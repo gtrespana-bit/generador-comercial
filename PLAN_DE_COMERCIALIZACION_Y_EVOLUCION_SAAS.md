@@ -91,7 +91,7 @@ Al trabajar en una tarea de este plan se debe:
   Evidencia: FastAPI + Jinja2 + SQLAlchemy + SQLite + ReportLab + JavaScript modular; aplicación empaquetable para Windows.
 
 - [x] **E0-002 — Ejecutar la suite automatizada.**  
-  Evidencia actualizada: 130 pruebas superadas con `.venv/bin/pytest -q` el 13/08/2026; la suite cubre Auth/membresías, aislamiento, almacenamiento privado y rate limiting de Auth, usa bases temporales y deja intacta la base personal.
+  Evidencia actualizada: 136 pruebas superadas con `.venv/bin/pytest -q` el 13/08/2026; la suite cubre Auth/membresías, aislamiento, almacenamiento privado y rate limiting de Auth, usa bases temporales y deja intacta la base personal.
 
 - [x] **E0-003 — Verificar el arranque y las rutas principales.**  
   Evidencia: las pantallas principales y la generación de PDF respondieron correctamente en una base limpia.
@@ -199,13 +199,13 @@ Al trabajar en una tarea de este plan se debe:
   Evidencia: configuración, catálogos, clientes, presupuestos, documentos, proyectos y entidades hijas incorporan `organizacion_id`; números y nombres reutilizables son únicos dentro de cada organización en el esquema web.
 
 - [x] **E1W-006 — Aplicar aislamiento en la sesión de datos.**
-  Evidencia: SQLAlchemy añade el criterio de organización a consultas y relaciones, asigna propietario a registros nuevos y rechaza escrituras cruzadas sin depender de cada ruta.
+  Evidencia: SQLAlchemy añade el criterio de organización a consultas y relaciones, asigna propietario a registros nuevos y rechaza escrituras cruzadas sin depender de cada ruta. `c93e7a4d20f1` añade una segunda barrera RLS por membresía/rol, todavía pendiente de prueba PostgreSQL real.
 
 - [~] **E1W-007 — Cubrir automáticamente el aislamiento de cada dominio.**
-  Cobertura actual: configuración, clientes, presupuestos, capítulos, acceso directo por ID, escritura cruzada, numeración, membresías y objetos privados. Storage verifica claves tenant y rechazo del proxy a otra organización; `WebSecurityMiddleware` bloquea escrituras cross-site y añade cabeceras defensivas; Auth limita ráfagas por ruta/IP en cada proceso. Pendiente ampliar dominios, añadir contadores distribuidos, retirar `unsafe-inline` de CSP y ejecutar el cruce real contra Supabase.
+  Cobertura actual: configuración, clientes, presupuestos, capítulos, acceso directo por ID, escritura cruzada, numeración, membresías y objetos privados. Storage verifica claves tenant y rechazo del proxy a otra organización; `WebSecurityMiddleware` bloquea escrituras cross-site y añade cabeceras defensivas; Auth limita ráfagas por ruta/IP; RLS cubre automáticamente todos los modelos tenant en la migración `c93e7a4d20f1`. Pendiente ampliar la auditoría de rutas, añadir contadores distribuidos, retirar `unsafe-inline` y ejecutar el cruce real contra Supabase con rol limitado.
 
 - [~] **E1W-008 — Implementar autenticación, sesión segura y autorización por membresía.**
-  Implementado en código: Supabase Auth por clave publicable, tokens HttpOnly, renovación, vínculo `auth.users` → `Usuario`, selección validada de organización y bloqueo de escritura para el rol `lectura`. La revisión `9bca2ad1f6e4` ya está aplicada en Supabase y las variables Auth quedaron configuradas localmente fuera de Git. En PostgreSQL se ignora `COTIZAT_ORGANIZATION_ID`. Recuperación con redirect HTTPS fijo e invitaciones de un solo uso para emails verificados ya están implementadas. Pendiente prueba end-to-end desde un entorno con salida a Supabase, configurar la Redirect URL real, aplicar `a84d2f6b91e0`, validar el canal de entrega de invitaciones y endurecer CSP/XSS antes de publicar.
+  Implementado en código: Supabase Auth por clave publicable, tokens HttpOnly, renovación, vínculo `auth.users` → `Usuario`, selección validada de organización y bloqueo de escritura para el rol `lectura`. La revisión `9bca2ad1f6e4` ya está aplicada en Supabase y las variables Auth quedaron configuradas localmente fuera de Git. En PostgreSQL se ignora `COTIZAT_ORGANIZATION_ID`. Recuperación con redirect HTTPS fijo e invitaciones de un solo uso para emails verificados ya están implementadas. Pendiente prueba end-to-end desde un entorno con salida a Supabase, configurar la Redirect URL real, aplicar `c93e7a4d20f1`, validar el canal de entrega de invitaciones y endurecer CSP/XSS antes de publicar.
 
 - [~] **E1W-009 — Crear una interfaz de almacenamiento y un backend de objetos.**
   Implementados `StorageBackend`, `LocalStorage` y `SupabaseStorage`, referencias por organización, metadatos sin binarios, proxy autorizado, compatibilidad legado, PDF vía `/tmp` y cobertura de logos, productos, partidas, proyectos, firmas, anexos, fichas técnicas e importaciones CYPE. Evidencia: `72e6f4d8a1c3`, `app/storage.py`, `tests/test_storage.py` y `docs/ALMACENAMIENTO_PRIVADO.md`. Pendiente crear/verificar `cotizat-private`, aplicar la migración y probar contra Supabase real; no existe acceso público improvisado.
@@ -214,7 +214,7 @@ Al trabajar en una tarea de este plan se debe:
   La ruta inicial ya enlaza registro/login → creación o selección de organización → onboarding demo/limpio existente; aceptar una invitación selecciona la organización autorizada. Pendiente probar el recorrido completo con dos emails reales y el cambio entre organizaciones.
 
 - [~] **E1W-011 — Ejecutar migraciones y suite de integración contra PostgreSQL real.**
-  Evidencia real: revisiones `5cda50f97ed9` y `9bca2ad1f6e4` aplicadas en Supabase; una partida modificada persistió entre conexiones físicas `16389` y `17068`; dos organizaciones conservaron valores independientes; RLS quedó activo y `anon` vio 0 partidas. Pendiente ejecutar la suite ORM/Auth completa desde un runner con salida a Supabase (el sandbox actual resetea PostgreSQL 5432/6543 y cierra TLS HTTPS antes de autenticar).
+  Evidencia real: revisiones `5cda50f97ed9` y `9bca2ad1f6e4` aplicadas en Supabase; una partida modificada persistió entre conexiones físicas `16389` y `17068`; dos organizaciones conservaron valores independientes; RLS quedó activo y `anon` vio 0 partidas. El código ya prepara `cotizat_app`, contexto transaccional y políticas autorizantes en `c93e7a4d20f1`. Pendiente aplicar ese head y ejecutar la suite ORM/Auth completa con un login sin `BYPASSRLS` desde un runner con salida a Supabase.
 
 - [ ] **E1W-012 — Diseñar y probar importación de instalaciones SQLite.**
   Nunca se migrarán datos privados a un servidor sin acción y confirmación del propietario.
@@ -562,12 +562,12 @@ La beta seguirá siendo privada y de capacidad limitada. Compartir infraestructu
 
 - [x] **E4-012 — Añadir `organizacion_id` o estrategia equivalente a todos los datos empresariales.**
   Adelantada como E1W-005, incluidas entidades hijas.
-- [x] **E4-013 — Aplicar filtrado obligatorio en la capa de datos.**
-  Adelantada como E1W-006.
-- [x] **E4-014 — Evitar depender de que cada ruta recuerde filtrar manualmente.**
-  El criterio se aplica mediante eventos de sesión SQLAlchemy.
+- [~] **E4-013 — Aplicar filtrado obligatorio en la capa de datos.**
+  SQLAlchemy ya lo aplica y `c93e7a4d20f1` versiona RLS por membresía/rol; falta aplicar y probar la barrera PostgreSQL real con el login limitado.
+- [~] **E4-014 — Evitar depender de que cada ruta recuerde filtrar manualmente.**
+  El criterio se aplica mediante eventos SQLAlchemy y políticas RLS sobre cada modelo tenant; falta validación de integración real.
 - [~] **E4-015 — Crear pruebas automáticas de aislamiento para cada dominio.**
-  Cobertura en `tests/test_tenancy.py` y `tests/test_storage.py`, incluidos metadatos, claves y proxy de archivos; faltan dominios y la integración real externa.
+  Cobertura en `tests/test_tenancy.py`, `tests/test_storage.py` y `tests/test_rls.py`, incluidos metadatos, claves, proxy, cobertura de tablas/políticas y contexto parametrizado; faltan dominios y la integración PostgreSQL real.
 - [~] **E4-016 — Auditar acceso directo por identificadores.**
   La prueba inicial cubre cliente y capítulo; falta inventario completo de rutas.
 - [~] **E4-017 — Auditar archivos y URLs firmadas.**
@@ -770,7 +770,7 @@ Se completará durante la Etapa 2. No deben guardarse aquí nombres, teléfonos 
 La base browser-first ya incluye persistencia portable, Alembic, propiedad organizacional, Auth y objetos privados. El siguiente trabajo es:
 
 1. **E1W-007:** continuar auditoría de rutas/roles, retirar `unsafe-inline` de CSP y completar aislamiento restante; CSRF, cabeceras globales y rate limiting local de Auth ya están implementados.
-2. **E1W-009:** aplicar el head `a84d2f6b91e0` (incluye Storage e invitaciones), aprovisionar `cotizat-private` como privado y probar Auth/Storage con salida TLS.
+2. **E1W-009/E1W-011:** aplicar el head `c93e7a4d20f1` (Storage, invitaciones y RLS), crear el login runtime limitado, aprovisionar `cotizat-private` y probar con salida TLS.
 3. **E1W-008:** configurar/probar recuperación e invitaciones reales con dos emails y definir el canal seguro de entrega.
 4. **E1W-010:** probar cuenta → organización → demo/limpio → primer PDF con archivos privados.
 5. **E1W-011/E1W-012:** suite PostgreSQL con rol no privilegiado e importación SQLite, incluidos objetos.
@@ -787,8 +787,9 @@ Evidencia acumulada al 13/08/2026:
 - Supabase Auth implementado con cookies HttpOnly, vínculo de identidad, selección por membresía, recuperación e invitaciones hasheadas de un solo uso; prueba real pendiente por TLS del sandbox.
 - Pruebas confirman separación de datos, permisos de equipo y claves/descargas de archivos privados.
 - `StorageBackend`, backend local y adaptador Supabase implementados; objetos bajo `organizaciones/<id>/...`, PDF remoto vía `/tmp` y revisión `72e6f4d8a1c3` preparados. El bucket real no se creó.
-- Pytest usa bases temporales, supera 130 pruebas y no modifica `presupuestos.db`.
-- La aplicación **sigue sin estar autorizada para publicarse**: faltan prueba real de Storage, CSP/XSS final, rol/políticas RLS no privilegiados y pruebas reales de Auth/ORM.
+- Rol grupal `cotizat_app` sin login/contraseña/BYPASSRLS, contexto por transacción y políticas tenant/rol versionados en `c93e7a4d20f1`; falta aplicarlos y probarlos con el login runtime real.
+- Pytest usa bases temporales, supera 136 pruebas y no modifica `presupuestos.db`.
+- La aplicación **sigue sin estar autorizada para publicarse**: faltan prueba real de Storage, CSP/XSS final, aplicar/probar el rol y las políticas RLS no privilegiadas, y pruebas reales de Auth/ORM.
 
 ---
 

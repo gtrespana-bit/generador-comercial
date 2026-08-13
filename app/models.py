@@ -67,6 +67,9 @@ class Organizacion(Base):
     nombre = Column(String(200), nullable=False)
     slug = Column(String(120), nullable=False, unique=True)
     activa = Column(Boolean, nullable=False, default=True)
+    creada_por_usuario_id = Column(
+        Integer, ForeignKey("usuarios.id", ondelete="SET NULL"), nullable=True, index=True
+    )
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 

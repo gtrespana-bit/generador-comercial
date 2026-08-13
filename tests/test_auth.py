@@ -271,6 +271,8 @@ def test_dependencia_postgresql_deriva_tenant_de_membresia_no_de_variable(
     dependency = database_module.get_db(request)
     db = next(dependency)
     try:
+        assert db.info["auth_user_id"] == AUTH_ID
+        assert db.info["auth_email"] == "persona@example.com"
         assert db.info["organizacion_id"] == organizacion_id
         assert db.info["rol_membresia"] == "administrador"
         assert request.state.usuario.auth_user_id == AUTH_ID

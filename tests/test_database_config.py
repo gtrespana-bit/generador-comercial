@@ -51,8 +51,11 @@ assert {'alembic_version', 'organizaciones', 'usuarios', 'membresias',
         'clientes', 'presupuestos', 'configuracion', 'archivos_almacenados',
         'invitaciones_organizacion'} <= tables
 assert 'auth_user_id' in {column['name'] for column in inspector.get_columns('usuarios')}
+assert 'creada_por_usuario_id' in {
+    column['name'] for column in inspector.get_columns('organizaciones')
+}
 with engine.connect() as connection:
-    assert connection.execute(text('SELECT version_num FROM alembic_version')).scalar_one() == 'a84d2f6b91e0'
+    assert connection.execute(text('SELECT version_num FROM alembic_version')).scalar_one() == 'c93e7a4d20f1'
 """
     comprobacion = subprocess.run(
         [sys.executable, "-c", script],

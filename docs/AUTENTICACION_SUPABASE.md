@@ -11,14 +11,16 @@ La contraseña y los tokens de sesión no se guardan en PostgreSQL. Los tokens s
 ## Variables del servidor
 
 ```bash
-DATABASE_URL=postgresql://...
+DATABASE_URL=postgresql://<login-runtime-sin-bypassrls>@...
+MIGRATION_DATABASE_URL=postgresql://<administrador-solo-durante-alembic>@...
+COTIZAT_REQUIRE_RLS_ROLE=true
 SUPABASE_URL=https://<project-ref>.supabase.co
 SUPABASE_PUBLISHABLE_KEY=sb_publishable_...
 COTIZAT_COOKIE_SECURE=true
 COTIZAT_PUBLIC_URL=https://cotizat.example.com
 ```
 
-`SUPABASE_PUBLISHABLE_KEY` tiene privilegios bajos y puede usarse para Auth. No se debe sustituir por `sb_secret_...`, `service_role` ni otra clave que omita RLS.
+`SUPABASE_PUBLISHABLE_KEY` tiene privilegios bajos y puede usarse para Auth. No se debe sustituir por `sb_secret_...`, `service_role` ni otra clave que omita RLS. `MIGRATION_DATABASE_URL` se inyecta únicamente al ejecutar Alembic y se retira del proceso web; no debe ser el fallback permanente de `DATABASE_URL`.
 
 Al probar expresamente sobre `http://localhost`, se puede usar `COTIZAT_COOKIE_SECURE=false`. En cualquier preview o despliegue HTTPS debe permanecer en `true`.
 
@@ -66,17 +68,11 @@ La revisión `a84d2f6b91e0` añade `invitaciones_organizacion` y `/equipo` permi
 
 Los enlaces se construyen desde `COTIZAT_PUBLIC_URL`, nunca desde `Host`. Aún no hay proveedor transaccional de correo: el gestor debe copiar el enlace y compartirlo por un canal seguro. No se incorporó una clave `service_role` ni se usó el endpoint administrativo de Supabase para simular el envío. Antes de una beta debe integrarse y probarse un canal de email real o establecer un procedimiento operativo controlado.
 
-## RLS: estado y límite actual
+## RLS: implementación y límite actual
 
-El proyecto real confirmó `relrowsecurity = true` y el rol `anon` obtuvo cero partidas sin políticas permisivas. Es una denegación predeterminada correcta.
+`c93e7a4d20f1` versiona `cotizat_app` sin login, contraseña ni `BYPASSRLS`, privilegios mínimos, funciones con `search_path` fijo y políticas por tenant/rol. La identidad se instala en la transacción solo después de validar Supabase; la organización se instala solo después de comprobar la membresía. El alta de perfil, la primera organización y la aceptación de invitaciones tienen políticas específicas para no depender de un contexto tenant que todavía no existe.
 
-La conexión Session pooler utilizada para migraciones entra como `postgres`, rol administrativo que omite RLS. Por eso:
-
-- el navegador público queda bloqueado por RLS;
-- el backend debe comprobar Auth + membresía y mantener el filtro ORM;
-- RLS todavía no es una segunda barrera frente a un error del backend conectado como `postgres`.
-
-Antes de publicar se debe crear un rol de aplicación sin `BYPASSRLS` y políticas basadas en membresías/JWT, o establecer de forma segura los claims por transacción. No se crearán políticas públicas de tipo `USING (true)`.
+El proyecto real confirmó previamente `relrowsecurity = true` y que `anon` obtuvo cero partidas. Sin embargo, su head continúa en `9bca2ad1f6e4`: allí la conexión usada por el backend/migraciones todavía entra como `postgres` y omite RLS. La nueva migración y el login limitado no se han probado contra ese PostgreSQL. Consulta el procedimiento y sus límites en `docs/BASE_DE_DATOS_WEB.md`.
 
 ## Estado de validación real
 
@@ -90,7 +86,7 @@ Esta integración no autoriza por sí sola un despliegue público. Siguen pendie
 - configurar `COTIZAT_PUBLIC_URL` y la Redirect URL real en Supabase;
 - sustituir/complementar el límite local por IP ya implementado con contadores distribuidos antes de escalar a varias instancias (el rate limit de Supabase tampoco sustituye el control de aplicación);
 - aplicar/probar la migración de invitaciones y validar el recorrido real con dos emails, incluido su canal de entrega;
-- políticas RLS autorizantes para un rol no privilegiado;
+- aplicar y probar `c93e7a4d20f1` con un login runtime realmente no privilegiado y dos organizaciones;
 - eliminar `unsafe-inline` de CSP y completar auditoría XSS;
 - aplicar/probar la migración y el bucket privado de Storage real.
 

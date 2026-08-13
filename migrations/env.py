@@ -4,6 +4,7 @@ La URL nunca se guarda en el repositorio: se resuelve con la misma política
 ``DATABASE_URL``/SQLite que usa la aplicación.
 """
 from logging.config import fileConfig
+import os
 
 from alembic import context
 from sqlalchemy import engine_from_config, pool
@@ -15,9 +16,11 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# ConfigParser interpreta '%' como interpolación; escaparlo permite contraseñas
-# codificadas en URL sin escribir secretos en alembic.ini.
-config.set_main_option("sqlalchemy.url", DATABASE_URL.replace("%", "%%"))
+# La aplicación debe conectarse con un rol RLS no privilegiado; Alembic usa
+# una URL administrativa separada cuando necesita crear roles/políticas.
+# ConfigParser interpreta '%' como interpolación, por eso se escapa.
+migration_url = os.environ.get("MIGRATION_DATABASE_URL", "").strip() or DATABASE_URL
+config.set_main_option("sqlalchemy.url", migration_url.replace("%", "%%"))
 target_metadata = Base.metadata
 
 

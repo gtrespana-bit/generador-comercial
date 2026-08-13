@@ -174,6 +174,9 @@ def aceptar_invitacion(
     elif not membresia.activa:
         membresia.rol = invitacion.rol
         membresia.activa = True
+    # Inserta/reactiva mientras la invitación aún está pendiente: la política
+    # RLS de membresías valida precisamente ese hecho dentro de la transacción.
+    db.flush()
     # Si otra vía ya activó la membresía, no se degrada ni eleva su rol.
 
     invitacion.accepted_at = ahora

@@ -1205,13 +1205,15 @@ async def crear_organizacion_web(
             error="Escribe un nombre válido para la empresa.",
         )
     slug_base = _slug_organizacion(nombre)
-    slug = slug_base
-    sufijo = 2
-    while db.query(Organizacion).filter(Organizacion.slug == slug).first():
-        slug = f"{slug_base[:110]}-{sufijo}"
-        sufijo += 1
+    # RLS no debe revelar slugs de otras empresas para buscar un sufijo. Un
+    # sufijo aleatorio mantiene la unicidad sin ampliar la lectura global.
+    slug = f"{slug_base[:107]}-{uuid.uuid4().hex[:12]}"
     usuario = db.get(Usuario, db.info["usuario_id"])
-    organizacion = Organizacion(nombre=nombre, slug=slug)
+    organizacion = Organizacion(
+        nombre=nombre,
+        slug=slug,
+        creada_por_usuario_id=usuario.id,
+    )
     db.add(organizacion)
     db.flush()
     db.add(Membresia(

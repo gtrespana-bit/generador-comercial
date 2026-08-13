@@ -4,8 +4,8 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-from sqlalchemy import create_engine, event, inspect
-from sqlalchemy.orm import declarative_base, sessionmaker
+from sqlalchemy import create_engine, event, inspect, text
+from sqlalchemy.orm import Session as OrmSession, declarative_base, sessionmaker
 from starlette.requests import Request
 
 from .branding import DATABASE_FILENAME, resolve_data_directory
@@ -44,6 +44,7 @@ DATABASE_URL = DATABASE.url
 DATABASE_BACKEND = DATABASE.backend
 DATABASE_IS_SQLITE = DATABASE.is_sqlite
 DB_PATH = DATABASE.sqlite_path
+EXPECTED_ALEMBIC_HEAD = "c93e7a4d20f1"
 
 # Copias de seguridad automáticas y manuales (solo corresponden al modo
 # SQLite local; PostgreSQL tendrá backups administrados fuera del proceso).
@@ -74,6 +75,47 @@ SessionLocal = sessionmaker(autoflush=False, bind=engine)
 Base = declarative_base()
 
 
+def _aplicar_contexto_postgresql(connection, info: dict) -> None:
+    """Instala claims locales a la transacción sin interpolarlos en SQL."""
+    if connection.dialect.name != "postgresql":
+        return
+    connection.execute(
+        text("""
+            SELECT
+              set_config('cotizat.auth_user_id', :auth_user_id, true),
+              set_config('cotizat.auth_email', :auth_email, true),
+              set_config('cotizat.organization_id', :organization_id, true)
+        """),
+        {
+            "auth_user_id": str(info.get("auth_user_id") or ""),
+            "auth_email": str(info.get("auth_email") or "").lower(),
+            "organization_id": str(info.get("organizacion_id") or ""),
+        },
+    )
+
+
+@event.listens_for(OrmSession, "after_begin")
+def _restaurar_contexto_postgresql(db, _transaction, connection):
+    """Reaplica SET LOCAL tras cada commit en conexiones reutilizadas."""
+    _aplicar_contexto_postgresql(connection, db.info)
+
+
+def _establecer_contexto_identidad(db, identidad) -> None:
+    db.info["auth_user_id"] = identidad.auth_user_id
+    db.info["auth_email"] = identidad.email
+
+
+def _establecer_contexto_organizacion(db, organizacion_id: int) -> None:
+    db.info["organizacion_id"] = int(organizacion_id)
+    if db.get_bind().dialect.name == "postgresql":
+        # La consulta de membresía ya abrió la transacción; actualiza el claim
+        # ahora y el evento lo restaurará en transacciones posteriores.
+        db.execute(
+            text("SELECT set_config('cotizat.organization_id', :value, true)"),
+            {"value": str(organizacion_id)},
+        )
+
+
 def _autenticar_usuario(db, request: Request):
     """Valida Supabase Auth y sincroniza el perfil local sin guardar tokens."""
     from .auth import (
@@ -86,6 +128,9 @@ def _autenticar_usuario(db, request: Request):
     if request is None:
         raise AuthenticationRequired("Inicia sesión para continuar.")
     identidad = identity_for_request(request)
+    # Solo después de que Supabase verificó el token se expone la identidad a
+    # PostgreSQL. Las políticas de perfiles permiten entonces alta/vínculo.
+    _establecer_contexto_identidad(db, identidad)
     try:
         usuario = sincronizar_usuario_auth(
             db,
@@ -168,7 +213,7 @@ def get_db(request: Request = None):
             request.state.membresias = membresias_activas(db, usuario.id)
             raise OrganizationRequired("Selecciona o crea una organización.")
 
-        db.info["organizacion_id"] = membresia.organizacion_id
+        _establecer_contexto_organizacion(db, membresia.organizacion_id)
         db.info["rol_membresia"] = membresia.rol
         db.info["membresia_id"] = membresia.id
         request.state.membresia = membresia
@@ -187,6 +232,45 @@ def _es_esquema_anterior_al_onboarding() -> bool:
     return "onboarding_completado" not in columnas
 
 
+def _verificar_head_alembic_postgresql() -> None:
+    with engine.connect() as connection:
+        version = connection.execute(
+            text("SELECT version_num FROM alembic_version")
+        ).scalar_one()
+    if version != EXPECTED_ALEMBIC_HEAD:
+        raise RuntimeError(
+            "El esquema PostgreSQL no está en el head requerido "
+            f"{EXPECTED_ALEMBIC_HEAD}. Ejecuta `alembic upgrade head`."
+        )
+
+
+def _verificar_rol_aplicacion_postgresql() -> None:
+    requerido = os.environ.get("COTIZAT_REQUIRE_RLS_ROLE", "true").strip().lower()
+    if DATABASE_IS_SQLITE or requerido in {"0", "false", "no", "off"}:
+        return
+    with engine.connect() as connection:
+        row = connection.execute(text("""
+            SELECT r.rolname, r.rolsuper, r.rolbypassrls, r.rolinherit,
+                   COALESCE(
+                     pg_has_role(r.oid, app_role.oid, 'member'), FALSE
+                   ) AS app_member
+            FROM pg_catalog.pg_roles AS r
+            LEFT JOIN pg_catalog.pg_roles AS app_role
+              ON app_role.rolname = 'cotizat_app'
+            WHERE r.rolname = current_user
+        """)).mappings().one()
+    if (
+        row["rolsuper"]
+        or row["rolbypassrls"]
+        or not row["rolinherit"]
+        or not row["app_member"]
+    ):
+        raise RuntimeError(
+            "DATABASE_URL debe usar un login no privilegiado miembro de "
+            "cotizat_app, con INHERIT y sin SUPERUSER/BYPASSRLS."
+        )
+
+
 def init_db():
     """Inicializa SQLite local o comprueba el esquema versionado de la web.
 
@@ -201,19 +285,22 @@ def init_db():
     if DATABASE_IS_SQLITE:
         Base.metadata.create_all(bind=engine)
         models.migrar(engine)
-    elif not inspect(engine).has_table("configuracion"):
-        raise RuntimeError(
-            "La base PostgreSQL no tiene el esquema de CotizaT. "
-            "Ejecuta `alembic upgrade head` antes de iniciar la aplicación."
-        )
-
-    with SessionLocal() as db:
-        models.asegurar_config(db)
-        # Una actualización no debe interrumpir al usuario con un asistente ni
-        # volver a sembrar datos. Solo las bases nuevas conservan el estado
-        # pendiente para elegir entre demo e instalación limpia.
-        if instalacion_anterior:
-            marcar_instalacion_anterior(db)
+        with SessionLocal() as db:
+            models.asegurar_config(db)
+            # Una actualización local no debe interrumpir al usuario con el
+            # asistente ni volver a sembrar datos.
+            if instalacion_anterior:
+                marcar_instalacion_anterior(db)
+    else:
+        if not inspect(engine).has_table("configuracion"):
+            raise RuntimeError(
+                "La base PostgreSQL no tiene el esquema de CotizaT. "
+                "Ejecuta `alembic upgrade head` antes de iniciar la aplicación."
+            )
+        _verificar_head_alembic_postgresql()
+        _verificar_rol_aplicacion_postgresql()
+        # No se consulta ni crea configuración global al arrancar: bajo RLS la
+        # configuración nace dentro del tenant después de validar membresía.
 
 
 # ---------------------------------------------------------------------------

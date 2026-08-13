@@ -78,7 +78,7 @@ lista MIME. En este bloque no se creó el bucket real ni política pública.
 
 Para habilitar el entorno real:
 
-1. aplicar Alembic hasta el head vigente `a84d2f6b91e0` (incluye `72e6f4d8a1c3`);
+1. aplicar Alembic hasta el head vigente `c93e7a4d20f1` (incluye `72e6f4d8a1c3`);
 2. crear/verificar `cotizat-private` como privado;
 3. configurar la secret key solo en backend;
 4. probar subida, lectura, descarga, PDF y borrado con dos organizaciones;
@@ -114,8 +114,8 @@ borrado compartido y materialización PDF. La prueba real contra Supabase
 Storage sigue pendiente en un runner/despliegue con salida TLS al proyecto.
 
 Este bloque no autoriza publicar CotizaT. CSRF por origen y cabeceras globales
-ya están implementados, pero siguen pendientes CSP/XSS final, rol PostgreSQL no
-privilegiado/políticas RLS completas, pruebas reales de Auth/Storage y auditoría.
+ya están implementados, pero siguen pendientes CSP/XSS final, aplicar/probar el
+rol PostgreSQL y las políticas RLS, pruebas reales de Auth/Storage y auditoría.
 
 Referencias oficiales:
 
