@@ -5,8 +5,8 @@
 **Zona inicial recomendada:** Valencia / Carabobo, con posterior expansión a Caracas y otras ciudades  
 **Fecha de creación:** 13 de agosto de 2026  
 **Última actualización:** 13 de agosto de 2026  
-**Estado general:** Etapa 0 completada · Etapa 1 pendiente de inicio  
-**Próxima etapa:** Etapa 1 — Preparación de la versión comercial local
+**Estado general:** Etapa 0 completada · Etapa 1 activa
+**Etapa activa:** Etapa 1 — Preparación de la versión comercial local
 
 ---
 
@@ -71,7 +71,7 @@ Al trabajar en una tarea de este plan se debe:
 | Etapa | Objetivo | Estado | Condición principal para avanzar |
 |---|---|---|---|
 | 0. Diagnóstico y límites | Conocer el estado real y fijar principios | **Completada** | Auditoría y decisión de nicho documentadas |
-| 1. Versión comercial local | Poder entregar e instalar un producto honesto, estable y entendible | **Siguiente** | Producto instalable probado fuera del equipo de desarrollo |
+| 1. Versión comercial local | Poder entregar e instalar un producto honesto, estable y entendible | **Activa** | Producto instalable probado fuera del equipo de desarrollo |
 | 2. Validación comercial pagada | Demostrar que empresas reales pagan y continúan usándolo | Pendiente | 5 pilotos pagados y señales de uso repetido |
 | 3. Piloto web de instancia individual | Validar acceso web y cobro recurrente sin riesgo multiempresa | Pendiente | 10 clientes de pago y operación estable |
 | 4. SaaS multiempresa | Construir una plataforma segura, escalable y operable | Pendiente | Beta de aislamiento y seguridad aprobada |
@@ -132,17 +132,19 @@ Al trabajar en una tarea de este plan se debe:
 
 # ETAPA 1 — Preparación de la versión comercial local
 
-**Estado:** PENDIENTE DE INICIO  
+**Estado:** ACTIVA — identidad comercial en definición
 **Objetivo:** transformar la aplicación privada en un producto instalable, honesto, estable y comprensible que pueda entregarse a los primeros clientes.  
 **Estimación orientativa:** 4–6 semanas, ajustable después del inventario inicial.  
 **Restricción:** no añadir grandes módulos funcionales durante esta etapa.
 
 ## 1.1 Identidad, alcance y presentación
 
-- [ ] **E1-001 — Elegir el nombre comercial del software.**  
+- [~] **E1-001 — Elegir el nombre comercial del software.**
   Debe ser distinto de RemodelaT, registrable, fácil de pronunciar y válido para una expansión latinoamericana.
+  Estado: el usuario pidió propuestas y fijó una marca orientada a construcción para Latinoamérica, con entrada comercial por remodelación venezolana. La lista corta inicial es ObraCifra, ObraNexo y Presuvia; ObraCifra es la recomendación preliminar. Falta la decisión final del usuario.
 
-- [ ] **E1-002 — Comprobar dominio, redes y conflictos básicos de marca.**
+- [~] **E1-002 — Comprobar dominio, redes y conflictos básicos de marca.**
+  Evidencia preliminar (13/08/2026): búsquedas exactas descartaron CotizaObra, ObraLista y Cota Obra por conflictos directos; Obralio se desaconseja por proximidad con Obrali y por tener `obralio.com` registrado. `obranexo.com` también está registrado y existe Obras Nexo en España. No apareció una coincidencia comercial exacta evidente para ObraCifra en la búsqueda web inicial ni resolución DNS de `obracifra.com`, pero esto no demuestra disponibilidad ni sustituye una búsqueda registral. La comprobación final depende del nombre elegido.
 
 - [ ] **E1-003 — Definir una propuesta de valor de una frase.**  
   Borrador a validar: «Crea presupuestos profesionales de remodelación con tus precios y controla cambios sin perder dinero».
@@ -678,6 +680,7 @@ Estas cifras no son precios definitivos; deben probarse en la Etapa 2.
 | 13/08/2026 | D-006 | No presentar la factura actual como fiscal | No existe homologación/integración demostrada | Tras consulta tributaria |
 | 13/08/2026 | D-007 | No reescribir el frontend por moda | El stack actual permite validar el producto | Si aparecen límites medidos |
 | 13/08/2026 | D-008 | Exigir pilotos pagados antes del multi-tenant | Reducir riesgo de construir sin demanda | Puerta Etapa 2 |
+| 13/08/2026 | D-009 | Crear una marca para construcción latinoamericana, especializada inicialmente en remodelación venezolana | Permite crecer por país y función sin diluir el mensaje comercial de entrada | Tras la selección final de nombre |
 
 ---
 
@@ -693,21 +696,18 @@ Se completará durante la Etapa 2. No deben guardarse aquí nombres, teléfonos 
 
 # 11. Próximo bloque de trabajo
 
-## Inicio de Etapa 1
+## Etapa 1 activa — entrega 1: identidad y honestidad del producto
 
-La siguiente sesión debe comenzar por estas tareas, en este orden:
+Trabajo actual, en este orden:
 
-1. **E1-001:** decisión o proceso de selección de marca.
-2. **E1-005:** inventario de datos y referencias de RemodelaT que deben eliminarse.
-3. **E1-006:** inventario y sustitución de promesas incorrectas.
-4. **E1-008:** definir el recorrido básico del primer presupuesto.
-5. **E1-015 a E1-020:** delimitar factura, licencia, privacidad y avisos legales.
-6. **E1-032 a E1-041:** endurecimiento local, dependencias, CI y pruebas.
-7. **E1-009 a E1-014:** implementar y probar el onboarding.
-8. **E1-022 a E1-031:** preparar el catálogo comercial inicial.
-9. **E1-042 a E1-061:** instalador, documentación, oferta y soporte.
+1. **E1-001 y E1-002:** elegir la marca a partir de la lista corta y cerrar su comprobación básica de conflictos, dominio y redes.
+2. **E1-003:** aprobar una propuesta de valor honesta de una frase.
+3. **E1-004 y E1-005:** aplicar la marca elegida y retirar todos los datos privados de RemodelaT.
+4. **E1-006:** sustituir promesas incorrectas, en particular «Autogenerar con IA» y «Gemelos Digitales 3D».
+5. **E1-007:** revisar los demás textos visibles afectados.
+6. Ejecutar pruebas automatizadas y una verificación visual de los flujos modificados.
 
-Antes de modificar el código se realizará un inventario concreto de la Etapa 1 y se dividirá en entregas pequeñas verificables.
+Inventario inicial realizado el 13/08/2026: se localizaron referencias de marca o empresa en `app/templates/base.html`, `app/models.py`, `desktop.py`, `presupuestos.spec`, `instalador.iss` y `scripts/crear-repo-nuevo.sh`; los claims principales están en `app/templates/index.html`, `app/templates/budgets/form.html`, `app/static/js/editor/generador.js` y `app/templates/projects/list.html`. Los identificadores de ejecutable y directorio de datos no se modificarán sin diseñar antes una migración que preserve instalaciones existentes.
 
 ---
 
