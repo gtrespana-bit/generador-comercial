@@ -282,3 +282,5 @@ python run.py                     # modo clásico (navegador)
 - Las fuentes **Lato** (`app/static/fonts/`) se distribuyen bajo la licencia
   SIL Open Font License 1.1 (incluida en `OFL.txt`).
 - Formato de PDF generado con diseño limpio y estructurado en capítulos y partidas.
+#   g e n e r a d o r - c o m e r c i a l  
+ 
