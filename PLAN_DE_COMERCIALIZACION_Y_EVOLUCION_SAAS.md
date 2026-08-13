@@ -91,7 +91,7 @@ Al trabajar en una tarea de este plan se debe:
   Evidencia: FastAPI + Jinja2 + SQLAlchemy + SQLite + ReportLab + JavaScript modular; aplicación empaquetable para Windows.
 
 - [x] **E0-002 — Ejecutar la suite automatizada.**  
-  Evidencia actualizada: 96 pruebas superadas con `.venv/bin/pytest -q` el 13/08/2026; la suite cubre el vínculo Auth/membresías, usa una base temporal y deja intacta la base personal.
+  Evidencia actualizada: 110 pruebas superadas con `.venv/bin/pytest -q` el 13/08/2026; la suite cubre Auth/membresías, aislamiento y almacenamiento privado, usa bases temporales y deja intacta la base personal.
 
 - [x] **E0-003 — Verificar el arranque y las rutas principales.**  
   Evidencia: las pantallas principales y la generación de PDF respondieron correctamente en una base limpia.
@@ -202,13 +202,13 @@ Al trabajar en una tarea de este plan se debe:
   Evidencia: SQLAlchemy añade el criterio de organización a consultas y relaciones, asigna propietario a registros nuevos y rechaza escrituras cruzadas sin depender de cada ruta.
 
 - [~] **E1W-007 — Cubrir automáticamente el aislamiento de cada dominio.**
-  Primera cobertura: configuración, clientes, presupuestos, capítulos, acceso directo por ID, escritura cruzada, numeración y membresías. Pendiente auditar archivos y ampliar casos por dominio antes de afirmar aislamiento completo.
+  Cobertura actual: configuración, clientes, presupuestos, capítulos, acceso directo por ID, escritura cruzada, numeración, membresías y objetos privados. Storage verifica claves tenant y rechazo del proxy a otra organización. Pendiente ampliar dominios y ejecutar el cruce real contra Supabase.
 
 - [~] **E1W-008 — Implementar autenticación, sesión segura y autorización por membresía.**
   Implementado en código: Supabase Auth por clave publicable, tokens HttpOnly, renovación, vínculo `auth.users` → `Usuario`, selección validada de organización y bloqueo de escritura para el rol `lectura`. La revisión `9bca2ad1f6e4` ya está aplicada en Supabase y las variables Auth quedaron configuradas localmente fuera de Git. En PostgreSQL se ignora `COTIZAT_ORGANIZATION_ID`. Pendiente prueba end-to-end desde un entorno con salida a Supabase, CSRF, recuperación de contraseña, invitaciones y endurecimiento antes de publicar.
 
-- [ ] **E1W-009 — Crear una interfaz de almacenamiento y un backend de objetos.**
-  Debe cubrir logos, productos, proyectos, firmas, anexos e importaciones.
+- [~] **E1W-009 — Crear una interfaz de almacenamiento y un backend de objetos.**
+  Implementados `StorageBackend`, `LocalStorage` y `SupabaseStorage`, referencias por organización, metadatos sin binarios, proxy autorizado, compatibilidad legado, PDF vía `/tmp` y cobertura de logos, productos, partidas, proyectos, firmas, anexos, fichas técnicas e importaciones CYPE. Evidencia: `72e6f4d8a1c3`, `app/storage.py`, `tests/test_storage.py` y `docs/ALMACENAMIENTO_PRIVADO.md`. Pendiente crear/verificar `cotizat-private`, aplicar la migración y probar contra Supabase real; no existe acceso público improvisado.
 
 - [~] **E1W-010 — Adaptar onboarding a cuenta → organización → demo/limpio.**
   La ruta inicial ya enlaza registro/login → creación o selección de organización → onboarding demo/limpio existente. Pendiente probar el recorrido completo con email real, invitaciones y cambio entre organizaciones.
@@ -562,16 +562,18 @@ La beta seguirá siendo privada y de capacidad limitada. Compartir infraestructu
 - [x] **E4-014 — Evitar depender de que cada ruta recuerde filtrar manualmente.**
   El criterio se aplica mediante eventos de sesión SQLAlchemy.
 - [~] **E4-015 — Crear pruebas automáticas de aislamiento para cada dominio.**
-  Cobertura inicial en `tests/test_tenancy.py`; faltan dominios y archivos.
+  Cobertura en `tests/test_tenancy.py` y `tests/test_storage.py`, incluidos metadatos, claves y proxy de archivos; faltan dominios y la integración real externa.
 - [~] **E4-016 — Auditar acceso directo por identificadores.**
   La prueba inicial cubre cliente y capítulo; falta inventario completo de rutas.
-- [ ] **E4-017 — Auditar archivos y URLs firmadas.**
+- [~] **E4-017 — Auditar archivos y URLs firmadas.**
+  Objetos nuevos usan proxy privado y `/static/uploads` se bloquea en PostgreSQL; falta auditoría externa y decidir URLs firmadas cortas para descargas grandes.
 
 ## 4.4 Infraestructura
 
 - [~] **E4-018 — PostgreSQL administrado.**
   Driver, URL y esquema están preparados; falta elegir proveedor y ejecutar integración real.
-- [ ] **E4-019 — Almacenamiento de objetos para imágenes, PDFs y anexos.**
+- [~] **E4-019 — Almacenamiento de objetos para imágenes, PDFs y anexos.**
+  Backend y metadatos implementados como E1W-009; falta aprovisionar y probar el bucket privado real.
 - [ ] **E4-020 — Cola de trabajos para PDFs, emails e importaciones pesadas.**
 - [ ] **E4-021 — Backups automáticos y restauraciones ensayadas.**
 - [ ] **E4-022 — Logs estructurados sin datos sensibles innecesarios.**
@@ -757,16 +759,16 @@ Se completará durante la Etapa 2. No deben guardarse aquí nombres, teléfonos 
 
 # 11. Próximo bloque de trabajo
 
-## Etapa 1 activa — siguiente bloque: acceso web seguro
+## Etapa 1 activa — siguiente bloque: endurecimiento y validación web real
 
-La primera entrega browser-first ya creó persistencia portable, esquema Alembic y propiedad organizacional. El siguiente trabajo, en este orden, es:
+La base browser-first ya incluye persistencia portable, Alembic, propiedad organizacional, Auth y objetos privados. El siguiente trabajo es:
 
-1. **E1W-008:** aplicar y probar la revisión Auth, configurar las claves publicables y completar seguridad de sesión/invitaciones.
-2. **E1W-009:** desacoplar archivos locales y crear almacenamiento persistente por organización.
-3. **E1W-007:** ampliar la auditoría de aislamiento a archivos, descargas y cada dominio restante.
-4. **E1W-010:** adaptar el recorrido ya iniciado a cuenta → organización → demo/limpio → primer PDF.
-5. **E1W-011 y E1W-012:** ejecutar la suite ORM en PostgreSQL desde un runner compatible y definir la importación confirmada desde SQLite.
-6. **E1-012 a E1-014:** retomar usabilidad y medición externa sobre el recorrido web resultante, no sobre una envoltura de escritorio que dejó de ser prioritaria.
+1. **E1W-007:** completar CSRF, cabeceras globales, auditoría de rutas/roles y aislamiento restante.
+2. **E1W-009:** aplicar `72e6f4d8a1c3`, aprovisionar `cotizat-private` como privado y probar Auth/Storage con salida TLS.
+3. **E1W-008:** completar recuperación de contraseña, invitaciones y pruebas reales.
+4. **E1W-010:** probar cuenta → organización → demo/limpio → primer PDF con archivos privados.
+5. **E1W-011/E1W-012:** suite PostgreSQL con rol no privilegiado e importación SQLite, incluidos objetos.
+6. **E1-012 a E1-014:** retomar usabilidad y medición externa sobre el recorrido web.
 
 Evidencia acumulada al 13/08/2026:
 
@@ -774,13 +776,13 @@ Evidencia acumulada al 13/08/2026:
 - Recorrido inicial, modos demo/limpio y progreso hasta el PDF implementados.
 - Decisión browser-first registrada en `docs/ADR-001_ARQUITECTURA_BROWSER_FIRST.md`.
 - `DATABASE_URL`, Psycopg 3 y Alembic preparados; compatibilidad SQLite preservada.
-- Baseline aplicada en Supabase real; persistencia confirmada entre dos conexiones físicas, RLS activo y acceso `anon` denegado.
-- Organizaciones, usuarios, membresías y propiedad organizacional incorporados al esquema.
-- Filtro y protección de escritura por organización aplicados en la sesión SQLAlchemy.
-- Integración inicial Supabase Auth implementada con cookies HttpOnly, vínculo de identidad y selección por membresía; revisión real aplicada y variables locales configuradas, con prueba end-to-end pendiente por la restricción de red del sandbox.
-- Pruebas confirman separación de configuración, clientes, presupuestos, capítulos, numeración y acceso por ID.
-- Pytest usa una base temporal y ya no debe modificar `presupuestos.db` del desarrollador.
-- La aplicación **sigue sin estar autorizada para publicarse**: faltan Storage externo, CSRF, políticas/rol RLS no privilegiado y completar pruebas reales de Auth/ORM.
+- Baseline aplicada en Supabase real; persistencia entre conexiones, RLS activo y `anon` denegado.
+- Organizaciones, usuarios, membresías, filtro tenant y protección de escritura incorporados.
+- Supabase Auth implementado con cookies HttpOnly, vínculo de identidad y selección por membresía; prueba real pendiente por TLS del sandbox.
+- Pruebas confirman separación de datos y claves/descargas de archivos privados.
+- `StorageBackend`, backend local y adaptador Supabase implementados; objetos bajo `organizaciones/<id>/...`, PDF remoto vía `/tmp` y revisión `72e6f4d8a1c3` preparados. El bucket real no se creó.
+- Pytest usa bases temporales, supera 110 pruebas y no modifica `presupuestos.db`.
+- La aplicación **sigue sin estar autorizada para publicarse**: faltan prueba real de Storage, CSRF/cabeceras, rol/políticas RLS no privilegiados y pruebas reales de Auth/ORM.
 
 ---
 

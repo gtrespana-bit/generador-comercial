@@ -269,8 +269,12 @@ def es_base_valida(ruta: Path) -> bool:
         return False
 
 
-def restaurar_base(origen: Path, uploads_origen: Path | None = None) -> None:
-    """Sustituye la base de datos (y opcionalmente las imágenes) por una copia.
+def restaurar_base(
+    origen: Path,
+    uploads_origen: Path | None = None,
+    private_storage_origen: Path | None = None,
+) -> None:
+    """Sustituye SQLite y, opcionalmente, ambos almacenes locales por una copia.
 
     - Guarda automáticamente una copia de lo actual en `backups/` por si
       hay que volver atrás.
@@ -291,6 +295,9 @@ def restaurar_base(origen: Path, uploads_origen: Path | None = None) -> None:
     uploads_dir = UPLOADS_DIR
     if uploads_dir.exists():
         shutil.copytree(uploads_dir, prev / "uploads")
+    private_storage_dir = PRIVATE_STORAGE_DIR
+    if private_storage_dir.exists():
+        shutil.copytree(private_storage_dir, prev / "private_storage")
 
     engine.dispose()  # cierra conexiones al archivo actual
 
@@ -305,6 +312,10 @@ def restaurar_base(origen: Path, uploads_origen: Path | None = None) -> None:
         if uploads_dir.exists():
             shutil.rmtree(uploads_dir)
         shutil.copytree(uploads_origen, uploads_dir)
+    if private_storage_origen is not None and private_storage_origen.is_dir():
+        if private_storage_dir.exists():
+            shutil.rmtree(private_storage_dir)
+        shutil.copytree(private_storage_origen, private_storage_dir)
 
     engine.dispose()
 

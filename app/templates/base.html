@@ -12,6 +12,24 @@
 </head>
 <body spellcheck="true">
 <script>
+  window.cotizatArchivoUrl = function (referencia) {
+    var localSQLite = {{ 'true' if database_is_sqlite else 'false' }};
+    var valor = String(referencia || '').trim();
+    if (!valor) return '';
+    if (valor.indexOf('storage://') === 0) {
+      var clave = valor.slice('storage://'.length).split('/').map(encodeURIComponent).join('/');
+      return '/archivos/' + clave;
+    }
+    if (valor.charAt(0) === '/') return valor;
+    if (valor.indexOf('static/') === 0) return '/' + valor;
+    if (valor.indexOf('uploads/') === 0) {
+      return localSQLite ? '/static/' + valor : '/archivos-legado/' + valor.slice(8).split('/').map(encodeURIComponent).join('/');
+    }
+    if (valor.indexOf('importaciones/') === 0) {
+      return localSQLite ? '/static/uploads/' + valor : '/archivos-legado/' + valor.split('/').map(encodeURIComponent).join('/');
+    }
+    return '/static/' + valor;
+  };
   (function () {
     if (localStorage.getItem('sidebar-collapsed') === 'true') {
       document.body.classList.add('collapsed');

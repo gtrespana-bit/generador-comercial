@@ -48,10 +48,10 @@ engine = create_engine(os.environ['DATABASE_URL'])
 inspector = inspect(engine)
 tables = set(inspector.get_table_names())
 assert {'alembic_version', 'organizaciones', 'usuarios', 'membresias',
-        'clientes', 'presupuestos', 'configuracion'} <= tables
+        'clientes', 'presupuestos', 'configuracion', 'archivos_almacenados'} <= tables
 assert 'auth_user_id' in {column['name'] for column in inspector.get_columns('usuarios')}
 with engine.connect() as connection:
-    assert connection.execute(text('SELECT version_num FROM alembic_version')).scalar_one() == '9bca2ad1f6e4'
+    assert connection.execute(text('SELECT version_num FROM alembic_version')).scalar_one() == '72e6f4d8a1c3'
 """
     comprobacion = subprocess.run(
         [sys.executable, "-c", script],

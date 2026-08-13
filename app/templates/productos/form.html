@@ -89,7 +89,7 @@
           <label>Foto principal</label>
           {% if producto and producto.imagen %}
           <div class="catalog-image-preview">
-            <img src="/static/{{ producto.imagen }}" alt="{{ producto.nombre }}">
+            <img src="{{ producto.imagen | archivo_url }}" alt="{{ producto.nombre }}">
             <label class="hint"><input type="checkbox" name="quitar_imagen" value="1"> Eliminar foto principal</label>
           </div>
           {% endif %}
@@ -102,7 +102,7 @@
           <div class="catalog-gallery">
             {% for imagen in producto.imagenes_lista[1:] %}
             <label class="catalog-gallery-item">
-              <img src="/static/{{ imagen }}" alt="Imagen de {{ producto.nombre }}">
+              <img src="{{ imagen | archivo_url }}" alt="Imagen de {{ producto.nombre }}">
               <span><input type="checkbox" name="quitar_imagenes" value="{{ imagen }}"> Eliminar</span>
             </label>
             {% endfor %}
@@ -115,7 +115,7 @@
         <div class="field field-full">
           <label>Ficha técnica (PDF)</label>
           {% if producto and producto.ficha_tecnica %}
-          <p class="hint" style="margin:0 0 .5rem;"><a class="link" href="/static/{{ producto.ficha_tecnica }}" target="_blank">📄 Ver ficha técnica actual</a> · <label><input type="checkbox" name="quitar_ficha_tecnica" value="1"> Eliminar</label></p>
+          <p class="hint" style="margin:0 0 .5rem;"><a class="link" href="{{ producto.ficha_tecnica | archivo_url }}" target="_blank">📄 Ver ficha técnica actual</a> · <label><input type="checkbox" name="quitar_ficha_tecnica" value="1"> Eliminar</label></p>
           {% endif %}
           <input type="file" name="ficha_tecnica" accept="application/pdf,.pdf">
         </div>

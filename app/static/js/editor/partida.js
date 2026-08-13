@@ -233,7 +233,7 @@
           sug.style.cssText = "padding:8px 10px; cursor:pointer; border-bottom:1px solid var(--bg); font-size:.82rem; display:flex; align-items:center; gap:9px;";
           if (item.imagen) {
             var thumb = FMT.h("img", "suggestion-thumb");
-            thumb.src = item.imagen.indexOf("/") === 0 ? item.imagen : "/static/" + item.imagen;
+            thumb.src = item.imagen.indexOf("/") === 0 ? item.imagen : window.cotizatArchivoUrl(item.imagen);
             thumb.alt = "";
             sug.appendChild(thumb);
           }
@@ -482,7 +482,7 @@
           } catch (e) { return ""; }
         }
         if (op.imagen) {
-          return op.imagen.indexOf("/") === 0 ? op.imagen : "/static/" + op.imagen;
+          return window.cotizatArchivoUrl(op.imagen);
         }
         return "";
       }
@@ -694,7 +694,7 @@
             imgPrev.style.display = "";
           } catch (e) {}
         } else if (op.imagen) {
-          imgPrev.src = op.imagen.indexOf("/") === 0 ? op.imagen : "/static/" + op.imagen;
+          imgPrev.src = window.cotizatArchivoUrl(op.imagen);
           imgPrev.style.display = "";
         }
         imgRow.appendChild(imgPrev);
@@ -1902,7 +1902,7 @@
       function rutaImagen(ruta) {
         ruta = String(ruta || "").trim();
         if (!ruta) return "";
-        return ruta.indexOf("/") === 0 ? ruta : "/static/" + ruta;
+        return window.cotizatArchivoUrl(ruta);
       }
       function actualizar() {
         var prodNombre = (partidaWrap.querySelector('[data-f="p_prod_nombre"]') || {}).value;
@@ -2408,7 +2408,7 @@
       }
 
       if (datos.prod_imagen) {
-        previa.src = "/static/" + datos.prod_imagen;
+        previa.src = window.cotizatArchivoUrl(datos.prod_imagen);
         previa.style.display = "";
         btnQuitarImg.style.display = "";
         fileLbl.textContent = "Sustituir imagen:";
@@ -2495,7 +2495,7 @@
             sug.style.cssText = "padding:8px 10px; cursor:pointer; border-bottom:1px solid var(--bg); font-size:.82rem; display:flex; align-items:center; gap:9px;";
             if (item.imagen) {
               var thumb = editor.FMT.h("img", "suggestion-thumb");
-              thumb.src = "/static/" + item.imagen;
+              thumb.src = window.cotizatArchivoUrl(item.imagen);
               thumb.alt = "";
               sug.appendChild(thumb);
             }
@@ -2526,7 +2526,7 @@
               prodCatInput.value = item.categoria || prodCatInput.value || "General";
               if (item.imagen) {
                 hiddenProdImagen.value = item.imagen;
-                mostrarPrevia("/static/" + item.imagen);
+                mostrarPrevia(window.cotizatArchivoUrl(item.imagen));
               }
               if (precioLinea) {
                 var total = editorInst.FMT.parseNum(precioLinea.value) - precioAnterior + precioNuevo;

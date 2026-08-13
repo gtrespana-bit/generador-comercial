@@ -278,7 +278,7 @@ class Presupuesto(TenantMixin, Base):
     mostrar_firmas = Column(Boolean, default=False)
     mostrar_resumen_capitulos = Column(Boolean, default=False)
     mostrar_garantias = Column(Boolean, default=False)
-    firma_cliente = Column(String(300), default="")   # ruta bajo app/static
+    firma_cliente = Column(String(300), default="")   # referencia lógica o ruta local histórica
     # Funciones económicas avanzadas (apagadas por defecto para conservar
     # el creador simple).
     usar_funciones_avanzadas = Column(Boolean, default=False)
@@ -491,7 +491,7 @@ class PresupuestoItem(TenantMixin, Base):
     # presupuesto no cambie al actualizar el catálogo posteriormente.
     producto_coste = Column(Float, nullable=True)
     producto_unidad = Column(String(20), default="")
-    producto_imagen = Column(String(300), default="")   # ruta bajo app/static
+    producto_imagen = Column(String(300), default="")   # referencia lógica o ruta local histórica
     # Campos avanzados, invisibles en el modo básico.
     tipo_partida = Column(String(20), default="included")
     seleccionada = Column(Boolean, default=False)
@@ -698,7 +698,7 @@ class DescomposicionPartida(TenantMixin, Base):
     vacías intencionales, fórmulas y columnas), mientras que
     :class:`DescomposicionFila` permite calcular y mostrar cada recurso sin
     volver a interpretar el Excel original. El archivo fuente también queda
-    guardado bajo uploads para una trazabilidad completamente reversible.
+    guardado en Storage privado para una trazabilidad completamente reversible.
     """
 
     __tablename__ = "descomposiciones_partida"
@@ -708,7 +708,7 @@ class DescomposicionPartida(TenantMixin, Base):
     codigo = Column(String(100), default="")
     unidad = Column(String(30), default="")
     nombre_hoja = Column(String(200), default="")
-    archivo_origen = Column(String(300), default="")  # ruta relativa a UPLOADS_DIR
+    archivo_origen = Column(String(300), default="")  # referencia lógica o ruta local histórica
     nombre_archivo_origen = Column(String(300), default="")
     rango_original = Column(String(100), default="")
     columnas_json = Column(Text, default="[]")
@@ -859,7 +859,7 @@ class Configuracion(TenantMixin, Base):
     empresa_telefono = Column(String(50), default="")
     empresa_email = Column(String(200), default="")
     empresa_web = Column(String(200), default="")
-    logo = Column(String(300), default="")                # ruta bajo app/static
+    logo = Column(String(300), default="")                # referencia lógica o ruta local histórica
     # Primer inicio y recorrido hasta el primer PDF real.
     onboarding_completado = Column(Boolean, default=False)
     onboarding_modo = Column(String(20), default="")      # demo / limpio / existente
@@ -1024,7 +1024,7 @@ class Producto(TenantMixin, Base):
     precio_unitario = Column(Float, default=0.0)
     unidad = Column(String(30), default="ud")
     categoria = Column(String(80), default="General")
-    imagen = Column(String(300), default="")           # ruta bajo app/static
+    imagen = Column(String(300), default="")           # referencia lógica o ruta local histórica
     # El precio unitario existente se conserva como precio de venta para no
     # alterar presupuestos ni catálogos creados con versiones anteriores.
     precio_compra = Column(Float, nullable=True)
@@ -1038,7 +1038,7 @@ class Producto(TenantMixin, Base):
     formato = Column(String(120), default="")
     tiempo_entrega_dias = Column(Integer, nullable=True)
     variantes = Column(Text, default="")
-    ficha_tecnica = Column(String(300), default="")    # PDF bajo uploads/
+    ficha_tecnica = Column(String(300), default="")    # referencia lógica del PDF o ruta histórica
     imagenes = Column(Text, default="[]")              # galería JSON; `imagen` es la principal
     usos = Column(Integer, default=0)
     ultimo_uso = Column(DateTime, nullable=True)

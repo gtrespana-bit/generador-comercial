@@ -116,7 +116,7 @@
           {% if part.descomposicion_cype.origen == 'manual' %}
           <div class="cype-origin-note">🧮 Descomposición de costes: {{ part.descomposicion_cype.filas | length }} filas de recursos · <a class="link" href="/presupuestos/{{ p.id }}/partidas/{{ part.id }}/descomposicion">Ver costes</a></div>
           {% else %}
-          <div class="cype-origin-note">📐 Descompuesto CYPE: {{ part.descomposicion_cype.filas | length }} filas y {{ part.descomposicion_cype.columnas | length }} columnas conservadas · <a class="link" href="/presupuestos/{{ p.id }}/partidas/{{ part.id }}/descomposicion">Ver matriz y costes</a>{% if part.descomposicion_cype.archivo_origen %} · <a class="link" href="/static/uploads/{{ part.descomposicion_cype.archivo_origen }}" download>Descargar Excel original</a>{% endif %}</div>
+          <div class="cype-origin-note">📐 Descompuesto CYPE: {{ part.descomposicion_cype.filas | length }} filas y {{ part.descomposicion_cype.columnas | length }} columnas conservadas · <a class="link" href="/presupuestos/{{ p.id }}/partidas/{{ part.id }}/descomposicion">Ver matriz y costes</a>{% if part.descomposicion_cype.archivo_origen %} · <a class="link" href="{{ part.descomposicion_cype.archivo_origen | archivo_url(true) }}" download>Descargar Excel original</a>{% endif %}</div>
           {% endif %}
           {% endif %}
         </td>
@@ -183,7 +183,7 @@
           {% if specs %}<div style="font-size:.75rem; color:var(--text-soft); margin-bottom:6px;">{{ specs }}</div>{% endif %}
           {% if op_imagen %}
           <div style="width:100%; height:90px; border-radius:6px; overflow:hidden; border:1px solid var(--border); background:#fff; margin-top:6px;">
-            <img src="/static/{{ op_imagen }}" alt="{{ op_nombre }}" style="width:100%; height:100%; object-fit:cover;">
+            <img src="{{ op_imagen | archivo_url }}" alt="{{ op_nombre }}" style="width:100%; height:100%; object-fit:cover;">
           </div>
           {% endif %}
         </div>
@@ -195,7 +195,7 @@
       <strong>Producto presupuestado:</strong>
       {% if part.producto_precio is not none %}<strong>{{ part.producto_precio | num }} {{ p.moneda | replace('USD','$') }} / {{ part.producto_unidad or part.unidad }}</strong>&nbsp;&nbsp;{% endif %}
       <em class="muted">{{ part.producto_nombre }}</em>
-      {% if part.producto_imagen %}<br><img src="/static/{{ part.producto_imagen }}" alt="Producto">{% endif %}
+      {% if part.producto_imagen %}<br><img src="{{ part.producto_imagen | archivo_url }}" alt="Producto">{% endif %}
     </div>
     {% endif %}
     {% endif %}
@@ -248,7 +248,7 @@
 <div class="card no-print" id="anexos">
   <h2>📎 Anexos del documento</h2><p class="hint">Añade fichas técnicas, planos, fotografías convertidas a PDF o documentos de proveedores. El PDF principal muestra su índice cuando activas esa opción en Editar.</p>
   <form method="post" action="/presupuestos/{{ p.id }}/anexos" enctype="multipart/form-data" class="form-actions"><input name="nombre" placeholder="Nombre visible del anexo" style="flex:1"><input type="file" name="archivo" accept="application/pdf" required><button class="btn btn-sm" type="submit">Añadir PDF</button></form>
-  {% if p.anexos %}<ul>{% for a in p.anexos %}<li><a class="link" target="_blank" href="/static/{{ a.archivo }}">{{ a.nombre }}</a> <form class="inline" method="post" action="/presupuestos/{{ p.id }}/anexos/{{ a.id }}/eliminar" onsubmit="return confirm('¿Eliminar anexo?')"><button class="btn btn-sm btn-danger" type="submit">Eliminar</button></form></li>{% endfor %}</ul>{% endif %}
+  {% if p.anexos %}<ul>{% for a in p.anexos %}<li><a class="link" target="_blank" href="{{ a.archivo | archivo_url(true) }}">{{ a.nombre }}</a> <form class="inline" method="post" action="/presupuestos/{{ p.id }}/anexos/{{ a.id }}/eliminar" onsubmit="return confirm('¿Eliminar anexo?')"><button class="btn btn-sm btn-danger" type="submit">Eliminar</button></form></li>{% endfor %}</ul>{% endif %}
 </div>
 
 {% if p.notas %}

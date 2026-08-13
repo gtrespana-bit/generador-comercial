@@ -60,7 +60,7 @@
         <label>Logotipo (lado derecho del encabezado)</label>
         {% if cfg.logo %}
         <div style="display:flex; align-items:center; gap:14px; margin-bottom:8px; flex-wrap:wrap;">
-          <img src="/static/{{ cfg.logo }}" alt="Logo" style="max-height:70px; max-width:220px; background:#fff; border:1px solid var(--border); border-radius:8px; padding:6px;">
+          <img src="{{ cfg.logo | archivo_url }}" alt="Logo" style="max-height:70px; max-width:220px; background:#fff; border:1px solid var(--border); border-radius:8px; padding:6px;">
           <label class="hint" style="display:flex; align-items:center; gap:6px;">
             <input type="checkbox" name="quitar_logo" value="1"> Quitar logo
           </label>

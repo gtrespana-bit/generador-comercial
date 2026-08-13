@@ -22,6 +22,7 @@ from xml.sax.saxutils import escape
 from reportlab.lib import colors
 
 from ..database import BASE_DIR, UPLOADS_DIR
+from ..storage import StorageError, materialize_reference, object_key_from_reference
 from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle
@@ -160,9 +161,18 @@ def _fit_image(ruta: Path, max_w: float, max_h: float, halign="RIGHT"):
 
 
 def _static_path(rel: str) -> Path:
-    """Resuelve un archivo estático: uploads del usuario o recursos empaquetados."""
+    """Resuelve recursos locales o materializa objetos privados en ``/tmp``."""
     if not rel:
-        return Path("")
+        return Path("/__cotizat_archivo_inexistente__")
+    try:
+        es_objeto_privado = object_key_from_reference(str(rel)) is not None
+    except StorageError:
+        return Path("/__cotizat_archivo_inexistente__")
+    if es_objeto_privado:
+        try:
+            return materialize_reference(str(rel))
+        except StorageError:
+            return Path("/__cotizat_archivo_inexistente__")
     clean = str(rel).strip().lstrip("/")
     if clean.startswith("static/"):
         clean = clean[7:]

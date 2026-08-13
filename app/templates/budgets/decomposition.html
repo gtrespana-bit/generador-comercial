@@ -8,7 +8,7 @@
     <p class="subtitle">{% if d.origen == 'manual' %}Descomposición de costes de la partida, fila a fila.{% else %}Matriz CYPE conservada fila a fila y columna a columna.{% endif %}</p>
   </div>
   <div class="actions">
-    {% if d.archivo_origen %}<a class="btn btn-primary" href="/static/uploads/{{ d.archivo_origen }}" download>⬇ Descargar Excel original</a>{% endif %}
+    {% if d.archivo_origen %}<a class="btn btn-primary" href="{{ d.archivo_origen | archivo_url(true) }}" download>⬇ Descargar Excel original</a>{% endif %}
     <a class="btn" href="/presupuestos/{{ p.id }}">← Volver al presupuesto</a>
   </div>
 </div>

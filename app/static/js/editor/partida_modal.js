@@ -65,7 +65,7 @@
     var img = root.querySelector('[data-role="catalog-image"]');
     if (!box || !img) return;
     if (ruta) {
-      img.src = ruta.indexOf("/") === 0 ? ruta : "/static/" + ruta;
+      img.src = window.cotizatArchivoUrl(ruta);
       box.style.display = "flex";
     } else {
       img.removeAttribute("src");
@@ -94,7 +94,7 @@
     if (titulo) titulo.textContent = nombre;
     if (detalle) detalle.textContent = (precio !== "" ? "Venta $" + num(precio).toFixed(2) : "Venta sin definir") + (coste !== "" ? " · Coste $" + num(coste).toFixed(2) : "") + (unidad ? " / " + unidad : "");
     if (img) {
-      var src = imagen ? (imagen.indexOf("/") === 0 ? imagen : "/static/" + imagen) : "";
+      var src = imagen ? (window.cotizatArchivoUrl(imagen)) : "";
       img.style.display = src ? "" : "none";
       if (src) img.src = src; else img.removeAttribute("src");
       if (icono) icono.style.display = src ? "none" : "grid";
@@ -565,7 +565,7 @@
           if (item.imagen) {
             var thumb = document.createElement("img");
             thumb.className = "suggestion-thumb";
-            thumb.src = "/static/" + item.imagen;
+            thumb.src = window.cotizatArchivoUrl(item.imagen);
             thumb.alt = "";
             sug.appendChild(thumb);
           }

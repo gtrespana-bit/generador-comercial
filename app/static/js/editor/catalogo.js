@@ -142,7 +142,7 @@
       // Mini preview si hay imagen
       if (item.imagen) {
         var img = document.createElement("img");
-        img.src = "/static/" + item.imagen;
+        img.src = window.cotizatArchivoUrl(item.imagen);
         img.style.cssText = "width:36px; height:36px; border-radius:5px; object-fit:cover;";
         div.appendChild(img);
       }

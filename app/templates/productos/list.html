@@ -82,7 +82,7 @@
           <tr draggable="true" class="producto-tr" data-id="{{ p.id }}" data-nombre="{{ (p.nombre ~ ' ' ~ p.descripcion ~ ' ' ~ p.categoria ~ ' ' ~ p.marca ~ ' ' ~ p.modelo ~ ' ' ~ p.sku ~ ' ' ~ p.proveedor ~ ' ' ~ p.color ~ ' ' ~ p.acabado) | lower }}">
             <td><input type="checkbox" class="row-check" data-id="{{ p.id }}" onchange="updateBulkBarProductos()"> <td>
               {% if p.imagen %}
-              <img src="/static/{{ p.imagen }}" alt="{{ p.nombre }}" style="width:48px; height:48px; object-fit:cover; border:1.5px solid var(--accent); border-radius:6px; background:#fff; padding:2px;">
+              <img src="{{ p.imagen | archivo_url }}" alt="{{ p.nombre }}" style="width:48px; height:48px; object-fit:cover; border:1.5px solid var(--accent); border-radius:6px; background:#fff; padding:2px;">
               {% else %}
               <span style="display:inline-flex; align-items:center; justify-content:center; width:48px; height:48px; border:1px dashed var(--border-strong); border-radius:6px; color:var(--text-muted); font-size:1.2rem;">🛍️</span>
               {% endif %}
@@ -95,7 +95,7 @@
                 {% if p.marca %}<span>{{ p.marca }}{% if p.modelo %} · {{ p.modelo }}{% endif %}</span>{% endif %}
                 {% if p.proveedor %}<span>🏪 {{ p.proveedor }}</span>{% endif %}
                 {% if p.fecha_actualizacion_precio %}<span>🗓 Precio: {{ p.fecha_actualizacion_precio | fecha }}</span>{% endif %}
-                {% if p.ficha_tecnica %}<span><a class="link" href="/static/{{ p.ficha_tecnica }}" target="_blank">📄 Ficha</a></span>{% endif %}
+                {% if p.ficha_tecnica %}<span><a class="link" href="{{ p.ficha_tecnica | archivo_url }}" target="_blank">📄 Ficha</a></span>{% endif %}
               </p>
               {% if p.descripcion %}<p class="hint" style="margin-top: 3px; font-size: 0.85rem; color: var(--text-soft);">{{ p.descripcion }}</p>{% endif %}
             </td>

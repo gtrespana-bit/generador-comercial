@@ -59,7 +59,7 @@
       {% if mostrar_imagen %}
       <div class="field field-full"><label>Imagen de referencia</label>
         <div class="catalog-image-preview" data-role="catalog-image-preview" style="{{ '' if partida and partida.imagen else 'display:none;' }}">
-          <img data-role="catalog-image" src="{{ '/static/' ~ partida.imagen if partida and partida.imagen else '' }}" alt="Imagen de la partida">
+          <img data-role="catalog-image" src="{{ partida.imagen | archivo_url if partida and partida.imagen else '' }}" alt="Imagen de la partida">
           <label class="hint"><input type="checkbox" name="quitar_imagen" value="1"> Eliminar imagen actual</label>
         </div>
         <input type="file" name="imagen" accept="image/*">

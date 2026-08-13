@@ -11,9 +11,10 @@ alcance, y genera documentos PDF profesionales.
 > **Dirección del producto:** CotizaT se desarrolla browser-first. Durante la
 > transición puede ejecutarse localmente en el navegador con SQLite, pero la
 > versión alojada usa PostgreSQL, organizaciones aisladas y almacenamiento
-> externo. Todavía no debe publicarse: la base de Supabase Auth ya está
-> implementada, pero faltan configurarla, probarla en el entorno real, proteger
-> formularios con CSRF y externalizar los archivos.
+> externo. Todavía no debe publicarse: Supabase Auth y la abstracción de
+> Storage privado ya están implementados, pero faltan pruebas reales de ambos,
+> aprovisionar el bucket privado, proteger formularios con CSRF y completar el
+> endurecimiento RLS/HTTP.
 >
 > Sus sugerencias se basan en coincidencias deterministas sobre el catálogo del
 > usuario; no se presentan como inteligencia artificial.
@@ -174,11 +175,13 @@ python run.py
 ```
 
 Para probar la base web con PostgreSQL, configura `DATABASE_URL` y ejecuta
-`alembic upgrade head` antes de iniciar. Consulta `docs/BASE_DE_DATOS_WEB.md`.
+`alembic upgrade head` antes de iniciar. Consulta `docs/BASE_DE_DATOS_WEB.md`,
+`docs/AUTENTICACION_SUPABASE.md` y `docs/ALMACENAMIENTO_PRIVADO.md`.
 
-En el modo compatible local, los datos se guardan en `presupuestos.db` (se crea automáticamente). Las
-imágenes subidas (logo y productos) van a `app/static/uploads/` — ninguna de
-las dos rutas se versiona en git. Para mover todos los datos a otra
+En el modo compatible local, los datos se guardan en `presupuestos.db` (se crea automáticamente). Los
+objetos nuevos van a `private_storage/` y se sirven mediante el proxy de la
+aplicación; `app/static/uploads/` se conserva solo para archivos históricos.
+Ninguna de esas rutas se versiona en git. Para mover todos los datos a otra
 instalación o versión usa la **copia de seguridad** de Configuración
 (descargar .zip → restaurar en la nueva), o apunta la nueva instalación al
 mismo archivo con `COTIZAT_DB` (`PRESUPUESTOS_DB` sigue aceptándose como alias).
@@ -191,6 +194,7 @@ app/
 ├── database.py        # Sesiones SQLite/PostgreSQL y compatibilidad local
 ├── db_config.py       # Resolución portable de DATABASE_URL
 ├── auth.py            # Supabase Auth, cookies HttpOnly y renovación de sesión
+├── storage.py         # Backends local/Supabase y referencias privadas
 ├── models.py          # Organizaciones, usuarios y datos comerciales aislados
 ├── seeds.py           # Catálogos y datos ficticios del modo demostración
 ├── utils.py           # Formatos de moneda/cantidades/fecha (estilo venezolano)
@@ -202,7 +206,8 @@ app/
     ├── css/           # Estilos de la aplicación
     ├── js/            # Constructor de capítulos del formulario
     ├── fonts/         # Familia Lato (licencia SIL OFL 1.1, ver OFL.txt)
-    └── uploads/       # Logo e imágenes de producto (no versionado)
+    └── uploads/       # Archivos históricos locales (no versionado)
+private_storage/        # Objetos nuevos del backend local (no versionado)
 desktop.py             # Modo escritorio: ventana propia (pywebview)
 run.py                 # Punto de entrada clásico (navegador)
 presupuestos.spec      # Empaquetado con PyInstaller
