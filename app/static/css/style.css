@@ -3213,3 +3213,20 @@ body.beneficio-on .partida-row {
   .table-tiempos th{font-size:.62rem; padding:.4rem .45rem;}
   .table-tiempos td{padding:.4rem .45rem;}
 }
+
+/* Sesión web autenticada */
+.sidebar-session {
+  margin: auto 12px 46px;
+  padding: 10px;
+  border-top: 1px solid var(--border);
+  display: grid;
+  gap: 4px;
+  font-size: .72rem;
+  color: var(--text-muted);
+  overflow: hidden;
+}
+.sidebar-session a { color: var(--text); text-decoration: none; overflow: hidden; text-overflow: ellipsis; }
+.sidebar-session span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sidebar-session form { margin: 3px 0 0; }
+.sidebar-session button { border: 0; padding: 0; background: transparent; color: var(--accent); font: inherit; font-weight: 700; cursor: pointer; }
+body.collapsed .sidebar-session { display: none; }

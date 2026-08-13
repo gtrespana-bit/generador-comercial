@@ -16,14 +16,16 @@ import os
 import re
 import shutil
 import traceback
+import unicodedata
 import uuid
 import zipfile
 
 log = logging.getLogger("cotizat")
 
 from fastapi import Depends, FastAPI, Form, Request, UploadFile  # noqa: F401 (type hints)
+from starlette.concurrency import run_in_threadpool
 from starlette.datastructures import UploadFile as UploadFileStarlette
-from fastapi.responses import HTMLResponse, RedirectResponse, Response
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import or_
@@ -40,9 +42,24 @@ from .database import (
     UPLOADS_DIR,
     copia_seguridad_sqlite,
     es_base_valida,
+    get_authenticated_db,
     get_db,
     init_db,
     restaurar_base,
+)
+from .auth import (
+    ACCESS_COOKIE,
+    ORGANIZATION_COOKIE,
+    AuthError,
+    AuthenticationRequired,
+    AuthNotConfigured,
+    OrganizationAccessDenied,
+    OrganizationRequired,
+    RefreshedAuthCookieMiddleware,
+    SupabaseAuthClient,
+    SupabaseAuthSettings,
+    clear_auth_cookies,
+    set_auth_cookies,
 )
 from .models import (
     ESTADOS,
@@ -53,7 +70,9 @@ from .models import (
     FacturaCapitulo,
     FacturaItem,
     Medicion,
+    Membresia,
     NotaSeguimiento,
+    Organizacion,
     Partida,
     Plantilla,
     RecetaEstancia,
@@ -62,10 +81,12 @@ from .models import (
     PresupuestoItem,
     PresupuestoVersion,
     Proyecto,
+    Usuario,
     CambioAlcance,
     CambioAlcanceItem,
     CategoriaPartida,
     Pago,
+    PermisoOrganizacionError,
     AnexoPresupuesto,
     BorradorPresupuesto,
     DescomposicionPartida,
@@ -74,6 +95,7 @@ from .models import (
     Producto,
     asegurar_config,
     marcar_vencidos,
+    membresias_activas,
     proximo_numero,
     proximo_numero_factura,
 )
@@ -219,6 +241,84 @@ class FormulariosUTF8Middleware:
 
 app = FastAPI(title=PRODUCT_NAME, lifespan=lifespan)
 app.add_middleware(FormulariosUTF8Middleware)
+app.add_middleware(RefreshedAuthCookieMiddleware)
+
+
+def _respuesta_auth_json(request: Request) -> bool:
+    accept = request.headers.get("accept", "")
+    return (
+        request.url.path.startswith("/api/")
+        or "/api/" in request.url.path
+        or "application/json" in accept
+        or request.headers.get("content-type", "").startswith("application/json")
+    )
+
+
+@app.exception_handler(AuthenticationRequired)
+async def _sesion_requerida(request: Request, exc: AuthenticationRequired):
+    if _respuesta_auth_json(request):
+        return JSONResponse({"ok": False, "error": str(exc)}, status_code=401)
+    siguiente = request.url.path
+    if request.url.query:
+        siguiente += "?" + request.url.query
+    return RedirectResponse(f"/acceso?next={quote(siguiente)}", status_code=303)
+
+
+@app.exception_handler(OrganizationRequired)
+async def _organizacion_requerida(request: Request, exc: OrganizationRequired):
+    if _respuesta_auth_json(request):
+        return JSONResponse({"ok": False, "error": str(exc)}, status_code=403)
+    membresias = getattr(request.state, "membresias", [])
+    destino = "/organizaciones" if membresias else "/organizaciones/nueva"
+    return RedirectResponse(destino, status_code=303)
+
+
+@app.exception_handler(OrganizationAccessDenied)
+async def _organizacion_denegada(request: Request, exc: OrganizationAccessDenied):
+    if _respuesta_auth_json(request):
+        return JSONResponse({"ok": False, "error": str(exc)}, status_code=403)
+    return RedirectResponse(
+        f"/organizaciones?error={quote(str(exc))}", status_code=303
+    )
+
+
+@app.exception_handler(AuthNotConfigured)
+async def _auth_no_configurada(request: Request, exc: AuthNotConfigured):
+    if _respuesta_auth_json(request):
+        return JSONResponse({"ok": False, "error": str(exc)}, status_code=503)
+    return TEMPLATES.TemplateResponse(
+        request,
+        "auth/access.html",
+        {"error": str(exc), "auth_configured": False, "next": ""},
+        status_code=503,
+    )
+
+
+@app.exception_handler(PermisoOrganizacionError)
+async def _permiso_organizacion_denegado(
+    request: Request, exc: PermisoOrganizacionError
+):
+    if _respuesta_auth_json(request):
+        return JSONResponse({"ok": False, "error": str(exc)}, status_code=403)
+    return TEMPLATES.TemplateResponse(
+        request,
+        "auth/forbidden.html",
+        {"error": str(exc)},
+        status_code=403,
+    )
+
+
+@app.exception_handler(AuthError)
+async def _servicio_auth_no_disponible(request: Request, exc: AuthError):
+    if _respuesta_auth_json(request):
+        return JSONResponse({"ok": False, "error": str(exc)}, status_code=503)
+    return TEMPLATES.TemplateResponse(
+        request,
+        "auth/access.html",
+        {"error": str(exc), "auth_configured": True, "next": ""},
+        status_code=503,
+    )
+
 # Las imágenes subidas se sirven desde la carpeta de datos del usuario;
 # el resto de estáticos (css, js, fuentes) desde los recursos empaquetados.
 UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
@@ -640,6 +740,233 @@ def _guardar_en_catalogos(db: Session, partidas: list, imagenes_guardadas: dict)
                 imagen=imagen,
             ))
             productos_nuevos.add(prod_nombre)
+
+
+# ---------------------------------------------------------------------------
+# Acceso web y selección de organización
+# ---------------------------------------------------------------------------
+
+def _next_seguro(valor: object, defecto: str = "/") -> str:
+    destino = str(valor or "").strip()
+    if (
+        not destino.startswith("/")
+        or destino.startswith("//")
+        or "\\" in destino
+        or any(ord(caracter) < 32 for caracter in destino)
+    ):
+        return defecto
+    return destino[:1000]
+
+
+def _slug_organizacion(nombre: str) -> str:
+    normalizado = unicodedata.normalize("NFKD", nombre)
+    ascii_texto = "".join(c for c in normalizado if not unicodedata.combining(c))
+    slug = re.sub(r"[^a-z0-9]+", "-", ascii_texto.lower()).strip("-")
+    return slug[:100] or "organizacion"
+
+
+@app.get("/acceso", response_class=HTMLResponse)
+def acceso(request: Request, next: str = ""):
+    error = request.query_params.get("error", "")
+    mensaje = request.query_params.get("msg", "")
+    try:
+        SupabaseAuthSettings.from_environment()
+        configurado = True
+    except AuthNotConfigured as exc:
+        configurado = False
+        error = error or str(exc)
+    return TEMPLATES.TemplateResponse(
+        request,
+        "auth/access.html",
+        {
+            "error": error,
+            "msg": mensaje,
+            "auth_configured": configurado,
+            "next": _next_seguro(next),
+        },
+    )
+
+
+@app.post("/acceso")
+async def iniciar_sesion(request: Request):
+    form = await request.form()
+    destino = _next_seguro(form.get("next"))
+    try:
+        settings = SupabaseAuthSettings.from_environment()
+        tokens = await run_in_threadpool(
+            SupabaseAuthClient(settings).sign_in,
+            str(form.get("email") or ""),
+            str(form.get("password") or ""),
+        )
+    except AuthError as exc:
+        return _redirect(
+            f"/acceso?next={quote(destino)}",
+            error=str(exc),
+        )
+    response = RedirectResponse(destino, status_code=303)
+    set_auth_cookies(response, tokens, settings.cookie_secure)
+    return response
+
+
+@app.post("/registro")
+async def registrar_cuenta(request: Request):
+    form = await request.form()
+    destino = _next_seguro(form.get("next"), "/organizaciones/nueva")
+    password = str(form.get("password") or "")
+    password_confirmation = str(form.get("password_confirmation") or "")
+    if password != password_confirmation:
+        return _redirect("/acceso", error="Las contraseñas no coinciden.")
+    try:
+        settings = SupabaseAuthSettings.from_environment()
+        result = await run_in_threadpool(
+            SupabaseAuthClient(settings).sign_up,
+            str(form.get("email") or ""),
+            password,
+            str(form.get("nombre") or ""),
+        )
+    except AuthError as exc:
+        return _redirect("/acceso", error=str(exc))
+    if result.tokens is None:
+        return _redirect(
+            "/acceso",
+            msg="Cuenta creada. Revisa tu email para confirmarla antes de iniciar sesión.",
+        )
+    response = RedirectResponse(destino, status_code=303)
+    set_auth_cookies(response, result.tokens, settings.cookie_secure)
+    return response
+
+
+@app.post("/salir")
+def cerrar_sesion():
+    response = RedirectResponse("/acceso", status_code=303)
+    try:
+        secure = SupabaseAuthSettings.from_environment().cookie_secure
+    except AuthNotConfigured:
+        secure = True
+    clear_auth_cookies(response, secure)
+    return response
+
+
+@app.get("/organizaciones", response_class=HTMLResponse)
+def listar_organizaciones_web(
+    request: Request,
+    db: Session = Depends(get_authenticated_db),
+):
+    if DATABASE_IS_SQLITE:
+        return _redirect("/")
+    usuario = db.get(Usuario, db.info["usuario_id"])
+    membresias = membresias_activas(db, usuario.id)
+    return TEMPLATES.TemplateResponse(
+        request,
+        "auth/organizations.html",
+        {
+            "usuario": usuario,
+            "membresias": membresias,
+            "error": request.query_params.get("error", ""),
+        },
+    )
+
+
+@app.get("/organizaciones/nueva", response_class=HTMLResponse)
+def nueva_organizacion_web(
+    request: Request,
+    db: Session = Depends(get_authenticated_db),
+):
+    if DATABASE_IS_SQLITE:
+        return _redirect("/")
+    usuario = db.get(Usuario, db.info["usuario_id"])
+    return TEMPLATES.TemplateResponse(
+        request,
+        "auth/organization_new.html",
+        {"usuario": usuario, "error": request.query_params.get("error", "")},
+    )
+
+
+@app.post("/organizaciones/nueva")
+async def crear_organizacion_web(
+    request: Request,
+    db: Session = Depends(get_authenticated_db),
+):
+    if DATABASE_IS_SQLITE:
+        return _redirect("/")
+    form = await request.form()
+    nombre = str(form.get("nombre") or "").strip()[:200]
+    if len(nombre) < 2:
+        return _redirect(
+            "/organizaciones/nueva",
+            error="Escribe un nombre válido para la empresa.",
+        )
+    slug_base = _slug_organizacion(nombre)
+    slug = slug_base
+    sufijo = 2
+    while db.query(Organizacion).filter(Organizacion.slug == slug).first():
+        slug = f"{slug_base[:110]}-{sufijo}"
+        sufijo += 1
+    usuario = db.get(Usuario, db.info["usuario_id"])
+    organizacion = Organizacion(nombre=nombre, slug=slug)
+    db.add(organizacion)
+    db.flush()
+    db.add(Membresia(
+        usuario_id=usuario.id,
+        organizacion_id=organizacion.id,
+        rol="propietario",
+    ))
+    db.commit()
+    try:
+        secure = SupabaseAuthSettings.from_environment().cookie_secure
+    except AuthNotConfigured:
+        secure = True
+    response = RedirectResponse("/bienvenida", status_code=303)
+    response.set_cookie(
+        ORGANIZATION_COOKIE,
+        str(organizacion.id),
+        max_age=60 * 60 * 24 * 30,
+        httponly=True,
+        secure=secure,
+        samesite="lax",
+        path="/",
+    )
+    return response
+
+
+@app.post("/organizaciones/{organizacion_id}/seleccionar")
+def seleccionar_organizacion_web(
+    organizacion_id: int,
+    db: Session = Depends(get_authenticated_db),
+):
+    if DATABASE_IS_SQLITE:
+        return _redirect("/")
+    usuario_id = db.info["usuario_id"]
+    membresia = (
+        db.query(Membresia)
+        .join(Organizacion, Organizacion.id == Membresia.organizacion_id)
+        .filter(
+            Membresia.usuario_id == usuario_id,
+            Membresia.organizacion_id == organizacion_id,
+            Membresia.activa.is_(True),
+            Organizacion.activa.is_(True),
+        )
+        .first()
+    )
+    if membresia is None:
+        raise OrganizationAccessDenied(
+            "No tienes acceso a la organización seleccionada."
+        )
+    try:
+        secure = SupabaseAuthSettings.from_environment().cookie_secure
+    except AuthNotConfigured:
+        secure = True
+    response = RedirectResponse("/", status_code=303)
+    response.set_cookie(
+        ORGANIZATION_COOKIE,
+        str(organizacion_id),
+        max_age=60 * 60 * 24 * 30,
+        httponly=True,
+        secure=secure,
+        samesite="lax",
+        path="/",
+    )
+    return response
 
 
 # ---------------------------------------------------------------------------

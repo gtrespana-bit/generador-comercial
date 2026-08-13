@@ -91,7 +91,7 @@ Al trabajar en una tarea de este plan se debe:
   Evidencia: FastAPI + Jinja2 + SQLAlchemy + SQLite + ReportLab + JavaScript modular; aplicación empaquetable para Windows.
 
 - [x] **E0-002 — Ejecutar la suite automatizada.**  
-  Evidencia actualizada: 88 pruebas superadas con `.venv/bin/pytest -q` el 13/08/2026; la suite usa una base temporal y deja intacta la base personal.
+  Evidencia actualizada: 96 pruebas superadas con `.venv/bin/pytest -q` el 13/08/2026; la suite cubre el vínculo Auth/membresías, usa una base temporal y deja intacta la base personal.
 
 - [x] **E0-003 — Verificar el arranque y las rutas principales.**  
   Evidencia: las pantallas principales y la generación de PDF respondieron correctamente en una base limpia.
@@ -193,7 +193,7 @@ Al trabajar en una tarea de este plan se debe:
   Evidencia: baseline reproducible en `migrations/`; el arranque PostgreSQL exige ejecutar previamente `alembic upgrade head` y no modifica DDL de manera implícita.
 
 - [x] **E1W-004 — Crear organizaciones, usuarios y membresías.**
-  Evidencia: modelos `Organizacion`, `Usuario` y `Membresia`, con membresía única y rol por empresa. La autenticación todavía no está implementada.
+  Evidencia: modelos `Organizacion`, `Usuario` y `Membresia`, con membresía única y rol por empresa; `Usuario.auth_user_id` enlaza el perfil con Supabase Auth desde la revisión `9bca2ad1f6e4`.
 
 - [x] **E1W-005 — Asignar propietario a los datos empresariales.**
   Evidencia: configuración, catálogos, clientes, presupuestos, documentos, proyectos y entidades hijas incorporan `organizacion_id`; números y nombres reutilizables son únicos dentro de cada organización en el esquema web.
@@ -204,16 +204,17 @@ Al trabajar en una tarea de este plan se debe:
 - [~] **E1W-007 — Cubrir automáticamente el aislamiento de cada dominio.**
   Primera cobertura: configuración, clientes, presupuestos, capítulos, acceso directo por ID, escritura cruzada, numeración y membresías. Pendiente auditar archivos y ampliar casos por dominio antes de afirmar aislamiento completo.
 
-- [ ] **E1W-008 — Implementar autenticación, sesión segura y autorización por membresía.**
-  El `COTIZAT_ORGANIZATION_ID` fijo es únicamente transitorio y prohíbe publicar la aplicación.
+- [~] **E1W-008 — Implementar autenticación, sesión segura y autorización por membresía.**
+  Implementado en código: Supabase Auth por clave publicable, tokens HttpOnly, renovación, vínculo `auth.users` → `Usuario`, selección validada de organización y bloqueo de escritura para el rol `lectura`. La revisión `9bca2ad1f6e4` ya está aplicada en Supabase y las variables Auth quedaron configuradas localmente fuera de Git. En PostgreSQL se ignora `COTIZAT_ORGANIZATION_ID`. Pendiente prueba end-to-end desde un entorno con salida a Supabase, CSRF, recuperación de contraseña, invitaciones y endurecimiento antes de publicar.
 
 - [ ] **E1W-009 — Crear una interfaz de almacenamiento y un backend de objetos.**
   Debe cubrir logos, productos, proyectos, firmas, anexos e importaciones.
 
-- [ ] **E1W-010 — Adaptar onboarding a cuenta → organización → demo/limpio.**
+- [~] **E1W-010 — Adaptar onboarding a cuenta → organización → demo/limpio.**
+  La ruta inicial ya enlaza registro/login → creación o selección de organización → onboarding demo/limpio existente. Pendiente probar el recorrido completo con email real, invitaciones y cambio entre organizaciones.
 
-- [ ] **E1W-011 — Ejecutar migraciones y suite de integración contra PostgreSQL real.**
-  La compilación SQL del baseline no sustituye una instancia real.
+- [~] **E1W-011 — Ejecutar migraciones y suite de integración contra PostgreSQL real.**
+  Evidencia real: revisiones `5cda50f97ed9` y `9bca2ad1f6e4` aplicadas en Supabase; una partida modificada persistió entre conexiones físicas `16389` y `17068`; dos organizaciones conservaron valores independientes; RLS quedó activo y `anon` vio 0 partidas. Pendiente ejecutar la suite ORM/Auth completa desde un runner con salida a Supabase (el sandbox actual resetea PostgreSQL 5432/6543 y cierra TLS HTTPS antes de autenticar).
 
 - [ ] **E1W-012 — Diseñar y probar importación de instalaciones SQLite.**
   Nunca se migrarán datos privados a un servidor sin acción y confirmación del propietario.
@@ -740,6 +741,7 @@ Estas cifras no son precios definitivos; deben probarse en la Etapa 2.
 | 13/08/2026 | D-013 | Sustituir la siembra automática por una elección explícita entre demo y limpio | Evitar datos y precios inesperados, y respetar a quien importará un catálogo propio | Después de pruebas de usabilidad |
 | 13/08/2026 | D-014 | Desarrollar CotizaT browser-first y pausar nuevas inversiones de escritorio | El producto final será alojado; adelantar persistencia y aislamiento evita reescribir cada módulo | Después de la beta web privada |
 | 13/08/2026 | D-015 | Adelantar organizaciones y aislamiento, pero no confundirlos con preparación para publicar | La propiedad de datos debe existir antes de ampliar funciones; autenticación, archivos y seguridad siguen pendientes | Al completar E1W-007 a E1W-011 |
+| 13/08/2026 | D-016 | Adoptar Supabase inicialmente para PostgreSQL, Auth y Storage, manteniendo abstraído el almacenamiento | Reduce integraciones en la beta; PostgreSQL real, RLS y persistencia ya se validaron, sin impedir migrar objetos a R2 | Tras medir límites/coste en pilotos |
 
 ---
 
@@ -759,11 +761,11 @@ Se completará durante la Etapa 2. No deben guardarse aquí nombres, teléfonos 
 
 La primera entrega browser-first ya creó persistencia portable, esquema Alembic y propiedad organizacional. El siguiente trabajo, en este orden, es:
 
-1. **E1W-007:** ampliar la auditoría de aislamiento a cada dominio, relación, descarga y acceso directo por ID.
-2. **E1W-008:** implementar autenticación, sesiones seguras y autorización por membresía; retirar el identificador organizacional fijo de las peticiones normales.
-3. **E1W-009:** desacoplar archivos locales y crear almacenamiento persistente por organización.
-4. **E1W-010:** adaptar el recorrido a cuenta → organización → demo/limpio → primer PDF.
-5. **E1W-011 y E1W-012:** probar PostgreSQL real y definir la importación confirmada desde SQLite.
+1. **E1W-008:** aplicar y probar la revisión Auth, configurar las claves publicables y completar seguridad de sesión/invitaciones.
+2. **E1W-009:** desacoplar archivos locales y crear almacenamiento persistente por organización.
+3. **E1W-007:** ampliar la auditoría de aislamiento a archivos, descargas y cada dominio restante.
+4. **E1W-010:** adaptar el recorrido ya iniciado a cuenta → organización → demo/limpio → primer PDF.
+5. **E1W-011 y E1W-012:** ejecutar la suite ORM en PostgreSQL desde un runner compatible y definir la importación confirmada desde SQLite.
 6. **E1-012 a E1-014:** retomar usabilidad y medición externa sobre el recorrido web resultante, no sobre una envoltura de escritorio que dejó de ser prioritaria.
 
 Evidencia acumulada al 13/08/2026:
@@ -771,12 +773,14 @@ Evidencia acumulada al 13/08/2026:
 - Marca, descriptor, propuesta y alcance no fiscal aplicados.
 - Recorrido inicial, modos demo/limpio y progreso hasta el PDF implementados.
 - Decisión browser-first registrada en `docs/ADR-001_ARQUITECTURA_BROWSER_FIRST.md`.
-- `DATABASE_URL`, Psycopg 3 y baseline Alembic preparados; compatibilidad SQLite preservada.
+- `DATABASE_URL`, Psycopg 3 y Alembic preparados; compatibilidad SQLite preservada.
+- Baseline aplicada en Supabase real; persistencia confirmada entre dos conexiones físicas, RLS activo y acceso `anon` denegado.
 - Organizaciones, usuarios, membresías y propiedad organizacional incorporados al esquema.
 - Filtro y protección de escritura por organización aplicados en la sesión SQLAlchemy.
-- Pruebas iniciales confirman separación de configuración, clientes, presupuestos, capítulos, numeración y acceso por ID.
+- Integración inicial Supabase Auth implementada con cookies HttpOnly, vínculo de identidad y selección por membresía; revisión real aplicada y variables locales configuradas, con prueba end-to-end pendiente por la restricción de red del sandbox.
+- Pruebas confirman separación de configuración, clientes, presupuestos, capítulos, numeración y acceso por ID.
 - Pytest usa una base temporal y ya no debe modificar `presupuestos.db` del desarrollador.
-- La aplicación **sigue sin estar autorizada para publicarse**: faltan autenticación, archivos externos y prueba PostgreSQL real.
+- La aplicación **sigue sin estar autorizada para publicarse**: faltan Storage externo, CSRF, políticas/rol RLS no privilegiado y completar pruebas reales de Auth/ORM.
 
 ---
 

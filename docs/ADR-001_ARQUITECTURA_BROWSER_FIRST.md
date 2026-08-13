@@ -54,15 +54,17 @@ La primera entrega de esta decisión incorpora:
 - asignación y filtrado automático por organización;
 - unicidad de números de documento y nombres de catálogo por organización;
 - pruebas de aislamiento de lectura, acceso directo por ID y escritura;
-- aislamiento de la base utilizada por pytest.
+- aislamiento de la base utilizada por pytest;
+- baseline aplicada en Supabase PostgreSQL y persistencia comprobada entre conexiones;
+- vínculo inicial Supabase Auth → `Usuario` → `Membresia` → `Organizacion`.
 
 ## Trabajo todavía obligatorio
 
 Esta decisión y su primera implementación **no vuelven pública ni segura** la aplicación. Antes de un despliegue externo faltan:
 
-- autenticación y selección de organización desde membresías;
-- autorización por rol;
-- CSRF, cookies seguras y cabeceras;
+- aplicar y probar con claves reales la migración/integración de Supabase Auth;
+- invitaciones y administración de membresías/roles;
+- CSRF, cabeceras y endurecimiento de sesiones;
 - almacenamiento de objetos;
 - secretos y entornos separados;
 - ejecución real de pruebas contra PostgreSQL;

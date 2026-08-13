@@ -47,8 +47,16 @@ alembic revision --autogenerate -m "descripcion"
 
 Toda revisión autogenerada debe inspeccionarse. No se debe ejecutar `create_all` como sustituto de Alembic en PostgreSQL.
 
+## Validación en Supabase
+
+El 13 de agosto de 2026 se aplicó la baseline `5cda50f97ed9` en un proyecto Supabase real. La prueba creó dos organizaciones con una partida homónima, modificó el precio de una de ellas y confirmó los valores desde dos conexiones PostgreSQL físicas diferentes (`pg_backend_pid` distinto). RLS automático quedó activo y el rol `anon` vio cero partidas.
+
+La revisión `9bca2ad1f6e4`, que añade el vínculo con Supabase Auth, también quedó aplicada en el mismo proyecto. El head real vigente es `9bca2ad1f6e4`.
+
 ## Restricciones actuales
 
-La existencia de PostgreSQL y `organizacion_id` no basta para publicar CotizaT. Mientras no exista autenticación, la dependencia HTTP utiliza el espacio transitorio configurado por `COTIZAT_ORGANIZATION_ID` (1 por defecto). Esto solo sirve para desarrollo local.
+La existencia de PostgreSQL y `organizacion_id` no basta para publicar CotizaT. En SQLite, `COTIZAT_ORGANIZATION_ID` conserva el espacio transitorio para recuperar instalaciones anteriores. En PostgreSQL se ignora: la dependencia HTTP exige Supabase Auth y una membresía activa.
+
+La conexión administrativa `postgres` omite RLS; el aislamiento del backend depende además de la autorización por membresía y del filtro ORM. Falta un rol de aplicación no privilegiado, políticas autorizantes, CSRF y completar la auditoría web. Consulta `docs/AUTENTICACION_SUPABASE.md`.
 
 Las copias `.db` y su restauración están desactivadas cuando el backend no es SQLite. La estrategia web será backup administrado y exportación por organización.

@@ -42,12 +42,16 @@ def test_alembic_construye_esquema_browser_first_desde_cero(tmp_path):
     assert resultado.returncode == 0, resultado.stderr
 
     script = """
-from sqlalchemy import create_engine, inspect
+from sqlalchemy import create_engine, inspect, text
 import os
 engine = create_engine(os.environ['DATABASE_URL'])
-tables = set(inspect(engine).get_table_names())
+inspector = inspect(engine)
+tables = set(inspector.get_table_names())
 assert {'alembic_version', 'organizaciones', 'usuarios', 'membresias',
         'clientes', 'presupuestos', 'configuracion'} <= tables
+assert 'auth_user_id' in {column['name'] for column in inspector.get_columns('usuarios')}
+with engine.connect() as connection:
+    assert connection.execute(text('SELECT version_num FROM alembic_version')).scalar_one() == '9bca2ad1f6e4'
 """
     comprobacion = subprocess.run(
         [sys.executable, "-c", script],

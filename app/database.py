@@ -6,6 +6,7 @@ from pathlib import Path
 
 from sqlalchemy import create_engine, event, inspect
 from sqlalchemy.orm import declarative_base, sessionmaker
+from starlette.requests import Request
 
 from .branding import DATABASE_FILENAME, resolve_data_directory
 from .db_config import resolver_database_settings
@@ -72,16 +73,105 @@ SessionLocal = sessionmaker(autoflush=False, bind=engine)
 Base = declarative_base()
 
 
-def get_db():
-    """Abre una sesión y activa el espacio local durante la transición web.
+def _autenticar_usuario(db, request: Request):
+    """Valida Supabase Auth y sincroniza el perfil local sin guardar tokens."""
+    from .auth import (
+        AuthenticationRequired,
+        OrganizationAccessDenied,
+        identity_for_request,
+    )
+    from .models import VinculoIdentidadError, sincronizar_usuario_auth
 
-    El bloque de autenticación sustituirá este identificador fijo por la
-    organización autorizada en la membresía del usuario.
+    if request is None:
+        raise AuthenticationRequired("Inicia sesión para continuar.")
+    identidad = identity_for_request(request)
+    try:
+        usuario = sincronizar_usuario_auth(
+            db,
+            identidad.auth_user_id,
+            identidad.email,
+            identidad.name,
+            identidad.email_verified,
+        )
+    except VinculoIdentidadError as exc:
+        db.rollback()
+        raise OrganizationAccessDenied(str(exc)) from exc
+    # El alta/vínculo del perfil es idempotente. Se confirma antes de resolver
+    # membresías para que una petición posterior nunca dependa de la sesión
+    # física que recibió el callback de Auth.
+    db.commit()
+    request.state.usuario = usuario
+    request.state.supabase_identity = identidad
+    db.info["usuario_id"] = usuario.id
+    return usuario
+
+
+def get_authenticated_db(request: Request = None):
+    """Sesión autenticada sin exigir todavía una organización activa.
+
+    Se usa exclusivamente para crear/seleccionar empresa. Los datos
+    comerciales continúan usando :func:`get_db`.
     """
     db = SessionLocal()
     try:
-        organizacion_id = int(os.environ.get("COTIZAT_ORGANIZATION_ID", "1"))
-        db.info["organizacion_id"] = organizacion_id
+        if DATABASE_IS_SQLITE:
+            yield db
+            return
+        _autenticar_usuario(db, request)
+        yield db
+    finally:
+        db.close()
+
+
+def get_db(request: Request = None):
+    """Abre una sesión con organización derivada de una membresía autorizada.
+
+    SQLite conserva el espacio fijo para recuperar instalaciones anteriores.
+    PostgreSQL nunca acepta ``COTIZAT_ORGANIZATION_ID``: valida Supabase Auth,
+    comprueba la membresía y solo entonces activa el filtro ORM.
+    """
+    db = SessionLocal()
+    try:
+        if DATABASE_IS_SQLITE:
+            organizacion_id = int(os.environ.get("COTIZAT_ORGANIZATION_ID", "1"))
+            db.info["organizacion_id"] = organizacion_id
+            yield db
+            return
+
+        from .auth import OrganizationAccessDenied, OrganizationRequired
+        from .models import (
+            OrganizacionNoAutorizadaError,
+            membresias_activas,
+            resolver_membresia_activa,
+        )
+
+        usuario = _autenticar_usuario(db, request)
+        cookie = request.cookies.get("cotizat_organization_id", "").strip()
+        organizacion_solicitada = None
+        if cookie:
+            try:
+                organizacion_solicitada = int(cookie)
+            except ValueError as exc:
+                raise OrganizationAccessDenied(
+                    "La organización seleccionada no es válida."
+                ) from exc
+        try:
+            membresia = resolver_membresia_activa(
+                db, usuario.id, organizacion_solicitada
+            )
+        except OrganizacionNoAutorizadaError as exc:
+            raise OrganizationAccessDenied(str(exc)) from exc
+        if membresia is None:
+            # Cero membresías lleva al alta inicial; varias requieren que el
+            # usuario elija explícitamente una para no mezclar contextos.
+            request.state.membresias = membresias_activas(db, usuario.id)
+            raise OrganizationRequired("Selecciona o crea una organización.")
+
+        db.info["organizacion_id"] = membresia.organizacion_id
+        db.info["rol_membresia"] = membresia.rol
+        db.info["membresia_id"] = membresia.id
+        request.state.membresia = membresia
+        request.state.organizacion = membresia.organizacion
         yield db
     finally:
         db.close()

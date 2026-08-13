@@ -45,6 +45,18 @@ ESTADOS_ETIQUETA = {
 ROLES_MEMBRESIA = {"propietario", "administrador", "miembro", "lectura"}
 
 
+class VinculoIdentidadError(RuntimeError):
+    """La identidad autenticada entra en conflicto con un perfil existente."""
+
+
+class OrganizacionNoAutorizadaError(RuntimeError):
+    """El usuario intentó seleccionar una organización sin membresía activa."""
+
+
+class PermisoOrganizacionError(RuntimeError):
+    """El rol de membresía no permite la escritura solicitada."""
+
+
 class Organizacion(Base):
     """Empresa aislada dentro de la futura aplicación web."""
 
@@ -61,11 +73,17 @@ class Organizacion(Base):
 
 
 class Usuario(Base):
-    """Identidad web; la autenticación se implementará en el bloque siguiente."""
+    """Perfil de aplicación vinculado a una identidad de Supabase Auth."""
 
     __tablename__ = "usuarios"
+    __table_args__ = (
+        UniqueConstraint("auth_user_id", name="uq_usuarios_auth_user_id"),
+    )
 
     id = Column(Integer, primary_key=True)
+    # UUID de auth.users representado como texto para conservar compatibilidad
+    # con SQLite. La contraseña nunca se copia desde Supabase a esta tabla.
+    auth_user_id = Column(String(36), nullable=True)
     email = Column(String(254), nullable=False, unique=True)
     nombre = Column(String(200), default="")
     password_hash = Column(String(255), default="")
@@ -99,6 +117,82 @@ class Membresia(Base):
 
     usuario = relationship("Usuario", back_populates="membresias")
     organizacion = relationship("Organizacion", back_populates="membresias")
+
+
+def sincronizar_usuario_auth(
+    db,
+    auth_user_id: str,
+    email: str,
+    nombre: str = "",
+    email_verificado: bool = False,
+) -> Usuario:
+    """Vincula de forma idempotente una identidad verificada por Supabase.
+
+    El email permite enlazar perfiles creados antes de incorporar Auth. Una vez
+    vinculado, un UUID diferente nunca puede apropiarse de ese mismo perfil.
+    """
+    auth_user_id = str(auth_user_id or "").strip()
+    email = str(email or "").strip().lower()
+    if not auth_user_id or not email:
+        raise VinculoIdentidadError("La identidad autenticada no es válida.")
+
+    usuario = db.query(Usuario).filter(Usuario.auth_user_id == auth_user_id).first()
+    por_email = db.query(Usuario).filter(Usuario.email == email).first()
+    if usuario is not None and por_email is not None and usuario.id != por_email.id:
+        raise VinculoIdentidadError("La identidad y el email pertenecen a perfiles distintos.")
+    if usuario is None:
+        usuario = por_email
+    if usuario is None:
+        usuario = Usuario(auth_user_id=auth_user_id, email=email, nombre=nombre[:200])
+        db.add(usuario)
+    elif usuario.auth_user_id not in {None, "", auth_user_id}:
+        raise VinculoIdentidadError("El perfil ya está vinculado a otra identidad.")
+    else:
+        usuario.auth_user_id = auth_user_id
+        usuario.email = email
+        if nombre and not usuario.nombre:
+            usuario.nombre = nombre[:200]
+
+    if not usuario.activo:
+        raise VinculoIdentidadError("La cuenta de CotizaT está desactivada.")
+    if email_verificado and usuario.email_verificado_at is None:
+        usuario.email_verificado_at = datetime.utcnow()
+    db.flush()
+    return usuario
+
+
+def membresias_activas(db, usuario_id: int) -> list[Membresia]:
+    """Devuelve únicamente membresías y organizaciones activas."""
+    return (
+        db.query(Membresia)
+        .join(Organizacion, Organizacion.id == Membresia.organizacion_id)
+        .filter(
+            Membresia.usuario_id == usuario_id,
+            Membresia.activa.is_(True),
+            Organizacion.activa.is_(True),
+        )
+        .order_by(Organizacion.nombre, Membresia.id)
+        .all()
+    )
+
+
+def resolver_membresia_activa(
+    db,
+    usuario_id: int,
+    organizacion_solicitada: int | None = None,
+) -> Membresia | None:
+    """Resuelve la empresa activa sin confiar en el identificador de cookie."""
+    membresias = membresias_activas(db, usuario_id)
+    if organizacion_solicitada is not None:
+        for membresia in membresias:
+            if membresia.organizacion_id == organizacion_solicitada:
+                return membresia
+        raise OrganizacionNoAutorizadaError(
+            "No tienes una membresía activa en la organización solicitada."
+        )
+    if len(membresias) == 1:
+        return membresias[0]
+    return None
 
 
 class TenantMixin:
@@ -1488,6 +1582,16 @@ def migrar(engine):
                 f"ON {nombre} (organizacion_id)"
             ))
 
+        # Las instalaciones SQLite anteriores reciben también la unicidad del
+        # vínculo con Supabase Auth. PostgreSQL obtiene el constraint mediante
+        # Alembic; múltiples NULL siguen permitidos hasta vincular cada perfil.
+        columnas_usuarios = _columnas(engine, "usuarios") or set()
+        if "auth_user_id" in columnas_usuarios:
+            conn.execute(text(
+                "CREATE UNIQUE INDEX IF NOT EXISTS ux_usuarios_auth_user_id "
+                "ON usuarios (auth_user_id)"
+            ))
+
         # Recupera el vínculo con la partida maestra en presupuestos creados
         # antes de existir esta columna. El nombre de Partida es único.
         if partidas_existentes and "partida_catalogo_id" in (_columnas(engine, "presupuesto_items") or set()):
@@ -1830,8 +1934,15 @@ def usar_organizacion(db, organizacion_id: int) -> None:
 
 @event.listens_for(OrmSession, "do_orm_execute")
 def _filtrar_por_organizacion(estado):
-    """Aplica el aislamiento sin depender de filtros manuales en cada ruta."""
+    """Aplica aislamiento y bloquea DML para membresías de solo lectura."""
     organizacion_id = estado.session.info.get("organizacion_id")
+    if (
+        (estado.is_update or estado.is_delete)
+        and estado.session.info.get("rol_membresia") == "lectura"
+    ):
+        raise PermisoOrganizacionError(
+            "Tu rol es de solo lectura y no permite modificar datos."
+        )
     if (
         (estado.is_select or estado.is_update or estado.is_delete)
         and organizacion_id is not None
@@ -1848,10 +1959,19 @@ def _filtrar_por_organizacion(estado):
 
 @event.listens_for(OrmSession, "before_flush")
 def _proteger_escrituras_por_organizacion(db, _flush_context, _instances):
-    """Asigna el propietario y rechaza escrituras cruzadas en una sesión web."""
+    """Asigna propietario y aplica tenencia/rol antes de escribir."""
     organizacion_id = db.info.get("organizacion_id")
     if organizacion_id is None:
         return  # migraciones, importador legado y pruebas unitarias sin contexto
+    entidades_tenant = {
+        entidad
+        for entidad in set(db.new).union(db.dirty).union(db.deleted)
+        if isinstance(entidad, TenantMixin)
+    }
+    if entidades_tenant and db.info.get("rol_membresia") == "lectura":
+        raise PermisoOrganizacionError(
+            "Tu rol es de solo lectura y no permite modificar datos."
+        )
     for entidad in db.new:
         if not isinstance(entidad, TenantMixin):
             continue

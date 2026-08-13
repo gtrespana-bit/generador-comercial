@@ -11,7 +11,9 @@ alcance, y genera documentos PDF profesionales.
 > **Dirección del producto:** CotizaT se desarrolla browser-first. Durante la
 > transición puede ejecutarse localmente en el navegador con SQLite, pero la
 > versión alojada usa PostgreSQL, organizaciones aisladas y almacenamiento
-> externo. Todavía no debe publicarse: faltan autenticación y seguridad web.
+> externo. Todavía no debe publicarse: la base de Supabase Auth ya está
+> implementada, pero faltan configurarla, probarla en el entorno real, proteger
+> formularios con CSRF y externalizar los archivos.
 >
 > Sus sugerencias se basan en coincidencias deterministas sobre el catálogo del
 > usuario; no se presentan como inteligencia artificial.
@@ -188,6 +190,7 @@ app/
 ├── main.py            # Rutas y lógica de la aplicación
 ├── database.py        # Sesiones SQLite/PostgreSQL y compatibilidad local
 ├── db_config.py       # Resolución portable de DATABASE_URL
+├── auth.py            # Supabase Auth, cookies HttpOnly y renovación de sesión
 ├── models.py          # Organizaciones, usuarios y datos comerciales aislados
 ├── seeds.py           # Catálogos y datos ficticios del modo demostración
 ├── utils.py           # Formatos de moneda/cantidades/fecha (estilo venezolano)
