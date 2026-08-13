@@ -220,10 +220,28 @@ def _backup_automatico():
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
     init_db()
-    (UPLOADS / "products").mkdir(parents=True, exist_ok=True)
-    (UPLOADS / "signatures").mkdir(parents=True, exist_ok=True)
-    (UPLOADS / "importaciones").mkdir(parents=True, exist_ok=True)
-    IMPORTS_DIR.mkdir(parents=True, exist_ok=True)
+    # Carpetas locales históricas. En PostgreSQL los archivos viven en el
+    # backend privado (Supabase) y en despliegues de solo lectura crear estas
+    # carpetas fallaría: se intentan únicamente en SQLite y un fallo no debe
+    # impedir el arranque de la aplicación.
+    if DATABASE_IS_SQLITE:
+        try:
+            (UPLOADS / "products").mkdir(parents=True, exist_ok=True)
+            (UPLOADS / "signatures").mkdir(parents=True, exist_ok=True)
+            (UPLOADS / "importaciones").mkdir(parents=True, exist_ok=True)
+        except OSError:
+            log.warning(
+                "No se pudieron crear las carpetas de subidas en %s: "
+                "sistema de archivos de solo lectura.",
+                UPLOADS,
+            )
+    try:
+        IMPORTS_DIR.mkdir(parents=True, exist_ok=True)
+    except OSError:
+        log.warning(
+            "No se pudo crear %s: sistema de archivos de solo lectura.",
+            IMPORTS_DIR,
+        )
     _backup_automatico()
     yield
 
@@ -384,13 +402,31 @@ async def _servicio_auth_no_disponible(request: Request, exc: AuthError):
 
 # SQLite conserva el montaje histórico. En PostgreSQL se bloquea antes del
 # montaje general: ningún archivo de usuario puede eludir el proxy autorizado.
-UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
+# En despliegues de solo lectura (p. ej. Vercel) crear el directorio puede
+# fallar; en ese caso se omite el montaje y las rutas heredadas devuelven 404
+# en lugar de impedir el arranque de la aplicación.
+def _bloquear_upload_estatico_legado(_legacy_path: str) -> Response:
+    return Response(status_code=404)
+
 if DATABASE_IS_SQLITE:
-    app.mount("/static/uploads", StaticFiles(directory=str(UPLOADS_DIR)), name="uploads")
+    try:
+        UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
+    except OSError:
+        log.warning(
+            "No se pudo crear %s: sistema de archivos de solo lectura. "
+            "Las rutas /static/uploads devolverán 404.",
+            UPLOADS_DIR,
+        )
+    if UPLOADS_DIR.is_dir():
+        app.mount("/static/uploads", StaticFiles(directory=str(UPLOADS_DIR)), name="uploads")
+    else:
+        app.get("/static/uploads/{_legacy_path:path}", include_in_schema=False)(
+            _bloquear_upload_estatico_legado
+        )
 else:
-    @app.get("/static/uploads/{_legacy_path:path}", include_in_schema=False)
-    def _bloquear_upload_estatico_web(_legacy_path: str):
-        return Response(status_code=404)
+    app.get("/static/uploads/{_legacy_path:path}", include_in_schema=False)(
+        _bloquear_upload_estatico_legado
+    )
 app.mount("/static", StaticFiles(directory=str(BASE_DIR / "app" / "static")), name="static")
 
 

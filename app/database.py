@@ -1,3 +1,4 @@
+import logging
 import os
 import shutil
 import sys
@@ -37,6 +38,43 @@ else:
     BASE_DIR = Path(__file__).resolve().parent.parent
     DATA_DIR = BASE_DIR
 
+
+def _directorio_escribible(directorio: Path) -> bool:
+    """Comprueba que un directorio existe (o puede crearse) y admite escritura."""
+    try:
+        directorio.mkdir(parents=True, exist_ok=True)
+        sonda = directorio / ".cotizat_sonda_escritura"
+        sonda.write_text("ok", encoding="utf-8")
+        sonda.unlink(missing_ok=True)
+        return True
+    except OSError:
+        return False
+
+
+# Los despliegues serverless (Vercel y similares) montan el código en un
+# sistema de archivos de solo lectura; solo /tmp es escribible. Sin
+# ``DATABASE_URL`` no hay dónde persistir en la ubicación habitual, así que
+# los datos locales se redirigen a /tmp para que la aplicación arranque (modo
+# efímero: cada instancia pierde los datos al reiniciarse). Un despliegue web
+# permanente debe configurar ``DATABASE_URL`` (PostgreSQL).
+DATOS_EFIMEROS = False
+if (
+    not os.environ.get("DATABASE_URL", "").strip()
+    and not getattr(sys, "frozen", False)
+    and not _directorio_escribible(DATA_DIR)
+):
+    DATOS_EFIMEROS = True
+    DATA_DIR = Path(os.environ.get("TMPDIR") or "/tmp") / "cotizat"
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    (DATA_DIR / "uploads").mkdir(parents=True, exist_ok=True)
+    (DATA_DIR / "private_storage").mkdir(parents=True, exist_ok=True)
+    logging.getLogger("cotizat").warning(
+        "Sistema de archivos de solo lectura detectado: los datos locales de "
+        "CotizaT se guardan temporalmente en %s y se perderán al reiniciar. "
+        "Configura DATABASE_URL (PostgreSQL) para un despliegue web permanente.",
+        DATA_DIR,
+    )
+
 # ``DATABASE_URL`` es la entrada de la futura versión web. Las variables de
 # archivo locales continúan funcionando para no romper instalaciones actuales.
 DATABASE = resolver_database_settings(DATA_DIR, DATABASE_FILENAME)
@@ -51,7 +89,14 @@ EXPECTED_ALEMBIC_HEAD = "c93e7a4d20f1"
 BACKUPS_DIR = DATA_DIR / "backups"
 
 # Archivos históricos servidos por /static/uploads para compatibilidad.
-UPLOADS_DIR = DATA_DIR / "uploads" if getattr(sys, "frozen", False) else BASE_DIR / "app" / "static" / "uploads"
+# En modo efímero (solo lectura) las subidas viven junto al resto de datos
+# temporales: el montaje estático del modo SQLite debe apuntar a un
+# directorio que exista y sea escribible.
+UPLOADS_DIR = (
+    DATA_DIR / "uploads"
+    if getattr(sys, "frozen", False) or DATOS_EFIMEROS
+    else BASE_DIR / "app" / "static" / "uploads"
+)
 # Los objetos nuevos del adaptador local nunca cuelgan del montaje estático:
 # incluso en desarrollo pasan por el proxy autorizado /archivos/....
 PRIVATE_STORAGE_DIR = DATA_DIR / "private_storage"
