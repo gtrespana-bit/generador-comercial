@@ -1,0 +1,361 @@
+{% extends "base.html" %}
+{% block title %}Catálogo de Productos{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Catálogo de Productos</h1>
+    <p class="subtitle">Materiales con precio y foto, independientes de las partidas. Los productos nuevos que escribes al crear un presupuesto se guardan aquí automáticamente.</p>
+  </div>
+  <a href="/productos/nuevo" class="btn btn-primary">+ Nuevo Producto</a>
+</div>
+
+<div class="filters" style="margin-bottom: 1.5rem; flex-wrap:wrap; align-items:flex-start; gap:12px;">
+  <div style="flex:1; min-width:260px;">
+    <input type="text" id="buscador" placeholder="🔍 Buscar por nombre, marca, modelo, SKU, proveedor o categoría…" onkeyup="filtrarProductos()" style="width:100%; max-width:580px;">
+    <div style="font-size:0.78rem;color:var(--text-soft);margin-top:3px;">Buscador + categorías laterales. Usa los checkboxes para eliminar en masa.</div>
+  </div>
+  <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+    <div id="bulk-bar-productos" style="display:none; background:var(--rose-soft);border:1px solid var(--rose);padding:3px 10px;border-radius:6px;align-items:center;gap:6px;font-size:0.9rem; flex-wrap:wrap;">
+      <span id="sel-count-productos" style="font-weight:600;color:var(--rose);">0</span>
+      <button type="button" class="btn btn-sm btn-danger" onclick="bulkDeleteProductos()">🗑 Eliminar seleccionados</button>
+      <button type="button" class="btn btn-sm btn-success" onclick="bulkExportSelectedProductos()">📥 Exportar seleccionados</button>
+      <input type="text" id="move-cat-productos" placeholder="Nueva categoría" style="width:130px; font-size:0.85rem; padding:2px 6px;" list="categorias-datalist-productos">
+      <button type="button" class="btn btn-sm" onclick="bulkMoveCategoryProductos()">➡️ Mover a cat.</button>
+      <button type="button" class="btn btn-sm" onclick="selectVisibleProductos()">Seleccionar visibles</button>
+      <button type="button" class="btn btn-sm" onclick="selectNoneProductos()">Cancelar</button>
+      <button type="button" class="btn btn-sm btn-danger" onclick="deleteAllVisibleProductos()" style="margin-left:6px;">🗑 Borrar TODO lo visible</button>
+    </div>
+    <form method="post" action="/productos/ajustar" onsubmit="return confirm('¿Ajustar TODOS los productos?');" style="display:flex;gap:4px;align-items:center;">
+      <input type="number" name="porcentaje" step="any" placeholder="% ±" required style="width:92px;">
+      <button class="btn btn-sm" type="submit">% Precios</button>
+    </form>
+    <a class="btn btn-sm" href="/productos/exportar">📥 CSV</a>
+  </div>
+</div>
+
+<div class="catalog-layout" style="display: flex; gap: 1.5rem; align-items: flex-start;">
+  <!-- SIDEBAR DE CATEGORÍAS -->
+  <div class="card category-sidebar" style="width: 240px; flex-shrink: 0; padding: 1rem; position: sticky; top: 1.5rem; max-height: calc(100vh - 6rem); overflow-y: auto;">
+    <h3 style="font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.75rem; letter-spacing: 0.05em;">Categorías</h3>
+    <div class="category-list" style="display: flex; flex-direction: column; gap: 4px;">
+      <button class="category-btn active" onclick="filtrarCategoria('todas')" id="btn-cat-todas" style="text-align: left; background: none; border: none; padding: 8px 12px; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.875rem; color: var(--text); font-weight: 500; display: flex; justify-content: space-between; align-items: center; width: 100%;">
+        <span>📂 Todas</span>
+        <span class="badge" style="background: var(--bg); color: var(--text-soft); font-size: 0.75rem;">{{ productos | length }}</span>
+      </button>
+
+      {% for cat, cat_productos in productos | groupby('categoria') %}
+      <button class="category-btn drop-product-category" onclick="filtrarCategoria('{{ cat }}')" id="btn-cat-{{ cat | replace(' ', '_') }}" style="text-align: left; background: none; border: none; padding: 8px 12px; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.875rem; color: var(--text-soft); font-weight: 500; display: flex; justify-content: space-between; align-items: center; width: 100%;">
+        <span>🏷️ {{ cat }}</span>
+        <span class="badge" style="background: var(--bg); color: var(--text-soft); font-size: 0.75rem;">{{ cat_productos | length }}</span>
+      </button>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- LISTA DE PRODUCTOS AGRUPADOS -->
+  <div style="flex: 1; display: flex; flex-direction: column; gap: 1.5rem;">
+    {% for cat, cat_productos in productos | groupby('categoria') %}
+    <div class="card category-group drop-product-category" data-categoria="{{ cat }}" id="group-{{ cat | replace(' ', '_') }}">
+      <div style="border-bottom: 1.5px solid var(--accent); padding-bottom: 0.5rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+        <h2 style="margin:0; font-size: 1.15rem; color: var(--text); display: flex; align-items: center; gap: 8px;">
+          <span style="color: var(--accent);">●</span> {{ cat }}
+        </h2>
+        <span class="badge badge-categoria" style="font-size:0.75rem;">{{ cat_productos | length }} productos</span> <button type="button" class="btn btn-xs" style="font-size:0.7rem;padding:1px 6px;margin-left:6px;" onclick="deleteCategoryProductos(\'{{ cat }}\')">🗑 Borrar cat.</button>
+      </div>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th style="width:26px;"><input type="checkbox" onchange="toggleAllProductos(this)" title="Seleccionar todos visibles"></th>
+            <th style="width: 70px;">Foto</th>
+            <th>Nombre</th>
+            <th style="width: 70px;">Unidad</th>
+            <th class="right" style="width: 90px;">Coste</th>
+            <th class="right sortable" data-sort="precio" style="width: 90px;">Venta</th>
+            <th class="right" style="width: 82px;">Margen</th>
+            <th class="right sortable" data-sort="usos" style="width: 60px;">Usos</th>
+            <th style="width: 110px;" class="right">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in cat_productos %}
+          <tr draggable="true" class="producto-tr" data-id="{{ p.id }}" data-nombre="{{ (p.nombre ~ ' ' ~ p.descripcion ~ ' ' ~ p.categoria ~ ' ' ~ p.marca ~ ' ' ~ p.modelo ~ ' ' ~ p.sku ~ ' ' ~ p.proveedor ~ ' ' ~ p.color ~ ' ' ~ p.acabado) | lower }}">
+            <td><input type="checkbox" class="row-check" data-id="{{ p.id }}" onchange="updateBulkBarProductos()"> <td>
+              {% if p.imagen %}
+              <img src="/static/{{ p.imagen }}" alt="{{ p.nombre }}" style="width:48px; height:48px; object-fit:cover; border:1.5px solid var(--accent); border-radius:6px; background:#fff; padding:2px;">
+              {% else %}
+              <span style="display:inline-flex; align-items:center; justify-content:center; width:48px; height:48px; border:1px dashed var(--border-strong); border-radius:6px; color:var(--text-muted); font-size:1.2rem;">🛍️</span>
+              {% endif %}
+            </td>
+            <td>
+              <strong class="producto-nombre">{{ p.nombre }}</strong>
+              {% if p.sku %}<span class="badge" style="margin-left:6px;">{{ p.sku }}</span>{% endif %}
+              {% if p.usos %}<span class="badge" title="Usos en presupuestos" style="margin-left:4px;">🔥 {{ p.usos }}</span>{% endif %}
+              <p class="catalog-meta">
+                {% if p.marca %}<span>{{ p.marca }}{% if p.modelo %} · {{ p.modelo }}{% endif %}</span>{% endif %}
+                {% if p.proveedor %}<span>🏪 {{ p.proveedor }}</span>{% endif %}
+                {% if p.fecha_actualizacion_precio %}<span>🗓 Precio: {{ p.fecha_actualizacion_precio | fecha }}</span>{% endif %}
+                {% if p.ficha_tecnica %}<span><a class="link" href="/static/{{ p.ficha_tecnica }}" target="_blank">📄 Ficha</a></span>{% endif %}
+              </p>
+              {% if p.descripcion %}<p class="hint" style="margin-top: 3px; font-size: 0.85rem; color: var(--text-soft);">{{ p.descripcion }}</p>{% endif %}
+            </td>
+            <td><code style="background: var(--bg); padding: 2px 6px; border-radius: 4px; font-size: 0.85rem;">{{ p.unidad }}</code></td>
+            <td class="right">{{ p.precio_compra | money if p.precio_compra is not none else '—' }}</td>
+            <td class="right" data-precio="{{ p.precio_unitario }}"><strong>{{ p.precio_unitario | money }}</strong></td>
+            <td class="right">{% if p.precio_compra is not none and p.precio_unitario %}<span class="{{ 'text-danger' if p.precio_unitario < p.precio_compra else '' }}">{{ (((p.precio_unitario - p.precio_compra) / p.precio_unitario) * 100) | num }}%</span>{% else %}—{% endif %}</td>
+            <td class="right" data-usos="{{ p.usos or 0 }}">{{ p.usos or 0 }}</td>
+            <td class="right">
+              <div style="display: flex; gap: 6px; justify-content: flex-end;">
+                <a href="/productos/{{ p.id }}/editar" class="btn btn-sm" title="Editar">✏️</a>
+                <form method="post" action="/productos/{{ p.id }}/eliminar" style="display:inline" onsubmit="return confirm('¿Eliminar este producto del catálogo?')">
+                  <button type="submit" class="btn btn-sm btn-danger" title="Eliminar">✕</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="card empty">
+      <p>Aún no hay productos en el catálogo.</p>
+      <p class="hint">Crea uno desde aquí o simplemente escribe un producto nuevo al armar un presupuesto: se guardará automáticamente.</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<datalist id="categorias-datalist-productos">
+  {% for cat, cat_productos in productos | groupby('categoria') %}
+  <option value="{{ cat }}"></option>
+  {% endfor %}
+</datalist>
+
+<style>
+.category-btn { transition: all 0.15s ease; }
+.category-btn:hover { background: var(--bg) !important; color: var(--text) !important; }
+.category-btn.active { background: var(--accent) !important; color: #fff !important; }
+.category-btn.active .badge { background: rgba(255,255,255,0.2) !important; color: #fff !important; }
+.drop-product-category.drag-over { outline:2px dashed var(--accent); outline-offset:-3px; background:var(--accent-soft) !important; }
+.producto-tr[draggable="true"] { cursor:grab; } .producto-tr.dragging { opacity:.4; }
+@media (max-width: 1024px) {
+  .catalog-layout { flex-direction: column; }
+  .category-sidebar { width: 100% !important; position: relative !important; top: 0 !important; }
+  .category-list { flex-direction: row !important; flex-wrap: wrap; }
+  .category-btn { width: auto !important; }
+}
+</style>
+
+<script>
+let categoriaSeleccionada = 'todas';
+
+function filtrarCategoria(categoria) {
+  categoriaSeleccionada = categoria;
+  document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+  if (categoria === 'todas') {
+    document.getElementById('btn-cat-todas').classList.add('active');
+    document.querySelectorAll('.category-group').forEach(g => g.style.display = '');
+  } else {
+    const id = 'btn-cat-' + categoria.replace(/ /g, '_');
+    const btn = document.getElementById(id);
+    if (btn) btn.classList.add('active');
+    document.querySelectorAll('.category-group').forEach(g => {
+      g.style.display = (g.dataset.categoria === categoria) ? '' : 'none';
+    });
+  }
+  filtrarProductos();
+}
+
+function filtrarProductos() {
+  const q = (document.getElementById('buscador').value || '').toLowerCase().trim();
+  document.querySelectorAll('.category-group').forEach(group => {
+    const cat = group.dataset.categoria;
+    const byCat = (categoriaSeleccionada === 'todas' || categoriaSeleccionada === cat);
+    let vis = 0;
+    group.querySelectorAll('.producto-tr').forEach(row => {
+      const ok = !q || (row.dataset.nombre || '').toLowerCase().includes(q);
+      row.style.display = ok ? '' : 'none';
+      if (ok) vis++;
+    });
+    group.style.display = (byCat && vis > 0) ? '' : 'none';
+  });
+  updateBulkBarProductos();
+}
+
+// Bulk for products
+function updateBulkBarProductos() {
+  const bar = document.getElementById('bulk-bar-productos');
+  const cnt = document.getElementById('sel-count-productos');
+  if (!bar || !cnt) return;
+  const n = document.querySelectorAll('.row-check:checked').length;
+  if (n > 0) { cnt.textContent = n; bar.style.display = 'flex'; }
+  else bar.style.display = 'none';
+}
+function selectNoneProductos() {
+  document.querySelectorAll('.row-check').forEach(c => c.checked=false);
+  updateBulkBarProductos();
+}
+function toggleAllProductos(master) {
+  document.querySelectorAll('.category-group').forEach(g => {
+    if (g.style.display === 'none') return;
+    g.querySelectorAll('.row-check').forEach(ch => { if (ch.offsetParent !== null) ch.checked = master.checked; });
+  });
+  updateBulkBarProductos();
+}
+async function bulkDeleteProductos() {
+  const ids = Array.from(document.querySelectorAll('.row-check:checked')).map(c => c.dataset.id);
+  if (!ids.length) return;
+  if (!confirm(`¿Eliminar ${ids.length} productos?`)) return;
+  const fd = new FormData();
+  ids.forEach(id => fd.append('ids', id));
+  const r = await fetch('/productos/bulk-delete', {method:'POST', body:fd});
+  if (r.redirected) window.location = r.url;
+}
+function initDragAndDropProductos() {
+  document.querySelectorAll('.producto-tr[draggable]').forEach(row => {
+    row.addEventListener('dragstart', event => {
+      let ids = Array.from(document.querySelectorAll('.row-check:checked')).map(c => c.dataset.id);
+      if (!ids.includes(row.dataset.id)) { selectNoneProductos(); const cb=row.querySelector('.row-check'); cb.checked=true; updateBulkBarProductos(); ids=[row.dataset.id]; }
+      event.dataTransfer.setData('text/plain', JSON.stringify(ids)); event.dataTransfer.effectAllowed='move'; row.classList.add('dragging');
+    });
+    row.addEventListener('dragend', () => row.classList.remove('dragging'));
+  });
+  document.querySelectorAll('.drop-product-category').forEach(target => {
+    target.addEventListener('dragover', e => { e.preventDefault(); target.classList.add('drag-over'); });
+    target.addEventListener('dragleave', () => target.classList.remove('drag-over'));
+    target.addEventListener('drop', async e => {
+      e.preventDefault(); target.classList.remove('drag-over'); let ids=[]; try { ids=JSON.parse(e.dataTransfer.getData('text/plain')); } catch (_) {}
+      const cat=target.dataset.cat || target.dataset.categoria; if (!ids.length || !cat) return;
+      const fd=new FormData(); ids.forEach(id=>fd.append('ids',id)); fd.append('new_category',cat);
+      const res=await fetch('/productos/bulk-move-category',{method:'POST',body:fd}); if(res.redirected) window.location=res.url; else if(res.ok) window.location.reload(); else alert('No se pudo mover la selección.');
+    });
+  });
+}
+function deleteCategoryProductos(cat) {
+  if (!confirm(`¿Borrar TODOS los productos de «${cat}»?`)) return;
+  const g = document.getElementById('group-' + cat.replace(/ /g,'_'));
+  if (!g) return;
+  const ids = [];
+  g.querySelectorAll('.row-check').forEach(ch => ids.push(ch.dataset.id));
+  if (!ids.length) return alert('Vacía');
+  const fd = new FormData();
+  ids.forEach(i => fd.append('ids', i));
+  fetch('/productos/bulk-delete', {method:'POST', body:fd}).then(r => {if(r.redirected) window.location=r.url;});
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.row-check').forEach(ch => ch.addEventListener('change', updateBulkBarProductos));
+  const b = document.getElementById('buscador');
+  if (b) b.addEventListener('input', updateBulkBarProductos);
+
+  makeTableSortableProductos();
+  initDragAndDropProductos();
+});
+
+function makeTableSortableProductos() {
+  document.querySelectorAll('.category-group table').forEach(table => {
+    const thead = table.querySelector('thead');
+    if (!thead) return;
+    const headers = thead.querySelectorAll('th');
+    headers.forEach((th, idx) => {
+      if (idx === 0 || idx === 1 || idx === headers.length - 1) return; // skip checkbox, photo, actions
+      th.style.cursor = 'pointer';
+      th.title = 'Clic para ordenar';
+      let asc = true;
+      th.onclick = () => {
+        sortTableProductos(table, idx, asc);
+        asc = !asc;
+      };
+    });
+  });
+}
+
+function sortTableProductos(table, colIndex, asc) {
+  const tbody = table.querySelector('tbody');
+  if (!tbody) return;
+  const rows = Array.from(tbody.querySelectorAll('tr.producto-tr'));
+  rows.sort((a, b) => {
+    const aCell = a.children[colIndex];
+    const bCell = b.children[colIndex];
+    if (!aCell || !bCell) return 0;
+
+    let aVal, bVal;
+    if (aCell.dataset.precio !== undefined) {
+      aVal = aCell.dataset.precio || '0';
+      bVal = bCell.dataset.precio || '0';
+    } else if (aCell.dataset.usos !== undefined) {
+      aVal = aCell.dataset.usos || '0';
+      bVal = bCell.dataset.usos || '0';
+    } else {
+      aVal = (aCell.textContent || '').trim().toLowerCase();
+      bVal = (bCell.textContent || '').trim().toLowerCase();
+    }
+
+    const aNum = parseFloat(String(aVal).replace(/[^\d.,-]/g, '').replace(',', '.')) || 0;
+    const bNum = parseFloat(String(bVal).replace(/[^\d.,-]/g, '').replace(',', '.')) || 0;
+    const numericCandidate = (aVal.match && aVal.match(/[\d.,-]/)) || (bVal.match && bVal.match(/[\d.,-]/));
+
+    if (!isNaN(aNum) && !isNaN(bNum) && numericCandidate) {
+      return asc ? aNum - bNum : bNum - aNum;
+    }
+    return asc ? String(aVal).localeCompare(String(bVal), 'es') : String(bVal).localeCompare(String(aVal), 'es');
+  });
+  rows.forEach(r => tbody.appendChild(r));
+}
+
+function selectVisibleProductos() {
+  document.querySelectorAll('.category-group').forEach(g => {
+    if (g.style.display === 'none') return;
+    g.querySelectorAll('.row-check').forEach(ch => { if (ch.offsetParent !== null) ch.checked = true; });
+  });
+  updateBulkBarProductos();
+}
+async function deleteAllVisibleProductos() {
+  const ids = [];
+  document.querySelectorAll('.category-group').forEach(g => {
+    if (g.style.display==='none') return;
+    g.querySelectorAll('.row-check').forEach(ch => { if (ch.offsetParent!==null) ids.push(ch.dataset.id); });
+  });
+  if (!ids.length) return alert('Nada visible');
+  if (!confirm('¿Eliminar ' + ids.length + ' productos visibles?')) return;
+  const fd = new FormData(); ids.forEach(i=>fd.append('ids',i));
+  const r = await fetch('/productos/bulk-delete',{method:'POST',body:fd});
+  if (r.redirected) window.location = r.url;
+}
+
+async function bulkExportSelectedProductos() {
+  const ids = Array.from(document.querySelectorAll('.row-check:checked')).map(c => c.dataset.id);
+  if (!ids.length) return alert('Selecciona al menos un producto.');
+  const fd = new FormData();
+  ids.forEach(id => fd.append('ids', id));
+  const res = await fetch('/productos/bulk-export-selected', { method: 'POST', body: fd });
+  if (res.ok) {
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'productos_seleccionados.csv';
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+  } else {
+    alert('Error al exportar');
+  }
+}
+
+async function bulkMoveCategoryProductos() {
+  const ids = Array.from(document.querySelectorAll('.row-check:checked')).map(c => c.dataset.id);
+  const newCat = (document.getElementById('move-cat-productos') || {}).value || '';
+  if (!ids.length || !newCat.trim()) return alert('Selecciona productos y escribe una categoría destino.');
+  const fd = new FormData();
+  ids.forEach(id => fd.append('ids', id));
+  fd.append('new_category', newCat.trim());
+  const res = await fetch('/productos/bulk-move-category', { method: 'POST', body: fd });
+  if (res.redirected) {
+    window.location = res.url;
+  } else {
+    alert('Error al mover');
+  }
+}
+</script>
+{% endblock %}

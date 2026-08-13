@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Packs de Estancia (Recetas de Reforma){% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>⚡ Packs de Estancia (Recetas de Reforma)</h1>
+    <p class="subtitle">Inserta capítulos completos de remodelación de lujo escalados proporcionalmente a los m² de cada estancia en 1 segundo (Alt+R).</p>
+  </div>
+  <div class="page-head-actions" style="display:flex; gap:0.5rem; align-items:center;">
+    <form method="post" action="/recetas/restaurar-demo" class="inline" onsubmit="return confirm('¿Verificar y restaurar los 6 presets iniciales de reforma de lujo?');">
+      <button class="btn" type="submit" title="Restaura los packs de demostración iniciales de alta gama">⚡ Restaurar Presets</button>
+    </form>
+    <a href="/recetas/nueva" class="btn btn-primary">＋ Nuevo Pack de Estancia</a>
+  </div>
+</div>
+
+{% if recetas %}
+<div class="card">
+  <div class="card-head" style="display:flex; justify-content:space-between; align-items:center;">
+    <h2>Packs disponibles en tu catálogo</h2>
+    <span class="badge">{{ recetas | length }} packs listos para usar</span>
+  </div>
+  <table class="table">
+    <thead>
+      <tr>
+        <th style="width:140px;">Categoría</th>
+        <th>Pack / Estancia</th>
+        <th style="width:130px; text-align:center;">Medida base</th>
+        <th style="width:110px; text-align:center;">Partidas</th>
+        <th style="width:260px; text-align:right;">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in recetas %}
+      <tr>
+        <td>
+          <span class="badge" style="background:var(--bg-alt); color:var(--text); font-weight:600;">{{ r.categoria or 'Otros' }}</span>
+        </td>
+        <td>
+          <strong>{{ r.nombre }}</strong>
+          {% if r.descripcion %}
+          <div class="muted" style="font-size:0.88rem; margin-top:2px;">{{ r.descripcion }}</div>
+          {% endif %}
+        </td>
+        <td style="text-align:center;">
+          <span class="badge" style="background:var(--primary-light); color:var(--primary); font-weight:600;">{{ r.cantidad_base_default }} {{ r.unidad_base }}</span>
+        </td>
+        <td style="text-align:center;">
+          <strong>{{ r.items_cnt }}</strong> <small class="muted">partidas</small>
+        </td>
+        <td style="text-align:right;">
+          <a class="btn btn-sm" href="/recetas/{{ r.id }}/editar" style="margin-right:4px;">✏️ Editar</a>
+          <form method="post" action="/recetas/{{ r.id }}/duplicar" class="inline" style="margin-right:4px;">
+            <button class="btn btn-sm" type="submit" title="Duplicar pack">⧉</button>
+          </form>
+          <form method="post" action="/recetas/{{ r.id }}/eliminar" class="inline" onsubmit="return confirm('¿Eliminar el pack de estancia «{{ r.nombre }}»?');">
+            <button class="btn btn-sm btn-danger" type="submit" title="Eliminar">🗑</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="card">
+  <p class="empty">Aún no hay packs de estancia guardados. Pulsa «⚡ Restaurar Presets» o crea tu primer pack con «＋ Nuevo Pack de Estancia».</p>
+</div>
+{% endif %}
+
+<div class="card">
+  <h2>¿Cómo funcionan las Recetas / Packs de Estancia?</h2>
+  <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:1.5rem; margin-top:1rem;">
+    <div style="background:var(--bg-alt); padding:1.2rem; border-radius:10px;">
+      <strong style="color:var(--primary); font-size:1.05rem;">1. Insértalas con 1 clic (`Alt+R`)</strong>
+      <p class="muted" style="margin-top:0.5rem; font-size:0.92rem; line-height:1.5;">
+        Desde el constructor de presupuestos, presiona <strong>Alt+R</strong> o haz clic en el botón <strong>«⚡ Pack de Estancia»</strong> de la barra sticky para insertar cualquier habitación al instante.
+      </p>
+    </div>
+    <div style="background:var(--bg-alt); padding:1.2rem; border-radius:10px;">
+      <strong style="color:var(--primary); font-size:1.05rem;">2. Escalado Proporcional Inteligente</strong>
+      <p class="muted" style="margin-top:0.5rem; font-size:0.92rem; line-height:1.5;">
+        Escribe los m² reales de la habitación de tu cliente (ej. 14 m² en un baño). El sistema recalculará proporcionalmente los metros de cerámica y nivelación mientras conserva las unidades sanitarias fijas.
+      </p>
+    </div>
+    <div style="background:var(--bg-alt); padding:1.2rem; border-radius:10px;">
+      <strong style="color:var(--primary); font-size:1.05rem;">3. Guarda tus propios Capítulos</strong>
+      <p class="muted" style="margin-top:0.5rem; font-size:0.92rem; line-height:1.5;">
+        ¿Diseñaste una cocina espectacular que quieres volver a cotizar? Haz clic en <strong>«💾 Guardar pack»</strong> en la cabecera de ese capítulo y guárdalo en esta librería.
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

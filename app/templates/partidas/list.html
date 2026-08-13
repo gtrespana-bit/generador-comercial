@@ -1,0 +1,921 @@
+{% extends "base.html" %}
+{% block title %}Catálogo de Partidas{% endblock %}
+{% block content %}
+<div class="page-head" style="margin-bottom:1.1rem;">
+  <div>
+    <h1 style="display:flex;align-items:center;gap:.6rem;">Catálogo de Partidas <span style="font-size:.78rem;font-weight:600;background:var(--accent);color:#fff;padding:2px 8px;border-radius:999px;">{{ partidas|length }}</span></h1>
+    <p class="subtitle">Reutilizables para tus presupuestos · organizadas por categoría y subcategoría · diseñadas para catálogos de 100–1.000 partidas</p>
+  </div>
+  <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+    <a href="/presupuestos/importar?destino=catalogo" class="btn" title="Importa partidas desde Excel/CSV (formato CYPE o tabular) directamente al catálogo">⇧ Importar Excel</a>
+    <a href="/partidas/nueva" class="btn btn-primary">+ Nueva Partida</a>
+  </div>
+</div>
+
+<!-- TOOLBAR SUPERIOR COMPACTA -->
+<div class="partidas-toolbar card" style="padding:.75rem .9rem; margin-bottom:1rem;">
+  <div class="toolbar-row">
+    <div class="toolbar-search">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="buscador" placeholder="Buscar por nombre, código, proveedor, descripción…" oninput="filtrarPartidas()" autocomplete="off">
+      <button id="clearSearch" class="btn btn-ghost btn-sm" style="display:none; padding:2px 6px;" onclick="clearSearch()" title="Limpiar">✕</button>
+    </div>
+    <div class="toolbar-actions">
+      <div class="toolbar-meta" id="filterMeta"></div>
+      <div class="toolbar-divider"></div>
+      <button class="btn btn-sm" onclick="toggleAllCats(true)" title="Expandir categorías y subcategorías">⤢ Expandir todo</button>
+      <button class="btn btn-sm" onclick="toggleAllCats(false)" title="Contraer categorías y subcategorías">⤡ Contraer todo</button>
+      <form method="post" action="/partidas/ajustar" onsubmit="return confirm('¿Ajustar TODAS las partidas visibles con este %?');" style="display:flex;gap:4px;align-items:center;">
+        <input type="number" name="porcentaje" step="any" placeholder="± %" required style="width:72px; padding:.3rem .5rem; border:1px solid var(--border); border-radius:6px; font-size:.82rem;">
+        <button class="btn btn-sm" type="submit" title="Ajustar precios de todas las partidas del catálogo">% Precios</button>
+      </form>
+      <a class="btn btn-sm" href="/partidas/exportar" title="Exportar catálogo completo">📥 CSV</a>
+    </div>
+  </div>
+
+  <!-- Bulk bar (aparece al seleccionar) -->
+  <div id="bulk-bar-partidas" class="bulk-bar">
+    <div class="bulk-left">
+      <span class="bulk-count"><strong id="sel-count-partidas">0</strong> seleccionadas</span>
+      <span class="bulk-sep"></span>
+      <button type="button" class="btn btn-sm btn-danger" onclick="bulkDeletePartidas()">🗑 Eliminar</button>
+      <button type="button" class="btn btn-sm" onclick="bulkExportSelectedPartidas()">📥 Exportar</button>
+      <div class="bulk-move">
+        <input type="text" id="move-cat-partidas" placeholder="Nueva categoría" list="categorias-datalist-partidas">
+        <button type="button" class="btn btn-sm" onclick="bulkMoveCategoryPartidas()">➡️ A categoría</button>
+        <input type="text" id="move-subcat-partidas" placeholder="Subcategoría" list="subcategorias-datalist-partidas">
+        <button type="button" class="btn btn-sm" onclick="bulkMoveSubcategoryPartidas()">↳ A subcategoría</button>
+      </div>
+    </div>
+    <div class="bulk-right">
+      <button type="button" class="btn btn-sm" onclick="selectVisiblePartidas()">Sel. visibles</button>
+      <button type="button" class="btn btn-sm" onclick="selectNonePartidas()">Limpiar</button>
+      <button type="button" class="btn btn-sm btn-danger" onclick="deleteAllVisiblePartidas()" title="Borra todo lo que está filtrado y visible">Borrar visibles</button>
+      <button type="button" class="btn btn-ghost btn-sm" onclick="selectNonePartidas()" title="Cerrar">✕</button>
+    </div>
+  </div>
+</div>
+
+<div class="catalog-layout" id="catalogLayout">
+  <!-- SIDEBAR CATEGORÍAS -->
+  <aside class="cat-sidebar card" id="catSidebar">
+    <div class="cat-sidebar-head">
+      <div>
+        <h3>Categorías</h3>
+        <span class="cat-sidebar-subtitle">{{ partidas|groupby('categoria')|list|length }} categorías · {{ partidas|length }} partidas</span>
+      </div>
+      <button class="btn-icon" id="btnCollapseSidebar" onclick="toggleCatSidebar()" title="Contraer panel">⟨</button>
+    </div>
+
+    <div class="cat-sidebar-body">
+      <details class="quick-category-create">
+        <summary>＋ Crear categoría o subcategoría</summary>
+        <form method="post" action="/partidas/categorias" class="quick-category-form">
+          <input name="categoria" required placeholder="Categoría nueva o existente" list="categorias-datalist-partidas">
+          <input name="subcategoria" placeholder="Subcategoría (opcional)" list="subcategorias-datalist-partidas">
+          <button class="btn btn-sm btn-primary" type="submit">Crear</button>
+        </form>
+        <span class="hint">Para crear una subcategoría, elige/escribe primero su categoría.</span>
+      </details>
+      <button class="category-btn active" data-cat="todas" id="btn-cat-todas" onclick="filtrarCategoria('todas')">
+        <span class="cat-btn-left"><span>📂</span><span class="cat-name">Todas</span></span>
+        <span class="cat-count">{{ partidas | length }}</span>
+      </button>
+
+      {% for cat, cat_partidas in partidas | groupby('categoria') %}
+      {% set sub_groups = cat_partidas|groupby('subcategoria') %}
+      {% set sub_count = sub_groups|length %}
+      {% set has_subs = (sub_groups|length > 1) or (sub_groups|length==1 and (sub_groups[0][0]|string).strip() != "" ) %}
+      <div class="cat-group {% if has_subs %}has-subs{% endif %}" data-cat="{{ cat }}">
+        <button class="category-btn {% if not has_subs %}no-subs{% endif %} drop-category" data-cat="{{ cat }}" onclick="filtrarCategoria('{{ cat|replace("'", "\\'") }}')" id="btn-cat-{{ cat|replace(' ', '_') }}">
+          <span class="cat-btn-left">
+            {% if has_subs %}<span class="cat-arrow">▸</span>{% else %}<span style="width:10px;display:inline-block;"></span>{% endif %}
+            <span>🏷️</span>
+            <span class="cat-name" title="{{ cat }}">{{ cat }}</span>
+          </span>
+          <span class="cat-count">{{ cat_partidas | length }}</span>
+        </button>
+        {% if has_subs %}
+        <div class="subcat-list" id="subcat-list-{{ cat|replace(' ', '_') }}">
+          {% for subcat, sub_partidas in sub_groups|sort(attribute='grouper') %}
+          {% set label = subcat if (subcat|string).strip() != "" else "Sin subcategoría" %}
+          {% set sid = (cat ~ '::' ~ (subcat if (subcat|string).strip() != "" else '__none__')) %}
+          <button class="subcat-btn drop-subcategory" data-cat="{{ cat }}" data-subcat="{{ subcat }}" title="{{ label }} · {{ sub_partidas|length }} partidas" onclick="filtrarSubcategoria('{{ cat|replace("'", "\\'") }}', '{{ subcat|replace("'", "\\'") }}')">
+            <span class="subcat-name">{{ label }}</span>
+            <span class="subcat-count">{{ sub_partidas|length }}</span>
+          </button>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+      {% endfor %}
+
+      {% for registro in categorias_catalogo if registro.categoria not in (partidas|map(attribute='categoria')|list) and not registro.subcategoria %}
+      <div class="cat-group" data-cat="{{ registro.categoria }}">
+        <button class="category-btn drop-category" data-cat="{{ registro.categoria }}" onclick="filtrarCategoria('{{ registro.categoria|replace("'", "\'") }}')">
+          <span class="cat-btn-left"><span>🏷️</span><span class="cat-name">{{ registro.categoria }}</span></span><span class="cat-count">0</span>
+        </button>
+      </div>
+      {% endfor %}
+      {% for registro in categorias_catalogo if registro.subcategoria %}
+      <button class="subcat-btn drop-subcategory saved-subcategory" data-cat="{{ registro.categoria }}" data-subcat="{{ registro.subcategoria }}" title="Subcategoría creada; arrastra aquí partidas de {{ registro.categoria }}">
+        <span class="subcat-name">↳ {{ registro.categoria }} · {{ registro.subcategoria }}</span><span class="subcat-count">Nueva</span>
+      </button>
+      {% endfor %}
+      <div class="sidebar-help">
+        <span class="hint">💡 Clic en categoría para filtrar. Clic en ▸ para ver subcategorías. Combina con el buscador.</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- BOTÓN PARA RE-EXPANDIR CUANDO ESTÁ COLAPSADO -->
+  <button id="catSidebarExpand" class="cat-sidebar-expand" onclick="toggleCatSidebar()" title="Mostrar categorías" style="display:none;">
+    <span>☰</span> <span>Categorías</span> <span class="badge" style="margin-left:6px;">{{ partidas|length }}</span>
+  </button>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <div class="catalog-main" id="catalogMain">
+    {% for cat, cat_partidas in partidas | groupby('categoria') %}
+    {% set sub_groups = cat_partidas|groupby('subcategoria') %}
+    <section class="cat-section" data-categoria="{{ cat }}" id="group-{{ cat|replace(' ', '_') }}">
+      <header class="cat-section-head drop-category" onclick="toggleCatSection(this)">
+        <button class="cat-toggle" aria-label="Contraer">▼</button>
+        <div class="cat-title-wrap">
+          <h2 class="cat-title"><span class="cat-dot"></span> {{ cat }}</h2>
+          {% set real_subs = sub_groups|selectattr('0')|select('string')|select('trim')|list|length %}{# fallback, but we compute has_subs similarly #}
+          {% set has_real = has_subs %}
+          <span class="cat-meta">{{ cat_partidas|length }} partidas{% if has_real %} · {{ sub_groups|length }} subcategoría{{ 's' if sub_groups|length!=1 }}{% endif %}</span>
+        </div>
+        <div class="cat-actions" onclick="event.stopPropagation()">
+          <label class="cat-check" title="Seleccionar toda la categoría">
+            <input type="checkbox" class="cat-select-all" onchange="toggleSelectCat('{{ cat|replace("'", "\\'") }}', this.checked)"> <span style="font-size:.75rem;">Sel.</span>
+          </label>
+          <button type="button" class="btn btn-sm" onclick="toggleCatSection(this.closest('.cat-section').querySelector('.cat-section-head'))" title="Contraer/Expandir">⤢</button>
+          <button type="button" class="btn btn-sm btn-ghost" style="color:var(--rose);" onclick="deleteCategory('{{ cat|replace("'", "\\'") }}')" title="Borrar categoría completa">🗑</button>
+        </div>
+        <span class="cat-badge">{{ cat_partidas|length }}</span>
+      </header>
+
+      <div class="cat-section-body">
+        {% set single_empty = sub_groups|length==1 and (sub_groups[0][0]|string).strip()=="" %}
+        {% if single_empty %}
+        {% set sub_partidas = sub_groups[0][1] %}
+        <div class="subcat-section no-subcat-header" data-categoria="{{ cat }}" data-subcategoria="">
+          <div class="subcat-body">
+            <table class="partidas-table">
+              <thead>
+                <tr>
+                  <th class="col-check"><input type="checkbox" class="subcat-master" onchange="toggleSelectSubcat('{{ cat|replace("'", "\\'") }}','', this.checked)" title="Seleccionar subcategoría"></th>
+                  <th class="col-code sortable" title="Código interno">Código</th>
+                  <th class="col-nombre sortable">Partida</th>
+                  <th class="col-und">Und.</th>
+                  <th class="col-coste right sortable" title="Coste directo (materiales+mano obra+complementarios+otros)">Coste</th>
+                  <th class="col-precio right sortable">Precio</th>
+                  <th class="col-margen right" title="Beneficio = Precio - Coste · % sobre coste">Beneficio</th>
+                  <th class="col-usos right sortable">Usos</th>
+                  <th class="col-actions right">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for p in sub_partidas|sort(attribute='nombre') %}
+                {% set coste = (p.coste_materiales or 0) + (p.coste_mano_obra or 0) + (p.coste_complementarios or 0) + (p.coste_otros or 0) %}
+                {% set margen = (p.precio_unitario or 0) - coste %}
+                {% set recursos = catalogo_descompuestos.get(p.id, []) %}
+                <tr draggable="true" class="partida-tr" data-id="{{ p.id }}" data-categoria="{{ p.categoria }}" data-subcategoria="{{ p.subcategoria }}" data-nombre="{{ (p.nombre ~ ' ' ~ p.descripcion ~ ' ' ~ p.categoria ~ ' ' ~ p.subcategoria ~ ' ' ~ p.codigo_interno ~ ' ' ~ p.codigo_externo ~ ' ' ~ p.proveedor) | lower }}" data-precio="{{ p.precio_unitario }}" data-coste="{{ coste }}" data-usos="{{ p.usos or 0 }}">
+                  <td class="col-check"><input type="checkbox" class="row-check" data-id="{{ p.id }}" onchange="onRowCheck(this)"></td>
+                  <td class="col-code">
+                    {% if p.codigo_interno or p.codigo_externo %}
+                      <code class="code-badge" title="{{ p.codigo_interno or p.codigo_externo }}">{{ (p.codigo_interno or p.codigo_externo)[:12] }}</code>
+                    {% else %}
+                      <span class="code-empty">—</span>
+                    {% endif %}
+                  </td>
+                  <td class="col-nombre">
+                    <div class="partida-main">
+                      <span class="partida-nombre" title="{{ p.nombre }}">{{ p.nombre }}</span>
+                      {% if p.usos and p.usos > 0 %}<span class="usos-mini" title="Usada {{ p.usos }} veces">🔥{{ p.usos }}</span>{% endif %}
+                    </div>
+                    <div class="partida-sub">
+                      {% if p.descripcion %}
+                        <span class="desc" title="{{ p.descripcion }}">{{ p.descripcion }}</span>
+                      {% else %}
+                        <span class="desc empty">Sin descripción</span>
+                      {% endif %}
+                      {% if p.proveedor %}<span class="prov" title="Proveedor">· {{ p.proveedor }}</span>{% endif %}
+                      {% if p.imagen %}<span class="has-img" title="Con imagen">🖼️</span>{% endif %}
+                    </div>
+                  </td>
+                  <td class="col-und"><span class="und-badge">{{ p.unidad }}</span></td>
+                  <td class="col-coste right" data-coste="{{ coste }}" title="Materiales {{ (p.coste_materiales or 0)|money }} · Mano {{ (p.coste_mano_obra or 0)|money }} · Compl. {{ (p.coste_complementarios or 0)|money }} · Otros {{ (p.coste_otros or 0)|money }}">
+                    <span class="coste-val">{{ coste | money if coste>0 else "—" }}</span>
+                  </td>
+                  <td class="col-precio right" data-precio="{{ p.precio_unitario }}"><strong class="precio-val">{{ p.precio_unitario | money }}</strong></td>
+                  <td class="col-margen right">
+                    {% if coste>0 %}
+                      {% set markup = ((p.precio_unitario - coste) / coste * 100) if coste else 0 %}
+                      {% set margen_pct = ((p.precio_unitario - coste) / p.precio_unitario * 100) if p.precio_unitario else 0 %}
+                      {% if margen>=0 %}<span class="margen-pos" title="Beneficio {{ margen|money }} · {{ markup|round(1) }}% s/coste, {{ margen_pct|round(1) }}% margen">+{{ margen|money }} · {{ markup|round(1) }}%</span>{% else %}<span class="margen-neg" title="{{ markup|round(1) }}% s/coste">{{ margen|money }} · {{ markup|round(1) }}%</span>{% endif %}
+                    {% else %}
+                      <span class="margen-na">—</span>
+                    {% endif %}
+                  </td>
+                  <td class="col-usos right" data-usos="{{ p.usos or 0}}">{{ p.usos or 0 }}</td>
+                  <td class="col-actions right">
+                    <div class="row-actions">
+                      <a href="/partidas/{{ p.id }}/editar" class="btn btn-sm btn-ghost" title="Editar">✏️</a>
+                      <form method="post" action="/partidas/{{ p.id }}/eliminar" style="display:inline" onsubmit="return confirm('¿Eliminar «{{ p.nombre|replace("'", "\\'") }}» del catálogo?')">
+                        <button type="submit" class="btn btn-sm btn-ghost" style="color:var(--rose);" title="Eliminar">✕</button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+                {% if recursos %}
+                <tr class="descomp-row" data-parent="{{ p.id }}">
+                  <td colspan="9" style="padding:0;">
+                    <details class="descomp-details">
+                      <summary><span class="descomp-summary-label">▾ Descomposición ({{ recursos|selectattr('tipo','equalto','recurso')|list|length }} recursos)</span> <span class="hint" style="margin-left:.6rem;">Clic para ver</span></summary>
+                      <div class="table-wrap" style="margin:.6rem 0 0;">
+                        <table class="table descomp-table">
+                          <thead><tr><th>Categoría</th><th>Código</th><th>Und.</th><th>Descripción</th><th class="right">Rend.</th><th class="right">Precio</th><th class="right">Importe</th></tr></thead>
+                          <tbody>
+                          {% for r in recursos if r.tipo == 'recurso' %}
+                            <tr><td><span class="badge" style="font-size:.70rem;background:var(--bg);">{{ r.categoria or r.grupo or 'otros' }}</span></td><td><code style="font-size:.72rem;">{{ r.codigo or '—' }}</code></td><td>{{ r.unidad or '—' }}</td><td style="max-width:260px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="{{ r.descripcion }}">{{ r.descripcion }}</td><td class="right">{{ r.rendimiento }}</td><td class="right">{{ r.precio }}</td><td class="right"><strong>{{ r.importe }}</strong></td></tr>
+                          {% endfor %}
+                          </tbody>
+                        </table>
+                      </div>
+                    </details>
+                  </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        {% else %}
+        {% for subcat, sub_partidas in sub_groups|sort(attribute='grouper') %}
+        {% set label = subcat if (subcat|string).strip() != "" else "Sin subcategoría" %}
+        <div class="subcat-section" data-categoria="{{ cat }}" data-subcategoria="{{ subcat }}">
+          <header class="subcat-head drop-subcategory" onclick="toggleSubcat(this)">
+            <span class="subcat-toggle">▼</span>
+            <span class="subcat-label">{{ label }}</span>
+            <span class="subcat-count-badge">{{ sub_partidas|length }}</span>
+            <span class="subcat-hint">{{ sub_partidas|length }} partidas</span>
+            <span class="subcat-actions" onclick="event.stopPropagation()">
+              <label class="subcat-check" title="Seleccionar subcategoría">
+                <input type="checkbox" onchange="toggleSelectSubcat('{{ cat|replace("'", "\\'") }}','{{ subcat|replace("'", "\\'") }}', this.checked)"> <span style="font-size:.72rem;color:var(--text-soft);">Sel.</span>
+              </label>
+            </span>
+          </header>
+          <div class="subcat-body">
+            <table class="partidas-table">
+              <thead>
+                <tr>
+                  <th class="col-check"><input type="checkbox" class="subcat-master" onchange="toggleSelectSubcat('{{ cat|replace("'", "\\'") }}','{{ subcat|replace("'", "\\'") }}', this.checked)" title="Seleccionar subcategoría"></th>
+                  <th class="col-code sortable" title="Código interno">Código</th>
+                  <th class="col-nombre sortable">Partida</th>
+                  <th class="col-und">Und.</th>
+                  <th class="col-coste right sortable" title="Coste directo (materiales+mano obra+complementarios+otros)">Coste</th>
+                  <th class="col-precio right sortable">Precio</th>
+                  <th class="col-margen right" title="Beneficio = Precio - Coste · % sobre coste">Beneficio</th>
+                  <th class="col-usos right sortable">Usos</th>
+                  <th class="col-actions right">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for p in sub_partidas|sort(attribute='nombre') %}
+                {% set coste = (p.coste_materiales or 0) + (p.coste_mano_obra or 0) + (p.coste_complementarios or 0) + (p.coste_otros or 0) %}
+                {% set margen = (p.precio_unitario or 0) - coste %}
+                {% set recursos = catalogo_descompuestos.get(p.id, []) %}
+                <tr draggable="true" class="partida-tr" data-id="{{ p.id }}" data-categoria="{{ p.categoria }}" data-subcategoria="{{ p.subcategoria }}" data-nombre="{{ (p.nombre ~ ' ' ~ p.descripcion ~ ' ' ~ p.categoria ~ ' ' ~ p.subcategoria ~ ' ' ~ p.codigo_interno ~ ' ' ~ p.codigo_externo ~ ' ' ~ p.proveedor) | lower }}" data-precio="{{ p.precio_unitario }}" data-coste="{{ coste }}" data-usos="{{ p.usos or 0 }}">
+                  <td class="col-check"><input type="checkbox" class="row-check" data-id="{{ p.id }}" onchange="onRowCheck(this)"></td>
+                  <td class="col-code">
+                    {% if p.codigo_interno or p.codigo_externo %}
+                      <code class="code-badge" title="{{ p.codigo_interno or p.codigo_externo }}">{{ (p.codigo_interno or p.codigo_externo)[:12] }}</code>
+                    {% else %}
+                      <span class="code-empty">—</span>
+                    {% endif %}
+                  </td>
+                  <td class="col-nombre">
+                    <div class="partida-main">
+                      <span class="partida-nombre" title="{{ p.nombre }}">{{ p.nombre }}</span>
+                      {% if p.usos and p.usos > 0 %}<span class="usos-mini" title="Usada {{ p.usos }} veces">🔥{{ p.usos }}</span>{% endif %}
+                    </div>
+                    <div class="partida-sub">
+                      {% if p.descripcion %}
+                        <span class="desc" title="{{ p.descripcion }}">{{ p.descripcion }}</span>
+                      {% else %}
+                        <span class="desc empty">Sin descripción</span>
+                      {% endif %}
+                      {% if p.proveedor %}<span class="prov" title="Proveedor">· {{ p.proveedor }}</span>{% endif %}
+                      {% if p.imagen %}<span class="has-img" title="Con imagen">🖼️</span>{% endif %}
+                    </div>
+                  </td>
+                  <td class="col-und"><span class="und-badge">{{ p.unidad }}</span></td>
+                  <td class="col-coste right" data-coste="{{ coste }}" title="Materiales {{ (p.coste_materiales or 0)|money }} · Mano {{ (p.coste_mano_obra or 0)|money }} · Compl. {{ (p.coste_complementarios or 0)|money }} · Otros {{ (p.coste_otros or 0)|money }}">
+                    <span class="coste-val">{{ coste | money if coste>0 else "—" }}</span>
+                  </td>
+                  <td class="col-precio right" data-precio="{{ p.precio_unitario }}"><strong class="precio-val">{{ p.precio_unitario | money }}</strong></td>
+                  <td class="col-margen right">
+                    {% if coste>0 %}
+                      {% set markup = ((p.precio_unitario - coste) / coste * 100) if coste else 0 %}
+                      {% set margen_pct = ((p.precio_unitario - coste) / p.precio_unitario * 100) if p.precio_unitario else 0 %}
+                      {% if margen>=0 %}<span class="margen-pos" title="Beneficio {{ margen|money }} · {{ markup|round(1) }}% s/coste, {{ margen_pct|round(1) }}% margen">+{{ margen|money }} · {{ markup|round(1) }}%</span>{% else %}<span class="margen-neg" title="{{ markup|round(1) }}% s/coste">{{ margen|money }} · {{ markup|round(1) }}%</span>{% endif %}
+                    {% else %}
+                      <span class="margen-na">—</span>
+                    {% endif %}
+                  </td>
+                  <td class="col-usos right" data-usos="{{ p.usos or 0}}">{{ p.usos or 0 }}</td>
+                  <td class="col-actions right">
+                    <div class="row-actions">
+                      <a href="/partidas/{{ p.id }}/editar" class="btn btn-sm btn-ghost" title="Editar">✏️</a>
+                      <form method="post" action="/partidas/{{ p.id }}/eliminar" style="display:inline" onsubmit="return confirm('¿Eliminar «{{ p.nombre|replace("'", "\\'") }}» del catálogo?')">
+                        <button type="submit" class="btn btn-sm btn-ghost" style="color:var(--rose);" title="Eliminar">✕</button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+                {% if recursos %}
+                <tr class="descomp-row" data-parent="{{ p.id }}">
+                  <td colspan="9" style="padding:0;">
+                    <details class="descomp-details">
+                      <summary><span class="descomp-summary-label">▾ Descomposición ({{ recursos|selectattr('tipo','equalto','recurso')|list|length }} recursos)</span> <span class="hint" style="margin-left:.6rem;">Clic para ver</span></summary>
+                      <div class="table-wrap" style="margin:.6rem 0 0;">
+                        <table class="table descomp-table">
+                          <thead><tr><th>Categoría</th><th>Código</th><th>Und.</th><th>Descripción</th><th class="right">Rend.</th><th class="right">Precio</th><th class="right">Importe</th></tr></thead>
+                          <tbody>
+                          {% for r in recursos if r.tipo == 'recurso' %}
+                            <tr><td><span class="badge" style="font-size:.70rem;background:var(--bg);">{{ r.categoria or r.grupo or 'otros' }}</span></td><td><code style="font-size:.72rem;">{{ r.codigo or '—' }}</code></td><td>{{ r.unidad or '—' }}</td><td style="max-width:260px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="{{ r.descripcion }}">{{ r.descripcion }}</td><td class="right">{{ r.rendimiento }}</td><td class="right">{{ r.precio }}</td><td class="right"><strong>{{ r.importe }}</strong></td></tr>
+                          {% endfor %}
+                          </tbody>
+                        </table>
+                      </div>
+                    </details>
+                  </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        {% endfor %}
+        {% endif %}
+      </div>
+    {% else %}
+    <div class="card empty" style="text-align:center; padding:2.5rem 1.5rem;">
+      <div style="font-size:2.4rem; margin-bottom:.6rem;">📋</div>
+      <h3 style="margin:0 0 .4rem;">Aún no hay partidas en el catálogo</h3>
+      <p class="hint" style="max-width:520px; margin:0 auto 1rem;">Crea tu primera partida o importa cientos desde Excel (formato CYPE o tabular). Una vez cargadas, organízalas por categoría y subcategoría para trabajar a gran escala.</p>
+      <div style="display:flex; gap:.6rem; justify-content:center; flex-wrap:wrap;">
+        <a href="/partidas/nueva" class="btn btn-primary">+ Nueva Partida</a>
+        <a href="/presupuestos/importar?destino=catalogo" class="btn">⇧ Importar desde Excel</a>
+      </div>
+    </div>
+    {% endfor %}
+
+    <div id="noResults" class="card empty" style="display:none; text-align:center;">
+      <p style="font-weight:600;">Sin resultados</p>
+      <p class="hint">No hay partidas que coincidan con la búsqueda o filtros actuales.</p>
+      <button class="btn btn-sm" onclick="clearFilters()">Limpiar filtros</button>
+    </div>
+  </div>
+</div>
+
+<datalist id="categorias-datalist-partidas">
+  {% for cat, cat_partidas in partidas | groupby('categoria') %}
+  <option value="{{ cat }}"></option>
+  {% endfor %}
+</datalist>
+<datalist id="subcategorias-datalist-partidas">
+  {% for cat, cat_partidas in partidas | groupby('categoria') %}
+    {% for subcat, _ in cat_partidas | groupby('subcategoria') if (subcat|string).strip() %}
+    <option value="{{ subcat }}"></option>
+    {% endfor %}
+  {% endfor %}
+</datalist>
+
+
+<script>
+let categoriaSeleccionada = 'todas';
+let subcategoriaSeleccionada = '';
+
+function toggleCatSidebar() {
+  const sidebar = document.getElementById('catSidebar');
+  const expandBtn = document.getElementById('catSidebarExpand');
+  const layout = document.getElementById('catalogLayout');
+  if (!sidebar || !expandBtn) return;
+  const isHidden = sidebar.style.display === 'none';
+  if (isHidden) {
+    sidebar.style.display = '';
+    expandBtn.style.display = 'none';
+    layout.classList.remove('sidebar-hidden');
+    localStorage.setItem('partidas-sidebar-collapsed', 'false');
+  } else {
+    sidebar.style.display = 'none';
+    expandBtn.style.display = 'inline-flex';
+    layout.classList.add('sidebar-hidden');
+    localStorage.setItem('partidas-sidebar-collapsed', 'true');
+  }
+}
+
+// --- CATEGORÍA expand/collapse in sidebar (show subcats) ---
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('.cat-group.has-subs .category-btn');
+  // we already have click handler for filtrarCategoria, but also toggle expanded
+  // distinguish: if user clicked arrow area? we toggle expanded on any click but keep filter
+  // Instead, separate: clicking cat-group arrow should expand without filtering? We'll handle via double duty: expand always on click
+  // To avoid interfering, we just toggle expanded when has-subs
+  const group = e.target.closest('.cat-group');
+  if (group && group.classList.contains('has-subs')) {
+    // if click was on the button itself, toggle expanded state
+    if (btn) {
+      group.classList.toggle('expanded');
+      // persist? not needed
+    }
+  }
+});
+
+function filtrarCategoria(categoria) {
+  // update active state for category buttons
+  document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.subcat-btn').forEach(b => b.classList.remove('active'));
+  categoriaSeleccionada = categoria;
+  subcategoriaSeleccionada = '';
+  if (categoria === 'todas') {
+    const allBtn = document.getElementById('btn-cat-todas');
+    if (allBtn) allBtn.classList.add('active');
+    // expand all groups visually? keep collapsed state as is
+  } else {
+    const id = 'btn-cat-' + categoria.replace(/ /g, '_');
+    const btn = document.getElementById(id);
+    if (btn) {
+      btn.classList.add('active');
+      // ensure its group is expanded to show subcats
+      const g = btn.closest('.cat-group');
+      if (g) g.classList.add('expanded');
+    }
+  }
+  filtrarPartidas();
+}
+
+function filtrarSubcategoria(categoria, subcategoria) {
+  // select specific subcat, also selects parent category
+  document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.subcat-btn').forEach(b => b.classList.remove('active'));
+  categoriaSeleccionada = categoria;
+  subcategoriaSeleccionada = subcategoria;
+  const catBtnId = 'btn-cat-' + categoria.replace(/ /g, '_');
+  const catBtn = document.getElementById(catBtnId);
+  if (catBtn) catBtn.classList.add('active');
+  const group = catBtn ? catBtn.closest('.cat-group') : null;
+  if (group) group.classList.add('expanded');
+  // mark subcat active
+  document.querySelectorAll('.subcat-btn').forEach(b => {
+    if (b.dataset.cat === categoria && b.dataset.subcat === subcategoria) b.classList.add('active');
+  });
+  filtrarPartidas();
+}
+
+function filtrarPartidas() {
+  const qRaw = (document.getElementById('buscador')?.value || '').toLowerCase().trim();
+  const q = qRaw;
+  const clearBtn = document.getElementById('clearSearch');
+  if (clearBtn) clearBtn.style.display = q ? 'inline-flex' : 'none';
+
+  let totalVisibleCats = 0;
+  let totalVisibleRows = 0;
+
+  document.querySelectorAll('.cat-section').forEach(section => {
+    const cat = section.dataset.categoria;
+    const catMatch = (categoriaSeleccionada === 'todas' || categoriaSeleccionada === cat);
+    // subcat filter narrows inside
+    let catVisible = false;
+    let catRowCount = 0;
+
+    section.querySelectorAll('.subcat-section').forEach(subsec => {
+      const subcat = subsec.dataset.subcategoria;
+      const subMatch = (!subcategoriaSeleccionada && catMatch) || (categoriaSeleccionada === cat && subcategoriaSeleccionada === subcat);
+      // if no sub filter, subMatch depends only on catMatch
+      const effectiveSubMatch = subcategoriaSeleccionada ? subMatch : catMatch;
+      if (!effectiveSubMatch) {
+        subsec.style.display = 'none';
+        return;
+      }
+      // filter rows inside
+      let visibleInSub = 0;
+      subsec.querySelectorAll('.partida-tr').forEach(row => {
+        const txt = (row.dataset.nombre || '').toLowerCase();
+        const ok = !q || txt.includes(q);
+        if (ok) {
+          row.style.display = '';
+          // also show its descomp row if exists
+          const descomp = subsec.querySelector(`.descomp-row[data-parent="${row.dataset.id}"]`);
+          if (descomp) descomp.style.display = row.style.display; // keep same display (visible)
+          visibleInSub++;
+        } else {
+          row.style.display = 'none';
+          const descomp = subsec.querySelector(`.descomp-row[data-parent="${row.dataset.id}"]`);
+          if (descomp) descomp.style.display = 'none';
+        }
+      });
+      // handle empty subcat header visibility
+      if (visibleInSub > 0) {
+        subsec.style.display = '';
+        // make sure its body is visible if we have results, but respect collapsed state? If collapsed and we have search, auto-expand
+        if (q && subsec.classList.contains('collapsed')) {
+          subsec.classList.remove('collapsed');
+          const b = subsec.querySelector('.subcat-body');
+          if (b) b.style.display = '';
+          const t = subsec.querySelector('.subcat-toggle');
+          if (t) t.textContent = '▼';
+        }
+        catVisible = true;
+        catRowCount += visibleInSub;
+      } else {
+        subsec.style.display = 'none';
+      }
+    });
+
+    if (catVisible && catRowCount>0) {
+      section.style.display = '';
+      totalVisibleCats++;
+      totalVisibleRows += catRowCount;
+      // if searching, expand category
+      if (q && section.classList.contains('collapsed')) {
+        section.classList.remove('collapsed');
+        const body = section.querySelector('.cat-section-body');
+        if (body) body.style.display = '';
+        const tg = section.querySelector('.cat-toggle');
+        if (tg) tg.textContent = '▼';
+      }
+    } else {
+      section.style.display = 'none';
+    }
+  });
+
+  // No results handling
+  const noRes = document.getElementById('noResults');
+  if (noRes) noRes.style.display = (totalVisibleRows===0) ? 'block' : 'none';
+
+  // toolbar meta
+  const meta = document.getElementById('filterMeta');
+  if (meta) {
+    if (q || categoriaSeleccionada!=='todas' || subcategoriaSeleccionada) {
+      meta.textContent = `${totalVisibleRows} partidas · ${totalVisibleCats} categorías`;
+    } else {
+      meta.textContent = `${document.querySelectorAll('.partida-tr').length} partidas en total`;
+    }
+  }
+  updateBulkBarPartidas();
+}
+
+function clearSearch() {
+  const inp = document.getElementById('buscador');
+  if (inp) { inp.value=''; filtrarPartidas(); inp.focus(); }
+}
+function clearFilters() {
+  categoriaSeleccionada='todas';
+  subcategoriaSeleccionada='';
+  document.querySelectorAll('.category-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('btn-cat-todas')?.classList.add('active');
+  document.querySelectorAll('.subcat-btn').forEach(b=>b.classList.remove('active'));
+  const inp=document.getElementById('buscador');
+  if (inp) inp.value='';
+  // reset collapsed? expand all
+  toggleAllCats(true);
+  toggleAllSubcats(true);
+  filtrarPartidas();
+}
+
+function toggleCatSection(header) {
+  const section = header.closest('.cat-section');
+  if (!section) return;
+  const body = section.querySelector('.cat-section-body');
+  const toggle = header.querySelector('.cat-toggle');
+  const isCollapsed = section.classList.contains('collapsed');
+  if (isCollapsed) {
+    section.classList.remove('collapsed');
+    if (body) body.style.display = '';
+    if (toggle) toggle.textContent='▼';
+  } else {
+    section.classList.add('collapsed');
+    if (body) body.style.display='none';
+    if (toggle) toggle.textContent='▶';
+  }
+}
+function toggleAllCats(expand) {
+  document.querySelectorAll('.cat-section').forEach(sec=>{
+    const body=sec.querySelector('.cat-section-body');
+    const tg=sec.querySelector('.cat-toggle');
+    if (expand) {
+      sec.classList.remove('collapsed');
+      if (body) body.style.display='';
+      if (tg) tg.textContent='▼';
+    } else {
+      sec.classList.add('collapsed');
+      if (body) body.style.display='none';
+      if (tg) tg.textContent='▶';
+    }
+  });
+}
+function toggleSubcat(header) {
+  const sub = header.closest('.subcat-section');
+  if (!sub) return;
+  const isCollapsed = sub.classList.contains('collapsed');
+  if (isCollapsed) {
+    sub.classList.remove('collapsed');
+  } else {
+    sub.classList.add('collapsed');
+  }
+}
+function toggleAllSubcats(expand) {
+  document.querySelectorAll('.subcat-section').forEach(s=>{
+    if (expand) s.classList.remove('collapsed');
+    else s.classList.add('collapsed');
+  });
+}
+
+// Selección
+function onRowCheck(chk) {
+  const tr = chk.closest('tr');
+  if (!tr) return;
+  if (chk.checked) tr.classList.add('selected');
+  else tr.classList.remove('selected');
+  updateBulkBarPartidas();
+}
+function toggleSelectCat(cat, checked) {
+  const sec = document.getElementById('group-' + cat.replace(/ /g, '_'));
+  if (!sec) return;
+  sec.querySelectorAll('.partida-tr').forEach(row=>{
+    if (row.style.display==='none') return;
+    const cb=row.querySelector('.row-check');
+    if (!cb) return;
+    cb.checked=checked;
+    if (checked) row.classList.add('selected'); else row.classList.remove('selected');
+  });
+  // also sync subcat masters
+  sec.querySelectorAll('.subcat-master, .subcat-section input[type="checkbox"]').forEach(cb=>cb.checked=checked);
+  updateBulkBarPartidas();
+}
+function toggleSelectSubcat(cat, subcat, checked) {
+  const sec = document.getElementById('group-' + cat.replace(/ /g, '_'));
+  if (!sec) return;
+  const subEl = [...sec.querySelectorAll('.subcat-section')].find(s=> (s.dataset.subcategoria||'')===subcat);
+  if (!subEl) return;
+  subEl.querySelectorAll('.partida-tr').forEach(row=>{
+    if (row.style.display==='none') return;
+    const cb=row.querySelector('.row-check');
+    if (!cb) return;
+    cb.checked=checked;
+    if (checked) row.classList.add('selected'); else row.classList.remove('selected');
+  });
+  updateBulkBarPartidas();
+}
+
+// === BULK ===
+function updateBulkBarPartidas() {
+  const bar = document.getElementById('bulk-bar-partidas');
+  const cnt = document.getElementById('sel-count-partidas');
+  if (!bar || !cnt) return;
+  const checks = document.querySelectorAll('.row-check:checked');
+  const n = checks.length;
+  if (n > 0) {
+    cnt.textContent = n;
+    bar.classList.add('show');
+    bar.style.display = 'flex';
+  } else {
+    bar.classList.remove('show');
+    bar.style.display = 'none';
+    // clear cat/subcat master checks if none
+  }
+}
+function selectNonePartidas() {
+  document.querySelectorAll('.row-check').forEach(c => { c.checked = false; c.closest('tr')?.classList.remove('selected'); });
+  document.querySelectorAll('.cat-select-all, .subcat-master, .subcat-check input').forEach(c=>c.checked=false);
+  updateBulkBarPartidas();
+}
+function selectVisiblePartidas() {
+  document.querySelectorAll('.cat-section').forEach(sec=>{
+    if (sec.style.display==='none') return;
+    sec.querySelectorAll('.subcat-section').forEach(sub=>{
+      if (sub.style.display==='none') return;
+      sub.querySelectorAll('.row-check').forEach(ch=>{
+        const row=ch.closest('tr');
+        if (row && row.style.display!=='none') { ch.checked=true; row.classList.add('selected'); }
+      });
+    });
+  });
+  updateBulkBarPartidas();
+}
+async function deleteAllVisiblePartidas() {
+  const visibleChecks = [];
+  document.querySelectorAll('.partida-tr').forEach(row=>{
+    if (row.style.display==='none') return;
+    if (row.closest('.cat-section')?.style.display==='none') return;
+    if (row.closest('.subcat-section')?.style.display==='none') return;
+    const ch=row.querySelector('.row-check');
+    if (ch) visibleChecks.push(ch.dataset.id);
+  });
+  if (!visibleChecks.length) return alert('No hay partidas visibles.');
+  if (!confirm(`¿Eliminar las ${visibleChecks.length} partidas actualmente visibles? Esta acción es irreversible.`)) return;
+  const fd = new FormData();
+  visibleChecks.forEach(id => fd.append('ids', id));
+  const res = await fetch('/partidas/bulk-delete', {method:'POST', body: fd});
+  if (res.redirected) window.location = res.url;
+  else if (res.ok) window.location.reload();
+  else alert('Error al eliminar');
+}
+async function bulkDeletePartidas() {
+  const ids = Array.from(document.querySelectorAll('.row-check:checked')).map(c => c.dataset.id);
+  if (!ids.length) return;
+  if (!confirm(`¿Eliminar ${ids.length} partidas del catálogo? Esta acción es irreversible.`)) return;
+  const fd = new FormData();
+  ids.forEach(id => fd.append('ids', id));
+  const res = await fetch('/partidas/bulk-delete', { method: 'POST', body: fd });
+  if (res.redirected) window.location = res.url;
+  else if (res.ok) window.location.reload();
+  else alert('Error al eliminar');
+}
+function deleteCategory(cat) {
+  if (!confirm(`¿Eliminar TODAS las partidas de la categoría «${cat}»? Esta acción es irreversible.`)) return;
+  const sec = document.getElementById('group-' + cat.replace(/ /g, '_'));
+  if (!sec) return;
+  const ids = [];
+  sec.querySelectorAll('.row-check').forEach(ch => ids.push(ch.dataset.id));
+  if (!ids.length) { alert('No hay partidas en esa categoría'); return; }
+  const fd = new FormData();
+  ids.forEach(id => fd.append('ids', id));
+  fetch('/partidas/bulk-delete', { method:'POST', body:fd })
+    .then(r => { if (r.redirected) window.location = r.url; else if (r.ok) window.location.reload(); });
+}
+
+async function bulkExportSelectedPartidas() {
+  const ids = Array.from(document.querySelectorAll('.row-check:checked')).map(c => c.dataset.id);
+  if (!ids.length) return alert('Selecciona al menos una partida.');
+  const fd = new FormData();
+  ids.forEach(id => fd.append('ids', id));
+  const res = await fetch('/partidas/bulk-export-selected', { method: 'POST', body: fd });
+  if (res.ok) {
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'partidas_seleccionadas.csv';
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+  } else {
+    alert('Error al exportar');
+  }
+}
+async function bulkMoveCategoryPartidas() {
+  const ids = Array.from(document.querySelectorAll('.row-check:checked')).map(c => c.dataset.id);
+  const newCat = (document.getElementById('move-cat-partidas') || {}).value || '';
+  if (!ids.length || !newCat.trim()) return alert('Selecciona partidas y escribe una categoría destino.');
+  const fd = new FormData();
+  ids.forEach(id => fd.append('ids', id));
+  fd.append('new_category', newCat.trim());
+  const res = await fetch('/partidas/bulk-move-category', { method: 'POST', body: fd });
+  if (res.redirected) window.location = res.url;
+  else if (res.ok) window.location.reload();
+  else alert('Error al mover');
+}
+
+// === MOVE TO SUBCATEGORY ===
+async function bulkMoveSubcategoryPartidas() {
+  const ids = Array.from(document.querySelectorAll('.row-check:checked')).map(c => c.dataset.id);
+  const subcategoria = (document.getElementById('move-subcat-partidas') || {}).value || '';
+  const categorias = [...new Set(Array.from(document.querySelectorAll('.row-check:checked')).map(c => c.closest('.partida-tr')?.dataset.categoria).filter(Boolean))];
+  if (!ids.length || !subcategoria.trim()) return alert('Selecciona partidas y escribe una subcategoría destino.');
+  if (categorias.length !== 1) return alert('Para mover a una subcategoría, selecciona partidas de una única categoría.');
+  await movePartidas(ids, categorias[0], subcategoria.trim());
+}
+async function movePartidas(ids, categoria, subcategoria = null) {
+  const fd = new FormData(); ids.forEach(id => fd.append('ids', id));
+  fd.append('new_category', categoria);
+  if (subcategoria !== null) fd.append('new_subcategory', subcategoria);
+  const res = await fetch(subcategoria === null ? '/partidas/bulk-move-category' : '/partidas/bulk-move-subcategory', {method:'POST', body:fd});
+  if (res.redirected) window.location = res.url;
+  else if (res.ok) window.location.reload();
+  else alert('No se pudo mover la selección.');
+}
+function initDragAndDropPartidas() {
+  document.querySelectorAll('.partida-tr[draggable]').forEach(row => {
+    row.addEventListener('dragstart', event => {
+      let ids = Array.from(document.querySelectorAll('.row-check:checked')).map(c => c.dataset.id);
+      if (!ids.includes(row.dataset.id)) { selectNonePartidas(); const cb=row.querySelector('.row-check'); cb.checked=true; onRowCheck(cb); ids=[row.dataset.id]; }
+      event.dataTransfer.setData('text/plain', JSON.stringify(ids)); event.dataTransfer.effectAllowed='move'; row.classList.add('dragging');
+    });
+    row.addEventListener('dragend', () => row.classList.remove('dragging'));
+  });
+  document.querySelectorAll('.drop-category, .drop-subcategory').forEach(target => {
+    target.addEventListener('dragover', e => { e.preventDefault(); e.dataTransfer.dropEffect='move'; target.classList.add('drag-over'); });
+    target.addEventListener('dragleave', () => target.classList.remove('drag-over'));
+    target.addEventListener('drop', async e => {
+      e.preventDefault(); target.classList.remove('drag-over');
+      let ids=[]; try { ids=JSON.parse(e.dataTransfer.getData('text/plain')); } catch (_) {};
+      if (!ids.length) return;
+      const categoria=target.dataset.cat || target.dataset.categoria || target.closest('.cat-section')?.dataset.categoria;
+      const isSub=target.classList.contains('drop-subcategory');
+      const subcategoria=isSub ? (target.dataset.subcat ?? target.dataset.subcategoria ?? target.closest('.subcat-section')?.dataset.subcategoria ?? '') : null;
+      if (isSub) {
+        const sourceCats=[...new Set(ids.map(id => document.querySelector(`.partida-tr[data-id="${id}"]`)?.dataset.categoria).filter(Boolean))];
+        if (sourceCats.length !== 1 || sourceCats[0] !== categoria) return alert('Una partida solo puede moverse a una subcategoría de su misma categoría. Muévela primero a la categoría destino.');
+      }
+      await movePartidas(ids, categoria, subcategoria);
+    });
+  });
+}
+
+// Sorting
+function makeTableSortable() {
+  document.querySelectorAll('.partidas-table').forEach(table => {
+    const thead = table.querySelector('thead');
+    if (!thead) return;
+    const headers = thead.querySelectorAll('th');
+    headers.forEach((th, idx) => {
+      if (!th.classList.contains('sortable')) return;
+      let asc = true;
+      th.style.cursor = 'pointer';
+      th.title = 'Clic para ordenar';
+      th.addEventListener('click', () => {
+        sortTable(table, idx, asc);
+        asc = !asc;
+        // visual indicator
+        headers.forEach(h=>h.classList.remove('sorted-asc','sorted-desc'));
+        th.classList.add(asc ? 'sorted-desc' : 'sorted-asc');
+      });
+    });
+  });
+}
+function sortTable(table, colIndex, asc) {
+  const tbody = table.querySelector('tbody');
+  if (!tbody) return;
+  // Collect rows in pairs (partida-tr + its descomp-row) to keep them together
+  const rows = [];
+  const trs = Array.from(tbody.children);
+  for (let i=0; i<trs.length; i++) {
+    const tr = trs[i];
+    if (tr.classList.contains('partida-tr')) {
+      const pair = [tr];
+      if (i+1 < trs.length && trs[i+1].classList.contains('descomp-row') && trs[i+1].dataset.parent === tr.dataset.id) {
+        pair.push(trs[i+1]);
+        i++;
+      }
+      rows.push(pair);
+    } else if (tr.classList.contains('descomp-row')) {
+      // orphan descomp, keep with previous?
+      rows.push([tr]);
+    }
+  }
+  rows.sort((a,b)=>{
+    const aCell = a[0].children[colIndex];
+    const bCell = b[0].children[colIndex];
+    if (!aCell || !bCell) return 0;
+    let aVal, bVal;
+    if (aCell.dataset.coste !== undefined) { aVal = aCell.dataset.coste || '0'; bVal = bCell.dataset.coste || '0'; }
+    else if (aCell.dataset.precio !== undefined) { aVal = aCell.dataset.precio || '0'; bVal = bCell.dataset.precio || '0'; }
+    else if (aCell.dataset.usos !== undefined) { aVal = aCell.dataset.usos || '0'; bVal = bCell.dataset.usos || '0'; }
+    else { aVal = (aCell.textContent || '').trim().toLowerCase(); bVal = (bCell.textContent || '').trim().toLowerCase(); }
+    const aNum = parseFloat(String(aVal).replace(/[^\d.,-]/g,'').replace(',', '.')) ?? 0;
+    const bNum = parseFloat(String(bVal).replace(/[^\d.,-]/g,'').replace(',', '.')) ?? 0;
+    const aIsNum = !isNaN(aNum) && String(aVal).match(/[\d]/);
+    const bIsNum = !isNaN(bNum) && String(bVal).match(/[\d]/);
+    if (aIsNum && bIsNum) return asc ? aNum - bNum : bNum - aNum;
+    return asc ? String(aVal).localeCompare(String(bVal),'es') : String(bVal).localeCompare(String(aVal),'es');
+  });
+  rows.forEach(pair=> pair.forEach(r=> tbody.appendChild(r)));
+}
+
+// Init
+document.addEventListener('DOMContentLoaded', () => {
+  // restore sidebar collapsed state
+  const collapsed = localStorage.getItem('partidas-sidebar-collapsed') === 'true';
+  const sidebar=document.getElementById('catSidebar');
+  const expandBtn=document.getElementById('catSidebarExpand');
+  if (collapsed && sidebar && expandBtn) {
+    sidebar.style.display='none';
+    expandBtn.style.display='inline-flex';
+    document.getElementById('catalogLayout')?.classList.add('sidebar-hidden');
+  }
+  // auto-expand first categories? keep all expanded initially
+  document.querySelectorAll('.cat-group.has-subs').forEach(g=>{
+    // expand first two by default for discoverability? Instead keep collapsed initially? Show expanded for active?
+    // We'll expand all that have subs by default to show structure, but not too much
+    // Let's expand all initially
+    g.classList.add('expanded');
+  });
+  document.querySelectorAll('.row-check').forEach(ch => {
+    ch.addEventListener('change', () => onRowCheck(ch));
+  });
+  const busc = document.getElementById('buscador');
+  if (busc) {
+    busc.addEventListener('input', filtrarPartidas);
+  }
+  makeTableSortable();
+  initDragAndDropPartidas();
+  filtrarPartidas();
+});
+</script>
+{% endblock %}

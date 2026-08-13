@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Facturas{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Facturas</h1>
+    <p class="subtitle">Facturas generadas desde presupuestos aprobados</p>
+  </div>
+  <a class="btn" href="/presupuestos">← Ir a presupuestos</a>
+</div>
+
+<div class="card">
+  {% if facturas %}
+  <table class="table">
+    <thead>
+      <tr><th>N.º</th><th>Fecha</th><th>Cliente</th><th>Estado</th><th class="right">Total</th><th class="right">Acciones</th></tr>
+    </thead>
+    <tbody>
+      {% for f in facturas %}
+      <tr>
+        <td><a class="link" href="/facturas/{{ f.id }}">{{ f.numero }}</a></td>
+        <td>{{ f.fecha | fecha }}</td>
+        <td>{{ f.cliente.nombre }}</td>
+        <td><span class="badge badge-{{ f.estado }}">{{ f.estado | capitalize }}</span></td>
+        <td class="right"><strong>{{ f.total | money(f.moneda) }}</strong></td>
+        <td class="right">
+          <div style="display:flex; gap:4px; justify-content:flex-end;">
+            <a class="btn btn-sm" href="/facturas/{{ f.id }}">Ver</a>
+            <a class="btn btn-sm" href="/facturas/{{ f.id }}/pdf" download="factura_{{ f.numero }}.pdf" onclick="descargarPDF(event, this.href, 'factura_{{ f.numero }}.pdf')">PDF</a>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty">Todavía no hay facturas. Cuando un presupuesto esté en estado <strong>aprobado</strong>,
+    ábrelo y pulsa «🧾 Facturar» para convertirlo en factura.</p>
+  {% endif %}
+</div>
+{% endblock %}

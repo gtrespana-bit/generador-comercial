@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Búsqueda global{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Búsqueda global</h1>
+    <p class="subtitle">Encuentra clientes, documentos, catálogos, plantillas y notas desde un solo lugar.</p>
+  </div>
+</div>
+
+<form method="get" action="/buscar" class="global-search-form">
+  <input type="search" name="q" value="{{ q }}" placeholder="Cliente, número, partida, SKU, proveedor, nota…" autofocus>
+  <button type="submit" class="btn btn-primary">🔍 Buscar</button>
+</form>
+
+{% if consulta %}
+<p class="search-summary"><strong>{{ total }}</strong> resultado(s) para «{{ consulta }}».</p>
+{% if total %}
+<div class="search-grid">
+  {% if resultados.clientes %}
+  <section class="card search-group"><div class="search-group-head"><h2>👥 Clientes</h2><span class="badge">{{ resultados.clientes | length }}</span></div>
+    {% for cliente in resultados.clientes %}<a class="search-result" href="/clientes/{{ cliente.id }}/editar"><strong>{{ cliente.nombre }}</strong><small>{{ cliente.rif or 'Sin RIF' }}{% if cliente.telefono %} · {{ cliente.telefono }}{% endif %}{% if cliente.email %} · {{ cliente.email }}{% endif %}</small></a>{% endfor %}
+  </section>{% endif %}
+
+  {% if resultados.presupuestos %}
+  <section class="card search-group"><div class="search-group-head"><h2>📄 Presupuestos</h2><span class="badge">{{ resultados.presupuestos | length }}</span></div>
+    {% for p in resultados.presupuestos %}<a class="search-result" href="/presupuestos/{{ p.id }}"><strong>{{ p.numero }}{% if p.titulo %} · {{ p.titulo }}{% endif %}</strong><small>{{ p.cliente.nombre }} · {{ p.estado | capitalize }} · {{ p.total | money(p.moneda) }}</small></a>{% endfor %}
+  </section>{% endif %}
+
+  {% if resultados.facturas %}
+  <section class="card search-group"><div class="search-group-head"><h2>🧾 Facturas</h2><span class="badge">{{ resultados.facturas | length }}</span></div>
+    {% for factura in resultados.facturas %}<a class="search-result" href="/facturas/{{ factura.id }}"><strong>{{ factura.numero }}{% if factura.titulo %} · {{ factura.titulo }}{% endif %}</strong><small>{{ factura.cliente.nombre }} · {{ factura.estado | capitalize }} · {{ factura.total | money(factura.moneda) }}</small></a>{% endfor %}
+  </section>{% endif %}
+
+  {% if resultados.partidas %}
+  <section class="card search-group"><div class="search-group-head"><h2>📋 Partidas</h2><span class="badge">{{ resultados.partidas | length }}</span></div>
+    {% for partida in resultados.partidas %}<a class="search-result" href="/partidas/{{ partida.id }}/editar"><strong>{{ partida.nombre }}</strong><small>{% if partida.codigo_interno %}{{ partida.codigo_interno }} · {% endif %}{{ partida.categoria }}{% if partida.subcategoria %} · {{ partida.subcategoria }}{% endif %} · {{ partida.precio_unitario | money }}</small></a>{% endfor %}
+  </section>{% endif %}
+
+  {% if resultados.productos %}
+  <section class="card search-group"><div class="search-group-head"><h2>🛍️ Productos</h2><span class="badge">{{ resultados.productos | length }}</span></div>
+    {% for producto in resultados.productos %}<a class="search-result" href="/productos/{{ producto.id }}/editar"><strong>{{ producto.nombre }}</strong><small>{% if producto.marca %}{{ producto.marca }}{% if producto.modelo %} · {{ producto.modelo }}{% endif %} · {% endif %}{% if producto.sku %}{{ producto.sku }} · {% endif %}{{ producto.precio_unitario | money }}</small></a>{% endfor %}
+  </section>{% endif %}
+
+  {% if resultados.plantillas %}
+  <section class="card search-group"><div class="search-group-head"><h2>🧩 Plantillas</h2><span class="badge">{{ resultados.plantillas | length }}</span></div>
+    {% for plantilla in resultados.plantillas %}<a class="search-result" href="/plantillas"><strong>{{ plantilla.nombre }}</strong><small>Plantilla reutilizable de presupuesto</small></a>{% endfor %}
+  </section>{% endif %}
+
+  {% if resultados.recetas %}
+  <section class="card search-group"><div class="search-group-head"><h2>⚡ Packs de Estancia</h2><span class="badge">{{ resultados.recetas | length }}</span></div>
+    {% for rec in resultados.recetas %}<a class="search-result" href="/recetas/{{ rec.id }}/editar"><strong>{{ rec.nombre }}</strong><small>Pack de estancia · Categoría: {{ rec.categoria }} · Medida base: {{ rec.cantidad_base_default }} {{ rec.unidad_base }}</small></a>{% endfor %}
+  </section>{% endif %}
+
+  {% if resultados.notas %}
+  <section class="card search-group"><div class="search-group-head"><h2>🗒️ Notas internas</h2><span class="badge">{{ resultados.notas | length }}</span></div>
+    {% for nota in resultados.notas %}<a class="search-result" href="/presupuestos/{{ nota.presupuesto.id }}#notas"><strong>{{ nota.presupuesto.numero }}{% if nota.presupuesto.titulo %} · {{ nota.presupuesto.titulo }}{% endif %}</strong><small>{{ nota.texto }}</small></a>{% endfor %}
+  </section>{% endif %}
+</div>
+{% else %}
+<div class="card empty"><p>No hay coincidencias. Prueba con otro nombre, número, SKU o palabra de la descripción.</p></div>
+{% endif %}
+{% else %}
+<div class="card empty"><p>Escribe al menos una palabra para buscar en todo el sistema.</p></div>
+{% endif %}
+{% endblock %}

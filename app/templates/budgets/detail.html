@@ -1,0 +1,317 @@
+{% extends "base.html" %}
+{% block title %}Presupuesto {{ p.numero }}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <p class="crumb">📄 <a href="/presupuestos">Presupuestos</a> › {{ p.numero }}</p>
+    <h1>Presupuesto {{ p.numero }}</h1>
+    <p class="subtitle">{% if p.titulo %}{{ p.titulo }} · {% endif %}Creado el {{ p.created_at.strftime('%d/%m/%Y %H:%M') if p.created_at else '' }}</p>
+  </div>
+  <div class="actions">
+    {% set wa = p.cliente.telefono | whatsapp('Hola ' ~ p.cliente.nombre ~ ', te comparto el presupuesto ' ~ p.numero ~ ' (' ~ (p.titulo or '') ~ ') por un total de ' ~ (p.total | money(p.moneda)) ~ '. Validez de la oferta: ' ~ p.validez_dias ~ ' días.') %}
+    {% if wa %}<a class="btn btn-whatsapp" href="{{ wa }}" target="_blank">💬 Enviar por WhatsApp</a>{% endif %}
+    <a class="btn" href="/presupuestos/{{ p.id }}/exportar" title="Descargar CSV con el detalle tabular">📥 CSV</a>
+    <button class="btn" type="button" onclick="imprimirPDF('/presupuestos/{{ p.id }}/pdf?inline=1')" title="Imprimir presupuesto en formato PDF">🖨️ Imprimir</button>
+    <a class="btn btn-primary" href="/presupuestos/{{ p.id }}/pdf" download="presupuesto_{{ p.numero }}.pdf" onclick="descargarPDF(event, this.href, 'presupuesto_{{ p.numero }}.pdf')">⬇ Descargar PDF</a>
+    <a class="btn" href="/presupuestos/{{ p.id }}/pdf?inline=1" target="_blank">👁 Ver PDF</a>
+    <a class="btn" href="/presupuestos/{{ p.id }}/tiempos" title="Estimación de horas y días laborables según los rendimientos de las partidas">⏱ Tiempo de obra</a>
+    <a class="btn" href="/presupuestos/{{ p.id }}/editar">✏️ Editar</a>
+    <a class="btn" href="/presupuestos/nuevo" title="Crear otro presupuesto">+ Nuevo</a>
+    {% if p.estado == 'aprobado' %}
+    <form method="post" action="/presupuestos/{{ p.id }}/proyecto" class="inline"><button class="btn" type="submit" title="Crear obra y control financiero">🏗️ Convertir en proyecto</button></form>
+    <form method="post" action="/presupuestos/{{ p.id }}/factura" class="inline">
+      <button class="btn" type="submit" title="Convertir este presupuesto aprobado en factura">🧾 Facturar</button>
+    </form>
+    {% endif %}
+    <form method="post" action="/presupuestos/{{ p.id }}/duplicar" class="inline">
+      <button class="btn" type="submit">📋 Duplicar</button>
+    </form>
+    <form method="post" action="/presupuestos/{{ p.id }}/eliminar" class="inline" onsubmit="return confirm('¿Eliminar este presupuesto?');">
+      <button class="btn btn-danger" type="submit">🗑 Eliminar</button>
+    </form>
+  </div>
+</div>
+<div class="card" style="margin-bottom: 24px; padding: 1.5rem; border-left: 4px solid var(--accent);">
+  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <h2 style="font-size: 1rem; font-weight: 600; margin: 0 0 0.5rem 0; color: var(--text);">Resumen del presupuesto</h2>
+        <p style="color: var(--text-soft); font-size: 0.9rem; line-height: 1.6; margin: 0; max-width: 640px;">
+          {% set con_costos = p.todas_partidas | selectattr('tiene_costes') | list %}
+          {% if con_costos %}
+          Margen de beneficio (según los costos internos cargados en {{ con_costos | length }} de {{ p.todas_partidas | length }} partida(s)):
+          {% if p.total_productos %}
+          obra <strong style="color: var(--text);">{{ p.margen_obra_pct }}%</strong> ({{ p.margen_obra | money(p.moneda) }}) · productos <strong style="color: var(--text);">{{ p.margen_productos_pct }}%</strong> ({{ p.margen_productos | money(p.moneda) }}) · total <strong style="color: var(--text);">{{ p.margen_pct }}%</strong> ({{ p.margen | money(p.moneda) }}). El total de productos asciende a <strong style="color: var(--text);">{{ p.total_productos | money(p.moneda) }}</strong>.
+          {% else %}
+          <strong style="color: var(--text);">{{ p.margen_pct }}%</strong> ({{ p.margen | money(p.moneda) }} sobre un costo interno de {{ p.coste_interno | money(p.moneda) }}).
+          {% endif %}
+          {% else %}
+          Sin margen calculable: ninguna partida de este presupuesto tiene costos internos (materiales/mano de obra) cargados todavía.
+          {% endif %}
+          <br>
+          {% if tiempos and tiempos.n_partidas_activas %}
+          ⏱ Planificación: <strong style="color: var(--text);">{{ "%.1f"|format(tiempos.total_mano_obra_h) }} h-hombre</strong> (👷‍♂️ {{ "%.1f"|format(tiempos.total_oficial_h) }} h oficial + 🧑‍🔧 {{ "%.1f"|format(tiempos.total_ayudante_h) }} h ayudante{% if tiempos.total_equipos_h %} + 🛠 {{ "%.1f"|format(tiempos.total_equipos_h) }} h equipos{% endif %}) · <strong style="color: var(--text);">{{ "%.1f"|format(tiempos.total_dias_duracion) }} días críticos</strong> <span class="hint">/ {{ "%.1f"|format(tiempos.total_dias) }} días h-hombre</span> ({{ tiempos.n_con_datos }}/{{ tiempos.n_partidas_activas }} con datos{% if sin_datos_tiempo is defined and sin_datos_tiempo %}{% else %}{% if tiempos.n_partidas_activas - tiempos.n_con_datos %} · ⚠ {{ tiempos.n_partidas_activas - tiempos.n_con_datos }} sin datos{% endif %}{% endif %}) · <a class="link" href="/presupuestos/{{ p.id }}/tiempos">📊 Planificar &amp; asignar horas</a>.
+          <br>
+          {% endif %}
+          Vigencia de la oferta: vence el <strong style="color: var(--text);">{{ fecha_vencimiento | fecha }}</strong>
+          {% if dias_restantes > 0 %}({{ dias_restantes }} día(s) restantes){% elif dias_restantes == 0 %}(vence hoy){% else %}<strong style="color: var(--rose);">(vencida hace {{ -dias_restantes }} día(s))</strong>{% endif %}.
+        </p>
+      </div>
+      <div class="actions" style="margin:0;">
+        <a class="btn" href="/presupuestos/{{ p.id }}/contrato?inline=1" target="_blank" title="Genera un contrato de servicios real en PDF con los datos de este presupuesto">📄 Ver contrato</a>
+        <a class="btn btn-ai" href="/presupuestos/{{ p.id }}/contrato" download="contrato_{{ p.numero }}.pdf" onclick="descargarPDF(event, this.href, 'contrato_{{ p.numero }}.pdf')">⬇ Descargar contrato</a>
+      </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="form-grid">
+    <div>
+      <h2>Cliente</h2>
+      <p><strong>{{ p.cliente.nombre }}</strong></p>
+      {% if p.cliente.rif %}<p class="muted">RIF/C.I.: {{ p.cliente.rif }}</p>{% endif %}
+      {% if p.cliente.pais %}<p class="muted">País: {{ p.cliente.pais }}</p>{% endif %}
+      {% if p.cliente.telefono %}<p class="muted">📞 {{ p.cliente.telefono }}</p>{% endif %}
+      {% if p.cliente.email %}<p class="muted">✉️ {{ p.cliente.email }}</p>{% endif %}
+    </div>
+    <div>
+      <h2>Datos</h2>
+      <p class="muted">Fecha: <strong>{{ p.fecha | fecha }}</strong></p>
+      {% if p.direccion_obra %}<p class="muted">Obra: <strong>{{ p.direccion_obra }}</strong>{% if p.codigo_postal %} (CP {{ p.codigo_postal }}){% endif %}</p>{% endif %}
+      <p class="muted">Validez: <strong>{{ p.validez_dias }} días</strong></p>
+      <p class="muted">Moneda: <strong>{{ p.moneda }}</strong>{% if p.tipo_cambio and p.moneda == 'USD' %} <span class="hint">(1 USD = {{ p.tipo_cambio | num }} Bs)</span>{% endif %}</p>
+      <p class="muted">IVA: <strong>{{ p.impuesto_pct | round(2) }}%</strong> · Descuento: <strong>{{ p.descuento_pct | round(2) }}%</strong></p>
+      <p><span class="badge badge-{{ p.estado }}">{{ p.estado | capitalize }}</span></p>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <h2>Capítulos y partidas</h2>
+    <form method="post" action="/presupuestos/{{ p.id }}/estado" class="inline">
+      <select name="estado" class="select-inline">
+        {% for e in estados %}
+        <option value="{{ e }}" {{ 'selected' if p.estado == e else '' }}>{{ e | capitalize }}</option>
+        {% endfor %}
+      </select>
+      <button class="btn btn-sm" type="submit">Cambiar estado</button>
+    </form>
+  </div>
+
+  {% for cap in p.capitulos %}
+  <div class="doc-capitulo-banda"></div>
+  <div class="doc-capitulo">
+    <span>{{ cap.nombre }}</span>
+    <span>{{ cap.subtotal | money(p.moneda) }}</span>
+  </div>
+  {% for part in cap.partidas %}
+  <div class="doc-partida">
+    <table class="table" style="margin-bottom:0;">
+      <tr>
+        <td>
+          <div class="doc-p-nombre">{% if part.codigo_externo %}<span class="hint">{{ part.codigo_externo }} · </span>{% endif %}{{ part.nombre }}</div>
+          {% if part.descripcion %}<div class="doc-p-desc">{{ part.descripcion }}</div>{% endif %}
+          {% if part.descomposicion_cype %}
+          {% if part.descomposicion_cype.origen == 'manual' %}
+          <div class="cype-origin-note">🧮 Descomposición de costes: {{ part.descomposicion_cype.filas | length }} filas de recursos · <a class="link" href="/presupuestos/{{ p.id }}/partidas/{{ part.id }}/descomposicion">Ver costes</a></div>
+          {% else %}
+          <div class="cype-origin-note">📐 Descompuesto CYPE: {{ part.descomposicion_cype.filas | length }} filas y {{ part.descomposicion_cype.columnas | length }} columnas conservadas · <a class="link" href="/presupuestos/{{ p.id }}/partidas/{{ part.id }}/descomposicion">Ver matriz y costes</a>{% if part.descomposicion_cype.archivo_origen %} · <a class="link" href="/static/uploads/{{ part.descomposicion_cype.archivo_origen }}" download>Descargar Excel original</a>{% endif %}</div>
+          {% endif %}
+          {% endif %}
+        </td>
+        <td class="right" style="width:90px; font-weight:600;">{{ part.cantidad_total | cant(part.unidad) }}</td>
+        <td class="right" style="width:110px;">{{ part.precio_unitario | num }} {{ p.moneda | replace('USD','$') | replace('Bs','Bs') }}/{{ part.unidad }}</td>
+        <td class="right" style="width:110px; font-weight:700;">{{ part.importe | money(p.moneda) }}</td>
+        <td class="right" style="width:150px;">
+          {% set tp = tiempos_por_partida.get(part.id) if tiempos_por_partida else none %}
+          {% if tp %}
+            {% if tp.fuente == 'manual' %}
+              <span class="tiempo-chip tiempo-chip-manual" title="✏ Manual · {{ '%.3f'|format(tp.horas_por_unidad) }} h/ud ({{ '%.2f'|format(tp.oficial_por_unidad) }} of. + {{ '%.2f'|format(tp.ayudante_por_unidad) }} ay.)">✏ {{ "%.1f"|format(tp.horas) }} h · {{ "%.1f"|format(tp.oficial_h) }}+{{ "%.1f"|format(tp.ayudante_h) }}</span>
+            {% else %}
+              <span class="tiempo-chip" title="{{ tp.fuente_etiqueta }} · {{ '%.3f'|format(tp.horas_por_unidad) }} h/ud · 👷 {{ '%.2f'|format(tp.oficial_por_unidad) }} of. + 🧑 {{ '%.2f'|format(tp.ayudante_por_unidad) }} ay. por {{ part.unidad }}">{{ "%.1f"|format(tp.horas) }} h<span class="hint" style="font-weight:500;"> · {{ "%.1f"|format(tp.oficial_h) }}+{{ "%.1f"|format(tp.ayudante_h) }}</span></span>
+            {% endif %}
+            {% if tp.duracion_h and tp.duracion_h != tp.horas %}<br><small class="hint" title="Duración crítica (paralela) de la partida">{{ "%.1f"|format(tp.duracion_h) }} h críticos</small>{% endif %}
+          {% elif part.descomposicion_cype %}
+            <span class="tiempo-chip tiempo-chip-vacio" title="El descompuesto no tiene filas con unidad de tiempo (h, día…).">⏱ —</span> <a class="link" href="/presupuestos/{{ p.id }}/tiempos" style="font-size:0.72rem;">Asignar</a>
+          {% else %}
+            <span class="hint">—</span> <a class="link" href="/presupuestos/{{ p.id }}/tiempos" style="font-size:0.72rem;">Asignar</a>
+          {% endif %}
+        </td>
+      </tr>
+    </table>
+    {% if part.mediciones %}
+    <table class="doc-mediciones" style="width:100%;">
+      {% for m in part.mediciones %}
+      <tr>
+        <td style="text-align:right; color:var(--text-soft);">{{ m.concepto or '–' }}</td>
+        <td class="right" style="width:90px;">{{ m.cantidad | cant(part.unidad) }}</td>
+        <td class="right" style="width:110px;">—</td>
+        <td class="right" style="width:110px;">{{ (m.cantidad * part.precio_unitario) | money(p.moneda) }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+    {% endif %}
+    {% if part.tiene_producto %}
+    {% set pm = part.productos_multiples %}
+    {% if pm and pm | length > 1 %}
+    <div class="doc-prod-multiples" style="margin-top:10px; padding:12px; border:1px solid var(--border); border-radius:10px; background:var(--bg-soft);">
+      <div style="font-weight:700; font-size:.88rem; margin-bottom:8px; color:var(--text);">📦 Opciones de producto a elegir:</div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:10px;">
+        {% set eleg = part.indice_producto_elegido %}
+        {% for op in pm %}
+        {% set es_sel = (loop.index0 == eleg) %}
+        <div style="border:1px solid {{ 'var(--accent)' if es_sel else 'var(--border)' }}; border-radius:8px; padding:10px; background:{{ 'var(--surface)' if es_sel else 'var(--bg)' }}; box-shadow:{{ '0 0 0 1px var(--accent)' if es_sel else 'none' }};">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <span style="font-size:.72rem; font-weight:700; padding:2px 8px; border-radius:4px; {{ 'background:var(--accent); color:#fff;' if es_sel else 'background:var(--bg-soft); color:var(--text-soft); border:1px solid var(--border);' }}">
+              {{ '✓ SELECCIONADO' if es_sel else 'OPCIÓN ' ~ loop.index }}
+            </span>
+            {% set op_precio = op.precio if op.precio is defined and op.precio is not none else op.producto_precio %}
+            {% set op_unidad = op.unidad if op.unidad is defined and op.unidad else (op.producto_unidad or part.unidad) %}
+            {% if op_precio is not none %}
+            <strong style="font-size:.85rem; color:var(--accent);">{{ op_precio | num }} {{ p.moneda | replace('USD','$') }} / {{ op_unidad }}</strong>
+            {% endif %}
+          </div>
+          {% set op_nombre = op.nombre if op.nombre is defined and op.nombre else op.producto_nombre %}
+          {% set op_imagen = op.imagen if op.imagen is defined and op.imagen else op.producto_imagen %}
+          <div style="font-weight:600; font-size:.85rem; color:var(--text); margin-bottom:4px;">{{ op_nombre }}</div>
+          {% set op_marca = op.marca if op.marca is defined else '' %}
+          {% set op_modelo = op.modelo if op.modelo is defined else '' %}
+          {% set op_color = op.color if op.color is defined else '' %}
+          {% set op_acabado = op.acabado if op.acabado is defined else '' %}
+          {% set specs = [op_marca, op_modelo, op_color, op_acabado] | select | join(' · ') %}
+          {% if specs %}<div style="font-size:.75rem; color:var(--text-soft); margin-bottom:6px;">{{ specs }}</div>{% endif %}
+          {% if op_imagen %}
+          <div style="width:100%; height:90px; border-radius:6px; overflow:hidden; border:1px solid var(--border); background:#fff; margin-top:6px;">
+            <img src="/static/{{ op_imagen }}" alt="{{ op_nombre }}" style="width:100%; height:100%; object-fit:cover;">
+          </div>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% else %}
+    <div class="doc-prod">
+      <strong>Producto presupuestado:</strong>
+      {% if part.producto_precio is not none %}<strong>{{ part.producto_precio | num }} {{ p.moneda | replace('USD','$') }} / {{ part.producto_unidad or part.unidad }}</strong>&nbsp;&nbsp;{% endif %}
+      <em class="muted">{{ part.producto_nombre }}</em>
+      {% if part.producto_imagen %}<br><img src="/static/{{ part.producto_imagen }}" alt="Producto">{% endif %}
+    </div>
+    {% endif %}
+    {% endif %}
+    {% if part.tiene_costes %}
+    <div class="hint" style="margin-top:6px; font-size:.76rem; background:var(--green-soft); border:1px solid rgba(5,150,105,.15); padding:4px 8px; border-radius:6px; display:inline-block;">
+      Coste: {{ part.coste | money(p.moneda) }} · Beneficio: {{ part.beneficio | money(p.moneda) }} ({{ "%.1f"|format((part.beneficio/part.coste*100) if part.coste else 0) }}% s/coste, {{ part.margen_beneficio_pct | num }}% margen)
+    </div>
+    {% endif %}
+  </div>
+  {% endfor %}
+  <div style="height: 14px;"></div>
+  {% endfor %}
+
+  <table class="table doc-totales" style="width:100%;">
+    <tr><td class="right" style="width:70%;">SUBTOTAL INCLUIDO</td><td class="right">{{ p.subtotal | money(p.moneda) }}</td></tr>
+    {% if p.usar_funciones_avanzadas and p.subtotal_opcional %}<tr><td class="right">OPCIONALES DISPONIBLES</td><td class="right">{{ p.subtotal_opcional | money(p.moneda) }}</td></tr>{% endif %}
+    {% if p.usar_funciones_avanzadas and p.subtotal_alternativas %}<tr><td class="right">ALTERNATIVAS DISPONIBLES</td><td class="right">{{ p.subtotal_alternativas | money(p.moneda) }}</td></tr>{% endif %}
+    {% if p.usar_funciones_avanzadas and p.costes_adicionales %}<tr><td class="right">COSTES ADICIONALES</td><td class="right">{{ p.costes_adicionales | money(p.moneda) }}</td></tr>{% endif %}
+    {% if p.total_productos %}<tr><td class="right">TOTAL OBRA / PARTIDAS</td><td class="right">{{ p.subtotal_obra | money(p.moneda) }}</td></tr><tr><td class="right">TOTAL PRODUCTOS</td><td class="right">{{ p.total_productos | money(p.moneda) }}</td></tr>{% endif %}
+    {% set mostrar_margenes = cfg.mostrar_costes_internos or con_costos %}
+    {% if mostrar_margenes %}
+      <tr><td class="right">COSTE INTERNO (uso interno)</td><td class="right">{{ p.coste_interno | money(p.moneda) }}</td></tr>
+      {% if p.total_productos %}
+      <tr><td class="right">BENEFICIO OBRA</td><td class="right" style="color:var(--green); font-weight:600;">{{ p.margen_obra | money(p.moneda) }} ({{ p.margen_obra_pct | num }} %)</td></tr>
+      <tr><td class="right">BENEFICIO PRODUCTOS</td><td class="right" style="color:var(--green); font-weight:600;">{{ p.margen_productos | money(p.moneda) }} ({{ p.margen_productos_pct | num }} %)</td></tr>
+      {% endif %}
+      <tr><td class="right">BENEFICIO TOTAL ESTIMADO</td><td class="right" style="color:var(--green); font-weight:600;">{{ p.margen | money(p.moneda) }}</td></tr>
+      <tr><td class="right">MARGEN TOTAL</td><td class="right" style="color:var(--green); font-weight:600;">{{ p.margen_pct | num }} %</td></tr>
+    {% endif %}
+    <tr><td class="right" style="width:70%;">BASE IMPONIBLE</td><td class="right">{{ p.base | money(p.moneda) }}</td></tr>
+    {% if p.descuento_pct %}
+    <tr><td class="right">DESCUENTO ({{ p.descuento_pct | round(2) }} %)</td><td class="right">- {{ p.descuento_monto | money(p.moneda) }}</td></tr>
+    {% endif %}
+    <tr><td class="right">I.V.A. ({{ p.impuesto_pct | round(2) }} %)</td><td class="right">{{ p.impuesto_monto | money(p.moneda) }}</td></tr>
+    <tr class="row-total"><td class="right"><strong>PRESUPUESTO TOTAL</strong></td><td class="right"><strong>{{ p.total | money(p.moneda) }}</strong></td></tr>
+  </table>
+</div>
+
+<div class="card no-print" id="versiones">
+  <div class="card-head"><div><h2>📌 Versiones congeladas</h2><p class="hint">Las versiones guardan el contenido y total exactos en ese momento.</p></div></div>
+  <form method="post" action="/presupuestos/{{ p.id }}/versiones" class="form-actions" style="align-items:end;">
+    <div class="field" style="flex:1"><label>Motivo (opcional)</label><input name="motivo" maxlength="500" placeholder="p. ej. Propuesta comercial enviada al cliente"></div><button class="btn" type="submit">❄️ Congelar versión</button>
+  </form>
+  {% if versiones %}
+  <table class="table"><thead><tr><th>Versión</th><th>Fecha</th><th>Estado</th><th>Motivo</th><th class="right">Total</th><th></th></tr></thead><tbody>{% for v in versiones %}<tr><td><strong>V{{ v.numero_version }}</strong></td><td>{{ v.fecha.strftime('%d/%m/%Y %H:%M') if v.fecha else '' }}</td><td>{{ v.estado | replace('_',' ') | capitalize }}</td><td>{{ v.motivo or '—' }}</td><td class="right">{{ v.total | money(p.moneda) }}</td><td><a class="link" href="/presupuestos/{{ p.id }}/versiones/{{ v.id }}">Ver</a></td></tr>{% endfor %}</tbody></table>
+  {% if versiones|length > 1 %}<form method="get" action="/presupuestos/{{ p.id }}/versiones/comparar" class="inline" style="margin-top:10px"><label>Comparar</label><select name="a">{% for v in versiones %}<option value="{{ v.id }}">V{{ v.numero_version }}</option>{% endfor %}</select><span>con</span><select name="b">{% for v in versiones %}<option value="{{ v.id }}" {{ 'selected' if loop.index == 2 else '' }}>V{{ v.numero_version }}</option>{% endfor %}</select><button class="btn btn-sm" type="submit">Comparar</button></form>{% endif %}
+  {% else %}<p class="empty">Aún no hay versiones. Se crea una automáticamente al enviar o aprobar el presupuesto.</p>{% endif %}
+</div>
+
+<div class="card no-print" id="anexos">
+  <h2>📎 Anexos del documento</h2><p class="hint">Añade fichas técnicas, planos, fotografías convertidas a PDF o documentos de proveedores. El PDF principal muestra su índice cuando activas esa opción en Editar.</p>
+  <form method="post" action="/presupuestos/{{ p.id }}/anexos" enctype="multipart/form-data" class="form-actions"><input name="nombre" placeholder="Nombre visible del anexo" style="flex:1"><input type="file" name="archivo" accept="application/pdf" required><button class="btn btn-sm" type="submit">Añadir PDF</button></form>
+  {% if p.anexos %}<ul>{% for a in p.anexos %}<li><a class="link" target="_blank" href="/static/{{ a.archivo }}">{{ a.nombre }}</a> <form class="inline" method="post" action="/presupuestos/{{ p.id }}/anexos/{{ a.id }}/eliminar" onsubmit="return confirm('¿Eliminar anexo?')"><button class="btn btn-sm btn-danger" type="submit">Eliminar</button></form></li>{% endfor %}</ul>{% endif %}
+</div>
+
+{% if p.notas %}
+<div class="card">
+  <h2>Información adicional</h2>
+  <p class="prewrap">{{ p.notas }}</p>
+</div>
+{% endif %}
+{% if p.condiciones %}
+<div class="card">
+  <h2>Condiciones del presupuesto</h2>
+  <p class="prewrap">{{ p.condiciones }}</p>
+</div>
+{% endif %}
+
+{% if p.mostrar_garantias %}
+<div class="card" id="garantias-obra">
+  <div class="card-head">
+    <div style="display:flex; align-items:center; gap:8px;">
+      <h2 style="margin:0;">🛡️ Garantías de la obra</h2>
+    </div>
+    <span class="badge badge-aprobado">Garantía por tipo de trabajo</span>
+  </div>
+  <p class="hint" style="margin-top:-0.25rem; margin-bottom:1rem;">
+    Plazos sobre la <strong>ejecución e instalación</strong> de los trabajos incluidos en este presupuesto, agrupados por tipo de obra. Los materiales, luminarias, grifería y equipos conservan la garantía de su fabricante.
+  </p>
+  
+  {% set familias = p.garantias_familias %}
+  {% if familias %}
+  <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:1.25rem;">
+    {% for fam in familias %}
+    <div style="border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: var(--radius-sm); padding: 0.85rem 1rem; background: var(--surface);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.35rem; flex-wrap:wrap; gap:0.5rem;">
+        <strong style="color: var(--text); font-size: 0.92rem; text-transform: uppercase;">{{ fam.grupo }}</strong>
+        <span class="badge" style="background: var(--accent-soft); color: var(--accent); font-weight: 700; font-size: 0.82rem; padding: 0.2rem 0.6rem; border-radius: 999px;">{{ fam.plazo }}</span>
+      </div>
+      <p style="color: var(--text-soft); font-size: 0.85rem; line-height: 1.5; margin: 0;">{{ fam.alcance }}</p>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  
+  <div style="background: var(--surface-alt); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.85rem 1rem; font-size: 0.82rem; color: var(--text-muted); line-height: 1.5;">
+    <strong style="color: var(--text);">Nota legal:</strong> {{ p.garantias_nota_legal }}
+  </div>
+</div>
+{% endif %}
+
+<div class="card no-print" id="notas">
+  <h2>📝 Notas de seguimiento</h2>
+  <p class="hint" style="margin-top:-0.25rem; margin-bottom:0.6rem;">Apuntes internos sobre este presupuesto (llamadas, cambios, acuerdos…). No aparecen en el PDF.</p>
+  <form method="post" action="/presupuestos/{{ p.id }}/notas" style="display:flex; gap:8px; align-items:center;">
+    <input type="text" name="texto" placeholder="Escribe una nota…" required style="flex:1;" maxlength="500">
+    <button class="btn btn-primary btn-sm" type="submit">Añadir</button>
+  </form>
+  {% if p.notas_seguimiento %}
+  <div class="notas-lista">
+    {% for n in p.notas_seguimiento %}
+    <div class="nota-item">
+      <span class="nota-fecha">{{ n.created_at.strftime('%d/%m/%Y %H:%M') if n.created_at else '' }}</span>
+      <p>{{ n.texto }}</p>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

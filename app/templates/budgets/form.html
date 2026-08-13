@@ -1,0 +1,1065 @@
+{% extends "base.html" %}
+{% from "partidas/_editor.html" import editor_partida_catalogo %}
+{% block title %}{{ 'Editar presupuesto' if presupuesto else 'Nuevo presupuesto' }}{% endblock %}
+
+{% block content %}
+<div class="page-head budget-editor-head">
+  <div>
+    <span class="page-eyebrow">{{ 'Presupuesto ' ~ presupuesto.numero if presupuesto else 'Nuevo documento' }}</span>
+    <h1>{{ 'Editar presupuesto' if presupuesto else 'Crear presupuesto' }}</h1>
+    <p class="subtitle">Organiza capítulos, edita partidas con su ficha técnica completa y comprueba el total sin salir del documento.</p>
+  </div>
+  <div class="budget-head-status"><span class="status-dot"></span>{{ presupuesto.estado|replace('_', ' ')|capitalize if presupuesto else 'Borrador nuevo' }}</div>
+</div>
+
+<nav class="builder-progress" aria-label="Secciones del creador">
+  <button type="button" data-scroll-builder="card-datos-generales"><span>1</span><strong>Datos</strong><small>Cliente y documento</small></button>
+  <button type="button" data-scroll-builder="builder-partidas" class="active"><span>2</span><strong>Partidas</strong><small>Capítulos y costes</small></button>
+  <button type="button" data-scroll-builder="builder-resumen"><span>3</span><strong>Revisión</strong><small>Totales y condiciones</small></button>
+</nav>
+
+<form method="post" id="form-presupuesto" class="budget-builder" enctype="multipart/form-data"
+      action="{{ '/presupuestos/' ~ presupuesto.id ~ '/editar' if presupuesto else '/presupuestos/nuevo' }}">
+  <input type="hidden" name="estructura_json" id="estructura-json" value="">
+
+  <!-- TOTAL EN VIVO (barra fija mientras editas) -->
+  <div class="sticky-total builder-command-bar">
+    <div class="builder-total-live"><span>Total actual</span><strong id="sticky-total-val">—</strong></div>
+    <div class="builder-command-actions">
+      <button type="button" id="btn-ai-dictation" class="btn btn-sm" title="Dictar en el campo activo">🎙 Dictar</button>
+      <button type="button" class="btn btn-sm btn-ai" id="btn-abrir-generador" title="Genera un borrador desde tu catálogo">✨ Autogenerar</button>
+      <button type="button" class="btn btn-sm" id="btn-modal-receta" title="Alt+R — Inserta habitaciones enteras de reforma escaladas al tamaño de tu estancia" style="background:var(--primary-light); color:var(--primary); font-weight:600;">⚡ Pack de Estancia (Alt+R)</button>
+      <button type="button" class="btn btn-sm iva-toggle-btn" id="btn-toggle-iva-top" title="Activar o desactivar el IVA de este presupuesto">💱 IVA: ON</button>
+      <button type="button" class="btn btn-sm" id="btn-preview-pdf-top" title="Vista previa del documento">👁 Vista previa</button>
+    </div>
+    <span class="toolbar-hint builder-shortcuts"><kbd>?</kbd> atajos · <kbd>Ctrl</kbd>+<kbd>Enter</kbd> guardar</span>
+  </div>
+
+  <!-- DATOS GENERALES -->
+  <div class="card collapsible-card builder-general-card" id="card-datos-generales">
+    <div class="card-header-toggle" onclick="toggleDatosGenerales()" style="display:flex; justify-content:space-between; align-items:center; cursor:pointer; user-select:none; padding: 2px 4px;">
+      <div style="display:flex; align-items:center; flex-wrap:wrap; gap:12px; width: 100%;">
+        <h2 style="margin:0; font-size:1.15rem; display:flex; align-items:center; gap:6px;">⚙️ Datos generales y cliente</h2>
+        <span id="datos-generales-resumen" style="font-size:0.82rem; color:var(--text-soft); font-weight:normal; margin-left:10px; background:var(--bg); padding:4px 10px; border-radius:15px; border:1px solid var(--border); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:calc(100% - 250px);"></span>
+      </div>
+      <button type="button" id="btn-toggle-datos" class="btn btn-sm" style="font-size:0.75rem; padding:4px 10px; white-space:nowrap; margin-left:auto;">▲ Contraer</button>
+    </div>
+    <div class="card-collapsible-content" id="datos-generales-content" style="margin-top:1.25rem; transition: max-height 0.2s ease;">
+      <div class="form-grid">
+        <div class="field">
+          <label>Cliente *</label>
+          <select name="client_id" required onchange="onClienteSeleccionado(this)">
+            <option value="">— Selecciona un cliente —</option>
+            {% for c in clientes %}
+            <option value="{{ c.id }}" {{ 'selected' if presupuesto and presupuesto.client_id == c.id else '' }}>{{ c.nombre }}</option>
+            {% endfor %}
+          </select>
+          <p class="hint">¿No está? <a class="link" href="/clientes/nuevo" target="_blank">Crea el cliente aquí</a>.</p>
+        </div>
+        <div class="field">
+          <label>Título del proyecto</label>
+          <input type="text" name="titulo" value="{{ presupuesto.titulo if presupuesto else '' }}"
+                 placeholder="p. ej. Residencia El Rosal · Remodelación Integral">
+        </div>
+        <div class="field field-full">
+          <label>Dirección de la obra</label>
+          <input type="text" name="direccion_obra" value="{{ presupuesto.direccion_obra if presupuesto else '' }}"
+                 placeholder="Calle, urb., edificio/residencia, ciudad">
+        </div>
+        <div class="field">
+          <label>Código postal</label>
+          <input type="text" name="codigo_postal" value="{{ presupuesto.codigo_postal if presupuesto else '' }}" placeholder="p. ej. 1060">
+        </div>
+        <div class="field">
+          <label>Fecha</label>
+          <input type="date" name="fecha" value="{{ presupuesto.fecha.isoformat() if presupuesto else hoy.isoformat() }}">
+        </div>
+        <div class="field">
+          <label>Validez (días)</label>
+          <input type="number" name="validez_dias" min="1" value="{{ presupuesto.validez_dias if presupuesto else cfg.validez_default }}" required>
+        </div>
+        <div class="field">
+          <label>Moneda</label>
+          <select name="moneda" id="moneda-select">
+            <option value="USD" {{ 'selected' if not presupuesto or presupuesto.moneda == 'USD' else '' }}>USD (dólar)</option>
+            <option value="Bs" {{ 'selected' if presupuesto and presupuesto.moneda == 'Bs' else '' }}>Bs (bolívar)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Tasa de cambio Bs/USD <span class="hint">(referencia, opcional)</span></label>
+          <input type="number" name="tipo_cambio" step="any" min="0" placeholder="p. ej. 155,00"
+                 value="{{ presupuesto.tipo_cambio if presupuesto and presupuesto.tipo_cambio else '' }}">
+        </div>
+        <div class="field">
+          <label>IVA (%)</label>
+          <input type="number" name="impuesto_pct" step="any" min="0" value="{{ presupuesto.impuesto_pct if presupuesto else cfg.iva_default }}">
+        </div>
+        <div class="field">
+          <label>Descuento (%)</label>
+          <input type="number" name="descuento_pct" step="any" min="0" value="{{ presupuesto.descuento_pct if presupuesto else 0 }}">
+        </div>
+        <div class="field">
+          <label>Estado</label>
+          <select name="estado">
+            {% set estado_actual = presupuesto.estado if presupuesto else 'borrador' %}
+            {% for e in estados %}
+            <option value="{{ e }}" {{ 'selected' if estado_actual == e else '' }}>{{ e | capitalize }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        {% if presupuesto and presupuesto.estado in ['enviado', 'reenviado', 'aprobado', 'aprobado_parcialmente', 'en_ejecucion', 'finalizado'] %}
+        <div class="field field-full"><label>Motivo de la nueva versión</label><input name="motivo_version" maxlength="500" placeholder="Describe brevemente el cambio realizado"><p class="hint">Al guardar, se conservará una nueva instantánea del documento.</p></div>
+        {% endif %}
+
+        {% if cfg.activar_funciones_venezuela %}<div class="field field-full" style="border:1px solid var(--border);padding:12px;border-radius:10px"><label style="font-weight:600">🇻🇪 Datos regionales (opcionales)</label><div class="form-grid">{% if cfg.mostrar_numero_control %}<div class="field"><label>Número de control</label><input name="numero_control" value="{{ presupuesto.numero_control if presupuesto else '' }}"></div>{% endif %}{% if cfg.mostrar_tasa_cambio %}<div class="field"><label>Fecha de tasa</label><input type="date" name="fecha_tipo_cambio" value="{{ presupuesto.fecha_tipo_cambio.isoformat() if presupuesto and presupuesto.fecha_tipo_cambio else '' }}"></div>{% endif %}{% if cfg.mostrar_retenciones %}<div class="field"><label>Retención (%)</label><input type="number" step="any" min="0" name="retencion_pct" value="{{ presupuesto.retencion_pct if presupuesto else 0 }}"></div><label><input type="checkbox" name="operacion_exenta" {{ 'checked' if presupuesto and presupuesto.operacion_exenta else '' }}> Operación exenta</label>{% endif %}{% if cfg.mostrar_clausula_cambiaria %}<div class="field field-full"><label>Cláusula de ajuste cambiario</label><textarea name="clausula_cambiaria">{{ presupuesto.clausula_cambiaria if presupuesto else '' }}</textarea></div>{% endif %}</div></div>{% endif %}
+        {% if cfg.activar_funciones_avanzadas or (presupuesto and presupuesto.usar_funciones_avanzadas) %}
+        <div class="field field-full advanced-budget-options" style="border:1px solid var(--border); border-radius:10px; padding:12px; background:var(--bg);">
+          <label style="display:flex; align-items:center; gap:8px; font-weight:600; cursor:pointer;">
+            <input type="checkbox" name="usar_funciones_avanzadas" value="1" id="usar-funciones-avanzadas"
+              {{ 'checked' if presupuesto and presupuesto.usar_funciones_avanzadas or (not presupuesto and cfg.activar_funciones_avanzadas) else '' }}>
+            Activar ajustes económicos avanzados para este presupuesto
+          </label>
+          <p class="hint" style="margin:5px 0 10px;">Si lo dejas desactivado, el creador funciona en modo básico y las partidas se calculan como incluidas.</p>
+          <div id="advanced-budget-fields" style="display:none; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px;">
+            {% if cfg.mostrar_cargos_adicionales or (presupuesto and presupuesto.usar_funciones_avanzadas) %}<div class="field"><label>Gastos indirectos (%)</label><input type="number" name="gastos_indirectos_pct" min="0" step="any" value="{{ presupuesto.gastos_indirectos_pct if presupuesto else 0 }}"></div>
+            <div class="field"><label>Imprevistos (%)</label><input type="number" name="imprevistos_pct" min="0" step="any" value="{{ presupuesto.imprevistos_pct if presupuesto else 0 }}"></div>
+            <div class="field"><label>Transporte / cargo fijo</label><input type="number" name="transporte_monto" min="0" step="any" value="{{ presupuesto.transporte_monto if presupuesto else 0 }}"></div>
+            <div class="field"><label>Otros cargos</label><input type="number" name="otros_cargos_monto" min="0" step="any" value="{{ presupuesto.otros_cargos_monto if presupuesto else 0 }}"></div>{% endif %}
+          </div>
+        </div>
+        {% endif %}
+        
+        <div class="field field-full" style="display:flex; flex-direction:column; gap:12px; border-top:1px solid var(--border); padding-top:16px; margin-top:10px;">
+          <label style="font-weight:600; color:var(--text); margin-bottom:4px;">🎨 Opciones premium y maquetación de lujo del PDF (Opcionales):</label>
+          <p class="hint" style="margin-top:-2px;">
+            Estas casillas se aplican a <strong>este presupuesto</strong>. Al guardar, pulsa
+            «👁 Ver PDF» (o descarga) para ver: la <strong>portada</strong> (página 1), el
+            <strong>resumen por capítulos</strong> (tras la cabecera), la
+            <strong>tabla de garantías</strong> (antes de las firmas) y el bloque de
+            <strong>firmas</strong> (al final). Para que los presupuestos <em>nuevos</em> las
+            traigan ya marcadas, actívalas en <strong>Configuración → Valores por defecto</strong>.
+          </p>
+          <div class="field field-full"><label>Estilo visual del PDF</label><select name="estilo_pdf"><option value="elegante" {{ 'selected' if not presupuesto or presupuesto.estilo_pdf == 'elegante' }}>Elegante</option><option value="tecnica" {{ 'selected' if presupuesto and presupuesto.estilo_pdf == 'tecnica' }}>Técnica</option><option value="minimalista" {{ 'selected' if presupuesto and presupuesto.estilo_pdf == 'minimalista' }}>Minimalista</option><option value="corporativa" {{ 'selected' if presupuesto and presupuesto.estilo_pdf == 'corporativa' }}>Corporativa</option><option value="compacta" {{ 'selected' if presupuesto and presupuesto.estilo_pdf == 'compacta' }}>Compacta</option><option value="editorial" {{ 'selected' if presupuesto and presupuesto.estilo_pdf == 'editorial' }}>Editorial</option></select></div>
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:12px;">
+            <label style="display:flex; align-items:center; gap:8px; font-weight:normal; cursor:pointer;">
+              <input type="checkbox" name="con_portada" id="chk-con-portada" value="1" onchange="toggleUploaderPortadas()"
+                {% if presupuesto %}
+                  {{ 'checked' if presupuesto.con_portada else '' }}
+                {% else %}
+                  {{ 'checked' if cfg.con_portada_default else '' }}
+                {% endif %}>
+              🌅 Incluir Portada de Presentación de página completa
+            </label>
+            <label style="display:flex; align-items:center; gap:8px; font-weight:normal; cursor:pointer;">
+              <input type="checkbox" name="mostrar_resumen_capitulos" value="1"
+                {% if presupuesto %}
+                  {{ 'checked' if presupuesto.mostrar_resumen_capitulos else '' }}
+                {% else %}
+                  {{ 'checked' if cfg.mostrar_resumen_capitulos_default else '' }}
+                {% endif %}>
+              📊 Mostrar Resumen Ejecutivo de Capítulos al inicio
+            </label>
+            <label style="display:flex; align-items:center; gap:8px; font-weight:normal; cursor:pointer;">
+              <input type="checkbox" name="mostrar_garantias" value="1"
+                {% if presupuesto %}
+                  {{ 'checked' if presupuesto.mostrar_garantias else '' }}
+                {% else %}
+                  {{ 'checked' if cfg.mostrar_garantias_default else '' }}
+                {% endif %}>
+              🛡️ Incluir tabla de garantías por tipo de trabajo (pisos, albañilería, fontanería, electricidad, pintura…)
+            </label>
+            <label style="display:flex; align-items:center; gap:8px; font-weight:normal; cursor:pointer;">
+              <input type="checkbox" name="mostrar_firmas" id="chk-firmas" value="1" onchange="toggleWrapperFirma()"
+                {% if presupuesto %}
+                  {{ 'checked' if presupuesto.mostrar_firmas else '' }}
+                {% else %}
+                  {{ 'checked' if cfg.mostrar_firmas_default else '' }}
+                {% endif %}>
+              ✍️ Mostrar bloque formal de firmas de aceptación al final
+            </label>
+            <label style="display:flex; align-items:center; gap:8px; font-weight:normal; cursor:pointer;"><input type="checkbox" name="mostrar_ahorro" value="1" {{ 'checked' if presupuesto and presupuesto.mostrar_ahorro else '' }}> 💰 Mostrar ahorro y descuento comercial</label>
+            <label style="display:flex; align-items:center; gap:8px; font-weight:normal; cursor:pointer;"><input type="checkbox" name="incluir_anexos" value="1" {{ 'checked' if presupuesto and presupuesto.incluir_anexos else '' }}> 📎 Incluir índice de anexos PDF</label>
+          </div>
+          
+          <div id="wrapper-firma" style="margin-top:10px; display:none;">
+            <label style="font-weight:600; font-size:0.875rem;">✍️ Firma del cliente (para el bloque de firmas del PDF):</label>
+            {% if presupuesto and presupuesto.firma_cliente %}
+            <div style="display:flex; align-items:center; gap:14px; margin-bottom:8px;">
+              <img src="/static/{{ presupuesto.firma_cliente }}" alt="Firma del cliente" style="max-height:70px; max-width:260px; border:1px solid var(--border); border-radius:6px; padding:4px; background:#fff;">
+              <label class="hint" style="display:flex; align-items:center; gap:6px; font-weight:normal;">
+                <input type="checkbox" name="quitar_firma" value="1"> Quitar firma
+              </label>
+            </div>
+            {% endif %}
+            <div>
+              <canvas id="firma-canvas" width="520" height="180"
+                style="border:1.5px dashed var(--border-strong); border-radius:8px; background:#fff; touch-action:none; max-width:100%; cursor:crosshair;"></canvas>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px; margin-top:8px; flex-wrap:wrap;">
+              <button type="button" class="btn btn-sm" id="btn-limpiar-firma">🧽 Limpiar</button>
+              <span class="hint">Firma con el ratón o el dedo (en tablet). Se guarda junto con el presupuesto.</span>
+            </div>
+            <input type="hidden" name="firma_cliente" id="firma-data">
+          </div>
+          
+          <div id="wrapper-foto-proyecto" style="margin-top:8px;">
+            <label style="font-weight:600; font-size:0.875rem;">Foto destacada del proyecto (para la portada):</label>
+            {% if presupuesto and presupuesto.foto_proyecto %}
+            <div style="display:flex; align-items:center; gap:14px; margin-bottom:8px;">
+              <img src="/static/{{ presupuesto.foto_proyecto }}" alt="Foto Proyecto" style="max-height:80px; max-width:180px; object-fit:cover; border:1px solid var(--border); border-radius:6px; padding:4px; background:#fff;">
+              <label class="hint" style="display:flex; align-items:center; gap:6px; font-weight:normal;">
+                <input type="checkbox" name="quitar_foto_proyecto" value="1"> Eliminar foto
+              </label>
+            </div>
+            {% endif %}
+            <input type="file" name="foto_proyecto" accept="image/*">
+            <p class="hint">Sube una foto del render 3D o del estado actual. Recomendado: formato apaisado (horizontal) de buena calidad.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONSTRUCTOR DE PRESUPUESTO -->
+  <section class="builder-workspace" id="builder-partidas">
+  <div class="builder-workspace-head">
+    <div><span class="section-kicker">Contenido del presupuesto</span><h2>Capítulos y partidas</h2><p>Añade desde el catálogo, importa Excel o crea una partida y abre su ficha completa para editarla.</p></div>
+    <div class="builder-workspace-count"><strong id="builder-item-count">0</strong><span>partidas</span></div>
+  </div>
+  <div class="builder-toolbar-wrap">
+    <div class="constructor-toolbar">
+      <span class="toolbar-title">Herramientas</span>
+      <span class="toolbar-hint" title="Atajos de teclado del constructor (escritura rápida)">
+        ⌨ <kbd>Enter</kbd> pasa de nombre→cantidad→precio
+        · <kbd>Alt</kbd>+<kbd>P</kbd> partida · <kbd>Alt</kbd>+<kbd>C</kbd> capítulo
+        · <kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>K</kbd> buscar · <kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>Enter</kbd> guardar
+      </span>
+      <div class="catalog-search-wrap">
+        <input type="text" id="buscar-partida" placeholder="🔍 Buscar en catálogo de partidas…" autocomplete="off">
+        <div id="catalogo-partidas">
+          {% if partidas_catalogo %}
+            {% for p in partidas_catalogo %}
+            <div class="partida-catalogo" data-nombre="{{ (p.nombre ~ ' ' ~ p.descripcion ~ ' ' ~ p.codigo_interno ~ ' ' ~ p.subcategoria ~ ' ' ~ p.proveedor)|lower }}" data-categoria="{{ p.categoria|lower }}" data-idx="{{ loop.index0 }}">
+              <button type="button" class="btn btn-sm" onclick="agregarDesdeCatalogo({{ loop.index0 }})" style="flex:1; text-align:left; border:none; background:none; cursor:pointer; font-size:0.82rem;">
+                <strong>{{ p.nombre }}</strong> <span style="color:var(--text-muted); font-size:0.75em;">({{ p.unidad }})</span>
+              </button>
+              <span class="badge badge-categoria">{{ p.categoria }}</span>
+              <span style="font-weight:600; color:var(--accent); font-size:0.82rem; white-space:nowrap;">{{ p.precio_unitario | num }} $</span>
+            </div>
+            {% endfor %}
+          {% else %}
+            <div style="padding:10px; color:var(--text-muted); font-size:0.85rem;">No hay partidas en el catálogo. <a class="link" href="/partidas/nueva" target="_blank">Crea la primera</a>.</div>
+          {% endif %}
+        </div>
+      </div>
+      {% if plantillas %}
+      <select id="select-plantilla" class="select-inline" title="Cargar plantilla">
+        <option value="">🧩 Plantilla…</option>
+        {% for t in plantillas %}
+        <option value="{{ t.id }}">{{ t.nombre }}</option>
+        {% endfor %}
+      </select>
+      {% endif %}
+      <button type="button" class="btn btn-sm btn-excel" id="btn-subir-excel" title="Subir un Excel y añadir sus partidas sin salir del presupuesto">⇧ Subir Excel</button>
+      <button type="button" class="btn btn-sm" id="btn-pegar-excel" title="Pegar filas desde Excel (copiar y pegar)">📋 Pegar de Excel</button>
+      <button type="button" class="btn btn-sm" id="btn-modal-receta-seccion" title="Alt+R — Inserta habitaciones enteras de reforma escaladas al tamaño de tu estancia" style="background:var(--primary-light); color:var(--primary); font-weight:600;">⚡ Pack de Estancia</button>
+      <button type="button" class="btn btn-sm" id="btn-preview-pdf" title="Vista previa del PDF">👁 Vista previa</button>
+      <span id="autosave-status" class="autosave-status" title="Autoguardado: cada cambio se guarda al instante en este equipo y se envía al servidor cuando dejas de editar."></span>
+      <button type="button" class="btn btn-xs autosave-save-now" id="btn-autosave-save-now" title="Forzar guardado ahora en el servidor" aria-label="Guardar ahora">💾 Guardar ahora</button>
+    </div>
+  </div>
+
+  <div id="capitulos"></div>
+
+  <button type="button" class="btn-add-capitulo" id="btn-agregar-capitulo"><span>＋</span> Agregar otro capítulo</button>
+  </section>
+
+  <!-- TOTALES -->
+  <div id="builder-resumen" class="builder-review-grid">
+  <div class="card card-totales builder-totals-card">
+    <div class="tot-linea"><span>Subtotal incluido</span><strong id="ui-subtotal">—</strong></div>
+    <div class="tot-linea" id="ui-fila-opcional" style="display:none;"><span>Opcionales disponibles</span><strong id="ui-opcional">—</strong></div>
+    <div class="tot-linea" id="ui-fila-alternativas" style="display:none;"><span>Alternativas disponibles</span><strong id="ui-alternativas">—</strong></div>
+    <div class="tot-linea" id="ui-fila-obra" style="display:none;"><span>Total obra / partidas</span><strong id="ui-obra">—</strong></div>
+    <div class="tot-linea" id="ui-fila-productos" style="display:none;"><span>Total productos</span><strong id="ui-productos">—</strong></div>
+    <div class="tot-linea" id="ui-fila-adicionales" style="display:none;"><span>Costes adicionales</span><strong id="ui-adicionales">—</strong></div>
+    <div class="tot-linea" id="ui-fila-desc"><span>Descuento</span><strong id="ui-descuento">—</strong></div>
+    <div class="tot-linea"><span>IVA <button type="button" class="btn btn-xs iva-toggle-btn" id="btn-toggle-iva-total" title="Activar o desactivar el IVA">ON</button></span><strong id="ui-iva">—</strong></div>
+    <div class="tot-linea" id="ui-fila-beneficio-obra" style="display:none;"><span>Beneficio obra</span><strong id="ui-beneficio-obra" style="color:var(--green);">—</strong></div>
+    <div class="tot-linea" id="ui-fila-margen-obra" style="display:none;"><span>Margen obra</span><strong id="ui-margen-obra" style="color:var(--green);">—</strong></div>
+    <div class="tot-linea" id="ui-fila-beneficio-productos" style="display:none;"><span>Beneficio productos</span><strong id="ui-beneficio-productos" style="color:var(--green);">—</strong></div>
+    <div class="tot-linea" id="ui-fila-margen-productos" style="display:none;"><span>Margen productos</span><strong id="ui-margen-productos" style="color:var(--green);">—</strong></div>
+    <div class="tot-linea" id="ui-fila-beneficio" style="display:none;"><span>Beneficio total estimado</span><strong id="ui-beneficio" style="color:var(--green);">—</strong></div>
+    <div class="tot-linea" id="ui-fila-margen" style="display:none;"><span>Margen total</span><strong id="ui-margen" style="color:var(--green);">—</strong></div>
+    <div class="tot-linea tot-tiempo"><span>⏱ Tiempo estimado de obra <small class="hint">(rendimientos de mano de obra)</small></span><strong id="ui-tiempo">—</strong></div>
+    <div class="tot-tiempo-nota hint" id="ui-tiempo-nota" style="font-size:.75rem; margin-top:-2px; padding:0 0 6px 0;"></div>
+    <div class="tot-linea tot-final"><span>TOTAL</span><strong id="ui-total">—</strong></div>
+  </div>
+
+  <!-- TEXTO -->
+  <div class="card">
+    <h2>Texto del presupuesto</h2>
+    <div class="form-grid">
+      <div class="field">
+        <label>Información adicional (alcance del trabajo)</label>
+        <textarea name="notas" rows="4" placeholder="Descripción general, inclusiones y exclusiones…">{{ presupuesto.notas if presupuesto else cfg.notas_default }}</textarea>
+      </div>
+      <div class="field">
+        <label>Condiciones</label>
+        <textarea name="condiciones" rows="4" placeholder="Forma de pago, anticipo, plazos, garantía…">{{ presupuesto.condiciones if presupuesto else cfg.condiciones_default }}</textarea>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div class="form-actions budget-save-dock">
+    <div class="save-dock-copy"><strong>¿Todo listo?</strong><span>El presupuesto y las partidas nuevas quedarán guardados.</span></div>
+    <button class="btn btn-primary" type="submit">💾 Guardar presupuesto</button>
+    <button type="button" class="btn" id="btn-guardar-plantilla">🧩 Guardar como plantilla</button>
+    <a class="btn" href="{{ '/presupuestos/' ~ presupuesto.id if presupuesto else '/presupuestos' }}">Cancelar</a>
+  </div>
+</form>
+
+<!-- Toast para deshacer / confirmaciones -->
+<div id="undo-flash" class="undo-flash"></div>
+
+<!-- Aviso de borrador recuperable (local del navegador o autoguardado del servidor) -->
+<div id="draft-banner" class="draft-banner" style="display:none;">
+  <span id="draft-banner-text">Se ha recuperado un <strong>borrador sin guardar</strong> de esta sesión.</span>
+  <div class="actions" style="margin-left:auto;">
+    <button type="button" class="btn btn-sm btn-primary" id="btn-restore-draft">Restaurar borrador</button>
+    <button type="button" class="btn btn-sm" id="btn-discard-draft">Descartar</button>
+  </div>
+</div>
+
+<!-- Modal: ficha completa de partida (mismo editor que el catálogo) -->
+<div class="modal-overlay" id="modal-editor-partida" role="dialog" aria-modal="true" aria-labelledby="titulo-editor-partida">
+  <div class="modal modal-partida-completa">
+    <form id="form-editor-partida" enctype="multipart/form-data">
+      <input type="hidden" name="partida_catalogo_id" id="editor-partida-catalogo-id">
+      <div class="modal-head partida-modal-head">
+        <div><span class="page-eyebrow">Editor completo de partida</span><h3 id="titulo-editor-partida">Editar partida</h3><p class="hint">La misma ficha técnica y el mismo cálculo que en la pestaña Partidas.</p></div>
+        <button type="button" class="btn btn-ghost" data-close aria-label="Cerrar">✕</button>
+      </div>
+      <div id="editor-partida-cype-note" class="cype-origin-note" style="display:none;"></div>
+      <div id="editor-partida-error" class="alert alert-error" style="display:none;"></div>
+
+      <nav class="partida-editor-tabs" aria-label="Secciones de la partida">
+        <button type="button" class="active" data-partida-tab="ficha"><span>01</span> Ficha y costes</button>
+        <button type="button" data-partida-tab="presupuesto"><span>02</span> Cantidad y mediciones</button>
+        <button type="button" data-partida-tab="producto"><span>03</span> Producto asociado</button>
+      </nav>
+
+      <div class="partida-tab-panel active" data-partida-panel="ficha">
+        {{ editor_partida_catalogo(None, true) }}
+      </div>
+
+      <div class="partida-tab-panel" data-partida-panel="presupuesto">
+        <section class="catalog-editor-section">
+          <div class="catalog-editor-section-head"><div><span class="section-kicker">Solo para este presupuesto</span><h3>Cantidad, comportamiento y mediciones</h3></div></div>
+          <div class="form-grid budget-line-grid">
+            <div class="field"><label>Cantidad directa</label><input type="number" step="any" min="0" name="linea_cantidad" value="1"></div>
+            <div class="field"><label>Tipo de partida</label><select name="linea_tipo"><option value="included">Incluida</option><option value="optional">Opcional</option><option value="alternative">Alternativa</option><option value="excluded">No incluida</option><option value="provisional">Provisional</option><option value="measurement">Sujeta a medición</option></select></div>
+            <div class="field"><label>Estado</label><select name="linea_seleccionada"><option value="1">Seleccionada</option><option value="0">No seleccionada</option></select></div>
+            <div class="field"><label>Grupo de alternativa</label><input name="linea_grupo_alternativa" placeholder="Opcional"></div>
+            <div class="field"><label>Desperdicio para este presupuesto (%)</label><input type="number" step="any" min="0" name="linea_desperdicio"></div>
+            <div class="field"><label>Beneficio (%) sobre coste</label><input type="number" step="any" name="linea_margen" placeholder="Ej: 40"><small class="hint">Sobre coste directo (markup). Ej: 40 = Coste ×1.40</small></div>
+          </div>
+        </section>
+        <section class="catalog-breakdown budget-measurements-editor">
+          <div class="breakdown-head"><div><span class="section-kicker">Desglose de cantidad</span><h3>Mediciones por zona o concepto</h3><p class="hint">Si añades mediciones, su suma sustituye a la cantidad directa.</p></div><button type="button" class="btn btn-sm btn-primary" id="editor-add-medicion">+ Añadir medición</button></div>
+          <div id="editor-mediciones-list" class="editor-mediciones-list"></div>
+          <div id="editor-mediciones-empty" class="breakdown-empty"><span>📐</span><strong>Sin mediciones desglosadas</strong><small>Se utilizará la cantidad directa indicada arriba.</small></div>
+        </section>
+      </div>
+
+      <div class="partida-tab-panel" data-partida-panel="producto">
+        <section class="catalog-editor-section">
+          <div class="catalog-editor-section-head"><div><span class="section-kicker">Producto presupuestado</span><h3>Material o producto asociado</h3><p class="hint">Opcional. Sirve para mostrar una referencia comercial concreta en esta partida.</p></div></div>
+          <div id="editor-producto-seleccionado" class="editor-producto-seleccionado" hidden aria-live="polite">
+            <img alt="">
+            <span class="editor-producto-icono">▦</span>
+            <span><small>Producto asociado a esta partida</small><strong data-producto-nombre></strong><em data-producto-detalle></em></span>
+            <button type="button" class="btn btn-sm btn-danger" id="editor-btn-quitar-producto" style="margin-left:auto;">🗑 Eliminar producto</button>
+          </div>
+          <div class="form-grid">
+            <div class="field field-full"><label>Buscar o escribir producto</label><input name="linea_prod_nombre" placeholder="p. ej. Porcelanato Calacatta 60x120"><p class="hint">Elige una sugerencia para completar automáticamente precio, unidad e imagen.</p></div>
+            <div class="field"><label>Precio del producto / unidad</label><input type="number" min="0" step="any" name="linea_prod_precio"><p class="hint">Se suma al precio base de la partida. Ej.: rodapié 10 + producto 2,50 = 12,50.</p></div>
+            <div class="field"><label>Coste / unidad</label><input type="number" min="0" step="any" name="linea_prod_coste"><p class="hint">Se usa para calcular el beneficio.</p></div>
+            <div class="field"><label>Unidad</label><input name="linea_prod_unidad" placeholder="m2, ud…"></div>
+            <div class="field"><label>Categoría</label><input name="linea_prod_categoria" list="categorias-disponibles"></div>
+            <div class="field field-full"><label>Imagen del producto</label><input name="linea_prod_imagen" placeholder="Sin imagen" readonly><p class="hint">La imagen se toma del producto del catálogo. Puedes gestionarla desde Productos.</p></div>
+          </div>
+        </section>
+      </div>
+
+      <div class="partida-modal-footer">
+        <div class="catalog-save-confirm" id="editor-save-scope-confirm" hidden>
+          <div class="catalog-save-title">Esta partida ya existe en el catálogo. ¿Dónde aplico los cambios?</div>
+          <div class="catalog-save-confirm-actions">
+            <button type="button" class="btn" data-scope="local">Solo este presupuesto</button>
+            <button type="button" class="btn btn-primary" data-scope="catalog">Guardar también en base de datos</button>
+          </div>
+          <small class="hint">Si eliges la base de datos, se actualizará la ficha del catálogo para futuros presupuestos; ningún presupuesto ya emitido se verá afectado.</small>
+        </div>
+        <div class="actions"><button type="button" class="btn" data-close>Cancelar</button><button type="submit" class="btn btn-primary" id="editor-partida-save">✓ Aplicar cambios</button></div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal: subir Excel sin abandonar el presupuesto -->
+<div class="modal-overlay" id="modal-importar-excel" role="dialog" aria-modal="true" aria-labelledby="titulo-importar-excel">
+  <div class="modal modal-import-excel">
+    <div class="modal-head">
+      <div>
+        <h3 id="titulo-importar-excel">⇧ Añadir partidas desde Excel</h3>
+        <p class="hint modal-subtitle">Se añadirán aquí y se guardarán también en tu catálogo, sin cambiar de pantalla.</p>
+      </div>
+      <button type="button" class="btn btn-ghost" data-close aria-label="Cerrar">✕</button>
+    </div>
+
+    <div id="excel-inline-source">
+      <label class="excel-drop-zone" id="excel-drop-zone" for="excel-inline-file">
+        <span class="excel-drop-icon">📊</span>
+        <strong>Selecciona o arrastra tu Excel</strong>
+        <span>Archivos .xlsx o .csv · puedes seleccionar varios descompuestos CYPE</span>
+        <input type="file" id="excel-inline-file" multiple accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+      </label>
+      <div id="excel-inline-files" class="excel-selected-files hint">Ningún archivo seleccionado</div>
+      <label class="check-line excel-header-check">
+        <input type="checkbox" id="excel-inline-header" checked>
+        La primera fila contiene nombres de columnas
+      </label>
+      <div class="form-actions compact-actions">
+        <button type="button" class="btn btn-primary" id="btn-analizar-excel-inline">Analizar archivo</button>
+        <button type="button" class="btn" data-close>Cancelar</button>
+      </div>
+    </div>
+
+    <div id="excel-inline-error" class="alert alert-error" style="display:none;" role="alert"></div>
+    <div id="excel-inline-review" class="import-hidden">
+      <div class="excel-review-head">
+        <div>
+          <strong id="excel-inline-result-title">Partidas detectadas</strong>
+          <p class="hint" id="excel-inline-result-meta"></p>
+        </div>
+        <button type="button" class="btn btn-sm" id="btn-cambiar-excel-inline">Cambiar archivo</button>
+      </div>
+
+      <div id="excel-inline-mapping" class="import-hidden">
+        <p class="hint">Comprueba las columnas. Solo <strong>Partida</strong> es obligatoria.</p>
+        <div class="table-wrap">
+          <table class="table import-map-table compact-map-table">
+            <thead><tr><th>Dato</th><th>Columna de Excel</th></tr></thead>
+            <tbody id="excel-inline-mapping-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="excel-inline-cype-chapter" class="field import-hidden">
+        <label>Capítulo de destino</label>
+        <input type="text" id="excel-inline-chapter" value="PARTIDAS IMPORTADAS" maxlength="200">
+      </div>
+
+      <div class="excel-inline-preview" id="excel-inline-preview"></div>
+      <div id="excel-inline-issues"></div>
+      <div class="form-actions compact-actions">
+        <button type="button" class="btn btn-primary" id="btn-confirmar-excel-inline">✓ Añadir al presupuesto</button>
+        <button type="button" class="btn" data-close>Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: pegar desde Excel -->
+<div class="modal-overlay" id="modal-pegar">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>📋 Pegar partidas desde Excel</h3>
+      <button type="button" class="btn btn-ghost" data-close>✕</button>
+    </div>
+    <p class="hint" style="margin-bottom:0.5rem;">
+      En Excel selecciona las filas y pulsa <strong>Copiar</strong>, luego pégalas aquí.
+      Formato aceptado: <code>Nombre&nbsp;·&nbsp;Unidad&nbsp;·&nbsp;Cantidad&nbsp;·&nbsp;Precio</code>
+      (unidad, cantidad y precio opcionales).
+    </p>
+    <textarea id="paste-input" rows="8" placeholder="Pega aquí (Ctrl+V)&#10;Porcelanato 90x90	m2	84.6	68&#10;Zoclo lacado	m	72	9.8"></textarea>
+    <div class="form-actions">
+      <button type="button" class="btn btn-primary" id="btn-importar-excel">Importar</button>
+      <button type="button" class="btn" data-close>Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: vista previa del PDF -->
+<div class="modal-overlay modal-preview" id="modal-preview">
+  <div class="modal modal-lg">
+    <div class="modal-head">
+      <h3>👁 Vista previa del PDF</h3>
+      <div class="actions">
+        <button type="button" class="btn btn-sm" id="btn-refresh-preview" title="Actualizar">🔄 Actualizar</button>
+        <button type="button" class="btn btn-ghost" data-close>✕</button>
+      </div>
+    </div>
+    <iframe id="preview-frame" title="Vista previa del PDF"></iframe>
+  </div>
+</div>
+
+<!-- Modal: guardar como plantilla -->
+<div class="modal-overlay" id="modal-plantilla">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>🧩 Guardar como plantilla</h3>
+      <button type="button" class="btn btn-ghost" data-close>✕</button>
+    </div>
+    <p class="hint" style="margin-bottom:0.5rem;">Guarda la estructura actual (capítulos, partidas y mediciones) para reutilizarla en presupuestos futuros.</p>
+    <div class="field">
+      <label>Nombre de la plantilla</label>
+      <input type="text" id="plantilla-nombre" placeholder="p. ej. Cocina completa gama alta">
+    </div>
+    <div class="form-actions">
+      <button type="button" class="btn btn-primary" id="btn-save-plantilla">Guardar plantilla</button>
+      <button type="button" class="btn" data-close>Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Pack de Estancia (Recetas de Reforma con 1 clic - Alt+R) -->
+<div class="modal-overlay" id="modal-recetas-estancia">
+  <div class="modal modal-lg" style="max-width:850px;">
+    <div class="modal-head">
+      <div>
+        <h3>⚡ Packs de Estancia (Recetas de Reforma)</h3>
+        <p class="hint modal-subtitle">Selecciona una estancia y los m² de tu habitación. El sistema insertará el capítulo completo y calculará proporcionalmente sus partidas.</p>
+      </div>
+      <button type="button" class="btn btn-ghost" data-close>✕</button>
+    </div>
+    <div class="modal-body" style="padding:1.5rem;">
+      <div style="display:grid; grid-template-columns: 2fr 1fr 1fr; gap:1rem; align-items:flex-end;">
+        <div>
+          <label style="display:block; font-weight:600; font-size:0.88rem; margin-bottom:4px;">Selecciona el Pack / Receta de estancia</label>
+          <select id="select-receta-pack" class="input" style="width:100%;">
+            <option value="">Cargando packs disponibles...</option>
+          </select>
+        </div>
+        <div>
+          <label style="display:block; font-weight:600; font-size:0.88rem; margin-bottom:4px;" id="label-medida-pack">Medida de la estancia (m²)</label>
+          <input type="number" step="0.1" id="input-medida-pack" class="input" style="width:100%; text-align:center;" value="10.0">
+        </div>
+        <div>
+          <button type="button" class="btn btn-primary" id="btn-insertar-pack-estancia" style="width:100%; font-weight:600; padding:0.65rem 1rem;">⚡ Insertar en Presupuesto</button>
+        </div>
+      </div>
+
+      <div id="receta-pack-desc" class="muted" style="margin-top:0.8rem; font-size:0.88rem; min-height:1.3em;"></div>
+
+      <div style="margin-top:1.5rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+          <strong style="font-size:0.95rem;">Vista previa en vivo del capítulo a insertar:</strong>
+          <span class="badge" id="badge-total-pack" style="background:var(--primary-light); color:var(--primary); font-size:0.95rem; font-weight:600;">Total estimado: $0.00</span>
+        </div>
+        <div style="max-height:360px; overflow-y:auto; border:1px solid var(--border); border-radius:8px;">
+          <table class="table" style="margin:0; font-size:0.88rem;">
+            <thead>
+              <tr style="background:var(--bg-alt);">
+                <th style="width:40px; text-align:center;">#</th>
+                <th>Partida del Pack</th>
+                <th style="width:100px; text-align:center;">Tipo</th>
+                <th style="width:100px; text-align:center;">Cant. est.</th>
+                <th style="width:60px; text-align:center;">Und.</th>
+                <th style="width:100px; text-align:right;">Precio unit.</th>
+                <th style="width:110px; text-align:right;">Importe est.</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-preview-pack">
+              <tr>
+                <td colspan="7" class="empty" style="text-align:center; padding:2rem;">Selecciona un pack en el desplegable superior.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer" style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border); padding:1rem 1.5rem;">
+      <a href="/recetas" target="_blank" class="muted" style="font-size:0.85rem; text-decoration:underline;">⚙️ Administrar catálogo de packs</a>
+      <button type="button" class="btn" data-close>Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Guardar Capítulo como Pack de Estancia -->
+<div class="modal-overlay" id="modal-guardar-capitulo-receta">
+  <div class="modal" style="max-width:520px;">
+    <div class="modal-head">
+      <h3>💾 Guardar Capítulo como Pack de Estancia</h3>
+      <button type="button" class="btn btn-ghost" data-close>✕</button>
+    </div>
+    <div class="modal-body" style="padding:1.5rem;">
+      <p class="muted" style="margin-bottom:1rem; font-size:0.9rem;">
+        Este capítulo se guardará en tu catálogo de <strong>⚡ Packs de Estancia</strong> y podrás insertarlo con un clic (Alt+R) en cualquier presupuesto futuro.
+      </p>
+      <div style="margin-bottom:1rem;">
+        <label style="display:block; font-weight:600; font-size:0.88rem; margin-bottom:4px;">Nombre del Pack *</label>
+        <input type="text" id="guardar-pack-nombre" class="input" style="width:100%;" required>
+      </div>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem; margin-bottom:1rem;">
+        <div>
+          <label style="display:block; font-weight:600; font-size:0.88rem; margin-bottom:4px;">Categoría</label>
+          <select id="guardar-pack-categoria" class="input" style="width:100%;">
+            <option value="Baños">Baños</option>
+            <option value="Cocinas">Cocinas</option>
+            <option value="Suelos">Suelos</option>
+            <option value="Habitaciones">Habitaciones</option>
+            <option value="Electricidad">Electricidad</option>
+            <option value="Otros">Otros</option>
+          </select>
+        </div>
+        <div>
+          <label style="display:block; font-weight:600; font-size:0.88rem; margin-bottom:4px;">Unidad base</label>
+          <input type="text" id="guardar-pack-unidad" class="input" style="width:100%; text-align:center;" value="m²">
+        </div>
+      </div>
+      <div style="margin-bottom:1rem;">
+        <label style="display:block; font-weight:600; font-size:0.88rem; margin-bottom:4px;">Medida base de referencia</label>
+        <input type="number" step="0.1" id="guardar-pack-base" class="input" style="width:100%; text-align:center;" value="10.0">
+      </div>
+      <div style="margin-bottom:1rem;">
+        <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.9rem; cursor:pointer;">
+          <input type="checkbox" id="guardar-pack-coeficientes" checked>
+          <span>Calcular coeficientes proporcionales automáticamente</span>
+        </label>
+        <p class="muted" style="font-size:0.82rem; margin-left:1.6rem; margin-top:2px;">
+          Si está marcado, las partidas con cantidades mayores a 1 se escalarán según los m² de la habitación.
+        </p>
+      </div>
+    </div>
+    <div class="modal-footer" style="display:flex; justify-content:flex-end; gap:0.8rem; border-top:1px solid var(--border); padding:1rem 1.5rem;">
+      <button type="button" class="btn" data-close>Cancelar</button>
+      <button type="button" class="btn btn-primary" id="btn-confirmar-guardar-pack">💾 Guardar en librería de Packs</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: autogenerar con IA (generador basado en TU catálogo, sin internet) -->
+<div class="modal-overlay" id="modal-generador">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>✨ Autogenerar con IA</h3>
+      <button type="button" class="btn btn-ghost" data-close>✕</button>
+    </div>
+    <p class="hint" style="margin-bottom:0.75rem;">
+      Describe el proyecto y se buscarán coincidencias en <strong>tu propio catálogo</strong> de partidas
+      (y en tus plantillas guardadas) para armar un borrador de capítulos. Funciona sin internet: no inventa
+      partidas ni precios que no existan ya en tu catálogo. Podrás editar todo después.
+    </p>
+    <div class="field">
+      <label>Describe el proyecto</label>
+      <textarea id="generador-texto" rows="3" placeholder="p. ej. Remodelación de baño 8m2, acabado premium, incluye plomería, electricidad y pintura"></textarea>
+    </div>
+    <div id="generador-resultado" class="hint" style="display:none; margin:0.5rem 0 0;"></div>
+    <div class="form-actions">
+      <button type="button" class="btn btn-primary" id="btn-generar">Generar borrador</button>
+      <button type="button" class="btn" data-close>Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: atajos de teclado -->
+<div class="modal-overlay" id="modal-atajos">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>⌨️ Atajos de teclado</h3>
+      <button type="button" class="btn btn-ghost" data-close>✕</button>
+    </div>
+    <div class="atajos-grid">
+      <div><kbd>Enter</kbd> Pasa de nombre → cantidad → precio</div>
+      <div><kbd>Alt</kbd>+<kbd>P</kbd> Añadir partida</div>
+      <div><kbd>Alt</kbd>+<kbd>C</kbd> Añadir capítulo</div>
+      <div><kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>K</kbd> o <kbd>/</kbd> Buscar en el catálogo</div>
+      <div><kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>M</kbd> Cambiar moneda (USD ↔ Bs)</div>
+      <div><kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>Z</kbd> Deshacer cambios estructurales</div>
+      <div><kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>Enter</kbd> Guardar presupuesto</div>
+      <div><kbd>?</kbd> Mostrar esta ayuda</div>
+      <div><kbd>Esc</kbd> Contraer partidas abiertas</div>
+      <div>🖱️ Arrastrar para reordenar partidas <em>y capítulos</em></div>
+    </div>
+    <div class="form-actions">
+      <button type="button" class="btn" data-close>Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<datalist id="unidades-comunes">
+  <option value="ud"></option>
+  <option value="m2"></option>
+  <option value="m"></option>
+  <option value="ml"></option>
+  <option value="glb"></option>
+  <option value="juego"></option>
+  <option value="kg"></option>
+  <option value="hora"></option>
+</datalist>
+{% endblock %}
+
+{% block scripts %}
+<script id="campos-importacion-inline" type="application/json">{{ campos_importables | tojson }}</script>
+<script id="datos-iniciales" type="application/json">
+{% if presupuesto %}{
+  "capitulos": [
+    {% for cap in presupuesto.capitulos %}{
+      "nombre": {{ cap.nombre | tojson }},
+      "partidas": [
+        {% for p in cap.partidas %}{
+          "partida_id": {{ p.id | tojson }},
+          "catalogo_id": {{ ((p|attr('partida_catalogo_id') if p is defined else '') or '') | tojson }},
+          "tiempo_estimado_horas": {{ ((tiempos_catalogo or {}).get(p.partida_catalogo_id) if p.partida_catalogo_id else none) | tojson }},
+          "codigo_externo": {{ p.codigo_externo | tojson }},
+          "tiene_descomposicion_cype": {{ (p.descomposicion_cype is not none) | tojson }},
+          "nombre_descomposicion_cype": {{ (p.descomposicion_cype.nombre_archivo_origen if p.descomposicion_cype else '') | tojson }},
+          "nombre": {{ p.nombre | tojson }},
+          "descripcion": {{ p.descripcion | tojson }},
+          "unidad": {{ p.unidad | tojson }},
+          "precio": {{ p.precio_unitario | tojson }},
+          "cantidad": {{ p.cantidad | tojson }},
+          "prod_nombre": {{ p.producto_nombre | tojson }},
+          "prod_precio": {{ (p.producto_precio if p.producto_precio is not none else '') | tojson }},
+          "prod_coste": {{ (p.producto_coste if p.producto_coste is not none else '') | tojson }},
+          "prod_unidad": {{ p.producto_unidad | tojson }},
+          "prod_imagen": {{ p.producto_imagen | tojson }},
+          "tipo_partida": {{ (p.tipo_partida or 'included') | tojson }},
+          "seleccionada": {{ (p.seleccionada or false) | tojson }},
+          "coste_materiales": {{ (p.coste_materiales or 0) | tojson }},
+          "coste_mano_obra": {{ (p.coste_mano_obra or 0) | tojson }},
+          "coste_complementarios": {{ (p.coste_complementarios or 0) | tojson }},
+          "coste_otros": {{ (p.coste_otros or 0) | tojson }},
+          "desperdicio_pct": {{ (p.desperdicio_pct or 0) | tojson }},
+          "margen_pct": {{ (p.margen_pct or 0) | tojson }},
+          "grupo_alternativa": {{ (p.grupo_alternativa or '') | tojson }},
+          "productos_opciones": [
+            {% for op in (p.productos_opciones or []) %}{
+              "id": {{ op.id | tojson }},
+              "nombre": {{ op.nombre | tojson }},
+              "descripcion": {{ op.descripcion | tojson }},
+              "precio": {{ op.precio | tojson }},
+              "coste": {{ (op.coste if op.coste is not none else '') | tojson }},
+              "unidad": {{ op.unidad | tojson }},
+              "categoria": {{ op.categoria | tojson }},
+              "marca": {{ op.marca | tojson }},
+              "modelo": {{ op.modelo | tojson }},
+              "sku": {{ op.sku | tojson }},
+              "color": {{ op.color | tojson }},
+              "acabado": {{ op.acabado | tojson }},
+              "imagen": {{ op.imagen | tojson }},
+              "seleccionado": {{ (op.seleccionado or false) | tojson }},
+              "orden": {{ op.orden | tojson }}
+            }{{ "," if not loop.last }}{% endfor %}
+          ],
+          "descomposicion": {% if p.descomposicion_cype %}{
+            "origen": {{ (p.descomposicion_cype.origen or '') | tojson }},
+            "codigo": {{ p.descomposicion_cype.codigo | tojson }},
+            "unidad": {{ p.descomposicion_cype.unidad | tojson }},
+            "filas": [
+              {% for f in p.descomposicion_cype.filas if (f.tipo or '') != 'vacia' %}{
+                "tipo": {{ f.tipo | tojson }},
+                "grupo": {{ f.grupo | tojson }},
+                "categoria": {{ (f.categoria or '') | tojson }},
+                "codigo": {{ f.codigo | tojson }},
+                "unidad": {{ f.unidad | tojson }},
+                "descripcion": {{ f.descripcion | tojson }},
+                "rendimiento": {{ (f.rendimiento if f.rendimiento is not none else '') | tojson }},
+                "precio": {{ (f.precio_unitario if f.precio_unitario is not none else '') | tojson }},
+                "importe": {{ (f.importe if f.importe is not none else '') | tojson }},
+                "numero": {{ f.numero_fila_excel | tojson }},
+                "celdas": {{ f.celdas | tojson }},
+                "formulas": {{ f.formulas | tojson }}
+              }{{ "," if not loop.last }}{% endfor %}
+            ]
+          }{% else %}null{% endif %},
+          "mediciones": [
+            {% for m in p.mediciones %}{ "concepto": {{ m.concepto | tojson }}, "cantidad": {{ m.cantidad | tojson }} }{{ "," if not loop.last }}{% endfor %}
+          ]
+        }{{ "," if not loop.last }}{% endfor %}
+      ]
+    }{{ "," if not loop.last }}{% endfor %}
+  ]
+}{% else %}{ "capitulos": [{ "nombre": "", "partidas": [] }]}{% endif %}
+</script>
+<script id="datos-catalogo" type="application/json">
+[
+  {% for p in partidas_catalogo %}{
+    "id": {{ p.id | tojson }},
+    "nombre": {{ p.nombre | tojson }},
+    "descripcion": {{ p.descripcion | tojson }},
+    "precio": {{ p.precio_unitario | tojson }},
+    "coste": {{ (p.coste if p.coste is not none else 0) | tojson }},
+    "unidad": {{ p.unidad | tojson }},
+    "categoria": {{ p.categoria | tojson }},
+    "subcategoria": {{ p.subcategoria | tojson }},
+    "codigo": {{ p.codigo_interno | tojson }},
+    "codigo_interno": {{ p.codigo_interno | tojson }},
+    "codigo_externo": {{ p.codigo_externo | tojson }},
+    "proveedor": {{ p.proveedor | tojson }},
+    "coste_materiales": {{ p.coste_materiales | tojson }},
+    "coste_mano_obra": {{ p.coste_mano_obra | tojson }},
+    "coste_complementarios": {{ p.coste_complementarios | tojson }},
+    "coste_otros": {{ p.coste_otros | tojson }},
+    "tiempo_estimado_horas": {{ p.tiempo_estimado_horas | tojson }},
+    "rendimiento": {{ p.rendimiento | tojson }},
+    "desperdicio_recomendado_pct": {{ p.desperdicio_recomendado_pct | tojson }},
+    "imagen": {{ p.imagen | tojson }},
+    "notas_tecnicas": {{ p.notas_tecnicas | tojson }},
+    "descomposicion": {% if p.descomposicion_json %}{{ p.descomposicion_json | tojson }}{% else %}null{% endif %},
+    "usos": {{ p.usos | tojson }}
+  }{{ "," if not loop.last }}{% endfor %}
+]
+</script>
+<script id="datos-productos" type="application/json">
+[
+  {% for p in productos_catalogo %}{
+    "id": {{ p.id | tojson }},
+    "nombre": {{ p.nombre | tojson }},
+    "descripcion": {{ p.descripcion | tojson }},
+    "precio": {{ p.precio_unitario | tojson }},
+    "coste": {{ (p.precio_compra if p.precio_compra is not none else '') | tojson }},
+    "unidad": {{ p.unidad | tojson }},
+    "categoria": {{ p.categoria | tojson }},
+    "marca": {{ p.marca | tojson }},
+    "modelo": {{ p.modelo | tojson }},
+    "sku": {{ p.sku | tojson }},
+    "proveedor": {{ p.proveedor | tojson }},
+    "color": {{ p.color | tojson }},
+    "acabado": {{ p.acabado | tojson }},
+    "formato": {{ p.formato | tojson }},
+    "imagen": {{ p.imagen | tojson }},
+    "fecha_precio": {{ (p.fecha_actualizacion_precio.isoformat() if p.fecha_actualizacion_precio else '') | tojson }},
+    "usos": {{ p.usos | tojson }}
+  }{{ "," if not loop.last }}{% endfor %}
+]
+</script>
+<script id="datos-recursos" type="application/json">
+[
+  {% for r in recursos_catalogo %}{
+    "id": {{ r.id | tojson }},
+    "codigo": {{ r.codigo | tojson }},
+    "descripcion": {{ r.descripcion | tojson }},
+    "unidad": {{ r.unidad | tojson }},
+    "categoria": {{ r.categoria | tojson }},
+    "grupo": {{ r.grupo | tojson }},
+    "precio": {{ r.precio | tojson }},
+    "proveedor": {{ r.proveedor | tojson }},
+    "usos": {{ r.usos | tojson }}
+  }{{ "," if not loop.last }}{% endfor %}
+]
+</script>
+<datalist id="categorias-disponibles">
+  {% for c in categorias %}<option value="{{ c }}"></option>{% endfor %}
+</datalist>
+<script>
+  window.BUDGET_ID = {{ presupuesto.id if presupuesto else 'null' }};
+  // Borrador del autoguardado persistido en el servidor (solo si es más
+  // reciente que el último guardado del presupuesto).
+  window.BORRADOR_SERVIDOR = {{ borrador_servidor | tojson if borrador_servidor else 'null' }};
+  window.FUNCIONES_AVANZADAS = {{ 'true' if cfg.activar_funciones_avanzadas or (presupuesto and presupuesto.usar_funciones_avanzadas) else 'false' }};
+  window.MOSTRAR_COSTES_INTERNOS = {{ 'true' if cfg.mostrar_costes_internos or (presupuesto and presupuesto.usar_funciones_avanzadas) else 'false' }};
+  window.MOSTRAR_ALTERNATIVAS = {{ 'true' if cfg.mostrar_alternativas or (presupuesto and presupuesto.usar_funciones_avanzadas) else 'false' }};
+  window.MOSTRAR_CARGOS = {{ 'true' if cfg.mostrar_cargos_adicionales or (presupuesto and presupuesto.usar_funciones_avanzadas) else 'false' }};
+  // Parámetros de la estimación de tiempos de obra (ver editor/tiempos.js)
+  window.TIEMPOS_CFG = {
+    jornada: {{ cfg.horas_jornada or 8 }},
+    tarifa: {{ cfg.tarifa_hora_media or 8 }},
+    por_coste: {{ 'true' if cfg.estimar_tiempo_por_coste else 'false' }}
+  };
+</script>
+<script>
+  // Beneficio por partida: siempre visible según petición del usuario (fila Benef. y totales)
+  document.body.classList.add('beneficio-on');
+</script>
+<!-- Módulos del editor (cargados en orden de dependencia) -->
+<script src="/static/js/utils/formato.js"></script>
+<script src="/static/js/utils/catalogo.js"></script>
+<script src="/static/js/partida_catalogo_editor.js"></script>
+<script src="/static/js/editor/partida.js"></script>
+<script src="/static/js/editor/capitulo.js"></script>
+<script src="/static/js/services/autosave.js"></script>
+<script src="/static/js/editor/atajos.js"></script>
+<script src="/static/js/editor/dragdrop.js"></script>
+<script src="/static/js/editor/catalogo.js"></script>
+<script src="/static/js/editor/totales.js"></script>
+<script src="/static/js/editor/tiempos.js"></script>
+<script src="/static/js/editor/main.js"></script>
+<script src="/static/js/editor/partida_modal.js"></script>
+<script src="/static/js/editor/importador_excel.js"></script>
+<script src="/static/js/editor/dictado.js"></script>
+<script src="/static/js/editor/generador.js"></script>
+<script src="/static/js/editor/recetas_modal.js"></script>
+<script>
+  (function () {
+    var chk = document.getElementById('usar-funciones-avanzadas');
+    var panel = document.getElementById('advanced-budget-fields');
+    function syncAdvanced() {
+      if (panel) panel.style.display = chk && chk.checked ? 'grid' : 'none';
+      document.querySelectorAll('.advanced-item-section').forEach(function (el) {
+        el.style.display = chk && chk.checked ? '' : 'none';
+      });
+    }
+    if (chk) { chk.addEventListener('change', function () { syncAdvanced(); if (typeof recalcular === 'function') recalcular(); }); syncAdvanced(); }
+  })();
+
+  function toggleDatosGenerales() {
+    var content = document.getElementById('datos-generales-content');
+    var btn = document.getElementById('btn-toggle-datos');
+    var card = document.getElementById('card-datos-generales');
+    if (!content || !btn || !card) return;
+    
+    if (content.style.display === 'none') {
+      content.style.display = '';
+      btn.textContent = '▲ Contraer';
+      card.style.borderColor = 'var(--border)';
+    } else {
+      content.style.display = 'none';
+      btn.textContent = '▼ Expandir';
+      card.style.borderColor = 'var(--accent)';
+    }
+  }
+
+  function onClienteSeleccionado(select) {
+    actualizarResumenDatosGenerales();
+    // Collapse automatically once they choose a client (creating budget)
+    if (select && select.value !== "") {
+      var content = document.getElementById('datos-generales-content');
+      if (content && content.style.display !== 'none') {
+        setTimeout(toggleDatosGenerales, 300);
+      }
+    }
+  }
+
+  function toggleUploaderPortadas() {
+    var chk = document.getElementById('chk-con-portada');
+    var wrapper = document.getElementById('wrapper-foto-proyecto');
+    if (chk && wrapper) {
+      wrapper.style.display = chk.checked ? 'block' : 'none';
+    }
+  }
+
+  function toggleWrapperFirma() {
+    var chk = document.getElementById('chk-firmas');
+    var wrapper = document.getElementById('wrapper-firma');
+    if (chk && wrapper) {
+      wrapper.style.display = chk.checked ? 'block' : 'none';
+    }
+  }
+
+  // --- Firma digital del cliente (canvas) ----------------------------------
+  (function () {
+    var canvas = document.getElementById('firma-canvas');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var input = document.getElementById('firma-data');
+    var dibujando = false;
+    var ultimo = null;
+
+    function pos(e) {
+      var r = canvas.getBoundingClientRect();
+      var t = e.touches ? e.touches[0] : e;
+      return {
+        x: (t.clientX - r.left) * (canvas.width / r.width),
+        y: (t.clientY - r.top) * (canvas.height / r.height)
+      };
+    }
+
+    ctx.lineWidth = 2.2;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.strokeStyle = '#1e293b';
+
+    canvas.addEventListener('mousedown', function (e) { dibujando = true; ultimo = pos(e); e.preventDefault(); });
+    canvas.addEventListener('mousemove', function (e) {
+      if (!dibujando) return;
+      var p = pos(e);
+      ctx.beginPath();
+      ctx.moveTo(ultimo.x, ultimo.y);
+      ctx.lineTo(p.x, p.y);
+      ctx.stroke();
+      ultimo = p;
+    });
+    window.addEventListener('mouseup', function () { if (dibujando) { dibujando = false; guardarFirma(); } });
+    canvas.addEventListener('touchstart', function (e) { e.preventDefault(); dibujando = true; ultimo = pos(e); }, { passive: false });
+    canvas.addEventListener('touchmove', function (e) {
+      e.preventDefault();
+      if (!dibujando) return;
+      var p = pos(e);
+      ctx.beginPath();
+      ctx.moveTo(ultimo.x, ultimo.y);
+      ctx.lineTo(p.x, p.y);
+      ctx.stroke();
+      ultimo = p;
+    }, { passive: false });
+    canvas.addEventListener('touchend', function () { if (dibujando) { dibujando = false; guardarFirma(); } });
+
+    function guardarFirma() {
+      input.value = canvas.toDataURL('image/png');
+    }
+
+    document.getElementById('btn-limpiar-firma').addEventListener('click', function () {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      input.value = '';
+    });
+  })();
+
+  function actualizarResumenDatosGenerales() {
+    var selectCliente = document.querySelector('select[name="client_id"]');
+    var inputTitulo = document.querySelector('input[name="titulo"]');
+    var selectMoneda = document.querySelector('select[name="moneda"]');
+    var inputFecha = document.querySelector('input[name="fecha"]');
+    var selectEstado = document.querySelector('select[name="estado"]');
+    
+    var cliente = selectCliente && selectCliente.options[selectCliente.selectedIndex] ? selectCliente.options[selectCliente.selectedIndex].text : '';
+    if (!cliente || cliente === '— Selecciona un cliente —') {
+      cliente = 'Sin cliente';
+    }
+    
+    var titulo = inputTitulo ? inputTitulo.value.trim() : '';
+    if (!titulo) {
+      titulo = '(Sin título)';
+    }
+    
+    var moneda = selectMoneda ? selectMoneda.value : 'USD';
+    
+    var fecha = inputFecha ? inputFecha.value : '';
+    if (fecha) {
+      var p = fecha.split('-');
+      if (p.length === 3) fecha = p[2] + '/' + p[1] + '/' + p[0];
+    }
+    
+    var estado = selectEstado ? selectEstado.options[selectEstado.selectedIndex].text : 'Borrador';
+    
+    var resumenText = "👤 " + cliente + "  |  🏗️ " + titulo + "  |  📅 " + fecha + "  |  💵 " + moneda + "  |  🏷️ " + estado;
+    
+    var resSpan = document.getElementById('datos-generales-resumen');
+    if (resSpan) {
+      resSpan.textContent = resumenText;
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", function() {
+    var fields = ['client_id', 'titulo', 'moneda', 'fecha', 'estado'];
+    fields.forEach(function(fName) {
+      var el = document.querySelector('[name="' + fName + '"]');
+      if (el) {
+        el.addEventListener('change', actualizarResumenDatosGenerales);
+        el.addEventListener('input', actualizarResumenDatosGenerales);
+      }
+    });
+    actualizarResumenDatosGenerales();
+    toggleUploaderPortadas();
+    toggleWrapperFirma();
+
+    // If a client is already chosen (e.g. editing an existing budget), collapse on load to save space
+    var selectCliente = document.querySelector('select[name="client_id"]');
+    if (selectCliente && selectCliente.value !== "") {
+      toggleDatosGenerales();
+    }
+  });
+</script>
+{% endblock %}

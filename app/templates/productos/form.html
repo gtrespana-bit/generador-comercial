@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Editar Producto' if producto else 'Nuevo Producto' }}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>{{ 'Editar Producto' if producto else 'Nuevo Producto' }}</h1>
+    <p class="subtitle">Mantén precio, proveedor y ficha técnica en el catálogo sin recargar el presupuesto.</p>
+  </div>
+</div>
+
+<div class="card">
+  <form method="post" action="{{ '/productos/' ~ producto.id ~ '/editar' if producto else '/productos/nuevo' }}" enctype="multipart/form-data">
+    <div class="form-grid">
+      <div class="field field-full">
+        <label>Nombre del producto *</label>
+        <input type="text" name="nombre" value="{{ producto.nombre if producto else '' }}" required placeholder="p. ej. Porcelanato 60x60 Gris Perla">
+      </div>
+      <div class="field">
+        <label>Marca</label>
+        <input type="text" name="marca" value="{{ producto.marca if producto else '' }}" placeholder="p. ej. Venis">
+      </div>
+      <div class="field">
+        <label>Modelo</label>
+        <input type="text" name="modelo" value="{{ producto.modelo if producto else '' }}" placeholder="Referencia o colección">
+      </div>
+      <div class="field">
+        <label>SKU / código de proveedor</label>
+        <input type="text" name="sku" value="{{ producto.sku if producto else '' }}" placeholder="p. ej. VEN-6060-GP">
+      </div>
+      <div class="field">
+        <label>Categoría</label>
+        <input type="text" name="categoria" value="{{ producto.categoria if producto else 'General' }}" placeholder="Pisos, Cocina, Baños…">
+      </div>
+      <div class="field">
+        <label>Unidad</label>
+        <select name="unidad">
+          {% set unidades = ['ud', 'm2', 'm', 'ml', 'm3', 'juego', 'hora', 'glb', 'kg'] %}
+          {% for u in unidades %}
+          <option value="{{ u }}" {{ 'selected' if producto and producto.unidad == u else '' }}>{{ u }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="field">
+        <label>Precio de coste unitario (USD)</label>
+        <input type="number" name="precio_compra" step="0.01" min="0" value="{{ producto.precio_compra if producto and producto.precio_compra is not none else '' }}" placeholder="0,00">
+        <p class="hint">Coste de compra usado para calcular el beneficio cuando lo asocies a una partida.</p>
+      </div>
+      <div class="field">
+        <label>Precio de venta unitario (USD) *</label>
+        <input type="number" name="precio_unitario" step="0.01" min="0" value="{{ producto.precio_unitario if producto else 0 }}" required>
+        <p class="hint" id="producto-margen-hint">Introduce coste y venta para ver el margen.</p>
+        {% if producto and producto.fecha_actualizacion_precio %}<p class="hint">Precio actualizado: {{ producto.fecha_actualizacion_precio | fecha }}</p>{% endif %}
+      </div>
+      <div class="field field-full">
+        <label>Descripción detallada</label>
+        <textarea name="descripcion" rows="4" placeholder="Descripción comercial, uso, compatibilidades…">{{ producto.descripcion if producto else '' }}</textarea>
+      </div>
+    </div>
+
+    <details class="catalog-advanced-fields" {% if producto and (producto.precio_compra is not none or producto.proveedor or producto.ficha_tecnica or producto.variantes) %}open{% endif %}>
+      <summary>Datos de compra, entrega y presentación <span>opcionales</span></summary>
+      <div class="form-grid" style="padding-top:1rem;">
+        <div class="field">
+          <label>Proveedor</label>
+          <input type="text" name="proveedor" value="{{ producto.proveedor if producto else '' }}" placeholder="Empresa o contacto">
+        </div>
+        <div class="field">
+          <label>Tiempo de entrega (días)</label>
+          <input type="number" name="tiempo_entrega_dias" step="1" min="0" value="{{ producto.tiempo_entrega_dias if producto and producto.tiempo_entrega_dias is not none else '' }}" placeholder="p. ej. 7">
+        </div>
+        <div class="field">
+          <label>Color</label>
+          <input type="text" name="color" value="{{ producto.color if producto else '' }}" placeholder="Gris perla">
+        </div>
+        <div class="field">
+          <label>Acabado</label>
+          <input type="text" name="acabado" value="{{ producto.acabado if producto else '' }}" placeholder="Mate, pulido, satinado…">
+        </div>
+        <div class="field">
+          <label>Formato</label>
+          <input type="text" name="formato" value="{{ producto.formato if producto else '' }}" placeholder="60 × 60 cm">
+        </div>
+        <div class="field field-full">
+          <label>Variantes disponibles</label>
+          <textarea name="variantes" rows="3" placeholder="Colores, formatos, referencias o alternativas comerciales…">{{ producto.variantes if producto else '' }}</textarea>
+        </div>
+
+        <div class="field field-full">
+          <label>Foto principal</label>
+          {% if producto and producto.imagen %}
+          <div class="catalog-image-preview">
+            <img src="/static/{{ producto.imagen }}" alt="{{ producto.nombre }}">
+            <label class="hint"><input type="checkbox" name="quitar_imagen" value="1"> Eliminar foto principal</label>
+          </div>
+          {% endif %}
+          <input type="file" name="imagen" accept="image/*">
+        </div>
+
+        <div class="field field-full">
+          <label>Galería de imágenes <span class="hint">(opcional)</span></label>
+          {% if producto and producto.imagenes_lista | length > 1 %}
+          <div class="catalog-gallery">
+            {% for imagen in producto.imagenes_lista[1:] %}
+            <label class="catalog-gallery-item">
+              <img src="/static/{{ imagen }}" alt="Imagen de {{ producto.nombre }}">
+              <span><input type="checkbox" name="quitar_imagenes" value="{{ imagen }}"> Eliminar</span>
+            </label>
+            {% endfor %}
+          </div>
+          {% endif %}
+          <input type="file" name="imagenes" accept="image/*" multiple>
+          <p class="hint">Puedes seleccionar varias imágenes a la vez. La foto principal se usa en el constructor.</p>
+        </div>
+
+        <div class="field field-full">
+          <label>Ficha técnica (PDF)</label>
+          {% if producto and producto.ficha_tecnica %}
+          <p class="hint" style="margin:0 0 .5rem;"><a class="link" href="/static/{{ producto.ficha_tecnica }}" target="_blank">📄 Ver ficha técnica actual</a> · <label><input type="checkbox" name="quitar_ficha_tecnica" value="1"> Eliminar</label></p>
+          {% endif %}
+          <input type="file" name="ficha_tecnica" accept="application/pdf,.pdf">
+        </div>
+      </div>
+    </details>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">💾 Guardar producto</button>
+      <a href="/productos" class="btn">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+  var coste = document.querySelector('[name="precio_compra"]');
+  var venta = document.querySelector('[name="precio_unitario"]');
+  var hint = document.getElementById('producto-margen-hint');
+  function numero(el) { var n = parseFloat((el && el.value || '').replace(',', '.')); return isFinite(n) ? n : 0; }
+  function actualizar() {
+    if (!hint) return; var c = numero(coste), v = numero(venta);
+    if (!c) { hint.textContent = 'Indica el coste para calcular el beneficio.'; return; }
+    var beneficio = v - c, margen = v ? beneficio / v * 100 : 0;
+    hint.textContent = 'Beneficio: $' + beneficio.toFixed(2) + ' / ud · Margen: ' + margen.toFixed(1) + '%';
+    hint.style.color = beneficio < 0 ? 'var(--rose)' : 'var(--green)';
+  }
+  [coste, venta].forEach(function (el) { if (el) el.addEventListener('input', actualizar); }); actualizar();
+})();
+</script>
+{% endblock %}

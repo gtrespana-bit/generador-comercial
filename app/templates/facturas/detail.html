@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}Factura {{ f.numero }}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <p class="crumb">🧾 <a href="/facturas">Facturas</a> › {{ f.numero }}</p>
+    <h1>Factura {{ f.numero }}</h1>
+    <p class="subtitle">{% if f.titulo %}{{ f.titulo }} · {% endif %}Emitida el {{ f.fecha | fecha }}</p>
+  </div>
+  <div class="actions">
+    <button class="btn" type="button" onclick="imprimirPDF('/facturas/{{ f.id }}/pdf?inline=1')" title="Imprimir factura en formato PDF">🖨️ Imprimir</button>
+    <a class="btn btn-primary" href="/facturas/{{ f.id }}/pdf" download="factura_{{ f.numero }}.pdf" onclick="descargarPDF(event, this.href, 'factura_{{ f.numero }}.pdf')">⬇ Descargar PDF</a>
+    <a class="btn" href="/facturas/{{ f.id }}/pdf?inline=1" target="_blank">👁 Ver PDF</a>
+    {% if f.presupuesto_id %}
+    <a class="btn" href="/presupuestos/{{ f.presupuesto_id }}">📄 Ver presupuesto origen</a>
+    {% endif %}
+    <form method="post" action="/facturas/{{ f.id }}/estado" class="inline">
+      <select name="estado" class="select-inline">
+        <option value="emitida" {{ 'selected' if f.estado == 'emitida' else '' }}>Emitida</option>
+        <option value="anulada" {{ 'selected' if f.estado == 'anulada' else '' }}>Anulada</option>
+      </select>
+      <button class="btn btn-sm" type="submit">Cambiar estado</button>
+    </form>
+    <form method="post" action="/facturas/{{ f.id }}/eliminar" class="inline" onsubmit="return confirm('¿Eliminar esta factura?');">
+      <button class="btn btn-danger" type="submit">🗑 Eliminar</button>
+    </form>
+  </div>
+</div>
+
+<div class="card">
+  <div class="form-grid">
+    <div>
+      <h2>Cliente</h2>
+      <p><strong>{{ f.cliente.nombre }}</strong></p>
+      {% if f.cliente.rif %}<p class="muted">RIF/C.I.: {{ f.cliente.rif }}</p>{% endif %}
+      {% if f.cliente.pais %}<p class="muted">País: {{ f.cliente.pais }}</p>{% endif %}
+      {% if f.cliente.telefono %}<p class="muted">📞 {{ f.cliente.telefono }}</p>{% endif %}
+    </div>
+    <div>
+      <h2>Datos</h2>
+      <p class="muted">Fecha de emisión: <strong>{{ f.fecha | fecha }}</strong></p>
+      {% if f.direccion_obra %}<p class="muted">Obra: <strong>{{ f.direccion_obra }}</strong></p>{% endif %}
+      <p class="muted">Moneda: <strong>{{ f.moneda }}</strong> · IVA: <strong>{{ f.impuesto_pct | round(2) }}%</strong></p>
+      <p><span class="badge badge-{{ f.estado }}">{{ f.estado | capitalize }}</span></p>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Capítulos y partidas</h2>
+  {% for cap in f.capitulos %}
+  <div class="doc-capitulo-banda"></div>
+  <div class="doc-capitulo">
+    <span>{{ cap.nombre }}</span>
+    <span>{{ cap.subtotal | money(f.moneda) }}</span>
+  </div>
+  {% for part in cap.partidas %}
+  <div class="doc-partida">
+    <table class="table" style="margin-bottom:0;">
+      <tr>
+        <td>
+          <div class="doc-p-nombre">{{ part.nombre }}</div>
+          {% if part.descripcion %}<div class="doc-p-desc">{{ part.descripcion }}</div>{% endif %}
+        </td>
+        <td class="right" style="width:90px; font-weight:600;">{{ part.cantidad | cant(part.unidad) }}</td>
+        <td class="right" style="width:110px;">{{ part.precio_unitario | num }} {{ f.moneda | replace('USD','$') | replace('Bs','Bs') }}/{{ part.unidad }}</td>
+        <td class="right" style="width:110px; font-weight:700;">{{ part.importe | money(f.moneda) }}</td>
+      </tr>
+    </table>
+  </div>
+  {% endfor %}
+  <div style="height: 14px;"></div>
+  {% endfor %}
+
+  <table class="table doc-totales" style="width:100%;">
+    <tr><td class="right" style="width:70%;">BASE IMPONIBLE</td><td class="right">{{ f.base | money(f.moneda) }}</td></tr>
+    {% if f.descuento_pct %}
+    <tr><td class="right">DESCUENTO ({{ f.descuento_pct | round(2) }} %)</td><td class="right">- {{ f.descuento_monto | money(f.moneda) }}</td></tr>
+    {% endif %}
+    <tr><td class="right">I.V.A. ({{ f.impuesto_pct | round(2) }} %)</td><td class="right">{{ f.impuesto_monto | money(f.moneda) }}</td></tr>
+    <tr class="row-total"><td class="right"><strong>TOTAL A PAGAR</strong></td><td class="right"><strong>{{ f.total | money(f.moneda) }}</strong></td></tr>
+  </table>
+</div>
+
+{% if f.notas %}
+<div class="card">
+  <h2>Información adicional</h2>
+  <p class="prewrap">{{ f.notas }}</p>
+</div>
+{% endif %}
+{% if f.condiciones %}
+<div class="card">
+  <h2>Condiciones de pago</h2>
+  <p class="prewrap">{{ f.condiciones }}</p>
+</div>
+{% endif %}
+{% endblock %}

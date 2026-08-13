@@ -1,0 +1,294 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Dashboard</h1>
+    <p class="subtitle">Resumen financiero y operativo de tu negocio</p>
+  </div>
+  <div class="actions">
+    <a class="btn btn-ai" href="/presupuestos/nuevo?autogenerar=1" title="Genera un borrador de capítulos y partidas buscando coincidencias en tu propio catálogo">
+      <svg width="14" height="14" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 1l2 5h5l-4 3.5 1.5 5L9 12l-4.5 2.5L6 9.5 2 6h5z"/></svg>
+      Autogenerar con IA
+    </a>
+    <a class="btn btn-primary" href="/presupuestos/nuevo">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 1v10M1 6h10"/></svg>
+      Nuevo Presupuesto
+    </a>
+  </div>
+</div>
+
+<!-- Panel de resumen (basado en tus propios datos, no en un servicio externo) -->
+<div class="dashboard-intel">
+  <div class="card card-intel-main">
+    <div class="intel-header">
+      <div class="intel-badge">
+        <svg width="14" height="14" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 1l2 5h5l-4 3.5 1.5 5L9 12l-4.5 2.5L6 9.5 2 6h5z"/></svg>
+        <span>Resumen del negocio</span>
+      </div>
+    </div>
+    <div class="intel-body">
+      <div class="intel-score">
+        <span class="intel-score-num">{{ tasa_aprobacion | int }}</span>
+        <span class="intel-score-pct">%</span>
+      </div>
+      <div class="intel-details">
+        <div class="intel-label">Tasa de aprobación histórica (presupuestos enviados que terminaron aprobados)</div>
+        <div class="intel-bar">
+          <div class="intel-bar-fill" style="width: {{ tasa_aprobacion }}%"></div>
+        </div>
+        <p class="intel-recommendation">
+          {% if analisis_precios.alertas %}
+          Tu catálogo de partidas tiene <strong>{{ analisis_precios.alertas | length }}</strong> con margen bajo o precio sin revisar{% if analisis_precios.categoria_mas_afectada %}, sobre todo en <strong>{{ analisis_precios.categoria_mas_afectada }}</strong>{% endif %}.
+          <a class="link" href="/presupuestos/optimizar-precios">Revísalas aquí →</a>
+          {% elif analisis_precios.evaluadas %}
+          Tu catálogo de partidas no tiene alertas de margen por ahora. <a class="link" href="/presupuestos/optimizar-precios">Ver análisis completo →</a>
+          {% else %}
+          Todavía no cargaste costos internos (materiales/mano de obra) en tu catálogo de partidas, así que no se puede calcular el margen. <a class="link" href="/partidas">Complétalo aquí →</a>
+          {% endif %}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-intel-side">
+    <h2>Indicadores de tu negocio</h2>
+    <div class="market-indicators">
+      <div class="indicator">
+        <span class="indicator-label">Proyectos activos</span>
+        <span class="indicator-value indicator-accent">{{ proyectos_activos }}</span>
+      </div>
+      <div class="indicator">
+        <span class="indicator-label">Presupuestos por vencer (7 días)</span>
+        <span class="indicator-value {{ 'indicator-down' if por_vencer else 'indicator-up' }}">{{ por_vencer }}</span>
+      </div>
+      <div class="indicator">
+        <span class="indicator-label">Margen promedio del catálogo</span>
+        <span class="indicator-value indicator-accent">{{ (analisis_precios.margen_promedio ~ '%') if analisis_precios.margen_promedio is not none else 'Sin datos' }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Stats Grid -->
+<div class="cards">
+  <div class="card-stat">
+    <div class="stat-num">{{ total_presupuestos }}</div>
+    <div class="stat-label">Presupuestos Emitidos</div>
+  </div>
+  <div class="card-stat">
+    <div class="stat-num">{{ total_facturas }}</div>
+    <div class="stat-label">Facturas Generadas</div>
+  </div>
+  <div class="card-stat">
+    <div class="stat-num">{{ por_estado['aprobado'] }}</div>
+    <div class="stat-label">Proyectos Aprobados</div>
+  </div>
+  <div class="card-stat">
+    <div class="stat-num" style="color: var(--accent);">{{ importe_aprobado | money }}</div>
+    <div class="stat-label">Volumen Aprobado</div>
+  </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="card">
+  <div class="card-head" style="padding-bottom: 0.85rem; border-bottom: 1px solid var(--border);">
+    <h2 style="margin-bottom: 0;">Actividad Reciente</h2>
+    <a class="link" href="/presupuestos" style="font-size: 0.82rem;">Ver todos →</a>
+  </div>
+  {% if recientes %}
+  <table class="table">
+    <thead>
+      <tr>
+        <th>N.º</th>
+        <th>Fecha</th>
+        <th>Cliente</th>
+        <th>Estado</th>
+        <th class="right">Total</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in recientes %}
+      <tr>
+        <td><a class="link" href="/presupuestos/{{ p.id }}">{{ p.numero }}</a></td>
+        <td style="color: var(--text-soft);">{{ p.fecha | fecha }}</td>
+        <td>{{ p.cliente.nombre }}</td>
+        <td><span class="badge badge-{{ p.estado }}">{{ p.estado | capitalize }}</span></td>
+        <td class="right"><strong>{{ p.total | money(p.moneda) }}</strong></td>
+        <td class="right">
+          <a class="btn btn-sm" href="/presupuestos/{{ p.id }}/pdf" download="presupuesto_{{ p.numero }}.pdf" onclick="descargarPDF(event, this.href, 'presupuesto_{{ p.numero }}.pdf')">PDF</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">
+    <p>Todavía no hay presupuestos. <a class="link" href="/presupuestos/nuevo">Crea el primero</a>.</p>
+  </div>
+  {% endif %}
+</div>
+
+<style>
+  /* Dashboard-specific styles — scoped to this page */
+  .dashboard-intel {
+    display: grid;
+    grid-template-columns: 1.8fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .card-intel-main {
+    padding: 1.5rem;
+    background: linear-gradient(135deg, var(--surface) 0%, var(--surface-alt) 100%);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .card-intel-main::before {
+    content: '';
+    position: absolute;
+    top: -40%;
+    right: -10%;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .card-intel-side {
+    padding: 1.5rem;
+    margin-bottom: 0;
+  }
+  .card-intel-side h2 {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 1.1rem;
+  }
+
+  .intel-header {
+    margin-bottom: 1.25rem;
+    position: relative;
+  }
+  .intel-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.7rem;
+    background: var(--accent-soft);
+    border: 1px solid var(--accent-light);
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--accent);
+  }
+  .intel-badge svg { width: 12px; height: 12px; }
+
+  .intel-body {
+    display: flex;
+    gap: 1.75rem;
+    align-items: center;
+    position: relative;
+  }
+  .intel-score {
+    display: flex;
+    align-items: baseline;
+    flex-shrink: 0;
+  }
+  .intel-score-num {
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.05em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .intel-score-pct {
+    font-size: 1.3rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-left: 2px;
+  }
+  .intel-details { flex: 1; min-width: 0; }
+  .intel-label {
+    color: var(--text-soft);
+    font-size: 0.82rem;
+    font-weight: 500;
+    margin-bottom: 0.6rem;
+  }
+  .intel-bar {
+    height: 5px;
+    background: var(--surface-active, var(--border));
+    width: 100%;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+  }
+  .intel-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), #8b5cf6);
+    border-radius: 3px;
+    transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .intel-recommendation {
+    color: var(--text-soft);
+    font-size: 0.84rem;
+    line-height: 1.6;
+    margin: 0;
+  }
+  .intel-recommendation strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .market-indicators {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .indicator {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .indicator:last-child { border-bottom: none; }
+  .indicator-label {
+    color: var(--text-soft);
+    font-size: 0.82rem;
+  }
+  .indicator-value {
+    font-weight: 600;
+    font-size: 0.8rem;
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+  }
+  .indicator-up {
+    color: var(--green);
+    background: var(--green-soft);
+  }
+  .indicator-down {
+    color: var(--rose);
+    background: var(--rose-soft);
+  }
+  .indicator-accent {
+    color: var(--accent);
+    background: var(--accent-soft);
+  }
+
+  @media (max-width: 900px) {
+    .dashboard-intel {
+      grid-template-columns: 1fr;
+    }
+    .intel-body {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+  }
+</style>
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Optimización de precios{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <p class="crumb"><a href="/presupuestos">Presupuestos</a> › Optimización de precios</p>
+    <h1>Optimización de precios</h1>
+    <p class="subtitle">Análisis real de tu catálogo de partidas (/partidas). No usa internet ni ninguna base de datos de mercado externa: sólo compara el precio de venta contra el costo que tú mismo cargaste.</p>
+  </div>
+  <div class="actions">
+    <a class="btn" href="/partidas">Ver catálogo de partidas</a>
+    <a class="btn btn-primary" href="/presupuestos">← Volver a presupuestos</a>
+  </div>
+</div>
+
+<div class="cards" style="margin-bottom:1.5rem;">
+  <div class="card-stat">
+    <div class="stat-num">{{ analisis.total_partidas }}</div>
+    <div class="stat-label">Partidas en tu catálogo</div>
+  </div>
+  <div class="card-stat">
+    <div class="stat-num">{{ analisis.evaluadas }}</div>
+    <div class="stat-label">Con costo interno cargado (evaluables)</div>
+  </div>
+  <div class="card-stat">
+    <div class="stat-num" style="color: {{ 'var(--rose)' if analisis.alertas else 'var(--accent)' }};">{{ analisis.alertas | length }}</div>
+    <div class="stat-label">Alertas detectadas</div>
+  </div>
+  <div class="card-stat">
+    <div class="stat-num">{{ (analisis.margen_promedio ~ '%') if analisis.margen_promedio is not none else '—' }}</div>
+    <div class="stat-label">Margen promedio del catálogo</div>
+  </div>
+</div>
+
+{% if analisis.sin_datos_costo %}
+<p class="hint" style="margin-bottom:1rem;">
+  ℹ️ {{ analisis.sin_datos_costo }} partida(s) no tienen costo de materiales/mano de obra cargado, así que no se puede calcular su margen todavía.
+  Complétalo en <a class="link" href="/partidas">el catálogo de partidas</a> para incluirlas en este análisis.
+</p>
+{% endif %}
+
+<div class="card">
+  <div class="card-head" style="padding-bottom: 0.85rem; border-bottom: 1px solid var(--border);">
+    <h2 style="margin-bottom:0;">Partidas a revisar</h2>
+    <span class="hint">Margen de referencia: {{ analisis.margen_minimo | int }}% · Se marca como desactualizado a partir de {{ analisis.dias_desactualizado }} días sin tocar el precio</span>
+  </div>
+  {% if analisis.alertas %}
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Partida</th>
+        <th>Categoría</th>
+        <th class="right">Precio venta</th>
+        <th class="right">Costo interno</th>
+        <th class="right">Margen</th>
+        <th>Motivo</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for a in analisis.alertas %}
+      <tr>
+        <td><strong>{{ a.nombre }}</strong></td>
+        <td>{{ a.categoria }}</td>
+        <td class="right">{{ a.precio_unitario | money }}</td>
+        <td class="right">{{ a.coste_unitario | money }}</td>
+        <td class="right" style="color: {{ 'var(--rose)' if a.margen_pct < analisis.margen_minimo else 'var(--text)' }};"><strong>{{ a.margen_pct }}%</strong></td>
+        <td style="font-size:0.82rem; color:var(--text-soft);">{{ a.motivos | join(' · ') }}</td>
+        <td class="right"><a class="btn btn-sm" href="/partidas/{{ a.id }}/editar" target="_blank">Ajustar precio</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">
+    <p>{{ 'No hay partidas con costo interno cargado todavía. Complétalo en el catálogo de partidas para poder analizarlas.' if not analisis.evaluadas else 'Sin alertas: todas las partidas evaluadas tienen margen saludable y precio actualizado. 👍' }}</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

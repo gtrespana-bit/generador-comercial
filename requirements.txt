@@ -1,0 +1,13 @@
+fastapi>=0.115
+uvicorn[standard]>=0.30
+sqlalchemy>=2.0
+jinja2>=3.1
+reportlab>=4.0
+python-multipart>=0.0.9
+pillow>=10.0
+# Lectura local de archivos .xlsx en el asistente de importación.
+openpyxl>=3.1
+# Ventana nativa de Windows (WebView2 / WinForms). La rama 6 se empaqueta
+# correctamente con PyInstaller e instala pythonnet en Windows.
+pywebview>=6.0,<7.0
+pythonnet>=3.0; sys_platform == "win32"

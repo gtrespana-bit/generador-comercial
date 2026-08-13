@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% from "partidas/_editor.html" import editor_partida_catalogo %}
+{% block title %}{{ 'Editar Partida' if partida else 'Nueva Partida' }}{% endblock %}
+{% block content %}
+<div class="page-head catalog-form-head">
+  <div>
+    <span class="page-eyebrow">Catálogo de partidas</span>
+    <h1>{{ 'Editar Partida' if partida else 'Nueva Partida' }}</h1>
+    <p class="subtitle">Ficha completa para definir el precio de venta, los datos técnicos y el análisis de costes.</p>
+  </div>
+  <a href="/partidas" class="btn">← Volver al catálogo</a>
+</div>
+
+<form class="catalog-editor-form" method="post" enctype="multipart/form-data" action="{{ '/partidas/' ~ partida.id ~ '/editar' if partida else '/partidas/nueva' }}">
+  {{ editor_partida_catalogo(partida, true) }}
+  <div class="form-actions catalog-editor-actions">
+    <span class="hint">Los cambios se aplicarán a las próximas veces que uses esta partida.</span>
+    <button class="btn btn-primary">💾 Guardar partida</button>
+    <a href="/partidas" class="btn">Cancelar</a>
+  </div>
+</form>
+
+<datalist id="categorias-disponibles">
+  {% for categoria in categorias %}<option value="{{ categoria }}"></option>{% endfor %}
+</datalist>
+{% endblock %}
+{% block scripts %}
+<script src="/static/js/partida_catalogo_editor.js"></script>
+{% endblock %}

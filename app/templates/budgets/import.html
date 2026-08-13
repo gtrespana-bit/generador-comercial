@@ -1,0 +1,340 @@
+{% extends "base.html" %}
+{% block title %}Importar partidas{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Importar partidas</h1>
+    <p class="subtitle">Importa tablas o descompuestos CYPE. El formato CYPE conserva la matriz completa, fórmulas y archivo original de cada partida.</p>
+  </div>
+  <a class="btn" href="{{ '/partidas' if modo_catalogo else '/presupuestos' }}">← Volver a {{ 'partidas' if modo_catalogo else 'presupuestos' }}</a>
+</div>
+
+<div class="import-steps" aria-label="Pasos de importación">
+  <span class="active">1. Cargar</span><span>2. Revisar</span><span>3. Validar</span><span>4. Confirmar</span>
+</div>
+
+<div class="card" id="import-source-card">
+  <h2>1. Carga los datos</h2>
+  <p class="hint">Para archivos como <strong>DPT020.xlsx</strong>, selecciona uno o varios <strong>.xlsx</strong> de CYPE: se detectará cada partida, fila, celda y fórmula sin convertirlo en una tabla plana. También se admiten CSV/Excel tabulares.</p>
+  <div class="form-grid">
+    <div class="field">
+      <label>Archivo CSV o Excel</label>
+      <input type="file" id="import-file" multiple accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+      <p class="hint">Puedes seleccionar varios archivos solo si todos son descompuestos CYPE.</p>
+    </div>
+    <div class="field" id="import-header-field">
+      <label>Primera fila (solo formato tabular)</label>
+      <label class="check-line"><input type="checkbox" id="import-header" checked> Contiene nombres de columnas</label>
+      <p class="hint">Desmarca si la primera fila ya es una partida.</p>
+    </div>
+    <div class="field field-full">
+      <label>O pega filas tabulares aquí</label>
+      <textarea id="import-text" rows="6" placeholder="Capítulo	Partida	Descripción	Unidad	Cantidad	Precio&#10;PISOS	Porcelanato 90x90	Suministro y colocación	m2	84,6	68"></textarea>
+      <p class="hint">El pegado admite tabulaciones, coma o punto y coma. Si eliges un archivo, este campo se ignora.</p>
+    </div>
+  </div>
+  <div class="form-actions">
+    <button type="button" class="btn btn-primary" id="btn-analyze-import">Analizar datos →</button>
+  </div>
+  <div id="import-source-error" class="alert alert-error" style="display:none;"></div>
+</div>
+
+<div class="card import-hidden" id="import-mapping-card">
+  <h2 id="import-review-title">2. Revisa la detección de columnas</h2>
+  <p class="hint" id="import-review-hint">El sistema propone una asignación. Solo <strong>Partida</strong> es obligatoria; ajusta cualquier columna antes de validar.</p>
+  <div id="tabular-mapping">
+    <div class="table-wrap">
+      <table class="table import-map-table">
+        <thead><tr><th>Dato del presupuesto</th><th>Columna detectada</th></tr></thead>
+        <tbody id="import-mapping-body"></tbody>
+      </table>
+    </div>
+  </div>
+  <div id="cype-summary" class="import-hidden"></div>
+  <h3 style="margin-top:1.25rem;">Vista previa <span id="import-preview-count" class="hint"></span></h3>
+  <div class="table-wrap import-preview-wrap" id="import-preview-wrap">
+    <table class="table" id="import-preview-table"><thead></thead><tbody></tbody></table>
+    <div id="cype-preview"></div>
+  </div>
+  <div class="form-actions">
+    <button type="button" class="btn btn-primary" id="btn-validate-import">Validar importación →</button>
+  </div>
+</div>
+
+<div class="card import-hidden" id="import-destination-card">
+  <h2>3. {% if modo_catalogo %}Destino: catálogo de partidas{% else %}Elige el destino{% endif %}</h2>
+  {% if modo_catalogo %}
+  <div style="display:flex; gap:.6rem; align-items:flex-start; background:var(--accent-soft); border:1px solid var(--accent-light); border-radius:var(--radius-sm); padding:.75rem .9rem; margin-bottom:.5rem;">
+    <span style="font-size:1.1rem;">📦</span>
+    <span style="font-size:.86rem; color:var(--text);">Las partidas detectadas se guardarán en el <strong>Catálogo de Partidas</strong> con su código, unidad, descripción y costes (mano de obra, materiales…), listas para reutilizarse en cualquier presupuesto. No se crea ni se modifica ningún presupuesto.</span>
+  </div>
+  <input type="hidden" id="modo-catalogo" value="1">
+  {% else %}
+  <p class="hint">Puedes crear un presupuesto nuevo o añadir las partidas a un presupuesto editable. Si un capítulo aún no existe en el destino, se creará al confirmar.</p>
+  <div class="form-grid">
+    <div class="field field-full">
+      <label>Destino</label>
+      <select id="import-destination">
+        <option value="">Crear un presupuesto nuevo</option>
+        {% for p in presupuestos %}
+        <option value="{{ p.id }}">Añadir a {{ p.numero }} · {{ p.cliente.nombre }}{% if p.titulo %} · {{ p.titulo }}{% endif %}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="field import-cype-only import-hidden" id="import-cype-chapter-field">
+      <label>Capítulo para las partidas CYPE</label>
+      <input type="text" id="import-cype-chapter" value="PARTIDAS IMPORTADAS" maxlength="200">
+      <p class="hint">Cada hoja/archivo detectado será una partida y conservará su descompuesto completo dentro de este capítulo.</p>
+    </div>
+    <div class="field import-new-only">
+      <label>Cliente *</label>
+      <select id="import-client">
+        <option value="">— Selecciona un cliente —</option>
+        {% for cliente in clientes %}<option value="{{ cliente.id }}">{{ cliente.nombre }}</option>{% endfor %}
+      </select>
+      {% if not clientes %}<p class="hint">Primero <a class="link" href="/clientes/nuevo" target="_blank">crea un cliente</a>.</p>{% endif %}
+    </div>
+    <div class="field import-new-only">
+      <label>Título del proyecto <span class="hint">(opcional)</span></label>
+      <input type="text" id="import-title" placeholder="p. ej. Remodelación cocina">
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<div class="card import-hidden" id="import-validation-card">
+  <h2>4. Validación y confirmación</h2>
+  <div class="import-summary" id="import-summary"></div>
+  <div id="import-issues"></div>
+  <div class="form-actions">
+    <button type="button" class="btn" id="btn-revalidate-import">↻ Validar de nuevo</button>
+    <button type="button" class="btn btn-primary" id="btn-confirm-import" disabled>✓ Confirmar importación</button>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+  'use strict';
+  var CAMPOS = {{ campos_importables | tojson }};
+  var estado = { formato: 'tabular', encabezados: [], filas: [], mapeo: {}, primeraFila: 2, validacion: null, importacionId: '', cypePartidas: [] };
+  var fileInput = document.getElementById('import-file');
+  var textInput = document.getElementById('import-text');
+  var headerInput = document.getElementById('import-header');
+  var sourceError = document.getElementById('import-source-error');
+  var mappingCard = document.getElementById('import-mapping-card');
+  var destinationCard = document.getElementById('import-destination-card');
+  var validationCard = document.getElementById('import-validation-card');
+  var destination = document.getElementById('import-destination');
+  var confirmBtn = document.getElementById('btn-confirm-import');
+  // Modo catálogo (abierto desde el tab Partidas): las partidas se guardan
+  // en el Catálogo de Partidas y no hace falta elegir destino ni cliente.
+  var MODO_CATALOGO = !!document.getElementById('modo-catalogo');
+
+  function mostrarError(mensaje) {
+    sourceError.textContent = mensaje || '';
+    sourceError.style.display = mensaje ? '' : 'none';
+  }
+  function ocultarValidacion() {
+    estado.validacion = null;
+    validationCard.classList.add('import-hidden');
+    confirmBtn.disabled = true;
+  }
+  function escapeText(valor) { return String(valor == null ? '' : valor); }
+  function esCype() { return estado.formato === 'cype_descompuesto'; }
+  function payload() {
+    var base = { formato: estado.formato, modo: MODO_CATALOGO ? 'catalogo' : 'presupuesto' };
+    if (!MODO_CATALOGO) {
+      base.presupuesto_destino_id = destination ? (destination.value || null) : null;
+      base.client_id = document.getElementById('import-client').value || null;
+      base.titulo = document.getElementById('import-title').value || '';
+    }
+    if (esCype()) {
+      base.importacion_id = estado.importacionId;
+      if (!MODO_CATALOGO) base.capitulo_cype = document.getElementById('import-cype-chapter').value || '';
+      return base;
+    }
+    var mapeo = {};
+    document.querySelectorAll('[data-import-field]').forEach(function (select) {
+      mapeo[select.dataset.importField] = select.value === '' ? null : Number(select.value);
+    });
+    estado.mapeo = mapeo;
+    base.filas = estado.filas;
+    base.mapeo = mapeo;
+    base.primera_fila = estado.primeraFila;
+    return base;
+  }
+  function actualizarDestino() {
+    if (!destination) return;  // modo catálogo: no hay selector de destino
+    var nuevo = !destination.value;
+    document.querySelectorAll('.import-new-only').forEach(function (el) { el.style.display = nuevo ? '' : 'none'; });
+    ocultarValidacion();
+  }
+  function setModoCype(activo) {
+    document.getElementById('import-header-field').style.display = activo ? 'none' : '';
+    document.getElementById('tabular-mapping').style.display = activo ? 'none' : '';
+    document.getElementById('cype-summary').classList.toggle('import-hidden', !activo);
+    document.getElementById('cype-preview').style.display = activo ? '' : 'none';
+    document.getElementById('import-preview-table').style.display = activo ? 'none' : '';
+    var chapterField = document.getElementById('import-cype-chapter-field');
+    if (chapterField) chapterField.classList.toggle('import-hidden', !activo);
+    document.getElementById('import-review-title').textContent = activo ? '2. Revisa las partidas y filas CYPE detectadas' : '2. Revisa la detección de columnas';
+    document.getElementById('import-review-hint').innerHTML = activo
+      ? 'Cada fila y columna se conserva con su número original. Los resultados de fórmula y las fórmulas se guardan, junto con el archivo <strong>.xlsx</strong> original.'
+      : 'El sistema propone una asignación. Solo <strong>Partida</strong> es obligatoria; ajusta cualquier columna antes de validar.';
+  }
+  function renderMapeo() {
+    var body = document.getElementById('import-mapping-body');
+    body.innerHTML = '';
+    Object.keys(CAMPOS).forEach(function (campo) {
+      var tr = document.createElement('tr');
+      var label = document.createElement('td');
+      var strong = document.createElement('strong');
+      strong.textContent = CAMPOS[campo] + (campo === 'partida' ? ' *' : '');
+      label.appendChild(strong);
+      var td = document.createElement('td');
+      var select = document.createElement('select');
+      select.dataset.importField = campo;
+      var empty = document.createElement('option'); empty.value = ''; empty.textContent = '— No importar —'; select.appendChild(empty);
+      estado.encabezados.forEach(function (encabezado, indice) {
+        var option = document.createElement('option'); option.value = indice; option.textContent = encabezado;
+        if (estado.mapeo[campo] === indice) option.selected = true;
+        select.appendChild(option);
+      });
+      select.addEventListener('change', ocultarValidacion);
+      td.appendChild(select); tr.appendChild(label); tr.appendChild(td); body.appendChild(tr);
+    });
+  }
+  function renderPreviewTabular() {
+    var table = document.getElementById('import-preview-table');
+    var thead = table.querySelector('thead'); var tbody = table.querySelector('tbody');
+    thead.innerHTML = ''; tbody.innerHTML = '';
+    var hr = document.createElement('tr');
+    estado.encabezados.forEach(function (header) { var th = document.createElement('th'); th.textContent = header; hr.appendChild(th); });
+    thead.appendChild(hr);
+    estado.filas.slice(0, 8).forEach(function (fila) {
+      var tr = document.createElement('tr');
+      estado.encabezados.forEach(function (_, index) { var td = document.createElement('td'); td.textContent = fila[index] || ''; tr.appendChild(td); });
+      tbody.appendChild(tr);
+    });
+    document.getElementById('import-preview-count').textContent = '· mostrando 8 de ' + estado.filas.length + ' filas';
+  }
+  function appendCelda(td, valor, formula) {
+    td.textContent = valor || '';
+    if (formula) {
+      td.title = formula;
+      var fx = document.createElement('small'); fx.className = 'cype-fx'; fx.textContent = 'fx';
+      td.appendChild(fx);
+    }
+  }
+  function renderPreviewCype() {
+    var summary = document.getElementById('cype-summary');
+    var preview = document.getElementById('cype-preview');
+    summary.innerHTML = ''; preview.innerHTML = '';
+    var totalFilas = 0;
+    estado.cypePartidas.forEach(function (partida) {
+      totalFilas += (partida.filas || []).length;
+      var ficha = document.createElement('div'); ficha.className = 'cype-partida-summary';
+      var title = document.createElement('strong'); title.textContent = (partida.codigo || 'Sin código') + ' · ' + (partida.nombre || 'Sin nombre'); ficha.appendChild(title);
+      var meta = document.createElement('span');
+      meta.textContent = (partida.unidad || '—') + ' · coste directo unitario: ' + Number(partida.coste_directo_unitario || 0).toLocaleString('es-ES', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' · ' + (partida.filas || []).length + ' filas · hoja: ' + (partida.hoja || '—');
+      ficha.appendChild(meta); summary.appendChild(ficha);
+
+      var bloque = document.createElement('section'); bloque.className = 'cype-sheet-preview';
+      var h4 = document.createElement('h4'); h4.textContent = 'Partida ' + (partida.codigo || '') + ' · matriz original'; bloque.appendChild(h4);
+      var table = document.createElement('table'); table.className = 'table cype-table';
+      var thead = document.createElement('thead'); var hrow = document.createElement('tr');
+      var thRow = document.createElement('th'); thRow.textContent = 'Fila'; hrow.appendChild(thRow);
+      (partida.columnas || []).forEach(function (col) { var th = document.createElement('th'); th.textContent = col; hrow.appendChild(th); });
+      thead.appendChild(hrow); table.appendChild(thead);
+      var tbody = document.createElement('tbody');
+      (partida.filas || []).forEach(function (fila) {
+        var tr = document.createElement('tr');
+        tr.className = 'cype-row-' + (fila.tipo || 'otro');
+        var rowno = document.createElement('th'); rowno.scope = 'row'; rowno.textContent = fila.numero; tr.appendChild(rowno);
+        (partida.columnas || []).forEach(function (col, index) {
+          var td = document.createElement('td'); appendCelda(td, (fila.celdas || [])[index], (fila.formulas || {})[col]); tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
+      table.appendChild(tbody); bloque.appendChild(table); preview.appendChild(bloque);
+    });
+    document.getElementById('import-preview-count').textContent = '· ' + estado.cypePartidas.length + ' partida(s), ' + totalFilas + ' fila(s) conservadas';
+  }
+  function issueLine(issue, type) {
+    var div = document.createElement('div');
+    div.className = type === 'error' ? 'import-issue error' : 'import-issue warning';
+    div.textContent = (issue.fila ? 'Fila ' + issue.fila + ': ' : '') + issue.mensaje;
+    return div;
+  }
+  function renderValidation(data) {
+    var summary = document.getElementById('import-summary');
+    var issues = document.getElementById('import-issues');
+    issues.innerHTML = '';
+    if (!data.ok) {
+      summary.textContent = data.error || 'No se pudo validar la importación.';
+      summary.className = 'import-summary error'; validationCard.classList.remove('import-hidden'); return;
+    }
+    var errors = data.errores || [], warnings = data.advertencias || [];
+    var etiqueta = esCype() ? 'partida(s) CYPE' : 'partida(s)';
+    summary.textContent = data.filas.length + ' ' + etiqueta + ' lista(s) · ' + errors.length + ' error(es) · ' + warnings.length + ' advertencia(s)';
+    summary.className = 'import-summary ' + (errors.length ? 'error' : warnings.length ? 'warning' : 'ok');
+    errors.forEach(function (issue) { issues.appendChild(issueLine(issue, 'error')); });
+    warnings.slice(0, 40).forEach(function (issue) { issues.appendChild(issueLine(issue, 'warning')); });
+    if (warnings.length > 40) { var more = document.createElement('p'); more.className = 'hint'; more.textContent = 'Se ocultaron ' + (warnings.length - 40) + ' advertencias adicionales.'; issues.appendChild(more); }
+    confirmBtn.disabled = Boolean(errors.length) || !data.filas.length;
+    validationCard.classList.remove('import-hidden');
+  }
+  async function validar() {
+    var response = await fetch('/presupuestos/importar/validar', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload()) });
+    var data = await response.json(); estado.validacion = data; renderValidation(data); return data;
+  }
+
+  document.getElementById('btn-analyze-import').addEventListener('click', async function () {
+    mostrarError('');
+    var form = new FormData();
+    Array.prototype.forEach.call(fileInput.files || [], function (file) { form.append('archivo', file); });
+    form.append('texto', textInput.value || ''); form.append('tiene_encabezados', headerInput.checked ? '1' : '0');
+    var button = this; button.disabled = true; button.textContent = 'Analizando…';
+    try {
+      var response = await fetch('/presupuestos/importar/analizar', {method: 'POST', body: form});
+      var data = await response.json();
+      if (!data.ok) { mostrarError(data.error || 'No se pudieron analizar los datos.'); return; }
+      estado.formato = data.formato || 'tabular';
+      estado.importacionId = data.importacion_id || '';
+      estado.cypePartidas = data.partidas || [];
+      estado.encabezados = data.encabezados || []; estado.filas = data.filas || []; estado.mapeo = data.mapeo_sugerido || {}; estado.primeraFila = data.primera_fila || 2;
+      setModoCype(esCype());
+      if (esCype()) renderPreviewCype(); else { renderMapeo(); renderPreviewTabular(); }
+      mappingCard.classList.remove('import-hidden'); destinationCard.classList.remove('import-hidden'); ocultarValidacion();
+      mappingCard.scrollIntoView({behavior: 'smooth', block: 'start'});
+    } catch (error) { mostrarError('No se pudo conectar con el analizador. Inténtalo otra vez.'); }
+    finally { button.disabled = false; button.textContent = 'Analizar datos →'; }
+  });
+  document.getElementById('btn-validate-import').addEventListener('click', function () { validar().catch(function () { mostrarError('No se pudo validar la importación.'); }); });
+  document.getElementById('btn-revalidate-import').addEventListener('click', function () { validar().catch(function () { mostrarError('No se pudo validar la importación.'); }); });
+  if (destination) destination.addEventListener('change', actualizarDestino);
+  var importClient = document.getElementById('import-client');
+  var importTitle = document.getElementById('import-title');
+  var importChapter = document.getElementById('import-cype-chapter');
+  if (importClient) importClient.addEventListener('change', ocultarValidacion);
+  if (importTitle) importTitle.addEventListener('input', ocultarValidacion);
+  if (importChapter) importChapter.addEventListener('input', ocultarValidacion);
+  actualizarDestino();
+
+  confirmBtn.addEventListener('click', async function () {
+    if (!estado.validacion || !estado.validacion.ok || (estado.validacion.errores || []).length) return;
+    if (!MODO_CATALOGO && !destination.value && !document.getElementById('import-client').value) { mostrarError('Selecciona un cliente antes de crear el presupuesto.'); destinationCard.scrollIntoView({behavior: 'smooth'}); return; }
+    var button = this; button.disabled = true; button.textContent = 'Importando…';
+    try {
+      var response = await fetch('/presupuestos/importar/confirmar', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload()) });
+      var data = await response.json();
+      if (data.ok && data.url) { window.location.assign(data.url); return; }
+      renderValidation(data); mostrarError(data.error || 'No se pudo confirmar la importación.');
+    } catch (error) { mostrarError('No se pudo confirmar la importación.'); }
+    finally { button.disabled = false; button.textContent = '✓ Confirmar importación'; }
+  });
+})();
+</script>
+{% endblock %}

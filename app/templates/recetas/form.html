@@ -1,0 +1,242 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Editar Pack de Estancia' if receta else 'Nuevo Pack de Estancia' }}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>{{ '✏️ Editar Pack de Estancia' if receta else '＋ Nuevo Pack de Estancia' }}</h1>
+    <p class="subtitle">Configura las partidas del pack y cómo se escalan según la medida base de la habitación.</p>
+  </div>
+  <div>
+    <a href="/recetas" class="btn">← Volver al listado</a>
+  </div>
+</div>
+
+<form method="post" action="{{ '/recetas/' ~ receta.id ~ '/editar' if receta else '/recetas/nueva' }}" id="receta-form">
+  <input type="hidden" name="datos" id="receta-datos-json" value='{{ receta.datos if (receta and receta.datos) else "[]" }}'>
+
+  <div class="card">
+    <h2>Datos de la Estancia / Pack</h2>
+    <div style="display:grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap:1rem; margin-top:1rem;">
+      <div>
+        <label style="display:block; font-weight:600; font-size:0.88rem; margin-bottom:4px;">Nombre del pack *</label>
+        <input type="text" name="nombre" value="{{ receta.nombre if receta else '' }}" placeholder="ej. Baño Principal de Lujo" required class="input" style="width:100%;">
+      </div>
+      <div>
+        <label style="display:block; font-weight:600; font-size:0.88rem; margin-bottom:4px;">Categoría</label>
+        <select name="categoria" class="input" style="width:100%;">
+          {% set cat_actual = receta.categoria if receta else 'Baños' %}
+          <option value="Baños" {{ 'selected' if cat_actual == 'Baños' else '' }}>Baños</option>
+          <option value="Cocinas" {{ 'selected' if cat_actual == 'Cocinas' else '' }}>Cocinas</option>
+          <option value="Suelos" {{ 'selected' if cat_actual == 'Suelos' else '' }}>Suelos</option>
+          <option value="Habitaciones" {{ 'selected' if cat_actual == 'Habitaciones' else '' }}>Habitaciones</option>
+          <option value="Electricidad" {{ 'selected' if cat_actual == 'Electricidad' else '' }}>Electricidad</option>
+          <option value="Otros" {{ 'selected' if cat_actual == 'Otros' else '' }}>Otros</option>
+        </select>
+      </div>
+      <div>
+        <label style="display:block; font-weight:600; font-size:0.88rem; margin-bottom:4px;">Unidad base</label>
+        <input type="text" name="unidad_base" value="{{ receta.unidad_base if receta else 'm²' }}" placeholder="ej. m² o und" class="input" style="width:100%;">
+      </div>
+      <div>
+        <label style="display:block; font-weight:600; font-size:0.88rem; margin-bottom:4px;">Medida base *</label>
+        <input type="number" step="0.1" name="cantidad_base_default" value="{{ receta.cantidad_base_default if receta else '10.0' }}" required class="input" style="width:100%;">
+      </div>
+    </div>
+    <div style="margin-top:1rem;">
+      <label style="display:block; font-weight:600; font-size:0.88rem; margin-bottom:4px;">Descripción</label>
+      <input type="text" name="descripcion" value="{{ receta.descripcion if receta else '' }}" placeholder="Descripción general de este pack de reforma..." class="input" style="width:100%;">
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head" style="display:flex; justify-content:space-between; align-items:center;">
+      <h2>Partidas y coeficientes del pack</h2>
+      <button type="button" class="btn btn-primary" id="btn-add-item">＋ Añadir partida al pack</button>
+    </div>
+    <p class="muted" style="margin-bottom:1rem;">
+      • <strong>Proporcional:</strong> La cantidad insertada será <code>Coeficiente × Medida de la estancia</code> (ej. 1.0 para el suelo, 3.2 para azulejos de pared).<br>
+      • <strong>Fijo:</strong> Se insertará siempre esa cantidad (ej. 1.0 inodoro, 4.0 luces LED).
+    </p>
+
+    <div style="overflow-x:auto;">
+      <table class="table" id="tabla-receta-items" style="min-width:850px;">
+        <thead>
+          <tr>
+            <th style="width:30px;"></th>
+            <th style="width:30%;">Partida</th>
+            <th style="width:130px;">Tipo cálculo</th>
+            <th style="width:110px; text-align:center;">Coef. / Cant.</th>
+            <th style="width:70px; text-align:center;">Und.</th>
+            <th style="width:100px; text-align:right;">Precio base ($)</th>
+            <th style="width:25%;">Descripción técnica / Categoría</th>
+            <th style="width:50px;"></th>
+          </tr>
+        </thead>
+        <tbody id="receta-tbody">
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div style="display:flex; justify-content:flex-end; gap:0.8rem; margin-top:1.5rem;">
+    <a href="/recetas" class="btn">Cancelar</a>
+    <button type="submit" class="btn btn-primary" style="font-weight:600;">💾 Guardar Pack de Estancia</button>
+  </div>
+</form>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  var tbody = document.getElementById("receta-tbody");
+  var inputJson = document.getElementById("receta-datos-json");
+  var btnAdd = document.getElementById("btn-add-item");
+  var form = document.getElementById("receta-form");
+
+  var items = [];
+  try {
+    items = JSON.parse(inputJson.value || "[]");
+  } catch (e) {
+    items = [];
+  }
+
+  function renderRows() {
+    tbody.innerHTML = "";
+    items.forEach(function(item, index) {
+      var tr = document.createElement("tr");
+      tr.dataset.idx = index;
+
+      // Drag/Index handle
+      var tdHandle = document.createElement("td");
+      tdHandle.style.textAlign = "center";
+      tdHandle.style.color = "var(--muted)";
+      tdHandle.textContent = (index + 1);
+      tr.appendChild(tdHandle);
+
+      // Nombre partida
+      var tdNombre = document.createElement("td");
+      var inpNombre = document.createElement("input");
+      inpNombre.type = "text";
+      inpNombre.className = "input";
+      inpNombre.style.width = "100%";
+      inpNombre.value = item.nombre || "";
+      inpNombre.placeholder = "Nombre de la partida...";
+      inpNombre.required = true;
+      inpNombre.addEventListener("input", function() { item.nombre = this.value; });
+      tdNombre.appendChild(inpNombre);
+      tr.appendChild(tdNombre);
+
+      // Tipo cálculo (proporcional | fijo)
+      var tdTipo = document.createElement("td");
+      var selTipo = document.createElement("select");
+      selTipo.className = "input";
+      selTipo.style.width = "100%";
+      selTipo.innerHTML = '<option value="proporcional">Proporcional</option><option value="fijo">Fijo</option>';
+      selTipo.value = item.tipo_calculo || "proporcional";
+      selTipo.addEventListener("change", function() {
+        item.tipo_calculo = this.value;
+      });
+      tdTipo.appendChild(selTipo);
+      tr.appendChild(tdTipo);
+
+      // Coeficiente / cantidad_fija
+      var tdCoef = document.createElement("td");
+      tdCoef.style.textAlign = "center";
+      var inpCoef = document.createElement("input");
+      inpCoef.type = "number";
+      inpCoef.step = "0.01";
+      inpCoef.className = "input";
+      inpCoef.style.width = "100%";
+      inpCoef.style.textAlign = "center";
+      var valNum = (item.tipo_calculo === "fijo") ? (item.cantidad_fija || 1.0) : (item.coeficiente || 1.0);
+      inpCoef.value = valNum;
+      inpCoef.addEventListener("input", function() {
+        var n = parseFloat(this.value) || 0;
+        if (item.tipo_calculo === "fijo") {
+          item.cantidad_fija = n;
+        } else {
+          item.coeficiente = n;
+        }
+      });
+      tdCoef.appendChild(inpCoef);
+      tr.appendChild(tdCoef);
+
+      // Unidad
+      var tdUnd = document.createElement("td");
+      tdUnd.style.textAlign = "center";
+      var inpUnd = document.createElement("input");
+      inpUnd.type = "text";
+      inpUnd.className = "input";
+      inpUnd.style.width = "100%";
+      inpUnd.style.textAlign = "center";
+      inpUnd.value = item.unidad || "m²";
+      inpUnd.addEventListener("input", function() { item.unidad = this.value; });
+      tdUnd.appendChild(inpUnd);
+      tr.appendChild(tdUnd);
+
+      // Precio base
+      var tdPrecio = document.createElement("td");
+      tdPrecio.style.textAlign = "right";
+      var inpPrecio = document.createElement("input");
+      inpPrecio.type = "number";
+      inpPrecio.step = "0.01";
+      inpPrecio.className = "input";
+      inpPrecio.style.width = "100%";
+      inpPrecio.style.textAlign = "right";
+      inpPrecio.value = (item.precio != null) ? item.precio : "";
+      inpPrecio.placeholder = "0.00";
+      inpPrecio.addEventListener("input", function() { item.precio = parseFloat(this.value) || 0; });
+      tdPrecio.appendChild(inpPrecio);
+      tr.appendChild(tdPrecio);
+
+      // Descripción / Categoría
+      var tdDesc = document.createElement("td");
+      var inpDesc = document.createElement("input");
+      inpDesc.type = "text";
+      inpDesc.className = "input";
+      inpDesc.style.width = "100%";
+      inpDesc.value = item.descripcion || "";
+      inpDesc.placeholder = "Descripción técnica y de alcance...";
+      inpDesc.addEventListener("input", function() { item.descripcion = this.value; });
+      tdDesc.appendChild(inpDesc);
+      tr.appendChild(tdDesc);
+
+      // Delete button
+      var tdDel = document.createElement("td");
+      tdDel.style.textAlign = "center";
+      var btnDel = document.createElement("button");
+      btnDel.type = "button";
+      btnDel.className = "btn btn-sm btn-danger";
+      btnDel.textContent = "✕";
+      btnDel.title = "Eliminar partida del pack";
+      btnDel.addEventListener("click", function() {
+        items.splice(index, 1);
+        renderRows();
+      });
+      tdDel.appendChild(btnDel);
+      tr.appendChild(tdDel);
+
+      tbody.appendChild(tr);
+    });
+  }
+
+  btnAdd.addEventListener("click", function() {
+    items.push({
+      nombre: "",
+      descripcion: "",
+      unidad: "m²",
+      precio: 10.00,
+      categoria: "Albañilería y Revestimientos",
+      tipo_calculo: "proporcional",
+      coeficiente: 1.0,
+      cantidad_fija: 1.0
+    });
+    renderRows();
+  });
+
+  form.addEventListener("submit", function() {
+    inputJson.value = JSON.stringify(items);
+  });
+
+  renderRows();
+});
+</script>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "base.html" %}{% block title %}{{ p.numero }} · versión {{ version.numero_version }}{% endblock %}{% block content %}
+<div class="page-head"><div><p class="crumb"><a href="/presupuestos/{{ p.id }}">Presupuesto {{ p.numero }}</a> › Versiones</p><h1>Versión {{ version.numero_version }}</h1><p class="subtitle">Congelada el {{ version.fecha.strftime('%d/%m/%Y %H:%M') }} · {{ version.estado | replace('_',' ') | capitalize }}</p></div><div class="actions"><a class="btn" href="/presupuestos/{{ p.id }}">← Volver</a></div></div>
+<div class="card"><h2>{{ snapshot.titulo or p.numero }}</h2><p><strong>Cliente:</strong> {{ snapshot.cliente.nombre }} · <strong>Total congelado:</strong> {{ snapshot.totales.total | money(snapshot.moneda) }}{% if snapshot.totales.total_productos %} · <strong>Productos:</strong> {{ snapshot.totales.total_productos | money(snapshot.moneda) }}{% endif %}</p><p class="muted">Motivo: {{ version.motivo or '—' }}</p></div>
+{% for cap in snapshot.capitulos %}<div class="card"><h2>{{ cap.nombre }}</h2><table class="table"><thead><tr><th>Partida</th><th>Cant.</th><th>Precio</th><th class="right">Importe</th></tr></thead><tbody>{% for i in cap.partidas %}<tr><td><strong>{{ i.nombre }}</strong>{% if i.descripcion %}<br><small>{{ i.descripcion }}</small>{% endif %}</td><td>{{ i.cantidad_total }} {{ i.unidad }}</td><td>{{ i.precio_unitario | money(snapshot.moneda) }}</td><td class="right">{{ i.importe | money(snapshot.moneda) }}</td></tr>{% endfor %}</tbody></table></div>{% endfor %}
+{% if snapshot.mostrar_garantias and snapshot.garantias_familias %}
+<div class="card">
+  <h2>🛡️ Garantías de la obra (versión congelada)</h2>
+  <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:1rem;">
+    {% for fam in snapshot.garantias_familias %}
+    <div style="border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: var(--radius-sm); padding: 0.85rem 1rem; background: var(--surface);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.35rem; flex-wrap:wrap; gap:0.5rem;">
+        <strong style="color: var(--text); font-size: 0.92rem; text-transform: uppercase;">{{ fam.grupo }}</strong>
+        <span class="badge" style="background: var(--accent-soft); color: var(--accent); font-weight: 700; font-size: 0.82rem; padding: 0.2rem 0.6rem; border-radius: 999px;">{{ fam.plazo }}</span>
+      </div>
+      <p style="color: var(--text-soft); font-size: 0.85rem; line-height: 1.5; margin: 0;">{{ fam.alcance }}</p>
+    </div>
+    {% endfor %}
+  </div>
+  {% if snapshot.garantias_nota_legal %}
+  <div style="background: var(--surface-alt); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.85rem 1rem; font-size: 0.82rem; color: var(--text-muted); line-height: 1.5;">
+    <strong style="color: var(--text);">Nota legal:</strong> {{ snapshot.garantias_nota_legal }}
+  </div>
+  {% endif %}
+</div>
+{% endif %}
+{% endblock %}

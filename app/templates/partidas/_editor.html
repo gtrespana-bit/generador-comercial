@@ -1,0 +1,74 @@
+{% macro editor_partida_catalogo(partida=None, mostrar_imagen=True) %}
+<div class="partida-catalogo-editor" data-partida-catalogo-editor>
+  <section class="catalog-editor-section catalog-editor-main">
+    <div class="catalog-editor-section-head">
+      <div><span class="section-kicker">Ficha técnica</span><h3>Identificación de la partida</h3></div>
+      <span class="section-status">Datos reutilizables en cualquier presupuesto</span>
+    </div>
+    <div class="form-grid catalog-editor-grid">
+      <div class="field field-full"><label>Nombre de la partida *</label><input name="nombre" required value="{{ partida.nombre if partida else '' }}" placeholder="p. ej. Enfoscado maestreado"></div>
+      <div class="field"><label>Categoría</label><input name="categoria" list="categorias-disponibles" value="{{ partida.categoria if partida else 'General' }}" placeholder="General"></div>
+      <div class="field"><label>Subcategoría</label><input name="subcategoria" value="{{ partida.subcategoria if partida else '' }}" placeholder="p. ej. Revestimientos"></div>
+      <div class="field"><label>Unidad de la partida</label><input name="unidad" value="{{ partida.unidad if partida else 'ud' }}" placeholder="m², m³, ud…"></div>
+      <div class="field"><label>Código de partida</label><input name="codigo_externo" value="{{ partida.codigo_externo if partida else '' }}" placeholder="RBE030"></div>
+      <div class="field field-full"><label>Descripción técnica</label><textarea name="descripcion" rows="4" placeholder="Alcance, materiales, ejecución, normativa y acabado…">{{ partida.descripcion if partida else '' }}</textarea></div>
+    </div>
+  </section>
+
+  <section class="catalog-price-sale">
+    <div class="sale-copy"><span class="section-kicker">Precio comercial</span><strong>Precio de venta unitario</strong><p class="hint">Define el precio sobre el coste directo. Puedes fijar el beneficio % y el precio se calculará solo.</p></div>
+    <div class="price-benefit-grid" style="display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:1rem; min-width:0;">
+      <div class="field"><label>Precio de venta (USD) *</label><div class="money-input"><span>$</span><input type="number" name="precio_unitario" id="catalog-precio-venta" step="0.01" min="0" required value="{{ partida.precio_unitario if partida else 0 }}"></div></div>
+      <div class="field"><label>Beneficio (%) sobre coste</label><div class="money-input" style="border:1px solid var(--border-strong); border-radius:var(--radius-xs); background:var(--surface); padding:0;"><span style="background:var(--green-soft); color:var(--green); font-weight:800; flex:0 0 auto;">%</span><input type="number" id="catalog-beneficio-pct" name="beneficio_pct" step="any" placeholder="40" title="Ej: 40 = Coste ×1.40" style="border:none; flex:1; min-width:0; padding:.48rem .72rem;"></div><small class="hint" id="catalog-beneficio-hint" style="margin-top:4px; display:block;">—</small></div>
+    </div>
+  </section>
+
+  <section class="catalog-breakdown">
+    <div class="breakdown-head">
+      <div><span class="section-kicker">Análisis de costes</span><h3>Análisis de precio unitario</h3><p class="hint">Añade los recursos reales. Cada importe es <strong>Rendimiento × Precio unitario</strong>.</p></div>
+      <button type="button" class="btn btn-sm btn-primary" data-action="add-recurso-catalogo">+ Añadir recurso</button>
+    </div>
+    <div class="table-wrap catalog-breakdown-table-wrap">
+      <table class="table tabla-descomposicion-catalogo" data-role="tabla-descomposicion-catalogo">
+        <thead><tr><th>Grupo</th><th>Código</th><th>Und.</th><th>Descripción</th><th class="right">Rendimiento</th><th class="right">% Rend.</th><th class="right">Precio unit.</th><th class="right">Importe</th><th class="right">% Coste</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="breakdown-empty" data-role="breakdown-empty"><span>🧮</span><strong>Aún no hay recursos</strong><small>Añade materiales, mano de obra, equipos o costes complementarios.</small></div>
+    <div class="breakdown-totals" data-role="breakdown-totals">
+      <span>Materiales <strong data-total="materiales">0,00</strong></span>
+      <span>Mano de obra <strong data-total="mano_obra">0,00</strong></span>
+      <span>Equipos y otros <strong data-total="otros">0,00</strong></span>
+      <span>Complementarios <strong data-total="complementarios">0,00</strong></span>
+      <span class="direct-cost">Coste directo <strong data-total="directo">0,00</strong></span>
+    </div>
+    <p class="hint breakdown-help">Para costes directos complementarios crea una fila con grupo “Costes complementarios”, unidad <code>%</code> y el porcentaje como rendimiento. La base se calcula sola.</p>
+  </section>
+
+  <details class="catalog-advanced-fields">
+    <summary><span class="advanced-summary-icon">⚙</span><span><strong>Datos adicionales</strong><small>Proveedor, rendimiento, planificación, notas e imagen</small></span></summary>
+    <div class="form-grid catalog-advanced-grid">
+      <div class="field"><label>Código interno</label><input name="codigo_interno" value="{{ partida.codigo_interno if partida else '' }}"></div>
+      <div class="field"><label>Proveedor habitual</label><input name="proveedor" value="{{ partida.proveedor if partida else '' }}"></div>
+      <div class="field"><label>Tiempo estimado total (h/ud)</label><input type="number" step="0.05" min="0" name="tiempo_estimado_horas" value="{{ partida.tiempo_estimado_horas if partida and partida.tiempo_estimado_horas is not none else '' }}" placeholder="1,00"><small class="hint">Total horas por unidad (reparte 60/40 si no desglosas)</small></div>
+      <div class="field"><label>⏱ Oficial h/ud</label><input type="number" step="0.05" min="0" name="tiempo_oficial_horas" value="{{ partida.tiempo_oficial_horas if partida and partida.tiempo_oficial_horas is not none else '' }}" placeholder="0,60"><small class="hint">Horas de oficial por unidad</small></div>
+      <div class="field"><label>⏱ Ayudante h/ud</label><input type="number" step="0.05" min="0" name="tiempo_ayudante_horas" value="{{ partida.tiempo_ayudante_horas if partida and partida.tiempo_ayudante_horas is not none else '' }}" placeholder="0,40"><small class="hint">Horas de ayudante/peón por unidad</small></div>
+      <div class="field"><label>⏱ Equipo h/ud</label><input type="number" step="0.05" min="0" name="tiempo_equipo_horas" value="{{ partida.tiempo_equipo_horas if partida and partida.tiempo_equipo_horas is not none else '' }}" placeholder="0,00"><small class="hint">Horas de maquinaria/equipo por unidad</small></div>
+      <div class="field"><label>Rendimiento informativo</label><input name="rendimiento" value="{{ partida.rendimiento if partida else '' }}"></div>
+      <div class="field"><label>Desperdicio recomendado (%)</label><input type="number" name="desperdicio_recomendado_pct" step="0.01" min="0" max="100" value="{{ partida.desperdicio_recomendado_pct if partida else 0 }}"></div>
+      {% if mostrar_imagen %}
+      <div class="field field-full"><label>Imagen de referencia</label>
+        <div class="catalog-image-preview" data-role="catalog-image-preview" style="{{ '' if partida and partida.imagen else 'display:none;' }}">
+          <img data-role="catalog-image" src="{{ '/static/' ~ partida.imagen if partida and partida.imagen else '' }}" alt="Imagen de la partida">
+          <label class="hint"><input type="checkbox" name="quitar_imagen" value="1"> Eliminar imagen actual</label>
+        </div>
+        <input type="file" name="imagen" accept="image/*">
+      </div>
+      {% endif %}
+      <div class="field field-full"><label>Notas técnicas</label><textarea name="notas_tecnicas" rows="3" placeholder="Observaciones internas, criterios de medición, recomendaciones…">{{ partida.notas_tecnicas if partida else '' }}</textarea></div>
+    </div>
+  </details>
+
+  <script type="application/json" data-partida-editor-inicial>{{ (partida.descomposicion_json if partida and partida.descomposicion_json else '[]') | tojson }}</script>
+</div>
+{% endmacro %}

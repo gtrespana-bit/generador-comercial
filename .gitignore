@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+presupuestos.db
+*.db
+backups/
+imports_cype/
+.DS_Store
+app/static/uploads/
+build/
+dist/
+instalador/
+logs/
+# Componente oficial descargado al crear el instalador (no se versiona).
+recursos/MicrosoftEdgeWebview2Setup.exe

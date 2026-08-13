@@ -1,0 +1,392 @@
+{% extends "base.html" %}
+{% block title %}Precios Unitarios · Recursos{% endblock %}
+{% block content %}
+<div class="page-head" style="margin-bottom:1.1rem;">
+  <div>
+    <h1 style="display:flex;align-items:center;gap:.6rem;">Precios Unitarios <span style="font-size:.78rem;font-weight:600;background:var(--accent);color:#fff;padding:2px 8px;border-radius:999px;">{{ recursos|length }}</span> <span style="font-size:.85rem;font-weight:500;color:var(--text-soft);">· Recursos</span></h1>
+    <p class="subtitle">Mano de obra, materiales y equipos organizados por familia. <strong>Cambia un precio aquí y se aplica automáticamente a todas las partidas que usan ese recurso</strong> (catálogo y presupuestos), recalculando costes directos.</p>
+  </div>
+  <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+    <form method="post" action="/recursos/sincronizar" style="display:inline;">
+      <button class="btn" title="Extrae recursos automáticamente desde las descomposiciones existentes de partidas y presupuestos">↻ Sincronizar desde partidas</button>
+    </form>
+    <a href="/recursos/nuevo" class="btn btn-primary">+ Nuevo Recurso</a>
+  </div>
+</div>
+
+<div class="partidas-toolbar card" style="padding:.75rem .9rem; margin-bottom:1rem;">
+  <div class="toolbar-row">
+    <div class="toolbar-search">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="buscador" placeholder="Buscar por código, descripción, grupo o proveedor…" oninput="filtrarRecursos()" autocomplete="off">
+      <button id="clearSearch" class="btn btn-ghost btn-sm" style="display:none; padding:2px 6px;" onclick="clearSearch()" title="Limpiar">✕</button>
+    </div>
+    <div class="toolbar-actions">
+      <div class="toolbar-meta" id="filterMeta"></div>
+      <div class="toolbar-divider"></div>
+      <button class="btn btn-sm" onclick="toggleAllCats(true)">⤢ Expandir</button>
+      <button class="btn btn-sm" onclick="toggleAllCats(false)">⤡ Contraer</button>
+      <form method="post" action="/recursos/bulk-ajustar" onsubmit="return confirm('¿Ajustar TODOS los recursos visibles con este %?');" style="display:flex;gap:4px;align-items:center;">
+        <input type="number" name="porcentaje" step="any" placeholder="± %" required style="width:72px; padding:.3rem .5rem; border:1px solid var(--border); border-radius:6px; font-size:.82rem;">
+        <button class="btn btn-sm" type="submit" title="Ajustar todos los precios unitarios">% Todos</button>
+      </form>
+      <a class="btn btn-sm" href="/recursos/exportar">📥 CSV</a>
+    </div>
+  </div>
+
+  <div id="bulk-bar-recursos" class="bulk-bar">
+    <div class="bulk-left">
+      <span class="bulk-count"><strong id="sel-count-recursos">0</strong> seleccionados</span>
+      <span class="bulk-sep"></span>
+      <button type="button" class="btn btn-sm btn-danger" onclick="bulkDeleteRecursos()">🗑 Eliminar</button>
+      <div class="bulk-move" style="display:flex;gap:4px;align-items:center;">
+        <input type="number" id="bulk-pct" placeholder="± %" step="any" style="width:84px;">
+        <button type="button" class="btn btn-sm" onclick="bulkAjustarSeleccion('pct')">% Ajustar</button>
+        <span style="font-size:.75rem;color:var(--text-muted);">o</span>
+        <input type="number" id="bulk-precio" placeholder="Nuevo precio" step="any" style="width:110px;">
+        <button type="button" class="btn btn-sm btn-primary" onclick="bulkAjustarSeleccion('fijo')">💰 Fijar</button>
+      </div>
+    </div>
+    <div class="bulk-right">
+      <button type="button" class="btn btn-sm" onclick="selectVisibleRecursos()">Sel. visibles</button>
+      <button type="button" class="btn btn-sm" onclick="selectNoneRecursos()">Limpiar</button>
+      <button type="button" class="btn btn-ghost btn-sm" onclick="selectNoneRecursos()">✕</button>
+    </div>
+  </div>
+</div>
+
+<div class="catalog-layout" id="catalogLayout">
+  <aside class="cat-sidebar card" id="catSidebar">
+    <div class="cat-sidebar-head">
+      <div>
+        <h3>Familias</h3>
+        <span class="cat-sidebar-subtitle">{{ categorias|length }} familias · {{ recursos|length }} recursos</span>
+      </div>
+      <button class="btn-icon" onclick="toggleCatSidebar()" title="Contraer panel">⟨</button>
+    </div>
+    <div class="cat-sidebar-body">
+      <button class="category-btn active" data-cat="todas" id="btn-cat-todas" onclick="filtrarCategoria('todas')">
+        <span class="cat-btn-left"><span>📂</span><span class="cat-name">Todas</span></span>
+        <span class="cat-count">{{ recursos|length }}</span>
+      </button>
+      {% for cat in categorias %}
+        {% set cat_recursos = recursos|selectattr('categoria','equalto',cat)|list %}
+        <button class="category-btn" data-cat="{{ cat }}" id="btn-cat-{{ cat }}" onclick="filtrarCategoria('{{ cat }}')">
+          <span class="cat-btn-left">
+            <span>
+              {% if cat == 'mano_obra' %}👷{% elif cat == 'materiales' %}🧱{% elif cat == 'complementarios' %}➕{% else %}🔧{% endif %}
+            </span>
+            <span class="cat-name">{{ etiquetas[cat] }}</span>
+          </span>
+          <span class="cat-count">{{ cat_recursos|length }}</span>
+        </button>
+      {% endfor %}
+      <div class="sidebar-help">
+        <span class="hint">💡 Agrupados como en las descomposiciones CYPE. Ajustar aquí propaga a todas las partidas que usan ese código/descripción.</span>
+        <div style="margin-top:.6rem; display:flex; gap:.4rem; flex-wrap:wrap;">
+          <span class="hint" style="background:var(--bg); padding:2px 6px; border-radius:999px; border:1px solid var(--border);">mano_obra → Oficial, Peón…</span>
+          <span class="hint" style="background:var(--bg); padding:2px 6px; border-radius:999px; border:1px solid var(--border);">materiales → Cemento, Arena…</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <button id="catSidebarExpand" class="cat-sidebar-expand" onclick="toggleCatSidebar()" style="display:none;">
+    <span>☰</span> <span>Familias</span> <span class="badge" style="margin-left:6px;">{{ recursos|length }}</span>
+  </button>
+
+  <div class="catalog-main" id="catalogMain">
+    {% if recursos %}
+      {% for cat in categorias %}
+        {% set cat_recursos = recursos|selectattr('categoria','equalto',cat)|list %}
+        {% if cat_recursos %}
+        <section class="cat-section" data-categoria="{{ cat }}" id="group-{{ cat }}">
+          <header class="cat-section-head" onclick="toggleCatSection(this)">
+            <button class="cat-toggle">▼</button>
+            <div class="cat-title-wrap">
+              <h2 class="cat-title">
+                <span class="cat-dot" style="background:{% if cat=='mano_obra' %}#f59e0b{% elif cat=='materiales' %}#0d9488{% elif cat=='complementarios' %}#8b5cf6{% else %}#64748b{% endif %};"></span>
+                {{ etiquetas[cat] }}
+              </h2>
+              <span class="cat-meta">{{ cat_recursos|length }} recursos · {{ cat_recursos|map(attribute='precio')|sum|round(2) }} total</span>
+            </div>
+            <div class="cat-actions" onclick="event.stopPropagation()">
+              <label class="cat-check" title="Seleccionar toda la familia">
+                <input type="checkbox" onchange="toggleSelectCat('{{ cat }}', this.checked)"> <span style="font-size:.75rem;">Sel.</span>
+              </label>
+              <button type="button" class="btn btn-sm" onclick="toggleCatSection(this.closest('.cat-section').querySelector('.cat-section-head'))">⤢</button>
+            </div>
+            <span class="cat-badge">{{ cat_recursos|length }}</span>
+          </header>
+          <div class="cat-section-body">
+            <div class="subcat-body" style="overflow-x:auto;">
+              <table class="partidas-table">
+                <thead>
+                  <tr>
+                    <th class="col-check"><input type="checkbox" onchange="toggleSelectCat('{{ cat }}', this.checked)"></th>
+                    <th class="col-code sortable">Código</th>
+                    <th class="col-nombre sortable" style="min-width:220px;">Recurso</th>
+                    <th class="col-und">Und.</th>
+                    <th class="col-precio right sortable" style="width:110px;">Precio unit.</th>
+                    <th class="col-usos right sortable" style="width:60px;">Usos</th>
+                    <th class="col-grupo" style="min-width:140px;">Grupo / Proveedor</th>
+                    <th class="col-actions right" style="width:110px;">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for r in cat_recursos|sort(attribute='descripcion') %}
+                  <tr class="recurso-tr" data-id="{{ r.id }}" data-categoria="{{ r.categoria }}" data-nombre="{{ (r.codigo ~ ' ' ~ r.descripcion ~ ' ' ~ r.grupo ~ ' ' ~ r.proveedor) | lower }}">
+                    <td class="col-check"><input type="checkbox" class="row-check" data-id="{{ r.id }}" onchange="onRowCheck(this)"></td>
+                    <td class="col-code">
+                      {% if r.codigo %}<code class="code-badge">{{ r.codigo[:14] }}</code>{% else %}<span class="code-empty">—</span>{% endif %}
+                    </td>
+                    <td class="col-nombre">
+                      <div class="partida-main">
+                        <span class="partida-nombre" title="{{ r.descripcion }}">{{ r.descripcion }}</span>
+                        {% if r.usos and r.usos>0 %}<span class="usos-mini" title="Usado en {{ r.usos }} partidas/filas">· {{ r.usos }} usos</span>{% endif %}
+                      </div>
+                      <div class="partida-sub">
+                        {% if r.grupo %}<span class="desc" title="{{ r.grupo }}">{{ r.grupo }}</span>{% endif %}
+                      </div>
+                    </td>
+                    <td class="col-und"><span class="und-badge">{{ r.unidad }}</span></td>
+                    <td class="col-precio right" data-precio="{{ r.precio }}">
+                      <strong class="precio-val">{{ r.precio | money }}</strong>
+                      {% if r.fecha_actualizacion_precio %}<div class="hint" style="font-size:.68rem;">{{ r.fecha_actualizacion_precio | fecha }}</div>{% endif %}
+                    </td>
+                    <td class="col-usos right" data-usos="{{ r.usos or 0 }}">{{ r.usos or 0 }}</td>
+                    <td style="font-size:.8rem; color:var(--text-soft);">
+                      {% if r.grupo %}<div title="{{ r.grupo }}" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:140px;">{{ r.grupo }}</div>{% endif %}
+                      {% if r.proveedor %}<div style="font-size:.72rem;">🏪 {{ r.proveedor }}</div>{% endif %}
+                    </td>
+                    <td class="col-actions right">
+                      <div class="row-actions">
+                        <a href="/recursos/{{ r.id }}/editar" class="btn btn-sm btn-ghost" title="Editar">✏️</a>
+                        <form method="post" action="/recursos/{{ r.id }}/eliminar" style="display:inline" onsubmit="return confirm('¿Eliminar recurso «{{ r.descripcion|replace("'", "\\'") }}»?')">
+                          <button type="submit" class="btn btn-sm btn-ghost" style="color:var(--rose);" title="Eliminar">✕</button>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+        {% endif %}
+      {% endfor %}
+      {# Recursos sin categoría mapeada (si los hubiera) #}
+      {% set otros = recursos|rejectattr('categoria','in',categorias)|list %}
+      {% if otros %}
+        <section class="cat-section" data-categoria="otros_extra">
+          <header class="cat-section-head"><h2 class="cat-title"><span class="cat-dot"></span> Otros</h2><span class="cat-badge">{{ otros|length }}</span></header>
+          <div class="cat-section-body"><p class="hint" style="padding:1rem;">{{ otros|length }} recursos sin categoría estándar.</p></div>
+        </section>
+      {% endif %}
+    {% else %}
+      <div class="card empty" style="text-align:center; padding:2.5rem 1.5rem;">
+        <div style="font-size:2.4rem; margin-bottom:.6rem;">🧱</div>
+        <h3 style="margin:0 0 .4rem;">Aún no hay precios unitarios</h3>
+        <p class="hint" style="max-width:560px; margin:0 auto 1rem;">Crea recursos de mano de obra y materiales aquí. Luego, al usarlos en la descomposición de una partida (por código o descripción), los precios se vincularán. <strong>Al cambiar un precio aquí se actualizarán automáticamente todas las partidas y presupuestos que lo usan.</strong></p>
+        <div style="display:flex; gap:.6rem; justify-content:center; flex-wrap:wrap;">
+          <a href="/recursos/nuevo" class="btn btn-primary">+ Nuevo Recurso</a>
+          <form method="post" action="/recursos/sincronizar" style="display:inline;"><button class="btn">↻ Sincronizar desde partidas existentes</button></form>
+        </div>
+        <div class="card" style="margin:1.2rem auto 0; max-width:560px; text-align:left; background:var(--bg);">
+          <p style="font-size:.85rem; font-weight:600; margin-bottom:.4rem;">Ejemplos típicos:</p>
+          <ul style="font-size:.82rem; color:var(--text-soft); margin-left:1.2rem; line-height:1.5;">
+            <li><code>mo001</code> · Oficial 1ª construcción · <code>h</code> · 24.50 $/h · Mano de obra</li>
+            <li><code>mt01</code> · Cemento CEM II/B-P 32.5 · <code>kg</code> · 0.18 $/kg · Materiales</li>
+            <li><code>mq01</code> · Camión grúa · <code>h</code> · 45.00 $/h · Equipos</li>
+          </ul>
+        </div>
+      </div>
+    {% endif %}
+    <div id="noResults" class="card empty" style="display:none; text-align:center;">
+      <p style="font-weight:600;">Sin resultados</p>
+      <p class="hint">No hay recursos que coincidan con la búsqueda o familia seleccionada.</p>
+      <button class="btn btn-sm" onclick="clearFilters()">Limpiar filtros</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+let categoriaSeleccionada = 'todas';
+function toggleCatSidebar(){
+  const s=document.getElementById('catSidebar'), e=document.getElementById('catSidebarExpand'), l=document.getElementById('catalogLayout');
+  if(!s||!e) return;
+  const hidden=s.style.display==='none';
+  if(hidden){ s.style.display=''; e.style.display='none'; l.classList.remove('sidebar-hidden'); localStorage.setItem('recursos-sidebar-collapsed','false'); }
+  else { s.style.display='none'; e.style.display='inline-flex'; l.classList.add('sidebar-hidden'); localStorage.setItem('recursos-sidebar-collapsed','true'); }
+}
+function filtrarCategoria(cat){
+  document.querySelectorAll('.category-btn').forEach(b=>b.classList.remove('active'));
+  categoriaSeleccionada=cat;
+  if(cat==='todas') document.getElementById('btn-cat-todas')?.classList.add('active');
+  else document.getElementById('btn-cat-'+cat)?.classList.add('active');
+  filtrarRecursos();
+}
+function filtrarRecursos(){
+  const q=(document.getElementById('buscador')?.value||'').toLowerCase().trim();
+  const clearBtn=document.getElementById('clearSearch');
+  if(clearBtn) clearBtn.style.display=q?'inline-flex':'none';
+  let visiblesCats=0, visiblesRows=0;
+  document.querySelectorAll('.cat-section').forEach(sec=>{
+    const cat=sec.dataset.categoria;
+    const matchCat=categoriaSeleccionada==='todas'||categoriaSeleccionada===cat;
+    if(!matchCat){ sec.style.display='none'; return; }
+    let rowsVis=0;
+    sec.querySelectorAll('.recurso-tr').forEach(row=>{
+      const txt=(row.dataset.nombre||'').toLowerCase();
+      const ok=!q||txt.includes(q);
+      row.style.display=ok?'':'none';
+      if(ok) rowsVis++;
+    });
+    if(rowsVis>0){
+      sec.style.display='';
+      if(q && sec.classList.contains('collapsed')){
+        sec.classList.remove('collapsed');
+        sec.querySelector('.cat-section-body').style.display='';
+        sec.querySelector('.cat-toggle').textContent='▼';
+      }
+      visiblesCats++; visiblesRows+=rowsVis;
+    } else {
+      sec.style.display='none';
+    }
+  });
+  document.getElementById('noResults').style.display=visiblesRows===0?'block':'none';
+  const meta=document.getElementById('filterMeta');
+  if(meta){
+    if(q||categoriaSeleccionada!=='todas') meta.textContent=`${visiblesRows} recursos · ${visiblesCats} familias`;
+    else meta.textContent=`${document.querySelectorAll('.recurso-tr').length} recursos en total`;
+  }
+  updateBulkBarRecursos();
+}
+function clearSearch(){ const i=document.getElementById('buscador'); if(i){ i.value=''; filtrarRecursos(); i.focus(); } }
+function clearFilters(){
+  categoriaSeleccionada='todas';
+  document.querySelectorAll('.category-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('btn-cat-todas')?.classList.add('active');
+  const i=document.getElementById('buscador'); if(i) i.value='';
+  document.querySelectorAll('.cat-section').forEach(s=>{ s.classList.remove('collapsed'); s.querySelector('.cat-section-body').style.display=''; s.querySelector('.cat-toggle').textContent='▼'; });
+  filtrarRecursos();
+}
+function toggleCatSection(header){
+  const sec=header.closest('.cat-section'); if(!sec) return;
+  const body=sec.querySelector('.cat-section-body'); const tg=header.querySelector('.cat-toggle');
+  const c=sec.classList.contains('collapsed');
+  if(c){ sec.classList.remove('collapsed'); body.style.display=''; tg.textContent='▼'; }
+  else { sec.classList.add('collapsed'); body.style.display='none'; tg.textContent='▶'; }
+}
+function toggleAllCats(expand){
+  document.querySelectorAll('.cat-section').forEach(sec=>{
+    const body=sec.querySelector('.cat-section-body'); const tg=sec.querySelector('.cat-toggle');
+    if(expand){ sec.classList.remove('collapsed'); body.style.display=''; tg.textContent='▼'; }
+    else { sec.classList.add('collapsed'); body.style.display='none'; tg.textContent='▶'; }
+  });
+}
+function onRowCheck(chk){
+  const tr=chk.closest('tr'); if(!tr) return;
+  if(chk.checked) tr.classList.add('selected'); else tr.classList.remove('selected');
+  updateBulkBarRecursos();
+}
+function toggleSelectCat(cat, checked){
+  const sec=document.getElementById('group-'+cat); if(!sec) return;
+  sec.querySelectorAll('.recurso-tr').forEach(row=>{
+    if(row.style.display==='none') return;
+    const cb=row.querySelector('.row-check'); if(!cb) return;
+    cb.checked=checked; if(checked) row.classList.add('selected'); else row.classList.remove('selected');
+  });
+  document.querySelectorAll('#group-'+cat+' .col-check input[type="checkbox"]').forEach(cb=>cb.checked=checked);
+  updateBulkBarRecursos();
+}
+function updateBulkBarRecursos(){
+  const bar=document.getElementById('bulk-bar-recursos'), cnt=document.getElementById('sel-count-recursos');
+  if(!bar||!cnt) return;
+  const n=document.querySelectorAll('.row-check:checked').length;
+  if(n>0){ cnt.textContent=n; bar.classList.add('show'); bar.style.display='flex'; }
+  else { bar.classList.remove('show'); bar.style.display='none'; }
+}
+function selectNoneRecursos(){
+  document.querySelectorAll('.row-check').forEach(c=>{ c.checked=false; c.closest('tr')?.classList.remove('selected'); });
+  document.querySelectorAll('.cat-check input, .col-check input').forEach(c=>c.checked=false);
+  updateBulkBarRecursos();
+}
+function selectVisibleRecursos(){
+  document.querySelectorAll('.cat-section').forEach(sec=>{
+    if(sec.style.display==='none') return;
+    sec.querySelectorAll('.row-check').forEach(ch=>{
+      const row=ch.closest('tr'); if(row && row.style.display!=='none'){ ch.checked=true; row.classList.add('selected'); }
+    });
+  });
+  updateBulkBarRecursos();
+}
+async function bulkDeleteRecursos(){
+  const ids=Array.from(document.querySelectorAll('.row-check:checked')).map(c=>c.dataset.id);
+  if(!ids.length) return;
+  if(!confirm(`¿Eliminar ${ids.length} recursos?`)) return;
+  const fd=new FormData(); ids.forEach(id=>fd.append('ids', id));
+  const r=await fetch('/recursos/bulk-delete',{method:'POST', body:fd});
+  if(r.redirected) window.location=r.url; else if(r.ok) window.location.reload();
+}
+async function bulkAjustarSeleccion(modo){
+  const ids=Array.from(document.querySelectorAll('.row-check:checked')).map(c=>c.dataset.id);
+  if(!ids.length) return alert('Selecciona al menos un recurso.');
+  let pct='', fijo='';
+  if(modo==='pct') pct=document.getElementById('bulk-pct')?.value||'';
+  else fijo=document.getElementById('bulk-precio')?.value||'';
+  if(modo==='pct' && !pct.trim()) return alert('Indica un % válido.');
+  if(modo==='fijo' && !fijo.trim()) return alert('Indica un precio válido.');
+  if(!confirm(`¿Aplicar ${modo==='pct' ? pct+'% a' : 'precio '+fijo+' a'} ${ids.length} recursos y propagar a todas las partidas?`)) return;
+  const fd=new FormData(); ids.forEach(id=>fd.append('ids', id));
+  if(modo==='pct') fd.append('porcentaje', pct); else fd.append('precio_fijo', fijo);
+  const r=await fetch('/recursos/bulk-ajustar-seleccion',{method:'POST', body:fd});
+  if(r.redirected) window.location=r.url; else if(r.ok) window.location.reload(); else alert('Error');
+}
+function makeTableSortable(){
+  document.querySelectorAll('.partidas-table').forEach(table=>{
+    const headers=table.querySelectorAll('th');
+    headers.forEach((th, idx)=>{
+      if(!th.classList.contains('sortable')) return;
+      let asc=true;
+      th.style.cursor='pointer'; th.title='Clic para ordenar';
+      th.addEventListener('click', ()=>{
+        sortTable(table, idx, asc);
+        asc=!asc;
+        headers.forEach(h=>h.classList.remove('sorted-asc','sorted-desc'));
+        th.classList.add(asc?'sorted-desc':'sorted-asc');
+      });
+    });
+  });
+}
+function sortTable(table, colIndex, asc){
+  const tbody=table.querySelector('tbody'); if(!tbody) return;
+  const rows=Array.from(tbody.querySelectorAll('tr.recurso-tr'));
+  rows.sort((a,b)=>{
+    const aCell=a.children[colIndex], bCell=b.children[colIndex];
+    if(!aCell||!bCell) return 0;
+    let aVal,bVal;
+    if(aCell.dataset.precio!==undefined){ aVal=aCell.dataset.precio||'0'; bVal=bCell.dataset.precio||'0'; }
+    else if(aCell.dataset.usos!==undefined){ aVal=aCell.dataset.usos||'0'; bVal=bCell.dataset.usos||'0'; }
+    else { aVal=(aCell.textContent||'').trim().toLowerCase(); bVal=(bCell.textContent||'').trim().toLowerCase(); }
+    const aNum=parseFloat(String(aVal).replace(/[^\d.,-]/g,'').replace(',','.'))||0;
+    const bNum=parseFloat(String(bVal).replace(/[^\d.,-]/g,'').replace(',','.'))||0;
+    const aIsNum=!isNaN(aNum)&&String(aVal).match(/[\d]/);
+    const bIsNum=!isNaN(bNum)&&String(bVal).match(/[\d]/);
+    if(aIsNum&&bIsNum) return asc? aNum-bNum : bNum-aNum;
+    return asc? String(aVal).localeCompare(String(bVal),'es') : String(bVal).localeCompare(String(aVal),'es');
+  });
+  rows.forEach(r=>tbody.appendChild(r));
+}
+document.addEventListener('DOMContentLoaded', ()=>{
+  const collapsed=localStorage.getItem('recursos-sidebar-collapsed')==='true';
+  const s=document.getElementById('catSidebar'), e=document.getElementById('catSidebarExpand');
+  if(collapsed && s && e){ s.style.display='none'; e.style.display='inline-flex'; document.getElementById('catalogLayout')?.classList.add('sidebar-hidden'); }
+  document.querySelectorAll('.row-check').forEach(ch=>ch.addEventListener('change', ()=>onRowCheck(ch)));
+  const busc=document.getElementById('buscador'); if(busc) busc.addEventListener('input', filtrarRecursos);
+  makeTableSortable(); filtrarRecursos();
+});
+</script>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Editar cliente' if cliente else 'Nuevo cliente' }}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>{{ 'Editar cliente' if cliente else 'Nuevo cliente' }}</h1>
+</div>
+
+<form method="post" action="{{ '/clientes/' ~ cliente.id ~ '/editar' if cliente else '/clientes/nuevo' }}">
+  <div class="card">
+    <div class="form-grid">
+      <div class="field">
+        <label>Nombre *</label>
+        <input type="text" name="nombre" value="{{ cliente.nombre if cliente else '' }}" required placeholder="Nombre o razón social">
+      </div>
+      <div class="field">
+        <label>RIF / C.I.</label>
+        <input type="text" name="rif" value="{{ cliente.rif if cliente else '' }}" placeholder="p. ej. J-12345678-9">
+      </div>
+      <div class="field">
+        <label>País</label>
+        <input type="text" name="pais" value="{{ cliente.pais if cliente else 'Venezuela' }}" placeholder="Venezuela">
+      </div>
+      <div class="field">
+        <label>Teléfono</label>
+        <input type="text" name="telefono" value="{{ cliente.telefono if cliente else '' }}" placeholder="+58 412 000 0000">
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" name="email" value="{{ cliente.email if cliente else '' }}">
+      </div>
+      <div class="field field-full">
+        <label>Dirección</label>
+        <textarea name="direccion" rows="3" placeholder="Dirección del inmueble o de contacto">{{ cliente.direccion if cliente else '' }}</textarea>
+      </div>
+    </div>
+  </div>
+  <div class="form-actions">
+    <button class="btn btn-primary" type="submit">💾 Guardar cliente</button>
+    <a class="btn" href="/clientes">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

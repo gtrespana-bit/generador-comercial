@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+{% block title %}Descompuesto {{ d.codigo }}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <p class="crumb">📄 <a href="/presupuestos">Presupuestos</a> › <a href="/presupuestos/{{ p.id }}">{{ p.numero }}</a> › Descompuesto</p>
+    <h1>{% if d.codigo %}{{ d.codigo }} · {% endif %}{{ part.nombre }}</h1>
+    <p class="subtitle">{% if d.origen == 'manual' %}Descomposición de costes de la partida, fila a fila.{% else %}Matriz CYPE conservada fila a fila y columna a columna.{% endif %}</p>
+  </div>
+  <div class="actions">
+    {% if d.archivo_origen %}<a class="btn btn-primary" href="/static/uploads/{{ d.archivo_origen }}" download>⬇ Descargar Excel original</a>{% endif %}
+    <a class="btn" href="/presupuestos/{{ p.id }}">← Volver al presupuesto</a>
+  </div>
+</div>
+
+<div class="card">
+  <div class="form-grid">
+    <div><h2>Datos de la partida</h2><p><strong>Código:</strong> {{ d.codigo or '—' }}</p><p><strong>Unidad:</strong> {{ d.unidad or part.unidad }}</p>{% if d.nombre_hoja %}<p><strong>Hoja:</strong> {{ d.nombre_hoja }}</p>{% endif %}</div>
+    <div><h2>{% if d.origen == 'manual' %}Coste directo{% else %}Coste directo CYPE{% endif %}</h2><p style="font-size:1.35rem; font-weight:700; color:var(--accent);" id="cype-coste-directo">{{ d.coste_directo_unitario | money(p.moneda) }} / {{ d.unidad or part.unidad }}</p><div class="cype-costs"><span>Materiales: <strong id="cype-costo-materiales">{{ part.coste_materiales | money(p.moneda) }}</strong></span><span>Mano de obra: <strong id="cype-costo-mano-obra">{{ part.coste_mano_obra | money(p.moneda) }}</strong></span><span>Directos complementarios: <strong id="cype-costo-complementarios">{{ part.coste_complementarios | money(p.moneda) }}</strong></span><span>Otros: <strong id="cype-costo-otros">{{ part.coste_otros | money(p.moneda) }}</strong></span></div><p class="hint">Este valor es el coste interno unitario usado en los cálculos de la partida.</p></div>
+    <div><h2>{% if d.origen == 'manual' %}Detalle{% else %}Conservación de origen{% endif %}</h2>{% if d.rango_original %}<p><strong>Rango:</strong> {{ d.rango_original }}</p>{% endif %}<p><strong>{{ d.filas | length }}</strong> filas físicas{% if d.columnas %} · <strong>{{ d.columnas | length }}</strong> columnas{% endif %}</p><p class="hint">{% if d.origen == 'manual' %}Descomposición creada o editada dentro del generador de presupuestos.{% else %}Se guardan los valores mostrados, fórmulas, rangos combinados y el .xlsx original.{% endif %}</p></div>
+    <div>
+      <h2>⏱ Tiempo por unidad</h2>
+      {% if tiempos_descompuesto and tiempos_descompuesto.total > 0 %}
+      <p style="font-size:1.35rem; font-weight:700; color:var(--accent);">{{ "%.4f"|format(tiempos_descompuesto.total) }} h / {{ d.unidad or part.unidad }} <small class="hint" style="font-weight:500;">· {{ "%.4f"|format(tiempos_descompuesto.duracion) }} h críticos</small></p>
+      <div class="cype-costs">
+        <span>Mano de obra: <strong>{{ "%.4f"|format(tiempos_descompuesto.mano_obra) }} h</strong></span>
+        <span>👷 Oficial: <strong>{{ "%.4f"|format(tiempos_descompuesto.oficial) }} h</strong></span>
+        <span>🧑 Ayudante: <strong>{{ "%.4f"|format(tiempos_descompuesto.ayudante) }} h</strong></span>
+        {% if tiempos_descompuesto.capataz %}<span>👨‍💼 Capataz: <strong>{{ "%.4f"|format(tiempos_descompuesto.capataz) }} h</strong></span>{% endif %}
+        <span>🛠 Equipos: <strong>{{ "%.4f"|format(tiempos_descompuesto.equipos) }} h</strong></span>
+      </div>
+      {% if tiempos_descompuesto.otros_mo %}<p class="hint">Otros MO: {{ "%.4f"|format(tiempos_descompuesto.otros_mo) }} h</p>{% endif %}
+      <p class="hint">Por cada {{ d.unidad or part.unidad }} de partida. Con {{ part.cantidad_total | cant(d.unidad or part.unidad) }} medidos:<br>
+        <strong>{{ "%.1f"|format(tiempos_descompuesto.total * part.cantidad_total) }} h-hombre</strong> ({{ "%.1f"|format(tiempos_descompuesto.oficial * part.cantidad_total) }} h oficial + {{ "%.1f"|format(tiempos_descompuesto.ayudante * part.cantidad_total) }} h ayudante) · <strong>{{ "%.1f"|format(tiempos_descompuesto.duracion * part.cantidad_total) }} h críticos</strong> ≈ {{ "%.1f"|format(tiempos_descompuesto.duracion * part.cantidad_total / (horas_jornada or 8)) }} días críticos (jornada {{ "%.0f"|format(horas_jornada or 8) }} h, 1 cuadrilla en paralelo).</p>
+      {% else %}
+      <p style="color:var(--text-soft);">Este descompuesto no tiene filas con unidad de tiempo (h, día…), así que no aporta horas a la estimación.</p>
+      <p class="hint">Las filas de materiales (kg, m³…) no cuentan tiempo; solo las de mano de obra, maquinaria y equipos con unidad h o día. Puedes asignar horas manualmente desde <a class="link" href="/presupuestos/{{ p.id }}/tiempos">Tiempo de obra</a>.</p>
+      {% endif %}
+    </div>
+  </div>
+  {% if part.descripcion %}<p class="prewrap" style="margin-top:1rem;">{{ part.descripcion }}</p>{% endif %}
+</div>
+
+<form method="post" id="form-recalcular">
+<div class="card">
+  <h2>Costes por recurso</h2>
+  <p class="hint">
+    Cada recurso cuesta <strong>Rendimiento × Precio unitario</strong> por {{ d.unidad or part.unidad }} de partida
+    (p. ej. 0,537 h/m² × 24,41 $/h = 13,11 $/m²). Edita el rendimiento o el precio y verás la cascada
+    actualizarse en vivo (subtotales, complementarios y coste directo, con las mismas reglas del Excel).
+    Luego pulsa <strong>Guardar y recalcular</strong> para fijar los cambios.
+  </p>
+  <div class="table-wrap">
+    <table class="table" id="tabla-recursos">
+      <thead><tr><th>Fila</th><th>Grupo</th><th>Código</th><th>Unidad</th><th>Descripción</th><th class="right">Rendimiento</th><th class="right">Precio unitario</th><th class="right">Importe</th></tr></thead>
+      <tbody>
+        {% for fila in d.filas if fila.tipo in ['recurso', 'subtotal', 'total'] %}
+        {% if fila.tipo == 'recurso' %}
+        {% set es_pct = (fila.unidad or '') | trim == '%' %}
+        <tr class="cype-row-recurso" data-fila-id="{{ fila.id }}" data-grupo="{{ fila.grupo }}" data-categoria="{{ categorias.get(fila.id, 'otros') }}" data-pct="{{ '1' if es_pct else '0' }}">
+          <td>{{ fila.numero_fila_excel }}</td><td>{{ fila.grupo or '—' }}</td><td>{{ fila.codigo or '—' }}</td><td>{{ fila.unidad or '—' }}</td><td>{{ fila.descripcion or '—' }}</td>
+          <td class="right"><input type="number" step="any" min="0" name="rend_{{ fila.id }}" value="{{ fila.rendimiento if fila.rendimiento is not none else '' }}" data-campo="rendimiento" title="Cantidad de este recurso ({{ fila.unidad or 'ud' }}) por cada {{ d.unidad or part.unidad }} de partida"></td>
+          <td class="right">
+            {% if es_pct %}
+            <input type="number" step="any" value="{{ fila.precio_unitario | round(2) if fila.precio_unitario is not none else 0 }}" data-campo="precio" readonly title="Derivado: suma de los demás subtotales. Se actualiza al recalcular." class="input-derivado">
+            {% else %}
+            <input type="number" step="any" min="0" name="precio_{{ fila.id }}" value="{{ fila.precio_unitario if fila.precio_unitario is not none else '' }}" data-campo="precio" title="Precio por {{ fila.unidad or 'ud' }} de este recurso">
+            {% endif %}
+          </td>
+          <td class="right"><span data-campo="importe">{{ fila.importe | num if fila.importe is not none else '—' }}</span></td>
+        </tr>
+        {% elif fila.tipo == 'subtotal' %}
+        <tr class="cype-row-subtotal" data-grupo="{{ fila.grupo }}" data-categoria="{{ grupos_categoria.get(fila.grupo or '', 'otros') }}">
+          <td>{{ fila.numero_fila_excel }}</td><td>{{ fila.grupo or '—' }}</td><td>{{ fila.codigo or '—' }}</td><td>{{ fila.unidad or '—' }}</td><td>{{ fila.descripcion or '—' }}</td><td></td><td></td>
+          <td class="right"><span data-campo="importe">{{ fila.importe | num if fila.importe is not none else '—' }}</span></td>
+        </tr>
+        {% else %}
+        <tr class="cype-row-total">
+          <td>{{ fila.numero_fila_excel }}</td><td>{{ fila.grupo or '—' }}</td><td>{{ fila.codigo or '—' }}</td><td>{{ fila.unidad or '—' }}</td><td>{{ fila.descripcion or '—' }}</td><td></td><td></td>
+          <td class="right"><strong><span data-campo="importe-total">{{ fila.importe | num if fila.importe is not none else '—' }}</span></strong></td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div style="display:flex; flex-wrap:wrap; gap:1rem; align-items:center; margin-top:1rem;">
+    <button type="submit" class="btn btn-primary">💾 Guardar y recalcular</button>
+    <label class="check-line" style="margin:0;"><input type="checkbox" name="ajustar_precio_venta" value="1"> Actualizar también el precio de venta de la partida al nuevo coste directo</label>
+    <span class="hint" id="aviso-recalculo">Los cambios se aplican al guardar.</span>
+  </div>
+</div>
+</form>
+
+{% if d.columnas %}
+<div class="card">
+  <h2>Matriz original completa</h2>
+  <p class="hint">La insignia <span class="cype-fx">fx</span> indica que la celda conserva además su fórmula original (visible al pasar el cursor). Rangos combinados: {{ d.rangos_combinados | join(', ') if d.rangos_combinados else 'ninguno' }}.</p>
+  <div class="table-wrap import-preview-wrap" style="max-height:650px;">
+    <table class="table cype-table">
+      <thead><tr><th>Fila</th>{% for columna in d.columnas %}<th>{{ columna }}</th>{% endfor %}</tr></thead>
+      <tbody>
+        {% for fila in d.filas %}
+        <tr class="cype-row-{{ fila.tipo }}"><th scope="row">{{ fila.numero_fila_excel }}</th>{% for celda in fila.celdas %}<td{% set formula = fila.formulas.get(d.columnas[loop.index0], '') %}{% if formula %} title="{{ formula }}"{% endif %}>{{ celda }}{% if formula %}<small class="cype-fx">fx</small>{% endif %}</td>{% endfor %}</tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+
+<script>
+(function () {
+  var UNIDAD_PARTIDA = {{ (d.unidad or part.unidad) | tojson }};
+  var SIMBOLO = {{ simbolo_moneda | tojson }};
+  var GRUPOS_CATEGORIA = {{ grupos_categoria | tojson }};
+  var tabla = document.getElementById('tabla-recursos');
+  if (!tabla) return;
+
+  function numero(input) {
+    var crudo = (input.value || '').replace(',', '.');
+    var valor = parseFloat(crudo);
+    return isNaN(valor) ? 0 : valor;
+  }
+  function redondear2(valor) {
+    return Math.round((valor + Number.EPSILON) * 100) / 100;
+  }
+  function formato(valor) {
+    return valor.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  function filasRecurso() { return Array.prototype.slice.call(tabla.querySelectorAll('tr.cype-row-recurso')); }
+  function filasSubtotal() { return Array.prototype.slice.call(tabla.querySelectorAll('tr.cype-row-subtotal')); }
+
+  function recalcular() {
+    var subGrupo = {};
+    var costes = { materiales: 0, mano_obra: 0, complementarios: 0, otros: 0 };
+
+    // 1) Recursos normales: importe = rendimiento × precio unitario.
+    filasRecurso().forEach(function (tr) {
+      if (tr.dataset.pct === '1') return;
+      var rend = numero(tr.querySelector('[data-campo="rendimiento"]'));
+      var precio = numero(tr.querySelector('[data-campo="precio"]'));
+      var importe = redondear2(rend * precio);
+      tr._importe = importe;
+      tr.querySelector('[data-campo="importe"]').textContent = formato(importe);
+      var grupo = tr.dataset.grupo || '';
+      subGrupo[grupo] = redondear2((subGrupo[grupo] || 0) + importe);
+      var categoria = tr.dataset.categoria || 'otros';
+      costes[categoria] = redondear2((costes[categoria] || 0) + importe);
+    });
+
+    // 2) Subtotales por grupo y base de los complementarios.
+    var subtotales = filasSubtotal();
+    var base = 0;
+    if (subtotales.length) {
+      subtotales.forEach(function (tr) {
+        var grupo = tr.dataset.grupo || '';
+        var valor = subGrupo[grupo] || 0;
+        tr.querySelector('[data-campo="importe"]').textContent = formato(valor);
+        if ((tr.dataset.categoria || GRUPOS_CATEGORIA[grupo] || 'otros') !== 'complementarios') base = redondear2(base + valor);
+      });
+    } else {
+      Object.keys(subGrupo).forEach(function (grupo) {
+        if ((GRUPOS_CATEGORIA[grupo] || 'otros') !== 'complementarios') base = redondear2(base + subGrupo[grupo]);
+      });
+    }
+
+    // 3) Filas de porcentaje: % × base / 100.
+    filasRecurso().forEach(function (tr) {
+      if (tr.dataset.pct !== '1') return;
+      var porcentaje = numero(tr.querySelector('[data-campo="rendimiento"]'));
+      var precioBase = tr.querySelector('[data-campo="precio"]');
+      if (precioBase) precioBase.value = base;
+      var importe = redondear2(porcentaje * base / 100);
+      tr._importe = importe;
+      tr.querySelector('[data-campo="importe"]').textContent = formato(importe);
+      costes.complementarios = redondear2(costes.complementarios + importe);
+    });
+
+    // 4) Coste directo = suma de todos los importes de recursos.
+    var costeDirecto = redondear2(filasRecurso().reduce(function (acc, tr) { return acc + (tr._importe || 0); }, 0));
+    var totalCelda = tabla.querySelector('[data-campo="importe-total"]');
+    if (totalCelda) totalCelda.textContent = formato(costeDirecto);
+
+    // 5) Reflejo en la cabecera de la página.
+    function actualizar(id, valor) {
+      var nodo = document.getElementById(id);
+      if (nodo) nodo.textContent = formato(valor) + ' ' + SIMBOLO;
+    }
+    actualizar('cype-costo-materiales', costes.materiales);
+    actualizar('cype-costo-mano-obra', costes.mano_obra);
+    actualizar('cype-costo-complementarios', costes.complementarios);
+    actualizar('cype-costo-otros', costes.otros);
+    var directo = document.getElementById('cype-coste-directo');
+    if (directo) directo.textContent = formato(costeDirecto) + ' ' + SIMBOLO + ' / ' + UNIDAD_PARTIDA;
+
+    var aviso = document.getElementById('aviso-recalculo');
+    if (aviso) aviso.textContent = 'Vista previa actualizada. Pulsa «Guardar y recalcular» para fijar los cambios.';
+  }
+
+  tabla.addEventListener('input', function (evento) {
+    if (evento.target.matches('[data-campo="rendimiento"], [data-campo="precio"]:not([readonly])')) recalcular();
+  });
+  document.getElementById('form-recalcular').addEventListener('submit', function () {
+    // Sincroniza el precio derivado de la fila % antes de enviar (informativo).
+    recalcular();
+  });
+})();
+</script>
+{% endblock %}

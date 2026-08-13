@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Plantillas{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Plantillas de presupuesto</h1>
+    <p class="subtitle">Reutiliza la estructura de un presupuesto (capítulos, partidas y mediciones) para crear otros nuevos.</p>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <h2>Plantillas guardadas</h2>
+  </div>
+  {% if plantillas %}
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Fecha</th>
+        <th style="text-align:right;">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for t in plantillas %}
+      <tr>
+        <td><strong>{{ t.nombre }}</strong></td>
+        <td class="muted">{{ t.created_at.strftime('%d/%m/%Y') if t.created_at else '' }}</td>
+        <td style="text-align:right;">
+          <form method="post" action="/plantillas/{{ t.id }}/eliminar" class="inline" onsubmit="return confirm('¿Eliminar la plantilla «{{ t.nombre }}»?');">
+            <button class="btn btn-sm btn-danger" type="submit">🗑 Eliminar</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty">Aún no hay plantillas. Dentro de un presupuesto usa «Guardar como plantilla» para crearla.</p>
+  {% endif %}
+</div>
+
+<div class="card">
+  <h2>¿Cómo se usa?</h2>
+  <ol class="muted" style="margin-left:1.2rem; line-height:1.8;">
+    <li>Abre un presupuesto (nuevo o existente) y monta su estructura.</li>
+    <li>Pulsa <strong>«💾 Guardar como plantilla»</strong> y ponle un nombre.</li>
+    <li>Al crear un <strong>nuevo presupuesto</strong>, elige la plantilla en el desplegable para precargar su estructura.</li>
+  </ol>
+</div>
+{% endblock %}
