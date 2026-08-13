@@ -57,6 +57,6 @@ La revisión `9bca2ad1f6e4`, que añade el vínculo con Supabase Auth, también 
 
 La existencia de PostgreSQL y `organizacion_id` no basta para publicar CotizaT. En SQLite, `COTIZAT_ORGANIZATION_ID` conserva el espacio transitorio para recuperar instalaciones anteriores. En PostgreSQL se ignora: la dependencia HTTP exige Supabase Auth y una membresía activa.
 
-La conexión administrativa `postgres` omite RLS; el aislamiento del backend depende además de la autorización por membresía y del filtro ORM. Falta un rol de aplicación no privilegiado, políticas autorizantes, CSRF y completar la auditoría web. Consulta `docs/AUTENTICACION_SUPABASE.md` y `docs/ALMACENAMIENTO_PRIVADO.md`.
+La conexión administrativa `postgres` omite RLS; el aislamiento del backend depende además de la autorización por membresía y del filtro ORM. Falta un rol de aplicación no privilegiado, políticas autorizantes y completar la auditoría XSS/CSP/rate limiting. CSRF por origen y cabeceras globales ya están implementados. Consulta `docs/AUTENTICACION_SUPABASE.md`, `docs/ALMACENAMIENTO_PRIVADO.md` y `docs/SEGURIDAD_WEB.md`.
 
 Las copias `.db` y su restauración están desactivadas cuando el backend no es SQLite. La estrategia web será backup administrado y exportación por organización.

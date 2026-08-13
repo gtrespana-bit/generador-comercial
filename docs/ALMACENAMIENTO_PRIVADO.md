@@ -113,9 +113,9 @@ metadatos sin binarios, backend local, REST Supabase simulado, bucket privado,
 borrado compartido y materialización PDF. La prueba real contra Supabase
 Storage sigue pendiente en un runner/despliegue con salida TLS al proyecto.
 
-Este bloque no autoriza publicar CotizaT. Siguen pendientes CSRF/cabeceras
-globales, rol PostgreSQL no privilegiado/políticas RLS completas, pruebas reales
-de Auth/Storage y auditoría.
+Este bloque no autoriza publicar CotizaT. CSRF por origen y cabeceras globales
+ya están implementados, pero siguen pendientes CSP/XSS final, rol PostgreSQL no
+privilegiado/políticas RLS completas, pruebas reales de Auth/Storage y auditoría.
 
 Referencias oficiales:
 

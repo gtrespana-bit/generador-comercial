@@ -13,8 +13,8 @@ alcance, y genera documentos PDF profesionales.
 > versión alojada usa PostgreSQL, organizaciones aisladas y almacenamiento
 > externo. Todavía no debe publicarse: Supabase Auth y la abstracción de
 > Storage privado ya están implementados, pero faltan pruebas reales de ambos,
-> aprovisionar el bucket privado, proteger formularios con CSRF y completar el
-> endurecimiento RLS/HTTP.
+> aprovisionar el bucket privado, validar Auth/Storage en despliegue real y
+> completar el endurecimiento RLS/CSP antes de publicar.
 >
 > Sus sugerencias se basan en coincidencias deterministas sobre el catálogo del
 > usuario; no se presentan como inteligencia artificial.
@@ -176,7 +176,8 @@ python run.py
 
 Para probar la base web con PostgreSQL, configura `DATABASE_URL` y ejecuta
 `alembic upgrade head` antes de iniciar. Consulta `docs/BASE_DE_DATOS_WEB.md`,
-`docs/AUTENTICACION_SUPABASE.md` y `docs/ALMACENAMIENTO_PRIVADO.md`.
+`docs/AUTENTICACION_SUPABASE.md`, `docs/ALMACENAMIENTO_PRIVADO.md` y
+`docs/SEGURIDAD_WEB.md`.
 
 En el modo compatible local, los datos se guardan en `presupuestos.db` (se crea automáticamente). Los
 objetos nuevos van a `private_storage/` y se sirven mediante el proxy de la

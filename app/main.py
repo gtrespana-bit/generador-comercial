@@ -34,6 +34,7 @@ from sqlalchemy.orm import Session
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
 from .branding import PRODUCT_NAME, VALUE_PROPOSITION
+from .security import WebSecurityMiddleware
 from .database import (
     BACKUPS_DIR,
     BASE_DIR,
@@ -262,6 +263,7 @@ class FormulariosUTF8Middleware:
 app = FastAPI(title=PRODUCT_NAME, lifespan=lifespan)
 app.add_middleware(FormulariosUTF8Middleware)
 app.add_middleware(RefreshedAuthCookieMiddleware)
+app.add_middleware(WebSecurityMiddleware, enforce_csrf=not DATABASE_IS_SQLITE)
 
 
 def _respuesta_auth_json(request: Request) -> bool:
