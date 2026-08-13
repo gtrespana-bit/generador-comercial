@@ -75,8 +75,8 @@ class SupabaseAuthSettings:
         return cls(url=url, publishable_key=key, cookie_secure=cookie_secure)
 
 
-def password_reset_redirect_url() -> str:
-    """URL pública fija y autorizable en Supabase para recuperar contraseña."""
+def public_app_url(path: str) -> str:
+    """Construye una URL desde el origen HTTPS fijo, nunca desde ``Host``."""
     public_url = os.environ.get("COTIZAT_PUBLIC_URL", "").strip().rstrip("/")
     try:
         parsed = urlparse(public_url)
@@ -94,7 +94,15 @@ def password_reset_redirect_url() -> str:
         raise AuthNotConfigured(
             "COTIZAT_PUBLIC_URL debe ser el origen HTTPS público de CotizaT."
         )
-    return public_url + "/restablecer-clave"
+    path = str(path or "")
+    if not path.startswith("/") or path.startswith("//") or "\\" in path:
+        raise AuthNotConfigured("La ruta pública de CotizaT no es válida.")
+    return public_url + path
+
+
+def password_reset_redirect_url() -> str:
+    """URL pública fija y autorizable en Supabase para recuperar contraseña."""
+    return public_app_url("/restablecer-clave")
 
 
 @dataclass(frozen=True)

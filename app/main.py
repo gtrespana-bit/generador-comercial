@@ -64,6 +64,7 @@ from .auth import (
     SupabaseAuthSettings,
     clear_auth_cookies,
     password_reset_redirect_url,
+    public_app_url,
     set_auth_cookies,
 )
 from .models import (
@@ -75,6 +76,7 @@ from .models import (
     Factura,
     FacturaCapitulo,
     FacturaItem,
+    InvitacionOrganizacion,
     Medicion,
     Membresia,
     NotaSeguimiento,
@@ -114,6 +116,14 @@ from .services.onboarding import (
     ErrorOnboarding,
     completar_onboarding,
     estado_recorrido_inicial,
+)
+from .services.invitations import (
+    GestionEquipoError,
+    aceptar_invitacion,
+    actualizar_membresia,
+    crear_invitacion,
+    exigir_gestor,
+    revocar_invitacion,
 )
 from .services.importer import (
     ErrorImportacion,
@@ -327,6 +337,18 @@ async def _auth_no_configurada(request: Request, exc: AuthNotConfigured):
 async def _permiso_organizacion_denegado(
     request: Request, exc: PermisoOrganizacionError
 ):
+    if _respuesta_auth_json(request):
+        return JSONResponse({"ok": False, "error": str(exc)}, status_code=403)
+    return TEMPLATES.TemplateResponse(
+        request,
+        "auth/forbidden.html",
+        {"error": str(exc)},
+        status_code=403,
+    )
+
+
+@app.exception_handler(GestionEquipoError)
+async def _gestion_equipo_denegada(request: Request, exc: GestionEquipoError):
     if _respuesta_auth_json(request):
         return JSONResponse({"ok": False, "error": str(exc)}, status_code=403)
     return TEMPLATES.TemplateResponse(
@@ -955,6 +977,22 @@ def _slug_organizacion(nombre: str) -> str:
     return slug[:100] or "organizacion"
 
 
+def _set_organization_cookie(response: Response, organizacion_id: int) -> None:
+    try:
+        secure = SupabaseAuthSettings.from_environment().cookie_secure
+    except AuthNotConfigured:
+        secure = True
+    response.set_cookie(
+        ORGANIZATION_COOKIE,
+        str(organizacion_id),
+        max_age=60 * 60 * 24 * 30,
+        httponly=True,
+        secure=secure,
+        samesite="lax",
+        path="/",
+    )
+
+
 @app.get("/acceso", response_class=HTMLResponse)
 def acceso(request: Request, next: str = ""):
     error = request.query_params.get("error", "")
@@ -1132,6 +1170,7 @@ def listar_organizaciones_web(
             "usuario": usuario,
             "membresias": membresias,
             "error": request.query_params.get("error", ""),
+            "msg": request.query_params.get("msg", ""),
         },
     )
 
@@ -1181,20 +1220,8 @@ async def crear_organizacion_web(
         rol="propietario",
     ))
     db.commit()
-    try:
-        secure = SupabaseAuthSettings.from_environment().cookie_secure
-    except AuthNotConfigured:
-        secure = True
     response = RedirectResponse("/bienvenida", status_code=303)
-    response.set_cookie(
-        ORGANIZATION_COOKIE,
-        str(organizacion.id),
-        max_age=60 * 60 * 24 * 30,
-        httponly=True,
-        secure=secure,
-        samesite="lax",
-        path="/",
-    )
+    _set_organization_cookie(response, organizacion.id)
     return response
 
 
@@ -1221,20 +1248,208 @@ def seleccionar_organizacion_web(
         raise OrganizationAccessDenied(
             "No tienes acceso a la organización seleccionada."
         )
-    try:
-        secure = SupabaseAuthSettings.from_environment().cookie_secure
-    except AuthNotConfigured:
-        secure = True
     response = RedirectResponse("/", status_code=303)
-    response.set_cookie(
-        ORGANIZATION_COOKIE,
-        str(organizacion_id),
-        max_age=60 * 60 * 24 * 30,
-        httponly=True,
-        secure=secure,
-        samesite="lax",
-        path="/",
+    _set_organization_cookie(response, organizacion_id)
+    return response
+
+
+def _render_equipo(
+    request: Request,
+    db: Session,
+    *,
+    invitation_link: str = "",
+    msg: str = "",
+    status_code: int = 200,
+):
+    organizacion_id = db.info["organizacion_id"]
+    actor_rol = db.info["rol_membresia"]
+    exigir_gestor(actor_rol)
+    membresias = (
+        db.query(Membresia)
+        .join(Usuario, Usuario.id == Membresia.usuario_id)
+        .filter(Membresia.organizacion_id == organizacion_id)
+        .order_by(Membresia.activa.desc(), Usuario.email, Membresia.id)
+        .all()
     )
+    invitaciones = (
+        db.query(InvitacionOrganizacion)
+        .filter(
+            InvitacionOrganizacion.organizacion_id == organizacion_id,
+            InvitacionOrganizacion.accepted_at.is_(None),
+            InvitacionOrganizacion.revoked_at.is_(None),
+        )
+        .order_by(InvitacionOrganizacion.created_at.desc())
+        .all()
+    )
+    return TEMPLATES.TemplateResponse(
+        request,
+        "auth/team.html",
+        {
+            "membresias": membresias,
+            "invitaciones": invitaciones,
+            "actor_rol": actor_rol,
+            "ahora": datetime.utcnow(),
+            "invitation_link": invitation_link,
+            "msg": msg or request.query_params.get("msg", ""),
+            "error": request.query_params.get("error", ""),
+        },
+        status_code=status_code,
+        headers={"Cache-Control": "no-store"},
+    )
+
+
+@app.get("/equipo", response_class=HTMLResponse)
+def gestionar_equipo_web(request: Request, db: Session = Depends(get_db)):
+    if DATABASE_IS_SQLITE:
+        return _redirect("/")
+    return _render_equipo(request, db)
+
+
+@app.post("/equipo/invitaciones", response_class=HTMLResponse)
+async def crear_invitacion_web(request: Request, db: Session = Depends(get_db)):
+    if DATABASE_IS_SQLITE:
+        return _redirect("/")
+    form = await request.form()
+    try:
+        # Valida primero el origen fijo para no persistir una invitación cuyo
+        # enlace no pueda construirse de forma segura.
+        public_app_url("/")
+        invitacion, token = crear_invitacion(
+            db,
+            organizacion_id=db.info["organizacion_id"],
+            actor_usuario_id=db.info["usuario_id"],
+            email=str(form.get("email") or ""),
+            rol=str(form.get("rol") or ""),
+        )
+        invitation_link = public_app_url(f"/invitaciones/{token}")
+        db.commit()
+    except (GestionEquipoError, AuthNotConfigured) as exc:
+        db.rollback()
+        return _redirect("/equipo", error=str(exc))
+    return _render_equipo(
+        request,
+        db,
+        invitation_link=invitation_link,
+        msg=f"Invitación creada para {invitacion.email}. Compártela por un canal seguro.",
+    )
+
+
+@app.post("/equipo/invitaciones/{invitacion_id}/revocar")
+def revocar_invitacion_web(
+    invitacion_id: int,
+    db: Session = Depends(get_db),
+):
+    if DATABASE_IS_SQLITE:
+        return _redirect("/")
+    invitacion = (
+        db.query(InvitacionOrganizacion)
+        .filter(
+            InvitacionOrganizacion.id == invitacion_id,
+            InvitacionOrganizacion.organizacion_id == db.info["organizacion_id"],
+        )
+        .first()
+    )
+    if invitacion is None:
+        return _redirect("/equipo", error="La invitación no existe.")
+    try:
+        revocar_invitacion(
+            db,
+            invitacion=invitacion,
+            organizacion_id=db.info["organizacion_id"],
+            actor_usuario_id=db.info["usuario_id"],
+        )
+        db.commit()
+    except GestionEquipoError as exc:
+        db.rollback()
+        return _redirect("/equipo", error=str(exc))
+    return _redirect("/equipo", msg="Invitación revocada.")
+
+
+@app.post("/equipo/membresias/{membresia_id}")
+async def actualizar_membresia_web(
+    membresia_id: int,
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    if DATABASE_IS_SQLITE:
+        return _redirect("/")
+    membresia = (
+        db.query(Membresia)
+        .filter(
+            Membresia.id == membresia_id,
+            Membresia.organizacion_id == db.info["organizacion_id"],
+        )
+        .with_for_update()
+        .first()
+    )
+    if membresia is None:
+        return _redirect("/equipo", error="La membresía no existe.")
+    form = await request.form()
+    try:
+        actualizar_membresia(
+            db,
+            membresia=membresia,
+            organizacion_id=db.info["organizacion_id"],
+            actor_usuario_id=db.info["usuario_id"],
+            rol=str(form.get("rol") or ""),
+            activa=str(form.get("activa") or "") == "1",
+        )
+        db.commit()
+    except GestionEquipoError as exc:
+        db.rollback()
+        return _redirect("/equipo", error=str(exc))
+    return _redirect("/equipo", msg="Membresía actualizada.")
+
+
+def _render_invitacion(
+    request: Request,
+    token: str,
+    *,
+    error: str = "",
+    status_code: int = 200,
+):
+    return TEMPLATES.TemplateResponse(
+        request,
+        "auth/invitation.html",
+        {"token": token, "error": error},
+        status_code=status_code,
+        headers={"Cache-Control": "no-store", "Referrer-Policy": "no-referrer"},
+    )
+
+
+@app.get("/invitaciones/{token}", response_class=HTMLResponse)
+def ver_invitacion_web(request: Request, token: str):
+    # La vista pública no consulta la base ni confirma si el token existe.
+    token_seguro = token if re.fullmatch(r"[A-Za-z0-9_-]{32,200}", token) else ""
+    return _render_invitacion(request, token_seguro)
+
+
+@app.post("/invitaciones/{token}/aceptar")
+def aceptar_invitacion_web(
+    token: str,
+    request: Request,
+    db: Session = Depends(get_authenticated_db),
+):
+    if DATABASE_IS_SQLITE:
+        return _redirect("/")
+    usuario = db.get(Usuario, db.info["usuario_id"])
+    identidad = request.state.supabase_identity
+    try:
+        membresia = aceptar_invitacion(
+            db,
+            token=token,
+            usuario=usuario,
+            email_verificado=identidad.email_verified,
+        )
+        organizacion_id = membresia.organizacion_id
+        db.commit()
+    except GestionEquipoError as exc:
+        db.rollback()
+        return _render_invitacion(request, token, error=str(exc), status_code=400)
+    response = _redirect(
+        "/organizaciones", msg="Invitación aceptada. Ya puedes entrar a la organización."
+    )
+    _set_organization_cookie(response, organizacion_id)
     return response
 
 

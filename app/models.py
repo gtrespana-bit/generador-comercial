@@ -19,6 +19,7 @@ from sqlalchemy import (
     Float,
     ForeignKey,
     Integer,
+    Index,
     String,
     Text,
     UniqueConstraint,
@@ -207,6 +208,43 @@ class TenantMixin:
             default=1,  # compatibilidad temporal con la única empresa local
             index=True,
         )
+
+
+class InvitacionOrganizacion(TenantMixin, Base):
+    """Invitación de un solo uso; únicamente persiste el hash del secreto."""
+
+    __tablename__ = "invitaciones_organizacion"
+    __table_args__ = (
+        CheckConstraint(
+            "rol IN ('administrador', 'miembro', 'lectura')",
+            name="ck_invitacion_rol_valido",
+        ),
+        UniqueConstraint("token_hash", name="uq_invitacion_token_hash"),
+        Index(
+            "ix_invitaciones_organizacion_email",
+            "organizacion_id",
+            "email",
+        ),
+    )
+
+    id = Column(Integer, primary_key=True)
+    email = Column(String(254), nullable=False)
+    rol = Column(String(30), nullable=False, default="miembro")
+    token_hash = Column(String(64), nullable=False)
+    invitada_por_usuario_id = Column(
+        Integer, ForeignKey("usuarios.id", ondelete="SET NULL"), nullable=True
+    )
+    aceptada_por_usuario_id = Column(
+        Integer, ForeignKey("usuarios.id", ondelete="SET NULL"), nullable=True
+    )
+    expires_at = Column(DateTime, nullable=False)
+    accepted_at = Column(DateTime, nullable=True)
+    revoked_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+
+    organizacion = relationship("Organizacion")
+    invitada_por = relationship("Usuario", foreign_keys=[invitada_por_usuario_id])
+    aceptada_por = relationship("Usuario", foreign_keys=[aceptada_por_usuario_id])
 
 
 class ArchivoAlmacenado(TenantMixin, Base):

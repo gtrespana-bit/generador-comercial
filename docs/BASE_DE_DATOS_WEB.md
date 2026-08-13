@@ -51,7 +51,7 @@ Toda revisión autogenerada debe inspeccionarse. No se debe ejecutar `create_all
 
 El 13 de agosto de 2026 se aplicó la baseline `5cda50f97ed9` en un proyecto Supabase real. La prueba creó dos organizaciones con una partida homónima, modificó el precio de una de ellas y confirmó los valores desde dos conexiones PostgreSQL físicas diferentes (`pg_backend_pid` distinto). RLS automático quedó activo y el rol `anon` vio cero partidas.
 
-La revisión `9bca2ad1f6e4`, que añade el vínculo con Supabase Auth, también quedó aplicada en el mismo proyecto. El head vigente allí sigue siendo `9bca2ad1f6e4`. El código tiene como nuevo head `72e6f4d8a1c3` para metadatos de Storage privado, pendiente de aplicar junto con la prueba real del bucket.
+La revisión `9bca2ad1f6e4`, que añade el vínculo con Supabase Auth, también quedó aplicada en el mismo proyecto. El head vigente allí sigue siendo `9bca2ad1f6e4`. El código tiene como head `a84d2f6b91e0`: encadena `72e6f4d8a1c3` para metadatos de Storage privado y la tabla de invitaciones de un solo uso. Ambas revisiones siguen pendientes de aplicar y probar en el entorno real.
 
 ## Restricciones actuales
 

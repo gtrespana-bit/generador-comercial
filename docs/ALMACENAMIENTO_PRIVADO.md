@@ -78,7 +78,7 @@ lista MIME. En este bloque no se creó el bucket real ni política pública.
 
 Para habilitar el entorno real:
 
-1. aplicar Alembic hasta `72e6f4d8a1c3`;
+1. aplicar Alembic hasta el head vigente `a84d2f6b91e0` (incluye `72e6f4d8a1c3`);
 2. crear/verificar `cotizat-private` como privado;
 3. configurar la secret key solo en backend;
 4. probar subida, lectura, descarga, PDF y borrado con dos organizaciones;

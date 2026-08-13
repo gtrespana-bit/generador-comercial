@@ -91,7 +91,7 @@ Al trabajar en una tarea de este plan se debe:
   Evidencia: FastAPI + Jinja2 + SQLAlchemy + SQLite + ReportLab + JavaScript modular; aplicación empaquetable para Windows.
 
 - [x] **E0-002 — Ejecutar la suite automatizada.**  
-  Evidencia actualizada: 124 pruebas superadas con `.venv/bin/pytest -q` el 13/08/2026; la suite cubre Auth/membresías, aislamiento, almacenamiento privado y rate limiting de Auth, usa bases temporales y deja intacta la base personal.
+  Evidencia actualizada: 130 pruebas superadas con `.venv/bin/pytest -q` el 13/08/2026; la suite cubre Auth/membresías, aislamiento, almacenamiento privado y rate limiting de Auth, usa bases temporales y deja intacta la base personal.
 
 - [x] **E0-003 — Verificar el arranque y las rutas principales.**  
   Evidencia: las pantallas principales y la generación de PDF respondieron correctamente en una base limpia.
@@ -205,13 +205,13 @@ Al trabajar en una tarea de este plan se debe:
   Cobertura actual: configuración, clientes, presupuestos, capítulos, acceso directo por ID, escritura cruzada, numeración, membresías y objetos privados. Storage verifica claves tenant y rechazo del proxy a otra organización; `WebSecurityMiddleware` bloquea escrituras cross-site y añade cabeceras defensivas; Auth limita ráfagas por ruta/IP en cada proceso. Pendiente ampliar dominios, añadir contadores distribuidos, retirar `unsafe-inline` de CSP y ejecutar el cruce real contra Supabase.
 
 - [~] **E1W-008 — Implementar autenticación, sesión segura y autorización por membresía.**
-  Implementado en código: Supabase Auth por clave publicable, tokens HttpOnly, renovación, vínculo `auth.users` → `Usuario`, selección validada de organización y bloqueo de escritura para el rol `lectura`. La revisión `9bca2ad1f6e4` ya está aplicada en Supabase y las variables Auth quedaron configuradas localmente fuera de Git. En PostgreSQL se ignora `COTIZAT_ORGANIZATION_ID`. Recuperación de contraseña y redirect HTTPS fijo ya están implementados. Pendiente prueba end-to-end desde un entorno con salida a Supabase, configurar la Redirect URL real, invitaciones y endurecimiento CSP/XSS antes de publicar.
+  Implementado en código: Supabase Auth por clave publicable, tokens HttpOnly, renovación, vínculo `auth.users` → `Usuario`, selección validada de organización y bloqueo de escritura para el rol `lectura`. La revisión `9bca2ad1f6e4` ya está aplicada en Supabase y las variables Auth quedaron configuradas localmente fuera de Git. En PostgreSQL se ignora `COTIZAT_ORGANIZATION_ID`. Recuperación con redirect HTTPS fijo e invitaciones de un solo uso para emails verificados ya están implementadas. Pendiente prueba end-to-end desde un entorno con salida a Supabase, configurar la Redirect URL real, aplicar `a84d2f6b91e0`, validar el canal de entrega de invitaciones y endurecer CSP/XSS antes de publicar.
 
 - [~] **E1W-009 — Crear una interfaz de almacenamiento y un backend de objetos.**
   Implementados `StorageBackend`, `LocalStorage` y `SupabaseStorage`, referencias por organización, metadatos sin binarios, proxy autorizado, compatibilidad legado, PDF vía `/tmp` y cobertura de logos, productos, partidas, proyectos, firmas, anexos, fichas técnicas e importaciones CYPE. Evidencia: `72e6f4d8a1c3`, `app/storage.py`, `tests/test_storage.py` y `docs/ALMACENAMIENTO_PRIVADO.md`. Pendiente crear/verificar `cotizat-private`, aplicar la migración y probar contra Supabase real; no existe acceso público improvisado.
 
 - [~] **E1W-010 — Adaptar onboarding a cuenta → organización → demo/limpio.**
-  La ruta inicial ya enlaza registro/login → creación o selección de organización → onboarding demo/limpio existente. Pendiente probar el recorrido completo con email real, invitaciones y cambio entre organizaciones.
+  La ruta inicial ya enlaza registro/login → creación o selección de organización → onboarding demo/limpio existente; aceptar una invitación selecciona la organización autorizada. Pendiente probar el recorrido completo con dos emails reales y el cambio entre organizaciones.
 
 - [~] **E1W-011 — Ejecutar migraciones y suite de integración contra PostgreSQL real.**
   Evidencia real: revisiones `5cda50f97ed9` y `9bca2ad1f6e4` aplicadas en Supabase; una partida modificada persistió entre conexiones físicas `16389` y `17068`; dos organizaciones conservaron valores independientes; RLS quedó activo y `anon` vio 0 partidas. Pendiente ejecutar la suite ORM/Auth completa desde un runner con salida a Supabase (el sandbox actual resetea PostgreSQL 5432/6543 y cierra TLS HTTPS antes de autenticar).
@@ -550,9 +550,9 @@ La beta seguirá siendo privada y de capacidad limitada. Compartir infraestructu
 - [x] **E4-006 — Crear modelo de Organización/Empresa.**
   Adelantada y completada como E1W-004.
 - [~] **E4-007 — Crear usuarios, membresías e invitaciones.**
-  Usuarios y membresías creados; invitaciones y autenticación siguen pendientes.
+  Implementados perfiles Auth, membresías e invitaciones de un solo uso con token hasheado, caducidad, revocación y aceptación por email verificado; faltan migración/prueba real y canal transaccional de entrega.
 - [~] **E4-008 — Definir roles mínimos: propietario, administrador, miembro y lectura.**
-  Roles persistibles definidos; falta aplicar permisos por operación.
+  Roles persistibles, bloqueo global de escritura para `lectura` y reglas de administración de equipo implementados; falta completar la matriz por operación de negocio.
 - [ ] **E4-009 — Implementar autorización centralizada.**
 - [~] **E4-010 — Implementar recuperación de contraseña y verificación de email.**
   Recuperación implementada sobre Supabase; falta prueba real y completar gestión explícita de verificación de email.
@@ -770,8 +770,8 @@ Se completará durante la Etapa 2. No deben guardarse aquí nombres, teléfonos 
 La base browser-first ya incluye persistencia portable, Alembic, propiedad organizacional, Auth y objetos privados. El siguiente trabajo es:
 
 1. **E1W-007:** continuar auditoría de rutas/roles, retirar `unsafe-inline` de CSP y completar aislamiento restante; CSRF, cabeceras globales y rate limiting local de Auth ya están implementados.
-2. **E1W-009:** aplicar `72e6f4d8a1c3`, aprovisionar `cotizat-private` como privado y probar Auth/Storage con salida TLS.
-3. **E1W-008:** configurar/probar recuperación de contraseña real y completar invitaciones.
+2. **E1W-009:** aplicar el head `a84d2f6b91e0` (incluye Storage e invitaciones), aprovisionar `cotizat-private` como privado y probar Auth/Storage con salida TLS.
+3. **E1W-008:** configurar/probar recuperación e invitaciones reales con dos emails y definir el canal seguro de entrega.
 4. **E1W-010:** probar cuenta → organización → demo/limpio → primer PDF con archivos privados.
 5. **E1W-011/E1W-012:** suite PostgreSQL con rol no privilegiado e importación SQLite, incluidos objetos.
 6. **E1-012 a E1-014:** retomar usabilidad y medición externa sobre el recorrido web.
@@ -784,10 +784,10 @@ Evidencia acumulada al 13/08/2026:
 - `DATABASE_URL`, Psycopg 3 y Alembic preparados; compatibilidad SQLite preservada.
 - Baseline aplicada en Supabase real; persistencia entre conexiones, RLS activo y `anon` denegado.
 - Organizaciones, usuarios, membresías, filtro tenant y protección de escritura incorporados.
-- Supabase Auth implementado con cookies HttpOnly, vínculo de identidad y selección por membresía; prueba real pendiente por TLS del sandbox.
-- Pruebas confirman separación de datos y claves/descargas de archivos privados.
+- Supabase Auth implementado con cookies HttpOnly, vínculo de identidad, selección por membresía, recuperación e invitaciones hasheadas de un solo uso; prueba real pendiente por TLS del sandbox.
+- Pruebas confirman separación de datos, permisos de equipo y claves/descargas de archivos privados.
 - `StorageBackend`, backend local y adaptador Supabase implementados; objetos bajo `organizaciones/<id>/...`, PDF remoto vía `/tmp` y revisión `72e6f4d8a1c3` preparados. El bucket real no se creó.
-- Pytest usa bases temporales, supera 124 pruebas y no modifica `presupuestos.db`.
+- Pytest usa bases temporales, supera 130 pruebas y no modifica `presupuestos.db`.
 - La aplicación **sigue sin estar autorizada para publicarse**: faltan prueba real de Storage, CSP/XSS final, rol/políticas RLS no privilegiados y pruebas reales de Auth/ORM.
 
 ---

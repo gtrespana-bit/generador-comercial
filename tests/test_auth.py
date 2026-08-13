@@ -16,6 +16,7 @@ from app.auth import (
     SupabaseAuthSettings,
     SupabaseIdentity,
     password_reset_redirect_url,
+    public_app_url,
     set_auth_cookies,
 )
 from app.database import Base
@@ -106,6 +107,9 @@ def test_url_publica_de_recuperacion_es_fija_y_https(monkeypatch):
     monkeypatch.setenv("COTIZAT_PUBLIC_URL", "https://cotizat.example.com")
     assert password_reset_redirect_url() == (
         "https://cotizat.example.com/restablecer-clave"
+    )
+    assert public_app_url("/invitaciones/token-seguro") == (
+        "https://cotizat.example.com/invitaciones/token-seguro"
     )
     monkeypatch.setenv("COTIZAT_PUBLIC_URL", "https://usuario@malicioso.example")
     with pytest.raises(AuthNotConfigured, match="COTIZAT_PUBLIC_URL"):

@@ -52,6 +52,20 @@ Una membresía `lectura` puede consultar datos, pero el ORM rechaza tanto `flush
 
 Para recuperación, `COTIZAT_PUBLIC_URL` debe ser un origen HTTPS fijo y su ruta `https://<origen>/restablecer-clave` debe añadirse a las Redirect URLs permitidas en Supabase Auth. No se deriva desde `Host`, para evitar envenenar el enlace enviado por email. El access token temporal solo cruza el navegador y el backend durante el cambio; no se persiste.
 
+## Invitaciones y administración de equipo
+
+La revisión `a84d2f6b91e0` añade `invitaciones_organizacion` y `/equipo` permite administrar miembros con estas reglas:
+
+- propietarios y administradores pueden invitar miembros o usuarios de solo lectura;
+- solo la persona propietaria puede otorgar o modificar el rol `administrador`;
+- la membresía propietaria no se desactiva, degrada ni transfiere desde esta pantalla;
+- cada invitación caduca en 7 días, es de un solo uso y cualquier enlace anterior para el mismo email queda revocado;
+- PostgreSQL recibe únicamente SHA-256 del secreto; el token original se muestra una sola vez;
+- aceptar exige una sesión Supabase cuyo email verificado coincida exactamente con el invitado;
+- la vista pública no consulta la invitación, por lo que no confirma si un token existe, y responde con `Cache-Control: no-store` y `Referrer-Policy: no-referrer`.
+
+Los enlaces se construyen desde `COTIZAT_PUBLIC_URL`, nunca desde `Host`. Aún no hay proveedor transaccional de correo: el gestor debe copiar el enlace y compartirlo por un canal seguro. No se incorporó una clave `service_role` ni se usó el endpoint administrativo de Supabase para simular el envío. Antes de una beta debe integrarse y probarse un canal de email real o establecer un procedimiento operativo controlado.
+
 ## RLS: estado y límite actual
 
 El proyecto real confirmó `relrowsecurity = true` y el rol `anon` obtuvo cero partidas sin políticas permisivas. Es una denegación predeterminada correcta.
@@ -66,7 +80,7 @@ Antes de publicar se debe crear un rol de aplicación sin `BYPASSRLS` y polític
 
 ## Estado de validación real
 
-La revisión `9bca2ad1f6e4` está aplicada en el proyecto real. El checkout actual no contiene `.env` (Arena lo recreó al reanudar la sesión) y el sandbox cierra tanto PostgreSQL como TLS hacia Supabase antes de autenticar; por eso registro, login y recuperación deben probarse desde el futuro despliegue o un runner con esa salida. Las pruebas unitarias simuladas no sustituyen esa comprobación.
+La revisión `9bca2ad1f6e4` está aplicada en el proyecto real. El checkout actual no contiene `.env` (Arena lo recreó al reanudar la sesión) y el sandbox cierra tanto PostgreSQL como TLS hacia Supabase antes de autenticar; por eso registro, login, recuperación e invitaciones deben probarse desde el futuro despliegue o un runner con esa salida. Las pruebas unitarias simuladas no sustituyen esa comprobación.
 
 ## Trabajo de seguridad todavía obligatorio
 
@@ -75,7 +89,7 @@ Esta integración no autoriza por sí sola un despliegue público. Siguen pendie
 - probar registro/login/recuperación end-to-end desde un entorno con salida HTTPS a Supabase;
 - configurar `COTIZAT_PUBLIC_URL` y la Redirect URL real en Supabase;
 - sustituir/complementar el límite local por IP ya implementado con contadores distribuidos antes de escalar a varias instancias (el rate limit de Supabase tampoco sustituye el control de aplicación);
-- gestión de invitaciones y roles administrativos;
+- aplicar/probar la migración de invitaciones y validar el recorrido real con dos emails, incluido su canal de entrega;
 - políticas RLS autorizantes para un rol no privilegiado;
 - eliminar `unsafe-inline` de CSP y completar auditoría XSS;
 - aplicar/probar la migración y el bucket privado de Storage real.
