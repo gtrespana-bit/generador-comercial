@@ -119,7 +119,7 @@
     var catalogoPanel = document.getElementById("catalogo-partidas");
     if (!catalogoPanel) return;
 
-    catalogoPanel.innerHTML = "";
+    catalogoPanel.replaceChildren();
 
     if (!items.length) {
       var empty = document.createElement("div");
@@ -329,9 +329,27 @@
     var pop = document.createElement("div");
     pop.id = "precio-choice-popover";
     pop.className = "precio-choice-popover";
-    pop.innerHTML = "<strong>Cambio de precio detectado</strong>" +
-      "<small>Este precio puede quedarse solo en esta partida del presupuesto o actualizar la partida maestra para futuros presupuestos. Los presupuestos ya creados no se modifican.</small>" +
-      '<div class="actions"><button type="button" class="btn btn-sm" data-action="local">Solo aquí</button><button type="button" class="btn btn-sm btn-primary" data-action="catalog">Actualizar catálogo</button></div>';
+    var titulo = document.createElement("strong");
+    titulo.textContent = "Cambio de precio detectado";
+    pop.appendChild(titulo);
+    var ayuda = document.createElement("small");
+    ayuda.textContent = "Este precio puede quedarse solo en esta partida del presupuesto o actualizar la partida maestra para futuros presupuestos. Los presupuestos ya creados no se modifican.";
+    pop.appendChild(ayuda);
+    var acciones = document.createElement("div");
+    acciones.className = "actions";
+    var soloAqui = document.createElement("button");
+    soloAqui.type = "button";
+    soloAqui.className = "btn btn-sm";
+    soloAqui.dataset.action = "local";
+    soloAqui.textContent = "Solo aquí";
+    acciones.appendChild(soloAqui);
+    var actualizarCatalogo = document.createElement("button");
+    actualizarCatalogo.type = "button";
+    actualizarCatalogo.className = "btn btn-sm btn-primary";
+    actualizarCatalogo.dataset.action = "catalog";
+    actualizarCatalogo.textContent = "Actualizar catálogo";
+    acciones.appendChild(actualizarCatalogo);
+    pop.appendChild(acciones);
     document.body.appendChild(pop);
     posicionarPopover(pop, target);
 
@@ -443,7 +461,6 @@
   editor.initCatalogo = init;
   editor.catalogo = { init: init };
 
-  // Exponer globalmente para el onclick inline del catálogo renderizado en
-  // form.html (onclick="agregarDesdeCatalogo(...)").
+  // Exponer para las acciones declarativas del catálogo compartido.
   window.agregarDesdeCatalogo = agregarDesdeCatalogo;
 })();

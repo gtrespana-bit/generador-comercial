@@ -180,13 +180,13 @@
     var chapterField = document.getElementById('import-cype-chapter-field');
     if (chapterField) chapterField.classList.toggle('import-hidden', !activo);
     document.getElementById('import-review-title').textContent = activo ? '2. Revisa las partidas y filas CYPE detectadas' : '2. Revisa la detección de columnas';
-    document.getElementById('import-review-hint').innerHTML = activo
-      ? 'Cada fila y columna se conserva con su número original. Los resultados de fórmula y las fórmulas se guardan, junto con el archivo <strong>.xlsx</strong> original.'
-      : 'El sistema propone una asignación. Solo <strong>Partida</strong> es obligatoria; ajusta cualquier columna antes de validar.';
+    document.getElementById('import-review-hint').textContent = activo
+      ? 'Cada fila y columna se conserva con su número original. Los resultados de fórmula y las fórmulas se guardan, junto con el archivo .xlsx original.'
+      : 'El sistema propone una asignación. Solo Partida es obligatoria; ajusta cualquier columna antes de validar.';
   }
   function renderMapeo() {
     var body = document.getElementById('import-mapping-body');
-    body.innerHTML = '';
+    body.replaceChildren();
     Object.keys(CAMPOS).forEach(function (campo) {
       var tr = document.createElement('tr');
       var label = document.createElement('td');
@@ -209,7 +209,7 @@
   function renderPreviewTabular() {
     var table = document.getElementById('import-preview-table');
     var thead = table.querySelector('thead'); var tbody = table.querySelector('tbody');
-    thead.innerHTML = ''; tbody.innerHTML = '';
+    thead.replaceChildren(); tbody.replaceChildren();
     var hr = document.createElement('tr');
     estado.encabezados.forEach(function (header) { var th = document.createElement('th'); th.textContent = header; hr.appendChild(th); });
     thead.appendChild(hr);
@@ -231,7 +231,7 @@
   function renderPreviewCype() {
     var summary = document.getElementById('cype-summary');
     var preview = document.getElementById('cype-preview');
-    summary.innerHTML = ''; preview.innerHTML = '';
+    summary.replaceChildren(); preview.replaceChildren();
     var totalFilas = 0;
     estado.cypePartidas.forEach(function (partida) {
       totalFilas += (partida.filas || []).length;
@@ -271,7 +271,7 @@
   function renderValidation(data) {
     var summary = document.getElementById('import-summary');
     var issues = document.getElementById('import-issues');
-    issues.innerHTML = '';
+    issues.replaceChildren();
     if (!data.ok) {
       summary.textContent = data.error || 'No se pudo validar la importación.';
       summary.className = 'import-summary error'; validationCard.classList.remove('import-hidden'); return;

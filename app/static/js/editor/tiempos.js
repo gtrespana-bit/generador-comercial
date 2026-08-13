@@ -274,7 +274,7 @@
         if (nSinDatos > 0) partes.push(nSinDatos + " partida(s) sin datos de tiempo");
         partes.push(fmtHoras(totalOf) + " h oficial + " + fmtHoras(totalAy) + " h ayudante");
         partes.push(fmtDias(diasDur) + " días críticos");
-        nota.innerHTML = partes.join(" · ") + ".";
+        nota.textContent = partes.join(" · ") + ".";
         var link = nota.querySelector("a");
         // keep existing link handling
         var existingLink = nota.querySelector("a");

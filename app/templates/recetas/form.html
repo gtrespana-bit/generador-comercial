@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 
   function renderRows() {
-    tbody.innerHTML = "";
+    tbody.replaceChildren();
     items.forEach(function(item, index) {
       var tr = document.createElement("tr");
       tr.dataset.idx = index;
@@ -129,7 +129,14 @@ document.addEventListener("DOMContentLoaded", function() {
       var selTipo = document.createElement("select");
       selTipo.className = "input";
       selTipo.style.width = "100%";
-      selTipo.innerHTML = '<option value="proporcional">Proporcional</option><option value="fijo">Fijo</option>';
+      var proporcional = document.createElement("option");
+      proporcional.value = "proporcional";
+      proporcional.textContent = "Proporcional";
+      selTipo.appendChild(proporcional);
+      var fijo = document.createElement("option");
+      fijo.value = "fijo";
+      fijo.textContent = "Fijo";
+      selTipo.appendChild(fijo);
       selTipo.value = item.tipo_calculo || "proporcional";
       selTipo.addEventListener("change", function() {
         item.tipo_calculo = this.value;

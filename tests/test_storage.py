@@ -12,7 +12,12 @@ from sqlalchemy.orm import sessionmaker
 
 from app import storage
 from app.database import Base
-from app.models import ArchivoAlmacenado, Organizacion, Producto
+from app.models import (
+    ArchivoAlmacenado,
+    Organizacion,
+    PermisoOrganizacionError,
+    Producto,
+)
 
 
 @pytest.fixture()
@@ -127,6 +132,27 @@ def test_save_object_registra_solo_metadatos_y_aisla_consultas(tenant_db, tmp_pa
     assert data not in repr(metadata.__dict__).encode()
     tenant_db.info["organizacion_id"] = 2
     assert tenant_db.query(ArchivoAlmacenado).all() == []
+
+
+def test_rol_lectura_no_puede_crear_ni_borrar_objetos(tenant_db, tmp_path, monkeypatch):
+    backend = storage.LocalStorage(tmp_path / "private")
+    monkeypatch.setattr(storage, "get_storage_backend", lambda: backend)
+    saved = storage.save_object(
+        tenant_db, b"existente", "productos", "foto.png", "image/png"
+    )
+    tenant_db.commit()
+
+    tenant_db.info["rol_membresia"] = "lectura"
+    with pytest.raises(PermisoOrganizacionError, match="solo lectura"):
+        storage.save_object(
+            tenant_db, b"nuevo", "productos", "nuevo.png", "image/png"
+        )
+    with pytest.raises(PermisoOrganizacionError, match="solo lectura"):
+        storage.delete_object(tenant_db, saved.reference)
+
+    assert backend.read(saved.object_key) == b"existente"
+    assert tenant_db.query(ArchivoAlmacenado).count() == 1
+    assert len(list((tmp_path / "private").rglob("*.*"))) == 1
 
 
 def test_borrado_conserva_objeto_compartido_hasta_ultima_referencia(tenant_db, tmp_path, monkeypatch):

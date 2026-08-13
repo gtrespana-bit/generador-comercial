@@ -219,7 +219,7 @@
     set("linea_prod_imagen", datos.prod_imagen || "");
     actualizarVistaProducto();
 
-    $("editor-mediciones-list").innerHTML = "";
+    $("editor-mediciones-list").replaceChildren();
     (datos.mediciones || []).forEach(addMedicion);
     syncMedicionesEmpty();
 

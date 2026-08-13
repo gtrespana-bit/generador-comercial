@@ -749,7 +749,7 @@
       }
 
       function renderOpciones() {
-        lista.innerHTML = "";
+        lista.replaceChildren();
         var hay = opcionesCache.length > 0;
         vacio.style.display = hay ? "none" : "";
         countBadge.textContent = String(opcionesCache.length);
@@ -1928,7 +1928,7 @@
         if (src) imagen.src = src;
         else imagen.removeAttribute("src");
 
-        galeria.innerHTML = "";
+        galeria.replaceChildren();
         if (opciones.length > 1) {
           galeria.style.display = "flex";
           opciones.forEach(function (op, i) {
@@ -2196,7 +2196,18 @@
           var markup = (beneficioU / coste * 100);
           var margen = precio>0 ? (beneficioU / precio *100) : 0;
           margenReal.style.color = beneficioU >=0 ? "var(--green)" : "var(--rose)";
-          margenReal.innerHTML = 'Coste: <strong>' + editorInst.FMT.fmt(coste) + '/ud</strong> · Precio: <strong>' + editorInst.FMT.fmt(precio) + '/ud</strong> · Beneficio: <strong>' + editorInst.FMT.fmt(beneficioU) + '/ud (' + markup.toFixed(1).replace(".",",")+'% s/coste, ' + margen.toFixed(1).replace(".",",")+'% margen)</strong>';
+          margenReal.textContent = "Coste: ";
+          var costeStrong = document.createElement("strong");
+          costeStrong.textContent = editorInst.FMT.fmt(coste) + "/ud";
+          margenReal.appendChild(costeStrong);
+          margenReal.appendChild(document.createTextNode(" · Precio: "));
+          var precioStrong = document.createElement("strong");
+          precioStrong.textContent = editorInst.FMT.fmt(precio) + "/ud";
+          margenReal.appendChild(precioStrong);
+          margenReal.appendChild(document.createTextNode(" · Beneficio: "));
+          var beneficioStrong = document.createElement("strong");
+          beneficioStrong.textContent = editorInst.FMT.fmt(beneficioU) + "/ud (" + markup.toFixed(1).replace(".",",") + "% s/coste, " + margen.toFixed(1).replace(".",",") + "% margen)";
+          margenReal.appendChild(beneficioStrong);
           margenReal.title = "Markup sobre coste: " + markup.toFixed(2) + "% | Margen sobre precio: " + margen.toFixed(2) + "%";
         }
 

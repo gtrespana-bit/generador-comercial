@@ -1670,7 +1670,7 @@ def listar_clientes(request: Request, q: str = "", db: Session = Depends(get_db)
 
 
 @app.get("/clientes/nuevo", response_class=HTMLResponse)
-def nuevo_cliente_form(request: Request):
+def nuevo_cliente_form(request: Request, _db: Session = Depends(get_db)):
     return TEMPLATES.TemplateResponse(request, "clients/form.html", {"cliente": None})
 
 
@@ -5316,7 +5316,7 @@ def sincronizar_recursos(db: Session = Depends(get_db)):
     return _redirect("/recursos", msg=f"Sincronizados {n} recursos desde descomposiciones existentes." if n else "No hay recursos nuevos para sincronizar.")
 
 @app.get("/recursos/nuevo", response_class=HTMLResponse)
-def nuevo_recurso_form(request: Request):
+def nuevo_recurso_form(request: Request, _db: Session = Depends(get_db)):
     return TEMPLATES.TemplateResponse(request, "recursos/form.html", {"recurso": None, "categorias": CATEGORIAS_RECURSO, "etiquetas": ETIQUETAS_RECURSO})
 
 @app.post("/recursos/nuevo")
@@ -5580,7 +5580,7 @@ def ajustar_precios_productos(porcentaje: str = Form("0"), db: Session = Depends
 
 
 @app.get("/productos/nuevo", response_class=HTMLResponse)
-def nuevo_producto_form(request: Request):
+def nuevo_producto_form(request: Request, _db: Session = Depends(get_db)):
     return TEMPLATES.TemplateResponse(request, "productos/form.html", {"producto": None})
 
 
@@ -5864,7 +5864,7 @@ def listar_recetas(request: Request, db: Session = Depends(get_db)):
 
 
 @app.get("/recetas/nueva", response_class=HTMLResponse)
-def nueva_receta_form(request: Request):
+def nueva_receta_form(request: Request, _db: Session = Depends(get_db)):
     return TEMPLATES.TemplateResponse(request, "recetas/form.html", {
         "receta": None,
         "items": [],

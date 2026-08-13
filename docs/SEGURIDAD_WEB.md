@@ -59,8 +59,18 @@ respuesta. `script-src` acepta solo `'self'` y ese nonce, y
 `script-src-attr 'none'` bloquea handlers HTML como `onclick`. Los 97 handlers
 heredados se sustituyeron por acciones declarativas registradas en
 `csp_events.js`; los formularios de borrado conservan su confirmación sin
-reconstruir código JavaScript. También se eliminó un `innerHTML` que incorporaba
-nombres/unidades editables de packs y ahora esos nodos usan `textContent`.
+reconstruir código JavaScript. El frontend ya no utiliza `innerHTML`,
+`outerHTML`, `insertAdjacentHTML` ni otros parsers de fragmentos HTML: los datos
+del catálogo, importaciones y editores se representan con creación explícita de
+nodos y `textContent`.
+
+La auditoría automatizada de rutas mantiene una lista cerrada de fronteras
+públicas (Auth, recuperación e invitación) y exige `get_db` o
+`get_authenticated_db` en el resto de endpoints comerciales. Incluso los
+formularios vacíos de clientes, recursos, productos y packs requieren sesión.
+Además, Storage comprueba el rol `lectura` **antes** de usar la credencial
+server-side para crear o borrar un objeto; el rechazo del flush/RLS por sí solo
+llegaría demasiado tarde y podría dejar un objeto huérfano o borrar uno válido.
 
 Los estilos siguen siendo la excepción transitoria: hay cientos de atributos
 `style` y cambios CSSOM del editor heredado, por lo que `style-src` aún incluye
@@ -69,8 +79,9 @@ extraer atributos y mutaciones de estilo antes de retirar esa última concesión
 Fuentes de Google permanecen limitadas a sus hosts oficiales. Por tanto la
 protección XSS mejoró de forma material, pero **la CSP todavía no es final**.
 
-Antes de publicar se debe eliminar `'unsafe-inline'` también de estilos,
-terminar la revisión de sinks DOM y ejecutar pruebas en el despliegue HTTPS real.
+Antes de publicar se debe eliminar `'unsafe-inline'` también de estilos y
+ejecutar pruebas en el despliegue HTTPS real. La revisión estática de sinks HTML
+queda cerrada; seguirá siendo una prueba de regresión permanente.
 
 ## Pruebas
 
@@ -82,8 +93,12 @@ terminar la revisión de sinks DOM y ejecutar pruebas en el despliegue HTTPS rea
 - escritura sin procedencia rechazada;
 - cabeceras defensivas y HSTS;
 - conservación de la CSP sandbox de archivos;
-- nonce único por respuesta, ausencia de handlers HTML y cobertura de todas las
-  acciones declarativas;
+- nonce único por respuesta, ausencia de handlers HTML, sinks de fragmentos HTML
+  y cobertura de todas las acciones declarativas;
+- protección declarada de todas las rutas comerciales salvo fronteras públicas
+  y operaciones de backup exclusivas de SQLite local;
+- bloqueo del backend de objetos para membresías de solo lectura antes de
+  cualquier efecto externo;
 - bloqueo `429`, `Retry-After`, separación por IP y exclusión de lecturas/rutas
   no protegidas en el límite de Auth.
 

@@ -381,6 +381,21 @@ def _safe_filename(original_name: str, prefix: str = "") -> str:
     return f"{base or 'archivo'}-{uuid.uuid4().hex[:16]}{extension}"
 
 
+def _require_storage_write(db) -> None:
+    """Bloquea efectos externos antes de que el ORM pueda rechazar el flush.
+
+    Storage usa una credencial server-side que omite RLS. Por eso no basta con
+    que ``before_flush`` proteja los metadatos: un miembro de solo lectura no
+    debe alcanzar ``put``/``delete`` y dejar un objeto huérfano o borrado.
+    """
+    if db.info.get("rol_membresia") == "lectura":
+        from .models import PermisoOrganizacionError
+
+        raise PermisoOrganizacionError(
+            "Tu rol es de solo lectura y no permite modificar archivos."
+        )
+
+
 def save_object(
     db,
     data: bytes,
@@ -397,6 +412,7 @@ def save_object(
     organization_id = int(db.info.get("organizacion_id") or 0)
     if organization_id <= 0:
         raise StorageError("No hay una organización activa para guardar el archivo.")
+    _require_storage_write(db)
     if not data or len(data) > MAX_OBJECT_SIZE:
         raise StorageError("El archivo está vacío o supera 12 MB.")
     original_name = _safe_original_name(original_name)
@@ -462,6 +478,7 @@ def read_reference(reference: str) -> bytes:
 def delete_object(db, reference: str) -> None:
     from .models import ArchivoAlmacenado
 
+    _require_storage_write(db)
     key = object_key_from_reference(reference)
     if key is None:
         clean = str(reference or "").strip().lstrip("/")

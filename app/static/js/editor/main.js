@@ -134,7 +134,7 @@
   editor.serializar = serializar;
 
   function construirDesde(lista) {
-    editor.contCapitulos.innerHTML = "";
+    editor.contCapitulos.replaceChildren();
     (lista || []).forEach(function (c) { Capitulo.crear(c, editor); });
     if (!editor.contCapitulos.querySelectorAll(".capitulo").length) {
       Capitulo.crear(null, editor);

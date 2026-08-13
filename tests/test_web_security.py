@@ -1,12 +1,15 @@
 from pathlib import Path
 import re
 
+from fastapi.routing import APIRoute
 from starlette.applications import Starlette
 from starlette.middleware import Middleware
 from starlette.responses import HTMLResponse, PlainTextResponse
 from starlette.routing import Route
 from starlette.testclient import TestClient
 
+from app.database import get_authenticated_db, get_db
+from app.main import app as cotizat_app
 from app.security import AuthRateLimitMiddleware, WebSecurityMiddleware
 
 
@@ -109,6 +112,19 @@ def test_plantillas_no_contienen_handlers_y_inline_usa_nonce():
         assert all("nonce=" in tag for tag in style_element.findall(template)), path
 
 
+def test_frontend_no_usa_sinks_html_de_inyeccion():
+    dangerous = re.compile(
+        r"\b(?:innerHTML|outerHTML|insertAdjacentHTML|document\.write|"
+        r"createContextualFragment|DOMParser)\b",
+        re.IGNORECASE,
+    )
+    for root in (Path("app/static/js"), Path("app/templates")):
+        for path in root.rglob("*"):
+            if path.suffix not in {".js", ".html"}:
+                continue
+            assert not dangerous.search(path.read_text(encoding="utf-8")), path
+
+
 def test_acciones_declarativas_tienen_handler_registrado():
     templates = "\n".join(
         path.read_text(encoding="utf-8")
@@ -127,6 +143,35 @@ def test_acciones_declarativas_tienen_handler_registrado():
         scripts,
     ))
     assert used <= registered, sorted(used - registered)
+
+
+def test_toda_ruta_comercial_exige_sesion_salvo_fronteras_publicas_o_locales():
+    publicas = {
+        ("GET", "/acceso"),
+        ("POST", "/acceso"),
+        ("POST", "/registro"),
+        ("POST", "/salir"),
+        ("GET", "/recuperar-acceso"),
+        ("POST", "/recuperar-acceso"),
+        ("GET", "/restablecer-clave"),
+        ("POST", "/restablecer-clave"),
+        ("GET", "/invitaciones/{token}"),
+    }
+    solo_sqlite_local = {
+        ("GET", "/configuracion/backup"),
+        ("POST", "/configuracion/restaurar"),
+    }
+    sin_proteccion = []
+    for route in cotizat_app.routes:
+        if not isinstance(route, APIRoute):
+            continue
+        dependencias = {dep.call for dep in route.dependant.dependencies}
+        protegida = bool({get_db, get_authenticated_db} & dependencias)
+        for method in route.methods - {"HEAD", "OPTIONS"}:
+            key = (method, route.path)
+            if key not in publicas | solo_sqlite_local and not protegida:
+                sin_proteccion.append(key)
+    assert not sin_proteccion, sorted(sin_proteccion)
 
 
 def test_rate_limit_bloquea_rafaga_y_publica_retry_after():

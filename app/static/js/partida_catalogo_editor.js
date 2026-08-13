@@ -134,7 +134,15 @@
       var beneficio = precio - coste;
       var markup = beneficio / coste * 100;
       var margen = precio > 0 ? beneficio / precio *100 : 0;
-      hint.innerHTML = 'Coste: <strong>' + formato(coste) + '</strong> · Beneficio: <strong style="color:'+(beneficio>=0?'var(--green)':'var(--rose)')+'">' + formato(beneficio) + ' (' + markup.toFixed(1).replace(".",",") + '% s/coste, ' + margen.toFixed(1).replace(".",",") + '% margen)</strong>';
+      hint.textContent = 'Coste: ';
+      var costeStrong = document.createElement('strong');
+      costeStrong.textContent = formato(coste);
+      hint.appendChild(costeStrong);
+      hint.appendChild(document.createTextNode(' · Beneficio: '));
+      var beneficioStrong = document.createElement('strong');
+      beneficioStrong.style.color = beneficio >= 0 ? 'var(--green)' : 'var(--rose)';
+      beneficioStrong.textContent = formato(beneficio) + ' (' + markup.toFixed(1).replace(".",",") + '% s/coste, ' + margen.toFixed(1).replace(".",",") + '% margen)';
+      hint.appendChild(beneficioStrong);
       hint.title = 'Markup ' + markup.toFixed(2) + '% sobre coste | Margen ' + margen.toFixed(2) + '% sobre precio';
     }
 
@@ -201,7 +209,7 @@
     }
 
     function cargar(filas) {
-      body.innerHTML = "";
+      body.replaceChildren();
       (Array.isArray(filas) ? filas : []).filter(function (fila) {
         return !fila.tipo || fila.tipo === "recurso";
       }).forEach(add);

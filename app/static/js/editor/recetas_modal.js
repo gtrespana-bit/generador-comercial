@@ -40,14 +40,14 @@
     var select = document.getElementById("select-receta-pack");
     if (!select) return;
 
-    select.innerHTML = '<option value="">Cargando packs disponibles...</option>';
+    mostrarEstadoSelect(select, "Cargando packs disponibles...");
 
     fetch("/recetas/api/list")
       .then(function (res) { return res.json(); })
       .then(function (data) {
         if (!data.ok || !data.recetas) {
           console.error("La API de packs devolvió una respuesta inválida:", data);
-          select.innerHTML = '<option value="">Error cargando packs</option>';
+          mostrarEstadoSelect(select, "Error cargando packs");
           return;
         }
         listaRecetasCache = data.recetas;
@@ -66,8 +66,16 @@
       })
       .catch(function (errRed) {
         console.error("Error de red cargando packs de estancia:", errRed);
-        select.innerHTML = '<option value="">Error cargando packs</option>';
+        mostrarEstadoSelect(select, "Error cargando packs");
       });
+  }
+
+  function mostrarEstadoSelect(select, mensaje) {
+    select.replaceChildren();
+    var option = document.createElement("option");
+    option.value = "";
+    option.textContent = mensaje;
+    select.appendChild(option);
   }
 
   function strId(id) {
@@ -75,7 +83,7 @@
   }
 
   function renderOpcionesSelect(select, recetas) {
-    select.innerHTML = "";
+    select.replaceChildren();
     var grupos = {};
     recetas.forEach(function (r) {
       var cat = r.categoria || "Otros";
@@ -124,7 +132,7 @@
     if (!tbody || !badgeTotal || !inpMedida) return;
 
     var medida = parseFloat(inpMedida.value) || 0;
-    tbody.innerHTML = "";
+    tbody.replaceChildren();
 
     if (!recetaSeleccionada || !recetaSeleccionada.items || !recetaSeleccionada.items.length) {
       var emptyRow = document.createElement("tr");
