@@ -141,10 +141,10 @@ Al trabajar en una tarea de este plan se debe:
 
 - [~] **E1-001 — Elegir el nombre comercial del software.**
   Debe ser distinto de RemodelaT, registrable, fácil de pronunciar y válido para una expansión latinoamericana.
-  Estado: el usuario pidió propuestas y fijó una marca orientada a construcción para Latinoamérica, con entrada comercial por remodelación venezolana. La lista corta inicial es ObraCifra, ObraNexo y Presuvia; ObraCifra es la recomendación preliminar. Falta la decisión final del usuario.
+  Estado: el usuario pidió una selección más profesional que la primera ronda descriptiva, por lo que ObraCifra, ObraNexo y Presuvia dejaron de ser lista corta. Después de ampliar y filtrar territorios técnicos, evocativos y propietarios, no existe todavía una marca aprobada. **Cuantora** se conserva únicamente como candidato exploratorio diferenciado. El usuario propuso después **CotizaT** y **PresupuestaT**: entre ambos, CotizaT comunica más rápido y es más corto, pero ambos deben superar todavía pruebas de pronunciación, escritura, diferenciación y expansión. PresupuestaT queda claramente debilitado por longitud, lectura reflexiva poco natural y proximidad competitiva.
 
 - [~] **E1-002 — Comprobar dominio, redes y conflictos básicos de marca.**
-  Evidencia preliminar (13/08/2026): búsquedas exactas descartaron CotizaObra, ObraLista y Cota Obra por conflictos directos; Obralio se desaconseja por proximidad con Obrali y por tener `obralio.com` registrado. `obranexo.com` también está registrado y existe Obras Nexo en España. No apareció una coincidencia comercial exacta evidente para ObraCifra en la búsqueda web inicial ni resolución DNS de `obracifra.com`, pero esto no demuestra disponibilidad ni sustituye una búsqueda registral. La comprobación final depende del nombre elegido.
+  Evidencia preliminar (13/08/2026): el cribado web acumulado descartó por conflicto o saturación a CotizaObra, ObraLista, Cota Obra, Obralio, ObraNexo, Aplomo, Cimentia, Civora, Quantora, Nivora, Dovela, Calcora, Metriva, Arqenta, Civanta, Pondera, Partium, Valtria, Rigor y Rasante. Cuantora no mostró una coincidencia empresarial exacta clara ni resolución DNS en `.com`, `.app`, `.io` o `.co`, pero el buscador tiende a corregirlo a «Cantora» y no se ha realizado verificación registral, social o mediante registrador. Las búsquedas exactas de CotizaT y PresupuestaT no mostraron una coincidencia exacta evidente; sin embargo, CotizaT entra en un espacio muy saturado por productos directos como Cotiza Constructor, Kotiza, CotiZa, CotizApp y Cotiza Pro, mientras PresupuestaT se aproxima de forma preocupante a PresupuestAPP, que opera para construcción desde `presupuesta.eu`. Ninguno de los dos nombres resolvió por DNS en `.com`, `.app`, `.io`, `.co`, `.net` o `.software`; esa ausencia **no demuestra disponibilidad**. La comprobación final exige consulta de registrador, redes, SENAPI/WIPO y asesoría marcaria antes de adoptar el nombre.
 
 - [ ] **E1-003 — Definir una propuesta de valor de una frase.**  
   Borrador a validar: «Crea presupuestos profesionales de remodelación con tus precios y controla cambios sin perder dinero».
@@ -700,8 +700,8 @@ Se completará durante la Etapa 2. No deben guardarse aquí nombres, teléfonos 
 
 Trabajo actual, en este orden:
 
-1. **E1-001 y E1-002:** elegir la marca a partir de la lista corta y cerrar su comprobación básica de conflictos, dominio y redes.
-2. **E1-003:** aprobar una propuesta de valor honesta de una frase.
+1. **E1-001 y E1-002:** decidir si se prioriza comprensión comercial inmediata o apropiabilidad a largo plazo; someter CotizaT y cualquier finalista propietario a una prueba oral/escrita con usuarios objetivo y cerrar después conflictos, dominio, redes y comprobación registral básica. PresupuestaT no debe avanzar salvo que nueva evidencia revierta sus problemas de nombre.
+2. **E1-003:** aprobar una propuesta de valor honesta de una frase, coherente con el nombre elegido.
 3. **E1-004 y E1-005:** aplicar la marca elegida y retirar todos los datos privados de RemodelaT.
 4. **E1-006:** sustituir promesas incorrectas, en particular «Autogenerar con IA» y «Gemelos Digitales 3D».
 5. **E1-007:** revisar los demás textos visibles afectados.
