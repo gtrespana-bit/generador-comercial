@@ -258,7 +258,7 @@ with TestClient(app) as client:
     from app.database import SessionLocal
     from app.models import Configuracion
     with SessionLocal() as db:
-        assert db.query(Configuracion).one().onboarding_iniciado_at is not None
+        assert db.query(Configuracion).one().onboarding_iniciado_at is None
     fin = client.post('/bienvenida', data={
         'empresa_nombre': 'Empresa HTTP',
         'empresa_pais': 'Venezuela',
@@ -268,9 +268,16 @@ with TestClient(app) as client:
         'modo_inicio': 'limpio',
     }, follow_redirects=False)
     assert fin.status_code == 303
+    with SessionLocal() as db:
+        assert db.query(Configuracion).one().onboarding_iniciado_at is not None
     panel = client.get('/')
     assert panel.status_code == 200
     assert 'Llega a tu primer PDF en cinco pasos' in panel.text
+    assert 'action="/recorrido/catalogo-revisado"' in panel.text
+    review = client.post('/recorrido/catalogo-revisado', follow_redirects=False)
+    assert review.status_code == 303 and review.headers['location'] == '/partidas'
+    with SessionLocal() as db:
+        assert db.query(Configuracion).one().onboarding_catalogo_revisado is True
 """
     env = os.environ.copy()
     env["COTIZAT_DB"] = str(db_path)
@@ -317,6 +324,10 @@ with TestClient(app) as client:
     with SessionLocal() as db:
         assert db.query(Configuracion).one().onboarding_pdf_descargado is False
     assert client.get(f'/presupuestos/{real_id}/pdf').status_code == 200
+    with SessionLocal() as db:
+        assert db.query(Configuracion).one().onboarding_pdf_descargado is False
+    tracked = client.post(f'/presupuestos/{real_id}/pdf-descargado')
+    assert tracked.status_code == 200 and tracked.json()['registrado'] is True
     with SessionLocal() as db:
         cfg = db.query(Configuracion).one()
         assert cfg.onboarding_pdf_descargado is True

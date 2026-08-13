@@ -73,4 +73,19 @@
     var output = document.getElementById("logo_ancho_val");
     if (output) output.textContent = String(element.value || "") + " pt";
   });
+
+  document.addEventListener("DOMContentLoaded", function () {
+    if (!document.body || document.body.dataset.refreshExpired !== "1") return;
+    fetch("/presupuestos/actualizar-vencidos", {
+      method: "POST",
+      headers: {"Accept": "application/json"}
+    })
+      .then(function (response) { return response.ok ? response.json() : null; })
+      .then(function (data) {
+        if (data && Number(data.actualizados || 0) > 0) window.location.reload();
+      })
+      .catch(function () {
+        // La sincronización es auxiliar: nunca debe bloquear la página.
+      });
+  });
 })();

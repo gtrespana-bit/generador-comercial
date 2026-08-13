@@ -1,3 +1,4 @@
+import ast
 from pathlib import Path
 import re
 
@@ -8,6 +9,7 @@ from starlette.responses import HTMLResponse, PlainTextResponse
 from starlette.routing import Route
 from starlette.testclient import TestClient
 
+from app import main as main_module
 from app.database import get_authenticated_db, get_db
 from app.main import app as cotizat_app
 from app.security import AuthRateLimitMiddleware, WebSecurityMiddleware
@@ -163,6 +165,34 @@ def test_acciones_declarativas_tienen_handler_registrado():
     assert used <= registered, sorted(used - registered)
 
 
+def test_rutas_get_no_hacen_escrituras_empresariales_directas():
+    tree = ast.parse(Path("app/main.py").read_text(encoding="utf-8"))
+    mutaciones = []
+    for node in tree.body:
+        if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            continue
+        is_get = any(
+            isinstance(decorator, ast.Call)
+            and isinstance(decorator.func, ast.Attribute)
+            and decorator.func.attr == "get"
+            for decorator in node.decorator_list
+        )
+        if not is_get:
+            continue
+        for call in (item for item in ast.walk(node) if isinstance(item, ast.Call)):
+            if (
+                isinstance(call.func, ast.Attribute)
+                and isinstance(call.func.value, ast.Name)
+                and call.func.value.id == "db"
+                and call.func.attr in {"add", "delete", "flush", "commit"}
+            ) or (
+                isinstance(call.func, ast.Name)
+                and call.func.id in {"asegurar_config", "marcar_vencidos"}
+            ):
+                mutaciones.append((node.name, call.lineno))
+    assert not mutaciones, mutaciones
+
+
 def test_toda_ruta_comercial_exige_sesion_salvo_fronteras_publicas_o_locales():
     publicas = {
         ("GET", "/acceso"),
@@ -190,6 +220,30 @@ def test_toda_ruta_comercial_exige_sesion_salvo_fronteras_publicas_o_locales():
             if key not in publicas | solo_sqlite_local and not protegida:
                 sin_proteccion.append(key)
     assert not sin_proteccion, sorted(sin_proteccion)
+
+
+def test_sincronizacion_de_vencidos_respeta_rol_lectura(monkeypatch):
+    class ReadOnlyDB:
+        info = {"rol_membresia": "lectura"}
+
+    monkeypatch.setattr(
+        main_module,
+        "marcar_vencidos",
+        lambda _db: (_ for _ in ()).throw(AssertionError("no debe escribir")),
+    )
+    assert main_module.actualizar_presupuestos_vencidos(ReadOnlyDB()) == {
+        "ok": True,
+        "actualizados": 0,
+    }
+
+    class WriteDB:
+        info = {"rol_membresia": "miembro"}
+
+    monkeypatch.setattr(main_module, "marcar_vencidos", lambda _db: 3)
+    assert main_module.actualizar_presupuestos_vencidos(WriteDB()) == {
+        "ok": True,
+        "actualizados": 3,
+    }
 
 
 def test_rate_limit_bloquea_rafaga_y_publica_retry_after():

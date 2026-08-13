@@ -71,6 +71,11 @@ formularios vacíos de clientes, recursos, productos y packs requieren sesión.
 Además, Storage comprueba el rol `lectura` **antes** de usar la credencial
 server-side para crear o borrar un objeto; el rechazo del flush/RLS por sí solo
 llegaría demasiado tarde y podría dejar un objeto huérfano o borrar uno válido.
+Las transiciones de vencimiento y los hitos de onboarding/PDF ya no escriben
+desde rutas `GET`: usan `POST` same-origin, y la auditoría AST impide reintroducir
+mutaciones empresariales directas en endpoints de lectura. Así una membresía de
+solo lectura puede abrir listados y descargar documentos sin provocar un flush
+rechazado.
 
 `style-src` tampoco admite `'unsafe-inline'` y `style-src-attr 'none'` bloquea
 atributos de estilo. Los 498 atributos heredados se trasladaron a clases; los
@@ -101,6 +106,8 @@ interacción.
   las acciones declarativas;
 - protección declarada de todas las rutas comerciales salvo fronteras públicas
   y operaciones de backup exclusivas de SQLite local;
+- ausencia de escrituras empresariales directas en rutas `GET` y sincronización
+  de vencimientos/PDF/onboarding mediante `POST`;
 - bloqueo del backend de objetos para membresías de solo lectura antes de
   cualquier efecto externo;
 - bloqueo `429`, `Retry-After`, separación por IP y exclusión de lecturas/rutas

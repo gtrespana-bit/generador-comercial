@@ -45,6 +45,7 @@ from .database import (
     UPLOADS_DIR,
     copia_seguridad_sqlite,
     es_base_valida,
+    establecer_contexto_organizacion,
     get_authenticated_db,
     get_db,
     init_db,
@@ -1220,6 +1221,9 @@ async def crear_organizacion_web(
         organizacion_id=organizacion.id,
         rol="propietario",
     ))
+    db.flush()
+    establecer_contexto_organizacion(db, organizacion.id)
+    db.add(Configuracion(organizacion_id=organizacion.id))
     db.commit()
     response = RedirectResponse("/bienvenida", status_code=303)
     _set_organization_cookie(response, organizacion.id)
@@ -1463,9 +1467,6 @@ def bienvenida(request: Request, db: Session = Depends(get_db)):
     cfg = _config(db)
     if cfg.onboarding_completado:
         return _redirect("/")
-    if not cfg.onboarding_iniciado_at:
-        cfg.onboarding_iniciado_at = datetime.utcnow()
-        db.commit()
     return TEMPLATES.TemplateResponse(
         request,
         "onboarding.html",
@@ -1478,6 +1479,9 @@ async def finalizar_bienvenida(request: Request, db: Session = Depends(get_db)):
     cfg = _config(db)
     if cfg.onboarding_completado:
         return _redirect("/")
+    if not cfg.onboarding_iniciado_at:
+        cfg.onboarding_iniciado_at = datetime.utcnow()
+        db.commit()
     form = await request.form()
     datos = {
         "empresa_nombre": form.get("empresa_nombre", ""),
@@ -1505,6 +1509,15 @@ async def finalizar_bienvenida(request: Request, db: Session = Depends(get_db)):
     return _redirect("/", msg="Tu espacio de trabajo está listo. Completa la guía para crear tu primer PDF.")
 
 
+@app.post("/recorrido/catalogo-revisado")
+def marcar_catalogo_revisado(db: Session = Depends(get_db)):
+    cfg = _config(db)
+    if not cfg.onboarding_catalogo_revisado:
+        cfg.onboarding_catalogo_revisado = True
+        db.commit()
+    return _redirect("/partidas")
+
+
 # ---------------------------------------------------------------------------
 # Inicio
 # ---------------------------------------------------------------------------
@@ -1514,7 +1527,6 @@ def inicio(request: Request, db: Session = Depends(get_db)):
     cfg = _config(db)
     if not cfg.onboarding_completado:
         return _redirect("/bienvenida")
-    marcar_vencidos(db)
     total_presupuestos = db.query(Presupuesto).count()
     total_clientes = db.query(Cliente).count()
     por_estado = {e: db.query(Presupuesto).filter(Presupuesto.estado == e).count() for e in ESTADOS}
@@ -1565,6 +1577,13 @@ def inicio(request: Request, db: Session = Depends(get_db)):
             "recorrido_inicial": recorrido_inicial,
         },
     )
+
+
+@app.post("/presupuestos/actualizar-vencidos")
+def actualizar_presupuestos_vencidos(db: Session = Depends(get_db)):
+    if db.info.get("rol_membresia") == "lectura":
+        return {"ok": True, "actualizados": 0}
+    return {"ok": True, "actualizados": marcar_vencidos(db)}
 
 
 @app.get("/presupuestos/optimizar-precios", response_class=HTMLResponse)
@@ -1760,7 +1779,6 @@ def listar_presupuestos(
     pagina: int = 1,
     db: Session = Depends(get_db),
 ):
-    marcar_vencidos(db)
     query = db.query(Presupuesto)
     if _estado_valido(estado):
         query = query.filter(Presupuesto.estado == estado)
@@ -4356,6 +4374,21 @@ def eliminar_anexo(presupuesto_id: int, anexo_id: int, db: Session = Depends(get
     return _redirect(f"/presupuestos/{presupuesto_id}#anexos", msg="Anexo eliminado.")
 
 
+@app.post("/presupuestos/{presupuesto_id}/pdf-descargado")
+def registrar_pdf_descargado(presupuesto_id: int, db: Session = Depends(get_db)):
+    presupuesto = db.get(Presupuesto, presupuesto_id)
+    if presupuesto is None:
+        return JSONResponse({"ok": False, "error": "Presupuesto no encontrado."}, status_code=404)
+    if db.info.get("rol_membresia") == "lectura" or presupuesto.es_demo:
+        return {"ok": True, "registrado": False}
+    cfg = _config(db)
+    if not cfg.onboarding_pdf_descargado:
+        cfg.onboarding_pdf_descargado = True
+        cfg.primer_pdf_at = datetime.utcnow()
+        db.commit()
+    return {"ok": True, "registrado": True}
+
+
 @app.get("/presupuestos/{presupuesto_id}/pdf")
 def descargar_pdf(presupuesto_id: int, inline: int = 0, db: Session = Depends(get_db)):
     presupuesto = db.get(Presupuesto, presupuesto_id)
@@ -4368,10 +4401,6 @@ def descargar_pdf(presupuesto_id: int, inline: int = 0, db: Session = Depends(ge
     )
     if isinstance(resultado, Response) and resultado.status_code != 200:
         return resultado
-    if not inline and not presupuesto.es_demo and not cfg.onboarding_pdf_descargado:
-        cfg.onboarding_pdf_descargado = True
-        cfg.primer_pdf_at = datetime.utcnow()
-        db.commit()
     return _respuesta_pdf(resultado, f"presupuesto_{presupuesto.numero}.pdf", inline)
 
 
@@ -4788,12 +4817,7 @@ def _partida_catalogo_json(partida: Partida) -> dict:
 
 
 @app.get("/partidas", response_class=HTMLResponse)
-def listar_partidas(request: Request, q: str = "", desde: str = "", db: Session = Depends(get_db)):
-    if desde == "inicio":
-        cfg = _config(db)
-        if not cfg.onboarding_catalogo_revisado:
-            cfg.onboarding_catalogo_revisado = True
-            db.commit()
+def listar_partidas(request: Request, q: str = "", db: Session = Depends(get_db)):
     query = db.query(Partida)
     if q.strip():
         like = f"%{q.strip()}%"

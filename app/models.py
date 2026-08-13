@@ -1394,8 +1394,8 @@ def proximo_numero_factura(db, year):
 def marcar_vencidos(db):
     """Pasa a «vencido» los presupuestos enviados cuya validez ya expiró.
 
-    Se ejecuta al abrir el dashboard o el historial; así el estado se
-    mantiene al día sin necesidad de tareas programadas.
+    Se ejecuta mediante una escritura same-origin al abrir el dashboard o el
+    historial; las rutas GET permanecen libres de efectos empresariales.
     """
     hoy = date.today()
     cambiados = 0
@@ -1405,6 +1405,7 @@ def marcar_vencidos(db):
             cambiados += 1
     if cambiados:
         db.commit()
+    return cambiados
 
 
 # ---------------------------------------------------------------------------

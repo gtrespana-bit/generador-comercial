@@ -105,7 +105,8 @@ def _establecer_contexto_identidad(db, identidad) -> None:
     db.info["auth_email"] = identidad.email
 
 
-def _establecer_contexto_organizacion(db, organizacion_id: int) -> None:
+def establecer_contexto_organizacion(db, organizacion_id: int) -> None:
+    """Activa el tenant ORM/RLS después de validar o crear su membresía."""
     db.info["organizacion_id"] = int(organizacion_id)
     if db.get_bind().dialect.name == "postgresql":
         # La consulta de membresía ya abrió la transacción; actualiza el claim
@@ -213,7 +214,7 @@ def get_db(request: Request = None):
             request.state.membresias = membresias_activas(db, usuario.id)
             raise OrganizationRequired("Selecciona o crea una organización.")
 
-        _establecer_contexto_organizacion(db, membresia.organizacion_id)
+        establecer_contexto_organizacion(db, membresia.organizacion_id)
         db.info["rol_membresia"] = membresia.rol
         db.info["membresia_id"] = membresia.id
         request.state.membresia = membresia

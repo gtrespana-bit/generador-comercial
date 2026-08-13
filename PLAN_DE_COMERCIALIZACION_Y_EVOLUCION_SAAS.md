@@ -91,7 +91,7 @@ Al trabajar en una tarea de este plan se debe:
   Evidencia: FastAPI + Jinja2 + SQLAlchemy + SQLite + ReportLab + JavaScript modular; aplicación empaquetable para Windows.
 
 - [x] **E0-002 — Ejecutar la suite automatizada.**  
-  Evidencia actualizada: 143 pruebas superadas con `.venv/bin/pytest -q` el 13/08/2026; la suite cubre Auth/membresías, aislamiento, almacenamiento privado y rate limiting de Auth, usa bases temporales y deja intacta la base personal.
+  Evidencia actualizada: 145 pruebas superadas con `.venv/bin/pytest -q` el 13/08/2026; la suite cubre Auth/membresías, aislamiento, almacenamiento privado y rate limiting de Auth, usa bases temporales y deja intacta la base personal.
 
 - [x] **E0-003 — Verificar el arranque y las rutas principales.**  
   Evidencia: las pantallas principales y la generación de PDF respondieron correctamente en una base limpia.
@@ -202,7 +202,7 @@ Al trabajar en una tarea de este plan se debe:
   Evidencia: SQLAlchemy añade el criterio de organización a consultas y relaciones, asigna propietario a registros nuevos y rechaza escrituras cruzadas sin depender de cada ruta. `c93e7a4d20f1` añade una segunda barrera RLS por membresía/rol, todavía pendiente de prueba PostgreSQL real.
 
 - [~] **E1W-007 — Cubrir automáticamente el aislamiento de cada dominio.**
-  Cobertura actual: configuración, clientes, presupuestos, capítulos, acceso directo por ID, escritura cruzada, numeración, membresías y objetos privados. Storage verifica claves tenant, rechazo del proxy a otra organización y bloquea crear/borrar objetos para el rol `lectura` antes de cualquier efecto externo; la auditoría automatizada exige autenticación en todas las rutas comerciales salvo fronteras públicas/locales explícitas; `WebSecurityMiddleware` bloquea escrituras cross-site y añade cabeceras defensivas; Auth limita ráfagas por ruta/IP; RLS cubre cada modelo tenant en `c93e7a4d20f1`; scripts y estilos usan nonce, `script-src-attr`/`style-src-attr` bloquean atributos, no queda `unsafe-inline` ni sinks de fragmentos HTML. Pendiente añadir contadores distribuidos, validar CSP/interacciones en navegador HTTPS y ejecutar el cruce real contra Supabase con rol limitado.
+  Cobertura actual: configuración, clientes, presupuestos, capítulos, acceso directo por ID, escritura cruzada, numeración, membresías y objetos privados. Storage verifica claves tenant, rechazo del proxy a otra organización y bloquea crear/borrar objetos para el rol `lectura` antes de cualquier efecto externo; la auditoría automatizada exige autenticación en todas las rutas comerciales salvo fronteras públicas/locales explícitas y prohíbe mutaciones empresariales directas en `GET`; vencimientos e hitos de onboarding/PDF usan `POST` same-origin. `WebSecurityMiddleware` bloquea escrituras cross-site y añade cabeceras defensivas; Auth limita ráfagas por ruta/IP; RLS cubre cada modelo tenant en `c93e7a4d20f1`; scripts y estilos usan nonce, `script-src-attr`/`style-src-attr` bloquean atributos, no queda `unsafe-inline` ni sinks de fragmentos HTML. Pendiente añadir contadores distribuidos, validar CSP/interacciones en navegador HTTPS y ejecutar el cruce real contra Supabase con rol limitado.
 
 - [~] **E1W-008 — Implementar autenticación, sesión segura y autorización por membresía.**
   Implementado en código: Supabase Auth por clave publicable, tokens HttpOnly, renovación, vínculo `auth.users` → `Usuario`, selección validada de organización y bloqueo de escritura para el rol `lectura`. La revisión `9bca2ad1f6e4` ya está aplicada en Supabase y las variables Auth quedaron configuradas localmente fuera de Git. En PostgreSQL se ignora `COTIZAT_ORGANIZATION_ID`. Recuperación con redirect HTTPS fijo e invitaciones de un solo uso para emails verificados ya están implementadas. Pendiente prueba end-to-end desde un entorno con salida a Supabase, configurar la Redirect URL real, aplicar `c93e7a4d20f1`, validar el canal de entrega de invitaciones y endurecer CSP/XSS antes de publicar.
@@ -788,7 +788,7 @@ Evidencia acumulada al 13/08/2026:
 - Pruebas confirman separación de datos, permisos de equipo y claves/descargas de archivos privados.
 - `StorageBackend`, backend local y adaptador Supabase implementados; objetos bajo `organizaciones/<id>/...`, PDF remoto vía `/tmp` y revisión `72e6f4d8a1c3` preparados. El bucket real no se creó.
 - Rol grupal `cotizat_app` sin login/contraseña/BYPASSRLS, contexto por transacción y políticas tenant/rol versionados en `c93e7a4d20f1`; falta aplicarlos y probarlos con el login runtime real.
-- Pytest usa bases temporales, supera 143 pruebas y no modifica `presupuestos.db`.
+- Pytest usa bases temporales, supera 145 pruebas y no modifica `presupuestos.db`.
 - La aplicación **sigue sin estar autorizada para publicarse**: faltan prueba real de Storage, CSP/XSS final, aplicar/probar el rol y las políticas RLS no privilegiadas, y pruebas reales de Auth/ORM.
 
 ---

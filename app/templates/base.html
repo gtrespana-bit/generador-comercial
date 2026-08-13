@@ -13,7 +13,7 @@
 <script nonce="{{ request.state.csp_nonce }}" src="/static/js/csp_styles.js"></script>
 <script src="/static/js/csp_events.js"></script>
 </head>
-<body spellcheck="true">
+<body spellcheck="true"{% if request.url.path in ['/', '/presupuestos'] %} data-refresh-expired="1"{% endif %}>
 <script nonce="{{ request.state.csp_nonce }}">
   window.cotizatArchivoUrl = function (referencia) {
     var localSQLite = {{ 'true' if database_is_sqlite else 'false' }};
@@ -179,6 +179,22 @@
   })();
 
   // Utilidades globales para descarga e impresión de documentos PDF
+  function registrarDescargaPresupuesto(url) {
+    try {
+      var parsed = new URL(url, window.location.origin);
+      var match = parsed.origin === window.location.origin
+        ? parsed.pathname.match(/^\/presupuestos\/(\d+)\/pdf$/)
+        : null;
+      if (!match) return Promise.resolve();
+      return fetch('/presupuestos/' + match[1] + '/pdf-descargado', {
+        method: 'POST',
+        headers: {'Accept': 'application/json'}
+      }).then(function () {}, function () {});
+    } catch (_error) {
+      return Promise.resolve();
+    }
+  }
+
   function descargarPDF(event, url, filename) {
     if (event && typeof event.preventDefault === 'function') {
       event.preventDefault();
@@ -191,6 +207,10 @@
           throw new Error('Error al descargar el archivo: HTTP ' + response.status);
         }
         return response.blob();
+      })
+      .then(function(blob) {
+        registrarDescargaPresupuesto(url);
+        return blob;
       })
       .then(function(blob) {
         var blobUrl = window.URL.createObjectURL(blob);

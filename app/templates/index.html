@@ -39,7 +39,11 @@
     <article class="first-run-step {{ 'done' if paso.completo else '' }}">
       <span class="step-state">{{ '✓' if paso.completo else loop.index }}</span>
       <div><h3>{{ paso.titulo }}</h3><p>{{ paso.detalle }}</p></div>
+      {% if paso.metodo | default('get') == 'post' %}
+      <form method="post" action="{{ paso.url }}"><button type="submit" class="btn btn-sm">{{ 'Revisar' if paso.completo else paso.accion }}</button></form>
+      {% else %}
       <a href="{{ paso.url }}" class="btn btn-sm">{{ 'Revisar' if paso.completo else paso.accion }}</a>
+      {% endif %}
     </article>
     {% endfor %}
   </div>

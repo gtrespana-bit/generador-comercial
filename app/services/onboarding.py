@@ -130,7 +130,8 @@ def estado_recorrido_inicial(db: Session, cfg: Configuracion | None = None) -> d
                 else "Crea tu primera partida o importa tu catálogo desde Excel."
             ),
             "completo": bool(cfg.onboarding_catalogo_revisado),
-            "url": "/partidas?desde=inicio",
+            "url": "/recorrido/catalogo-revisado",
+            "metodo": "post",
             "accion": "Abrir catálogo",
         },
         {
