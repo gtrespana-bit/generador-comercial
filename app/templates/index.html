@@ -30,7 +30,7 @@
       <strong>{{ recorrido_inicial.porcentaje }}%</strong><span>completado</span>
     </div>
   </div>
-  <div class="first-run-bar"><span style="width:{{ recorrido_inicial.porcentaje }}%"></span></div>
+  <div class="first-run-bar"><span data-cotizat-width="{{ recorrido_inicial.porcentaje }}"></span></div>
   {% if recorrido_inicial.presupuesto_demo %}
   <div class="demo-shortcut"><span><strong>Ejemplo disponible:</strong> explora el presupuesto ficticio sin confundirlo con tu trabajo real.</span><a class="btn btn-sm" href="/presupuestos/{{ recorrido_inicial.presupuesto_demo.id }}">Ver ejemplo</a></div>
   {% endif %}
@@ -63,7 +63,7 @@
       <div class="intel-details">
         <div class="intel-label">Tasa de aprobación histórica (presupuestos enviados que terminaron aprobados)</div>
         <div class="intel-bar">
-          <div class="intel-bar-fill" style="width: {{ tasa_aprobacion }}%"></div>
+          <div class="intel-bar-fill" data-cotizat-width="{{ tasa_aprobacion }}"></div>
         </div>
         <p class="intel-recommendation">
           {% if analisis_precios.alertas %}
@@ -114,16 +114,16 @@
     <div class="stat-label">Proyectos Aprobados</div>
   </div>
   <div class="card-stat">
-    <div class="stat-num" style="color: var(--accent);">{{ importe_aprobado | money }}</div>
+    <div class="stat-num csp-s-10d73d1269">{{ importe_aprobado | money }}</div>
     <div class="stat-label">Volumen Aprobado</div>
   </div>
 </div>
 
 <!-- Recent Activity -->
 <div class="card">
-  <div class="card-head" style="padding-bottom: 0.85rem; border-bottom: 1px solid var(--border);">
-    <h2 style="margin-bottom: 0;">Actividad Reciente</h2>
-    <a class="link" href="/presupuestos" style="font-size: 0.82rem;">Ver todos →</a>
+  <div class="card-head csp-s-05e74ce48a">
+    <h2 class="csp-s-768bda7dd9">Actividad Reciente</h2>
+    <a class="link csp-s-871b7becf5" href="/presupuestos">Ver todos →</a>
   </div>
   {% if recientes %}
   <table class="table">
@@ -141,7 +141,7 @@
       {% for p in recientes %}
       <tr>
         <td><a class="link" href="/presupuestos/{{ p.id }}">{{ p.numero }}</a>{% if p.es_demo %} <span class="badge">Demo</span>{% endif %}</td>
-        <td style="color: var(--text-soft);">{{ p.fecha | fecha }}</td>
+        <td class="csp-s-3ea0609665">{{ p.fecha | fecha }}</td>
         <td>{{ p.cliente.nombre }}</td>
         <td><span class="badge badge-{{ p.estado }}">{{ p.estado | capitalize }}</span></td>
         <td class="right"><strong>{{ p.total | money(p.moneda) }}</strong></td>

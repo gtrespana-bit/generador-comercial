@@ -57,7 +57,7 @@
   function mostrarError(mensaje) {
     var caja = $("editor-partida-error");
     caja.textContent = mensaje || "";
-    caja.style.display = mensaje ? "" : "none";
+    CotizatStyles.set(caja, "display", mensaje ? "" : "none");
   }
 
   function mostrarImagen(ruta) {
@@ -66,10 +66,10 @@
     if (!box || !img) return;
     if (ruta) {
       img.src = window.cotizatArchivoUrl(ruta);
-      box.style.display = "flex";
+      CotizatStyles.set(box, "display", "flex");
     } else {
       img.removeAttribute("src");
-      box.style.display = "none";
+      CotizatStyles.set(box, "display", "none");
     }
     var quitar = form.elements.quitar_imagen;
     if (quitar) quitar.checked = false;
@@ -95,9 +95,9 @@
     if (detalle) detalle.textContent = (precio !== "" ? "Venta $" + num(precio).toFixed(2) : "Venta sin definir") + (coste !== "" ? " · Coste $" + num(coste).toFixed(2) : "") + (unidad ? " / " + unidad : "");
     if (img) {
       var src = imagen ? (window.cotizatArchivoUrl(imagen)) : "";
-      img.style.display = src ? "" : "none";
+      CotizatStyles.set(img, "display", src ? "" : "none");
       if (src) img.src = src; else img.removeAttribute("src");
-      if (icono) icono.style.display = src ? "none" : "grid";
+      if (icono) CotizatStyles.set(icono, "display", src ? "none" : "grid");
     }
   }
 
@@ -141,7 +141,7 @@
   }
 
   function syncMedicionesEmpty() {
-    $("editor-mediciones-empty").style.display = $("editor-mediciones-list").children.length ? "none" : "flex";
+    CotizatStyles.set($("editor-mediciones-empty"), "display", $("editor-mediciones-list").children.length ? "none" : "flex");
   }
 
   function leerMediciones() {
@@ -225,7 +225,7 @@
 
     var cype = !!datos.tiene_descomposicion_cype;
     var note = $("editor-partida-cype-note");
-    note.style.display = cype ? "" : "none";
+    CotizatStyles.set(note, "display", cype ? "" : "none");
     note.textContent = cype ? "📐 Esta partida conserva su matriz CYPE original. Los recursos que edites aquí se actualizarán sin eliminar su trazabilidad técnica." : "";
     $("titulo-editor-partida").textContent = datos.nombre ? "Editar · " + datos.nombre : "Nueva partida";
     actualizarSelectorCatalogo(fichaCatalogoActual);
@@ -525,11 +525,11 @@
 
       input.setAttribute("autocomplete", "off");
       var wrap = document.createElement("div");
-      wrap.style.cssText = "position:relative; display:flex; width:100%;";
+      CotizatStyles.setCssText(wrap, "position:relative; display:flex; width:100%;");
       input.parentNode.insertBefore(wrap, input);
       wrap.appendChild(input);
-      input.style.flex = "1";
-      input.style.minWidth = "0";
+      CotizatStyles.set(input, "flex", "1");
+      CotizatStyles.set(input, "minWidth", "0");
 
       var dropdown = null;
       function cerrar() {
@@ -538,9 +538,9 @@
       function posicionar() {
         if (!dropdown) return;
         var r = input.getBoundingClientRect();
-        dropdown.style.top = (r.bottom + 4) + "px";
-        dropdown.style.left = r.left + "px";
-        dropdown.style.width = r.width + "px";
+        CotizatStyles.set(dropdown, "top", (r.bottom + 4) + "px");
+        CotizatStyles.set(dropdown, "left", r.left + "px");
+        CotizatStyles.set(dropdown, "width", r.width + "px");
       }
       function mostrar() {
         var query = input.value.trim();
@@ -556,12 +556,12 @@
 
         dropdown = document.createElement("div");
         dropdown.className = "autocomplete-suggestions";
-        dropdown.style.cssText = "position:fixed; z-index:1300; background:var(--surface); border:1px solid var(--border-strong); border-radius:var(--radius-sm); max-height:240px; overflow-y:auto; box-shadow:var(--shadow-lg);";
+        CotizatStyles.setCssText(dropdown, "position:fixed; z-index:1300; background:var(--surface); border:1px solid var(--border-strong); border-radius:var(--radius-sm); max-height:240px; overflow-y:auto; box-shadow:var(--shadow-lg);");
 
         matches.forEach(function (item) {
           var sug = document.createElement("div");
           sug.className = "suggestion-item";
-          sug.style.cssText = "padding:8px 10px; cursor:pointer; border-bottom:1px solid var(--bg); font-size:.82rem; display:flex; align-items:center; gap:9px;";
+          CotizatStyles.setCssText(sug, "padding:8px 10px; cursor:pointer; border-bottom:1px solid var(--bg); font-size:.82rem; display:flex; align-items:center; gap:9px;");
           if (item.imagen) {
             var thumb = document.createElement("img");
             thumb.className = "suggestion-thumb";
@@ -573,7 +573,7 @@
           main.className = "suggestion-main";
           var title = document.createElement("div");
           title.className = "suggestion-title";
-          title.style.fontWeight = "600";
+          CotizatStyles.set(title, "fontWeight", "600");
           title.textContent = item.nombre;
           main.appendChild(title);
           var meta = [item.marca, item.modelo, item.sku, item.categoria].filter(Boolean).join(" · ");
@@ -581,7 +581,7 @@
           main.appendChild(editor.FMT.h("div", "suggestion-meta", meta + (fecha ? " · precio " + fecha : "")));
           sug.appendChild(main);
           var precio = document.createElement("span");
-          precio.style.cssText = "color:var(--accent); font-size:.78em; white-space:nowrap;";
+          CotizatStyles.setCssText(precio, "color:var(--accent); font-size:.78em; white-space:nowrap;");
           precio.textContent = (item.precio || 0).toFixed(2) + " $ / " + (item.unidad || "ud");
           sug.appendChild(precio);
 
@@ -600,8 +600,8 @@
             cerrar();
             editor.marcarCambio();
           });
-          sug.addEventListener("mouseenter", function () { sug.style.background = "var(--bg)"; });
-          sug.addEventListener("mouseleave", function () { sug.style.background = "none"; });
+          sug.addEventListener("mouseenter", function () { CotizatStyles.set(sug, "background", "var(--bg)"); });
+          sug.addEventListener("mouseleave", function () { CotizatStyles.set(sug, "background", "none"); });
           dropdown.appendChild(sug);
         });
 

@@ -28,7 +28,7 @@
     <div class="builder-command-actions">
       <button type="button" id="btn-ai-dictation" class="btn btn-sm" title="Dictar en el campo activo">🎙 Dictar</button>
       <button type="button" class="btn btn-sm btn-ai" id="btn-abrir-generador" title="Busca coincidencias en tu catálogo y arma un borrador editable">Sugerir desde catálogo</button>
-      <button type="button" class="btn btn-sm" id="btn-modal-receta" title="Alt+R — Inserta habitaciones enteras de reforma escaladas al tamaño de tu estancia" style="background:var(--primary-light); color:var(--primary); font-weight:600;">⚡ Pack de Estancia (Alt+R)</button>
+      <button type="button" class="btn btn-sm csp-s-941e073ac1" id="btn-modal-receta" title="Alt+R — Inserta habitaciones enteras de reforma escaladas al tamaño de tu estancia">⚡ Pack de Estancia (Alt+R)</button>
       <button type="button" class="btn btn-sm iva-toggle-btn" id="btn-toggle-iva-top" title="Activar o desactivar el IVA de este presupuesto">💱 IVA: ON</button>
       <button type="button" class="btn btn-sm" id="btn-preview-pdf-top" title="Vista previa del documento">👁 Vista previa</button>
     </div>
@@ -37,14 +37,14 @@
 
   <!-- DATOS GENERALES -->
   <div class="card collapsible-card builder-general-card" id="card-datos-generales">
-    <div class="card-header-toggle" data-cotizat-click="budget-toggle-general" style="display:flex; justify-content:space-between; align-items:center; cursor:pointer; user-select:none; padding: 2px 4px;">
-      <div style="display:flex; align-items:center; flex-wrap:wrap; gap:12px; width: 100%;">
-        <h2 style="margin:0; font-size:1.15rem; display:flex; align-items:center; gap:6px;">⚙️ Datos generales y cliente</h2>
-        <span id="datos-generales-resumen" style="font-size:0.82rem; color:var(--text-soft); font-weight:normal; margin-left:10px; background:var(--bg); padding:4px 10px; border-radius:15px; border:1px solid var(--border); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:calc(100% - 250px);"></span>
+    <div class="card-header-toggle csp-s-4c4a58cb34" data-cotizat-click="budget-toggle-general">
+      <div class="csp-s-de125207c8">
+        <h2 class="csp-s-6423fe0d33">⚙️ Datos generales y cliente</h2>
+        <span id="datos-generales-resumen" class="csp-s-998cfa4dbf"></span>
       </div>
-      <button type="button" id="btn-toggle-datos" class="btn btn-sm" style="font-size:0.75rem; padding:4px 10px; white-space:nowrap; margin-left:auto;">▲ Contraer</button>
+      <button type="button" id="btn-toggle-datos" class="btn btn-sm csp-s-62ebedb23a">▲ Contraer</button>
     </div>
-    <div class="card-collapsible-content" id="datos-generales-content" style="margin-top:1.25rem; transition: max-height 0.2s ease;">
+    <div class="card-collapsible-content csp-s-3f453f98f8" id="datos-generales-content">
       <div class="form-grid">
         <div class="field">
           <label>Cliente *</label>
@@ -111,16 +111,16 @@
         <div class="field field-full"><label>Motivo de la nueva versión</label><input name="motivo_version" maxlength="500" placeholder="Describe brevemente el cambio realizado"><p class="hint">Al guardar, se conservará una nueva instantánea del documento.</p></div>
         {% endif %}
 
-        {% if cfg.activar_funciones_venezuela %}<div class="field field-full" style="border:1px solid var(--border);padding:12px;border-radius:10px"><label style="font-weight:600">🇻🇪 Datos regionales (opcionales)</label><div class="form-grid">{% if cfg.mostrar_numero_control %}<div class="field"><label>Número de control</label><input name="numero_control" value="{{ presupuesto.numero_control if presupuesto else '' }}"></div>{% endif %}{% if cfg.mostrar_tasa_cambio %}<div class="field"><label>Fecha de tasa</label><input type="date" name="fecha_tipo_cambio" value="{{ presupuesto.fecha_tipo_cambio.isoformat() if presupuesto and presupuesto.fecha_tipo_cambio else '' }}"></div>{% endif %}{% if cfg.mostrar_retenciones %}<div class="field"><label>Retención (%)</label><input type="number" step="any" min="0" name="retencion_pct" value="{{ presupuesto.retencion_pct if presupuesto else 0 }}"></div><label><input type="checkbox" name="operacion_exenta" {{ 'checked' if presupuesto and presupuesto.operacion_exenta else '' }}> Operación exenta</label>{% endif %}{% if cfg.mostrar_clausula_cambiaria %}<div class="field field-full"><label>Cláusula de ajuste cambiario</label><textarea name="clausula_cambiaria">{{ presupuesto.clausula_cambiaria if presupuesto else '' }}</textarea></div>{% endif %}</div></div>{% endif %}
+        {% if cfg.activar_funciones_venezuela %}<div class="field field-full csp-s-d66c3f479a"><label class="csp-s-6b2a94ea3b">🇻🇪 Datos regionales (opcionales)</label><div class="form-grid">{% if cfg.mostrar_numero_control %}<div class="field"><label>Número de control</label><input name="numero_control" value="{{ presupuesto.numero_control if presupuesto else '' }}"></div>{% endif %}{% if cfg.mostrar_tasa_cambio %}<div class="field"><label>Fecha de tasa</label><input type="date" name="fecha_tipo_cambio" value="{{ presupuesto.fecha_tipo_cambio.isoformat() if presupuesto and presupuesto.fecha_tipo_cambio else '' }}"></div>{% endif %}{% if cfg.mostrar_retenciones %}<div class="field"><label>Retención (%)</label><input type="number" step="any" min="0" name="retencion_pct" value="{{ presupuesto.retencion_pct if presupuesto else 0 }}"></div><label><input type="checkbox" name="operacion_exenta" {{ 'checked' if presupuesto and presupuesto.operacion_exenta else '' }}> Operación exenta</label>{% endif %}{% if cfg.mostrar_clausula_cambiaria %}<div class="field field-full"><label>Cláusula de ajuste cambiario</label><textarea name="clausula_cambiaria">{{ presupuesto.clausula_cambiaria if presupuesto else '' }}</textarea></div>{% endif %}</div></div>{% endif %}
         {% if cfg.activar_funciones_avanzadas or (presupuesto and presupuesto.usar_funciones_avanzadas) %}
-        <div class="field field-full advanced-budget-options" style="border:1px solid var(--border); border-radius:10px; padding:12px; background:var(--bg);">
-          <label style="display:flex; align-items:center; gap:8px; font-weight:600; cursor:pointer;">
+        <div class="field field-full advanced-budget-options csp-s-acdc88ecde">
+          <label class="csp-s-5898011ec9">
             <input type="checkbox" name="usar_funciones_avanzadas" value="1" id="usar-funciones-avanzadas"
               {{ 'checked' if presupuesto and presupuesto.usar_funciones_avanzadas or (not presupuesto and cfg.activar_funciones_avanzadas) else '' }}>
             Activar ajustes económicos avanzados para este presupuesto
           </label>
-          <p class="hint" style="margin:5px 0 10px;">Si lo dejas desactivado, el creador funciona en modo básico y las partidas se calculan como incluidas.</p>
-          <div id="advanced-budget-fields" style="display:none; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px;">
+          <p class="hint csp-s-20dc2ddb47">Si lo dejas desactivado, el creador funciona en modo básico y las partidas se calculan como incluidas.</p>
+          <div id="advanced-budget-fields" class="cotizat-hidden csp-s-4c24a4e230">
             {% if cfg.mostrar_cargos_adicionales or (presupuesto and presupuesto.usar_funciones_avanzadas) %}<div class="field"><label>Gastos indirectos (%)</label><input type="number" name="gastos_indirectos_pct" min="0" step="any" value="{{ presupuesto.gastos_indirectos_pct if presupuesto else 0 }}"></div>
             <div class="field"><label>Imprevistos (%)</label><input type="number" name="imprevistos_pct" min="0" step="any" value="{{ presupuesto.imprevistos_pct if presupuesto else 0 }}"></div>
             <div class="field"><label>Transporte / cargo fijo</label><input type="number" name="transporte_monto" min="0" step="any" value="{{ presupuesto.transporte_monto if presupuesto else 0 }}"></div>
@@ -129,9 +129,9 @@
         </div>
         {% endif %}
         
-        <div class="field field-full" style="display:flex; flex-direction:column; gap:12px; border-top:1px solid var(--border); padding-top:16px; margin-top:10px;">
-          <label style="font-weight:600; color:var(--text); margin-bottom:4px;">🎨 Opciones premium y maquetación de lujo del PDF (Opcionales):</label>
-          <p class="hint" style="margin-top:-2px;">
+        <div class="field field-full csp-s-fd30acedb7">
+          <label class="csp-s-af442fc30e">🎨 Opciones premium y maquetación de lujo del PDF (Opcionales):</label>
+          <p class="hint csp-s-60ba0ca9de">
             Estas casillas se aplican a <strong>este presupuesto</strong>. Al guardar, pulsa
             «👁 Ver PDF» (o descarga) para ver: la <strong>portada</strong> (página 1), el
             <strong>resumen por capítulos</strong> (tras la cabecera), la
@@ -140,8 +140,8 @@
             traigan ya marcadas, actívalas en <strong>Configuración → Valores por defecto</strong>.
           </p>
           <div class="field field-full"><label>Estilo visual del PDF</label><select name="estilo_pdf"><option value="elegante" {{ 'selected' if not presupuesto or presupuesto.estilo_pdf == 'elegante' }}>Elegante</option><option value="tecnica" {{ 'selected' if presupuesto and presupuesto.estilo_pdf == 'tecnica' }}>Técnica</option><option value="minimalista" {{ 'selected' if presupuesto and presupuesto.estilo_pdf == 'minimalista' }}>Minimalista</option><option value="corporativa" {{ 'selected' if presupuesto and presupuesto.estilo_pdf == 'corporativa' }}>Corporativa</option><option value="compacta" {{ 'selected' if presupuesto and presupuesto.estilo_pdf == 'compacta' }}>Compacta</option><option value="editorial" {{ 'selected' if presupuesto and presupuesto.estilo_pdf == 'editorial' }}>Editorial</option></select></div>
-          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:12px;">
-            <label style="display:flex; align-items:center; gap:8px; font-weight:normal; cursor:pointer;">
+          <div class="csp-s-35aa851099">
+            <label class="csp-s-4ef216fae4">
               <input type="checkbox" name="con_portada" id="chk-con-portada" value="1" data-cotizat-change="budget-toggle-cover"
                 {% if presupuesto %}
                   {{ 'checked' if presupuesto.con_portada else '' }}
@@ -150,7 +150,7 @@
                 {% endif %}>
               🌅 Incluir Portada de Presentación de página completa
             </label>
-            <label style="display:flex; align-items:center; gap:8px; font-weight:normal; cursor:pointer;">
+            <label class="csp-s-4ef216fae4">
               <input type="checkbox" name="mostrar_resumen_capitulos" value="1"
                 {% if presupuesto %}
                   {{ 'checked' if presupuesto.mostrar_resumen_capitulos else '' }}
@@ -159,7 +159,7 @@
                 {% endif %}>
               📊 Mostrar Resumen Ejecutivo de Capítulos al inicio
             </label>
-            <label style="display:flex; align-items:center; gap:8px; font-weight:normal; cursor:pointer;">
+            <label class="csp-s-4ef216fae4">
               <input type="checkbox" name="mostrar_garantias" value="1"
                 {% if presupuesto %}
                   {{ 'checked' if presupuesto.mostrar_garantias else '' }}
@@ -168,7 +168,7 @@
                 {% endif %}>
               🛡️ Incluir tabla de garantías por tipo de trabajo (pisos, albañilería, fontanería, electricidad, pintura…)
             </label>
-            <label style="display:flex; align-items:center; gap:8px; font-weight:normal; cursor:pointer;">
+            <label class="csp-s-4ef216fae4">
               <input type="checkbox" name="mostrar_firmas" id="chk-firmas" value="1" data-cotizat-change="budget-toggle-signature"
                 {% if presupuesto %}
                   {{ 'checked' if presupuesto.mostrar_firmas else '' }}
@@ -177,37 +177,37 @@
                 {% endif %}>
               ✍️ Mostrar bloque formal de firmas de aceptación al final
             </label>
-            <label style="display:flex; align-items:center; gap:8px; font-weight:normal; cursor:pointer;"><input type="checkbox" name="mostrar_ahorro" value="1" {{ 'checked' if presupuesto and presupuesto.mostrar_ahorro else '' }}> 💰 Mostrar ahorro y descuento comercial</label>
-            <label style="display:flex; align-items:center; gap:8px; font-weight:normal; cursor:pointer;"><input type="checkbox" name="incluir_anexos" value="1" {{ 'checked' if presupuesto and presupuesto.incluir_anexos else '' }}> 📎 Incluir índice de anexos PDF</label>
+            <label class="csp-s-4ef216fae4"><input type="checkbox" name="mostrar_ahorro" value="1" {{ 'checked' if presupuesto and presupuesto.mostrar_ahorro else '' }}> 💰 Mostrar ahorro y descuento comercial</label>
+            <label class="csp-s-4ef216fae4"><input type="checkbox" name="incluir_anexos" value="1" {{ 'checked' if presupuesto and presupuesto.incluir_anexos else '' }}> 📎 Incluir índice de anexos PDF</label>
           </div>
           
-          <div id="wrapper-firma" style="margin-top:10px; display:none;">
-            <label style="font-weight:600; font-size:0.875rem;">✍️ Firma del cliente (para el bloque de firmas del PDF):</label>
+          <div id="wrapper-firma" class="cotizat-hidden csp-s-726e8b317f">
+            <label class="csp-s-5949a3a251">✍️ Firma del cliente (para el bloque de firmas del PDF):</label>
             {% if presupuesto and presupuesto.firma_cliente %}
-            <div style="display:flex; align-items:center; gap:14px; margin-bottom:8px;">
-              <img src="{{ presupuesto.firma_cliente | archivo_url }}" alt="Firma del cliente" style="max-height:70px; max-width:260px; border:1px solid var(--border); border-radius:6px; padding:4px; background:#fff;">
-              <label class="hint" style="display:flex; align-items:center; gap:6px; font-weight:normal;">
+            <div class="csp-s-79f6faf0ac">
+              <img src="{{ presupuesto.firma_cliente | archivo_url }}" alt="Firma del cliente" class="csp-s-604f99a379">
+              <label class="hint csp-s-cf094e4f0f">
                 <input type="checkbox" name="quitar_firma" value="1"> Quitar firma
               </label>
             </div>
             {% endif %}
             <div>
               <canvas id="firma-canvas" width="520" height="180"
-                style="border:1.5px dashed var(--border-strong); border-radius:8px; background:#fff; touch-action:none; max-width:100%; cursor:crosshair;"></canvas>
+                class="csp-s-afb0a1a28f"></canvas>
             </div>
-            <div style="display:flex; align-items:center; gap:10px; margin-top:8px; flex-wrap:wrap;">
+            <div class="csp-s-a7a0396596">
               <button type="button" class="btn btn-sm" id="btn-limpiar-firma">🧽 Limpiar</button>
               <span class="hint">Firma con el ratón o el dedo (en tablet). Se guarda junto con el presupuesto.</span>
             </div>
             <input type="hidden" name="firma_cliente" id="firma-data">
           </div>
           
-          <div id="wrapper-foto-proyecto" style="margin-top:8px;">
-            <label style="font-weight:600; font-size:0.875rem;">Foto destacada del proyecto (para la portada):</label>
+          <div id="wrapper-foto-proyecto" class="csp-s-a33b8fc2ff">
+            <label class="csp-s-5949a3a251">Foto destacada del proyecto (para la portada):</label>
             {% if presupuesto and presupuesto.foto_proyecto %}
-            <div style="display:flex; align-items:center; gap:14px; margin-bottom:8px;">
-              <img src="{{ presupuesto.foto_proyecto | archivo_url }}" alt="Foto Proyecto" style="max-height:80px; max-width:180px; object-fit:cover; border:1px solid var(--border); border-radius:6px; padding:4px; background:#fff;">
-              <label class="hint" style="display:flex; align-items:center; gap:6px; font-weight:normal;">
+            <div class="csp-s-79f6faf0ac">
+              <img src="{{ presupuesto.foto_proyecto | archivo_url }}" alt="Foto Proyecto" class="csp-s-b1b250dca2">
+              <label class="hint csp-s-cf094e4f0f">
                 <input type="checkbox" name="quitar_foto_proyecto" value="1"> Eliminar foto
               </label>
             </div>
@@ -240,15 +240,15 @@
           {% if partidas_catalogo %}
             {% for p in partidas_catalogo %}
             <div class="partida-catalogo" data-nombre="{{ (p.nombre ~ ' ' ~ p.descripcion ~ ' ' ~ p.codigo_interno ~ ' ' ~ p.subcategoria ~ ' ' ~ p.proveedor)|lower }}" data-categoria="{{ p.categoria|lower }}" data-idx="{{ loop.index0 }}">
-              <button type="button" class="btn btn-sm" data-cotizat-click="budget-add-catalog" data-index="{{ loop.index0 }}" style="flex:1; text-align:left; border:none; background:none; cursor:pointer; font-size:0.82rem;">
-                <strong>{{ p.nombre }}</strong> <span style="color:var(--text-muted); font-size:0.75em;">({{ p.unidad }})</span>
+              <button type="button" class="btn btn-sm csp-s-8bbfe4a61f" data-cotizat-click="budget-add-catalog" data-index="{{ loop.index0 }}">
+                <strong>{{ p.nombre }}</strong> <span class="csp-s-4198d64579">({{ p.unidad }})</span>
               </button>
               <span class="badge badge-categoria">{{ p.categoria }}</span>
-              <span style="font-weight:600; color:var(--accent); font-size:0.82rem; white-space:nowrap;">{{ p.precio_unitario | num }} $</span>
+              <span class="csp-s-32a823a8ca">{{ p.precio_unitario | num }} $</span>
             </div>
             {% endfor %}
           {% else %}
-            <div style="padding:10px; color:var(--text-muted); font-size:0.85rem;">No hay partidas en el catálogo. <a class="link" href="/partidas/nueva" target="_blank">Crea la primera</a>.</div>
+            <div class="csp-s-5ee28be5f0">No hay partidas en el catálogo. <a class="link" href="/partidas/nueva" target="_blank">Crea la primera</a>.</div>
           {% endif %}
         </div>
       </div>
@@ -262,7 +262,7 @@
       {% endif %}
       <button type="button" class="btn btn-sm btn-excel" id="btn-subir-excel" title="Subir un Excel y añadir sus partidas sin salir del presupuesto">⇧ Subir Excel</button>
       <button type="button" class="btn btn-sm" id="btn-pegar-excel" title="Pegar filas desde Excel (copiar y pegar)">📋 Pegar de Excel</button>
-      <button type="button" class="btn btn-sm" id="btn-modal-receta-seccion" title="Alt+R — Inserta habitaciones enteras de reforma escaladas al tamaño de tu estancia" style="background:var(--primary-light); color:var(--primary); font-weight:600;">⚡ Pack de Estancia</button>
+      <button type="button" class="btn btn-sm csp-s-941e073ac1" id="btn-modal-receta-seccion" title="Alt+R — Inserta habitaciones enteras de reforma escaladas al tamaño de tu estancia">⚡ Pack de Estancia</button>
       <button type="button" class="btn btn-sm" id="btn-preview-pdf" title="Vista previa del PDF">👁 Vista previa</button>
       <span id="autosave-status" class="autosave-status" title="Autoguardado: cada cambio se guarda al instante en este equipo y se envía al servidor cuando dejas de editar."></span>
       <button type="button" class="btn btn-xs autosave-save-now" id="btn-autosave-save-now" title="Forzar guardado ahora en el servidor" aria-label="Guardar ahora">💾 Guardar ahora</button>
@@ -278,21 +278,21 @@
   <div id="builder-resumen" class="builder-review-grid">
   <div class="card card-totales builder-totals-card">
     <div class="tot-linea"><span>Subtotal incluido</span><strong id="ui-subtotal">—</strong></div>
-    <div class="tot-linea" id="ui-fila-opcional" style="display:none;"><span>Opcionales disponibles</span><strong id="ui-opcional">—</strong></div>
-    <div class="tot-linea" id="ui-fila-alternativas" style="display:none;"><span>Alternativas disponibles</span><strong id="ui-alternativas">—</strong></div>
-    <div class="tot-linea" id="ui-fila-obra" style="display:none;"><span>Total obra / partidas</span><strong id="ui-obra">—</strong></div>
-    <div class="tot-linea" id="ui-fila-productos" style="display:none;"><span>Total productos</span><strong id="ui-productos">—</strong></div>
-    <div class="tot-linea" id="ui-fila-adicionales" style="display:none;"><span>Costes adicionales</span><strong id="ui-adicionales">—</strong></div>
+    <div class="tot-linea cotizat-hidden" id="ui-fila-opcional"><span>Opcionales disponibles</span><strong id="ui-opcional">—</strong></div>
+    <div class="tot-linea cotizat-hidden" id="ui-fila-alternativas"><span>Alternativas disponibles</span><strong id="ui-alternativas">—</strong></div>
+    <div class="tot-linea cotizat-hidden" id="ui-fila-obra"><span>Total obra / partidas</span><strong id="ui-obra">—</strong></div>
+    <div class="tot-linea cotizat-hidden" id="ui-fila-productos"><span>Total productos</span><strong id="ui-productos">—</strong></div>
+    <div class="tot-linea cotizat-hidden" id="ui-fila-adicionales"><span>Costes adicionales</span><strong id="ui-adicionales">—</strong></div>
     <div class="tot-linea" id="ui-fila-desc"><span>Descuento</span><strong id="ui-descuento">—</strong></div>
     <div class="tot-linea"><span>IVA <button type="button" class="btn btn-xs iva-toggle-btn" id="btn-toggle-iva-total" title="Activar o desactivar el IVA">ON</button></span><strong id="ui-iva">—</strong></div>
-    <div class="tot-linea" id="ui-fila-beneficio-obra" style="display:none;"><span>Beneficio obra</span><strong id="ui-beneficio-obra" style="color:var(--green);">—</strong></div>
-    <div class="tot-linea" id="ui-fila-margen-obra" style="display:none;"><span>Margen obra</span><strong id="ui-margen-obra" style="color:var(--green);">—</strong></div>
-    <div class="tot-linea" id="ui-fila-beneficio-productos" style="display:none;"><span>Beneficio productos</span><strong id="ui-beneficio-productos" style="color:var(--green);">—</strong></div>
-    <div class="tot-linea" id="ui-fila-margen-productos" style="display:none;"><span>Margen productos</span><strong id="ui-margen-productos" style="color:var(--green);">—</strong></div>
-    <div class="tot-linea" id="ui-fila-beneficio" style="display:none;"><span>Beneficio total estimado</span><strong id="ui-beneficio" style="color:var(--green);">—</strong></div>
-    <div class="tot-linea" id="ui-fila-margen" style="display:none;"><span>Margen total</span><strong id="ui-margen" style="color:var(--green);">—</strong></div>
+    <div class="tot-linea cotizat-hidden" id="ui-fila-beneficio-obra"><span>Beneficio obra</span><strong id="ui-beneficio-obra" class="csp-s-5516851989">—</strong></div>
+    <div class="tot-linea cotizat-hidden" id="ui-fila-margen-obra"><span>Margen obra</span><strong id="ui-margen-obra" class="csp-s-5516851989">—</strong></div>
+    <div class="tot-linea cotizat-hidden" id="ui-fila-beneficio-productos"><span>Beneficio productos</span><strong id="ui-beneficio-productos" class="csp-s-5516851989">—</strong></div>
+    <div class="tot-linea cotizat-hidden" id="ui-fila-margen-productos"><span>Margen productos</span><strong id="ui-margen-productos" class="csp-s-5516851989">—</strong></div>
+    <div class="tot-linea cotizat-hidden" id="ui-fila-beneficio"><span>Beneficio total estimado</span><strong id="ui-beneficio" class="csp-s-5516851989">—</strong></div>
+    <div class="tot-linea cotizat-hidden" id="ui-fila-margen"><span>Margen total</span><strong id="ui-margen" class="csp-s-5516851989">—</strong></div>
     <div class="tot-linea tot-tiempo"><span>⏱ Tiempo estimado de obra <small class="hint">(rendimientos de mano de obra)</small></span><strong id="ui-tiempo">—</strong></div>
-    <div class="tot-tiempo-nota hint" id="ui-tiempo-nota" style="font-size:.75rem; margin-top:-2px; padding:0 0 6px 0;"></div>
+    <div class="tot-tiempo-nota hint csp-s-88b066e08c" id="ui-tiempo-nota"></div>
     <div class="tot-linea tot-final"><span>TOTAL</span><strong id="ui-total">—</strong></div>
   </div>
 
@@ -324,9 +324,9 @@
 <div id="undo-flash" class="undo-flash"></div>
 
 <!-- Aviso de borrador recuperable (local del navegador o autoguardado del servidor) -->
-<div id="draft-banner" class="draft-banner" style="display:none;">
+<div id="draft-banner" class="draft-banner cotizat-hidden">
   <span id="draft-banner-text">Se ha recuperado un <strong>borrador sin guardar</strong> de esta sesión.</span>
-  <div class="actions" style="margin-left:auto;">
+  <div class="actions csp-s-c9fd821d61">
     <button type="button" class="btn btn-sm btn-primary" id="btn-restore-draft">Restaurar borrador</button>
     <button type="button" class="btn btn-sm" id="btn-discard-draft">Descartar</button>
   </div>
@@ -341,8 +341,8 @@
         <div><span class="page-eyebrow">Editor completo de partida</span><h3 id="titulo-editor-partida">Editar partida</h3><p class="hint">La misma ficha técnica y el mismo cálculo que en la pestaña Partidas.</p></div>
         <button type="button" class="btn btn-ghost" data-close aria-label="Cerrar">✕</button>
       </div>
-      <div id="editor-partida-cype-note" class="cype-origin-note" style="display:none;"></div>
-      <div id="editor-partida-error" class="alert alert-error" style="display:none;"></div>
+      <div id="editor-partida-cype-note" class="cype-origin-note cotizat-hidden"></div>
+      <div id="editor-partida-error" class="alert alert-error cotizat-hidden"></div>
 
       <nav class="partida-editor-tabs" aria-label="Secciones de la partida">
         <button type="button" class="active" data-partida-tab="ficha"><span>01</span> Ficha y costes</button>
@@ -380,7 +380,7 @@
             <img alt="">
             <span class="editor-producto-icono">▦</span>
             <span><small>Producto asociado a esta partida</small><strong data-producto-nombre></strong><em data-producto-detalle></em></span>
-            <button type="button" class="btn btn-sm btn-danger" id="editor-btn-quitar-producto" style="margin-left:auto;">🗑 Eliminar producto</button>
+            <button type="button" class="btn btn-sm btn-danger csp-s-c9fd821d61" id="editor-btn-quitar-producto">🗑 Eliminar producto</button>
           </div>
           <div class="form-grid">
             <div class="field field-full"><label>Buscar o escribir producto</label><input name="linea_prod_nombre" placeholder="p. ej. Porcelanato Calacatta 60x120"><p class="hint">Elige una sugerencia para completar automáticamente precio, unidad e imagen.</p></div>
@@ -437,7 +437,7 @@
       </div>
     </div>
 
-    <div id="excel-inline-error" class="alert alert-error" style="display:none;" role="alert"></div>
+    <div id="excel-inline-error" class="alert alert-error cotizat-hidden" role="alert"></div>
     <div id="excel-inline-review" class="import-hidden">
       <div class="excel-review-head">
         <div>
@@ -479,7 +479,7 @@
       <h3>📋 Pegar partidas desde Excel</h3>
       <button type="button" class="btn btn-ghost" data-close>✕</button>
     </div>
-    <p class="hint" style="margin-bottom:0.5rem;">
+    <p class="hint csp-s-f18d2d509a">
       En Excel selecciona las filas y pulsa <strong>Copiar</strong>, luego pégalas aquí.
       Formato aceptado: <code>Nombre&nbsp;·&nbsp;Unidad&nbsp;·&nbsp;Cantidad&nbsp;·&nbsp;Precio</code>
       (unidad, cantidad y precio opcionales).
@@ -513,7 +513,7 @@
       <h3>🧩 Guardar como plantilla</h3>
       <button type="button" class="btn btn-ghost" data-close>✕</button>
     </div>
-    <p class="hint" style="margin-bottom:0.5rem;">Guarda la estructura actual (capítulos, partidas y mediciones) para reutilizarla en presupuestos futuros.</p>
+    <p class="hint csp-s-f18d2d509a">Guarda la estructura actual (capítulos, partidas y mediciones) para reutilizarla en presupuestos futuros.</p>
     <div class="field">
       <label>Nombre de la plantilla</label>
       <input type="text" id="plantilla-nombre" placeholder="p. ej. Cocina completa gama alta">
@@ -527,7 +527,7 @@
 
 <!-- Modal: Pack de Estancia (Recetas de Reforma con 1 clic - Alt+R) -->
 <div class="modal-overlay" id="modal-recetas-estancia">
-  <div class="modal modal-lg" style="max-width:850px;">
+  <div class="modal modal-lg csp-s-d480531e7f">
     <div class="modal-head">
       <div>
         <h3>⚡ Packs de Estancia (Recetas de Reforma)</h3>
@@ -535,54 +535,54 @@
       </div>
       <button type="button" class="btn btn-ghost" data-close>✕</button>
     </div>
-    <div class="modal-body" style="padding:1.5rem;">
-      <div style="display:grid; grid-template-columns: 2fr 1fr 1fr; gap:1rem; align-items:flex-end;">
+    <div class="modal-body csp-s-deea30875a">
+      <div class="csp-s-74e81db110">
         <div>
-          <label style="display:block; font-weight:600; font-size:0.88rem; margin-bottom:4px;">Selecciona el Pack / Receta de estancia</label>
-          <select id="select-receta-pack" class="input" style="width:100%;">
+          <label class="csp-s-b44d0ad3fc">Selecciona el Pack / Receta de estancia</label>
+          <select id="select-receta-pack" class="input csp-s-9ccc4ca9d6">
             <option value="">Cargando packs disponibles...</option>
           </select>
         </div>
         <div>
-          <label style="display:block; font-weight:600; font-size:0.88rem; margin-bottom:4px;" id="label-medida-pack">Medida de la estancia (m²)</label>
-          <input type="number" step="0.1" id="input-medida-pack" class="input" style="width:100%; text-align:center;" value="10.0">
+          <label class="csp-s-b44d0ad3fc" id="label-medida-pack">Medida de la estancia (m²)</label>
+          <input type="number" step="0.1" id="input-medida-pack" class="input csp-s-331aa27b27" value="10.0">
         </div>
         <div>
-          <button type="button" class="btn btn-primary" id="btn-insertar-pack-estancia" style="width:100%; font-weight:600; padding:0.65rem 1rem;">⚡ Insertar en Presupuesto</button>
+          <button type="button" class="btn btn-primary csp-s-14dfcb7cc9" id="btn-insertar-pack-estancia">⚡ Insertar en Presupuesto</button>
         </div>
       </div>
 
-      <div id="receta-pack-desc" class="muted" style="margin-top:0.8rem; font-size:0.88rem; min-height:1.3em;"></div>
+      <div id="receta-pack-desc" class="muted csp-s-8f452e868d"></div>
 
-      <div style="margin-top:1.5rem;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
-          <strong style="font-size:0.95rem;">Vista previa en vivo del capítulo a insertar:</strong>
-          <span class="badge" id="badge-total-pack" style="background:var(--primary-light); color:var(--primary); font-size:0.95rem; font-weight:600;">Total estimado: $0.00</span>
+      <div class="csp-s-3574ea2cbf">
+        <div class="csp-s-323c1fa4e8">
+          <strong class="csp-s-232f9fa610">Vista previa en vivo del capítulo a insertar:</strong>
+          <span class="badge csp-s-7f2747e2b8" id="badge-total-pack">Total estimado: $0.00</span>
         </div>
-        <div style="max-height:360px; overflow-y:auto; border:1px solid var(--border); border-radius:8px;">
-          <table class="table" style="margin:0; font-size:0.88rem;">
+        <div class="csp-s-de0b2c84f6">
+          <table class="table csp-s-1a46806bde">
             <thead>
-              <tr style="background:var(--bg-alt);">
-                <th style="width:40px; text-align:center;">#</th>
+              <tr class="csp-s-28b29075b5">
+                <th class="csp-s-9b9315757d">#</th>
                 <th>Partida del Pack</th>
-                <th style="width:100px; text-align:center;">Tipo</th>
-                <th style="width:100px; text-align:center;">Cant. est.</th>
-                <th style="width:60px; text-align:center;">Und.</th>
-                <th style="width:100px; text-align:right;">Precio unit.</th>
-                <th style="width:110px; text-align:right;">Importe est.</th>
+                <th class="csp-s-07f450c60c">Tipo</th>
+                <th class="csp-s-07f450c60c">Cant. est.</th>
+                <th class="csp-s-9c31662e47">Und.</th>
+                <th class="csp-s-278acc1abc">Precio unit.</th>
+                <th class="csp-s-251145023f">Importe est.</th>
               </tr>
             </thead>
             <tbody id="tbody-preview-pack">
               <tr>
-                <td colspan="7" class="empty" style="text-align:center; padding:2rem;">Selecciona un pack en el desplegable superior.</td>
+                <td colspan="7" class="empty csp-s-284473c560">Selecciona un pack en el desplegable superior.</td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
     </div>
-    <div class="modal-footer" style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border); padding:1rem 1.5rem;">
-      <a href="/recetas" target="_blank" class="muted" style="font-size:0.85rem; text-decoration:underline;">⚙️ Administrar catálogo de packs</a>
+    <div class="modal-footer csp-s-a25ae6e557">
+      <a href="/recetas" target="_blank" class="muted csp-s-06e5235951">⚙️ Administrar catálogo de packs</a>
       <button type="button" class="btn" data-close>Cerrar</button>
     </div>
   </div>
@@ -590,23 +590,23 @@
 
 <!-- Modal: Guardar Capítulo como Pack de Estancia -->
 <div class="modal-overlay" id="modal-guardar-capitulo-receta">
-  <div class="modal" style="max-width:520px;">
+  <div class="modal csp-s-82c063887d">
     <div class="modal-head">
       <h3>💾 Guardar Capítulo como Pack de Estancia</h3>
       <button type="button" class="btn btn-ghost" data-close>✕</button>
     </div>
-    <div class="modal-body" style="padding:1.5rem;">
-      <p class="muted" style="margin-bottom:1rem; font-size:0.9rem;">
+    <div class="modal-body csp-s-deea30875a">
+      <p class="muted csp-s-2346c4facf">
         Este capítulo se guardará en tu catálogo de <strong>⚡ Packs de Estancia</strong> y podrás insertarlo con un clic (Alt+R) en cualquier presupuesto futuro.
       </p>
-      <div style="margin-bottom:1rem;">
-        <label style="display:block; font-weight:600; font-size:0.88rem; margin-bottom:4px;">Nombre del Pack *</label>
-        <input type="text" id="guardar-pack-nombre" class="input" style="width:100%;" required>
+      <div class="csp-s-68227a9129">
+        <label class="csp-s-b44d0ad3fc">Nombre del Pack *</label>
+        <input type="text" id="guardar-pack-nombre" class="input csp-s-9ccc4ca9d6" required>
       </div>
-      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem; margin-bottom:1rem;">
+      <div class="csp-s-b7971c41ee">
         <div>
-          <label style="display:block; font-weight:600; font-size:0.88rem; margin-bottom:4px;">Categoría</label>
-          <select id="guardar-pack-categoria" class="input" style="width:100%;">
+          <label class="csp-s-b44d0ad3fc">Categoría</label>
+          <select id="guardar-pack-categoria" class="input csp-s-9ccc4ca9d6">
             <option value="Baños">Baños</option>
             <option value="Cocinas">Cocinas</option>
             <option value="Suelos">Suelos</option>
@@ -616,25 +616,25 @@
           </select>
         </div>
         <div>
-          <label style="display:block; font-weight:600; font-size:0.88rem; margin-bottom:4px;">Unidad base</label>
-          <input type="text" id="guardar-pack-unidad" class="input" style="width:100%; text-align:center;" value="m²">
+          <label class="csp-s-b44d0ad3fc">Unidad base</label>
+          <input type="text" id="guardar-pack-unidad" class="input csp-s-331aa27b27" value="m²">
         </div>
       </div>
-      <div style="margin-bottom:1rem;">
-        <label style="display:block; font-weight:600; font-size:0.88rem; margin-bottom:4px;">Medida base de referencia</label>
-        <input type="number" step="0.1" id="guardar-pack-base" class="input" style="width:100%; text-align:center;" value="10.0">
+      <div class="csp-s-68227a9129">
+        <label class="csp-s-b44d0ad3fc">Medida base de referencia</label>
+        <input type="number" step="0.1" id="guardar-pack-base" class="input csp-s-331aa27b27" value="10.0">
       </div>
-      <div style="margin-bottom:1rem;">
-        <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.9rem; cursor:pointer;">
+      <div class="csp-s-68227a9129">
+        <label class="csp-s-437da90a21">
           <input type="checkbox" id="guardar-pack-coeficientes" checked>
           <span>Calcular coeficientes proporcionales automáticamente</span>
         </label>
-        <p class="muted" style="font-size:0.82rem; margin-left:1.6rem; margin-top:2px;">
+        <p class="muted csp-s-9985f0aa07">
           Si está marcado, las partidas con cantidades mayores a 1 se escalarán según los m² de la habitación.
         </p>
       </div>
     </div>
-    <div class="modal-footer" style="display:flex; justify-content:flex-end; gap:0.8rem; border-top:1px solid var(--border); padding:1rem 1.5rem;">
+    <div class="modal-footer csp-s-05337f4c26">
       <button type="button" class="btn" data-close>Cancelar</button>
       <button type="button" class="btn btn-primary" id="btn-confirmar-guardar-pack">💾 Guardar en librería de Packs</button>
     </div>
@@ -648,7 +648,7 @@
       <h3>Sugerir partidas desde tu catálogo</h3>
       <button type="button" class="btn btn-ghost" data-close>✕</button>
     </div>
-    <p class="hint" style="margin-bottom:0.75rem;">
+    <p class="hint csp-s-bdf32b3fef">
       Describe el proyecto y se buscarán coincidencias en <strong>tu propio catálogo</strong> de partidas
       (y en tus plantillas guardadas) para armar un borrador de capítulos. Funciona sin internet: no inventa
       partidas ni precios que no existan ya en tu catálogo. Podrás editar todo después.
@@ -657,7 +657,7 @@
       <label>Describe el proyecto</label>
       <textarea id="generador-texto" rows="3" placeholder="p. ej. Remodelación de baño 8m2, acabado premium, incluye plomería, electricidad y pintura"></textarea>
     </div>
-    <div id="generador-resultado" class="hint" style="display:none; margin:0.5rem 0 0;"></div>
+    <div id="generador-resultado" class="hint cotizat-hidden csp-s-24dbb79f28"></div>
     <div class="form-actions">
       <button type="button" class="btn btn-primary" id="btn-generar">Generar borrador</button>
       <button type="button" class="btn" data-close>Cancelar</button>
@@ -898,9 +898,9 @@
     var chk = document.getElementById('usar-funciones-avanzadas');
     var panel = document.getElementById('advanced-budget-fields');
     function syncAdvanced() {
-      if (panel) panel.style.display = chk && chk.checked ? 'grid' : 'none';
+      if (panel) CotizatStyles.set(panel, "display", chk && chk.checked ? 'grid' : 'none');
       document.querySelectorAll('.advanced-item-section').forEach(function (el) {
-        el.style.display = chk && chk.checked ? '' : 'none';
+        CotizatStyles.set(el, "display", chk && chk.checked ? '' : 'none');
       });
     }
     if (chk) { chk.addEventListener('change', function () { syncAdvanced(); if (typeof recalcular === 'function') recalcular(); }); syncAdvanced(); }
@@ -912,14 +912,14 @@
     var card = document.getElementById('card-datos-generales');
     if (!content || !btn || !card) return;
     
-    if (content.style.display === 'none') {
-      content.style.display = '';
+    if (CotizatStyles.isHidden(content)) {
+      CotizatStyles.set(content, "display", '');
       btn.textContent = '▲ Contraer';
-      card.style.borderColor = 'var(--border)';
+      CotizatStyles.set(card, "borderColor", 'var(--border)');
     } else {
-      content.style.display = 'none';
+      CotizatStyles.set(content, "display", 'none');
       btn.textContent = '▼ Expandir';
-      card.style.borderColor = 'var(--accent)';
+      CotizatStyles.set(card, "borderColor", 'var(--accent)');
     }
   }
 
@@ -928,7 +928,7 @@
     // Collapse automatically once they choose a client (creating budget)
     if (select && select.value !== "") {
       var content = document.getElementById('datos-generales-content');
-      if (content && content.style.display !== 'none') {
+      if (content && !CotizatStyles.isHidden(content)) {
         setTimeout(toggleDatosGenerales, 300);
       }
     }
@@ -938,7 +938,7 @@
     var chk = document.getElementById('chk-con-portada');
     var wrapper = document.getElementById('wrapper-foto-proyecto');
     if (chk && wrapper) {
-      wrapper.style.display = chk.checked ? 'block' : 'none';
+      CotizatStyles.set(wrapper, "display", chk.checked ? 'block' : 'none');
     }
   }
 
@@ -946,7 +946,7 @@
     var chk = document.getElementById('chk-firmas');
     var wrapper = document.getElementById('wrapper-firma');
     if (chk && wrapper) {
-      wrapper.style.display = chk.checked ? 'block' : 'none';
+      CotizatStyles.set(wrapper, "display", chk.checked ? 'block' : 'none');
     }
   }
 

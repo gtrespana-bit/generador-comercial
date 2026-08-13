@@ -283,7 +283,7 @@
         if(!nota.querySelector("a.tiempo-link")){
           var link2 = document.createElement("a");
           link2.className="tiempo-link";
-          link2.style.marginLeft="6px";
+          CotizatStyles.set(link2, "marginLeft", "6px");
           nota.appendChild(link2);
           existingLink = link2;
         } else {

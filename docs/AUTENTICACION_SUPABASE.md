@@ -87,7 +87,7 @@ Esta integración no autoriza por sí sola un despliegue público. Siguen pendie
 - sustituir/complementar el límite local por IP ya implementado con contadores distribuidos antes de escalar a varias instancias (el rate limit de Supabase tampoco sustituye el control de aplicación);
 - aplicar/probar la migración de invitaciones y validar el recorrido real con dos emails, incluido su canal de entrega;
 - aplicar y probar `c93e7a4d20f1` con un login runtime realmente no privilegiado y dos organizaciones;
-- retirar `unsafe-inline` de estilos (scripts ya usan nonce) y completar auditoría XSS;
+- validar en el navegador HTTPS real la CSP sin `unsafe-inline` y la auditoría XSS ya automatizada;
 - aplicar/probar la migración y el bucket privado de Storage real.
 
 CSRF por origen, cabeceras defensivas, almacenamiento privado y autorización de descargas ya están implementados en código, pero aún requieren validación en el despliegue real.

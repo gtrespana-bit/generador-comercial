@@ -44,7 +44,7 @@
     var caja = $("excel-inline-error");
     if (!caja) return;
     caja.textContent = mensaje || "";
-    caja.style.display = mensaje ? "" : "none";
+    CotizatStyles.set(caja, "display", mensaje ? "" : "none");
   }
 
   function limpiarIssues() {
@@ -79,11 +79,11 @@
     if (file) file.value = "";
     var files = $("excel-inline-files");
     if (files) files.textContent = "Ningún archivo seleccionado";
-    $("excel-inline-source").style.display = "";
+    CotizatStyles.set($("excel-inline-source"), "display", "");
     $("excel-inline-review").classList.add("import-hidden");
     $("excel-inline-mapping").classList.add("import-hidden");
     $("excel-inline-cype-chapter").classList.add("import-hidden");
-    $("excel-inline-header").closest(".excel-header-check").style.display = "";
+    CotizatStyles.set($("excel-inline-header").closest(".excel-header-check"), "display", "");
     $("excel-inline-preview").replaceChildren();
     limpiarIssues();
     mostrarError("");
@@ -197,9 +197,9 @@
     estado.mapeo = data.mapeo_sugerido || {};
     estado.primeraFila = data.primera_fila || 2;
 
-    $("excel-inline-source").style.display = "none";
+    CotizatStyles.set($("excel-inline-source"), "display", "none");
     $("excel-inline-review").classList.remove("import-hidden");
-    $("excel-inline-header").closest(".excel-header-check").style.display = esCype() ? "none" : "";
+    CotizatStyles.set($("excel-inline-header").closest(".excel-header-check"), "display", esCype() ? "none" : "");
     limpiarIssues();
 
     if (esCype()) {

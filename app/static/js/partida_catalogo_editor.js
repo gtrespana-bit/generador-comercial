@@ -104,7 +104,7 @@
       });
       var directo = root.querySelector('[data-total="directo"]');
       if (directo) directo.textContent = formato(totalCoste);
-      if (empty) empty.style.display = rows.length ? "none" : "flex";
+      if (empty) CotizatStyles.set(empty, "display", rows.length ? "none" : "flex");
       root.dispatchEvent(new CustomEvent("partida-editor:recalculated", {
         bubbles: true,
         detail: { costes: sums, directo: totalCoste }
@@ -128,7 +128,7 @@
       }
       if (coste <= 0) {
         hint.textContent = 'Añade recursos para ver el beneficio';
-        hint.style.color = 'var(--text-muted)';
+        CotizatStyles.set(hint, "color", 'var(--text-muted)');
         return;
       }
       var beneficio = precio - coste;
@@ -140,7 +140,7 @@
       hint.appendChild(costeStrong);
       hint.appendChild(document.createTextNode(' · Beneficio: '));
       var beneficioStrong = document.createElement('strong');
-      beneficioStrong.style.color = beneficio >= 0 ? 'var(--green)' : 'var(--rose)';
+      CotizatStyles.set(beneficioStrong, "color", beneficio >= 0 ? 'var(--green)' : 'var(--rose)');
       beneficioStrong.textContent = formato(beneficio) + ' (' + markup.toFixed(1).replace(".",",") + '% s/coste, ' + margen.toFixed(1).replace(".",",") + '% margen)';
       hint.appendChild(beneficioStrong);
       hint.title = 'Markup ' + markup.toFixed(2) + '% sobre coste | Margen ' + margen.toFixed(2) + '% sobre precio';

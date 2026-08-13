@@ -202,7 +202,8 @@ class WebSecurityMiddleware:
                         b"frame-ancestors 'none'; form-action 'self'; "
                         + f"script-src 'self' 'nonce-{nonce}'; ".encode("ascii")
                         + b"script-src-attr 'none'; "
-                        + b"style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+                        + f"style-src 'self' 'nonce-{nonce}' https://fonts.googleapis.com; ".encode("ascii")
+                        + b"style-src-attr 'none'; "
                         + b"font-src 'self' https://fonts.gstatic.com data:; "
                         + b"img-src 'self' data: blob:; connect-src 'self'; "
                         + b"frame-src 'self' blob:"

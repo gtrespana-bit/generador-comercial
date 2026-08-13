@@ -52,7 +52,7 @@ se activa con `COTIZAT_TRUST_PROXY=true` detrás de un proxy conocido que elimin
 o sanee ese encabezado. Activarlo si el proceso recibe Internet directamente
 permitiría falsear la IP y eludir el límite.
 
-## CSP y límite todavía pendiente
+## CSP estricta para scripts y estilos
 
 Los scripts inline legítimos reciben un nonce aleatorio distinto en cada
 respuesta. `script-src` acepta solo `'self'` y ese nonce, y
@@ -72,16 +72,19 @@ Además, Storage comprueba el rol `lectura` **antes** de usar la credencial
 server-side para crear o borrar un objeto; el rechazo del flush/RLS por sí solo
 llegaría demasiado tarde y podría dejar un objeto huérfano o borrar uno válido.
 
-Los estilos siguen siendo la excepción transitoria: hay cientos de atributos
-`style` y cambios CSSOM del editor heredado, por lo que `style-src` aún incluye
-`'unsafe-inline'`. Las etiquetas `<style>` ya reciben nonce, pero todavía falta
-extraer atributos y mutaciones de estilo antes de retirar esa última concesión.
-Fuentes de Google permanecen limitadas a sus hosts oficiales. Por tanto la
-protección XSS mejoró de forma material, pero **la CSP todavía no es final**.
+`style-src` tampoco admite `'unsafe-inline'` y `style-src-attr 'none'` bloquea
+atributos de estilo. Los 498 atributos heredados se trasladaron a clases; los
+valores Jinja variables usan clases cerradas o atributos de datos numéricos.
+Las mutaciones CSSOM del editor pasan por `csp_styles.js`, que crea una hoja
+autorizada con el nonce de la respuesta y modifica reglas CSS, nunca el atributo
+`style` del elemento. Sus nombres de propiedad se validan y CSSOM interpreta los
+valores sin construir HTML. Las etiquetas `<style>` legítimas conservan nonce y
+las fuentes de Google permanecen limitadas a sus hosts oficiales.
 
-Antes de publicar se debe eliminar `'unsafe-inline'` también de estilos y
-ejecutar pruebas en el despliegue HTTPS real. La revisión estática de sinks HTML
-queda cerrada; seguirá siendo una prueba de regresión permanente.
+La revisión estática de sinks HTML y estilos queda cerrada y se mantiene como
+prueba de regresión. Antes de publicar todavía se debe confirmar en un navegador
+del despliegue HTTPS real que no hay violaciones CSP ni regresiones visuales o de
+interacción.
 
 ## Pruebas
 
@@ -93,8 +96,9 @@ queda cerrada; seguirá siendo una prueba de regresión permanente.
 - escritura sin procedencia rechazada;
 - cabeceras defensivas y HSTS;
 - conservación de la CSP sandbox de archivos;
-- nonce único por respuesta, ausencia de handlers HTML, sinks de fragmentos HTML
-  y cobertura de todas las acciones declarativas;
+- nonce único por respuesta, ausencia de `unsafe-inline`, handlers HTML,
+  atributos/style API directos, sinks de fragmentos HTML y cobertura de todas
+  las acciones declarativas;
 - protección declarada de todas las rutas comerciales salvo fronteras públicas
   y operaciones de backup exclusivas de SQLite local;
 - bloqueo del backend de objetos para membresías de solo lectura antes de
@@ -102,6 +106,6 @@ queda cerrada; seguirá siendo una prueba de regresión permanente.
 - bloqueo `429`, `Retry-After`, separación por IP y exclusión de lecturas/rutas
   no protegidas en el límite de Auth.
 
-Este avance no sustituye la auditoría pendiente de XSS, el rate limiting
-distribuido, sesiones, roles PostgreSQL no privilegiados ni pruebas reales de
-Auth/Storage.
+Este avance no sustituye una revisión independiente, la validación CSP en
+navegador HTTPS, el rate limiting distribuido, ni las pruebas reales de
+Auth/Storage/RLS con un rol PostgreSQL no privilegiado.

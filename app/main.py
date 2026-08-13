@@ -555,12 +555,11 @@ def _generar_pdf_seguro(generador, etiqueta: str):
         log.error("Error generando %s:\n%s", etiqueta, traceback.format_exc())
         return HTMLResponse(
             "<!doctype html><html lang='es'><head><meta charset='utf-8'>"
-            "<title>Error generando el PDF</title></head><body style='font-family:sans-serif;"
-            "max-width:640px;margin:60px auto;line-height:1.6'>"
+            "<title>Error generando el PDF</title></head><body><main>"
             "<h2>No se pudo generar el PDF</h2>"
             "<p>Ocurrió un error al generar el documento. Mira el log de la aplicación "
             "(inicio.log o la consola) para ver el detalle, o prueba a actualizar la "
-            "aplicación a la última versión.</p></body></html>",
+            "aplicación a la última versión.</p></main></body></html>",
             status_code=500,
         )
 

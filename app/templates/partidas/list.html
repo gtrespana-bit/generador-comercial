@@ -1,32 +1,32 @@
 {% extends "base.html" %}
 {% block title %}Catálogo de Partidas{% endblock %}
 {% block content %}
-<div class="page-head" style="margin-bottom:1.1rem;">
+<div class="page-head csp-s-5d6e5a9c91">
   <div>
-    <h1 style="display:flex;align-items:center;gap:.6rem;">Catálogo de Partidas <span style="font-size:.78rem;font-weight:600;background:var(--accent);color:#fff;padding:2px 8px;border-radius:999px;">{{ partidas|length }}</span></h1>
+    <h1 class="csp-s-93f4d4c3fe">Catálogo de Partidas <span class="csp-s-20db78cd99">{{ partidas|length }}</span></h1>
     <p class="subtitle">Reutilizables para tus presupuestos · organizadas por categoría y subcategoría · diseñadas para catálogos de 100–1.000 partidas</p>
   </div>
-  <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+  <div class="csp-s-33ff8b3e89">
     <a href="/presupuestos/importar?destino=catalogo" class="btn" title="Importa partidas desde Excel/CSV (formato CYPE o tabular) directamente al catálogo">⇧ Importar Excel</a>
     <a href="/partidas/nueva" class="btn btn-primary">+ Nueva Partida</a>
   </div>
 </div>
 
 <!-- TOOLBAR SUPERIOR COMPACTA -->
-<div class="partidas-toolbar card" style="padding:.75rem .9rem; margin-bottom:1rem;">
+<div class="partidas-toolbar card csp-s-0d510e3476">
   <div class="toolbar-row">
     <div class="toolbar-search">
       <span class="search-icon">🔍</span>
       <input type="text" id="buscador" placeholder="Buscar por nombre, código, proveedor, descripción…" data-cotizat-input="partidas-filter" autocomplete="off">
-      <button id="clearSearch" class="btn btn-ghost btn-sm" style="display:none; padding:2px 6px;" data-cotizat-click="partidas-clear-search" title="Limpiar">✕</button>
+      <button id="clearSearch" class="btn btn-ghost btn-sm cotizat-hidden csp-s-dbb704fc6f" data-cotizat-click="partidas-clear-search" title="Limpiar">✕</button>
     </div>
     <div class="toolbar-actions">
       <div class="toolbar-meta" id="filterMeta"></div>
       <div class="toolbar-divider"></div>
       <button class="btn btn-sm" data-cotizat-click="partidas-expand-all" title="Expandir categorías y subcategorías">⤢ Expandir todo</button>
       <button class="btn btn-sm" data-cotizat-click="partidas-collapse-all" title="Contraer categorías y subcategorías">⤡ Contraer todo</button>
-      <form method="post" action="/partidas/ajustar" data-confirm="¿Ajustar TODAS las partidas visibles con este %?" style="display:flex;gap:4px;align-items:center;">
-        <input type="number" name="porcentaje" step="any" placeholder="± %" required style="width:72px; padding:.3rem .5rem; border:1px solid var(--border); border-radius:6px; font-size:.82rem;">
+      <form method="post" action="/partidas/ajustar" data-confirm="¿Ajustar TODAS las partidas visibles con este %?" class="csp-s-014fb690a1">
+        <input type="number" name="porcentaje" step="any" placeholder="± %" required class="csp-s-d3156a880b">
         <button class="btn btn-sm" type="submit" title="Ajustar precios de todas las partidas del catálogo">% Precios</button>
       </form>
       <a class="btn btn-sm" href="/partidas/exportar" title="Exportar catálogo completo">📥 CSV</a>
@@ -89,7 +89,7 @@
       <div class="cat-group {% if has_subs %}has-subs{% endif %}" data-cat="{{ cat }}">
         <button class="category-btn {% if not has_subs %}no-subs{% endif %} drop-category" data-cat="{{ cat }}" data-cotizat-click="partidas-filter-category" id="btn-cat-{{ cat|replace(' ', '_') }}">
           <span class="cat-btn-left">
-            {% if has_subs %}<span class="cat-arrow">▸</span>{% else %}<span style="width:10px;display:inline-block;"></span>{% endif %}
+            {% if has_subs %}<span class="cat-arrow">▸</span>{% else %}<span class="csp-s-9188d8120f"></span>{% endif %}
             <span>🏷️</span>
             <span class="cat-name" title="{{ cat }}">{{ cat }}</span>
           </span>
@@ -129,8 +129,8 @@
   </aside>
 
   <!-- BOTÓN PARA RE-EXPANDIR CUANDO ESTÁ COLAPSADO -->
-  <button id="catSidebarExpand" class="cat-sidebar-expand" data-cotizat-click="partidas-toggle-sidebar" title="Mostrar categorías" style="display:none;">
-    <span>☰</span> <span>Categorías</span> <span class="badge" style="margin-left:6px;">{{ partidas|length }}</span>
+  <button id="catSidebarExpand" class="cat-sidebar-expand cotizat-hidden" data-cotizat-click="partidas-toggle-sidebar" title="Mostrar categorías">
+    <span>☰</span> <span>Categorías</span> <span class="badge csp-s-451d13ae38">{{ partidas|length }}</span>
   </button>
 
   <!-- CONTENIDO PRINCIPAL -->
@@ -148,10 +148,10 @@
         </div>
         <div class="cat-actions" data-cotizat-click="stop-propagation">
           <label class="cat-check" title="Seleccionar toda la categoría">
-            <input type="checkbox" class="cat-select-all" data-cotizat-change="partidas-select-category"> <span style="font-size:.75rem;">Sel.</span>
+            <input type="checkbox" class="cat-select-all" data-cotizat-change="partidas-select-category"> <span class="csp-s-6b643de52a">Sel.</span>
           </label>
           <button type="button" class="btn btn-sm" data-cotizat-click="partidas-toggle-section-button" title="Contraer/Expandir">⤢</button>
-          <button type="button" class="btn btn-sm btn-ghost" style="color:var(--rose);" data-cotizat-click="partidas-delete-category" title="Borrar categoría completa">🗑</button>
+          <button type="button" class="btn btn-sm btn-ghost csp-s-be52c7a071" data-cotizat-click="partidas-delete-category" title="Borrar categoría completa">🗑</button>
         </div>
         <span class="cat-badge">{{ cat_partidas|length }}</span>
       </header>
@@ -223,23 +223,23 @@
                   <td class="col-actions right">
                     <div class="row-actions">
                       <a href="/partidas/{{ p.id }}/editar" class="btn btn-sm btn-ghost" title="Editar">✏️</a>
-                      <form method="post" action="/partidas/{{ p.id }}/eliminar" style="display:inline" data-confirm="¿Eliminar «{{ p.nombre }}» del catálogo?">
-                        <button type="submit" class="btn btn-sm btn-ghost" style="color:var(--rose);" title="Eliminar">✕</button>
+                      <form method="post" action="/partidas/{{ p.id }}/eliminar" class="csp-s-a91548c594" data-confirm="¿Eliminar «{{ p.nombre }}» del catálogo?">
+                        <button type="submit" class="btn btn-sm btn-ghost csp-s-be52c7a071" title="Eliminar">✕</button>
                       </form>
                     </div>
                   </td>
                 </tr>
                 {% if recursos %}
                 <tr class="descomp-row" data-parent="{{ p.id }}">
-                  <td colspan="9" style="padding:0;">
+                  <td colspan="9" class="csp-s-1305fa8339">
                     <details class="descomp-details">
-                      <summary><span class="descomp-summary-label">▾ Descomposición ({{ recursos|selectattr('tipo','equalto','recurso')|list|length }} recursos)</span> <span class="hint" style="margin-left:.6rem;">Clic para ver</span></summary>
-                      <div class="table-wrap" style="margin:.6rem 0 0;">
+                      <summary><span class="descomp-summary-label">▾ Descomposición ({{ recursos|selectattr('tipo','equalto','recurso')|list|length }} recursos)</span> <span class="hint csp-s-a7d39f24f0">Clic para ver</span></summary>
+                      <div class="table-wrap csp-s-abe228aee0">
                         <table class="table descomp-table">
                           <thead><tr><th>Categoría</th><th>Código</th><th>Und.</th><th>Descripción</th><th class="right">Rend.</th><th class="right">Precio</th><th class="right">Importe</th></tr></thead>
                           <tbody>
                           {% for r in recursos if r.tipo == 'recurso' %}
-                            <tr><td><span class="badge" style="font-size:.70rem;background:var(--bg);">{{ r.categoria or r.grupo or 'otros' }}</span></td><td><code style="font-size:.72rem;">{{ r.codigo or '—' }}</code></td><td>{{ r.unidad or '—' }}</td><td style="max-width:260px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="{{ r.descripcion }}">{{ r.descripcion }}</td><td class="right">{{ r.rendimiento }}</td><td class="right">{{ r.precio }}</td><td class="right"><strong>{{ r.importe }}</strong></td></tr>
+                            <tr><td><span class="badge csp-s-9f32b4b1a6">{{ r.categoria or r.grupo or 'otros' }}</span></td><td><code class="csp-s-fd9c8d013c">{{ r.codigo or '—' }}</code></td><td>{{ r.unidad or '—' }}</td><td class="csp-s-6c21943208" title="{{ r.descripcion }}">{{ r.descripcion }}</td><td class="right">{{ r.rendimiento }}</td><td class="right">{{ r.precio }}</td><td class="right"><strong>{{ r.importe }}</strong></td></tr>
                           {% endfor %}
                           </tbody>
                         </table>
@@ -264,7 +264,7 @@
             <span class="subcat-hint">{{ sub_partidas|length }} partidas</span>
             <span class="subcat-actions" data-cotizat-click="stop-propagation">
               <label class="subcat-check" title="Seleccionar subcategoría">
-                <input type="checkbox" data-cotizat-change="partidas-select-subcategory"> <span style="font-size:.72rem;color:var(--text-soft);">Sel.</span>
+                <input type="checkbox" data-cotizat-change="partidas-select-subcategory"> <span class="csp-s-958e431104">Sel.</span>
               </label>
             </span>
           </header>
@@ -330,23 +330,23 @@
                   <td class="col-actions right">
                     <div class="row-actions">
                       <a href="/partidas/{{ p.id }}/editar" class="btn btn-sm btn-ghost" title="Editar">✏️</a>
-                      <form method="post" action="/partidas/{{ p.id }}/eliminar" style="display:inline" data-confirm="¿Eliminar «{{ p.nombre }}» del catálogo?">
-                        <button type="submit" class="btn btn-sm btn-ghost" style="color:var(--rose);" title="Eliminar">✕</button>
+                      <form method="post" action="/partidas/{{ p.id }}/eliminar" class="csp-s-a91548c594" data-confirm="¿Eliminar «{{ p.nombre }}» del catálogo?">
+                        <button type="submit" class="btn btn-sm btn-ghost csp-s-be52c7a071" title="Eliminar">✕</button>
                       </form>
                     </div>
                   </td>
                 </tr>
                 {% if recursos %}
                 <tr class="descomp-row" data-parent="{{ p.id }}">
-                  <td colspan="9" style="padding:0;">
+                  <td colspan="9" class="csp-s-1305fa8339">
                     <details class="descomp-details">
-                      <summary><span class="descomp-summary-label">▾ Descomposición ({{ recursos|selectattr('tipo','equalto','recurso')|list|length }} recursos)</span> <span class="hint" style="margin-left:.6rem;">Clic para ver</span></summary>
-                      <div class="table-wrap" style="margin:.6rem 0 0;">
+                      <summary><span class="descomp-summary-label">▾ Descomposición ({{ recursos|selectattr('tipo','equalto','recurso')|list|length }} recursos)</span> <span class="hint csp-s-a7d39f24f0">Clic para ver</span></summary>
+                      <div class="table-wrap csp-s-abe228aee0">
                         <table class="table descomp-table">
                           <thead><tr><th>Categoría</th><th>Código</th><th>Und.</th><th>Descripción</th><th class="right">Rend.</th><th class="right">Precio</th><th class="right">Importe</th></tr></thead>
                           <tbody>
                           {% for r in recursos if r.tipo == 'recurso' %}
-                            <tr><td><span class="badge" style="font-size:.70rem;background:var(--bg);">{{ r.categoria or r.grupo or 'otros' }}</span></td><td><code style="font-size:.72rem;">{{ r.codigo or '—' }}</code></td><td>{{ r.unidad or '—' }}</td><td style="max-width:260px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="{{ r.descripcion }}">{{ r.descripcion }}</td><td class="right">{{ r.rendimiento }}</td><td class="right">{{ r.precio }}</td><td class="right"><strong>{{ r.importe }}</strong></td></tr>
+                            <tr><td><span class="badge csp-s-9f32b4b1a6">{{ r.categoria or r.grupo or 'otros' }}</span></td><td><code class="csp-s-fd9c8d013c">{{ r.codigo or '—' }}</code></td><td>{{ r.unidad or '—' }}</td><td class="csp-s-6c21943208" title="{{ r.descripcion }}">{{ r.descripcion }}</td><td class="right">{{ r.rendimiento }}</td><td class="right">{{ r.precio }}</td><td class="right"><strong>{{ r.importe }}</strong></td></tr>
                           {% endfor %}
                           </tbody>
                         </table>
@@ -364,19 +364,19 @@
         {% endif %}
       </div>
     {% else %}
-    <div class="card empty" style="text-align:center; padding:2.5rem 1.5rem;">
-      <div style="font-size:2.4rem; margin-bottom:.6rem;">📋</div>
-      <h3 style="margin:0 0 .4rem;">Aún no hay partidas en el catálogo</h3>
-      <p class="hint" style="max-width:520px; margin:0 auto 1rem;">Crea tu primera partida o importa cientos desde Excel (formato CYPE o tabular). Una vez cargadas, organízalas por categoría y subcategoría para trabajar a gran escala.</p>
-      <div style="display:flex; gap:.6rem; justify-content:center; flex-wrap:wrap;">
+    <div class="card empty csp-s-d6e98c0fe2">
+      <div class="csp-s-c7d3ba0dcc">📋</div>
+      <h3 class="csp-s-261f301f5a">Aún no hay partidas en el catálogo</h3>
+      <p class="hint csp-s-ff35838023">Crea tu primera partida o importa cientos desde Excel (formato CYPE o tabular). Una vez cargadas, organízalas por categoría y subcategoría para trabajar a gran escala.</p>
+      <div class="csp-s-eb1a6b0356">
         <a href="/partidas/nueva" class="btn btn-primary">+ Nueva Partida</a>
         <a href="/presupuestos/importar?destino=catalogo" class="btn">⇧ Importar desde Excel</a>
       </div>
     </div>
     {% endfor %}
 
-    <div id="noResults" class="card empty" style="display:none; text-align:center;">
-      <p style="font-weight:600;">Sin resultados</p>
+    <div id="noResults" class="card empty cotizat-hidden csp-s-5a2dfef236">
+      <p class="csp-s-6b2a94ea3b">Sin resultados</p>
       <p class="hint">No hay partidas que coincidan con la búsqueda o filtros actuales.</p>
       <button class="btn btn-sm" data-cotizat-click="partidas-clear-filters">Limpiar filtros</button>
     </div>
@@ -406,15 +406,15 @@ function toggleCatSidebar() {
   const expandBtn = document.getElementById('catSidebarExpand');
   const layout = document.getElementById('catalogLayout');
   if (!sidebar || !expandBtn) return;
-  const isHidden = sidebar.style.display === 'none';
+  const isHidden = CotizatStyles.isHidden(sidebar);
   if (isHidden) {
-    sidebar.style.display = '';
-    expandBtn.style.display = 'none';
+    CotizatStyles.set(sidebar, "display", '');
+    CotizatStyles.set(expandBtn, "display", 'none');
     layout.classList.remove('sidebar-hidden');
     localStorage.setItem('partidas-sidebar-collapsed', 'false');
   } else {
-    sidebar.style.display = 'none';
-    expandBtn.style.display = 'inline-flex';
+    CotizatStyles.set(sidebar, "display", 'none');
+    CotizatStyles.set(expandBtn, "display", 'inline-flex');
     layout.classList.add('sidebar-hidden');
     localStorage.setItem('partidas-sidebar-collapsed', 'true');
   }
@@ -482,7 +482,7 @@ function filtrarPartidas() {
   const qRaw = (document.getElementById('buscador')?.value || '').toLowerCase().trim();
   const q = qRaw;
   const clearBtn = document.getElementById('clearSearch');
-  if (clearBtn) clearBtn.style.display = q ? 'inline-flex' : 'none';
+  if (clearBtn) CotizatStyles.set(clearBtn, "display", q ? 'inline-flex' : 'none');
 
   let totalVisibleCats = 0;
   let totalVisibleRows = 0;
@@ -500,7 +500,7 @@ function filtrarPartidas() {
       // if no sub filter, subMatch depends only on catMatch
       const effectiveSubMatch = subcategoriaSeleccionada ? subMatch : catMatch;
       if (!effectiveSubMatch) {
-        subsec.style.display = 'none';
+        CotizatStyles.set(subsec, "display", 'none');
         return;
       }
       // filter rows inside
@@ -509,55 +509,55 @@ function filtrarPartidas() {
         const txt = (row.dataset.nombre || '').toLowerCase();
         const ok = !q || txt.includes(q);
         if (ok) {
-          row.style.display = '';
+          CotizatStyles.set(row, "display", '');
           // also show its descomp row if exists
           const descomp = subsec.querySelector(`.descomp-row[data-parent="${row.dataset.id}"]`);
-          if (descomp) descomp.style.display = row.style.display; // keep same display (visible)
+          if (descomp) CotizatStyles.toggle(descomp, !CotizatStyles.isHidden(row));
           visibleInSub++;
         } else {
-          row.style.display = 'none';
+          CotizatStyles.set(row, "display", 'none');
           const descomp = subsec.querySelector(`.descomp-row[data-parent="${row.dataset.id}"]`);
-          if (descomp) descomp.style.display = 'none';
+          if (descomp) CotizatStyles.set(descomp, "display", 'none');
         }
       });
       // handle empty subcat header visibility
       if (visibleInSub > 0) {
-        subsec.style.display = '';
+        CotizatStyles.set(subsec, "display", '');
         // make sure its body is visible if we have results, but respect collapsed state? If collapsed and we have search, auto-expand
         if (q && subsec.classList.contains('collapsed')) {
           subsec.classList.remove('collapsed');
           const b = subsec.querySelector('.subcat-body');
-          if (b) b.style.display = '';
+          if (b) CotizatStyles.set(b, "display", '');
           const t = subsec.querySelector('.subcat-toggle');
           if (t) t.textContent = '▼';
         }
         catVisible = true;
         catRowCount += visibleInSub;
       } else {
-        subsec.style.display = 'none';
+        CotizatStyles.set(subsec, "display", 'none');
       }
     });
 
     if (catVisible && catRowCount>0) {
-      section.style.display = '';
+      CotizatStyles.set(section, "display", '');
       totalVisibleCats++;
       totalVisibleRows += catRowCount;
       // if searching, expand category
       if (q && section.classList.contains('collapsed')) {
         section.classList.remove('collapsed');
         const body = section.querySelector('.cat-section-body');
-        if (body) body.style.display = '';
+        if (body) CotizatStyles.set(body, "display", '');
         const tg = section.querySelector('.cat-toggle');
         if (tg) tg.textContent = '▼';
       }
     } else {
-      section.style.display = 'none';
+      CotizatStyles.set(section, "display", 'none');
     }
   });
 
   // No results handling
   const noRes = document.getElementById('noResults');
-  if (noRes) noRes.style.display = (totalVisibleRows===0) ? 'block' : 'none';
+  if (noRes) CotizatStyles.set(noRes, "display", (totalVisibleRows===0) ? 'block' : 'none');
 
   // toolbar meta
   const meta = document.getElementById('filterMeta');
@@ -597,11 +597,11 @@ function toggleCatSection(header) {
   const isCollapsed = section.classList.contains('collapsed');
   if (isCollapsed) {
     section.classList.remove('collapsed');
-    if (body) body.style.display = '';
+    if (body) CotizatStyles.set(body, "display", '');
     if (toggle) toggle.textContent='▼';
   } else {
     section.classList.add('collapsed');
-    if (body) body.style.display='none';
+    if (body) CotizatStyles.set(body, "display", 'none');
     if (toggle) toggle.textContent='▶';
   }
 }
@@ -611,11 +611,11 @@ function toggleAllCats(expand) {
     const tg=sec.querySelector('.cat-toggle');
     if (expand) {
       sec.classList.remove('collapsed');
-      if (body) body.style.display='';
+      if (body) CotizatStyles.set(body, "display", '');
       if (tg) tg.textContent='▼';
     } else {
       sec.classList.add('collapsed');
-      if (body) body.style.display='none';
+      if (body) CotizatStyles.set(body, "display", 'none');
       if (tg) tg.textContent='▶';
     }
   });
@@ -649,7 +649,7 @@ function toggleSelectCat(cat, checked) {
   const sec = document.getElementById('group-' + cat.replace(/ /g, '_'));
   if (!sec) return;
   sec.querySelectorAll('.partida-tr').forEach(row=>{
-    if (row.style.display==='none') return;
+    if (CotizatStyles.isHidden(row)) return;
     const cb=row.querySelector('.row-check');
     if (!cb) return;
     cb.checked=checked;
@@ -665,7 +665,7 @@ function toggleSelectSubcat(cat, subcat, checked) {
   const subEl = [...sec.querySelectorAll('.subcat-section')].find(s=> (s.dataset.subcategoria||'')===subcat);
   if (!subEl) return;
   subEl.querySelectorAll('.partida-tr').forEach(row=>{
-    if (row.style.display==='none') return;
+    if (CotizatStyles.isHidden(row)) return;
     const cb=row.querySelector('.row-check');
     if (!cb) return;
     cb.checked=checked;
@@ -684,10 +684,10 @@ function updateBulkBarPartidas() {
   if (n > 0) {
     cnt.textContent = n;
     bar.classList.add('show');
-    bar.style.display = 'flex';
+    CotizatStyles.set(bar, "display", 'flex');
   } else {
     bar.classList.remove('show');
-    bar.style.display = 'none';
+    CotizatStyles.set(bar, "display", 'none');
     // clear cat/subcat master checks if none
   }
 }
@@ -698,12 +698,12 @@ function selectNonePartidas() {
 }
 function selectVisiblePartidas() {
   document.querySelectorAll('.cat-section').forEach(sec=>{
-    if (sec.style.display==='none') return;
+    if (CotizatStyles.isHidden(sec)) return;
     sec.querySelectorAll('.subcat-section').forEach(sub=>{
-      if (sub.style.display==='none') return;
+      if (CotizatStyles.isHidden(sub)) return;
       sub.querySelectorAll('.row-check').forEach(ch=>{
         const row=ch.closest('tr');
-        if (row && row.style.display!=='none') { ch.checked=true; row.classList.add('selected'); }
+        if (row && !CotizatStyles.isHidden(row)) { ch.checked=true; row.classList.add('selected'); }
       });
     });
   });
@@ -712,9 +712,9 @@ function selectVisiblePartidas() {
 async function deleteAllVisiblePartidas() {
   const visibleChecks = [];
   document.querySelectorAll('.partida-tr').forEach(row=>{
-    if (row.style.display==='none') return;
-    if (row.closest('.cat-section')?.style.display==='none') return;
-    if (row.closest('.subcat-section')?.style.display==='none') return;
+    if (CotizatStyles.isHidden(row)) return;
+    if (CotizatStyles.isHidden(row.closest('.cat-section'))) return;
+    if (CotizatStyles.isHidden(row.closest('.subcat-section'))) return;
     const ch=row.querySelector('.row-check');
     if (ch) visibleChecks.push(ch.dataset.id);
   });
@@ -837,7 +837,7 @@ function makeTableSortable() {
     headers.forEach((th, idx) => {
       if (!th.classList.contains('sortable')) return;
       let asc = true;
-      th.style.cursor = 'pointer';
+      CotizatStyles.set(th, "cursor", 'pointer');
       th.title = 'Clic para ordenar';
       th.addEventListener('click', () => {
         sortTable(table, idx, asc);
@@ -930,8 +930,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const sidebar=document.getElementById('catSidebar');
   const expandBtn=document.getElementById('catSidebarExpand');
   if (collapsed && sidebar && expandBtn) {
-    sidebar.style.display='none';
-    expandBtn.style.display='inline-flex';
+    CotizatStyles.set(sidebar, "display", 'none');
+    CotizatStyles.set(expandBtn, "display", 'inline-flex');
     document.getElementById('catalogLayout')?.classList.add('sidebar-hidden');
   }
   // auto-expand first categories? keep all expanded initially

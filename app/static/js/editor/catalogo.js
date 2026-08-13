@@ -124,7 +124,7 @@
     if (!items.length) {
       var empty = document.createElement("div");
       empty.className = "empty";
-      empty.style.cssText = "padding:1rem; color:var(--text-soft); font-size:0.85rem;";
+      CotizatStyles.setCssText(empty, "padding:1rem; color:var(--text-soft); font-size:0.85rem;");
       empty.textContent = "Sin resultados";
       catalogoPanel.appendChild(empty);
       return;
@@ -134,7 +134,7 @@
       var realIdx = editor.CATALOGO.indexOf(item);
       var div = document.createElement("div");
       div.className = "partida-catalogo";
-      div.style.cssText = "padding:8px 12px; cursor:pointer; display:flex; align-items:center; gap:10px; border-bottom:1px solid var(--border-subtle);";
+      CotizatStyles.setCssText(div, "padding:8px 12px; cursor:pointer; display:flex; align-items:center; gap:10px; border-bottom:1px solid var(--border-subtle);");
       div.dataset.idx = realIdx;
       div.dataset.nombre = item.nombre;
       div.dataset.categoria = item.categoria;
@@ -143,35 +143,35 @@
       if (item.imagen) {
         var img = document.createElement("img");
         img.src = window.cotizatArchivoUrl(item.imagen);
-        img.style.cssText = "width:36px; height:36px; border-radius:5px; object-fit:cover;";
+        CotizatStyles.setCssText(img, "width:36px; height:36px; border-radius:5px; object-fit:cover;");
         div.appendChild(img);
       }
 
       var main = document.createElement("div");
-      main.style.cssText = "flex:1; min-width:0;";
+      CotizatStyles.setCssText(main, "flex:1; min-width:0;");
 
       var nombre = document.createElement("div");
       nombre.textContent = item.nombre;
-      nombre.style.cssText = "font-weight:600; font-size:0.88rem; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;";
+      CotizatStyles.setCssText(nombre, "font-weight:600; font-size:0.88rem; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;");
       main.appendChild(nombre);
 
       var meta = document.createElement("div");
       meta.textContent = [item.categoria, item.subcategoria, item.proveedor].filter(Boolean).join(" · ");
-      meta.style.cssText = "font-size:0.72rem; color:var(--text-muted); margin-top:2px;";
+      CotizatStyles.setCssText(meta, "font-size:0.72rem; color:var(--text-muted); margin-top:2px;");
       main.appendChild(meta);
       div.appendChild(main);
 
       var precio = document.createElement("span");
       precio.textContent = (item.precio || 0).toFixed(2) + " $";
-      precio.style.cssText = "font-weight:600; color:var(--accent); font-size:0.85rem; white-space:nowrap;";
+      CotizatStyles.setCssText(precio, "font-weight:600; color:var(--accent); font-size:0.85rem; white-space:nowrap;");
 
       var badgeUso = document.createElement("span");
       badgeUso.className = "badge-categoria";
       badgeUso.textContent = "🔥 " + (item.usos || 0);
-      badgeUso.style.cssText = "font-size:0.65rem; padding:1px 6px; margin-left:6px;";
+      CotizatStyles.setCssText(badgeUso, "font-size:0.65rem; padding:1px 6px; margin-left:6px;");
 
       var wrapper = document.createElement("div");
-      wrapper.style.cssText = "display:flex; align-items:center; gap:6px;";
+      CotizatStyles.setCssText(wrapper, "display:flex; align-items:center; gap:6px;");
       wrapper.appendChild(precio);
       wrapper.appendChild(badgeUso);
       div.appendChild(wrapper);
@@ -186,10 +186,10 @@
       });
 
       div.addEventListener("mouseenter", function () {
-        div.style.background = "var(--surface-hover)";
+        CotizatStyles.set(div, "background", "var(--surface-hover)");
       });
       div.addEventListener("mouseleave", function () {
-        div.style.background = "transparent";
+        CotizatStyles.set(div, "background", "transparent");
       });
 
       catalogoPanel.appendChild(div);
@@ -290,9 +290,9 @@
     if (Math.abs(diffPct) < 0.1) return;
     var indicator = document.createElement("span");
     indicator.className = "precio-indicator";
-    indicator.style.cssText = "font-size:0.65rem; margin-left:6px; opacity:0.8;";
-    if (diff > 0) { indicator.textContent = "↑ " + diffPct.toFixed(1) + "% vs catálogo"; indicator.style.color = "var(--rose)"; }
-    else { indicator.textContent = "↓ " + Math.abs(diffPct).toFixed(1) + "% vs catálogo"; indicator.style.color = "var(--green)"; }
+    CotizatStyles.setCssText(indicator, "font-size:0.65rem; margin-left:6px; opacity:0.8;");
+    if (diff > 0) { indicator.textContent = "↑ " + diffPct.toFixed(1) + "% vs catálogo"; CotizatStyles.set(indicator, "color", "var(--rose)"); }
+    else { indicator.textContent = "↓ " + Math.abs(diffPct).toFixed(1) + "% vs catálogo"; CotizatStyles.set(indicator, "color", "var(--green)"); }
     importeCell.appendChild(indicator);
   }
 
@@ -303,15 +303,15 @@
 
   function posicionarPopover(pop, target) {
     var r = target.getBoundingClientRect();
-    pop.style.visibility = "hidden";
-    pop.style.display = "block";
+    CotizatStyles.set(pop, "visibility", "hidden");
+    CotizatStyles.set(pop, "display", "block");
     var w = pop.offsetWidth, h = pop.offsetHeight;
     var left = Math.min(window.innerWidth - w - 12, Math.max(12, r.left));
     var top = r.bottom + 8;
     if (top + h > window.innerHeight - 12) top = Math.max(12, r.top - h - 8);
-    pop.style.left = left + "px";
-    pop.style.top = top + "px";
-    pop.style.visibility = "visible";
+    CotizatStyles.set(pop, "left", left + "px");
+    CotizatStyles.set(pop, "top", top + "px");
+    CotizatStyles.set(pop, "visibility", "visible");
   }
 
   function actualizarPrecioCatalogoLocal(partida) {

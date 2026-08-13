@@ -16,12 +16,12 @@
 <div class="card">
   <div class="form-grid">
     <div><h2>Datos de la partida</h2><p><strong>Código:</strong> {{ d.codigo or '—' }}</p><p><strong>Unidad:</strong> {{ d.unidad or part.unidad }}</p>{% if d.nombre_hoja %}<p><strong>Hoja:</strong> {{ d.nombre_hoja }}</p>{% endif %}</div>
-    <div><h2>{% if d.origen == 'manual' %}Coste directo{% else %}Coste directo CYPE{% endif %}</h2><p style="font-size:1.35rem; font-weight:700; color:var(--accent);" id="cype-coste-directo">{{ d.coste_directo_unitario | money(p.moneda) }} / {{ d.unidad or part.unidad }}</p><div class="cype-costs"><span>Materiales: <strong id="cype-costo-materiales">{{ part.coste_materiales | money(p.moneda) }}</strong></span><span>Mano de obra: <strong id="cype-costo-mano-obra">{{ part.coste_mano_obra | money(p.moneda) }}</strong></span><span>Directos complementarios: <strong id="cype-costo-complementarios">{{ part.coste_complementarios | money(p.moneda) }}</strong></span><span>Otros: <strong id="cype-costo-otros">{{ part.coste_otros | money(p.moneda) }}</strong></span></div><p class="hint">Este valor es el coste interno unitario usado en los cálculos de la partida.</p></div>
+    <div><h2>{% if d.origen == 'manual' %}Coste directo{% else %}Coste directo CYPE{% endif %}</h2><p class="csp-s-66804cc396" id="cype-coste-directo">{{ d.coste_directo_unitario | money(p.moneda) }} / {{ d.unidad or part.unidad }}</p><div class="cype-costs"><span>Materiales: <strong id="cype-costo-materiales">{{ part.coste_materiales | money(p.moneda) }}</strong></span><span>Mano de obra: <strong id="cype-costo-mano-obra">{{ part.coste_mano_obra | money(p.moneda) }}</strong></span><span>Directos complementarios: <strong id="cype-costo-complementarios">{{ part.coste_complementarios | money(p.moneda) }}</strong></span><span>Otros: <strong id="cype-costo-otros">{{ part.coste_otros | money(p.moneda) }}</strong></span></div><p class="hint">Este valor es el coste interno unitario usado en los cálculos de la partida.</p></div>
     <div><h2>{% if d.origen == 'manual' %}Detalle{% else %}Conservación de origen{% endif %}</h2>{% if d.rango_original %}<p><strong>Rango:</strong> {{ d.rango_original }}</p>{% endif %}<p><strong>{{ d.filas | length }}</strong> filas físicas{% if d.columnas %} · <strong>{{ d.columnas | length }}</strong> columnas{% endif %}</p><p class="hint">{% if d.origen == 'manual' %}Descomposición creada o editada dentro del generador de presupuestos.{% else %}Se guardan los valores mostrados, fórmulas, rangos combinados y el .xlsx original.{% endif %}</p></div>
     <div>
       <h2>⏱ Tiempo por unidad</h2>
       {% if tiempos_descompuesto and tiempos_descompuesto.total > 0 %}
-      <p style="font-size:1.35rem; font-weight:700; color:var(--accent);">{{ "%.4f"|format(tiempos_descompuesto.total) }} h / {{ d.unidad or part.unidad }} <small class="hint" style="font-weight:500;">· {{ "%.4f"|format(tiempos_descompuesto.duracion) }} h críticos</small></p>
+      <p class="csp-s-66804cc396">{{ "%.4f"|format(tiempos_descompuesto.total) }} h / {{ d.unidad or part.unidad }} <small class="hint csp-s-946cbebb5f">· {{ "%.4f"|format(tiempos_descompuesto.duracion) }} h críticos</small></p>
       <div class="cype-costs">
         <span>Mano de obra: <strong>{{ "%.4f"|format(tiempos_descompuesto.mano_obra) }} h</strong></span>
         <span>👷 Oficial: <strong>{{ "%.4f"|format(tiempos_descompuesto.oficial) }} h</strong></span>
@@ -33,12 +33,12 @@
       <p class="hint">Por cada {{ d.unidad or part.unidad }} de partida. Con {{ part.cantidad_total | cant(d.unidad or part.unidad) }} medidos:<br>
         <strong>{{ "%.1f"|format(tiempos_descompuesto.total * part.cantidad_total) }} h-hombre</strong> ({{ "%.1f"|format(tiempos_descompuesto.oficial * part.cantidad_total) }} h oficial + {{ "%.1f"|format(tiempos_descompuesto.ayudante * part.cantidad_total) }} h ayudante) · <strong>{{ "%.1f"|format(tiempos_descompuesto.duracion * part.cantidad_total) }} h críticos</strong> ≈ {{ "%.1f"|format(tiempos_descompuesto.duracion * part.cantidad_total / (horas_jornada or 8)) }} días críticos (jornada {{ "%.0f"|format(horas_jornada or 8) }} h, 1 cuadrilla en paralelo).</p>
       {% else %}
-      <p style="color:var(--text-soft);">Este descompuesto no tiene filas con unidad de tiempo (h, día…), así que no aporta horas a la estimación.</p>
+      <p class="csp-s-3ea0609665">Este descompuesto no tiene filas con unidad de tiempo (h, día…), así que no aporta horas a la estimación.</p>
       <p class="hint">Las filas de materiales (kg, m³…) no cuentan tiempo; solo las de mano de obra, maquinaria y equipos con unidad h o día. Puedes asignar horas manualmente desde <a class="link" href="/presupuestos/{{ p.id }}/tiempos">Tiempo de obra</a>.</p>
       {% endif %}
     </div>
   </div>
-  {% if part.descripcion %}<p class="prewrap" style="margin-top:1rem;">{{ part.descripcion }}</p>{% endif %}
+  {% if part.descripcion %}<p class="prewrap csp-s-442b023e55">{{ part.descripcion }}</p>{% endif %}
 </div>
 
 <form method="post" id="form-recalcular">
@@ -84,9 +84,9 @@
       </tbody>
     </table>
   </div>
-  <div style="display:flex; flex-wrap:wrap; gap:1rem; align-items:center; margin-top:1rem;">
+  <div class="csp-s-c0585e01b8">
     <button type="submit" class="btn btn-primary">💾 Guardar y recalcular</button>
-    <label class="check-line" style="margin:0;"><input type="checkbox" name="ajustar_precio_venta" value="1"> Actualizar también el precio de venta de la partida al nuevo coste directo</label>
+    <label class="check-line csp-s-38965f9b18"><input type="checkbox" name="ajustar_precio_venta" value="1"> Actualizar también el precio de venta de la partida al nuevo coste directo</label>
     <span class="hint" id="aviso-recalculo">Los cambios se aplican al guardar.</span>
   </div>
 </div>
@@ -96,7 +96,7 @@
 <div class="card">
   <h2>Matriz original completa</h2>
   <p class="hint">La insignia <span class="cype-fx">fx</span> indica que la celda conserva además su fórmula original (visible al pasar el cursor). Rangos combinados: {{ d.rangos_combinados | join(', ') if d.rangos_combinados else 'ninguno' }}.</p>
-  <div class="table-wrap import-preview-wrap" style="max-height:650px;">
+  <div class="table-wrap import-preview-wrap csp-s-17a4d03ec1">
     <table class="table cype-table">
       <thead><tr><th>Fila</th>{% for columna in d.columnas %}<th>{{ columna }}</th>{% endfor %}</tr></thead>
       <tbody>

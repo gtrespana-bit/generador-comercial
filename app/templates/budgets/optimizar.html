@@ -13,7 +13,7 @@
   </div>
 </div>
 
-<div class="cards" style="margin-bottom:1.5rem;">
+<div class="cards csp-s-e12e213489">
   <div class="card-stat">
     <div class="stat-num">{{ analisis.total_partidas }}</div>
     <div class="stat-label">Partidas en tu catálogo</div>
@@ -23,7 +23,7 @@
     <div class="stat-label">Con costo interno cargado (evaluables)</div>
   </div>
   <div class="card-stat">
-    <div class="stat-num" style="color: {{ 'var(--rose)' if analisis.alertas else 'var(--accent)' }};">{{ analisis.alertas | length }}</div>
+    <div class="stat-num {{ 'text-rose' if analisis.alertas else 'text-accent' }}">{{ analisis.alertas | length }}</div>
     <div class="stat-label">Alertas detectadas</div>
   </div>
   <div class="card-stat">
@@ -33,15 +33,15 @@
 </div>
 
 {% if analisis.sin_datos_costo %}
-<p class="hint" style="margin-bottom:1rem;">
+<p class="hint csp-s-68227a9129">
   ℹ️ {{ analisis.sin_datos_costo }} partida(s) no tienen costo de materiales/mano de obra cargado, así que no se puede calcular su margen todavía.
   Complétalo en <a class="link" href="/partidas">el catálogo de partidas</a> para incluirlas en este análisis.
 </p>
 {% endif %}
 
 <div class="card">
-  <div class="card-head" style="padding-bottom: 0.85rem; border-bottom: 1px solid var(--border);">
-    <h2 style="margin-bottom:0;">Partidas a revisar</h2>
+  <div class="card-head csp-s-05e74ce48a">
+    <h2 class="csp-s-768bda7dd9">Partidas a revisar</h2>
     <span class="hint">Margen de referencia: {{ analisis.margen_minimo | int }}% · Se marca como desactualizado a partir de {{ analisis.dias_desactualizado }} días sin tocar el precio</span>
   </div>
   {% if analisis.alertas %}
@@ -64,8 +64,8 @@
         <td>{{ a.categoria }}</td>
         <td class="right">{{ a.precio_unitario | money }}</td>
         <td class="right">{{ a.coste_unitario | money }}</td>
-        <td class="right" style="color: {{ 'var(--rose)' if a.margen_pct < analisis.margen_minimo else 'var(--text)' }};"><strong>{{ a.margen_pct }}%</strong></td>
-        <td style="font-size:0.82rem; color:var(--text-soft);">{{ a.motivos | join(' · ') }}</td>
+        <td class="right {{ 'text-rose' if a.margen_pct < analisis.margen_minimo else 'text-default' }}"><strong>{{ a.margen_pct }}%</strong></td>
+        <td class="csp-s-f25d241cb3">{{ a.motivos | join(' · ') }}</td>
         <td class="right"><a class="btn btn-sm" href="/partidas/{{ a.id }}/editar" target="_blank">Ajustar precio</a></td>
       </tr>
       {% endfor %}

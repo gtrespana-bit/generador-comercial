@@ -18,7 +18,7 @@
       <tr>
         <th>Nombre</th>
         <th>Fecha</th>
-        <th style="text-align:right;">Acciones</th>
+        <th class="csp-s-9b75d38881">Acciones</th>
       </tr>
     </thead>
     <tbody>
@@ -26,7 +26,7 @@
       <tr>
         <td><strong>{{ t.nombre }}</strong></td>
         <td class="muted">{{ t.created_at.strftime('%d/%m/%Y') if t.created_at else '' }}</td>
-        <td style="text-align:right;">
+        <td class="csp-s-9b75d38881">
           <form method="post" action="/plantillas/{{ t.id }}/eliminar" class="inline" data-confirm="¿Eliminar la plantilla «{{ t.nombre }}»?">
             <button class="btn btn-sm btn-danger" type="submit">🗑 Eliminar</button>
           </form>
@@ -42,7 +42,7 @@
 
 <div class="card">
   <h2>¿Cómo se usa?</h2>
-  <ol class="muted" style="margin-left:1.2rem; line-height:1.8;">
+  <ol class="muted csp-s-0ac9ea6b62">
     <li>Abre un presupuesto (nuevo o existente) y monta su estructura.</li>
     <li>Pulsa <strong>«💾 Guardar como plantilla»</strong> y ponle un nombre.</li>
     <li>Al crear un <strong>nuevo presupuesto</strong>, elige la plantilla en el desplegable para precargar su estructura.</li>

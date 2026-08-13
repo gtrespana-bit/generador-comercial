@@ -59,7 +59,7 @@
 
     <details class="catalog-advanced-fields" {% if producto and (producto.precio_compra is not none or producto.proveedor or producto.ficha_tecnica or producto.variantes) %}open{% endif %}>
       <summary>Datos de compra, entrega y presentación <span>opcionales</span></summary>
-      <div class="form-grid" style="padding-top:1rem;">
+      <div class="form-grid csp-s-d932cc6d8c">
         <div class="field">
           <label>Proveedor</label>
           <input type="text" name="proveedor" value="{{ producto.proveedor if producto else '' }}" placeholder="Empresa o contacto">
@@ -115,7 +115,7 @@
         <div class="field field-full">
           <label>Ficha técnica (PDF)</label>
           {% if producto and producto.ficha_tecnica %}
-          <p class="hint" style="margin:0 0 .5rem;"><a class="link" href="{{ producto.ficha_tecnica | archivo_url }}" target="_blank">📄 Ver ficha técnica actual</a> · <label><input type="checkbox" name="quitar_ficha_tecnica" value="1"> Eliminar</label></p>
+          <p class="hint csp-s-4db3f8740b"><a class="link" href="{{ producto.ficha_tecnica | archivo_url }}" target="_blank">📄 Ver ficha técnica actual</a> · <label><input type="checkbox" name="quitar_ficha_tecnica" value="1"> Eliminar</label></p>
           {% endif %}
           <input type="file" name="ficha_tecnica" accept="application/pdf,.pdf">
         </div>
@@ -142,7 +142,7 @@
     if (!c) { hint.textContent = 'Indica el coste para calcular el beneficio.'; return; }
     var beneficio = v - c, margen = v ? beneficio / v * 100 : 0;
     hint.textContent = 'Beneficio: $' + beneficio.toFixed(2) + ' / ud · Margen: ' + margen.toFixed(1) + '%';
-    hint.style.color = beneficio < 0 ? 'var(--rose)' : 'var(--green)';
+    CotizatStyles.set(hint, "color", beneficio < 0 ? 'var(--rose)' : 'var(--green)');
   }
   [coste, venta].forEach(function (el) { if (el) el.addEventListener('input', actualizar); }); actualizar();
 })();

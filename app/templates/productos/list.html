@@ -9,72 +9,72 @@
   <a href="/productos/nuevo" class="btn btn-primary">+ Nuevo Producto</a>
 </div>
 
-<div class="filters" style="margin-bottom: 1.5rem; flex-wrap:wrap; align-items:flex-start; gap:12px;">
-  <div style="flex:1; min-width:260px;">
-    <input type="text" id="buscador" placeholder="🔍 Buscar por nombre, marca, modelo, SKU, proveedor o categoría…" data-cotizat-keyup="productos-filter" style="width:100%; max-width:580px;">
-    <div style="font-size:0.78rem;color:var(--text-soft);margin-top:3px;">Buscador + categorías laterales. Usa los checkboxes para eliminar en masa.</div>
+<div class="filters csp-s-c6d264ee51">
+  <div class="csp-s-618c05be5c">
+    <input type="text" id="buscador" placeholder="🔍 Buscar por nombre, marca, modelo, SKU, proveedor o categoría…" data-cotizat-keyup="productos-filter" class="csp-s-ea8cf769a3">
+    <div class="csp-s-316b05820a">Buscador + categorías laterales. Usa los checkboxes para eliminar en masa.</div>
   </div>
-  <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-    <div id="bulk-bar-productos" style="display:none; background:var(--rose-soft);border:1px solid var(--rose);padding:3px 10px;border-radius:6px;align-items:center;gap:6px;font-size:0.9rem; flex-wrap:wrap;">
-      <span id="sel-count-productos" style="font-weight:600;color:var(--rose);">0</span>
+  <div class="csp-s-9d48bcd569">
+    <div id="bulk-bar-productos" class="cotizat-hidden csp-s-4e6aaf2283">
+      <span id="sel-count-productos" class="csp-s-8cf7fda045">0</span>
       <button type="button" class="btn btn-sm btn-danger" data-cotizat-click="productos-bulk-delete">🗑 Eliminar seleccionados</button>
       <button type="button" class="btn btn-sm btn-success" data-cotizat-click="productos-bulk-export">📥 Exportar seleccionados</button>
-      <input type="text" id="move-cat-productos" placeholder="Nueva categoría" style="width:130px; font-size:0.85rem; padding:2px 6px;" list="categorias-datalist-productos">
+      <input type="text" id="move-cat-productos" placeholder="Nueva categoría" class="csp-s-0f21bf64ba" list="categorias-datalist-productos">
       <button type="button" class="btn btn-sm" data-cotizat-click="productos-bulk-move">➡️ Mover a cat.</button>
       <button type="button" class="btn btn-sm" data-cotizat-click="productos-select-visible">Seleccionar visibles</button>
       <button type="button" class="btn btn-sm" data-cotizat-click="productos-select-none">Cancelar</button>
-      <button type="button" class="btn btn-sm btn-danger" data-cotizat-click="productos-delete-visible" style="margin-left:6px;">🗑 Borrar TODO lo visible</button>
+      <button type="button" class="btn btn-sm btn-danger csp-s-451d13ae38" data-cotizat-click="productos-delete-visible">🗑 Borrar TODO lo visible</button>
     </div>
-    <form method="post" action="/productos/ajustar" data-confirm="¿Ajustar TODOS los productos?" style="display:flex;gap:4px;align-items:center;">
-      <input type="number" name="porcentaje" step="any" placeholder="% ±" required style="width:92px;">
+    <form method="post" action="/productos/ajustar" data-confirm="¿Ajustar TODOS los productos?" class="csp-s-014fb690a1">
+      <input type="number" name="porcentaje" step="any" placeholder="% ±" required class="csp-s-343d6c0de6">
       <button class="btn btn-sm" type="submit">% Precios</button>
     </form>
     <a class="btn btn-sm" href="/productos/exportar">📥 CSV</a>
   </div>
 </div>
 
-<div class="catalog-layout" style="display: flex; gap: 1.5rem; align-items: flex-start;">
+<div class="catalog-layout csp-s-a9b6bdb12f">
   <!-- SIDEBAR DE CATEGORÍAS -->
-  <div class="card category-sidebar" style="width: 240px; flex-shrink: 0; padding: 1rem; position: sticky; top: 1.5rem; max-height: calc(100vh - 6rem); overflow-y: auto;">
-    <h3 style="font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.75rem; letter-spacing: 0.05em;">Categorías</h3>
-    <div class="category-list" style="display: flex; flex-direction: column; gap: 4px;">
-      <button class="category-btn active" data-cotizat-click="productos-filter-category" data-cat="todas" id="btn-cat-todas" style="text-align: left; background: none; border: none; padding: 8px 12px; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.875rem; color: var(--text); font-weight: 500; display: flex; justify-content: space-between; align-items: center; width: 100%;">
+  <div class="card category-sidebar csp-s-870e14e711">
+    <h3 class="csp-s-4397e20fe9">Categorías</h3>
+    <div class="category-list csp-s-640fb6d0c5">
+      <button class="category-btn active csp-s-b7192152ef" data-cotizat-click="productos-filter-category" data-cat="todas" id="btn-cat-todas">
         <span>📂 Todas</span>
-        <span class="badge" style="background: var(--bg); color: var(--text-soft); font-size: 0.75rem;">{{ productos | length }}</span>
+        <span class="badge csp-s-3b4bb75f0e">{{ productos | length }}</span>
       </button>
 
       {% for cat, cat_productos in productos | groupby('categoria') %}
-      <button class="category-btn drop-product-category" data-cat="{{ cat }}" data-cotizat-click="productos-filter-category" id="btn-cat-{{ cat | replace(' ', '_') }}" style="text-align: left; background: none; border: none; padding: 8px 12px; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.875rem; color: var(--text-soft); font-weight: 500; display: flex; justify-content: space-between; align-items: center; width: 100%;">
+      <button class="category-btn drop-product-category csp-s-0f7a3355e6" data-cat="{{ cat }}" data-cotizat-click="productos-filter-category" id="btn-cat-{{ cat | replace(' ', '_') }}">
         <span>🏷️ {{ cat }}</span>
-        <span class="badge" style="background: var(--bg); color: var(--text-soft); font-size: 0.75rem;">{{ cat_productos | length }}</span>
+        <span class="badge csp-s-3b4bb75f0e">{{ cat_productos | length }}</span>
       </button>
       {% endfor %}
     </div>
   </div>
 
   <!-- LISTA DE PRODUCTOS AGRUPADOS -->
-  <div style="flex: 1; display: flex; flex-direction: column; gap: 1.5rem;">
+  <div class="csp-s-08376baafc">
     {% for cat, cat_productos in productos | groupby('categoria') %}
     <div class="card category-group drop-product-category" data-categoria="{{ cat }}" id="group-{{ cat | replace(' ', '_') }}">
-      <div style="border-bottom: 1.5px solid var(--accent); padding-bottom: 0.5rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
-        <h2 style="margin:0; font-size: 1.15rem; color: var(--text); display: flex; align-items: center; gap: 8px;">
-          <span style="color: var(--accent);">●</span> {{ cat }}
+      <div class="csp-s-99c92f408f">
+        <h2 class="csp-s-e71e28dc61">
+          <span class="csp-s-10d73d1269">●</span> {{ cat }}
         </h2>
-        <span class="badge badge-categoria" style="font-size:0.75rem;">{{ cat_productos | length }} productos</span> <button type="button" class="btn btn-xs" style="font-size:0.7rem;padding:1px 6px;margin-left:6px;" data-cotizat-click="productos-delete-category">🗑 Borrar cat.</button>
+        <span class="badge badge-categoria csp-s-72559bf72e">{{ cat_productos | length }} productos</span> <button type="button" class="btn btn-xs csp-s-d04d35ec75" data-cotizat-click="productos-delete-category">🗑 Borrar cat.</button>
       </div>
 
       <table class="table">
         <thead>
           <tr>
-            <th style="width:26px;"><input type="checkbox" data-cotizat-change="productos-toggle-all" title="Seleccionar todos visibles"></th>
-            <th style="width: 70px;">Foto</th>
+            <th class="csp-s-bcd04dfac9"><input type="checkbox" data-cotizat-change="productos-toggle-all" title="Seleccionar todos visibles"></th>
+            <th class="csp-s-3e5bb81768">Foto</th>
             <th>Nombre</th>
-            <th style="width: 70px;">Unidad</th>
-            <th class="right" style="width: 90px;">Coste</th>
-            <th class="right sortable" data-sort="precio" style="width: 90px;">Venta</th>
-            <th class="right" style="width: 82px;">Margen</th>
-            <th class="right sortable" data-sort="usos" style="width: 60px;">Usos</th>
-            <th style="width: 110px;" class="right">Acciones</th>
+            <th class="csp-s-3e5bb81768">Unidad</th>
+            <th class="right csp-s-71f9841409">Coste</th>
+            <th class="right sortable csp-s-71f9841409" data-sort="precio">Venta</th>
+            <th class="right csp-s-d218c2c241">Margen</th>
+            <th class="right sortable csp-s-c5f3c1cb42" data-sort="usos">Usos</th>
+            <th class="right csp-s-0dfe35f39a">Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -82,32 +82,32 @@
           <tr draggable="true" class="producto-tr" data-id="{{ p.id }}" data-nombre="{{ (p.nombre ~ ' ' ~ p.descripcion ~ ' ' ~ p.categoria ~ ' ' ~ p.marca ~ ' ' ~ p.modelo ~ ' ' ~ p.sku ~ ' ' ~ p.proveedor ~ ' ' ~ p.color ~ ' ' ~ p.acabado) | lower }}">
             <td><input type="checkbox" class="row-check" data-id="{{ p.id }}" data-cotizat-change="productos-row-check"> <td>
               {% if p.imagen %}
-              <img src="{{ p.imagen | archivo_url }}" alt="{{ p.nombre }}" style="width:48px; height:48px; object-fit:cover; border:1.5px solid var(--accent); border-radius:6px; background:#fff; padding:2px;">
+              <img src="{{ p.imagen | archivo_url }}" alt="{{ p.nombre }}" class="csp-s-55a1a17655">
               {% else %}
-              <span style="display:inline-flex; align-items:center; justify-content:center; width:48px; height:48px; border:1px dashed var(--border-strong); border-radius:6px; color:var(--text-muted); font-size:1.2rem;">🛍️</span>
+              <span class="csp-s-8bcf1c6072">🛍️</span>
               {% endif %}
             </td>
             <td>
               <strong class="producto-nombre">{{ p.nombre }}</strong>
-              {% if p.sku %}<span class="badge" style="margin-left:6px;">{{ p.sku }}</span>{% endif %}
-              {% if p.usos %}<span class="badge" title="Usos en presupuestos" style="margin-left:4px;">🔥 {{ p.usos }}</span>{% endif %}
+              {% if p.sku %}<span class="badge csp-s-451d13ae38">{{ p.sku }}</span>{% endif %}
+              {% if p.usos %}<span class="badge csp-s-9a8ff29472" title="Usos en presupuestos">🔥 {{ p.usos }}</span>{% endif %}
               <p class="catalog-meta">
                 {% if p.marca %}<span>{{ p.marca }}{% if p.modelo %} · {{ p.modelo }}{% endif %}</span>{% endif %}
                 {% if p.proveedor %}<span>🏪 {{ p.proveedor }}</span>{% endif %}
                 {% if p.fecha_actualizacion_precio %}<span>🗓 Precio: {{ p.fecha_actualizacion_precio | fecha }}</span>{% endif %}
                 {% if p.ficha_tecnica %}<span><a class="link" href="{{ p.ficha_tecnica | archivo_url }}" target="_blank">📄 Ficha</a></span>{% endif %}
               </p>
-              {% if p.descripcion %}<p class="hint" style="margin-top: 3px; font-size: 0.85rem; color: var(--text-soft);">{{ p.descripcion }}</p>{% endif %}
+              {% if p.descripcion %}<p class="hint csp-s-425a6e76cc">{{ p.descripcion }}</p>{% endif %}
             </td>
-            <td><code style="background: var(--bg); padding: 2px 6px; border-radius: 4px; font-size: 0.85rem;">{{ p.unidad }}</code></td>
+            <td><code class="csp-s-ee607fcc95">{{ p.unidad }}</code></td>
             <td class="right">{{ p.precio_compra | money if p.precio_compra is not none else '—' }}</td>
             <td class="right" data-precio="{{ p.precio_unitario }}"><strong>{{ p.precio_unitario | money }}</strong></td>
             <td class="right">{% if p.precio_compra is not none and p.precio_unitario %}<span class="{{ 'text-danger' if p.precio_unitario < p.precio_compra else '' }}">{{ (((p.precio_unitario - p.precio_compra) / p.precio_unitario) * 100) | num }}%</span>{% else %}—{% endif %}</td>
             <td class="right" data-usos="{{ p.usos or 0 }}">{{ p.usos or 0 }}</td>
             <td class="right">
-              <div style="display: flex; gap: 6px; justify-content: flex-end;">
+              <div class="csp-s-6ab8cd05da">
                 <a href="/productos/{{ p.id }}/editar" class="btn btn-sm" title="Editar">✏️</a>
-                <form method="post" action="/productos/{{ p.id }}/eliminar" style="display:inline" data-confirm="¿Eliminar este producto del catálogo?">
+                <form method="post" action="/productos/{{ p.id }}/eliminar" class="csp-s-a91548c594" data-confirm="¿Eliminar este producto del catálogo?">
                   <button type="submit" class="btn btn-sm btn-danger" title="Eliminar">✕</button>
                 </form>
               </div>
@@ -155,13 +155,13 @@ function filtrarCategoria(categoria) {
   document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
   if (categoria === 'todas') {
     document.getElementById('btn-cat-todas').classList.add('active');
-    document.querySelectorAll('.category-group').forEach(g => g.style.display = '');
+    document.querySelectorAll('.category-group').forEach(g => CotizatStyles.set(g, "display", ''));
   } else {
     const id = 'btn-cat-' + categoria.replace(/ /g, '_');
     const btn = document.getElementById(id);
     if (btn) btn.classList.add('active');
     document.querySelectorAll('.category-group').forEach(g => {
-      g.style.display = (g.dataset.categoria === categoria) ? '' : 'none';
+      CotizatStyles.set(g, "display", (g.dataset.categoria === categoria) ? '' : 'none');
     });
   }
   filtrarProductos();
@@ -175,10 +175,10 @@ function filtrarProductos() {
     let vis = 0;
     group.querySelectorAll('.producto-tr').forEach(row => {
       const ok = !q || (row.dataset.nombre || '').toLowerCase().includes(q);
-      row.style.display = ok ? '' : 'none';
+      CotizatStyles.set(row, "display", ok ? '' : 'none');
       if (ok) vis++;
     });
-    group.style.display = (byCat && vis > 0) ? '' : 'none';
+    CotizatStyles.set(group, "display", (byCat && vis > 0) ? '' : 'none');
   });
   updateBulkBarProductos();
 }
@@ -189,8 +189,8 @@ function updateBulkBarProductos() {
   const cnt = document.getElementById('sel-count-productos');
   if (!bar || !cnt) return;
   const n = document.querySelectorAll('.row-check:checked').length;
-  if (n > 0) { cnt.textContent = n; bar.style.display = 'flex'; }
-  else bar.style.display = 'none';
+  if (n > 0) { cnt.textContent = n; CotizatStyles.set(bar, "display", 'flex'); }
+  else CotizatStyles.set(bar, "display", 'none');
 }
 function selectNoneProductos() {
   document.querySelectorAll('.row-check').forEach(c => c.checked=false);
@@ -198,7 +198,7 @@ function selectNoneProductos() {
 }
 function toggleAllProductos(master) {
   document.querySelectorAll('.category-group').forEach(g => {
-    if (g.style.display === 'none') return;
+    if (CotizatStyles.isHidden(g)) return;
     g.querySelectorAll('.row-check').forEach(ch => { if (ch.offsetParent !== null) ch.checked = master.checked; });
   });
   updateBulkBarProductos();
@@ -256,7 +256,7 @@ function makeTableSortableProductos() {
     const headers = thead.querySelectorAll('th');
     headers.forEach((th, idx) => {
       if (idx === 0 || idx === 1 || idx === headers.length - 1) return; // skip checkbox, photo, actions
-      th.style.cursor = 'pointer';
+      CotizatStyles.set(th, "cursor", 'pointer');
       th.title = 'Clic para ordenar';
       let asc = true;
       th.onclick = () => {
@@ -302,7 +302,7 @@ function sortTableProductos(table, colIndex, asc) {
 
 function selectVisibleProductos() {
   document.querySelectorAll('.category-group').forEach(g => {
-    if (g.style.display === 'none') return;
+    if (CotizatStyles.isHidden(g)) return;
     g.querySelectorAll('.row-check').forEach(ch => { if (ch.offsetParent !== null) ch.checked = true; });
   });
   updateBulkBarProductos();
@@ -310,7 +310,7 @@ function selectVisibleProductos() {
 async function deleteAllVisibleProductos() {
   const ids = [];
   document.querySelectorAll('.category-group').forEach(g => {
-    if (g.style.display==='none') return;
+    if (CotizatStyles.isHidden(g)) return;
     g.querySelectorAll('.row-check').forEach(ch => { if (ch.offsetParent!==null) ids.push(ch.dataset.id); });
   });
   if (!ids.length) return alert('Nada visible');

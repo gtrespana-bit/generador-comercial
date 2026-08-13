@@ -377,28 +377,28 @@
 
     // Ocultar/mostrar filas según configuración
     var filaDesc = document.getElementById("ui-fila-desc");
-    if (filaDesc) filaDesc.style.display = dto > 0 ? "" : "none";
+    if (filaDesc) CotizatStyles.set(filaDesc, "display", dto > 0 ? "" : "none");
 
     ["ui-fila-opcional", "ui-fila-alternativas", "ui-fila-adicionales"].forEach(function (id) {
       var e = document.getElementById(id);
-      if (e) e.style.display = avanzado ? "" : "none";
+      if (e) CotizatStyles.set(e, "display", avanzado ? "" : "none");
     });
     ["ui-fila-productos", "ui-fila-obra"].forEach(function (id) {
       var e = document.getElementById(id);
-      if (e) e.style.display = totalProductos > 0 ? "" : "none";
+      if (e) CotizatStyles.set(e, "display", totalProductos > 0 ? "" : "none");
     });
 
     ["ui-fila-beneficio-obra", "ui-fila-margen-obra"].forEach(function (id) {
       var e = document.getElementById(id);
-      if (e) e.style.display = hayCostes ? "" : "none";
+      if (e) CotizatStyles.set(e, "display", hayCostes ? "" : "none");
     });
     ["ui-fila-beneficio-productos", "ui-fila-margen-productos"].forEach(function (id) {
       var e = document.getElementById(id);
-      if (e) e.style.display = hayCostes && hayCostesProductos ? "" : "none";
+      if (e) CotizatStyles.set(e, "display", hayCostes && hayCostesProductos ? "" : "none");
     });
     ["ui-fila-beneficio", "ui-fila-margen"].forEach(function (id) {
       var e = document.getElementById(id);
-      if (e) e.style.display = hayCostes ? "" : "none";
+      if (e) CotizatStyles.set(e, "display", hayCostes ? "" : "none");
     });
 
     // Actualizar barra sticky con datos completos
@@ -626,7 +626,7 @@
           if (!input) {
             input = document.createElement("input");
             input.type = "file";
-            input.style.display = "none";
+            CotizatStyles.set(input, "display", "none");
             form.appendChild(input);
             createdTemp = true;
           }
@@ -857,19 +857,19 @@
       var btnRestore = document.getElementById("btn-restore-draft");
       var btnDiscard = document.getElementById("btn-discard-draft");
 
-      if (draftBanner) draftBanner.style.display = "flex";
+      if (draftBanner) CotizatStyles.set(draftBanner, "display", "flex");
 
       if (btnRestore) {
         btnRestore.addEventListener("click", function () {
           if (autosave) autosave.restaurarBorrador();
-          if (draftBanner) draftBanner.style.display = "none";
+          if (draftBanner) CotizatStyles.set(draftBanner, "display", "none");
         });
       }
 
       if (btnDiscard) {
         btnDiscard.addEventListener("click", function () {
           if (autosave) autosave.limpiarBorradorLocal();
-          if (draftBanner) draftBanner.style.display = "none";
+          if (draftBanner) CotizatStyles.set(draftBanner, "display", "none");
         });
       }
     } else if (window.BORRADOR_SERVIDOR && window.BORRADOR_SERVIDOR.capitulos && window.BORRADOR_SERVIDOR.capitulos.length) {
@@ -878,14 +878,14 @@
       var draftBannerS = document.getElementById("draft-banner");
       var draftTexto = document.getElementById("draft-banner-text");
       if (draftBannerS) {
-        draftBannerS.style.display = "flex";
+        CotizatStyles.set(draftBannerS, "display", "flex");
         if (draftTexto) draftTexto.textContent = "El autoguardado tiene cambios sin guardar de esta sesión.";
         var btnRestoreS = document.getElementById("btn-restore-draft");
         if (btnRestoreS) {
           btnRestoreS.addEventListener("click", function () {
             editor.construirDesde(window.BORRADOR_SERVIDOR.capitulos);
             editor.marcarCambio();
-            draftBannerS.style.display = "none";
+            CotizatStyles.set(draftBannerS, "display", "none");
           });
         }
         var btnDiscardS = document.getElementById("btn-discard-draft");
@@ -898,7 +898,7 @@
                 body: JSON.stringify({ capitulos: null, ts: Date.now() })
               }).catch(function () {});
             } catch (e) {}
-            draftBannerS.style.display = "none";
+            CotizatStyles.set(draftBannerS, "display", "none");
           });
         }
       }

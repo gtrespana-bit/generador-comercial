@@ -11,7 +11,7 @@
 <form method="post" action="/configuracion" enctype="multipart/form-data">
   <div class="card">
     <h2>Datos de la empresa</h2>
-    <p class="subtitle" style="margin-bottom:0.75rem;">Aparecen en la caja del encabezado del PDF.</p>
+    <p class="subtitle csp-s-bdf32b3fef">Aparecen en la caja del encabezado del PDF.</p>
     <div class="form-grid">
       <div class="field">
         <label>Nombre de la empresa *</label>
@@ -47,9 +47,9 @@
       </div>
       <div class="field">
         <label>Color primario de la marca (PDF)</label>
-        <div style="display:flex; align-items:center; gap:10px;">
-          <input type="color" name="pdf_color" value="{{ cfg.pdf_color or '#04265D' }}" style="padding:0; width:50px; height:38px; border:1px solid var(--border); border-radius:6px; cursor:pointer;" data-cotizat-change="show-color-value">
-          <span style="font-family:monospace; font-size:14px; color:var(--text-muted); text-transform:uppercase;">{{ cfg.pdf_color or '#04265D' }}</span>
+        <div class="csp-s-4f4fe07927">
+          <input type="color" name="pdf_color" value="{{ cfg.pdf_color or '#04265D' }}" class="csp-s-5d5d9f2c44" data-cotizat-change="show-color-value">
+          <span class="csp-s-50d8f808d5">{{ cfg.pdf_color or '#04265D' }}</span>
         </div>
       </div>
       <div class="field field-full">
@@ -59,22 +59,22 @@
       <div class="field field-full">
         <label>Logotipo (lado derecho del encabezado)</label>
         {% if cfg.logo %}
-        <div style="display:flex; align-items:center; gap:14px; margin-bottom:8px; flex-wrap:wrap;">
-          <img src="{{ cfg.logo | archivo_url }}" alt="Logo" style="max-height:70px; max-width:220px; background:#fff; border:1px solid var(--border); border-radius:8px; padding:6px;">
-          <label class="hint" style="display:flex; align-items:center; gap:6px;">
+        <div class="csp-s-098616dfc0">
+          <img src="{{ cfg.logo | archivo_url }}" alt="Logo" class="csp-s-956e30a089">
+          <label class="hint csp-s-047507c35c">
             <input type="checkbox" name="quitar_logo" value="1"> Quitar logo
           </label>
         </div>
         {% endif %}
         <input type="file" name="logo" accept="image/*">
         <p class="hint">PNG o JPG. Se ajusta automáticamente al recuadro del encabezado.</p>
-        <div style="display:flex; align-items:center; gap:12px; margin-top:12px; flex-wrap:wrap; max-width:640px;">
-          <label class="hint" style="margin:0; min-width:120px;">Tamaño en el PDF:</label>
+        <div class="csp-s-484a54c78b">
+          <label class="hint csp-s-aa5624ae65">Tamaño en el PDF:</label>
           <input type="range" id="logo_ancho" name="logo_ancho_pdf" min="120" max="420" step="10"
                  value="{{ cfg.logo_ancho_pdf|int if cfg.logo_ancho_pdf else 360 }}"
-                 style="flex:1; min-width:160px;"
+                 class="csp-s-098e4d12c1"
                  data-cotizat-input="show-logo-width">
-          <span id="logo_ancho_val" style="font-family:monospace; font-size:13px; color:var(--text-muted); min-width:52px;">
+          <span id="logo_ancho_val" class="csp-s-2968716aac">
             {{ cfg.logo_ancho_pdf|int if cfg.logo_ancho_pdf else 360 }} pt
           </span>
         </div>
@@ -102,53 +102,53 @@
         <label>Validez por defecto (días)</label>
         <input type="number" name="validez_default" min="1" value="{{ cfg.validez_default }}">
       </div>
-      <div class="field field-full" style="display:flex; flex-direction:column; gap:10px; margin-top:8px; border-top: 1px solid var(--border); padding-top: 14px;">
-        <label style="font-weight:600; color: var(--text);">Opciones predeterminadas del PDF:</label>
-        <p class="hint" style="margin-top:-2px; max-width:680px;">
+      <div class="field field-full csp-s-16bcf666ae">
+        <label class="csp-s-4b43428289">Opciones predeterminadas del PDF:</label>
+        <p class="hint csp-s-b578c7f3a6">
           Si marcas una casilla y guardas, se aplica <strong>también a los presupuestos
           ya existentes</strong> (todos pasan a incluir esa opción). Si la dejas sin marcar,
           solo afecta a los presupuestos nuevos. Para quitar una opción de un presupuesto
           concreto, ábrelo, desmarca la casilla en «Opciones premium» y guárdalo.
         </p>
-        <label style="display:flex; align-items:center; gap:8px; font-weight:normal; cursor:pointer; color: var(--text-soft);">
+        <label class="csp-s-25e01abf0a">
           <input type="checkbox" name="con_portada_default" value="1" {{ 'checked' if cfg.con_portada_default else '' }}>
           Añadir Portada de Presentación editorial de página completa por defecto
         </label>
-        <label style="display:flex; align-items:center; gap:8px; font-weight:normal; cursor:pointer; color: var(--text-soft);">
+        <label class="csp-s-25e01abf0a">
           <input type="checkbox" name="mostrar_resumen_capitulos_default" value="1" {{ 'checked' if cfg.mostrar_resumen_capitulos_default else '' }}>
           Mostrar Tabla de Resumen Ejecutivo de Capítulos al inicio por defecto
         </label>
-        <label style="display:flex; align-items:center; gap:8px; font-weight:normal; cursor:pointer; color: var(--text-soft);">
+        <label class="csp-s-25e01abf0a">
           <input type="checkbox" name="mostrar_firmas_default" value="1" {{ 'checked' if cfg.mostrar_firmas_default else '' }}>
           Mostrar bloque de firmas formales de aceptación al final por defecto
         </label>
-        <label style="display:flex; align-items:center; gap:8px; font-weight:normal; cursor:pointer; color: var(--text-soft);">
+        <label class="csp-s-25e01abf0a">
           <input type="checkbox" name="mostrar_garantias_default" value="1" {{ 'checked' if cfg.mostrar_garantias_default else '' }}>
           Incluir tabla de garantías por tipo de trabajo (pisos, carpintería, fontanería…) por defecto
         </label>
       </div>
-      <div class="field field-full" style="border-top:1px solid var(--border); padding-top:14px;">
-        <label style="font-weight:600;">Funciones avanzadas del creador</label>
+      <div class="field field-full csp-s-30e51cbec9">
+        <label class="csp-s-6b2a94ea3b">Funciones avanzadas del creador</label>
         <p class="hint">El creador permanece simple por defecto. Activa esta opción para mostrar ajustes de costes, márgenes, alternativas y cargos adicionales en los presupuestos.</p>
-        <label style="display:flex; align-items:center; gap:8px; cursor:pointer; margin:8px 0;"><input type="checkbox" name="activar_funciones_avanzadas" value="1" {{ 'checked' if cfg.activar_funciones_avanzadas else '' }}> Activar modo avanzado en presupuestos nuevos</label>
-        <label style="display:flex; align-items:center; gap:8px; cursor:pointer; margin:8px 0;"><input type="checkbox" name="mostrar_costes_internos" value="1" {{ 'checked' if cfg.mostrar_costes_internos else '' }}> Mostrar costes internos y margen</label>
-        <label style="display:flex; align-items:center; gap:8px; cursor:pointer; margin:8px 0;"><input type="checkbox" name="mostrar_alternativas" value="1" {{ 'checked' if cfg.mostrar_alternativas else '' }}> Activar alternativas y partidas opcionales</label>
-        <label style="display:flex; align-items:center; gap:8px; cursor:pointer; margin:8px 0;"><input type="checkbox" name="mostrar_cargos_adicionales" value="1" {{ 'checked' if cfg.mostrar_cargos_adicionales else '' }}> Activar gastos indirectos, imprevistos y cargos</label>
-        <div class="field field-full" style="border-top:1px solid var(--border);padding-top:14px;margin-top:4px;">
-          <label style="font-weight:600;">⏱ Estimación de tiempos de obra</label>
+        <label class="csp-s-48d378d077"><input type="checkbox" name="activar_funciones_avanzadas" value="1" {{ 'checked' if cfg.activar_funciones_avanzadas else '' }}> Activar modo avanzado en presupuestos nuevos</label>
+        <label class="csp-s-48d378d077"><input type="checkbox" name="mostrar_costes_internos" value="1" {{ 'checked' if cfg.mostrar_costes_internos else '' }}> Mostrar costes internos y margen</label>
+        <label class="csp-s-48d378d077"><input type="checkbox" name="mostrar_alternativas" value="1" {{ 'checked' if cfg.mostrar_alternativas else '' }}> Activar alternativas y partidas opcionales</label>
+        <label class="csp-s-48d378d077"><input type="checkbox" name="mostrar_cargos_adicionales" value="1" {{ 'checked' if cfg.mostrar_cargos_adicionales else '' }}> Activar gastos indirectos, imprevistos y cargos</label>
+        <div class="field field-full csp-s-c2600a842f">
+          <label class="csp-s-6b2a94ea3b">⏱ Estimación de tiempos de obra</label>
           <p class="hint">Las horas se calculan desde los rendimientos de mano de obra de las partidas (filas del descompuesto con unidad h/día) y, en su defecto, desde el tiempo estimado del catálogo. Con la tarifa media se estiman horas cuando la partida solo tiene coste de mano de obra.</p>
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:10px">
-            <label style="display:grid;gap:4px;font-weight:600;color:var(--text);">Horas por jornada laboral
-              <input type="number" name="horas_jornada" step="0.5" min="1" max="24" value="{{ cfg.horas_jornada or 8 }}" style="font-weight:normal;">
+          <div class="csp-s-7194258dd4">
+            <label class="csp-s-dd0904f904">Horas por jornada laboral
+              <input type="number" name="horas_jornada" step="0.5" min="1" max="24" value="{{ cfg.horas_jornada or 8 }}" class="csp-s-73a0665eae">
             </label>
-            <label style="display:grid;gap:4px;font-weight:600;color:var(--text);">Tarifa media de mano de obra (moneda/h)
-              <input type="number" name="tarifa_hora_media" step="0.5" min="0.5" value="{{ cfg.tarifa_hora_media or 8 }}" style="font-weight:normal;">
+            <label class="csp-s-dd0904f904">Tarifa media de mano de obra (moneda/h)
+              <input type="number" name="tarifa_hora_media" step="0.5" min="0.5" value="{{ cfg.tarifa_hora_media or 8 }}" class="csp-s-73a0665eae">
             </label>
           </div>
-          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin:10px 0 0 0;"><input type="checkbox" name="estimar_tiempo_por_coste" value="1" {{ 'checked' if cfg.estimar_tiempo_por_coste else '' }}> Estimar horas desde el coste de mano de obra cuando la partida no tiene rendimientos de tiempo</label>
+          <label class="csp-s-bf283309bc"><input type="checkbox" name="estimar_tiempo_por_coste" value="1" {{ 'checked' if cfg.estimar_tiempo_por_coste else '' }}> Estimar horas desde el coste de mano de obra cuando la partida no tiene rendimientos de tiempo</label>
         </div>
       </div>
-      <div class="field field-full" style="border-top:1px solid var(--border);padding-top:14px;"><label style="font-weight:600;">Funciones regionales de Venezuela</label><p class="hint">Se mantienen ocultas en el creador hasta que actives esta capacidad.</p><label style="display:flex;gap:8px"><input type="checkbox" name="activar_funciones_venezuela" {{ 'checked' if cfg.activar_funciones_venezuela else '' }}> Activar opciones venezolanas</label><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;margin-top:10px"><label><input type="checkbox" name="mostrar_numero_control" {{ 'checked' if cfg.mostrar_numero_control else '' }}> Número de control</label><label><input type="checkbox" name="mostrar_tasa_cambio" {{ 'checked' if cfg.mostrar_tasa_cambio else '' }}> Tasa y fecha</label><label><input type="checkbox" name="mostrar_total_bs" {{ 'checked' if cfg.mostrar_total_bs else '' }}> Equivalente en Bs.</label><label><input type="checkbox" name="mostrar_retenciones" {{ 'checked' if cfg.mostrar_retenciones else '' }}> Retenciones / exento</label><label><input type="checkbox" name="mostrar_clausula_cambiaria" {{ 'checked' if cfg.mostrar_clausula_cambiaria else '' }}> Cláusula cambiaria</label></div><label style="margin-top:10px">Datos bancarios y métodos de pago</label><textarea name="datos_bancarios" rows="3" placeholder="Banco, cuenta, pago móvil, Zelle, USDT…">{{ cfg.datos_bancarios }}</textarea></div>
+      <div class="field field-full csp-s-30e51cbec9"><label class="csp-s-6b2a94ea3b">Funciones regionales de Venezuela</label><p class="hint">Se mantienen ocultas en el creador hasta que actives esta capacidad.</p><label class="csp-s-d6241da47c"><input type="checkbox" name="activar_funciones_venezuela" {{ 'checked' if cfg.activar_funciones_venezuela else '' }}> Activar opciones venezolanas</label><div class="csp-s-9ba0b3ba7c"><label><input type="checkbox" name="mostrar_numero_control" {{ 'checked' if cfg.mostrar_numero_control else '' }}> Número de control</label><label><input type="checkbox" name="mostrar_tasa_cambio" {{ 'checked' if cfg.mostrar_tasa_cambio else '' }}> Tasa y fecha</label><label><input type="checkbox" name="mostrar_total_bs" {{ 'checked' if cfg.mostrar_total_bs else '' }}> Equivalente en Bs.</label><label><input type="checkbox" name="mostrar_retenciones" {{ 'checked' if cfg.mostrar_retenciones else '' }}> Retenciones / exento</label><label><input type="checkbox" name="mostrar_clausula_cambiaria" {{ 'checked' if cfg.mostrar_clausula_cambiaria else '' }}> Cláusula cambiaria</label></div><label class="csp-s-726e8b317f">Datos bancarios y métodos de pago</label><textarea name="datos_bancarios" rows="3" placeholder="Banco, cuenta, pago móvil, Zelle, USDT…">{{ cfg.datos_bancarios }}</textarea></div>
       <div class="field field-full">
         <label>Información adicional por defecto</label>
         <textarea name="notas_default" rows="3" placeholder="Texto que se rellena automáticamente en cada presupuesto nuevo">{{ cfg.notas_default }}</textarea>
@@ -165,20 +165,20 @@
   </div>
 </form>
 
-<div class="card" style="margin-top:1.25rem;">
+<div class="card csp-s-a3c9c5afaa">
   <h2>Copia de seguridad y restauración</h2>
   {% if database_is_sqlite %}
-  <p class="subtitle" style="margin-bottom:0.75rem;">Descarga todo tu trabajo y restáuralo en otra instalación o en una versión nueva de la aplicación.</p>
+  <p class="subtitle csp-s-bdf32b3fef">Descarga todo tu trabajo y restáuralo en otra instalación o en una versión nueva de la aplicación.</p>
   <div class="form-grid">
     <div class="field">
       <label>Descargar copia de seguridad</label>
-      <a class="btn btn-primary" href="/configuracion/backup" style="text-decoration:none;">⬇️ Descargar copia (.zip)</a>
+      <a class="btn btn-primary csp-s-a85c615773" href="/configuracion/backup">⬇️ Descargar copia (.zip)</a>
       <p class="hint">Incluye la base de datos completa y todas las imágenes (logotipo, productos y fotos de proyectos). Guárdala en un lugar seguro: con ella puedes recuperar todo o pasarlo a una versión nueva. Además, la aplicación crea <strong>una copia automática semanal</strong> en la carpeta de datos de la aplicación (<code>backups/</code>) cada vez que arranca.</p>
     </div>
     <div class="field">
       <label>Restaurar copia</label>
       <form method="post" action="/configuracion/restaurar" enctype="multipart/form-data" data-confirm="⚠️ Se reemplazarán TODOS los datos actuales por los de la copia. ¿Continuar?">
-        <input type="file" name="archivo" accept=".zip,.db" required style="margin-bottom:8px;">
+        <input type="file" name="archivo" accept=".zip,.db" required class="csp-s-c500155b62">
         <button class="btn" type="submit">↩️ Restaurar copia</button>
       </form>
       <p class="hint">Selecciona el .zip de copia de seguridad (o un .db). Antes de restaurar se guarda automáticamente una copia de lo actual en la carpeta <code>backups/</code> de la aplicación.</p>

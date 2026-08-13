@@ -276,7 +276,7 @@
         var texto = (ta && ta.value || "").trim();
         if (!texto) {
           if (salida) {
-            salida.style.display = "block";
+            CotizatStyles.set(salida, "display", "block");
             salida.textContent = "Escribe una breve descripción del proyecto (por ejemplo el tipo de obra y sus acabados).";
           }
           return;
@@ -284,12 +284,12 @@
         var resultado = generarBorrador(texto);
         if (!resultado.total) {
           if (salida) {
-            salida.style.display = "block";
+            CotizatStyles.set(salida, "display", "block");
             salida.textContent = "No se encontraron coincidencias en tu catálogo de partidas. Prueba con otras palabras, o agrega la partida en /partidas/nueva y vuelve a intentarlo.";
           }
           return;
         }
-        if (salida) salida.style.display = "none";
+        if (salida) CotizatStyles.set(salida, "display", "none");
         ta.value = "";
         editor.cerrarModal("modal-generador");
       });

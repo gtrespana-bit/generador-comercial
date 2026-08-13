@@ -92,9 +92,13 @@ def test_csp_usa_nonce_unico_y_bloquea_handlers_inline():
     first_nonce = first.text.split('nonce="', 1)[1].split('"', 1)[0]
     second_nonce = second.text.split('nonce="', 1)[1].split('"', 1)[0]
     script_directive = first_csp.split("script-src ", 1)[1].split(";", 1)[0]
+    style_directive = first_csp.split("style-src ", 1)[1].split(";", 1)[0]
     assert f"'nonce-{first_nonce}'" in script_directive
+    assert f"'nonce-{first_nonce}'" in style_directive
     assert "'unsafe-inline'" not in script_directive
+    assert "'unsafe-inline'" not in style_directive
     assert "script-src-attr 'none'" in first_csp
+    assert "style-src-attr 'none'" in first_csp
     assert first_nonce != second_nonce
 
 
@@ -105,11 +109,21 @@ def test_plantillas_no_contienen_handlers_y_inline_usa_nonce():
     )
     inline_script = re.compile(r"<script(?![^>]*\bsrc=)[^>]*>", re.IGNORECASE)
     style_element = re.compile(r"<style[^>]*>", re.IGNORECASE)
+    style_attribute = re.compile(r"\sstyle\s*=", re.IGNORECASE)
     for path in Path("app/templates").rglob("*.html"):
         template = path.read_text(encoding="utf-8")
         assert not event_attribute.search(template), path
+        assert not style_attribute.search(template), path
         assert all("nonce=" in tag for tag in inline_script.findall(template)), path
         assert all("nonce=" in tag for tag in style_element.findall(template)), path
+
+
+def test_respuesta_real_publica_nonce_para_hoja_dinamica_sin_estilos_inline():
+    with TestClient(cotizat_app) as client:
+        response = client.get("/")
+    nonce = response.headers["content-security-policy"].split("'nonce-", 1)[1].split("'", 1)[0]
+    assert f'<script nonce="{nonce}" src="/static/js/csp_styles.js"></script>' in response.text
+    assert not re.search(r"\sstyle\s*=", response.text, re.IGNORECASE)
 
 
 def test_frontend_no_usa_sinks_html_de_inyeccion():
@@ -118,11 +132,15 @@ def test_frontend_no_usa_sinks_html_de_inyeccion():
         r"createContextualFragment|DOMParser)\b",
         re.IGNORECASE,
     )
+    style_api = re.compile(r"\.style(?:\.|\[|\s*=)|style\.cssText", re.IGNORECASE)
     for root in (Path("app/static/js"), Path("app/templates")):
         for path in root.rglob("*"):
             if path.suffix not in {".js", ".html"}:
                 continue
-            assert not dangerous.search(path.read_text(encoding="utf-8")), path
+            source = path.read_text(encoding="utf-8")
+            assert not dangerous.search(source), path
+            if path.name != "csp_styles.js":
+                assert not style_api.search(source), path
 
 
 def test_acciones_declarativas_tienen_handler_registrado():

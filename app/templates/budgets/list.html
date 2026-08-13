@@ -28,7 +28,7 @@
   {% if q or estado or desde or hasta %}<a class="btn btn-sm" href="/presupuestos">Limpiar</a>{% endif %}
 </form>
 
-<p class="hint" style="margin:-0.5rem 0 0.75rem;">{{ total }} presupuesto(s) encontrado(s)</p>
+<p class="hint csp-s-aded0dd9df">{{ total }} presupuesto(s) encontrado(s)</p>
 
 <div class="card">
   {% if presupuestos %}
@@ -45,13 +45,13 @@
         <td><span class="badge badge-{{ p.estado }}">{{ p.estado | capitalize }}</span></td>
         <td class="right"><strong>{{ p.total | money(p.moneda) }}</strong></td>
         <td class="right">
-          <div style="display:flex; gap:4px; justify-content:flex-end;">
+          <div class="csp-s-814a5492b5">
             <a class="btn btn-sm" href="/presupuestos/{{ p.id }}">Ver</a>
             <a class="btn btn-sm" href="/presupuestos/{{ p.id }}/editar">✏️ Editar</a>
             <a class="btn btn-sm" href="/presupuestos/{{ p.id }}/tiempos" title="Tiempo estimado de obra">⏱</a>
             {% set wa = p.cliente.telefono | whatsapp('Hola ' ~ p.cliente.nombre ~ ', te comparto el presupuesto ' ~ p.numero ~ ' por un total de ' ~ (p.total | money(p.moneda)) ~ '.') %}
             {% if wa %}<a class="btn btn-sm btn-whatsapp" href="{{ wa }}" target="_blank" title="Enviar por WhatsApp">💬</a>{% endif %}
-            <form method="post" action="/presupuestos/{{ p.id }}/duplicar" style="display:inline;">
+            <form method="post" action="/presupuestos/{{ p.id }}/duplicar" class="csp-s-a91548c594">
               <button class="btn btn-sm" type="submit" title="Duplicar">📋</button>
             </form>
             <a class="btn btn-sm" href="/presupuestos/{{ p.id }}/pdf" download="presupuesto_{{ p.numero }}.pdf" data-cotizat-click="download-pdf">PDF</a>
