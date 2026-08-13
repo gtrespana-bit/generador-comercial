@@ -430,6 +430,13 @@ else:
 app.mount("/static", StaticFiles(directory=str(BASE_DIR / "app" / "static")), name="static")
 
 
+@app.get("/favicon.ico", include_in_schema=False)
+def favicon() -> RedirectResponse:
+    """Los navegadores piden /favicon.ico por defecto; sin esta ruta cada
+    visita deja un 404 ruidoso en los logs del despliegue."""
+    return RedirectResponse("/static/icono.png", status_code=307)
+
+
 # ---------------------------------------------------------------------------
 # Utilidades
 # ---------------------------------------------------------------------------

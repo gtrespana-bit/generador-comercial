@@ -43,3 +43,46 @@ def test_arranque_en_sistema_de_solo_lectura(modo):
     if modo == "sqlite":
         assert "DATOS_EFIMEROS: True" in salida
         assert "Sistema de archivos de solo lectura detectado" in resultado.stderr
+
+
+def test_organizacion_por_entorno_vacia_equivale_a_no_configurada(monkeypatch):
+    """Una variable presente pero vacía (Vercel la crea al pegar listas de
+    variables) no debe romper get_db: antes producía ValueError en int('')."""
+    from fastapi.testclient import TestClient
+
+    from app.main import app
+
+    monkeypatch.setenv("COTIZAT_ORGANIZATION_ID", "")
+    with TestClient(app) as client:
+        respuesta = client.get("/", follow_redirects=False)
+        assert respuesta.status_code in (200, 303), (
+            f"Código inesperado con COTIZAT_ORGANIZATION_ID vacía: "
+            f"{respuesta.status_code}"
+        )
+
+
+def test_organizacion_por_entorno_no_numerica_falla_con_mensaje_claro(monkeypatch):
+    """Un valor no numérico sí es un error de configuración: debe lanzar un
+    ValueError descriptivo, no un 500 mudo."""
+    from fastapi.testclient import TestClient
+
+    from app.main import app
+
+    monkeypatch.setenv("COTIZAT_ORGANIZATION_ID", "no-soy-un-numero")
+    with TestClient(app) as client:
+        with pytest.raises(ValueError, match="COTIZAT_ORGANIZATION_ID"):
+            client.get("/")
+
+
+def test_favicon_redirige_al_icono_estatico():
+    """El navegador pide /favicon.ico por defecto; debe redirigir al icono
+    real en lugar de dejar un 404 ruidoso en los logs del despliegue."""
+    from fastapi.testclient import TestClient
+
+    from app.main import app
+
+    with TestClient(app) as client:
+        respuesta = client.get("/favicon.ico", follow_redirects=False)
+        assert respuesta.status_code == 307
+        assert respuesta.headers["location"] == "/static/icono.png"
+

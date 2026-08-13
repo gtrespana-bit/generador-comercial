@@ -28,6 +28,16 @@ necesita la configuración PostgreSQL + Supabase descrita en
 > `MIGRATION_DATABASE_URL` es solo para migrar localmente; **no** debe
 > configurarse en Vercel.
 
+### Variables vacías o heredadas
+
+Vercel crea variables presentes pero **vacías** si pegas una lista sin valor
+o importas un `.env` incompleto. Eso puede romper el arranque (p. ej. una
+`COTIZAT_ORGANIZATION_ID` vacía hacía fallar cada petición con 500). La
+aplicación ya trata una variable vacía como «no configurada», pero conviene
+revisar **Settings → Environment Variables** y eliminar las claves que no
+tengan valor real. `COTIZAT_ORGANIZATION_ID` solo aplica al modo SQLite
+local: en la versión web con PostgreSQL se ignora y no hace falta definirla.
+
 ## Migración del esquema (una vez, antes del primer uso)
 
 La app comprueba al arrancar que PostgreSQL ya tiene el esquema versionado;

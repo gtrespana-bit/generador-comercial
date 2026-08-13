@@ -215,6 +215,26 @@ def get_authenticated_db(request: Request = None):
         db.close()
 
 
+def _organizacion_sqlite_desde_entorno() -> int:
+    """Espacio fijo de SQLite desde ``COTIZAT_ORGANIZATION_ID``.
+
+    Una variable presente pero vacía (típico al copiar listas de variables de
+    entorno en plataformas como Vercel) equivale a no configurada: se usa el
+    espacio histórico 1. Un valor no numérico sí es un error de configuración
+    real y debe fallar con un mensaje claro en lugar de un 500 genérico.
+    """
+    valor = os.environ.get("COTIZAT_ORGANIZATION_ID", "").strip()
+    if not valor:
+        return 1
+    try:
+        return int(valor)
+    except ValueError as exc:
+        raise ValueError(
+            "COTIZAT_ORGANIZATION_ID debe ser un número entero "
+            f"(recibido: {valor!r})."
+        ) from exc
+
+
 def get_db(request: Request = None):
     """Abre una sesión con organización derivada de una membresía autorizada.
 
@@ -225,8 +245,7 @@ def get_db(request: Request = None):
     db = SessionLocal()
     try:
         if DATABASE_IS_SQLITE:
-            organizacion_id = int(os.environ.get("COTIZAT_ORGANIZATION_ID", "1"))
-            db.info["organizacion_id"] = organizacion_id
+            db.info["organizacion_id"] = _organizacion_sqlite_desde_entorno()
             yield db
             return
 
