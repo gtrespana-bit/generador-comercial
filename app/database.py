@@ -49,10 +49,11 @@ DB_PATH = DATABASE.sqlite_path
 # SQLite local; PostgreSQL tendrá backups administrados fuera del proceso).
 BACKUPS_DIR = DATA_DIR / "backups"
 
-# Imágenes subidas por el usuario (logo, productos, firmas, proyectos).
-# Esta ruta se conserva durante la transición. La versión web la sustituirá
-# por una interfaz de almacenamiento de objetos.
+# Archivos históricos servidos por /static/uploads para compatibilidad.
 UPLOADS_DIR = DATA_DIR / "uploads" if getattr(sys, "frozen", False) else BASE_DIR / "app" / "static" / "uploads"
+# Los objetos nuevos del adaptador local nunca cuelgan del montaje estático:
+# incluso en desarrollo pasan por el proxy autorizado /archivos/....
+PRIVATE_STORAGE_DIR = DATA_DIR / "private_storage"
 
 _engine_options = {"pool_pre_ping": True}
 if DATABASE_IS_SQLITE:

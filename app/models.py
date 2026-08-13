@@ -209,6 +209,30 @@ class TenantMixin:
         )
 
 
+class ArchivoAlmacenado(TenantMixin, Base):
+    """Metadatos de un objeto privado; el binario vive fuera de PostgreSQL."""
+
+    __tablename__ = "archivos_almacenados"
+    __table_args__ = (
+        UniqueConstraint(
+            "organizacion_id", "object_key", name="uq_archivo_organizacion_clave"
+        ),
+        CheckConstraint(
+            "object_key LIKE 'organizaciones/' || organizacion_id || '/%'",
+            name="ck_archivo_clave_pertenece_organizacion",
+        ),
+    )
+
+    id = Column(Integer, primary_key=True)
+    object_key = Column(String(900), nullable=False)
+    categoria = Column(String(80), nullable=False)
+    content_type = Column(String(150), nullable=False)
+    tamano_bytes = Column(Integer, nullable=False)
+    sha256 = Column(String(64), nullable=False)
+    nombre_original = Column(String(300), nullable=False)
+    metadata_json = Column(Text, nullable=False, default="{}")
+
+
 class Cliente(TenantMixin, Base):
     __tablename__ = "clientes"
 

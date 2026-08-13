@@ -11,6 +11,7 @@ imports_cype/
 .env.*
 !.env.example
 app/static/uploads/
+private_storage/
 build/
 dist/
 instalador/
