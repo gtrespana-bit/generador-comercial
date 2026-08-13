@@ -1,12 +1,102 @@
 """Frontera HTTP browser-first: CSRF por origen y cabeceras defensivas."""
 from __future__ import annotations
 
+from collections import deque
+import ipaddress
+from threading import Lock
+import time
 from urllib.parse import urlsplit
 
 from starlette.responses import JSONResponse, PlainTextResponse
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
 _UNSAFE_METHODS = {"POST", "PUT", "PATCH", "DELETE"}
+
+
+class AuthRateLimitMiddleware:
+    """Límite básico por IP para endpoints de credenciales y recuperación.
+
+    Es deliberadamente local al proceso. Reduce abuso accidental y ráfagas,
+    pero un despliegue con varias instancias necesitará Redis/Upstash o el
+    rate limiter equivalente del proveedor.
+    """
+
+    DEFAULT_LIMITS = {
+        "/acceso": 10,
+        "/registro": 5,
+        "/recuperar-acceso": 5,
+        "/restablecer-clave": 10,
+    }
+
+    def __init__(
+        self,
+        app: ASGIApp,
+        limits: dict[str, int] | None = None,
+        window_seconds: int = 300,
+        trust_forwarded_for: bool = False,
+        max_buckets: int = 10_000,
+    ):
+        self.app = app
+        self.limits = dict(limits or self.DEFAULT_LIMITS)
+        self.window_seconds = max(1, int(window_seconds))
+        self.trust_forwarded_for = trust_forwarded_for
+        self.max_buckets = max(1, int(max_buckets))
+        self._attempts: dict[tuple[str, str], deque[float]] = {}
+        self._lock = Lock()
+
+    def _client_ip(self, scope: Scope, headers: dict[str, str]) -> str:
+        forwarded = headers.get("x-forwarded-for", "").split(",", 1)[0].strip()
+        try:
+            if self.trust_forwarded_for and forwarded:
+                return str(ipaddress.ip_address(forwarded))
+        except ValueError:
+            pass
+        client = scope.get("client")
+        return str(client[0]) if client else "unknown"
+
+    def _permitido(self, key: tuple[str, str], limit: int) -> tuple[bool, int]:
+        now = time.monotonic()
+        threshold = now - self.window_seconds
+        with self._lock:
+            if key not in self._attempts and len(self._attempts) >= self.max_buckets:
+                stale = [
+                    stored_key
+                    for stored_key, values in self._attempts.items()
+                    if not values or values[-1] <= threshold
+                ]
+                for stored_key in stale:
+                    self._attempts.pop(stored_key, None)
+                if len(self._attempts) >= self.max_buckets:
+                    self._attempts.pop(next(iter(self._attempts)))
+            attempts = self._attempts.setdefault(key, deque())
+            while attempts and attempts[0] <= threshold:
+                attempts.popleft()
+            if len(attempts) >= limit:
+                retry = max(1, int(self.window_seconds - (now - attempts[0])))
+                return False, retry
+            attempts.append(now)
+            return True, 0
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        if scope["type"] != "http" or str(scope.get("method", "GET")).upper() != "POST":
+            await self.app(scope, receive, send)
+            return
+        path = str(scope.get("path", ""))
+        limit = self.limits.get(path)
+        if not limit:
+            await self.app(scope, receive, send)
+            return
+        headers = WebSecurityMiddleware._headers(scope)
+        allowed, retry = self._permitido((path, self._client_ip(scope, headers)), limit)
+        if allowed:
+            await self.app(scope, receive, send)
+            return
+        response = JSONResponse(
+            {"ok": False, "error": "Demasiados intentos. Espera antes de volver a intentarlo."},
+            status_code=429,
+            headers={"Retry-After": str(retry)},
+        )
+        await response(scope, receive, send)
 
 
 class WebSecurityMiddleware:

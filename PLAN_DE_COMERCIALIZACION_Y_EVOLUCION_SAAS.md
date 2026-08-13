@@ -91,7 +91,7 @@ Al trabajar en una tarea de este plan se debe:
   Evidencia: FastAPI + Jinja2 + SQLAlchemy + SQLite + ReportLab + JavaScript modular; aplicación empaquetable para Windows.
 
 - [x] **E0-002 — Ejecutar la suite automatizada.**  
-  Evidencia actualizada: 119 pruebas superadas con `.venv/bin/pytest -q` el 13/08/2026; la suite cubre Auth/membresías, aislamiento y almacenamiento privado, usa bases temporales y deja intacta la base personal.
+  Evidencia actualizada: 124 pruebas superadas con `.venv/bin/pytest -q` el 13/08/2026; la suite cubre Auth/membresías, aislamiento, almacenamiento privado y rate limiting de Auth, usa bases temporales y deja intacta la base personal.
 
 - [x] **E0-003 — Verificar el arranque y las rutas principales.**  
   Evidencia: las pantallas principales y la generación de PDF respondieron correctamente en una base limpia.
@@ -202,7 +202,7 @@ Al trabajar en una tarea de este plan se debe:
   Evidencia: SQLAlchemy añade el criterio de organización a consultas y relaciones, asigna propietario a registros nuevos y rechaza escrituras cruzadas sin depender de cada ruta.
 
 - [~] **E1W-007 — Cubrir automáticamente el aislamiento de cada dominio.**
-  Cobertura actual: configuración, clientes, presupuestos, capítulos, acceso directo por ID, escritura cruzada, numeración, membresías y objetos privados. Storage verifica claves tenant y rechazo del proxy a otra organización; `WebSecurityMiddleware` bloquea escrituras cross-site y añade cabeceras defensivas. Pendiente ampliar dominios, retirar `unsafe-inline` de CSP y ejecutar el cruce real contra Supabase.
+  Cobertura actual: configuración, clientes, presupuestos, capítulos, acceso directo por ID, escritura cruzada, numeración, membresías y objetos privados. Storage verifica claves tenant y rechazo del proxy a otra organización; `WebSecurityMiddleware` bloquea escrituras cross-site y añade cabeceras defensivas; Auth limita ráfagas por ruta/IP en cada proceso. Pendiente ampliar dominios, añadir contadores distribuidos, retirar `unsafe-inline` de CSP y ejecutar el cruce real contra Supabase.
 
 - [~] **E1W-008 — Implementar autenticación, sesión segura y autorización por membresía.**
   Implementado en código: Supabase Auth por clave publicable, tokens HttpOnly, renovación, vínculo `auth.users` → `Usuario`, selección validada de organización y bloqueo de escritura para el rol `lectura`. La revisión `9bca2ad1f6e4` ya está aplicada en Supabase y las variables Auth quedaron configuradas localmente fuera de Git. En PostgreSQL se ignora `COTIZAT_ORGANIZATION_ID`. Recuperación de contraseña y redirect HTTPS fijo ya están implementados. Pendiente prueba end-to-end desde un entorno con salida a Supabase, configurar la Redirect URL real, invitaciones y endurecimiento CSP/XSS antes de publicar.
@@ -485,7 +485,8 @@ La beta seguirá siendo privada y de capacidad limitada. Compartir infraestructu
   Implementada por validación estricta Origin/Referer y Fetch Metadata en PostgreSQL, con pruebas same-origin/cross-site.
 - [~] **E3-007 — Añadir cookies seguras y cabeceras de seguridad.**
   Cookies Auth seguras y cabeceras globales implementadas; falta validación completa en el despliegue HTTPS y retirar `unsafe-inline` de CSP.
-- [ ] **E3-008 — Añadir límites de carga y rate limiting básico.**
+- [~] **E3-008 — Añadir límites de carga y rate limiting básico.**
+  Auth ya responde 429 con `Retry-After` ante ráfagas por ruta/IP y los archivos validan tamaño/MIME; falta un contador compartido entre instancias y verificar límites en el proxy de producción.
 
 ## 3.2 Datos y operación
 
@@ -591,7 +592,7 @@ La beta seguirá siendo privada y de capacidad limitada. Compartir infraestructu
 - [ ] **E4-027 — Historial de sesiones y acciones sensibles.**
 - [ ] **E4-028 — Política de contraseñas y bloqueo de intentos.**
 - [~] **E4-029 — CSRF, XSS, CSP, validación de archivos y rate limiting revisados.**
-  CSRF por origen, cabeceras, límites/MIME de archivos y CSP transitoria implementados; faltan CSP sin `unsafe-inline`, auditoría XSS y rate limiting.
+  CSRF por origen, cabeceras, límites/MIME de archivos, rate limiting local de Auth y CSP transitoria implementados; faltan CSP sin `unsafe-inline`, auditoría XSS y rate limiting distribuido.
 - [ ] **E4-030 — Escaneo de dependencias y secretos en CI.**
 - [ ] **E4-031 — Auditoría externa o revisión independiente antes del lanzamiento público.**
 - [ ] **E4-032 — Plan de respuesta a incidentes.**
@@ -768,7 +769,7 @@ Se completará durante la Etapa 2. No deben guardarse aquí nombres, teléfonos 
 
 La base browser-first ya incluye persistencia portable, Alembic, propiedad organizacional, Auth y objetos privados. El siguiente trabajo es:
 
-1. **E1W-007:** continuar auditoría de rutas/roles, retirar `unsafe-inline` de CSP y completar aislamiento restante; CSRF por origen y cabeceras globales ya están implementados.
+1. **E1W-007:** continuar auditoría de rutas/roles, retirar `unsafe-inline` de CSP y completar aislamiento restante; CSRF, cabeceras globales y rate limiting local de Auth ya están implementados.
 2. **E1W-009:** aplicar `72e6f4d8a1c3`, aprovisionar `cotizat-private` como privado y probar Auth/Storage con salida TLS.
 3. **E1W-008:** configurar/probar recuperación de contraseña real y completar invitaciones.
 4. **E1W-010:** probar cuenta → organización → demo/limpio → primer PDF con archivos privados.
@@ -786,7 +787,7 @@ Evidencia acumulada al 13/08/2026:
 - Supabase Auth implementado con cookies HttpOnly, vínculo de identidad y selección por membresía; prueba real pendiente por TLS del sandbox.
 - Pruebas confirman separación de datos y claves/descargas de archivos privados.
 - `StorageBackend`, backend local y adaptador Supabase implementados; objetos bajo `organizaciones/<id>/...`, PDF remoto vía `/tmp` y revisión `72e6f4d8a1c3` preparados. El bucket real no se creó.
-- Pytest usa bases temporales, supera 119 pruebas y no modifica `presupuestos.db`.
+- Pytest usa bases temporales, supera 124 pruebas y no modifica `presupuestos.db`.
 - La aplicación **sigue sin estar autorizada para publicarse**: faltan prueba real de Storage, CSP/XSS final, rol/políticas RLS no privilegiados y pruebas reales de Auth/ORM.
 
 ---

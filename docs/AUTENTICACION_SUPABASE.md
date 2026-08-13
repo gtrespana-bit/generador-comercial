@@ -74,7 +74,7 @@ Esta integración no autoriza por sí sola un despliegue público. Siguen pendie
 
 - probar registro/login/recuperación end-to-end desde un entorno con salida HTTPS a Supabase;
 - configurar `COTIZAT_PUBLIC_URL` y la Redirect URL real en Supabase;
-- límites distribuidos de login y recuperación (el rate limit de Supabase no sustituye el control de aplicación);
+- sustituir/complementar el límite local por IP ya implementado con contadores distribuidos antes de escalar a varias instancias (el rate limit de Supabase tampoco sustituye el control de aplicación);
 - gestión de invitaciones y roles administrativos;
 - políticas RLS autorizantes para un rol no privilegiado;
 - eliminar `unsafe-inline` de CSP y completar auditoría XSS;

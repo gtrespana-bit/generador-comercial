@@ -31,6 +31,27 @@ Todas las respuestas incorporan:
 Las respuestas de archivos que ya declaran `Content-Security-Policy: sandbox`
 conservan esa política más restrictiva.
 
+## Límite de frecuencia de Auth
+
+`AuthRateLimitMiddleware` limita por ruta e IP las escrituras sensibles:
+
+- 10 intentos cada 5 minutos en `/acceso`;
+- 5 intentos cada 5 minutos en `/registro`;
+- 5 intentos cada 5 minutos en `/recuperar-acceso`;
+- 10 intentos cada 5 minutos en `/restablecer-clave`.
+
+Cuando se supera el límite responde `429` y publica `Retry-After`. Las lecturas y
+las rutas no incluidas no consumen intentos. El número de contadores se acota
+para que las IP nuevas no hagan crecer la memoria indefinidamente. Esta primera
+barrera vive en la memoria de cada proceso: no comparte contadores entre
+instancias y se reinicia
+con el servidor. Por tanto **no sustituye un límite distribuido** (Redis,
+Upstash o el servicio equivalente del proveedor) antes de una exposición
+pública con escalado horizontal. Por defecto se ignora `X-Forwarded-For`; solo
+se activa con `COTIZAT_TRUST_PROXY=true` detrás de un proxy conocido que elimine
+o sanee ese encabezado. Activarlo si el proceso recibe Internet directamente
+permitiría falsear la IP y eludir el límite.
+
 ## Límite deliberado de CSP
 
 La interfaz heredada contiene scripts y estilos inline. Para no romper el
@@ -52,7 +73,10 @@ pruebas en el despliegue HTTPS real.
 - Origin/Fetch Metadata cross-site rechazado;
 - escritura sin procedencia rechazada;
 - cabeceras defensivas y HSTS;
-- conservación de la CSP sandbox de archivos.
+- conservación de la CSP sandbox de archivos;
+- bloqueo `429`, `Retry-After`, separación por IP y exclusión de lecturas/rutas
+  no protegidas en el límite de Auth.
 
-Este avance no sustituye la auditoría pendiente de XSS, rate limiting, sesiones,
-roles PostgreSQL no privilegiados ni pruebas reales de Auth/Storage.
+Este avance no sustituye la auditoría pendiente de XSS, el rate limiting
+distribuido, sesiones, roles PostgreSQL no privilegiados ni pruebas reales de
+Auth/Storage.
