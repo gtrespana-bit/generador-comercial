@@ -1,0 +1,5 @@
+# Compatibilidad temporal con la envoltura de escritorio existente.
+# No instalar este archivo en el despliegue web.
+-r requirements.txt
+pywebview>=6.0,<7.0
+pythonnet>=3.0; sys_platform == "win32"

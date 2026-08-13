@@ -8,9 +8,13 @@ empresas de construcción y remodelación en Venezuela: trabaja en USD o
 bolívares, organiza capítulos, partidas, mediciones, productos y cambios de
 alcance, y genera documentos PDF profesionales.
 
-> CotizaT funciona de forma local. Sus sugerencias se basan en coincidencias
-> deterministas sobre el catálogo del usuario; no se presentan como
-> inteligencia artificial ni requieren enviar los datos a un servicio externo.
+> **Dirección del producto:** CotizaT se desarrolla browser-first. Durante la
+> transición puede ejecutarse localmente en el navegador con SQLite, pero la
+> versión alojada usa PostgreSQL, organizaciones aisladas y almacenamiento
+> externo. Todavía no debe publicarse: faltan autenticación y seguridad web.
+>
+> Sus sugerencias se basan en coincidencias deterministas sobre el catálogo del
+> usuario; no se presentan como inteligencia artificial.
 
 ## Cómo se estructura un presupuesto
 
@@ -167,7 +171,10 @@ pip install -r requirements.txt
 python run.py
 ```
 
-Los datos se guardan en `presupuestos.db` (se crea automáticamente). Las
+Para probar la base web con PostgreSQL, configura `DATABASE_URL` y ejecuta
+`alembic upgrade head` antes de iniciar. Consulta `docs/BASE_DE_DATOS_WEB.md`.
+
+En el modo compatible local, los datos se guardan en `presupuestos.db` (se crea automáticamente). Las
 imágenes subidas (logo y productos) van a `app/static/uploads/` — ninguna de
 las dos rutas se versiona en git. Para mover todos los datos a otra
 instalación o versión usa la **copia de seguridad** de Configuración
@@ -179,8 +186,9 @@ mismo archivo con `COTIZAT_DB` (`PRESUPUESTOS_DB` sigue aceptándose como alias)
 ```
 app/
 ├── main.py            # Rutas y lógica de la aplicación
-├── database.py        # Conexión SQLite, inicialización y migraciones
-├── models.py          # Cliente, Presupuesto, Capítulo, Item, Medición, Config
+├── database.py        # Sesiones SQLite/PostgreSQL y compatibilidad local
+├── db_config.py       # Resolución portable de DATABASE_URL
+├── models.py          # Organizaciones, usuarios y datos comerciales aislados
 ├── seeds.py           # Catálogos y datos ficticios del modo demostración
 ├── utils.py           # Formatos de moneda/cantidades/fecha (estilo venezolano)
 ├── services/
@@ -195,16 +203,19 @@ app/
 desktop.py             # Modo escritorio: ventana propia (pywebview)
 run.py                 # Punto de entrada clásico (navegador)
 presupuestos.spec      # Empaquetado con PyInstaller
-instalador.iss         # Instalador de Windows (Inno Setup)
+instalador.iss         # Compatibilidad histórica del instalador Windows
+migrations/             # Esquema PostgreSQL versionado con Alembic
 ```
 
-## Instalar como aplicación de Windows (ventana propia)
+## Compatibilidad de escritorio (desarrollo pausado)
 
-La aplicación se puede instalar **como un programa normal de Windows**:
+La envoltura Windows se conserva para acceder y migrar instalaciones anteriores, pero dejó de ser la prioridad del producto. No se añadirán funciones exclusivas de escritorio mientras se construye la base web.
+
+La aplicación existente se puede instalar **como un programa normal de Windows**:
 icono propio, ventana propia (sin navegador y sin consola), acceso directo
 en el escritorio y en el menú Inicio, y desinstalador.
 
-### Opción A — Instalador con doble clic (recomendada)
+### Opción A — Instalador histórico con doble clic
 
 1. En tu PC con Windows, ejecuta `CREAR_INSTALADOR.bat` (la primera vez
    instala PyInstaller e Inno Setup, ambos gratis).
@@ -223,8 +234,8 @@ Ejecuta `EMPAQUETAR.bat` → `dist\CotizaT.exe` (un único archivo
 autónomo). Copialo a cualquier PC y haz doble clic: se abre en su propia
 ventana.
 
-> **Para entregar a otras personas, usa siempre la Opción A.** Su instalador
-> incluye el mecanismo que instala WebView2 automáticamente si hace falta. La
+> Estas opciones se documentan únicamente para compatibilidad y recuperación.
+> No son el canal recomendado para nuevos pilotos mientras se construye la beta web. La
 > Opción B es portátil y presupone que el equipo ya tiene WebView2. Si la ventana
 > nativa no pudiera cargarse, la aplicación intenta abrirse en el navegador
 > predeterminado y deja el diagnóstico en `logs\inicio.log`, dentro de la
@@ -261,8 +272,8 @@ las últimas líneas del registro.
 ### Modo ventana propia en desarrollo
 
 ```bash
-pip install -r requirements.txt   # incluye pywebview
-python desktop.py                 # ventana propia (sin navegador)
+pip install -r requirements-desktop.txt  # compatibilidad pywebview
+python desktop.py                        # ventana propia (sin navegador)
 python run.py                     # modo clásico (navegador)
 ```
 

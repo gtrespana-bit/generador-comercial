@@ -35,6 +35,7 @@ from .database import (
     BACKUPS_DIR,
     BASE_DIR,
     DATA_DIR,
+    DATABASE_IS_SQLITE,
     DB_PATH,
     UPLOADS_DIR,
     copia_seguridad_sqlite,
@@ -114,6 +115,7 @@ TEMPLATES.env.filters["fecha"] = fmt_fecha
 TEMPLATES.env.globals.update(
     product_name=PRODUCT_NAME,
     value_proposition=VALUE_PROPOSITION,
+    database_is_sqlite=DATABASE_IS_SQLITE,
 )
 
 
@@ -136,11 +138,9 @@ EXT_FICHA_TECNICA = {".pdf"}
 
 
 def _backup_automatico():
-    """Copia de seguridad automática semanal en backups/ (al arrancar).
-
-    Solo actúa si no existe ninguna copia automática de los últimos 7 días;
-    si algo falla, se ignora (nunca impide abrir la aplicación).
-    """
+    """Copia semanal del archivo SQLite local; no se aplica a PostgreSQL."""
+    if not DATABASE_IS_SQLITE:
+        return
     try:
         backups = BACKUPS_DIR
         backups.mkdir(parents=True, exist_ok=True)
@@ -3601,7 +3601,12 @@ async def guardar_configuracion(request: Request, db: Session = Depends(get_db))
 
 @app.get("/configuracion/backup")
 def descargar_backup():
-    """Descarga una copia completa de los datos: base + imágenes subidas."""
+    """Descarga una copia completa de una instalación SQLite local."""
+    if not DATABASE_IS_SQLITE:
+        return _redirect(
+            "/configuracion",
+            error="La versión web usa backups administrados; no descarga el archivo completo de PostgreSQL.",
+        )
     uploads = UPLOADS_DIR
     tmp_db = BACKUPS_DIR / "tmp_backup.db"
     try:
@@ -3682,6 +3687,11 @@ def _extraer_backup_zip(ruta_zip: Path, destino: Path):
 
 @app.post("/configuracion/restaurar")
 async def restaurar_backup(request: Request):
+    if not DATABASE_IS_SQLITE:
+        return _redirect(
+            "/configuracion",
+            error="La restauración de archivos SQLite está desactivada en la versión web.",
+        )
     form = await request.form()
     archivo = form.get("archivo")
     if not isinstance(archivo, UploadFileStarlette) or not archivo.filename:

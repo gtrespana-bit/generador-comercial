@@ -8,6 +8,7 @@ from sqlalchemy import create_engine, event, inspect
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 from .branding import DATABASE_FILENAME, resolve_data_directory
+from .db_config import resolver_database_settings
 
 # ---------------------------------------------------------------------------
 # Rutas: recursos empaquetados vs. datos del usuario
@@ -35,32 +36,36 @@ else:
     BASE_DIR = Path(__file__).resolve().parent.parent
     DATA_DIR = BASE_DIR
 
-# COTIZAT_DB permite cambiar la ruta de la base. PRESUPUESTOS_DB se conserva
-# como alias para automatizaciones e instalaciones anteriores.
-_ruta_db_configurada = os.environ.get("COTIZAT_DB") or os.environ.get("PRESUPUESTOS_DB")
-DB_PATH = Path(_ruta_db_configurada or (DATA_DIR / DATABASE_FILENAME))
-if not DB_PATH.is_absolute():
-    DB_PATH = (DATA_DIR / DB_PATH).resolve()
+# ``DATABASE_URL`` es la entrada de la futura versión web. Las variables de
+# archivo locales continúan funcionando para no romper instalaciones actuales.
+DATABASE = resolver_database_settings(DATA_DIR, DATABASE_FILENAME)
+DATABASE_URL = DATABASE.url
+DATABASE_BACKEND = DATABASE.backend
+DATABASE_IS_SQLITE = DATABASE.is_sqlite
+DB_PATH = DATABASE.sqlite_path
 
-# Copias de seguridad automáticas y manuales
+# Copias de seguridad automáticas y manuales (solo corresponden al modo
+# SQLite local; PostgreSQL tendrá backups administrados fuera del proceso).
 BACKUPS_DIR = DATA_DIR / "backups"
 
 # Imágenes subidas por el usuario (logo, productos, firmas, proyectos).
-# En modo empaquetado viven en DATA_DIR/uploads (no dentro del .exe).
+# Esta ruta se conserva durante la transición. La versión web la sustituirá
+# por una interfaz de almacenamiento de objetos.
 UPLOADS_DIR = DATA_DIR / "uploads" if getattr(sys, "frozen", False) else BASE_DIR / "app" / "static" / "uploads"
 
-engine = create_engine(
-    f"sqlite:///{DB_PATH}",
-    connect_args={"check_same_thread": False},
-)
+_engine_options = {"pool_pre_ping": True}
+if DATABASE_IS_SQLITE:
+    _engine_options["connect_args"] = {"check_same_thread": False}
+engine = create_engine(DATABASE_URL, **_engine_options)
 
 
-@event.listens_for(engine, "connect")
-def _activar_claves_foraneas(dbapi_connection, _connection_record):
-    """SQLite no activa FK por defecto; sin esto podían quedar huérfanos."""
-    cursor = dbapi_connection.cursor()
-    cursor.execute("PRAGMA foreign_keys=ON")
-    cursor.close()
+if DATABASE_IS_SQLITE:
+    @event.listens_for(engine, "connect")
+    def _activar_claves_foraneas(dbapi_connection, _connection_record):
+        """SQLite no activa FK por defecto; sin esto podían quedar huérfanos."""
+        cursor = dbapi_connection.cursor()
+        cursor.execute("PRAGMA foreign_keys=ON")
+        cursor.close()
 
 
 SessionLocal = sessionmaker(autoflush=False, bind=engine)
@@ -68,9 +73,15 @@ Base = declarative_base()
 
 
 def get_db():
-    """Dependencia de FastAPI: abre una sesión por petición."""
+    """Abre una sesión y activa el espacio local durante la transición web.
+
+    El bloque de autenticación sustituirá este identificador fijo por la
+    organización autorizada en la membresía del usuario.
+    """
     db = SessionLocal()
     try:
+        organizacion_id = int(os.environ.get("COTIZAT_ORGANIZATION_ID", "1"))
+        db.info["organizacion_id"] = organizacion_id
         yield db
     finally:
         db.close()
@@ -86,13 +97,25 @@ def _es_esquema_anterior_al_onboarding() -> bool:
 
 
 def init_db():
-    """Crea/migra la base y deja que una instalación nueva elija su contenido."""
+    """Inicializa SQLite local o comprueba el esquema versionado de la web.
+
+    Las instalaciones SQLite conservan la migración no destructiva histórica.
+    En PostgreSQL el esquema debe aplicarse previamente con Alembic; ejecutar
+    DDL implícito al arrancar varias instancias web produciría carreras.
+    """
     from . import models  # noqa: F401  (registra los modelos en Base)
     from .services.onboarding import marcar_instalacion_anterior
 
     instalacion_anterior = _es_esquema_anterior_al_onboarding()
-    Base.metadata.create_all(bind=engine)
-    models.migrar(engine)
+    if DATABASE_IS_SQLITE:
+        Base.metadata.create_all(bind=engine)
+        models.migrar(engine)
+    elif not inspect(engine).has_table("configuracion"):
+        raise RuntimeError(
+            "La base PostgreSQL no tiene el esquema de CotizaT. "
+            "Ejecuta `alembic upgrade head` antes de iniciar la aplicación."
+        )
+
     with SessionLocal() as db:
         models.asegurar_config(db)
         # Una actualización no debe interrumpir al usuario con un asistente ni
@@ -106,6 +129,18 @@ def init_db():
 # Copias de seguridad (descargar / restaurar)
 # ---------------------------------------------------------------------------
 
+class OperacionSoloSQLite(RuntimeError):
+    """La operación local solicitada no corresponde al backend web."""
+
+
+def _exigir_sqlite() -> Path:
+    if not DATABASE_IS_SQLITE or DB_PATH is None:
+        raise OperacionSoloSQLite(
+            "Esta operación solo está disponible en la instalación SQLite local."
+        )
+    return DB_PATH
+
+
 def copia_seguridad_sqlite(destino: Path) -> None:
     """Copia el archivo de la base usando la API de backup de SQLite.
 
@@ -114,10 +149,11 @@ def copia_seguridad_sqlite(destino: Path) -> None:
     """
     import sqlite3
 
+    db_path = _exigir_sqlite()
     destino.parent.mkdir(parents=True, exist_ok=True)
-    if not DB_PATH.exists():
-        raise FileNotFoundError(f"No existe la base de datos: {DB_PATH}")
-    src = sqlite3.connect(str(DB_PATH))
+    if not db_path.exists():
+        raise FileNotFoundError(f"No existe la base de datos: {db_path}")
+    src = sqlite3.connect(str(db_path))
     dst = sqlite3.connect(str(destino))
     try:
         src.backup(dst)
@@ -152,14 +188,15 @@ def restaurar_base(origen: Path, uploads_origen: Path | None = None) -> None:
     """
     from . import models  # noqa: F401
 
+    db_path = _exigir_sqlite()
     backups = BACKUPS_DIR
     backups.mkdir(parents=True, exist_ok=True)
     marca = datetime.now().strftime("%Y%m%d_%H%M%S")
     prev = backups / f"antes_de_restaurar_{marca}"
     prev.mkdir(parents=True, exist_ok=True)
 
-    if DB_PATH.exists():
-        shutil.copy2(DB_PATH, prev / DB_PATH.name)
+    if db_path.exists():
+        shutil.copy2(db_path, prev / db_path.name)
     uploads_dir = UPLOADS_DIR
     if uploads_dir.exists():
         shutil.copytree(uploads_dir, prev / "uploads")
@@ -168,10 +205,10 @@ def restaurar_base(origen: Path, uploads_origen: Path | None = None) -> None:
 
     # Reemplazo atómico del .db (los conectados al archivo viejo lo siguen
     # viendo intacto; las nuevas conexiones abren el archivo restaurado)
-    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
-    tmp = DB_PATH.with_name(DB_PATH.name + ".restaurando")
+    db_path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = db_path.with_name(db_path.name + ".restaurando")
     shutil.copy2(origen, tmp)
-    os.replace(tmp, DB_PATH)
+    os.replace(tmp, db_path)
 
     if uploads_origen is not None and uploads_origen.is_dir():
         if uploads_dir.exists():

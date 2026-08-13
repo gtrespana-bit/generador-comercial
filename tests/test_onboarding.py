@@ -12,6 +12,7 @@ from app.database import Base
 from app.models import (
     Cliente,
     Configuracion,
+    Organizacion,
     Partida,
     Presupuesto,
     Producto,
@@ -55,6 +56,7 @@ def test_modo_limpio_no_inyecta_datos_y_no_se_repite():
         assert cfg.onboarding_completado is True
         assert cfg.onboarding_modo == "limpio"
         assert cfg.empresa_ciudad == "Valencia"
+        assert db.query(Organizacion).filter_by(slug="espacio-local").count() == 1
         assert db.query(Cliente).count() == 0
         assert db.query(Presupuesto).count() == 0
         assert db.query(Partida).count() == 0

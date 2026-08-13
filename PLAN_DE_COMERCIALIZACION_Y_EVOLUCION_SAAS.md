@@ -6,7 +6,7 @@
 **Fecha de creación:** 13 de agosto de 2026  
 **Última actualización:** 13 de agosto de 2026  
 **Estado general:** Etapa 0 completada · Etapa 1 activa
-**Etapa activa:** Etapa 1 — Preparación de la versión comercial local
+**Etapa activa:** Etapa 1 — Fundamentos de la versión comercial web
 
 ---
 
@@ -71,10 +71,10 @@ Al trabajar en una tarea de este plan se debe:
 | Etapa | Objetivo | Estado | Condición principal para avanzar |
 |---|---|---|---|
 | 0. Diagnóstico y límites | Conocer el estado real y fijar principios | **Completada** | Auditoría y decisión de nicho documentadas |
-| 1. Versión comercial local | Poder entregar e instalar un producto honesto, estable y entendible | **Activa** | Producto instalable probado fuera del equipo de desarrollo |
+| 1. Fundamentos comerciales web | Construir una base browser-first honesta, persistente y aislada | **Activa** | Beta web privada con autenticación y datos persistentes |
 | 2. Validación comercial pagada | Demostrar que empresas reales pagan y continúan usándolo | Pendiente | 5 pilotos pagados y señales de uso repetido |
-| 3. Piloto web de instancia individual | Validar acceso web y cobro recurrente sin riesgo multiempresa | Pendiente | 10 clientes de pago y operación estable |
-| 4. SaaS multiempresa | Construir una plataforma segura, escalable y operable | Pendiente | Beta de aislamiento y seguridad aprobada |
+| 3. Beta web controlada | Validar operación alojada, soporte y recurrencia | Pendiente | 10 clientes de pago y operación estable |
+| 4. Endurecimiento SaaS | Completar seguridad, escalabilidad y operación pública | Pendiente | Beta de aislamiento y seguridad aprobada |
 | 5. Retención y profundidad | Convertirlo en una herramienta de uso frecuente durante la obra | Pendiente | Uso recurrente y reducción de abandono |
 | 6. Expansión controlada | Crecer por gremios y países sin perder el foco vertical | Pendiente | Mercado inicial repetible y rentable |
 
@@ -91,7 +91,7 @@ Al trabajar en una tarea de este plan se debe:
   Evidencia: FastAPI + Jinja2 + SQLAlchemy + SQLite + ReportLab + JavaScript modular; aplicación empaquetable para Windows.
 
 - [x] **E0-002 — Ejecutar la suite automatizada.**  
-  Evidencia actualizada: 78 pruebas superadas con `PYTHONPATH=. .venv/bin/pytest -q` el 13/08/2026.
+  Evidencia actualizada: 88 pruebas superadas con `.venv/bin/pytest -q` el 13/08/2026; la suite usa una base temporal y deja intacta la base personal.
 
 - [x] **E0-003 — Verificar el arranque y las rutas principales.**  
   Evidencia: las pantallas principales y la generación de PDF respondieron correctamente en una base limpia.
@@ -117,7 +117,7 @@ Al trabajar en una tarea de este plan se debe:
 - [x] No reescribir la interfaz con React u otro framework sin una necesidad validada.
 - [x] No llamar «IA» a funciones deterministas basadas en coincidencias del catálogo.
 - [x] No presentar la factura actual como factura fiscal homologada.
-- [x] Exigir validación pagada antes de invertir en un SaaS multiempresa completo.
+- [x] Exigir validación pagada antes de invertir en la operación SaaS completa; los fundamentos de aislamiento se adelantan para evitar reescrituras.
 
 ## 0.3 Criterio de salida
 
@@ -130,12 +130,12 @@ Al trabajar en una tarea de este plan se debe:
 
 ---
 
-# ETAPA 1 — Preparación de la versión comercial local
+# ETAPA 1 — Fundamentos de la versión comercial web
 
-**Estado:** ACTIVA — identidad comercial y primer inicio aplicados; validación externa pendiente
-**Objetivo:** transformar la aplicación privada en un producto instalable, honesto, estable y comprensible que pueda entregarse a los primeros clientes.  
-**Estimación orientativa:** 4–6 semanas, ajustable después del inventario inicial.  
-**Restricción:** no añadir grandes módulos funcionales durante esta etapa.
+**Estado:** ACTIVA — estrategia browser-first aprobada y base multiempresa en construcción
+**Objetivo:** transformar la aplicación privada en un producto web honesto, persistente y aislado por empresa antes de añadir más funciones o desplegarlo públicamente.
+**Estimación:** se revisará después de completar autenticación, almacenamiento y una ejecución real sobre PostgreSQL.
+**Restricción:** no añadir grandes módulos funcionales ni invertir en el instalador mientras falten los fundamentos web.
 
 ## 1.1 Identidad, alcance y presentación
 
@@ -181,7 +181,44 @@ Al trabajar en una tarea de este plan se debe:
 
 - [ ] **E1-014 — Simplificar el recorrido básico según los resultados.**
 
-## 1.3 Honestidad funcional y límites legales
+## 1.3 Fundamentos browser-first — prioridad activa
+
+- [x] **E1W-001 — Adoptar y documentar la arquitectura browser-first.**
+  Evidencia: decisión del propietario y `docs/ADR-001_ARQUITECTURA_BROWSER_FIRST.md`. FastAPI/Jinja se conserva; el desarrollo exclusivo de escritorio queda pausado.
+
+- [x] **E1W-002 — Desacoplar la conexión del archivo SQLite.**
+  Evidencia: `DATABASE_URL` permite PostgreSQL y conserva `COTIZAT_DB`/`PRESUPUESTOS_DB` para compatibilidad local. Las URL PostgreSQL usan Psycopg 3.
+
+- [x] **E1W-003 — Introducir migraciones web versionadas con Alembic.**
+  Evidencia: baseline reproducible en `migrations/`; el arranque PostgreSQL exige ejecutar previamente `alembic upgrade head` y no modifica DDL de manera implícita.
+
+- [x] **E1W-004 — Crear organizaciones, usuarios y membresías.**
+  Evidencia: modelos `Organizacion`, `Usuario` y `Membresia`, con membresía única y rol por empresa. La autenticación todavía no está implementada.
+
+- [x] **E1W-005 — Asignar propietario a los datos empresariales.**
+  Evidencia: configuración, catálogos, clientes, presupuestos, documentos, proyectos y entidades hijas incorporan `organizacion_id`; números y nombres reutilizables son únicos dentro de cada organización en el esquema web.
+
+- [x] **E1W-006 — Aplicar aislamiento en la sesión de datos.**
+  Evidencia: SQLAlchemy añade el criterio de organización a consultas y relaciones, asigna propietario a registros nuevos y rechaza escrituras cruzadas sin depender de cada ruta.
+
+- [~] **E1W-007 — Cubrir automáticamente el aislamiento de cada dominio.**
+  Primera cobertura: configuración, clientes, presupuestos, capítulos, acceso directo por ID, escritura cruzada, numeración y membresías. Pendiente auditar archivos y ampliar casos por dominio antes de afirmar aislamiento completo.
+
+- [ ] **E1W-008 — Implementar autenticación, sesión segura y autorización por membresía.**
+  El `COTIZAT_ORGANIZATION_ID` fijo es únicamente transitorio y prohíbe publicar la aplicación.
+
+- [ ] **E1W-009 — Crear una interfaz de almacenamiento y un backend de objetos.**
+  Debe cubrir logos, productos, proyectos, firmas, anexos e importaciones.
+
+- [ ] **E1W-010 — Adaptar onboarding a cuenta → organización → demo/limpio.**
+
+- [ ] **E1W-011 — Ejecutar migraciones y suite de integración contra PostgreSQL real.**
+  La compilación SQL del baseline no sustituye una instancia real.
+
+- [ ] **E1W-012 — Diseñar y probar importación de instalaciones SQLite.**
+  Nunca se migrarán datos privados a un servidor sin acción y confirmación del propietario.
+
+## 1.4 Honestidad funcional y límites legales
 
 - [x] **E1-015 — Renombrar la factura actual como documento no fiscal cuando corresponda.**
   Decisión aplicada: «Documento de cobro» en interfaz y PDF; los identificadores internos y rutas históricas se conservan para no romper la base ni enlaces existentes. Los documentos nuevos usan prefijo `DC-`.
@@ -201,7 +238,7 @@ Al trabajar en una tarea de este plan se debe:
 
 - [ ] **E1-021 — Mantener el repositorio privado y revisar que no contenga datos reales sensibles.**
 
-## 1.4 Catálogo comercial inicial
+## 1.5 Catálogo comercial inicial
 
 - [ ] **E1-022 — Auditar la procedencia y derechos de las partidas que se pretenden vender.**  
   Clasificar cada fuente como propia, autorizada, pública, adquirida o no redistribuible.
@@ -228,9 +265,10 @@ Al trabajar en una tarea de este plan se debe:
 - [ ] **E1-031 — Preparar packs iniciales de alto valor.**  
   Mínimos sugeridos: baño, cocina, pintura integral, cambio de pisos y adecuación comercial pequeña.
 
-## 1.5 Seguridad y funcionamiento local
+## 1.6 Seguridad y funcionamiento local
 
-- [ ] **E1-032 — Cambiar el host local predeterminado de `0.0.0.0` a `127.0.0.1`.**
+- [x] **E1-032 — Cambiar el host local predeterminado de `0.0.0.0` a `127.0.0.1`.**
+  `run.py` solo expone otra interfaz si se configura deliberadamente `COTIZAT_HOST`; los despliegues administrados definirán su propio comando.
 
 - [ ] **E1-033 — Revisar acciones destructivas locales.**  
   Borrados masivos, restauración de backup, ajustes de precios y eliminación de documentos deben exigir confirmación clara.
@@ -247,33 +285,40 @@ Al trabajar en una tarea de este plan se debe:
 
 - [ ] **E1-038 — Configurar GitHub Actions para ejecutar las pruebas.**
 
-- [ ] **E1-039 — Hacer que `pytest` funcione sin depender de configurar manualmente `PYTHONPATH`.**
+- [x] **E1-039 — Hacer que `pytest` funcione sin depender de configurar manualmente `PYTHONPATH`.**
+  Evidencia: `pytest.ini` incorpora la raíz del proyecto y permite ejecutar `.venv/bin/pytest -q` directamente.
 
 - [ ] **E1-040 — Añadir pruebas de los recorridos críticos.**  
   Instalación limpia, primer inicio, presupuesto, PDF, backup, restauración y actualización.
 
-- [ ] **E1-041 — Revisar que las pruebas no modifiquen la base de datos personal del desarrollador.**
+- [x] **E1-041 — Revisar que las pruebas no modifiquen la base de datos personal del desarrollador.**
+  Evidencia: `tests/conftest.py` asigna una base temporal antes de importar la aplicación y la elimina al cerrar la sesión de pytest.
 
-## 1.6 Instalador, actualización y recuperación
+## 1.7 Compatibilidad de escritorio pausada
 
-- [ ] **E1-042 — Generar un instalador comercial con marca y versión.**
+Las herramientas existentes se conservan como fuente de migración, pero dejaron de ser entregables prioritarios por la decisión browser-first D-014.
 
-- [ ] **E1-043 — Probar instalación limpia en Windows 10 y Windows 11.**
+- [-] **E1-042 — Generar un instalador comercial con marca y versión.**
+  Pausada: no se invertirá en una nueva entrega Windows mientras falten autenticación, PostgreSQL y almacenamiento web.
 
-- [ ] **E1-044 — Probar actualización conservando base, imágenes y configuración.**
+- [-] **E1-043 — Probar instalación limpia en Windows 10 y Windows 11.**
 
-- [ ] **E1-045 — Probar desinstalación sin pérdida accidental de datos.**
+- [-] **E1-044 — Probar actualización conservando base, imágenes y configuración.**
+  Sustituida como prioridad por la importación controlada de SQLite de E1W-012.
 
-- [ ] **E1-046 — Probar backup y restauración entre dos equipos.**
+- [-] **E1-045 — Probar desinstalación sin pérdida accidental de datos.**
 
-- [ ] **E1-047 — Definir formato de versiones y notas de lanzamiento.**  
+- [-] **E1-046 — Probar backup y restauración entre dos equipos.**
+  La versión web requerirá backup administrado y exportación por organización.
+
+- [ ] **E1-047 — Definir formato de versiones y notas de lanzamiento.**
   Recomendación: versionado semántico `MAYOR.MENOR.PARCHE`.
 
-- [ ] **E1-048 — Definir un canal seguro para distribuir actualizaciones.**
+- [-] **E1-048 — Definir un canal seguro para distribuir actualizaciones de escritorio.**
 
-- [ ] **E1-049 — Investigar firma de código para reducir alertas de SmartScreen.**
+- [-] **E1-049 — Investigar firma de código para reducir alertas de SmartScreen.**
 
-## 1.7 Documentación, demostración y soporte
+## 1.8 Documentación, demostración y soporte
 
 - [ ] **E1-050 — Crear guía de inicio rápido.**  
   Máximo recomendado: 5–8 páginas.
@@ -291,13 +336,13 @@ Al trabajar en una tarea de este plan se debe:
 - [ ] **E1-056 — Preparar una landing page sencilla.**  
   Debe mostrar problema, resultado, vídeo, PDF de ejemplo, público objetivo y llamada a solicitar demostración.
 
-## 1.8 Hipótesis comercial inicial
+## 1.9 Hipótesis comercial inicial
 
 - [ ] **E1-057 — Definir oferta de piloto fundador.**  
   Hipótesis inicial: configuración asistida + catálogo + soporte por 99 USD/año o 10–15 USD/mes.
 
-- [ ] **E1-058 — Definir hipótesis de licencia de escritorio.**  
-  Hipótesis inicial: 79–149 USD de pago único y renovación opcional de soporte/catálogo.
+- [-] **E1-058 — Definir hipótesis de licencia de escritorio.**
+  Descartada como prioridad por la dirección browser-first; el precio se validará sobre acceso web.
 
 - [ ] **E1-059 — Definir métodos de cobro legales y operables.**  
   Considerar cobro trimestral/anual para reducir fricción administrativa.
@@ -306,7 +351,7 @@ Al trabajar en una tarea de este plan se debe:
 
 - [ ] **E1-061 — Definir proceso manual de activación para los primeros pilotos.**
 
-## 1.9 Criterios de salida de la Etapa 1
+## 1.10 Criterios de salida de la Etapa 1
 
 No se marcará esta etapa como completada hasta cumplir todos los siguientes puntos:
 
@@ -314,14 +359,15 @@ No se marcará esta etapa como completada hasta cumplir todos los siguientes pun
 - [x] No existen promesas visibles de IA, 3D o facturación fiscal no implementadas.
 - [ ] Un usuario nuevo puede generar su primer PDF en menos de 20 minutos con ayuda mínima.
 - [ ] El catálogo comercial tiene procedencia revisada y precios fechados.
-- [ ] El instalador funciona en al menos 3 equipos externos de Windows.
-- [ ] Una actualización conserva todos los datos.
-- [ ] Backup y restauración fueron probados entre equipos.
-- [ ] Existe guía de inicio, vídeo, oferta, contrato y canal de soporte.
+- [ ] PostgreSQL, Alembic y el aislamiento funcionan en una instancia de integración real.
+- [ ] Inicio y cierre de sesión, membresías, roles y CSRF están probados.
+- [ ] Imágenes y anexos usan almacenamiento persistente por organización.
+- [ ] Existe una exportación y una migración controlada desde SQLite.
+- [ ] Existe guía de inicio, oferta, contrato y canal de soporte.
 - [ ] CI ejecuta las pruebas y el recorrido crítico está cubierto.
 - [ ] Tres usuarios externos completaron una prueba de usabilidad.
 
-**Puerta al terminar:** entregar la versión a prospectos y comenzar la Etapa 2. No construir todavía el SaaS multiempresa.
+**Puerta al terminar:** desplegar una beta web privada para prospectos y comenzar la validación pagada, sin afirmar todavía preparación para lanzamiento público.
 
 ---
 
@@ -414,28 +460,21 @@ Considerar si, después de 15–20 entrevistas y una oferta concreta:
 - El soporte requerido supera ampliamente el ingreso posible.
 - Los usuarios prefieren claramente Excel incluso después de una prueba acompañada.
 
-**Puerta al terminar:** decidir entre mantener licencia local, iniciar piloto web individual o detener inversión comercial.
+**Puerta al terminar:** avanzar a beta web controlada, ajustar la propuesta o detener inversión comercial según evidencia de pago y uso.
 
 ---
 
-# ETAPA 3 — Piloto web de instancia individual
+# ETAPA 3 — Beta web controlada
 
-**Estado:** PENDIENTE  
-**Prerrequisito:** Etapa 2 validada.  
-**Objetivo:** comprobar que el acceso web, el backup remoto y la recurrencia aportan valor, sin introducir todavía el riesgo de una base multiempresa compartida.
+**Estado:** PENDIENTE
+**Prerrequisito:** fundamentos web de Etapa 1 y validación inicial de Etapa 2.
+**Objetivo:** comprobar que el acceso alojado, el backup remoto, el soporte y la recurrencia aportan valor usando desde el inicio organizaciones lógicamente aisladas.
 
-Cada empresa tendrá inicialmente:
-
-- Instancia separada.
-- Base de datos separada.
-- Archivos separados.
-- Credenciales propias.
-- Subdominio propio.
-- Backups externos.
+La beta seguirá siendo privada y de capacidad limitada. Compartir infraestructura no autoriza un lanzamiento público: cada acceso deberá validarse mediante membresía y las pruebas impedirán cruces de datos y archivos.
 
 ## 3.1 Fundamentos
 
-- [ ] **E3-001 — Diseñar arquitectura de instancia individual.**
+- [ ] **E3-001 — Diseñar la operación y capacidad de la beta web controlada.**
 - [ ] **E3-002 — Añadir login de aplicación seguro.**
 - [ ] **E3-003 — Implementar cierre de sesión y cambio de contraseña.**
 - [ ] **E3-004 — Implementar recuperación de acceso administrada o por email.**
@@ -483,42 +522,54 @@ Cada empresa tendrá inicialmente:
 
 ---
 
-# ETAPA 4 — SaaS multiempresa
+# ETAPA 4 — Endurecimiento y operación SaaS
 
-**Estado:** PENDIENTE  
-**Prerrequisitos:** validación de pago, uso recurrente y demanda multiusuario.  
-**Estimación orientativa:** 12–20 semanas a tiempo completo, más beta y endurecimiento.  
-**Objetivo:** operar múltiples empresas de forma segura dentro de una plataforma administrable.
+**Estado:** PENDIENTE; algunos fundamentos técnicos fueron adelantados a E1W para evitar reescrituras.
+**Prerrequisitos:** validación de pago, uso recurrente y demanda multiusuario.
+**Estimación:** se revisará con métricas de la beta.
+**Objetivo:** endurecer y operar públicamente la plataforma multiempresa iniciada en Etapa 1.
 
 ## 4.1 Refactorización estructural
 
 - [ ] **E4-001 — Dividir `app/main.py` en routers por dominio.**
 - [ ] **E4-002 — Extraer servicios de aplicación y reglas de autorización.**
-- [ ] **E4-003 — Crear configuración separada por entorno.**
-- [ ] **E4-004 — Introducir migraciones versionadas con Alembic.**
-- [ ] **E4-005 — Mantener SQLite para escritorio y PostgreSQL para SaaS, si continúa el producto híbrido.**
+- [~] **E4-003 — Crear configuración separada por entorno.**
+  `DATABASE_URL` ya separa persistencia web; faltan secretos, almacenamiento y políticas completas por entorno.
+- [x] **E4-004 — Introducir migraciones versionadas con Alembic.**
+  Adelantada y completada como E1W-003.
+- [-] **E4-005 — Mantener SQLite para escritorio y PostgreSQL para SaaS, si continúa el producto híbrido.**
+  No habrá desarrollo híbrido paralelo: SQLite queda como compatibilidad/importación y PostgreSQL es el objetivo web.
 
 ## 4.2 Identidad y organizaciones
 
-- [ ] **E4-006 — Crear modelo de Organización/Empresa.**
-- [ ] **E4-007 — Crear usuarios, membresías e invitaciones.**
-- [ ] **E4-008 — Definir roles mínimos: propietario, administrador, presupuestador y lectura.**
+- [x] **E4-006 — Crear modelo de Organización/Empresa.**
+  Adelantada y completada como E1W-004.
+- [~] **E4-007 — Crear usuarios, membresías e invitaciones.**
+  Usuarios y membresías creados; invitaciones y autenticación siguen pendientes.
+- [~] **E4-008 — Definir roles mínimos: propietario, administrador, miembro y lectura.**
+  Roles persistibles definidos; falta aplicar permisos por operación.
 - [ ] **E4-009 — Implementar autorización centralizada.**
 - [ ] **E4-010 — Implementar recuperación de contraseña y verificación de email.**
 - [ ] **E4-011 — Evaluar segundo factor para administradores.**
 
 ## 4.3 Aislamiento multiempresa
 
-- [ ] **E4-012 — Añadir `organizacion_id` o estrategia equivalente a todos los datos empresariales.**
-- [ ] **E4-013 — Aplicar filtrado obligatorio en la capa de datos.**
-- [ ] **E4-014 — Evitar depender de que cada ruta recuerde filtrar manualmente.**
-- [ ] **E4-015 — Crear pruebas automáticas de aislamiento para cada dominio.**
-- [ ] **E4-016 — Auditar acceso directo por identificadores.**
+- [x] **E4-012 — Añadir `organizacion_id` o estrategia equivalente a todos los datos empresariales.**
+  Adelantada como E1W-005, incluidas entidades hijas.
+- [x] **E4-013 — Aplicar filtrado obligatorio en la capa de datos.**
+  Adelantada como E1W-006.
+- [x] **E4-014 — Evitar depender de que cada ruta recuerde filtrar manualmente.**
+  El criterio se aplica mediante eventos de sesión SQLAlchemy.
+- [~] **E4-015 — Crear pruebas automáticas de aislamiento para cada dominio.**
+  Cobertura inicial en `tests/test_tenancy.py`; faltan dominios y archivos.
+- [~] **E4-016 — Auditar acceso directo por identificadores.**
+  La prueba inicial cubre cliente y capítulo; falta inventario completo de rutas.
 - [ ] **E4-017 — Auditar archivos y URLs firmadas.**
 
 ## 4.4 Infraestructura
 
-- [ ] **E4-018 — PostgreSQL administrado.**
+- [~] **E4-018 — PostgreSQL administrado.**
+  Driver, URL y esquema están preparados; falta elegir proveedor y ejecutar integración real.
 - [ ] **E4-019 — Almacenamiento de objetos para imágenes, PDFs y anexos.**
 - [ ] **E4-020 — Cola de trabajos para PDFs, emails e importaciones pesadas.**
 - [ ] **E4-021 — Backups automáticos y restauraciones ensayadas.**
@@ -662,7 +713,7 @@ Estas cifras no son precios definitivos; deben probarse en la Etapa 2.
 |---|---:|---|
 | Piloto fundador anual | 99 USD/año | Sin validar |
 | Piloto mensual | 10–15 USD/mes | Sin validar |
-| Licencia local perpetua | 79–149 USD | Sin validar |
+| Licencia local perpetua | 79–149 USD | Descartada como prioridad por D-014 |
 | Renovación de soporte/catálogo | 30–60 USD/año | Sin validar |
 | Futuro plan web profesional | 19–29 USD/mes | Sin validar |
 | Tiempo máximo al primer PDF | 20 minutos | Sin validar externamente |
@@ -676,17 +727,19 @@ Estas cifras no son precios definitivos; deben probarse en la Etapa 2.
 |---|---|---|---|---|
 | 13/08/2026 | D-001 | Mantener foco en construcción y remodelación | Es donde existe conocimiento, código y catálogo diferencial | Tras validar Venezuela |
 | 13/08/2026 | D-002 | Comenzar por empresas pequeñas de remodelación privada | Ciclo de venta más corto y mejor encaje con el PDF comercial | Después de 20 entrevistas |
-| 13/08/2026 | D-003 | Preparar primero una versión comercial local | Menor coste y riesgo que un SaaS completo | Al cerrar Etapa 2 |
-| 13/08/2026 | D-004 | No publicar la aplicación actual en internet | No existen autenticación ni aislamiento | Etapa 3 |
+| 13/08/2026 | D-003 | Preparar primero una versión comercial local | Decisión histórica sustituida por D-014 al aclararse la prioridad browser-first | Sustituida el 13/08/2026 |
+| 13/08/2026 | D-004 | No publicar la aplicación actual en internet | Aún no existen autenticación, autorización de archivos ni seguridad web completa | Al completar E1W-007 a E1W-011 |
 | 13/08/2026 | D-005 | No presentar funciones deterministas como IA | Proteger credibilidad | Si se integra IA real |
 | 13/08/2026 | D-006 | No presentar la factura actual como fiscal | No existe homologación/integración demostrada | Tras consulta tributaria |
 | 13/08/2026 | D-007 | No reescribir el frontend por moda | El stack actual permite validar el producto | Si aparecen límites medidos |
-| 13/08/2026 | D-008 | Exigir pilotos pagados antes del multi-tenant | Reducir riesgo de construir sin demanda | Puerta Etapa 2 |
+| 13/08/2026 | D-008 | Exigir pilotos pagados antes de escalar la operación SaaS | Los fundamentos multiempresa se adelantan por D-015, pero no la inversión operativa completa | Puerta Etapa 2 |
 | 13/08/2026 | D-009 | Crear una marca para construcción latinoamericana, especializada inicialmente en remodelación venezolana | Permite crecer por país y función sin diluir el mensaje comercial de entrada | Tras la selección final de nombre |
 | 13/08/2026 | D-010 | Adoptar **CotizaT** como nombre comercial | El usuario priorizó comprensión inmediata y aprobó expresamente el nombre | Tras revisión marcaria profesional |
 | 13/08/2026 | D-011 | Usar la propuesta «Convierte tu catálogo y tus precios en presupuestos de obra claros, editables y listos para presentar» | Es verificable con el producto actual y no promete resultados financieros | Después de pruebas comerciales |
 | 13/08/2026 | D-012 | Renombrar ejecutable e instalador, manteniendo compatibilidad automática con la carpeta histórica de datos | Aplicar la marca sin hacer desaparecer bases, imágenes ni backups existentes | Después de probar actualización en Windows |
 | 13/08/2026 | D-013 | Sustituir la siembra automática por una elección explícita entre demo y limpio | Evitar datos y precios inesperados, y respetar a quien importará un catálogo propio | Después de pruebas de usabilidad |
+| 13/08/2026 | D-014 | Desarrollar CotizaT browser-first y pausar nuevas inversiones de escritorio | El producto final será alojado; adelantar persistencia y aislamiento evita reescribir cada módulo | Después de la beta web privada |
+| 13/08/2026 | D-015 | Adelantar organizaciones y aislamiento, pero no confundirlos con preparación para publicar | La propiedad de datos debe existir antes de ampliar funciones; autenticación, archivos y seguridad siguen pendientes | Al completar E1W-007 a E1W-011 |
 
 ---
 
@@ -702,28 +755,28 @@ Se completará durante la Etapa 2. No deben guardarse aquí nombres, teléfonos 
 
 # 11. Próximo bloque de trabajo
 
-## Etapa 1 activa — siguiente bloque: validación del primer recorrido
+## Etapa 1 activa — siguiente bloque: acceso web seguro
 
-La identidad, el alcance honesto y el primer inicio ya están aplicados. El siguiente trabajo, en este orden, es:
+La primera entrega browser-first ya creó persistencia portable, esquema Alembic y propiedad organizacional. El siguiente trabajo, en este orden, es:
 
-1. **E1-012 y E1-013:** observar al menos tres personas ajenas al desarrollo y medir, sin guiarlas paso a paso, el tiempo real hasta el primer PDF.
-2. **E1-014 y E1-007:** corregir los bloqueos observados y terminar la revisión integral de microcopy con evidencia de esas sesiones.
-3. **E1-002:** completar reserva de activos y revisión marcaria profesional de CotizaT; el riesgo no se considera cerrado por ausencia DNS o RDAP.
-4. **E1-022 a E1-031:** auditar procedencia, estructura y vigencia del catálogo comercial antes de redistribuir precios.
-5. **E1-042 a E1-045:** compilar y probar en Windows la actualización de marca, la conservación de datos y el instalador en equipos externos antes de cerrar la entrega comercial.
+1. **E1W-007:** ampliar la auditoría de aislamiento a cada dominio, relación, descarga y acceso directo por ID.
+2. **E1W-008:** implementar autenticación, sesiones seguras y autorización por membresía; retirar el identificador organizacional fijo de las peticiones normales.
+3. **E1W-009:** desacoplar archivos locales y crear almacenamiento persistente por organización.
+4. **E1W-010:** adaptar el recorrido a cuenta → organización → demo/limpio → primer PDF.
+5. **E1W-011 y E1W-012:** probar PostgreSQL real y definir la importación confirmada desde SQLite.
+6. **E1-012 a E1-014:** retomar usabilidad y medición externa sobre el recorrido web resultante, no sobre una envoltura de escritorio que dejó de ser prioritaria.
 
 Evidencia acumulada al 13/08/2026:
 
-- Marca, descriptor y propuesta centralizados en `app/branding.py`.
-- Configuración y demo sin datos personales reales en `app/models.py` y `app/seeds.py`.
-- Claims de IA/3D sustituidos por nombres que describen la función real.
-- «Factura» visible sustituida por «Documento de cobro» con aviso no fiscal.
-- Ejecutable e instalador renombrados como CotizaT.
-- Migración no destructiva: una instalación nueva usa `%LOCALAPPDATA%\CotizaT`; una actualización sigue usando `%LOCALAPPDATA%\Presupuestos` si allí encuentra datos previos. Los aliases técnicos anteriores continúan aceptándose.
-- El PDF real versionado y el script histórico con datos privados fueron retirados del árbol actual.
-- Recorrido inicial documentado en `docs/RECORRIDO_PRIMER_PRESUPUESTO.md` y aplicado mediante `/bienvenida` y la guía verificable del dashboard.
-- Modos demo y limpio probados; reintentos tras fallo parcial no duplican contenido y las instalaciones heredadas conservan configuración y datos.
-- Suite completa: **78 pruebas aprobadas**; compilación sintáctica, revisión de diff y smoke tests HTTP correctos.
+- Marca, descriptor, propuesta y alcance no fiscal aplicados.
+- Recorrido inicial, modos demo/limpio y progreso hasta el PDF implementados.
+- Decisión browser-first registrada en `docs/ADR-001_ARQUITECTURA_BROWSER_FIRST.md`.
+- `DATABASE_URL`, Psycopg 3 y baseline Alembic preparados; compatibilidad SQLite preservada.
+- Organizaciones, usuarios, membresías y propiedad organizacional incorporados al esquema.
+- Filtro y protección de escritura por organización aplicados en la sesión SQLAlchemy.
+- Pruebas iniciales confirman separación de configuración, clientes, presupuestos, capítulos, numeración y acceso por ID.
+- Pytest usa una base temporal y ya no debe modificar `presupuestos.db` del desarrollador.
+- La aplicación **sigue sin estar autorizada para publicarse**: faltan autenticación, archivos externos y prueba PostgreSQL real.
 
 ---
 
@@ -737,4 +790,4 @@ El objetivo inmediato no es construir la mayor cantidad posible de funciones. El
 4. Mantener sus precios y documentos seguros.
 5. Obtener suficiente valor como para pagar y seguir utilizándolo.
 
-Solo cuando esto esté demostrado se justificará convertir la aplicación en un SaaS multiempresa completo.
+Los fundamentos multiempresa se construyen desde ahora para evitar reescrituras; la inversión en escalabilidad, operación pública y automatización comercial solo se justificará con evidencia de uso y pago.

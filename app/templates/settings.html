@@ -167,6 +167,7 @@
 
 <div class="card" style="margin-top:1.25rem;">
   <h2>Copia de seguridad y restauración</h2>
+  {% if database_is_sqlite %}
   <p class="subtitle" style="margin-bottom:0.75rem;">Descarga todo tu trabajo y restáuralo en otra instalación o en una versión nueva de la aplicación.</p>
   <div class="form-grid">
     <div class="field">
@@ -184,5 +185,8 @@
       <p class="hint">Selecciona el .zip de copia de seguridad (o un .db). Antes de restaurar se guarda automáticamente una copia de lo actual en la carpeta <code>backups/</code> de la aplicación.</p>
     </div>
   </div>
+  {% else %}
+  <p class="subtitle">La versión web utiliza copias administradas de PostgreSQL y almacenamiento externo. La restauración de un archivo SQLite local está desactivada para evitar reemplazar datos compartidos.</p>
+  {% endif %}
 </div>
 {% endblock %}

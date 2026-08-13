@@ -41,7 +41,7 @@ echo Comprobando PyInstaller y dependencias (FastAPI, Uvicorn, etc.)...
 if errorlevel 1 (
     echo Instalando / actualizando PyInstaller y dependencias del proyecto...
     %PY% -m pip install --upgrade pip
-    %PY% -m pip install pyinstaller -r requirements.txt
+    %PY% -m pip install pyinstaller -r requirements-desktop.txt
     if errorlevel 1 (
         echo [ERROR] No se pudieron instalar las dependencias o PyInstaller. Revisa tu conexion a internet.
         pause
