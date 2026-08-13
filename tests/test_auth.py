@@ -11,9 +11,11 @@ from app.auth import (
     ACCESS_COOKIE,
     REFRESH_COOKIE,
     AuthNotConfigured,
+    InvalidCredentials,
     SupabaseAuthClient,
     SupabaseAuthSettings,
     SupabaseIdentity,
+    password_reset_redirect_url,
     set_auth_cookies,
 )
 from app.database import Base
@@ -98,6 +100,45 @@ def test_configuracion_auth_exige_url_https_y_clave_publicable(monkeypatch):
     monkeypatch.setenv("SUPABASE_PUBLISHABLE_KEY", "sb_secret_no_debe_usarse")
     with pytest.raises(AuthNotConfigured, match="sb_publishable"):
         SupabaseAuthSettings.from_environment()
+
+
+def test_url_publica_de_recuperacion_es_fija_y_https(monkeypatch):
+    monkeypatch.setenv("COTIZAT_PUBLIC_URL", "https://cotizat.example.com")
+    assert password_reset_redirect_url() == (
+        "https://cotizat.example.com/restablecer-clave"
+    )
+    monkeypatch.setenv("COTIZAT_PUBLIC_URL", "https://usuario@malicioso.example")
+    with pytest.raises(AuthNotConfigured, match="COTIZAT_PUBLIC_URL"):
+        password_reset_redirect_url()
+
+
+def test_recuperacion_usa_endpoints_gotrue_sin_secret_key():
+    client = StubAuthClient([{}, _user_payload()])
+    redirect = "https://cotizat.example.com/restablecer-clave"
+
+    client.request_password_reset(" Persona@Example.com ", redirect)
+    identity = client.update_password("recovery-access-token", "nueva-clave-segura")
+
+    assert client.calls[0] == (
+        "POST",
+        "/auth/v1/recover",
+        {"email": "persona@example.com", "redirect_to": redirect},
+        "",
+    )
+    assert client.calls[1] == (
+        "PUT",
+        "/auth/v1/user",
+        {"password": "nueva-clave-segura"},
+        "recovery-access-token",
+    )
+    assert identity.email == "persona@example.com"
+
+
+def test_recuperacion_rechaza_password_corta_antes_de_contactar_supabase():
+    client = StubAuthClient([])
+    with pytest.raises(InvalidCredentials, match="8 caracteres"):
+        client.update_password("recovery-token", "corta")
+    assert client.calls == []
 
 
 def test_login_y_refresh_consumen_los_endpoints_de_gotrue():

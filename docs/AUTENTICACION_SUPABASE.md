@@ -15,6 +15,7 @@ DATABASE_URL=postgresql://...
 SUPABASE_URL=https://<project-ref>.supabase.co
 SUPABASE_PUBLISHABLE_KEY=sb_publishable_...
 COTIZAT_COOKIE_SECURE=true
+COTIZAT_PUBLIC_URL=https://cotizat.example.com
 ```
 
 `SUPABASE_PUBLISHABLE_KEY` tiene privilegios bajos y puede usarse para Auth. No se debe sustituir por `sb_secret_...`, `service_role` ni otra clave que omita RLS.
@@ -39,6 +40,8 @@ alembic upgrade head
 
 - `/registro`: crea la identidad en Supabase Auth; si el proyecto exige confirmación, solicita verificar el email.
 - `/acceso`: inicia sesión contra GoTrue y escribe cookies HttpOnly.
+- `/recuperar-acceso`: solicita a GoTrue un enlace sin revelar si el email existe.
+- `/restablecer-clave`: consume la sesión temporal `type=recovery`, elimina el fragmento de la barra y actualiza la contraseña directamente en GoTrue.
 - `/organizaciones/nueva`: crea la primera organización y una membresía `propietario`.
 - `/organizaciones`: enumera solo membresías y organizaciones activas.
 - `/organizaciones/{id}/seleccionar`: vuelve a comprobar la membresía antes de escribir la cookie de selección.
@@ -46,6 +49,8 @@ alembic upgrade head
 - `/salir`: elimina access token, refresh token y organización seleccionada.
 
 Una membresía `lectura` puede consultar datos, pero el ORM rechaza tanto `flush` como `UPDATE`/`DELETE` masivos.
+
+Para recuperación, `COTIZAT_PUBLIC_URL` debe ser un origen HTTPS fijo y su ruta `https://<origen>/restablecer-clave` debe añadirse a las Redirect URLs permitidas en Supabase Auth. No se deriva desde `Host`, para evitar envenenar el enlace enviado por email. El access token temporal solo cruza el navegador y el backend durante el cambio; no se persiste.
 
 ## RLS: estado y límite actual
 
@@ -61,16 +66,18 @@ Antes de publicar se debe crear un rol de aplicación sin `BYPASSRLS` y polític
 
 ## Estado de validación real
 
-La revisión `9bca2ad1f6e4` está aplicada y `SUPABASE_URL`/`SUPABASE_PUBLISHABLE_KEY` quedaron configuradas localmente sin entrar en Git. El sandbox actual cierra tanto los puertos PostgreSQL como el TLS hacia dominios Supabase antes de autenticar; por eso la prueba end-to-end de GoTrue debe ejecutarse desde el futuro entorno de despliegue o un runner con esa salida de red. Las pruebas unitarias usan respuestas Auth simuladas y no sustituyen esa comprobación.
+La revisión `9bca2ad1f6e4` está aplicada en el proyecto real. El checkout actual no contiene `.env` (Arena lo recreó al reanudar la sesión) y el sandbox cierra tanto PostgreSQL como TLS hacia Supabase antes de autenticar; por eso registro, login y recuperación deben probarse desde el futuro despliegue o un runner con esa salida. Las pruebas unitarias simuladas no sustituyen esa comprobación.
 
 ## Trabajo de seguridad todavía obligatorio
 
 Esta integración no autoriza por sí sola un despliegue público. Siguen pendientes:
 
-- probar registro/login end-to-end desde un entorno con salida HTTPS a Supabase (la revisión y variables ya están configuradas);
-- protección CSRF para todos los formularios mutables;
-- cabeceras de seguridad y límites de login;
-- recuperación de contraseña y URLs de redirección por entorno;
+- probar registro/login/recuperación end-to-end desde un entorno con salida HTTPS a Supabase;
+- configurar `COTIZAT_PUBLIC_URL` y la Redirect URL real en Supabase;
+- límites distribuidos de login y recuperación (el rate limit de Supabase no sustituye el control de aplicación);
 - gestión de invitaciones y roles administrativos;
 - políticas RLS autorizantes para un rol no privilegiado;
-- almacenamiento privado de objetos y autorización de descargas.
+- eliminar `unsafe-inline` de CSP y completar auditoría XSS;
+- aplicar/probar la migración y el bucket privado de Storage real.
+
+CSRF por origen, cabeceras defensivas, almacenamiento privado y autorización de descargas ya están implementados en código, pero aún requieren validación en el despliegue real.

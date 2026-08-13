@@ -56,12 +56,14 @@ from .auth import (
     AuthError,
     AuthenticationRequired,
     AuthNotConfigured,
+    InvalidCredentials,
     OrganizationAccessDenied,
     OrganizationRequired,
     RefreshedAuthCookieMiddleware,
     SupabaseAuthClient,
     SupabaseAuthSettings,
     clear_auth_cookies,
+    password_reset_redirect_url,
     set_auth_cookies,
 )
 from .models import (
@@ -968,6 +970,85 @@ def acceso(request: Request, next: str = ""):
             "next": _next_seguro(next),
         },
     )
+
+
+@app.get("/recuperar-acceso", response_class=HTMLResponse)
+def recuperar_acceso_form(request: Request):
+    return TEMPLATES.TemplateResponse(
+        request,
+        "auth/recover.html",
+        {
+            "error": request.query_params.get("error", ""),
+            "msg": request.query_params.get("msg", ""),
+        },
+    )
+
+
+@app.post("/recuperar-acceso")
+async def solicitar_recuperacion(request: Request):
+    form = await request.form()
+    email = str(form.get("email") or "").strip()
+    mensaje = "Si la cuenta existe, Supabase enviará un enlace para restablecer la contraseña."
+    try:
+        settings = SupabaseAuthSettings.from_environment()
+        redirect_to = password_reset_redirect_url()
+        await run_in_threadpool(
+            SupabaseAuthClient(settings).request_password_reset,
+            email,
+            redirect_to,
+        )
+    except InvalidCredentials:
+        # Respuesta deliberadamente indistinguible para no enumerar cuentas.
+        pass
+    except AuthError as exc:
+        return _redirect("/recuperar-acceso", error=str(exc))
+    return _redirect("/recuperar-acceso", msg=mensaje)
+
+
+@app.get("/restablecer-clave", response_class=HTMLResponse)
+def restablecer_clave_form(request: Request):
+    return TEMPLATES.TemplateResponse(
+        request,
+        "auth/reset_password.html",
+        {"error": request.query_params.get("error", ""), "recovery_token": ""},
+    )
+
+
+@app.post("/restablecer-clave")
+async def restablecer_clave(request: Request):
+    form = await request.form()
+    token = str(form.get("recovery_token") or "").strip()
+    password = str(form.get("password") or "")
+    confirmation = str(form.get("password_confirmation") or "")
+    if password != confirmation:
+        return TEMPLATES.TemplateResponse(
+            request,
+            "auth/reset_password.html",
+            {"error": "Las contraseñas no coinciden.", "recovery_token": token},
+            status_code=400,
+        )
+    try:
+        settings = SupabaseAuthSettings.from_environment()
+        client = SupabaseAuthClient(settings)
+        # Verifica primero que el token todavía identifica a un usuario.
+        await run_in_threadpool(client.get_user, token)
+        await run_in_threadpool(client.update_password, token, password)
+    except AuthError:
+        return TEMPLATES.TemplateResponse(
+            request,
+            "auth/reset_password.html",
+            {
+                "error": "El enlace no es válido o ha caducado. Solicita uno nuevo.",
+                "recovery_token": "",
+            },
+            status_code=400,
+        )
+    response = RedirectResponse(
+        "/acceso?msg=" + quote("Contraseña actualizada. Ya puedes iniciar sesión."),
+        status_code=303,
+    )
+    clear_auth_cookies(response, settings.cookie_secure)
+    return response
 
 
 @app.post("/acceso")

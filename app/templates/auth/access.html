@@ -51,6 +51,7 @@
       <label for="login-password">Contraseña</label>
       <input id="login-password" name="password" type="password" autocomplete="current-password" required {% if not auth_configured %}disabled{% endif %}>
       <button type="submit" {% if not auth_configured %}disabled{% endif %}>Entrar a CotizaT</button>
+      <p class="note"><a href="/recuperar-acceso">¿Olvidaste tu contraseña?</a></p>
     </form>
 
     <form method="post" action="/registro">

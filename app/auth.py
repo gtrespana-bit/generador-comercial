@@ -75,6 +75,28 @@ class SupabaseAuthSettings:
         return cls(url=url, publishable_key=key, cookie_secure=cookie_secure)
 
 
+def password_reset_redirect_url() -> str:
+    """URL pública fija y autorizable en Supabase para recuperar contraseña."""
+    public_url = os.environ.get("COTIZAT_PUBLIC_URL", "").strip().rstrip("/")
+    try:
+        parsed = urlparse(public_url)
+    except ValueError as exc:
+        raise AuthNotConfigured("COTIZAT_PUBLIC_URL no es válida.") from exc
+    if (
+        parsed.scheme != "https"
+        or not parsed.netloc
+        or parsed.username
+        or parsed.password
+        or parsed.query
+        or parsed.fragment
+        or parsed.path not in {"", "/"}
+    ):
+        raise AuthNotConfigured(
+            "COTIZAT_PUBLIC_URL debe ser el origen HTTPS público de CotizaT."
+        )
+    return public_url + "/restablecer-clave"
+
+
 @dataclass(frozen=True)
 class SupabaseIdentity:
     auth_user_id: str
@@ -213,6 +235,29 @@ class SupabaseAuthClient:
         if payload.get("access_token") and payload.get("refresh_token"):
             return SignupResult(identity, _tokens_from_payload(payload))
         return SignupResult(identity, None)
+
+    def request_password_reset(self, email: str, redirect_to: str) -> None:
+        email = email.strip().lower()
+        if not email or "@" not in email:
+            raise InvalidCredentials("Escribe un email válido.")
+        parsed = urlparse(redirect_to)
+        if parsed.scheme != "https" or not parsed.netloc:
+            raise AuthNotConfigured("La URL de recuperación no es válida.")
+        self._request_json(
+            "POST",
+            "/auth/v1/recover",
+            {"email": email, "redirect_to": redirect_to},
+        )
+
+    def update_password(self, access_token: str, password: str) -> SupabaseIdentity:
+        if not access_token:
+            raise AuthenticationRequired("El enlace de recuperación no es válido.")
+        if len(password) < 8:
+            raise InvalidCredentials("La contraseña debe tener al menos 8 caracteres.")
+        payload = self._request_json(
+            "PUT", "/auth/v1/user", {"password": password}, access_token=access_token
+        )
+        return _identity_from_payload(payload)
 
     def get_user(self, access_token: str) -> SupabaseIdentity:
         if not access_token:
