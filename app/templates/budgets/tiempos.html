@@ -10,7 +10,7 @@
   <div class="actions">
     <a class="btn" href="/presupuestos/{{ p.id }}">◀ Ver presupuesto</a>
     <a class="btn" href="/presupuestos/{{ p.id }}/editar">✏ Editar partidas</a>
-    <button class="btn" type="button" onclick="window.print()">🖨️ Imprimir planificación</button>
+    <button class="btn" type="button" data-cotizat-click="window-print">🖨️ Imprimir planificación</button>
   </div>
 </div>
 
@@ -23,20 +23,20 @@
 <!-- ================= KPIs PRINCIPALES ================= -->
 <div class="tiempos-kpi-grid">
   <!-- Plazo es lo que ve el cliente; esfuerzo es el coste en personal -->
-  <div class="tiempo-card tiempo-card-principal" style="border-left-color:#0d9488;">
+  <div class="tiempo-card tiempo-card-principal csp-s-c203c4f4e6">
     <div class="tiempo-card-label">⏱ Plazo crítico — duración real <span class="hint" title="Suma de duraciones por partida con trabajo en paralelo (max oficial/ayudante). Es el plazo mínimo con 1 cuadrilla secuencial.">ⓘ</span></div>
-    <div class="tiempo-card-valor" style="color:#0f766e;">{{ "%.1f"|format(tiempos.total_duracion_h) }} <small>h</small> <span class="hint" style="font-size:.85rem; font-weight:600;">· {{ "%.1f"|format(tiempos.total_dias_duracion) }} días</span></div>
+    <div class="tiempo-card-valor csp-s-f4cd63326c">{{ "%.1f"|format(tiempos.total_duracion_h) }} <small>h</small> <span class="hint csp-s-8d7681f06b">· {{ "%.1f"|format(tiempos.total_dias_duracion) }} días</span></div>
     <div class="tiempo-card-detalle">
       <span class="hint">Con 1 cuadrilla (1 of. + 1 ay.) y jornada {{ "%.0f"|format(tiempos.horas_jornada) }} h. Con <span id="kpi-dias-cuadrilla-top">{{ "%.1f"|format(tiempos.total_dias_duracion) }}</span> días críticos.</span>
     </div>
-    <div class="tiempo-card-nota" style="background:#ecfdf5; border-color:rgba(13,148,136,.18); color:#0f766e;">
+    <div class="tiempo-card-nota csp-s-a0688da494">
       Esfuerzo total: <strong>{{ "%.1f"|format(tiempos.total_mano_obra_h) }} h-hombre</strong>
       {% if tiempos.total_mano_obra_h %}
         · <span class="kpi-chip kpi-oficial">👷‍♂️ {{ "%.1f"|format(tiempos.total_oficial_h) }} h of. <em>{{ "%.0f"|format(pct_oficial) }}%</em></span>
         <span class="kpi-chip kpi-ayudante">🧑‍🔧 {{ "%.1f"|format(tiempos.total_ayudante_h) }} h ay. <em>{{ "%.0f"|format(pct_ayudante) }}%</em></span>
       {% endif %}
       {% if tiempos.total_equipos_h %}<span class="kpi-chip kpi-equipos">🛠 {{ "%.1f"|format(tiempos.total_equipos_h) }} h eq.</span>{% endif %}
-      <br><small class="hint" style="color:#0f766e;">💡 Añadir ayudante <em>aumenta</em> horas-hombre (ej: 36→50) pero <em>reduce</em> el plazo (ej: 36→25 días) porque oficial y ayudante trabajan en paralelo. Mira <strong>Plazo</strong>, no solo esfuerzo.</small>
+      <br><small class="hint csp-s-f4cd63326c">💡 Añadir ayudante <em>aumenta</em> horas-hombre (ej: 36→50) pero <em>reduce</em> el plazo (ej: 36→25 días) porque oficial y ayudante trabajan en paralelo. Mira <strong>Plazo</strong>, no solo esfuerzo.</small>
     </div>
   </div>
 
@@ -47,7 +47,7 @@
       <span class="hint">{{ "%.1f"|format(tiempos.total_oficial_h) }} of. + {{ "%.1f"|format(tiempos.total_ayudante_h) }} ay.{% if tiempos.total_equipos_h %} + {{ "%.1f"|format(tiempos.total_equipos_h) }} eq. = {{ "%.1f"|format(tiempos.total_horas) }} h (hombre+equipo){% endif %}</span>
       <br><span class="hint">={{ "%.1f"|format(tiempos.total_dias) }} días-hombre / {{ "%.0f"|format(tiempos.horas_jornada) }}h</span>
     </div>
-    <div class="tiempo-cobertura-track" title="Proporción plazo vs esfuerzo — cuanto más paralelizas, más baja"><div class="tiempo-cobertura-fill" style="width: {{ (tiempos.total_duracion_h / tiempos.total_mano_obra_h * 100) if tiempos.total_mano_obra_h else 0 }}%; background: var(--accent);"></div></div>
+    <div class="tiempo-cobertura-track" title="Proporción plazo vs esfuerzo — cuanto más paralelizas, más baja"><div class="tiempo-cobertura-fill coverage-accent" data-cotizat-width="{{ (tiempos.total_duracion_h / tiempos.total_mano_obra_h * 100) if tiempos.total_mano_obra_h else 0 }}"></div></div>
     <small class="hint">Eficiencia de paralelización: {{ "%.0f"|format((tiempos.total_duracion_h / tiempos.total_mano_obra_h * 100) if tiempos.total_mano_obra_h else 0) }}% (100% = sin paralelismo)</small>
   </div>
 
@@ -64,8 +64,8 @@
     <div class="tiempo-card-label">Cobertura de datos</div>
     <div class="tiempo-card-valor">{{ "%.0f"|format(cobertura) }} <small>%</small> <span class="hint">· {{ con_datos }}/{{ tiempos.n_partidas_activas }}</span></div>
     <div class="tiempo-card-detalle">{{ con_datos }} partida(s) con datos · <span class="fuente-badge badge-sin-datos">{{ sin_datos }} sin datos</span></div>
-    <div class="tiempo-cobertura-track"><div class="tiempo-cobertura-fill" style="width:{{ cobertura }}%; background: {{ '#059669' if cobertura>=80 else '#d97706' if cobertura>=50 else '#e11d48' }};"></div></div>
-    {% if sin_datos %}<div class="hint" style="margin-top:6px;">Asigna horas abajo — <strong>h/ud es consumo (horas por unidad)</strong>. Mayor valor = más lento.</div>{% endif %}
+    <div class="tiempo-cobertura-track"><div class="tiempo-cobertura-fill {{ 'coverage-good' if cobertura>=80 else 'coverage-warning' if cobertura>=50 else 'coverage-danger' }}" data-cotizat-width="{{ cobertura }}"></div></div>
+    {% if sin_datos %}<div class="hint csp-s-1d436efc1f">Asigna horas abajo — <strong>h/ud es consumo (horas por unidad)</strong>. Mayor valor = más lento.</div>{% endif %}
   </div>
 </div>
 
@@ -83,7 +83,7 @@
       <label>Jornada (h/día)</label>
       <div class="plan-control">
         <input type="range" id="input-jornada" min="4" max="12" step="0.5" value="{{ tiempos.horas_jornada }}">
-        <input type="number" id="input-jornada-num" value="{{ tiempos.horas_jornada }}" min="4" max="12" step="0.5" style="width:70px;">
+        <input type="number" id="input-jornada-num" value="{{ tiempos.horas_jornada }}" min="4" max="12" step="0.5" class="csp-s-3e5bb81768">
       </div>
       <small class="hint">Ajuste temporal para simular. La jornada del presupuesto es {{ tiempos.horas_jornada }} h.</small>
     </div>
@@ -91,7 +91,7 @@
       <label>Cuadrillas en paralelo</label>
       <div class="plan-control">
         <input type="range" id="input-cuadrillas" min="1" max="6" step="1" value="1">
-        <input type="number" id="input-cuadrillas-num" value="1" min="1" max="6" step="1" style="width:70px;">
+        <input type="number" id="input-cuadrillas-num" value="1" min="1" max="6" step="1" class="csp-s-3e5bb81768">
       </div>
       <small class="hint">Si duplicas cuadrillas, el plazo crítico se divide.</small>
     </div>
@@ -134,9 +134,9 @@
 </div>
 
 {% if sin_datos %}
-<div class="alert" style="margin-bottom:1rem; display:flex; gap:12px; align-items:flex-start; flex-wrap:wrap;">
-  <div style="flex:1; min-width:260px;">⚠ <strong>{{ sin_datos }} partida(s)</strong> sin datos no cuentan en los totales. Asígnalas abajo directamente (oficial / ayudante / equipo por unidad) y se guardará al instante. También puedes avanzar capítulo a capítulo.</div>
-  <button type="button" class="btn btn-sm" onclick="document.getElementById('tabla-detalle').scrollIntoView({behavior:'smooth'})">⬇ Ir a asignar</button>
+<div class="alert csp-s-a01f14dd06">
+  <div class="csp-s-618c05be5c">⚠ <strong>{{ sin_datos }} partida(s)</strong> sin datos no cuentan en los totales. Asígnalas abajo directamente (oficial / ayudante / equipo por unidad) y se guardará al instante. También puedes avanzar capítulo a capítulo.</div>
+  <button type="button" class="btn btn-sm" data-cotizat-click="scroll-target" data-target="tabla-detalle">⬇ Ir a asignar</button>
 </div>
 
 <!-- Asignación rápida masiva -->
@@ -148,7 +148,7 @@
     </div>
   </div>
   <div class="bulk-tiempo-grid">
-    <label class="check-line" style="gap:8px;"><input type="checkbox" id="bulk-check-all"> Seleccionar todas sin datos ({{ sin_datos }})</label>
+    <label class="check-line csp-s-d56e3e3bc1"><input type="checkbox" id="bulk-check-all"> Seleccionar todas sin datos ({{ sin_datos }})</label>
     <div class="bulk-inputs">
       <div class="field"><label>Oficial h / ud</label><input type="number" id="bulk-oficial" step="0.05" min="0" placeholder="0,60"></div>
       <div class="field"><label>Ayudante h / ud</label><input type="number" id="bulk-ayudante" step="0.05" min="0" placeholder="0,40"></div>
@@ -175,7 +175,7 @@
   {% if tiempos.capitulos %}
   <div class="barra-capitulos">
     {% for c in tiempos.capitulos %}
-    <div class="barra-capitulo" style="flex-basis: {{ c.pct }}%;" title="{{ c.nombre }}: {{ c.pct }}% de las horas · {{ c.oficial_h }}h oficial + {{ c.ayudante_h }}h ayudante"></div>
+    <div class="barra-capitulo" data-cotizat-flex-basis="{{ c.pct }}" title="{{ c.nombre }}: {{ c.pct }}% de las horas · {{ c.oficial_h }}h oficial + {{ c.ayudante_h }}h ayudante"></div>
     {% endfor %}
   </div>
   <div class="table-wrap">
@@ -199,10 +199,10 @@
   </div>
   <!-- Donut / leyenda por oficio -->
   <div class="tiempos-leyenda">
-    <span class="leyenda-item"><span class="leyenda-dot" style="background:#6366f1;"></span> Oficial {{ "%.1f"|format(tiempos.total_oficial_h) }} h ({{ "%.0f"|format(pct_oficial) }}%)</span>
-    <span class="leyenda-item"><span class="leyenda-dot" style="background:#0d9488;"></span> Ayudante {{ "%.1f"|format(tiempos.total_ayudante_h) }} h ({{ "%.0f"|format(pct_ayudante) }}%)</span>
-    {% if tiempos.total_capataz_h %}<span class="leyenda-item"><span class="leyenda-dot" style="background:#7c3aed;"></span> Capataz {{ "%.1f"|format(tiempos.total_capataz_h) }} h</span>{% endif %}
-    <span class="leyenda-item"><span class="leyenda-dot" style="background:#d97706;"></span> Equipos {{ "%.1f"|format(tiempos.total_equipos_h) }} h</span>
+    <span class="leyenda-item"><span class="leyenda-dot csp-s-29d4ad1ec3"></span> Oficial {{ "%.1f"|format(tiempos.total_oficial_h) }} h ({{ "%.0f"|format(pct_oficial) }}%)</span>
+    <span class="leyenda-item"><span class="leyenda-dot csp-s-8fb634d160"></span> Ayudante {{ "%.1f"|format(tiempos.total_ayudante_h) }} h ({{ "%.0f"|format(pct_ayudante) }}%)</span>
+    {% if tiempos.total_capataz_h %}<span class="leyenda-item"><span class="leyenda-dot csp-s-bddef4339f"></span> Capataz {{ "%.1f"|format(tiempos.total_capataz_h) }} h</span>{% endif %}
+    <span class="leyenda-item"><span class="leyenda-dot csp-s-80cd702205"></span> Equipos {{ "%.1f"|format(tiempos.total_equipos_h) }} h</span>
   </div>
   {% else %}
   <p class="empty">Aún no hay partidas con horas estimadas.</p>
@@ -217,8 +217,8 @@
       <p class="hint">Horas por unidad × cantidad = horas de la partida. <strong>Oficial / Ayudante / Equipo</strong> se suman como horas-hombre; la duración es el máximo entre ellos (trabajo en paralelo en la misma partida). Haz clic en <em>✏ Asignar</em> para fijar horas manuales en segundos.</p>
     </div>
     <div class="actions">
-      <input type="text" id="filtro-tiempos" placeholder="🔍 Filtrar partidas…" style="padding:0.4rem 0.6rem; border:1px solid var(--border); border-radius:6px; font-size:0.82rem;">
-      <select id="filtro-fuente" class="select-inline" style="margin:0;"><option value="">Todas las fuentes</option><option value="descompuesto">Descompuesto</option><option value="catalogo">Catálogo</option><option value="coste">Por coste</option><option value="manual">Manual</option><option value="sin_datos">Sin datos</option></select>
+      <input type="text" id="filtro-tiempos" placeholder="🔍 Filtrar partidas…" class="csp-s-c0b35682cc">
+      <select id="filtro-fuente" class="select-inline csp-s-38965f9b18"><option value="">Todas las fuentes</option><option value="descompuesto">Descompuesto</option><option value="catalogo">Catálogo</option><option value="coste">Por coste</option><option value="manual">Manual</option><option value="sin_datos">Sin datos</option></select>
     </div>
   </div>
 
@@ -230,22 +230,22 @@
       <div class="doc-capitulo-banda"></div>
       <div class="doc-capitulo tiempos-capitulo-head">
         <span>{{ t.capitulo or 'CAPÍTULO GENERAL' }}</span>
-        <span class="hint" style="font-weight:600;">{{ "%.1f"|format(tiempos.capitulos | selectattr('nombre', 'equalto', t.capitulo) | map(attribute='horas') | sum) }} h-hombre · {{ "%.1f"|format(tiempos.capitulos | selectattr('nombre', 'equalto', t.capitulo) | map(attribute='duracion_h') | sum) }} h duración</span>
+        <span class="hint csp-s-6b2a94ea3b">{{ "%.1f"|format(tiempos.capitulos | selectattr('nombre', 'equalto', t.capitulo) | map(attribute='horas') | sum) }} h-hombre · {{ "%.1f"|format(tiempos.capitulos | selectattr('nombre', 'equalto', t.capitulo) | map(attribute='duracion_h') | sum) }} h duración</span>
       </div>
       <div class="table-wrap">
       <table class="table table-tiempos">
         <thead>
           <tr>
-            <th style="min-width:220px;">Partida</th>
-            <th class="right" style="width:90px;">Cantidad</th>
-            <th class="right" style="width:110px;">Rend. h/ud</th>
-            <th class="right" style="width:95px;" title="Horas de oficial">👷‍♂️ Oficial</th>
-            <th class="right" style="width:95px;" title="Horas de ayudante">🧑‍🔧 Ayudante</th>
-            <th class="right" style="width:90px;">Equipos</th>
-            <th class="right" style="width:90px;">Duración</th>
-            <th class="right" style="width:95px;">Total h-h</th>
-            <th style="width:140px;">Fuente</th>
-            <th style="width:170px;">Asignar</th>
+            <th class="csp-s-9fda40b045">Partida</th>
+            <th class="right csp-s-71f9841409">Cantidad</th>
+            <th class="right csp-s-0dfe35f39a">Rend. h/ud</th>
+            <th class="right csp-s-11e632aedb" title="Horas de oficial">👷‍♂️ Oficial</th>
+            <th class="right csp-s-11e632aedb" title="Horas de ayudante">🧑‍🔧 Ayudante</th>
+            <th class="right csp-s-71f9841409">Equipos</th>
+            <th class="right csp-s-71f9841409">Duración</th>
+            <th class="right csp-s-11e632aedb">Total h-h</th>
+            <th class="csp-s-8378652daa">Fuente</th>
+            <th class="csp-s-72244bfef4">Asignar</th>
           </tr>
         </thead>
         <tbody data-capitulo="{{ t.capitulo }}">
@@ -273,7 +273,7 @@
         {% else %}
         <span class="tiempos-sin-detalle" title="{{ t.fuente_etiqueta }}{{ (' — ' ~ t.nota) if t.nota else '' }}">{{ t.nombre }}</span>
         {% endif %}
-        {% if t.fuente == 'sin_datos' %}<br><span class="hint" style="color:#e11d48;">Sin tiempo — asigna abajo</span>{% endif %}
+        {% if t.fuente == 'sin_datos' %}<br><span class="hint csp-s-e6fd6b5ab2">Sin tiempo — asigna abajo</span>{% endif %}
       </td>
       <td class="right">{{ "%.2f"|format(t.cantidad) }} {{ t.unidad or 'ud' }}</td>
       <td class="right">{% if t.fuente != 'sin_datos' %}{{ "%.3f"|format(t.horas_por_unidad) }}<br><small class="hint">{{ "%.3f"|format(t.duracion_por_unidad) }} crít.</small>{% else %}—{% endif %}</td>
@@ -297,20 +297,20 @@
               {{ "%.2f"|format(t.oficial_por_unidad) }}/{{ "%.2f"|format(t.ayudante_por_unidad) }}/{{ "%.2f"|format(t.equipos_por_unidad) }} <span title="Oficial / Ayudante / Equipo">O/A/E</span>
             </div>
           {% endif %}
-          <div class="tiempo-edit-form" style="display:flex; gap:4px; align-items:center; flex-wrap:wrap;">
-            <input type="number" step="0.05" min="0" placeholder="Of." title="Oficial h/ud" class="input-tiempo input-oficial" data-rol="oficial" value="{{ '' if t.fuente!='manual' else (t.oficial_por_unidad if t.oficial_por_unidad else '') }}" style="width:56px; padding:3px 4px; font-size:0.78rem;">
-            <input type="number" step="0.05" min="0" placeholder="Ay." title="Ayudante h/ud" class="input-tiempo input-ayudante" data-rol="ayudante" value="{{ '' if t.fuente!='manual' else (t.ayudante_por_unidad if t.ayudante_por_unidad else '') }}" style="width:56px; padding:3px 4px; font-size:0.78rem;">
-            <input type="number" step="0.05" min="0" placeholder="Eq." title="Equipo h/ud" class="input-tiempo input-equipo" data-rol="equipo" value="{{ '' if t.fuente!='manual' else (t.equipos_por_unidad if t.equipos_por_unidad else '') }}" style="width:56px; padding:3px 4px; font-size:0.78rem;">
+          <div class="tiempo-edit-form csp-s-017ade935b">
+            <input type="number" step="0.05" min="0" placeholder="Of." title="Oficial h/ud" class="input-tiempo input-oficial csp-s-76976c3274" data-rol="oficial" value="{{ '' if t.fuente!='manual' else (t.oficial_por_unidad if t.oficial_por_unidad else '') }}">
+            <input type="number" step="0.05" min="0" placeholder="Ay." title="Ayudante h/ud" class="input-tiempo input-ayudante csp-s-76976c3274" data-rol="ayudante" value="{{ '' if t.fuente!='manual' else (t.ayudante_por_unidad if t.ayudante_por_unidad else '') }}">
+            <input type="number" step="0.05" min="0" placeholder="Eq." title="Equipo h/ud" class="input-tiempo input-equipo csp-s-76976c3274" data-rol="equipo" value="{{ '' if t.fuente!='manual' else (t.equipos_por_unidad if t.equipos_por_unidad else '') }}">
             <button type="button" class="btn btn-sm btn-primary btn-guardar-tiempo" data-partida="{{ t.partida_id }}" title="Guardar tiempo manual">💾</button>
             {% if t.fuente == 'manual' %}<button type="button" class="btn btn-sm btn-ghost btn-borrar-tiempo" data-partida="{{ t.partida_id }}" title="Borrar manual y volver a automático">↺</button>{% endif %}
-            <label class="check-line" style="margin:0; font-size:0.72rem; display:flex; align-items:center; gap:4px;" title="Seleccionar para asignación masiva"><input type="checkbox" class="bulk-check" value="{{ t.partida_id }}" {% if t.fuente=='sin_datos' %}checked{% endif %}> masivo</label>
+            <label class="check-line csp-s-15e65b4ac3" title="Seleccionar para asignación masiva"><input type="checkbox" class="bulk-check" value="{{ t.partida_id }}" {% if t.fuente=='sin_datos' %}checked{% endif %}> masivo</label>
           </div>
-          <div class="tiempo-edit-total" style="margin-top:4px; display:flex; gap:4px; align-items:center;">
-            <input type="number" step="0.05" min="0" placeholder="Total h/ud (60/40)" title="Total h/ud — si lo usas, reparte 60% oficial / 40% ayudante" class="input-tiempo input-total" data-rol="total" style="width:90px; padding:3px 4px; font-size:0.78rem; border-style:dashed;">
+          <div class="tiempo-edit-total csp-s-de8b6f07a0">
+            <input type="number" step="0.05" min="0" placeholder="Total h/ud (60/40)" title="Total h/ud — si lo usas, reparte 60% oficial / 40% ayudante" class="input-tiempo input-total csp-s-dffece7534" data-rol="total">
             <button type="button" class="btn btn-xs btn-guardar-tiempo-total" data-partida="{{ t.partida_id }}" title="Guardar total">Total →</button>
           </div>
         </div>
-        <div class="tiempo-edit-status hint" style="font-size:0.70rem; min-height:14px;"></div>
+        <div class="tiempo-edit-status hint csp-s-982b0a31a7"></div>
       </td>
     </tr>
   {% endfor %}
@@ -319,11 +319,11 @@
   {% if not tiempos.partidas %}
   <p class="empty">Este presupuesto aún no tiene partidas.</p>
   {% else %}
-  <table class="table doc-totales" style="width:100%; margin-top:1rem;">
-    <tr><td class="right" style="width:55%;"><strong>TOTAL HORAS-HOMBRE</strong> <span class="hint">(oficial {{ "%.1f"|format(tiempos.total_oficial_h) }} + ayudante {{ "%.1f"|format(tiempos.total_ayudante_h) }}{% if tiempos.total_capataz_h %} + capataz {{ "%.1f"|format(tiempos.total_capataz_h) }}{% endif %})</span></td><td class="right"><strong>{{ "%.1f"|format(tiempos.total_mano_obra_h) }} h</strong></td></tr>
+  <table class="table doc-totales csp-s-767f2cb245">
+    <tr><td class="right csp-s-87c7216e17"><strong>TOTAL HORAS-HOMBRE</strong> <span class="hint">(oficial {{ "%.1f"|format(tiempos.total_oficial_h) }} + ayudante {{ "%.1f"|format(tiempos.total_ayudante_h) }}{% if tiempos.total_capataz_h %} + capataz {{ "%.1f"|format(tiempos.total_capataz_h) }}{% endif %})</span></td><td class="right"><strong>{{ "%.1f"|format(tiempos.total_mano_obra_h) }} h</strong></td></tr>
     <tr><td class="right">+ Equipos / maquinaria</td><td class="right">{{ "%.1f"|format(tiempos.total_equipos_h) }} h</td></tr>
     <tr><td class="right"><strong>TOTAL HORAS (hombre + equipo)</strong></td><td class="right"><strong>{{ "%.1f"|format(tiempos.total_horas) }} h</strong></td></tr>
-    <tr style="background:var(--accent-soft);"><td class="right"><strong>DURACIÓN CRÍTICA TOTAL</strong> <span class="hint">(max por partida, trabajo en paralelo)</span></td><td class="right"><strong>{{ "%.1f"|format(tiempos.total_duracion_h) }} h</strong> · {{ "%.1f"|format(tiempos.total_dias_duracion) }} días</td></tr>
+    <tr class="csp-s-dbcfa29b81"><td class="right"><strong>DURACIÓN CRÍTICA TOTAL</strong> <span class="hint">(max por partida, trabajo en paralelo)</span></td><td class="right"><strong>{{ "%.1f"|format(tiempos.total_duracion_h) }} h</strong> · {{ "%.1f"|format(tiempos.total_dias_duracion) }} días</td></tr>
     <tr><td class="right"><strong>DÍAS LABORABLES (h-hombre / {{ "%.0f"|format(tiempos.horas_jornada) }} h)</strong></td><td class="right"><strong>{{ "%.1f"|format(tiempos.total_dias) }} días</strong> <span class="hint">· {{ "%.1f"|format(tiempos.total_semanas) }} sem.</span></td></tr>
     <tr><td class="right"><strong>DÍAS CRÍTICOS (duración / {{ "%.0f"|format(tiempos.horas_jornada) }} h)</strong></td><td class="right"><strong>{{ "%.1f"|format(tiempos.total_dias_duracion) }} días</strong> <span class="hint">· {{ "%.1f"|format(tiempos.total_semanas_duracion) }} sem.</span></td></tr>
   </table>
@@ -341,16 +341,16 @@
     <li><strong>Cuadrillas:</strong> con <em>n</em> cuadrillas idénticas en paralelo el plazo crítico se divide entre <em>n</em>. Usa el simulador arriba para proyecciones.</li>
     <li><strong>¿Por qué añadir ayudante sube de 36h a 50h?</strong> Porque <strong>horas-hombre</strong> es esfuerzo (suma: 30h oficial + 20h ayudante = 50h), mientras que <strong>plazo</strong> es duración (max: 30h). Con ayudante el esfuerzo sube un poco pero el plazo baja de 36h a 30h. El campo <em>h/ud es consumo (horas por unidad)</em>: <code>0,5 h/m²</code> = 30 min por m². Mayor número = más lento. No es productividad (m²/h).</li>
   </ul>
-  <div class="alert" style="margin-top:12px; background:var(--blue-soft); border-color:rgba(37,99,235,.18); color:var(--blue);">
+  <div class="alert csp-s-749f8ab21b">
     💡 <strong>Consejo profesional:</strong> completa primero las partidas sin datos con tiempos manuales (aunque sean aproximados). Con cobertura &gt;90% la estimación de plazo y la carga de personal (días-oficial / días-ayudante) es fiable para planificar compras y subcontratas.
   </div>
 </div>
 
-<div id="tiempos-toast" class="undo-flash" style="z-index:1300;"></div>
+<div id="tiempos-toast" class="undo-flash csp-s-a0a5f73abb"></div>
 {% endblock %}
 
 {% block scripts %}
-<script>
+<script nonce="{{ request.state.csp_nonce }}">
 (function(){
   const presupuestoId = {{ p.id | tojson }};
   const tiemposBase = {{ tiempos | tojson }};
@@ -364,7 +364,7 @@
   const toast = document.getElementById('tiempos-toast');
   function showToast(msg, ok=true){
     toast.textContent = msg;
-    toast.style.background = ok ? 'var(--zinc-900)' : '#e11d48';
+    CotizatStyles.set(toast, "background", ok ? 'var(--zinc-900)' : '#e11d48');
     toast.classList.add('show');
     setTimeout(()=> toast.classList.remove('show'), 2500);
   }
@@ -465,7 +465,7 @@
       const fuente = tr.dataset.fuente || '';
       const okNombre = !q || nombre.includes(q);
       const okFuente = !f || fuente===f;
-      tr.style.display = (okNombre && okFuente) ? '' : 'none';
+      CotizatStyles.set(tr, "display", (okNombre && okFuente) ? '' : 'none');
     });
   }
   if(filtroNombre) filtroNombre.addEventListener('input', aplicarFiltros);
@@ -483,7 +483,7 @@
       });
       const data = await res.json();
       if(!data.ok) throw new Error(data.error || 'Error');
-      if(statusEl) { statusEl.textContent = '✓ Guardado'; statusEl.style.color='var(--green)'; setTimeout(()=> statusEl.textContent='', 2000); }
+      if(statusEl) { statusEl.textContent = '✓ Guardado'; CotizatStyles.set(statusEl, "color", 'var(--green)'); setTimeout(()=> statusEl.textContent='', 2000); }
       // Actualizar KPIs si viene tiempos
       if(data.tiempos){
         totalManoObraH = data.tiempos.total_mano_obra_h;
@@ -503,7 +503,7 @@
         if(badge){ badge.textContent='✏ Manual'; badge.className='fuente-badge badge-manual'; }
       }
     }catch(e){
-      if(statusEl){ statusEl.textContent = '✗ ' + (e.message||'Error'); statusEl.style.color='var(--rose)';}
+      if(statusEl){ statusEl.textContent = '✗ ' + (e.message||'Error'); CotizatStyles.set(statusEl, "color", 'var(--rose)');}
       showToast(e.message||'Error al guardar', false);
     }
   }
@@ -575,7 +575,7 @@
     bulkAll.addEventListener('change', ()=>{
       document.querySelectorAll('.bulk-check').forEach(cb=>{
         const tr = cb.closest('.fila-tiempo');
-        if(tr && tr.style.display!=='none') cb.checked = bulkAll.checked;
+        if(tr && !CotizatStyles.isHidden(tr)) cb.checked = bulkAll.checked;
       });
     });
   }

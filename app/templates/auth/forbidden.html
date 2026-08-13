@@ -1,0 +1,9 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Acceso restringido · {{ product_name }}</title>
+  <style nonce="{{ request.state.csp_nonce }}">:root{font-family:Inter,system-ui,sans-serif;color:#17211d;background:#f3f7f5}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:20px}main{width:min(100%,520px);background:white;padding:34px;border-radius:18px;box-shadow:0 18px 55px rgba(10,48,34,.12)}h1{color:#8d2529}.button{display:inline-block;margin-top:18px;padding:12px 16px;border-radius:9px;background:#146c43;color:white;text-decoration:none;font-weight:800}</style>
+</head>
+<body><main><h1>Acción no autorizada</h1><p>{{ error }}</p><p>La información no fue modificada.</p><a class="button" href="/">Volver al inicio</a></main></body>
+</html>

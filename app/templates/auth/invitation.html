@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>Invitación · {{ product_name }}</title>
+  <style nonce="{{ request.state.csp_nonce }}">
+    :root{font-family:Inter,ui-sans-serif,system-ui,sans-serif;color:#17211d;background:#f3f7f5}*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px}main{width:min(100%,540px);background:white;padding:34px;border-radius:18px;box-shadow:0 18px 55px rgba(10,48,34,.12)}.brand{font-weight:900;color:#0b5b38}h1{margin:24px 0 8px}.muted{color:#66776f;line-height:1.55}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}button,.button{display:inline-block;border:0;border-radius:10px;padding:13px 17px;background:#146c43;color:white;font:inherit;font-weight:800;text-decoration:none;cursor:pointer}.secondary{background:#e7f4ee;color:#0b5b38}.alert{background:#fff0f0;color:#9b2529;border-radius:10px;padding:12px 14px;margin-top:18px}form{margin:0}
+  </style>
+</head>
+<body><main>
+<div class="brand">{{ product_name }}</div>
+<h1>Te invitaron a una organización</h1>
+<p class="muted">Inicia sesión o crea tu cuenta con el mismo email que recibió la invitación. Por seguridad, el email debe estar confirmado y el enlace solo puede usarse una vez.</p>
+{% if error %}<div class="alert">{{ error }}</div>{% endif %}
+<div class="actions">
+  <a class="button secondary" href="/acceso?next=/invitaciones/{{ token }}">Iniciar sesión o registrarme</a>
+  {% if token %}<form action="/invitaciones/{{ token }}/aceptar" method="post"><button type="submit">Aceptar invitación</button></form>{% endif %}
+</div>
+</main></body></html>

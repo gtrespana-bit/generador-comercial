@@ -1,5 +1,5 @@
 @echo off
-REM Abre el Generador de Presupuestos en su propia VENTANA (sin navegador).
+REM Abre CotizaT en su propia VENTANA (sin navegador).
 REM Necesita Python y las dependencias instaladas (ver INICIAR.bat la primera vez).
 cd /d "%~dp0"
 
@@ -24,7 +24,7 @@ REM --- Comprobar el motor de ventana nativa (pywebview + pythonnet) ---
 %PY% -c "import webview, clr; from importlib.metadata import version; assert int(version('pywebview').split('.')[0]) >= 6" >nul 2>&1
 if errorlevel 1 (
     echo Preparando el motor de ventana nativa...
-    %PY% -m pip install --upgrade -r requirements.txt
+    %PY% -m pip install --upgrade -r requirements-desktop.txt
     if errorlevel 1 (
         echo [ERROR] No se pudieron instalar las dependencias de escritorio.
         echo Revisa tu conexion a internet y vuelve a intentarlo.

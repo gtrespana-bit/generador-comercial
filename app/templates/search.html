@@ -28,7 +28,7 @@
   </section>{% endif %}
 
   {% if resultados.facturas %}
-  <section class="card search-group"><div class="search-group-head"><h2>🧾 Facturas</h2><span class="badge">{{ resultados.facturas | length }}</span></div>
+  <section class="card search-group"><div class="search-group-head"><h2>🧾 Documentos de cobro</h2><span class="badge">{{ resultados.facturas | length }}</span></div>
     {% for factura in resultados.facturas %}<a class="search-result" href="/facturas/{{ factura.id }}"><strong>{{ factura.numero }}{% if factura.titulo %} · {{ factura.titulo }}{% endif %}</strong><small>{{ factura.cliente.nombre }} · {{ factura.estado | capitalize }} · {{ factura.total | money(factura.moneda) }}</small></a>{% endfor %}
   </section>{% endif %}
 

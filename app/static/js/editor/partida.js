@@ -223,30 +223,30 @@
         if (!matches.length) return;
 
         dropdown = FMT.h("div", "autocomplete-suggestions");
-        dropdown.style.cssText = "position:absolute; top:100%; left:0; right:0; background:var(--surface); border:1px solid var(--border-strong); border-radius:var(--radius-sm); max-height:240px; overflow-y:auto; z-index:1200; box-shadow:var(--shadow-lg); margin-top:4px; min-width:260px;";
+        CotizatStyles.setCssText(dropdown, "position:absolute; top:100%; left:0; right:0; background:var(--surface); border:1px solid var(--border-strong); border-radius:var(--radius-sm); max-height:240px; overflow-y:auto; z-index:1200; box-shadow:var(--shadow-lg); margin-top:4px; min-width:260px;");
         // No dejar que un clic dentro del desplegable llegue a la fila de la
         // partida (abriría la ficha y cerraría la lista sin seleccionar).
         dropdown.addEventListener("click", function (evt) { evt.stopPropagation(); });
 
         matches.forEach(function (item) {
           var sug = FMT.h("div", "suggestion-item");
-          sug.style.cssText = "padding:8px 10px; cursor:pointer; border-bottom:1px solid var(--bg); font-size:.82rem; display:flex; align-items:center; gap:9px;";
+          CotizatStyles.setCssText(sug, "padding:8px 10px; cursor:pointer; border-bottom:1px solid var(--bg); font-size:.82rem; display:flex; align-items:center; gap:9px;");
           if (item.imagen) {
             var thumb = FMT.h("img", "suggestion-thumb");
-            thumb.src = item.imagen.indexOf("/") === 0 ? item.imagen : "/static/" + item.imagen;
+            thumb.src = item.imagen.indexOf("/") === 0 ? item.imagen : window.cotizatArchivoUrl(item.imagen);
             thumb.alt = "";
             sug.appendChild(thumb);
           }
           var main = FMT.h("div", "suggestion-main");
           var title = FMT.h("div", "suggestion-title", item.nombre);
-          title.style.fontWeight = "600";
+          CotizatStyles.set(title, "fontWeight", "600");
           main.appendChild(title);
           var meta = [item.marca, item.modelo, item.sku, item.categoria].filter(Boolean).join(" · ");
           var fecha = FMT.fechaCorta ? FMT.fechaCorta(item.fecha_precio) : "";
           main.appendChild(FMT.h("div", "suggestion-meta", meta + (fecha ? " · precio " + fecha : "")));
           sug.appendChild(main);
           var precio = FMT.h("span", null, (Number(item.precio) || 0).toFixed(2) + " $ / " + (item.unidad || "ud"));
-          precio.style.cssText = "color:var(--accent); font-size:.78em; white-space:nowrap;";
+          CotizatStyles.setCssText(precio, "color:var(--accent); font-size:.78em; white-space:nowrap;");
           sug.appendChild(precio);
 
           sug.addEventListener("mousedown", function (evt) { evt.preventDefault(); });
@@ -255,8 +255,8 @@
             cerrar();
             if (typeof opciones.alElegir === "function") opciones.alElegir(item);
           });
-          sug.addEventListener("mouseenter", function () { sug.style.background = "var(--bg)"; });
-          sug.addEventListener("mouseleave", function () { sug.style.background = "none"; });
+          sug.addEventListener("mouseenter", function () { CotizatStyles.set(sug, "background", "var(--bg)"); });
+          sug.addEventListener("mouseleave", function () { CotizatStyles.set(sug, "background", "none"); });
           dropdown.appendChild(sug);
         });
         contenedor.appendChild(dropdown);
@@ -346,19 +346,19 @@
 
       var sec = FMT.h("div", "productos-opciones-section");
       // Estilo para que sea visible fuera del detalle
-      sec.style.cssText = "margin:0 0.65rem 0.6rem; border:1px solid var(--border); border-radius:10px; background:var(--bg); padding:10px 12px;";
+      CotizatStyles.setCssText(sec, "margin:0 0.65rem 0.6rem; border:1px solid var(--border); border-radius:10px; background:var(--bg); padding:10px 12px;");
 
       // Header
       var header = FMT.h("div", "productos-opciones-header");
-      header.style.cssText = "display:flex; align-items:center; gap:8px; flex-wrap:wrap;";
+      CotizatStyles.setCssText(header, "display:flex; align-items:center; gap:8px; flex-wrap:wrap;");
       var titleLeft = FMT.h("div", "productos-opciones-title");
-      titleLeft.style.cssText = "display:flex; align-items:center; gap:8px; flex:1; min-width:180px;";
+      CotizatStyles.setCssText(titleLeft, "display:flex; align-items:center; gap:8px; flex:1; min-width:180px;");
       var icon = FMT.h("span", "", "🧩");
-      icon.style.fontSize = "1rem";
+      CotizatStyles.set(icon, "fontSize", "1rem");
       var label = FMT.h("div", "detail-label", "Productos para elegir");
-      label.style.cssText = "margin:0; font-weight:700; color:var(--text);";
+      CotizatStyles.setCssText(label, "margin:0; font-weight:700; color:var(--text);");
       var countBadge = FMT.h("span", "productos-opciones-count");
-      countBadge.style.cssText = "display:inline-flex; align-items:center; justify-content:center; min-width:22px; height:20px; padding:0 6px; border-radius:999px; background:var(--accent-soft); color:var(--accent); border:1px solid var(--accent-light); font-size:0.72rem; font-weight:700;";
+      CotizatStyles.setCssText(countBadge, "display:inline-flex; align-items:center; justify-content:center; min-width:22px; height:20px; padding:0 6px; border-radius:999px; background:var(--accent-soft); color:var(--accent); border:1px solid var(--accent-light); font-size:0.72rem; font-weight:700;");
       countBadge.textContent = String(opcionesCache.length);
       titleLeft.appendChild(icon);
       titleLeft.appendChild(label);
@@ -366,7 +366,7 @@
       header.appendChild(titleLeft);
 
       var headerActions = FMT.h("div", "productos-opciones-header-actions");
-      headerActions.style.cssText = "display:flex; gap:6px; align-items:center; flex-wrap:wrap;";
+      CotizatStyles.setCssText(headerActions, "display:flex; gap:6px; align-items:center; flex-wrap:wrap;");
 
       var toggleBtn = FMT.h("button", "btn btn-xs", opcionesCache.length ? "▾ Ocultar" : "▸ Mostrar (" + opcionesCache.length + ")");
       toggleBtn.type = "button";
@@ -385,18 +385,18 @@
 
       // Body plegable
       var body = FMT.h("div", "productos-opciones-body");
-      body.style.cssText = "margin-top:10px;";
+      CotizatStyles.setCssText(body, "margin-top:10px;");
 
       var hint = FMT.h("p", "hint",
         "Añade varios productos candidatos para esta partida. El cliente verá las opciones en el PDF. Marca uno como elegido si ya decidió.");
-      hint.style.margin = "0 0 8px 0";
+      CotizatStyles.set(hint, "margin", "0 0 8px 0");
       body.appendChild(hint);
 
       var lista = FMT.h("div", "productos-opciones-lista");
       body.appendChild(lista);
 
       var vacio = FMT.h("p", "hint productos-opciones-empty", "Sin opciones alternativas todavía. La partida usa solo el producto principal de arriba. Usa + Añadir producto para ofrecer alternativas.");
-      vacio.style.cssText = "margin:6px 0 0 0; font-style:italic;";
+      CotizatStyles.setCssText(vacio, "margin:6px 0 0 0; font-style:italic;");
       body.appendChild(vacio);
       sec.appendChild(body);
 
@@ -405,7 +405,7 @@
       function aplicarColapsado(isCollapsed) {
         collapsed = !!isCollapsed;
         sec.classList.toggle("collapsed", collapsed);
-        body.style.display = collapsed ? "none" : "";
+        CotizatStyles.set(body, "display", collapsed ? "none" : "");
         toggleBtn.textContent = collapsed ? "▸ Mostrar (" + opcionesCache.length + ")" : "▾ Ocultar";
       }
       aplicarColapsado(collapsed);
@@ -482,7 +482,7 @@
           } catch (e) { return ""; }
         }
         if (op.imagen) {
-          return op.imagen.indexOf("/") === 0 ? op.imagen : "/static/" + op.imagen;
+          return window.cotizatArchivoUrl(op.imagen);
         }
         return "";
       }
@@ -491,20 +491,20 @@
         var tarjeta = FMT.h("div", "producto-opcion-tarjeta");
         tarjeta.dataset.idx = String(idx);
         if (op.seleccionado) tarjeta.classList.add("seleccionada");
-        tarjeta.style.cssText = "display:flex; gap:12px; align-items:flex-start; padding:8px; border:1px solid var(--border); border-radius:10px; margin-bottom:8px; background:var(--surface);";
-        if (op.seleccionado) tarjeta.style.borderColor = "var(--accent)";
+        CotizatStyles.setCssText(tarjeta, "display:flex; gap:12px; align-items:flex-start; padding:8px; border:1px solid var(--border); border-radius:10px; margin-bottom:8px; background:var(--surface);");
+        if (op.seleccionado) CotizatStyles.set(tarjeta, "borderColor", "var(--accent)");
 
         // Foto clicable: mismo efecto que la casilla «Elegido».
         var fotoBtn = FMT.h("button", "producto-opcion-foto");
         fotoBtn.type = "button";
         fotoBtn.title = "Elegir este producto";
-        fotoBtn.style.cssText = "flex:0 0 92px; width:92px; height:92px; padding:0; border:2px solid " + (op.seleccionado ? "var(--accent)" : "var(--border)") + "; border-radius:8px; overflow:hidden; background:var(--bg); cursor:pointer; display:grid; place-items:center;";
+        CotizatStyles.setCssText(fotoBtn, "flex:0 0 92px; width:92px; height:92px; padding:0; border:2px solid " + (op.seleccionado ? "var(--accent)" : "var(--border)") + "; border-radius:8px; overflow:hidden; background:var(--bg); cursor:pointer; display:grid; place-items:center;");
         var srcFoto = srcImagenOpcion(op);
         if (srcFoto) {
           var fotoImg = FMT.h("img", "producto-opcion-foto-img");
           fotoImg.src = srcFoto;
           fotoImg.alt = op.nombre || "Producto";
-          fotoImg.style.cssText = "width:100%; height:100%; object-fit:cover; display:block;";
+          CotizatStyles.setCssText(fotoImg, "width:100%; height:100%; object-fit:cover; display:block;");
           fotoBtn.appendChild(fotoImg);
         } else {
           fotoBtn.appendChild(FMT.h("span", "", "▦"));
@@ -516,15 +516,15 @@
         tarjeta.appendChild(fotoBtn);
 
         var cuerpoTarjeta = FMT.h("div", "producto-opcion-cuerpo");
-        cuerpoTarjeta.style.cssText = "flex:1; min-width:0;";
+        CotizatStyles.setCssText(cuerpoTarjeta, "flex:1; min-width:0;");
         tarjeta.appendChild(cuerpoTarjeta);
 
         // Cabecera
         var head = FMT.h("div", "producto-opcion-head");
-        head.style.cssText = "display:flex; align-items:center; gap:8px; flex-wrap:wrap;";
+        CotizatStyles.setCssText(head, "display:flex; align-items:center; gap:8px; flex-wrap:wrap;");
 
         var selLabel = FMT.h("label", "producto-opcion-seleccion");
-        selLabel.style.cssText = "display:flex; align-items:center; gap:6px; cursor:pointer; font-size:0.78rem; font-weight:600; user-select:none;";
+        CotizatStyles.setCssText(selLabel, "display:flex; align-items:center; gap:6px; cursor:pointer; font-size:0.78rem; font-weight:600; user-select:none;");
         var selRadio = document.createElement("input");
         selRadio.type = "radio";
         selRadio.name = "producto_opcion_sel_" + groupId;
@@ -542,12 +542,12 @@
         // contenedor posicionado para poder colgar el desplegable justo
         // debajo, igual que el campo «Producto presupuestado» de la ficha.
         var nombreWrap = FMT.h("div", "producto-opcion-buscador");
-        nombreWrap.style.cssText = "position:relative; flex:1; min-width:180px; display:flex;";
+        CotizatStyles.setCssText(nombreWrap, "position:relative; flex:1; min-width:180px; display:flex;");
         var nombreInput = FMT.crearInput("text", op.nombre || "", "Buscar producto en el catálogo…", null, { "data-opcion-campo": "nombre" });
         nombreInput.className = "producto-opcion-nombre";
         nombreInput.setAttribute("autocomplete", "off");
         nombreInput.title = "Escribe para buscar en la base de productos; también puedes teclear un producto nuevo.";
-        nombreInput.style.cssText = "flex:1; min-width:0; padding:6px 8px; font-size:0.85rem;";
+        CotizatStyles.setCssText(nombreInput, "flex:1; min-width:0; padding:6px 8px; font-size:0.85rem;");
         nombreInput.addEventListener("click", function (e) { e.stopPropagation(); });
         nombreInput.addEventListener("input", function () {
           op.nombre = nombreInput.value;
@@ -599,7 +599,7 @@
         });
 
         var precioMini = FMT.crearInput("number", op.precio != null ? op.precio : "", "Precio", null, { "data-opcion-campo": "precio", step: "any", min: "0" });
-        precioMini.style.cssText = "width:110px; padding:6px 8px; font-size:0.85rem;";
+        CotizatStyles.setCssText(precioMini, "width:110px; padding:6px 8px; font-size:0.85rem;");
         precioMini.placeholder = "Precio";
         precioMini.addEventListener("click", function (e) { e.stopPropagation(); });
         precioMini.addEventListener("input", function () {
@@ -622,16 +622,16 @@
 
         // Grid detalles
         var grid = FMT.h("div", "producto-opcion-grid");
-        grid.style.cssText = "display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:6px 10px; margin-top:8px;";
+        CotizatStyles.setCssText(grid, "display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:6px 10px; margin-top:8px;");
 
         function campo(labelTxt, key, placeholder, tipo) {
           var box = FMT.h("div", "field");
-          box.style.cssText = "margin:0;";
+          CotizatStyles.setCssText(box, "margin:0;");
           var l = FMT.h("label", null, labelTxt);
-          l.style.cssText = "font-size:0.7rem; color:var(--text-soft); margin-bottom:2px; display:block;";
+          CotizatStyles.setCssText(l, "font-size:0.7rem; color:var(--text-soft); margin-bottom:2px; display:block;");
           box.appendChild(l);
           var inp = FMT.crearInput(tipo || "text", op[key] != null ? op[key] : "", placeholder || "", null, { "data-opcion-campo": key, step: "any", min: "0" });
-          inp.style.cssText = "padding:5px 7px; font-size:0.82rem; width:100%;";
+          CotizatStyles.setCssText(inp, "padding:5px 7px; font-size:0.82rem; width:100%;");
           inp.addEventListener("click", function (e) { e.stopPropagation(); });
           inp.addEventListener("input", function () {
             op[key] = inp.value;
@@ -655,15 +655,15 @@
 
         // Descripción
         var descBox = FMT.h("div", "field");
-        descBox.style.cssText = "grid-column:1 / -1; margin-top:4px;";
+        CotizatStyles.setCssText(descBox, "grid-column:1 / -1; margin-top:4px;");
         var descLabel = FMT.h("label", null, "Descripción");
-        descLabel.style.cssText = "font-size:0.7rem; color:var(--text-soft); margin-bottom:2px; display:block;";
+        CotizatStyles.setCssText(descLabel, "font-size:0.7rem; color:var(--text-soft); margin-bottom:2px; display:block;");
         descBox.appendChild(descLabel);
         var descTA = document.createElement("textarea");
         descTA.rows = 1;
         descTA.placeholder = "Detalles del producto (acabado, dimensiones, garantía…)";
         descTA.setAttribute("data-opcion-campo", "descripcion");
-        descTA.style.cssText = "width:100%; padding:5px 7px; font-size:0.82rem; resize:vertical;";
+        CotizatStyles.setCssText(descTA, "width:100%; padding:5px 7px; font-size:0.82rem; resize:vertical;");
         descTA.value = op.descripcion || "";
         descTA.addEventListener("click", function (e) { e.stopPropagation(); });
         descTA.addEventListener("input", function () { op.descripcion = descTA.value; persistirYRecalcular(); });
@@ -672,42 +672,42 @@
 
         // Imagen
         var imgBox = FMT.h("div", "field");
-        imgBox.style.cssText = "grid-column:1 / -1; margin-top:6px;";
+        CotizatStyles.setCssText(imgBox, "grid-column:1 / -1; margin-top:6px;");
         var imgLabel = FMT.h("label", null, "Imagen");
-        imgLabel.style.cssText = "font-size:0.7rem; color:var(--text-soft); margin-bottom:2px; display:block;";
+        CotizatStyles.setCssText(imgLabel, "font-size:0.7rem; color:var(--text-soft); margin-bottom:2px; display:block;");
         imgBox.appendChild(imgLabel);
         var imgRow = FMT.h("div");
-        imgRow.style.cssText = "display:flex; align-items:center; gap:8px; flex-wrap:wrap;";
+        CotizatStyles.setCssText(imgRow, "display:flex; align-items:center; gap:8px; flex-wrap:wrap;");
         var imgPrev = FMT.h("img", "producto-opcion-previa");
         imgPrev.alt = "";
-        imgPrev.style.cssText = "max-height:60px; max-width:90px; border-radius:4px; border:1px solid var(--border); display:none; object-fit:cover;";
+        CotizatStyles.setCssText(imgPrev, "max-height:60px; max-width:90px; border-radius:4px; border:1px solid var(--border); display:none; object-fit:cover;");
         // Prioridad: _objUrl (archivo nuevo) > imagen guardada
         if (op._objUrl) {
           imgPrev.src = op._objUrl;
-          imgPrev.style.display = "";
+          CotizatStyles.set(imgPrev, "display", "");
         } else if (op._imagen_file && op._imagen_file instanceof File) {
           // Crear URL al vuelo si se perdió
           try {
             var tmpUrl = URL.createObjectURL(op._imagen_file);
             op._objUrl = tmpUrl;
             imgPrev.src = tmpUrl;
-            imgPrev.style.display = "";
+            CotizatStyles.set(imgPrev, "display", "");
           } catch (e) {}
         } else if (op.imagen) {
-          imgPrev.src = op.imagen.indexOf("/") === 0 ? op.imagen : "/static/" + op.imagen;
-          imgPrev.style.display = "";
+          imgPrev.src = window.cotizatArchivoUrl(op.imagen);
+          CotizatStyles.set(imgPrev, "display", "");
         }
         imgRow.appendChild(imgPrev);
 
         var fileLbl = FMT.h("span", "hint", op.imagen || op._imagen_file ? "Sustituir imagen:" : "Imagen (opcional):");
-        fileLbl.style.cssText = "font-size:0.7rem;";
+        CotizatStyles.setCssText(fileLbl, "font-size:0.7rem;");
         imgRow.appendChild(fileLbl);
 
         var fileInput = document.createElement("input");
         fileInput.type = "file";
         fileInput.accept = "image/*";
         fileInput.setAttribute("data-opcion-campo", "imagen_file");
-        fileInput.style.cssText = "flex:1; min-width:160px; font-size:0.75rem;";
+        CotizatStyles.setCssText(fileInput, "flex:1; min-width:160px; font-size:0.75rem;");
         fileInput.addEventListener("click", function (e) { e.stopPropagation(); });
         fileInput.addEventListener("change", function () {
           if (fileInput.files && fileInput.files[0]) {
@@ -716,9 +716,9 @@
             op._objUrl = url;
             op._imagen_file = fileInput.files[0];
             imgPrev.src = url;
-            imgPrev.style.display = "";
+            CotizatStyles.set(imgPrev, "display", "");
             fileLbl.textContent = "Sustituir imagen:";
-            btnQuitar.style.display = "";
+            CotizatStyles.set(btnQuitar, "display", "");
             persistirYRecalcular();
           }
         });
@@ -727,7 +727,7 @@
         var btnQuitar = FMT.h("button", "btn btn-xs btn-ghost", "🗑 Quitar imagen");
         btnQuitar.type = "button";
         btnQuitar.title = "Quitar la imagen de esta opción";
-        btnQuitar.style.display = (op.imagen || op._imagen_file) ? "" : "none";
+        CotizatStyles.set(btnQuitar, "display", (op.imagen || op._imagen_file) ? "" : "none");
         btnQuitar.addEventListener("click", function (e) {
           e.stopPropagation();
           op.imagen = "";
@@ -735,8 +735,8 @@
           op._imagen_file = null;
           if (fileInput) fileInput.value = "";
           imgPrev.removeAttribute("src");
-          imgPrev.style.display = "none";
-          btnQuitar.style.display = "none";
+          CotizatStyles.set(imgPrev, "display", "none");
+          CotizatStyles.set(btnQuitar, "display", "none");
           fileLbl.textContent = "Imagen (opcional):";
           persistirYRecalcular();
         });
@@ -749,9 +749,9 @@
       }
 
       function renderOpciones() {
-        lista.innerHTML = "";
+        lista.replaceChildren();
         var hay = opcionesCache.length > 0;
-        vacio.style.display = hay ? "none" : "";
+        CotizatStyles.set(vacio, "display", hay ? "none" : "");
         countBadge.textContent = String(opcionesCache.length);
         opcionesCache.forEach(function (op, i) {
           op.orden = i;
@@ -886,7 +886,7 @@
 
       if (tipo !== "recurso" && tipo !== "subtotal" && tipo !== "total") {
         tr.classList.add("drow-oculto");
-        tr.style.display = "none";
+        CotizatStyles.set(tr, "display", "none");
       }
 
       var catActual = datos.categoria || derivarCategoria(datos.grupo, datos.codigo);
@@ -955,12 +955,12 @@
 
       // Descripción con autocompletado de recursos existentes
       var tdDesc = editor.FMT.h("td", "dc-desc");
-      tdDesc.style.position = "relative";
+      CotizatStyles.set(tdDesc, "position", "relative");
       if (editable) {
         var descWrap = editor.FMT.h("div");
-        descWrap.style.cssText = "position:relative; display:flex; width:100%;";
+        CotizatStyles.setCssText(descWrap, "position:relative; display:flex; width:100%;");
         var inDesc = editor.FMT.crearInput("text", datos.descripcion || "", "p. ej. Peón, Mortero…", "d_descripcion");
-        inDesc.style.flex = "1";
+        CotizatStyles.set(inDesc, "flex", "1");
         inDesc.setAttribute("autocomplete", "off");
         // Guardar valor original para dataset
         inDesc.addEventListener("input", function () {
@@ -1069,30 +1069,30 @@
           cerrarRecursoAutocomplete();
           if (!recursos.length) return;
           recursoDropdown = editor.FMT.h("div", "autocomplete-suggestions");
-          recursoDropdown.style.cssText = "position:absolute; top:100%; left:0; right:0; background:var(--surface); border:1px solid var(--border-strong); border-radius:var(--radius-sm); max-height:260px; overflow-y:auto; z-index:2000; box-shadow:var(--shadow-lg); margin-top:4px;";
+          CotizatStyles.setCssText(recursoDropdown, "position:absolute; top:100%; left:0; right:0; background:var(--surface); border:1px solid var(--border-strong); border-radius:var(--radius-sm); max-height:260px; overflow-y:auto; z-index:2000; box-shadow:var(--shadow-lg); margin-top:4px;");
           recursos.forEach(function(item){
             var sug = editor.FMT.h("div", "suggestion-item");
-            sug.style.cssText = "padding:8px 10px; cursor:pointer; border-bottom:1px solid var(--bg); font-size:.82rem; display:flex; align-items:center; gap:9px;";
+            CotizatStyles.setCssText(sug, "padding:8px 10px; cursor:pointer; border-bottom:1px solid var(--bg); font-size:.82rem; display:flex; align-items:center; gap:9px;");
             var main = editor.FMT.h("div", "suggestion-main");
-            main.style.cssText = "flex:1; min-width:0;";
+            CotizatStyles.setCssText(main, "flex:1; min-width:0;");
             var title = editor.FMT.h("div", "suggestion-title", item.descripcion || "");
-            title.style.cssText = "font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;";
+            CotizatStyles.setCssText(title, "font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;");
             main.appendChild(title);
             var metaParts = [item.codigo, item.grupo, item.proveedor, item.categoria, item.unidad].filter(Boolean);
             var meta = editor.FMT.h("div", "suggestion-meta", metaParts.join(" · "));
-            meta.style.cssText = "font-size:.72rem; color:var(--text-muted); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;";
+            CotizatStyles.setCssText(meta, "font-size:.72rem; color:var(--text-muted); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;");
             main.appendChild(meta);
             sug.appendChild(main);
             var right = editor.FMT.h("div", "", (parseFloat(item.precio||0).toFixed(2) + " $"));
-            right.style.cssText = "font-weight:600; color:var(--accent); font-size:0.82rem; white-space:nowrap; margin-left:auto;";
+            CotizatStyles.setCssText(right, "font-weight:600; color:var(--accent); font-size:0.82rem; white-space:nowrap; margin-left:auto;");
             sug.appendChild(right);
             sug.addEventListener("mousedown", function(e){ e.preventDefault(); });
             sug.addEventListener("click", function(e){
               e.stopPropagation();
               aplicarRecursoSeleccionado(item);
             });
-            sug.addEventListener("mouseenter", function(){ sug.style.background = "var(--surface-hover)"; });
-            sug.addEventListener("mouseleave", function(){ sug.style.background = "transparent"; });
+            sug.addEventListener("mouseenter", function(){ CotizatStyles.set(sug, "background", "var(--surface-hover)"); });
+            sug.addEventListener("mouseleave", function(){ CotizatStyles.set(sug, "background", "transparent"); });
             recursoDropdown.appendChild(sug);
           });
           descWrap.appendChild(recursoDropdown);
@@ -1194,10 +1194,10 @@
       var sec = partidaWrap.querySelector(".dcost-section");
       if (!sec) return;
       var n = sec._tbody ? sec._tbody.querySelectorAll(".drow").length : 0;
-      if (sec._vacio) sec._vacio.style.display = n ? "none" : "";
+      if (sec._vacio) CotizatStyles.set(sec._vacio, "display", n ? "none" : "");
       if (sec._btnCostes) {
         var posibles = filasDesdeCostesPartida(sec._datos || {});
-        sec._btnCostes.style.display = (!n && posibles.length) ? "" : "none";
+        CotizatStyles.set(sec._btnCostes, "display", (!n && posibles.length) ? "" : "none");
       }
     }
 
@@ -1269,7 +1269,7 @@
 
       var btnCostes = editor.FMT.h("button", "btn btn-sm", "🧮 Crear filas desde los costes actuales");
       btnCostes.type = "button";
-      btnCostes.style.display = "none";
+      CotizatStyles.set(btnCostes, "display", "none");
       btnCostes.title = "Convierte los costes de la partida en filas editables";
       btnCostes.addEventListener("click", function () {
         var filas = filasDesdeCostesPartida(datos);
@@ -1541,7 +1541,7 @@
       row.appendChild(drag);
 
       var nombreWrap = editor.FMT.h("div", "partida-nombre-wrap");
-      nombreWrap.style.position = "relative";
+      CotizatStyles.set(nombreWrap, "position", "relative");
       var num = editor.FMT.h("span", "partida-num", "");
       nombreWrap.appendChild(num);
       var dot = editor.FMT.h("span", "partida-dot");
@@ -1593,27 +1593,27 @@
         if (!matches.length) return;
 
         partidaDropdown = editorInst.FMT.h("div", "autocomplete-suggestions");
-        partidaDropdown.style.cssText = "position:absolute; top:100%; left:0; right:0; background:var(--surface); border:1px solid var(--border-strong); border-radius:var(--radius-sm); max-height:240px; overflow-y:auto; z-index:1000; box-shadow:var(--shadow-lg); margin-top:4px;";
+        CotizatStyles.setCssText(partidaDropdown, "position:absolute; top:100%; left:0; right:0; background:var(--surface); border:1px solid var(--border-strong); border-radius:var(--radius-sm); max-height:240px; overflow-y:auto; z-index:1000; box-shadow:var(--shadow-lg); margin-top:4px;");
 
         matches.forEach(function (item) {
           var sug = editorInst.FMT.h("div", "suggestion-item");
-          sug.style.cssText = "padding:8px 10px; cursor:pointer; border-bottom:1px solid var(--bg); font-size:.82rem; display:flex; align-items:center; gap:9px;";
+          CotizatStyles.setCssText(sug, "padding:8px 10px; cursor:pointer; border-bottom:1px solid var(--bg); font-size:.82rem; display:flex; align-items:center; gap:9px;");
           
           var main = editorInst.FMT.h("div", "suggestion-main");
           var title = editorInst.FMT.h("div", "suggestion-title", item.nombre);
-          title.style.fontWeight = "600";
+          CotizatStyles.set(title, "fontWeight", "600");
           main.appendChild(title);
           
           var meta = [item.categoria, item.proveedor].filter(Boolean).join(" · ");
           if (meta) {
             var mdiv = editorInst.FMT.h("div", "suggestion-meta", meta);
-            mdiv.style.cssText = "font-size:.72rem; color:var(--text-muted); margin-top:2px;";
+            CotizatStyles.setCssText(mdiv, "font-size:.72rem; color:var(--text-muted); margin-top:2px;");
             main.appendChild(mdiv);
           }
           sug.appendChild(main);
           
           var right = editorInst.FMT.h("div", "", (item.precio || 0).toFixed(2) + " $");
-          right.style.cssText = "font-weight:600; color:var(--accent); font-size:0.85rem; white-space:nowrap; margin-left:auto;";
+          CotizatStyles.setCssText(right, "font-weight:600; color:var(--accent); font-size:0.85rem; white-space:nowrap; margin-left:auto;");
           sug.appendChild(right);
 
           sug.addEventListener("mousedown", function(e) { e.preventDefault(); });
@@ -1659,8 +1659,8 @@
             }
           });
           
-          sug.addEventListener("mouseenter", function () { sug.style.background = "var(--surface-hover)"; });
-          sug.addEventListener("mouseleave", function () { sug.style.background = "transparent"; });
+          sug.addEventListener("mouseenter", function () { CotizatStyles.set(sug, "background", "var(--surface-hover)"); });
+          sug.addEventListener("mouseleave", function () { CotizatStyles.set(sug, "background", "transparent"); });
 
           partidaDropdown.appendChild(sug);
         });
@@ -1681,16 +1681,16 @@
       row.appendChild(nombreWrap);
 
       var cantCell = editor.FMT.h("div", "");
-      cantCell.style.textAlign = "right";
-      cantCell.style.padding = "0 0.5rem";
+      CotizatStyles.set(cantCell, "textAlign", "right");
+      CotizatStyles.set(cantCell, "padding", "0 0.5rem");
       var cantInput = editor.FMT.crearInput("number", datos.cantidad !== undefined ? datos.cantidad : "1", "0", "p_cantidad", { step: "any", min: "0" });
       cantInput.className = "partida-cant-input";
       cantCell.appendChild(cantInput);
       row.appendChild(cantCell);
 
       var undCell = editor.FMT.h("div", "");
-      undCell.style.textAlign = "center";
-      undCell.style.padding = "0 0.3rem";
+      CotizatStyles.set(undCell, "textAlign", "center");
+      CotizatStyles.set(undCell, "padding", "0 0.3rem");
       var undSelect = document.createElement("select");
       undSelect.className = "partida-unidad-select";
       undSelect.dataset.f = "p_unidad";
@@ -1708,8 +1708,8 @@
       row.appendChild(undCell);
 
       var precioCell = editor.FMT.h("div", "");
-      precioCell.style.textAlign = "right";
-      precioCell.style.padding = "0 0.5rem";
+      CotizatStyles.set(precioCell, "textAlign", "right");
+      CotizatStyles.set(precioCell, "padding", "0 0.5rem");
       var precioInput = editor.FMT.crearInput("number", datos.precio !== undefined ? datos.precio : "0", "0,00", "p_precio", { step: "any", min: "0" });
       precioInput.className = "partida-precio-input";
       precioInput.addEventListener("input", function () {
@@ -1872,13 +1872,13 @@
       texto.appendChild(meta);
 
       var accionesWrap = editor.FMT.h("div", "partida-producto-acciones");
-      accionesWrap.style.cssText = "display:flex; align-items:center; gap:8px; margin-left:auto;";
+      CotizatStyles.setCssText(accionesWrap, "display:flex; align-items:center; gap:8px; margin-left:auto;");
 
       var accion = editor.FMT.h("span", "partida-producto-accion", "Cambiar ›");
       var btnQuitarProd = editor.FMT.h("button", "btn btn-xs btn-danger", "🗑 Eliminar producto");
       btnQuitarProd.type = "button";
       btnQuitarProd.title = "Eliminar y desasociar este producto de la partida";
-      btnQuitarProd.style.cssText = "font-size:0.75rem; padding:3px 8px; z-index:2;";
+      CotizatStyles.setCssText(btnQuitarProd, "font-size:0.75rem; padding:3px 8px; z-index:2;");
       btnQuitarProd.addEventListener("click", function (evt) {
         evt.stopPropagation();
         if (confirm("¿Seguro que deseas eliminar este producto de la partida?")) {
@@ -1896,13 +1896,13 @@
       wrapRes.appendChild(resumen);
 
       var galeria = editor.FMT.h("div", "partida-producto-galeria");
-      galeria.style.cssText = "display:none; gap:6px; flex-wrap:wrap; padding:0 0.65rem 0.45rem;";
+      CotizatStyles.setCssText(galeria, "display:none; gap:6px; flex-wrap:wrap; padding:0 0.65rem 0.45rem;");
       wrapRes.appendChild(galeria);
 
       function rutaImagen(ruta) {
         ruta = String(ruta || "").trim();
         if (!ruta) return "";
-        return ruta.indexOf("/") === 0 ? ruta : "/static/" + ruta;
+        return window.cotizatArchivoUrl(ruta);
       }
       function actualizar() {
         var prodNombre = (partidaWrap.querySelector('[data-f="p_prod_nombre"]') || {}).value;
@@ -1914,7 +1914,7 @@
         wrapRes.hidden = !tieneProducto;
         resumen.hidden = !tieneProducto;
         if (!tieneProducto) {
-          galeria.style.display = "none";
+          CotizatStyles.set(galeria, "display", "none");
           return;
         }
         nombre.textContent = prodNombre || (opciones[0] && opciones[0].nombre) || "Producto";
@@ -1923,25 +1923,25 @@
         var coste = editorInst.FMT.parseNum(costeProducto);
         meta.textContent = (prodPrecio !== "" && isFinite(precio) ? "Venta " + editorInst.FMT.fmt(precio) : "Venta sin definir") + (costeProducto !== "" ? " · Coste " + editorInst.FMT.fmt(coste) : "") + (prodUnidad ? " / " + prodUnidad : "");
         var src = rutaImagen(prodImagen);
-        imagen.style.display = src ? "" : "none";
-        sinImagen.style.display = src ? "none" : "grid";
+        CotizatStyles.set(imagen, "display", src ? "" : "none");
+        CotizatStyles.set(sinImagen, "display", src ? "none" : "grid");
         if (src) imagen.src = src;
         else imagen.removeAttribute("src");
 
-        galeria.innerHTML = "";
+        galeria.replaceChildren();
         if (opciones.length > 1) {
-          galeria.style.display = "flex";
+          CotizatStyles.set(galeria, "display", "flex");
           opciones.forEach(function (op, i) {
             var btn = editor.FMT.h("button", "partida-producto-mini");
             btn.type = "button";
             btn.title = "Elegir " + (op.nombre || "producto");
-            btn.style.cssText = "width:56px; height:56px; padding:0; border:2px solid " + (op.seleccionado ? "var(--accent)" : "var(--border)") + "; border-radius:6px; overflow:hidden; background:var(--bg); cursor:pointer;";
+            CotizatStyles.setCssText(btn, "width:56px; height:56px; padding:0; border:2px solid " + (op.seleccionado ? "var(--accent)" : "var(--border)") + "; border-radius:6px; overflow:hidden; background:var(--bg); cursor:pointer;");
             var imgSrc = rutaImagen(op.imagen);
             if (imgSrc) {
               var im = editor.FMT.h("img");
               im.src = imgSrc;
               im.alt = op.nombre || "";
-              im.style.cssText = "width:100%; height:100%; object-fit:cover;";
+              CotizatStyles.setCssText(im, "width:100%; height:100%; object-fit:cover;");
               btn.appendChild(im);
             } else {
               btn.appendChild(editor.FMT.h("span", "", (op.nombre || "?").slice(0, 2)));
@@ -1978,7 +1978,7 @@
             galeria.appendChild(btn);
           });
         } else {
-          galeria.style.display = "none";
+          CotizatStyles.set(galeria, "display", "none");
         }
       }
       resumen.addEventListener("click", function (evento) {
@@ -2050,12 +2050,12 @@
       sec1.appendChild(headCat);
 
       var catRow = editor.FMT.h("div");
-      catRow.style.cssText = "display:flex; align-items:center; gap:0.5rem; margin-bottom:0.45rem;";
+      CotizatStyles.setCssText(catRow, "display:flex; align-items:center; gap:0.5rem; margin-bottom:0.45rem;");
       var catLabel = editor.FMT.h("label", null, "Categoría:");
-      catLabel.style.cssText = "font-size:0.8rem; font-weight:600; color:var(--text-soft); white-space:nowrap;";
+      CotizatStyles.setCssText(catLabel, "font-size:0.8rem; font-weight:600; color:var(--text-soft); white-space:nowrap;");
       var catInput = editor.FMT.crearInput("text", datos.categoria || "", "General", "p_categoria");
       catInput.setAttribute("list", "categorias-disponibles");
-      catInput.style.cssText = "flex:1; min-width:120px; padding:0.3rem 0.55rem; font-size:0.8rem;";
+      CotizatStyles.setCssText(catInput, "flex:1; min-width:120px; padding:0.3rem 0.55rem; font-size:0.8rem;");
       catRow.appendChild(catLabel);
       catRow.appendChild(catInput);
       sec1.appendChild(catRow);
@@ -2143,20 +2143,20 @@
         objetivo.step = "any";
 
         var margenBox = editor.FMT.h("div", "field");
-        margenBox.style.gridColumn = "1 / -1";
+        CotizatStyles.set(margenBox, "gridColumn", "1 / -1");
         margenBox.appendChild(editor.FMT.h("label", null, "Beneficio real con el precio actual"));
         var margenReal = editor.FMT.h("div", "margen-real-partida", "—");
         margenReal.dataset.f = "margen_real";
-        margenReal.style.cssText = "font-weight:600; padding:8px 10px; background:var(--bg); border:1px solid var(--border); border-radius:6px; font-size:.84rem; min-height:36px; display:flex; align-items:center;";
+        CotizatStyles.setCssText(margenReal, "font-weight:600; padding:8px 10px; background:var(--bg); border:1px solid var(--border); border-radius:6px; font-size:.84rem; min-height:36px; display:flex; align-items:center;");
         margenBox.appendChild(margenReal);
 
         var btnRow = editor.FMT.h("div");
-        btnRow.style.cssText = "display:flex; gap:8px; flex-wrap:wrap; margin-top:6px; align-items:center;";
+        CotizatStyles.setCssText(btnRow, "display:flex; gap:8px; flex-wrap:wrap; margin-top:6px; align-items:center;");
         var aplicar = editor.FMT.h("button", "btn btn-sm btn-primary", "Aplicar beneficio al precio");
         aplicar.type = "button";
         aplicar.title = "Calcula el precio de venta según el beneficio deseado: Precio = Coste × (1 + Beneficio%/100)";
         var aplicarHint = editor.FMT.h("span", "hint", "Ej: coste 100 + 40% → precio 140");
-        aplicarHint.style.alignSelf = "center";
+        CotizatStyles.set(aplicarHint, "alignSelf", "center");
         btnRow.appendChild(aplicar);
         btnRow.appendChild(aplicarHint);
         margenBox.appendChild(btnRow);
@@ -2189,14 +2189,25 @@
           var precio = editorInst.FMT.parseNum(precioEl ? precioEl.value : 0);
           if (coste <= 0) {
             margenReal.textContent = "Añade costes (o descomposición) para ver el beneficio";
-            margenReal.style.color = "var(--text-muted)";
+            CotizatStyles.set(margenReal, "color", "var(--text-muted)");
             return;
           }
           var beneficioU = precio - coste;
           var markup = (beneficioU / coste * 100);
           var margen = precio>0 ? (beneficioU / precio *100) : 0;
-          margenReal.style.color = beneficioU >=0 ? "var(--green)" : "var(--rose)";
-          margenReal.innerHTML = 'Coste: <strong>' + editorInst.FMT.fmt(coste) + '/ud</strong> · Precio: <strong>' + editorInst.FMT.fmt(precio) + '/ud</strong> · Beneficio: <strong>' + editorInst.FMT.fmt(beneficioU) + '/ud (' + markup.toFixed(1).replace(".",",")+'% s/coste, ' + margen.toFixed(1).replace(".",",")+'% margen)</strong>';
+          CotizatStyles.set(margenReal, "color", beneficioU >=0 ? "var(--green)" : "var(--rose)");
+          margenReal.textContent = "Coste: ";
+          var costeStrong = document.createElement("strong");
+          costeStrong.textContent = editorInst.FMT.fmt(coste) + "/ud";
+          margenReal.appendChild(costeStrong);
+          margenReal.appendChild(document.createTextNode(" · Precio: "));
+          var precioStrong = document.createElement("strong");
+          precioStrong.textContent = editorInst.FMT.fmt(precio) + "/ud";
+          margenReal.appendChild(precioStrong);
+          margenReal.appendChild(document.createTextNode(" · Beneficio: "));
+          var beneficioStrong = document.createElement("strong");
+          beneficioStrong.textContent = editorInst.FMT.fmt(beneficioU) + "/ud (" + markup.toFixed(1).replace(".",",") + "% s/coste, " + margen.toFixed(1).replace(".",",") + "% margen)";
+          margenReal.appendChild(beneficioStrong);
           margenReal.title = "Markup sobre coste: " + markup.toFixed(2) + "% | Margen sobre precio: " + margen.toFixed(2) + "%";
         }
 
@@ -2205,7 +2216,7 @@
           var pct = editorInst.FMT.parseNum(objetivo.value);
           if (coste <= 0) {
             margenReal.textContent = "Indica un coste directo mayor a 0";
-            margenReal.style.color = "var(--rose)";
+            CotizatStyles.set(margenReal, "color", "var(--rose)");
             return;
           }
           if (!isFinite(pct)) pct = 0;
@@ -2300,7 +2311,7 @@
       // Mediciones
       var sec2 = editor.FMT.h("div", "detail-section");
       var medHead = editor.FMT.h("div");
-      medHead.style.cssText = "display:flex; align-items:center; gap:0.5rem; margin-bottom:0.3rem;";
+      CotizatStyles.setCssText(medHead, "display:flex; align-items:center; gap:0.5rem; margin-bottom:0.3rem;");
       medHead.appendChild(editor.FMT.h("div", "detail-label", "Mediciones (desglose por zonas)"));
       var btnAddMed = editor.FMT.h("button", "btn btn-sm", "+ Medición");
       btnAddMed.type = "button";
@@ -2362,12 +2373,12 @@
 
       // Categoría del producto
       var prodCatRow = editor.FMT.h("div");
-      prodCatRow.style.cssText = "display:flex; align-items:center; gap:0.5rem; margin-top:0.4rem;";
+      CotizatStyles.setCssText(prodCatRow, "display:flex; align-items:center; gap:0.5rem; margin-top:0.4rem;");
       var prodCatLabel = editor.FMT.h("label", null, "Categoría del producto:");
-      prodCatLabel.style.cssText = "font-size:0.8rem; font-weight:600; color:var(--text-soft); white-space:nowrap;";
+      CotizatStyles.setCssText(prodCatLabel, "font-size:0.8rem; font-weight:600; color:var(--text-soft); white-space:nowrap;");
       var prodCatInput = editor.FMT.crearInput("text", datos.prod_categoria || "", "General", "p_prod_categoria");
       prodCatInput.setAttribute("list", "categorias-disponibles");
-      prodCatInput.style.cssText = "flex:1; min-width:120px; padding:0.3rem 0.55rem; font-size:0.8rem;";
+      CotizatStyles.setCssText(prodCatInput, "flex:1; min-width:120px; padding:0.3rem 0.55rem; font-size:0.8rem;");
       prodCatRow.appendChild(prodCatLabel);
       prodCatRow.appendChild(prodCatInput);
       sec3.appendChild(prodCatRow);
@@ -2376,14 +2387,14 @@
       var imgRow = editor.FMT.h("div", "prod-img-row");
       var previa = editor.FMT.h("img", "prod-previa");
       previa.alt = "Imagen del producto";
-      previa.style.display = "none";
+      CotizatStyles.set(previa, "display", "none");
       var hiddenProdImagen = editor.FMT.crearInput("hidden", datos.prod_imagen || "", null, "p_prod_imagen_actual");
       var fileLbl = editor.FMT.h("span", "hint", "Imagen (opcional):");
       var file = editor.FMT.crearInput("file", undefined, null, "p_prod_imagen", { accept: "image/*" });
       var btnQuitarImg = editor.FMT.h("button", "btn btn-sm btn-danger", "🗑 Eliminar");
       btnQuitarImg.type = "button";
       btnQuitarImg.title = "Quitar la foto del producto";
-      btnQuitarImg.style.display = "none";
+      CotizatStyles.set(btnQuitarImg, "display", "none");
 
       function mostrarPrevia(src) {
         if (previa.dataset.objUrl) {
@@ -2391,8 +2402,8 @@
           delete previa.dataset.objUrl;
         }
         previa.src = src;
-        previa.style.display = "";
-        btnQuitarImg.style.display = "";
+        CotizatStyles.set(previa, "display", "");
+        CotizatStyles.set(btnQuitarImg, "display", "");
         fileLbl.textContent = "Sustituir imagen:";
       }
 
@@ -2402,15 +2413,15 @@
           delete previa.dataset.objUrl;
         }
         previa.removeAttribute("src");
-        previa.style.display = "none";
-        btnQuitarImg.style.display = "none";
+        CotizatStyles.set(previa, "display", "none");
+        CotizatStyles.set(btnQuitarImg, "display", "none");
         fileLbl.textContent = "Imagen (opcional):";
       }
 
       if (datos.prod_imagen) {
-        previa.src = "/static/" + datos.prod_imagen;
-        previa.style.display = "";
-        btnQuitarImg.style.display = "";
+        previa.src = window.cotizatArchivoUrl(datos.prod_imagen);
+        CotizatStyles.set(previa, "display", "");
+        CotizatStyles.set(btnQuitarImg, "display", "");
         fileLbl.textContent = "Sustituir imagen:";
       }
 
@@ -2438,7 +2449,7 @@
 
       var btnQuitarProdTotal = editor.FMT.h("button", "btn btn-sm btn-danger", "🗑 Eliminar producto de esta partida");
       btnQuitarProdTotal.type = "button";
-      btnQuitarProdTotal.style.cssText = "margin-top:10px;";
+      CotizatStyles.setCssText(btnQuitarProdTotal, "margin-top:10px;");
       btnQuitarProdTotal.addEventListener("click", function () {
         if (confirm("¿Seguro que deseas eliminar el producto de esta partida?")) {
           quitarProductoDePartida(partidaWrap);
@@ -2454,10 +2465,10 @@
       // Autocompletado de productos
       (function () {
         var prodNombreWrap = editor.FMT.h("div");
-        prodNombreWrap.style.cssText = "position:relative; display:flex;";
+        CotizatStyles.setCssText(prodNombreWrap, "position:relative; display:flex;");
         prodNombreInput.parentNode.insertBefore(prodNombreWrap, prodNombreInput);
         prodNombreWrap.appendChild(prodNombreInput);
-        prodNombreInput.style.flex = "1";
+        CotizatStyles.set(prodNombreInput, "flex", "1");
         var prodDropdown = null;
 
         function cerrarProdAutocomplete() {
@@ -2488,27 +2499,27 @@
           if (!matches.length) return;
 
           prodDropdown = editor.FMT.h("div", "autocomplete-suggestions");
-          prodDropdown.style.cssText = "position:absolute; top:100%; left:0; right:0; background:var(--surface); border:1px solid var(--border-strong); border-radius:var(--radius-sm); max-height:240px; overflow-y:auto; z-index:1000; box-shadow:var(--shadow-lg); margin-top:4px;";
+          CotizatStyles.setCssText(prodDropdown, "position:absolute; top:100%; left:0; right:0; background:var(--surface); border:1px solid var(--border-strong); border-radius:var(--radius-sm); max-height:240px; overflow-y:auto; z-index:1000; box-shadow:var(--shadow-lg); margin-top:4px;");
 
           matches.forEach(function (item) {
             var sug = editor.FMT.h("div", "suggestion-item");
-            sug.style.cssText = "padding:8px 10px; cursor:pointer; border-bottom:1px solid var(--bg); font-size:.82rem; display:flex; align-items:center; gap:9px;";
+            CotizatStyles.setCssText(sug, "padding:8px 10px; cursor:pointer; border-bottom:1px solid var(--bg); font-size:.82rem; display:flex; align-items:center; gap:9px;");
             if (item.imagen) {
               var thumb = editor.FMT.h("img", "suggestion-thumb");
-              thumb.src = "/static/" + item.imagen;
+              thumb.src = window.cotizatArchivoUrl(item.imagen);
               thumb.alt = "";
               sug.appendChild(thumb);
             }
             var main = editor.FMT.h("div", "suggestion-main");
             var title = editor.FMT.h("div", "suggestion-title", item.nombre);
-            title.style.fontWeight = "600";
+            CotizatStyles.set(title, "fontWeight", "600");
             main.appendChild(title);
             var meta = [item.marca, item.modelo, item.sku, item.categoria].filter(Boolean).join(" · ");
             var fecha = editorInst.FMT.fechaCorta(item.fecha_precio);
             main.appendChild(editor.FMT.h("div", "suggestion-meta", meta + (fecha ? " · precio " + fecha : "")));
             sug.appendChild(main);
             var precio = editor.FMT.h("span", null, (item.precio || 0).toFixed(2) + " $ / " + (item.unidad || "ud"));
-            precio.style.cssText = "color:var(--accent); font-size:.78em; white-space:nowrap;";
+            CotizatStyles.setCssText(precio, "color:var(--accent); font-size:.78em; white-space:nowrap;");
             sug.appendChild(precio);
 
             sug.addEventListener("mousedown", function (evt) {
@@ -2526,7 +2537,7 @@
               prodCatInput.value = item.categoria || prodCatInput.value || "General";
               if (item.imagen) {
                 hiddenProdImagen.value = item.imagen;
-                mostrarPrevia("/static/" + item.imagen);
+                mostrarPrevia(window.cotizatArchivoUrl(item.imagen));
               }
               if (precioLinea) {
                 var total = editorInst.FMT.parseNum(precioLinea.value) - precioAnterior + precioNuevo;
@@ -2540,10 +2551,10 @@
               editorInst.marcarCambio();
             });
             sug.addEventListener("mouseenter", function () {
-              sug.style.background = "var(--bg)";
+              CotizatStyles.set(sug, "background", "var(--bg)");
             });
             sug.addEventListener("mouseleave", function () {
-              sug.style.background = "none";
+              CotizatStyles.set(sug, "background", "none");
             });
             prodDropdown.appendChild(sug);
           });

@@ -4,12 +4,12 @@
 <div class="page-head">
   <div>
     <h1>Dashboard</h1>
-    <p class="subtitle">Resumen financiero y operativo de tu negocio</p>
+    <p class="subtitle">{{ value_proposition }}</p>
   </div>
   <div class="actions">
     <a class="btn btn-ai" href="/presupuestos/nuevo?autogenerar=1" title="Genera un borrador de capítulos y partidas buscando coincidencias en tu propio catálogo">
       <svg width="14" height="14" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 1l2 5h5l-4 3.5 1.5 5L9 12l-4.5 2.5L6 9.5 2 6h5z"/></svg>
-      Autogenerar con IA
+      Sugerir desde catálogo
     </a>
     <a class="btn btn-primary" href="/presupuestos/nuevo">
       <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 1v10M1 6h10"/></svg>
@@ -17,6 +17,38 @@
     </a>
   </div>
 </div>
+
+{% if recorrido_inicial and not recorrido_inicial.completo %}
+<section class="first-run-card" aria-labelledby="first-run-title">
+  <div class="first-run-head">
+    <div>
+      <span class="section-kicker">Guía de inicio · {{ recorrido_inicial.completados }}/{{ recorrido_inicial.total }}</span>
+      <h2 id="first-run-title">Llega a tu primer PDF en cinco pasos</h2>
+      <p>Avanza con datos reales. El contenido de demostración no completa los pasos de cliente, presupuesto ni PDF.</p>
+    </div>
+    <div class="first-run-progress" aria-label="{{ recorrido_inicial.porcentaje }}% completado">
+      <strong>{{ recorrido_inicial.porcentaje }}%</strong><span>completado</span>
+    </div>
+  </div>
+  <div class="first-run-bar"><span data-cotizat-width="{{ recorrido_inicial.porcentaje }}"></span></div>
+  {% if recorrido_inicial.presupuesto_demo %}
+  <div class="demo-shortcut"><span><strong>Ejemplo disponible:</strong> explora el presupuesto ficticio sin confundirlo con tu trabajo real.</span><a class="btn btn-sm" href="/presupuestos/{{ recorrido_inicial.presupuesto_demo.id }}">Ver ejemplo</a></div>
+  {% endif %}
+  <div class="first-run-steps">
+    {% for paso in recorrido_inicial.pasos %}
+    <article class="first-run-step {{ 'done' if paso.completo else '' }}">
+      <span class="step-state">{{ '✓' if paso.completo else loop.index }}</span>
+      <div><h3>{{ paso.titulo }}</h3><p>{{ paso.detalle }}</p></div>
+      {% if paso.metodo | default('get') == 'post' %}
+      <form method="post" action="{{ paso.url }}"><button type="submit" class="btn btn-sm">{{ 'Revisar' if paso.completo else paso.accion }}</button></form>
+      {% else %}
+      <a href="{{ paso.url }}" class="btn btn-sm">{{ 'Revisar' if paso.completo else paso.accion }}</a>
+      {% endif %}
+    </article>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
 
 <!-- Panel de resumen (basado en tus propios datos, no en un servicio externo) -->
 <div class="dashboard-intel">
@@ -35,7 +67,7 @@
       <div class="intel-details">
         <div class="intel-label">Tasa de aprobación histórica (presupuestos enviados que terminaron aprobados)</div>
         <div class="intel-bar">
-          <div class="intel-bar-fill" style="width: {{ tasa_aprobacion }}%"></div>
+          <div class="intel-bar-fill" data-cotizat-width="{{ tasa_aprobacion }}"></div>
         </div>
         <p class="intel-recommendation">
           {% if analisis_precios.alertas %}
@@ -79,23 +111,23 @@
   </div>
   <div class="card-stat">
     <div class="stat-num">{{ total_facturas }}</div>
-    <div class="stat-label">Facturas Generadas</div>
+    <div class="stat-label">Documentos de cobro</div>
   </div>
   <div class="card-stat">
     <div class="stat-num">{{ por_estado['aprobado'] }}</div>
     <div class="stat-label">Proyectos Aprobados</div>
   </div>
   <div class="card-stat">
-    <div class="stat-num" style="color: var(--accent);">{{ importe_aprobado | money }}</div>
+    <div class="stat-num csp-s-10d73d1269">{{ importe_aprobado | money }}</div>
     <div class="stat-label">Volumen Aprobado</div>
   </div>
 </div>
 
 <!-- Recent Activity -->
 <div class="card">
-  <div class="card-head" style="padding-bottom: 0.85rem; border-bottom: 1px solid var(--border);">
-    <h2 style="margin-bottom: 0;">Actividad Reciente</h2>
-    <a class="link" href="/presupuestos" style="font-size: 0.82rem;">Ver todos →</a>
+  <div class="card-head csp-s-05e74ce48a">
+    <h2 class="csp-s-768bda7dd9">Actividad Reciente</h2>
+    <a class="link csp-s-871b7becf5" href="/presupuestos">Ver todos →</a>
   </div>
   {% if recientes %}
   <table class="table">
@@ -112,13 +144,13 @@
     <tbody>
       {% for p in recientes %}
       <tr>
-        <td><a class="link" href="/presupuestos/{{ p.id }}">{{ p.numero }}</a></td>
-        <td style="color: var(--text-soft);">{{ p.fecha | fecha }}</td>
+        <td><a class="link" href="/presupuestos/{{ p.id }}">{{ p.numero }}</a>{% if p.es_demo %} <span class="badge">Demo</span>{% endif %}</td>
+        <td class="csp-s-3ea0609665">{{ p.fecha | fecha }}</td>
         <td>{{ p.cliente.nombre }}</td>
         <td><span class="badge badge-{{ p.estado }}">{{ p.estado | capitalize }}</span></td>
         <td class="right"><strong>{{ p.total | money(p.moneda) }}</strong></td>
         <td class="right">
-          <a class="btn btn-sm" href="/presupuestos/{{ p.id }}/pdf" download="presupuesto_{{ p.numero }}.pdf" onclick="descargarPDF(event, this.href, 'presupuesto_{{ p.numero }}.pdf')">PDF</a>
+          <a class="btn btn-sm" href="/presupuestos/{{ p.id }}/pdf" download="presupuesto_{{ p.numero }}.pdf" data-cotizat-click="download-pdf">PDF</a>
         </td>
       </tr>
       {% endfor %}
@@ -131,8 +163,25 @@
   {% endif %}
 </div>
 
-<style>
+<style nonce="{{ request.state.csp_nonce }}">
   /* Dashboard-specific styles — scoped to this page */
+  .first-run-card { background:linear-gradient(145deg,var(--surface),var(--surface-alt)); border:1px solid var(--accent-light); border-radius:16px; padding:1.4rem; margin-bottom:1.5rem; box-shadow:0 12px 38px rgba(15,76,129,.07); }
+  .first-run-head { display:flex; align-items:flex-start; justify-content:space-between; gap:1.5rem; }
+  .first-run-head h2 { font-size:1.15rem; margin:.22rem 0 .35rem; }
+  .first-run-head p { color:var(--text-soft); font-size:.82rem; margin:0; max-width:650px; line-height:1.55; }
+  .first-run-progress { width:84px; height:84px; flex:none; border:7px solid var(--accent-soft); border-top-color:var(--accent); border-radius:50%; display:grid; place-content:center; text-align:center; }
+  .first-run-progress strong { color:var(--accent); font-size:1.05rem; }
+  .first-run-progress span { color:var(--text-muted); font-size:.58rem; }
+  .first-run-bar { height:5px; background:var(--border); border-radius:99px; overflow:hidden; margin:1rem 0; }
+  .first-run-bar span { display:block; height:100%; border-radius:inherit; background:linear-gradient(90deg,var(--accent),#e5ae3c); transition:width .3s ease; }
+  .demo-shortcut { display:flex; justify-content:space-between; align-items:center; gap:1rem; padding:.65rem .8rem; border-radius:9px; background:var(--accent-soft); color:var(--text-soft); font-size:.76rem; margin-bottom:.75rem; }
+  .first-run-steps { display:grid; gap:.5rem; }
+  .first-run-step { display:grid; grid-template-columns:32px minmax(0,1fr) auto; align-items:center; gap:.75rem; padding:.72rem .8rem; border:1px solid var(--border-subtle); border-radius:10px; background:var(--surface); }
+  .step-state { width:27px; height:27px; display:grid; place-items:center; border-radius:50%; background:var(--accent); color:#fff; font-size:.74rem; font-weight:800; }
+  .first-run-step.done { opacity:.68; }
+  .first-run-step.done .step-state { background:var(--green); }
+  .first-run-step h3 { font-size:.82rem; margin:0 0 .12rem; }
+  .first-run-step p { color:var(--text-muted); font-size:.7rem; margin:0; line-height:1.4; }
   .dashboard-intel {
     display: grid;
     grid-template-columns: 1.8fr 1fr;
@@ -281,6 +330,10 @@
   }
 
   @media (max-width: 900px) {
+    .first-run-head { align-items:center; }
+    .first-run-step { grid-template-columns:32px minmax(0,1fr); }
+    .first-run-step .btn { grid-column:2; justify-self:start; }
+    .demo-shortcut { align-items:flex-start; flex-direction:column; }
     .dashboard-intel {
       grid-template-columns: 1fr;
     }

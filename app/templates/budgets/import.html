@@ -36,7 +36,7 @@
   <div class="form-actions">
     <button type="button" class="btn btn-primary" id="btn-analyze-import">Analizar datos →</button>
   </div>
-  <div id="import-source-error" class="alert alert-error" style="display:none;"></div>
+  <div id="import-source-error" class="alert alert-error cotizat-hidden"></div>
 </div>
 
 <div class="card import-hidden" id="import-mapping-card">
@@ -51,7 +51,7 @@
     </div>
   </div>
   <div id="cype-summary" class="import-hidden"></div>
-  <h3 style="margin-top:1.25rem;">Vista previa <span id="import-preview-count" class="hint"></span></h3>
+  <h3 class="csp-s-a3c9c5afaa">Vista previa <span id="import-preview-count" class="hint"></span></h3>
   <div class="table-wrap import-preview-wrap" id="import-preview-wrap">
     <table class="table" id="import-preview-table"><thead></thead><tbody></tbody></table>
     <div id="cype-preview"></div>
@@ -64,9 +64,9 @@
 <div class="card import-hidden" id="import-destination-card">
   <h2>3. {% if modo_catalogo %}Destino: catálogo de partidas{% else %}Elige el destino{% endif %}</h2>
   {% if modo_catalogo %}
-  <div style="display:flex; gap:.6rem; align-items:flex-start; background:var(--accent-soft); border:1px solid var(--accent-light); border-radius:var(--radius-sm); padding:.75rem .9rem; margin-bottom:.5rem;">
-    <span style="font-size:1.1rem;">📦</span>
-    <span style="font-size:.86rem; color:var(--text);">Las partidas detectadas se guardarán en el <strong>Catálogo de Partidas</strong> con su código, unidad, descripción y costes (mano de obra, materiales…), listas para reutilizarse en cualquier presupuesto. No se crea ni se modifica ningún presupuesto.</span>
+  <div class="csp-s-1442e8ce92">
+    <span class="csp-s-9c527edffc">📦</span>
+    <span class="csp-s-63affd90a4">Las partidas detectadas se guardarán en el <strong>Catálogo de Partidas</strong> con su código, unidad, descripción y costes (mano de obra, materiales…), listas para reutilizarse en cualquier presupuesto. No se crea ni se modifica ningún presupuesto.</span>
   </div>
   <input type="hidden" id="modo-catalogo" value="1">
   {% else %}
@@ -114,7 +114,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
+<script nonce="{{ request.state.csp_nonce }}">
 (function () {
   'use strict';
   var CAMPOS = {{ campos_importables | tojson }};
@@ -134,7 +134,7 @@
 
   function mostrarError(mensaje) {
     sourceError.textContent = mensaje || '';
-    sourceError.style.display = mensaje ? '' : 'none';
+    CotizatStyles.set(sourceError, "display", mensaje ? '' : 'none');
   }
   function ocultarValidacion() {
     estado.validacion = null;
@@ -168,25 +168,25 @@
   function actualizarDestino() {
     if (!destination) return;  // modo catálogo: no hay selector de destino
     var nuevo = !destination.value;
-    document.querySelectorAll('.import-new-only').forEach(function (el) { el.style.display = nuevo ? '' : 'none'; });
+    document.querySelectorAll('.import-new-only').forEach(function (el) { CotizatStyles.set(el, "display", nuevo ? '' : 'none'); });
     ocultarValidacion();
   }
   function setModoCype(activo) {
-    document.getElementById('import-header-field').style.display = activo ? 'none' : '';
-    document.getElementById('tabular-mapping').style.display = activo ? 'none' : '';
+    CotizatStyles.set(document.getElementById('import-header-field'), "display", activo ? 'none' : '');
+    CotizatStyles.set(document.getElementById('tabular-mapping'), "display", activo ? 'none' : '');
     document.getElementById('cype-summary').classList.toggle('import-hidden', !activo);
-    document.getElementById('cype-preview').style.display = activo ? '' : 'none';
-    document.getElementById('import-preview-table').style.display = activo ? 'none' : '';
+    CotizatStyles.set(document.getElementById('cype-preview'), "display", activo ? '' : 'none');
+    CotizatStyles.set(document.getElementById('import-preview-table'), "display", activo ? 'none' : '');
     var chapterField = document.getElementById('import-cype-chapter-field');
     if (chapterField) chapterField.classList.toggle('import-hidden', !activo);
     document.getElementById('import-review-title').textContent = activo ? '2. Revisa las partidas y filas CYPE detectadas' : '2. Revisa la detección de columnas';
-    document.getElementById('import-review-hint').innerHTML = activo
-      ? 'Cada fila y columna se conserva con su número original. Los resultados de fórmula y las fórmulas se guardan, junto con el archivo <strong>.xlsx</strong> original.'
-      : 'El sistema propone una asignación. Solo <strong>Partida</strong> es obligatoria; ajusta cualquier columna antes de validar.';
+    document.getElementById('import-review-hint').textContent = activo
+      ? 'Cada fila y columna se conserva con su número original. Los resultados de fórmula y las fórmulas se guardan, junto con el archivo .xlsx original.'
+      : 'El sistema propone una asignación. Solo Partida es obligatoria; ajusta cualquier columna antes de validar.';
   }
   function renderMapeo() {
     var body = document.getElementById('import-mapping-body');
-    body.innerHTML = '';
+    body.replaceChildren();
     Object.keys(CAMPOS).forEach(function (campo) {
       var tr = document.createElement('tr');
       var label = document.createElement('td');
@@ -209,7 +209,7 @@
   function renderPreviewTabular() {
     var table = document.getElementById('import-preview-table');
     var thead = table.querySelector('thead'); var tbody = table.querySelector('tbody');
-    thead.innerHTML = ''; tbody.innerHTML = '';
+    thead.replaceChildren(); tbody.replaceChildren();
     var hr = document.createElement('tr');
     estado.encabezados.forEach(function (header) { var th = document.createElement('th'); th.textContent = header; hr.appendChild(th); });
     thead.appendChild(hr);
@@ -231,7 +231,7 @@
   function renderPreviewCype() {
     var summary = document.getElementById('cype-summary');
     var preview = document.getElementById('cype-preview');
-    summary.innerHTML = ''; preview.innerHTML = '';
+    summary.replaceChildren(); preview.replaceChildren();
     var totalFilas = 0;
     estado.cypePartidas.forEach(function (partida) {
       totalFilas += (partida.filas || []).length;
@@ -271,7 +271,7 @@
   function renderValidation(data) {
     var summary = document.getElementById('import-summary');
     var issues = document.getElementById('import-issues');
-    issues.innerHTML = '';
+    issues.replaceChildren();
     if (!data.ok) {
       summary.textContent = data.error || 'No se pudo validar la importación.';
       summary.className = 'import-summary error'; validationCard.classList.remove('import-hidden'); return;

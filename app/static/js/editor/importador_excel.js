@@ -44,18 +44,18 @@
     var caja = $("excel-inline-error");
     if (!caja) return;
     caja.textContent = mensaje || "";
-    caja.style.display = mensaje ? "" : "none";
+    CotizatStyles.set(caja, "display", mensaje ? "" : "none");
   }
 
   function limpiarIssues() {
     var caja = $("excel-inline-issues");
-    if (caja) caja.innerHTML = "";
+    if (caja) caja.replaceChildren();
   }
 
   function mostrarIssues(errores, advertencias) {
     var caja = $("excel-inline-issues");
     if (!caja) return;
-    caja.innerHTML = "";
+    caja.replaceChildren();
     (errores || []).forEach(function (issue) {
       var div = document.createElement("div");
       div.className = "import-issue error";
@@ -79,12 +79,12 @@
     if (file) file.value = "";
     var files = $("excel-inline-files");
     if (files) files.textContent = "Ningún archivo seleccionado";
-    $("excel-inline-source").style.display = "";
+    CotizatStyles.set($("excel-inline-source"), "display", "");
     $("excel-inline-review").classList.add("import-hidden");
     $("excel-inline-mapping").classList.add("import-hidden");
     $("excel-inline-cype-chapter").classList.add("import-hidden");
-    $("excel-inline-header").closest(".excel-header-check").style.display = "";
-    $("excel-inline-preview").innerHTML = "";
+    CotizatStyles.set($("excel-inline-header").closest(".excel-header-check"), "display", "");
+    $("excel-inline-preview").replaceChildren();
     limpiarIssues();
     mostrarError("");
   }
@@ -119,7 +119,7 @@
   function renderMapeo() {
     var body = $("excel-inline-mapping-body");
     var campos = camposImportables();
-    body.innerHTML = "";
+    body.replaceChildren();
     Object.keys(campos).forEach(function (campo) {
       var tr = document.createElement("tr");
       var etiqueta = crearCeldaTexto("th", campos[campo] + (campo === "partida" ? " *" : ""));
@@ -146,7 +146,7 @@
 
   function renderPreviewTabular() {
     var cont = $("excel-inline-preview");
-    cont.innerHTML = "";
+    cont.replaceChildren();
     var table = document.createElement("table");
     table.className = "table";
     var thead = document.createElement("thead");
@@ -166,7 +166,7 @@
 
   function renderPreviewCype() {
     var cont = $("excel-inline-preview");
-    cont.innerHTML = "";
+    cont.replaceChildren();
     estado.partidasCype.forEach(function (partida) {
       var item = document.createElement("div");
       item.className = "excel-cype-item";
@@ -197,9 +197,9 @@
     estado.mapeo = data.mapeo_sugerido || {};
     estado.primeraFila = data.primera_fila || 2;
 
-    $("excel-inline-source").style.display = "none";
+    CotizatStyles.set($("excel-inline-source"), "display", "none");
     $("excel-inline-review").classList.remove("import-hidden");
-    $("excel-inline-header").closest(".excel-header-check").style.display = esCype() ? "none" : "";
+    CotizatStyles.set($("excel-inline-header").closest(".excel-header-check"), "display", esCype() ? "none" : "");
     limpiarIssues();
 
     if (esCype()) {

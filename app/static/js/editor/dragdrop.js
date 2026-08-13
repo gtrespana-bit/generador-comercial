@@ -19,7 +19,7 @@
   function createGuideLine() {
     var line = document.createElement("div");
     line.className = "drag-guide-line";
-    line.style.cssText = "position:absolute; height:2px; background:#0d9488; border-radius:2px; pointer-events:none; z-index:100; box-shadow:0 0 6px rgba(13,148,136,0.5); display:none;";
+    CotizatStyles.setCssText(line, "position:absolute; height:2px; background:#0d9488; border-radius:2px; pointer-events:none; z-index:100; box-shadow:0 0 6px rgba(13,148,136,0.5); display:none;");
     return line;
   }
 
@@ -32,7 +32,7 @@
     }
 
     if (!element) {
-      line.style.display = "none";
+      CotizatStyles.set(line, "display", "none");
       return;
     }
 
@@ -41,15 +41,15 @@
 
     // Posicionar la línea en el centro del elemento (línea horizontal)
     var top = elementRect.top - containerRect.top + elementRect.height / 2 - 1;
-    line.style.top = top + "px";
-    line.style.left = "0";
-    line.style.width = "100%";
-    line.style.display = "block";
+    CotizatStyles.set(line, "top", top + "px");
+    CotizatStyles.set(line, "left", "0");
+    CotizatStyles.set(line, "width", "100%");
+    CotizatStyles.set(line, "display", "block");
   }
 
   function hideGuideLine(container) {
     if (container._guideLine) {
-      container._guideLine.style.display = "none";
+      CotizatStyles.set(container._guideLine, "display", "none");
     }
   }
 
@@ -63,7 +63,7 @@
 
     // Asegurar posicionamiento relativo para la línea guía
     if (getComputedStyle(contCapitulos).position === "static") {
-      contCapitulos.style.position = "relative";
+      CotizatStyles.set(contCapitulos, "position", "relative");
     }
 
     contCapitulos.addEventListener("dragstart", function (e) {

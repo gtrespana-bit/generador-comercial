@@ -104,7 +104,7 @@
       });
       var directo = root.querySelector('[data-total="directo"]');
       if (directo) directo.textContent = formato(totalCoste);
-      if (empty) empty.style.display = rows.length ? "none" : "flex";
+      if (empty) CotizatStyles.set(empty, "display", rows.length ? "none" : "flex");
       root.dispatchEvent(new CustomEvent("partida-editor:recalculated", {
         bubbles: true,
         detail: { costes: sums, directo: totalCoste }
@@ -128,13 +128,21 @@
       }
       if (coste <= 0) {
         hint.textContent = 'Añade recursos para ver el beneficio';
-        hint.style.color = 'var(--text-muted)';
+        CotizatStyles.set(hint, "color", 'var(--text-muted)');
         return;
       }
       var beneficio = precio - coste;
       var markup = beneficio / coste * 100;
       var margen = precio > 0 ? beneficio / precio *100 : 0;
-      hint.innerHTML = 'Coste: <strong>' + formato(coste) + '</strong> · Beneficio: <strong style="color:'+(beneficio>=0?'var(--green)':'var(--rose)')+'">' + formato(beneficio) + ' (' + markup.toFixed(1).replace(".",",") + '% s/coste, ' + margen.toFixed(1).replace(".",",") + '% margen)</strong>';
+      hint.textContent = 'Coste: ';
+      var costeStrong = document.createElement('strong');
+      costeStrong.textContent = formato(coste);
+      hint.appendChild(costeStrong);
+      hint.appendChild(document.createTextNode(' · Beneficio: '));
+      var beneficioStrong = document.createElement('strong');
+      CotizatStyles.set(beneficioStrong, "color", beneficio >= 0 ? 'var(--green)' : 'var(--rose)');
+      beneficioStrong.textContent = formato(beneficio) + ' (' + markup.toFixed(1).replace(".",",") + '% s/coste, ' + margen.toFixed(1).replace(".",",") + '% margen)';
+      hint.appendChild(beneficioStrong);
       hint.title = 'Markup ' + markup.toFixed(2) + '% sobre coste | Margen ' + margen.toFixed(2) + '% sobre precio';
     }
 
@@ -201,7 +209,7 @@
     }
 
     function cargar(filas) {
-      body.innerHTML = "";
+      body.replaceChildren();
       (Array.isArray(filas) ? filas : []).filter(function (fila) {
         return !fila.tipo || fila.tipo === "recurso";
       }).forEach(add);

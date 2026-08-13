@@ -1,15 +1,15 @@
 {% extends "base.html" %}
-{% block title %}Factura {{ f.numero }}{% endblock %}
+{% block title %}Documento de cobro {{ f.numero }}{% endblock %}
 {% block content %}
 <div class="page-head">
   <div>
-    <p class="crumb">🧾 <a href="/facturas">Facturas</a> › {{ f.numero }}</p>
-    <h1>Factura {{ f.numero }}</h1>
+    <p class="crumb">🧾 <a href="/facturas">Documentos de cobro</a> › {{ f.numero }}</p>
+    <h1>Documento de cobro {{ f.numero }}</h1>
     <p class="subtitle">{% if f.titulo %}{{ f.titulo }} · {% endif %}Emitida el {{ f.fecha | fecha }}</p>
   </div>
   <div class="actions">
-    <button class="btn" type="button" onclick="imprimirPDF('/facturas/{{ f.id }}/pdf?inline=1')" title="Imprimir factura en formato PDF">🖨️ Imprimir</button>
-    <a class="btn btn-primary" href="/facturas/{{ f.id }}/pdf" download="factura_{{ f.numero }}.pdf" onclick="descargarPDF(event, this.href, 'factura_{{ f.numero }}.pdf')">⬇ Descargar PDF</a>
+    <button class="btn" type="button" data-cotizat-click="print-pdf" data-url="/facturas/{{ f.id }}/pdf?inline=1" title="Imprimir documento de cobro en PDF">🖨️ Imprimir</button>
+    <a class="btn btn-primary" href="/facturas/{{ f.id }}/pdf" download="documento_cobro_{{ f.numero }}.pdf" data-cotizat-click="download-pdf">⬇ Descargar PDF</a>
     <a class="btn" href="/facturas/{{ f.id }}/pdf?inline=1" target="_blank">👁 Ver PDF</a>
     {% if f.presupuesto_id %}
     <a class="btn" href="/presupuestos/{{ f.presupuesto_id }}">📄 Ver presupuesto origen</a>
@@ -21,10 +21,14 @@
       </select>
       <button class="btn btn-sm" type="submit">Cambiar estado</button>
     </form>
-    <form method="post" action="/facturas/{{ f.id }}/eliminar" class="inline" onsubmit="return confirm('¿Eliminar esta factura?');">
+    <form method="post" action="/facturas/{{ f.id }}/eliminar" class="inline" data-confirm="¿Eliminar este documento de cobro?">
       <button class="btn btn-danger" type="submit">🗑 Eliminar</button>
     </form>
   </div>
+</div>
+
+<div class="alert alert-warning csp-s-68227a9129" role="note">
+  <strong>Documento comercial no fiscal.</strong> No sustituye una factura fiscal emitida conforme a la normativa aplicable.
 </div>
 
 <div class="card">
@@ -56,24 +60,24 @@
   </div>
   {% for part in cap.partidas %}
   <div class="doc-partida">
-    <table class="table" style="margin-bottom:0;">
+    <table class="table csp-s-768bda7dd9">
       <tr>
         <td>
           <div class="doc-p-nombre">{{ part.nombre }}</div>
           {% if part.descripcion %}<div class="doc-p-desc">{{ part.descripcion }}</div>{% endif %}
         </td>
-        <td class="right" style="width:90px; font-weight:600;">{{ part.cantidad | cant(part.unidad) }}</td>
-        <td class="right" style="width:110px;">{{ part.precio_unitario | num }} {{ f.moneda | replace('USD','$') | replace('Bs','Bs') }}/{{ part.unidad }}</td>
-        <td class="right" style="width:110px; font-weight:700;">{{ part.importe | money(f.moneda) }}</td>
+        <td class="right csp-s-463c663c8c">{{ part.cantidad | cant(part.unidad) }}</td>
+        <td class="right csp-s-0dfe35f39a">{{ part.precio_unitario | num }} {{ f.moneda | replace('USD','$') | replace('Bs','Bs') }}/{{ part.unidad }}</td>
+        <td class="right csp-s-6ef849732a">{{ part.importe | money(f.moneda) }}</td>
       </tr>
     </table>
   </div>
   {% endfor %}
-  <div style="height: 14px;"></div>
+  <div class="csp-s-57baee63f7"></div>
   {% endfor %}
 
-  <table class="table doc-totales" style="width:100%;">
-    <tr><td class="right" style="width:70%;">BASE IMPONIBLE</td><td class="right">{{ f.base | money(f.moneda) }}</td></tr>
+  <table class="table doc-totales csp-s-9ccc4ca9d6">
+    <tr><td class="right csp-s-9eae69365e">BASE IMPONIBLE</td><td class="right">{{ f.base | money(f.moneda) }}</td></tr>
     {% if f.descuento_pct %}
     <tr><td class="right">DESCUENTO ({{ f.descuento_pct | round(2) }} %)</td><td class="right">- {{ f.descuento_monto | money(f.moneda) }}</td></tr>
     {% endif %}

@@ -19,12 +19,12 @@
     <div class="field"><label>Grupo (opcional)</label><input name="grupo" value="{{ recurso.grupo if recurso else '' }}" placeholder="Mano de obra, Materiales..."></div>
     <div class="field"><label>Proveedor (opcional)</label><input name="proveedor" value="{{ recurso.proveedor if recurso else '' }}"></div>
   </div>
-  <div class="card" style="background:var(--accent-soft); border:1px solid var(--accent-light); margin:1.2rem 0; padding:.85rem 1rem;">
-    <strong style="font-size:.85rem;">ℹ️ Propagación automática</strong>
-    <p class="hint" style="margin:.3rem 0 0;">Al guardar, si el precio cambió, se actualizarán <strong>todas</strong> las filas de descomposición (catálogo y presupuestos) que usan este recurso (mismo código o misma descripción+unidad+categoría), recalculando importes y costes directos.</p>
+  <div class="card csp-s-e219c669dc">
+    <strong class="csp-s-1014e6cef4">ℹ️ Propagación automática</strong>
+    <p class="hint csp-s-5fe9287197">Al guardar, si el precio cambió, se actualizarán <strong>todas</strong> las filas de descomposición (catálogo y presupuestos) que usan este recurso (mismo código o misma descripción+unidad+categoría), recalculando importes y costes directos.</p>
   </div>
   <div class="form-actions"><button class="btn btn-primary">💾 Guardar recurso</button><a href="/recursos" class="btn">Cancelar</a></div>
 </form>
 </div>
-<style>.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem 1.25rem}.field{display:flex;flex-direction:column;gap:.2rem}.field-full{grid-column:1/-1}.field label{font-size:.8rem;font-weight:600;color:var(--text-secondary)}.field input,.field select{padding:.45rem .7rem;border:1px solid var(--border);border-radius:6px;font-size:.875rem;font-family:inherit;background:var(--surface)}.field input:focus,.field select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light)}.hint{color:var(--text-muted);font-size:.75rem}.form-actions{display:flex;gap:.5rem;margin-top:.5rem}@media(max-width:650px){.form-grid{grid-template-columns:1fr}}</style>
+<style nonce="{{ request.state.csp_nonce }}">.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem 1.25rem}.field{display:flex;flex-direction:column;gap:.2rem}.field-full{grid-column:1/-1}.field label{font-size:.8rem;font-weight:600;color:var(--text-secondary)}.field input,.field select{padding:.45rem .7rem;border:1px solid var(--border);border-radius:6px;font-size:.875rem;font-family:inherit;background:var(--surface)}.field input:focus,.field select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light)}.hint{color:var(--text-muted);font-size:.75rem}.form-actions{display:flex;gap:.5rem;margin-top:.5rem}@media(max-width:650px){.form-grid{grid-template-columns:1fr}}</style>
 {% endblock %}

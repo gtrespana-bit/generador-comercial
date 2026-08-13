@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "partidas/_editor.html" import editor_partida_catalogo %}
+{% from "partidas/_editor.html" import editor_partida_catalogo with context %}
 {% block title %}{{ 'Editar Partida' if partida else 'Nueva Partida' }}{% endblock %}
 {% block content %}
 <div class="page-head catalog-form-head">

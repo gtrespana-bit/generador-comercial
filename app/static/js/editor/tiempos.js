@@ -274,7 +274,7 @@
         if (nSinDatos > 0) partes.push(nSinDatos + " partida(s) sin datos de tiempo");
         partes.push(fmtHoras(totalOf) + " h oficial + " + fmtHoras(totalAy) + " h ayudante");
         partes.push(fmtDias(diasDur) + " días críticos");
-        nota.innerHTML = partes.join(" · ") + ".";
+        nota.textContent = partes.join(" · ") + ".";
         var link = nota.querySelector("a");
         // keep existing link handling
         var existingLink = nota.querySelector("a");
@@ -283,7 +283,7 @@
         if(!nota.querySelector("a.tiempo-link")){
           var link2 = document.createElement("a");
           link2.className="tiempo-link";
-          link2.style.marginLeft="6px";
+          CotizatStyles.set(link2, "marginLeft", "6px");
           nota.appendChild(link2);
           existingLink = link2;
         } else {

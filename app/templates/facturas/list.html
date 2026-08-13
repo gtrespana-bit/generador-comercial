@@ -1,10 +1,10 @@
 {% extends "base.html" %}
-{% block title %}Facturas{% endblock %}
+{% block title %}Documentos de cobro{% endblock %}
 {% block content %}
 <div class="page-head">
   <div>
-    <h1>Facturas</h1>
-    <p class="subtitle">Facturas generadas desde presupuestos aprobados</p>
+    <h1>Documentos de cobro</h1>
+    <p class="subtitle">Documentos comerciales no fiscales creados desde presupuestos aprobados</p>
   </div>
   <a class="btn" href="/presupuestos">← Ir a presupuestos</a>
 </div>
@@ -24,9 +24,9 @@
         <td><span class="badge badge-{{ f.estado }}">{{ f.estado | capitalize }}</span></td>
         <td class="right"><strong>{{ f.total | money(f.moneda) }}</strong></td>
         <td class="right">
-          <div style="display:flex; gap:4px; justify-content:flex-end;">
+          <div class="csp-s-814a5492b5">
             <a class="btn btn-sm" href="/facturas/{{ f.id }}">Ver</a>
-            <a class="btn btn-sm" href="/facturas/{{ f.id }}/pdf" download="factura_{{ f.numero }}.pdf" onclick="descargarPDF(event, this.href, 'factura_{{ f.numero }}.pdf')">PDF</a>
+            <a class="btn btn-sm" href="/facturas/{{ f.id }}/pdf" download="documento_cobro_{{ f.numero }}.pdf" data-cotizat-click="download-pdf">PDF</a>
           </div>
         </td>
       </tr>
@@ -34,8 +34,8 @@
     </tbody>
   </table>
   {% else %}
-  <p class="empty">Todavía no hay facturas. Cuando un presupuesto esté en estado <strong>aprobado</strong>,
-    ábrelo y pulsa «🧾 Facturar» para convertirlo en factura.</p>
+  <p class="empty">Todavía no hay documentos de cobro. Cuando un presupuesto esté <strong>aprobado</strong>,
+    ábrelo y pulsa «🧾 Crear documento de cobro». Este documento no sustituye una factura fiscal.</p>
   {% endif %}
 </div>
 {% endblock %}

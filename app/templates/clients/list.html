@@ -24,14 +24,14 @@
     <tbody>
       {% for c in clientes %}
       <tr>
-        <td><a class="link" href="/clientes/{{ c.id }}/editar">{{ c.nombre }}</a></td>
+        <td><a class="link" href="/clientes/{{ c.id }}/editar">{{ c.nombre }}</a>{% if c.es_demo %} <span class="badge">Demo</span>{% endif %}</td>
         <td>{{ c.rif }}</td>
         <td>{{ c.telefono }}</td>
         <td>{{ c.email }}</td>
         <td class="right">{{ c.presupuestos | length }}</td>
         <td class="right">
           <a class="btn btn-sm" href="/clientes/{{ c.id }}/editar">Editar</a>
-          <form method="post" action="/clientes/{{ c.id }}/eliminar" class="inline" onsubmit="return confirm('¿Eliminar este cliente?');">
+          <form method="post" action="/clientes/{{ c.id }}/eliminar" class="inline" data-confirm="¿Eliminar este cliente?">
             <button class="btn btn-sm btn-danger" type="submit">✕</button>
           </form>
         </td>

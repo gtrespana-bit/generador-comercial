@@ -40,14 +40,14 @@
     var select = document.getElementById("select-receta-pack");
     if (!select) return;
 
-    select.innerHTML = '<option value="">Cargando packs disponibles...</option>';
+    mostrarEstadoSelect(select, "Cargando packs disponibles...");
 
     fetch("/recetas/api/list")
       .then(function (res) { return res.json(); })
       .then(function (data) {
         if (!data.ok || !data.recetas) {
           console.error("La API de packs devolvió una respuesta inválida:", data);
-          select.innerHTML = '<option value="">Error cargando packs</option>';
+          mostrarEstadoSelect(select, "Error cargando packs");
           return;
         }
         listaRecetasCache = data.recetas;
@@ -66,8 +66,16 @@
       })
       .catch(function (errRed) {
         console.error("Error de red cargando packs de estancia:", errRed);
-        select.innerHTML = '<option value="">Error cargando packs</option>';
+        mostrarEstadoSelect(select, "Error cargando packs");
       });
+  }
+
+  function mostrarEstadoSelect(select, mensaje) {
+    select.replaceChildren();
+    var option = document.createElement("option");
+    option.value = "";
+    option.textContent = mensaje;
+    select.appendChild(option);
   }
 
   function strId(id) {
@@ -75,7 +83,7 @@
   }
 
   function renderOpcionesSelect(select, recetas) {
-    select.innerHTML = "";
+    select.replaceChildren();
     var grupos = {};
     recetas.forEach(function (r) {
       var cat = r.categoria || "Otros";
@@ -124,10 +132,16 @@
     if (!tbody || !badgeTotal || !inpMedida) return;
 
     var medida = parseFloat(inpMedida.value) || 0;
-    tbody.innerHTML = "";
+    tbody.replaceChildren();
 
     if (!recetaSeleccionada || !recetaSeleccionada.items || !recetaSeleccionada.items.length) {
-      tbody.innerHTML = '<tr><td colspan="7" class="empty" style="text-align:center; padding:2rem;">El pack no tiene partidas asociadas.</td></tr>';
+      var emptyRow = document.createElement("tr");
+      var emptyCell = document.createElement("td");
+      emptyCell.colSpan = 7;
+      emptyCell.className = "empty receta-preview-empty";
+      emptyCell.textContent = "El pack no tiene partidas asociadas.";
+      emptyRow.appendChild(emptyCell);
+      tbody.appendChild(emptyRow);
       badgeTotal.textContent = "Total estimado: $" + money(0);
       return;
     }
@@ -148,14 +162,27 @@
       totalEst += imp;
 
       var tr = document.createElement("tr");
-      tr.innerHTML =
-        '<td style="text-align:center; color:var(--muted);">' + (idx + 1) + '</td>' +
-        '<td><strong>' + (item.nombre || "") + '</strong></td>' +
-        '<td style="text-align:center;"><span class="badge" style="font-size:0.75rem;">' + tagTipo + '</span></td>' +
-        '<td style="text-align:center; font-weight:600;">' + cant + '</td>' +
-        '<td style="text-align:center;">' + (item.unidad || "m²") + '</td>' +
-        '<td style="text-align:right;">$' + money(prec) + '</td>' +
-        '<td style="text-align:right; font-weight:600;">$' + money(imp) + '</td>';
+      function cell(text, className) {
+        var td = document.createElement("td");
+        if (className) td.className = className;
+        td.textContent = text;
+        tr.appendChild(td);
+        return td;
+      }
+      cell(String(idx + 1), "receta-preview-center receta-preview-muted");
+      var nameCell = cell("", "");
+      var strong = document.createElement("strong");
+      strong.textContent = item.nombre || "";
+      nameCell.appendChild(strong);
+      var typeCell = cell("", "receta-preview-center");
+      var badge = document.createElement("span");
+      badge.className = "badge receta-preview-badge";
+      badge.textContent = tagTipo;
+      typeCell.appendChild(badge);
+      cell(String(cant), "receta-preview-center receta-preview-strong");
+      cell(item.unidad || "m²", "receta-preview-center");
+      cell("$" + money(prec), "receta-preview-right");
+      cell("$" + money(imp), "receta-preview-right receta-preview-strong");
       tbody.appendChild(tr);
     });
 

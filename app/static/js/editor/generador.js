@@ -1,10 +1,10 @@
 /* ============================================================================
-   Editor — Plantillas y Autogenerar con IA (generador basado en catálogo)
+   Editor — Plantillas y sugerencias basadas en el catálogo
 
    Este archivo conecta funciones que existían en el HTML pero nunca tenían
    código detrás:
      · El selector "🧩 Plantilla…" y los botones de guardar/cargar plantilla.
-     · El botón "Autogenerar con IA", que antes era idéntico a "Nuevo
+     · El botón de sugerencias, que antes era idéntico a "Nuevo
        presupuesto" (mismo enlace, sin generar nada).
 
    El generador NO usa ningún servicio de IA externo ni internet: es un
@@ -151,7 +151,7 @@
   }
 
   // -------------------------------------------------------------------------
-  // Autogenerar con IA — buscador de coincidencias sobre tu catálogo
+  // Sugerencias desde catálogo — coincidencias deterministas
   // -------------------------------------------------------------------------
 
   var PALABRAS_VACIAS = [
@@ -276,7 +276,7 @@
         var texto = (ta && ta.value || "").trim();
         if (!texto) {
           if (salida) {
-            salida.style.display = "block";
+            CotizatStyles.set(salida, "display", "block");
             salida.textContent = "Escribe una breve descripción del proyecto (por ejemplo el tipo de obra y sus acabados).";
           }
           return;
@@ -284,18 +284,18 @@
         var resultado = generarBorrador(texto);
         if (!resultado.total) {
           if (salida) {
-            salida.style.display = "block";
+            CotizatStyles.set(salida, "display", "block");
             salida.textContent = "No se encontraron coincidencias en tu catálogo de partidas. Prueba con otras palabras, o agrega la partida en /partidas/nueva y vuelve a intentarlo.";
           }
           return;
         }
-        if (salida) salida.style.display = "none";
+        if (salida) CotizatStyles.set(salida, "display", "none");
         ta.value = "";
         editor.cerrarModal("modal-generador");
       });
     }
 
-    // Si venimos del Dashboard con "Autogenerar con IA" (?autogenerar=1)
+    // Compatibilidad con el enlace histórico del dashboard (?autogenerar=1)
     if (location.search.indexOf("autogenerar=1") !== -1) {
       editor.abrirModal("modal-generador");
     }

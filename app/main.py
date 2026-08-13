@@ -1,4 +1,4 @@
-"""Generador de Presupuestos — aplicación web local (FastAPI).
+"""CotizaT — aplicación local de presupuestos de obra (FastAPI).
 
 Ejecutar con:  python run.py   (o: uvicorn app.main:app)
 """
@@ -12,46 +12,76 @@ import io
 import json
 import logging
 import math
+import mimetypes
 import os
 import re
 import shutil
 import traceback
+import unicodedata
 import uuid
 import zipfile
 
-log = logging.getLogger("presupuestos")
+log = logging.getLogger("cotizat")
 
 from fastapi import Depends, FastAPI, Form, Request, UploadFile  # noqa: F401 (type hints)
+from starlette.concurrency import run_in_threadpool
 from starlette.datastructures import UploadFile as UploadFileStarlette
-from fastapi.responses import HTMLResponse, RedirectResponse, Response
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import or_
 from sqlalchemy.orm import Session
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
+from .branding import PRODUCT_NAME, VALUE_PROPOSITION
+from .security import AuthRateLimitMiddleware, WebSecurityMiddleware
 from .database import (
     BACKUPS_DIR,
     BASE_DIR,
     DATA_DIR,
+    DATABASE_IS_SQLITE,
     DB_PATH,
+    PRIVATE_STORAGE_DIR,
     UPLOADS_DIR,
     copia_seguridad_sqlite,
     es_base_valida,
+    establecer_contexto_organizacion,
+    get_authenticated_db,
     get_db,
     init_db,
     restaurar_base,
 )
+from .auth import (
+    ACCESS_COOKIE,
+    ORGANIZATION_COOKIE,
+    AuthError,
+    AuthenticationRequired,
+    AuthNotConfigured,
+    InvalidCredentials,
+    OrganizationAccessDenied,
+    OrganizationRequired,
+    RefreshedAuthCookieMiddleware,
+    SupabaseAuthClient,
+    SupabaseAuthSettings,
+    clear_auth_cookies,
+    password_reset_redirect_url,
+    public_app_url,
+    set_auth_cookies,
+)
 from .models import (
     ESTADOS,
+    ArchivoAlmacenado,
     Capitulo,
     Cliente,
     Configuracion,
     Factura,
     FacturaCapitulo,
     FacturaItem,
+    InvitacionOrganizacion,
     Medicion,
+    Membresia,
     NotaSeguimiento,
+    Organizacion,
     Partida,
     Plantilla,
     RecetaEstancia,
@@ -60,10 +90,12 @@ from .models import (
     PresupuestoItem,
     PresupuestoVersion,
     Proyecto,
+    Usuario,
     CambioAlcance,
     CambioAlcanceItem,
     CategoriaPartida,
     Pago,
+    PermisoOrganizacionError,
     AnexoPresupuesto,
     BorradorPresupuesto,
     DescomposicionPartida,
@@ -72,6 +104,7 @@ from .models import (
     Producto,
     asegurar_config,
     marcar_vencidos,
+    membresias_activas,
     proximo_numero,
     proximo_numero_factura,
 )
@@ -80,6 +113,19 @@ from .services.analisis import analizar_catalogo_partidas
 from .services.contrato import generar_contrato_pdf
 from .services.tiempos import calcular_tiempos_presupuesto, horas_por_unidad_descompuesto
 from .services.versions import ESTADOS_CONGELABLES, crear_version, leer_snapshot
+from .services.onboarding import (
+    ErrorOnboarding,
+    completar_onboarding,
+    estado_recorrido_inicial,
+)
+from .services.invitations import (
+    GestionEquipoError,
+    aceptar_invitacion,
+    actualizar_membresia,
+    crear_invitacion,
+    exigir_gestor,
+    revocar_invitacion,
+)
 from .services.importer import (
     ErrorImportacion,
     ETIQUETAS_CAMPOS,
@@ -99,12 +145,30 @@ from .services.importer import (
     validar_filas,
 )
 from .utils import SIMBOLOS, fmt_fecha, fmt_monto, fmt_num, fmt_cantidad
+from .storage import (
+    StorageError,
+    copy_object,
+    delete_object,
+    file_url,
+    get_storage_backend,
+    object_key_from_reference,
+    read_reference,
+    save_object,
+    storage_reference,
+    validate_tenant_object_key,
+)
 
 TEMPLATES = Jinja2Templates(directory=str(BASE_DIR / "app" / "templates"))
 TEMPLATES.env.filters["money"] = fmt_monto
 TEMPLATES.env.filters["num"] = fmt_num
 TEMPLATES.env.filters["cant"] = fmt_cantidad
 TEMPLATES.env.filters["fecha"] = fmt_fecha
+TEMPLATES.env.filters["archivo_url"] = file_url
+TEMPLATES.env.globals.update(
+    product_name=PRODUCT_NAME,
+    value_proposition=VALUE_PROPOSITION,
+    database_is_sqlite=DATABASE_IS_SQLITE,
+)
 
 
 def whatsapp_url(telefono, texto) -> str:
@@ -126,11 +190,9 @@ EXT_FICHA_TECNICA = {".pdf"}
 
 
 def _backup_automatico():
-    """Copia de seguridad automática semanal en backups/ (al arrancar).
-
-    Solo actúa si no existe ninguna copia automática de los últimos 7 días;
-    si algo falla, se ignora (nunca impide abrir la aplicación).
-    """
+    """Copia semanal del archivo SQLite local; no se aplica a PostgreSQL."""
+    if not DATABASE_IS_SQLITE:
+        return
     try:
         backups = BACKUPS_DIR
         backups.mkdir(parents=True, exist_ok=True)
@@ -145,7 +207,11 @@ def _backup_automatico():
             if UPLOADS_DIR.exists():
                 for p in sorted(UPLOADS_DIR.rglob("*")):
                     if p.is_file():
-                        z.write(p, p.relative_to(UPLOADS_DIR.parent).as_posix())
+                        z.write(p, (Path("uploads") / p.relative_to(UPLOADS_DIR)).as_posix())
+            if PRIVATE_STORAGE_DIR.exists():
+                for p in sorted(PRIVATE_STORAGE_DIR.rglob("*")):
+                    if p.is_file():
+                        z.write(p, (Path("private_storage") / p.relative_to(PRIVATE_STORAGE_DIR)).as_posix())
         tmp.unlink(missing_ok=True)
     except Exception:
         pass
@@ -207,18 +273,214 @@ class FormulariosUTF8Middleware:
         await self.app(scope, receive, send)
 
 
-app = FastAPI(title="Generador de Presupuestos", lifespan=lifespan)
+app = FastAPI(title=PRODUCT_NAME, lifespan=lifespan)
 app.add_middleware(FormulariosUTF8Middleware)
-# Las imágenes subidas se sirven desde la carpeta de datos del usuario;
-# el resto de estáticos (css, js, fuentes) desde los recursos empaquetados.
+app.add_middleware(RefreshedAuthCookieMiddleware)
+app.add_middleware(
+    AuthRateLimitMiddleware,
+    trust_forwarded_for=os.environ.get("COTIZAT_TRUST_PROXY", "").strip().lower()
+    in {"1", "true", "yes", "on"},
+)
+app.add_middleware(WebSecurityMiddleware, enforce_csrf=not DATABASE_IS_SQLITE)
+
+
+def _respuesta_auth_json(request: Request) -> bool:
+    accept = request.headers.get("accept", "")
+    return (
+        request.url.path.startswith("/api/")
+        or "/api/" in request.url.path
+        or "application/json" in accept
+        or request.headers.get("content-type", "").startswith("application/json")
+    )
+
+
+@app.exception_handler(AuthenticationRequired)
+async def _sesion_requerida(request: Request, exc: AuthenticationRequired):
+    if _respuesta_auth_json(request):
+        return JSONResponse({"ok": False, "error": str(exc)}, status_code=401)
+    siguiente = request.url.path
+    if request.url.query:
+        siguiente += "?" + request.url.query
+    return RedirectResponse(f"/acceso?next={quote(siguiente)}", status_code=303)
+
+
+@app.exception_handler(OrganizationRequired)
+async def _organizacion_requerida(request: Request, exc: OrganizationRequired):
+    if _respuesta_auth_json(request):
+        return JSONResponse({"ok": False, "error": str(exc)}, status_code=403)
+    membresias = getattr(request.state, "membresias", [])
+    destino = "/organizaciones" if membresias else "/organizaciones/nueva"
+    return RedirectResponse(destino, status_code=303)
+
+
+@app.exception_handler(OrganizationAccessDenied)
+async def _organizacion_denegada(request: Request, exc: OrganizationAccessDenied):
+    if _respuesta_auth_json(request):
+        return JSONResponse({"ok": False, "error": str(exc)}, status_code=403)
+    return RedirectResponse(
+        f"/organizaciones?error={quote(str(exc))}", status_code=303
+    )
+
+
+@app.exception_handler(AuthNotConfigured)
+async def _auth_no_configurada(request: Request, exc: AuthNotConfigured):
+    if _respuesta_auth_json(request):
+        return JSONResponse({"ok": False, "error": str(exc)}, status_code=503)
+    return TEMPLATES.TemplateResponse(
+        request,
+        "auth/access.html",
+        {"error": str(exc), "auth_configured": False, "next": ""},
+        status_code=503,
+    )
+
+
+@app.exception_handler(PermisoOrganizacionError)
+async def _permiso_organizacion_denegado(
+    request: Request, exc: PermisoOrganizacionError
+):
+    if _respuesta_auth_json(request):
+        return JSONResponse({"ok": False, "error": str(exc)}, status_code=403)
+    return TEMPLATES.TemplateResponse(
+        request,
+        "auth/forbidden.html",
+        {"error": str(exc)},
+        status_code=403,
+    )
+
+
+@app.exception_handler(GestionEquipoError)
+async def _gestion_equipo_denegada(request: Request, exc: GestionEquipoError):
+    if _respuesta_auth_json(request):
+        return JSONResponse({"ok": False, "error": str(exc)}, status_code=403)
+    return TEMPLATES.TemplateResponse(
+        request,
+        "auth/forbidden.html",
+        {"error": str(exc)},
+        status_code=403,
+    )
+
+
+@app.exception_handler(StorageError)
+async def _storage_no_disponible(request: Request, exc: StorageError):
+    mensaje = "El almacenamiento privado no está disponible. Inténtalo de nuevo."
+    if _respuesta_auth_json(request):
+        return JSONResponse({"ok": False, "error": mensaje}, status_code=503)
+    return HTMLResponse(
+        f"<h1>Almacenamiento no disponible</h1><p>{mensaje}</p>",
+        status_code=503,
+    )
+
+
+@app.exception_handler(AuthError)
+async def _servicio_auth_no_disponible(request: Request, exc: AuthError):
+    if _respuesta_auth_json(request):
+        return JSONResponse({"ok": False, "error": str(exc)}, status_code=503)
+    return TEMPLATES.TemplateResponse(
+        request,
+        "auth/access.html",
+        {"error": str(exc), "auth_configured": True, "next": ""},
+        status_code=503,
+    )
+
+# SQLite conserva el montaje histórico. En PostgreSQL se bloquea antes del
+# montaje general: ningún archivo de usuario puede eludir el proxy autorizado.
 UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
-app.mount("/static/uploads", StaticFiles(directory=str(UPLOADS_DIR)), name="uploads")
+if DATABASE_IS_SQLITE:
+    app.mount("/static/uploads", StaticFiles(directory=str(UPLOADS_DIR)), name="uploads")
+else:
+    @app.get("/static/uploads/{_legacy_path:path}", include_in_schema=False)
+    def _bloquear_upload_estatico_web(_legacy_path: str):
+        return Response(status_code=404)
 app.mount("/static", StaticFiles(directory=str(BASE_DIR / "app" / "static")), name="static")
 
 
 # ---------------------------------------------------------------------------
 # Utilidades
 # ---------------------------------------------------------------------------
+
+@app.get("/archivos/{object_key:path}")
+def descargar_archivo_privado(
+    object_key: str,
+    download: int = 0,
+    db: Session = Depends(get_db),
+):
+    """Proxy privado: autoriza por membresía/tenant antes de leer el objeto."""
+    organizacion_id = int(db.info.get("organizacion_id") or 0)
+    try:
+        key = validate_tenant_object_key(object_key, organizacion_id)
+    except StorageError:
+        return Response(status_code=404)
+    metadata = (
+        db.query(ArchivoAlmacenado)
+        .filter(ArchivoAlmacenado.object_key == key)
+        .first()
+    )
+    if metadata is None or metadata.categoria == "manifiestos-importacion":
+        return Response(status_code=404)
+    backend = get_storage_backend()
+    try:
+        contenido = backend.read(key)
+    except StorageError:
+        return Response(status_code=404)
+    nombre = Path(metadata.nombre_original or "archivo").name.replace('"', "")
+    disposicion = "attachment" if download else "inline"
+    headers = {
+        "Cache-Control": "private, max-age=300",
+        "Content-Disposition": f"{disposicion}; filename*=UTF-8''{quote(nombre, safe='')}",
+        "X-Content-Type-Options": "nosniff",
+        "Content-Security-Policy": "sandbox",
+        "Cross-Origin-Resource-Policy": "same-origin",
+    }
+    return Response(
+        contenido,
+        media_type=metadata.content_type or "application/octet-stream",
+        headers=headers,
+    )
+
+
+@app.get("/archivos-legado/{legacy_path:path}")
+def descargar_archivo_legado_privado(
+    legacy_path: str,
+    download: int = 0,
+    db: Session = Depends(get_db),
+):
+    """Compatibilidad web autorizada para referencias locales anteriores."""
+    clean = str(legacy_path or "").strip().replace("\\", "/").lstrip("/")
+    path = (UPLOADS_DIR / clean).resolve()
+    try:
+        invalido = (
+            not clean
+            or "//" in clean
+            or ".." in clean.split("/")
+            or UPLOADS_DIR.resolve() not in path.parents
+            or not path.is_file()
+            or path.stat().st_size > 12 * 1024 * 1024
+        )
+    except OSError:
+        invalido = True
+    if invalido:
+        return Response(status_code=404)
+    referencias = {f"uploads/{clean}", f"static/uploads/{clean}", clean}
+    if not any(_archivo_referenciado(db, referencia) for referencia in referencias):
+        return Response(status_code=404)
+    try:
+        contenido = path.read_bytes()
+    except OSError:
+        return Response(status_code=404)
+    mime = mimetypes.guess_type(path.name)[0] or "application/octet-stream"
+    disposicion = "attachment" if download else "inline"
+    return Response(
+        contenido,
+        media_type=mime,
+        headers={
+            "Cache-Control": "private, max-age=300",
+            "Content-Disposition": f"{disposicion}; filename*=UTF-8''{quote(path.name, safe='')}",
+            "X-Content-Type-Options": "nosniff",
+            "Content-Security-Policy": "sandbox",
+            "Cross-Origin-Resource-Policy": "same-origin",
+        },
+    )
+
 
 def _config(db: Session) -> Configuracion:
     cfg = db.query(Configuracion).first()
@@ -294,12 +556,11 @@ def _generar_pdf_seguro(generador, etiqueta: str):
         log.error("Error generando %s:\n%s", etiqueta, traceback.format_exc())
         return HTMLResponse(
             "<!doctype html><html lang='es'><head><meta charset='utf-8'>"
-            "<title>Error generando el PDF</title></head><body style='font-family:sans-serif;"
-            "max-width:640px;margin:60px auto;line-height:1.6'>"
+            "<title>Error generando el PDF</title></head><body><main>"
             "<h2>No se pudo generar el PDF</h2>"
             "<p>Ocurrió un error al generar el documento. Mira el log de la aplicación "
             "(inicio.log o la consola) para ver el detalle, o prueba a actualizar la "
-            "aplicación a la última versión.</p></body></html>",
+            "aplicación a la última versión.</p></main></body></html>",
             status_code=500,
         )
 
@@ -378,8 +639,16 @@ def _validar_condiciones_presupuesto(form, partidas):
     return ""
 
 
-async def _guardar_imagen(archivo: UploadFile, prefijo: str) -> str:
-    """Guarda una imagen subida en la carpeta de uploads y devuelve su ruta relativa."""
+def _categoria_archivo(prefijo: str) -> str:
+    raiz = str(prefijo or "").replace("\\", "/").strip("/").split("/", 1)[0]
+    return {
+        "logo": "logos", "products": "productos", "projects": "fotos-proyecto",
+        "partidas": "partidas", "signatures": "firmas",
+    }.get(raiz, "anexos")
+
+
+async def _guardar_imagen(archivo: UploadFile, prefijo: str, db: Session) -> str:
+    """Valida una imagen y la guarda mediante el backend privado configurado."""
     nombre = (archivo.filename or "").strip()
     if not nombre:
         return ""
@@ -387,50 +656,56 @@ async def _guardar_imagen(archivo: UploadFile, prefijo: str) -> str:
     if ext not in EXT_IMG:
         return ""
     datos = await archivo.read()
-    if not datos or len(datos) > 12 * 1024 * 1024:  # 12 MB máx.
+    if not datos or len(datos) > 12 * 1024 * 1024:
         return ""
-    # Nunca reutilizar el nombre generado por el formulario: varios
-    # presupuestos guardados el mismo día podían sobrescribirse entre sí
-    # (y compartir accidentalmente fotos). El contenido se valida realmente
-    # como imagen, no sólo por la extensión declarada por el navegador.
     try:
         from PIL import Image as PILImage
         with PILImage.open(io.BytesIO(datos)) as imagen:
+            formato = str(imagen.format or "").upper()
+            ancho, alto = imagen.size
+            if ancho <= 0 or alto <= 0 or ancho * alto > 40_000_000:
+                return ""
             imagen.verify()
     except Exception:
         return ""
-    nombre_unico = f"{prefijo}_{uuid.uuid4().hex[:12]}{ext}"
-    destino = UPLOADS / nombre_unico
-    destino.parent.mkdir(parents=True, exist_ok=True)
-    destino.write_bytes(datos)
-    return f"uploads/{nombre_unico}"
+    mime = {
+        "PNG": "image/png", "JPEG": "image/jpeg", "WEBP": "image/webp",
+        "GIF": "image/gif",
+    }.get(formato)
+    if mime is None:
+        return ""
+    return save_object(
+        db, datos, _categoria_archivo(prefijo), nombre, mime, prefix=prefijo
+    ).reference
 
 
-async def _guardar_ficha_tecnica(archivo: UploadFile, prefijo: str) -> str:
-    """Guarda una ficha técnica PDF asociada a un producto de catálogo."""
+async def _guardar_ficha_tecnica(
+    archivo: UploadFile, prefijo: str, db: Session
+) -> str:
     nombre = (archivo.filename or "").strip()
     if not nombre or Path(nombre).suffix.lower() not in EXT_FICHA_TECNICA:
         return ""
     datos = await archivo.read()
-    # Comprobación de firma para no confiar solamente en la extensión enviada.
     if not datos or len(datos) > 12 * 1024 * 1024 or not datos.startswith(b"%PDF-"):
         return ""
-    destino_rel = f"products/{prefijo}_{uuid.uuid4().hex[:12]}.pdf"
-    destino = UPLOADS / destino_rel
-    destino.parent.mkdir(parents=True, exist_ok=True)
-    destino.write_bytes(datos)
-    return f"uploads/{destino_rel}"
+    return save_object(
+        db, datos, "fichas-tecnicas", nombre, "application/pdf", prefix=prefijo
+    ).reference
 
 
 def _rutas_galeria(valor, portada: str = "") -> list[str]:
-    """Normaliza una galería JSON y conserva rutas relativas gestionadas por la app."""
+    """Normaliza una galería y acepta referencias privadas o legado local."""
     try:
         rutas = json.loads(valor or "[]") if isinstance(valor, str) else list(valor or [])
     except (TypeError, ValueError):
         rutas = []
     resultado = []
     for ruta in ([portada] if portada else []) + rutas:
-        if isinstance(ruta, str) and ruta.startswith("uploads/") and ruta not in resultado:
+        if (
+            isinstance(ruta, str)
+            and (ruta.startswith("storage://") or ruta.startswith("uploads/"))
+            and ruta not in resultado
+        ):
             resultado.append(ruta)
     return resultado
 
@@ -443,58 +718,105 @@ def _entero_opcional(valor, minimo=0):
         return None
 
 
-def _borrar_imagen(ruta_rel: str):
+def _archivo_referenciado(db: Session, referencia: str) -> bool:
+    """Evita borrar un objeto inmutable que todavía comparte otro registro."""
+    if not referencia:
+        return False
+    campos = (
+        (Configuracion, Configuracion.logo),
+        (Presupuesto, Presupuesto.foto_proyecto),
+        (Presupuesto, Presupuesto.firma_cliente),
+        (PresupuestoItem, PresupuestoItem.producto_imagen),
+        (PresupuestoItemProducto, PresupuestoItemProducto.imagen),
+        (Partida, Partida.imagen),
+        (Producto, Producto.imagen),
+        (Producto, Producto.ficha_tecnica),
+        (AnexoPresupuesto, AnexoPresupuesto.archivo),
+        (DescomposicionPartida, DescomposicionPartida.archivo_origen),
+    )
+    for modelo, campo in campos:
+        if db.query(modelo).filter(campo == referencia).first() is not None:
+            return True
+    for modelo, campo in (
+        (Producto, Producto.imagenes),
+        (PresupuestoVersion, PresupuestoVersion.datos_snapshot),
+        (BorradorPresupuesto, BorradorPresupuesto.datos),
+        (Plantilla, Plantilla.datos),
+    ):
+        if db.query(modelo).filter(campo.contains(referencia)).first() is not None:
+            return True
+    return False
+
+
+def _normalizar_referencia_imagen(db: Session, referencia: object) -> str:
+    """Acepta solo una imagen ya autorizada para la organización activa."""
+    value = str(referencia or "").strip()
+    if not value:
+        return ""
+    try:
+        key = object_key_from_reference(value)
+    except StorageError:
+        return ""
+    if key is not None:
+        try:
+            validate_tenant_object_key(key, int(db.info.get("organizacion_id") or 0))
+        except StorageError:
+            return ""
+        metadata = db.query(ArchivoAlmacenado).filter(ArchivoAlmacenado.object_key == key).first()
+        if metadata is None or not metadata.content_type.startswith("image/"):
+            return ""
+        return storage_reference(key)
+    clean = value.lstrip("/")
+    if clean.startswith("static/"):
+        clean = clean[7:]
+    if clean.startswith("uploads/"):
+        clean = clean[8:]
+    if Path(clean).suffix.lower() not in EXT_IMG:
+        return ""
+    path = (UPLOADS_DIR / clean).resolve()
+    if UPLOADS_DIR.resolve() not in path.parents or not path.is_file():
+        return ""
+    legacy = f"uploads/{clean}"
+    if DATABASE_IS_SQLITE or _archivo_referenciado(db, legacy) or _archivo_referenciado(db, clean):
+        return legacy
+    return ""
+
+
+def _borrar_imagen(ruta_rel: str, db: Session):
     if not ruta_rel:
         return
-    try:
-        rel = ruta_rel[len("uploads/"):] if ruta_rel.startswith("uploads/") else ruta_rel
-        p = (UPLOADS / rel).resolve()
-        if p.is_file() and UPLOADS.resolve() in p.parents:
-            p.unlink()
-    except OSError:
-        pass
+    db.flush()
+    if not _archivo_referenciado(db, ruta_rel):
+        delete_object(db, ruta_rel)
 
 
-def _copiar_imagen(ruta_rel: str, prefijo: str) -> str:
-    """Copia un recurso referenciado para que duplicados sean independientes."""
+def _copiar_imagen(ruta_rel: str, prefijo: str, db: Session) -> str:
     if not ruta_rel:
         return ""
+    return copy_object(db, ruta_rel, _categoria_archivo(prefijo), prefijo)
+
+
+def _guardar_firma(data_url: str, db: Session):
+    """Valida y guarda una firma PNG dibujada en el navegador."""
     try:
-        origen_rel = ruta_rel[len("uploads/"):] if ruta_rel.startswith("uploads/") else ruta_rel
-        origen = (UPLOADS / origen_rel).resolve()
-        if not origen.is_file() or UPLOADS.resolve() not in origen.parents:
+        if not isinstance(data_url, str) or not data_url.startswith("data:image/png;base64,"):
             return ""
-        destino_rel = f"{prefijo}_{uuid.uuid4().hex[:12]}{origen.suffix.lower()}"
-        destino = (UPLOADS / destino_rel).resolve()
-        if UPLOADS.resolve() not in destino.parents:
-            return ""
-        destino.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(origen, destino)
-        return f"uploads/{destino_rel}"
-    except OSError:
-        return ""
-
-
-def _guardar_firma(data_url: str):
-    """Guarda una firma dibujada en el navegador (data URL PNG).
-
-    Devuelve la ruta relativa («uploads/signatures/…») o "" si falla.
-    """
-    try:
-        if not isinstance(data_url, str) or "," not in data_url:
-            return ""
-        b64 = data_url.split(",", 1)[1]
-        datos = base64.b64decode(b64)
+        datos = base64.b64decode(data_url.split(",", 1)[1], validate=True)
         if not datos or len(datos) > 2 * 1024 * 1024:
             return ""
-        destino_rel = f"signatures/sig_{uuid.uuid4().hex[:12]}.png"
-        destino = UPLOADS / "signatures" / Path(destino_rel).name
-        destino.parent.mkdir(parents=True, exist_ok=True)
-        destino.write_bytes(datos)
-        return f"uploads/{destino_rel}"
+        from PIL import Image as PILImage
+        with PILImage.open(io.BytesIO(datos)) as imagen:
+            if str(imagen.format or "").upper() != "PNG":
+                return ""
+            ancho, alto = imagen.size
+            if ancho <= 0 or alto <= 0 or ancho * alto > 4_000_000:
+                return ""
+            imagen.verify()
     except Exception:
         return ""
-
+    return save_object(
+        db, datos, "firmas", "firma.png", "image/png", prefix="firma"
+    ).reference
 
 def _csv_response(filas: list, nombre_archivo: str) -> Response:
     """Respuesta CSV con separador «;» y BOM UTF-8 (Excel en español)."""
@@ -633,12 +955,578 @@ def _guardar_en_catalogos(db: Session, partidas: list, imagenes_guardadas: dict)
 
 
 # ---------------------------------------------------------------------------
+# Acceso web y selección de organización
+# ---------------------------------------------------------------------------
+
+def _next_seguro(valor: object, defecto: str = "/") -> str:
+    destino = str(valor or "").strip()
+    if (
+        not destino.startswith("/")
+        or destino.startswith("//")
+        or "\\" in destino
+        or any(ord(caracter) < 32 for caracter in destino)
+    ):
+        return defecto
+    return destino[:1000]
+
+
+def _slug_organizacion(nombre: str) -> str:
+    normalizado = unicodedata.normalize("NFKD", nombre)
+    ascii_texto = "".join(c for c in normalizado if not unicodedata.combining(c))
+    slug = re.sub(r"[^a-z0-9]+", "-", ascii_texto.lower()).strip("-")
+    return slug[:100] or "organizacion"
+
+
+def _set_organization_cookie(response: Response, organizacion_id: int) -> None:
+    try:
+        secure = SupabaseAuthSettings.from_environment().cookie_secure
+    except AuthNotConfigured:
+        secure = True
+    response.set_cookie(
+        ORGANIZATION_COOKIE,
+        str(organizacion_id),
+        max_age=60 * 60 * 24 * 30,
+        httponly=True,
+        secure=secure,
+        samesite="lax",
+        path="/",
+    )
+
+
+@app.get("/acceso", response_class=HTMLResponse)
+def acceso(request: Request, next: str = ""):
+    error = request.query_params.get("error", "")
+    mensaje = request.query_params.get("msg", "")
+    try:
+        SupabaseAuthSettings.from_environment()
+        configurado = True
+    except AuthNotConfigured as exc:
+        configurado = False
+        error = error or str(exc)
+    return TEMPLATES.TemplateResponse(
+        request,
+        "auth/access.html",
+        {
+            "error": error,
+            "msg": mensaje,
+            "auth_configured": configurado,
+            "next": _next_seguro(next),
+        },
+    )
+
+
+@app.get("/recuperar-acceso", response_class=HTMLResponse)
+def recuperar_acceso_form(request: Request):
+    return TEMPLATES.TemplateResponse(
+        request,
+        "auth/recover.html",
+        {
+            "error": request.query_params.get("error", ""),
+            "msg": request.query_params.get("msg", ""),
+        },
+    )
+
+
+@app.post("/recuperar-acceso")
+async def solicitar_recuperacion(request: Request):
+    form = await request.form()
+    email = str(form.get("email") or "").strip()
+    mensaje = "Si la cuenta existe, Supabase enviará un enlace para restablecer la contraseña."
+    try:
+        settings = SupabaseAuthSettings.from_environment()
+        redirect_to = password_reset_redirect_url()
+        await run_in_threadpool(
+            SupabaseAuthClient(settings).request_password_reset,
+            email,
+            redirect_to,
+        )
+    except InvalidCredentials:
+        # Respuesta deliberadamente indistinguible para no enumerar cuentas.
+        pass
+    except AuthError as exc:
+        return _redirect("/recuperar-acceso", error=str(exc))
+    return _redirect("/recuperar-acceso", msg=mensaje)
+
+
+@app.get("/restablecer-clave", response_class=HTMLResponse)
+def restablecer_clave_form(request: Request):
+    return TEMPLATES.TemplateResponse(
+        request,
+        "auth/reset_password.html",
+        {"error": request.query_params.get("error", ""), "recovery_token": ""},
+    )
+
+
+@app.post("/restablecer-clave")
+async def restablecer_clave(request: Request):
+    form = await request.form()
+    token = str(form.get("recovery_token") or "").strip()
+    password = str(form.get("password") or "")
+    confirmation = str(form.get("password_confirmation") or "")
+    if password != confirmation:
+        return TEMPLATES.TemplateResponse(
+            request,
+            "auth/reset_password.html",
+            {"error": "Las contraseñas no coinciden.", "recovery_token": token},
+            status_code=400,
+        )
+    try:
+        settings = SupabaseAuthSettings.from_environment()
+        client = SupabaseAuthClient(settings)
+        # Verifica primero que el token todavía identifica a un usuario.
+        await run_in_threadpool(client.get_user, token)
+        await run_in_threadpool(client.update_password, token, password)
+    except AuthError:
+        return TEMPLATES.TemplateResponse(
+            request,
+            "auth/reset_password.html",
+            {
+                "error": "El enlace no es válido o ha caducado. Solicita uno nuevo.",
+                "recovery_token": "",
+            },
+            status_code=400,
+        )
+    response = RedirectResponse(
+        "/acceso?msg=" + quote("Contraseña actualizada. Ya puedes iniciar sesión."),
+        status_code=303,
+    )
+    clear_auth_cookies(response, settings.cookie_secure)
+    return response
+
+
+@app.post("/acceso")
+async def iniciar_sesion(request: Request):
+    form = await request.form()
+    destino = _next_seguro(form.get("next"))
+    try:
+        settings = SupabaseAuthSettings.from_environment()
+        tokens = await run_in_threadpool(
+            SupabaseAuthClient(settings).sign_in,
+            str(form.get("email") or ""),
+            str(form.get("password") or ""),
+        )
+    except AuthError as exc:
+        return _redirect(
+            f"/acceso?next={quote(destino)}",
+            error=str(exc),
+        )
+    response = RedirectResponse(destino, status_code=303)
+    set_auth_cookies(response, tokens, settings.cookie_secure)
+    return response
+
+
+@app.post("/registro")
+async def registrar_cuenta(request: Request):
+    form = await request.form()
+    destino = _next_seguro(form.get("next"), "/organizaciones/nueva")
+    password = str(form.get("password") or "")
+    password_confirmation = str(form.get("password_confirmation") or "")
+    if password != password_confirmation:
+        return _redirect("/acceso", error="Las contraseñas no coinciden.")
+    try:
+        settings = SupabaseAuthSettings.from_environment()
+        result = await run_in_threadpool(
+            SupabaseAuthClient(settings).sign_up,
+            str(form.get("email") or ""),
+            password,
+            str(form.get("nombre") or ""),
+        )
+    except AuthError as exc:
+        return _redirect("/acceso", error=str(exc))
+    if result.tokens is None:
+        return _redirect(
+            "/acceso",
+            msg="Cuenta creada. Revisa tu email para confirmarla antes de iniciar sesión.",
+        )
+    response = RedirectResponse(destino, status_code=303)
+    set_auth_cookies(response, result.tokens, settings.cookie_secure)
+    return response
+
+
+@app.post("/salir")
+def cerrar_sesion():
+    response = RedirectResponse("/acceso", status_code=303)
+    try:
+        secure = SupabaseAuthSettings.from_environment().cookie_secure
+    except AuthNotConfigured:
+        secure = True
+    clear_auth_cookies(response, secure)
+    return response
+
+
+@app.get("/organizaciones", response_class=HTMLResponse)
+def listar_organizaciones_web(
+    request: Request,
+    db: Session = Depends(get_authenticated_db),
+):
+    if DATABASE_IS_SQLITE:
+        return _redirect("/")
+    usuario = db.get(Usuario, db.info["usuario_id"])
+    membresias = membresias_activas(db, usuario.id)
+    return TEMPLATES.TemplateResponse(
+        request,
+        "auth/organizations.html",
+        {
+            "usuario": usuario,
+            "membresias": membresias,
+            "error": request.query_params.get("error", ""),
+            "msg": request.query_params.get("msg", ""),
+        },
+    )
+
+
+@app.get("/organizaciones/nueva", response_class=HTMLResponse)
+def nueva_organizacion_web(
+    request: Request,
+    db: Session = Depends(get_authenticated_db),
+):
+    if DATABASE_IS_SQLITE:
+        return _redirect("/")
+    usuario = db.get(Usuario, db.info["usuario_id"])
+    return TEMPLATES.TemplateResponse(
+        request,
+        "auth/organization_new.html",
+        {"usuario": usuario, "error": request.query_params.get("error", "")},
+    )
+
+
+@app.post("/organizaciones/nueva")
+async def crear_organizacion_web(
+    request: Request,
+    db: Session = Depends(get_authenticated_db),
+):
+    if DATABASE_IS_SQLITE:
+        return _redirect("/")
+    form = await request.form()
+    nombre = str(form.get("nombre") or "").strip()[:200]
+    if len(nombre) < 2:
+        return _redirect(
+            "/organizaciones/nueva",
+            error="Escribe un nombre válido para la empresa.",
+        )
+    slug_base = _slug_organizacion(nombre)
+    # RLS no debe revelar slugs de otras empresas para buscar un sufijo. Un
+    # sufijo aleatorio mantiene la unicidad sin ampliar la lectura global.
+    slug = f"{slug_base[:107]}-{uuid.uuid4().hex[:12]}"
+    usuario = db.get(Usuario, db.info["usuario_id"])
+    organizacion = Organizacion(
+        nombre=nombre,
+        slug=slug,
+        creada_por_usuario_id=usuario.id,
+    )
+    db.add(organizacion)
+    db.flush()
+    db.add(Membresia(
+        usuario_id=usuario.id,
+        organizacion_id=organizacion.id,
+        rol="propietario",
+    ))
+    db.flush()
+    establecer_contexto_organizacion(db, organizacion.id)
+    db.add(Configuracion(organizacion_id=organizacion.id))
+    db.commit()
+    response = RedirectResponse("/bienvenida", status_code=303)
+    _set_organization_cookie(response, organizacion.id)
+    return response
+
+
+@app.post("/organizaciones/{organizacion_id}/seleccionar")
+def seleccionar_organizacion_web(
+    organizacion_id: int,
+    db: Session = Depends(get_authenticated_db),
+):
+    if DATABASE_IS_SQLITE:
+        return _redirect("/")
+    usuario_id = db.info["usuario_id"]
+    membresia = (
+        db.query(Membresia)
+        .join(Organizacion, Organizacion.id == Membresia.organizacion_id)
+        .filter(
+            Membresia.usuario_id == usuario_id,
+            Membresia.organizacion_id == organizacion_id,
+            Membresia.activa.is_(True),
+            Organizacion.activa.is_(True),
+        )
+        .first()
+    )
+    if membresia is None:
+        raise OrganizationAccessDenied(
+            "No tienes acceso a la organización seleccionada."
+        )
+    response = RedirectResponse("/", status_code=303)
+    _set_organization_cookie(response, organizacion_id)
+    return response
+
+
+def _render_equipo(
+    request: Request,
+    db: Session,
+    *,
+    invitation_link: str = "",
+    msg: str = "",
+    status_code: int = 200,
+):
+    organizacion_id = db.info["organizacion_id"]
+    actor_rol = db.info["rol_membresia"]
+    exigir_gestor(actor_rol)
+    membresias = (
+        db.query(Membresia)
+        .join(Usuario, Usuario.id == Membresia.usuario_id)
+        .filter(Membresia.organizacion_id == organizacion_id)
+        .order_by(Membresia.activa.desc(), Usuario.email, Membresia.id)
+        .all()
+    )
+    invitaciones = (
+        db.query(InvitacionOrganizacion)
+        .filter(
+            InvitacionOrganizacion.organizacion_id == organizacion_id,
+            InvitacionOrganizacion.accepted_at.is_(None),
+            InvitacionOrganizacion.revoked_at.is_(None),
+        )
+        .order_by(InvitacionOrganizacion.created_at.desc())
+        .all()
+    )
+    return TEMPLATES.TemplateResponse(
+        request,
+        "auth/team.html",
+        {
+            "membresias": membresias,
+            "invitaciones": invitaciones,
+            "actor_rol": actor_rol,
+            "ahora": datetime.utcnow(),
+            "invitation_link": invitation_link,
+            "msg": msg or request.query_params.get("msg", ""),
+            "error": request.query_params.get("error", ""),
+        },
+        status_code=status_code,
+        headers={"Cache-Control": "no-store"},
+    )
+
+
+@app.get("/equipo", response_class=HTMLResponse)
+def gestionar_equipo_web(request: Request, db: Session = Depends(get_db)):
+    if DATABASE_IS_SQLITE:
+        return _redirect("/")
+    return _render_equipo(request, db)
+
+
+@app.post("/equipo/invitaciones", response_class=HTMLResponse)
+async def crear_invitacion_web(request: Request, db: Session = Depends(get_db)):
+    if DATABASE_IS_SQLITE:
+        return _redirect("/")
+    form = await request.form()
+    try:
+        # Valida primero el origen fijo para no persistir una invitación cuyo
+        # enlace no pueda construirse de forma segura.
+        public_app_url("/")
+        invitacion, token = crear_invitacion(
+            db,
+            organizacion_id=db.info["organizacion_id"],
+            actor_usuario_id=db.info["usuario_id"],
+            email=str(form.get("email") or ""),
+            rol=str(form.get("rol") or ""),
+        )
+        invitation_link = public_app_url(f"/invitaciones/{token}")
+        db.commit()
+    except (GestionEquipoError, AuthNotConfigured) as exc:
+        db.rollback()
+        return _redirect("/equipo", error=str(exc))
+    return _render_equipo(
+        request,
+        db,
+        invitation_link=invitation_link,
+        msg=f"Invitación creada para {invitacion.email}. Compártela por un canal seguro.",
+    )
+
+
+@app.post("/equipo/invitaciones/{invitacion_id}/revocar")
+def revocar_invitacion_web(
+    invitacion_id: int,
+    db: Session = Depends(get_db),
+):
+    if DATABASE_IS_SQLITE:
+        return _redirect("/")
+    invitacion = (
+        db.query(InvitacionOrganizacion)
+        .filter(
+            InvitacionOrganizacion.id == invitacion_id,
+            InvitacionOrganizacion.organizacion_id == db.info["organizacion_id"],
+        )
+        .first()
+    )
+    if invitacion is None:
+        return _redirect("/equipo", error="La invitación no existe.")
+    try:
+        revocar_invitacion(
+            db,
+            invitacion=invitacion,
+            organizacion_id=db.info["organizacion_id"],
+            actor_usuario_id=db.info["usuario_id"],
+        )
+        db.commit()
+    except GestionEquipoError as exc:
+        db.rollback()
+        return _redirect("/equipo", error=str(exc))
+    return _redirect("/equipo", msg="Invitación revocada.")
+
+
+@app.post("/equipo/membresias/{membresia_id}")
+async def actualizar_membresia_web(
+    membresia_id: int,
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    if DATABASE_IS_SQLITE:
+        return _redirect("/")
+    membresia = (
+        db.query(Membresia)
+        .filter(
+            Membresia.id == membresia_id,
+            Membresia.organizacion_id == db.info["organizacion_id"],
+        )
+        .with_for_update()
+        .first()
+    )
+    if membresia is None:
+        return _redirect("/equipo", error="La membresía no existe.")
+    form = await request.form()
+    try:
+        actualizar_membresia(
+            db,
+            membresia=membresia,
+            organizacion_id=db.info["organizacion_id"],
+            actor_usuario_id=db.info["usuario_id"],
+            rol=str(form.get("rol") or ""),
+            activa=str(form.get("activa") or "") == "1",
+        )
+        db.commit()
+    except GestionEquipoError as exc:
+        db.rollback()
+        return _redirect("/equipo", error=str(exc))
+    return _redirect("/equipo", msg="Membresía actualizada.")
+
+
+def _render_invitacion(
+    request: Request,
+    token: str,
+    *,
+    error: str = "",
+    status_code: int = 200,
+):
+    return TEMPLATES.TemplateResponse(
+        request,
+        "auth/invitation.html",
+        {"token": token, "error": error},
+        status_code=status_code,
+        headers={"Cache-Control": "no-store", "Referrer-Policy": "no-referrer"},
+    )
+
+
+@app.get("/invitaciones/{token}", response_class=HTMLResponse)
+def ver_invitacion_web(request: Request, token: str):
+    # La vista pública no consulta la base ni confirma si el token existe.
+    token_seguro = token if re.fullmatch(r"[A-Za-z0-9_-]{32,200}", token) else ""
+    return _render_invitacion(request, token_seguro)
+
+
+@app.post("/invitaciones/{token}/aceptar")
+def aceptar_invitacion_web(
+    token: str,
+    request: Request,
+    db: Session = Depends(get_authenticated_db),
+):
+    if DATABASE_IS_SQLITE:
+        return _redirect("/")
+    usuario = db.get(Usuario, db.info["usuario_id"])
+    identidad = request.state.supabase_identity
+    try:
+        membresia = aceptar_invitacion(
+            db,
+            token=token,
+            usuario=usuario,
+            email_verificado=identidad.email_verified,
+        )
+        organizacion_id = membresia.organizacion_id
+        db.commit()
+    except GestionEquipoError as exc:
+        db.rollback()
+        return _render_invitacion(request, token, error=str(exc), status_code=400)
+    response = _redirect(
+        "/organizaciones", msg="Invitación aceptada. Ya puedes entrar a la organización."
+    )
+    _set_organization_cookie(response, organizacion_id)
+    return response
+
+
+# ---------------------------------------------------------------------------
+# Primer inicio
+# ---------------------------------------------------------------------------
+
+@app.get("/bienvenida", response_class=HTMLResponse)
+def bienvenida(request: Request, db: Session = Depends(get_db)):
+    cfg = _config(db)
+    if cfg.onboarding_completado:
+        return _redirect("/")
+    return TEMPLATES.TemplateResponse(
+        request,
+        "onboarding.html",
+        {"cfg": cfg, "error": request.query_params.get("error", "")},
+    )
+
+
+@app.post("/bienvenida")
+async def finalizar_bienvenida(request: Request, db: Session = Depends(get_db)):
+    cfg = _config(db)
+    if cfg.onboarding_completado:
+        return _redirect("/")
+    if not cfg.onboarding_iniciado_at:
+        cfg.onboarding_iniciado_at = datetime.utcnow()
+        db.commit()
+    form = await request.form()
+    datos = {
+        "empresa_nombre": form.get("empresa_nombre", ""),
+        "empresa_legal": form.get("empresa_legal", ""),
+        "empresa_rif": form.get("empresa_rif", ""),
+        "empresa_pais": form.get("empresa_pais", "Venezuela"),
+        "empresa_ciudad": form.get("empresa_ciudad", ""),
+        "empresa_direccion": form.get("empresa_direccion", ""),
+        "empresa_telefono": form.get("empresa_telefono", ""),
+        "empresa_email": form.get("empresa_email", ""),
+        "moneda_default": form.get("moneda_default", "USD"),
+        "iva_default": _f(form.get("iva_default"), 16.0),
+    }
+    try:
+        cfg = completar_onboarding(db, datos, str(form.get("modo_inicio", "")))
+    except ErrorOnboarding as exc:
+        return _redirect("/bienvenida", error=str(exc))
+
+    logo = form.get("logo")
+    if isinstance(logo, UploadFileStarlette) and logo.filename:
+        ruta = await _guardar_imagen(logo, "logo", db)
+        if ruta:
+            cfg.logo = ruta
+            db.commit()
+    return _redirect("/", msg="Tu espacio de trabajo está listo. Completa la guía para crear tu primer PDF.")
+
+
+@app.post("/recorrido/catalogo-revisado")
+def marcar_catalogo_revisado(db: Session = Depends(get_db)):
+    cfg = _config(db)
+    if not cfg.onboarding_catalogo_revisado:
+        cfg.onboarding_catalogo_revisado = True
+        db.commit()
+    return _redirect("/partidas")
+
+
+# ---------------------------------------------------------------------------
 # Inicio
 # ---------------------------------------------------------------------------
 
 @app.get("/", response_class=HTMLResponse)
 def inicio(request: Request, db: Session = Depends(get_db)):
-    marcar_vencidos(db)
+    cfg = _config(db)
+    if not cfg.onboarding_completado:
+        return _redirect("/bienvenida")
     total_presupuestos = db.query(Presupuesto).count()
     total_clientes = db.query(Cliente).count()
     por_estado = {e: db.query(Presupuesto).filter(Presupuesto.estado == e).count() for e in ESTADOS}
@@ -663,6 +1551,11 @@ def inicio(request: Request, db: Session = Depends(get_db)):
     margen_estimado = sum(p.margen for p in db.query(Presupuesto).filter(Presupuesto.estado.in_(["aprobado", "aprobado_parcialmente", "en_ejecucion", "finalizado"])).all())
     proyectos_activos = db.query(Proyecto).filter(Proyecto.estado.in_(["en_ejecucion", "pausado"])).count()
     analisis_precios = analizar_catalogo_partidas(db)
+    recorrido_inicial = (
+        estado_recorrido_inicial(db, cfg)
+        if cfg.onboarding_modo in {"demo", "limpio"}
+        else None
+    )
     return TEMPLATES.TemplateResponse(
         request,
         "index.html",
@@ -681,8 +1574,16 @@ def inicio(request: Request, db: Session = Depends(get_db)):
             "descuentos_concedidos": descuentos_concedidos, "margen_estimado": margen_estimado,
             "proyectos_activos": proyectos_activos,
             "analisis_precios": analisis_precios,
+            "recorrido_inicial": recorrido_inicial,
         },
     )
+
+
+@app.post("/presupuestos/actualizar-vencidos")
+def actualizar_presupuestos_vencidos(db: Session = Depends(get_db)):
+    if db.info.get("rol_membresia") == "lectura":
+        return {"ok": True, "actualizados": 0}
+    return {"ok": True, "actualizados": marcar_vencidos(db)}
 
 
 @app.get("/presupuestos/optimizar-precios", response_class=HTMLResponse)
@@ -787,7 +1688,7 @@ def listar_clientes(request: Request, q: str = "", db: Session = Depends(get_db)
 
 
 @app.get("/clientes/nuevo", response_class=HTMLResponse)
-def nuevo_cliente_form(request: Request):
+def nuevo_cliente_form(request: Request, _db: Session = Depends(get_db)):
     return TEMPLATES.TemplateResponse(request, "clients/form.html", {"cliente": None})
 
 
@@ -856,7 +1757,7 @@ def eliminar_cliente(cliente_id: int, db: Session = Depends(get_db)):
         if num_presupuestos:
             detalles.append(f"{num_presupuestos} presupuesto(s)")
         if num_facturas:
-            detalles.append(f"{num_facturas} factura(s)")
+            detalles.append(f"{num_facturas} documento(s) de cobro")
         return _redirect(f"/clientes/{cliente_id}/editar",
                          error="No se puede eliminar: tiene " + " y ".join(detalles) + " asociado(s).")
     db.delete(cliente)
@@ -878,7 +1779,6 @@ def listar_presupuestos(
     pagina: int = 1,
     db: Session = Depends(get_db),
 ):
-    marcar_vencidos(db)
     query = db.query(Presupuesto)
     if _estado_valido(estado):
         query = query.filter(Presupuesto.estado == estado)
@@ -980,61 +1880,83 @@ def exportar_presupuestos(
 _TOKEN_IMPORTACION_RE = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", re.I)
 
 
-def _guardar_importacion_cype(archivos: list[tuple[str, bytes]]) -> dict:
-    """Guarda las fuentes CYPE y su análisis servidor a servidor.
-
-    El navegador recibe solo un identificador opaco. En confirmar se vuelve a
-    leer este manifiesto, nunca una matriz modificable enviada desde el cliente;
-    así no se puede perder, recortar o alterar filas entre la vista previa y la
-    creación del presupuesto.
-    """
+def _guardar_importacion_cype(
+    archivos: list[tuple[str, bytes]], db: Session
+) -> dict:
+    """Guarda fuentes y manifiesto CYPE en almacenamiento privado del tenant."""
     if not archivos:
         raise ErrorImportacion("Selecciona al menos un archivo .xlsx de CYPE.")
     token = str(uuid.uuid4())
-    destino_fuentes = UPLOADS / "importaciones"
-    destino_fuentes.mkdir(parents=True, exist_ok=True)
-    IMPORTS_DIR.mkdir(parents=True, exist_ok=True)
-    partidas = []
+    analizados = []
     for indice, (nombre_original, contenido) in enumerate(archivos, start=1):
-        analisis = analizar_cype_xlsx(contenido)
-        nombre_limpio = Path(nombre_original or f"partida_{indice}.xlsx").name
-        nombre_destino = f"{token}_{indice}.xlsx"
-        (destino_fuentes / nombre_destino).write_bytes(contenido)
-        archivo_relativo = f"importaciones/{nombre_destino}"
-        for partida in analisis["partidas"]:
-            partida["archivo_origen"] = archivo_relativo
-            partida["nombre_archivo_origen"] = nombre_limpio
-            partidas.append(partida)
-    manifiesto = {
-        "formato": "cype_descompuesto",
-        "partidas": partidas,
-        "partidas_detectadas": len(partidas),
-        "filas_detectadas": sum(len(partida["filas"]) for partida in partidas),
-    }
-    ruta_tmp = IMPORTS_DIR / f"{token}.json"
-    temporal = ruta_tmp.with_suffix(".tmp")
-    temporal.write_text(json.dumps(manifiesto, ensure_ascii=False), encoding="utf-8")
-    os.replace(temporal, ruta_tmp)
-    return {"importacion_id": token, **manifiesto}
+        analizados.append((
+            Path(nombre_original or f"partida_{indice}.xlsx").name,
+            contenido,
+            analizar_cype_xlsx(contenido),
+        ))
+    referencias = []
+    partidas = []
+    try:
+        for indice, (nombre_limpio, contenido, analisis) in enumerate(analizados, start=1):
+            guardado = save_object(
+                db, contenido, "importaciones", nombre_limpio,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                exact_filename=f"{token}_{indice}.xlsx",
+            )
+            referencias.append(guardado.reference)
+            for partida in analisis["partidas"]:
+                partida["archivo_origen"] = guardado.reference
+                partida["nombre_archivo_origen"] = nombre_limpio
+                partidas.append(partida)
+        manifiesto = {
+            "formato": "cype_descompuesto",
+            "partidas": partidas,
+            "partidas_detectadas": len(partidas),
+            "filas_detectadas": sum(len(partida["filas"]) for partida in partidas),
+        }
+        guardado = save_object(
+            db,
+            json.dumps(manifiesto, ensure_ascii=False).encode("utf-8"),
+            "manifiestos-importacion", f"{token}.json", "application/json",
+            exact_filename=f"{token}.json",
+        )
+        referencias.append(guardado.reference)
+        db.commit()
+        return {"importacion_id": token, **manifiesto}
+    except StorageError as exc:
+        for referencia in referencias:
+            try:
+                delete_object(db, referencia)
+            except StorageError:
+                pass
+        db.rollback()
+        raise ErrorImportacion(
+            "No se pudo guardar la importación en el almacenamiento privado."
+        ) from exc
 
 
-def _cargar_importacion_cype(importacion_id: object) -> dict:
+def _cargar_importacion_cype(importacion_id: object, db: Session) -> dict:
     token = str(importacion_id or "").strip()
     if not _TOKEN_IMPORTACION_RE.fullmatch(token):
         raise ErrorImportacion("La importación CYPE no es válida o ha caducado. Vuelve a analizar el archivo.")
-    ruta = IMPORTS_DIR / f"{token}.json"
+    organizacion_id = int(db.info.get("organizacion_id") or 0)
+    key = f"organizaciones/{organizacion_id}/manifiestos-importacion/{token}.json"
+    metadata = db.query(ArchivoAlmacenado).filter(ArchivoAlmacenado.object_key == key).first()
     try:
-        datos = json.loads(ruta.read_text(encoding="utf-8"))
-    except (OSError, ValueError) as exc:
+        if metadata is not None:
+            contenido = read_reference(storage_reference(key)).decode("utf-8")
+        else:
+            contenido = (IMPORTS_DIR / f"{token}.json").read_text(encoding="utf-8")
+        datos = json.loads(contenido)
+    except (OSError, StorageError, UnicodeDecodeError, ValueError) as exc:
         raise ErrorImportacion("La importación CYPE no está disponible. Vuelve a cargar el archivo.") from exc
     if datos.get("formato") != "cype_descompuesto" or not isinstance(datos.get("partidas"), list):
         raise ErrorImportacion("El manifiesto de la importación CYPE no es válido.")
     return datos
 
-
 def _datos_cype_desde_payload(payload, db: Session):
     """Valida el manifiesto CYPE guardado y resuelve el presupuesto destino."""
-    datos = _cargar_importacion_cype(payload.get("importacion_id"))
+    datos = _cargar_importacion_cype(payload.get("importacion_id"), db)
     partidas = datos["partidas"]
     if not partidas:
         raise ErrorImportacion("No se detectaron partidas CYPE para importar.")
@@ -1548,7 +2470,9 @@ def importar_presupuesto_form(request: Request, destino: str = "", db: Session =
 
 
 @app.post("/presupuestos/importar/analizar")
-async def analizar_importacion_presupuesto(request: Request):
+async def analizar_importacion_presupuesto(
+    request: Request, db: Session = Depends(get_db)
+):
     form = await request.form()
     archivos_subidos = [
         archivo for archivo in form.getlist("archivo")
@@ -1570,7 +2494,9 @@ async def analizar_importacion_presupuesto(request: Request):
             # antes de guardarse: nunca se mezcla una importación parcial con
             # un archivo de otro formato.
             if all(extension == ".xlsx" and es_formato_cype_xlsx(contenido) for _, extension, contenido in archivos):
-                resultado = _guardar_importacion_cype([(nombre, contenido) for nombre, _, contenido in archivos])
+                resultado = _guardar_importacion_cype(
+                    [(nombre, contenido) for nombre, _, contenido in archivos], db
+                )
                 return {"ok": True, **resultado}
             if len(archivos) > 1:
                 raise ErrorImportacion("Solo se pueden cargar varios archivos cuando todos usan el formato CYPE de descompuesto.")
@@ -1776,7 +2702,7 @@ def nuevo_presupuesto_form(request: Request, db: Session = Depends(get_db)):
     )
 
 
-def _leer_formulario_presupuesto(form):
+def _leer_formulario_presupuesto(form, db: Session | None = None):
     """Interpreta el formulario anidado de capítulos/partidas/mediciones.
 
     Devuelve (datos_generales, capitulos) donde capitulos es una lista de
@@ -1849,7 +2775,9 @@ def _leer_formulario_presupuesto(form):
                             "color": str(opcion.get("color", "")).strip(),
                             "acabado": str(opcion.get("acabado", "")).strip(),
                             "descripcion": str(opcion.get("descripcion", "")).strip(),
-                            "imagen_actual": str(opcion.get("imagen", "")).strip(),
+                            "imagen_actual": _normalizar_referencia_imagen(
+                                db, opcion.get("imagen", "")
+                            ),
                             "seleccionado": bool(opcion.get("seleccionado", False)),
                             "orden": int(_f(opcion.get("orden"), 0)),
                         })
@@ -1869,7 +2797,9 @@ def _leer_formulario_presupuesto(form):
                         "prod_coste": _f(pd.get("prod_coste"), None) if str(pd.get("prod_coste", "")).strip() else None,
                         "prod_unidad": str(pd.get("prod_unidad", "")).strip(),
                         "prod_categoria": str(pd.get("prod_categoria", "")).strip(),
-                        "prod_imagen_actual": str(pd.get("prod_imagen", "")).strip(),
+                        "prod_imagen_actual": _normalizar_referencia_imagen(
+                            db, pd.get("prod_imagen", "")
+                        ),
                         "prod_imagen_file": archivo,
                         "tipo_partida": str(pd.get("tipo_partida", "included")).strip() or "included",
                         "seleccionada": bool(pd.get("seleccionada", False)),
@@ -1978,7 +2908,9 @@ def _leer_formulario_presupuesto(form):
             "prod_coste": _f(en(prod_costes, i), None) if str(en(prod_costes, i)).strip() else None,
             "prod_unidad": str(en(prod_unidades, i)).strip(),
             "prod_categoria": str(en(prod_categorias, i)).strip(),
-            "prod_imagen_actual": str(en(prod_actual, i)).strip(),
+            "prod_imagen_actual": _normalizar_referencia_imagen(
+                db, en(prod_actual, i)
+            ),
             "prod_imagen_file": imagenes[i] if i < len(imagenes) else None,
             "tipo_partida": str(en(tipos, i, "included")).strip() or "included",
             "seleccionada": str(en(seleccionadas, i)).strip().lower() in {"1", "true", "si", "sí"},
@@ -2289,7 +3221,7 @@ async def crear_presupuesto(request: Request, db: Session = Depends(get_db)):
     cliente = db.get(Cliente, int(_f(form.get("client_id"))))
     if cliente is None:
         return _redirect("/presupuestos/nuevo", error="Selecciona un cliente válido.")
-    capitulos, partidas = _leer_formulario_presupuesto(form)
+    capitulos, partidas = _leer_formulario_presupuesto(form, db)
     capitulos = [c for c in capitulos if c["nombre"]]
     if not capitulos:
         return _redirect("/presupuestos/nuevo", error="Agrega al menos un capítulo con nombre.")
@@ -2318,7 +3250,7 @@ async def crear_presupuesto(request: Request, db: Session = Depends(get_db)):
     foto_proyecto = ""
     foto_file = form.get("foto_proyecto")
     if isinstance(foto_file, UploadFileStarlette) and foto_file.filename:
-        foto_proyecto = await _guardar_imagen(foto_file, f"projects/p_new_{date.today().isoformat()}")
+        foto_proyecto = await _guardar_imagen(foto_file, f"projects/p_new_{date.today().isoformat()}", db)
 
     presupuesto = Presupuesto(
         numero=proximo_numero(db, f.year),
@@ -2355,7 +3287,7 @@ async def crear_presupuesto(request: Request, db: Session = Depends(get_db)):
     for i, pd in enumerate(partidas):
         archivo = pd.get("prod_imagen_file")
         if isinstance(archivo, UploadFileStarlette) and archivo.filename:
-            ruta = await _guardar_imagen(archivo, f"products/tmp_{i}_{date.today().isoformat()}")
+            ruta = await _guardar_imagen(archivo, f"products/tmp_{i}_{date.today().isoformat()}", db)
             if ruta:
                 imagenes[i] = ruta
     # Imágenes nuevas de las opciones múltiples de producto. Cada archivo
@@ -2369,7 +3301,7 @@ async def crear_presupuesto(request: Request, db: Session = Depends(get_db)):
     ):
         if not (isinstance(archivo_op, UploadFileStarlette) and archivo_op.filename):
             continue
-        ruta = await _guardar_imagen(archivo_op, f"products/opc_{date.today().isoformat()}_{len(imagenes_opciones)}")
+        ruta = await _guardar_imagen(archivo_op, f"products/opc_{date.today().isoformat()}_{len(imagenes_opciones)}", db)
         if ruta and idx_str and ":" in idx_str:
             p_idx, o_idx = idx_str.split(":", 1)
             imagenes_opciones[(int(p_idx), int(o_idx))] = ruta
@@ -2377,7 +3309,7 @@ async def crear_presupuesto(request: Request, db: Session = Depends(get_db)):
     # Firma digital del cliente (si la dibujaron en el formulario)
     firma = form.get("firma_cliente")
     if isinstance(firma, str) and firma.startswith("data:image/png;base64,"):
-        presupuesto.firma_cliente = _guardar_firma(firma)
+        presupuesto.firma_cliente = _guardar_firma(firma, db)
 
     _montar_presupuesto(presupuesto, capitulos, partidas, imagenes, imagenes_opciones)
     db.add(presupuesto)
@@ -2894,7 +3826,7 @@ def agregar_nota(presupuesto_id: int, texto: str = Form(""), db: Session = Depen
 
 
 # ---------------------------------------------------------------------------
-# Facturas (conversión de presupuesto aprobado)
+# Documentos de cobro no fiscales (rutas históricas /facturas)
 # ---------------------------------------------------------------------------
 
 @app.post("/presupuestos/{presupuesto_id}/factura")
@@ -2904,17 +3836,17 @@ def crear_factura(presupuesto_id: int, db: Session = Depends(get_db)):
         return _redirect("/presupuestos", error="Presupuesto no encontrado.")
     if presupuesto.estado != "aprobado":
         return _redirect(f"/presupuestos/{presupuesto_id}",
-                         error="Solo se puede facturar un presupuesto en estado «aprobado».")
+                         error="Solo se puede crear el documento de cobro desde un presupuesto «aprobado».")
     ya = db.query(Factura).filter(Factura.presupuesto_id == presupuesto.id).first()
     if ya:
-        return _redirect(f"/facturas/{ya.id}", msg="Este presupuesto ya tiene una factura asociada.")
+        return _redirect(f"/facturas/{ya.id}", msg="Este presupuesto ya tiene un documento de cobro asociado.")
 
     año = date.today().year
     # La factura queda vinculada a una versión aprobada concreta; si procede
     # de una base anterior sin versión, se crea la instantánea ahora.
     version = db.query(PresupuestoVersion).filter_by(presupuesto_id=presupuesto.id, estado="aprobado").order_by(PresupuestoVersion.numero_version.desc()).first()
     if version is None:
-        version = crear_version(db, presupuesto, "Versión aprobada usada para facturación")
+        version = crear_version(db, presupuesto, "Versión aprobada usada para el documento de cobro")
         db.flush()
     factura = Factura(
         numero=proximo_numero_factura(db, año),
@@ -2957,7 +3889,7 @@ def crear_factura(presupuesto_id: int, db: Session = Depends(get_db)):
             ))
     db.add(factura)
     db.commit()
-    return _redirect(f"/facturas/{factura.id}", msg=f"Factura {factura.numero} creada desde el presupuesto {presupuesto.numero}.")
+    return _redirect(f"/facturas/{factura.id}", msg=f"Documento de cobro {factura.numero} creado desde el presupuesto {presupuesto.numero}.")
 
 
 @app.get("/facturas", response_class=HTMLResponse)
@@ -2970,7 +3902,7 @@ def listar_facturas(request: Request, db: Session = Depends(get_db)):
 def ver_factura(factura_id: int, request: Request, db: Session = Depends(get_db)):
     factura = db.get(Factura, factura_id)
     if factura is None:
-        return _redirect("/facturas", error="Factura no encontrada.")
+        return _redirect("/facturas", error="Documento de cobro no encontrado.")
     return TEMPLATES.TemplateResponse(request, "facturas/detail.html", {"f": factura})
 
 
@@ -2978,25 +3910,25 @@ def ver_factura(factura_id: int, request: Request, db: Session = Depends(get_db)
 def descargar_pdf_factura(factura_id: int, inline: int = 0, db: Session = Depends(get_db)):
     factura = db.get(Factura, factura_id)
     if factura is None:
-        return _redirect("/facturas", error="Factura no encontrada.")
+        return _redirect("/facturas", error="Documento de cobro no encontrado.")
     resultado = _generar_pdf_seguro(
         lambda: pdf_service.generar_factura_pdf(factura, _config(db)),
-        f"el PDF de la factura {factura.numero}",
+        f"el PDF del documento de cobro {factura.numero}",
     )
     if isinstance(resultado, Response) and resultado.status_code != 200:
         return resultado
-    return _respuesta_pdf(resultado, f"factura_{factura.numero}.pdf", inline)
+    return _respuesta_pdf(resultado, f"documento_cobro_{factura.numero}.pdf", inline)
 
 
 @app.post("/facturas/{factura_id}/estado")
 def cambiar_estado_factura(factura_id: int, estado: str = Form(...), db: Session = Depends(get_db)):
     factura = db.get(Factura, factura_id)
     if factura is None:
-        return _redirect("/facturas", error="Factura no encontrada.")
+        return _redirect("/facturas", error="Documento de cobro no encontrado.")
     if estado in ("emitida", "anulada"):
         factura.estado = estado
         db.commit()
-        return _redirect(f"/facturas/{factura_id}", msg=f"Factura marcada como «{estado}».")
+        return _redirect(f"/facturas/{factura_id}", msg=f"Documento de cobro marcado como «{estado}».")
     return _redirect(f"/facturas/{factura_id}", error="Estado inválido.")
 
 
@@ -3004,11 +3936,11 @@ def cambiar_estado_factura(factura_id: int, estado: str = Form(...), db: Session
 def eliminar_factura(factura_id: int, db: Session = Depends(get_db)):
     factura = db.get(Factura, factura_id)
     if factura is None:
-        return _redirect("/facturas", error="Factura no encontrada.")
+        return _redirect("/facturas", error="Documento de cobro no encontrado.")
     numero = factura.numero
     db.delete(factura)
     db.commit()
-    return _redirect("/facturas", msg=f"Factura {numero} eliminada.")
+    return _redirect("/facturas", msg=f"Documento de cobro {numero} eliminado.")
 
 
 @app.post("/presupuestos/{presupuesto_id}/borrador")
@@ -3124,7 +4056,7 @@ async def actualizar_presupuesto(presupuesto_id: int, request: Request, db: Sess
     cliente = db.get(Cliente, int(_f(form.get("client_id"))))
     if cliente is None:
         return _redirect(f"/presupuestos/{presupuesto_id}/editar", error="Selecciona un cliente válido.")
-    capitulos, partidas = _leer_formulario_presupuesto(form)
+    capitulos, partidas = _leer_formulario_presupuesto(form, db)
     capitulos = [c for c in capitulos if c["nombre"]]
     if not capitulos:
         return _redirect(f"/presupuestos/{presupuesto_id}/editar", error="Agrega al menos un capítulo con nombre.")
@@ -3171,24 +4103,31 @@ async def actualizar_presupuesto(presupuesto_id: int, request: Request, db: Sess
     except ValueError: presupuesto.fecha_tipo_cambio = None
 
     if form.get("quitar_foto_proyecto"):
-        _borrar_imagen(presupuesto.foto_proyecto)
+        anterior = presupuesto.foto_proyecto
         presupuesto.foto_proyecto = ""
+        _borrar_imagen(anterior, db)
     else:
         foto_file = form.get("foto_proyecto")
         if isinstance(foto_file, UploadFileStarlette) and foto_file.filename:
-            if presupuesto.foto_proyecto:
-                _borrar_imagen(presupuesto.foto_proyecto)
-            ruta = await _guardar_imagen(foto_file, f"projects/p{presupuesto_id}_{date.today().isoformat()}")
+            ruta = await _guardar_imagen(foto_file, f"projects/p{presupuesto_id}_{date.today().isoformat()}", db)
             if ruta:
+                anterior = presupuesto.foto_proyecto
                 presupuesto.foto_proyecto = ruta
+                _borrar_imagen(anterior, db)
 
     # Imágenes: limpia las antiguas que se dejen de usar y guarda las nuevas
     antiguas = [p.producto_imagen for cap in presupuesto.capitulos for p in cap.partidas]
+    antiguas_opciones = [
+        opcion.imagen
+        for cap in presupuesto.capitulos
+        for partida in cap.partidas
+        for opcion in partida.productos_opciones
+    ]
     imagenes = {}
     for i, pd in enumerate(partidas):
         archivo = pd.get("prod_imagen_file")
         if isinstance(archivo, UploadFileStarlette) and archivo.filename:
-            ruta = await _guardar_imagen(archivo, f"products/p{presupuesto_id}_{i}_{date.today().isoformat()}")
+            ruta = await _guardar_imagen(archivo, f"products/p{presupuesto_id}_{i}_{date.today().isoformat()}", db)
             if ruta:
                 imagenes[i] = ruta
     # Imágenes nuevas de las opciones múltiples: cada archivo viene
@@ -3201,20 +4140,24 @@ async def actualizar_presupuesto(presupuesto_id: int, request: Request, db: Sess
     ):
         if not (isinstance(archivo_op, UploadFileStarlette) and archivo_op.filename):
             continue
-        ruta = await _guardar_imagen(archivo_op, f"products/opc_p{presupuesto_id}_{len(imagenes_opciones)}")
+        ruta = await _guardar_imagen(archivo_op, f"products/opc_p{presupuesto_id}_{len(imagenes_opciones)}", db)
         if ruta and idx_str and ":" in idx_str:
             p_idx, o_idx = idx_str.split(":", 1)
             imagenes_opciones[(int(p_idx), int(o_idx))] = ruta
 
     # Firma digital del cliente
     if form.get("quitar_firma"):
-        _borrar_imagen(presupuesto.firma_cliente)
+        anterior = presupuesto.firma_cliente
         presupuesto.firma_cliente = ""
+        _borrar_imagen(anterior, db)
     else:
         firma = form.get("firma_cliente")
         if isinstance(firma, str) and firma.startswith("data:image/png;base64,"):
-            _borrar_imagen(presupuesto.firma_cliente)
-            presupuesto.firma_cliente = _guardar_firma(firma)
+            nueva_firma = _guardar_firma(firma, db)
+            if nueva_firma:
+                anterior = presupuesto.firma_cliente
+                presupuesto.firma_cliente = nueva_firma
+                _borrar_imagen(anterior, db)
 
     # Nombres ya presentes (para no inflar usos al volver a guardar sin cambios).
     nombres_previos = {p.nombre for cap in presupuesto.capitulos for p in cap.partidas}
@@ -3223,9 +4166,18 @@ async def actualizar_presupuesto(presupuesto_id: int, request: Request, db: Sess
     _montar_presupuesto(presupuesto, capitulos, partidas, imagenes, imagenes_opciones)
     db.flush()
     nuevas = {p.producto_imagen for cap in presupuesto.capitulos for p in cap.partidas}
+    nuevas_opciones = {
+        opcion.imagen
+        for cap in presupuesto.capitulos
+        for partida in cap.partidas
+        for opcion in partida.productos_opciones
+    }
     for ruta in antiguas:
         if ruta and ruta not in nuevas:
-            _borrar_imagen(ruta)
+            _borrar_imagen(ruta, db)
+    for ruta in antiguas_opciones:
+        if ruta and ruta not in nuevas_opciones:
+            _borrar_imagen(ruta, db)
     _guardar_en_catalogos(db, partidas, imagenes)
     db.flush()
     _vincular_partidas_catalogo(db, presupuesto)
@@ -3281,11 +4233,11 @@ def duplicar_presupuesto(presupuesto_id: int, db: Session = Depends(get_db)):
         notas=original.notas,
         condiciones=original.condiciones,
         con_portada=original.con_portada,
-        foto_proyecto=_copiar_imagen(original.foto_proyecto, "projects/dup") or original.foto_proyecto,
+        foto_proyecto=_copiar_imagen(original.foto_proyecto, "projects/dup", db) or original.foto_proyecto,
         mostrar_firmas=original.mostrar_firmas,
         mostrar_resumen_capitulos=original.mostrar_resumen_capitulos,
         mostrar_garantias=getattr(original, "mostrar_garantias", False),
-        firma_cliente=_copiar_imagen(original.firma_cliente, "signatures/dup") or original.firma_cliente,
+        firma_cliente=_copiar_imagen(original.firma_cliente, "signatures/dup", db) or original.firma_cliente,
         usar_funciones_avanzadas=original.usar_funciones_avanzadas,
         gastos_indirectos_pct=original.gastos_indirectos_pct,
         imprevistos_pct=original.imprevistos_pct,
@@ -3315,7 +4267,7 @@ def duplicar_presupuesto(presupuesto_id: int, db: Session = Depends(get_db)):
                 producto_precio=part_o.producto_precio,
                 producto_coste=part_o.producto_coste,
                 producto_unidad=part_o.producto_unidad,
-                producto_imagen=_copiar_imagen(part_o.producto_imagen, "products/dup") or part_o.producto_imagen,
+                producto_imagen=_copiar_imagen(part_o.producto_imagen, "products/dup", db) or part_o.producto_imagen,
                 tipo_partida=part_o.tipo_partida,
                 seleccionada=part_o.seleccionada,
                 coste_materiales=part_o.coste_materiales,
@@ -3357,7 +4309,7 @@ def duplicar_presupuesto(presupuesto_id: int, db: Session = Depends(get_db)):
                     sku=opc_o.sku,
                     color=opc_o.color,
                     acabado=opc_o.acabado,
-                    imagen=_copiar_imagen(opc_o.imagen, "products/dup_opc") or opc_o.imagen,
+                    imagen=_copiar_imagen(opc_o.imagen, "products/dup_opc", db) or opc_o.imagen,
                     seleccionado=opc_o.seleccionado,
                     orden=opc_o.orden,
                 ))
@@ -3373,10 +4325,18 @@ def eliminar_presupuesto(presupuesto_id: int, db: Session = Depends(get_db)):
     if presupuesto is None:
         return _redirect("/presupuestos", error="Presupuesto no encontrado.")
     numero = presupuesto.numero
+    referencias = {presupuesto.foto_proyecto, presupuesto.firma_cliente}
+    referencias.update(anexo.archivo for anexo in presupuesto.anexos)
     for cap in presupuesto.capitulos:
         for p in cap.partidas:
-            _borrar_imagen(p.producto_imagen)
+            referencias.add(p.producto_imagen)
+            referencias.update(opcion.imagen for opcion in p.productos_opciones)
+            if p.descomposicion_cype:
+                referencias.add(p.descomposicion_cype.archivo_origen)
     db.delete(presupuesto)
+    db.flush()
+    for referencia in referencias:
+        _borrar_imagen(referencia, db)
     db.commit()
     return _redirect("/presupuestos", msg=f"Presupuesto {numero} eliminado.")
 
@@ -3388,17 +4348,45 @@ async def agregar_anexo(presupuesto_id: int, request: Request, db: Session = Dep
     form = await request.form(); archivo = form.get("archivo")
     if not isinstance(archivo, UploadFileStarlette) or not archivo.filename or Path(archivo.filename).suffix.lower() != ".pdf":
         return _redirect(f"/presupuestos/{presupuesto_id}", error="Selecciona un anexo PDF válido.")
-    destino = UPLOADS / "attachments"; destino.mkdir(parents=True, exist_ok=True)
-    nombre_archivo = f"{uuid.uuid4().hex}.pdf"; contenido = await archivo.read()
-    (destino / nombre_archivo).write_bytes(contenido)
-    db.add(AnexoPresupuesto(presupuesto_id=presupuesto.id, nombre=str(form.get("nombre") or archivo.filename)[:250], archivo=f"uploads/attachments/{nombre_archivo}")); db.commit()
+    contenido = await archivo.read()
+    if not contenido or len(contenido) > 12 * 1024 * 1024 or not contenido.startswith(b"%PDF-"):
+        return _redirect(f"/presupuestos/{presupuesto_id}", error="El anexo PDF no es válido o supera 12 MB.")
+    referencia = save_object(
+        db, contenido, "anexos", archivo.filename, "application/pdf",
+        prefix=f"presupuesto-{presupuesto.id}",
+    ).reference
+    db.add(AnexoPresupuesto(
+        presupuesto_id=presupuesto.id,
+        nombre=str(form.get("nombre") or archivo.filename)[:250],
+        archivo=referencia,
+    ))
+    db.commit()
     return _redirect(f"/presupuestos/{presupuesto_id}#anexos", msg="Anexo añadido.")
 
 @app.post("/presupuestos/{presupuesto_id}/anexos/{anexo_id}/eliminar")
 def eliminar_anexo(presupuesto_id: int, anexo_id: int, db: Session = Depends(get_db)):
     anexo=db.get(AnexoPresupuesto, anexo_id)
     if not anexo or anexo.presupuesto_id != presupuesto_id: return _redirect(f"/presupuestos/{presupuesto_id}", error="Anexo no encontrado.")
-    _borrar_imagen(anexo.archivo); db.delete(anexo); db.commit(); return _redirect(f"/presupuestos/{presupuesto_id}#anexos", msg="Anexo eliminado.")
+    referencia = anexo.archivo
+    db.delete(anexo)
+    _borrar_imagen(referencia, db)
+    db.commit()
+    return _redirect(f"/presupuestos/{presupuesto_id}#anexos", msg="Anexo eliminado.")
+
+
+@app.post("/presupuestos/{presupuesto_id}/pdf-descargado")
+def registrar_pdf_descargado(presupuesto_id: int, db: Session = Depends(get_db)):
+    presupuesto = db.get(Presupuesto, presupuesto_id)
+    if presupuesto is None:
+        return JSONResponse({"ok": False, "error": "Presupuesto no encontrado."}, status_code=404)
+    if db.info.get("rol_membresia") == "lectura" or presupuesto.es_demo:
+        return {"ok": True, "registrado": False}
+    cfg = _config(db)
+    if not cfg.onboarding_pdf_descargado:
+        cfg.onboarding_pdf_descargado = True
+        cfg.primer_pdf_at = datetime.utcnow()
+        db.commit()
+    return {"ok": True, "registrado": True}
 
 
 @app.get("/presupuestos/{presupuesto_id}/pdf")
@@ -3406,8 +4394,9 @@ def descargar_pdf(presupuesto_id: int, inline: int = 0, db: Session = Depends(ge
     presupuesto = db.get(Presupuesto, presupuesto_id)
     if presupuesto is None:
         return _redirect("/presupuestos", error="Presupuesto no encontrado.")
+    cfg = _config(db)
     resultado = _generar_pdf_seguro(
-        lambda: pdf_service.generar_pdf(presupuesto, _config(db)),
+        lambda: pdf_service.generar_pdf(presupuesto, cfg),
         f"el PDF del presupuesto {presupuesto.numero}",
     )
     if isinstance(resultado, Response) and resultado.status_code != 200:
@@ -3450,6 +4439,8 @@ async def guardar_configuracion(request: Request, db: Session = Depends(get_db))
     cfg.empresa_nombre = str(form.get("empresa_nombre", "")).strip() or "Mi Empresa"
     cfg.empresa_legal = str(form.get("empresa_legal", "")).strip()
     cfg.empresa_rif = str(form.get("empresa_rif", "")).strip()
+    cfg.empresa_pais = str(form.get("empresa_pais", "Venezuela")).strip() or "Venezuela"
+    cfg.empresa_ciudad = str(form.get("empresa_ciudad", "")).strip()
     cfg.empresa_direccion = str(form.get("empresa_direccion", "")).strip()
     cfg.empresa_telefono = str(form.get("empresa_telefono", "")).strip()
     cfg.empresa_email = str(form.get("empresa_email", "")).strip()
@@ -3476,16 +4467,17 @@ async def guardar_configuracion(request: Request, db: Session = Depends(get_db))
     cfg.estimar_tiempo_por_coste = bool(form.get("estimar_tiempo_por_coste"))
 
     if form.get("quitar_logo"):
-        _borrar_imagen(cfg.logo)
+        anterior = cfg.logo
         cfg.logo = ""
+        _borrar_imagen(anterior, db)
     else:
         logo = form.get("logo")
         if isinstance(logo, UploadFileStarlette) and logo.filename:
-            if cfg.logo:
-                _borrar_imagen(cfg.logo)
-            ruta = await _guardar_imagen(logo, "logo")
+            ruta = await _guardar_imagen(logo, "logo", db)
             if ruta:
+                anterior = cfg.logo
                 cfg.logo = ruta
+                _borrar_imagen(anterior, db)
 
     # Los valores por defecto marcados se aplican también a los presupuestos
     # ya existentes (sólo en sentido activador: si desmarcas una casilla, los
@@ -3524,7 +4516,12 @@ async def guardar_configuracion(request: Request, db: Session = Depends(get_db))
 
 @app.get("/configuracion/backup")
 def descargar_backup():
-    """Descarga una copia completa de los datos: base + imágenes subidas."""
+    """Descarga una copia completa de una instalación SQLite local."""
+    if not DATABASE_IS_SQLITE:
+        return _redirect(
+            "/configuracion",
+            error="La versión web usa backups administrados; no descarga el archivo completo de PostgreSQL.",
+        )
     uploads = UPLOADS_DIR
     tmp_db = BACKUPS_DIR / "tmp_backup.db"
     try:
@@ -3539,10 +4536,14 @@ def descargar_backup():
                         # cuelga directamente de DATA_DIR. En ambos casos el
                         # nombre dentro del ZIP debe ser siempre uploads/....
                         z.write(p, (Path("uploads") / p.relative_to(uploads)).as_posix())
+            if PRIVATE_STORAGE_DIR.exists():
+                for p in sorted(PRIVATE_STORAGE_DIR.rglob("*")):
+                    if p.is_file():
+                        z.write(p, (Path("private_storage") / p.relative_to(PRIVATE_STORAGE_DIR)).as_posix())
             z.writestr(
                 "LEEME_BACKUP.txt",
-                "Copia de seguridad del Generador de Presupuestos\n"
-                "==================================================\n"
+                "Copia de seguridad de CotizaT\n"
+                "==============================\n"
                 f"Creada el {datetime.now().strftime('%d/%m/%Y %H:%M')}\n\n"
                 "Para restaurarla: abre la aplicación, ve a Configuración →\n"
                 "«Copia de seguridad y restauración» → «Restaurar copia» y\n"
@@ -3550,7 +4551,8 @@ def descargar_backup():
                 "Contenido:\n"
                 "  · presupuestos.db  → todos los datos (clientes, presupuestos,\n"
                 "                       partidas, productos, plantillas, configuración)\n"
-                "  · uploads/         → logotipo, fotos de productos y de proyectos\n",
+                "  · uploads/         → archivos históricos compatibles\n"
+                "  · private_storage/ → archivos nuevos servidos por el proxy privado\n",
             )
         buf.seek(0)
         nombre = f"backup_presupuestos_{datetime.now().strftime('%Y%m%d_%H%M')}.zip"
@@ -3567,9 +4569,9 @@ def descargar_backup():
 
 
 def _extraer_backup_zip(ruta_zip: Path, destino: Path):
-    """Extrae `presupuestos.db` y `uploads/` de un zip de copia de seguridad.
+    """Extrae SQLite y los almacenes local privado e histórico de un backup.
 
-    Devuelve (ruta_db, ruta_uploads | None). Lanza ValueError si el zip no
+    Devuelve (ruta_db, ruta_uploads | None, ruta_privada | None). Lanza ValueError si el zip no
     es válido o contiene rutas inseguras (zip slip).
     """
     destino.mkdir(exist_ok=True)
@@ -3598,13 +4600,23 @@ def _extraer_backup_zip(ruta_zip: Path, destino: Path):
         if db_tmp is None or not db_tmp.exists():
             raise ValueError("La copia no contiene el archivo presupuestos.db.")
         uploads_tmp = destino / "uploads"
-        return db_tmp, uploads_tmp if uploads_tmp.is_dir() else None
+        private_tmp = destino / "private_storage"
+        return (
+            db_tmp,
+            uploads_tmp if uploads_tmp.is_dir() else None,
+            private_tmp if private_tmp.is_dir() else None,
+        )
     except zipfile.BadZipFile:
         raise ValueError("El archivo no es un .zip válido.")
 
 
 @app.post("/configuracion/restaurar")
 async def restaurar_backup(request: Request):
+    if not DATABASE_IS_SQLITE:
+        return _redirect(
+            "/configuracion",
+            error="La restauración de archivos SQLite está desactivada en la versión web.",
+        )
     form = await request.form()
     archivo = form.get("archivo")
     if not isinstance(archivo, UploadFileStarlette) or not archivo.filename:
@@ -3624,14 +4636,14 @@ async def restaurar_backup(request: Request):
 
         if ext == ".zip":
             extraido = subida.parent / f"extraido_{uuid.uuid4().hex[:8]}"
-            db_tmp, uploads_tmp = _extraer_backup_zip(subida, extraido)
+            db_tmp, uploads_tmp, private_tmp = _extraer_backup_zip(subida, extraido)
         else:
-            db_tmp, uploads_tmp = subida, None
+            db_tmp, uploads_tmp, private_tmp = subida, None, None
 
         if not es_base_valida(db_tmp):
             return _redirect("/configuracion", error="El archivo no es una base de datos válida.")
 
-        restaurar_base(db_tmp, uploads_tmp)
+        restaurar_base(db_tmp, uploads_tmp, private_tmp)
         return _redirect(
             "/configuracion",
             msg="✅ Copia restaurada correctamente. Antes de restaurar se guardó una copia de lo anterior en la carpeta «backups».",
@@ -3746,11 +4758,11 @@ def _datos_producto_catalogo(form):
     }
 
 
-async def _guardar_imagenes_galeria(form, prefijo: str) -> list[str]:
+async def _guardar_imagenes_galeria(form, prefijo: str, db: Session) -> list[str]:
     rutas = []
     for archivo in form.getlist("imagenes"):
         if isinstance(archivo, UploadFileStarlette) and archivo.filename:
-            ruta = await _guardar_imagen(archivo, prefijo)
+            ruta = await _guardar_imagen(archivo, prefijo, db)
             if ruta:
                 rutas.append(ruta)
     return rutas
@@ -3985,16 +4997,17 @@ async def guardar_partida_desde_presupuesto(request: Request, db: Session = Depe
         partida.fecha_actualizacion_precio = datetime.utcnow()
 
     if form.get("quitar_imagen"):
-        _borrar_imagen(partida.imagen)
+        anterior = partida.imagen
         partida.imagen = ""
+        _borrar_imagen(anterior, db)
     else:
         archivo = form.get("imagen")
         if isinstance(archivo, UploadFileStarlette) and archivo.filename:
             vieja = partida.imagen
-            ruta = await _guardar_imagen(archivo, f"partidas/cat_{partida.id or 'nueva'}")
+            ruta = await _guardar_imagen(archivo, f"partidas/cat_{partida.id or 'nueva'}", db)
             if ruta:
                 partida.imagen = ruta
-                _borrar_imagen(vieja)
+                _borrar_imagen(vieja, db)
 
     db.commit()
     db.refresh(partida)
@@ -4027,7 +5040,7 @@ async def crear_partida(request: Request, db: Session = Depends(get_db)):
     imagen = ""
     archivo = form.get("imagen")
     if isinstance(archivo, UploadFileStarlette) and archivo.filename:
-        imagen = await _guardar_imagen(archivo, "partidas/cat")
+        imagen = await _guardar_imagen(archivo, "partidas/cat", db)
     partida = Partida(nombre=nombre, imagen=imagen, **datos)
     db.add(partida)
     db.commit()
@@ -4070,16 +5083,17 @@ async def actualizar_partida(partida_id: int, request: Request, db: Session = De
     if precio_anterior != partida.precio_unitario:
         partida.fecha_actualizacion_precio = datetime.utcnow()
     if form.get("quitar_imagen"):
-        _borrar_imagen(partida.imagen)
+        anterior = partida.imagen
         partida.imagen = ""
+        _borrar_imagen(anterior, db)
     else:
         archivo = form.get("imagen")
         if isinstance(archivo, UploadFileStarlette) and archivo.filename:
             vieja = partida.imagen
-            ruta = await _guardar_imagen(archivo, f"partidas/cat_{partida_id}")
+            ruta = await _guardar_imagen(archivo, f"partidas/cat_{partida_id}", db)
             if ruta:
                 partida.imagen = ruta
-                _borrar_imagen(vieja)
+                _borrar_imagen(vieja, db)
     db.commit()
     _sincronizar_recursos(db)
     return _redirect("/partidas", msg="Partida actualizada.")
@@ -4090,8 +5104,9 @@ def eliminar_partida(partida_id: int, db: Session = Depends(get_db)):
     partida = db.get(Partida, partida_id)
     if partida is None:
         return _redirect("/partidas", error="Partida no encontrada.")
-    _borrar_imagen(partida.imagen)
+    referencia = partida.imagen
     db.delete(partida)
+    _borrar_imagen(referencia, db)
     db.commit()
     return _redirect("/partidas", msg="Partida eliminada.")
 
@@ -4113,12 +5128,16 @@ async def bulk_delete_partidas(request: Request, db: Session = Depends(get_db)):
     if not ids:
         return _redirect("/partidas", error="No se seleccionaron partidas.")
     count = 0
+    referencias = set()
     for pid in ids:
         p = db.get(Partida, pid)
         if p:
-            _borrar_imagen(p.imagen)
+            referencias.add(p.imagen)
             db.delete(p)
             count += 1
+    db.flush()
+    for referencia in referencias:
+        _borrar_imagen(referencia, db)
     db.commit()
     return _redirect("/partidas", msg=f"Se eliminaron {count} partidas.")
 
@@ -4320,7 +5339,7 @@ def sincronizar_recursos(db: Session = Depends(get_db)):
     return _redirect("/recursos", msg=f"Sincronizados {n} recursos desde descomposiciones existentes." if n else "No hay recursos nuevos para sincronizar.")
 
 @app.get("/recursos/nuevo", response_class=HTMLResponse)
-def nuevo_recurso_form(request: Request):
+def nuevo_recurso_form(request: Request, _db: Session = Depends(get_db)):
     return TEMPLATES.TemplateResponse(request, "recursos/form.html", {"recurso": None, "categorias": CATEGORIAS_RECURSO, "etiquetas": ETIQUETAS_RECURSO})
 
 @app.post("/recursos/nuevo")
@@ -4584,7 +5603,7 @@ def ajustar_precios_productos(porcentaje: str = Form("0"), db: Session = Depends
 
 
 @app.get("/productos/nuevo", response_class=HTMLResponse)
-def nuevo_producto_form(request: Request):
+def nuevo_producto_form(request: Request, _db: Session = Depends(get_db)):
     return TEMPLATES.TemplateResponse(request, "productos/form.html", {"producto": None})
 
 
@@ -4599,12 +5618,12 @@ async def crear_producto(request: Request, db: Session = Depends(get_db)):
     principal = ""
     archivo = form.get("imagen")
     if isinstance(archivo, UploadFileStarlette) and archivo.filename:
-        principal = await _guardar_imagen(archivo, "products/cat")
-    galeria = _rutas_galeria(await _guardar_imagenes_galeria(form, "products/gallery"), principal)
+        principal = await _guardar_imagen(archivo, "products/cat", db)
+    galeria = _rutas_galeria(await _guardar_imagenes_galeria(form, "products/gallery", db), principal)
     ficha = ""
     archivo_ficha = form.get("ficha_tecnica")
     if isinstance(archivo_ficha, UploadFileStarlette) and archivo_ficha.filename:
-        ficha = await _guardar_ficha_tecnica(archivo_ficha, "ficha")
+        ficha = await _guardar_ficha_tecnica(archivo_ficha, "ficha", db)
     producto = Producto(
         nombre=nombre, imagen=principal, imagenes=json.dumps(galeria), ficha_tecnica=ficha,
         **_datos_producto_catalogo(form),
@@ -4651,12 +5670,12 @@ async def actualizar_producto(producto_id: int, request: Request, db: Session = 
         galeria = [ruta for ruta in galeria if ruta != producto.imagen]
     archivo = form.get("imagen")
     if isinstance(archivo, UploadFileStarlette) and archivo.filename:
-        nueva_principal = await _guardar_imagen(archivo, f"products/cat_{producto_id}")
+        nueva_principal = await _guardar_imagen(archivo, f"products/cat_{producto_id}", db)
         if nueva_principal:
             galeria = [ruta for ruta in galeria if ruta != producto.imagen]
             principal = nueva_principal
             galeria.insert(0, nueva_principal)
-    galeria.extend(await _guardar_imagenes_galeria(form, f"products/gallery_{producto_id}"))
+    galeria.extend(await _guardar_imagenes_galeria(form, f"products/gallery_{producto_id}", db))
     galeria = _rutas_galeria(galeria, principal)
     if not principal and galeria:
         principal = galeria[0]
@@ -4664,18 +5683,20 @@ async def actualizar_producto(producto_id: int, request: Request, db: Session = 
     producto.imagenes = json.dumps(galeria)
 
     if form.get("quitar_ficha_tecnica"):
-        _borrar_imagen(producto.ficha_tecnica)
+        anterior = producto.ficha_tecnica
         producto.ficha_tecnica = ""
+        _borrar_imagen(anterior, db)
     else:
         archivo_ficha = form.get("ficha_tecnica")
         if isinstance(archivo_ficha, UploadFileStarlette) and archivo_ficha.filename:
-            nueva_ficha = await _guardar_ficha_tecnica(archivo_ficha, f"ficha_{producto_id}")
+            nueva_ficha = await _guardar_ficha_tecnica(archivo_ficha, f"ficha_{producto_id}", db)
             if nueva_ficha:
-                _borrar_imagen(producto.ficha_tecnica)
+                anterior = producto.ficha_tecnica
                 producto.ficha_tecnica = nueva_ficha
+                _borrar_imagen(anterior, db)
 
     for ruta in set(galeria_inicial) - set(galeria):
-        _borrar_imagen(ruta)
+        _borrar_imagen(ruta, db)
     db.commit()
     return _redirect("/productos", msg="Producto actualizado.")
 
@@ -4685,10 +5706,11 @@ def eliminar_producto(producto_id: int, db: Session = Depends(get_db)):
     producto = db.get(Producto, producto_id)
     if producto is None:
         return _redirect("/productos", error="Producto no encontrado.")
-    for ruta in producto.imagenes_lista:
-        _borrar_imagen(ruta)
-    _borrar_imagen(producto.ficha_tecnica)
+    referencias = set(producto.imagenes_lista)
+    referencias.add(producto.ficha_tecnica)
     db.delete(producto)
+    for referencia in referencias:
+        _borrar_imagen(referencia, db)
     db.commit()
     return _redirect("/productos", msg="Producto eliminado.")
 
@@ -4709,14 +5731,17 @@ async def bulk_delete_productos(request: Request, db: Session = Depends(get_db))
     if not ids:
         return _redirect("/productos", error="No se seleccionaron productos.")
     count = 0
+    referencias = set()
     for pid in ids:
         p = db.get(Producto, pid)
         if p:
-            for ruta in p.imagenes_lista:
-                _borrar_imagen(ruta)
-            _borrar_imagen(p.ficha_tecnica)
+            referencias.update(p.imagenes_lista)
+            referencias.add(p.ficha_tecnica)
             db.delete(p)
             count += 1
+    db.flush()
+    for referencia in referencias:
+        _borrar_imagen(referencia, db)
     db.commit()
     return _redirect("/productos", msg=f"Se eliminaron {count} productos.")
 
@@ -4862,7 +5887,7 @@ def listar_recetas(request: Request, db: Session = Depends(get_db)):
 
 
 @app.get("/recetas/nueva", response_class=HTMLResponse)
-def nueva_receta_form(request: Request):
+def nueva_receta_form(request: Request, _db: Session = Depends(get_db)):
     return TEMPLATES.TemplateResponse(request, "recetas/form.html", {
         "receta": None,
         "items": [],

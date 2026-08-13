@@ -75,10 +75,10 @@
         if (e.target.tagName === "INPUT" || e.target.tagName === "BUTTON") return;
         if (cap.classList.contains("collapsed")) {
           cap.classList.remove("collapsed");
-          chevron.style.transform = "rotate(0deg)";
+          CotizatStyles.set(chevron, "transform", "rotate(0deg)");
         } else {
           cap.classList.add("collapsed");
-          chevron.style.transform = "rotate(-90deg)";
+          CotizatStyles.set(chevron, "transform", "rotate(-90deg)");
         }
       });
       cap.appendChild(head);
@@ -115,7 +115,7 @@
       cap.draggable = true;
       // El handle es la cabecera para evitar conflictos con inputs
       var capituloHandle = head;
-      capituloHandle.style.cursor = "grab";
+      CotizatStyles.set(capituloHandle, "cursor", "grab");
       cap.addEventListener("dragstart", function (e) {
         // Solo permitir arrastre desde la cabecera o si el target es el propio capítulo
         if (e.target.closest(".partida-wrap, input, select, textarea, button, a") && !e.target.closest(".capitulo-head")) {

@@ -16,7 +16,7 @@ import sqlite3
 from sqlalchemy import create_engine, inspect, text
 
 from app.database import Base
-from app.models import Configuracion, Presupuesto, migrar
+from app.models import Cliente, Configuracion, Presupuesto, migrar
 
 
 def _engine(tmp_path, nombre="prueba.db"):
@@ -45,6 +45,39 @@ def test_migrar_anade_columnas_que_faltan_en_una_base_antigua(tmp_path):
 
     assert "mostrar_garantias_default" in _columnas_reales(engine, "configuracion")
     assert "mostrar_garantias" in _columnas_reales(engine, "presupuestos")
+
+
+def test_migrar_asigna_datos_anteriores_al_espacio_local(tmp_path):
+    engine = _engine(tmp_path, "pre_multiempresa.db")
+    # La tabla se crea con el esquema anterior; create_all respeta la tabla y
+    # únicamente crea las estructuras nuevas que todavía no existen.
+    with engine.begin() as conn:
+        conn.execute(text("""
+            CREATE TABLE clientes (
+                id INTEGER PRIMARY KEY,
+                nombre VARCHAR(200) NOT NULL,
+                rif VARCHAR(50) DEFAULT '',
+                pais VARCHAR(80) DEFAULT 'Venezuela',
+                telefono VARCHAR(50) DEFAULT '',
+                email VARCHAR(200) DEFAULT '',
+                direccion TEXT DEFAULT '',
+                es_demo BOOLEAN DEFAULT 0,
+                created_at DATETIME
+            )
+        """))
+        conn.execute(text("INSERT INTO clientes (nombre) VALUES ('Histórico')"))
+    Base.metadata.create_all(bind=engine)
+
+    migrar(engine)
+
+    assert "organizacion_id" in _columnas_reales(engine, "clientes")
+    assert "ix_clientes_organizacion_id" in {
+        indice["name"] for indice in inspect(engine).get_indexes("clientes")
+    }
+    with engine.connect() as conn:
+        assert conn.execute(text(
+            "SELECT organizacion_id FROM clientes WHERE nombre = 'Histórico'"
+        )).scalar_one() == 1
 
 
 def test_consulta_de_configuracion_funciona_tras_migrar(tmp_path):

@@ -539,6 +539,7 @@ def test_factura_solo_incluye_partidas_del_total():
         db.expire_all()
         from app.models import Factura
         factura = db.query(Factura).order_by(Factura.id.desc()).first()
+        assert factura.numero.startswith("DC-")
         assert [i.nombre for i in factura.todas_partidas] == ["Incluida"]
         assert factura.total == pytest.approx(presupuesto.total, abs=0.011)
     finally:

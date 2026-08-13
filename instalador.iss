@@ -1,31 +1,33 @@
 ; -----------------------------------------------------------------------------
-; Instalador del Generador de Presupuestos (Inno Setup)
+; Instalador de CotizaT (Inno Setup)
 ; Se ejecuta desde CREAR_INSTALADOR.bat, que primero empaqueta la app con
 ; PyInstaller, descarga el bootstrapper oficial de WebView2 y luego compila
-; este script.
-; Resultado: instalador\Instalador_Presupuestos.exe
+; este script. Resultado: instalador\Instalador_CotizaT.exe
 ;
-; La instalación es por usuario (sin pedir permisos de administrador) y
-; crea acceso directo en el escritorio y en el menú Inicio, con su
-; desinstalador. Los datos del usuario viven en %LOCALAPPDATA%\Presupuestos
-; y NO se borran al desinstalar (para que no pierdas nada por accidente).
+; La instalación es por usuario y no borra los datos al desinstalar.
+; Al actualizar una versión anterior se conserva su directorio de programa y
+; CotizaT detecta automáticamente %LOCALAPPDATA%\Presupuestos si allí existe
+; una base previa. Las instalaciones nuevas usan %LOCALAPPDATA%\CotizaT.
 ; -----------------------------------------------------------------------------
 
 #define WebView2RuntimeKey "Software\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}"
 
 [Setup]
-AppName=Generador de Presupuestos
+; Conserva el identificador implícito del instalador anterior para que CotizaT
+; sea una actualización y no una segunda aplicación independiente.
+AppId=Generador de Presupuestos
+AppName=CotizaT
 AppVersion=1.0
-AppPublisher=RemodelaT Venezuela
-AppPublisherURL=https://www.remodelat.net
-DefaultDirName={localappdata}\Programs\Presupuestos
-DefaultGroupName=Presupuestos
+AppPublisher=CotizaT
+DefaultDirName={localappdata}\Programs\CotizaT
+DefaultGroupName=CotizaT
+UsePreviousAppDir=yes
 DisableProgramGroupPage=yes
 OutputDir=instalador
-OutputBaseFilename=Instalador_Presupuestos
+OutputBaseFilename=Instalador_CotizaT
 SetupIconFile=icono.ico
-UninstallDisplayIcon={app}\Presupuestos.exe
-UninstallDisplayName=Generador de Presupuestos
+UninstallDisplayIcon={app}\CotizaT.exe
+UninstallDisplayName=CotizaT
 Compression=lzma2
 SolidCompression=yes
 PrivilegesRequired=lowest
@@ -35,23 +37,30 @@ WizardStyle=modern
 Name: "desktopicon"; Description: "Crear acceso directo en el escritorio"; GroupDescription: "Accesos directos:"
 
 [Files]
-Source: "dist\Presupuestos.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "dist\CotizaT.exe"; DestDir: "{app}"; Flags: ignoreversion
 ; Bootstrapper oficial de Microsoft (≈2 MB). Solo se ejecuta si el equipo no
 ; dispone ya de WebView2; entonces descarga e instala el runtime en silencio.
 Source: "recursos\MicrosoftEdgeWebview2Setup.exe"; DestDir: "{tmp}"; Flags: deleteafterinstall
 
+[InstallDelete]
+; Limpia solo binarios y accesos directos antiguos. Nunca toca la base,
+; backups, imágenes ni otros datos creados por el usuario.
+Type: files; Name: "{app}\Presupuestos.exe"
+Type: files; Name: "{autodesktop}\Presupuestos.lnk"
+Type: files; Name: "{autoprograms}\Presupuestos.lnk"
+
 [Icons]
-Name: "{autoprograms}\Presupuestos"; Filename: "{app}\Presupuestos.exe"
-Name: "{autodesktop}\Presupuestos"; Filename: "{app}\Presupuestos.exe"; Tasks: desktopicon
+Name: "{autoprograms}\CotizaT"; Filename: "{app}\CotizaT.exe"
+Name: "{autodesktop}\CotizaT"; Filename: "{app}\CotizaT.exe"; Tasks: desktopicon
 
 [Run]
 ; El bootstrapper detecta automáticamente x86/x64/ARM64. Al estar el setup
 ; instalado por usuario, WebView2 se instala por usuario sin pedir elevación.
 Filename: "{tmp}\MicrosoftEdgeWebview2Setup.exe"; Parameters: "/silent /install"; StatusMsg: "Preparando el motor de la aplicación..."; Flags: waituntilterminated runhidden; Check: WebView2Falta
-Filename: "{app}\Presupuestos.exe"; Description: "Abrir Generador de Presupuestos"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\CotizaT.exe"; Description: "Abrir CotizaT"; Flags: nowait postinstall skipifsilent
 
 [UninstallDelete]
-; No borramos %LOCALAPPDATA%\Presupuestos: conserva tus datos al desinstalar.
+; Deliberadamente vacío: los presupuestos y copias del usuario se conservan.
 
 [Code]
 function EsVersionWebView2Valida(const Version: String): Boolean;

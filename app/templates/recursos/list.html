@@ -1,33 +1,33 @@
 {% extends "base.html" %}
 {% block title %}Precios Unitarios · Recursos{% endblock %}
 {% block content %}
-<div class="page-head" style="margin-bottom:1.1rem;">
+<div class="page-head csp-s-5d6e5a9c91">
   <div>
-    <h1 style="display:flex;align-items:center;gap:.6rem;">Precios Unitarios <span style="font-size:.78rem;font-weight:600;background:var(--accent);color:#fff;padding:2px 8px;border-radius:999px;">{{ recursos|length }}</span> <span style="font-size:.85rem;font-weight:500;color:var(--text-soft);">· Recursos</span></h1>
+    <h1 class="csp-s-93f4d4c3fe">Precios Unitarios <span class="csp-s-20db78cd99">{{ recursos|length }}</span> <span class="csp-s-2ebe03a855">· Recursos</span></h1>
     <p class="subtitle">Mano de obra, materiales y equipos organizados por familia. <strong>Cambia un precio aquí y se aplica automáticamente a todas las partidas que usan ese recurso</strong> (catálogo y presupuestos), recalculando costes directos.</p>
   </div>
-  <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
-    <form method="post" action="/recursos/sincronizar" style="display:inline;">
+  <div class="csp-s-33ff8b3e89">
+    <form method="post" action="/recursos/sincronizar" class="csp-s-a91548c594">
       <button class="btn" title="Extrae recursos automáticamente desde las descomposiciones existentes de partidas y presupuestos">↻ Sincronizar desde partidas</button>
     </form>
     <a href="/recursos/nuevo" class="btn btn-primary">+ Nuevo Recurso</a>
   </div>
 </div>
 
-<div class="partidas-toolbar card" style="padding:.75rem .9rem; margin-bottom:1rem;">
+<div class="partidas-toolbar card csp-s-0d510e3476">
   <div class="toolbar-row">
     <div class="toolbar-search">
       <span class="search-icon">🔍</span>
-      <input type="text" id="buscador" placeholder="Buscar por código, descripción, grupo o proveedor…" oninput="filtrarRecursos()" autocomplete="off">
-      <button id="clearSearch" class="btn btn-ghost btn-sm" style="display:none; padding:2px 6px;" onclick="clearSearch()" title="Limpiar">✕</button>
+      <input type="text" id="buscador" placeholder="Buscar por código, descripción, grupo o proveedor…" data-cotizat-input="recursos-filter" autocomplete="off">
+      <button id="clearSearch" class="btn btn-ghost btn-sm cotizat-hidden csp-s-dbb704fc6f" data-cotizat-click="recursos-clear-search" title="Limpiar">✕</button>
     </div>
     <div class="toolbar-actions">
       <div class="toolbar-meta" id="filterMeta"></div>
       <div class="toolbar-divider"></div>
-      <button class="btn btn-sm" onclick="toggleAllCats(true)">⤢ Expandir</button>
-      <button class="btn btn-sm" onclick="toggleAllCats(false)">⤡ Contraer</button>
-      <form method="post" action="/recursos/bulk-ajustar" onsubmit="return confirm('¿Ajustar TODOS los recursos visibles con este %?');" style="display:flex;gap:4px;align-items:center;">
-        <input type="number" name="porcentaje" step="any" placeholder="± %" required style="width:72px; padding:.3rem .5rem; border:1px solid var(--border); border-radius:6px; font-size:.82rem;">
+      <button class="btn btn-sm" data-cotizat-click="recursos-expand-all">⤢ Expandir</button>
+      <button class="btn btn-sm" data-cotizat-click="recursos-collapse-all">⤡ Contraer</button>
+      <form method="post" action="/recursos/bulk-ajustar" data-confirm="¿Ajustar TODOS los recursos visibles con este %?" class="csp-s-014fb690a1">
+        <input type="number" name="porcentaje" step="any" placeholder="± %" required class="csp-s-d3156a880b">
         <button class="btn btn-sm" type="submit" title="Ajustar todos los precios unitarios">% Todos</button>
       </form>
       <a class="btn btn-sm" href="/recursos/exportar">📥 CSV</a>
@@ -38,19 +38,19 @@
     <div class="bulk-left">
       <span class="bulk-count"><strong id="sel-count-recursos">0</strong> seleccionados</span>
       <span class="bulk-sep"></span>
-      <button type="button" class="btn btn-sm btn-danger" onclick="bulkDeleteRecursos()">🗑 Eliminar</button>
-      <div class="bulk-move" style="display:flex;gap:4px;align-items:center;">
-        <input type="number" id="bulk-pct" placeholder="± %" step="any" style="width:84px;">
-        <button type="button" class="btn btn-sm" onclick="bulkAjustarSeleccion('pct')">% Ajustar</button>
-        <span style="font-size:.75rem;color:var(--text-muted);">o</span>
-        <input type="number" id="bulk-precio" placeholder="Nuevo precio" step="any" style="width:110px;">
-        <button type="button" class="btn btn-sm btn-primary" onclick="bulkAjustarSeleccion('fijo')">💰 Fijar</button>
+      <button type="button" class="btn btn-sm btn-danger" data-cotizat-click="recursos-bulk-delete">🗑 Eliminar</button>
+      <div class="bulk-move csp-s-014fb690a1">
+        <input type="number" id="bulk-pct" placeholder="± %" step="any" class="csp-s-9e447cb85e">
+        <button type="button" class="btn btn-sm" data-cotizat-click="recursos-bulk-percent">% Ajustar</button>
+        <span class="csp-s-ec2d1ea1e8">o</span>
+        <input type="number" id="bulk-precio" placeholder="Nuevo precio" step="any" class="csp-s-0dfe35f39a">
+        <button type="button" class="btn btn-sm btn-primary" data-cotizat-click="recursos-bulk-fixed">💰 Fijar</button>
       </div>
     </div>
     <div class="bulk-right">
-      <button type="button" class="btn btn-sm" onclick="selectVisibleRecursos()">Sel. visibles</button>
-      <button type="button" class="btn btn-sm" onclick="selectNoneRecursos()">Limpiar</button>
-      <button type="button" class="btn btn-ghost btn-sm" onclick="selectNoneRecursos()">✕</button>
+      <button type="button" class="btn btn-sm" data-cotizat-click="recursos-select-visible">Sel. visibles</button>
+      <button type="button" class="btn btn-sm" data-cotizat-click="recursos-select-none">Limpiar</button>
+      <button type="button" class="btn btn-ghost btn-sm" data-cotizat-click="recursos-select-none">✕</button>
     </div>
   </div>
 </div>
@@ -62,16 +62,16 @@
         <h3>Familias</h3>
         <span class="cat-sidebar-subtitle">{{ categorias|length }} familias · {{ recursos|length }} recursos</span>
       </div>
-      <button class="btn-icon" onclick="toggleCatSidebar()" title="Contraer panel">⟨</button>
+      <button class="btn-icon" data-cotizat-click="recursos-toggle-sidebar" title="Contraer panel">⟨</button>
     </div>
     <div class="cat-sidebar-body">
-      <button class="category-btn active" data-cat="todas" id="btn-cat-todas" onclick="filtrarCategoria('todas')">
+      <button class="category-btn active" data-cat="todas" id="btn-cat-todas" data-cotizat-click="recursos-filter-category">
         <span class="cat-btn-left"><span>📂</span><span class="cat-name">Todas</span></span>
         <span class="cat-count">{{ recursos|length }}</span>
       </button>
       {% for cat in categorias %}
         {% set cat_recursos = recursos|selectattr('categoria','equalto',cat)|list %}
-        <button class="category-btn" data-cat="{{ cat }}" id="btn-cat-{{ cat }}" onclick="filtrarCategoria('{{ cat }}')">
+        <button class="category-btn" data-cat="{{ cat }}" id="btn-cat-{{ cat }}" data-cotizat-click="recursos-filter-category">
           <span class="cat-btn-left">
             <span>
               {% if cat == 'mano_obra' %}👷{% elif cat == 'materiales' %}🧱{% elif cat == 'complementarios' %}➕{% else %}🔧{% endif %}
@@ -83,16 +83,16 @@
       {% endfor %}
       <div class="sidebar-help">
         <span class="hint">💡 Agrupados como en las descomposiciones CYPE. Ajustar aquí propaga a todas las partidas que usan ese código/descripción.</span>
-        <div style="margin-top:.6rem; display:flex; gap:.4rem; flex-wrap:wrap;">
-          <span class="hint" style="background:var(--bg); padding:2px 6px; border-radius:999px; border:1px solid var(--border);">mano_obra → Oficial, Peón…</span>
-          <span class="hint" style="background:var(--bg); padding:2px 6px; border-radius:999px; border:1px solid var(--border);">materiales → Cemento, Arena…</span>
+        <div class="csp-s-ca8856959a">
+          <span class="hint csp-s-aebe12c804">mano_obra → Oficial, Peón…</span>
+          <span class="hint csp-s-aebe12c804">materiales → Cemento, Arena…</span>
         </div>
       </div>
     </div>
   </aside>
 
-  <button id="catSidebarExpand" class="cat-sidebar-expand" onclick="toggleCatSidebar()" style="display:none;">
-    <span>☰</span> <span>Familias</span> <span class="badge" style="margin-left:6px;">{{ recursos|length }}</span>
+  <button id="catSidebarExpand" class="cat-sidebar-expand cotizat-hidden" data-cotizat-click="recursos-toggle-sidebar">
+    <span>☰</span> <span>Familias</span> <span class="badge csp-s-451d13ae38">{{ recursos|length }}</span>
   </button>
 
   <div class="catalog-main" id="catalogMain">
@@ -101,42 +101,42 @@
         {% set cat_recursos = recursos|selectattr('categoria','equalto',cat)|list %}
         {% if cat_recursos %}
         <section class="cat-section" data-categoria="{{ cat }}" id="group-{{ cat }}">
-          <header class="cat-section-head" onclick="toggleCatSection(this)">
+          <header class="cat-section-head" data-cotizat-click="recursos-toggle-section">
             <button class="cat-toggle">▼</button>
             <div class="cat-title-wrap">
               <h2 class="cat-title">
-                <span class="cat-dot" style="background:{% if cat=='mano_obra' %}#f59e0b{% elif cat=='materiales' %}#0d9488{% elif cat=='complementarios' %}#8b5cf6{% else %}#64748b{% endif %};"></span>
+                <span class="cat-dot cat-dot-{{ cat if cat in ['mano_obra', 'materiales', 'complementarios'] else 'otros' }}"></span>
                 {{ etiquetas[cat] }}
               </h2>
               <span class="cat-meta">{{ cat_recursos|length }} recursos · {{ cat_recursos|map(attribute='precio')|sum|round(2) }} total</span>
             </div>
-            <div class="cat-actions" onclick="event.stopPropagation()">
+            <div class="cat-actions" data-cotizat-click="stop-propagation">
               <label class="cat-check" title="Seleccionar toda la familia">
-                <input type="checkbox" onchange="toggleSelectCat('{{ cat }}', this.checked)"> <span style="font-size:.75rem;">Sel.</span>
+                <input type="checkbox" data-cotizat-change="recursos-select-category"> <span class="csp-s-6b643de52a">Sel.</span>
               </label>
-              <button type="button" class="btn btn-sm" onclick="toggleCatSection(this.closest('.cat-section').querySelector('.cat-section-head'))">⤢</button>
+              <button type="button" class="btn btn-sm" data-cotizat-click="recursos-toggle-section-button">⤢</button>
             </div>
             <span class="cat-badge">{{ cat_recursos|length }}</span>
           </header>
           <div class="cat-section-body">
-            <div class="subcat-body" style="overflow-x:auto;">
+            <div class="subcat-body csp-s-fbff25e9fc">
               <table class="partidas-table">
                 <thead>
                   <tr>
-                    <th class="col-check"><input type="checkbox" onchange="toggleSelectCat('{{ cat }}', this.checked)"></th>
+                    <th class="col-check"><input type="checkbox" data-cotizat-change="recursos-select-category"></th>
                     <th class="col-code sortable">Código</th>
-                    <th class="col-nombre sortable" style="min-width:220px;">Recurso</th>
+                    <th class="col-nombre sortable csp-s-9fda40b045">Recurso</th>
                     <th class="col-und">Und.</th>
-                    <th class="col-precio right sortable" style="width:110px;">Precio unit.</th>
-                    <th class="col-usos right sortable" style="width:60px;">Usos</th>
-                    <th class="col-grupo" style="min-width:140px;">Grupo / Proveedor</th>
-                    <th class="col-actions right" style="width:110px;">Acciones</th>
+                    <th class="col-precio right sortable csp-s-0dfe35f39a">Precio unit.</th>
+                    <th class="col-usos right sortable csp-s-c5f3c1cb42">Usos</th>
+                    <th class="col-grupo csp-s-f4600e914e">Grupo / Proveedor</th>
+                    <th class="col-actions right csp-s-0dfe35f39a">Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
                   {% for r in cat_recursos|sort(attribute='descripcion') %}
                   <tr class="recurso-tr" data-id="{{ r.id }}" data-categoria="{{ r.categoria }}" data-nombre="{{ (r.codigo ~ ' ' ~ r.descripcion ~ ' ' ~ r.grupo ~ ' ' ~ r.proveedor) | lower }}">
-                    <td class="col-check"><input type="checkbox" class="row-check" data-id="{{ r.id }}" onchange="onRowCheck(this)"></td>
+                    <td class="col-check"><input type="checkbox" class="row-check" data-id="{{ r.id }}" data-cotizat-change="recursos-row-check"></td>
                     <td class="col-code">
                       {% if r.codigo %}<code class="code-badge">{{ r.codigo[:14] }}</code>{% else %}<span class="code-empty">—</span>{% endif %}
                     </td>
@@ -152,18 +152,18 @@
                     <td class="col-und"><span class="und-badge">{{ r.unidad }}</span></td>
                     <td class="col-precio right" data-precio="{{ r.precio }}">
                       <strong class="precio-val">{{ r.precio | money }}</strong>
-                      {% if r.fecha_actualizacion_precio %}<div class="hint" style="font-size:.68rem;">{{ r.fecha_actualizacion_precio | fecha }}</div>{% endif %}
+                      {% if r.fecha_actualizacion_precio %}<div class="hint csp-s-aa47175cbd">{{ r.fecha_actualizacion_precio | fecha }}</div>{% endif %}
                     </td>
                     <td class="col-usos right" data-usos="{{ r.usos or 0 }}">{{ r.usos or 0 }}</td>
-                    <td style="font-size:.8rem; color:var(--text-soft);">
-                      {% if r.grupo %}<div title="{{ r.grupo }}" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:140px;">{{ r.grupo }}</div>{% endif %}
-                      {% if r.proveedor %}<div style="font-size:.72rem;">🏪 {{ r.proveedor }}</div>{% endif %}
+                    <td class="csp-s-5a86b3c2d5">
+                      {% if r.grupo %}<div title="{{ r.grupo }}" class="csp-s-525217bbb7">{{ r.grupo }}</div>{% endif %}
+                      {% if r.proveedor %}<div class="csp-s-fd9c8d013c">🏪 {{ r.proveedor }}</div>{% endif %}
                     </td>
                     <td class="col-actions right">
                       <div class="row-actions">
                         <a href="/recursos/{{ r.id }}/editar" class="btn btn-sm btn-ghost" title="Editar">✏️</a>
-                        <form method="post" action="/recursos/{{ r.id }}/eliminar" style="display:inline" onsubmit="return confirm('¿Eliminar recurso «{{ r.descripcion|replace("'", "\\'") }}»?')">
-                          <button type="submit" class="btn btn-sm btn-ghost" style="color:var(--rose);" title="Eliminar">✕</button>
+                        <form method="post" action="/recursos/{{ r.id }}/eliminar" class="csp-s-a91548c594" data-confirm="¿Eliminar recurso «{{ r.descripcion }}»?">
+                          <button type="submit" class="btn btn-sm btn-ghost csp-s-be52c7a071" title="Eliminar">✕</button>
                         </form>
                       </div>
                     </td>
@@ -181,21 +181,21 @@
       {% if otros %}
         <section class="cat-section" data-categoria="otros_extra">
           <header class="cat-section-head"><h2 class="cat-title"><span class="cat-dot"></span> Otros</h2><span class="cat-badge">{{ otros|length }}</span></header>
-          <div class="cat-section-body"><p class="hint" style="padding:1rem;">{{ otros|length }} recursos sin categoría estándar.</p></div>
+          <div class="cat-section-body"><p class="hint csp-s-a936d34619">{{ otros|length }} recursos sin categoría estándar.</p></div>
         </section>
       {% endif %}
     {% else %}
-      <div class="card empty" style="text-align:center; padding:2.5rem 1.5rem;">
-        <div style="font-size:2.4rem; margin-bottom:.6rem;">🧱</div>
-        <h3 style="margin:0 0 .4rem;">Aún no hay precios unitarios</h3>
-        <p class="hint" style="max-width:560px; margin:0 auto 1rem;">Crea recursos de mano de obra y materiales aquí. Luego, al usarlos en la descomposición de una partida (por código o descripción), los precios se vincularán. <strong>Al cambiar un precio aquí se actualizarán automáticamente todas las partidas y presupuestos que lo usan.</strong></p>
-        <div style="display:flex; gap:.6rem; justify-content:center; flex-wrap:wrap;">
+      <div class="card empty csp-s-d6e98c0fe2">
+        <div class="csp-s-c7d3ba0dcc">🧱</div>
+        <h3 class="csp-s-261f301f5a">Aún no hay precios unitarios</h3>
+        <p class="hint csp-s-ebe7313303">Crea recursos de mano de obra y materiales aquí. Luego, al usarlos en la descomposición de una partida (por código o descripción), los precios se vincularán. <strong>Al cambiar un precio aquí se actualizarán automáticamente todas las partidas y presupuestos que lo usan.</strong></p>
+        <div class="csp-s-eb1a6b0356">
           <a href="/recursos/nuevo" class="btn btn-primary">+ Nuevo Recurso</a>
-          <form method="post" action="/recursos/sincronizar" style="display:inline;"><button class="btn">↻ Sincronizar desde partidas existentes</button></form>
+          <form method="post" action="/recursos/sincronizar" class="csp-s-a91548c594"><button class="btn">↻ Sincronizar desde partidas existentes</button></form>
         </div>
-        <div class="card" style="margin:1.2rem auto 0; max-width:560px; text-align:left; background:var(--bg);">
-          <p style="font-size:.85rem; font-weight:600; margin-bottom:.4rem;">Ejemplos típicos:</p>
-          <ul style="font-size:.82rem; color:var(--text-soft); margin-left:1.2rem; line-height:1.5;">
+        <div class="card csp-s-6c25543b62">
+          <p class="csp-s-c41374837b">Ejemplos típicos:</p>
+          <ul class="csp-s-102c7973a6">
             <li><code>mo001</code> · Oficial 1ª construcción · <code>h</code> · 24.50 $/h · Mano de obra</li>
             <li><code>mt01</code> · Cemento CEM II/B-P 32.5 · <code>kg</code> · 0.18 $/kg · Materiales</li>
             <li><code>mq01</code> · Camión grúa · <code>h</code> · 45.00 $/h · Equipos</li>
@@ -203,23 +203,23 @@
         </div>
       </div>
     {% endif %}
-    <div id="noResults" class="card empty" style="display:none; text-align:center;">
-      <p style="font-weight:600;">Sin resultados</p>
+    <div id="noResults" class="card empty cotizat-hidden csp-s-5a2dfef236">
+      <p class="csp-s-6b2a94ea3b">Sin resultados</p>
       <p class="hint">No hay recursos que coincidan con la búsqueda o familia seleccionada.</p>
-      <button class="btn btn-sm" onclick="clearFilters()">Limpiar filtros</button>
+      <button class="btn btn-sm" data-cotizat-click="recursos-clear-filters">Limpiar filtros</button>
     </div>
   </div>
 </div>
 
 
-<script>
+<script nonce="{{ request.state.csp_nonce }}">
 let categoriaSeleccionada = 'todas';
 function toggleCatSidebar(){
   const s=document.getElementById('catSidebar'), e=document.getElementById('catSidebarExpand'), l=document.getElementById('catalogLayout');
   if(!s||!e) return;
-  const hidden=s.style.display==='none';
-  if(hidden){ s.style.display=''; e.style.display='none'; l.classList.remove('sidebar-hidden'); localStorage.setItem('recursos-sidebar-collapsed','false'); }
-  else { s.style.display='none'; e.style.display='inline-flex'; l.classList.add('sidebar-hidden'); localStorage.setItem('recursos-sidebar-collapsed','true'); }
+  const hidden=CotizatStyles.isHidden(s);
+  if(hidden){ CotizatStyles.set(s, "display", ''); CotizatStyles.set(e, "display", 'none'); l.classList.remove('sidebar-hidden'); localStorage.setItem('recursos-sidebar-collapsed','false'); }
+  else { CotizatStyles.set(s, "display", 'none'); CotizatStyles.set(e, "display", 'inline-flex'); l.classList.add('sidebar-hidden'); localStorage.setItem('recursos-sidebar-collapsed','true'); }
 }
 function filtrarCategoria(cat){
   document.querySelectorAll('.category-btn').forEach(b=>b.classList.remove('active'));
@@ -231,32 +231,32 @@ function filtrarCategoria(cat){
 function filtrarRecursos(){
   const q=(document.getElementById('buscador')?.value||'').toLowerCase().trim();
   const clearBtn=document.getElementById('clearSearch');
-  if(clearBtn) clearBtn.style.display=q?'inline-flex':'none';
+  if(clearBtn) CotizatStyles.set(clearBtn, "display", q?'inline-flex':'none');
   let visiblesCats=0, visiblesRows=0;
   document.querySelectorAll('.cat-section').forEach(sec=>{
     const cat=sec.dataset.categoria;
     const matchCat=categoriaSeleccionada==='todas'||categoriaSeleccionada===cat;
-    if(!matchCat){ sec.style.display='none'; return; }
+    if(!matchCat){ CotizatStyles.set(sec, "display", 'none'); return; }
     let rowsVis=0;
     sec.querySelectorAll('.recurso-tr').forEach(row=>{
       const txt=(row.dataset.nombre||'').toLowerCase();
       const ok=!q||txt.includes(q);
-      row.style.display=ok?'':'none';
+      CotizatStyles.set(row, "display", ok?'':'none');
       if(ok) rowsVis++;
     });
     if(rowsVis>0){
-      sec.style.display='';
+      CotizatStyles.set(sec, "display", '');
       if(q && sec.classList.contains('collapsed')){
         sec.classList.remove('collapsed');
-        sec.querySelector('.cat-section-body').style.display='';
+        CotizatStyles.set(sec.querySelector('.cat-section-body'), "display", '');
         sec.querySelector('.cat-toggle').textContent='▼';
       }
       visiblesCats++; visiblesRows+=rowsVis;
     } else {
-      sec.style.display='none';
+      CotizatStyles.set(sec, "display", 'none');
     }
   });
-  document.getElementById('noResults').style.display=visiblesRows===0?'block':'none';
+  CotizatStyles.set(document.getElementById('noResults'), "display", visiblesRows===0?'block':'none');
   const meta=document.getElementById('filterMeta');
   if(meta){
     if(q||categoriaSeleccionada!=='todas') meta.textContent=`${visiblesRows} recursos · ${visiblesCats} familias`;
@@ -270,21 +270,21 @@ function clearFilters(){
   document.querySelectorAll('.category-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('btn-cat-todas')?.classList.add('active');
   const i=document.getElementById('buscador'); if(i) i.value='';
-  document.querySelectorAll('.cat-section').forEach(s=>{ s.classList.remove('collapsed'); s.querySelector('.cat-section-body').style.display=''; s.querySelector('.cat-toggle').textContent='▼'; });
+  document.querySelectorAll('.cat-section').forEach(s=>{ s.classList.remove('collapsed'); CotizatStyles.set(s.querySelector('.cat-section-body'), "display", ''); s.querySelector('.cat-toggle').textContent='▼'; });
   filtrarRecursos();
 }
 function toggleCatSection(header){
   const sec=header.closest('.cat-section'); if(!sec) return;
   const body=sec.querySelector('.cat-section-body'); const tg=header.querySelector('.cat-toggle');
   const c=sec.classList.contains('collapsed');
-  if(c){ sec.classList.remove('collapsed'); body.style.display=''; tg.textContent='▼'; }
-  else { sec.classList.add('collapsed'); body.style.display='none'; tg.textContent='▶'; }
+  if(c){ sec.classList.remove('collapsed'); CotizatStyles.set(body, "display", ''); tg.textContent='▼'; }
+  else { sec.classList.add('collapsed'); CotizatStyles.set(body, "display", 'none'); tg.textContent='▶'; }
 }
 function toggleAllCats(expand){
   document.querySelectorAll('.cat-section').forEach(sec=>{
     const body=sec.querySelector('.cat-section-body'); const tg=sec.querySelector('.cat-toggle');
-    if(expand){ sec.classList.remove('collapsed'); body.style.display=''; tg.textContent='▼'; }
-    else { sec.classList.add('collapsed'); body.style.display='none'; tg.textContent='▶'; }
+    if(expand){ sec.classList.remove('collapsed'); CotizatStyles.set(body, "display", ''); tg.textContent='▼'; }
+    else { sec.classList.add('collapsed'); CotizatStyles.set(body, "display", 'none'); tg.textContent='▶'; }
   });
 }
 function onRowCheck(chk){
@@ -295,7 +295,7 @@ function onRowCheck(chk){
 function toggleSelectCat(cat, checked){
   const sec=document.getElementById('group-'+cat); if(!sec) return;
   sec.querySelectorAll('.recurso-tr').forEach(row=>{
-    if(row.style.display==='none') return;
+    if(CotizatStyles.isHidden(row)) return;
     const cb=row.querySelector('.row-check'); if(!cb) return;
     cb.checked=checked; if(checked) row.classList.add('selected'); else row.classList.remove('selected');
   });
@@ -306,8 +306,8 @@ function updateBulkBarRecursos(){
   const bar=document.getElementById('bulk-bar-recursos'), cnt=document.getElementById('sel-count-recursos');
   if(!bar||!cnt) return;
   const n=document.querySelectorAll('.row-check:checked').length;
-  if(n>0){ cnt.textContent=n; bar.classList.add('show'); bar.style.display='flex'; }
-  else { bar.classList.remove('show'); bar.style.display='none'; }
+  if(n>0){ cnt.textContent=n; bar.classList.add('show'); CotizatStyles.set(bar, "display", 'flex'); }
+  else { bar.classList.remove('show'); CotizatStyles.set(bar, "display", 'none'); }
 }
 function selectNoneRecursos(){
   document.querySelectorAll('.row-check').forEach(c=>{ c.checked=false; c.closest('tr')?.classList.remove('selected'); });
@@ -316,9 +316,9 @@ function selectNoneRecursos(){
 }
 function selectVisibleRecursos(){
   document.querySelectorAll('.cat-section').forEach(sec=>{
-    if(sec.style.display==='none') return;
+    if(CotizatStyles.isHidden(sec)) return;
     sec.querySelectorAll('.row-check').forEach(ch=>{
-      const row=ch.closest('tr'); if(row && row.style.display!=='none'){ ch.checked=true; row.classList.add('selected'); }
+      const row=ch.closest('tr'); if(row && !CotizatStyles.isHidden(row)){ ch.checked=true; row.classList.add('selected'); }
     });
   });
   updateBulkBarRecursos();
@@ -351,7 +351,7 @@ function makeTableSortable(){
     headers.forEach((th, idx)=>{
       if(!th.classList.contains('sortable')) return;
       let asc=true;
-      th.style.cursor='pointer'; th.title='Clic para ordenar';
+      CotizatStyles.set(th, "cursor", 'pointer'); th.title='Clic para ordenar';
       th.addEventListener('click', ()=>{
         sortTable(table, idx, asc);
         asc=!asc;
@@ -380,12 +380,33 @@ function sortTable(table, colIndex, asc){
   });
   rows.forEach(r=>tbody.appendChild(r));
 }
+window.CotizatActions.register('recursos-filter', () => filtrarRecursos());
+window.CotizatActions.register('recursos-clear-search', () => clearSearch());
+window.CotizatActions.register('recursos-expand-all', () => toggleAllCats(true));
+window.CotizatActions.register('recursos-collapse-all', () => toggleAllCats(false));
+window.CotizatActions.register('recursos-bulk-delete', () => bulkDeleteRecursos());
+window.CotizatActions.register('recursos-bulk-percent', () => bulkAjustarSeleccion('pct'));
+window.CotizatActions.register('recursos-bulk-fixed', () => bulkAjustarSeleccion('fijo'));
+window.CotizatActions.register('recursos-select-visible', () => selectVisibleRecursos());
+window.CotizatActions.register('recursos-select-none', () => selectNoneRecursos());
+window.CotizatActions.register('recursos-toggle-sidebar', () => toggleCatSidebar());
+window.CotizatActions.register('recursos-filter-category', element => filtrarCategoria(element.dataset.cat || 'todas'));
+window.CotizatActions.register('recursos-toggle-section', element => toggleCatSection(element));
+window.CotizatActions.register('recursos-toggle-section-button', element => {
+  const header = element.closest('.cat-section')?.querySelector('.cat-section-head');
+  if (header) toggleCatSection(header);
+});
+window.CotizatActions.register('recursos-select-category', element => {
+  const section = element.closest('.cat-section');
+  toggleSelectCat(section?.dataset.categoria || '', element.checked);
+});
+window.CotizatActions.register('recursos-row-check', element => onRowCheck(element));
+window.CotizatActions.register('recursos-clear-filters', () => clearFilters());
+
 document.addEventListener('DOMContentLoaded', ()=>{
   const collapsed=localStorage.getItem('recursos-sidebar-collapsed')==='true';
   const s=document.getElementById('catSidebar'), e=document.getElementById('catSidebarExpand');
-  if(collapsed && s && e){ s.style.display='none'; e.style.display='inline-flex'; document.getElementById('catalogLayout')?.classList.add('sidebar-hidden'); }
-  document.querySelectorAll('.row-check').forEach(ch=>ch.addEventListener('change', ()=>onRowCheck(ch)));
-  const busc=document.getElementById('buscador'); if(busc) busc.addEventListener('input', filtrarRecursos);
+  if(collapsed && s && e){ CotizatStyles.set(s, "display", 'none'); CotizatStyles.set(e, "display", 'inline-flex'); document.getElementById('catalogLayout')?.classList.add('sidebar-hidden'); }
   makeTableSortable(); filtrarRecursos();
 });
 </script>

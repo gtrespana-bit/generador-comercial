@@ -2,14 +2,19 @@ import json
 from fastapi.testclient import TestClient
 from app.main import app
 from app.database import SessionLocal, init_db
-from app.models import RecetaEstancia
+from app.models import Configuracion, RecetaEstancia
+from app.services.onboarding import completar_onboarding
 
 client = TestClient(app)
 
 
 def test_recetas_endpoints():
     init_db()
-    
+    with SessionLocal() as db:
+        cfg = db.query(Configuracion).first()
+        if not cfg.onboarding_completado:
+            completar_onboarding(db, {"empresa_nombre": "Empresa de pruebas"}, "demo")
+
     # 1. Verificar listado principal
     res = client.get("/recetas")
     assert res.status_code == 200

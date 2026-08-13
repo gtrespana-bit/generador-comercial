@@ -1,15 +1,12 @@
 """Datos iniciales y catálogos reutilizables.
 
-- `sembrar_catalogo`: mantiene el catálogo de partidas (se ejecuta en cada
-  arranque, es idempotente: crea las que faltan y actualiza las partidas
-  «nuevas» especificadas por el usuario si ya existían con datos distintos).
-- `sembrar_productos`: catálogo inicial de productos (idempotente).
-- `sembrar_demo`: sólo cuando la base de datos está vacía crea el
-  presupuesto de ejemplo de remodelación de lujo (en USD, con capítulos,
-  mediciones y productos presupuestados).
+- `sembrar_catalogo`: carga un catálogo inicial idempotente cuando la persona
+  elige el modo demo; crea lo que falta sin duplicar nombres existentes.
+- `sembrar_productos`: carga el catálogo demostrativo de productos.
+- `sembrar_demo`: sólo cuando no hay presupuestos crea el cliente y el
+  presupuesto ficticios (en USD, con capítulos, mediciones y productos).
 
-Catálogo extenso basado en el presupuesto de referencia (PRESUPUESTO
-SILVIA JULIO.pdf), adaptado al mercado venezolano:
+Catálogo inicial de demostración adaptado al mercado venezolano:
   · "hormigón" → "concreto"
   · "fontanería" → "plomería"
   · "enchufes / tomas" → "tomacorrientes"
@@ -72,12 +69,13 @@ def sembrar_demo(db: Session):
         return
 
     cliente = Cliente(
-        nombre="María Fernanda Aristimuño",
-        rif="V-14.326.870",
+        nombre="Cliente de demostración",
+        rif="",
         pais="Venezuela",
-        telefono="+58 414 326 87 90",
-        email="mf.aristimuno@gmail.com",
-        direccion="Urbanización El Rosal, Caracas",
+        telefono="",
+        email="",
+        direccion="Valencia, Carabobo",
+        es_demo=True,
     )
     db.add(cliente)
     db.flush()
@@ -87,14 +85,15 @@ def sembrar_demo(db: Session):
         numero=proximo_numero(db, hoy.year),
         year=hoy.year,
         fecha=hoy,
-        titulo="Residencia El Rosal · Remodelación Integral",
-        direccion_obra="Calle Mohedano, Residencias Altamira Park, Caracas",
-        codigo_postal="1060",
+        titulo="Remodelación residencial de demostración",
+        direccion_obra="Valencia, Carabobo",
+        codigo_postal="",
         validez_dias=30,
         moneda="USD",
         impuesto_pct=16.0,
         descuento_pct=0.0,
         estado="borrador",
+        es_demo=True,
         client_id=cliente.id,
         notas=("Presupuesto elaborado con mediciones tomadas en obra. Incluye mano de obra "
                "especializada, materiales de primera calidad y gestión integral del proyecto. "

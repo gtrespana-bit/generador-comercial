@@ -12,19 +12,23 @@ Estructura de un presupuesto (fiel al formato de referencia):
 from datetime import date, datetime, timedelta
 
 from sqlalchemy import (
+    CheckConstraint,
     Column,
     Date,
     DateTime,
     Float,
     ForeignKey,
     Integer,
+    Index,
     String,
     Text,
+    UniqueConstraint,
+    event,
     inspect,
     text,
     Boolean,
 )
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import Session as OrmSession, declared_attr, relationship, with_loader_criteria
 
 from .database import Base
 
@@ -39,8 +43,238 @@ ESTADOS_ETIQUETA = {
     "rechazado": "Rechazado", "vencido": "Vencido", "cancelado": "Cancelado", "archivado": "Archivado",
 }
 
+ROLES_MEMBRESIA = {"propietario", "administrador", "miembro", "lectura"}
 
-class Cliente(Base):
+
+class VinculoIdentidadError(RuntimeError):
+    """La identidad autenticada entra en conflicto con un perfil existente."""
+
+
+class OrganizacionNoAutorizadaError(RuntimeError):
+    """El usuario intentó seleccionar una organización sin membresía activa."""
+
+
+class PermisoOrganizacionError(RuntimeError):
+    """El rol de membresía no permite la escritura solicitada."""
+
+
+class Organizacion(Base):
+    """Empresa aislada dentro de la futura aplicación web."""
+
+    __tablename__ = "organizaciones"
+
+    id = Column(Integer, primary_key=True)
+    nombre = Column(String(200), nullable=False)
+    slug = Column(String(120), nullable=False, unique=True)
+    activa = Column(Boolean, nullable=False, default=True)
+    creada_por_usuario_id = Column(
+        Integer, ForeignKey("usuarios.id", ondelete="SET NULL"), nullable=True, index=True
+    )
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    membresias = relationship("Membresia", back_populates="organizacion", cascade="all, delete-orphan")
+
+
+class Usuario(Base):
+    """Perfil de aplicación vinculado a una identidad de Supabase Auth."""
+
+    __tablename__ = "usuarios"
+    __table_args__ = (
+        UniqueConstraint("auth_user_id", name="uq_usuarios_auth_user_id"),
+    )
+
+    id = Column(Integer, primary_key=True)
+    # UUID de auth.users representado como texto para conservar compatibilidad
+    # con SQLite. La contraseña nunca se copia desde Supabase a esta tabla.
+    auth_user_id = Column(String(36), nullable=True)
+    email = Column(String(254), nullable=False, unique=True)
+    nombre = Column(String(200), default="")
+    password_hash = Column(String(255), default="")
+    activo = Column(Boolean, nullable=False, default=True)
+    email_verificado_at = Column(DateTime, nullable=True)
+    ultimo_acceso_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    membresias = relationship("Membresia", back_populates="usuario", cascade="all, delete-orphan")
+
+
+class Membresia(Base):
+    """Relación y rol de un usuario dentro de una organización."""
+
+    __tablename__ = "membresias"
+    __table_args__ = (
+        UniqueConstraint("usuario_id", "organizacion_id", name="uq_membresia_usuario_organizacion"),
+        CheckConstraint(
+            "rol IN ('propietario', 'administrador', 'miembro', 'lectura')",
+            name="ck_membresia_rol_valido",
+        ),
+    )
+
+    id = Column(Integer, primary_key=True)
+    usuario_id = Column(Integer, ForeignKey("usuarios.id", ondelete="CASCADE"), nullable=False, index=True)
+    organizacion_id = Column(Integer, ForeignKey("organizaciones.id", ondelete="CASCADE"), nullable=False, index=True)
+    rol = Column(String(30), nullable=False, default="miembro")
+    activa = Column(Boolean, nullable=False, default=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    usuario = relationship("Usuario", back_populates="membresias")
+    organizacion = relationship("Organizacion", back_populates="membresias")
+
+
+def sincronizar_usuario_auth(
+    db,
+    auth_user_id: str,
+    email: str,
+    nombre: str = "",
+    email_verificado: bool = False,
+) -> Usuario:
+    """Vincula de forma idempotente una identidad verificada por Supabase.
+
+    El email permite enlazar perfiles creados antes de incorporar Auth. Una vez
+    vinculado, un UUID diferente nunca puede apropiarse de ese mismo perfil.
+    """
+    auth_user_id = str(auth_user_id or "").strip()
+    email = str(email or "").strip().lower()
+    if not auth_user_id or not email:
+        raise VinculoIdentidadError("La identidad autenticada no es válida.")
+
+    usuario = db.query(Usuario).filter(Usuario.auth_user_id == auth_user_id).first()
+    por_email = db.query(Usuario).filter(Usuario.email == email).first()
+    if usuario is not None and por_email is not None and usuario.id != por_email.id:
+        raise VinculoIdentidadError("La identidad y el email pertenecen a perfiles distintos.")
+    if usuario is None:
+        usuario = por_email
+    if usuario is None:
+        usuario = Usuario(auth_user_id=auth_user_id, email=email, nombre=nombre[:200])
+        db.add(usuario)
+    elif usuario.auth_user_id not in {None, "", auth_user_id}:
+        raise VinculoIdentidadError("El perfil ya está vinculado a otra identidad.")
+    else:
+        usuario.auth_user_id = auth_user_id
+        usuario.email = email
+        if nombre and not usuario.nombre:
+            usuario.nombre = nombre[:200]
+
+    if not usuario.activo:
+        raise VinculoIdentidadError("La cuenta de CotizaT está desactivada.")
+    if email_verificado and usuario.email_verificado_at is None:
+        usuario.email_verificado_at = datetime.utcnow()
+    db.flush()
+    return usuario
+
+
+def membresias_activas(db, usuario_id: int) -> list[Membresia]:
+    """Devuelve únicamente membresías y organizaciones activas."""
+    return (
+        db.query(Membresia)
+        .join(Organizacion, Organizacion.id == Membresia.organizacion_id)
+        .filter(
+            Membresia.usuario_id == usuario_id,
+            Membresia.activa.is_(True),
+            Organizacion.activa.is_(True),
+        )
+        .order_by(Organizacion.nombre, Membresia.id)
+        .all()
+    )
+
+
+def resolver_membresia_activa(
+    db,
+    usuario_id: int,
+    organizacion_solicitada: int | None = None,
+) -> Membresia | None:
+    """Resuelve la empresa activa sin confiar en el identificador de cookie."""
+    membresias = membresias_activas(db, usuario_id)
+    if organizacion_solicitada is not None:
+        for membresia in membresias:
+            if membresia.organizacion_id == organizacion_solicitada:
+                return membresia
+        raise OrganizacionNoAutorizadaError(
+            "No tienes una membresía activa en la organización solicitada."
+        )
+    if len(membresias) == 1:
+        return membresias[0]
+    return None
+
+
+class TenantMixin:
+    """Marca un agregado cuyo propietario obligatorio es una organización."""
+
+    @declared_attr
+    def organizacion_id(cls):
+        return Column(
+            Integer,
+            ForeignKey("organizaciones.id", ondelete="RESTRICT"),
+            nullable=False,
+            default=1,  # compatibilidad temporal con la única empresa local
+            index=True,
+        )
+
+
+class InvitacionOrganizacion(TenantMixin, Base):
+    """Invitación de un solo uso; únicamente persiste el hash del secreto."""
+
+    __tablename__ = "invitaciones_organizacion"
+    __table_args__ = (
+        CheckConstraint(
+            "rol IN ('administrador', 'miembro', 'lectura')",
+            name="ck_invitacion_rol_valido",
+        ),
+        UniqueConstraint("token_hash", name="uq_invitacion_token_hash"),
+        Index(
+            "ix_invitaciones_organizacion_email",
+            "organizacion_id",
+            "email",
+        ),
+    )
+
+    id = Column(Integer, primary_key=True)
+    email = Column(String(254), nullable=False)
+    rol = Column(String(30), nullable=False, default="miembro")
+    token_hash = Column(String(64), nullable=False)
+    invitada_por_usuario_id = Column(
+        Integer, ForeignKey("usuarios.id", ondelete="SET NULL"), nullable=True
+    )
+    aceptada_por_usuario_id = Column(
+        Integer, ForeignKey("usuarios.id", ondelete="SET NULL"), nullable=True
+    )
+    expires_at = Column(DateTime, nullable=False)
+    accepted_at = Column(DateTime, nullable=True)
+    revoked_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+
+    organizacion = relationship("Organizacion")
+    invitada_por = relationship("Usuario", foreign_keys=[invitada_por_usuario_id])
+    aceptada_por = relationship("Usuario", foreign_keys=[aceptada_por_usuario_id])
+
+
+class ArchivoAlmacenado(TenantMixin, Base):
+    """Metadatos de un objeto privado; el binario vive fuera de PostgreSQL."""
+
+    __tablename__ = "archivos_almacenados"
+    __table_args__ = (
+        UniqueConstraint(
+            "organizacion_id", "object_key", name="uq_archivo_organizacion_clave"
+        ),
+        CheckConstraint(
+            "object_key LIKE 'organizaciones/' || organizacion_id || '/%'",
+            name="ck_archivo_clave_pertenece_organizacion",
+        ),
+    )
+
+    id = Column(Integer, primary_key=True)
+    object_key = Column(String(900), nullable=False)
+    categoria = Column(String(80), nullable=False)
+    content_type = Column(String(150), nullable=False)
+    tamano_bytes = Column(Integer, nullable=False)
+    sha256 = Column(String(64), nullable=False)
+    nombre_original = Column(String(300), nullable=False)
+    metadata_json = Column(Text, nullable=False, default="{}")
+
+
+class Cliente(TenantMixin, Base):
     __tablename__ = "clientes"
 
     id = Column(Integer, primary_key=True)
@@ -50,16 +284,20 @@ class Cliente(Base):
     telefono = Column(String(50), default="")
     email = Column(String(200), default="")
     direccion = Column(Text, default="")
+    es_demo = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     presupuestos = relationship("Presupuesto", back_populates="cliente")
 
 
-class Presupuesto(Base):
+class Presupuesto(TenantMixin, Base):
     __tablename__ = "presupuestos"
+    __table_args__ = (
+        UniqueConstraint("organizacion_id", "numero", name="uq_presupuesto_organizacion_numero"),
+    )
 
     id = Column(Integer, primary_key=True)
-    numero = Column(String(20), nullable=False, unique=True)
+    numero = Column(String(20), nullable=False)
     year = Column(Integer, nullable=False)
     fecha = Column(Date, nullable=False, default=date.today)
     # Proyecto / obra
@@ -73,6 +311,7 @@ class Presupuesto(Base):
     impuesto_pct = Column(Float, default=16.0)
     descuento_pct = Column(Float, default=0.0)
     estado = Column(String(20), default="borrador")
+    es_demo = Column(Boolean, default=False)
     notas = Column(Text, default="")
     condiciones = Column(Text, default="")
     con_portada = Column(Boolean, default=False)
@@ -80,7 +319,7 @@ class Presupuesto(Base):
     mostrar_firmas = Column(Boolean, default=False)
     mostrar_resumen_capitulos = Column(Boolean, default=False)
     mostrar_garantias = Column(Boolean, default=False)
-    firma_cliente = Column(String(300), default="")   # ruta bajo app/static
+    firma_cliente = Column(String(300), default="")   # referencia lógica o ruta local histórica
     # Funciones económicas avanzadas (apagadas por defecto para conservar
     # el creador simple).
     usar_funciones_avanzadas = Column(Boolean, default=False)
@@ -214,7 +453,7 @@ class Presupuesto(Base):
         return NOTA_LEGAL
 
 
-class PresupuestoVersion(Base):
+class PresupuestoVersion(TenantMixin, Base):
     """Instantánea inmutable creada al enviar, aprobar o versionar un documento."""
     __tablename__ = "presupuesto_versiones"
 
@@ -232,7 +471,7 @@ class PresupuestoVersion(Base):
 
 
 
-class Capitulo(Base):
+class Capitulo(TenantMixin, Base):
     """Capítulo del presupuesto (MUROS Y PARTICIONES, ELECTRICIDAD…)."""
 
     __tablename__ = "capitulos"
@@ -265,7 +504,7 @@ class Capitulo(Base):
         return float(money(total))
 
 
-class PresupuestoItem(Base):
+class PresupuestoItem(TenantMixin, Base):
     """Partida: obra o material con cantidad y precio unitario.
 
     La cantidad total sale de la suma de sus mediciones; si no tiene,
@@ -293,7 +532,7 @@ class PresupuestoItem(Base):
     # presupuesto no cambie al actualizar el catálogo posteriormente.
     producto_coste = Column(Float, nullable=True)
     producto_unidad = Column(String(20), default="")
-    producto_imagen = Column(String(300), default="")   # ruta bajo app/static
+    producto_imagen = Column(String(300), default="")   # referencia lógica o ruta local histórica
     # Campos avanzados, invisibles en el modo básico.
     tipo_partida = Column(String(20), default="included")
     seleccionada = Column(Boolean, default=False)
@@ -493,14 +732,14 @@ class PresupuestoItem(Base):
         )
 
 
-class DescomposicionPartida(Base):
+class DescomposicionPartida(TenantMixin, Base):
     """Descompuesto técnico CYPE asociado a una partida de presupuesto.
 
     ``filas_originales_json`` preserva la matriz completa (incluidas las filas
     vacías intencionales, fórmulas y columnas), mientras que
     :class:`DescomposicionFila` permite calcular y mostrar cada recurso sin
     volver a interpretar el Excel original. El archivo fuente también queda
-    guardado bajo uploads para una trazabilidad completamente reversible.
+    guardado en Storage privado para una trazabilidad completamente reversible.
     """
 
     __tablename__ = "descomposiciones_partida"
@@ -510,7 +749,7 @@ class DescomposicionPartida(Base):
     codigo = Column(String(100), default="")
     unidad = Column(String(30), default="")
     nombre_hoja = Column(String(200), default="")
-    archivo_origen = Column(String(300), default="")  # ruta relativa a UPLOADS_DIR
+    archivo_origen = Column(String(300), default="")  # referencia lógica o ruta local histórica
     nombre_archivo_origen = Column(String(300), default="")
     rango_original = Column(String(100), default="")
     columnas_json = Column(Text, default="[]")
@@ -550,7 +789,7 @@ class DescomposicionPartida(Base):
         return self._json_lista(self.rangos_combinados_json)
 
 
-class DescomposicionFila(Base):
+class DescomposicionFila(TenantMixin, Base):
     """Una fila física de un Excel CYPE, incluso si está vacía o es subtotal."""
 
     __tablename__ = "descomposicion_filas"
@@ -591,7 +830,7 @@ class DescomposicionFila(Base):
         return resultado if isinstance(resultado, dict) else {}
 
 
-class Medicion(Base):
+class Medicion(TenantMixin, Base):
     """Línea de desglose de una partida (zona/concepto + cantidad)."""
 
     __tablename__ = "mediciones"
@@ -605,7 +844,7 @@ class Medicion(Base):
     partida = relationship("PresupuestoItem", back_populates="mediciones")
 
 
-class PresupuestoItemProducto(Base):
+class PresupuestoItemProducto(TenantMixin, Base):
     """Producto alternativo asociado a una partida.
 
     Cada partida puede tener varios productos a elegir para el cliente. La
@@ -647,7 +886,7 @@ class PresupuestoItemProducto(Base):
     partida = relationship("PresupuestoItem", back_populates="productos_opciones")
 
 
-class Configuracion(Base):
+class Configuracion(TenantMixin, Base):
     __tablename__ = "configuracion"
 
     id = Column(Integer, primary_key=True)
@@ -655,11 +894,21 @@ class Configuracion(Base):
     empresa_nombre = Column(String(200), default="Mi Empresa")
     empresa_legal = Column(String(250), default="")       # razón social
     empresa_rif = Column(String(50), default="")
+    empresa_pais = Column(String(80), default="Venezuela")
+    empresa_ciudad = Column(String(120), default="")
     empresa_direccion = Column(Text, default="")
     empresa_telefono = Column(String(50), default="")
     empresa_email = Column(String(200), default="")
     empresa_web = Column(String(200), default="")
-    logo = Column(String(300), default="")                # ruta bajo app/static
+    logo = Column(String(300), default="")                # referencia lógica o ruta local histórica
+    # Primer inicio y recorrido hasta el primer PDF real.
+    onboarding_completado = Column(Boolean, default=False)
+    onboarding_modo = Column(String(20), default="")      # demo / limpio / existente
+    onboarding_iniciado_at = Column(DateTime, nullable=True)
+    onboarding_completado_at = Column(DateTime, nullable=True)
+    onboarding_catalogo_revisado = Column(Boolean, default=False)
+    onboarding_pdf_descargado = Column(Boolean, default=False)
+    primer_pdf_at = Column(DateTime, nullable=True)
     # Valores por defecto para presupuestos nuevos
     iva_default = Column(Float, default=16.0)
     moneda_default = Column(String(10), default="USD")
@@ -695,7 +944,7 @@ class Configuracion(Base):
     semilla_recetas_aplicada = Column(Boolean, default=False)
 
 
-class Plantilla(Base):
+class Plantilla(TenantMixin, Base):
     """Plantilla de presupuesto reutilizable.
 
     Guarda la estructura (capítulos, partidas y mediciones) en formato JSON
@@ -711,7 +960,7 @@ class Plantilla(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
 
-class RecetaEstancia(Base):
+class RecetaEstancia(TenantMixin, Base):
     """Pack / Receta de estancia para armar capítulos de obra con 1 clic.
 
     Guarda la plantilla de un capítulo completo (ej. 'Baño Principal de Lujo')
@@ -731,7 +980,7 @@ class RecetaEstancia(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
 
-class CategoriaPartida(Base):
+class CategoriaPartida(TenantMixin, Base):
     """Estructura explícita del catálogo, incluso cuando aún no tiene partidas."""
 
     __tablename__ = "categorias_partidas"
@@ -742,13 +991,16 @@ class CategoriaPartida(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
 
-class Partida(Base):
-    """Catálogo de partidas reutilizables para remodelaciones de lujo."""
+class Partida(TenantMixin, Base):
+    """Catálogo editable y privado de una organización."""
 
     __tablename__ = "partidas"
+    __table_args__ = (
+        UniqueConstraint("organizacion_id", "nombre", name="uq_partida_organizacion_nombre"),
+    )
 
     id = Column(Integer, primary_key=True)
-    nombre = Column(String(200), nullable=False, unique=True)
+    nombre = Column(String(200), nullable=False)
     descripcion = Column(Text, default="")
     precio_unitario = Column(Float, default=0.0)
     unidad = Column(String(30), default="ud")          # m2, ud, ml, juego, etc.
@@ -792,7 +1044,7 @@ class Partida(Base):
         )
 
 
-class Producto(Base):
+class Producto(TenantMixin, Base):
     """Catálogo de productos reutilizables (p. ej. materiales con foto).
 
     Los productos son independientes de las partidas: una partida («Solado
@@ -803,14 +1055,17 @@ class Producto(Base):
     """
 
     __tablename__ = "productos"
+    __table_args__ = (
+        UniqueConstraint("organizacion_id", "nombre", name="uq_producto_organizacion_nombre"),
+    )
 
     id = Column(Integer, primary_key=True)
-    nombre = Column(String(250), nullable=False, unique=True)
+    nombre = Column(String(250), nullable=False)
     descripcion = Column(Text, default="")
     precio_unitario = Column(Float, default=0.0)
     unidad = Column(String(30), default="ud")
     categoria = Column(String(80), default="General")
-    imagen = Column(String(300), default="")           # ruta bajo app/static
+    imagen = Column(String(300), default="")           # referencia lógica o ruta local histórica
     # El precio unitario existente se conserva como precio de venta para no
     # alterar presupuestos ni catálogos creados con versiones anteriores.
     precio_compra = Column(Float, nullable=True)
@@ -824,7 +1079,7 @@ class Producto(Base):
     formato = Column(String(120), default="")
     tiempo_entrega_dias = Column(Integer, nullable=True)
     variantes = Column(Text, default="")
-    ficha_tecnica = Column(String(300), default="")    # PDF bajo uploads/
+    ficha_tecnica = Column(String(300), default="")    # referencia lógica del PDF o ruta histórica
     imagenes = Column(Text, default="[]")              # galería JSON; `imagen` es la principal
     usos = Column(Integer, default=0)
     ultimo_uso = Column(DateTime, nullable=True)
@@ -848,7 +1103,7 @@ class Producto(Base):
         return limpias
 
 
-class Recurso(Base):
+class Recurso(TenantMixin, Base):
     """Catálogo central de precios unitarios (recursos).
 
     Cada fila es un precio unitario reutilizable (mano de obra, material,
@@ -894,7 +1149,7 @@ class Recurso(Base):
         return f"desc:{norm(self.descripcion)}|{norm(self.unidad)}|{norm(self.categoria)}"
 
 
-class NotaSeguimiento(Base):
+class NotaSeguimiento(TenantMixin, Base):
     """Nota interna de seguimiento sobre un presupuesto.
 
     «Llamé al cliente y quiere cambiar el piso del baño», etc. Solo la ve
@@ -911,7 +1166,7 @@ class NotaSeguimiento(Base):
     presupuesto = relationship("Presupuesto", back_populates="notas_seguimiento")
 
 
-class Factura(Base):
+class Factura(TenantMixin, Base):
     """Factura generada a partir de un presupuesto aprobado.
 
     Copia la estructura del presupuesto (capítulos y partidas) en el
@@ -920,9 +1175,12 @@ class Factura(Base):
     """
 
     __tablename__ = "facturas"
+    __table_args__ = (
+        UniqueConstraint("organizacion_id", "numero", name="uq_factura_organizacion_numero"),
+    )
 
     id = Column(Integer, primary_key=True)
-    numero = Column(String(20), nullable=False, unique=True)
+    numero = Column(String(20), nullable=False)
     year = Column(Integer, nullable=False)
     fecha = Column(Date, nullable=False, default=date.today)
     titulo = Column(String(250), default="")
@@ -993,7 +1251,7 @@ class Factura(Base):
         return float(money(self.base + self.impuesto_monto))
 
 
-class FacturaCapitulo(Base):
+class FacturaCapitulo(TenantMixin, Base):
     __tablename__ = "factura_capitulos"
 
     id = Column(Integer, primary_key=True)
@@ -1015,7 +1273,7 @@ class FacturaCapitulo(Base):
         return float(money(sum(p.importe for p in self.partidas)))
 
 
-class FacturaItem(Base):
+class FacturaItem(TenantMixin, Base):
     __tablename__ = "factura_items"
 
     id = Column(Integer, primary_key=True)
@@ -1054,33 +1312,49 @@ class FacturaItem(Base):
 
 
 DATOS_EMPRESA_DEFECTO = {
-    "empresa_nombre": "RemodelaT Venezuela",
-    "empresa_telefono": "04227997043",
-    "empresa_email": "contacto@remodelat.net",
-    "empresa_web": "www.remodelat.net",
-    "empresa_direccion": "San Diego, Carabobo",
+    "empresa_nombre": "Mi Empresa",
+    "empresa_pais": "Venezuela",
+    "empresa_ciudad": "",
+    "empresa_telefono": "",
+    "empresa_email": "",
+    "empresa_web": "",
+    "empresa_direccion": "",
+    "onboarding_completado": False,
 }
 
 
-def asegurar_config(db):
-    """Si no existe configuración, crea una con los datos de RemodelaT.
+def asegurar_organizacion_local(db) -> Organizacion:
+    """Conserva los datos históricos dentro de una organización transitoria.
 
-    En instalaciones nuevas la configuración ya viene rellena con los datos
-    de la empresa (nombre, teléfono, web, email y dirección). Si la base de
-    datos es antigua y todavía conserva el placeholder genérico («Mi
-    Empresa»), también se autorellena una única vez; si el usuario ya la
-    personalizó, no se toca.
+    Esta organización permite seguir desarrollando en el navegador sin fingir
+    que ya existe autenticación. En la versión web cada sesión elegirá una
+    organización a través de su membresía.
     """
+    organizacion = db.query(Organizacion).filter(
+        Organizacion.slug == "espacio-local"
+    ).first()
+    if organizacion is None:
+        organizacion = Organizacion(nombre="Espacio local", slug="espacio-local")
+        db.add(organizacion)
+        db.flush()
+    return organizacion
+
+
+def asegurar_config(db):
+    """Crea configuración neutra dentro de la organización activa."""
+    organizacion_id = db.info.get("organizacion_id")
+    if organizacion_id is None:
+        organizacion_id = asegurar_organizacion_local(db).id
+        usar_organizacion(db, organizacion_id)
     cfg = db.query(Configuracion).first()
     if cfg is None:
-        cfg = Configuracion(**DATOS_EMPRESA_DEFECTO)
-        db.add(cfg)
-        db.commit()
-        return
-    if cfg.empresa_nombre in ("", "Mi Empresa") and not cfg.empresa_email:
-        for campo, valor in DATOS_EMPRESA_DEFECTO.items():
-            setattr(cfg, campo, valor)
-        db.commit()
+        db.add(Configuracion(
+            organizacion_id=organizacion_id,
+            **DATOS_EMPRESA_DEFECTO,
+        ))
+    # También persiste la organización recién creada cuando la configuración
+    # ya existía en una base local anterior.
+    db.commit()
 
 
 def proximo_numero(db, year):
@@ -1100,9 +1374,11 @@ def proximo_numero(db, year):
 
 
 def proximo_numero_factura(db, year):
-    """Calcula el siguiente número de factura para el año dado.
+    """Calcula el siguiente número de documento de cobro para el año dado.
 
-    Formato: F-<año>-<secuencial de 3 dígitos>, p. ej. F-2026-001
+    Formato: DC-<año>-<secuencial de 3 dígitos>, p. ej. DC-2026-001.
+    Se consideran también los números históricos F-* para continuar la
+    secuencia sin alterar documentos existentes.
     """
     numeros = db.query(Factura.numero).filter(Factura.year == year).all()
     max_sec = 0
@@ -1112,14 +1388,14 @@ def proximo_numero_factura(db, year):
             max_sec = max(max_sec, sec)
         except (ValueError, IndexError):
             continue
-    return f"F-{year}-{max_sec + 1:03d}"
+    return f"DC-{year}-{max_sec + 1:03d}"
 
 
 def marcar_vencidos(db):
     """Pasa a «vencido» los presupuestos enviados cuya validez ya expiró.
 
-    Se ejecuta al abrir el dashboard o el historial; así el estado se
-    mantiene al día sin necesidad de tareas programadas.
+    Se ejecuta mediante una escritura same-origin al abrir el dashboard o el
+    historial; las rutas GET permanecen libres de efectos empresariales.
     """
     hoy = date.today()
     cambiados = 0
@@ -1129,6 +1405,7 @@ def marcar_vencidos(db):
             cambiados += 1
     if cambiados:
         db.commit()
+    return cambiados
 
 
 # ---------------------------------------------------------------------------
@@ -1210,9 +1487,11 @@ def migrar(engine):
     aditivas = {
         "clientes": [
             ("pais", "VARCHAR(80) DEFAULT 'Venezuela'"),
+            ("es_demo", "BOOLEAN DEFAULT 0"),
         ],
         "presupuestos": [
             ("titulo", "VARCHAR(250) DEFAULT ''"),
+            ("es_demo", "BOOLEAN DEFAULT 0"),
             ("direccion_obra", "VARCHAR(300) DEFAULT ''"),
             ("codigo_postal", "VARCHAR(20) DEFAULT ''"),
             ("con_portada", "BOOLEAN DEFAULT 0"),
@@ -1234,8 +1513,17 @@ def migrar(engine):
         ],
         "configuracion": [
             ("empresa_legal", "VARCHAR(250) DEFAULT ''"),
+            ("empresa_pais", "VARCHAR(80) DEFAULT 'Venezuela'"),
+            ("empresa_ciudad", "VARCHAR(120) DEFAULT ''"),
             ("empresa_web", "VARCHAR(200) DEFAULT ''"),
             ("logo", "VARCHAR(300) DEFAULT ''"),
+            ("onboarding_completado", "BOOLEAN DEFAULT 0"),
+            ("onboarding_modo", "VARCHAR(20) DEFAULT ''"),
+            ("onboarding_iniciado_at", "DATETIME"),
+            ("onboarding_completado_at", "DATETIME"),
+            ("onboarding_catalogo_revisado", "BOOLEAN DEFAULT 0"),
+            ("onboarding_pdf_descargado", "BOOLEAN DEFAULT 0"),
+            ("primer_pdf_at", "DATETIME"),
             ("condiciones_default", "TEXT DEFAULT ''"),
             ("pdf_color", "VARCHAR(10) DEFAULT '#04265D'"),
             ("logo_ancho_pdf", "FLOAT DEFAULT 360"),
@@ -1341,6 +1629,34 @@ def migrar(engine):
         # que actualizar la aplicación sobre una base antigua nunca impida
         # abrirla.
         _sincronizar_columnas_modelos(engine, conn)
+
+        # Todo dato local anterior pertenece al espacio transitorio 1. Los
+        # índices mantienen rápidas las consultas cuando el catálogo contiene
+        # miles de partidas. Las tablas nuevas ya traen ambos desde create_all.
+        for tabla in Base.metadata.sorted_tables:
+            if "organizacion_id" not in tabla.columns:
+                continue
+            nombre = tabla.name
+            if "organizacion_id" not in (_columnas(engine, nombre) or set()):
+                continue
+            conn.execute(text(
+                f"UPDATE {nombre} SET organizacion_id = 1 "
+                "WHERE organizacion_id IS NULL"
+            ))
+            conn.execute(text(
+                f"CREATE INDEX IF NOT EXISTS ix_{nombre}_organizacion_id "
+                f"ON {nombre} (organizacion_id)"
+            ))
+
+        # Las instalaciones SQLite anteriores reciben también la unicidad del
+        # vínculo con Supabase Auth. PostgreSQL obtiene el constraint mediante
+        # Alembic; múltiples NULL siguen permitidos hasta vincular cada perfil.
+        columnas_usuarios = _columnas(engine, "usuarios") or set()
+        if "auth_user_id" in columnas_usuarios:
+            conn.execute(text(
+                "CREATE UNIQUE INDEX IF NOT EXISTS ux_usuarios_auth_user_id "
+                "ON usuarios (auth_user_id)"
+            ))
 
         # Recupera el vínculo con la partida maestra en presupuestos creados
         # antes de existir esta columna. El nombre de Partida es único.
@@ -1568,7 +1884,7 @@ def migrar(engine):
                 },
             )
 
-class AnexoPresupuesto(Base):
+class AnexoPresupuesto(TenantMixin, Base):
     __tablename__ = "presupuesto_anexos"
     id = Column(Integer, primary_key=True)
     presupuesto_id = Column(Integer, ForeignKey("presupuestos.id"), nullable=False)
@@ -1578,7 +1894,7 @@ class AnexoPresupuesto(Base):
     presupuesto = relationship("Presupuesto", back_populates="anexos")
 
 
-class BorradorPresupuesto(Base):
+class BorradorPresupuesto(TenantMixin, Base):
     """Borrador del editor persistido por el autoguardado del servidor.
 
     Un único borrador por presupuesto (se sobrescribe en cada guardado del
@@ -1596,7 +1912,7 @@ class BorradorPresupuesto(Base):
     presupuesto = relationship("Presupuesto")
 
 
-class Proyecto(Base):
+class Proyecto(TenantMixin, Base):
     __tablename__ = "proyectos"
     id = Column(Integer, primary_key=True)
     presupuesto_id = Column(Integer, ForeignKey("presupuestos.id"), nullable=False, unique=True)
@@ -1626,7 +1942,7 @@ class Proyecto(Base):
     @property
     def saldo_pendiente(self): return round(self.total_actual - self.total_pagado, 2)
 
-class CambioAlcance(Base):
+class CambioAlcance(TenantMixin, Base):
     __tablename__ = "cambios_alcance"
     id = Column(Integer, primary_key=True)
     proyecto_id = Column(Integer, ForeignKey("proyectos.id"), nullable=False)
@@ -1639,7 +1955,7 @@ class CambioAlcance(Base):
     proyecto = relationship("Proyecto", back_populates="cambios")
     items = relationship("CambioAlcanceItem", back_populates="cambio", cascade="all, delete-orphan", order_by="CambioAlcanceItem.id")
 
-class CambioAlcanceItem(Base):
+class CambioAlcanceItem(TenantMixin, Base):
     __tablename__ = "cambio_alcance_items"
     id = Column(Integer, primary_key=True)
     cambio_id = Column(Integer, ForeignKey("cambios_alcance.id"), nullable=False)
@@ -1651,7 +1967,7 @@ class CambioAlcanceItem(Base):
     @property
     def importe(self): return round((self.cantidad or 0) * (self.precio_unitario or 0), 2)
 
-class Pago(Base):
+class Pago(TenantMixin, Base):
     __tablename__ = "pagos"
     id = Column(Integer, primary_key=True)
     proyecto_id = Column(Integer, ForeignKey("proyectos.id"), nullable=True)
@@ -1668,3 +1984,74 @@ class Pago(Base):
     proyecto = relationship("Proyecto", back_populates="pagos")
     presupuesto = relationship("Presupuesto")
     factura = relationship("Factura")
+
+
+class ContextoOrganizacionError(RuntimeError):
+    """Una lectura o escritura intentó cruzar el límite de organización."""
+
+
+def usar_organizacion(db, organizacion_id: int) -> None:
+    """Activa el filtro obligatorio para todas las entidades empresariales."""
+    organizacion_id = int(organizacion_id)
+    if organizacion_id <= 0:
+        raise ContextoOrganizacionError("La organización activa no es válida.")
+    db.info["organizacion_id"] = organizacion_id
+
+
+@event.listens_for(OrmSession, "do_orm_execute")
+def _filtrar_por_organizacion(estado):
+    """Aplica aislamiento y bloquea DML para membresías de solo lectura."""
+    organizacion_id = estado.session.info.get("organizacion_id")
+    if (
+        (estado.is_update or estado.is_delete)
+        and estado.session.info.get("rol_membresia") == "lectura"
+    ):
+        raise PermisoOrganizacionError(
+            "Tu rol es de solo lectura y no permite modificar datos."
+        )
+    if (
+        (estado.is_select or estado.is_update or estado.is_delete)
+        and organizacion_id is not None
+        and not estado.execution_options.get("sin_filtro_organizacion", False)
+    ):
+        estado.statement = estado.statement.options(
+            with_loader_criteria(
+                TenantMixin,
+                lambda modelo: modelo.organizacion_id == organizacion_id,
+                include_aliases=True,
+            )
+        )
+
+
+@event.listens_for(OrmSession, "before_flush")
+def _proteger_escrituras_por_organizacion(db, _flush_context, _instances):
+    """Asigna propietario y aplica tenencia/rol antes de escribir."""
+    organizacion_id = db.info.get("organizacion_id")
+    if organizacion_id is None:
+        return  # migraciones, importador legado y pruebas unitarias sin contexto
+    entidades_tenant = {
+        entidad
+        for entidad in set(db.new).union(db.dirty).union(db.deleted)
+        if isinstance(entidad, TenantMixin)
+    }
+    if entidades_tenant and db.info.get("rol_membresia") == "lectura":
+        raise PermisoOrganizacionError(
+            "Tu rol es de solo lectura y no permite modificar datos."
+        )
+    for entidad in db.new:
+        if not isinstance(entidad, TenantMixin):
+            continue
+        if entidad.organizacion_id is None:
+            entidad.organizacion_id = organizacion_id
+        elif entidad.organizacion_id != organizacion_id:
+            raise ContextoOrganizacionError(
+                "No se puede crear un registro para otra organización."
+            )
+    for entidad in set(db.dirty).union(db.deleted):
+        if (
+            isinstance(entidad, TenantMixin)
+            and entidad.organizacion_id != organizacion_id
+        ):
+            raise ContextoOrganizacionError(
+                "No se puede modificar un registro de otra organización."
+            )
