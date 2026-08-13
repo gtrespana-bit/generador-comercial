@@ -1,12 +1,10 @@
 """Datos iniciales y catálogos reutilizables.
 
-- `sembrar_catalogo`: mantiene el catálogo de partidas (se ejecuta en cada
-  arranque, es idempotente: crea las que faltan y actualiza las partidas
-  «nuevas» especificadas por el usuario si ya existían con datos distintos).
-- `sembrar_productos`: catálogo inicial de productos (idempotente).
-- `sembrar_demo`: sólo cuando la base de datos está vacía crea el
-  presupuesto de ejemplo de remodelación de lujo (en USD, con capítulos,
-  mediciones y productos presupuestados).
+- `sembrar_catalogo`: carga un catálogo inicial idempotente cuando la persona
+  elige el modo demo; crea lo que falta sin duplicar nombres existentes.
+- `sembrar_productos`: carga el catálogo demostrativo de productos.
+- `sembrar_demo`: sólo cuando no hay presupuestos crea el cliente y el
+  presupuesto ficticios (en USD, con capítulos, mediciones y productos).
 
 Catálogo inicial de demostración adaptado al mercado venezolano:
   · "hormigón" → "concreto"
@@ -77,6 +75,7 @@ def sembrar_demo(db: Session):
         telefono="",
         email="",
         direccion="Valencia, Carabobo",
+        es_demo=True,
     )
     db.add(cliente)
     db.flush()
@@ -94,6 +93,7 @@ def sembrar_demo(db: Session):
         impuesto_pct=16.0,
         descuento_pct=0.0,
         estado="borrador",
+        es_demo=True,
         client_id=cliente.id,
         notas=("Presupuesto elaborado con mediciones tomadas en obra. Incluye mano de obra "
                "especializada, materiales de primera calidad y gestión integral del proyecto. "

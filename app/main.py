@@ -81,6 +81,11 @@ from .services.analisis import analizar_catalogo_partidas
 from .services.contrato import generar_contrato_pdf
 from .services.tiempos import calcular_tiempos_presupuesto, horas_por_unidad_descompuesto
 from .services.versions import ESTADOS_CONGELABLES, crear_version, leer_snapshot
+from .services.onboarding import (
+    ErrorOnboarding,
+    completar_onboarding,
+    estado_recorrido_inicial,
+)
 from .services.importer import (
     ErrorImportacion,
     ETIQUETAS_CAMPOS,
@@ -638,11 +643,65 @@ def _guardar_en_catalogos(db: Session, partidas: list, imagenes_guardadas: dict)
 
 
 # ---------------------------------------------------------------------------
+# Primer inicio
+# ---------------------------------------------------------------------------
+
+@app.get("/bienvenida", response_class=HTMLResponse)
+def bienvenida(request: Request, db: Session = Depends(get_db)):
+    cfg = _config(db)
+    if cfg.onboarding_completado:
+        return _redirect("/")
+    if not cfg.onboarding_iniciado_at:
+        cfg.onboarding_iniciado_at = datetime.utcnow()
+        db.commit()
+    return TEMPLATES.TemplateResponse(
+        request,
+        "onboarding.html",
+        {"cfg": cfg, "error": request.query_params.get("error", "")},
+    )
+
+
+@app.post("/bienvenida")
+async def finalizar_bienvenida(request: Request, db: Session = Depends(get_db)):
+    cfg = _config(db)
+    if cfg.onboarding_completado:
+        return _redirect("/")
+    form = await request.form()
+    datos = {
+        "empresa_nombre": form.get("empresa_nombre", ""),
+        "empresa_legal": form.get("empresa_legal", ""),
+        "empresa_rif": form.get("empresa_rif", ""),
+        "empresa_pais": form.get("empresa_pais", "Venezuela"),
+        "empresa_ciudad": form.get("empresa_ciudad", ""),
+        "empresa_direccion": form.get("empresa_direccion", ""),
+        "empresa_telefono": form.get("empresa_telefono", ""),
+        "empresa_email": form.get("empresa_email", ""),
+        "moneda_default": form.get("moneda_default", "USD"),
+        "iva_default": _f(form.get("iva_default"), 16.0),
+    }
+    try:
+        cfg = completar_onboarding(db, datos, str(form.get("modo_inicio", "")))
+    except ErrorOnboarding as exc:
+        return _redirect("/bienvenida", error=str(exc))
+
+    logo = form.get("logo")
+    if isinstance(logo, UploadFileStarlette) and logo.filename:
+        ruta = await _guardar_imagen(logo, "logo")
+        if ruta:
+            cfg.logo = ruta
+            db.commit()
+    return _redirect("/", msg="Tu espacio de trabajo está listo. Completa la guía para crear tu primer PDF.")
+
+
+# ---------------------------------------------------------------------------
 # Inicio
 # ---------------------------------------------------------------------------
 
 @app.get("/", response_class=HTMLResponse)
 def inicio(request: Request, db: Session = Depends(get_db)):
+    cfg = _config(db)
+    if not cfg.onboarding_completado:
+        return _redirect("/bienvenida")
     marcar_vencidos(db)
     total_presupuestos = db.query(Presupuesto).count()
     total_clientes = db.query(Cliente).count()
@@ -668,6 +727,11 @@ def inicio(request: Request, db: Session = Depends(get_db)):
     margen_estimado = sum(p.margen for p in db.query(Presupuesto).filter(Presupuesto.estado.in_(["aprobado", "aprobado_parcialmente", "en_ejecucion", "finalizado"])).all())
     proyectos_activos = db.query(Proyecto).filter(Proyecto.estado.in_(["en_ejecucion", "pausado"])).count()
     analisis_precios = analizar_catalogo_partidas(db)
+    recorrido_inicial = (
+        estado_recorrido_inicial(db, cfg)
+        if cfg.onboarding_modo in {"demo", "limpio"}
+        else None
+    )
     return TEMPLATES.TemplateResponse(
         request,
         "index.html",
@@ -686,6 +750,7 @@ def inicio(request: Request, db: Session = Depends(get_db)):
             "descuentos_concedidos": descuentos_concedidos, "margen_estimado": margen_estimado,
             "proyectos_activos": proyectos_activos,
             "analisis_precios": analisis_precios,
+            "recorrido_inicial": recorrido_inicial,
         },
     )
 
@@ -3411,12 +3476,17 @@ def descargar_pdf(presupuesto_id: int, inline: int = 0, db: Session = Depends(ge
     presupuesto = db.get(Presupuesto, presupuesto_id)
     if presupuesto is None:
         return _redirect("/presupuestos", error="Presupuesto no encontrado.")
+    cfg = _config(db)
     resultado = _generar_pdf_seguro(
-        lambda: pdf_service.generar_pdf(presupuesto, _config(db)),
+        lambda: pdf_service.generar_pdf(presupuesto, cfg),
         f"el PDF del presupuesto {presupuesto.numero}",
     )
     if isinstance(resultado, Response) and resultado.status_code != 200:
         return resultado
+    if not inline and not presupuesto.es_demo and not cfg.onboarding_pdf_descargado:
+        cfg.onboarding_pdf_descargado = True
+        cfg.primer_pdf_at = datetime.utcnow()
+        db.commit()
     return _respuesta_pdf(resultado, f"presupuesto_{presupuesto.numero}.pdf", inline)
 
 
@@ -3455,6 +3525,8 @@ async def guardar_configuracion(request: Request, db: Session = Depends(get_db))
     cfg.empresa_nombre = str(form.get("empresa_nombre", "")).strip() or "Mi Empresa"
     cfg.empresa_legal = str(form.get("empresa_legal", "")).strip()
     cfg.empresa_rif = str(form.get("empresa_rif", "")).strip()
+    cfg.empresa_pais = str(form.get("empresa_pais", "Venezuela")).strip() or "Venezuela"
+    cfg.empresa_ciudad = str(form.get("empresa_ciudad", "")).strip()
     cfg.empresa_direccion = str(form.get("empresa_direccion", "")).strip()
     cfg.empresa_telefono = str(form.get("empresa_telefono", "")).strip()
     cfg.empresa_email = str(form.get("empresa_email", "")).strip()
@@ -3810,7 +3882,12 @@ def _partida_catalogo_json(partida: Partida) -> dict:
 
 
 @app.get("/partidas", response_class=HTMLResponse)
-def listar_partidas(request: Request, q: str = "", db: Session = Depends(get_db)):
+def listar_partidas(request: Request, q: str = "", desde: str = "", db: Session = Depends(get_db)):
+    if desde == "inicio":
+        cfg = _config(db)
+        if not cfg.onboarding_catalogo_revisado:
+            cfg.onboarding_catalogo_revisado = True
+            db.commit()
     query = db.query(Partida)
     if q.strip():
         like = f"%{q.strip()}%"

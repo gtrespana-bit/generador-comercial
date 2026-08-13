@@ -113,7 +113,7 @@ TOTAL** sobre fondo azul-grisáceo con faja azul y numeración de páginas
 - **Paginación** del historial (25 por página) e **índices** en la base de
   datos para que todo siga rápido con miles de registros.
 - **Configuración**: nombre comercial, razón social, RIF, teléfono, email,
-  web, dirección, **logotipo propio** (con **control de tamaño en el PDF**),
+  país, ciudad, web, dirección, **logotipo propio** (con **control de tamaño en el PDF**),
   color de marca y valores por defecto (moneda, IVA, validez, notas,
   condiciones). Una instalación nueva usa datos empresariales neutros; cada
   empresa debe completar su propia información antes de emitir documentos.
@@ -128,12 +128,12 @@ TOTAL** sobre fondo azul-grisáceo con faja azul y numeración de páginas
   de datos también se puede cambiar con la variable de entorno
   `COTIZAT_DB` para apuntar una instalación nueva al mismo archivo. El nombre
   histórico `PRESUPUESTOS_DB` continúa aceptándose por compatibilidad.
-- **Datos de demostración**: la primera ejecución crea un cliente, un
-  catálogo base de partidas de lujo (incluidas las partidas de suelos
-  «Levantado de pavimento laminado», «Preparación y nivelación suelo
-  existente», «Solado de baldosas cerámicas en capa fina», «Rodapie lacado
-  en blanco» y «Material Cerámico para Suelos») y un presupuesto de ejemplo
-  completo (se pueden editar o eliminar).
+- **Primer inicio**: una instalación nueva solicita los datos mínimos de la
+  empresa y permite elegir entre **ejemplo guiado** e **instalación limpia**.
+  El ejemplo carga un catálogo base, productos, packs, un cliente y un
+  presupuesto ficticios, identificados como demostración y con precios que
+  deben revisarse. La opción limpia no añade catálogos ni documentos. El
+  dashboard guía hasta la primera descarga de un PDF real.
 
 ## Requisitos
 
@@ -181,9 +181,10 @@ app/
 ├── main.py            # Rutas y lógica de la aplicación
 ├── database.py        # Conexión SQLite, inicialización y migraciones
 ├── models.py          # Cliente, Presupuesto, Capítulo, Item, Medición, Config
-├── seeds.py           # Datos de demostración (primera ejecución)
+├── seeds.py           # Catálogos y datos ficticios del modo demostración
 ├── utils.py           # Formatos de moneda/cantidades/fecha (estilo venezolano)
 ├── services/
+│   ├── onboarding.py  # Primer inicio y progreso hasta el primer PDF
 │   └── pdf.py         # Motor del PDF estilo documento de referencia (ReportLab)
 ├── templates/         # Páginas HTML (Jinja2)
 └── static/
@@ -245,7 +246,7 @@ las últimas líneas del registro.
    - Si **aparece**, las líneas siguientes explican qué pasó.
 2. **«El servidor local no respondió en N s»**: la aplicación tardó demasiado
    en prepararse. Es normal la primera vez en equipos lentos (el antivirus
-   escanea el programa y se crea la base de datos con los datos de ejemplo).
+   escanea el programa y se crea o migra la base de datos local).
    Vuelve a intentarlo. Si se repite, arranca la app con más margen:
    `set COTIZAT_ESPERA=300` y luego ejecuta `CotizaT.exe` desde esa
    misma ventana.

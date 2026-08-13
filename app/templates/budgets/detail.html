@@ -4,8 +4,9 @@
 <div class="page-head">
   <div>
     <p class="crumb">📄 <a href="/presupuestos">Presupuestos</a> › {{ p.numero }}</p>
-    <h1>Presupuesto {{ p.numero }}</h1>
+    <h1>Presupuesto {{ p.numero }}{% if p.es_demo %} <span class="badge">Demostración</span>{% endif %}</h1>
     <p class="subtitle">{% if p.titulo %}{{ p.titulo }} · {% endif %}Creado el {{ p.created_at.strftime('%d/%m/%Y %H:%M') if p.created_at else '' }}</p>
+    {% if p.es_demo %}<p class="hint">Este documento es ficticio. Puedes explorarlo, editarlo o eliminarlo; no cuenta como tu primer presupuesto real.</p>{% endif %}
   </div>
   <div class="actions">
     {% set wa = p.cliente.telefono | whatsapp('Hola ' ~ p.cliente.nombre ~ ', te comparto el presupuesto ' ~ p.numero ~ ' (' ~ (p.titulo or '') ~ ') por un total de ' ~ (p.total | money(p.moneda)) ~ '. Validez de la oferta: ' ~ p.validez_dias ~ ' días.') %}

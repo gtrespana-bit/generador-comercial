@@ -50,6 +50,7 @@ class Cliente(Base):
     telefono = Column(String(50), default="")
     email = Column(String(200), default="")
     direccion = Column(Text, default="")
+    es_demo = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     presupuestos = relationship("Presupuesto", back_populates="cliente")
@@ -73,6 +74,7 @@ class Presupuesto(Base):
     impuesto_pct = Column(Float, default=16.0)
     descuento_pct = Column(Float, default=0.0)
     estado = Column(String(20), default="borrador")
+    es_demo = Column(Boolean, default=False)
     notas = Column(Text, default="")
     condiciones = Column(Text, default="")
     con_portada = Column(Boolean, default=False)
@@ -655,11 +657,21 @@ class Configuracion(Base):
     empresa_nombre = Column(String(200), default="Mi Empresa")
     empresa_legal = Column(String(250), default="")       # razón social
     empresa_rif = Column(String(50), default="")
+    empresa_pais = Column(String(80), default="Venezuela")
+    empresa_ciudad = Column(String(120), default="")
     empresa_direccion = Column(Text, default="")
     empresa_telefono = Column(String(50), default="")
     empresa_email = Column(String(200), default="")
     empresa_web = Column(String(200), default="")
     logo = Column(String(300), default="")                # ruta bajo app/static
+    # Primer inicio y recorrido hasta el primer PDF real.
+    onboarding_completado = Column(Boolean, default=False)
+    onboarding_modo = Column(String(20), default="")      # demo / limpio / existente
+    onboarding_iniciado_at = Column(DateTime, nullable=True)
+    onboarding_completado_at = Column(DateTime, nullable=True)
+    onboarding_catalogo_revisado = Column(Boolean, default=False)
+    onboarding_pdf_descargado = Column(Boolean, default=False)
+    primer_pdf_at = Column(DateTime, nullable=True)
     # Valores por defecto para presupuestos nuevos
     iva_default = Column(Float, default=16.0)
     moneda_default = Column(String(10), default="USD")
@@ -1055,10 +1067,13 @@ class FacturaItem(Base):
 
 DATOS_EMPRESA_DEFECTO = {
     "empresa_nombre": "Mi Empresa",
+    "empresa_pais": "Venezuela",
+    "empresa_ciudad": "",
     "empresa_telefono": "",
     "empresa_email": "",
     "empresa_web": "",
     "empresa_direccion": "",
+    "onboarding_completado": False,
 }
 
 
@@ -1203,9 +1218,11 @@ def migrar(engine):
     aditivas = {
         "clientes": [
             ("pais", "VARCHAR(80) DEFAULT 'Venezuela'"),
+            ("es_demo", "BOOLEAN DEFAULT 0"),
         ],
         "presupuestos": [
             ("titulo", "VARCHAR(250) DEFAULT ''"),
+            ("es_demo", "BOOLEAN DEFAULT 0"),
             ("direccion_obra", "VARCHAR(300) DEFAULT ''"),
             ("codigo_postal", "VARCHAR(20) DEFAULT ''"),
             ("con_portada", "BOOLEAN DEFAULT 0"),
@@ -1227,8 +1244,17 @@ def migrar(engine):
         ],
         "configuracion": [
             ("empresa_legal", "VARCHAR(250) DEFAULT ''"),
+            ("empresa_pais", "VARCHAR(80) DEFAULT 'Venezuela'"),
+            ("empresa_ciudad", "VARCHAR(120) DEFAULT ''"),
             ("empresa_web", "VARCHAR(200) DEFAULT ''"),
             ("logo", "VARCHAR(300) DEFAULT ''"),
+            ("onboarding_completado", "BOOLEAN DEFAULT 0"),
+            ("onboarding_modo", "VARCHAR(20) DEFAULT ''"),
+            ("onboarding_iniciado_at", "DATETIME"),
+            ("onboarding_completado_at", "DATETIME"),
+            ("onboarding_catalogo_revisado", "BOOLEAN DEFAULT 0"),
+            ("onboarding_pdf_descargado", "BOOLEAN DEFAULT 0"),
+            ("primer_pdf_at", "DATETIME"),
             ("condiciones_default", "TEXT DEFAULT ''"),
             ("pdf_color", "VARCHAR(10) DEFAULT '#04265D'"),
             ("logo_ancho_pdf", "FLOAT DEFAULT 360"),

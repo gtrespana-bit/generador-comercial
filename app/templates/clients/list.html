@@ -24,7 +24,7 @@
     <tbody>
       {% for c in clientes %}
       <tr>
-        <td><a class="link" href="/clientes/{{ c.id }}/editar">{{ c.nombre }}</a></td>
+        <td><a class="link" href="/clientes/{{ c.id }}/editar">{{ c.nombre }}</a>{% if c.es_demo %} <span class="badge">Demo</span>{% endif %}</td>
         <td>{{ c.rif }}</td>
         <td>{{ c.telefono }}</td>
         <td>{{ c.email }}</td>

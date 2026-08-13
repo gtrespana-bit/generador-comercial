@@ -4,7 +4,7 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-from sqlalchemy import create_engine, event
+from sqlalchemy import create_engine, event, inspect
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 from .branding import DATABASE_FILENAME, resolve_data_directory
@@ -76,19 +76,30 @@ def get_db():
         db.close()
 
 
-def init_db():
-    """Crea las tablas, aplica migraciones y siembra los datos de demo."""
-    from . import models  # noqa: F401  (registra los modelos en Base)
-    from .seeds import sembrar_catalogo, sembrar_demo, sembrar_productos, sembrar_recetas
+def _es_esquema_anterior_al_onboarding() -> bool:
+    """Detecta una base existente creada antes del asistente de primer inicio."""
+    inspector = inspect(engine)
+    if not inspector.has_table("configuracion"):
+        return False
+    columnas = {columna["name"] for columna in inspector.get_columns("configuracion")}
+    return "onboarding_completado" not in columnas
 
+
+def init_db():
+    """Crea/migra la base y deja que una instalación nueva elija su contenido."""
+    from . import models  # noqa: F401  (registra los modelos en Base)
+    from .services.onboarding import marcar_instalacion_anterior
+
+    instalacion_anterior = _es_esquema_anterior_al_onboarding()
     Base.metadata.create_all(bind=engine)
     models.migrar(engine)
     with SessionLocal() as db:
         models.asegurar_config(db)
-        sembrar_catalogo(db)
-        sembrar_productos(db)
-        sembrar_recetas(db)
-        sembrar_demo(db)
+        # Una actualización no debe interrumpir al usuario con un asistente ni
+        # volver a sembrar datos. Solo las bases nuevas conservan el estado
+        # pendiente para elegir entre demo e instalación limpia.
+        if instalacion_anterior:
+            marcar_instalacion_anterior(db)
 
 
 # ---------------------------------------------------------------------------
@@ -172,7 +183,11 @@ def restaurar_base(origen: Path, uploads_origen: Path | None = None) -> None:
     # Crea las tablas nuevas que pueda necesitar la versión actual y
     # reaplica migraciones: así un backup de una versión anterior queda
     # al día al restaurarlo.
+    instalacion_anterior = _es_esquema_anterior_al_onboarding()
     Base.metadata.create_all(bind=engine)
     models.migrar(engine)
     with SessionLocal() as db:
         models.asegurar_config(db)
+        if instalacion_anterior:
+            from .services.onboarding import marcar_instalacion_anterior
+            marcar_instalacion_anterior(db)

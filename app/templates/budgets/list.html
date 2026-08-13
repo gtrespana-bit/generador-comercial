@@ -39,7 +39,7 @@
     <tbody>
       {% for p in presupuestos %}
       <tr>
-        <td><a class="link" href="/presupuestos/{{ p.id }}">{{ p.numero }}</a></td>
+        <td><a class="link" href="/presupuestos/{{ p.id }}">{{ p.numero }}</a>{% if p.es_demo %} <span class="badge">Demo</span>{% endif %}</td>
         <td>{{ p.fecha | fecha }}</td>
         <td>{{ p.cliente.nombre }}</td>
         <td><span class="badge badge-{{ p.estado }}">{{ p.estado | capitalize }}</span></td>

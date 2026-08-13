@@ -91,13 +91,13 @@ Al trabajar en una tarea de este plan se debe:
   Evidencia: FastAPI + Jinja2 + SQLAlchemy + SQLite + ReportLab + JavaScript modular; aplicación empaquetable para Windows.
 
 - [x] **E0-002 — Ejecutar la suite automatizada.**  
-  Evidencia actualizada: 68 pruebas superadas con `PYTHONPATH=. .venv/bin/pytest -q` el 13/08/2026.
+  Evidencia actualizada: 78 pruebas superadas con `PYTHONPATH=. .venv/bin/pytest -q` el 13/08/2026.
 
 - [x] **E0-003 — Verificar el arranque y las rutas principales.**  
   Evidencia: las pantallas principales y la generación de PDF respondieron correctamente en una base limpia.
 
 - [x] **E0-004 — Medir el contenido inicial de una instalación nueva.**  
-  Evidencia: 58 partidas, 3 productos, 6 packs de estancia, 0 recursos y 1 presupuesto de demostración.
+  Evidencia actualizada: el modo demo carga 58 partidas, 3 productos, 6 packs de estancia y 1 presupuesto ficticio; el modo limpio comienza sin catálogos, clientes ni documentos.
 
 - [x] **E0-005 — Revisar la preparación actual para SaaS.**  
   Resultado: no existen autenticación, usuarios, roles, organizaciones, aislamiento multiempresa, CSRF, cobro recurrente ni operación cloud.
@@ -132,7 +132,7 @@ Al trabajar en una tarea de este plan se debe:
 
 # ETAPA 1 — Preparación de la versión comercial local
 
-**Estado:** ACTIVA — identidad comercial aplicada; experiencia de primer inicio pendiente
+**Estado:** ACTIVA — identidad comercial y primer inicio aplicados; validación externa pendiente
 **Objetivo:** transformar la aplicación privada en un producto instalable, honesto, estable y comprensible que pueda entregarse a los primeros clientes.  
 **Estimación orientativa:** 4–6 semanas, ajustable después del inventario inicial.  
 **Restricción:** no añadir grandes módulos funcionales durante esta etapa.
@@ -162,16 +162,17 @@ Al trabajar en una tarea de este plan se debe:
 
 ## 1.2 Primer inicio y experiencia básica
 
-- [ ] **E1-008 — Diseñar el recorrido ideal del primer presupuesto.**  
-  Meta: empresa → cliente → pack/capítulo → cantidades/precios → PDF en menos de 20 minutos.
+- [x] **E1-008 — Diseñar el recorrido ideal del primer presupuesto.**
+  Recorrido y presupuesto temporal documentados en `docs/RECORRIDO_PRIMER_PRESUPUESTO.md`: empresa → contenido inicial → catálogo → cliente → presupuesto → descarga de PDF. La meta de 20 minutos sigue siendo una hipótesis pendiente de validación externa.
 
-- [ ] **E1-009 — Crear asistente de primer inicio.**  
-  Datos mínimos: nombre comercial, razón social, RIF, teléfono, email, moneda, IVA, logo y ubicación.
+- [x] **E1-009 — Crear asistente de primer inicio.**
+  Evidencia: `/bienvenida` solicita nombre comercial, razón social, RIF, teléfono, email, país, ciudad, dirección, moneda, IVA y logo; conserva todo en la base local y solo exige el nombre para avanzar. Una base anterior migra sin mostrar el asistente ni sobrescribir su empresa.
 
-- [ ] **E1-010 — Permitir elegir entre datos de demostración o instalación limpia.**
+- [x] **E1-010 — Permitir elegir entre datos de demostración o instalación limpia.**
+  Evidencia: la elección explícita e idempotente carga catálogo, productos, packs, cliente y presupuesto ficticios, o deja la instalación vacía. Los registros demo se identifican en la interfaz y no completan hitos reales.
 
-- [ ] **E1-011 — Crear una lista de inicio o panel de bienvenida.**  
-  Ejemplo: configurar empresa, crear cliente, revisar catálogo, crear primer presupuesto, descargar PDF.
+- [x] **E1-011 — Crear una lista de inicio o panel de bienvenida.**
+  Evidencia: el dashboard muestra cinco pasos comprobados con datos locales: empresa, catálogo, cliente real, presupuesto real y descarga del primer PDF. Abrir una vista previa o descargar el PDF demo no completa el último paso.
 
 - [ ] **E1-012 — Ejecutar pruebas de usabilidad con al menos 3 personas ajenas al desarrollo.**  
   No se les debe explicar cada paso; se observarán bloqueos y preguntas.
@@ -685,6 +686,7 @@ Estas cifras no son precios definitivos; deben probarse en la Etapa 2.
 | 13/08/2026 | D-010 | Adoptar **CotizaT** como nombre comercial | El usuario priorizó comprensión inmediata y aprobó expresamente el nombre | Tras revisión marcaria profesional |
 | 13/08/2026 | D-011 | Usar la propuesta «Convierte tu catálogo y tus precios en presupuestos de obra claros, editables y listos para presentar» | Es verificable con el producto actual y no promete resultados financieros | Después de pruebas comerciales |
 | 13/08/2026 | D-012 | Renombrar ejecutable e instalador, manteniendo compatibilidad automática con la carpeta histórica de datos | Aplicar la marca sin hacer desaparecer bases, imágenes ni backups existentes | Después de probar actualización en Windows |
+| 13/08/2026 | D-013 | Sustituir la siembra automática por una elección explícita entre demo y limpio | Evitar datos y precios inesperados, y respetar a quien importará un catálogo propio | Después de pruebas de usabilidad |
 
 ---
 
@@ -700,18 +702,17 @@ Se completará durante la Etapa 2. No deben guardarse aquí nombres, teléfonos 
 
 # 11. Próximo bloque de trabajo
 
-## Etapa 1 activa — siguiente bloque: primer inicio y recorrido básico
+## Etapa 1 activa — siguiente bloque: validación del primer recorrido
 
-La entrega de identidad y honestidad quedó aplicada en código. El siguiente trabajo, en este orden, es:
+La identidad, el alcance honesto y el primer inicio ya están aplicados. El siguiente trabajo, en este orden, es:
 
-1. **E1-002:** completar reserva de activos y revisión marcaria profesional de CotizaT; el riesgo no se considera cerrado por ausencia DNS o RDAP.
-2. **E1-008:** definir el recorrido ideal empresa → cliente → catálogo/pack → presupuesto → PDF.
-3. **E1-009 a E1-011:** crear asistente de primer inicio, elección demo/limpio y lista de bienvenida.
-4. **E1-007:** terminar la revisión integral de microcopy dentro del nuevo onboarding.
-5. **E1-012 a E1-014:** probar el recorrido con usuarios ajenos, medir el primer PDF y simplificar con evidencia.
-6. **E1-042 a E1-045:** compilar y probar en Windows la actualización de marca, la conservación de datos y el instalador en equipos externos antes de cerrar la entrega comercial.
+1. **E1-012 y E1-013:** observar al menos tres personas ajenas al desarrollo y medir, sin guiarlas paso a paso, el tiempo real hasta el primer PDF.
+2. **E1-014 y E1-007:** corregir los bloqueos observados y terminar la revisión integral de microcopy con evidencia de esas sesiones.
+3. **E1-002:** completar reserva de activos y revisión marcaria profesional de CotizaT; el riesgo no se considera cerrado por ausencia DNS o RDAP.
+4. **E1-022 a E1-031:** auditar procedencia, estructura y vigencia del catálogo comercial antes de redistribuir precios.
+5. **E1-042 a E1-045:** compilar y probar en Windows la actualización de marca, la conservación de datos y el instalador en equipos externos antes de cerrar la entrega comercial.
 
-Evidencia de la entrega de identidad (13/08/2026):
+Evidencia acumulada al 13/08/2026:
 
 - Marca, descriptor y propuesta centralizados en `app/branding.py`.
 - Configuración y demo sin datos personales reales en `app/models.py` y `app/seeds.py`.
@@ -720,7 +721,9 @@ Evidencia de la entrega de identidad (13/08/2026):
 - Ejecutable e instalador renombrados como CotizaT.
 - Migración no destructiva: una instalación nueva usa `%LOCALAPPDATA%\CotizaT`; una actualización sigue usando `%LOCALAPPDATA%\Presupuestos` si allí encuentra datos previos. Los aliases técnicos anteriores continúan aceptándose.
 - El PDF real versionado y el script histórico con datos privados fueron retirados del árbol actual.
-- Pruebas de regresión de branding, privacidad, alcance fiscal y compatibilidad añadidas en `tests/test_branding.py`; suite completa: **68 aprobadas**.
+- Recorrido inicial documentado en `docs/RECORRIDO_PRIMER_PRESUPUESTO.md` y aplicado mediante `/bienvenida` y la guía verificable del dashboard.
+- Modos demo y limpio probados; reintentos tras fallo parcial no duplican contenido y las instalaciones heredadas conservan configuración y datos.
+- Suite completa: **78 pruebas aprobadas**; compilación sintáctica, revisión de diff y smoke tests HTTP correctos.
 
 ---
 

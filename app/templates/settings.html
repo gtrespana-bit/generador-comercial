@@ -26,6 +26,14 @@
         <input type="text" name="empresa_rif" value="{{ cfg.empresa_rif }}" placeholder="J-XXXXXXXX-X">
       </div>
       <div class="field">
+        <label>País</label>
+        <input type="text" name="empresa_pais" value="{{ cfg.empresa_pais or 'Venezuela' }}" placeholder="Venezuela">
+      </div>
+      <div class="field">
+        <label>Ciudad</label>
+        <input type="text" name="empresa_ciudad" value="{{ cfg.empresa_ciudad }}" placeholder="p. ej. Valencia">
+      </div>
+      <div class="field">
         <label>Teléfono</label>
         <input type="text" name="empresa_telefono" value="{{ cfg.empresa_telefono }}" placeholder="+58 212 000 0000">
       </div>
