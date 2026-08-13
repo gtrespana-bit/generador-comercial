@@ -131,7 +131,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
+<script nonce="{{ request.state.csp_nonce }}">
 (function () {
   var coste = document.querySelector('[name="precio_compra"]');
   var venta = document.querySelector('[name="precio_unitario"]');

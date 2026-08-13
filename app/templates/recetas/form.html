@@ -84,7 +84,7 @@
   </div>
 </form>
 
-<script>
+<script nonce="{{ request.state.csp_nonce }}">
 document.addEventListener("DOMContentLoaded", function() {
   var tbody = document.getElementById("receta-tbody");
   var inputJson = document.getElementById("receta-datos-json");

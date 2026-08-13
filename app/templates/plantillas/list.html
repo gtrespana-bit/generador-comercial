@@ -27,7 +27,7 @@
         <td><strong>{{ t.nombre }}</strong></td>
         <td class="muted">{{ t.created_at.strftime('%d/%m/%Y') if t.created_at else '' }}</td>
         <td style="text-align:right;">
-          <form method="post" action="/plantillas/{{ t.id }}/eliminar" class="inline" onsubmit="return confirm('¿Eliminar la plantilla «{{ t.nombre }}»?');">
+          <form method="post" action="/plantillas/{{ t.id }}/eliminar" class="inline" data-confirm="¿Eliminar la plantilla «{{ t.nombre }}»?">
             <button class="btn btn-sm btn-danger" type="submit">🗑 Eliminar</button>
           </form>
         </td>

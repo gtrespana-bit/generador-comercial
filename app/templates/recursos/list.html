@@ -18,15 +18,15 @@
   <div class="toolbar-row">
     <div class="toolbar-search">
       <span class="search-icon">🔍</span>
-      <input type="text" id="buscador" placeholder="Buscar por código, descripción, grupo o proveedor…" oninput="filtrarRecursos()" autocomplete="off">
-      <button id="clearSearch" class="btn btn-ghost btn-sm" style="display:none; padding:2px 6px;" onclick="clearSearch()" title="Limpiar">✕</button>
+      <input type="text" id="buscador" placeholder="Buscar por código, descripción, grupo o proveedor…" data-cotizat-input="recursos-filter" autocomplete="off">
+      <button id="clearSearch" class="btn btn-ghost btn-sm" style="display:none; padding:2px 6px;" data-cotizat-click="recursos-clear-search" title="Limpiar">✕</button>
     </div>
     <div class="toolbar-actions">
       <div class="toolbar-meta" id="filterMeta"></div>
       <div class="toolbar-divider"></div>
-      <button class="btn btn-sm" onclick="toggleAllCats(true)">⤢ Expandir</button>
-      <button class="btn btn-sm" onclick="toggleAllCats(false)">⤡ Contraer</button>
-      <form method="post" action="/recursos/bulk-ajustar" onsubmit="return confirm('¿Ajustar TODOS los recursos visibles con este %?');" style="display:flex;gap:4px;align-items:center;">
+      <button class="btn btn-sm" data-cotizat-click="recursos-expand-all">⤢ Expandir</button>
+      <button class="btn btn-sm" data-cotizat-click="recursos-collapse-all">⤡ Contraer</button>
+      <form method="post" action="/recursos/bulk-ajustar" data-confirm="¿Ajustar TODOS los recursos visibles con este %?" style="display:flex;gap:4px;align-items:center;">
         <input type="number" name="porcentaje" step="any" placeholder="± %" required style="width:72px; padding:.3rem .5rem; border:1px solid var(--border); border-radius:6px; font-size:.82rem;">
         <button class="btn btn-sm" type="submit" title="Ajustar todos los precios unitarios">% Todos</button>
       </form>
@@ -38,19 +38,19 @@
     <div class="bulk-left">
       <span class="bulk-count"><strong id="sel-count-recursos">0</strong> seleccionados</span>
       <span class="bulk-sep"></span>
-      <button type="button" class="btn btn-sm btn-danger" onclick="bulkDeleteRecursos()">🗑 Eliminar</button>
+      <button type="button" class="btn btn-sm btn-danger" data-cotizat-click="recursos-bulk-delete">🗑 Eliminar</button>
       <div class="bulk-move" style="display:flex;gap:4px;align-items:center;">
         <input type="number" id="bulk-pct" placeholder="± %" step="any" style="width:84px;">
-        <button type="button" class="btn btn-sm" onclick="bulkAjustarSeleccion('pct')">% Ajustar</button>
+        <button type="button" class="btn btn-sm" data-cotizat-click="recursos-bulk-percent">% Ajustar</button>
         <span style="font-size:.75rem;color:var(--text-muted);">o</span>
         <input type="number" id="bulk-precio" placeholder="Nuevo precio" step="any" style="width:110px;">
-        <button type="button" class="btn btn-sm btn-primary" onclick="bulkAjustarSeleccion('fijo')">💰 Fijar</button>
+        <button type="button" class="btn btn-sm btn-primary" data-cotizat-click="recursos-bulk-fixed">💰 Fijar</button>
       </div>
     </div>
     <div class="bulk-right">
-      <button type="button" class="btn btn-sm" onclick="selectVisibleRecursos()">Sel. visibles</button>
-      <button type="button" class="btn btn-sm" onclick="selectNoneRecursos()">Limpiar</button>
-      <button type="button" class="btn btn-ghost btn-sm" onclick="selectNoneRecursos()">✕</button>
+      <button type="button" class="btn btn-sm" data-cotizat-click="recursos-select-visible">Sel. visibles</button>
+      <button type="button" class="btn btn-sm" data-cotizat-click="recursos-select-none">Limpiar</button>
+      <button type="button" class="btn btn-ghost btn-sm" data-cotizat-click="recursos-select-none">✕</button>
     </div>
   </div>
 </div>
@@ -62,16 +62,16 @@
         <h3>Familias</h3>
         <span class="cat-sidebar-subtitle">{{ categorias|length }} familias · {{ recursos|length }} recursos</span>
       </div>
-      <button class="btn-icon" onclick="toggleCatSidebar()" title="Contraer panel">⟨</button>
+      <button class="btn-icon" data-cotizat-click="recursos-toggle-sidebar" title="Contraer panel">⟨</button>
     </div>
     <div class="cat-sidebar-body">
-      <button class="category-btn active" data-cat="todas" id="btn-cat-todas" onclick="filtrarCategoria('todas')">
+      <button class="category-btn active" data-cat="todas" id="btn-cat-todas" data-cotizat-click="recursos-filter-category">
         <span class="cat-btn-left"><span>📂</span><span class="cat-name">Todas</span></span>
         <span class="cat-count">{{ recursos|length }}</span>
       </button>
       {% for cat in categorias %}
         {% set cat_recursos = recursos|selectattr('categoria','equalto',cat)|list %}
-        <button class="category-btn" data-cat="{{ cat }}" id="btn-cat-{{ cat }}" onclick="filtrarCategoria('{{ cat }}')">
+        <button class="category-btn" data-cat="{{ cat }}" id="btn-cat-{{ cat }}" data-cotizat-click="recursos-filter-category">
           <span class="cat-btn-left">
             <span>
               {% if cat == 'mano_obra' %}👷{% elif cat == 'materiales' %}🧱{% elif cat == 'complementarios' %}➕{% else %}🔧{% endif %}
@@ -91,7 +91,7 @@
     </div>
   </aside>
 
-  <button id="catSidebarExpand" class="cat-sidebar-expand" onclick="toggleCatSidebar()" style="display:none;">
+  <button id="catSidebarExpand" class="cat-sidebar-expand" data-cotizat-click="recursos-toggle-sidebar" style="display:none;">
     <span>☰</span> <span>Familias</span> <span class="badge" style="margin-left:6px;">{{ recursos|length }}</span>
   </button>
 
@@ -101,7 +101,7 @@
         {% set cat_recursos = recursos|selectattr('categoria','equalto',cat)|list %}
         {% if cat_recursos %}
         <section class="cat-section" data-categoria="{{ cat }}" id="group-{{ cat }}">
-          <header class="cat-section-head" onclick="toggleCatSection(this)">
+          <header class="cat-section-head" data-cotizat-click="recursos-toggle-section">
             <button class="cat-toggle">▼</button>
             <div class="cat-title-wrap">
               <h2 class="cat-title">
@@ -110,11 +110,11 @@
               </h2>
               <span class="cat-meta">{{ cat_recursos|length }} recursos · {{ cat_recursos|map(attribute='precio')|sum|round(2) }} total</span>
             </div>
-            <div class="cat-actions" onclick="event.stopPropagation()">
+            <div class="cat-actions" data-cotizat-click="stop-propagation">
               <label class="cat-check" title="Seleccionar toda la familia">
-                <input type="checkbox" onchange="toggleSelectCat('{{ cat }}', this.checked)"> <span style="font-size:.75rem;">Sel.</span>
+                <input type="checkbox" data-cotizat-change="recursos-select-category"> <span style="font-size:.75rem;">Sel.</span>
               </label>
-              <button type="button" class="btn btn-sm" onclick="toggleCatSection(this.closest('.cat-section').querySelector('.cat-section-head'))">⤢</button>
+              <button type="button" class="btn btn-sm" data-cotizat-click="recursos-toggle-section-button">⤢</button>
             </div>
             <span class="cat-badge">{{ cat_recursos|length }}</span>
           </header>
@@ -123,7 +123,7 @@
               <table class="partidas-table">
                 <thead>
                   <tr>
-                    <th class="col-check"><input type="checkbox" onchange="toggleSelectCat('{{ cat }}', this.checked)"></th>
+                    <th class="col-check"><input type="checkbox" data-cotizat-change="recursos-select-category"></th>
                     <th class="col-code sortable">Código</th>
                     <th class="col-nombre sortable" style="min-width:220px;">Recurso</th>
                     <th class="col-und">Und.</th>
@@ -136,7 +136,7 @@
                 <tbody>
                   {% for r in cat_recursos|sort(attribute='descripcion') %}
                   <tr class="recurso-tr" data-id="{{ r.id }}" data-categoria="{{ r.categoria }}" data-nombre="{{ (r.codigo ~ ' ' ~ r.descripcion ~ ' ' ~ r.grupo ~ ' ' ~ r.proveedor) | lower }}">
-                    <td class="col-check"><input type="checkbox" class="row-check" data-id="{{ r.id }}" onchange="onRowCheck(this)"></td>
+                    <td class="col-check"><input type="checkbox" class="row-check" data-id="{{ r.id }}" data-cotizat-change="recursos-row-check"></td>
                     <td class="col-code">
                       {% if r.codigo %}<code class="code-badge">{{ r.codigo[:14] }}</code>{% else %}<span class="code-empty">—</span>{% endif %}
                     </td>
@@ -162,7 +162,7 @@
                     <td class="col-actions right">
                       <div class="row-actions">
                         <a href="/recursos/{{ r.id }}/editar" class="btn btn-sm btn-ghost" title="Editar">✏️</a>
-                        <form method="post" action="/recursos/{{ r.id }}/eliminar" style="display:inline" onsubmit="return confirm('¿Eliminar recurso «{{ r.descripcion|replace("'", "\\'") }}»?')">
+                        <form method="post" action="/recursos/{{ r.id }}/eliminar" style="display:inline" data-confirm="¿Eliminar recurso «{{ r.descripcion }}»?">
                           <button type="submit" class="btn btn-sm btn-ghost" style="color:var(--rose);" title="Eliminar">✕</button>
                         </form>
                       </div>
@@ -206,13 +206,13 @@
     <div id="noResults" class="card empty" style="display:none; text-align:center;">
       <p style="font-weight:600;">Sin resultados</p>
       <p class="hint">No hay recursos que coincidan con la búsqueda o familia seleccionada.</p>
-      <button class="btn btn-sm" onclick="clearFilters()">Limpiar filtros</button>
+      <button class="btn btn-sm" data-cotizat-click="recursos-clear-filters">Limpiar filtros</button>
     </div>
   </div>
 </div>
 
 
-<script>
+<script nonce="{{ request.state.csp_nonce }}">
 let categoriaSeleccionada = 'todas';
 function toggleCatSidebar(){
   const s=document.getElementById('catSidebar'), e=document.getElementById('catSidebarExpand'), l=document.getElementById('catalogLayout');
@@ -380,12 +380,33 @@ function sortTable(table, colIndex, asc){
   });
   rows.forEach(r=>tbody.appendChild(r));
 }
+window.CotizatActions.register('recursos-filter', () => filtrarRecursos());
+window.CotizatActions.register('recursos-clear-search', () => clearSearch());
+window.CotizatActions.register('recursos-expand-all', () => toggleAllCats(true));
+window.CotizatActions.register('recursos-collapse-all', () => toggleAllCats(false));
+window.CotizatActions.register('recursos-bulk-delete', () => bulkDeleteRecursos());
+window.CotizatActions.register('recursos-bulk-percent', () => bulkAjustarSeleccion('pct'));
+window.CotizatActions.register('recursos-bulk-fixed', () => bulkAjustarSeleccion('fijo'));
+window.CotizatActions.register('recursos-select-visible', () => selectVisibleRecursos());
+window.CotizatActions.register('recursos-select-none', () => selectNoneRecursos());
+window.CotizatActions.register('recursos-toggle-sidebar', () => toggleCatSidebar());
+window.CotizatActions.register('recursos-filter-category', element => filtrarCategoria(element.dataset.cat || 'todas'));
+window.CotizatActions.register('recursos-toggle-section', element => toggleCatSection(element));
+window.CotizatActions.register('recursos-toggle-section-button', element => {
+  const header = element.closest('.cat-section')?.querySelector('.cat-section-head');
+  if (header) toggleCatSection(header);
+});
+window.CotizatActions.register('recursos-select-category', element => {
+  const section = element.closest('.cat-section');
+  toggleSelectCat(section?.dataset.categoria || '', element.checked);
+});
+window.CotizatActions.register('recursos-row-check', element => onRowCheck(element));
+window.CotizatActions.register('recursos-clear-filters', () => clearFilters());
+
 document.addEventListener('DOMContentLoaded', ()=>{
   const collapsed=localStorage.getItem('recursos-sidebar-collapsed')==='true';
   const s=document.getElementById('catSidebar'), e=document.getElementById('catSidebarExpand');
   if(collapsed && s && e){ s.style.display='none'; e.style.display='inline-flex'; document.getElementById('catalogLayout')?.classList.add('sidebar-hidden'); }
-  document.querySelectorAll('.row-check').forEach(ch=>ch.addEventListener('change', ()=>onRowCheck(ch)));
-  const busc=document.getElementById('buscador'); if(busc) busc.addEventListener('input', filtrarRecursos);
   makeTableSortable(); filtrarRecursos();
 });
 </script>

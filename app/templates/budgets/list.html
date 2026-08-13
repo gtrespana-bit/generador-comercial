@@ -54,7 +54,7 @@
             <form method="post" action="/presupuestos/{{ p.id }}/duplicar" style="display:inline;">
               <button class="btn btn-sm" type="submit" title="Duplicar">📋</button>
             </form>
-            <a class="btn btn-sm" href="/presupuestos/{{ p.id }}/pdf" download="presupuesto_{{ p.numero }}.pdf" onclick="descargarPDF(event, this.href, 'presupuesto_{{ p.numero }}.pdf')">PDF</a>
+            <a class="btn btn-sm" href="/presupuestos/{{ p.id }}/pdf" download="presupuesto_{{ p.numero }}.pdf" data-cotizat-click="download-pdf">PDF</a>
           </div>
         </td>
       </tr>

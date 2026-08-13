@@ -7,7 +7,7 @@
     <p class="subtitle">Inserta capítulos completos de remodelación de lujo escalados proporcionalmente a los m² de cada estancia en 1 segundo (Alt+R).</p>
   </div>
   <div class="page-head-actions" style="display:flex; gap:0.5rem; align-items:center;">
-    <form method="post" action="/recetas/restaurar-demo" class="inline" onsubmit="return confirm('¿Verificar y restaurar los 6 presets iniciales de reforma de lujo?');">
+    <form method="post" action="/recetas/restaurar-demo" class="inline" data-confirm="¿Verificar y restaurar los 6 presets iniciales de reforma de lujo?">
       <button class="btn" type="submit" title="Restaura los packs de demostración iniciales de alta gama">⚡ Restaurar Presets</button>
     </form>
     <a href="/recetas/nueva" class="btn btn-primary">＋ Nuevo Pack de Estancia</a>
@@ -53,7 +53,7 @@
           <form method="post" action="/recetas/{{ r.id }}/duplicar" class="inline" style="margin-right:4px;">
             <button class="btn btn-sm" type="submit" title="Duplicar pack">⧉</button>
           </form>
-          <form method="post" action="/recetas/{{ r.id }}/eliminar" class="inline" onsubmit="return confirm('¿Eliminar el pack de estancia «{{ r.nombre }}»?');">
+          <form method="post" action="/recetas/{{ r.id }}/eliminar" class="inline" data-confirm="¿Eliminar el pack de estancia «{{ r.nombre }}»?">
             <button class="btn btn-sm btn-danger" type="submit" title="Eliminar">🗑</button>
           </form>
         </td>

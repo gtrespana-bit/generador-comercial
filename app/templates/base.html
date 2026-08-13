@@ -9,9 +9,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/static/css/style.css">
+<link rel="stylesheet" href="/static/css/csp.css">
+<script src="/static/js/csp_events.js"></script>
 </head>
 <body spellcheck="true">
-<script>
+<script nonce="{{ request.state.csp_nonce }}">
   window.cotizatArchivoUrl = function (referencia) {
     var localSQLite = {{ 'true' if database_is_sqlite else 'false' }};
     var valor = String(referencia || '').trim();
@@ -140,7 +142,7 @@
 <main class="content">
   {% block content %}{% endblock %}
 </main>
-<script>
+<script nonce="{{ request.state.csp_nonce }}">
   (function() {
     var toggle = document.getElementById('sidebar-toggle');
     if (toggle) {

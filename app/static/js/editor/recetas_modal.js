@@ -127,7 +127,13 @@
     tbody.innerHTML = "";
 
     if (!recetaSeleccionada || !recetaSeleccionada.items || !recetaSeleccionada.items.length) {
-      tbody.innerHTML = '<tr><td colspan="7" class="empty" style="text-align:center; padding:2rem;">El pack no tiene partidas asociadas.</td></tr>';
+      var emptyRow = document.createElement("tr");
+      var emptyCell = document.createElement("td");
+      emptyCell.colSpan = 7;
+      emptyCell.className = "empty receta-preview-empty";
+      emptyCell.textContent = "El pack no tiene partidas asociadas.";
+      emptyRow.appendChild(emptyCell);
+      tbody.appendChild(emptyRow);
       badgeTotal.textContent = "Total estimado: $" + money(0);
       return;
     }
@@ -148,14 +154,27 @@
       totalEst += imp;
 
       var tr = document.createElement("tr");
-      tr.innerHTML =
-        '<td style="text-align:center; color:var(--muted);">' + (idx + 1) + '</td>' +
-        '<td><strong>' + (item.nombre || "") + '</strong></td>' +
-        '<td style="text-align:center;"><span class="badge" style="font-size:0.75rem;">' + tagTipo + '</span></td>' +
-        '<td style="text-align:center; font-weight:600;">' + cant + '</td>' +
-        '<td style="text-align:center;">' + (item.unidad || "m²") + '</td>' +
-        '<td style="text-align:right;">$' + money(prec) + '</td>' +
-        '<td style="text-align:right; font-weight:600;">$' + money(imp) + '</td>';
+      function cell(text, className) {
+        var td = document.createElement("td");
+        if (className) td.className = className;
+        td.textContent = text;
+        tr.appendChild(td);
+        return td;
+      }
+      cell(String(idx + 1), "receta-preview-center receta-preview-muted");
+      var nameCell = cell("", "");
+      var strong = document.createElement("strong");
+      strong.textContent = item.nombre || "";
+      nameCell.appendChild(strong);
+      var typeCell = cell("", "receta-preview-center");
+      var badge = document.createElement("span");
+      badge.className = "badge receta-preview-badge";
+      badge.textContent = tagTipo;
+      typeCell.appendChild(badge);
+      cell(String(cant), "receta-preview-center receta-preview-strong");
+      cell(item.unidad || "m²", "receta-preview-center");
+      cell("$" + money(prec), "receta-preview-right");
+      cell("$" + money(imp), "receta-preview-right receta-preview-strong");
       tbody.appendChild(tr);
     });
 

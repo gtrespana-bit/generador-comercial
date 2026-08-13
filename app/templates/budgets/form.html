@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "partidas/_editor.html" import editor_partida_catalogo %}
+{% from "partidas/_editor.html" import editor_partida_catalogo with context %}
 {% block title %}{{ 'Editar presupuesto' if presupuesto else 'Nuevo presupuesto' }}{% endblock %}
 
 {% block content %}
@@ -37,7 +37,7 @@
 
   <!-- DATOS GENERALES -->
   <div class="card collapsible-card builder-general-card" id="card-datos-generales">
-    <div class="card-header-toggle" onclick="toggleDatosGenerales()" style="display:flex; justify-content:space-between; align-items:center; cursor:pointer; user-select:none; padding: 2px 4px;">
+    <div class="card-header-toggle" data-cotizat-click="budget-toggle-general" style="display:flex; justify-content:space-between; align-items:center; cursor:pointer; user-select:none; padding: 2px 4px;">
       <div style="display:flex; align-items:center; flex-wrap:wrap; gap:12px; width: 100%;">
         <h2 style="margin:0; font-size:1.15rem; display:flex; align-items:center; gap:6px;">⚙️ Datos generales y cliente</h2>
         <span id="datos-generales-resumen" style="font-size:0.82rem; color:var(--text-soft); font-weight:normal; margin-left:10px; background:var(--bg); padding:4px 10px; border-radius:15px; border:1px solid var(--border); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:calc(100% - 250px);"></span>
@@ -48,7 +48,7 @@
       <div class="form-grid">
         <div class="field">
           <label>Cliente *</label>
-          <select name="client_id" required onchange="onClienteSeleccionado(this)">
+          <select name="client_id" required data-cotizat-change="budget-client-selected">
             <option value="">— Selecciona un cliente —</option>
             {% for c in clientes %}
             <option value="{{ c.id }}" {{ 'selected' if presupuesto and presupuesto.client_id == c.id else '' }}>{{ c.nombre }}</option>
@@ -142,7 +142,7 @@
           <div class="field field-full"><label>Estilo visual del PDF</label><select name="estilo_pdf"><option value="elegante" {{ 'selected' if not presupuesto or presupuesto.estilo_pdf == 'elegante' }}>Elegante</option><option value="tecnica" {{ 'selected' if presupuesto and presupuesto.estilo_pdf == 'tecnica' }}>Técnica</option><option value="minimalista" {{ 'selected' if presupuesto and presupuesto.estilo_pdf == 'minimalista' }}>Minimalista</option><option value="corporativa" {{ 'selected' if presupuesto and presupuesto.estilo_pdf == 'corporativa' }}>Corporativa</option><option value="compacta" {{ 'selected' if presupuesto and presupuesto.estilo_pdf == 'compacta' }}>Compacta</option><option value="editorial" {{ 'selected' if presupuesto and presupuesto.estilo_pdf == 'editorial' }}>Editorial</option></select></div>
           <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:12px;">
             <label style="display:flex; align-items:center; gap:8px; font-weight:normal; cursor:pointer;">
-              <input type="checkbox" name="con_portada" id="chk-con-portada" value="1" onchange="toggleUploaderPortadas()"
+              <input type="checkbox" name="con_portada" id="chk-con-portada" value="1" data-cotizat-change="budget-toggle-cover"
                 {% if presupuesto %}
                   {{ 'checked' if presupuesto.con_portada else '' }}
                 {% else %}
@@ -169,7 +169,7 @@
               🛡️ Incluir tabla de garantías por tipo de trabajo (pisos, albañilería, fontanería, electricidad, pintura…)
             </label>
             <label style="display:flex; align-items:center; gap:8px; font-weight:normal; cursor:pointer;">
-              <input type="checkbox" name="mostrar_firmas" id="chk-firmas" value="1" onchange="toggleWrapperFirma()"
+              <input type="checkbox" name="mostrar_firmas" id="chk-firmas" value="1" data-cotizat-change="budget-toggle-signature"
                 {% if presupuesto %}
                   {{ 'checked' if presupuesto.mostrar_firmas else '' }}
                 {% else %}
@@ -240,7 +240,7 @@
           {% if partidas_catalogo %}
             {% for p in partidas_catalogo %}
             <div class="partida-catalogo" data-nombre="{{ (p.nombre ~ ' ' ~ p.descripcion ~ ' ' ~ p.codigo_interno ~ ' ' ~ p.subcategoria ~ ' ' ~ p.proveedor)|lower }}" data-categoria="{{ p.categoria|lower }}" data-idx="{{ loop.index0 }}">
-              <button type="button" class="btn btn-sm" onclick="agregarDesdeCatalogo({{ loop.index0 }})" style="flex:1; text-align:left; border:none; background:none; cursor:pointer; font-size:0.82rem;">
+              <button type="button" class="btn btn-sm" data-cotizat-click="budget-add-catalog" data-index="{{ loop.index0 }}" style="flex:1; text-align:left; border:none; background:none; cursor:pointer; font-size:0.82rem;">
                 <strong>{{ p.nombre }}</strong> <span style="color:var(--text-muted); font-size:0.75em;">({{ p.unidad }})</span>
               </button>
               <span class="badge badge-categoria">{{ p.categoria }}</span>
@@ -703,8 +703,8 @@
 {% endblock %}
 
 {% block scripts %}
-<script id="campos-importacion-inline" type="application/json">{{ campos_importables | tojson }}</script>
-<script id="datos-iniciales" type="application/json">
+<script nonce="{{ request.state.csp_nonce }}" id="campos-importacion-inline" type="application/json">{{ campos_importables | tojson }}</script>
+<script nonce="{{ request.state.csp_nonce }}" id="datos-iniciales" type="application/json">
 {% if presupuesto %}{
   "capitulos": [
     {% for cap in presupuesto.capitulos %}{
@@ -785,7 +785,7 @@
   ]
 }{% else %}{ "capitulos": [{ "nombre": "", "partidas": [] }]}{% endif %}
 </script>
-<script id="datos-catalogo" type="application/json">
+<script nonce="{{ request.state.csp_nonce }}" id="datos-catalogo" type="application/json">
 [
   {% for p in partidas_catalogo %}{
     "id": {{ p.id | tojson }},
@@ -814,7 +814,7 @@
   }{{ "," if not loop.last }}{% endfor %}
 ]
 </script>
-<script id="datos-productos" type="application/json">
+<script nonce="{{ request.state.csp_nonce }}" id="datos-productos" type="application/json">
 [
   {% for p in productos_catalogo %}{
     "id": {{ p.id | tojson }},
@@ -837,7 +837,7 @@
   }{{ "," if not loop.last }}{% endfor %}
 ]
 </script>
-<script id="datos-recursos" type="application/json">
+<script nonce="{{ request.state.csp_nonce }}" id="datos-recursos" type="application/json">
 [
   {% for r in recursos_catalogo %}{
     "id": {{ r.id | tojson }},
@@ -855,7 +855,7 @@
 <datalist id="categorias-disponibles">
   {% for c in categorias %}<option value="{{ c }}"></option>{% endfor %}
 </datalist>
-<script>
+<script nonce="{{ request.state.csp_nonce }}">
   window.BUDGET_ID = {{ presupuesto.id if presupuesto else 'null' }};
   // Borrador del autoguardado persistido en el servidor (solo si es más
   // reciente que el último guardado del presupuesto).
@@ -871,7 +871,7 @@
     por_coste: {{ 'true' if cfg.estimar_tiempo_por_coste else 'false' }}
   };
 </script>
-<script>
+<script nonce="{{ request.state.csp_nonce }}">
   // Beneficio por partida: siempre visible según petición del usuario (fila Benef. y totales)
   document.body.classList.add('beneficio-on');
 </script>
@@ -893,7 +893,7 @@
 <script src="/static/js/editor/dictado.js"></script>
 <script src="/static/js/editor/generador.js"></script>
 <script src="/static/js/editor/recetas_modal.js"></script>
-<script>
+<script nonce="{{ request.state.csp_nonce }}">
   (function () {
     var chk = document.getElementById('usar-funciones-avanzadas');
     var panel = document.getElementById('advanced-budget-fields');
@@ -1041,6 +1041,22 @@
       resSpan.textContent = resumenText;
     }
   }
+
+  window.CotizatActions.register("budget-toggle-general", function () {
+    toggleDatosGenerales();
+  });
+  window.CotizatActions.register("budget-client-selected", function (element) {
+    onClienteSeleccionado(element);
+  });
+  window.CotizatActions.register("budget-toggle-cover", function () {
+    toggleUploaderPortadas();
+  });
+  window.CotizatActions.register("budget-toggle-signature", function () {
+    toggleWrapperFirma();
+  });
+  window.CotizatActions.register("budget-add-catalog", function (element) {
+    agregarDesdeCatalogo(Number(element.dataset.index || 0));
+  });
 
   document.addEventListener("DOMContentLoaded", function() {
     var fields = ['client_id', 'titulo', 'moneda', 'fecha', 'estado'];

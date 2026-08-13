@@ -109,7 +109,7 @@
 </div>
 {% endif %}
 
-<script>
+<script nonce="{{ request.state.csp_nonce }}">
 (function () {
   var UNIDAD_PARTIDA = {{ (d.unidad or part.unidad) | tojson }};
   var SIMBOLO = {{ simbolo_moneda | tojson }};

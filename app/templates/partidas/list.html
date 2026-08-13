@@ -17,15 +17,15 @@
   <div class="toolbar-row">
     <div class="toolbar-search">
       <span class="search-icon">🔍</span>
-      <input type="text" id="buscador" placeholder="Buscar por nombre, código, proveedor, descripción…" oninput="filtrarPartidas()" autocomplete="off">
-      <button id="clearSearch" class="btn btn-ghost btn-sm" style="display:none; padding:2px 6px;" onclick="clearSearch()" title="Limpiar">✕</button>
+      <input type="text" id="buscador" placeholder="Buscar por nombre, código, proveedor, descripción…" data-cotizat-input="partidas-filter" autocomplete="off">
+      <button id="clearSearch" class="btn btn-ghost btn-sm" style="display:none; padding:2px 6px;" data-cotizat-click="partidas-clear-search" title="Limpiar">✕</button>
     </div>
     <div class="toolbar-actions">
       <div class="toolbar-meta" id="filterMeta"></div>
       <div class="toolbar-divider"></div>
-      <button class="btn btn-sm" onclick="toggleAllCats(true)" title="Expandir categorías y subcategorías">⤢ Expandir todo</button>
-      <button class="btn btn-sm" onclick="toggleAllCats(false)" title="Contraer categorías y subcategorías">⤡ Contraer todo</button>
-      <form method="post" action="/partidas/ajustar" onsubmit="return confirm('¿Ajustar TODAS las partidas visibles con este %?');" style="display:flex;gap:4px;align-items:center;">
+      <button class="btn btn-sm" data-cotizat-click="partidas-expand-all" title="Expandir categorías y subcategorías">⤢ Expandir todo</button>
+      <button class="btn btn-sm" data-cotizat-click="partidas-collapse-all" title="Contraer categorías y subcategorías">⤡ Contraer todo</button>
+      <form method="post" action="/partidas/ajustar" data-confirm="¿Ajustar TODAS las partidas visibles con este %?" style="display:flex;gap:4px;align-items:center;">
         <input type="number" name="porcentaje" step="any" placeholder="± %" required style="width:72px; padding:.3rem .5rem; border:1px solid var(--border); border-radius:6px; font-size:.82rem;">
         <button class="btn btn-sm" type="submit" title="Ajustar precios de todas las partidas del catálogo">% Precios</button>
       </form>
@@ -38,20 +38,20 @@
     <div class="bulk-left">
       <span class="bulk-count"><strong id="sel-count-partidas">0</strong> seleccionadas</span>
       <span class="bulk-sep"></span>
-      <button type="button" class="btn btn-sm btn-danger" onclick="bulkDeletePartidas()">🗑 Eliminar</button>
-      <button type="button" class="btn btn-sm" onclick="bulkExportSelectedPartidas()">📥 Exportar</button>
+      <button type="button" class="btn btn-sm btn-danger" data-cotizat-click="partidas-bulk-delete">🗑 Eliminar</button>
+      <button type="button" class="btn btn-sm" data-cotizat-click="partidas-bulk-export">📥 Exportar</button>
       <div class="bulk-move">
         <input type="text" id="move-cat-partidas" placeholder="Nueva categoría" list="categorias-datalist-partidas">
-        <button type="button" class="btn btn-sm" onclick="bulkMoveCategoryPartidas()">➡️ A categoría</button>
+        <button type="button" class="btn btn-sm" data-cotizat-click="partidas-bulk-move-category">➡️ A categoría</button>
         <input type="text" id="move-subcat-partidas" placeholder="Subcategoría" list="subcategorias-datalist-partidas">
-        <button type="button" class="btn btn-sm" onclick="bulkMoveSubcategoryPartidas()">↳ A subcategoría</button>
+        <button type="button" class="btn btn-sm" data-cotizat-click="partidas-bulk-move-subcategory">↳ A subcategoría</button>
       </div>
     </div>
     <div class="bulk-right">
-      <button type="button" class="btn btn-sm" onclick="selectVisiblePartidas()">Sel. visibles</button>
-      <button type="button" class="btn btn-sm" onclick="selectNonePartidas()">Limpiar</button>
-      <button type="button" class="btn btn-sm btn-danger" onclick="deleteAllVisiblePartidas()" title="Borra todo lo que está filtrado y visible">Borrar visibles</button>
-      <button type="button" class="btn btn-ghost btn-sm" onclick="selectNonePartidas()" title="Cerrar">✕</button>
+      <button type="button" class="btn btn-sm" data-cotizat-click="partidas-select-visible">Sel. visibles</button>
+      <button type="button" class="btn btn-sm" data-cotizat-click="partidas-select-none">Limpiar</button>
+      <button type="button" class="btn btn-sm btn-danger" data-cotizat-click="partidas-delete-visible" title="Borra todo lo que está filtrado y visible">Borrar visibles</button>
+      <button type="button" class="btn btn-ghost btn-sm" data-cotizat-click="partidas-select-none" title="Cerrar">✕</button>
     </div>
   </div>
 </div>
@@ -64,7 +64,7 @@
         <h3>Categorías</h3>
         <span class="cat-sidebar-subtitle">{{ partidas|groupby('categoria')|list|length }} categorías · {{ partidas|length }} partidas</span>
       </div>
-      <button class="btn-icon" id="btnCollapseSidebar" onclick="toggleCatSidebar()" title="Contraer panel">⟨</button>
+      <button class="btn-icon" id="btnCollapseSidebar" data-cotizat-click="partidas-toggle-sidebar" title="Contraer panel">⟨</button>
     </div>
 
     <div class="cat-sidebar-body">
@@ -77,7 +77,7 @@
         </form>
         <span class="hint">Para crear una subcategoría, elige/escribe primero su categoría.</span>
       </details>
-      <button class="category-btn active" data-cat="todas" id="btn-cat-todas" onclick="filtrarCategoria('todas')">
+      <button class="category-btn active" data-cat="todas" id="btn-cat-todas" data-cotizat-click="partidas-filter-category">
         <span class="cat-btn-left"><span>📂</span><span class="cat-name">Todas</span></span>
         <span class="cat-count">{{ partidas | length }}</span>
       </button>
@@ -87,7 +87,7 @@
       {% set sub_count = sub_groups|length %}
       {% set has_subs = (sub_groups|length > 1) or (sub_groups|length==1 and (sub_groups[0][0]|string).strip() != "" ) %}
       <div class="cat-group {% if has_subs %}has-subs{% endif %}" data-cat="{{ cat }}">
-        <button class="category-btn {% if not has_subs %}no-subs{% endif %} drop-category" data-cat="{{ cat }}" onclick="filtrarCategoria('{{ cat|replace("'", "\\'") }}')" id="btn-cat-{{ cat|replace(' ', '_') }}">
+        <button class="category-btn {% if not has_subs %}no-subs{% endif %} drop-category" data-cat="{{ cat }}" data-cotizat-click="partidas-filter-category" id="btn-cat-{{ cat|replace(' ', '_') }}">
           <span class="cat-btn-left">
             {% if has_subs %}<span class="cat-arrow">▸</span>{% else %}<span style="width:10px;display:inline-block;"></span>{% endif %}
             <span>🏷️</span>
@@ -100,7 +100,7 @@
           {% for subcat, sub_partidas in sub_groups|sort(attribute='grouper') %}
           {% set label = subcat if (subcat|string).strip() != "" else "Sin subcategoría" %}
           {% set sid = (cat ~ '::' ~ (subcat if (subcat|string).strip() != "" else '__none__')) %}
-          <button class="subcat-btn drop-subcategory" data-cat="{{ cat }}" data-subcat="{{ subcat }}" title="{{ label }} · {{ sub_partidas|length }} partidas" onclick="filtrarSubcategoria('{{ cat|replace("'", "\\'") }}', '{{ subcat|replace("'", "\\'") }}')">
+          <button class="subcat-btn drop-subcategory" data-cat="{{ cat }}" data-subcat="{{ subcat }}" title="{{ label }} · {{ sub_partidas|length }} partidas" data-cotizat-click="partidas-filter-subcategory">
             <span class="subcat-name">{{ label }}</span>
             <span class="subcat-count">{{ sub_partidas|length }}</span>
           </button>
@@ -112,7 +112,7 @@
 
       {% for registro in categorias_catalogo if registro.categoria not in (partidas|map(attribute='categoria')|list) and not registro.subcategoria %}
       <div class="cat-group" data-cat="{{ registro.categoria }}">
-        <button class="category-btn drop-category" data-cat="{{ registro.categoria }}" onclick="filtrarCategoria('{{ registro.categoria|replace("'", "\'") }}')">
+        <button class="category-btn drop-category" data-cat="{{ registro.categoria }}" data-cotizat-click="partidas-filter-category">
           <span class="cat-btn-left"><span>🏷️</span><span class="cat-name">{{ registro.categoria }}</span></span><span class="cat-count">0</span>
         </button>
       </div>
@@ -129,7 +129,7 @@
   </aside>
 
   <!-- BOTÓN PARA RE-EXPANDIR CUANDO ESTÁ COLAPSADO -->
-  <button id="catSidebarExpand" class="cat-sidebar-expand" onclick="toggleCatSidebar()" title="Mostrar categorías" style="display:none;">
+  <button id="catSidebarExpand" class="cat-sidebar-expand" data-cotizat-click="partidas-toggle-sidebar" title="Mostrar categorías" style="display:none;">
     <span>☰</span> <span>Categorías</span> <span class="badge" style="margin-left:6px;">{{ partidas|length }}</span>
   </button>
 
@@ -138,7 +138,7 @@
     {% for cat, cat_partidas in partidas | groupby('categoria') %}
     {% set sub_groups = cat_partidas|groupby('subcategoria') %}
     <section class="cat-section" data-categoria="{{ cat }}" id="group-{{ cat|replace(' ', '_') }}">
-      <header class="cat-section-head drop-category" onclick="toggleCatSection(this)">
+      <header class="cat-section-head drop-category" data-cotizat-click="partidas-toggle-section">
         <button class="cat-toggle" aria-label="Contraer">▼</button>
         <div class="cat-title-wrap">
           <h2 class="cat-title"><span class="cat-dot"></span> {{ cat }}</h2>
@@ -146,12 +146,12 @@
           {% set has_real = has_subs %}
           <span class="cat-meta">{{ cat_partidas|length }} partidas{% if has_real %} · {{ sub_groups|length }} subcategoría{{ 's' if sub_groups|length!=1 }}{% endif %}</span>
         </div>
-        <div class="cat-actions" onclick="event.stopPropagation()">
+        <div class="cat-actions" data-cotizat-click="stop-propagation">
           <label class="cat-check" title="Seleccionar toda la categoría">
-            <input type="checkbox" class="cat-select-all" onchange="toggleSelectCat('{{ cat|replace("'", "\\'") }}', this.checked)"> <span style="font-size:.75rem;">Sel.</span>
+            <input type="checkbox" class="cat-select-all" data-cotizat-change="partidas-select-category"> <span style="font-size:.75rem;">Sel.</span>
           </label>
-          <button type="button" class="btn btn-sm" onclick="toggleCatSection(this.closest('.cat-section').querySelector('.cat-section-head'))" title="Contraer/Expandir">⤢</button>
-          <button type="button" class="btn btn-sm btn-ghost" style="color:var(--rose);" onclick="deleteCategory('{{ cat|replace("'", "\\'") }}')" title="Borrar categoría completa">🗑</button>
+          <button type="button" class="btn btn-sm" data-cotizat-click="partidas-toggle-section-button" title="Contraer/Expandir">⤢</button>
+          <button type="button" class="btn btn-sm btn-ghost" style="color:var(--rose);" data-cotizat-click="partidas-delete-category" title="Borrar categoría completa">🗑</button>
         </div>
         <span class="cat-badge">{{ cat_partidas|length }}</span>
       </header>
@@ -165,7 +165,7 @@
             <table class="partidas-table">
               <thead>
                 <tr>
-                  <th class="col-check"><input type="checkbox" class="subcat-master" onchange="toggleSelectSubcat('{{ cat|replace("'", "\\'") }}','', this.checked)" title="Seleccionar subcategoría"></th>
+                  <th class="col-check"><input type="checkbox" class="subcat-master" data-cotizat-change="partidas-select-subcategory" title="Seleccionar subcategoría"></th>
                   <th class="col-code sortable" title="Código interno">Código</th>
                   <th class="col-nombre sortable">Partida</th>
                   <th class="col-und">Und.</th>
@@ -182,7 +182,7 @@
                 {% set margen = (p.precio_unitario or 0) - coste %}
                 {% set recursos = catalogo_descompuestos.get(p.id, []) %}
                 <tr draggable="true" class="partida-tr" data-id="{{ p.id }}" data-categoria="{{ p.categoria }}" data-subcategoria="{{ p.subcategoria }}" data-nombre="{{ (p.nombre ~ ' ' ~ p.descripcion ~ ' ' ~ p.categoria ~ ' ' ~ p.subcategoria ~ ' ' ~ p.codigo_interno ~ ' ' ~ p.codigo_externo ~ ' ' ~ p.proveedor) | lower }}" data-precio="{{ p.precio_unitario }}" data-coste="{{ coste }}" data-usos="{{ p.usos or 0 }}">
-                  <td class="col-check"><input type="checkbox" class="row-check" data-id="{{ p.id }}" onchange="onRowCheck(this)"></td>
+                  <td class="col-check"><input type="checkbox" class="row-check" data-id="{{ p.id }}" data-cotizat-change="partidas-row-check"></td>
                   <td class="col-code">
                     {% if p.codigo_interno or p.codigo_externo %}
                       <code class="code-badge" title="{{ p.codigo_interno or p.codigo_externo }}">{{ (p.codigo_interno or p.codigo_externo)[:12] }}</code>
@@ -223,7 +223,7 @@
                   <td class="col-actions right">
                     <div class="row-actions">
                       <a href="/partidas/{{ p.id }}/editar" class="btn btn-sm btn-ghost" title="Editar">✏️</a>
-                      <form method="post" action="/partidas/{{ p.id }}/eliminar" style="display:inline" onsubmit="return confirm('¿Eliminar «{{ p.nombre|replace("'", "\\'") }}» del catálogo?')">
+                      <form method="post" action="/partidas/{{ p.id }}/eliminar" style="display:inline" data-confirm="¿Eliminar «{{ p.nombre }}» del catálogo?">
                         <button type="submit" class="btn btn-sm btn-ghost" style="color:var(--rose);" title="Eliminar">✕</button>
                       </form>
                     </div>
@@ -257,14 +257,14 @@
         {% for subcat, sub_partidas in sub_groups|sort(attribute='grouper') %}
         {% set label = subcat if (subcat|string).strip() != "" else "Sin subcategoría" %}
         <div class="subcat-section" data-categoria="{{ cat }}" data-subcategoria="{{ subcat }}">
-          <header class="subcat-head drop-subcategory" onclick="toggleSubcat(this)">
+          <header class="subcat-head drop-subcategory" data-cotizat-click="partidas-toggle-subcategory">
             <span class="subcat-toggle">▼</span>
             <span class="subcat-label">{{ label }}</span>
             <span class="subcat-count-badge">{{ sub_partidas|length }}</span>
             <span class="subcat-hint">{{ sub_partidas|length }} partidas</span>
-            <span class="subcat-actions" onclick="event.stopPropagation()">
+            <span class="subcat-actions" data-cotizat-click="stop-propagation">
               <label class="subcat-check" title="Seleccionar subcategoría">
-                <input type="checkbox" onchange="toggleSelectSubcat('{{ cat|replace("'", "\\'") }}','{{ subcat|replace("'", "\\'") }}', this.checked)"> <span style="font-size:.72rem;color:var(--text-soft);">Sel.</span>
+                <input type="checkbox" data-cotizat-change="partidas-select-subcategory"> <span style="font-size:.72rem;color:var(--text-soft);">Sel.</span>
               </label>
             </span>
           </header>
@@ -272,7 +272,7 @@
             <table class="partidas-table">
               <thead>
                 <tr>
-                  <th class="col-check"><input type="checkbox" class="subcat-master" onchange="toggleSelectSubcat('{{ cat|replace("'", "\\'") }}','{{ subcat|replace("'", "\\'") }}', this.checked)" title="Seleccionar subcategoría"></th>
+                  <th class="col-check"><input type="checkbox" class="subcat-master" data-cotizat-change="partidas-select-subcategory" title="Seleccionar subcategoría"></th>
                   <th class="col-code sortable" title="Código interno">Código</th>
                   <th class="col-nombre sortable">Partida</th>
                   <th class="col-und">Und.</th>
@@ -289,7 +289,7 @@
                 {% set margen = (p.precio_unitario or 0) - coste %}
                 {% set recursos = catalogo_descompuestos.get(p.id, []) %}
                 <tr draggable="true" class="partida-tr" data-id="{{ p.id }}" data-categoria="{{ p.categoria }}" data-subcategoria="{{ p.subcategoria }}" data-nombre="{{ (p.nombre ~ ' ' ~ p.descripcion ~ ' ' ~ p.categoria ~ ' ' ~ p.subcategoria ~ ' ' ~ p.codigo_interno ~ ' ' ~ p.codigo_externo ~ ' ' ~ p.proveedor) | lower }}" data-precio="{{ p.precio_unitario }}" data-coste="{{ coste }}" data-usos="{{ p.usos or 0 }}">
-                  <td class="col-check"><input type="checkbox" class="row-check" data-id="{{ p.id }}" onchange="onRowCheck(this)"></td>
+                  <td class="col-check"><input type="checkbox" class="row-check" data-id="{{ p.id }}" data-cotizat-change="partidas-row-check"></td>
                   <td class="col-code">
                     {% if p.codigo_interno or p.codigo_externo %}
                       <code class="code-badge" title="{{ p.codigo_interno or p.codigo_externo }}">{{ (p.codigo_interno or p.codigo_externo)[:12] }}</code>
@@ -330,7 +330,7 @@
                   <td class="col-actions right">
                     <div class="row-actions">
                       <a href="/partidas/{{ p.id }}/editar" class="btn btn-sm btn-ghost" title="Editar">✏️</a>
-                      <form method="post" action="/partidas/{{ p.id }}/eliminar" style="display:inline" onsubmit="return confirm('¿Eliminar «{{ p.nombre|replace("'", "\\'") }}» del catálogo?')">
+                      <form method="post" action="/partidas/{{ p.id }}/eliminar" style="display:inline" data-confirm="¿Eliminar «{{ p.nombre }}» del catálogo?">
                         <button type="submit" class="btn btn-sm btn-ghost" style="color:var(--rose);" title="Eliminar">✕</button>
                       </form>
                     </div>
@@ -378,7 +378,7 @@
     <div id="noResults" class="card empty" style="display:none; text-align:center;">
       <p style="font-weight:600;">Sin resultados</p>
       <p class="hint">No hay partidas que coincidan con la búsqueda o filtros actuales.</p>
-      <button class="btn btn-sm" onclick="clearFilters()">Limpiar filtros</button>
+      <button class="btn btn-sm" data-cotizat-click="partidas-clear-filters">Limpiar filtros</button>
     </div>
   </div>
 </div>
@@ -397,7 +397,7 @@
 </datalist>
 
 
-<script>
+<script nonce="{{ request.state.csp_nonce }}">
 let categoriaSeleccionada = 'todas';
 let subcategoriaSeleccionada = '';
 
@@ -888,6 +888,41 @@ function sortTable(table, colIndex, asc) {
   rows.forEach(pair=> pair.forEach(r=> tbody.appendChild(r)));
 }
 
+window.CotizatActions.register('partidas-filter', () => filtrarPartidas());
+window.CotizatActions.register('partidas-clear-search', () => clearSearch());
+window.CotizatActions.register('partidas-expand-all', () => toggleAllCats(true));
+window.CotizatActions.register('partidas-collapse-all', () => toggleAllCats(false));
+window.CotizatActions.register('partidas-bulk-delete', () => bulkDeletePartidas());
+window.CotizatActions.register('partidas-bulk-export', () => bulkExportSelectedPartidas());
+window.CotizatActions.register('partidas-bulk-move-category', () => bulkMoveCategoryPartidas());
+window.CotizatActions.register('partidas-bulk-move-subcategory', () => bulkMoveSubcategoryPartidas());
+window.CotizatActions.register('partidas-select-visible', () => selectVisiblePartidas());
+window.CotizatActions.register('partidas-select-none', () => selectNonePartidas());
+window.CotizatActions.register('partidas-delete-visible', () => deleteAllVisiblePartidas());
+window.CotizatActions.register('partidas-toggle-sidebar', () => toggleCatSidebar());
+window.CotizatActions.register('partidas-filter-category', element => filtrarCategoria(element.dataset.cat || 'todas'));
+window.CotizatActions.register('partidas-filter-subcategory', element => filtrarSubcategoria(element.dataset.cat || '', element.dataset.subcat || ''));
+window.CotizatActions.register('partidas-toggle-section', element => toggleCatSection(element));
+window.CotizatActions.register('partidas-toggle-section-button', element => {
+  const header = element.closest('.cat-section')?.querySelector('.cat-section-head');
+  if (header) toggleCatSection(header);
+});
+window.CotizatActions.register('partidas-toggle-subcategory', element => toggleSubcat(element));
+window.CotizatActions.register('partidas-select-category', element => {
+  const section = element.closest('.cat-section');
+  toggleSelectCat(section?.dataset.categoria || '', element.checked);
+});
+window.CotizatActions.register('partidas-select-subcategory', element => {
+  const section = element.closest('.subcat-section');
+  toggleSelectSubcat(section?.dataset.categoria || '', section?.dataset.subcategoria || '', element.checked);
+});
+window.CotizatActions.register('partidas-row-check', element => onRowCheck(element));
+window.CotizatActions.register('partidas-delete-category', element => {
+  const section = element.closest('.cat-section');
+  deleteCategory(section?.dataset.categoria || '');
+});
+window.CotizatActions.register('partidas-clear-filters', () => clearFilters());
+
 // Init
 document.addEventListener('DOMContentLoaded', () => {
   // restore sidebar collapsed state
@@ -906,13 +941,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Let's expand all initially
     g.classList.add('expanded');
   });
-  document.querySelectorAll('.row-check').forEach(ch => {
-    ch.addEventListener('change', () => onRowCheck(ch));
-  });
-  const busc = document.getElementById('buscador');
-  if (busc) {
-    busc.addEventListener('input', filtrarPartidas);
-  }
   makeTableSortable();
   initDragAndDropPartidas();
   filtrarPartidas();

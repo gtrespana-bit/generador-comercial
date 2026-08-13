@@ -12,8 +12,8 @@
     {% set wa = p.cliente.telefono | whatsapp('Hola ' ~ p.cliente.nombre ~ ', te comparto el presupuesto ' ~ p.numero ~ ' (' ~ (p.titulo or '') ~ ') por un total de ' ~ (p.total | money(p.moneda)) ~ '. Validez de la oferta: ' ~ p.validez_dias ~ ' días.') %}
     {% if wa %}<a class="btn btn-whatsapp" href="{{ wa }}" target="_blank">💬 Enviar por WhatsApp</a>{% endif %}
     <a class="btn" href="/presupuestos/{{ p.id }}/exportar" title="Descargar CSV con el detalle tabular">📥 CSV</a>
-    <button class="btn" type="button" onclick="imprimirPDF('/presupuestos/{{ p.id }}/pdf?inline=1')" title="Imprimir presupuesto en formato PDF">🖨️ Imprimir</button>
-    <a class="btn btn-primary" href="/presupuestos/{{ p.id }}/pdf" download="presupuesto_{{ p.numero }}.pdf" onclick="descargarPDF(event, this.href, 'presupuesto_{{ p.numero }}.pdf')">⬇ Descargar PDF</a>
+    <button class="btn" type="button" data-cotizat-click="print-pdf" data-url="/presupuestos/{{ p.id }}/pdf?inline=1" title="Imprimir presupuesto en formato PDF">🖨️ Imprimir</button>
+    <a class="btn btn-primary" href="/presupuestos/{{ p.id }}/pdf" download="presupuesto_{{ p.numero }}.pdf" data-cotizat-click="download-pdf">⬇ Descargar PDF</a>
     <a class="btn" href="/presupuestos/{{ p.id }}/pdf?inline=1" target="_blank">👁 Ver PDF</a>
     <a class="btn" href="/presupuestos/{{ p.id }}/tiempos" title="Estimación de horas y días laborables según los rendimientos de las partidas">⏱ Tiempo de obra</a>
     <a class="btn" href="/presupuestos/{{ p.id }}/editar">✏️ Editar</a>
@@ -27,7 +27,7 @@
     <form method="post" action="/presupuestos/{{ p.id }}/duplicar" class="inline">
       <button class="btn" type="submit">📋 Duplicar</button>
     </form>
-    <form method="post" action="/presupuestos/{{ p.id }}/eliminar" class="inline" onsubmit="return confirm('¿Eliminar este presupuesto?');">
+    <form method="post" action="/presupuestos/{{ p.id }}/eliminar" class="inline" data-confirm="¿Eliminar este presupuesto?">
       <button class="btn btn-danger" type="submit">🗑 Eliminar</button>
     </form>
   </div>
@@ -59,7 +59,7 @@
       </div>
       <div class="actions" style="margin:0;">
         <a class="btn" href="/presupuestos/{{ p.id }}/contrato?inline=1" target="_blank" title="Genera un contrato de servicios real en PDF con los datos de este presupuesto">📄 Ver contrato</a>
-        <a class="btn btn-ai" href="/presupuestos/{{ p.id }}/contrato" download="contrato_{{ p.numero }}.pdf" onclick="descargarPDF(event, this.href, 'contrato_{{ p.numero }}.pdf')">⬇ Descargar contrato</a>
+        <a class="btn btn-ai" href="/presupuestos/{{ p.id }}/contrato" download="contrato_{{ p.numero }}.pdf" data-cotizat-click="download-pdf">⬇ Descargar contrato</a>
       </div>
   </div>
 </div>
@@ -248,7 +248,7 @@
 <div class="card no-print" id="anexos">
   <h2>📎 Anexos del documento</h2><p class="hint">Añade fichas técnicas, planos, fotografías convertidas a PDF o documentos de proveedores. El PDF principal muestra su índice cuando activas esa opción en Editar.</p>
   <form method="post" action="/presupuestos/{{ p.id }}/anexos" enctype="multipart/form-data" class="form-actions"><input name="nombre" placeholder="Nombre visible del anexo" style="flex:1"><input type="file" name="archivo" accept="application/pdf" required><button class="btn btn-sm" type="submit">Añadir PDF</button></form>
-  {% if p.anexos %}<ul>{% for a in p.anexos %}<li><a class="link" target="_blank" href="{{ a.archivo | archivo_url(true) }}">{{ a.nombre }}</a> <form class="inline" method="post" action="/presupuestos/{{ p.id }}/anexos/{{ a.id }}/eliminar" onsubmit="return confirm('¿Eliminar anexo?')"><button class="btn btn-sm btn-danger" type="submit">Eliminar</button></form></li>{% endfor %}</ul>{% endif %}
+  {% if p.anexos %}<ul>{% for a in p.anexos %}<li><a class="link" target="_blank" href="{{ a.archivo | archivo_url(true) }}">{{ a.nombre }}</a> <form class="inline" method="post" action="/presupuestos/{{ p.id }}/anexos/{{ a.id }}/eliminar" data-confirm="¿Eliminar anexo?"><button class="btn btn-sm btn-danger" type="submit">Eliminar</button></form></li>{% endfor %}</ul>{% endif %}
 </div>
 
 {% if p.notas %}

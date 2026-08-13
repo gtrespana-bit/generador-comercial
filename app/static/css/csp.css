@@ -1,0 +1,7 @@
+/* Clases sin estilos inline para componentes endurecidos por CSP. */
+.receta-preview-empty { text-align: center; padding: 2rem; }
+.receta-preview-center { text-align: center; }
+.receta-preview-right { text-align: right; }
+.receta-preview-muted { color: var(--muted); }
+.receta-preview-strong { font-weight: 600; }
+.receta-preview-badge { font-size: .75rem; }

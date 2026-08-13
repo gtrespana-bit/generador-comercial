@@ -1,6 +1,9 @@
+from pathlib import Path
+import re
+
 from starlette.applications import Starlette
 from starlette.middleware import Middleware
-from starlette.responses import PlainTextResponse
+from starlette.responses import HTMLResponse, PlainTextResponse
 from starlette.routing import Route
 from starlette.testclient import TestClient
 
@@ -67,6 +70,63 @@ def test_cabeceras_defensivas_y_hsts_en_https():
     assert response.headers["cross-origin-opener-policy"] == "same-origin"
     assert "frame-ancestors 'none'" in response.headers["content-security-policy"]
     assert response.headers["strict-transport-security"].startswith("max-age=31536000")
+
+
+def test_csp_usa_nonce_unico_y_bloquea_handlers_inline():
+    async def html_con_nonce(request):
+        nonce = request.state.csp_nonce
+        return HTMLResponse(f'<script nonce="{nonce}">window.ok=true</script>')
+
+    app = Starlette(
+        routes=[Route("/html", html_con_nonce)],
+        middleware=[Middleware(WebSecurityMiddleware, enforce_csrf=True)],
+    )
+    with TestClient(app, base_url="https://cotizat.test") as client:
+        first = client.get("/html")
+        second = client.get("/html")
+
+    first_csp = first.headers["content-security-policy"]
+    first_nonce = first.text.split('nonce="', 1)[1].split('"', 1)[0]
+    second_nonce = second.text.split('nonce="', 1)[1].split('"', 1)[0]
+    script_directive = first_csp.split("script-src ", 1)[1].split(";", 1)[0]
+    assert f"'nonce-{first_nonce}'" in script_directive
+    assert "'unsafe-inline'" not in script_directive
+    assert "script-src-attr 'none'" in first_csp
+    assert first_nonce != second_nonce
+
+
+def test_plantillas_no_contienen_handlers_y_inline_usa_nonce():
+    event_attribute = re.compile(
+        r"\son(?:click|change|input|submit|load|error|blur|focus|keydown|keyup)\s*=",
+        re.IGNORECASE,
+    )
+    inline_script = re.compile(r"<script(?![^>]*\bsrc=)[^>]*>", re.IGNORECASE)
+    style_element = re.compile(r"<style[^>]*>", re.IGNORECASE)
+    for path in Path("app/templates").rglob("*.html"):
+        template = path.read_text(encoding="utf-8")
+        assert not event_attribute.search(template), path
+        assert all("nonce=" in tag for tag in inline_script.findall(template)), path
+        assert all("nonce=" in tag for tag in style_element.findall(template)), path
+
+
+def test_acciones_declarativas_tienen_handler_registrado():
+    templates = "\n".join(
+        path.read_text(encoding="utf-8")
+        for path in Path("app/templates").rglob("*.html")
+    )
+    scripts = "\n".join(
+        path.read_text(encoding="utf-8")
+        for path in Path("app/static/js").rglob("*.js")
+    ) + "\n" + templates
+    used = set(re.findall(
+        r'data-cotizat-(?:click|change|input|keyup)="([a-z0-9-]+)"',
+        templates,
+    ))
+    registered = set(re.findall(
+        r'(?:CotizatActions\.)?register\(["\']([a-z0-9-]+)["\']',
+        scripts,
+    ))
+    assert used <= registered, sorted(used - registered)
 
 
 def test_rate_limit_bloquea_rafaga_y_publica_retry_after():

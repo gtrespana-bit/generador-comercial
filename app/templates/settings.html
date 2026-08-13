@@ -48,7 +48,7 @@
       <div class="field">
         <label>Color primario de la marca (PDF)</label>
         <div style="display:flex; align-items:center; gap:10px;">
-          <input type="color" name="pdf_color" value="{{ cfg.pdf_color or '#04265D' }}" style="padding:0; width:50px; height:38px; border:1px solid var(--border); border-radius:6px; cursor:pointer;" onchange="this.nextElementSibling.textContent=this.value.toUpperCase()">
+          <input type="color" name="pdf_color" value="{{ cfg.pdf_color or '#04265D' }}" style="padding:0; width:50px; height:38px; border:1px solid var(--border); border-radius:6px; cursor:pointer;" data-cotizat-change="show-color-value">
           <span style="font-family:monospace; font-size:14px; color:var(--text-muted); text-transform:uppercase;">{{ cfg.pdf_color or '#04265D' }}</span>
         </div>
       </div>
@@ -73,7 +73,7 @@
           <input type="range" id="logo_ancho" name="logo_ancho_pdf" min="120" max="420" step="10"
                  value="{{ cfg.logo_ancho_pdf|int if cfg.logo_ancho_pdf else 360 }}"
                  style="flex:1; min-width:160px;"
-                 oninput="document.getElementById('logo_ancho_val').textContent = this.value + ' pt'">
+                 data-cotizat-input="show-logo-width">
           <span id="logo_ancho_val" style="font-family:monospace; font-size:13px; color:var(--text-muted); min-width:52px;">
             {{ cfg.logo_ancho_pdf|int if cfg.logo_ancho_pdf else 360 }} pt
           </span>
@@ -177,8 +177,7 @@
     </div>
     <div class="field">
       <label>Restaurar copia</label>
-      <form method="post" action="/configuracion/restaurar" enctype="multipart/form-data"
-            onsubmit="return confirm('⚠️ Se reemplazarán TODOS los datos actuales por los de la copia. ¿Continuar?');">
+      <form method="post" action="/configuracion/restaurar" enctype="multipart/form-data" data-confirm="⚠️ Se reemplazarán TODOS los datos actuales por los de la copia. ¿Continuar?">
         <input type="file" name="archivo" accept=".zip,.db" required style="margin-bottom:8px;">
         <button class="btn" type="submit">↩️ Restaurar copia</button>
       </form>

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Configura tu espacio · {{ product_name }}</title>
 <link rel="icon" type="image/png" href="/static/icono.png">
-<style>
+<style nonce="{{ request.state.csp_nonce }}">
   :root {
     color-scheme: light;
     --navy:#082a5e; --navy-2:#123f78; --gold:#e5ae3c; --ink:#172033;
@@ -75,7 +75,7 @@
   @media(max-width:900px){ .shell{grid-template-columns:1fr}.intro{min-height:auto;padding:30px}.intro-copy{margin:45px 0 35px}.intro h1{font-size:2.5rem}.workspace{padding:28px 18px 46px}.trust{display:none} }
   @media(max-width:620px){ .grid,.mode-grid{grid-template-columns:1fr}.step span{display:none}.card{padding:24px 18px}.summary-row{display:grid;gap:4px}.summary-row strong{text-align:left}.actions{align-items:stretch}.btn{flex:1}.actions-right{width:100%} }
 </style>
-<noscript><style>.wizard-panel{display:block!important;margin-bottom:35px}.stepper,.js-only{display:none!important}</style></noscript>
+<noscript><style nonce="{{ request.state.csp_nonce }}">.wizard-panel{display:block!important;margin-bottom:35px}.stepper,.js-only{display:none!important}</style></noscript>
 </head>
 <body>
 <div class="shell">
@@ -202,7 +202,7 @@
     </div>
   </main>
 </div>
-<script>
+<script nonce="{{ request.state.csp_nonce }}">
 (function () {
   var panels = Array.prototype.slice.call(document.querySelectorAll('.wizard-panel'));
   var steps = Array.prototype.slice.call(document.querySelectorAll('.step'));

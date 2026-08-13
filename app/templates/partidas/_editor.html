@@ -69,6 +69,6 @@
     </div>
   </details>
 
-  <script type="application/json" data-partida-editor-inicial>{{ (partida.descomposicion_json if partida and partida.descomposicion_json else '[]') | tojson }}</script>
+  <script nonce="{{ request.state.csp_nonce }}" type="application/json" data-partida-editor-inicial>{{ (partida.descomposicion_json if partida and partida.descomposicion_json else '[]') | tojson }}</script>
 </div>
 {% endmacro %}

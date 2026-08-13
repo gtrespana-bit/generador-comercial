@@ -52,17 +52,25 @@ se activa con `COTIZAT_TRUST_PROXY=true` detrás de un proxy conocido que elimin
 o sanee ese encabezado. Activarlo si el proceso recibe Internet directamente
 permitiría falsear la IP y eludir el límite.
 
-## Límite deliberado de CSP
+## CSP y límite todavía pendiente
 
-La interfaz heredada contiene scripts y estilos inline. Para no romper el
-constructor, la CSP transitoria permite `'unsafe-inline'` en `script-src` y
-`style-src`; fuentes de Google están limitadas a sus hosts oficiales. Esto
-impide plugins, objetos, framing y conexiones arbitrarias, pero **no constituye
-la CSP final contra XSS**.
+Los scripts inline legítimos reciben un nonce aleatorio distinto en cada
+respuesta. `script-src` acepta solo `'self'` y ese nonce, y
+`script-src-attr 'none'` bloquea handlers HTML como `onclick`. Los 97 handlers
+heredados se sustituyeron por acciones declarativas registradas en
+`csp_events.js`; los formularios de borrado conservan su confirmación sin
+reconstruir código JavaScript. También se eliminó un `innerHTML` que incorporaba
+nombres/unidades editables de packs y ahora esos nodos usan `textContent`.
 
-Antes de publicar se deben extraer handlers/scripts inline o introducir nonces,
-eliminar `'unsafe-inline'`, revisar plantillas con datos del usuario y ejecutar
-pruebas en el despliegue HTTPS real.
+Los estilos siguen siendo la excepción transitoria: hay cientos de atributos
+`style` y cambios CSSOM del editor heredado, por lo que `style-src` aún incluye
+`'unsafe-inline'`. Las etiquetas `<style>` ya reciben nonce, pero todavía falta
+extraer atributos y mutaciones de estilo antes de retirar esa última concesión.
+Fuentes de Google permanecen limitadas a sus hosts oficiales. Por tanto la
+protección XSS mejoró de forma material, pero **la CSP todavía no es final**.
+
+Antes de publicar se debe eliminar `'unsafe-inline'` también de estilos,
+terminar la revisión de sinks DOM y ejecutar pruebas en el despliegue HTTPS real.
 
 ## Pruebas
 
@@ -74,6 +82,8 @@ pruebas en el despliegue HTTPS real.
 - escritura sin procedencia rechazada;
 - cabeceras defensivas y HSTS;
 - conservación de la CSP sandbox de archivos;
+- nonce único por respuesta, ausencia de handlers HTML y cobertura de todas las
+  acciones declarativas;
 - bloqueo `429`, `Retry-After`, separación por IP y exclusión de lecturas/rutas
   no protegidas en el límite de Auth.
 

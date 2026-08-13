@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from collections import deque
 import ipaddress
+import secrets
 from threading import Lock
 import time
 from urllib.parse import urlsplit
@@ -155,6 +156,8 @@ class WebSecurityMiddleware:
             return
 
         headers = self._headers(scope)
+        nonce = secrets.token_urlsafe(18)
+        scope.setdefault("state", {})["csp_nonce"] = nonce
         method = str(scope.get("method", "GET")).upper()
         if self.enforce_csrf and method in _UNSAFE_METHODS and not self._csrf_valido(scope, headers):
             accept = headers.get("accept", "")
@@ -167,12 +170,22 @@ class WebSecurityMiddleware:
                 response = PlainTextResponse(
                     "Solicitud bloqueada por protección CSRF.", status_code=403
                 )
-            await response(scope, receive, self._send_with_headers(scope, headers, send))
+            await response(
+                scope, receive, self._send_with_headers(scope, headers, nonce, send)
+            )
             return
 
-        await self.app(scope, receive, self._send_with_headers(scope, headers, send))
+        await self.app(
+            scope, receive, self._send_with_headers(scope, headers, nonce, send)
+        )
 
-    def _send_with_headers(self, scope: Scope, request_headers: dict[str, str], send: Send):
+    def _send_with_headers(
+        self,
+        scope: Scope,
+        request_headers: dict[str, str],
+        nonce: str,
+        send: Send,
+    ):
         scheme = self._scheme(scope, request_headers)
 
         async def send_secure(message: Message) -> None:
@@ -187,11 +200,12 @@ class WebSecurityMiddleware:
                     b"content-security-policy": (
                         b"default-src 'self'; base-uri 'self'; object-src 'none'; "
                         b"frame-ancestors 'none'; form-action 'self'; "
-                        b"script-src 'self' 'unsafe-inline'; "
-                        b"style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
-                        b"font-src 'self' https://fonts.gstatic.com data:; "
-                        b"img-src 'self' data: blob:; connect-src 'self'; "
-                        b"frame-src 'self' blob:"
+                        + f"script-src 'self' 'nonce-{nonce}'; ".encode("ascii")
+                        + b"script-src-attr 'none'; "
+                        + b"style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+                        + b"font-src 'self' https://fonts.gstatic.com data:; "
+                        + b"img-src 'self' data: blob:; connect-src 'self'; "
+                        + b"frame-src 'self' blob:"
                     ),
                 }
                 if scheme == "https":

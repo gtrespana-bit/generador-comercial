@@ -11,21 +11,21 @@
 
 <div class="filters" style="margin-bottom: 1.5rem; flex-wrap:wrap; align-items:flex-start; gap:12px;">
   <div style="flex:1; min-width:260px;">
-    <input type="text" id="buscador" placeholder="🔍 Buscar por nombre, marca, modelo, SKU, proveedor o categoría…" onkeyup="filtrarProductos()" style="width:100%; max-width:580px;">
+    <input type="text" id="buscador" placeholder="🔍 Buscar por nombre, marca, modelo, SKU, proveedor o categoría…" data-cotizat-keyup="productos-filter" style="width:100%; max-width:580px;">
     <div style="font-size:0.78rem;color:var(--text-soft);margin-top:3px;">Buscador + categorías laterales. Usa los checkboxes para eliminar en masa.</div>
   </div>
   <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
     <div id="bulk-bar-productos" style="display:none; background:var(--rose-soft);border:1px solid var(--rose);padding:3px 10px;border-radius:6px;align-items:center;gap:6px;font-size:0.9rem; flex-wrap:wrap;">
       <span id="sel-count-productos" style="font-weight:600;color:var(--rose);">0</span>
-      <button type="button" class="btn btn-sm btn-danger" onclick="bulkDeleteProductos()">🗑 Eliminar seleccionados</button>
-      <button type="button" class="btn btn-sm btn-success" onclick="bulkExportSelectedProductos()">📥 Exportar seleccionados</button>
+      <button type="button" class="btn btn-sm btn-danger" data-cotizat-click="productos-bulk-delete">🗑 Eliminar seleccionados</button>
+      <button type="button" class="btn btn-sm btn-success" data-cotizat-click="productos-bulk-export">📥 Exportar seleccionados</button>
       <input type="text" id="move-cat-productos" placeholder="Nueva categoría" style="width:130px; font-size:0.85rem; padding:2px 6px;" list="categorias-datalist-productos">
-      <button type="button" class="btn btn-sm" onclick="bulkMoveCategoryProductos()">➡️ Mover a cat.</button>
-      <button type="button" class="btn btn-sm" onclick="selectVisibleProductos()">Seleccionar visibles</button>
-      <button type="button" class="btn btn-sm" onclick="selectNoneProductos()">Cancelar</button>
-      <button type="button" class="btn btn-sm btn-danger" onclick="deleteAllVisibleProductos()" style="margin-left:6px;">🗑 Borrar TODO lo visible</button>
+      <button type="button" class="btn btn-sm" data-cotizat-click="productos-bulk-move">➡️ Mover a cat.</button>
+      <button type="button" class="btn btn-sm" data-cotizat-click="productos-select-visible">Seleccionar visibles</button>
+      <button type="button" class="btn btn-sm" data-cotizat-click="productos-select-none">Cancelar</button>
+      <button type="button" class="btn btn-sm btn-danger" data-cotizat-click="productos-delete-visible" style="margin-left:6px;">🗑 Borrar TODO lo visible</button>
     </div>
-    <form method="post" action="/productos/ajustar" onsubmit="return confirm('¿Ajustar TODOS los productos?');" style="display:flex;gap:4px;align-items:center;">
+    <form method="post" action="/productos/ajustar" data-confirm="¿Ajustar TODOS los productos?" style="display:flex;gap:4px;align-items:center;">
       <input type="number" name="porcentaje" step="any" placeholder="% ±" required style="width:92px;">
       <button class="btn btn-sm" type="submit">% Precios</button>
     </form>
@@ -38,13 +38,13 @@
   <div class="card category-sidebar" style="width: 240px; flex-shrink: 0; padding: 1rem; position: sticky; top: 1.5rem; max-height: calc(100vh - 6rem); overflow-y: auto;">
     <h3 style="font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.75rem; letter-spacing: 0.05em;">Categorías</h3>
     <div class="category-list" style="display: flex; flex-direction: column; gap: 4px;">
-      <button class="category-btn active" onclick="filtrarCategoria('todas')" id="btn-cat-todas" style="text-align: left; background: none; border: none; padding: 8px 12px; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.875rem; color: var(--text); font-weight: 500; display: flex; justify-content: space-between; align-items: center; width: 100%;">
+      <button class="category-btn active" data-cotizat-click="productos-filter-category" data-cat="todas" id="btn-cat-todas" style="text-align: left; background: none; border: none; padding: 8px 12px; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.875rem; color: var(--text); font-weight: 500; display: flex; justify-content: space-between; align-items: center; width: 100%;">
         <span>📂 Todas</span>
         <span class="badge" style="background: var(--bg); color: var(--text-soft); font-size: 0.75rem;">{{ productos | length }}</span>
       </button>
 
       {% for cat, cat_productos in productos | groupby('categoria') %}
-      <button class="category-btn drop-product-category" onclick="filtrarCategoria('{{ cat }}')" id="btn-cat-{{ cat | replace(' ', '_') }}" style="text-align: left; background: none; border: none; padding: 8px 12px; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.875rem; color: var(--text-soft); font-weight: 500; display: flex; justify-content: space-between; align-items: center; width: 100%;">
+      <button class="category-btn drop-product-category" data-cat="{{ cat }}" data-cotizat-click="productos-filter-category" id="btn-cat-{{ cat | replace(' ', '_') }}" style="text-align: left; background: none; border: none; padding: 8px 12px; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.875rem; color: var(--text-soft); font-weight: 500; display: flex; justify-content: space-between; align-items: center; width: 100%;">
         <span>🏷️ {{ cat }}</span>
         <span class="badge" style="background: var(--bg); color: var(--text-soft); font-size: 0.75rem;">{{ cat_productos | length }}</span>
       </button>
@@ -60,13 +60,13 @@
         <h2 style="margin:0; font-size: 1.15rem; color: var(--text); display: flex; align-items: center; gap: 8px;">
           <span style="color: var(--accent);">●</span> {{ cat }}
         </h2>
-        <span class="badge badge-categoria" style="font-size:0.75rem;">{{ cat_productos | length }} productos</span> <button type="button" class="btn btn-xs" style="font-size:0.7rem;padding:1px 6px;margin-left:6px;" onclick="deleteCategoryProductos(\'{{ cat }}\')">🗑 Borrar cat.</button>
+        <span class="badge badge-categoria" style="font-size:0.75rem;">{{ cat_productos | length }} productos</span> <button type="button" class="btn btn-xs" style="font-size:0.7rem;padding:1px 6px;margin-left:6px;" data-cotizat-click="productos-delete-category">🗑 Borrar cat.</button>
       </div>
 
       <table class="table">
         <thead>
           <tr>
-            <th style="width:26px;"><input type="checkbox" onchange="toggleAllProductos(this)" title="Seleccionar todos visibles"></th>
+            <th style="width:26px;"><input type="checkbox" data-cotizat-change="productos-toggle-all" title="Seleccionar todos visibles"></th>
             <th style="width: 70px;">Foto</th>
             <th>Nombre</th>
             <th style="width: 70px;">Unidad</th>
@@ -80,7 +80,7 @@
         <tbody>
           {% for p in cat_productos %}
           <tr draggable="true" class="producto-tr" data-id="{{ p.id }}" data-nombre="{{ (p.nombre ~ ' ' ~ p.descripcion ~ ' ' ~ p.categoria ~ ' ' ~ p.marca ~ ' ' ~ p.modelo ~ ' ' ~ p.sku ~ ' ' ~ p.proveedor ~ ' ' ~ p.color ~ ' ' ~ p.acabado) | lower }}">
-            <td><input type="checkbox" class="row-check" data-id="{{ p.id }}" onchange="updateBulkBarProductos()"> <td>
+            <td><input type="checkbox" class="row-check" data-id="{{ p.id }}" data-cotizat-change="productos-row-check"> <td>
               {% if p.imagen %}
               <img src="{{ p.imagen | archivo_url }}" alt="{{ p.nombre }}" style="width:48px; height:48px; object-fit:cover; border:1.5px solid var(--accent); border-radius:6px; background:#fff; padding:2px;">
               {% else %}
@@ -107,7 +107,7 @@
             <td class="right">
               <div style="display: flex; gap: 6px; justify-content: flex-end;">
                 <a href="/productos/{{ p.id }}/editar" class="btn btn-sm" title="Editar">✏️</a>
-                <form method="post" action="/productos/{{ p.id }}/eliminar" style="display:inline" onsubmit="return confirm('¿Eliminar este producto del catálogo?')">
+                <form method="post" action="/productos/{{ p.id }}/eliminar" style="display:inline" data-confirm="¿Eliminar este producto del catálogo?">
                   <button type="submit" class="btn btn-sm btn-danger" title="Eliminar">✕</button>
                 </form>
               </div>
@@ -132,7 +132,7 @@
   {% endfor %}
 </datalist>
 
-<style>
+<style nonce="{{ request.state.csp_nonce }}">
 .category-btn { transition: all 0.15s ease; }
 .category-btn:hover { background: var(--bg) !important; color: var(--text) !important; }
 .category-btn.active { background: var(--accent) !important; color: #fff !important; }
@@ -147,7 +147,7 @@
 }
 </style>
 
-<script>
+<script nonce="{{ request.state.csp_nonce }}">
 let categoriaSeleccionada = 'todas';
 
 function filtrarCategoria(categoria) {
@@ -245,10 +245,6 @@ function deleteCategoryProductos(cat) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('.row-check').forEach(ch => ch.addEventListener('change', updateBulkBarProductos));
-  const b = document.getElementById('buscador');
-  if (b) b.addEventListener('input', updateBulkBarProductos);
-
   makeTableSortableProductos();
   initDragAndDropProductos();
 });
@@ -357,5 +353,20 @@ async function bulkMoveCategoryProductos() {
     alert('Error al mover');
   }
 }
+
+window.CotizatActions.register('productos-filter', () => filtrarProductos());
+window.CotizatActions.register('productos-filter-category', element => filtrarCategoria(element.dataset.cat || 'todas'));
+window.CotizatActions.register('productos-bulk-delete', () => bulkDeleteProductos());
+window.CotizatActions.register('productos-bulk-export', () => bulkExportSelectedProductos());
+window.CotizatActions.register('productos-bulk-move', () => bulkMoveCategoryProductos());
+window.CotizatActions.register('productos-select-visible', () => selectVisibleProductos());
+window.CotizatActions.register('productos-select-none', () => selectNoneProductos());
+window.CotizatActions.register('productos-delete-visible', () => deleteAllVisibleProductos());
+window.CotizatActions.register('productos-toggle-all', element => toggleAllProductos(element));
+window.CotizatActions.register('productos-row-check', () => updateBulkBarProductos());
+window.CotizatActions.register('productos-delete-category', element => {
+  const group = element.closest('.category-group');
+  deleteCategoryProductos(group?.dataset.categoria || '');
+});
 </script>
 {% endblock %}

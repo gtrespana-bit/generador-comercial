@@ -10,7 +10,7 @@
   <div class="actions">
     <a class="btn" href="/presupuestos/{{ p.id }}">◀ Ver presupuesto</a>
     <a class="btn" href="/presupuestos/{{ p.id }}/editar">✏ Editar partidas</a>
-    <button class="btn" type="button" onclick="window.print()">🖨️ Imprimir planificación</button>
+    <button class="btn" type="button" data-cotizat-click="window-print">🖨️ Imprimir planificación</button>
   </div>
 </div>
 
@@ -136,7 +136,7 @@
 {% if sin_datos %}
 <div class="alert" style="margin-bottom:1rem; display:flex; gap:12px; align-items:flex-start; flex-wrap:wrap;">
   <div style="flex:1; min-width:260px;">⚠ <strong>{{ sin_datos }} partida(s)</strong> sin datos no cuentan en los totales. Asígnalas abajo directamente (oficial / ayudante / equipo por unidad) y se guardará al instante. También puedes avanzar capítulo a capítulo.</div>
-  <button type="button" class="btn btn-sm" onclick="document.getElementById('tabla-detalle').scrollIntoView({behavior:'smooth'})">⬇ Ir a asignar</button>
+  <button type="button" class="btn btn-sm" data-cotizat-click="scroll-target" data-target="tabla-detalle">⬇ Ir a asignar</button>
 </div>
 
 <!-- Asignación rápida masiva -->
@@ -350,7 +350,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
+<script nonce="{{ request.state.csp_nonce }}">
 (function(){
   const presupuestoId = {{ p.id | tojson }};
   const tiemposBase = {{ tiempos | tojson }};
