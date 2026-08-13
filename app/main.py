@@ -1,4 +1,4 @@
-"""Generador de Presupuestos — aplicación web local (FastAPI).
+"""CotizaT — aplicación local de presupuestos de obra (FastAPI).
 
 Ejecutar con:  python run.py   (o: uvicorn app.main:app)
 """
@@ -19,7 +19,7 @@ import traceback
 import uuid
 import zipfile
 
-log = logging.getLogger("presupuestos")
+log = logging.getLogger("cotizat")
 
 from fastapi import Depends, FastAPI, Form, Request, UploadFile  # noqa: F401 (type hints)
 from starlette.datastructures import UploadFile as UploadFileStarlette
@@ -30,6 +30,7 @@ from sqlalchemy import or_
 from sqlalchemy.orm import Session
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
+from .branding import PRODUCT_NAME, VALUE_PROPOSITION
 from .database import (
     BACKUPS_DIR,
     BASE_DIR,
@@ -105,6 +106,10 @@ TEMPLATES.env.filters["money"] = fmt_monto
 TEMPLATES.env.filters["num"] = fmt_num
 TEMPLATES.env.filters["cant"] = fmt_cantidad
 TEMPLATES.env.filters["fecha"] = fmt_fecha
+TEMPLATES.env.globals.update(
+    product_name=PRODUCT_NAME,
+    value_proposition=VALUE_PROPOSITION,
+)
 
 
 def whatsapp_url(telefono, texto) -> str:
@@ -207,7 +212,7 @@ class FormulariosUTF8Middleware:
         await self.app(scope, receive, send)
 
 
-app = FastAPI(title="Generador de Presupuestos", lifespan=lifespan)
+app = FastAPI(title=PRODUCT_NAME, lifespan=lifespan)
 app.add_middleware(FormulariosUTF8Middleware)
 # Las imágenes subidas se sirven desde la carpeta de datos del usuario;
 # el resto de estáticos (css, js, fuentes) desde los recursos empaquetados.
@@ -856,7 +861,7 @@ def eliminar_cliente(cliente_id: int, db: Session = Depends(get_db)):
         if num_presupuestos:
             detalles.append(f"{num_presupuestos} presupuesto(s)")
         if num_facturas:
-            detalles.append(f"{num_facturas} factura(s)")
+            detalles.append(f"{num_facturas} documento(s) de cobro")
         return _redirect(f"/clientes/{cliente_id}/editar",
                          error="No se puede eliminar: tiene " + " y ".join(detalles) + " asociado(s).")
     db.delete(cliente)
@@ -2894,7 +2899,7 @@ def agregar_nota(presupuesto_id: int, texto: str = Form(""), db: Session = Depen
 
 
 # ---------------------------------------------------------------------------
-# Facturas (conversión de presupuesto aprobado)
+# Documentos de cobro no fiscales (rutas históricas /facturas)
 # ---------------------------------------------------------------------------
 
 @app.post("/presupuestos/{presupuesto_id}/factura")
@@ -2904,17 +2909,17 @@ def crear_factura(presupuesto_id: int, db: Session = Depends(get_db)):
         return _redirect("/presupuestos", error="Presupuesto no encontrado.")
     if presupuesto.estado != "aprobado":
         return _redirect(f"/presupuestos/{presupuesto_id}",
-                         error="Solo se puede facturar un presupuesto en estado «aprobado».")
+                         error="Solo se puede crear el documento de cobro desde un presupuesto «aprobado».")
     ya = db.query(Factura).filter(Factura.presupuesto_id == presupuesto.id).first()
     if ya:
-        return _redirect(f"/facturas/{ya.id}", msg="Este presupuesto ya tiene una factura asociada.")
+        return _redirect(f"/facturas/{ya.id}", msg="Este presupuesto ya tiene un documento de cobro asociado.")
 
     año = date.today().year
     # La factura queda vinculada a una versión aprobada concreta; si procede
     # de una base anterior sin versión, se crea la instantánea ahora.
     version = db.query(PresupuestoVersion).filter_by(presupuesto_id=presupuesto.id, estado="aprobado").order_by(PresupuestoVersion.numero_version.desc()).first()
     if version is None:
-        version = crear_version(db, presupuesto, "Versión aprobada usada para facturación")
+        version = crear_version(db, presupuesto, "Versión aprobada usada para el documento de cobro")
         db.flush()
     factura = Factura(
         numero=proximo_numero_factura(db, año),
@@ -2957,7 +2962,7 @@ def crear_factura(presupuesto_id: int, db: Session = Depends(get_db)):
             ))
     db.add(factura)
     db.commit()
-    return _redirect(f"/facturas/{factura.id}", msg=f"Factura {factura.numero} creada desde el presupuesto {presupuesto.numero}.")
+    return _redirect(f"/facturas/{factura.id}", msg=f"Documento de cobro {factura.numero} creado desde el presupuesto {presupuesto.numero}.")
 
 
 @app.get("/facturas", response_class=HTMLResponse)
@@ -2970,7 +2975,7 @@ def listar_facturas(request: Request, db: Session = Depends(get_db)):
 def ver_factura(factura_id: int, request: Request, db: Session = Depends(get_db)):
     factura = db.get(Factura, factura_id)
     if factura is None:
-        return _redirect("/facturas", error="Factura no encontrada.")
+        return _redirect("/facturas", error="Documento de cobro no encontrado.")
     return TEMPLATES.TemplateResponse(request, "facturas/detail.html", {"f": factura})
 
 
@@ -2978,25 +2983,25 @@ def ver_factura(factura_id: int, request: Request, db: Session = Depends(get_db)
 def descargar_pdf_factura(factura_id: int, inline: int = 0, db: Session = Depends(get_db)):
     factura = db.get(Factura, factura_id)
     if factura is None:
-        return _redirect("/facturas", error="Factura no encontrada.")
+        return _redirect("/facturas", error="Documento de cobro no encontrado.")
     resultado = _generar_pdf_seguro(
         lambda: pdf_service.generar_factura_pdf(factura, _config(db)),
-        f"el PDF de la factura {factura.numero}",
+        f"el PDF del documento de cobro {factura.numero}",
     )
     if isinstance(resultado, Response) and resultado.status_code != 200:
         return resultado
-    return _respuesta_pdf(resultado, f"factura_{factura.numero}.pdf", inline)
+    return _respuesta_pdf(resultado, f"documento_cobro_{factura.numero}.pdf", inline)
 
 
 @app.post("/facturas/{factura_id}/estado")
 def cambiar_estado_factura(factura_id: int, estado: str = Form(...), db: Session = Depends(get_db)):
     factura = db.get(Factura, factura_id)
     if factura is None:
-        return _redirect("/facturas", error="Factura no encontrada.")
+        return _redirect("/facturas", error="Documento de cobro no encontrado.")
     if estado in ("emitida", "anulada"):
         factura.estado = estado
         db.commit()
-        return _redirect(f"/facturas/{factura_id}", msg=f"Factura marcada como «{estado}».")
+        return _redirect(f"/facturas/{factura_id}", msg=f"Documento de cobro marcado como «{estado}».")
     return _redirect(f"/facturas/{factura_id}", error="Estado inválido.")
 
 
@@ -3004,11 +3009,11 @@ def cambiar_estado_factura(factura_id: int, estado: str = Form(...), db: Session
 def eliminar_factura(factura_id: int, db: Session = Depends(get_db)):
     factura = db.get(Factura, factura_id)
     if factura is None:
-        return _redirect("/facturas", error="Factura no encontrada.")
+        return _redirect("/facturas", error="Documento de cobro no encontrado.")
     numero = factura.numero
     db.delete(factura)
     db.commit()
-    return _redirect("/facturas", msg=f"Factura {numero} eliminada.")
+    return _redirect("/facturas", msg=f"Documento de cobro {numero} eliminado.")
 
 
 @app.post("/presupuestos/{presupuesto_id}/borrador")
@@ -3541,8 +3546,8 @@ def descargar_backup():
                         z.write(p, (Path("uploads") / p.relative_to(uploads)).as_posix())
             z.writestr(
                 "LEEME_BACKUP.txt",
-                "Copia de seguridad del Generador de Presupuestos\n"
-                "==================================================\n"
+                "Copia de seguridad de CotizaT\n"
+                "==============================\n"
                 f"Creada el {datetime.now().strftime('%d/%m/%Y %H:%M')}\n\n"
                 "Para restaurarla: abre la aplicación, ve a Configuración →\n"
                 "«Copia de seguridad y restauración» → «Restaurar copia» y\n"

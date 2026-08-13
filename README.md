@@ -1,11 +1,16 @@
-# Presupuestos
+# CotizaT
 
-Generador de presupuestos de alta gama para empresas de **remodelación de
-viviendas de lujo**. Pensado para la sede de Venezuela: trabaja en **USD** con
-**IVA 16 %** (o en bolívares con tasa de referencia) y produce presupuestos en
-**PDF con formato profesional idéntico al de referencia** (estructura de
-capítulos, descripciones técnicas, mediciones por zonas y producto
-presupuestado con imagen).
+**Presupuestos y control comercial para construcción y remodelación.**
+
+CotizaT convierte tu catálogo y tus precios en presupuestos de obra claros,
+editables y listos para presentar. Está orientado inicialmente a pequeñas
+empresas de construcción y remodelación en Venezuela: trabaja en USD o
+bolívares, organiza capítulos, partidas, mediciones, productos y cambios de
+alcance, y genera documentos PDF profesionales.
+
+> CotizaT funciona de forma local. Sus sugerencias se basan en coincidencias
+> deterministas sobre el catálogo del usuario; no se presentan como
+> inteligencia artificial ni requieren enviar los datos a un servicio externo.
 
 ## Cómo se estructura un presupuesto
 
@@ -22,7 +27,7 @@ Presupuesto (P-2026-001)
 
 El PDF se cierra con el bloque **BASE IMPONIBLE / I.V.A. / PRESUPUESTO
 TOTAL** sobre fondo azul-grisáceo con faja azul y numeración de páginas
-«n/N», igual que el documento de referencia.
+«n/N».
 
 ## Funcionalidades
 
@@ -63,7 +68,7 @@ TOTAL** sobre fondo azul-grisáceo con faja azul y numeración de páginas
   - Moneda **USD** o **Bs**, tasa de cambio de referencia BCV.
   - Estados: borrador, enviado, aprobado, rechazado, vencido.
   - Historial con filtros por cliente, estado y rango de fechas.
-  - **Exportación a PDF** idéntica al presupuesto de referencia: fuente
+  - **Exportación a PDF profesional:** fuente
     **Lato** embebida, caja de empresa con faja navy, logo, banda de
     capítulos, mediciones, «Producto presupuestado», bloque de totales e
     «Información adicional». El PDF incluye **marca de agua** con el
@@ -95,9 +100,9 @@ TOTAL** sobre fondo azul-grisáceo con faja azul y numeración de páginas
   - **Exportar a CSV/Excel**: historial (respetando filtros), detalle de
     un presupuesto, y catálogos de partidas y productos.
   - Vista previa del PDF en el navegador (👁 Ver PDF).
-- **Facturas**: desde un presupuesto **aprobado** se genera la factura
-  (`F-2026-001`) con su propio PDF («FACTURA», «TOTAL A PAGAR») y su
-  historial independiente en `/facturas`.
+- **Documentos de cobro no fiscales**: desde un presupuesto **aprobado** se
+  genera un documento comercial (`DC-2026-001`) con su propio PDF e historial.
+  La interfaz y el PDF aclaran que no sustituye una factura fiscal.
 - **Notas de seguimiento**: apuntes internos por presupuesto (llamadas,
   cambios, acuerdos) que no aparecen en el PDF.
 - **Vencimiento automático**: los presupuestos enviados cuya validez
@@ -110,10 +115,8 @@ TOTAL** sobre fondo azul-grisáceo con faja azul y numeración de páginas
 - **Configuración**: nombre comercial, razón social, RIF, teléfono, email,
   web, dirección, **logotipo propio** (con **control de tamaño en el PDF**),
   color de marca y valores por defecto (moneda, IVA, validez, notas,
-  condiciones). Al abrir el programa por primera vez ya viene rellena con
-  los datos de la empresa (**RemodelaT Venezuela**: 04227997043 ·
-  www.remodelat.net · contacto@remodelat.net · San Diego, Carabobo); se
-  pueden cambiar en cualquier momento.
+  condiciones). Una instalación nueva usa datos empresariales neutros; cada
+  empresa debe completar su propia información antes de emitir documentos.
   - Los **valores por defecto del PDF** marcados (portada, resumen de
     capítulos, firmas) se aplican al guardar **tanto a los presupuestos
     nuevos como a los ya existentes**; si una casilla queda sin marcar,
@@ -123,7 +126,8 @@ TOTAL** sobre fondo azul-grisáceo con faja azul y numeración de páginas
   en cualquier instalación o versión nueva. Antes de restaurar se guarda
   automáticamente una copia de lo actual en `backups/`. La ruta de la base
   de datos también se puede cambiar con la variable de entorno
-  `PRESUPUESTOS_DB` para apuntar una instalación nueva al mismo archivo.
+  `COTIZAT_DB` para apuntar una instalación nueva al mismo archivo. El nombre
+  histórico `PRESUPUESTOS_DB` continúa aceptándose por compatibilidad.
 - **Datos de demostración**: la primera ejecución crea un cliente, un
   catálogo base de partidas de lujo (incluidas las partidas de suelos
   «Levantado de pavimento laminado», «Preparación y nivelación suelo
@@ -168,7 +172,7 @@ imágenes subidas (logo y productos) van a `app/static/uploads/` — ninguna de
 las dos rutas se versiona en git. Para mover todos los datos a otra
 instalación o versión usa la **copia de seguridad** de Configuración
 (descargar .zip → restaurar en la nueva), o apunta la nueva instalación al
-mismo archivo con la variable de entorno `PRESUPUESTOS_DB`.
+mismo archivo con `COTIZAT_DB` (`PRESUPUESTOS_DB` sigue aceptándose como alias).
 
 ## Estructura del proyecto
 
@@ -203,7 +207,7 @@ en el escritorio y en el menú Inicio, y desinstalador.
 
 1. En tu PC con Windows, ejecuta `CREAR_INSTALADOR.bat` (la primera vez
    instala PyInstaller e Inno Setup, ambos gratis).
-2. El resultado es `instalador\Instalador_Presupuestos.exe`.
+2. El resultado es `instalador\Instalador_CotizaT.exe`.
 3. Copia **solo ese archivo** a cualquier PC con Windows y ejecútalo: instala
    la app, sus accesos directos y el desinstalador.
 4. Si ese PC no tiene Microsoft WebView2, el instalador lo detecta y lo
@@ -214,7 +218,7 @@ en el escritorio y en el menú Inicio, y desinstalador.
 
 ### Opción B — Carpeta portátil (sin instalador)
 
-Ejecuta `EMPAQUETAR.bat` → `dist\Presupuestos.exe` (un único archivo
+Ejecuta `EMPAQUETAR.bat` → `dist\CotizaT.exe` (un único archivo
 autónomo). Copialo a cualquier PC y haz doble clic: se abre en su propia
 ventana.
 
@@ -222,35 +226,36 @@ ventana.
 > incluye el mecanismo que instala WebView2 automáticamente si hace falta. La
 > Opción B es portátil y presupone que el equipo ya tiene WebView2. Si la ventana
 > nativa no pudiera cargarse, la aplicación intenta abrirse en el navegador
-> predeterminado y deja el diagnóstico en
-> `%LOCALAPPDATA%\Presupuestos\logs\inicio.log`.
+> predeterminado y deja el diagnóstico en `logs\inicio.log`, dentro de la
+> carpeta de datos activa.
 
 ### Si la aplicación no arranca (diagnóstico con inicio.log)
 
-Cada intento de arranque escribe en
-`%LOCALAPPDATA%\Presupuestos\logs\inicio.log` (en el explorador de Windows,
-pega esa ruta en la barra de direcciones). El cuadro de error muestra además
-las últimas líneas del registro, así no hay que buscarlas a mano.
+Cada intento de arranque escribe en `logs\inicio.log` dentro de la carpeta de
+datos activa. En una instalación nueva es `%LOCALAPPDATA%\CotizaT`; si ya
+existe una versión anterior con datos en `%LOCALAPPDATA%\Presupuestos`,
+CotizaT sigue usando esa carpeta automáticamente. El cuadro de error muestra
+las últimas líneas del registro.
 
 1. **Busca la línea `=== Arranque de la aplicación de escritorio ===` con la
    fecha/hora en que lo intentaste.**
    - Si **no aparece**, el ejecutable ni siquiera llegó a empezar: suele ser
-     el antivirus o SmartScreen bloqueándolo, o un `Presupuestos.exe` antiguo.
+     el antivirus o SmartScreen bloqueándolo, o un `CotizaT.exe` antiguo.
      Desinstala, vuelve a instalar la versión actual y prueba de nuevo.
    - Si **aparece**, las líneas siguientes explican qué pasó.
 2. **«El servidor local no respondió en N s»**: la aplicación tardó demasiado
    en prepararse. Es normal la primera vez en equipos lentos (el antivirus
    escanea el programa y se crea la base de datos con los datos de ejemplo).
    Vuelve a intentarlo. Si se repite, arranca la app con más margen:
-   `set PRESUPUESTOS_ESPERA=300` y luego ejecuta `Presupuestos.exe` desde esa
+   `set COTIZAT_ESPERA=300` y luego ejecuta `CotizaT.exe` desde esa
    misma ventana.
 3. **«Causa: …»** o **«Error no controlado»**: esa línea es el error real
    (un módulo que falta, un archivo dañado, etc.); cópiala junto con las
    últimas líneas del registro para reportar el problema.
-4. Si sospechas de una instalación corrupta, puedes renombrar (no borrar) la
-   carpeta `%LOCALAPPDATA%\Presupuestos` y volver a abrir la app: se creará
-   de nuevo con datos de ejemplo. Tus datos quedarán en la carpeta renombrada
-   por si quieres recuperarlos.
+4. Si sospechas de una instalación corrupta, no borres la carpeta de datos.
+   Primero descarga o copia un backup. Renombra temporalmente la carpeta activa
+   y vuelve a abrir la app; CotizaT creará una instalación limpia y la carpeta
+   renombrada quedará disponible para recuperación.
 
 ### Modo ventana propia en desarrollo
 
@@ -260,15 +265,15 @@ python desktop.py                 # ventana propia (sin navegador)
 python run.py                     # modo clásico (navegador)
 ```
 
-> **Dónde viven tus datos en la app instalada:** en
-> `%LOCALAPPDATA%\Presupuestos\` (base de datos, imágenes y copias de
-> seguridad). Por eso **actualizar o desinstalar el programa no borra tus
-> presupuestos**. Antes de desinstalar, haz una copia de seguridad desde
-> Configuración por si acaso.
+> **Dónde viven tus datos:** una instalación nueva usa
+> `%LOCALAPPDATA%\CotizaT\`. Si actualizas una versión anterior, se conserva
+> `%LOCALAPPDATA%\Presupuestos\` cuando allí ya existen datos. La aplicación
+> no mueve ni borra automáticamente la base, imágenes o backups. Antes de una
+> actualización importante, crea una copia desde Configuración.
 
 ## Plan (siguientes pasos posibles)
 
-- [x] Conversión de presupuesto aprobado a factura
+- [x] Conversión de presupuesto aprobado a documento de cobro no fiscal
 - [x] Copia / duplicado de presupuestos
 - [x] Portada de presentación opcional con foto del proyecto
 - [x] Firma del cliente digitalizada
@@ -282,5 +287,3 @@ python run.py                     # modo clásico (navegador)
 - Las fuentes **Lato** (`app/static/fonts/`) se distribuyen bajo la licencia
   SIL Open Font License 1.1 (incluida en `OFL.txt`).
 - Formato de PDF generado con diseño limpio y estructurado en capítulos y partidas.
-#   g e n e r a d o r - c o m e r c i a l  
- 

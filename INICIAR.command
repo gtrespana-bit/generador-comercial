@@ -1,13 +1,13 @@
 #!/bin/bash
 # ============================================================
-#   Generador de Presupuestos - Inicio con doble clic (macOS)
+#   CotizaT - Inicio con doble clic (macOS)
 #   No cierres esta ventana mientras uses la aplicación.
 # ============================================================
 cd "$(dirname "$0")" || exit 1
 
 echo
 echo "  ============================================"
-echo "    GENERADOR DE PRESUPUESTOS"
+echo "    COTIZAT"
 echo "  ============================================"
 echo
 

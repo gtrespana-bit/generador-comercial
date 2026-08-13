@@ -1,12 +1,12 @@
 @echo off
 REM ============================================================================
-REM  Empaqueta el Generador de Presupuestos como aplicacion de escritorio (.exe)
+REM  Empaqueta CotizaT como aplicacion de escritorio (.exe)
 REM  Requisito: Python 3.10+ instalado (con "Add to Python PATH" marcado).
 REM
-REM  Resultado:  dist\Presupuestos.exe
+REM  Resultado:  dist\CotizaT.exe
 REM  - Es una aplicacion de VENTANA PROPIA (pywebview): se abre en su propia
 REM    ventana, sin navegador y sin consola negra.
-REM  - Copia el archivo dist\Presupuestos.exe a cualquier PC con Windows y haz
+REM  - Copia el archivo dist\CotizaT.exe a cualquier PC con Windows y haz
 REM    doble clic (no necesita Python instalado).
 REM  - Para entregar la app a otras personas usa mejor CREAR_INSTALADOR.bat:
 REM    incluye la instalación automática de WebView2 si el PC lo necesita.
@@ -60,11 +60,11 @@ if errorlevel 1 (
 
 echo [3/3] Hecho.
 echo.
-echo La aplicacion esta en:  dist\Presupuestos.exe
+echo La aplicacion esta en:  dist\CotizaT.exe
 echo Copialo a cualquier PC con Windows y haz doble clic:
 echo se abrira en su propia ventana (sin navegador).
 echo.
-echo IMPORTANTE: tus datos (presupuestos.db, imagenes y copias de seguridad)
-echo se guardan en  %%LOCALAPPDATA%%\Presupuestos  - no se pierden al
-echo actualizar ni al mover la carpeta del programa.
+echo IMPORTANTE: una instalacion nueva guarda los datos en %%LOCALAPPDATA%%\CotizaT.
+echo Si ya existe %%LOCALAPPDATA%%\Presupuestos con datos de una version anterior,
+echo CotizaT conserva esa ubicacion. Actualizar no borra presupuestos ni backups.
 pause

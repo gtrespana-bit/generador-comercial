@@ -1054,32 +1054,23 @@ class FacturaItem(Base):
 
 
 DATOS_EMPRESA_DEFECTO = {
-    "empresa_nombre": "RemodelaT Venezuela",
-    "empresa_telefono": "04227997043",
-    "empresa_email": "contacto@remodelat.net",
-    "empresa_web": "www.remodelat.net",
-    "empresa_direccion": "San Diego, Carabobo",
+    "empresa_nombre": "Mi Empresa",
+    "empresa_telefono": "",
+    "empresa_email": "",
+    "empresa_web": "",
+    "empresa_direccion": "",
 }
 
 
 def asegurar_config(db):
-    """Si no existe configuración, crea una con los datos de RemodelaT.
+    """Crea una configuración empresarial neutra cuando todavía no existe.
 
-    En instalaciones nuevas la configuración ya viene rellena con los datos
-    de la empresa (nombre, teléfono, web, email y dirección). Si la base de
-    datos es antigua y todavía conserva el placeholder genérico («Mi
-    Empresa»), también se autorellena una única vez; si el usuario ya la
-    personalizó, no se toca.
+    Nunca reemplaza una configuración existente: una actualización de marca
+    no debe modificar los datos que el usuario ya personalizó.
     """
     cfg = db.query(Configuracion).first()
     if cfg is None:
-        cfg = Configuracion(**DATOS_EMPRESA_DEFECTO)
-        db.add(cfg)
-        db.commit()
-        return
-    if cfg.empresa_nombre in ("", "Mi Empresa") and not cfg.empresa_email:
-        for campo, valor in DATOS_EMPRESA_DEFECTO.items():
-            setattr(cfg, campo, valor)
+        db.add(Configuracion(**DATOS_EMPRESA_DEFECTO))
         db.commit()
 
 
@@ -1100,9 +1091,11 @@ def proximo_numero(db, year):
 
 
 def proximo_numero_factura(db, year):
-    """Calcula el siguiente número de factura para el año dado.
+    """Calcula el siguiente número de documento de cobro para el año dado.
 
-    Formato: F-<año>-<secuencial de 3 dígitos>, p. ej. F-2026-001
+    Formato: DC-<año>-<secuencial de 3 dígitos>, p. ej. DC-2026-001.
+    Se consideran también los números históricos F-* para continuar la
+    secuencia sin alterar documentos existentes.
     """
     numeros = db.query(Factura.numero).filter(Factura.year == year).all()
     max_sec = 0
@@ -1112,7 +1105,7 @@ def proximo_numero_factura(db, year):
             max_sec = max(max_sec, sec)
         except (ValueError, IndexError):
             continue
-    return f"F-{year}-{max_sec + 1:03d}"
+    return f"DC-{year}-{max_sec + 1:03d}"
 
 
 def marcar_vencidos(db):

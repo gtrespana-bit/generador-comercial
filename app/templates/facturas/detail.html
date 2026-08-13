@@ -1,15 +1,15 @@
 {% extends "base.html" %}
-{% block title %}Factura {{ f.numero }}{% endblock %}
+{% block title %}Documento de cobro {{ f.numero }}{% endblock %}
 {% block content %}
 <div class="page-head">
   <div>
-    <p class="crumb">🧾 <a href="/facturas">Facturas</a> › {{ f.numero }}</p>
-    <h1>Factura {{ f.numero }}</h1>
+    <p class="crumb">🧾 <a href="/facturas">Documentos de cobro</a> › {{ f.numero }}</p>
+    <h1>Documento de cobro {{ f.numero }}</h1>
     <p class="subtitle">{% if f.titulo %}{{ f.titulo }} · {% endif %}Emitida el {{ f.fecha | fecha }}</p>
   </div>
   <div class="actions">
-    <button class="btn" type="button" onclick="imprimirPDF('/facturas/{{ f.id }}/pdf?inline=1')" title="Imprimir factura en formato PDF">🖨️ Imprimir</button>
-    <a class="btn btn-primary" href="/facturas/{{ f.id }}/pdf" download="factura_{{ f.numero }}.pdf" onclick="descargarPDF(event, this.href, 'factura_{{ f.numero }}.pdf')">⬇ Descargar PDF</a>
+    <button class="btn" type="button" onclick="imprimirPDF('/facturas/{{ f.id }}/pdf?inline=1')" title="Imprimir documento de cobro en PDF">🖨️ Imprimir</button>
+    <a class="btn btn-primary" href="/facturas/{{ f.id }}/pdf" download="documento_cobro_{{ f.numero }}.pdf" onclick="descargarPDF(event, this.href, 'documento_cobro_{{ f.numero }}.pdf')">⬇ Descargar PDF</a>
     <a class="btn" href="/facturas/{{ f.id }}/pdf?inline=1" target="_blank">👁 Ver PDF</a>
     {% if f.presupuesto_id %}
     <a class="btn" href="/presupuestos/{{ f.presupuesto_id }}">📄 Ver presupuesto origen</a>
@@ -21,10 +21,14 @@
       </select>
       <button class="btn btn-sm" type="submit">Cambiar estado</button>
     </form>
-    <form method="post" action="/facturas/{{ f.id }}/eliminar" class="inline" onsubmit="return confirm('¿Eliminar esta factura?');">
+    <form method="post" action="/facturas/{{ f.id }}/eliminar" class="inline" onsubmit="return confirm('¿Eliminar este documento de cobro?');">
       <button class="btn btn-danger" type="submit">🗑 Eliminar</button>
     </form>
   </div>
+</div>
+
+<div class="alert alert-warning" role="note" style="margin-bottom:1rem;">
+  <strong>Documento comercial no fiscal.</strong> No sustituye una factura fiscal emitida conforme a la normativa aplicable.
 </div>
 
 <div class="card">

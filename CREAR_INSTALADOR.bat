@@ -1,11 +1,11 @@
 @echo off
 REM ============================================================================
-REM  Crea el INSTALADOR de Windows del Generador de Presupuestos.
+REM  Crea el INSTALADOR de Windows de CotizaT.
 REM  Necesita (solo la primera vez):
 REM    1. Python 3.10+  ->  https://www.python.org/downloads/  (marca "Add to PATH")
 REM    2. Inno Setup 6  ->  https://jrsoftware.org/isdl.php   (instalación por defecto)
 REM
-REM  Resultado:  instalador\Instalador_Presupuestos.exe
+REM  Resultado:  instalador\Instalador_CotizaT.exe
 REM  Ese archivo se puede copiar a cualquier PC con Windows: al ejecutarlo
 REM  instala la app "como un programa normal": acceso directo en el escritorio,
 REM  menú Inicio, desinstalador y ventana propia (sin navegador). Si al equipo
@@ -136,7 +136,7 @@ echo Compilando el instalador...
 
 echo.
 echo ============================================================================
-echo  LISTO. Revisa la carpeta  instalador\  ->  Instalador_Presupuestos.exe
+echo  LISTO. Revisa la carpeta  instalador\  ->  Instalador_CotizaT.exe
 echo  Copialo a cualquier PC con Windows y ejecutalo: instalara la aplicacion
 echo  con acceso directo, menu Inicio y desinstalador, en su propia ventana.
 echo ============================================================================

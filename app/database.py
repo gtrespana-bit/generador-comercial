@@ -7,14 +7,18 @@ from pathlib import Path
 from sqlalchemy import create_engine, event
 from sqlalchemy.orm import declarative_base, sessionmaker
 
+from .branding import DATABASE_FILENAME, resolve_data_directory
+
 # ---------------------------------------------------------------------------
 # Rutas: recursos empaquetados vs. datos del usuario
 # ---------------------------------------------------------------------------
 # - En modo empaquetado (.exe creado con PyInstaller):
 #     · BASE_DIR  → _MEIPASS (recursos de solo lectura: plantillas, css,
 #                   fuentes, todo lo que viaja dentro del .exe)
-#     · DATA_DIR  → %LOCALAPPDATA%\Presupuestos  (donde vive TODO lo que el
-#                   usuario crea: base de datos, imágenes, copias de
+#     · DATA_DIR  → %LOCALAPPDATA%\CotizaT en instalaciones nuevas, o la
+#                   carpeta histórica %LOCALAPPDATA%\Presupuestos cuando ya
+#                   contiene datos de una versión anterior (donde vive todo lo
+#                   que el usuario crea: base de datos, imágenes, copias de
 #                   seguridad). Así la app instalada puede escribirse sin
 #                   permisos de administrador y no pierde datos al
 #                   actualizar o desinstalar el programa.
@@ -26,16 +30,15 @@ if getattr(sys, "frozen", False):
         or os.environ.get("APPDATA")
         or str(Path.home())
     )
-    DATA_DIR = _raiz_datos / "Presupuestos"
+    DATA_DIR = resolve_data_directory(_raiz_datos)
 else:
     BASE_DIR = Path(__file__).resolve().parent.parent
     DATA_DIR = BASE_DIR
 
-# La ruta de la base de datos se puede cambiar con la variable de entorno
-# PRESUPUESTOS_DB. Resulta útil para actualizar la aplicación a una carpeta
-# nueva sin perder datos: apunta la instalación nueva al mismo archivo, o
-# úsalo junto con la copia de seguridad de «Configuración».
-DB_PATH = Path(os.environ.get("PRESUPUESTOS_DB") or (DATA_DIR / "presupuestos.db"))
+# COTIZAT_DB permite cambiar la ruta de la base. PRESUPUESTOS_DB se conserva
+# como alias para automatizaciones e instalaciones anteriores.
+_ruta_db_configurada = os.environ.get("COTIZAT_DB") or os.environ.get("PRESUPUESTOS_DB")
+DB_PATH = Path(_ruta_db_configurada or (DATA_DIR / DATABASE_FILENAME))
 if not DB_PATH.is_absolute():
     DB_PATH = (DATA_DIR / DB_PATH).resolve()
 

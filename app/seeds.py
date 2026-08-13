@@ -8,8 +8,7 @@
   presupuesto de ejemplo de remodelación de lujo (en USD, con capítulos,
   mediciones y productos presupuestados).
 
-Catálogo extenso basado en el presupuesto de referencia (PRESUPUESTO
-SILVIA JULIO.pdf), adaptado al mercado venezolano:
+Catálogo inicial de demostración adaptado al mercado venezolano:
   · "hormigón" → "concreto"
   · "fontanería" → "plomería"
   · "enchufes / tomas" → "tomacorrientes"
@@ -72,12 +71,12 @@ def sembrar_demo(db: Session):
         return
 
     cliente = Cliente(
-        nombre="María Fernanda Aristimuño",
-        rif="V-14.326.870",
+        nombre="Cliente de demostración",
+        rif="",
         pais="Venezuela",
-        telefono="+58 414 326 87 90",
-        email="mf.aristimuno@gmail.com",
-        direccion="Urbanización El Rosal, Caracas",
+        telefono="",
+        email="",
+        direccion="Valencia, Carabobo",
     )
     db.add(cliente)
     db.flush()
@@ -87,9 +86,9 @@ def sembrar_demo(db: Session):
         numero=proximo_numero(db, hoy.year),
         year=hoy.year,
         fecha=hoy,
-        titulo="Residencia El Rosal · Remodelación Integral",
-        direccion_obra="Calle Mohedano, Residencias Altamira Park, Caracas",
-        codigo_postal="1060",
+        titulo="Remodelación residencial de demostración",
+        direccion_obra="Valencia, Carabobo",
+        codigo_postal="",
         validez_dias=30,
         moneda="USD",
         impuesto_pct=16.0,

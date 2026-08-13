@@ -4,12 +4,12 @@
 <div class="page-head">
   <div>
     <h1>Dashboard</h1>
-    <p class="subtitle">Resumen financiero y operativo de tu negocio</p>
+    <p class="subtitle">{{ value_proposition }}</p>
   </div>
   <div class="actions">
     <a class="btn btn-ai" href="/presupuestos/nuevo?autogenerar=1" title="Genera un borrador de capítulos y partidas buscando coincidencias en tu propio catálogo">
       <svg width="14" height="14" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 1l2 5h5l-4 3.5 1.5 5L9 12l-4.5 2.5L6 9.5 2 6h5z"/></svg>
-      Autogenerar con IA
+      Sugerir desde catálogo
     </a>
     <a class="btn btn-primary" href="/presupuestos/nuevo">
       <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 1v10M1 6h10"/></svg>
@@ -79,7 +79,7 @@
   </div>
   <div class="card-stat">
     <div class="stat-num">{{ total_facturas }}</div>
-    <div class="stat-label">Facturas Generadas</div>
+    <div class="stat-label">Documentos de cobro</div>
   </div>
   <div class="card-stat">
     <div class="stat-num">{{ por_estado['aprobado'] }}</div>

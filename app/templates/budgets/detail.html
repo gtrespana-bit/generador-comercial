@@ -20,7 +20,7 @@
     {% if p.estado == 'aprobado' %}
     <form method="post" action="/presupuestos/{{ p.id }}/proyecto" class="inline"><button class="btn" type="submit" title="Crear obra y control financiero">🏗️ Convertir en proyecto</button></form>
     <form method="post" action="/presupuestos/{{ p.id }}/factura" class="inline">
-      <button class="btn" type="submit" title="Convertir este presupuesto aprobado en factura">🧾 Facturar</button>
+      <button class="btn" type="submit" title="Crear un documento de cobro no fiscal desde este presupuesto aprobado">🧾 Crear documento de cobro</button>
     </form>
     {% endif %}
     <form method="post" action="/presupuestos/{{ p.id }}/duplicar" class="inline">

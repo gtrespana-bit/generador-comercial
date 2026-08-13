@@ -1,13 +1,13 @@
 # -*- mode: python ; coding: utf-8 -*-
-# Especificación de PyInstaller para empaquetar el Generador de Presupuestos
+# Especificación de PyInstaller para empaquetar CotizaT
 # como aplicación de escritorio con VENTANA PROPIA (pywebview, sin navegador).
 # Uso:  pyinstaller presupuestos.spec --noconfirm
-# Resultado:  dist/Presupuestos.exe
+# Resultado:  dist/CotizaT.exe
 #
-# · Los datos del usuario (presupuestos.db, backups/, uploads/) se guardan
-#   en %LOCALAPPDATA%\Presupuestos (ver app/database.py), nunca dentro del
-#   .exe, para que la app instalada no necesite permisos de administrador
-#   y no pierda datos al actualizar.
+# · Los datos se guardan en %LOCALAPPDATA%\CotizaT en instalaciones nuevas.
+#   Si una versión anterior ya tiene datos en %LOCALAPPDATA%\Presupuestos,
+#   se conserva esa ubicación. Nunca viven dentro del .exe ni se borran al
+#   actualizar (ver app/database.py).
 from PyInstaller.utils.hooks import collect_data_files, collect_dynamic_libs, collect_submodules
 
 # Recolectar explícitamente todos los módulos del backend y frameworks
@@ -112,9 +112,9 @@ exe = EXE(
     a.scripts,
     a.binaries,
     a.datas,
-    name="Presupuestos",
+    name="CotizaT",
     debug=False,
-    console=False,       # app de ventana: errores en %LOCALAPPDATA%\Presupuestos\logs
+    console=False,       # app de ventana: errores en logs/ de la carpeta de datos activa
     icon="icono.ico",
     uac_admin=False,
 )

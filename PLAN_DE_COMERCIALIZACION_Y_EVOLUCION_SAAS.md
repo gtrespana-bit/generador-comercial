@@ -1,6 +1,6 @@
 # Plan de comercialización y evolución a SaaS
 
-**Producto:** Generador de presupuestos para construcción y remodelación  
+**Producto:** CotizaT — presupuestos y control comercial para construcción y remodelación
 **Mercado inicial:** empresas pequeñas de remodelación y construcción privada en Venezuela  
 **Zona inicial recomendada:** Valencia / Carabobo, con posterior expansión a Caracas y otras ciudades  
 **Fecha de creación:** 13 de agosto de 2026  
@@ -91,7 +91,7 @@ Al trabajar en una tarea de este plan se debe:
   Evidencia: FastAPI + Jinja2 + SQLAlchemy + SQLite + ReportLab + JavaScript modular; aplicación empaquetable para Windows.
 
 - [x] **E0-002 — Ejecutar la suite automatizada.**  
-  Evidencia: 58 pruebas superadas con `PYTHONPATH=. .venv/bin/pytest -q` el 13/08/2026.
+  Evidencia actualizada: 68 pruebas superadas con `PYTHONPATH=. .venv/bin/pytest -q` el 13/08/2026.
 
 - [x] **E0-003 — Verificar el arranque y las rutas principales.**  
   Evidencia: las pantallas principales y la generación de PDF respondieron correctamente en una base limpia.
@@ -132,33 +132,33 @@ Al trabajar en una tarea de este plan se debe:
 
 # ETAPA 1 — Preparación de la versión comercial local
 
-**Estado:** ACTIVA — identidad comercial en definición
+**Estado:** ACTIVA — identidad comercial aplicada; experiencia de primer inicio pendiente
 **Objetivo:** transformar la aplicación privada en un producto instalable, honesto, estable y comprensible que pueda entregarse a los primeros clientes.  
 **Estimación orientativa:** 4–6 semanas, ajustable después del inventario inicial.  
 **Restricción:** no añadir grandes módulos funcionales durante esta etapa.
 
 ## 1.1 Identidad, alcance y presentación
 
-- [~] **E1-001 — Elegir el nombre comercial del software.**
-  Debe ser distinto de RemodelaT, registrable, fácil de pronunciar y válido para una expansión latinoamericana.
-  Estado: el usuario pidió una selección más profesional que la primera ronda descriptiva, por lo que ObraCifra, ObraNexo y Presuvia dejaron de ser lista corta. Después de ampliar y filtrar territorios técnicos, evocativos y propietarios, no existe todavía una marca aprobada. **Cuantora** se conserva únicamente como candidato exploratorio diferenciado. El usuario propuso después **CotizaT** y **PresupuestaT**: entre ambos, CotizaT comunica más rápido y es más corto, pero ambos deben superar todavía pruebas de pronunciación, escritura, diferenciación y expansión. PresupuestaT queda claramente debilitado por longitud, lectura reflexiva poco natural y proximidad competitiva.
+- [x] **E1-001 — Elegir el nombre comercial del software.**
+  Decisión aprobada por el usuario el 13/08/2026: **CotizaT**. Se eligió por su comprensión inmediata para el mercado venezolano y su relación directa con el trabajo principal. La decisión comercial no equivale a autorización registral; el riesgo de diferenciación queda controlado en E1-002.
 
 - [~] **E1-002 — Comprobar dominio, redes y conflictos básicos de marca.**
-  Evidencia preliminar (13/08/2026): el cribado web acumulado descartó por conflicto o saturación a CotizaObra, ObraLista, Cota Obra, Obralio, ObraNexo, Aplomo, Cimentia, Civora, Quantora, Nivora, Dovela, Calcora, Metriva, Arqenta, Civanta, Pondera, Partium, Valtria, Rigor y Rasante. Cuantora no mostró una coincidencia empresarial exacta clara ni resolución DNS en `.com`, `.app`, `.io` o `.co`, pero el buscador tiende a corregirlo a «Cantora» y no se ha realizado verificación registral, social o mediante registrador. Las búsquedas exactas de CotizaT y PresupuestaT no mostraron una coincidencia exacta evidente; sin embargo, CotizaT entra en un espacio muy saturado por productos directos como Cotiza Constructor, Kotiza, CotiZa, CotizApp y Cotiza Pro, mientras PresupuestaT se aproxima de forma preocupante a PresupuestAPP, que opera para construcción desde `presupuesta.eu`. Ninguno de los dos nombres resolvió por DNS en `.com`, `.app`, `.io`, `.co`, `.net` o `.software`; esa ausencia **no demuestra disponibilidad**. La comprobación final exige consulta de registrador, redes, SENAPI/WIPO y asesoría marcaria antes de adoptar el nombre.
+  Evidencia acumulada (13/08/2026): no apareció una empresa exacta claramente indexada como «CotizaT» en búsquedas generales ni en Instagram, LinkedIn, TikTok o X. `cotizat.app` devolvió RDAP 404 y ninguna raíz `cotizat` resolvió por DNS en `.com`, `.app`, `.io`, `.co`, `.net` o `.software`; esto **no equivale a disponibilidad ni reserva**. El riesgo comercial sigue siendo alto por competidores directos o próximos: **Cotiza** (`getcotiza.com`), **CotiZa** (app para contratistas), Cotiza Pro, CotizApp, Cotiza Constructor, Kotiza y la página colombiana «Cotízate». WIPO y SENAPI no dieron un resultado público concluyente. Pendiente: consultar registrador, reservar los activos disponibles y obtener una revisión marcaria profesional antes del lanzamiento. **PresupuestaT queda descartado** por longitud, pronunciación y proximidad con PresupuestAPP.
 
-- [ ] **E1-003 — Definir una propuesta de valor de una frase.**  
-  Borrador a validar: «Crea presupuestos profesionales de remodelación con tus precios y controla cambios sin perder dinero».
+- [x] **E1-003 — Definir una propuesta de valor de una frase.**
+  Propuesta aplicada: «Convierte tu catálogo y tus precios en presupuestos de obra claros, editables y listos para presentar». Describe funciones existentes y evita prometer ahorro o resultados financieros no demostrados. Evidencia: `app/branding.py`, dashboard y `README.md`.
 
-- [ ] **E1-004 — Sustituir “Presupuestos Pro” y nombres genéricos por la marca elegida.**
+- [x] **E1-004 — Sustituir “Presupuestos Pro” y nombres genéricos por la marca elegida.**
+  Evidencia: interfaz, título FastAPI, ventana de escritorio, icono provisional, ejecutable PyInstaller, instalador Inno Setup, lanzadores y documentación muestran CotizaT.
 
-- [ ] **E1-005 — Eliminar los datos predeterminados de RemodelaT.**  
-  Incluye nombre, teléfono, email, web, dirección y editor/instalador.
+- [x] **E1-005 — Eliminar los datos predeterminados de RemodelaT.**
+  Evidencia: la configuración nueva usa campos de contacto vacíos, la demo quedó anonimizada, se retiró el PDF real versionado y se eliminó el script histórico que contenía los datos privados. La actualización nunca sobrescribe una configuración ya personalizada.
 
-- [ ] **E1-006 — Eliminar o renombrar afirmaciones que no corresponden a la función real.**  
-  Mínimos: «Autogenerar con IA» y «Gemelos Digitales 3D».
+- [x] **E1-006 — Eliminar o renombrar afirmaciones que no corresponden a la función real.**
+  Evidencia: «Autogenerar con IA» pasó a «Sugerir desde catálogo» y explica el matching determinista local; «Gemelos Digitales 3D» pasó a «Proyectos».
 
-- [ ] **E1-007 — Revisar todo el texto visible al usuario.**  
-  Corregir ortografía, consistencia de términos, mensajes técnicos y promesas exageradas.
+- [~] **E1-007 — Revisar todo el texto visible al usuario.**
+  Primera revisión completada para marca, generador por catálogo, proyectos, instalador y alcance fiscal. Pendiente una revisión integral de microcopy durante el trabajo de onboarding y pruebas de usabilidad.
 
 ## 1.2 Primer inicio y experiencia básica
 
@@ -182,11 +182,11 @@ Al trabajar en una tarea de este plan se debe:
 
 ## 1.3 Honestidad funcional y límites legales
 
-- [ ] **E1-015 — Renombrar la factura actual como documento no fiscal cuando corresponda.**  
-  Opciones a validar legalmente: factura proforma, cuenta de cobro o documento comercial.
+- [x] **E1-015 — Renombrar la factura actual como documento no fiscal cuando corresponda.**
+  Decisión aplicada: «Documento de cobro» en interfaz y PDF; los identificadores internos y rutas históricas se conservan para no romper la base ni enlaces existentes. Los documentos nuevos usan prefijo `DC-`.
 
-- [ ] **E1-016 — Añadir aviso visible de alcance fiscal.**  
-  Debe indicar que el documento no sustituye una factura fiscal homologada, salvo futura integración autorizada.
+- [x] **E1-016 — Añadir aviso visible de alcance fiscal.**
+  Evidencia: detalle HTML y PDF indican «Documento comercial no fiscal. No sustituye una factura fiscal emitida conforme a la normativa aplicable».
 
 - [ ] **E1-017 — Consultar a un profesional tributario venezolano.**  
   Entregable: nota escrita sobre presupuesto, proforma, factura, IVA, número de control y retenciones.
@@ -309,8 +309,8 @@ Al trabajar en una tarea de este plan se debe:
 
 No se marcará esta etapa como completada hasta cumplir todos los siguientes puntos:
 
-- [ ] La aplicación no muestra datos ni marca de RemodelaT a un cliente nuevo.
-- [ ] No existen promesas visibles de IA, 3D o facturación fiscal no implementadas.
+- [x] La aplicación no muestra datos ni marca de RemodelaT a un cliente nuevo.
+- [x] No existen promesas visibles de IA, 3D o facturación fiscal no implementadas.
 - [ ] Un usuario nuevo puede generar su primer PDF en menos de 20 minutos con ayuda mínima.
 - [ ] El catálogo comercial tiene procedencia revisada y precios fechados.
 - [ ] El instalador funciona en al menos 3 equipos externos de Windows.
@@ -641,7 +641,7 @@ La expansión debe realizarse principalmente mediante catálogos, packs y lengua
 | R-002 | El producto abruma al usuario de papel/Excel | Alta | Alta | Onboarding y pruebas observadas | Abierto |
 | R-003 | Partidas sin derechos de redistribución | Media | Crítico | Auditoría de procedencia | Abierto |
 | R-004 | Precios desactualizados causan pérdidas | Alta | Crítico | Fecha, fuente, región y aviso referencial | Abierto |
-| R-005 | Documento llamado factura sin validez fiscal | Alta | Crítico | Renombrar y consultar especialista | Abierto |
+| R-005 | Confusión entre documento de cobro y factura fiscal | Media | Crítico | Aviso no fiscal aplicado; consultar especialista | Mitigado parcialmente |
 | R-006 | Fuga de datos entre empresas | Alta en la arquitectura actual | Crítico | No publicar; aislamiento y pruebas | Abierto |
 | R-007 | Precio demasiado bajo frente al soporte | Alta | Alta | Medir soporte y cobrar onboarding/anualidad | Abierto |
 | R-008 | Dificultad para cobrar recurrencia en Venezuela | Alta | Alta | Métodos legales alternativos y cobro trimestral/anual | Abierto |
@@ -649,6 +649,7 @@ La expansión debe realizarse principalmente mediante catálogos, packs y lengua
 | R-010 | Seguir agregando funciones sin mercado | Alta | Alta | Puertas de decisión por etapa | Abierto |
 | R-011 | Pérdida o corrupción de datos | Media | Crítico | Backups probados y recuperación | Abierto |
 | R-012 | Instalador bloqueado por SmartScreen/antivirus | Media | Alta | Firma de código y pruebas externas | Abierto |
+| R-013 | CotizaT se confunde o colisiona con marcas del territorio «Cotiza» | Alta | Alta | Revisión profesional, registro urgente y validación oral antes del lanzamiento | Abierto |
 
 ---
 
@@ -681,6 +682,9 @@ Estas cifras no son precios definitivos; deben probarse en la Etapa 2.
 | 13/08/2026 | D-007 | No reescribir el frontend por moda | El stack actual permite validar el producto | Si aparecen límites medidos |
 | 13/08/2026 | D-008 | Exigir pilotos pagados antes del multi-tenant | Reducir riesgo de construir sin demanda | Puerta Etapa 2 |
 | 13/08/2026 | D-009 | Crear una marca para construcción latinoamericana, especializada inicialmente en remodelación venezolana | Permite crecer por país y función sin diluir el mensaje comercial de entrada | Tras la selección final de nombre |
+| 13/08/2026 | D-010 | Adoptar **CotizaT** como nombre comercial | El usuario priorizó comprensión inmediata y aprobó expresamente el nombre | Tras revisión marcaria profesional |
+| 13/08/2026 | D-011 | Usar la propuesta «Convierte tu catálogo y tus precios en presupuestos de obra claros, editables y listos para presentar» | Es verificable con el producto actual y no promete resultados financieros | Después de pruebas comerciales |
+| 13/08/2026 | D-012 | Renombrar ejecutable e instalador, manteniendo compatibilidad automática con la carpeta histórica de datos | Aplicar la marca sin hacer desaparecer bases, imágenes ni backups existentes | Después de probar actualización en Windows |
 
 ---
 
@@ -696,18 +700,27 @@ Se completará durante la Etapa 2. No deben guardarse aquí nombres, teléfonos 
 
 # 11. Próximo bloque de trabajo
 
-## Etapa 1 activa — entrega 1: identidad y honestidad del producto
+## Etapa 1 activa — siguiente bloque: primer inicio y recorrido básico
 
-Trabajo actual, en este orden:
+La entrega de identidad y honestidad quedó aplicada en código. El siguiente trabajo, en este orden, es:
 
-1. **E1-001 y E1-002:** decidir si se prioriza comprensión comercial inmediata o apropiabilidad a largo plazo; someter CotizaT y cualquier finalista propietario a una prueba oral/escrita con usuarios objetivo y cerrar después conflictos, dominio, redes y comprobación registral básica. PresupuestaT no debe avanzar salvo que nueva evidencia revierta sus problemas de nombre.
-2. **E1-003:** aprobar una propuesta de valor honesta de una frase, coherente con el nombre elegido.
-3. **E1-004 y E1-005:** aplicar la marca elegida y retirar todos los datos privados de RemodelaT.
-4. **E1-006:** sustituir promesas incorrectas, en particular «Autogenerar con IA» y «Gemelos Digitales 3D».
-5. **E1-007:** revisar los demás textos visibles afectados.
-6. Ejecutar pruebas automatizadas y una verificación visual de los flujos modificados.
+1. **E1-002:** completar reserva de activos y revisión marcaria profesional de CotizaT; el riesgo no se considera cerrado por ausencia DNS o RDAP.
+2. **E1-008:** definir el recorrido ideal empresa → cliente → catálogo/pack → presupuesto → PDF.
+3. **E1-009 a E1-011:** crear asistente de primer inicio, elección demo/limpio y lista de bienvenida.
+4. **E1-007:** terminar la revisión integral de microcopy dentro del nuevo onboarding.
+5. **E1-012 a E1-014:** probar el recorrido con usuarios ajenos, medir el primer PDF y simplificar con evidencia.
+6. **E1-042 a E1-045:** compilar y probar en Windows la actualización de marca, la conservación de datos y el instalador en equipos externos antes de cerrar la entrega comercial.
 
-Inventario inicial realizado el 13/08/2026: se localizaron referencias de marca o empresa en `app/templates/base.html`, `app/models.py`, `desktop.py`, `presupuestos.spec`, `instalador.iss` y `scripts/crear-repo-nuevo.sh`; los claims principales están en `app/templates/index.html`, `app/templates/budgets/form.html`, `app/static/js/editor/generador.js` y `app/templates/projects/list.html`. Los identificadores de ejecutable y directorio de datos no se modificarán sin diseñar antes una migración que preserve instalaciones existentes.
+Evidencia de la entrega de identidad (13/08/2026):
+
+- Marca, descriptor y propuesta centralizados en `app/branding.py`.
+- Configuración y demo sin datos personales reales en `app/models.py` y `app/seeds.py`.
+- Claims de IA/3D sustituidos por nombres que describen la función real.
+- «Factura» visible sustituida por «Documento de cobro» con aviso no fiscal.
+- Ejecutable e instalador renombrados como CotizaT.
+- Migración no destructiva: una instalación nueva usa `%LOCALAPPDATA%\CotizaT`; una actualización sigue usando `%LOCALAPPDATA%\Presupuestos` si allí encuentra datos previos. Los aliases técnicos anteriores continúan aceptándose.
+- El PDF real versionado y el script histórico con datos privados fueron retirados del árbol actual.
+- Pruebas de regresión de branding, privacidad, alcance fiscal y compatibilidad añadidas en `tests/test_branding.py`; suite completa: **68 aprobadas**.
 
 ---
 

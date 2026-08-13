@@ -27,7 +27,7 @@
     <div class="builder-total-live"><span>Total actual</span><strong id="sticky-total-val">—</strong></div>
     <div class="builder-command-actions">
       <button type="button" id="btn-ai-dictation" class="btn btn-sm" title="Dictar en el campo activo">🎙 Dictar</button>
-      <button type="button" class="btn btn-sm btn-ai" id="btn-abrir-generador" title="Genera un borrador desde tu catálogo">✨ Autogenerar</button>
+      <button type="button" class="btn btn-sm btn-ai" id="btn-abrir-generador" title="Busca coincidencias en tu catálogo y arma un borrador editable">Sugerir desde catálogo</button>
       <button type="button" class="btn btn-sm" id="btn-modal-receta" title="Alt+R — Inserta habitaciones enteras de reforma escaladas al tamaño de tu estancia" style="background:var(--primary-light); color:var(--primary); font-weight:600;">⚡ Pack de Estancia (Alt+R)</button>
       <button type="button" class="btn btn-sm iva-toggle-btn" id="btn-toggle-iva-top" title="Activar o desactivar el IVA de este presupuesto">💱 IVA: ON</button>
       <button type="button" class="btn btn-sm" id="btn-preview-pdf-top" title="Vista previa del documento">👁 Vista previa</button>
@@ -59,7 +59,7 @@
         <div class="field">
           <label>Título del proyecto</label>
           <input type="text" name="titulo" value="{{ presupuesto.titulo if presupuesto else '' }}"
-                 placeholder="p. ej. Residencia El Rosal · Remodelación Integral">
+                 placeholder="p. ej. Remodelación integral de vivienda">
         </div>
         <div class="field field-full">
           <label>Dirección de la obra</label>
@@ -641,11 +641,11 @@
   </div>
 </div>
 
-<!-- Modal: autogenerar con IA (generador basado en TU catálogo, sin internet) -->
+<!-- Modal: sugerencias deterministas desde el catálogo local -->
 <div class="modal-overlay" id="modal-generador">
   <div class="modal">
     <div class="modal-head">
-      <h3>✨ Autogenerar con IA</h3>
+      <h3>Sugerir partidas desde tu catálogo</h3>
       <button type="button" class="btn btn-ghost" data-close>✕</button>
     </div>
     <p class="hint" style="margin-bottom:0.75rem;">

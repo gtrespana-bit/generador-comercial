@@ -1,15 +1,15 @@
 @echo off
 REM ============================================================
-REM   Generador de Presupuestos - Inicio con doble clic (Windows)
+REM   CotizaT - Inicio con doble clic (Windows)
 REM   No cierres esta ventana mientras uses la aplicacion.
 REM   Para salir, cierra esta ventana.
 REM ============================================================
 cd /d "%~dp0"
-title Generador de Presupuestos
+title CotizaT
 
 echo.
 echo   ============================================
-echo     GENERADOR DE PRESUPUESTOS
+echo     COTIZAT
 echo   ============================================
 echo.
 

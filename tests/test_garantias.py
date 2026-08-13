@@ -14,7 +14,7 @@ def _presupuesto(*capitulos):
     return SimpleNamespace(capitulos=caps)
 
 
-def test_rusticana_agrupa_por_familia_no_por_partida():
+def test_presupuesto_agrupa_por_familia_no_por_partida():
     p = _presupuesto(
         ("DEMOLICIÓN Y PREPARACIÓN", [
             ("Picado de piso existente", "Retiro de cerámica y escombros"),

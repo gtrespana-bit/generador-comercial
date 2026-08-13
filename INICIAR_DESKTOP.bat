@@ -1,5 +1,5 @@
 @echo off
-REM Abre el Generador de Presupuestos en su propia VENTANA (sin navegador).
+REM Abre CotizaT en su propia VENTANA (sin navegador).
 REM Necesita Python y las dependencias instaladas (ver INICIAR.bat la primera vez).
 cd /d "%~dp0"
 

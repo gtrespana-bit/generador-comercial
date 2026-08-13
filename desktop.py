@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Modo escritorio: abre el Generador de Presupuestos en su propia ventana.
+"""Modo escritorio: abre CotizaT en su propia ventana.
 
 Usa pywebview (ventana nativa con WebView2 en Windows / WKWebView en macOS)
 para mostrar la aplicación sin necesidad de navegador. El servidor local
@@ -10,15 +10,16 @@ Uso:
     python desktop.py --navegador         # modo clásico: abre el navegador
 
 Variables de entorno opcionales:
-    PRESUPUESTOS_PORT=8000        Puerto fijo (por defecto: uno libre)
-    PRESUPUESTOS_NO_WINDOW=1      Sin ventana ni navegador (solo servidor,
-                                  útil en servidores o para pruebas)
-    PRESUPUESTOS_ESPERA=120       Segundos máximos que se espera al servidor
-                                  local antes de mostrar un error (120 por
-                                  defecto; súbelo en equipos muy lentos)
+    COTIZAT_PORT=8000        Puerto fijo (por defecto: uno libre)
+    COTIZAT_NO_WINDOW=1      Sin ventana ni navegador (solo servidor,
+                             útil en servidores o para pruebas)
+    COTIZAT_ESPERA=120       Segundos máximos que se espera al servidor local.
 
-Diagnóstico de la versión instalada:
-    %LOCALAPPDATA%\Presupuestos\logs\inicio.log
+Los nombres PRESUPUESTOS_* anteriores siguen aceptándose como alias.
+
+Diagnóstico de una instalación nueva:
+    %LOCALAPPDATA%\CotizaT\logs\inicio.log
+Las instalaciones actualizadas conservan su carpeta histórica si contiene datos.
 """
 import ctypes
 import logging
@@ -31,7 +32,9 @@ import traceback
 import webbrowser
 from pathlib import Path
 
-NOMBRE_APP = "Generador de Presupuestos"
+from app.branding import PRODUCT_NAME, resolve_data_directory
+
+NOMBRE_APP = PRODUCT_NAME
 
 
 def asegurar_consola_inexistente() -> None:
@@ -68,7 +71,7 @@ def directorio_datos() -> Path:
             or os.environ.get("APPDATA")
             or str(Path.home())
         )
-        return raiz / "Presupuestos"
+        return resolve_data_directory(raiz)
     return Path(__file__).resolve().parent
 
 
@@ -152,7 +155,7 @@ def puerto_libre() -> int:
 
 
 def puerto_configurado() -> int:
-    valor = os.environ.get("PRESUPUESTOS_PORT", "").strip()
+    valor = (os.environ.get("COTIZAT_PORT") or os.environ.get("PRESUPUESTOS_PORT") or "").strip()
     if not valor:
         return puerto_libre()
     try:
@@ -162,7 +165,7 @@ def puerto_configurado() -> int:
     except ValueError:
         pass
     logging.getLogger(__name__).warning(
-        "PRESUPUESTOS_PORT=%r no es un puerto válido; se usará uno libre.", valor
+        "COTIZAT_PORT=%r no es un puerto válido; se usará uno libre.", valor
     )
     return puerto_libre()
 
@@ -173,9 +176,9 @@ def _espera_maxima_segundos() -> float:
     La primera ejecución en equipos lentos (antivirus escaneando el .exe,
     disco mecánico, migraciones y datos de ejemplo creándose) puede tardar
     bastante más de 10 segundos; por defecto se esperan 120. Se puede subir
-    con PRESUPUESTOS_ESPERA.
+    con COTIZAT_ESPERA (también se acepta el nombre histórico).
     """
-    valor = os.environ.get("PRESUPUESTOS_ESPERA", "").strip()
+    valor = (os.environ.get("COTIZAT_ESPERA") or os.environ.get("PRESUPUESTOS_ESPERA") or "").strip()
     try:
         segundos = float(valor)
         if segundos > 0:
@@ -184,7 +187,7 @@ def _espera_maxima_segundos() -> float:
         pass
     if valor:
         logging.getLogger(__name__).warning(
-            "PRESUPUESTOS_ESPERA=%r no es válido; se esperarán 120 segundos.", valor
+            "COTIZAT_ESPERA=%r no es válido; se esperarán 120 segundos.", valor
         )
     return 120.0
 
@@ -387,7 +390,7 @@ def main() -> None:
     hilo = threading.Thread(
         target=ejecutar_servidor,
         args=(host, puerto, estado),
-        name="servidor-presupuestos",
+        name="servidor-cotizat",
         daemon=True,
     )
     hilo.start()
@@ -395,21 +398,21 @@ def main() -> None:
         error = estado.get("error")
         if error is not None:
             mensaje = (
-                "No se pudo iniciar el servidor local de Presupuestos.\n\n"
+                "No se pudo iniciar el servidor local de CotizaT.\n\n"
                 f"Causa: {describir_error(error)}"
             )
         else:
             mensaje = (
-                "El servidor local de Presupuestos tardó demasiado en arrancar.\n\n"
+                "El servidor local de CotizaT tardó demasiado en arrancar.\n\n"
                 "Suele ocurrir la primera vez, mientras el antivirus escanea la "
                 "aplicación o se preparan la base de datos y los datos de "
                 "ejemplo. Vuelve a intentarlo; si se repite en un equipo lento, "
-                "aumenta la variable PRESUPUESTOS_ESPERA (segundos)."
+                "aumenta la variable COTIZAT_ESPERA (segundos)."
             )
         mostrar_error(mensaje, ruta_log)
         return
 
-    if os.environ.get("PRESUPUESTOS_NO_WINDOW") == "1":
+    if (os.environ.get("COTIZAT_NO_WINDOW") or os.environ.get("PRESUPUESTOS_NO_WINDOW")) == "1":
         logging.getLogger(__name__).info("Modo sin ventana solicitado.")
         hilo.join()  # Solo servidor (modo headless / pruebas).
         return
@@ -436,7 +439,7 @@ def main() -> None:
 
     try:
         webview.create_window(
-            title="Presupuestos — Generador de presupuestos",
+            title="CotizaT — Presupuestos de obra",
             url=url,
             width=1360,
             height=860,
@@ -463,7 +466,7 @@ def main() -> None:
             hilo.join()
         else:
             mostrar_error(
-                "No se pudo abrir la ventana de Presupuestos ni el navegador. "
+                "No se pudo abrir la ventana de CotizaT ni el navegador. "
                 "Revise el archivo de diagnóstico.",
                 ruta_log,
             )

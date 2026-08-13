@@ -1,6 +1,6 @@
 """Generación del presupuesto en PDF con ReportLab.
 
-Replica fielmente el formato de referencia (Stimat / Plan Reforma):
+Genera un documento comercial estructurado para presupuestos de obra:
 
   · Cabecera con caja de empresa (fondo azul-grisáceo, faja azul a la
     izquierda) y logotipo a la derecha.
@@ -186,7 +186,7 @@ def _cabecera(presupuesto, config, st, azul_color, titulo_doc="PRESUPUESTO",
               etiqueta_num="Presupuesto Nº", titulo_por_defecto="Presupuesto de remodelación"):
     """Caja de empresa + logo, título y bloque proyecto / cliente.
 
-    También se usa para la factura (titulo_doc="FACTURA").
+    También se usa para el documento de cobro (título no fiscal).
     """
     # -- Caja de empresa ---------------------------------------------------
     # Etiquetas cortas: la caja de empresa ahora es estrecha
@@ -1333,11 +1333,7 @@ def generar_pdf(presupuesto, config):
 
 
 def generar_factura_pdf(factura, config):
-    """Devuelve un BytesIO con el PDF de la factura.
-
-    Reutiliza el mismo motor que el presupuesto (cabecera, capítulos,
-    totales) con la etiqueta FACTURA y «TOTAL A PAGAR».
-    """
+    """Devuelve un PDF comercial de cobro, expresamente no fiscal."""
     _registrar_fuentes()
     st = _estilos()
     moneda = factura.moneda
@@ -1351,16 +1347,23 @@ def generar_factura_pdf(factura, config):
         rightMargin=34,
         topMargin=30,
         bottomMargin=34,
-        title=f"Factura {factura.numero} — {factura.titulo or config.empresa_nombre}",
+        title=f"Documento de cobro {factura.numero} — {factura.titulo or config.empresa_nombre}",
         author=config.empresa_nombre,
-        subject="Factura de remodelación",
+        subject="Documento comercial de cobro no fiscal",
     )
 
     story = []
     story += _cabecera(
         factura, config, st, azul_color,
-        titulo_doc="FACTURA", etiqueta_num="Factura Nº", titulo_por_defecto="Factura de obra",
+        titulo_doc="DOCUMENTO DE COBRO", etiqueta_num="Documento Nº", titulo_por_defecto="Documento de cobro",
     )
+    story.append(_seccion(
+        "Alcance del documento",
+        "Documento comercial no fiscal. No sustituye una factura fiscal emitida conforme a la normativa aplicable.",
+        st,
+        azul_color,
+    ))
+    story.append(Spacer(1, 14))
     for i, cap in enumerate(factura.capitulos):
         if i > 0:
             story.append(Spacer(1, 26))

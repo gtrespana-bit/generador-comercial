@@ -1,12 +1,12 @@
 #!/bin/bash
 # ============================================================
-#   Generador de Presupuestos - Inicio rápido (Linux)
+#   CotizaT - Inicio rápido (Linux)
 #   Puedes hacer doble clic (Ejecutar) o ejecutarlo en terminal.
 # ============================================================
 cd "$(dirname "$0")" || exit 1
 
 echo
-echo "  GENERADOR DE PRESUPUESTOS"
+echo "  COTIZAT"
 echo
 
 PY=python3

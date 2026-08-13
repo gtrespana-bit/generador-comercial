@@ -19,7 +19,7 @@ No es una opinión leyendo el README. Esto es lo que se comprobó de verdad:
 | 13 rutas principales vía HTTP | **Todas 200** |
 | Generación de PDF real (`/presupuestos/1/pdf`) | 200, 4 páginas, 68 KB |
 | Inspección **visual** del PDF generado (render a PNG) | Revisado página a página |
-| Inspección visual del PDF real de obra (`P-2026-003 La Rusticana`, 15 págs.) | Revisado |
+| Inspección visual de un PDF real de obra anonimizado (15 págs.; archivo retirado por privacidad) | Revisado |
 | Búsqueda de capa de seguridad (`auth`, `login`, `session`, `password`, `csrf`, `cors`) | **Cero coincidencias en todo el proyecto** |
 | Contenido real de la BD | 59 partidas de catálogo, 8 recetas de estancia, 4 presupuestos, 11 items |
 
@@ -126,7 +126,7 @@ venezolano, donde la conectividad no se da por supuesta.
 | `run.py` sirve en `0.0.0.0:8000` sin protección | Alta | Cualquiera en la misma WiFi (una obra, un coworking) entra y edita/borra todo. Sin login, sin registro de quién hizo qué. |
 | Sin CSRF ni CORS | Media-alta en LAN | Una web maliciosa abierta en el mismo PC puede hacer POST a `localhost:8000/presupuestos/1/eliminar`. |
 | `base.html` carga la fuente Inter desde Google Fonts | Media | **Rompe la coherencia visual sin internet** — justo el escenario que el resto del producto cuida. Además filtra la IP de tus clientes a Google. Las Lato ya están embebidas: haz lo mismo con Inter. |
-| Datos de RemodelaT hardcodeados en `models.py` (nombre, teléfono `04227997043`, email, web, dirección) | Alta para vender | El primer cliente que instale ve **tu** teléfono como configuración por defecto. |
+| Datos privados de empresa hardcodeados en `models.py` (nombre, contacto y dirección) | Alta para vender | Un cliente nuevo no debe recibir información de otra empresa. **Resuelto el 13/08/2026:** defaults neutros y prueba de regresión. |
 | 67 `except Exception` en el código, 17 de ellos con `pass` | Media | Los fallos se tragan en silencio. Cuando un cliente diga "no me guardó la foto", no habrá ni un log que lo explique. |
 | Sin `LICENSE` | Media | Legalmente el código no tiene términos. Si vas a vender licencias, necesitas EULA. |
 | Sin CI (GitHub Actions) | Media | Tienes 58 tests excelentes que nadie ejecuta automáticamente al hacer merge. |
@@ -161,8 +161,8 @@ Lo que produce el documento:
   con alcance y exclusiones.
 
 **Veredicto:** un cliente final recibe esto y no le queda ninguna duda de que está tratando con una
-empresa seria. Es indistinguible de la salida de un software de 60 €/mes. El PDF real de la obra
-"La Rusticana" (15 páginas) lo confirma en un caso de uso auténtico, no de demo.
+empresa seria. Es indistinguible de la salida de un software de 60 €/mes. Un PDF real de obra
+anonimizado (15 páginas) confirmó el caso de uso; el archivo fue retirado del repositorio por privacidad.
 
 ---
 
@@ -385,7 +385,7 @@ sí llámala IA.
 ## 7. Detalles concretos para arreglar esta semana
 
 ```
-app/models.py:1057-1061   → datos de RemodelaT como defaults de configuración
+app/models.py             → defaults empresariales neutros (resuelto el 13/08/2026)
 app/templates/base.html   → <link> a Google Fonts (Inter): embeberla como Lato
 app/templates/index.html:12         → "Autogenerar con IA"  → "Autogenerar desde tu catálogo"
 app/templates/budgets/form.html:648 → ídem
