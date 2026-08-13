@@ -767,6 +767,8 @@ Se completará durante la Etapa 2. No deben guardarse aquí nombres, teléfonos 
 
 ## Etapa 1 activa — siguiente bloque: endurecimiento y validación web real
 
+La continuidad operativa exacta para una conversación nueva está en `docs/CONTINUIDAD_STAGING_SUPABASE.md`; debe seguirse sin reconstruir el estado desde el chat.
+
 La base browser-first ya incluye persistencia portable, Alembic, propiedad organizacional, Auth y objetos privados. El siguiente trabajo es:
 
 1. **E1W-007:** completar la validación real de aislamiento y CSP en navegador HTTPS; rutas comerciales, rol de solo lectura en DB/Storage, sinks HTML/CSS, scripts/estilos con nonce, handlers, CSRF, cabeceras y rate limiting local ya tienen cobertura automática.
