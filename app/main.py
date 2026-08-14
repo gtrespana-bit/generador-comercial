@@ -1173,7 +1173,7 @@ async def restablecer_clave(request: Request):
         "/acceso?msg=" + quote("Contraseña actualizada. Ya puedes iniciar sesión."),
         status_code=303,
     )
-    clear_auth_cookies(response, settings.cookie_secure)
+    clear_auth_cookies(response, settings.cookie_secure, request)
     return response
 
 
@@ -1213,6 +1213,7 @@ async def registrar_cuenta(request: Request):
             str(form.get("email") or ""),
             password,
             str(form.get("nombre") or ""),
+            public_app_url("/acceso"),
         )
     except AuthError as exc:
         return _redirect("/acceso", error=str(exc))
@@ -1227,13 +1228,162 @@ async def registrar_cuenta(request: Request):
 
 
 @app.post("/salir")
-def cerrar_sesion():
+async def cerrar_sesion(request: Request):
+    """Cierra la sesión local y revoca el refresh token en Supabase.
+
+    Borrar las cookies basta para el navegador, pero el refresh token seguiría
+    siendo válido en GoTrue. La revocación es best-effort: si Supabase no
+    responde, la sesión local se cierra igualmente y nunca se deja al usuario
+    dentro por un fallo del proveedor.
+    """
     response = RedirectResponse("/acceso", status_code=303)
+    secure = True
     try:
-        secure = SupabaseAuthSettings.from_environment().cookie_secure
+        settings = SupabaseAuthSettings.from_environment()
+        secure = settings.cookie_secure
+        access_token = request.cookies.get(ACCESS_COOKIE, "")
+        if access_token:
+            await run_in_threadpool(
+                SupabaseAuthClient(settings).sign_out, access_token
+            )
     except AuthNotConfigured:
-        secure = True
-    clear_auth_cookies(response, secure)
+        pass
+    except AuthError:
+        log.info("No se pudo revocar la sesión en Supabase; se cierra localmente.")
+    clear_auth_cookies(response, secure, request)
+    return response
+
+
+# ---------------------------------------------------------------------------
+# Panel de la cuenta (perfil, contraseña y sesión)
+# ---------------------------------------------------------------------------
+
+def _render_cuenta(
+    request: Request,
+    db: Session,
+    *,
+    msg: str = "",
+    error: str = "",
+    status_code: int = 200,
+):
+    """Pinta el panel con el perfil local y las membresías del usuario.
+
+    ``get_authenticated_db`` no resuelve organización activa (el panel debe
+    abrirse incluso sin haber elegido empresa), así que la selección se deduce
+    aquí de la cookie y se contrasta con las membresías reales: una cookie
+    manipulada nunca marca como activa una empresa ajena.
+    """
+    usuario = db.get(Usuario, db.info["usuario_id"])
+    membresias = membresias_activas(db, usuario.id)
+    cookie = request.cookies.get(ORGANIZATION_COOKIE, "").strip()
+    try:
+        seleccionada = int(cookie) if cookie else None
+    except ValueError:
+        seleccionada = None
+    if seleccionada not in {m.organizacion_id for m in membresias}:
+        seleccionada = membresias[0].organizacion_id if len(membresias) == 1 else None
+    return TEMPLATES.TemplateResponse(
+        request,
+        "auth/account.html",
+        {
+            "usuario": usuario,
+            "membresias": membresias,
+            "organizacion_activa_id": seleccionada,
+            "email_verificado": bool(usuario.email_verificado_at),
+            "msg": msg,
+            "error": error,
+        },
+        status_code=status_code,
+    )
+
+
+@app.get("/cuenta", response_class=HTMLResponse)
+def ver_cuenta(request: Request, db: Session = Depends(get_authenticated_db)):
+    if DATABASE_IS_SQLITE:
+        return _redirect("/configuracion")
+    return _render_cuenta(
+        request,
+        db,
+        msg=request.query_params.get("msg", ""),
+        error=request.query_params.get("error", ""),
+    )
+
+
+@app.post("/cuenta/perfil")
+async def actualizar_perfil_cuenta(
+    request: Request,
+    db: Session = Depends(get_authenticated_db),
+):
+    """Guarda el nombre visible en el perfil local y en Supabase.
+
+    El email no se edita aquí: cambiarlo exige reverificación en Supabase y
+    rehacer el vínculo con `usuarios.auth_user_id`, lo que rompería membresías
+    e invitaciones pendientes emitidas contra el email anterior.
+    """
+    if DATABASE_IS_SQLITE:
+        return _redirect("/configuracion")
+    form = await request.form()
+    nombre = str(form.get("nombre") or "").strip()[:200]
+    if len(nombre) < 2:
+        return _render_cuenta(
+            request, db, error="Escribe un nombre de al menos 2 caracteres.",
+            status_code=400,
+        )
+    usuario = db.get(Usuario, db.info["usuario_id"])
+    usuario.nombre = nombre
+    db.commit()
+    try:
+        settings = SupabaseAuthSettings.from_environment()
+        access_token = request.cookies.get(ACCESS_COOKIE, "")
+        if access_token:
+            await run_in_threadpool(
+                SupabaseAuthClient(settings).update_profile, access_token, nombre
+            )
+    except AuthError:
+        # El perfil local ya quedó guardado: no se revierte por un fallo del
+        # metadato remoto, que solo alimenta el nombre mostrado.
+        log.info("No se pudo sincronizar el nombre con Supabase.")
+    return _redirect("/cuenta", msg="Perfil actualizado.")
+
+
+@app.post("/cuenta/clave")
+async def cambiar_clave_cuenta(
+    request: Request,
+    db: Session = Depends(get_authenticated_db),
+):
+    """Cambia la contraseña exigiendo la actual y cierra la sesión."""
+    if DATABASE_IS_SQLITE:
+        return _redirect("/configuracion")
+    form = await request.form()
+    actual = str(form.get("password_actual") or "")
+    nueva = str(form.get("password") or "")
+    confirmacion = str(form.get("password_confirmation") or "")
+    if nueva != confirmacion:
+        return _render_cuenta(
+            request, db, error="Las contraseñas nuevas no coinciden.", status_code=400
+        )
+    usuario = db.get(Usuario, db.info["usuario_id"])
+    try:
+        settings = SupabaseAuthSettings.from_environment()
+        access_token = request.cookies.get(ACCESS_COOKIE, "")
+        await run_in_threadpool(
+            SupabaseAuthClient(settings).change_password,
+            access_token,
+            usuario.email,
+            actual,
+            nueva,
+        )
+    except InvalidCredentials as exc:
+        return _render_cuenta(request, db, error=str(exc), status_code=400)
+    except AuthError as exc:
+        return _render_cuenta(request, db, error=str(exc), status_code=503)
+    # Cambiar la contraseña invalida las sesiones anteriores: se fuerza un
+    # inicio de sesión nuevo en lugar de conservar cookies ya obsoletas.
+    response = RedirectResponse(
+        "/acceso?msg=" + quote("Contraseña actualizada. Inicia sesión de nuevo."),
+        status_code=303,
+    )
+    clear_auth_cookies(response, settings.cookie_secure, request)
     return response
 
 

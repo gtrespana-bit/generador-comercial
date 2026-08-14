@@ -203,6 +203,12 @@ Site URL:      https://<staging-estable>
 Redirect URL:  https://<staging-estable>/restablecer-clave
 ```
 
+La Redirect URL debe coincidir carácter a carácter (esquema, dominio, ruta, sin
+barra final). Si falta, Supabase **no da error**: descarta `redirect_to`, envía
+el enlace al Site URL y el correo de recuperación acaba en la pantalla de
+login. Comprueba el valor exacto que espera la app en `/readyz`, campo
+`recovery_redirect_url_esperada`.
+
 Haz un nuevo redeploy de Vercel después de guardar.
 
 ## Aceptación real (matriz)

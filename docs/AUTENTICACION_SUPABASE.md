@@ -48,11 +48,59 @@ alembic upgrade head
 - `/organizaciones`: enumera solo membresías y organizaciones activas.
 - `/organizaciones/{id}/seleccionar`: vuelve a comprobar la membresía antes de escribir la cookie de selección.
 - Rutas comerciales: `get_db` ignora `COTIZAT_ORGANIZATION_ID` en PostgreSQL y deriva usuario, rol y organización de la sesión autenticada.
-- `/salir`: elimina access token, refresh token y organización seleccionada.
+- `/cuenta`: panel de la persona autenticada (perfil, contraseña, organizaciones y cierre de sesión).
+- `/salir`: revoca la sesión en GoTrue (`POST /auth/v1/logout`) y elimina access token, refresh token y organización seleccionada.
+
+## Panel de cuenta (`/cuenta`)
+
+Hasta ahora la sesión solo podía cerrarse desde el enlace de la barra lateral y la contraseña únicamente se cambiaba por email de recuperación. El panel reúne las tres operaciones básicas de la cuenta:
+
+- **Perfil**: edita `usuarios.nombre` y sincroniza `user_metadata.name` en Supabase. El email **no** se edita: es la clave del vínculo con `auth.users` y el destinatario de las invitaciones pendientes, así que cambiarlo exigiría reverificación y una transición explícita que todavía no está implementada. Si Supabase falla, el nombre local ya guardado no se revierte: el metadato remoto solo alimenta el nombre mostrado.
+- **Contraseña**: exige la contraseña actual y **reautentica** con `grant_type=password` antes de llamar a `PUT /auth/v1/user`. GoTrue aceptaría el cambio solo con el access token, por lo que una sesión robada bastaría para secuestrar la cuenta; la reautenticación cierra ese hueco. Al terminar se borran las cookies y se obliga a iniciar sesión de nuevo. La ruta está incluida en el rate limiter local (`/cuenta/clave`) para que la verificación de la contraseña actual no se convierta en un oráculo de fuerza bruta.
+- **Organizaciones**: lista las membresías activas y marca cuál está seleccionada. La cookie de organización se contrasta contra las membresías reales, de modo que una cookie manipulada nunca marca como activa una empresa ajena.
+
+`clear_auth_cookies` acepta la petición para descartar una renovación de token pendiente: sin eso, `RefreshedAuthCookieMiddleware` reescribía las cookies justo después de borrarlas y el cierre de sesión no surtía efecto cuando el access token se había renovado en esa misma petición.
+
+El cierre de sesión es *best-effort* frente a Supabase: si GoTrue no responde, la sesión local se cierra igualmente y nunca se deja al usuario dentro por un fallo del proveedor.
 
 Una membresía `lectura` puede consultar datos, pero el ORM rechaza tanto `flush` como `UPDATE`/`DELETE` masivos.
 
 Para recuperación, `COTIZAT_PUBLIC_URL` debe ser un origen HTTPS fijo y su ruta `https://<origen>/restablecer-clave` debe añadirse a las Redirect URLs permitidas en Supabase Auth. No se deriva desde `Host`, para evitar envenenar el enlace enviado por email. El access token temporal solo cruza el navegador y el backend durante el cambio; no se persiste.
+
+### Fallo observado y corregido: el enlace del email llevaba al login
+
+**Causa real (bug propio):** `redirect_to` se enviaba dentro del **cuerpo JSON** de `POST /auth/v1/recover`. GoTrue no lo lee ahí. Su struct `RecoverParams` (`internal/api/recover.go`) solo declara:
+
+```go
+type RecoverParams struct {
+    Email               string `json:"email"`
+    CodeChallenge       string `json:"code_challenge"`
+    CodeChallengeMethod string `json:"code_challenge_method"`
+}
+```
+
+No hay campo `redirect_to`, así que el valor se descartaba **en silencio** (sin error ni aviso) y GoTrue caía al **Site URL**. El cliente oficial `auth-js` lo envía como **parámetro de query** (`src/lib/fetch.ts`: `qs['redirect_to'] = options.redirectTo`).
+
+La corrección envía la URL donde GoTrue sí la lee:
+
+```text
+POST /auth/v1/recover?redirect_to=https%3A%2F%2F<origen>%2Frestablecer-clave
+body: {"email": "..."}
+```
+
+Lo mismo aplicaba a `POST /auth/v1/signup`: `SignupParams` tampoco declara `redirect_to`, por lo que el email de confirmación también caía al Site URL. Corregido igual.
+
+Efecto secundario que confundía el diagnóstico: al caer al Site URL (`/`), que exige sesión, la app rebotaba a `/acceso`, y el navegador arrastraba el fragmento en cada salto. Se aterrizaba en:
+
+```text
+/acceso?next=/#access_token=...&type=recovery
+```
+
+El fragmento (`#…`) **nunca viaja al servidor**, así que ninguna ruta podía leerlo: el login lo ignoraba y el enlace parecía roto aunque el token fuera válido. Esto hacía que el fallo se pareciese mucho a una Redirect URL sin autorizar; conviene descartar primero el formato de la petición.
+
+Tener la Redirect URL autorizada en Authentication → URL Configuration **sigue siendo obligatorio** (GoTrue valida contra esa lista), pero no era la causa aquí. `/readyz` publica el valor exacto esperado en `recovery_redirect_url_esperada`.
+
+Red de seguridad en la aplicación: `app/static/js/recovery_redirect.js` se carga en el login y en el layout general; si detecta `type=recovery` con `access_token` en el fragmento, reenvía a `/restablecer-clave` conservándolo. Un enlace caducado (sin token y con `error`) se desvía a `/recuperar-acceso` con un mensaje claro en lugar de dejar a la persona en el login. El token permanece siempre en el fragmento: no pasa a la query, donde quedaría registrado en logs o en el `Referer`.
 
 ## Invitaciones y administración de equipo
 

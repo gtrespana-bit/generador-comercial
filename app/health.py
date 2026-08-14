@@ -79,6 +79,23 @@ def _check_public_url() -> tuple[str, str | None]:
         return "no-configurado", str(exc)
 
 
+def _check_recovery_redirect() -> tuple[str, str | None]:
+    """Publica la Redirect URL exacta que Supabase debe tener autorizada.
+
+    Supabase descarta ``redirect_to`` en silencio cuando la URL no está en su
+    lista y usa el Site URL: el enlace del email acaba en la pantalla de login
+    y parece roto. No se puede consultar esa lista sin credenciales de
+    administración, así que readiness expone el valor esperado para poder
+    compararlo de un vistazo con Authentication → URL Configuration.
+    """
+    from .auth import AuthNotConfigured, password_reset_redirect_url
+
+    try:
+        return password_reset_redirect_url(), None
+    except AuthNotConfigured as exc:
+        return "no-configurado", str(exc)
+
+
 def _check_postgresql(engine: Engine) -> dict[str, object]:
     """Comprueba conexión, head de Alembic y el rol runtime limitado."""
     results: dict[str, object] = {"database": "postgresql"}
@@ -177,6 +194,11 @@ def readiness(engine: Engine | None = None) -> HealthStatus:
     checks["public_url"] = url_state
     if url_error:
         errors.append(f"URL pública: {url_error}")
+
+    # Informativo: no falla el readiness, porque la lista de Redirect URLs
+    # vive en Supabase y no puede comprobarse desde aquí.
+    redirect_state, _redirect_error = _check_recovery_redirect()
+    checks["recovery_redirect_url_esperada"] = redirect_state
 
     if DATABASE_IS_SQLITE:
         checks.update({k: str(v) for k, v in _check_sqlite().items()})

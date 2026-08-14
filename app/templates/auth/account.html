@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block title %}Mi cuenta{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Mi cuenta</h1>
+    <p class="subtitle">Tus datos personales, contraseña y sesión</p>
+  </div>
+  <form action="/salir" method="post" class="inline">
+    <button class="btn" type="submit">Cerrar sesión</button>
+  </form>
+</div>
+
+{% if msg %}<div class="alert alert-ok">{{ msg }}</div>{% endif %}
+{% if error %}<div class="alert alert-error">{{ error }}</div>{% endif %}
+
+<div class="card">
+  <h2>Datos personales</h2>
+  <p class="subtitle">Este nombre identifica tus acciones dentro del equipo.</p>
+  <form method="post" action="/cuenta/perfil">
+    <div class="form-grid">
+      <div class="field">
+        <label for="cuenta-nombre">Nombre visible *</label>
+        <input id="cuenta-nombre" name="nombre" value="{{ usuario.nombre }}" minlength="2" maxlength="200" autocomplete="name" required>
+      </div>
+      <div class="field">
+        <label for="cuenta-email">Email de acceso</label>
+        <input id="cuenta-email" value="{{ usuario.email }}" disabled>
+        <p class="hint">
+          {% if email_verificado %}Verificado.{% else %}Sin verificar todavía.{% endif %}
+          El email identifica tu cuenta en Supabase y tus invitaciones, por lo que no se cambia desde aquí.
+        </p>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-primary" type="submit">Guardar cambios</button>
+    </div>
+  </form>
+</div>
+
+<div class="card">
+  <h2>Cambiar contraseña</h2>
+  <p class="subtitle">Pedimos la contraseña actual para que nadie pueda cambiarla desde una sesión abierta que no sea tuya.</p>
+  <form method="post" action="/cuenta/clave">
+    <div class="form-grid">
+      <div class="field">
+        <label for="clave-actual">Contraseña actual *</label>
+        <input id="clave-actual" name="password_actual" type="password" autocomplete="current-password" required>
+      </div>
+      <div class="field">
+        <label for="clave-nueva">Nueva contraseña *</label>
+        <input id="clave-nueva" name="password" type="password" minlength="8" autocomplete="new-password" required>
+        <p class="hint">Mínimo 8 caracteres.</p>
+      </div>
+      <div class="field">
+        <label for="clave-confirmacion">Repite la nueva contraseña *</label>
+        <input id="clave-confirmacion" name="password_confirmation" type="password" minlength="8" autocomplete="new-password" required>
+      </div>
+    </div>
+    <p class="hint">Al cambiarla se cerrará la sesión y tendrás que entrar de nuevo con la contraseña nueva.</p>
+    <div class="form-actions">
+      <button class="btn btn-primary" type="submit">Actualizar contraseña</button>
+      <a class="btn" href="/recuperar-acceso">No recuerdo la actual</a>
+    </div>
+  </form>
+</div>
+
+<div class="card">
+  <h2>Tus organizaciones</h2>
+  <p class="subtitle">Empresas a las que perteneces y el rol que tienes en cada una.</p>
+  {% if membresias %}
+  <table class="table">
+    <thead>
+      <tr><th>Empresa</th><th>Rol</th><th class="right">Acciones</th></tr>
+    </thead>
+    <tbody>
+      {% for membresia in membresias %}
+      <tr>
+        <td>
+          <strong>{{ membresia.organizacion.nombre }}</strong>
+          {% if organizacion_activa_id == membresia.organizacion_id %}
+          <span class="badge badge-aprobado">Activa</span>
+          {% endif %}
+        </td>
+        <td><span class="badge">{{ membresia.rol }}</span></td>
+        <td class="right">
+          {% if organizacion_activa_id != membresia.organizacion_id %}
+          <form method="post" action="/organizaciones/{{ membresia.organizacion_id }}/seleccionar" class="inline">
+            <button class="btn btn-sm" type="submit">Entrar</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="hint">Todavía no perteneces a ninguna organización.</p>
+  {% endif %}
+  <div class="form-actions">
+    <a class="btn" href="/organizaciones">Cambiar de organización</a>
+    <a class="btn" href="/organizaciones/nueva">Crear otra empresa</a>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Sesión</h2>
+  <p class="subtitle">Cerrar sesión borra las cookies de este navegador y revoca la sesión en Supabase.</p>
+  <form action="/salir" method="post">
+    <div class="form-actions">
+      <button class="btn btn-danger" type="submit">Cerrar sesión</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

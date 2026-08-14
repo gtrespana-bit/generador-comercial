@@ -1109,3 +1109,188 @@ partidas críticas (impermeabilizaciones, pases de fontanería, juntas epóxicas
   desde capítulo vía API, cálculo proporcional y fijo, duplicación, búsqueda
   global y restauración de presets iniciales.
 - **Suite completa**: 48 pruebas OK (`.venv/bin/pytest -o pythonpath=.`).
+
+---
+
+# 22. Fase 13 — Panel de cuenta, contraseña y cierre de sesión (2026-08-14)
+
+Estado: **COMPLETADA** (pendiente de validación real contra Supabase).
+
+## Problema que resuelve
+
+Tras iniciar sesión no existía ningún lugar donde la persona usuaria pudiera
+ver o modificar sus propios datos. El único rastro de la sesión era un bloque
+pequeño al final de la barra lateral con el email y un enlace de salida, y la
+contraseña solo podía cambiarse saliendo de la aplicación y pidiendo un email
+de recuperación. Faltaba lo más básico de cualquier SaaS: un panel de cuenta.
+
+## Resultado implementado
+
+- **Nueva página `/cuenta`** (`auth/account.html`), integrada en el layout de
+  la aplicación (`base.html`) en lugar de ser una pantalla suelta como
+  `/equipo` u `/organizaciones`. Contiene cuatro bloques: datos personales,
+  cambio de contraseña, organizaciones y sesión.
+- **Perfil editable** (`POST /cuenta/perfil`): actualiza `usuarios.nombre` y
+  sincroniza `user_metadata.name` en Supabase. El email se muestra pero no se
+  edita, con su estado de verificación.
+- **Cambio de contraseña** (`POST /cuenta/clave`): exige la contraseña actual,
+  **reautentica** contra GoTrue con `grant_type=password` y solo entonces
+  llama a `PUT /auth/v1/user`. Al terminar cierra la sesión y obliga a entrar
+  de nuevo. Incluida en el rate limiter local (10 intentos / 5 min por IP).
+- **Organizaciones**: tabla con las membresías activas, el rol de cada una y
+  la empresa seleccionada marcada como «Activa», con acceso directo para
+  cambiar de empresa o crear otra.
+- **Cierre de sesión mejorado** (`POST /salir`): además de borrar las cookies,
+  revoca el refresh token en Supabase (`POST /auth/v1/logout`). Es
+  *best-effort*: si Supabase no responde, la sesión local se cierra igual.
+- **Barra lateral**: el bloque de sesión pasa a mostrar avatar con la inicial,
+  nombre y los enlaces «Mi cuenta» / «Cerrar sesión», y se añade «Mi cuenta»
+  en la sección Sistema de la navegación.
+
+## Detalles técnicos y riesgos cubiertos
+
+- **Sesión robada no basta para cambiar la contraseña.** GoTrue acepta
+  `PUT /auth/v1/user` solo con el access token; la reautenticación previa con
+  la contraseña actual cierra ese vector de secuestro de cuenta.
+- **El cierre de sesión ya no puede revertirse solo.** `clear_auth_cookies`
+  recibe ahora la petición y descarta cualquier renovación pendiente: sin eso,
+  `RefreshedAuthCookieMiddleware` reescribía las cookies justo después de
+  borrarlas cuando el access token se había renovado en la misma petición.
+- **La organización activa no se cree por cookie.** `/cuenta` usa
+  `get_authenticated_db` (no exige empresa elegida), así que la cookie se
+  contrasta contra las membresías reales antes de marcar ninguna como activa.
+- **El email no se edita** porque es la clave del vínculo con `auth.users` y
+  el destinatario de las invitaciones pendientes; cambiarlo exige un flujo de
+  reverificación que no está implementado.
+
+## Pruebas realizadas
+
+- **`tests/test_cuenta.py`** (10 pruebas): render del panel, actualización de
+  perfil local + metadato remoto, rechazo de nombre vacío y de cambio de
+  email, cambio de contraseña con reautenticación y borrado de cookies,
+  contraseña actual incorrecta sin llegar a actualizar, validación de
+  confirmación/longitud antes de contactar Supabase, revocación en `/salir`,
+  cierre de sesión aunque Supabase falle, descarte de la renovación pendiente
+  y cobertura de rate limiting en rutas con contraseña.
+- **Suite completa**: 186 pruebas OK + 3 omitidas; 41 plantillas Jinja
+  parseadas correctamente.
+- **Manual**: panel revisado en el navegador con dos organizaciones,
+  comprobando el marcado de la activa y que una cookie de organización ajena
+  no marca ninguna.
+
+## Pendientes / ideas siguientes
+
+- Cambio de email con reverificación y transición del vínculo `auth_user_id`.
+- Listado de sesiones activas por dispositivo con revocación individual.
+- Eliminación de cuenta y salida voluntaria de una organización.
+- Validación end-to-end real contra Supabase (sigue bloqueada en el sandbox).
+
+---
+
+# 23. Corrección — El enlace de recuperación aterrizaba en el login (2026-08-14)
+
+Estado: **CORREGIDO** (bug de código; no requiere cambios de configuración).
+
+## Síntoma reportado
+
+El email de recuperación llegaba correctamente, pero al pulsar el enlace el
+navegador mostraba la pantalla de inicio de sesión en lugar de la de nueva
+contraseña, con esta forma de URL:
+
+```text
+/acceso?next=/#access_token=...&expires_in=3600&type=recovery
+```
+
+## Causa raíz real (bug propio) — corrige el diagnóstico inicial
+
+**Primer diagnóstico, equivocado:** se atribuyó a que la Redirect URL no
+estaba autorizada en Supabase. El usuario confirmó que **ya lo estaba desde
+antes**, lo que obligó a revisar el código y descartó esa hipótesis.
+
+**Causa verificada:** la aplicación enviaba `redirect_to` dentro del **cuerpo
+JSON** de `POST /auth/v1/recover`. GoTrue no lo lee ahí. Su struct
+`RecoverParams` (`internal/api/recover.go`) solo declara:
+
+```go
+type RecoverParams struct {
+    Email               string `json:"email"`
+    CodeChallenge       string `json:"code_challenge"`
+    CodeChallengeMethod string `json:"code_challenge_method"`
+}
+```
+
+No existe campo `redirect_to`, así que el valor se descartaba **en silencio**
+—sin error ni aviso— y GoTrue caía al **Site URL**. El cliente oficial
+`auth-js` lo envía como **parámetro de query** (`src/lib/fetch.ts`:
+`qs['redirect_to'] = options.redirectTo`), no en el cuerpo.
+
+Corrección aplicada en `app/auth.py`:
+
+```text
+POST /auth/v1/recover?redirect_to=https%3A%2F%2F<origen>%2Frestablecer-clave
+body: {"email": "..."}
+```
+
+**Mismo bug latente en el registro:** `SignupParams` (`internal/api/signup.go`)
+tampoco declara `redirect_to`, de modo que el email de confirmación también
+habría caído al Site URL. Corregido igual y `/registro` pasa ahora
+`public_app_url("/acceso")`.
+
+Por qué el síntoma despistaba: al caer al Site URL (`/`), que exige sesión, la
+app rebotaba a `/acceso`, y el navegador re-adjuntaba el fragmento en cada
+salto. El fragmento **nunca viaja al servidor**, así que ninguna ruta podía
+leer el token. El resultado es idéntico al de una Redirect URL sin autorizar,
+que fue justo la pista falsa. Lección: ante este síntoma, verificar primero el
+**formato de la petición** antes que la configuración remota.
+
+Se decodificó el JWT del enlace para descartar un token inválido:
+`type=recovery`, `amr.method=otp`, vigencia de 1 hora y email correcto. El
+token siempre fue válido; solo aterrizaba donde nadie lo leía.
+
+## Verificación
+
+Captura HTTP real contra un servidor local que suplanta a GoTrue, comprobando
+la petición exacta que sale:
+
+```text
+POST /auth/v1/recover?redirect_to=https%3A%2F%2Fcotizat-generador.vercel.app%2Frestablecer-clave
+body: {"email": "gtrespana@gmail.com"}
+```
+
+## Red de seguridad implementada en la aplicación
+
+- **`app/static/js/recovery_redirect.js`**: se carga en `auth/access.html` y en
+  `base.html` (los dos destinos a los que Supabase puede desviar). Si detecta
+  `type=recovery` con `access_token` en el fragmento, reenvía a
+  `/restablecer-clave` conservándolo íntegro. Si el enlace llega caducado
+  (`error`/`error_code` sin token), desvía a `/recuperar-acceso` con un mensaje
+  claro en vez de dejar a la persona mirando el login.
+  - El token **permanece siempre en el fragmento**: no se copia a la query,
+    donde acabaría en logs de servidor o en la cabecera `Referer`.
+  - No actúa si ya se está en `/restablecer-clave` (no puede crear bucles), ni
+    con anclas normales de la aplicación, ni con `type=magiclink`.
+- **`/readyz`** publica ahora `recovery_redirect_url_esperada` con la URL exacta
+  que debe autorizarse en Supabase, para diagnosticar esto de un vistazo. Es
+  informativo y no hace fallar el readiness: la lista vive en Supabase y no
+  puede consultarse sin credenciales de administración.
+
+## Pruebas realizadas
+
+- **`tests/test_auth.py`**: dos pruebas nuevas fijan el formato de la petición
+  (`redirect_to` en la query y **ausente** del cuerpo) para `/auth/v1/recover`
+  y `/auth/v1/signup`. Son las que habrían detectado este fallo.
+- **`tests/test_recuperacion_redireccion.py`** (10 pruebas): ejercita el script
+  con Node sobre un DOM mínimo. Cubre la URL real reportada, aterrizaje en la
+  raíz, ausencia de bucle en la página correcta, login normal, `magiclink`,
+  fragmento sin token, ancla corriente, enlace caducado, y que el token nunca
+  salga del fragmento. Incluye una prueba que verifica que el script sigue
+  cargado en ambas plantillas.
+- **Suite completa**: 198 pruebas OK + 3 omitidas; 41 plantillas Jinja OK.
+- **Manual**: script servido con `200 text/javascript` y admitido por la CSP
+  (`script-src 'self'`), verificado contra la aplicación en ejecución.
+
+## Documentación actualizada
+
+`docs/GUIA_STAGING_POR_CLICS.md` (paso 6, con aviso destacado),
+`docs/APROVISIONAMIENTO_STAGING.md` (paso F) y `docs/AUTENTICACION_SUPABASE.md`
+(sección «Fallo observado: el enlace del email lleva al login»).

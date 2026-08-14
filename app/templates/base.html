@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{% block title %}Inicio{% endblock %} · {{ product_name }}</title>
 <link rel="icon" type="image/png" href="/static/icono.png">
+<script src="/static/js/recovery_redirect.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -113,6 +114,12 @@
     </a>
 
     <div class="nav-section">Sistema</div>
+    {% if request.state.usuario is defined %}
+    <a href="/cuenta" class="{{ 'active' if request.url.path.startswith('/cuenta') else '' }}">
+      <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="6" r="3.25"/><path d="M2.5 16c0-3.6 2.9-6.5 6.5-6.5s6.5 2.9 6.5 6.5"/></svg>
+      <span>Mi cuenta</span>
+    </a>
+    {% endif %}
     <a href="/configuracion" class="{{ 'active' if request.url.path == '/configuracion' else '' }}">
       <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="9" r="2.5"/><path d="M9 1.5v2M9 14.5v2M1.5 9h2M14.5 9h2M3.4 3.4l1.4 1.4M13.2 13.2l1.4 1.4M3.4 14.6l1.4-1.4M13.2 4.8l1.4-1.4"/></svg>
       <span>Configuración</span>
@@ -130,8 +137,14 @@
     {% if request.state.organizacion is defined %}
     <a href="/organizaciones" title="Cambiar organización"><strong>{{ request.state.organizacion.nombre }}</strong></a>
     {% endif %}
-    <span>{{ request.state.usuario.email }}</span>
-    <form action="/salir" method="post"><button type="submit">Cerrar sesión</button></form>
+    <a class="sidebar-session-user" href="/cuenta" title="Mi cuenta">
+      <span class="sidebar-session-avatar" aria-hidden="true">{{ (request.state.usuario.nombre or request.state.usuario.email)[:1] | upper }}</span>
+      <span>{{ request.state.usuario.nombre or request.state.usuario.email }}</span>
+    </a>
+    <div class="sidebar-session-actions">
+      <a href="/cuenta">Mi cuenta</a>
+      <form action="/salir" method="post"><button type="submit">Cerrar sesión</button></form>
+    </div>
   </div>
   {% endif %}
 

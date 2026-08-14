@@ -171,8 +171,31 @@ Vercel):
      (sin barra al final).
 3. En Supabase → **Authentication** → **URL Configuration**:
    - **Site URL**: `https://cotizat-generador.vercel.app`
-   - **Redirect URLs**: añade
-     `https://cotizat-generador.vercel.app/restablecer-clave`
+   - **Redirect URLs**: añade **exactamente** (una por línea)
+
+     ```text
+     https://cotizat-generador.vercel.app/restablecer-clave
+     ```
+
+   > ⚠️ **Este paso es obligatorio y silencioso si se omite.** Supabase no
+   > avisa cuando una `redirect_to` no está en la lista: la descarta y manda
+   > el enlace al **Site URL**. El resultado es que el correo de recuperación
+   > lleva a la pantalla de inicio de sesión (con un `#access_token=...`
+   > colgando de la barra de direcciones) y el enlace parece roto.
+   >
+   > La URL debe coincidir carácter a carácter: mismo esquema `https`, mismo
+   > dominio, sin barra final y con la ruta `/restablecer-clave`. Si usas un
+   > dominio propio además del de Vercel, añade **ambos**.
+   >
+   > Para comprobar qué URL espera la aplicación, abre `/readyz` y mira el
+   > campo `recovery_redirect_url_esperada`: ese valor exacto es el que debe
+   > estar en la lista.
+   >
+   > **Si el enlace sigue llevando al login con la URL ya autorizada**, el
+   > problema no es esta lista: revisa que la app envíe `redirect_to` como
+   > **parámetro de query** y no en el cuerpo JSON. GoTrue no lo lee en el
+   > cuerpo y lo descarta sin error (fue un bug real, corregido en
+   > `app/auth.py`; ver `docs/AUTENTICACION_SUPABASE.md`).
 4. En Vercel → pestaña **Deployments**, abre el menú del último deployment →
    **Redeploy** para que tome la variable nueva.
 

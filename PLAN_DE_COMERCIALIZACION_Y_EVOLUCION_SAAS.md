@@ -559,7 +559,9 @@ La beta seguirá siendo privada y de capacidad limitada. Compartir infraestructu
   Roles persistibles, bloqueo global de escritura para `lectura` y reglas de administración de equipo implementados; falta completar la matriz por operación de negocio.
 - [ ] **E4-009 — Implementar autorización centralizada.**
 - [~] **E4-010 — Implementar recuperación de contraseña y verificación de email.**
-  Recuperación implementada sobre Supabase; falta prueba real y completar gestión explícita de verificación de email.
+  Recuperación implementada sobre Supabase y cambio de contraseña desde `/cuenta` con reautenticación previa y cierre de sesión posterior; falta prueba real y completar gestión explícita de verificación de email.
+- [~] **E4-031 — Panel de cuenta de la persona usuaria.**
+  `/cuenta` reúne perfil (nombre), cambio de contraseña, listado de organizaciones con la activa marcada y cierre de sesión; `/salir` revoca además la sesión en GoTrue. Falta cambio de email con reverificación, gestión de sesiones activas por dispositivo y eliminación de cuenta.
 - [ ] **E4-011 — Evaluar segundo factor para administradores.**
 
 ## 4.3 Aislamiento multiempresa
