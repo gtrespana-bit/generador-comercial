@@ -1218,9 +1218,16 @@ async def registrar_cuenta(request: Request):
     except AuthError as exc:
         return _redirect("/acceso", error=str(exc))
     if result.tokens is None:
+        # Mensaje único tanto para el alta nueva como para el email ya
+        # registrado: GoTrue oculta a propósito cuál de los dos casos es, y
+        # diferenciarlos aquí permitiría enumerar qué emails tienen cuenta.
         return _redirect(
             "/acceso",
-            msg="Cuenta creada. Revisa tu email para confirmarla antes de iniciar sesión.",
+            msg=(
+                "Revisa tu email y abre el enlace de confirmación para activar la "
+                "cuenta. Si ya tenías una cuenta con ese email, inicia sesión con "
+                "tu contraseña o usa «Olvidé mi contraseña»."
+            ),
         )
     response = RedirectResponse(destino, status_code=303)
     set_auth_cookies(response, result.tokens, settings.cookie_secure)

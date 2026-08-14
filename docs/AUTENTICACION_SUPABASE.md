@@ -90,6 +90,40 @@ body: {"email": "..."}
 
 Lo mismo aplicaba a `POST /auth/v1/signup`: `SignupParams` tampoco declara `redirect_to`, por lo que el email de confirmación también caía al Site URL. Corregido igual.
 
+### Fallo observado y corregido: «Supabase no pudo crear la cuenta»
+
+**Síntoma:** el registro, que antes funcionaba, empezó a fallar siempre con ese
+mensaje en staging. No era una clave caducada ni configuración perdida: era un
+**bug propio de parseo** que se destapó al activar «Confirm email» en el proyecto.
+
+`POST /auth/v1/signup` responde **HTTP 200 con tres formas distintas**
+(`internal/api/signup.go`), y solo una anida el usuario bajo `user`:
+
+| Situación | Respuesta de GoTrue | Forma del JSON |
+| --- | --- | --- |
+| Autoconfirm activo | `sendJSON(w, 200, token)` | `{access_token, refresh_token, user:{...}}` |
+| Confirmación por email, alta nueva | `sendJSON(w, 200, user)` | usuario **en la raíz**, sin tokens |
+| Email ya registrado sin confirmar | `sendJSON(w, 200, sanitizedUser)` | usuario **en la raíz**, `identities: []` |
+
+`sign_up` leía siempre `payload["user"]`, así que los dos últimos casos —ambos
+respuestas correctas— se convertían en `InvalidCredentials`. Mientras el
+proyecto estuvo en autoconfirm el registro funcionaba; al exigir confirmación,
+falló el 100% de las veces.
+
+La corrección acepta el usuario en la raíz cuando no viene envuelto y solo trata
+como error una respuesta sin identidad utilizable. El caso «email ya registrado»
+se detecta por `identities: []` (el usuario obfuscado que GoTrue devuelve para no
+revelar qué direcciones existen) y se expone como `SignupResult.ya_registrado`.
+
+**La bandera no cambia el mensaje que ve la persona.** Diferenciar el aviso
+permitiría enumerar qué emails tienen cuenta, justo lo que GoTrue evita. `/registro`
+responde siempre lo mismo: revisa tu email para confirmar la cuenta y, si ya tenías
+una, inicia sesión o usa «Olvidé mi contraseña».
+
+Cubierto por `tests/test_auth.py`: las tres formas de respuesta más el cuerpo sin
+identidad. Con el código anterior, dos de esas pruebas fallan con el mensaje exacto
+que se reportó.
+
 Efecto secundario que confundía el diagnóstico: al caer al Site URL (`/`), que exige sesión, la app rebotaba a `/acceso`, y el navegador arrastraba el fragmento en cada salto. Se aterrizaba en:
 
 ```text

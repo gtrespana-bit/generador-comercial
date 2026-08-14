@@ -154,6 +154,10 @@ class AuthTokens:
 class SignupResult:
     identity: SupabaseIdentity
     tokens: AuthTokens | None
+    #: GoTrue devuelve un usuario "obfuscado" (sin identidades) cuando el email
+    #: ya estaba registrado y la confirmación por email está activa, para no
+    #: revelar qué direcciones existen. No se ha creado ninguna cuenta nueva.
+    ya_registrado: bool = False
 
 
 def _identity_from_payload(payload: dict[str, Any]) -> SupabaseIdentity:
@@ -282,13 +286,30 @@ class SupabaseAuthClient:
             ruta,
             {"email": email, "password": password, "data": {"name": name.strip()[:200]}},
         )
+        # ``/auth/v1/signup`` responde 200 con TRES formas distintas
+        # (internal/api/signup.go), y solo una anida el usuario bajo "user":
+        #
+        # 1. Autoconfirm activo: ``sendJSON(w, 200, token)`` -> AccessTokenResponse
+        #    con access_token, refresh_token y "user" anidado.
+        # 2. Confirmación por email activa y alta nueva: ``sendJSON(w, 200, user)``
+        #    -> el usuario va EN LA RAÍZ, sin envoltorio ni tokens.
+        # 3. Email ya registrado sin confirmar: ``sendJSON(w, 200, sanitizedUser)``
+        #    -> también en la raíz, con un id falso y "identities": [].
+        #
+        # Leer siempre ``payload["user"]`` rompía el registro entero en cuanto
+        # el proyecto exigía confirmar el email: los casos 2 y 3 acababan en
+        # "Supabase no pudo crear la cuenta" pese a ser respuestas correctas.
         user = payload.get("user")
         if not isinstance(user, dict):
-            raise InvalidCredentials("Supabase no pudo crear la cuenta.")
+            user = payload
         identity = _identity_from_payload(user)
         if payload.get("access_token") and payload.get("refresh_token"):
             return SignupResult(identity, _tokens_from_payload(payload))
-        return SignupResult(identity, None)
+        # Usuario obfuscado: GoTrue vacía "identities" para no filtrar si el
+        # email existe. Se distingue del alta real, que trae su identidad.
+        identities = user.get("identities")
+        ya_registrado = isinstance(identities, list) and not identities
+        return SignupResult(identity, None, ya_registrado=ya_registrado)
 
     def request_password_reset(self, email: str, redirect_to: str) -> None:
         """Pide a GoTrue el email de recuperación.

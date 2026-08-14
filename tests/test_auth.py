@@ -369,3 +369,85 @@ def test_rol_lectura_bloquea_flush_y_dml_masivo():
     finally:
         db.close()
         engine.dispose()
+
+
+def _usuario_raiz(auth_id=AUTH_ID, email="persona@example.com", identities=None):
+    """Respuesta de ``/auth/v1/signup`` con el usuario EN LA RAÍZ.
+
+    Es lo que devuelve GoTrue cuando el proyecto exige confirmar el email:
+    ``sendJSON(w, http.StatusOK, user)``, sin envoltorio ``user`` ni tokens.
+    """
+    payload = {
+        "id": auth_id,
+        "email": email,
+        "confirmation_sent_at": "2026-08-14T00:00:00Z",
+        "email_confirmed_at": None,
+        "confirmed_at": None,
+        "user_metadata": {"name": "Persona de prueba"},
+        "identities": [{"id": auth_id, "provider": "email"}],
+    }
+    if identities is not None:
+        payload["identities"] = identities
+    return payload
+
+
+def test_registro_acepta_usuario_en_la_raiz_con_confirmacion_de_email():
+    """Regresión: el registro se rompía entero al activar «Confirm email».
+
+    ``internal/api/signup.go`` solo anida el usuario bajo ``user`` cuando hay
+    autoconfirm y devuelve un ``AccessTokenResponse``. Si la confirmación por
+    email está activa responde ``sendJSON(w, 200, user)``: HTTP 200 correcto,
+    pero el usuario va en la raíz. Leer siempre ``payload["user"]`` convertía
+    ese éxito en «Supabase no pudo crear la cuenta».
+    """
+    client = StubAuthClient([_usuario_raiz()])
+
+    result = client.sign_up(
+        "persona@example.com", "clave-larga-seg", "Persona", ""
+    )
+
+    assert result.tokens is None, "sin autoconfirm no hay sesión todavía"
+    assert result.ya_registrado is False
+    assert result.identity.auth_user_id == AUTH_ID
+    assert result.identity.email == "persona@example.com"
+    assert result.identity.email_verified is False
+
+
+def test_registro_de_email_ya_existente_no_revela_que_existe():
+    """GoTrue devuelve un usuario obfuscado con ``identities`` vacío.
+
+    No se ha creado ninguna cuenta, pero la respuesta es 200 y trae un id
+    falso para no filtrar qué emails están registrados. Se marca la bandera
+    sin cambiar el mensaje que ve la persona.
+    """
+    client = StubAuthClient([_usuario_raiz(identities=[])])
+
+    result = client.sign_up(
+        "persona@example.com", "clave-larga-seg", "Persona", ""
+    )
+
+    assert result.ya_registrado is True
+    assert result.tokens is None
+
+
+def test_registro_con_autoconfirm_devuelve_sesion_iniciada():
+    """Con autoconfirm, GoTrue responde el ``AccessTokenResponse`` anidado."""
+    client = StubAuthClient([_token_payload()])
+
+    result = client.sign_up(
+        "persona@example.com", "clave-larga-seg", "Persona", ""
+    )
+
+    assert result.ya_registrado is False
+    assert result.tokens is not None
+    assert result.tokens.access_token == "access-token"
+    assert result.tokens.refresh_token == "refresh-token"
+    assert result.identity.auth_user_id == AUTH_ID
+
+
+def test_registro_rechaza_una_respuesta_sin_identidad_utilizable():
+    """Un cuerpo vacío o sin id sigue siendo un error, no un alta silenciosa."""
+    client = StubAuthClient([{}])
+
+    with pytest.raises(InvalidCredentials):
+        client.sign_up("persona@example.com", "clave-larga-seg", "Persona", "")
