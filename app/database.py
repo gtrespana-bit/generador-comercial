@@ -301,11 +301,12 @@ def _verificar_head_alembic_postgresql() -> None:
     with engine.connect() as connection:
         version = connection.execute(
             text("SELECT version_num FROM alembic_version")
-        ).scalar_one()
+        ).scalar_one_or_none()
     if version != EXPECTED_ALEMBIC_HEAD:
         raise RuntimeError(
             "El esquema PostgreSQL no está en el head requerido "
-            f"{EXPECTED_ALEMBIC_HEAD}. Ejecuta `alembic upgrade head`."
+            f"{EXPECTED_ALEMBIC_HEAD} (encontrado: {version!r}). "
+            "Ejecuta `alembic upgrade head` o inserta la versión en `alembic_version`."
         )
 
 
