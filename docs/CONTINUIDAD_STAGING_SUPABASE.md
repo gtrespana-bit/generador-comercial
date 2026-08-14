@@ -34,6 +34,24 @@ La Etapa 1 local browser-first incluye:
 También pasaron compilación Python, parseo Jinja, `node --check` y
 `git diff --check`. `.env` y `presupuestos.db` no forman parte del repositorio.
 
+### Preparación de staging añadida desde el sandbox (14/08/2026)
+
+Sin contactar con Supabase/Vercel (el sandbox no tiene salida TLS a esos
+servicios) y sin imprimir secretos, se dejó listo:
+
+- `/healthz` (liveness) y `/readyz` (readiness) sin autenticación. `/readyz`
+  verifica configuración de Auth/Storage/`COTIZAT_PUBLIC_URL`, conexión
+  PostgreSQL, head de Alembic (`c93e7a4d20f1`) y que el login runtime sea
+  miembro no privilegiado de `cotizat_app`; devuelve 503 con `errors` sin
+  secretos si algo falta.
+- `app/tools/ensure_bucket.py` para verificar o crear `cotizat-private`
+  (`public=false`, 12 MB) desde un equipo con salida TLS.
+- `docs/APROVISIONAMIENTO_STAGING.md` con el orden A–F paso a paso (backup,
+  migraciones, rol runtime idempotente, bucket, variables de Vercel y Auth).
+
+La suite local quedó en `155 passed` y siguen pasando compilación Python,
+parseo Jinja con el entorno real, `node --check` y `git diff --check`.
+
 El PR de integración es:
 
 ```text

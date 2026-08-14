@@ -41,12 +41,30 @@ local: en la versión web con PostgreSQL se ignora y no hace falta definirla.
 ## Migración del esquema (una vez, antes del primer uso)
 
 La app comprueba al arrancar que PostgreSQL ya tiene el esquema versionado;
-si falta, falla con un mensaje claro. Ejecuta desde tu máquina:
+si falta o está desfasado, falla con un mensaje claro. El orden completo
+(backup, rol runtime limitado, bucket privado, variables y Auth) está en
+[`APROVISIONAMIENTO_STAGING.md`](APROVISIONAMIENTO_STAGING.md). Ejecuta desde
+tu máquina, usando la URL administrativa **solo** para Alembic:
 
 ```bash
 MIGRATION_DATABASE_URL=postgresql://administrador:…@host:5432/cotizat \
 alembic upgrade head
 ```
+
+## Endpoints de salud
+
+- `GET /healthz` — liveness: responde 200 si el proceso está vivo (no toca la
+  base de datos).
+- `GET /readyz` — readiness: comprueba la configuración de Auth, Storage y
+  `COTIZAT_PUBLIC_URL`, la conexión PostgreSQL, el head de Alembic esperado y
+  que el rol runtime sea un miembro no privilegiado de `cotizat_app`
+  (`NOSUPERUSER`, `NOBYPASSRLS`, `INHERIT`).
+
+Devuelve `200` cuando está listo y `503` con un array `errors` (sin secretos)
+si el despliegue no debe recibir tráfico. Las respuestas llevan
+`Cache-Control: no-store` para que los balanceadores no cacheen un estado
+viejo. Un `200` en `/readyz` no sustituye la matriz de aceptación con dos
+correos y dos organizaciones.
 
 ## ¿Qué pasa si no configuras `DATABASE_URL`?
 
