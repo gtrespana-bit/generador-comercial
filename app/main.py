@@ -103,6 +103,7 @@ from .models import (
     PresupuestoItemProducto,
     Producto,
     asegurar_config,
+    crear_organizacion_con_propietario,
     marcar_vencidos,
     membresias_activas,
     proximo_numero,
@@ -1291,19 +1292,15 @@ async def crear_organizacion_web(
     # sufijo aleatorio mantiene la unicidad sin ampliar la lectura global.
     slug = f"{slug_base[:107]}-{uuid.uuid4().hex[:12]}"
     usuario = db.get(Usuario, db.info["usuario_id"])
-    organizacion = Organizacion(
+    # El alta reserva el id desde ``organizaciones_id_seq`` para insertar sin
+    # ``RETURNING``: la política ``cotizat_org_select`` exige una membresía que
+    # todavía no existe y haría fallar la lectura implícita del INSERT.
+    organizacion = crear_organizacion_con_propietario(
+        db,
         nombre=nombre,
         slug=slug,
-        creada_por_usuario_id=usuario.id,
-    )
-    db.add(organizacion)
-    db.flush()
-    db.add(Membresia(
         usuario_id=usuario.id,
-        organizacion_id=organizacion.id,
-        rol="propietario",
-    ))
-    db.flush()
+    )
     establecer_contexto_organizacion(db, organizacion.id)
     db.add(Configuracion(organizacion_id=organizacion.id))
     db.commit()

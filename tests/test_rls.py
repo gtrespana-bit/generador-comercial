@@ -157,3 +157,133 @@ def test_migracion_rls_no_hace_nada_fuera_de_postgresql(monkeypatch):
     monkeypatch.setattr(migration.op, "execute", lambda statement: statements.append(statement))
     migration.upgrade()
     assert statements == []
+
+
+# ---------------------------------------------------------------------------
+# Regresión: bootstrap de la primera organización bajo RLS
+# ---------------------------------------------------------------------------
+# Vercel falló con ``psycopg.errors.InsufficientPrivilege: new row violates
+# row-level security policy for table organizaciones`` en
+# ``INSERT ... RETURNING organizaciones.id``. El ``WITH CHECK`` de
+# ``cotizat_org_insert`` se cumplía; lo que fallaba era el ``RETURNING``, que
+# evalúa ``cotizat_org_select`` sobre la fila recién insertada cuando todavía
+# no existe la membresía que esa política exige.
+
+def test_insert_de_organizacion_con_id_explicito_no_emite_returning():
+    """El id preasignado es lo que elimina el RETURNING que RLS rechazaba."""
+    from sqlalchemy.dialects import postgresql
+
+    from app.models import Organizacion
+
+    tabla = Organizacion.__table__
+    dialecto = postgresql.dialect()
+
+    sin_id = str(
+        tabla.insert().values(nombre="Empresa", slug="empresa").compile(dialect=dialecto)
+    )
+    con_id = str(
+        tabla.insert()
+        .values(id=42, nombre="Empresa", slug="empresa")
+        .compile(dialect=dialecto)
+    )
+
+    # Comportamiento por defecto que provocaba el fallo en staging.
+    assert "RETURNING organizaciones.id" in sin_id
+    # Con la clave primaria explícita PostgreSQL ya no necesita leer la fila.
+    assert "RETURNING" not in con_id
+    assert con_id.startswith("INSERT INTO organizaciones (id,")
+
+
+def test_reservar_id_organizacion_usa_la_secuencia_sin_tocar_la_tabla():
+    """``nextval`` no pasa por ninguna política de fila."""
+    from app.models import reservar_id_organizacion
+
+    ejecutadas = []
+
+    class _Resultado:
+        def scalar_one(self):
+            return 77
+
+    class _FakeDb:
+        def get_bind(self):
+            return _FakeBind()
+
+        def execute(self, statement, *_args, **_kwargs):
+            ejecutadas.append(str(statement))
+            return _Resultado()
+
+    assert reservar_id_organizacion(_FakeDb()) == 77
+    assert len(ejecutadas) == 1
+    sql = ejecutadas[0]
+    assert "nextval" in sql
+    assert "organizaciones" in sql and "id" in sql
+    # La reserva jamás debe leer la tabla protegida por RLS.
+    assert "FROM public.organizaciones" not in sql
+    assert "SELECT" in sql.upper() and "INSERT" not in sql.upper()
+
+
+def test_reservar_id_organizacion_no_aplica_a_sqlite():
+    """SQLite local no tiene RLS: conserva el autoincremento del motor."""
+    from app.models import reservar_id_organizacion
+
+    class _SqliteDb:
+        def get_bind(self):
+            return SimpleNamespace(dialect=SimpleNamespace(name="sqlite"))
+
+        def execute(self, *_args, **_kwargs):  # pragma: no cover - no debe usarse
+            raise AssertionError("SQLite no debe reservar ids desde una secuencia")
+
+    assert reservar_id_organizacion(_SqliteDb()) is None
+
+
+def test_crear_organizacion_con_propietario_deja_membresia_en_la_misma_transaccion():
+    """El alta es atómica: sin la membresía, la organización sería invisible."""
+    from sqlalchemy import create_engine
+    from sqlalchemy.orm import sessionmaker
+
+    from app.models import (
+        Membresia,
+        Organizacion,
+        Usuario,
+        crear_organizacion_con_propietario,
+    )
+
+    engine = create_engine("sqlite://")
+    Base.metadata.create_all(engine)
+    with sessionmaker(bind=engine)() as db:
+        usuario = Usuario(email="propietaria@example.com", nombre="Propietaria")
+        db.add(usuario)
+        db.flush()
+
+        organizacion = crear_organizacion_con_propietario(
+            db, nombre="Empresa Uno", slug="empresa-uno-abc", usuario_id=usuario.id
+        )
+        db.commit()
+
+        assert organizacion.id is not None
+        guardada = db.get(Organizacion, organizacion.id)
+        assert guardada.creada_por_usuario_id == usuario.id
+        assert guardada.activa is True
+
+        membresia = db.query(Membresia).filter_by(
+            organizacion_id=organizacion.id
+        ).one()
+        # ``cotizat_security.can_create_owner_membership`` solo autoriza esta
+        # combinación exacta: el creador, como propietario, y sin membresías
+        # previas en la organización.
+        assert (membresia.usuario_id, membresia.rol, membresia.activa) == (
+            usuario.id,
+            "propietario",
+            True,
+        )
+
+
+def test_endpoint_de_alta_usa_el_bootstrap_sin_returning():
+    """El endpoint no debe reintroducir el ``Organizacion(...)`` directo."""
+    import inspect
+
+    import app.main as main
+
+    fuente = inspect.getsource(main.crear_organizacion_web)
+    assert "crear_organizacion_con_propietario(" in fuente
+    assert "db.add(organizacion)" not in fuente
