@@ -179,6 +179,10 @@ Para probar la base web con PostgreSQL, configura `DATABASE_URL` y ejecuta
 `docs/AUTENTICACION_SUPABASE.md`, `docs/ALMACENAMIENTO_PRIVADO.md` y
 `docs/SEGURIDAD_WEB.md`.
 
+Para desplegar en Vercel (o cualquier serverless con sistema de archivos de
+solo lectura), sigue `docs/DESPLIEGUE_VERCEL.md`: configura las variables de
+entorno y aplica las migraciones antes del primer uso.
+
 En el modo compatible local, los datos se guardan en `presupuestos.db` (se crea automáticamente). Los
 objetos nuevos van a `private_storage/` y se sirven mediante el proxy de la
 aplicación; `app/static/uploads/` se conserva solo para archivos históricos.
