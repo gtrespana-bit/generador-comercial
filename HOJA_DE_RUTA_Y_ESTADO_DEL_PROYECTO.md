@@ -1432,3 +1432,66 @@ vez de enviar el binario por la función.
   completo: subir el anexo, marcar la casilla y descargar el PDF fusionado.
 
 Suite: **208 passed, 3 skipped**.
+
+# 26. Aislamiento entre organizaciones y bucket privado, verificados en CI (14/08/2026)
+
+**Estado: COMPLETADO** (salvo una comprobación manual que depende del proyecto
+Supabase real, no del código).
+
+## El problema
+
+Los puntos 10 y 13 de la matriz de aceptación —"una clave de objeto de la
+Organización A devuelve 404 bajo la Organización B" y "el bucket no entrega
+objetos sin pasar por CotizaT"— eran comprobaciones manuales sobre staging.
+Son exactamente las dos que no conviene dejar en manos de la memoria: bastaba
+con que alguien tocara el proxy `/archivos/{object_key}`, el filtro por tenant
+o el aprovisionamiento del bucket y olvidara repetirlas para que una fuga entre
+empresas llegara a producción sin que nada avisara.
+
+## Qué se hizo
+
+`tests/test_aislamiento_almacenamiento.py` (6 pruebas) traslada ambos puntos a
+la suite:
+
+- **Punto 10, recorrido HTTP real.** Dos organizaciones con su propio usuario y
+  su propia membresía. La Organización A sube un anexo; la petición se hace con
+  el cliente HTTP contra la URL que genera `file_url`, no llamando a la función
+  del endpoint. Con A activa se recibe 200 y el contenido; con B activa, la
+  misma URL exacta devuelve 404 y el cuerpo no contiene el archivo.
+- **Punto 10, manipulación de la clave.** Cinco intentos de alcanzar el objeto
+  de A desde B: identificador reescrito, `..` en la ruta, `..` codificado como
+  `%2f`, identificador con cero a la izquierda y `?download=1`. Todos 404.
+- **Punto 10, capa de datos.** El metadato de A tampoco aparece al consultar
+  `ArchivoAlmacenado` con B activa: el 404 no depende solo del proxy.
+- **Punto 13.** El bucket se aprovisiona `public=false`; `ensure_bucket` falla
+  si encuentra un bucket público; `SupabaseStorage` no expone `public_url` ni
+  `signed_url`; `file_url` siempre devuelve una ruta `/archivos/...` sin
+  `supabase.co`; y ninguna plantilla ni JavaScript de `app/` contiene
+  `supabase.co/storage` ni `/object/public/`.
+
+## Verificación de que las pruebas sirven
+
+Escritas de una vez, pasaron a la primera, que es justo cuando conviene
+desconfiar. Se comprobó rompiendo la protección a propósito:
+
+1. Anulando solo el prefijo de tenant en `validate_tenant_object_key`: siguen en
+   verde, porque el filtro ORM por organización todavía tapa la fuga.
+2. Anulando solo el filtro ORM del proxy: siguen en verde, porque la validación
+   de la clave la bloquea antes.
+3. Anulando **las dos** capas a la vez: las pruebas fallan con `200 != 404`.
+
+Es decir, el aislamiento tiene defensa en profundidad —hacen falta dos fallos
+simultáneos para que haya fuga— y las pruebas detectan ese escenario. Los tres
+archivos se restauraron después (`git diff` limpio antes de commitear).
+
+## Lo que sigue siendo manual
+
+Confirmar en el navegador que la URL pública del objeto en el proyecto Supabase
+real responde acceso denegado. Depende de la configuración del bucket, no del
+repositorio, así que ninguna prueba puede sustituirla.
+
+## Resultado
+
+Suite completa: **214 passed, 3 skipped** (antes 208). Matriz de aceptación:
+puntos 1–5 superados en staging, 10 y 13 cubiertos en CI; los siguientes (6–9)
+requieren un segundo correo real.

@@ -208,15 +208,22 @@ Validación automatizada tras este bloque: `174 passed, 3 skipped`.
 
 ## 3. Orden obligatorio del siguiente bloque
 
-> **Punto exacto al 14/08/2026 (última actualización):** matriz de aceptación
-> superada hasta el punto 3 incluido. Registro, creación de la Organización A y
-> ciclo completo de recuperación de contraseña confirmados en
-> `https://cotizat-generador.vercel.app`. **Lo siguiente es el punto 4:**
-> subir logo, imagen de producto/partida, anexo PDF y ficha técnica, que es la
-> primera prueba real de `SupabaseStorage` contra el bucket privado
-> `cotizat-private`. Encadenar inmediatamente los puntos 5 (PDF), 10 (una clave
-> de objeto de A devuelve 404 bajo B) y 13 (el bucket no entrega objetos sin
-> pasar por CotizaT), porque comparten el mismo montaje de datos.
+> **Punto exacto al 14/08/2026 (última actualización):** puntos 1–5 superados
+> en `https://cotizat-generador.vercel.app` (registro, Organización A,
+> recuperación de contraseña, subida de logo/imagen/anexo/ficha y descarga del
+> PDF). Los puntos **10 y 13 se han trasladado a pruebas automáticas** en
+> `tests/test_aislamiento_almacenamiento.py`, porque eran comprobaciones
+> manuales fáciles de olvidar tras un cambio en el proxy `/archivos/...`: ahora
+> CI verifica que un objeto de A devuelve 404 bajo B (también manipulando la
+> clave) y que nada del código expone el bucket directamente. La única parte
+> del punto 13 que sigue siendo manual, por depender del proyecto Supabase real
+> y no del código, es pegar la URL pública del objeto en el navegador y
+> confirmar el acceso denegado.
+>
+> **Lo siguiente son los puntos 6 a 9** (invitar al Usuario B, aceptar la
+> invitación una sola vez, comprobar el rol `lectura`, ascenderlo a `miembro` y
+> crear la Organización B con nombres homónimos), que exigen un segundo correo
+> real y por eso no pueden automatizarse. Después, los puntos 11, 12 y 14.
 
 > Punto exacto al 14/08/2026: Pasos A–F completados y verificados. `/healthz` y `/readyz` responden 200 OK en la URL real `https://cotizat-generador.vercel.app`. Resuelta la incidencia de bootstrap de organizaciones bajo RLS y **confirmada en staging la creación de la Organización A** (puntos 1 y 2 de la matriz superados). Añadidos además integración continua y bloqueo de dependencias (ver Sección 2), y **el workflow `CI` ya está activo en GitHub** con su primera ejecución sobre `main` en verde (run `31811936947`); con esto queda cerrada la "Acción manual pendiente" del flujo. **Lo siguiente es continuar la matriz de aceptación de la Sección 4 desde el punto 3** (recuperación de contraseña); el usuario A y la Organización A ya existen, así que no deben repetirse su registro ni su aprovisionamiento.
 
@@ -238,9 +245,9 @@ Paso a paso con dos correos (ej. Usuario A y Usuario B):
 7. **Usuario B:** Aceptar invitación una sola vez. Probar que `lectura` consulta/descarga pero devuelve 403 en escrituras.
 8. **Usuario A:** Ascender a B a `miembro`. Verificar que B ya puede crear/editar en Organización A.
 9. **Usuario B:** Crear Organización B (nombre/números homónimos) y verificar aislamiento total de datos.
-10. **Seguridad de Storage:** Probar que una URL de objeto de la Organización A devuelve 404 para la Organización B.
+10. ~~**Seguridad de Storage:** Probar que una URL de objeto de la Organización A devuelve 404 para la Organización B.~~ **Cubierto por pruebas automáticas el 14/08/2026** (`tests/test_aislamiento_almacenamiento.py`); queda como confirmación visual opcional en staging.
 11. **Cookies/CSRF/DevTools:** Confirmar cookies HttpOnly/Secure/SameSite y ausencia de violaciones CSP en la consola del navegador.
-12. **Bucket privado:** Verificar que el acceso directo al objeto público en Supabase Storage devuelve acceso denegado.
+12. ~~**Bucket privado:** Verificar que el acceso directo al objeto público en Supabase Storage devuelve acceso denegado.~~ **Aprovisionamiento cubierto por pruebas automáticas el 14/08/2026**; falta una única comprobación manual: pegar en el navegador la URL pública del objeto y confirmar que Supabase responde acceso denegado.
 
 ## 4. Matriz de aceptación real
 
@@ -256,10 +263,16 @@ No declarar staging validado hasta completar los 14 puntos con dos correos verif
    provocar efectos de Storage;
 8. al cambiar B a `miembro`, puede escribir en la organización autorizada;
 9. crear organización B con nombres/números homónimos no mezcla datos con A;
-10. una URL/clave de objeto de A solicitada bajo B devuelve 404;
+10. una URL/clave de objeto de A solicitada bajo B devuelve 404 — **cubierto en
+    CI** (`tests/test_aislamiento_almacenamiento.py`: recorrido HTTP con dos
+    organizaciones, más los intentos de manipular la clave);
 11. cookies Auth son Secure/HttpOnly y las escrituras cross-site devuelven 403;
 12. DevTools no muestra violaciones CSP ni fallos de interacción/estilos;
-13. el bucket no entrega objetos sin pasar por CotizaT;
+13. el bucket no entrega objetos sin pasar por CotizaT — **cubierto en CI** en
+    todo lo que depende del código (el bucket se aprovisiona `public=false`,
+    no existe generación de URL pública ni firmada, y ninguna plantilla enlaza
+    a `supabase.co/storage`); **queda pendiente** la comprobación manual de que
+    la URL pública del objeto responde acceso denegado en el proyecto real;
 14. el arranque falla si se sustituye temporalmente `DATABASE_URL` por un rol con
     `BYPASSRLS` o fuera de `cotizat_app` (probar sin exponer credenciales).
 
