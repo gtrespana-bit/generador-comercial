@@ -103,6 +103,16 @@ def test_configuracion_auth_exige_url_https_y_clave_publicable(monkeypatch):
         SupabaseAuthSettings.from_environment()
 
 
+def test_configuracion_auth_acepta_jwt_legacy_de_anon(monkeypatch):
+    """Los proyectos antiguos muestran claves JWT eyJ... (anon); no deben
+    rechazarse al arrancar. La firma la valida Supabase, no la app."""
+    jwt = "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiYW5vbiJ9.signature-part-123"
+    monkeypatch.setenv("SUPABASE_URL", "https://project.supabase.co")
+    monkeypatch.setenv("SUPABASE_PUBLISHABLE_KEY", jwt)
+    settings = SupabaseAuthSettings.from_environment()
+    assert settings.publishable_key == jwt
+
+
 def test_url_publica_de_recuperacion_es_fija_y_https(monkeypatch):
     monkeypatch.setenv("COTIZAT_PUBLIC_URL", "https://cotizat.example.com")
     assert password_reset_redirect_url() == (
