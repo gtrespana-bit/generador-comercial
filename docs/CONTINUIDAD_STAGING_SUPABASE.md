@@ -152,8 +152,25 @@ PostgreSQL y `167 passed` con PostgreSQL real.
 
 **Confirmado en staging (14/08/2026):** con el PR #6 fusionado, el propietario
 creó correctamente la Organización A en la aplicación desplegada. Los puntos 1
-y 2 de la matriz quedan superados; la matriz continúa desde el punto 3
-(recuperación de contraseña).
+y 2 de la matriz quedan superados.
+
+### Punto 3 de la matriz superado: recuperación de contraseña (14/08/2026)
+
+El propietario confirmó el ciclo completo en la aplicación desplegada:
+
+1. `/recuperar-acceso` envía el email de recuperación;
+2. el enlace del email aterriza en `/restablecer-clave` con el token en el
+   fragmento (ya sin el rebote a `/acceso` descrito en la Sección 23 de la
+   hoja de ruta);
+3. la contraseña se cambia correctamente;
+4. el inicio de sesión con la contraseña nueva funciona.
+
+Con esto queda validada en HTTPS real la corrección de `redirect_to` como
+parámetro de query en `POST /auth/v1/recover` y la red de seguridad
+`app/static/js/recovery_redirect.js`. La matriz continúa desde el **punto 4**
+(subida de logo, imagen de partida/producto, anexo PDF y ficha técnica contra
+el bucket privado `cotizat-private`), que es la primera prueba real de
+`SupabaseStorage` en despliegue.
 
 ### Integración continua y dependencias bloqueadas (14/08/2026)
 
@@ -191,6 +208,16 @@ Validación automatizada tras este bloque: `174 passed, 3 skipped`.
 
 ## 3. Orden obligatorio del siguiente bloque
 
+> **Punto exacto al 14/08/2026 (última actualización):** matriz de aceptación
+> superada hasta el punto 3 incluido. Registro, creación de la Organización A y
+> ciclo completo de recuperación de contraseña confirmados en
+> `https://cotizat-generador.vercel.app`. **Lo siguiente es el punto 4:**
+> subir logo, imagen de producto/partida, anexo PDF y ficha técnica, que es la
+> primera prueba real de `SupabaseStorage` contra el bucket privado
+> `cotizat-private`. Encadenar inmediatamente los puntos 5 (PDF), 10 (una clave
+> de objeto de A devuelve 404 bajo B) y 13 (el bucket no entrega objetos sin
+> pasar por CotizaT), porque comparten el mismo montaje de datos.
+
 > Punto exacto al 14/08/2026: Pasos A–F completados y verificados. `/healthz` y `/readyz` responden 200 OK en la URL real `https://cotizat-generador.vercel.app`. Resuelta la incidencia de bootstrap de organizaciones bajo RLS y **confirmada en staging la creación de la Organización A** (puntos 1 y 2 de la matriz superados). Añadidos además integración continua y bloqueo de dependencias (ver Sección 2), y **el workflow `CI` ya está activo en GitHub** con su primera ejecución sobre `main` en verde (run `31811936947`); con esto queda cerrada la "Acción manual pendiente" del flujo. **Lo siguiente es continuar la matriz de aceptación de la Sección 4 desde el punto 3** (recuperación de contraseña); el usuario A y la Organización A ya existen, así que no deben repetirse su registro ni su aprovisionamiento.
 
 ### Paso A — Fusionar el PR #4
@@ -204,8 +231,8 @@ Paso a paso con dos correos (ej. Usuario A y Usuario B):
 
 1. ~~**Usuario A:** Registro, inicio de sesión y creación de Organización A.~~ **Completado el 14/08/2026.**
 2. **Usuario A:** Completar onboarding (demo o limpio).
-3. **Usuario A:** Probar recuperación de clave (redirect fijo `https://cotizat-generador.vercel.app/restablecer-clave`).
-4. **Usuario A:** Cargar logo, partida con imagen, anexo PDF y ficha técnica.
+3. ~~**Usuario A:** Probar recuperación de clave (redirect fijo `https://cotizat-generador.vercel.app/restablecer-clave`).~~ **Completado el 14/08/2026:** email recibido, enlace correcto, contraseña cambiada e inicio de sesión con la nueva.
+4. **Usuario A:** Cargar logo, partida con imagen, anexo PDF y ficha técnica. ← **siguiente**
 5. **Usuario A:** Crear presupuesto y descargar PDF generado.
 6. **Usuario A → Usuario B:** Invitar a Usuario B con rol `lectura` desde `/equipo`.
 7. **Usuario B:** Aceptar invitación una sola vez. Probar que `lectura` consulta/descarga pero devuelve 403 en escrituras.
@@ -255,4 +282,4 @@ Si staging falla durante la matriz, corregir el problema específico observado s
 
 Copiar este texto, sin añadir secretos:
 
-> Continúa el proyecto CotizaT desde el `main` actual (PR #4 a #7 fusionados, workflow de CI activo y en verde). Lee `docs/CONTINUIDAD_STAGING_SUPABASE.md` y `PLAN_DE_COMERCIALIZACION_Y_EVOLUCION_SAAS.md`, secciones 1.3 y 11. No repitas trabajo completado ni pidas secretos. Staging en Vercel (`https://cotizat-generador.vercel.app`) y Supabase ya están funcionando y `/readyz` responde 200 OK. El siguiente objetivo es ejecutar la matriz de aceptación de 14 puntos de la Sección 4 con dos correos ficticios y dos organizaciones, continuando desde el punto 3 (recuperación de contraseña).
+> Continúa el proyecto CotizaT desde el `main` actual (workflow de CI activo y en verde). Lee `docs/CONTINUIDAD_STAGING_SUPABASE.md` y `PLAN_DE_COMERCIALIZACION_Y_EVOLUCION_SAAS.md`, secciones 1.3 y 11. No repitas trabajo completado ni pidas secretos. Staging en Vercel (`https://cotizat-generador.vercel.app`) y Supabase ya están funcionando y `/readyz` responde 200 OK. Los puntos 1, 2 y 3 de la matriz de aceptación (registro, Organización A y recuperación de contraseña completa) ya están confirmados en staging. El siguiente objetivo es el **punto 4**: subir logo, imagen de producto/partida, anexo PDF y ficha técnica contra el bucket privado `cotizat-private`, y encadenar los puntos 5, 10 y 13 en la misma sesión.

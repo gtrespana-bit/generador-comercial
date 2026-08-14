@@ -777,9 +777,9 @@ La continuidad operativa exacta para una conversación nueva está en `docs/CONT
 
 La base browser-first ya está desplegada en staging Vercel + Supabase (`https://cotizat-generador.vercel.app`), con `/healthz` y `/readyz` respondiendo 200 OK. El siguiente trabajo es:
 
-1. **Matriz de aceptación (Sección 4 de CONTINUIDAD):** continuar los 14 puntos de prueba manual con dos correos y dos organizaciones en el entorno desplegado. Los puntos 1 y 2 (registro de A y creación de la Organización A) quedaron confirmados el 14/08/2026 tras fusionar el PR #6.
-2. **E1W-007 / E1W-008:** validar recuperación de clave, invitaciones de equipo, cambio de roles (`lectura` vs `miembro`) e interacción de cookies/CSP en navegador real HTTPS.
-3. **E1W-009 / E1W-011:** verificar la subida/descarga de imágenes, anexos PDF y fichas técnicas a través del proxy autorizado conectando con el bucket privado `cotizat-private`.
+1. **Matriz de aceptación (Sección 4 de CONTINUIDAD):** continuar los 14 puntos de prueba manual con dos correos y dos organizaciones en el entorno desplegado. Los puntos 1 y 2 (registro de A y creación de la Organización A) quedaron confirmados el 14/08/2026 tras fusionar el PR #6, y el punto 3 (recuperación de contraseña de punta a punta) el mismo día.
+2. **E1W-009 / E1W-011 — prioridad inmediata:** verificar la subida/descarga de imágenes, anexos PDF y fichas técnicas a través del proxy autorizado conectando con el bucket privado `cotizat-private`. Es el punto 4 de la matriz y la primera prueba real de `SupabaseStorage`, hasta ahora solo ejercitado contra una simulación REST.
+3. **E1W-007 / E1W-008:** validar invitaciones de equipo, cambio de roles (`lectura` vs `miembro`) e interacción de cookies/CSP en navegador real HTTPS. La recuperación de clave ya está validada.
 4. **Infraestructura futura:** añadir Redis/Upstash para rate limiting distribuido antes de escalar a múltiples instancias o apertura pública.
 5. **E1-012 a E1-014:** retomar usabilidad y medición externa sobre el recorrido web.
 
@@ -794,6 +794,7 @@ Evidencia acumulada al 14/08/2026:
 - PR #3 fusionado y PR #4 abierto con correcciones defensivas de lectura de `alembic_version` y manejo de excepciones en `lifespan`.
 - Vercel desplegado y respondiendo HTTP 200 OK en `/healthz` y `/readyz` con todas las comprobaciones en verde.
 - PR #6 fusionado: el bootstrap de la primera organización bajo RLS funciona y el propietario confirmó la creación de la Organización A en staging el 14/08/2026.
+- Recuperación de contraseña validada end-to-end en staging el 14/08/2026: email recibido, enlace correcto hacia `/restablecer-clave`, cambio de contraseña e inicio de sesión con la nueva. Auth deja de ser un subsistema sin prueba real.
 - Integración continua activa (E1-038) y dependencias bloqueadas (E1-037): cada pull request ejecuta la suite y las verificaciones que antes eran manuales.
 - Pytest supera 174 pruebas automáticas.
 - La aplicación **está lista para ejecutar la matriz de aceptación manual con dos organizaciones** antes de autorizar cualquier beta abierta.

@@ -1294,3 +1294,64 @@ body: {"email": "gtrespana@gmail.com"}
 `docs/GUIA_STAGING_POR_CLICS.md` (paso 6, con aviso destacado),
 `docs/APROVISIONAMIENTO_STAGING.md` (paso F) y `docs/AUTENTICACION_SUPABASE.md`
 (sección «Fallo observado: el enlace del email lleva al login»).
+
+## Verificación end-to-end en staging (14/08/2026)
+
+El propietario confirmó el ciclo completo en
+`https://cotizat-generador.vercel.app`: el email de recuperación llega, el
+enlace abre `/restablecer-clave`, la contraseña se cambia y el inicio de
+sesión con la contraseña nueva funciona. Con esto:
+
+- la corrección de `redirect_to` queda validada contra GoTrue real, no solo
+  contra el servidor que lo suplantaba en las pruebas;
+- el **punto 3 de la matriz de aceptación** (`docs/CONTINUIDAD_STAGING_SUPABASE.md`,
+  Sección 4) queda superado;
+- la validación end-to-end de Auth contra Supabase, listada como pendiente en
+  la Fase 13, deja de estar bloqueada para los flujos de contraseña.
+
+---
+
+# 24. Siguiente bloque — Punto 4 de la matriz: Storage privado en despliegue real
+
+Estado: **PENDIENTE** (es el trabajo inmediato).
+
+## Por qué es lo siguiente
+
+Auth ya está probado en HTTPS real de punta a punta. La pieza equivalente que
+**nunca se ha ejercitado contra el servicio real** es `SupabaseStorage`: todas
+sus pruebas usan una simulación REST. Es el último subsistema con riesgo de
+sorpresa en despliegue, y el resto de la matriz (PDF con imágenes, aislamiento
+entre organizaciones) depende de que funcione.
+
+## Qué hay que comprobar, en este orden
+
+1. **Punto 4 — subida y lectura.** Con el Usuario A en la Organización A:
+   logo de empresa, imagen de producto, imagen de partida, anexo PDF y ficha
+   técnica PDF. Cada archivo debe verse luego a través de
+   `/archivos/organizaciones/<id>/...` y nunca mediante una URL pública de
+   Supabase.
+2. **Punto 5 — PDF.** Generar y descargar el PDF de un presupuesto que use esas
+   imágenes. Aquí se ejercita `materialize_reference()` sobre `/tmp`, que es el
+   camino específico del filesystem de solo lectura de Vercel.
+3. **Punto 10 — aislamiento.** Con el Usuario B en la Organización B, pedir una
+   clave de objeto de A. Debe responder **404**, no 403 ni el archivo.
+4. **Punto 13 — bucket privado.** Pedir el objeto directamente a la URL pública
+   de Supabase Storage. Debe negar el acceso.
+
+## Señales de fallo a vigilar
+
+- Error al subir con `SUPABASE_SECRET_KEY` enviada como `Bearer` en lugar de
+  `apikey` (el código ya usa `apikey`; confirmarlo en el log si falla).
+- Rechazo por tamaño: el bucket está limitado a 12 MB y con lista MIME.
+- PDF sin imágenes: indicaría que `/tmp` no se pobló o que la referencia no se
+  materializó.
+- Un 200 en el punto 10 significa fuga entre organizaciones: es bloqueante y no
+  debe corregirse relajando el filtro ORM ni las políticas RLS.
+
+## Después del punto 4
+
+Puntos 6 a 9 (invitaciones y roles `lectura` / `miembro`), 11 y 12
+(cookies/CSRF/CSP en DevTools) y 14 (arranque rechazado con un rol
+`BYPASSRLS`). Cerrada la matriz, el siguiente bloque de infraestructura es el
+rate limiting distribuido (Redis/Upstash), obligatorio antes de escalar a
+varias instancias o abrir el registro.
