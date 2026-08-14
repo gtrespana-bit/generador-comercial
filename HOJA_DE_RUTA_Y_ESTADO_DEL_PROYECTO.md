@@ -1184,3 +1184,84 @@ de recuperación. Faltaba lo más básico de cualquier SaaS: un panel de cuenta.
 - Listado de sesiones activas por dispositivo con revocación individual.
 - Eliminación de cuenta y salida voluntaria de una organización.
 - Validación end-to-end real contra Supabase (sigue bloqueada en el sandbox).
+
+---
+
+# 23. Corrección — El enlace de recuperación aterrizaba en el login (2026-08-14)
+
+Estado: **CORREGIDO** (requiere además un cambio de configuración en Supabase).
+
+## Síntoma reportado
+
+El email de recuperación llegaba correctamente, pero al pulsar el enlace el
+navegador mostraba la pantalla de inicio de sesión en lugar de la de nueva
+contraseña, con esta forma de URL:
+
+```text
+/acceso?next=/#access_token=...&expires_in=3600&type=recovery
+```
+
+## Causa raíz (configuración, no código)
+
+La aplicación pide a Supabase `redirect_to=https://<origen>/restablecer-clave`.
+Supabase **solo respeta ese parámetro si la URL exacta está en su lista de
+Redirect URLs**. Si no está, no devuelve ningún error: la descarta en silencio
+y usa el **Site URL** configurado.
+
+La cadena completa del fallo:
+
+1. Supabase descarta la `redirect_to` no autorizada y usa el Site URL (`/`).
+2. `/` exige sesión, así que la app redirige a `/acceso?next=/`.
+3. El navegador **re-adjunta el fragmento** `#access_token=...` en cada salto.
+4. El fragmento **nunca viaja al servidor** (así funciona HTTP), por lo que
+   ninguna ruta puede leerlo: el login lo ignora y el enlace parece roto,
+   aunque el token sea perfectamente válido.
+
+Se verificó decodificando el JWT del enlace: `type=recovery`, `amr.method=otp`,
+vigencia de 1 hora y email correcto. El token era válido; solo aterrizó en la
+página que no sabe leerlo.
+
+## Solución de fondo (acción manual requerida)
+
+En Supabase → Authentication → URL Configuration, añadir a **Redirect URLs**:
+
+```text
+https://cotizat-generador.vercel.app/restablecer-clave
+```
+
+Debe coincidir carácter a carácter, sin barra final.
+
+## Red de seguridad implementada en la aplicación
+
+- **`app/static/js/recovery_redirect.js`**: se carga en `auth/access.html` y en
+  `base.html` (los dos destinos a los que Supabase puede desviar). Si detecta
+  `type=recovery` con `access_token` en el fragmento, reenvía a
+  `/restablecer-clave` conservándolo íntegro. Si el enlace llega caducado
+  (`error`/`error_code` sin token), desvía a `/recuperar-acceso` con un mensaje
+  claro en vez de dejar a la persona mirando el login.
+  - El token **permanece siempre en el fragmento**: no se copia a la query,
+    donde acabaría en logs de servidor o en la cabecera `Referer`.
+  - No actúa si ya se está en `/restablecer-clave` (no puede crear bucles), ni
+    con anclas normales de la aplicación, ni con `type=magiclink`.
+- **`/readyz`** publica ahora `recovery_redirect_url_esperada` con la URL exacta
+  que debe autorizarse en Supabase, para diagnosticar esto de un vistazo. Es
+  informativo y no hace fallar el readiness: la lista vive en Supabase y no
+  puede consultarse sin credenciales de administración.
+
+## Pruebas realizadas
+
+- **`tests/test_recuperacion_redireccion.py`** (10 pruebas): ejercita el script
+  con Node sobre un DOM mínimo. Cubre la URL real reportada, aterrizaje en la
+  raíz, ausencia de bucle en la página correcta, login normal, `magiclink`,
+  fragmento sin token, ancla corriente, enlace caducado, y que el token nunca
+  salga del fragmento. Incluye una prueba que verifica que el script sigue
+  cargado en ambas plantillas.
+- **Suite completa**: 196 pruebas OK + 3 omitidas; 41 plantillas Jinja OK.
+- **Manual**: script servido con `200 text/javascript` y admitido por la CSP
+  (`script-src 'self'`), verificado contra la aplicación en ejecución.
+
+## Documentación actualizada
+
+`docs/GUIA_STAGING_POR_CLICS.md` (paso 6, con aviso destacado),
+`docs/APROVISIONAMIENTO_STAGING.md` (paso F) y `docs/AUTENTICACION_SUPABASE.md`
+(sección «Fallo observado: el enlace del email lleva al login»).

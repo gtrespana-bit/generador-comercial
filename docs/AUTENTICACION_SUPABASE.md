@@ -67,6 +67,20 @@ Una membresía `lectura` puede consultar datos, pero el ORM rechaza tanto `flush
 
 Para recuperación, `COTIZAT_PUBLIC_URL` debe ser un origen HTTPS fijo y su ruta `https://<origen>/restablecer-clave` debe añadirse a las Redirect URLs permitidas en Supabase Auth. No se deriva desde `Host`, para evitar envenenar el enlace enviado por email. El access token temporal solo cruza el navegador y el backend durante el cambio; no se persiste.
 
+### Fallo observado: el enlace del email lleva al login
+
+Si la Redirect URL **no** está autorizada, Supabase no devuelve ningún error: descarta `redirect_to` y usa el **Site URL**. Como `/` exige sesión, la app rebota a `/acceso`, y el navegador arrastra el fragmento en cada salto, así que se aterriza en:
+
+```text
+/acceso?next=/#access_token=...&type=recovery
+```
+
+El fragmento (`#…`) **nunca viaja al servidor**, de modo que ninguna ruta puede leerlo: la pantalla de login lo ignora y el enlace parece roto aunque el token sea válido.
+
+Solución de fondo: autorizar `https://<origen>/restablecer-clave` en Authentication → URL Configuration. `/readyz` publica el valor exacto esperado en `recovery_redirect_url_esperada` para poder compararlo de un vistazo.
+
+Red de seguridad en la aplicación: `app/static/js/recovery_redirect.js` se carga en el login y en el layout general; si detecta `type=recovery` con `access_token` en el fragmento, reenvía a `/restablecer-clave` conservándolo. Un enlace caducado (sin token y con `error`) se desvía a `/recuperar-acceso` con un mensaje claro en lugar de dejar a la persona en el login. El token permanece siempre en el fragmento: no pasa a la query, donde quedaría registrado en logs o en el `Referer`.
+
 ## Invitaciones y administración de equipo
 
 La revisión `a84d2f6b91e0` añade `invitaciones_organizacion` y `/equipo` permite administrar miembros con estas reglas:
