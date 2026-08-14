@@ -152,8 +152,25 @@ PostgreSQL y `167 passed` con PostgreSQL real.
 
 **Confirmado en staging (14/08/2026):** con el PR #6 fusionado, el propietario
 creó correctamente la Organización A en la aplicación desplegada. Los puntos 1
-y 2 de la matriz quedan superados; la matriz continúa desde el punto 3
-(recuperación de contraseña).
+y 2 de la matriz quedan superados.
+
+### Punto 3 de la matriz superado: recuperación de contraseña (14/08/2026)
+
+El propietario confirmó el ciclo completo en la aplicación desplegada:
+
+1. `/recuperar-acceso` envía el email de recuperación;
+2. el enlace del email aterriza en `/restablecer-clave` con el token en el
+   fragmento (ya sin el rebote a `/acceso` descrito en la Sección 23 de la
+   hoja de ruta);
+3. la contraseña se cambia correctamente;
+4. el inicio de sesión con la contraseña nueva funciona.
+
+Con esto queda validada en HTTPS real la corrección de `redirect_to` como
+parámetro de query en `POST /auth/v1/recover` y la red de seguridad
+`app/static/js/recovery_redirect.js`. La matriz continúa desde el **punto 4**
+(subida de logo, imagen de partida/producto, anexo PDF y ficha técnica contra
+el bucket privado `cotizat-private`), que es la primera prueba real de
+`SupabaseStorage` en despliegue.
 
 ### Integración continua y dependencias bloqueadas (14/08/2026)
 
@@ -189,14 +206,61 @@ deprecación de Node 20 (actualizar versiones cuando se toque el flujo).
 
 Validación automatizada tras este bloque: `174 passed, 3 skipped`.
 
+### Incidencia resuelta: el registro fallaba con «Supabase no pudo crear la cuenta» (14/08/2026)
+
+El registro, que estaba confirmado como superado (punto 1), empezó a fallar
+**siempre** en staging. No era una clave caducada ni configuración perdida: era
+un **bug propio de parseo** que se destapó al activar «Confirm email» en el
+proyecto Supabase.
+
+`POST /auth/v1/signup` responde **HTTP 200 con tres formas distintas**
+(`internal/api/signup.go`) y solo la de autoconfirm anida el usuario bajo la
+clave `user`. Con confirmación por email, el usuario viene **en la raíz**;
+`sign_up` leía siempre `payload["user"]` y convertía esa respuesta correcta en
+`InvalidCredentials`. Detalle completo y tabla de casos en
+`docs/AUTENTICACION_SUPABASE.md`.
+
+Corregido en `d4aa7f1`: se acepta el usuario en la raíz y el error se reserva
+para respuestas sin identidad utilizable. El caso «email ya registrado» se
+detecta por `identities: []` y se expone como `SignupResult.ya_registrado`,
+**sin cambiar el mensaje mostrado** (diferenciarlo permitiría enumerar qué
+emails tienen cuenta). Cubierto por cuatro pruebas en `tests/test_auth.py`.
+
+> **Aviso operativo para la matriz manual:** el SMTP por defecto de Supabase
+> limita a **~2-4 emails por hora**. Los puntos 6-9 exigen registrar y confirmar
+> un segundo correo, así que ese tope puede bloquear el recorrido a mitad. Si
+> ocurre, configurar un SMTP propio antes de continuar; no relajar «Confirm
+> email» para esquivarlo.
+
 ## 3. Orden obligatorio del siguiente bloque
+
+> **Punto exacto al 14/08/2026 (última actualización):** puntos 1–5 superados
+> en `https://cotizat-generador.vercel.app` (registro, Organización A,
+> recuperación de contraseña, subida de logo/imagen/anexo/ficha y descarga del
+> PDF). Los puntos **10 y 13 se han trasladado a pruebas automáticas** en
+> `tests/test_aislamiento_almacenamiento.py`, porque eran comprobaciones
+> manuales fáciles de olvidar tras un cambio en el proxy `/archivos/...`: ahora
+> CI verifica que un objeto de A devuelve 404 bajo B (también manipulando la
+> clave) y que nada del código expone el bucket directamente. La única parte
+> del punto 13 que sigue siendo manual, por depender del proyecto Supabase real
+> y no del código, es pegar la URL pública del objeto en el navegador y
+> confirmar el acceso denegado.
+>
+> **Lo siguiente son los puntos 6 a 9** (invitar al Usuario B, aceptar la
+> invitación una sola vez, comprobar el rol `lectura`, ascenderlo a `miembro` y
+> crear la Organización B con nombres homónimos), que exigen un segundo correo
+> real y por eso no pueden automatizarse. Después, los puntos 11, 12 y 14.
 
 > Punto exacto al 14/08/2026: Pasos A–F completados y verificados. `/healthz` y `/readyz` responden 200 OK en la URL real `https://cotizat-generador.vercel.app`. Resuelta la incidencia de bootstrap de organizaciones bajo RLS y **confirmada en staging la creación de la Organización A** (puntos 1 y 2 de la matriz superados). Añadidos además integración continua y bloqueo de dependencias (ver Sección 2), y **el workflow `CI` ya está activo en GitHub** con su primera ejecución sobre `main` en verde (run `31811936947`); con esto queda cerrada la "Acción manual pendiente" del flujo. **Lo siguiente es continuar la matriz de aceptación de la Sección 4 desde el punto 3** (recuperación de contraseña); el usuario A y la Organización A ya existen, así que no deben repetirse su registro ni su aprovisionamiento.
 
-### Paso A — Fusionar el PR #4
+### Paso A — Fusionar el PR abierto
 
-- Fusionar PR #4 (`https://github.com/gtrespana-bit/generador-comercial/pull/4`) en `main` si aún no se ha completado desde GitHub.
-- Iniciar la nueva conversación trabajando desde el `main` actualizado.
+- PR #4 ya fusionado. El PR vivo es **#11**
+  (`https://github.com/gtrespana-bit/generador-comercial/pull/11`), con los
+  anexos PDF, el aislamiento verificado en CI, la guía de pasos manuales y el
+  arreglo del registro. Checks en verde.
+- Fusionarlo en `main` e iniciar la conversación nueva desde el `main`
+  actualizado.
 
 ### Paso B — Ejecutar la matriz de aceptación manual (Sección 4)
 
@@ -204,16 +268,16 @@ Paso a paso con dos correos (ej. Usuario A y Usuario B):
 
 1. ~~**Usuario A:** Registro, inicio de sesión y creación de Organización A.~~ **Completado el 14/08/2026.**
 2. **Usuario A:** Completar onboarding (demo o limpio).
-3. **Usuario A:** Probar recuperación de clave (redirect fijo `https://cotizat-generador.vercel.app/restablecer-clave`).
-4. **Usuario A:** Cargar logo, partida con imagen, anexo PDF y ficha técnica.
+3. ~~**Usuario A:** Probar recuperación de clave (redirect fijo `https://cotizat-generador.vercel.app/restablecer-clave`).~~ **Completado el 14/08/2026:** email recibido, enlace correcto, contraseña cambiada e inicio de sesión con la nueva.
+4. **Usuario A:** Cargar logo, partida con imagen, anexo PDF y ficha técnica. ← **siguiente**
 5. **Usuario A:** Crear presupuesto y descargar PDF generado.
 6. **Usuario A → Usuario B:** Invitar a Usuario B con rol `lectura` desde `/equipo`.
 7. **Usuario B:** Aceptar invitación una sola vez. Probar que `lectura` consulta/descarga pero devuelve 403 en escrituras.
 8. **Usuario A:** Ascender a B a `miembro`. Verificar que B ya puede crear/editar en Organización A.
 9. **Usuario B:** Crear Organización B (nombre/números homónimos) y verificar aislamiento total de datos.
-10. **Seguridad de Storage:** Probar que una URL de objeto de la Organización A devuelve 404 para la Organización B.
+10. ~~**Seguridad de Storage:** Probar que una URL de objeto de la Organización A devuelve 404 para la Organización B.~~ **Cubierto por pruebas automáticas el 14/08/2026** (`tests/test_aislamiento_almacenamiento.py`); queda como confirmación visual opcional en staging.
 11. **Cookies/CSRF/DevTools:** Confirmar cookies HttpOnly/Secure/SameSite y ausencia de violaciones CSP en la consola del navegador.
-12. **Bucket privado:** Verificar que el acceso directo al objeto público en Supabase Storage devuelve acceso denegado.
+12. ~~**Bucket privado:** Verificar que el acceso directo al objeto público en Supabase Storage devuelve acceso denegado.~~ **Aprovisionamiento cubierto por pruebas automáticas el 14/08/2026**; falta una única comprobación manual: pegar en el navegador la URL pública del objeto y confirmar que Supabase responde acceso denegado.
 
 ## 4. Matriz de aceptación real
 
@@ -229,10 +293,16 @@ No declarar staging validado hasta completar los 14 puntos con dos correos verif
    provocar efectos de Storage;
 8. al cambiar B a `miembro`, puede escribir en la organización autorizada;
 9. crear organización B con nombres/números homónimos no mezcla datos con A;
-10. una URL/clave de objeto de A solicitada bajo B devuelve 404;
+10. una URL/clave de objeto de A solicitada bajo B devuelve 404 — **cubierto en
+    CI** (`tests/test_aislamiento_almacenamiento.py`: recorrido HTTP con dos
+    organizaciones, más los intentos de manipular la clave);
 11. cookies Auth son Secure/HttpOnly y las escrituras cross-site devuelven 403;
 12. DevTools no muestra violaciones CSP ni fallos de interacción/estilos;
-13. el bucket no entrega objetos sin pasar por CotizaT;
+13. el bucket no entrega objetos sin pasar por CotizaT — **cubierto en CI** en
+    todo lo que depende del código (el bucket se aprovisiona `public=false`,
+    no existe generación de URL pública ni firmada, y ninguna plantilla enlaza
+    a `supabase.co/storage`); **queda pendiente** la comprobación manual de que
+    la URL pública del objeto responde acceso denegado en el proyecto real;
 14. el arranque falla si se sustituye temporalmente `DATABASE_URL` por un rol con
     `BYPASSRLS` o fuera de `cotizat_app` (probar sin exponer credenciales).
 
@@ -255,4 +325,26 @@ Si staging falla durante la matriz, corregir el problema específico observado s
 
 Copiar este texto, sin añadir secretos:
 
-> Continúa el proyecto CotizaT desde el `main` actual (PR #4 a #7 fusionados, workflow de CI activo y en verde). Lee `docs/CONTINUIDAD_STAGING_SUPABASE.md` y `PLAN_DE_COMERCIALIZACION_Y_EVOLUCION_SAAS.md`, secciones 1.3 y 11. No repitas trabajo completado ni pidas secretos. Staging en Vercel (`https://cotizat-generador.vercel.app`) y Supabase ya están funcionando y `/readyz` responde 200 OK. El siguiente objetivo es ejecutar la matriz de aceptación de 14 puntos de la Sección 4 con dos correos ficticios y dos organizaciones, continuando desde el punto 3 (recuperación de contraseña).
+> Continúa el proyecto CotizaT desde el `main` actual (CI en verde). Lee primero
+> `docs/CONTINUIDAD_STAGING_SUPABASE.md` y `docs/MATRIZ_PASOS_MANUALES.md`. No
+> repitas trabajo completado ni pidas secretos.
+>
+> Staging (`https://cotizat-generador.vercel.app`) y Supabase funcionan;
+> `/readyz` responde 200. De la matriz de aceptación: **puntos 1-5 superados** en
+> staging y **10 y 13 cubiertos en CI** (`tests/test_aislamiento_almacenamiento.py`).
+>
+> **Voy a ejecutar yo mismo, en el navegador, los pasos manuales que quedan: 6,
+> 7, 8, 9, 11, 12, la parte manual del 13 y el 14.** Sigo la guía de
+> `docs/MATRIZ_PASOS_MANUALES.md`. Tu papel es acompañarme: resolver los fallos
+> que encuentre, interpretar los errores y corregir el código cuando haga falta,
+> sin relajar CSRF, CSP, RLS, el bucket privado ni el rol limitado.
+>
+> Contexto reciente que necesitas: el registro se rompió con «Supabase no pudo
+> crear la cuenta» porque `sign_up` solo leía el usuario anidado bajo `user`, y
+> GoTrue lo devuelve en la raíz cuando «Confirm email» está activo. Corregido en
+> `d4aa7f1`. Ojo con el límite de **~2-4 emails/hora** del SMTP por defecto de
+> Supabase: los puntos 6-9 necesitan confirmar un segundo correo y ese tope puede
+> frenar el recorrido.
+>
+> Al terminar la matriz: fusionar el PR pendiente y retirar del `README.md` el
+> aviso de «todavía no debe publicarse».

@@ -14,6 +14,8 @@ alembic==1.19.1
 psycopg[binary]==3.3.4
 jinja2==3.1.6
 reportlab==5.0.0
+# Fusión de los anexos PDF como páginas del presupuesto (app/services/pdf_anexos.py).
+pypdf==6.16.1
 python-multipart==0.0.32
 pillow==12.3.0
 # Lectura de archivos .xlsx en el asistente de importación.

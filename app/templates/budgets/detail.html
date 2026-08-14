@@ -246,7 +246,7 @@
 </div>
 
 <div class="card no-print" id="anexos">
-  <h2>📎 Anexos del documento</h2><p class="hint">Añade fichas técnicas, planos, fotografías convertidas a PDF o documentos de proveedores. El PDF principal muestra su índice cuando activas esa opción en Editar.</p>
+  <h2>📎 Anexos del documento</h2><p class="hint">Añade fichas técnicas, planos, fotografías convertidas a PDF o documentos de proveedores. Al activar «Incluir anexos» en Editar, sus páginas se añaden al final del PDF del presupuesto y el índice indica en qué página empieza cada uno; los que no quepan por tamaño se anuncian como entrega aparte.</p>
   <form method="post" action="/presupuestos/{{ p.id }}/anexos" enctype="multipart/form-data" class="form-actions"><input name="nombre" placeholder="Nombre visible del anexo" class="csp-s-6253876a64"><input type="file" name="archivo" accept="application/pdf" required><button class="btn btn-sm" type="submit">Añadir PDF</button></form>
   {% if p.anexos %}<ul>{% for a in p.anexos %}<li><a class="link" target="_blank" href="{{ a.archivo | archivo_url(true) }}">{{ a.nombre }}</a> <form class="inline" method="post" action="/presupuestos/{{ p.id }}/anexos/{{ a.id }}/eliminar" data-confirm="¿Eliminar anexo?"><button class="btn btn-sm btn-danger" type="submit">Eliminar</button></form></li>{% endfor %}</ul>{% endif %}
 </div>

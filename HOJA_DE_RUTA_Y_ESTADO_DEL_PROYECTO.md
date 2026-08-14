@@ -1294,3 +1294,253 @@ body: {"email": "gtrespana@gmail.com"}
 `docs/GUIA_STAGING_POR_CLICS.md` (paso 6, con aviso destacado),
 `docs/APROVISIONAMIENTO_STAGING.md` (paso F) y `docs/AUTENTICACION_SUPABASE.md`
 (sección «Fallo observado: el enlace del email lleva al login»).
+
+## Verificación end-to-end en staging (14/08/2026)
+
+El propietario confirmó el ciclo completo en
+`https://cotizat-generador.vercel.app`: el email de recuperación llega, el
+enlace abre `/restablecer-clave`, la contraseña se cambia y el inicio de
+sesión con la contraseña nueva funciona. Con esto:
+
+- la corrección de `redirect_to` queda validada contra GoTrue real, no solo
+  contra el servidor que lo suplantaba en las pruebas;
+- el **punto 3 de la matriz de aceptación** (`docs/CONTINUIDAD_STAGING_SUPABASE.md`,
+  Sección 4) queda superado;
+- la validación end-to-end de Auth contra Supabase, listada como pendiente en
+  la Fase 13, deja de estar bloqueada para los flujos de contraseña.
+
+---
+
+# 24. Siguiente bloque — Punto 4 de la matriz: Storage privado en despliegue real
+
+Estado: **PENDIENTE** (es el trabajo inmediato).
+
+## Por qué es lo siguiente
+
+Auth ya está probado en HTTPS real de punta a punta. La pieza equivalente que
+**nunca se ha ejercitado contra el servicio real** es `SupabaseStorage`: todas
+sus pruebas usan una simulación REST. Es el último subsistema con riesgo de
+sorpresa en despliegue, y el resto de la matriz (PDF con imágenes, aislamiento
+entre organizaciones) depende de que funcione.
+
+## Qué hay que comprobar, en este orden
+
+1. **Punto 4 — subida y lectura.** Con el Usuario A en la Organización A:
+   logo de empresa, imagen de producto, imagen de partida, anexo PDF y ficha
+   técnica PDF. Cada archivo debe verse luego a través de
+   `/archivos/organizaciones/<id>/...` y nunca mediante una URL pública de
+   Supabase.
+2. **Punto 5 — PDF.** Generar y descargar el PDF de un presupuesto que use esas
+   imágenes. Aquí se ejercita `materialize_reference()` sobre `/tmp`, que es el
+   camino específico del filesystem de solo lectura de Vercel.
+3. **Punto 10 — aislamiento.** Con el Usuario B en la Organización B, pedir una
+   clave de objeto de A. Debe responder **404**, no 403 ni el archivo.
+4. **Punto 13 — bucket privado.** Pedir el objeto directamente a la URL pública
+   de Supabase Storage. Debe negar el acceso.
+
+## Señales de fallo a vigilar
+
+- Error al subir con `SUPABASE_SECRET_KEY` enviada como `Bearer` en lugar de
+  `apikey` (el código ya usa `apikey`; confirmarlo en el log si falla).
+- Rechazo por tamaño: el bucket está limitado a 12 MB y con lista MIME.
+- PDF sin imágenes: indicaría que `/tmp` no se pobló o que la referencia no se
+  materializó.
+- Un 200 en el punto 10 significa fuga entre organizaciones: es bloqueante y no
+  debe corregirse relajando el filtro ORM ni las políticas RLS.
+
+## Después del punto 4
+
+Puntos 6 a 9 (invitaciones y roles `lectura` / `miembro`), 11 y 12
+(cookies/CSRF/CSP en DevTools) y 14 (arranque rechazado con un rol
+`BYPASSRLS`). Cerrada la matriz, el siguiente bloque de infraestructura es el
+rate limiting distribuido (Redis/Upstash), obligatorio antes de escalar a
+varias instancias o abrir el registro.
+
+---
+
+# 25. Anexos incorporados al PDF del presupuesto (14/08/2026)
+
+Estado: **COMPLETADO**.
+
+## El problema
+
+Marcar «Incluir anexos» solo imprimía una lista de nombres al final del
+presupuesto. El cliente leía «Anexo 1 · Planos de distribución» y no recibía
+ningún plano: los archivos se quedaban en la aplicación, accesibles únicamente
+para usuarios con sesión iniciada. Un cliente sin cuenta no tenía forma de
+verlos.
+
+Se descartó la alternativa de imprimir un hipervínculo al proxy
+`/archivos/...`: el destinatario típico de un presupuesto no tiene cuenta en
+CotizaT, así que el enlace le habría devuelto un 404.
+
+## Qué hace ahora
+
+Los anexos se **fusionan como páginas reales** del PDF del presupuesto. Un
+único archivo contiene el presupuesto y todos sus documentos de apoyo, y el
+índice explica cómo se entregan y dónde encontrarlos:
+
+> Los anexos que se relacionan a continuación forman parte de este presupuesto
+> y se entregan dentro de este mismo archivo: están añadidos como páginas
+> adicionales al final del documento, en el orden indicado y conservando su
+> formato y su numeración originales.
+>
+> • Anexo 1 · Planos de distribución — 3 páginas, desde la página 2 de este archivo.
+> • Anexo 2 · Ficha técnica del porcelanato — 1 página, desde la página 5 de este archivo.
+
+El número de página anunciado es el real: el documento se genera, se mide y se
+regenera con la paginación definitiva. El pie «n/N» cuenta también las páginas
+de los anexos, de modo que el total coincide con el archivo entregado.
+
+## Tope de tamaño (límite de Vercel)
+
+Una función de Vercel no puede devolver más de **4,5 MB** en el cuerpo de la
+respuesta; superarlo produce `413 FUNCTION_PAYLOAD_TOO_LARGE` y no hay opción
+de configuración que lo cambie. Como `/presupuestos/{id}/pdf` envía el binario
+completo, `app/services/pdf_anexos.py` mantiene el resultado por debajo de
+`LIMITE_TOTAL_BYTES` (4 MB, con `LIMITE_DURO_BYTES` = 4,4 MB como red de
+seguridad). Los anexos que no caben **no se incorporan** y el índice lo dice
+con claridad («se entrega como archivo independiente para no superar el tamaño
+máximo de este PDF») en lugar de producir un error que el usuario no sabría
+interpretar.
+
+Si en el futuro se quiere levantar ese tope, el patrón correcto es subir el PDF
+combinado al almacenamiento y devolver una redirección a una URL firmada, en
+vez de enviar el binario por la función.
+
+## Degradación y seguridad
+
+- Un anexo borrado del almacenamiento, cifrado o ilegible **no rompe la
+  descarga**: se omite y el índice lo anuncia como entrega aparte.
+- De los anexos solo se copian las páginas. Se descartan los widgets de
+  formulario y las anotaciones con JavaScript, para que un PDF subido no pueda
+  inyectar comportamiento en el documento comercial ni interferir con el
+  formulario del PDF interactivo (`app/services/pdf_interactivo.py`), que se
+  conserva intacto tras la fusión.
+
+## Cambios
+
+- `app/services/pdf_anexos.py` (nuevo): lectura, planificación por tamaño,
+  texto del índice, fusión y saneado.
+- `app/services/pdf.py`: `generar_pdf()` orquesta medición y fusión;
+  `_documento_presupuesto()` construye el documento base; `_CanvasNumerado`
+  acepta `paginas_extra` para el pie «n/N».
+- `requirements.txt` + `requirements.lock`: `pypdf==6.16.1`.
+- `presupuestos.spec`: `pypdf` y `app.services.pdf_anexos` en el empaquetado.
+- Textos de interfaz en `budgets/detail.html` y `budgets/form.html`.
+- `tests/test_pdf_anexos.py` (nuevo, 10 pruebas), incluido un recorrido HTTP
+  completo: subir el anexo, marcar la casilla y descargar el PDF fusionado.
+
+Suite: **208 passed, 3 skipped**.
+
+# 26. Aislamiento entre organizaciones y bucket privado, verificados en CI (14/08/2026)
+
+**Estado: COMPLETADO** (salvo una comprobación manual que depende del proyecto
+Supabase real, no del código).
+
+## El problema
+
+Los puntos 10 y 13 de la matriz de aceptación —"una clave de objeto de la
+Organización A devuelve 404 bajo la Organización B" y "el bucket no entrega
+objetos sin pasar por CotizaT"— eran comprobaciones manuales sobre staging.
+Son exactamente las dos que no conviene dejar en manos de la memoria: bastaba
+con que alguien tocara el proxy `/archivos/{object_key}`, el filtro por tenant
+o el aprovisionamiento del bucket y olvidara repetirlas para que una fuga entre
+empresas llegara a producción sin que nada avisara.
+
+## Qué se hizo
+
+`tests/test_aislamiento_almacenamiento.py` (6 pruebas) traslada ambos puntos a
+la suite:
+
+- **Punto 10, recorrido HTTP real.** Dos organizaciones con su propio usuario y
+  su propia membresía. La Organización A sube un anexo; la petición se hace con
+  el cliente HTTP contra la URL que genera `file_url`, no llamando a la función
+  del endpoint. Con A activa se recibe 200 y el contenido; con B activa, la
+  misma URL exacta devuelve 404 y el cuerpo no contiene el archivo.
+- **Punto 10, manipulación de la clave.** Cinco intentos de alcanzar el objeto
+  de A desde B: identificador reescrito, `..` en la ruta, `..` codificado como
+  `%2f`, identificador con cero a la izquierda y `?download=1`. Todos 404.
+- **Punto 10, capa de datos.** El metadato de A tampoco aparece al consultar
+  `ArchivoAlmacenado` con B activa: el 404 no depende solo del proxy.
+- **Punto 13.** El bucket se aprovisiona `public=false`; `ensure_bucket` falla
+  si encuentra un bucket público; `SupabaseStorage` no expone `public_url` ni
+  `signed_url`; `file_url` siempre devuelve una ruta `/archivos/...` sin
+  `supabase.co`; y ninguna plantilla ni JavaScript de `app/` contiene
+  `supabase.co/storage` ni `/object/public/`.
+
+## Verificación de que las pruebas sirven
+
+Escritas de una vez, pasaron a la primera, que es justo cuando conviene
+desconfiar. Se comprobó rompiendo la protección a propósito:
+
+1. Anulando solo el prefijo de tenant en `validate_tenant_object_key`: siguen en
+   verde, porque el filtro ORM por organización todavía tapa la fuga.
+2. Anulando solo el filtro ORM del proxy: siguen en verde, porque la validación
+   de la clave la bloquea antes.
+3. Anulando **las dos** capas a la vez: las pruebas fallan con `200 != 404`.
+
+Es decir, el aislamiento tiene defensa en profundidad —hacen falta dos fallos
+simultáneos para que haya fuga— y las pruebas detectan ese escenario. Los tres
+archivos se restauraron después (`git diff` limpio antes de commitear).
+
+## Lo que sigue siendo manual
+
+Confirmar en el navegador que la URL pública del objeto en el proyecto Supabase
+real responde acceso denegado. Depende de la configuración del bucket, no del
+repositorio, así que ninguna prueba puede sustituirla.
+
+## Resultado
+
+Suite completa: **214 passed, 3 skipped** (antes 208). Matriz de aceptación:
+puntos 1–5 superados en staging, 10 y 13 cubiertos en CI; los siguientes (6–9)
+requieren un segundo correo real.
+
+# 27. Registro reparado: GoTrue no siempre anida el usuario (14/08/2026)
+
+## El problema
+
+El registro, ya confirmado como superado en la matriz (punto 1), empezó a fallar
+**siempre** en staging con «Supabase no pudo crear la cuenta». No era una clave
+caducada ni configuración perdida, sino un **bug propio** que permanecía latente.
+
+`POST /auth/v1/signup` responde **HTTP 200 con tres formas distintas**
+(`internal/api/signup.go`), y solo una anida el usuario bajo la clave `user`:
+
+| Situación | Respuesta | Forma |
+| --- | --- | --- |
+| Autoconfirm activo | `sendJSON(w, 200, token)` | `{access_token, refresh_token, user:{...}}` |
+| Confirmación por email, alta nueva | `sendJSON(w, 200, user)` | usuario **en la raíz** |
+| Email ya registrado sin confirmar | `sendJSON(w, 200, sanitizedUser)` | raíz, `identities: []` |
+
+`sign_up` leía siempre `payload["user"]`. Mientras el proyecto estuvo en
+autoconfirm funcionaba; al activar «Confirm email», las dos últimas respuestas
+—correctas— se convirtieron en `InvalidCredentials` y el registro falló al 100%.
+
+## Qué se hizo
+
+Se acepta el usuario en la raíz cuando no viene envuelto y el error queda
+reservado para respuestas sin identidad utilizable. El caso «email ya
+registrado» se detecta por `identities: []` (el usuario obfuscado de GoTrue) y
+se expone como `SignupResult.ya_registrado`.
+
+**La bandera no altera el mensaje mostrado.** Diferenciar el aviso convertiría
+el formulario en un enumerador de emails con cuenta, justo lo que GoTrue evita.
+`/registro` responde siempre lo mismo: confirma tu email y, si ya tenías cuenta,
+inicia sesión o usa «Olvidé mi contraseña».
+
+## Verificación de que las pruebas sirven
+
+Cuatro pruebas nuevas en `tests/test_auth.py` cubren las tres formas más el
+cuerpo sin identidad. Al revertir la corrección, dos fallan con el mensaje
+textual reportado (`InvalidCredentials: Supabase no pudo crear la cuenta.`).
+
+## Lo que sigue siendo manual
+
+Los puntos 6, 7, 8, 9, 11, 12, 13 (parte manual) y 14, con la guía
+`docs/MATRIZ_PASOS_MANUALES.md`. Atención al límite de ~2-4 emails/hora del SMTP
+por defecto de Supabase al registrar y confirmar el segundo correo.
+
+## Resultado
+
+Suite completa: **218 passed, 3 skipped** (antes 214). Commit `d4aa7f1`.
