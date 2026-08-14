@@ -147,7 +147,15 @@ def sincronizar_usuario_auth(
     if usuario is None:
         usuario = por_email
     if usuario is None:
-        usuario = Usuario(auth_user_id=auth_user_id, email=email, nombre=nombre[:200])
+        # Los defaults Python de SQLAlchemy se aplican durante el INSERT, no al
+        # construir la instancia. Fijarlo aquí evita interpretar ``None`` como
+        # una cuenta desactivada antes del primer flush.
+        usuario = Usuario(
+            auth_user_id=auth_user_id,
+            email=email,
+            nombre=nombre[:200],
+            activo=True,
+        )
         db.add(usuario)
     elif usuario.auth_user_id not in {None, "", auth_user_id}:
         raise VinculoIdentidadError("El perfil ya está vinculado a otra identidad.")
@@ -157,7 +165,7 @@ def sincronizar_usuario_auth(
         if nombre and not usuario.nombre:
             usuario.nombre = nombre[:200]
 
-    if not usuario.activo:
+    if usuario.activo is False:
         raise VinculoIdentidadError("La cuenta de CotizaT está desactivada.")
     if email_verificado and usuario.email_verificado_at is None:
         usuario.email_verificado_at = datetime.utcnow()

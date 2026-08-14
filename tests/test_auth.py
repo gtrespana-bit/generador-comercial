@@ -186,6 +186,22 @@ def test_tokens_quedan_en_cookies_httponly_secure():
     assert all("HttpOnly" in value and "Secure" in value and "SameSite=lax" in value for value in cookies)
 
 
+def test_identidad_nueva_queda_activa_antes_del_primer_flush():
+    engine, db = _db()
+    try:
+        usuario = sincronizar_usuario_auth(
+            db, AUTH_ID, "nueva@example.com", "Cuenta nueva", True
+        )
+        db.commit()
+
+        assert usuario.activo is True
+        assert usuario.auth_user_id == AUTH_ID
+        assert usuario.email_verificado_at is not None
+    finally:
+        db.close()
+        engine.dispose()
+
+
 def test_identidad_supabase_se_vincula_por_email_una_sola_vez():
     engine, db = _db()
     try:
