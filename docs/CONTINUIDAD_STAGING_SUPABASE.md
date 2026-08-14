@@ -177,17 +177,21 @@ staging, no antes de fusionar. Se añadió la puerta automática que faltaba:
 Al actualizar una dependencia el procedimiento es: cambiar el pin, ejecutar
 `python tools/generar_lock.py`, correr la suite y abrir el pull request.
 
-**Acción manual pendiente:** copiar `docs/ci/ci.yml` a
-`.github/workflows/ci.yml` desde un clon local y empujarlo; GitHub rechaza que
-la aplicación automática escriba en `.github/workflows/` sin el permiso
-`workflows`. Instrucciones en `docs/ci/README.md`. Hasta entonces el flujo está
-escrito y probado, pero no se ejecuta en GitHub.
+**Acción manual completada (14/08/2026):** `.github/workflows/ci.yml` se creó
+desde la interfaz web de GitHub (commit `24fe1e0` en `main`) y es idéntico a
+`docs/ci/ci.yml`. El flujo `CI` está **activo** y su primera ejecución sobre
+`main` terminó en verde: job "Pruebas y verificaciones" ✓, run
+`31811936947`. La prueba `test_el_flujo_activo_coincide_con_la_definicion_versionada`
+(`tests/test_integracion_continua.py`) sigue impidiendo que ambas copias se
+separen. Aviso no bloqueante de esa ejecución: GitHub ejecutará
+`actions/checkout@v4` y `actions/setup-python@v5` en Node 24 por la
+deprecación de Node 20 (actualizar versiones cuando se toque el flujo).
 
 Validación automatizada tras este bloque: `174 passed, 3 skipped`.
 
 ## 3. Orden obligatorio del siguiente bloque
 
-> Punto exacto al 14/08/2026: Pasos A–F completados y verificados. `/healthz` y `/readyz` responden 200 OK en la URL real `https://cotizat-generador.vercel.app`. Resuelta la incidencia de bootstrap de organizaciones bajo RLS y **confirmada en staging la creación de la Organización A** (puntos 1 y 2 de la matriz superados). Añadidos además integración continua y bloqueo de dependencias (ver Sección 2). **Lo siguiente es continuar la matriz de aceptación de la Sección 4 desde el punto 3** (recuperación de contraseña); el usuario A y la Organización A ya existen, así que no deben repetirse su registro ni su aprovisionamiento.
+> Punto exacto al 14/08/2026: Pasos A–F completados y verificados. `/healthz` y `/readyz` responden 200 OK en la URL real `https://cotizat-generador.vercel.app`. Resuelta la incidencia de bootstrap de organizaciones bajo RLS y **confirmada en staging la creación de la Organización A** (puntos 1 y 2 de la matriz superados). Añadidos además integración continua y bloqueo de dependencias (ver Sección 2), y **el workflow `CI` ya está activo en GitHub** con su primera ejecución sobre `main` en verde (run `31811936947`); con esto queda cerrada la "Acción manual pendiente" del flujo. **Lo siguiente es continuar la matriz de aceptación de la Sección 4 desde el punto 3** (recuperación de contraseña); el usuario A y la Organización A ya existen, así que no deben repetirse su registro ni su aprovisionamiento.
 
 ### Paso A — Fusionar el PR #4
 
@@ -251,4 +255,4 @@ Si staging falla durante la matriz, corregir el problema específico observado s
 
 Copiar este texto, sin añadir secretos:
 
-> Continúa el proyecto CotizaT desde el `main` que incorpora el PR #4. Lee `docs/CONTINUIDAD_STAGING_SUPABASE.md` y `PLAN_DE_COMERCIALIZACION_Y_EVOLUCION_SAAS.md`, secciones 1.3 y 11. No repitas trabajo completado ni pidas secretos. Staging en Vercel (`https://cotizat-generador.vercel.app`) y Supabase ya están funcionando y `/readyz` responde 200 OK. El siguiente objetivo es ejecutar la matriz de aceptación de 14 puntos de la Sección 4 con dos correos ficticios y dos organizaciones.
+> Continúa el proyecto CotizaT desde el `main` actual (PR #4 a #7 fusionados, workflow de CI activo y en verde). Lee `docs/CONTINUIDAD_STAGING_SUPABASE.md` y `PLAN_DE_COMERCIALIZACION_Y_EVOLUCION_SAAS.md`, secciones 1.3 y 11. No repitas trabajo completado ni pidas secretos. Staging en Vercel (`https://cotizat-generador.vercel.app`) y Supabase ya están funcionando y `/readyz` responde 200 OK. El siguiente objetivo es ejecutar la matriz de aceptación de 14 puntos de la Sección 4 con dos correos ficticios y dos organizaciones, continuando desde el punto 3 (recuperación de contraseña).
