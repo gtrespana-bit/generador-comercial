@@ -76,15 +76,37 @@ proyecto real.
 
 Pendientes externos:
 
-1. respaldo recuperable de Supabase;
-2. `alembic upgrade head` con URL administrativa;
-3. login `cotizat_runtime` limitado y miembro de `cotizat_app`;
-4. bucket privado `cotizat-private`;
-5. proyecto de staging HTTPS en Vercel;
-6. Site URL y Redirect URL reales en Supabase Auth;
-7. pruebas con dos emails y dos organizaciones;
-8. validación de CSP/interacciones en navegador real;
-9. rate limiting distribuido antes de escalar a múltiples instancias.
+1. ~~respaldo recuperable de Supabase~~: el plan Free no incluye backups
+   automáticos; las migraciones aplicadas son aditivas y no borraron datos.
+   El propietario puede exportar manualmente desde Table Editor si lo desea.
+2. ~~`alembic upgrade head` con URL administrativa~~: aplicado el 13/08/2026
+   pegando `docs/staging_migration.sql` en el SQL Editor de Supabase.
+   `SELECT version_num FROM alembic_version` devuelve `c93e7a4d20f1`.
+3. ~~login `cotizat_runtime` limitado y miembro de `cotizat_app`~~: creado.
+   Verificado `rolsuper=false`, `rolbypassrls=false`, `rolinherit=true` y
+   `pg_has_role(..., 'cotizat_app', 'member') = true`.
+4. ~~bucket privado `cotizat-private`~~: creado en Supabase Storage
+   (`public=false`, límite 12 MB).
+5. proyecto de staging HTTPS en Vercel: **repositorio importado y primer
+   deploy realizado, pero con errores pendientes de diagnosticar** (el
+   propietario los reportó; aún no se ha leído el log). URL estable y
+   variables de entorno configuradas en Vercel; falta confirmar el dominio.
+6. Site URL y Redirect URL reales en Supabase Auth: pendiente de confirmar.
+7. pruebas con dos emails y dos organizaciones: pendiente.
+8. validación de CSP/interacciones en navegador real: pendiente.
+9. rate limiting distribuido antes de escalar a múltiples instancias: pendiente.
+
+Notas del aprovisionamiento real (2026-08-13):
+
+- El pooler de Supabase usa el formato de usuario `rol.ref-proyecto`
+  (p. ej. `cotizat_runtime.ivsuiyfljcajrijgwisg`), no solo `cotizat_runtime`.
+- El `ALTER ROLE ... NOSUPERUSER ... NOBYPASSRLS` que Alembic emite de forma
+  incondicional falla en el SQL Editor de Supabase cloud (el rol ejecutor no
+  es superuser) con `permission denied to alter role`. `staging_migration.sql`
+  y `staging_runtime_role.sql` ya crean el rol condicionalmente sin ese ALTER.
+- La cadena `DATABASE_URL` para Vercel debe usar `cotizat_runtime.<ref>` y
+  terminar en `?sslmode=require`. Si la contraseña lleva símbolos, debe
+  percent-codificarse (o usar una de solo letras/números).
 
 El sandbox de Arena cortó TLS al intentar acceder a Supabase y al descargar
 Chromium para Playwright. No repetir esos intentos como si fueran una validación
