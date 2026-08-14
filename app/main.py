@@ -438,6 +438,42 @@ def favicon() -> RedirectResponse:
 
 
 # ---------------------------------------------------------------------------
+# Salud (sin autenticación; no exponen secretos ni datos de tenant)
+# ---------------------------------------------------------------------------
+
+_NO_CACHE = {
+    "Cache-Control": "no-store, max-age=0",
+    "Pragma": "no-cache",
+}
+
+
+@app.get("/healthz", include_in_schema=False)
+def healthz() -> JSONResponse:
+    """Liveness: el proceso responde. No depende de la base de datos."""
+    from .health import liveness
+
+    return JSONResponse(liveness().to_dict(), headers=_NO_CACHE)
+
+
+@app.get("/readyz", include_in_schema=False)
+def readyz() -> JSONResponse:
+    """Readiness: configuración, base de datos y rol runtime están listos.
+
+    Devuelve 503 si el despliegue no debe recibir tráfico (esquema
+    desactualizado, rol runtime privilegiado, Auth/Storage sin configurar).
+    No imprime secretos: los mensajes se sanean en ``app.health``.
+    """
+    from .health import run_readiness
+
+    status = run_readiness()
+    return JSONResponse(
+        status.to_dict(),
+        status_code=200 if status.ok else 503,
+        headers=_NO_CACHE,
+    )
+
+
+# ---------------------------------------------------------------------------
 # Utilidades
 # ---------------------------------------------------------------------------
 

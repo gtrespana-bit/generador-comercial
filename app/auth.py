@@ -25,6 +25,34 @@ REFRESH_COOKIE = "cotizat_refresh_token"
 ORGANIZATION_COOKIE = "cotizat_organization_id"
 
 
+def _parece_jwt(value: str) -> bool:
+    """Comprobación de formato, no de firma (la valida Supabase).
+
+    Las claves API de proyectos antiguos son JWT (``eyJ…``) con tres
+    segmentos base64url. Las claves nuevas usan prefijos ``sb_*_``.
+    """
+    parts = value.split(".")
+    if len(parts) != 3:
+        return False
+    return bool(
+        all(parts)
+        and all(ch.isascii() and (ch.isalnum() or ch in "-_.") for ch in value)
+    )
+
+
+def es_clave_publicable(key: str) -> bool:
+    """Una clave publicable puede ser ``sb_publishable_…`` o un JWT ``anon``."""
+    return key.startswith("sb_publishable_") or _parece_jwt(key)
+
+
+def es_clave_secreta_servidor(key: str) -> bool:
+    """Una clave secreta de servidor puede ser ``sb_secret_…`` o un JWT legacy.
+
+    El JWT legacy ``service_role`` es secreto: nunca debe llegar al navegador.
+    """
+    return key.startswith("sb_secret_") or _parece_jwt(key)
+
+
 class AuthError(RuntimeError):
     """Error de autenticación que se puede mostrar sin filtrar secretos."""
 
@@ -65,9 +93,10 @@ class SupabaseAuthSettings:
             raise AuthNotConfigured(
                 "Supabase Auth todavía no está configurado en el servidor."
             )
-        if not key.startswith("sb_publishable_"):
+        if not es_clave_publicable(key):
             raise AuthNotConfigured(
-                "SUPABASE_PUBLISHABLE_KEY debe usar una clave sb_publishable_."
+                "SUPABASE_PUBLISHABLE_KEY debe usar una clave sb_publishable_ "
+                "o el JWT anon público del proyecto."
             )
         parsed = urlparse(url)
         if parsed.scheme != "https" or not parsed.netloc or parsed.path not in {"", "/"}:

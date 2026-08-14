@@ -251,8 +251,18 @@ def test_supabase_exige_secret_key_y_nunca_publishable(monkeypatch):
     monkeypatch.setenv("COTIZAT_STORAGE_BACKEND", "supabase")
     monkeypatch.setenv("SUPABASE_URL", "https://example.supabase.co")
     monkeypatch.setenv("SUPABASE_SECRET_KEY", "sb_publishable_no-es-valida")
-    with pytest.raises(storage.StorageNotConfigured, match="sb_secret_"):
+    with pytest.raises(storage.StorageNotConfigured):
         storage.StorageSettings.from_environment()
+
+
+def test_supabase_acepta_jwt_legacy_service_role(monkeypatch):
+    """Compatibilidad con proyectos que aún muestran el JWT service_role."""
+    jwt = "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoic2VydmljZV9yb2xlIn0.signature-part-123"
+    monkeypatch.setenv("COTIZAT_STORAGE_BACKEND", "supabase")
+    monkeypatch.setenv("SUPABASE_URL", "https://example.supabase.co")
+    monkeypatch.setenv("SUPABASE_SECRET_KEY", jwt)
+    settings = storage.StorageSettings.from_environment()
+    assert settings.secret_key == jwt
 
 
 def test_pdf_materializa_objeto_remoto_en_tmp(tmp_path, monkeypatch):

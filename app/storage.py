@@ -23,6 +23,7 @@ from urllib.parse import quote, urlparse
 from urllib.request import Request as UrlRequest, urlopen
 import uuid
 
+from .auth import es_clave_secreta_servidor
 from .database import (
     DATABASE_BACKEND,
     DATABASE_IS_SQLITE,
@@ -74,9 +75,10 @@ class StorageSettings:
         parsed = urlparse(url)
         if parsed.scheme != "https" or not parsed.netloc:
             raise StorageNotConfigured("SUPABASE_URL no es válida para Storage.")
-        if not secret_key.startswith("sb_secret_"):
+        if not es_clave_secreta_servidor(secret_key):
             raise StorageNotConfigured(
-                "SUPABASE_SECRET_KEY debe usar una clave sb_secret_ exclusiva del servidor."
+                "SUPABASE_SECRET_KEY debe usar una clave sb_secret_ "
+                "o el JWT service_role legacy, exclusivo del servidor."
             )
         if not re.fullmatch(r"[a-z0-9][a-z0-9-]{2,62}", bucket):
             raise StorageNotConfigured("El nombre del bucket privado no es válido.")

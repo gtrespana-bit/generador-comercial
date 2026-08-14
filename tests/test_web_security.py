@@ -205,6 +205,10 @@ def test_toda_ruta_comercial_exige_sesion_salvo_fronteras_publicas_o_locales():
         ("POST", "/restablecer-clave"),
         ("GET", "/invitaciones/{token}"),
         ("GET", "/favicon.ico"),
+        # Salud: fronteras públicas de infraestructura (no exponen datos de
+        # tenant ni secretos; readiness devuelve 503 si algo falta).
+        ("GET", "/healthz"),
+        ("GET", "/readyz"),
     }
     solo_sqlite_local = {
         ("GET", "/configuracion/backup"),
