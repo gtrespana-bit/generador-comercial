@@ -219,7 +219,10 @@ def _backup_automatico():
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
-    init_db()
+    try:
+        init_db()
+    except Exception as exc:
+        log.error("Fallo al inicializar la base de datos en lifespan: %s", exc)
     # Carpetas locales históricas. En PostgreSQL los archivos viven en el
     # backend privado (Supabase) y en despliegues de solo lectura crear estas
     # carpetas fallaría: se intentan únicamente en SQLite y un fallo no debe

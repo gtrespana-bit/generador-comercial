@@ -300,7 +300,7 @@ def _es_esquema_anterior_al_onboarding() -> bool:
 def _verificar_head_alembic_postgresql() -> None:
     with engine.connect() as connection:
         version = connection.execute(
-            text("SELECT version_num FROM alembic_version")
+            text("SELECT version_num FROM public.alembic_version")
         ).scalar_one_or_none()
     if version != EXPECTED_ALEMBIC_HEAD:
         raise RuntimeError(
