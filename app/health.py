@@ -96,7 +96,7 @@ def _check_postgresql(engine: Engine) -> dict[str, object]:
     try:
         with engine.connect() as connection:
             version = connection.execute(
-                text("SELECT version_num FROM alembic_version")
+                text("SELECT version_num FROM public.alembic_version")
             ).scalar_one_or_none()
         if version == EXPECTED_ALEMBIC_HEAD:
             results["alembic"] = f"head:{EXPECTED_ALEMBIC_HEAD}"

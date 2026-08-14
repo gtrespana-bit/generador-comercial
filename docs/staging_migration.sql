@@ -1525,5 +1525,12 @@ CREATE POLICY cotizat_invitation_update_recipient
 
 UPDATE alembic_version SET version_num='c93e7a4d20f1' WHERE alembic_version.version_num = 'a84d2f6b91e0';
 
+ALTER TABLE public.alembic_version DISABLE ROW LEVEL SECURITY;
+GRANT SELECT ON TABLE public.alembic_version TO cotizat_app;
+
+INSERT INTO alembic_version (version_num)
+SELECT 'c93e7a4d20f1'
+WHERE NOT EXISTS (SELECT 1 FROM alembic_version);
+
 COMMIT;
 

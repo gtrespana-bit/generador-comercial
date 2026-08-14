@@ -65,3 +65,52 @@ with engine.connect() as connection:
         capture_output=True,
     )
     assert comprobacion.returncode == 0, comprobacion.stderr
+
+
+def test_verificar_head_alembic_postgresql_eleva_runtime_error_si_tabla_vacia_o_version_diferente(monkeypatch):
+    import pytest
+    from app.database import _verificar_head_alembic_postgresql, EXPECTED_ALEMBIC_HEAD
+
+    class _FakeResult:
+        def __init__(self, value):
+            self._value = value
+
+        def scalar_one_or_none(self):
+            return self._value
+
+    class _FakeConn:
+        def __init__(self, value):
+            self._value = value
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            pass
+
+        def execute(self, stmt):
+            return _FakeResult(self._value)
+
+    class _FakeEngine:
+        def __init__(self, value):
+            self._value = value
+
+        def connect(self):
+            return _FakeConn(self._value)
+
+    # Caso 1: tabla vacía (scalar_one_or_none devuelve None)
+    monkeypatch.setattr("app.database.engine", _FakeEngine(None))
+    with pytest.raises(RuntimeError) as exc_info:
+        _verificar_head_alembic_postgresql()
+    assert "encontrado: None" in str(exc_info.value)
+
+    # Caso 2: versión diferente
+    monkeypatch.setattr("app.database.engine", _FakeEngine("old_version"))
+    with pytest.raises(RuntimeError) as exc_info2:
+        _verificar_head_alembic_postgresql()
+    assert "encontrado: 'old_version'" in str(exc_info2.value)
+
+    # Caso 3: versión correcta
+    monkeypatch.setattr("app.database.engine", _FakeEngine(EXPECTED_ALEMBIC_HEAD))
+    _verificar_head_alembic_postgresql()  # No debe elevar excepción
+
