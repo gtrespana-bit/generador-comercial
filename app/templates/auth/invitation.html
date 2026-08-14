@@ -14,7 +14,7 @@
 <p class="muted">Inicia sesión o crea tu cuenta con el mismo email que recibió la invitación. Por seguridad, el email debe estar confirmado y el enlace solo puede usarse una vez.</p>
 {% if error %}<div class="alert">{{ error }}</div>{% endif %}
 <div class="actions">
-  <a class="button secondary" href="/acceso?next=/invitaciones/{{ token }}">Iniciar sesión o registrarme</a>
+  <a class="button secondary" href="/acceso?next=/invitaciones/{{ token }}/aceptar">Iniciar sesión o registrarme</a>
   {% if token %}<form action="/invitaciones/{{ token }}/aceptar" method="post"><button type="submit">Aceptar invitación</button></form>{% endif %}
 </div>
 </main></body></html>

@@ -1665,6 +1665,20 @@ def ver_invitacion_web(request: Request, token: str):
     return _render_invitacion(request, token_seguro)
 
 
+@app.get("/invitaciones/{token}/aceptar", response_class=HTMLResponse)
+def ver_invitacion_aceptar_web(request: Request, token: str):
+    """Página de aceptación servida por GET.
+
+    Después de iniciar sesión, la redirección ``?next=...`` siempre llega por
+    GET, así que esta ruta debe existir: sin ella el navegador recibía un
+    405 Method Not Allowed porque la única ruta registrada era el POST.
+    La acción real de aceptar sigue siendo POST (CSRF protegido).
+    """
+    # La vista pública no consulta la base ni confirma si el token existe.
+    token_seguro = token if re.fullmatch(r"[A-Za-z0-9_-]{32,200}", token) else ""
+    return _render_invitacion(request, token_seguro)
+
+
 @app.post("/invitaciones/{token}/aceptar")
 def aceptar_invitacion_web(
     token: str,

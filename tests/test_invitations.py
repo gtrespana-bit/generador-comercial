@@ -56,6 +56,23 @@ def test_vista_publica_no_confirma_si_el_token_existe_y_no_se_cachea():
     assert "Te invitaron" in invalida.text
 
 
+def test_aceptar_invitacion_responde_por_get_para_redireccion_tras_login():
+    """El `?next=` posterior al login llega por GET; la ruta debe existir.
+
+    Regresión: antes la ruta /aceptar solo estaba registrada como POST, así
+    que el navegador recibía 405 Method Not Allowed después de iniciar sesión.
+    """
+    from app.main import app
+
+    with TestClient(app) as client:
+        respuesta = client.get("/invitaciones/" + "a" * 43 + "/aceptar")
+    assert respuesta.status_code == 200
+    assert "Te invitaron" in respuesta.text
+    # El formulario real de aceptar sigue siendo POST (protegido por CSRF).
+    assert 'method="post"' in respuesta.text
+    assert "/aceptar" in respuesta.text
+
+
 def test_invitacion_guarda_hash_revoca_anterior_y_no_el_secreto():
     engine, db = _db()
     try:
@@ -197,6 +214,43 @@ def test_aceptacion_exige_email_verificado_coincidente_y_consume_token():
                 usuario=invitado,
                 email_verificado=True,
                 ahora=datetime(2026, 8, 13, 14),
+            )
+    finally:
+        db.close()
+        engine.dispose()
+
+
+def test_aceptacion_no_usa_select_for_update_y_falla_si_ya_se_consumio():
+    """La reclamación del token es un UPDATE condicional; si otra petición ya
+    lo consumió, ``rowcount`` es 0 y se rechaza.
+
+    Regresión del error 500 en producción: ``SELECT ... FOR UPDATE`` sobre
+    ``invitaciones_organizacion`` exigía el privilegio UPDATE a nivel de
+    tabla, pero el rol de aplicación solo lo tiene a nivel de columna.
+    """
+    engine, db = _db()
+    try:
+        organizacion, propietario, invitado, _ = _equipo(db)
+        invitacion, token = crear_invitacion(
+            db,
+            organizacion_id=organizacion.id,
+            actor_usuario_id=propietario.id,
+            email=invitado.email,
+            rol="miembro",
+            ahora=datetime(2026, 8, 13, 12),
+        )
+        # Simula que otra transacción ya aceptó la invitación.
+        invitacion.accepted_at = datetime(2026, 8, 13, 12, 5)
+        invitacion.aceptada_por_usuario_id = propietario.id
+        db.commit()
+
+        with pytest.raises(GestionEquipoError, match="no es válida"):
+            aceptar_invitacion(
+                db,
+                token=token,
+                usuario=invitado,
+                email_verificado=True,
+                ahora=datetime(2026, 8, 13, 13),
             )
     finally:
         db.close()

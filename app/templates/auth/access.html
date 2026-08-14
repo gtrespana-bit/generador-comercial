@@ -57,7 +57,7 @@
 
     <form method="post" action="/registro">
       <h2>Crear cuenta</h2>
-      <input type="hidden" name="next" value="/organizaciones/nueva">
+      <input type="hidden" name="next" value="{{ next or '/organizaciones/nueva' }}">
       <label for="signup-name">Nombre</label>
       <input id="signup-name" name="nombre" autocomplete="name" maxlength="200" required {% if not auth_configured %}disabled{% endif %}>
       <label for="signup-email">Email</label>
