@@ -4,15 +4,14 @@
 --
 -- 1) Decide una contraseña larga y aleatoria para el login runtime y
 --    reemplaza CAMBIA_ESTA_CONTRASEÑA_LARGA debajo (solo en tu panel, nunca
---    en el chat ni en Git). El script usa comillas dollar-quoted para que una
---    contraseña con comillas o símbolos no rompa el SQL.
+--    en el chat ni en Git).
 -- 2) Pulsa Run.
 -- 3) Ejecuta los dos SELECT de verificación del final.
 --
 -- Resultado exigido:
---   rolsuper   = false
+--   rolsuper     = false
 --   rolbypassrls = false
---   rolinherit = true
+--   rolinherit   = true
 --   miembro de cotizat_app = true
 
 DO $$
@@ -26,21 +25,19 @@ BEGIN
       NOCREATEROLE
       NOREPLICATION
       NOBYPASSRLS;
-  ELSE
-    ALTER ROLE cotizat_runtime
-      INHERIT
-      NOSUPERUSER
-      NOCREATEDB
-      NOCREATEROLE
-      NOREPLICATION
-      NOBYPASSRLS;
   END IF;
+  -- Si el rol ya existía, NO se usa ALTER ROLE con atributos reservados
+  -- (SUPERUSER/REPLICATION/BYPASSRLS): el SQL Editor de Supabase cloud no
+  -- corre como superuser y ese ALTER fallaría. Si necesitas corregir un rol
+  -- existente que tenga SUPERUSER o BYPASSRLS, contacta al propietario del
+  -- proyecto; la app lo detectará y se negará a arrancar.
 END
 $$;
 
 GRANT cotizat_app TO cotizat_runtime;
 
--- Reemplaza el literal entre $cotizat$...$cotizat$ por tu contraseña real.
+-- Contraseña (cambia el literal). Usa comillas dollar-quoted para que una
+-- contraseña con símbolos o comillas no rompa el SQL.
 ALTER ROLE cotizat_runtime WITH LOGIN PASSWORD $cotizat$CAMBIA_ESTA_CONTRASEÑA_LARGA$cotizat$;
 
 -- Verificación (copia y pega el resultado, sin la contraseña):

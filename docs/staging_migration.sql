@@ -64,6 +64,11 @@ ALTER TABLE organizaciones ADD CONSTRAINT fk_organizaciones_creada_por_usuario F
 
 CREATE INDEX ix_organizaciones_creada_por_usuario_id ON organizaciones (creada_por_usuario_id);
 
+-- Crea el rol de aplicación solo si no existe. Se evita un ALTER ROLE
+-- incondicional con atributos reservados (SUPERUSER/REPLICATION/BYPASSRLS):
+-- en el SQL Editor de Supabase cloud el rol que ejecuta no es superuser y
+-- PostgreSQL exige serlo solo para mencionar esos atributos, aunque ya
+-- estén correctos.
 DO $role$
         BEGIN
           IF NOT EXISTS (SELECT 1 FROM pg_catalog.pg_roles WHERE rolname = 'cotizat_app') THEN
@@ -72,9 +77,6 @@ DO $role$
           END IF;
         END
         $role$;
-
-ALTER ROLE cotizat_app NOLOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE
-          NOINHERIT NOREPLICATION NOBYPASSRLS;
 
 CREATE SCHEMA IF NOT EXISTS cotizat_security;
 
