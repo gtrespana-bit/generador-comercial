@@ -46,11 +46,28 @@ servicios) y sin imprimir secretos, se dejó listo:
   secretos si algo falta.
 - `app/tools/ensure_bucket.py` para verificar o crear `cotizat-private`
   (`public=false`, 12 MB) desde un equipo con salida TLS.
-- `docs/APROVISIONAMIENTO_STAGING.md` con el orden A–F paso a paso (backup,
-  migraciones, rol runtime idempotente, bucket, variables de Vercel y Auth).
+- `docs/APROVISIONAMIENTO_STAGING.md` y `docs/GUIA_STAGING_POR_CLICS.md` con el
+  orden A–F paso a paso (backup, migraciones, rol runtime idempotente, bucket,
+  variables de Vercel y Auth), incluyendo el formato de usuario del pooler
+  `rol.ref-proyecto` y el SQL ya compilado en `docs/staging_migration.sql` y
+  `docs/staging_runtime_role.sql` para pegar en el SQL Editor sin terminal.
+- Compatibilidad con claves legacy JWT (`anon`/`service_role` en formato
+  `eyJ...`) además de las nuevas `sb_publishable_...`/`sb_secret_...`.
 
-La suite local quedó en `155 passed` y siguen pasando compilación Python,
+La suite local quedó en **157 passed** y siguen pasando compilación Python,
 parseo Jinja con el entorno real, `node --check` y `git diff --check`.
+
+Trabajo de esta sesión en la rama `arena/019ffdba-generador-comercial`
+(pendiente de abrir PR contra `main`):
+
+```text
+3de8678 docs: fija URL de staging https://cotizat-generador.vercel.app
+b08891a docs: registra estado real de staging (migracion, roles, bucket)
+0120946 docs: aclara formato de usuario del pooler (rol.ref-proyecto)
+8959f8a staging: evita ALTER ROLE con atributos reservados en SQL Editor
+9cdca2a staging: guia por clics, SQL listo y compatibilidad con claves legacy JWT
+33deb39 staging: endpoints de salud y guía de aprovisionamiento Vercel+Supabase
+```
 
 El PR de integración es:
 
@@ -88,16 +105,19 @@ Pendientes externos:
 4. ~~bucket privado `cotizat-private`~~: creado en Supabase Storage
    (`public=false`, límite 12 MB).
 5. proyecto de staging HTTPS en Vercel: **repositorio importado y primer
-   deploy realizado, pero con errores pendientes de diagnosticar** (el
-   propietario los reportó; aún no se ha leído el log). La URL de staging
-   elegida es `https://cotizat-generador.vercel.app`.
-6. Site URL y Redirect URL reales en Supabase Auth: **pendiente de confirmar**
-   en el panel; deben fijarse a:
+   deploy realizado, pero con errores pendientes de diagnosticar**. El
+   propietario confirmó que subió el proyecto a Vercel y reportó errores, pero
+   no se ha compartido aún el Build Log/Runtime Log ni la respuesta de
+   `/healthz`/`/readyz`. La URL de staging elegida es
+   `https://cotizat-generador.vercel.app`.
+6. Site URL y Redirect URL reales en Supabase Auth: **el propietario confirmó
+   que añadió las URLs en Supabase**. Deben ser exactamente:
    - Site URL: `https://cotizat-generador.vercel.app`
    - Redirect URL: `https://cotizat-generador.vercel.app/restablecer-clave`
-   En Vercel, `COTIZAT_PUBLIC_URL` debe valer
-   `https://cotizat-generador.vercel.app` (sin barra final), seguido de un
-   redeploy.
+   En Vercel, `COTIZAT_PUBLIC_URL` también debe valer
+   `https://cotizat-generador.vercel.app` (sin barra final); el propietario
+   confirmó que la variable está creada. **Falta confirmar que se hizo un
+   redeploy después de crear la variable y que `/readyz` responde 200.**
 7. pruebas con dos emails y dos organizaciones: pendiente.
 8. validación de CSP/interacciones en navegador real: pendiente.
 9. rate limiting distribuido antes de escalar a múltiples instancias: pendiente.
@@ -120,121 +140,68 @@ real: ejecutar las comprobaciones desde Vercel o un equipo con salida TLS.
 
 ## 3. Orden obligatorio del siguiente bloque
 
+> Punto exacto al 13/08/2026: Pasos A–D completados. Paso E (Vercel) con el
+> proyecto importado, variables y URL configuradas, pero errores sin
+> diagnosticar todavía. Paso F (Auth) hecho por el propietario en Supabase.
+> **Lo siguiente en la nueva conversación es diagnosticar por qué Vercel da
+> errores**, empezando por pedir el contenido de `/readyz` (o el Build/Runtime
+> Log) del deployment en `https://cotizat-generador.vercel.app`.
+
 ### Paso A — Integrar y respaldar
 
-1. Fusionar el PR #1.
-2. Obtener `main` actualizado.
-3. Crear backup administrado o `pg_dump` fuera del repositorio.
-4. No guardar dumps, `.env`, URLs con contraseña ni claves en Git.
+- ✅ PR #1 fusionado.
+- ⚠️ El plan Free no incluye backups automáticos; las migraciones aplicadas son
+  aditivas. Se puede exportar manualmente desde Table Editor si se desea.
 
 ### Paso B — Aplicar migraciones
 
-Usar solo durante Alembic:
-
-```dotenv
-MIGRATION_DATABASE_URL=postgresql://<administrador>@...
-```
-
-Ejecutar:
-
-```bash
-alembic current
-alembic upgrade head
-alembic current
-```
-
-Resultado obligatorio:
-
-```text
-c93e7a4d20f1
-```
-
-Retirar `MIGRATION_DATABASE_URL` del entorno después. Nunca debe llegar al
-runtime web.
+- ✅ Aplicado pegando `docs/staging_migration.sql` en el SQL Editor.
+- `SELECT version_num FROM alembic_version` devuelve `c93e7a4d20f1`.
+- Se descubrió y corrigió que el `ALTER ROLE` incondicional de Alembic falla en
+  el SQL Editor de Supabase cloud (`permission denied to alter role`); el SQL
+  del repositorio ya crea el rol condicionalmente.
 
 ### Paso C — Crear el login runtime
 
-Después de que exista `cotizat_app`:
-
-```sql
-CREATE ROLE cotizat_runtime
-  LOGIN
-  INHERIT
-  NOSUPERUSER
-  NOCREATEDB
-  NOCREATEROLE
-  NOREPLICATION
-  NOBYPASSRLS;
-
-GRANT cotizat_app TO cotizat_runtime;
-```
-
-Asignar la contraseña fuera de Git/chat y verificar:
-
-```sql
-SELECT rolname, rolsuper, rolbypassrls, rolinherit
-FROM pg_roles
-WHERE rolname = 'cotizat_runtime';
-
-SELECT pg_has_role('cotizat_runtime', 'cotizat_app', 'member');
-```
-
-Se exige `rolsuper=false`, `rolbypassrls=false`, `rolinherit=true` y membresía
-verdadera. `cotizat_runtime` no puede ser propietario de tablas.
+- ✅ `cotizat_runtime` creado con `docs/staging_runtime_role.sql`.
+- Verificado: `rolsuper=false`, `rolbypassrls=false`, `rolinherit=true`,
+  miembro de `cotizat_app=true`.
+- Referencia del proyecto en el pooler: `ivsuiyfljcajrijgwisg`, host
+  `aws-0-ca-central-1.pooler.supabase.com`, puerto `5432`.
 
 ### Paso D — Crear Storage privado
 
-Crear en Supabase Storage:
-
-```text
-cotizat-private
-```
-
-Debe permanecer `public=false`, con límite de 12 MB. No añadir lectura pública
-para `anon`/`authenticated`: el backend usa su secret key y el proxy de CotizaT
-es la frontera de autorización.
+- ✅ Bucket `cotizat-private` creado (`public=false`, 12 MB).
 
 ### Paso E — Crear staging Vercel
 
-Vercel reconoce `app/main.py` como entrada FastAPI. Usar un proyecto separado de
-staging, idealmente protegido, con URL estable, por ejemplo:
+- ✅ Proyecto importado a Vercel.
+- ✅ URL: `https://cotizat-generador.vercel.app` (sin barra final en
+  `COTIZAT_PUBLIC_URL`).
+- ✅ Variables configuradas por el propietario: `DATABASE_URL` (con
+  `cotizat_runtime.ivsuiyfljcajrijgwisg`), `COTIZAT_REQUIRE_RLS_ROLE=true`,
+  `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `COTIZAT_STORAGE_BACKEND=supabase`,
+  `SUPABASE_STORAGE_BUCKET=cotizat-private`, `SUPABASE_SECRET_KEY`,
+  `COTIZAT_COOKIE_SECURE=true`, `COTIZAT_TRUST_PROXY=true`,
+  `COTIZAT_PUBLIC_URL`.
+- ⚠️ **Errores reportados, aún sin diagnosticar.** No se ha compartido el log.
+- Pendiente de verificar: redeploy tras la variable y respuesta de
+  `/healthz` (200) y `/readyz` (200 con `ok:true`).
 
-```text
-https://cotizat-staging.vercel.app
-```
+Regla invariable:
 
-Variables runtime, solo en el gestor de secretos de Vercel:
-
-```dotenv
-DATABASE_URL=postgresql://cotizat_runtime:<secreto>@.../?sslmode=require
-COTIZAT_REQUIRE_RLS_ROLE=true
-SUPABASE_URL=https://<proyecto>.supabase.co
-SUPABASE_PUBLISHABLE_KEY=sb_publishable_...
-COTIZAT_STORAGE_BACKEND=supabase
-SUPABASE_STORAGE_BUCKET=cotizat-private
-SUPABASE_SECRET_KEY=sb_secret_...
-COTIZAT_PUBLIC_URL=https://<staging-estable>
-COTIZAT_COOKIE_SECURE=true
-COTIZAT_TRUST_PROXY=true
-```
-
-Nunca configurar en runtime:
-
-- `MIGRATION_DATABASE_URL`;
-- una conexión `postgres`/administrativa como `DATABASE_URL`;
-- `service_role` o `sb_secret_` en variables públicas del frontend;
-- `COTIZAT_REQUIRE_RLS_ROLE=false` como solución de despliegue.
+- nunca configurar `MIGRATION_DATABASE_URL` en runtime;
+- nunca usar una conexión `postgres`/administrativa como `DATABASE_URL`;
+- nunca poner `service_role`/`sb_secret_` en variables públicas del frontend;
+- nunca fijar `COTIZAT_REQUIRE_RLS_ROLE=false` como solución de despliegue.
 
 ### Paso F — Configurar Auth
 
-En Supabase Auth:
-
-```text
-Site URL: https://<staging-estable>
-Redirect URL: https://<staging-estable>/restablecer-clave
-```
-
-Hacer redeploy después de fijar las variables.
+- ✅ El propietario añadió en Supabase:
+  - Site URL: `https://cotizat-generador.vercel.app`
+  - Redirect URL: `https://cotizat-generador.vercel.app/restablecer-clave`
+- Verificar que funcionan recuperación de contraseña e invitaciones durante la
+  matriz real (correos de Supabase).
 
 ## 4. Matriz de aceptación real
 
