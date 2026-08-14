@@ -12,7 +12,7 @@ import json
 import os
 from typing import Any
 from urllib.error import HTTPError, URLError
-from urllib.parse import urlparse
+from urllib.parse import quote, urlparse
 from urllib.request import Request as UrlRequest, urlopen
 from uuid import UUID
 
@@ -257,15 +257,29 @@ class SupabaseAuthClient:
         )
         return _tokens_from_payload(payload)
 
-    def sign_up(self, email: str, password: str, name: str = "") -> SignupResult:
+    def sign_up(
+        self, email: str, password: str, name: str = "", redirect_to: str = ""
+    ) -> SignupResult:
+        """Crea la identidad en Supabase Auth.
+
+        Igual que en ``/auth/v1/recover``, ``redirect_to`` va en la query:
+        ``SignupParams`` tampoco lo declara en el cuerpo. Sin esto, el email
+        de confirmación llevaría al Site URL en lugar de a la app.
+        """
         email = email.strip().lower()
         if not email or "@" not in email:
             raise InvalidCredentials("Escribe un email válido.")
         if len(password) < 8:
             raise InvalidCredentials("La contraseña debe tener al menos 8 caracteres.")
+        ruta = "/auth/v1/signup"
+        if redirect_to:
+            parsed = urlparse(redirect_to)
+            if parsed.scheme != "https" or not parsed.netloc:
+                raise AuthNotConfigured("La URL de confirmación no es válida.")
+            ruta += f"?redirect_to={quote(redirect_to, safe='')}"
         payload = self._request_json(
             "POST",
-            "/auth/v1/signup",
+            ruta,
             {"email": email, "password": password, "data": {"name": name.strip()[:200]}},
         )
         user = payload.get("user")
@@ -277,6 +291,15 @@ class SupabaseAuthClient:
         return SignupResult(identity, None)
 
     def request_password_reset(self, email: str, redirect_to: str) -> None:
+        """Pide a GoTrue el email de recuperación.
+
+        ``redirect_to`` viaja en la QUERY STRING, no en el cuerpo JSON. El
+        struct ``RecoverParams`` de GoTrue solo declara ``email``,
+        ``code_challenge`` y ``code_challenge_method``: un ``redirect_to``
+        dentro del JSON se descarta en silencio y el enlace del email acaba
+        apuntando al Site URL, aunque la ruta esté autorizada en Supabase.
+        El cliente oficial (auth-js) también lo envía como parámetro de URL.
+        """
         email = email.strip().lower()
         if not email or "@" not in email:
             raise InvalidCredentials("Escribe un email válido.")
@@ -285,8 +308,8 @@ class SupabaseAuthClient:
             raise AuthNotConfigured("La URL de recuperación no es válida.")
         self._request_json(
             "POST",
-            "/auth/v1/recover",
-            {"email": email, "redirect_to": redirect_to},
+            f"/auth/v1/recover?redirect_to={quote(redirect_to, safe='')}",
+            {"email": email},
         )
 
     def update_password(self, access_token: str, password: str) -> SupabaseIdentity:

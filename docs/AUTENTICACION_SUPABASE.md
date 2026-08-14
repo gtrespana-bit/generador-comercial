@@ -67,17 +67,38 @@ Una membresía `lectura` puede consultar datos, pero el ORM rechaza tanto `flush
 
 Para recuperación, `COTIZAT_PUBLIC_URL` debe ser un origen HTTPS fijo y su ruta `https://<origen>/restablecer-clave` debe añadirse a las Redirect URLs permitidas en Supabase Auth. No se deriva desde `Host`, para evitar envenenar el enlace enviado por email. El access token temporal solo cruza el navegador y el backend durante el cambio; no se persiste.
 
-### Fallo observado: el enlace del email lleva al login
+### Fallo observado y corregido: el enlace del email llevaba al login
 
-Si la Redirect URL **no** está autorizada, Supabase no devuelve ningún error: descarta `redirect_to` y usa el **Site URL**. Como `/` exige sesión, la app rebota a `/acceso`, y el navegador arrastra el fragmento en cada salto, así que se aterriza en:
+**Causa real (bug propio):** `redirect_to` se enviaba dentro del **cuerpo JSON** de `POST /auth/v1/recover`. GoTrue no lo lee ahí. Su struct `RecoverParams` (`internal/api/recover.go`) solo declara:
+
+```go
+type RecoverParams struct {
+    Email               string `json:"email"`
+    CodeChallenge       string `json:"code_challenge"`
+    CodeChallengeMethod string `json:"code_challenge_method"`
+}
+```
+
+No hay campo `redirect_to`, así que el valor se descartaba **en silencio** (sin error ni aviso) y GoTrue caía al **Site URL**. El cliente oficial `auth-js` lo envía como **parámetro de query** (`src/lib/fetch.ts`: `qs['redirect_to'] = options.redirectTo`).
+
+La corrección envía la URL donde GoTrue sí la lee:
+
+```text
+POST /auth/v1/recover?redirect_to=https%3A%2F%2F<origen>%2Frestablecer-clave
+body: {"email": "..."}
+```
+
+Lo mismo aplicaba a `POST /auth/v1/signup`: `SignupParams` tampoco declara `redirect_to`, por lo que el email de confirmación también caía al Site URL. Corregido igual.
+
+Efecto secundario que confundía el diagnóstico: al caer al Site URL (`/`), que exige sesión, la app rebotaba a `/acceso`, y el navegador arrastraba el fragmento en cada salto. Se aterrizaba en:
 
 ```text
 /acceso?next=/#access_token=...&type=recovery
 ```
 
-El fragmento (`#…`) **nunca viaja al servidor**, de modo que ninguna ruta puede leerlo: la pantalla de login lo ignora y el enlace parece roto aunque el token sea válido.
+El fragmento (`#…`) **nunca viaja al servidor**, así que ninguna ruta podía leerlo: el login lo ignoraba y el enlace parecía roto aunque el token fuera válido. Esto hacía que el fallo se pareciese mucho a una Redirect URL sin autorizar; conviene descartar primero el formato de la petición.
 
-Solución de fondo: autorizar `https://<origen>/restablecer-clave` en Authentication → URL Configuration. `/readyz` publica el valor exacto esperado en `recovery_redirect_url_esperada` para poder compararlo de un vistazo.
+Tener la Redirect URL autorizada en Authentication → URL Configuration **sigue siendo obligatorio** (GoTrue valida contra esa lista), pero no era la causa aquí. `/readyz` publica el valor exacto esperado en `recovery_redirect_url_esperada`.
 
 Red de seguridad en la aplicación: `app/static/js/recovery_redirect.js` se carga en el login y en el layout general; si detecta `type=recovery` con `access_token` en el fragmento, reenvía a `/restablecer-clave` conservándolo. Un enlace caducado (sin token y con `error`) se desvía a `/recuperar-acceso` con un mensaje claro en lugar de dejar a la persona en el login. El token permanece siempre en el fragmento: no pasa a la query, donde quedaría registrado en logs o en el `Referer`.
 

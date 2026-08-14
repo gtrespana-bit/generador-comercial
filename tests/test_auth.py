@@ -126,6 +126,49 @@ def test_url_publica_de_recuperacion_es_fija_y_https(monkeypatch):
         password_reset_redirect_url()
 
 
+def test_recuperacion_envia_redirect_to_en_la_query_no_en_el_cuerpo():
+    """Regresión: GoTrue ignora ``redirect_to`` dentro del JSON.
+
+    ``RecoverParams`` (internal/api/recover.go) solo declara ``email``,
+    ``code_challenge`` y ``code_challenge_method``. Enviarlo en el cuerpo no
+    da error: se descarta y el enlace del email apunta al Site URL, de modo
+    que la persona aterriza en el login aunque la ruta esté autorizada en
+    Supabase. El cliente oficial lo manda como parámetro de URL.
+    """
+    client = StubAuthClient([{}])
+    redirect = "https://cotizat.example.com/restablecer-clave"
+
+    client.request_password_reset(" Persona@Example.com ", redirect)
+
+    method, path, payload, _token = client.calls[0]
+    assert method == "POST"
+    assert path == (
+        "/auth/v1/recover"
+        "?redirect_to=https%3A%2F%2Fcotizat.example.com%2Frestablecer-clave"
+    )
+    # El cuerpo no debe llevarlo: ahí GoTrue no lo lee.
+    assert payload == {"email": "persona@example.com"}
+    assert "redirect_to" not in payload
+
+
+def test_registro_envia_redirect_to_en_la_query_no_en_el_cuerpo():
+    """``SignupParams`` tampoco declara ``redirect_to`` en el cuerpo."""
+    client = StubAuthClient([{"user": _user_payload()}])
+
+    client.sign_up(
+        "persona@example.com",
+        "clave-larga-seg",
+        "Persona",
+        "https://cotizat.example.com/acceso",
+    )
+
+    _method, path, payload, _token = client.calls[0]
+    assert path == (
+        "/auth/v1/signup?redirect_to=https%3A%2F%2Fcotizat.example.com%2Facceso"
+    )
+    assert "redirect_to" not in payload
+
+
 def test_recuperacion_usa_endpoints_gotrue_sin_secret_key():
     client = StubAuthClient([{}, _user_payload()])
     redirect = "https://cotizat.example.com/restablecer-clave"
@@ -133,12 +176,8 @@ def test_recuperacion_usa_endpoints_gotrue_sin_secret_key():
     client.request_password_reset(" Persona@Example.com ", redirect)
     identity = client.update_password("recovery-access-token", "nueva-clave-segura")
 
-    assert client.calls[0] == (
-        "POST",
-        "/auth/v1/recover",
-        {"email": "persona@example.com", "redirect_to": redirect},
-        "",
-    )
+    assert client.calls[0][1].startswith("/auth/v1/recover?redirect_to=")
+    assert client.calls[0][2] == {"email": "persona@example.com"}
     assert client.calls[1] == (
         "PUT",
         "/auth/v1/user",

@@ -190,6 +190,12 @@ Vercel):
    > Para comprobar qué URL espera la aplicación, abre `/readyz` y mira el
    > campo `recovery_redirect_url_esperada`: ese valor exacto es el que debe
    > estar en la lista.
+   >
+   > **Si el enlace sigue llevando al login con la URL ya autorizada**, el
+   > problema no es esta lista: revisa que la app envíe `redirect_to` como
+   > **parámetro de query** y no en el cuerpo JSON. GoTrue no lo lee en el
+   > cuerpo y lo descarta sin error (fue un bug real, corregido en
+   > `app/auth.py`; ver `docs/AUTENTICACION_SUPABASE.md`).
 4. En Vercel → pestaña **Deployments**, abre el menú del último deployment →
    **Redeploy** para que tome la variable nueva.
 

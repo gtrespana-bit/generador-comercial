@@ -1189,7 +1189,7 @@ de recuperación. Faltaba lo más básico de cualquier SaaS: un panel de cuenta.
 
 # 23. Corrección — El enlace de recuperación aterrizaba en el login (2026-08-14)
 
-Estado: **CORREGIDO** (requiere además un cambio de configuración en Supabase).
+Estado: **CORREGIDO** (bug de código; no requiere cambios de configuración).
 
 ## Síntoma reportado
 
@@ -1201,35 +1201,61 @@ contraseña, con esta forma de URL:
 /acceso?next=/#access_token=...&expires_in=3600&type=recovery
 ```
 
-## Causa raíz (configuración, no código)
+## Causa raíz real (bug propio) — corrige el diagnóstico inicial
 
-La aplicación pide a Supabase `redirect_to=https://<origen>/restablecer-clave`.
-Supabase **solo respeta ese parámetro si la URL exacta está en su lista de
-Redirect URLs**. Si no está, no devuelve ningún error: la descarta en silencio
-y usa el **Site URL** configurado.
+**Primer diagnóstico, equivocado:** se atribuyó a que la Redirect URL no
+estaba autorizada en Supabase. El usuario confirmó que **ya lo estaba desde
+antes**, lo que obligó a revisar el código y descartó esa hipótesis.
 
-La cadena completa del fallo:
+**Causa verificada:** la aplicación enviaba `redirect_to` dentro del **cuerpo
+JSON** de `POST /auth/v1/recover`. GoTrue no lo lee ahí. Su struct
+`RecoverParams` (`internal/api/recover.go`) solo declara:
 
-1. Supabase descarta la `redirect_to` no autorizada y usa el Site URL (`/`).
-2. `/` exige sesión, así que la app redirige a `/acceso?next=/`.
-3. El navegador **re-adjunta el fragmento** `#access_token=...` en cada salto.
-4. El fragmento **nunca viaja al servidor** (así funciona HTTP), por lo que
-   ninguna ruta puede leerlo: el login lo ignora y el enlace parece roto,
-   aunque el token sea perfectamente válido.
-
-Se verificó decodificando el JWT del enlace: `type=recovery`, `amr.method=otp`,
-vigencia de 1 hora y email correcto. El token era válido; solo aterrizó en la
-página que no sabe leerlo.
-
-## Solución de fondo (acción manual requerida)
-
-En Supabase → Authentication → URL Configuration, añadir a **Redirect URLs**:
-
-```text
-https://cotizat-generador.vercel.app/restablecer-clave
+```go
+type RecoverParams struct {
+    Email               string `json:"email"`
+    CodeChallenge       string `json:"code_challenge"`
+    CodeChallengeMethod string `json:"code_challenge_method"`
+}
 ```
 
-Debe coincidir carácter a carácter, sin barra final.
+No existe campo `redirect_to`, así que el valor se descartaba **en silencio**
+—sin error ni aviso— y GoTrue caía al **Site URL**. El cliente oficial
+`auth-js` lo envía como **parámetro de query** (`src/lib/fetch.ts`:
+`qs['redirect_to'] = options.redirectTo`), no en el cuerpo.
+
+Corrección aplicada en `app/auth.py`:
+
+```text
+POST /auth/v1/recover?redirect_to=https%3A%2F%2F<origen>%2Frestablecer-clave
+body: {"email": "..."}
+```
+
+**Mismo bug latente en el registro:** `SignupParams` (`internal/api/signup.go`)
+tampoco declara `redirect_to`, de modo que el email de confirmación también
+habría caído al Site URL. Corregido igual y `/registro` pasa ahora
+`public_app_url("/acceso")`.
+
+Por qué el síntoma despistaba: al caer al Site URL (`/`), que exige sesión, la
+app rebotaba a `/acceso`, y el navegador re-adjuntaba el fragmento en cada
+salto. El fragmento **nunca viaja al servidor**, así que ninguna ruta podía
+leer el token. El resultado es idéntico al de una Redirect URL sin autorizar,
+que fue justo la pista falsa. Lección: ante este síntoma, verificar primero el
+**formato de la petición** antes que la configuración remota.
+
+Se decodificó el JWT del enlace para descartar un token inválido:
+`type=recovery`, `amr.method=otp`, vigencia de 1 hora y email correcto. El
+token siempre fue válido; solo aterrizaba donde nadie lo leía.
+
+## Verificación
+
+Captura HTTP real contra un servidor local que suplanta a GoTrue, comprobando
+la petición exacta que sale:
+
+```text
+POST /auth/v1/recover?redirect_to=https%3A%2F%2Fcotizat-generador.vercel.app%2Frestablecer-clave
+body: {"email": "gtrespana@gmail.com"}
+```
 
 ## Red de seguridad implementada en la aplicación
 
@@ -1250,13 +1276,16 @@ Debe coincidir carácter a carácter, sin barra final.
 
 ## Pruebas realizadas
 
+- **`tests/test_auth.py`**: dos pruebas nuevas fijan el formato de la petición
+  (`redirect_to` en la query y **ausente** del cuerpo) para `/auth/v1/recover`
+  y `/auth/v1/signup`. Son las que habrían detectado este fallo.
 - **`tests/test_recuperacion_redireccion.py`** (10 pruebas): ejercita el script
   con Node sobre un DOM mínimo. Cubre la URL real reportada, aterrizaje en la
   raíz, ausencia de bucle en la página correcta, login normal, `magiclink`,
   fragmento sin token, ancla corriente, enlace caducado, y que el token nunca
   salga del fragmento. Incluye una prueba que verifica que el script sigue
   cargado en ambas plantillas.
-- **Suite completa**: 196 pruebas OK + 3 omitidas; 41 plantillas Jinja OK.
+- **Suite completa**: 198 pruebas OK + 3 omitidas; 41 plantillas Jinja OK.
 - **Manual**: script servido con `200 text/javascript` y admitido por la CSP
   (`script-src 'self'`), verificado contra la aplicación en ejecución.
 

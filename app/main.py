@@ -1213,6 +1213,7 @@ async def registrar_cuenta(request: Request):
             str(form.get("email") or ""),
             password,
             str(form.get("nombre") or ""),
+            public_app_url("/acceso"),
         )
     except AuthError as exc:
         return _redirect("/acceso", error=str(exc))
