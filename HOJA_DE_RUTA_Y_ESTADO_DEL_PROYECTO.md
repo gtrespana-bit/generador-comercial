@@ -1495,3 +1495,52 @@ repositorio, así que ninguna prueba puede sustituirla.
 Suite completa: **214 passed, 3 skipped** (antes 208). Matriz de aceptación:
 puntos 1–5 superados en staging, 10 y 13 cubiertos en CI; los siguientes (6–9)
 requieren un segundo correo real.
+
+# 27. Registro reparado: GoTrue no siempre anida el usuario (14/08/2026)
+
+## El problema
+
+El registro, ya confirmado como superado en la matriz (punto 1), empezó a fallar
+**siempre** en staging con «Supabase no pudo crear la cuenta». No era una clave
+caducada ni configuración perdida, sino un **bug propio** que permanecía latente.
+
+`POST /auth/v1/signup` responde **HTTP 200 con tres formas distintas**
+(`internal/api/signup.go`), y solo una anida el usuario bajo la clave `user`:
+
+| Situación | Respuesta | Forma |
+| --- | --- | --- |
+| Autoconfirm activo | `sendJSON(w, 200, token)` | `{access_token, refresh_token, user:{...}}` |
+| Confirmación por email, alta nueva | `sendJSON(w, 200, user)` | usuario **en la raíz** |
+| Email ya registrado sin confirmar | `sendJSON(w, 200, sanitizedUser)` | raíz, `identities: []` |
+
+`sign_up` leía siempre `payload["user"]`. Mientras el proyecto estuvo en
+autoconfirm funcionaba; al activar «Confirm email», las dos últimas respuestas
+—correctas— se convirtieron en `InvalidCredentials` y el registro falló al 100%.
+
+## Qué se hizo
+
+Se acepta el usuario en la raíz cuando no viene envuelto y el error queda
+reservado para respuestas sin identidad utilizable. El caso «email ya
+registrado» se detecta por `identities: []` (el usuario obfuscado de GoTrue) y
+se expone como `SignupResult.ya_registrado`.
+
+**La bandera no altera el mensaje mostrado.** Diferenciar el aviso convertiría
+el formulario en un enumerador de emails con cuenta, justo lo que GoTrue evita.
+`/registro` responde siempre lo mismo: confirma tu email y, si ya tenías cuenta,
+inicia sesión o usa «Olvidé mi contraseña».
+
+## Verificación de que las pruebas sirven
+
+Cuatro pruebas nuevas en `tests/test_auth.py` cubren las tres formas más el
+cuerpo sin identidad. Al revertir la corrección, dos fallan con el mensaje
+textual reportado (`InvalidCredentials: Supabase no pudo crear la cuenta.`).
+
+## Lo que sigue siendo manual
+
+Los puntos 6, 7, 8, 9, 11, 12, 13 (parte manual) y 14, con la guía
+`docs/MATRIZ_PASOS_MANUALES.md`. Atención al límite de ~2-4 emails/hora del SMTP
+por defecto de Supabase al registrar y confirmar el segundo correo.
+
+## Resultado
+
+Suite completa: **218 passed, 3 skipped** (antes 214). Commit `d4aa7f1`.

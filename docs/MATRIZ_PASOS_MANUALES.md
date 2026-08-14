@@ -20,6 +20,14 @@ Duración estimada: **45–60 minutos**. Usa solo datos ficticios.
    como B saldrías de A. Sugerencia: Chrome para A, Chrome en incógnito para B.
 3. Un bloc de notas para pegar el enlace de invitación.
 
+> **Aviso sobre el envío de emails.** El SMTP por defecto de Supabase limita a
+> **~2-4 correos por hora**. Registrar al Usuario B y confirmar su email consume
+> parte de esa cuota, y si además pruebas recuperaciones de contraseña puedes
+> quedarte sin envíos a mitad del recorrido. Si un email no llega, casi siempre
+> es el límite y no un fallo de CotizaT: espera una hora o configura un SMTP
+> propio. **No desactives «Confirm email» para esquivarlo**: es el ajuste que
+> destapó el fallo de registro corregido en `d4aa7f1`.
+
 > **Aviso importante sobre el punto 6.** CotizaT **todavía no envía emails de
 > invitación**. Al invitar a B, la pantalla muestra un enlace **una sola vez** y
 > no lo vuelve a enseñar. Cópialo en el bloc de notas antes de navegar a otra
