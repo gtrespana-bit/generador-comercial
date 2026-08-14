@@ -106,14 +106,17 @@ En Supabase:
    - Escoge el modo **Transaction** o **Session pooler** (puerto 6543/5432
      según te muestre; ambos valen, pero para Vercel serverless suele
      recomendarse el pooler **Transaction**).
-   - El usuario que trae por defecto es `postgres`; **cámbialo** por
-     `cotizat_runtime`.
+   - El usuario que trae por defecto es `postgres.<ref>`; **cámbialo** por
+     `cotizat_runtime.<ref>` (en el pooler de Supabase el formato es
+     `rol.ref-del-proyecto`; si tu cadena es
+     `postgres.ivsuiyfljcajrijgwisg`, deja `ivsuiyfljcajrijgwisg` y cambia
+     solo `postgres` por `cotizat_runtime`).
    - Sustituye el marcador de contraseña por la que pusiste en el Paso 2.
    - Asegúrate de que termina en `?sslmode=require`.
    - Resultado esperado (ejemplo con el patrón del pooler):
 
      ```text
-     postgresql://cotizat_runtime:TU_CONTRASEÑA@aws-0-<region>.pooler.supabase.com:6543/postgres?sslmode=require
+     postgresql://cotizat_runtime.ivsuiyfljcajrijgwisg:TU_CONTRASEÑA@aws-0-<region>.pooler.supabase.com:6543/postgres?sslmode=require
      ```
 
    - Esa cadena es tu `DATABASE_URL`.
