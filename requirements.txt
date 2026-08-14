@@ -1,12 +1,20 @@
 # Runtime web compartido por desarrollo y producción.
-fastapi>=0.115
-uvicorn[standard]>=0.30
-sqlalchemy>=2.0
-alembic>=1.13,<2.0
-psycopg[binary]>=3.2,<4.0
-jinja2>=3.1
-reportlab>=4.0
-python-multipart>=0.0.9
-pillow>=10.0
+#
+# Las versiones están fijadas (E1-037) para que Vercel, CI y el entorno local
+# instalen exactamente el mismo código. Sin pines, cada build de Vercel resolvía
+# la última versión disponible y podía romper un despliegue estable sin ningún
+# cambio en el repositorio.
+#
+# Para actualizar: cambiar el pin aquí, regenerar el cierre completo con
+# `python tools/generar_lock.py` y ejecutar la suite antes de fusionar.
+fastapi==0.141.1
+uvicorn[standard]==0.52.3
+sqlalchemy==2.0.52
+alembic==1.19.1
+psycopg[binary]==3.3.4
+jinja2==3.1.6
+reportlab==5.0.0
+python-multipart==0.0.32
+pillow==12.3.0
 # Lectura de archivos .xlsx en el asistente de importación.
-openpyxl>=3.1
+openpyxl==3.1.5

@@ -150,9 +150,44 @@ Regresión añadida:
 Validación automatizada tras la corrección: `164 passed, 3 skipped` sin
 PostgreSQL y `167 passed` con PostgreSQL real.
 
+**Confirmado en staging (14/08/2026):** con el PR #6 fusionado, el propietario
+creó correctamente la Organización A en la aplicación desplegada. Los puntos 1
+y 2 de la matriz quedan superados; la matriz continúa desde el punto 3
+(recuperación de contraseña).
+
+### Integración continua y dependencias bloqueadas (14/08/2026)
+
+Los dos últimos fallos (`alembic_version` y bootstrap RLS) se detectaron en
+staging, no antes de fusionar. Se añadió la puerta automática que faltaba:
+
+- `docs/ci/ci.yml` se ejecuta en cada pull request y push a `main` o
+  `arena/**`, e incluye instalación del lock, coherencia del bloqueo,
+  `compileall`, parseo Jinja con el entorno real, `node --check`, revisión de
+  espacios en blanco acotada al cambio, simulación del sistema de archivos de
+  solo lectura de Vercel (PostgreSQL y SQLite) y `pytest -q`;
+- `requirements.txt` y `requirements-dev.txt` fijan cada dependencia con `==`;
+  `requirements.lock` guarda el cierre transitivo (41 paquetes). Antes, los
+  rangos abiertos permitían que **cada build de Vercel resolviera versiones
+  distintas** y rompiera un despliegue estable sin cambios en el repositorio;
+- `tools/generar_lock.py` regenera el cierre y `tools/verificar_lock.py` impide
+  que un pin cambie sin regenerarlo;
+- `tools/verificar_plantillas.py` parsea las 40 plantillas con el entorno Jinja
+  real de `app.main`.
+
+Al actualizar una dependencia el procedimiento es: cambiar el pin, ejecutar
+`python tools/generar_lock.py`, correr la suite y abrir el pull request.
+
+**Acción manual pendiente:** copiar `docs/ci/ci.yml` a
+`.github/workflows/ci.yml` desde un clon local y empujarlo; GitHub rechaza que
+la aplicación automática escriba en `.github/workflows/` sin el permiso
+`workflows`. Instrucciones en `docs/ci/README.md`. Hasta entonces el flujo está
+escrito y probado, pero no se ejecuta en GitHub.
+
+Validación automatizada tras este bloque: `174 passed, 3 skipped`.
+
 ## 3. Orden obligatorio del siguiente bloque
 
-> Punto exacto al 14/08/2026: Pasos A–F completados y verificados. `/healthz` y `/readyz` responden 200 OK en la URL real `https://cotizat-generador.vercel.app`. Resuelta además la incidencia de bootstrap de organizaciones bajo RLS (ver Sección 2). **Lo siguiente es reanudar la matriz de aceptación de la Sección 4 desde el punto 2** con la organización A; el usuario A (Auth id 1) ya está activo, vinculado y verificado, así que no debe repetirse su registro ni su aprovisionamiento.
+> Punto exacto al 14/08/2026: Pasos A–F completados y verificados. `/healthz` y `/readyz` responden 200 OK en la URL real `https://cotizat-generador.vercel.app`. Resuelta la incidencia de bootstrap de organizaciones bajo RLS y **confirmada en staging la creación de la Organización A** (puntos 1 y 2 de la matriz superados). Añadidos además integración continua y bloqueo de dependencias (ver Sección 2). **Lo siguiente es continuar la matriz de aceptación de la Sección 4 desde el punto 3** (recuperación de contraseña); el usuario A y la Organización A ya existen, así que no deben repetirse su registro ni su aprovisionamiento.
 
 ### Paso A — Fusionar el PR #4
 
@@ -163,7 +198,7 @@ PostgreSQL y `167 passed` con PostgreSQL real.
 
 Paso a paso con dos correos (ej. Usuario A y Usuario B):
 
-1. **Usuario A:** Registro, inicio de sesión y creación de Organización A.
+1. ~~**Usuario A:** Registro, inicio de sesión y creación de Organización A.~~ **Completado el 14/08/2026.**
 2. **Usuario A:** Completar onboarding (demo o limpio).
 3. **Usuario A:** Probar recuperación de clave (redirect fijo `https://cotizat-generador.vercel.app/restablecer-clave`).
 4. **Usuario A:** Cargar logo, partida con imagen, anexo PDF y ficha técnica.

@@ -1,3 +1,6 @@
 -r requirements.txt
-pytest>=8,<10
-httpx2>=2.10,<3
+# Herramientas de prueba, fijadas igual que el runtime (E1-037).
+pytest==9.1.1
+httpx2==2.10.0
+# Usada por las pruebas que validan el flujo de integración continua.
+PyYAML==6.0.3

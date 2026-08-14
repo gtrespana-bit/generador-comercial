@@ -1,0 +1,102 @@
+name: CI
+
+# Ejecuta las verificaciones que hasta ahora se hacían a mano (E1-038).
+# Los dos últimos fallos de staging se detectaron en producción; esta puerta
+# los habría visto antes de fusionar.
+
+on:
+  push:
+    branches: ["main", "arena/**"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+# Si se empuja varias veces seguidas a la misma rama, cancela la ejecución
+# anterior en lugar de acumular trabajo redundante.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  PYTHON_VERSION: "3.11"
+  # Ninguna etapa debe tocar una base real: se fuerza SQLite temporal.
+  PIP_DISABLE_PIP_VERSION_CHECK: "1"
+
+jobs:
+  pruebas:
+    name: Pruebas y verificaciones
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Descargar el repositorio
+        uses: actions/checkout@v4
+        with:
+          # Se necesita el histórico para comparar la rama con su base y
+          # revisar solo las líneas que introduce el cambio.
+          fetch-depth: 0
+
+      - name: Preparar Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements.lock
+
+      - name: Instalar dependencias fijadas
+        # Se usa el cierre completo para que CI pruebe exactamente el mismo
+        # conjunto de paquetes en cada ejecución (E1-037).
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.lock
+
+      - name: Comprobar que el lock corresponde a los requirements
+        # Evita que alguien cambie requirements.txt y olvide regenerar el lock,
+        # lo que dejaría a Vercel y CI instalando versiones distintas.
+        run: python tools/verificar_lock.py
+
+      - name: Compilar todo el código Python
+        run: python -m compileall -q app tools run.py desktop.py
+
+      - name: Parsear las plantillas Jinja con el entorno real
+        run: python tools/verificar_plantillas.py
+
+      - name: Verificar la sintaxis del JavaScript
+        run: |
+          estado=0
+          while IFS= read -r archivo; do
+            if ! node --check "$archivo"; then
+              echo "::error file=$archivo::Error de sintaxis JavaScript"
+              estado=1
+            fi
+          done < <(find app/static/js -name '*.js')
+          exit $estado
+
+      - name: Detectar conflictos y espacios en blanco sobrantes
+        # Solo se revisan las líneas que introduce este cambio. Revisar el
+        # árbol completo marcaría los dos espacios finales de Markdown (que son
+        # saltos de línea intencionales) y código antiguo ajeno al PR.
+        run: |
+          base="${{ github.event.pull_request.base.sha }}"
+          if [ -z "$base" ]; then
+            base="$(git rev-parse HEAD~1 2>/dev/null || true)"
+          fi
+          if [ -z "$base" ]; then
+            echo "Sin confirmación base con la que comparar; se omite la revisión."
+            exit 0
+          fi
+          echo "Comparando con $base"
+          git diff --check "$base" -- . ':(exclude)*.md'
+
+      - name: Simular el sistema de archivos de solo lectura de Vercel
+        # Reproduce la restricción real de Vercel (solo /tmp escribible) en los
+        # dos modos soportados, que ya provocó incidencias de arranque.
+        run: |
+          python tools/simular_vercel_rofs.py postgres
+          python tools/simular_vercel_rofs.py sqlite
+
+      - name: Ejecutar la suite automatizada
+        run: pytest -q

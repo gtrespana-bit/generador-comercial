@@ -282,9 +282,12 @@ Al trabajar en una tarea de este plan se debe:
 - [ ] **E1-036 — Embeber o servir localmente las fuentes de la interfaz.**  
   Eliminar la dependencia actual de Google Fonts para el modo offline.
 
-- [ ] **E1-037 — Bloquear dependencias a versiones reproducibles.**
+- [x] **E1-037 — Bloquear dependencias a versiones reproducibles.**
+  Evidencia: `requirements.txt` y `requirements-dev.txt` fijan cada dependencia directa con `==`, y `requirements.lock` guarda el cierre transitivo completo (41 paquetes) que instala la integración continua. `tools/generar_lock.py` regenera el cierre y `tools/verificar_lock.py` impide que un pin cambie sin regenerarlo, evitando que Vercel y CI instalen versiones distintas. Cubierto por `tests/test_dependencias_bloqueadas.py`. Motivo: antes los rangos abiertos (`fastapi>=0.115`) permitían que Vercel resolviera versiones nuevas en cada build y rompiera un despliegue estable sin ningún cambio en el repositorio.
 
-- [ ] **E1-038 — Configurar GitHub Actions para ejecutar las pruebas.**
+- [~] **E1-038 — Configurar GitHub Actions para ejecutar las pruebas.**
+  Flujo escrito y verificado; falta un paso manual de activación. Evidencia: `docs/ci/ci.yml` define la ejecución en cada push a `main`/`arena/**` y en cada pull request, e incorpora las verificaciones que antes se hacían a mano: instalación del lock, coherencia del bloqueo, `compileall`, parseo de las 40 plantillas Jinja con el entorno real, `node --check` sobre los 20 archivos JavaScript, revisión de espacios en blanco limitada a las líneas del cambio, simulación del sistema de archivos de solo lectura de Vercel en modo PostgreSQL y SQLite, y `pytest -q`. Protegido por `tests/test_integracion_continua.py`, que falla si se elimina un paso o si las dos copias divergen.
+  **Pendiente:** copiar `docs/ci/ci.yml` a `.github/workflows/ci.yml` desde un clon local y empujarlo (instrucciones en `docs/ci/README.md`). El token de la aplicación que abre los cambios automáticos carece del permiso `workflows` y GitHub rechaza el push de archivos bajo `.github/workflows/`.
 
 - [x] **E1-039 — Hacer que `pytest` funcione sin depender de configurar manualmente `PYTHONPATH`.**
   Evidencia: `pytest.ini` incorpora la raíz del proyecto y permite ejecutar `.venv/bin/pytest -q` directamente.
@@ -365,7 +368,8 @@ No se marcará esta etapa como completada hasta cumplir todos los siguientes pun
 - [ ] Imágenes y anexos usan almacenamiento persistente por organización.
 - [ ] Existe una exportación y una migración controlada desde SQLite.
 - [ ] Existe guía de inicio, oferta, contrato y canal de soporte.
-- [ ] CI ejecuta las pruebas y el recorrido crítico está cubierto.
+- [~] CI ejecuta las pruebas y el recorrido crítico está cubierto.
+  CI operativo desde el 14/08/2026 (E1-038); falta cubrir el recorrido crítico completo (E1-040).
 - [ ] Tres usuarios externos completaron una prueba de usabilidad.
 
 **Puerta al terminar:** desplegar una beta web privada para prospectos y comenzar la validación pagada, sin afirmar todavía preparación para lanzamiento público.
@@ -771,7 +775,7 @@ La continuidad operativa exacta para una conversación nueva está en `docs/CONT
 
 La base browser-first ya está desplegada en staging Vercel + Supabase (`https://cotizat-generador.vercel.app`), con `/healthz` y `/readyz` respondiendo 200 OK. El siguiente trabajo es:
 
-1. **Matriz de aceptación (Sección 4 de CONTINUIDAD):** ejecutar los 14 puntos de prueba manual con dos correos y dos organizaciones en el entorno desplegado.
+1. **Matriz de aceptación (Sección 4 de CONTINUIDAD):** continuar los 14 puntos de prueba manual con dos correos y dos organizaciones en el entorno desplegado. Los puntos 1 y 2 (registro de A y creación de la Organización A) quedaron confirmados el 14/08/2026 tras fusionar el PR #6.
 2. **E1W-007 / E1W-008:** validar recuperación de clave, invitaciones de equipo, cambio de roles (`lectura` vs `miembro`) e interacción de cookies/CSP en navegador real HTTPS.
 3. **E1W-009 / E1W-011:** verificar la subida/descarga de imágenes, anexos PDF y fichas técnicas a través del proxy autorizado conectando con el bucket privado `cotizat-private`.
 4. **Infraestructura futura:** añadir Redis/Upstash para rate limiting distribuido antes de escalar a múltiples instancias o apertura pública.
@@ -787,7 +791,9 @@ Evidencia acumulada al 14/08/2026:
 - Bucket `cotizat-private` aprovisionado y verificado.
 - PR #3 fusionado y PR #4 abierto con correcciones defensivas de lectura de `alembic_version` y manejo de excepciones en `lifespan`.
 - Vercel desplegado y respondiendo HTTP 200 OK en `/healthz` y `/readyz` con todas las comprobaciones en verde.
-- Pytest supera 158 pruebas automáticas.
+- PR #6 fusionado: el bootstrap de la primera organización bajo RLS funciona y el propietario confirmó la creación de la Organización A en staging el 14/08/2026.
+- Integración continua activa (E1-038) y dependencias bloqueadas (E1-037): cada pull request ejecuta la suite y las verificaciones que antes eran manuales.
+- Pytest supera 174 pruebas automáticas.
 - La aplicación **está lista para ejecutar la matriz de aceptación manual con dos organizaciones** antes de autorizar cualquier beta abierta.
 
 ---

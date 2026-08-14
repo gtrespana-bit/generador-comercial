@@ -174,6 +174,26 @@ pip install -r requirements.txt
 python run.py
 ```
 
+### Pruebas y verificaciones
+
+El flujo de integración continua está definido en `docs/ci/ci.yml` (ver
+`docs/ci/README.md` para activarlo). Para reproducir esas mismas comprobaciones
+antes de subir un cambio:
+
+```bash
+pip install -r requirements.lock   # mismo conjunto exacto que usa CI
+pytest -q                          # suite automatizada
+python tools/verificar_lock.py     # dependencias fijadas y coherentes
+python tools/verificar_plantillas.py  # plantillas Jinja parseables
+python -m compileall -q app tools run.py desktop.py
+find app/static/js -name '*.js' -exec node --check {} \;
+```
+
+Las dependencias están fijadas a versiones exactas para que el entorno local,
+CI y Vercel instalen siempre lo mismo. Al actualizar una: cambia el pin en
+`requirements.txt` o `requirements-dev.txt`, ejecuta
+`python tools/generar_lock.py` y vuelve a correr la suite.
+
 Para probar la base web con PostgreSQL, configura `DATABASE_URL` y ejecuta
 `alembic upgrade head` antes de iniciar. Consulta `docs/BASE_DE_DATOS_WEB.md`,
 `docs/AUTENTICACION_SUPABASE.md`, `docs/ALMACENAMIENTO_PRIVADO.md` y
