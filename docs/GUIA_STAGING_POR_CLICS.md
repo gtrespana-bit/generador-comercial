@@ -164,15 +164,15 @@ Vercel):
 ## Paso 6 — Fijar la URL pública y redirigir Auth
 
 1. Cuando termine el primer despliegue, Vercel te da un dominio, por ejemplo
-   `https://cotizat-staging.vercel.app`.
+   `https://cotizat-generador.vercel.app`.
 2. Vuelve a Vercel → tu proyecto → **Settings → Environment Variables**, crea
    o edita:
-   - `COTIZAT_PUBLIC_URL` = `https://cotizat-staging.vercel.app`
+   - `COTIZAT_PUBLIC_URL` = `https://cotizat-generador.vercel.app`
      (sin barra al final).
 3. En Supabase → **Authentication** → **URL Configuration**:
-   - **Site URL**: `https://cotizat-staging.vercel.app`
+   - **Site URL**: `https://cotizat-generador.vercel.app`
    - **Redirect URLs**: añade
-     `https://cotizat-staging.vercel.app/restablecer-clave`
+     `https://cotizat-generador.vercel.app/restablecer-clave`
 4. En Vercel → pestaña **Deployments**, abre el menú del último deployment →
    **Redeploy** para que tome la variable nueva.
 
@@ -183,8 +183,8 @@ Vercel):
 Abre en el navegador:
 
 ```text
-https://cotizat-staging.vercel.app/healthz
-https://cotizat-staging.vercel.app/readyz
+https://cotizat-generador.vercel.app/healthz
+https://cotizat-generador.vercel.app/readyz
 ```
 
 - `/healthz` debe devolver `200` con `{"ok": true, ...}`.

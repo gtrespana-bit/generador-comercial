@@ -89,9 +89,15 @@ Pendientes externos:
    (`public=false`, límite 12 MB).
 5. proyecto de staging HTTPS en Vercel: **repositorio importado y primer
    deploy realizado, pero con errores pendientes de diagnosticar** (el
-   propietario los reportó; aún no se ha leído el log). URL estable y
-   variables de entorno configuradas en Vercel; falta confirmar el dominio.
-6. Site URL y Redirect URL reales en Supabase Auth: pendiente de confirmar.
+   propietario los reportó; aún no se ha leído el log). La URL de staging
+   elegida es `https://cotizat-generador.vercel.app`.
+6. Site URL y Redirect URL reales en Supabase Auth: **pendiente de confirmar**
+   en el panel; deben fijarse a:
+   - Site URL: `https://cotizat-generador.vercel.app`
+   - Redirect URL: `https://cotizat-generador.vercel.app/restablecer-clave`
+   En Vercel, `COTIZAT_PUBLIC_URL` debe valer
+   `https://cotizat-generador.vercel.app` (sin barra final), seguido de un
+   redeploy.
 7. pruebas con dos emails y dos organizaciones: pendiente.
 8. validación de CSP/interacciones en navegador real: pendiente.
 9. rate limiting distribuido antes de escalar a múltiples instancias: pendiente.
