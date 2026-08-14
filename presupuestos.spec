@@ -45,6 +45,7 @@ hiddenimports = [
     "sqlalchemy.dialects.sqlite",
     "jinja2",
     "reportlab",
+    "pypdf",
     "multipart",
     "PIL",
     "email_validator",
@@ -55,6 +56,7 @@ hiddenimports = [
     "app.models",
     "app.services",
     "app.services.pdf",
+    "app.services.pdf_anexos",
     "app.utils",
     "app.seeds",
 ]
@@ -66,6 +68,7 @@ for mod in [
     "pydantic",
     "sqlalchemy",
     "reportlab",
+    "pypdf",
     "webview",
     "anyio",
 ]:

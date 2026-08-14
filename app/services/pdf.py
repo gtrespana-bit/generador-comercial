@@ -51,6 +51,7 @@ from ..utils import (
     fmt_precio_u,
     saneado,
 )
+from . import pdf_anexos
 from .pdf_interactivo import ContextoInteractivo
 
 
@@ -839,18 +840,22 @@ class _CanvasNumerado(canvas.Canvas):
         "vencido": "VENCIDO",
     }
 
-    def __init__(self, *args, estado="", ctx=None, **kwargs):
+    def __init__(self, *args, estado="", ctx=None, paginas_extra=0, **kwargs):
         super().__init__(*args, **kwargs)
         self._paginas = []
         self._estado = estado
         self._ctx = ctx
+        # Páginas que se añadirán después (anexos fusionados): el total del
+        # pie «n/N» debe contarlas para que coincida con el archivo que
+        # recibe el cliente.
+        self._paginas_extra = int(paginas_extra or 0)
 
     def showPage(self):
         self._paginas.append(dict(self.__dict__))
         self._startPage()
 
     def save(self):
-        total = len(self._paginas)
+        total = len(self._paginas) + self._paginas_extra
         for state in self._paginas:
             self.__dict__.update(state)
             # Marca de agua diagonal (sobre el contenido, con transparencia)
@@ -1255,6 +1260,48 @@ def generar_pdf(presupuesto, config):
     prefiere y el precio unitario, los importes, los subtotales de capítulo
     y los totales se recalculan dentro del propio PDF (ver
     :mod:`app.services.pdf_interactivo`).
+
+    Cuando el presupuesto tiene anexos y la opción está activada, los anexos
+    se incorporan como páginas finales del mismo archivo y el índice indica
+    en qué página empieza cada uno (ver :mod:`app.services.pdf_anexos`).
+    """
+    anexos = pdf_anexos.cargar(presupuesto)
+    if not anexos:
+        return _documento_presupuesto(presupuesto, config)
+
+    # El índice cita la página en la que empieza cada anexo, pero esa página
+    # depende de cuántas ocupe el presupuesto, que solo se sabe tras generar.
+    # Se genera con un índice provisional del mismo número de líneas, se mide
+    # y se vuelve a generar con las páginas reales; si el texto definitivo
+    # cambiase la paginación, se repite una vez más.
+    buf = _documento_presupuesto(
+        presupuesto, config, pdf_anexos.texto(pdf_anexos.plan_provisional(anexos))
+    )
+    for _ in range(2):
+        tam, paginas = pdf_anexos.medir(buf)
+        pdf_anexos.planificar(anexos, tam, paginas)
+        buf = _documento_presupuesto(
+            presupuesto, config, pdf_anexos.texto(anexos),
+            paginas_extra=pdf_anexos.paginas_incorporadas(anexos),
+        )
+        if pdf_anexos.medir(buf)[1] == paginas:
+            break
+
+    fusionado = pdf_anexos.fusionar(buf, anexos)
+    if len(fusionado.getvalue()) <= pdf_anexos.LIMITE_DURO_BYTES:
+        return fusionado
+    # Red de seguridad: si aun así el archivo se pasa del tope, se entrega el
+    # presupuesto sin fusionar antes que una descarga que el servidor rechace.
+    return _documento_presupuesto(
+        presupuesto, config, pdf_anexos.texto(pdf_anexos.descartar_todos(anexos))
+    )
+
+
+def _documento_presupuesto(presupuesto, config, texto_anexos="", paginas_extra=0):
+    """Construye el PDF del presupuesto (sin fusionar los anexos).
+
+    ``paginas_extra`` son las páginas de anexos que se añadirán después: el
+    pie «n/N» las cuenta para que el total sea el del archivo entregado.
     """
     _registrar_fuentes()
     st = _estilos()
@@ -1325,9 +1372,9 @@ def generar_pdf(presupuesto, config):
         ahorro = original - presupuesto.base
         texto_ahorro = f"Precio original: {fmt_monto(original, moneda)}\nDescuento comercial: {fmt_monto(ahorro, moneda)}\nPrecio final antes de IVA: {fmt_monto(presupuesto.base, moneda)}"
         story.append(Spacer(1, 16)); story.append(_seccion("Ahorro obtenido", texto_ahorro, st, azul_color))
-    if getattr(presupuesto, "incluir_anexos", False) and getattr(presupuesto, "anexos", None):
-        lista = "\n".join(f"• {a.nombre}" for a in presupuesto.anexos)
-        story.append(Spacer(1, 16)); story.append(_seccion("Anexos incluidos", lista, st, azul_color))
+    if texto_anexos:
+        story.append(Spacer(1, 16))
+        story.append(_seccion("Anexos incluidos", texto_anexos, st, azul_color))
 
     # Bloque formal de firmas de aceptación (Opcional)
     if getattr(presupuesto, "mostrar_garantias", False):
@@ -1337,7 +1384,8 @@ def generar_pdf(presupuesto, config):
     if presupuesto.mostrar_firmas:
         story.append(_bloque_firmas(presupuesto, config, st, azul_color))
 
-    doc.build(story, canvasmaker=lambda *a, **k: _CanvasNumerado(*a, estado=presupuesto.estado, ctx=ctx, **k))
+    doc.build(story, canvasmaker=lambda *a, **k: _CanvasNumerado(
+        *a, estado=presupuesto.estado, ctx=ctx, paginas_extra=paginas_extra, **k))
     buf.seek(0)
     return buf
 

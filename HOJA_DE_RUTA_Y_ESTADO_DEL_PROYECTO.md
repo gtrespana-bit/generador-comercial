@@ -1355,3 +1355,80 @@ Puntos 6 a 9 (invitaciones y roles `lectura` / `miembro`), 11 y 12
 `BYPASSRLS`). Cerrada la matriz, el siguiente bloque de infraestructura es el
 rate limiting distribuido (Redis/Upstash), obligatorio antes de escalar a
 varias instancias o abrir el registro.
+
+---
+
+# 25. Anexos incorporados al PDF del presupuesto (14/08/2026)
+
+Estado: **COMPLETADO**.
+
+## El problema
+
+Marcar «Incluir anexos» solo imprimía una lista de nombres al final del
+presupuesto. El cliente leía «Anexo 1 · Planos de distribución» y no recibía
+ningún plano: los archivos se quedaban en la aplicación, accesibles únicamente
+para usuarios con sesión iniciada. Un cliente sin cuenta no tenía forma de
+verlos.
+
+Se descartó la alternativa de imprimir un hipervínculo al proxy
+`/archivos/...`: el destinatario típico de un presupuesto no tiene cuenta en
+CotizaT, así que el enlace le habría devuelto un 404.
+
+## Qué hace ahora
+
+Los anexos se **fusionan como páginas reales** del PDF del presupuesto. Un
+único archivo contiene el presupuesto y todos sus documentos de apoyo, y el
+índice explica cómo se entregan y dónde encontrarlos:
+
+> Los anexos que se relacionan a continuación forman parte de este presupuesto
+> y se entregan dentro de este mismo archivo: están añadidos como páginas
+> adicionales al final del documento, en el orden indicado y conservando su
+> formato y su numeración originales.
+>
+> • Anexo 1 · Planos de distribución — 3 páginas, desde la página 2 de este archivo.
+> • Anexo 2 · Ficha técnica del porcelanato — 1 página, desde la página 5 de este archivo.
+
+El número de página anunciado es el real: el documento se genera, se mide y se
+regenera con la paginación definitiva. El pie «n/N» cuenta también las páginas
+de los anexos, de modo que el total coincide con el archivo entregado.
+
+## Tope de tamaño (límite de Vercel)
+
+Una función de Vercel no puede devolver más de **4,5 MB** en el cuerpo de la
+respuesta; superarlo produce `413 FUNCTION_PAYLOAD_TOO_LARGE` y no hay opción
+de configuración que lo cambie. Como `/presupuestos/{id}/pdf` envía el binario
+completo, `app/services/pdf_anexos.py` mantiene el resultado por debajo de
+`LIMITE_TOTAL_BYTES` (4 MB, con `LIMITE_DURO_BYTES` = 4,4 MB como red de
+seguridad). Los anexos que no caben **no se incorporan** y el índice lo dice
+con claridad («se entrega como archivo independiente para no superar el tamaño
+máximo de este PDF») en lugar de producir un error que el usuario no sabría
+interpretar.
+
+Si en el futuro se quiere levantar ese tope, el patrón correcto es subir el PDF
+combinado al almacenamiento y devolver una redirección a una URL firmada, en
+vez de enviar el binario por la función.
+
+## Degradación y seguridad
+
+- Un anexo borrado del almacenamiento, cifrado o ilegible **no rompe la
+  descarga**: se omite y el índice lo anuncia como entrega aparte.
+- De los anexos solo se copian las páginas. Se descartan los widgets de
+  formulario y las anotaciones con JavaScript, para que un PDF subido no pueda
+  inyectar comportamiento en el documento comercial ni interferir con el
+  formulario del PDF interactivo (`app/services/pdf_interactivo.py`), que se
+  conserva intacto tras la fusión.
+
+## Cambios
+
+- `app/services/pdf_anexos.py` (nuevo): lectura, planificación por tamaño,
+  texto del índice, fusión y saneado.
+- `app/services/pdf.py`: `generar_pdf()` orquesta medición y fusión;
+  `_documento_presupuesto()` construye el documento base; `_CanvasNumerado`
+  acepta `paginas_extra` para el pie «n/N».
+- `requirements.txt` + `requirements.lock`: `pypdf==6.16.1`.
+- `presupuestos.spec`: `pypdf` y `app.services.pdf_anexos` en el empaquetado.
+- Textos de interfaz en `budgets/detail.html` y `budgets/form.html`.
+- `tests/test_pdf_anexos.py` (nuevo, 10 pruebas), incluido un recorrido HTTP
+  completo: subir el anexo, marcar la casilla y descargar el PDF fusionado.
+
+Suite: **208 passed, 3 skipped**.
