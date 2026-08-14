@@ -98,9 +98,61 @@ Regla invariable:
 - nunca poner `service_role`/`sb_secret_` en variables públicas del frontend;
 - nunca fijar `COTIZAT_REQUIRE_RLS_ROLE=false` como solución de despliegue.
 
+### Incidencia resuelta: bootstrap de la primera organización bajo RLS (14/08/2026)
+
+La matriz quedó detenida en el punto 2 (crear la organización A). Vercel
+registró:
+
+```text
+psycopg.errors.InsufficientPrivilege: new row violates row-level security
+policy for table "organizaciones"
+[SQL: INSERT INTO organizaciones (...) RETURNING organizaciones.id]
+```
+
+Causa raíz exacta, reproducida contra un PostgreSQL real con un rol
+`NOBYPASSRLS`: **el `WITH CHECK` de `cotizat_org_insert` sí se cumplía**. Lo
+que fallaba era el `RETURNING organizaciones.id` que SQLAlchemy añade para
+recuperar la clave primaria: `RETURNING` evalúa la política de lectura
+`cotizat_org_select` sobre la fila recién insertada, y esa política exige una
+membresía que todavía no puede existir (la membresía necesita el `id` de la
+organización). Un bootstrap circular.
+
+Corrección aplicada **sin relajar ninguna política**:
+
+- `reservar_id_organizacion()` obtiene el `id` con
+  `nextval(pg_get_serial_sequence('public.organizaciones','id'))`. `nextval`
+  no lee la tabla, así que ninguna política de fila lo alcanza;
+- `crear_organizacion_con_propietario()` inserta con la clave primaria ya
+  explícita, por lo que SQLAlchemy **omite el `RETURNING`**, y crea la
+  membresía de `propietario` en la misma transacción — justo lo que
+  `cotizat_security.can_create_owner_membership` autoriza;
+- en SQLite (sin RLS) se conserva el autoincremento del motor.
+
+No se modificaron políticas, roles ni migraciones: la revisión Alembic sigue
+siendo `c93e7a4d20f1` y **no hace falta migrar la base de staging**.
+
+Regresión añadida:
+
+- `tests/test_rls.py`: el `INSERT` con `id` explícito no emite `RETURNING`, la
+  reserva usa la secuencia sin tocar la tabla, y el endpoint no reintroduce el
+  alta directa;
+- `tests/test_rls_postgres.py` (nuevo): contra PostgreSQL real con un rol
+  `NOBYPASSRLS`, verifica que el `INSERT ... RETURNING` **sigue siendo
+  rechazado** (si esa prueba deja de fallar, alguien debilitó
+  `cotizat_org_select`) y que el camino corregido completa el alta. Se omite
+  salvo que se defina `COTIZAT_TEST_ADMIN_DATABASE_URL`:
+
+  ```bash
+  COTIZAT_TEST_ADMIN_DATABASE_URL=postgresql+psycopg://postgres@/postgres \
+      pytest tests/test_rls_postgres.py
+  ```
+
+Validación automatizada tras la corrección: `164 passed, 3 skipped` sin
+PostgreSQL y `167 passed` con PostgreSQL real.
+
 ## 3. Orden obligatorio del siguiente bloque
 
-> Punto exacto al 14/08/2026: Pasos A–F completados y verificados. `/healthz` y `/readyz` responden 200 OK en la URL real `https://cotizat-generador.vercel.app`. **Lo siguiente en la nueva conversación es ejecutar la matriz de aceptación de la Sección 4** con dos correos ficticios/de prueba y dos organizaciones.
+> Punto exacto al 14/08/2026: Pasos A–F completados y verificados. `/healthz` y `/readyz` responden 200 OK en la URL real `https://cotizat-generador.vercel.app`. Resuelta además la incidencia de bootstrap de organizaciones bajo RLS (ver Sección 2). **Lo siguiente es reanudar la matriz de aceptación de la Sección 4 desde el punto 2** con la organización A; el usuario A (Auth id 1) ya está activo, vinculado y verificado, así que no debe repetirse su registro ni su aprovisionamiento.
 
 ### Paso A — Fusionar el PR #4
 

@@ -173,6 +173,71 @@ def sincronizar_usuario_auth(
     return usuario
 
 
+def reservar_id_organizacion(db) -> int | None:
+    """Reserva el identificador de la nueva empresa desde su secuencia.
+
+    Solo aplica a PostgreSQL. Devuelve ``None`` en SQLite, donde no hay RLS y
+    el autoincremento del motor sigue siendo la vía natural.
+
+    ``nextval`` no consulta la tabla, así que no lo alcanza ninguna política de
+    fila: es la única forma de conocer el ``id`` **antes** de insertarlo y, por
+    tanto, de emitir un ``INSERT`` sin ``RETURNING``. Ver
+    :func:`crear_organizacion_con_propietario` para el motivo exacto.
+    """
+    if db.get_bind().dialect.name != "postgresql":
+        return None
+    return int(
+        db.execute(
+            text("SELECT nextval(pg_get_serial_sequence('public.organizaciones', 'id'))")
+        ).scalar_one()
+    )
+
+
+def crear_organizacion_con_propietario(
+    db,
+    *,
+    nombre: str,
+    slug: str,
+    usuario_id: int,
+) -> Organizacion:
+    """Crea la primera empresa de un usuario sin que RLS bloquee el alta.
+
+    El bootstrap de una organización es circular: ``cotizat_org_select`` exige
+    membresía para leer la fila, pero la membresía no puede existir hasta que
+    la organización esté creada. ``INSERT ... RETURNING organizaciones.id`` —el
+    SQL que SQLAlchemy genera por defecto para recuperar la clave primaria—
+    ejecuta implícitamente esa política de lectura sobre la fila recién
+    insertada y falla con ``InsufficientPrivilege`` aunque el ``WITH CHECK`` de
+    ``cotizat_org_insert`` sí se cumpla.
+
+    La corrección no relaja ninguna política: se reserva el ``id`` con
+    ``nextval`` sobre ``organizaciones_id_seq`` y se inserta la fila con la
+    clave primaria ya explícita, de modo que el ``INSERT`` no necesita
+    ``RETURNING`` y nunca dispara la política ``SELECT``. La membresía de
+    ``propietario`` se crea en la misma transacción, que es justo lo que
+    ``cotizat_security.can_create_owner_membership`` autoriza.
+    """
+    organizacion = Organizacion(
+        id=reservar_id_organizacion(db),
+        nombre=nombre,
+        slug=slug,
+        activa=True,
+        creada_por_usuario_id=usuario_id,
+    )
+    db.add(organizacion)
+    # ``render_nulls`` no interviene aquí: con el id ya presente SQLAlchemy
+    # omite el RETURNING. En SQLite (id None) conserva el autoincremento.
+    db.flush()
+    db.add(Membresia(
+        usuario_id=usuario_id,
+        organizacion_id=organizacion.id,
+        rol="propietario",
+        activa=True,
+    ))
+    db.flush()
+    return organizacion
+
+
 def membresias_activas(db, usuario_id: int) -> list[Membresia]:
     """Devuelve únicamente membresías y organizaciones activas."""
     return (
