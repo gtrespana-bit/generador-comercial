@@ -4,7 +4,7 @@
 **Mercado inicial:** empresas pequeñas de remodelación y construcción privada en Venezuela  
 **Zona inicial recomendada:** Valencia / Carabobo, con posterior expansión a Caracas y otras ciudades  
 **Fecha de creación:** 13 de agosto de 2026  
-**Última actualización:** 13 de agosto de 2026  
+**Última actualización:** 14 de agosto de 2026  
 **Estado general:** Etapa 0 completada · Etapa 1 activa
 **Etapa activa:** Etapa 1 — Fundamentos de la versión comercial web
 
@@ -765,33 +765,30 @@ Se completará durante la Etapa 2. No deben guardarse aquí nombres, teléfonos 
 
 # 11. Próximo bloque de trabajo
 
-## Etapa 1 activa — siguiente bloque: endurecimiento y validación web real
+## Etapa 1 activa — siguiente bloque: validación con matriz de aceptación en staging
 
 La continuidad operativa exacta para una conversación nueva está en `docs/CONTINUIDAD_STAGING_SUPABASE.md`; debe seguirse sin reconstruir el estado desde el chat.
 
-La base browser-first ya incluye persistencia portable, Alembic, propiedad organizacional, Auth y objetos privados. El siguiente trabajo es:
+La base browser-first ya está desplegada en staging Vercel + Supabase (`https://cotizat-generador.vercel.app`), con `/healthz` y `/readyz` respondiendo 200 OK. El siguiente trabajo es:
 
-1. **E1W-007:** completar la validación real de aislamiento y CSP en navegador HTTPS; rutas comerciales, rol de solo lectura en DB/Storage, sinks HTML/CSS, scripts/estilos con nonce, handlers, CSRF, cabeceras y rate limiting local ya tienen cobertura automática.
-2. **E1W-009/E1W-011:** aplicar el head `c93e7a4d20f1` (Storage, invitaciones y RLS), crear el login runtime limitado, aprovisionar `cotizat-private` y probar con salida TLS.
-3. **E1W-008:** configurar/probar recuperación e invitaciones reales con dos emails y definir el canal seguro de entrega.
-4. **E1W-010:** probar cuenta → organización → demo/limpio → primer PDF con archivos privados.
-5. **E1W-011/E1W-012:** suite PostgreSQL con rol no privilegiado e importación SQLite, incluidos objetos.
-6. **E1-012 a E1-014:** retomar usabilidad y medición externa sobre el recorrido web.
+1. **Matriz de aceptación (Sección 4 de CONTINUIDAD):** ejecutar los 14 puntos de prueba manual con dos correos y dos organizaciones en el entorno desplegado.
+2. **E1W-007 / E1W-008:** validar recuperación de clave, invitaciones de equipo, cambio de roles (`lectura` vs `miembro`) e interacción de cookies/CSP en navegador real HTTPS.
+3. **E1W-009 / E1W-011:** verificar la subida/descarga de imágenes, anexos PDF y fichas técnicas a través del proxy autorizado conectando con el bucket privado `cotizat-private`.
+4. **Infraestructura futura:** añadir Redis/Upstash para rate limiting distribuido antes de escalar a múltiples instancias o apertura pública.
+5. **E1-012 a E1-014:** retomar usabilidad y medición externa sobre el recorrido web.
 
-Evidencia acumulada al 13/08/2026:
+Evidencia acumulada al 14/08/2026:
 
 - Marca, descriptor, propuesta y alcance no fiscal aplicados.
 - Recorrido inicial, modos demo/limpio y progreso hasta el PDF implementados.
 - Decisión browser-first registrada en `docs/ADR-001_ARQUITECTURA_BROWSER_FIRST.md`.
 - `DATABASE_URL`, Psycopg 3 y Alembic preparados; compatibilidad SQLite preservada.
-- Baseline aplicada en Supabase real; persistencia entre conexiones, RLS activo y `anon` denegado.
-- Organizaciones, usuarios, membresías, filtro tenant y protección de escritura incorporados.
-- Supabase Auth implementado con cookies HttpOnly, vínculo de identidad, selección por membresía, recuperación e invitaciones hasheadas de un solo uso; prueba real pendiente por TLS del sandbox.
-- Pruebas confirman separación de datos, permisos de equipo y claves/descargas de archivos privados.
-- `StorageBackend`, backend local y adaptador Supabase implementados; objetos bajo `organizaciones/<id>/...`, PDF remoto vía `/tmp` y revisión `72e6f4d8a1c3` preparados. El bucket real no se creó.
-- Rol grupal `cotizat_app` sin login/contraseña/BYPASSRLS, contexto por transacción y políticas tenant/rol versionados en `c93e7a4d20f1`; falta aplicarlos y probarlos con el login runtime real.
-- Pytest usa bases temporales, supera 145 pruebas y no modifica `presupuestos.db`.
-- La aplicación **sigue sin estar autorizada para publicarse**: faltan prueba real de Storage, CSP/XSS final, aplicar/probar el rol y las políticas RLS no privilegiadas, y pruebas reales de Auth/ORM.
+- Migraciones aplicadas en Supabase real; RLS activo y `cotizat_runtime` configurado como rol limitado miembro de `cotizat_app`.
+- Bucket `cotizat-private` aprovisionado y verificado.
+- PR #3 fusionado y PR #4 abierto con correcciones defensivas de lectura de `alembic_version` y manejo de excepciones en `lifespan`.
+- Vercel desplegado y respondiendo HTTP 200 OK en `/healthz` y `/readyz` con todas las comprobaciones en verde.
+- Pytest supera 158 pruebas automáticas.
+- La aplicación **está lista para ejecutar la matriz de aceptación manual con dos organizaciones** antes de autorizar cualquier beta abierta.
 
 ---
 
