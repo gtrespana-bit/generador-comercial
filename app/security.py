@@ -27,6 +27,9 @@ class AuthRateLimitMiddleware:
         "/registro": 5,
         "/recuperar-acceso": 5,
         "/restablecer-clave": 10,
+        # Verifica la contraseña actual: sin límite, una sesión robada podría
+        # usarse para adivinarla por fuerza bruta desde el propio panel.
+        "/cuenta/clave": 10,
     }
 
     def __init__(

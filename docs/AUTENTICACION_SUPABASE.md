@@ -48,7 +48,20 @@ alembic upgrade head
 - `/organizaciones`: enumera solo membresías y organizaciones activas.
 - `/organizaciones/{id}/seleccionar`: vuelve a comprobar la membresía antes de escribir la cookie de selección.
 - Rutas comerciales: `get_db` ignora `COTIZAT_ORGANIZATION_ID` en PostgreSQL y deriva usuario, rol y organización de la sesión autenticada.
-- `/salir`: elimina access token, refresh token y organización seleccionada.
+- `/cuenta`: panel de la persona autenticada (perfil, contraseña, organizaciones y cierre de sesión).
+- `/salir`: revoca la sesión en GoTrue (`POST /auth/v1/logout`) y elimina access token, refresh token y organización seleccionada.
+
+## Panel de cuenta (`/cuenta`)
+
+Hasta ahora la sesión solo podía cerrarse desde el enlace de la barra lateral y la contraseña únicamente se cambiaba por email de recuperación. El panel reúne las tres operaciones básicas de la cuenta:
+
+- **Perfil**: edita `usuarios.nombre` y sincroniza `user_metadata.name` en Supabase. El email **no** se edita: es la clave del vínculo con `auth.users` y el destinatario de las invitaciones pendientes, así que cambiarlo exigiría reverificación y una transición explícita que todavía no está implementada. Si Supabase falla, el nombre local ya guardado no se revierte: el metadato remoto solo alimenta el nombre mostrado.
+- **Contraseña**: exige la contraseña actual y **reautentica** con `grant_type=password` antes de llamar a `PUT /auth/v1/user`. GoTrue aceptaría el cambio solo con el access token, por lo que una sesión robada bastaría para secuestrar la cuenta; la reautenticación cierra ese hueco. Al terminar se borran las cookies y se obliga a iniciar sesión de nuevo. La ruta está incluida en el rate limiter local (`/cuenta/clave`) para que la verificación de la contraseña actual no se convierta en un oráculo de fuerza bruta.
+- **Organizaciones**: lista las membresías activas y marca cuál está seleccionada. La cookie de organización se contrasta contra las membresías reales, de modo que una cookie manipulada nunca marca como activa una empresa ajena.
+
+`clear_auth_cookies` acepta la petición para descartar una renovación de token pendiente: sin eso, `RefreshedAuthCookieMiddleware` reescribía las cookies justo después de borrarlas y el cierre de sesión no surtía efecto cuando el access token se había renovado en esa misma petición.
+
+El cierre de sesión es *best-effort* frente a Supabase: si GoTrue no responde, la sesión local se cierra igualmente y nunca se deja al usuario dentro por un fallo del proveedor.
 
 Una membresía `lectura` puede consultar datos, pero el ORM rechaza tanto `flush` como `UPDATE`/`DELETE` masivos.
 

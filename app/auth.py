@@ -235,6 +235,9 @@ class SupabaseAuthClient:
             raise AuthError("Supabase Auth no pudo completar la solicitud.") from exc
         except (URLError, TimeoutError, OSError) as exc:
             raise AuthError("No se pudo contactar con Supabase Auth.") from exc
+        if not raw.strip():
+            # ``/auth/v1/logout`` responde 204 sin cuerpo: no es un error.
+            return {}
         try:
             result = json.loads(raw.decode("utf-8"))
         except (UnicodeDecodeError, ValueError) as exc:
@@ -296,6 +299,46 @@ class SupabaseAuthClient:
         )
         return _identity_from_payload(payload)
 
+    def update_profile(self, access_token: str, name: str) -> SupabaseIdentity:
+        """Actualiza ``user_metadata.name`` sin tocar email ni contraseña."""
+        if not access_token:
+            raise AuthenticationRequired("Inicia sesión para continuar.")
+        payload = self._request_json(
+            "PUT",
+            "/auth/v1/user",
+            {"data": {"name": str(name or "").strip()[:200]}},
+            access_token=access_token,
+        )
+        return _identity_from_payload(payload)
+
+    def change_password(
+        self, access_token: str, email: str, current_password: str, new_password: str
+    ) -> SupabaseIdentity:
+        """Cambia la contraseña reautenticando primero con la actual.
+
+        GoTrue permite ``PUT /auth/v1/user`` solo con el access token, así que
+        una sesión robada bastaría para secuestrar la cuenta. Reautenticar con
+        ``grant_type=password`` obliga a demostrar que se conoce la contraseña
+        vigente antes de sustituirla.
+        """
+        if not access_token:
+            raise AuthenticationRequired("Inicia sesión para continuar.")
+        if not current_password:
+            raise InvalidCredentials("Escribe tu contraseña actual.")
+        if len(new_password) < 8:
+            raise InvalidCredentials("La contraseña debe tener al menos 8 caracteres.")
+        if new_password == current_password:
+            raise InvalidCredentials("La nueva contraseña debe ser distinta de la actual.")
+        # Reautenticación: falla con InvalidCredentials si la actual no coincide.
+        self.sign_in(email, current_password)
+        return self.update_password(access_token, new_password)
+
+    def sign_out(self, access_token: str) -> None:
+        """Revoca la sesión en Supabase; el logout local no depende de esto."""
+        if not access_token:
+            return
+        self._request_json("POST", "/auth/v1/logout", {}, access_token=access_token)
+
     def get_user(self, access_token: str) -> SupabaseIdentity:
         if not access_token:
             raise AuthenticationRequired("Inicia sesión para continuar.")
@@ -334,7 +377,22 @@ def set_auth_cookies(response: Response, tokens: AuthTokens, secure: bool) -> No
     )
 
 
-def clear_auth_cookies(response: Response, secure: bool = True) -> None:
+def clear_auth_cookies(
+    response: Response, secure: bool = True, request: Request | None = None
+) -> None:
+    """Borra las cookies de sesión y cancela una renovación en curso.
+
+    Si la petición renovó el access token al validar la identidad,
+    :class:`RefreshedAuthCookieMiddleware` volvería a escribir las cookies
+    después de este borrado y el usuario seguiría dentro. Al descartar los
+    tokens pendientes, el cierre de sesión siempre gana.
+    """
+    if request is not None:
+        # ``State`` delega en un dict: ausente lanza KeyError, no AttributeError.
+        try:
+            del request.state.cotizat_refreshed_tokens
+        except (AttributeError, KeyError):
+            pass
     for name in (ACCESS_COOKIE, REFRESH_COOKIE, ORGANIZATION_COOKIE):
         response.delete_cookie(
             name,

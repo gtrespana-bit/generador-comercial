@@ -1109,3 +1109,78 @@ partidas críticas (impermeabilizaciones, pases de fontanería, juntas epóxicas
   desde capítulo vía API, cálculo proporcional y fijo, duplicación, búsqueda
   global y restauración de presets iniciales.
 - **Suite completa**: 48 pruebas OK (`.venv/bin/pytest -o pythonpath=.`).
+
+---
+
+# 22. Fase 13 — Panel de cuenta, contraseña y cierre de sesión (2026-08-14)
+
+Estado: **COMPLETADA** (pendiente de validación real contra Supabase).
+
+## Problema que resuelve
+
+Tras iniciar sesión no existía ningún lugar donde la persona usuaria pudiera
+ver o modificar sus propios datos. El único rastro de la sesión era un bloque
+pequeño al final de la barra lateral con el email y un enlace de salida, y la
+contraseña solo podía cambiarse saliendo de la aplicación y pidiendo un email
+de recuperación. Faltaba lo más básico de cualquier SaaS: un panel de cuenta.
+
+## Resultado implementado
+
+- **Nueva página `/cuenta`** (`auth/account.html`), integrada en el layout de
+  la aplicación (`base.html`) en lugar de ser una pantalla suelta como
+  `/equipo` u `/organizaciones`. Contiene cuatro bloques: datos personales,
+  cambio de contraseña, organizaciones y sesión.
+- **Perfil editable** (`POST /cuenta/perfil`): actualiza `usuarios.nombre` y
+  sincroniza `user_metadata.name` en Supabase. El email se muestra pero no se
+  edita, con su estado de verificación.
+- **Cambio de contraseña** (`POST /cuenta/clave`): exige la contraseña actual,
+  **reautentica** contra GoTrue con `grant_type=password` y solo entonces
+  llama a `PUT /auth/v1/user`. Al terminar cierra la sesión y obliga a entrar
+  de nuevo. Incluida en el rate limiter local (10 intentos / 5 min por IP).
+- **Organizaciones**: tabla con las membresías activas, el rol de cada una y
+  la empresa seleccionada marcada como «Activa», con acceso directo para
+  cambiar de empresa o crear otra.
+- **Cierre de sesión mejorado** (`POST /salir`): además de borrar las cookies,
+  revoca el refresh token en Supabase (`POST /auth/v1/logout`). Es
+  *best-effort*: si Supabase no responde, la sesión local se cierra igual.
+- **Barra lateral**: el bloque de sesión pasa a mostrar avatar con la inicial,
+  nombre y los enlaces «Mi cuenta» / «Cerrar sesión», y se añade «Mi cuenta»
+  en la sección Sistema de la navegación.
+
+## Detalles técnicos y riesgos cubiertos
+
+- **Sesión robada no basta para cambiar la contraseña.** GoTrue acepta
+  `PUT /auth/v1/user` solo con el access token; la reautenticación previa con
+  la contraseña actual cierra ese vector de secuestro de cuenta.
+- **El cierre de sesión ya no puede revertirse solo.** `clear_auth_cookies`
+  recibe ahora la petición y descarta cualquier renovación pendiente: sin eso,
+  `RefreshedAuthCookieMiddleware` reescribía las cookies justo después de
+  borrarlas cuando el access token se había renovado en la misma petición.
+- **La organización activa no se cree por cookie.** `/cuenta` usa
+  `get_authenticated_db` (no exige empresa elegida), así que la cookie se
+  contrasta contra las membresías reales antes de marcar ninguna como activa.
+- **El email no se edita** porque es la clave del vínculo con `auth.users` y
+  el destinatario de las invitaciones pendientes; cambiarlo exige un flujo de
+  reverificación que no está implementado.
+
+## Pruebas realizadas
+
+- **`tests/test_cuenta.py`** (10 pruebas): render del panel, actualización de
+  perfil local + metadato remoto, rechazo de nombre vacío y de cambio de
+  email, cambio de contraseña con reautenticación y borrado de cookies,
+  contraseña actual incorrecta sin llegar a actualizar, validación de
+  confirmación/longitud antes de contactar Supabase, revocación en `/salir`,
+  cierre de sesión aunque Supabase falle, descarte de la renovación pendiente
+  y cobertura de rate limiting en rutas con contraseña.
+- **Suite completa**: 186 pruebas OK + 3 omitidas; 41 plantillas Jinja
+  parseadas correctamente.
+- **Manual**: panel revisado en el navegador con dos organizaciones,
+  comprobando el marcado de la activa y que una cookie de organización ajena
+  no marca ninguna.
+
+## Pendientes / ideas siguientes
+
+- Cambio de email con reverificación y transición del vínculo `auth_user_id`.
+- Listado de sesiones activas por dispositivo con revocación individual.
+- Eliminación de cuenta y salida voluntaria de una organización.
+- Validación end-to-end real contra Supabase (sigue bloqueada en el sandbox).
