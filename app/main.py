@@ -1654,7 +1654,7 @@ def _render_invitacion(
         "auth/invitation.html",
         {"token": token, "error": error},
         status_code=status_code,
-        headers={"Cache-Control": "no-store", "Referrer-Policy": "no-referrer"},
+        headers={"Cache-Control": "no-store", "Referrer-Policy": "strict-origin-when-cross-origin"},
     )
 
 

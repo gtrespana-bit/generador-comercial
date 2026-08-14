@@ -51,7 +51,7 @@ def test_vista_publica_no_confirma_si_el_token_existe_y_no_se_cachea():
         invalida = client.get("/invitaciones/corta")
     assert valida.status_code == invalida.status_code == 200
     assert valida.headers["cache-control"] == "no-store"
-    assert valida.headers["referrer-policy"] == "no-referrer"
+    assert valida.headers["referrer-policy"] == "strict-origin-when-cross-origin"
     assert "Te invitaron" in valida.text
     assert "Te invitaron" in invalida.text
 
