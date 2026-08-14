@@ -1648,11 +1648,18 @@ def _render_invitacion(
     *,
     error: str = "",
     status_code: int = 200,
+    autenticado: bool = False,
+    auto_aceptar: bool = False,
 ):
     return TEMPLATES.TemplateResponse(
         request,
         "auth/invitation.html",
-        {"token": token, "error": error},
+        {
+            "token": token,
+            "error": error,
+            "autenticado": autenticado,
+            "auto_aceptar": auto_aceptar,
+        },
         status_code=status_code,
         headers={"Cache-Control": "no-store", "Referrer-Policy": "strict-origin-when-cross-origin"},
     )
@@ -1662,7 +1669,8 @@ def _render_invitacion(
 def ver_invitacion_web(request: Request, token: str):
     # La vista pública no consulta la base ni confirma si el token existe.
     token_seguro = token if re.fullmatch(r"[A-Za-z0-9_-]{32,200}", token) else ""
-    return _render_invitacion(request, token_seguro)
+    autenticado = bool(request.cookies.get(ACCESS_COOKIE))
+    return _render_invitacion(request, token_seguro, autenticado=autenticado)
 
 
 @app.get("/invitaciones/{token}/aceptar", response_class=HTMLResponse)
@@ -1672,11 +1680,19 @@ def ver_invitacion_aceptar_web(request: Request, token: str):
     Después de iniciar sesión, la redirección ``?next=...`` siempre llega por
     GET, así que esta ruta debe existir: sin ella el navegador recibía un
     405 Method Not Allowed porque la única ruta registrada era el POST.
-    La acción real de aceptar sigue siendo POST (CSRF protegido).
+    Si hay sesión, la página autoenvía el POST de aceptación (un clic menos
+    tras el login); la validación y el consumo del token los hace el POST,
+    protegido por CSRF, así que no se relaja ninguna seguridad.
     """
     # La vista pública no consulta la base ni confirma si el token existe.
     token_seguro = token if re.fullmatch(r"[A-Za-z0-9_-]{32,200}", token) else ""
-    return _render_invitacion(request, token_seguro)
+    autenticado = bool(request.cookies.get(ACCESS_COOKIE))
+    return _render_invitacion(
+        request,
+        token_seguro,
+        autenticado=autenticado,
+        auto_aceptar=autenticado,
+    )
 
 
 @app.post("/invitaciones/{token}/aceptar")
@@ -1700,7 +1716,13 @@ def aceptar_invitacion_web(
         db.commit()
     except GestionEquipoError as exc:
         db.rollback()
-        return _render_invitacion(request, token, error=str(exc), status_code=400)
+        return _render_invitacion(
+            request,
+            token,
+            error=str(exc),
+            status_code=400,
+            autenticado=True,
+        )
     response = _redirect(
         "/organizaciones", msg="Invitación aceptada. Ya puedes entrar a la organización."
     )

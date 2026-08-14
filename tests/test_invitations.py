@@ -61,6 +61,7 @@ def test_aceptar_invitacion_responde_por_get_para_redireccion_tras_login():
 
     Regresión: antes la ruta /aceptar solo estaba registrada como POST, así
     que el navegador recibía 405 Method Not Allowed después de iniciar sesión.
+    Sin sesión, la página ofrece iniciar sesión (no el formulario).
     """
     from app.main import app
 
@@ -68,9 +69,40 @@ def test_aceptar_invitacion_responde_por_get_para_redireccion_tras_login():
         respuesta = client.get("/invitaciones/" + "a" * 43 + "/aceptar")
     assert respuesta.status_code == 200
     assert "Te invitaron" in respuesta.text
-    # El formulario real de aceptar sigue siendo POST (protegido por CSRF).
+    assert "/acceso?next=" in respuesta.text
+    # El enlace conserva la ruta de aceptación para volver tras el login.
+    assert "/invitaciones/" in respuesta.text and "/aceptar" in respuesta.text
+    # Sin cookie de sesión no se muestra el formulario de autoenvío.
+    assert 'id="aceptar-invitacion"' not in respuesta.text
+
+
+def test_aceptar_invitacion_con_sesion_muestra_formulario_post_y_autoenvio():
+    """Con sesión activa, la página GET muestra el formulario POST protegido
+    por CSRF y un script que lo autoenvía (un clic menos tras el login)."""
+    from app.auth import ACCESS_COOKIE
+    from app.main import app
+
+    with TestClient(app) as client:
+        client.cookies.set(ACCESS_COOKIE, "sesion-ficticia")
+        respuesta = client.get("/invitaciones/" + "a" * 43 + "/aceptar")
+    assert respuesta.status_code == 200
+    assert 'id="aceptar-invitacion"' in respuesta.text
     assert 'method="post"' in respuesta.text
-    assert "/aceptar" in respuesta.text
+    assert 'action="/invitaciones/' in respuesta.text and respuesta.text.count("/aceptar") >= 1
+    # El autoenvío usa un script nonce (CSP) y no un handler inline.
+    assert "form.submit()" in respuesta.text
+    assert 'nonce="' in respuesta.text
+    assert " onsubmit=" not in respuesta.text
+
+
+def test_aceptar_invitacion_sin_sesion_no_autoenvia():
+    """Sin cookie de sesión no debe haber script de autoenvío: el usuario
+    todavía tiene que autenticarse."""
+    from app.main import app
+
+    with TestClient(app) as client:
+        respuesta = client.get("/invitaciones/" + "a" * 43 + "/aceptar")
+    assert "form.submit()" not in respuesta.text
 
 
 def test_invitacion_guarda_hash_revoca_anterior_y_no_el_secreto():
