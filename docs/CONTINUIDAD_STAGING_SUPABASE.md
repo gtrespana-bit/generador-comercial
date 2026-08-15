@@ -8,11 +8,13 @@ depender del historial del chat. Debe leerse junto con
 y 11.
 
 > **Empieza por `docs/PUNTO_DE_CONTINUACION.md`** (corte del 15/08/2026,
-> noche). Este archivo describe el estado *de fondo* de staging; aquel dice
-> **en qué paso exacto se quedó el trabajo** y qué toca hacer a continuación.
-> Resumen: rate limiting distribuido (PR #18) y emails de invitación (PR #19)
-> fusionados y verificados en producción; queda la prueba E2E de invitaciones
-> a cargo del usuario.
+> cierre de sesión). Este archivo describe el estado *de fondo* de staging;
+> aquel dice **en qué paso exacto se quedó el trabajo** y qué toca hacer a
+> continuación. Resumen: PR #18 (rate limiting), PR #19 (emails) y PR #20
+> (E1-040 recorrido crítico, E1W-012 importación SQLite→web y paquete
+> legal/comercial con landing `/conocer` y páginas `/legal/*`) fusionados;
+> el usuario probó las páginas nuevas y aceptó la v1. Quedan la prueba E2E
+> de invitaciones y pendientes operativos menores a su cargo.
 
 ## 1. Estado confirmado del repositorio
 
