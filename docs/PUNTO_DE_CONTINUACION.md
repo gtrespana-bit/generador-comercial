@@ -68,6 +68,31 @@ el docstring del módulo y en `docs/SEGURIDAD_WEB.md`):
 
 **Al fusionar el PR, producción despliega desde `main` y recoge las variables.**
 
+### Aviso: el check «Vercel» del último commit aparece en rojo
+
+El segundo commit del PR (`becf758`, este mismo documento) **solo toca archivos
+markdown** y aun así el check de Vercel quedó en `failure`, con la descripción
+**«Deployment was blocked»**. El commit anterior, `c7d8be2`, que sí tocaba
+código, desplegó correctamente («Deployment has completed»).
+
+«Blocked» significa que Vercel **ni siquiera empezó a construir**: no es un
+fallo de compilación ni de las pruebas. `vercel.json` no cambió y no hay
+`ignoreCommand` ni `.vercelignore`. La suite sigue en **250 passed, 5 skipped**
+y el check «Pruebas y verificaciones» está en **pass**.
+
+Lo más probable es un tope del lado de la cuenta —el plan Hobby limita los
+despliegues diarios— o una protección de despliegue activada en el proyecto.
+**No pude confirmarlo**: desde el entorno donde se trabajó no hay salida de red
+hacia `api.vercel.com`, y el token de GitHub no tiene permiso para leer la API
+de deployments (403).
+
+Qué hacer antes de fusionar: abrir el panel de Vercel y mirar por qué se bloqueó
+ese despliegue concreto. Si es el límite diario, se resuelve solo al día
+siguiente. **Conviene comprobarlo** porque el merge a `main` dispara justamente
+el despliegue de producción que debe recoger las variables de Upstash; si los
+despliegues siguen bloqueados, el merge no publicaría nada y `/readyz` seguiría
+mostrando el estado antiguo.
+
 ---
 
 ## 2. Lo siguiente: activar Upstash (pasos del usuario)
