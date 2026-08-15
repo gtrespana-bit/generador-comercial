@@ -1631,4 +1631,4 @@ usuario hasta el final del desarrollo.
 
 ## Resultado
 
-Suite completa: **246 passed, 5 skipped** (antes 228).
+Suite completa: **250 passed, 5 skipped** (antes 228).

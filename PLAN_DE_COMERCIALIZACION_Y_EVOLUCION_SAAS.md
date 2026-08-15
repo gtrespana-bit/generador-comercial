@@ -773,7 +773,7 @@ Se completará durante la Etapa 2. No deben guardarse aquí nombres, teléfonos 
 
 ## Etapa 1 activa — siguiente bloque: validación con matriz de aceptación en staging
 
-La continuidad operativa exacta para una conversación nueva está en `docs/CONTINUIDAD_STAGING_SUPABASE.md`; debe seguirse sin reconstruir el estado desde el chat.
+La continuidad operativa exacta para una conversación nueva está en `docs/PUNTO_DE_CONTINUACION.md` (dónde se quedó el trabajo y qué sigue) y `docs/CONTINUIDAD_STAGING_SUPABASE.md` (estado de fondo de staging); deben seguirse sin reconstruir el estado desde el chat.
 
 La base browser-first ya está desplegada en staging Vercel + Supabase (`https://cotizat-generador.vercel.app`), con `/healthz` y `/readyz` respondiendo 200 OK. El siguiente trabajo es:
 

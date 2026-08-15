@@ -7,6 +7,12 @@ depender del historial del chat. Debe leerse junto con
 `PLAN_DE_COMERCIALIZACION_Y_EVOLUCION_SAAS.md`, especialmente las secciones 1.3
 y 11.
 
+> **Empieza por `docs/PUNTO_DE_CONTINUACION.md`** (corte del 15/08/2026). Este
+> archivo describe el estado *de fondo* de staging; aquel dice **en qué paso
+> exacto se quedó el trabajo** y qué toca hacer a continuación. Resumen: el
+> PR #18 (rate limiting distribuido) quedó abierto con CI en verde, pendiente de
+> que se creen las variables de Upstash en Vercel y se fusione.
+
 ## 1. Estado confirmado del repositorio
 
 La Etapa 1 local browser-first incluye:
@@ -101,6 +107,9 @@ Estado verificado de Vercel:
 ```text
 URL de staging: https://cotizat-generador.vercel.app
 Variables de entorno: DATABASE_URL, COTIZAT_REQUIRE_RLS_ROLE=true, SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, COTIZAT_STORAGE_BACKEND=supabase, SUPABASE_STORAGE_BUCKET=cotizat-private, SUPABASE_SECRET_KEY, COTIZAT_COOKIE_SECURE=true, COTIZAT_TRUST_PROXY=true, COTIZAT_PUBLIC_URL.
+Pendientes de añadir (rate limiting distribuido, ver docs/PUNTO_DE_CONTINUACION.md sección 2):
+  UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN, COTIZAT_REQUIRE_DISTRIBUTED_RATELIMIT=true.
+  Las tres juntas y en Production; la tercera sola provoca un 503 intencionado en /readyz.
 /healthz: 200 OK
 /readyz: 200 OK
 ```
@@ -384,33 +393,16 @@ Si staging falla durante la matriz, corregir el problema específico observado s
 
 ## 6. Mensaje sugerido para iniciar una conversación nueva
 
-Copiar este texto, sin añadir secretos:
+El mensaje vigente y el punto exacto de continuación están en
+**`docs/PUNTO_DE_CONTINUACION.md`** (corte del 15/08/2026), secciones 2 y 7.
 
-> Continúa el proyecto CotizaT desde el `main` actual (CI en verde). Lee primero
-> `docs/CONTINUIDAD_STAGING_SUPABASE.md` y `docs/MATRIZ_PASOS_MANUALES.md`. No
-> repitas trabajo completado ni pidas secretos.
->
-> El incidente de invitaciones (500 al aceptar) y el de `alembic_version` están
-> cerrados: el head es `e1a4b7c9d2f0`, el PR #16 está fusionado y `/readyz`
-> responde 200 en producción.
->
-> Staging (`https://cotizat-generador.vercel.app`) y Supabase funcionan;
-> `/readyz` responde 200. De la matriz de aceptación: **puntos 1-9, 11 y 12
-> superados** en staging y **10 y 13 cubiertos en CI**
-> (`tests/test_aislamiento_almacenamiento.py`).
->
-> **Voy a ejecutar yo mismo, en el navegador, los pasos manuales que quedan:
-> la parte manual del 13 y el 14.** Sigo la guía de
-> `docs/MATRIZ_PASOS_MANUALES.md`. Tu papel es acompañarme: resolver los fallos
-> que encuentre, interpretar los errores y corregir el código cuando haga falta,
-> sin relajar CSRF, CSP, RLS, el bucket privado ni el rol limitado.
->
-> Contexto reciente que necesitas: el registro se rompió con «Supabase no pudo
-> crear la cuenta» porque `sign_up` solo leía el usuario anidado bajo `user`, y
-> GoTrue lo devuelve en la raíz cuando «Confirm email» está activo. Corregido en
-> `d4aa7f1`. Ojo con el límite de **~2-4 emails/hora** del SMTP por defecto de
-> Supabase: los puntos 6-9 necesitan confirmar un segundo correo y ese tope puede
-> frenar el recorrido.
->
-> Al terminar la matriz: fusionar el PR pendiente y retirar del `README.md` el
-> aviso de «todavía no debe publicarse».
+Resumen para no tener que abrirlo: el bloque de **rate limiting distribuido**
+quedó terminado en el **PR #18**, abierto y con CI en verde (commit `c7d8be2`,
+250 passed / 5 skipped). Falta solo la parte operativa: crear la base en
+Upstash, añadir las tres variables en Vercel (**antes** del merge, porque
+producción despliega desde `main`), fusionar el PR y comprobar que `/readyz`
+devuelve `rate_limit: distribuido:upstash`.
+
+Los puntos 13-manual y 14 de la matriz siguen **aparcados por decisión del
+usuario** hasta que el desarrollo esté cerrado: validarlos ahora no sirve de
+nada si un paso posterior los rompe.
