@@ -51,7 +51,7 @@ Toda revisión autogenerada debe inspeccionarse. No se debe ejecutar `create_all
 
 El 13 de agosto de 2026 se aplicó la baseline `5cda50f97ed9` en un proyecto Supabase real. La prueba creó dos organizaciones con una partida homónima, modificó el precio de una de ellas y confirmó los valores desde dos conexiones PostgreSQL físicas diferentes (`pg_backend_pid` distinto). RLS automático quedó activo y el rol `anon` vio cero partidas.
 
-La revisión `9bca2ad1f6e4`, que añade el vínculo con Supabase Auth, también quedó aplicada en el mismo proyecto. El head vigente allí sigue siendo `9bca2ad1f6e4`. El código tiene como head `d7f2a9c41e63`: encadena Storage privado, invitaciones, las políticas RLS/rol de aplicación y la corrección de visibilidad de la invitación aceptada. Esas revisiones siguen pendientes de aplicar y probar en el entorno real.
+La revisión `9bca2ad1f6e4`, que añade el vínculo con Supabase Auth, también quedó aplicada en el mismo proyecto. El head vigente allí sigue siendo `9bca2ad1f6e4`. El código tiene como head `f9f24d062470`: encadena Storage privado, invitaciones, las políticas RLS/rol de aplicación, la corrección de visibilidad de la invitación aceptada y la legibilidad de `public.alembic_version` para el rol runtime. Esas revisiones siguen pendientes de aplicar y probar en el entorno real.
 
 ## Rol de runtime y migraciones
 
@@ -61,7 +61,7 @@ La revisión `9bca2ad1f6e4`, que añade el vínculo con Supabase Auth, también 
 GRANT cotizat_app TO cotizat_runtime;
 ```
 
-`cotizat_runtime` debe conservar `INHERIT` y no puede ser propietario de tablas, superusuario ni tener `BYPASSRLS`. La migración se ejecuta con `MIGRATION_DATABASE_URL` administrativa; el proceso web recibe solo `DATABASE_URL` del login limitado. PostgreSQL exige este control por defecto: CotizaT aborta el arranque si el esquema no está en `d7f2a9c41e63` o detecta un rol privilegiado, sin `INHERIT` o ajeno a `cotizat_app`. `COTIZAT_REQUIRE_RLS_ROLE=false` queda exclusivamente como escape explícito de diagnóstico, no como configuración publicable.
+`cotizat_runtime` debe conservar `INHERIT` y no puede ser propietario de tablas, superusuario ni tener `BYPASSRLS`. La migración se ejecuta con `MIGRATION_DATABASE_URL` administrativa; el proceso web recibe solo `DATABASE_URL` del login limitado. PostgreSQL exige este control por defecto: CotizaT aborta el arranque si el esquema no está en `f9f24d062470` o detecta un rol privilegiado, sin `INHERIT` o ajeno a `cotizat_app`. `COTIZAT_REQUIRE_RLS_ROLE=false` queda exclusivamente como escape explícito de diagnóstico, no como configuración publicable.
 
 La URL administrativa no debe configurarse en el servicio web después de migrar. No se guardan contraseñas en migraciones, documentación ni Git.
 

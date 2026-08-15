@@ -56,31 +56,12 @@ def entorno_postgres():
     entorno = dict(os.environ)
     entorno["MIGRATION_DATABASE_URL"] = url_base
     entorno["DATABASE_URL"] = url_base
-    resultado = subprocess.run(
-        [sys.executable, "-m", "alembic", "upgrade", "head"],
-        cwd=REPO,
-        env=entorno,
-        capture_output=True,
-        text=True,
-    )
-    assert resultado.returncode == 0, resultado.stderr
+    _ejecutar_alembic(entorno, "head")
+
+    _asegurar_rol_runtime(url_base)
 
     motor_admin = create_engine(url_base, isolation_level="AUTOCOMMIT")
     with motor_admin.connect() as conexion:
-        conexion.execute(text("""
-            DO $$ BEGIN
-              IF NOT EXISTS (
-                SELECT 1 FROM pg_catalog.pg_roles WHERE rolname = 'cotizat_runtime'
-              ) THEN
-                CREATE ROLE cotizat_runtime LOGIN INHERIT NOSUPERUSER
-                  NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS;
-              END IF;
-            END $$;
-        """))
-        conexion.execute(text("GRANT cotizat_app TO cotizat_runtime"))
-        conexion.execute(
-            text(f"ALTER ROLE cotizat_runtime PASSWORD '{RUNTIME_PASSWORD}'")
-        )
         # Identidad ya activa, vinculada y verificada, como en staging.
         conexion.execute(
             text("""
@@ -97,14 +78,8 @@ def entorno_postgres():
             text("SELECT id FROM usuarios WHERE email = :email"), {"email": EMAIL}
         ).scalar_one()
 
-    url_runtime = str(
-        make_url(url_base).set(
-            username="cotizat_runtime", password=RUNTIME_PASSWORD
-        )
-    )
-
     yield {
-        "runtime_url": url_runtime,
+        "runtime_url": _url_runtime(url_base),
         "usuario_id": usuario_id,
         "admin_url": url_base,
     }
@@ -114,6 +89,49 @@ def entorno_postgres():
         conexion.execute(
             text(f'DROP DATABASE IF EXISTS "{nombre}" WITH (FORCE)')
         )
+
+
+def _ejecutar_alembic(entorno: dict, objetivo: str, comando: str = "upgrade") -> None:
+    """``alembic <upgrade|downgrade> <objetivo>`` contra la base del entorno."""
+    resultado = subprocess.run(
+        [sys.executable, "-m", "alembic", comando, objetivo],
+        cwd=REPO,
+        env=entorno,
+        capture_output=True,
+        text=True,
+    )
+    assert resultado.returncode == 0, (
+        f"alembic {comando} {objetivo} falló:\n{resultado.stderr}"
+    )
+
+
+def _asegurar_rol_runtime(url_base: str) -> None:
+    """Crea (si falta) el rol de login limitado y lo hace miembro de cotizat_app."""
+    motor = create_engine(url_base, isolation_level="AUTOCOMMIT")
+    with motor.connect() as conexion:
+        conexion.execute(text("""
+            DO $$ BEGIN
+              IF NOT EXISTS (
+                SELECT 1 FROM pg_catalog.pg_roles WHERE rolname = 'cotizat_runtime'
+              ) THEN
+                CREATE ROLE cotizat_runtime LOGIN INHERIT NOSUPERUSER
+                  NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS;
+              END IF;
+            END $$;
+        """))
+        conexion.execute(text("GRANT cotizat_app TO cotizat_runtime"))
+        conexion.execute(
+            text(f"ALTER ROLE cotizat_runtime PASSWORD '{RUNTIME_PASSWORD}'")
+        )
+    motor.dispose()
+
+
+def _url_runtime(url_base: str) -> str:
+    return str(
+        make_url(url_base).set(
+            username="cotizat_runtime", password=RUNTIME_PASSWORD
+        )
+    )
 
 
 def _aplicar_contexto(conexion, organizacion_id: str = "") -> None:
@@ -425,3 +443,116 @@ def test_el_rol_de_runtime_no_puede_saltarse_rls(entorno_postgres):
     assert fila.rolsuper is False
     assert fila.rolbypassrls is False
     motor.dispose()
+
+
+def test_alembic_version_es_legible_por_el_rol_runtime(entorno_postgres):
+    """/readyz depende de esta lectura: la fila debe llegar al login limitado.
+
+    Regresión del 503 con «alembic: inesperado:sin-version»: el administrador
+    ve la fila pero cotizat_runtime obtenía cero filas sin error porque RLS
+    estaba activo sobre public.alembic_version sin política para cotizat_app.
+    Tras f9f24d062470 la tabla es metadatos sin RLS y con GRANT SELECT.
+    """
+    from app.database import EXPECTED_ALEMBIC_HEAD
+
+    motor = create_engine(entorno_postgres["runtime_url"])
+    with motor.connect() as conexion:
+        version = conexion.execute(
+            text("SELECT version_num FROM public.alembic_version")
+        ).scalar_one()
+        assert version == EXPECTED_ALEMBIC_HEAD
+    motor.dispose()
+
+    motor_admin = create_engine(entorno_postgres["admin_url"])
+    with motor_admin.connect() as conexion:
+        estado = conexion.execute(text("""
+            SELECT c.relrowsecurity, c.relforcerowsecurity,
+                   count(p.policyname) AS politicas
+            FROM pg_catalog.pg_class AS c
+            JOIN pg_catalog.pg_namespace AS n ON n.oid = c.relnamespace
+            LEFT JOIN pg_catalog.pg_policies AS p
+                   ON p.schemaname = n.nspname AND p.tablename = c.relname
+            WHERE n.nspname = 'public' AND c.relname = 'alembic_version'
+            GROUP BY c.relrowsecurity, c.relforcerowsecurity
+        """)).one()
+        assert estado.relrowsecurity is False
+        assert estado.relforcerowsecurity is False
+        assert estado.politicas == 0
+    motor_admin.dispose()
+
+
+def test_arreglo_de_visibilidad_alembic_version_se_recupera_de_rls_activo():
+    """Reproduce el bug de staging y verifica que la migración lo cura.
+
+    Base propia desechable: se aplica el head, se enciende RLS sobre
+    alembic_version (el estado roto que dejaba el /readyz en 503), se
+    comprueba que el rol runtime deja de ver la fila, y se ejecuta
+    downgrade+upgrade de la migración f9f24d062470 para validar que el
+    downgrade revierte y el upgrade restaura la legibilidad.
+    """
+    from app.database import EXPECTED_ALEMBIC_HEAD
+
+    nombre = f"cotizat_rls_vis_{uuid.uuid4().hex[:8]}"
+    admin = create_engine(ADMIN_URL, isolation_level="AUTOCOMMIT")
+    with admin.connect() as conexion:
+        conexion.execute(text(f'CREATE DATABASE "{nombre}"'))
+
+    url_base = str(make_url(ADMIN_URL).set(database=nombre))
+    entorno = dict(os.environ)
+    entorno["MIGRATION_DATABASE_URL"] = url_base
+    entorno["DATABASE_URL"] = url_base
+
+    motor_admin = None
+    try:
+        _ejecutar_alembic(entorno, "head")
+        _asegurar_rol_runtime(url_base)
+
+        # 1) Estado roto: RLS activo sobre alembic_version sin política para
+        #    cotizat_app (el GRANT SELECT de c93e7a4d20f1 sigue existiendo).
+        motor_admin = create_engine(url_base, isolation_level="AUTOCOMMIT")
+        with motor_admin.connect() as conexion:
+            conexion.execute(
+                text("ALTER TABLE public.alembic_version ENABLE ROW LEVEL SECURITY")
+            )
+
+        # 2) El rol runtime deja de ver la fila: este era el «sin-version».
+        with create_engine(_url_runtime(url_base)).connect() as conexion:
+            assert conexion.execute(
+                text("SELECT version_num FROM public.alembic_version")
+            ).scalar_one_or_none() is None
+
+        # 3) Downgrade + upgrade ejercitan downgrade() y upgrade() reales de
+        #    la migración de visibilidad.
+        _ejecutar_alembic(entorno, "d7f2a9c41e63", comando="downgrade")
+        _ejecutar_alembic(entorno, "head")
+
+        # 4) El rol runtime vuelve a ver el head y RLS queda apagado.
+        motor = create_engine(_url_runtime(url_base))
+        with motor.connect() as conexion:
+            assert conexion.execute(
+                text("SELECT version_num FROM public.alembic_version")
+            ).scalar_one() == EXPECTED_ALEMBIC_HEAD
+        motor.dispose()
+
+        with motor_admin.connect() as conexion:
+            estado = conexion.execute(text("""
+                SELECT c.relrowsecurity, c.relforcerowsecurity,
+                       count(p.policyname) AS politicas
+                FROM pg_catalog.pg_class AS c
+                JOIN pg_catalog.pg_namespace AS n ON n.oid = c.relnamespace
+                LEFT JOIN pg_catalog.pg_policies AS p
+                       ON p.schemaname = n.nspname AND p.tablename = c.relname
+                WHERE n.nspname = 'public' AND c.relname = 'alembic_version'
+                GROUP BY c.relrowsecurity, c.relforcerowsecurity
+            """)).one()
+            assert estado.relrowsecurity is False
+            assert estado.relforcerowsecurity is False
+            assert estado.politicas == 0
+    finally:
+        if motor_admin is not None:
+            motor_admin.dispose()
+        admin.dispose()
+        with admin.connect() as conexion:
+            conexion.execute(
+                text(f'DROP DATABASE IF EXISTS "{nombre}" WITH (FORCE)')
+            )

@@ -46,7 +46,7 @@ y `git diff --check`. `.env` y `presupuestos.db` no forman parte del repositorio
       "storage": "supabase:cotizat-private",
       "public_url": "configurado",
       "database": "postgresql",
-      "alembic": "head:d7f2a9c41e63",
+      "alembic": "head:f9f24d062470",
       "rol_runtime": "superuser=False, bypassrls=False, inherit=True, cotizat_app=True"
     },
     "errors": []
@@ -61,6 +61,7 @@ y `git diff --check`. `.env` y `presupuestos.db` no forman parte del repositorio
 PRs creados en GitHub:
 - **PR #3** (fusionado en `main`).
 - **PR #4**: `https://github.com/gtrespana-bit/generador-comercial/pull/4` (`fix(staging): asegura lectura de public.alembic_version y atrapa excepciones en lifespan`).
+- **PR #15**: `f9f24d062470` versiona la corrección de visibilidad de `alembic_version`: RLS activo sobre esa tabla (sin política para `cotizat_app`) ocultaba la fila al rol runtime y `/readyz` volvía a caer en 503 con «alembic: inesperado:sin-version». La migración apaga RLS sobre los metadatos, elimina políticas residuales y garantiza el GRANT SELECT; `/readyz` ahora reporta el estado RLS de la tabla en el propio mensaje de error para que una regresión futura se explique sola.
 
 Después de fusionar el PR #4, la nueva conversación debe trabajar desde el `main` resultante.
 

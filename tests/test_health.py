@@ -93,6 +93,9 @@ def test_readiness_con_engine_postgresql_detecta_head_y_rol(monkeypatch):
         def one(self):
             return self._mapping
 
+        def one_or_none(self):
+            return self._mapping or None
+
     class _Connection:
         def __init__(self, engine):
             self.engine = engine
@@ -105,6 +108,15 @@ def test_readiness_con_engine_postgresql_detecta_head_y_rol(monkeypatch):
 
         def execute(self, statement, parameters=None):
             sql = str(statement)
+            if "relrowsecurity" in sql:
+                if self.engine.rls_version is None:
+                    # Tabla ausente: el diagnóstico no obtiene filas.
+                    return _Result()
+                return _Result(mapping={
+                    "relrowsecurity": self.engine.rls_version,
+                    "relforcerowsecurity": self.engine.force_version,
+                    "politicas": self.engine.politicas_version,
+                })
             if "alembic_version" in sql:
                 return _Result(self.engine.version)
             if "pg_roles" in sql:
@@ -119,12 +131,16 @@ def test_readiness_con_engine_postgresql_detecta_head_y_rol(monkeypatch):
 
     class _FakeEngine:
         def __init__(self, version, *, rolsuper=False, rolbypassrls=False,
-                     rolinherit=True, app_member=True):
+                     rolinherit=True, app_member=True, rls_version=False,
+                     force_version=False, politicas_version=0):
             self.version = version
             self.rolsuper = rolsuper
             self.rolbypassrls = rolbypassrls
             self.rolinherit = rolinherit
             self.app_member = app_member
+            self.rls_version = rls_version
+            self.force_version = force_version
+            self.politicas_version = politicas_version
             self.disposed = False
 
         def connect(self):
@@ -160,6 +176,25 @@ def test_readiness_con_engine_postgresql_detecta_head_y_rol(monkeypatch):
     status = readiness(old)
     assert status.ok is False
     assert any("Esquema" in e for e in status.errors)
+
+    # Fila invisible (0 filas): el diagnóstico debe señalar RLS activo sin
+    # políticas para el rol runtime (la causa del 503 de staging), no un
+    # «sin-version» mudo.
+    invisible = _FakeEngine(None, rls_version=True, politicas_version=0)
+    status = readiness(invisible)
+    assert status.ok is False
+    assert status.checks["alembic"].startswith("inesperado:sin-version")
+    assert "rls=True" in status.checks["alembic"]
+    assert any("rls=True" in e for e in status.errors)
+
+    # Sin tabla (p. ej. esquema no migrado) no debe romper el readiness.
+    sin_tabla = _FakeEngine(None, rls_version=False, politicas_version=0)
+    sin_tabla.rls_version = None  # fila del diagnóstico ausente
+    sin_tabla.politicas_version = None
+    status = readiness(sin_tabla)
+    assert status.ok is False
+    assert any("sin versión" in e for e in status.errors)
+    assert any("no-existe public.alembic_version" in e for e in status.errors)
 
     # Rol con BYPASSRLS -> error (aceptación #14).
     privileged = _FakeEngine(EXPECTED_ALEMBIC_HEAD, rolbypassrls=True)

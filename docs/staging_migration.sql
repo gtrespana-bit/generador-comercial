@@ -1549,11 +1549,37 @@ CREATE POLICY cotizat_invitation_select_recipient
 
 UPDATE alembic_version SET version_num='d7f2a9c41e63' WHERE alembic_version.version_num = 'c93e7a4d20f1';
 
+-- Running upgrade d7f2a9c41e63 -> f9f24d062470
+
+-- /readyz reportaba «alembic: inesperado:sin-version»: el administrador ve la
+-- fila de alembic_version pero el rol runtime (cotizat_runtime, miembro de
+-- cotizat_app) obtenía cero filas sin error porque RLS estaba activo sobre la
+-- tabla sin política que autorice a cotizat_app. alembic_version es metadatos
+-- de migración, no datos de tenant: se deja sin RLS, se elimina cualquier
+-- política residual y se garantiza el GRANT SELECT de c93e7a4d20f1.
 ALTER TABLE public.alembic_version DISABLE ROW LEVEL SECURITY;
+ALTER TABLE public.alembic_version NO FORCE ROW LEVEL SECURITY;
+
+DO $policy$
+DECLARE pol record;
+BEGIN
+  FOR pol IN
+    SELECT policyname FROM pg_catalog.pg_policies
+    WHERE schemaname = 'public' AND tablename = 'alembic_version'
+  LOOP
+    EXECUTE format(
+      'DROP POLICY IF EXISTS %I ON public.alembic_version', pol.policyname
+    );
+  END LOOP;
+END
+$policy$;
+
 GRANT SELECT ON TABLE public.alembic_version TO cotizat_app;
 
+UPDATE alembic_version SET version_num='f9f24d062470' WHERE alembic_version.version_num = 'd7f2a9c41e63';
+
 INSERT INTO alembic_version (version_num)
-SELECT 'd7f2a9c41e63'
+SELECT 'f9f24d062470'
 WHERE NOT EXISTS (SELECT 1 FROM alembic_version);
 
 COMMIT;

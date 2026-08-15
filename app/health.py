@@ -96,6 +96,38 @@ def _check_recovery_redirect() -> tuple[str, str | None]:
         return "no-configurado", str(exc)
 
 
+def _diagnostico_visibilidad_alembic_version(engine: Engine) -> str | None:
+    """Por qué el rol runtime no ve la fila de ``public.alembic_version``.
+
+    Devuelve una cadena corta con el estado de RLS de la tabla y cuántas
+    políticas tiene, o ``None`` si la tabla no existe. Las vistas
+    ``pg_catalog.pg_class`` y ``pg_catalog.pg_policies`` son legibles por
+    cualquier rol, así que el propio login limitado puede ejecutar esta
+    consulta sin privilegios extra. Se usa solo cuando la versión ya resultó
+    invisible, para no añadir trabajo en el camino feliz.
+    """
+    try:
+        with engine.connect() as connection:
+            row = connection.execute(text("""
+                SELECT c.relrowsecurity, c.relforcerowsecurity,
+                       count(p.policyname) AS politicas
+                FROM pg_catalog.pg_class AS c
+                JOIN pg_catalog.pg_namespace AS n ON n.oid = c.relnamespace
+                LEFT JOIN pg_catalog.pg_policies AS p
+                       ON p.schemaname = n.nspname AND p.tablename = c.relname
+                WHERE n.nspname = 'public' AND c.relname = 'alembic_version'
+                GROUP BY c.relrowsecurity, c.relforcerowsecurity
+            """)).mappings().one_or_none()
+        if row is None:
+            return "no-existe public.alembic_version"
+        return (
+            f"rls={row['relrowsecurity']}, force={row['relforcerowsecurity']}, "
+            f"politicas={row['politicas']}"
+        )
+    except Exception as exc:  # pragma: no cover - depende de red/infra
+        return f"indefinido:{_safe_error(exc)}"
+
+
 def _check_postgresql(engine: Engine) -> dict[str, object]:
     """Comprueba conexión, head de Alembic y el rol runtime limitado."""
     results: dict[str, object] = {"database": "postgresql"}
@@ -119,9 +151,23 @@ def _check_postgresql(engine: Engine) -> dict[str, object]:
             results["alembic"] = f"head:{EXPECTED_ALEMBIC_HEAD}"
         else:
             results["alembic"] = f"inesperado:{version or 'sin-version'}"
-            errors.append(
-                f"Esquema en {version or 'sin versión'}; se espera {EXPECTED_ALEMBIC_HEAD}."
-            )
+            if version is None:
+                detalles = _diagnostico_visibilidad_alembic_version(engine)
+                if detalles:
+                    results["alembic"] = f"inesperado:sin-version ({detalles})"
+                    errors.append(
+                        "Esquema en sin versión; se espera "
+                        f"{EXPECTED_ALEMBIC_HEAD}. La fila de alembic_version "
+                        f"no es visible para el rol runtime ({detalles})."
+                    )
+                else:
+                    errors.append(
+                        f"Esquema en sin versión; se espera {EXPECTED_ALEMBIC_HEAD}."
+                    )
+            else:
+                errors.append(
+                    f"Esquema en {version}; se espera {EXPECTED_ALEMBIC_HEAD}."
+                )
     except Exception as exc:  # pragma: no cover - depende de red/infra
         results["alembic"] = "error"
         errors.append(f"No se pudo comprobar Alembic: {_safe_error(exc)}")
