@@ -43,6 +43,8 @@
     .plan .antes { color: #9aa8a1; text-decoration: line-through; font-weight: 600; }
     .plan ul { padding-left: 18px; color: #4c5c54; line-height: 1.7; font-size: .95rem; }
     .nota-honesta { background: #fdf6e7; border: 1px solid #ecd9a8; border-radius: 12px; padding: 14px 18px; font-size: .92rem; line-height: 1.55; max-width: 760px; margin-top: 26px; color: #5c4a13; }
+    .enlace-ejemplo { color: #0b5b38; font-weight: 700; text-decoration: none; }
+    .enlace-ejemplo:hover { text-decoration: underline; }
     footer { background: #073c2b; color: #cce8dc; padding: 36px 20px; }
     .footer-int { max-width: 1040px; margin: 0 auto; display: flex; justify-content: space-between; gap: 18px; flex-wrap: wrap; font-size: .9rem; }
     .footer-int a { color: #9fd6bd; text-decoration: none; margin-right: 16px; }
@@ -65,6 +67,7 @@
     <p class="sub">{{ product_name }} convierte tu catálogo y tus precios en presupuestos profesionales en PDF —con capítulos, mediciones, alternativas de producto y control de aprobaciones— para empresas de construcción y remodelación.</p>
     <div class="acciones">
       <a class="btn btn-primario" href="mailto:{{ email_soporte }}?subject=Quiero%20una%20demostraci%C3%B3n%20de%20{{ product_name }}">Solicitar una demostración</a>
+      <a class="btn btn-secundario" href="/static/pdf/presupuesto-ejemplo.pdf" target="_blank" rel="noopener">Ver un presupuesto de ejemplo (PDF)</a>
       <a class="btn btn-secundario" href="/acceso">Ya tengo cuenta</a>
     </div>
   </div>
@@ -85,6 +88,7 @@
     <div class="tarjeta">
       <h3>PDF que da confianza</h3>
       <p>Documento con tu logo, portada opcional, resumen por capítulos, condiciones y garantías. Versiones inmutables: siempre sabrás qué se envió y qué se aprobó.</p>
+      <p><a class="enlace-ejemplo" href="/static/pdf/presupuesto-ejemplo.pdf" target="_blank" rel="noopener">Descarga un presupuesto de ejemplo →</a></p>
     </div>
     <div class="tarjeta">
       <h3>Del presupuesto al cobro</h3>

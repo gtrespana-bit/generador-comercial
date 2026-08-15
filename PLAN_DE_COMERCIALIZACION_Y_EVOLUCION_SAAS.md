@@ -333,7 +333,8 @@ Las herramientas existentes se conservan como fuente de migración, pero dejaron
 
 - [ ] **E1-051 — Grabar vídeo de demostración de 5 minutos.**
 
-- [ ] **E1-052 — Crear un presupuesto de muestra comercial sin datos personales reales.**
+- [x] **E1-052 — Crear un presupuesto de muestra comercial sin datos personales reales.**
+  Evidencia (15/08/2026): `app/services/presupuesto_muestra.py` construye el presupuesto y `tools/generar_presupuesto_muestra.py` escribe `app/static/pdf/presupuesto-ejemplo.pdf`, enlazado desde la landing («Ver un presupuesto de ejemplo (PDF)»). Todo ficticio: empresa «Construcciones El Samán, C.A.» con RIF marcador `J-00000000-0` y contacto en el dominio reservado `ejemplo.com`, cliente genérico «Familia Rodríguez» sin documento real, e importes/mediciones verosímiles inventados; el propio PDF declara en «Información adicional» que todos los datos son ficticios. Cubierto por `tests/test_presupuesto_muestra.py`.
 
 - [ ] **E1-053 — Crear preguntas frecuentes.**
 
@@ -342,7 +343,7 @@ Las herramientas existentes se conservan como fuente de migración, pero dejaron
 - [ ] **E1-055 — Crear procedimiento para reportar errores con evidencia.**
 
 - [~] **E1-056 — Preparar una landing page sencilla.**
-  Publicada en `/conocer` (15/08/2026): problema, resultado, público objetivo, precios promocionales del piloto (89 US$/año con habitual 109; 9,99 US$/mes primer año con habitual 12,99), nota de honestidad (acceso anticipado, documentos no fiscales) y llamada a solicitar demostración por email. Pendiente para cerrar: el vídeo de demostración (E1-051) y el PDF de ejemplo (E1-052), que se enlazarán cuando existan.
+  Publicada en `/conocer` (15/08/2026): problema, resultado, público objetivo, precios promocionales del piloto (89 US$/año con habitual 109; 9,99 US$/mes primer año con habitual 12,99), nota de honestidad (acceso anticipado, documentos no fiscales), llamada a solicitar demostración por email y enlace al PDF de ejemplo (E1-052, añadido el 15/08/2026). Pendiente para cerrar: el vídeo de demostración (E1-051), que se enlazará cuando exista.
 
 ## 1.9 Hipótesis comercial inicial
 

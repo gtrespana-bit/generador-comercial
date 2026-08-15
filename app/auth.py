@@ -9,12 +9,15 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import json
+import logging
 import os
 from typing import Any
 from urllib.error import HTTPError, URLError
 from urllib.parse import quote, urlparse
 from urllib.request import Request as UrlRequest, urlopen
 from uuid import UUID
+
+log = logging.getLogger("cotizat")
 
 from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -232,8 +235,22 @@ class SupabaseAuthClient:
             with urlopen(request, timeout=12) as response:  # noqa: S310 (URL validada)
                 raw = response.read(1024 * 1024)
         except HTTPError as exc:
-            # El detalle de GoTrue no contiene la contraseña, pero se reduce a
-            # mensajes propios para no depender de su respuesta interna.
+            # El detalle de GoTrue no contiene la contraseña ni el token en
+            # claro, pero revela la causa real (otp_expired, email no
+            # confirmado, credenciales inválidas…). Se registra en el log del
+            # servidor para poder diagnosticar, y al usuario se le sigue
+            # mostrando un mensaje propio que no filtra nada.
+            try:
+                cuerpo = (exc.read(512) or b"").decode("utf-8", "replace")
+            except Exception:  # noqa: BLE001 - el cuerpo es solo informativo
+                cuerpo = ""
+            log.warning(
+                "Supabase Auth %s %s -> HTTP %s: %s",
+                method,
+                path,
+                exc.code,
+                (cuerpo or "(sin cuerpo)")[:300],
+            )
             if exc.code in {400, 401, 403, 422}:
                 raise InvalidCredentials("Email, contraseña o sesión no válidos.") from exc
             raise AuthError("Supabase Auth no pudo completar la solicitud.") from exc

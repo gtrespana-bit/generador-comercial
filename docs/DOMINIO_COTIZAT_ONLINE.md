@@ -51,7 +51,11 @@ automáticamente (suele tardar 5–30 min tras validar).
 Supabase → **Authentication → URL Configuration**:
 
 - **Site URL**: `https://cotizat.online`
-- **Redirect URLs**: añadir `https://cotizat.online/restablecer-clave`
+- **Redirect URLs**: añadir **las dos** rutas a las que CotizaT manda
+  redirigir tras los enlaces por email (GoTrue valida por coincidencia exacta,
+  sin barra final ni `www`):
+  - `https://cotizat.online/restablecer-clave` (recuperación de contraseña)
+  - `https://cotizat.online/acceso` (confirmación de registro)
   (puedes dejar la antigua `https://cotizat-generador.vercel.app/restablecer-clave`
   durante la transición; los enlaces viejos de recuperación siguen funcionando).
 
