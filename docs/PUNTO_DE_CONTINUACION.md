@@ -1,6 +1,6 @@
 # Punto exacto de continuación
 
-Fecha de corte: **15/08/2026** (America/Caracas).
+Fecha de corte: **15/08/2026, noche (cierre de sesión)** (America/Caracas).
 
 Este documento existe para retomar el trabajo desde una conversación nueva sin
 depender del historial del chat. Describe **dónde nos quedamos exactamente** y
@@ -8,215 +8,165 @@ depender del historial del chat. Describe **dónde nos quedamos exactamente** y
 
 Léelo junto con `docs/CONTINUIDAD_STAGING_SUPABASE.md` (estado de staging y
 matriz de aceptación) y `PLAN_DE_COMERCIALIZACION_Y_EVOLUCION_SAAS.md`
-(secciones 1.3 y 11).
+(secciones 1.3, 1.4, 1.8, 1.9 y 11).
 
 ---
 
-## 1. Lo último que se hizo: rate limiting distribuido
+## 1. Lo último que se hizo: el PR #20 (tres bloques en una sesión)
 
-### El problema que se corrigió
+La rama `arena/01a0069a-generador-comercial` entregó tres bloques que el
+usuario decidió **fusionar como PR #20** al cerrar la sesión del 15/08/2026.
+Si estás leyendo esto desde `main`, el merge ya ocurrió. Contenido exacto:
 
-`AuthRateLimitMiddleware` guardaba los intentos de acceso en un `dict` del
-proceso. En un servidor único eso funciona; **en Vercel no**: cada invocación
-puede ejecutarse en un proceso nuevo, así que el contador arrancaba vacío una y
-otra vez. Los «10 intentos cada 5 minutos» de `/acceso` solo se aplicaban entre
-peticiones que casualmente cayeran en la misma instancia caliente.
+### 1a. E1-040 — recorrido crítico cubierto `[x]` (commit `1b4571d`)
 
-No era un límite laxo: era **un límite inexistente disfrazado de protección**.
+`tests/test_recorrido_critico.py`: 4 pruebas en subproceso contra una
+instalación aislada (variable nueva `COTIZAT_DATA_DIR`, solo modo
+desarrollo; el .exe la ignora):
 
-### Qué se implementó
+1. instalación limpia → asistente → catálogo/cliente/presupuesto reales →
+   PDF → backup .zip → pérdida → restauración (con copia previa automática
+   en `backups/antes_de_restaurar_*`) → reinicio sin reinyección;
+2. restaurar la copia de una versión anterior re-aplica migraciones;
+3. backup automático semanal sin duplicados;
+4. zip malicioso (zip slip) rechazado sin tocar la base.
 
-`app/ratelimit.py` (nuevo) separa la decisión («¿permito este intento?») de
-dónde se guarda la cuenta, detrás de
-`hit(identidad, límite, ventana) -> Decision`:
+El criterio «CI ejecuta las pruebas y el recorrido crítico está cubierto»
+pasó a `[x]` en el plan.
 
-| Backend | Cuándo se usa | Comparte estado |
+### 1b. E1W-012 — importación de instalaciones SQLite `[x]` (commit `11d6e50`)
+
+Cerró la última tarea técnica de la Etapa 1 web. Regla de oro respetada:
+**nunca se migran datos privados sin acción y confirmación del propietario.**
+
+- `app/services/instalacion_sqlite.py`: la fuente (.zip de backup o .db) se
+  lee con `sqlite3` crudo en **solo lectura**, tolerando bases de versiones
+  anteriores (columnas/tablas ausentes → defaults del modelo). El destino se
+  escribe con la **sesión ORM del usuario autenticado**: tenencia, rol y RLS
+  aplican como en cualquier otra escritura.
+- Asistente en `/configuracion/importar-instalacion` con **dos pasos**:
+  *analizar* (resumen honesto sin escribir nada) → *confirmar* (recarga del
+  MISMO archivo, verificado por SHA-256, + casilla explícita). El servidor no
+  guarda el archivo entre pasos → compatible con serverless.
+- No migra datos demo ni configuración de empresa; limpia referencias a
+  archivos locales avisando cuántas; reimportar no duplica; conflictos de
+  número se listan antes de confirmar; solo propietario/administrador.
+- 12 pruebas en `tests/test_instalacion_sqlite.py`.
+- El criterio «exportación y migración controlada desde SQLite» pasó a `[x]`.
+
+### 1c. Paquete legal/comercial (commit `e496fc1`)
+
+Páginas públicas nuevas (sin sesión, declaradas en la auditoría de rutas,
+CSP estricta):
+
+| Ruta | Tarea | Contenido |
 | --- | --- | --- |
-| `MemoryRateLimit` | Escritorio, desarrollo y respaldo ante fallos | No |
-| `UpstashRateLimit` | Con las dos variables `UPSTASH_REDIS_REST_*` | Sí |
+| `/conocer` | E1-056 `[~]` | Landing: problema, resultado, público, llamada a demo por email y precios |
+| `/legal/terminos` | E1-018 `[x]` | EULA/términos: licencia, datos del cliente, alcance no fiscal, responsabilidad, terminación |
+| `/legal/privacidad` | E1-019 `[x]` | Privacidad con los encargados reales (Supabase, Vercel, Resend, Upstash, GoDaddy) |
+| `/legal/soporte` | E1-019 `[x]` | Canal soporte@cotizat.online, horario UTC−4, tiempos, cómo reportar errores |
+| `/legal/licencias` | E1-020 `[x]` | 42 paquetes verificados con `importlib.metadata`; Lato OFL, psycopg LGPL, PyInstaller con excepción |
 
-Decisiones de diseño que **no conviene reabrir sin motivo** (están razonadas en
-el docstring del módulo y en `docs/SEGURIDAD_WEB.md`):
+Más: `docs/GUIA_INICIO_RAPIDO.md` (E1-050 `[x]`, ~5 páginas, recorrido
+<20 min) y los **precios del piloto decididos por el usuario** (E1-057 `[~]`),
+publicados en la landing:
 
-- **API REST y no cliente Redis.** Una función serverless no conserva sockets
-  entre invocaciones, así que la conexión persistente no aporta; usar `urllib`
-  evita sumar una dependencia al runtime, con su pin en `requirements.txt` y la
-  regeneración del lock. Mismo patrón que `app/auth.py` y `app/storage.py`.
-- **Ventana fija por tramo** (`now // ventana` en la clave), no deslizante:
-  caduca sola, renovar el TTL es idempotente y todo cabe en un solo viaje
-  (`INCR` + `EXPIRE` en pipeline, timeout 3 s).
-- **Si Upstash falla, degrada al contador local.** Ni fail-open (quitaría el
-  límite justo cuando el servicio está en apuros) ni fail-closed (dejaría a
-  todos fuera por una caída ajena).
-- **La IP no viaja en claro** al tercero: la clave es
-  `cotizat:rl:<sha256("ruta|ip")[:32]>:<índice>`.
-- **Una configuración incompleta no impide arrancar**: avisa `/readyz` con
-  `checks.rate_limit`. Solo `COTIZAT_REQUIRE_DISTRIBUTED_RATELIMIT=true` la
-  convierte en error, y nunca bajo SQLite, donde un contador por proceso es lo
-  correcto.
+- **89 US$/año** promoción inicial (precio habitual **109 US$/año**);
+- **9,99 US$/mes** el primer año (precio habitual **12,99 US$/mes**).
 
-### Estado del código
+Decisiones de diseño que no conviene reabrir sin motivo:
 
-- **PR #18** — <https://github.com/gtrespana-bit/generador-comercial/pull/18>
-- Rama `arena/01a00341-generador-comercial`, commit **`c7d8be2`**, sobre la base
-  `66f932f` (= merge del PR #17).
-- **CI en verde**, Vercel Preview correcto, sin conflictos (`MERGEABLE`/`CLEAN`).
-- Suite: **250 passed, 5 skipped** (antes del bloque eran 228).
-- 14 archivos: `app/ratelimit.py` y `tests/test_ratelimit_distribuido.py`
-  nuevos; el resto son el cableado en `app/security.py` y `app/health.py`, más
-  documentación.
+- La razón social se inyecta con `COTIZAT_LEGAL_ENTITY` (y el correo con
+  `COTIZAT_SUPPORT_EMAIL`, por defecto `soporte@cotizat.online`) desde
+  `app/branding.py`. Sin definir, los documentos muestran el marcador
+  `[RAZÓN SOCIAL DEL TITULAR — pendiente de registro]`: es **a propósito**,
+  imposible de publicar por accidente como entidad real.
+- Jurisdicción neutral («ley del domicilio del titular»), elegida por el
+  usuario mientras decide la entidad legal.
+- `tests/test_paginas_publicas.py` (6 pruebas) incluye una de **honestidad
+  publicitaria**: el precio promocional siempre aparece junto al habitual.
+- La pantalla de acceso enlaza términos y privacidad al crear cuenta.
 
-**Al fusionar el PR, producción despliega desde `main` y recoge las variables.**
-*(Hecho: el merge `7940ce9` desplegó y `/readyz` confirma `distribuido:upstash`.)*
+### Validación del usuario (15/08/2026, noche)
 
-### Aviso: el check «Vercel» del último commit aparece en rojo
+El usuario **probó las páginas nuevas y el resto de lo entregado y confirmó
+que todo funciona correctamente**. Su valoración textual: necesita mejoras
+claramente, pero está bien para ser la primera versión. Es decir: **v1
+aceptada; iterar diseño/contenido después, sin rehacer la base.**
 
-El segundo commit del PR (`becf758`, este mismo documento) **solo toca archivos
-markdown** y aun así el check de Vercel quedó en `failure`, con la descripción
-**«Deployment was blocked»**. El commit anterior, `c7d8be2`, que sí tocaba
-código, desplegó correctamente («Deployment has completed»).
+### Estado final de la sesión
 
-«Blocked» significa que Vercel **ni siquiera empezó a construir**: no es un
-fallo de compilación ni de las pruebas. `vercel.json` no cambió y no hay
-`ignoreCommand` ni `.vercelignore`. La suite sigue en **250 passed, 5 skipped**
-y el check «Pruebas y verificaciones» está en **pass**.
-
-Lo más probable es un tope del lado de la cuenta —el plan Hobby limita los
-despliegues diarios— o una protección de despliegue activada en el proyecto.
-**No pude confirmarlo**: desde el entorno donde se trabajó no hay salida de red
-hacia `api.vercel.com`, y el token de GitHub no tiene permiso para leer la API
-de deployments (403).
-
-Qué hacer antes de fusionar: abrir el panel de Vercel y mirar por qué se bloqueó
-ese despliegue concreto. Si es el límite diario, se resuelve solo al día
-siguiente. **Conviene comprobarlo** porque el merge a `main` dispara justamente
-el despliegue de producción que debe recoger las variables de Upstash; si los
-despliegues siguen bloqueados, el merge no publicaría nada y `/readyz` seguiría
-mostrando el estado antiguo.
+- Suite: **284 passed, 5 skipped** (262 → 266 → 278 → 284).
+- La rama incluye un merge de `origin/main` (`e1b0444`) que resolvió el
+  conflicto de docs creado por el PR #21 (docs viejos de la rama anterior
+  fusionados por el usuario); se conservó la versión más reciente.
+- PR #20 `MERGEABLE` al cierre; **el usuario lo fusiona él mismo**.
 
 ---
 
-## 2. Resuelto: rate limiting distribuido activo (15/08/2026)
+## 2. Cerrado antes (no rehacer)
 
-El bloque está **cerrado y verificado**. No rehacer ningún paso:
-
-1. **Base Upstash creada** por el usuario (15/08/2026).
-2. **Las tres variables están en Vercel** (Production): `UPSTASH_REDIS_REST_URL`,
-   `UPSTASH_REDIS_REST_TOKEN` y `COTIZAT_REQUIRE_DISTRIBUTED_RATELIMIT=true`.
-3. **PR #18 fusionado** en `main` (merge `7940ce9`); producción desplegó desde
-   `main` y recogió las variables.
-4. **Verificado el 15/08/2026**: `https://cotizat-generador.vercel.app/readyz`
-   responde `200` con `"rate_limit": "distribuido:upstash"` y `"ok": true`, y
-   `"errors": []`. Diagnóstico: `memoria` = variables ausentes en Production;
-   `mal-configurado` = URL no https o token vacío. (Ya no aplican.)
-5. Anotado en `docs/CONTINUIDAD_STAGING_SUPABASE.md` (sección 2).
-
-Consumo esperado: 2 comandos por intento de login, muy por debajo del plan
-gratuito de Upstash.
+1. **Rate limiting distribuido** (PR #18, merge `7940ce9`): Upstash activo,
+   `/readyz` → `"rate_limit": "distribuido:upstash"`.
+2. **Dominio propio** `cotizat.online` (GoDaddy → Vercel; Supabase y
+   `COTIZAT_PUBLIC_URL` apuntando al dominio). Guía en
+   `docs/DOMINIO_COTIZAT_ONLINE.md`.
+3. **Emails de invitación** (PR #19, merge `f686e80`): Resend con dominio
+   verificado; producción confirma `"email": "configurado"` en `/readyz`.
+4. **E1-040, E1W-012 y paquete legal/comercial** (PR #20, esta sesión).
 
 ---
 
-## 3. Aparcado por decisión del usuario
+## 3. Pendientes del usuario (operativos, sin código)
 
-**Puntos 13-manual y 14 de la matriz de aceptación.** Razón dada: esas pruebas
-conviene hacerlas más al final, porque algo validado hoy puede romperse en
-cualquiera de los pasos que aún quedan. **No pedir que se ejecuten** hasta que
-el desarrollo esté cerrado.
+1. **Prueba E2E de invitaciones** (la hará él): `/equipo` → invitación real →
+   correo desde `no-responder@cotizat.online` → aceptar y ver que se consume.
+   Preguntarle si ya la hizo antes de dar el bloque de emails por cerrado
+   del todo.
+2. **Crear el buzón/redirección `soporte@cotizat.online`** (lo más simple:
+   redirección en GoDaddy hacia su correo real). La landing y los legales ya
+   lo publican.
+3. **Definir la razón social** → añadir `COTIZAT_LEGAL_ENTITY` en Vercel
+   (Production) y redeploy; el marcador desaparece solo.
+4. Tras fusionar el PR #20: verificar en producción que
+   `https://cotizat.online/conocer` y las 4 páginas `/legal/*` responden 200.
 
-- **13-manual:** pegar la URL pública del objeto Supabase en ventana privada y
-  confirmar acceso denegado.
-- **14:** sustituir temporalmente `DATABASE_URL` por un rol con
-  `SUPERUSER`/`BYPASSRLS` y verificar que `/readyz` responde 503.
+## 4. Aparcado por decisión del usuario
 
-Guía operativa en `docs/MATRIZ_PASOS_MANUALES.md` (45-60 min).
+**Puntos 13-manual y 14 de la matriz de aceptación** — no pedirlos hasta que
+el desarrollo esté cerrado (guía en `docs/MATRIZ_PASOS_MANUALES.md`).
 
 ---
 
-## 4. En curso: emails de invitación — todo operativo hecho, falta fusionar el código
+## 5. Qué es lo siguiente
 
-### Estado exacto (15/08/2026, tarde)
+En orden recomendado:
 
-**Parte operativa: COMPLETA por el usuario** ✅
-
-- **Dominio propio comprado**: `cotizat.online` (GoDaddy).
-- **Vercel**: dominios `cotizat.online` y `www.cotizat.online` añadidos; la app
-  ya responde en `https://cotizat.online` (`/healthz` y `/readyz` 200 OK).
-  DNS en GoDaddy: A `@` → `76.76.21.21`, CNAME `www` → `cname.vercel-dns.com`
-  (comprobar que no quede un A duplicado de parking si la web «parpadea»).
-- **Supabase**: Site URL `https://cotizat.online` y Redirect URL
-  `https://cotizat.online/restablecer-clave` configuradas.
-- **`COTIZAT_PUBLIC_URL=https://cotizat.online`** en Vercel (Production) y
-  **redeploy hecho** → `/readyz` ya reporta
-  `recovery_redirect_url_esperada: https://cotizat.online/restablecer-clave`.
-- **Resend**: cuenta creada, dominio `cotizat.online` añadido y **verificado**
-  (SPF/DKIM/MX publicados en GoDaddy; DKIM confirmado público:
-  `resend._domainkey.cotizat.online` TXT visible).
-- **Vercel (Production)**: `RESEND_API_KEY` y
-  `COTIZAT_EMAIL_FROM=CotizaT <no-responder@cotizat.online>` añadidas.
-
-**Parte de código: lista pero SIN FUSIONAR — este es el único paso pendiente** ⚠️
-
-- El código de emails vive en la rama **`arena/01a00633-generador-comercial`**,
-  HEAD **`6d99b7d`**, ya subida a GitHub (3 commits sobre `main`):
-  1. `282f9c7` — emails de invitación por Resend con degradación a enlace en
-     pantalla (`app/services/email.py`, plantillas, cableado en
-     `crear_invitacion_web`, `checks.email` en `/readyz`, 12 pruebas en
-     `tests/test_email_invitaciones.py`; suite **262 passed, 5 skipped**);
-  2. `5679ceb` — docs: el dominio de Vercel no puede usarse en Resend;
-  3. `6d99b7d` — docs: guía del dominio (`docs/DOMINIO_COTIZAT_ONLINE.md`).
-- **`main` sigue en `7940ce9`** (merge del PR #18). Producción despliega desde
-  `main`, por eso `/readyz` de `cotizat.online` **NO muestra `"email"` todavía**
-  aunque las variables ya estén en Vercel. El `"email": "configurado"` que vio
-  el usuario era el preview de Vercel de la rama, no producción.
-
-### Lo inmediato (único paso que falta)
-
-1. **Fusionar la rama `arena/01a00633-generador-comercial` a `main`** (PR o
-   merge manual como el #18). El despliegue de producción recoge las variables
-   ya existentes y el `checks.email`.
-2. Verificar `https://cotizat.online/readyz` → debe aparecer
-   `"email": "configurado"` (y seguir `"rate_limit": "distribuido:upstash"`).
-3. **Prueba E2E final**: crear una invitación real en `/equipo` con un email
-   al que el usuario tenga acceso; confirmar que llega el correo desde
-   `no-responder@cotizat.online` con el enlace de invitación; aceptarla con
-   una cuenta del mismo email verificado y comprobar que se consume.
-4. Opcional: si el dominio «parpadea», revisar en GoDaddy que haya un único
-   registro A `@` → `76.76.21.21` (sin el de parking).
-
-Hasta que se fusione, el flujo funciona igual que antes (enlace en pantalla).
-
-Bloques posteriores, en orden recomendado:
-
-1. **E1-040 — pruebas de recorridos críticos.** Criterio de salida de Etapa 1,
-   aún en `[~]`.
-2. **E1W-012 — importación de instalaciones SQLite hacia la web.**
-3. **Paquete legal/comercial:** E1-018 (EULA), E1-019 (privacidad), E1-020
-   (licencias de terceros), E1-050 (guía de inicio), E1-056 (landing).
+1. **E1-052 — presupuesto de muestra comercial** sin datos personales reales
+   (alimenta la landing con el «PDF de ejemplo» que le falta a E1-056).
+2. **E1-051 — vídeo de demostración de 5 minutos** (operativo del usuario;
+   la landing lo enlazará donde corresponda).
+3. **E1-021 — revisar que el repositorio no contenga datos reales sensibles.**
+4. **E1-059/E1-060 — método de cobro + recibo/contrato firmable y registro
+   interno de licencias** (cierra E1-057 y el criterio «guía, oferta,
+   contrato y soporte»).
+5. Iterar diseño/contenido de landing y legales (v1 aceptada con mejoras
+   pendientes declaradas por el usuario).
 
 Criterios de salida de Etapa 1 aún abiertos: primer PDF en <20 min por usuario
-nuevo, catálogo con procedencia y precios fechados, exportación/migración desde
-SQLite, guía + oferta + contrato + soporte, recorrido crítico cubierto en CI,
-tres pruebas de usabilidad externas.
+nuevo, catálogo con procedencia y precios fechados, recibo/registro de
+licencias, tres pruebas de usabilidad externas.
+
+## 6. Aviso de plan que conviene tener presente
+
+El plan **Hobby de Vercel prohíbe el uso comercial**. La landing ya publica
+precios: antes de **cobrar** al primer cliente hay que pasar a **Pro
+(20 $/mes)**. Al cerrar la matriz completa: retirar del `README.md` (línea 14)
+el aviso de «todavía no debe publicarse».
 
 ---
 
-## 5. Aviso de plan que conviene tener presente
-
-El plan **Hobby de Vercel prohíbe el uso comercial**. En cuanto CotizaT tenga un
-cliente que pague, hace falta **Pro (20 $/mes)**, con independencia del rate
-limiting. Además, en Hobby, superar un límite **detiene** el recurso hasta que
-se reinicie la ventana (no llega una factura sorpresa, pero sí una caída).
-
-No es urgente con pilotos gratuitos. Sí debe estar en el plan antes de cobrar.
-
-Al cerrar la matriz completa: retirar del `README.md` (línea 14) el aviso de
-«todavía no debe publicarse».
-
----
-
-## 6. Reglas invariables (no negociables)
-
-Heredadas de `docs/CONTINUIDAD_STAGING_SUPABASE.md`:
+## 7. Reglas invariables (no negociables)
 
 - nunca configurar `MIGRATION_DATABASE_URL` en runtime;
 - nunca usar una conexión `postgres`/administrativa como `DATABASE_URL`;
@@ -228,14 +178,18 @@ Heredadas de `docs/CONTINUIDAD_STAGING_SUPABASE.md`:
 - toda dependencia nueva exige pin `==` en `requirements.txt` más
   `python tools/generar_lock.py`, o falla `tests/test_dependencias_bloqueadas.py`.
 
-Nota operativa: el token de la app que abre cambios automáticos **carece del
-permiso `workflows`**, así que GitHub rechaza pushes de archivos bajo
-`.github/workflows/`. Por eso `docs/ci/ci.yml` existe como copia y el workflow
-se instaló manualmente.
+Nota operativa: el token de la app que abre cambios automáticos carece del
+permiso `workflows`; `docs/ci/ci.yml` existe como copia y el workflow se
+instaló manualmente.
+
+Nota de entorno: el `.venv` no persiste entre sesiones (recrearlo es normal) y
+el HEAD local puede aparecer retrocedido al inicio de una sesión nueva; si los
+archivos están intactos, basta `git fetch origin <rama>` + `git reset --mixed
+FETCH_HEAD` para realinear sin perder nada.
 
 ---
 
-## 7. Mensaje para iniciar la conversación nueva
+## 8. Mensaje para iniciar la conversación nueva
 
 Copiar tal cual, sin añadir secretos ni tokens:
 
@@ -245,54 +199,51 @@ Continúa el proyecto CotizaT. Antes de proponer nada, lee
 `docs/PUNTO_DE_CONTINUACION.md` y luego `docs/CONTINUIDAD_STAGING_SUPABASE.md`.
 No repitas trabajo ya hecho y no me pidas secretos.
 
-**Dónde quedó todo (15/08/2026).**
+**Dónde quedó todo (15/08/2026, cierre de sesión).**
 
-- **Rate limiting distribuido: cerrado y verificado.** Base Upstash creada,
-  tres variables en Vercel, PR #18 fusionado (merge `7940ce9` en `main`) y
-  `/readyz` responde `"rate_limit": "distribuido:upstash"` con `"ok": true`.
-- **Dominio propio operativo:** `cotizat.online` (GoDaddy) apuntando a Vercel;
-  la app responde en `https://cotizat.online` y `www`. Supabase con Site URL y
-  Redirect URL del dominio nuevo. `COTIZAT_PUBLIC_URL=https://cotizat.online`
-  en Vercel y redeploy hecho (confirmado en `/readyz`:
-  `recovery_redirect_url_esperada: https://cotizat.online/restablecer-clave`).
-- **Emails de invitación — TODO lo operativo está hecho y verificado por el
-  usuario:** cuenta Resend creada, dominio `cotizat.online` verificado en
-  Resend (SPF/DKIM/MX en GoDaddy), y en Vercel Production ya están
-  `RESEND_API_KEY` y `COTIZAT_EMAIL_FROM=CotizaT <no-responder@cotizat.online>`.
-- **PERO el código de emails NO está en `main` todavía.** Vive en la rama
-  `arena/01a00633-generador-comercial` (HEAD `6d99b7d`, 3 commits sobre
-  `main`: `282f9c7` código, `5679ceb` y `6d99b7d` docs), ya subida a GitHub.
-  `main` sigue en `7940ce9`, así que el `/readyz` de producción NO muestra
-  `"email"` aunque las variables ya existen. El `"email": "configurado"` que
-  vio el usuario era el preview de Vercel de la rama.
-- **Lo único que falta en el bloque de emails:** fusionar la rama
-  `arena/01a00633-generador-comercial` a `main` (PR o merge manual, como el
-  #18); el despliegue de producción recoge las variables y `/readyz` debe
-  mostrar `"email": "configurado"`. Después, prueba E2E final: crear una
-  invitación real en `/equipo` con un email del usuario y confirmar que llega
-  desde `no-responder@cotizat.online`.
+- **Fusioné yo mismo el PR #20** («docs + E1-040 + E1W-012 + paquete
+  legal/comercial», rama `arena/01a0069a-generador-comercial`, HEAD
+  `e1b0444`). Con él quedan en `main`: el recorrido crítico cubierto
+  (E1-040 `[x]`), la importación de instalaciones SQLite hacia la web
+  (E1W-012 `[x]`, asistente en `/configuracion/importar-instalacion`) y el
+  paquete legal/comercial: landing `/conocer` con mis precios (89 US$/año
+  promo, habitual 109; 9,99 US$/mes primer año, habitual 12,99), páginas
+  `/legal/terminos`, `/legal/privacidad`, `/legal/soporte`,
+  `/legal/licencias` y `docs/GUIA_INICIO_RAPIDO.md`.
+- **Ya probé las páginas nuevas y lo demás: todo funciona.** Necesita mejoras
+  claramente, pero está bien como primera versión. No rehacer nada; las
+  mejoras de diseño/contenido se iteran después.
+- Bloques cerrados antes y verificados en producción: rate limiting
+  distribuido (Upstash), dominio `cotizat.online`, emails de invitación por
+  Resend (`/readyz` con `"email": "configurado"`).
+- Suite al cierre: **284 passed, 5 skipped**.
 
 **Empieza por verificar el estado real, no te fíes de este resumen:**
 
-1. `git log --oneline -5` y `git status --short` — ¿árbol en la rama
-   `arena/01a00633-generador-comercial` con `6d99b7d` presente?
-2. `git ls-remote origin arena/01a00633-generador-comercial` — ¿la rama está
-   en GitHub con el mismo commit?
-3. Recrea el entorno y corre la suite: `python3 -m venv .venv`,
+1. `git log --oneline -5` y `git status --short` — el merge del PR #20 debe
+   estar en `main`. (Si el HEAD local aparece retrocedido con archivos
+   intactos: `git fetch` + `git reset --mixed FETCH_HEAD`, es un artefacto
+   conocido del entorno.)
+2. Recrea el entorno y corre la suite: `python3 -m venv .venv`,
    `.venv/bin/pip install -r requirements-dev.txt`, `.venv/bin/pytest -q`.
-   Deben salir **262 passed, 5 skipped**.
-4. Abre `https://cotizat.online/readyz` — debe estar en 200 con
-   `rate_limit: distribuido:upstash`; fíjate si ya aparece `"email"` (si el
-   merge ya se hizo) o no (si sigue pendiente).
-5. Pregunta al usuario si ya fusionó la rama a `main` antes de hacer nada con
-   el código; si no, es el siguiente paso (él decide PR o merge manual).
+   Deben salir **284 passed, 5 skipped**.
+3. Abre `https://cotizat.online/readyz` (debe seguir 200 con `"email":
+   "configurado"` y `"rate_limit": "distribuido:upstash"`) y comprueba que
+   `https://cotizat.online/conocer` y las 4 páginas `/legal/*` responden 200
+   tras el despliegue del merge.
 
-**Aparcado por decisión del usuario:** los puntos 13-manual y 14 de la matriz
-de aceptación, hasta que el desarrollo esté cerrado. No pedirlos todavía.
+**Mis pendientes operativos (recuérdamelos, pero no los bloquees):** la
+prueba E2E de invitaciones en `/equipo`; crear la redirección
+`soporte@cotizat.online` en GoDaddy; definir la razón social y añadir
+`COTIZAT_LEGAL_ENTITY` en Vercel.
 
-**Siguientes bloques cuando cierre esto:** 1) E1-040 pruebas de recorridos
-críticos; 2) E1W-012 importación de instalaciones SQLite hacia la web;
-3) paquete legal/comercial (E1-018/019/020/050/056). Recordar: plan Hobby de
-Vercel prohíbe uso comercial → pasar a Pro antes de cobrar.
+**Aparcado por decisión mía:** los puntos 13-manual y 14 de la matriz, hasta
+que el desarrollo esté cerrado. No pedirlos todavía.
+
+**Siguiente bloque:** E1-052 (presupuesto de muestra comercial sin datos
+reales, que además dará el «PDF de ejemplo» a la landing); después E1-021
+(revisión de datos sensibles del repo) y E1-059/E1-060 (cobro + recibo/
+contrato). Recordar: Vercel Hobby prohíbe uso comercial → pasar a Pro antes
+de cobrar.
 
 ---

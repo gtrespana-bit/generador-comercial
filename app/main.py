@@ -33,7 +33,7 @@ from sqlalchemy import or_
 from sqlalchemy.orm import Session
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
-from .branding import PRODUCT_NAME, VALUE_PROPOSITION
+from .branding import LEGAL_ENTITY, PRODUCT_NAME, SUPPORT_EMAIL, VALUE_PROPOSITION
 from .security import AuthRateLimitMiddleware, WebSecurityMiddleware
 from .database import (
     BACKUPS_DIR,
@@ -150,6 +150,12 @@ from .services.importer import (
     texto_celda,
     validar_filas,
 )
+from .services.instalacion_sqlite import (
+    ErrorInstalacion,
+    LIMITE_BYTES as LIMITE_INSTALACION_BYTES,
+    analizar_instalacion,
+    importar_instalacion,
+)
 from .utils import SIMBOLOS, fmt_fecha, fmt_monto, fmt_num, fmt_cantidad
 from .storage import (
     StorageError,
@@ -174,6 +180,8 @@ TEMPLATES.env.globals.update(
     product_name=PRODUCT_NAME,
     value_proposition=VALUE_PROPOSITION,
     database_is_sqlite=DATABASE_IS_SQLITE,
+    titular_legal=LEGAL_ENTITY,
+    email_soporte=SUPPORT_EMAIL,
 )
 
 
@@ -1837,6 +1845,35 @@ def marcar_catalogo_revisado(db: Session = Depends(get_db)):
         cfg.onboarding_catalogo_revisado = True
         db.commit()
     return _redirect("/partidas")
+
+
+# ---------------------------------------------------------------------------
+# Páginas públicas: landing y legales (E1-018/019/020/056)
+# ---------------------------------------------------------------------------
+# No tocan datos de tenant ni sesión: solo renderizan contenido estático con
+# la identidad del producto. Por eso no dependen de get_db y están declaradas
+# como fronteras públicas en la auditoría de protección de rutas.
+
+@app.get("/conocer", response_class=HTMLResponse, include_in_schema=False)
+def landing_publica(request: Request):
+    """Landing comercial: problema, resultado, público y llamada a demo."""
+    return TEMPLATES.TemplateResponse(request, "landing.html", {})
+
+
+_PAGINAS_LEGALES = {
+    "terminos": "legal/terminos.html",
+    "privacidad": "legal/privacidad.html",
+    "soporte": "legal/soporte.html",
+    "licencias": "legal/licencias.html",
+}
+
+
+@app.get("/legal/{pagina}", response_class=HTMLResponse, include_in_schema=False)
+def pagina_legal(pagina: str, request: Request):
+    plantilla = _PAGINAS_LEGALES.get(pagina)
+    if plantilla is None:
+        return Response("Página no encontrada.", status_code=404)
+    return TEMPLATES.TemplateResponse(request, plantilla, {})
 
 
 # ---------------------------------------------------------------------------
@@ -4978,6 +5015,89 @@ async def restaurar_backup(request: Request):
                 shutil.rmtree(extraido, ignore_errors=True)
         except OSError:
             pass
+
+
+# ---------------------------------------------------------------------------
+# Importación de una instalación SQLite local hacia la web (E1W-012)
+# ---------------------------------------------------------------------------
+# Dos pasos: «analizar» muestra un resumen honesto (qué entra, qué se omite y
+# por qué) sin escribir nada; «confirmar» exige volver a subir el MISMO
+# archivo (SHA-256 verificado) más una casilla de confirmación explícita.
+# Nunca se migran datos privados sin acción y confirmación del propietario.
+
+
+async def _leer_instalacion_subida(request: Request):
+    """Archivo subido del formulario, validado en tamaño; None si falta."""
+    form = await request.form()
+    archivo = form.get("archivo")
+    if not isinstance(archivo, UploadFileStarlette) or not archivo.filename:
+        return None, form
+    contenido = await archivo.read()
+    if len(contenido) > LIMITE_INSTALACION_BYTES:
+        raise ErrorInstalacion("El archivo supera el límite de 50 MB.")
+    return contenido, form
+
+
+@app.get("/configuracion/importar-instalacion", response_class=HTMLResponse)
+def importar_instalacion_form(request: Request, db: Session = Depends(get_db)):
+    """Pantalla del asistente; disponible también en SQLite para probar en local."""
+    return TEMPLATES.TemplateResponse(
+        request,
+        "importar_instalacion.html",
+        {"resumen": None, "resultado": None, "rol": db.info.get("rol_membresia")},
+    )
+
+
+@app.post("/configuracion/importar-instalacion/analizar", response_class=HTMLResponse)
+async def analizar_instalacion_subida(request: Request, db: Session = Depends(get_db)):
+    try:
+        contenido, _form = await _leer_instalacion_subida(request)
+        if contenido is None:
+            return _redirect(
+                "/configuracion/importar-instalacion",
+                error="Selecciona la copia de seguridad (.zip) o la base (.db) de tu instalación.",
+            )
+        resumen = analizar_instalacion(db, contenido)
+    except (ErrorInstalacion, PermisoOrganizacionError) as exc:
+        return _redirect("/configuracion/importar-instalacion", error=str(exc))
+    return TEMPLATES.TemplateResponse(
+        request,
+        "importar_instalacion.html",
+        {"resumen": resumen, "resultado": None, "rol": db.info.get("rol_membresia")},
+    )
+
+
+@app.post("/configuracion/importar-instalacion/confirmar", response_class=HTMLResponse)
+async def confirmar_instalacion_subida(request: Request, db: Session = Depends(get_db)):
+    try:
+        contenido, form = await _leer_instalacion_subida(request)
+        if contenido is None:
+            return _redirect(
+                "/configuracion/importar-instalacion",
+                error="Vuelve a seleccionar el archivo para confirmar la importación.",
+            )
+        if str(form.get("confirmar", "")).strip() != "si":
+            return _redirect(
+                "/configuracion/importar-instalacion",
+                error="Marca la casilla de confirmación para importar tus datos.",
+            )
+        sha256 = str(form.get("sha256", "")).strip()
+        if not sha256:
+            return _redirect(
+                "/configuracion/importar-instalacion",
+                error="Falta el análisis previo: analiza el archivo antes de confirmar.",
+            )
+        resultado = importar_instalacion(db, contenido, sha256_esperado=sha256)
+        db.commit()
+    except (ErrorInstalacion, PermisoOrganizacionError) as exc:
+        db.rollback()
+        return _redirect("/configuracion/importar-instalacion", error=str(exc))
+    _sincronizar_recursos(db)
+    return TEMPLATES.TemplateResponse(
+        request,
+        "importar_instalacion.html",
+        {"resumen": None, "resultado": resultado, "rol": db.info.get("rol_membresia")},
+    )
 
 
 # ---------------------------------------------------------------------------

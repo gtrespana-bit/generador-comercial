@@ -1,0 +1,57 @@
+{% extends "legal/_base_legal.html" %}
+{% block titulo %}Condiciones de soporte{% endblock %}
+{% block contenido %}
+<h1>Condiciones de soporte</h1>
+<p class="meta">Versión 1.0 · Vigente desde el 15 de agosto de 2026</p>
+
+<h2>1. Canal</h2>
+<p>El canal de soporte es el correo
+<a href="mailto:{{ email_soporte }}">{{ email_soporte }}</a>. Durante la etapa
+de acceso anticipado es también el canal para sugerencias y para acordar
+sesiones de configuración asistida.</p>
+
+<h2>2. Qué incluye el soporte</h2>
+<ul>
+  <li>Ayuda para configurar tu empresa, catálogo e importación de datos.</li>
+  <li>Resolución de dudas de uso de cualquier función.</li>
+  <li>Investigación y corrección de errores del producto.</li>
+  <li>Recuperación ante problemas de acceso a tu cuenta u organización.</li>
+</ul>
+
+<h2>3. Qué no incluye</h2>
+<ul>
+  <li>Asesoramiento fiscal, legal o de precios de tu negocio.</li>
+  <li>Carga manual de tu catálogo completo (existe importación desde Excel y
+      desde la instalación local; podemos guiarte para usarla).</li>
+  <li>Desarrollo de funciones a medida, salvo acuerdo escrito aparte.</li>
+  <li>Soporte de hardware, del sistema operativo o de tu red.</li>
+</ul>
+
+<h2>4. Horario y tiempos orientativos</h2>
+<ul>
+  <li>Horario de atención: días laborables, 9:00–18:00 (hora de Venezuela, UTC−4).</li>
+  <li>Primera respuesta: normalmente en el mismo día laborable; máximo 2 días laborables.</li>
+  <li>Errores que impiden trabajar (no puedes acceder o no puedes generar
+      documentos): prioridad máxima; empezamos a investigar en cuanto se recibe
+      el reporte dentro del horario de atención.</li>
+</ul>
+<p>Durante la etapa de acceso anticipado estos tiempos son compromisos de
+esfuerzo, no garantías contractuales con penalización.</p>
+
+<h2>5. Cómo reportar un error</h2>
+<p>Para resolverlo rápido, incluye en tu correo:</p>
+<ol>
+  <li>Qué intentabas hacer y qué esperabas que ocurriera.</li>
+  <li>Qué ocurrió en su lugar (mensaje de error exacto, si lo hay).</li>
+  <li>Pasos para reproducirlo, si los conoces.</li>
+  <li>Captura de pantalla o PDF afectado, <strong>sin datos personales de tus
+      clientes</strong> si puedes evitarlo.</li>
+  <li>Fecha y hora aproximada, y si usas la web o la aplicación de escritorio.</li>
+</ol>
+
+<h2>6. Mantenimientos y avisos</h2>
+<p>Los mantenimientos programados que impliquen indisponibilidad se anuncian
+con antelación por email o dentro de la aplicación. Los incidentes relevantes
+se comunican con su resolución y, cuando proceda, con las medidas para que no
+se repitan.</p>
+{% endblock %}

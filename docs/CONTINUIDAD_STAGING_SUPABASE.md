@@ -7,11 +7,14 @@ depender del historial del chat. Debe leerse junto con
 `PLAN_DE_COMERCIALIZACION_Y_EVOLUCION_SAAS.md`, especialmente las secciones 1.3
 y 11.
 
-> **Empieza por `docs/PUNTO_DE_CONTINUACION.md`** (corte del 15/08/2026). Este
-> archivo describe el estado *de fondo* de staging; aquel dice **en qué paso
-> exacto se quedó el trabajo** y qué toca hacer a continuación. Resumen: el
-> PR #18 (rate limiting distribuido) quedó abierto con CI en verde, pendiente de
-> que se creen las variables de Upstash en Vercel y se fusione.
+> **Empieza por `docs/PUNTO_DE_CONTINUACION.md`** (corte del 15/08/2026,
+> cierre de sesión). Este archivo describe el estado *de fondo* de staging;
+> aquel dice **en qué paso exacto se quedó el trabajo** y qué toca hacer a
+> continuación. Resumen: PR #18 (rate limiting), PR #19 (emails) y PR #20
+> (E1-040 recorrido crítico, E1W-012 importación SQLite→web y paquete
+> legal/comercial con landing `/conocer` y páginas `/legal/*`) fusionados;
+> el usuario probó las páginas nuevas y aceptó la v1. Quedan la prueba E2E
+> de invitaciones y pendientes operativos menores a su cargo.
 
 ## 1. Estado confirmado del repositorio
 
@@ -112,6 +115,8 @@ Rate limiting distribuido (verificado el 15/08/2026): las tres variables de
 Upstash están en Vercel (Production), el PR #18 está fusionado y `/readyz`
 responde `"rate_limit": "distribuido:upstash"` con `"ok": true`.
 Resend (15/08/2026): dominio cotizat.online verificado (SPF/DKIM/MX en GoDaddy).
+Emails (verificado el 15/08/2026, noche): PR #19 fusionado (merge f686e80) y
+`/readyz` de producción responde `"email": "configurado"`.
 /healthz: 200 OK
 /readyz: 200 OK (recovery_redirect_url_esperada: https://cotizat.online/restablecer-clave)
 ```
@@ -125,14 +130,18 @@ Pendientes explícitos:
    (Production) y PR #18 fusionado; `/readyz` responde
    `checks.rate_limit = "distribuido:upstash"` con `"ok": true`.
 4. Emails de invitación (ver `docs/EMAILS_INVITACION.md` y
-   `docs/DOMINIO_COTIZAT_ONLINE.md`): **operativo completo** (dominio
-   cotizat.online verificado en Resend, `RESEND_API_KEY` y
-   `COTIZAT_EMAIL_FROM` en Vercel Production); **falta fusionar el código**:
-   la rama `arena/01a00633-generador-comercial` (HEAD `6d99b7d`) contiene los
-   emails pero `main` sigue en `7940ce9`, por eso `/readyz` de producción aún
-   no muestra `"email"`. Al fusionar y desplegar debe aparecer
-   `"email": "configurado"`.
-5. Importación explícita de instalaciones SQLite e imágenes.
+   `docs/DOMINIO_COTIZAT_ONLINE.md`): **código y operativo completos y
+   desplegados** (PR #19 fusionado el 15/08/2026, merge `f686e80`; dominio
+   cotizat.online verificado en Resend; `RESEND_API_KEY` y
+   `COTIZAT_EMAIL_FROM` en Vercel Production; `/readyz` verificado con
+   `"email": "configurado"`). **Solo queda la prueba E2E** a cargo del
+   usuario: invitación real en `/equipo` → correo desde
+   `no-responder@cotizat.online` → aceptarla y comprobar que se consume.
+5. ~~Importación explícita de instalaciones SQLite~~ **Resuelto el 15/08/2026**
+   (E1W-012): asistente de dos pasos en `/configuracion/importar-instalacion`
+   con confirmación explícita y SHA-256 verificado. Las imágenes y archivos
+   locales no viajan (la base no los contiene): el asistente lo avisa y el
+   usuario los vuelve a subir desde la web cuando los necesite.
 
 Regla invariable:
 
