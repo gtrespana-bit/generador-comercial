@@ -142,9 +142,13 @@ enlace en pantalla, `checks.email` informativo en `/readyz` y 12 pruebas en
 
 **Queda la parte operativa (usuario):**
 
-1. Crear cuenta en [resend.com](https://resend.com), verificar un dominio y
-   crear una API key `re_...` (paso a paso en `docs/EMAILS_INVITACION.md`).
-2. Añadir en Vercel (Production) `RESEND_API_KEY` y `COTIZAT_EMAIL_FROM`.
+1. ~~Crear cuenta en Resend y verificar dominio~~ → **dominio comprado:
+   `cotizat.online` (GoDaddy) el 15/08/2026**. Guía completa con valores DNS
+   exactos en `docs/DOMINIO_COTIZAT_ONLINE.md`: Vercel (A `76.76.21.21` +
+   CNAME `www`) → Supabase (Site URL/Redirect URL) → Resend (SPF/DKIM/MX) →
+   variables (`COTIZAT_PUBLIC_URL`, `RESEND_API_KEY`, `COTIZAT_EMAIL_FROM`).
+2. Añadir en Vercel (Production) `RESEND_API_KEY` y `COTIZAT_EMAIL_FROM`
+   (`CotizaT <no-responder@cotizat.online>`).
 3. Verificar `/readyz` → `"email": "configurado"` y una invitación real.
 
 Hasta entonces el flujo funciona igual que antes (enlace en pantalla).

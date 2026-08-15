@@ -48,19 +48,25 @@ correos de Auth (confirmación de registro y recuperación de clave).
 
 ## Preparar Resend (una vez)
 
+El dominio propio ya está comprado: **`cotizat.online` (GoDaddy)**. La guía
+completa y ordenada (Vercel → Supabase → Resend → variables) está en
+`docs/DOMINIO_COTIZAT_ONLINE.md`. Resumen del lado de Resend:
+
 1. Crear cuenta en [resend.com](https://resend.com) (plan gratuito:
    100 correos/día, 3.000/mes; una invitación es un correo).
-2. **Sin dominio propio** (modo prueba): usar `onboarding@resend.dev` como
-   `COTIZAT_EMAIL_FROM` — solo llegarán correos a tu propio email. Para
-   invitar a otra persona real hace falta un dominio verificado:
-3. **Add Domain** y verificar el dominio (registro DNS) — los correos de un
-   dominio sin verificar rebotan salvo que uses `onboarding@resend.dev`.
-3. **API Keys → Create API Key** con permiso de envío (`sending access`).
+2. [resend.com/domains](https://resend.com/domains) → **Add Domain** →
+   `cotizat.online`.
+3. Copiar los registros DNS que muestra Resend (SPF, DKIM y MX) y añadirlos en
+   GoDaddy → DNS. Pulsar **Verify** en Resend cuando estén propagados.
+4. **API Keys → Create API Key** con permiso de envío (`sending access`).
    Copiar la clave `re_...`.
-4. En Vercel → Project → Settings → Environment Variables (Production, y
+5. En Vercel → Project → Settings → Environment Variables (Production, y
    Preview si se quiere probar en previews): añadir las dos variables.
-5. El despliegue siguiente las recoge. Verificar en `/readyz` que aparece
+6. El despliegue siguiente las recoge. Verificar en `/readyz` que aparece
    `"email": "configurado"` (informativo: no hace fallar el readiness).
+
+Sin dominio propio (solo prueba): `onboarding@resend.dev` como
+`COTIZAT_EMAIL_FROM` — solo llegan correos al email de la cuenta de Resend.
 
 ## Verificación
 
