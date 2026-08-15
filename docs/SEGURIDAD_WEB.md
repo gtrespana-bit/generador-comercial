@@ -126,6 +126,16 @@ prueba de regresión. Antes de publicar todavía se debe confirmar en un navegad
 del despliegue HTTPS real que no hay violaciones CSP ni regresiones visuales o de
 interacción.
 
+## Emails de invitación
+
+Las invitaciones de equipo se envían por Resend (API REST, `urllib`) cuando
+`RESEND_API_KEY` y `COTIZAT_EMAIL_FROM` están configuradas; si no, o si el
+proveedor falla, el enlace se muestra una sola vez en pantalla (ver
+`docs/EMAILS_INVITACION.md`). La clave `re_...` es EXCLUSIVA del backend y
+nunca viaja al navegador; el token de la invitación sigue guardándose solo
+como SHA-256. Las plantillas de correo se excluyen de la verificación CSP a
+propósito: los clientes de email exigen estilos en línea.
+
 ## Pruebas
 
 `tests/test_web_security.py` cubre:

@@ -1,0 +1,9 @@
+{{ product_name }} — Invitación a {{ organizacion_nombre }}
+
+{{ invitador }}{% if invitador_email %} ({{ invitador_email }}){% endif %} te invitó a unirte a la organización {{ organizacion_nombre }} con el rol {{ rol }}.
+
+El enlace es personal, de un solo uso y caduca el {{ caduca_el.strftime('%d/%m/%Y') }}. Entra con el mismo email que recibió esta invitación:
+
+{{ enlace }}
+
+Si no esperabas esta invitación, ignora este correo: caducará sola y no se usa ningún dato tuyo. Este mensaje se envía automáticamente desde {{ product_name }}; no respondas a esta dirección.

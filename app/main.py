@@ -127,6 +127,11 @@ from .services.invitations import (
     exigir_gestor,
     revocar_invitacion,
 )
+from .services.email import (
+    EmailNotConfigured,
+    EmailSendError,
+    enviar_invitacion_por_email,
+)
 from .services.importer import (
     ErrorImportacion,
     ETIQUETAS_CAMPOS,
@@ -1567,11 +1572,48 @@ async def crear_invitacion_web(request: Request, db: Session = Depends(get_db)):
     except (GestionEquipoError, AuthNotConfigured) as exc:
         db.rollback()
         return _redirect("/equipo", error=str(exc))
+
+    # La invitación ya está guardada: el correo es un canal de entrega, no la
+    # fuente de verdad. Si no hay correo configurado o el proveedor falla, se
+    # degrada al comportamiento de siempre: mostrar el enlace una vez en
+    # pantalla para copiarlo.
+    email_enviado = False
+    try:
+        organizacion = db.get(Organizacion, db.info["organizacion_id"])
+        invitador = db.get(Usuario, db.info["usuario_id"])
+        enviar_invitacion_por_email(
+            email=invitacion.email,
+            enlace=invitation_link,
+            organizacion_nombre=organizacion.nombre if organizacion else "",
+            invitador_nombre=invitador.nombre if invitador else "",
+            invitador_email=invitador.email if invitador else "",
+            rol=invitacion.rol,
+            caduca_el=invitacion.expires_at,
+        )
+        email_enviado = True
+    except (EmailNotConfigured, EmailSendError) as exc:
+        log.info(
+            "Invitación para %s sin correo (%s); se muestra el enlace en pantalla.",
+            invitacion.email,
+            type(exc).__name__,
+        )
+    if email_enviado:
+        return _render_equipo(
+            request,
+            db,
+            msg=(
+                f"Invitación enviada a {invitacion.email}. "
+                "Revisará su bandeja de entrada para aceptarla."
+            ),
+        )
     return _render_equipo(
         request,
         db,
         invitation_link=invitation_link,
-        msg=f"Invitación creada para {invitacion.email}. Compártela por un canal seguro.",
+        msg=(
+            f"Invitación creada para {invitacion.email}. No se pudo enviar el "
+            "correo: copia el enlace y compártelo por un canal seguro."
+        ),
     )
 
 
