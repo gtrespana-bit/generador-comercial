@@ -259,8 +259,9 @@ No repitas trabajo ya hecho y no me pidas secretos.
 
 **Dónde quedó todo (15/08/2026).** El bloque de rate limiting distribuido con
 Upstash está terminado en el **PR #18**, que sigue **abierto y sin fusionar**,
-en la rama `arena/01a00341-generador-comercial` con tres commits: `c7d8be2`
-(código), `becf758` y `118502b` (documentación). Las pruebas van en verde
+en la rama `arena/01a00341-generador-comercial`. Todo el código del bloque está
+en un único commit, **`c7d8be2`**; los commits posteriores de esa rama son solo
+documentación. Las pruebas van en verde
 (**250 passed, 5 skipped**), pero **el check de Vercel está en rojo** con
 «Deployment was blocked», incluso en commits que solo tocan markdown. Eso no es
 un fallo del código: Vercel ni siquiera arranca la construcción. Está explicado
@@ -271,11 +272,10 @@ y dime el resultado de cada punto antes de tocar nada:
 
 1. `gh pr view 18 --json state,mergeable,mergeStateStatus` — ¿sigue abierto?
 2. `gh pr checks 18` — ¿pasan las pruebas? ¿sigue Vercel en rojo?
-3. `gh api repos/gtrespana-bit/generador-comercial/commits/118502b/status --jq
-   '.statuses[] | "\(.context): \(.state) — \(.description)"'` — ¿qué motivo
-   da Vercel?
-4. `git log --oneline -3` y `git status --short` — ¿está el árbol limpio y
-   coinciden los tres commits?
+3. `gh api repos/gtrespana-bit/generador-comercial/commits/$(git rev-parse HEAD)/status --jq '.statuses[] | "\(.context): \(.state) — \(.description)"'`
+   — ¿qué motivo da Vercel?
+4. `git log --oneline -5` y `git status --short` — ¿árbol limpio y presente
+   `c7d8be2`?
 5. Recrea el entorno y corre la suite: `python3 -m venv .venv`,
    `.venv/bin/pip install -r requirements-dev.txt`, `.venv/bin/pytest -q`.
    Deben salir **250 passed, 5 skipped**. (El `.venv` no se conserva entre
