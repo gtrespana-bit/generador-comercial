@@ -132,26 +132,58 @@ Guía operativa en `docs/MATRIZ_PASOS_MANUALES.md` (45-60 min).
 
 ---
 
-## 4. En curso: envío real de emails de invitación (código terminado)
+## 4. En curso: emails de invitación — todo operativo hecho, falta fusionar el código
 
-**Código completo y en verde** (15/08/2026): `app/services/email.py` (cliente
-REST de Resend con `urllib`, sin dependencias nuevas), plantillas
-`app/templates/emails/`, cableado en `crear_invitacion_web` con degradación a
-enlace en pantalla, `checks.email` informativo en `/readyz` y 12 pruebas en
-`tests/test_email_invitaciones.py`. Suite: **262 passed, 5 skipped**.
+### Estado exacto (15/08/2026, tarde)
 
-**Queda la parte operativa (usuario):**
+**Parte operativa: COMPLETA por el usuario** ✅
 
-1. ~~Crear cuenta en Resend y verificar dominio~~ → **dominio comprado:
-   `cotizat.online` (GoDaddy) el 15/08/2026**. Guía completa con valores DNS
-   exactos en `docs/DOMINIO_COTIZAT_ONLINE.md`: Vercel (A `76.76.21.21` +
-   CNAME `www`) → Supabase (Site URL/Redirect URL) → Resend (SPF/DKIM/MX) →
-   variables (`COTIZAT_PUBLIC_URL`, `RESEND_API_KEY`, `COTIZAT_EMAIL_FROM`).
-2. Añadir en Vercel (Production) `RESEND_API_KEY` y `COTIZAT_EMAIL_FROM`
-   (`CotizaT <no-responder@cotizat.online>`).
-3. Verificar `/readyz` → `"email": "configurado"` y una invitación real.
+- **Dominio propio comprado**: `cotizat.online` (GoDaddy).
+- **Vercel**: dominios `cotizat.online` y `www.cotizat.online` añadidos; la app
+  ya responde en `https://cotizat.online` (`/healthz` y `/readyz` 200 OK).
+  DNS en GoDaddy: A `@` → `76.76.21.21`, CNAME `www` → `cname.vercel-dns.com`
+  (comprobar que no quede un A duplicado de parking si la web «parpadea»).
+- **Supabase**: Site URL `https://cotizat.online` y Redirect URL
+  `https://cotizat.online/restablecer-clave` configuradas.
+- **`COTIZAT_PUBLIC_URL=https://cotizat.online`** en Vercel (Production) y
+  **redeploy hecho** → `/readyz` ya reporta
+  `recovery_redirect_url_esperada: https://cotizat.online/restablecer-clave`.
+- **Resend**: cuenta creada, dominio `cotizat.online` añadido y **verificado**
+  (SPF/DKIM/MX publicados en GoDaddy; DKIM confirmado público:
+  `resend._domainkey.cotizat.online` TXT visible).
+- **Vercel (Production)**: `RESEND_API_KEY` y
+  `COTIZAT_EMAIL_FROM=CotizaT <no-responder@cotizat.online>` añadidas.
 
-Hasta entonces el flujo funciona igual que antes (enlace en pantalla).
+**Parte de código: lista pero SIN FUSIONAR — este es el único paso pendiente** ⚠️
+
+- El código de emails vive en la rama **`arena/01a00633-generador-comercial`**,
+  HEAD **`6d99b7d`**, ya subida a GitHub (3 commits sobre `main`):
+  1. `282f9c7` — emails de invitación por Resend con degradación a enlace en
+     pantalla (`app/services/email.py`, plantillas, cableado en
+     `crear_invitacion_web`, `checks.email` en `/readyz`, 12 pruebas en
+     `tests/test_email_invitaciones.py`; suite **262 passed, 5 skipped**);
+  2. `5679ceb` — docs: el dominio de Vercel no puede usarse en Resend;
+  3. `6d99b7d` — docs: guía del dominio (`docs/DOMINIO_COTIZAT_ONLINE.md`).
+- **`main` sigue en `7940ce9`** (merge del PR #18). Producción despliega desde
+  `main`, por eso `/readyz` de `cotizat.online` **NO muestra `"email"` todavía**
+  aunque las variables ya estén en Vercel. El `"email": "configurado"` que vio
+  el usuario era el preview de Vercel de la rama, no producción.
+
+### Lo inmediato (único paso que falta)
+
+1. **Fusionar la rama `arena/01a00633-generador-comercial` a `main`** (PR o
+   merge manual como el #18). El despliegue de producción recoge las variables
+   ya existentes y el `checks.email`.
+2. Verificar `https://cotizat.online/readyz` → debe aparecer
+   `"email": "configurado"` (y seguir `"rate_limit": "distribuido:upstash"`).
+3. **Prueba E2E final**: crear una invitación real en `/equipo` con un email
+   al que el usuario tenga acceso; confirmar que llega el correo desde
+   `no-responder@cotizat.online` con el enlace de invitación; aceptarla con
+   una cuenta del mismo email verificado y comprobar que se consume.
+4. Opcional: si el dominio «parpadea», revisar en GoDaddy que haya un único
+   registro A `@` → `76.76.21.21` (sin el de parking).
+
+Hasta que se fusione, el flujo funciona igual que antes (enlace en pantalla).
 
 Bloques posteriores, en orden recomendado:
 
@@ -213,34 +245,54 @@ Continúa el proyecto CotizaT. Antes de proponer nada, lee
 `docs/PUNTO_DE_CONTINUACION.md` y luego `docs/CONTINUIDAD_STAGING_SUPABASE.md`.
 No repitas trabajo ya hecho y no me pidas secretos.
 
-**Dónde quedó todo (15/08/2026).** El bloque de rate limiting distribuido está
-**cerrado y verificado**: base Upstash creada, las tres variables
-(`UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`,
-`COTIZAT_REQUIRE_DISTRIBUTED_RATELIMIT=true`) añadidas por el usuario en Vercel,
-**PR #18 fusionado** en `main` (merge `7940ce9`) y `/readyz` responde
-`"rate_limit": "distribuido:upstash"` con `"ok": true` en
-`https://cotizat-generador.vercel.app/readyz`. Suite en verde
-(**250 passed, 5 skipped**). Detalles y diagnóstico en la sección 2.
+**Dónde quedó todo (15/08/2026).**
 
-**Empieza por verificar el estado real, no te fíes de este resumen.** Hazlo así
-y dime el resultado de cada punto antes de tocar nada:
+- **Rate limiting distribuido: cerrado y verificado.** Base Upstash creada,
+  tres variables en Vercel, PR #18 fusionado (merge `7940ce9` en `main`) y
+  `/readyz` responde `"rate_limit": "distribuido:upstash"` con `"ok": true`.
+- **Dominio propio operativo:** `cotizat.online` (GoDaddy) apuntando a Vercel;
+  la app responde en `https://cotizat.online` y `www`. Supabase con Site URL y
+  Redirect URL del dominio nuevo. `COTIZAT_PUBLIC_URL=https://cotizat.online`
+  en Vercel y redeploy hecho (confirmado en `/readyz`:
+  `recovery_redirect_url_esperada: https://cotizat.online/restablecer-clave`).
+- **Emails de invitación — TODO lo operativo está hecho y verificado por el
+  usuario:** cuenta Resend creada, dominio `cotizat.online` verificado en
+  Resend (SPF/DKIM/MX en GoDaddy), y en Vercel Production ya están
+  `RESEND_API_KEY` y `COTIZAT_EMAIL_FROM=CotizaT <no-responder@cotizat.online>`.
+- **PERO el código de emails NO está en `main` todavía.** Vive en la rama
+  `arena/01a00633-generador-comercial` (HEAD `6d99b7d`, 3 commits sobre
+  `main`: `282f9c7` código, `5679ceb` y `6d99b7d` docs), ya subida a GitHub.
+  `main` sigue en `7940ce9`, así que el `/readyz` de producción NO muestra
+  `"email"` aunque las variables ya existen. El `"email": "configurado"` que
+  vio el usuario era el preview de Vercel de la rama.
+- **Lo único que falta en el bloque de emails:** fusionar la rama
+  `arena/01a00633-generador-comercial` a `main` (PR o merge manual, como el
+  #18); el despliegue de producción recoge las variables y `/readyz` debe
+  mostrar `"email": "configurado"`. Después, prueba E2E final: crear una
+  invitación real en `/equipo` con un email del usuario y confirmar que llega
+  desde `no-responder@cotizat.online`.
 
-1. `git log --oneline -5` y `git status --short` — ¿árbol limpio y con el merge
-   `7940ce9` presente?
-2. Recrea el entorno y corre la suite: `python3 -m venv .venv`,
+**Empieza por verificar el estado real, no te fíes de este resumen:**
+
+1. `git log --oneline -5` y `git status --short` — ¿árbol en la rama
+   `arena/01a00633-generador-comercial` con `6d99b7d` presente?
+2. `git ls-remote origin arena/01a00633-generador-comercial` — ¿la rama está
+   en GitHub con el mismo commit?
+3. Recrea el entorno y corre la suite: `python3 -m venv .venv`,
    `.venv/bin/pip install -r requirements-dev.txt`, `.venv/bin/pytest -q`.
-   Deben salir **250 passed, 5 skipped**. (El `.venv` no se conserva entre
-   sesiones; que falte es normal.)
-3. Abre `https://cotizat-generador.vercel.app/readyz` — debe seguir en 200 con
-   `rate_limit: distribuido:upstash`.
+   Deben salir **262 passed, 5 skipped**.
+4. Abre `https://cotizat.online/readyz` — debe estar en 200 con
+   `rate_limit: distribuido:upstash`; fíjate si ya aparece `"email"` (si el
+   merge ya se hizo) o no (si sigue pendiente).
+5. Pregunta al usuario si ya fusionó la rama a `main` antes de hacer nada con
+   el código; si no, es el siguiente paso (él decide PR o merge manual).
 
-**En curso:** envío real de emails de invitación. **Código terminado y en
-verde** (262 passed); falta solo la parte operativa del usuario: crear la
-cuenta de Resend, verificar dominio, añadir `RESEND_API_KEY` y
-`COTIZAT_EMAIL_FROM` en Vercel y comprobar `/readyz` → `"email": "configurado"`
-(detalles en `docs/EMAILS_INVITACION.md`).
+**Aparcado por decisión del usuario:** los puntos 13-manual y 14 de la matriz
+de aceptación, hasta que el desarrollo esté cerrado. No pedirlos todavía.
 
-**Aparcado por decisión mía:** los puntos 13-manual y 14 de la matriz de
-aceptación, hasta que el desarrollo esté cerrado. No me los pidas todavía.
+**Siguientes bloques cuando cierre esto:** 1) E1-040 pruebas de recorridos
+críticos; 2) E1W-012 importación de instalaciones SQLite hacia la web;
+3) paquete legal/comercial (E1-018/019/020/050/056). Recordar: plan Hobby de
+Vercel prohíbe uso comercial → pasar a Pro antes de cobrar.
 
 ---
