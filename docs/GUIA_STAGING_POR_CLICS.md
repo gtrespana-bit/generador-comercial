@@ -38,7 +38,7 @@ instalar nada.
    Tiene que devolver **exactamente**:
 
    ```text
-   c93e7a4d20f1
+   d7f2a9c41e63
    ```
 
 Eso es todo el “Alembic upgrade head”; no necesitas instalar Alembic.
@@ -225,7 +225,7 @@ sesión).
 Pásame, sin ninguna contraseña:
 
 1. El resultado de `SELECT version_num FROM alembic_version;`
-   (debe ser `c93e7a4d20f1`).
+   (debe ser `d7f2a9c41e63`).
 2. Los resultados de los SELECT del rol runtime
    (`false, false, true` y `true`).
 3. El código HTTP de `/healthz` y `/readyz` (200/200 idealmente).

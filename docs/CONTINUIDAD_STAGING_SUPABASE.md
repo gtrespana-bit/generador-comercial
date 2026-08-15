@@ -46,7 +46,7 @@ y `git diff --check`. `.env` y `presupuestos.db` no forman parte del repositorio
       "storage": "supabase:cotizat-private",
       "public_url": "configurado",
       "database": "postgresql",
-      "alembic": "head:c93e7a4d20f1",
+      "alembic": "head:d7f2a9c41e63",
       "rol_runtime": "superuser=False, bypassrls=False, inherit=True, cotizat_app=True"
     },
     "errors": []

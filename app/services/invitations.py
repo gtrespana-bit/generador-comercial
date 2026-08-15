@@ -139,6 +139,13 @@ def aceptar_invitacion(
     nivel de **columna** (concesión deliberada de mínimos privilegios), así
     que producía ``permission denied for table`` (500). El ``rowcount`` del
     UPDATE condicional detecta cualquier consumo en carrera.
+
+    RLS añade una segunda trampa: PostgreSQL evalúa el ``USING`` de las
+    políticas SELECT como ``WITH CHECK`` sobre la **fila nueva** de un
+    UPDATE. La revisión ``d7f2a9c41e63`` ajusta
+    ``cotizat_invitation_select_recipient`` para que la fila aceptada siga
+    siendo visible para quien la aceptó; sin ese ajuste el UPDATE moría con
+    ``new row violates row-level security policy`` (500 al aceptar).
     """
     token = str(token or "").strip()
     if not re.fullmatch(r"[A-Za-z0-9_-]{32,200}", token):

@@ -1723,6 +1723,13 @@ def aceptar_invitacion_web(
             status_code=400,
             autenticado=True,
         )
+    except Exception:
+        # Un fallo de base/RLS no debe morir como un 500 mudo: la traza queda
+        # en el log del despliegue para diagnosticarlo (regresión del 500 al
+        # aceptar invitaciones por la política SELECT sobre la fila nueva).
+        db.rollback()
+        log.error("Error aceptando la invitación:\n%s", traceback.format_exc())
+        raise
     response = _redirect(
         "/organizaciones", msg="Invitación aceptada. Ya puedes entrar a la organización."
     )

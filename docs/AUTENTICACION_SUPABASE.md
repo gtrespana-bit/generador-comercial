@@ -154,6 +154,8 @@ Los enlaces se construyen desde `COTIZAT_PUBLIC_URL`, nunca desde `Host`. Aún n
 
 `c93e7a4d20f1` versiona `cotizat_app` sin login, contraseña ni `BYPASSRLS`, privilegios mínimos, funciones con `search_path` fijo y políticas por tenant/rol. La identidad se instala en la transacción solo después de validar Supabase; la organización se instala solo después de comprobar la membresía. El alta de perfil, la primera organización y la aceptación de invitaciones tienen políticas específicas para no depender de un contexto tenant que todavía no existe.
 
+`d7f2a9c41e63` corrige la aceptación de invitaciones: PostgreSQL evalúa el `USING` de las políticas SELECT como `WITH CHECK` sobre la fila nueva de un UPDATE, y `cotizat_invitation_select_recipient` exigía `accepted_at IS NULL` —justo lo que el UPDATE de aceptación elimina—, lo que producía `InsufficientPrivilege` (500) al pulsar «Aceptar invitación». La política ahora muestra al destinatario su invitación también después de aceptarla (solo si la aceptó él); el consumo del token de un solo uso no cambia.
+
 El proyecto real confirmó previamente `relrowsecurity = true` y que `anon` obtuvo cero partidas. Sin embargo, su head continúa en `9bca2ad1f6e4`: allí la conexión usada por el backend/migraciones todavía entra como `postgres` y omite RLS. La nueva migración y el login limitado no se han probado contra ese PostgreSQL. Consulta el procedimiento y sus límites en `docs/BASE_DE_DATOS_WEB.md`.
 
 ## Estado de validación real
@@ -168,7 +170,7 @@ Esta integración no autoriza por sí sola un despliegue público. Siguen pendie
 - configurar `COTIZAT_PUBLIC_URL` y la Redirect URL real en Supabase;
 - sustituir/complementar el límite local por IP ya implementado con contadores distribuidos antes de escalar a varias instancias (el rate limit de Supabase tampoco sustituye el control de aplicación);
 - aplicar/probar la migración de invitaciones y validar el recorrido real con dos emails, incluido su canal de entrega;
-- aplicar y probar `c93e7a4d20f1` con un login runtime realmente no privilegiado y dos organizaciones;
+- aplicar y probar `d7f2a9c41e63` con un login runtime realmente no privilegiado y dos organizaciones;
 - validar en el navegador HTTPS real la CSP sin `unsafe-inline` y la auditoría XSS ya automatizada;
 - aplicar/probar la migración y el bucket privado de Storage real.
 
