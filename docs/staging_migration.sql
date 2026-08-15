@@ -1549,12 +1549,20 @@ CREATE POLICY cotizat_invitation_select_recipient
 
 UPDATE alembic_version SET version_num='d7f2a9c41e63' WHERE alembic_version.version_num = 'c93e7a4d20f1';
 
+-- Running upgrade d7f2a9c41e63 -> e1a4b7c9d2f0
+
+-- alembic_version solo contiene metadatos de migración: no necesita RLS.
 ALTER TABLE public.alembic_version DISABLE ROW LEVEL SECURITY;
 GRANT SELECT ON TABLE public.alembic_version TO cotizat_app;
 
-INSERT INTO alembic_version (version_num)
-SELECT 'd7f2a9c41e63'
-WHERE NOT EXISTS (SELECT 1 FROM alembic_version);
+UPDATE public.alembic_version
+SET version_num = 'e1a4b7c9d2f0'
+WHERE version_num = 'd7f2a9c41e63';
+
+-- Permite que este bundle también repare una tabla de versión vacía.
+INSERT INTO public.alembic_version (version_num)
+SELECT 'e1a4b7c9d2f0'
+WHERE NOT EXISTS (SELECT 1 FROM public.alembic_version);
 
 COMMIT;
 

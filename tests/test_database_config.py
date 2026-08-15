@@ -5,6 +5,7 @@ import subprocess
 import sys
 
 from app.db_config import resolver_database_settings
+from app.database import EXPECTED_ALEMBIC_HEAD
 
 
 def test_database_url_postgresql_tiene_prioridad_y_usa_psycopg(monkeypatch, tmp_path):
@@ -55,8 +56,8 @@ assert 'creada_por_usuario_id' in {
     column['name'] for column in inspector.get_columns('organizaciones')
 }
 with engine.connect() as connection:
-    assert connection.execute(text('SELECT version_num FROM alembic_version')).scalar_one() == 'd7f2a9c41e63'
-"""
+    assert connection.execute(text('SELECT version_num FROM alembic_version')).scalar_one() == __EXPECTED_ALEMBIC_HEAD__
+""".replace("__EXPECTED_ALEMBIC_HEAD__", repr(EXPECTED_ALEMBIC_HEAD))
     comprobacion = subprocess.run(
         [sys.executable, "-c", script],
         cwd=Path(__file__).resolve().parents[1],

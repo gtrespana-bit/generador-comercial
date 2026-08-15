@@ -8,7 +8,8 @@ from app.database import Base, _aplicar_contexto_postgresql
 from app.models import TenantMixin
 from migrations.versions import c93e7a4d20f1_add_application_role_and_tenant_rls as migration
 from migrations.versions import (
-    d7f2a9c41e63_fix_invitation_select_policy_on_acceptance as head_migration,
+    d7f2a9c41e63_fix_invitation_select_policy_on_acceptance as invitation_migration,
+    e1a4b7c9d2f0_harden_alembic_version_visibility as head_migration,
 )
 
 
@@ -104,7 +105,8 @@ def test_arranque_rechaza_rol_que_omite_rls(monkeypatch):
 
 def test_head_exigido_por_runtime_coincide_con_alembic():
     assert database_module.EXPECTED_ALEMBIC_HEAD == head_migration.revision
-    assert head_migration.down_revision == migration.revision
+    assert head_migration.down_revision == invitation_migration.revision
+    assert invitation_migration.down_revision == migration.revision
 
 
 def test_migracion_rls_cubre_cada_modelo_tenant():
@@ -163,18 +165,18 @@ def test_migracion_rls_no_hace_nada_fuera_de_postgresql(monkeypatch):
     assert statements == []
 
 
-def test_migracion_head_no_hace_nada_fuera_de_postgresql(monkeypatch):
+def test_migracion_invitaciones_no_hace_nada_fuera_de_postgresql(monkeypatch):
     """La corrección de la política SELECT es solo para PostgreSQL."""
     statements = []
     sqlite_bind = SimpleNamespace(dialect=SimpleNamespace(name="sqlite"))
-    monkeypatch.setattr(head_migration.op, "get_bind", lambda: sqlite_bind)
-    monkeypatch.setattr(head_migration.op, "execute", lambda s: statements.append(s))
-    head_migration.upgrade()
-    head_migration.downgrade()
+    monkeypatch.setattr(invitation_migration.op, "get_bind", lambda: sqlite_bind)
+    monkeypatch.setattr(invitation_migration.op, "execute", lambda s: statements.append(s))
+    invitation_migration.upgrade()
+    invitation_migration.downgrade()
     assert statements == []
 
 
-def test_migracion_head_sigue_mostrando_la_fila_aceptada_a_quien_la_acepto(monkeypatch):
+def test_migracion_invitaciones_sigue_mostrando_la_fila_aceptada_a_quien_la_acepto(monkeypatch):
     """Regresión estática del 500 en POST /invitaciones/{token}/aceptar.
 
     PostgreSQL exige que la fila nueva de un UPDATE siga pasando el USING de
@@ -183,9 +185,9 @@ def test_migracion_head_sigue_mostrando_la_fila_aceptada_a_quien_la_acepto(monke
     usuario que la aceptó, y el downgrade restaura la versión estricta.
     """
     statements = []
-    monkeypatch.setattr(head_migration.op, "get_bind", lambda: _FakeBind())
-    monkeypatch.setattr(head_migration.op, "execute", lambda s: statements.append(str(s)))
-    head_migration.upgrade()
+    monkeypatch.setattr(invitation_migration.op, "get_bind", lambda: _FakeBind())
+    monkeypatch.setattr(invitation_migration.op, "execute", lambda s: statements.append(str(s)))
+    invitation_migration.upgrade()
     sql = "\n".join(statements)
 
     assert "DROP POLICY IF EXISTS cotizat_invitation_select_recipient" in sql
@@ -206,13 +208,45 @@ def test_migracion_head_sigue_mostrando_la_fila_aceptada_a_quien_la_acepto(monke
 
     downgrade_statements = []
     monkeypatch.setattr(
-        head_migration.op, "execute", lambda s: downgrade_statements.append(str(s))
+        invitation_migration.op, "execute", lambda s: downgrade_statements.append(str(s))
     )
-    head_migration.downgrade()
+    invitation_migration.downgrade()
     revertido = "\n".join(downgrade_statements)
     # El rollback restaura la visibilidad estricta previa (sin la rama OR).
     assert "aceptada_por_usuario_id = cotizat_security.current_user_id()" not in revertido
     assert "accepted_at IS NULL" in revertido
+
+
+def test_migracion_alembic_version_desactiva_rls_y_concede_lectura(monkeypatch):
+    """El runtime puede leer solo el metadato que necesita para readiness."""
+    statements = []
+    monkeypatch.setattr(head_migration.op, "get_bind", lambda: _FakeBind())
+    monkeypatch.setattr(head_migration.op, "execute", lambda s: statements.append(str(s)))
+
+    head_migration.upgrade()
+    sql = "\n".join(statements)
+    assert "ALTER TABLE public.alembic_version DISABLE ROW LEVEL SECURITY" in sql
+    assert "GRANT SELECT ON TABLE public.alembic_version TO cotizat_app" in sql
+    assert "INSERT" not in sql.upper()
+
+    downgrade_statements = []
+    monkeypatch.setattr(
+        head_migration.op, "execute", lambda s: downgrade_statements.append(str(s))
+    )
+    head_migration.downgrade()
+    revertido = "\n".join(downgrade_statements)
+    assert "REVOKE SELECT ON TABLE public.alembic_version FROM cotizat_app" in revertido
+    assert "ALTER TABLE public.alembic_version ENABLE ROW LEVEL SECURITY" in revertido
+
+
+def test_migracion_alembic_version_no_hace_nada_fuera_de_postgresql(monkeypatch):
+    statements = []
+    sqlite_bind = SimpleNamespace(dialect=SimpleNamespace(name="sqlite"))
+    monkeypatch.setattr(head_migration.op, "get_bind", lambda: sqlite_bind)
+    monkeypatch.setattr(head_migration.op, "execute", lambda s: statements.append(s))
+    head_migration.upgrade()
+    head_migration.downgrade()
+    assert statements == []
 
 
 # ---------------------------------------------------------------------------

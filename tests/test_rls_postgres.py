@@ -127,6 +127,33 @@ def _aplicar_contexto(conexion, organizacion_id: str = "") -> None:
     )
 
 
+def test_alembic_version_es_legible_por_runtime_y_no_tiene_rls(entorno_postgres):
+    """La guardia de arranque funciona con el login real y limitado."""
+    from app.database import EXPECTED_ALEMBIC_HEAD
+
+    motor = create_engine(entorno_postgres["runtime_url"])
+    with motor.connect() as conexion:
+        fila = conexion.execute(text("""
+            SELECT c.relrowsecurity, c.relforcerowsecurity,
+                   has_table_privilege(
+                     current_user, 'public.alembic_version', 'SELECT'
+                   ) AS puede_leer,
+                   (
+                     SELECT version_num
+                     FROM public.alembic_version
+                   ) AS version_num
+            FROM pg_catalog.pg_class AS c
+            JOIN pg_catalog.pg_namespace AS n ON n.oid = c.relnamespace
+            WHERE n.nspname = 'public' AND c.relname = 'alembic_version'
+        """)).one()
+
+    assert fila.relrowsecurity is False
+    assert fila.relforcerowsecurity is False
+    assert fila.puede_leer is True
+    assert fila.version_num == EXPECTED_ALEMBIC_HEAD
+    motor.dispose()
+
+
 def test_rls_sigue_rechazando_el_insert_con_returning(entorno_postgres):
     """Documenta la causa raíz: RLS no se relajó, se dejó de usar RETURNING.
 
