@@ -84,13 +84,12 @@ LEFT JOIN pg_catalog.pg_policies AS p
 WHERE n.nspname = 'public' AND c.relname = 'alembic_version'
 GROUP BY c.relrowsecurity, c.relforcerowsecurity;
 
---    La prueba definitiva: la misma consulta que ejecuta /readyz, pero como
---    el rol runtime (SET ROLE no necesita contraseña; el SQL Editor corre
---    como superusuario). Debe devolver f9f24d062470, no 0 filas.
-SET ROLE cotizat_runtime;
-SELECT version_num FROM public.alembic_version;
-RESET ROLE;
-
-SET ROLE cotizat_app;
-SELECT version_num FROM public.alembic_version;
-RESET ROLE;
+--    La prueba definitiva, sin SET ROLE (el SQL Editor de Supabase no es
+--    superusuario y no puede cambiar a un rol del que no es miembro).
+--    has_table_privilege considera la herencia: cotizat_runtime hereda de
+--    cotizat_app, así que con runtime_select=true y relrowsecurity=false la
+--    misma consulta de /readyz le devolverá la fila. Debe devolver true, true.
+SELECT has_table_privilege('cotizat_app', 'public.alembic_version', 'SELECT')
+         AS app_select,
+       has_table_privilege('cotizat_runtime', 'public.alembic_version', 'SELECT')
+         AS runtime_select;
