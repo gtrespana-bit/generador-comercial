@@ -239,60 +239,6 @@
   // -------------------------------------------------------------------------
 
   function init() {
-    // Crear tabla de estilos CSS para la barra sticky
-    if (!document.getElementById("sticky-total-styles")) {
-      var style = document.createElement("style");
-      style.id = "sticky-total-styles";
-      style.textContent = `
-        .sticky-total {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 1rem;
-          padding: 0.6rem 1rem;
-          background: var(--surface);
-          border: 1px solid var(--border-strong);
-          border-radius: var(--radius);
-          margin-bottom: 1rem;
-          box-shadow: var(--shadow);
-          font-size: 0.85rem;
-        }
-        .margen-dot {
-          width: 10px;
-          height: 10px;
-          border-radius: 50%;
-          transition: background 0.3s ease;
-        }
-        .descuento-bar {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-        }
-        .descuento-bar > div {
-          width: 50px;
-          height: 4px;
-          background: var(--border);
-          border-radius: 2px;
-          overflow: hidden;
-        }
-        .descuento-bar > div > div {
-          height: 100%;
-          border-radius: 2px;
-          transition: width 0.3s ease, background 0.3s ease;
-        }
-        .costo-badge {
-          font-size: 0.72rem;
-          color: var(--text-muted);
-        }
-        .precio-indicator {
-          font-size: 0.65rem;
-          margin-left: 6px;
-          opacity: 0.8;
-        }
-      `;
-      document.head.appendChild(style);
-    }
-
     renderStickyTotal();
   }
 

@@ -294,53 +294,6 @@
   }
 
   // -------------------------------------------------------------------------
-  // CSS para la línea guía (inyectar si no existe)
-  // -------------------------------------------------------------------------
-
-  function injectGuideLineStyles() {
-    if (document.getElementById("drag-drop-styles")) return;
-
-    var style = document.createElement("style");
-    style.id = "drag-drop-styles";
-    style.textContent = `
-      .drag-guide-line {
-        position: absolute;
-        left: 0;
-        right: 0;
-        height: 3px;
-        background: linear-gradient(90deg, transparent, #0d9488 20%, #0d9488 80%, transparent);
-        border-radius: 2px;
-        pointer-events: none;
-        z-index: 99;
-        box-shadow: 0 0 8px rgba(13, 148, 136, 0.6);
-        opacity: 0;
-        transition: opacity 0.15s ease;
-      }
-      .drag-guide-line.visible {
-        opacity: 1;
-      }
-      .partida-wrap.drag-over {
-        box-shadow: 0 0 0 2px var(--accent), 0 2px 8px rgba(13,148,136,0.15);
-        border-radius: var(--radius-sm);
-        background: var(--accent-soft);
-        transition: background 0.1s ease, box-shadow 0.1s ease;
-      }
-      .partida-wrap.dragging {
-        opacity: 0.5;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-      }
-      .capitulo.drag-over .capitulo-head {
-        box-shadow: 0 -3px 0 0 var(--accent) inset;
-        border-radius: var(--radius) var(--radius) 0 0;
-      }
-      .capitulo.dragging {
-        opacity: 0.5;
-      }
-    `;
-    document.head.appendChild(style);
-  }
-
-  // -------------------------------------------------------------------------
   // Inicialización
   // -------------------------------------------------------------------------
 
@@ -349,7 +302,6 @@
     var cont = editor.contCapitulos || document.getElementById("capitulos");
     if (cont && cont._dragDropInit) return;
     if (cont) cont._dragDropInit = true;
-    injectGuideLineStyles();
     initPartidaDragDrop();
     initCapituloDragDrop();
   }
