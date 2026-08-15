@@ -1558,6 +1558,7 @@ body.collapsed .sidebar-toggle-btn { transform: rotate(180deg); }
   font-weight: 700;
 }
 .sticky-total kbd { font-size: 0.72em; }
+.margen-dot { transition: background 0.3s ease; }
 
 
 /* ==========================================================================

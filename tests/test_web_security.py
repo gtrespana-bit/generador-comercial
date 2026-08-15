@@ -145,6 +145,18 @@ def test_frontend_no_usa_sinks_html_de_inyeccion():
                 assert not style_api.search(source), path
 
 
+def test_hojas_style_dinamicas_inyectadas_exigen_nonce():
+    # Un <style> creado en JS sin nonce queda bloqueado por la CSP
+    # (style-src solo autoriza 'self', el nonce de la respuesta y Google Fonts).
+    # Solo debe crearse en csp_styles.js, que le asigna el nonce capturado.
+    crear_style = re.compile(r'createElement\(["\']style["\']\)')
+    asigna_nonce = re.compile(r'\.nonce\s*=')
+    for path in Path("app/static/js").rglob("*.js"):
+        source = path.read_text(encoding="utf-8")
+        if crear_style.search(source):
+            assert asigna_nonce.search(source), path
+
+
 def test_acciones_declarativas_tienen_handler_registrado():
     templates = "\n".join(
         path.read_text(encoding="utf-8")

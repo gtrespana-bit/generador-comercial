@@ -5,7 +5,7 @@ from datetime import date
 
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, event
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 from starlette.datastructures import FormData
@@ -23,6 +23,7 @@ from app.models import (
     Capitulo,
     Cliente,
     Medicion,
+    Organizacion,
     Partida,
     Presupuesto,
     PresupuestoItem,
@@ -198,6 +199,59 @@ def test_actualizar_precio_partida_desde_presupuesto_no_modifica_linea_guardada(
         db.expire_all()
         assert db.get(Partida, maestra.id).precio_unitario == pytest.approx(12.5)
         assert db.get(PresupuestoItem, linea.id).precio_unitario == pytest.approx(10)
+    finally:
+        db.close()
+        engine.dispose()
+
+
+def test_eliminar_partida_del_catalogo_desvincula_lineas_de_presupuesto():
+    """Borrar una partida del catálogo no debe borrar presupuestos.
+
+    ``presupuesto_items.partida_catalogo_id`` es solo el origen de la copia;
+    el precio ya vive en la línea. Al eliminar la partida maestra, las líneas
+    que la referenciaban deben sobrevivir con el vínculo a NULL (en vez de
+    fallar con ForeignKeyViolation como ocurría en producción).
+    """
+    engine = create_engine("sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool)
+
+    @event.listens_for(engine, "connect")
+    def _fk_on(connection, _record):
+        connection.execute("PRAGMA foreign_keys=ON")
+
+    Base.metadata.create_all(engine)
+    Session = sessionmaker(bind=engine)
+    db = Session()
+    try:
+        organizacion = Organizacion(nombre="Empresa de pruebas", slug="empresa-de-pruebas")
+        db.add(organizacion)
+        db.flush()  # id=1; los TenantMixin usan organizacion_id=1 por defecto
+        cliente = Cliente(nombre="Cliente prueba")
+        maestra = Partida(nombre="Solado porcelanato", precio_unitario=30, unidad="m2", categoria="Pavimentos")
+        db.add_all([cliente, maestra])
+        db.commit()
+        presupuesto = Presupuesto(
+            numero="PRE-DEL-001", year=date.today().year, fecha=date.today(),
+            titulo="Prueba borrado", client_id=cliente.id, moneda="USD", impuesto_pct=16,
+        )
+        capitulo = Capitulo(nombre="CAPÍTULO", orden=1)
+        linea = PresupuestoItem(
+            nombre=maestra.nombre, unidad=maestra.unidad, cantidad=1,
+            precio_unitario=30, orden=1, partida_catalogo_id=maestra.id,
+        )
+        capitulo.partidas.append(linea)
+        presupuesto.capitulos.append(capitulo)
+        db.add(presupuesto)
+        db.commit()
+
+        from app.main import eliminar_partida
+
+        respuesta = eliminar_partida(maestra.id, db)
+        assert respuesta.status_code == 303
+        db.expire_all()
+        assert db.get(Partida, maestra.id) is None
+        item = db.get(PresupuestoItem, linea.id)
+        assert item is not None
+        assert item.partida_catalogo_id is None
     finally:
         db.close()
         engine.dispose()

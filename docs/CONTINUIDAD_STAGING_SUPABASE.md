@@ -46,7 +46,7 @@ y `git diff --check`. `.env` y `presupuestos.db` no forman parte del repositorio
       "storage": "supabase:cotizat-private",
       "public_url": "configurado",
       "database": "postgresql",
-      "alembic": "head:d7f2a9c41e63",
+      "alembic": "head:e1a4b7c9d2f0",
       "rol_runtime": "superuser=False, bypassrls=False, inherit=True, cotizat_app=True"
     },
     "errors": []
@@ -58,24 +58,39 @@ y `git diff --check`. `.env` y `presupuestos.db` no forman parte del repositorio
   2. Se ejecutó `INSERT INTO alembic_version` y `ALTER TABLE public.alembic_version DISABLE ROW LEVEL SECURITY; GRANT SELECT ON TABLE public.alembic_version TO cotizat_app;` en Supabase.
   3. Se corrigió `_verificar_head_alembic_postgresql()` para usar `.scalar_one_or_none()`, calificar explícitamente `public.alembic_version` y atrapar excepciones en `lifespan` de forma defensiva para evitar cierres abruptos 500 en Vercel.
 
-El estado desplegado anterior quedó en `d7f2a9c41e63`. El checkout actual añade
-`e1a4b7c9d2f0`, que versiona de forma permanente el `DISABLE ROW LEVEL
-SECURITY` y el `GRANT SELECT` de `public.alembic_version`. Antes de desplegar
-este checkout hay que ejecutar `docs/staging_upgrade_e1a4b7c9d2f0.sql` en el SQL
-Editor; después `/readyz` debe mostrar `head:e1a4b7c9d2f0`.
+### Cierre del incidente de `alembic_version` (14/08/2026)
+
+La migración `e1a4b7c9d2f0` (parent `d7f2a9c41e63`) versiona de forma
+permanente el `DISABLE ROW LEVEL SECURITY` y el `GRANT SELECT` de
+`public.alembic_version`. Ya está **aplicada en Supabase** y **desplegada en
+producción**:
+
+- Supabase confirmó `relrowsecurity = false`, `relforcerowsecurity = false`,
+  `cotizat_app_puede_leer = true` y `version_num = e1a4b7c9d2f0`.
+- `/readyz` en producción responde **200 OK** con `"alembic":
+  "head:e1a4b7c9d2f0"` y `"rol_runtime": "superuser=False, bypassrls=False,
+  inherit=True, cotizat_app=True"`.
+- El PR **#16** se fusionó en `main` el 14/08/2026 con CI y deploy de Vercel en
+  verde.
+
+El incidente queda cerrado: producción y base de datos están alineadas en
+`e1a4b7c9d2f0` y el código desplegado espera ese mismo head (el código anterior
+fallaría en `/readyz` esperando `d7f2a9c41e63`).
 
 PRs creados en GitHub:
 - **PR #3** (fusionado en `main`).
 - **PR #4**: `https://github.com/gtrespana-bit/generador-comercial/pull/4` (`fix(staging): asegura lectura de public.alembic_version y atrapa excepciones en lifespan`).
+- **PR #16**: `https://github.com/gtrespana-bit/generador-comercial/pull/16` (`fix(db): versiona el endurecimiento de alembic_version`) — **fusionado**.
 
-Después de fusionar el PR #4, la nueva conversación debe trabajar desde el `main` resultante.
+La nueva conversación debe trabajar desde el `main` resultante (commit
+`bb84767`), que ya incluye `e1a4b7c9d2f0`.
 
 ## 2. Estado externo verificado de Supabase y Vercel
 
 Estado verificado de Supabase:
 
 ```text
-Alembic remoto: d7f2a9c41e63
+Alembic remoto: e1a4b7c9d2f0
 Rol runtime: cotizat_runtime (NOSUPERUSER, NOBYPASSRLS, INHERIT, miembro de cotizat_app)
 Bucket Storage: cotizat-private (privado, 12 MB)
 Auth URLs: Site URL https://cotizat-generador.vercel.app y Redirect URL https://cotizat-generador.vercel.app/restablecer-clave
@@ -240,22 +255,30 @@ emails tienen cuenta). Cubierto por cuatro pruebas en `tests/test_auth.py`.
 
 ## 3. Orden obligatorio del siguiente bloque
 
-> **Punto exacto al 14/08/2026 (última actualización):** puntos 1–5 superados
-> en `https://cotizat-generador.vercel.app` (registro, Organización A,
-> recuperación de contraseña, subida de logo/imagen/anexo/ficha y descarga del
-> PDF). Los puntos **10 y 13 se han trasladado a pruebas automáticas** en
+> **Punto exacto al 14/08/2026 (última actualización):** puntos 1–9, 11 y 12
+> superados en `https://cotizat-generador.vercel.app`: registro, Organización A,
+> recuperación de contraseña, subida de logo/imagen/anexo/ficha, descarga del
+> PDF, **invitación al Usuario B con rol `lectura`, aceptación de un solo uso
+> con email verificado, comprobación de que `lectura` no escribe, ascenso a
+> `miembro`, creación de la Organización B con nombres/números homónimos sin
+> mezcla de datos con A, cookies Auth HttpOnly/Secure/SameSite=Lax con
+> `document.cookie` vacío y desaparición al cerrar sesión, y consola sin
+> violaciones CSP** (el rechazo de escrituras cross-site del punto 11 está
+> cubierto en CI por `tests/test_web_security.py`). Los puntos **10 y 13 se han
+> trasladado a pruebas automáticas** en
 > `tests/test_aislamiento_almacenamiento.py`, porque eran comprobaciones
 > manuales fáciles de olvidar tras un cambio en el proxy `/archivos/...`: ahora
 > CI verifica que un objeto de A devuelve 404 bajo B (también manipulando la
 > clave) y que nada del código expone el bucket directamente. La única parte
 > del punto 13 que sigue siendo manual, por depender del proyecto Supabase real
 > y no del código, es pegar la URL pública del objeto en el navegador y
-> confirmar el acceso denegado.
+> confirmar el acceso denegado. La lógica del punto 14 (rechazo de arranque con
+> un rol `SUPERUSER`/`BYPASSRLS`) ya está cubierta por `tests/test_rls.py` y
+> `tests/test_health.py`.
 >
-> **Lo siguiente son los puntos 6 a 9** (invitar al Usuario B, aceptar la
-> invitación una sola vez, comprobar el rol `lectura`, ascenderlo a `miembro` y
-> crear la Organización B con nombres homónimos), que exigen un segundo correo
-> real y por eso no pueden automatizarse. Después, los puntos 11, 12 y 14.
+> **Lo siguiente son el punto 14** (rechazo de arranque con un rol
+> privilegiado; opcional, lógica cubierta en CI) **y la parte manual del punto
+> 13** (URL pública del bucket denegada).
 
 > Punto exacto al 14/08/2026: Pasos A–F completados y verificados. `/healthz` y `/readyz` responden 200 OK en la URL real `https://cotizat-generador.vercel.app`. Resuelta la incidencia de bootstrap de organizaciones bajo RLS y **confirmada en staging la creación de la Organización A** (puntos 1 y 2 de la matriz superados). Añadidos además integración continua y bloqueo de dependencias (ver Sección 2), y **el workflow `CI` ya está activo en GitHub** con su primera ejecución sobre `main` en verde (run `31811936947`); con esto queda cerrada la "Acción manual pendiente" del flujo. **Lo siguiente es continuar la matriz de aceptación de la Sección 4 desde el punto 3** (recuperación de contraseña); el usuario A y la Organización A ya existen, así que no deben repetirse su registro ni su aprovisionamiento.
 
@@ -273,17 +296,40 @@ emails tienen cuenta). Cubierto por cuatro pruebas en `tests/test_auth.py`.
 Paso a paso con dos correos (ej. Usuario A y Usuario B):
 
 1. ~~**Usuario A:** Registro, inicio de sesión y creación de Organización A.~~ **Completado el 14/08/2026.**
-2. **Usuario A:** Completar onboarding (demo o limpio).
+2. ~~**Usuario A:** Completar onboarding (demo o limpio).~~ **Completado el 14/08/2026.**
 3. ~~**Usuario A:** Probar recuperación de clave (redirect fijo `https://cotizat-generador.vercel.app/restablecer-clave`).~~ **Completado el 14/08/2026:** email recibido, enlace correcto, contraseña cambiada e inicio de sesión con la nueva.
-4. **Usuario A:** Cargar logo, partida con imagen, anexo PDF y ficha técnica. ← **siguiente**
-5. **Usuario A:** Crear presupuesto y descargar PDF generado.
-6. **Usuario A → Usuario B:** Invitar a Usuario B con rol `lectura` desde `/equipo`.
-7. **Usuario B:** Aceptar invitación una sola vez. Probar que `lectura` consulta/descarga pero devuelve 403 en escrituras.
-8. **Usuario A:** Ascender a B a `miembro`. Verificar que B ya puede crear/editar en Organización A.
-9. **Usuario B:** Crear Organización B (nombre/números homónimos) y verificar aislamiento total de datos.
+4. ~~**Usuario A:** Cargar logo, partida con imagen, anexo PDF y ficha técnica.~~ **Completado el 14/08/2026.**
+5. ~~**Usuario A:** Crear presupuesto y descargar PDF generado.~~ **Completado el 14/08/2026.**
+6. ~~**Usuario A → Usuario B:** Invitar a Usuario B con rol `lectura` desde `/equipo`.~~ **Completado el 14/08/2026.**
+7. ~~**Usuario B:** Aceptar invitación una sola vez (email verificado). `lectura` consulta/descarga y devuelve 403 en escrituras.~~ **Completado el 14/08/2026.**
+8. ~~**Usuario A:** Ascender a B a `miembro`. Verificar que B ya puede crear/editar en Organización A.~~ **Completado el 14/08/2026.**
+9. ~~**Usuario B:** Crear Organización B (nombre/números homónimos) y verificar aislamiento total de datos.~~ **Completado el 14/08/2026: sin fuga de datos entre A y B.**
 10. ~~**Seguridad de Storage:** Probar que una URL de objeto de la Organización A devuelve 404 para la Organización B.~~ **Cubierto por pruebas automáticas el 14/08/2026** (`tests/test_aislamiento_almacenamiento.py`); queda como confirmación visual opcional en staging.
-11. **Cookies/CSRF/DevTools:** Confirmar cookies HttpOnly/Secure/SameSite y ausencia de violaciones CSP en la consola del navegador.
-12. ~~**Bucket privado:** Verificar que el acceso directo al objeto público en Supabase Storage devuelve acceso denegado.~~ **Aprovisionamiento cubierto por pruebas automáticas el 14/08/2026**; falta una única comprobación manual: pegar en el navegador la URL pública del objeto y confirmar que Supabase responde acceso denegado.
+11. ~~**Cookies/CSRF:** Confirmar cookies HttpOnly/Secure/SameSite, `document.cookie` vacío y desaparición al cerrar sesión.~~ **Completado el 14/08/2026** (el rechazo de escrituras cross-site está cubierto en CI por `tests/test_web_security.py`).
+12. ~~**DevTools/CSP:** Ausencia de violaciones Content Security Policy en la consola del navegador.~~ **Completado el 14/08/2026:** se eliminaron dos hojas `<style>` inyectadas sin nonce en `dragdrop.js` y `totales.js` y se validó en el despliegue de la rama.
+13. ~~**Bucket privado:** Verificar que el acceso directo al objeto público en Supabase Storage devuelve acceso denegado.~~ **Aprovisionamiento cubierto por pruebas automáticas el 14/08/2026**; falta una única comprobación manual: pegar en el navegador la URL pública del objeto y confirmar que Supabase responde acceso denegado.
+14. **Arranque con rol privilegiado:** confirmar que CotizaT se niega a servir si `DATABASE_URL` usa un rol con `SUPERUSER`/`BYPASSRLS` (503 en `/readyz`). ← **siguiente**
+
+### Incidencias resueltas durante el punto 12 (14/08/2026)
+
+La revisión de la consola del creador destapó dos fallos reales, corregidos en
+la rama `arena/01a00312-generador-comercial` (PR #17) y validados en el
+despliegue de la rama:
+
+1. **Violaciones CSP.** `editor/dragdrop.js` y `editor/totales.js` creaban
+   elementos `<style>` con `textContent` sin asignarles el nonce de la
+   respuesta, así que la CSP estricta (`style-src 'self' 'nonce-…' + Google
+   Fonts`) los bloqueaba. Esos estilos ya vivían en `style.css` o se aplican
+   por la utilidad `CotizatStyles` (hoja con nonce vía CSSOM), así que la
+   inyección era redundante y se eliminó. Se añadió una prueba que exige nonce
+   a cualquier `<style>` dinámico (`tests/test_web_security.py`).
+2. **500 al borrar una partida del catálogo.** `eliminar_partida` y
+   `bulk_delete_partidas` borraban la fila de `partidas` sin desvincular las
+   líneas de `presupuesto_items` que la referencian, y PostgreSQL respondía
+   `ForeignKeyViolation`. Como `partida_catalogo_id` solo recuerda el origen de
+   la copia (el precio ya vive en la línea), ahora se anula la referencia antes
+   del borrado y el presupuesto sobrevive intacto. Regresión en
+   `tests/test_app.py` con las FK de SQLite activadas.
 
 ## 4. Matriz de aceptación real
 
@@ -294,16 +340,23 @@ No declarar staging validado hasta completar los 14 puntos con dos correos verif
 3. recuperación de contraseña llega y solo redirige al origen fijo;
 4. A sube logo, producto/partida con imagen, anexo y ficha PDF;
 5. A crea un presupuesto y genera/descarga PDF;
-6. A invita a B y B acepta una sola vez con email coincidente y verificado;
+6. A invita a B y B acepta una sola vez con email coincidente y verificado —
+   **superado en staging (14/08/2026)**;
 7. B con rol `lectura` puede consultar/descargar pero no crear, editar, borrar ni
-   provocar efectos de Storage;
-8. al cambiar B a `miembro`, puede escribir en la organización autorizada;
-9. crear organización B con nombres/números homónimos no mezcla datos con A;
+   provocar efectos de Storage — **superado en staging (14/08/2026)**;
+8. al cambiar B a `miembro`, puede escribir en la organización autorizada —
+   **superado en staging (14/08/2026)**;
+9. crear organización B con nombres/números homónimos no mezcla datos con A —
+   **superado en staging (14/08/2026)**;
 10. una URL/clave de objeto de A solicitada bajo B devuelve 404 — **cubierto en
     CI** (`tests/test_aislamiento_almacenamiento.py`: recorrido HTTP con dos
     organizaciones, más los intentos de manipular la clave);
-11. cookies Auth son Secure/HttpOnly y las escrituras cross-site devuelven 403;
-12. DevTools no muestra violaciones CSP ni fallos de interacción/estilos;
+11. cookies Auth son Secure/HttpOnly y las escrituras cross-site devuelven 403 —
+    **superado en staging (14/08/2026)** (cookies comprobadas en navegador;
+    rechazo cross-site cubierto en CI por `tests/test_web_security.py`);
+12. DevTools no muestra violaciones CSP ni fallos de interacción/estilos —
+    **superado en staging (14/08/2026)** (dos hojas `<style>` dinámicas sin
+    nonce eliminadas y validado en el despliegue de la rama);
 13. el bucket no entrega objetos sin pasar por CotizaT — **cubierto en CI** en
     todo lo que depende del código (el bucket se aprovisiona `public=false`,
     no existe generación de URL pública ni firmada, y ninguna plantilla enlaza
@@ -335,12 +388,17 @@ Copiar este texto, sin añadir secretos:
 > `docs/CONTINUIDAD_STAGING_SUPABASE.md` y `docs/MATRIZ_PASOS_MANUALES.md`. No
 > repitas trabajo completado ni pidas secretos.
 >
-> Staging (`https://cotizat-generador.vercel.app`) y Supabase funcionan;
-> `/readyz` responde 200. De la matriz de aceptación: **puntos 1-5 superados** en
-> staging y **10 y 13 cubiertos en CI** (`tests/test_aislamiento_almacenamiento.py`).
+> El incidente de invitaciones (500 al aceptar) y el de `alembic_version` están
+> cerrados: el head es `e1a4b7c9d2f0`, el PR #16 está fusionado y `/readyz`
+> responde 200 en producción.
 >
-> **Voy a ejecutar yo mismo, en el navegador, los pasos manuales que quedan: 6,
-> 7, 8, 9, 11, 12, la parte manual del 13 y el 14.** Sigo la guía de
+> Staging (`https://cotizat-generador.vercel.app`) y Supabase funcionan;
+> `/readyz` responde 200. De la matriz de aceptación: **puntos 1-9, 11 y 12
+> superados** en staging y **10 y 13 cubiertos en CI**
+> (`tests/test_aislamiento_almacenamiento.py`).
+>
+> **Voy a ejecutar yo mismo, en el navegador, los pasos manuales que quedan:
+> la parte manual del 13 y el 14.** Sigo la guía de
 > `docs/MATRIZ_PASOS_MANUALES.md`. Tu papel es acompañarme: resolver los fallos
 > que encuentre, interpretar los errores y corregir el código cuando haga falta,
 > sin relajar CSRF, CSP, RLS, el bucket privado ni el rol limitado.

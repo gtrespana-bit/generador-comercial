@@ -1350,11 +1350,15 @@ entre organizaciones) depende de que funcione.
 
 ## Después del punto 4
 
-Puntos 6 a 9 (invitaciones y roles `lectura` / `miembro`), 11 y 12
-(cookies/CSRF/CSP en DevTools) y 14 (arranque rechazado con un rol
-`BYPASSRLS`). Cerrada la matriz, el siguiente bloque de infraestructura es el
-rate limiting distribuido (Redis/Upstash), obligatorio antes de escalar a
-varias instancias o abrir el registro.
+Puntos 6 a 9 (invitación al Usuario B, aceptación de un solo uso con email
+verificado, rol `lectura` comprobado, ascenso a `miembro` y Organización B con
+nombres homónimos sin fuga de datos), el punto 11 (cookies HttpOnly/Secure y
+`document.cookie` vacío) y el punto 12 (consola sin violaciones CSP) quedan
+**superados en staging el 14/08/2026**. Resta el punto 14 (arranque rechazado
+con un rol `BYPASSRLS`; opcional, lógica cubierta en CI). Cerrada la matriz, el
+siguiente bloque de infraestructura es el rate limiting distribuido
+(Redis/Upstash), obligatorio antes de escalar a varias instancias o abrir el
+registro.
 
 ---
 
@@ -1537,9 +1541,11 @@ textual reportado (`InvalidCredentials: Supabase no pudo crear la cuenta.`).
 
 ## Lo que sigue siendo manual
 
-Los puntos 6, 7, 8, 9, 11, 12, 13 (parte manual) y 14, con la guía
-`docs/MATRIZ_PASOS_MANUALES.md`. Atención al límite de ~2-4 emails/hora del SMTP
-por defecto de Supabase al registrar y confirmar el segundo correo.
+Los puntos 6 a 9, 11 y 12 quedaron superados el 14/08/2026 (invitación al
+Usuario B, aceptación con email verificado, rol `lectura` comprobado, ascenso a
+`miembro`, Organización B homónima sin fuga de datos, cookies HttpOnly/Secure y
+consola sin violaciones CSP). Restan el punto 13 (parte manual) y el 14, con la
+guía `docs/MATRIZ_PASOS_MANUALES.md`.
 
 ## Resultado
 
