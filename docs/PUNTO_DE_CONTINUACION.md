@@ -249,26 +249,60 @@ se instaló manualmente.
 
 ## 7. Mensaje para iniciar la conversación nueva
 
-Copiar este texto, sin añadir secretos:
+Copiar tal cual, sin añadir secretos ni tokens:
 
-> Continúa el proyecto CotizaT. Lee primero `docs/PUNTO_DE_CONTINUACION.md` y
-> luego `docs/CONTINUIDAD_STAGING_SUPABASE.md`. No repitas trabajo completado ni
-> pidas secretos.
->
-> Contexto: el PR #18 (rate limiting distribuido con Upstash) quedó **abierto,
-> con CI en verde**, commit `c7d8be2` sobre la base `66f932f`. Ya creé la cuenta
-> de Upstash. Los pasos que me tocan a mí están en la sección 2 de
-> `docs/PUNTO_DE_CONTINUACION.md`: crear la base, poner tres variables en Vercel,
-> fusionar el PR y comprobar que `/readyz` muestra
-> `rate_limit: distribuido:upstash`.
->
-> **Dime en qué punto de esa lista estoy** y sigue desde ahí. Si ya está
-> fusionado y verificado, anótalo en `docs/CONTINUIDAD_STAGING_SUPABASE.md` con
-> fecha y pasamos al siguiente bloque.
->
-> Los puntos 13-manual y 14 de la matriz siguen **aparcados por decisión mía**
-> hasta el final del desarrollo; no me los pidas todavía.
->
-> Siguiente bloque sugerido cuando esto cierre: **envío real de emails de
-> invitación**, porque hoy `/equipo` obliga a copiar el enlace a mano y eso no
-> aguanta un cliente piloto.
+---
+
+Continúa el proyecto CotizaT. Antes de proponer nada, lee
+`docs/PUNTO_DE_CONTINUACION.md` y luego `docs/CONTINUIDAD_STAGING_SUPABASE.md`.
+No repitas trabajo ya hecho y no me pidas secretos.
+
+**Dónde quedó todo (15/08/2026).** El bloque de rate limiting distribuido con
+Upstash está terminado en el **PR #18**, que sigue **abierto y sin fusionar**,
+en la rama `arena/01a00341-generador-comercial` con tres commits: `c7d8be2`
+(código), `becf758` y `118502b` (documentación). Las pruebas van en verde
+(**250 passed, 5 skipped**), pero **el check de Vercel está en rojo** con
+«Deployment was blocked», incluso en commits que solo tocan markdown. Eso no es
+un fallo del código: Vercel ni siquiera arranca la construcción. Está explicado
+en la sección 1 del punto de continuación.
+
+**Empieza por verificar el estado real, no te fíes de este resumen.** Hazlo así
+y dime el resultado de cada punto antes de tocar nada:
+
+1. `gh pr view 18 --json state,mergeable,mergeStateStatus` — ¿sigue abierto?
+2. `gh pr checks 18` — ¿pasan las pruebas? ¿sigue Vercel en rojo?
+3. `gh api repos/gtrespana-bit/generador-comercial/commits/118502b/status --jq
+   '.statuses[] | "\(.context): \(.state) — \(.description)"'` — ¿qué motivo
+   da Vercel?
+4. `git log --oneline -3` y `git status --short` — ¿está el árbol limpio y
+   coinciden los tres commits?
+5. Recrea el entorno y corre la suite: `python3 -m venv .venv`,
+   `.venv/bin/pip install -r requirements-dev.txt`, `.venv/bin/pytest -q`.
+   Deben salir **250 passed, 5 skipped**. (El `.venv` no se conserva entre
+   sesiones; que falte es normal.)
+
+**Lo que me toca a mí está en la sección 2** del punto de continuación: crear la
+base en Upstash, añadir tres variables en Vercel, fusionar el PR y comprobar
+`/readyz`. Ya tengo la cuenta de Upstash creada. **Pregúntame en qué paso estoy**
+en lugar de suponerlo.
+
+**Ojo con el orden y con el bloqueo de Vercel.** Las variables van en Vercel
+**antes** del merge, porque producción despliega desde `main`. Y si los
+despliegues siguen bloqueados, fusionar no publicaría nada: `/readyz` seguiría
+mostrando el estado antiguo y parecería que la configuración falló. Ayúdame
+primero a averiguar por qué Vercel bloquea (yo puedo abrir el panel; tú desde el
+sandbox no tienes salida a `api.vercel.com`).
+
+Cuando esté fusionado y verificado, `/readyz` debe mostrar
+`"rate_limit": "distribuido:upstash"`. Anótalo entonces en
+`docs/CONTINUIDAD_STAGING_SUPABASE.md` (sección 2, estado externo verificado)
+con la fecha.
+
+**Aparcado por decisión mía:** los puntos 13-manual y 14 de la matriz de
+aceptación, hasta que el desarrollo esté cerrado. No me los pidas todavía.
+
+**Siguiente bloque cuando esto cierre:** envío real de emails de invitación. Hoy
+`/equipo` muestra el enlace una sola vez y hay que copiarlo a mano, y eso no
+aguanta un cliente piloto.
+
+---
