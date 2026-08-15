@@ -172,3 +172,62 @@ def test_readiness_con_engine_postgresql_detecta_head_y_rol(monkeypatch):
     status = readiness(outsider)
     assert status.ok is False
     assert any("cotizat_app" in e for e in status.errors)
+
+
+def test_readyz_publica_el_estado_del_contador_de_intentos(monkeypatch):
+    """/readyz debe delatar un contador por proceso, no darlo por bueno."""
+    monkeypatch.setenv("SUPABASE_URL", "https://placeholder.supabase.co")
+    monkeypatch.setenv("SUPABASE_PUBLISHABLE_KEY", "sb_publishable_placeholder")
+    monkeypatch.setenv("COTIZAT_PUBLIC_URL", "https://cotizat.example.com")
+    monkeypatch.delenv("UPSTASH_REDIS_REST_URL", raising=False)
+    monkeypatch.delenv("UPSTASH_REDIS_REST_TOKEN", raising=False)
+    with TestClient(app) as client:
+        r = client.get("/readyz")
+    assert r.json()["checks"]["rate_limit"] == "memoria"
+
+
+def test_readyz_no_filtra_el_token_del_contador(monkeypatch):
+    """El estado del contador no puede arrastrar la credencial a la respuesta."""
+    monkeypatch.setenv("SUPABASE_URL", "https://placeholder.supabase.co")
+    monkeypatch.setenv("SUPABASE_PUBLISHABLE_KEY", "sb_publishable_placeholder")
+    monkeypatch.setenv("COTIZAT_PUBLIC_URL", "https://cotizat.example.com")
+    monkeypatch.setenv("UPSTASH_REDIS_REST_URL", "https://ejemplo.upstash.io")
+    monkeypatch.setenv("UPSTASH_REDIS_REST_TOKEN", "token-secreto-de-prueba")
+    with TestClient(app) as client:
+        r = client.get("/readyz")
+    assert r.json()["checks"]["rate_limit"] == "distribuido:upstash"
+    assert "token-secreto-de-prueba" not in r.text
+
+
+def test_readyz_en_sqlite_no_exige_contador_compartido(monkeypatch):
+    """En escritorio hay un solo proceso: contar en memoria es lo correcto."""
+    monkeypatch.setenv("SUPABASE_URL", "https://placeholder.supabase.co")
+    monkeypatch.setenv("SUPABASE_PUBLISHABLE_KEY", "sb_publishable_placeholder")
+    monkeypatch.setenv("COTIZAT_PUBLIC_URL", "https://cotizat.example.com")
+    monkeypatch.delenv("UPSTASH_REDIS_REST_URL", raising=False)
+    monkeypatch.delenv("UPSTASH_REDIS_REST_TOKEN", raising=False)
+    monkeypatch.setenv("COTIZAT_REQUIRE_DISTRIBUTED_RATELIMIT", "true")
+    assert health_module.DATABASE_IS_SQLITE, "Esta prueba asume SQLite local."
+    with TestClient(app) as client:
+        r = client.get("/readyz")
+    assert r.status_code == 200, r.text
+    assert not any("Rate limit" in e for e in r.json()["errors"])
+
+
+def test_readyz_falla_si_se_exige_contador_compartido_y_falta(monkeypatch):
+    """Fuera de SQLite, exigirlo y no tenerlo debe ser un 503, no un aviso."""
+    monkeypatch.setenv("SUPABASE_URL", "https://placeholder.supabase.co")
+    monkeypatch.setenv("SUPABASE_PUBLISHABLE_KEY", "sb_publishable_placeholder")
+    monkeypatch.setenv("COTIZAT_PUBLIC_URL", "https://cotizat.example.com")
+    monkeypatch.delenv("UPSTASH_REDIS_REST_URL", raising=False)
+    monkeypatch.delenv("UPSTASH_REDIS_REST_TOKEN", raising=False)
+    monkeypatch.setenv("COTIZAT_REQUIRE_DISTRIBUTED_RATELIMIT", "true")
+    # Se simula un despliegue PostgreSQL sin tocar la base real.
+    monkeypatch.setattr(health_module, "DATABASE_IS_SQLITE", False)
+    monkeypatch.setattr(
+        health_module, "_check_postgresql", lambda engine: {"database": "ok"}
+    )
+    estado = readiness()
+    assert estado.ok is False
+    assert any("Rate limit" in e for e in estado.errors)
+    assert estado.checks["rate_limit"] == "memoria"

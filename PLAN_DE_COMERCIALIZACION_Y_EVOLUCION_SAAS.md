@@ -773,14 +773,14 @@ Se completará durante la Etapa 2. No deben guardarse aquí nombres, teléfonos 
 
 ## Etapa 1 activa — siguiente bloque: validación con matriz de aceptación en staging
 
-La continuidad operativa exacta para una conversación nueva está en `docs/CONTINUIDAD_STAGING_SUPABASE.md`; debe seguirse sin reconstruir el estado desde el chat.
+La continuidad operativa exacta para una conversación nueva está en `docs/PUNTO_DE_CONTINUACION.md` (dónde se quedó el trabajo y qué sigue) y `docs/CONTINUIDAD_STAGING_SUPABASE.md` (estado de fondo de staging); deben seguirse sin reconstruir el estado desde el chat.
 
 La base browser-first ya está desplegada en staging Vercel + Supabase (`https://cotizat-generador.vercel.app`), con `/healthz` y `/readyz` respondiendo 200 OK. El siguiente trabajo es:
 
 1. **Matriz de aceptación (Sección 4 de CONTINUIDAD):** continuar los 14 puntos de prueba manual con dos correos y dos organizaciones en el entorno desplegado. Los puntos 1-9, 11 y 12 quedaron superados el 14/08/2026 (registro de A, Organización A, recuperación de contraseña, subida/descarga de archivos y PDF, invitación al Usuario B, rol `lectura` comprobado, ascenso a `miembro`, Organización B homónima sin fuga de datos, cookies HttpOnly/Secure y consola sin violaciones CSP).
 2. **E1W-009 / E1W-011 — prioridad inmediata:** verificar la subida/descarga de imágenes, anexos PDF y fichas técnicas a través del proxy autorizado conectando con el bucket privado `cotizat-private`. Es el punto 4 de la matriz y la primera prueba real de `SupabaseStorage`, hasta ahora solo ejercitado contra una simulación REST.
 3. **E1W-007 / E1W-008:** las invitaciones de equipo, el cambio de roles (`lectura` vs `miembro`), las cookies de sesión (HttpOnly/Secure/SameSite, `document.cookie` vacío) y la ausencia de violaciones CSP ya quedaron validados en navegador real el 14/08/2026 (puntos 6-8, 11 y 12 de la matriz). La recuperación de clave ya está validada.
-4. **Infraestructura futura:** añadir Redis/Upstash para rate limiting distribuido antes de escalar a múltiples instancias o apertura pública.
+4. **Infraestructura — hecho:** el rate limiting distribuido ya está implementado (`app/ratelimit.py`, backend Upstash Redis por REST con degradación a memoria). Para activarlo en staging solo faltan las variables `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` y `COTIZAT_REQUIRE_DISTRIBUTED_RATELIMIT=true` en Vercel; `/readyz` publica el estado en `checks.rate_limit`.
 5. **E1-012 a E1-014:** retomar usabilidad y medición externa sobre el recorrido web.
 
 Evidencia acumulada al 14/08/2026:

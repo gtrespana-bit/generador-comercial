@@ -38,19 +38,54 @@ conservan esa política más restrictiva.
 - 10 intentos cada 5 minutos en `/acceso`;
 - 5 intentos cada 5 minutos en `/registro`;
 - 5 intentos cada 5 minutos en `/recuperar-acceso`;
-- 10 intentos cada 5 minutos en `/restablecer-clave`.
+- 10 intentos cada 5 minutos en `/restablecer-clave`;
+- 10 intentos cada 5 minutos en `/cuenta/clave`.
 
 Cuando se supera el límite responde `429` y publica `Retry-After`. Las lecturas y
-las rutas no incluidas no consumen intentos. El número de contadores se acota
-para que las IP nuevas no hagan crecer la memoria indefinidamente. Esta primera
-barrera vive en la memoria de cada proceso: no comparte contadores entre
-instancias y se reinicia
-con el servidor. Por tanto **no sustituye un límite distribuido** (Redis,
-Upstash o el servicio equivalente del proveedor) antes de una exposición
-pública con escalado horizontal. Por defecto se ignora `X-Forwarded-For`; solo
+las rutas no incluidas no consumen intentos. Por defecto se ignora
+`X-Forwarded-For`; solo
 se activa con `COTIZAT_TRUST_PROXY=true` detrás de un proxy conocido que elimine
 o sanee ese encabezado. Activarlo si el proceso recibe Internet directamente
 permitiría falsear la IP y eludir el límite.
+
+### Dónde se cuenta: memoria frente a contador compartido
+
+Contar en la memoria del proceso protege un servidor único, pero **no protege
+un despliegue serverless**. En Vercel cada invocación puede ejecutarse en un
+proceso nuevo, de modo que el contador arranca vacío una y otra vez: bastaba
+con que las peticiones cayesen en instancias distintas para que «5 intentos
+cada 5 minutos» no se aplicara. `app/ratelimit.py` separa la decisión de dónde
+se guarda la cuenta y ofrece dos backends:
+
+| Backend | Cuándo se usa | Comparte estado |
+| --- | --- | --- |
+| `MemoryRateLimit` | Escritorio, desarrollo y respaldo ante fallos | No |
+| `UpstashRateLimit` | Con `UPSTASH_REDIS_REST_URL` y `UPSTASH_REDIS_REST_TOKEN` | Sí |
+
+Decisiones que conviene no revertir sin motivo:
+
+- **API REST, no cliente Redis.** Una función serverless no conserva sockets
+  entre invocaciones, y usar `urllib` evita sumar una dependencia al runtime
+  (mismo patrón que `app/auth.py` y `app/storage.py`).
+- **Ventana fija por tramo** (`now // ventana`) en lugar de deslizante: la
+  clave caduca sola, renovar el TTL es idempotente y todo cabe en un único
+  viaje de ida y vuelta (`INCR` + `EXPIRE` en un pipeline, timeout de 3 s).
+  Pierde precisión en la frontera entre tramos; a cambio no necesita sorted
+  sets ni scripts Lua.
+- **Degradación al contador local si Upstash falla.** No se falla abierto
+  (sería quitar el límite justo cuando el servicio está en apuros) ni cerrado
+  (dejaría a todos sin poder entrar por una caída ajena): se vuelve a la
+  protección que existía antes.
+- **La IP no viaja en claro.** La clave es `cotizat:rl:<sha256("ruta|ip")[:32]>
+  :<índice>`, determinista entre instancias pero no reconstruible.
+
+Una configuración incompleta o inválida no impide arrancar: se registra un
+aviso y se degrada a memoria. Lo que sí hace ruido es `/readyz`, que publica
+`checks.rate_limit` con `memoria`, `distribuido:upstash` o `mal-configurado`.
+Con `COTIZAT_REQUIRE_DISTRIBUTED_RATELIMIT=true` el estado `memoria` pasa a ser
+un error de readiness — actívalo en cualquier despliegue con más de una
+instancia. En SQLite (escritorio) nunca se considera error, porque ahí un
+contador por proceso es exactamente lo correcto.
 
 ## CSP estricta para scripts y estilos
 
