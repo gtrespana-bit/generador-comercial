@@ -1,6 +1,6 @@
 # Punto exacto de continuación
 
-Fecha de corte: **15/08/2026, noche (segunda parte de la sesión)** (America/Caracas).
+Fecha de corte: **15/08/2026, noche (tercera parte de la sesión)** (America/Caracas).
 
 Este documento retoma el trabajo sin depender del historial del chat. Describe
 **dónde quedó exactamente** el trabajo y **qué sigue**, en ese orden. Léelo
@@ -9,7 +9,36 @@ junto con `docs/CONTINUIDAD_STAGING_SUPABASE.md` (estado de staging/matriz) y
 
 ---
 
-## 1. Lo último hecho: rama `arena/01a00790-generador-comercial` (PR #22 abierto)
+## 0. Lo último hecho: rama `arena/01a007cf-generador-comercial` (E1-021)
+
+El **PR #22 está fusionado** (merge `88dabdd`); la sección 1 queda como
+histórico. Sobre ese merge, esta sesión cerró **E1-021 — repositorio privado y
+sin datos reales sensibles**:
+
+- `tools/auditar_datos_sensibles.py`: auditoría repetible de todo lo versionado
+  (credenciales de Supabase/Resend/GitHub/AWS, JWT, PEM, cadenas de conexión con
+  contraseña real, correos personales, teléfonos VE/ES, documentos fiscales,
+  referencias del proyecto Supabase/Upstash y archivos que nunca deben
+  versionarse). Distingue marcadores de valores reales, así que no genera ruido.
+- **Repositorio confirmado privado** (`private: true`, 0 forks).
+- **Historial completo auditado**: se recuperó el histórico (`--unshallow`) y se
+  recorrieron los **653 blobs de los 101 commits**. **No hay ni hubo ninguna
+  credencial real** → *no hace falta reescribir el histórico ni rotar claves*.
+- **Tres datos reales corregidos en el árbol**: el correo personal del
+  propietario en `HOJA_DE_RUTA_Y_ESTADO_DEL_PROYECTO.md` y dos apariciones de la
+  referencia del proyecto Supabase en `docs/GUIA_STAGING_POR_CLICS.md`.
+- `tests/test_datos_sensibles.py` (34 pruebas) deja la auditoría vigilada en CI.
+- `docs/DATOS_SENSIBLES.md`: alcance, resultado y reglas de escritura.
+
+Suite tras el bloque: **323 passed, 5 skipped**. `compileall`, plantillas
+(49), lock (42 paquetes), simulación de Vercel RO y `git diff --check` en verde.
+
+**Siguiente bloque de código: E1-059/E1-060** (método de cobro + recibo/contrato
+firmable y registro interno de licencias).
+
+---
+
+## 1. Histórico: rama `arena/01a00790-generador-comercial` (PR #22, fusionado)
 
 Trabajo de esta sesión sobre `main` (`8d89954`, merge del PR #20). Tres commits:
 
@@ -111,6 +140,18 @@ usuario correrá las pruebas).
 
 ## 3. Pendientes operativos del usuario (sin código)
 
+> **Estado al 15/08/2026 (tercera parte).** Ninguno bloquea el desarrollo, pero
+> siguen abiertos y hay que recordarlos en cada sesión:
+> 1. Añadir `https://cotizat.online/acceso` a las Redirect URLs de Supabase,
+>    subir el rate limit de emails a ~30/hora y dejar el cooldown en 60 s.
+> 2. Pruebas E2E de Auth: registro + confirmación, recuperación de contraseña e
+>    invitación real en `/equipo` (el PR #22 ya está fusionado y desplegado).
+> 3. Crear la redirección `soporte@cotizat.online` en GoDaddy.
+> 4. Definir la razón social y añadir `COTIZAT_LEGAL_ENTITY` en Vercel
+>    (Production) + redeploy.
+> 5. **Vercel Hobby prohíbe el uso comercial** → pasar a Pro antes de cobrar al
+>    primer cliente.
+
 1. **Pruebas E2E** (el usuario las hará **después del PR #22**): registro +
    confirmación de email, recuperación de contraseña, e invitación real en
    `/equipo` → correo desde `no-responder@cotizat.online` → aceptar y comprobar
@@ -139,7 +180,9 @@ En orden recomendado:
 
 1. **Cerrar el PR #22** y **correr las pruebas E2E** de Auth (registro +
    confirmación, recuperación, invitación en `/equipo`) — a cargo del usuario.
-2. **E1-021 — revisar que el repositorio no contenga datos reales sensibles.**
+2. ~~**E1-021 — revisar que el repositorio no contenga datos reales
+   sensibles.**~~ **Completado el 15/08/2026** (ver sección 0 y
+   `docs/DATOS_SENSIBLES.md`).
 3. **E1-059/E1-060 — método de cobro + recibo/contrato firmable y registro
    interno de licencias** (cierra E1-057 y el criterio «guía, oferta, contrato
    y soporte»).
@@ -218,7 +261,7 @@ Recordar: Vercel Hobby prohíbe uso comercial → pasar a Pro antes de cobrar.
 **Aparcado por decisión mía:** los puntos 13-manual y 14 de la matriz, hasta que
 el desarrollo esté cerrado.
 
-**Siguiente bloque:** E1-021 (revisión de datos sensibles del repo), después
-E1-059/E1-060 (cobro + recibo/contrato). El vídeo (E1-051) queda a mi cargo.
+**Siguiente bloque:** E1-059/E1-060 (cobro + recibo/contrato). E1-021 ya está
+cerrado (`docs/DATOS_SENSIBLES.md`). El vídeo (E1-051) queda a mi cargo.
 
 ---
