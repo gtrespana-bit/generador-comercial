@@ -1350,14 +1350,13 @@ entre organizaciones) depende de que funcione.
 
 ## Después del punto 4
 
-Puntos 6 a 8 (invitación al Usuario B, aceptación de un solo uso con email
-verificado, rol `lectura` comprobado y ascenso a `miembro`) quedan
-**superados en staging el 14/08/2026**. Restan el punto 9 (crear la
-Organización B con nombres homónimos y verificar el aislamiento), 11 y 12
-(cookies/CSRF/CSP en DevTools) y 14 (arranque rechazado con un rol
-`BYPASSRLS`). Cerrada la matriz, el siguiente bloque de infraestructura es el
-rate limiting distribuido (Redis/Upstash), obligatorio antes de escalar a
-varias instancias o abrir el registro.
+Puntos 6 a 9 (invitación al Usuario B, aceptación de un solo uso con email
+verificado, rol `lectura` comprobado, ascenso a `miembro` y Organización B con
+nombres homónimos sin fuga de datos) quedan **superados en staging el
+14/08/2026**. Restan los puntos 11 y 12 (cookies/CSRF/CSP en DevTools) y 14
+(arranque rechazado con un rol `BYPASSRLS`). Cerrada la matriz, el siguiente
+bloque de infraestructura es el rate limiting distribuido (Redis/Upstash),
+obligatorio antes de escalar a varias instancias o abrir el registro.
 
 ---
 
@@ -1540,10 +1539,10 @@ textual reportado (`InvalidCredentials: Supabase no pudo crear la cuenta.`).
 
 ## Lo que sigue siendo manual
 
-Los puntos 6, 7 y 8 quedaron superados el 14/08/2026 (invitación al Usuario B,
-aceptación con email verificado, rol `lectura` comprobado y ascenso a
-`miembro`). Restan los puntos 9, 11, 12, 13 (parte manual) y 14, con la guía
-`docs/MATRIZ_PASOS_MANUALES.md`.
+Los puntos 6 a 9 quedaron superados el 14/08/2026 (invitación al Usuario B,
+aceptación con email verificado, rol `lectura` comprobado, ascenso a `miembro`
+y Organización B homónima sin fuga de datos). Restan los puntos 11, 12, 13
+(parte manual) y 14, con la guía `docs/MATRIZ_PASOS_MANUALES.md`.
 
 ## Resultado
 

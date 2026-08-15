@@ -255,23 +255,26 @@ emails tienen cuenta). Cubierto por cuatro pruebas en `tests/test_auth.py`.
 
 ## 3. Orden obligatorio del siguiente bloque
 
-> **Punto exacto al 14/08/2026 (última actualización):** puntos 1–8 superados
+> **Punto exacto al 14/08/2026 (última actualización):** puntos 1–9 superados
 > en `https://cotizat-generador.vercel.app`: registro, Organización A,
 > recuperación de contraseña, subida de logo/imagen/anexo/ficha, descarga del
 > PDF, **invitación al Usuario B con rol `lectura`, aceptación de un solo uso
-> con email verificado, comprobación de que `lectura` no escribe, y ascenso a
-> `miembro`**. Los puntos **10 y 13 se han trasladado a pruebas automáticas**
-> en `tests/test_aislamiento_almacenamiento.py`, porque eran comprobaciones
-> manuales fáciles de olvidar tras un cambio en el proxy `/archivos/...`: ahora
-> CI verifica que un objeto de A devuelve 404 bajo B (también manipulando la
-> clave) y que nada del código expone el bucket directamente. La única parte
-> del punto 13 que sigue siendo manual, por depender del proyecto Supabase real
-> y no del código, es pegar la URL pública del objeto en el navegador y
-> confirmar el acceso denegado.
+> con email verificado, comprobación de que `lectura` no escribe, ascenso a
+> `miembro`, y creación de la Organización B con nombres/números homónimos sin
+> mezcla de datos con A**. Los puntos **10 y 13 se han trasladado a pruebas
+> automáticas** en `tests/test_aislamiento_almacenamiento.py`, porque eran
+> comprobaciones manuales fáciles de olvidar tras un cambio en el proxy
+> `/archivos/...`: ahora CI verifica que un objeto de A devuelve 404 bajo B
+> (también manipulando la clave) y que nada del código expone el bucket
+> directamente. La única parte del punto 13 que sigue siendo manual, por
+> depender del proyecto Supabase real y no del código, es pegar la URL pública
+> del objeto en el navegador y confirmar el acceso denegado. La lógica del
+> punto 14 (rechazo de arranque con un rol `SUPERUSER`/`BYPASSRLS`) ya está
+> cubierta por `tests/test_rls.py` y `tests/test_health.py`.
 >
-> **Lo siguiente es el punto 9** (el Usuario B crea la Organización B con
-> nombres/números homónimos y se verifica que no se mezclan datos con A),
-> seguido de los puntos 11, 12 y 14.
+> **Lo siguiente son los puntos 11, 12 y 14** (cookies/CSRF, consola sin
+> violaciones CSP y rechazo de arranque con un rol privilegiado), más la parte
+> manual del punto 13 (URL pública del bucket denegada).
 
 > Punto exacto al 14/08/2026: Pasos A–F completados y verificados. `/healthz` y `/readyz` responden 200 OK en la URL real `https://cotizat-generador.vercel.app`. Resuelta la incidencia de bootstrap de organizaciones bajo RLS y **confirmada en staging la creación de la Organización A** (puntos 1 y 2 de la matriz superados). Añadidos además integración continua y bloqueo de dependencias (ver Sección 2), y **el workflow `CI` ya está activo en GitHub** con su primera ejecución sobre `main` en verde (run `31811936947`); con esto queda cerrada la "Acción manual pendiente" del flujo. **Lo siguiente es continuar la matriz de aceptación de la Sección 4 desde el punto 3** (recuperación de contraseña); el usuario A y la Organización A ya existen, así que no deben repetirse su registro ni su aprovisionamiento.
 
@@ -296,10 +299,11 @@ Paso a paso con dos correos (ej. Usuario A y Usuario B):
 6. ~~**Usuario A → Usuario B:** Invitar a Usuario B con rol `lectura` desde `/equipo`.~~ **Completado el 14/08/2026.**
 7. ~~**Usuario B:** Aceptar invitación una sola vez (email verificado). `lectura` consulta/descarga y devuelve 403 en escrituras.~~ **Completado el 14/08/2026.**
 8. ~~**Usuario A:** Ascender a B a `miembro`. Verificar que B ya puede crear/editar en Organización A.~~ **Completado el 14/08/2026.**
-9. **Usuario B:** Crear Organización B (nombre/números homónimos) y verificar aislamiento total de datos. ← **siguiente**
+9. ~~**Usuario B:** Crear Organización B (nombre/números homónimos) y verificar aislamiento total de datos.~~ **Completado el 14/08/2026: sin fuga de datos entre A y B.**
 10. ~~**Seguridad de Storage:** Probar que una URL de objeto de la Organización A devuelve 404 para la Organización B.~~ **Cubierto por pruebas automáticas el 14/08/2026** (`tests/test_aislamiento_almacenamiento.py`); queda como confirmación visual opcional en staging.
-11. **Cookies/CSRF/DevTools:** Confirmar cookies HttpOnly/Secure/SameSite y ausencia de violaciones CSP en la consola del navegador.
+11. **Cookies/CSRF/DevTools:** Confirmar cookies HttpOnly/Secure/SameSite y ausencia de violaciones CSP en la consola del navegador. ← **siguiente**
 12. ~~**Bucket privado:** Verificar que el acceso directo al objeto público en Supabase Storage devuelve acceso denegado.~~ **Aprovisionamiento cubierto por pruebas automáticas el 14/08/2026**; falta una única comprobación manual: pegar en el navegador la URL pública del objeto y confirmar que Supabase responde acceso denegado.
+13. **Arranque con rol privilegiado:** confirmar que CotizaT se niega a servir si `DATABASE_URL` usa un rol con `SUPERUSER`/`BYPASSRLS` (503 en `/readyz`). ← **siguiente**
 
 ## 4. Matriz de aceptación real
 
@@ -316,7 +320,8 @@ No declarar staging validado hasta completar los 14 puntos con dos correos verif
    provocar efectos de Storage — **superado en staging (14/08/2026)**;
 8. al cambiar B a `miembro`, puede escribir en la organización autorizada —
    **superado en staging (14/08/2026)**;
-9. crear organización B con nombres/números homónimos no mezcla datos con A;
+9. crear organización B con nombres/números homónimos no mezcla datos con A —
+   **superado en staging (14/08/2026)**;
 10. una URL/clave de objeto de A solicitada bajo B devuelve 404 — **cubierto en
     CI** (`tests/test_aislamiento_almacenamiento.py`: recorrido HTTP con dos
     organizaciones, más los intentos de manipular la clave);
@@ -358,11 +363,11 @@ Copiar este texto, sin añadir secretos:
 > responde 200 en producción.
 >
 > Staging (`https://cotizat-generador.vercel.app`) y Supabase funcionan;
-> `/readyz` responde 200. De la matriz de aceptación: **puntos 1-8 superados** en
+> `/readyz` responde 200. De la matriz de aceptación: **puntos 1-9 superados** en
 > staging y **10 y 13 cubiertos en CI** (`tests/test_aislamiento_almacenamiento.py`).
 >
-> **Voy a ejecutar yo mismo, en el navegador, los pasos manuales que quedan: 9,
-> 11, 12, la parte manual del 13 y el 14.** Sigo la guía de
+> **Voy a ejecutar yo mismo, en el navegador, los pasos manuales que quedan: 11,
+> 12, la parte manual del 13 y el 14.** Sigo la guía de
 > `docs/MATRIZ_PASOS_MANUALES.md`. Tu papel es acompañarme: resolver los fallos
 > que encuentre, interpretar los errores y corregir el código cuando haga falta,
 > sin relajar CSRF, CSP, RLS, el bucket privado ni el rol limitado.
