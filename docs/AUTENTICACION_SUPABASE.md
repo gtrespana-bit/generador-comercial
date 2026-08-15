@@ -158,22 +158,31 @@ Los enlaces se construyen desde `COTIZAT_PUBLIC_URL`, nunca desde `Host`. Aún n
 
 `e1a4b7c9d2f0` hace permanente el arreglo operativo de `alembic_version`: desactiva RLS en esa tabla de metadatos y concede únicamente `SELECT` a `cotizat_app`. Así el login `cotizat_runtime` puede comprobar el head en `/readyz` sin abrir ningún acceso a datos de tenants. Para SQL Editor está disponible `docs/staging_upgrade_e1a4b7c9d2f0.sql`.
 
-El proyecto real confirmó previamente `relrowsecurity = true` y que `anon` obtuvo cero partidas. Tras el cierre del incidente de invitaciones, Supabase quedó en `d7f2a9c41e63` y el flujo de aceptación se probó con el login runtime limitado. El siguiente paso es aplicar `e1a4b7c9d2f0` para que esa lectura de metadatos quede versionada; consulta el procedimiento y sus límites en `docs/BASE_DE_DATOS_WEB.md`.
+El proyecto real confirmó previamente `relrowsecurity = true` y que `anon` obtuvo cero partidas. Tras el cierre del incidente de invitaciones, Supabase quedó en `d7f2a9c41e63` y el flujo de aceptación se probó con el login runtime limitado. `e1a4b7c9d2f0` ya está **aplicada y desplegada**: Supabase confirmó `relrowsecurity = false`, `relforcerowsecurity = false` y `SELECT` para `cotizat_app` en `public.alembic_version`, y `/readyz` en producción responde `"alembic": "head:e1a4b7c9d2f0"` con `"rol_runtime": "superuser=False, bypassrls=False, inherit=True, cotizat_app=True"`. El PR #16 que versiona este endurecimiento está fusionado en `main`.
 
 ## Estado de validación real
 
-Las revisiones hasta `d7f2a9c41e63` están aplicadas en el proyecto real. El siguiente head del checkout es `e1a4b7c9d2f0`; su SQL de actualización debe ejecutarse en Supabase antes del redeploy. El checkout no contiene `.env` (Arena lo recreó al reanudar la sesión) y el sandbox cierra tanto PostgreSQL como TLS hacia Supabase antes de autenticar; por eso la nueva comprobación debe validarse desde el despliegue o un runner con esa salida. Las pruebas unitarias simuladas no sustituyen esa comprobación.
+Las revisiones hasta `e1a4b7c9d2f0` están aplicadas y desplegadas en el proyecto real. `/healthz` y `/readyz` responden **200 OK** en producción; `/readyz` devuelve `"alembic": "head:e1a4b7c9d2f0"` y `"rol_runtime": "superuser=False, bypassrls=False, inherit=True, cotizat_app=True"`. El PR #16 está fusionado en `main` (commit `bb84767`). La comprobación en producción sustituye la que el sandbox no puede ejecutar (cierra TLS hacia Supabase antes de autenticar).
 
 ## Trabajo de seguridad todavía obligatorio
 
-Esta integración no autoriza por sí sola un despliegue público. Siguen pendientes:
+Esta integración no autoriza por sí sola un despliegue público. Cerrado en esta
+etapa:
 
-- probar registro/login/recuperación end-to-end desde un entorno con salida HTTPS a Supabase;
-- configurar `COTIZAT_PUBLIC_URL` y la Redirect URL real en Supabase;
-- sustituir/complementar el límite local por IP ya implementado con contadores distribuidos antes de escalar a varias instancias (el rate limit de Supabase tampoco sustituye el control de aplicación);
-- aplicar/probar la migración de invitaciones y validar el recorrido real con dos emails, incluido su canal de entrega;
-- aplicar y probar el head `e1a4b7c9d2f0` (incluye `d7f2a9c41e63`) con un login runtime realmente no privilegiado y dos organizaciones;
-- validar en el navegador HTTPS real la CSP sin `unsafe-inline` y la auditoría XSS ya automatizada;
-- aplicar/probar la migración y el bucket privado de Storage real.
+- la migración de invitaciones `d7f2a9c41e63` está aplicada y el flujo de
+  aceptación probado (incidente del 500 resuelto);
+- el head `e1a4b7c9d2f0` está aplicado y desplegado, y `/readyz` lo confirma con
+  el rol runtime no privilegiado.
+
+Siguen pendientes:
+
+- validar el recorrido real de invitaciones con dos emails, incluido su canal de
+  entrega (hoy el gestor copia el enlace y lo comparte manualmente);
+- sustituir/complementar el límite local por IP con contadores distribuidos
+  antes de escalar a varias instancias;
+- validar en el navegador HTTPS real la CSP sin `unsafe-inline` y la auditoría
+  XSS ya automatizada;
+- validar el cruce de lectura/escritura con dos organizaciones y el acceso
+  denegado a la URL pública del bucket privado de Storage.
 
 CSRF por origen, cabeceras defensivas, almacenamiento privado y autorización de descargas ya están implementados en código, pero aún requieren validación en el despliegue real.

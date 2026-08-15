@@ -46,7 +46,7 @@ y `git diff --check`. `.env` y `presupuestos.db` no forman parte del repositorio
       "storage": "supabase:cotizat-private",
       "public_url": "configurado",
       "database": "postgresql",
-      "alembic": "head:d7f2a9c41e63",
+      "alembic": "head:e1a4b7c9d2f0",
       "rol_runtime": "superuser=False, bypassrls=False, inherit=True, cotizat_app=True"
     },
     "errors": []
@@ -58,24 +58,39 @@ y `git diff --check`. `.env` y `presupuestos.db` no forman parte del repositorio
   2. Se ejecutó `INSERT INTO alembic_version` y `ALTER TABLE public.alembic_version DISABLE ROW LEVEL SECURITY; GRANT SELECT ON TABLE public.alembic_version TO cotizat_app;` en Supabase.
   3. Se corrigió `_verificar_head_alembic_postgresql()` para usar `.scalar_one_or_none()`, calificar explícitamente `public.alembic_version` y atrapar excepciones en `lifespan` de forma defensiva para evitar cierres abruptos 500 en Vercel.
 
-El estado desplegado anterior quedó en `d7f2a9c41e63`. El checkout actual añade
-`e1a4b7c9d2f0`, que versiona de forma permanente el `DISABLE ROW LEVEL
-SECURITY` y el `GRANT SELECT` de `public.alembic_version`. Antes de desplegar
-este checkout hay que ejecutar `docs/staging_upgrade_e1a4b7c9d2f0.sql` en el SQL
-Editor; después `/readyz` debe mostrar `head:e1a4b7c9d2f0`.
+### Cierre del incidente de `alembic_version` (14/08/2026)
+
+La migración `e1a4b7c9d2f0` (parent `d7f2a9c41e63`) versiona de forma
+permanente el `DISABLE ROW LEVEL SECURITY` y el `GRANT SELECT` de
+`public.alembic_version`. Ya está **aplicada en Supabase** y **desplegada en
+producción**:
+
+- Supabase confirmó `relrowsecurity = false`, `relforcerowsecurity = false`,
+  `cotizat_app_puede_leer = true` y `version_num = e1a4b7c9d2f0`.
+- `/readyz` en producción responde **200 OK** con `"alembic":
+  "head:e1a4b7c9d2f0"` y `"rol_runtime": "superuser=False, bypassrls=False,
+  inherit=True, cotizat_app=True"`.
+- El PR **#16** se fusionó en `main` el 14/08/2026 con CI y deploy de Vercel en
+  verde.
+
+El incidente queda cerrado: producción y base de datos están alineadas en
+`e1a4b7c9d2f0` y el código desplegado espera ese mismo head (el código anterior
+fallaría en `/readyz` esperando `d7f2a9c41e63`).
 
 PRs creados en GitHub:
 - **PR #3** (fusionado en `main`).
 - **PR #4**: `https://github.com/gtrespana-bit/generador-comercial/pull/4` (`fix(staging): asegura lectura de public.alembic_version y atrapa excepciones en lifespan`).
+- **PR #16**: `https://github.com/gtrespana-bit/generador-comercial/pull/16` (`fix(db): versiona el endurecimiento de alembic_version`) — **fusionado**.
 
-Después de fusionar el PR #4, la nueva conversación debe trabajar desde el `main` resultante.
+La nueva conversación debe trabajar desde el `main` resultante (commit
+`bb84767`), que ya incluye `e1a4b7c9d2f0`.
 
 ## 2. Estado externo verificado de Supabase y Vercel
 
 Estado verificado de Supabase:
 
 ```text
-Alembic remoto: d7f2a9c41e63
+Alembic remoto: e1a4b7c9d2f0
 Rol runtime: cotizat_runtime (NOSUPERUSER, NOBYPASSRLS, INHERIT, miembro de cotizat_app)
 Bucket Storage: cotizat-private (privado, 12 MB)
 Auth URLs: Site URL https://cotizat-generador.vercel.app y Redirect URL https://cotizat-generador.vercel.app/restablecer-clave
@@ -334,6 +349,10 @@ Copiar este texto, sin añadir secretos:
 > Continúa el proyecto CotizaT desde el `main` actual (CI en verde). Lee primero
 > `docs/CONTINUIDAD_STAGING_SUPABASE.md` y `docs/MATRIZ_PASOS_MANUALES.md`. No
 > repitas trabajo completado ni pidas secretos.
+>
+> El incidente de invitaciones (500 al aceptar) y el de `alembic_version` están
+> cerrados: el head es `e1a4b7c9d2f0`, el PR #16 está fusionado y `/readyz`
+> responde 200 en producción.
 >
 > Staging (`https://cotizat-generador.vercel.app`) y Supabase funcionan;
 > `/readyz` responde 200. De la matriz de aceptación: **puntos 1-5 superados** en

@@ -51,7 +51,7 @@ Toda revisión autogenerada debe inspeccionarse. No se debe ejecutar `create_all
 
 El 13 de agosto de 2026 se aplicó la baseline `5cda50f97ed9` en un proyecto Supabase real. La prueba creó dos organizaciones con una partida homónima, modificó el precio de una de ellas y confirmó los valores desde dos conexiones PostgreSQL físicas diferentes (`pg_backend_pid` distinto). RLS automático quedó activo y el rol `anon` vio cero partidas.
 
-La revisión `9bca2ad1f6e4`, que añade el vínculo con Supabase Auth, también quedó aplicada en el mismo proyecto. El entorno real ya está en `d7f2a9c41e63`, con Storage privado, invitaciones, las políticas RLS/rol de aplicación y la corrección de visibilidad de la invitación aceptada probados con el login runtime limitado. El código tiene como siguiente head `e1a4b7c9d2f0`, que añade la lectura segura de `alembic_version`; queda aplicar `docs/staging_upgrade_e1a4b7c9d2f0.sql` y comprobarlo en el entorno real.
+La revisión `9bca2ad1f6e4`, que añade el vínculo con Supabase Auth, también quedó aplicada en el mismo proyecto. El entorno real está en `e1a4b7c9d2f0`, con Storage privado, invitaciones, las políticas RLS/rol de aplicación, la corrección de visibilidad de la invitación aceptada y la lectura segura de `alembic_version` aplicados y verificados con el login runtime limitado. `/readyz` en producción confirma `"alembic": "head:e1a4b7c9d2f0"` y `"rol_runtime": "superuser=False, bypassrls=False, inherit=True, cotizat_app=True"`.
 
 ## Rol de runtime y migraciones
 
@@ -84,6 +84,10 @@ Las funciones auxiliares viven en `cotizat_security`, tienen `search_path` fijo 
 
 La existencia de PostgreSQL, RLS versionado y `organizacion_id` todavía no basta para publicar CotizaT. En SQLite, `COTIZAT_ORGANIZATION_ID` conserva el espacio transitorio para recuperar instalaciones anteriores. En PostgreSQL se ignora: la dependencia HTTP exige Supabase Auth y una membresía activa.
 
-El código RLS solo tiene validación estática/offline en este checkout. Falta aplicar `c93e7a4d20f1` con la URL administrativa, crear el login limitado sin exponer su contraseña y ejecutar cruces reales de lectura/escritura con dos organizaciones. Hasta entonces el proyecto real continúa en `9bca2ad1f6e4` y la conexión `postgres` sigue omitiendo RLS.
+El RLS ya está aplicado y validado en el proyecto real con el login limitado
+(`superuser=False, bypassrls=False, inherit=True, cotizat_app=True`). Queda
+pendiente ejecutar cruces reales de lectura/escritura con dos organizaciones en
+navegador, y la prueba manual de que la URL pública del bucket privado niega el
+acceso.
 
 Las copias `.db` y su restauración están desactivadas cuando el backend no es SQLite. La estrategia web será backup administrado y exportación por organización. Consulta también `docs/AUTENTICACION_SUPABASE.md`, `docs/ALMACENAMIENTO_PRIVADO.md` y `docs/SEGURIDAD_WEB.md`.
