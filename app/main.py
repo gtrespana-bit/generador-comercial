@@ -5378,12 +5378,32 @@ async def actualizar_partida(partida_id: int, request: Request, db: Session = De
     return _redirect("/partidas", msg="Partida actualizada.")
 
 
+def _desvincular_partidas_del_catalogo(db: Session, partida_ids) -> None:
+    """Corta el vínculo de las líneas de presupuesto con partidas del catálogo.
+
+    ``presupuesto_items.partida_catalogo_id`` solo recuerda de qué partida
+    maestra se copió una línea; el precio ya está copiado en la propia línea.
+    Borrar una partida del catálogo no debe borrar presupuestos: se anula la
+    referencia (FK a NULL) antes del borrado para no violar la integridad
+    referencial.
+    """
+    if not partida_ids:
+        return
+    db.query(PresupuestoItem).filter(
+        PresupuestoItem.partida_catalogo_id.in_(partida_ids)
+    ).update(
+        {PresupuestoItem.partida_catalogo_id: None},
+        synchronize_session=False,
+    )
+
+
 @app.post("/partidas/{partida_id}/eliminar")
 def eliminar_partida(partida_id: int, db: Session = Depends(get_db)):
     partida = db.get(Partida, partida_id)
     if partida is None:
         return _redirect("/partidas", error="Partida no encontrada.")
     referencia = partida.imagen
+    _desvincular_partidas_del_catalogo(db, [partida_id])
     db.delete(partida)
     _borrar_imagen(referencia, db)
     db.commit()
@@ -5406,6 +5426,7 @@ async def bulk_delete_partidas(request: Request, db: Session = Depends(get_db)):
             pass
     if not ids:
         return _redirect("/partidas", error="No se seleccionaron partidas.")
+    _desvincular_partidas_del_catalogo(db, ids)
     count = 0
     referencias = set()
     for pid in ids:
