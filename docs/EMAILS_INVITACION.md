@@ -22,15 +22,38 @@ el enlace en pantalla queda solo como respaldo.
 | Clave | Valor | Notas |
 | --- | --- | --- |
 | `RESEND_API_KEY` | `re_...` | Clave de la API de Resend. **EXCLUSIVA del backend**, nunca en el frontend. Debe empezar por `re_`. |
-| `COTIZAT_EMAIL_FROM` | `CotizaT <no-responder@tu-dominio.com>` | Dirección de un **dominio verificado** en Resend (o `onboarding@resend.dev` para probar). |
+| `COTIZAT_EMAIL_FROM` | `CotizaT <no-responder@tu-dominio.com>` | Dirección de un **dominio verificado** en Resend. Para probar sin dominio: `onboarding@resend.dev`, con la limitación de abajo. |
 
 Sin las dos, el sistema funciona exactamente como antes (enlace en pantalla).
+
+## ¿Puedo usar el dominio de Vercel? No
+
+No se puede verificar `cotizat-generador.vercel.app` en Resend: ese subdominio
+lo controla Vercel, no nosotros. Resend exige añadir registros DNS (SPF/DKIM)
+en el proveedor del dominio, y eso solo puede hacerse sobre un dominio propio.
+Un remitente como `no-responder@cotizat-generador.vercel.app` **rebotaría**.
+
+Para probar **sin comprar dominio todavía** existe `onboarding@resend.dev`:
+funciona al instante, pero **solo entrega correos al email con el que
+registraste la cuenta de Resend**. Sirve para validar la integración de
+extremo a extremo (crear una invitación dirigida a tu propio email y verla
+llegar), no para invitar a un cliente real.
+
+Para un piloto real se necesita un dominio propio. No es un requisito solo de
+Resend: la aplicación tampoco debería quedarse en `*.vercel.app` para uso
+comercial (ver el aviso del plan Hobby en `docs/PUNTO_DE_CONTINUACION.md`).
+Un mismo dominio sirve para las tres cosas: dominio personalizado en Vercel,
+verificación en Resend y (opcional) SMTP personalizado en Supabase para los
+correos de Auth (confirmación de registro y recuperación de clave).
 
 ## Preparar Resend (una vez)
 
 1. Crear cuenta en [resend.com](https://resend.com) (plan gratuito:
    100 correos/día, 3.000/mes; una invitación es un correo).
-2. **Add Domain** y verificar el dominio (registro DNS) — los correos de un
+2. **Sin dominio propio** (modo prueba): usar `onboarding@resend.dev` como
+   `COTIZAT_EMAIL_FROM` — solo llegarán correos a tu propio email. Para
+   invitar a otra persona real hace falta un dominio verificado:
+3. **Add Domain** y verificar el dominio (registro DNS) — los correos de un
    dominio sin verificar rebotan salvo que uses `onboarding@resend.dev`.
 3. **API Keys → Create API Key** con permiso de envío (`sending access`).
    Copiar la clave `re_...`.
