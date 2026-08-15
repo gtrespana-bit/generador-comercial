@@ -99,19 +99,21 @@ Estado verificado de Supabase:
 Alembic remoto: e1a4b7c9d2f0
 Rol runtime: cotizat_runtime (NOSUPERUSER, NOBYPASSRLS, INHERIT, miembro de cotizat_app)
 Bucket Storage: cotizat-private (privado, 12 MB)
-Auth URLs: Site URL https://cotizat-generador.vercel.app y Redirect URL https://cotizat-generador.vercel.app/restablecer-clave
+Auth URLs: Site URL https://cotizat.online y Redirect URL https://cotizat.online/restablecer-clave
 ```
 
 Estado verificado de Vercel:
 
 ```text
-URL de staging: https://cotizat-generador.vercel.app
-Variables de entorno: DATABASE_URL, COTIZAT_REQUIRE_RLS_ROLE=true, SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, COTIZAT_STORAGE_BACKEND=supabase, SUPABASE_STORAGE_BUCKET=cotizat-private, SUPABASE_SECRET_KEY, COTIZAT_COOKIE_SECURE=true, COTIZAT_TRUST_PROXY=true, COTIZAT_PUBLIC_URL, UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN, COTIZAT_REQUIRE_DISTRIBUTED_RATELIMIT=true.
+URL de staging: https://cotizat.online (dominio propio, 15/08/2026);
+  alias previo https://cotizat-generador.vercel.app sigue activo.
+Variables de entorno: DATABASE_URL, COTIZAT_REQUIRE_RLS_ROLE=true, SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, COTIZAT_STORAGE_BACKEND=supabase, SUPABASE_STORAGE_BUCKET=cotizat-private, SUPABASE_SECRET_KEY, COTIZAT_COOKIE_SECURE=true, COTIZAT_TRUST_PROXY=true, COTIZAT_PUBLIC_URL=https://cotizat.online, UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN, COTIZAT_REQUIRE_DISTRIBUTED_RATELIMIT=true, RESEND_API_KEY, COTIZAT_EMAIL_FROM=CotizaT <no-responder@cotizat.online>.
 Rate limiting distribuido (verificado el 15/08/2026): las tres variables de
 Upstash están en Vercel (Production), el PR #18 está fusionado y `/readyz`
 responde `"rate_limit": "distribuido:upstash"` con `"ok": true`.
+Resend (15/08/2026): dominio cotizat.online verificado (SPF/DKIM/MX en GoDaddy).
 /healthz: 200 OK
-/readyz: 200 OK
+/readyz: 200 OK (recovery_redirect_url_esperada: https://cotizat.online/restablecer-clave)
 ```
 
 Pendientes explícitos:
@@ -122,11 +124,14 @@ Pendientes explícitos:
    15/08/2026**: base Upstash creada, las tres variables añadidas en Vercel
    (Production) y PR #18 fusionado; `/readyz` responde
    `checks.rate_limit = "distribuido:upstash"` con `"ok": true`.
-4. Emails de invitación (código listo, ver `docs/EMAILS_INVITACION.md`):
-   crear la cuenta en Resend, verificar el dominio y añadir en Vercel
-   `RESEND_API_KEY` y `COTIZAT_EMAIL_FROM`; `/readyz` debe pasar a
-   `"email": "configurado"`. Hasta entonces las invitaciones se entregan como
-   enlace en pantalla.
+4. Emails de invitación (ver `docs/EMAILS_INVITACION.md` y
+   `docs/DOMINIO_COTIZAT_ONLINE.md`): **operativo completo** (dominio
+   cotizat.online verificado en Resend, `RESEND_API_KEY` y
+   `COTIZAT_EMAIL_FROM` en Vercel Production); **falta fusionar el código**:
+   la rama `arena/01a00633-generador-comercial` (HEAD `6d99b7d`) contiene los
+   emails pero `main` sigue en `7940ce9`, por eso `/readyz` de producción aún
+   no muestra `"email"`. Al fusionar y desplegar debe aparecer
+   `"email": "configurado"`.
 5. Importación explícita de instalaciones SQLite e imágenes.
 
 Regla invariable:
