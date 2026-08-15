@@ -7,6 +7,9 @@ import app.database as database_module
 from app.database import Base, _aplicar_contexto_postgresql
 from app.models import TenantMixin
 from migrations.versions import c93e7a4d20f1_add_application_role_and_tenant_rls as migration
+from migrations.versions import (
+    d7f2a9c41e63_fix_invitation_select_policy_on_acceptance as head_migration,
+)
 
 
 class _FakeConnection:
@@ -100,7 +103,8 @@ def test_arranque_rechaza_rol_que_omite_rls(monkeypatch):
 
 
 def test_head_exigido_por_runtime_coincide_con_alembic():
-    assert database_module.EXPECTED_ALEMBIC_HEAD == migration.revision
+    assert database_module.EXPECTED_ALEMBIC_HEAD == head_migration.revision
+    assert head_migration.down_revision == migration.revision
 
 
 def test_migracion_rls_cubre_cada_modelo_tenant():
@@ -157,6 +161,58 @@ def test_migracion_rls_no_hace_nada_fuera_de_postgresql(monkeypatch):
     monkeypatch.setattr(migration.op, "execute", lambda statement: statements.append(statement))
     migration.upgrade()
     assert statements == []
+
+
+def test_migracion_head_no_hace_nada_fuera_de_postgresql(monkeypatch):
+    """La corrección de la política SELECT es solo para PostgreSQL."""
+    statements = []
+    sqlite_bind = SimpleNamespace(dialect=SimpleNamespace(name="sqlite"))
+    monkeypatch.setattr(head_migration.op, "get_bind", lambda: sqlite_bind)
+    monkeypatch.setattr(head_migration.op, "execute", lambda s: statements.append(s))
+    head_migration.upgrade()
+    head_migration.downgrade()
+    assert statements == []
+
+
+def test_migracion_head_sigue_mostrando_la_fila_aceptada_a_quien_la_acepto(monkeypatch):
+    """Regresión estática del 500 en POST /invitaciones/{token}/aceptar.
+
+    PostgreSQL exige que la fila nueva de un UPDATE siga pasando el USING de
+    las políticas SELECT. La política del destinatario ya no puede exigir
+    ``accepted_at IS NULL`` a secas: la fila aceptada sigue visible para el
+    usuario que la aceptó, y el downgrade restaura la versión estricta.
+    """
+    statements = []
+    monkeypatch.setattr(head_migration.op, "get_bind", lambda: _FakeBind())
+    monkeypatch.setattr(head_migration.op, "execute", lambda s: statements.append(str(s)))
+    head_migration.upgrade()
+    sql = "\n".join(statements)
+
+    assert "DROP POLICY IF EXISTS cotizat_invitation_select_recipient" in sql
+    compacto = " ".join(sql.split())
+    assert (
+        "CREATE POLICY cotizat_invitation_select_recipient"
+        " ON public.invitaciones_organizacion" in compacto
+    )
+    assert "FOR SELECT TO cotizat_app" in sql
+    # La fila pendiente sigue siendo visible…
+    assert "accepted_at IS NULL" in sql
+    # …y la aceptada también, solo para quien la aceptó.
+    assert "aceptada_por_usuario_id = cotizat_security.current_user_id()" in sql
+    # El destinatario sigue sin ver invitaciones revocadas o ajenas.
+    assert "email = cotizat_security.current_user_email()" in sql
+    assert "revoked_at IS NULL" in sql
+    assert "cotizat_security.current_user_is_verified()" in sql
+
+    downgrade_statements = []
+    monkeypatch.setattr(
+        head_migration.op, "execute", lambda s: downgrade_statements.append(str(s))
+    )
+    head_migration.downgrade()
+    revertido = "\n".join(downgrade_statements)
+    # El rollback restaura la visibilidad estricta previa (sin la rama OR).
+    assert "aceptada_por_usuario_id = cotizat_security.current_user_id()" not in revertido
+    assert "accepted_at IS NULL" in revertido
 
 
 # ---------------------------------------------------------------------------

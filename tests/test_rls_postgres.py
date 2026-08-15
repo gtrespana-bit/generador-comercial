@@ -103,7 +103,11 @@ def entorno_postgres():
         )
     )
 
-    yield {"runtime_url": url_runtime, "usuario_id": usuario_id}
+    yield {
+        "runtime_url": url_runtime,
+        "usuario_id": usuario_id,
+        "admin_url": url_base,
+    }
 
     motor_admin.dispose()
     with admin.connect() as conexion:
@@ -185,6 +189,229 @@ def test_bootstrap_crea_la_primera_organizacion_bajo_rls(entorno_postgres):
         ).count() == 1
 
     motor.dispose()
+
+
+def test_invitado_acepta_invitacion_bajo_rls(entorno_postgres):
+    """Flujo completo de invitación con el rol limitado real.
+
+    Regresión del 500 de producción en ``POST /invitaciones/{token}/aceptar``:
+    PostgreSQL evalúa el ``USING`` de las políticas SELECT como ``WITH CHECK``
+    sobre la fila nueva del UPDATE que marca la invitación como aceptada. La
+    política del destinatario exigía ``accepted_at IS NULL`` —justo lo que el
+    UPDATE elimina— y la reclamación moría con ``InsufficientPrivilege: new
+    row violates row-level security policy``.
+    """
+    import app.database as database_module
+    from app.models import Membresia, Usuario, crear_organizacion_con_propietario
+    from app.services.invitations import (
+        GestionEquipoError,
+        aceptar_invitacion,
+        crear_invitacion,
+    )
+
+    dueña_auth = "33333333-3333-4333-8333-333333333333"
+    dueña_email = "duena@example.com"
+    admin = create_engine(
+        entorno_postgres["admin_url"], isolation_level="AUTOCOMMIT"
+    )
+    with admin.connect() as conexion:
+        conexion.execute(text("""
+            INSERT INTO usuarios (
+              auth_user_id, email, nombre, activo, email_verificado_at,
+              created_at, updated_at
+            )
+            VALUES (:auth, :email, 'Dueña', TRUE, now(), now(), now())
+            ON CONFLICT (email) DO NOTHING
+        """), {"auth": dueña_auth, "email": dueña_email})
+        dueña_id = conexion.execute(
+            text("SELECT id FROM usuarios WHERE email = :email"),
+            {"email": dueña_email},
+        ).scalar_one()
+    admin.dispose()
+
+    motor = create_engine(entorno_postgres["runtime_url"])
+    Sesion = sessionmaker(bind=motor)
+
+    def contexto(db, auth_user_id, email, organizacion_id=None):
+        db.info.update({"auth_user_id": auth_user_id, "auth_email": email})
+        db.execute(text("SELECT 1"))  # abre la transacción e instala el contexto
+        if organizacion_id is not None:
+            database_module.establecer_contexto_organizacion(db, organizacion_id)
+
+    # 1) La dueña crea su organización (flujo ya verificado).
+    with Sesion() as db:
+        contexto(db, dueña_auth, dueña_email)
+        organizacion = crear_organizacion_con_propietario(
+            db,
+            nombre="Constructora RLS",
+            slug=f"constructora-rls-{uuid.uuid4().hex[:8]}",
+            usuario_id=dueña_id,
+        )
+        database_module.establecer_contexto_organizacion(db, organizacion.id)
+        db.commit()
+        organizacion_id = organizacion.id
+
+    # 2) La dueña invita al usuario verificado del fixture.
+    with Sesion() as db:
+        contexto(db, dueña_auth, dueña_email, organizacion_id)
+        invitacion, token = crear_invitacion(
+            db,
+            organizacion_id=organizacion_id,
+            actor_usuario_id=dueña_id,
+            email=EMAIL,
+            rol="miembro",
+        )
+        assert invitacion.id is not None
+        db.commit()
+
+    # 3) El invitado acepta SIN organización activa (el POST que fallaba).
+    invitado_id = entorno_postgres["usuario_id"]
+    with Sesion() as db:
+        contexto(db, AUTH_ID, EMAIL)
+        usuario = db.get(Usuario, invitado_id)
+        assert usuario is not None
+        membresia = aceptar_invitacion(
+            db, token=token, usuario=usuario, email_verificado=True
+        )
+        assert membresia.organizacion_id == organizacion_id
+        assert membresia.rol == "miembro"
+        db.commit()
+
+    # 4) El token es de un solo uso: reaceptar se rechaza sin 500.
+    with Sesion() as db:
+        contexto(db, AUTH_ID, EMAIL)
+        usuario = db.get(Usuario, invitado_id)
+        with pytest.raises(GestionEquipoError, match="no es válida"):
+            aceptar_invitacion(
+                db, token=token, usuario=usuario, email_verificado=True
+            )
+        db.rollback()
+
+    # 5) La membresía quedó activa y visible para el propio invitado.
+    with Sesion() as db:
+        contexto(db, AUTH_ID, EMAIL)
+        membresias = (
+            db.query(Membresia)
+            .filter(
+                Membresia.usuario_id == invitado_id,
+                Membresia.organizacion_id == organizacion_id,
+            )
+            .all()
+        )
+        assert [(m.rol, m.activa) for m in membresias] == [("miembro", True)]
+
+    # 6) Una invitación dirigida a otro email sigue siendo invisible para el
+    #    destinatario del fixture (la corrección no amplía esa frontera).
+    from app.models import InvitacionOrganizacion
+    from app.services.invitations import actualizar_membresia, revocar_invitacion
+
+    with Sesion() as db:
+        contexto(db, dueña_auth, dueña_email, organizacion_id)
+        _, token_ajena = crear_invitacion(
+            db,
+            organizacion_id=organizacion_id,
+            actor_usuario_id=dueña_id,
+            email="otra.persona@example.com",
+            rol="miembro",
+        )
+        db.commit()
+
+    with Sesion() as db:
+        contexto(db, AUTH_ID, EMAIL)
+        visibles = (
+            db.query(InvitacionOrganizacion)
+            .filter(InvitacionOrganizacion.token_hash == _hash_de(token_ajena))
+            .count()
+        )
+        assert visibles == 0
+
+    # 7) Membresía desactivada + nueva invitación: se reactiva sin duplicar.
+    with Sesion() as db:
+        contexto(db, dueña_auth, dueña_email, organizacion_id)
+        membresia_activa = (
+            db.query(Membresia)
+            .filter(
+                Membresia.usuario_id == invitado_id,
+                Membresia.organizacion_id == organizacion_id,
+            )
+            .with_for_update()
+            .one()
+        )
+        actualizar_membresia(
+            db,
+            membresia=membresia_activa,
+            organizacion_id=organizacion_id,
+            actor_usuario_id=dueña_id,
+            rol="miembro",
+            activa=False,
+        )
+        db.commit()
+
+    # 8) La primera de las nuevas invitaciones se revoca: debe ser invisible.
+    #    La segunda se acepta y reactiva la membresía con el nuevo rol.
+    with Sesion() as db:
+        contexto(db, dueña_auth, dueña_email, organizacion_id)
+        revocada, token_revocada = crear_invitacion(
+            db,
+            organizacion_id=organizacion_id,
+            actor_usuario_id=dueña_id,
+            email=EMAIL,
+            rol="lectura",
+        )
+        revocar_invitacion(
+            db,
+            invitacion=revocada,
+            organizacion_id=organizacion_id,
+            actor_usuario_id=dueña_id,
+        )
+        _, token_reactivacion = crear_invitacion(
+            db,
+            organizacion_id=organizacion_id,
+            actor_usuario_id=dueña_id,
+            email=EMAIL,
+            rol="lectura",
+        )
+        db.commit()
+
+    with Sesion() as db:
+        contexto(db, AUTH_ID, EMAIL)
+        assert (
+            db.query(InvitacionOrganizacion)
+            .filter(InvitacionOrganizacion.token_hash == _hash_de(token_revocada))
+            .count()
+            == 0
+        )
+
+    with Sesion() as db:
+        contexto(db, AUTH_ID, EMAIL)
+        usuario = db.get(Usuario, invitado_id)
+        reactivada = aceptar_invitacion(
+            db, token=token_reactivacion, usuario=usuario, email_verificado=True
+        )
+        assert reactivada.activa is True
+        assert reactivada.rol == "lectura"
+        db.commit()
+
+    with Sesion() as db:
+        contexto(db, AUTH_ID, EMAIL)
+        membresias = (
+            db.query(Membresia)
+            .filter(
+                Membresia.usuario_id == invitado_id,
+                Membresia.organizacion_id == organizacion_id,
+            )
+            .all()
+        )
+        assert [(m.rol, m.activa) for m in membresias] == [("lectura", True)]
+
+    motor.dispose()
+
+
+def _hash_de(token: str) -> str:
+    """Mismo hash SHA-256 que guarda el servicio (los tokens no se persisten)."""
+    import hashlib
+
+    return hashlib.sha256(token.encode("utf-8")).hexdigest()
 
 
 def test_el_rol_de_runtime_no_puede_saltarse_rls(entorno_postgres):

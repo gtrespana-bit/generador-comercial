@@ -1525,11 +1525,35 @@ CREATE POLICY cotizat_invitation_update_recipient
 
 UPDATE alembic_version SET version_num='c93e7a4d20f1' WHERE alembic_version.version_num = 'a84d2f6b91e0';
 
+-- Running upgrade c93e7a4d20f1 -> d7f2a9c41e63
+
+-- El destinatario sigue viendo su invitación después de aceptarla (solo si la
+-- aceptó él). Sin esto, el UPDATE que marca accepted_at moría con
+-- InsufficientPrivilege porque PostgreSQL evalúa el USING de las políticas
+-- SELECT como WITH CHECK sobre la fila nueva del UPDATE (500 al aceptar).
+DROP POLICY IF EXISTS cotizat_invitation_select_recipient ON public.invitaciones_organizacion;
+
+CREATE POLICY cotizat_invitation_select_recipient
+        ON public.invitaciones_organizacion
+        FOR SELECT TO cotizat_app
+        USING (
+      email = cotizat_security.current_user_email()
+      AND cotizat_security.current_user_is_verified()
+      AND revoked_at IS NULL
+      AND expires_at > pg_catalog.clock_timestamp()
+      AND (
+        accepted_at IS NULL
+        OR aceptada_por_usuario_id = cotizat_security.current_user_id()
+      )
+    );
+
+UPDATE alembic_version SET version_num='d7f2a9c41e63' WHERE alembic_version.version_num = 'c93e7a4d20f1';
+
 ALTER TABLE public.alembic_version DISABLE ROW LEVEL SECURITY;
 GRANT SELECT ON TABLE public.alembic_version TO cotizat_app;
 
 INSERT INTO alembic_version (version_num)
-SELECT 'c93e7a4d20f1'
+SELECT 'd7f2a9c41e63'
 WHERE NOT EXISTS (SELECT 1 FROM alembic_version);
 
 COMMIT;

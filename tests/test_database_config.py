@@ -55,7 +55,7 @@ assert 'creada_por_usuario_id' in {
     column['name'] for column in inspector.get_columns('organizaciones')
 }
 with engine.connect() as connection:
-    assert connection.execute(text('SELECT version_num FROM alembic_version')).scalar_one() == 'c93e7a4d20f1'
+    assert connection.execute(text('SELECT version_num FROM alembic_version')).scalar_one() == 'd7f2a9c41e63'
 """
     comprobacion = subprocess.run(
         [sys.executable, "-c", script],
