@@ -29,7 +29,7 @@ La app expone dos fronteras de salud (sin autenticación, sin datos de tenant):
 | Endpoint | Uso |
 | --- | --- |
 | `/healthz` | Liveness: el proceso responde. No toca la base de datos. |
-| `/readyz` | Readiness: Auth, Storage, COTIZAT_PUBLIC_URL, conexión PostgreSQL, head de Alembic (`d7f2a9c41e63`) y rol runtime (miembro de `cotizat_app`, `NOSUPERUSER`, `NOBYPASSRLS`, `INHERIT`). |
+| `/readyz` | Readiness: Auth, Storage, COTIZAT_PUBLIC_URL, conexión PostgreSQL, head de Alembic (`e1a4b7c9d2f0`) y rol runtime (miembro de `cotizat_app`, `NOSUPERUSER`, `NOBYPASSRLS`, `INHERIT`). |
 
 `/readyz` devuelve **503** si el despliegue no debe recibir tráfico; **200** no
 sustituye la matriz de aceptación con dos correos y dos organizaciones.
@@ -64,7 +64,7 @@ export MIGRATION_DATABASE_URL='postgresql://<admin>@<host>:5432/postgres?sslmode
 
 alembic current          # antes: c93e7a4d20f1 (conocido) o inferior
 alembic upgrade head
-alembic current          # OBLIGATORIO que imprima: d7f2a9c41e63
+alembic current          # OBLIGATORIO que imprima: e1a4b7c9d2f0
 
 unset MIGRATION_DATABASE_URL
 ```
@@ -72,7 +72,7 @@ unset MIGRATION_DATABASE_URL
 Resultado obligatorio documentado:
 
 ```text
-d7f2a9c41e63
+e1a4b7c9d2f0
 ```
 
 ## Paso C — Crear el login runtime

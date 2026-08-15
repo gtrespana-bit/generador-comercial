@@ -58,6 +58,12 @@ y `git diff --check`. `.env` y `presupuestos.db` no forman parte del repositorio
   2. Se ejecutó `INSERT INTO alembic_version` y `ALTER TABLE public.alembic_version DISABLE ROW LEVEL SECURITY; GRANT SELECT ON TABLE public.alembic_version TO cotizat_app;` en Supabase.
   3. Se corrigió `_verificar_head_alembic_postgresql()` para usar `.scalar_one_or_none()`, calificar explícitamente `public.alembic_version` y atrapar excepciones en `lifespan` de forma defensiva para evitar cierres abruptos 500 en Vercel.
 
+El estado desplegado anterior quedó en `d7f2a9c41e63`. El checkout actual añade
+`e1a4b7c9d2f0`, que versiona de forma permanente el `DISABLE ROW LEVEL
+SECURITY` y el `GRANT SELECT` de `public.alembic_version`. Antes de desplegar
+este checkout hay que ejecutar `docs/staging_upgrade_e1a4b7c9d2f0.sql` en el SQL
+Editor; después `/readyz` debe mostrar `head:e1a4b7c9d2f0`.
+
 PRs creados en GitHub:
 - **PR #3** (fusionado en `main`).
 - **PR #4**: `https://github.com/gtrespana-bit/generador-comercial/pull/4` (`fix(staging): asegura lectura de public.alembic_version y atrapa excepciones en lifespan`).
@@ -69,7 +75,7 @@ Después de fusionar el PR #4, la nueva conversación debe trabajar desde el `ma
 Estado verificado de Supabase:
 
 ```text
-Alembic remoto: c93e7a4d20f1
+Alembic remoto: d7f2a9c41e63
 Rol runtime: cotizat_runtime (NOSUPERUSER, NOBYPASSRLS, INHERIT, miembro de cotizat_app)
 Bucket Storage: cotizat-private (privado, 12 MB)
 Auth URLs: Site URL https://cotizat-generador.vercel.app y Redirect URL https://cotizat-generador.vercel.app/restablecer-clave

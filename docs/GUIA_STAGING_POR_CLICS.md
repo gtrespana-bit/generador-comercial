@@ -38,10 +38,16 @@ instalar nada.
    Tiene que devolver **exactamente**:
 
    ```text
-   d7f2a9c41e63
+   e1a4b7c9d2f0
    ```
 
 Eso es todo el “Alembic upgrade head”; no necesitas instalar Alembic.
+
+Si la base ya estaba en `d7f2a9c41e63` (la incidencia de invitaciones ya estaba
+cerrada), no vuelvas a ejecutar el bundle completo: pega únicamente
+`docs/staging_upgrade_e1a4b7c9d2f0.sql` en el SQL Editor. Ese archivo desactiva
+RLS en `public.alembic_version`, concede `SELECT` a `cotizat_app` y deja la
+versión en el nuevo head.
 
 ---
 
@@ -225,7 +231,7 @@ sesión).
 Pásame, sin ninguna contraseña:
 
 1. El resultado de `SELECT version_num FROM alembic_version;`
-   (debe ser `d7f2a9c41e63`).
+   (debe ser `e1a4b7c9d2f0`).
 2. Los resultados de los SELECT del rol runtime
    (`false, false, true` y `true`).
 3. El código HTTP de `/healthz` y `/readyz` (200/200 idealmente).
