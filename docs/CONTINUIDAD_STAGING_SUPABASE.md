@@ -106,10 +106,10 @@ Estado verificado de Vercel:
 
 ```text
 URL de staging: https://cotizat-generador.vercel.app
-Variables de entorno: DATABASE_URL, COTIZAT_REQUIRE_RLS_ROLE=true, SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, COTIZAT_STORAGE_BACKEND=supabase, SUPABASE_STORAGE_BUCKET=cotizat-private, SUPABASE_SECRET_KEY, COTIZAT_COOKIE_SECURE=true, COTIZAT_TRUST_PROXY=true, COTIZAT_PUBLIC_URL.
-Pendientes de añadir (rate limiting distribuido, ver docs/PUNTO_DE_CONTINUACION.md sección 2):
-  UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN, COTIZAT_REQUIRE_DISTRIBUTED_RATELIMIT=true.
-  Las tres juntas y en Production; la tercera sola provoca un 503 intencionado en /readyz.
+Variables de entorno: DATABASE_URL, COTIZAT_REQUIRE_RLS_ROLE=true, SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, COTIZAT_STORAGE_BACKEND=supabase, SUPABASE_STORAGE_BUCKET=cotizat-private, SUPABASE_SECRET_KEY, COTIZAT_COOKIE_SECURE=true, COTIZAT_TRUST_PROXY=true, COTIZAT_PUBLIC_URL, UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN, COTIZAT_REQUIRE_DISTRIBUTED_RATELIMIT=true.
+Rate limiting distribuido (verificado el 15/08/2026): las tres variables de
+Upstash están en Vercel (Production), el PR #18 está fusionado y `/readyz`
+responde `"rate_limit": "distribuido:upstash"` con `"ok": true`.
 /healthz: 200 OK
 /readyz: 200 OK
 ```
@@ -118,8 +118,16 @@ Pendientes explícitos:
 
 1. Pruebas de la matriz de aceptación de la Sección 4 con dos correos y dos organizaciones en la aplicación desplegada.
 2. Validación de CSP/interacciones en navegador real durante la matriz.
-3. Rate limiting distribuido: **código listo** (`app/ratelimit.py`). Falta la parte operativa: crear la base en Upstash y añadir a Vercel `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` y `COTIZAT_REQUIRE_DISTRIBUTED_RATELIMIT=true`. Mientras no estén, `/readyz` responde `checks.rate_limit = "memoria"`, y en Vercel eso significa que el límite de Auth no se aplica de verdad entre invocaciones.
-4. Importación explícita de instalaciones SQLite e imágenes.
+3. ~~Rate limiting distribuido: código listo (`app/ratelimit.py`).~~ **Resuelto el
+   15/08/2026**: base Upstash creada, las tres variables añadidas en Vercel
+   (Production) y PR #18 fusionado; `/readyz` responde
+   `checks.rate_limit = "distribuido:upstash"` con `"ok": true`.
+4. Emails de invitación (código listo, ver `docs/EMAILS_INVITACION.md`):
+   crear la cuenta en Resend, verificar el dominio y añadir en Vercel
+   `RESEND_API_KEY` y `COTIZAT_EMAIL_FROM`; `/readyz` debe pasar a
+   `"email": "configurado"`. Hasta entonces las invitaciones se entregan como
+   enlace en pantalla.
+5. Importación explícita de instalaciones SQLite e imágenes.
 
 Regla invariable:
 

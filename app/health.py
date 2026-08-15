@@ -97,6 +97,18 @@ def _check_recovery_redirect() -> tuple[str, str | None]:
         return "no-configurado", str(exc)
 
 
+def _check_email_configuration() -> tuple[str, str | None]:
+    """Informativo: las invitaciones degradan a enlace en pantalla.
+
+    Sin `RESEND_API_KEY`/`COTIZAT_EMAIL_FROM` el flujo de equipo sigue
+    funcionando (muestra el enlace una sola vez), así que este chequeo nunca
+    hace fallar el readiness; solo publica el estado para el panel.
+    """
+    from .services.email import estado_configuracion_email
+
+    return estado_configuracion_email()
+
+
 def _check_postgresql(engine: Engine) -> dict[str, object]:
     """Comprueba conexión, head de Alembic y el rol runtime limitado."""
     results: dict[str, object] = {"database": "postgresql"}
@@ -200,6 +212,11 @@ def readiness(engine: Engine | None = None) -> HealthStatus:
     # vive en Supabase y no puede comprobarse desde aquí.
     redirect_state, _redirect_error = _check_recovery_redirect()
     checks["recovery_redirect_url_esperada"] = redirect_state
+
+    # Informativo: sin correo configurado las invitaciones se entregan como
+    # enlace en pantalla, así que nunca añade errores al readiness.
+    email_state, _email_error = _check_email_configuration()
+    checks["email"] = email_state
 
     # En SQLite local (escritorio) un contador por proceso es correcto: hay un
     # único proceso. Solo se informa/exige el compartido en despliegue web.

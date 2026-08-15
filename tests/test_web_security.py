@@ -113,6 +113,11 @@ def test_plantillas_no_contienen_handlers_y_inline_usa_nonce():
     style_element = re.compile(r"<style[^>]*>", re.IGNORECASE)
     style_attribute = re.compile(r"\sstyle\s*=", re.IGNORECASE)
     for path in Path("app/templates").rglob("*.html"):
+        # Las plantillas de correo no se sirven por HTTP ni bajo la CSP de la
+        # aplicación: se renderizan dentro de emails, y los clientes de correo
+        # descartan hojas externas y exigen estilos en línea.
+        if "emails" in path.parts:
+            continue
         template = path.read_text(encoding="utf-8")
         assert not event_attribute.search(template), path
         assert not style_attribute.search(template), path

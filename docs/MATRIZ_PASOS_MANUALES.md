@@ -28,10 +28,12 @@ Duración estimada: **45–60 minutos**. Usa solo datos ficticios.
 > propio. **No desactives «Confirm email» para esquivarlo**: es el ajuste que
 > destapó el fallo de registro corregido en `d4aa7f1`.
 
-> **Aviso importante sobre el punto 6.** CotizaT **todavía no envía emails de
-> invitación**. Al invitar a B, la pantalla muestra un enlace **una sola vez** y
-> no lo vuelve a enseñar. Cópialo en el bloc de notas antes de navegar a otra
-> página. Si lo pierdes, revoca la invitación y crea otra.
+> **Aviso importante sobre el punto 6.** CotizaT envía el correo de invitación
+> automáticamente cuando `RESEND_API_KEY` y `COTIZAT_EMAIL_FROM` están
+> configuradas (ver `docs/EMAILS_INVITACION.md`). Si el correo no está
+> configurado o el envío falla, la pantalla muestra el enlace **una sola vez**
+> y no lo vuelve a enseñar. En ese caso, cópialo en el bloc de notas antes de
+> navegar a otra página; si lo pierdes, revoca la invitación y crea otra.
 
 ---
 
