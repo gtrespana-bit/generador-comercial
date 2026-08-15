@@ -1352,12 +1352,13 @@ entre organizaciones) depende de que funcione.
 
 Puntos 6 a 9 (invitación al Usuario B, aceptación de un solo uso con email
 verificado, rol `lectura` comprobado, ascenso a `miembro` y Organización B con
-nombres homónimos sin fuga de datos) y el punto 11 (cookies HttpOnly/Secure y
-`document.cookie` vacío) quedan **superados en staging el 14/08/2026**. Restan
-el punto 12 (sin violaciones CSP en DevTools) y el 14 (arranque rechazado con
-un rol `BYPASSRLS`). Cerrada la matriz, el siguiente bloque de infraestructura
-es el rate limiting distribuido (Redis/Upstash), obligatorio antes de escalar a
-varias instancias o abrir el registro.
+nombres homónimos sin fuga de datos), el punto 11 (cookies HttpOnly/Secure y
+`document.cookie` vacío) y el punto 12 (consola sin violaciones CSP) quedan
+**superados en staging el 14/08/2026**. Resta el punto 14 (arranque rechazado
+con un rol `BYPASSRLS`; opcional, lógica cubierta en CI). Cerrada la matriz, el
+siguiente bloque de infraestructura es el rate limiting distribuido
+(Redis/Upstash), obligatorio antes de escalar a varias instancias o abrir el
+registro.
 
 ---
 
@@ -1540,11 +1541,11 @@ textual reportado (`InvalidCredentials: Supabase no pudo crear la cuenta.`).
 
 ## Lo que sigue siendo manual
 
-Los puntos 6 a 9 y 11 quedaron superados el 14/08/2026 (invitación al Usuario
-B, aceptación con email verificado, rol `lectura` comprobado, ascenso a
-`miembro`, Organización B homónima sin fuga de datos y cookies
-HttpOnly/Secure). Restan los puntos 12, 13 (parte manual) y 14, con la guía
-`docs/MATRIZ_PASOS_MANUALES.md`.
+Los puntos 6 a 9, 11 y 12 quedaron superados el 14/08/2026 (invitación al
+Usuario B, aceptación con email verificado, rol `lectura` comprobado, ascenso a
+`miembro`, Organización B homónima sin fuga de datos, cookies HttpOnly/Secure y
+consola sin violaciones CSP). Restan el punto 13 (parte manual) y el 14, con la
+guía `docs/MATRIZ_PASOS_MANUALES.md`.
 
 ## Resultado
 

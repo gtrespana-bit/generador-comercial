@@ -255,29 +255,30 @@ emails tienen cuenta). Cubierto por cuatro pruebas en `tests/test_auth.py`.
 
 ## 3. Orden obligatorio del siguiente bloque
 
-> **Punto exacto al 14/08/2026 (última actualización):** puntos 1–9 y 11
+> **Punto exacto al 14/08/2026 (última actualización):** puntos 1–9, 11 y 12
 > superados en `https://cotizat-generador.vercel.app`: registro, Organización A,
 > recuperación de contraseña, subida de logo/imagen/anexo/ficha, descarga del
 > PDF, **invitación al Usuario B con rol `lectura`, aceptación de un solo uso
 > con email verificado, comprobación de que `lectura` no escribe, ascenso a
 > `miembro`, creación de la Organización B con nombres/números homónimos sin
-> mezcla de datos con A, y cookies Auth HttpOnly/Secure/SameSite=Lax con
-> `document.cookie` vacío y desaparición al cerrar sesión** (el rechazo de
-> escrituras cross-site del punto 11 está cubierto en CI por
-> `tests/test_web_security.py`). Los puntos **10 y 13 se han trasladado a
-> pruebas automáticas** en `tests/test_aislamiento_almacenamiento.py`, porque
-> eran comprobaciones manuales fáciles de olvidar tras un cambio en el proxy
-> `/archivos/...`: ahora CI verifica que un objeto de A devuelve 404 bajo B
-> (también manipulando la clave) y que nada del código expone el bucket
-> directamente. La única parte del punto 13 que sigue siendo manual, por
-> depender del proyecto Supabase real y no del código, es pegar la URL pública
-> del objeto en el navegador y confirmar el acceso denegado. La lógica del
-> punto 14 (rechazo de arranque con un rol `SUPERUSER`/`BYPASSRLS`) ya está
-> cubierta por `tests/test_rls.py` y `tests/test_health.py`.
+> mezcla de datos con A, cookies Auth HttpOnly/Secure/SameSite=Lax con
+> `document.cookie` vacío y desaparición al cerrar sesión, y consola sin
+> violaciones CSP** (el rechazo de escrituras cross-site del punto 11 está
+> cubierto en CI por `tests/test_web_security.py`). Los puntos **10 y 13 se han
+> trasladado a pruebas automáticas** en
+> `tests/test_aislamiento_almacenamiento.py`, porque eran comprobaciones
+> manuales fáciles de olvidar tras un cambio en el proxy `/archivos/...`: ahora
+> CI verifica que un objeto de A devuelve 404 bajo B (también manipulando la
+> clave) y que nada del código expone el bucket directamente. La única parte
+> del punto 13 que sigue siendo manual, por depender del proyecto Supabase real
+> y no del código, es pegar la URL pública del objeto en el navegador y
+> confirmar el acceso denegado. La lógica del punto 14 (rechazo de arranque con
+> un rol `SUPERUSER`/`BYPASSRLS`) ya está cubierta por `tests/test_rls.py` y
+> `tests/test_health.py`.
 >
-> **Lo siguiente son los puntos 12 y 14** (consola sin violaciones CSP y
-> rechazo de arranque con un rol privilegiado), más la parte manual del punto
-> 13 (URL pública del bucket denegada).
+> **Lo siguiente son el punto 14** (rechazo de arranque con un rol
+> privilegiado; opcional, lógica cubierta en CI) **y la parte manual del punto
+> 13** (URL pública del bucket denegada).
 
 > Punto exacto al 14/08/2026: Pasos A–F completados y verificados. `/healthz` y `/readyz` responden 200 OK en la URL real `https://cotizat-generador.vercel.app`. Resuelta la incidencia de bootstrap de organizaciones bajo RLS y **confirmada en staging la creación de la Organización A** (puntos 1 y 2 de la matriz superados). Añadidos además integración continua y bloqueo de dependencias (ver Sección 2), y **el workflow `CI` ya está activo en GitHub** con su primera ejecución sobre `main` en verde (run `31811936947`); con esto queda cerrada la "Acción manual pendiente" del flujo. **Lo siguiente es continuar la matriz de aceptación de la Sección 4 desde el punto 3** (recuperación de contraseña); el usuario A y la Organización A ya existen, así que no deben repetirse su registro ni su aprovisionamiento.
 
@@ -305,9 +306,30 @@ Paso a paso con dos correos (ej. Usuario A y Usuario B):
 9. ~~**Usuario B:** Crear Organización B (nombre/números homónimos) y verificar aislamiento total de datos.~~ **Completado el 14/08/2026: sin fuga de datos entre A y B.**
 10. ~~**Seguridad de Storage:** Probar que una URL de objeto de la Organización A devuelve 404 para la Organización B.~~ **Cubierto por pruebas automáticas el 14/08/2026** (`tests/test_aislamiento_almacenamiento.py`); queda como confirmación visual opcional en staging.
 11. ~~**Cookies/CSRF:** Confirmar cookies HttpOnly/Secure/SameSite, `document.cookie` vacío y desaparición al cerrar sesión.~~ **Completado el 14/08/2026** (el rechazo de escrituras cross-site está cubierto en CI por `tests/test_web_security.py`).
-12. **DevTools/CSP:** Ausencia de violaciones Content Security Policy en la consola del navegador. ← **siguiente**
+12. ~~**DevTools/CSP:** Ausencia de violaciones Content Security Policy en la consola del navegador.~~ **Completado el 14/08/2026:** se eliminaron dos hojas `<style>` inyectadas sin nonce en `dragdrop.js` y `totales.js` y se validó en el despliegue de la rama.
 13. ~~**Bucket privado:** Verificar que el acceso directo al objeto público en Supabase Storage devuelve acceso denegado.~~ **Aprovisionamiento cubierto por pruebas automáticas el 14/08/2026**; falta una única comprobación manual: pegar en el navegador la URL pública del objeto y confirmar que Supabase responde acceso denegado.
 14. **Arranque con rol privilegiado:** confirmar que CotizaT se niega a servir si `DATABASE_URL` usa un rol con `SUPERUSER`/`BYPASSRLS` (503 en `/readyz`). ← **siguiente**
+
+### Incidencias resueltas durante el punto 12 (14/08/2026)
+
+La revisión de la consola del creador destapó dos fallos reales, corregidos en
+la rama `arena/01a00312-generador-comercial` (PR #17) y validados en el
+despliegue de la rama:
+
+1. **Violaciones CSP.** `editor/dragdrop.js` y `editor/totales.js` creaban
+   elementos `<style>` con `textContent` sin asignarles el nonce de la
+   respuesta, así que la CSP estricta (`style-src 'self' 'nonce-…' + Google
+   Fonts`) los bloqueaba. Esos estilos ya vivían en `style.css` o se aplican
+   por la utilidad `CotizatStyles` (hoja con nonce vía CSSOM), así que la
+   inyección era redundante y se eliminó. Se añadió una prueba que exige nonce
+   a cualquier `<style>` dinámico (`tests/test_web_security.py`).
+2. **500 al borrar una partida del catálogo.** `eliminar_partida` y
+   `bulk_delete_partidas` borraban la fila de `partidas` sin desvincular las
+   líneas de `presupuesto_items` que la referencian, y PostgreSQL respondía
+   `ForeignKeyViolation`. Como `partida_catalogo_id` solo recuerda el origen de
+   la copia (el precio ya vive en la línea), ahora se anula la referencia antes
+   del borrado y el presupuesto sobrevive intacto. Regresión en
+   `tests/test_app.py` con las FK de SQLite activadas.
 
 ## 4. Matriz de aceptación real
 
@@ -332,7 +354,9 @@ No declarar staging validado hasta completar los 14 puntos con dos correos verif
 11. cookies Auth son Secure/HttpOnly y las escrituras cross-site devuelven 403 —
     **superado en staging (14/08/2026)** (cookies comprobadas en navegador;
     rechazo cross-site cubierto en CI por `tests/test_web_security.py`);
-12. DevTools no muestra violaciones CSP ni fallos de interacción/estilos;
+12. DevTools no muestra violaciones CSP ni fallos de interacción/estilos —
+    **superado en staging (14/08/2026)** (dos hojas `<style>` dinámicas sin
+    nonce eliminadas y validado en el despliegue de la rama);
 13. el bucket no entrega objetos sin pasar por CotizaT — **cubierto en CI** en
     todo lo que depende del código (el bucket se aprovisiona `public=false`,
     no existe generación de URL pública ni firmada, y ninguna plantilla enlaza
@@ -369,11 +393,11 @@ Copiar este texto, sin añadir secretos:
 > responde 200 en producción.
 >
 > Staging (`https://cotizat-generador.vercel.app`) y Supabase funcionan;
-> `/readyz` responde 200. De la matriz de aceptación: **puntos 1-9 y 11 superados**
-> en staging y **10 y 13 cubiertos en CI**
+> `/readyz` responde 200. De la matriz de aceptación: **puntos 1-9, 11 y 12
+> superados** en staging y **10 y 13 cubiertos en CI**
 > (`tests/test_aislamiento_almacenamiento.py`).
 >
-> **Voy a ejecutar yo mismo, en el navegador, los pasos manuales que quedan: 12,
+> **Voy a ejecutar yo mismo, en el navegador, los pasos manuales que quedan:
 > la parte manual del 13 y el 14.** Sigo la guía de
 > `docs/MATRIZ_PASOS_MANUALES.md`. Tu papel es acompañarme: resolver los fallos
 > que encuentre, interpretar los errores y corregir el código cuando haga falta,
