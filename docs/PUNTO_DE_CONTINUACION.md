@@ -124,19 +124,26 @@ Guía operativa en `docs/MATRIZ_PASOS_MANUALES.md` (45-60 min).
 
 ## 4. Qué es lo siguiente
 
-Con el bloque de emails desplegado, los siguientes bloques en orden
-recomendado:
+**E1-040 cerrado el 15/08/2026**: `tests/test_recorrido_critico.py` cubre
+sobre HTTP el recorrido completo (instalación limpia → asistente → catálogo,
+cliente y presupuesto reales → PDF → backup → pérdida → restauración), la
+restauración de una base de versión anterior con re-migración automática, el
+backup automático semanal sin duplicados y el rechazo de zips maliciosos
+(zip slip). Cada prueba corre contra una instalación aislada mediante la
+variable nueva `COTIZAT_DATA_DIR` (solo modo desarrollo; en el .exe se
+ignora). Suite: **266 passed, 5 skipped**. El criterio «CI ejecuta las
+pruebas y el recorrido crítico está cubierto» pasó a `[x]` en el plan.
 
-1. **E1-040 — pruebas de recorridos críticos.** Criterio de salida de Etapa 1,
-   aún en `[~]`.
-2. **E1W-012 — importación de instalaciones SQLite hacia la web.**
-3. **Paquete legal/comercial:** E1-018 (EULA), E1-019 (privacidad), E1-020
+Los siguientes bloques en orden recomendado:
+
+1. **E1W-012 — importación de instalaciones SQLite hacia la web.**
+2. **Paquete legal/comercial:** E1-018 (EULA), E1-019 (privacidad), E1-020
    (licencias de terceros), E1-050 (guía de inicio), E1-056 (landing).
 
 Criterios de salida de Etapa 1 aún abiertos: primer PDF en <20 min por usuario
 nuevo, catálogo con procedencia y precios fechados, exportación/migración desde
-SQLite, guía + oferta + contrato + soporte, recorrido crítico cubierto en CI,
-tres pruebas de usabilidad externas.
+SQLite, guía + oferta + contrato + soporte, tres pruebas de usabilidad
+externas.
 
 ---
 

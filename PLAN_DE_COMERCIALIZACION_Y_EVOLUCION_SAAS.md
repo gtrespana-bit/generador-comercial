@@ -292,8 +292,9 @@ Al trabajar en una tarea de este plan se debe:
 - [x] **E1-039 — Hacer que `pytest` funcione sin depender de configurar manualmente `PYTHONPATH`.**
   Evidencia: `pytest.ini` incorpora la raíz del proyecto y permite ejecutar `.venv/bin/pytest -q` directamente.
 
-- [ ] **E1-040 — Añadir pruebas de los recorridos críticos.**  
+- [x] **E1-040 — Añadir pruebas de los recorridos críticos.**
   Instalación limpia, primer inicio, presupuesto, PDF, backup, restauración y actualización.
+  Evidencia (15/08/2026): `tests/test_recorrido_critico.py` encadena sobre HTTP instalación limpia → asistente → catálogo/cliente/presupuesto reales → PDF → backup → pérdida → restauración (incluida la copia previa automática), más restauración de una base de versión anterior con re-migración, backup automático semanal sin duplicados y rechazo de zip malicioso (zip slip). Cada prueba corre contra una instalación aislada vía `COTIZAT_DATA_DIR`.
 
 - [x] **E1-041 — Revisar que las pruebas no modifiquen la base de datos personal del desarrollador.**
   Evidencia: `tests/conftest.py` asigna una base temporal antes de importar la aplicación y la elimina al cerrar la sesión de pytest.
@@ -368,8 +369,8 @@ No se marcará esta etapa como completada hasta cumplir todos los siguientes pun
 - [ ] Imágenes y anexos usan almacenamiento persistente por organización.
 - [ ] Existe una exportación y una migración controlada desde SQLite.
 - [ ] Existe guía de inicio, oferta, contrato y canal de soporte.
-- [~] CI ejecuta las pruebas y el recorrido crítico está cubierto.
-  CI operativo desde el 14/08/2026 (E1-038); falta cubrir el recorrido crítico completo (E1-040).
+- [x] CI ejecuta las pruebas y el recorrido crítico está cubierto.
+  CI operativo desde el 14/08/2026 (E1-038); recorrido crítico completo cubierto el 15/08/2026 (E1-040, `tests/test_recorrido_critico.py`).
 - [ ] Tres usuarios externos completaron una prueba de usabilidad.
 
 **Puerta al terminar:** desplegar una beta web privada para prospectos y comenzar la validación pagada, sin afirmar todavía preparación para lanzamiento público.

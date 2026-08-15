@@ -26,6 +26,14 @@ from .db_config import resolver_database_settings
 #                   permisos de administrador y no pierde datos al
 #                   actualizar o desinstalar el programa.
 # - En desarrollo: ambos apuntan a la raíz del repositorio.
+#
+# ``COTIZAT_DATA_DIR`` redirige el directorio de datos completo (base,
+# backups, uploads y almacén privado) en modo desarrollo. Lo usan las pruebas
+# del recorrido crítico para ejercitar backup/restauración sin tocar los
+# datos del desarrollador, igual que ``COTIZAT_DB`` aísla solo el archivo
+# SQLite. En modo empaquetado se ignora: la instalación real debe seguir las
+# reglas de ``resolve_data_directory``.
+_data_dir_configurado = os.environ.get("COTIZAT_DATA_DIR", "").strip()
 if getattr(sys, "frozen", False):
     BASE_DIR = Path(getattr(sys, "_MEIPASS", Path(sys.executable).parent))
     _raiz_datos = Path(
@@ -34,9 +42,10 @@ if getattr(sys, "frozen", False):
         or str(Path.home())
     )
     DATA_DIR = resolve_data_directory(_raiz_datos)
+    _data_dir_configurado = ""
 else:
     BASE_DIR = Path(__file__).resolve().parent.parent
-    DATA_DIR = BASE_DIR
+    DATA_DIR = Path(_data_dir_configurado).resolve() if _data_dir_configurado else BASE_DIR
 
 
 def _directorio_escribible(directorio: Path) -> bool:
@@ -94,7 +103,7 @@ BACKUPS_DIR = DATA_DIR / "backups"
 # directorio que exista y sea escribible.
 UPLOADS_DIR = (
     DATA_DIR / "uploads"
-    if getattr(sys, "frozen", False) or DATOS_EFIMEROS
+    if getattr(sys, "frozen", False) or DATOS_EFIMEROS or _data_dir_configurado
     else BASE_DIR / "app" / "static" / "uploads"
 )
 # Los objetos nuevos del adaptador local nunca cuelgan del montaje estático:
