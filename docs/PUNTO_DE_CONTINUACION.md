@@ -143,14 +143,39 @@ duplica al reimportar y exige rol propietario/administrador. 12 pruebas en
 `tests/test_instalacion_sqlite.py`. Suite: **278 passed, 5 skipped**. El
 criterio «exportación y migración controlada desde SQLite» pasó a `[x]`.
 
-Los siguientes bloques en orden recomendado:
+**Paquete legal/comercial entregado el 15/08/2026**:
 
-1. **Paquete legal/comercial:** E1-018 (EULA), E1-019 (privacidad), E1-020
-   (licencias de terceros), E1-050 (guía de inicio), E1-056 (landing).
+- **E1-018** `[x]` — términos del servicio/EULA en `/legal/terminos`.
+- **E1-019** `[x]` — privacidad en `/legal/privacidad` y condiciones de
+  soporte en `/legal/soporte` (canal: soporte@cotizat.online).
+- **E1-020** `[x]` — licencias de terceros en `/legal/licencias` (generado
+  desde los metadatos reales del lock; Lato OFL, psycopg LGPL, PyInstaller
+  con excepción).
+- **E1-050** `[x]` — guía de inicio rápido en `docs/GUIA_INICIO_RAPIDO.md`.
+- **E1-056** `[~]` — landing pública en `/conocer` con precios promocionales
+  (89 US$/año, habitual 109; 9,99 US$/mes primer año, habitual 12,99); le
+  faltan el vídeo (E1-051) y el PDF de ejemplo (E1-052) para cerrarse.
+- **E1-057** `[~]` — precios del piloto decididos y publicados; falta método
+  de cobro (E1-059) y recibo/contrato firmable (E1-060).
+- La razón social se inyecta con `COTIZAT_LEGAL_ENTITY` (Vercel) y el email
+  de soporte con `COTIZAT_SUPPORT_EMAIL` (por defecto soporte@cotizat.online).
+  Hasta definir la entidad, los documentos muestran un marcador visible.
+- 6 pruebas nuevas en `tests/test_paginas_publicas.py` (contenido exigido por
+  el plan, honestidad de precios, CSP y 404). Suite: **284 passed, 5 skipped**.
+
+Pendientes operativos del usuario para este bloque:
+
+1. **Crear el buzón/redirección `soporte@cotizat.online`** (Resend o
+   redirección en GoDaddy hacia tu correo real).
+2. Definir la razón social y añadir `COTIZAT_LEGAL_ENTITY` en Vercel.
+3. Decidir método de cobro (E1-059) para cerrar E1-057/E1-060.
+
+Bloques siguientes en orden recomendado: E1-051 (vídeo de 5 min), E1-052
+(presupuesto de muestra), E1-021 (revisión de datos sensibles del repo).
 
 Criterios de salida de Etapa 1 aún abiertos: primer PDF en <20 min por usuario
-nuevo, catálogo con procedencia y precios fechados, guía + oferta + contrato +
-soporte, tres pruebas de usabilidad externas.
+nuevo, catálogo con procedencia y precios fechados, recibo/registro de
+licencias, tres pruebas de usabilidad externas.
 
 ---
 

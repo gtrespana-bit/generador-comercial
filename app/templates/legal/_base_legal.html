@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}Información legal{% endblock %} · {{ product_name }}</title>
+  <link rel="icon" type="image/png" href="/static/icono.png">
+  <style nonce="{{ request.state.csp_nonce }}">
+    :root { font-family: Inter, ui-sans-serif, system-ui, sans-serif; color: #17211d; background: #f3f7f5; }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 28px 16px 60px; }
+    main { max-width: 860px; margin: 0 auto; background: white; border-radius: 18px; padding: 40px 44px 48px; box-shadow: 0 18px 50px rgba(10, 48, 34, .10); }
+    header.site { max-width: 860px; margin: 0 auto 18px; display: flex; justify-content: space-between; align-items: center; }
+    header.site a { color: #0b5b38; text-decoration: none; font-weight: 700; }
+    h1 { font-size: 1.7rem; line-height: 1.2; margin: 0 0 6px; }
+    h2 { font-size: 1.15rem; margin: 30px 0 10px; }
+    h3 { font-size: 1rem; margin: 22px 0 8px; }
+    p, li { line-height: 1.65; }
+    .meta { color: #65766e; font-size: .88rem; margin-bottom: 26px; }
+    .aviso { background: #fdf6e7; border: 1px solid #ecd9a8; border-radius: 10px; padding: 12px 16px; font-size: .92rem; line-height: 1.5; }
+    table { border-collapse: collapse; width: 100%; font-size: .88rem; }
+    th, td { border: 1px solid #dde7e2; padding: 7px 10px; text-align: left; vertical-align: top; }
+    th { background: #eef5f1; }
+    footer.legal { max-width: 860px; margin: 26px auto 0; color: #65766e; font-size: .85rem; display: flex; gap: 16px; flex-wrap: wrap; }
+    footer.legal a { color: #0b5b38; }
+    code { background: #eef5f1; border-radius: 5px; padding: 1px 5px; font-size: .88em; }
+  </style>
+</head>
+<body>
+<header class="site">
+  <a href="/conocer">{{ product_name }}</a>
+  <a href="/acceso">Iniciar sesión</a>
+</header>
+<main>
+{% block contenido %}{% endblock %}
+</main>
+<footer class="legal">
+  <a href="/legal/terminos">Términos del servicio</a>
+  <a href="/legal/privacidad">Privacidad</a>
+  <a href="/legal/soporte">Soporte</a>
+  <a href="/legal/licencias">Licencias de terceros</a>
+</footer>
+</body>
+</html>

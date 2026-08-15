@@ -231,12 +231,14 @@ Al trabajar en una tarea de este plan se debe:
 - [ ] **E1-017 — Consultar a un profesional tributario venezolano.**  
   Entregable: nota escrita sobre presupuesto, proforma, factura, IVA, número de control y retenciones.
 
-- [ ] **E1-018 — Preparar EULA o contrato de licencia comercial.**
+- [x] **E1-018 — Preparar EULA o contrato de licencia comercial.**
+  Evidencia (15/08/2026): términos del servicio y licencia de uso publicados en `/legal/terminos` (`app/templates/legal/terminos.html`): licencia limitada, propiedad de los datos del cliente, alcance no fiscal de los documentos, precios/renovación, límites de responsabilidad, terminación con ventana de exportación ≥30 días y ley del domicilio del titular. La razón social se inyecta con `COTIZAT_LEGAL_ENTITY` (hasta entonces se muestra un marcador imposible de confundir con una entidad real).
 
-- [ ] **E1-019 — Preparar política de privacidad básica y condiciones de soporte.**
+- [x] **E1-019 — Preparar política de privacidad básica y condiciones de soporte.**
+  Evidencia (15/08/2026): `/legal/privacidad` (qué datos, para qué, encargados reales: Supabase, Vercel, Resend, Upstash y GoDaddy; sin venta de datos, sin rastreadores, cookies solo técnicas, derechos y plazos) y `/legal/soporte` (canal soporte@cotizat.online, horario, tiempos orientativos y procedimiento de reporte de errores con evidencia — cubre también E1-055 en su parte pública).
 
-- [ ] **E1-020 — Crear aviso de licencias de terceros.**  
-  Revisar dependencias, fuentes Lato y obligaciones de redistribución en el instalador.
+- [x] **E1-020 — Crear aviso de licencias de terceros.**
+  Evidencia (15/08/2026): `/legal/licencias` generado a partir de los metadatos reales de `requirements.lock` (42 paquetes verificados con `importlib.metadata`): Lato bajo OFL 1.1 con su texto en `app/static/fonts/OFL.txt`, psycopg LGPL-3.0 usado sin modificar como paquete instalable, PyInstaller con su excepción de empaquetado, y sin copyleft fuerte en el producto distribuido.
 
 - [ ] **E1-021 — Mantener el repositorio privado y revisar que no contenga datos reales sensibles.**
 
@@ -326,8 +328,8 @@ Las herramientas existentes se conservan como fuente de migración, pero dejaron
 
 ## 1.8 Documentación, demostración y soporte
 
-- [ ] **E1-050 — Crear guía de inicio rápido.**  
-  Máximo recomendado: 5–8 páginas.
+- [x] **E1-050 — Crear guía de inicio rápido.**
+  Evidencia (15/08/2026): `docs/GUIA_INICIO_RAPIDO.md` (~5 páginas impresas): cuenta y organización → catálogo (manual/Excel/importación local) → cliente → presupuesto → PDF, con tabla de «después del primer PDF» y canal de soporte. Sigue el recorrido de `docs/RECORRIDO_PRIMER_PRESUPUESTO.md` y el objetivo de <20 minutos.
 
 - [ ] **E1-051 — Grabar vídeo de demostración de 5 minutos.**
 
@@ -339,13 +341,13 @@ Las herramientas existentes se conservan como fuente de migración, pero dejaron
 
 - [ ] **E1-055 — Crear procedimiento para reportar errores con evidencia.**
 
-- [ ] **E1-056 — Preparar una landing page sencilla.**  
-  Debe mostrar problema, resultado, vídeo, PDF de ejemplo, público objetivo y llamada a solicitar demostración.
+- [~] **E1-056 — Preparar una landing page sencilla.**
+  Publicada en `/conocer` (15/08/2026): problema, resultado, público objetivo, precios promocionales del piloto (89 US$/año con habitual 109; 9,99 US$/mes primer año con habitual 12,99), nota de honestidad (acceso anticipado, documentos no fiscales) y llamada a solicitar demostración por email. Pendiente para cerrar: el vídeo de demostración (E1-051) y el PDF de ejemplo (E1-052), que se enlazarán cuando existan.
 
 ## 1.9 Hipótesis comercial inicial
 
-- [ ] **E1-057 — Definir oferta de piloto fundador.**  
-  Hipótesis inicial: configuración asistida + catálogo + soporte por 99 USD/año o 10–15 USD/mes.
+- [~] **E1-057 — Definir oferta de piloto fundador.**
+  Precios decididos y publicados en la landing (15/08/2026): 89 US$/año como promoción inicial (precio habitual 109 US$/año) o 9,99 US$/mes el primer año (habitual 12,99 US$/mes), con configuración asistida y soporte incluidos. Pendiente: método de cobro (E1-059) y contrato/recibo (E1-060).
 
 - [-] **E1-058 — Definir hipótesis de licencia de escritorio.**
   Descartada como prioridad por la dirección browser-first; el precio se validará sobre acceso web.
@@ -370,7 +372,8 @@ No se marcará esta etapa como completada hasta cumplir todos los siguientes pun
 - [ ] Imágenes y anexos usan almacenamiento persistente por organización.
 - [x] Existe una exportación y una migración controlada desde SQLite.
   Exportación: backup .zip completo desde Configuración (E1-021). Migración: importación con confirmación explícita hacia la web el 15/08/2026 (E1W-012, `/configuracion/importar-instalacion`).
-- [ ] Existe guía de inicio, oferta, contrato y canal de soporte.
+- [~] Existe guía de inicio, oferta, contrato y canal de soporte.
+  Guía (`docs/GUIA_INICIO_RAPIDO.md`), oferta (precios en `/conocer`), términos como contrato de servicio (`/legal/terminos`) y canal de soporte (`/legal/soporte`) publicados el 15/08/2026. Falta: recibo y registro interno de licencias (E1-060) y crear el buzón soporte@cotizat.online.
 - [x] CI ejecuta las pruebas y el recorrido crítico está cubierto.
   CI operativo desde el 14/08/2026 (E1-038); recorrido crítico completo cubierto el 15/08/2026 (E1-040, `tests/test_recorrido_critico.py`).
 - [ ] Tres usuarios externos completaron una prueba de usabilidad.

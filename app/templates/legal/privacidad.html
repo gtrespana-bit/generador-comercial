@@ -1,0 +1,127 @@
+{% extends "legal/_base_legal.html" %}
+{% block titulo %}Política de privacidad{% endblock %}
+{% block contenido %}
+<h1>Política de privacidad</h1>
+<p class="meta">Versión 1.0 · Vigente desde el 15 de agosto de 2026</p>
+
+<div class="aviso">
+  En corto: guardamos lo mínimo para que el servicio funcione; tus contraseñas
+  no las vemos nunca (las gestiona Supabase Auth); tus datos comerciales no se
+  venden, no se comparten con anunciantes y no se usan para entrenar nada;
+  puedes exportarlos o pedir su eliminación cuando quieras.
+</div>
+
+<h2>1. Responsable</h2>
+<p>El responsable del tratamiento es <strong>{{ titular_legal }}</strong>,
+operador de {{ product_name }}. Contacto:
+<a href="mailto:{{ email_soporte }}">{{ email_soporte }}</a>.</p>
+
+<h2>2. Qué datos tratamos y para qué</h2>
+<table>
+  <tr><th>Datos</th><th>Para qué</th><th>Base</th></tr>
+  <tr>
+    <td>Cuenta: email, nombre y contraseña</td>
+    <td>Identificarte e iniciar sesión. La contraseña la recibe y custodia
+        <strong>Supabase Auth</strong>; nunca se almacena en la base de
+        {{ product_name }}.</td>
+    <td>Ejecución del contrato</td>
+  </tr>
+  <tr>
+    <td>Datos comerciales de tu organización: clientes, catálogos, precios,
+        presupuestos, documentos, proyectos, pagos e imágenes que subes</td>
+    <td>Prestarte el servicio. Son datos que tú introduces y de los que tu
+        organización es titular.</td>
+    <td>Ejecución del contrato</td>
+  </tr>
+  <tr>
+    <td>Registros técnicos mínimos (IP en el control de intentos de acceso)</td>
+    <td>Seguridad: limitar intentos de acceso abusivos. La IP no se guarda en
+        claro: se usa un resumen criptográfico (SHA-256) con caducidad de
+        minutos.</td>
+    <td>Interés legítimo (seguridad)</td>
+  </tr>
+  <tr>
+    <td>Email de las invitaciones de equipo</td>
+    <td>Enviar la invitación a unirse a tu organización a través del proveedor
+        de correo (Resend), desde <code>no-responder@cotizat.online</code>.</td>
+    <td>Ejecución del contrato</td>
+  </tr>
+</table>
+
+<h2>3. Lo que NO hacemos</h2>
+<ul>
+  <li>No vendemos ni alquilamos tus datos.</li>
+  <li>No usamos tus datos comerciales para publicidad ni los compartimos con anunciantes.</li>
+  <li>No usamos tu contenido para entrenar modelos ni para ningún fin distinto de prestarte el servicio.</li>
+  <li>No instalamos rastreadores de terceros con fines publicitarios. La versión de escritorio no envía telemetría.</li>
+</ul>
+
+<h2>4. Dónde viven los datos (encargados del tratamiento)</h2>
+<p>Usamos proveedores de infraestructura que actúan por instrucción nuestra:</p>
+<table>
+  <tr><th>Proveedor</th><th>Función</th></tr>
+  <tr><td>Supabase</td><td>Autenticación (email y credenciales), base de datos PostgreSQL y almacenamiento privado de archivos. Los archivos se sirven solo a miembros autorizados de tu organización, a través de un proxy con sesión; el bucket no es público.</td></tr>
+  <tr><td>Vercel</td><td>Alojamiento de la aplicación web.</td></tr>
+  <tr><td>Resend</td><td>Envío de emails transaccionales (invitaciones de equipo).</td></tr>
+  <tr><td>Upstash</td><td>Contador distribuido del límite de intentos de acceso (recibe únicamente claves anonimizadas con caducidad, nunca tu IP ni tu email en claro).</td></tr>
+  <tr><td>GoDaddy</td><td>Registro del dominio <code>cotizat.online</code> y DNS.</td></tr>
+</table>
+<p>Estos proveedores pueden ubicar servidores fuera de tu país. Elegimos
+servicios con medidas de seguridad estándar de la industria y limitamos los
+datos que recibe cada uno a lo imprescindible para su función.</p>
+
+<h2>5. Aislamiento entre organizaciones</h2>
+<p>Cada organización es un espacio separado: el aislamiento se aplica en la
+capa de datos (filtro obligatorio por organización en cada consulta y
+políticas de seguridad a nivel de fila en PostgreSQL) y en el acceso a
+archivos. Un miembro de una organización no puede ver datos de otra.</p>
+
+<h2>6. Cookies</h2>
+<p>Usamos únicamente cookies técnicas de sesión (HttpOnly, Secure y SameSite):
+identifican tu sesión y tu organización activa. No hay cookies de publicidad
+ni de seguimiento. Sin estas cookies el servicio no puede funcionar, por lo
+que no requieren consentimiento adicional.</p>
+
+<h2>7. Conservación</h2>
+<ul>
+  <li>Los datos de tu organización se conservan mientras la cuenta esté activa.</li>
+  <li>Si cancelas, los datos permanecen disponibles para exportación durante un
+      plazo razonable (mínimo 30 días) y después pueden eliminarse.</li>
+  <li>Las copias de seguridad administradas rotan y las eliminaciones se
+      propagan a ellas con la cadencia de esa rotación.</li>
+</ul>
+
+<h2>8. Tus derechos</h2>
+<p>Puedes ejercer en cualquier momento, escribiendo a
+<a href="mailto:{{ email_soporte }}">{{ email_soporte }}</a>:</p>
+<ul>
+  <li><strong>Acceso y portabilidad</strong>: obtener una copia de tus datos (las
+      exportaciones integradas ya cubren la mayor parte).</li>
+  <li><strong>Rectificación</strong>: corregir datos inexactos (normalmente puedes
+      hacerlo tú mismo desde la aplicación).</li>
+  <li><strong>Eliminación</strong>: pedir el borrado de tu cuenta y de los datos de
+      tu organización (si la organización tiene más miembros, la solicitud debe
+      venir de su propietario).</li>
+</ul>
+<p>Respondemos en un plazo máximo de 30 días.</p>
+
+<h2>9. Seguridad</h2>
+<ul>
+  <li>Cifrado en tránsito (HTTPS) en todo el servicio.</li>
+  <li>Contraseñas gestionadas exclusivamente por Supabase Auth; recuperación por enlace de un solo uso.</li>
+  <li>Sesiones con cookies HttpOnly no accesibles desde JavaScript, protección CSRF y política de seguridad de contenido (CSP) estricta.</li>
+  <li>Almacenamiento de archivos privado, servido solo con autorización de membresía.</li>
+  <li>Roles de base de datos sin privilegios administrativos y aislamiento por fila verificado por pruebas automatizadas.</li>
+</ul>
+<p>Si se produjera un incidente de seguridad que afecte a tus datos, te lo
+notificaremos sin dilación indebida junto con las medidas tomadas.</p>
+
+<h2>10. Menores</h2>
+<p>{{ product_name }} es una herramienta profesional para empresas y no está
+dirigida a menores de edad.</p>
+
+<h2>11. Cambios en esta política</h2>
+<p>Si cambiamos esta política de forma sustancial lo anunciaremos por email o
+dentro de la aplicación con antelación razonable. La versión vigente estará
+siempre publicada en esta página.</p>
+{% endblock %}

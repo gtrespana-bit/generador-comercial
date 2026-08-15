@@ -33,7 +33,7 @@ from sqlalchemy import or_
 from sqlalchemy.orm import Session
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
-from .branding import PRODUCT_NAME, VALUE_PROPOSITION
+from .branding import LEGAL_ENTITY, PRODUCT_NAME, SUPPORT_EMAIL, VALUE_PROPOSITION
 from .security import AuthRateLimitMiddleware, WebSecurityMiddleware
 from .database import (
     BACKUPS_DIR,
@@ -180,6 +180,8 @@ TEMPLATES.env.globals.update(
     product_name=PRODUCT_NAME,
     value_proposition=VALUE_PROPOSITION,
     database_is_sqlite=DATABASE_IS_SQLITE,
+    titular_legal=LEGAL_ENTITY,
+    email_soporte=SUPPORT_EMAIL,
 )
 
 
@@ -1843,6 +1845,35 @@ def marcar_catalogo_revisado(db: Session = Depends(get_db)):
         cfg.onboarding_catalogo_revisado = True
         db.commit()
     return _redirect("/partidas")
+
+
+# ---------------------------------------------------------------------------
+# Páginas públicas: landing y legales (E1-018/019/020/056)
+# ---------------------------------------------------------------------------
+# No tocan datos de tenant ni sesión: solo renderizan contenido estático con
+# la identidad del producto. Por eso no dependen de get_db y están declaradas
+# como fronteras públicas en la auditoría de protección de rutas.
+
+@app.get("/conocer", response_class=HTMLResponse, include_in_schema=False)
+def landing_publica(request: Request):
+    """Landing comercial: problema, resultado, público y llamada a demo."""
+    return TEMPLATES.TemplateResponse(request, "landing.html", {})
+
+
+_PAGINAS_LEGALES = {
+    "terminos": "legal/terminos.html",
+    "privacidad": "legal/privacidad.html",
+    "soporte": "legal/soporte.html",
+    "licencias": "legal/licencias.html",
+}
+
+
+@app.get("/legal/{pagina}", response_class=HTMLResponse, include_in_schema=False)
+def pagina_legal(pagina: str, request: Request):
+    plantilla = _PAGINAS_LEGALES.get(pagina)
+    if plantilla is None:
+        return Response("Página no encontrada.", status_code=404)
+    return TEMPLATES.TemplateResponse(request, plantilla, {})
 
 
 # ---------------------------------------------------------------------------

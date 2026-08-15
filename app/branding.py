@@ -13,6 +13,17 @@ VALUE_PROPOSITION = (
     "editables y listos para presentar."
 )
 
+# Identidad legal publicada en términos, privacidad y landing. La razón social
+# se completa con la variable de entorno COTIZAT_LEGAL_ENTITY cuando exista la
+# empresa registrada; hasta entonces los documentos muestran el marcador para
+# que sea imposible publicarlos por accidente como si ya estuvieran completos.
+import os as _os
+
+LEGAL_ENTITY = _os.environ.get("COTIZAT_LEGAL_ENTITY", "").strip() or (
+    "[RAZÓN SOCIAL DEL TITULAR — pendiente de registro]"
+)
+SUPPORT_EMAIL = _os.environ.get("COTIZAT_SUPPORT_EMAIL", "").strip() or "soporte@cotizat.online"
+
 DATA_DIRECTORY_NAME = "CotizaT"
 LEGACY_DATA_DIRECTORY_NAMES = ("Presupuestos",)
 DATABASE_FILENAME = "presupuestos.db"

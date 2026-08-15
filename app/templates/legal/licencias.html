@@ -1,0 +1,68 @@
+{% extends "legal/_base_legal.html" %}
+{% block titulo %}Licencias de terceros{% endblock %}
+{% block contenido %}
+<h1>Aviso de licencias de software de terceros</h1>
+<p class="meta">Correspondiente a las dependencias fijadas en <code>requirements.lock</code> · Actualizado el 15 de agosto de 2026</p>
+
+<p>{{ product_name }} se construye sobre software de código abierto. Este aviso
+reconoce a sus autores y cumple las obligaciones de atribución de cada
+licencia. Los textos completos de las licencias acompañan a cada paquete en su
+distribución oficial.</p>
+
+<h2>Tipografías</h2>
+<table>
+  <tr><th>Fuente</th><th>Licencia</th><th>Uso</th></tr>
+  <tr>
+    <td><strong>Lato</strong> — © 2010–2014 tyPoland Łukasz Dziedzic</td>
+    <td>SIL Open Font License 1.1 (el texto completo se distribuye junto a las
+        fuentes en <code>app/static/fonts/OFL.txt</code>)</td>
+    <td>Incrustada en los PDFs generados y distribuida con la aplicación</td>
+  </tr>
+  <tr>
+    <td><strong>Inter</strong> — © The Inter Project Authors</td>
+    <td>SIL Open Font License 1.1</td>
+    <td>Interfaz web, servida desde Google Fonts</td>
+  </tr>
+</table>
+
+<h2>Bibliotecas Python (runtime)</h2>
+<table>
+  <tr><th>Paquete</th><th>Licencia</th></tr>
+  <tr><td>FastAPI</td><td>MIT</td></tr>
+  <tr><td>Starlette</td><td>BSD-3-Clause</td></tr>
+  <tr><td>Uvicorn (+ uvloop, httptools, watchfiles, websockets, python-dotenv)</td><td>BSD-3-Clause / MIT / Apache-2.0 / BSD-3-Clause / BSD-3-Clause / BSD-3-Clause</td></tr>
+  <tr><td>SQLAlchemy</td><td>MIT</td></tr>
+  <tr><td>Alembic (+ Mako)</td><td>MIT</td></tr>
+  <tr><td>psycopg y psycopg-binary</td><td>LGPL-3.0 (se usa sin modificar, enlazado dinámicamente como paquete instalable; el código fuente está disponible en <code>psycopg.org</code>)</td></tr>
+  <tr><td>Jinja2 (+ MarkupSafe)</td><td>BSD-3-Clause</td></tr>
+  <tr><td>ReportLab (edición open source)</td><td>BSD</td></tr>
+  <tr><td>pypdf</td><td>BSD-3-Clause</td></tr>
+  <tr><td>Pillow</td><td>MIT-CMU</td></tr>
+  <tr><td>openpyxl (+ et_xmlfile)</td><td>MIT</td></tr>
+  <tr><td>python-multipart</td><td>Apache-2.0</td></tr>
+  <tr><td>pydantic (+ pydantic-core, annotated-types, annotated-doc, typing-inspection)</td><td>MIT</td></tr>
+  <tr><td>anyio, h11, idna, click, greenlet, truststore, typing_extensions, charset-normalizer, Pygments, packaging</td><td>MIT / MIT / BSD-3-Clause / BSD-3-Clause / MIT+PSF-2.0 / MIT / PSF-2.0 / MIT / BSD-2-Clause / Apache-2.0 ó BSD-2-Clause</td></tr>
+</table>
+
+<h2>Aplicación de escritorio</h2>
+<table>
+  <tr><th>Paquete</th><th>Licencia</th><th>Nota</th></tr>
+  <tr><td>pywebview</td><td>BSD-3-Clause</td><td>Ventana nativa de la versión de escritorio</td></tr>
+  <tr><td>pythonnet</td><td>MIT</td><td>Solo en Windows</td></tr>
+  <tr><td>PyInstaller</td><td>GPL-2.0 con excepción explícita de empaquetado</td><td>Herramienta de construcción del ejecutable; su excepción permite distribuir el ejecutable resultante bajo licencia propia. No forma parte del producto distribuido.</td></tr>
+  <tr><td>CPython</td><td>PSF-2.0</td><td>Intérprete embebido en el ejecutable</td></tr>
+</table>
+
+<h2>Servicios (no redistribuidos)</h2>
+<p>La versión web utiliza servicios gestionados que no se redistribuyen con el
+producto y se rigen por sus propios términos: Supabase, Vercel, Resend y
+Upstash.</p>
+
+<h2>Obligaciones cumplidas</h2>
+<ul>
+  <li><strong>Atribución</strong>: este aviso lista autores y licencias de todo el software redistribuido.</li>
+  <li><strong>OFL (Lato)</strong>: las fuentes se redistribuyen con su licencia íntegra en <code>app/static/fonts/OFL.txt</code>; no se venden por separado ni se renombran.</li>
+  <li><strong>LGPL (psycopg)</strong>: se usa como biblioteca instalable sin modificaciones; cualquiera puede sustituirla por otra versión compatible.</li>
+  <li><strong>Sin copyleft fuerte en el producto</strong>: ninguna dependencia redistribuida impone GPL al código de {{ product_name }}.</li>
+</ul>
+{% endblock %}

@@ -227,6 +227,9 @@ def test_toda_ruta_comercial_exige_sesion_salvo_fronteras_publicas_o_locales():
         # tenant ni secretos; readiness devuelve 503 si algo falta).
         ("GET", "/healthz"),
         ("GET", "/readyz"),
+        # Landing y páginas legales: contenido estático sin datos de tenant.
+        ("GET", "/conocer"),
+        ("GET", "/legal/{pagina}"),
     }
     solo_sqlite_local = {
         ("GET", "/configuracion/backup"),

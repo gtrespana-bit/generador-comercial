@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ product_name }} — Presupuestos de obra claros, editables y listos para presentar</title>
+  <meta name="description" content="Convierte tu catálogo y tus precios en presupuestos de construcción y remodelación profesionales en PDF. Para empresas que hoy trabajan con papel o Excel.">
+  <link rel="icon" type="image/png" href="/static/icono.png">
+  <style nonce="{{ request.state.csp_nonce }}">
+    :root { font-family: Inter, ui-sans-serif, system-ui, sans-serif; color: #17211d; background: #f3f7f5; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    a.btn { display: inline-block; border-radius: 12px; padding: 14px 26px; font-weight: 800; text-decoration: none; }
+    .btn-primario { background: #146c43; color: white; }
+    .btn-primario:hover { background: #0f5734; }
+    .btn-secundario { background: #e7f4ee; color: #0b5b38; }
+    nav { max-width: 1040px; margin: 0 auto; padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; }
+    nav strong { font-size: 1.25rem; color: #073c2b; }
+    nav div { display: flex; gap: 12px; align-items: center; }
+    nav a.entrar { color: #0b5b38; font-weight: 700; text-decoration: none; }
+    header.hero { background: #073c2b; color: white; padding: 72px 20px 84px; }
+    .hero-int { max-width: 1040px; margin: 0 auto; }
+    .hero-int h1 { font-size: clamp(2rem, 5vw, 3.4rem); line-height: 1.08; margin: 0 0 18px; max-width: 760px; }
+    .hero-int p.sub { color: #cce8dc; font-size: 1.15rem; line-height: 1.6; max-width: 660px; margin: 0 0 30px; }
+    .acciones { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 22px; }
+    section { max-width: 1040px; margin: 0 auto; padding: 56px 20px; }
+    section h2 { font-size: 1.7rem; margin: 0 0 8px; }
+    section p.intro { color: #4c5c54; max-width: 700px; line-height: 1.65; margin-top: 0; }
+    .grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; margin-top: 28px; }
+    .tarjeta { background: white; border-radius: 16px; padding: 26px; box-shadow: 0 10px 32px rgba(10,48,34,.08); }
+    .tarjeta h3 { margin: 0 0 8px; font-size: 1.05rem; }
+    .tarjeta p { color: #4c5c54; line-height: 1.6; margin: 0; font-size: .95rem; }
+    .franja { background: #eaf4ef; }
+    ul.pasos { margin: 24px 0 0; padding: 0; list-style: none; counter-reset: paso; max-width: 700px; }
+    ul.pasos li { counter-increment: paso; position: relative; padding: 14px 0 14px 58px; line-height: 1.55; border-bottom: 1px solid #d8e6df; }
+    ul.pasos li::before { content: counter(paso); position: absolute; left: 0; top: 12px; width: 38px; height: 38px; border-radius: 50%; background: #146c43; color: white; font-weight: 800; display: grid; place-items: center; }
+    .precios { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 30px; max-width: 760px; }
+    .plan { background: white; border-radius: 18px; padding: 30px; box-shadow: 0 10px 32px rgba(10,48,34,.08); border: 2px solid transparent; }
+    .plan.destacado { border-color: #146c43; }
+    .plan .etiqueta { display: inline-block; background: #fdf0d4; color: #8a6100; border-radius: 999px; font-size: .78rem; font-weight: 800; padding: 4px 12px; margin-bottom: 12px; }
+    .plan .cifra { font-size: 2.4rem; font-weight: 800; }
+    .plan .cifra small { font-size: 1rem; font-weight: 600; color: #65766e; }
+    .plan .antes { color: #9aa8a1; text-decoration: line-through; font-weight: 600; }
+    .plan ul { padding-left: 18px; color: #4c5c54; line-height: 1.7; font-size: .95rem; }
+    .nota-honesta { background: #fdf6e7; border: 1px solid #ecd9a8; border-radius: 12px; padding: 14px 18px; font-size: .92rem; line-height: 1.55; max-width: 760px; margin-top: 26px; color: #5c4a13; }
+    footer { background: #073c2b; color: #cce8dc; padding: 36px 20px; }
+    .footer-int { max-width: 1040px; margin: 0 auto; display: flex; justify-content: space-between; gap: 18px; flex-wrap: wrap; font-size: .9rem; }
+    .footer-int a { color: #9fd6bd; text-decoration: none; margin-right: 16px; }
+    .footer-int a:hover { text-decoration: underline; }
+    @media (max-width: 720px) { header.hero { padding: 48px 20px 56px; } section { padding: 40px 20px; } }
+  </style>
+</head>
+<body>
+<nav>
+  <strong>{{ product_name }}</strong>
+  <div>
+    <a class="entrar" href="/acceso">Iniciar sesión</a>
+    <a class="btn btn-primario" href="mailto:{{ email_soporte }}?subject=Quiero%20una%20demostraci%C3%B3n%20de%20{{ product_name }}">Solicitar demostración</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-int">
+    <h1>Deja el Excel: presupuestos de obra claros, editables y listos para presentar.</h1>
+    <p class="sub">{{ product_name }} convierte tu catálogo y tus precios en presupuestos profesionales en PDF —con capítulos, mediciones, alternativas de producto y control de aprobaciones— para empresas de construcción y remodelación.</p>
+    <div class="acciones">
+      <a class="btn btn-primario" href="mailto:{{ email_soporte }}?subject=Quiero%20una%20demostraci%C3%B3n%20de%20{{ product_name }}">Solicitar una demostración</a>
+      <a class="btn btn-secundario" href="/acceso">Ya tengo cuenta</a>
+    </div>
+  </div>
+</header>
+
+<section>
+  <h2>¿Te suena?</h2>
+  <p class="intro">Cada presupuesto es una tarde de copiar y pegar. Los precios viven en la cabeza o en un Excel que solo entiende una persona. El cliente pide dos cambios y hay que rehacerlo todo. Y cuando aprueban, nadie recuerda qué versión se aprobó.</p>
+  <div class="grid3">
+    <div class="tarjeta">
+      <h3>Tu catálogo, de una vez</h3>
+      <p>Partidas con precios, costes y descomposición técnica. Importa desde Excel —incluidos descompuestos de CYPE— o desde tu instalación local anterior. Cárgalo una vez, úsalo siempre.</p>
+    </div>
+    <div class="tarjeta">
+      <h3>Presupuestos en minutos</h3>
+      <p>Capítulos, mediciones por tramos, packs de estancia, alternativas de producto para que el cliente elija. Duplica un presupuesto parecido y ajústalo en lugar de empezar de cero.</p>
+    </div>
+    <div class="tarjeta">
+      <h3>PDF que da confianza</h3>
+      <p>Documento con tu logo, portada opcional, resumen por capítulos, condiciones y garantías. Versiones inmutables: siempre sabrás qué se envió y qué se aprobó.</p>
+    </div>
+    <div class="tarjeta">
+      <h3>Del presupuesto al cobro</h3>
+      <p>Aprobado el presupuesto, conviértelo en proyecto: cambios de alcance, documentos de cobro y control de pagos y saldos, todo conectado.</p>
+    </div>
+    <div class="tarjeta">
+      <h3>Tu equipo, con roles</h3>
+      <p>Invita a tu equipo por email con roles de administrador, miembro o solo lectura. Cada organización es un espacio privado y aislado.</p>
+    </div>
+    <div class="tarjeta">
+      <h3>Tus datos son tuyos</h3>
+      <p>Exporta a Excel y PDF cuando quieras. Sin permanencia: si te vas, te llevas tus datos. Así de simple.</p>
+    </div>
+  </div>
+</section>
+
+<section class="franja">
+  <h2>De cero a tu primer presupuesto en menos de 20 minutos</h2>
+  <ul class="pasos">
+    <li>Crea tu cuenta y tu organización: nombre de tu empresa, moneda e IVA.</li>
+    <li>Carga tu catálogo: impórtalo desde Excel o crea tus primeras partidas.</li>
+    <li>Crea el cliente, arma el presupuesto por capítulos y descarga el PDF con tu logo.</li>
+  </ul>
+  <p class="intro">¿Vienes de la versión de escritorio? Importa toda tu instalación —catálogo, clientes, presupuestos y proyectos— con el asistente integrado, con resumen previo y confirmación explícita.</p>
+</section>
+
+<section>
+  <h2>Precio de lanzamiento</h2>
+  <p class="intro">Oferta fundadora para las primeras empresas. El precio contratado se respeta durante todo el período pagado.</p>
+  <div class="precios">
+    <div class="plan destacado">
+      <span class="etiqueta">PROMOCIÓN INICIAL</span>
+      <h3>Plan anual</h3>
+      <div class="cifra">89 US$ <small>/ año</small></div>
+      <p><span class="antes">109 US$ / año</span> — precio habitual</p>
+      <ul>
+        <li>Todas las funciones incluidas</li>
+        <li>Configuración asistida de tu empresa y catálogo</li>
+        <li>Soporte directo por email</li>
+        <li>Actualizaciones incluidas</li>
+      </ul>
+    </div>
+    <div class="plan">
+      <span class="etiqueta">PROMOCIÓN INICIAL</span>
+      <h3>Plan mensual</h3>
+      <div class="cifra">9,99 US$ <small>/ mes el primer año</small></div>
+      <p><span class="antes">12,99 US$ / mes</span> — precio habitual</p>
+      <ul>
+        <li>Todas las funciones incluidas</li>
+        <li>Sin permanencia: cancela cuando quieras</li>
+        <li>Soporte directo por email</li>
+      </ul>
+    </div>
+  </div>
+  <div class="nota-honesta">
+    <strong>Honestidad por delante:</strong> {{ product_name }} está en acceso
+    anticipado. Los documentos que genera son documentos comerciales, no
+    facturas fiscales. Antes de cobrarte nada tendrás una demostración con tus
+    propios datos y sabrás exactamente qué recibes.
+  </div>
+</section>
+
+<section class="franja">
+  <h2>¿Para quién es?</h2>
+  <p class="intro">Para constructoras pequeñas y medianas, remodeladores, contratistas e instaladores de Latinoamérica que hoy presupuestan con papel, Word o Excel y quieren presentar mejor, responder más rápido y no perder el control de versiones, aprobaciones y cobros. Si haces entre 2 y 50 presupuestos al mes, esto es para ti.</p>
+  <div class="acciones">
+    <a class="btn btn-primario" href="mailto:{{ email_soporte }}?subject=Quiero%20una%20demostraci%C3%B3n%20de%20{{ product_name }}&body=Hola%2C%20me%20interesa%20una%20demostraci%C3%B3n.%0A%0AMi%20empresa%3A%20%0AA%20qu%C3%A9%20nos%20dedicamos%3A%20%0APresupuestos%20al%20mes%20(aprox)%3A%20">Solicitar una demostración gratuita</a>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-int">
+    <div>© 2026 {{ product_name }} · {{ titular_legal }}</div>
+    <div>
+      <a href="/legal/terminos">Términos</a>
+      <a href="/legal/privacidad">Privacidad</a>
+      <a href="/legal/soporte">Soporte</a>
+      <a href="/legal/licencias">Licencias</a>
+      <a href="mailto:{{ email_soporte }}">{{ email_soporte }}</a>
+    </div>
+  </div>
+</footer>
+</body>
+</html>
