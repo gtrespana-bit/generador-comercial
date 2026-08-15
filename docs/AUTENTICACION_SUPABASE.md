@@ -67,6 +67,8 @@ Una membresía `lectura` puede consultar datos, pero el ORM rechaza tanto `flush
 
 Para recuperación, `COTIZAT_PUBLIC_URL` debe ser un origen HTTPS fijo y su ruta `https://<origen>/restablecer-clave` debe añadirse a las Redirect URLs permitidas en Supabase Auth. No se deriva desde `Host`, para evitar envenenar el enlace enviado por email. El access token temporal solo cruza el navegador y el backend durante el cambio; no se persiste.
 
+La confirmación de registro usa `redirect_to = https://<origen>/acceso` (en `registrar_cuenta`), así que **esa ruta también debe estar en las Redirect URLs**. Son dos destinos: `/restablecer-clave` (recuperación) y `/acceso` (confirmación de alta). GoTrue valida por coincidencia exacta: sin barra final ni `www`. Si falta alguna, el enlace del email cae al Site URL (`/`) y, aunque `recovery_redirect.js` rescata el fragmento de recuperación, la confirmación de registro puede parecer rota (el usuario no queda confirmado y el login devuelve «Email, contraseña o sesión no válidos»).
+
 ### Fallo observado y corregido: el enlace del email llevaba al login
 
 **Causa real (bug propio):** `redirect_to` se enviaba dentro del **cuerpo JSON** de `POST /auth/v1/recover`. GoTrue no lo lee ahí. Su struct `RecoverParams` (`internal/api/recover.go`) solo declara:
