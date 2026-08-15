@@ -204,6 +204,7 @@ def test_toda_ruta_comercial_exige_sesion_salvo_fronteras_publicas_o_locales():
         ("GET", "/restablecer-clave"),
         ("POST", "/restablecer-clave"),
         ("GET", "/invitaciones/{token}"),
+        ("GET", "/invitaciones/{token}/aceptar"),
         ("GET", "/favicon.ico"),
         # Salud: fronteras públicas de infraestructura (no exponen datos de
         # tenant ni secretos; readiness devuelve 503 si algo falta).

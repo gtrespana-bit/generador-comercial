@@ -6,6 +6,7 @@ import hashlib
 import re
 import secrets
 
+from sqlalchemy import update
 from sqlalchemy.orm import Session
 
 from ..models import InvitacionOrganizacion, Membresia, Usuario
@@ -129,7 +130,16 @@ def aceptar_invitacion(
     email_verificado: bool,
     ahora: datetime | None = None,
 ) -> Membresia:
-    """Consume la invitación si pertenece al email autenticado y verificado."""
+    """Consume la invitación si pertenece al email autenticado y verificado.
+
+    La reclamación del token de un solo uso se hace con un ``UPDATE ... WHERE
+    accepted_at IS NULL`` atómico, en lugar de ``SELECT ... FOR UPDATE``. Un
+    ``FOR UPDATE`` sobre ``invitaciones_organizacion`` exigiría el privilegio
+    UPDATE a nivel de **tabla**, pero el rol de aplicación solo lo tiene a
+    nivel de **columna** (concesión deliberada de mínimos privilegios), así
+    que producía ``permission denied for table`` (500). El ``rowcount`` del
+    UPDATE condicional detecta cualquier consumo en carrera.
+    """
     token = str(token or "").strip()
     if not re.fullmatch(r"[A-Za-z0-9_-]{32,200}", token):
         raise GestionEquipoError("La invitación no es válida o ya caducó.")
@@ -137,7 +147,6 @@ def aceptar_invitacion(
     invitacion = (
         db.query(InvitacionOrganizacion)
         .filter(InvitacionOrganizacion.token_hash == _hash_token(token))
-        .with_for_update()
         .first()
     )
     if (
@@ -179,8 +188,22 @@ def aceptar_invitacion(
     db.flush()
     # Si otra vía ya activó la membresía, no se degrada ni eleva su rol.
 
-    invitacion.accepted_at = ahora
-    invitacion.aceptada_por_usuario_id = usuario.id
+    # Reclamación atómica del token de un solo uso. Solo triunfa si la
+    # invitación sigue pendiente, no revocada y vigente; el UPDATE pasa por la
+    # política RLS ``cotizat_invitation_update_recipient``. Sin filas
+    # actualizadas significa que otra petición la consumió primero.
+    resultado = db.execute(
+        update(InvitacionOrganizacion)
+        .where(
+            InvitacionOrganizacion.id == invitacion.id,
+            InvitacionOrganizacion.accepted_at.is_(None),
+            InvitacionOrganizacion.revoked_at.is_(None),
+            InvitacionOrganizacion.expires_at > ahora,
+        )
+        .values(accepted_at=ahora, aceptada_por_usuario_id=usuario.id)
+    )
+    if resultado.rowcount != 1:
+        raise GestionEquipoError("La invitación no es válida o ya caducó.")
     db.flush()
     return membresia
 
