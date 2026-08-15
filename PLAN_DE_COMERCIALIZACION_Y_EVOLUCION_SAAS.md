@@ -216,8 +216,9 @@ Al trabajar en una tarea de este plan se debe:
 - [~] **E1W-011 — Ejecutar migraciones y suite de integración contra PostgreSQL real.**
   Evidencia real: revisiones `5cda50f97ed9` y `9bca2ad1f6e4` aplicadas en Supabase; una partida modificada persistió entre conexiones físicas `16389` y `17068`; dos organizaciones conservaron valores independientes; RLS quedó activo y `anon` vio 0 partidas. El código ya prepara `cotizat_app`, contexto transaccional y políticas autorizantes en `c93e7a4d20f1`. Pendiente aplicar ese head y ejecutar la suite ORM/Auth completa con un login sin `BYPASSRLS` desde un runner con salida a Supabase.
 
-- [ ] **E1W-012 — Diseñar y probar importación de instalaciones SQLite.**
+- [x] **E1W-012 — Diseñar y probar importación de instalaciones SQLite.**
   Nunca se migrarán datos privados a un servidor sin acción y confirmación del propietario.
+  Evidencia (15/08/2026): `app/services/instalacion_sqlite.py` + asistente en `/configuracion/importar-instalacion`. Flujo de dos pasos (analizar → confirmar) con resumen honesto previo, casilla de confirmación explícita y verificación SHA-256 de que el archivo confirmado es el analizado (el servidor no lo guarda entre pasos). Acepta el .zip de backup o el .db directo; lee la fuente con `sqlite3` en solo lectura (tolera bases de versiones anteriores sin columnas nuevas); escribe con la sesión ORM del usuario (tenencia, rol y RLS se aplican como en cualquier escritura). No migra datos demo ni configuración de empresa; limpia referencias a archivos locales avisando cuántas; reimportar no duplica (números de presupuesto/documento en conflicto se omiten y se listan antes de confirmar). Solo propietario o administrador pueden importar. 12 pruebas en `tests/test_instalacion_sqlite.py`.
 
 ## 1.4 Honestidad funcional y límites legales
 
@@ -367,7 +368,8 @@ No se marcará esta etapa como completada hasta cumplir todos los siguientes pun
 - [ ] PostgreSQL, Alembic y el aislamiento funcionan en una instancia de integración real.
 - [ ] Inicio y cierre de sesión, membresías, roles y CSRF están probados.
 - [ ] Imágenes y anexos usan almacenamiento persistente por organización.
-- [ ] Existe una exportación y una migración controlada desde SQLite.
+- [x] Existe una exportación y una migración controlada desde SQLite.
+  Exportación: backup .zip completo desde Configuración (E1-021). Migración: importación con confirmación explícita hacia la web el 15/08/2026 (E1W-012, `/configuracion/importar-instalacion`).
 - [ ] Existe guía de inicio, oferta, contrato y canal de soporte.
 - [x] CI ejecuta las pruebas y el recorrido crítico está cubierto.
   CI operativo desde el 14/08/2026 (E1-038); recorrido crítico completo cubierto el 15/08/2026 (E1-040, `tests/test_recorrido_critico.py`).

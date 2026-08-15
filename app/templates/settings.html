@@ -187,5 +187,10 @@
   {% else %}
   <p class="subtitle">La versión web utiliza copias administradas de PostgreSQL y almacenamiento externo. La restauración de un archivo SQLite local está desactivada para evitar reemplazar datos compartidos.</p>
   {% endif %}
+  <div class="field">
+    <label>Importar una instalación local</label>
+    <a class="btn" href="/configuracion/importar-instalacion">⬆️ Importar datos de mi CotizaT de escritorio</a>
+    <p class="hint">Trae clientes, catálogo, presupuestos, documentos de cobro y proyectos desde la copia de seguridad de tu instalación local. Con análisis previo y confirmación explícita; nada se importa automáticamente.</p>
+  </div>
 </div>
 {% endblock %}

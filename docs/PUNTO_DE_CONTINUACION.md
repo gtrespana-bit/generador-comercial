@@ -134,16 +134,23 @@ variable nueva `COTIZAT_DATA_DIR` (solo modo desarrollo; en el .exe se
 ignora). Suite: **266 passed, 5 skipped**. El criterio «CI ejecuta las
 pruebas y el recorrido crítico está cubierto» pasó a `[x]` en el plan.
 
+**E1W-012 cerrado el 15/08/2026**: importación de instalaciones SQLite hacia
+la web con `app/services/instalacion_sqlite.py` y el asistente de dos pasos
+en `/configuracion/importar-instalacion` (analizar → resumen honesto →
+confirmar con casilla explícita y SHA-256 verificado). No migra demos ni
+configuración de empresa, limpia referencias a archivos locales avisando, no
+duplica al reimportar y exige rol propietario/administrador. 12 pruebas en
+`tests/test_instalacion_sqlite.py`. Suite: **278 passed, 5 skipped**. El
+criterio «exportación y migración controlada desde SQLite» pasó a `[x]`.
+
 Los siguientes bloques en orden recomendado:
 
-1. **E1W-012 — importación de instalaciones SQLite hacia la web.**
-2. **Paquete legal/comercial:** E1-018 (EULA), E1-019 (privacidad), E1-020
+1. **Paquete legal/comercial:** E1-018 (EULA), E1-019 (privacidad), E1-020
    (licencias de terceros), E1-050 (guía de inicio), E1-056 (landing).
 
 Criterios de salida de Etapa 1 aún abiertos: primer PDF en <20 min por usuario
-nuevo, catálogo con procedencia y precios fechados, exportación/migración desde
-SQLite, guía + oferta + contrato + soporte, tres pruebas de usabilidad
-externas.
+nuevo, catálogo con procedencia y precios fechados, guía + oferta + contrato +
+soporte, tres pruebas de usabilidad externas.
 
 ---
 

@@ -150,6 +150,12 @@ from .services.importer import (
     texto_celda,
     validar_filas,
 )
+from .services.instalacion_sqlite import (
+    ErrorInstalacion,
+    LIMITE_BYTES as LIMITE_INSTALACION_BYTES,
+    analizar_instalacion,
+    importar_instalacion,
+)
 from .utils import SIMBOLOS, fmt_fecha, fmt_monto, fmt_num, fmt_cantidad
 from .storage import (
     StorageError,
@@ -4978,6 +4984,89 @@ async def restaurar_backup(request: Request):
                 shutil.rmtree(extraido, ignore_errors=True)
         except OSError:
             pass
+
+
+# ---------------------------------------------------------------------------
+# Importación de una instalación SQLite local hacia la web (E1W-012)
+# ---------------------------------------------------------------------------
+# Dos pasos: «analizar» muestra un resumen honesto (qué entra, qué se omite y
+# por qué) sin escribir nada; «confirmar» exige volver a subir el MISMO
+# archivo (SHA-256 verificado) más una casilla de confirmación explícita.
+# Nunca se migran datos privados sin acción y confirmación del propietario.
+
+
+async def _leer_instalacion_subida(request: Request):
+    """Archivo subido del formulario, validado en tamaño; None si falta."""
+    form = await request.form()
+    archivo = form.get("archivo")
+    if not isinstance(archivo, UploadFileStarlette) or not archivo.filename:
+        return None, form
+    contenido = await archivo.read()
+    if len(contenido) > LIMITE_INSTALACION_BYTES:
+        raise ErrorInstalacion("El archivo supera el límite de 50 MB.")
+    return contenido, form
+
+
+@app.get("/configuracion/importar-instalacion", response_class=HTMLResponse)
+def importar_instalacion_form(request: Request, db: Session = Depends(get_db)):
+    """Pantalla del asistente; disponible también en SQLite para probar en local."""
+    return TEMPLATES.TemplateResponse(
+        request,
+        "importar_instalacion.html",
+        {"resumen": None, "resultado": None, "rol": db.info.get("rol_membresia")},
+    )
+
+
+@app.post("/configuracion/importar-instalacion/analizar", response_class=HTMLResponse)
+async def analizar_instalacion_subida(request: Request, db: Session = Depends(get_db)):
+    try:
+        contenido, _form = await _leer_instalacion_subida(request)
+        if contenido is None:
+            return _redirect(
+                "/configuracion/importar-instalacion",
+                error="Selecciona la copia de seguridad (.zip) o la base (.db) de tu instalación.",
+            )
+        resumen = analizar_instalacion(db, contenido)
+    except (ErrorInstalacion, PermisoOrganizacionError) as exc:
+        return _redirect("/configuracion/importar-instalacion", error=str(exc))
+    return TEMPLATES.TemplateResponse(
+        request,
+        "importar_instalacion.html",
+        {"resumen": resumen, "resultado": None, "rol": db.info.get("rol_membresia")},
+    )
+
+
+@app.post("/configuracion/importar-instalacion/confirmar", response_class=HTMLResponse)
+async def confirmar_instalacion_subida(request: Request, db: Session = Depends(get_db)):
+    try:
+        contenido, form = await _leer_instalacion_subida(request)
+        if contenido is None:
+            return _redirect(
+                "/configuracion/importar-instalacion",
+                error="Vuelve a seleccionar el archivo para confirmar la importación.",
+            )
+        if str(form.get("confirmar", "")).strip() != "si":
+            return _redirect(
+                "/configuracion/importar-instalacion",
+                error="Marca la casilla de confirmación para importar tus datos.",
+            )
+        sha256 = str(form.get("sha256", "")).strip()
+        if not sha256:
+            return _redirect(
+                "/configuracion/importar-instalacion",
+                error="Falta el análisis previo: analiza el archivo antes de confirmar.",
+            )
+        resultado = importar_instalacion(db, contenido, sha256_esperado=sha256)
+        db.commit()
+    except (ErrorInstalacion, PermisoOrganizacionError) as exc:
+        db.rollback()
+        return _redirect("/configuracion/importar-instalacion", error=str(exc))
+    _sincronizar_recursos(db)
+    return TEMPLATES.TemplateResponse(
+        request,
+        "importar_instalacion.html",
+        {"resumen": None, "resultado": resultado, "rol": db.info.get("rol_membresia")},
+    )
 
 
 # ---------------------------------------------------------------------------

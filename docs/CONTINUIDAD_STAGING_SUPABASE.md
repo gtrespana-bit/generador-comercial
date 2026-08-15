@@ -135,7 +135,11 @@ Pendientes explícitos:
    `"email": "configurado"`). **Solo queda la prueba E2E** a cargo del
    usuario: invitación real en `/equipo` → correo desde
    `no-responder@cotizat.online` → aceptarla y comprobar que se consume.
-5. Importación explícita de instalaciones SQLite e imágenes.
+5. ~~Importación explícita de instalaciones SQLite~~ **Resuelto el 15/08/2026**
+   (E1W-012): asistente de dos pasos en `/configuracion/importar-instalacion`
+   con confirmación explícita y SHA-256 verificado. Las imágenes y archivos
+   locales no viajan (la base no los contiene): el asistente lo avisa y el
+   usuario los vuelve a subir desde la web cuando los necesite.
 
 Regla invariable:
 
