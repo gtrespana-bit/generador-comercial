@@ -7,11 +7,12 @@ depender del historial del chat. Debe leerse junto con
 `PLAN_DE_COMERCIALIZACION_Y_EVOLUCION_SAAS.md`, especialmente las secciones 1.3
 y 11.
 
-> **Empieza por `docs/PUNTO_DE_CONTINUACION.md`** (corte del 15/08/2026). Este
-> archivo describe el estado *de fondo* de staging; aquel dice **en qué paso
-> exacto se quedó el trabajo** y qué toca hacer a continuación. Resumen: el
-> PR #18 (rate limiting distribuido) quedó abierto con CI en verde, pendiente de
-> que se creen las variables de Upstash en Vercel y se fusione.
+> **Empieza por `docs/PUNTO_DE_CONTINUACION.md`** (corte del 15/08/2026,
+> noche). Este archivo describe el estado *de fondo* de staging; aquel dice
+> **en qué paso exacto se quedó el trabajo** y qué toca hacer a continuación.
+> Resumen: rate limiting distribuido (PR #18) y emails de invitación (PR #19)
+> fusionados y verificados en producción; queda la prueba E2E de invitaciones
+> a cargo del usuario.
 
 ## 1. Estado confirmado del repositorio
 
@@ -99,19 +100,23 @@ Estado verificado de Supabase:
 Alembic remoto: e1a4b7c9d2f0
 Rol runtime: cotizat_runtime (NOSUPERUSER, NOBYPASSRLS, INHERIT, miembro de cotizat_app)
 Bucket Storage: cotizat-private (privado, 12 MB)
-Auth URLs: Site URL https://cotizat-generador.vercel.app y Redirect URL https://cotizat-generador.vercel.app/restablecer-clave
+Auth URLs: Site URL https://cotizat.online y Redirect URL https://cotizat.online/restablecer-clave
 ```
 
 Estado verificado de Vercel:
 
 ```text
-URL de staging: https://cotizat-generador.vercel.app
-Variables de entorno: DATABASE_URL, COTIZAT_REQUIRE_RLS_ROLE=true, SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, COTIZAT_STORAGE_BACKEND=supabase, SUPABASE_STORAGE_BUCKET=cotizat-private, SUPABASE_SECRET_KEY, COTIZAT_COOKIE_SECURE=true, COTIZAT_TRUST_PROXY=true, COTIZAT_PUBLIC_URL, UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN, COTIZAT_REQUIRE_DISTRIBUTED_RATELIMIT=true.
+URL de staging: https://cotizat.online (dominio propio, 15/08/2026);
+  alias previo https://cotizat-generador.vercel.app sigue activo.
+Variables de entorno: DATABASE_URL, COTIZAT_REQUIRE_RLS_ROLE=true, SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, COTIZAT_STORAGE_BACKEND=supabase, SUPABASE_STORAGE_BUCKET=cotizat-private, SUPABASE_SECRET_KEY, COTIZAT_COOKIE_SECURE=true, COTIZAT_TRUST_PROXY=true, COTIZAT_PUBLIC_URL=https://cotizat.online, UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN, COTIZAT_REQUIRE_DISTRIBUTED_RATELIMIT=true, RESEND_API_KEY, COTIZAT_EMAIL_FROM=CotizaT <no-responder@cotizat.online>.
 Rate limiting distribuido (verificado el 15/08/2026): las tres variables de
 Upstash están en Vercel (Production), el PR #18 está fusionado y `/readyz`
 responde `"rate_limit": "distribuido:upstash"` con `"ok": true`.
+Resend (15/08/2026): dominio cotizat.online verificado (SPF/DKIM/MX en GoDaddy).
+Emails (verificado el 15/08/2026, noche): PR #19 fusionado (merge f686e80) y
+`/readyz` de producción responde `"email": "configurado"`.
 /healthz: 200 OK
-/readyz: 200 OK
+/readyz: 200 OK (recovery_redirect_url_esperada: https://cotizat.online/restablecer-clave)
 ```
 
 Pendientes explícitos:
@@ -122,11 +127,14 @@ Pendientes explícitos:
    15/08/2026**: base Upstash creada, las tres variables añadidas en Vercel
    (Production) y PR #18 fusionado; `/readyz` responde
    `checks.rate_limit = "distribuido:upstash"` con `"ok": true`.
-4. Emails de invitación (código listo, ver `docs/EMAILS_INVITACION.md`):
-   crear la cuenta en Resend, verificar el dominio y añadir en Vercel
-   `RESEND_API_KEY` y `COTIZAT_EMAIL_FROM`; `/readyz` debe pasar a
-   `"email": "configurado"`. Hasta entonces las invitaciones se entregan como
-   enlace en pantalla.
+4. Emails de invitación (ver `docs/EMAILS_INVITACION.md` y
+   `docs/DOMINIO_COTIZAT_ONLINE.md`): **código y operativo completos y
+   desplegados** (PR #19 fusionado el 15/08/2026, merge `f686e80`; dominio
+   cotizat.online verificado en Resend; `RESEND_API_KEY` y
+   `COTIZAT_EMAIL_FROM` en Vercel Production; `/readyz` verificado con
+   `"email": "configurado"`). **Solo queda la prueba E2E** a cargo del
+   usuario: invitación real en `/equipo` → correo desde
+   `no-responder@cotizat.online` → aceptarla y comprobar que se consume.
 5. Importación explícita de instalaciones SQLite e imágenes.
 
 Regla invariable:

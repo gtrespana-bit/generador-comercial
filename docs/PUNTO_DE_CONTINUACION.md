@@ -1,6 +1,6 @@
 # Punto exacto de continuación
 
-Fecha de corte: **15/08/2026** (America/Caracas).
+Fecha de corte: **15/08/2026, noche** (America/Caracas).
 
 Este documento existe para retomar el trabajo desde una conversación nueva sin
 depender del historial del chat. Describe **dónde nos quedamos exactamente** y
@@ -12,107 +12,97 @@ matriz de aceptación) y `PLAN_DE_COMERCIALIZACION_Y_EVOLUCION_SAAS.md`
 
 ---
 
-## 1. Lo último que se hizo: rate limiting distribuido
+## 1. Lo último que se hizo: emails de invitación (código en `main` y verificado)
 
-### El problema que se corrigió
+### Estado exacto (15/08/2026, noche)
 
-`AuthRateLimitMiddleware` guardaba los intentos de acceso en un `dict` del
-proceso. En un servidor único eso funciona; **en Vercel no**: cada invocación
-puede ejecutarse en un proceso nuevo, así que el contador arrancaba vacío una y
-otra vez. Los «10 intentos cada 5 minutos» de `/acceso` solo se aplicaban entre
-peticiones que casualmente cayeran en la misma instancia caliente.
+El bloque completo de emails está **desplegado y verificado en producción**.
+No rehacer ningún paso:
 
-No era un límite laxo: era **un límite inexistente disfrazado de protección**.
+- **PR #19 fusionado en `main`** el 15/08/2026 (merge **`f686e80`**), con los
+  commits de la rama `arena/01a00633-generador-comercial`:
+  1. `282f9c7` — emails de invitación por Resend con degradación a enlace en
+     pantalla (`app/services/email.py`, plantillas `app/templates/emails/`,
+     cableado en `crear_invitacion_web`, `checks.email` en `/readyz`,
+     12 pruebas en `tests/test_email_invitaciones.py`);
+  2. `5679ceb` — docs: el dominio de Vercel no puede usarse en Resend;
+  3. `6d99b7d` — docs: guía del dominio (`docs/DOMINIO_COTIZAT_ONLINE.md`).
+- **Parte operativa completa** (hecha por el usuario el 15/08/2026): cuenta
+  Resend, dominio `cotizat.online` verificado en Resend (SPF/DKIM/MX en
+  GoDaddy), y en Vercel Production `RESEND_API_KEY` y
+  `COTIZAT_EMAIL_FROM=CotizaT <no-responder@cotizat.online>`.
+- **Verificado en producción** (`https://cotizat.online/readyz`, 200 OK):
+  `"email": "configurado"`, `"rate_limit": "distribuido:upstash"`,
+  `"recovery_redirect_url_esperada": "https://cotizat.online/restablecer-clave"`,
+  `"ok": true`, `"errors": []`.
+- Suite en verde: **262 passed, 5 skipped**.
 
-### Qué se implementó
+Nota de historial: el commit `85e35ae` (solo docs de continuidad, escrito
+2 minutos después del merge del PR #19) quedó fuera de `main` y su contenido
+ya estaba desactualizado; este documento lo sustituye.
 
-`app/ratelimit.py` (nuevo) separa la decisión («¿permito este intento?») de
-dónde se guarda la cuenta, detrás de
-`hit(identidad, límite, ventana) -> Decision`:
+### Lo único pendiente del bloque: prueba E2E de invitaciones
 
-| Backend | Cuándo se usa | Comparte estado |
-| --- | --- | --- |
-| `MemoryRateLimit` | Escritorio, desarrollo y respaldo ante fallos | No |
-| `UpstashRateLimit` | Con las dos variables `UPSTASH_REDIS_REST_*` | Sí |
+La hará **el usuario por su cuenta** (decidido el 15/08/2026); no requiere
+código:
 
-Decisiones de diseño que **no conviene reabrir sin motivo** (están razonadas en
-el docstring del módulo y en `docs/SEGURIDAD_WEB.md`):
+1. Entrar en `https://cotizat.online/equipo` y crear una invitación real a un
+   email al que el usuario tenga acceso.
+2. Confirmar que llega el correo desde `no-responder@cotizat.online` con el
+   enlace de invitación (revisar spam la primera vez).
+3. Aceptar la invitación con una cuenta del mismo email y comprobar que se
+   consume (un solo uso).
+4. Si algo falla: el flujo degrada a enlace en pantalla (no se pierde la
+   invitación); revisar el panel de Resend (pestaña Emails) para ver el error
+   de entrega, y `docs/EMAILS_INVITACION.md` para el diagnóstico.
 
-- **API REST y no cliente Redis.** Una función serverless no conserva sockets
-  entre invocaciones, así que la conexión persistente no aporta; usar `urllib`
-  evita sumar una dependencia al runtime, con su pin en `requirements.txt` y la
-  regeneración del lock. Mismo patrón que `app/auth.py` y `app/storage.py`.
-- **Ventana fija por tramo** (`now // ventana` en la clave), no deslizante:
-  caduca sola, renovar el TTL es idempotente y todo cabe en un solo viaje
-  (`INCR` + `EXPIRE` en pipeline, timeout 3 s).
-- **Si Upstash falla, degrada al contador local.** Ni fail-open (quitaría el
-  límite justo cuando el servicio está en apuros) ni fail-closed (dejaría a
-  todos fuera por una caída ajena).
-- **La IP no viaja en claro** al tercero: la clave es
-  `cotizat:rl:<sha256("ruta|ip")[:32]>:<índice>`.
-- **Una configuración incompleta no impide arrancar**: avisa `/readyz` con
-  `checks.rate_limit`. Solo `COTIZAT_REQUIRE_DISTRIBUTED_RATELIMIT=true` la
-  convierte en error, y nunca bajo SQLite, donde un contador por proceso es lo
-  correcto.
-
-### Estado del código
-
-- **PR #18** — <https://github.com/gtrespana-bit/generador-comercial/pull/18>
-- Rama `arena/01a00341-generador-comercial`, commit **`c7d8be2`**, sobre la base
-  `66f932f` (= merge del PR #17).
-- **CI en verde**, Vercel Preview correcto, sin conflictos (`MERGEABLE`/`CLEAN`).
-- Suite: **250 passed, 5 skipped** (antes del bloque eran 228).
-- 14 archivos: `app/ratelimit.py` y `tests/test_ratelimit_distribuido.py`
-  nuevos; el resto son el cableado en `app/security.py` y `app/health.py`, más
-  documentación.
-
-**Al fusionar el PR, producción despliega desde `main` y recoge las variables.**
-*(Hecho: el merge `7940ce9` desplegó y `/readyz` confirma `distribuido:upstash`.)*
-
-### Aviso: el check «Vercel» del último commit aparece en rojo
-
-El segundo commit del PR (`becf758`, este mismo documento) **solo toca archivos
-markdown** y aun así el check de Vercel quedó en `failure`, con la descripción
-**«Deployment was blocked»**. El commit anterior, `c7d8be2`, que sí tocaba
-código, desplegó correctamente («Deployment has completed»).
-
-«Blocked» significa que Vercel **ni siquiera empezó a construir**: no es un
-fallo de compilación ni de las pruebas. `vercel.json` no cambió y no hay
-`ignoreCommand` ni `.vercelignore`. La suite sigue en **250 passed, 5 skipped**
-y el check «Pruebas y verificaciones» está en **pass**.
-
-Lo más probable es un tope del lado de la cuenta —el plan Hobby limita los
-despliegues diarios— o una protección de despliegue activada en el proyecto.
-**No pude confirmarlo**: desde el entorno donde se trabajó no hay salida de red
-hacia `api.vercel.com`, y el token de GitHub no tiene permiso para leer la API
-de deployments (403).
-
-Qué hacer antes de fusionar: abrir el panel de Vercel y mirar por qué se bloqueó
-ese despliegue concreto. Si es el límite diario, se resuelve solo al día
-siguiente. **Conviene comprobarlo** porque el merge a `main` dispara justamente
-el despliegue de producción que debe recoger las variables de Upstash; si los
-despliegues siguen bloqueados, el merge no publicaría nada y `/readyz` seguiría
-mostrando el estado antiguo.
+Hasta que esa prueba pase, el bloque se considera «desplegado, pendiente de
+validación E2E».
 
 ---
 
-## 2. Resuelto: rate limiting distribuido activo (15/08/2026)
+## 2. Cerrado antes (no rehacer)
 
-El bloque está **cerrado y verificado**. No rehacer ningún paso:
+### Rate limiting distribuido (15/08/2026)
 
-1. **Base Upstash creada** por el usuario (15/08/2026).
-2. **Las tres variables están en Vercel** (Production): `UPSTASH_REDIS_REST_URL`,
-   `UPSTASH_REDIS_REST_TOKEN` y `COTIZAT_REQUIRE_DISTRIBUTED_RATELIMIT=true`.
-3. **PR #18 fusionado** en `main` (merge `7940ce9`); producción desplegó desde
-   `main` y recogió las variables.
-4. **Verificado el 15/08/2026**: `https://cotizat-generador.vercel.app/readyz`
-   responde `200` con `"rate_limit": "distribuido:upstash"` y `"ok": true`, y
-   `"errors": []`. Diagnóstico: `memoria` = variables ausentes en Production;
-   `mal-configurado` = URL no https o token vacío. (Ya no aplican.)
-5. Anotado en `docs/CONTINUIDAD_STAGING_SUPABASE.md` (sección 2).
+- **PR #18 fusionado** (merge `7940ce9`). Base Upstash creada y las tres
+  variables en Vercel Production: `UPSTASH_REDIS_REST_URL`,
+  `UPSTASH_REDIS_REST_TOKEN`, `COTIZAT_REQUIRE_DISTRIBUTED_RATELIMIT=true`.
+- Verificado: `/readyz` responde `"rate_limit": "distribuido:upstash"`.
+- Diagnóstico si cambiara: `memoria` = variables ausentes; `mal-configurado` =
+  URL no https o token vacío.
+- Consumo esperado: 2 comandos por intento de login, muy por debajo del plan
+  gratuito de Upstash.
 
-Consumo esperado: 2 comandos por intento de login, muy por debajo del plan
-gratuito de Upstash.
+Decisiones de diseño de `app/ratelimit.py` que **no conviene reabrir sin
+motivo** (razonadas en el docstring del módulo y en `docs/SEGURIDAD_WEB.md`):
+
+- **API REST y no cliente Redis** (serverless no conserva sockets; `urllib`
+  evita una dependencia de runtime, mismo patrón que `app/auth.py` y
+  `app/storage.py`).
+- **Ventana fija por tramo** (`now // ventana` en la clave), no deslizante:
+  caduca sola y todo cabe en un viaje (`INCR` + `EXPIRE` en pipeline,
+  timeout 3 s).
+- **Si Upstash falla, degrada al contador local** (ni fail-open ni
+  fail-closed).
+- **La IP no viaja en claro**: clave
+  `cotizat:rl:<sha256("ruta|ip")[:32]>:<índice>`.
+- **Configuración incompleta no impide arrancar**: avisa en
+  `checks.rate_limit`; solo `COTIZAT_REQUIRE_DISTRIBUTED_RATELIMIT=true` la
+  convierte en error, y nunca bajo SQLite.
+
+### Dominio propio `cotizat.online` (15/08/2026)
+
+- Comprado en GoDaddy; Vercel sirve `cotizat.online` y `www.cotizat.online`
+  (DNS: A `@` → `76.76.21.21`, CNAME `www` → `cname.vercel-dns.com`).
+- Supabase: Site URL `https://cotizat.online` y Redirect URL
+  `https://cotizat.online/restablecer-clave`.
+- `COTIZAT_PUBLIC_URL=https://cotizat.online` en Vercel Production, redeploy
+  hecho y confirmado en `/readyz`.
+- El alias `https://cotizat-generador.vercel.app` sigue activo.
+- Guía completa con valores DNS exactos: `docs/DOMINIO_COTIZAT_ONLINE.md`.
+- Si el dominio «parpadea»: comprobar en GoDaddy que haya un único registro A
+  `@` → `76.76.21.21` (sin el de parking).
 
 ---
 
@@ -132,28 +122,10 @@ Guía operativa en `docs/MATRIZ_PASOS_MANUALES.md` (45-60 min).
 
 ---
 
-## 4. En curso: envío real de emails de invitación (código terminado)
+## 4. Qué es lo siguiente
 
-**Código completo y en verde** (15/08/2026): `app/services/email.py` (cliente
-REST de Resend con `urllib`, sin dependencias nuevas), plantillas
-`app/templates/emails/`, cableado en `crear_invitacion_web` con degradación a
-enlace en pantalla, `checks.email` informativo en `/readyz` y 12 pruebas en
-`tests/test_email_invitaciones.py`. Suite: **262 passed, 5 skipped**.
-
-**Queda la parte operativa (usuario):**
-
-1. ~~Crear cuenta en Resend y verificar dominio~~ → **dominio comprado:
-   `cotizat.online` (GoDaddy) el 15/08/2026**. Guía completa con valores DNS
-   exactos en `docs/DOMINIO_COTIZAT_ONLINE.md`: Vercel (A `76.76.21.21` +
-   CNAME `www`) → Supabase (Site URL/Redirect URL) → Resend (SPF/DKIM/MX) →
-   variables (`COTIZAT_PUBLIC_URL`, `RESEND_API_KEY`, `COTIZAT_EMAIL_FROM`).
-2. Añadir en Vercel (Production) `RESEND_API_KEY` y `COTIZAT_EMAIL_FROM`
-   (`CotizaT <no-responder@cotizat.online>`).
-3. Verificar `/readyz` → `"email": "configurado"` y una invitación real.
-
-Hasta entonces el flujo funciona igual que antes (enlace en pantalla).
-
-Bloques posteriores, en orden recomendado:
+Con el bloque de emails desplegado, los siguientes bloques en orden
+recomendado:
 
 1. **E1-040 — pruebas de recorridos críticos.** Criterio de salida de Etapa 1,
    aún en `[~]`.
@@ -213,34 +185,39 @@ Continúa el proyecto CotizaT. Antes de proponer nada, lee
 `docs/PUNTO_DE_CONTINUACION.md` y luego `docs/CONTINUIDAD_STAGING_SUPABASE.md`.
 No repitas trabajo ya hecho y no me pidas secretos.
 
-**Dónde quedó todo (15/08/2026).** El bloque de rate limiting distribuido está
-**cerrado y verificado**: base Upstash creada, las tres variables
-(`UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`,
-`COTIZAT_REQUIRE_DISTRIBUTED_RATELIMIT=true`) añadidas por el usuario en Vercel,
-**PR #18 fusionado** en `main` (merge `7940ce9`) y `/readyz` responde
-`"rate_limit": "distribuido:upstash"` con `"ok": true` en
-`https://cotizat-generador.vercel.app/readyz`. Suite en verde
-(**250 passed, 5 skipped**). Detalles y diagnóstico en la sección 2.
+**Dónde quedó todo (15/08/2026, noche).**
 
-**Empieza por verificar el estado real, no te fíes de este resumen.** Hazlo así
-y dime el resultado de cada punto antes de tocar nada:
+- **Rate limiting distribuido: cerrado y verificado.** PR #18 fusionado (merge
+  `7940ce9`), variables de Upstash en Vercel y `/readyz` responde
+  `"rate_limit": "distribuido:upstash"`.
+- **Dominio propio operativo:** `cotizat.online` (GoDaddy) sirviendo la app en
+  Vercel; Supabase y `COTIZAT_PUBLIC_URL` apuntando al dominio nuevo.
+- **Emails de invitación: código en `main` y desplegado.** PR #19 fusionado
+  (merge `f686e80`), Resend configurado con dominio verificado,
+  `RESEND_API_KEY` y `COTIZAT_EMAIL_FROM` en Vercel Production, y
+  `https://cotizat.online/readyz` verificado con `"email": "configurado"` y
+  `"ok": true`.
+- **Único pendiente del bloque de emails: la prueba E2E**, que hago yo por mi
+  cuenta (invitación real en `/equipo` → correo desde
+  `no-responder@cotizat.online` → aceptarla y ver que se consume). Pregúntame
+  si ya la hice; si llegó bien, el bloque queda cerrado del todo.
 
-1. `git log --oneline -5` y `git status --short` — ¿árbol limpio y con el merge
-   `7940ce9` presente?
+**Empieza por verificar el estado real, no te fíes de este resumen:**
+
+1. `git log --oneline -5` y `git status --short` — ¿árbol limpio con el merge
+   `f686e80` presente?
 2. Recrea el entorno y corre la suite: `python3 -m venv .venv`,
    `.venv/bin/pip install -r requirements-dev.txt`, `.venv/bin/pytest -q`.
-   Deben salir **250 passed, 5 skipped**. (El `.venv` no se conserva entre
-   sesiones; que falte es normal.)
-3. Abre `https://cotizat-generador.vercel.app/readyz` — debe seguir en 200 con
-   `rate_limit: distribuido:upstash`.
-
-**En curso:** envío real de emails de invitación. **Código terminado y en
-verde** (262 passed); falta solo la parte operativa del usuario: crear la
-cuenta de Resend, verificar dominio, añadir `RESEND_API_KEY` y
-`COTIZAT_EMAIL_FROM` en Vercel y comprobar `/readyz` → `"email": "configurado"`
-(detalles en `docs/EMAILS_INVITACION.md`).
+   Deben salir **262 passed, 5 skipped**.
+3. Abre `https://cotizat.online/readyz` — debe estar en 200 con
+   `"email": "configurado"` y `"rate_limit": "distribuido:upstash"`.
 
 **Aparcado por decisión mía:** los puntos 13-manual y 14 de la matriz de
-aceptación, hasta que el desarrollo esté cerrado. No me los pidas todavía.
+aceptación, hasta que el desarrollo esté cerrado. No pedirlos todavía.
+
+**Siguientes bloques cuando cierre esto:** 1) E1-040 pruebas de recorridos
+críticos; 2) E1W-012 importación de instalaciones SQLite hacia la web;
+3) paquete legal/comercial (E1-018/019/020/050/056). Recordar: plan Hobby de
+Vercel prohíbe uso comercial → pasar a Pro antes de cobrar.
 
 ---
