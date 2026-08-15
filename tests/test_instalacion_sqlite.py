@@ -110,13 +110,24 @@ def _instalacion_local(tmp_path, con_demo=False, organizacion_id=1, numero="P-20
 
 
 def _zip_de_backup(db_bytes, extras=()):
+    """Empaqueta un backup en un zip **determinista**.
+
+    ``writestr(nombre, datos)`` graba la fecha/hora actual en cada entrada, así
+    que dos llamadas en segundos distintos producen bytes distintos y el
+    SHA-256 que el test recalcula deja de coincidir con el que el servidor
+    calculó sobre el archivo subido. Se fija la marca de tiempo para que el
+    zip sea reproducible y el flujo de análisis→confirmación (que verifica el
+    hash) sea estable en CI.
+    """
     buf = io.BytesIO()
+    fecha_fija = (2026, 1, 1, 0, 0, 0)
+    entradas = [("presupuestos.db", db_bytes), ("LEEME_BACKUP.txt", "Copia de seguridad")]
+    entradas.extend(extras)
     with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as z:
-        z.write_bytes = None
-        z.writestr("presupuestos.db", db_bytes)
-        z.writestr("LEEME_BACKUP.txt", "Copia de seguridad")
-        for nombre, contenido in extras:
-            z.writestr(nombre, contenido)
+        for nombre, contenido in entradas:
+            info = zipfile.ZipInfo(nombre, date_time=fecha_fija)
+            info.compress_type = zipfile.ZIP_DEFLATED
+            z.writestr(info, contenido)
     return buf.getvalue()
 
 
