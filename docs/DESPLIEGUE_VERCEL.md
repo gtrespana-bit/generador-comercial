@@ -24,9 +24,18 @@ necesita la configuración PostgreSQL + Supabase descrita en
 | `COTIZAT_COOKIE_SECURE` | `true` |
 | `COTIZAT_TRUST_PROXY` | `true` (Vercel saneado de `X-Forwarded-For` para el limitador) |
 | `COTIZAT_REQUIRE_RLS_ROLE` | `true` |
+| `UPSTASH_REDIS_REST_URL` | `https://tu-base.upstash.io` (contador de intentos compartido) |
+| `UPSTASH_REDIS_REST_TOKEN` | token REST de Upstash (solo backend) |
+| `COTIZAT_REQUIRE_DISTRIBUTED_RATELIMIT` | `true` |
 
 > `MIGRATION_DATABASE_URL` es solo para migrar localmente; **no** debe
 > configurarse en Vercel.
+
+> Las tres últimas variables no son opcionales en Vercel. Sin ellas el límite
+> de intentos de acceso se cuenta en la memoria de cada invocación, y como cada
+> invocación puede ser un proceso nuevo, el contador arranca de cero y deja de
+> frenar los intentos de contraseña. Con `COTIZAT_REQUIRE_DISTRIBUTED_RATELIMIT=true`
+> el propio `/readyz` avisa respondiendo 503 si faltan.
 
 ### Variables vacías o heredadas
 

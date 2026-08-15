@@ -160,6 +160,21 @@ Vercel):
    | `COTIZAT_COOKIE_SECURE` | `true` |
    | `COTIZAT_TRUST_PROXY` | `true` |
    | `COTIZAT_PUBLIC_URL` | (lo rellenamos en el siguiente paso) |
+   | `UPSTASH_REDIS_REST_URL` | la URL REST de la base Upstash (ver recuadro) |
+   | `UPSTASH_REDIS_REST_TOKEN` | el token REST de esa base |
+   | `COTIZAT_REQUIRE_DISTRIBUTED_RATELIMIT` | `true` |
+
+   > **Las tres últimas: de dónde salen.** Entra en
+   > [console.upstash.com](https://console.upstash.com), crea una base Redis
+   > (el plan gratuito sobra para staging) y en su pestaña **REST API** copia
+   > `UPSTASH_REDIS_REST_URL` y `UPSTASH_REDIS_REST_TOKEN`. Sirven para contar
+   > los intentos de acceso en un sitio común a todas las instancias: en Vercel
+   > cada petición puede atenderla un proceso distinto, así que sin esto el
+   > contador empieza de cero cada vez y el límite de intentos de contraseña no
+   > llega a aplicarse. El token es del backend; no lo pongas en ninguna
+   > variable que acabe en el navegador. Si prefieres dejarlo para más tarde,
+   > omite las tres a la vez: con `COTIZAT_REQUIRE_DISTRIBUTED_RATELIMIT=true`
+   > pero sin base, `/readyz` responderá 503 a propósito.
 
 6. **No** añadas `MIGRATION_DATABASE_URL`. No pongas una URL de `postgres`
    administrador como `DATABASE_URL`.

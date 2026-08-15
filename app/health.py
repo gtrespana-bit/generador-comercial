@@ -27,6 +27,7 @@ from .database import (
     EXPECTED_ALEMBIC_HEAD,
     engine as default_engine,
 )
+from .ratelimit import estado_configuracion
 from .storage import StorageNotConfigured, StorageSettings
 
 
@@ -199,6 +200,13 @@ def readiness(engine: Engine | None = None) -> HealthStatus:
     # vive en Supabase y no puede comprobarse desde aquí.
     redirect_state, _redirect_error = _check_recovery_redirect()
     checks["recovery_redirect_url_esperada"] = redirect_state
+
+    # En SQLite local (escritorio) un contador por proceso es correcto: hay un
+    # único proceso. Solo se informa/exige el compartido en despliegue web.
+    ratelimit_state, ratelimit_error = estado_configuracion()
+    checks["rate_limit"] = ratelimit_state
+    if ratelimit_error and not DATABASE_IS_SQLITE:
+        errors.append(f"Rate limit: {ratelimit_error}")
 
     if DATABASE_IS_SQLITE:
         checks.update({k: str(v) for k, v in _check_sqlite().items()})

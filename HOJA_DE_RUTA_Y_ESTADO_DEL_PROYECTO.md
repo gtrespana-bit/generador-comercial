@@ -1550,3 +1550,85 @@ guía `docs/MATRIZ_PASOS_MANUALES.md`.
 ## Resultado
 
 Suite completa: **218 passed, 3 skipped** (antes 214). Commit `d4aa7f1`.
+
+# 28. El límite de intentos de acceso no limitaba nada en Vercel (14/08/2026)
+
+## El problema
+
+`AuthRateLimitMiddleware` guardaba los intentos en un `dict` del proceso. En un
+servidor único eso funciona. En Vercel **no**: cada invocación puede ejecutarse
+en un proceso nuevo, así que el diccionario arranca vacío una y otra vez.
+
+El resultado es peor que un límite laxo: es un límite inexistente disfrazado de
+protección. Los «10 intentos cada 5 minutos» de `/acceso` solo se aplicaban
+entre peticiones que casualmente cayeran en la misma instancia caliente. Quien
+probara contraseñas no necesitaba ni saltárselo. La documentación lo daba por
+sabido («no sustituye un límite distribuido»), pero seguía figurando como
+pendiente de infraestructura mientras staging ya estaba en línea.
+
+## Qué se hizo
+
+`app/ratelimit.py` separa la decisión («¿permito este intento?») de dónde se
+guarda la cuenta, detrás de `hit(identidad, límite, ventana) -> Decision`:
+
+| Backend | Cuándo | Comparte estado |
+| --- | --- | --- |
+| `MemoryRateLimit` | Escritorio, desarrollo, respaldo ante fallos | No |
+| `UpstashRateLimit` | Con las dos variables `UPSTASH_REDIS_REST_*` | Sí |
+
+Decisiones que merecen justificarse:
+
+- **API REST en vez de cliente Redis.** Una función serverless no conserva
+  sockets entre invocaciones, así que la conexión persistente no aporta; usar
+  `urllib` evita además sumar una dependencia al runtime, y con ella un pin en
+  `requirements.txt` y una regeneración del lock. Mismo patrón que `app/auth.py`
+  y `app/storage.py`.
+- **Ventana fija por tramo** (`now // ventana` en la clave) y no deslizante: la
+  clave caduca sola sin tareas de limpieza, renovar el TTL es idempotente y todo
+  cabe en un solo viaje (`INCR` + `EXPIRE` en un pipeline, timeout 3 s). Se
+  pierde precisión en la frontera entre tramos; a cambio no hacen falta sorted
+  sets ni scripts Lua. La imprecisión es acotada y conocida.
+- **Degradación al contador local si Upstash falla.** Fallar abierto sería
+  quitar el límite justo cuando el servicio está en apuros; fallar cerrado
+  dejaría a todos los usuarios fuera por una caída ajena. Se vuelve a la
+  protección que ya existía.
+- **La IP no viaja en claro** a un tercero: la clave es
+  `cotizat:rl:<sha256("ruta|ip")[:32]>:<índice>`, determinista entre instancias
+  —lo único que el contador necesita— pero no reconstruible.
+- **Una configuración incompleta no impide arrancar**: se registra un aviso y se
+  degrada. Quien avisa es `/readyz`, con `checks.rate_limit`. Solo
+  `COTIZAT_REQUIRE_DISTRIBUTED_RATELIMIT=true` convierte «memoria» en error, y
+  ni siquiera entonces bajo SQLite, donde un contador por proceso es lo correcto.
+
+## Verificación de que las pruebas sirven
+
+18 pruebas en `tests/test_ratelimit_distribuido.py`, contra un servidor HTTP real
+que implementa `INCR`/`EXPIRE` —no un doble en memoria—, para ejercitar de verdad
+el pipeline, las cabeceras y el parseo.
+
+La prueba central reproduce el fallo original: reparte cuatro intentos entre
+**dos aplicaciones distintas**, cada una con su propio middleware, como dos
+invocaciones serverless. Con el límite en 3, el cuarto debe rechazarse aunque
+llegue a la instancia que solo ha visto uno. Junto a ella,
+`test_el_contador_en_memoria_no_habria_detectado_el_abuso` corre el mismo
+escenario con `MemoryRateLimit` y comprueba que el abuso **pasa**: si algún día
+esa prueba empieza a fallar, la anterior habrá dejado de demostrar algo.
+
+El resto cubre el límite exacto, el aislamiento por IP y por ruta, que la IP no
+aparezca en el tráfico saliente, que se fije `EXPIRE`, el `Bearer`, el único
+round-trip, la degradación con el servicio devolviendo 500 y con el puerto
+muerto (sin propagar excepción al login), el rechazo de URL no https y de token
+vacío, y los cuatro estados de `/readyz`.
+
+## Lo que sigue siendo manual
+
+Activarlo en staging: crear la base en Upstash y añadir a Vercel
+`UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` y
+`COTIZAT_REQUIRE_DISTRIBUTED_RATELIMIT=true`. Hasta entonces `/readyz` seguirá
+publicando `rate_limit: memoria`, que en Vercel significa sin límite efectivo.
+Los pasos 13-manual y 14 de la matriz continúan aparcados por decisión del
+usuario hasta el final del desarrollo.
+
+## Resultado
+
+Suite completa: **246 passed, 5 skipped** (antes 228).

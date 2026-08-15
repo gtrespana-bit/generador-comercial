@@ -331,7 +331,8 @@ def test_rate_limit_acota_contadores_en_memoria():
     assert middleware._permitido(("/acceso", "192.0.2.30"), 1)[0]
     assert middleware._permitido(("/acceso", "192.0.2.31"), 1)[0]
     assert middleware._permitido(("/acceso", "192.0.2.32"), 1)[0]
-    assert len(middleware._attempts) == 2
+    # El estado vive ahora en el backend intercambiable, no en el middleware.
+    assert len(middleware.backend._attempts) == 2
 
 
 def test_rate_limit_no_afecta_lecturas_ni_otras_rutas():

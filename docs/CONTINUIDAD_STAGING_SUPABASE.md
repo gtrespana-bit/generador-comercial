@@ -109,7 +109,7 @@ Pendientes explícitos:
 
 1. Pruebas de la matriz de aceptación de la Sección 4 con dos correos y dos organizaciones en la aplicación desplegada.
 2. Validación de CSP/interacciones en navegador real durante la matriz.
-3. Rate limiting distribuido (Redis/Upstash) antes de escalar a múltiples instancias o apertura pública.
+3. Rate limiting distribuido: **código listo** (`app/ratelimit.py`). Falta la parte operativa: crear la base en Upstash y añadir a Vercel `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` y `COTIZAT_REQUIRE_DISTRIBUTED_RATELIMIT=true`. Mientras no estén, `/readyz` responde `checks.rate_limit = "memoria"`, y en Vercel eso significa que el límite de Auth no se aplica de verdad entre invocaciones.
 4. Importación explícita de instalaciones SQLite e imágenes.
 
 Regla invariable:
@@ -371,8 +371,10 @@ Usar solo datos ficticios durante esta matriz.
 
 Si staging pasa la matriz:
 
-1. añadir Redis/Upstash para rate limiting distribuido antes de múltiples
-   instancias o exposición pública;
+1. activar el rate limiting distribuido en Vercel (el código ya está: basta
+   crear la base en Upstash y definir `UPSTASH_REDIS_REST_URL`,
+   `UPSTASH_REDIS_REST_TOKEN` y `COTIZAT_REQUIRE_DISTRIBUTED_RATELIMIT=true`;
+   comprobar después que `/readyz` muestra `rate_limit: distribuido:upstash`);
 2. automatizar smoke tests HTTPS de Auth/rutas/CSP donde sea viable;
 3. diseñar y probar importación explícita de instalaciones SQLite y objetos;
 4. continuar E1-012 a E1-014 (usabilidad y medición del recorrido web);

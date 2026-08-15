@@ -227,8 +227,11 @@ Antes de declarar staging validado, ejecuta la matriz de 14 puntos de
 
 ## Pendientes explícitos (no bloquean el staging inicial)
 
-- Redis/Upstash para rate limiting distribuido antes de múltiples instancias
-  o exposición pública.
+- Crear la base de Upstash y definir `UPSTASH_REDIS_REST_URL`,
+  `UPSTASH_REDIS_REST_TOKEN` y `COTIZAT_REQUIRE_DISTRIBUTED_RATELIMIT=true`
+  en Vercel. El rate limiting distribuido ya está implementado en
+  `app/ratelimit.py`; sin esas variables el contador es por proceso y en
+  serverless no limita nada.
 - Importación explícita de instalaciones SQLite y sus objetos
   (E1W-012).
 - Smoke tests HTTPS automatizados de Auth/rutas/CSP donde sea viable.
