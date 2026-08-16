@@ -73,7 +73,7 @@ Al trabajar en una tarea de este plan se debe:
 | 0. Diagnóstico y límites | Conocer el estado real y fijar principios | **Completada** | Auditoría y decisión de nicho documentadas |
 | 1. Fundamentos comerciales web | Construir una base browser-first honesta, persistente y aislada | **Completada** | Base web, licencias y usabilidad verificadas |
 | 2. Validación comercial pagada | Demostrar que empresas reales pagan y continúan usándolo | **Aplazada hasta el final por decisión del titular** | Solo se abrirá cuando el producto se considere completo |
-| 3. Cierre funcional y operativo web | Terminar el ciclo comercial y la operación antes de exponerlo a clientes | **Activa** | Envío, aceptación, recuperación y operación completas |
+| 3. Cierre funcional y operativo web | Terminar el ciclo comercial y la operación antes de exponerlo a clientes | **Completada en la rama (despliegue pendiente)** | Envío, aceptación, recuperación y operación completas |
 | 4. Endurecimiento SaaS | Completar seguridad, escalabilidad y operación pública | Pendiente | Beta de aislamiento y seguridad aprobada |
 | 5. Retención y profundidad | Convertirlo en una herramienta de uso frecuente durante la obra | Pendiente | Uso recurrente y reducción de abandono |
 | 6. Expansión controlada | Crecer por gremios y países sin perder el foco vertical | Pendiente | Mercado inicial repetible y rentable |
@@ -584,10 +584,16 @@ Esta etapa se cierra con evidencia técnica, no con clientes (D-017):
 - [x] El presupuesto puede enviarse por email desde CotizaT.
 - [x] Existe un enlace público seguro, revocable y limitado a una propuesta.
 - [x] La aceptación o rechazo queda trazada y notifica a la empresa.
-- [ ] La restauración completa de datos y archivos está ensayada.
-- [ ] Existe exportación completa por organización y procedimiento de baja.
-- [ ] Monitorización y diagnóstico permiten detectar fallos sin exponer datos sensibles.
+- [x] La restauración completa de datos y archivos está ensayada (E3-020/E3-021).
+- [x] Existe exportación completa por organización y procedimiento de baja (E3-022/E3-023).
+- [x] Monitorización y diagnóstico permiten detectar fallos sin exponer datos sensibles (E3-024).
 - [x] Autenticación, HTTPS, almacenamiento privado, rate limiting y licencias funcionan en producción.
+
+Todo el bloque E3-016 a E3-024 está **completado en la rama** con suite en
+verde (453 passed, 6 skipped). El ensayo sobre la infraestructura real
+(staging) queda pendiente del despliegue autorizado: migraciones
+`c2f6e8a1d934` y `a3d7e9c1b5f2` sin aplicar en Supabase (scripts en
+`docs/staging_upgrade_*.sql`).
 
 **Puerta al terminar:** pasar al endurecimiento técnico de Etapa 4 o al siguiente bloque funcional que el titular considere necesario. La validación comercial continúa aplazada.
 
@@ -897,8 +903,20 @@ comercial.
    SECURITY DEFINER `cotizat_security.baja_organizacion` en PostgreSQL
    (migración `a3d7e9c1b5f2`, sin aplicar hasta el despliegue). Detalle en
    `docs/EXPORTACION_Y_BAJA_ORGANIZACION.md`. Suite: **441 passed, 6 skipped**.
-5. **E3-024 — Monitorización y diagnóstico** (siguiente): observabilidad de la
-   operación web (salud, errores, métricas honestas).
+5. ~~**E3-024 — Monitorización y diagnóstico.**~~ Completado el 16/08/2026:
+   panel de operación `/admin/operacion` con los chequeos de `/readyz`,
+   hechos operativos (backend, modo efímero, head de Alembic, almacenamiento,
+   rate limit, licencias, operadores) y registro acotado en memoria de
+   errores no capturados (sin query strings ni tokens, con agregación de
+   ocurrencias); middleware que captura y relanza sin cambiar la semántica
+   HTTP. Detalle en `docs/MONITORIZACION_Y_DIAGNOSTICO.md`. Suite:
+   **453 passed, 6 skipped**.
+
+Con E3-024 queda terminado el cierre funcional y operativo de la Etapa 3
+(envío, aceptación, recuperación, exportación/baja y operación). Lo siguiente,
+según la puerta de salida, es el **endurecimiento técnico de la Etapa 4** o
+la autorización del despliegue con las migraciones pendientes
+(`c2f6e8a1d934`, `a3d7e9c1b5f2`).
 
 <details><summary>Histórico: bloque previo — validación con matriz de aceptación en staging (superado el 14-16/08/2026)</summary>
 

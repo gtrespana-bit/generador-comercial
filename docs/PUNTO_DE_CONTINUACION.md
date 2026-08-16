@@ -236,9 +236,20 @@ bloqueante. Interfaz mejorada del panel de operador: pendiente futuro.
    (18 pruebas nuevas). Detalles en
    `docs/EXPORTACION_Y_BAJA_ORGANIZACION.md` y
    `docs/RESPALDO_Y_RESTAURACION_WEB.md`.
-9. **Siguiente bloque:** monitorización y diagnóstico (E3-024). Catálogo
-   comercial y validación pagada permanecen aplazados hasta que el titular
-   declare completo el producto.
+9. ~~**E3-024 — Monitorización y diagnóstico.**~~ **Completado en la rama el
+   16/08/2026**: panel `/admin/operacion` solo para operador con los chequeos
+   de `/readyz`, hechos operativos y registro acotado en memoria de errores no
+   capturados (sin query strings ni tokens); middleware que captura y relanza
+   sin cambiar la semántica HTTP. Sin migración nueva. Suite del bloque:
+   **453 passed, 6 skipped** (12 pruebas nuevas en `tests/test_operacion.py`).
+   Detalle en `docs/MONITORIZACION_Y_DIAGNOSTICO.md`.
+
+**Con E3-024 queda completo el cierre funcional y operativo de la Etapa 3**
+(E3-016 a E3-024) en la rama. Siguiente según la puerta de salida del plan:
+**endurecimiento técnico de la Etapa 4** o **autorizar el despliegue** con las
+migraciones pendientes (`c2f6e8a1d934`, `a3d7e9c1b5f2`) y ensayo en staging.
+Catálogo comercial y validación pagada permanecen aplazados hasta que el
+titular declare completo el producto.
 
 ## 6. Reglas invariables (no negociables)
 
@@ -299,15 +310,17 @@ No repitas trabajo ya hecho y no me pidas secretos.
   hasta que el producto se considere completo.
 - Incidencia de Auth cerrada (Redirect URLs y rate limits confirmados).
 
-**E3-016 a E3-023 completados localmente:** envío por email, enlace público
+**E3-016 a E3-024 completados localmente:** envío por email, enlace público
 revocable, respuesta trazable, notificación y estado controlado, respaldo
 web completo y verificable con restauración en dos pasos, exportación
-portátil y baja con borrado verificado. Suite verificada en la rama:
-**441 passed, 6 skipped**. **Siguiente bloque técnico:** monitorización y
-diagnóstico (E3-024). No abrir PR. **Migraciones pendientes de aplicar hasta
-la autorización de despliegue: `c2f6e8a1d934` y `a3d7e9c1b5f2`** (producción
-continúa en `b7c4a9e2d31f`; scripts en `docs/staging_upgrade_*.sql`). No
-retomar catálogo ni pilotos salvo nueva decisión expresa.
+portátil, baja con borrado verificado y monitorización y diagnóstico del
+operador. **Cierre funcional y operativo de la Etapa 3 completo en la rama.**
+Suite verificada: **453 passed, 6 skipped**. Siguiente según la puerta de
+salida: endurecimiento técnico de la Etapa 4 o autorización del despliegue.
+No abrir PR. **Migraciones pendientes de aplicar hasta la autorización de
+despliegue: `c2f6e8a1d934` y `a3d7e9c1b5f2`** (producción continúa en
+`b7c4a9e2d31f`; scripts en `docs/staging_upgrade_*.sql`). No retomar catálogo
+ni pilotos salvo nueva decisión expresa.
 
 **Nota de la sesión de recuperación (16/08/2026):** todo lo anterior se
 recuperó desde un parche en la rama `arena/01a00b99-generador-comercial`

@@ -200,6 +200,10 @@ from .services.respaldo import (
 from .services.restauracion import analizar_respaldo, restaurar_respaldo
 from .services.exportacion import generar_exportacion
 from .services.baja import BajaError, ejecutar_baja, resumen_baja
+from .services.operacion import (
+    RegistroErroresMiddleware,
+    diagnostico_operacion,
+)
 from .utils import SIMBOLOS, fmt_fecha, fmt_monto, fmt_num, fmt_cantidad
 from .storage import (
     StorageError,
@@ -361,6 +365,9 @@ app.add_middleware(
     in {"1", "true", "yes", "on"},
 )
 app.add_middleware(WebSecurityMiddleware, enforce_csrf=not DATABASE_IS_SQLITE)
+# Añadido el último para quedar en la capa exterior: así ve cualquier
+# excepción no manejada de las rutas y del resto de middlewares (E3-024).
+app.add_middleware(RegistroErroresMiddleware)
 
 
 def _respuesta_auth_json(request: Request) -> bool:
@@ -2023,6 +2030,25 @@ def _render_licencias(
 @app.get("/admin/licencias", response_class=HTMLResponse, include_in_schema=False)
 def panel_licencias(request: Request, db: Session = Depends(get_operator_db)):
     return _render_licencias(request, db)
+
+
+@app.get("/admin/operacion", response_class=HTMLResponse, include_in_schema=False)
+def panel_operacion(request: Request, db: Session = Depends(get_operator_db)):
+    """Diagnóstico operativo del despliegue (E3-024), solo para el operador.
+
+    Reutiliza los chequeos de `/readyz` y añade los errores no capturados del
+    proceso. Sin datos de tenant: el panel es del producto, no de un cliente.
+    """
+    diagnostico = diagnostico_operacion()
+    return TEMPLATES.TemplateResponse(
+        request,
+        "admin/operacion.html",
+        {
+            "diagnostico": diagnostico,
+            "operador": db.info.get("auth_email", ""),
+        },
+        headers={"Cache-Control": "no-store"},
+    )
 
 
 @app.post("/admin/licencias", include_in_schema=False)
