@@ -58,10 +58,14 @@
         "DR": {
           "nombre": "Revestimientos y trasdosados",
           "grupos": {
-            "DRS": "Suelos y pavimentos",
-            "DRC": "Piezas rígidas en paramentos verticales",
-            "DRF": "Revestimientos continuos",
-            "DRT": "Falsos techos"
+            "DRS": "Pisos y pavimentos",
+            "DRC": "Enchapados y piezas rígidas en paredes",
+            "DRF": "Revestimientos continuos (frisos, yeso, estuco)",
+            "DRT": "Cielos rasos",
+            "DRR": "Trasdosados",
+            "DRD": "Revestimientos decorativos",
+            "DRE": "Escaleras",
+            "DRQ": "Salpicados y morteros monocapa en fachada"
           }
         },
         "DS": {

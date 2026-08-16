@@ -1,0 +1,41 @@
+{
+  "codigo": "DRF050",
+  "capitulo": "D",
+  "subcapitulo": "DR",
+  "grupo": "DRF",
+  "unidad": "m²",
+  "titulo": "Eliminación de pintura en paramento mediante raspado y decapado.",
+  "descripcion": "Eliminación de las capas de pintura existentes en paramento interior o exterior, mediante raspado mecánico con espátula y lijado, con aplicación puntual de decapante químico en gel en las zonas de pintura muy adherida o de espesor elevado. Se emplea cuando la pintura existente está cuarteada, sopla o es incompatible con el nuevo acabado. Incluye la protección de pisos, carpintería y mobiliario, la ventilación del ambiente durante la aplicación del decapante, la neutralización y lavado de los restos químicos, el aspirado del polvo y la retirada de los residuos. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en superficie realmente tratada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-DECAP",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.14
+    },
+    {
+      "ref": "MT-PROT-OBRA",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MQ-LIJAD",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MQ-ASPIR",
+      "rendimiento": 0.11
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.22
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.3
+    }
+  ]
+}

@@ -1,14 +1,41 @@
 {
   "codigo": "DRT010",
-  "capitulo": "D", "subcapitulo": "DR", "grupo": "DRT",
+  "capitulo": "D",
+  "subcapitulo": "DR",
+  "grupo": "DRT",
   "unidad": "m²",
-  "titulo": "Demolición de cielo raso y su estructura de soporte.",
-  "descripcion": "Demolición de cielo raso existente de yeso, machihembrado o placa, junto con su estructura de soporte y elementos de cuelgue, con medios manuales. Incluye desconexión previa de las luminarias y elementos alojados en el plano del cielo, protección del piso y del mobiliario, retirada de escombro en sacos hasta el punto de acopio y limpieza de la zona, dejando la losa a la vista. No incluye el transporte a vertedero. Medido en superficie realmente demolida.",
-  "margen": 0.30, "complementarios_pct": 1,
+  "titulo": "Demolición de cielo raso de yeso laminado y su estructura.",
+  "descripcion": "Demolición de cielo raso continuo de placa de yeso laminado, junto con la perfilería de acero galvanizado, las varillas de cuelgue y el ángulo perimetral, ejecutada con medios manuales. Incluye la desconexión y retiro previo de las luminarias, rejillas y difusores alojados en el plano del cielo, la protección del piso y del mobiliario, el descuelgue ordenado de las placas para evitar caídas incontroladas, el retiro del escombro en sacos y de la perfilería atada, y la limpieza de la zona dejando la losa a la vista. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en superficie realmente demolida.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
   "recursos": [
-    {"ref": "MT-SAC-ESC", "rendimiento": 0.55},
-    {"ref": "MQ-ASPIR",   "rendimiento": 0.080},
-    {"ref": "MO-AYU-ESP", "rendimiento": 0.160},
-    {"ref": "MO-AYU",     "rendimiento": 0.180}
+    {
+      "ref": "MT-SAC-ESC",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.07
+    },
+    {
+      "ref": "MT-PROT-OBRA",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MQ-ASPIR",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.14
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.16
+    }
   ]
 }

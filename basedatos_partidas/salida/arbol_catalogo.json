@@ -110,7 +110,7 @@
           "grupos": [
             {
               "codigo": "DRS",
-              "nombre": "Suelos y pavimentos",
+              "nombre": "Pisos y pavimentos",
               "partidas": [
                 {
                   "codigo": "DRS010",
@@ -245,42 +245,263 @@
             },
             {
               "codigo": "DRC",
-              "nombre": "Piezas rígidas en paramentos verticales",
+              "nombre": "Enchapados y piezas rígidas en paredes",
               "partidas": [
                 {
                   "codigo": "DRC010",
-                  "titulo": "Picado de revestimiento cerámico en paramento y su capa de agarre.",
+                  "titulo": "Picado de enchapado cerámico en pared y su capa de pega.",
                   "unidad": "m²",
-                  "precio": 5.95,
+                  "precio": 6.25,
                   "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DRC020",
+                  "titulo": "Picado de enchapado de granito o terrazo en pared.",
+                  "unidad": "m²",
+                  "precio": 7.31,
+                  "horas": 0.78,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DRC030",
+                  "titulo": "Picado de enchapado de piedra natural en pared.",
+                  "unidad": "m²",
+                  "precio": 7.67,
+                  "horas": 0.82,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DRC040",
+                  "titulo": "Desmontaje de enchapado de madera o machihembrado en pared.",
+                  "unidad": "m²",
+                  "precio": 2.21,
+                  "horas": 0.32,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DRC050",
+                  "titulo": "Desmontaje de revestimiento de láminas o paneles en pared.",
+                  "unidad": "m²",
+                  "precio": 1.56,
+                  "horas": 0.22,
                   "producto_cliente": false
                 }
               ],
-              "n": 1
+              "n": 5
             },
             {
               "codigo": "DRF",
-              "nombre": "Revestimientos continuos",
-              "partidas": [],
-              "n": 0
-            },
-            {
-              "codigo": "DRT",
-              "nombre": "Falsos techos",
+              "nombre": "Revestimientos continuos (frisos, yeso, estuco)",
               "partidas": [
                 {
-                  "codigo": "DRT010",
-                  "titulo": "Demolición de cielo raso y su estructura de soporte.",
+                  "codigo": "DRF010",
+                  "titulo": "Picado de friso de mortero en paramento.",
                   "unidad": "m²",
-                  "precio": 2.37,
-                  "horas": 0.34,
+                  "precio": 5.86,
+                  "horas": 0.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DRF020",
+                  "titulo": "Picado de friso de yeso o pasta en paramento.",
+                  "unidad": "m²",
+                  "precio": 3.65,
+                  "horas": 0.38,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DRF030",
+                  "titulo": "Picado de estuco o pasta decorativa en paramento.",
+                  "unidad": "m²",
+                  "precio": 4.3,
+                  "horas": 0.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DRF040",
+                  "titulo": "Repicado de superficie de concreto para mejorar adherencia.",
+                  "unidad": "m²",
+                  "precio": 4.37,
+                  "horas": 0.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DRF050",
+                  "titulo": "Eliminación de pintura en paramento mediante raspado y decapado.",
+                  "unidad": "m²",
+                  "precio": 5.15,
+                  "horas": 0.52,
                   "producto_cliente": false
                 }
               ],
-              "n": 1
+              "n": 5
+            },
+            {
+              "codigo": "DRT",
+              "nombre": "Cielos rasos",
+              "partidas": [
+                {
+                  "codigo": "DRT010",
+                  "titulo": "Demolición de cielo raso de yeso laminado y su estructura.",
+                  "unidad": "m²",
+                  "precio": 2.69,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DRT020",
+                  "titulo": "Demolición de cielo raso de yeso vaciado o pasta.",
+                  "unidad": "m²",
+                  "precio": 4.91,
+                  "horas": 0.48,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DRT030",
+                  "titulo": "Desmontaje de cielo raso desmontable de fibra mineral.",
+                  "unidad": "m²",
+                  "precio": 1.65,
+                  "horas": 0.18,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DRT040",
+                  "titulo": "Desmontaje de cielo raso de machihembrado de madera.",
+                  "unidad": "m²",
+                  "precio": 2.82,
+                  "horas": 0.34,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DRT050",
+                  "titulo": "Desmontaje de cielo raso de láminas de PVC o aluminio.",
+                  "unidad": "m²",
+                  "precio": 1.76,
+                  "horas": 0.2,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 5
+            },
+            {
+              "codigo": "DRR",
+              "nombre": "Trasdosados",
+              "partidas": [
+                {
+                  "codigo": "DRR010",
+                  "titulo": "Demolición de trasdosado de yeso laminado y su estructura.",
+                  "unidad": "m²",
+                  "precio": 2.56,
+                  "horas": 0.33,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DRR020",
+                  "titulo": "Demolición de trasdosado de bloque o ladrillo adosado a muro.",
+                  "unidad": "m²",
+                  "precio": 6.21,
+                  "horas": 0.62,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DRR030",
+                  "titulo": "Desmontaje de trasdosado directo de placa pegada al muro.",
+                  "unidad": "m²",
+                  "precio": 3.12,
+                  "horas": 0.42,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 3
+            },
+            {
+              "codigo": "DRD",
+              "nombre": "Revestimientos decorativos",
+              "partidas": [
+                {
+                  "codigo": "DRD010",
+                  "titulo": "Retiro de papel tapiz en paramento.",
+                  "unidad": "m²",
+                  "precio": 2.2,
+                  "horas": 0.25,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DRD020",
+                  "titulo": "Desmontaje de moldura decorativa de yeso o poliestireno.",
+                  "unidad": "m",
+                  "precio": 0.94,
+                  "horas": 0.13,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DRD030",
+                  "titulo": "Retiro de láminas decorativas, vinilos o espejos adheridos.",
+                  "unidad": "m²",
+                  "precio": 1.6,
+                  "horas": 0.15,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 3
+            },
+            {
+              "codigo": "DRE",
+              "nombre": "Escaleras",
+              "partidas": [
+                {
+                  "codigo": "DRE010",
+                  "titulo": "Demolición de revestimiento cerámico de escalera.",
+                  "unidad": "m²",
+                  "precio": 7.27,
+                  "horas": 0.85,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DRE020",
+                  "titulo": "Demolición de revestimiento de granito o piedra natural en escalera.",
+                  "unidad": "m²",
+                  "precio": 8.58,
+                  "horas": 0.98,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DRE030",
+                  "titulo": "Demolición de zócalo escalonado de escalera.",
+                  "unidad": "m",
+                  "precio": 1.78,
+                  "horas": 0.22,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 3
+            },
+            {
+              "codigo": "DRQ",
+              "nombre": "Salpicados y morteros monocapa en fachada",
+              "partidas": [
+                {
+                  "codigo": "DRQ010",
+                  "titulo": "Picado de salpicado o graniplast en fachada.",
+                  "unidad": "m²",
+                  "precio": 7.11,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DRQ020",
+                  "titulo": "Picado de mortero monocapa en fachada.",
+                  "unidad": "m²",
+                  "precio": 8.02,
+                  "horas": 0.78,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 2
             }
           ],
-          "n": 18
+          "n": 42
         },
         {
           "codigo": "DS",
@@ -295,7 +516,7 @@
           "n": 0
         }
       ],
-      "n": 20
+      "n": 44
     },
     {
       "codigo": "A",

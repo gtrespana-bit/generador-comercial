@@ -336,6 +336,18 @@
       "descripcion": "Disolvente removedor de adhesivos para levantado de pisos vinílicos y alfombras.",
       "precio": 5.2,
       "estado": "provisional"
+    },
+    "MT-DECAP": {
+      "unidad": "l",
+      "descripcion": "Decapante químico en gel para eliminación de capas de pintura en paramentos.",
+      "precio": 6.5,
+      "estado": "provisional"
+    },
+    "MT-VAPOR": {
+      "unidad": "l",
+      "descripcion": "Solución humectante para reblandecimiento de papel tapiz y pegamentos murales.",
+      "precio": 2.4,
+      "estado": "provisional"
     }
   },
   "maquinaria": {
@@ -421,6 +433,12 @@
       "unidad": "h",
       "descripcion": "Amoladora angular con disco de diamante, para corte perimetral y de juntas.",
       "precio": 2.4,
+      "estado": "provisional"
+    },
+    "MQ-ANDAMIO": {
+      "unidad": "h",
+      "descripcion": "Andamio tubular o de borriquetas para trabajos en altura, incluido montaje y desmontaje amortizados.",
+      "precio": 1.9,
       "estado": "provisional"
     }
   }
