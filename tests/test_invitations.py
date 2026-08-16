@@ -11,8 +11,10 @@ from app.models import InvitacionOrganizacion, Membresia, Organizacion, Usuario
 from app.services.invitations import (
     GestionEquipoError,
     aceptar_invitacion,
+    aceptar_invitacion_pendiente,
     actualizar_membresia,
     crear_invitacion,
+    invitaciones_pendientes_para,
     revocar_invitacion,
 )
 
@@ -366,3 +368,256 @@ def test_administracion_protege_propietario_y_otros_administradores():
     finally:
         db.close()
         engine.dispose()
+
+
+# ---------------------------------------------------------------------------
+# Aceptar desde el panel, sin volver al email
+#
+# Incidencia reportada el 15/08/2026 tras las pruebas E2E: quien NO tenía
+# cuenta recibía la invitación, se registraba, confirmaba el email y al iniciar
+# sesión aterrizaba en «crear organización», sin ninguna opción de aceptar la
+# invitación. Tenía que volver al correo y pulsar el enlace por segunda vez.
+#
+# Causa: el enlace de confirmación de Supabase apunta al `redirect_to` fijo
+# (`/acceso`), así que el `?next=/invitaciones/<token>/aceptar` del registro se
+# perdía por el camino; y el token solo vivía en el email, de modo que dentro
+# de la aplicación la invitación era invisible.
+# ---------------------------------------------------------------------------
+
+
+def test_invitacion_pendiente_es_visible_para_su_destinatario_verificado():
+    """El destinatario debe poder descubrir la invitación sin el email."""
+    engine, db = _db()
+    try:
+        organizacion, propietario, invitado, _ = _equipo(db)
+        crear_invitacion(
+            db,
+            organizacion_id=organizacion.id,
+            actor_usuario_id=propietario.id,
+            email=invitado.email,
+            rol="miembro",
+            ahora=datetime(2026, 8, 13, 12),
+        )
+        db.commit()
+
+        pendientes = invitaciones_pendientes_para(
+            db, usuario=invitado, ahora=datetime(2026, 8, 13, 13)
+        )
+
+        assert [i.email for i in pendientes] == [invitado.email]
+        assert pendientes[0].organizacion_id == organizacion.id
+    finally:
+        db.close()
+        engine.dispose()
+
+
+def test_las_invitaciones_de_otra_persona_no_son_visibles():
+    """El listado se filtra por email; nunca muestra invitaciones ajenas."""
+    engine, db = _db()
+    try:
+        organizacion, propietario, invitado, _ = _equipo(db)
+        crear_invitacion(
+            db,
+            organizacion_id=organizacion.id,
+            actor_usuario_id=propietario.id,
+            email=invitado.email,
+            rol="miembro",
+            ahora=datetime(2026, 8, 13, 12),
+        )
+        otra = Usuario(
+            email="otra@example.com",
+            email_verificado_at=datetime(2026, 8, 13),
+        )
+        db.add(otra)
+        db.commit()
+
+        assert (
+            invitaciones_pendientes_para(
+                db, usuario=otra, ahora=datetime(2026, 8, 13, 13)
+            )
+            == []
+        )
+    finally:
+        db.close()
+        engine.dispose()
+
+
+def test_sin_email_confirmado_no_se_anuncia_la_invitacion():
+    """No se muestra lo que todavía no se puede aceptar."""
+    engine, db = _db()
+    try:
+        organizacion, propietario, invitado, _ = _equipo(db)
+        crear_invitacion(
+            db,
+            organizacion_id=organizacion.id,
+            actor_usuario_id=propietario.id,
+            email=invitado.email,
+            rol="miembro",
+            ahora=datetime(2026, 8, 13, 12),
+        )
+        invitado.email_verificado_at = None
+        db.commit()
+
+        assert (
+            invitaciones_pendientes_para(
+                db, usuario=invitado, ahora=datetime(2026, 8, 13, 13)
+            )
+            == []
+        )
+    finally:
+        db.close()
+        engine.dispose()
+
+
+def test_caducadas_revocadas_y_aceptadas_no_se_listan():
+    engine, db = _db()
+    try:
+        organizacion, propietario, invitado, _ = _equipo(db)
+        _, token = crear_invitacion(
+            db,
+            organizacion_id=organizacion.id,
+            actor_usuario_id=propietario.id,
+            email=invitado.email,
+            rol="miembro",
+            ahora=datetime(2026, 8, 13, 12),
+        )
+        db.commit()
+
+        # Caducada: la misma invitación consultada más allá de su vigencia.
+        assert (
+            invitaciones_pendientes_para(
+                db, usuario=invitado, ahora=datetime(2026, 9, 30)
+            )
+            == []
+        )
+
+        aceptar_invitacion(
+            db,
+            token=token,
+            usuario=invitado,
+            email_verificado=True,
+            ahora=datetime(2026, 8, 13, 13),
+        )
+        db.commit()
+
+        # Aceptada: deja de aparecer como pendiente.
+        assert (
+            invitaciones_pendientes_para(
+                db, usuario=invitado, ahora=datetime(2026, 8, 13, 14)
+            )
+            == []
+        )
+    finally:
+        db.close()
+        engine.dispose()
+
+
+def test_aceptar_desde_el_panel_crea_la_membresia_y_consume_la_invitacion():
+    """La vía sin token deja el mismo estado final que la del email."""
+    engine, db = _db()
+    try:
+        organizacion, propietario, invitado, _ = _equipo(db)
+        invitacion, _ = crear_invitacion(
+            db,
+            organizacion_id=organizacion.id,
+            actor_usuario_id=propietario.id,
+            email=invitado.email,
+            rol="miembro",
+            ahora=datetime(2026, 8, 13, 12),
+        )
+        db.commit()
+
+        membresia = aceptar_invitacion_pendiente(
+            db,
+            invitacion_id=invitacion.id,
+            usuario=invitado,
+            email_verificado=True,
+            ahora=datetime(2026, 8, 13, 13),
+        )
+        db.commit()
+
+        assert membresia.organizacion_id == organizacion.id
+        assert membresia.usuario_id == invitado.id
+        assert membresia.rol == "miembro"
+        assert membresia.activa is True
+        assert invitacion.accepted_at is not None
+        assert invitacion.aceptada_por_usuario_id == invitado.id
+
+        # De un solo uso también por esta vía.
+        with pytest.raises(GestionEquipoError, match="no es válida"):
+            aceptar_invitacion_pendiente(
+                db,
+                invitacion_id=invitacion.id,
+                usuario=invitado,
+                email_verificado=True,
+                ahora=datetime(2026, 8, 13, 14),
+            )
+    finally:
+        db.close()
+        engine.dispose()
+
+
+def test_aceptar_desde_el_panel_no_permite_robar_la_invitacion_de_otro():
+    """Conocer el id no basta: se exige ser el destinatario y estar verificado.
+
+    Es la comprobación clave de la vía sin token: el id es un entero pequeño y
+    adivinable, al contrario que el secreto del email.
+    """
+    engine, db = _db()
+    try:
+        organizacion, propietario, invitado, _ = _equipo(db)
+        invitacion, _ = crear_invitacion(
+            db,
+            organizacion_id=organizacion.id,
+            actor_usuario_id=propietario.id,
+            email=invitado.email,
+            rol="miembro",
+            ahora=datetime(2026, 8, 13, 12),
+        )
+        intruso = Usuario(
+            email="intruso@example.com",
+            email_verificado_at=datetime(2026, 8, 13),
+        )
+        db.add(intruso)
+        db.commit()
+
+        with pytest.raises(GestionEquipoError, match="mismo email"):
+            aceptar_invitacion_pendiente(
+                db,
+                invitacion_id=invitacion.id,
+                usuario=intruso,
+                email_verificado=True,
+                ahora=datetime(2026, 8, 13, 13),
+            )
+        with pytest.raises(GestionEquipoError, match="Confirma tu email"):
+            aceptar_invitacion_pendiente(
+                db,
+                invitacion_id=invitacion.id,
+                usuario=invitado,
+                email_verificado=False,
+                ahora=datetime(2026, 8, 13, 13),
+            )
+        # Un id inexistente no distingue su respuesta de una ajena.
+        with pytest.raises(GestionEquipoError, match="no es válida"):
+            aceptar_invitacion_pendiente(
+                db,
+                invitacion_id=999_999,
+                usuario=invitado,
+                email_verificado=True,
+                ahora=datetime(2026, 8, 13, 13),
+            )
+        assert invitacion.accepted_at is None
+    finally:
+        db.close()
+        engine.dispose()
+
+
+def test_la_pagina_publica_explica_que_hacer_si_no_tienes_cuenta():
+    """El paso 3 del recorrido debe decir qué pasa después de registrarse."""
+    from app.main import app
+
+    with TestClient(app) as client:
+        respuesta = client.get("/invitaciones/" + "a" * 43)
+
+    assert "¿Aún no tienes cuenta?" in respuesta.text
+    assert "no hace falta volver a este enlace" in respuesta.text

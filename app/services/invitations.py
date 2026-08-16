@@ -122,6 +122,86 @@ def crear_invitacion(
     return invitacion, token
 
 
+def invitaciones_pendientes_para(
+    db: Session,
+    *,
+    usuario: Usuario,
+    ahora: datetime | None = None,
+) -> list[InvitacionOrganizacion]:
+    """Invitaciones vigentes dirigidas al email del usuario autenticado.
+
+    Permite descubrir la invitación **desde dentro de la aplicación**, sin
+    volver al correo. Antes, el token vivía únicamente en el enlace del email:
+    quien se registraba desde la invitación perdía el hilo al confirmar la
+    cuenta (el enlace de confirmación de Supabase apunta a ``/acceso`` fijo, sin
+    ``next``) y aterrizaba en «crear organización» sin ninguna forma de aceptar.
+
+    No se filtra por organización a propósito: el destinatario todavía **no**
+    es miembro de ninguna, así que el filtro de tenant no aplica todavía. En
+    PostgreSQL la política ``cotizat_invitation_select_recipient`` es la que
+    restringe la lectura a las invitaciones del propio email verificado, de
+    modo que esta consulta no puede devolver las de otra persona ni aunque el
+    ORM se equivocara.
+
+    Devuelve la fila de la invitación, nunca el secreto: ``token_hash`` no se
+    expone y el nombre de la organización tampoco se lee aquí (``cotizat_org_select``
+    exige una membresía que aún no existe).
+    """
+    if usuario.email_verificado_at is None:
+        # Sin email confirmado la invitación no es aceptable; no se anuncia.
+        return []
+    email = str(usuario.email or "").strip().lower()
+    if not email:
+        return []
+    ahora = ahora or datetime.utcnow()
+    return (
+        db.query(InvitacionOrganizacion)
+        .filter(
+            InvitacionOrganizacion.email == email,
+            InvitacionOrganizacion.accepted_at.is_(None),
+            InvitacionOrganizacion.revoked_at.is_(None),
+            InvitacionOrganizacion.expires_at > ahora,
+        )
+        .order_by(InvitacionOrganizacion.created_at.desc())
+        .all()
+    )
+
+
+def aceptar_invitacion_pendiente(
+    db: Session,
+    *,
+    invitacion_id: int,
+    usuario: Usuario,
+    email_verificado: bool,
+    ahora: datetime | None = None,
+) -> Membresia:
+    """Acepta desde el panel una invitación dirigida al email autenticado.
+
+    Es la variante sin token de :func:`aceptar_invitacion`, para quien ya está
+    dentro de la aplicación y no debería tener que volver al correo.
+
+    **No debilita la seguridad.** El token del email prueba el control del
+    buzón; aquí esa prueba ya la aportó Supabase al confirmar la dirección, y
+    se sigue exigiendo lo mismo que en la ruta con token: sesión iniciada,
+    email verificado y coincidencia exacta con el destinatario. Quien pudiera
+    abusar de esta ruta tendría que controlar ya la cuenta de correo invitada,
+    en cuyo caso también podría leer el enlace original.
+    """
+    ahora = ahora or datetime.utcnow()
+    invitacion = (
+        db.query(InvitacionOrganizacion)
+        .filter(InvitacionOrganizacion.id == invitacion_id)
+        .first()
+    )
+    return _consumir_invitacion(
+        db,
+        invitacion=invitacion,
+        usuario=usuario,
+        email_verificado=email_verificado,
+        ahora=ahora,
+    )
+
+
 def aceptar_invitacion(
     db: Session,
     *,
@@ -156,6 +236,29 @@ def aceptar_invitacion(
         .filter(InvitacionOrganizacion.token_hash == _hash_token(token))
         .first()
     )
+    return _consumir_invitacion(
+        db,
+        invitacion=invitacion,
+        usuario=usuario,
+        email_verificado=email_verificado,
+        ahora=ahora,
+    )
+
+
+def _consumir_invitacion(
+    db: Session,
+    *,
+    invitacion: InvitacionOrganizacion | None,
+    usuario: Usuario,
+    email_verificado: bool,
+    ahora: datetime,
+) -> Membresia:
+    """Validación y consumo compartidos por las dos vías de aceptación.
+
+    Vive aparte para que aceptar por enlace del email y aceptar desde el panel
+    apliquen **exactamente** las mismas comprobaciones: una divergencia entre
+    ambas sería precisamente el hueco por el que se colaría un abuso.
+    """
     if (
         invitacion is None
         or invitacion.accepted_at is not None

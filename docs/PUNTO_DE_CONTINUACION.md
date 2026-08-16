@@ -33,6 +33,31 @@ sin datos reales sensibles**:
 Suite tras el bloque: **323 passed, 5 skipped**. `compileall`, plantillas
 (49), lock (42 paquetes), simulación de Vercel RO y `git diff --check` en verde.
 
+### Corrección de UX de invitaciones (16/08/2026)
+
+Tras las pruebas E2E, el usuario confirmó que registro, confirmación, cambio de
+contraseña e invitaciones **funcionan**, pero aceptar una invitación **sin tener
+cuenta previa** obligaba a un rodeo: registrarse, confirmar el email, aterrizar
+en «crea tu empresa» sin rastro de la invitación y **volver al correo a pulsar
+el enlace por segunda vez**.
+
+Causa: el enlace de confirmación de Supabase usa un `redirect_to` fijo
+(`/acceso`) y pierde el `?next=/invitaciones/<token>/aceptar`; como el token solo
+vivía en el email, la invitación era invisible dentro de la aplicación.
+
+Corregido descubriendo la invitación **desde la sesión** (por email verificado),
+no desde el token:
+
+- `/organizaciones` lista las invitaciones pendientes con un botón de aceptar;
+- `/invitaciones/pendientes/{id}/aceptar` es la vía sin token;
+- `/organizaciones/nueva` redirige al panel si hay invitación pendiente y
+  ninguna membresía;
+- ambas vías comparten `_consumir_invitacion`, así que no pueden divergir en
+  seguridad (sesión + email verificado + destinatario exacto).
+
+Cubierto por `tests/test_invitacion_sin_cuenta.py` (5 pruebas HTTP) y 6 pruebas
+nuevas en `tests/test_invitations.py`. Suite: **335 passed, 5 skipped**.
+
 **Siguiente bloque de código: E1-059/E1-060** (método de cobro + recibo/contrato
 firmable y registro interno de licencias).
 
@@ -144,8 +169,10 @@ usuario correrá las pruebas).
 > siguen abiertos y hay que recordarlos en cada sesión:
 > 1. Añadir `https://cotizat.online/acceso` a las Redirect URLs de Supabase,
 >    subir el rate limit de emails a ~30/hora y dejar el cooldown en 60 s.
-> 2. Pruebas E2E de Auth: registro + confirmación, recuperación de contraseña e
->    invitación real en `/equipo` (el PR #22 ya está fusionado y desplegado).
+> 2. ~~Pruebas E2E de Auth.~~ **Hechas el 15/08/2026**: registro, confirmación,
+>    cambio de contraseña e invitaciones (con y sin cuenta previa) verificados.
+>    De ahí salió la corrección de UX de invitaciones descrita arriba; conviene
+>    repetir el caso «sin cuenta» tras desplegarla.
 > 3. Crear la redirección `soporte@cotizat.online` en GoDaddy.
 > 4. Definir la razón social y añadir `COTIZAT_LEGAL_ENTITY` en Vercel
 >    (Production) + redeploy.

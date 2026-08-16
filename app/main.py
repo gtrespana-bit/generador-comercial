@@ -122,9 +122,11 @@ from .services.onboarding import (
 from .services.invitations import (
     GestionEquipoError,
     aceptar_invitacion,
+    aceptar_invitacion_pendiente,
     actualizar_membresia,
     crear_invitacion,
     exigir_gestor,
+    invitaciones_pendientes_para,
     revocar_invitacion,
 )
 from .services.email import (
@@ -1422,10 +1424,55 @@ def listar_organizaciones_web(
         {
             "usuario": usuario,
             "membresias": membresias,
+            # Sin esto, quien se registra desde una invitación no encuentra
+            # ninguna forma de aceptarla dentro de la aplicación.
+            "invitaciones": invitaciones_pendientes_para(db, usuario=usuario),
             "error": request.query_params.get("error", ""),
             "msg": request.query_params.get("msg", ""),
         },
+        headers={"Cache-Control": "no-store"},
     )
+
+
+@app.post("/invitaciones/pendientes/{invitacion_id}/aceptar")
+def aceptar_invitacion_pendiente_web(
+    invitacion_id: int,
+    request: Request,
+    db: Session = Depends(get_authenticated_db),
+):
+    """Acepta una invitación ya visible en el panel, sin volver al email.
+
+    El enlace del correo sigue funcionando igual; esta ruta cubre el caso en
+    que la persona ya está dentro (típicamente recién registrada y confirmada),
+    donde exigir que rebusque el email era un paso muerto.
+    """
+    if DATABASE_IS_SQLITE:
+        return _redirect("/")
+    usuario = db.get(Usuario, db.info["usuario_id"])
+    identidad = request.state.supabase_identity
+    try:
+        membresia = aceptar_invitacion_pendiente(
+            db,
+            invitacion_id=invitacion_id,
+            usuario=usuario,
+            email_verificado=identidad.email_verified,
+        )
+        organizacion_id = membresia.organizacion_id
+        db.commit()
+    except GestionEquipoError as exc:
+        db.rollback()
+        return _redirect("/organizaciones", error=str(exc))
+    except Exception:
+        db.rollback()
+        log.error(
+            "Error aceptando la invitación pendiente:\n%s", traceback.format_exc()
+        )
+        raise
+    response = _redirect(
+        "/organizaciones", msg="Invitación aceptada. Ya puedes entrar a la organización."
+    )
+    _set_organization_cookie(response, organizacion_id)
+    return response
 
 
 @app.get("/organizaciones/nueva", response_class=HTMLResponse)
@@ -1436,6 +1483,12 @@ def nueva_organizacion_web(
     if DATABASE_IS_SQLITE:
         return _redirect("/")
     usuario = db.get(Usuario, db.info["usuario_id"])
+    pendientes = invitaciones_pendientes_para(db, usuario=usuario)
+    # Quien llega aquí por el destino por omisión del registro puede tener una
+    # invitación esperando: crear una empresa propia casi nunca es lo que
+    # quiere, así que se le ofrece la opción correcta antes de escribir nada.
+    if pendientes and not membresias_activas(db, usuario.id):
+        return _redirect("/organizaciones")
     return TEMPLATES.TemplateResponse(
         request,
         "auth/organization_new.html",
