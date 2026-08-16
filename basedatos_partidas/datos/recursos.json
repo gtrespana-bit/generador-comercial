@@ -11,9 +11,9 @@
       "precio": 5.5,
       "estado": "confirmado"
     },
-    "MO-OF1-SOL": {
+    "MO-OF1-PISO": {
       "unidad": "h",
-      "descripcion": "Oficial de 1ª solador.",
+      "descripcion": "Oficial de 1ª colocador de pisos.",
       "precio": 5.5,
       "estado": "confirmado"
     },
@@ -77,7 +77,7 @@
       "precio": 5.5,
       "estado": "confirmado"
     },
-    "MO-OF1-SOLD": {
+    "MO-OF1-PISOD": {
       "unidad": "h",
       "descripcion": "Oficial de 1ª soldador.",
       "precio": 5.5,
@@ -142,7 +142,7 @@
       "precio": 1.55,
       "estado": "verificado-mercado",
       "fuente": "MercadoLibre VE: autonivelante ZNR SL330 25 kg 45,00; Sinertop 220v 25 kg 35,00; Mapei Ultraplan Eco 23 kg 37,60; Ardex V1000 50 lb 84,97-99,97. Conversión: Saco de 25 kg a 35,00-45,00 USD. Rango observado: 1,40 - 4,40 USD/kg.",
-      "nota": "Corrección importante: el precio anterior (0,42) era propio de un mortero de contrapiso corriente, no de un autonivelante."
+      "nota": "Corrección importante: el precio anterior (0,42) era propio de un mortero de afirmado corriente, no de un autonivelante."
     },
     "MT-IMP-PRIM": {
       "unidad": "l",
@@ -152,7 +152,7 @@
     },
     "MT-PER-BANDA": {
       "unidad": "m",
-      "descripcion": "Banda perimetral de polietileno expandido de 10 mm para desolidarizar el recrecido de los paramentos.",
+      "descripcion": "Banda perimetral de polietileno expandido de 10 mm para desolidarizar el afirmado de los paramentos.",
       "precio": 0.55,
       "estado": "provisional"
     },
@@ -1012,9 +1012,9 @@
       "estado": "verificado-mercado",
       "fuente": "MercadoLibre VE: kit de microcemento 6 m2 110,00; microcemento preparado 98,00; kit 6 y 30 m2 120,00. Conversión: Kit para 6 m2 a 110 USD con un consumo aproximado de 4 kg/m2. Rango observado: 4,60 - 6,50 USD/kg."
     },
-    "MT-MORT-CONTRA": {
+    "MT-MORT-AFIRM": {
       "unidad": "m3",
-      "descripcion": "Mortero de cemento y arena para contrapiso y capas de nivelación de piso, elaborado en obra, dosificación 1:6.",
+      "descripcion": "Mortero de cemento y arena para afirmado y capas de nivelación de piso, elaborado en obra, dosificación 1:6.",
       "precio": 79.67,
       "estado": "derivado",
       "fuente": "Precio calculado a partir de sus componentes del propio cuadro; no se introduce a mano. Cambiar el cemento o la arena recalcula este mortero.",
@@ -1041,7 +1041,7 @@
     },
     "MT-ADH-MADERA": {
       "unidad": "kg",
-      "descripcion": "Adhesivo de poliuretano para encolado de parquet y madera sobre contrapiso.",
+      "descripcion": "Adhesivo de poliuretano para encolado de parquet y madera sobre afirmado.",
       "precio": 3.4,
       "estado": "provisional"
     },

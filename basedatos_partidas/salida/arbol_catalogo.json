@@ -391,7 +391,7 @@
             },
             {
               "codigo": "CT-02-01-150",
-              "titulo": "Demolición de contrapiso o base de mortero de nivelación.",
+              "titulo": "Demolición de afirmado o base de mortero de nivelación.",
               "unidad": "m²",
               "precio": 7.18,
               "horas": 0.75,
@@ -2735,11 +2735,11 @@
       "subcapitulos": [
         {
           "codigo": "01",
-          "nombre": "Bases, contrapisos y nivelación",
+          "nombre": "Bases, afirmados y nivelación",
           "partidas": [
             {
               "codigo": "CT-08-01-010",
-              "titulo": "Recrecido con mortero autonivelante de 5 mm de espesor medio.",
+              "titulo": "Nivelación con mortero autonivelante de 5 mm de espesor medio.",
               "unidad": "m²",
               "precio": 20.64,
               "horas": 0.3,
@@ -2747,7 +2747,7 @@
             },
             {
               "codigo": "CT-08-01-020",
-              "titulo": "Contrapiso de mortero de nivelación, 4 cm de espesor.",
+              "titulo": "Afirmado de mortero de nivelación, 4 cm de espesor.",
               "unidad": "m²",
               "precio": 12.7,
               "horas": 0.7,
@@ -2755,7 +2755,7 @@
             },
             {
               "codigo": "CT-08-01-030",
-              "titulo": "Contrapiso de concreto sobre terreno, 8 cm de espesor.",
+              "titulo": "Afirmado de concreto sobre terreno, 8 cm de espesor.",
               "unidad": "m²",
               "precio": 24.61,
               "horas": 0.64,
@@ -2794,7 +2794,7 @@
           "partidas": [
             {
               "codigo": "CT-08-02-010",
-              "titulo": "Colocación de pavimento cerámico o porcelanato de formato estándar, en capa fina.",
+              "titulo": "Colocación de piso cerámico o porcelanato de formato estándar, en capa fina.",
               "unidad": "m²",
               "precio": 8.15,
               "horas": 0.6,
@@ -2802,7 +2802,7 @@
             },
             {
               "codigo": "CT-08-02-020",
-              "titulo": "Colocación de pavimento de porcelanato de gran formato, en capa fina.",
+              "titulo": "Colocación de piso de porcelanato de gran formato, en capa fina.",
               "unidad": "m²",
               "precio": 11.01,
               "horas": 0.9,
@@ -2912,7 +2912,7 @@
             },
             {
               "codigo": "CT-08-04-030",
-              "titulo": "Piso de parquet encolado sobre contrapiso.",
+              "titulo": "Piso de parquet encolado sobre afirmado.",
               "unidad": "m²",
               "precio": 13.72,
               "horas": 0.78,
@@ -4798,7 +4798,7 @@
             },
             {
               "codigo": "CT-17-02-040",
-              "titulo": "Tope o encimera de área de lavado.",
+              "titulo": "Tope o mesón de área de lavado.",
               "unidad": "m",
               "precio": 26.57,
               "horas": 1.5,
@@ -4829,7 +4829,7 @@
             },
             {
               "codigo": "CT-17-03-030",
-              "titulo": "Encimera de baño sobre mueble o estructura.",
+              "titulo": "Mesón de baño sobre mueble o estructura.",
               "unidad": "m",
               "precio": 19.59,
               "horas": 1.4,

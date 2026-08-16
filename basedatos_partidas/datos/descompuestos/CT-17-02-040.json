@@ -4,8 +4,8 @@
   "capitulo": "17",
   "subcapitulo": "02",
   "unidad": "m",
-  "titulo": "Tope o encimera de área de lavado.",
-  "descripcion": "Suministro e instalación de tope o encimera en el área de lavado o de servicio, con su recorte para el lavadero y su canto trabajado. Incluye la plantilla en obra sobre la base ya nivelada, el mecanizado del recorte, el presentado y nivelado, el sellado del canto de corte que es por donde el material absorbe humedad en un área permanentemente mojada, la fijación y el sellado perimetral contra la pared. El material lo elige el cliente y se presupuesta aparte. Medido en longitud de tope.",
+  "titulo": "Tope o mesón de área de lavado.",
+  "descripcion": "Suministro e instalación de tope o mesón en el área de lavado o de servicio, con su recorte para el lavadero y su canto trabajado. Incluye la plantilla en obra sobre la base ya nivelada, el mecanizado del recorte, el presentado y nivelado, el sellado del canto de corte que es por donde el material absorbe humedad en un área permanentemente mojada, la fijación y el sellado perimetral contra la pared. El material lo elige el cliente y se presupuesta aparte. Medido en longitud de tope.",
   "margen": 0.3,
   "complementarios_pct": 1,
   "producto_cliente": {
@@ -32,7 +32,7 @@
       "rendimiento": 0.22
     },
     {
-      "ref": "MO-OF1-SOL",
+      "ref": "MO-OF1-PISO",
       "rendimiento": 0.95
     },
     {

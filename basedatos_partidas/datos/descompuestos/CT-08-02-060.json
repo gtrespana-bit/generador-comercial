@@ -16,7 +16,7 @@
   },
   "recursos": [
     {
-      "ref": "MT-MORT-CONTRA",
+      "ref": "MT-MORT-AFIRM",
       "rendimiento": 0.046
     },
     {
@@ -40,7 +40,7 @@
       "rendimiento": 0.09
     },
     {
-      "ref": "MO-OF1-SOL",
+      "ref": "MO-OF1-PISO",
       "rendimiento": 0.82
     },
     {

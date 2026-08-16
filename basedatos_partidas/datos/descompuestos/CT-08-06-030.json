@@ -5,7 +5,7 @@
   "subcapitulo": "06",
   "unidad": "m²",
   "titulo": "Piso continuo de microcemento.",
-  "descripcion": "Revestimiento continuo de microcemento sobre piso existente o contrapiso, aplicado en capas con malla de refuerzo y sellado con varias manos de barniz de protección. Permite renovar un piso sin demolerlo y sin apenas ganar cota, lo que en reforma resuelve el problema de los umbrales y las puertas. Es muy sensible al soporte: cualquier fisura o movimiento se refleja en el acabado. Incluye la comprobación y estabilización del soporte, la imprimación, la capa base con malla, las capas de acabado con la textura elegida, el lijado entre capas y las manos de sellador de alto tránsito. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
+  "descripcion": "Revestimiento continuo de microcemento sobre piso existente o afirmado, aplicado en capas con malla de refuerzo y sellado con varias manos de barniz de protección. Permite renovar un piso sin demolerlo y sin apenas ganar cota, lo que en reforma resuelve el problema de los umbrales y las puertas. Es muy sensible al soporte: cualquier fisura o movimiento se refleja en el acabado. Incluye la comprobación y estabilización del soporte, la imprimación, la capa base con malla, las capas de acabado con la textura elegida, el lijado entre capas y las manos de sellador de alto tránsito. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
   "margen": 0.3,
   "complementarios_pct": 1,
   "recursos": [
@@ -34,7 +34,7 @@
       "rendimiento": 0.08
     },
     {
-      "ref": "MO-OF1-SOL",
+      "ref": "MO-OF1-PISO",
       "rendimiento": 1.15
     },
     {

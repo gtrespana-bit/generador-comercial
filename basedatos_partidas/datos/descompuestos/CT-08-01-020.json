@@ -4,13 +4,13 @@
   "capitulo": "08",
   "subcapitulo": "01",
   "unidad": "m²",
-  "titulo": "Contrapiso de mortero de nivelación, 4 cm de espesor.",
-  "descripcion": "Contrapiso de mortero de cemento y arena de 4 cm de espesor medio, maestreado y reglado, ejecutado sobre losa o base compactada para recibir el piso de acabado. Es la capa que define el nivel y la planitud definitivos del piso, de modo que los defectos que se dejen aquí se arrastran a todo el acabado posterior. Incluye la limpieza y humedecido del soporte, la colocación de maestras a la cota de proyecto, el tendido y reglado del mortero, el fratasado de la superficie y el curado durante los primeros días. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
+  "titulo": "Afirmado de mortero de nivelación, 4 cm de espesor.",
+  "descripcion": "Afirmado de mortero de cemento y arena de 4 cm de espesor medio, maestreado y reglado, ejecutado sobre losa o base compactada para recibir el piso de acabado. Es la capa que define el nivel y la planitud definitivos del piso, de modo que los defectos que se dejen aquí se arrastran a todo el acabado posterior. Incluye la limpieza y humedecido del soporte, la colocación de maestras a la cota de proyecto, el tendido y reglado del mortero, el fratasado de la superficie y el curado durante los primeros días. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
   "margen": 0.3,
   "complementarios_pct": 1,
   "recursos": [
     {
-      "ref": "MT-MORT-CONTRA",
+      "ref": "MT-MORT-AFIRM",
       "rendimiento": 0.078
     },
     {

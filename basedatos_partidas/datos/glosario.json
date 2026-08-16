@@ -1,0 +1,33 @@
+{
+  "_comentario": "Glosario de obra. Manda la terminología venezolana: es la que entiende el cliente que lee el presupuesto. Cada entrada cambia el texto en TODAS partes (recursos, clasificación y las 540 partidas) con una sola orden. Se aplica con: python3 basedatos_partidas/terminologia.py aplicar",
+  "_como_funciona": "«de» es lo que se busca y «a» lo que se escribe. La sustitución respeta mayúscula inicial y plurales simples. «codigos» renombra además el código del recurso, y el cambio se arrastra a todas las partidas que lo usan.",
+  "cambios": [],
+  "_prohibidos": {
+    "_comentario": "Términos peninsulares que no deben aparecer nunca en un presupuesto venezolano. La orden «auditar» los busca y avisa.",
+    "hormigón": "concreto",
+    "solado": "piso",
+    "enfoscado": "friso",
+    "guarnecido": "friso",
+    "falso techo": "cielo raso",
+    "escayola": "yeso",
+    "fontanero": "plomero",
+    "terrazo continuo": "granito vaciado en sitio",
+    "capa de agarre": "capa de pega",
+    "recrecido": "afirmado",
+    "forjado": "losa",
+    "tabique de fábrica": "pared de bloque",
+    "encimera": "mesón",
+    "grifo": "llave",
+    "azulejo": "cerámica de pared",
+    "baldosín": "cerámica",
+    "arqueta": "boca de visita",
+    "albañal": "colector",
+    "bajante de fecales": "bajante de aguas negras"
+  },
+  "_matizados": {
+    "_comentario": "Palabras correctas en un contexto e incorrectas en otro. La auditoría las cuenta y avisa, pero no las marca como error.",
+    "pavimento": "correcto en exteriores (adoquín, asfalto, deportivo); en interiores es «piso»",
+    "zócalo": "correcto como base de cúpula o de muro; si es la moldura del piso, es «rodapié»",
+    "cazoleta": "correcto en «bisagra de cazoleta»; si es el desagüe de cubierta, es «tragante»"
+  }
+}

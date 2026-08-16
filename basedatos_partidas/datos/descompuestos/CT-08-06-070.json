@@ -10,7 +10,7 @@
   "complementarios_pct": 1,
   "recursos": [
     {
-      "ref": "MT-MORT-CONTRA",
+      "ref": "MT-MORT-AFIRM",
       "rendimiento": 0.058
     },
     {
@@ -34,7 +34,7 @@
       "rendimiento": 0.09
     },
     {
-      "ref": "MO-OF1-SOL",
+      "ref": "MO-OF1-PISO",
       "rendimiento": 0.72
     },
     {

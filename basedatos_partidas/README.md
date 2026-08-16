@@ -260,7 +260,7 @@ hecho y el precio sale solo:
 }
 ```
 
-Hay cuatro: `MT-MOR-PEGA` (1:4), `MT-MOR-FRISO` (1:5), `MT-MORT-CONTRA` (1:6)
+Hay cuatro: `MT-MOR-PEGA` (1:4), `MT-MOR-FRISO` (1:5), `MT-MORT-AFIRM` (1:6)
 y `MT-MORT-EST` (1:3). Su `estado` es `derivado` y su precio se recalcula en
 cascada; `precio.py` se niega a fijarlo a mano y te dice qué componente tocar.
 
@@ -279,6 +279,80 @@ aplicación.
 
 El concreto premezclado (`MT-CONC-210`, `MT-CONC-250`…) **no** es compuesto a
 propósito: se compra puesto en obra y su precio lo pone la planta.
+
+## Qué NO depende del cemento
+
+Solo esos cuatro. Todo lo que se **compra hecho** tiene precio propio y se
+cambia por separado: el pego cerámico (`MT-ADH-C1`, `MT-ADH-C2TE`), la
+boquilla, el autonivelante, el grout, el mortero de reparación, el
+impermeabilizante, el microcemento y los cuatro concretos premezclados.
+
+Comprobación con el saco de cemento a 20 USD:
+
+| Partida | Antes | Ahora | Lleva | |
+|---|---:|---:|---|---|
+| Afirmado de nivelación | 9,77 | 14,61 | mortero de obra | +49,5 % |
+| Friso maestreado | 6,45 | 8,38 | mortero de obra | +29,9 % |
+| Tabique de bloque de 10 | 12,38 | 13,18 | mortero de obra | +6,5 % |
+| Piso cerámico | 6,28 | 6,28 | pego en saco | sin cambio |
+| Losa nervada | 397,57 | 397,57 | premezclado | sin cambio |
+| Nivelación autonivelante | 18,92 | 18,92 | saco industrial | sin cambio |
+
+---
+
+# Terminología (terminologia.py)
+
+El presupuesto lo lee el cliente: si la palabra no es la suya, el documento
+pierde credibilidad por mucho que el número esté bien. El vocabulario no se
+corrige a mano archivo por archivo, sino desde `datos/glosario.json`.
+
+```bash
+python3 basedatos_partidas/terminologia.py auditar   # busca términos peninsulares
+python3 basedatos_partidas/terminologia.py listar    # qué cambiaría el glosario
+python3 basedatos_partidas/terminologia.py aplicar   # lo escribe y regenera
+```
+
+La sustitución respeta la mayúscula inicial y los plurales, alcanza a los tres
+sitios donde vive el texto (recursos, clasificación y las 540 partidas), y
+puede renombrar además el código del recurso.
+
+## Tres niveles de palabra
+
+| Nivel | Dónde | Qué hace la auditoría |
+|---|---|---|
+| `cambios` | Sustituciones a ejecutar | Se aplican con `aplicar` |
+| `_prohibidos` | Peninsular que no debe aparecer nunca | Falla y los lista |
+| `_matizados` | Correcto en un contexto, incorrecto en otro | Avisa, no falla |
+
+`solo_en` acota un cambio a unos archivos concretos. Se usó con «pavimento»:
+en Venezuela es correcto en exteriores (pavimento de adoquín, asfáltico,
+deportivo) y no en interiores, donde es «piso».
+
+## La auditoría solo mira lo que ve el cliente
+
+Recorre el título y la descripción de cada partida, la descripción de cada
+recurso y los nombres de capítulo y subcapítulo. **No** mira `fuente` ni
+`nota`: son apuntes internos de procedencia que citan nombres comerciales tal
+cual los publica el vendedor («bisagra de cazoleta»), y auditarlos solo
+produce falsas alarmas.
+
+## Lo que se corrigió en el barrido
+
+| De | A | Dónde |
+|---|---|---|
+| contrapiso | **afirmado** | 26 sitios, y el recurso `MT-MORT-CONTRA` → `MT-MORT-AFIRM` |
+| encimera | mesón | 8 |
+| solador | colocador de pisos | 2, y `MO-OF1-SOL` → `MO-OF1-PISO` |
+| recrecido | afirmado | 4 |
+| pavimento | piso | 6, solo en las dos partidas de piso interior |
+| falso techo | cielo raso | 1 |
+| forjado | losa | 1 |
+| recrecerlo | engrosarlo | 1 |
+
+Se descartaron dos reglas que parecían obvias y eran falsas: **«zócalo» no
+siempre es rodapié** —las 18 apariciones son zócalo escalonado de escalera,
+zócalo de realce del domo y zócalo del mueble de cocina, todas correctas— y
+**«cazoleta»** en el catálogo es siempre la bisagra de mueble.
 
 ---
 

@@ -46,6 +46,8 @@ del proyecto. El catálogo masivo se detecta con **8 campos, 0 errores, 0 advert
 | `construir.py` | Genera el catálogo masivo (`.csv`, `.xlsx`, `.json`) y lo valida con el importador real. |
 | `precios.py` | `exportar` / `aplicar`. Actualización de precios en bloque, ordenada por impacto, con copia de seguridad. Marca `confirmado`. |
 | `contraste.py` | `listar` / `aplicar`. Vuelca una ronda de contraste de mercado desde `datos/contraste_mercado_*.json`, marca `verificado-mercado` y escribe la evidencia en el campo `fuente`. Salta la maquinaria. |
+| `precio.py` | `buscar` / `ver` / `fijar`. Cambia el precio de un artículo indicándolo como lo da el proveedor (`--por-saco`, `--por-galon`…). Simula el impacto antes de escribir. |
+| `terminologia.py` | `auditar` / `listar` / `aplicar`. Cambia una palabra en todo el catálogo desde `datos/glosario.json` y vigila que no quede vocabulario peninsular en el texto que ve el cliente. |
 | `cobertura.py` | Informe de avance por capítulo y subcapítulo. |
 | `equidad.py` | Reparto del precio de venta y simulación de escenarios de tarifa. |
 
