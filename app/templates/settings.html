@@ -167,6 +167,13 @@
 
 <div class="card csp-s-a3c9c5afaa">
   <h2>Copia de seguridad y restauración</h2>
+  <div class="form-grid">
+    <div class="field">
+      <label>Respaldo web completo (datos y archivos)</label>
+      <a class="btn btn-primary csp-s-a85c615773" href="/configuracion/respaldo">🛡️ Respaldo y restauración web</a>
+      <p class="hint">Descarga un paquete verificable con todos los datos de esta organización y sus archivos (cada uno con su huella SHA-256) o restaura una copia en dos pasos con confirmación explícita. La restauración nunca borra ni sobrescribe lo que ya existe.</p>
+    </div>
+  </div>
   {% if database_is_sqlite %}
   <p class="subtitle csp-s-bdf32b3fef">Descarga todo tu trabajo y restáuralo en otra instalación o en una versión nueva de la aplicación.</p>
   <div class="form-grid">
@@ -185,7 +192,7 @@
     </div>
   </div>
   {% else %}
-  <p class="subtitle">La versión web utiliza copias administradas de PostgreSQL y almacenamiento externo. La restauración de un archivo SQLite local está desactivada para evitar reemplazar datos compartidos.</p>
+  <p class="subtitle">La restauración de archivos SQLite locales está desactivada en la versión web para evitar reemplazar datos compartidos. Usa el <strong>respaldo web completo</strong> de arriba para descargar o restaurar esta organización.</p>
   {% endif %}
   <div class="field">
     <label>Importar una instalación local</label>

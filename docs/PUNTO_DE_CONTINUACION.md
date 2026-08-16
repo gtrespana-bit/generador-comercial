@@ -213,9 +213,22 @@ bloqueante. Interfaz mejorada del panel de operador: pendiente futuro.
    el 16/08/2026**: aviso a propietarios/administradores, cambio solo si es la
    última versión y reintento sin perder la respuesta. Suite: 409 passed,
    6 skipped.
-5. **Siguiente bloque:** restauración completa, exportación/baja por organización,
-   monitorización y diagnóstico. Catálogo comercial y validación pagada
-   permanecen aplazados hasta que el titular declare completo el producto.
+5. ~~**E3-020 — Copia de seguridad web completa y verificable.**~~
+   **Completado en la rama el 16/08/2026**: paquete `cotizat-backup` v1
+   descargable por propietario/administrador en ambos backends, con manifest,
+   omisiones declaradas y cada archivo bajo su SHA-256.
+6. ~~**E3-021 — Restauración controlada en dos pasos.**~~ **Completado en la
+   rama el 16/08/2026**: re-subida del MISMO archivo (SHA-256) + confirmación
+   explícita, verificación íntegra antes de escribir, fusión idempotente sin
+   borrar ni duplicar, archivos re-escritos al almacén privado con
+   reutilización por huella y trazabilidad de propuestas conservada como
+   notas. Sin migración nueva. Suite del bloque: **423 passed, 6 skipped**
+   (14 pruebas nuevas en `tests/test_respaldo_restauracion.py`).
+7. **Siguiente bloque:** exportación y baja por organización (E3-022/E3-023),
+   monitorización y diagnóstico (E3-024). Catálogo comercial y validación
+   pagada permanecen aplazados hasta que el titular declare completo el
+   producto. Detalle operativo del respaldo en
+   `docs/RESPALDO_Y_RESTAURACION_WEB.md`.
 
 ## 6. Reglas invariables (no negociables)
 
@@ -276,16 +289,19 @@ No repitas trabajo ya hecho y no me pidas secretos.
   hasta que el producto se considere completo.
 - Incidencia de Auth cerrada (Redirect URLs y rate limits confirmados).
 
-**E3-016 a E3-019 completados localmente:** envío por email, enlace público
-revocable, respuesta trazable, notificación y estado controlado. **Siguiente
-bloque técnico:** restauración completa de datos/archivos y exportación/baja por
-organización. No abrir PR, no aplicar aún `c2f6e8a1d934`, no retomar catálogo
-ni pilotos salvo nueva decisión expresa.
+**E3-016 a E3-021 completados localmente:** envío por email, enlace público
+revocable, respuesta trazable, notificación y estado controlado, y respaldo
+web completo y verificable con restauración en dos pasos
+(`docs/RESPALDO_Y_RESTAURACION_WEB.md`). Suite verificada en la rama:
+**423 passed, 6 skipped**. **Siguiente bloque técnico:** exportación y baja por
+organización (E3-022/E3-023), luego monitorización y diagnóstico (E3-024).
+No abrir PR, no aplicar aún `c2f6e8a1d934` (sin migraciones nuevas en este
+bloque), no retomar catálogo ni pilotos salvo nueva decisión expresa.
 
 **Nota de la sesión de recuperación (16/08/2026):** todo lo anterior se
 recuperó desde un parche en la rama `arena/01a00b99-generador-comercial`
-(sección «0bis» de este documento). El trabajo quedó **staged sin commit**;
-verificar `git status` y commitear antes de continuar. Suite verificada:
-**409 passed, 6 skipped**.
+(sección «0bis» de este documento) y quedó commiteado y empujado como
+`9fd5afa`. Los commits del bloque de respaldo se añaden sobre esa base en la
+misma rama.
 
 ---

@@ -872,6 +872,27 @@ exportación/baja por organización, monitorización y diagnóstico. Solo cuando
 titular declare terminado el producto se retomará la Etapa 2 de validación
 comercial.
 
+### Bloque siguiente: restauración completa por organización (16/08/2026)
+
+1. ~~**E3-020 — Copia de seguridad web completa y verificable.**~~ Completado el
+   16/08/2026: paquete `.zip` `cotizat-backup` v1 con manifest, conteos,
+   omisiones declaradas y cada archivo bajo su SHA-256; funciona en PostgreSQL
+   y SQLite; descarga solo para propietario/administrador.
+2. ~~**E3-021 — Restauración controlada en dos pasos.**~~ Completado el
+   16/08/2026: mismo archivo re-subido (SHA-256) + confirmación explícita;
+   verificación íntegra antes de escribir; fusión idempotente por claves
+   naturales (nada se borra ni se duplica); archivos re-escritos al almacén
+   privado del destino con reutilización por huella; historial de propuestas
+   conservado como notas; licencias, cuentas, invitaciones y enlaces quedan
+   fuera con motivo declarado. Detalle operativo en
+   `docs/RESPALDO_Y_RESTAURACION_WEB.md`. Suite: **423 passed, 6 skipped**.
+3. **E3-022 — Exportación por organización** (pendiente): formato portátil
+   para llevarse los datos, reutilizando el paquete verificable de E3-020.
+4. **E3-023 — Baja por organización** (pendiente): cierre de cuenta con
+   borrado verificado de datos y archivos, sin residuos.
+5. **E3-024 — Monitorización y diagnóstico** (pendiente): observabilidad de la
+   operación web (salud, errores, métricas honestas).
+
 <details><summary>Histórico: bloque previo — validación con matriz de aceptación en staging (superado el 14-16/08/2026)</summary>
 
 La base browser-first ya está desplegada en staging Vercel + Supabase (`https://cotizat-generador.vercel.app`), con `/healthz` y `/readyz` respondiendo 200 OK. El siguiente trabajo es:

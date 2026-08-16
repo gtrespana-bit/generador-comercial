@@ -8,6 +8,7 @@ from pathlib import Path
 from urllib.parse import quote
 import base64
 import csv
+import hashlib
 import io
 import json
 import logging
@@ -16,6 +17,7 @@ import mimetypes
 import os
 import re
 import shutil
+import tempfile
 import traceback
 import unicodedata
 import uuid
@@ -190,6 +192,12 @@ from .services.instalacion_sqlite import (
     analizar_instalacion,
     importar_instalacion,
 )
+from .services.respaldo import (
+    ErrorRespaldo,
+    LIMITE_RESPALDO_BYTES,
+    generar_respaldo,
+)
+from .services.restauracion import analizar_respaldo, restaurar_respaldo
 from .utils import SIMBOLOS, fmt_fecha, fmt_monto, fmt_num, fmt_cantidad
 from .storage import (
     StorageError,
@@ -5994,6 +6002,145 @@ async def confirmar_instalacion_subida(request: Request, db: Session = Depends(g
         "importar_instalacion.html",
         {"resumen": None, "resultado": resultado, "rol": db.info.get("rol_membresia")},
     )
+
+
+# ---------------------------------------------------------------------------
+# Respaldo y restauración web completos por organización (E3-020 / E3-021)
+# ---------------------------------------------------------------------------
+# La copia web es un paquete verificable (manifest + SHA-256 por archivo) que
+# funciona igual en PostgreSQL y en SQLite. La restauración conserva el flujo
+# de dos pasos de E1W-012: analizar (sin escribir nada) y confirmar exigiendo
+# volver a subir el MISMO archivo más una casilla de confirmación explícita.
+
+
+async def _leer_respaldo_subido(request: Request) -> tuple[Path, str, dict]:
+    """Streaming a /tmp (serverless-safe). Devuelve (ruta temporal, sha256, form)."""
+    form = await request.form()
+    archivo = form.get("archivo")
+    if not isinstance(archivo, UploadFileStarlette) or not archivo.filename:
+        raise ErrorRespaldo("Selecciona el archivo de copia de seguridad (.zip).")
+    destino = Path(tempfile.gettempdir()) / f"cotizat-respaldo-{uuid.uuid4().hex}.zip"
+    digesto = hashlib.sha256()
+    total = 0
+    try:
+        with open(destino, "wb") as archivo_local:
+            while chunk := await archivo.read(1024 * 1024):
+                total += len(chunk)
+                if total > LIMITE_RESPALDO_BYTES:
+                    raise ErrorRespaldo("El archivo supera el límite de 300 MB.")
+                digesto.update(chunk)
+                archivo_local.write(chunk)
+        if total == 0:
+            raise ErrorRespaldo("El archivo de copia está vacío.")
+    except Exception:
+        destino.unlink(missing_ok=True)
+        raise
+    return destino, digesto.hexdigest(), form
+
+
+@app.get("/configuracion/respaldo", response_class=HTMLResponse)
+def respaldo_web_form(request: Request, db: Session = Depends(get_db)):
+    """Pantalla del respaldo web: descargar copia y restaurar en dos pasos."""
+    if db.info.get("rol_membresia") not in {"propietario", "administrador"}:
+        return _redirect(
+            "/configuracion",
+            error="Solo propietarios y administradores pueden gestionar el respaldo completo.",
+        )
+    return TEMPLATES.TemplateResponse(
+        request,
+        "respaldo.html",
+        {"resumen": None, "resultado": None, "rol": db.info.get("rol_membresia")},
+    )
+
+
+@app.get("/configuracion/respaldo/descargar")
+def descargar_respaldo_web(db: Session = Depends(get_db)):
+    """Descarga el paquete completo y verificable de la organización activa."""
+    if db.info.get("rol_membresia") not in {"propietario", "administrador"}:
+        return _redirect(
+            "/configuracion",
+            error="Solo propietarios y administradores pueden descargar el respaldo completo.",
+        )
+    try:
+        contenido = generar_respaldo(db)
+    except ErrorRespaldo as exc:
+        return _redirect("/configuracion/respaldo", error=str(exc))
+    nombre = f"cotizat_respaldo_{datetime.now().strftime('%Y%m%d_%H%M')}.zip"
+    return Response(
+        content=contenido,
+        media_type="application/zip",
+        headers={
+            "Content-Disposition": f'attachment; filename="{nombre}"',
+            "Cache-Control": "no-store",
+        },
+    )
+
+
+@app.post("/configuracion/respaldo/restaurar", response_class=HTMLResponse)
+async def analizar_respaldo_subido(request: Request, db: Session = Depends(get_db)):
+    """Paso 1: analiza y verifica la copia sin escribir nada."""
+    if db.info.get("rol_membresia") not in {"propietario", "administrador"}:
+        return _redirect(
+            "/configuracion",
+            error="Solo propietarios y administradores pueden restaurar el respaldo completo.",
+        )
+    ruta_temporal = None
+    try:
+        ruta_temporal, sha256, _form = await _leer_respaldo_subido(request)
+        resumen = analizar_respaldo(db, ruta_temporal)
+        resumen.sha256_paquete = sha256
+    except (ErrorRespaldo, PermisoOrganizacionError) as exc:
+        return _redirect("/configuracion/respaldo", error=str(exc))
+    finally:
+        if ruta_temporal is not None:
+            ruta_temporal.unlink(missing_ok=True)
+    return TEMPLATES.TemplateResponse(
+        request,
+        "respaldo.html",
+        {"resumen": resumen, "resultado": None, "rol": db.info.get("rol_membresia")},
+    )
+
+
+@app.post("/configuracion/respaldo/restaurar/confirmar", response_class=HTMLResponse)
+async def confirmar_respaldo_subido(request: Request, db: Session = Depends(get_db)):
+    """Paso 2: mismo archivo + confirmación explícita; ejecuta la restauración."""
+    if db.info.get("rol_membresia") not in {"propietario", "administrador"}:
+        return _redirect(
+            "/configuracion",
+            error="Solo propietarios y administradores pueden restaurar el respaldo completo.",
+        )
+    ruta_temporal = None
+    try:
+        ruta_temporal, sha256, form = await _leer_respaldo_subido(request)
+        if str(form.get("confirmar", "")).strip() != "si":
+            raise ErrorRespaldo(
+                "Marca la casilla de confirmación para restaurar la copia."
+            )
+        esperado = str(form.get("sha256", "")).strip()
+        if not esperado:
+            raise ErrorRespaldo(
+                "Falta el análisis previo: analiza la copia antes de confirmar."
+            )
+        if sha256 != esperado:
+            raise ErrorRespaldo(
+                "El archivo no es el mismo que analizaste. Vuelve a analizarlo y "
+                "sube exactamente ese archivo para confirmar."
+            )
+        resultado = restaurar_respaldo(db, ruta_temporal)
+        db.commit()
+    except (ErrorRespaldo, PermisoOrganizacionError) as exc:
+        db.rollback()
+        return _redirect("/configuracion/respaldo", error=str(exc))
+    finally:
+        if ruta_temporal is not None:
+            ruta_temporal.unlink(missing_ok=True)
+    _sincronizar_recursos(db)
+    return TEMPLATES.TemplateResponse(
+        request,
+        "respaldo.html",
+        {"resumen": None, "resultado": resultado, "rol": db.info.get("rol_membresia")},
+    )
+
 
 
 # ---------------------------------------------------------------------------
