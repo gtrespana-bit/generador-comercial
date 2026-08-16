@@ -1,14 +1,24 @@
-# Base de datos de partidas (trabajo externo)
+# Base de datos de partidas
 
-Carpeta **independiente** del código de la aplicación. Aquí se construye y valida
-el catálogo de partidas; no se toca ni un módulo del proyecto. Lo único que se
-lee del proyecto es `app/services/importer.py`, y solo para **validar** que lo
-generado se detecta perfectamente al subirlo.
+> **¿Vienes nuevo a esto? Lee antes [`EMPEZAR_AQUI.md`](EMPEZAR_AQUI.md).**
+> Ahí está el estado, las reglas ya decididas y por dónde seguir.
+
+El catálogo de partidas se construye y se valida aquí, en una carpeta aparte
+del código de la aplicación. `datos/recursos.json` es la fuente única de los
+precios y `salida/` son los ficheros listos para subir.
+
+Durante la mayor parte del trabajo **no se tocó ni un módulo del proyecto**: lo
+único que se leía era `app/services/importer.py`, y solo para validar que lo
+generado se detecta al subirlo. Eso cambió al construir la barra lateral del
+editor de presupuestos; los archivos de la aplicación que se modificaron están
+listados en [`USO_EN_LA_APLICACION.md`](USO_EN_LA_APLICACION.md).
 
 ```
 basedatos_partidas/
-├── datos/partidas.csv   ← FUENTE DE VERDAD (aquí van tus datos)
-├── construir.py         ← genera y valida
+├── datos/recursos.json  ← FUENTE ÚNICA DE PRECIOS
+├── datos/descompuestos/ ← 540 partidas, una por archivo
+├── descompuestos.py     ← genera las hojas y el maestro
+├── construir.py         ← genera y valida el catálogo
 └── salida/              ← ficheros listos para subir a la app
     ├── catalogo_partidas.csv
     ├── catalogo_partidas.xlsx

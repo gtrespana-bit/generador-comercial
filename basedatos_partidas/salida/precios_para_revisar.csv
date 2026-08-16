@@ -64,7 +64,7 @@ MT-MAMPARA-OFI;materiales;Sistema de mampara divisoria de oficina, con perfiler�
 MT-TUB-FRIGO;materiales;Par de tuberías frigoríficas de cobre aisladas, con cable de interconexión.;m;9.8000;USD;provisional;2;49.49;;
 MT-EPOXI-PISO;materiales;Resina epóxica bicomponente autonivelante para piso continuo, con su imprimación.;kg;15.0000;USD;verificado-mercado;2;48.75;;
 MT-CLAVOS;materiales;Clavos, tornillos y elementos de fijación de uso general en obra.;kg;2.6000;USD;verificado-mercado;59;47.94;;
-MT-MORT-CONTRA;materiales;Mortero de cemento y arena para contrapiso y capas de nivelación de piso, elaborado en obra, dosificación 1:6.;m3;79.6700;USD;derivado;10;47.01;;
+MT-MORT-AFIRM;materiales;Mortero de cemento y arena para afirmado y capas de nivelación de piso, elaborado en obra, dosificación 1:6.;m3;79.6700;USD;derivado;10;47.01;;
 MT-TABLERO-PROV;materiales;Tablero eléctrico provisional de obra con interruptor diferencial y protecciones, amortizado por uso.;ud;45.0000;USD;provisional;1;45.00;;
 MQ-ANDAMIO;maquinaria;Andamio tubular o de borriquetas para trabajos en altura, incluido montaje y desmontaje amortizados.;h;1.9000;USD;provisional;86;44.61;;
 MT-PIEDRA-PIC;materiales;Piedra picada de granulometría corriente, puesta en obra, para bases y drenajes.;m3;28.0000;USD;verificado-mercado;2;42.56;;
@@ -190,7 +190,7 @@ MT-LINEA-VIDA;materiales;Línea de vida horizontal con sus anclajes y absorbedor
 MT-CANAL-PVC;materiales;Canal de PVC o lámina galvanizada para recogida de aguas lluvias, con sus soportes.;m;7.8000;USD;provisional;1;8.27;;
 MT-PERFIL-TRANS;materiales;Perfil de transición de aluminio entre pisos de distinto material o nivel.;m;3.8000;USD;provisional;2;7.98;;
 MT-PERFIL-CORTINERO;materiales;Riel de cortinero con sus soportes y accesorios.;m;7.4000;USD;provisional;1;7.77;;
-MT-ADH-MADERA;materiales;Adhesivo de poliuretano para encolado de parquet y madera sobre contrapiso.;kg;3.4000;USD;provisional;2;7.31;;
+MT-ADH-MADERA;materiales;Adhesivo de poliuretano para encolado de parquet y madera sobre afirmado.;kg;3.4000;USD;provisional;2;7.31;;
 MT-PYL-CANAL;materiales;Canal de acero galvanizado de 70 mm para arranque y remate de tabique autoportante.;m;1.7000;USD;verificado-mercado;5;7.22;;
 MT-TORN-TECHO;materiales;Tornillo autoperforante con arandela de neopreno para fijación de láminas de cubierta.;ud;0.1800;USD;provisional;6;7.20;;
 MT-AISL-TERM;materiales;Panel de aislamiento térmico de poliestireno o lana mineral para cubiertas y cielos.;m2;4.8000;USD;provisional;2;7.01;;
@@ -290,7 +290,7 @@ MT-VAPOR;materiales;Solución humectante para reblandecimiento de papel tapiz y 
 MT-LAMP-OBRA;materiales;Reflector o lámpara de obra con su portalámparas y protección, amortizado por uso.;ud;9.5000;USD;provisional;1;0.52;;
 MQ-NIVEL-LASER;maquinaria;Nivel láser autonivelante y equipo de medición para replanteo.;h;2.2000;USD;provisional;6;0.40;;
 MT-TORNILLO-EST;materiales;Tornillería estructural de alta resistencia con tuerca y arandelas.;ud;1.2000;USD;provisional;4;0.25;;
-MT-PER-BANDA;materiales;Banda perimetral de polietileno expandido de 10 mm para desolidarizar el recrecido de los paramentos.;m;0.5500;USD;provisional;1;0.22;;
+MT-PER-BANDA;materiales;Banda perimetral de polietileno expandido de 10 mm para desolidarizar el afirmado de los paramentos.;m;0.5500;USD;provisional;1;0.22;;
 MQ-DESBROZ;maquinaria;Desbrozadora de motor con hilo y disco, para limpieza de vegetación.;h;2.7000;USD;provisional;2;0.15;;
 MT-ADH-C1;materiales;Adhesivo cementoso normal tipo C1, color gris, para colocación de cerámica en capa fina.;kg;0.2400;USD;verificado-mercado;0;0.00;;
 MO-AYU;mano_obra;Ayudante.;h;3.5000;USD;confirmado;489;907.79;;
@@ -299,9 +299,9 @@ MO-AYU-ESP;mano_obra;Ayudante especializado.;h;4.0000;USD;confirmado;174;345.90;
 MO-OF1-CARPM;mano_obra;Oficial de 1ª carpintero de madera estructural.;h;5.5000;USD;confirmado;39;262.13;;
 MO-OF1-ELE;mano_obra;Oficial de 1ª electricista.;h;5.5000;USD;confirmado;36;253.52;;
 MO-OF1-PLO;mano_obra;Oficial de 1ª plomero.;h;5.5000;USD;confirmado;33;221.10;;
-MO-OF1-SOL;mano_obra;Oficial de 1ª solador.;h;5.5000;USD;confirmado;33;103.29;;
+MO-OF1-PISO;mano_obra;Oficial de 1ª colocador de pisos.;h;5.5000;USD;confirmado;33;103.29;;
 MO-OF1-CARP;mano_obra;Oficial de 1ª carpintero de obra (encofrador).;h;5.5000;USD;confirmado;23;92.78;;
-MO-OF1-SOLD;mano_obra;Oficial de 1ª soldador.;h;5.5000;USD;confirmado;18;77.72;;
+MO-OF1-PISOD;mano_obra;Oficial de 1ª soldador.;h;5.5000;USD;confirmado;18;77.72;;
 MO-OF1-MON;mano_obra;Oficial de 1ª montador de prefabricados interiores.;h;5.5000;USD;confirmado;29;71.50;;
 MO-OF1-VIDR;mano_obra;Oficial de 1ª vidriero.;h;5.5000;USD;confirmado;10;53.24;;
 MO-OF1-PIN;mano_obra;Oficial de 1ª pintor.;h;5.5000;USD;confirmado;27;46.75;;
