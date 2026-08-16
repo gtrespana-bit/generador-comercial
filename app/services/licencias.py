@@ -18,15 +18,19 @@ Decisiones que conviene no revertir sin pensarlo
 """
 from __future__ import annotations
 
+import os
 from datetime import date, datetime, timedelta
 
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from ..models import (
     ESTADOS_LICENCIA,
     ORIGENES_LICENCIA,
     Licencia,
+    Membresia,
     Organizacion,
+    Usuario,
 )
 
 
@@ -260,3 +264,165 @@ def totales(filas: list[dict]) -> dict:
         "por_vencer": sum(1 for f in filas if f["por_vencer"]),
         "ingresos": sum(f["ingresos"] for f in filas),
     }
+
+
+# ---------------------------------------------------------------------------
+# Corte automático de acceso (E1-060, segunda parte)
+# ---------------------------------------------------------------------------
+#
+# La exigencia es un interruptor del despliegue, no del código: hasta que el
+# titular lo activa, el producto funciona como siempre. Al activarlo, las
+# organizaciones sin licencia vigente pierden el acceso a sus pantallas de
+# trabajo (los datos no se tocan: al renovar, todo sigue donde estaba).
+
+
+def exigencia_licencia_activada() -> bool:
+    """``COTIZAT_EXIGIR_LICENCIA`` activa el corte automático de acceso.
+
+    Valor por omisión: **desactivado**. Es una decisión de negocio del
+    despliegue (Vercel), como `COTIZAT_OPERADORES`: no hay pantalla para
+    encenderla y solo surte efecto en el backend web (PostgreSQL); la
+    instalación de escritorio jamás exige licencia.
+    """
+    valor = os.environ.get("COTIZAT_EXIGIR_LICENCIA", "").strip().lower()
+    return valor in {"1", "true", "on", "si", "sí"}
+
+
+def organizacion_tiene_acceso(
+    db: Session, organizacion_id: int, *, hoy: date | None = None
+) -> bool:
+    """Indica si la organización puede usar la aplicación hoy.
+
+    En PostgreSQL pregunta a ``cotizat_security.organization_has_license``,
+    la función SECURITY DEFINER de la revisión ``b7c4a9e2d31f``: la sesión de
+    un cliente no puede leer ``licencias`` (RLS de operador), así que el corte
+    no podría consultar la tabla directamente. La función devuelve un simple
+    booleano y solo sirve para la organización del propio claim de sesión.
+
+    En SQLite —escritorio y pruebas— la consulta directa es suficiente: no
+    hay RLS y la tabla está al alcance del proceso.
+    """
+    if db.get_bind().dialect.name == "postgresql":
+        resultado = db.execute(
+            text("SELECT cotizat_security.organization_has_license(:org)"),
+            {"org": int(organizacion_id)},
+        ).scalar()
+        return bool(resultado)
+    return licencia_vigente(db, organizacion_id, hoy=hoy) is not None
+
+
+# ---------------------------------------------------------------------------
+# Avisos de vencimiento por correo (E1-060, segunda parte)
+# ---------------------------------------------------------------------------
+
+#: La nota deja constancia de cada envío y evita repetir el aviso el mismo día.
+_MARCA_AVISO = "Aviso de vencimiento enviado"
+
+
+def correos_administradores(db: Session, organizacion_id: int) -> list[str]:
+    """Correos de propietario/administrador activos de la organización.
+
+    En PostgreSQL pasa por ``cotizat_security.organization_admin_emails``
+    (revisión ``b7c4a9e2d31f``): las membresías de un cliente están fuera del
+    alcance del operador por RLS, así que la función —guardada por la marca
+    de operador— es la única vía honesta de conocerlos. En SQLite se usa la
+    consulta directa equivalente.
+    """
+    if db.get_bind().dialect.name == "postgresql":
+        filas = db.execute(
+            text(
+                "SELECT email FROM cotizat_security.organization_admin_emails(:org)"
+            ),
+            {"org": int(organizacion_id)},
+        ).all()
+        return [str(fila[0]) for fila in filas if fila and fila[0]]
+    filas = (
+        db.query(Usuario.email)
+        .join(Membresia, Membresia.usuario_id == Usuario.id)
+        .filter(
+            Membresia.organizacion_id == int(organizacion_id),
+            Membresia.activa.is_(True),
+            Membresia.rol.in_(["propietario", "administrador"]),
+            Usuario.activo.is_(True),
+        )
+        .order_by(Usuario.id)
+        .all()
+    )
+    return [str(email) for (email,) in filas if email]
+
+
+def aviso_enviado_hoy(licencia: Licencia, hoy: date) -> bool:
+    """Evita mandar dos avisos el mismo día si el operador pulsa dos veces."""
+    return f"[{hoy.strftime('%Y-%m-%d')}] {_MARCA_AVISO}" in (licencia.notas or "")
+
+
+def registrar_aviso_enviado(
+    licencia: Licencia, destinatarios: list[str], *, hoy: date
+) -> None:
+    """Anota el envío en la propia licencia: el registro se audita a sí mismo."""
+    nota = (
+        f"[{hoy.strftime('%Y-%m-%d')}] {_MARCA_AVISO} a "
+        + ", ".join(destinatarios)
+    )
+    licencia.notas = f"{licencia.notas or ''}\n{nota}".strip()
+
+
+def enviar_avisos_vencimiento(
+    db: Session,
+    *,
+    remitente,
+    dias_aviso: int = 15,
+    hoy: date | None = None,
+) -> dict:
+    """Envía el aviso de vencimiento a las organizaciones que están por vencer.
+
+    Lo dispara el operador desde el panel (no hay trabajos programados en un
+    despliegue serverless). ``remitente`` es la función de envío
+    (``app.services.email.enviar_aviso_licencia``); se inyecta para poder
+    probar el flujo sin red.
+
+    Devuelve un resumen con listas de correos, así el panel puede mostrar
+    exactamente qué pasó sin esconder fallos del proveedor.
+    ``EmailNotConfigured`` (falta Resend en el despliegue) no se cuenta como
+    fallo por organización: se propaga para avisar al operador de que el
+    correo no está configurado.
+
+    """
+    hoy = hoy or date.today()
+    resultado = {
+        "avisadas": [],       # (organización, [correos]) con envío confirmado
+        "omitidas": [],       # organizaciones ya avisadas hoy
+        "sin_correo": [],     # organizaciones sin administrador alcanzable
+        "fallidas": [],       # (organización, error) del proveedor de correo
+    }
+    for fila in resumen_organizaciones(db, hoy=hoy, dias_aviso=dias_aviso):
+        licencia = fila["vigente"]
+        if not fila["por_vencer"] or licencia is None:
+            continue
+        nombre = fila["organizacion"].nombre
+        if aviso_enviado_hoy(licencia, hoy):
+            resultado["omitidas"].append(nombre)
+            continue
+        destinatarios = correos_administradores(db, fila["organizacion"].id)
+        if not destinatarios:
+            resultado["sin_correo"].append(nombre)
+            continue
+        from .email import EmailNotConfigured
+
+        try:
+            for destinatario in destinatarios:
+                remitente(
+                    email=destinatario,
+                    organizacion_nombre=nombre,
+                    vence=licencia.vence,
+                    dias_restantes=licencia.dias_restantes(hoy),
+                )
+        except EmailNotConfigured:
+            raise
+        except Exception as exc:  # el proveedor decide qué lanza
+            resultado["fallidas"].append((nombre, str(exc)))
+            continue
+        registrar_aviso_enviado(licencia, destinatarios, hoy=hoy)
+        resultado["avisadas"].append((nombre, destinatarios))
+    db.flush()
+    return resultado

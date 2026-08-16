@@ -225,6 +225,17 @@ def readiness(engine: Engine | None = None) -> HealthStatus:
     if ratelimit_error and not DATABASE_IS_SQLITE:
         errors.append(f"Rate limit: {ratelimit_error}")
 
+    # Informativo: exigir licencia es una decisión de negocio del despliegue,
+    # no una condición de salud; con ella apagada la app funciona igual.
+    from .services.licencias import exigencia_licencia_activada
+
+    if DATABASE_IS_SQLITE:
+        checks["licencias"] = "no-aplica (escritorio)"
+    else:
+        checks["licencias"] = (
+            "exigida" if exigencia_licencia_activada() else "no-exigida"
+        )
+
     if DATABASE_IS_SQLITE:
         checks.update({k: str(v) for k, v in _check_sqlite().items()})
     else:

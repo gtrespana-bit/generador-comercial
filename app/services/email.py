@@ -1,11 +1,11 @@
 """Envío de correos transaccionales por API REST (Resend).
 
-CotizaT solo necesita un correo por ahora: el de invitación a una
-organización. El enlace se genera en `/equipo` y hasta ahora se mostraba una
-sola vez en pantalla para copiarlo a mano, lo que no aguanta un cliente
-piloto. Este módulo lo envía por la API REST de Resend con `urllib`, el mismo
-patrón que `app/auth.py`, `app/storage.py` y `app/ratelimit.py`: sin
-dependencias nuevas en el runtime ni regeneración del lock.
+CotizaT envía dos tipos de correo: la invitación a una organización (generada
+en `/equipo`) y el aviso de vencimiento de licencia (disparado por el operador
+desde el panel, E1-060). Este módulo los manda por la API REST de Resend con
+`urllib`, el mismo patrón que `app/auth.py`, `app/storage.py` y
+`app/ratelimit.py`: sin dependencias nuevas en el runtime ni regeneración del
+lock.
 
 Configuración mínima: `RESEND_API_KEY` (clave `re_...`, EXCLUSIVA del backend)
 y `COTIZAT_EMAIL_FROM` (dirección verificada en Resend). Sin ellas el flujo no
@@ -20,7 +20,7 @@ del correo; ningún secreto del servidor viaja al frontend.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import date, datetime
 import json
 import logging
 import os
@@ -185,6 +185,52 @@ def enviar_invitacion_por_email(
         raise
     logger.info("Invitación enviada a %s (id %s).", email, envio_id)
     return envio_id
+
+
+def enviar_aviso_licencia(
+    *,
+    email: str,
+    organizacion_nombre: str,
+    vence: date,
+    dias_restantes: int,
+) -> str:
+    """Avisa a un administrador de que el acceso de su organización vence.
+
+    Lo dispara el operador desde el panel de licencias (no hay trabajos en
+    segundo plano en el despliegue serverless). Con cobro manual (E1-059) el
+    aviso no enlaza a ninguna pasarela: invita a escribir a soporte para
+    acordar la renovación, que es exactamente cómo se cobra el piloto.
+    """
+    settings = EmailSettings.from_environment()
+    contexto = {
+        "product_name": PRODUCT_NAME,
+        "organizacion_nombre": organizacion_nombre,
+        "vence": vence,
+        "dias_restantes": dias_restantes,
+        "soporte_email": _soporte_email(),
+        "anio": datetime.utcnow().year,
+    }
+    asunto = (
+        f"Tu acceso a {PRODUCT_NAME} vence el "
+        f"{vence.strftime('%d/%m/%Y')} · {organizacion_nombre}"
+    )
+    html = _jinja.get_template("emails/aviso_licencia.html").render(**contexto)
+    texto = _jinja.get_template("emails/aviso_licencia.txt").render(**contexto)
+    try:
+        envio_id = _post_resend(settings, to=email, subject=asunto, html=html, text=texto)
+    except EmailSendError as exc:
+        logger.warning(
+            "No se pudo enviar el aviso de vencimiento a %s (%s).", email, exc
+        )
+        raise
+    logger.info("Aviso de vencimiento enviado a %s (id %s).", email, envio_id)
+    return envio_id
+
+
+def _soporte_email() -> str:
+    from ..branding import SUPPORT_EMAIL
+
+    return SUPPORT_EMAIL
 
 
 def estado_configuracion_email() -> tuple[str, str | None]:

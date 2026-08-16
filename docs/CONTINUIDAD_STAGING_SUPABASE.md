@@ -66,6 +66,12 @@ y `git diff --check`. `.env` y `presupuestos.db` no forman parte del repositorio
 > (E1-060, licencias de operador). La migración se aplicó en Supabase y
 > `/readyz` real responde `"alembic": "head:f4c1d8e37a95"` con `"ok": true`
 > (ver `docs/PANEL_DE_OPERADOR.md` §5).
+>
+> **Actualización 16/08/2026 (noche):** el head exigido pasa a
+> `b7c4a9e2d31f` (E1-060 segunda parte: corte automático, avisos y
+> visibilidad del operador). **Pendiente de aplicar en Supabase** con
+> `docs/staging_upgrade_b7c4a9e2d31f.sql` tras el despliegue; `/readyz`
+> responderá 503 hasta entonces (la guarda funciona así a propósito).
 - La raíz `/` redirige correctamente a `/acceso` (pantalla de inicio de sesión).
 - Diagnóstico y resolución de errores iniciales de Vercel:
   1. `alembic_version` estaba vacía / filtrada por RLS para roles no superusuario.
@@ -106,9 +112,12 @@ Estado verificado de Supabase:
 ```text
 Alembic remoto: f4c1d8e37a95 (aplicado el 16/08/2026 con
   docs/staging_upgrade_f4c1d8e37a95.sql; RLS de licencias: true/true, SELECT a cotizat_app)
+  → b7c4a9e2d31f PENDIENTE (16/08/2026 noche): docs/staging_upgrade_b7c4a9e2d31f.sql
 Rol runtime: cotizat_runtime (NOSUPERUSER, NOBYPASSRLS, INHERIT, miembro de cotizat_app)
 Bucket Storage: cotizat-private (privado, 12 MB)
-Auth URLs: Site URL https://cotizat.online y Redirect URL https://cotizat.online/restablecer-clave
+Auth URLs: Site URL https://cotizat.online y Redirect URLs
+  https://cotizat.online/restablecer-clave y https://cotizat.online/acceso
+  (completadas el 16/08/2026; rate limit de emails en ~30/hora)
 ```
 
 Estado verificado de Vercel:

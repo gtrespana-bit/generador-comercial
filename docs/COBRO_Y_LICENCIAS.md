@@ -1,7 +1,13 @@
 # Cobro y licencias (E1-059 / E1-060)
 
-Fecha: **16/08/2026**. Documento de decisión: recoge la investigación y deja
-la elección al titular. **No hay nada implementado todavía.**
+Fecha: **16/08/2026**. Documento de decisión: recoge la investigación.
+
+> **Decisión adoptada (16/08/2026): cobro manual para el piloto** (opción B).
+> La vía A (autónomo en España + Stripe) queda acordada como paso previo al
+> cobro recurrente. E1-060 está implementado al completo: panel de operador,
+> recibo PDF, corte automático con `COTIZAT_EXIGIR_LICENCIA` y avisos de
+> vencimiento por correo (ver `docs/PANEL_DE_OPERADOR.md` §6 y
+> `docs/PROCESO_PILOTOS.md`).
 
 > Aviso: esto no es asesoramiento fiscal ni legal. Antes de cobrar al primer
 > cliente conviene una consulta con un asesor en España (y, si se factura desde
@@ -140,10 +146,10 @@ Por eso conviene abordarlo **como su propio bloque**, no de pasada.
 | E1-053 Preguntas frecuentes | ✅ `/legal/preguntas` |
 | E1-054 Alcance del soporte | ✅ `/legal/soporte` §2–§3 |
 | E1-055 Reporte de errores | ✅ `/legal/soporte` §5 |
-| E1-059 Método de cobro | 🔍 investigado; **decisión del titular** |
-| E1-060 Registro de licencias | ✅ panel `/admin/licencias` **desplegado en producción el 16/08/2026** (`docs/PANEL_DE_OPERADOR.md`); falta recibo PDF |
-| E1-061 Activación manual de pilotos | ⬜ depende de E1-059 |
+| E1-059 Método de cobro | ✅ **decidido (16/08/2026): cobro manual para el piloto**; Stripe+autónomo antes del cobro recurrente |
+| E1-060 Registro de licencias | ✅ panel `/admin/licencias` desplegado en producción el 16/08/2026; recibo PDF, corte automático y avisos de vencimiento implementados el 16/08/2026 noche (migración `b7c4a9e2d31f`) |
+| E1-061 Activación manual de pilotos | ✅ proceso documentado en `docs/PROCESO_PILOTOS.md` (16/08/2026) |
 
-Lo que desbloquea el resto es **decidir la opción de cobro** (sección 2). El
-panel de licencias (E1-060) puede construirse en paralelo, porque el registro
-interno hace falta igual, se cobre como se cobre.
+El registro interno hacía falta se cobrase como se cobrase; con la decisión de
+cobro manual tomada, las tres piezas que esperaban (recibo, corte y avisos)
+quedaron construidas en la misma sesión.

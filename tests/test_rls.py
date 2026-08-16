@@ -8,9 +8,10 @@ from app.database import Base, _aplicar_contexto_postgresql
 from app.models import TenantMixin
 from migrations.versions import c93e7a4d20f1_add_application_role_and_tenant_rls as migration
 from migrations.versions import (
+    b7c4a9e2d31f_license_cutoff_and_operator_visibility as head_migration,
     d7f2a9c41e63_fix_invitation_select_policy_on_acceptance as invitation_migration,
     e1a4b7c9d2f0_harden_alembic_version_visibility as alembic_migration,
-    f4c1d8e37a95_add_operator_licenses as head_migration,
+    f4c1d8e37a95_add_operator_licenses as licenses_migration,
 )
 
 
@@ -138,7 +139,8 @@ def test_head_exigido_por_runtime_coincide_con_alembic():
     esquema que la base no tiene todavía (o al revés).
     """
     assert database_module.EXPECTED_ALEMBIC_HEAD == head_migration.revision
-    assert head_migration.down_revision == alembic_migration.revision
+    assert head_migration.down_revision == licenses_migration.revision
+    assert licenses_migration.down_revision == alembic_migration.revision
     assert alembic_migration.down_revision == invitation_migration.revision
     assert invitation_migration.down_revision == migration.revision
 

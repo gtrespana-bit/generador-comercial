@@ -357,25 +357,45 @@ Las herramientas existentes se conservan como fuente de migración, pero dejaron
 - [-] **E1-058 — Definir hipótesis de licencia de escritorio.**
   Descartada como prioridad por la dirección browser-first; el precio se validará sobre acceso web.
 
-- [~] **E1-059 — Definir métodos de cobro legales y operables.**  
-  Considerar cobro trimestral/anual para reducir fricción administrativa.
-  **Investigación cerrada (16/08/2026), decisión pendiente del titular.** Stripe
-  **no opera en Venezuela**, y Wise/Payoneer imponen restricciones fuertes a
-  residentes venezolanos; las pasarelas *merchant of record* (Paddle, Lemon
-  Squeezy) exigen una entidad legal en país soportado. **El titular es de
-  nacionalidad española y reside también en España**, lo que abre la vía
-  limpia: darse de alta como **autónomo en España** (modelo 036 + RETA) permite
-  usar Stripe con normalidad, emitir factura española y cobrar con tarjeta desde
-  cualquier país. Contrapartida: cuota de autónomo, IVA/IRPF trimestrales y, si
-  se vende a consumidores de la UE por encima de 10.000 €/año, ventanilla única
-  OSS. Alternativa sin altas: **cobro manual** (transferencia/Zelle/Binance)
-  con activación a mano, suficiente para un piloto de pocos clientes. Análisis
-  completo en `docs/COBRO_Y_LICENCIAS.md`.
+- [x] **E1-059 — Definir métodos de cobro legales y operables.**
+  **Decisión del titular (16/08/2026): cobro manual para el piloto.** El
+  cliente paga por transferencia, Zelle, Binance o Pago Móvil y el titular
+  activa la licencia a mano desde el panel. Vía «en serio» ya acordada para el
+  cobro recurrente: autónomo en España (modelo 036 + RETA) + Stripe; *merchant
+  of record* descartado hoy (más caro y exige la entidad ya creada). Stripe no
+  opera en Venezuela y Wise/Payoneer restringen a residentes venezolanos; el
+  titular es español y reside en España, así que la regularización fiscal es
+  asumible cuando el volumen lo pida. Análisis en `docs/COBRO_Y_LICENCIAS.md`.
 
-- [~] **E1-060 — Preparar recibo, contrato y registro interno de licencias.**
-  **Registro interno completado (16/08/2026).** Panel de operador en `/admin/licencias` (`app/templates/admin/licencias.html`, `app/services/licencias.py`, modelo `Licencia`, migración `f4c1d8e37a95`): conceder, renovar, regalar prueba o cortesía, compensar incidencias y cancelar dejando constancia, con resumen de organizaciones sin licencia y avisos de vencimiento a 15 días. Distingue `pago` de `prueba`/`cortesia`/`compensacion` para que solo lo cobrado sume a ingresos, y encadena renovaciones sin restar días. **Aislamiento**: `licencias` es tabla **no-tenant** con RLS propia (`cotizat_licencia_*`) que exige la marca `cotizat.es_operador`; la lista de operadores vive en `COTIZAT_OPERADORES` (variable de entorno, no columna, para que no exista escalada escribiendo en la base) y se exige email verificado. 18 pruebas en `tests/test_licencias.py`, incluida la de que un cliente autenticado no alcanza el panel y la de que el panel no expone datos de negocio. Guía en `docs/PANEL_DE_OPERADOR.md`. **Pendiente**: recibo/contrato en PDF y corte automático de acceso (esperan a E1-059).
+- [x] **E1-060 — Preparar recibo, contrato y registro interno de licencias.**
+  **Registro interno completado (16/08/2026).** Panel de operador en `/admin/licencias` (`app/templates/admin/licencias.html`, `app/services/licencias.py`, modelo `Licencia`, migración `f4c1d8e37a95`): conceder, renovar, regalar prueba o cortesía, compensar incidencias y cancelar dejando constancia, con resumen de organizaciones sin licencia y avisos de vencimiento a 15 días. Distingue `pago` de `prueba`/`cortesia`/`compensacion` para que solo lo cobrado sume a ingresos, y encadena renovaciones sin restar días. **Aislamiento**: `licencias` es tabla **no-tenant** con RLS propia (`cotizat_licencia_*`) que exige la marca `cotizat.es_operador`; la lista de operadores vive en `COTIZAT_OPERADORES` (variable de entorno, no columna, para que no exista escalada escribiendo en la base) y se exige email verificado. Guía en `docs/PANEL_DE_OPERADOR.md`.
+  **Cerrado del todo (16/08/2026, noche), migración `b7c4a9e2d31f`:**
+  - **Recibo PDF** por licencia de pago (`app/services/recibo_licencia.py`,
+    botón «recibo PDF» en el panel): número estable `CT-000NNN`, período
+    inclusive, método y referencia; se declara **comercial sin validez fiscal**
+    mientras no exista razón social registrada.
+  - **Corte automático de acceso**: con `COTIZAT_EXIGIR_LICENCIA=true`, una
+    organización sin licencia vigente no entra a sus pantallas (página
+    «Acceso suspendido»; los datos no se tocan y vuelven al renovar). El
+    corte consulta `cotizat_security.organization_has_license` (SECURITY
+    DEFINER guardada por el claim de organización: la sesión del cliente no
+    puede leer `licencias`). Valor por omisión: desactivado; escritorio jamás
+    exige licencia.
+  - **Avisos de vencimiento por correo** (Resend): botón del panel que
+    escribe a propietario/administrador activos vía
+    `cotizat_security.organization_admin_emails` (guardada por marca de
+    operador), con constancia del envío en la propia licencia y sin reenviar
+    dos veces el mismo día.
+  - **Corrección de visibilidad**: la política `cotizat_org_select` solo
+    mostraba organizaciones con membresía propia, así que el panel era ciego
+    a las de clientes; ahora las lista también para la sesión de operador.
 
-- [ ] **E1-061 — Definir proceso manual de activación para los primeros pilotos.**
+- [x] **E1-061 — Definir proceso manual de activación para los primeros pilotos.**
+  Documentado en `docs/PROCESO_PILOTOS.md` (16/08/2026): demostración →
+  registro del prospecto → cobro manual acordado → licencia y recibo desde el
+  panel → seguimiento semanal de «por vencer» con avisos por correo →
+  suspensión automática al vencer si no hay pago → reactivación al renovar
+  sin perder datos.
 
 ## 1.10 Criterios de salida de la Etapa 1
 
@@ -385,13 +405,16 @@ No se marcará esta etapa como completada hasta cumplir todos los siguientes pun
 - [x] No existen promesas visibles de IA, 3D o facturación fiscal no implementadas.
 - [ ] Un usuario nuevo puede generar su primer PDF en menos de 20 minutos con ayuda mínima.
 - [ ] El catálogo comercial tiene procedencia revisada y precios fechados.
-- [ ] PostgreSQL, Alembic y el aislamiento funcionan en una instancia de integración real.
-- [ ] Inicio y cierre de sesión, membresías, roles y CSRF están probados.
-- [ ] Imágenes y anexos usan almacenamiento persistente por organización.
+- [x] PostgreSQL, Alembic y el aislamiento funcionan en una instancia de integración real.
+  Evidencia: producción Vercel + Supabase con `/readyz` en verde (head Alembic, rol runtime limitado miembro de `cotizat_app`) y matriz de aceptación con dos organizaciones superada el 14/08/2026 (puntos 1-9, 11 y 12, incluida organización homónima sin fuga de datos); RLS de `licencias` verificado en producción el 16/08/2026.
+- [x] Inicio y cierre de sesión, membresías, roles y CSRF están probados.
+  Evidencia: E2E de Auth en producción el 15/08/2026 (registro, confirmación, cambio de contraseña, invitaciones con y sin cuenta previa); roles `lectura`/`miembro`, cookies HttpOnly/Secure y consola sin violaciones CSP en la matriz del 14/08/2026 (puntos 6-8, 11 y 12); CSRF same-origin cubierto por la suite (`tests/test_web_security.py`).
+- [x] Imágenes y anexos usan almacenamiento persistente por organización.
+  Evidencia: punto 4 de la matriz (14/08/2026) — subida y descarga de imágenes, anexos PDF y fichas técnicas a través del proxy autorizado sobre el bucket privado `cotizat-private`.
 - [x] Existe una exportación y una migración controlada desde SQLite.
   Exportación: backup .zip completo desde Configuración (E1-021). Migración: importación con confirmación explícita hacia la web el 15/08/2026 (E1W-012, `/configuracion/importar-instalacion`).
 - [~] Existe guía de inicio, oferta, contrato y canal de soporte.
-  Guía (`docs/GUIA_INICIO_RAPIDO.md`), oferta (precios en `/conocer`), términos como contrato de servicio (`/legal/terminos`) y canal de soporte (`/legal/soporte`) publicados el 15/08/2026. Falta: recibo y registro interno de licencias (E1-060) y crear el buzón soporte@cotizat.online.
+  Guía (`docs/GUIA_INICIO_RAPIDO.md`), oferta (precios en `/conocer`), términos como contrato de servicio (`/legal/terminos`) y canal de soporte (`/legal/soporte`) publicados el 15/08/2026. Recibo y registro interno de licencias cerrados el 16/08/2026 (E1-060). Falta solo crear el buzón soporte@cotizat.online (decisión del titular: se crea cuando haga falta de verdad).
 - [x] CI ejecuta las pruebas y el recorrido crítico está cubierto.
   CI operativo desde el 14/08/2026 (E1-038); recorrido crítico completo cubierto el 15/08/2026 (E1-040, `tests/test_recorrido_critico.py`).
 - [ ] Tres usuarios externos completaron una prueba de usabilidad.
@@ -795,9 +818,31 @@ Se completará durante la Etapa 2. No deben guardarse aquí nombres, teléfonos 
 
 # 11. Próximo bloque de trabajo
 
-## Etapa 1 activa — siguiente bloque: validación con matriz de aceptación en staging
+## Etapa 1 activa — siguiente bloque: cerrar la etapa con validación externa
 
 La continuidad operativa exacta para una conversación nueva está en `docs/PUNTO_DE_CONTINUACION.md` (dónde se quedó el trabajo y qué sigue) y `docs/CONTINUIDAD_STAGING_SUPABASE.md` (estado de fondo de staging); deben seguirse sin reconstruir el estado desde el chat.
+
+**Estado al 16/08/2026 (noche):** E1-059 decidida (cobro manual para el
+piloto), E1-060 cerrada por completo (panel + recibo PDF + corte automático +
+avisos de vencimiento) y E1-061 documentada (`docs/PROCESO_PILOTOS.md`). La
+parte construible de la Etapa 1 está terminada; lo que queda para marcarla es
+**validación externa**, no código:
+
+1. Pruebas de usabilidad con **tres usuarios externos** (E1-012/013/014): un
+   usuario nuevo debe generar su primer PDF en menos de 20 minutos con ayuda
+   mínima.
+2. **Vídeo de demostración de 5 minutos** (E1-051, operativo del titular) para
+   cerrar la landing (E1-056).
+3. Catálogo comercial con procedencia revisada y precios fechados.
+4. Operativa del bloque de licencias (ver `docs/PROCESO_PILOTOS.md` §0):
+   migración `b7c4a9e2d31f` en Supabase, cortesía a la organización del
+   titular y `COTIZAT_EXIGIR_LICENCIA=true` al empezar el piloto.
+
+Superado eso: la puerta es **beta web privada para prospectos** y comienzo de
+la validación pagada (Etapa 2), sin afirmar todavía preparación para
+lanzamiento público.
+
+<details><summary>Histórico: bloque previo — validación con matriz de aceptación en staging (superado el 14-16/08/2026)</summary>
 
 La base browser-first ya está desplegada en staging Vercel + Supabase (`https://cotizat-generador.vercel.app`), con `/healthz` y `/readyz` respondiendo 200 OK. El siguiente trabajo es:
 
@@ -822,6 +867,8 @@ Evidencia acumulada al 14/08/2026:
 - Integración continua activa (E1-038) y dependencias bloqueadas (E1-037): cada pull request ejecuta la suite y las verificaciones que antes eran manuales.
 - Pytest supera 174 pruebas automáticas.
 - La aplicación **está lista para ejecutar la matriz de aceptación manual con dos organizaciones** antes de autorizar cualquier beta abierta.
+
+</details>
 
 ---
 
