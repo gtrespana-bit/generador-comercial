@@ -367,3 +367,45 @@ El catálogo recalculado se contrastó contra un presupuesto tipo de vivienda de
 quedan dentro del rango de mercado; las partidas de acabado e instalaciones
 quedan por debajo, lo que es coherente porque el benchmark incluye el material
 de acabado que en nuestro modelo se factura aparte como producto de cliente.
+
+---
+
+# Política de mano de obra y reparto (equidad.py)
+
+Las tarifas de mano de obra de este catálogo están **por encima de la tarifa
+habitual del mercado venezolano** por decisión expresa del titular. No es un
+error de calibración: es la posición del negocio.
+
+| | Este catálogo | Mercado VE 2026 |
+|---|---:|---:|
+| Oficial de 1ª | 44,00 USD/jornada | ~15,00 |
+| Ayudante especializado | 32,00 USD/jornada | ~11,00 |
+| Ayudante | 28,00 USD/jornada | ~9,00 |
+
+## El dato que importa
+
+Pagar **3 veces** la tarifa de mercado encarece el precio final del catálogo
+solo un **17 %**, porque en la mayoría de las partidas manda el material. A
+cambio, la parte del precio de venta que llega al trabajador pasa del
+**6,5 % al 16,5 %**.
+
+```bash
+python3 basedatos_partidas/equidad.py
+python3 basedatos_partidas/equidad.py --escenario 4.5 3.2 2.8
+```
+
+El informe desglosa el peso de la mano de obra por capítulo, que es donde se
+ve cuánto pesa la decisión: en demoliciones y pintura la mano de obra es el
+40 % del coste; en fundaciones y estructuras, apenas el 13-16 %.
+
+## Uso comercial
+
+El porcentaje que llega al trabajador es un dato defendible frente al cliente y
+un argumento de diferenciación: explica por qué el presupuesto no es el más
+barato y qué se está comprando con esa diferencia. También sostiene la calidad,
+porque la rotación de personal y los repasos por mala ejecución cuestan más que
+el 17 %.
+
+**Importante para el cálculo**: estas tarifas son **coste**, no precio de venta.
+El margen del 30 % se aplica encima del coste directo, de modo que no hay doble
+margen sobre la mano de obra.
