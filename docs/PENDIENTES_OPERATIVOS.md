@@ -12,6 +12,7 @@ Estado al escribir esta guía:
 | 3 | `soporte@cotizat.online` | **pendiente** (ver aviso: GoDaddy ya no lo da gratis) |
 | 4 | Razón social → `COTIZAT_LEGAL_ENTITY` | **pendiente** (no urgente) |
 | 5 | Vercel Hobby → Pro | **aplazado por decisión del usuario** |
+| 6 | Panel de operador E1-060: migración `f4c1d8e37a95` + `COTIZAT_OPERADORES` | ✅ **completado** (16/08/2026): script `docs/staging_upgrade_f4c1d8e37a95.sql` aplicado en Supabase, variable en Vercel, panel verificado por el titular en `https://cotizat.online/admin/licencias` |
 
 ---
 

@@ -1,6 +1,6 @@
 # Punto exacto de continuación
 
-Fecha de corte: **15/08/2026, noche (tercera parte de la sesión)** (America/Caracas).
+Fecha de corte: **16/08/2026, tarde (cierre de la cuarta parte de la sesión)** (America/Caracas).
 
 Este documento retoma el trabajo sin depender del historial del chat. Describe
 **dónde quedó exactamente** el trabajo y **qué sigue**, en ese orden. Léelo
@@ -9,11 +9,12 @@ junto con `docs/CONTINUIDAD_STAGING_SUPABASE.md` (estado de staging/matriz) y
 
 ---
 
-## 0. Lo último hecho: rama `arena/01a007cf-generador-comercial` (E1-021)
+## 0. Lo último hecho: rama `arena/01a007cf-generador-comercial` (E1-021 + E1-060)
 
-El **PR #22 está fusionado** (merge `88dabdd`); la sección 1 queda como
-histórico. Sobre ese merge, esta sesión cerró **E1-021 — repositorio privado y
-sin datos reales sensibles**:
+El **PR #23 está fusionado** (merge `52d1a09`, título «E1-021 (datos sensibles)
++ fix de invitaciones sin cuenta previa»); la sección 1 queda como histórico.
+Sobre ese merge, esta sesión cerró **E1-021 — repositorio privado y sin datos
+reales sensibles**:
 
 - `tools/auditar_datos_sensibles.py`: auditoría repetible de todo lo versionado
   (credenciales de Supabase/Resend/GitHub/AWS, JWT, PEM, cadenas de conexión con
@@ -102,15 +103,26 @@ exige `cotizat.es_operador`; la lista de operadores vive en
 escalada escribiendo en la base) y se exige email verificado. 18 pruebas en
 `tests/test_licencias.py`. Suite: **362 passed, 5 skipped**.
 
-> **⚠ Dos pasos obligatorios antes de usarlo en producción**, detallados en
-> `docs/PANEL_DE_OPERADOR.md` §1:
-> 1. **Aplicar la migración** `f4c1d8e37a95` con la conexión administrativa.
->    El runtime ya exige ese head: sin migrar, `/readyz` responde **503**.
-> 2. Añadir **`COTIZAT_OPERADORES`** en Vercel con tu correo y redesplegar.
->    Sin esa variable el panel está cerrado incluso para ti.
+### E1-060 — desplegado en producción y verificado (16/08/2026)
 
-Pendiente dentro de E1-060: recibo/contrato en PDF y corte automático de acceso
-(ambos esperan a la decisión de cobro de E1-059).
+Los dos pasos obligatorios quedaron **completados** (detalle y evidencia en
+`docs/PANEL_DE_OPERADOR.md` §5):
+
+1. **Migración `f4c1d8e37a95` aplicada** en Supabase con el script
+   `docs/staging_upgrade_f4c1d8e37a95.sql` (SQL Editor; guarda de versión +
+   transacción). `/readyz` pasó a `"alembic": "head:f4c1d8e37a95"` con `ok: true`.
+   El check RLS del propio script devolvió `true/true/true`.
+2. **`COTIZAT_OPERADORES` añadida en Vercel** (Production) y **redeploy**.
+   El titular entró a **https://cotizat.online/admin/licencias**, inició sesión
+   con su correo verificado y **confirmó que el panel funciona**.
+
+**Decisión del titular (16/08/2026):** el panel se queda **deliberadamente
+simple** por ahora — solo lo esencial. La mejora de la interfaz queda anotada
+como pendiente futuro, no como bloqueante.
+
+Pendiente dentro de E1-060: recibo/contrato en PDF, corte automático de acceso
+y avisos de vencimiento por correo (los tres esperan, sobre todo, a la decisión
+de cobro de E1-059).
 
 **Siguiente bloque: E1-059** (decisión de cobro del titular) y, con ella, el
 recibo en PDF.
@@ -266,18 +278,24 @@ desarrollo esté cerrado (guía en `docs/MATRIZ_PASOS_MANUALES.md`).
 
 En orden recomendado:
 
-1. **Cerrar el PR #22** y **correr las pruebas E2E** de Auth (registro +
-   confirmación, recuperación, invitación en `/equipo`) — a cargo del usuario.
+1. ~~**Cerrar el PR #22** y correr las pruebas E2E de Auth.~~ **PR #23 fusionado
+   el 16/08/2026** (merge `52d1a09`, incluye E1-021, el fix de invitaciones sin
+   cuenta previa y el panel E1-060). Pruebas E2E de Auth **hechas el
+   15/08/2026**: registro, confirmación, cambio de contraseña e invitaciones.
 2. ~~**E1-021 — revisar que el repositorio no contenga datos reales
    sensibles.**~~ **Completado el 15/08/2026** (ver sección 0 y
    `docs/DATOS_SENSIBLES.md`).
-3. **E1-059/E1-060 — método de cobro + recibo/contrato firmable y registro
-   interno de licencias** (cierra E1-057 y el criterio «guía, oferta, contrato
-   y soporte»).
+3. ~~**E1-060 — panel de operador.**~~ **Desplegado y verificado el 16/08/2026**
+   en `https://cotizat.online/admin/licencias` (sección 0 y
+   `docs/PANEL_DE_OPERADOR.md`). Queda **E1-059 — decisión de cobro del
+   titular** (análisis en `docs/COBRO_Y_LICENCIAS.md`) y con ella el recibo en
+   PDF, el corte automático de acceso y los avisos de vencimiento.
 4. **E1-051 — vídeo de demostración de 5 minutos** (operativo del usuario; la
    landing lo enlazará donde corresponda).
 5. Iterar diseño/contenido de landing y legales (v1 aceptada con mejoras
-   pendientes declaradas por el usuario).
+   pendientes declaradas por el usuario). El panel de operador se quedó
+   deliberadamente simple por ahora; su mejora de interfaz es otro pendiente
+   futuro, no bloqueante.
 
 ---
 
@@ -314,42 +332,39 @@ Continúa el proyecto CotizaT. Antes de proponer nada, lee
 `docs/PUNTO_DE_CONTINUACION.md` y luego `docs/CONTINUIDAD_STAGING_SUPABASE.md`.
 No repitas trabajo ya hecho y no me pidas secretos.
 
-**Dónde quedó todo (15/08/2026, noche, cierre de la segunda parte).**
+**Dónde quedó todo (16/08/2026, tarde, cierre de la cuarta parte).**
 
-- **Rama `arena/01a00790-generador-comercial`, PR #22 abierto** hacia `main`,
-  con tres commits sobre el merge del PR #20:
-  1. **E1-052 `[x]`** — presupuesto de muestra comercial sin datos reales
-     (`app/services/presupuesto_muestra.py` + `tools/generar_presupuesto_muestra.py`
-     → `app/static/pdf/presupuesto-ejemplo.pdf`), enlazado desde la landing
-     `/conocer` y cubierto por `tests/test_presupuesto_muestra.py`.
-  2. **Auth** — `app/auth.py` ahora registra en el log el error real de GoTrue
-     (`Supabase Auth ... -> HTTP ...`); docs de Redirect URLs actualizadas.
-  3. **Fix de CI** — zip de backup determinista en
-     `tests/test_instalacion_sqlite.py` (el test SHA-256 era flaky en CI).
-- Suite al cierre: **289 passed, 5 skipped**.
+- **PR #23 fusionado** (merge `52d1a09`): E1-021 (datos sensibles), fix de
+  invitaciones sin cuenta previa y **E1-060 — panel de operador**
+  (`/admin/licencias`) construido y probado (362 passed, 5 skipped).
+- **E1-060 DESPLEGADO EN PRODUCCIÓN y verificado el 16/08/2026**:
+  1. Migración `f4c1d8e37a95` aplicada en Supabase con el script
+     `docs/staging_upgrade_f4c1d8e37a95.sql` (SQL Editor). `/readyz` responde
+     `"alembic": "head:f4c1d8e37a95"` con `ok: true`.
+  2. `COTIZAT_OPERADORES` añadida en Vercel (Production) + redeploy.
+  3. El titular entró a `https://cotizat.online/admin/licencias` y confirmó
+     que funciona. Por decisión suya, el panel se queda deliberadamente simple
+     por ahora; la mejora de interfaz es pendiente futuro.
+- **Pendiente dentro de E1-060:** recibo en PDF, corte automático de acceso y
+  avisos de vencimiento (esperan a E1-059).
+- Suite al cierre de código: **362 passed, 5 skipped**. Rama de esta sesión:
+  `arena/01a00825-generador-comercial` (commits de docs `.env.example` +
+  script SQL de la migración, ya en GitHub).
 
-**Incidencia de Auth (registro + recuperación) en curso:**
-- Síntomas: confirmar email → login «usuario o contraseña erróneo»; recuperar
-  clave → «el enlace no es válido o ha caducado»; luego «Supabase Auth no pudo
-  completar la solicitud».
-- Diagnóstico: faltaba la Redirect URL `/acceso` (solo estaba
-  `/restablecer-clave`) + límite del SMTP por defecto de Supabase (~2-4/hora).
-- **Ya creé el SMTP personalizado de Supabase con Resend** (smtp.resend.com:465,
-  usuario resend, clave `re_...`, remitente `no-responder@cotizat.online`).
-- Pendiente mío (operativo): añadir `https://cotizat.online/acceso` a las
-  Redirect URLs de Supabase, subir el rate limit por hora (~30) y dejar el
-  cooldown en 60 s.
-
-**Mis pendientes operativos (recuérdamelos, no los bloquees):** correr las
-pruebas E2E de Auth (registro+confirmación, recuperación, invitación en
-`/equipo`) después del PR; crear la redirección `soporte@cotizat.online` en
-GoDaddy; definir la razón social y añadir `COTIZAT_LEGAL_ENTITY` en Vercel.
-Recordar: Vercel Hobby prohíbe uso comercial → pasar a Pro antes de cobrar.
+**Incidencia de Auth (registro + recuperación) — resuelta en operativo:**
+- SMTP personalizado de Supabase con Resend creado por el titular.
+- Pendientes operativos suyos aún abiertos: añadir
+  `https://cotizat.online/acceso` a las Redirect URLs de Supabase, subir el
+  rate limit por hora (~30) y dejar el cooldown en 60 s; crear la redirección
+  `soporte@cotizat.online` en GoDaddy; definir la razón social y añadir
+  `COTIZAT_LEGAL_ENTITY` en Vercel; Vercel Hobby → Pro antes de cobrar.
 
 **Aparcado por decisión mía:** los puntos 13-manual y 14 de la matriz, hasta que
 el desarrollo esté cerrado.
 
-**Siguiente bloque:** E1-059/E1-060 (cobro + recibo/contrato). E1-021 ya está
-cerrado (`docs/DATOS_SENSIBLES.md`). El vídeo (E1-051) queda a mi cargo.
+**Siguiente bloque:** **E1-059 — decisión de cobro del titular** (análisis en
+`docs/COBRO_Y_LICENCIAS.md`) y, con ella, el recibo en PDF, el corte automático
+de acceso y los avisos de vencimiento. E1-021 y el panel E1-060 ya están
+cerrados/desplegados. El vídeo (E1-051) queda a mi cargo.
 
 ---

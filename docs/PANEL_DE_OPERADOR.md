@@ -1,5 +1,12 @@
 # Panel de operador: licencias (E1-060)
 
+> **Estado: EN PRODUCCIÓN y verificado el 16/08/2026** en `https://cotizat.online`.
+> Los dos pasos de despliegue de la §1 están **completados** (migración
+> `f4c1d8e37a95` aplicada y `COTIZAT_OPERADORES` configurada en Vercel). El
+> titular entró al panel y confirmó que funciona. Por decisión del titular se
+> mantiene **deliberadamente simple** por ahora (solo lo esencial); las mejoras
+> de interfaz y las piezas que faltan quedan anotadas en la §4.
+
 Fecha: **16/08/2026**. Registro interno para conceder acceso, renovarlo, regalar
 un período de prueba o compensar una incidencia.
 
@@ -8,6 +15,10 @@ Ruta: **`/admin/licencias`**.
 ---
 
 ## 1. Antes de nada: dos pasos obligatorios de despliegue
+
+> **Estado: completados el 16/08/2026** (ver §5). Se conservan aquí como
+> registro de cómo se despliega el panel: **cualquier entorno nuevo** (preview,
+> otra base de datos, un despliegue desde cero) tendrá que repetirlos.
 
 Este bloque **incluye una migración de base de datos**. Sin aplicarla,
 `/readyz` responderá 503 en producción, porque el código pasa a exigir el head
@@ -22,6 +33,11 @@ anteriores:
 MIGRATION_DATABASE_URL='postgresql://administrador:…@host:5432/postgres?sslmode=require' \
   alembic upgrade head
 ```
+
+**Alternativa sin terminal (la que se usó el 16/08/2026):** el script SQL listo
+para pegar en **Supabase → SQL Editor → New query → Run**:
+`docs/staging_upgrade_f4c1d8e37a95.sql`. Va en una transacción y lleva guarda
+de versión: aborta sin tocar nada si la base no está en `e1a4b7c9d2f0`.
 
 Comprobación: `/readyz` debe responder `"alembic": "head:f4c1d8e37a95"`.
 
@@ -152,6 +168,36 @@ con la fecha pasada sería una mentira silenciosa.
 - **No genera todavía el recibo en PDF.** El registro ya guarda todo lo
   necesario (importe, método, referencia, período); falta el documento.
 - **No envía avisos de vencimiento por correo.** El panel los marca en ámbar.
+- **La interfaz es deliberadamente simple** (decisión del titular, 16/08/2026):
+  tabla + formulario, sin adornos. Funciona y cubre lo esencial, pero se
+  mejorará más adelante (mejor agrupación por estado, filtros, acciones
+  visibles sin redirigir, etc.).
 
 Nada de esto bloquea el uso: el panel ya sirve para lo que se pidió — ver,
 gestionar, regalar meses y dejar constancia.
+
+---
+
+## 5. Verificación en producción (16/08/2026)
+
+Secuencia completa aplicada y verificada:
+
+1. **Migración aplicada** con el script `docs/staging_upgrade_f4c1d8e37a95.sql`
+   (Supabase → SQL Editor). La consulta final del script devolvió:
+   `relrowsecurity = true, relforcerowsecurity = true, cotizat_app_puede_leer = true`.
+2. **`/readyz` en https://cotizat.online/readyz** pasó de
+   `"alembic": "inesperado:e1a4b7c9d2f0"` (ok: false) a:
+   ```json
+   {"ok": true, "checks": {"alembic": "head:f4c1d8e37a95",
+    "rol_runtime": "superuser=False, bypassrls=False, inherit=True, cotizat_app=True", ...}, "errors": []}
+   ```
+3. **`COTIZAT_OPERADORES`** configurada en Vercel (Production) con el correo del
+   titular y **redeploy** (las variables solo se leen al arrancar).
+4. **Acceso real**: el titular entró a `https://cotizat.online/admin/licencias`,
+   inició sesión con su correo verificado y confirmó que el panel funciona.
+
+> Si en el futuro un entorno nuevo rechaza el acceso aunque la variable esté
+> puesta, revisar en este orden: (1) ¿se redesplegó después de guardar la
+> variable? (2) ¿el correo de la sesión está confirmado en Supabase Auth?
+> (3) ¿coincide exactamente la dirección? La lista se normaliza en minúsculas,
+> pero la pertenencia exige el mismo correo de la sesión.

@@ -141,7 +141,7 @@ Por eso conviene abordarlo **como su propio bloque**, no de pasada.
 | E1-054 Alcance del soporte | ✅ `/legal/soporte` §2–§3 |
 | E1-055 Reporte de errores | ✅ `/legal/soporte` §5 |
 | E1-059 Método de cobro | 🔍 investigado; **decisión del titular** |
-| E1-060 Registro de licencias | ✅ panel `/admin/licencias` (`docs/PANEL_DE_OPERADOR.md`); falta recibo PDF |
+| E1-060 Registro de licencias | ✅ panel `/admin/licencias` **desplegado en producción el 16/08/2026** (`docs/PANEL_DE_OPERADOR.md`); falta recibo PDF |
 | E1-061 Activación manual de pilotos | ⬜ depende de E1-059 |
 
 Lo que desbloquea el resto es **decidir la opción de cobro** (sección 2). El

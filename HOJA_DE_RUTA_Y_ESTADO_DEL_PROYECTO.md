@@ -1,6 +1,6 @@
 # Hoja de ruta y estado del proyecto
 
-Fecha de actualización: 2026-08-10  
+Fecha de actualización: 2026-08-16
 Proyecto: Generador de presupuestos para remodelación  
 Estado: Fases 0 a 10 completadas
 
@@ -1633,3 +1633,54 @@ usuario hasta el final del desarrollo.
 ## Resultado
 
 Suite completa: **250 passed, 5 skipped** (antes 228).
+
+---
+
+# 29. Panel de operador y licencias — E1-060 (2026-08-16)
+
+Estado: **COMPLETADO y DESPLEGADO en producción**.
+
+## Qué es
+
+Registro interno de licencias del producto: el titular puede conceder acceso,
+renovarlo, regalar un período de prueba o compensar una incidencia. Es la única
+excepción deliberada al aislamiento multi-tenant: una licencia *apunta* a una
+organización pero **no le pertenece** (es información del negocio del titular
+sobre un cliente).
+
+## Qué se construyó
+
+- **Ruta `/admin/licencias`** (panel) + `POST /admin/licencias` (conceder/
+  renovar) + `POST /admin/licencias/{id}/cancelar`.
+- **Tabla `licencias` no-tenant** con estados `activa`/`vencida`/`cancelada`,
+  orígenes `pago`/`prueba`/`cortesia`/`compensacion`, encadenamiento de
+  renovaciones (la nueva empieza al día siguiente del vencimiento), y tope de
+  seguridad de 3 años.
+- **Solo `origen='pago'` suma a los ingresos** del panel: una cortesía con
+  importe o un pago sin él se rechazan.
+- **Aislamiento de raíz** (el riesgo del diseño): RLS propia
+  (`cotizat_licencia_*`) que exige la marca `cotizat.es_operador`; la lista de
+  operadores vive en la variable de entorno **`COTIZAT_OPERADORES`** (no en una
+  columna, para que no exista escalada escribiendo en la base) y se exige
+  **email verificado**.
+- Pruebas: `tests/test_licencias.py` (18) + auditoría en
+  `tests/test_web_security.py`. Suite: **362 passed, 5 skipped**.
+
+## Despliegue en producción (16/08/2026)
+
+1. **Migración `f4c1d8e37a95`** aplicada en Supabase con el script
+   `docs/staging_upgrade_f4c1d8e37a95.sql` (SQL Editor → New query → Run).
+   Verificación RLS del propio script: `true/true/true`.
+2. **`COTIZAT_OPERADORES`** añadida en Vercel (Production) + **redeploy**.
+3. `/readyz` real: `"alembic": "head:f4c1d8e37a95"` con `ok: true`.
+4. **Verificado por el titular** en `https://cotizat.online/admin/licencias`.
+
+Guía de uso y protección: `docs/PANEL_DE_OPERADOR.md`.
+
+## Pendiente dentro de E1-060 (no bloqueante)
+
+- Recibo en PDF (espera a la decisión de cobro **E1-059**).
+- Corte automático de acceso al vencer (decisión de negocio; espera a E1-059).
+- Avisos de vencimiento por correo (hoy el panel marca el ámbar a 15 días).
+- **Mejora de la interfaz**: por decisión del titular (16/08/2026) el panel se
+  queda deliberadamente simple por ahora; se mejorará más adelante.
