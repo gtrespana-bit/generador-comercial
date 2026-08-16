@@ -78,7 +78,9 @@ def test_modo_demo_crea_contenido_ficticio_identificado():
         cfg = completar_onboarding(db, _datos_empresa(), "demo")
         assert cfg.onboarding_completado is True
         assert cfg.onboarding_modo == "demo"
-        assert db.query(Partida).count() >= 50
+        # Catálogo propio de basedatos_partidas (540 partidas + recursos).
+        assert db.query(Partida).count() >= 500
+        assert db.query(Partida).filter(Partida.codigo_interno.like("CT-%")).count() >= 500
         assert db.query(Producto).count() >= 3
         assert db.query(RecetaEstancia).count() >= 6
         cliente = db.query(Cliente).one()
@@ -109,7 +111,7 @@ def test_reintento_demo_recupera_un_fallo_parcial_sin_duplicar(monkeypatch):
         cantidad_parcial = db.query(Partida).count()
         assert cfg.onboarding_completado is False
         assert cfg.onboarding_modo == "demo"
-        assert cantidad_parcial >= 50
+        assert cantidad_parcial >= 500
         with pytest.raises(ErrorOnboarding, match="misma opción"):
             completar_onboarding(db, _datos_empresa(), "limpio")
 

@@ -57,6 +57,8 @@ hiddenimports = [
     "app.services",
     "app.services.pdf",
     "app.services.pdf_anexos",
+    "app.services.catalogo_propio",
+    "app.services.recursos",
     "app.utils",
     "app.seeds",
 ]
@@ -84,6 +86,10 @@ datas = [
     ("app/static", "app/static"),      # css, js, fuentes Lato, icono
     ("app/templates", "app/templates"),
     ("icono.ico", "."),
+    # Catálogo propio: 540 partidas + cuadro de precios (fuente de la siembra).
+    # Solo datos/ y el motor; no hace falta salida/*.xlsx (se regenera offline).
+    ("basedatos_partidas/datos", "basedatos_partidas/datos"),
+    ("basedatos_partidas/descompuestos.py", "basedatos_partidas"),
 ]
 binaries = []
 try:

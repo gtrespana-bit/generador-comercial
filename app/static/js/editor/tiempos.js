@@ -301,7 +301,7 @@
 
     var badge = document.getElementById("tiempo-badge");
     if (badge) {
-      badge.textContent = nPartidas ? `⏱ ${fmtHoras(totalMO)} h · ${fmtDias(diasDur)} d` : "⏱ —";
+      badge.textContent = nPartidas ? `${fmtHoras(totalMO)} h · ${fmtDias(diasDur)} d` : "—";
       badge.title = `Tiempo: ${fmtHoras(totalOf)} h oficial + ${fmtHoras(totalAy)} h ayudante — ${fmtDias(diasDur)} días críticos`;
     }
   }

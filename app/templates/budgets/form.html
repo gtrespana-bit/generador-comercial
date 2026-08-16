@@ -1,48 +1,79 @@
 {% extends "base.html" %}
 {% from "partidas/_editor.html" import editor_partida_catalogo with context %}
 {% block title %}{{ 'Editar presupuesto' if presupuesto else 'Nuevo presupuesto' }}{% endblock %}
+{% block body_class %}editor-focus{% endblock %}
 
 {% block content %}
-<div class="page-head budget-editor-head">
-  <div>
-    <span class="page-eyebrow">{{ 'Presupuesto ' ~ presupuesto.numero if presupuesto else 'Nuevo documento' }}</span>
-    <h1>{{ 'Editar presupuesto' if presupuesto else 'Crear presupuesto' }}</h1>
-    <p class="subtitle">Organiza capítulos, edita partidas con su ficha técnica completa y comprueba el total sin salir del documento.</p>
-  </div>
-  <div class="budget-head-status"><span class="status-dot"></span>{{ presupuesto.estado|replace('_', ' ')|capitalize if presupuesto else 'Borrador nuevo' }}</div>
-</div>
-
-<nav class="builder-progress" aria-label="Secciones del creador">
-  <button type="button" data-scroll-builder="card-datos-generales"><span>1</span><strong>Datos</strong><small>Cliente y documento</small></button>
-  <button type="button" data-scroll-builder="builder-partidas" class="active"><span>2</span><strong>Partidas</strong><small>Capítulos y costes</small></button>
-  <button type="button" data-scroll-builder="builder-resumen"><span>3</span><strong>Revisión</strong><small>Totales y condiciones</small></button>
-</nav>
-
 <form method="post" id="form-presupuesto" class="budget-builder" enctype="multipart/form-data"
       action="{{ '/presupuestos/' ~ presupuesto.id ~ '/editar' if presupuesto else '/presupuestos/nuevo' }}">
   <input type="hidden" name="estructura_json" id="estructura-json" value="">
 
-  <!-- TOTAL EN VIVO (barra fija mientras editas) -->
-  <div class="sticky-total builder-command-bar">
-    <div class="builder-total-live"><span>Total actual</span><strong id="sticky-total-val">—</strong></div>
-    <div class="builder-command-actions">
-      <button type="button" id="btn-ai-dictation" class="btn btn-sm" title="Dictar en el campo activo">🎙 Dictar</button>
-      <button type="button" class="btn btn-sm btn-ai" id="btn-abrir-generador" title="Busca coincidencias en tu catálogo y arma un borrador editable">Sugerir desde catálogo</button>
-      <button type="button" class="btn btn-sm csp-s-941e073ac1" id="btn-modal-receta" title="Alt+R — Inserta habitaciones enteras de reforma escaladas al tamaño de tu estancia">⚡ Pack de Estancia (Alt+R)</button>
-      <button type="button" class="btn btn-sm iva-toggle-btn" id="btn-toggle-iva-top" title="Activar o desactivar el IVA de este presupuesto">💱 IVA: ON</button>
-      <button type="button" class="btn btn-sm" id="btn-preview-pdf-top" title="Vista previa del documento">👁 Vista previa</button>
+  <!-- Command bar única: identidad + total + acciones principales + guardar -->
+  <header class="editor-command-bar" id="editor-command-bar" role="banner">
+    <div class="ecb-identity">
+      <a class="ecb-back" href="{{ '/presupuestos/' ~ presupuesto.id if presupuesto else '/presupuestos' }}" title="Volver">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg>
+      </a>
+      <div class="ecb-title-wrap">
+        <span class="ecb-eyebrow">{{ presupuesto.numero if presupuesto else 'Nuevo' }}</span>
+        <strong class="ecb-title" id="ecb-doc-title">{{ (presupuesto.titulo if presupuesto and presupuesto.titulo else '') or ('Editar presupuesto' if presupuesto else 'Crear presupuesto') }}</strong>
+      </div>
+      <span class="ecb-status"><span class="status-dot"></span>{{ presupuesto.estado|replace('_', ' ')|capitalize if presupuesto else 'Borrador' }}</span>
     </div>
-    <span class="toolbar-hint builder-shortcuts"><kbd>?</kbd> atajos · <kbd>Ctrl</kbd>+<kbd>Enter</kbd> guardar</span>
-  </div>
+
+    <div class="ecb-total" title="Total del presupuesto en vivo">
+      <span class="ecb-total-label">Total</span>
+      <strong class="ecb-total-val" id="sticky-total-val">—</strong>
+      <div class="ecb-meta" id="editor-command-meta">
+        <span id="margen-indicator" class="ecb-chip"><span class="margen-dot"></span><span id="margen-text">—</span></span>
+        <span id="tiempo-badge" class="ecb-chip muted">—</span>
+        <span class="ecb-chip muted"><span id="builder-item-count">0</span> partidas</span>
+      </div>
+    </div>
+
+    <div class="ecb-actions">
+      <div class="ecb-tools">
+        <button type="button" id="btn-ai-dictation" class="btn btn-sm btn-ghost" title="Dictar en el campo activo">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><rect x="5.5" y="1.5" width="5" height="8" rx="2.5"/><path d="M3 7.5a5 5 0 0010 0M8 12.5V14.5"/></svg>
+          <span class="ecb-label">Dictar</span>
+        </button>
+        <button type="button" class="btn btn-sm btn-ghost" id="btn-abrir-generador" title="Sugerir partidas desde tu catálogo">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M8 2v4M8 10v4M2 8h4M10 8h4"/><circle cx="8" cy="8" r="2.5"/></svg>
+          <span class="ecb-label">Sugerir</span>
+        </button>
+        <button type="button" class="btn btn-sm btn-ghost" id="btn-modal-receta" title="Pack de Estancia (Alt+R)">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M3 3h10v10H3z"/><path d="M6 3v10M3 6.5h10"/></svg>
+          <span class="ecb-label">Pack</span>
+        </button>
+        <button type="button" class="btn btn-sm btn-ghost iva-toggle-btn" id="btn-toggle-iva-top" title="Activar o desactivar el IVA">IVA</button>
+        <button type="button" class="btn btn-sm btn-ghost" id="btn-preview-pdf-top" title="Vista previa del PDF">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M1.5 8s2.5-4.5 6.5-4.5S14.5 8 14.5 8s-2.5 4.5-6.5 4.5S1.5 8 1.5 8z"/><circle cx="8" cy="8" r="2"/></svg>
+          <span class="ecb-label">Vista previa</span>
+        </button>
+        <button type="button" class="btn btn-sm btn-ghost" id="btn-density-toggle" title="Cambiar densidad de filas" aria-pressed="false">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M2 4h12M2 8h12M2 12h12"/></svg>
+          <span class="ecb-label">Densidad</span>
+        </button>
+      </div>
+      <span id="autosave-status" class="autosave-status" title="Estado del autoguardado"></span>
+      <button type="submit" class="btn btn-primary ecb-save" id="btn-guardar-principal">Guardar</button>
+    </div>
+  </header>
+
+  <nav class="builder-progress" aria-label="Secciones del creador">
+    <button type="button" data-scroll-builder="card-datos-generales"><span>1</span><strong>Datos</strong><small>Cliente y documento</small></button>
+    <button type="button" data-scroll-builder="builder-partidas" class="active"><span>2</span><strong>Partidas</strong><small>Capítulos y costes</small></button>
+    <button type="button" data-scroll-builder="builder-resumen"><span>3</span><strong>Revisión</strong><small>Totales y condiciones</small></button>
+  </nav>
 
   <!-- DATOS GENERALES -->
   <div class="card collapsible-card builder-general-card" id="card-datos-generales">
     <div class="card-header-toggle csp-s-4c4a58cb34" data-cotizat-click="budget-toggle-general">
       <div class="csp-s-de125207c8">
-        <h2 class="csp-s-6423fe0d33">⚙️ Datos generales y cliente</h2>
+        <h2 class="csp-s-6423fe0d33">Datos generales y cliente</h2>
         <span id="datos-generales-resumen" class="csp-s-998cfa4dbf"></span>
       </div>
-      <button type="button" id="btn-toggle-datos" class="btn btn-sm csp-s-62ebedb23a">▲ Contraer</button>
+      <button type="button" id="btn-toggle-datos" class="btn btn-sm csp-s-62ebedb23a">Contraer</button>
     </div>
     <div class="card-collapsible-content csp-s-3f453f98f8" id="datos-generales-content">
       <div class="form-grid">
@@ -130,14 +161,12 @@
         {% endif %}
         
         <div class="field field-full csp-s-fd30acedb7">
-          <label class="csp-s-af442fc30e">🎨 Opciones premium y maquetación de lujo del PDF (Opcionales):</label>
+          <label class="csp-s-af442fc30e">Opciones de maquetación del PDF</label>
           <p class="hint csp-s-60ba0ca9de">
-            Estas casillas se aplican a <strong>este presupuesto</strong>. Al guardar, pulsa
-            «👁 Ver PDF» (o descarga) para ver: la <strong>portada</strong> (página 1), el
-            <strong>resumen por capítulos</strong> (tras la cabecera), la
-            <strong>tabla de garantías</strong> (antes de las firmas) y el bloque de
-            <strong>firmas</strong> (al final). Para que los presupuestos <em>nuevos</em> las
-            traigan ya marcadas, actívalas en <strong>Configuración → Valores por defecto</strong>.
+            Estas casillas se aplican a <strong>este presupuesto</strong>. Al guardar, usa
+            «Vista previa» para comprobar portada, resumen, garantías y firmas.
+            Los valores por defecto de los presupuestos nuevos se configuran en
+            <strong>Configuración</strong>.
           </p>
           <div class="field field-full"><label>Estilo visual del PDF</label><select name="estilo_pdf"><option value="elegante" {{ 'selected' if not presupuesto or presupuesto.estilo_pdf == 'elegante' }}>Elegante</option><option value="tecnica" {{ 'selected' if presupuesto and presupuesto.estilo_pdf == 'tecnica' }}>Técnica</option><option value="minimalista" {{ 'selected' if presupuesto and presupuesto.estilo_pdf == 'minimalista' }}>Minimalista</option><option value="corporativa" {{ 'selected' if presupuesto and presupuesto.estilo_pdf == 'corporativa' }}>Corporativa</option><option value="compacta" {{ 'selected' if presupuesto and presupuesto.estilo_pdf == 'compacta' }}>Compacta</option><option value="editorial" {{ 'selected' if presupuesto and presupuesto.estilo_pdf == 'editorial' }}>Editorial</option></select></div>
           <div class="csp-s-35aa851099">
@@ -148,7 +177,7 @@
                 {% else %}
                   {{ 'checked' if cfg.con_portada_default else '' }}
                 {% endif %}>
-              🌅 Incluir Portada de Presentación de página completa
+              Incluir portada de presentación
             </label>
             <label class="csp-s-4ef216fae4">
               <input type="checkbox" name="mostrar_resumen_capitulos" value="1"
@@ -157,7 +186,7 @@
                 {% else %}
                   {{ 'checked' if cfg.mostrar_resumen_capitulos_default else '' }}
                 {% endif %}>
-              📊 Mostrar Resumen Ejecutivo de Capítulos al inicio
+              Resumen ejecutivo de capítulos al inicio
             </label>
             <label class="csp-s-4ef216fae4">
               <input type="checkbox" name="mostrar_garantias" value="1"
@@ -166,7 +195,7 @@
                 {% else %}
                   {{ 'checked' if cfg.mostrar_garantias_default else '' }}
                 {% endif %}>
-              🛡️ Incluir tabla de garantías por tipo de trabajo (pisos, albañilería, fontanería, electricidad, pintura…)
+              Tabla de garantías por tipo de trabajo
             </label>
             <label class="csp-s-4ef216fae4">
               <input type="checkbox" name="mostrar_firmas" id="chk-firmas" value="1" data-cotizat-change="budget-toggle-signature"
@@ -175,14 +204,14 @@
                 {% else %}
                   {{ 'checked' if cfg.mostrar_firmas_default else '' }}
                 {% endif %}>
-              ✍️ Mostrar bloque formal de firmas de aceptación al final
+              Bloque de firmas de aceptación al final
             </label>
-            <label class="csp-s-4ef216fae4"><input type="checkbox" name="mostrar_ahorro" value="1" {{ 'checked' if presupuesto and presupuesto.mostrar_ahorro else '' }}> 💰 Mostrar ahorro y descuento comercial</label>
-            <label class="csp-s-4ef216fae4"><input type="checkbox" name="incluir_anexos" value="1" {{ 'checked' if presupuesto and presupuesto.incluir_anexos else '' }}> 📎 Incluir los anexos PDF dentro del documento (índice + páginas al final)</label>
+            <label class="csp-s-4ef216fae4"><input type="checkbox" name="mostrar_ahorro" value="1" {{ 'checked' if presupuesto and presupuesto.mostrar_ahorro else '' }}> Mostrar ahorro y descuento comercial</label>
+            <label class="csp-s-4ef216fae4"><input type="checkbox" name="incluir_anexos" value="1" {{ 'checked' if presupuesto and presupuesto.incluir_anexos else '' }}> Incluir anexos PDF dentro del documento</label>
           </div>
           
           <div id="wrapper-firma" class="cotizat-hidden csp-s-726e8b317f">
-            <label class="csp-s-5949a3a251">✍️ Firma del cliente (para el bloque de firmas del PDF):</label>
+            <label class="csp-s-5949a3a251">Firma del cliente (para el bloque de firmas del PDF)</label>
             {% if presupuesto and presupuesto.firma_cliente %}
             <div class="csp-s-79f6faf0ac">
               <img src="{{ presupuesto.firma_cliente | archivo_url }}" alt="Firma del cliente" class="csp-s-604f99a379">
@@ -196,14 +225,14 @@
                 class="csp-s-afb0a1a28f"></canvas>
             </div>
             <div class="csp-s-a7a0396596">
-              <button type="button" class="btn btn-sm" id="btn-limpiar-firma">🧽 Limpiar</button>
+              <button type="button" class="btn btn-sm" id="btn-limpiar-firma">Limpiar</button>
               <span class="hint">Firma con el ratón o el dedo (en tablet). Se guarda junto con el presupuesto.</span>
             </div>
             <input type="hidden" name="firma_cliente" id="firma-data">
           </div>
           
           <div id="wrapper-foto-proyecto" class="csp-s-a33b8fc2ff">
-            <label class="csp-s-5949a3a251">Foto destacada del proyecto (para la portada):</label>
+            <label class="csp-s-5949a3a251">Foto destacada del proyecto (portada)</label>
             {% if presupuesto and presupuesto.foto_proyecto %}
             <div class="csp-s-79f6faf0ac">
               <img src="{{ presupuesto.foto_proyecto | archivo_url }}" alt="Foto Proyecto" class="csp-s-b1b250dca2">
@@ -225,41 +254,36 @@
   <aside class="arbol-catalogo" id="arbol-catalogo">
     <div class="arbol-head">
       <div class="arbol-titulo">
-        <span class="section-kicker">Base de datos</span>
-        <h3>Catálogo de partidas</h3>
+        <span class="section-kicker">Catálogo</span>
+        <h3>Partidas</h3>
       </div>
       <button type="button" class="arbol-toggle" id="arbol-toggle" data-cotizat-click="arbol-toggle"
               aria-expanded="true" title="Ocultar el catálogo">‹</button>
     </div>
     <div class="arbol-tools">
-      <input type="search" id="arbol-buscar" placeholder="🔍 Buscar partida…" autocomplete="off">
+      <input type="search" id="arbol-buscar" placeholder="Buscar partida…" autocomplete="off">
       <div class="arbol-tools-row">
         <span id="arbol-contador" class="arbol-contador">—</span>
         <span class="arbol-acciones">
-          <button type="button" class="btn btn-xs" data-cotizat-click="arbol-expandir" title="Abrir todas las ramas">Abrir</button>
-          <button type="button" class="btn btn-xs" data-cotizat-click="arbol-plegar" title="Cerrar todas las ramas">Cerrar</button>
+          <button type="button" class="btn btn-xs btn-ghost" data-cotizat-click="arbol-expandir" title="Abrir todas las ramas">Abrir</button>
+          <button type="button" class="btn btn-xs btn-ghost" data-cotizat-click="arbol-plegar" title="Cerrar todas las ramas">Cerrar</button>
         </span>
       </div>
     </div>
     <div class="arbol-body"></div>
-    <p class="arbol-pie hint">Arrastra una partida sobre el capítulo donde la quieras, o pulsa <kbd>Enter</kbd> para añadirla al último.</p>
+    <p class="arbol-pie hint">Arrastra sobre un capítulo, o <kbd>Enter</kbd> para añadir al último.</p>
   </aside>
 
   <section class="builder-workspace" id="builder-partidas">
   <div class="builder-workspace-head">
-    <div><span class="section-kicker">Contenido del presupuesto</span><h2>Capítulos y partidas</h2><p>Añade desde el catálogo, importa Excel o crea una partida y abre su ficha completa para editarla.</p></div>
-    <div class="builder-workspace-count"><strong id="builder-item-count">0</strong><span>partidas</span></div>
-  </div>
-  <div class="builder-toolbar-wrap">
-    <div class="constructor-toolbar">
-      <span class="toolbar-title">Herramientas</span>
-      <span class="toolbar-hint" title="Atajos de teclado del constructor (escritura rápida)">
-        ⌨ <kbd>Enter</kbd> pasa de nombre→cantidad→precio
-        · <kbd>Alt</kbd>+<kbd>P</kbd> partida · <kbd>Alt</kbd>+<kbd>C</kbd> capítulo
-        · <kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>K</kbd> buscar · <kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>Enter</kbd> guardar
-      </span>
+    <div>
+      <span class="section-kicker">Presupuesto</span>
+      <h2>Capítulos y partidas</h2>
+      <p class="hint">Arrastra desde el catálogo, importa Excel o crea partidas a mano.</p>
+    </div>
+    <div class="builder-workspace-tools">
       <div class="catalog-search-wrap">
-        <input type="text" id="buscar-partida" placeholder="🔍 Buscar en catálogo de partidas…" autocomplete="off">
+        <input type="text" id="buscar-partida" placeholder="Buscar…  Ctrl+K" autocomplete="off" aria-label="Buscar en catálogo" readonly data-cotizat-click="open-spotlight" title="Abrir buscador del catálogo (Ctrl+K)">
         <div id="catalogo-partidas">
           {% if partidas_catalogo %}
             {% for p in partidas_catalogo %}
@@ -278,70 +302,74 @@
       </div>
       {% if plantillas %}
       <select id="select-plantilla" class="select-inline" title="Cargar plantilla">
-        <option value="">🧩 Plantilla…</option>
+        <option value="">Plantilla…</option>
         {% for t in plantillas %}
         <option value="{{ t.id }}">{{ t.nombre }}</option>
         {% endfor %}
       </select>
       {% endif %}
-      <button type="button" class="btn btn-sm btn-excel" id="btn-subir-excel" title="Subir un Excel y añadir sus partidas sin salir del presupuesto">⇧ Subir Excel</button>
-      <button type="button" class="btn btn-sm" id="btn-pegar-excel" title="Pegar filas desde Excel (copiar y pegar)">📋 Pegar de Excel</button>
-      <button type="button" class="btn btn-sm csp-s-941e073ac1" id="btn-modal-receta-seccion" title="Alt+R — Inserta habitaciones enteras de reforma escaladas al tamaño de tu estancia">⚡ Pack de Estancia</button>
-      <button type="button" class="btn btn-sm" id="btn-preview-pdf" title="Vista previa del PDF">👁 Vista previa</button>
-      <span id="autosave-status" class="autosave-status" title="Autoguardado: cada cambio se guarda al instante en este equipo y se envía al servidor cuando dejas de editar."></span>
-      <button type="button" class="btn btn-xs autosave-save-now" id="btn-autosave-save-now" title="Forzar guardado ahora en el servidor" aria-label="Guardar ahora">💾 Guardar ahora</button>
+      <button type="button" class="btn btn-sm" id="btn-subir-excel" title="Importar Excel al presupuesto">Importar Excel</button>
+      <button type="button" class="btn btn-sm btn-ghost" id="btn-pegar-excel" title="Pegar filas desde Excel">Pegar</button>
+      <button type="button" class="btn btn-sm btn-ghost" id="btn-modal-receta-seccion" title="Pack de Estancia (Alt+R)">Pack</button>
+      <button type="button" class="btn btn-sm btn-ghost" id="btn-preview-pdf" title="Vista previa del PDF">Vista previa</button>
+      <button type="button" class="btn btn-xs btn-ghost autosave-save-now" id="btn-autosave-save-now" title="Forzar guardado del borrador" aria-label="Guardar borrador ahora">Borrador</button>
     </div>
   </div>
 
   <div id="capitulos"></div>
 
-  <button type="button" class="btn-add-capitulo" id="btn-agregar-capitulo"><span>＋</span> Agregar otro capítulo</button>
+  <button type="button" class="btn-add-capitulo" id="btn-agregar-capitulo"><span>+</span> Agregar capítulo</button>
   </section>
   </div>
 
-  <!-- TOTALES -->
-  <div id="builder-resumen" class="builder-review-grid">
-  <div class="card card-totales builder-totals-card">
-    <div class="tot-linea"><span>Subtotal incluido</span><strong id="ui-subtotal">—</strong></div>
-    <div class="tot-linea cotizat-hidden" id="ui-fila-opcional"><span>Opcionales disponibles</span><strong id="ui-opcional">—</strong></div>
-    <div class="tot-linea cotizat-hidden" id="ui-fila-alternativas"><span>Alternativas disponibles</span><strong id="ui-alternativas">—</strong></div>
-    <div class="tot-linea cotizat-hidden" id="ui-fila-obra"><span>Total obra / partidas</span><strong id="ui-obra">—</strong></div>
-    <div class="tot-linea cotizat-hidden" id="ui-fila-productos"><span>Total productos</span><strong id="ui-productos">—</strong></div>
-    <div class="tot-linea cotizat-hidden" id="ui-fila-adicionales"><span>Costes adicionales</span><strong id="ui-adicionales">—</strong></div>
-    <div class="tot-linea" id="ui-fila-desc"><span>Descuento</span><strong id="ui-descuento">—</strong></div>
-    <div class="tot-linea"><span>IVA <button type="button" class="btn btn-xs iva-toggle-btn" id="btn-toggle-iva-total" title="Activar o desactivar el IVA">ON</button></span><strong id="ui-iva">—</strong></div>
-    <div class="tot-linea cotizat-hidden" id="ui-fila-beneficio-obra"><span>Beneficio obra</span><strong id="ui-beneficio-obra" class="csp-s-5516851989">—</strong></div>
-    <div class="tot-linea cotizat-hidden" id="ui-fila-margen-obra"><span>Margen obra</span><strong id="ui-margen-obra" class="csp-s-5516851989">—</strong></div>
-    <div class="tot-linea cotizat-hidden" id="ui-fila-beneficio-productos"><span>Beneficio productos</span><strong id="ui-beneficio-productos" class="csp-s-5516851989">—</strong></div>
-    <div class="tot-linea cotizat-hidden" id="ui-fila-margen-productos"><span>Margen productos</span><strong id="ui-margen-productos" class="csp-s-5516851989">—</strong></div>
-    <div class="tot-linea cotizat-hidden" id="ui-fila-beneficio"><span>Beneficio total estimado</span><strong id="ui-beneficio" class="csp-s-5516851989">—</strong></div>
-    <div class="tot-linea cotizat-hidden" id="ui-fila-margen"><span>Margen total</span><strong id="ui-margen" class="csp-s-5516851989">—</strong></div>
-    <div class="tot-linea tot-tiempo"><span>⏱ Tiempo estimado de obra <small class="hint">(rendimientos de mano de obra)</small></span><strong id="ui-tiempo">—</strong></div>
-    <div class="tot-tiempo-nota hint csp-s-88b066e08c" id="ui-tiempo-nota"></div>
-    <div class="tot-linea tot-final"><span>TOTAL</span><strong id="ui-total">—</strong></div>
-  </div>
-
-  <!-- TEXTO -->
-  <div class="card">
-    <h2>Texto del presupuesto</h2>
-    <div class="form-grid">
-      <div class="field">
-        <label>Información adicional (alcance del trabajo)</label>
-        <textarea name="notas" rows="4" placeholder="Descripción general, inclusiones y exclusiones…">{{ presupuesto.notas if presupuesto else cfg.notas_default }}</textarea>
+  <!-- TOTALES (a la derecha, solos) + TEXTO debajo a ancho completo -->
+  <div id="builder-resumen" class="builder-review">
+    <div class="builder-totals-wrap">
+      <div class="card card-totales builder-totals-card">
+        <div class="totales-head">
+          <span class="section-kicker">Resumen económico</span>
+          <h2>Totales de la obra</h2>
+        </div>
+        <div class="tot-linea"><span>Subtotal incluido</span><strong id="ui-subtotal">—</strong></div>
+        <div class="tot-linea cotizat-hidden" id="ui-fila-opcional"><span>Opcionales disponibles</span><strong id="ui-opcional">—</strong></div>
+        <div class="tot-linea cotizat-hidden" id="ui-fila-alternativas"><span>Alternativas disponibles</span><strong id="ui-alternativas">—</strong></div>
+        <div class="tot-linea cotizat-hidden" id="ui-fila-obra"><span>Total obra / partidas</span><strong id="ui-obra">—</strong></div>
+        <div class="tot-linea cotizat-hidden" id="ui-fila-productos"><span>Total productos</span><strong id="ui-productos">—</strong></div>
+        <div class="tot-linea cotizat-hidden" id="ui-fila-adicionales"><span>Costes adicionales</span><strong id="ui-adicionales">—</strong></div>
+        <div class="tot-linea" id="ui-fila-desc"><span>Descuento</span><strong id="ui-descuento">—</strong></div>
+        <div class="tot-linea"><span>IVA <button type="button" class="btn btn-xs iva-toggle-btn" id="btn-toggle-iva-total" title="Activar o desactivar el IVA">ON</button></span><strong id="ui-iva">—</strong></div>
+        <div class="tot-linea cotizat-hidden" id="ui-fila-beneficio-obra"><span>Beneficio obra</span><strong id="ui-beneficio-obra" class="csp-s-5516851989">—</strong></div>
+        <div class="tot-linea cotizat-hidden" id="ui-fila-margen-obra"><span>Margen obra</span><strong id="ui-margen-obra" class="csp-s-5516851989">—</strong></div>
+        <div class="tot-linea cotizat-hidden" id="ui-fila-beneficio-productos"><span>Beneficio productos</span><strong id="ui-beneficio-productos" class="csp-s-5516851989">—</strong></div>
+        <div class="tot-linea cotizat-hidden" id="ui-fila-margen-productos"><span>Margen productos</span><strong id="ui-margen-productos" class="csp-s-5516851989">—</strong></div>
+        <div class="tot-linea cotizat-hidden" id="ui-fila-beneficio"><span>Beneficio total estimado</span><strong id="ui-beneficio" class="csp-s-5516851989">—</strong></div>
+        <div class="tot-linea cotizat-hidden" id="ui-fila-margen"><span>Margen total</span><strong id="ui-margen" class="csp-s-5516851989">—</strong></div>
+        <div class="tot-linea tot-tiempo"><span>Tiempo estimado de obra <small class="hint">(rendimientos de mano de obra)</small></span><strong id="ui-tiempo">—</strong></div>
+        <div class="tot-tiempo-nota hint csp-s-88b066e08c" id="ui-tiempo-nota"></div>
+        <div class="tot-linea tot-final"><span>TOTAL</span><strong id="ui-total">—</strong></div>
       </div>
-      <div class="field">
-        <label>Condiciones</label>
-        <textarea name="condiciones" rows="4" placeholder="Forma de pago, anticipo, plazos, garantía…">{{ presupuesto.condiciones if presupuesto else cfg.condiciones_default }}</textarea>
+    </div>
+
+    <div class="card builder-texto-card">
+      <h2>Texto del presupuesto</h2>
+      <div class="form-grid">
+        <div class="field">
+          <label>Información adicional (alcance del trabajo)</label>
+          <textarea name="notas" rows="4" placeholder="Descripción general, inclusiones y exclusiones…">{{ presupuesto.notas if presupuesto else cfg.notas_default }}</textarea>
+        </div>
+        <div class="field">
+          <label>Condiciones</label>
+          <textarea name="condiciones" rows="4" placeholder="Forma de pago, anticipo, plazos, garantía…">{{ presupuesto.condiciones if presupuesto else cfg.condiciones_default }}</textarea>
+        </div>
       </div>
     </div>
   </div>
-  </div>
 
   <div class="form-actions budget-save-dock">
-    <div class="save-dock-copy"><strong>¿Todo listo?</strong><span>El presupuesto y las partidas nuevas quedarán guardados.</span></div>
-    <button class="btn btn-primary" type="submit">💾 Guardar presupuesto</button>
-    <button type="button" class="btn" id="btn-guardar-plantilla">🧩 Guardar como plantilla</button>
-    <a class="btn" href="{{ '/presupuestos/' ~ presupuesto.id if presupuesto else '/presupuestos' }}">Cancelar</a>
+    <div class="save-dock-copy"><strong>Revisión final</strong><span>Se guardarán el presupuesto y las partidas nuevas del catálogo.</span></div>
+    <button class="btn btn-primary" type="submit">Guardar presupuesto</button>
+    <button type="button" class="btn btn-ghost" id="btn-guardar-plantilla">Guardar como plantilla</button>
+    <a class="btn btn-ghost" href="{{ '/presupuestos/' ~ presupuesto.id if presupuesto else '/presupuestos' }}">Cancelar</a>
   </div>
 </form>
 
@@ -438,7 +466,7 @@
   <div class="modal modal-import-excel">
     <div class="modal-head">
       <div>
-        <h3 id="titulo-importar-excel">⇧ Añadir partidas desde Excel</h3>
+        <h3 id="titulo-importar-excel">Añadir partidas desde Excel</h3>
         <p class="hint modal-subtitle">Se añadirán aquí y se guardarán también en tu catálogo, sin cambiar de pantalla.</p>
       </div>
       <button type="button" class="btn btn-ghost" data-close aria-label="Cerrar">✕</button>
@@ -446,7 +474,9 @@
 
     <div id="excel-inline-source">
       <label class="excel-drop-zone" id="excel-drop-zone" for="excel-inline-file">
-        <span class="excel-drop-icon">📊</span>
+        <span class="excel-drop-icon" aria-hidden="true">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5M8 13h8M8 17h5"/></svg>
+        </span>
         <strong>Selecciona o arrastra tu Excel</strong>
         <span>Archivos .xlsx o .csv · puedes seleccionar varios descompuestos CYPE</span>
         <input type="file" id="excel-inline-file" multiple accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
@@ -501,7 +531,7 @@
 <div class="modal-overlay" id="modal-pegar">
   <div class="modal">
     <div class="modal-head">
-      <h3>📋 Pegar partidas desde Excel</h3>
+      <h3>Pegar partidas desde Excel</h3>
       <button type="button" class="btn btn-ghost" data-close>✕</button>
     </div>
     <p class="hint csp-s-f18d2d509a">
@@ -521,9 +551,9 @@
 <div class="modal-overlay modal-preview" id="modal-preview">
   <div class="modal modal-lg">
     <div class="modal-head">
-      <h3>👁 Vista previa del PDF</h3>
+      <h3>Vista previa del PDF</h3>
       <div class="actions">
-        <button type="button" class="btn btn-sm" id="btn-refresh-preview" title="Actualizar">🔄 Actualizar</button>
+        <button type="button" class="btn btn-sm" id="btn-refresh-preview" title="Actualizar">Actualizar</button>
         <button type="button" class="btn btn-ghost" data-close>✕</button>
       </div>
     </div>
@@ -535,7 +565,7 @@
 <div class="modal-overlay" id="modal-plantilla">
   <div class="modal">
     <div class="modal-head">
-      <h3>🧩 Guardar como plantilla</h3>
+      <h3>Guardar como plantilla</h3>
       <button type="button" class="btn btn-ghost" data-close>✕</button>
     </div>
     <p class="hint csp-s-f18d2d509a">Guarda la estructura actual (capítulos, partidas y mediciones) para reutilizarla en presupuestos futuros.</p>
@@ -555,7 +585,7 @@
   <div class="modal modal-lg csp-s-d480531e7f">
     <div class="modal-head">
       <div>
-        <h3>⚡ Packs de Estancia (Recetas de Reforma)</h3>
+        <h3>Packs de Estancia</h3>
         <p class="hint modal-subtitle">Selecciona una estancia y los m² de tu habitación. El sistema insertará el capítulo completo y calculará proporcionalmente sus partidas.</p>
       </div>
       <button type="button" class="btn btn-ghost" data-close>✕</button>
@@ -573,7 +603,7 @@
           <input type="number" step="0.1" id="input-medida-pack" class="input csp-s-331aa27b27" value="10.0">
         </div>
         <div>
-          <button type="button" class="btn btn-primary csp-s-14dfcb7cc9" id="btn-insertar-pack-estancia">⚡ Insertar en Presupuesto</button>
+          <button type="button" class="btn btn-primary csp-s-14dfcb7cc9" id="btn-insertar-pack-estancia">Insertar en presupuesto</button>
         </div>
       </div>
 
@@ -607,7 +637,7 @@
       </div>
     </div>
     <div class="modal-footer csp-s-a25ae6e557">
-      <a href="/recetas" target="_blank" class="muted csp-s-06e5235951">⚙️ Administrar catálogo de packs</a>
+      <a href="/recetas" target="_blank" class="muted csp-s-06e5235951">Administrar catálogo de packs</a>
       <button type="button" class="btn" data-close>Cerrar</button>
     </div>
   </div>
@@ -617,12 +647,12 @@
 <div class="modal-overlay" id="modal-guardar-capitulo-receta">
   <div class="modal csp-s-82c063887d">
     <div class="modal-head">
-      <h3>💾 Guardar Capítulo como Pack de Estancia</h3>
+      <h3>Guardar capítulo como pack de estancia</h3>
       <button type="button" class="btn btn-ghost" data-close>✕</button>
     </div>
     <div class="modal-body csp-s-deea30875a">
       <p class="muted csp-s-2346c4facf">
-        Este capítulo se guardará en tu catálogo de <strong>⚡ Packs de Estancia</strong> y podrás insertarlo con un clic (Alt+R) en cualquier presupuesto futuro.
+        Este capítulo se guardará en tu catálogo de <strong>Packs de Estancia</strong> y podrás insertarlo con un clic (Alt+R) en cualquier presupuesto futuro.
       </p>
       <div class="csp-s-68227a9129">
         <label class="csp-s-b44d0ad3fc">Nombre del Pack *</label>
@@ -661,7 +691,7 @@
     </div>
     <div class="modal-footer csp-s-05337f4c26">
       <button type="button" class="btn" data-close>Cancelar</button>
-      <button type="button" class="btn btn-primary" id="btn-confirmar-guardar-pack">💾 Guardar en librería de Packs</button>
+      <button type="button" class="btn btn-primary" id="btn-confirmar-guardar-pack">Guardar en librería de packs</button>
     </div>
   </div>
 </div>
@@ -694,14 +724,14 @@
 <div class="modal-overlay" id="modal-atajos">
   <div class="modal">
     <div class="modal-head">
-      <h3>⌨️ Atajos de teclado</h3>
+      <h3>Atajos de teclado</h3>
       <button type="button" class="btn btn-ghost" data-close>✕</button>
     </div>
     <div class="atajos-grid">
       <div><kbd>Enter</kbd> Pasa de nombre → cantidad → precio</div>
       <div><kbd>Alt</kbd>+<kbd>P</kbd> Añadir partida</div>
       <div><kbd>Alt</kbd>+<kbd>C</kbd> Añadir capítulo</div>
-      <div><kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>K</kbd> o <kbd>/</kbd> Buscar en el catálogo</div>
+      <div><kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>K</kbd> o <kbd>/</kbd> Spotlight del catálogo</div>
       <div><kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>M</kbd> Cambiar moneda (USD ↔ Bs)</div>
       <div><kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>Z</kbd> Deshacer cambios estructurales</div>
       <div><kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>Enter</kbd> Guardar presupuesto</div>
@@ -919,6 +949,7 @@
 <script src="/static/js/editor/generador.js"></script>
 <script src="/static/js/editor/recetas_modal.js"></script>
 <script src="/static/js/editor/arbol_catalogo.js"></script>
+<script src="/static/js/editor/spotlight.js"></script>
 <script nonce="{{ request.state.csp_nonce }}">
   (function () {
     var chk = document.getElementById('usar-funciones-avanzadas');
@@ -940,11 +971,11 @@
     
     if (CotizatStyles.isHidden(content)) {
       CotizatStyles.set(content, "display", '');
-      btn.textContent = '▲ Contraer';
+      btn.textContent = 'Contraer';
       CotizatStyles.set(card, "borderColor", 'var(--border)');
     } else {
       CotizatStyles.set(content, "display", 'none');
-      btn.textContent = '▼ Expandir';
+      btn.textContent = 'Expandir';
       CotizatStyles.set(card, "borderColor", 'var(--accent)');
     }
   }
@@ -1060,11 +1091,16 @@
     
     var estado = selectEstado ? selectEstado.options[selectEstado.selectedIndex].text : 'Borrador';
     
-    var resumenText = "👤 " + cliente + "  |  🏗️ " + titulo + "  |  📅 " + fecha + "  |  💵 " + moneda + "  |  🏷️ " + estado;
-    
+    var resumenText = cliente + " · " + titulo + " · " + fecha + " · " + moneda + " · " + estado;
+
     var resSpan = document.getElementById('datos-generales-resumen');
     if (resSpan) {
       resSpan.textContent = resumenText;
+    }
+    var docTitle = document.getElementById('ecb-doc-title');
+    if (docTitle && inputTitulo) {
+      var t = inputTitulo.value.trim();
+      if (t) docTitle.textContent = t;
     }
   }
 
@@ -1101,6 +1137,37 @@
     var selectCliente = document.querySelector('select[name="client_id"]');
     if (selectCliente && selectCliente.value !== "") {
       toggleDatosGenerales();
+    }
+
+    // Densidad compacta / cómoda (persiste en localStorage)
+    var densityBtn = document.getElementById('btn-density-toggle');
+    if (densityBtn) {
+      var syncDensity = function () {
+        var compact = document.body.classList.contains('density-compact');
+        densityBtn.setAttribute('aria-pressed', compact ? 'true' : 'false');
+        densityBtn.title = compact ? 'Cambiar a densidad cómoda' : 'Cambiar a densidad compacta';
+      };
+      densityBtn.addEventListener('click', function () {
+        document.body.classList.toggle('density-compact');
+        localStorage.setItem(
+          'editor-density',
+          document.body.classList.contains('density-compact') ? 'compact' : 'comfy'
+        );
+        syncDensity();
+      });
+      syncDensity();
+    }
+
+    // El input de búsqueda abre el Spotlight (⌘K)
+    var buscar = document.getElementById('buscar-partida');
+    if (buscar) {
+      buscar.addEventListener('focus', function () {
+        buscar.blur();
+        if (window.EDITOR && window.EDITOR.abrirSpotlight) window.EDITOR.abrirSpotlight();
+      });
+      buscar.addEventListener('click', function () {
+        if (window.EDITOR && window.EDITOR.abrirSpotlight) window.EDITOR.abrirSpotlight();
+      });
     }
   });
 </script>

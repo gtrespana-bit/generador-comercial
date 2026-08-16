@@ -1,10 +1,9 @@
 /* ============================================================================
-   Editor — Totales y barra sticky mejorada
+   Editor — Indicadores de la command bar (margen, descuento, coste, tiempo)
 
-   - Barra de total fijo con indicadores visuales
-   - Progress bar del descuento
-   - Indicador de margen (semáforo)
-   - Sparkline simple del coste vs precio por capítulo
+   La barra de comando vive en el HTML del editor (form.html). Este módulo
+   solo actualiza los chips de margen / descuento / coste / tiempo. Ya no
+   crea una segunda barra sticky (antes se duplicaba con la del template).
    ============================================================================ */
 
 (function () {
@@ -12,234 +11,133 @@
 
   var editor = window.EDITOR;
 
-  // -------------------------------------------------------------------------
-  // Barra sticky de totales
-  // -------------------------------------------------------------------------
+  function ensureMetaChips() {
+    var meta = document.getElementById("editor-command-meta");
+    if (!meta) return;
 
-  function renderStickyTotal() {
-    var existing = document.getElementById("sticky-total-bar");
-    if (existing) existing.remove();
+    // Descuento (se crea bajo demanda si no existe)
+    if (!document.getElementById("descuento-text")) {
+      var descuentoChip = document.createElement("span");
+      descuentoChip.className = "ecb-chip muted";
+      descuentoChip.id = "descuento-chip";
+      descuentoChip.innerHTML =
+        '<span id="descuento-fill" class="ecb-descuento-fill" hidden></span>' +
+        '<span id="descuento-text"></span>';
+      meta.appendChild(descuentoChip);
+    }
 
-    var bar = document.createElement("div");
-    bar.className = "sticky-total";
-    bar.id = "sticky-total-bar";
-    CotizatStyles.setCssText(bar, editor.stickyTotalStyles || "");
+    if (!document.getElementById("costo-badge")) {
+      var costo = document.createElement("span");
+      costo.id = "costo-badge";
+      costo.className = "ecb-chip muted";
+      costo.textContent = "Costo: —";
+      meta.appendChild(costo);
+    }
 
-    // Contenedor izquierdo: total grande
-    var left = document.createElement("div");
-    CotizatStyles.setCssText(left, "display:flex; align-items:center; gap:12px;");
-
-    var label = document.createElement("span");
-    label.textContent = "TOTAL";
-    CotizatStyles.setCssText(label, "font-size:0.75rem; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em;");
-    left.appendChild(label);
-
-    var totalVal = document.createElement("strong");
-    totalVal.id = "sticky-total-val";
-    CotizatStyles.setCssText(totalVal, "font-size:1.4rem; color:var(--accent); font-weight:700;");
-    left.appendChild(totalVal);
-
-    bar.appendChild(left);
-
-    // Indicadores de margen + descuento
-    var indicators = document.createElement("div");
-    CotizatStyles.setCssText(indicators, "display:flex; align-items:center; gap:16px;");
-
-    // Indicador de margen (semáforo)
-    var margenIndicator = document.createElement("div");
-    margenIndicator.id = "margen-indicator";
-    CotizatStyles.setCssText(margenIndicator, "display:flex; align-items:center; gap:6px; font-size:0.8rem;");
-
-    var margenDot = document.createElement("span");
-    margenDot.className = "margen-dot";
-    CotizatStyles.setCssText(margenDot, "width:10px; height:10px; border-radius:50%; background:var(--border-strong);");
-    margenIndicator.appendChild(margenDot);
-
-    var margenText = document.createElement("span");
-    margenText.id = "margen-text";
-    CotizatStyles.setCssText(margenText, "color:var(--text-soft);");
-    margenIndicator.appendChild(margenText);
-
-    indicators.appendChild(margenIndicator);
-
-    // Barra de progreso del descuento
-    var descuentoBar = document.createElement("div");
-    descuentoBar.className = "descuento-bar";
-    CotizatStyles.setCssText(descuentoBar, "display:flex; align-items:center; gap:6px; font-size:0.72rem; color:var(--text-muted);");
-
-    var descuentoTrack = document.createElement("div");
-    CotizatStyles.setCssText(descuentoTrack, "width:60px; height:4px; background:var(--border); border-radius:2px; overflow:hidden;");
-
-    var descuentoFill = document.createElement("div");
-    descuentoFill.id = "descuento-fill";
-    CotizatStyles.setCssText(descuentoFill, "height:100%; background:var(--accent); width:0%; border-radius:2px; transition: width 0.3s ease, background 0.3s ease;");
-
-    descuentoTrack.appendChild(descuentoFill);
-    descuentoBar.appendChild(descuentoTrack);
-
-    var descuentoText = document.createElement("span");
-    descuentoText.id = "descuento-text";
-    descuentoBar.appendChild(descuentoText);
-
-    indicators.appendChild(descuentoBar);
-
-    // Coste vs precio (mini gráfico)
-    var costoBadge = document.createElement("div");
-    costoBadge.id = "costo-badge";
-    CotizatStyles.setCssText(costoBadge, "display:flex; align-items:center; gap:4px; font-size:0.72rem; color:var(--text-muted);");
-    costoBadge.textContent = "Costo: --";
-    indicators.appendChild(costoBadge);
-
-    // Tiempo estimado de obra (lo actualiza editor/tiempos.js)
-    var tiempoBadge = document.createElement("div");
-    tiempoBadge.id = "tiempo-badge";
-    CotizatStyles.setCssText(tiempoBadge, "display:flex; align-items:center; gap:4px; font-size:0.72rem; color:var(--text-muted); white-space:nowrap;");
-    tiempoBadge.textContent = "⏱ —";
-    indicators.appendChild(tiempoBadge);
-
-    bar.appendChild(indicators);
-
-    // Pegar al contenedor correcto
-    var toolbar = document.querySelector(".constructor-toolbar");
-    if (toolbar) {
-      toolbar.parentNode.insertBefore(bar, toolbar.nextSibling);
-    } else {
-      var cont = document.querySelector(".content") || document.body;
-      cont.insertBefore(bar, cont.firstChild);
+    if (!document.getElementById("tiempo-badge")) {
+      var tiempo = document.createElement("span");
+      tiempo.id = "tiempo-badge";
+      tiempo.className = "ecb-chip muted";
+      tiempo.textContent = "—";
+      meta.appendChild(tiempo);
     }
   }
 
-  // -------------------------------------------------------------------------
-  // Actualizar totales en sticky
-  // -------------------------------------------------------------------------
-
   function actualizarStickyTotal(totals) {
+    ensureMetaChips();
+
     var totalEl = document.getElementById("sticky-total-val");
     var margenEl = document.getElementById("margen-text");
     var margenDot = document.querySelector("#margen-indicator .margen-dot");
     var descuentoFill = document.getElementById("descuento-fill");
     var descuentoText = document.getElementById("descuento-text");
+    var descuentoChip = document.getElementById("descuento-chip");
     var costoBadge = document.getElementById("costo-badge");
 
-    if (totalEl) {
+    if (totalEl && editor.FMT) {
       totalEl.textContent = editor.FMT.fmt(totals.total, totals.moneda);
     }
 
     if (margenEl) {
-      // El semáforo de la barra debe medir la obra, no los productos de paso
-      // (cerámica, calentadores, electrodomésticos) que apenas dejan margen.
+      // El semáforo mide la obra, no los productos de paso.
       var conProductos = (totals.total_productos || 0) > 0;
       var margenPct = conProductos ? (totals.margen_obra_pct || 0) : (totals.margen_pct || 0);
       var margenAbs = conProductos ? (totals.margen_obra || 0) : (totals.margen || 0);
-      var etiqueta = conProductos ? "Margen obra " : "Margen ";
+      var etiqueta = conProductos ? "Obra " : "Margen ";
 
       if (margenPct >= 20) {
-        margenEl.textContent = "✅ " + etiqueta + margenPct.toFixed(1) + "%";
-        if (margenDot) CotizatStyles.set(margenDot, "background", "#10b981");
+        margenEl.textContent = etiqueta + margenPct.toFixed(1) + "%";
+        if (margenDot) {
+          margenDot.className = "margen-dot ok";
+          CotizatStyles.set(margenDot, "background", "");
+        }
       } else if (margenPct >= 10) {
-        margenEl.textContent = "⚠ " + etiqueta + margenPct.toFixed(1) + "%";
-        if (margenDot) CotizatStyles.set(margenDot, "background", "#f59e0b");
+        margenEl.textContent = etiqueta + margenPct.toFixed(1) + "%";
+        if (margenDot) {
+          margenDot.className = "margen-dot warn";
+          CotizatStyles.set(margenDot, "background", "");
+        }
       } else if (margenPct > 0) {
-        margenEl.textContent = "📉 " + etiqueta + margenPct.toFixed(1) + "%";
-        if (margenDot) CotizatStyles.set(margenDot, "background", "#e11d48");
+        margenEl.textContent = etiqueta + margenPct.toFixed(1) + "%";
+        if (margenDot) {
+          margenDot.className = "margen-dot bad";
+          CotizatStyles.set(margenDot, "background", "");
+        }
       } else if (margenAbs < 0) {
-        margenEl.textContent = "❌ Pérdida obra -" + Math.abs(margenPct).toFixed(1) + "%";
-        if (margenDot) CotizatStyles.set(margenDot, "background", "#e11d48");
+        margenEl.textContent = "Pérdida " + Math.abs(margenPct).toFixed(1) + "%";
+        if (margenDot) {
+          margenDot.className = "margen-dot bad";
+          CotizatStyles.set(margenDot, "background", "");
+        }
       } else {
         margenEl.textContent = "—";
-        if (margenDot) CotizatStyles.set(margenDot, "background", "var(--border-strong)");
+        if (margenDot) {
+          margenDot.className = "margen-dot";
+          CotizatStyles.set(margenDot, "background", "");
+        }
       }
       margenEl.title = conProductos
-        ? "Margen real de la obra sin contar productos comerciales. Total: " + (totals.margen_pct || 0).toFixed(1) + "%"
+        ? "Margen real de la obra sin productos. Total: " + (totals.margen_pct || 0).toFixed(1) + "%"
         : "Margen total del presupuesto";
     }
 
-    if (descuentoFill && descuentoText) {
+    if (descuentoText) {
       var descuentoPct = totals.descuento_pct || 0;
-      var maxDescuento = 50; // referencia visual
-      var pctVisual = Math.min((descuentoPct / maxDescuento) * 100, 100);
-      CotizatStyles.set(descuentoFill, "width", pctVisual + "%");
-
-      if (descuentoPct > 15) {
-        CotizatStyles.set(descuentoFill, "background", "#e11d48");
-      } else if (descuentoPct > 10) {
-        CotizatStyles.set(descuentoFill, "background", "#f59e0b");
+      if (descuentoPct > 0) {
+        descuentoText.textContent = "−" + descuentoPct.toFixed(1) + "%";
+        if (descuentoChip) descuentoChip.hidden = false;
+        if (descuentoFill) {
+          var pctVisual = Math.min((descuentoPct / 50) * 100, 100);
+          CotizatStyles.set(descuentoFill, "width", pctVisual + "%");
+          descuentoFill.hidden = false;
+          if (descuentoPct > 15) descuentoFill.className = "ecb-descuento-fill bad";
+          else if (descuentoPct > 10) descuentoFill.className = "ecb-descuento-fill warn";
+          else descuentoFill.className = "ecb-descuento-fill";
+        }
       } else {
-        CotizatStyles.set(descuentoFill, "background", "var(--accent)");
+        descuentoText.textContent = "";
+        if (descuentoChip) descuentoChip.hidden = true;
       }
-
-      descuentoText.textContent = descuentoPct > 0 ? "−" + descuentoPct.toFixed(1) + "%" : "";
     }
 
     if (costoBadge) {
       var costeTotal = totals.coste_interno || 0;
       var totalVenta = totals.total || 0;
-      if (costeTotal > 0) {
+      if (costeTotal > 0 && editor.FMT) {
         var costoPct = totalVenta > 0 ? (costeTotal / totalVenta * 100) : 0;
-        costoBadge.textContent = "Costo: " + editor.FMT.fmt(costeTotal, totals.moneda) + " (" + costoPct.toFixed(1) + "%)";
+        costoBadge.textContent =
+          "Costo " + editor.FMT.fmt(costeTotal, totals.moneda) +
+          " · " + costoPct.toFixed(0) + "%";
+        costoBadge.hidden = false;
       } else {
-        costoBadge.textContent = "Costo: —";
+        costoBadge.textContent = "";
+        costoBadge.hidden = true;
       }
     }
   }
 
-  // -------------------------------------------------------------------------
-  // Sparkline simple para capítulo (costo vs precio)
-  // -------------------------------------------------------------------------
-
-  function crearSparkline(canvas, datos) {
-    if (!canvas || !datos || datos.length < 2) return;
-
-    var ctx = canvas.getContext("2d");
-    var rect = canvas.parentElement.getBoundingClientRect();
-    var width = Math.min(rect.width || 200, 120);
-    var height = 24;
-
-    canvas.width = width * 2;
-    canvas.height = height * 2;
-    CotizatStyles.set(canvas, "width", width + "px");
-    CotizatStyles.set(canvas, "height", height + "px");
-    ctx.scale(2, 2);
-
-    ctx.clearRect(0, 0, width, height);
-
-    var max = Math.max.apply(null, datos.map(function (d) { return Math.max(d.precio, d.costo); }));
-    var min = Math.min.apply(null, datos.map(function (d) { return Math.min(d.precio, d.costo); }));
-    var range = max - min || 1;
-
-    // Dibujar precio
-    ctx.beginPath();
-    ctx.strokeStyle = "#0d9488";
-    ctx.lineWidth = 2;
-    datos.forEach(function (d, i) {
-      var x = (i / (datos.length - 1)) * width;
-      var y = height - ((d.precio - min) / range) * (height - 4) - 2;
-      if (i === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
-    });
-    ctx.stroke();
-
-    // Dibujar costo
-    ctx.beginPath();
-    ctx.strokeStyle = "#e11d48";
-    ctx.lineWidth = 1.5;
-    ctx.setLineDash([2, 2]);
-    datos.forEach(function (d, i) {
-      var x = (i / (datos.length - 1)) * width;
-      var y = height - ((d.costo - min) / range) * (height - 4) - 2;
-      if (i === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
-    });
-    ctx.stroke();
-    ctx.setLineDash([]);
-  }
-
-  // -------------------------------------------------------------------------
-  // Inicialización
-  // -------------------------------------------------------------------------
-
   function init() {
-    renderStickyTotal();
+    ensureMetaChips();
   }
 
   editor.initStickyTotal = init;

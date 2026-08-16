@@ -44,7 +44,7 @@
       });
       actions.appendChild(btnDupCap);
 
-      var btnSavePack = Partida.crearElemento("button", "btn btn-sm", "💾 Guardar pack");
+      var btnSavePack = Partida.crearElemento("button", "btn btn-sm btn-ghost", "Pack");
       btnSavePack.type = "button";
       btnSavePack.title = "Guardar este capítulo como un nuevo Pack de Estancia en tu librería";
       btnSavePack.addEventListener("click", function (e) {
@@ -85,13 +85,14 @@
 
       var body = Partida.crearElemento("div", "capitulo-body");
       var pHead = Partida.crearElemento("div", "partidas-head");
-      pHead.appendChild(Partida.crearElemento("span", "", ""));
+      // Alineado con .partida-row: nombre | cant | und | P.U. | importe | benef | flags | menú
       pHead.appendChild(Partida.crearElemento("span", "", "Partida"));
       pHead.appendChild(Partida.crearElemento("span", "", "Cant."));
       pHead.appendChild(Partida.crearElemento("span", "", "Und."));
-      pHead.appendChild(Partida.crearElemento("span", "", "Precio"));
+      pHead.appendChild(Partida.crearElemento("span", "", "P.U."));
       pHead.appendChild(Partida.crearElemento("span", "", "Importe"));
       pHead.appendChild(Partida.crearElemento("span", "", "Benef."));
+      pHead.appendChild(Partida.crearElemento("span", "", ""));
       pHead.appendChild(Partida.crearElemento("span", "", ""));
       body.appendChild(pHead);
 

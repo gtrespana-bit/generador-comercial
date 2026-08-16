@@ -1728,20 +1728,106 @@
       benefCell.title = "Beneficio = Importe − Coste interno";
       row.appendChild(benefCell);
 
-      // Acciones de fila
+      // Indicadores de estado (descompuesto / producto / alternativa)
+      var flagsCell = editor.FMT.h("div", "partida-flags");
+      var flagDescomp = editor.FMT.h("span", "partida-flag", "APU");
+      flagDescomp.title = "Tiene descomposición de costes";
+      flagDescomp.hidden = true;
+      var flagProd = editor.FMT.h("span", "partida-flag partida-flag-prod", "Prod");
+      flagProd.title = "Producto asociado";
+      flagProd.hidden = true;
+      var flagAlt = editor.FMT.h("span", "partida-flag partida-flag-alt", "Alt");
+      flagAlt.title = "Partida alternativa / opcional";
+      flagAlt.hidden = true;
+      flagsCell.appendChild(flagDescomp);
+      flagsCell.appendChild(flagProd);
+      flagsCell.appendChild(flagAlt);
+      row.appendChild(flagsCell);
+
+      function actualizarFlags() {
+        var tieneDescomp =
+          !!wrap.querySelector(".drow") ||
+          !!(datos.descomposicion && (Array.isArray(datos.descomposicion)
+            ? datos.descomposicion.length
+            : (datos.descomposicion.filas || []).length));
+        var prodNombre = (wrap.querySelector('[data-f="p_prod_nombre"]') || {}).value || "";
+        var opciones = leerProductosOpciones(wrap);
+        var tipo = (wrap.querySelector('[data-f="p_tipo_partida"]') || {}).value || "included";
+        flagDescomp.hidden = !tieneDescomp;
+        flagProd.hidden = !(String(prodNombre).trim() || opciones.length);
+        flagAlt.hidden = !(tipo === "optional" || tipo === "alternative");
+      }
+      wrap._actualizarFlags = actualizarFlags;
+
+      // Menú de acciones (⋯) — menos ruido en la fila
       var delCell = editor.FMT.h("div", "partida-del");
-      var editBtn = editor.FMT.h("button", "partida-edit-btn", "✎ Editar");
-      editBtn.type = "button";
-      editBtn.title = "Abrir la ficha técnica completa";
-      var dupBtn = editor.FMT.h("button", "partida-icon-btn", "⧉");
-      dupBtn.type = "button";
-      dupBtn.title = "Duplicar partida";
-      var delBtn = editor.FMT.h("button", "partida-icon-btn", "✕");
-      delBtn.type = "button";
-      delBtn.title = "Eliminar partida";
-      delCell.appendChild(editBtn);
-      delCell.appendChild(dupBtn);
-      delCell.appendChild(delBtn);
+      var menuWrap = editor.FMT.h("div", "partida-menu");
+      var menuBtn = editor.FMT.h("button", "partida-menu-btn", "⋯");
+      menuBtn.type = "button";
+      menuBtn.title = "Acciones de la partida";
+      menuBtn.setAttribute("aria-haspopup", "true");
+      menuBtn.setAttribute("aria-expanded", "false");
+      var menuList = editor.FMT.h("div", "partida-menu-list");
+      menuList.hidden = true;
+      menuList.setAttribute("role", "menu");
+
+      function itemMenu(etiqueta, accion, claseExtra) {
+        var b = editor.FMT.h("button", "partida-menu-item" + (claseExtra ? " " + claseExtra : ""), etiqueta);
+        b.type = "button";
+        b.setAttribute("role", "menuitem");
+        b.addEventListener("click", function (e) {
+          e.stopPropagation();
+          cerrarMenu();
+          accion();
+        });
+        return b;
+      }
+
+      function abrirMenu() {
+        document.querySelectorAll(".partida-menu.open").forEach(function (m) {
+          m.classList.remove("open");
+          var l = m.querySelector(".partida-menu-list");
+          var b = m.querySelector(".partida-menu-btn");
+          if (l) l.hidden = true;
+          if (b) b.setAttribute("aria-expanded", "false");
+        });
+        menuWrap.classList.add("open");
+        menuList.hidden = false;
+        menuBtn.setAttribute("aria-expanded", "true");
+      }
+      function cerrarMenu() {
+        menuWrap.classList.remove("open");
+        menuList.hidden = true;
+        menuBtn.setAttribute("aria-expanded", "false");
+      }
+
+      var editBtn = itemMenu("Editar ficha", function () { toggle(); });
+      editBtn.classList.add("partida-edit-btn");
+      var dupBtn = itemMenu("Duplicar", function () { editorInst.duplicarPartida(wrap); });
+      var delBtn = itemMenu("Eliminar", function () {
+        if (confirm("¿Eliminar esta partida?")) {
+          editorInst.pushUndo();
+          wrap.remove();
+          editorInst.renumerar();
+          editorInst.recalcular();
+          editorInst.marcarCambio();
+        }
+      }, "peligro");
+
+      menuList.appendChild(editBtn);
+      menuList.appendChild(dupBtn);
+      menuList.appendChild(delBtn);
+      menuBtn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        if (menuWrap.classList.contains("open")) cerrarMenu();
+        else abrirMenu();
+      });
+      document.addEventListener("click", function (e) {
+        if (!menuWrap.contains(e.target)) cerrarMenu();
+      });
+      delCell.appendChild(menuWrap);
+      menuWrap.appendChild(menuBtn);
+      menuWrap.appendChild(menuList);
       row.appendChild(delCell);
 
       wrap.appendChild(row);
@@ -1826,19 +1912,6 @@
         }
       });
 
-      // Editar/duplicar/eliminar
-      editBtn.addEventListener("click", function () { toggle(); });
-      dupBtn.addEventListener("click", function () { editorInst.duplicarPartida(wrap); });
-      delBtn.addEventListener("click", function () {
-        if (confirm("¿Eliminar esta partida?")) {
-          editorInst.pushUndo();
-          wrap.remove();
-          editorInst.renumerar();
-          editorInst.recalcular();
-          editorInst.marcarCambio();
-        }
-      });
-
       [cantInput, precioInput].forEach(function (el) {
         el.addEventListener("input", function () {
           editorInst.renumerar();
@@ -1850,6 +1923,7 @@
       // Mediciones iniciales
       (datos.mediciones || []).forEach(function (m) { crearMedicion(wrap, m, editorInst); });
 
+      setTimeout(actualizarFlags, 0);
       editorInst.renumerar();
       editorInst.recalcular();
       return wrap;

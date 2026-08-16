@@ -10,27 +10,27 @@
     <form method="post" action="/recursos/sincronizar" class="csp-s-a91548c594">
       <button class="btn" title="Extrae recursos automáticamente desde las descomposiciones existentes de partidas y presupuestos">↻ Sincronizar desde partidas</button>
     </form>
-    <a href="/recursos/nuevo" class="btn btn-primary">+ Nuevo Recurso</a>
+    <a href="/recursos/nuevo" class="btn btn-primary">Nuevo recurso</a>
   </div>
 </div>
 
 <div class="partidas-toolbar card csp-s-0d510e3476">
   <div class="toolbar-row">
     <div class="toolbar-search">
-      <span class="search-icon">🔍</span>
+      <span class="search-icon" aria-hidden="true">⌕</span>
       <input type="text" id="buscador" placeholder="Buscar por código, descripción, grupo o proveedor…" data-cotizat-input="recursos-filter" autocomplete="off">
       <button id="clearSearch" class="btn btn-ghost btn-sm cotizat-hidden csp-s-dbb704fc6f" data-cotizat-click="recursos-clear-search" title="Limpiar">✕</button>
     </div>
     <div class="toolbar-actions">
       <div class="toolbar-meta" id="filterMeta"></div>
       <div class="toolbar-divider"></div>
-      <button class="btn btn-sm" data-cotizat-click="recursos-expand-all">⤢ Expandir</button>
-      <button class="btn btn-sm" data-cotizat-click="recursos-collapse-all">⤡ Contraer</button>
+      <button class="btn btn-sm" data-cotizat-click="recursos-expand-all">Expandir</button>
+      <button class="btn btn-sm" data-cotizat-click="recursos-collapse-all">Contraer</button>
       <form method="post" action="/recursos/bulk-ajustar" data-confirm="¿Ajustar TODOS los recursos visibles con este %?" class="csp-s-014fb690a1">
         <input type="number" name="porcentaje" step="any" placeholder="± %" required class="csp-s-d3156a880b">
         <button class="btn btn-sm" type="submit" title="Ajustar todos los precios unitarios">% Todos</button>
       </form>
-      <a class="btn btn-sm" href="/recursos/exportar">📥 CSV</a>
+      <a class="btn btn-sm" href="/recursos/exportar">CSV</a>
     </div>
   </div>
 

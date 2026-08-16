@@ -732,7 +732,7 @@
       ? (impInput ? FMT.parseNum(impInput.value) : 0)
       : (editor.ivaGuardado != null ? editor.ivaGuardado : 0);
     document.querySelectorAll(".iva-toggle-btn").forEach(function (b) {
-      b.textContent = on ? "IVA: ON" : "IVA: OFF";
+      b.textContent = on ? "IVA ON" : "IVA OFF";
       b.classList.toggle("active", !on);
       b.title = on ? ("Desactivar IVA (" + pct + " %)") : ("Activar IVA (" + pct + " %)");
     });
