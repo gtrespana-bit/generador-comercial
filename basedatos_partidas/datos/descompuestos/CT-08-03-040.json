@@ -1,0 +1,60 @@
+{
+  "codigo": "CT-08-03-040",
+  "ambito": "reforma",
+  "capitulo": "08",
+  "subcapitulo": "03",
+  "unidad": "m²",
+  "titulo": "Piso de baldosa de granito prefabricado.",
+  "descripcion": "Colocación de piso con baldosa de granito o terrazo prefabricado, recibida con mortero o adhesivo según el espesor, con pulido de igualación en obra. Incluye el replanteo del despiece, la colocación con nivelación y junta mínima, el rejuntado con lechada de cemento a juego, el pulido de igualación que elimina los resaltos entre piezas y unifica el plano, el resane de poros y el abrillantado. La pieza la elige el cliente y se presupuesta aparte. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "producto_cliente": {
+    "tipo": "Baldosa de granito o terrazo prefabricado para piso",
+    "unidad": "m2",
+    "consumo": 1.07,
+    "nota": "Consumo con 7 % de desperdicio por cortes y roturas."
+  },
+  "recursos": [
+    {
+      "ref": "MT-MORT-CONTRA",
+      "rendimiento": 48.0
+    },
+    {
+      "ref": "MT-CEMENTO",
+      "rendimiento": 3.0
+    },
+    {
+      "ref": "MT-JUN-CG2",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MT-CONS-PULIDO",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-SELLA-PIEDRA",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-MEZCL",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MQ-PULIDORA",
+      "rendimiento": 0.28
+    },
+    {
+      "ref": "MQ-CORT-AGUA",
+      "rendimiento": 0.09
+    },
+    {
+      "ref": "MO-OF1-SOL",
+      "rendimiento": 0.7
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.52
+    }
+  ],
+  "codigo_covenin": ""
+}

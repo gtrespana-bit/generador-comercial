@@ -1,0 +1,40 @@
+{
+  "codigo": "CT-08-05-040",
+  "ambito": "reforma",
+  "capitulo": "08",
+  "subcapitulo": "05",
+  "unidad": "m²",
+  "titulo": "Alfombra o moqueta.",
+  "descripcion": "Colocación de alfombra o moqueta, mediante encolado directo o sistema de tiras tensoras según el tipo, con su remate perimetral. Incluye la comprobación de limpieza y sequedad del soporte, la colocación de la manta base cuando el sistema lo requiera, el corte y presentado de los paños respetando el sentido del pelo, que debe ser el mismo en todo el ambiente porque de lo contrario los paños se ven de distinto tono, el encolado o tensado, el sellado de las uniones y el remate en umbrales y perímetro. El material lo elige el cliente y se presupuesta aparte. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "producto_cliente": {
+    "tipo": "Alfombra o moqueta elegida por el cliente",
+    "unidad": "m2",
+    "consumo": 1.12,
+    "nota": "Consumo con 12 % de desperdicio: el sentido del pelo condiciona el despiece y obliga a descartar recortes."
+  },
+  "recursos": [
+    {
+      "ref": "MT-ADH-VINIL",
+      "rendimiento": 0.38
+    },
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-ASPIR",
+      "rendimiento": 0.055
+    },
+    {
+      "ref": "MO-OF1-SOL",
+      "rendimiento": 0.26
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.18
+    }
+  ],
+  "codigo_covenin": ""
+}

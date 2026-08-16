@@ -888,6 +888,90 @@
       "descripcion": "Microcemento bicomponente con su resina y malla de refuerzo, para revestimiento continuo.",
       "precio": 6.5,
       "estado": "provisional"
+    },
+    "MT-MORT-CONTRA": {
+      "unidad": "kg",
+      "descripcion": "Mortero de cemento y arena para contrapiso y capas de nivelación de piso.",
+      "precio": 0.13,
+      "estado": "provisional"
+    },
+    "MT-MANTA-ACUS": {
+      "unidad": "m2",
+      "descripcion": "Manta acústica de polietileno reticulado para piso laminado flotante.",
+      "precio": 1.3,
+      "estado": "provisional"
+    },
+    "MT-ADH-MADERA": {
+      "unidad": "kg",
+      "descripcion": "Adhesivo de poliuretano para encolado de parquet y madera sobre contrapiso.",
+      "precio": 3.4,
+      "estado": "provisional"
+    },
+    "MT-BARNIZ-PISO": {
+      "unidad": "l",
+      "descripcion": "Barniz de poliuretano de alto tránsito para acabado de pisos de madera.",
+      "precio": 11.0,
+      "estado": "provisional"
+    },
+    "MT-ADH-VINIL": {
+      "unidad": "kg",
+      "descripcion": "Adhesivo acrílico para revestimientos flexibles de piso, vinílico y linóleo.",
+      "precio": 2.8,
+      "estado": "provisional"
+    },
+    "MT-ENDURECEDOR": {
+      "unidad": "kg",
+      "descripcion": "Endurecedor superficial de cuarzo y cemento para pisos de concreto de alto tránsito.",
+      "precio": 0.85,
+      "estado": "provisional"
+    },
+    "MT-EPOXI-PISO": {
+      "unidad": "kg",
+      "descripcion": "Resina epóxica bicomponente autonivelante para piso continuo, con su imprimación.",
+      "precio": 8.2,
+      "estado": "provisional"
+    },
+    "MT-DESMOLD-COLOR": {
+      "unidad": "kg",
+      "descripcion": "Desmoldeante en polvo con pigmento para concreto estampado.",
+      "precio": 3.6,
+      "estado": "provisional"
+    },
+    "MT-SELLA-CONC": {
+      "unidad": "l",
+      "descripcion": "Sellador acrílico de protección y realce para pisos de concreto y estampados.",
+      "precio": 6.4,
+      "estado": "provisional"
+    },
+    "MT-PERFIL-TRANS": {
+      "unidad": "m",
+      "descripcion": "Perfil de transición de aluminio entre pisos de distinto material o nivel.",
+      "precio": 3.8,
+      "estado": "provisional"
+    },
+    "MT-JUNTA-DILAT": {
+      "unidad": "m",
+      "descripcion": "Perfil de junta de dilatación para piso, con su elemento elástico.",
+      "precio": 5.2,
+      "estado": "provisional"
+    },
+    "MT-CINTA-ANTIDES": {
+      "unidad": "m",
+      "descripcion": "Cinta o perfil antideslizante para narices de peldaño.",
+      "precio": 4.6,
+      "estado": "provisional"
+    },
+    "MT-GRANO-MARMOL": {
+      "unidad": "kg",
+      "descripcion": "Grano de mármol seleccionado para granito vaciado en sitio.",
+      "precio": 0.45,
+      "estado": "provisional"
+    },
+    "MT-PLATINA-DIV": {
+      "unidad": "m",
+      "descripcion": "Platina divisoria de aluminio o bronce para juntas de granito vaciado en sitio.",
+      "precio": 2.1,
+      "estado": "provisional"
     }
   },
   "maquinaria": {
@@ -1117,6 +1201,18 @@
       "unidad": "h",
       "descripcion": "Pulidora y abrillantadora de piedra natural con aporte de agua.",
       "precio": 4.5,
+      "estado": "provisional"
+    },
+    "MQ-LIJAD-PISO": {
+      "unidad": "h",
+      "descripcion": "Lijadora de banda y orilladora para pisos de madera, con aspiración.",
+      "precio": 6.5,
+      "estado": "provisional"
+    },
+    "MQ-ESTAMP": {
+      "unidad": "h",
+      "descripcion": "Juego de moldes estampadores y rodillos para concreto impreso.",
+      "precio": 4.8,
       "estado": "provisional"
     }
   }

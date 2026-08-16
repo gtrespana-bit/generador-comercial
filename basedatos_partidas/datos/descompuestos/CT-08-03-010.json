@@ -1,0 +1,52 @@
+{
+  "codigo": "CT-08-03-010",
+  "ambito": "reforma",
+  "capitulo": "08",
+  "subcapitulo": "03",
+  "unidad": "m²",
+  "titulo": "Piso de mármol o granito en capa fina.",
+  "descripcion": "Colocación de piso de mármol o granito en capa fina con adhesivo cementoso blanco de altas prestaciones, con junta mínima. El adhesivo blanco es obligado en mármoles claros porque el gris se transparenta a través de la pieza y produce manchas irreversibles. Incluye la comprobación y regularización previa del soporte, el replanteo del despiece atendiendo a la veta y al tono para que la composición sea continua, el doble encolado, la nivelación con cuñas, los cortes con disco refrigerado, el rejuntado a juego y la limpieza con productos no ácidos, ya que el ácido ataca el mármol de forma permanente. La pieza la elige el cliente y se presupuesta aparte. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "producto_cliente": {
+    "tipo": "Pieza de mármol, granito o piedra natural pulida para piso",
+    "unidad": "m2",
+    "consumo": 1.09,
+    "nota": "Consumo con 9 % de desperdicio. Comprar todo el material del mismo lote para garantizar uniformidad de tono y veta."
+  },
+  "recursos": [
+    {
+      "ref": "MT-ADH-PIEDRA",
+      "rendimiento": 7.0
+    },
+    {
+      "ref": "MT-JUN-CG2",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MT-CRU-NIV",
+      "rendimiento": 5.0
+    },
+    {
+      "ref": "MT-SELLA-PIEDRA",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-CORT-AGUA",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MQ-BATID",
+      "rendimiento": 0.055
+    },
+    {
+      "ref": "MO-OF1-SOL",
+      "rendimiento": 0.56
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.34
+    }
+  ],
+  "codigo_covenin": ""
+}

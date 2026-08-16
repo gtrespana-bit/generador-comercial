@@ -2428,9 +2428,41 @@
               "precio": 8.02,
               "horas": 0.3,
               "producto_cliente": false
+            },
+            {
+              "codigo": "CT-08-01-020",
+              "titulo": "Contrapiso de mortero de nivelación, 4 cm de espesor.",
+              "unidad": "m²",
+              "precio": 17.86,
+              "horas": 0.7,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-08-01-030",
+              "titulo": "Contrapiso de concreto sobre terreno, 8 cm de espesor.",
+              "unidad": "m²",
+              "precio": 24.83,
+              "horas": 0.64,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-08-01-040",
+              "titulo": "Nivelación con mortero seco compactado.",
+              "unidad": "m²",
+              "precio": 21.62,
+              "horas": 0.7,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-08-01-050",
+              "titulo": "Preparación y puente de adherencia sobre losa existente.",
+              "unidad": "m²",
+              "precio": 7.19,
+              "horas": 0.35,
+              "producto_cliente": false
             }
           ],
-          "n": 1
+          "n": 5
         },
         {
           "codigo": "02",
@@ -2451,33 +2483,213 @@
               "precio": 12.51,
               "horas": 0.9,
               "producto_cliente": true
+            },
+            {
+              "codigo": "CT-08-02-030",
+              "titulo": "Piso cerámico en área húmeda con pendiente a desagüe.",
+              "unidad": "m²",
+              "precio": 13.18,
+              "horas": 0.93,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-08-02-040",
+              "titulo": "Piso cerámico en terraza o área exterior.",
+              "unidad": "m²",
+              "precio": 13.86,
+              "horas": 0.89,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-08-02-050",
+              "titulo": "Piso cerámico colocado en capa gruesa sobre mortero.",
+              "unidad": "m²",
+              "precio": 19.41,
+              "horas": 1.16,
+              "producto_cliente": true
             }
           ],
-          "n": 2
+          "n": 5
         },
         {
           "codigo": "03",
           "nombre": "Pisos de piedra natural y granito",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-08-03-010",
+              "titulo": "Piso de mármol o granito en capa fina.",
+              "unidad": "m²",
+              "precio": 15.31,
+              "horas": 0.9,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-08-03-020",
+              "titulo": "Piso de granito vaciado en sitio.",
+              "unidad": "m²",
+              "precio": 49.71,
+              "horas": 1.6,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-08-03-030",
+              "titulo": "Piso de laja o piedra natural irregular.",
+              "unidad": "m²",
+              "precio": 23.21,
+              "horas": 1.34,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-08-03-040",
+              "titulo": "Piso de baldosa de granito prefabricado.",
+              "unidad": "m²",
+              "precio": 24.78,
+              "horas": 1.22,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-08-03-050",
+              "titulo": "Pulido y abrillantado de piso de piedra existente.",
+              "unidad": "m²",
+              "precio": 12.88,
+              "horas": 0.7,
+              "producto_cliente": false
+            }
+          ],
+          "n": 5
         },
         {
           "codigo": "04",
           "nombre": "Pisos de madera y laminados",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-08-04-010",
+              "titulo": "Piso laminado flotante con manta acústica.",
+              "unidad": "m²",
+              "precio": 4.89,
+              "horas": 0.42,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-08-04-020",
+              "titulo": "Piso de madera maciza clavada sobre rastreles.",
+              "unidad": "m²",
+              "precio": 15.04,
+              "horas": 0.93,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-08-04-030",
+              "titulo": "Piso de parquet encolado sobre contrapiso.",
+              "unidad": "m²",
+              "precio": 12.93,
+              "horas": 0.78,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-08-04-040",
+              "titulo": "Lijado y barnizado de piso de madera.",
+              "unidad": "m²",
+              "precio": 12.91,
+              "horas": 0.72,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-08-04-050",
+              "titulo": "Piso de deck de madera o madera técnica para exterior.",
+              "unidad": "m²",
+              "precio": 29.69,
+              "horas": 1.05,
+              "producto_cliente": true
+            }
+          ],
+          "n": 5
         },
         {
           "codigo": "05",
           "nombre": "Pisos vinílicos y flexibles",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-08-05-010",
+              "titulo": "Piso vinílico en lámina.",
+              "unidad": "m²",
+              "precio": 5.02,
+              "horas": 0.48,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-08-05-020",
+              "titulo": "Piso vinílico en baldosa o lama.",
+              "unidad": "m²",
+              "precio": 4.06,
+              "horas": 0.42,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-08-05-030",
+              "titulo": "Piso de caucho o pavimento deportivo.",
+              "unidad": "m²",
+              "precio": 5.79,
+              "horas": 0.54,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-08-05-040",
+              "titulo": "Alfombra o moqueta.",
+              "unidad": "m²",
+              "precio": 4.39,
+              "horas": 0.44,
+              "producto_cliente": true
+            }
+          ],
+          "n": 4
         },
         {
           "codigo": "06",
           "nombre": "Pisos continuos de concreto y microcemento",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-08-06-010",
+              "titulo": "Piso de concreto alisado mecánicamente.",
+              "unidad": "m²",
+              "precio": 26.2,
+              "horas": 0.8,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-08-06-020",
+              "titulo": "Piso de concreto estampado.",
+              "unidad": "m²",
+              "precio": 38.82,
+              "horas": 1.3,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-08-06-030",
+              "titulo": "Piso continuo de microcemento.",
+              "unidad": "m²",
+              "precio": 47.79,
+              "horas": 1.6,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-08-06-040",
+              "titulo": "Piso epóxico autonivelante.",
+              "unidad": "m²",
+              "precio": 35.15,
+              "horas": 0.82,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-08-06-050",
+              "titulo": "Endurecedor superficial y sellado de piso de concreto.",
+              "unidad": "m²",
+              "precio": 10.47,
+              "horas": 0.43,
+              "producto_cliente": false
+            }
+          ],
+          "n": 5
         },
         {
           "codigo": "07",
@@ -2490,18 +2702,91 @@
               "precio": 1.69,
               "horas": 0.165,
               "producto_cliente": true
+            },
+            {
+              "codigo": "CT-08-07-020",
+              "titulo": "Rodapié de madera o MDF.",
+              "unidad": "m",
+              "precio": 2.13,
+              "horas": 0.195,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-08-07-030",
+              "titulo": "Rodapié de mortero con media caña sanitaria.",
+              "unidad": "m",
+              "precio": 4.06,
+              "horas": 0.33,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-08-07-040",
+              "titulo": "Perfil de transición entre pisos.",
+              "unidad": "m",
+              "precio": 6.92,
+              "horas": 0.19,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-08-07-050",
+              "titulo": "Junta de dilatación en piso.",
+              "unidad": "m",
+              "precio": 10.17,
+              "horas": 0.27,
+              "producto_cliente": false
             }
           ],
-          "n": 1
+          "n": 5
         },
         {
           "codigo": "08",
           "nombre": "Revestimiento de escaleras",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-08-08-010",
+              "titulo": "Revestimiento de escalera con cerámica o porcelanato.",
+              "unidad": "m²",
+              "precio": 18.02,
+              "horas": 1.67,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-08-08-020",
+              "titulo": "Revestimiento de escalera con piedra natural.",
+              "unidad": "m²",
+              "precio": 24.57,
+              "horas": 1.97,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-08-08-030",
+              "titulo": "Peldaño de madera sobre escalera de concreto.",
+              "unidad": "m",
+              "precio": 9.49,
+              "horas": 0.72,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-08-08-040",
+              "titulo": "Cinta o perfil antideslizante en nariz de peldaño.",
+              "unidad": "m",
+              "precio": 7.67,
+              "horas": 0.16,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-08-08-050",
+              "titulo": "Zócalo escalonado de escalera.",
+              "unidad": "m",
+              "precio": 3.68,
+              "horas": 0.42,
+              "producto_cliente": true
+            }
+          ],
+          "n": 5
         }
       ],
-      "n": 4
+      "n": 39
     },
     {
       "codigo": "09",
