@@ -133,27 +133,56 @@ Lo que ya funciona en el editor de presupuestos:
 
 ## Lo que falta para la idea de la barra lateral
 
-La idea era: *una barra lateral con la base de datos completa y sus
-subcategorías, y poder buscar y arrastrar hasta el presupuesto*.
+**Ya está construida.** Se describe abajo lo que hace y qué se tocó.
 
-Hoy el catálogo aparece como una **lista plana desplegable dentro del
-buscador**. Con 540 partidas eso deja de servir: no hay forma de recorrer
-«Capítulo 07 → Frisos → los seis frisos que hay» sin acordarse del nombre
-exacto.
+# 6. La barra lateral en árbol (construida)
 
-Falta, en concreto:
+En el editor de presupuestos, a la izquierda, hay un panel fijo con **toda la
+base de datos**: 20 capítulos → 121 subcapítulos → 540 partidas.
 
-1. **Panel lateral fijo** con el árbol de 20 capítulos → 121 subcapítulos →
-   540 partidas, plegable por rama. El árbol ya está generado en
-   `salida/arbol_catalogo.json` con contadores por rama, precio, unidad, horas
-   y marca de producto de cliente.
-2. **Buscador dentro del árbol** que filtre manteniendo el contexto (que se
-   vea de qué capítulo cuelga cada resultado).
-3. **Arrastrar desde el árbol hasta un capítulo del presupuesto.** La
-   infraestructura de arrastre ya existe (`static/js/editor/dragdrop.js`), pero
-   hoy solo reordena lo que ya está dentro; hay que admitir un origen externo.
-4. **Doble clic o Enter** como alternativa al arrastre, porque en portátil sin
-   ratón arrastrar es incómodo.
+- **Se recorre plegando y desplegando ramas.** Cada rama lleva su contador.
+- **Buscador propio**: filtra y abre solo las ramas con resultados, así que
+  siempre se ve de qué capítulo cuelga cada cosa. `Esc` limpia. Los botones
+  «Abrir» y «Cerrar» despliegan o pliegan todo.
+- **Arrastrar y soltar**: se coge una partida del árbol y se suelta sobre el
+  capítulo del presupuesto donde se quiera. El capítulo se resalta al pasar
+  por encima. Entra con **cantidad 1** y con su descomposición completa.
+- **Sin ratón**: `Enter` o doble clic la mandan al último capítulo.
+- El panel se pliega con el botón `‹` para recuperar ancho.
+- En pantallas estrechas (menos de 1100 px) pasa a ocupar el ancho completo
+  encima del presupuesto, con altura limitada.
 
-Esto sí toca código de la aplicación (`app/templates/budgets/form.html`,
-`app/static/js/editor/`) y un endpoint que sirva el árbol.
+No añade ninguna petición al servidor: se dibuja con los datos del catálogo
+que la página ya cargaba.
+
+## Archivos tocados
+
+| Archivo | Cambio |
+|---|---|
+| `app/static/js/editor/arbol_catalogo.js` | **Nuevo.** Árbol, buscador, arrastre e inserción |
+| `app/static/js/editor/catalogo.js` | `agregarDesdeCatalogo` se parte en `insertarEnCapitulo(idx, cap)` para poder elegir capítulo destino |
+| `app/templates/budgets/form.html` | Rejilla de dos columnas, marcado del panel y carga del script |
+| `app/static/css/style.css` | Estilos del panel y del resaltado de capítulo al soltar |
+| `app/services/importer.py` | `_etiqueta_previa`: lee «Capítulo:» y «Subcapítulo:» encima de la cabecera del descompuesto |
+| `app/main.py` | `_importar_a_catalogo` guarda esa subcategoría |
+| `app/security.py` | `COTIZAT_FRAME_ANCESTORS` para poder embeber la app en un panel de vista previa |
+| `basedatos_partidas/descompuestos.py` | Escribe capítulo y subcapítulo en A1 y A2 de cada hoja |
+
+## Por qué hizo falta tocar el importador
+
+Al importar los 540 descompuestos, **todas las partidas caían en una sola
+categoría llamada «CYPE» y sin subcategoría**: la hoja no llevaba esa
+información y no había árbol posible.
+
+Ahora el generador escribe dos etiquetas en las celdas A1 y A2, encima de la
+cabecera de partida y en la columna A sola, de modo que el lector no las
+confunde con la fila de la partida (que exige código, unidad y título a la
+vez). Los descompuestos que no las traigan —los de CYPE, por ejemplo— se
+importan exactamente igual que antes.
+
+## Comprobado
+
+- 540 partidas importadas → **20 capítulos y 121 subcapítulos** en la base de
+  datos de la aplicación, que es justo la taxonomía del catálogo.
+- Los **391 tests** del proyecto siguen pasando.
+

@@ -200,12 +200,13 @@
   // Agregar partida desde catálogo
   // -------------------------------------------------------------------------
 
-  function agregarDesdeCatalogo(idx) {
+  function insertarEnCapitulo(idx, cap) {
     var d = editor.CATALOGO[idx];
-    if (!d) return;
-
-    var caps = editor.contCapitulos.querySelectorAll(".capitulo");
-    var cap = caps.length ? caps[caps.length - 1] : editor.Capitulo.crear({ nombre: "CAPÍTULO GENERAL" }, editor);
+    if (!d) return null;
+    if (!cap) {
+      var caps = editor.contCapitulos.querySelectorAll(".capitulo");
+      cap = caps.length ? caps[caps.length - 1] : editor.Capitulo.crear({ nombre: "CAPÍTULO GENERAL" }, editor);
+    }
     cap.classList.remove("collapsed");
 
     editor.pushUndo();
@@ -249,11 +250,18 @@
       if (ni) setTimeout(function () { ni.focus(); }, 200);
     }
 
+    editor.marcarCambio();
+    return partida;
+  }
+
+  function agregarDesdeCatalogo(idx) {
+    var partida = insertarEnCapitulo(idx, null);
+
     var cat = document.getElementById("catalogo-partidas");
     if (cat) cat.classList.remove("open");
     var buscar = document.getElementById("buscar-partida");
     if (buscar) buscar.value = "";
-    editor.marcarCambio();
+    return partida;
   }
 
   // -------------------------------------------------------------------------
@@ -460,6 +468,8 @@
 
   editor.initCatalogo = init;
   editor.catalogo = { init: init };
+  // Usado por la barra lateral en árbol para insertar en un capítulo concreto.
+  editor.Catalogo = { insertarEnCapitulo: insertarEnCapitulo };
 
   // Exponer para las acciones declarativas del catálogo compartido.
   window.agregarDesdeCatalogo = agregarDesdeCatalogo;

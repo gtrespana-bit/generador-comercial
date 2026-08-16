@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import ipaddress
+import os
 import secrets
 from urllib.parse import urlsplit
 
@@ -11,6 +12,26 @@ from starlette.types import ASGIApp, Message, Receive, Scope, Send
 from .ratelimit import MemoryRateLimit, RateLimitBackend, build_rate_limiter
 
 _UNSAFE_METHODS = {"POST", "PUT", "PATCH", "DELETE"}
+
+
+def _antecesores_permitidos() -> tuple[bytes, bytes | None]:
+    """Quién puede embeber la aplicación en un iframe.
+
+    Por defecto, nadie: `frame-ancestors 'none'` y `X-Frame-Options: DENY`,
+    que es lo correcto en producción para cerrar el clickjacking.
+
+    `COTIZAT_FRAME_ANCESTORS` permite abrir una excepción concreta cuando la
+    aplicación se sirve dentro de un panel de vista previa o de una demo
+    embebida. Se indica la lista de orígenes tal cual la espera CSP, por
+    ejemplo `https://*.e2b.app`. Nunca se acepta un comodín total.
+    """
+    valor = (os.environ.get("COTIZAT_FRAME_ANCESTORS") or "").strip()
+    if not valor or valor == "*":
+        return b"'none'", b"DENY"
+    origenes = " ".join(valor.split())
+    # Con una excepción activa, X-Frame-Options sobra: es más restrictivo que
+    # CSP y no entiende comodines, así que bloquearía igualmente.
+    return origenes.encode("ascii", "ignore"), None
 
 
 class AuthRateLimitMiddleware:
@@ -184,15 +205,15 @@ class WebSecurityMiddleware:
         async def send_secure(message: Message) -> None:
             if message["type"] == "http.response.start":
                 existing = {key.lower() for key, _value in message.get("headers", [])}
+                antecesores, x_frame = _antecesores_permitidos()
                 additions = {
                     b"x-content-type-options": b"nosniff",
                     b"referrer-policy": b"strict-origin-when-cross-origin",
-                    b"x-frame-options": b"DENY",
                     b"cross-origin-opener-policy": b"same-origin",
                     b"permissions-policy": b"camera=(), microphone=(), geolocation=()",
                     b"content-security-policy": (
                         b"default-src 'self'; base-uri 'self'; object-src 'none'; "
-                        b"frame-ancestors 'none'; form-action 'self'; "
+                        + b"frame-ancestors " + antecesores + b"; form-action 'self'; "
                         + f"script-src 'self' 'nonce-{nonce}'; ".encode("ascii")
                         + b"script-src-attr 'none'; "
                         + f"style-src 'self' 'nonce-{nonce}' https://fonts.googleapis.com; ".encode("ascii")
@@ -202,6 +223,8 @@ class WebSecurityMiddleware:
                         + b"frame-src 'self' blob:"
                     ),
                 }
+                if x_frame:
+                    additions[b"x-frame-options"] = x_frame
                 if scheme == "https":
                     additions[b"strict-transport-security"] = b"max-age=31536000; includeSubDomains"
                 raw = list(message.get("headers", []))

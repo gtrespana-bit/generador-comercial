@@ -260,6 +260,18 @@ def construir_hoja(partida: dict, ruta: Path) -> dict:
     ajuste = Alignment(wrap_text=True, vertical="top")
     fino = Side(style="thin", color="999999")
 
+    # --- Etiquetas de clasificación (filas 1 y 2) ---
+    # Van encima de la cabecera de partida y en la columna A sola, así que el
+    # lector del proyecto no las confunde con la fila de la partida (que exige
+    # código, unidad y título). Sirven para que al importar el descompuesto el
+    # catálogo conserve su capítulo y su subcapítulo, y pueda dibujarse el
+    # árbol de la barra lateral.
+    ubicacion = partida.get("_ubicacion") or {}
+    if ubicacion.get("capitulo"):
+        ws.cell(1, 1, f"Capítulo: {ubicacion['capitulo_cod']} {ubicacion['capitulo']}")
+    if ubicacion.get("subcapitulo"):
+        ws.cell(2, 1, f"Subcapítulo: {ubicacion['subcapitulo']}")
+
     # --- Cabecera de la partida (filas 3 y 5) ---
     ws.cell(3, 1, partida["codigo"]).font = negrita
     ws.cell(3, 2, partida["unidad"])
