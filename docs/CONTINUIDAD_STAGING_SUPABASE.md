@@ -2,12 +2,15 @@
 
 Fecha de corte de fondo: 14/08/2026 (America/Caracas).
 
-> **Actualización de rama 16/08/2026:** producción continúa en
-> `b7c4a9e2d31f`. La rama de trabajo incorpora E3-017 y exige el nuevo head
-> `c2f6e8a1d934` (`docs/staging_upgrade_c2f6e8a1d934.sql`), todavía **no
-> aplicado** porque el titular decidió no abrir ni fusionar PR durante el bloque
-> activo. No tocar Supabase hasta el despliegue final de este bloque. Suite de
-> la rama: **409 passed, 6 skipped**.
+> **Actualización de rama 16/08/2026 (noche):** el bloque de cierre operativo
+> (E3-016 a E3-024) está completo en la rama con suite **453 passed, 6 skipped**,
+> y el titular **aplicó y verificó en Supabase** las dos migraciones del bloque:
+> `c2f6e8a1d934` (4 políticas de `enlaces_propuesta` comprobadas) y
+> `a3d7e9c1b5f2` (`baja_organizacion` SECURITY DEFINER, propietario
+> `postgres`). Cadena: `b7c4a9e2d31f → c2f6e8a1d934 → a3d7e9c1b5f2`. El código
+> desplegado aún exige `b7c4a9e2d31f`, así que `/readyz` del entorno migrado
+> responderá **503 (esperado)** hasta desplegar la rama. Ver
+> `docs/PUNTO_DE_CONTINUACION.md` §0ter.
 
 Este documento permite continuar el trabajo desde una conversación nueva sin
 depender del historial del chat. Debe leerse junto con

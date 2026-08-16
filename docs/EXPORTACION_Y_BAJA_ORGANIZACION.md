@@ -1,8 +1,9 @@
 # Exportación y baja por organización (E3-022 / E3-023)
 
 Fecha: **16/08/2026** · Suite: **441 passed, 6 skipped** · Migración nueva:
-**`a3d7e9c1b5f2`** (función de baja, solo PostgreSQL; pendiente de aplicar en
-Supabase hasta la autorización de despliegue).
+**`a3d7e9c1b5f2`** (función de baja, solo PostgreSQL). **Aplicada y verificada
+en Supabase el 16/08/2026**: `baja_organizacion` con `security_definer = true`
+y propietario `postgres`, según la verificación del titular.
 
 Este bloque cierra la portabilidad del dato y el ciclo de salida de una
 organización: llevarse los datos en un formato abierto (E3-022) y darse de

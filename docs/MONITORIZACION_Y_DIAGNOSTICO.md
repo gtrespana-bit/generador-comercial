@@ -70,9 +70,10 @@ queda fuera de este bloque a propósito.
 
 ## 6. Estado del cierre de Etapa 3
 
-Código completo en la rama (E3-016 a E3-024). Pendiente del despliegue
-autorizado: aplicar en Supabase las migraciones `c2f6e8a1d934` (propuestas) y
-`a3d7e9c1b5f2` (baja), con sus scripts en `docs/staging_upgrade_*.sql`, y
+Código completo en la rama (E3-016 a E3-024) y **migraciones `c2f6e8a1d934` y
+`a3d7e9c1b5f2` aplicadas y verificadas en Supabase el 16/08/2026** (ver
+`docs/PUNTO_DE_CONTINUACION.md` §0ter). Pendiente: desplegar el código de la
+rama (hasta entonces `/readyz` del entorno migrado responde 503, esperado) y
 ensayar el flujo real en staging. Después, según la puerta de salida del plan:
 endurecimiento técnico de la Etapa 4 o el bloque funcional que el titular
 decida. Validación comercial y catálogo real siguen aplazados (D-017).

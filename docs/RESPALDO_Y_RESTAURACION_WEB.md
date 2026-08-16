@@ -1,7 +1,8 @@
 # Respaldo y restauración web por organización (E3-020 / E3-021)
 
 Fecha: **16/08/2026** · Suite: **423 passed, 6 skipped** · Sin migración nueva
-(el head de Alembic sigue siendo `c2f6e8a1d934`; este bloque no cambia esquema).
+(el head de Alembic al cerrar este bloque era `c2f6e8a1d934`; el bloque
+siguiente lo llevó a `a3d7e9c1b5f2`, aplicada y verificada en Supabase).
 
 Este documento describe la copia de seguridad **web** completa y verificable de
 una organización y su restauración controlada. Sustituye —para la versión
@@ -82,7 +83,9 @@ transacción la compromete la ruta; ante error, `rollback`.
 ## 5. Operación y verificación
 
 - **Sin migración nueva**: el bloque no cambia el esquema. `EXPECTED_ALEMBIC_HEAD`
-  continúa en `c2f6e8a1d934`; **no aplicar nada en Supabase** por este bloque.
+  continuaba en `c2f6e8a1d934`; **no aplicar nada en Supabase** por este
+  bloque. (Histórico: el titular aplicó después `c2f6e8a1d934` y
+  `a3d7e9c1b5f2` el 16/08/2026 — ver §0ter del punto de continuación.)
 - En producción los archivos viajan por el proxy autorizado hacia el bucket
   privado (`storage://organizaciones/{org}/…`); la restauración usa el mismo
   camino que una subida normal (`save_object`).

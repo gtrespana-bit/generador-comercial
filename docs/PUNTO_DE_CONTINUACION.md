@@ -48,6 +48,31 @@ aplicar** (no aplicar ni tocar Supabase hasta autorización de despliegue).
 
 ---
 
+## ✅ 0ter. Migraciones del bloque aplicadas en Supabase (16/08/2026)
+
+El titular ejecutó en Supabase SQL Editor los scripts del bloque y **verificó
+los dos resultados** esperados:
+
+- **`c2f6e8a1d934` (propuestas):** la tabla `public.enlaces_propuesta` tiene
+  exactamente las 4 políticas previstas — `cotizat_proposal_insert_tenant`
+  (INSERT con `tenant_access(organizacion_id, true)`),
+  `cotizat_proposal_select_tenant` (SELECT por tenant),
+  `cotizat_proposal_select_public` (SELECT solo por hash del token + vigente +
+  no revocada) y `cotizat_proposal_update_tenant` (UPDATE por tenant). ✅
+- **`a3d7e9c1b5f2` (baja):** la función `cotizat_security.baja_organizacion`
+  existe con `security_definer = true` y propietario `postgres` (el usuario
+  que aplica la migración), tal como declara el script. ✅ La guarda de
+  versión del script exige `c2f6e8a1d934` antes, así que la cadena está
+  completa: `b7c4a9e2d31f → c2f6e8a1d934 → a3d7e9c1b5f2`.
+
+**Consecuencia operativa esperada:** hasta que el código de esta rama (que
+exige el head `a3d7e9c1b5f2`) se despliegue en el entorno migrado, su
+`/readyz` responderá **503** porque la base va por delante del código. No es
+un fallo: es la comprobación de head funcionando como está diseñada. Tras el
+despliegue, `/readyz` debe volver a 200.
+
+---
+
 ## 0. Lo último hecho: PR #25 fusionado en `main`
 
 **Decisión de negocio adoptada en esta sesión (titular, 16/08/2026):**
@@ -202,9 +227,10 @@ bloqueante. Interfaz mejorada del panel de operador: pendiente futuro.
    privado y constancia interna. Suite: 397 passed, 5 skipped.
 2. ~~**E3-017 — Enlace público seguro y revocable.**~~ **Completado en la
    rama el 16/08/2026**: versión/PDF congelados, secreto solo en SHA-256,
-   caducidad, revocación, página pública mínima y RLS por hash. Migración nueva
-   `c2f6e8a1d934`, pendiente únicamente cuando se despliegue. Suite: 403 passed,
-   6 skipped.
+   caducidad, revocación, página pública mínima y RLS por hash. Migración
+   `c2f6e8a1d934` **aplicada y verificada por el titular en Supabase el
+   16/08/2026** (las 4 políticas de `enlaces_propuesta` coinciden con el
+   script). Suite: 403 passed, 6 skipped.
 3. ~~**E3-018 — Aceptación o rechazo trazable.**~~ **Completado en la rama el
    16/08/2026**: una respuesta por enlace, versión exacta, identidad declarada,
    comentario y fecha/hora; función PostgreSQL limitada. Suite: 405 passed,
@@ -231,8 +257,10 @@ bloqueante. Interfaz mejorada del panel de operador: pendiente futuro.
    16/08/2026**: solo el propietario, nombre exacto escrito + casilla,
    archivos borrados antes de la base, borrado transaccional completo y
    aislado por organización; función `cotizat_security.baja_organizacion` en
-   PostgreSQL. Migración nueva **`a3d7e9c1b5f2`** (head exigido), pendiente
-   de aplicar hasta el despliegue. Suite del bloque: **441 passed, 6 skipped**
+   PostgreSQL. Migración **`a3d7e9c1b5f2`** (head exigido) **aplicada y
+   verificada por el titular en Supabase el 16/08/2026** (`baja_organizacion`
+   SECURITY DEFINER con propietario `postgres`). Suite del bloque:
+   **441 passed, 6 skipped**
    (18 pruebas nuevas). Detalles en
    `docs/EXPORTACION_Y_BAJA_ORGANIZACION.md` y
    `docs/RESPALDO_Y_RESTAURACION_WEB.md`.
@@ -245,11 +273,13 @@ bloqueante. Interfaz mejorada del panel de operador: pendiente futuro.
    Detalle en `docs/MONITORIZACION_Y_DIAGNOSTICO.md`.
 
 **Con E3-024 queda completo el cierre funcional y operativo de la Etapa 3**
-(E3-016 a E3-024) en la rama. Siguiente según la puerta de salida del plan:
-**endurecimiento técnico de la Etapa 4** o **autorizar el despliegue** con las
-migraciones pendientes (`c2f6e8a1d934`, `a3d7e9c1b5f2`) y ensayo en staging.
-Catálogo comercial y validación pagada permanecen aplazados hasta que el
-titular declare completo el producto.
+(E3-016 a E3-024) en la rama, y **las dos migraciones del bloque están
+aplicadas y verificadas en Supabase** (ver §0ter). Siguiente según la puerta
+de salida del plan: **desplegar el código de la rama** (hasta entonces
+`/readyz` responderá 503 en el entorno migrado porque la base va por delante
+del código), ensayar el flujo real en staging, y después el **endurecimiento
+técnico de la Etapa 4**. Catálogo comercial y validación pagada permanecen
+aplazados hasta que el titular declare completo el producto.
 
 ## 6. Reglas invariables (no negociables)
 
@@ -315,12 +345,12 @@ revocable, respuesta trazable, notificación y estado controlado, respaldo
 web completo y verificable con restauración en dos pasos, exportación
 portátil, baja con borrado verificado y monitorización y diagnóstico del
 operador. **Cierre funcional y operativo de la Etapa 3 completo en la rama.**
-Suite verificada: **453 passed, 6 skipped**. Siguiente según la puerta de
-salida: endurecimiento técnico de la Etapa 4 o autorización del despliegue.
-No abrir PR. **Migraciones pendientes de aplicar hasta la autorización de
-despliegue: `c2f6e8a1d934` y `a3d7e9c1b5f2`** (producción continúa en
-`b7c4a9e2d31f`; scripts en `docs/staging_upgrade_*.sql`). No retomar catálogo
-ni pilotos salvo nueva decisión expresa.
+Suite verificada: **453 passed, 6 skipped**. **Las migraciones `c2f6e8a1d934`
+y `a3d7e9c1b5f2` están aplicadas y verificadas en Supabase el 16/08/2026**
+(ver §0ter). Queda desplegar el código de la rama (hasta entonces `/readyz`
+del entorno migrado responde 503, esperado) y ensayar el flujo real. Siguiente
+según la puerta de salida: endurecimiento técnico de la Etapa 4. No abrir PR.
+No retomar catálogo ni pilotos salvo nueva decisión expresa.
 
 **Nota de la sesión de recuperación (16/08/2026):** todo lo anterior se
 recuperó desde un parche en la rama `arena/01a00b99-generador-comercial`
