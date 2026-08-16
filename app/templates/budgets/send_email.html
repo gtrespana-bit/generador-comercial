@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Enviar presupuesto {{ p.numero }}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <p class="crumb">📄 <a href="/presupuestos">Presupuestos</a> › <a href="/presupuestos/{{ p.id }}">{{ p.numero }}</a> › Enviar por email</p>
+    <h1>Enviar presupuesto por email</h1>
+    <p class="subtitle">Se generará el PDF, se adjuntará al correo y la versión enviada quedará congelada.</p>
+  </div>
+  <div class="actions">
+    <a class="btn" href="/presupuestos/{{ p.id }}">← Volver al presupuesto</a>
+    <a class="btn" href="/presupuestos/{{ p.id }}/pdf?inline=1" target="_blank">👁 Revisar PDF</a>
+  </div>
+</div>
+
+{% if error_envio %}<div class="alert alert-error" role="alert">{{ error_envio }}</div>{% endif %}
+
+<div class="card">
+  <div class="form-grid">
+    <div>
+      <h2>Documento</h2>
+      <p><strong>{{ p.numero }}</strong>{% if p.titulo %} · {{ p.titulo }}{% endif %}</p>
+      <p class="muted">Cliente: {{ p.cliente.nombre }}</p>
+      <p class="muted">Total: {{ p.total | money(p.moneda) }}</p>
+      <p class="muted">Estado actual: <span class="badge badge-{{ p.estado }}">{{ p.estado | replace('_', ' ') | capitalize }}</span></p>
+    </div>
+    <div>
+      <h2>Qué ocurrirá</h2>
+      <p class="muted">El cliente recibirá un PDF adjunto. Solo si Resend confirma el envío, CotizaT cambiará el estado a enviado o reenviado, creará una versión inmutable y dejará constancia interna.</p>
+      {% if not cfg.empresa_email %}<p class="hint">Configura el email de la empresa si quieres que el cliente pueda responder directamente al mensaje.</p>{% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <form method="post" action="/presupuestos/{{ p.id }}/enviar-email">
+    <div class="field">
+      <label for="destinatario">Email del destinatario</label>
+      <input id="destinatario" name="destinatario" type="email" value="{{ datos.destinatario }}" maxlength="254" autocomplete="email" required>
+      <span class="hint">Se ha tomado del cliente; puedes corregirlo antes de enviar.</span>
+    </div>
+    <div class="field">
+      <label for="asunto">Asunto</label>
+      <input id="asunto" name="asunto" type="text" value="{{ datos.asunto }}" maxlength="200" required>
+    </div>
+    <div class="field">
+      <label for="mensaje">Mensaje</label>
+      <textarea id="mensaje" name="mensaje" rows="10" maxlength="5000" required>{{ datos.mensaje }}</textarea>
+      <span class="hint">El PDF incluirá el alcance, los importes, la vigencia y las condiciones completas.</span>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-primary" type="submit">✉️ Generar PDF y enviar</button>
+      <a class="btn" href="/presupuestos/{{ p.id }}">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

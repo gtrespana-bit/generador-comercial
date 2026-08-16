@@ -434,6 +434,119 @@ def test_invitado_acepta_invitacion_bajo_rls(entorno_postgres):
     motor.dispose()
 
 
+def test_enlace_publico_rls_solo_expone_su_fila_y_no_abre_el_tenant(entorno_postgres):
+    """El claim del enlace no concede membresía ni lectura de presupuestos."""
+    from datetime import date, datetime, timedelta
+    from app.models import (
+        Cliente, EnlacePropuesta, Organizacion, Presupuesto, PresupuestoVersion,
+    )
+    from app.services.propuestas import registrar_respuesta_propuesta
+
+    token = "T" * 43
+    token_hash = _hash_de(token)
+    admin_engine = create_engine(entorno_postgres["admin_url"])
+    Admin = sessionmaker(bind=admin_engine)
+    with Admin() as db:
+        org = Organizacion(
+            nombre="Empresa propuesta RLS",
+            slug=f"propuesta-rls-{uuid.uuid4().hex[:8]}",
+            creada_por_usuario_id=entorno_postgres["usuario_id"],
+        )
+        db.add(org)
+        db.flush()
+        cliente = Cliente(
+            organizacion_id=org.id,
+            nombre="Cliente público",
+            email="cliente.publico@example.com",
+        )
+        db.add(cliente)
+        db.flush()
+        presupuesto = Presupuesto(
+            organizacion_id=org.id,
+            numero="P-RLS-1",
+            year=2026,
+            fecha=date(2026, 8, 16),
+            estado="enviado",
+            client_id=cliente.id,
+        )
+        db.add(presupuesto)
+        db.flush()
+        version = PresupuestoVersion(
+            organizacion_id=org.id,
+            presupuesto_id=presupuesto.id,
+            numero_version=1,
+            estado="enviado",
+            total=100,
+            datos_snapshot="{}",
+            pdf_snapshot="storage://organizaciones/1/presupuestos/rls.pdf",
+        )
+        db.add(version)
+        db.flush()
+        enlace = EnlacePropuesta(
+            organizacion_id=org.id,
+            presupuesto_id=presupuesto.id,
+            presupuesto_version_id=version.id,
+            presupuesto_version_numero=1,
+            token_hash=token_hash,
+            token_prefix=token[:8],
+            pdf_snapshot=version.pdf_snapshot,
+            empresa_nombre=org.nombre,
+            cliente_nombre=cliente.nombre,
+            presupuesto_numero=presupuesto.numero,
+            presupuesto_titulo="Prueba RLS",
+            total=100,
+            moneda="USD",
+            fecha_presupuesto=date(2026, 8, 16),
+            valido_hasta=date(2026, 9, 15),
+            expires_at=datetime.utcnow() + timedelta(days=1),
+            created_at=datetime.utcnow(),
+        )
+        db.add(enlace)
+        db.commit()
+        enlace_id = enlace.id
+
+    runtime = create_engine(entorno_postgres["runtime_url"])
+    Sesion = sessionmaker(bind=runtime)
+    with Sesion() as db:
+        db.info["proposal_token_hash"] = token_hash
+        enlace_publico = db.query(EnlacePropuesta).filter_by(id=enlace_id).one()
+        # El mismo claim no abre la tabla de presupuestos ni ninguna otra del tenant.
+        assert db.query(Presupuesto).count() == 0
+        registrar_respuesta_propuesta(
+            db,
+            enlace=enlace_publico,
+            decision="aceptada",
+            nombre="Cliente RLS",
+            email="cliente.rls@example.com",
+            comentario="Conforme",
+        )
+        db.commit()
+
+    with Admin() as db:
+        respondido = db.get(EnlacePropuesta, enlace_id)
+        assert respondido.respuesta == "aceptada"
+        assert respondido.respondido_por_email == "cliente.rls@example.com"
+        assert respondido.responded_at is not None
+        assert respondido.estado_presupuesto_actualizado is True
+        assert db.get(Presupuesto, respondido.presupuesto_id).estado == "aprobado"
+
+    with Sesion() as db:
+        db.info["proposal_token_hash"] = _hash_de("F" * 43)
+        assert db.query(EnlacePropuesta).filter_by(id=enlace_id).count() == 0
+
+    with Admin() as db:
+        db.query(EnlacePropuesta).filter_by(id=enlace_id).update(
+            {"revoked_at": datetime.utcnow()}
+        )
+        db.commit()
+    with Sesion() as db:
+        db.info["proposal_token_hash"] = token_hash
+        assert db.query(EnlacePropuesta).filter_by(id=enlace_id).count() == 0
+
+    runtime.dispose()
+    admin_engine.dispose()
+
+
 def _hash_de(token: str) -> str:
     """Mismo hash SHA-256 que guarda el servicio (los tokens no se persisten)."""
     import hashlib

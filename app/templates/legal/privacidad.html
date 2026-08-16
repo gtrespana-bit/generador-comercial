@@ -2,7 +2,7 @@
 {% block titulo %}Política de privacidad{% endblock %}
 {% block contenido %}
 <h1>Política de privacidad</h1>
-<p class="meta">Versión 1.0 · Vigente desde el 15 de agosto de 2026</p>
+<p class="meta">Versión 1.1 · Vigente desde el 16 de agosto de 2026</p>
 
 <div class="aviso">
   En corto: guardamos lo mínimo para que el servicio funcione; tus contraseñas
@@ -41,10 +41,20 @@ operador de {{ product_name }}. Contacto:
     <td>Interés legítimo (seguridad)</td>
   </tr>
   <tr>
-    <td>Email de las invitaciones de equipo</td>
-    <td>Enviar la invitación a unirse a tu organización a través del proveedor
-        de correo (Resend), desde <code>no-responder@cotizat.online</code>.</td>
+    <td>Emails de invitaciones y destinatarios de presupuestos</td>
+    <td>Enviar invitaciones de equipo y, cuando lo solicites, entregar al
+        cliente el presupuesto PDF mediante Resend.</td>
     <td>Ejecución del contrato</td>
+  </tr>
+  <tr>
+    <td>Enlaces de propuesta: empresa, cliente, número, título, total, fechas y PDF congelado</td>
+    <td>Mostrar la propuesta concreta a quien reciba el enlace secreto que tu organización crea. El enlace caduca, puede revocarse y no permite navegar por otros datos.</td>
+    <td>Ejecución del contrato</td>
+  </tr>
+  <tr>
+    <td>Respuesta a una propuesta: decisión, nombre y email declarados, comentario opcional, fecha y hora</td>
+    <td>Dejar constancia de la aceptación o rechazo de la versión exacta que se compartió. No afirmamos verificar la identidad más allá de los datos declarados por quien posee el enlace.</td>
+    <td>Ejecución del contrato e interés legítimo en conservar la trazabilidad comercial</td>
   </tr>
 </table>
 
@@ -60,9 +70,9 @@ operador de {{ product_name }}. Contacto:
 <p>Usamos proveedores de infraestructura que actúan por instrucción nuestra:</p>
 <table>
   <tr><th>Proveedor</th><th>Función</th></tr>
-  <tr><td>Supabase</td><td>Autenticación (email y credenciales), base de datos PostgreSQL y almacenamiento privado de archivos. Los archivos se sirven solo a miembros autorizados de tu organización, a través de un proxy con sesión; el bucket no es público.</td></tr>
-  <tr><td>Vercel</td><td>Alojamiento de la aplicación web.</td></tr>
-  <tr><td>Resend</td><td>Envío de emails transaccionales (invitaciones de equipo).</td></tr>
+  <tr><td>Supabase</td><td>Autenticación (email y credenciales), base de datos PostgreSQL y almacenamiento privado de archivos. El bucket no es público. Los archivos requieren membresía, salvo el PDF exacto de una propuesta que tu organización comparta deliberadamente mediante un enlace secreto, temporal y revocable.</td></tr>
+  <tr><td>Vercel</td><td>Alojamiento de la aplicación web y de la página que valida los enlaces de propuesta.</td></tr>
+  <tr><td>Resend</td><td>Envío de emails transaccionales (invitaciones, avisos y presupuestos que decides enviar).</td></tr>
   <tr><td>Upstash</td><td>Contador distribuido del límite de intentos de acceso (recibe únicamente claves anonimizadas con caducidad, nunca tu IP ni tu email en claro).</td></tr>
   <tr><td>GoDaddy</td><td>Registro del dominio <code>cotizat.online</code> y DNS.</td></tr>
 </table>
@@ -74,7 +84,10 @@ datos que recibe cada uno a lo imprescindible para su función.</p>
 <p>Cada organización es un espacio separado: el aislamiento se aplica en la
 capa de datos (filtro obligatorio por organización en cada consulta y
 políticas de seguridad a nivel de fila en PostgreSQL) y en el acceso a
-archivos. Un miembro de una organización no puede ver datos de otra.</p>
+archivos. Un miembro de una organización no puede ver datos de otra. La única
+excepción deliberada es una propuesta compartida por tu propia organización:
+quien posea su enlace secreto puede consultar exclusivamente esa versión y su
+PDF hasta que el enlace caduque o sea revocado.</p>
 
 <h2>6. Cookies</h2>
 <p>Usamos únicamente cookies técnicas de sesión (HttpOnly, Secure y SameSite):

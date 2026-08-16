@@ -1,0 +1,12 @@
+{{ empresa_nombre }} — Presupuesto {{ presupuesto_numero }}
+Enviado mediante {{ product_name }}
+
+{% if cliente_nombre %}Hola, {{ cliente_nombre }}:
+
+{% endif %}{{ mensaje }}
+
+Documento adjunto: presupuesto {{ presupuesto_numero }} en PDF{% if total_texto %} · Total {{ total_texto }}{% endif %}.
+
+{% if permite_responder %}Puedes responder directamente a este correo para contactar con {{ empresa_nombre }}.
+
+{% endif %}Este mensaje contiene una propuesta comercial. Revisa el PDF adjunto para consultar alcance, importes, vigencia y condiciones completas.

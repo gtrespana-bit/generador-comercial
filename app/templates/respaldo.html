@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% block title %}Respaldo y restauración web{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Respaldo y restauración web</h1>
+    <p class="subtitle">Copia completa y verificable de esta organización: datos y archivos, con huella digital por archivo</p>
+  </div>
+</div>
+
+{% if resultado %}
+<div class="card">
+  <h2>✅ Restauración completada</h2>
+  <p class="subtitle">La copia se verificó íntegra y sus datos ya están en esta organización. Nada de lo que ya existía se borró ni se sobrescribió.</p>
+  <h3>Restaurado</h3>
+  <ul>
+    {% for clave, cantidad in resultado.restaurados.items() %}
+    <li><strong>{{ cantidad }}</strong> {{ clave.replace('.json', '').replace('_', ' ') }}</li>
+    {% endfor %}
+    {% if not resultado.restaurados %}
+    <li>Nada nuevo: todo lo que trae la copia ya existía aquí.</li>
+    {% endif %}
+  </ul>
+  <h3>Reutilizado sin duplicar</h3>
+  <ul>
+    {% for clave, cantidad in resultado.reutilizados.items() %}
+    <li><strong>{{ cantidad }}</strong> {{ clave.replace('.json', '').replace('_', ' ') }}</li>
+    {% endfor %}
+  </ul>
+  <p>
+    <strong>{{ resultado.archivos_restaurados }}</strong> archivo(s) restaurado(s) y
+    <strong>{{ resultado.archivos_reutilizados }}</strong> archivo(s) reutilizado(s) por huella.
+    Configuración comercial: {{ resultado.configuracion }}.
+  </p>
+  {% if resultado.avisos %}
+  <h3>Avisos</h3>
+  <ul>
+    {% for aviso in resultado.avisos %}
+    <li>{{ aviso }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+  <p><a class="btn btn-primary" href="/presupuestos">Ver presupuestos</a>
+     <a class="btn" href="/configuracion/respaldo">Volver al respaldo</a></p>
+</div>
+{% elif resumen %}
+<div class="card">
+  <h2>Paso 2 de 2 — Revisa y confirma</h2>
+  {% if resumen.organizacion.nombre %}
+  <p class="subtitle">Copia de <strong>{{ resumen.organizacion.nombre }}</strong>, verificada íntegra. Nada se restaura todavía: revisa el resumen y confirma.</p>
+  {% else %}
+  <p class="subtitle">Copia verificada íntegra. Nada se restaura todavía: revisa el resumen y confirma.</p>
+  {% endif %}
+  <h3>Se restaurará (sin borrar nada de lo actual)</h3>
+  <ul>
+    {% for clave, cantidad in resumen.conteos.items() %}
+    <li><strong>{{ cantidad }}</strong> {{ clave.replace('.json', '').replace('_', ' ') }}</li>
+    {% endfor %}
+    <li><strong>{{ resumen.archivos|length }}</strong> archivo(s) verificados ({{ (resumen.total_bytes / 1048576) | round(1) }} MB)</li>
+  </ul>
+  {% if resumen.reutilizables %}
+  <h3>Lo que ya existe aquí se reutilizará</h3>
+  <ul>
+    {% for clave, notas in resumen.reutilizables.items() %}
+    {% for nota in notas %}
+    <li>{{ nota }}</li>
+    {% endfor %}
+    {% endfor %}
+  </ul>
+  {% endif %}
+  <h3>Qué NO se restaura y por qué</h3>
+  <ul>
+    {% for clave, motivo in resumen.omitido.items() %}
+    <li><strong>{{ clave.replace('_', ' ') }}:</strong> {{ motivo }}</li>
+    {% endfor %}
+  </ul>
+  {% if resumen.avisos %}
+  <h3>Avisos de la copia</h3>
+  <ul>
+    {% for aviso in resumen.avisos %}
+    <li>{{ aviso }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+  <form method="post" action="/configuracion/respaldo/restaurar/confirmar" enctype="multipart/form-data">
+    <input type="hidden" name="sha256" value="{{ resumen.sha256_paquete }}">
+    <div class="field">
+      <label>Vuelve a seleccionar el mismo archivo</label>
+      <input type="file" name="archivo" accept=".zip" required>
+      <p class="hint">Por seguridad el servidor no guarda tu archivo entre pasos. Debe ser exactamente el mismo: se verifica con su huella digital.</p>
+    </div>
+    <div class="field">
+      <label class="hint">
+        <input type="checkbox" name="confirmar" value="si" required>
+        Confirmo que soy el propietario de estos datos y quiero restaurar esta copia en esta organización.
+      </label>
+    </div>
+    <button class="btn btn-primary" type="submit">↩️ Restaurar copia</button>
+    <a class="btn" href="/configuracion/respaldo">Cancelar</a>
+  </form>
+</div>
+{% else %}
+<div class="card">
+  <h2>Descargar copia completa</h2>
+  <p class="subtitle">Un único archivo .zip con todos los datos de esta organización y sus archivos (PDFs, anexos, fotos, logo en referencias, fichas), cada uno verificado con su huella SHA-256. Guárdalo en un lugar seguro.</p>
+  <a class="btn btn-primary" href="/configuracion/respaldo/descargar">⬇️ Descargar copia (.zip)</a>
+  <p class="hint">Máximo 300 MB. No incluye cuentas de usuario, licencias, invitaciones ni enlaces públicos activos; las respuestas históricas de propuestas viajan como notas de seguimiento.</p>
+</div>
+<div class="card">
+  <h2>Exportar datos para llevártelos</h2>
+  <p class="subtitle">Un paquete legible por cualquier herramienta: una hoja CSV por tabla (abre directo en Excel o LibreOffice), tus archivos con su nombre original y, dentro, la copia verificable completa por si algún día vuelves a CotizaT.</p>
+  <a class="btn" href="/configuracion/exportacion/descargar">📤 Descargar exportación (.zip)</a>
+</div>
+<div class="card">
+  <h2>Restaurar una copia</h2>
+  <p class="subtitle">Paso 1 de 2 — Analizar la copia. Primero verás qué contiene y qué no; nada se restaura sin tu confirmación explícita.</p>
+  <form method="post" action="/configuracion/respaldo/restaurar" enctype="multipart/form-data">
+    <div class="field">
+      <label>Copia de seguridad (.zip)</label>
+      <input type="file" name="archivo" accept=".zip" required>
+      <p class="hint">Máximo 300 MB. La restauración nunca borra ni sobrescribe lo que ya existe: lo que coincide se reutiliza y solo se añade lo que falta.</p>
+    </div>
+    <button class="btn btn-primary" type="submit">🔍 Analizar copia</button>
+  </form>
+</div>
+{% if rol == 'propietario' %}
+<div class="card">
+  <h2>Dar de baja la organización</h2>
+  <p class="subtitle">Borrado definitivo e irreversible de todos los datos y archivos de esta organización. Descarga antes tu exportación y confirma escribiendo el nombre exacto de la organización.</p>
+  <a class="btn" href="/configuracion/baja">🗑️ Dar de baja la organización</a>
+</div>
+{% endif %}
+{% endif %}
+{% endblock %}

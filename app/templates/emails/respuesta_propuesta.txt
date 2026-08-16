@@ -1,0 +1,11 @@
+{{ product_name }} — Propuesta {{ decision }}
+
+La propuesta {{ presupuesto_numero }}{% if presupuesto_titulo %} · {{ presupuesto_titulo }}{% endif %}, versión V{{ version_numero }}, fue {{ decision }}.
+
+Cliente: {{ cliente_nombre or '—' }}
+Respondió: {{ respondido_por_nombre }} · {{ respondido_por_email }}
+{% if comentario %}Comentario: {{ comentario }}
+{% endif %}
+Abrir presupuesto en CotizaT: {{ enlace_interno }}
+
+La identidad mostrada es la declarada por quien respondió el enlace. CotizaT conserva la versión exacta, la decisión y la fecha/hora; no certifica una firma electrónica cualificada.

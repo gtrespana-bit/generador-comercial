@@ -91,7 +91,7 @@ DATABASE_URL = DATABASE.url
 DATABASE_BACKEND = DATABASE.backend
 DATABASE_IS_SQLITE = DATABASE.is_sqlite
 DB_PATH = DATABASE.sqlite_path
-EXPECTED_ALEMBIC_HEAD = "b7c4a9e2d31f"
+EXPECTED_ALEMBIC_HEAD = "a3d7e9c1b5f2"
 
 # Copias de seguridad automáticas y manuales (solo corresponden al modo
 # SQLite local; PostgreSQL tendrá backups administrados fuera del proceso).
@@ -139,12 +139,14 @@ def _aplicar_contexto_postgresql(connection, info: dict) -> None:
               set_config('cotizat.auth_user_id', :auth_user_id, true),
               set_config('cotizat.auth_email', :auth_email, true),
               set_config('cotizat.organization_id', :organization_id, true),
-              set_config('cotizat.es_operador', :es_operador, true)
+              set_config('cotizat.es_operador', :es_operador, true),
+              set_config('cotizat.proposal_token_hash', :proposal_token_hash, true)
         """),
         {
             "auth_user_id": str(info.get("auth_user_id") or ""),
             "auth_email": str(info.get("auth_email") or "").lower(),
             "organization_id": str(info.get("organizacion_id") or ""),
+            "proposal_token_hash": str(info.get("proposal_token_hash") or ""),
             # Marca que habilita las políticas RLS de `licencias`. Vale 'on'
             # solo si el correo verificado figura en COTIZAT_OPERADORES; para
             # cualquier sesión de cliente queda en 'off' y la tabla se comporta
@@ -263,6 +265,24 @@ def get_operator_db(request: Request = None):
             # Mismo mensaje que cualquier otro acceso denegado: no confirma la
             # existencia del panel a quien no debe usarlo.
             raise OrganizationAccessDenied("No tienes acceso a esta sección.")
+        yield db
+    finally:
+        db.close()
+
+
+def get_public_proposal_db(token: str):
+    """Sesión sin identidad limitada por RLS al hash de un enlace público.
+
+    No activa organización ni usuario. En PostgreSQL la única política que
+    puede devolver una fila compara el SHA-256 del token con el claim local de
+    esta transacción. Las demás tablas tenant permanecen completamente
+    inaccesibles.
+    """
+    from .services.propuestas import hash_token_propuesta
+
+    db = SessionLocal()
+    try:
+        db.info["proposal_token_hash"] = hash_token_propuesta(token)
         yield db
     finally:
         db.close()

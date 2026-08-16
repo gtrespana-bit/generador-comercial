@@ -1,8 +1,8 @@
 """Envío de correos transaccionales por API REST (Resend).
 
-CotizaT envía dos tipos de correo: la invitación a una organización (generada
-en `/equipo`) y el aviso de vencimiento de licencia (disparado por el operador
-desde el panel, E1-060). Este módulo los manda por la API REST de Resend con
+CotizaT envía correos de invitación a una organización, avisos de vencimiento
+de licencia y presupuestos PDF dirigidos al cliente. Este módulo los manda por
+la API REST de Resend con
 `urllib`, el mismo patrón que `app/auth.py`, `app/storage.py` y
 `app/ratelimit.py`: sin dependencias nuevas en el runtime ni regeneración del
 lock.
@@ -19,11 +19,13 @@ del correo; ningún secreto del servidor viaja al frontend.
 """
 from __future__ import annotations
 
+import base64
 from dataclasses import dataclass
 from datetime import date, datetime
 import json
 import logging
 import os
+from pathlib import Path
 import re
 from urllib.error import HTTPError, URLError
 from urllib.request import Request as UrlRequest, urlopen
@@ -57,6 +59,18 @@ class EmailNotConfigured(RuntimeError):
 
 class EmailSendError(RuntimeError):
     """El proveedor no confirmó el envío."""
+
+
+class EmailValidationError(ValueError):
+    """Algún dato del correo no es seguro o no cumple los límites."""
+
+
+@dataclass(frozen=True)
+class EmailAttachment:
+    """Archivo adjunto enviado por la API de Resend."""
+
+    filename: str
+    content: bytes
 
 
 def _env(nombre: str) -> str:
@@ -105,17 +119,52 @@ class EmailSettings:
         return cls(api_key=api_key, from_address=from_address)
 
 
-def _post_resend(settings: EmailSettings, *, to: str, subject: str, html: str, text: str) -> str:
-    """Envía el correo y devuelve el id confirmado por Resend."""
-    cuerpo = json.dumps(
-        {
-            "from": settings.from_address,
-            "to": [to],
-            "subject": subject,
-            "html": html,
-            "text": text,
-        }
-    ).encode("utf-8")
+def _post_resend(
+    settings: EmailSettings,
+    *,
+    to: str,
+    subject: str,
+    html: str,
+    text: str,
+    reply_to: str = "",
+    attachments: tuple[EmailAttachment, ...] = (),
+) -> str:
+    """Envía el correo y devuelve el id confirmado por Resend.
+
+    Los adjuntos se codifican en base64 dentro del JSON, que es el formato de
+    la API REST. Se limita el total antes de construir el cuerpo para no agotar
+    memoria en una función serverless ni convertir este método en un envío de
+    archivos arbitrarios.
+    """
+    if not _direccion_valida(to) or "<" in to:
+        raise EmailValidationError("La dirección de destino no es válida.")
+    if not subject.strip() or len(subject) > 200 or "\n" in subject or "\r" in subject:
+        raise EmailValidationError("El asunto no es válido o supera 200 caracteres.")
+    if reply_to and (not _direccion_valida(reply_to) or "<" in reply_to):
+        raise EmailValidationError("La dirección de respuesta no es válida.")
+    if len(attachments) > 3:
+        raise EmailValidationError("No se pueden adjuntar más de 3 archivos.")
+    if sum(len(adjunto.content) for adjunto in attachments) > 8 * 1024 * 1024:
+        raise EmailValidationError("Los archivos adjuntos superan 8 MB.")
+
+    payload = {
+        "from": settings.from_address,
+        "to": [to],
+        "subject": subject.strip(),
+        "html": html,
+        "text": text,
+    }
+    if reply_to:
+        payload["reply_to"] = reply_to
+    if attachments:
+        payload["attachments"] = [
+            {
+                "filename": Path(adjunto.filename).name[:180] or "archivo.pdf",
+                "content": base64.b64encode(adjunto.content).decode("ascii"),
+            }
+            for adjunto in attachments
+        ]
+    cuerpo = json.dumps(payload).encode("utf-8")
     request = UrlRequest(
         RESEND_API_URL,
         data=cuerpo,
@@ -184,6 +233,148 @@ def enviar_invitacion_por_email(
         logger.warning("No se pudo enviar la invitación a %s (%s).", email, exc)
         raise
     logger.info("Invitación enviada a %s (id %s).", email, envio_id)
+    return envio_id
+
+
+def email_destino_valido(email: str) -> bool:
+    """Valida una dirección simple de destinatario (sin nombre visible)."""
+    limpio = str(email or "").strip()
+    return len(limpio) <= 254 and "<" not in limpio and _direccion_valida(limpio)
+
+
+def enviar_presupuesto_por_email(
+    *,
+    email: str,
+    asunto: str,
+    mensaje: str,
+    empresa_nombre: str,
+    cliente_nombre: str,
+    presupuesto_numero: str,
+    presupuesto_titulo: str,
+    total_texto: str,
+    pdf: bytes,
+    nombre_pdf: str,
+    responder_a: str = "",
+) -> str:
+    """Entrega al cliente un presupuesto PDF y devuelve el id de Resend."""
+    email = str(email or "").strip().lower()
+    asunto = str(asunto or "").strip()
+    mensaje = str(mensaje or "").strip()
+    if not email_destino_valido(email):
+        raise EmailValidationError("Escribe un email de destino válido.")
+    if not asunto or len(asunto) > 200 or "\n" in asunto or "\r" in asunto:
+        raise EmailValidationError("El asunto es obligatorio y admite hasta 200 caracteres.")
+    if not mensaje:
+        raise EmailValidationError("Escribe el mensaje que recibirá el cliente.")
+    if len(mensaje) > 5000:
+        raise EmailValidationError("El mensaje admite hasta 5.000 caracteres.")
+    if not pdf or not pdf.startswith(b"%PDF-"):
+        raise EmailValidationError("No se pudo preparar un PDF válido para adjuntar.")
+    responder_a = str(responder_a or "").strip().lower()
+    if responder_a and not email_destino_valido(responder_a):
+        responder_a = ""
+
+    settings = EmailSettings.from_environment()
+    contexto = {
+        "product_name": PRODUCT_NAME,
+        "empresa_nombre": str(empresa_nombre or "").strip() or PRODUCT_NAME,
+        "cliente_nombre": str(cliente_nombre or "").strip(),
+        "presupuesto_numero": str(presupuesto_numero or "").strip(),
+        "presupuesto_titulo": str(presupuesto_titulo or "").strip(),
+        "total_texto": str(total_texto or "").strip(),
+        "mensaje": mensaje,
+        "permite_responder": bool(responder_a),
+        "anio": datetime.utcnow().year,
+    }
+    html = _jinja.get_template("emails/presupuesto.html").render(**contexto)
+    texto = _jinja.get_template("emails/presupuesto.txt").render(**contexto)
+    try:
+        envio_id = _post_resend(
+            settings,
+            to=email,
+            subject=asunto,
+            html=html,
+            text=texto,
+            reply_to=responder_a,
+            attachments=(EmailAttachment(filename=nombre_pdf, content=pdf),),
+        )
+    except EmailSendError as exc:
+        logger.warning("No se pudo enviar el presupuesto a %s (%s).", email, exc)
+        raise
+    logger.info(
+        "Presupuesto %s enviado a %s (id %s).",
+        presupuesto_numero,
+        email,
+        envio_id,
+    )
+    return envio_id
+
+
+def enviar_respuesta_propuesta_por_email(
+    *,
+    email: str,
+    decision: str,
+    empresa_nombre: str,
+    cliente_nombre: str,
+    presupuesto_numero: str,
+    presupuesto_titulo: str,
+    version_numero: int,
+    respondido_por_nombre: str,
+    respondido_por_email: str,
+    comentario: str,
+    enlace_interno: str,
+) -> str:
+    """Notifica a un administrador la respuesta registrada por el cliente."""
+    email = str(email or "").strip().lower()
+    if not email_destino_valido(email):
+        raise EmailValidationError("El destinatario interno no es válido.")
+    decision = str(decision or "").strip().lower()
+    if decision not in {"aceptada", "rechazada"}:
+        raise EmailValidationError("La respuesta de la propuesta no es válida.")
+    settings = EmailSettings.from_environment()
+    contexto = {
+        "product_name": PRODUCT_NAME,
+        "decision": decision,
+        "empresa_nombre": str(empresa_nombre or "").strip() or PRODUCT_NAME,
+        "cliente_nombre": str(cliente_nombre or "").strip(),
+        "presupuesto_numero": str(presupuesto_numero or "").strip(),
+        "presupuesto_titulo": str(presupuesto_titulo or "").strip(),
+        "version_numero": int(version_numero),
+        "respondido_por_nombre": str(respondido_por_nombre or "").strip(),
+        "respondido_por_email": str(respondido_por_email or "").strip().lower(),
+        "comentario": str(comentario or "").strip(),
+        "enlace_interno": enlace_interno,
+        "anio": datetime.utcnow().year,
+    }
+    asunto = (
+        f"Propuesta {decision}: {presupuesto_numero} · "
+        f"{cliente_nombre or respondido_por_nombre}"
+    )[:200]
+    html = _jinja.get_template("emails/respuesta_propuesta.html").render(**contexto)
+    texto = _jinja.get_template("emails/respuesta_propuesta.txt").render(**contexto)
+    try:
+        envio_id = _post_resend(
+            settings,
+            to=email,
+            subject=asunto,
+            html=html,
+            text=texto,
+            reply_to=contexto["respondido_por_email"],
+        )
+    except EmailSendError as exc:
+        logger.warning(
+            "No se pudo notificar la respuesta de %s a %s (%s).",
+            presupuesto_numero,
+            email,
+            exc,
+        )
+        raise
+    logger.info(
+        "Respuesta de propuesta %s notificada a %s (id %s).",
+        presupuesto_numero,
+        email,
+        envio_id,
+    )
     return envio_id
 
 
