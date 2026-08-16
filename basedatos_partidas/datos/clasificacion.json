@@ -90,7 +90,11 @@
         "02": "Bloque y ladrillo de arcilla",
         "03": "Tabiquería de yeso laminado",
         "04": "Tabiquería de otros materiales",
-        "05": "Dinteles, brocales y remates de vano"
+        "05": "Dinteles, brocales y remates de vano",
+        "06": "Mampostería estructural",
+        "07": "Frentes de losa y cajones de persiana",
+        "08": "Mamparas y tabiques móviles",
+        "09": "Limpieza y tratamiento de fachadas"
       }
     },
     "07": {

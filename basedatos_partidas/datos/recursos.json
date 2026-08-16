@@ -1464,6 +1464,72 @@
       "descripcion": "Adecuación de zona de vestuario y comedor de obra, con mobiliario básico.",
       "precio": 120.0,
       "estado": "provisional"
+    },
+    "MT-BLQ-EST-15": {
+      "unidad": "ud",
+      "descripcion": "Bloque de concreto estructural de 15x20x40 cm, de resistencia certificada.",
+      "precio": 1.05,
+      "estado": "provisional"
+    },
+    "MT-BLQ-EST-20": {
+      "unidad": "ud",
+      "descripcion": "Bloque de concreto estructural de 20x20x40 cm, de resistencia certificada.",
+      "precio": 1.35,
+      "estado": "provisional"
+    },
+    "MT-MORT-EST": {
+      "unidad": "kg",
+      "descripcion": "Mortero de pega de resistencia controlada para mampostería estructural.",
+      "precio": 0.24,
+      "estado": "provisional"
+    },
+    "MT-GROUT-CELDA": {
+      "unidad": "m3",
+      "descripcion": "Concreto fluido de relleno de celdas para mampostería estructural.",
+      "precio": 132.0,
+      "estado": "provisional"
+    },
+    "MT-ESCALERILLA": {
+      "unidad": "m",
+      "descripcion": "Escalerilla o junta de refuerzo horizontal para mampostería.",
+      "precio": 1.15,
+      "estado": "provisional"
+    },
+    "MT-CAJON-PERS": {
+      "unidad": "m",
+      "descripcion": "Cajón de persiana prefabricado aislado, con su tapa registrable.",
+      "precio": 18.0,
+      "estado": "provisional"
+    },
+    "MT-MAMPARA-OFI": {
+      "unidad": "m2",
+      "descripcion": "Sistema de mampara divisoria de oficina, con perfilería, paneles y juntas.",
+      "precio": 48.0,
+      "estado": "provisional"
+    },
+    "MT-TABIQUE-MOVIL": {
+      "unidad": "m2",
+      "descripcion": "Sistema de tabique móvil o plegable, con paneles, riel y herrajes.",
+      "precio": 135.0,
+      "estado": "provisional"
+    },
+    "MT-HIDROFUG-FACH": {
+      "unidad": "l",
+      "descripcion": "Hidrofugante incoloro de impregnación para protección de fachadas.",
+      "precio": 8.6,
+      "estado": "provisional"
+    },
+    "MT-FUNGICIDA": {
+      "unidad": "l",
+      "descripcion": "Solución fungicida y algicida para tratamiento de moho y verdín en fachadas.",
+      "precio": 6.2,
+      "estado": "provisional"
+    },
+    "MT-LIMP-QUIM": {
+      "unidad": "l",
+      "descripcion": "Limpiador químico específico para fachadas, según el tipo de soporte y de mancha.",
+      "precio": 9.4,
+      "estado": "provisional"
     }
   },
   "maquinaria": {

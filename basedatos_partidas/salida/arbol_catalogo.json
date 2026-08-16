@@ -2167,9 +2167,133 @@
             }
           ],
           "n": 5
+        },
+        {
+          "codigo": "06",
+          "nombre": "Mampostería estructural",
+          "partidas": [
+            {
+              "codigo": "CT-06-06-010",
+              "titulo": "Pared de mampostería estructural de bloque de concreto de 15 cm.",
+              "unidad": "m²",
+              "precio": 47.92,
+              "horas": 1.78,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-06-06-020",
+              "titulo": "Pared de mampostería estructural de bloque de concreto de 20 cm.",
+              "unidad": "m²",
+              "precio": 59.77,
+              "horas": 1.94,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-06-06-030",
+              "titulo": "Viga dintel de mampostería estructural con bloque canal.",
+              "unidad": "m",
+              "precio": 32.29,
+              "horas": 1.38,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-06-06-040",
+              "titulo": "Refuerzo de celda vertical con acero y relleno de concreto.",
+              "unidad": "m",
+              "precio": 11.13,
+              "horas": 0.6,
+              "producto_cliente": false
+            }
+          ],
+          "n": 4
+        },
+        {
+          "codigo": "07",
+          "nombre": "Frentes de losa y cajones de persiana",
+          "partidas": [
+            {
+              "codigo": "CT-06-07-010",
+              "titulo": "Tratamiento y remate de frente de losa en fachada.",
+              "unidad": "m",
+              "precio": 12.55,
+              "horas": 0.68,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-06-07-020",
+              "titulo": "Cajón de persiana en dintel de ventana.",
+              "unidad": "m",
+              "precio": 34.63,
+              "horas": 0.8,
+              "producto_cliente": false
+            }
+          ],
+          "n": 2
+        },
+        {
+          "codigo": "08",
+          "nombre": "Mamparas y tabiques móviles",
+          "partidas": [
+            {
+              "codigo": "CT-06-08-010",
+              "titulo": "Mampara divisoria de oficina.",
+              "unidad": "m²",
+              "precio": 83.49,
+              "horas": 1.13,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-06-08-020",
+              "titulo": "Tabique móvil o plegable.",
+              "unidad": "m²",
+              "precio": 217.43,
+              "horas": 1.8,
+              "producto_cliente": false
+            }
+          ],
+          "n": 2
+        },
+        {
+          "codigo": "09",
+          "nombre": "Limpieza y tratamiento de fachadas",
+          "partidas": [
+            {
+              "codigo": "CT-06-09-010",
+              "titulo": "Limpieza de fachada con hidrolavado.",
+              "unidad": "m²",
+              "precio": 2.64,
+              "horas": 0.26,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-06-09-020",
+              "titulo": "Tratamiento fungicida de fachada contra moho y verdín.",
+              "unidad": "m²",
+              "precio": 4.49,
+              "horas": 0.3,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-06-09-030",
+              "titulo": "Limpieza química de fachada y eliminación de manchas.",
+              "unidad": "m²",
+              "precio": 6.57,
+              "horas": 0.42,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-06-09-040",
+              "titulo": "Aplicación de hidrofugante incoloro en fachada.",
+              "unidad": "m²",
+              "precio": 6.42,
+              "horas": 0.33,
+              "producto_cliente": false
+            }
+          ],
+          "n": 4
         }
       ],
-      "n": 25
+      "n": 37
     },
     {
       "codigo": "07",
