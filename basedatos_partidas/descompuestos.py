@@ -106,7 +106,13 @@ def ubicar(partida: dict, taxonomia: dict) -> dict:
 
 
 def cargar_recursos() -> dict:
-    """Aplana datos/recursos.json en un mapa codigo -> ficha del recurso."""
+    """Aplana datos/recursos.json en un mapa codigo -> ficha del recurso.
+
+    Los recursos que declaran `composicion` (morteros y concretos elaborados
+    en obra) **no llevan precio propio**: se calcula sumando sus componentes.
+    Así, subir el cemento recalcula solo el mortero de pega, el de friso y el
+    de contrapiso, sin tener que acordarse de tocarlos uno a uno.
+    """
     if not RECURSOS.exists():
         return {}
     bruto = json.loads(RECURSOS.read_text(encoding="utf-8"))
@@ -114,7 +120,69 @@ def cargar_recursos() -> dict:
     for grupo in ("materiales", "maquinaria", "mano_obra"):
         for codigo, ficha in (bruto.get(grupo) or {}).items():
             plano[codigo] = {**ficha, "grupo": grupo, "codigo": codigo}
+
+    # Precio de los compuestos, resuelto en cascada y detectando ciclos.
+    def precio_de(codigo: str, visitando: tuple[str, ...] = ()) -> float:
+        ficha = plano.get(codigo)
+        if ficha is None:
+            raise ValueError(f"el recurso «{codigo}» no existe en recursos.json")
+        composicion = ficha.get("composicion")
+        if not composicion:
+            return float(ficha["precio"])
+        if codigo in visitando:
+            ciclo = " -> ".join((*visitando, codigo))
+            raise ValueError(f"composición circular de recursos: {ciclo}")
+        total = sum(
+            float(c["cantidad"]) * precio_de(c["ref"], (*visitando, codigo))
+            for c in composicion
+        )
+        ficha["precio"] = round(total, 4)
+        return ficha["precio"]
+
+    for codigo in list(plano):
+        precio_de(codigo)
     return plano
+
+
+def _desglosar(ref: str, rendimiento: float, catalogo: dict, origen: str = "") -> list[dict]:
+    """Devuelve las líneas físicas de un recurso, abriendo los compuestos.
+
+    Un mortero elaborado en obra no se escribe como una línea opaca: se abre
+    en el cemento, la arena y el agua que realmente lo componen. Es la forma
+    en que se lee un análisis de precio unitario en Venezuela y, además, es lo
+    que permite que al cambiar el precio del cemento en la aplicación se
+    recalculen todas las partidas que llevan mortero.
+    """
+    ficha = catalogo.get(ref)
+    if not ficha:
+        raise ValueError(f"el recurso «{ref}» no existe en recursos.json")
+    composicion = ficha.get("composicion")
+    if not composicion:
+        return [{
+            "grupo": ficha["grupo"],
+            "codigo": ref,
+            "unidad": ficha["unidad"],
+            "descripcion": ficha["descripcion"],
+            "rendimiento": rendimiento,
+            "precio": float(ficha["precio"]),
+            "origen": origen,
+        }]
+    etiqueta = origen or _etiqueta_compuesto(ficha["descripcion"])
+    lineas: list[dict] = []
+    for componente in composicion:
+        lineas.extend(_desglosar(
+            componente["ref"],
+            rendimiento * float(componente["cantidad"]),
+            catalogo,
+            etiqueta,
+        ))
+    return lineas
+
+
+def _etiqueta_compuesto(descripcion: str) -> str:
+    """«Mortero de pega para mampostería, elaborado…» -> «mortero de pega»."""
+    corte = descripcion.split(",")[0].split(" para ")[0].strip().rstrip(".")
+    return corte[:1].lower() + corte[1:] if corte else "mezcla en obra"
 
 
 def resolver_recursos(partida: dict, catalogo: dict) -> list[dict]:
@@ -135,6 +203,11 @@ def resolver_recursos(partida: dict, catalogo: dict) -> list[dict]:
                 raise ValueError(
                     f"{partida['codigo']}: el recurso «{ref}» no existe en recursos.json"
                 )
+            if ficha.get("composicion") and not linea.get("sin_desglosar"):
+                resueltos.extend(
+                    _desglosar(ref, float(linea["rendimiento"]), catalogo)
+                )
+                continue
             resueltos.append({
                 "grupo": ficha["grupo"],
                 "codigo": ref,
@@ -146,7 +219,33 @@ def resolver_recursos(partida: dict, catalogo: dict) -> list[dict]:
         else:
             resueltos.append({**linea, "rendimiento": float(linea["rendimiento"]),
                               "precio": float(linea["precio"])})
-    return resueltos
+
+    # Un mismo componente puede llegar por dos caminos (p. ej. el cemento del
+    # mortero de pega y el del friso en la misma partida). Se acumulan en una
+    # sola línea para que el descompuesto no repita el mismo código.
+    fusionadas: dict[tuple, dict] = {}
+    orden: list[tuple] = []
+    for item in resueltos:
+        clave = (item["grupo"], item["codigo"], item["unidad"], round(item["precio"], 6))
+        if clave in fusionadas:
+            fusionadas[clave]["rendimiento"] += item["rendimiento"]
+            previo = fusionadas[clave].get("origen") or ""
+            nuevo = item.get("origen") or ""
+            if nuevo and nuevo not in previo:
+                fusionadas[clave]["origen"] = f"{previo} y {nuevo}" if previo else nuevo
+        else:
+            fusionadas[clave] = dict(item)
+            orden.append(clave)
+
+    salida = []
+    for clave in orden:
+        item = fusionadas[clave]
+        item["rendimiento"] = round(item["rendimiento"], 8)
+        origen = item.pop("origen", "")
+        if origen:
+            item["descripcion"] = f"{item['descripcion'].rstrip('.')}. Para {origen}."
+        salida.append(item)
+    return salida
 
 
 def construir_hoja(partida: dict, ruta: Path) -> dict:

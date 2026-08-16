@@ -21,11 +21,11 @@
     },
     {
       "ref": "MT-MOR-PEGA",
-      "rendimiento": 30.0
+      "rendimiento": 0.03
     },
     {
       "ref": "MT-MOR-FRISO",
-      "rendimiento": 36.0
+      "rendimiento": 0.036
     },
     {
       "ref": "MT-MORT-IMPER",

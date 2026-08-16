@@ -205,6 +205,83 @@ de qué NO está incluido.
 
 ---
 
+# Cambiar el precio de UN artículo (precio.py)
+
+En Venezuela el cemento puede amanecer en 10 y anochecer en 20. Esta es la
+herramienta del día a día. **Nunca se edita el precio dentro de una partida**:
+se cambia en el cuadro de recursos y las 540 partidas se recalculan solas.
+
+```bash
+# ¿cómo se llama el recurso?
+python3 basedatos_partidas/precio.py buscar cemento
+
+# ¿qué precio tiene hoy y a qué partidas afecta?
+python3 basedatos_partidas/precio.py ver MT-CEMENTO
+
+# el saco de 42,5 kg amaneció en 20 USD -> SIMULACIÓN, no escribe nada
+python3 basedatos_partidas/precio.py fijar MT-CEMENTO 20 --por-saco 42.5
+
+# convencido: escribe, hace copia de seguridad y regenera las 540 partidas
+python3 basedatos_partidas/precio.py fijar MT-CEMENTO 20 --por-saco 42.5 --aplicar
+```
+
+La simulación es lo importante: antes de tocar nada dice **cuántas partidas
+cambian, cuáles son las más castigadas y cuánto sube el conjunto**. Ejemplo real
+con el cemento al doble: 67 partidas afectadas, la peor sube un 56 % (nivelación
+con mortero seco) y el conjunto de esas 67 sube un 4,4 %.
+
+Se indica el precio **como lo da el proveedor** y él convierte a la unidad del
+cuadro:
+
+| Opción | Para qué |
+|---|---|
+| `--por-saco KG` | Cemento, pego, estuco, yeso |
+| `--por-galon` | Pinturas, selladores, imprimaciones (3,785 l) |
+| `--por-rollo M` | Cable, manto, manguera |
+| `--por-lamina M2` | Drywall, policarbonato, melamina |
+| `--por-unidad N` | Cajas y paquetes |
+
+Sin ninguna opción, el valor se toma tal cual en la unidad del recurso.
+
+## Recursos compuestos: el caso del cemento
+
+Un mortero elaborado en obra **no lleva precio propio**. Declara de qué está
+hecho y el precio sale solo:
+
+```json
+"MT-MOR-PEGA": {
+  "unidad": "m3",
+  "descripcion": "Mortero de pega para mampostería, elaborado en obra…",
+  "composicion": [
+    {"ref": "MT-CEMENTO",   "cantidad": 340},
+    {"ref": "MT-ARENA",     "cantidad": 1.05},
+    {"ref": "MT-AGUA-OBRA", "cantidad": 0.20}
+  ]
+}
+```
+
+Hay cuatro: `MT-MOR-PEGA` (1:4), `MT-MOR-FRISO` (1:5), `MT-MORT-CONTRA` (1:6)
+y `MT-MORT-EST` (1:3). Su `estado` es `derivado` y su precio se recalcula en
+cascada; `precio.py` se niega a fijarlo a mano y te dice qué componente tocar.
+
+Además, al escribir la hoja de descompuesto el mortero **se abre en sus
+componentes**: donde antes salía una línea opaca de «mortero de pega» ahora
+salen el cemento, la arena y el agua que realmente lleva, con la coletilla
+«Para mortero de pega». Es como se lee un análisis de precio unitario en
+Venezuela y es lo que hace que el cemento se propague también dentro de la
+aplicación.
+
+> **Por qué importa.** Antes de esto, subir el cemento movía **10 partidas de
+> 540**. Las otras 89 que llevan cemento lo llevaban escondido dentro de un
+> mortero con precio congelado. Ahora mueve **67**. Las que faltan hasta 99 usan
+> concreto premezclado, que se compra hecho y tiene su propio precio de mercado:
+> es correcto que no dependa del saco de cemento.
+
+El concreto premezclado (`MT-CONC-210`, `MT-CONC-250`…) **no** es compuesto a
+propósito: se compra puesto en obra y su precio lo pone la planta.
+
+---
+
 # Actualización de precios en bloque (precios.py)
 
 Los precios viven **solo** en `datos/recursos.json`. Las partidas guardan

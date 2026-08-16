@@ -319,18 +319,46 @@
       "fuente": "Bloque concreto 10 cm: fabricante 0,42; detal hasta 0,55."
     },
     "MT-MOR-PEGA": {
-      "unidad": "kg",
-      "descripcion": "Mortero de pega para mampostería, elaborado con cemento y arena lavada.",
-      "precio": 0.105,
-      "estado": "verificado-mercado",
-      "fuente": "Mortero de pega hecho en obra: ~350 kg cemento + arena por m3."
+      "unidad": "m3",
+      "descripcion": "Mortero de pega para mampostería, elaborado en obra con cemento y arena lavada, dosificación 1:4.",
+      "precio": 99.92,
+      "estado": "derivado",
+      "fuente": "Precio calculado a partir de sus componentes del propio cuadro; no se introduce a mano. Cambiar el cemento o la arena recalcula este mortero.",
+      "composicion": [
+        {
+          "ref": "MT-CEMENTO",
+          "cantidad": 340
+        },
+        {
+          "ref": "MT-ARENA",
+          "cantidad": 1.05
+        },
+        {
+          "ref": "MT-AGUA-OBRA",
+          "cantidad": 0.2
+        }
+      ]
     },
     "MT-MOR-FRISO": {
-      "unidad": "kg",
-      "descripcion": "Mortero de friso para revestimiento de paramentos, elaborado con cemento y arena cernida.",
-      "precio": 0.1,
-      "estado": "verificado-mercado",
-      "fuente": "Mortero de friso elaborado en obra con cemento y arena cernida."
+      "unidad": "m3",
+      "descripcion": "Mortero de friso para revestimiento de paramentos, elaborado en obra con cemento y arena cernida, dosificación 1:5.",
+      "precio": 90.952,
+      "estado": "derivado",
+      "fuente": "Precio calculado a partir de sus componentes del propio cuadro; no se introduce a mano. Cambiar el cemento o la arena recalcula este mortero.",
+      "composicion": [
+        {
+          "ref": "MT-CEMENTO",
+          "cantidad": 300
+        },
+        {
+          "ref": "MT-ARENA",
+          "cantidad": 1.05
+        },
+        {
+          "ref": "MT-AGUA-OBRA",
+          "cantidad": 0.22
+        }
+      ]
     },
     "MT-MALLA-ESQ": {
       "unidad": "m",
@@ -985,11 +1013,25 @@
       "fuente": "MercadoLibre VE: kit de microcemento 6 m2 110,00; microcemento preparado 98,00; kit 6 y 30 m2 120,00. Conversión: Kit para 6 m2 a 110 USD con un consumo aproximado de 4 kg/m2. Rango observado: 4,60 - 6,50 USD/kg."
     },
     "MT-MORT-CONTRA": {
-      "unidad": "kg",
-      "descripcion": "Mortero de cemento y arena para contrapiso y capas de nivelación de piso.",
-      "precio": 0.09,
-      "estado": "verificado-mercado",
-      "fuente": "Mortero de contrapiso, dosificacion mas pobre."
+      "unidad": "m3",
+      "descripcion": "Mortero de cemento y arena para contrapiso y capas de nivelación de piso, elaborado en obra, dosificación 1:6.",
+      "precio": 79.67,
+      "estado": "derivado",
+      "fuente": "Precio calculado a partir de sus componentes del propio cuadro; no se introduce a mano. Cambiar el cemento o la arena recalcula este mortero.",
+      "composicion": [
+        {
+          "ref": "MT-CEMENTO",
+          "cantidad": 250
+        },
+        {
+          "ref": "MT-ARENA",
+          "cantidad": 1.05
+        },
+        {
+          "ref": "MT-AGUA-OBRA",
+          "cantidad": 0.2
+        }
+      ]
     },
     "MT-MANTA-ACUS": {
       "unidad": "m2",
@@ -1605,11 +1647,25 @@
       "fuente": "Bloque estructural 20 certificado."
     },
     "MT-MORT-EST": {
-      "unidad": "kg",
-      "descripcion": "Mortero de pega de resistencia controlada para mampostería estructural.",
-      "precio": 0.15,
-      "estado": "verificado-mercado",
-      "fuente": "Mortero de pega de resistencia controlada para mamposteria estructural."
+      "unidad": "m3",
+      "descripcion": "Mortero de pega de resistencia controlada para mampostería estructural, elaborado en obra, dosificación 1:3.",
+      "precio": 123.602,
+      "estado": "derivado",
+      "fuente": "Precio calculado a partir de sus componentes del propio cuadro; no se introduce a mano. Cambiar el cemento o la arena recalcula este mortero.",
+      "composicion": [
+        {
+          "ref": "MT-CEMENTO",
+          "cantidad": 450
+        },
+        {
+          "ref": "MT-ARENA",
+          "cantidad": 1.0
+        },
+        {
+          "ref": "MT-AGUA-OBRA",
+          "cantidad": 0.22
+        }
+      ]
     },
     "MT-GROUT-CELDA": {
       "unidad": "m3",
