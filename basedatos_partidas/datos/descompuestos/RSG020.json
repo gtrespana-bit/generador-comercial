@@ -1,0 +1,25 @@
+{
+  "codigo": "RSG020",
+  "capitulo": "R", "subcapitulo": "RS", "grupo": "RSG",
+  "unidad": "m²",
+  "titulo": "Colocación de pavimento de porcelanato de gran formato, en capa fina.",
+  "descripcion": "Colocación de pavimento con pieza de porcelanato rectificado de gran formato, tipo 120x60 cm o superior, sobre soporte previamente regularizado. Ejecución en capa fina con adhesivo cementoso mejorado C2 TE mediante doble encolado, manipulación de las piezas con juego de ventosas, nivelación con cuñas para garantizar la planitud que exige el formato y junta mínima rejuntada con mortero CG2. Incluye comprobación previa de la planitud del soporte, replanteo del despiece, cortes con cortadora de disco de diamante refrigerada por agua, limpieza final y retirada de restos. La pieza la elige el cliente y se presupuesta aparte. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
+  "margen": 0.30,
+  "complementarios_pct": 1,
+  "producto_cliente": {
+    "tipo": "Pieza de porcelanato de gran formato para pavimento, 120x60 cm o superior",
+    "unidad": "m2",
+    "consumo": 1.08,
+    "nota": "Consumo con 8 % de desperdicio: en gran formato el corte desaprovecha más pieza."
+  },
+  "recursos": [
+    {"ref": "MT-ADH-C2TE",   "rendimiento": 7.50},
+    {"ref": "MT-JUN-CG2",    "rendimiento": 0.30},
+    {"ref": "MT-CRU-NIV",    "rendimiento": 4.00},
+    {"ref": "MQ-CORT-AGUA",  "rendimiento": 0.110},
+    {"ref": "MQ-VENT-SUC",   "rendimiento": 0.150},
+    {"ref": "MQ-BATID",      "rendimiento": 0.060},
+    {"ref": "MO-OF1-SOL",    "rendimiento": 0.450},
+    {"ref": "MO-AYU-ESP",    "rendimiento": 0.450}
+  ]
+}

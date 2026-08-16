@@ -1,0 +1,803 @@
+{
+  "moneda": "USD",
+  "arbol": [
+    {
+      "codigo": "0",
+      "nombre": "Actuaciones previas",
+      "subcapitulos": [
+        {
+          "codigo": "0A",
+          "nombre": "Andamios y maquinaria de elevación",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "0S",
+          "nombre": "Sondeos y catas",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "0P",
+          "nombre": "Protecciones y apeos",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "0L",
+          "nombre": "Limpieza y desalojo previo",
+          "grupos": [],
+          "n": 0
+        }
+      ],
+      "n": 0
+    },
+    {
+      "codigo": "D",
+      "nombre": "Demoliciones",
+      "subcapitulos": [
+        {
+          "codigo": "DE",
+          "nombre": "Estructuras",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "DF",
+          "nombre": "Fachadas",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "DP",
+          "nombre": "Particiones",
+          "grupos": [
+            {
+              "codigo": "DPT",
+              "nombre": "Tabiquería",
+              "partidas": [],
+              "n": 0
+            }
+          ],
+          "n": 0
+        },
+        {
+          "codigo": "DL",
+          "nombre": "Carpintería, vidrios y protecciones solares",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "DI",
+          "nombre": "Instalaciones",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "DQ",
+          "nombre": "Cubiertas",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "DR",
+          "nombre": "Revestimientos y trasdosados",
+          "grupos": [
+            {
+              "codigo": "DRS",
+              "nombre": "Suelos y pavimentos",
+              "partidas": [
+                {
+                  "codigo": "DRS010",
+                  "titulo": "Demolición de pavimento cerámico existente y su capa de agarre.",
+                  "unidad": "m²",
+                  "precio": 4.62,
+                  "horas": 0.53,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 1
+            },
+            {
+              "codigo": "DRC",
+              "nombre": "Piezas rígidas en paramentos verticales",
+              "partidas": [],
+              "n": 0
+            },
+            {
+              "codigo": "DRF",
+              "nombre": "Revestimientos continuos",
+              "partidas": [],
+              "n": 0
+            },
+            {
+              "codigo": "DRT",
+              "nombre": "Falsos techos",
+              "partidas": [],
+              "n": 0
+            }
+          ],
+          "n": 1
+        },
+        {
+          "codigo": "DS",
+          "nombre": "Equipamiento",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "DM",
+          "nombre": "Firmes y pavimentos exteriores",
+          "grupos": [],
+          "n": 0
+        }
+      ],
+      "n": 1
+    },
+    {
+      "codigo": "A",
+      "nombre": "Acondicionamiento del terreno",
+      "subcapitulos": [
+        {
+          "codigo": "AM",
+          "nombre": "Movimiento de tierras",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "AS",
+          "nombre": "Saneamiento enterrado",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "AN",
+          "nombre": "Nivelación y compactación",
+          "grupos": [],
+          "n": 0
+        }
+      ],
+      "n": 0
+    },
+    {
+      "codigo": "C",
+      "nombre": "Cimentaciones",
+      "subcapitulos": [
+        {
+          "codigo": "CS",
+          "nombre": "Superficiales",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "CP",
+          "nombre": "Profundas",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "CC",
+          "nombre": "Contenciones",
+          "grupos": [],
+          "n": 0
+        }
+      ],
+      "n": 0
+    },
+    {
+      "codigo": "E",
+      "nombre": "Estructuras",
+      "subcapitulos": [
+        {
+          "codigo": "EH",
+          "nombre": "Hormigón armado",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "EA",
+          "nombre": "Acero",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "EM",
+          "nombre": "Madera",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "EF",
+          "nombre": "Fábrica estructural",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "ER",
+          "nombre": "Refuerzos y recalces",
+          "grupos": [],
+          "n": 0
+        }
+      ],
+      "n": 0
+    },
+    {
+      "codigo": "F",
+      "nombre": "Fachadas y particiones",
+      "subcapitulos": [
+        {
+          "codigo": "FF",
+          "nombre": "Fábrica no estructural",
+          "grupos": [
+            {
+              "codigo": "FFB",
+              "nombre": "Bloque de concreto",
+              "partidas": [],
+              "n": 0
+            },
+            {
+              "codigo": "FFL",
+              "nombre": "Ladrillo cerámico",
+              "partidas": [],
+              "n": 0
+            }
+          ],
+          "n": 0
+        },
+        {
+          "codigo": "FB",
+          "nombre": "Tabiquería de entramado autoportante",
+          "grupos": [
+            {
+              "codigo": "FBY",
+              "nombre": "De placas de yeso laminado",
+              "partidas": [
+                {
+                  "codigo": "FBY010",
+                  "titulo": "Tabique autoportante de placa de yeso laminado 15+70+15, doble placa por cara.",
+                  "unidad": "m²",
+                  "precio": 52.4,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 1
+            },
+            {
+              "codigo": "FBC",
+              "nombre": "De placas de cemento",
+              "partidas": [],
+              "n": 0
+            }
+          ],
+          "n": 1
+        },
+        {
+          "codigo": "FC",
+          "nombre": "Dinteles, cargaderos y cajones de persiana",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "FD",
+          "nombre": "Defensas y barandillas",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "FZ",
+          "nombre": "Limpieza y tratamientos superficiales",
+          "grupos": [],
+          "n": 0
+        }
+      ],
+      "n": 1
+    },
+    {
+      "codigo": "L",
+      "nombre": "Carpintería, cerrajería, vidrios y protecciones solares",
+      "subcapitulos": [
+        {
+          "codigo": "LP",
+          "nombre": "Puertas interiores",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "LE",
+          "nombre": "Puertas de entrada",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "LV",
+          "nombre": "Ventanas y balconeras",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "LA",
+          "nombre": "Armarios y closets",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "LC",
+          "nombre": "Cerrajería y rejas",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "LG",
+          "nombre": "Vidrios",
+          "grupos": [],
+          "n": 0
+        }
+      ],
+      "n": 0
+    },
+    {
+      "codigo": "H",
+      "nombre": "Remates y ayudas",
+      "subcapitulos": [
+        {
+          "codigo": "HA",
+          "nombre": "Ayudas de albañilería a instalaciones",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "HR",
+          "nombre": "Remates y sellados",
+          "grupos": [],
+          "n": 0
+        }
+      ],
+      "n": 0
+    },
+    {
+      "codigo": "I",
+      "nombre": "Instalaciones",
+      "subcapitulos": [
+        {
+          "codigo": "IF",
+          "nombre": "Fontanería",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "IS",
+          "nombre": "Saneamiento y desagües",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "IE",
+          "nombre": "Eléctrica",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "II",
+          "nombre": "Iluminación",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "IC",
+          "nombre": "Climatización y ventilación",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "IG",
+          "nombre": "Gas",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "IT",
+          "nombre": "Telecomunicaciones y datos",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "IP",
+          "nombre": "Protección contra incendios",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "IH",
+          "nombre": "Hidroneumáticos y bombeo",
+          "grupos": [],
+          "n": 0
+        }
+      ],
+      "n": 0
+    },
+    {
+      "codigo": "N",
+      "nombre": "Aislamientos e impermeabilizaciones",
+      "subcapitulos": [
+        {
+          "codigo": "NA",
+          "nombre": "Aislamientos térmicos y acústicos",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "NI",
+          "nombre": "Impermeabilizaciones",
+          "grupos": [],
+          "n": 0
+        }
+      ],
+      "n": 0
+    },
+    {
+      "codigo": "Q",
+      "nombre": "Cubiertas",
+      "subcapitulos": [
+        {
+          "codigo": "QI",
+          "nombre": "Inclinadas",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "QP",
+          "nombre": "Planas",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "QL",
+          "nombre": "Lucernarios y translúcidas",
+          "grupos": [],
+          "n": 0
+        }
+      ],
+      "n": 0
+    },
+    {
+      "codigo": "R",
+      "nombre": "Revestimientos y trasdosados",
+      "subcapitulos": [
+        {
+          "codigo": "RS",
+          "nombre": "Pavimentos",
+          "grupos": [
+            {
+              "codigo": "RSA",
+              "nombre": "Morteros y pastas de nivelación",
+              "partidas": [
+                {
+                  "codigo": "RSA010",
+                  "titulo": "Recrecido con mortero autonivelante de 5 mm de espesor medio.",
+                  "unidad": "m²",
+                  "precio": 8.02,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 1
+            },
+            {
+              "codigo": "RSG",
+              "nombre": "Cerámicos y porcelánicos",
+              "partidas": [
+                {
+                  "codigo": "RSG010",
+                  "titulo": "Colocación de pavimento cerámico o porcelanato de formato estándar, en capa fina.",
+                  "unidad": "m²",
+                  "precio": 9.17,
+                  "horas": 0.6,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "RSG020",
+                  "titulo": "Colocación de pavimento de porcelanato de gran formato, en capa fina.",
+                  "unidad": "m²",
+                  "precio": 12.51,
+                  "horas": 0.9,
+                  "producto_cliente": true
+                }
+              ],
+              "n": 2
+            },
+            {
+              "codigo": "RSP",
+              "nombre": "Piedra natural",
+              "partidas": [],
+              "n": 0
+            },
+            {
+              "codigo": "RSM",
+              "nombre": "Madera y laminados",
+              "partidas": [],
+              "n": 0
+            },
+            {
+              "codigo": "RSV",
+              "nombre": "Vinílicos y sintéticos",
+              "partidas": [],
+              "n": 0
+            },
+            {
+              "codigo": "RSC",
+              "nombre": "Continuos de concreto y microcemento",
+              "partidas": [],
+              "n": 0
+            },
+            {
+              "codigo": "RSD",
+              "nombre": "Remates de pavimento",
+              "partidas": [
+                {
+                  "codigo": "RSD010",
+                  "titulo": "Colocación de rodapié cerámico o de porcelanato.",
+                  "unidad": "m",
+                  "precio": 1.69,
+                  "horas": 0.165,
+                  "producto_cliente": true
+                }
+              ],
+              "n": 1
+            }
+          ],
+          "n": 4
+        },
+        {
+          "codigo": "RA",
+          "nombre": "Revestimientos de paramentos con piezas rígidas",
+          "grupos": [
+            {
+              "codigo": "RAG",
+              "nombre": "Alicatados cerámicos y porcelánicos",
+              "partidas": [
+                {
+                  "codigo": "RAG010",
+                  "titulo": "Alicatado de paramento interior con pieza cerámica o porcelanato, en capa fina.",
+                  "unidad": "m²",
+                  "precio": 10.87,
+                  "horas": 0.78,
+                  "producto_cliente": true
+                }
+              ],
+              "n": 1
+            },
+            {
+              "codigo": "RAP",
+              "nombre": "Piedra natural",
+              "partidas": [],
+              "n": 0
+            }
+          ],
+          "n": 1
+        },
+        {
+          "codigo": "RP",
+          "nombre": "Revestimientos continuos",
+          "grupos": [
+            {
+              "codigo": "RPF",
+              "nombre": "Frisos y enlucidos",
+              "partidas": [],
+              "n": 0
+            },
+            {
+              "codigo": "RPE",
+              "nombre": "Estucos y morteros decorativos",
+              "partidas": [],
+              "n": 0
+            }
+          ],
+          "n": 0
+        },
+        {
+          "codigo": "RI",
+          "nombre": "Pinturas",
+          "grupos": [
+            {
+              "codigo": "RII",
+              "nombre": "Interiores",
+              "partidas": [],
+              "n": 0
+            },
+            {
+              "codigo": "RIE",
+              "nombre": "Exteriores",
+              "partidas": [],
+              "n": 0
+            },
+            {
+              "codigo": "RIM",
+              "nombre": "Sobre madera y metal",
+              "partidas": [],
+              "n": 0
+            }
+          ],
+          "n": 0
+        },
+        {
+          "codigo": "RR",
+          "nombre": "Trasdosados",
+          "grupos": [
+            {
+              "codigo": "RRY",
+              "nombre": "De placas de yeso laminado",
+              "partidas": [],
+              "n": 0
+            }
+          ],
+          "n": 0
+        },
+        {
+          "codigo": "RT",
+          "nombre": "Falsos techos",
+          "grupos": [
+            {
+              "codigo": "RTY",
+              "nombre": "De placas de yeso laminado",
+              "partidas": [],
+              "n": 0
+            },
+            {
+              "codigo": "RTD",
+              "nombre": "Desmontables y registrables",
+              "partidas": [],
+              "n": 0
+            }
+          ],
+          "n": 0
+        }
+      ],
+      "n": 5
+    },
+    {
+      "codigo": "S",
+      "nombre": "Señalización y equipamiento",
+      "subcapitulos": [
+        {
+          "codigo": "SB",
+          "nombre": "Aparatos sanitarios y grifería",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "SC",
+          "nombre": "Mobiliario de cocina y encimeras",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "SE",
+          "nombre": "Electrodomésticos",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "SS",
+          "nombre": "Señalización",
+          "grupos": [],
+          "n": 0
+        }
+      ],
+      "n": 0
+    },
+    {
+      "codigo": "U",
+      "nombre": "Urbanización interior de la parcela",
+      "subcapitulos": [
+        {
+          "codigo": "UP",
+          "nombre": "Pavimentos exteriores",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "UC",
+          "nombre": "Cerramientos de parcela",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "UJ",
+          "nombre": "Jardinería y riego",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "UI",
+          "nombre": "Instalaciones exteriores",
+          "grupos": [],
+          "n": 0
+        }
+      ],
+      "n": 0
+    },
+    {
+      "codigo": "G",
+      "nombre": "Gestión de residuos",
+      "subcapitulos": [
+        {
+          "codigo": "GT",
+          "nombre": "Transporte de residuos",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "GC",
+          "nombre": "Contenedores y acopio",
+          "grupos": [],
+          "n": 0
+        }
+      ],
+      "n": 0
+    },
+    {
+      "codigo": "X",
+      "nombre": "Control de calidad y ensayos",
+      "subcapitulos": [
+        {
+          "codigo": "XE",
+          "nombre": "Ensayos de materiales",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "XP",
+          "nombre": "Pruebas de servicio",
+          "grupos": [],
+          "n": 0
+        }
+      ],
+      "n": 0
+    },
+    {
+      "codigo": "Y",
+      "nombre": "Seguridad y salud",
+      "subcapitulos": [
+        {
+          "codigo": "YP",
+          "nombre": "Protecciones individuales",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "YC",
+          "nombre": "Protecciones colectivas",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "YS",
+          "nombre": "Señalización de obra",
+          "grupos": [],
+          "n": 0
+        }
+      ],
+      "n": 0
+    },
+    {
+      "codigo": "Z",
+      "nombre": "Eficiencia energética",
+      "subcapitulos": [
+        {
+          "codigo": "ZS",
+          "nombre": "Solar fotovoltaica y térmica",
+          "grupos": [],
+          "n": 0
+        },
+        {
+          "codigo": "ZA",
+          "nombre": "Mejora de envolvente",
+          "grupos": [],
+          "n": 0
+        }
+      ],
+      "n": 0
+    }
+  ]
+}

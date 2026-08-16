@@ -145,3 +145,60 @@ El precio de venta del catálogo sale de `coste directo × (1 + margen)`, con
 python3 basedatos_partidas/descompuestos.py   # 1. descompuestos + maestro
 python3 basedatos_partidas/construir.py       # 2. catálogo importable
 ```
+
+
+---
+
+# Clasificación jerárquica (datos/clasificacion.json)
+
+Tres niveles, pensados para alimentar el árbol de la barra lateral del presupuestador:
+
+```
+Capítulo (1 letra)  →  Subcapítulo (2 letras)  →  Grupo (3 letras)  →  Partida (grupo + 3 dígitos)
+
+R  Revestimientos y trasdosados
+└─ RS  Pavimentos
+   └─ RSG  Cerámicos y porcelánicos
+      ├─ RSG010  Pavimento formato estándar
+      └─ RSG020  Pavimento gran formato
+```
+
+Cada partida declara `capitulo`, `subcapitulo` y `grupo`. El generador **valida** que los
+tres existan en `clasificacion.json` y que el código empiece por el grupo; si no, falla.
+Así es imposible que se cuele una partida descolgada del árbol.
+
+Hay **18 capítulos** declarados desde el principio, aunque estén vacíos: el árbol se
+construye completo y las ramas se van llenando.
+
+## Salida para el front
+
+`salida/arbol_catalogo.json` contiene el árbol ya montado, con el contador de partidas de
+cada rama y, en las hojas, código, título, unidad, precio, horas y si requiere producto de
+cliente. Es lo que consumirá la barra lateral arrastrable.
+
+---
+
+# Productos de elección del cliente
+
+Una partida **no incluye el material de acabado que elige el cliente**. El solado incluye
+adhesivo, junta, crucetas, corte y mano de obra — pero **no la cerámica**, porque esa
+depende de lo que escoja cada cliente y vive en el catálogo de productos.
+
+Cada partida afectada declara:
+
+```json
+"producto_cliente": {
+  "tipo": "Pieza cerámica o porcelanato para pavimento, formato hasta 60x60 cm",
+  "unidad": "m2",
+  "consumo": 1.06,
+  "nota": "Consumo con 6 % de desperdicio por cortes y roturas."
+}
+```
+
+El `consumo` es el factor de conversión: por cada m² de partida hacen falta 1,06 m² de
+producto. Al presupuestar, se elige el producto, se multiplica por el consumo y se suma.
+El precio de la partida es **solo de ejecución**, y así se puede ofrecer el mismo trabajo
+con tres cerámicas distintas sin recalcular nada.
+
+La nota se arrastra al campo `notas_tecnicas` del catálogo, dejando constancia explícita
+de qué NO está incluido.

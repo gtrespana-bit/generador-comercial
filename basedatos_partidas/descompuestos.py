@@ -27,6 +27,7 @@ BASE = Path(__file__).resolve().parent
 RAIZ = BASE.parent
 ORIGEN = BASE / "datos" / "descompuestos"
 RECURSOS = BASE / "datos" / "recursos.json"
+CLASIFICACION = BASE / "datos" / "clasificacion.json"
 SALIDA = BASE / "salida" / "descompuestos"
 
 # Margen por defecto para pasar de coste directo a precio de venta del catálogo.
@@ -71,6 +72,31 @@ def _f_total(offsets: list[int]) -> str:
 
 
 F_COMPLEMENTARIOS = "=ROUND(INDIRECT(ADDRESS(ROW()+(0), COLUMN()+(-2), 1))*INDIRECT(ADDRESS(ROW()+(0), COLUMN()+(-1), 1))/100, 2)"
+
+
+def cargar_clasificacion() -> dict:
+    return json.loads(CLASIFICACION.read_text(encoding="utf-8")) if CLASIFICACION.exists() else {}
+
+
+def ubicar(partida: dict, taxonomia: dict) -> dict:
+    """Valida capítulo/subcapítulo/grupo y devuelve sus nombres legibles."""
+    caps = taxonomia.get("capitulos", {})
+    cap, sub, gru = partida.get("capitulo"), partida.get("subcapitulo"), partida.get("grupo")
+    if cap not in caps:
+        raise ValueError(f"{partida['codigo']}: capítulo «{cap}» no existe en clasificacion.json")
+    subs = caps[cap]["subcapitulos"]
+    if sub not in subs:
+        raise ValueError(f"{partida['codigo']}: subcapítulo «{sub}» no existe en el capítulo {cap}")
+    grupos = subs[sub].get("grupos", {})
+    if gru not in grupos:
+        raise ValueError(f"{partida['codigo']}: grupo «{gru}» no existe en el subcapítulo {sub}")
+    if not partida["codigo"].startswith(gru):
+        raise ValueError(f"{partida['codigo']}: el código debe empezar por el grupo «{gru}»")
+    return {
+        "capitulo_cod": cap, "capitulo": caps[cap]["nombre"],
+        "subcapitulo_cod": sub, "subcapitulo": subs[sub]["nombre"],
+        "grupo_cod": gru, "grupo": grupos[gru],
+    }
 
 
 def cargar_recursos() -> dict:
@@ -243,20 +269,26 @@ def main(argv: list[str]) -> int:
         sys.exit("No hay descompuestos que generar.")
 
     catalogo_recursos = cargar_recursos()
-    print(f"Cuadro de recursos: {len(catalogo_recursos)} recursos cargados\n")
+    taxonomia = cargar_clasificacion()
+    n_caps = len(taxonomia.get("capitulos", {}))
+    print(f"Cuadro de recursos: {len(catalogo_recursos)} recursos · "
+          f"Clasificación: {n_caps} capítulos · Moneda: {taxonomia.get('_moneda', 'USD')}\n")
 
     fallos = 0
     resumen_catalogo: list[dict] = []
     for fuente in fuentes:
         partida = json.loads(fuente.read_text(encoding="utf-8"))
         partida["_recursos"] = resolver_recursos(partida, catalogo_recursos)
+        partida["_ubicacion"] = ubicar(partida, taxonomia)
         destino = SALIDA / f"{partida['codigo']}.xlsx"
         resumen = construir_hoja(partida, destino)
+        u = partida["_ubicacion"]
         print(f"\n{partida['codigo']}  {partida['titulo']}")
+        print(f"  clasificación  : {u['capitulo']} › {u['subcapitulo']} › {u['grupo']}")
         print(f"  archivo        : {destino.relative_to(RAIZ)}")
         for clave, valor in resumen["totales"].items():
-            print(f"  {clave:<16}: {valor:>8.2f} €")
-        print(f"  {'COSTE DIRECTO':<16}: {resumen['coste_directo']:>8.2f} €")
+            print(f"  {clave:<16}: {valor:>8.2f} USD")
+        print(f"  {'COSTE DIRECTO':<16}: {resumen['coste_directo']:>8.2f} USD")
 
         v = validar(destino)
         if not v["detectado"]:
@@ -278,11 +310,18 @@ def main(argv: list[str]) -> int:
                     if r["grupo"] == "mano_obra")
         print(f"    horas de mano de obra por {partida['unidad']}: {horas:.3f} h")
 
+        pc = partida.get("producto_cliente")
+        if pc:
+            print(f"  producto cliente: {pc['consumo']} {pc['unidad']}/{partida['unidad']} "
+                  f"— {pc['tipo'][:52]}")
+
         margen = float(partida.get("margen", MARGEN_DEFECTO))
         coste = resumen["coste_directo"]
         resumen_catalogo.append({
             "codigo": partida["codigo"],
-            "capitulo": partida.get("capitulo", ""),
+            "ubicacion": partida["_ubicacion"],
+            "producto_cliente": pc,
+            "capitulo": partida["_ubicacion"]["capitulo"],
             "titulo": partida["titulo"],
             "descripcion": partida["descripcion"],
             "unidad": partida["unidad"],
@@ -295,7 +334,41 @@ def main(argv: list[str]) -> int:
 
     if resumen_catalogo:
         escribir_catalogo(resumen_catalogo)
+        escribir_arbol(resumen_catalogo, taxonomia)
     return 1 if fallos else 0
+
+
+def escribir_arbol(filas: list[dict], taxonomia: dict) -> None:
+    """Genera el árbol jerárquico que alimentará la barra lateral."""
+    caps = taxonomia.get("capitulos", {})
+    arbol = []
+    for cod_cap, cap in caps.items():
+        nodo_subs = []
+        for cod_sub, sub in cap["subcapitulos"].items():
+            nodo_grupos = []
+            for cod_gru, nombre_gru in sub.get("grupos", {}).items():
+                hijas = [
+                    {"codigo": f["codigo"], "titulo": f["titulo"], "unidad": f["unidad"],
+                     "precio": f["precio_venta"], "horas": f["horas"],
+                     "producto_cliente": bool(f.get("producto_cliente"))}
+                    for f in filas if f["ubicacion"]["grupo_cod"] == cod_gru
+                ]
+                nodo_grupos.append({"codigo": cod_gru, "nombre": nombre_gru,
+                                    "partidas": hijas, "n": len(hijas)})
+            total_sub = sum(g["n"] for g in nodo_grupos)
+            nodo_subs.append({"codigo": cod_sub, "nombre": sub["nombre"],
+                              "grupos": nodo_grupos, "n": total_sub})
+        total_cap = sum(s["n"] for s in nodo_subs)
+        arbol.append({"codigo": cod_cap, "nombre": cap["nombre"],
+                      "subcapitulos": nodo_subs, "n": total_cap})
+
+    ruta = BASE / "salida" / "arbol_catalogo.json"
+    ruta.parent.mkdir(parents=True, exist_ok=True)
+    ruta.write_text(json.dumps({"moneda": taxonomia.get("_moneda", "USD"), "arbol": arbol},
+                               ensure_ascii=False, indent=2), encoding="utf-8")
+    con = sum(1 for c in arbol if c["n"])
+    print(f"Árbol de navegación   -> {ruta.relative_to(RAIZ)} "
+          f"({len(arbol)} capítulos, {con} con partidas)")
 
 
 def escribir_catalogo(filas: list[dict]) -> None:
@@ -313,17 +386,23 @@ def escribir_catalogo(filas: list[dict]) -> None:
         w.writerow(cabeceras)
         for f in filas:
             c = f["costes"]
+            u = f["ubicacion"]
+            nota = f"Coste directo {f['coste_directo']:.2f} USD + margen {f['margen']*100:.0f}%"
+            if f.get("producto_cliente"):
+                pcl = f["producto_cliente"]
+                nota += (f" | NO INCLUYE el producto de elección del cliente: "
+                         f"{pcl['tipo']} ({pcl['consumo']} {pcl['unidad']}/{f['unidad']})")
             w.writerow([
-                f["codigo"], f["capitulo"], f["titulo"], f["descripcion"],
+                f["codigo"], u["capitulo"], f["titulo"], f["descripcion"],
                 "m2" if f["unidad"] == "m²" else f["unidad"],
                 f"{f['precio_venta']:.2f}",
-                f["capitulo"], "",
+                u["subcapitulo"], u["grupo"],
                 f"{c.get('materiales', 0):.2f}",
                 f"{c.get('mano_obra', 0):.2f}",
                 f"{c.get('complementarios', 0):.2f}",
                 f"{c.get('maquinaria', 0):.2f}",
                 f"{f['horas']:.3f} h/{f['unidad']}",
-                "", f"Coste directo {f['coste_directo']:.2f} EUR + margen {f['margen']*100:.0f}%",
+                "", nota,
             ])
     print(f"\nCatálogo consolidado -> {ruta.relative_to(RAIZ)} ({len(filas)} partidas)")
 

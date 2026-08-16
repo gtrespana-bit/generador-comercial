@@ -1,0 +1,166 @@
+{
+  "_comentario": "Taxonomía jerárquica del catálogo. Tres niveles: capítulo (1 letra), subcapítulo (2 letras) y grupo (3 letras). El código de partida es GRUPO + 3 dígitos, p. ej. RSG010. Esta estructura es la que alimentará el árbol de la barra lateral del presupuestador. Añadir subcapítulos y grupos según se vayan creando partidas: aquí solo se declaran los que existen o se prevén.",
+  "_moneda": "USD",
+  "_ambito": "Venezuela",
+
+  "capitulos": {
+    "0": {
+      "nombre": "Actuaciones previas",
+      "subcapitulos": {
+        "0A": {"nombre": "Andamios y maquinaria de elevación", "grupos": {}},
+        "0S": {"nombre": "Sondeos y catas", "grupos": {}},
+        "0P": {"nombre": "Protecciones y apeos", "grupos": {}},
+        "0L": {"nombre": "Limpieza y desalojo previo", "grupos": {}}
+      }
+    },
+    "D": {
+      "nombre": "Demoliciones",
+      "subcapitulos": {
+        "DE": {"nombre": "Estructuras", "grupos": {}},
+        "DF": {"nombre": "Fachadas", "grupos": {}},
+        "DP": {"nombre": "Particiones", "grupos": {
+          "DPT": "Tabiquería"
+        }},
+        "DL": {"nombre": "Carpintería, vidrios y protecciones solares", "grupos": {}},
+        "DI": {"nombre": "Instalaciones", "grupos": {}},
+        "DQ": {"nombre": "Cubiertas", "grupos": {}},
+        "DR": {"nombre": "Revestimientos y trasdosados", "grupos": {
+          "DRS": "Suelos y pavimentos",
+          "DRC": "Piezas rígidas en paramentos verticales",
+          "DRF": "Revestimientos continuos",
+          "DRT": "Falsos techos"
+        }},
+        "DS": {"nombre": "Equipamiento", "grupos": {}},
+        "DM": {"nombre": "Firmes y pavimentos exteriores", "grupos": {}}
+      }
+    },
+    "A": {"nombre": "Acondicionamiento del terreno", "subcapitulos": {
+      "AM": {"nombre": "Movimiento de tierras", "grupos": {}},
+      "AS": {"nombre": "Saneamiento enterrado", "grupos": {}},
+      "AN": {"nombre": "Nivelación y compactación", "grupos": {}}
+    }},
+    "C": {"nombre": "Cimentaciones", "subcapitulos": {
+      "CS": {"nombre": "Superficiales", "grupos": {}},
+      "CP": {"nombre": "Profundas", "grupos": {}},
+      "CC": {"nombre": "Contenciones", "grupos": {}}
+    }},
+    "E": {"nombre": "Estructuras", "subcapitulos": {
+      "EH": {"nombre": "Hormigón armado", "grupos": {}},
+      "EA": {"nombre": "Acero", "grupos": {}},
+      "EM": {"nombre": "Madera", "grupos": {}},
+      "EF": {"nombre": "Fábrica estructural", "grupos": {}},
+      "ER": {"nombre": "Refuerzos y recalces", "grupos": {}}
+    }},
+    "F": {
+      "nombre": "Fachadas y particiones",
+      "subcapitulos": {
+        "FF": {"nombre": "Fábrica no estructural", "grupos": {
+          "FFB": "Bloque de concreto",
+          "FFL": "Ladrillo cerámico"
+        }},
+        "FB": {"nombre": "Tabiquería de entramado autoportante", "grupos": {
+          "FBY": "De placas de yeso laminado",
+          "FBC": "De placas de cemento"
+        }},
+        "FC": {"nombre": "Dinteles, cargaderos y cajones de persiana", "grupos": {}},
+        "FD": {"nombre": "Defensas y barandillas", "grupos": {}},
+        "FZ": {"nombre": "Limpieza y tratamientos superficiales", "grupos": {}}
+      }
+    },
+    "L": {"nombre": "Carpintería, cerrajería, vidrios y protecciones solares", "subcapitulos": {
+      "LP": {"nombre": "Puertas interiores", "grupos": {}},
+      "LE": {"nombre": "Puertas de entrada", "grupos": {}},
+      "LV": {"nombre": "Ventanas y balconeras", "grupos": {}},
+      "LA": {"nombre": "Armarios y closets", "grupos": {}},
+      "LC": {"nombre": "Cerrajería y rejas", "grupos": {}},
+      "LG": {"nombre": "Vidrios", "grupos": {}}
+    }},
+    "H": {"nombre": "Remates y ayudas", "subcapitulos": {
+      "HA": {"nombre": "Ayudas de albañilería a instalaciones", "grupos": {}},
+      "HR": {"nombre": "Remates y sellados", "grupos": {}}
+    }},
+    "I": {"nombre": "Instalaciones", "subcapitulos": {
+      "IF": {"nombre": "Fontanería", "grupos": {}},
+      "IS": {"nombre": "Saneamiento y desagües", "grupos": {}},
+      "IE": {"nombre": "Eléctrica", "grupos": {}},
+      "II": {"nombre": "Iluminación", "grupos": {}},
+      "IC": {"nombre": "Climatización y ventilación", "grupos": {}},
+      "IG": {"nombre": "Gas", "grupos": {}},
+      "IT": {"nombre": "Telecomunicaciones y datos", "grupos": {}},
+      "IP": {"nombre": "Protección contra incendios", "grupos": {}},
+      "IH": {"nombre": "Hidroneumáticos y bombeo", "grupos": {}}
+    }},
+    "N": {"nombre": "Aislamientos e impermeabilizaciones", "subcapitulos": {
+      "NA": {"nombre": "Aislamientos térmicos y acústicos", "grupos": {}},
+      "NI": {"nombre": "Impermeabilizaciones", "grupos": {}}
+    }},
+    "Q": {"nombre": "Cubiertas", "subcapitulos": {
+      "QI": {"nombre": "Inclinadas", "grupos": {}},
+      "QP": {"nombre": "Planas", "grupos": {}},
+      "QL": {"nombre": "Lucernarios y translúcidas", "grupos": {}}
+    }},
+    "R": {
+      "nombre": "Revestimientos y trasdosados",
+      "subcapitulos": {
+        "RS": {"nombre": "Pavimentos", "grupos": {
+          "RSA": "Morteros y pastas de nivelación",
+          "RSG": "Cerámicos y porcelánicos",
+          "RSP": "Piedra natural",
+          "RSM": "Madera y laminados",
+          "RSV": "Vinílicos y sintéticos",
+          "RSC": "Continuos de concreto y microcemento",
+          "RSD": "Remates de pavimento"
+        }},
+        "RA": {"nombre": "Revestimientos de paramentos con piezas rígidas", "grupos": {
+          "RAG": "Alicatados cerámicos y porcelánicos",
+          "RAP": "Piedra natural"
+        }},
+        "RP": {"nombre": "Revestimientos continuos", "grupos": {
+          "RPF": "Frisos y enlucidos",
+          "RPE": "Estucos y morteros decorativos"
+        }},
+        "RI": {"nombre": "Pinturas", "grupos": {
+          "RII": "Interiores",
+          "RIE": "Exteriores",
+          "RIM": "Sobre madera y metal"
+        }},
+        "RR": {"nombre": "Trasdosados", "grupos": {
+          "RRY": "De placas de yeso laminado"
+        }},
+        "RT": {"nombre": "Falsos techos", "grupos": {
+          "RTY": "De placas de yeso laminado",
+          "RTD": "Desmontables y registrables"
+        }}
+      }
+    },
+    "S": {"nombre": "Señalización y equipamiento", "subcapitulos": {
+      "SB": {"nombre": "Aparatos sanitarios y grifería", "grupos": {}},
+      "SC": {"nombre": "Mobiliario de cocina y encimeras", "grupos": {}},
+      "SE": {"nombre": "Electrodomésticos", "grupos": {}},
+      "SS": {"nombre": "Señalización", "grupos": {}}
+    }},
+    "U": {"nombre": "Urbanización interior de la parcela", "subcapitulos": {
+      "UP": {"nombre": "Pavimentos exteriores", "grupos": {}},
+      "UC": {"nombre": "Cerramientos de parcela", "grupos": {}},
+      "UJ": {"nombre": "Jardinería y riego", "grupos": {}},
+      "UI": {"nombre": "Instalaciones exteriores", "grupos": {}}
+    }},
+    "G": {"nombre": "Gestión de residuos", "subcapitulos": {
+      "GT": {"nombre": "Transporte de residuos", "grupos": {}},
+      "GC": {"nombre": "Contenedores y acopio", "grupos": {}}
+    }},
+    "X": {"nombre": "Control de calidad y ensayos", "subcapitulos": {
+      "XE": {"nombre": "Ensayos de materiales", "grupos": {}},
+      "XP": {"nombre": "Pruebas de servicio", "grupos": {}}
+    }},
+    "Y": {"nombre": "Seguridad y salud", "subcapitulos": {
+      "YP": {"nombre": "Protecciones individuales", "grupos": {}},
+      "YC": {"nombre": "Protecciones colectivas", "grupos": {}},
+      "YS": {"nombre": "Señalización de obra", "grupos": {}}
+    }},
+    "Z": {"nombre": "Eficiencia energética", "subcapitulos": {
+      "ZS": {"nombre": "Solar fotovoltaica y térmica", "grupos": {}},
+      "ZA": {"nombre": "Mejora de envolvente", "grupos": {}}
+    }}
+  }
+}

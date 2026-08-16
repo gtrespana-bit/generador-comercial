@@ -1,0 +1,24 @@
+{
+  "codigo": "RAG010",
+  "capitulo": "R", "subcapitulo": "RA", "grupo": "RAG",
+  "unidad": "m²",
+  "titulo": "Alicatado de paramento interior con pieza cerámica o porcelanato, en capa fina.",
+  "descripcion": "Alicatado de paramento interior en baños, cocinas y áreas húmedas con pieza cerámica o de porcelanato rectificado, sobre soporte previamente frisado y regularizado. Ejecución en capa fina con adhesivo cementoso mejorado C2 TE de deslizamiento reducido aplicado con llana dentada, nivelación mediante crucetas y cuñas, y rejuntado con mortero CG2. Incluye replanteo de hiladas para evitar piezas cortadas en zonas vistas, cortes y taladros para el paso de instalaciones y mecanismos, resolución de encuentros y esquinas, y limpieza final. La pieza la elige el cliente y se presupuesta aparte. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
+  "margen": 0.30,
+  "complementarios_pct": 1,
+  "producto_cliente": {
+    "tipo": "Pieza cerámica o porcelanato para revestimiento de paramento",
+    "unidad": "m2",
+    "consumo": 1.07,
+    "nota": "Consumo con 7 % de desperdicio por cortes, taladros y ajuste de hiladas."
+  },
+  "recursos": [
+    {"ref": "MT-ADH-C2TE",   "rendimiento": 6.00},
+    {"ref": "MT-JUN-CG2",    "rendimiento": 0.40},
+    {"ref": "MT-CRU-NIV",    "rendimiento": 8.00},
+    {"ref": "MQ-CORT-AGUA",  "rendimiento": 0.090},
+    {"ref": "MQ-BATID",      "rendimiento": 0.050},
+    {"ref": "MO-OF1-ALI",    "rendimiento": 0.520},
+    {"ref": "MO-AYU",        "rendimiento": 0.260}
+  ]
+}

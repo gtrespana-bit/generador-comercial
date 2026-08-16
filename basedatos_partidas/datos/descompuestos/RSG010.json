@@ -1,0 +1,24 @@
+{
+  "codigo": "RSG010",
+  "capitulo": "R", "subcapitulo": "RS", "grupo": "RSG",
+  "unidad": "m²",
+  "titulo": "Colocación de pavimento cerámico o porcelanato de formato estándar, en capa fina.",
+  "descripcion": "Colocación de pavimento con pieza cerámica o de porcelanato de formato estándar, hasta 60x60 cm, sobre soporte previamente regularizado y limpio. Ejecución en capa fina con adhesivo cementoso mejorado C2 TE aplicado con llana dentada y doble encolado en la pieza, nivelación con sistema de crucetas y cuñas, y rejuntado con mortero cementoso CG2 en el color elegido. Incluye replanteo previo para centrar el despiece, cortes y ajustes en encuentros y pasos de instalaciones, limpieza final de la superficie y retirada de restos. La pieza cerámica la elige el cliente y se presupuesta aparte. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
+  "margen": 0.30,
+  "complementarios_pct": 1,
+  "producto_cliente": {
+    "tipo": "Pieza cerámica o porcelanato para pavimento, formato hasta 60x60 cm",
+    "unidad": "m2",
+    "consumo": 1.06,
+    "nota": "Consumo con 6 % de desperdicio por cortes y roturas. A mayor formato o despiece en diagonal, subir al 10 %."
+  },
+  "recursos": [
+    {"ref": "MT-ADH-C2TE",   "rendimiento": 5.50},
+    {"ref": "MT-JUN-CG2",    "rendimiento": 0.45},
+    {"ref": "MT-CRU-NIV",    "rendimiento": 6.00},
+    {"ref": "MQ-CORT-AGUA",  "rendimiento": 0.070},
+    {"ref": "MQ-BATID",      "rendimiento": 0.045},
+    {"ref": "MO-OF1-SOL",    "rendimiento": 0.400},
+    {"ref": "MO-AYU",        "rendimiento": 0.200}
+  ]
+}
