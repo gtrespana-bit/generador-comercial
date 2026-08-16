@@ -135,71 +135,75 @@
     }).slice(0, 5);
   }
 
+  function nodoPreview(tag, clase, texto) {
+    var node = document.createElement(tag);
+    if (clase) node.className = clase;
+    if (texto !== undefined && texto !== null) node.textContent = texto;
+    return node;
+  }
+
   function mostrarPreview(hojaEl, d) {
     var el = asegurarPreview();
     var codigo = d.codigo_externo || d.codigo_interno || d.codigo || "";
     var filas = filasDescompuesto(d);
-    var html = "";
+
+    el.replaceChildren();
+
     if (codigo) {
-      html += '<div class="arbol-preview-code">' + escapeHtml(codigo) + "</div>";
+      el.appendChild(nodoPreview("div", "arbol-preview-code", codigo));
     }
-    html += '<div class="arbol-preview-nombre">' + escapeHtml(d.nombre || "") + "</div>";
-    html +=
-      '<div class="arbol-preview-precio">' +
-      num(d.precio).toFixed(2) +
-      " $ / " +
-      escapeHtml(d.unidad || "ud") +
-      "</div>";
+    el.appendChild(nodoPreview("div", "arbol-preview-nombre", d.nombre || ""));
+    el.appendChild(nodoPreview(
+      "div",
+      "arbol-preview-precio",
+      num(d.precio).toFixed(2) + " $ / " + (d.unidad || "ud")
+    ));
     if (d.categoria || d.subcategoria) {
-      html +=
-        '<div class="arbol-preview-ruta">' +
-        escapeHtml([d.categoria, d.subcategoria].filter(Boolean).join(" · ")) +
-        "</div>";
+      el.appendChild(nodoPreview(
+        "div",
+        "arbol-preview-ruta",
+        [d.categoria, d.subcategoria].filter(Boolean).join(" · ")
+      ));
     }
     if (d.descripcion) {
       var desc = String(d.descripcion).replace(/\s+/g, " ").trim();
       if (desc.length > 160) desc = desc.slice(0, 157) + "…";
-      html += '<div class="arbol-preview-desc">' + escapeHtml(desc) + "</div>";
+      el.appendChild(nodoPreview("div", "arbol-preview-desc", desc));
     }
     if (filas.length) {
-      html += '<ul class="arbol-preview-filas">';
+      var listaFilas = document.createElement("ul");
+      listaFilas.className = "arbol-preview-filas";
       filas.forEach(function (f) {
         var etiqueta = f.codigo || f.descripcion || "recurso";
         var precio = f.precio != null ? f.precio : f.precio_unitario;
-        html +=
-          "<li><span>" +
-          escapeHtml(String(etiqueta).slice(0, 42)) +
-          "</span><em>" +
-          (precio != null && precio !== "" ? num(precio).toFixed(2) : "—") +
-          "</em></li>";
+        var fila = document.createElement("li");
+        fila.appendChild(nodoPreview("span", null, String(etiqueta).slice(0, 42)));
+        fila.appendChild(nodoPreview(
+          "em",
+          null,
+          precio != null && precio !== "" ? num(precio).toFixed(2) : "—"
+        ));
+        listaFilas.appendChild(fila);
       });
-      html += "</ul>";
+      el.appendChild(listaFilas);
     }
-    html += '<div class="arbol-preview-hint">Arrastra · doble clic · Enter</div>';
-    el.innerHTML = html;
+    el.appendChild(nodoPreview("div", "arbol-preview-hint", "Arrastra · doble clic · Enter"));
+
     el.hidden = false;
     posicionarPreview(hojaEl, el);
-  }
-
-  function escapeHtml(texto) {
-    return String(texto || "")
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;");
   }
 
   function posicionarPreview(ancla, el) {
     var r = ancla.getBoundingClientRect();
     var ancho = Math.min(320, window.innerWidth - 24);
-    el.style.width = ancho + "px";
+    CotizatStyles.set(el, "width", ancho + "px");
     var left = r.right + 10;
     if (left + ancho > window.innerWidth - 12) {
       left = Math.max(12, r.left - ancho - 10);
     }
     var top = Math.max(12, Math.min(r.top, window.innerHeight - el.offsetHeight - 12));
-    el.style.left = left + "px";
-    el.style.top = top + "px";
+    CotizatStyles.set(el, "left", left + "px");
+    CotizatStyles.set(el, "top", top + "px");
   }
 
   function ocultarPreview() {

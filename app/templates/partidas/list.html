@@ -512,7 +512,7 @@ function filtrarPartidas() {
           CotizatStyles.set(row, "display", '');
           // also show its descomp row if exists
           const descomp = subsec.querySelector(`.descomp-row[data-parent="${row.dataset.id}"]`);
-          if (descomp) CotizatStyles.toggle(descomp, !CotizatStyles.isHidden(row));
+          if (descomp) CotizatStyles.set(descomp, "display", '');
           visibleInSub++;
         } else {
           CotizatStyles.set(row, "display", 'none');

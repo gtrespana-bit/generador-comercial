@@ -26,6 +26,39 @@
       .replace(/[\u0300-\u036f]/g, "");
   }
 
+  function crearElemento(tag, atributos, texto) {
+    var node = document.createElement(tag);
+    if (atributos) {
+      Object.keys(atributos).forEach(function (clave) {
+        if (clave === "className") node.className = atributos[clave];
+        else node.setAttribute(clave, atributos[clave]);
+      });
+    }
+    if (texto !== undefined && texto !== null) node.textContent = texto;
+    return node;
+  }
+
+  function crearIconoBusqueda() {
+    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("class", "spotlight-icon");
+    svg.setAttribute("width", "18");
+    svg.setAttribute("height", "18");
+    svg.setAttribute("viewBox", "0 0 18 18");
+    svg.setAttribute("fill", "none");
+    svg.setAttribute("stroke", "currentColor");
+    svg.setAttribute("stroke-width", "1.5");
+    svg.setAttribute("aria-hidden", "true");
+    var circulo = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    circulo.setAttribute("cx", "7.5");
+    circulo.setAttribute("cy", "7.5");
+    circulo.setAttribute("r", "5");
+    var linea = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    linea.setAttribute("d", "M16 16l-4-4");
+    svg.appendChild(circulo);
+    svg.appendChild(linea);
+    return svg;
+  }
+
   function asegurarDOM() {
     if (overlay) return;
     overlay = document.getElementById("spotlight-catalogo");
@@ -34,17 +67,37 @@
       overlay.id = "spotlight-catalogo";
       overlay.className = "spotlight-overlay";
       overlay.hidden = true;
-      overlay.innerHTML =
-        '<div class="spotlight-panel" role="dialog" aria-modal="true" aria-label="Buscar partida">' +
-        '<div class="spotlight-head">' +
-        '<svg class="spotlight-icon" width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="7.5" cy="7.5" r="5"/><path d="M16 16l-4-4"/></svg>' +
-        '<input type="search" id="spotlight-input" class="spotlight-input" placeholder="Buscar partida por nombre, código o capítulo…" autocomplete="off" spellcheck="false">' +
-        '<kbd class="spotlight-esc">Esc</kbd>' +
-        "</div>" +
-        '<div class="spotlight-meta" id="spotlight-meta"></div>' +
-        '<div class="spotlight-list" id="spotlight-list" role="listbox"></div>' +
-        '<div class="spotlight-foot"><span>↑↓ navegar</span><span>Enter añadir</span><span>Esc cerrar</span></div>' +
-        "</div>";
+
+      var panel = crearElemento("div", {
+        className: "spotlight-panel",
+        role: "dialog",
+        "aria-modal": "true",
+        "aria-label": "Buscar partida",
+      });
+
+      var cabecera = crearElemento("div", { className: "spotlight-head" });
+      cabecera.appendChild(crearIconoBusqueda());
+      cabecera.appendChild(crearElemento("input", {
+        type: "search",
+        id: "spotlight-input",
+        className: "spotlight-input",
+        placeholder: "Buscar partida por nombre, código o capítulo…",
+        autocomplete: "off",
+        spellcheck: "false",
+      }));
+      cabecera.appendChild(crearElemento("kbd", { className: "spotlight-esc" }, "Esc"));
+      panel.appendChild(cabecera);
+
+      panel.appendChild(crearElemento("div", { className: "spotlight-meta", id: "spotlight-meta" }));
+      panel.appendChild(crearElemento("div", { className: "spotlight-list", id: "spotlight-list", role: "listbox" }));
+
+      var pie = crearElemento("div", { className: "spotlight-foot" });
+      pie.appendChild(crearElemento("span", null, "↑↓ navegar"));
+      pie.appendChild(crearElemento("span", null, "Enter añadir"));
+      pie.appendChild(crearElemento("span", null, "Esc cerrar"));
+      panel.appendChild(pie);
+
+      overlay.appendChild(panel);
       document.body.appendChild(overlay);
     }
     input = document.getElementById("spotlight-input");
@@ -121,14 +174,6 @@
     return out.slice(0, 60);
   }
 
-  function escapeHtml(texto) {
-    return String(texto || "")
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;");
-  }
-
   function render(query) {
     activos = buscar(query);
     seleccionado = 0;
@@ -138,50 +183,54 @@
         : "Sin coincidencias";
     }
     if (!lista) return;
+    lista.replaceChildren();
     if (!activos.length) {
-      lista.innerHTML =
-        '<div class="spotlight-empty">No hay partidas que coincidan. Prueba otro término o el código CT-…</div>';
+      lista.appendChild(crearElemento(
+        "div",
+        { className: "spotlight-empty" },
+        "No hay partidas que coincidan. Prueba otro término o el código CT-…"
+      ));
       return;
     }
-    var html = "";
+    var fragmento = document.createDocumentFragment();
     activos.forEach(function (item, i) {
       var p = item.p;
       var codigo = p.codigo_externo || p.codigo_interno || p.codigo || "";
       var ruta = [p.categoria, p.subcategoria].filter(Boolean).join(" · ");
-      html +=
-        '<button type="button" class="spotlight-item' +
-        (i === 0 ? " activo" : "") +
-        '" role="option" data-i="' +
-        i +
-        '" data-idx="' +
-        item.idx +
-        '">' +
-        '<span class="spotlight-item-main">' +
-        (codigo ? '<code class="spotlight-code">' + escapeHtml(codigo) + "</code>" : "") +
-        '<span class="spotlight-nombre">' +
-        escapeHtml(p.nombre || "") +
-        "</span>" +
-        (ruta ? '<span class="spotlight-ruta">' + escapeHtml(ruta) + "</span>" : "") +
-        "</span>" +
-        '<span class="spotlight-item-meta">' +
-        '<strong>' +
-        (Number(p.precio) || 0).toFixed(2) +
-        "</strong>" +
-        "<small>/$" +
-        escapeHtml(p.unidad || "ud") +
-        "</small>" +
-        "</span>" +
-        "</button>";
-    });
-    lista.innerHTML = html;
-    lista.querySelectorAll(".spotlight-item").forEach(function (btn) {
+
+      var btn = crearElemento("button", {
+        type: "button",
+        className: "spotlight-item" + (i === 0 ? " activo" : ""),
+        role: "option",
+        "data-i": String(i),
+        "data-idx": String(item.idx),
+      });
+
+      var principal = crearElemento("span", { className: "spotlight-item-main" });
+      if (codigo) {
+        principal.appendChild(crearElemento("code", { className: "spotlight-code" }, codigo));
+      }
+      principal.appendChild(crearElemento("span", { className: "spotlight-nombre" }, p.nombre || ""));
+      if (ruta) {
+        principal.appendChild(crearElemento("span", { className: "spotlight-ruta" }, ruta));
+      }
+      btn.appendChild(principal);
+
+      var metadatos = crearElemento("span", { className: "spotlight-item-meta" });
+      metadatos.appendChild(crearElemento("strong", null, (Number(p.precio) || 0).toFixed(2)));
+      metadatos.appendChild(crearElemento("small", null, "/$" + (p.unidad || "ud")));
+      btn.appendChild(metadatos);
+
       btn.addEventListener("mouseenter", function () {
         seleccionar(Number(btn.dataset.i) || 0);
       });
       btn.addEventListener("click", function () {
         insertar(Number(btn.dataset.idx));
       });
+
+      fragmento.appendChild(btn);
     });
+    lista.appendChild(fragmento);
   }
 
   function seleccionar(i) {
@@ -231,6 +280,9 @@
 
   editor.abrirSpotlight = abrir;
   editor.cerrarSpotlight = cerrar;
+
+  // El buscador de la barra de herramientas usa data-cotizat-click="open-spotlight".
+  window.CotizatActions.register("open-spotlight", abrir);
 
   // Atajo se registra también aquí por si atajos.js se carga antes
   document.addEventListener("keydown", function (e) {
