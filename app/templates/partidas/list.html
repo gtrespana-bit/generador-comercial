@@ -7,8 +7,8 @@
     <p class="subtitle">Reutilizables para tus presupuestos · organizadas por categoría y subcategoría · diseñadas para catálogos de 100–1.000 partidas</p>
   </div>
   <div class="csp-s-33ff8b3e89">
-    <a href="/presupuestos/importar?destino=catalogo" class="btn" title="Importa partidas desde Excel/CSV (formato CYPE o tabular) directamente al catálogo">⇧ Importar Excel</a>
-    <a href="/partidas/nueva" class="btn btn-primary">+ Nueva Partida</a>
+    <a href="/presupuestos/importar?destino=catalogo" class="btn" title="Importa partidas desde Excel/CSV (formato CYPE o tabular) directamente al catálogo">Importar Excel</a>
+    <a href="/partidas/nueva" class="btn btn-primary">Nueva partida</a>
   </div>
 </div>
 
@@ -16,20 +16,20 @@
 <div class="partidas-toolbar card csp-s-0d510e3476">
   <div class="toolbar-row">
     <div class="toolbar-search">
-      <span class="search-icon">🔍</span>
+      <span class="search-icon" aria-hidden="true">⌕</span>
       <input type="text" id="buscador" placeholder="Buscar por nombre, código, proveedor, descripción…" data-cotizat-input="partidas-filter" autocomplete="off">
       <button id="clearSearch" class="btn btn-ghost btn-sm cotizat-hidden csp-s-dbb704fc6f" data-cotizat-click="partidas-clear-search" title="Limpiar">✕</button>
     </div>
     <div class="toolbar-actions">
       <div class="toolbar-meta" id="filterMeta"></div>
       <div class="toolbar-divider"></div>
-      <button class="btn btn-sm" data-cotizat-click="partidas-expand-all" title="Expandir categorías y subcategorías">⤢ Expandir todo</button>
-      <button class="btn btn-sm" data-cotizat-click="partidas-collapse-all" title="Contraer categorías y subcategorías">⤡ Contraer todo</button>
+      <button class="btn btn-sm" data-cotizat-click="partidas-expand-all" title="Expandir categorías y subcategorías">Expandir</button>
+      <button class="btn btn-sm" data-cotizat-click="partidas-collapse-all" title="Contraer categorías y subcategorías">Contraer</button>
       <form method="post" action="/partidas/ajustar" data-confirm="¿Ajustar TODAS las partidas visibles con este %?" class="csp-s-014fb690a1">
         <input type="number" name="porcentaje" step="any" placeholder="± %" required class="csp-s-d3156a880b">
         <button class="btn btn-sm" type="submit" title="Ajustar precios de todas las partidas del catálogo">% Precios</button>
       </form>
-      <a class="btn btn-sm" href="/partidas/exportar" title="Exportar catálogo completo">📥 CSV</a>
+      <a class="btn btn-sm" href="/partidas/exportar" title="Exportar catálogo completo">CSV</a>
     </div>
   </div>
 

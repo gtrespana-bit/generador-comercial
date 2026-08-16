@@ -283,7 +283,7 @@
     </div>
     <div class="builder-workspace-tools">
       <div class="catalog-search-wrap">
-        <input type="text" id="buscar-partida" placeholder="Buscar en catálogo…  Ctrl+K" autocomplete="off" aria-label="Buscar en catálogo">
+        <input type="text" id="buscar-partida" placeholder="Buscar…  Ctrl+K" autocomplete="off" aria-label="Buscar en catálogo" readonly data-cotizat-click="open-spotlight" title="Abrir buscador del catálogo (Ctrl+K)">
         <div id="catalogo-partidas">
           {% if partidas_catalogo %}
             {% for p in partidas_catalogo %}
@@ -731,7 +731,7 @@
       <div><kbd>Enter</kbd> Pasa de nombre → cantidad → precio</div>
       <div><kbd>Alt</kbd>+<kbd>P</kbd> Añadir partida</div>
       <div><kbd>Alt</kbd>+<kbd>C</kbd> Añadir capítulo</div>
-      <div><kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>K</kbd> o <kbd>/</kbd> Buscar en el catálogo</div>
+      <div><kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>K</kbd> o <kbd>/</kbd> Spotlight del catálogo</div>
       <div><kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>M</kbd> Cambiar moneda (USD ↔ Bs)</div>
       <div><kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>Z</kbd> Deshacer cambios estructurales</div>
       <div><kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>Enter</kbd> Guardar presupuesto</div>
@@ -949,6 +949,7 @@
 <script src="/static/js/editor/generador.js"></script>
 <script src="/static/js/editor/recetas_modal.js"></script>
 <script src="/static/js/editor/arbol_catalogo.js"></script>
+<script src="/static/js/editor/spotlight.js"></script>
 <script nonce="{{ request.state.csp_nonce }}">
   (function () {
     var chk = document.getElementById('usar-funciones-avanzadas');
@@ -1155,6 +1156,18 @@
         syncDensity();
       });
       syncDensity();
+    }
+
+    // El input de búsqueda abre el Spotlight (⌘K)
+    var buscar = document.getElementById('buscar-partida');
+    if (buscar) {
+      buscar.addEventListener('focus', function () {
+        buscar.blur();
+        if (window.EDITOR && window.EDITOR.abrirSpotlight) window.EDITOR.abrirSpotlight();
+      });
+      buscar.addEventListener('click', function () {
+        if (window.EDITOR && window.EDITOR.abrirSpotlight) window.EDITOR.abrirSpotlight();
+      });
     }
   });
 </script>

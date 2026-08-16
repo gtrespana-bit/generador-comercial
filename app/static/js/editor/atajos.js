@@ -13,13 +13,17 @@
       var inInput = tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT";
       var mod = e.ctrlKey || e.metaKey;
 
-      // Ctrl/Cmd+K → buscador catálogo
+      // Ctrl/Cmd+K → Spotlight del catálogo (o buscador clásico si no hay)
       if (mod && e.key.toLowerCase() === "k") {
         e.preventDefault();
-        var b = document.getElementById("buscar-partida");
-        if (b) {
-          b.focus();
-          b.select();
+        if (editor.abrirSpotlight) {
+          editor.abrirSpotlight();
+        } else {
+          var b = document.getElementById("buscar-partida");
+          if (b) {
+            b.focus();
+            b.select();
+          }
         }
         return;
       }
@@ -37,11 +41,14 @@
         return;
       }
 
-      // / → buscador (fuera de inputs)
+      // / → Spotlight (fuera de inputs)
       if (e.key === "/" && !inInput && !mod && !e.altKey && !e.shiftKey) {
         e.preventDefault();
-        var b2 = document.getElementById("buscar-partida");
-        if (b2) b2.focus();
+        if (editor.abrirSpotlight) editor.abrirSpotlight();
+        else {
+          var b2 = document.getElementById("buscar-partida");
+          if (b2) b2.focus();
+        }
         return;
       }
 
