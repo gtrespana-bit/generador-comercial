@@ -367,14 +367,30 @@
 
   window.CotizatActions.register("arbol-toggle", function () {
     panel.classList.toggle("plegado");
+    var plegado = panel.classList.contains("plegado");
+    try {
+      localStorage.setItem("arbol-catalogo-plegado", plegado ? "true" : "false");
+    } catch (e) {}
     var boton = document.getElementById("arbol-toggle");
     if (boton) {
-      var plegado = panel.classList.contains("plegado");
       boton.setAttribute("aria-expanded", plegado ? "false" : "true");
       boton.textContent = plegado ? "›" : "‹";
       boton.title = plegado ? "Mostrar el catálogo" : "Ocultar el catálogo";
     }
   });
+
+  // Restaurar preferencia de panel plegado
+  try {
+    if (localStorage.getItem("arbol-catalogo-plegado") === "true") {
+      panel.classList.add("plegado");
+      var botonInit = document.getElementById("arbol-toggle");
+      if (botonInit) {
+        botonInit.setAttribute("aria-expanded", "false");
+        botonInit.textContent = "›";
+        botonInit.title = "Mostrar el catálogo";
+      }
+    }
+  } catch (e) {}
 
   window.CotizatActions.register("arbol-expandir", function () {
     cuerpo.querySelectorAll(".arbol-rama").forEach(function (rama) {

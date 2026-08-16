@@ -14,7 +14,7 @@
 <script nonce="{{ request.state.csp_nonce }}" src="/static/js/csp_styles.js"></script>
 <script src="/static/js/csp_events.js"></script>
 </head>
-<body spellcheck="true"{% if request.url.path in ['/', '/presupuestos'] %} data-refresh-expired="1"{% endif %}>
+<body spellcheck="true" class="{% block body_class %}{% endblock %}"{% if request.url.path in ['/', '/presupuestos'] %} data-refresh-expired="1"{% endif %}>
 <script nonce="{{ request.state.csp_nonce }}">
   window.cotizatArchivoUrl = function (referencia) {
     var localSQLite = {{ 'true' if database_is_sqlite else 'false' }};
@@ -35,11 +35,18 @@
     return '/static/' + valor;
   };
   (function () {
-    if (localStorage.getItem('sidebar-collapsed') === 'true') {
+    // El editor de presupuestos fuerza el modo focus (sidebar a iconos +
+    // canvas a todo el ancho). Fuera de ahí se respeta la preferencia guardada.
+    if (document.body.classList.contains('editor-focus')) {
+      document.body.classList.add('collapsed');
+    } else if (localStorage.getItem('sidebar-collapsed') === 'true') {
       document.body.classList.add('collapsed');
     }
     if (localStorage.getItem('theme') === 'dark') {
       document.documentElement.setAttribute('data-theme', 'dark');
+    }
+    if (localStorage.getItem('editor-density') === 'compact') {
+      document.body.classList.add('density-compact');
     }
   })();
 </script>
