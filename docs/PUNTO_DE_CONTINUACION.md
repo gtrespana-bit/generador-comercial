@@ -1,6 +1,6 @@
 # Punto exacto de continuación
 
-Fecha de corte: **16/08/2026, noche (PR #25 fusionado, licencias y usabilidad verificadas)** (America/Caracas).
+Fecha de corte: **16/08/2026, noche (Etapa 1 cerrada; validación comercial aplazada)** (America/Caracas).
 
 Este documento retoma el trabajo sin depender del historial del chat. Describe
 **dónde quedó exactamente** el trabajo y **qué sigue**, en ese orden. Léelo
@@ -58,6 +58,18 @@ construcción no necesitaron ayuda y varios presupuestos genéricos de baño se
 terminaron en aproximadamente 10 minutos. No se localizaron errores. Las
 personas sin conocimientos de construcción tardaron más de 20 minutos, dato
 coherente con el nicho profesional definido y no un fallo del recorrido.
+
+### Decisiones de alcance posteriores del titular (16/08/2026)
+
+1. **Etapa 1 se considera completada.**
+2. Las partidas actuales son **propias, de ejemplo y solo para pruebas**. Se
+   eliminarán cuando se carguen las partidas reales revisadas; catálogo y
+   partidas comerciales quedan fuera del trabajo actual.
+3. La **validación comercial pagada se aplaza hasta el final**. El titular no
+   entregará a clientes un generador que todavía considere incompleto. No se
+   abrirán pilotos durante los siguientes bloques técnicos.
+4. La etapa activa pasa a ser el **cierre funcional y operativo web**. El
+   siguiente bloque recomendado completa entrega y aceptación del presupuesto.
 
 ### Pasos operativos pendientes DE ESTE BLOQUE (el orden importa)
 
@@ -132,18 +144,16 @@ bloqueante. Interfaz mejorada del panel de operador: pendiente futuro.
 
 ## 5. Qué es lo siguiente
 
-1. **Cerrar el catálogo comercial distribuido**, que es el único criterio de
-   producto pendiente para marcar la Etapa 1: procedencia/derechos de sus
-   partidas y precios referenciales con región y fecha (E1-022 a E1-030).
-2. **Vídeo de demostración de 5 minutos** (E1-051, operativo del titular):
-   cierra la landing (E1-056), pero no bloquea preparar la venta.
-3. **Antes del primer cobro**: buzón de soporte operativo, titular legal en
-   `COTIZAT_LEGAL_ENTITY`, Vercel Pro y completar los pasos de corte que aún
-   correspondan en la sección 0.
-4. **Abrir la Etapa 2**: lista de prospectos, entrevistas y cinco pilotos
-   pagados con el proceso de `docs/PROCESO_PILOTOS.md`, midiendo uso durante
-   ocho semanas. La usabilidad E1-012/013/014 ya está superada y no debe
-   repetirse sin una señal nueva.
+1. **E3-016 — Envío por email del presupuesto** con destinatario, asunto,
+   mensaje y PDF adjunto, reutilizando Resend.
+2. **E3-017 — Enlace público seguro y revocable** limitado a una propuesta y
+   sin acceso a datos internos de la organización.
+3. **E3-018 — Aceptación o rechazo trazable** sobre una versión exacta, con
+   identidad declarada y fecha/hora.
+4. **E3-019 — Notificación a la empresa** y transición controlada del estado.
+5. Después: restauración completa, exportación/baja por organización,
+   monitorización y diagnóstico. Catálogo comercial y validación pagada
+   permanecen aplazados hasta que el titular declare completo el producto.
 
 ## 6. Reglas invariables (no negociables)
 
@@ -190,17 +200,17 @@ No repitas trabajo ya hecho y no me pidas secretos.
   `docs/staging_upgrade_b7c4a9e2d31f.sql`. Suite: **391 passed, 5 skipped**.
 - **E1-061 documentado** en `docs/PROCESO_PILOTOS.md` (guion de pilotos).
 - **PR #25 fusionado**, migración aplicada y licencias funcionando según la
-  verificación del titular. Antes del primer piloto de pago hay que confirmar
-  la cortesía propia y activar `COTIZAT_EXIGIR_LICENCIA=true` si aún faltan.
-- Incidencia de Auth cerrada (Redirect URLs y rate limits confirmados por mí).
-- Aplazados por decisión mía: buzón `soporte@`, razón social
-  (`COTIZAT_LEGAL_ENTITY`), Vercel Pro, puntos 13-manual y 14 de la matriz.
-
+  verificación del titular.
 - **Usabilidad superada (E1-012/013/014):** profesionales de construcción sin
   ayuda, varios presupuestos de baño en ≈10 minutos y sin errores observados.
+- **Etapa 1 completada.** Las partidas actuales son propias y se mantienen
+  solo como ejemplos de prueba; el catálogo real se cargará al final.
+- **Validación comercial aplazada por decisión del titular:** no habrá pilotos
+  hasta que el producto se considere completo.
+- Incidencia de Auth cerrada (Redirect URLs y rate limits confirmados).
 
-**Siguiente bloque:** cerrar procedencia y fecha de precios del catálogo; el
-vídeo (E1-051) puede hacerse en paralelo. Después, activar la Etapa 2 y buscar
-cinco pilotos pagados.
+**Siguiente bloque técnico (Etapa 3):** envío por email del presupuesto → enlace
+público seguro y revocable → aceptación/rechazo trazable → notificación a la
+empresa. No retomar catálogo ni pilotos salvo nueva decisión expresa.
 
 ---

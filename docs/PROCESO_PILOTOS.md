@@ -7,6 +7,11 @@ clientes de pago con cobro manual (E1-059).
 
 Público: el titular operando el producto. Nada de aquí lo ejecuta un cliente.
 
+> **Estado de este proceso:** aplazado por decisión del titular el 16/08/2026.
+> Se conserva como procedimiento futuro, pero no se abrirán pilotos ni se
+> ejecutará validación comercial hasta que el titular declare completo el
+> producto (D-017 del plan de comercialización).
+
 ---
 
 ## 0. Requisitos previos (una sola vez)
