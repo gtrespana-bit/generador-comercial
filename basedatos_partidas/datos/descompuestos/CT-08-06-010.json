@@ -1,0 +1,50 @@
+{
+  "codigo": "CT-08-06-010",
+  "ambito": "reforma",
+  "capitulo": "08",
+  "subcapitulo": "06",
+  "unidad": "m²",
+  "titulo": "Piso de concreto alisado mecánicamente.",
+  "descripcion": "Piso continuo de concreto con acabado alisado mecánicamente mediante alisadora de aspas, con juntas de control aserradas y curado. Incluye el vaciado y reglado del concreto, el flotado inicial, el alisado mecánico en las pasadas necesarias hasta obtener la textura y el cerrado de poro requeridos, el aserrado de las juntas de control en el momento en que el concreto lo admite sin desgranarse ni fisurar, y el curado, que en un piso alisado es determinante porque toda la calidad superficial se pierde si el agua de fraguado se evapora demasiado rápido. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONC-210",
+      "rendimiento": 0.09
+    },
+    {
+      "ref": "MT-MALLA-ELEC",
+      "rendimiento": 1.08
+    },
+    {
+      "ref": "MT-CURADOR",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MT-SEPARADOR",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MQ-ALISADORA",
+      "rendimiento": 0.09
+    },
+    {
+      "ref": "MQ-VIBRADOR",
+      "rendimiento": 0.045
+    },
+    {
+      "ref": "MQ-AMOLA",
+      "rendimiento": 0.045
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.38
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.42
+    }
+  ],
+  "codigo_covenin": ""
+}

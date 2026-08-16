@@ -1,0 +1,38 @@
+{
+  "codigo": "CT-17-04-020",
+  "ambito": "reforma",
+  "capitulo": "17",
+  "subcapitulo": "04",
+  "unidad": "ud",
+  "titulo": "Juego de accesorios y herrajes de mobiliario.",
+  "descripcion": "Suministro y montaje del juego de accesorios y herrajes complementarios del mobiliario: tiradores, organizadores, bisagras de cierre suave, sistemas de elevación y topes. Incluye el replanteo, el pretaladrado con plantilla para garantizar la alineación de los tiradores en todos los frentes, que es lo que se nota a simple vista en un mueble bien terminado, el montaje y la regulación final de cierres y amortiguadores. Medido por juego instalado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-HERRAJE-CLOSET",
+      "rendimiento": 8.0
+    },
+    {
+      "ref": "MT-TORN",
+      "rendimiento": 26.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.22
+    },
+    {
+      "ref": "MQ-ATORN",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 0.8
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.3
+    }
+  ],
+  "codigo_covenin": ""
+}

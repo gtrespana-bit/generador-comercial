@@ -1,0 +1,46 @@
+{
+  "codigo": "CT-01-01-030",
+  "ambito": "reforma",
+  "capitulo": "01",
+  "subcapitulo": "01",
+  "unidad": "m²",
+  "titulo": "Barrera antipolvo con lámina plástica y cierre de paso.",
+  "descripcion": "Barrera provisional de confinamiento de polvo entre la zona de obra y las áreas en uso, formada por bastidor de listón de madera y lámina de polietileno tensada y sellada en todo su perímetro contra piso, paredes y techo, con cierre tipo cremallera para el paso del personal. Es la medida que permite trabajar en un ambiente mientras el resto del inmueble sigue habitado u operativo. Incluye el replanteo, el montaje del bastidor, la colocación y sellado de la lámina, el montaje del cierre de paso, el mantenimiento de la barrera durante la obra y su desmontaje y retiro al finalizar. Medido en superficie de barrera realmente ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PROT-PLAST",
+      "rendimiento": 1.2
+    },
+    {
+      "ref": "MT-MADERA-LISTON",
+      "rendimiento": 1.6
+    },
+    {
+      "ref": "MT-ZIPPER",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MT-CINTA-ENM",
+      "rendimiento": 0.22
+    },
+    {
+      "ref": "MT-CLAVOS",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.04
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.13
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.13
+    }
+  ],
+  "codigo_covenin": ""
+}

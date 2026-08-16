@@ -3120,12 +3120,14 @@ def _importar_a_catalogo(db: Session, filas: list[dict], formato: str) -> tuple[
                 categoria = capitulo
             else:
                 categoria = "CYPE" if es_cype else "General"
+        subcategoria = str(item.get("subcapitulo") or item.get("subcategoria") or "").strip()
         db.add(Partida(
             nombre=nombre,
             descripcion=str(item.get("descripcion", "")).strip(),
             precio_unitario=precio,
             unidad=str(item.get("unidad", "ud")).strip() or "ud",
             categoria=categoria,
+            subcategoria=subcategoria[:80],
             codigo_interno=str(item.get("codigo") or item.get("codigo_externo") or "").strip(),
             codigo_externo=str(item.get("codigo") or item.get("codigo_externo") or "").strip(),
             descomposicion_json=json.dumps({

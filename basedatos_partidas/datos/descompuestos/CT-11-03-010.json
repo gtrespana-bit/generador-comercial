@@ -1,0 +1,50 @@
+{
+  "codigo": "CT-11-03-010",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "03",
+  "unidad": "m²",
+  "titulo": "Cubierta de lámina metálica acanalada.",
+  "descripcion": "Cubierta con lámina metálica acanalada galvanizada o prepintada, fijada a las correas con tornillos autoperforantes con arandela de neopreno. El tornillo debe apretarse hasta comprimir la arandela sin deformar la lámina: apretado de más, la arandela se degrada y filtra; de menos, no sella. Incluye el replanteo del solape lateral y longitudinal en el sentido contrario a los vientos dominantes, la colocación y alineación de las láminas, la fijación en cresta de onda, el sellado de los solapes y los remates de alero, cumbrera y borde. Medido en superficie realmente ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-LAMINA-ZINC",
+      "rendimiento": 1.1
+    },
+    {
+      "ref": "MT-TORN-TECHO",
+      "rendimiento": 9.0
+    },
+    {
+      "ref": "MT-SELLA-ELAST",
+      "rendimiento": 0.07
+    },
+    {
+      "ref": "MT-CUMBRERA",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MQ-ATORN",
+      "rendimiento": 0.13
+    },
+    {
+      "ref": "MQ-MONTAC",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.28
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.38
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.3
+    }
+  ],
+  "codigo_covenin": ""
+}

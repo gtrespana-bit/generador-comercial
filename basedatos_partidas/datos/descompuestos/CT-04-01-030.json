@@ -1,0 +1,34 @@
+{
+  "codigo": "CT-04-01-030",
+  "ambito": "reforma",
+  "capitulo": "04",
+  "subcapitulo": "01",
+  "unidad": "m²",
+  "titulo": "Encofrado y desencofrado de zapata.",
+  "descripcion": "Encofrado de las caras laterales de zapata mediante paneles de madera con sus puntales y arriostramientos, y su posterior desencofrado. Incluye el replanteo y montaje de los paneles, la comprobación de escuadras, plomos y dimensiones antes del vaciado, el apuntalamiento y arriostramiento que impide la apertura del encofrado por el empuje del concreto fresco, la aplicación de desmoldeante, el desencofrado cuidadoso una vez alcanzada la resistencia necesaria, y la limpieza y acopio de los paneles para su reutilización. Medido en superficie de encofrado en contacto con el concreto.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-FORM-MADERA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-CLAVOS",
+      "rendimiento": 0.22
+    },
+    {
+      "ref": "MT-DESMOLD",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MO-OF1-CARP",
+      "rendimiento": 0.48
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.48
+    }
+  ],
+  "codigo_covenin": ""
+}

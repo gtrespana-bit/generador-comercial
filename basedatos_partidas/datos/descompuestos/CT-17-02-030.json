@@ -1,0 +1,40 @@
+{
+  "codigo": "CT-17-02-030",
+  "ambito": "reforma",
+  "capitulo": "17",
+  "subcapitulo": "02",
+  "unidad": "m",
+  "titulo": "Salpicadero de mesón.",
+  "descripcion": "Ejecución del salpicadero o zócalo posterior del mesón, en el mismo material del tablero o en el acabado elegido, con su sellado inferior. El sellado de la junta entre salpicadero y mesón es lo que impide que el agua se filtre por detrás y arruine el mueble bajo, que es el fallo más habitual en cocinas. Incluye el corte a medida, la colocación con adhesivo, el ajuste a las irregularidades de la pared, el sellado de la junta inferior con silicona sanitaria y el remate de esquinas. Medido en longitud realmente ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "producto_cliente": {
+    "tipo": "Pieza de salpicadero a juego con el mesón, elegida por el cliente",
+    "unidad": "m",
+    "consumo": 1.06,
+    "nota": "Consumo con 6 % de desperdicio por cortes y esquinas."
+  },
+  "recursos": [
+    {
+      "ref": "MT-ADH-PIEDRA",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MT-SIL-SAN",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MQ-CORT-AGUA",
+      "rendimiento": 0.09
+    },
+    {
+      "ref": "MO-OF1-PISO",
+      "rendimiento": 0.42
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.21
+    }
+  ],
+  "codigo_covenin": ""
+}

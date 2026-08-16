@@ -1,0 +1,38 @@
+{
+  "codigo": "CT-05-01-020",
+  "ambito": "reforma",
+  "capitulo": "05",
+  "subcapitulo": "01",
+  "unidad": "m²",
+  "titulo": "Encofrado y desencofrado de columna.",
+  "descripcion": "Encofrado de columna mediante paneles de madera con abrazaderas, puntales y arriostramiento, y su posterior desencofrado. Incluye el replanteo sobre el nivel, el montaje de los paneles alrededor del armado, el aplomado en las dos direcciones y su arriostramiento, la comprobación de la escuadría y del recubrimiento, la aplicación de desmoldeante, la previsión de la ventana de limpieza en la base, el desencofrado una vez alcanzada la resistencia y la limpieza y acopio de los paneles para su reutilización. Medido en superficie de encofrado en contacto con el concreto.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-FORM-MADERA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-CLAVOS",
+      "rendimiento": 0.32
+    },
+    {
+      "ref": "MT-DESMOLD",
+      "rendimiento": 0.07
+    },
+    {
+      "ref": "MT-APEO",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MO-OF1-CARP",
+      "rendimiento": 0.65
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.65
+    }
+  ],
+  "codigo_covenin": ""
+}

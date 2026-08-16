@@ -1,0 +1,26 @@
+{
+  "codigo": "CT-01-01-020",
+  "ambito": "reforma",
+  "capitulo": "01",
+  "subcapitulo": "01",
+  "unidad": "m²",
+  "titulo": "Protección de mobiliario y equipos con lámina plástica.",
+  "descripcion": "Protección de mobiliario, electrodomésticos y equipos que permanecen en el inmueble durante la obra, mediante lámina de polietileno fijada con cinta. Incluye el agrupamiento previo del mobiliario en la zona más alejada del frente de trabajo, su cubrición completa con lámina solapada, el sellado con cinta para impedir la entrada de polvo, la revisión periódica de la protección mientras dure la obra y su retiro y desecho al finalizar. Medido en superficie de mobiliario realmente protegida.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PROT-PLAST",
+      "rendimiento": 1.15
+    },
+    {
+      "ref": "MT-CINTA-ENM",
+      "rendimiento": 0.11
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.07
+    }
+  ],
+  "codigo_covenin": ""
+}

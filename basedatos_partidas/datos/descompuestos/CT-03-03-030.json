@@ -1,0 +1,34 @@
+{
+  "codigo": "CT-03-03-030",
+  "ambito": "reforma",
+  "capitulo": "03",
+  "subcapitulo": "03",
+  "unidad": "m³",
+  "titulo": "Relleno de zanja de instalaciones con arena.",
+  "descripcion": "Relleno de zanja de instalaciones con arena lavada, formando la cama de asiento bajo la tubería y el recubrimiento envolvente hasta 20 cm por encima de su generatriz superior, para protegerla de cargas puntuales y del contacto con material grueso. Incluye el suministro y puesta en obra de la arena, la formación de la cama con la pendiente de la instalación, el relleno lateral y superior por capas con compactación manual cuidadosa para no desplazar ni dañar la tubería, y la colocación de la cinta de señalización sobre el recubrimiento. Medido en volumen de arena realmente colocada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ARENA",
+      "rendimiento": 1.15
+    },
+    {
+      "ref": "MT-SENAL-OBRA",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MT-AGUA-OBRA",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.52
+    }
+  ],
+  "codigo_covenin": ""
+}

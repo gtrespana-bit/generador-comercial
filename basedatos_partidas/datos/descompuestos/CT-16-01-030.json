@@ -1,0 +1,46 @@
+{
+  "codigo": "CT-16-01-030",
+  "ambito": "reforma",
+  "capitulo": "16",
+  "subcapitulo": "01",
+  "unidad": "m",
+  "titulo": "Sellado de fisuras en paramento previo a pintura.",
+  "descripcion": "Apertura, saneado y sellado de fisuras en paramento antes de pintar, con masilla elástica y banda de refuerzo en las de mayor apertura. Pintar sobre una fisura sin tratar solo la disimula unas semanas: reaparece en la misma línea en cuanto el paramento se mueve, y el cliente lo lee como un defecto de la pintura. Incluye el mapeo de las fisuras, su apertura en cajeado para dar alojamiento al sellador, la limpieza y aspirado, la imprimación, el relleno con masilla elástica, el refuerzo con banda en las fisuras vivas y el lijado de la transición. Medido en longitud de fisura realmente tratada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-SELLA-FISURA",
+      "rendimiento": 0.32
+    },
+    {
+      "ref": "MT-MALLA-JUNTA",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MT-PIN-MASILLA",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MT-PIN-LIJA",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MQ-AMOLA",
+      "rendimiento": 0.09
+    },
+    {
+      "ref": "MQ-ASPIR",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.23
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.12
+    }
+  ],
+  "codigo_covenin": ""
+}

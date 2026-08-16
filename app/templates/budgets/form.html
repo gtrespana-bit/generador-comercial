@@ -221,6 +221,30 @@
   </div>
 
   <!-- CONSTRUCTOR DE PRESUPUESTO -->
+  <div class="builder-con-arbol">
+  <aside class="arbol-catalogo" id="arbol-catalogo">
+    <div class="arbol-head">
+      <div class="arbol-titulo">
+        <span class="section-kicker">Base de datos</span>
+        <h3>Catálogo de partidas</h3>
+      </div>
+      <button type="button" class="arbol-toggle" id="arbol-toggle" data-cotizat-click="arbol-toggle"
+              aria-expanded="true" title="Ocultar el catálogo">‹</button>
+    </div>
+    <div class="arbol-tools">
+      <input type="search" id="arbol-buscar" placeholder="🔍 Buscar partida…" autocomplete="off">
+      <div class="arbol-tools-row">
+        <span id="arbol-contador" class="arbol-contador">—</span>
+        <span class="arbol-acciones">
+          <button type="button" class="btn btn-xs" data-cotizat-click="arbol-expandir" title="Abrir todas las ramas">Abrir</button>
+          <button type="button" class="btn btn-xs" data-cotizat-click="arbol-plegar" title="Cerrar todas las ramas">Cerrar</button>
+        </span>
+      </div>
+    </div>
+    <div class="arbol-body"></div>
+    <p class="arbol-pie hint">Arrastra una partida sobre el capítulo donde la quieras, o pulsa <kbd>Enter</kbd> para añadirla al último.</p>
+  </aside>
+
   <section class="builder-workspace" id="builder-partidas">
   <div class="builder-workspace-head">
     <div><span class="section-kicker">Contenido del presupuesto</span><h2>Capítulos y partidas</h2><p>Añade desde el catálogo, importa Excel o crea una partida y abre su ficha completa para editarla.</p></div>
@@ -273,6 +297,7 @@
 
   <button type="button" class="btn-add-capitulo" id="btn-agregar-capitulo"><span>＋</span> Agregar otro capítulo</button>
   </section>
+  </div>
 
   <!-- TOTALES -->
   <div id="builder-resumen" class="builder-review-grid">
@@ -893,6 +918,7 @@
 <script src="/static/js/editor/dictado.js"></script>
 <script src="/static/js/editor/generador.js"></script>
 <script src="/static/js/editor/recetas_modal.js"></script>
+<script src="/static/js/editor/arbol_catalogo.js"></script>
 <script nonce="{{ request.state.csp_nonce }}">
   (function () {
     var chk = document.getElementById('usar-funciones-avanzadas');

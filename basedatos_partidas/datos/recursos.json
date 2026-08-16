@@ -1,0 +1,2067 @@
+{
+  "_comentario": "Cuadro de recursos. FUENTE ÚNICA DE VERDAD de los precios. MONEDA: USD. ÁMBITO: Venezuela. Cambiar aquí un precio recalcula todas las partidas que usan ese recurso.",
+  "_moneda": "USD",
+  "_revision": "2026-08 · segunda ronda de contraste de material (MercadoLibre VE y EPA Venezuela). Alquiler de equipos sin tocar.",
+  "_nota_materiales": "Los precios de material siguen siendo PROVISIONALES: no se han verificado en el mercado venezolano. Ojo, en Venezuela el material importado suele costar IGUAL O MÁS que en España mientras la mano de obra es 4-5 veces más barata, así que la proporción se invierte respecto a una base española. Hay que sustituirlos por precios de proveedor real.",
+  "_nota_productos_cliente": "Los materiales de acabado que elige el cliente (cerámica, porcelanato, grifería, sanitarios, puertas, pintura de color...) NO van aquí ni forman parte del descompuesto. Viven en el catálogo de productos y se suman al presupuesto aparte. En su lugar, cada partida declara un bloque 'producto_cliente' con el consumo por unidad.",
+  "mano_obra": {
+    "MO-OF1": {
+      "unidad": "h",
+      "descripcion": "Oficial de 1ª.",
+      "precio": 5.5,
+      "estado": "confirmado"
+    },
+    "MO-OF1-PISO": {
+      "unidad": "h",
+      "descripcion": "Oficial de 1ª colocador de pisos.",
+      "precio": 5.5,
+      "estado": "confirmado"
+    },
+    "MO-OF1-ALI": {
+      "unidad": "h",
+      "descripcion": "Oficial de 1ª alicatador.",
+      "precio": 5.5,
+      "estado": "confirmado"
+    },
+    "MO-OF1-ALB": {
+      "unidad": "h",
+      "descripcion": "Oficial de 1ª albañil.",
+      "precio": 5.5,
+      "estado": "confirmado"
+    },
+    "MO-OF1-MON": {
+      "unidad": "h",
+      "descripcion": "Oficial de 1ª montador de prefabricados interiores.",
+      "precio": 5.5,
+      "estado": "confirmado"
+    },
+    "MO-AYU-ESP": {
+      "unidad": "h",
+      "descripcion": "Ayudante especializado.",
+      "precio": 4.0,
+      "estado": "confirmado"
+    },
+    "MO-AYU": {
+      "unidad": "h",
+      "descripcion": "Ayudante.",
+      "precio": 3.5,
+      "estado": "confirmado"
+    },
+    "MO-OF1-PIN": {
+      "unidad": "h",
+      "descripcion": "Oficial de 1ª pintor.",
+      "precio": 5.5,
+      "estado": "confirmado"
+    },
+    "MO-OF1-PLO": {
+      "unidad": "h",
+      "descripcion": "Oficial de 1ª plomero.",
+      "precio": 5.5,
+      "estado": "confirmado"
+    },
+    "MO-OF1-ELE": {
+      "unidad": "h",
+      "descripcion": "Oficial de 1ª electricista.",
+      "precio": 5.5,
+      "estado": "confirmado"
+    },
+    "MO-OF1-CAB": {
+      "unidad": "h",
+      "descripcion": "Oficial de 1ª cabillero (armador de acero de refuerzo).",
+      "precio": 5.5,
+      "estado": "confirmado"
+    },
+    "MO-OF1-CARP": {
+      "unidad": "h",
+      "descripcion": "Oficial de 1ª carpintero de obra (encofrador).",
+      "precio": 5.5,
+      "estado": "confirmado"
+    },
+    "MO-OF1-SOLD": {
+      "unidad": "h",
+      "descripcion": "Oficial de 1ª soldador.",
+      "precio": 5.5,
+      "estado": "confirmado"
+    },
+    "MO-OF1-CARPM": {
+      "unidad": "h",
+      "descripcion": "Oficial de 1ª carpintero de madera estructural.",
+      "precio": 5.5,
+      "estado": "confirmado"
+    },
+    "MO-OF1-VIDR": {
+      "unidad": "h",
+      "descripcion": "Oficial de 1ª vidriero.",
+      "precio": 5.5,
+      "estado": "confirmado"
+    },
+    "MO-OF1-AC": {
+      "unidad": "h",
+      "descripcion": "Oficial de 1ª técnico en refrigeración y climatización.",
+      "precio": 5.5,
+      "estado": "confirmado"
+    },
+    "MO-OF1-JARD": {
+      "unidad": "h",
+      "descripcion": "Oficial de 1ª jardinero.",
+      "precio": 5.5,
+      "estado": "confirmado"
+    }
+  },
+  "materiales": {
+    "MT-ADH-C2TE": {
+      "unidad": "kg",
+      "descripcion": "Adhesivo cementoso mejorado tipo C2 TE, de deslizamiento reducido y tiempo abierto ampliado, para colocación de porcelanato en capa fina.",
+      "precio": 0.32,
+      "estado": "verificado-mercado",
+      "fuente": "Pega porcelanato saco 25 kg a 7-9 USD."
+    },
+    "MT-ADH-C1": {
+      "unidad": "kg",
+      "descripcion": "Adhesivo cementoso normal tipo C1, color gris, para colocación de cerámica en capa fina.",
+      "precio": 0.24,
+      "estado": "verificado-mercado",
+      "fuente": "Pega ceramica comun, saco 25 kg a 5-7 USD."
+    },
+    "MT-JUN-CG2": {
+      "unidad": "kg",
+      "descripcion": "Mortero de juntas cementoso tipo CG2, de absorción reducida y resistencia elevada a la abrasión, en el color elegido.",
+      "precio": 1.6,
+      "estado": "verificado-mercado",
+      "fuente": "Boquilla cementosa, bolsa de 1 kg a 1,50-2,00 USD."
+    },
+    "MT-CRU-NIV": {
+      "unidad": "ud",
+      "descripcion": "Sistema de crucetas y cuñas niveladoras de un solo uso para colocación de baldosa.",
+      "precio": 0.09,
+      "estado": "provisional"
+    },
+    "MT-AUT-NIV": {
+      "unidad": "kg",
+      "descripcion": "Mortero autonivelante de base cemento para regularización de soportes interiores.",
+      "precio": 1.55,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: autonivelante ZNR SL330 25 kg 45,00; Sinertop 220v 25 kg 35,00; Mapei Ultraplan Eco 23 kg 37,60; Ardex V1000 50 lb 84,97-99,97. Conversión: Saco de 25 kg a 35,00-45,00 USD. Rango observado: 1,40 - 4,40 USD/kg.",
+      "nota": "Corrección importante: el precio anterior (0,42) era propio de un mortero de afirmado corriente, no de un autonivelante."
+    },
+    "MT-IMP-PRIM": {
+      "unidad": "l",
+      "descripcion": "Imprimación tapaporos de resinas acrílicas en dispersión acuosa, para regular la absorción del soporte.",
+      "precio": 3.8,
+      "estado": "provisional"
+    },
+    "MT-PER-BANDA": {
+      "unidad": "m",
+      "descripcion": "Banda perimetral de polietileno expandido de 10 mm para desolidarizar el afirmado de los paramentos.",
+      "precio": 0.55,
+      "estado": "provisional"
+    },
+    "MT-SAC-ESC": {
+      "unidad": "ud",
+      "descripcion": "Saco de rafia de alta resistencia para retirada manual de escombro.",
+      "precio": 0.65,
+      "estado": "provisional"
+    },
+    "MT-PYL-CANAL": {
+      "unidad": "m",
+      "descripcion": "Canal de acero galvanizado de 70 mm para arranque y remate de tabique autoportante.",
+      "precio": 1.7,
+      "estado": "verificado-mercado",
+      "fuente": "Canal galvanizado 70 mm."
+    },
+    "MT-PYL-MONT": {
+      "unidad": "m",
+      "descripcion": "Montante de acero galvanizado de 70 mm para estructura de tabique autoportante.",
+      "precio": 2.1,
+      "estado": "verificado-mercado",
+      "fuente": "Montante galvanizado 70 mm."
+    },
+    "MT-PYL-PLACA": {
+      "unidad": "m2",
+      "descripcion": "Placa de yeso laminado estándar de 15 mm de espesor, borde afinado.",
+      "precio": 7.2,
+      "estado": "verificado-mercado",
+      "fuente": "Lamina de 15 mm, sobreprecio sobre la de 12,5."
+    },
+    "MT-PYL-LANA": {
+      "unidad": "m2",
+      "descripcion": "Panel de lana mineral de 60 mm para aislamiento térmico y acústico en cámara de tabique.",
+      "precio": 3.6,
+      "estado": "provisional"
+    },
+    "MT-PYL-BANDA": {
+      "unidad": "m",
+      "descripcion": "Banda estanca autoadhesiva de polietileno para junta perimetral de tabique.",
+      "precio": 0.42,
+      "estado": "provisional"
+    },
+    "MT-PYL-PASTA": {
+      "unidad": "kg",
+      "descripcion": "Pasta de juntas y cinta de papel microperforada para tratamiento de uniones.",
+      "precio": 1.05,
+      "estado": "verificado-mercado",
+      "fuente": "Pasta de juntas y cinta."
+    },
+    "MT-TORN": {
+      "unidad": "ud",
+      "descripcion": "Tornillería y fijaciones mecánicas para montaje de estructura y placas.",
+      "precio": 0.03,
+      "estado": "provisional"
+    },
+    "MT-PIN-FONDO": {
+      "unidad": "l",
+      "descripcion": "Fondo fijador o sellador acrílico al agua, para consolidar y regular la absorción de paramentos interiores.",
+      "precio": 5.0,
+      "estado": "verificado-mercado",
+      "fuente": "Galon de fondo fijador ~19 USD."
+    },
+    "MT-PIN-CAUCHO": {
+      "unidad": "l",
+      "descripcion": "Pintura de caucho acrílico mate lavable para interiores, base blanca tintable.",
+      "precio": 3.95,
+      "estado": "verificado-mercado",
+      "fuente": "Galon de caucho 9-20 USD; mediana 15 sobre 3,785 l."
+    },
+    "MT-PIN-ESMALTE": {
+      "unidad": "l",
+      "descripcion": "Esmalte sintético brillante para carpintería metálica y de madera.",
+      "precio": 7.4,
+      "estado": "verificado-mercado",
+      "fuente": "Galon de esmalte a 27,90 USD."
+    },
+    "MT-PIN-MASILLA": {
+      "unidad": "kg",
+      "descripcion": "Masilla de reparación en pasta para alisado de paramentos interiores.",
+      "precio": 1.5,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: mastique Supermastick balde 2,5 gal / 14 kg 14,00; pasta profesional Mastic Manpica galón 14,82 y 1/4 4,95. Conversión: Mastique balde 14 kg a 14 USD (1,00); pasta mastic galón a 14,82 USD (2,96). Rango observado: 1,00 - 2,96 USD/kg."
+    },
+    "MT-PIN-LIJA": {
+      "unidad": "ud",
+      "descripcion": "Lija, cinta de enmascarar y plástico de protección. Consumibles de preparación y protección.",
+      "precio": 0.85,
+      "estado": "provisional"
+    },
+    "MT-PLO-PPR20": {
+      "unidad": "m",
+      "descripcion": "Tubería de polipropileno PPR de 20 mm para agua fría y caliente, con termofusión.",
+      "precio": 1.5,
+      "estado": "verificado-mercado",
+      "fuente": "Tubo PPR 20 mm x 4 m a 5-8 USD; mediana 6."
+    },
+    "MT-PLO-ACC20": {
+      "unidad": "ud",
+      "descripcion": "Accesorios de PPR de 20 mm: codos, tees, uniones y adaptadores roscados.",
+      "precio": 0.8,
+      "estado": "verificado-mercado",
+      "fuente": "Accesorios PPR 20 mm."
+    },
+    "MT-PLO-PVC4": {
+      "unidad": "m",
+      "descripcion": "Tubería de PVC sanitario de 4 pulgadas para desagüe, con junta cementada.",
+      "precio": 2.8,
+      "estado": "verificado-mercado",
+      "fuente": "Tubo PVC 4 pulgadas x 6 m a 12-18 USD; mediana 16."
+    },
+    "MT-PLO-ACC4": {
+      "unidad": "ud",
+      "descripcion": "Accesorios de PVC sanitario de 4 pulgadas: codos, yees, sifones y pegamento.",
+      "precio": 2.9,
+      "estado": "verificado-mercado",
+      "fuente": "Accesorios PVC sanitario 4 pulgadas."
+    },
+    "MT-PLO-SOP": {
+      "unidad": "ud",
+      "descripcion": "Abrazaderas, soportes y tacos de fijación para tubería.",
+      "precio": 0.45,
+      "estado": "provisional"
+    },
+    "MT-ELE-TUB20": {
+      "unidad": "m",
+      "descripcion": "Tubería conduit corrugada de PVC de 20 mm para canalización eléctrica empotrada.",
+      "precio": 0.62,
+      "estado": "verificado-mercado",
+      "fuente": "Conduit corrugado PVC 20 mm."
+    },
+    "MT-ELE-CABLE": {
+      "unidad": "m",
+      "descripcion": "Conductor de cobre THW calibre 12 AWG, aislamiento 600 V.",
+      "precio": 0.6,
+      "estado": "verificado-mercado",
+      "fuente": "Cable THW 12 AWG: rollo de 100 m a 45-65 USD."
+    },
+    "MT-ELE-CAJA": {
+      "unidad": "ud",
+      "descripcion": "Caja de paso o de mecanismo, metálica o de PVC, para empotrar.",
+      "precio": 1.1,
+      "estado": "verificado-mercado",
+      "fuente": "Caja de paso o de mecanismo."
+    },
+    "MT-ELE-MECA": {
+      "unidad": "ud",
+      "descripcion": "Mecanismo de interruptor o tomacorriente con placa, gama estándar.",
+      "precio": 3.2,
+      "estado": "verificado-mercado",
+      "fuente": "Mecanismo con placa, gama estandar."
+    },
+    "MT-YESO-REP": {
+      "unidad": "kg",
+      "descripcion": "Yeso o mortero de reparación para el tapado de rozas.",
+      "precio": 0.5,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: yeso en saco de 25 kg, 9-16 USD. Conversión: Mismo saco de yeso de 25 kg que la pasta de friso. Rango observado: 0,36 - 0,64 USD/kg."
+    },
+    "MT-BLQ-10": {
+      "unidad": "ud",
+      "descripcion": "Bloque de concreto hueco de 10x20x40 cm para tabiquería no estructural.",
+      "precio": 0.48,
+      "estado": "verificado-mercado",
+      "fuente": "Bloque concreto 10 cm: fabricante 0,42; detal hasta 0,55."
+    },
+    "MT-MOR-PEGA": {
+      "unidad": "m3",
+      "descripcion": "Mortero de pega para mampostería, elaborado en obra con cemento y arena lavada, dosificación 1:4.",
+      "precio": 99.92,
+      "estado": "derivado",
+      "fuente": "Precio calculado a partir de sus componentes del propio cuadro; no se introduce a mano. Cambiar el cemento o la arena recalcula este mortero.",
+      "composicion": [
+        {
+          "ref": "MT-CEMENTO",
+          "cantidad": 340
+        },
+        {
+          "ref": "MT-ARENA",
+          "cantidad": 1.05
+        },
+        {
+          "ref": "MT-AGUA-OBRA",
+          "cantidad": 0.2
+        }
+      ]
+    },
+    "MT-MOR-FRISO": {
+      "unidad": "m3",
+      "descripcion": "Mortero de friso para revestimiento de paramentos, elaborado en obra con cemento y arena cernida, dosificación 1:5.",
+      "precio": 90.952,
+      "estado": "derivado",
+      "fuente": "Precio calculado a partir de sus componentes del propio cuadro; no se introduce a mano. Cambiar el cemento o la arena recalcula este mortero.",
+      "composicion": [
+        {
+          "ref": "MT-CEMENTO",
+          "cantidad": 300
+        },
+        {
+          "ref": "MT-ARENA",
+          "cantidad": 1.05
+        },
+        {
+          "ref": "MT-AGUA-OBRA",
+          "cantidad": 0.22
+        }
+      ]
+    },
+    "MT-MALLA-ESQ": {
+      "unidad": "m",
+      "descripcion": "Cantonera metálica de esquina y malla de refuerzo para encuentros de friso.",
+      "precio": 0.7,
+      "estado": "provisional"
+    },
+    "MT-PYL-PLACA125": {
+      "unidad": "m2",
+      "descripcion": "Placa de yeso laminado estándar de 12,5 mm de espesor, borde afinado.",
+      "precio": 6.4,
+      "estado": "verificado-mercado",
+      "fuente": "Lamina drywall 1/2 de 1,22x2,44 (2,98 m2) a 14-22 USD; mediana 19."
+    },
+    "MT-PYL-PERF-CR": {
+      "unidad": "m2",
+      "descripcion": "Perfilería de acero galvanizado para cielo raso suspendido: maestras, ángulo perimetral, horquillas y varilla de cuelgue.",
+      "precio": 3.6,
+      "estado": "verificado-mercado",
+      "fuente": "Perfileria de cielo raso: maestras, angulo y cuelgues."
+    },
+    "MT-PLO-LLAVE": {
+      "unidad": "ud",
+      "descripcion": "Llave de paso de PPR de 20 mm, de esfera, para empotrar.",
+      "precio": 4.5,
+      "estado": "provisional"
+    },
+    "MT-PLO-ABASTO": {
+      "unidad": "ud",
+      "descripcion": "Tubo de abasto flexible con sus racores y accesorios de conexión a aparato.",
+      "precio": 3.2,
+      "estado": "provisional"
+    },
+    "MT-PLO-DESAG": {
+      "unidad": "ud",
+      "descripcion": "Accesorios de desagüe para aparato sanitario: sifón, brida, adaptadores y pegamento.",
+      "precio": 5.4,
+      "estado": "provisional"
+    },
+    "MT-SAN-FIJA": {
+      "unidad": "ud",
+      "descripcion": "Kit de fijación de aparato sanitario: anclajes, anillo de cera y tornillería.",
+      "precio": 4.8,
+      "estado": "provisional"
+    },
+    "MT-SIL-SAN": {
+      "unidad": "ud",
+      "descripcion": "Cartucho de silicona sanitaria antihongos para sellado de aparatos.",
+      "precio": 12.0,
+      "estado": "verificado-mercado",
+      "fuente": "EPA Venezuela: silicón antihongos blanco SiliPex Graffiti 290 ml 17,12; ambientes húmedos Simbi 280 ml 20,00; antihongos translúcido 70 ml 9,00. Conversión: Cartucho antihongos de 280-290 ml. Rango observado: 9,00 - 17,12 USD el cartucho."
+    },
+    "MT-CANON": {
+      "unidad": "m3",
+      "descripcion": "Canon de vertido en vertedero o botadero autorizado.",
+      "precio": 3.5,
+      "estado": "provisional"
+    },
+    "MT-CONS-DEM": {
+      "unidad": "ud",
+      "descripcion": "Consumibles de demolición: puntas y cinceles de martillo, discos de corte y hojas de espátula.",
+      "precio": 1.1,
+      "estado": "provisional"
+    },
+    "MT-PROT-OBRA": {
+      "unidad": "m2",
+      "descripcion": "Protección de obra con plástico, cartón corrugado y cinta de enmascarar.",
+      "precio": 0.35,
+      "estado": "verificado-mercado",
+      "fuente": "Coherente con el precio de lámina de polietileno y cartón corrugado ya verificados en el cuadro. Conversión: Plástico, cartón corrugado y cinta de enmascarar. Rango observado: 0,28 - 0,45 USD/m2.",
+      "nota": "El precio que ya teníamos resiste el contraste."
+    },
+    "MT-DISOL-ADH": {
+      "unidad": "l",
+      "descripcion": "Disolvente removedor de adhesivos para levantado de pisos vinílicos y alfombras.",
+      "precio": 5.2,
+      "estado": "provisional"
+    },
+    "MT-DECAP": {
+      "unidad": "l",
+      "descripcion": "Decapante químico en gel para eliminación de capas de pintura en paramentos.",
+      "precio": 6.5,
+      "estado": "provisional"
+    },
+    "MT-VAPOR": {
+      "unidad": "l",
+      "descripcion": "Solución humectante para reblandecimiento de papel tapiz y pegamentos murales.",
+      "precio": 2.4,
+      "estado": "provisional"
+    },
+    "MT-APEO": {
+      "unidad": "ud",
+      "descripcion": "Puntal metálico telescópico y madera de apeo, con amortización por uso.",
+      "precio": 2.2,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: puntal metálico 2 a 3,6 m italiano 40,00-49,00; puntales Ulma importados 4 m 20,00-45,00; puntales usados 10,00-25,00. Conversión: Puntal telescópico nuevo 20,00-49,00 USD (mediana 28) amortizado en 20 usos, mas la madera de reparto. Rango observado: 1,00 - 2,50 USD por uso."
+    },
+    "MT-OXI-CONS": {
+      "unidad": "ud",
+      "descripcion": "Consumibles de oxicorte y soldadura: gas, boquillas y discos de corte de metal.",
+      "precio": 3.9,
+      "estado": "provisional"
+    },
+    "MT-PROT-CARTON": {
+      "unidad": "m2",
+      "descripcion": "Cartón corrugado en rollo para protección de pisos y superficies terminadas durante la obra.",
+      "precio": 0.45,
+      "estado": "provisional"
+    },
+    "MT-PROT-PLAST": {
+      "unidad": "m2",
+      "descripcion": "Lámina de polietileno para protección de mobiliario, cerramiento de ambientes y barreras antipolvo.",
+      "precio": 0.28,
+      "estado": "provisional"
+    },
+    "MT-CINTA-ENM": {
+      "unidad": "ud",
+      "descripcion": "Rollo de cinta de enmascarar y cinta adhesiva de embalaje para fijación de protecciones.",
+      "precio": 1.2,
+      "estado": "provisional"
+    },
+    "MT-ZIPPER": {
+      "unidad": "ud",
+      "descripcion": "Cierre tipo cremallera autoadhesivo para paso de personal a través de barrera antipolvo.",
+      "precio": 3.8,
+      "estado": "provisional"
+    },
+    "MT-MADERA-LISTON": {
+      "unidad": "m",
+      "descripcion": "Listón de madera de obra para bastidores, marcos de cerramiento provisional y rastreles.",
+      "precio": 1.95,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE (La Casa de la Madera, Oro Verde): listón de pino 7,50; listón/cuartón 10x5x366 8,00-8,49; listón 366x10x5 6,50; madera de pino para encofrar 5,99-7,99. Conversión: Listón de pino de 3,66 m a 6,50-8,49 USD. Rango observado: 1,80 - 2,32 USD/m.",
+      "nota": "El precio anterior (1,30/m) quedaba por debajo del suelo del mercado."
+    },
+    "MT-LAMINA-OSB": {
+      "unidad": "m2",
+      "descripcion": "Lámina de madera contrachapada u OSB para cerramiento provisional de vanos y protecciones rígidas.",
+      "precio": 10.5,
+      "estado": "verificado-mercado",
+      "fuente": "Lamina MDF/contrachapado 18 mm de 1,22x2,44 (2,98 m2) a ~47 USD."
+    },
+    "MT-MALLA-OBRA": {
+      "unidad": "m2",
+      "descripcion": "Malla plástica de señalización para cerramiento perimetral y delimitación de zonas de obra.",
+      "precio": 0.9,
+      "estado": "provisional"
+    },
+    "MT-CLAVOS": {
+      "unidad": "kg",
+      "descripcion": "Clavos, tornillos y elementos de fijación de uso general en obra.",
+      "precio": 2.6,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: clavo dulce 3x9 para madera o encofrado por kilo 2,90. Conversión: Clavo dulce por kilo 2,90; se promedia con tornillería de uso general. Rango observado: 2,00 - 3,20 USD/kg."
+    },
+    "MT-VIGA-APEO": {
+      "unidad": "m",
+      "descripcion": "Viga o durmiente de madera de reparto para apeos y apuntalamientos.",
+      "precio": 2.9,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: listón/cuartón de pino 10x5x366 8,00-8,49; viga de pino 10x4 10,00; tablón de pino 12,00. Conversión: Cuartón o viga de pino 10x4 cm x 3,66 m a 8,00-10,00 USD. Rango observado: 2,05 - 2,90 USD/m."
+    },
+    "MT-ELE-PROV": {
+      "unidad": "m",
+      "descripcion": "Cable encauchetado para instalación eléctrica provisional de obra.",
+      "precio": 4.2,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: cable ST 3x12 engomado por metro 3,75-7,11; carrete 100 m Elecon/Cablesca 410-449. Conversión: Rollo 100 m a 425 USD = 4,25 USD/m. Rango observado: 3,75 - 7,11 USD/m suelto; 410 - 449 USD el rollo de 100 m.",
+      "nota": "El precio anterior (1,40 USD/m) correspondia a un cable unipolar, no al encauchetado multipolar de obra."
+    },
+    "MT-TABLERO-PROV": {
+      "unidad": "ud",
+      "descripcion": "Tablero eléctrico provisional de obra con interruptor diferencial y protecciones, amortizado por uso.",
+      "precio": 45.0,
+      "estado": "provisional"
+    },
+    "MT-LAMP-OBRA": {
+      "unidad": "ud",
+      "descripcion": "Reflector o lámpara de obra con su portalámparas y protección, amortizado por uso.",
+      "precio": 9.5,
+      "estado": "provisional"
+    },
+    "MT-MANGUERA": {
+      "unidad": "m",
+      "descripcion": "Manguera reforzada para red de agua provisional de obra.",
+      "precio": 0.85,
+      "estado": "provisional"
+    },
+    "MT-LLAVE-PROV": {
+      "unidad": "ud",
+      "descripcion": "Llave de paso, adaptadores y accesorios para punto de agua provisional.",
+      "precio": 6.0,
+      "estado": "provisional"
+    },
+    "MT-SENAL-OBRA": {
+      "unidad": "ud",
+      "descripcion": "Señal de advertencia, cinta de peligro y conos de delimitación de obra.",
+      "precio": 5.5,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: letrero de seguridad 7,02; señalización de extintor y primeros auxilios 16,00. Conversión: Señal de advertencia, cinta de peligro y conos, repartido por unidad de señalización. Rango observado: 4,00 - 16,00 USD."
+    },
+    "MT-ARENA": {
+      "unidad": "m3",
+      "descripcion": "Arena lavada de río, puesta en obra, para camas de asiento y rellenos de zanja.",
+      "precio": 22.0,
+      "estado": "verificado-mercado",
+      "fuente": "Arena lavada 18-28 USD/m3 segun distancia de cantera."
+    },
+    "MT-PIEDRA-PIC": {
+      "unidad": "m3",
+      "descripcion": "Piedra picada de granulometría corriente, puesta en obra, para bases y drenajes.",
+      "precio": 28.0,
+      "estado": "verificado-mercado",
+      "fuente": "Piedra picada / triturado 3/4 a 22-35 USD/m3."
+    },
+    "MT-MAT-PRESTAMO": {
+      "unidad": "m3",
+      "descripcion": "Material granular seleccionado de préstamo, tipo granzón natural, puesto en obra para rellenos compactados.",
+      "precio": 16.0,
+      "estado": "verificado-mercado",
+      "fuente": "Granzon natural, por debajo de la piedra triturada."
+    },
+    "MT-MADERA-ENTIB": {
+      "unidad": "m2",
+      "descripcion": "Tablón y puntal de madera para entibado de zanja, con amortización por número de usos.",
+      "precio": 3.4,
+      "estado": "provisional"
+    },
+    "MT-CANON-TIERRA": {
+      "unidad": "m3",
+      "descripcion": "Canon de vertido de tierra y material de excavación en botadero autorizado.",
+      "precio": 2.8,
+      "estado": "provisional"
+    },
+    "MT-AGUA-OBRA": {
+      "unidad": "m3",
+      "descripcion": "Agua para amasado, humectación de rellenos y compactación.",
+      "precio": 1.6,
+      "estado": "provisional"
+    },
+    "MT-CONC-180": {
+      "unidad": "m3",
+      "descripcion": "Concreto premezclado de resistencia 180 kg/cm2, puesto en obra.",
+      "precio": 95.0,
+      "estado": "verificado-mercado",
+      "fuente": "Premezclado MercadoLibre VE 87-125 USD/m3; 180 kg/cm2 en el extremo bajo."
+    },
+    "MT-CONC-210": {
+      "unidad": "m3",
+      "descripcion": "Concreto premezclado de resistencia 210 kg/cm2, puesto en obra.",
+      "precio": 108.0,
+      "estado": "verificado-mercado",
+      "fuente": "Premezclado 210: APU de referencia da 110 USD/m3 en material."
+    },
+    "MT-CONC-250": {
+      "unidad": "m3",
+      "descripcion": "Concreto premezclado de resistencia 250 kg/cm2, puesto en obra.",
+      "precio": 118.0,
+      "estado": "verificado-mercado",
+      "fuente": "Premezclado 250 en rango medio-alto del mercado VE."
+    },
+    "MT-CEMENTO": {
+      "unidad": "kg",
+      "descripcion": "Cemento Portland gris tipo I, en saco.",
+      "precio": 0.225,
+      "estado": "verificado-mercado",
+      "fuente": "Saco 42,5 kg a 8,50-12,00 USD (mediana 9,55). MercadoLibre VE y ferreterías: 9,00-13,00."
+    },
+    "MT-ACERO-CAB": {
+      "unidad": "kg",
+      "descripcion": "Acero de refuerzo en cabillas corrugadas, límite elástico 4.200 kg/cm2, cortado y doblado.",
+      "precio": 1.2,
+      "estado": "verificado-mercado",
+      "fuente": "Cabilla corrugada 1,00-1,40 USD/kg segun diametro; nacional vs importado."
+    },
+    "MT-ALAMBRE": {
+      "unidad": "kg",
+      "descripcion": "Alambre recocido para amarre de acero de refuerzo.",
+      "precio": 1.9,
+      "estado": "provisional"
+    },
+    "MT-MALLA-ELEC": {
+      "unidad": "m2",
+      "descripcion": "Malla electrosoldada de acero para refuerzo de losas y pisos.",
+      "precio": 4.6,
+      "estado": "verificado-mercado",
+      "fuente": "Malla electrosoldada en el rango habitual de ferreteria."
+    },
+    "MT-SEPARADOR": {
+      "unidad": "ud",
+      "descripcion": "Separador plástico o de mortero para garantizar el recubrimiento del acero de refuerzo.",
+      "precio": 0.08,
+      "estado": "provisional"
+    },
+    "MT-FORM-MADERA": {
+      "unidad": "m2",
+      "descripcion": "Encofrado de madera con sus puntales y arriostramientos, amortizado por número de usos.",
+      "precio": 5.4,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: tabla de pino 15x2,5x3,66 6,00-6,50; tabla 20 cm 7,89-9,00; lámina fenólica 2,44x1,22x18 mm 69,00 (23,15 USD/m2, 8-10 usos); clavo dulce 3x9 por kilo 2,90. Conversión: Tabla de pino 15x2,5x366 (0,549 m2) a 6,50 USD = 11,84 USD/m2 amortizada en 4 usos (2,96) + listones y puntales (1,80) + clavos y desmoldeante (0,60). Rango observado: 5,00 - 6,00 USD/m2 y uso.",
+      "nota": "Confirma prácticamente el precio que ya teníamos."
+    },
+    "MT-DESMOLD": {
+      "unidad": "l",
+      "descripcion": "Desmoldeante para encofrados, que facilita el desencofrado y protege la madera.",
+      "precio": 2.8,
+      "estado": "provisional"
+    },
+    "MT-POLIET": {
+      "unidad": "m2",
+      "descripcion": "Lámina de polietileno de alta densidad como barrera de vapor bajo losas de piso.",
+      "precio": 0.65,
+      "estado": "provisional"
+    },
+    "MT-IMPERM-ASF": {
+      "unidad": "l",
+      "descripcion": "Impermeabilizante asfáltico en emulsión para protección de fundaciones y trasdós de muros.",
+      "precio": 4.5,
+      "estado": "provisional"
+    },
+    "MT-ADITIVO": {
+      "unidad": "l",
+      "descripcion": "Aditivo plastificante y reductor de agua para concreto.",
+      "precio": 3.2,
+      "estado": "provisional"
+    },
+    "MT-TUBO-DREN": {
+      "unidad": "m",
+      "descripcion": "Tubería de drenaje perforada corrugada con geotextil, para drenaje de trasdós de muro.",
+      "precio": 3.6,
+      "estado": "provisional"
+    },
+    "MT-GEOTEXTIL": {
+      "unidad": "m2",
+      "descripcion": "Geotextil no tejido para separación y filtro en drenajes y rellenos.",
+      "precio": 1.1,
+      "estado": "provisional"
+    },
+    "MT-CURADOR": {
+      "unidad": "l",
+      "descripcion": "Curador químico de membrana para concreto, que retiene el agua de fraguado.",
+      "precio": 3.4,
+      "estado": "provisional"
+    },
+    "MT-PERFIL-ACERO": {
+      "unidad": "kg",
+      "descripcion": "Perfil estructural de acero laminado, suministrado cortado a medida.",
+      "precio": 1.95,
+      "estado": "verificado-mercado",
+      "fuente": "Perfil estructural algo por encima de la cabilla."
+    },
+    "MT-PLANCHA-ACERO": {
+      "unidad": "kg",
+      "descripcion": "Plancha de acero para placas base, cartelas y conexiones.",
+      "precio": 2.2,
+      "estado": "verificado-mercado",
+      "fuente": "Plancha de acero, sobreprecio por corte y mecanizado."
+    },
+    "MT-PERNO-ANCLA": {
+      "unidad": "ud",
+      "descripcion": "Perno de anclaje de acero con tuerca y arandela, para fijación de placa base.",
+      "precio": 2.2,
+      "estado": "verificado-mercado",
+      "fuente": "Perno de anclaje con tuerca y arandela; el valor anterior estaba inflado."
+    },
+    "MT-TORNILLO-EST": {
+      "unidad": "ud",
+      "descripcion": "Tornillería estructural de alta resistencia con tuerca y arandelas.",
+      "precio": 1.2,
+      "estado": "provisional"
+    },
+    "MT-ELECTRODO": {
+      "unidad": "kg",
+      "descripcion": "Electrodo revestido para soldadura estructural por arco eléctrico.",
+      "precio": 4.8,
+      "estado": "provisional"
+    },
+    "MT-PINT-ANTICORR": {
+      "unidad": "l",
+      "descripcion": "Imprimación anticorrosiva de fondo para estructura metálica.",
+      "precio": 7.2,
+      "estado": "provisional"
+    },
+    "MT-MADERA-EST": {
+      "unidad": "m3",
+      "descripcion": "Madera estructural aserrada y cepillada, de escuadría según proyecto.",
+      "precio": 285.0,
+      "estado": "verificado-mercado",
+      "fuente": "Madera estructural aserrada; ajustada a la baja respecto al valor inicial."
+    },
+    "MT-HERRAJE-MAD": {
+      "unidad": "ud",
+      "descripcion": "Herraje o conector metálico galvanizado para uniones de estructura de madera.",
+      "precio": 5.5,
+      "estado": "provisional"
+    },
+    "MT-PRESERV-MAD": {
+      "unidad": "l",
+      "descripcion": "Preservante fungicida e insecticida para protección de madera estructural.",
+      "precio": 6.4,
+      "estado": "provisional"
+    },
+    "MT-VIGUETA": {
+      "unidad": "m",
+      "descripcion": "Vigueta prefabricada pretensada de concreto para losa de entrepiso.",
+      "precio": 8.5,
+      "estado": "provisional"
+    },
+    "MT-BLOQUE-ALIV": {
+      "unidad": "ud",
+      "descripcion": "Bloque de arcilla de aliviano para losa nervada.",
+      "precio": 0.95,
+      "estado": "provisional"
+    },
+    "MT-ANIME-ALIV": {
+      "unidad": "ud",
+      "descripcion": "Bloque de poliestireno expandido de aliviano para losa nervada, de menor peso propio.",
+      "precio": 1.6,
+      "estado": "provisional"
+    },
+    "MT-CONC-300": {
+      "unidad": "m3",
+      "descripcion": "Concreto premezclado de resistencia 300 kg/cm2, puesto en obra.",
+      "precio": 132.0,
+      "estado": "verificado-mercado",
+      "fuente": "Premezclado 300, extremo alto del rango publicado."
+    },
+    "MT-EPOXI-ANCLA": {
+      "unidad": "l",
+      "descripcion": "Resina epóxica bicomponente para anclaje químico de barras y para inyección de fisuras.",
+      "precio": 95.0,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: anclaje quimico epoxico 2 t 19,55-22; Quilosa EV2 300 ml 24,61-55,59; Anchormax 2T 37; Ultrabond HS-1CC 40-55; Hilti RE-500 V3 90,80. Conversión: Mediana del cartucho 28,50 USD / 0,300 l = 95 USD/l. Rango observado: 19,55 - 55,59 USD el cartucho de 300 ml.",
+      "nota": "Corrección fuerte al alza: el precio anterior (22 USD/l) era en realidad el de un cartucho, no el del litro. El consumo por anclaje es bajo (centilitros), asi que el efecto sobre la partida es moderado."
+    },
+    "MT-FIBRA-CARB": {
+      "unidad": "m2",
+      "descripcion": "Tejido de fibra de carbono unidireccional con su resina de saturación, para refuerzo estructural.",
+      "precio": 48.0,
+      "estado": "provisional"
+    },
+    "MT-MORT-REP-EST": {
+      "unidad": "kg",
+      "descripcion": "Mortero tixotrópico de reparación estructural, de retracción compensada y con inhibidor de corrosión.",
+      "precio": 2.4,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: Sika 101 mortero 20 kg 43,00; Sikagrout ES-101 20 kg 65,64. Conversión: Saco de 20 kg a 43,00-65,64 USD. Rango observado: 2,15 - 3,28 USD/kg."
+    },
+    "MT-PUENTE-ADH": {
+      "unidad": "l",
+      "descripcion": "Puente de adherencia epóxico entre concreto endurecido y concreto o mortero nuevo.",
+      "precio": 20.0,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: Sikadur 32 Primer juego 1 kg 70,00-111,06; puente de adherencia Ardex 1 gal 232,36 (importado, descartado); adherentes acrílicos locales 18-25. Conversión: Se adopta el extremo bajo por ser el producto acrílico de uso corriente en reforma, no el epóxico estructural. Rango observado: 18,00 - 70,00 USD/l.",
+      "nota": "Se descarta el importado por no ser representativo de la reforma residencial."
+    },
+    "MT-GROUT": {
+      "unidad": "kg",
+      "descripcion": "Grout fluido de alta resistencia y retracción compensada, para nivelación de apoyos y relleno de placas base.",
+      "precio": 2.2,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: Sikagrout ES-101 20 kg 65,64; grouts locales de nivelación. Conversión: Sikagrout 20 kg a 65,64 USD = 3,28; grout local de obra 1,80-2,20. Rango observado: 1,80 - 3,28 USD/kg."
+    },
+    "MT-PASIVANTE": {
+      "unidad": "l",
+      "descripcion": "Recubrimiento pasivante de base cementosa con inhibidor, para protección de acero de refuerzo corroído.",
+      "precio": 9.8,
+      "estado": "provisional"
+    },
+    "MT-BLQ-15": {
+      "unidad": "ud",
+      "descripcion": "Bloque de concreto hueco de 15x20x40 cm.",
+      "precio": 0.62,
+      "estado": "verificado-mercado",
+      "fuente": "Bloque concreto 15x20x40: 0,45 fabricante a 0,80 detal."
+    },
+    "MT-BLQ-20": {
+      "unidad": "ud",
+      "descripcion": "Bloque de concreto hueco de 20x20x40 cm.",
+      "precio": 0.78,
+      "estado": "verificado-mercado",
+      "fuente": "Bloque concreto 20x20x40: 0,57 fabricante a 0,95 detal."
+    },
+    "MT-BLQ-ARC-10": {
+      "unidad": "ud",
+      "descripcion": "Bloque hueco de arcilla de 10x20x30 cm.",
+      "precio": 0.38,
+      "estado": "verificado-mercado",
+      "fuente": "Bloque arcilla 10, por debajo del de 15."
+    },
+    "MT-BLQ-ARC-15": {
+      "unidad": "ud",
+      "descripcion": "Bloque hueco de arcilla de 15x20x30 cm.",
+      "precio": 0.55,
+      "estado": "verificado-mercado",
+      "fuente": "Bloque de arcilla 15x20x40: 0,45-0,65 USD."
+    },
+    "MT-LADRILLO": {
+      "unidad": "ud",
+      "descripcion": "Ladrillo macizo de arcilla cocida.",
+      "precio": 0.23,
+      "estado": "verificado-mercado",
+      "fuente": "Ladrillo de arcilla 0,18-0,28 USD/unidad."
+    },
+    "MT-BLQ-VIDRIO": {
+      "unidad": "ud",
+      "descripcion": "Bloque de vidrio de 19x19x8 cm, con sus separadores y refuerzo de junta.",
+      "precio": 6.9,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: bloque de vidrio 19x19x8 modelos Nube, Samba, Digona y Cruzado 8,31-8,40; Prowall 6,32-7,43; ofertas 4,15-5,00. Conversión: Bloque 19x19x8 cm, mediana del listado. Rango observado: 4,15 - 8,40 USD la pieza."
+    },
+    "MT-PLACA-CEM": {
+      "unidad": "m2",
+      "descripcion": "Placa de cemento reforzada con fibra, apta para áreas húmedas y exteriores.",
+      "precio": 9.2,
+      "estado": "provisional"
+    },
+    "MT-PYL-PLACA-RH": {
+      "unidad": "m2",
+      "descripcion": "Placa de yeso laminado resistente a la humedad, de 12,5 mm, para áreas húmedas.",
+      "precio": 11.3,
+      "estado": "verificado-mercado",
+      "fuente": "Lamina verde antihumedad a 33,78 USD la plancha de 2,98 m2."
+    },
+    "MT-DINTEL-PREF": {
+      "unidad": "m",
+      "descripcion": "Dintel prefabricado de concreto armado para vanos de puerta y ventana.",
+      "precio": 6.5,
+      "estado": "provisional"
+    },
+    "MT-PANEL-LIV": {
+      "unidad": "m2",
+      "descripcion": "Panel liviano prefabricado de núcleo aligerado con caras de mortero, para tabiquería.",
+      "precio": 14.0,
+      "estado": "provisional"
+    },
+    "MT-MACHIH-MAD": {
+      "unidad": "m2",
+      "descripcion": "Machihembrado de madera para divisiones y forros interiores.",
+      "precio": 11.0,
+      "estado": "verificado-mercado",
+      "fuente": "Machihembrado de madera para forros."
+    },
+    "MT-MALLA-JUNTA": {
+      "unidad": "m",
+      "descripcion": "Malla o banda de refuerzo para juntas entre materiales distintos y encuentros con estructura.",
+      "precio": 1.2,
+      "estado": "provisional"
+    },
+    "MT-SELLA-ELAST": {
+      "unidad": "l",
+      "descripcion": "Sellador elástico de poliuretano para juntas de movimiento y encuentros.",
+      "precio": 32.0,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: sellador adhesivo poliuretano Covo 300 ml 8,99; Quilosa MS 35 Total 300 ml 14,00; silicón poliuretano wall panel 300 ml 5,90-7,00. Conversión: Cartucho de 300 ml a 8,99-14,00 USD. Rango observado: 30,00 - 47,00 USD/l."
+    },
+    "MT-ANCLA-MURO": {
+      "unidad": "ud",
+      "descripcion": "Conector o anclaje metálico de amarre de pared a estructura de concreto.",
+      "precio": 0.65,
+      "estado": "provisional"
+    },
+    "MT-REFUERZO-PYL": {
+      "unidad": "m",
+      "descripcion": "Refuerzo interior de madera o perfil metálico para anclaje de cargas en tabique de yeso laminado.",
+      "precio": 3.2,
+      "estado": "provisional"
+    },
+    "MT-HIDROFUGO": {
+      "unidad": "l",
+      "descripcion": "Aditivo hidrófugo de masa para morteros de friso en exteriores y áreas húmedas.",
+      "precio": 4.2,
+      "estado": "provisional"
+    },
+    "MT-MORT-IMPER": {
+      "unidad": "kg",
+      "descripcion": "Mortero impermeabilizante cementoso bicomponente, flexible, para áreas húmedas bajo enchapado.",
+      "precio": 1.25,
+      "estado": "verificado-mercado",
+      "fuente": "Mortero cementoso flexible bicomponente."
+    },
+    "MT-PASTA-YESO": {
+      "unidad": "kg",
+      "descripcion": "Pasta de yeso para friso y enlucido de paramentos interiores.",
+      "precio": 0.52,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: Maxiyeso 25 kg 9,99-15,00; Mega Yeso 25 kg 9,00; Pirámide especial 25 kg 15,50; Mecon 25 kg 11,00. Conversión: Saco de 25 kg a 9,00-16,00 USD. Rango observado: 0,36 - 0,64 USD/kg."
+    },
+    "MT-ESTUCO-FINO": {
+      "unidad": "kg",
+      "descripcion": "Pasta de acabado fino para estucado y alisado de paramentos interiores.",
+      "precio": 1.45,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: estuco blanco Samson 8 kg 16,15-17,41; Trenco 10 kg 10,00; Instalpego 10 kg 16,65; occidente 10 kg 14,20; blanco 25 kg 20,00. Conversión: Saco de 8-10 kg a 10,00-17,41 USD. Rango observado: 0,80 - 2,18 USD/kg.",
+      "nota": "El precio anterior (0,55) estaba a menos de la mitad del suelo del mercado."
+    },
+    "MT-MOLDURA-YESO": {
+      "unidad": "m",
+      "descripcion": "Moldura corrida de yeso o poliuretano para remates decorativos, con su pasta de agarre.",
+      "precio": 3.2,
+      "estado": "provisional"
+    },
+    "MT-PERFIL-REMATE": {
+      "unidad": "m",
+      "descripcion": "Perfil de aluminio o PVC para remate, esquinero y transición en enchapados.",
+      "precio": 2.6,
+      "estado": "provisional"
+    },
+    "MT-ANCLA-PIEDRA": {
+      "unidad": "ud",
+      "descripcion": "Anclaje metálico de acero inoxidable para fijación mecánica de piezas de piedra natural.",
+      "precio": 1.3,
+      "estado": "provisional"
+    },
+    "MT-ADH-PIEDRA": {
+      "unidad": "kg",
+      "descripcion": "Adhesivo cementoso blanco de altas prestaciones, específico para piedra natural sensible a manchas.",
+      "precio": 0.46,
+      "estado": "verificado-mercado",
+      "fuente": "Pega blanca de altas prestaciones, sobreprecio sobre la gris."
+    },
+    "MT-CONS-PULIDO": {
+      "unidad": "m2",
+      "descripcion": "Consumibles de pulido y abrillantado: discos diamantados, abrasivos y cristalizador.",
+      "precio": 2.4,
+      "estado": "provisional"
+    },
+    "MT-SELLA-PIEDRA": {
+      "unidad": "l",
+      "descripcion": "Sellador hidrofugante y antimanchas para piedra natural y porcelanato poroso.",
+      "precio": 12.0,
+      "estado": "provisional"
+    },
+    "MT-PEGA-MURAL": {
+      "unidad": "kg",
+      "descripcion": "Pegamento mural para papel tapiz y revestimientos textiles.",
+      "precio": 3.1,
+      "estado": "provisional"
+    },
+    "MT-ESTUCO-VEN": {
+      "unidad": "kg",
+      "descripcion": "Pasta de estuco veneciano a la cal, para acabado decorativo pulido.",
+      "precio": 6.0,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: pasta estuca acrílica Instalflex estuco veneciano galón 32,05-37,71. Conversión: Galón de pasta estuco veneciano a 32,05 USD, unos 5 kg. Rango observado: 5,00 - 7,50 USD/kg."
+    },
+    "MT-MICROCEM": {
+      "unidad": "kg",
+      "descripcion": "Microcemento bicomponente con su resina y malla de refuerzo, para revestimiento continuo.",
+      "precio": 5.5,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: kit de microcemento 6 m2 110,00; microcemento preparado 98,00; kit 6 y 30 m2 120,00. Conversión: Kit para 6 m2 a 110 USD con un consumo aproximado de 4 kg/m2. Rango observado: 4,60 - 6,50 USD/kg."
+    },
+    "MT-MORT-AFIRM": {
+      "unidad": "m3",
+      "descripcion": "Mortero de cemento y arena para afirmado y capas de nivelación de piso, elaborado en obra, dosificación 1:6.",
+      "precio": 79.67,
+      "estado": "derivado",
+      "fuente": "Precio calculado a partir de sus componentes del propio cuadro; no se introduce a mano. Cambiar el cemento o la arena recalcula este mortero.",
+      "composicion": [
+        {
+          "ref": "MT-CEMENTO",
+          "cantidad": 250
+        },
+        {
+          "ref": "MT-ARENA",
+          "cantidad": 1.05
+        },
+        {
+          "ref": "MT-AGUA-OBRA",
+          "cantidad": 0.2
+        }
+      ]
+    },
+    "MT-MANTA-ACUS": {
+      "unidad": "m2",
+      "descripcion": "Manta acústica de polietileno reticulado para piso laminado flotante.",
+      "precio": 1.3,
+      "estado": "provisional"
+    },
+    "MT-ADH-MADERA": {
+      "unidad": "kg",
+      "descripcion": "Adhesivo de poliuretano para encolado de parquet y madera sobre afirmado.",
+      "precio": 3.4,
+      "estado": "provisional"
+    },
+    "MT-BARNIZ-PISO": {
+      "unidad": "l",
+      "descripcion": "Barniz de poliuretano de alto tránsito para acabado de pisos de madera.",
+      "precio": 9.5,
+      "estado": "verificado-mercado",
+      "fuente": "Barniz poliuretano de alto transito, galon ~36 USD."
+    },
+    "MT-ADH-VINIL": {
+      "unidad": "kg",
+      "descripcion": "Adhesivo acrílico para revestimientos flexibles de piso, vinílico y linóleo.",
+      "precio": 2.8,
+      "estado": "provisional"
+    },
+    "MT-ENDURECEDOR": {
+      "unidad": "kg",
+      "descripcion": "Endurecedor superficial de cuarzo y cemento para pisos de concreto de alto tránsito.",
+      "precio": 0.85,
+      "estado": "provisional"
+    },
+    "MT-EPOXI-PISO": {
+      "unidad": "kg",
+      "descripcion": "Resina epóxica bicomponente autonivelante para piso continuo, con su imprimación.",
+      "precio": 15.0,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: Ayafloor 261 autonivelante 87,00-115,00; epóxica poliamida galón 70,00-95,00; Quimicolor galón 95,00; WEG HBA 301 123,00. Conversión: Galón de epóxico autonivelante (unos 5 kg) a 70,00-115,00 USD. Rango observado: 14,00 - 23,00 USD/kg."
+    },
+    "MT-DESMOLD-COLOR": {
+      "unidad": "kg",
+      "descripcion": "Desmoldeante en polvo con pigmento para concreto estampado.",
+      "precio": 3.6,
+      "estado": "provisional"
+    },
+    "MT-SELLA-CONC": {
+      "unidad": "l",
+      "descripcion": "Sellador acrílico de protección y realce para pisos de concreto y estampados.",
+      "precio": 6.4,
+      "estado": "provisional"
+    },
+    "MT-PERFIL-TRANS": {
+      "unidad": "m",
+      "descripcion": "Perfil de transición de aluminio entre pisos de distinto material o nivel.",
+      "precio": 3.8,
+      "estado": "provisional"
+    },
+    "MT-JUNTA-DILAT": {
+      "unidad": "m",
+      "descripcion": "Perfil de junta de dilatación para piso, con su elemento elástico.",
+      "precio": 5.2,
+      "estado": "provisional"
+    },
+    "MT-CINTA-ANTIDES": {
+      "unidad": "m",
+      "descripcion": "Cinta o perfil antideslizante para narices de peldaño.",
+      "precio": 4.6,
+      "estado": "provisional"
+    },
+    "MT-GRANO-MARMOL": {
+      "unidad": "kg",
+      "descripcion": "Grano de mármol seleccionado para granito vaciado en sitio.",
+      "precio": 0.45,
+      "estado": "provisional"
+    },
+    "MT-PLATINA-DIV": {
+      "unidad": "m",
+      "descripcion": "Platina divisoria de aluminio o bronce para juntas de granito vaciado en sitio.",
+      "precio": 2.1,
+      "estado": "provisional"
+    },
+    "MT-CIELO-DESM": {
+      "unidad": "m2",
+      "descripcion": "Panel de fibra mineral de 60x60 cm para cielo raso desmontable.",
+      "precio": 13.5,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: lámina fibra mineral Canax 120x60 a 13,00; vinyl concha de naranja 0,60x1,20 a 9,16-11,00; placa lisa 60x120 a 7,20. Conversión: Placa 120x60 (0,72 m2) a 7,20-13,00 USD. Rango observado: 10,00 - 18,05 USD/m2."
+    },
+    "MT-PERF-DESM": {
+      "unidad": "m2",
+      "descripcion": "Perfilería vista en T y ángulo perimetral, con tensores, para cielo raso desmontable.",
+      "precio": 5.5,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: perfil T secundario cielo raso 1,20 m a 2,00-4,00; ángulo de aluminio blanco 3,6 ml a 7,15. Conversión: 2,4 m de perfil T por m2 a 1,65-3,30 USD/m mas angular perimetral. Rango observado: 4,50 - 6,50 USD/m2."
+    },
+    "MT-CIELO-PVC": {
+      "unidad": "m2",
+      "descripcion": "Lámina de PVC machihembrada para cielo raso, con sus perfiles de remate.",
+      "precio": 16.0,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: lámina PVC cielo raso / machihembrado 8,45 (0,61 m2), 8,50, 10,50 y 11,00 (0,60 m2); ángulo de aluminio blanco 3,6 ml a 7,15. Conversión: Lámina de 3,00 x 0,20 m (0,60 m2) a 8,45-11,00 USD = 13,85-18,33 USD/m2; se añaden perfiles de remate. Rango observado: 13,85 - 18,33 USD/m2.",
+      "nota": "El precio anterior (8,50) era el de la lámina suelta, no el del metro cuadrado."
+    },
+    "MT-CIELO-METAL": {
+      "unidad": "m2",
+      "descripcion": "Lámina metálica lineal o en bandeja para cielo raso, prelacada.",
+      "precio": 14.0,
+      "estado": "provisional"
+    },
+    "MT-REGISTRO": {
+      "unidad": "ud",
+      "descripcion": "Tapa de registro practicable para cielo raso, con su marco.",
+      "precio": 12.0,
+      "estado": "provisional"
+    },
+    "MT-CORNISA": {
+      "unidad": "m",
+      "descripcion": "Perfil de cornisa para iluminación indirecta en cielo raso.",
+      "precio": 4.5,
+      "estado": "provisional"
+    },
+    "MT-MANTO-ASF": {
+      "unidad": "m2",
+      "descripcion": "Manto asfáltico prefabricado con armadura de poliéster, para impermeabilización de cubierta.",
+      "precio": 5.6,
+      "estado": "verificado-mercado",
+      "fuente": "Rollo estandar 35 USD y EPA 2,7 mm 64,50 USD; rollos de ~10 m2."
+    },
+    "MT-IMPRIM-ASF": {
+      "unidad": "l",
+      "descripcion": "Imprimación asfáltica de base solvente, como puente de adherencia del manto.",
+      "precio": 4.2,
+      "estado": "verificado-mercado",
+      "fuente": "Cunete de primer / asfalto liquido 40 USD; galon 14-18."
+    },
+    "MT-ACRIL-IMPER": {
+      "unidad": "l",
+      "descripcion": "Impermeabilizante acrílico elastomérico de aplicación líquida, con su malla de refuerzo.",
+      "precio": 4.4,
+      "estado": "verificado-mercado",
+      "fuente": "Impermeabilizante acrilico: galon 14-18 USD sobre 3,785 l."
+    },
+    "MT-POLIUR-LIQ": {
+      "unidad": "kg",
+      "descripcion": "Membrana líquida de poliuretano de alta elasticidad y resistencia a la intemperie.",
+      "precio": 10.5,
+      "estado": "verificado-mercado",
+      "fuente": "Poliuretano liquido, gama alta de impermeabilizantes."
+    },
+    "MT-GRAVILLA": {
+      "unidad": "m3",
+      "descripcion": "Gravilla lavada de protección para cubiertas impermeabilizadas.",
+      "precio": 24.0,
+      "estado": "provisional"
+    },
+    "MT-AISL-TERM": {
+      "unidad": "m2",
+      "descripcion": "Panel de aislamiento térmico de poliestireno o lana mineral para cubiertas y cielos.",
+      "precio": 4.8,
+      "estado": "provisional"
+    },
+    "MT-AISL-REFLECT": {
+      "unidad": "m2",
+      "descripcion": "Manta reflectiva de doble burbuja con foil de aluminio, para aislamiento bajo techo.",
+      "precio": 3.2,
+      "estado": "provisional"
+    },
+    "MT-BANDA-REF": {
+      "unidad": "m",
+      "descripcion": "Banda elástica de refuerzo para encuentros, esquinas y juntas en impermeabilizaciones.",
+      "precio": 2.8,
+      "estado": "provisional"
+    },
+    "MT-SELLA-PASE": {
+      "unidad": "ud",
+      "descripcion": "Kit de sellado de pase de tubería en impermeabilización, con collarín y masilla.",
+      "precio": 4.6,
+      "estado": "provisional"
+    },
+    "MT-TEJA-CRIOLLA": {
+      "unidad": "ud",
+      "descripcion": "Teja criolla de arcilla cocida, tipo canal.",
+      "precio": 0.68,
+      "estado": "verificado-mercado",
+      "fuente": "Teja criolla de arcilla."
+    },
+    "MT-TEJA-ASF": {
+      "unidad": "m2",
+      "descripcion": "Teja asfáltica en shingle con su fieltro base y clavos de fijación.",
+      "precio": 10.5,
+      "estado": "verificado-mercado",
+      "fuente": "Teja asfaltica shingle con fieltro y clavos."
+    },
+    "MT-LAMINA-ZINC": {
+      "unidad": "m2",
+      "descripcion": "Lámina metálica acanalada galvanizada o prepintada para cubierta.",
+      "precio": 9.5,
+      "estado": "verificado-mercado",
+      "fuente": "Lamina acerolit: 44 USD por lamina de 4 m (~3,6 m2 utiles)."
+    },
+    "MT-PANEL-SAND": {
+      "unidad": "m2",
+      "descripcion": "Panel sándwich aislado con núcleo de poliuretano para cubierta.",
+      "precio": 22.0,
+      "estado": "provisional"
+    },
+    "MT-POLICARB": {
+      "unidad": "m2",
+      "descripcion": "Lámina de policarbonato alveolar translúcida, con sus perfiles de unión.",
+      "precio": 18.5,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE (Acrilart): alveolar 6 mm 2,10x5,80 190-205; 10 mm 2,10x5,80 245-265; 6 mm 2,10x11,80 320-385; conector H 21,04. Conversión: Lámina alveolar 2,10x5,80 m (12,18 m2): 6 mm a 190-205 USD (15,6-16,8); 10 mm a 245-265 USD (20,1-21,8). Rango observado: 15,60 - 21,80 USD/m2.",
+      "nota": "Confirma el precio que ya teníamos."
+    },
+    "MT-CUMBRERA": {
+      "unidad": "m",
+      "descripcion": "Pieza de cumbrera y remate para cubierta, del material de la cubierta.",
+      "precio": 6.4,
+      "estado": "provisional"
+    },
+    "MT-CANAL-PVC": {
+      "unidad": "m",
+      "descripcion": "Canal de PVC o lámina galvanizada para recogida de aguas lluvias, con sus soportes.",
+      "precio": 7.8,
+      "estado": "provisional"
+    },
+    "MT-BAJANTE-PVC": {
+      "unidad": "m",
+      "descripcion": "Bajante de PVC para aguas lluvias, con sus abrazaderas y codos.",
+      "precio": 5.2,
+      "estado": "provisional"
+    },
+    "MT-TRAGANTE": {
+      "unidad": "ud",
+      "descripcion": "Tragante, boquilla o sumidero de cubierta con su rejilla y guardahojas.",
+      "precio": 14.0,
+      "estado": "provisional"
+    },
+    "MT-TORN-TECHO": {
+      "unidad": "ud",
+      "descripcion": "Tornillo autoperforante con arandela de neopreno para fijación de láminas de cubierta.",
+      "precio": 0.18,
+      "estado": "provisional"
+    },
+    "MT-PLOT-REG": {
+      "unidad": "ud",
+      "descripcion": "Pedestal regulable de polipropileno para piso flotante sobre cubierta.",
+      "precio": 3.4,
+      "estado": "provisional"
+    },
+    "MT-VALV-CHECK": {
+      "unidad": "ud",
+      "descripcion": "Válvula de retención y válvula de compuerta para instalación de bombeo.",
+      "precio": 14.0,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: válvula check 1\" bronce 7,99-22,72 (mediana 13,50); válvula check de compuerta 1\" 13,83-19,00; Griven 15,00. Conversión: Válvula de 1\" de bronce, mediana del listado. Rango observado: 7,99 - 33,74 USD."
+    },
+    "MT-ACC-BOMBA": {
+      "unidad": "ud",
+      "descripcion": "Accesorios de conexión de bomba: uniones universales, manómetro, niples y soportes.",
+      "precio": 28.0,
+      "estado": "provisional"
+    },
+    "MT-TUB-PPR25": {
+      "unidad": "m",
+      "descripcion": "Tubería de polipropileno PPR de 25 mm para montantes y alimentación principal.",
+      "precio": 2.8,
+      "estado": "verificado-mercado",
+      "fuente": "Tubo PPR 25 mm x 4 m a 9,99-15,45 USD."
+    },
+    "MT-FLOTANTE": {
+      "unidad": "ud",
+      "descripcion": "Válvula de flotante y accesorios de control de nivel para tanque de agua.",
+      "precio": 9.5,
+      "estado": "provisional"
+    },
+    "MT-TABLERO-DIST": {
+      "unidad": "ud",
+      "descripcion": "Tablero de distribución empotrable con barraje, para el número de circuitos de proyecto.",
+      "precio": 48.0,
+      "estado": "verificado-mercado",
+      "fuente": "Tablero de distribucion empotrable con barraje."
+    },
+    "MT-BREAKER": {
+      "unidad": "ud",
+      "descripcion": "Interruptor termomagnético monopolar o bipolar para protección de circuito.",
+      "precio": 7.5,
+      "estado": "verificado-mercado",
+      "fuente": "Interruptor termomagnetico monopolar."
+    },
+    "MT-DIFERENCIAL": {
+      "unidad": "ud",
+      "descripcion": "Interruptor diferencial de alta sensibilidad para protección de personas.",
+      "precio": 32.0,
+      "estado": "provisional"
+    },
+    "MT-CINTA-LED": {
+      "unidad": "m",
+      "descripcion": "Cinta LED con su fuente de alimentación y perfil de aluminio disipador.",
+      "precio": 6.2,
+      "estado": "provisional"
+    },
+    "MT-CABLE-8": {
+      "unidad": "m",
+      "descripcion": "Conductor de cobre THW calibre 8 AWG para acometidas y circuitos de fuerza.",
+      "precio": 1.45,
+      "estado": "verificado-mercado",
+      "fuente": "Cable THW 8 AWG, proporcional al calibre."
+    },
+    "MT-BARRA-TIERRA": {
+      "unidad": "ud",
+      "descripcion": "Electrodo de puesta a tierra de cobre con su conector y caja de inspección.",
+      "precio": 18.0,
+      "estado": "provisional"
+    },
+    "MT-CABLE-DATOS": {
+      "unidad": "m",
+      "descripcion": "Cable de datos categoría 6 para redes y telecomunicaciones.",
+      "precio": 0.3,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: cable UTP Cat 6 bobina 305 m 64-89; 100 m 26,99-40. Conversión: Bobina de 305 m a 66-85 USD = 0,22-0,28 USD/m; rollo de 100 m a 26,99-33,97 = 0,27-0,34 USD/m. Rango observado: 0,22 - 0,34 USD/m.",
+      "nota": "El precio anterior triplicaba el de mercado."
+    },
+    "MT-TOMA-DATOS": {
+      "unidad": "ud",
+      "descripcion": "Toma de datos o televisión con su placa y conector.",
+      "precio": 6.5,
+      "estado": "provisional"
+    },
+    "MT-CABLE-ALARMA": {
+      "unidad": "m",
+      "descripcion": "Cable multipar apantallado para sistemas de alarma y control.",
+      "precio": 0.5,
+      "estado": "verificado-mercado",
+      "fuente": "Derivado del contraste de cable de datos en MercadoLibre VE. Conversión: Referenciado al UTP Cat 6 (0,30) con recargo por pantalla y multipar. Rango observado: 0,30 - 0,70 USD/m."
+    },
+    "MT-TUB-FRIGO": {
+      "unidad": "m",
+      "descripcion": "Par de tuberías frigoríficas de cobre aisladas, con cable de interconexión.",
+      "precio": 9.8,
+      "estado": "provisional"
+    },
+    "MT-SOPORTE-AC": {
+      "unidad": "ud",
+      "descripcion": "Soporte metálico galvanizado para unidad condensadora, con sus anclajes.",
+      "precio": 16.0,
+      "estado": "provisional"
+    },
+    "MT-DUCTO-VENT": {
+      "unidad": "m",
+      "descripcion": "Ducto de ventilación flexible o de lámina galvanizada, con sus accesorios.",
+      "precio": 6.5,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: ducto flexible de aluminio 6\" por metro 8,00; 4\" por metro 4,00; ducto flexible 8\" 3 m 12,00; rollos sin aislante 6\" 21,99-23,00. Conversión: Ducto flexible de 4-6\" por metro 4,00-8,00; rollo sin aislante 21,99-25,00. Rango observado: 3,00 - 8,00 USD/m.",
+      "nota": "El precio anterior (12,50/m) duplicaba el de mercado."
+    },
+    "MT-TUB-GAS": {
+      "unidad": "m",
+      "descripcion": "Tubería de cobre o acero para instalación de gas doméstico, con sus accesorios.",
+      "precio": 6.4,
+      "estado": "provisional"
+    },
+    "MT-REGUL-GAS": {
+      "unidad": "ud",
+      "descripcion": "Regulador de presión, llave de corte y accesorios para instalación de gas.",
+      "precio": 24.0,
+      "estado": "provisional"
+    },
+    "MT-EXTINTOR": {
+      "unidad": "ud",
+      "descripcion": "Extintor portátil de polvo químico seco con su soporte y señalización.",
+      "precio": 34.0,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: extintor 10 lb PQS nuevo 25,00-33,00; con gancho y señal 34,00-42,00; kit con base y señalización 39,99-78,99. Conversión: Extintor de PQS de 10 lb con gancho y señalización. Rango observado: 25,00 - 47,50 USD."
+    },
+    "MT-DETECT-HUMO": {
+      "unidad": "ud",
+      "descripcion": "Detector de humo autónomo o direccionable, con su base.",
+      "precio": 22.0,
+      "estado": "provisional"
+    },
+    "MT-GABINETE-MANG": {
+      "unidad": "ud",
+      "descripcion": "Gabinete contra incendios con manguera, válvula y boquilla.",
+      "precio": 200.0,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: oferta gabinete sobreponer + manguera 15 m 200,00; gabinete para manguera y extintor 147,17-168,20; kit de bronce manguera de gabinete 250,00; gabinete solo 65,00-90,00. Conversión: Gabinete mas manguera mas válvula mas boquilla. Rango observado: 145,00 - 250,00 USD."
+    },
+    "MT-GAS-REFRIG": {
+      "unidad": "kg",
+      "descripcion": "Gas refrigerante para carga de equipos de climatización.",
+      "precio": 18.0,
+      "estado": "provisional"
+    },
+    "MT-MARCO-PUERTA": {
+      "unidad": "m",
+      "descripcion": "Marco de puerta de madera o metálico, con sus topes y anclajes.",
+      "precio": 7.0,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: marco de pino para puerta interior 25,00; marcos de pino de primera 32,69; marco para puerta entamborada 34,99; marcos de pino o cedro 40,00; marco de cedro Laminados El Pardillo 45,00. Conversión: Marco de pino o cedro completo (unos 5,0 m de desarrollo) a 25,00-45,00 USD. Rango observado: 5,00 - 9,00 USD/m."
+    },
+    "MT-HERRAJE-PUERTA": {
+      "unidad": "ud",
+      "descripcion": "Juego de bisagras, topes y herrajes de colgar para puerta.",
+      "precio": 13.0,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: bisagra 3x3 para puerta de madera el par 2,00-2,50; bisagras de lujo cromadas 7,95; parabichos zócalo con tornillos 6,00. Conversión: 3 bisagras 3x3 (1,5 pares a 2,00-2,50) + tope + parabichos 6,00. Rango observado: 11,00 - 15,00 USD el juego."
+    },
+    "MT-CERRADURA": {
+      "unidad": "ud",
+      "descripcion": "Cerradura de embutir con manija y cilindro.",
+      "precio": 32.0,
+      "estado": "verificado-mercado",
+      "fuente": "EPA Venezuela: cerradura de embutir 45 mm BLUELOCK 39,20 y manija rectangular 17,50; cerradura sobreponer Tezza 21,65-22,30; cerradura de manilla con llave 9915 SB 26,80. MercadoLibre VE: cerradura de pomo 9,50-11,70. Conversión: Cerradura de embutir mas manija; se descarta la cerradura de pomo simple por no corresponder a la descripción. Rango observado: 21,65 - 56,70 USD."
+    },
+    "MT-PERFIL-ALUM": {
+      "unidad": "kg",
+      "descripcion": "Perfil de aluminio para carpintería de ventanas y puertas, con sus accesorios.",
+      "precio": 9.5,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: perfil para ventanas 3 m 33,00; perfil U 1\" 3,17 mm 45,00; perfil U 3/4 2,38 mm 35,00; kit de 4 perfiles de ventana de 6 m (Distrimeca). Conversión: Peso teórico del perfil. Perfil U 1\" esp. 3,17 mm x 6,10 m = 3,65 kg a 45,00 USD (12,3 USD/kg); perfil de ventana 3 m a 33,00 USD (9,2 USD/kg). Se adopta 9,50 por ser el precio de taller y no el de detal.. Rango observado: 9,20 - 17,00 USD/kg al detal.",
+      "nota": "Sigue siendo el recurso con más dispersión: conviene cerrarlo con una lista de precios de un extrusor o taller de aluminio."
+    },
+    "MT-VIDRIO-6": {
+      "unidad": "m2",
+      "descripcion": "Vidrio flotado incoloro de 6 mm.",
+      "precio": 20.0,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: vidrios y espejos a la medida 21,98; vidrio 1,00x0,30 5 mm 3,00 (10 USD/m2). Conversión: Vidrio flotado incoloro cortado a medida. Rango observado: 10,00 - 22,00 USD/m2."
+    },
+    "MT-VIDRIO-TEMP": {
+      "unidad": "m2",
+      "descripcion": "Vidrio templado de seguridad de 10 mm, con cantos pulidos y perforaciones.",
+      "precio": 68.0,
+      "estado": "verificado-mercado",
+      "fuente": "Referencias regionales de suministro: México 2.000-2.800 MXN/m2 (100-140 USD); Colombia 180.000 COP/m2 (45 USD); mercado internacional 15-20 USD/pie2. MercadoLibre VE: vidrio templado panorámico 10 mm 150,00 la hoja. Conversión: Templado de 10 mm con cantos pulidos, suministro sin herrajes. Rango observado: 45,00 - 140,00 USD/m2."
+    },
+    "MT-ESPEJO": {
+      "unidad": "m2",
+      "descripcion": "Espejo de 4 mm con canto pulido y respaldo protegido.",
+      "precio": 32.0,
+      "estado": "verificado-mercado",
+      "fuente": "EPA Venezuela: espejo rectangular 60x40 cm borde esmerilado 21,00. MercadoLibre VE: vidrios y espejos a la medida 21,98. Conversión: Espejo 60x40 cm con borde esmerilado a 21,00 USD equivale a 87 USD/m2 al detal; a medida y por superficie baja mucho. Rango observado: 22,00 - 87,00 USD/m2."
+    },
+    "MT-SILICONA-EST": {
+      "unidad": "l",
+      "descripcion": "Silicona estructural o neutra para acristalamiento y sellado de carpintería.",
+      "precio": 48.0,
+      "estado": "verificado-mercado",
+      "fuente": "EPA Venezuela: silicón sellador Acrielastic Simbi 290 ml 13,09; SiliPex Graffiti 290 ml 15,11; antihongos 290 ml 17,12. Conversión: Cartucho de 290 ml a 13,09-17,12 USD. Rango observado: 45,00 - 59,00 USD/l."
+    },
+    "MT-TUBO-ACERO": {
+      "unidad": "kg",
+      "descripcion": "Tubo estructural de acero para herrería de rejas, portones y barandas.",
+      "precio": 1.95,
+      "estado": "verificado-mercado",
+      "fuente": "EPA Venezuela: tubo cuadrado HP 1\"x1\" 0,9 mm 6 m 7,52 (1,81 USD/kg); tubo rectangular HP 2\"x1\" 0,9 mm 6 m 10,60 (1,68); tubo galvanizado cuadrado 1\" 6 m 9,50 (2,29). MercadoLibre VE: tubo 2x2 0,90 mm 6 m 16,00 (1,89). Conversión: Peso teórico del perfil conformado. Tubo 1x1 0,9 mm = 0,69 kg/m; 2x1 0,9 mm = 1,05 kg/m; 2x2 0,9 mm = 1,41 kg/m. Rango observado: 1,68 - 2,29 USD/kg."
+    },
+    "MT-ACERO-INOX": {
+      "unidad": "kg",
+      "descripcion": "Tubo y accesorios de acero inoxidable para barandas y pasamanos.",
+      "precio": 14.0,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: tubo inox 304 diámetro 1 5/8\" por metro 40,00; tubo inox Sch40 304 14,00; sujetador de pasamanos 10,00-15,00; baranda de inox montada 14,00-50,00 el metro. Conversión: Tubo inoxidable 304 de 1 5/8\" por metro a 40,00 USD con un peso aproximado de 1,3 kg/m. Rango observado: 12,00 - 30,00 USD/kg.",
+      "nota": "El inoxidable en Venezuela es importado y caro; el precio anterior (9,50) quedaba por debajo del suelo del mercado."
+    },
+    "MT-MOSQUITERO": {
+      "unidad": "m2",
+      "descripcion": "Malla mosquitera con su bastidor de aluminio.",
+      "precio": 7.5,
+      "estado": "provisional"
+    },
+    "MT-MELAMINA": {
+      "unidad": "m2",
+      "descripcion": "Tablero de melamina de 18 mm con cantos aplicados, para closets y muebles.",
+      "precio": 19.0,
+      "estado": "verificado-mercado",
+      "fuente": "Melamina MDF 18 mm de 1,83x2,44 (4,46 m2) a 74-98 USD; mediana 85."
+    },
+    "MT-HERRAJE-CLOSET": {
+      "unidad": "ud",
+      "descripcion": "Herraje de closet: bisagra, tirador, soporte de entrepaño y tornillería.",
+      "precio": 4.5,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: bisagra de cazoleta con freno 2,99; bisagra recta pack 2,00; tirador manilla 2,40-4,00; corredera telescópica 30-40 cm 4,00-6,00; placa reparadora 3,25. Conversión: Bisagra de cazoleta el par 2,99-4,25 + tirador 2,40-4,00 + soportes de entrepaño, repartido por hoja o módulo. Rango observado: 3,50 - 6,00 USD el juego."
+    },
+    "MT-RIEL-CORRED": {
+      "unidad": "m",
+      "descripcion": "Riel superior e inferior con carros para puerta corrediza.",
+      "precio": 14.0,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: kit riel 3 m con garruchas 60 kg 45,00-55,00; kit closet corredizo 3 m 30,10-135,00; riel de aluminio Olimpia 4 m 28,00-43,00. Conversión: Kit de riel de 3 m con garruchas a 45,00-55,00 USD. Rango observado: 8,90 - 18,30 USD/m."
+    },
+    "MT-ESTRUCT-MESON": {
+      "unidad": "m",
+      "descripcion": "Estructura de soporte de mesón en perfil metálico o mampostería, con su base.",
+      "precio": 12.0,
+      "estado": "provisional"
+    },
+    "MT-BARRA-APOYO": {
+      "unidad": "ud",
+      "descripcion": "Barra de apoyo de acero inoxidable para accesibilidad en baño.",
+      "precio": 28.0,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE y CO: barra de seguridad para baño en inox 40 cm equivalente a 11-15 USD; 60 cm 30 USD; pasamanos de baño con anclajes. Conversión: Barra de apoyo de inox de 40-60 cm. Rango observado: 11,00 - 30,00 USD."
+    },
+    "MT-ADOQUIN": {
+      "unidad": "m2",
+      "descripcion": "Adoquín de concreto para pavimento exterior, con su cama de arena.",
+      "precio": 15.5,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE (Bloneca, Induminca, bloques3h): adoquín de concreto para caminería 11,80-14,51; zig-zag 12,30-16,00; hexagonal 11,80-15,13; ecológico 12,50-21,60; behaton 16,00. Conversión: Adoquín de concreto por m2, mediana 14,30, mas cama de arena. Rango observado: 11,80 - 21,60 USD/m2."
+    },
+    "MT-GRAMA": {
+      "unidad": "m2",
+      "descripcion": "Grama en panes o alfombra, puesta en obra.",
+      "precio": 3.2,
+      "estado": "provisional"
+    },
+    "MT-TIERRA-ABON": {
+      "unidad": "m3",
+      "descripcion": "Tierra abonada y sustrato para jardinería.",
+      "precio": 28.0,
+      "estado": "provisional"
+    },
+    "MT-TUB-RIEGO": {
+      "unidad": "m",
+      "descripcion": "Tubería de polietileno y accesorios para red de riego.",
+      "precio": 1.6,
+      "estado": "provisional"
+    },
+    "MT-ASPERSOR": {
+      "unidad": "ud",
+      "descripcion": "Aspersor o gotero con su conexión a la red de riego.",
+      "precio": 8.5,
+      "estado": "provisional"
+    },
+    "MT-CANAL-DREN": {
+      "unidad": "m",
+      "descripcion": "Canal de drenaje lineal prefabricado con su rejilla.",
+      "precio": 22.0,
+      "estado": "provisional"
+    },
+    "MT-CONTENEDOR": {
+      "unidad": "ud",
+      "descripcion": "Alquiler mensual de contenedor de escombro, incluido su retiro y vaciado.",
+      "precio": 65.0,
+      "estado": "provisional"
+    },
+    "MT-CONS-LIMP": {
+      "unidad": "m2",
+      "descripcion": "Consumibles de limpieza final: detergentes, desincrustantes, paños y bolsas.",
+      "precio": 0.35,
+      "estado": "provisional"
+    },
+    "MT-BARANDA-PROV": {
+      "unidad": "m",
+      "descripcion": "Baranda provisional de borde con guardacuerpos, pasamanos y rodapié, amortizada por usos.",
+      "precio": 4.5,
+      "estado": "provisional"
+    },
+    "MT-RED-SEG": {
+      "unidad": "m2",
+      "descripcion": "Red de seguridad de poliamida con sus cuerdas de atado, amortizada por usos.",
+      "precio": 2.8,
+      "estado": "provisional"
+    },
+    "MT-LINEA-VIDA": {
+      "unidad": "m",
+      "descripcion": "Línea de vida horizontal con sus anclajes y absorbedor de energía.",
+      "precio": 6.2,
+      "estado": "provisional"
+    },
+    "MT-EPP": {
+      "unidad": "ud",
+      "descripcion": "Dotación de equipo de protección individual por trabajador: casco, botas, guantes, lentes y chaleco.",
+      "precio": 42.0,
+      "estado": "verificado-mercado",
+      "fuente": "Composición a partir de precios de seguridad laboral en MercadoLibre VE. Conversión: Casco 8 + botas de punta de acero 22 + guantes 3 + lentes 3 + chaleco 5. Rango observado: 38,00 - 48,00 USD por trabajador.",
+      "nota": "El precio que ya teníamos resiste el contraste."
+    },
+    "MT-ARNES": {
+      "unidad": "ud",
+      "descripcion": "Arnés de cuerpo completo con eslinga y absorbedor, para trabajo en altura.",
+      "precio": 55.0,
+      "estado": "provisional"
+    },
+    "MT-BOTIQUIN": {
+      "unidad": "ud",
+      "descripcion": "Botiquín de primeros auxilios de obra, dotado y con reposición.",
+      "precio": 35.0,
+      "estado": "verificado-mercado",
+      "fuente": "Contraste de dotaciones de seguridad laboral en MercadoLibre VE. Conversión: Botiquín de obra dotado, con reposición del consumido. Rango observado: 25,00 - 45,00 USD."
+    },
+    "MT-CASETA-BIEN": {
+      "unidad": "ud",
+      "descripcion": "Adecuación de zona de vestuario y comedor de obra, con mobiliario básico.",
+      "precio": 120.0,
+      "estado": "provisional"
+    },
+    "MT-BLQ-EST-15": {
+      "unidad": "ud",
+      "descripcion": "Bloque de concreto estructural de 15x20x40 cm, de resistencia certificada.",
+      "precio": 0.88,
+      "estado": "verificado-mercado",
+      "fuente": "Bloque estructural certificado, sobreprecio sobre el comun."
+    },
+    "MT-BLQ-EST-20": {
+      "unidad": "ud",
+      "descripcion": "Bloque de concreto estructural de 20x20x40 cm, de resistencia certificada.",
+      "precio": 1.1,
+      "estado": "verificado-mercado",
+      "fuente": "Bloque estructural 20 certificado."
+    },
+    "MT-MORT-EST": {
+      "unidad": "m3",
+      "descripcion": "Mortero de pega de resistencia controlada para mampostería estructural, elaborado en obra, dosificación 1:3.",
+      "precio": 123.602,
+      "estado": "derivado",
+      "fuente": "Precio calculado a partir de sus componentes del propio cuadro; no se introduce a mano. Cambiar el cemento o la arena recalcula este mortero.",
+      "composicion": [
+        {
+          "ref": "MT-CEMENTO",
+          "cantidad": 450
+        },
+        {
+          "ref": "MT-ARENA",
+          "cantidad": 1.0
+        },
+        {
+          "ref": "MT-AGUA-OBRA",
+          "cantidad": 0.22
+        }
+      ]
+    },
+    "MT-GROUT-CELDA": {
+      "unidad": "m3",
+      "descripcion": "Concreto fluido de relleno de celdas para mampostería estructural.",
+      "precio": 126.0,
+      "estado": "verificado-mercado",
+      "fuente": "Concreto fluido de relleno, por encima del 250 convencional."
+    },
+    "MT-ESCALERILLA": {
+      "unidad": "m",
+      "descripcion": "Escalerilla o junta de refuerzo horizontal para mampostería.",
+      "precio": 1.15,
+      "estado": "provisional"
+    },
+    "MT-CAJON-PERS": {
+      "unidad": "m",
+      "descripcion": "Cajón de persiana prefabricado aislado, con su tapa registrable.",
+      "precio": 18.0,
+      "estado": "provisional"
+    },
+    "MT-MAMPARA-OFI": {
+      "unidad": "m2",
+      "descripcion": "Sistema de mampara divisoria de oficina, con perfilería, paneles y juntas.",
+      "precio": 48.0,
+      "estado": "provisional"
+    },
+    "MT-TABIQUE-MOVIL": {
+      "unidad": "m2",
+      "descripcion": "Sistema de tabique móvil o plegable, con paneles, riel y herrajes.",
+      "precio": 135.0,
+      "estado": "provisional"
+    },
+    "MT-HIDROFUG-FACH": {
+      "unidad": "l",
+      "descripcion": "Hidrofugante incoloro de impregnación para protección de fachadas.",
+      "precio": 8.6,
+      "estado": "provisional"
+    },
+    "MT-FUNGICIDA": {
+      "unidad": "l",
+      "descripcion": "Solución fungicida y algicida para tratamiento de moho y verdín en fachadas.",
+      "precio": 6.2,
+      "estado": "provisional"
+    },
+    "MT-LIMP-QUIM": {
+      "unidad": "l",
+      "descripcion": "Limpiador químico específico para fachadas, según el tipo de soporte y de mancha.",
+      "precio": 9.4,
+      "estado": "provisional"
+    },
+    "MT-BLQ-12": {
+      "unidad": "ud",
+      "descripcion": "Bloque de concreto hueco de 12x20x40 cm.",
+      "precio": 0.52,
+      "estado": "verificado-mercado",
+      "fuente": "Bloque concreto 12 cm: fabricante 0,44."
+    },
+    "MT-STEELDECK": {
+      "unidad": "m2",
+      "descripcion": "Lámina colaborante de acero galvanizado tipo steel deck para losa mixta.",
+      "precio": 19.0,
+      "estado": "provisional"
+    },
+    "MT-CONECTOR-CORTE": {
+      "unidad": "ud",
+      "descripcion": "Conector de cortante soldable para losa mixta sobre estructura metálica.",
+      "precio": 1.4,
+      "estado": "provisional"
+    },
+    "MT-DOMO": {
+      "unidad": "ud",
+      "descripcion": "Domo o claraboya de policarbonato o acrílico con su zócalo y herrajes.",
+      "precio": 72.0,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: cúpula o claraboya 60x60 45,00; cúpulas acrílicas 60,00; 60x60 con escotilla 150,00; claraboyas a medida 20,00-22,00 (piezas pequeñas). Conversión: Cúpula o claraboya de 60x60 cm con zócalo y herrajes. Rango observado: 45,00 - 120,00 USD."
+    },
+    "MT-CELOSIA": {
+      "unidad": "m2",
+      "descripcion": "Celosía o romanilla de aluminio para ventilación, con su marco.",
+      "precio": 26.0,
+      "estado": "provisional"
+    },
+    "MT-PANEL-PVC-BANO": {
+      "unidad": "m2",
+      "descripcion": "Panel de PVC o composite para revestimiento de paredes de baño, con sus perfiles.",
+      "precio": 13.5,
+      "estado": "provisional"
+    },
+    "MT-TRAMPA-GRASA": {
+      "unidad": "ud",
+      "descripcion": "Trampa de grasa prefabricada con su tapa y conexiones.",
+      "precio": 78.0,
+      "estado": "provisional"
+    },
+    "MT-TIMBRE": {
+      "unidad": "ud",
+      "descripcion": "Timbre con su pulsador y transformador.",
+      "precio": 14.0,
+      "estado": "provisional"
+    },
+    "MT-PINT-TRAFICO": {
+      "unidad": "l",
+      "descripcion": "Pintura de tráfico para demarcación de pisos y estacionamientos.",
+      "precio": 9.2,
+      "estado": "provisional"
+    },
+    "MT-PERFIL-CORTINERO": {
+      "unidad": "m",
+      "descripcion": "Riel de cortinero con sus soportes y accesorios.",
+      "precio": 7.4,
+      "estado": "provisional"
+    },
+    "MT-SELLA-FISURA": {
+      "unidad": "kg",
+      "descripcion": "Sellador elástico de fisuras en base a poliuretano o acrílico para exteriores.",
+      "precio": 4.8,
+      "estado": "provisional"
+    },
+    "MT-QUIMICO-LIMP-AC": {
+      "unidad": "ud",
+      "descripcion": "Producto químico espumante para limpieza de serpentines de climatización.",
+      "precio": 8.5,
+      "estado": "provisional"
+    },
+    "MT-REJILLA-VENT": {
+      "unidad": "ud",
+      "descripcion": "Rejilla de ventilación con marco y malla antiinsectos.",
+      "precio": 9.0,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: ducto con rejilla para extractor 4\" Coflex 23,06; base para ducto flange 4,50-5,00. Conversión: Rejilla con marco; el conjunto ducto + rejilla Coflex de 4\" cuesta 23,06. Rango observado: 5,00 - 12,00 USD."
+    },
+    "MT-MADERA-PERGOLA": {
+      "unidad": "m",
+      "descripcion": "Viga y listón de madera tratada para pérgola exterior.",
+      "precio": 6.8,
+      "estado": "provisional"
+    }
+  },
+  "maquinaria": {
+    "MQ-CORT-AGUA": {
+      "unidad": "h",
+      "descripcion": "Cortadora eléctrica de banco con disco de diamante y refrigeración por agua, incluida amortización y consumo.",
+      "precio": 3.2,
+      "estado": "provisional"
+    },
+    "MQ-BATID": {
+      "unidad": "h",
+      "descripcion": "Batidora mezcladora eléctrica de doble varilla para amasado de morteros y adhesivos.",
+      "precio": 1.6,
+      "estado": "provisional"
+    },
+    "MQ-MART-ELEC": {
+      "unidad": "h",
+      "descripcion": "Martillo eléctrico de demolición de 5 kg, incluida amortización y consumo.",
+      "precio": 3.9,
+      "estado": "provisional"
+    },
+    "MQ-ASPIR": {
+      "unidad": "h",
+      "descripcion": "Aspirador industrial con filtro de polvo fino para limpieza de soporte y control de polvo.",
+      "precio": 2.1,
+      "estado": "provisional"
+    },
+    "MQ-VENT-SUC": {
+      "unidad": "h",
+      "descripcion": "Juego de ventosas de elevación para manipulación de piezas de gran formato.",
+      "precio": 2.8,
+      "estado": "provisional"
+    },
+    "MQ-ATORN": {
+      "unidad": "h",
+      "descripcion": "Atornilladora eléctrica para placa de yeso laminado, incluida amortización y consumo.",
+      "precio": 1.4,
+      "estado": "provisional"
+    },
+    "MQ-LIJAD": {
+      "unidad": "h",
+      "descripcion": "Lijadora de pared con aspiración para acabado de juntas.",
+      "precio": 2.1,
+      "estado": "provisional"
+    },
+    "MQ-ROZAD": {
+      "unidad": "h",
+      "descripcion": "Rozadora eléctrica de doble disco de diamante con captación de polvo.",
+      "precio": 4.2,
+      "estado": "provisional"
+    },
+    "MQ-TERMOF": {
+      "unidad": "h",
+      "descripcion": "Termofusora para tubería de polipropileno PPR, incluida amortización.",
+      "precio": 1.8,
+      "estado": "provisional"
+    },
+    "MQ-RODILLO": {
+      "unidad": "h",
+      "descripcion": "Equipo de aplicación de pintura: rodillos, brochas, cubetas y andamio bajo.",
+      "precio": 0.9,
+      "estado": "provisional"
+    },
+    "MQ-VOLQ": {
+      "unidad": "h",
+      "descripcion": "Camión volqueta de 6 m³ con chofer, para transporte de escombro a vertedero.",
+      "precio": 18.0,
+      "estado": "provisional"
+    },
+    "MQ-MEZCL": {
+      "unidad": "h",
+      "descripcion": "Mezcladora de concreto y mortero de 1 saco, incluida amortización y combustible.",
+      "precio": 3.6,
+      "estado": "provisional"
+    },
+    "MQ-MART-NEUM": {
+      "unidad": "h",
+      "descripcion": "Martillo neumático con compresor de aire, para demolición de concreto y pisos de alta dureza.",
+      "precio": 12.0,
+      "estado": "provisional"
+    },
+    "MQ-AMOLA": {
+      "unidad": "h",
+      "descripcion": "Amoladora angular con disco de diamante, para corte perimetral y de juntas.",
+      "precio": 2.4,
+      "estado": "provisional"
+    },
+    "MQ-ANDAMIO": {
+      "unidad": "h",
+      "descripcion": "Andamio tubular o de borriquetas para trabajos en altura, incluido montaje y desmontaje amortizados.",
+      "precio": 1.9,
+      "estado": "provisional"
+    },
+    "MQ-RETRO": {
+      "unidad": "h",
+      "descripcion": "Retroexcavadora o minicargadora con martillo hidráulico y operador.",
+      "precio": 35.0,
+      "estado": "provisional"
+    },
+    "MQ-OXICORTE": {
+      "unidad": "h",
+      "descripcion": "Equipo de oxicorte para desguace de estructuras y elementos metálicos.",
+      "precio": 4.8,
+      "estado": "provisional"
+    },
+    "MQ-SIERRA": {
+      "unidad": "h",
+      "descripcion": "Sierra circular o motosierra para corte de elementos de madera.",
+      "precio": 2.9,
+      "estado": "provisional"
+    },
+    "MQ-MONTAC": {
+      "unidad": "h",
+      "descripcion": "Montacargas o pluma de obra para bajada de material desde plantas altas.",
+      "precio": 9.5,
+      "estado": "provisional"
+    },
+    "MQ-DETECTOR": {
+      "unidad": "h",
+      "descripcion": "Detector electrónico de instalaciones empotradas, para localizar tuberías, cables y armaduras sin picar.",
+      "precio": 2.6,
+      "estado": "provisional"
+    },
+    "MQ-TALADRO": {
+      "unidad": "h",
+      "descripcion": "Taladro percutor con brocas, incluida amortización y consumo.",
+      "precio": 1.5,
+      "estado": "provisional"
+    },
+    "MQ-NIVEL-LASER": {
+      "unidad": "h",
+      "descripcion": "Nivel láser autonivelante y equipo de medición para replanteo.",
+      "precio": 2.2,
+      "estado": "provisional"
+    },
+    "MQ-BANO-PORT": {
+      "unidad": "ud",
+      "descripcion": "Alquiler mensual de baño portátil de obra, incluido su mantenimiento y vaciado periódico.",
+      "precio": 55.0,
+      "estado": "provisional"
+    },
+    "MQ-COMPACT-SALTO": {
+      "unidad": "h",
+      "descripcion": "Compactador vibratorio de impacto tipo canguro, para compactación de zanjas y espacios reducidos.",
+      "precio": 4.5,
+      "estado": "provisional"
+    },
+    "MQ-PLANCHA-COMP": {
+      "unidad": "h",
+      "descripcion": "Plancha compactadora vibratoria, para compactación de superficies y bases.",
+      "precio": 3.8,
+      "estado": "provisional"
+    },
+    "MQ-BOMBA-ACHI": {
+      "unidad": "h",
+      "descripcion": "Bomba sumergible de achique con manguera de descarga, para agotamiento de excavaciones.",
+      "precio": 2.4,
+      "estado": "provisional"
+    },
+    "MQ-DESBROZ": {
+      "unidad": "h",
+      "descripcion": "Desbrozadora de motor con hilo y disco, para limpieza de vegetación.",
+      "precio": 2.7,
+      "estado": "provisional"
+    },
+    "MQ-VIBRADOR": {
+      "unidad": "h",
+      "descripcion": "Vibrador de aguja con motor, para compactación de concreto.",
+      "precio": 3.4,
+      "estado": "provisional"
+    },
+    "MQ-CIZALLA": {
+      "unidad": "h",
+      "descripcion": "Cizalla y dobladora de cabillas, incluida su amortización.",
+      "precio": 2.1,
+      "estado": "provisional"
+    },
+    "MQ-BOMBA-CONC": {
+      "unidad": "h",
+      "descripcion": "Bomba de concreto con su operador, para vaciados de difícil acceso o gran volumen.",
+      "precio": 45.0,
+      "estado": "provisional"
+    },
+    "MQ-PERF-PILOTE": {
+      "unidad": "h",
+      "descripcion": "Equipo de perforación rotatoria para pilotes vaciados en sitio, con operador.",
+      "precio": 55.0,
+      "estado": "provisional"
+    },
+    "MQ-ALISADORA": {
+      "unidad": "h",
+      "descripcion": "Alisadora mecánica de concreto tipo helicóptero, para acabado de losas.",
+      "precio": 5.2,
+      "estado": "provisional"
+    },
+    "MQ-SOLDADORA": {
+      "unidad": "h",
+      "descripcion": "Equipo de soldadura eléctrica por arco con sus accesorios, incluida amortización y consumo.",
+      "precio": 3.6,
+      "estado": "provisional"
+    },
+    "MQ-GRUA": {
+      "unidad": "h",
+      "descripcion": "Camión grúa o grúa móvil con operador, para izado y montaje de elementos estructurales.",
+      "precio": 48.0,
+      "estado": "provisional"
+    },
+    "MQ-INYECTORA": {
+      "unidad": "h",
+      "descripcion": "Equipo de inyección de resinas a baja presión, con sus boquillas y mangueras.",
+      "precio": 4.2,
+      "estado": "provisional"
+    },
+    "MQ-ESMERIL": {
+      "unidad": "h",
+      "descripcion": "Esmeriladora y cepillo de púas para limpieza y preparación de superficies metálicas.",
+      "precio": 2.3,
+      "estado": "provisional"
+    },
+    "MQ-PROYECT-MORT": {
+      "unidad": "h",
+      "descripcion": "Máquina de proyección de mortero y pasta de yeso, con su compresor y mangueras.",
+      "precio": 6.8,
+      "estado": "provisional"
+    },
+    "MQ-PULIDORA": {
+      "unidad": "h",
+      "descripcion": "Pulidora y abrillantadora de piedra natural con aporte de agua.",
+      "precio": 4.5,
+      "estado": "provisional"
+    },
+    "MQ-LIJAD-PISO": {
+      "unidad": "h",
+      "descripcion": "Lijadora de banda y orilladora para pisos de madera, con aspiración.",
+      "precio": 6.5,
+      "estado": "provisional"
+    },
+    "MQ-ESTAMP": {
+      "unidad": "h",
+      "descripcion": "Juego de moldes estampadores y rodillos para concreto impreso.",
+      "precio": 4.8,
+      "estado": "provisional"
+    },
+    "MQ-RECUP-GAS": {
+      "unidad": "h",
+      "descripcion": "Equipo de recuperación de gas refrigerante y bomba de vacío para climatización.",
+      "precio": 6.5,
+      "estado": "provisional"
+    },
+    "MQ-HIDROLAV": {
+      "unidad": "h",
+      "descripcion": "Hidrolavadora de presión para limpieza de fachadas, pisos y acabados.",
+      "precio": 4.2,
+      "estado": "provisional"
+    },
+    "MQ-DOBLAD-TUBO": {
+      "unidad": "h",
+      "descripcion": "Dobladora y abocardadora de tubería de cobre para climatización y gas.",
+      "precio": 2.6,
+      "estado": "provisional"
+    }
+  }
+}

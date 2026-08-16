@@ -1,0 +1,82 @@
+{
+  "codigo": "CT-05-04-050",
+  "ambito": "reforma",
+  "capitulo": "05",
+  "subcapitulo": "04",
+  "unidad": "m²",
+  "titulo": "Losa nervada con bloques de poliestireno de aliviano.",
+  "descripcion": "Losa nervada de entrepiso o techo formada por nervios de concreto armado y bloques de poliestireno expandido de aliviano, con su loseta de compresión y malla de retracción. Frente al bloque de arcilla reduce notablemente el peso propio de la losa, lo que repercute en el dimensionado de vigas, columnas y fundaciones, y mejora el aislamiento térmico. Incluye el encofrado y apuntalamiento, la colocación de los bloques, el armado de los nervios, la malla de la loseta de compresión, el vaciado y vibrado, el reglado, el curado y el desapuntalamiento escalonado. Medido en superficie de losa realmente ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ANIME-ALIV",
+      "rendimiento": 8.4
+    },
+    {
+      "ref": "MT-CONC-250",
+      "rendimiento": 0.085
+    },
+    {
+      "ref": "MT-ACERO-CAB",
+      "rendimiento": 6.8
+    },
+    {
+      "ref": "MT-MALLA-ELEC",
+      "rendimiento": 1.08
+    },
+    {
+      "ref": "MT-ALAMBRE",
+      "rendimiento": 0.09
+    },
+    {
+      "ref": "MT-FORM-MADERA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-APEO",
+      "rendimiento": 1.1
+    },
+    {
+      "ref": "MT-VIGA-APEO",
+      "rendimiento": 0.9
+    },
+    {
+      "ref": "MT-CLAVOS",
+      "rendimiento": 0.26
+    },
+    {
+      "ref": "MT-DESMOLD",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MT-CURADOR",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MQ-VIBRADOR",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MQ-CIZALLA",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-CARP",
+      "rendimiento": 0.45
+    },
+    {
+      "ref": "MO-OF1-CAB",
+      "rendimiento": 0.32
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.82
+    }
+  ],
+  "codigo_covenin": ""
+}

@@ -1,0 +1,46 @@
+{
+  "codigo": "CT-10-03-020",
+  "ambito": "reforma",
+  "capitulo": "10",
+  "subcapitulo": "03",
+  "unidad": "m²",
+  "titulo": "Impermeabilización de jardinera o maceta de obra.",
+  "descripcion": "Impermeabilización interior de jardinera o maceta de obra con membrana cementosa flexible y capa drenante, incluida la salida de drenaje. Una jardinera sin impermeabilizar transmite humedad permanente al muro contiguo y termina reventando el friso y la pintura de la cara opuesta. Incluye la regularización interior, el refuerzo de encuentros y esquinas, las manos de membrana, el tratamiento del pase de drenaje, la colocación del geotextil y de la capa drenante de gravilla antes del sustrato. Medido en superficie realmente ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MORT-IMPER",
+      "rendimiento": 4.2
+    },
+    {
+      "ref": "MT-BANDA-REF",
+      "rendimiento": 1.8
+    },
+    {
+      "ref": "MT-GEOTEXTIL",
+      "rendimiento": 1.15
+    },
+    {
+      "ref": "MT-GRAVILLA",
+      "rendimiento": 0.045
+    },
+    {
+      "ref": "MT-SELLA-PASE",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MQ-BATID",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.52
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.34
+    }
+  ],
+  "codigo_covenin": ""
+}

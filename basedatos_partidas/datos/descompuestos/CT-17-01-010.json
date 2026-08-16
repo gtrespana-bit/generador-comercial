@@ -1,0 +1,50 @@
+{
+  "codigo": "CT-17-01-010",
+  "ambito": "reforma",
+  "capitulo": "17",
+  "subcapitulo": "01",
+  "unidad": "m",
+  "titulo": "Mueble bajo de cocina a medida.",
+  "descripcion": "Fabricación e instalación de mueble bajo de cocina en melamina, con su estructura, puertas, gavetas, entrepaños y zócalo. Incluye la toma de medidas en obra comprobando plomos y escuadras, el despiece y corte con cantos aplicados, la previsión de los huecos y recortes para el paso de tuberías y tomas eléctricas antes del montaje, el armado de los módulos, la nivelación mediante patas regulables, la unión entre módulos, el montaje de puertas y gavetas con sus correderas y la regulación de frentes hasta obtener holguras uniformes. Medido en longitud de frente de mueble.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MELAMINA",
+      "rendimiento": 2.4
+    },
+    {
+      "ref": "MT-HERRAJE-CLOSET",
+      "rendimiento": 9.0
+    },
+    {
+      "ref": "MT-TORN",
+      "rendimiento": 46.0
+    },
+    {
+      "ref": "MT-SELLA-ELAST",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.32
+    },
+    {
+      "ref": "MQ-ATORN",
+      "rendimiento": 0.38
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.22
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 2.1
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 1.05
+    }
+  ],
+  "codigo_covenin": ""
+}

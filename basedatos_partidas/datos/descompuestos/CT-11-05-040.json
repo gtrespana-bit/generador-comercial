@@ -1,0 +1,46 @@
+{
+  "codigo": "CT-11-05-040",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "05",
+  "unidad": "m",
+  "titulo": "Alero y remate de borde de cubierta.",
+  "descripcion": "Formación del alero y del remate del borde de cubierta, con su pieza de terminación, goterón y sellado. El goterón es lo que separa el agua del paramento: sin él, el agua rodea el canto por capilaridad y escurre por la fachada dejando el chorreado sucio característico bajo los aleros mal resueltos. Incluye el replanteo, la colocación de la pieza de remate con su vuelo, la formación del goterón, el sellado del encuentro con la cubierta y con el paramento y la fijación. Medido en longitud realmente ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CUMBRERA",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-MOR-FRISO",
+      "rendimiento": 0.008
+    },
+    {
+      "ref": "MT-SELLA-ELAST",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MT-TORN-TECHO",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MQ-MEZCL",
+      "rendimiento": 0.025
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.38
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.26
+    }
+  ],
+  "codigo_covenin": ""
+}

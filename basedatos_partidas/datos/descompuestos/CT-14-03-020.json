@@ -1,0 +1,42 @@
+{
+  "codigo": "CT-14-03-020",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "03",
+  "unidad": "ud",
+  "titulo": "Instalación de detector de humo y alarma.",
+  "descripcion": "Instalación de detector de humo con su base, conexión y prueba, integrado o autónomo según el sistema. Incluye el replanteo de la posición en el techo respetando la separación mínima a paredes, vigas y difusores de aire, ya que colocado junto a una rejilla de impulsión el flujo de aire desvía el humo y retrasa la detección, el montaje de la base, la conexión al lazo o la colocación de la batería en los autónomos, la programación de la dirección cuando corresponda y la prueba con generador de humo. Medido por unidad instalada y probada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-DETECT-HUMO",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-CABLE-ALARMA",
+      "rendimiento": 8.0
+    },
+    {
+      "ref": "MT-ELE-CAJA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.11
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 0.62
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.25
+    }
+  ],
+  "codigo_covenin": ""
+}

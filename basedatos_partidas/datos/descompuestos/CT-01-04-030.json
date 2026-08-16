@@ -1,0 +1,26 @@
+{
+  "codigo": "CT-01-04-030",
+  "ambito": "reforma",
+  "capitulo": "01",
+  "subcapitulo": "04",
+  "unidad": "m²",
+  "titulo": "Detección no destructiva de instalaciones empotradas.",
+  "descripcion": "Localización de tuberías, canalizaciones eléctricas y armaduras empotradas mediante detector electrónico, sin picar el paramento, con marcado del trazado sobre la superficie. Es el paso previo que evita cortar una instalación en servicio al abrir rozas o taladrar, y permite replantear las nuevas canalizaciones esquivando las existentes. Incluye el barrido sistemático de la superficie, el marcado del trazado detectado, la anotación de las profundidades estimadas y el levantamiento de un croquis de lo localizado. Medido en superficie realmente barrida.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MQ-DETECTOR",
+      "rendimiento": 0.13
+    },
+    {
+      "ref": "MT-CINTA-ENM",
+      "rendimiento": 0.04
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.13
+    }
+  ],
+  "codigo_covenin": ""
+}

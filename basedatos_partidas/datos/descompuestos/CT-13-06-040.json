@@ -1,0 +1,46 @@
+{
+  "codigo": "CT-13-06-040",
+  "ambito": "reforma",
+  "capitulo": "13",
+  "subcapitulo": "06",
+  "unidad": "ud",
+  "titulo": "Punto de timbre con su pulsador.",
+  "descripcion": "Instalación de timbre con su pulsador exterior, transformador y conexión. Incluye el replanteo del pulsador junto al acceso a la altura de uso, la canalización hasta el punto del timbre, el tendido del conductor, el montaje del transformador en punto registrable, la conexión y la prueba. Medido por punto terminado y probado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-TIMBRE",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-ELE-TUB20",
+      "rendimiento": 8.0
+    },
+    {
+      "ref": "MT-CABLE-ALARMA",
+      "rendimiento": 10.0
+    },
+    {
+      "ref": "MT-ELE-CAJA",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MT-YESO-REP",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MQ-ROZAD",
+      "rendimiento": 0.24
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 0.9
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.5
+    }
+  ],
+  "codigo_covenin": ""
+}

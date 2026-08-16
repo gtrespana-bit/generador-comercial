@@ -1,0 +1,38 @@
+{
+  "codigo": "CT-04-04-020",
+  "ambito": "reforma",
+  "capitulo": "04",
+  "subcapitulo": "04",
+  "unidad": "kg",
+  "titulo": "Acero de refuerzo en muro de contención.",
+  "descripcion": "Suministro, corte, doblado, armado y colocación de acero de refuerzo en cabillas corrugadas en muro de contención, según los planos de despiece. Incluye el corte y doblado, el armado de las dos parrillas verticales con sus ganchos de arranque solapados a las esperas de la fundación, el amarre con alambre, la colocación de separadores en ambas caras para garantizar el recubrimiento, los refuerzos de borde y de esquina, y la comprobación de que la parrilla del lado del terreno queda en la cara traccionada correcta, error frecuente y de consecuencias graves. Medido en peso de acero realmente colocado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ACERO-CAB",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-ALAMBRE",
+      "rendimiento": 0.012
+    },
+    {
+      "ref": "MT-SEPARADOR",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MQ-CIZALLA",
+      "rendimiento": 0.013
+    },
+    {
+      "ref": "MO-OF1-CAB",
+      "rendimiento": 0.031
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.031
+    }
+  ],
+  "codigo_covenin": ""
+}

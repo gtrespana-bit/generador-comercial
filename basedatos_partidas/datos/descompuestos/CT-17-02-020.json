@@ -1,0 +1,58 @@
+{
+  "codigo": "CT-17-02-020",
+  "ambito": "reforma",
+  "capitulo": "17",
+  "subcapitulo": "02",
+  "unidad": "m",
+  "titulo": "Mesón de concreto revestido.",
+  "descripcion": "Ejecución de mesón de concreto armado vaciado en sitio, con su estructura de apoyo, revestido con el acabado elegido. Es la solución tradicional y la más económica cuando el acabado es cerámico o de granito vaciado. Incluye la ejecución de la estructura de apoyo, el encofrado y armado del tablero, el vaciado y curado, la conformación de los huecos de fregadero y placa, el desencofrado y la regularización de la superficie lista para recibir el revestimiento. No incluye el revestimiento de acabado. Medido en longitud de mesón.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONC-210",
+      "rendimiento": 0.055
+    },
+    {
+      "ref": "MT-ACERO-CAB",
+      "rendimiento": 7.0
+    },
+    {
+      "ref": "MT-FORM-MADERA",
+      "rendimiento": 1.6
+    },
+    {
+      "ref": "MT-ESTRUCT-MESON",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-CLAVOS",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MT-CURADOR",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-CIZALLA",
+      "rendimiento": 0.09
+    },
+    {
+      "ref": "MQ-VIBRADOR",
+      "rendimiento": 0.09
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 1.6
+    },
+    {
+      "ref": "MO-OF1-CARP",
+      "rendimiento": 0.9
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 1.7
+    }
+  ],
+  "codigo_covenin": ""
+}

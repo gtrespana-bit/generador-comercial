@@ -1,0 +1,66 @@
+{
+  "codigo": "CT-04-01-090",
+  "ambito": "reforma",
+  "capitulo": "04",
+  "subcapitulo": "01",
+  "unidad": "m²",
+  "titulo": "Refuerzo y ampliación de zapata existente.",
+  "descripcion": "Refuerzo de zapata existente mediante ampliación de su superficie con una corona de concreto armado conectada al elemento original. Incluye el descubrimiento de la zapata existente, el repicado de su superficie para dar adherencia, la perforación y anclaje químico de los conectores que cosen la ampliación al núcleo, el armado de la corona, el encofrado, el vaciado con concreto de retracción compensada, el curado y el relleno perimetral. Medido en superficie de ampliación realmente ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONC-250",
+      "rendimiento": 0.22
+    },
+    {
+      "ref": "MT-ACERO-CAB",
+      "rendimiento": 22.0
+    },
+    {
+      "ref": "MT-EPOXI-ANCLA",
+      "rendimiento": 0.45
+    },
+    {
+      "ref": "MT-PUENTE-ADH",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MT-FORM-MADERA",
+      "rendimiento": 1.1
+    },
+    {
+      "ref": "MT-CLAVOS",
+      "rendimiento": 0.28
+    },
+    {
+      "ref": "MQ-MART-ELEC",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.45
+    },
+    {
+      "ref": "MQ-CIZALLA",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MQ-VIBRADOR",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 1.6
+    },
+    {
+      "ref": "MO-OF1-CAB",
+      "rendimiento": 0.9
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 2.2
+    }
+  ],
+  "codigo_covenin": ""
+}

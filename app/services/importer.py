@@ -431,6 +431,24 @@ def _clasificar_filas_cype(
     return filas, costes, round(importe_directo, 2)
 
 
+def _etiqueta_previa(filas: list[dict], hasta_fila: int, prefijos: tuple[str, ...]) -> str:
+    """Lee una etiqueta «Clave: valor» escrita encima de la cabecera de partida.
+
+    Permite que un descompuesto declare a qué capítulo y subcapítulo pertenece
+    sin alterar el formato de la tabla. Los descompuestos que no la traigan
+    (como los de CYPE) simplemente devuelven cadena vacía.
+    """
+    for fila in filas[: max(0, hasta_fila - 1)]:
+        for celda in fila["celdas"]:
+            texto = str(celda or "").strip()
+            if not texto or ":" not in texto:
+                continue
+            clave, _, valor = texto.partition(":")
+            if normalizar(clave) in prefijos:
+                return valor.strip()[:80]
+    return ""
+
+
 def analizar_cype_xlsx(contenido: bytes) -> dict:
     """Lee descompuestos CYPE preservando la estructura del libro.
 
@@ -511,6 +529,8 @@ def analizar_cype_xlsx(contenido: bytes) -> dict:
                 "unidad": cabecera["unidad"],
                 "nombre": cabecera["titulo"],
                 "descripcion": descripcion_larga,
+                "capitulo": _etiqueta_previa(filas, cabecera["fila"], ("capitulo",)),
+                "subcapitulo": _etiqueta_previa(filas, cabecera["fila"], ("subcapitulo", "subcategoria")),
                 "fila_cabecera": cabecera["fila"],
                 "fila_encabezados": fila_encabezados,
                 "columnas": columnas,

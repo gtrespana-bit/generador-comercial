@@ -1,0 +1,46 @@
+{
+  "codigo": "CT-15-05-020",
+  "ambito": "reforma",
+  "capitulo": "15",
+  "subcapitulo": "05",
+  "unidad": "m²",
+  "titulo": "Puerta corrediza de closet.",
+  "descripcion": "Suministro y montaje de puerta corrediza de closet con su riel superior e inferior, carros, hojas y tiradores. Incluye la nivelación del riel superior, que es el que soporta el peso y del que depende que las hojas no se descuelguen ni rocen, el montaje de la guía inferior, el colgado de las hojas con sus carros regulables, el ajuste de la verticalidad y del solape entre hojas y la colocación de topes y felpas. Medido en superficie realmente ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MELAMINA",
+      "rendimiento": 1.06
+    },
+    {
+      "ref": "MT-RIEL-CORRED",
+      "rendimiento": 2.2
+    },
+    {
+      "ref": "MT-HERRAJE-CLOSET",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MT-TORN",
+      "rendimiento": 18.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.14
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 0.78
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.39
+    }
+  ],
+  "codigo_covenin": ""
+}

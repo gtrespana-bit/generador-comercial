@@ -1,0 +1,48 @@
+{
+  "codigo": "CT-08-02-050",
+  "ambito": "reforma",
+  "capitulo": "08",
+  "subcapitulo": "02",
+  "unidad": "m²",
+  "titulo": "Piso cerámico colocado en capa gruesa sobre mortero.",
+  "descripcion": "Colocación de piso cerámico por el método tradicional de capa gruesa, asentando la pieza sobre una capa de mortero fresco que a la vez recibe la pieza y forma el nivel. Se emplea cuando el soporte presenta desniveles que harían inviable la capa fina, ya que permite corregir cota y planitud en una sola operación, aunque exige más material y más pericia del colocador de pisos. Incluye el replanteo de niveles con maestras, el extendido del mortero, la espolvoreada de cemento, el asentado y golpeteo de la pieza hasta el nivel, la comprobación continua con regla y nivel, el rejuntado y la limpieza. La pieza la elige el cliente y se presupuesta aparte. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "producto_cliente": {
+    "tipo": "Pieza cerámica o porcelanato para pavimento",
+    "unidad": "m2",
+    "consumo": 1.06,
+    "nota": "Consumo con 6 % de desperdicio por cortes y roturas."
+  },
+  "recursos": [
+    {
+      "ref": "MT-MORT-AFIRM",
+      "rendimiento": 0.058
+    },
+    {
+      "ref": "MT-CEMENTO",
+      "rendimiento": 3.2
+    },
+    {
+      "ref": "MT-JUN-CG2",
+      "rendimiento": 0.45
+    },
+    {
+      "ref": "MQ-MEZCL",
+      "rendimiento": 0.07
+    },
+    {
+      "ref": "MQ-CORT-AGUA",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-PISO",
+      "rendimiento": 0.68
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.48
+    }
+  ],
+  "codigo_covenin": ""
+}

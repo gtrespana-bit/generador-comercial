@@ -1,0 +1,30 @@
+{
+  "codigo": "CT-13-03-030",
+  "ambito": "reforma",
+  "capitulo": "13",
+  "subcapitulo": "03",
+  "unidad": "ud",
+  "titulo": "Interruptor diferencial de protección de personas.",
+  "descripcion": "Suministro y montaje de interruptor diferencial de alta sensibilidad en el tablero, con su conexión y prueba. Es el dispositivo que protege a las personas frente al contacto eléctrico: los termomagnéticos protegen la instalación, no a quien la toca. Su instalación es obligada en circuitos de baños, cocinas y exteriores. Incluye el montaje sobre riel, el conexionado de fases y neutro respetando el orden, la comprobación de que ningún neutro del circuito protegido se une aguas abajo con otro circuito, error que provoca disparos intermitentes imposibles de diagnosticar, y la prueba con el botón de test y con equipo de medida. Medido por unidad instalada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-DIFERENCIAL",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-ELE-CABLE",
+      "rendimiento": 1.2
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 0.48
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.15
+    }
+  ],
+  "codigo_covenin": ""
+}

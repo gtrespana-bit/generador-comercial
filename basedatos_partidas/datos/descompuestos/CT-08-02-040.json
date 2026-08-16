@@ -1,0 +1,52 @@
+{
+  "codigo": "CT-08-02-040",
+  "ambito": "reforma",
+  "capitulo": "08",
+  "subcapitulo": "02",
+  "unidad": "m²",
+  "titulo": "Piso cerámico en terraza o área exterior.",
+  "descripcion": "Colocación de piso cerámico o de porcelanato en terraza, patio o área exterior, con adhesivo cementoso de altas prestaciones, junta ancha y juntas de dilatación perimetrales y en paños. En exterior el piso sufre dilataciones térmicas y humedad bajo la pieza, de modo que la junta ancha y las juntas de dilatación son las que evitan el abombamiento y el desprendimiento por acumulación de tensiones. Incluye la comprobación de la pendiente de evacuación del soporte, el replanteo, el doble encolado, la ejecución de las juntas de dilatación, el rejuntado con mortero para exterior y el sellado perimetral. La pieza la elige el cliente y se presupuesta aparte. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "producto_cliente": {
+    "tipo": "Pieza cerámica o porcelanato apta para exterior, con resistencia al deslizamiento requerida",
+    "unidad": "m2",
+    "consumo": 1.08,
+    "nota": "Consumo con 8 % de desperdicio. Verificar que la pieza sea apta para exterior y para tránsito peatonal."
+  },
+  "recursos": [
+    {
+      "ref": "MT-ADH-C2TE",
+      "rendimiento": 7.0
+    },
+    {
+      "ref": "MT-JUN-CG2",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MT-CRU-NIV",
+      "rendimiento": 6.0
+    },
+    {
+      "ref": "MT-SELLA-ELAST",
+      "rendimiento": 0.14
+    },
+    {
+      "ref": "MQ-CORT-AGUA",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-BATID",
+      "rendimiento": 0.055
+    },
+    {
+      "ref": "MO-OF1-PISO",
+      "rendimiento": 0.56
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.33
+    }
+  ],
+  "codigo_covenin": ""
+}

@@ -1,0 +1,43 @@
+{
+  "codigo": "CT-02-09-050",
+  "ambito": "reforma",
+  "capitulo": "02",
+  "subcapitulo": "09",
+  "unidad": "ud",
+  "titulo": "Desmontaje de puerta exterior o metálica con su marco.",
+  "descripcion": "Desmontaje de puerta exterior, de seguridad o metálica, incluidos la hoja, el marco y la herrajería, ejecutado mediante oxicorte o amoladora sobre los anclajes empotrados. Por su peso requiere dos operarios para el sostenimiento de la hoja durante la liberación del marco. Incluye el sostenimiento previo del conjunto, el corte de los anclajes, el picado y resane de los huecos que queden en el muro, el retiro del material hasta el punto de acopio y su clasificación como chatarra. Si el cliente desea conservar el elemento, se desmonta con cuidado y se acopia protegido, lo que reduce el rendimiento y debe advertirse en el presupuesto. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido por unidad desmontada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-OXI-CONS",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MT-YESO-REP",
+      "rendimiento": 1.2
+    },
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MQ-OXICORTE",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MQ-AMOLA",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.6
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_anterior": "DLP020"
+}

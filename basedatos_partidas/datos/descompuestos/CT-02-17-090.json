@@ -1,0 +1,38 @@
+{
+  "codigo": "CT-02-17-090",
+  "ambito": "reforma",
+  "capitulo": "02",
+  "subcapitulo": "17",
+  "unidad": "m²",
+  "titulo": "Demolición de jardinera o elemento de obra en exterior.",
+  "descripcion": "Demolición de jardinera, banco, murete decorativo o elemento menor de obra en exterior, incluidos su relleno, revestimiento y fundación. Incluye el vaciado previo de la tierra y de la vegetación en el caso de jardineras, con reserva de las plantas que el cliente desee conservar, el picado de revestimientos, la demolición de la fábrica y de la fundación, el retiro del escombro clasificado separando tierra y material vegetal del escombro inerte, y el relleno y compactación del hueco. No incluye el bote. Medido en superficie realmente ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-SAC-ESC",
+      "rendimiento": 1.2
+    },
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.24
+    },
+    {
+      "ref": "MQ-MART-ELEC",
+      "rendimiento": 0.32
+    },
+    {
+      "ref": "MQ-RETRO",
+      "rendimiento": 0.03
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.36
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.48
+    }
+  ],
+  "codigo_covenin": ""
+}

@@ -1,0 +1,42 @@
+{
+  "codigo": "CT-05-06-060",
+  "ambito": "reforma",
+  "capitulo": "05",
+  "subcapitulo": "06",
+  "unidad": "ud",
+  "titulo": "Anclaje químico de barra de acero en concreto.",
+  "descripcion": "Anclaje de barra de acero en elemento de concreto existente mediante resina epóxica bicomponente inyectada en perforación, para conexión de elementos nuevos a la estructura existente. Incluye el replanteo del punto evitando la armadura existente mediante detección previa, la perforación con el diámetro y la profundidad especificados por el fabricante de la resina, la limpieza del taladro mediante soplado y cepillado repetidos, operación de la que depende por completo la capacidad del anclaje y que es la que más se omite en obra, la inyección de la resina desde el fondo, la introducción de la barra con giro y el respeto del tiempo de curado antes de cargarla. Medido por unidad realmente ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-EPOXI-ANCLA",
+      "rendimiento": 0.075
+    },
+    {
+      "ref": "MT-ACERO-CAB",
+      "rendimiento": 0.65
+    },
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.13
+    },
+    {
+      "ref": "MQ-DETECTOR",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.23
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.12
+    }
+  ],
+  "codigo_covenin": ""
+}

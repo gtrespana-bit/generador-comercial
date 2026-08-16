@@ -1,0 +1,38 @@
+{
+  "codigo": "CT-13-05-020",
+  "ambito": "reforma",
+  "capitulo": "13",
+  "subcapitulo": "05",
+  "unidad": "ud",
+  "titulo": "Puesta a tierra con electrodo.",
+  "descripcion": "Ejecución de la puesta a tierra de la instalación mediante electrodo de cobre enterrado, con su conductor de protección, conector y caja de inspección registrable. Sin puesta a tierra efectiva, el interruptor diferencial no dispone del camino de fuga que necesita para actuar, de modo que ambos elementos funcionan como sistema o no funcionan. Incluye la excavación, el hincado del electrodo, la conexión del conductor con conector de compresión, la caja de inspección registrable, el tendido hasta el tablero y la medición de la resistencia de tierra con telurómetro, que es lo que acredita que el sistema sirve. Medido por puesta a tierra ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-BARRA-TIERRA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-CABLE-8",
+      "rendimiento": 8.0
+    },
+    {
+      "ref": "MT-ELE-CAJA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-MOR-PEGA",
+      "rendimiento": 0.006
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 1.6
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 1.2
+    }
+  ],
+  "codigo_covenin": ""
+}

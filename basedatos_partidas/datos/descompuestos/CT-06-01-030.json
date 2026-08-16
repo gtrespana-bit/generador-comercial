@@ -1,0 +1,38 @@
+{
+  "codigo": "CT-06-01-030",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "01",
+  "unidad": "m²",
+  "titulo": "Pared de bloque de concreto de 20 cm.",
+  "descripcion": "Pared de 20 cm de espesor ejecutada con bloque hueco de concreto de 20x20x40 cm recibido con mortero de pega, aparejado a soga con juntas enrasadas. Se emplea en cerramientos de fachada, paredes de linderos y en cualquier paño que deba aportar masa por razones acústicas o de seguridad. Incluye el replanteo, el humedecido de las piezas, la colocación de hiladas a nivel y plomo, la formación de huecos, el amarre a la estructura mediante conectores y la limpieza. No incluye el friso ni los dinteles. Medido a cinta corrida descontando huecos mayores de 2 m².",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-BLQ-20",
+      "rendimiento": 12.6
+    },
+    {
+      "ref": "MT-MOR-PEGA",
+      "rendimiento": 0.016
+    },
+    {
+      "ref": "MT-ANCLA-MURO",
+      "rendimiento": 1.2
+    },
+    {
+      "ref": "MQ-MEZCL",
+      "rendimiento": 0.09
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.65
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.65
+    }
+  ],
+  "codigo_covenin": ""
+}

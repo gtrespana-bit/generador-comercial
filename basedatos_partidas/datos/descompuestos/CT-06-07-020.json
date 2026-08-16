@@ -1,0 +1,42 @@
+{
+  "codigo": "CT-06-07-020",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "07",
+  "unidad": "m",
+  "titulo": "Cajón de persiana en dintel de ventana.",
+  "descripcion": "Suministro y colocación de cajón de persiana prefabricado aislado sobre el dintel de la ventana, con su tapa registrable. Incluye la comprobación de la cota y de las dimensiones interiores que exige el sistema de persiana previsto, la colocación del cajón a nivel con sus entregas de apoyo, el macizado y sellado perimetral, la verificación de que la tapa queda registrable una vez terminado el friso, requisito sin el cual cualquier reparación futura del mecanismo obliga a romper, y el remate. Medido en longitud realmente colocada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CAJON-PERS",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-MOR-PEGA",
+      "rendimiento": 0.008
+    },
+    {
+      "ref": "MT-SELLA-ELAST",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MT-MALLA-JUNTA",
+      "rendimiento": 1.1
+    },
+    {
+      "ref": "MQ-MEZCL",
+      "rendimiento": 0.03
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.48
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.32
+    }
+  ],
+  "codigo_covenin": ""
+}

@@ -1,0 +1,48 @@
+{
+  "codigo": "CT-12-04-070",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "04",
+  "unidad": "ud",
+  "titulo": "Instalación de lavadero o poceta de servicio.",
+  "descripcion": "Instalación de lavadero o poceta de servicio con su grifería, desagüe y soportes. Incluye la comprobación de la base o soportes que deben resistir el peso de la pieza llena de agua y con ropa, el nivelado, la conexión de la toma de agua con su llave, el montaje del desagüe con sifón, el sellado perimetral contra la pared y la prueba de estanqueidad y evacuación. El aparato y la grifería los elige el cliente y se presupuestan aparte. Medido por unidad instalada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "producto_cliente": {
+    "tipo": "Lavadero o poceta de servicio con su grifería, elegido por el cliente",
+    "unidad": "ud",
+    "consumo": 1.0,
+    "nota": "La partida cubre solo la instalación."
+  },
+  "recursos": [
+    {
+      "ref": "MT-PLO-ABASTO",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-PLO-DESAG",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-SIL-SAN",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MT-PLO-SOP",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.22
+    },
+    {
+      "ref": "MO-OF1-PLO",
+      "rendimiento": 1.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.6
+    }
+  ],
+  "codigo_covenin": ""
+}

@@ -1,0 +1,22 @@
+{
+  "codigo": "CT-03-02-090",
+  "ambito": "reforma",
+  "capitulo": "03",
+  "subcapitulo": "02",
+  "unidad": "hora",
+  "titulo": "Achicamiento de agua en excavación.",
+  "descripcion": "Agotamiento del agua acumulada en la excavación mediante bomba sumergible con manguera de descarga a punto autorizado, para permitir el trabajo en seco. Se aplica cuando aparece nivel freático, filtraciones o agua de lluvia acumulada. Incluye el emplazamiento de la bomba en el punto bajo, el tendido de la manguera de descarga a un punto donde el vertido no erosione ni inunde otras zonas, la vigilancia del funcionamiento, la limpieza periódica del filtro de aspiración y el retiro del equipo. Medido por hora de funcionamiento efectivo del equipo.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MQ-BOMBA-ACHI",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.25
+    }
+  ],
+  "codigo_covenin": ""
+}
