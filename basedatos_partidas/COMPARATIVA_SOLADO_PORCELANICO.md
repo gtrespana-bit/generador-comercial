@@ -59,7 +59,59 @@ la vigente es BCCA2023_V02.bc3.)*
 
 ---
 
-## C) CYPE / Generador de Precios — **solo referencia, NO utilizable**
+## C) Comunidad de Madrid — ⛔ NO OBTENIBLE DESDE AQUÍ
+
+Base de Precios de la Construcción de la CM · edición 2024 · ~15.400 referencias
+
+**Motivo del bloqueo**: la descarga está tras el portal `gestiona.comunidad.madrid/bdco_inter`,
+que exige identificación electrónica española: **IDentifica, DNI electrónico, Certificado
+Digital o Cl@ve**. No hay páginas públicas con el descompuesto ni PDF abierto del cuadro
+de precios. No es un problema del entorno: es un muro de autenticación.
+
+- Portal de descarga: https://gestiona.comunidad.madrid/bdco_inter
+- Registro previo: https://registroidentifica.comunidad.madrid/
+- Información de uso 2024 (PDF abierto):
+  https://www.comunidad.madrid/docs/assets/2024/08/06/bd_constr_informacion_de_uso_2024.pdf
+- Contacto: bdc@madrid.org
+
+> Dato relevante: la edición 2024 se rehízo **desde cero** porque detectaron desfases de
+> precio que las correcciones anuales no corregían. Los costes horarios salen del Convenio
+> Colectivo de Construcción de la Comunidad de Madrid, así que es probablemente la base
+> pública con la mano de obra más realista. Merece el esfuerzo de conseguirla.
+
+### Hueco pendiente de rellenar
+
+| Código | Ud | Descripción | Rend. | Precio | Importe |
+|---|---|---|---:|---:|---:|
+| *(pendiente)* | | | | | |
+
+---
+
+## D) Galicia — BDCG · ⛔ NO OBTENIBLE DESDE AQUÍ
+
+Base de Datos da Construcción de Galicia · **21ª edición, 1er semestre 2026** · ITG + IGVS
+
+**Motivo del bloqueo**: se distribuye por la plataforma `presupuesta.com`, que exige
+**registro de usuario** para consultar o descargar. La portada confirma la edición vigente
+pero no expone ninguna partida sin iniciar sesión.
+
+- Plataforma: https://www.presupuesta.com
+- Registro: https://www.presupuesta.com/registro/informacion.php
+- Contacto: gestionusuarios@presupuesta.com
+
+> Es la base **más actualizada de todas** (semestral, frente a la anual o peor del resto) y
+> declara más de 1,5 millones de precios básicos. Disponible en gallego y castellano.
+> La del País Vasco (BPGV) la elabora el mismo instituto (ITG), así que comparten estructura.
+
+### Hueco pendiente de rellenar
+
+| Código | Ud | Descripción | Rend. | Precio | Importe |
+|---|---|---|---:|---:|---:|
+| *(pendiente)* | | | | | |
+
+---
+
+## E) CYPE / Generador de Precios — **solo referencia, NO utilizable**
 
 **Titular**: CYPE Ingenieros, S.A. · Producto comercial · Reutilización no permitida
 **Partida**: `RSG130` · m² · Solado de baldosas cerámicas "GRESPANIA" — **51,02 €/m²** (versión CARM)
@@ -81,17 +133,30 @@ la vigente es BCCA2023_V02.bc3.)*
 
 ## Lectura comparada
 
-| | Andalucía | Extremadura | CYPE *(ref.)* |
-|---|---:|---:|---:|
-| Precio partida | ≈ 55,35 €/m² | 60,45 €/m² | 51,02 €/m² |
-| **Horas totales /m²** | **0,720** | **1,150** | **0,602** |
-| Coste mano de obra | 10,68 € | 15,11 € + aux. | 11,23 € |
-| Coste hora oficial | 15,12 € | 13,42 € | 18,91 € |
-| Categorías | oficial + peón | oficial + ayudante + peón | oficial + ayudante |
-| Maquinaria | no | no | no (en interior) |
-| Recargo final | 13 % indirectos | incluido | 2 % complementarios |
-| Auxiliares anidadas | no | **sí** | no |
-| Desperdicio explícito | sí (12,75 u/m²) | sí (1,10 m²/m²) | sí (1,05 m²/m²) |
+| | Andalucía | Extremadura | Madrid | Galicia | CYPE *(ref.)* |
+|---|---:|---:|---:|---:|---:|
+| Precio partida | ≈ 55,35 €/m² | 60,45 €/m² | *pendiente* | *pendiente* | 51,02 €/m² |
+| **Horas totales /m²** | **0,720** | **1,150** | *pendiente* | *pendiente* | **0,602** |
+| Coste mano de obra | 10,68 € | 15,11 € + aux. | *pendiente* | *pendiente* | 11,23 € |
+| Coste hora oficial | 15,12 € | 13,42 € | *pendiente* | *pendiente* | 18,91 € |
+| Categorías | oficial + peón | oficial + ayudante + peón | *pendiente* | *pendiente* | oficial + ayudante |
+| Maquinaria | no | no | *pendiente* | *pendiente* | no (en interior) |
+| Recargo final | 13 % indirectos | incluido | *pendiente* | *pendiente* | 2 % complementarios |
+| Auxiliares anidadas | no | **sí** | *pendiente* | *pendiente* | no |
+| Desperdicio explícito | sí (12,75 u/m²) | sí (1,10 m²/m²) | *pendiente* | *pendiente* | sí (1,05 m²/m²) |
+| **Acceso** | libre | libre | **cert. digital** | **registro** | no utilizable |
+| Edición | 2024 | **2026** | 2024 | **2026 (semestral)** | viva |
+
+### Cómo completar los dos huecos
+
+Para Madrid y Galicia hace falta identificarse; hay que hacerlo desde un navegador propio.
+Una vez dentro, buscar la partida equivalente («solado» o «pavimento» de «gres porcelánico»)
+y copiar la tabla del descompuesto con estas columnas:
+
+    código · unidad · descripción · rendimiento · precio unitario · importe
+
+Con eso se rellenan las secciones C y D y la tabla comparativa queda cerrada.
+
 
 ### Conclusiones
 
@@ -122,7 +187,12 @@ volcado al layout de hoja de descompuesto que ya genera `descompuestos.py`.
 - No hay salida directa a Internet desde el entorno: los `.bc3` de Andalucía y Extremadura
   **no se han podido descargar** aquí. Los datos anteriores proceden de los listados
   publicados en PDF y del visor web de Extremadura.
-- **Galicia (BDCG)**, **Comunidad de Madrid** y **País Vasco (BPGV)** no exponen el
-  descompuesto en abierto de forma consultable; requieren descarga del BC3 o registro.
+- **Comunidad de Madrid**: muro de identificación electrónica (IDentifica / DNIe /
+  Certificado Digital / Cl@ve). Sin acceso público a ninguna partida.
+- **Galicia (BDCG)** y **País Vasco (BPGV)**: distribuidas por presupuesta.com (ITG),
+  requieren registro de usuario. La portada confirma la 21ª edición (1er sem. 2026) pero
+  no muestra partidas sin iniciar sesión.
+- Ninguna de las dos se ha inventado ni estimado: los huecos quedan marcados como
+  *pendiente* hasta disponer del dato real.
 - Para trabajar con los BC3 completos hay que descargarlos manualmente y dejarlos en
   `basedatos_partidas/datos/bc3/`.
