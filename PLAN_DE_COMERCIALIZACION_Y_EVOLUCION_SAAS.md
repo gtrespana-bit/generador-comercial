@@ -372,7 +372,8 @@ Las herramientas existentes se conservan como fuente de migración, pero dejaron
   con activación a mano, suficiente para un piloto de pocos clientes. Análisis
   completo en `docs/COBRO_Y_LICENCIAS.md`.
 
-- [ ] **E1-060 — Preparar recibo, contrato y registro interno de licencias.**
+- [~] **E1-060 — Preparar recibo, contrato y registro interno de licencias.**
+  **Registro interno completado (16/08/2026).** Panel de operador en `/admin/licencias` (`app/templates/admin/licencias.html`, `app/services/licencias.py`, modelo `Licencia`, migración `f4c1d8e37a95`): conceder, renovar, regalar prueba o cortesía, compensar incidencias y cancelar dejando constancia, con resumen de organizaciones sin licencia y avisos de vencimiento a 15 días. Distingue `pago` de `prueba`/`cortesia`/`compensacion` para que solo lo cobrado sume a ingresos, y encadena renovaciones sin restar días. **Aislamiento**: `licencias` es tabla **no-tenant** con RLS propia (`cotizat_licencia_*`) que exige la marca `cotizat.es_operador`; la lista de operadores vive en `COTIZAT_OPERADORES` (variable de entorno, no columna, para que no exista escalada escribiendo en la base) y se exige email verificado. 18 pruebas en `tests/test_licencias.py`, incluida la de que un cliente autenticado no alcanza el panel y la de que el panel no expone datos de negocio. Guía en `docs/PANEL_DE_OPERADOR.md`. **Pendiente**: recibo/contrato en PDF y corte automático de acceso (esperan a E1-059).
 
 - [ ] **E1-061 — Definir proceso manual de activación para los primeros pilotos.**
 

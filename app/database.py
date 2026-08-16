@@ -91,7 +91,7 @@ DATABASE_URL = DATABASE.url
 DATABASE_BACKEND = DATABASE.backend
 DATABASE_IS_SQLITE = DATABASE.is_sqlite
 DB_PATH = DATABASE.sqlite_path
-EXPECTED_ALEMBIC_HEAD = "e1a4b7c9d2f0"
+EXPECTED_ALEMBIC_HEAD = "f4c1d8e37a95"
 
 # Copias de seguridad automáticas y manuales (solo corresponden al modo
 # SQLite local; PostgreSQL tendrá backups administrados fuera del proceso).
@@ -138,12 +138,18 @@ def _aplicar_contexto_postgresql(connection, info: dict) -> None:
             SELECT
               set_config('cotizat.auth_user_id', :auth_user_id, true),
               set_config('cotizat.auth_email', :auth_email, true),
-              set_config('cotizat.organization_id', :organization_id, true)
+              set_config('cotizat.organization_id', :organization_id, true),
+              set_config('cotizat.es_operador', :es_operador, true)
         """),
         {
             "auth_user_id": str(info.get("auth_user_id") or ""),
             "auth_email": str(info.get("auth_email") or "").lower(),
             "organization_id": str(info.get("organizacion_id") or ""),
+            # Marca que habilita las políticas RLS de `licencias`. Vale 'on'
+            # solo si el correo verificado figura en COTIZAT_OPERADORES; para
+            # cualquier sesión de cliente queda en 'off' y la tabla se comporta
+            # como si estuviera vacía (revisión f4c1d8e37a95).
+            "es_operador": "on" if info.get("es_operador") else "off",
         },
     )
 
@@ -155,8 +161,16 @@ def _restaurar_contexto_postgresql(db, _transaction, connection):
 
 
 def _establecer_contexto_identidad(db, identidad) -> None:
+    from .operadores import es_operador
+
     db.info["auth_user_id"] = identidad.auth_user_id
     db.info["auth_email"] = identidad.email
+    # La marca de operador se decide aquí, junto a la identidad ya validada por
+    # Supabase, y nunca a partir de datos de la petición: así ninguna ruta puede
+    # concedérsela por su cuenta.
+    db.info["es_operador"] = es_operador(
+        identidad.email, email_verificado=identidad.email_verified
+    )
 
 
 def establecer_contexto_organizacion(db, organizacion_id: int) -> None:
@@ -219,6 +233,36 @@ def get_authenticated_db(request: Request = None):
             yield db
             return
         _autenticar_usuario(db, request)
+        yield db
+    finally:
+        db.close()
+
+
+def get_operator_db(request: Request = None):
+    """Sesión autenticada que además exige ser **operador del producto**.
+
+    Es la puerta del panel de administración de licencias. Se apoya en
+    ``_autenticar_usuario`` (misma validación de Supabase que el resto) y añade
+    la comprobación de la lista ``COTIZAT_OPERADORES``.
+
+    En PostgreSQL la sesión queda marcada con ``cotizat.es_operador``, que es lo
+    que habilita las políticas RLS de ``licencias``. Si esta comprobación se
+    saltara por un fallo de código, RLS seguiría devolviendo cero filas.
+    """
+    from .auth import OrganizationAccessDenied
+
+    db = SessionLocal()
+    try:
+        if DATABASE_IS_SQLITE:
+            # Instalación local monousuario: el panel de licencias no aplica.
+            raise OrganizationAccessDenied(
+                "El panel de licencias solo existe en el despliegue web."
+            )
+        _autenticar_usuario(db, request)
+        if not db.info.get("es_operador"):
+            # Mismo mensaje que cualquier otro acceso denegado: no confirma la
+            # existencia del panel a quien no debe usarlo.
+            raise OrganizationAccessDenied("No tienes acceso a esta sección.")
         yield db
     finally:
         db.close()

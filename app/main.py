@@ -48,6 +48,7 @@ from .database import (
     establecer_contexto_organizacion,
     get_authenticated_db,
     get_db,
+    get_operator_db,
     init_db,
     restaurar_base,
 )
@@ -70,6 +71,8 @@ from .auth import (
 )
 from .models import (
     ESTADOS,
+    ORIGENES_LICENCIA,
+    ORIGENES_LICENCIA_ETIQUETA,
     ArchivoAlmacenado,
     Capitulo,
     Cliente,
@@ -118,6 +121,14 @@ from .services.onboarding import (
     ErrorOnboarding,
     completar_onboarding,
     estado_recorrido_inicial,
+)
+from .services.licencias import (
+    DURACIONES,
+    GestionLicenciaError,
+    cancelar_licencia,
+    crear_licencia,
+    resumen_organizaciones,
+    totales,
 )
 from .services.invitations import (
     GestionEquipoError,
@@ -1911,6 +1922,105 @@ def marcar_catalogo_revisado(db: Session = Depends(get_db)):
 def landing_publica(request: Request):
     """Landing comercial: problema, resultado, público y llamada a demo."""
     return TEMPLATES.TemplateResponse(request, "landing.html", {})
+
+
+# ---------------------------------------------------------------------------
+# Panel de operador: licencias del producto (E1-060)
+#
+# Estas rutas son la única excepción al aislamiento multi-tenant, y por eso
+# están agrupadas y marcadas. `get_operator_db` exige que el correo autenticado
+# y verificado figure en COTIZAT_OPERADORES; en PostgreSQL, además, las
+# políticas RLS de `licencias` solo devuelven filas a una sesión marcada como
+# operador. El panel muestra datos de licencia (quién, cuánto, hasta cuándo),
+# nunca datos de negocio de las organizaciones.
+# ---------------------------------------------------------------------------
+
+
+def _render_licencias(
+    request: Request,
+    db: Session,
+    *,
+    msg: str = "",
+    error: str = "",
+    status_code: int = 200,
+):
+    filas = resumen_organizaciones(db)
+    return TEMPLATES.TemplateResponse(
+        request,
+        "admin/licencias.html",
+        {
+            "filas": filas,
+            "totales": totales(filas),
+            "duraciones": [(clave, texto) for clave, (texto, _) in DURACIONES.items()],
+            "origenes": [
+                (origen, ORIGENES_LICENCIA_ETIQUETA[origen])
+                for origen in ORIGENES_LICENCIA
+            ],
+            "hoy": date.today(),
+            "operador": db.info.get("auth_email", ""),
+            "msg": msg or request.query_params.get("msg", ""),
+            "error": error or request.query_params.get("error", ""),
+        },
+        status_code=status_code,
+        headers={"Cache-Control": "no-store"},
+    )
+
+
+@app.get("/admin/licencias", response_class=HTMLResponse, include_in_schema=False)
+def panel_licencias(request: Request, db: Session = Depends(get_operator_db)):
+    return _render_licencias(request, db)
+
+
+@app.post("/admin/licencias", include_in_schema=False)
+async def crear_licencia_web(
+    request: Request, db: Session = Depends(get_operator_db)
+):
+    form = await request.form()
+    try:
+        crear_licencia(
+            db,
+            organizacion_id=int(form.get("organizacion_id") or 0),
+            origen=str(form.get("origen") or ""),
+            duracion=str(form.get("duracion") or ""),
+            importe=str(form.get("importe") or 0),
+            moneda=str(form.get("moneda") or "USD"),
+            metodo_cobro=str(form.get("metodo_cobro") or ""),
+            referencia=str(form.get("referencia") or ""),
+            notas=str(form.get("notas") or ""),
+            operador_email=str(db.info.get("auth_email") or ""),
+        )
+        db.commit()
+    except (GestionLicenciaError, ValueError) as exc:
+        db.rollback()
+        return _redirect("/admin/licencias", error=str(exc))
+    except Exception:
+        db.rollback()
+        log.error("Error creando la licencia:\n%s", traceback.format_exc())
+        raise
+    return _redirect("/admin/licencias", msg="Licencia registrada.")
+
+
+@app.post("/admin/licencias/{licencia_id}/cancelar", include_in_schema=False)
+async def cancelar_licencia_web(
+    licencia_id: int, request: Request, db: Session = Depends(get_operator_db)
+):
+    form = await request.form()
+    try:
+        cancelar_licencia(
+            db,
+            licencia_id=licencia_id,
+            motivo=str(form.get("motivo") or ""),
+            operador_email=str(db.info.get("auth_email") or ""),
+        )
+        db.commit()
+    except GestionLicenciaError as exc:
+        db.rollback()
+        return _redirect("/admin/licencias", error=str(exc))
+    except Exception:
+        db.rollback()
+        log.error("Error cancelando la licencia:\n%s", traceback.format_exc())
+        raise
+    return _redirect("/admin/licencias", msg="Licencia cancelada.")
 
 
 _PAGINAS_LEGALES = {

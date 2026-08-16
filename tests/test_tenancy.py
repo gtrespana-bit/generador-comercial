@@ -10,6 +10,7 @@ from app.models import (
     Cliente,
     Configuracion,
     ContextoOrganizacionError,
+    Licencia,
     Membresia,
     Organizacion,
     Presupuesto,
@@ -46,13 +47,38 @@ def _sesiones():
 
 
 def test_todo_modelo_comercial_declara_propietario():
+    """Todo dato de negocio pertenece a una organización.
+
+    Las excepciones son deliberadas y están enumeradas aquí, para que añadir un
+    modelo sin `organizacion_id` obligue a justificarlo en esta lista:
+
+    - `Organizacion`, `Usuario` y `Membresia` son la identidad global.
+    - `Licencia` es un dato del **titular del producto** sobre una organización
+      (cuánto paga y hasta cuándo), no un dato *de* esa organización. Si
+      heredara de `TenantMixin`, el filtro automático se la mostraría al propio
+      cliente. Su aislamiento lo aportan `get_operator_db` y las políticas RLS
+      `cotizat_licencia_*` (revisión `f4c1d8e37a95`).
+    """
     identidades_globales = {Organizacion, Usuario, Membresia}
+    no_tenant_justificados = {Licencia}
     sin_propietario = []
     for mapper in Base.registry.mappers:
         modelo = mapper.class_
-        if modelo not in identidades_globales and not issubclass(modelo, TenantMixin):
+        if (
+            modelo not in identidades_globales
+            and modelo not in no_tenant_justificados
+            and not issubclass(modelo, TenantMixin)
+        ):
             sin_propietario.append(modelo.__name__)
     assert not sin_propietario, f"Modelos comerciales sin organización: {sin_propietario}"
+
+
+def test_la_licencia_no_es_una_tabla_de_tenant():
+    """Regresión explícita: convertirla en tenant la filtraría al cliente."""
+    assert not issubclass(Licencia, TenantMixin), (
+        "Licencia no puede heredar de TenantMixin: el filtro por organización "
+        "la haría visible al cliente sobre el que informa."
+    )
 
 
 def test_configuracion_y_numeracion_son_independientes_por_empresa():

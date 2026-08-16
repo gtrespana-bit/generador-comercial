@@ -89,8 +89,31 @@ organización, así que exige tabla **no-tenant** con RLS propia, rol de operado
 por variable de entorno, panel `/admin/licencias`, recibo PDF y auditoría. Es
 una excepción deliberada al aislamiento: debe abordarse como su propio bloque.
 
-**Siguiente bloque de código: E1-060** (panel de licencias + recibo), en cuanto
-el titular confirme; E1-059 se cierra con su decisión de cobro.
+### E1-060 — panel de operador construido (16/08/2026)
+
+`/admin/licencias`: ver, conceder, renovar, **regalar prueba/cortesía**,
+compensar incidencias y cancelar con constancia. Resumen con organizaciones sin
+licencia e ingresos (solo cuenta `origen='pago'`), y aviso ámbar a 15 días.
+
+**Aislamiento resuelto de raíz**, que era el riesgo señalado:
+`licencias` es tabla **no-tenant** con RLS propia (`cotizat_licencia_*`) que
+exige `cotizat.es_operador`; la lista de operadores vive en
+`COTIZAT_OPERADORES` (**variable de entorno, no columna**, para que no exista
+escalada escribiendo en la base) y se exige email verificado. 18 pruebas en
+`tests/test_licencias.py`. Suite: **362 passed, 5 skipped**.
+
+> **⚠ Dos pasos obligatorios antes de usarlo en producción**, detallados en
+> `docs/PANEL_DE_OPERADOR.md` §1:
+> 1. **Aplicar la migración** `f4c1d8e37a95` con la conexión administrativa.
+>    El runtime ya exige ese head: sin migrar, `/readyz` responde **503**.
+> 2. Añadir **`COTIZAT_OPERADORES`** en Vercel con tu correo y redesplegar.
+>    Sin esa variable el panel está cerrado incluso para ti.
+
+Pendiente dentro de E1-060: recibo/contrato en PDF y corte automático de acceso
+(ambos esperan a la decisión de cobro de E1-059).
+
+**Siguiente bloque: E1-059** (decisión de cobro del titular) y, con ella, el
+recibo en PDF.
 
 ---
 
