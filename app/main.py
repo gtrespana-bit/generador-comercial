@@ -24,6 +24,9 @@ import uuid
 import zipfile
 
 log = logging.getLogger("cotizat")
+from .logs import configurar_logs  # noqa: E402  (tras crear el logger)
+
+configurar_logs()
 
 from fastapi import Depends, FastAPI, Form, Request, UploadFile  # noqa: F401 (type hints)
 from starlette.concurrency import run_in_threadpool
@@ -204,6 +207,7 @@ from .services.operacion import (
     RegistroErroresMiddleware,
     diagnostico_operacion,
 )
+from .permisos import es_lectura, es_propietario, puede_gestionar
 from .utils import SIMBOLOS, fmt_fecha, fmt_monto, fmt_num, fmt_cantidad
 from .storage import (
     StorageError,
@@ -2268,7 +2272,7 @@ def inicio(request: Request, db: Session = Depends(get_db)):
 
 @app.post("/presupuestos/actualizar-vencidos")
 def actualizar_presupuestos_vencidos(db: Session = Depends(get_db)):
-    if db.info.get("rol_membresia") == "lectura":
+    if es_lectura(db):
         return {"ok": True, "actualizados": 0}
     return {"ok": True, "actualizados": marcar_vencidos(db)}
 
@@ -4166,7 +4170,7 @@ def enviar_presupuesto_email_web(
         "asunto": str(asunto or "").strip(),
         "mensaje": str(mensaje or "").strip(),
     }
-    if db.info.get("rol_membresia") == "lectura":
+    if es_lectura(db):
         return _pagina_envio_presupuesto(
             request, presupuesto, cfg, datos,
             "Tu rol es de solo lectura y no permite enviar documentos.", 403,
@@ -4405,7 +4409,7 @@ def crear_enlace_publico_web(
     presupuesto = db.get(Presupuesto, presupuesto_id)
     if presupuesto is None:
         return _redirect("/presupuestos", error="Presupuesto no encontrado.")
-    if db.info.get("rol_membresia") == "lectura":
+    if es_lectura(db):
         return _pagina_enlaces_propuesta(
             request, presupuesto, db,
             error="Tu rol es de solo lectura y no permite crear enlaces.",
@@ -4491,7 +4495,7 @@ def revocar_enlace_publico_web(
     enlace_id: int,
     db: Session = Depends(get_db),
 ):
-    if db.info.get("rol_membresia") == "lectura":
+    if es_lectura(db):
         return _redirect(
             f"/presupuestos/{presupuesto_id}/enlace-publico",
             error="Tu rol es de solo lectura y no permite revocar enlaces.",
@@ -4521,7 +4525,7 @@ def reintentar_notificacion_propuesta_web(
     request: Request,
     db: Session = Depends(get_db),
 ):
-    if db.info.get("rol_membresia") not in {"propietario", "administrador"}:
+    if not puede_gestionar(db):
         return _redirect(
             f"/presupuestos/{presupuesto_id}/enlace-publico",
             error="Solo propietarios y administradores pueden reenviar la notificación.",
@@ -5669,7 +5673,7 @@ def registrar_pdf_descargado(presupuesto_id: int, db: Session = Depends(get_db))
     presupuesto = db.get(Presupuesto, presupuesto_id)
     if presupuesto is None:
         return JSONResponse({"ok": False, "error": "Presupuesto no encontrado."}, status_code=404)
-    if db.info.get("rol_membresia") == "lectura" or presupuesto.es_demo:
+    if es_lectura(db) or presupuesto.es_demo:
         return {"ok": True, "registrado": False}
     cfg = _config(db)
     if not cfg.onboarding_pdf_descargado:
@@ -6069,7 +6073,7 @@ async def _leer_respaldo_subido(request: Request) -> tuple[Path, str, dict]:
 @app.get("/configuracion/respaldo", response_class=HTMLResponse)
 def respaldo_web_form(request: Request, db: Session = Depends(get_db)):
     """Pantalla del respaldo web: descargar copia y restaurar en dos pasos."""
-    if db.info.get("rol_membresia") not in {"propietario", "administrador"}:
+    if not puede_gestionar(db):
         return _redirect(
             "/configuracion",
             error="Solo propietarios y administradores pueden gestionar el respaldo completo.",
@@ -6084,7 +6088,7 @@ def respaldo_web_form(request: Request, db: Session = Depends(get_db)):
 @app.get("/configuracion/respaldo/descargar")
 def descargar_respaldo_web(db: Session = Depends(get_db)):
     """Descarga el paquete completo y verificable de la organización activa."""
-    if db.info.get("rol_membresia") not in {"propietario", "administrador"}:
+    if not puede_gestionar(db):
         return _redirect(
             "/configuracion",
             error="Solo propietarios y administradores pueden descargar el respaldo completo.",
@@ -6107,7 +6111,7 @@ def descargar_respaldo_web(db: Session = Depends(get_db)):
 @app.post("/configuracion/respaldo/restaurar", response_class=HTMLResponse)
 async def analizar_respaldo_subido(request: Request, db: Session = Depends(get_db)):
     """Paso 1: analiza y verifica la copia sin escribir nada."""
-    if db.info.get("rol_membresia") not in {"propietario", "administrador"}:
+    if not puede_gestionar(db):
         return _redirect(
             "/configuracion",
             error="Solo propietarios y administradores pueden restaurar el respaldo completo.",
@@ -6132,7 +6136,7 @@ async def analizar_respaldo_subido(request: Request, db: Session = Depends(get_d
 @app.post("/configuracion/respaldo/restaurar/confirmar", response_class=HTMLResponse)
 async def confirmar_respaldo_subido(request: Request, db: Session = Depends(get_db)):
     """Paso 2: mismo archivo + confirmación explícita; ejecuta la restauración."""
-    if db.info.get("rol_membresia") not in {"propietario", "administrador"}:
+    if not puede_gestionar(db):
         return _redirect(
             "/configuracion",
             error="Solo propietarios y administradores pueden restaurar el respaldo completo.",
@@ -6178,7 +6182,7 @@ async def confirmar_respaldo_subido(request: Request, db: Session = Depends(get_
 def descargar_exportacion_organizacion(db: Session = Depends(get_db)):
     """Exportación legible y verificable: CSV por tabla, archivos con nombre y
     el respaldo completo embebido, para llevarse los datos fuera de CotizaT."""
-    if db.info.get("rol_membresia") not in {"propietario", "administrador"}:
+    if not puede_gestionar(db):
         return _redirect(
             "/configuracion",
             error="Solo propietarios y administradores pueden descargar la exportación completa.",
@@ -6202,7 +6206,7 @@ def descargar_exportacion_organizacion(db: Session = Depends(get_db)):
 def baja_organizacion_form(request: Request, db: Session = Depends(get_db)):
     """Pantalla de baja: resumen de lo que se borrará y confirmación por
     escrito del nombre exacto de la organización. Solo el propietario."""
-    if db.info.get("rol_membresia") != "propietario":
+    if not es_propietario(db):
         return _redirect(
             "/configuracion",
             error="Solo el propietario puede dar de baja la organización.",
@@ -6223,7 +6227,7 @@ async def confirmar_baja_organizacion(request: Request, db: Session = Depends(ge
     """Ejecuta la baja verificada. Tras el borrado no hay organización que
     consultar, así que se responde directamente con la página de completado
     (sin redirect) y se retira la cookie de organización."""
-    if db.info.get("rol_membresia") != "propietario":
+    if not es_propietario(db):
         return _redirect(
             "/configuracion",
             error="Solo el propietario puede dar de baja la organización.",

@@ -30,6 +30,7 @@ from .database import (
     PRIVATE_STORAGE_DIR,
     UPLOADS_DIR,
 )
+from .permisos import es_lectura
 
 STORAGE_REFERENCE_PREFIX = "storage://"
 DEFAULT_BUCKET = "cotizat-private"
@@ -391,7 +392,7 @@ def _require_storage_write(db) -> None:
     que ``before_flush`` proteja los metadatos: un miembro de solo lectura no
     debe alcanzar ``put``/``delete`` y dejar un objeto huérfano o borrado.
     """
-    if db.info.get("rol_membresia") == "lectura":
+    if es_lectura(db):
         from .models import PermisoOrganizacionError
 
         raise PermisoOrganizacionError(

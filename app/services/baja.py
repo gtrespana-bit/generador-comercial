@@ -75,6 +75,7 @@ from ..models import (
     RecetaEstancia,
     Recurso,
 )
+from ..permisos import es_propietario
 from ..storage import get_storage_backend
 
 
@@ -174,7 +175,7 @@ def ejecutar_baja(
     organizacion_id = int(db.info.get("organizacion_id") or 0)
     if organizacion_id <= 0:
         raise BajaError("No hay una organización activa.")
-    if db.info.get("rol_membresia") != "propietario":
+    if not es_propietario(db):
         raise PermisoOrganizacionError(
             "Solo el propietario puede dar de baja la organización."
         )

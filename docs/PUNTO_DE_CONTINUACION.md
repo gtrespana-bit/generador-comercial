@@ -54,11 +54,15 @@ El titular ejecutó en Supabase SQL Editor los scripts del bloque y **verificó
 los dos resultados** esperados:
 
 - **`c2f6e8a1d934` (propuestas):** la tabla `public.enlaces_propuesta` tiene
-  exactamente las 4 políticas previstas — `cotizat_proposal_insert_tenant`
-  (INSERT con `tenant_access(organizacion_id, true)`),
-  `cotizat_proposal_select_tenant` (SELECT por tenant),
-  `cotizat_proposal_select_public` (SELECT solo por hash del token + vigente +
-  no revocada) y `cotizat_proposal_update_tenant` (UPDATE por tenant). ✅
+  exactamente las 4 políticas previstas:
+
+  | polname | polcmd | using_expr | check_expr |
+  |---|---|---|---|
+  | `cotizat_proposal_insert_tenant` | INSERT | — | `tenant_access(organizacion_id, true)` |
+  | `cotizat_proposal_select_public` | SELECT | `token_hash = NULLIF(current_setting('cotizat.proposal_token_hash', true), '')` AND `revoked_at IS NULL` AND `expires_at > clock_timestamp()` | — |
+  | `cotizat_proposal_select_tenant` | SELECT | `tenant_access(organizacion_id, false)` | — |
+  | `cotizat_proposal_update_tenant` | UPDATE | `tenant_access(organizacion_id, true)` | `tenant_access(organizacion_id, true)` |
+
 - **`a3d7e9c1b5f2` (baja):** la función `cotizat_security.baja_organizacion`
   existe con `security_definer = true` y propietario `postgres` (el usuario
   que aplica la migración), tal como declara el script. ✅ La guarda de
@@ -281,6 +285,17 @@ del código), ensayar el flujo real en staging, y después el **endurecimiento
 técnico de la Etapa 4**. Catálogo comercial y validación pagada permanecen
 aplazados hasta que el titular declare completo el producto.
 
+10. ~~**Etapa 4, primer bloque — autorización centralizada y logs
+    estructurados.**~~ **Completado en la rama el 16/08/2026**:
+    `app/permisos.py` (E4-002/E4-009) concentra los conjuntos de roles y sus
+    predicados; los checks inline de las rutas migraron a los predicados y
+    una prueba estática impide su regreso; `app/logs.py` (E4-022) añade modo
+    JSON opt-in (`COTIZAT_LOG_JSON`) con redacción de credenciales en
+    mensajes y trazas. Suite: **465 passed, 6 skipped** (12 pruebas nuevas en
+    `tests/test_permisos.py` y `tests/test_logs.py`). Siguiente de la Etapa
+    4: **E4-001 — dividir `app/main.py` en routers por dominio** (el plan
+    marca la sección 4.1 como el trabajo estructural pendiente más grande).
+
 ## 6. Reglas invariables (no negociables)
 
 - **no abrir ni pedir fusionar un PR durante un bloque de trabajo activo**: al
@@ -345,12 +360,14 @@ revocable, respuesta trazable, notificación y estado controlado, respaldo
 web completo y verificable con restauración en dos pasos, exportación
 portátil, baja con borrado verificado y monitorización y diagnóstico del
 operador. **Cierre funcional y operativo de la Etapa 3 completo en la rama.**
-Suite verificada: **453 passed, 6 skipped**. **Las migraciones `c2f6e8a1d934`
-y `a3d7e9c1b5f2` están aplicadas y verificadas en Supabase el 16/08/2026**
-(ver §0ter). Queda desplegar el código de la rama (hasta entonces `/readyz`
-del entorno migrado responde 503, esperado) y ensayar el flujo real. Siguiente
-según la puerta de salida: endurecimiento técnico de la Etapa 4. No abrir PR.
-No retomar catálogo ni pilotos salvo nueva decisión expresa.
+**Las migraciones `c2f6e8a1d934` y `a3d7e9c1b5f2` están aplicadas y
+verificadas en Supabase el 16/08/2026** (ver §0ter). **Etapa 4 iniciada:**
+autorización centralizada (E4-002/E4-009) y logs estructurados (E4-022)
+completados; siguiente estructural: E4-001 (routers por dominio). Suite
+verificada en la rama: **465 passed, 6 skipped**. Queda desplegar el código
+de la rama (hasta entonces `/readyz` del entorno migrado responde 503,
+esperado) y ensayar el flujo real en staging. No abrir PR. No retomar
+catálogo ni pilotos salvo nueva decisión expresa.
 
 **Nota de la sesión de recuperación (16/08/2026):** todo lo anterior se
 recuperó desde un parche en la rama `arena/01a00b99-generador-comercial`

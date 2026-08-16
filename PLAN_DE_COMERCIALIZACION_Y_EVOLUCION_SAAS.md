@@ -602,7 +602,7 @@ rama: hasta entonces `/readyz` del entorno migrado responde 503 (esperado).
 
 # ETAPA 4 — Endurecimiento y operación SaaS
 
-**Estado:** PENDIENTE; algunos fundamentos técnicos fueron adelantados a E1W para evitar reescrituras.
+**Estado:** EN CURSO — iniciada el 16/08/2026 con autorización centralizada (E4-002/E4-009) y logs estructurados (E4-022); algunos fundamentos fueron adelantados a E1W para evitar reescrituras.
 **Prerrequisitos:** cierre funcional de la Etapa 3. Por D-017, el endurecimiento puede completarse antes de la validación comercial.
 **Estimación:** se revisará con métricas de la beta.
 **Objetivo:** endurecer y operar públicamente la plataforma multiempresa iniciada en Etapa 1.
@@ -610,7 +610,10 @@ rama: hasta entonces `/readyz` del entorno migrado responde 503 (esperado).
 ## 4.1 Refactorización estructural
 
 - [ ] **E4-001 — Dividir `app/main.py` en routers por dominio.**
-- [ ] **E4-002 — Extraer servicios de aplicación y reglas de autorización.**
+- [x] **E4-002 — Extraer servicios de aplicación y reglas de autorización.**
+  Los servicios viven en `app/services/` (licencias, propuestas, respaldo,
+  restauración, exportación, baja, operación…) y las reglas de autorización
+  quedaron centralizadas en `app/permisos.py` el 16/08/2026.
 - [~] **E4-003 — Crear configuración separada por entorno.**
   `DATABASE_URL` ya separa persistencia web; faltan secretos, almacenamiento y políticas completas por entorno.
 - [x] **E4-004 — Introducir migraciones versionadas con Alembic.**
@@ -625,8 +628,9 @@ rama: hasta entonces `/readyz` del entorno migrado responde 503 (esperado).
 - [~] **E4-007 — Crear usuarios, membresías e invitaciones.**
   Implementados perfiles Auth, membresías e invitaciones de un solo uso con token hasheado, caducidad, revocación y aceptación por email verificado; faltan migración/prueba real y canal transaccional de entrega.
 - [~] **E4-008 — Definir roles mínimos: propietario, administrador, miembro y lectura.**
-  Roles persistibles, bloqueo global de escritura para `lectura` y reglas de administración de equipo implementados; falta completar la matriz por operación de negocio.
-- [ ] **E4-009 — Implementar autorización centralizada.**
+  Roles persistibles, bloqueo global de escritura para `lectura` y reglas de administración de equipo implementados; la matriz de capacidades por rol vive centralizada en `app/permisos.py` (E4-009) con pruebas; falta completar la verificación de la matriz por operación de negocio en la interfaz.
+- [x] **E4-009 — Implementar autorización centralizada.**
+  Completada el 16/08/2026 con `app/permisos.py`: única fuente de verdad de los conjuntos de roles y predicados (`puede_escribir`, `puede_gestionar`, `es_propietario`, `es_lectura`) y variantes que lanzan excepción; los checks inline de las rutas migraron a los predicados y una prueba estática impide que reaparezcan. La guardia de bajo nivel de SQLAlchemy (`app/models`) permanece como defensa en profundidad.
 - [~] **E4-010 — Implementar recuperación de contraseña y verificación de email.**
   Recuperación implementada sobre Supabase y cambio de contraseña desde `/cuenta` con reautenticación previa y cierre de sesión posterior; falta prueba real y completar gestión explícita de verificación de email.
 - [~] **E4-031 — Panel de cuenta de la persona usuaria.**
@@ -656,7 +660,8 @@ rama: hasta entonces `/readyz` del entorno migrado responde 503 (esperado).
   Backend y metadatos implementados como E1W-009; falta aprovisionar y probar el bucket privado real.
 - [ ] **E4-020 — Cola de trabajos para PDFs, emails e importaciones pesadas.**
 - [ ] **E4-021 — Backups automáticos y restauraciones ensayadas.**
-- [ ] **E4-022 — Logs estructurados sin datos sensibles innecesarios.**
+- [x] **E4-022 — Logs estructurados sin datos sensibles innecesarios.**
+  Completado el 16/08/2026 con `app/logs.py`: modo JSON opt-in (`COTIZAT_LOG_JSON=true`, apagado por omisión), idempotente, y redacción de credenciales embebidas en URLs tanto en mensajes como en trazas de excepción.
 - [ ] **E4-023 — Monitorización, alertas y seguimiento de errores.**
 - [ ] **E4-024 — Entornos separados de desarrollo, pruebas y producción.**
 - [ ] **E4-025 — Despliegues repetibles y reversibles.**
