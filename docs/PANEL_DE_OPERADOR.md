@@ -243,6 +243,28 @@ piezas que faltaban. Migración `b7c4a9e2d31f`
   cortesía a la propia organización del titular y entonces fijar la variable
   (orden completo en `docs/PROCESO_PILOTOS.md` §0).
 
+#### Qué puede hacer cada estado con el corte activo
+
+| Situación | ¿Trabaja? | Comentario |
+| --- | --- | --- |
+| Licencia vigente (inicio ≤ hoy ≤ vence) | ✅ Todo | El día de `vence` cuenta como día de acceso |
+| Sin licencia / vencida / cancelada | ❌ Suspendida | Ve «Acceso suspendido» en cualquier ruta de negocio |
+| Licencia encadenada que empieza mañana | ❌ Hoy | Se activa sola al llegar `inicio` |
+| Panel de operador | ✅ Siempre | No depende de ninguna organización |
+| Usuario suspendido | ✅ Solo: iniciar/cerrar sesión, `/organizaciones` (cambiar de organización), aceptar invitaciones y páginas legales | Nada de datos: ni presupuestos, clientes, catálogo, PDFs ni descargas |
+
+Notas de diseño del corte:
+
+- Es **por organización**, no por usuario: crear una organización nueva no
+  sirve para escapar (la nueva también carece de licencia).
+- Un registro nuevo sin piloto acordado ve la suspensión desde el minuto uno:
+  el período de prueba lo concede el titular (7 días desde el panel) según el
+  proceso de `docs/PROCESO_PILOTOS.md`.
+- El corte se evalúa en cada petición: una licencia que venció anoche suspende
+  en el siguiente clic.
+- Verificación sin tocar producción (Supabase → SQL Editor):
+  `BEGIN; SELECT set_config('cotizat.organization_id', '<id>', true); SELECT cotizat_security.organization_has_license(<id>); ROLLBACK;`
+
 ### Avisos de vencimiento por correo
 
 - Botón «Enviar avisos de vencimiento» (visible solo cuando alguna licencia

@@ -52,14 +52,20 @@ simulación de Vercel RO y `git diff --check` en verde.
 
 ### Pasos operativos pendientes DE ESTE BLOQUE (el orden importa)
 
-1. Fusionar el PR de esta rama; Vercel despliega `main`.
-2. **Aplicar `docs/staging_upgrade_b7c4a9e2d31f.sql`** en Supabase (SQL
-   Editor). `/readyz` debe pasar a `"alembic": "head:b7c4a9e2d31f"` con
-   `ok: true` (antes de eso dirá 503: es la guarda funcionando).
+1. **Fusionar el PR #25**; Vercel despliega `main`. Ojo: el titular aplicó el
+   SQL **antes** de fusionar, así que `/readyz` responde 503 (esquema por
+   delante del código) hasta completar el despliegue. Es la guarda funcionando.
+2. ~~Aplicar `docs/staging_upgrade_b7c4a9e2d31f.sql` en Supabase~~ **Hecho el
+   16/08/2026 (noche)**: funciones creadas con propietario `postgres` y
+   `security_definer=true` (verificado en `pg_proc`).
 3. **Conceder licencia de cortesía a la propia organización del titular**
    desde el panel (nota «uso del titular»). Hacerlo ANTES del paso 4.
 4. Cuando empiece el piloto de pago: `COTIZAT_EXIGIR_LICENCIA=true` en Vercel
    (Production) + redeploy. El panel deja de mostrar el aviso ámbar.
+   Verificación previa sin tocar producción (SQL Editor):
+   `BEGIN; SELECT set_config('cotizat.organization_id', '<id>', true); SELECT cotizat_security.organization_has_license(<id>); ROLLBACK;`
+   → FALSE sin licencia, TRUE tras concederla. La matriz completa de qué puede
+   hacer cada estado está en `docs/PANEL_DE_OPERADOR.md` §6.
 5. Verificación en producción del fix de visibilidad: con un **segundo correo
    de cliente** registrado (organización sin membresía del titular), comprobar
    que ahora SÍ aparece en `/admin/licencias`.
@@ -106,8 +112,8 @@ el servidor por si algo volviera a fallar (Vercel → Logs).
    marcador honesto mientras tanto, a propósito).
 4. Vercel Hobby prohíbe uso comercial → **Pro (20 $/mes)** antes de cobrar al
    primer cliente. **Aplazado**: sin cobros todavía, no corre prisa.
-5. Repetir la prueba E2E «invitación sin cuenta previa» en producción (el fix
-   se desplegó con el PR #23; falta confirmarla en vivo).
+5. ~~Repetir la prueba E2E «invitación sin cuenta previa» en producción.~~
+   **Hecha el 16/08/2026 (noche)**: funciona.
 
 ## 4. Aparcado por decisión del usuario
 
