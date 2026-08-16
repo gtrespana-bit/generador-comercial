@@ -50,6 +50,16 @@ class VinculoIdentidadError(RuntimeError):
     """La identidad autenticada entra en conflicto con un perfil existente."""
 
 
+class LicenciaSuspendidaError(RuntimeError):
+    """La organización no tiene una licencia vigente y el despliegue la exige.
+
+    Solo se levanta cuando ``COTIZAT_EXIGIR_LICENCIA`` está activa, es decir,
+    cuando el titular decidió que el producto ya no se usa sin licencia. El
+    mensaje se muestra al propio miembro de la organización, así que puede
+    (y debe) nombrarla.
+    """
+
+
 class OrganizacionNoAutorizadaError(RuntimeError):
     """El usuario intentó seleccionar una organización sin membresía activa."""
 

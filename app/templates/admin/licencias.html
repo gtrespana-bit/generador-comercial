@@ -65,6 +65,16 @@
   aislados por organización.
 </div>
 
+{% if not exigencia_licencias %}
+<div class="aviso">
+  <strong>El corte automático de acceso está desactivado.</strong> Hoy una
+  organización sin licencia vigente puede seguir usando la aplicación. Cuando
+  empiece el cobro de los pilotos, actívalo con
+  <code>COTIZAT_EXIGIR_LICENCIA=true</code> en el despliegue (y concede antes
+  una licencia de cortesía a tu propia organización).
+</div>
+{% endif %}
+
 <div class="cifras">
   <div class="cifra"><b>{{ totales.organizaciones }}</b><span>Organizaciones</span></div>
   <div class="cifra"><b>{{ totales.con_licencia }}</b><span>Con licencia vigente</span></div>
@@ -72,6 +82,19 @@
   <div class="cifra alerta"><b>{{ totales.por_vencer }}</b><span>Vencen en 15 días o menos</span></div>
   <div class="cifra"><b>{{ '%.2f'|format(totales.ingresos) }}</b><span>Ingresos registrados (USD)</span></div>
 </div>
+
+{% if totales.por_vencer %}
+<div class="card">
+  <h2>Avisos de vencimiento</h2>
+  <p class="muted">Envía un correo a los administradores de
+  {{ totales.por_vencer }} organización(es) cuya licencia vence en 15 días o
+  menos, invitándoles a renovar. Cada licencia queda anotada con el envío y no
+  se repite el mismo día.</p>
+  <form method="post" action="/admin/licencias/avisos">
+    <button type="submit">Enviar avisos de vencimiento</button>
+  </form>
+</div>
+{% endif %}
 
 <div class="card">
   <h2>Conceder o renovar licencia</h2>
@@ -165,6 +188,9 @@
                 {{ licencia.origen }} ·
                 {{ '%.2f'|format(licencia.importe) }} {{ licencia.moneda }} ·
                 <span class="pill {{ 'ok' if licencia.estado == 'activa' else ('bad' if licencia.estado == 'cancelada' else 'off') }}">{{ licencia.estado }}</span>
+                {% if licencia.origen == 'pago' and licencia.importe > 0 %}
+                · <a href="/admin/licencias/{{ licencia.id }}/recibo.pdf">recibo PDF</a>
+                {% endif %}
                 {% if licencia.estado != 'cancelada' %}
                 <form class="inline" method="post" action="/admin/licencias/{{ licencia.id }}/cancelar">
                   <button class="link" type="submit">cancelar</button>

@@ -161,17 +161,19 @@ con la fecha pasada sería una mentira silenciosa.
 
 ## 4. Lo que este bloque todavía no hace
 
-- **No corta el acceso automáticamente.** Hoy el registro es informativo: nadie
-  se queda fuera de la aplicación por no tener licencia. Aplicar el corte es una
-  decisión de negocio con consecuencias (dejar a un cliente fuera por un error
-  de registro), así que se deja para cuando exista el cobro real (E1-059).
-- **No genera todavía el recibo en PDF.** El registro ya guarda todo lo
-  necesario (importe, método, referencia, período); falta el documento.
-- **No envía avisos de vencimiento por correo.** El panel los marca en ámbar.
+- ~~**No corta el acceso automáticamente.**~~ **Resuelto el 16/08/2026** (ver
+  §6): con `COTIZAT_EXIGIR_LICENCIA=true` el acceso se suspende solo al
+  vencer. El valor por omisión sigue siendo desactivado.
+- ~~**No genera todavía el recibo en PDF.**~~ **Resuelto el 16/08/2026**:
+  enlace «recibo PDF» en cada licencia de pago (ver §6).
+- ~~**No envía avisos de vencimiento por correo.**~~ **Resuelto el
+  16/08/2026**: botón «Enviar avisos de vencimiento» (ver §6).
 - **La interfaz es deliberadamente simple** (decisión del titular, 16/08/2026):
   tabla + formulario, sin adornos. Funciona y cubre lo esencial, pero se
   mejorará más adelante (mejor agrupación por estado, filtros, acciones
   visibles sin redirigir, etc.).
+- **No hay avisos programados por horario**: el despliegue es serverless; el
+  botón del panel marca la cadencia semanal (ver `docs/PROCESO_PILOTOS.md`).
 
 Nada de esto bloquea el uso: el panel ya sirve para lo que se pidió — ver,
 gestionar, regalar meses y dejar constancia.
@@ -201,3 +203,94 @@ Secuencia completa aplicada y verificada:
 > variable? (2) ¿el correo de la sesión está confirmado en Supabase Auth?
 > (3) ¿coincide exactamente la dirección? La lista se normaliza en minúsculas,
 > pero la pertenencia exige el mismo correo de la sesión.
+
+---
+
+## 6. Segunda parte (16/08/2026, noche): recibo, corte y avisos
+
+Con E1-059 decidida (**cobro manual para el piloto**) se construyeron las tres
+piezas que faltaban. Migración `b7c4a9e2d31f`
+(`docs/staging_upgrade_b7c4a9e2d31f.sql` para aplicarla en Supabase).
+
+### Recibo PDF por licencia de pago
+
+- Enlace «recibo PDF» en el historial de cada licencia `origen='pago'` con
+  importe. Número estable `CT-000NNN` (derivado del id), período con ambos
+  días inclusive, método y referencia del cobro.
+- El pie declara que es un **documento comercial sin validez fiscal ni
+  tributaria**: mientras no exista razón social registrada
+  (`COTIZAT_LEGAL_ENTITY`), el emisor muestra el marcador honesto, igual que
+  las páginas legales.
+- Una cortesía o prueba **no tiene recibo** (el panel devuelve el motivo):
+  documentar como cobro algo regalado falsearía el registro.
+
+### Corte automático de acceso
+
+- Interruptor del despliegue: `COTIZAT_EXIGIR_LICENCIA=true`. **Por omisión,
+  desactivado** — actualizar el código nunca cierra un despliegue solo.
+- Con él activo, una organización sin licencia vigente no pasa de la puerta
+  común de las rutas de negocio (`get_db`): recibe la pantalla «Acceso
+  suspendido», que le dice que sus datos siguen guardados y cómo reactivar.
+  Los datos no se tocan; al renovar, todo vuelve.
+- En PostgreSQL el corte no consulta `licencias` directamente (la sesión del
+  cliente no puede leerla por RLS de operador): pregunta a
+  `cotizat_security.organization_has_license(id)`, función SECURITY DEFINER
+  que solo devuelve un booleano y solo sobre la organización del claim de la
+  propia sesión. En escritorio (SQLite) el corte **no aplica nunca**.
+- El panel muestra un aviso ámbar mientras el interruptor esté apagado, y
+  `/readyz` publica `"licencias": "exigida" | "no-exigida"`.
+- Antes de activarlo en producción: aplicar la migración, conceder la
+  cortesía a la propia organización del titular y entonces fijar la variable
+  (orden completo en `docs/PROCESO_PILOTOS.md` §0).
+
+#### Qué puede hacer cada estado con el corte activo
+
+| Situación | ¿Trabaja? | Comentario |
+| --- | --- | --- |
+| Licencia vigente (inicio ≤ hoy ≤ vence) | ✅ Todo | El día de `vence` cuenta como día de acceso |
+| Sin licencia / vencida / cancelada | ❌ Suspendida | Ve «Acceso suspendido» en cualquier ruta de negocio |
+| Licencia encadenada que empieza mañana | ❌ Hoy | Se activa sola al llegar `inicio` |
+| Panel de operador | ✅ Siempre | No depende de ninguna organización |
+| Usuario suspendido | ✅ Solo: iniciar/cerrar sesión, `/organizaciones` (cambiar de organización), aceptar invitaciones y páginas legales | Nada de datos: ni presupuestos, clientes, catálogo, PDFs ni descargas |
+
+Notas de diseño del corte:
+
+- Es **por organización**, no por usuario: crear una organización nueva no
+  sirve para escapar (la nueva también carece de licencia).
+- Un registro nuevo sin piloto acordado ve la suspensión desde el minuto uno:
+  el período de prueba lo concede el titular (7 días desde el panel) según el
+  proceso de `docs/PROCESO_PILOTOS.md`.
+- El corte se evalúa en cada petición: una licencia que venció anoche suspende
+  en el siguiente clic.
+- Verificación sin tocar producción (Supabase → SQL Editor):
+  `BEGIN; SELECT set_config('cotizat.organization_id', '<id>', true); SELECT cotizat_security.organization_has_license(<id>); ROLLBACK;`
+
+### Avisos de vencimiento por correo
+
+- Botón «Enviar avisos de vencimiento» (visible solo cuando alguna licencia
+  vence en 15 días o menos). Escribe a los **administradores activos** de cada
+  organización por Resend; en PostgreSQL los correos salen de
+  `cotizat_security.organization_admin_emails(id)`, SECURITY DEFINER guardada
+  por la marca de operador (una sesión de cliente obtiene cero filas).
+- Cada envío queda anotado en la propia licencia («[fecha] Aviso de
+  vencimiento enviado a …») y no se repite el mismo día aunque se pulse dos
+  veces. Un fallo del proveedor se reporta y **no** se anota: puede
+  reintentarse en el momento.
+- Sin `RESEND_API_KEY`/`COTIZAT_EMAIL_FROM` el panel lo explica en vez de
+  fallar en silencio.
+
+### Corrección de visibilidad del panel (bug latente)
+
+La política `cotizat_org_select` de la revisión `c93e7a4d20f1` solo devolvía
+las organizaciones donde el usuario tiene membresía, así que en producción el
+panel era **ciego a las organizaciones de clientes** (solo veía las del
+propio titular, lo que disimulaba el fallo). La nueva política mantiene la vía
+de membresía intacta y añade la de la marca de operador — el panel lista
+nombres para administrar licencias; los datos de negocio siguen aislados.
+
+### Pruebas
+
+29 pruebas nuevas en `tests/test_licencias_acceso.py` (interruptor, corte en
+el camino real de `get_db`, pantalla de suspensión, recibo –válido, numerado
+y solo de pago–, avisos –destinatarios, constancia, deduplicación, fallos– y
+guardas de las funciones SQL). Suite completa: **391 passed, 5 skipped**.

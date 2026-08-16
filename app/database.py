@@ -91,7 +91,7 @@ DATABASE_URL = DATABASE.url
 DATABASE_BACKEND = DATABASE.backend
 DATABASE_IS_SQLITE = DATABASE.is_sqlite
 DB_PATH = DATABASE.sqlite_path
-EXPECTED_ALEMBIC_HEAD = "f4c1d8e37a95"
+EXPECTED_ALEMBIC_HEAD = "b7c4a9e2d31f"
 
 # Copias de seguridad automáticas y manuales (solo corresponden al modo
 # SQLite local; PostgreSQL tendrá backups administrados fuera del proceso).
@@ -336,6 +336,29 @@ def get_db(request: Request = None):
         db.info["membresia_id"] = membresia.id
         request.state.membresia = membresia
         request.state.organizacion = membresia.organizacion
+
+        # Corte automático de acceso (E1-060): con COTIZAT_EXIGIR_LICENCIA
+        # activa, una organización sin licencia vigente no entra a sus
+        # pantallas de trabajo. Se aplica aquí, en la única puerta de las
+        # rutas de negocio, y solo en el despliegue web: la instalación de
+        # escritorio (SQLite) jamás exige licencia. La consulta va a la
+        # función SECURITY DEFINER porque la sesión del cliente no puede leer
+        # `licencias` por RLS.
+        from .models import LicenciaSuspendidaError
+        from .services.licencias import (
+            exigencia_licencia_activada,
+            organizacion_tiene_acceso,
+        )
+
+        if exigencia_licencia_activada() and not organizacion_tiene_acceso(
+            db, membresia.organizacion_id
+        ):
+            raise LicenciaSuspendidaError(
+                f"El acceso de «{membresia.organizacion.nombre}» está "
+                "suspendido: su licencia venció o aún no fue activada. Tus "
+                "datos siguen guardados; al renovar la licencia todo vuelve "
+                "a estar disponible."
+            )
         yield db
     finally:
         db.close()

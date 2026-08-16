@@ -1,0 +1,9 @@
+{{ product_name }} — Tu acceso vence en {{ dias_restantes }} {{ 'día' if dias_restantes == 1 else 'días' }}
+
+El acceso de {{ organizacion_nombre }} a {{ product_name }} vence el {{ vence.strftime('%d/%m/%Y') }} (inclusive). Pasada esa fecha la cuenta se suspende sola hasta renovar.
+
+Tus datos (presupuestos, clientes, catálogos y archivos) no se borran: en cuanto renueves, todo vuelve a estar disponible tal como lo dejaste.
+
+Para renovar, escríbenos a {{ soporte_email }} y acordamos el pago contigo.
+
+Recibes este aviso porque administras la organización {{ organizacion_nombre }} en {{ product_name }}. Este mensaje se envía automáticamente cuando la licencia está próxima a vencer; no respondas a esta dirección.

@@ -81,6 +81,8 @@ from .models import (
     FacturaCapitulo,
     FacturaItem,
     InvitacionOrganizacion,
+    Licencia,
+    LicenciaSuspendidaError,
     Medicion,
     Membresia,
     NotaSeguimiento,
@@ -127,9 +129,12 @@ from .services.licencias import (
     GestionLicenciaError,
     cancelar_licencia,
     crear_licencia,
+    enviar_avisos_vencimiento,
+    exigencia_licencia_activada,
     resumen_organizaciones,
     totales,
 )
+from .services.recibo_licencia import generar_recibo_licencia_pdf, numero_recibo
 from .services.invitations import (
     GestionEquipoError,
     aceptar_invitacion,
@@ -428,6 +433,25 @@ async def _servicio_auth_no_disponible(request: Request, exc: AuthError):
         "auth/access.html",
         {"error": str(exc), "auth_configured": True, "next": ""},
         status_code=503,
+    )
+
+
+@app.exception_handler(LicenciaSuspendidaError)
+async def _licencia_suspendida(request: Request, exc: LicenciaSuspendidaError):
+    """Organización sin licencia vigente con el corte automático activo.
+
+    Se muestra una pantalla propia y no un redirect: cualquier ruta de
+    negocio (incluido `/organizaciones/seleccionar` posterior) debe llegar a
+    este mensaje, nunca a una página normal medio rota.
+    """
+    if _respuesta_auth_json(request):
+        return JSONResponse({"ok": False, "error": str(exc)}, status_code=403)
+    return TEMPLATES.TemplateResponse(
+        request,
+        "licencia_suspendida.html",
+        {"error": str(exc)},
+        status_code=403,
+        headers={"Cache-Control": "no-store"},
     )
 
 # SQLite conserva el montaje histórico. En PostgreSQL se bloquea antes del
@@ -1958,6 +1982,10 @@ def _render_licencias(
             ],
             "hoy": date.today(),
             "operador": db.info.get("auth_email", ""),
+            # El panel avisa en cabecera si el corte automático está
+            # apagado: sin él, una licencia vencida solo es información, no
+            # una suspensión real del acceso.
+            "exigencia_licencias": exigencia_licencia_activada(),
             "msg": msg or request.query_params.get("msg", ""),
             "error": error or request.query_params.get("error", ""),
         },
@@ -2021,6 +2049,91 @@ async def cancelar_licencia_web(
         log.error("Error cancelando la licencia:\n%s", traceback.format_exc())
         raise
     return _redirect("/admin/licencias", msg="Licencia cancelada.")
+
+
+@app.get("/admin/licencias/{licencia_id}/recibo.pdf", include_in_schema=False)
+def recibo_licencia_web(
+    licencia_id: int, request: Request, db: Session = Depends(get_operator_db)
+):
+    """Descarga el comprobante de pago de una licencia (E1-060).
+
+    Misma puerta del resto del panel: `get_operator_db` + RLS de operador en
+    PostgreSQL. Los errores de negocio (licencia inexistente o que no es de
+    pago) vuelven al panel como mensaje; no hay nada útil que servir en un 404
+    de un panel sin enlaces públicos.
+    """
+    licencia = db.get(Licencia, licencia_id)
+    if licencia is None or licencia.organizacion is None:
+        return _redirect("/admin/licencias", error="La licencia indicada no existe.")
+    try:
+        buffer = generar_recibo_licencia_pdf(licencia, licencia.organizacion)
+    except GestionLicenciaError as exc:
+        return _redirect("/admin/licencias", error=str(exc))
+    nombre_archivo = (
+        f"recibo-{numero_recibo(licencia)}-{licencia.organizacion.slug}.pdf"
+    )
+    return Response(
+        buffer.read(),
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f'attachment; filename="{nombre_archivo}"',
+            "Cache-Control": "no-store",
+        },
+    )
+
+
+@app.post("/admin/licencias/avisos", include_in_schema=False)
+def enviar_avisos_web(request: Request, db: Session = Depends(get_operator_db)):
+    """Envía los avisos de vencimiento a las organizaciones por vencer.
+
+    Lo dispara el operador a mano: no hay trabajos programados en un
+    despliegue serverless. El envío real lo hace Resend; la licencia queda
+    anotada con la fecha y los destinatarios para no reenviar el mismo día.
+    """
+    from .services.email import EmailNotConfigured, enviar_aviso_licencia
+
+    try:
+        resultado = enviar_avisos_vencimiento(db, remitente=enviar_aviso_licencia)
+        db.commit()
+    except EmailNotConfigured:
+        db.rollback()
+        return _redirect(
+            "/admin/licencias",
+            error=(
+                "El correo no está configurado: faltan RESEND_API_KEY o "
+                "COTIZAT_EMAIL_FROM en el despliegue."
+            ),
+        )
+    except Exception:
+        db.rollback()
+        log.error("Error enviando avisos de vencimiento:\n%s", traceback.format_exc())
+        raise
+
+    partes = []
+    if resultado["avisadas"]:
+        partes.append(f"{len(resultado['avisadas'])} organización(es) avisada(s)")
+    if resultado["omitidas"]:
+        partes.append(f"{len(resultado['omitidas'])} ya avisada(s) hoy")
+    if resultado["sin_correo"]:
+        partes.append(
+            "sin correo de administrador: " + ", ".join(resultado["sin_correo"])
+        )
+    if not partes and not resultado["fallidas"]:
+        return _redirect(
+            "/admin/licencias",
+            msg="Ninguna licencia vence dentro del plazo de aviso.",
+        )
+    if resultado["fallidas"]:
+        detalle = "; ".join(
+            f"{nombre}: {exc}" for nombre, exc in resultado["fallidas"]
+        )
+        if partes:
+            partes.append(f"errores: {detalle}")
+            return _redirect("/admin/licencias", error=" | ".join(partes))
+        return _redirect(
+            "/admin/licencias", error=f"No se pudo enviar ningún aviso: {detalle}"
+        )
+    return _redirect("/admin/licencias", msg="; ".join(partes) + ".")
 
 
 _PAGINAS_LEGALES = {
