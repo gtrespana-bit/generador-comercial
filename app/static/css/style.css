@@ -2731,9 +2731,51 @@ button:focus-visible, a:focus-visible {
 .builder-workspace .btn-add-partida { border-radius: var(--radius-xs); }
 .builder-workspace > .btn-add-capitulo { margin-top: .4rem; border-radius: var(--radius-sm); background: var(--surface); }
 
-.builder-review-grid { display: grid; grid-template-columns: minmax(300px, .8fr) minmax(380px, 1.2fr); gap: 1rem; align-items: start; }
+/* Totales a la derecha (solos); texto del presupuesto debajo a ancho completo. */
+.builder-review {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.builder-totals-wrap {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+.builder-totals-card {
+  width: min(420px, 100%);
+  margin: 0;
+  position: sticky;
+  top: 72px;
+}
+.builder-totals-card .totales-head {
+  margin-bottom: 0.65rem;
+  padding-bottom: 0.55rem;
+  border-bottom: 1px solid var(--border);
+}
+.builder-totals-card .totales-head h2 {
+  margin: 0.15rem 0 0;
+  font-size: 1rem;
+  letter-spacing: -0.02em;
+}
+.builder-texto-card {
+  width: 100%;
+  margin: 0;
+}
+/* Compatibilidad por si queda la clase antigua en caché */
+.builder-review-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: stretch;
+}
 .builder-review-grid > .card { margin: 0; }
-.builder-totals-card { position: sticky; top: 72px; }
+.builder-review-grid > .card-totales,
+.builder-review-grid > .builder-totals-card {
+  width: min(420px, 100%);
+  margin-left: auto;
+}
 .budget-save-dock {
   position: sticky;
   bottom: .65rem;
@@ -2826,8 +2868,11 @@ button:focus-visible, a:focus-visible {
   .partidas-head,
   .partida-row { grid-template-columns: minmax(260px, 1fr) 82px 66px 105px 105px 90px; }
   .partida-edit-btn { width: 30px; overflow: hidden; padding: .34rem .4rem; }
-  .builder-review-grid { grid-template-columns: 1fr; }
-  .builder-totals-card { position: static; }
+  .builder-totals-wrap { justify-content: stretch; }
+  .builder-totals-card {
+    width: 100%;
+    position: static;
+  }
   .catalog-editor-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 760px) {
@@ -3275,8 +3320,14 @@ body.collapsed .sidebar-session { display: none; }
   grid-template-columns: minmax(240px, 320px) minmax(0, 1fr);
   gap: 1rem;
   align-items: start;
+  transition: grid-template-columns var(--dur-slow) var(--ease-out);
 }
 .builder-con-arbol > .builder-workspace { min-width: 0; }
+/* Al plegar el catálogo se libera la columna entera (no solo se ocultan partidas). */
+.builder-con-arbol.arbol-plegado {
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 0.55rem;
+}
 
 .arbol-catalogo {
   position: sticky;
@@ -3289,11 +3340,31 @@ body.collapsed .sidebar-session { display: none; }
   border-radius: calc(var(--radius) + 2px);
   background: var(--surface);
   overflow: hidden;
+  min-width: 0;
+  transition: max-height var(--dur) var(--ease-out), width var(--dur) var(--ease-out);
 }
-.arbol-catalogo.plegado { max-height: 58px; }
+.arbol-catalogo.plegado {
+  max-height: none;
+  width: 44px;
+  min-width: 44px;
+}
 .arbol-catalogo.plegado .arbol-tools,
 .arbol-catalogo.plegado .arbol-body,
-.arbol-catalogo.plegado .arbol-pie { display: none; }
+.arbol-catalogo.plegado .arbol-pie,
+.arbol-catalogo.plegado .arbol-titulo {
+  display: none;
+}
+.arbol-catalogo.plegado .arbol-head {
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0.55rem 0.25rem;
+  border-bottom: none;
+  min-height: 52px;
+}
+.arbol-catalogo.plegado .arbol-toggle {
+  margin: 0;
+}
 
 .arbol-head {
   display: flex;
@@ -3415,7 +3486,13 @@ body.collapsed .sidebar-session { display: none; }
 
 @media (max-width: 1100px) {
   .builder-con-arbol { grid-template-columns: minmax(0, 1fr); }
+  .builder-con-arbol.arbol-plegado { grid-template-columns: minmax(0, 1fr); }
   .arbol-catalogo { position: static; max-height: 340px; }
+  .arbol-catalogo.plegado {
+    width: 100%;
+    min-width: 0;
+    max-height: 52px;
+  }
 }
 
 /* ==========================================================================
@@ -3686,6 +3763,15 @@ body.editor-focus .builder-con-arbol {
   margin: 0;
   grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
 }
+body.editor-focus .builder-con-arbol.arbol-plegado {
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 0.5rem;
+}
+body.editor-focus .arbol-catalogo.plegado {
+  width: 44px;
+  min-width: 44px;
+  margin: 0;
+}
 body.editor-focus .builder-workspace {
   margin: 0;
   padding: 0.75rem;
@@ -3798,10 +3884,23 @@ body.editor-focus .arbol-pie {
 }
 
 /* Totales y dock más quietos */
-body.editor-focus .builder-review-grid {
+body.editor-focus .builder-review {
   margin-top: 0.85rem;
 }
 body.editor-focus .builder-totals-card {
+  box-shadow: none;
+  top: 4.75rem;
+}
+body.editor-focus .builder-totals-card .tot-linea {
+  padding: 0.35rem 0;
+  font-size: 0.84rem;
+}
+body.editor-focus .builder-totals-card .tot-linea.tot-final {
+  margin-top: 0.35rem;
+  padding-top: 0.65rem;
+  border-top: 1px solid var(--border-strong);
+}
+body.editor-focus .builder-texto-card {
   box-shadow: none;
 }
 body.editor-focus .tot-linea.tot-final strong,
@@ -3903,6 +4002,9 @@ body.editor-focus .builder-command-bar:not(.editor-command-bar) {
   body.editor-focus .builder-con-arbol {
     grid-template-columns: minmax(200px, 240px) minmax(0, 1fr);
   }
+  body.editor-focus .builder-con-arbol.arbol-plegado {
+    grid-template-columns: 44px minmax(0, 1fr);
+  }
 }
 @media (max-width: 900px) {
   .editor-command-bar {
@@ -3925,6 +4027,16 @@ body.editor-focus .builder-command-bar:not(.editor-command-bar) {
   body.editor-focus .builder-con-arbol {
     grid-template-columns: minmax(0, 1fr);
   }
+  body.editor-focus .builder-con-arbol.arbol-plegado {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  body.editor-focus .arbol-catalogo.plegado {
+    width: 100%;
+    min-width: 0;
+    max-height: 52px;
+  }
+  .builder-totals-wrap { justify-content: stretch; }
+  .builder-totals-card { width: 100%; }
   body.editor-focus .content {
     padding: 0.5rem 0.65rem 4rem;
   }

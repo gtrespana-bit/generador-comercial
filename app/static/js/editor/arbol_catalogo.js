@@ -365,9 +365,12 @@
     init();
   }
 
-  window.CotizatActions.register("arbol-toggle", function () {
-    panel.classList.toggle("plegado");
-    var plegado = panel.classList.contains("plegado");
+  function aplicarEstadoPlegado(plegado) {
+    panel.classList.toggle("plegado", plegado);
+    // El contenedor grid debe soltar la columna: si no, el panel se pliega
+    // pero sigue ocupando 280–320 px y no se gana espacio de trabajo.
+    var layout = panel.closest(".builder-con-arbol");
+    if (layout) layout.classList.toggle("arbol-plegado", plegado);
     try {
       localStorage.setItem("arbol-catalogo-plegado", plegado ? "true" : "false");
     } catch (e) {}
@@ -377,18 +380,16 @@
       boton.textContent = plegado ? "›" : "‹";
       boton.title = plegado ? "Mostrar el catálogo" : "Ocultar el catálogo";
     }
+  }
+
+  window.CotizatActions.register("arbol-toggle", function () {
+    aplicarEstadoPlegado(!panel.classList.contains("plegado"));
   });
 
   // Restaurar preferencia de panel plegado
   try {
     if (localStorage.getItem("arbol-catalogo-plegado") === "true") {
-      panel.classList.add("plegado");
-      var botonInit = document.getElementById("arbol-toggle");
-      if (botonInit) {
-        botonInit.setAttribute("aria-expanded", "false");
-        botonInit.textContent = "›";
-        botonInit.title = "Mostrar el catálogo";
-      }
+      aplicarEstadoPlegado(true);
     }
   } catch (e) {}
 

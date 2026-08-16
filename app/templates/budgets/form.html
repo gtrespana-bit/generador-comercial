@@ -322,42 +322,47 @@
   </section>
   </div>
 
-  <!-- TOTALES -->
-  <div id="builder-resumen" class="builder-review-grid">
-  <div class="card card-totales builder-totals-card">
-    <div class="tot-linea"><span>Subtotal incluido</span><strong id="ui-subtotal">—</strong></div>
-    <div class="tot-linea cotizat-hidden" id="ui-fila-opcional"><span>Opcionales disponibles</span><strong id="ui-opcional">—</strong></div>
-    <div class="tot-linea cotizat-hidden" id="ui-fila-alternativas"><span>Alternativas disponibles</span><strong id="ui-alternativas">—</strong></div>
-    <div class="tot-linea cotizat-hidden" id="ui-fila-obra"><span>Total obra / partidas</span><strong id="ui-obra">—</strong></div>
-    <div class="tot-linea cotizat-hidden" id="ui-fila-productos"><span>Total productos</span><strong id="ui-productos">—</strong></div>
-    <div class="tot-linea cotizat-hidden" id="ui-fila-adicionales"><span>Costes adicionales</span><strong id="ui-adicionales">—</strong></div>
-    <div class="tot-linea" id="ui-fila-desc"><span>Descuento</span><strong id="ui-descuento">—</strong></div>
-    <div class="tot-linea"><span>IVA <button type="button" class="btn btn-xs iva-toggle-btn" id="btn-toggle-iva-total" title="Activar o desactivar el IVA">ON</button></span><strong id="ui-iva">—</strong></div>
-    <div class="tot-linea cotizat-hidden" id="ui-fila-beneficio-obra"><span>Beneficio obra</span><strong id="ui-beneficio-obra" class="csp-s-5516851989">—</strong></div>
-    <div class="tot-linea cotizat-hidden" id="ui-fila-margen-obra"><span>Margen obra</span><strong id="ui-margen-obra" class="csp-s-5516851989">—</strong></div>
-    <div class="tot-linea cotizat-hidden" id="ui-fila-beneficio-productos"><span>Beneficio productos</span><strong id="ui-beneficio-productos" class="csp-s-5516851989">—</strong></div>
-    <div class="tot-linea cotizat-hidden" id="ui-fila-margen-productos"><span>Margen productos</span><strong id="ui-margen-productos" class="csp-s-5516851989">—</strong></div>
-    <div class="tot-linea cotizat-hidden" id="ui-fila-beneficio"><span>Beneficio total estimado</span><strong id="ui-beneficio" class="csp-s-5516851989">—</strong></div>
-    <div class="tot-linea cotizat-hidden" id="ui-fila-margen"><span>Margen total</span><strong id="ui-margen" class="csp-s-5516851989">—</strong></div>
-    <div class="tot-linea tot-tiempo"><span>Tiempo estimado de obra <small class="hint">(rendimientos de mano de obra)</small></span><strong id="ui-tiempo">—</strong></div>
-    <div class="tot-tiempo-nota hint csp-s-88b066e08c" id="ui-tiempo-nota"></div>
-    <div class="tot-linea tot-final"><span>TOTAL</span><strong id="ui-total">—</strong></div>
-  </div>
-
-  <!-- TEXTO -->
-  <div class="card">
-    <h2>Texto del presupuesto</h2>
-    <div class="form-grid">
-      <div class="field">
-        <label>Información adicional (alcance del trabajo)</label>
-        <textarea name="notas" rows="4" placeholder="Descripción general, inclusiones y exclusiones…">{{ presupuesto.notas if presupuesto else cfg.notas_default }}</textarea>
-      </div>
-      <div class="field">
-        <label>Condiciones</label>
-        <textarea name="condiciones" rows="4" placeholder="Forma de pago, anticipo, plazos, garantía…">{{ presupuesto.condiciones if presupuesto else cfg.condiciones_default }}</textarea>
+  <!-- TOTALES (a la derecha, solos) + TEXTO debajo a ancho completo -->
+  <div id="builder-resumen" class="builder-review">
+    <div class="builder-totals-wrap">
+      <div class="card card-totales builder-totals-card">
+        <div class="totales-head">
+          <span class="section-kicker">Resumen económico</span>
+          <h2>Totales de la obra</h2>
+        </div>
+        <div class="tot-linea"><span>Subtotal incluido</span><strong id="ui-subtotal">—</strong></div>
+        <div class="tot-linea cotizat-hidden" id="ui-fila-opcional"><span>Opcionales disponibles</span><strong id="ui-opcional">—</strong></div>
+        <div class="tot-linea cotizat-hidden" id="ui-fila-alternativas"><span>Alternativas disponibles</span><strong id="ui-alternativas">—</strong></div>
+        <div class="tot-linea cotizat-hidden" id="ui-fila-obra"><span>Total obra / partidas</span><strong id="ui-obra">—</strong></div>
+        <div class="tot-linea cotizat-hidden" id="ui-fila-productos"><span>Total productos</span><strong id="ui-productos">—</strong></div>
+        <div class="tot-linea cotizat-hidden" id="ui-fila-adicionales"><span>Costes adicionales</span><strong id="ui-adicionales">—</strong></div>
+        <div class="tot-linea" id="ui-fila-desc"><span>Descuento</span><strong id="ui-descuento">—</strong></div>
+        <div class="tot-linea"><span>IVA <button type="button" class="btn btn-xs iva-toggle-btn" id="btn-toggle-iva-total" title="Activar o desactivar el IVA">ON</button></span><strong id="ui-iva">—</strong></div>
+        <div class="tot-linea cotizat-hidden" id="ui-fila-beneficio-obra"><span>Beneficio obra</span><strong id="ui-beneficio-obra" class="csp-s-5516851989">—</strong></div>
+        <div class="tot-linea cotizat-hidden" id="ui-fila-margen-obra"><span>Margen obra</span><strong id="ui-margen-obra" class="csp-s-5516851989">—</strong></div>
+        <div class="tot-linea cotizat-hidden" id="ui-fila-beneficio-productos"><span>Beneficio productos</span><strong id="ui-beneficio-productos" class="csp-s-5516851989">—</strong></div>
+        <div class="tot-linea cotizat-hidden" id="ui-fila-margen-productos"><span>Margen productos</span><strong id="ui-margen-productos" class="csp-s-5516851989">—</strong></div>
+        <div class="tot-linea cotizat-hidden" id="ui-fila-beneficio"><span>Beneficio total estimado</span><strong id="ui-beneficio" class="csp-s-5516851989">—</strong></div>
+        <div class="tot-linea cotizat-hidden" id="ui-fila-margen"><span>Margen total</span><strong id="ui-margen" class="csp-s-5516851989">—</strong></div>
+        <div class="tot-linea tot-tiempo"><span>Tiempo estimado de obra <small class="hint">(rendimientos de mano de obra)</small></span><strong id="ui-tiempo">—</strong></div>
+        <div class="tot-tiempo-nota hint csp-s-88b066e08c" id="ui-tiempo-nota"></div>
+        <div class="tot-linea tot-final"><span>TOTAL</span><strong id="ui-total">—</strong></div>
       </div>
     </div>
-  </div>
+
+    <div class="card builder-texto-card">
+      <h2>Texto del presupuesto</h2>
+      <div class="form-grid">
+        <div class="field">
+          <label>Información adicional (alcance del trabajo)</label>
+          <textarea name="notas" rows="4" placeholder="Descripción general, inclusiones y exclusiones…">{{ presupuesto.notas if presupuesto else cfg.notas_default }}</textarea>
+        </div>
+        <div class="field">
+          <label>Condiciones</label>
+          <textarea name="condiciones" rows="4" placeholder="Forma de pago, anticipo, plazos, garantía…">{{ presupuesto.condiciones if presupuesto else cfg.condiciones_default }}</textarea>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="form-actions budget-save-dock">
