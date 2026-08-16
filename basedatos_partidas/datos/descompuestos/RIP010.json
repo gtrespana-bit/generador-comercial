@@ -1,0 +1,16 @@
+{
+  "codigo": "RIP010",
+  "capitulo": "R", "subcapitulo": "RI", "grupo": "RIP",
+  "unidad": "m²",
+  "titulo": "Preparación de paramento interior para pintura: resane, alisado y fondo.",
+  "descripcion": "Preparación completa de paramento interior antes de pintar. Incluye protección de pisos, carpintería y mobiliario con plástico y cinta de enmascarar, retirada de partes sueltas, resane de grietas y huecos con masilla de reparación, alisado y lijado hasta obtener superficie uniforme, eliminación del polvo residual y aplicación de una mano de fondo fijador para consolidar el soporte y regular su absorción. Deja el paramento listo para recibir el acabado. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
+  "margen": 0.30, "complementarios_pct": 1,
+  "recursos": [
+    {"ref": "MT-PIN-MASILLA", "rendimiento": 0.35},
+    {"ref": "MT-PIN-FONDO",   "rendimiento": 0.130},
+    {"ref": "MT-PIN-LIJA",    "rendimiento": 0.25},
+    {"ref": "MQ-RODILLO",     "rendimiento": 0.100},
+    {"ref": "MO-OF1-PIN",     "rendimiento": 0.130},
+    {"ref": "MO-AYU",         "rendimiento": 0.090}
+  ]
+}

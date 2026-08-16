@@ -362,20 +362,107 @@
         {
           "codigo": "IF",
           "nombre": "Fontanería",
-          "grupos": [],
-          "n": 0
+          "grupos": [
+            {
+              "codigo": "IFT",
+              "nombre": "Tuberías y montantes de agua",
+              "partidas": [
+                {
+                  "codigo": "IFT010",
+                  "titulo": "Tubería de agua de PPR de 20 mm, empotrada, incluso roza y resane.",
+                  "unidad": "m",
+                  "precio": 7.45,
+                  "horas": 0.46,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 1
+            },
+            {
+              "codigo": "IFA",
+              "nombre": "Aparatos y puntos de agua",
+              "partidas": [],
+              "n": 0
+            },
+            {
+              "codigo": "IFL",
+              "nombre": "Llaves y valvulería",
+              "partidas": [],
+              "n": 0
+            }
+          ],
+          "n": 1
         },
         {
           "codigo": "IS",
           "nombre": "Saneamiento y desagües",
-          "grupos": [],
-          "n": 0
+          "grupos": [
+            {
+              "codigo": "IST",
+              "nombre": "Tuberías y bajantes de desagüe",
+              "partidas": [
+                {
+                  "codigo": "IST010",
+                  "titulo": "Tubería de desagüe de PVC sanitario de 4 pulgadas.",
+                  "unidad": "m",
+                  "precio": 11.04,
+                  "horas": 0.41,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 1
+            },
+            {
+              "codigo": "ISA",
+              "nombre": "Puntos de desagüe de aparatos",
+              "partidas": [],
+              "n": 0
+            }
+          ],
+          "n": 1
         },
         {
           "codigo": "IE",
           "nombre": "Eléctrica",
-          "grupos": [],
-          "n": 0
+          "grupos": [
+            {
+              "codigo": "IEC",
+              "nombre": "Canalizaciones y cableado",
+              "partidas": [
+                {
+                  "codigo": "IEC010",
+                  "titulo": "Canalización eléctrica empotrada con conduit de 20 mm y conductor 12 AWG.",
+                  "unidad": "m",
+                  "precio": 8.37,
+                  "horas": 0.34,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 1
+            },
+            {
+              "codigo": "IEM",
+              "nombre": "Mecanismos y tomas",
+              "partidas": [
+                {
+                  "codigo": "IEM010",
+                  "titulo": "Punto de interruptor o tomacorriente, incluso caja y mecanismo.",
+                  "unidad": "ud",
+                  "precio": 8.72,
+                  "horas": 0.33,
+                  "producto_cliente": true
+                }
+              ],
+              "n": 1
+            },
+            {
+              "codigo": "IET",
+              "nombre": "Tableros y protecciones",
+              "partidas": [],
+              "n": 0
+            }
+          ],
+          "n": 2
         },
         {
           "codigo": "II",
@@ -414,7 +501,7 @@
           "n": 0
         }
       ],
-      "n": 0
+      "n": 4
     },
     {
       "codigo": "N",
@@ -602,8 +689,17 @@
             {
               "codigo": "RII",
               "nombre": "Interiores",
-              "partidas": [],
-              "n": 0
+              "partidas": [
+                {
+                  "codigo": "RII010",
+                  "titulo": "Pintura de caucho mate lavable en paramento interior, dos manos.",
+                  "unidad": "m²",
+                  "precio": 3.46,
+                  "horas": 0.255,
+                  "producto_cliente": true
+                }
+              ],
+              "n": 1
             },
             {
               "codigo": "RIE",
@@ -614,11 +710,35 @@
             {
               "codigo": "RIM",
               "nombre": "Sobre madera y metal",
-              "partidas": [],
-              "n": 0
+              "partidas": [
+                {
+                  "codigo": "RIM010",
+                  "titulo": "Esmalte sintético sobre carpintería metálica o de madera, dos manos.",
+                  "unidad": "m²",
+                  "precio": 5.23,
+                  "horas": 0.42,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 1
+            },
+            {
+              "codigo": "RIP",
+              "nombre": "Preparación de soportes",
+              "partidas": [
+                {
+                  "codigo": "RIP010",
+                  "titulo": "Preparación de paramento interior para pintura: resane, alisado y fondo.",
+                  "unidad": "m²",
+                  "precio": 2.82,
+                  "horas": 0.22,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 1
             }
           ],
-          "n": 0
+          "n": 3
         },
         {
           "codigo": "RR",
@@ -653,7 +773,7 @@
           "n": 0
         }
       ],
-      "n": 5
+      "n": 8
     },
     {
       "codigo": "S",

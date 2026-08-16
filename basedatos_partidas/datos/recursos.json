@@ -2,46 +2,312 @@
   "_comentario": "Cuadro de recursos. FUENTE ÚNICA DE VERDAD de los precios. MONEDA: USD. ÁMBITO: Venezuela. Cambiar aquí un precio recalcula todas las partidas que usan ese recurso.",
   "_moneda": "USD",
   "_revision": "2026-08 · mano de obra facilitada por el cliente · materiales PROVISIONALES",
-
   "_nota_materiales": "Los precios de material siguen siendo PROVISIONALES: no se han verificado en el mercado venezolano. Ojo, en Venezuela el material importado suele costar IGUAL O MÁS que en España mientras la mano de obra es 4-5 veces más barata, así que la proporción se invierte respecto a una base española. Hay que sustituirlos por precios de proveedor real.",
-
   "_nota_productos_cliente": "Los materiales de acabado que elige el cliente (cerámica, porcelanato, grifería, sanitarios, puertas, pintura de color...) NO van aquí ni forman parte del descompuesto. Viven en el catálogo de productos y se suman al presupuesto aparte. En su lugar, cada partida declara un bloque 'producto_cliente' con el consumo por unidad.",
-
   "mano_obra": {
-    "MO-OF1": {"unidad": "h", "descripcion": "Oficial de 1ª.", "precio": 5.50, "estado": "confirmado"},
-    "MO-OF1-SOL": {"unidad": "h", "descripcion": "Oficial de 1ª solador.", "precio": 5.50, "estado": "confirmado"},
-    "MO-OF1-ALI": {"unidad": "h", "descripcion": "Oficial de 1ª alicatador.", "precio": 5.50, "estado": "confirmado"},
-    "MO-OF1-ALB": {"unidad": "h", "descripcion": "Oficial de 1ª albañil.", "precio": 5.50, "estado": "confirmado"},
-    "MO-OF1-MON": {"unidad": "h", "descripcion": "Oficial de 1ª montador de prefabricados interiores.", "precio": 5.50, "estado": "confirmado"},
-    "MO-AYU-ESP": {"unidad": "h", "descripcion": "Ayudante especializado.", "precio": 4.00, "estado": "confirmado"},
-    "MO-AYU": {"unidad": "h", "descripcion": "Ayudante.", "precio": 3.50, "estado": "confirmado"}
+    "MO-OF1": {
+      "unidad": "h",
+      "descripcion": "Oficial de 1ª.",
+      "precio": 5.5,
+      "estado": "confirmado"
+    },
+    "MO-OF1-SOL": {
+      "unidad": "h",
+      "descripcion": "Oficial de 1ª solador.",
+      "precio": 5.5,
+      "estado": "confirmado"
+    },
+    "MO-OF1-ALI": {
+      "unidad": "h",
+      "descripcion": "Oficial de 1ª alicatador.",
+      "precio": 5.5,
+      "estado": "confirmado"
+    },
+    "MO-OF1-ALB": {
+      "unidad": "h",
+      "descripcion": "Oficial de 1ª albañil.",
+      "precio": 5.5,
+      "estado": "confirmado"
+    },
+    "MO-OF1-MON": {
+      "unidad": "h",
+      "descripcion": "Oficial de 1ª montador de prefabricados interiores.",
+      "precio": 5.5,
+      "estado": "confirmado"
+    },
+    "MO-AYU-ESP": {
+      "unidad": "h",
+      "descripcion": "Ayudante especializado.",
+      "precio": 4.0,
+      "estado": "confirmado"
+    },
+    "MO-AYU": {
+      "unidad": "h",
+      "descripcion": "Ayudante.",
+      "precio": 3.5,
+      "estado": "confirmado"
+    },
+    "MO-OF1-PIN": {
+      "unidad": "h",
+      "descripcion": "Oficial de 1ª pintor.",
+      "precio": 5.5,
+      "estado": "confirmado"
+    },
+    "MO-OF1-PLO": {
+      "unidad": "h",
+      "descripcion": "Oficial de 1ª plomero.",
+      "precio": 5.5,
+      "estado": "confirmado"
+    },
+    "MO-OF1-ELE": {
+      "unidad": "h",
+      "descripcion": "Oficial de 1ª electricista.",
+      "precio": 5.5,
+      "estado": "confirmado"
+    }
   },
-
   "materiales": {
-    "MT-ADH-C2TE": {"unidad": "kg", "descripcion": "Adhesivo cementoso mejorado tipo C2 TE, de deslizamiento reducido y tiempo abierto ampliado, para colocación de porcelanato en capa fina.", "precio": 0.48, "estado": "provisional"},
-    "MT-ADH-C1": {"unidad": "kg", "descripcion": "Adhesivo cementoso normal tipo C1, color gris, para colocación de cerámica en capa fina.", "precio": 0.32, "estado": "provisional"},
-    "MT-JUN-CG2": {"unidad": "kg", "descripcion": "Mortero de juntas cementoso tipo CG2, de absorción reducida y resistencia elevada a la abrasión, en el color elegido.", "precio": 1.35, "estado": "provisional"},
-    "MT-CRU-NIV": {"unidad": "ud", "descripcion": "Sistema de crucetas y cuñas niveladoras de un solo uso para colocación de baldosa.", "precio": 0.09, "estado": "provisional"},
-    "MT-AUT-NIV": {"unidad": "kg", "descripcion": "Mortero autonivelante de base cemento para regularización de soportes interiores.", "precio": 0.42, "estado": "provisional"},
-    "MT-IMP-PRIM": {"unidad": "l", "descripcion": "Imprimación tapaporos de resinas acrílicas en dispersión acuosa, para regular la absorción del soporte.", "precio": 3.80, "estado": "provisional"},
-    "MT-PER-BANDA": {"unidad": "m", "descripcion": "Banda perimetral de polietileno expandido de 10 mm para desolidarizar el recrecido de los paramentos.", "precio": 0.55, "estado": "provisional"},
-    "MT-SAC-ESC": {"unidad": "ud", "descripcion": "Saco de rafia de alta resistencia para retirada manual de escombro.", "precio": 0.65, "estado": "provisional"},
-    "MT-PYL-CANAL": {"unidad": "m", "descripcion": "Canal de acero galvanizado de 70 mm para arranque y remate de tabique autoportante.", "precio": 1.95, "estado": "provisional"},
-    "MT-PYL-MONT": {"unidad": "m", "descripcion": "Montante de acero galvanizado de 70 mm para estructura de tabique autoportante.", "precio": 2.35, "estado": "provisional"},
-    "MT-PYL-PLACA": {"unidad": "m2", "descripcion": "Placa de yeso laminado estándar de 15 mm de espesor, borde afinado.", "precio": 4.80, "estado": "provisional"},
-    "MT-PYL-LANA": {"unidad": "m2", "descripcion": "Panel de lana mineral de 60 mm para aislamiento térmico y acústico en cámara de tabique.", "precio": 3.60, "estado": "provisional"},
-    "MT-PYL-BANDA": {"unidad": "m", "descripcion": "Banda estanca autoadhesiva de polietileno para junta perimetral de tabique.", "precio": 0.42, "estado": "provisional"},
-    "MT-PYL-PASTA": {"unidad": "kg", "descripcion": "Pasta de juntas y cinta de papel microperforada para tratamiento de uniones.", "precio": 1.25, "estado": "provisional"},
-    "MT-TORN": {"unidad": "ud", "descripcion": "Tornillería y fijaciones mecánicas para montaje de estructura y placas.", "precio": 0.03, "estado": "provisional"}
+    "MT-ADH-C2TE": {
+      "unidad": "kg",
+      "descripcion": "Adhesivo cementoso mejorado tipo C2 TE, de deslizamiento reducido y tiempo abierto ampliado, para colocación de porcelanato en capa fina.",
+      "precio": 0.48,
+      "estado": "provisional"
+    },
+    "MT-ADH-C1": {
+      "unidad": "kg",
+      "descripcion": "Adhesivo cementoso normal tipo C1, color gris, para colocación de cerámica en capa fina.",
+      "precio": 0.32,
+      "estado": "provisional"
+    },
+    "MT-JUN-CG2": {
+      "unidad": "kg",
+      "descripcion": "Mortero de juntas cementoso tipo CG2, de absorción reducida y resistencia elevada a la abrasión, en el color elegido.",
+      "precio": 1.35,
+      "estado": "provisional"
+    },
+    "MT-CRU-NIV": {
+      "unidad": "ud",
+      "descripcion": "Sistema de crucetas y cuñas niveladoras de un solo uso para colocación de baldosa.",
+      "precio": 0.09,
+      "estado": "provisional"
+    },
+    "MT-AUT-NIV": {
+      "unidad": "kg",
+      "descripcion": "Mortero autonivelante de base cemento para regularización de soportes interiores.",
+      "precio": 0.42,
+      "estado": "provisional"
+    },
+    "MT-IMP-PRIM": {
+      "unidad": "l",
+      "descripcion": "Imprimación tapaporos de resinas acrílicas en dispersión acuosa, para regular la absorción del soporte.",
+      "precio": 3.8,
+      "estado": "provisional"
+    },
+    "MT-PER-BANDA": {
+      "unidad": "m",
+      "descripcion": "Banda perimetral de polietileno expandido de 10 mm para desolidarizar el recrecido de los paramentos.",
+      "precio": 0.55,
+      "estado": "provisional"
+    },
+    "MT-SAC-ESC": {
+      "unidad": "ud",
+      "descripcion": "Saco de rafia de alta resistencia para retirada manual de escombro.",
+      "precio": 0.65,
+      "estado": "provisional"
+    },
+    "MT-PYL-CANAL": {
+      "unidad": "m",
+      "descripcion": "Canal de acero galvanizado de 70 mm para arranque y remate de tabique autoportante.",
+      "precio": 1.95,
+      "estado": "provisional"
+    },
+    "MT-PYL-MONT": {
+      "unidad": "m",
+      "descripcion": "Montante de acero galvanizado de 70 mm para estructura de tabique autoportante.",
+      "precio": 2.35,
+      "estado": "provisional"
+    },
+    "MT-PYL-PLACA": {
+      "unidad": "m2",
+      "descripcion": "Placa de yeso laminado estándar de 15 mm de espesor, borde afinado.",
+      "precio": 4.8,
+      "estado": "provisional"
+    },
+    "MT-PYL-LANA": {
+      "unidad": "m2",
+      "descripcion": "Panel de lana mineral de 60 mm para aislamiento térmico y acústico en cámara de tabique.",
+      "precio": 3.6,
+      "estado": "provisional"
+    },
+    "MT-PYL-BANDA": {
+      "unidad": "m",
+      "descripcion": "Banda estanca autoadhesiva de polietileno para junta perimetral de tabique.",
+      "precio": 0.42,
+      "estado": "provisional"
+    },
+    "MT-PYL-PASTA": {
+      "unidad": "kg",
+      "descripcion": "Pasta de juntas y cinta de papel microperforada para tratamiento de uniones.",
+      "precio": 1.25,
+      "estado": "provisional"
+    },
+    "MT-TORN": {
+      "unidad": "ud",
+      "descripcion": "Tornillería y fijaciones mecánicas para montaje de estructura y placas.",
+      "precio": 0.03,
+      "estado": "provisional"
+    },
+    "MT-PIN-FONDO": {
+      "unidad": "l",
+      "descripcion": "Fondo fijador o sellador acrílico al agua, para consolidar y regular la absorción de paramentos interiores.",
+      "precio": 3.2,
+      "estado": "provisional"
+    },
+    "MT-PIN-CAUCHO": {
+      "unidad": "l",
+      "descripcion": "Pintura de caucho acrílico mate lavable para interiores, base blanca tintable.",
+      "precio": 4.1,
+      "estado": "provisional"
+    },
+    "MT-PIN-ESMALTE": {
+      "unidad": "l",
+      "descripcion": "Esmalte sintético brillante para carpintería metálica y de madera.",
+      "precio": 6.8,
+      "estado": "provisional"
+    },
+    "MT-PIN-MASILLA": {
+      "unidad": "kg",
+      "descripcion": "Masilla de reparación en pasta para alisado de paramentos interiores.",
+      "precio": 1.1,
+      "estado": "provisional"
+    },
+    "MT-PIN-LIJA": {
+      "unidad": "ud",
+      "descripcion": "Lija, cinta de enmascarar y plástico de protección. Consumibles de preparación y protección.",
+      "precio": 0.85,
+      "estado": "provisional"
+    },
+    "MT-PLO-PPR20": {
+      "unidad": "m",
+      "descripcion": "Tubería de polipropileno PPR de 20 mm para agua fría y caliente, con termofusión.",
+      "precio": 1.45,
+      "estado": "provisional"
+    },
+    "MT-PLO-ACC20": {
+      "unidad": "ud",
+      "descripcion": "Accesorios de PPR de 20 mm: codos, tees, uniones y adaptadores roscados.",
+      "precio": 0.9,
+      "estado": "provisional"
+    },
+    "MT-PLO-PVC4": {
+      "unidad": "m",
+      "descripcion": "Tubería de PVC sanitario de 4 pulgadas para desagüe, con junta cementada.",
+      "precio": 4.6,
+      "estado": "provisional"
+    },
+    "MT-PLO-ACC4": {
+      "unidad": "ud",
+      "descripcion": "Accesorios de PVC sanitario de 4 pulgadas: codos, yees, sifones y pegamento.",
+      "precio": 3.4,
+      "estado": "provisional"
+    },
+    "MT-PLO-SOP": {
+      "unidad": "ud",
+      "descripcion": "Abrazaderas, soportes y tacos de fijación para tubería.",
+      "precio": 0.45,
+      "estado": "provisional"
+    },
+    "MT-ELE-TUB20": {
+      "unidad": "m",
+      "descripcion": "Tubería conduit corrugada de PVC de 20 mm para canalización eléctrica empotrada.",
+      "precio": 0.75,
+      "estado": "provisional"
+    },
+    "MT-ELE-CABLE": {
+      "unidad": "m",
+      "descripcion": "Conductor de cobre THW calibre 12 AWG, aislamiento 600 V.",
+      "precio": 0.95,
+      "estado": "provisional"
+    },
+    "MT-ELE-CAJA": {
+      "unidad": "ud",
+      "descripcion": "Caja de paso o de mecanismo, metálica o de PVC, para empotrar.",
+      "precio": 1.3,
+      "estado": "provisional"
+    },
+    "MT-ELE-MECA": {
+      "unidad": "ud",
+      "descripcion": "Mecanismo de interruptor o tomacorriente con placa, gama estándar.",
+      "precio": 3.6,
+      "estado": "provisional"
+    },
+    "MT-YESO-REP": {
+      "unidad": "kg",
+      "descripcion": "Yeso o mortero de reparación para el tapado de rozas.",
+      "precio": 0.35,
+      "estado": "provisional"
+    }
   },
-
   "maquinaria": {
-    "MQ-CORT-AGUA": {"unidad": "h", "descripcion": "Cortadora eléctrica de banco con disco de diamante y refrigeración por agua, incluida amortización y consumo.", "precio": 3.20, "estado": "provisional"},
-    "MQ-BATID": {"unidad": "h", "descripcion": "Batidora mezcladora eléctrica de doble varilla para amasado de morteros y adhesivos.", "precio": 1.60, "estado": "provisional"},
-    "MQ-MART-ELEC": {"unidad": "h", "descripcion": "Martillo eléctrico de demolición de 5 kg, incluida amortización y consumo.", "precio": 3.90, "estado": "provisional"},
-    "MQ-ASPIR": {"unidad": "h", "descripcion": "Aspirador industrial con filtro de polvo fino para limpieza de soporte y control de polvo.", "precio": 2.10, "estado": "provisional"},
-    "MQ-VENT-SUC": {"unidad": "h", "descripcion": "Juego de ventosas de elevación para manipulación de piezas de gran formato.", "precio": 2.80, "estado": "provisional"},
-    "MQ-ATORN": {"unidad": "h", "descripcion": "Atornilladora eléctrica para placa de yeso laminado, incluida amortización y consumo.", "precio": 1.40, "estado": "provisional"},
-    "MQ-LIJAD": {"unidad": "h", "descripcion": "Lijadora de pared con aspiración para acabado de juntas.", "precio": 2.10, "estado": "provisional"}
+    "MQ-CORT-AGUA": {
+      "unidad": "h",
+      "descripcion": "Cortadora eléctrica de banco con disco de diamante y refrigeración por agua, incluida amortización y consumo.",
+      "precio": 3.2,
+      "estado": "provisional"
+    },
+    "MQ-BATID": {
+      "unidad": "h",
+      "descripcion": "Batidora mezcladora eléctrica de doble varilla para amasado de morteros y adhesivos.",
+      "precio": 1.6,
+      "estado": "provisional"
+    },
+    "MQ-MART-ELEC": {
+      "unidad": "h",
+      "descripcion": "Martillo eléctrico de demolición de 5 kg, incluida amortización y consumo.",
+      "precio": 3.9,
+      "estado": "provisional"
+    },
+    "MQ-ASPIR": {
+      "unidad": "h",
+      "descripcion": "Aspirador industrial con filtro de polvo fino para limpieza de soporte y control de polvo.",
+      "precio": 2.1,
+      "estado": "provisional"
+    },
+    "MQ-VENT-SUC": {
+      "unidad": "h",
+      "descripcion": "Juego de ventosas de elevación para manipulación de piezas de gran formato.",
+      "precio": 2.8,
+      "estado": "provisional"
+    },
+    "MQ-ATORN": {
+      "unidad": "h",
+      "descripcion": "Atornilladora eléctrica para placa de yeso laminado, incluida amortización y consumo.",
+      "precio": 1.4,
+      "estado": "provisional"
+    },
+    "MQ-LIJAD": {
+      "unidad": "h",
+      "descripcion": "Lijadora de pared con aspiración para acabado de juntas.",
+      "precio": 2.1,
+      "estado": "provisional"
+    },
+    "MQ-ROZAD": {
+      "unidad": "h",
+      "descripcion": "Rozadora eléctrica de doble disco de diamante con captación de polvo.",
+      "precio": 4.2,
+      "estado": "provisional"
+    },
+    "MQ-TERMOF": {
+      "unidad": "h",
+      "descripcion": "Termofusora para tubería de polipropileno PPR, incluida amortización.",
+      "precio": 1.8,
+      "estado": "provisional"
+    },
+    "MQ-RODILLO": {
+      "unidad": "h",
+      "descripcion": "Equipo de aplicación de pintura: rodillos, brochas, cubetas y andamio bajo.",
+      "precio": 0.9,
+      "estado": "provisional"
+    }
   }
 }

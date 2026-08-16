@@ -202,3 +202,32 @@ con tres cerámicas distintas sin recalcular nada.
 
 La nota se arrastra al campo `notas_tecnicas` del catálogo, dejando constancia explícita
 de qué NO está incluido.
+
+---
+
+# Actualización de precios en bloque (precios.py)
+
+Los precios viven **solo** en `datos/recursos.json`. Las partidas guardan
+rendimientos y referencian recursos por código, así que **actualizar precios
+nunca obliga a tocar una partida**.
+
+```bash
+python3 basedatos_partidas/precios.py exportar
+# -> salida/precios_para_revisar.csv, ordenado POR IMPACTO
+#    (los recursos que más pesan en el coste del catálogo, primero)
+
+# rellenar la columna «precio_nuevo» y:
+python3 basedatos_partidas/precios.py aplicar
+# -> actualiza recursos.json, marca los recursos como «confirmado»
+#    y deja copia de seguridad con fecha
+
+python3 basedatos_partidas/descompuestos.py && python3 basedatos_partidas/construir.py
+```
+
+El CSV incluye `partidas_que_lo_usan` y `peso_en_catalogo_usd` para saber
+dónde merece la pena invertir el tiempo de buscar precios.
+
+**Conclusión práctica**: no hay que tener los precios antes de escribir
+partidas. Lo único que sí conviene fijar desde el principio es la **unidad de
+compra** de cada recurso (kg o saco, m o rollo), porque cambiar la unidad sí
+obliga a revisar los rendimientos.

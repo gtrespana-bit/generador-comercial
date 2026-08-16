@@ -1,0 +1,18 @@
+{
+  "codigo": "IFT010",
+  "capitulo": "I", "subcapitulo": "IF", "grupo": "IFT",
+  "unidad": "m",
+  "titulo": "Tubería de agua de PPR de 20 mm, empotrada, incluso roza y resane.",
+  "descripcion": "Instalación de tubería de polipropileno PPR de 20 mm para distribución de agua fría o caliente, empotrada en paramento. Incluye replanteo del trazado, apertura de roza con rozadora eléctrica con captación de polvo, colocación de la tubería con uniones por termofusión, accesorios y piezas especiales, fijación con abrazaderas, prueba de estanqueidad a presión y tapado de roza con mortero de reparación, dejando el paramento listo para su revestimiento. No incluye el acabado final del paramento. Medido en longitud realmente instalada.",
+  "margen": 0.30, "complementarios_pct": 1,
+  "recursos": [
+    {"ref": "MT-PLO-PPR20", "rendimiento": 1.03},
+    {"ref": "MT-PLO-ACC20", "rendimiento": 0.55},
+    {"ref": "MT-PLO-SOP",   "rendimiento": 0.70},
+    {"ref": "MT-YESO-REP",  "rendimiento": 1.80},
+    {"ref": "MQ-ROZAD",     "rendimiento": 0.110},
+    {"ref": "MQ-TERMOF",    "rendimiento": 0.080},
+    {"ref": "MO-OF1-PLO",   "rendimiento": 0.260},
+    {"ref": "MO-AYU",       "rendimiento": 0.200}
+  ]
+}
