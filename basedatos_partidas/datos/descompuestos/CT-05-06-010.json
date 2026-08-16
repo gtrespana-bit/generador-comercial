@@ -1,0 +1,50 @@
+{
+  "codigo": "CT-05-06-010",
+  "ambito": "reforma",
+  "capitulo": "05",
+  "subcapitulo": "06",
+  "unidad": "m²",
+  "titulo": "Reparación superficial de concreto con mortero estructural.",
+  "descripcion": "Reparación de concreto deteriorado por coqueras, desprendimientos o carbonatación, mediante saneado del área y reposición con mortero tixotrópico de reparación estructural, de 3 cm de espesor medio. Incluye la delimitación del área con corte perimetral perpendicular para evitar bordes en bisel que se desprenden, el picado del concreto suelto hasta alcanzar concreto sano, la limpieza y saturación del soporte, la aplicación del puente de adherencia, la reposición del mortero por capas respetando el espesor máximo por capa y el curado del material aplicado. Medido en superficie realmente reparada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MORT-REP-EST",
+      "rendimiento": 62.0
+    },
+    {
+      "ref": "MT-PUENTE-ADH",
+      "rendimiento": 0.32
+    },
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MT-CURADOR",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MQ-MART-ELEC",
+      "rendimiento": 0.28
+    },
+    {
+      "ref": "MQ-AMOLA",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MQ-ASPIR",
+      "rendimiento": 0.13
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.85
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.65
+    }
+  ],
+  "codigo_covenin": ""
+}

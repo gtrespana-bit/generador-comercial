@@ -76,6 +76,18 @@
       "descripcion": "Oficial de 1ª carpintero de obra (encofrador).",
       "precio": 5.5,
       "estado": "confirmado"
+    },
+    "MO-OF1-SOLD": {
+      "unidad": "h",
+      "descripcion": "Oficial de 1ª soldador.",
+      "precio": 5.5,
+      "estado": "confirmado"
+    },
+    "MO-OF1-CARPM": {
+      "unidad": "h",
+      "descripcion": "Oficial de 1ª carpintero de madera estructural.",
+      "precio": 5.5,
+      "estado": "confirmado"
     }
   },
   "materiales": {
@@ -594,6 +606,120 @@
       "descripcion": "Curador químico de membrana para concreto, que retiene el agua de fraguado.",
       "precio": 3.4,
       "estado": "provisional"
+    },
+    "MT-PERFIL-ACERO": {
+      "unidad": "kg",
+      "descripcion": "Perfil estructural de acero laminado, suministrado cortado a medida.",
+      "precio": 1.85,
+      "estado": "provisional"
+    },
+    "MT-PLANCHA-ACERO": {
+      "unidad": "kg",
+      "descripcion": "Plancha de acero para placas base, cartelas y conexiones.",
+      "precio": 2.1,
+      "estado": "provisional"
+    },
+    "MT-PERNO-ANCLA": {
+      "unidad": "ud",
+      "descripcion": "Perno de anclaje de acero con tuerca y arandela, para fijación de placa base.",
+      "precio": 3.4,
+      "estado": "provisional"
+    },
+    "MT-TORNILLO-EST": {
+      "unidad": "ud",
+      "descripcion": "Tornillería estructural de alta resistencia con tuerca y arandelas.",
+      "precio": 1.2,
+      "estado": "provisional"
+    },
+    "MT-ELECTRODO": {
+      "unidad": "kg",
+      "descripcion": "Electrodo revestido para soldadura estructural por arco eléctrico.",
+      "precio": 4.8,
+      "estado": "provisional"
+    },
+    "MT-PINT-ANTICORR": {
+      "unidad": "l",
+      "descripcion": "Imprimación anticorrosiva de fondo para estructura metálica.",
+      "precio": 7.2,
+      "estado": "provisional"
+    },
+    "MT-MADERA-EST": {
+      "unidad": "m3",
+      "descripcion": "Madera estructural aserrada y cepillada, de escuadría según proyecto.",
+      "precio": 320.0,
+      "estado": "provisional"
+    },
+    "MT-HERRAJE-MAD": {
+      "unidad": "ud",
+      "descripcion": "Herraje o conector metálico galvanizado para uniones de estructura de madera.",
+      "precio": 5.5,
+      "estado": "provisional"
+    },
+    "MT-PRESERV-MAD": {
+      "unidad": "l",
+      "descripcion": "Preservante fungicida e insecticida para protección de madera estructural.",
+      "precio": 6.4,
+      "estado": "provisional"
+    },
+    "MT-VIGUETA": {
+      "unidad": "m",
+      "descripcion": "Vigueta prefabricada pretensada de concreto para losa de entrepiso.",
+      "precio": 8.5,
+      "estado": "provisional"
+    },
+    "MT-BLOQUE-ALIV": {
+      "unidad": "ud",
+      "descripcion": "Bloque de arcilla de aliviano para losa nervada.",
+      "precio": 0.95,
+      "estado": "provisional"
+    },
+    "MT-ANIME-ALIV": {
+      "unidad": "ud",
+      "descripcion": "Bloque de poliestireno expandido de aliviano para losa nervada, de menor peso propio.",
+      "precio": 1.6,
+      "estado": "provisional"
+    },
+    "MT-CONC-300": {
+      "unidad": "m3",
+      "descripcion": "Concreto premezclado de resistencia 300 kg/cm2, puesto en obra.",
+      "precio": 138.0,
+      "estado": "provisional"
+    },
+    "MT-EPOXI-ANCLA": {
+      "unidad": "l",
+      "descripcion": "Resina epóxica bicomponente para anclaje químico de barras y para inyección de fisuras.",
+      "precio": 22.0,
+      "estado": "provisional"
+    },
+    "MT-FIBRA-CARB": {
+      "unidad": "m2",
+      "descripcion": "Tejido de fibra de carbono unidireccional con su resina de saturación, para refuerzo estructural.",
+      "precio": 48.0,
+      "estado": "provisional"
+    },
+    "MT-MORT-REP-EST": {
+      "unidad": "kg",
+      "descripcion": "Mortero tixotrópico de reparación estructural, de retracción compensada y con inhibidor de corrosión.",
+      "precio": 1.9,
+      "estado": "provisional"
+    },
+    "MT-PUENTE-ADH": {
+      "unidad": "l",
+      "descripcion": "Puente de adherencia epóxico entre concreto endurecido y concreto o mortero nuevo.",
+      "precio": 14.0,
+      "estado": "provisional"
+    },
+    "MT-GROUT": {
+      "unidad": "kg",
+      "descripcion": "Grout fluido de alta resistencia y retracción compensada, para nivelación de apoyos y relleno de placas base.",
+      "precio": 1.15,
+      "estado": "provisional"
+    },
+    "MT-PASIVANTE": {
+      "unidad": "l",
+      "descripcion": "Recubrimiento pasivante de base cementosa con inhibidor, para protección de acero de refuerzo corroído.",
+      "precio": 9.8,
+      "estado": "provisional"
     }
   },
   "maquinaria": {
@@ -787,6 +913,30 @@
       "unidad": "h",
       "descripcion": "Alisadora mecánica de concreto tipo helicóptero, para acabado de losas.",
       "precio": 5.2,
+      "estado": "provisional"
+    },
+    "MQ-SOLDADORA": {
+      "unidad": "h",
+      "descripcion": "Equipo de soldadura eléctrica por arco con sus accesorios, incluida amortización y consumo.",
+      "precio": 3.6,
+      "estado": "provisional"
+    },
+    "MQ-GRUA": {
+      "unidad": "h",
+      "descripcion": "Camión grúa o grúa móvil con operador, para izado y montaje de elementos estructurales.",
+      "precio": 48.0,
+      "estado": "provisional"
+    },
+    "MQ-INYECTORA": {
+      "unidad": "h",
+      "descripcion": "Equipo de inyección de resinas a baja presión, con sus boquillas y mangueras.",
+      "precio": 4.2,
+      "estado": "provisional"
+    },
+    "MQ-ESMERIL": {
+      "unidad": "h",
+      "descripcion": "Esmeriladora y cepillo de púas para limpieza y preparación de superficies metálicas.",
+      "precio": 2.3,
       "estado": "provisional"
     }
   }

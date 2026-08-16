@@ -1,0 +1,42 @@
+{
+  "codigo": "CT-05-03-020",
+  "ambito": "reforma",
+  "capitulo": "05",
+  "subcapitulo": "03",
+  "unidad": "m",
+  "titulo": "Correas y viguetas de madera para cubierta o entrepiso.",
+  "descripcion": "Suministro y montaje de correas o viguetas de madera para el soporte de cubierta o entrepiso, fijadas a la estructura principal con herrajes o clavado. Incluye la recepción y selección de las piezas, el replanteo de la separación entre ejes, el corte a medida, el presentado y nivelación, la fijación a los apoyos, la colocación de los arriostramientos o crucetas que impiden el vuelco lateral y la comprobación del plano de apoyo. Medido en longitud realmente colocada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MADERA-EST",
+      "rendimiento": 0.014
+    },
+    {
+      "ref": "MT-CLAVOS",
+      "rendimiento": 0.09
+    },
+    {
+      "ref": "MT-HERRAJE-MAD",
+      "rendimiento": 0.55
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.055
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 0.19
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.19
+    }
+  ],
+  "codigo_covenin": ""
+}

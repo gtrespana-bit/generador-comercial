@@ -1607,41 +1607,327 @@
         {
           "codigo": "01",
           "nombre": "Concreto armado vaciado en sitio",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-05-01-010",
+              "titulo": "Acero de refuerzo en columnas.",
+              "unidad": "kg",
+              "precio": 2.48,
+              "horas": 0.076,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-05-01-020",
+              "titulo": "Encofrado y desencofrado de columna.",
+              "unidad": "m²",
+              "precio": 17.25,
+              "horas": 1.3,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-05-01-030",
+              "titulo": "Concreto para columna.",
+              "unidad": "m³",
+              "precio": 193.28,
+              "horas": 2.6,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-05-01-040",
+              "titulo": "Acero de refuerzo en vigas.",
+              "unidad": "kg",
+              "precio": 2.43,
+              "horas": 0.07,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-05-01-050",
+              "titulo": "Encofrado y desencofrado de viga.",
+              "unidad": "m²",
+              "precio": 20.02,
+              "horas": 1.44,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-05-01-060",
+              "titulo": "Concreto para viga.",
+              "unidad": "m³",
+              "precio": 189.76,
+              "horas": 2.4,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-05-01-070",
+              "titulo": "Acero de refuerzo en pantalla o muro estructural.",
+              "unidad": "kg",
+              "precio": 2.34,
+              "horas": 0.06,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-05-01-080",
+              "titulo": "Encofrado a dos caras de pantalla estructural.",
+              "unidad": "m²",
+              "precio": 17.21,
+              "horas": 1.2,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-05-01-090",
+              "titulo": "Concreto para pantalla estructural.",
+              "unidad": "m³",
+              "precio": 190.5,
+              "horas": 2.2,
+              "producto_cliente": false
+            }
+          ],
+          "n": 9
         },
         {
           "codigo": "02",
           "nombre": "Estructura metálica",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-05-02-010",
+              "titulo": "Suministro y montaje de estructura metálica.",
+              "unidad": "kg",
+              "precio": 3.89,
+              "horas": 0.096,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-05-02-020",
+              "titulo": "Placa base con pernos de anclaje para columna metálica.",
+              "unidad": "ud",
+              "precio": 107.48,
+              "horas": 3.2,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-05-02-030",
+              "titulo": "Soldadura de conexiones estructurales en obra.",
+              "unidad": "m",
+              "precio": 8.35,
+              "horas": 0.6,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-05-02-040",
+              "titulo": "Imprimación anticorrosiva de estructura metálica.",
+              "unidad": "m²",
+              "precio": 6.2,
+              "horas": 0.38,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-05-02-050",
+              "titulo": "Correas metálicas para estructura de techo.",
+              "unidad": "kg",
+              "precio": 3.43,
+              "horas": 0.086,
+              "producto_cliente": false
+            }
+          ],
+          "n": 5
         },
         {
           "codigo": "03",
           "nombre": "Estructura de madera",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-05-03-010",
+              "titulo": "Suministro y montaje de estructura de madera.",
+              "unidad": "m³",
+              "precio": 563.24,
+              "horas": 16.0,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-05-03-020",
+              "titulo": "Correas y viguetas de madera para cubierta o entrepiso.",
+              "unidad": "m",
+              "precio": 12.68,
+              "horas": 0.38,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-05-03-030",
+              "titulo": "Tratamiento preservante de madera estructural.",
+              "unidad": "m²",
+              "precio": 3.81,
+              "horas": 0.22,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-05-03-040",
+              "titulo": "Herraje o conector metálico para unión de estructura de madera.",
+              "unidad": "ud",
+              "precio": 9.2,
+              "horas": 0.26,
+              "producto_cliente": false
+            }
+          ],
+          "n": 4
         },
         {
           "codigo": "04",
           "nombre": "Losas y entrepisos",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-05-04-010",
+              "titulo": "Encofrado de losa maciza sobre puntales.",
+              "unidad": "m²",
+              "precio": 22.28,
+              "horas": 1.12,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-05-04-020",
+              "titulo": "Acero de refuerzo en losa maciza.",
+              "unidad": "kg",
+              "precio": 2.27,
+              "horas": 0.052,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-05-04-030",
+              "titulo": "Concreto para losa maciza.",
+              "unidad": "m³",
+              "precio": 185.81,
+              "horas": 1.72,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-05-04-040",
+              "titulo": "Losa nervada con bloques de arcilla de aliviano.",
+              "unidad": "m²",
+              "precio": 70.77,
+              "horas": 1.88,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-05-04-050",
+              "titulo": "Losa nervada con bloques de poliestireno de aliviano.",
+              "unidad": "m²",
+              "precio": 77.36,
+              "horas": 1.77,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-05-04-060",
+              "titulo": "Losa con viguetas prefabricadas pretensadas.",
+              "unidad": "m²",
+              "precio": 61.39,
+              "horas": 1.22,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-05-04-070",
+              "titulo": "Apuntalamiento de losa durante el vaciado y el fraguado.",
+              "unidad": "m²",
+              "precio": 11.93,
+              "horas": 0.44,
+              "producto_cliente": false
+            }
+          ],
+          "n": 7
         },
         {
           "codigo": "05",
           "nombre": "Escaleras estructurales",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-05-05-010",
+              "titulo": "Encofrado de escalera de concreto armado.",
+              "unidad": "m²",
+              "precio": 29.15,
+              "horas": 2.3,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-05-05-020",
+              "titulo": "Acero de refuerzo en escalera.",
+              "unidad": "kg",
+              "precio": 2.46,
+              "horas": 0.072,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-05-05-030",
+              "titulo": "Concreto para escalera de concreto armado.",
+              "unidad": "m³",
+              "precio": 199.24,
+              "horas": 3.8,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-05-05-040",
+              "titulo": "Escalera metálica estructural.",
+              "unidad": "kg",
+              "precio": 4.71,
+              "horas": 0.13,
+              "producto_cliente": false
+            }
+          ],
+          "n": 4
         },
         {
           "codigo": "06",
           "nombre": "Refuerzos y reparaciones estructurales",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-05-06-010",
+              "titulo": "Reparación superficial de concreto con mortero estructural.",
+              "unidad": "m²",
+              "precio": 173.12,
+              "horas": 1.5,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-05-06-020",
+              "titulo": "Tratamiento pasivante de acero de refuerzo corroído.",
+              "unidad": "m²",
+              "precio": 12.49,
+              "horas": 0.94,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-05-06-030",
+              "titulo": "Inyección de fisuras en concreto con resina epóxica.",
+              "unidad": "m",
+              "precio": 15.65,
+              "horas": 0.72,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-05-06-040",
+              "titulo": "Refuerzo estructural con tejido de fibra de carbono.",
+              "unidad": "m²",
+              "precio": 92.44,
+              "horas": 1.8,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-05-06-050",
+              "titulo": "Encamisado de columna de concreto armado.",
+              "unidad": "m",
+              "precio": 180.34,
+              "horas": 8.4,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-05-06-060",
+              "titulo": "Anclaje químico de barra de acero en concreto.",
+              "unidad": "ud",
+              "precio": 6.1,
+              "horas": 0.35,
+              "producto_cliente": false
+            }
+          ],
+          "n": 6
         }
       ],
-      "n": 0
+      "n": 35
     },
     {
       "codigo": "06",

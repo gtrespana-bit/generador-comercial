@@ -1,0 +1,38 @@
+{
+  "codigo": "CT-05-02-030",
+  "ambito": "reforma",
+  "capitulo": "05",
+  "subcapitulo": "02",
+  "unidad": "m",
+  "titulo": "Soldadura de conexiones estructurales en obra.",
+  "descripcion": "Ejecución de cordón de soldadura de conexión estructural en obra, con preparación de bordes, precalentamiento cuando el espesor lo requiera y limpieza entre pasadas. Incluye la limpieza y preparación de las superficies a unir con esmerilado hasta metal sano, el punteado y verificación de la posición antes del cordón definitivo, la ejecución de la soldadura en las pasadas necesarias según el espesor, la eliminación de escoria entre pasadas, la inspección visual del cordón terminado y el retoque de la protección anticorrosiva en la zona afectada por el calor. Medido en longitud de cordón realmente ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ELECTRODO",
+      "rendimiento": 0.32
+    },
+    {
+      "ref": "MT-PINT-ANTICORR",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MQ-SOLDADORA",
+      "rendimiento": 0.32
+    },
+    {
+      "ref": "MQ-ESMERIL",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-SOLD",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": ""
+}

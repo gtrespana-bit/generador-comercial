@@ -1,0 +1,46 @@
+{
+  "codigo": "CT-05-06-040",
+  "ambito": "reforma",
+  "capitulo": "05",
+  "subcapitulo": "06",
+  "unidad": "m²",
+  "titulo": "Refuerzo estructural con tejido de fibra de carbono.",
+  "descripcion": "Refuerzo de elemento estructural de concreto mediante encolado de tejido de fibra de carbono con resina epóxica de saturación. Aporta capacidad a flexión o a cortante sin apenas añadir peso ni modificar la geometría, lo que lo hace idóneo en rehabilitación donde no se puede aumentar la sección. Incluye la regularización y lijado del soporte hasta obtener una superficie plana y sin lechada, el redondeo de las aristas por las que ha de doblar el tejido, la imprimación, la aplicación de la resina de saturación, la colocación del tejido en la dirección de las tracciones eliminando burbujas con rodillo, la segunda capa de resina y el curado. Medido en superficie de tejido realmente colocada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-FIBRA-CARB",
+      "rendimiento": 1.12
+    },
+    {
+      "ref": "MT-PUENTE-ADH",
+      "rendimiento": 0.45
+    },
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.22
+    },
+    {
+      "ref": "MQ-LIJAD",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MQ-ASPIR",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 1.1
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.7
+    }
+  ],
+  "codigo_covenin": ""
+}
