@@ -8,17 +8,17 @@ del proyecto.
 
 | | |
 |---|---:|
-| Partidas | **120** |
-| Hojas de descompuesto `.xlsx` | 120 |
-| Partidas con producto de elección del cliente | 8 |
-| Recursos en el cuadro de precios | **78** |
+| Partidas | **454** |
+| Hojas de descompuesto `.xlsx` | 454 |
+| Partidas con producto de elección del cliente | 69 |
+| Recursos en el cuadro de precios | **286** |
 | — mano de obra / materiales / maquinaria | 10 / 42 / 12 |
 | — precios confirmados / provisionales | 10 / 54 |
-| Clasificación | 18 capítulos · 74 subcapítulos · 41 grupos |
-| — capítulos con partidas / vacíos | 6 / 12 |
+| Clasificación | 20 capítulos · 115 subcapítulos |
+| — capítulos con partidas / vacíos | **20 / 0** |
 | Moneda | USD (Venezuela) |
 
-**Validación**: las 120 partidas pasan `es_formato_cype_xlsx` y `analizar_cype_xlsx`
+**Validación**: las 454 partidas pasan `es_formato_cype_xlsx` y `analizar_cype_xlsx`
 del proyecto. El catálogo masivo se detecta con **8 campos, 0 errores, 0 advertencias**.
 
 ---
@@ -52,35 +52,33 @@ del proyecto. El catálogo masivo se detecta con **8 campos, 0 errores, 0 advert
 
 ---
 
-## Capítulo D · Demoliciones — **CERRADO**
+## Los 20 capítulos — CATÁLOGO CERRADO
 
-98 partidas en 13 subcapítulos y 42 grupos.
+| Cap | Nombre | Sub. | Partidas |
+|---|---|---:|---:|
+| 01 | Trabajos preliminares y provisionales | 5 | 24 |
+| 02 | Demoliciones y desmontajes | 17 | 98 |
+| 03 | Movimiento de tierras | 4 | 22 |
+| 04 | Fundaciones | 5 | 25 |
+| 05 | Estructuras | 6 | 35 |
+| 06 | Paredes y tabiquería | 5 | 25 |
+| 07 | Frisos y revestimientos de pared | 5 | 25 |
+| 08 | Pisos y pavimentos | 8 | 39 |
+| 09 | Cielos rasos | 5 | 11 |
+| 10 | Impermeabilizaciones y aislamientos | 4 | 12 |
+| 11 | Techos y cubiertas | 5 | 14 |
+| 12 | Instalaciones sanitarias | 7 | 16 |
+| 13 | Instalaciones eléctricas | 6 | 17 |
+| 14 | Instalaciones mecánicas y especiales | 4 | 13 |
+| 15 | Herrería, carpintería y vidrios | 7 | 24 |
+| 16 | Pintura y acabados | 5 | 11 |
+| 17 | Equipamiento y mobiliario fijo | 5 | 13 |
+| 18 | Obras exteriores y urbanismo | 5 | 15 |
+| 19 | Gestión de residuos y limpieza | 3 | 6 |
+| 20 | Seguridad y salud en obra | 4 | 9 |
+| | **TOTAL** | **115** | **454** |
 
-| Sub | Nombre | Part. | Grupos |
-|---|---|---:|---|
-| DD | Cimentaciones | 3 | DDS zapatas · DDM vigas y muros · DDL losas |
-| DE | Estructuras | 6 | DEC concreto (4) · DEA metálica · DEM madera |
-| DF | Fachadas | 4 | DFF muros · DFL ligeros · DFD defensas (2) |
-| DP | Particiones | 5 | DPT tabiquería (5) |
-| DL | Carpintería y vidrios | 6 | DLP puertas (2) · DLV ventanas · DLC rejas · DLA closets · DLG vidrios |
-| DH | Remates | 3 | DHR alféizares, dinteles y pasamanos |
-| DI | Instalaciones | 8 | DIS aparatos (3) · DIF agua · DIE eléctrica (2) · DIC clima · DII iluminación |
-| DN | Aislamientos e impermeabilizaciones | 3 | DNI impermeabilizaciones (2) · DNA aislamientos |
-| DQ | Cubiertas | 6 | DQI inclinadas (3) · DQP planas · DQC canales (2) |
-| DR | Revestimientos y trasdosados | 42 | DRS (16) · DRC (5) · DRF (5) · DRT (5) · DRR (3) · DRD (3) · DRE (3) · DRQ (2) |
-| DS | Equipamiento | 4 | DSC cocinas (2) · DSB baños · DSM mobiliario fijo |
-| DU | Urbanización de la parcela | 4 | DUC cerramientos (2) · DUJ jardinería · DUI instalaciones |
-| DM | Firmes y pavimentos exteriores | 4 | DMP pavimentos (3) · DMB brocales |
-
-## Otros capítulos en curso
-
-| Cap | Partidas | Estado |
-|---|---:|---|
-| F · Fachadas y particiones | 2 | FFB bloque · FBY yeso laminado |
-| I · Instalaciones | 7 | IFT · IFA · IFL · IST · ISA · IEC · IEM |
-| R · Revestimientos | 10 | RSA · RSG (2) · RSD · RAG · RPF · RII · RIM · RIP · RTY |
-| S · Equipamiento | 2 | SBA inodoro y lavamanos |
-| G · Gestión de residuos | 1 | GTR retiro de escombro |
+Cobertura: **115/115 subcapítulos con contenido**.
 
 ## Cadena de generación
 
