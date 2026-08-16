@@ -2,15 +2,18 @@
 
 Fecha de corte de fondo: 14/08/2026 (America/Caracas).
 
-> **Actualización de rama 16/08/2026 (noche):** el bloque de cierre operativo
-> (E3-016 a E3-024) está completo en la rama con suite **453 passed, 6 skipped**,
-> y el titular **aplicó y verificó en Supabase** las dos migraciones del bloque:
-> `c2f6e8a1d934` (4 políticas de `enlaces_propuesta` comprobadas) y
-> `a3d7e9c1b5f2` (`baja_organizacion` SECURITY DEFINER, propietario
-> `postgres`). Cadena: `b7c4a9e2d31f → c2f6e8a1d934 → a3d7e9c1b5f2`. El código
-> desplegado aún exige `b7c4a9e2d31f`, así que `/readyz` del entorno migrado
-> responderá **503 (esperado)** hasta desplegar la rama. Ver
-> `docs/PUNTO_DE_CONTINUACION.md` §0ter.
+> **Actualización de rama 16/08/2026 (cierre de bloque con PR del titular):**
+> el bloque de cierre operativo (E3-016 a E3-024) y el primer bloque de la
+> Etapa 4 (autorización centralizada y logs estructurados) están completos en
+> la rama con suite **465 passed, 6 skipped**. El titular **aplicó y verificó
+> en Supabase** las dos migraciones del bloque: `c2f6e8a1d934` (4 políticas de
+> `enlaces_propuesta` comprobadas) y `a3d7e9c1b5f2` (`baja_organizacion`
+> SECURITY DEFINER, propietario `postgres`). Cadena:
+> `b7c4a9e2d31f → c2f6e8a1d934 → a3d7e9c1b5f2`. El titular creó además el
+> **PR del bloque** desde `arena/01a00b99-generador-comercial` (ver §0quater
+> del punto de continuación). El código desplegado aún exige `b7c4a9e2d31f`,
+> así que `/readyz` del entorno migrado responderá **503 (esperado)** hasta
+> desplegar la rama. Ver `docs/PUNTO_DE_CONTINUACION.md` §0ter y §0quater.
 
 Este documento permite continuar el trabajo desde una conversación nueva sin
 depender del historial del chat. Debe leerse junto con

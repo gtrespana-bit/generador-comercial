@@ -1,6 +1,6 @@
 # Punto exacto de continuación
 
-Fecha de corte: **16/08/2026, noche (Etapa 1 cerrada; validación comercial aplazada)** (America/Caracas).
+Fecha de corte: **16/08/2026, cierre de bloque con PR del titular (Etapa 3 cerrada; Etapa 4 iniciada)** (America/Caracas).
 
 Este documento retoma el trabajo sin depender del historial del chat. Describe
 **dónde quedó exactamente** el trabajo y **qué sigue**, en ese orden. Léelo
@@ -43,8 +43,9 @@ Verificación ejecutada en esta sesión (todo en verde):
 Estado funcional confirmado: **E3-016 a E3-019 completados** (envío por email,
 enlace público revocable, aceptación/rechazo trazable, notificación y estado
 controlado). La migración `c2f6e8a1d934` está en
-`migrations/versions/c2f6e8a1d934_public_proposal_links.py` y **sigue sin
-aplicar** (no aplicar ni tocar Supabase hasta autorización de despliegue).
+`migrations/versions/c2f6e8a1d934_public_proposal_links.py`; al cierre de esta
+sesión **ya fue aplicada y verificada en Supabase** — ver §0ter, que deja sin
+efecto el párrafo original de esta sección.
 
 ---
 
@@ -74,6 +75,55 @@ exige el head `a3d7e9c1b5f2`) se despliegue en el entorno migrado, su
 `/readyz` responderá **503** porque la base va por delante del código. No es
 un fallo: es la comprobación de head funcionando como está diseñada. Tras el
 despliegue, `/readyz` debe volver a 200.
+
+---
+
+## 🚀 0quater. Cierre de bloque con PR del titular (16/08/2026)
+
+El titular creó el **PR #___ ** desde `arena/01a00b99-generador-comercial`
+hacia `main` con todo el trabajo de la sesión. **Completar aquí el número y el
+estado** (abierto / fusionado) al verificarlo con:
+
+```bash
+gh pr list --head arena/01a00b99-generador-comercial --state all
+```
+
+Commits que contiene el PR (en orden):
+
+1. `9fd5afa` — recuperación de E3-016 a E3-019 (envío, enlaces, respuesta,
+   notificación) desde el parche de recuperación.
+2. `bd684e1` — E3-020/E3-021: respaldo web verificable y restauración en dos
+   pasos.
+3. `a0d2711` — E3-022/E3-023: exportación portátil y baja con borrado
+   verificado.
+4. `7ddb7de` — E3-024: panel `/admin/operacion` y registro de errores.
+5. `2bf6d19` — documentación de las migraciones aplicadas en Supabase.
+6. `d3eb2a7` — Etapa 4 (primer bloque): autorización centralizada
+   (`app/permisos.py`) y logs estructurados (`app/logs.py`).
+
+Estado verificado de la rama en el momento del PR:
+
+- Suite: **465 passed, 6 skipped**; 63 plantillas; `compileall`; JavaScript;
+  lock (42 paquetes); `git diff --check`; simulación de Vercel read-only.
+- Migraciones `c2f6e8a1d934` y `a3d7e9c1b5f2` **ya aplicadas y verificadas en
+  Supabase** (§0ter): no hay que volver a aplicarlas. Al desplegar este
+  código, `/readyz` del entorno migrado vuelve a 200 (hasta entonces, 503
+  esperado).
+- Sin secretos en el repositorio (la auditoría `tools/auditar_datos_sensibles.py`
+  sigue activa en CI).
+
+**Para la sesión nueva** (ver también §6, nota de entorno):
+
+1. Si el HEAD local aparece retrocedido: `git fetch origin
+   arena/01a00b99-generador-comercial && git reset --mixed FETCH_HEAD`.
+2. Recrear el entorno: `python -m venv .venv && .venv/bin/pip install -r
+   requirements.lock`.
+3. Registrar arriba el número y estado del PR; si se fusionó, `main` ya
+   contiene este trabajo y el bloque puede continuar en la rama de la sesión
+   sobre la misma base.
+4. Continuar por el **siguiente trabajo planificado** (§5, punto 10):
+   **E4-001 — dividir `app/main.py` en routers por dominio**, la tarea
+   estructural pendiente más grande de la Etapa 4.
 
 ---
 
@@ -302,7 +352,9 @@ aplazados hasta que el titular declare completo el producto.
   fusionarlo, el titular debe cerrar el chat y se pierde el acceso de esta
   sesión a la rama; los PR solo se crean cuando sean absolutamente necesarios,
   al terminar un bloque funcional completo y con autorización expresa del
-  titular;
+  titular. (Cumplido en esta sesión: el PR del bloque fue creado por el
+  titular al cierre — ver §0quater — y la regla sigue rigiendo para el
+  siguiente bloque.)
 - nunca configurar `MIGRATION_DATABASE_URL` en runtime;
 - nunca usar una conexión `postgres`/administrativa como `DATABASE_URL`;
 - nunca poner `service_role`/`sb_secret_` en variables públicas del frontend;
@@ -331,48 +383,36 @@ Copiar tal cual, sin añadir secretos ni tokens:
 ---
 
 Continúa el proyecto CotizaT. Antes de proponer nada, lee
-`docs/PUNTO_DE_CONTINUACION.md` y luego `docs/CONTINUIDAD_STAGING_SUPABASE.md`.
-No repitas trabajo ya hecho y no me pidas secretos.
+`docs/PUNTO_DE_CONTINUACION.md` (secciones 0bis, 0ter y 0quater primero) y
+luego `docs/CONTINUIDAD_STAGING_SUPABASE.md`. No repitas trabajo ya hecho y
+no me pidas secretos.
 
-**Dónde quedó todo (16/08/2026, noche).**
+**Dónde quedó todo (16/08/2026, cierre de bloque con PR del titular).**
 
-- **E1-059 decidida: cobro manual para el piloto** (Stripe+autónomo en España
-  queda para el cobro recurrente).
-- **E1-060 cerrado del todo** (rama `arena/01a00837-generador-comercial`):
-  recibo PDF de licencias de pago, **corte automático de acceso** con
-  `COTIZAT_EXIGIR_LICENCIA` (apagado por omisión), **avisos de vencimiento**
-  por correo desde el panel, y corrección del bug que dejaba al panel ciego a
-  organizaciones de clientes. Migración nueva `b7c4a9e2d31f` con script
-  `docs/staging_upgrade_b7c4a9e2d31f.sql`. Suite: **391 passed, 5 skipped**.
-- **E1-061 documentado** en `docs/PROCESO_PILOTOS.md` (guion de pilotos).
-- **PR #25 fusionado**, migración aplicada y licencias funcionando según la
-  verificación del titular.
-- **Usabilidad superada (E1-012/013/014):** profesionales de construcción sin
-  ayuda, varios presupuestos de baño en ≈10 minutos y sin errores observados.
-- **Etapa 1 completada.** Las partidas actuales son propias y se mantienen
-  solo como ejemplos de prueba; el catálogo real se cargará al final.
-- **Validación comercial aplazada por decisión del titular:** no habrá pilotos
-  hasta que el producto se considere completo.
-- Incidencia de Auth cerrada (Redirect URLs y rate limits confirmados).
-
-**E3-016 a E3-024 completados localmente:** envío por email, enlace público
-revocable, respuesta trazable, notificación y estado controlado, respaldo
-web completo y verificable con restauración en dos pasos, exportación
-portátil, baja con borrado verificado y monitorización y diagnóstico del
-operador. **Cierre funcional y operativo de la Etapa 3 completo en la rama.**
-**Las migraciones `c2f6e8a1d934` y `a3d7e9c1b5f2` están aplicadas y
-verificadas en Supabase el 16/08/2026** (ver §0ter). **Etapa 4 iniciada:**
-autorización centralizada (E4-002/E4-009) y logs estructurados (E4-022)
-completados; siguiente estructural: E4-001 (routers por dominio). Suite
-verificada en la rama: **465 passed, 6 skipped**. Queda desplegar el código
-de la rama (hasta entonces `/readyz` del entorno migrado responde 503,
-esperado) y ensayar el flujo real en staging. No abrir PR. No retomar
-catálogo ni pilotos salvo nueva decisión expresa.
-
-**Nota de la sesión de recuperación (16/08/2026):** todo lo anterior se
-recuperó desde un parche en la rama `arena/01a00b99-generador-comercial`
-(sección «0bis» de este documento) y quedó commiteado y empujado como
-`9fd5afa`. Los commits del bloque de respaldo se añaden sobre esa base en la
-misma rama.
+- La rama `arena/01a00b99-generador-comercial` termina el bloque en el commit
+  `d3eb2a7` y el titular creó el **PR #___ ** con todo ese trabajo (anota el
+  número con `gh pr list --head arena/01a00b99-generador-comercial --state all`;
+  si ya está fusionado, `main` contiene este código).
+- Commits del bloque: `9fd5afa` (recuperación E3-016 a E3-019), `bd684e1`
+  (E3-020/21 respaldo y restauración), `a0d2711` (E3-022/23 exportación y
+  baja), `7ddb7de` (E3-024 monitorización), `2bf6d19` (migraciones aplicadas
+  documentadas) y `d3eb2a7` (Etapa 4: autorización centralizada + logs
+  estructurados).
+- Migraciones `c2f6e8a1d934` y `a3d7e9c1b5f2` **aplicadas y verificadas en
+  Supabase** (§0ter). Hasta desplegar el código de la rama, el `/readyz` del
+  entorno migrado responde 503 (esperado); tras el despliegue vuelve a 200.
+- Suite de la rama: **465 passed, 6 skipped**; puertas en verde (63
+  plantillas, compileall, JavaScript, lock de 42 paquetes, `git diff --check`,
+  simulación Vercel read-only).
+- **Siguiente trabajo: Etapa 4 — E4-001 (dividir `app/main.py` en routers por
+  dominio)**, la tarea estructural pendiente más grande; el resto de tareas
+  abiertas de la etapa están en el plan §4.1 a §4.8.
+- Al empezar: realinea si el HEAD aparece retrocedido
+  (`git fetch origin arena/01a00b99-generador-comercial && git reset --mixed
+  FETCH_HEAD`) y recrea `.venv` (`python -m venv .venv && .venv/bin/pip
+  install -r requirements.lock`).
+- No repetir: catálogo comercial y pilotos siguen aplazados (D-017) hasta
+  nueva decisión expresa del titular; no pedir secretos ni URLs
+  administrativas.
 
 ---
