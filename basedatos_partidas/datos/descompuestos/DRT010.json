@@ -1,0 +1,14 @@
+{
+  "codigo": "DRT010",
+  "capitulo": "D", "subcapitulo": "DR", "grupo": "DRT",
+  "unidad": "m²",
+  "titulo": "Demolición de cielo raso y su estructura de soporte.",
+  "descripcion": "Demolición de cielo raso existente de yeso, machihembrado o placa, junto con su estructura de soporte y elementos de cuelgue, con medios manuales. Incluye desconexión previa de las luminarias y elementos alojados en el plano del cielo, protección del piso y del mobiliario, retirada de escombro en sacos hasta el punto de acopio y limpieza de la zona, dejando la losa a la vista. No incluye el transporte a vertedero. Medido en superficie realmente demolida.",
+  "margen": 0.30, "complementarios_pct": 1,
+  "recursos": [
+    {"ref": "MT-SAC-ESC", "rendimiento": 0.55},
+    {"ref": "MQ-ASPIR",   "rendimiento": 0.080},
+    {"ref": "MO-AYU-ESP", "rendimiento": 0.160},
+    {"ref": "MO-AYU",     "rendimiento": 0.180}
+  ]
+}

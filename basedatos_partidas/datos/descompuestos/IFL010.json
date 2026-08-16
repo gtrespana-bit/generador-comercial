@@ -1,0 +1,16 @@
+{
+  "codigo": "IFL010",
+  "capitulo": "I", "subcapitulo": "IF", "grupo": "IFL",
+  "unidad": "ud",
+  "titulo": "Llave de paso de PPR de 20 mm, empotrada.",
+  "descripcion": "Suministro y montaje de llave de paso de esfera de PPR de 20 mm, empotrada en paramento, para el corte sectorizado del suministro de agua. Incluye apertura del hueco, montaje intercalado en la tubería mediante termofusión, comprobación de la maniobrabilidad del volante, prueba de estanqueidad y resane del paramento, dejando el embellecedor enrasado. Medido por unidad instalada y probada.",
+  "margen": 0.30, "complementarios_pct": 1,
+  "recursos": [
+    {"ref": "MT-PLO-LLAVE", "rendimiento": 1.00},
+    {"ref": "MT-PLO-ACC20", "rendimiento": 2.00},
+    {"ref": "MT-YESO-REP",  "rendimiento": 1.20},
+    {"ref": "MQ-TERMOF",    "rendimiento": 0.120},
+    {"ref": "MO-OF1-PLO",   "rendimiento": 0.450},
+    {"ref": "MO-AYU",       "rendimiento": 0.250}
+  ]
+}

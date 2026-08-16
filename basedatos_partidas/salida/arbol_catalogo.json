@@ -55,11 +55,20 @@
             {
               "codigo": "DPT",
               "nombre": "Tabiquería",
-              "partidas": [],
-              "n": 0
+              "partidas": [
+                {
+                  "codigo": "DPT010",
+                  "titulo": "Demolición de tabique de bloque o ladrillo, incluidos sus revestimientos.",
+                  "unidad": "m²",
+                  "precio": 5.42,
+                  "horas": 0.58,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 1
             }
           ],
-          "n": 0
+          "n": 1
         },
         {
           "codigo": "DL",
@@ -70,8 +79,24 @@
         {
           "codigo": "DI",
           "nombre": "Instalaciones",
-          "grupos": [],
-          "n": 0
+          "grupos": [
+            {
+              "codigo": "DIS",
+              "nombre": "Desmontaje de aparatos e instalaciones",
+              "partidas": [
+                {
+                  "codigo": "DIS010",
+                  "titulo": "Desmontaje de aparato sanitario y su grifería.",
+                  "unidad": "ud",
+                  "precio": 4.55,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 1
+            }
+          ],
+          "n": 1
         },
         {
           "codigo": "DQ",
@@ -101,8 +126,17 @@
             {
               "codigo": "DRC",
               "nombre": "Piezas rígidas en paramentos verticales",
-              "partidas": [],
-              "n": 0
+              "partidas": [
+                {
+                  "codigo": "DRC010",
+                  "titulo": "Picado de revestimiento cerámico en paramento y su capa de agarre.",
+                  "unidad": "m²",
+                  "precio": 5.95,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 1
             },
             {
               "codigo": "DRF",
@@ -113,11 +147,20 @@
             {
               "codigo": "DRT",
               "nombre": "Falsos techos",
-              "partidas": [],
-              "n": 0
+              "partidas": [
+                {
+                  "codigo": "DRT010",
+                  "titulo": "Demolición de cielo raso y su estructura de soporte.",
+                  "unidad": "m²",
+                  "precio": 2.37,
+                  "horas": 0.34,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 1
             }
           ],
-          "n": 1
+          "n": 3
         },
         {
           "codigo": "DS",
@@ -132,7 +175,7 @@
           "n": 0
         }
       ],
-      "n": 1
+      "n": 5
     },
     {
       "codigo": "A",
@@ -232,8 +275,17 @@
             {
               "codigo": "FFB",
               "nombre": "Bloque de concreto",
-              "partidas": [],
-              "n": 0
+              "partidas": [
+                {
+                  "codigo": "FFB010",
+                  "titulo": "Tabique de bloque de concreto de 10 cm, recibido con mortero de pega.",
+                  "unidad": "m²",
+                  "precio": 18.29,
+                  "horas": 1.1,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 1
             },
             {
               "codigo": "FFL",
@@ -242,7 +294,7 @@
               "n": 0
             }
           ],
-          "n": 0
+          "n": 1
         },
         {
           "codigo": "FB",
@@ -291,7 +343,7 @@
           "n": 0
         }
       ],
-      "n": 1
+      "n": 2
     },
     {
       "codigo": "L",
@@ -381,17 +433,35 @@
             {
               "codigo": "IFA",
               "nombre": "Aparatos y puntos de agua",
-              "partidas": [],
-              "n": 0
+              "partidas": [
+                {
+                  "codigo": "IFA010",
+                  "titulo": "Punto de agua fría y caliente para aparato sanitario.",
+                  "unidad": "ud",
+                  "precio": 37.22,
+                  "horas": 1.9,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 1
             },
             {
               "codigo": "IFL",
               "nombre": "Llaves y valvulería",
-              "partidas": [],
-              "n": 0
+              "partidas": [
+                {
+                  "codigo": "IFL010",
+                  "titulo": "Llave de paso de PPR de 20 mm, empotrada.",
+                  "unidad": "ud",
+                  "precio": 13.52,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 1
             }
           ],
-          "n": 1
+          "n": 3
         },
         {
           "codigo": "IS",
@@ -415,11 +485,20 @@
             {
               "codigo": "ISA",
               "nombre": "Puntos de desagüe de aparatos",
-              "partidas": [],
-              "n": 0
+              "partidas": [
+                {
+                  "codigo": "ISA010",
+                  "titulo": "Punto de desagüe para aparato sanitario.",
+                  "unidad": "ud",
+                  "precio": 33.84,
+                  "horas": 1.7,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 1
             }
           ],
-          "n": 1
+          "n": 2
         },
         {
           "codigo": "IE",
@@ -501,7 +580,7 @@
           "n": 0
         }
       ],
-      "n": 4
+      "n": 7
     },
     {
       "codigo": "N",
@@ -670,8 +749,17 @@
             {
               "codigo": "RPF",
               "nombre": "Frisos y enlucidos",
-              "partidas": [],
-              "n": 0
+              "partidas": [
+                {
+                  "codigo": "RPF010",
+                  "titulo": "Friso de mortero maestreado sobre paramento interior, 1,5 cm de espesor.",
+                  "unidad": "m²",
+                  "precio": 10.75,
+                  "horas": 0.75,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 1
             },
             {
               "codigo": "RPE",
@@ -680,7 +768,7 @@
               "n": 0
             }
           ],
-          "n": 0
+          "n": 1
         },
         {
           "codigo": "RI",
@@ -760,8 +848,17 @@
             {
               "codigo": "RTY",
               "nombre": "De placas de yeso laminado",
-              "partidas": [],
-              "n": 0
+              "partidas": [
+                {
+                  "codigo": "RTY010",
+                  "titulo": "Cielo raso continuo de placa de yeso laminado, estructura oculta suspendida.",
+                  "unidad": "m²",
+                  "precio": 18.47,
+                  "horas": 0.95,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 1
             },
             {
               "codigo": "RTD",
@@ -770,10 +867,10 @@
               "n": 0
             }
           ],
-          "n": 0
+          "n": 1
         }
       ],
-      "n": 8
+      "n": 10
     },
     {
       "codigo": "S",
@@ -782,8 +879,38 @@
         {
           "codigo": "SB",
           "nombre": "Aparatos sanitarios y grifería",
-          "grupos": [],
-          "n": 0
+          "grupos": [
+            {
+              "codigo": "SBA",
+              "nombre": "Aparatos sanitarios",
+              "partidas": [
+                {
+                  "codigo": "SBA010",
+                  "titulo": "Instalación de inodoro con su conexión de agua y desagüe.",
+                  "unidad": "ud",
+                  "precio": 23.45,
+                  "horas": 1.8,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "SBA020",
+                  "titulo": "Instalación de lavamanos con su grifería y desagüe.",
+                  "unidad": "ud",
+                  "precio": 36.45,
+                  "horas": 2.1,
+                  "producto_cliente": true
+                }
+              ],
+              "n": 2
+            },
+            {
+              "codigo": "SBG",
+              "nombre": "Grifería y accesorios",
+              "partidas": [],
+              "n": 0
+            }
+          ],
+          "n": 2
         },
         {
           "codigo": "SC",
@@ -804,7 +931,7 @@
           "n": 0
         }
       ],
-      "n": 0
+      "n": 2
     },
     {
       "codigo": "U",
@@ -844,8 +971,24 @@
         {
           "codigo": "GT",
           "nombre": "Transporte de residuos",
-          "grupos": [],
-          "n": 0
+          "grupos": [
+            {
+              "codigo": "GTR",
+              "nombre": "Retirada y transporte de escombro",
+              "partidas": [
+                {
+                  "codigo": "GTR010",
+                  "titulo": "Retirada y transporte de escombro a vertedero autorizado.",
+                  "unidad": "m³",
+                  "precio": 16.07,
+                  "horas": 0.85,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 1
+            }
+          ],
+          "n": 1
         },
         {
           "codigo": "GC",
@@ -854,7 +997,7 @@
           "n": 0
         }
       ],
-      "n": 0
+      "n": 1
     },
     {
       "codigo": "X",

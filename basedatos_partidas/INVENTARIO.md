@@ -8,17 +8,17 @@ del proyecto.
 
 | | |
 |---|---:|
-| Partidas | **14** |
-| Hojas de descompuesto `.xlsx` | 14 |
-| Partidas con producto de elección del cliente | 6 |
-| Recursos en el cuadro de precios | **50** |
-| — mano de obra / materiales / maquinaria | 10 / 30 / 10 |
-| — precios confirmados / provisionales | 10 / 40 |
-| Clasificación | 18 capítulos · 74 subcapítulos · 35 grupos |
-| — capítulos con partidas / vacíos | 4 / 14 |
+| Partidas | **27** |
+| Hojas de descompuesto `.xlsx` | 27 |
+| Partidas con producto de elección del cliente | 8 |
+| Recursos en el cuadro de precios | **64** |
+| — mano de obra / materiales / maquinaria | 10 / 42 / 12 |
+| — precios confirmados / provisionales | 10 / 54 |
+| Clasificación | 18 capítulos · 74 subcapítulos · 41 grupos |
+| — capítulos con partidas / vacíos | 6 / 12 |
 | Moneda | USD (Venezuela) |
 
-**Validación**: las 14 partidas pasan `es_formato_cype_xlsx` y `analizar_cype_xlsx`
+**Validación**: las 27 partidas pasan `es_formato_cype_xlsx` y `analizar_cype_xlsx`
 del proyecto. El catálogo masivo se detecta con **8 campos, 0 errores, 0 advertencias**.
 
 ---

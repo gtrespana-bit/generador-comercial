@@ -1,0 +1,15 @@
+{
+  "codigo": "DRC010",
+  "capitulo": "D", "subcapitulo": "DR", "grupo": "DRC",
+  "unidad": "m²",
+  "titulo": "Picado de revestimiento cerámico en paramento y su capa de agarre.",
+  "descripcion": "Picado de revestimiento cerámico existente en paramento vertical, incluida su capa de agarre de mortero, ejecutado con martillo eléctrico manual hasta dejar el soporte a la vista, sin comprometer la estabilidad del muro ni dañar las instalaciones empotradas. Incluye protección previa de pisos, aparatos y carpintería, control de polvo mediante aspiración, retirada manual de escombro en sacos hasta el punto de acopio y limpieza de la superficie resultante, dejándola preparada para recibir el nuevo friso. No incluye el transporte a vertedero. Medido en superficie realmente picada.",
+  "margen": 0.30, "complementarios_pct": 1,
+  "recursos": [
+    {"ref": "MT-SAC-ESC",   "rendimiento": 0.70},
+    {"ref": "MQ-MART-ELEC", "rendimiento": 0.300},
+    {"ref": "MQ-ASPIR",     "rendimiento": 0.140},
+    {"ref": "MO-AYU-ESP",   "rendimiento": 0.350},
+    {"ref": "MO-AYU",       "rendimiento": 0.350}
+  ]
+}

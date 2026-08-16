@@ -246,6 +246,78 @@
       "descripcion": "Yeso o mortero de reparación para el tapado de rozas.",
       "precio": 0.35,
       "estado": "provisional"
+    },
+    "MT-BLQ-10": {
+      "unidad": "ud",
+      "descripcion": "Bloque de concreto hueco de 10x20x40 cm para tabiquería no estructural.",
+      "precio": 0.55,
+      "estado": "provisional"
+    },
+    "MT-MOR-PEGA": {
+      "unidad": "kg",
+      "descripcion": "Mortero de pega para mampostería, elaborado con cemento y arena lavada.",
+      "precio": 0.18,
+      "estado": "provisional"
+    },
+    "MT-MOR-FRISO": {
+      "unidad": "kg",
+      "descripcion": "Mortero de friso para revestimiento de paramentos, elaborado con cemento y arena cernida.",
+      "precio": 0.16,
+      "estado": "provisional"
+    },
+    "MT-MALLA-ESQ": {
+      "unidad": "m",
+      "descripcion": "Cantonera metálica de esquina y malla de refuerzo para encuentros de friso.",
+      "precio": 0.7,
+      "estado": "provisional"
+    },
+    "MT-PYL-PLACA125": {
+      "unidad": "m2",
+      "descripcion": "Placa de yeso laminado de 12,5 mm de espesor, borde afinado, para cielo raso.",
+      "precio": 4.2,
+      "estado": "provisional"
+    },
+    "MT-PYL-PERF-CR": {
+      "unidad": "m2",
+      "descripcion": "Perfilería de acero galvanizado para cielo raso suspendido: maestras, ángulo perimetral, horquillas y varilla de cuelgue.",
+      "precio": 3.1,
+      "estado": "provisional"
+    },
+    "MT-PLO-LLAVE": {
+      "unidad": "ud",
+      "descripcion": "Llave de paso de PPR de 20 mm, de esfera, para empotrar.",
+      "precio": 4.5,
+      "estado": "provisional"
+    },
+    "MT-PLO-ABASTO": {
+      "unidad": "ud",
+      "descripcion": "Tubo de abasto flexible con sus racores y accesorios de conexión a aparato.",
+      "precio": 3.2,
+      "estado": "provisional"
+    },
+    "MT-PLO-DESAG": {
+      "unidad": "ud",
+      "descripcion": "Accesorios de desagüe para aparato sanitario: sifón, brida, adaptadores y pegamento.",
+      "precio": 5.4,
+      "estado": "provisional"
+    },
+    "MT-SAN-FIJA": {
+      "unidad": "ud",
+      "descripcion": "Kit de fijación de aparato sanitario: anclajes, anillo de cera y tornillería.",
+      "precio": 4.8,
+      "estado": "provisional"
+    },
+    "MT-SIL-SAN": {
+      "unidad": "ud",
+      "descripcion": "Cartucho de silicona sanitaria antihongos para sellado de aparatos.",
+      "precio": 2.9,
+      "estado": "provisional"
+    },
+    "MT-CANON": {
+      "unidad": "m3",
+      "descripcion": "Canon de vertido en vertedero o botadero autorizado.",
+      "precio": 3.5,
+      "estado": "provisional"
     }
   },
   "maquinaria": {
@@ -307,6 +379,18 @@
       "unidad": "h",
       "descripcion": "Equipo de aplicación de pintura: rodillos, brochas, cubetas y andamio bajo.",
       "precio": 0.9,
+      "estado": "provisional"
+    },
+    "MQ-VOLQ": {
+      "unidad": "h",
+      "descripcion": "Camión volqueta de 6 m³ con chofer, para transporte de escombro a vertedero.",
+      "precio": 18.0,
+      "estado": "provisional"
+    },
+    "MQ-MEZCL": {
+      "unidad": "h",
+      "descripcion": "Mezcladora de concreto y mortero de 1 saco, incluida amortización y combustible.",
+      "precio": 3.6,
       "estado": "provisional"
     }
   }

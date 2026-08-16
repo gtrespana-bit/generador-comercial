@@ -1,0 +1,18 @@
+{
+  "codigo": "RTY010",
+  "capitulo": "R", "subcapitulo": "RT", "grupo": "RTY",
+  "unidad": "m²",
+  "titulo": "Cielo raso continuo de placa de yeso laminado, estructura oculta suspendida.",
+  "descripcion": "Cielo raso continuo formado por una placa de yeso laminado de 12,5 mm atornillada a estructura oculta de perfilería de acero galvanizado, suspendida de la losa mediante varilla y horquilla, con ángulo perimetral en todo el contorno. Incluye replanteo y nivelación con manguera o láser, colocación del perímetro, montaje y nivelación de las maestras, atornillado de las placas, tratamiento de juntas con cinta y pasta, lijado hasta dejar la superficie lista para pintar, y previsión de los huecos de luminarias y rejillas. Medido en superficie realmente ejecutada.",
+  "margen": 0.30, "complementarios_pct": 1,
+  "recursos": [
+    {"ref": "MT-PYL-PLACA125", "rendimiento": 1.06},
+    {"ref": "MT-PYL-PERF-CR",  "rendimiento": 1.05},
+    {"ref": "MT-PYL-PASTA",    "rendimiento": 0.55},
+    {"ref": "MT-TORN",         "rendimiento": 22.0},
+    {"ref": "MQ-ATORN",        "rendimiento": 0.150},
+    {"ref": "MQ-LIJAD",        "rendimiento": 0.080},
+    {"ref": "MO-OF1-MON",      "rendimiento": 0.550},
+    {"ref": "MO-AYU-ESP",      "rendimiento": 0.400}
+  ]
+}

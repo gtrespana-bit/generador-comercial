@@ -47,7 +47,9 @@
         },
         "DI": {
           "nombre": "Instalaciones",
-          "grupos": {}
+          "grupos": {
+            "DIS": "Desmontaje de aparatos e instalaciones"
+          }
         },
         "DQ": {
           "nombre": "Cubiertas",
@@ -344,7 +346,10 @@
       "subcapitulos": {
         "SB": {
           "nombre": "Aparatos sanitarios y grifería",
-          "grupos": {}
+          "grupos": {
+            "SBA": "Aparatos sanitarios",
+            "SBG": "Grifería y accesorios"
+          }
         },
         "SC": {
           "nombre": "Mobiliario de cocina y encimeras",
@@ -386,7 +391,9 @@
       "subcapitulos": {
         "GT": {
           "nombre": "Transporte de residuos",
-          "grupos": {}
+          "grupos": {
+            "GTR": "Retirada y transporte de escombro"
+          }
         },
         "GC": {
           "nombre": "Contenedores y acopio",

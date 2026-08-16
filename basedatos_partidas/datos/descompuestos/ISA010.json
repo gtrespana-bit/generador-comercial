@@ -1,0 +1,16 @@
+{
+  "codigo": "ISA010",
+  "capitulo": "I", "subcapitulo": "IS", "grupo": "ISA",
+  "unidad": "ud",
+  "titulo": "Punto de desagüe para aparato sanitario.",
+  "descripcion": "Ejecución de punto de desagüe para aparato sanitario, formado por la derivación en tubería de PVC sanitario desde el aparato hasta la bajante o colector más próximo, con una longitud media de 2 m y la pendiente reglamentaria. Incluye replanteo, apertura del paso en piso o paramento, montaje de la tubería con uniones cementadas, sifón y accesorios, fijación mediante abrazaderas, prueba de estanqueidad con agua, taponado provisional hasta la instalación del aparato y resane del paso. No incluye el aparato. Medido por punto terminado y probado.",
+  "margen": 0.30, "complementarios_pct": 1,
+  "recursos": [
+    {"ref": "MT-PLO-PVC4",  "rendimiento": 2.10},
+    {"ref": "MT-PLO-DESAG", "rendimiento": 1.00},
+    {"ref": "MT-PLO-SOP",   "rendimiento": 2.50},
+    {"ref": "MT-YESO-REP",  "rendimiento": 5.00},
+    {"ref": "MO-OF1-PLO",   "rendimiento": 0.950},
+    {"ref": "MO-AYU",       "rendimiento": 0.750}
+  ]
+}
