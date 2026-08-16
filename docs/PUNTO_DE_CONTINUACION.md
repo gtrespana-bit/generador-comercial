@@ -224,11 +224,21 @@ bloqueante. Interfaz mejorada del panel de operador: pendiente futuro.
    reutilización por huella y trazabilidad de propuestas conservada como
    notas. Sin migración nueva. Suite del bloque: **423 passed, 6 skipped**
    (14 pruebas nuevas en `tests/test_respaldo_restauracion.py`).
-7. **Siguiente bloque:** exportación y baja por organización (E3-022/E3-023),
-   monitorización y diagnóstico (E3-024). Catálogo comercial y validación
-   pagada permanecen aplazados hasta que el titular declare completo el
-   producto. Detalle operativo del respaldo en
+7. ~~**E3-022 — Exportación portátil.**~~ **Completado en la rama el
+   16/08/2026**: `cotizat-export` v1 con CSV por tabla, archivos con nombre
+   original y respaldo verificable embebido; solo propietario/administrador.
+8. ~~**E3-023 — Baja con borrado verificado.**~~ **Completado en la rama el
+   16/08/2026**: solo el propietario, nombre exacto escrito + casilla,
+   archivos borrados antes de la base, borrado transaccional completo y
+   aislado por organización; función `cotizat_security.baja_organizacion` en
+   PostgreSQL. Migración nueva **`a3d7e9c1b5f2`** (head exigido), pendiente
+   de aplicar hasta el despliegue. Suite del bloque: **441 passed, 6 skipped**
+   (18 pruebas nuevas). Detalles en
+   `docs/EXPORTACION_Y_BAJA_ORGANIZACION.md` y
    `docs/RESPALDO_Y_RESTAURACION_WEB.md`.
+9. **Siguiente bloque:** monitorización y diagnóstico (E3-024). Catálogo
+   comercial y validación pagada permanecen aplazados hasta que el titular
+   declare completo el producto.
 
 ## 6. Reglas invariables (no negociables)
 
@@ -289,14 +299,15 @@ No repitas trabajo ya hecho y no me pidas secretos.
   hasta que el producto se considere completo.
 - Incidencia de Auth cerrada (Redirect URLs y rate limits confirmados).
 
-**E3-016 a E3-021 completados localmente:** envío por email, enlace público
-revocable, respuesta trazable, notificación y estado controlado, y respaldo
-web completo y verificable con restauración en dos pasos
-(`docs/RESPALDO_Y_RESTAURACION_WEB.md`). Suite verificada en la rama:
-**423 passed, 6 skipped**. **Siguiente bloque técnico:** exportación y baja por
-organización (E3-022/E3-023), luego monitorización y diagnóstico (E3-024).
-No abrir PR, no aplicar aún `c2f6e8a1d934` (sin migraciones nuevas en este
-bloque), no retomar catálogo ni pilotos salvo nueva decisión expresa.
+**E3-016 a E3-023 completados localmente:** envío por email, enlace público
+revocable, respuesta trazable, notificación y estado controlado, respaldo
+web completo y verificable con restauración en dos pasos, exportación
+portátil y baja con borrado verificado. Suite verificada en la rama:
+**441 passed, 6 skipped**. **Siguiente bloque técnico:** monitorización y
+diagnóstico (E3-024). No abrir PR. **Migraciones pendientes de aplicar hasta
+la autorización de despliegue: `c2f6e8a1d934` y `a3d7e9c1b5f2`** (producción
+continúa en `b7c4a9e2d31f`; scripts en `docs/staging_upgrade_*.sql`). No
+retomar catálogo ni pilotos salvo nueva decisión expresa.
 
 **Nota de la sesión de recuperación (16/08/2026):** todo lo anterior se
 recuperó desde un parche en la rama `arena/01a00b99-generador-comercial`

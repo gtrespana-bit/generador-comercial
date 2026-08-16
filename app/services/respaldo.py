@@ -340,15 +340,16 @@ def _leeme_restauracion(manifest: dict[str, Any]) -> str:
     )
 
 
-def generar_respaldo(db: Session) -> bytes:
-    """Genera el .zip completo y verificable de la organización activa."""
+def recopilar_datos(db: Session) -> dict[str, list[dict[str, Any]]]:
+    """Datos serializables de la organización activa (tablas, membresías,
+    historial de propuestas y configuración comercial).
+
+    Es la base compartida por el respaldo (E3-020) y la exportación legible
+    (E3-022); ambos garantizan así los mismos contenidos y omisiones.
+    """
     organizacion_id = int(db.info.get("organizacion_id") or 0)
     if organizacion_id <= 0:
         raise ErrorRespaldo("No hay una organización activa para generar la copia.")
-    organizacion = db.get(Organizacion, organizacion_id)
-    if organizacion is None:
-        raise ErrorRespaldo("La organización activa no existe.")
-
     filas: dict[str, list[dict[str, Any]]] = {}
     for especificacion in TABLAS_RESPALDO:
         filas_tabla: list[dict[str, Any]] = []
@@ -367,7 +368,19 @@ def generar_respaldo(db: Session) -> bytes:
     filas[ARCHIVO_MEMBRESIAS] = _membresias_exportables(db, organizacion_id)
     filas[ARCHIVO_HISTORIAL_ENLACES] = _historial_enlaces(db)
     filas[ARCHIVO_CONFIGURACION] = [_configuracion_exportable(db)]
+    return filas
 
+
+def generar_respaldo(db: Session) -> bytes:
+    """Genera el .zip completo y verificable de la organización activa."""
+    organizacion_id = int(db.info.get("organizacion_id") or 0)
+    if organizacion_id <= 0:
+        raise ErrorRespaldo("No hay una organización activa para generar la copia.")
+    organizacion = db.get(Organizacion, organizacion_id)
+    if organizacion is None:
+        raise ErrorRespaldo("La organización activa no existe.")
+
+    filas = recopilar_datos(db)
     referencias = _recolectar_referencias(filas)
     avisos: list[str] = []
     archivos_por_referencia: dict[str, dict[str, Any]] = {}

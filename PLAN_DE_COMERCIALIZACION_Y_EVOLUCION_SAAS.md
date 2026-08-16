@@ -886,11 +886,18 @@ comercial.
    conservado como notas; licencias, cuentas, invitaciones y enlaces quedan
    fuera con motivo declarado. Detalle operativo en
    `docs/RESPALDO_Y_RESTAURACION_WEB.md`. Suite: **423 passed, 6 skipped**.
-3. **E3-022 — Exportación por organización** (pendiente): formato portátil
-   para llevarse los datos, reutilizando el paquete verificable de E3-020.
-4. **E3-023 — Baja por organización** (pendiente): cierre de cuenta con
-   borrado verificado de datos y archivos, sin residuos.
-5. **E3-024 — Monitorización y diagnóstico** (pendiente): observabilidad de la
+3. ~~**E3-022 — Exportación por organización.**~~ Completado el 16/08/2026:
+   paquete `cotizat-export` v1 con CSV por tabla (BOM UTF-8), archivos con
+   nombre original y el respaldo verificable embebido; solo
+   propietario/administrador; funciona en PostgreSQL y SQLite.
+4. ~~**E3-023 — Baja por organización.**~~ Completado el 16/08/2026: solo el
+   propietario, nombre exacto escrito + casilla explícita, archivos borrados
+   antes de la base, borrado transaccional completo (datos, licencias,
+   membresías y organización) con aislamiento entre tenants; función
+   SECURITY DEFINER `cotizat_security.baja_organizacion` en PostgreSQL
+   (migración `a3d7e9c1b5f2`, sin aplicar hasta el despliegue). Detalle en
+   `docs/EXPORTACION_Y_BAJA_ORGANIZACION.md`. Suite: **441 passed, 6 skipped**.
+5. **E3-024 — Monitorización y diagnóstico** (siguiente): observabilidad de la
    operación web (salud, errores, métricas honestas).
 
 <details><summary>Histórico: bloque previo — validación con matriz de aceptación en staging (superado el 14-16/08/2026)</summary>

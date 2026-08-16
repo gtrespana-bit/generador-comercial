@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Dar de baja la organización{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Dar de baja la organización</h1>
+    <p class="subtitle">Borrado definitivo de todos los datos y archivos de <strong>{{ resumen.nombre }}</strong></p>
+  </div>
+</div>
+
+<div class="card">
+  <h2>⚠️ Esta acción es irreversible</h2>
+  <p class="subtitle">Se borrarán de forma permanente y sin período de gracia:</p>
+  <ul>
+    <li><strong>{{ resumen.conteos.presupuestos }}</strong> presupuesto(s), <strong>{{ resumen.conteos.clientes }}</strong> cliente(s) y sus capítulos, partidas, mediciones, versiones y notas</li>
+    <li><strong>{{ resumen.conteos.partidas }}</strong> partida(s) de catálogo, <strong>{{ resumen.conteos.productos }}</strong> producto(s), <strong>{{ resumen.conteos.recursos }}</strong> recurso(s), plantillas y packs</li>
+    <li><strong>{{ resumen.conteos.facturas }}</strong> documento(s) de cobro, <strong>{{ resumen.conteos.proyectos }}</strong> proyecto(s) con cambios y pagos</li>
+    <li><strong>{{ resumen.archivos }}</strong> archivo(s) del almacenamiento privado (fotos, PDFs, anexos, fichas)</li>
+    <li>La configuración comercial, las invitaciones pendientes, las membresías y la propia organización</li>
+  </ul>
+  <p>Tu <strong>cuenta de acceso</strong> no se borra: quedarás sin organizaciones y podrás crear una nueva. La licencia asociada se cancela con la baja.</p>
+</div>
+
+<div class="card">
+  <h2>Antes de continuar, llévate tus datos</h2>
+  <p class="subtitle">Descarga la exportación completa (CSV legibles + archivos + copia verificable) y guárdala en un lugar seguro.</p>
+  <a class="btn btn-primary" href="/configuracion/exportacion/descargar">⬇️ Descargar exportación completa (.zip)</a>
+</div>
+
+<div class="card">
+  <h2>Confirmar la baja</h2>
+  <form method="post" action="/configuracion/baja/confirmar" data-confirm="⚠️ Se borrarán TODOS los datos y archivos de esta organización de forma irreversible. ¿Continuar?">
+    <div class="field">
+      <label>Escribe el nombre exacto de la organización para confirmar</label>
+      <input type="text" name="nombre_confirmado" required placeholder="{{ resumen.nombre }}" autocomplete="off">
+      <p class="hint">Debe coincidir exactamente con «{{ resumen.nombre }}». Si no coincide, no se borra nada.</p>
+    </div>
+    <div class="field">
+      <label class="hint">
+        <input type="checkbox" name="confirmar" value="si" required>
+        Entiendo que esta acción es irreversible y que perderé todos los datos y archivos de esta organización.
+      </label>
+    </div>
+    <button class="btn btn-danger" type="submit">🗑️ Dar de baja definitivamente</button>
+    <a class="btn" href="/configuracion/respaldo">Cancelar</a>
+  </form>
+</div>
+{% endblock %}

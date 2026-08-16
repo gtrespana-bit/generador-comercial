@@ -97,8 +97,8 @@ transacción la compromete la ruta; ante error, `rollback`.
 
 ## 6. Pendientes deliberados del bloque (no son olvidos)
 
-- **Exportación y baja por organización** (E3-022 / E3-023): el paquete sirve
-  de base; la exportación formal a otro formato y la baja con borrado
-  verificado se diseñan aparte.
+- **Exportación y baja por organización** (E3-022 / E3-023): **completadas el
+  16/08/2026** sobre este mismo paquete — ver
+  `docs/EXPORTACION_Y_BAJA_ORGANIZACION.md`.
 - La descarga SQLite histórica (`/configuracion/backup`) sigue intacta para el
   escritorio; el nuevo respaldo funciona en **ambos** backends.

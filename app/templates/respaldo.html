@@ -107,6 +107,11 @@
   <p class="hint">Máximo 300 MB. No incluye cuentas de usuario, licencias, invitaciones ni enlaces públicos activos; las respuestas históricas de propuestas viajan como notas de seguimiento.</p>
 </div>
 <div class="card">
+  <h2>Exportar datos para llevártelos</h2>
+  <p class="subtitle">Un paquete legible por cualquier herramienta: una hoja CSV por tabla (abre directo en Excel o LibreOffice), tus archivos con su nombre original y, dentro, la copia verificable completa por si algún día vuelves a CotizaT.</p>
+  <a class="btn" href="/configuracion/exportacion/descargar">📤 Descargar exportación (.zip)</a>
+</div>
+<div class="card">
   <h2>Restaurar una copia</h2>
   <p class="subtitle">Paso 1 de 2 — Analizar la copia. Primero verás qué contiene y qué no; nada se restaura sin tu confirmación explícita.</p>
   <form method="post" action="/configuracion/respaldo/restaurar" enctype="multipart/form-data">
@@ -118,5 +123,12 @@
     <button class="btn btn-primary" type="submit">🔍 Analizar copia</button>
   </form>
 </div>
+{% if rol == 'propietario' %}
+<div class="card">
+  <h2>Dar de baja la organización</h2>
+  <p class="subtitle">Borrado definitivo e irreversible de todos los datos y archivos de esta organización. Descarga antes tu exportación y confirma escribiendo el nombre exacto de la organización.</p>
+  <a class="btn" href="/configuracion/baja">🗑️ Dar de baja la organización</a>
+</div>
+{% endif %}
 {% endif %}
 {% endblock %}

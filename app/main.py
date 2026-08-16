@@ -198,6 +198,8 @@ from .services.respaldo import (
     generar_respaldo,
 )
 from .services.restauracion import analizar_respaldo, restaurar_respaldo
+from .services.exportacion import generar_exportacion
+from .services.baja import BajaError, ejecutar_baja, resumen_baja
 from .utils import SIMBOLOS, fmt_fecha, fmt_monto, fmt_num, fmt_cantidad
 from .storage import (
     StorageError,
@@ -6141,6 +6143,83 @@ async def confirmar_respaldo_subido(request: Request, db: Session = Depends(get_
         {"resumen": None, "resultado": resultado, "rol": db.info.get("rol_membresia")},
     )
 
+
+# ---------------------------------------------------------------------------
+# Exportación portátil (E3-022) y baja de organización (E3-023)
+# ---------------------------------------------------------------------------
+
+@app.get("/configuracion/exportacion/descargar")
+def descargar_exportacion_organizacion(db: Session = Depends(get_db)):
+    """Exportación legible y verificable: CSV por tabla, archivos con nombre y
+    el respaldo completo embebido, para llevarse los datos fuera de CotizaT."""
+    if db.info.get("rol_membresia") not in {"propietario", "administrador"}:
+        return _redirect(
+            "/configuracion",
+            error="Solo propietarios y administradores pueden descargar la exportación completa.",
+        )
+    try:
+        contenido = generar_exportacion(db)
+    except ErrorRespaldo as exc:
+        return _redirect("/configuracion/respaldo", error=str(exc))
+    nombre = f"cotizat_exportacion_{datetime.now().strftime('%Y%m%d_%H%M')}.zip"
+    return Response(
+        content=contenido,
+        media_type="application/zip",
+        headers={
+            "Content-Disposition": f'attachment; filename="{nombre}"',
+            "Cache-Control": "no-store",
+        },
+    )
+
+
+@app.get("/configuracion/baja", response_class=HTMLResponse)
+def baja_organizacion_form(request: Request, db: Session = Depends(get_db)):
+    """Pantalla de baja: resumen de lo que se borrará y confirmación por
+    escrito del nombre exacto de la organización. Solo el propietario."""
+    if db.info.get("rol_membresia") != "propietario":
+        return _redirect(
+            "/configuracion",
+            error="Solo el propietario puede dar de baja la organización.",
+        )
+    try:
+        resumen = resumen_baja(db)
+    except BajaError as exc:
+        return _redirect("/configuracion", error=str(exc))
+    return TEMPLATES.TemplateResponse(
+        request,
+        "baja.html",
+        {"resumen": resumen, "rol": db.info.get("rol_membresia")},
+    )
+
+
+@app.post("/configuracion/baja/confirmar", response_class=HTMLResponse)
+async def confirmar_baja_organizacion(request: Request, db: Session = Depends(get_db)):
+    """Ejecuta la baja verificada. Tras el borrado no hay organización que
+    consultar, así que se responde directamente con la página de completado
+    (sin redirect) y se retira la cookie de organización."""
+    if db.info.get("rol_membresia") != "propietario":
+        return _redirect(
+            "/configuracion",
+            error="Solo el propietario puede dar de baja la organización.",
+        )
+    form = await request.form()
+    try:
+        nombre = ejecutar_baja(
+            db,
+            nombre_confirmado=str(form.get("nombre_confirmado", "")),
+            confirmar=str(form.get("confirmar", "")) == "si",
+        )
+    except (BajaError, PermisoOrganizacionError) as exc:
+        db.rollback()
+        return _redirect("/configuracion/baja", error=str(exc))
+    response = TEMPLATES.TemplateResponse(
+        request,
+        "baja_completada.html",
+        {"nombre": nombre},
+    )
+    response.delete_cookie("cotizat_organization_id")
+    response.headers["Cache-Control"] = "no-store"
+    return response
 
 
 # ---------------------------------------------------------------------------
