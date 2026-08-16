@@ -185,6 +185,7 @@ pip install -r requirements.lock   # mismo conjunto exacto que usa CI
 pytest -q                          # suite automatizada
 python tools/verificar_lock.py     # dependencias fijadas y coherentes
 python tools/verificar_plantillas.py  # plantillas Jinja parseables
+python tools/auditar_datos_sensibles.py  # sin credenciales ni datos reales (E1-021)
 python -m compileall -q app tools run.py desktop.py
 find app/static/js -name '*.js' -exec node --check {} \;
 ```

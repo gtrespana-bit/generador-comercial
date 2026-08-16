@@ -10,7 +10,7 @@ from starlette.routing import Route
 from starlette.testclient import TestClient
 
 from app import main as main_module
-from app.database import get_authenticated_db, get_db
+from app.database import get_authenticated_db, get_db, get_operator_db
 from app.main import app as cotizat_app
 from app.security import AuthRateLimitMiddleware, WebSecurityMiddleware
 
@@ -231,6 +231,11 @@ def test_toda_ruta_comercial_exige_sesion_salvo_fronteras_publicas_o_locales():
         ("GET", "/conocer"),
         ("GET", "/legal/{pagina}"),
     }
+    # El panel de operador usa su propia dependencia, que además de exigir
+    # sesión comprueba COTIZAT_OPERADORES. Se declara aquí para que la
+    # auditoría siga sirviendo: si alguien la sustituyera por `get_db`, el
+    # panel quedaría abierto a cualquier cliente autenticado.
+    operador = {get_operator_db}
     solo_sqlite_local = {
         ("GET", "/configuracion/backup"),
         ("POST", "/configuracion/restaurar"),
@@ -240,7 +245,7 @@ def test_toda_ruta_comercial_exige_sesion_salvo_fronteras_publicas_o_locales():
         if not isinstance(route, APIRoute):
             continue
         dependencias = {dep.call for dep in route.dependant.dependencies}
-        protegida = bool({get_db, get_authenticated_db} & dependencias)
+        protegida = bool(({get_db, get_authenticated_db} | operador) & dependencias)
         for method in route.methods - {"HEAD", "OPTIONS"}:
             key = (method, route.path)
             if key not in publicas | solo_sqlite_local and not protegida:

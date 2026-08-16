@@ -9,7 +9,8 @@ from app.models import TenantMixin
 from migrations.versions import c93e7a4d20f1_add_application_role_and_tenant_rls as migration
 from migrations.versions import (
     d7f2a9c41e63_fix_invitation_select_policy_on_acceptance as invitation_migration,
-    e1a4b7c9d2f0_harden_alembic_version_visibility as head_migration,
+    e1a4b7c9d2f0_harden_alembic_version_visibility as alembic_migration,
+    f4c1d8e37a95_add_operator_licenses as head_migration,
 )
 
 
@@ -60,8 +61,35 @@ def test_contexto_postgresql_usa_parametros_y_limpia_valores_ausentes():
         "auth_user_id": auth_id,
         "auth_email": "persona@example.com",
         "organization_id": "27",
+        # Sin marca explícita, la sesión NO es de operador: es el valor seguro
+        # por omisión y lo que deja vacía la tabla `licencias` bajo RLS.
+        "es_operador": "off",
     }
     assert "set_config('cotizat.organization_id'" in sql
+    assert "set_config('cotizat.es_operador'" in sql
+
+
+def test_la_marca_de_operador_solo_se_activa_cuando_el_contexto_lo_declara():
+    """`cotizat.es_operador` habilita las políticas RLS de `licencias`.
+
+    Si se activara sola, cualquier sesión vería el registro de licencias de
+    todos los clientes; por eso se comprueba en ambos sentidos.
+    """
+    operador = _FakeConnection()
+    _aplicar_contexto_postgresql(operador, {
+        "auth_user_id": "id-operador",
+        "auth_email": "titular@example.com",
+        "es_operador": True,
+    })
+    assert operador.calls[0][1]["es_operador"] == "on"
+
+    cliente = _FakeConnection()
+    _aplicar_contexto_postgresql(cliente, {
+        "auth_user_id": "id-cliente",
+        "auth_email": "cliente@example.com",
+        "organizacion_id": 4,
+    })
+    assert cliente.calls[0][1]["es_operador"] == "off"
 
     sqlite = _FakeConnection("sqlite")
     _aplicar_contexto_postgresql(sqlite, {})
@@ -104,8 +132,14 @@ def test_arranque_rechaza_rol_que_omite_rls(monkeypatch):
 
 
 def test_head_exigido_por_runtime_coincide_con_alembic():
+    """El head que el runtime exige debe ser el último de la cadena.
+
+    Si divergen, `/readyz` responde 503 en producción: el código espera un
+    esquema que la base no tiene todavía (o al revés).
+    """
     assert database_module.EXPECTED_ALEMBIC_HEAD == head_migration.revision
-    assert head_migration.down_revision == invitation_migration.revision
+    assert head_migration.down_revision == alembic_migration.revision
+    assert alembic_migration.down_revision == invitation_migration.revision
     assert invitation_migration.down_revision == migration.revision
 
 
@@ -220,10 +254,10 @@ def test_migracion_invitaciones_sigue_mostrando_la_fila_aceptada_a_quien_la_acep
 def test_migracion_alembic_version_desactiva_rls_y_concede_lectura(monkeypatch):
     """El runtime puede leer solo el metadato que necesita para readiness."""
     statements = []
-    monkeypatch.setattr(head_migration.op, "get_bind", lambda: _FakeBind())
-    monkeypatch.setattr(head_migration.op, "execute", lambda s: statements.append(str(s)))
+    monkeypatch.setattr(alembic_migration.op, "get_bind", lambda: _FakeBind())
+    monkeypatch.setattr(alembic_migration.op, "execute", lambda s: statements.append(str(s)))
 
-    head_migration.upgrade()
+    alembic_migration.upgrade()
     sql = "\n".join(statements)
     assert "ALTER TABLE public.alembic_version DISABLE ROW LEVEL SECURITY" in sql
     assert "GRANT SELECT ON TABLE public.alembic_version TO cotizat_app" in sql
@@ -231,9 +265,9 @@ def test_migracion_alembic_version_desactiva_rls_y_concede_lectura(monkeypatch):
 
     downgrade_statements = []
     monkeypatch.setattr(
-        head_migration.op, "execute", lambda s: downgrade_statements.append(str(s))
+        alembic_migration.op, "execute", lambda s: downgrade_statements.append(str(s))
     )
-    head_migration.downgrade()
+    alembic_migration.downgrade()
     revertido = "\n".join(downgrade_statements)
     assert "REVOKE SELECT ON TABLE public.alembic_version FROM cotizat_app" in revertido
     assert "ALTER TABLE public.alembic_version ENABLE ROW LEVEL SECURITY" in revertido
@@ -242,10 +276,10 @@ def test_migracion_alembic_version_desactiva_rls_y_concede_lectura(monkeypatch):
 def test_migracion_alembic_version_no_hace_nada_fuera_de_postgresql(monkeypatch):
     statements = []
     sqlite_bind = SimpleNamespace(dialect=SimpleNamespace(name="sqlite"))
-    monkeypatch.setattr(head_migration.op, "get_bind", lambda: sqlite_bind)
-    monkeypatch.setattr(head_migration.op, "execute", lambda s: statements.append(s))
-    head_migration.upgrade()
-    head_migration.downgrade()
+    monkeypatch.setattr(alembic_migration.op, "get_bind", lambda: sqlite_bind)
+    monkeypatch.setattr(alembic_migration.op, "execute", lambda s: statements.append(s))
+    alembic_migration.upgrade()
+    alembic_migration.downgrade()
     assert statements == []
 
 

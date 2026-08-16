@@ -240,7 +240,8 @@ Al trabajar en una tarea de este plan se debe:
 - [x] **E1-020 — Crear aviso de licencias de terceros.**
   Evidencia (15/08/2026): `/legal/licencias` generado a partir de los metadatos reales de `requirements.lock` (42 paquetes verificados con `importlib.metadata`): Lato bajo OFL 1.1 con su texto en `app/static/fonts/OFL.txt`, psycopg LGPL-3.0 usado sin modificar como paquete instalable, PyInstaller con su excepción de empaquetado, y sin copyleft fuerte en el producto distribuido.
 
-- [ ] **E1-021 — Mantener el repositorio privado y revisar que no contenga datos reales sensibles.**
+- [x] **E1-021 — Mantener el repositorio privado y revisar que no contenga datos reales sensibles.**
+  Evidencia (15/08/2026): repositorio confirmado **privado** (`gh api repos/... → "private": true`, 0 forks) y revisión de contenido convertida en comprobación repetible con `tools/auditar_datos_sensibles.py` (credenciales de Supabase/Resend/GitHub/AWS, JWT, PEM, cadenas de conexión con contraseña real, correos personales, teléfonos VE/ES, documentos fiscales, referencias del proyecto Supabase/Upstash y archivos que nunca deben versionarse). Se auditaron los 214 archivos versionados **y los 653 blobs de los 101 commits del historial**: no hay ni hubo nunca un secreto real confirmado (todas las coincidencias del historial son marcadores tipo `REEMPLAZAR` o valores de prueba), por lo que **no hace falta reescribir el histórico ni rotar claves**. Se corrigieron los tres datos reales encontrados en el árbol: el correo personal del propietario en `HOJA_DE_RUTA_Y_ESTADO_DEL_PROYECTO.md` (→ `persona@example.com`) y dos apariciones de la referencia del proyecto Supabase en `docs/GUIA_STAGING_POR_CLICS.md` (→ `<ref-de-tu-proyecto>`). `tests/test_datos_sensibles.py` (34 pruebas) mantiene la auditoría en verde en CI y verifica que cada regla siga detectando y que los marcadores legítimos no generen ruido. Guía completa en `docs/DATOS_SENSIBLES.md`.
 
 ## 1.5 Catálogo comercial inicial
 
@@ -336,11 +337,14 @@ Las herramientas existentes se conservan como fuente de migración, pero dejaron
 - [x] **E1-052 — Crear un presupuesto de muestra comercial sin datos personales reales.**
   Evidencia (15/08/2026): `app/services/presupuesto_muestra.py` construye el presupuesto y `tools/generar_presupuesto_muestra.py` escribe `app/static/pdf/presupuesto-ejemplo.pdf`, enlazado desde la landing («Ver un presupuesto de ejemplo (PDF)»). Todo ficticio: empresa «Construcciones El Samán, C.A.» con RIF marcador `J-00000000-0` y contacto en el dominio reservado `ejemplo.com`, cliente genérico «Familia Rodríguez» sin documento real, e importes/mediciones verosímiles inventados; el propio PDF declara en «Información adicional» que todos los datos son ficticios. Cubierto por `tests/test_presupuesto_muestra.py`.
 
-- [ ] **E1-053 — Crear preguntas frecuentes.**
+- [x] **E1-053 — Crear preguntas frecuentes.**
+  Evidencia (16/08/2026): `/legal/preguntas` (`app/templates/legal/preguntas.html`), 17 preguntas en 5 bloques (producto; datos, importación y control; facturación y alcance fiscal; precio y contratación; soporte). Enlazada desde el pie de la landing y de todas las páginas legales. Declara el acceso anticipado, repite que los documentos **no son facturas fiscales** y cierra advirtiendo que en caso de discrepancia prevalecen términos, privacidad y soporte. Cubierta por 6 pruebas en `tests/test_paginas_publicas.py`, incluida una que falla si la FAQ llegara a prometer facturación fiscal.
 
-- [ ] **E1-054 — Definir qué incluye y qué no incluye el soporte.**
+- [x] **E1-054 — Definir qué incluye y qué no incluye el soporte.**
+  Evidencia: `/legal/soporte` §2 y §3 delimitan lo incluido (configuración, dudas de uso, errores del producto, recuperación de acceso) y lo excluido (asesoramiento fiscal/legal, carga manual del catálogo completo, desarrollos a medida, hardware/SO/red), más horario y tiempos orientativos declarados como compromisos de esfuerzo, no garantías con penalización. Protegido por `test_condiciones_de_soporte_delimitan_incluido_y_excluido`.
 
-- [ ] **E1-055 — Crear procedimiento para reportar errores con evidencia.**
+- [x] **E1-055 — Crear procedimiento para reportar errores con evidencia.**
+  Evidencia: `/legal/soporte` §5 pide los cinco datos que hacen reproducible un fallo (qué esperabas, qué ocurrió con el mensaje exacto, pasos, captura o PDF **sin datos personales de clientes**, y fecha/hora + entorno). Protegido por `test_procedimiento_de_reporte_pide_evidencia_sin_datos_de_clientes`.
 
 - [~] **E1-056 — Preparar una landing page sencilla.**
   Publicada en `/conocer` (15/08/2026): problema, resultado, público objetivo, precios promocionales del piloto (89 US$/año con habitual 109; 9,99 US$/mes primer año con habitual 12,99), nota de honestidad (acceso anticipado, documentos no fiscales), llamada a solicitar demostración por email y enlace al PDF de ejemplo (E1-052, añadido el 15/08/2026). Pendiente para cerrar: el vídeo de demostración (E1-051), que se enlazará cuando exista.
@@ -353,10 +357,23 @@ Las herramientas existentes se conservan como fuente de migración, pero dejaron
 - [-] **E1-058 — Definir hipótesis de licencia de escritorio.**
   Descartada como prioridad por la dirección browser-first; el precio se validará sobre acceso web.
 
-- [ ] **E1-059 — Definir métodos de cobro legales y operables.**  
+- [~] **E1-059 — Definir métodos de cobro legales y operables.**  
   Considerar cobro trimestral/anual para reducir fricción administrativa.
+  **Investigación cerrada (16/08/2026), decisión pendiente del titular.** Stripe
+  **no opera en Venezuela**, y Wise/Payoneer imponen restricciones fuertes a
+  residentes venezolanos; las pasarelas *merchant of record* (Paddle, Lemon
+  Squeezy) exigen una entidad legal en país soportado. **El titular es de
+  nacionalidad española y reside también en España**, lo que abre la vía
+  limpia: darse de alta como **autónomo en España** (modelo 036 + RETA) permite
+  usar Stripe con normalidad, emitir factura española y cobrar con tarjeta desde
+  cualquier país. Contrapartida: cuota de autónomo, IVA/IRPF trimestrales y, si
+  se vende a consumidores de la UE por encima de 10.000 €/año, ventanilla única
+  OSS. Alternativa sin altas: **cobro manual** (transferencia/Zelle/Binance)
+  con activación a mano, suficiente para un piloto de pocos clientes. Análisis
+  completo en `docs/COBRO_Y_LICENCIAS.md`.
 
-- [ ] **E1-060 — Preparar recibo, contrato y registro interno de licencias.**
+- [~] **E1-060 — Preparar recibo, contrato y registro interno de licencias.**
+  **Registro interno completado (16/08/2026).** Panel de operador en `/admin/licencias` (`app/templates/admin/licencias.html`, `app/services/licencias.py`, modelo `Licencia`, migración `f4c1d8e37a95`): conceder, renovar, regalar prueba o cortesía, compensar incidencias y cancelar dejando constancia, con resumen de organizaciones sin licencia y avisos de vencimiento a 15 días. Distingue `pago` de `prueba`/`cortesia`/`compensacion` para que solo lo cobrado sume a ingresos, y encadena renovaciones sin restar días. **Aislamiento**: `licencias` es tabla **no-tenant** con RLS propia (`cotizat_licencia_*`) que exige la marca `cotizat.es_operador`; la lista de operadores vive en `COTIZAT_OPERADORES` (variable de entorno, no columna, para que no exista escalada escribiendo en la base) y se exige email verificado. 18 pruebas en `tests/test_licencias.py`, incluida la de que un cliente autenticado no alcanza el panel y la de que el panel no expone datos de negocio. Guía en `docs/PANEL_DE_OPERADOR.md`. **Pendiente**: recibo/contrato en PDF y corte automático de acceso (esperan a E1-059).
 
 - [ ] **E1-061 — Definir proceso manual de activación para los primeros pilotos.**
 

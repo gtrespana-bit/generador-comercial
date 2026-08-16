@@ -2059,6 +2059,92 @@ class Pago(TenantMixin, Base):
     factura = relationship("Factura")
 
 
+#: Estados del ciclo de vida de una licencia.
+ESTADOS_LICENCIA = ("activa", "vencida", "cancelada")
+
+#: Origen de la licencia. Distinguirlos importa para no confundir ingresos
+#: reales con cortesías al leer el panel: una prueba y un mes regalado valen
+#: 0 y no deben sumar a la facturación.
+ORIGENES_LICENCIA = ("pago", "prueba", "cortesia", "compensacion")
+
+ORIGENES_LICENCIA_ETIQUETA = {
+    "pago": "Pago",
+    "prueba": "Prueba gratuita",
+    "cortesia": "Cortesía",
+    "compensacion": "Compensación por incidencia",
+}
+
+
+class Licencia(Base):
+    """Licencia de uso de CotizaT concedida a una organización cliente.
+
+    **No es una tabla de tenant y no debe serlo.** Las tablas con
+    ``TenantMixin`` contienen datos *de* un cliente y se filtran por su
+    organización; una licencia es un dato del negocio del titular *sobre* una
+    organización: cuánto paga, hasta cuándo y por qué. Si heredara de
+    ``TenantMixin`` el filtro automático la haría visible al propio cliente.
+
+    Por eso queda fuera del filtro ORM y, en PostgreSQL, se protege con
+    políticas RLS propias que exigen la marca de operador en la sesión (ver la
+    revisión ``f4c1d8e37a95``). Una sesión de cliente no obtiene ni una fila.
+    """
+
+    __tablename__ = "licencias"
+    __table_args__ = (
+        CheckConstraint(
+            "estado IN ('activa', 'vencida', 'cancelada')",
+            name="ck_licencia_estado_valido",
+        ),
+        CheckConstraint(
+            "origen IN ('pago', 'prueba', 'cortesia', 'compensacion')",
+            name="ck_licencia_origen_valido",
+        ),
+        CheckConstraint("importe >= 0", name="ck_licencia_importe_no_negativo"),
+        Index("ix_licencias_organizacion_inicio", "organizacion_id", "inicio"),
+    )
+
+    id = Column(Integer, primary_key=True)
+    organizacion_id = Column(
+        Integer,
+        ForeignKey("organizaciones.id", ondelete="RESTRICT"),
+        nullable=False,
+        index=True,
+    )
+    estado = Column(String(20), nullable=False, default="activa")
+    origen = Column(String(20), nullable=False, default="pago")
+    inicio = Column(Date, nullable=False, default=date.today)
+    #: Último día con acceso, inclusive.
+    vence = Column(Date, nullable=False)
+    importe = Column(Float, nullable=False, default=0.0)
+    moneda = Column(String(10), nullable=False, default="USD")
+    metodo_cobro = Column(String(80), default="")
+    referencia = Column(String(150), default="")
+    notas = Column(Text, default="")
+    #: Auditoría: quién concedió la licencia y desde qué correo. Se guarda el
+    #: email además del id porque el operador puede no ser miembro de la
+    #: organización y su usuario podría no existir en el futuro.
+    creada_por_email = Column(String(254), nullable=False, default="")
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    organizacion = relationship("Organizacion")
+
+    @property
+    def es_ingreso(self) -> bool:
+        """Solo las licencias de pago cuentan como facturación."""
+        return self.origen == "pago" and self.importe > 0
+
+    def vigente(self, hoy: date | None = None) -> bool:
+        """Indica si la licencia da acceso en la fecha indicada."""
+        hoy = hoy or date.today()
+        return self.estado == "activa" and self.inicio <= hoy <= self.vence
+
+    def dias_restantes(self, hoy: date | None = None) -> int:
+        """Días que quedan de acceso (0 si ya venció)."""
+        hoy = hoy or date.today()
+        return max((self.vence - hoy).days, 0)
+
+
 class ContextoOrganizacionError(RuntimeError):
     """Una lectura o escritura intentó cruzar el límite de organización."""
 

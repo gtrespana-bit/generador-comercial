@@ -63,6 +63,17 @@ Sin esto, el enlace de «restablecer clave» del email redirigiría a la pantall
 de login y parecería roto (`/readyz` publica la URL esperada en
 `recovery_redirect_url_esperada` para compararla de un vistazo).
 
+### Límite de correos de Auth (pantalla aparte)
+
+El número de correos por hora **no** está en *URL Configuration* ni dentro de
+*SMTP Settings*, sino en **Authentication → Rate Limits**
+(`/project/<ref>/auth/rate-limits`). Con SMTP personalizado activo, sube
+«Rate limit for sending emails» a **30/hora** y deja el intervalo mínimo entre
+correos al mismo usuario en **60 s**. Sin SMTP propio el campo está bloqueado y
+el techo son ~2 correos/hora en todo el proyecto.
+
+Paso a paso en `docs/PENDIENTES_OPERATIVOS.md` §1.
+
 ## Paso 4 — Vercel: variable pública y despliegue
 
 Project → **Settings → Environment Variables** (Production y Preview):
@@ -132,3 +143,13 @@ Redeploy. Verificar en `https://cotizat.online/readyz`:
 - **No hay buzones en `cotizat.online`**: los correos que alguien envíe a
   `algo@cotizat.online` rebotarán (no hay MX de recepción). Si algún día se
   quiere un buzón (Google Workspace), se añade entonces y se consolida el SPF.
+  - Comprobado el **16/08/2026**: el dominio raíz sigue **sin MX ni TXT**, y
+    Resend está verificado sobre **`send.cotizat.online`** (SPF + MX hacia
+    `feedback-smtp.eu-west-1.amazonses.com`) con el DKIM `resend._domainkey` en
+    la raíz. Enviar funciona; **recibir no**, así que `soporte@cotizat.online`
+    todavía rebota.
+  - Al montar la recepción, **los MX nuevos van en la raíz `@`** (donde no hay
+    nada, así que no se pisa el envío). **No tocar** los registros de
+    `send.cotizat.online` ni el TXT `resend._domainkey`: sin ellos dejan de
+    salir las invitaciones. Opciones y pasos en
+    `docs/PENDIENTES_OPERATIVOS.md` §3.

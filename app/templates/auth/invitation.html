@@ -12,6 +12,9 @@
 <div class="brand">{{ product_name }}</div>
 <h1>Te invitaron a una organización</h1>
 <p class="muted">Inicia sesión o crea tu cuenta con el mismo email que recibió la invitación. Por seguridad, el email debe estar confirmado y el enlace solo puede usarse una vez.</p>
+{% if not autenticado %}
+<p class="muted"><strong>¿Aún no tienes cuenta?</strong> Crea una con ese mismo email y confírmala desde el correo de Supabase. Al iniciar sesión encontrarás la invitación esperándote para aceptarla con un clic: no hace falta volver a este enlace.</p>
+{% endif %}
 {% if error %}<div class="alert">{{ error }}</div>{% endif %}
 {% if autenticado and token %}
 <p class="muted">Estás dentro. Estamos aceptando la invitación…</p>

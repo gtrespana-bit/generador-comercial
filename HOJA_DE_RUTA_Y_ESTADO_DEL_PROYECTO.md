@@ -1250,11 +1250,12 @@ token siempre fue válido; solo aterrizaba donde nadie lo leía.
 ## Verificación
 
 Captura HTTP real contra un servidor local que suplanta a GoTrue, comprobando
-la petición exacta que sale:
+la petición exacta que sale (el correo real de la prueba se sustituyó aquí por
+uno de ejemplo, E1-021):
 
 ```text
 POST /auth/v1/recover?redirect_to=https%3A%2F%2Fcotizat-generador.vercel.app%2Frestablecer-clave
-body: {"email": "gtrespana@gmail.com"}
+body: {"email": "persona@example.com"}
 ```
 
 ## Red de seguridad implementada en la aplicación

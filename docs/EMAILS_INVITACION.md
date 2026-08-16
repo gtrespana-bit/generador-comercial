@@ -17,6 +17,43 @@ el enlace en pantalla queda solo como respaldo.
    inesperada), el flujo **degrada sin romper**: la invitación sigue guardada
    y la pantalla muestra el enlace una vez, el comportamiento de siempre.
 
+## Aceptar la invitación: con cuenta y sin cuenta
+
+Hay **dos vías equivalentes**, y ambas exigen lo mismo: sesión iniciada, email
+confirmado y coincidencia exacta con el destinatario.
+
+1. **Enlace del correo** (`/invitaciones/<token>/aceptar`). El token es un
+   secreto de un solo uso. Si la persona ya tiene cuenta, es un clic.
+2. **Panel de organizaciones** (`/organizaciones`). Al iniciar sesión, quien
+   tiene una invitación vigente la ve listada con un botón «Aceptar
+   invitación», sin volver al correo.
+
+### Por qué existe la segunda vía (incidencia del 15/08/2026)
+
+Quien **no** tenía cuenta quedaba atrapado en un rodeo: pulsaba el enlace, se
+registraba, confirmaba el email… y aterrizaba en «crea tu empresa», sin rastro
+de la invitación. Tenía que volver al correo y pulsar el enlace por segunda vez.
+
+La causa es que el enlace de confirmación de Supabase apunta a un `redirect_to`
+**fijo** (`/acceso`) y no conserva el `?next=/invitaciones/<token>/aceptar` que
+la aplicación había preparado. Al perderse el `next`, y viviendo el token solo
+dentro del email, la invitación era invisible desde dentro de la aplicación.
+
+En lugar de intentar arrastrar el token a través de Supabase (frágil, y llevaría
+un secreto de un solo uso por más sitios de los necesarios), la invitación se
+descubre desde la sesión: se busca por el **email verificado** de quien ha
+entrado. Además, si alguien sin ninguna membresía abre «crear organización»
+teniendo una invitación pendiente, se le lleva al panel para que elija; fundar
+una empresa propia casi nunca es lo que quería.
+
+**Esto no relaja la seguridad.** El token del correo prueba el control del
+buzón; en la vía del panel esa prueba ya la aportó Supabase al confirmar la
+dirección. Ambas vías comparten la misma función de consumo
+(`_consumir_invitacion`), así que no pueden divergir. El identificador que
+viaja en la URL del panel es el `id` de la fila, adivinable, y por eso **no
+autoriza nada por sí mismo**: quien no sea el destinatario verificado recibe el
+mismo error que si no existiera.
+
 ## Variables de entorno
 
 | Clave | Valor | Notas |
@@ -99,7 +136,12 @@ Sin dominio propio (solo prueba): `onboarding@resend.dev` como
 - `app/services/email.py` — configuración, cliente REST de Resend (urllib,
   sin dependencias nuevas) y `enviar_invitacion_por_email`.
 - `app/templates/emails/invitacion.html` / `.txt` — plantillas del correo.
-- `app/main.py` — cableado en `crear_invitacion_web` con degradación.
+- `app/main.py` — cableado en `crear_invitacion_web` con degradación, y
+  `/invitaciones/pendientes/{id}/aceptar` para la vía del panel.
+- `app/services/invitations.py` — `invitaciones_pendientes_para`,
+  `aceptar_invitacion_pendiente` y el consumo compartido `_consumir_invitacion`.
 - `app/health.py` — chequeo informativo `checks.email` en `/readyz`.
 - `tests/test_email_invitaciones.py` — 12 pruebas (configuración, payload,
   flujo web con correo, sin configuración, proveedor caído, readiness).
+- `tests/test_invitacion_sin_cuenta.py` — recorrido HTTP de quien acepta sin
+  tener cuenta previa (regresión de la incidencia del 15/08/2026).

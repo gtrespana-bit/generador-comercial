@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Licencias · {{ product_name }}</title>
+  <style nonce="{{ request.state.csp_nonce }}">
+    :root{font-family:Inter,ui-sans-serif,system-ui,sans-serif;color:#17211d;background:#f3f7f5}
+    *{box-sizing:border-box}
+    body{margin:0;padding:26px 16px 60px}
+    main{max-width:1060px;margin:auto}
+    header.site{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;gap:12px;flex-wrap:wrap}
+    .brand{font-size:1.3rem;font-weight:900;color:#0b5b38}
+    .operador{color:#66776f;font-size:.85rem}
+    h1{margin:0 0 4px;font-size:1.5rem}
+    .muted{color:#66776f}
+    .cifras{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:20px 0 26px}
+    .cifra{background:white;border-radius:12px;padding:14px 16px;box-shadow:0 6px 22px rgba(10,48,34,.07)}
+    .cifra b{display:block;font-size:1.5rem;line-height:1.2}
+    .cifra span{color:#66776f;font-size:.82rem}
+    .alerta b{color:#9b6114}
+    .card{background:white;border-radius:14px;padding:20px;box-shadow:0 8px 30px rgba(10,48,34,.08);margin-bottom:18px}
+    table{border-collapse:collapse;width:100%;font-size:.88rem}
+    th,td{border-bottom:1px solid #e4ede8;padding:9px 8px;text-align:left;vertical-align:top}
+    th{background:#eef5f1;font-size:.8rem;text-transform:uppercase;letter-spacing:.03em}
+    .pill{display:inline-block;border-radius:999px;padding:3px 9px;font-size:.75rem;font-weight:800}
+    .ok{background:#e9f6ef;color:#11623f}
+    .warn{background:#fdf3e2;color:#9b6114}
+    .off{background:#f1f1f1;color:#6b6b6b}
+    .bad{background:#fff0f0;color:#9b2529}
+    label{display:block;font-weight:700;margin:12px 0 5px;font-size:.85rem}
+    input,select,textarea{width:100%;border:1px solid #b9c8c1;border-radius:9px;padding:9px;font:inherit;font-size:.9rem}
+    textarea{min-height:60px;resize:vertical}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:0 14px}
+    button{border:0;border-radius:9px;background:#146c43;color:white;padding:10px 15px;font:inherit;font-weight:800;cursor:pointer;margin-top:14px}
+    button.link{background:none;color:#9b2529;padding:2px 0;margin:0;font-size:.8rem;font-weight:700;text-decoration:underline}
+    .alert,.notice{border-radius:10px;padding:11px 14px;margin-bottom:16px;font-size:.9rem}
+    .alert{background:#fff0f0;color:#9b2529}
+    .notice{background:#e9f6ef;color:#11623f}
+    details summary{cursor:pointer;color:#0b5b38;font-weight:700;font-size:.82rem}
+    .hist{margin:8px 0 0;padding-left:16px;color:#66776f;font-size:.82rem}
+    .aviso{background:#fdf6e7;border:1px solid #ecd9a8;border-radius:10px;padding:11px 14px;font-size:.85rem;margin-bottom:18px}
+    form.inline{display:inline}
+  </style>
+</head>
+<body><main>
+
+<header class="site">
+  <div>
+    <span class="brand">{{ product_name }}</span>
+    <div class="operador">Panel de operador · {{ operador }}</div>
+  </div>
+  <div><a href="/organizaciones">Volver a la aplicación</a></div>
+</header>
+
+<h1>Licencias</h1>
+<p class="muted">Registro interno de acceso al producto. Fecha de hoy: {{ hoy }}.</p>
+
+{% if error %}<div class="alert">{{ error }}</div>{% endif %}
+{% if msg %}<div class="notice">{{ msg }}</div>{% endif %}
+
+<div class="aviso">
+  Esta pantalla solo muestra el estado de las licencias: nombre de la
+  organización, período y cobro. <strong>No da acceso a los datos de negocio de
+  ningún cliente</strong> (presupuestos, clientes o precios), que siguen
+  aislados por organización.
+</div>
+
+<div class="cifras">
+  <div class="cifra"><b>{{ totales.organizaciones }}</b><span>Organizaciones</span></div>
+  <div class="cifra"><b>{{ totales.con_licencia }}</b><span>Con licencia vigente</span></div>
+  <div class="cifra"><b>{{ totales.sin_licencia }}</b><span>Sin licencia</span></div>
+  <div class="cifra alerta"><b>{{ totales.por_vencer }}</b><span>Vencen en 15 días o menos</span></div>
+  <div class="cifra"><b>{{ '%.2f'|format(totales.ingresos) }}</b><span>Ingresos registrados (USD)</span></div>
+</div>
+
+<div class="card">
+  <h2>Conceder o renovar licencia</h2>
+  <p class="muted">Si la organización ya tiene una licencia vigente, la nueva
+  empieza el día siguiente a su vencimiento: renovar nunca resta días.</p>
+  <form method="post" action="/admin/licencias">
+    <div class="grid">
+      <div>
+        <label for="organizacion_id">Organización</label>
+        <select id="organizacion_id" name="organizacion_id" required>
+          <option value="">Selecciona…</option>
+          {% for fila in filas %}
+          <option value="{{ fila.organizacion.id }}">{{ fila.organizacion.nombre }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label for="origen">Tipo</label>
+        <select id="origen" name="origen" required>
+          {% for valor, etiqueta in origenes %}
+          <option value="{{ valor }}">{{ etiqueta }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label for="duracion">Duración</label>
+        <select id="duracion" name="duracion" required>
+          {% for clave, texto in duraciones %}
+          <option value="{{ clave }}">{{ texto }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label for="importe">Importe (0 si no es de pago)</label>
+        <input id="importe" name="importe" type="number" min="0" step="0.01" value="0">
+      </div>
+      <div>
+        <label for="moneda">Moneda</label>
+        <input id="moneda" name="moneda" maxlength="10" value="USD">
+      </div>
+      <div>
+        <label for="metodo_cobro">Método de cobro</label>
+        <input id="metodo_cobro" name="metodo_cobro" maxlength="80" placeholder="transferencia, Zelle…">
+      </div>
+      <div>
+        <label for="referencia">Referencia</label>
+        <input id="referencia" name="referencia" maxlength="150" placeholder="nº de operación">
+      </div>
+    </div>
+    <label for="notas">Notas internas</label>
+    <textarea id="notas" name="notas" placeholder="Motivo de la cortesía, incidencia compensada, acuerdo alcanzado…"></textarea>
+    <button type="submit">Registrar licencia</button>
+  </form>
+</div>
+
+<div class="card">
+  <h2>Estado por organización</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Organización</th><th>Estado</th><th>Vence</th>
+        <th>Tipo</th><th>Ingresos</th><th>Historial</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for fila in filas %}
+      <tr>
+        <td><strong>{{ fila.organizacion.nombre }}</strong></td>
+        <td>
+          {% if fila.vigente %}
+            {% if fila.por_vencer %}
+            <span class="pill warn">Vence en {{ fila.dias_restantes }} d</span>
+            {% else %}
+            <span class="pill ok">Activa</span>
+            {% endif %}
+          {% else %}
+            <span class="pill off">Sin licencia</span>
+          {% endif %}
+        </td>
+        <td>{{ fila.vigente.vence if fila.vigente else '—' }}</td>
+        <td>{{ fila.vigente.origen if fila.vigente else '—' }}</td>
+        <td>{{ '%.2f'|format(fila.ingresos) }}</td>
+        <td>
+          {% if fila.licencias %}
+          <details>
+            <summary>{{ fila.licencias|length }} registro(s)</summary>
+            <ul class="hist">
+              {% for licencia in fila.licencias %}
+              <li>
+                {{ licencia.inicio }} → {{ licencia.vence }} ·
+                {{ licencia.origen }} ·
+                {{ '%.2f'|format(licencia.importe) }} {{ licencia.moneda }} ·
+                <span class="pill {{ 'ok' if licencia.estado == 'activa' else ('bad' if licencia.estado == 'cancelada' else 'off') }}">{{ licencia.estado }}</span>
+                {% if licencia.estado != 'cancelada' %}
+                <form class="inline" method="post" action="/admin/licencias/{{ licencia.id }}/cancelar">
+                  <button class="link" type="submit">cancelar</button>
+                </form>
+                {% endif %}
+              </li>
+              {% endfor %}
+            </ul>
+          </details>
+          {% else %}<span class="muted">—</span>{% endif %}
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="6" class="muted">Todavía no hay organizaciones registradas.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+</main></body></html>
