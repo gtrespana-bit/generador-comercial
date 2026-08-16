@@ -1,0 +1,42 @@
+{
+  "codigo": "CT-01-01-040",
+  "ambito": "reforma",
+  "capitulo": "01",
+  "subcapitulo": "01",
+  "unidad": "m²",
+  "titulo": "Cerramiento provisional de vano con lámina de madera.",
+  "descripcion": "Cerramiento provisional de vano de puerta o ventana mediante lámina de madera contrachapada u OSB sobre bastidor de listón, anclada al vano. Se emplea para cerrar huecos abiertos por demolición o desmontaje de carpintería, protegiendo el interior frente a la intemperie y frente a intrusiones mientras llega la carpintería definitiva. Incluye el replanteo y corte de la lámina, el montaje del bastidor, la fijación al vano con tacos, el sellado perimetral, su mantenimiento durante la obra y el desmontaje al colocar la carpintería definitiva. Medido en superficie de vano realmente cerrada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-LAMINA-OSB",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-MADERA-LISTON",
+      "rendimiento": 2.4
+    },
+    {
+      "ref": "MT-CLAVOS",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MT-PROT-PLAST",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.24
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.24
+    }
+  ],
+  "codigo_covenin": ""
+}

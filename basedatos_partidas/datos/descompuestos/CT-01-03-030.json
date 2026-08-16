@@ -1,0 +1,42 @@
+{
+  "codigo": "CT-01-03-030",
+  "ambito": "reforma",
+  "capitulo": "01",
+  "subcapitulo": "03",
+  "unidad": "ud",
+  "titulo": "Apuntalamiento de vano durante la apertura de hueco.",
+  "descripcion": "Apuntalamiento provisional del muro situado sobre un vano que se va a abrir o ampliar, mediante puntales y durmientes que reciben la carga de la fábrica superior mientras se ejecuta la demolición y se coloca el dintel definitivo. Es la operación que evita el colapso de la fábrica al retirar el apoyo. Incluye el replanteo, la apertura de las cajas de apoyo del durmiente en el muro, el montaje y puesta en carga de los puntales a ambas caras, la verificación durante la demolición, la retirada del apeo una vez fraguado y en carga el dintel definitivo y el resane de las cajas de apoyo. Medido por vano realmente apuntalado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-APEO",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MT-VIGA-APEO",
+      "rendimiento": 3.2
+    },
+    {
+      "ref": "MT-MADERA-LISTON",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MT-YESO-REP",
+      "rendimiento": 3.5
+    },
+    {
+      "ref": "MQ-MART-ELEC",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 1.4
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 1.4
+    }
+  ],
+  "codigo_covenin": ""
+}

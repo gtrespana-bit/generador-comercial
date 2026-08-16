@@ -1,0 +1,50 @@
+{
+  "codigo": "CT-01-04-020",
+  "ambito": "reforma",
+  "capitulo": "01",
+  "subcapitulo": "04",
+  "unidad": "ud",
+  "titulo": "Cata en piso o losa para reconocimiento de capas o instalaciones.",
+  "descripcion": "Apertura de cata de reconocimiento en piso o losa, de dimensiones aproximadas 40x40 cm, para identificar el espesor y el estado del contrapiso, la existencia de impermeabilización o la presencia de instalaciones enterradas antes de definir la intervención. Incluye la localización previa con detector, el corte perimetral con disco para obtener un borde limpio, el picado por capas con registro del espesor de cada una, el registro fotográfico, y la reposición de la cata con mortero de reparación enrasado con el nivel existente. Medido por cata realmente ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-YESO-REP",
+      "rendimiento": 4.5
+    },
+    {
+      "ref": "MT-PROT-OBRA",
+      "rendimiento": 0.8
+    },
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.22
+    },
+    {
+      "ref": "MQ-DETECTOR",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MQ-AMOLA",
+      "rendimiento": 0.22
+    },
+    {
+      "ref": "MQ-MART-ELEC",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MQ-ASPIR",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.55
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.4
+    }
+  ],
+  "codigo_covenin": ""
+}

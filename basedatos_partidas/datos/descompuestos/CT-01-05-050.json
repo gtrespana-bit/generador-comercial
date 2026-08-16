@@ -1,0 +1,42 @@
+{
+  "codigo": "CT-01-05-050",
+  "ambito": "reforma",
+  "capitulo": "01",
+  "subcapitulo": "05",
+  "unidad": "ud",
+  "titulo": "Caseta o zona cerrada de acopio de materiales y herramienta, por mes.",
+  "descripcion": "Habilitación de una zona cerrada dentro de la obra para el acopio de materiales y el guardado de herramienta, mediante cerramiento de lámina de madera sobre bastidor con puerta y cierre, o mediante la adecuación de un ambiente existente. Incluye el montaje del cerramiento y de la puerta con cerradura, la protección del piso de la zona de acopio, la organización de estanterías o tarimas para separar el material del suelo, el mantenimiento del orden durante el periodo y el desmontaje al finalizar la obra. Medido por mes de permanencia.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-LAMINA-OSB",
+      "rendimiento": 7.5
+    },
+    {
+      "ref": "MT-MADERA-LISTON",
+      "rendimiento": 14.0
+    },
+    {
+      "ref": "MT-CLAVOS",
+      "rendimiento": 1.6
+    },
+    {
+      "ref": "MT-PROT-CARTON",
+      "rendimiento": 6.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 2.6
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 2.6
+    }
+  ],
+  "codigo_covenin": ""
+}

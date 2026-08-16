@@ -10,35 +10,232 @@
         {
           "codigo": "01",
           "nombre": "Protecciones y cerramientos provisionales",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-01-01-010",
+              "titulo": "Protección de piso terminado durante la ejecución de la obra.",
+              "unidad": "m²",
+              "precio": 1.43,
+              "horas": 0.055,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-01-01-020",
+              "titulo": "Protección de mobiliario y equipos con lámina plástica.",
+              "unidad": "m²",
+              "precio": 0.92,
+              "horas": 0.07,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-01-01-030",
+              "titulo": "Barrera antipolvo con lámina plástica y cierre de paso.",
+              "unidad": "m²",
+              "precio": 7.18,
+              "horas": 0.26,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-01-01-040",
+              "titulo": "Cerramiento provisional de vano con lámina de madera.",
+              "unidad": "m²",
+              "precio": 19.59,
+              "horas": 0.48,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-01-01-050",
+              "titulo": "Cerramiento perimetral provisional de obra con malla de señalización.",
+              "unidad": "m",
+              "precio": 4.13,
+              "horas": 0.13,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-01-01-060",
+              "titulo": "Protección de carpintería y aparatos que permanecen en obra.",
+              "unidad": "m²",
+              "precio": 1.29,
+              "horas": 0.08,
+              "producto_cliente": false
+            }
+          ],
+          "n": 6
         },
         {
           "codigo": "02",
           "nombre": "Andamios y medios de elevación",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-01-02-010",
+              "titulo": "Andamio tubular de fachada, montaje, alquiler mensual y desmontaje.",
+              "unidad": "m²",
+              "precio": 10.79,
+              "horas": 0.68,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-01-02-020",
+              "titulo": "Permanencia adicional de andamio de fachada, por mes.",
+              "unidad": "m²",
+              "precio": 2.59,
+              "horas": 0.06,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-01-02-030",
+              "titulo": "Andamio interior móvil o sobre borriquetas.",
+              "unidad": "m²",
+              "precio": 1.81,
+              "horas": 0.09,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-01-02-040",
+              "titulo": "Montacargas o pluma de obra para bajada de material, por mes.",
+              "unidad": "ud",
+              "precio": 152.18,
+              "horas": 7.0,
+              "producto_cliente": false
+            }
+          ],
+          "n": 4
         },
         {
           "codigo": "03",
           "nombre": "Apeos y apuntalamientos",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-01-03-010",
+              "titulo": "Apeo de losa con puntales metálicos y durmientes de reparto.",
+              "unidad": "m²",
+              "precio": 20.59,
+              "horas": 0.56,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-01-03-020",
+              "titulo": "Apeo de viga con puntales metálicos.",
+              "unidad": "m",
+              "precio": 17.16,
+              "horas": 0.64,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-01-03-030",
+              "titulo": "Apuntalamiento de vano durante la apertura de hueco.",
+              "unidad": "ud",
+              "precio": 49.58,
+              "horas": 2.8,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-01-03-040",
+              "titulo": "Apeo o arriostramiento provisional de muro.",
+              "unidad": "m²",
+              "precio": 17.64,
+              "horas": 0.6,
+              "producto_cliente": false
+            }
+          ],
+          "n": 4
         },
         {
           "codigo": "04",
           "nombre": "Catas, sondeos y replanteos",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-01-04-010",
+              "titulo": "Cata en pared para reconocimiento de instalaciones o soporte.",
+              "unidad": "ud",
+              "precio": 7.79,
+              "horas": 0.72,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-01-04-020",
+              "titulo": "Cata en piso o losa para reconocimiento de capas o instalaciones.",
+              "unidad": "ud",
+              "precio": 11.63,
+              "horas": 0.95,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-01-04-030",
+              "titulo": "Detección no destructiva de instalaciones empotradas.",
+              "unidad": "m²",
+              "precio": 1.46,
+              "horas": 0.13,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-01-04-040",
+              "titulo": "Replanteo general de la obra y trazado de ejes.",
+              "unidad": "m²",
+              "precio": 0.77,
+              "horas": 0.09,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-01-04-050",
+              "titulo": "Levantamiento de medidas del inmueble existente.",
+              "unidad": "m²",
+              "precio": 0.62,
+              "horas": 0.07,
+              "producto_cliente": false
+            }
+          ],
+          "n": 5
         },
         {
           "codigo": "05",
           "nombre": "Servicios provisionales de obra",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-01-05-010",
+              "titulo": "Acometida eléctrica provisional de obra con tablero de protección.",
+              "unidad": "ud",
+              "precio": 151.15,
+              "horas": 4.8,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-01-05-020",
+              "titulo": "Punto de agua provisional de obra.",
+              "unidad": "ud",
+              "precio": 46.23,
+              "horas": 2.1,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-01-05-030",
+              "titulo": "Iluminación provisional de obra.",
+              "unidad": "m²",
+              "precio": 2.41,
+              "horas": 0.075,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-01-05-040",
+              "titulo": "Baño portátil de obra, por mes de permanencia.",
+              "unidad": "ud",
+              "precio": 73.81,
+              "horas": 0.35,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-01-05-050",
+              "titulo": "Caseta o zona cerrada de acopio de materiales y herramienta, por mes.",
+              "unidad": "ud",
+              "precio": 146.84,
+              "horas": 5.2,
+              "producto_cliente": false
+            }
+          ],
+          "n": 5
         }
       ],
-      "n": 0
+      "n": 24
     },
     {
       "codigo": "02",

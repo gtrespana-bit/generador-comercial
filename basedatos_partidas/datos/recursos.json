@@ -360,6 +360,96 @@
       "descripcion": "Consumibles de oxicorte y soldadura: gas, boquillas y discos de corte de metal.",
       "precio": 3.9,
       "estado": "provisional"
+    },
+    "MT-PROT-CARTON": {
+      "unidad": "m2",
+      "descripcion": "Cartón corrugado en rollo para protección de pisos y superficies terminadas durante la obra.",
+      "precio": 0.45,
+      "estado": "provisional"
+    },
+    "MT-PROT-PLAST": {
+      "unidad": "m2",
+      "descripcion": "Lámina de polietileno para protección de mobiliario, cerramiento de ambientes y barreras antipolvo.",
+      "precio": 0.28,
+      "estado": "provisional"
+    },
+    "MT-CINTA-ENM": {
+      "unidad": "ud",
+      "descripcion": "Rollo de cinta de enmascarar y cinta adhesiva de embalaje para fijación de protecciones.",
+      "precio": 1.2,
+      "estado": "provisional"
+    },
+    "MT-ZIPPER": {
+      "unidad": "ud",
+      "descripcion": "Cierre tipo cremallera autoadhesivo para paso de personal a través de barrera antipolvo.",
+      "precio": 3.8,
+      "estado": "provisional"
+    },
+    "MT-MADERA-LISTON": {
+      "unidad": "m",
+      "descripcion": "Listón de madera de obra para bastidores, marcos de cerramiento provisional y rastreles.",
+      "precio": 1.3,
+      "estado": "provisional"
+    },
+    "MT-LAMINA-OSB": {
+      "unidad": "m2",
+      "descripcion": "Lámina de madera contrachapada u OSB para cerramiento provisional de vanos y protecciones rígidas.",
+      "precio": 8.5,
+      "estado": "provisional"
+    },
+    "MT-MALLA-OBRA": {
+      "unidad": "m2",
+      "descripcion": "Malla plástica de señalización para cerramiento perimetral y delimitación de zonas de obra.",
+      "precio": 0.9,
+      "estado": "provisional"
+    },
+    "MT-CLAVOS": {
+      "unidad": "kg",
+      "descripcion": "Clavos, tornillos y elementos de fijación de uso general en obra.",
+      "precio": 1.8,
+      "estado": "provisional"
+    },
+    "MT-VIGA-APEO": {
+      "unidad": "m",
+      "descripcion": "Viga o durmiente de madera de reparto para apeos y apuntalamientos.",
+      "precio": 3.1,
+      "estado": "provisional"
+    },
+    "MT-ELE-PROV": {
+      "unidad": "m",
+      "descripcion": "Cable encauchetado para instalación eléctrica provisional de obra.",
+      "precio": 1.4,
+      "estado": "provisional"
+    },
+    "MT-TABLERO-PROV": {
+      "unidad": "ud",
+      "descripcion": "Tablero eléctrico provisional de obra con interruptor diferencial y protecciones, amortizado por uso.",
+      "precio": 45.0,
+      "estado": "provisional"
+    },
+    "MT-LAMP-OBRA": {
+      "unidad": "ud",
+      "descripcion": "Reflector o lámpara de obra con su portalámparas y protección, amortizado por uso.",
+      "precio": 9.5,
+      "estado": "provisional"
+    },
+    "MT-MANGUERA": {
+      "unidad": "m",
+      "descripcion": "Manguera reforzada para red de agua provisional de obra.",
+      "precio": 0.85,
+      "estado": "provisional"
+    },
+    "MT-LLAVE-PROV": {
+      "unidad": "ud",
+      "descripcion": "Llave de paso, adaptadores y accesorios para punto de agua provisional.",
+      "precio": 6.0,
+      "estado": "provisional"
+    },
+    "MT-SENAL-OBRA": {
+      "unidad": "ud",
+      "descripcion": "Señal de advertencia, cinta de peligro y conos de delimitación de obra.",
+      "precio": 4.2,
+      "estado": "provisional"
     }
   },
   "maquinaria": {
@@ -475,6 +565,30 @@
       "unidad": "h",
       "descripcion": "Montacargas o pluma de obra para bajada de material desde plantas altas.",
       "precio": 9.5,
+      "estado": "provisional"
+    },
+    "MQ-DETECTOR": {
+      "unidad": "h",
+      "descripcion": "Detector electrónico de instalaciones empotradas, para localizar tuberías, cables y armaduras sin picar.",
+      "precio": 2.6,
+      "estado": "provisional"
+    },
+    "MQ-TALADRO": {
+      "unidad": "h",
+      "descripcion": "Taladro percutor con brocas, incluida amortización y consumo.",
+      "precio": 1.5,
+      "estado": "provisional"
+    },
+    "MQ-NIVEL-LASER": {
+      "unidad": "h",
+      "descripcion": "Nivel láser autonivelante y equipo de medición para replanteo.",
+      "precio": 2.2,
+      "estado": "provisional"
+    },
+    "MQ-BANO-PORT": {
+      "unidad": "ud",
+      "descripcion": "Alquiler mensual de baño portátil de obra, incluido su mantenimiento y vaciado periódico.",
+      "precio": 55.0,
       "estado": "provisional"
     }
   }
