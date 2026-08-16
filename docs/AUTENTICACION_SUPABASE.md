@@ -160,6 +160,8 @@ Los enlaces se construyen desde `COTIZAT_PUBLIC_URL`, nunca desde `Host`. Aún n
 
 `e1a4b7c9d2f0` hace permanente el arreglo operativo de `alembic_version`: desactiva RLS en esa tabla de metadatos y concede únicamente `SELECT` a `cotizat_app`. Así el login `cotizat_runtime` puede comprobar el head en `/readyz` sin abrir ningún acceso a datos de tenants. Para SQL Editor está disponible `docs/staging_upgrade_e1a4b7c9d2f0.sql`.
 
+`f4c1d8e37a95` (E1-060, 16/08/2026) añade la tabla `licencias` con RLS propia que exige la marca `cotizat.es_operador` (panel `/admin/licencias`). **Es el head actual de producción**; script para SQL Editor en `docs/staging_upgrade_f4c1d8e37a95.sql`. Detalle en `docs/PANEL_DE_OPERADOR.md`.
+
 El proyecto real confirmó previamente `relrowsecurity = true` y que `anon` obtuvo cero partidas. Tras el cierre del incidente de invitaciones, Supabase quedó en `d7f2a9c41e63` y el flujo de aceptación se probó con el login runtime limitado. `e1a4b7c9d2f0` ya está **aplicada y desplegada**: Supabase confirmó `relrowsecurity = false`, `relforcerowsecurity = false` y `SELECT` para `cotizat_app` en `public.alembic_version`, y `/readyz` en producción responde `"alembic": "head:e1a4b7c9d2f0"` con `"rol_runtime": "superuser=False, bypassrls=False, inherit=True, cotizat_app=True"`. El PR #16 que versiona este endurecimiento está fusionado en `main`.
 
 ## Estado de validación real

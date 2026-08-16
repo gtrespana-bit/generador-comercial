@@ -55,12 +55,17 @@ y `git diff --check`. `.env` y `presupuestos.db` no forman parte del repositorio
       "storage": "supabase:cotizat-private",
       "public_url": "configurado",
       "database": "postgresql",
-      "alembic": "head:e1a4b7c9d2f0",
+      "alembic": "head:f4c1d8e37a95",
       "rol_runtime": "superuser=False, bypassrls=False, inherit=True, cotizat_app=True"
     },
     "errors": []
   }
   ```
+
+> **Actualización 16/08/2026:** el head exigido es ahora `f4c1d8e37a95`
+> (E1-060, licencias de operador). La migración se aplicó en Supabase y
+> `/readyz` real responde `"alembic": "head:f4c1d8e37a95"` con `"ok": true`
+> (ver `docs/PANEL_DE_OPERADOR.md` §5).
 - La raíz `/` redirige correctamente a `/acceso` (pantalla de inicio de sesión).
 - Diagnóstico y resolución de errores iniciales de Vercel:
   1. `alembic_version` estaba vacía / filtrada por RLS para roles no superusuario.
@@ -99,7 +104,8 @@ La nueva conversación debe trabajar desde el `main` resultante (commit
 Estado verificado de Supabase:
 
 ```text
-Alembic remoto: e1a4b7c9d2f0
+Alembic remoto: f4c1d8e37a95 (aplicado el 16/08/2026 con
+  docs/staging_upgrade_f4c1d8e37a95.sql; RLS de licencias: true/true, SELECT a cotizat_app)
 Rol runtime: cotizat_runtime (NOSUPERUSER, NOBYPASSRLS, INHERIT, miembro de cotizat_app)
 Bucket Storage: cotizat-private (privado, 12 MB)
 Auth URLs: Site URL https://cotizat.online y Redirect URL https://cotizat.online/restablecer-clave
@@ -110,7 +116,8 @@ Estado verificado de Vercel:
 ```text
 URL de staging: https://cotizat.online (dominio propio, 15/08/2026);
   alias previo https://cotizat-generador.vercel.app sigue activo.
-Variables de entorno: DATABASE_URL, COTIZAT_REQUIRE_RLS_ROLE=true, SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, COTIZAT_STORAGE_BACKEND=supabase, SUPABASE_STORAGE_BUCKET=cotizat-private, SUPABASE_SECRET_KEY, COTIZAT_COOKIE_SECURE=true, COTIZAT_TRUST_PROXY=true, COTIZAT_PUBLIC_URL=https://cotizat.online, UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN, COTIZAT_REQUIRE_DISTRIBUTED_RATELIMIT=true, RESEND_API_KEY, COTIZAT_EMAIL_FROM=CotizaT <no-responder@cotizat.online>.
+Variables de entorno: DATABASE_URL, COTIZAT_REQUIRE_RLS_ROLE=true, SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, COTIZAT_STORAGE_BACKEND=supabase, SUPABASE_STORAGE_BUCKET=cotizat-private, SUPABASE_SECRET_KEY, COTIZAT_COOKIE_SECURE=true, COTIZAT_TRUST_PROXY=true, COTIZAT_PUBLIC_URL=https://cotizat.online, UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN, COTIZAT_REQUIRE_DISTRIBUTED_RATELIMIT=true, RESEND_API_KEY, COTIZAT_EMAIL_FROM=CotizaT <no-responder@cotizat.online>, COTIZAT_OPERADORES (añadida el 16/08/2026: correo del titular; habilita /admin/licencias).
+Panel de operador (E1-060, 16/08/2026): https://cotizat.online/admin/licencias — desplegado y verificado por el titular.
 Rate limiting distribuido (verificado el 15/08/2026): las tres variables de
 Upstash están en Vercel (Production), el PR #18 está fusionado y `/readyz`
 responde `"rate_limit": "distribuido:upstash"` con `"ok": true`.

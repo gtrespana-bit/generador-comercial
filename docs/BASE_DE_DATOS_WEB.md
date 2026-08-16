@@ -53,6 +53,8 @@ El 13 de agosto de 2026 se aplicó la baseline `5cda50f97ed9` en un proyecto Sup
 
 La revisión `9bca2ad1f6e4`, que añade el vínculo con Supabase Auth, también quedó aplicada en el mismo proyecto. El entorno real está en `e1a4b7c9d2f0`, con Storage privado, invitaciones, las políticas RLS/rol de aplicación, la corrección de visibilidad de la invitación aceptada y la lectura segura de `alembic_version` aplicados y verificados con el login runtime limitado. `/readyz` en producción confirma `"alembic": "head:e1a4b7c9d2f0"` y `"rol_runtime": "superuser=False, bypassrls=False, inherit=True, cotizat_app=True"`.
 
+**Actualización 16/08/2026:** el head actual de producción es `f4c1d8e37a95` (E1-060, tabla `licencias` de operador con RLS propia; aplicada con `docs/staging_upgrade_f4c1d8e37a95.sql`). `/readyz` real responde `"alembic": "head:f4c1d8e37a95"` con `ok: true`. Ver `docs/PANEL_DE_OPERADOR.md`.
+
 ## Rol de runtime y migraciones
 
 `c93e7a4d20f1` crea `cotizat_app` como rol grupal `NOLOGIN`, `NOSUPERUSER` y `NOBYPASSRLS`; deliberadamente no contiene contraseña. El login de runtime debe crearse fuera de Git, con una contraseña generada en el gestor de secretos del proveedor, y recibir únicamente:
