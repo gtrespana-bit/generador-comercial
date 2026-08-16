@@ -1,7 +1,7 @@
 {
   "_comentario": "Cuadro de recursos. FUENTE ÚNICA DE VERDAD de los precios. MONEDA: USD. ÁMBITO: Venezuela. Cambiar aquí un precio recalcula todas las partidas que usan ese recurso.",
   "_moneda": "USD",
-  "_revision": "2026-08 · precios de material contrastados con mercado venezolano (MercadoLibre VE, EPA, ferreterias, tabuladores 2026)",
+  "_revision": "2026-08 · mano de obra facilitada por el cliente · materiales PROVISIONALES",
   "_nota_materiales": "Los precios de material siguen siendo PROVISIONALES: no se han verificado en el mercado venezolano. Ojo, en Venezuela el material importado suele costar IGUAL O MÁS que en España mientras la mano de obra es 4-5 veces más barata, así que la proporción se invierte respecto a una base española. Hay que sustituirlos por precios de proveedor real.",
   "_nota_productos_cliente": "Los materiales de acabado que elige el cliente (cerámica, porcelanato, grifería, sanitarios, puertas, pintura de color...) NO van aquí ni forman parte del descompuesto. Viven en el catálogo de productos y se suman al presupuesto aparte. En su lugar, cada partida declara un bloque 'producto_cliente' con el consumo por unidad.",
   "mano_obra": {
@@ -112,23 +112,20 @@
     "MT-ADH-C2TE": {
       "unidad": "kg",
       "descripcion": "Adhesivo cementoso mejorado tipo C2 TE, de deslizamiento reducido y tiempo abierto ampliado, para colocación de porcelanato en capa fina.",
-      "precio": 0.32,
-      "estado": "verificado-mercado",
-      "fuente": "Pega porcelanato saco 25 kg a 7-9 USD."
+      "precio": 0.48,
+      "estado": "provisional"
     },
     "MT-ADH-C1": {
       "unidad": "kg",
       "descripcion": "Adhesivo cementoso normal tipo C1, color gris, para colocación de cerámica en capa fina.",
-      "precio": 0.24,
-      "estado": "verificado-mercado",
-      "fuente": "Pega ceramica comun, saco 25 kg a 5-7 USD."
+      "precio": 0.32,
+      "estado": "provisional"
     },
     "MT-JUN-CG2": {
       "unidad": "kg",
       "descripcion": "Mortero de juntas cementoso tipo CG2, de absorción reducida y resistencia elevada a la abrasión, en el color elegido.",
-      "precio": 1.6,
-      "estado": "verificado-mercado",
-      "fuente": "Boquilla cementosa, bolsa de 1 kg a 1,50-2,00 USD."
+      "precio": 1.35,
+      "estado": "provisional"
     },
     "MT-CRU-NIV": {
       "unidad": "ud",
@@ -163,23 +160,20 @@
     "MT-PYL-CANAL": {
       "unidad": "m",
       "descripcion": "Canal de acero galvanizado de 70 mm para arranque y remate de tabique autoportante.",
-      "precio": 1.7,
-      "estado": "verificado-mercado",
-      "fuente": "Canal galvanizado 70 mm."
+      "precio": 1.95,
+      "estado": "provisional"
     },
     "MT-PYL-MONT": {
       "unidad": "m",
       "descripcion": "Montante de acero galvanizado de 70 mm para estructura de tabique autoportante.",
-      "precio": 2.1,
-      "estado": "verificado-mercado",
-      "fuente": "Montante galvanizado 70 mm."
+      "precio": 2.35,
+      "estado": "provisional"
     },
     "MT-PYL-PLACA": {
       "unidad": "m2",
       "descripcion": "Placa de yeso laminado estándar de 15 mm de espesor, borde afinado.",
-      "precio": 7.2,
-      "estado": "verificado-mercado",
-      "fuente": "Lamina de 15 mm, sobreprecio sobre la de 12,5."
+      "precio": 4.8,
+      "estado": "provisional"
     },
     "MT-PYL-LANA": {
       "unidad": "m2",
@@ -196,9 +190,8 @@
     "MT-PYL-PASTA": {
       "unidad": "kg",
       "descripcion": "Pasta de juntas y cinta de papel microperforada para tratamiento de uniones.",
-      "precio": 1.05,
-      "estado": "verificado-mercado",
-      "fuente": "Pasta de juntas y cinta."
+      "precio": 1.25,
+      "estado": "provisional"
     },
     "MT-TORN": {
       "unidad": "ud",
@@ -209,23 +202,20 @@
     "MT-PIN-FONDO": {
       "unidad": "l",
       "descripcion": "Fondo fijador o sellador acrílico al agua, para consolidar y regular la absorción de paramentos interiores.",
-      "precio": 5.0,
-      "estado": "verificado-mercado",
-      "fuente": "Galon de fondo fijador ~19 USD."
+      "precio": 3.2,
+      "estado": "provisional"
     },
     "MT-PIN-CAUCHO": {
       "unidad": "l",
       "descripcion": "Pintura de caucho acrílico mate lavable para interiores, base blanca tintable.",
-      "precio": 3.95,
-      "estado": "verificado-mercado",
-      "fuente": "Galon de caucho 9-20 USD; mediana 15 sobre 3,785 l."
+      "precio": 4.1,
+      "estado": "provisional"
     },
     "MT-PIN-ESMALTE": {
       "unidad": "l",
       "descripcion": "Esmalte sintético brillante para carpintería metálica y de madera.",
-      "precio": 7.4,
-      "estado": "verificado-mercado",
-      "fuente": "Galon de esmalte a 27,90 USD."
+      "precio": 6.8,
+      "estado": "provisional"
     },
     "MT-PIN-MASILLA": {
       "unidad": "kg",
@@ -242,30 +232,26 @@
     "MT-PLO-PPR20": {
       "unidad": "m",
       "descripcion": "Tubería de polipropileno PPR de 20 mm para agua fría y caliente, con termofusión.",
-      "precio": 1.5,
-      "estado": "verificado-mercado",
-      "fuente": "Tubo PPR 20 mm x 4 m a 5-8 USD; mediana 6."
+      "precio": 1.45,
+      "estado": "provisional"
     },
     "MT-PLO-ACC20": {
       "unidad": "ud",
       "descripcion": "Accesorios de PPR de 20 mm: codos, tees, uniones y adaptadores roscados.",
-      "precio": 0.8,
-      "estado": "verificado-mercado",
-      "fuente": "Accesorios PPR 20 mm."
+      "precio": 0.9,
+      "estado": "provisional"
     },
     "MT-PLO-PVC4": {
       "unidad": "m",
       "descripcion": "Tubería de PVC sanitario de 4 pulgadas para desagüe, con junta cementada.",
-      "precio": 2.8,
-      "estado": "verificado-mercado",
-      "fuente": "Tubo PVC 4 pulgadas x 6 m a 12-18 USD; mediana 16."
+      "precio": 4.6,
+      "estado": "provisional"
     },
     "MT-PLO-ACC4": {
       "unidad": "ud",
       "descripcion": "Accesorios de PVC sanitario de 4 pulgadas: codos, yees, sifones y pegamento.",
-      "precio": 2.9,
-      "estado": "verificado-mercado",
-      "fuente": "Accesorios PVC sanitario 4 pulgadas."
+      "precio": 3.4,
+      "estado": "provisional"
     },
     "MT-PLO-SOP": {
       "unidad": "ud",
@@ -276,30 +262,26 @@
     "MT-ELE-TUB20": {
       "unidad": "m",
       "descripcion": "Tubería conduit corrugada de PVC de 20 mm para canalización eléctrica empotrada.",
-      "precio": 0.62,
-      "estado": "verificado-mercado",
-      "fuente": "Conduit corrugado PVC 20 mm."
+      "precio": 0.75,
+      "estado": "provisional"
     },
     "MT-ELE-CABLE": {
       "unidad": "m",
       "descripcion": "Conductor de cobre THW calibre 12 AWG, aislamiento 600 V.",
-      "precio": 0.6,
-      "estado": "verificado-mercado",
-      "fuente": "Cable THW 12 AWG: rollo de 100 m a 45-65 USD."
+      "precio": 0.95,
+      "estado": "provisional"
     },
     "MT-ELE-CAJA": {
       "unidad": "ud",
       "descripcion": "Caja de paso o de mecanismo, metálica o de PVC, para empotrar.",
-      "precio": 1.1,
-      "estado": "verificado-mercado",
-      "fuente": "Caja de paso o de mecanismo."
+      "precio": 1.3,
+      "estado": "provisional"
     },
     "MT-ELE-MECA": {
       "unidad": "ud",
       "descripcion": "Mecanismo de interruptor o tomacorriente con placa, gama estándar.",
-      "precio": 3.2,
-      "estado": "verificado-mercado",
-      "fuente": "Mecanismo con placa, gama estandar."
+      "precio": 3.6,
+      "estado": "provisional"
     },
     "MT-YESO-REP": {
       "unidad": "kg",
@@ -310,23 +292,20 @@
     "MT-BLQ-10": {
       "unidad": "ud",
       "descripcion": "Bloque de concreto hueco de 10x20x40 cm para tabiquería no estructural.",
-      "precio": 0.48,
-      "estado": "verificado-mercado",
-      "fuente": "Bloque concreto 10 cm: fabricante 0,42; detal hasta 0,55."
+      "precio": 0.55,
+      "estado": "provisional"
     },
     "MT-MOR-PEGA": {
       "unidad": "kg",
       "descripcion": "Mortero de pega para mampostería, elaborado con cemento y arena lavada.",
-      "precio": 0.105,
-      "estado": "verificado-mercado",
-      "fuente": "Mortero de pega hecho en obra: ~350 kg cemento + arena por m3."
+      "precio": 0.18,
+      "estado": "provisional"
     },
     "MT-MOR-FRISO": {
       "unidad": "kg",
       "descripcion": "Mortero de friso para revestimiento de paramentos, elaborado con cemento y arena cernida.",
-      "precio": 0.1,
-      "estado": "verificado-mercado",
-      "fuente": "Mortero de friso elaborado en obra con cemento y arena cernida."
+      "precio": 0.16,
+      "estado": "provisional"
     },
     "MT-MALLA-ESQ": {
       "unidad": "m",
@@ -337,16 +316,14 @@
     "MT-PYL-PLACA125": {
       "unidad": "m2",
       "descripcion": "Placa de yeso laminado estándar de 12,5 mm de espesor, borde afinado.",
-      "precio": 6.4,
-      "estado": "verificado-mercado",
-      "fuente": "Lamina drywall 1/2 de 1,22x2,44 (2,98 m2) a 14-22 USD; mediana 19."
+      "precio": 4.2,
+      "estado": "provisional"
     },
     "MT-PYL-PERF-CR": {
       "unidad": "m2",
       "descripcion": "Perfilería de acero galvanizado para cielo raso suspendido: maestras, ángulo perimetral, horquillas y varilla de cuelgue.",
-      "precio": 3.6,
-      "estado": "verificado-mercado",
-      "fuente": "Perfileria de cielo raso: maestras, angulo y cuelgues."
+      "precio": 3.1,
+      "estado": "provisional"
     },
     "MT-PLO-LLAVE": {
       "unidad": "ud",
@@ -459,9 +436,8 @@
     "MT-LAMINA-OSB": {
       "unidad": "m2",
       "descripcion": "Lámina de madera contrachapada u OSB para cerramiento provisional de vanos y protecciones rígidas.",
-      "precio": 10.5,
-      "estado": "verificado-mercado",
-      "fuente": "Lamina MDF/contrachapado 18 mm de 1,22x2,44 (2,98 m2) a ~47 USD."
+      "precio": 8.5,
+      "estado": "provisional"
     },
     "MT-MALLA-OBRA": {
       "unidad": "m2",
@@ -521,22 +497,19 @@
       "unidad": "m3",
       "descripcion": "Arena lavada de río, puesta en obra, para camas de asiento y rellenos de zanja.",
       "precio": 22.0,
-      "estado": "verificado-mercado",
-      "fuente": "Arena lavada 18-28 USD/m3 segun distancia de cantera."
+      "estado": "provisional"
     },
     "MT-PIEDRA-PIC": {
       "unidad": "m3",
       "descripcion": "Piedra picada de granulometría corriente, puesta en obra, para bases y drenajes.",
-      "precio": 28.0,
-      "estado": "verificado-mercado",
-      "fuente": "Piedra picada / triturado 3/4 a 22-35 USD/m3."
+      "precio": 26.0,
+      "estado": "provisional"
     },
     "MT-MAT-PRESTAMO": {
       "unidad": "m3",
       "descripcion": "Material granular seleccionado de préstamo, tipo granzón natural, puesto en obra para rellenos compactados.",
-      "precio": 16.0,
-      "estado": "verificado-mercado",
-      "fuente": "Granzon natural, por debajo de la piedra triturada."
+      "precio": 18.0,
+      "estado": "provisional"
     },
     "MT-MADERA-ENTIB": {
       "unidad": "m2",
@@ -559,37 +532,32 @@
     "MT-CONC-180": {
       "unidad": "m3",
       "descripcion": "Concreto premezclado de resistencia 180 kg/cm2, puesto en obra.",
-      "precio": 95.0,
-      "estado": "verificado-mercado",
-      "fuente": "Premezclado MercadoLibre VE 87-125 USD/m3; 180 kg/cm2 en el extremo bajo."
+      "precio": 105.0,
+      "estado": "provisional"
     },
     "MT-CONC-210": {
       "unidad": "m3",
       "descripcion": "Concreto premezclado de resistencia 210 kg/cm2, puesto en obra.",
-      "precio": 108.0,
-      "estado": "verificado-mercado",
-      "fuente": "Premezclado 210: APU de referencia da 110 USD/m3 en material."
+      "precio": 115.0,
+      "estado": "provisional"
     },
     "MT-CONC-250": {
       "unidad": "m3",
       "descripcion": "Concreto premezclado de resistencia 250 kg/cm2, puesto en obra.",
-      "precio": 118.0,
-      "estado": "verificado-mercado",
-      "fuente": "Premezclado 250 en rango medio-alto del mercado VE."
+      "precio": 125.0,
+      "estado": "provisional"
     },
     "MT-CEMENTO": {
       "unidad": "kg",
       "descripcion": "Cemento Portland gris tipo I, en saco.",
-      "precio": 0.225,
-      "estado": "verificado-mercado",
-      "fuente": "Saco 42,5 kg a 8,50-12,00 USD (mediana 9,55). MercadoLibre VE y ferreterías: 9,00-13,00."
+      "precio": 0.22,
+      "estado": "provisional"
     },
     "MT-ACERO-CAB": {
       "unidad": "kg",
       "descripcion": "Acero de refuerzo en cabillas corrugadas, límite elástico 4.200 kg/cm2, cortado y doblado.",
-      "precio": 1.2,
-      "estado": "verificado-mercado",
-      "fuente": "Cabilla corrugada 1,00-1,40 USD/kg segun diametro; nacional vs importado."
+      "precio": 1.35,
+      "estado": "provisional"
     },
     "MT-ALAMBRE": {
       "unidad": "kg",
@@ -600,9 +568,8 @@
     "MT-MALLA-ELEC": {
       "unidad": "m2",
       "descripcion": "Malla electrosoldada de acero para refuerzo de losas y pisos.",
-      "precio": 4.6,
-      "estado": "verificado-mercado",
-      "fuente": "Malla electrosoldada en el rango habitual de ferreteria."
+      "precio": 4.2,
+      "estado": "provisional"
     },
     "MT-SEPARADOR": {
       "unidad": "ud",
@@ -661,23 +628,20 @@
     "MT-PERFIL-ACERO": {
       "unidad": "kg",
       "descripcion": "Perfil estructural de acero laminado, suministrado cortado a medida.",
-      "precio": 1.95,
-      "estado": "verificado-mercado",
-      "fuente": "Perfil estructural algo por encima de la cabilla."
+      "precio": 1.85,
+      "estado": "provisional"
     },
     "MT-PLANCHA-ACERO": {
       "unidad": "kg",
       "descripcion": "Plancha de acero para placas base, cartelas y conexiones.",
-      "precio": 2.2,
-      "estado": "verificado-mercado",
-      "fuente": "Plancha de acero, sobreprecio por corte y mecanizado."
+      "precio": 2.1,
+      "estado": "provisional"
     },
     "MT-PERNO-ANCLA": {
       "unidad": "ud",
       "descripcion": "Perno de anclaje de acero con tuerca y arandela, para fijación de placa base.",
-      "precio": 2.2,
-      "estado": "verificado-mercado",
-      "fuente": "Perno de anclaje con tuerca y arandela; el valor anterior estaba inflado."
+      "precio": 3.4,
+      "estado": "provisional"
     },
     "MT-TORNILLO-EST": {
       "unidad": "ud",
@@ -700,9 +664,8 @@
     "MT-MADERA-EST": {
       "unidad": "m3",
       "descripcion": "Madera estructural aserrada y cepillada, de escuadría según proyecto.",
-      "precio": 285.0,
-      "estado": "verificado-mercado",
-      "fuente": "Madera estructural aserrada; ajustada a la baja respecto al valor inicial."
+      "precio": 320.0,
+      "estado": "provisional"
     },
     "MT-HERRAJE-MAD": {
       "unidad": "ud",
@@ -737,9 +700,8 @@
     "MT-CONC-300": {
       "unidad": "m3",
       "descripcion": "Concreto premezclado de resistencia 300 kg/cm2, puesto en obra.",
-      "precio": 132.0,
-      "estado": "verificado-mercado",
-      "fuente": "Premezclado 300, extremo alto del rango publicado."
+      "precio": 138.0,
+      "estado": "provisional"
     },
     "MT-EPOXI-ANCLA": {
       "unidad": "l",
@@ -780,37 +742,32 @@
     "MT-BLQ-15": {
       "unidad": "ud",
       "descripcion": "Bloque de concreto hueco de 15x20x40 cm.",
-      "precio": 0.62,
-      "estado": "verificado-mercado",
-      "fuente": "Bloque concreto 15x20x40: 0,45 fabricante a 0,80 detal."
+      "precio": 0.75,
+      "estado": "provisional"
     },
     "MT-BLQ-20": {
       "unidad": "ud",
       "descripcion": "Bloque de concreto hueco de 20x20x40 cm.",
-      "precio": 0.78,
-      "estado": "verificado-mercado",
-      "fuente": "Bloque concreto 20x20x40: 0,57 fabricante a 0,95 detal."
+      "precio": 0.95,
+      "estado": "provisional"
     },
     "MT-BLQ-ARC-10": {
       "unidad": "ud",
       "descripcion": "Bloque hueco de arcilla de 10x20x30 cm.",
-      "precio": 0.38,
-      "estado": "verificado-mercado",
-      "fuente": "Bloque arcilla 10, por debajo del de 15."
+      "precio": 0.42,
+      "estado": "provisional"
     },
     "MT-BLQ-ARC-15": {
       "unidad": "ud",
       "descripcion": "Bloque hueco de arcilla de 15x20x30 cm.",
-      "precio": 0.55,
-      "estado": "verificado-mercado",
-      "fuente": "Bloque de arcilla 15x20x40: 0,45-0,65 USD."
+      "precio": 0.58,
+      "estado": "provisional"
     },
     "MT-LADRILLO": {
       "unidad": "ud",
       "descripcion": "Ladrillo macizo de arcilla cocida.",
-      "precio": 0.23,
-      "estado": "verificado-mercado",
-      "fuente": "Ladrillo de arcilla 0,18-0,28 USD/unidad."
+      "precio": 0.28,
+      "estado": "provisional"
     },
     "MT-BLQ-VIDRIO": {
       "unidad": "ud",
@@ -827,9 +784,8 @@
     "MT-PYL-PLACA-RH": {
       "unidad": "m2",
       "descripcion": "Placa de yeso laminado resistente a la humedad, de 12,5 mm, para áreas húmedas.",
-      "precio": 11.3,
-      "estado": "verificado-mercado",
-      "fuente": "Lamina verde antihumedad a 33,78 USD la plancha de 2,98 m2."
+      "precio": 6.1,
+      "estado": "provisional"
     },
     "MT-DINTEL-PREF": {
       "unidad": "m",
@@ -846,9 +802,8 @@
     "MT-MACHIH-MAD": {
       "unidad": "m2",
       "descripcion": "Machihembrado de madera para divisiones y forros interiores.",
-      "precio": 11.0,
-      "estado": "verificado-mercado",
-      "fuente": "Machihembrado de madera para forros."
+      "precio": 12.5,
+      "estado": "provisional"
     },
     "MT-MALLA-JUNTA": {
       "unidad": "m",
@@ -883,9 +838,8 @@
     "MT-MORT-IMPER": {
       "unidad": "kg",
       "descripcion": "Mortero impermeabilizante cementoso bicomponente, flexible, para áreas húmedas bajo enchapado.",
-      "precio": 1.25,
-      "estado": "verificado-mercado",
-      "fuente": "Mortero cementoso flexible bicomponente."
+      "precio": 1.45,
+      "estado": "provisional"
     },
     "MT-PASTA-YESO": {
       "unidad": "kg",
@@ -920,9 +874,8 @@
     "MT-ADH-PIEDRA": {
       "unidad": "kg",
       "descripcion": "Adhesivo cementoso blanco de altas prestaciones, específico para piedra natural sensible a manchas.",
-      "precio": 0.46,
-      "estado": "verificado-mercado",
-      "fuente": "Pega blanca de altas prestaciones, sobreprecio sobre la gris."
+      "precio": 0.68,
+      "estado": "provisional"
     },
     "MT-CONS-PULIDO": {
       "unidad": "m2",
@@ -957,9 +910,8 @@
     "MT-MORT-CONTRA": {
       "unidad": "kg",
       "descripcion": "Mortero de cemento y arena para contrapiso y capas de nivelación de piso.",
-      "precio": 0.09,
-      "estado": "verificado-mercado",
-      "fuente": "Mortero de contrapiso, dosificacion mas pobre."
+      "precio": 0.13,
+      "estado": "provisional"
     },
     "MT-MANTA-ACUS": {
       "unidad": "m2",
@@ -976,9 +928,8 @@
     "MT-BARNIZ-PISO": {
       "unidad": "l",
       "descripcion": "Barniz de poliuretano de alto tránsito para acabado de pisos de madera.",
-      "precio": 9.5,
-      "estado": "verificado-mercado",
-      "fuente": "Barniz poliuretano de alto transito, galon ~36 USD."
+      "precio": 11.0,
+      "estado": "provisional"
     },
     "MT-ADH-VINIL": {
       "unidad": "kg",
@@ -1079,30 +1030,26 @@
     "MT-MANTO-ASF": {
       "unidad": "m2",
       "descripcion": "Manto asfáltico prefabricado con armadura de poliéster, para impermeabilización de cubierta.",
-      "precio": 5.6,
-      "estado": "verificado-mercado",
-      "fuente": "Rollo estandar 35 USD y EPA 2,7 mm 64,50 USD; rollos de ~10 m2."
+      "precio": 7.2,
+      "estado": "provisional"
     },
     "MT-IMPRIM-ASF": {
       "unidad": "l",
       "descripcion": "Imprimación asfáltica de base solvente, como puente de adherencia del manto.",
-      "precio": 4.2,
-      "estado": "verificado-mercado",
-      "fuente": "Cunete de primer / asfalto liquido 40 USD; galon 14-18."
+      "precio": 3.9,
+      "estado": "provisional"
     },
     "MT-ACRIL-IMPER": {
       "unidad": "l",
       "descripcion": "Impermeabilizante acrílico elastomérico de aplicación líquida, con su malla de refuerzo.",
-      "precio": 4.4,
-      "estado": "verificado-mercado",
-      "fuente": "Impermeabilizante acrilico: galon 14-18 USD sobre 3,785 l."
+      "precio": 5.4,
+      "estado": "provisional"
     },
     "MT-POLIUR-LIQ": {
       "unidad": "kg",
       "descripcion": "Membrana líquida de poliuretano de alta elasticidad y resistencia a la intemperie.",
-      "precio": 10.5,
-      "estado": "verificado-mercado",
-      "fuente": "Poliuretano liquido, gama alta de impermeabilizantes."
+      "precio": 12.5,
+      "estado": "provisional"
     },
     "MT-GRAVILLA": {
       "unidad": "m3",
@@ -1137,23 +1084,20 @@
     "MT-TEJA-CRIOLLA": {
       "unidad": "ud",
       "descripcion": "Teja criolla de arcilla cocida, tipo canal.",
-      "precio": 0.68,
-      "estado": "verificado-mercado",
-      "fuente": "Teja criolla de arcilla."
+      "precio": 0.75,
+      "estado": "provisional"
     },
     "MT-TEJA-ASF": {
       "unidad": "m2",
       "descripcion": "Teja asfáltica en shingle con su fieltro base y clavos de fijación.",
-      "precio": 10.5,
-      "estado": "verificado-mercado",
-      "fuente": "Teja asfaltica shingle con fieltro y clavos."
+      "precio": 9.5,
+      "estado": "provisional"
     },
     "MT-LAMINA-ZINC": {
       "unidad": "m2",
       "descripcion": "Lámina metálica acanalada galvanizada o prepintada para cubierta.",
-      "precio": 9.5,
-      "estado": "verificado-mercado",
-      "fuente": "Lamina acerolit: 44 USD por lamina de 4 m (~3,6 m2 utiles)."
+      "precio": 8.2,
+      "estado": "provisional"
     },
     "MT-PANEL-SAND": {
       "unidad": "m2",
@@ -1218,9 +1162,8 @@
     "MT-TUB-PPR25": {
       "unidad": "m",
       "descripcion": "Tubería de polipropileno PPR de 25 mm para montantes y alimentación principal.",
-      "precio": 2.8,
-      "estado": "verificado-mercado",
-      "fuente": "Tubo PPR 25 mm x 4 m a 9,99-15,45 USD."
+      "precio": 2.1,
+      "estado": "provisional"
     },
     "MT-FLOTANTE": {
       "unidad": "ud",
@@ -1231,16 +1174,14 @@
     "MT-TABLERO-DIST": {
       "unidad": "ud",
       "descripcion": "Tablero de distribución empotrable con barraje, para el número de circuitos de proyecto.",
-      "precio": 48.0,
-      "estado": "verificado-mercado",
-      "fuente": "Tablero de distribucion empotrable con barraje."
+      "precio": 55.0,
+      "estado": "provisional"
     },
     "MT-BREAKER": {
       "unidad": "ud",
       "descripcion": "Interruptor termomagnético monopolar o bipolar para protección de circuito.",
-      "precio": 7.5,
-      "estado": "verificado-mercado",
-      "fuente": "Interruptor termomagnetico monopolar."
+      "precio": 8.5,
+      "estado": "provisional"
     },
     "MT-DIFERENCIAL": {
       "unidad": "ud",
@@ -1257,9 +1198,8 @@
     "MT-CABLE-8": {
       "unidad": "m",
       "descripcion": "Conductor de cobre THW calibre 8 AWG para acometidas y circuitos de fuerza.",
-      "precio": 1.45,
-      "estado": "verificado-mercado",
-      "fuente": "Cable THW 8 AWG, proporcional al calibre."
+      "precio": 2.1,
+      "estado": "provisional"
     },
     "MT-BARRA-TIERRA": {
       "unidad": "ud",
@@ -1408,9 +1348,8 @@
     "MT-MELAMINA": {
       "unidad": "m2",
       "descripcion": "Tablero de melamina de 18 mm con cantos aplicados, para closets y muebles.",
-      "precio": 19.0,
-      "estado": "verificado-mercado",
-      "fuente": "Melamina MDF 18 mm de 1,83x2,44 (4,46 m2) a 74-98 USD; mediana 85."
+      "precio": 16.0,
+      "estado": "provisional"
     },
     "MT-HERRAJE-CLOSET": {
       "unidad": "ud",
@@ -1529,30 +1468,26 @@
     "MT-BLQ-EST-15": {
       "unidad": "ud",
       "descripcion": "Bloque de concreto estructural de 15x20x40 cm, de resistencia certificada.",
-      "precio": 0.88,
-      "estado": "verificado-mercado",
-      "fuente": "Bloque estructural certificado, sobreprecio sobre el comun."
+      "precio": 1.05,
+      "estado": "provisional"
     },
     "MT-BLQ-EST-20": {
       "unidad": "ud",
       "descripcion": "Bloque de concreto estructural de 20x20x40 cm, de resistencia certificada.",
-      "precio": 1.1,
-      "estado": "verificado-mercado",
-      "fuente": "Bloque estructural 20 certificado."
+      "precio": 1.35,
+      "estado": "provisional"
     },
     "MT-MORT-EST": {
       "unidad": "kg",
       "descripcion": "Mortero de pega de resistencia controlada para mampostería estructural.",
-      "precio": 0.15,
-      "estado": "verificado-mercado",
-      "fuente": "Mortero de pega de resistencia controlada para mamposteria estructural."
+      "precio": 0.24,
+      "estado": "provisional"
     },
     "MT-GROUT-CELDA": {
       "unidad": "m3",
       "descripcion": "Concreto fluido de relleno de celdas para mampostería estructural.",
-      "precio": 126.0,
-      "estado": "verificado-mercado",
-      "fuente": "Concreto fluido de relleno, por encima del 250 convencional."
+      "precio": 132.0,
+      "estado": "provisional"
     },
     "MT-ESCALERILLA": {
       "unidad": "m",
@@ -1599,9 +1534,8 @@
     "MT-BLQ-12": {
       "unidad": "ud",
       "descripcion": "Bloque de concreto hueco de 12x20x40 cm.",
-      "precio": 0.52,
-      "estado": "verificado-mercado",
-      "fuente": "Bloque concreto 12 cm: fabricante 0,44."
+      "precio": 0.62,
+      "estado": "provisional"
     },
     "MT-STEELDECK": {
       "unidad": "m2",

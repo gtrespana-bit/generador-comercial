@@ -326,3 +326,44 @@ declarar la equivalencia cuando se disponga del texto de la norma.
 Conseguir la **COVENIN 2000-2 y su Suplemento N.º 1 (1999)** para replicar su
 árbol de capítulos y su esquema de codificación exactos. Sin la norma se puede
 avanzar en las partidas, pero no fijar los códigos definitivos.
+
+---
+
+# Contraste de precios con el mercado venezolano
+
+Revisión de agosto de 2026. Se contrastaron **66 recursos** contra precios
+publicados del mercado venezolano y se marcaron con el estado
+`verificado-mercado`, añadiendo el campo `fuente` con la referencia y el
+razonamiento de cada uno.
+
+## Fuentes empleadas
+
+- MercadoLibre Venezuela (cemento, drywall, melamina, PPR, porcelanato, concreto premezclado)
+- EPA en línea Venezuela (manto asfáltico, cerámica, cemento)
+- Ferreterías y fabricantes con lista pública (bloques de concreto)
+- Tabuladores de precios de la construcción Venezuela 2026 (APU de referencia)
+
+## Criterio aplicado
+
+- Se tomó la **mediana del rango** publicado, no el extremo bajo.
+- Los materiales vendidos por presentación se convirtieron a la unidad del
+  cuadro: saco de 42,5 kg a kg, galón de 3,785 l a litro, plancha de 1,22x2,44
+  (2,98 m²) o de 1,83x2,44 (4,46 m²) a m², rollo de 100 m a metro.
+- Los **morteros elaborados en obra** (pega, friso, contrapiso) no se toman de
+  lista: se derivan del cemento y la arena que los componen.
+
+## Estados del cuadro de recursos
+
+| Estado | Significado |
+|---|---|
+| `confirmado` | Dato facilitado directamente por el cliente (mano de obra) |
+| `verificado-mercado` | Contrastado con precios publicados del mercado venezolano |
+| `provisional` | Sin contrastar. Pendiente de precio de proveedor real |
+
+## Verificación cruzada
+
+El catálogo recalculado se contrastó contra un presupuesto tipo de vivienda de
+80 m² en Caracas. La pared de bloque con friso a dos caras y la losa nervada
+quedan dentro del rango de mercado; las partidas de acabado e instalaciones
+quedan por debajo, lo que es coherente porque el benchmark incluye el material
+de acabado que en nuestro modelo se factura aparte como producto de cliente.

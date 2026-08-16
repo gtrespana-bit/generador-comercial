@@ -39,7 +39,7 @@
               "codigo": "CT-01-01-040",
               "titulo": "Cerramiento provisional de vano con lámina de madera.",
               "unidad": "m²",
-              "precio": 19.59,
+              "precio": 22.35,
               "horas": 0.48,
               "producto_cliente": false
             },
@@ -79,7 +79,7 @@
               "codigo": "CT-01-01-090",
               "titulo": "Puerta provisional de acceso a la zona de obra.",
               "unidad": "ud",
-              "precio": 83.14,
+              "precio": 88.92,
               "horas": 2.1,
               "producto_cliente": false
             }
@@ -126,7 +126,7 @@
               "codigo": "CT-01-02-050",
               "titulo": "Andamio colgante o silleta para trabajos en fachada.",
               "unidad": "m²",
-              "precio": 9.61,
+              "precio": 8.67,
               "horas": 0.36,
               "producto_cliente": false
             }
@@ -259,7 +259,7 @@
               "codigo": "CT-01-05-050",
               "titulo": "Caseta o zona cerrada de acopio de materiales y herramienta, por mes.",
               "unidad": "ud",
-              "precio": 146.84,
+              "precio": 166.53,
               "horas": 5.2,
               "producto_cliente": false
             }
@@ -754,7 +754,7 @@
               "codigo": "CT-02-08-060",
               "titulo": "Apertura de nicho u hornacina en pared.",
               "unidad": "ud",
-              "precio": 18.8,
+              "precio": 17.86,
               "horas": 1.9,
               "producto_cliente": false
             }
@@ -1365,7 +1365,7 @@
               "codigo": "CT-03-03-020",
               "titulo": "Relleno y compactación con material granular de préstamo.",
               "unidad": "m³",
-              "precio": 34.71,
+              "precio": 31.43,
               "horas": 0.74,
               "producto_cliente": false
             },
@@ -1381,7 +1381,7 @@
               "codigo": "CT-03-03-040",
               "titulo": "Base de piedra picada compactada.",
               "unidad": "m³",
-              "precio": 45.36,
+              "precio": 48.5,
               "horas": 0.68,
               "producto_cliente": false
             },
@@ -1428,7 +1428,7 @@
               "codigo": "CT-03-04-040",
               "titulo": "Suministro y transporte de material de préstamo a obra.",
               "unidad": "m³",
-              "precio": 28.35,
+              "precio": 25.73,
               "horas": 0.15,
               "producto_cliente": false
             },
@@ -1458,7 +1458,7 @@
               "codigo": "CT-04-01-010",
               "titulo": "Concreto pobre de limpieza bajo fundaciones, 5 cm de espesor.",
               "unidad": "m²",
-              "precio": 8.41,
+              "precio": 7.68,
               "horas": 0.17,
               "producto_cliente": false
             },
@@ -1466,7 +1466,7 @@
               "codigo": "CT-04-01-020",
               "titulo": "Acero de refuerzo en zapatas y bases.",
               "unidad": "kg",
-              "precio": 2.3,
+              "precio": 2.09,
               "horas": 0.056,
               "producto_cliente": false
             },
@@ -1482,7 +1482,7 @@
               "codigo": "CT-04-01-040",
               "titulo": "Concreto para zapata aislada.",
               "unidad": "m³",
-              "precio": 167.7,
+              "precio": 158.13,
               "horas": 1.62,
               "producto_cliente": false
             },
@@ -1490,7 +1490,7 @@
               "codigo": "CT-04-01-050",
               "titulo": "Concreto para zapata corrida.",
               "unidad": "m³",
-              "precio": 166.6,
+              "precio": 157.04,
               "horas": 1.45,
               "producto_cliente": false
             },
@@ -1498,7 +1498,7 @@
               "codigo": "CT-04-01-060",
               "titulo": "Pedestal de concreto armado sobre fundación.",
               "unidad": "m³",
-              "precio": 243.11,
+              "precio": 233.47,
               "horas": 5.0,
               "producto_cliente": false
             },
@@ -1506,7 +1506,7 @@
               "codigo": "CT-04-01-070",
               "titulo": "Dado o base de concreto para equipo o máquina.",
               "unidad": "ud",
-              "precio": 95.0,
+              "precio": 85.35,
               "horas": 3.65,
               "producto_cliente": false
             },
@@ -1514,7 +1514,7 @@
               "codigo": "CT-04-01-080",
               "titulo": "Recalce de fundación existente.",
               "unidad": "m",
-              "precio": 137.83,
+              "precio": 133.39,
               "horas": 7.4,
               "producto_cliente": false
             },
@@ -1522,7 +1522,7 @@
               "codigo": "CT-04-01-090",
               "titulo": "Refuerzo y ampliación de zapata existente.",
               "unidad": "m²",
-              "precio": 134.64,
+              "precio": 128.28,
               "horas": 4.7,
               "producto_cliente": false
             }
@@ -1537,7 +1537,7 @@
               "codigo": "CT-04-02-010",
               "titulo": "Acero de refuerzo en vigas de riostra.",
               "unidad": "kg",
-              "precio": 2.39,
+              "precio": 2.18,
               "horas": 0.068,
               "producto_cliente": false
             },
@@ -1553,7 +1553,7 @@
               "codigo": "CT-04-02-030",
               "titulo": "Concreto para viga de riostra.",
               "unidad": "m³",
-              "precio": 171.91,
+              "precio": 162.27,
               "horas": 2.0,
               "producto_cliente": false
             }
@@ -1576,7 +1576,7 @@
               "codigo": "CT-04-03-020",
               "titulo": "Acero de refuerzo en losa de fundación.",
               "unidad": "kg",
-              "precio": 2.27,
+              "precio": 2.07,
               "horas": 0.052,
               "producto_cliente": false
             },
@@ -1584,7 +1584,7 @@
               "codigo": "CT-04-03-030",
               "titulo": "Malla electrosoldada de refuerzo en losa.",
               "unidad": "m²",
-              "precio": 7.37,
+              "precio": 7.96,
               "horas": 0.15,
               "producto_cliente": false
             },
@@ -1600,7 +1600,7 @@
               "codigo": "CT-04-03-050",
               "titulo": "Concreto para losa de fundación.",
               "unidad": "m³",
-              "precio": 182.77,
+              "precio": 173.21,
               "horas": 1.56,
               "producto_cliente": false
             },
@@ -1623,7 +1623,7 @@
               "codigo": "CT-04-04-010",
               "titulo": "Encofrado a dos caras de muro de contención.",
               "unidad": "m²",
-              "precio": 16.43,
+              "precio": 16.33,
               "horas": 1.24,
               "producto_cliente": false
             },
@@ -1631,7 +1631,7 @@
               "codigo": "CT-04-04-020",
               "titulo": "Acero de refuerzo en muro de contención.",
               "unidad": "kg",
-              "precio": 2.37,
+              "precio": 2.16,
               "horas": 0.062,
               "producto_cliente": false
             },
@@ -1639,7 +1639,7 @@
               "codigo": "CT-04-04-030",
               "titulo": "Concreto para muro de contención.",
               "unidad": "m³",
-              "precio": 191.39,
+              "precio": 181.73,
               "horas": 2.3,
               "producto_cliente": false
             },
@@ -1655,7 +1655,7 @@
               "codigo": "CT-04-04-050",
               "titulo": "Drenaje de trasdós de muro con tubería y grava.",
               "unidad": "m",
-              "precio": 21.94,
+              "precio": 22.78,
               "horas": 0.46,
               "producto_cliente": false
             }
@@ -1678,7 +1678,7 @@
               "codigo": "CT-04-05-020",
               "titulo": "Acero de refuerzo en pilote.",
               "unidad": "kg",
-              "precio": 2.61,
+              "precio": 2.41,
               "horas": 0.076,
               "producto_cliente": false
             },
@@ -1686,7 +1686,7 @@
               "codigo": "CT-04-05-030",
               "titulo": "Concreto para pilote vaciado en sitio.",
               "unidad": "m³",
-              "precio": 217.58,
+              "precio": 207.01,
               "horas": 2.45,
               "producto_cliente": false
             },
@@ -1702,7 +1702,7 @@
               "codigo": "CT-04-05-050",
               "titulo": "Cabezal de pilotes de concreto armado.",
               "unidad": "m³",
-              "precio": 231.7,
+              "precio": 222.05,
               "horas": 3.85,
               "producto_cliente": false
             }
@@ -1724,7 +1724,7 @@
               "codigo": "CT-05-01-010",
               "titulo": "Acero de refuerzo en columnas.",
               "unidad": "kg",
-              "precio": 2.48,
+              "precio": 2.27,
               "horas": 0.076,
               "producto_cliente": false
             },
@@ -1740,7 +1740,7 @@
               "codigo": "CT-05-01-030",
               "titulo": "Concreto para columna.",
               "unidad": "m³",
-              "precio": 193.28,
+              "precio": 183.55,
               "horas": 2.6,
               "producto_cliente": false
             },
@@ -1748,7 +1748,7 @@
               "codigo": "CT-05-01-040",
               "titulo": "Acero de refuerzo en vigas.",
               "unidad": "kg",
-              "precio": 2.43,
+              "precio": 2.22,
               "horas": 0.07,
               "producto_cliente": false
             },
@@ -1764,7 +1764,7 @@
               "codigo": "CT-05-01-060",
               "titulo": "Concreto para viga.",
               "unidad": "m³",
-              "precio": 189.76,
+              "precio": 180.1,
               "horas": 2.4,
               "producto_cliente": false
             },
@@ -1772,7 +1772,7 @@
               "codigo": "CT-05-01-070",
               "titulo": "Acero de refuerzo en pantalla o muro estructural.",
               "unidad": "kg",
-              "precio": 2.34,
+              "precio": 2.13,
               "horas": 0.06,
               "producto_cliente": false
             },
@@ -1780,7 +1780,7 @@
               "codigo": "CT-05-01-080",
               "titulo": "Encofrado a dos caras de pantalla estructural.",
               "unidad": "m²",
-              "precio": 17.21,
+              "precio": 17.12,
               "horas": 1.2,
               "producto_cliente": false
             },
@@ -1788,7 +1788,7 @@
               "codigo": "CT-05-01-090",
               "titulo": "Concreto para pantalla estructural.",
               "unidad": "m³",
-              "precio": 190.5,
+              "precio": 180.86,
               "horas": 2.2,
               "producto_cliente": false
             }
@@ -1803,7 +1803,7 @@
               "codigo": "CT-05-02-010",
               "titulo": "Suministro y montaje de estructura metálica.",
               "unidad": "kg",
-              "precio": 3.89,
+              "precio": 4.02,
               "horas": 0.096,
               "producto_cliente": false
             },
@@ -1811,7 +1811,7 @@
               "codigo": "CT-05-02-020",
               "titulo": "Placa base con pernos de anclaje para columna metálica.",
               "unidad": "ud",
-              "precio": 107.48,
+              "precio": 103.01,
               "horas": 3.2,
               "producto_cliente": false
             },
@@ -1835,7 +1835,7 @@
               "codigo": "CT-05-02-050",
               "titulo": "Correas metálicas para estructura de techo.",
               "unidad": "kg",
-              "precio": 3.43,
+              "precio": 3.58,
               "horas": 0.086,
               "producto_cliente": false
             }
@@ -1850,7 +1850,7 @@
               "codigo": "CT-05-03-010",
               "titulo": "Suministro y montaje de estructura de madera.",
               "unidad": "m³",
-              "precio": 563.24,
+              "precio": 514.53,
               "horas": 16.0,
               "producto_cliente": false
             },
@@ -1858,7 +1858,7 @@
               "codigo": "CT-05-03-020",
               "titulo": "Correas y viguetas de madera para cubierta o entrepiso.",
               "unidad": "m",
-              "precio": 12.68,
+              "precio": 12.03,
               "horas": 0.38,
               "producto_cliente": false
             },
@@ -1897,7 +1897,7 @@
               "codigo": "CT-05-04-020",
               "titulo": "Acero de refuerzo en losa maciza.",
               "unidad": "kg",
-              "precio": 2.27,
+              "precio": 2.07,
               "horas": 0.052,
               "producto_cliente": false
             },
@@ -1905,7 +1905,7 @@
               "codigo": "CT-05-04-030",
               "titulo": "Concreto para losa maciza.",
               "unidad": "m³",
-              "precio": 185.81,
+              "precio": 176.24,
               "horas": 1.72,
               "producto_cliente": false
             },
@@ -1913,7 +1913,7 @@
               "codigo": "CT-05-04-040",
               "titulo": "Losa nervada con bloques de arcilla de aliviano.",
               "unidad": "m²",
-              "precio": 70.77,
+              "precio": 69.23,
               "horas": 1.88,
               "producto_cliente": false
             },
@@ -1921,7 +1921,7 @@
               "codigo": "CT-05-04-050",
               "titulo": "Losa nervada con bloques de poliestireno de aliviano.",
               "unidad": "m²",
-              "precio": 77.36,
+              "precio": 75.82,
               "horas": 1.77,
               "producto_cliente": false
             },
@@ -1929,7 +1929,7 @@
               "codigo": "CT-05-04-060",
               "titulo": "Losa con viguetas prefabricadas pretensadas.",
               "unidad": "m²",
-              "precio": 61.39,
+              "precio": 60.67,
               "horas": 1.22,
               "producto_cliente": false
             },
@@ -1945,7 +1945,7 @@
               "codigo": "CT-05-04-080",
               "titulo": "Losa mixta con lámina colaborante sobre estructura metálica.",
               "unidad": "m²",
-              "precio": 68.54,
+              "precio": 68.33,
               "horas": 1.0,
               "producto_cliente": false
             },
@@ -1953,7 +1953,7 @@
               "codigo": "CT-05-04-090",
               "titulo": "Ampliación de losa en voladizo o balcón.",
               "unidad": "m²",
-              "precio": 123.59,
+              "precio": 119.2,
               "horas": 5.5,
               "producto_cliente": false
             }
@@ -1976,7 +1976,7 @@
               "codigo": "CT-05-05-020",
               "titulo": "Acero de refuerzo en escalera.",
               "unidad": "kg",
-              "precio": 2.46,
+              "precio": 2.25,
               "horas": 0.072,
               "producto_cliente": false
             },
@@ -1984,7 +1984,7 @@
               "codigo": "CT-05-05-030",
               "titulo": "Concreto para escalera de concreto armado.",
               "unidad": "m³",
-              "precio": 199.24,
+              "precio": 189.49,
               "horas": 3.8,
               "producto_cliente": false
             },
@@ -1992,7 +1992,7 @@
               "codigo": "CT-05-05-040",
               "titulo": "Escalera metálica estructural.",
               "unidad": "kg",
-              "precio": 4.71,
+              "precio": 4.89,
               "horas": 0.13,
               "producto_cliente": false
             }
@@ -2039,7 +2039,7 @@
               "codigo": "CT-05-06-050",
               "titulo": "Encamisado de columna de concreto armado.",
               "unidad": "m",
-              "precio": 180.34,
+              "precio": 174.2,
               "horas": 8.4,
               "producto_cliente": false
             },
@@ -2047,7 +2047,7 @@
               "codigo": "CT-05-06-060",
               "titulo": "Anclaje químico de barra de acero en concreto.",
               "unidad": "ud",
-              "precio": 6.1,
+              "precio": 5.97,
               "horas": 0.35,
               "producto_cliente": false
             },
@@ -2055,7 +2055,7 @@
               "codigo": "CT-05-06-070",
               "titulo": "Refuerzo de losa o viga con perfil metálico.",
               "unidad": "m",
-              "precio": 192.82,
+              "precio": 187.82,
               "horas": 4.9,
               "producto_cliente": false
             }
@@ -2077,7 +2077,7 @@
               "codigo": "CT-06-01-010",
               "titulo": "Tabique de bloque de concreto de 10 cm, recibido con mortero de pega.",
               "unidad": "m²",
-              "precio": 18.29,
+              "precio": 16.17,
               "horas": 1.1,
               "producto_cliente": false
             },
@@ -2085,7 +2085,7 @@
               "codigo": "CT-06-01-020",
               "titulo": "Pared de bloque de concreto de 15 cm.",
               "unidad": "m²",
-              "precio": 23.83,
+              "precio": 20.45,
               "horas": 1.2,
               "producto_cliente": false
             },
@@ -2093,7 +2093,7 @@
               "codigo": "CT-06-01-030",
               "titulo": "Pared de bloque de concreto de 20 cm.",
               "unidad": "m²",
-              "precio": 28.63,
+              "precio": 24.23,
               "horas": 1.3,
               "producto_cliente": false
             },
@@ -2101,7 +2101,7 @@
               "codigo": "CT-06-01-040",
               "titulo": "Pared de bloque de concreto a la vista.",
               "unidad": "m²",
-              "precio": 28.37,
+              "precio": 24.78,
               "horas": 1.8,
               "producto_cliente": false
             },
@@ -2109,7 +2109,7 @@
               "codigo": "CT-06-01-050",
               "titulo": "Machón o columna de confinamiento en pared de bloque.",
               "unidad": "m",
-              "precio": 33.5,
+              "precio": 32.01,
               "horas": 1.78,
               "producto_cliente": false
             },
@@ -2117,7 +2117,7 @@
               "codigo": "CT-06-01-060",
               "titulo": "Viga de corona o de amarre en pared de bloque.",
               "unidad": "m",
-              "precio": 29.72,
+              "precio": 28.38,
               "horas": 1.58,
               "producto_cliente": false
             },
@@ -2125,7 +2125,7 @@
               "codigo": "CT-06-01-070",
               "titulo": "Pared de bloque de concreto de 12 cm.",
               "unidad": "m²",
-              "precio": 20.81,
+              "precio": 18.1,
               "horas": 1.14,
               "producto_cliente": false
             }
@@ -2140,7 +2140,7 @@
               "codigo": "CT-06-02-010",
               "titulo": "Pared de bloque de arcilla de 10 cm.",
               "unidad": "m²",
-              "precio": 18.73,
+              "precio": 16.98,
               "horas": 1.05,
               "producto_cliente": false
             },
@@ -2148,7 +2148,7 @@
               "codigo": "CT-06-02-020",
               "titulo": "Pared de bloque de arcilla de 15 cm.",
               "unidad": "m²",
-              "precio": 23.75,
+              "precio": 21.92,
               "horas": 1.15,
               "producto_cliente": false
             },
@@ -2156,7 +2156,7 @@
               "codigo": "CT-06-02-030",
               "titulo": "Pared de ladrillo macizo de arcilla.",
               "unidad": "m²",
-              "precio": 40.79,
+              "precio": 34.55,
               "horas": 1.9,
               "producto_cliente": false
             },
@@ -2164,7 +2164,7 @@
               "codigo": "CT-06-02-040",
               "titulo": "Pared de ladrillo de arcilla a la vista.",
               "unidad": "m²",
-              "precio": 45.76,
+              "precio": 39.17,
               "horas": 2.4,
               "producto_cliente": false
             }
@@ -2179,7 +2179,7 @@
               "codigo": "CT-06-03-010",
               "titulo": "Tabique autoportante de placa de yeso laminado 15+70+15, doble placa por cara.",
               "unidad": "m²",
-              "precio": 52.4,
+              "precio": 64.05,
               "horas": 0.7,
               "producto_cliente": false
             },
@@ -2187,7 +2187,7 @@
               "codigo": "CT-06-03-020",
               "titulo": "Tabique autoportante de yeso laminado 12,5+70+12,5, placa simple.",
               "unidad": "m²",
-              "precio": 35.46,
+              "precio": 39.99,
               "horas": 0.55,
               "producto_cliente": false
             },
@@ -2195,7 +2195,7 @@
               "codigo": "CT-06-03-030",
               "titulo": "Tabique de yeso laminado con placa resistente a la humedad.",
               "unidad": "m²",
-              "precio": 45.15,
+              "precio": 57.76,
               "horas": 0.75,
               "producto_cliente": false
             },
@@ -2203,7 +2203,7 @@
               "codigo": "CT-06-03-040",
               "titulo": "Trasdosado autoportante de yeso laminado.",
               "unidad": "m²",
-              "precio": 24.19,
+              "precio": 26.21,
               "horas": 0.45,
               "producto_cliente": false
             },
@@ -2211,7 +2211,7 @@
               "codigo": "CT-06-03-050",
               "titulo": "Trasdosado directo de placa de yeso laminado pegada al muro.",
               "unidad": "m²",
-              "precio": 13.23,
+              "precio": 15.59,
               "horas": 0.4,
               "producto_cliente": false
             },
@@ -2234,7 +2234,7 @@
               "codigo": "CT-06-04-010",
               "titulo": "Pared de bloque de vidrio.",
               "unidad": "m²",
-              "precio": 186.85,
+              "precio": 185.85,
               "horas": 1.9,
               "producto_cliente": false
             },
@@ -2242,7 +2242,7 @@
               "codigo": "CT-06-04-020",
               "titulo": "Tabique de placa de cemento sobre estructura metálica.",
               "unidad": "m²",
-              "precio": 53.64,
+              "precio": 52.62,
               "horas": 0.85,
               "producto_cliente": false
             },
@@ -2250,7 +2250,7 @@
               "codigo": "CT-06-04-030",
               "titulo": "Tabique de paneles livianos prefabricados.",
               "unidad": "m²",
-              "precio": 30.12,
+              "precio": 29.65,
               "horas": 0.6,
               "producto_cliente": false
             },
@@ -2258,7 +2258,7 @@
               "codigo": "CT-06-04-040",
               "titulo": "División liviana de machihembrado de madera.",
               "unidad": "m²",
-              "precio": 31.59,
+              "precio": 29.46,
               "horas": 0.7,
               "producto_cliente": false
             }
@@ -2273,7 +2273,7 @@
               "codigo": "CT-06-05-010",
               "titulo": "Dintel prefabricado de concreto sobre vano.",
               "unidad": "m",
-              "precio": 13.48,
+              "precio": 13.04,
               "horas": 0.56,
               "producto_cliente": false
             },
@@ -2281,7 +2281,7 @@
               "codigo": "CT-06-05-020",
               "titulo": "Dintel de concreto armado vaciado en sitio.",
               "unidad": "m",
-              "precio": 33.2,
+              "precio": 31.95,
               "horas": 1.92,
               "producto_cliente": false
             },
@@ -2289,7 +2289,7 @@
               "codigo": "CT-06-05-030",
               "titulo": "Brocal o antepecho de ventana.",
               "unidad": "m",
-              "precio": 13.43,
+              "precio": 11.01,
               "horas": 0.7,
               "producto_cliente": false
             },
@@ -2297,7 +2297,7 @@
               "codigo": "CT-06-05-040",
               "titulo": "Formación de jambas y mochetas de vano.",
               "unidad": "m",
-              "precio": 7.25,
+              "precio": 6.38,
               "horas": 0.54,
               "producto_cliente": false
             },
@@ -2305,7 +2305,7 @@
               "codigo": "CT-06-05-050",
               "titulo": "Remate y sellado del encuentro de pared con estructura.",
               "unidad": "m",
-              "precio": 5.75,
+              "precio": 5.55,
               "horas": 0.3,
               "producto_cliente": false
             }
@@ -2320,7 +2320,7 @@
               "codigo": "CT-06-06-010",
               "titulo": "Pared de mampostería estructural de bloque de concreto de 15 cm.",
               "unidad": "m²",
-              "precio": 47.92,
+              "precio": 42.46,
               "horas": 1.78,
               "producto_cliente": false
             },
@@ -2328,7 +2328,7 @@
               "codigo": "CT-06-06-020",
               "titulo": "Pared de mampostería estructural de bloque de concreto de 20 cm.",
               "unidad": "m²",
-              "precio": 59.77,
+              "precio": 52.18,
               "horas": 1.94,
               "producto_cliente": false
             },
@@ -2336,7 +2336,7 @@
               "codigo": "CT-06-06-030",
               "titulo": "Viga dintel de mampostería estructural con bloque canal.",
               "unidad": "m",
-              "precio": 32.29,
+              "precio": 29.98,
               "horas": 1.38,
               "producto_cliente": false
             },
@@ -2344,7 +2344,7 @@
               "codigo": "CT-06-06-040",
               "titulo": "Refuerzo de celda vertical con acero y relleno de concreto.",
               "unidad": "m",
-              "precio": 11.13,
+              "precio": 10.5,
               "horas": 0.6,
               "producto_cliente": false
             }
@@ -2359,7 +2359,7 @@
               "codigo": "CT-06-07-010",
               "titulo": "Tratamiento y remate de frente de losa en fachada.",
               "unidad": "m",
-              "precio": 12.55,
+              "precio": 11.28,
               "horas": 0.68,
               "producto_cliente": false
             },
@@ -2367,7 +2367,7 @@
               "codigo": "CT-06-07-020",
               "titulo": "Cajón de persiana en dintel de ventana.",
               "unidad": "m",
-              "precio": 34.63,
+              "precio": 33.85,
               "horas": 0.8,
               "producto_cliente": false
             }
@@ -2382,7 +2382,7 @@
               "codigo": "CT-06-08-010",
               "titulo": "Mampara divisoria de oficina.",
               "unidad": "m²",
-              "precio": 83.49,
+              "precio": 80.96,
               "horas": 1.13,
               "producto_cliente": false
             },
@@ -2390,7 +2390,7 @@
               "codigo": "CT-06-08-020",
               "titulo": "Tabique móvil o plegable.",
               "unidad": "m²",
-              "precio": 217.43,
+              "precio": 214.5,
               "horas": 1.8,
               "producto_cliente": false
             }
@@ -2451,7 +2451,7 @@
               "codigo": "CT-07-01-010",
               "titulo": "Friso de mortero maestreado sobre paramento interior, 1,5 cm de espesor.",
               "unidad": "m²",
-              "precio": 10.75,
+              "precio": 8.71,
               "horas": 0.75,
               "producto_cliente": false
             },
@@ -2459,7 +2459,7 @@
               "codigo": "CT-07-01-020",
               "titulo": "Friso de mortero con hidrófugo en paramento exterior.",
               "unidad": "m²",
-              "precio": 17.52,
+              "precio": 14.85,
               "horas": 0.95,
               "producto_cliente": false
             },
@@ -2467,7 +2467,7 @@
               "codigo": "CT-07-01-030",
               "titulo": "Friso rústico texturado en fachada.",
               "unidad": "m²",
-              "precio": 16.45,
+              "precio": 14.26,
               "horas": 0.85,
               "producto_cliente": false
             },
@@ -2475,7 +2475,7 @@
               "codigo": "CT-07-01-040",
               "titulo": "Mortero impermeabilizante en área húmeda, base para enchapado.",
               "unidad": "m²",
-              "precio": 12.4,
+              "precio": 11.47,
               "horas": 0.55,
               "producto_cliente": false
             },
@@ -2483,7 +2483,7 @@
               "codigo": "CT-07-01-050",
               "titulo": "Regularización y repello de paramento existente.",
               "unidad": "m²",
-              "precio": 12.23,
+              "precio": 10.5,
               "horas": 0.7,
               "producto_cliente": false
             },
@@ -2491,7 +2491,7 @@
               "codigo": "CT-07-01-060",
               "titulo": "Friso de mortero proyectado mecánicamente.",
               "unidad": "m²",
-              "precio": 10.92,
+              "precio": 8.72,
               "horas": 0.52,
               "producto_cliente": false
             },
@@ -2499,7 +2499,7 @@
               "codigo": "CT-07-01-070",
               "titulo": "Media caña sanitaria en encuentro de pared y piso.",
               "unidad": "m",
-              "precio": 3.59,
+              "precio": 3.15,
               "horas": 0.3,
               "producto_cliente": false
             },
@@ -2507,7 +2507,7 @@
               "codigo": "CT-07-01-080",
               "titulo": "Repello y afinado de mocheta o arista de vano.",
               "unidad": "m",
-              "precio": 4.89,
+              "precio": 4.33,
               "horas": 0.38,
               "producto_cliente": false
             }
@@ -2530,7 +2530,7 @@
               "codigo": "CT-07-02-020",
               "titulo": "Estucado fino de pasta sobre friso.",
               "unidad": "m²",
-              "precio": 6.38,
+              "precio": 6.59,
               "horas": 0.55,
               "producto_cliente": false
             },
@@ -2538,7 +2538,7 @@
               "codigo": "CT-07-02-030",
               "titulo": "Alisado de paramento con pasta de nivelación.",
               "unidad": "m²",
-              "precio": 4.34,
+              "precio": 4.52,
               "horas": 0.35,
               "producto_cliente": false
             },
@@ -2546,7 +2546,7 @@
               "codigo": "CT-07-02-040",
               "titulo": "Moldura decorativa corrida de yeso.",
               "unidad": "m",
-              "precio": 7.77,
+              "precio": 7.66,
               "horas": 0.35,
               "producto_cliente": false
             },
@@ -2569,7 +2569,7 @@
               "codigo": "CT-07-03-010",
               "titulo": "Alicatado de paramento interior con pieza cerámica o porcelanato, en capa fina.",
               "unidad": "m²",
-              "precio": 10.87,
+              "precio": 9.74,
               "horas": 0.78,
               "producto_cliente": true
             },
@@ -2577,7 +2577,7 @@
               "codigo": "CT-07-03-020",
               "titulo": "Enchapado de porcelanato de gran formato en pared.",
               "unidad": "m²",
-              "precio": 14.5,
+              "precio": 12.8,
               "horas": 1.05,
               "producto_cliente": true
             },
@@ -2585,7 +2585,7 @@
               "codigo": "CT-07-03-030",
               "titulo": "Enchapado cerámico en fachada o paramento exterior.",
               "unidad": "m²",
-              "precio": 16.33,
+              "precio": 14.94,
               "horas": 1.15,
               "producto_cliente": true
             },
@@ -2593,7 +2593,7 @@
               "codigo": "CT-07-03-040",
               "titulo": "Cenefa o listelo decorativo en enchapado.",
               "unidad": "m",
-              "precio": 2.99,
+              "precio": 2.85,
               "horas": 0.31,
               "producto_cliente": true
             },
@@ -2601,7 +2601,7 @@
               "codigo": "CT-07-03-050",
               "titulo": "Perfil de remate, esquinero o transición en enchapado.",
               "unidad": "m",
-              "precio": 5.25,
+              "precio": 5.17,
               "horas": 0.2,
               "producto_cliente": false
             },
@@ -2609,7 +2609,7 @@
               "codigo": "CT-07-03-060",
               "titulo": "Enchapado de zona de ducha sobre impermeabilización.",
               "unidad": "m²",
-              "precio": 14.13,
+              "precio": 12.92,
               "horas": 1.02,
               "producto_cliente": true
             },
@@ -2617,7 +2617,7 @@
               "codigo": "CT-07-03-070",
               "titulo": "Zócalo cerámico de pared.",
               "unidad": "m",
-              "precio": 3.06,
+              "precio": 2.91,
               "horas": 0.27,
               "producto_cliente": true
             }
@@ -2632,7 +2632,7 @@
               "codigo": "CT-07-04-010",
               "titulo": "Enchapado de mármol o granito en pared, colocación en capa fina.",
               "unidad": "m²",
-              "precio": 14.61,
+              "precio": 12.53,
               "horas": 0.95,
               "producto_cliente": true
             },
@@ -2640,7 +2640,7 @@
               "codigo": "CT-07-04-020",
               "titulo": "Enchapado de laja o piedra natural irregular.",
               "unidad": "m²",
-              "precio": 23.82,
+              "precio": 21.03,
               "horas": 1.35,
               "producto_cliente": true
             },
@@ -2648,7 +2648,7 @@
               "codigo": "CT-07-04-030",
               "titulo": "Enchapado de piedra natural con anclaje mecánico.",
               "unidad": "m²",
-              "precio": 31.46,
+              "precio": 30.59,
               "horas": 1.75,
               "producto_cliente": true
             },
@@ -2656,7 +2656,7 @@
               "codigo": "CT-07-04-040",
               "titulo": "Zócalo de piedra natural.",
               "unidad": "m",
-              "precio": 2.95,
+              "precio": 2.67,
               "horas": 0.25,
               "producto_cliente": true
             },
@@ -2679,7 +2679,7 @@
               "codigo": "CT-07-05-010",
               "titulo": "Revestimiento de paramento con papel tapiz.",
               "unidad": "m²",
-              "precio": 4.24,
+              "precio": 4.41,
               "horas": 0.42,
               "producto_cliente": true
             },
@@ -2687,7 +2687,7 @@
               "codigo": "CT-07-05-020",
               "titulo": "Estuco veneciano o acabado decorativo mineral.",
               "unidad": "m²",
-              "precio": 16.2,
+              "precio": 16.38,
               "horas": 1.12,
               "producto_cliente": false
             },
@@ -2695,7 +2695,7 @@
               "codigo": "CT-07-05-030",
               "titulo": "Revestimiento de paramento con paneles decorativos.",
               "unidad": "m²",
-              "precio": 13.64,
+              "precio": 13.33,
               "horas": 0.51,
               "producto_cliente": true
             },
@@ -2703,7 +2703,7 @@
               "codigo": "CT-07-05-040",
               "titulo": "Forro de pared con machihembrado de madera.",
               "unidad": "m²",
-              "precio": 30.64,
+              "precio": 28.52,
               "horas": 0.65,
               "producto_cliente": false
             },
@@ -2719,7 +2719,7 @@
               "codigo": "CT-07-05-060",
               "titulo": "Revestimiento de pared de baño con paneles de PVC.",
               "unidad": "m²",
-              "precio": 29.84,
+              "precio": 29.57,
               "horas": 0.63,
               "producto_cliente": false
             }
@@ -2749,7 +2749,7 @@
               "codigo": "CT-08-01-020",
               "titulo": "Contrapiso de mortero de nivelación, 4 cm de espesor.",
               "unidad": "m²",
-              "precio": 17.86,
+              "precio": 13.75,
               "horas": 0.7,
               "producto_cliente": false
             },
@@ -2757,7 +2757,7 @@
               "codigo": "CT-08-01-030",
               "titulo": "Contrapiso de concreto sobre terreno, 8 cm de espesor.",
               "unidad": "m²",
-              "precio": 24.83,
+              "precio": 24.61,
               "horas": 0.64,
               "producto_cliente": false
             },
@@ -2765,7 +2765,7 @@
               "codigo": "CT-08-01-040",
               "titulo": "Nivelación con mortero seco compactado.",
               "unidad": "m²",
-              "precio": 21.62,
+              "precio": 16.82,
               "horas": 0.7,
               "producto_cliente": false
             },
@@ -2781,7 +2781,7 @@
               "codigo": "CT-08-01-060",
               "titulo": "Reparación y parcheo puntual de piso existente.",
               "unidad": "m²",
-              "precio": 13.64,
+              "precio": 12.64,
               "horas": 1.2,
               "producto_cliente": false
             }
@@ -2796,7 +2796,7 @@
               "codigo": "CT-08-02-010",
               "titulo": "Colocación de pavimento cerámico o porcelanato de formato estándar, en capa fina.",
               "unidad": "m²",
-              "precio": 9.17,
+              "precio": 8.15,
               "horas": 0.6,
               "producto_cliente": true
             },
@@ -2804,7 +2804,7 @@
               "codigo": "CT-08-02-020",
               "titulo": "Colocación de pavimento de porcelanato de gran formato, en capa fina.",
               "unidad": "m²",
-              "precio": 12.51,
+              "precio": 11.01,
               "horas": 0.9,
               "producto_cliente": true
             },
@@ -2812,7 +2812,7 @@
               "codigo": "CT-08-02-030",
               "titulo": "Piso cerámico en área húmeda con pendiente a desagüe.",
               "unidad": "m²",
-              "precio": 13.18,
+              "precio": 12.08,
               "horas": 0.93,
               "producto_cliente": true
             },
@@ -2820,7 +2820,7 @@
               "codigo": "CT-08-02-040",
               "titulo": "Piso cerámico en terraza o área exterior.",
               "unidad": "m²",
-              "precio": 13.86,
+              "precio": 12.58,
               "horas": 0.89,
               "producto_cliente": true
             },
@@ -2828,7 +2828,7 @@
               "codigo": "CT-08-02-050",
               "titulo": "Piso cerámico colocado en capa gruesa sobre mortero.",
               "unidad": "m²",
-              "precio": 19.41,
+              "precio": 16.54,
               "horas": 1.16,
               "producto_cliente": true
             },
@@ -2836,7 +2836,7 @@
               "codigo": "CT-08-02-060",
               "titulo": "Piso de baldosa hidráulica o mosaico de cemento.",
               "unidad": "m²",
-              "precio": 21.18,
+              "precio": 18.97,
               "horas": 1.34,
               "producto_cliente": true
             }
@@ -2851,7 +2851,7 @@
               "codigo": "CT-08-03-010",
               "titulo": "Piso de mármol o granito en capa fina.",
               "unidad": "m²",
-              "precio": 15.31,
+              "precio": 13.38,
               "horas": 0.9,
               "producto_cliente": true
             },
@@ -2859,7 +2859,7 @@
               "codigo": "CT-08-03-020",
               "titulo": "Piso de granito vaciado en sitio.",
               "unidad": "m²",
-              "precio": 49.71,
+              "precio": 49.8,
               "horas": 1.6,
               "producto_cliente": false
             },
@@ -2867,7 +2867,7 @@
               "codigo": "CT-08-03-030",
               "titulo": "Piso de laja o piedra natural irregular.",
               "unidad": "m²",
-              "precio": 23.21,
+              "precio": 20.59,
               "horas": 1.34,
               "producto_cliente": true
             },
@@ -2875,7 +2875,7 @@
               "codigo": "CT-08-03-040",
               "titulo": "Piso de baldosa de granito prefabricado.",
               "unidad": "m²",
-              "precio": 24.78,
+              "precio": 22.48,
               "horas": 1.22,
               "producto_cliente": true
             },
@@ -2922,7 +2922,7 @@
               "codigo": "CT-08-04-040",
               "titulo": "Lijado y barnizado de piso de madera.",
               "unidad": "m²",
-              "precio": 12.91,
+              "precio": 12.27,
               "horas": 0.72,
               "producto_cliente": false
             },
@@ -2992,7 +2992,7 @@
               "codigo": "CT-08-06-010",
               "titulo": "Piso de concreto alisado mecánicamente.",
               "unidad": "m²",
-              "precio": 26.2,
+              "precio": 25.93,
               "horas": 0.8,
               "producto_cliente": false
             },
@@ -3000,7 +3000,7 @@
               "codigo": "CT-08-06-020",
               "titulo": "Piso de concreto estampado.",
               "unidad": "m²",
-              "precio": 38.82,
+              "precio": 38.49,
               "horas": 1.3,
               "producto_cliente": false
             },
@@ -3032,7 +3032,7 @@
               "codigo": "CT-08-06-060",
               "titulo": "Piso de cemento pulido llaneteado a mano.",
               "unidad": "m²",
-              "precio": 20.01,
+              "precio": 16.8,
               "horas": 1.1,
               "producto_cliente": false
             },
@@ -3040,7 +3040,7 @@
               "codigo": "CT-08-06-070",
               "titulo": "Piso de gravilla lavada o chino lavado.",
               "unidad": "m²",
-              "precio": 21.45,
+              "precio": 18.43,
               "horas": 1.28,
               "producto_cliente": false
             }
@@ -3055,7 +3055,7 @@
               "codigo": "CT-08-07-010",
               "titulo": "Colocación de rodapié cerámico o de porcelanato.",
               "unidad": "m",
-              "precio": 1.69,
+              "precio": 1.59,
               "horas": 0.165,
               "producto_cliente": true
             },
@@ -3063,7 +3063,7 @@
               "codigo": "CT-08-07-020",
               "titulo": "Rodapié de madera o MDF.",
               "unidad": "m",
-              "precio": 2.13,
+              "precio": 2.08,
               "horas": 0.195,
               "producto_cliente": true
             },
@@ -3071,7 +3071,7 @@
               "codigo": "CT-08-07-030",
               "titulo": "Rodapié de mortero con media caña sanitaria.",
               "unidad": "m",
-              "precio": 4.06,
+              "precio": 3.55,
               "horas": 0.33,
               "producto_cliente": false
             },
@@ -3087,7 +3087,7 @@
               "codigo": "CT-08-07-050",
               "titulo": "Junta de dilatación en piso.",
               "unidad": "m",
-              "precio": 10.17,
+              "precio": 10.04,
               "horas": 0.27,
               "producto_cliente": false
             },
@@ -3095,7 +3095,7 @@
               "codigo": "CT-08-07-060",
               "titulo": "Nivelación y remate de umbral entre ambientes.",
               "unidad": "m",
-              "precio": 10.69,
+              "precio": 10.01,
               "horas": 0.42,
               "producto_cliente": false
             }
@@ -3110,7 +3110,7 @@
               "codigo": "CT-08-08-010",
               "titulo": "Revestimiento de escalera con cerámica o porcelanato.",
               "unidad": "m²",
-              "precio": 18.02,
+              "precio": 16.63,
               "horas": 1.67,
               "producto_cliente": true
             },
@@ -3118,7 +3118,7 @@
               "codigo": "CT-08-08-020",
               "titulo": "Revestimiento de escalera con piedra natural.",
               "unidad": "m²",
-              "precio": 24.57,
+              "precio": 22.24,
               "horas": 1.97,
               "producto_cliente": true
             },
@@ -3142,7 +3142,7 @@
               "codigo": "CT-08-08-050",
               "titulo": "Zócalo escalonado de escalera.",
               "unidad": "m",
-              "precio": 3.68,
+              "precio": 3.55,
               "horas": 0.42,
               "producto_cliente": true
             }
@@ -3164,7 +3164,7 @@
               "codigo": "CT-09-01-010",
               "titulo": "Cielo raso continuo de placa de yeso laminado, estructura oculta suspendida.",
               "unidad": "m²",
-              "precio": 18.47,
+              "precio": 22.07,
               "horas": 0.95,
               "producto_cliente": false
             },
@@ -3172,7 +3172,7 @@
               "codigo": "CT-09-01-020",
               "titulo": "Cielo raso de yeso laminado con placa resistente a la humedad.",
               "unidad": "m²",
-              "precio": 22.02,
+              "precio": 29.8,
               "horas": 1.03,
               "producto_cliente": false
             },
@@ -3180,7 +3180,7 @@
               "codigo": "CT-09-01-030",
               "titulo": "Cielo raso de yeso laminado con doble placa, acústico.",
               "unidad": "m²",
-              "precio": 34.68,
+              "precio": 41.27,
               "horas": 1.4,
               "producto_cliente": false
             },
@@ -3188,7 +3188,7 @@
               "codigo": "CT-09-01-040",
               "titulo": "Foso o cajón de cortina en cielo raso de yeso laminado.",
               "unidad": "m",
-              "precio": 20.11,
+              "precio": 23.24,
               "horas": 0.87,
               "producto_cliente": false
             },
@@ -3196,7 +3196,7 @@
               "codigo": "CT-09-01-050",
               "titulo": "Registro practicable en cielo raso.",
               "unidad": "ud",
-              "precio": 22.8,
+              "precio": 23.14,
               "horas": 0.57,
               "producto_cliente": false
             },
@@ -3204,7 +3204,7 @@
               "codigo": "CT-09-01-060",
               "titulo": "Cielo raso de yeso laminado a doble nivel.",
               "unidad": "m²",
-              "precio": 30.17,
+              "precio": 35.06,
               "horas": 1.48,
               "producto_cliente": false
             }
@@ -3250,7 +3250,7 @@
               "codigo": "CT-09-03-020",
               "titulo": "Cielo raso exterior en alero o porche.",
               "unidad": "m²",
-              "precio": 27.04,
+              "precio": 27.72,
               "horas": 0.72,
               "producto_cliente": false
             }
@@ -3265,7 +3265,7 @@
               "codigo": "CT-09-04-010",
               "titulo": "Cielo raso de machihembrado de madera.",
               "unidad": "m²",
-              "precio": 32.51,
+              "precio": 30.38,
               "horas": 0.82,
               "producto_cliente": false
             }
@@ -3280,7 +3280,7 @@
               "codigo": "CT-09-05-010",
               "titulo": "Moldura perimetral de remate en cielo raso.",
               "unidad": "m",
-              "precio": 7.55,
+              "precio": 7.45,
               "horas": 0.33,
               "producto_cliente": false
             },
@@ -3288,7 +3288,7 @@
               "codigo": "CT-09-05-020",
               "titulo": "Cornisa para iluminación indirecta en cielo raso.",
               "unidad": "m",
-              "precio": 13.33,
+              "precio": 13.52,
               "horas": 0.6,
               "producto_cliente": false
             },
@@ -3296,7 +3296,7 @@
               "codigo": "CT-09-05-030",
               "titulo": "Cortinero empotrado en cielo raso.",
               "unidad": "m",
-              "precio": 26.04,
+              "precio": 28.12,
               "horas": 0.72,
               "producto_cliente": false
             }
@@ -3318,7 +3318,7 @@
               "codigo": "CT-10-01-010",
               "titulo": "Impermeabilización de cubierta con manto asfáltico.",
               "unidad": "m²",
-              "precio": 18.55,
+              "precio": 16.25,
               "horas": 0.72,
               "producto_cliente": false
             },
@@ -3326,7 +3326,7 @@
               "codigo": "CT-10-01-020",
               "titulo": "Refuerzo de encuentros y petos en impermeabilización asfáltica.",
               "unidad": "m",
-              "precio": 20.4,
+              "precio": 18.94,
               "horas": 0.78,
               "producto_cliente": false
             },
@@ -3349,7 +3349,7 @@
               "codigo": "CT-10-02-010",
               "titulo": "Impermeabilización con acrílico elastomérico y malla.",
               "unidad": "m²",
-              "precio": 17.73,
+              "precio": 15.82,
               "horas": 0.6,
               "producto_cliente": false
             },
@@ -3357,7 +3357,7 @@
               "codigo": "CT-10-02-020",
               "titulo": "Impermeabilización con membrana líquida de poliuretano.",
               "unidad": "m²",
-              "precio": 34.33,
+              "precio": 30.13,
               "horas": 0.71,
               "producto_cliente": false
             },
@@ -3365,7 +3365,7 @@
               "codigo": "CT-10-02-030",
               "titulo": "Impermeabilización con membrana cementosa flexible.",
               "unidad": "m²",
-              "precio": 12.29,
+              "precio": 11.4,
               "horas": 0.56,
               "producto_cliente": false
             },
@@ -3373,7 +3373,7 @@
               "codigo": "CT-10-02-040",
               "titulo": "Impermeabilización de muro enterrado por su cara interior.",
               "unidad": "m²",
-              "precio": 23.53,
+              "precio": 22.18,
               "horas": 1.13,
               "producto_cliente": false
             },
@@ -3396,7 +3396,7 @@
               "codigo": "CT-10-03-010",
               "titulo": "Impermeabilización de piso de baño o ducha bajo enchapado.",
               "unidad": "m²",
-              "precio": 19.6,
+              "precio": 18.6,
               "horas": 0.68,
               "producto_cliente": false
             },
@@ -3404,7 +3404,7 @@
               "codigo": "CT-10-03-020",
               "titulo": "Impermeabilización de jardinera o maceta de obra.",
               "unidad": "m²",
-              "precio": 24.99,
+              "precio": 23.88,
               "horas": 0.86,
               "producto_cliente": false
             },
@@ -3420,7 +3420,7 @@
               "codigo": "CT-10-03-040",
               "titulo": "Impermeabilización interior de tanque de agua.",
               "unidad": "m²",
-              "precio": 21.12,
+              "precio": 20.02,
               "horas": 0.94,
               "producto_cliente": false
             },
@@ -3428,7 +3428,7 @@
               "codigo": "CT-10-03-050",
               "titulo": "Impermeabilización de balcón o terraza transitable.",
               "unidad": "m²",
-              "precio": 18.99,
+              "precio": 17.99,
               "horas": 0.76,
               "producto_cliente": false
             }
@@ -3481,7 +3481,7 @@
               "codigo": "CT-11-01-010",
               "titulo": "Estructura metálica de techo.",
               "unidad": "kg",
-              "precio": 4.15,
+              "precio": 4.29,
               "horas": 0.106,
               "producto_cliente": false
             },
@@ -3489,7 +3489,7 @@
               "codigo": "CT-11-01-020",
               "titulo": "Estructura de madera de techo.",
               "unidad": "m²",
-              "precio": 55.38,
+              "precio": 53.46,
               "horas": 1.93,
               "producto_cliente": false
             }
@@ -3504,7 +3504,7 @@
               "codigo": "CT-11-02-010",
               "titulo": "Cubierta de teja criolla de arcilla.",
               "unidad": "m²",
-              "precio": 46.46,
+              "precio": 42.96,
               "horas": 1.4,
               "producto_cliente": false
             },
@@ -3512,7 +3512,7 @@
               "codigo": "CT-11-02-020",
               "titulo": "Cubierta de teja asfáltica.",
               "unidad": "m²",
-              "precio": 36.02,
+              "precio": 40.26,
               "horas": 0.98,
               "producto_cliente": false
             },
@@ -3520,7 +3520,7 @@
               "codigo": "CT-11-02-030",
               "titulo": "Cumbrera y remates de cubierta de teja.",
               "unidad": "m",
-              "precio": 15.2,
+              "precio": 14.55,
               "horas": 0.54,
               "producto_cliente": false
             }
@@ -3535,7 +3535,7 @@
               "codigo": "CT-11-03-010",
               "titulo": "Cubierta de lámina metálica acanalada.",
               "unidad": "m²",
-              "precio": 22.52,
+              "precio": 24.4,
               "horas": 0.68,
               "producto_cliente": false
             },
@@ -3559,7 +3559,7 @@
               "codigo": "CT-11-03-040",
               "titulo": "Instalación de domo o claraboya en cubierta.",
               "unidad": "ud",
-              "precio": 178.0,
+              "precio": 175.47,
               "horas": 3.8,
               "producto_cliente": false
             }
@@ -3574,7 +3574,7 @@
               "codigo": "CT-11-04-010",
               "titulo": "Pendientado de cubierta plana con mortero aligerado.",
               "unidad": "m²",
-              "precio": 18.62,
+              "precio": 15.07,
               "horas": 0.88,
               "producto_cliente": false
             },
@@ -3582,7 +3582,7 @@
               "codigo": "CT-11-04-020",
               "titulo": "Torta de cemento de protección de cubierta.",
               "unidad": "m²",
-              "precio": 26.6,
+              "precio": 23.39,
               "horas": 0.92,
               "producto_cliente": false
             },
@@ -3621,7 +3621,7 @@
               "codigo": "CT-11-05-030",
               "titulo": "Tragante o boquilla de desagüe de cubierta.",
               "unidad": "ud",
-              "precio": 31.72,
+              "precio": 31.33,
               "horas": 1.02,
               "producto_cliente": false
             },
@@ -3629,7 +3629,7 @@
               "codigo": "CT-11-05-040",
               "titulo": "Alero y remate de borde de cubierta.",
               "unidad": "m",
-              "precio": 17.12,
+              "precio": 16.5,
               "horas": 0.64,
               "producto_cliente": false
             },
@@ -3645,7 +3645,7 @@
               "codigo": "CT-11-05-060",
               "titulo": "Reparación puntual de cubierta.",
               "unidad": "m²",
-              "precio": 23.91,
+              "precio": 22.2,
               "horas": 1.0,
               "producto_cliente": false
             }
@@ -3667,7 +3667,7 @@
               "codigo": "CT-12-01-010",
               "titulo": "Tubería de agua de PPR de 20 mm, empotrada, incluso roza y resane.",
               "unidad": "m",
-              "precio": 7.45,
+              "precio": 7.44,
               "horas": 0.46,
               "producto_cliente": false
             },
@@ -3675,7 +3675,7 @@
               "codigo": "CT-12-01-020",
               "titulo": "Montante de agua de PPR de 25 mm.",
               "unidad": "m",
-              "precio": 8.15,
+              "precio": 9.05,
               "horas": 0.49,
               "producto_cliente": false
             },
@@ -3683,7 +3683,7 @@
               "codigo": "CT-12-01-030",
               "titulo": "Sustitución de tramo de tubería de agua existente.",
               "unidad": "m",
-              "precio": 10.43,
+              "precio": 10.35,
               "horas": 0.7,
               "producto_cliente": false
             }
@@ -3698,7 +3698,7 @@
               "codigo": "CT-12-02-010",
               "titulo": "Punto de agua fría y caliente para aparato sanitario.",
               "unidad": "ud",
-              "precio": 37.22,
+              "precio": 36.71,
               "horas": 1.9,
               "producto_cliente": false
             }
@@ -3713,7 +3713,7 @@
               "codigo": "CT-12-03-010",
               "titulo": "Llave de paso de PPR de 20 mm, empotrada.",
               "unidad": "ud",
-              "precio": 13.52,
+              "precio": 13.26,
               "horas": 0.7,
               "producto_cliente": false
             }
@@ -3744,7 +3744,7 @@
               "codigo": "CT-12-04-030",
               "titulo": "Instalación de ducha o regadera con su grifería.",
               "unidad": "ud",
-              "precio": 17.78,
+              "precio": 17.58,
               "horas": 1.65,
               "producto_cliente": true
             },
@@ -3760,7 +3760,7 @@
               "codigo": "CT-12-04-050",
               "titulo": "Instalación de calentador de agua.",
               "unidad": "ud",
-              "precio": 52.2,
+              "precio": 51.66,
               "horas": 3.3,
               "producto_cliente": true
             },
@@ -3799,7 +3799,7 @@
               "codigo": "CT-12-05-010",
               "titulo": "Tubería de desagüe de PVC sanitario de 4 pulgadas.",
               "unidad": "m",
-              "precio": 11.04,
+              "precio": 8.33,
               "horas": 0.41,
               "producto_cliente": false
             },
@@ -3807,7 +3807,7 @@
               "codigo": "CT-12-05-020",
               "titulo": "Instalación de trampa de grasa.",
               "unidad": "ud",
-              "precio": 146.58,
+              "precio": 137.97,
               "horas": 2.7,
               "producto_cliente": false
             },
@@ -3815,7 +3815,7 @@
               "codigo": "CT-12-05-030",
               "titulo": "Registro de aguas servidas.",
               "unidad": "ud",
-              "precio": 99.52,
+              "precio": 86.79,
               "horas": 6.0,
               "producto_cliente": true
             }
@@ -3830,7 +3830,7 @@
               "codigo": "CT-12-06-010",
               "titulo": "Punto de desagüe para aparato sanitario.",
               "unidad": "ud",
-              "precio": 33.84,
+              "precio": 28.87,
               "horas": 1.7,
               "producto_cliente": false
             }
@@ -3845,7 +3845,7 @@
               "codigo": "CT-12-07-010",
               "titulo": "Instalación de tanque de agua.",
               "unidad": "ud",
-              "precio": 91.56,
+              "precio": 96.02,
               "horas": 5.6,
               "producto_cliente": true
             },
@@ -3853,7 +3853,7 @@
               "codigo": "CT-12-07-020",
               "titulo": "Instalación de bomba centrífuga de agua.",
               "unidad": "ud",
-              "precio": 131.04,
+              "precio": 132.48,
               "horas": 4.9,
               "producto_cliente": true
             },
@@ -3861,7 +3861,7 @@
               "codigo": "CT-12-07-030",
               "titulo": "Instalación de sistema hidroneumático.",
               "unidad": "ud",
-              "precio": 208.94,
+              "precio": 212.22,
               "horas": 7.0,
               "producto_cliente": true
             },
@@ -3869,7 +3869,7 @@
               "codigo": "CT-12-07-040",
               "titulo": "Instalación de tanque séptico prefabricado.",
               "unidad": "ud",
-              "precio": 129.55,
+              "precio": 116.29,
               "horas": 8.4,
               "producto_cliente": true
             }
@@ -3891,7 +3891,7 @@
               "codigo": "CT-13-01-010",
               "titulo": "Canalización eléctrica empotrada con conduit de 20 mm y conductor 12 AWG.",
               "unidad": "m",
-              "precio": 8.37,
+              "precio": 6.72,
               "horas": 0.34,
               "producto_cliente": false
             },
@@ -3899,7 +3899,7 @@
               "codigo": "CT-13-01-020",
               "titulo": "Canalización eléctrica en cielo raso o superficie.",
               "unidad": "m",
-              "precio": 8.2,
+              "precio": 6.55,
               "horas": 0.26,
               "producto_cliente": false
             },
@@ -3907,7 +3907,7 @@
               "codigo": "CT-13-01-030",
               "titulo": "Canalización eléctrica para equipo de climatización.",
               "unidad": "m",
-              "precio": 13.34,
+              "precio": 10.43,
               "horas": 0.35,
               "producto_cliente": false
             }
@@ -3922,7 +3922,7 @@
               "codigo": "CT-13-02-010",
               "titulo": "Punto de interruptor o tomacorriente, incluso caja y mecanismo.",
               "unidad": "ud",
-              "precio": 8.72,
+              "precio": 7.93,
               "horas": 0.33,
               "producto_cliente": true
             },
@@ -3930,7 +3930,7 @@
               "codigo": "CT-13-02-020",
               "titulo": "Punto de fuerza para electrodoméstico o equipo.",
               "unidad": "ud",
-              "precio": 77.82,
+              "precio": 60.65,
               "horas": 1.8,
               "producto_cliente": false
             },
@@ -3938,7 +3938,7 @@
               "codigo": "CT-13-02-030",
               "titulo": "Reubicación de punto eléctrico existente.",
               "unidad": "ud",
-              "precio": 35.4,
+              "precio": 29.99,
               "horas": 1.45,
               "producto_cliente": false
             }
@@ -3953,7 +3953,7 @@
               "codigo": "CT-13-03-010",
               "titulo": "Tablero eléctrico de distribución.",
               "unidad": "ud",
-              "precio": 145.44,
+              "precio": 131.13,
               "horas": 4.6,
               "producto_cliente": false
             },
@@ -3961,7 +3961,7 @@
               "codigo": "CT-13-03-020",
               "titulo": "Interruptor termomagnético de protección de circuito.",
               "unidad": "ud",
-              "precio": 14.92,
+              "precio": 13.25,
               "horas": 0.42,
               "producto_cliente": false
             },
@@ -3969,7 +3969,7 @@
               "codigo": "CT-13-03-030",
               "titulo": "Interruptor diferencial de protección de personas.",
               "unidad": "ud",
-              "precio": 47.67,
+              "precio": 47.12,
               "horas": 0.63,
               "producto_cliente": false
             },
@@ -3992,7 +3992,7 @@
               "codigo": "CT-13-04-010",
               "titulo": "Instalación de luminaria empotrada en cielo raso.",
               "unidad": "ud",
-              "precio": 5.2,
+              "precio": 4.56,
               "horas": 0.42,
               "producto_cliente": true
             },
@@ -4000,7 +4000,7 @@
               "codigo": "CT-13-04-020",
               "titulo": "Instalación de luminaria de sobreponer o colgante.",
               "unidad": "ud",
-              "precio": 5.94,
+              "precio": 5.37,
               "horas": 0.51,
               "producto_cliente": true
             },
@@ -4008,7 +4008,7 @@
               "codigo": "CT-13-04-030",
               "titulo": "Iluminación lineal con cinta LED.",
               "unidad": "m",
-              "precio": 12.44,
+              "precio": 11.9,
               "horas": 0.32,
               "producto_cliente": false
             },
@@ -4016,7 +4016,7 @@
               "codigo": "CT-13-04-040",
               "titulo": "Instalación de reflector o luminaria de exterior.",
               "unidad": "ud",
-              "precio": 10.57,
+              "precio": 9.29,
               "horas": 0.74,
               "producto_cliente": true
             },
@@ -4024,7 +4024,7 @@
               "codigo": "CT-13-04-050",
               "titulo": "Punto para ventilador de techo.",
               "unidad": "ud",
-              "precio": 55.41,
+              "precio": 43.32,
               "horas": 1.55,
               "producto_cliente": false
             }
@@ -4039,7 +4039,7 @@
               "codigo": "CT-13-05-010",
               "titulo": "Acometida eléctrica desde el punto de suministro.",
               "unidad": "ud",
-              "precio": 159.8,
+              "precio": 132.07,
               "horas": 6.8,
               "producto_cliente": false
             },
@@ -4047,7 +4047,7 @@
               "codigo": "CT-13-05-020",
               "titulo": "Puesta a tierra con electrodo.",
               "unidad": "ud",
-              "precio": 65.88,
+              "precio": 58.2,
               "horas": 2.8,
               "producto_cliente": false
             },
@@ -4055,7 +4055,7 @@
               "codigo": "CT-13-05-030",
               "titulo": "Caja de medidor y protección de servicio.",
               "unidad": "ud",
-              "precio": 61.8,
+              "precio": 52.74,
               "horas": 2.7,
               "producto_cliente": false
             }
@@ -4070,7 +4070,7 @@
               "codigo": "CT-13-06-010",
               "titulo": "Punto de datos, telefonía o televisión.",
               "unidad": "ud",
-              "precio": 50.08,
+              "precio": 48.62,
               "horas": 1.45,
               "producto_cliente": false
             },
@@ -4078,7 +4078,7 @@
               "codigo": "CT-13-06-020",
               "titulo": "Instalación de videoportero o citófono.",
               "unidad": "ud",
-              "precio": 72.27,
+              "precio": 68.67,
               "horas": 3.9,
               "producto_cliente": true
             },
@@ -4086,7 +4086,7 @@
               "codigo": "CT-13-06-030",
               "titulo": "Punto de alarma, cámara o control de acceso.",
               "unidad": "ud",
-              "precio": 46.8,
+              "precio": 44.15,
               "horas": 1.7,
               "producto_cliente": true
             },
@@ -4094,7 +4094,7 @@
               "codigo": "CT-13-06-040",
               "titulo": "Punto de timbre con su pulsador.",
               "unidad": "ud",
-              "precio": 50.83,
+              "precio": 48.93,
               "horas": 1.4,
               "producto_cliente": false
             }
@@ -4116,7 +4116,7 @@
               "codigo": "CT-14-01-010",
               "titulo": "Instalación de equipo de aire acondicionado tipo split.",
               "unidad": "ud",
-              "precio": 153.26,
+              "precio": 151.94,
               "horas": 5.1,
               "producto_cliente": true
             },
@@ -4132,7 +4132,7 @@
               "codigo": "CT-14-01-030",
               "titulo": "Instalación de extractor o ventilador.",
               "unidad": "ud",
-              "precio": 58.73,
+              "precio": 57.08,
               "horas": 1.65,
               "producto_cliente": true
             },
@@ -4187,7 +4187,7 @@
               "codigo": "CT-14-02-030",
               "titulo": "Regulador, medidor y protección de instalación de gas.",
               "unidad": "ud",
-              "precio": 119.8,
+              "precio": 119.02,
               "horas": 3.3,
               "producto_cliente": false
             }
@@ -4210,7 +4210,7 @@
               "codigo": "CT-14-03-020",
               "titulo": "Instalación de detector de humo y alarma.",
               "unidad": "ud",
-              "precio": 44.1,
+              "precio": 43.82,
               "horas": 0.87,
               "producto_cliente": false
             },
@@ -4218,7 +4218,7 @@
               "codigo": "CT-14-03-030",
               "titulo": "Instalación de gabinete contra incendios.",
               "unidad": "ud",
-              "precio": 293.57,
+              "precio": 295.33,
               "horas": 3.6,
               "producto_cliente": false
             }
@@ -4233,7 +4233,7 @@
               "codigo": "CT-14-04-010",
               "titulo": "Instalación de planta eléctrica de respaldo.",
               "unidad": "ud",
-              "precio": 253.28,
+              "precio": 228.18,
               "horas": 8.4,
               "producto_cliente": true
             },
@@ -4241,7 +4241,7 @@
               "codigo": "CT-14-04-020",
               "titulo": "Instalación de sistema de respaldo con inversor y baterías.",
               "unidad": "ud",
-              "precio": 137.74,
+              "precio": 121.32,
               "horas": 5.4,
               "producto_cliente": true
             },
@@ -4249,7 +4249,7 @@
               "codigo": "CT-14-04-030",
               "titulo": "Tablero de transferencia entre red y respaldo.",
               "unidad": "ud",
-              "precio": 168.39,
+              "precio": 145.02,
               "horas": 4.2,
               "producto_cliente": true
             }
@@ -4295,7 +4295,7 @@
               "codigo": "CT-15-01-040",
               "titulo": "Puerta de closet abatible o plegable.",
               "unidad": "m²",
-              "precio": 60.42,
+              "precio": 64.6,
               "horas": 1.35,
               "producto_cliente": false
             },
@@ -4303,7 +4303,7 @@
               "codigo": "CT-15-01-050",
               "titulo": "Instalación de puerta de baño de PVC o aluminio.",
               "unidad": "ud",
-              "precio": 114.78,
+              "precio": 108.49,
               "horas": 2.4,
               "producto_cliente": true
             },
@@ -4311,7 +4311,7 @@
               "codigo": "CT-15-01-060",
               "titulo": "Marco y contramarco metálico para vano.",
               "unidad": "m",
-              "precio": 19.03,
+              "precio": 19.19,
               "horas": 0.7,
               "producto_cliente": false
             },
@@ -4334,7 +4334,7 @@
               "codigo": "CT-15-02-010",
               "titulo": "Instalación de puerta metálica exterior o de seguridad.",
               "unidad": "ud",
-              "precio": 98.72,
+              "precio": 84.75,
               "horas": 4.7,
               "producto_cliente": true
             },
@@ -4342,7 +4342,7 @@
               "codigo": "CT-15-02-020",
               "titulo": "Instalación de puerta de entrada de madera.",
               "unidad": "ud",
-              "precio": 171.91,
+              "precio": 161.28,
               "horas": 4.2,
               "producto_cliente": true
             },
@@ -4350,7 +4350,7 @@
               "codigo": "CT-15-02-030",
               "titulo": "Portón corredizo metálico.",
               "unidad": "m²",
-              "precio": 104.45,
+              "precio": 100.52,
               "horas": 2.3,
               "producto_cliente": false
             }
@@ -4365,7 +4365,7 @@
               "codigo": "CT-15-03-010",
               "titulo": "Ventana de aluminio corrediza.",
               "unidad": "m²",
-              "precio": 109.98,
+              "precio": 103.09,
               "horas": 1.8,
               "producto_cliente": false
             },
@@ -4373,7 +4373,7 @@
               "codigo": "CT-15-03-020",
               "titulo": "Ventana de aluminio batiente o proyectante.",
               "unidad": "m²",
-              "precio": 117.65,
+              "precio": 110.75,
               "horas": 2.1,
               "producto_cliente": false
             },
@@ -4381,7 +4381,7 @@
               "codigo": "CT-15-03-030",
               "titulo": "Ventana fija o paño panorámico.",
               "unidad": "m²",
-              "precio": 97.25,
+              "precio": 92.04,
               "horas": 1.7,
               "producto_cliente": false
             },
@@ -4397,7 +4397,7 @@
               "codigo": "CT-15-03-050",
               "titulo": "Ventana de PVC.",
               "unidad": "m²",
-              "precio": 122.04,
+              "precio": 115.15,
               "horas": 2.17,
               "producto_cliente": false
             },
@@ -4405,7 +4405,7 @@
               "codigo": "CT-15-03-060",
               "titulo": "Celosía o romanilla de ventilación.",
               "unidad": "m²",
-              "precio": 75.54,
+              "precio": 68.84,
               "horas": 1.18,
               "producto_cliente": false
             }
@@ -4420,7 +4420,7 @@
               "codigo": "CT-15-04-010",
               "titulo": "Reja de protección metálica para ventana o puerta.",
               "unidad": "m²",
-              "precio": 87.18,
+              "precio": 77.73,
               "horas": 1.8,
               "producto_cliente": false
             },
@@ -4428,7 +4428,7 @@
               "codigo": "CT-15-04-020",
               "titulo": "Portón de reja para acceso.",
               "unidad": "m²",
-              "precio": 99.37,
+              "precio": 93.07,
               "horas": 2.12,
               "producto_cliente": false
             },
@@ -4436,7 +4436,7 @@
               "codigo": "CT-15-04-030",
               "titulo": "Baranda metálica de protección.",
               "unidad": "m",
-              "precio": 70.47,
+              "precio": 64.17,
               "horas": 1.57,
               "producto_cliente": false
             },
@@ -4444,7 +4444,7 @@
               "codigo": "CT-15-04-040",
               "titulo": "Estructura metálica menor y marquesinas.",
               "unidad": "kg",
-              "precio": 4.25,
+              "precio": 4.24,
               "horas": 0.091,
               "producto_cliente": false
             }
@@ -4459,7 +4459,7 @@
               "codigo": "CT-15-05-010",
               "titulo": "Closet empotrado a medida.",
               "unidad": "m²",
-              "precio": 121.32,
+              "precio": 131.56,
               "horas": 2.55,
               "producto_cliente": false
             },
@@ -4467,7 +4467,7 @@
               "codigo": "CT-15-05-020",
               "titulo": "Puerta corrediza de closet.",
               "unidad": "m²",
-              "precio": 79.38,
+              "precio": 83.56,
               "horas": 1.17,
               "producto_cliente": false
             },
@@ -4475,7 +4475,7 @@
               "codigo": "CT-15-05-030",
               "titulo": "Entrepaños y organizadores interiores de closet.",
               "unidad": "m",
-              "precio": 31.12,
+              "precio": 32.89,
               "horas": 0.63,
               "producto_cliente": false
             }
@@ -4506,7 +4506,7 @@
               "codigo": "CT-15-06-030",
               "titulo": "Mampara de baño en vidrio templado.",
               "unidad": "m²",
-              "precio": 129.18,
+              "precio": 122.89,
               "horas": 1.87,
               "producto_cliente": false
             },
@@ -4514,7 +4514,7 @@
               "codigo": "CT-15-06-040",
               "titulo": "Baranda o cerramiento de vidrio templado.",
               "unidad": "m²",
-              "precio": 163.81,
+              "precio": 155.94,
               "horas": 2.1,
               "producto_cliente": false
             }
@@ -4529,7 +4529,7 @@
               "codigo": "CT-15-07-010",
               "titulo": "Pasamanos de madera sobre baranda o pared.",
               "unidad": "m",
-              "precio": 21.1,
+              "precio": 20.64,
               "horas": 0.78,
               "producto_cliente": false
             },
@@ -4537,7 +4537,7 @@
               "codigo": "CT-15-07-020",
               "titulo": "Baranda o pasamanos de acero inoxidable.",
               "unidad": "m",
-              "precio": 85.59,
+              "precio": 80.87,
               "horas": 1.35,
               "producto_cliente": false
             }
@@ -4559,7 +4559,7 @@
               "codigo": "CT-16-01-010",
               "titulo": "Preparación de paramento interior para pintura: resane, alisado y fondo.",
               "unidad": "m²",
-              "precio": 2.82,
+              "precio": 3.12,
               "horas": 0.22,
               "producto_cliente": false
             },
@@ -4567,7 +4567,7 @@
               "codigo": "CT-16-01-020",
               "titulo": "Preparación de paramento exterior para pintura.",
               "unidad": "m²",
-              "precio": 4.45,
+              "precio": 4.86,
               "horas": 0.34,
               "producto_cliente": false
             },
@@ -4590,7 +4590,7 @@
               "codigo": "CT-16-02-010",
               "titulo": "Pintura de caucho mate lavable en paramento interior, dos manos.",
               "unidad": "m²",
-              "precio": 3.46,
+              "precio": 3.41,
               "horas": 0.255,
               "producto_cliente": true
             },
@@ -4598,7 +4598,7 @@
               "codigo": "CT-16-02-020",
               "titulo": "Pintura de caucho satinada lavable en interior, dos manos.",
               "unidad": "m²",
-              "precio": 3.76,
+              "precio": 3.71,
               "horas": 0.285,
               "producto_cliente": true
             },
@@ -4606,7 +4606,7 @@
               "codigo": "CT-16-02-030",
               "titulo": "Pintura de cielo raso, dos manos.",
               "unidad": "m²",
-              "precio": 4.46,
+              "precio": 4.41,
               "horas": 0.32,
               "producto_cliente": true
             }
@@ -4621,7 +4621,7 @@
               "codigo": "CT-16-03-010",
               "titulo": "Pintura de caucho para exterior, dos manos.",
               "unidad": "m²",
-              "precio": 5.11,
+              "precio": 5.04,
               "horas": 0.37,
               "producto_cliente": true
             },
@@ -4629,7 +4629,7 @@
               "codigo": "CT-16-03-020",
               "titulo": "Pintura elastomérica impermeabilizante de fachada.",
               "unidad": "m²",
-              "precio": 13.17,
+              "precio": 11.93,
               "horas": 0.51,
               "producto_cliente": false
             },
@@ -4637,7 +4637,7 @@
               "codigo": "CT-16-03-030",
               "titulo": "Pintura sobre concreto visto o superficie mineral.",
               "unidad": "m²",
-              "precio": 6.83,
+              "precio": 7.23,
               "horas": 0.45,
               "producto_cliente": false
             }
@@ -4652,7 +4652,7 @@
               "codigo": "CT-16-04-010",
               "titulo": "Esmalte sintético sobre carpintería metálica o de madera, dos manos.",
               "unidad": "m²",
-              "precio": 5.23,
+              "precio": 5.4,
               "horas": 0.42,
               "producto_cliente": false
             },
@@ -4660,7 +4660,7 @@
               "codigo": "CT-16-04-020",
               "titulo": "Pintura sobre superficie galvanizada o de aluminio.",
               "unidad": "m²",
-              "precio": 5.68,
+              "precio": 6.15,
               "horas": 0.43,
               "producto_cliente": false
             }
@@ -4683,7 +4683,7 @@
               "codigo": "CT-16-05-020",
               "titulo": "Acabado decorativo texturado.",
               "unidad": "m²",
-              "precio": 8.18,
+              "precio": 8.35,
               "horas": 0.78,
               "producto_cliente": false
             },
@@ -4691,7 +4691,7 @@
               "codigo": "CT-16-05-030",
               "titulo": "Barniz protector sobre madera interior.",
               "unidad": "m²",
-              "precio": 7.53,
+              "precio": 7.23,
               "horas": 0.48,
               "producto_cliente": false
             },
@@ -4721,7 +4721,7 @@
               "codigo": "CT-17-01-010",
               "titulo": "Mueble bajo de cocina a medida.",
               "unidad": "m",
-              "precio": 124.88,
+              "precio": 134.33,
               "horas": 3.15,
               "producto_cliente": false
             },
@@ -4729,7 +4729,7 @@
               "codigo": "CT-17-01-020",
               "titulo": "Mueble alto de cocina a medida.",
               "unidad": "m",
-              "precio": 122.4,
+              "precio": 124.37,
               "horas": 2.85,
               "producto_cliente": false
             },
@@ -4737,7 +4737,7 @@
               "codigo": "CT-17-01-030",
               "titulo": "Isla o península de cocina.",
               "unidad": "m",
-              "precio": 169.75,
+              "precio": 176.06,
               "horas": 3.9,
               "producto_cliente": false
             },
@@ -4745,7 +4745,7 @@
               "codigo": "CT-17-01-040",
               "titulo": "Instalación de campana extractora de cocina.",
               "unidad": "ud",
-              "precio": 54.73,
+              "precio": 53.08,
               "horas": 1.8,
               "producto_cliente": true
             },
@@ -4761,7 +4761,7 @@
               "codigo": "CT-17-01-060",
               "titulo": "Alacena o despensa de cocina a medida.",
               "unidad": "m",
-              "precio": 178.66,
+              "precio": 187.33,
               "horas": 3.6,
               "producto_cliente": false
             }
@@ -4776,7 +4776,7 @@
               "codigo": "CT-17-02-010",
               "titulo": "Mesón de granito, cuarzo o piedra natural.",
               "unidad": "m",
-              "precio": 22.59,
+              "precio": 22.14,
               "horas": 1.8,
               "producto_cliente": true
             },
@@ -4784,7 +4784,7 @@
               "codigo": "CT-17-02-020",
               "titulo": "Mesón de concreto revestido.",
               "unidad": "m",
-              "precio": 76.04,
+              "precio": 74.14,
               "horas": 4.2,
               "producto_cliente": false
             },
@@ -4792,7 +4792,7 @@
               "codigo": "CT-17-02-030",
               "titulo": "Salpicadero de mesón.",
               "unidad": "m",
-              "precio": 6.06,
+              "precio": 5.88,
               "horas": 0.63,
               "producto_cliente": true
             },
@@ -4800,7 +4800,7 @@
               "codigo": "CT-17-02-040",
               "titulo": "Tope o encimera de área de lavado.",
               "unidad": "m",
-              "precio": 20.7,
+              "precio": 20.32,
               "horas": 1.5,
               "producto_cliente": true
             }
@@ -4815,7 +4815,7 @@
               "codigo": "CT-17-03-010",
               "titulo": "Mueble de baño con lavamanos.",
               "unidad": "ud",
-              "precio": 32.77,
+              "precio": 26.47,
               "horas": 1.95,
               "producto_cliente": true
             },
@@ -4831,7 +4831,7 @@
               "codigo": "CT-17-03-030",
               "titulo": "Encimera de baño sobre mueble o estructura.",
               "unidad": "m",
-              "precio": 13.69,
+              "precio": 13.34,
               "horas": 1.4,
               "producto_cliente": true
             }
@@ -4846,7 +4846,7 @@
               "codigo": "CT-17-04-010",
               "titulo": "Instalación de barra de apoyo para accesibilidad.",
               "unidad": "ud",
-              "precio": 67.0,
+              "precio": 62.27,
               "horas": 0.98,
               "producto_cliente": false
             },
@@ -4869,7 +4869,7 @@
               "codigo": "CT-17-05-010",
               "titulo": "Repisa o estantería fija.",
               "unidad": "m",
-              "precio": 27.48,
+              "precio": 29.13,
               "horas": 0.6,
               "producto_cliente": false
             },
@@ -4877,7 +4877,7 @@
               "codigo": "CT-17-05-020",
               "titulo": "Mueble fijo a medida.",
               "unidad": "m²",
-              "precio": 120.08,
+              "precio": 129.94,
               "horas": 2.7,
               "producto_cliente": false
             }
@@ -4899,7 +4899,7 @@
               "codigo": "CT-18-01-010",
               "titulo": "Piso de concreto exterior con acabado escobillado.",
               "unidad": "m²",
-              "precio": 28.26,
+              "precio": 27.82,
               "horas": 0.8,
               "producto_cliente": false
             },
@@ -4923,7 +4923,7 @@
               "codigo": "CT-18-01-040",
               "titulo": "Rampa de acceso vehicular de concreto.",
               "unidad": "m²",
-              "precio": 38.14,
+              "precio": 37.57,
               "horas": 1.3,
               "producto_cliente": false
             },
@@ -4931,7 +4931,7 @@
               "codigo": "CT-18-01-050",
               "titulo": "Escalera exterior de concreto.",
               "unidad": "m²",
-              "precio": 90.3,
+              "precio": 86.48,
               "horas": 5.22,
               "producto_cliente": false
             }
@@ -4946,7 +4946,7 @@
               "codigo": "CT-18-02-010",
               "titulo": "Brocal o bordillo de concreto.",
               "unidad": "m",
-              "precio": 16.74,
+              "precio": 15.55,
               "horas": 0.8,
               "producto_cliente": false
             },
@@ -4954,7 +4954,7 @@
               "codigo": "CT-18-02-020",
               "titulo": "Acera de concreto.",
               "unidad": "m²",
-              "precio": 26.6,
+              "precio": 26.38,
               "horas": 0.76,
               "producto_cliente": false
             },
@@ -4962,7 +4962,7 @@
               "codigo": "CT-18-02-030",
               "titulo": "Canal de drenaje lineal con rejilla.",
               "unidad": "m",
-              "precio": 45.05,
+              "precio": 44.01,
               "horas": 1.0,
               "producto_cliente": false
             },
@@ -4970,7 +4970,7 @@
               "codigo": "CT-18-02-040",
               "titulo": "Tanquilla o registro de drenaje.",
               "unidad": "ud",
-              "precio": 113.89,
+              "precio": 99.27,
               "horas": 6.8,
               "producto_cliente": true
             }
@@ -4985,7 +4985,7 @@
               "codigo": "CT-18-03-010",
               "titulo": "Cerca perimetral de bloque.",
               "unidad": "m²",
-              "precio": 54.99,
+              "precio": 47.05,
               "horas": 3.05,
               "producto_cliente": false
             },
@@ -4993,7 +4993,7 @@
               "codigo": "CT-18-03-020",
               "titulo": "Cerca de malla ciclónica.",
               "unidad": "m",
-              "precio": 34.1,
+              "precio": 33.83,
               "horas": 0.98,
               "producto_cliente": false
             },
@@ -5001,7 +5001,7 @@
               "codigo": "CT-18-03-030",
               "titulo": "Portón de acceso vehicular.",
               "unidad": "m²",
-              "precio": 121.24,
+              "precio": 116.73,
               "horas": 2.7,
               "producto_cliente": false
             }
@@ -5032,7 +5032,7 @@
               "codigo": "CT-18-04-030",
               "titulo": "Red de riego por goteo o aspersión.",
               "unidad": "m",
-              "precio": 8.83,
+              "precio": 8.78,
               "horas": 0.38,
               "producto_cliente": false
             }
@@ -5047,7 +5047,7 @@
               "codigo": "CT-18-05-010",
               "titulo": "Punto de iluminación exterior de jardín.",
               "unidad": "ud",
-              "precio": 48.45,
+              "precio": 38.36,
               "horas": 1.9,
               "producto_cliente": true
             },
@@ -5055,7 +5055,7 @@
               "codigo": "CT-18-05-020",
               "titulo": "Punto de agua exterior con llave de jardín.",
               "unidad": "ud",
-              "precio": 35.78,
+              "precio": 35.06,
               "horas": 1.6,
               "producto_cliente": false
             }
@@ -5070,7 +5070,7 @@
               "codigo": "CT-18-06-010",
               "titulo": "Pérgola de madera para exterior.",
               "unidad": "m²",
-              "precio": 94.47,
+              "precio": 91.77,
               "horas": 2.3,
               "producto_cliente": false
             },
@@ -5078,7 +5078,7 @@
               "codigo": "CT-18-06-020",
               "titulo": "Jardinera de obra en exterior.",
               "unidad": "m",
-              "precio": 63.92,
+              "precio": 56.52,
               "horas": 3.2,
               "producto_cliente": false
             }
@@ -5200,7 +5200,7 @@
               "codigo": "CT-20-01-020",
               "titulo": "Red de seguridad en huecos y perímetros.",
               "unidad": "m²",
-              "precio": 9.15,
+              "precio": 8.2,
               "horas": 0.32,
               "producto_cliente": false
             },
@@ -5208,7 +5208,7 @@
               "codigo": "CT-20-01-030",
               "titulo": "Línea de vida para trabajos en altura.",
               "unidad": "m",
-              "precio": 23.78,
+              "precio": 20.63,
               "horas": 0.5,
               "producto_cliente": false
             }
