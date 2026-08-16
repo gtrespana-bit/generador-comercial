@@ -337,11 +337,14 @@ Las herramientas existentes se conservan como fuente de migración, pero dejaron
 - [x] **E1-052 — Crear un presupuesto de muestra comercial sin datos personales reales.**
   Evidencia (15/08/2026): `app/services/presupuesto_muestra.py` construye el presupuesto y `tools/generar_presupuesto_muestra.py` escribe `app/static/pdf/presupuesto-ejemplo.pdf`, enlazado desde la landing («Ver un presupuesto de ejemplo (PDF)»). Todo ficticio: empresa «Construcciones El Samán, C.A.» con RIF marcador `J-00000000-0` y contacto en el dominio reservado `ejemplo.com`, cliente genérico «Familia Rodríguez» sin documento real, e importes/mediciones verosímiles inventados; el propio PDF declara en «Información adicional» que todos los datos son ficticios. Cubierto por `tests/test_presupuesto_muestra.py`.
 
-- [ ] **E1-053 — Crear preguntas frecuentes.**
+- [x] **E1-053 — Crear preguntas frecuentes.**
+  Evidencia (16/08/2026): `/legal/preguntas` (`app/templates/legal/preguntas.html`), 17 preguntas en 5 bloques (producto; datos, importación y control; facturación y alcance fiscal; precio y contratación; soporte). Enlazada desde el pie de la landing y de todas las páginas legales. Declara el acceso anticipado, repite que los documentos **no son facturas fiscales** y cierra advirtiendo que en caso de discrepancia prevalecen términos, privacidad y soporte. Cubierta por 6 pruebas en `tests/test_paginas_publicas.py`, incluida una que falla si la FAQ llegara a prometer facturación fiscal.
 
-- [ ] **E1-054 — Definir qué incluye y qué no incluye el soporte.**
+- [x] **E1-054 — Definir qué incluye y qué no incluye el soporte.**
+  Evidencia: `/legal/soporte` §2 y §3 delimitan lo incluido (configuración, dudas de uso, errores del producto, recuperación de acceso) y lo excluido (asesoramiento fiscal/legal, carga manual del catálogo completo, desarrollos a medida, hardware/SO/red), más horario y tiempos orientativos declarados como compromisos de esfuerzo, no garantías con penalización. Protegido por `test_condiciones_de_soporte_delimitan_incluido_y_excluido`.
 
-- [ ] **E1-055 — Crear procedimiento para reportar errores con evidencia.**
+- [x] **E1-055 — Crear procedimiento para reportar errores con evidencia.**
+  Evidencia: `/legal/soporte` §5 pide los cinco datos que hacen reproducible un fallo (qué esperabas, qué ocurrió con el mensaje exacto, pasos, captura o PDF **sin datos personales de clientes**, y fecha/hora + entorno). Protegido por `test_procedimiento_de_reporte_pide_evidencia_sin_datos_de_clientes`.
 
 - [~] **E1-056 — Preparar una landing page sencilla.**
   Publicada en `/conocer` (15/08/2026): problema, resultado, público objetivo, precios promocionales del piloto (89 US$/año con habitual 109; 9,99 US$/mes primer año con habitual 12,99), nota de honestidad (acceso anticipado, documentos no fiscales), llamada a solicitar demostración por email y enlace al PDF de ejemplo (E1-052, añadido el 15/08/2026). Pendiente para cerrar: el vídeo de demostración (E1-051), que se enlazará cuando exista.
@@ -354,8 +357,20 @@ Las herramientas existentes se conservan como fuente de migración, pero dejaron
 - [-] **E1-058 — Definir hipótesis de licencia de escritorio.**
   Descartada como prioridad por la dirección browser-first; el precio se validará sobre acceso web.
 
-- [ ] **E1-059 — Definir métodos de cobro legales y operables.**  
+- [~] **E1-059 — Definir métodos de cobro legales y operables.**  
   Considerar cobro trimestral/anual para reducir fricción administrativa.
+  **Investigación cerrada (16/08/2026), decisión pendiente del titular.** Stripe
+  **no opera en Venezuela**, y Wise/Payoneer imponen restricciones fuertes a
+  residentes venezolanos; las pasarelas *merchant of record* (Paddle, Lemon
+  Squeezy) exigen una entidad legal en país soportado. **El titular es de
+  nacionalidad española y reside también en España**, lo que abre la vía
+  limpia: darse de alta como **autónomo en España** (modelo 036 + RETA) permite
+  usar Stripe con normalidad, emitir factura española y cobrar con tarjeta desde
+  cualquier país. Contrapartida: cuota de autónomo, IVA/IRPF trimestrales y, si
+  se vende a consumidores de la UE por encima de 10.000 €/año, ventanilla única
+  OSS. Alternativa sin altas: **cobro manual** (transferencia/Zelle/Binance)
+  con activación a mano, suficiente para un piloto de pocos clientes. Análisis
+  completo en `docs/COBRO_Y_LICENCIAS.md`.
 
 - [ ] **E1-060 — Preparar recibo, contrato y registro interno de licencias.**
 

@@ -83,3 +83,81 @@ def test_identidad_legal_configurable_por_entorno(monkeypatch):
     import app.branding as branding
     assert branding.LEGAL_ENTITY in r.text
     assert branding.SUPPORT_EMAIL in r.text
+
+
+# ---------------------------------------------------------------------------
+# Preguntas frecuentes (E1-053) y alcance del soporte (E1-054, E1-055)
+# ---------------------------------------------------------------------------
+
+
+def test_preguntas_frecuentes_responde_y_cubre_los_temas_decisivos():
+    """La FAQ existe para resolver dudas ANTES de contratar."""
+    r = _get("/legal/preguntas")
+    assert r.status_code == 200
+    for tema in (
+        "presupuesto",      # qué es el producto
+        "excel",            # importación del catálogo
+        "exportar",         # poder marcharse con los datos
+        "permanencia",      # compromiso de contratación
+        "soporte",          # canal de ayuda
+    ):
+        assert tema in r.text.lower(), tema
+
+
+def test_preguntas_frecuentes_no_promete_facturacion_fiscal():
+    """El punto más delicado: no puede contradecir a los términos.
+
+    Prometer facturación fiscal en la FAQ sería exactamente la promesa que el
+    resto del paquete legal se cuida de no hacer.
+    """
+    r = _get("/legal/preguntas")
+    texto = r.text.lower()
+    assert "no" in texto and "factura" in texto
+    # Debe declarar el alcance no fiscal de forma explícita.
+    assert "documentos comerciales" in texto
+    assert "no sustituyen" in texto or "no sustituye" in texto
+
+
+def test_preguntas_frecuentes_declara_el_acceso_anticipado():
+    """Honestidad comercial: el estado real del producto se dice por delante."""
+    r = _get("/legal/preguntas")
+    assert "acceso anticipado" in r.text.lower()
+
+
+def test_preguntas_frecuentes_remite_a_los_documentos_vinculantes():
+    """Una FAQ no es un contrato; debe decir cuál manda si hay discrepancia."""
+    r = _get("/legal/preguntas")
+    for enlace in ("/legal/terminos", "/legal/privacidad", "/legal/soporte"):
+        assert enlace in r.text, enlace
+    assert "prevalecen" in r.text.lower()
+
+
+def test_la_faq_esta_enlazada_desde_la_landing_y_el_pie_legal():
+    """Una FAQ que no se encuentra no resuelve ninguna duda."""
+    assert "/legal/preguntas" in _get("/conocer").text
+    assert "/legal/preguntas" in _get("/legal/terminos").text
+
+
+def test_condiciones_de_soporte_delimitan_incluido_y_excluido():
+    """E1-054: el alcance del soporte debe estar acotado por escrito.
+
+    Sin la lista de exclusiones, cualquier expectativa es discutible: es la
+    parte que evita malentendidos cuando alguien pide asesoría fiscal o que le
+    carguemos el catálogo entero.
+    """
+    r = _get("/legal/soporte")
+    texto = r.text.lower()
+    assert "qué incluye" in texto and "qué no incluye" in texto
+    for excluido in ("fiscal", "a medida", "hardware"):
+        assert excluido in texto, excluido
+    for incluido in ("configurar", "errores"):
+        assert incluido in texto, incluido
+
+
+def test_procedimiento_de_reporte_pide_evidencia_sin_datos_de_clientes():
+    """E1-055: reportar con evidencia, pero sin exponer datos de terceros."""
+    r = _get("/legal/soporte")
+    texto = r.text.lower()
+    assert "reportar un error" in texto
+    assert "reproducirlo" in texto
+    assert "sin datos personales" in texto

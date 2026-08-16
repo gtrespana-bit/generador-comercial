@@ -58,8 +58,39 @@ no desde el token:
 Cubierto por `tests/test_invitacion_sin_cuenta.py` (5 pruebas HTTP) y 6 pruebas
 nuevas en `tests/test_invitations.py`. Suite: **335 passed, 5 skipped**.
 
-**Siguiente bloque de código: E1-059/E1-060** (método de cobro + recibo/contrato
-firmable y registro interno de licencias).
+### Contenido comercial cerrado (16/08/2026)
+
+- **E1-053 `[x]`** — `/legal/preguntas`: 17 preguntas en 5 bloques, enlazada
+  desde la landing y el pie legal. Declara el acceso anticipado y repite que los
+  documentos **no son facturas fiscales**; una prueba falla si algún día la FAQ
+  llegara a prometer lo contrario.
+- **E1-054 `[x]`** y **E1-055 `[x]`** — ya estaban cubiertos por
+  `/legal/soporte` §2–§3 (incluido/excluido) y §5 (reporte con evidencia sin
+  datos de clientes); ahora quedan protegidos por pruebas.
+
+Suite: **342 passed, 5 skipped**.
+
+### E1-059 — investigado, decisión del titular
+
+Stripe **no opera en Venezuela**; Wise/Payoneer restringen a residentes
+venezolanos y los *merchant of record* (Paddle, Lemon Squeezy) exigen entidad en
+país soportado. **El titular es español y reside también en España**, así que la
+vía limpia es **autónomo en España + Stripe** (036 + RETA), con cuota, IVA/IRPF
+trimestrales y OSS solo si se superan 10.000 €/año a particulares de la UE.
+Para el piloto inmediato basta el **cobro manual**. Análisis en
+`docs/COBRO_Y_LICENCIAS.md`.
+
+### E1-060 — diseñado, pendiente de construir
+
+Decisión del titular: el registro de licencias va **dentro de la aplicación**.
+Ojo, no es trivial: hoy **no existe** rol de superadministrador y todas las
+tablas de negocio son *tenant* bajo RLS. Una licencia no pertenece a ninguna
+organización, así que exige tabla **no-tenant** con RLS propia, rol de operador
+por variable de entorno, panel `/admin/licencias`, recibo PDF y auditoría. Es
+una excepción deliberada al aislamiento: debe abordarse como su propio bloque.
+
+**Siguiente bloque de código: E1-060** (panel de licencias + recibo), en cuanto
+el titular confirme; E1-059 se cierra con su decisión de cobro.
 
 ---
 

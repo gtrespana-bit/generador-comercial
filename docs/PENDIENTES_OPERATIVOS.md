@@ -118,7 +118,7 @@ Pasos (ejemplo con Forward Email):
    | --- | --- | --- | --- |
    | MX | `@` | 10 | `mx1.forwardemail.net` |
    | MX | `@` | 10 | `mx2.forwardemail.net` |
-   | TXT | `@` | — | `forward-email=soporte:TU-CORREO-REAL@gmail.com` |
+   | TXT | `@` | — | `forward-email=soporte:tu-correo-real@example.com` |
 
 3. Verifica en el panel del servicio y **envía una prueba** a
    `soporte@cotizat.online` desde otra cuenta.

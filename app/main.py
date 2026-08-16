@@ -1918,6 +1918,7 @@ _PAGINAS_LEGALES = {
     "privacidad": "legal/privacidad.html",
     "soporte": "legal/soporte.html",
     "licencias": "legal/licencias.html",
+    "preguntas": "legal/preguntas.html",
 }
 
 
