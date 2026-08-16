@@ -80,9 +80,10 @@ despliegue, `/readyz` debe volver a 200.
 
 ## 🚀 0quater. Cierre de bloque con PR del titular (16/08/2026)
 
-El titular creó el **PR #___ ** desde `arena/01a00b99-generador-comercial`
-hacia `main` con todo el trabajo de la sesión. **Completar aquí el número y el
-estado** (abierto / fusionado) al verificarlo con:
+El titular creó el **PR #27** (siguiente número tras el #26, cerrado) desde
+`arena/01a00b99-generador-comercial` hacia `main` con todo el trabajo de la
+sesión. **Al volver, confirmar aquí el número y el estado** (abierto /
+fusionado) con:
 
 ```bash
 gh pr list --head arena/01a00b99-generador-comercial --state all
@@ -100,6 +101,7 @@ Commits que contiene el PR (en orden):
 5. `2bf6d19` — documentación de las migraciones aplicadas en Supabase.
 6. `d3eb2a7` — Etapa 4 (primer bloque): autorización centralizada
    (`app/permisos.py`) y logs estructurados (`app/logs.py`).
+7. `2de721a` — documentación del traspaso de sesión (este §0quater y §7).
 
 Estado verificado de la rama en el momento del PR:
 
@@ -111,19 +113,40 @@ Estado verificado de la rama en el momento del PR:
   esperado).
 - Sin secretos en el repositorio (la auditoría `tools/auditar_datos_sensibles.py`
   sigue activa en CI).
+- **CI:** al crear el PR, el workflow `CI` se ejecuta automáticamente sobre
+  él (el disparador `pull_request` hacia `main`; la copia del workflow vive en
+  `docs/ci/ci.yml`). Fusionar solo cuando termine en verde.
 
-**Para la sesión nueva** (ver también §6, nota de entorno):
+### Qué hacer justo después del PR (árbol de decisión para la sesión nueva)
 
-1. Si el HEAD local aparece retrocedido: `git fetch origin
-   arena/01a00b99-generador-comercial && git reset --mixed FETCH_HEAD`.
-2. Recrear el entorno: `python -m venv .venv && .venv/bin/pip install -r
-   requirements.lock`.
-3. Registrar arriba el número y estado del PR; si se fusionó, `main` ya
-   contiene este trabajo y el bloque puede continuar en la rama de la sesión
-   sobre la misma base.
-4. Continuar por el **siguiente trabajo planificado** (§5, punto 10):
-   **E4-001 — dividir `app/main.py` en routers por dominio**, la tarea
-   estructural pendiente más grande de la Etapa 4.
+**A. Si el PR sigue abierto (o falló CI):**
+
+1. Mirar los checks en GitHub: `gh pr view 27 --json statusCheckRollup`.
+2. Si algo falla, corregirlo en esta misma rama (la sesión continúa en
+   `arena/01a00b99-generador-comercial`) y empujar; el check se re-ejecuta.
+3. No empezar E4-001 con el PR roto: primera prioridad, PR en verde.
+
+**B. Si el PR fue fusionado (escenario normal):**
+
+1. `main` ya contiene todo el trabajo (los 7 commits). Si el HEAD local de la
+   sesión nueva aparece retrocedido: `git fetch origin
+   arena/01a00b99-generador-comercial && git reset --mixed FETCH_HEAD`
+   (o partir de `main` directamente, según cómo abra la sesión nueva).
+2. **Desplegar** el código de `main`/rama (Vercel, Production): con las
+   migraciones ya aplicadas (§0ter), `/readyz` debe volver a **200**. Si
+   respondiera 503, revisar `checks` de `/readyz` antes de nada.
+3. **Ensayar en staging el flujo real** con una organización de prueba:
+   respaldo → restauración → exportación → `/admin/operacion` (no ejecutar la
+   baja sobre datos reales; usar solo la organización de prueba).
+4. **Continuar el desarrollo** por la tarea planificada: **E4-001 — dividir
+   `app/main.py` en routers por dominio** (detalle en §5, punto 10).
+
+### Recordatorio de entorno para la sesión nueva
+
+- Recrear el entorno: `python -m venv .venv && .venv/bin/pip install -r
+  requirements.lock` (el `.venv` no persiste entre sesiones).
+- Los secretos (Supabase, Resend, Upstash) nunca se piden ni se tocan desde
+  el código; todo lo que depende de ellos es del titular (§6, reglas).
 
 ---
 
@@ -390,14 +413,17 @@ no me pidas secretos.
 **Dónde quedó todo (16/08/2026, cierre de bloque con PR del titular).**
 
 - La rama `arena/01a00b99-generador-comercial` termina el bloque en el commit
-  `d3eb2a7` y el titular creó el **PR #___ ** con todo ese trabajo (anota el
-  número con `gh pr list --head arena/01a00b99-generador-comercial --state all`;
-  si ya está fusionado, `main` contiene este código).
+  `2de721a` y el titular creó el **PR #27** con todo ese trabajo (confirmar
+  con `gh pr list --head arena/01a00b99-generador-comercial --state all`; si
+  ya está fusionado, `main` contiene este código). El árbol de decisión «justo
+  después del PR» está en `docs/PUNTO_DE_CONTINUACION.md` §0quater: si el PR
+  sigue abierto, primera prioridad es dejarlo en verde; si está fusionado,
+  desplegar, verificar `/readyz` en 200 y ensayar el flujo real en staging.
 - Commits del bloque: `9fd5afa` (recuperación E3-016 a E3-019), `bd684e1`
   (E3-020/21 respaldo y restauración), `a0d2711` (E3-022/23 exportación y
   baja), `7ddb7de` (E3-024 monitorización), `2bf6d19` (migraciones aplicadas
-  documentadas) y `d3eb2a7` (Etapa 4: autorización centralizada + logs
-  estructurados).
+  documentadas), `d3eb2a7` (Etapa 4: autorización centralizada + logs
+  estructurados) y `2de721a` (traspaso de sesión para el PR).
 - Migraciones `c2f6e8a1d934` y `a3d7e9c1b5f2` **aplicadas y verificadas en
   Supabase** (§0ter). Hasta desplegar el código de la rama, el `/readyz` del
   entorno migrado responde 503 (esperado); tras el despliegue vuelve a 200.
