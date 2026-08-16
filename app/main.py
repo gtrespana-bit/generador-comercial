@@ -49,6 +49,7 @@ from .database import (
     get_authenticated_db,
     get_db,
     get_operator_db,
+    get_public_proposal_db,
     init_db,
     restaurar_base,
 )
@@ -105,6 +106,7 @@ from .models import (
     BorradorPresupuesto,
     DescomposicionPartida,
     DescomposicionFila,
+    EnlacePropuesta,
     PresupuestoItemProducto,
     Producto,
     asegurar_config,
@@ -135,6 +137,16 @@ from .services.licencias import (
     totales,
 )
 from .services.recibo_licencia import generar_recibo_licencia_pdf, numero_recibo
+from .services.propuestas import (
+    DURACIONES_ENLACE,
+    GestionEnlacePropuestaError,
+    crear_enlace_propuesta,
+    destinatarios_respuesta_propuesta,
+    marcar_notificacion_respuesta,
+    registrar_respuesta_propuesta,
+    resolver_enlace_propuesta,
+    revocar_enlace_propuesta,
+)
 from .services.invitations import (
     GestionEquipoError,
     aceptar_invitacion,
@@ -148,7 +160,11 @@ from .services.invitations import (
 from .services.email import (
     EmailNotConfigured,
     EmailSendError,
+    EmailValidationError,
+    email_destino_valido,
     enviar_invitacion_por_email,
+    enviar_presupuesto_por_email,
+    enviar_respuesta_propuesta_por_email,
 )
 from .services.importer import (
     ErrorImportacion,
@@ -4029,6 +4045,609 @@ def registrar_pago(proyecto_id: int, importe: float = Form(0), fecha: str = Form
     except ValueError: fecha_pago=date.today()
     db.add(Pago(proyecto_id=p.id, presupuesto_id=p.presupuesto_id, fecha=fecha_pago, importe=importe, moneda=p.presupuesto.moneda, metodo=metodo, referencia=referencia.strip(), estado=estado if estado in ("pendiente","confirmado","anulado") else "confirmado", notas=notas.strip()))
     db.commit(); return _redirect(f"/proyectos/{p.id}", msg="Pago registrado.")
+
+
+def _datos_envio_presupuesto(presupuesto: Presupuesto, cfg: Configuracion) -> dict[str, str]:
+    """Valores iniciales del formulario de entrega por correo."""
+    cliente_nombre = (presupuesto.cliente.nombre or "").strip()
+    empresa_nombre = (cfg.empresa_nombre or "").strip() or PRODUCT_NAME
+    titulo = (presupuesto.titulo or "").strip()
+    asunto = f"Presupuesto {presupuesto.numero}"
+    if titulo:
+        asunto += f" · {titulo}"
+    saludo = f"Hola {cliente_nombre}," if cliente_nombre else "Hola,"
+    mensaje = (
+        f"{saludo}\n\n"
+        f"Te enviamos adjunto el presupuesto {presupuesto.numero}"
+        f"{f' para {titulo}' if titulo else ''}.\n\n"
+        "Quedamos atentos a cualquier duda o comentario.\n\n"
+        f"Saludos,\n{empresa_nombre}"
+    )
+    return {
+        "destinatario": (presupuesto.cliente.email or "").strip().lower(),
+        "asunto": asunto[:200],
+        "mensaje": mensaje[:5000],
+    }
+
+
+def _estado_despues_de_enviar(estado: str) -> str:
+    if estado in {"borrador", "en_revision"}:
+        return "enviado"
+    if estado in {"enviado", "cambios_solicitados", "reenviado", "vencido"}:
+        return "reenviado"
+    return estado
+
+
+def _pagina_envio_presupuesto(
+    request: Request,
+    presupuesto: Presupuesto,
+    cfg: Configuracion,
+    datos: dict[str, str] | None = None,
+    error: str = "",
+    status_code: int = 200,
+):
+    return TEMPLATES.TemplateResponse(
+        request,
+        "budgets/send_email.html",
+        {
+            "p": presupuesto,
+            "cfg": cfg,
+            "datos": datos or _datos_envio_presupuesto(presupuesto, cfg),
+            "error_envio": error,
+        },
+        status_code=status_code,
+    )
+
+
+@app.get("/presupuestos/{presupuesto_id}/enviar-email", response_class=HTMLResponse)
+def formulario_envio_presupuesto(
+    presupuesto_id: int,
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    presupuesto = db.get(Presupuesto, presupuesto_id)
+    if presupuesto is None:
+        return _redirect("/presupuestos", error="Presupuesto no encontrado.")
+    return _pagina_envio_presupuesto(request, presupuesto, _config(db))
+
+
+@app.post("/presupuestos/{presupuesto_id}/enviar-email", response_class=HTMLResponse)
+def enviar_presupuesto_email_web(
+    presupuesto_id: int,
+    request: Request,
+    destinatario: str = Form(""),
+    asunto: str = Form(""),
+    mensaje: str = Form(""),
+    db: Session = Depends(get_db),
+):
+    """Genera, congela y entrega el PDF; un fallo no cambia el presupuesto."""
+    presupuesto = db.get(Presupuesto, presupuesto_id)
+    if presupuesto is None:
+        return _redirect("/presupuestos", error="Presupuesto no encontrado.")
+    cfg = _config(db)
+    datos = {
+        "destinatario": str(destinatario or "").strip().lower(),
+        "asunto": str(asunto or "").strip(),
+        "mensaje": str(mensaje or "").strip(),
+    }
+    if db.info.get("rol_membresia") == "lectura":
+        return _pagina_envio_presupuesto(
+            request, presupuesto, cfg, datos,
+            "Tu rol es de solo lectura y no permite enviar documentos.", 403,
+        )
+    if presupuesto.estado in {"cancelado", "archivado"}:
+        return _pagina_envio_presupuesto(
+            request, presupuesto, cfg, datos,
+            "Un presupuesto cancelado o archivado no se puede enviar.", 400,
+        )
+    if not email_destino_valido(datos["destinatario"]):
+        return _pagina_envio_presupuesto(
+            request, presupuesto, cfg, datos,
+            "Escribe un email de destino válido.", 400,
+        )
+    if not datos["asunto"] or len(datos["asunto"]) > 200 or "\n" in datos["asunto"] or "\r" in datos["asunto"]:
+        return _pagina_envio_presupuesto(
+            request, presupuesto, cfg, datos,
+            "El asunto es obligatorio y admite hasta 200 caracteres.", 400,
+        )
+    if not datos["mensaje"] or len(datos["mensaje"]) > 5000:
+        return _pagina_envio_presupuesto(
+            request, presupuesto, cfg, datos,
+            "El mensaje es obligatorio y admite hasta 5.000 caracteres.", 400,
+        )
+
+    estado_anterior = presupuesto.estado
+    presupuesto.estado = _estado_despues_de_enviar(estado_anterior)
+    resultado = _generar_pdf_seguro(
+        lambda: pdf_service.generar_pdf(presupuesto, cfg),
+        f"el PDF para enviar del presupuesto {presupuesto.numero}",
+    )
+    if isinstance(resultado, Response):
+        db.rollback()
+        return _pagina_envio_presupuesto(
+            request, presupuesto, cfg, datos,
+            "No se pudo generar el PDF. Revisa el presupuesto e inténtalo de nuevo.", 500,
+        )
+    pdf_bytes = resultado.getvalue()
+    nombre_pdf = f"presupuesto_{presupuesto.numero}.pdf"
+    try:
+        proveedor_id = enviar_presupuesto_por_email(
+            email=datos["destinatario"],
+            asunto=datos["asunto"],
+            mensaje=datos["mensaje"],
+            empresa_nombre=cfg.empresa_nombre,
+            cliente_nombre=presupuesto.cliente.nombre,
+            presupuesto_numero=presupuesto.numero,
+            presupuesto_titulo=presupuesto.titulo,
+            total_texto=fmt_monto(presupuesto.total, presupuesto.moneda),
+            pdf=pdf_bytes,
+            nombre_pdf=nombre_pdf,
+            responder_a=cfg.empresa_email,
+        )
+    except (EmailNotConfigured, EmailValidationError, EmailSendError) as exc:
+        db.rollback()
+        return _pagina_envio_presupuesto(
+            request, presupuesto, cfg, datos, str(exc), 502,
+        )
+
+    version = crear_version(
+        db,
+        presupuesto,
+        f"Presupuesto enviado por email a {datos['destinatario']}",
+    )
+    db.flush()
+    try:
+        version.pdf_snapshot = save_object(
+            db,
+            pdf_bytes,
+            "presupuestos",
+            nombre_pdf,
+            "application/pdf",
+            prefix=f"presupuesto-{presupuesto.id}-v{version.numero_version}",
+            metadata={
+                "presupuesto_id": presupuesto.id,
+                "version_id": version.id,
+                "numero_version": version.numero_version,
+                "destinatario": datos["destinatario"],
+                "resend_id": proveedor_id,
+            },
+        ).reference
+    except StorageError as exc:
+        # El correo ya salió: no se le dice al usuario que reintente y termine
+        # enviando un duplicado. La versión JSON y la constancia se conservan.
+        log.error(
+            "Presupuesto %s enviado, pero no se guardó el PDF congelado: %s",
+            presupuesto.numero,
+            exc,
+        )
+    db.add(NotaSeguimiento(
+        presupuesto_id=presupuesto.id,
+        texto=(
+            f"Presupuesto enviado por email a {datos['destinatario']} · "
+            f"V{version.numero_version} · proveedor {proveedor_id}."
+        ),
+    ))
+    db.commit()
+    return _redirect(
+        f"/presupuestos/{presupuesto_id}#versiones",
+        msg=(
+            f"Presupuesto enviado a {datos['destinatario']} y congelado como "
+            f"versión {version.numero_version}."
+        ),
+    )
+
+
+def _url_publica_propuesta(request: Request, token: str) -> str:
+    ruta = f"/propuestas/{token}"
+    if DATABASE_IS_SQLITE:
+        return str(request.base_url).rstrip("/") + ruta
+    return public_app_url(ruta)
+
+
+def _url_interna_presupuesto(request: Request, presupuesto_id: int) -> str:
+    ruta = f"/presupuestos/{presupuesto_id}#versiones"
+    if DATABASE_IS_SQLITE:
+        return str(request.base_url).rstrip("/") + ruta
+    return public_app_url(ruta)
+
+
+def _notificar_respuesta_propuesta(
+    request: Request,
+    db: Session,
+    enlace: EnlacePropuesta,
+) -> tuple[list[str], str]:
+    """Envía a propietarios/administradores; la respuesta ya está confirmada."""
+    try:
+        destinatarios = destinatarios_respuesta_propuesta(db, enlace=enlace)
+    except GestionEnlacePropuestaError as exc:
+        destinatarios = []
+        error = str(exc)
+    else:
+        error = "" if destinatarios else "La organización no tiene destinatarios administrativos activos."
+
+    ya_enviados = {
+        email.strip().lower()
+        for email in str(enlace.notificacion_destinatarios or "").split(",")
+        if email.strip()
+    }
+    enviados = sorted(ya_enviados)
+    fallos = []
+    if not error:
+        for destinatario in destinatarios:
+            if destinatario in ya_enviados:
+                continue
+            try:
+                enviar_respuesta_propuesta_por_email(
+                    email=destinatario,
+                    decision=enlace.respuesta,
+                    empresa_nombre=enlace.empresa_nombre,
+                    cliente_nombre=enlace.cliente_nombre,
+                    presupuesto_numero=enlace.presupuesto_numero,
+                    presupuesto_titulo=enlace.presupuesto_titulo,
+                    version_numero=enlace.presupuesto_version_numero,
+                    respondido_por_nombre=enlace.respondido_por_nombre,
+                    respondido_por_email=enlace.respondido_por_email,
+                    comentario=enlace.respuesta_comentario,
+                    enlace_interno=_url_interna_presupuesto(
+                        request, enlace.presupuesto_id
+                    ),
+                )
+                enviados.append(destinatario)
+            except (EmailNotConfigured, EmailValidationError, EmailSendError) as exc:
+                fallos.append(f"{destinatario}: {exc}")
+        if fallos:
+            error = "; ".join(fallos)[:1000]
+    try:
+        marcar_notificacion_respuesta(
+            db,
+            enlace=enlace,
+            destinatarios=enviados,
+            error=error,
+        )
+        db.commit()
+    except GestionEnlacePropuestaError:
+        db.rollback()
+        log.error(
+            "Respuesta de propuesta %s registrada, pero no se pudo guardar "
+            "la constancia de notificación.",
+            enlace.presupuesto_numero,
+        )
+    return enviados, error
+
+
+def _pagina_enlaces_propuesta(
+    request: Request,
+    presupuesto: Presupuesto,
+    db: Session,
+    *,
+    enlace_creado: str = "",
+    error: str = "",
+    status_code: int = 200,
+):
+    enlaces = (
+        db.query(EnlacePropuesta)
+        .filter(EnlacePropuesta.presupuesto_id == presupuesto.id)
+        .order_by(EnlacePropuesta.created_at.desc())
+        .all()
+    )
+    return TEMPLATES.TemplateResponse(
+        request,
+        "budgets/public_link.html",
+        {
+            "p": presupuesto,
+            "enlaces": enlaces,
+            "duraciones": DURACIONES_ENLACE,
+            "enlace_creado": enlace_creado,
+            "error_enlace": error or request.query_params.get("error", ""),
+            "mensaje_enlace": request.query_params.get("msg", ""),
+            "ahora": datetime.utcnow(),
+        },
+        status_code=status_code,
+    )
+
+
+@app.get("/presupuestos/{presupuesto_id}/enlace-publico", response_class=HTMLResponse)
+def gestionar_enlace_publico(
+    presupuesto_id: int,
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    presupuesto = db.get(Presupuesto, presupuesto_id)
+    if presupuesto is None:
+        return _redirect("/presupuestos", error="Presupuesto no encontrado.")
+    return _pagina_enlaces_propuesta(request, presupuesto, db)
+
+
+@app.post("/presupuestos/{presupuesto_id}/enlace-publico", response_class=HTMLResponse)
+def crear_enlace_publico_web(
+    presupuesto_id: int,
+    request: Request,
+    duracion_dias: int = Form(30),
+    db: Session = Depends(get_db),
+):
+    """Congela el PDF y crea un secreto revocable; nunca publica el bucket."""
+    presupuesto = db.get(Presupuesto, presupuesto_id)
+    if presupuesto is None:
+        return _redirect("/presupuestos", error="Presupuesto no encontrado.")
+    if db.info.get("rol_membresia") == "lectura":
+        return _pagina_enlaces_propuesta(
+            request, presupuesto, db,
+            error="Tu rol es de solo lectura y no permite crear enlaces.",
+            status_code=403,
+        )
+    if duracion_dias not in DURACIONES_ENLACE:
+        return _pagina_enlaces_propuesta(
+            request, presupuesto, db,
+            error="La duración del enlace no es válida.",
+            status_code=400,
+        )
+    if presupuesto.estado in {"cancelado", "archivado"}:
+        return _pagina_enlaces_propuesta(
+            request, presupuesto, db,
+            error="Un presupuesto cancelado o archivado no puede publicarse.",
+            status_code=400,
+        )
+
+    cfg = _config(db)
+    presupuesto.estado = _estado_despues_de_enviar(presupuesto.estado)
+    resultado = _generar_pdf_seguro(
+        lambda: pdf_service.generar_pdf(presupuesto, cfg),
+        f"el PDF público del presupuesto {presupuesto.numero}",
+    )
+    if isinstance(resultado, Response):
+        db.rollback()
+        return _pagina_enlaces_propuesta(
+            request, presupuesto, db,
+            error="No se pudo generar el PDF de la propuesta.",
+            status_code=500,
+        )
+    pdf_bytes = resultado.getvalue()
+    version = crear_version(db, presupuesto, "Versión publicada mediante enlace seguro")
+    db.flush()
+    try:
+        version.pdf_snapshot = save_object(
+            db,
+            pdf_bytes,
+            "presupuestos",
+            f"presupuesto_{presupuesto.numero}.pdf",
+            "application/pdf",
+            prefix=f"presupuesto-{presupuesto.id}-v{version.numero_version}",
+            metadata={
+                "presupuesto_id": presupuesto.id,
+                "version_id": version.id,
+                "numero_version": version.numero_version,
+                "destino": "enlace-publico",
+            },
+        ).reference
+        enlace, token = crear_enlace_propuesta(
+            db,
+            presupuesto=presupuesto,
+            version=version,
+            config=cfg,
+            creado_por_usuario_id=db.info.get("usuario_id"),
+            duracion_dias=duracion_dias,
+        )
+        db.add(NotaSeguimiento(
+            presupuesto_id=presupuesto.id,
+            texto=(
+                f"Enlace público creado para V{version.numero_version}; "
+                f"caduca el {enlace.expires_at.strftime('%d/%m/%Y %H:%M')}."
+            ),
+        ))
+        url_creada = _url_publica_propuesta(request, token)
+        db.commit()
+    except (AuthNotConfigured, StorageError, GestionEnlacePropuestaError) as exc:
+        db.rollback()
+        return _pagina_enlaces_propuesta(
+            request, presupuesto, db, error=str(exc), status_code=500,
+        )
+    return _pagina_enlaces_propuesta(
+        request,
+        presupuesto,
+        db,
+        enlace_creado=url_creada,
+    )
+
+
+@app.post("/presupuestos/{presupuesto_id}/enlaces/{enlace_id}/revocar")
+def revocar_enlace_publico_web(
+    presupuesto_id: int,
+    enlace_id: int,
+    db: Session = Depends(get_db),
+):
+    if db.info.get("rol_membresia") == "lectura":
+        return _redirect(
+            f"/presupuestos/{presupuesto_id}/enlace-publico",
+            error="Tu rol es de solo lectura y no permite revocar enlaces.",
+        )
+    enlace = db.get(EnlacePropuesta, enlace_id)
+    if enlace is None or enlace.presupuesto_id != presupuesto_id:
+        return _redirect(
+            f"/presupuestos/{presupuesto_id}/enlace-publico",
+            error="Enlace no encontrado.",
+        )
+    revocar_enlace_propuesta(db, enlace=enlace)
+    db.add(NotaSeguimiento(
+        presupuesto_id=presupuesto_id,
+        texto=f"Enlace público {enlace.token_prefix}… revocado.",
+    ))
+    db.commit()
+    return _redirect(
+        f"/presupuestos/{presupuesto_id}/enlace-publico",
+        msg="Enlace revocado. Ya no permite consultar la propuesta.",
+    )
+
+
+@app.post("/presupuestos/{presupuesto_id}/enlaces/{enlace_id}/notificar")
+def reintentar_notificacion_propuesta_web(
+    presupuesto_id: int,
+    enlace_id: int,
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    if db.info.get("rol_membresia") not in {"propietario", "administrador"}:
+        return _redirect(
+            f"/presupuestos/{presupuesto_id}/enlace-publico",
+            error="Solo propietarios y administradores pueden reenviar la notificación.",
+        )
+    enlace = db.get(EnlacePropuesta, enlace_id)
+    if (
+        enlace is None
+        or enlace.presupuesto_id != presupuesto_id
+        or enlace.respuesta == "pendiente"
+    ):
+        return _redirect(
+            f"/presupuestos/{presupuesto_id}/enlace-publico",
+            error="No existe una respuesta notificable.",
+        )
+    enviados, error = _notificar_respuesta_propuesta(request, db, enlace)
+    if error:
+        return _redirect(
+            f"/presupuestos/{presupuesto_id}/enlace-publico",
+            error=f"La respuesta sigue guardada, pero falló la notificación: {error}",
+        )
+    return _redirect(
+        f"/presupuestos/{presupuesto_id}/enlace-publico",
+        msg=f"Notificación enviada a {', '.join(enviados)}.",
+    )
+
+
+def _respuesta_propuesta_no_disponible(request: Request):
+    return TEMPLATES.TemplateResponse(
+        request,
+        "public/proposal_unavailable.html",
+        {},
+        status_code=404,
+        headers={
+            "Cache-Control": "no-store, max-age=0",
+            "Pragma": "no-cache",
+            "Referrer-Policy": "no-referrer",
+        },
+    )
+
+
+def _pagina_propuesta_publica(
+    request: Request,
+    enlace: EnlacePropuesta,
+    token: str,
+    *,
+    error: str = "",
+    datos: dict[str, str] | None = None,
+    status_code: int = 200,
+):
+    return TEMPLATES.TemplateResponse(
+        request,
+        "public/proposal.html",
+        {
+            "propuesta": enlace,
+            "token": token,
+            "error_respuesta": error,
+            "datos_respuesta": datos or {
+                "nombre": enlace.cliente_nombre,
+                "email": "",
+                "comentario": "",
+            },
+        },
+        status_code=status_code,
+        headers={
+            "Cache-Control": "no-store, max-age=0",
+            "Pragma": "no-cache",
+            "Referrer-Policy": "no-referrer",
+            "X-Robots-Tag": "noindex, nofollow, noarchive",
+        },
+    )
+
+
+@app.get("/propuestas/{token}", response_class=HTMLResponse)
+def ver_propuesta_publica(
+    token: str,
+    request: Request,
+    db: Session = Depends(get_public_proposal_db),
+):
+    enlace = resolver_enlace_propuesta(db, token=token)
+    if enlace is None:
+        return _respuesta_propuesta_no_disponible(request)
+    return _pagina_propuesta_publica(request, enlace, token)
+
+
+@app.post("/propuestas/{token}/responder", response_class=HTMLResponse)
+def responder_propuesta_publica(
+    token: str,
+    request: Request,
+    decision: str = Form(""),
+    nombre: str = Form(""),
+    email: str = Form(""),
+    comentario: str = Form(""),
+    declaracion: str = Form(""),
+    db: Session = Depends(get_public_proposal_db),
+):
+    enlace = resolver_enlace_propuesta(db, token=token)
+    if enlace is None:
+        return _respuesta_propuesta_no_disponible(request)
+    datos = {
+        "nombre": str(nombre or "").strip(),
+        "email": str(email or "").strip().lower(),
+        "comentario": str(comentario or "").strip(),
+    }
+    if declaracion != "confirmada":
+        return _pagina_propuesta_publica(
+            request, enlace, token,
+            error="Confirma que estás autorizado para responder esta propuesta.",
+            datos=datos,
+            status_code=400,
+        )
+    try:
+        registrar_respuesta_propuesta(
+            db,
+            enlace=enlace,
+            decision=decision,
+            nombre=datos["nombre"],
+            email=datos["email"],
+            comentario=datos["comentario"],
+        )
+        db.commit()
+        _notificar_respuesta_propuesta(request, db, enlace)
+    except GestionEnlacePropuestaError as exc:
+        db.rollback()
+        enlace = resolver_enlace_propuesta(db, token=token)
+        if enlace is None:
+            return _respuesta_propuesta_no_disponible(request)
+        return _pagina_propuesta_publica(
+            request, enlace, token, error=str(exc), datos=datos, status_code=400,
+        )
+    return _redirect(f"/propuestas/{token}")
+
+
+@app.get("/propuestas/{token}/pdf")
+def ver_pdf_propuesta_publica(
+    token: str,
+    request: Request,
+    download: int = 0,
+    db: Session = Depends(get_public_proposal_db),
+):
+    enlace = resolver_enlace_propuesta(db, token=token)
+    if enlace is None:
+        return Response(status_code=404, headers=_NO_CACHE)
+    try:
+        contenido = read_reference(enlace.pdf_snapshot)
+    except StorageError:
+        return Response(status_code=404, headers=_NO_CACHE)
+    nombre = re.sub(r"[^A-Za-z0-9_.-]+", "-", enlace.presupuesto_numero) or "propuesta"
+    disposicion = "attachment" if download else "inline"
+    return Response(
+        contenido,
+        media_type="application/pdf",
+        headers={
+            "Cache-Control": "no-store, max-age=0",
+            "Pragma": "no-cache",
+            "Referrer-Policy": "no-referrer",
+            "X-Robots-Tag": "noindex, nofollow, noarchive",
+            "Content-Disposition": f'{disposicion}; filename="presupuesto_{nombre}.pdf"',
+            "X-Content-Type-Options": "nosniff",
+            "Content-Security-Policy": "sandbox",
+            "Cross-Origin-Resource-Policy": "same-origin",
+        },
+    )
 
 
 @app.get("/presupuestos/{presupuesto_id}", response_class=HTMLResponse)

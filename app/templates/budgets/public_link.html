@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Enlace público · {{ p.numero }}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <p class="crumb">📄 <a href="/presupuestos">Presupuestos</a> › <a href="/presupuestos/{{ p.id }}">{{ p.numero }}</a> › Enlace público</p>
+    <h1>Enlace público de la propuesta</h1>
+    <p class="subtitle">Comparte una versión congelada sin dar acceso a la organización, clientes, catálogos ni otros archivos.</p>
+  </div>
+  <div class="actions"><a class="btn" href="/presupuestos/{{ p.id }}">← Volver al presupuesto</a></div>
+</div>
+
+{% if error_enlace %}<div class="alert alert-error" role="alert">{{ error_enlace }}</div>{% endif %}
+{% if mensaje_enlace %}<div class="alert alert-ok" role="status">{{ mensaje_enlace }}</div>{% endif %}
+{% if enlace_creado %}
+<div class="alert alert-ok" role="status">
+  <strong>Enlace creado. Cópialo ahora: el secreto no se guarda y no volverá a mostrarse.</strong>
+  <div class="form-actions">
+    <input id="enlace-publico-creado" type="text" value="{{ enlace_creado }}" readonly aria-label="Enlace público creado">
+    <button id="copiar-enlace-publico" class="btn btn-primary" type="button">Copiar enlace</button>
+    <a class="btn" href="{{ enlace_creado }}" target="_blank" rel="noreferrer">Abrir propuesta</a>
+  </div>
+</div>
+{% endif %}
+
+<div class="card">
+  <h2>Crear un enlace nuevo</h2>
+  <p class="hint">Al crear uno nuevo se revocan automáticamente los enlaces vigentes anteriores. CotizaT genera y conserva el PDF exacto asociado a una nueva versión inmutable.</p>
+  <form method="post" action="/presupuestos/{{ p.id }}/enlace-publico" class="form-actions">
+    <label for="duracion_dias">Caducidad</label>
+    <select id="duracion_dias" name="duracion_dias">
+      {% for dias in duraciones %}<option value="{{ dias }}" {{ 'selected' if dias == 30 else '' }}>{{ dias }} días</option>{% endfor %}
+    </select>
+    <button class="btn btn-primary" type="submit">🔗 Crear enlace seguro</button>
+  </form>
+</div>
+
+<div class="card">
+  <h2>Historial de enlaces</h2>
+  {% if enlaces %}
+  <table class="table">
+    <thead><tr><th>Identificador</th><th>Versión</th><th>Creado</th><th>Caduca</th><th>Enlace</th><th>Respuesta</th><th>Aviso interno</th><th></th></tr></thead>
+    <tbody>
+      {% for enlace in enlaces %}
+      <tr>
+        <td><code>{{ enlace.token_prefix }}…</code></td>
+        <td>V{{ enlace.presupuesto_version_numero }}</td>
+        <td>{{ enlace.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
+        <td>{{ enlace.expires_at.strftime('%d/%m/%Y %H:%M') }}</td>
+        <td>
+          {% if enlace.revoked_at %}<span class="badge">Revocado</span>
+          {% elif enlace.expires_at <= ahora %}<span class="badge">Caducado</span>
+          {% else %}<span class="badge badge-aprobado">Vigente</span>{% endif %}
+        </td>
+        <td>{% if enlace.respuesta == 'aceptada' %}<span class="badge badge-aprobado">Aceptada</span>{% elif enlace.respuesta == 'rechazada' %}<span class="badge badge-rechazado">Rechazada</span>{% else %}<span class="badge">Pendiente</span>{% endif %}{% if enlace.responded_at %}<br><small>{{ enlace.respondido_por_nombre }} · {{ enlace.responded_at.strftime('%d/%m/%Y %H:%M') }}</small>{% endif %}</td>
+        <td>{% if enlace.notificacion_enviada_at %}<span class="badge badge-aprobado">Enviado</span><br><small>{{ enlace.notificacion_destinatarios }}</small>{% elif enlace.notificacion_error %}<span class="badge badge-rechazado">Falló</span><br><small>{{ enlace.notificacion_error }}</small>{% else %}—{% endif %}{% if enlace.respuesta != 'pendiente' and not enlace.notificacion_enviada_at %}<form method="post" action="/presupuestos/{{ p.id }}/enlaces/{{ enlace.id }}/notificar" class="inline"><button class="btn btn-sm" type="submit">Reintentar aviso</button></form>{% endif %}</td>
+        <td>{% if not enlace.revoked_at and enlace.expires_at > ahora %}<form method="post" action="/presupuestos/{{ p.id }}/enlaces/{{ enlace.id }}/revocar" class="inline" data-confirm="¿Revocar este enlace? Dejará de funcionar inmediatamente."><button class="btn btn-sm btn-danger" type="submit">Revocar</button></form>{% endif %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}<p class="empty">Todavía no se ha creado ningún enlace para este presupuesto.</p>{% endif %}
+</div>
+{% if enlace_creado %}<script src="/static/js/public_link.js"></script>{% endif %}
+{% endblock %}

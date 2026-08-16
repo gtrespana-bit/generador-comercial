@@ -53,6 +53,16 @@ def test_paginas_legales_responden_sin_sesion():
             assert fragmento.lower() in r.text.lower(), (ruta, fragmento)
 
 
+def test_legales_explican_limites_de_enlaces_y_respuesta_declarada():
+    privacidad = _get("/legal/privacidad").text.lower()
+    terminos = " ".join(_get("/legal/terminos").text.lower().split())
+    assert "enlace secreto" in privacidad
+    assert "aceptación o rechazo" in privacidad
+    assert "identidad" in privacidad and "declarad" in privacidad
+    assert "firma electrónica cualificada" in terminos
+    assert "no constituye" in terminos
+
+
 def test_pagina_legal_inexistente_da_404():
     assert _get("/legal/no-existe").status_code == 404
 

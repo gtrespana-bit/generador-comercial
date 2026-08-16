@@ -1,6 +1,6 @@
 # Punto exacto de continuación
 
-Fecha de corte: **16/08/2026, noche (cierre de la sesión E1-059 + E1-060/E1-061)** (America/Caracas).
+Fecha de corte: **16/08/2026, noche (Etapa 1 cerrada; validación comercial aplazada)** (America/Caracas).
 
 Este documento retoma el trabajo sin depender del historial del chat. Describe
 **dónde quedó exactamente** el trabajo y **qué sigue**, en ese orden. Léelo
@@ -9,7 +9,46 @@ junto con `docs/CONTINUIDAD_STAGING_SUPABASE.md` (estado de staging/matriz) y
 
 ---
 
-## 0. Lo último hecho: rama `arena/01a00837-generador-comercial`
+## ⚠️ 0bis. Recuperación de sesión del 16/08/2026 (léase antes que el resto)
+
+La rama `arena/01a00b99-generador-comercial` se recuperó en una sesión nueva a
+partir de un parche de exportación. Estado real verificado en esta sesión:
+
+- **Base:** commit `17e1172` («Add files via upload»), única rama
+  `arena/01a00b99-generador-comercial`. No se cambió de rama.
+- **Parche aplicado completo con `git apply --index`** (formato `diff --git`,
+  sin cabeceras `From`), excluyendo únicamente los artefactos de `handoff/`:
+  sus binarios venían como `Binary files differ` sin datos recuperables y la
+  carpeta debía eliminarse de todas formas. Todo lo demás (32 rutas de código,
+  plantillas, pruebas, docs y migración) aplicó limpio, sin conflictos.
+- **Eliminados:** el `.patch` de recuperación de la raíz (estaba trackeado en
+  el commit base, por eso figura como borrado) y toda carpeta `handoff/`. No
+  queda ningún `.patch` ni `handoff` en el árbol.
+- **Estado git actual:** los cambios recuperados están **staged pero SIN
+  commit** (33 rutas: 32 de contenido + el borrado del `.patch`). El head de
+  la rama sigue siendo `17e1172`; no existen los commits `435a690`, `85e590c`
+  ni `33fdf10` en este repositorio, solo su contenido aplicado. Sin PR abierto
+  y sin push, por instrucción expresa.
+- **Siguiente paso recomendado:** revisar `git status` y, con autorización,
+  commitear el estado recuperado en esta misma rama antes de seguir trabajando.
+
+Verificación ejecutada en esta sesión (todo en verde):
+
+- Suite completa: **409 passed, 6 skipped** (las 6 son pruebas PostgreSQL
+  omitidas por no existir URL administrativa de pruebas).
+- Plantillas Jinja: **59 correctas**. `compileall`: OK. JavaScript
+  (`node --check`): OK. `tools/verificar_lock.py`: **42 paquetes coherentes**.
+  `git diff --check`: OK. `tools/simular_vercel_rofs.py`: importación correcta.
+
+Estado funcional confirmado: **E3-016 a E3-019 completados** (envío por email,
+enlace público revocable, aceptación/rechazo trazable, notificación y estado
+controlado). La migración `c2f6e8a1d934` está en
+`migrations/versions/c2f6e8a1d934_public_proposal_links.py` y **sigue sin
+aplicar** (no aplicar ni tocar Supabase hasta autorización de despliegue).
+
+---
+
+## 0. Lo último hecho: PR #25 fusionado en `main`
 
 **Decisión de negocio adoptada en esta sesión (titular, 16/08/2026):**
 
@@ -48,13 +87,46 @@ Migración nueva: **`b7c4a9e2d31f`** (head exigido por `/readyz`; script para
 Supabase en `docs/staging_upgrade_b7c4a9e2d31f.sql`, con guarda de versión).
 29 pruebas nuevas en `tests/test_licencias_acceso.py`. Suite:
 **391 passed, 5 skipped**. `compileall`, plantillas (53), lock (42 paquetes),
-simulación de Vercel RO y `git diff --check` en verde.
+simulación de Vercel RO y `git diff --check` en verde. El PR #25 fue
+fusionado el 16/08/2026; CI de `main` terminó en verde. Después del despliegue,
+el titular confirmó que las licencias funcionan.
 
-### Pasos operativos pendientes DE ESTE BLOQUE (el orden importa)
+La validación externa de usabilidad también quedó cerrada el 16/08/2026:
+varias personas probaron el producto, profesionales del ámbito de la
+construcción no necesitaron ayuda y varios presupuestos genéricos de baño se
+terminaron en aproximadamente 10 minutos. No se localizaron errores. Las
+personas sin conocimientos de construcción tardaron más de 20 minutos, dato
+coherente con el nicho profesional definido y no un fallo del recorrido.
 
-1. **Fusionar el PR #25**; Vercel despliega `main`. Ojo: el titular aplicó el
-   SQL **antes** de fusionar, así que `/readyz` responde 503 (esquema por
-   delante del código) hasta completar el despliegue. Es la guarda funcionando.
+### Decisiones de alcance posteriores del titular (16/08/2026)
+
+1. **Etapa 1 se considera completada.**
+2. Las partidas actuales son **propias, de ejemplo y solo para pruebas**. Se
+   eliminarán cuando se carguen las partidas reales revisadas; catálogo y
+   partidas comerciales quedan fuera del trabajo actual.
+3. La **validación comercial pagada se aplaza hasta el final**. El titular no
+   entregará a clientes un generador que todavía considere incompleto. No se
+   abrirán pilotos durante los siguientes bloques técnicos.
+4. La etapa activa pasa a ser el **cierre funcional y operativo web**. El
+   siguiente bloque recomendado completa entrega y aceptación del presupuesto.
+
+### Trabajo acumulado en la rama actual (sin PR por decisión del titular)
+
+- **E3-016:** envío del presupuesto por email con PDF adjunto y congelado.
+- **E3-017:** enlace público seguro, temporal y revocable a una propuesta.
+- **E3-018:** aceptación/rechazo único y trazable de la versión exacta.
+- **E3-019:** aviso inmediato a administradores y cambio de estado solo para la
+  última versión, con constancia y reintento si falla Resend.
+- Head nuevo de la rama: **`c2f6e8a1d934`**. Producción continúa correctamente
+  en `b7c4a9e2d31f`; no aplicar `docs/staging_upgrade_c2f6e8a1d934.sql` ni
+  desplegar el código hasta terminar el bloque y recibir autorización expresa.
+- Suite: **409 passed, 6 skipped**; 59 plantillas, `compileall`, JavaScript,
+  lock y `git diff --check` en verde.
+
+### Pasos operativos pendientes DEL BLOQUE DE LICENCIAS (histórico)
+
+1. ~~Fusionar el PR #25 y desplegar `main`.~~ **Hecho el 16/08/2026**; CI en
+   verde y funcionalidad de licencias confirmada por el titular.
 2. ~~Aplicar `docs/staging_upgrade_b7c4a9e2d31f.sql` en Supabase~~ **Hecho el
    16/08/2026 (noche)**: funciones creadas con propietario `postgres` y
    `security_definer=true` (verificado en `pg_proc`).
@@ -124,20 +196,34 @@ bloqueante. Interfaz mejorada del panel de operador: pendiente futuro.
 
 ## 5. Qué es lo siguiente
 
-1. **Pasos operativos del bloque de licencias** (sección 0: migración +
-   cortesía propia + activar el corte cuando empiece el piloto).
-2. **Cerrar la Etapa 1** (criterios de salida en §1.10 del plan; los de
-   infraestructura ya tienen evidencia y se marcaron). Lo que falta de verdad:
-   - **Pruebas de usabilidad con 3 usuarios externos** (E1-012/013/014): un
-     usuario nuevo debe generar su primer PDF en < 20 min con ayuda mínima.
-   - **Vídeo de demostración de 5 minutos** (E1-051, operativo del titular):
-     cierra la landing (E1-056).
-   - Catálogo comercial con procedencia revisada y precios fechados.
-3. **Puerta a Etapa 2**: beta privada para prospectos y validación pagada con
-   el proceso de `docs/PROCESO_PILOTOS.md`.
+1. ~~**E3-016 — Envío por email del presupuesto.**~~ **Completado en la rama
+   de trabajo el 16/08/2026**: formulario precargado, PDF adjunto por Resend,
+   `Reply-To`, estado solo tras confirmación, versión inmutable, PDF exacto
+   privado y constancia interna. Suite: 397 passed, 5 skipped.
+2. ~~**E3-017 — Enlace público seguro y revocable.**~~ **Completado en la
+   rama el 16/08/2026**: versión/PDF congelados, secreto solo en SHA-256,
+   caducidad, revocación, página pública mínima y RLS por hash. Migración nueva
+   `c2f6e8a1d934`, pendiente únicamente cuando se despliegue. Suite: 403 passed,
+   6 skipped.
+3. ~~**E3-018 — Aceptación o rechazo trazable.**~~ **Completado en la rama el
+   16/08/2026**: una respuesta por enlace, versión exacta, identidad declarada,
+   comentario y fecha/hora; función PostgreSQL limitada. Suite: 405 passed,
+   6 skipped.
+4. ~~**E3-019 — Notificación y estado controlado.**~~ **Completado localmente
+   el 16/08/2026**: aviso a propietarios/administradores, cambio solo si es la
+   última versión y reintento sin perder la respuesta. Suite: 409 passed,
+   6 skipped.
+5. **Siguiente bloque:** restauración completa, exportación/baja por organización,
+   monitorización y diagnóstico. Catálogo comercial y validación pagada
+   permanecen aplazados hasta que el titular declare completo el producto.
 
 ## 6. Reglas invariables (no negociables)
 
+- **no abrir ni pedir fusionar un PR durante un bloque de trabajo activo**: al
+  fusionarlo, el titular debe cerrar el chat y se pierde el acceso de esta
+  sesión a la rama; los PR solo se crean cuando sean absolutamente necesarios,
+  al terminar un bloque funcional completo y con autorización expresa del
+  titular;
 - nunca configurar `MIGRATION_DATABASE_URL` en runtime;
 - nunca usar una conexión `postgres`/administrativa como `DATABASE_URL`;
 - nunca poner `service_role`/`sb_secret_` en variables públicas del frontend;
@@ -180,15 +266,26 @@ No repitas trabajo ya hecho y no me pidas secretos.
   organizaciones de clientes. Migración nueva `b7c4a9e2d31f` con script
   `docs/staging_upgrade_b7c4a9e2d31f.sql`. Suite: **391 passed, 5 skipped**.
 - **E1-061 documentado** en `docs/PROCESO_PILOTOS.md` (guion de pilotos).
-- **Mis pasos operativos pendientes, en orden:** fusionar el PR → aplicar la
-  migración en Supabase → conceder mi propia organización una cortesía →
-  activar `COTIZAT_EXIGIR_LICENCIA=true` en Vercel al empezar el piloto.
-- Incidencia de Auth cerrada (Redirect URLs y rate limits confirmados por mí).
-- Aplazados por decisión mía: buzón `soporte@`, razón social
-  (`COTIZAT_LEGAL_ENTITY`), Vercel Pro, puntos 13-manual y 14 de la matriz.
+- **PR #25 fusionado**, migración aplicada y licencias funcionando según la
+  verificación del titular.
+- **Usabilidad superada (E1-012/013/014):** profesionales de construcción sin
+  ayuda, varios presupuestos de baño en ≈10 minutos y sin errores observados.
+- **Etapa 1 completada.** Las partidas actuales son propias y se mantienen
+  solo como ejemplos de prueba; el catálogo real se cargará al final.
+- **Validación comercial aplazada por decisión del titular:** no habrá pilotos
+  hasta que el producto se considere completo.
+- Incidencia de Auth cerrada (Redirect URLs y rate limits confirmados).
 
-**Siguiente bloque:** cerrar la Etapa 1 — usabilidad con 3 usuarios externos
-(E1-012/013/014), el vídeo (E1-051, a mi cargo) y el catálogo con procedencia;
-después, beta privada y pilotos pagados (Etapa 2).
+**E3-016 a E3-019 completados localmente:** envío por email, enlace público
+revocable, respuesta trazable, notificación y estado controlado. **Siguiente
+bloque técnico:** restauración completa de datos/archivos y exportación/baja por
+organización. No abrir PR, no aplicar aún `c2f6e8a1d934`, no retomar catálogo
+ni pilotos salvo nueva decisión expresa.
+
+**Nota de la sesión de recuperación (16/08/2026):** todo lo anterior se
+recuperó desde un parche en la rama `arena/01a00b99-generador-comercial`
+(sección «0bis» de este documento). El trabajo quedó **staged sin commit**;
+verificar `git status` y commitear antes de continuar. Suite verificada:
+**409 passed, 6 skipped**.
 
 ---

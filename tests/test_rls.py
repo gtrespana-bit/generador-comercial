@@ -8,7 +8,8 @@ from app.database import Base, _aplicar_contexto_postgresql
 from app.models import TenantMixin
 from migrations.versions import c93e7a4d20f1_add_application_role_and_tenant_rls as migration
 from migrations.versions import (
-    b7c4a9e2d31f_license_cutoff_and_operator_visibility as head_migration,
+    b7c4a9e2d31f_license_cutoff_and_operator_visibility as licenses_access_migration,
+    c2f6e8a1d934_public_proposal_links as head_migration,
     d7f2a9c41e63_fix_invitation_select_policy_on_acceptance as invitation_migration,
     e1a4b7c9d2f0_harden_alembic_version_visibility as alembic_migration,
     f4c1d8e37a95_add_operator_licenses as licenses_migration,
@@ -62,12 +63,14 @@ def test_contexto_postgresql_usa_parametros_y_limpia_valores_ausentes():
         "auth_user_id": auth_id,
         "auth_email": "persona@example.com",
         "organization_id": "27",
+        "proposal_token_hash": "",
         # Sin marca explícita, la sesión NO es de operador: es el valor seguro
         # por omisión y lo que deja vacía la tabla `licencias` bajo RLS.
         "es_operador": "off",
     }
     assert "set_config('cotizat.organization_id'" in sql
     assert "set_config('cotizat.es_operador'" in sql
+    assert "set_config('cotizat.proposal_token_hash'" in sql
 
 
 def test_la_marca_de_operador_solo_se_activa_cuando_el_contexto_lo_declara():
@@ -139,7 +142,8 @@ def test_head_exigido_por_runtime_coincide_con_alembic():
     esquema que la base no tiene todavía (o al revés).
     """
     assert database_module.EXPECTED_ALEMBIC_HEAD == head_migration.revision
-    assert head_migration.down_revision == licenses_migration.revision
+    assert head_migration.down_revision == licenses_access_migration.revision
+    assert licenses_access_migration.down_revision == licenses_migration.revision
     assert licenses_migration.down_revision == alembic_migration.revision
     assert alembic_migration.down_revision == invitation_migration.revision
     assert invitation_migration.down_revision == migration.revision
@@ -152,7 +156,8 @@ def test_migracion_rls_cubre_cada_modelo_tenant():
         if issubclass(mapper.class_, TenantMixin)
     }
     assert modelos_tenant == set(migration.TENANT_TABLES) | {
-        migration.INVITATION_TABLE
+        migration.INVITATION_TABLE,
+        head_migration.TABLE,
     }
 
 

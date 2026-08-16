@@ -431,6 +431,12 @@ class Presupuesto(TenantMixin, Base):
     )
     anexos = relationship("AnexoPresupuesto", back_populates="presupuesto", cascade="all, delete-orphan", order_by="AnexoPresupuesto.id")
     versiones = relationship("PresupuestoVersion", back_populates="presupuesto", cascade="all, delete-orphan", order_by="PresupuestoVersion.numero_version.desc()")
+    enlaces_publicos = relationship(
+        "EnlacePropuesta",
+        back_populates="presupuesto",
+        cascade="all, delete-orphan",
+        order_by="EnlacePropuesta.created_at.desc()",
+    )
     notas_seguimiento = relationship(
         "NotaSeguimiento",
         back_populates="presupuesto",
@@ -552,6 +558,78 @@ class PresupuestoVersion(TenantMixin, Base):
 
     presupuesto = relationship("Presupuesto", back_populates="versiones")
 
+
+
+class EnlacePropuesta(TenantMixin, Base):
+    """Acceso público revocable a una versión congelada de un presupuesto.
+
+    Solo persiste el hash del secreto. Los datos duplicados aquí son el
+    subconjunto deliberadamente público de la propuesta: la ruta sin sesión no
+    necesita ni puede leer las demás tablas del tenant bajo RLS.
+    """
+
+    __tablename__ = "enlaces_propuesta"
+    __table_args__ = (
+        UniqueConstraint("token_hash", name="uq_enlace_propuesta_token_hash"),
+        CheckConstraint(
+            "length(token_hash) = 64",
+            name="ck_enlace_propuesta_token_hash_sha256",
+        ),
+        CheckConstraint(
+            "respuesta IN ('pendiente', 'aceptada', 'rechazada')",
+            name="ck_enlace_propuesta_respuesta_valida",
+        ),
+        Index(
+            "ix_enlaces_propuesta_presupuesto_creado",
+            "presupuesto_id",
+            "created_at",
+        ),
+    )
+
+    id = Column(Integer, primary_key=True)
+    presupuesto_id = Column(
+        Integer, ForeignKey("presupuestos.id", ondelete="CASCADE"), nullable=False
+    )
+    presupuesto_version_id = Column(
+        Integer,
+        ForeignKey("presupuesto_versiones.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    presupuesto_version_numero = Column(Integer, nullable=False)
+    token_hash = Column(String(64), nullable=False)
+    token_prefix = Column(String(12), nullable=False, default="")
+    pdf_snapshot = Column(String(900), nullable=False)
+    empresa_nombre = Column(String(200), nullable=False, default="")
+    cliente_nombre = Column(String(200), nullable=False, default="")
+    presupuesto_numero = Column(String(20), nullable=False, default="")
+    presupuesto_titulo = Column(String(250), nullable=False, default="")
+    total = Column(Float, nullable=False, default=0.0)
+    moneda = Column(String(10), nullable=False, default="USD")
+    fecha_presupuesto = Column(Date, nullable=False)
+    valido_hasta = Column(Date, nullable=False)
+    creado_por_usuario_id = Column(
+        Integer, ForeignKey("usuarios.id", ondelete="SET NULL"), nullable=True
+    )
+    expires_at = Column(DateTime, nullable=False)
+    revoked_at = Column(DateTime, nullable=True)
+    respuesta = Column(String(20), nullable=False, default="pendiente")
+    respondido_por_nombre = Column(String(200), nullable=False, default="")
+    respondido_por_email = Column(String(254), nullable=False, default="")
+    respuesta_comentario = Column(Text, nullable=False, default="")
+    responded_at = Column(DateTime, nullable=True)
+    estado_presupuesto_actualizado = Column(Boolean, nullable=False, default=False)
+    notificacion_enviada_at = Column(DateTime, nullable=True)
+    notificacion_destinatarios = Column(Text, nullable=False, default="")
+    notificacion_error = Column(Text, nullable=False, default="")
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+
+    presupuesto = relationship("Presupuesto", back_populates="enlaces_publicos")
+    version = relationship("PresupuestoVersion")
+    creado_por = relationship("Usuario")
+
+    def vigente(self, ahora: datetime | None = None) -> bool:
+        ahora = ahora or datetime.utcnow()
+        return self.revoked_at is None and self.expires_at > ahora
 
 
 class Capitulo(TenantMixin, Base):

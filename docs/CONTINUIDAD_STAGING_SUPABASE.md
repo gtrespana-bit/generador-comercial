@@ -1,6 +1,13 @@
 # Continuidad exacta: staging Vercel + Supabase
 
-Fecha de corte: 14/08/2026 (America/Caracas).
+Fecha de corte de fondo: 14/08/2026 (America/Caracas).
+
+> **Actualización de rama 16/08/2026:** producción continúa en
+> `b7c4a9e2d31f`. La rama de trabajo incorpora E3-017 y exige el nuevo head
+> `c2f6e8a1d934` (`docs/staging_upgrade_c2f6e8a1d934.sql`), todavía **no
+> aplicado** porque el titular decidió no abrir ni fusionar PR durante el bloque
+> activo. No tocar Supabase hasta el despliegue final de este bloque. Suite de
+> la rama: **409 passed, 6 skipped**.
 
 Este documento permite continuar el trabajo desde una conversación nueva sin
 depender del historial del chat. Debe leerse junto con
