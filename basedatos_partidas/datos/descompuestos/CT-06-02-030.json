@@ -1,0 +1,38 @@
+{
+  "codigo": "CT-06-02-030",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "02",
+  "unidad": "m²",
+  "titulo": "Pared de ladrillo macizo de arcilla.",
+  "descripcion": "Pared ejecutada con ladrillo macizo de arcilla cocida recibido con mortero de pega, aparejado a soga con juntas enrasadas. El tamaño reducido de la pieza multiplica el número de unidades por metro cuadrado y hace de esta la mampostería de menor rendimiento, aunque aporta la mayor masa y resistencia. Incluye el replanteo, el humedecido previo de las piezas que en el ladrillo de arcilla es determinante porque absorbe el agua del mortero y compromete su fraguado, la colocación de hiladas a nivel y plomo con trabazón, la formación de huecos y la limpieza. Medido a cinta corrida descontando huecos mayores de 2 m².",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-LADRILLO",
+      "rendimiento": 62.0
+    },
+    {
+      "ref": "MT-MOR-PEGA",
+      "rendimiento": 22.0
+    },
+    {
+      "ref": "MT-ANCLA-MURO",
+      "rendimiento": 1.2
+    },
+    {
+      "ref": "MQ-MEZCL",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.95
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.95
+    }
+  ],
+  "codigo_covenin": ""
+}

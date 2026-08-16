@@ -1,0 +1,46 @@
+{
+  "codigo": "CT-06-04-010",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "04",
+  "unidad": "m²",
+  "titulo": "Pared de bloque de vidrio.",
+  "descripcion": "Paño de bloque de vidrio recibido con mortero, con separadores plásticos que garantizan la constancia de la junta y refuerzo de cabilla en las juntas horizontales y verticales. Aporta luz natural manteniendo la privacidad, y es habitual en baños y en divisiones interiores. Exige un paño con sus cuatro bordes confinados y con junta de dilatación perimetral, ya que el vidrio no admite deformaciones del entorno. Incluye el replanteo del despiece que debe resolverse con piezas enteras porque el bloque no se corta, la colocación con separadores, el armado de las juntas con cabilla, el rejuntado y la limpieza final de las caras. Medido a cinta corrida descontando huecos mayores de 2 m².",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-BLQ-VIDRIO",
+      "rendimiento": 26.0
+    },
+    {
+      "ref": "MT-MOR-PEGA",
+      "rendimiento": 9.5
+    },
+    {
+      "ref": "MT-ACERO-CAB",
+      "rendimiento": 2.4
+    },
+    {
+      "ref": "MT-JUN-CG2",
+      "rendimiento": 1.2
+    },
+    {
+      "ref": "MT-SELLA-ELAST",
+      "rendimiento": 0.22
+    },
+    {
+      "ref": "MQ-MEZCL",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 1.1
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.8
+    }
+  ],
+  "codigo_covenin": ""
+}

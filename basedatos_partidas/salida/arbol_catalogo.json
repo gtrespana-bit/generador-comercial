@@ -1944,15 +1944,88 @@
               "precio": 18.29,
               "horas": 1.1,
               "producto_cliente": false
+            },
+            {
+              "codigo": "CT-06-01-020",
+              "titulo": "Pared de bloque de concreto de 15 cm.",
+              "unidad": "m²",
+              "precio": 23.83,
+              "horas": 1.2,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-06-01-030",
+              "titulo": "Pared de bloque de concreto de 20 cm.",
+              "unidad": "m²",
+              "precio": 28.63,
+              "horas": 1.3,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-06-01-040",
+              "titulo": "Pared de bloque de concreto a la vista.",
+              "unidad": "m²",
+              "precio": 28.37,
+              "horas": 1.8,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-06-01-050",
+              "titulo": "Machón o columna de confinamiento en pared de bloque.",
+              "unidad": "m",
+              "precio": 33.5,
+              "horas": 1.78,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-06-01-060",
+              "titulo": "Viga de corona o de amarre en pared de bloque.",
+              "unidad": "m",
+              "precio": 29.72,
+              "horas": 1.58,
+              "producto_cliente": false
             }
           ],
-          "n": 1
+          "n": 6
         },
         {
           "codigo": "02",
           "nombre": "Bloque y ladrillo de arcilla",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-06-02-010",
+              "titulo": "Pared de bloque de arcilla de 10 cm.",
+              "unidad": "m²",
+              "precio": 18.73,
+              "horas": 1.05,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-06-02-020",
+              "titulo": "Pared de bloque de arcilla de 15 cm.",
+              "unidad": "m²",
+              "precio": 23.75,
+              "horas": 1.15,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-06-02-030",
+              "titulo": "Pared de ladrillo macizo de arcilla.",
+              "unidad": "m²",
+              "precio": 40.79,
+              "horas": 1.9,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-06-02-040",
+              "titulo": "Pared de ladrillo de arcilla a la vista.",
+              "unidad": "m²",
+              "precio": 45.76,
+              "horas": 2.4,
+              "producto_cliente": false
+            }
+          ],
+          "n": 4
         },
         {
           "codigo": "03",
@@ -1965,24 +2038,138 @@
               "precio": 52.4,
               "horas": 0.7,
               "producto_cliente": false
+            },
+            {
+              "codigo": "CT-06-03-020",
+              "titulo": "Tabique autoportante de yeso laminado 12,5+70+12,5, placa simple.",
+              "unidad": "m²",
+              "precio": 35.46,
+              "horas": 0.55,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-06-03-030",
+              "titulo": "Tabique de yeso laminado con placa resistente a la humedad.",
+              "unidad": "m²",
+              "precio": 45.15,
+              "horas": 0.75,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-06-03-040",
+              "titulo": "Trasdosado autoportante de yeso laminado.",
+              "unidad": "m²",
+              "precio": 24.19,
+              "horas": 0.45,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-06-03-050",
+              "titulo": "Trasdosado directo de placa de yeso laminado pegada al muro.",
+              "unidad": "m²",
+              "precio": 13.23,
+              "horas": 0.4,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-06-03-060",
+              "titulo": "Refuerzo interior para anclaje de cargas en tabique de yeso laminado.",
+              "unidad": "ud",
+              "precio": 5.93,
+              "horas": 0.33,
+              "producto_cliente": false
             }
           ],
-          "n": 1
+          "n": 6
         },
         {
           "codigo": "04",
           "nombre": "Tabiquería de otros materiales",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-06-04-010",
+              "titulo": "Pared de bloque de vidrio.",
+              "unidad": "m²",
+              "precio": 186.85,
+              "horas": 1.9,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-06-04-020",
+              "titulo": "Tabique de placa de cemento sobre estructura metálica.",
+              "unidad": "m²",
+              "precio": 53.64,
+              "horas": 0.85,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-06-04-030",
+              "titulo": "Tabique de paneles livianos prefabricados.",
+              "unidad": "m²",
+              "precio": 30.12,
+              "horas": 0.6,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-06-04-040",
+              "titulo": "División liviana de machihembrado de madera.",
+              "unidad": "m²",
+              "precio": 31.59,
+              "horas": 0.7,
+              "producto_cliente": false
+            }
+          ],
+          "n": 4
         },
         {
           "codigo": "05",
           "nombre": "Dinteles, brocales y remates de vano",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-06-05-010",
+              "titulo": "Dintel prefabricado de concreto sobre vano.",
+              "unidad": "m",
+              "precio": 13.48,
+              "horas": 0.56,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-06-05-020",
+              "titulo": "Dintel de concreto armado vaciado en sitio.",
+              "unidad": "m",
+              "precio": 33.2,
+              "horas": 1.92,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-06-05-030",
+              "titulo": "Brocal o antepecho de ventana.",
+              "unidad": "m",
+              "precio": 13.43,
+              "horas": 0.7,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-06-05-040",
+              "titulo": "Formación de jambas y mochetas de vano.",
+              "unidad": "m",
+              "precio": 7.25,
+              "horas": 0.54,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-06-05-050",
+              "titulo": "Remate y sellado del encuentro de pared con estructura.",
+              "unidad": "m",
+              "precio": 5.75,
+              "horas": 0.3,
+              "producto_cliente": false
+            }
+          ],
+          "n": 5
         }
       ],
-      "n": 2
+      "n": 25
     },
     {
       "codigo": "07",

@@ -297,7 +297,7 @@
     },
     "MT-PYL-PLACA125": {
       "unidad": "m2",
-      "descripcion": "Placa de yeso laminado de 12,5 mm de espesor, borde afinado, para cielo raso.",
+      "descripcion": "Placa de yeso laminado estándar de 12,5 mm de espesor, borde afinado.",
       "precio": 4.2,
       "estado": "provisional"
     },
@@ -719,6 +719,96 @@
       "unidad": "l",
       "descripcion": "Recubrimiento pasivante de base cementosa con inhibidor, para protección de acero de refuerzo corroído.",
       "precio": 9.8,
+      "estado": "provisional"
+    },
+    "MT-BLQ-15": {
+      "unidad": "ud",
+      "descripcion": "Bloque de concreto hueco de 15x20x40 cm.",
+      "precio": 0.75,
+      "estado": "provisional"
+    },
+    "MT-BLQ-20": {
+      "unidad": "ud",
+      "descripcion": "Bloque de concreto hueco de 20x20x40 cm.",
+      "precio": 0.95,
+      "estado": "provisional"
+    },
+    "MT-BLQ-ARC-10": {
+      "unidad": "ud",
+      "descripcion": "Bloque hueco de arcilla de 10x20x30 cm.",
+      "precio": 0.42,
+      "estado": "provisional"
+    },
+    "MT-BLQ-ARC-15": {
+      "unidad": "ud",
+      "descripcion": "Bloque hueco de arcilla de 15x20x30 cm.",
+      "precio": 0.58,
+      "estado": "provisional"
+    },
+    "MT-LADRILLO": {
+      "unidad": "ud",
+      "descripcion": "Ladrillo macizo de arcilla cocida.",
+      "precio": 0.28,
+      "estado": "provisional"
+    },
+    "MT-BLQ-VIDRIO": {
+      "unidad": "ud",
+      "descripcion": "Bloque de vidrio de 19x19x8 cm, con sus separadores y refuerzo de junta.",
+      "precio": 4.8,
+      "estado": "provisional"
+    },
+    "MT-PLACA-CEM": {
+      "unidad": "m2",
+      "descripcion": "Placa de cemento reforzada con fibra, apta para áreas húmedas y exteriores.",
+      "precio": 9.2,
+      "estado": "provisional"
+    },
+    "MT-PYL-PLACA-RH": {
+      "unidad": "m2",
+      "descripcion": "Placa de yeso laminado resistente a la humedad, de 12,5 mm, para áreas húmedas.",
+      "precio": 6.1,
+      "estado": "provisional"
+    },
+    "MT-DINTEL-PREF": {
+      "unidad": "m",
+      "descripcion": "Dintel prefabricado de concreto armado para vanos de puerta y ventana.",
+      "precio": 6.5,
+      "estado": "provisional"
+    },
+    "MT-PANEL-LIV": {
+      "unidad": "m2",
+      "descripcion": "Panel liviano prefabricado de núcleo aligerado con caras de mortero, para tabiquería.",
+      "precio": 14.0,
+      "estado": "provisional"
+    },
+    "MT-MACHIH-MAD": {
+      "unidad": "m2",
+      "descripcion": "Machihembrado de madera para divisiones y forros interiores.",
+      "precio": 12.5,
+      "estado": "provisional"
+    },
+    "MT-MALLA-JUNTA": {
+      "unidad": "m",
+      "descripcion": "Malla o banda de refuerzo para juntas entre materiales distintos y encuentros con estructura.",
+      "precio": 1.2,
+      "estado": "provisional"
+    },
+    "MT-SELLA-ELAST": {
+      "unidad": "l",
+      "descripcion": "Sellador elástico de poliuretano para juntas de movimiento y encuentros.",
+      "precio": 8.5,
+      "estado": "provisional"
+    },
+    "MT-ANCLA-MURO": {
+      "unidad": "ud",
+      "descripcion": "Conector o anclaje metálico de amarre de pared a estructura de concreto.",
+      "precio": 0.65,
+      "estado": "provisional"
+    },
+    "MT-REFUERZO-PYL": {
+      "unidad": "m",
+      "descripcion": "Refuerzo interior de madera o perfil metálico para anclaje de cargas en tabique de yeso laminado.",
+      "precio": 3.2,
       "estado": "provisional"
     }
   },

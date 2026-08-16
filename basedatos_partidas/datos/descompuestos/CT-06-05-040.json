@@ -1,0 +1,42 @@
+{
+  "codigo": "CT-06-05-040",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "05",
+  "unidad": "m",
+  "titulo": "Formación de jambas y mochetas de vano.",
+  "descripcion": "Formación y repaso de las jambas y mochetas de un vano de puerta o ventana, dejándolas aplomadas, escuadradas y con las dimensiones exactas para recibir la carpintería. Es la operación que determina si la carpintería entra sin forzarla: un vano fuera de escuadra obliga a rehacerlo o a resolverlo con calzos y sellados que se ven. Incluye el repicado de los excesos, el macizado y regularización con mortero de las zonas deficientes, la comprobación de plomos, escuadras y diagonales, y el acabado de la superficie lista para frisar. Medido en longitud de jamba realmente ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MOR-FRISO",
+      "rendimiento": 11.0
+    },
+    {
+      "ref": "MT-MALLA-ESQ",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MQ-MEZCL",
+      "rendimiento": 0.04
+    },
+    {
+      "ref": "MQ-MART-ELEC",
+      "rendimiento": 0.07
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.32
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.22
+    }
+  ],
+  "codigo_covenin": ""
+}
