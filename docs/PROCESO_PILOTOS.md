@@ -15,7 +15,7 @@ Público: el titular operando el producto. Nada de aquí lo ejecuta un cliente.
 | --- | --- | --- |
 | Declarar operadores | `COTIZAT_OPERADORES` en Vercel (Production) + redeploy | ✅ hecho el 16/08/2026 |
 | Correo transaccional | `RESEND_API_KEY` + `COTIZAT_EMAIL_FROM` en Vercel | ✅ hecho (SMTP de Supabase también usa Resend) |
-| Migración `b7c4a9e2d31f` | Supabase → SQL Editor → `docs/staging_upgrade_b7c4a9e2d31f.sql` | ⬜ pendiente al desplegar este bloque |
+| Migración `b7c4a9e2d31f` | Supabase → SQL Editor → `docs/staging_upgrade_b7c4a9e2d31f.sql` | ✅ aplicada el 16/08/2026 |
 | **Conceder licencia de cortesía a la propia organización del titular** | Panel → «cortesia», duración larga, nota «uso del titular» | ⬜ hacerlo **antes** de activar el corte |
 | Activar el corte | `COTIZAT_EXIGIR_LICENCIA=true` en Vercel + redeploy | ⬜ al empezar los pilotos de pago |
 | Buzón `soporte@cotizat.online` | Reenvío en el proveedor del dominio | ⬜ cuando haga falta de verdad |

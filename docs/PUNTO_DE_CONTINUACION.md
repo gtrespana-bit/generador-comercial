@@ -1,6 +1,6 @@
 # Punto exacto de continuación
 
-Fecha de corte: **16/08/2026, noche (cierre de la sesión E1-059 + E1-060/E1-061)** (America/Caracas).
+Fecha de corte: **16/08/2026, noche (PR #25 fusionado, licencias y usabilidad verificadas)** (America/Caracas).
 
 Este documento retoma el trabajo sin depender del historial del chat. Describe
 **dónde quedó exactamente** el trabajo y **qué sigue**, en ese orden. Léelo
@@ -9,7 +9,7 @@ junto con `docs/CONTINUIDAD_STAGING_SUPABASE.md` (estado de staging/matriz) y
 
 ---
 
-## 0. Lo último hecho: rama `arena/01a00837-generador-comercial`
+## 0. Lo último hecho: PR #25 fusionado en `main`
 
 **Decisión de negocio adoptada en esta sesión (titular, 16/08/2026):**
 
@@ -48,13 +48,21 @@ Migración nueva: **`b7c4a9e2d31f`** (head exigido por `/readyz`; script para
 Supabase en `docs/staging_upgrade_b7c4a9e2d31f.sql`, con guarda de versión).
 29 pruebas nuevas en `tests/test_licencias_acceso.py`. Suite:
 **391 passed, 5 skipped**. `compileall`, plantillas (53), lock (42 paquetes),
-simulación de Vercel RO y `git diff --check` en verde.
+simulación de Vercel RO y `git diff --check` en verde. El PR #25 fue
+fusionado el 16/08/2026; CI de `main` terminó en verde. Después del despliegue,
+el titular confirmó que las licencias funcionan.
+
+La validación externa de usabilidad también quedó cerrada el 16/08/2026:
+varias personas probaron el producto, profesionales del ámbito de la
+construcción no necesitaron ayuda y varios presupuestos genéricos de baño se
+terminaron en aproximadamente 10 minutos. No se localizaron errores. Las
+personas sin conocimientos de construcción tardaron más de 20 minutos, dato
+coherente con el nicho profesional definido y no un fallo del recorrido.
 
 ### Pasos operativos pendientes DE ESTE BLOQUE (el orden importa)
 
-1. **Fusionar el PR #25**; Vercel despliega `main`. Ojo: el titular aplicó el
-   SQL **antes** de fusionar, así que `/readyz` responde 503 (esquema por
-   delante del código) hasta completar el despliegue. Es la guarda funcionando.
+1. ~~Fusionar el PR #25 y desplegar `main`.~~ **Hecho el 16/08/2026**; CI en
+   verde y funcionalidad de licencias confirmada por el titular.
 2. ~~Aplicar `docs/staging_upgrade_b7c4a9e2d31f.sql` en Supabase~~ **Hecho el
    16/08/2026 (noche)**: funciones creadas con propietario `postgres` y
    `security_definer=true` (verificado en `pg_proc`).
@@ -124,17 +132,18 @@ bloqueante. Interfaz mejorada del panel de operador: pendiente futuro.
 
 ## 5. Qué es lo siguiente
 
-1. **Pasos operativos del bloque de licencias** (sección 0: migración +
-   cortesía propia + activar el corte cuando empiece el piloto).
-2. **Cerrar la Etapa 1** (criterios de salida en §1.10 del plan; los de
-   infraestructura ya tienen evidencia y se marcaron). Lo que falta de verdad:
-   - **Pruebas de usabilidad con 3 usuarios externos** (E1-012/013/014): un
-     usuario nuevo debe generar su primer PDF en < 20 min con ayuda mínima.
-   - **Vídeo de demostración de 5 minutos** (E1-051, operativo del titular):
-     cierra la landing (E1-056).
-   - Catálogo comercial con procedencia revisada y precios fechados.
-3. **Puerta a Etapa 2**: beta privada para prospectos y validación pagada con
-   el proceso de `docs/PROCESO_PILOTOS.md`.
+1. **Cerrar el catálogo comercial distribuido**, que es el único criterio de
+   producto pendiente para marcar la Etapa 1: procedencia/derechos de sus
+   partidas y precios referenciales con región y fecha (E1-022 a E1-030).
+2. **Vídeo de demostración de 5 minutos** (E1-051, operativo del titular):
+   cierra la landing (E1-056), pero no bloquea preparar la venta.
+3. **Antes del primer cobro**: buzón de soporte operativo, titular legal en
+   `COTIZAT_LEGAL_ENTITY`, Vercel Pro y completar los pasos de corte que aún
+   correspondan en la sección 0.
+4. **Abrir la Etapa 2**: lista de prospectos, entrevistas y cinco pilotos
+   pagados con el proceso de `docs/PROCESO_PILOTOS.md`, midiendo uso durante
+   ocho semanas. La usabilidad E1-012/013/014 ya está superada y no debe
+   repetirse sin una señal nueva.
 
 ## 6. Reglas invariables (no negociables)
 
@@ -180,15 +189,18 @@ No repitas trabajo ya hecho y no me pidas secretos.
   organizaciones de clientes. Migración nueva `b7c4a9e2d31f` con script
   `docs/staging_upgrade_b7c4a9e2d31f.sql`. Suite: **391 passed, 5 skipped**.
 - **E1-061 documentado** en `docs/PROCESO_PILOTOS.md` (guion de pilotos).
-- **Mis pasos operativos pendientes, en orden:** fusionar el PR → aplicar la
-  migración en Supabase → conceder mi propia organización una cortesía →
-  activar `COTIZAT_EXIGIR_LICENCIA=true` en Vercel al empezar el piloto.
+- **PR #25 fusionado**, migración aplicada y licencias funcionando según la
+  verificación del titular. Antes del primer piloto de pago hay que confirmar
+  la cortesía propia y activar `COTIZAT_EXIGIR_LICENCIA=true` si aún faltan.
 - Incidencia de Auth cerrada (Redirect URLs y rate limits confirmados por mí).
 - Aplazados por decisión mía: buzón `soporte@`, razón social
   (`COTIZAT_LEGAL_ENTITY`), Vercel Pro, puntos 13-manual y 14 de la matriz.
 
-**Siguiente bloque:** cerrar la Etapa 1 — usabilidad con 3 usuarios externos
-(E1-012/013/014), el vídeo (E1-051, a mi cargo) y el catálogo con procedencia;
-después, beta privada y pilotos pagados (Etapa 2).
+- **Usabilidad superada (E1-012/013/014):** profesionales de construcción sin
+  ayuda, varios presupuestos de baño en ≈10 minutos y sin errores observados.
+
+**Siguiente bloque:** cerrar procedencia y fecha de precios del catálogo; el
+vídeo (E1-051) puede hacerse en paralelo. Después, activar la Etapa 2 y buscar
+cinco pilotos pagados.
 
 ---

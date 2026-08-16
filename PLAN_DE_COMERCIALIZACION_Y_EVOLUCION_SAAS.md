@@ -4,7 +4,7 @@
 **Mercado inicial:** empresas pequeñas de remodelación y construcción privada en Venezuela  
 **Zona inicial recomendada:** Valencia / Carabobo, con posterior expansión a Caracas y otras ciudades  
 **Fecha de creación:** 13 de agosto de 2026  
-**Última actualización:** 14 de agosto de 2026  
+**Última actualización:** 16 de agosto de 2026
 **Estado general:** Etapa 0 completada · Etapa 1 activa
 **Etapa activa:** Etapa 1 — Fundamentos de la versión comercial web
 
@@ -163,7 +163,7 @@ Al trabajar en una tarea de este plan se debe:
 ## 1.2 Primer inicio y experiencia básica
 
 - [x] **E1-008 — Diseñar el recorrido ideal del primer presupuesto.**
-  Recorrido y presupuesto temporal documentados en `docs/RECORRIDO_PRIMER_PRESUPUESTO.md`: empresa → contenido inicial → catálogo → cliente → presupuesto → descarga de PDF. La meta de 20 minutos sigue siendo una hipótesis pendiente de validación externa.
+  Recorrido y presupuesto temporal documentados en `docs/RECORRIDO_PRIMER_PRESUPUESTO.md`: empresa → contenido inicial → catálogo → cliente → presupuesto → descarga de PDF. La meta de 20 minutos quedó validada externamente el 16/08/2026 para el público objetivo (E1-012/013).
 
 - [x] **E1-009 — Crear asistente de primer inicio.**
   Evidencia: `/bienvenida` solicita nombre comercial, razón social, RIF, teléfono, email, país, ciudad, dirección, moneda, IVA y logo; conserva todo en la base local y solo exige el nombre para avanzar. Una base anterior migra sin mostrar el asistente ni sobrescribir su empresa.
@@ -174,12 +174,14 @@ Al trabajar en una tarea de este plan se debe:
 - [x] **E1-011 — Crear una lista de inicio o panel de bienvenida.**
   Evidencia: el dashboard muestra cinco pasos comprobados con datos locales: empresa, catálogo, cliente real, presupuesto real y descarga del primer PDF. Abrir una vista previa o descargar el PDF demo no completa el último paso.
 
-- [ ] **E1-012 — Ejecutar pruebas de usabilidad con al menos 3 personas ajenas al desarrollo.**  
-  No se les debe explicar cada paso; se observarán bloqueos y preguntas.
+- [x] **E1-012 — Ejecutar pruebas de usabilidad con al menos 3 personas ajenas al desarrollo.**
+  Evidencia comunicada por el titular el 16/08/2026: varias personas externas probaron el recorrido. Las personas del ámbito de la construcción —público objetivo real— completaron el presupuesto sin ayuda. No se localizaron errores durante las sesiones.
 
-- [ ] **E1-013 — Medir el tiempo real hasta el primer PDF.**
+- [x] **E1-013 — Medir el tiempo real hasta el primer PDF.**
+  Resultado: varios participantes prepararon un presupuesto genérico de baño en aproximadamente **10 minutos**. El público objetivo quedó por debajo del máximo de 20 minutos. Algunas personas sin conocimientos de construcción tardaron más de 20 minutos; no se considera un fallo del recorrido para el nicho definido, pero queda como dato de segmentación.
 
-- [ ] **E1-014 — Simplificar el recorrido básico según los resultados.**
+- [x] **E1-014 — Simplificar el recorrido básico según los resultados.**
+  No se observaron bloqueos, errores ni necesidad de ayuda entre profesionales de construcción, por lo que no se justifica cambiar el recorrido antes de los pilotos. Se reabrirá únicamente si el uso pagado aporta evidencia nueva.
 
 ## 1.3 Fundamentos browser-first — prioridad activa
 
@@ -289,9 +291,8 @@ Al trabajar en una tarea de este plan se debe:
 - [x] **E1-037 — Bloquear dependencias a versiones reproducibles.**
   Evidencia: `requirements.txt` y `requirements-dev.txt` fijan cada dependencia directa con `==`, y `requirements.lock` guarda el cierre transitivo completo (41 paquetes) que instala la integración continua. `tools/generar_lock.py` regenera el cierre y `tools/verificar_lock.py` impide que un pin cambie sin regenerarlo, evitando que Vercel y CI instalen versiones distintas. Cubierto por `tests/test_dependencias_bloqueadas.py`. Motivo: antes los rangos abiertos (`fastapi>=0.115`) permitían que Vercel resolviera versiones nuevas en cada build y rompiera un despliegue estable sin ningún cambio en el repositorio.
 
-- [~] **E1-038 — Configurar GitHub Actions para ejecutar las pruebas.**
-  Flujo escrito y verificado; falta un paso manual de activación. Evidencia: `docs/ci/ci.yml` define la ejecución en cada push a `main`/`arena/**` y en cada pull request, e incorpora las verificaciones que antes se hacían a mano: instalación del lock, coherencia del bloqueo, `compileall`, parseo de las 40 plantillas Jinja con el entorno real, `node --check` sobre los 20 archivos JavaScript, revisión de espacios en blanco limitada a las líneas del cambio, simulación del sistema de archivos de solo lectura de Vercel en modo PostgreSQL y SQLite, y `pytest -q`. Protegido por `tests/test_integracion_continua.py`, que falla si se elimina un paso o si las dos copias divergen.
-  **Pendiente:** copiar `docs/ci/ci.yml` a `.github/workflows/ci.yml` desde un clon local y empujarlo (instrucciones en `docs/ci/README.md`). El token de la aplicación que abre los cambios automáticos carece del permiso `workflows` y GitHub rechaza el push de archivos bajo `.github/workflows/`.
+- [x] **E1-038 — Configurar GitHub Actions para ejecutar las pruebas.**
+  CI activa en GitHub desde el 14/08/2026 y ejecutada en cada push a `main`/`arena/**` y pull request. Incluye instalación del lock, coherencia del bloqueo, `compileall`, parseo de plantillas Jinja, `node --check`, revisión de espacios, simulación del sistema de archivos de solo lectura de Vercel y `pytest -q`. `tests/test_integracion_continua.py` protege la definición. Evidencia más reciente: ejecución de `main` del PR #25 completada en verde el 16/08/2026.
 
 - [x] **E1-039 — Hacer que `pytest` funcione sin depender de configurar manualmente `PYTHONPATH`.**
   Evidencia: `pytest.ini` incorpora la raíz del proyecto y permite ejecutar `.venv/bin/pytest -q` directamente.
@@ -351,8 +352,8 @@ Las herramientas existentes se conservan como fuente de migración, pero dejaron
 
 ## 1.9 Hipótesis comercial inicial
 
-- [~] **E1-057 — Definir oferta de piloto fundador.**
-  Precios decididos y publicados en la landing (15/08/2026): 89 US$/año como promoción inicial (precio habitual 109 US$/año) o 9,99 US$/mes el primer año (habitual 12,99 US$/mes), con configuración asistida y soporte incluidos. Pendiente: método de cobro (E1-059) y contrato/recibo (E1-060).
+- [x] **E1-057 — Definir oferta de piloto fundador.**
+  Precios decididos y publicados en la landing (15/08/2026): 89 US$/año como promoción inicial (precio habitual 109 US$/año) o 9,99 US$/mes el primer año (habitual 12,99 US$/mes), con configuración asistida y soporte incluidos. Método de cobro manual cerrado en E1-059 y contrato, recibo y registro de licencias cerrados en E1-060 el 16/08/2026.
 
 - [-] **E1-058 — Definir hipótesis de licencia de escritorio.**
   Descartada como prioridad por la dirección browser-first; el precio se validará sobre acceso web.
@@ -403,7 +404,8 @@ No se marcará esta etapa como completada hasta cumplir todos los siguientes pun
 
 - [x] La aplicación no muestra datos ni marca de RemodelaT a un cliente nuevo.
 - [x] No existen promesas visibles de IA, 3D o facturación fiscal no implementadas.
-- [ ] Un usuario nuevo puede generar su primer PDF en menos de 20 minutos con ayuda mínima.
+- [x] Un usuario nuevo puede generar su primer PDF en menos de 20 minutos con ayuda mínima.
+  Evidencia (16/08/2026): profesionales de construcción lo hicieron sin ayuda; varios presupuestos genéricos de baño se completaron en unos 10 minutos.
 - [ ] El catálogo comercial tiene procedencia revisada y precios fechados.
 - [x] PostgreSQL, Alembic y el aislamiento funcionan en una instancia de integración real.
   Evidencia: producción Vercel + Supabase con `/readyz` en verde (head Alembic, rol runtime limitado miembro de `cotizat_app`) y matriz de aceptación con dos organizaciones superada el 14/08/2026 (puntos 1-9, 11 y 12, incluida organización homónima sin fuga de datos); RLS de `licencias` verificado en producción el 16/08/2026.
@@ -417,7 +419,8 @@ No se marcará esta etapa como completada hasta cumplir todos los siguientes pun
   Guía (`docs/GUIA_INICIO_RAPIDO.md`), oferta (precios en `/conocer`), términos como contrato de servicio (`/legal/terminos`) y canal de soporte (`/legal/soporte`) publicados el 15/08/2026. Recibo y registro interno de licencias cerrados el 16/08/2026 (E1-060). Falta solo crear el buzón soporte@cotizat.online (decisión del titular: se crea cuando haga falta de verdad).
 - [x] CI ejecuta las pruebas y el recorrido crítico está cubierto.
   CI operativo desde el 14/08/2026 (E1-038); recorrido crítico completo cubierto el 15/08/2026 (E1-040, `tests/test_recorrido_critico.py`).
-- [ ] Tres usuarios externos completaron una prueba de usabilidad.
+- [x] Tres o más usuarios externos completaron una prueba de usabilidad.
+  Evidencia comunicada por el titular el 16/08/2026: varias personas probaron el producto, sin errores observados; el público de construcción no necesitó ayuda.
 
 **Puerta al terminar:** desplegar una beta web privada para prospectos y comenzar la validación pagada, sin afirmar todavía preparación para lanzamiento público.
 
@@ -752,7 +755,7 @@ La expansión debe realizarse principalmente mediante catálogos, packs y lengua
 | ID | Riesgo | Probabilidad | Impacto | Mitigación principal | Estado |
 |---|---|---:|---:|---|---|
 | R-001 | Los elogios no se convierten en pagos | Alta | Alta | Pilotos pagados antes del SaaS | Abierto |
-| R-002 | El producto abruma al usuario de papel/Excel | Alta | Alta | Onboarding y pruebas observadas | Abierto |
+| R-002 | El producto abruma al usuario de papel/Excel | Alta | Alta | Onboarding y pruebas observadas | Mitigado inicialmente en público de construcción; reevaluar en pilotos |
 | R-003 | Partidas sin derechos de redistribución | Media | Crítico | Auditoría de procedencia | Abierto |
 | R-004 | Precios desactualizados causan pérdidas | Alta | Crítico | Fecha, fuente, región y aviso referencial | Abierto |
 | R-005 | Confusión entre documento de cobro y factura fiscal | Media | Crítico | Aviso no fiscal aplicado; consultar especialista | Mitigado parcialmente |
@@ -778,7 +781,7 @@ Estas cifras no son precios definitivos; deben probarse en la Etapa 2.
 | Licencia local perpetua | 79–149 USD | Descartada como prioridad por D-014 |
 | Renovación de soporte/catálogo | 30–60 USD/año | Sin validar |
 | Futuro plan web profesional | 19–29 USD/mes | Sin validar |
-| Tiempo máximo al primer PDF | 20 minutos | Sin validar externamente |
+| Tiempo máximo al primer PDF | 20 minutos | Validado inicialmente: público de construcción ≈10 min y sin ayuda (16/08/2026) |
 | Reducción esperada de tiempo | 50 % | Sin validar |
 
 ---
@@ -812,35 +815,39 @@ Se completará durante la Etapa 2. No deben guardarse aquí nombres, teléfonos 
 
 | Fecha | Tipo | Segmento | Hallazgo | Evidencia anonimizada | Acción |
 |---|---|---|---|---|---|
-| — | — | — | — | — | — |
+| 16/08/2026 | Prueba de usabilidad | Profesionales de construcción y personas externas | El público objetivo completó presupuestos sin ayuda; varios baños genéricos en ≈10 min; sin errores observados. Personas sin conocimientos de construcción tardaron más, fuera del nicho prioritario. | Informe verbal anonimizado del titular | Mantener el recorrido; pasar a validación pagada tras cerrar procedencia del catálogo |
 
 ---
 
 # 11. Próximo bloque de trabajo
 
-## Etapa 1 activa — siguiente bloque: cerrar la etapa con validación externa
+## Etapa 1 activa — usabilidad superada; cierre del catálogo y paso a validación pagada
 
 La continuidad operativa exacta para una conversación nueva está en `docs/PUNTO_DE_CONTINUACION.md` (dónde se quedó el trabajo y qué sigue) y `docs/CONTINUIDAD_STAGING_SUPABASE.md` (estado de fondo de staging); deben seguirse sin reconstruir el estado desde el chat.
 
 **Estado al 16/08/2026 (noche):** E1-059 decidida (cobro manual para el
 piloto), E1-060 cerrada por completo (panel + recibo PDF + corte automático +
-avisos de vencimiento) y E1-061 documentada (`docs/PROCESO_PILOTOS.md`). La
-parte construible de la Etapa 1 está terminada; lo que queda para marcarla es
-**validación externa**, no código:
+avisos de vencimiento), E1-061 documentada (`docs/PROCESO_PILOTOS.md`) y PR
+#25 fusionado. El titular confirmó además el funcionamiento de las licencias.
 
-1. Pruebas de usabilidad con **tres usuarios externos** (E1-012/013/014): un
-   usuario nuevo debe generar su primer PDF en menos de 20 minutos con ayuda
-   mínima.
+La **validación externa de usabilidad ya está superada** (E1-012/013/014):
+varias personas probaron el producto; profesionales de construcción no
+necesitaron ayuda y varios presupuestos genéricos de baño se completaron en
+aproximadamente 10 minutos, sin errores observados. Las personas sin
+conocimientos de construcción tardaron más, lo que confirma el nicho en vez de
+invalidar el recorrido.
+
+Lo siguiente es:
+
+1. **Cerrar el catálogo comercial distribuido**: procedencia/derechos de cada
+   fuente y precios referenciales con región y fecha (E1-022 a E1-030). Este es
+   el único criterio de producto que aún impide marcar la Etapa 1 completa.
 2. **Vídeo de demostración de 5 minutos** (E1-051, operativo del titular) para
-   cerrar la landing (E1-056).
-3. Catálogo comercial con procedencia revisada y precios fechados.
-4. Operativa del bloque de licencias (ver `docs/PROCESO_PILOTOS.md` §0):
-   migración `b7c4a9e2d31f` en Supabase, cortesía a la organización del
-   titular y `COTIZAT_EXIGIR_LICENCIA=true` al empezar el piloto.
-
-Superado eso: la puerta es **beta web privada para prospectos** y comienzo de
-la validación pagada (Etapa 2), sin afirmar todavía preparación para
-lanzamiento público.
+   cerrar la landing (E1-056); no bloquea comenzar la preparación comercial.
+3. Completar antes del primer cobro los pendientes operativos declarados:
+   buzón de soporte, titular legal y Vercel Pro.
+4. Abrir la **Etapa 2 — validación comercial pagada**: lista de prospectos,
+   entrevistas y cinco pilotos pagados con seguimiento de ocho semanas.
 
 <details><summary>Histórico: bloque previo — validación con matriz de aceptación en staging (superado el 14-16/08/2026)</summary>
 
@@ -850,7 +857,7 @@ La base browser-first ya está desplegada en staging Vercel + Supabase (`https:/
 2. **E1W-009 / E1W-011 — prioridad inmediata:** verificar la subida/descarga de imágenes, anexos PDF y fichas técnicas a través del proxy autorizado conectando con el bucket privado `cotizat-private`. Es el punto 4 de la matriz y la primera prueba real de `SupabaseStorage`, hasta ahora solo ejercitado contra una simulación REST.
 3. **E1W-007 / E1W-008:** las invitaciones de equipo, el cambio de roles (`lectura` vs `miembro`), las cookies de sesión (HttpOnly/Secure/SameSite, `document.cookie` vacío) y la ausencia de violaciones CSP ya quedaron validados en navegador real el 14/08/2026 (puntos 6-8, 11 y 12 de la matriz). La recuperación de clave ya está validada.
 4. **Infraestructura — hecho:** el rate limiting distribuido ya está implementado (`app/ratelimit.py`, backend Upstash Redis por REST con degradación a memoria). Para activarlo en staging solo faltan las variables `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` y `COTIZAT_REQUIRE_DISTRIBUTED_RATELIMIT=true` en Vercel; `/readyz` publica el estado en `checks.rate_limit`.
-5. **E1-012 a E1-014:** retomar usabilidad y medición externa sobre el recorrido web.
+5. **E1-012 a E1-014:** este pendiente histórico fue superado posteriormente el 16/08/2026; la evidencia actual está en §1.2 y §10.
 
 Evidencia acumulada al 14/08/2026:
 
