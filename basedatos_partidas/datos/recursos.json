@@ -318,6 +318,24 @@
       "descripcion": "Canon de vertido en vertedero o botadero autorizado.",
       "precio": 3.5,
       "estado": "provisional"
+    },
+    "MT-CONS-DEM": {
+      "unidad": "ud",
+      "descripcion": "Consumibles de demolición: puntas y cinceles de martillo, discos de corte y hojas de espátula.",
+      "precio": 1.1,
+      "estado": "provisional"
+    },
+    "MT-PROT-OBRA": {
+      "unidad": "m2",
+      "descripcion": "Protección de obra con plástico, cartón corrugado y cinta de enmascarar.",
+      "precio": 0.35,
+      "estado": "provisional"
+    },
+    "MT-DISOL-ADH": {
+      "unidad": "l",
+      "descripcion": "Disolvente removedor de adhesivos para levantado de pisos vinílicos y alfombras.",
+      "precio": 5.2,
+      "estado": "provisional"
     }
   },
   "maquinaria": {
@@ -391,6 +409,18 @@
       "unidad": "h",
       "descripcion": "Mezcladora de concreto y mortero de 1 saco, incluida amortización y combustible.",
       "precio": 3.6,
+      "estado": "provisional"
+    },
+    "MQ-MART-NEUM": {
+      "unidad": "h",
+      "descripcion": "Martillo neumático con compresor de aire, para demolición de concreto y pisos de alta dureza.",
+      "precio": 12.0,
+      "estado": "provisional"
+    },
+    "MQ-AMOLA": {
+      "unidad": "h",
+      "descripcion": "Amoladora angular con disco de diamante, para corte perimetral y de juntas.",
+      "precio": 2.4,
       "estado": "provisional"
     }
   }

@@ -231,3 +231,40 @@ dónde merece la pena invertir el tiempo de buscar precios.
 partidas. Lo único que sí conviene fijar desde el principio es la **unidad de
 compra** de cada recurso (kg o saco, m o rollo), porque cambiar la unidad sí
 obliga a revisar los rendimientos.
+
+---
+
+# Cobertura (cobertura.py)
+
+Informe del avance del catálogo sobre la taxonomía, para trabajar **capítulo a
+capítulo y grupo a grupo** sin dejar huecos:
+
+```bash
+python3 basedatos_partidas/cobertura.py              # resumen por capítulo
+python3 basedatos_partidas/cobertura.py D            # detalle del capítulo D
+python3 basedatos_partidas/cobertura.py --pendientes # grupos declarados y vacíos
+```
+
+## Criterio de trabajo
+
+1. Se elige un **grupo** (tercer nivel, p. ej. `DRS`).
+2. Se completa **entero**, con todas las variantes de material y sus remates.
+3. Se pasa al siguiente grupo del mismo subcapítulo.
+
+Un grupo se considera cerrado cuando cubre las tipologías que realmente se
+encuentran en obra en Venezuela, no cuando iguala a ninguna base ajena.
+
+## Terminología
+
+El catálogo usa vocabulario de obra venezolano:
+
+| No usar | Usar |
+|---|---|
+| hormigón | concreto |
+| pavimento / solado | piso |
+| enfoscado / guarnecido | friso |
+| falso techo | cielo raso |
+| terrazo (continuo) | granito vaciado en sitio |
+| escayola | yeso |
+| fontanero | plomero |
+| bote de escombro | bote de escombro / retiro a vertedero |

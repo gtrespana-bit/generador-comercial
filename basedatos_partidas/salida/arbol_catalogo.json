@@ -114,14 +114,134 @@
               "partidas": [
                 {
                   "codigo": "DRS010",
-                  "titulo": "Demolición de pavimento cerámico existente y su capa de agarre.",
+                  "titulo": "Demolición de piso cerámico y su capa de pega.",
                   "unidad": "m²",
-                  "precio": 4.62,
+                  "precio": 4.88,
                   "horas": 0.53,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DRS015",
+                  "titulo": "Demolición de rodapié cerámico.",
+                  "unidad": "m",
+                  "precio": 1.0,
+                  "horas": 0.12,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DRS020",
+                  "titulo": "Demolición de piso de granito o terrazo en baldosa.",
+                  "unidad": "m²",
+                  "precio": 5.9,
+                  "horas": 0.62,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DRS025",
+                  "titulo": "Demolición de rodapié de granito o terrazo.",
+                  "unidad": "m",
+                  "precio": 1.17,
+                  "horas": 0.14,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DRS030",
+                  "titulo": "Demolición de piso de granito vaciado en sitio.",
+                  "unidad": "m²",
+                  "precio": 13.04,
+                  "horas": 0.95,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DRS040",
+                  "titulo": "Demolición de piso de cemento pulido.",
+                  "unidad": "m²",
+                  "precio": 6.92,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DRS045",
+                  "titulo": "Demolición de rodapié de cemento.",
+                  "unidad": "m",
+                  "precio": 0.91,
+                  "horas": 0.11,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DRS050",
+                  "titulo": "Demolición de piso de piedra natural.",
+                  "unidad": "m²",
+                  "precio": 6.34,
+                  "horas": 0.68,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DRS055",
+                  "titulo": "Demolición de rodapié de piedra natural.",
+                  "unidad": "m",
+                  "precio": 1.25,
+                  "horas": 0.15,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DRS060",
+                  "titulo": "Levantado de piso de parquet o madera.",
+                  "unidad": "m²",
+                  "precio": 2.17,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DRS065",
+                  "titulo": "Levantado de rodapié de madera.",
+                  "unidad": "m",
+                  "precio": 0.43,
+                  "horas": 0.08,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DRS070",
+                  "titulo": "Levantado de piso laminado.",
+                  "unidad": "m²",
+                  "precio": 1.26,
+                  "horas": 0.18,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DRS080",
+                  "titulo": "Levantado de piso vinílico, linóleo o alfombra.",
+                  "unidad": "m²",
+                  "precio": 2.12,
+                  "horas": 0.22,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DRS090",
+                  "titulo": "Demolición de piso continuo de concreto.",
+                  "unidad": "m²",
+                  "precio": 15.33,
+                  "horas": 1.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DRS100",
+                  "titulo": "Demolición de contrapiso o base de mortero de nivelación.",
+                  "unidad": "m²",
+                  "precio": 7.18,
+                  "horas": 0.75,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DRS110",
+                  "titulo": "Desmontaje de piso técnico registrable.",
+                  "unidad": "m²",
+                  "precio": 1.09,
+                  "horas": 0.15,
                   "producto_cliente": false
                 }
               ],
-              "n": 1
+              "n": 16
             },
             {
               "codigo": "DRC",
@@ -160,7 +280,7 @@
               "n": 1
             }
           ],
-          "n": 3
+          "n": 18
         },
         {
           "codigo": "DS",
@@ -175,7 +295,7 @@
           "n": 0
         }
       ],
-      "n": 5
+      "n": 20
     },
     {
       "codigo": "A",
