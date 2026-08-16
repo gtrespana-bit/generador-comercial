@@ -1,0 +1,18 @@
+{
+  "codigo": "PRO-REV-005",
+  "capitulo": "REVESTIMIENTOS",
+  "unidad": "m²",
+  "titulo": "Recrecido con mortero autonivelante de 5 mm de espesor medio.",
+  "descripcion": "Regularización de soporte mediante mortero autonivelante de base cemento CT-C25-F6, de 5 mm de espesor medio, para dejar el soporte en condiciones de planitud aptas para la colocación de pavimento cerámico de gran formato. Incluye limpieza y aspirado previo del soporte, aplicación de imprimación tapaporos para regular la absorción, colocación de banda perimetral de desolidarización, amasado mecánico, vertido, extendido y desaireado del producto, y tiempo de espera hasta transitabilidad. Medido en superficie realmente ejecutada.",
+  "margen": 0.30,
+  "complementarios_pct": 2,
+  "recursos": [
+    {"ref": "MT-AUT-NIV",    "rendimiento": 8.50},
+    {"ref": "MT-IMP-PRIM",   "rendimiento": 0.180},
+    {"ref": "MT-PER-BANDA",  "rendimiento": 0.400},
+    {"ref": "MQ-BATID",      "rendimiento": 0.070},
+    {"ref": "MQ-ASPIR",      "rendimiento": 0.050},
+    {"ref": "MO-OF1-ALB",    "rendimiento": 0.150},
+    {"ref": "MO-PEO-ESP",    "rendimiento": 0.150}
+  ]
+}

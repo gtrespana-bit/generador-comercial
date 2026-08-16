@@ -1,0 +1,19 @@
+{
+  "codigo": "PRO-REV-003",
+  "capitulo": "REVESTIMIENTOS",
+  "unidad": "m²",
+  "titulo": "Alicatado de gres porcelánico rectificado 30x90 cm en paramento interior.",
+  "descripcion": "Suministro y colocación de revestimiento de paramento interior con baldosa de gres porcelánico rectificado de 30x90 cm y 9 mm de espesor, gama media, en baños y cocinas. Colocación en capa fina con adhesivo cementoso mejorado C2 TE de deslizamiento reducido, aplicado con llana dentada sobre soporte enfoscado y regularizado, con nivelación mediante crucetas y cuñas y rejuntado con mortero CG2. Incluye replanteo de hiladas para evitar piezas cortadas en zonas vistas, cortes y taladros para el paso de instalaciones y mecanismos, ejecución de encuentros y limpieza final. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
+  "margen": 0.30,
+  "complementarios_pct": 2,
+  "recursos": [
+    {"ref": "MT-POR-PARED",  "rendimiento": 1.07},
+    {"ref": "MT-ADH-C2TE",   "rendimiento": 6.00},
+    {"ref": "MT-JUN-CG2",    "rendimiento": 0.40},
+    {"ref": "MT-CRU-NIV",    "rendimiento": 8.00},
+    {"ref": "MQ-CORT-AGUA",  "rendimiento": 0.090},
+    {"ref": "MQ-BATID",      "rendimiento": 0.050},
+    {"ref": "MO-OF1-ALI",    "rendimiento": 0.520},
+    {"ref": "MO-AYU-SOL",    "rendimiento": 0.260}
+  ]
+}

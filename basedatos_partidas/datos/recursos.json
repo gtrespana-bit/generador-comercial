@@ -1,0 +1,37 @@
+{
+  "_comentario": "Cuadro de precios de recursos. FUENTE ÚNICA DE VERDAD de los precios. Cambiar aquí un precio actualiza automáticamente todas las partidas que usan ese recurso. Los valores marcados 'provisional' hay que sustituirlos por los reales de vuestros proveedores y convenio.",
+  "_revision": "2026-08 provisional",
+
+  "mano_obra": {
+    "MO-OF1-SOL": {"unidad": "h", "descripcion": "Oficial 1ª solador.", "precio": 22.50, "estado": "provisional"},
+    "MO-OF1-ALI": {"unidad": "h", "descripcion": "Oficial 1ª alicatador.", "precio": 22.50, "estado": "provisional"},
+    "MO-OF1-ALB": {"unidad": "h", "descripcion": "Oficial 1ª albañil.", "precio": 22.00, "estado": "provisional"},
+    "MO-AYU-SOL": {"unidad": "h", "descripcion": "Ayudante solador.", "precio": 19.00, "estado": "provisional"},
+    "MO-AYU-ALB": {"unidad": "h", "descripcion": "Ayudante albañil.", "precio": 18.80, "estado": "provisional"},
+    "MO-PEO-ORD": {"unidad": "h", "descripcion": "Peón ordinario de construcción.", "precio": 17.50, "estado": "provisional"},
+    "MO-PEO-ESP": {"unidad": "h", "descripcion": "Peón especializado de construcción.", "precio": 18.20, "estado": "provisional"}
+  },
+
+  "materiales": {
+    "MT-POR-6060": {"unidad": "m2", "descripcion": "Baldosa de gres porcelánico esmaltado, 60x60 cm y 9 mm de espesor, absorción de agua E<0,5%, grupo BIa según UNE-EN 14411, gama media.", "precio": 18.50, "estado": "provisional"},
+    "MT-POR-12060": {"unidad": "m2", "descripcion": "Baldosa de gres porcelánico rectificado de gran formato, 120x60 cm y 10 mm de espesor, absorción de agua E<0,5%, grupo BIa según UNE-EN 14411, gama media.", "precio": 27.00, "estado": "provisional"},
+    "MT-POR-PARED": {"unidad": "m2", "descripcion": "Baldosa de gres porcelánico rectificado para revestimiento de paramentos, 30x90 cm y 9 mm de espesor, gama media.", "precio": 23.00, "estado": "provisional"},
+    "MT-POR-RODA": {"unidad": "m", "descripcion": "Rodapié de gres porcelánico, 8x60 cm, a juego con el pavimento.", "precio": 4.20, "estado": "provisional"},
+    "MT-ADH-C2TE": {"unidad": "kg", "descripcion": "Adhesivo cementoso mejorado C2 TE, con deslizamiento reducido y tiempo abierto ampliado, según UNE-EN 12004.", "precio": 0.48, "estado": "provisional"},
+    "MT-ADH-C1": {"unidad": "kg", "descripcion": "Adhesivo cementoso normal C1, según UNE-EN 12004, color gris.", "precio": 0.32, "estado": "provisional"},
+    "MT-JUN-CG2": {"unidad": "kg", "descripcion": "Mortero de juntas cementoso CG2, según UNE-EN 13888, con absorción de agua reducida y resistencia elevada a la abrasión.", "precio": 1.35, "estado": "provisional"},
+    "MT-CRU-NIV": {"unidad": "ud", "descripcion": "Sistema de crucetas y cuñas niveladoras de un solo uso para colocación de baldosa.", "precio": 0.09, "estado": "provisional"},
+    "MT-AUT-NIV": {"unidad": "kg", "descripcion": "Mortero autonivelante de base cemento, CT-C25-F6 según UNE-EN 13813, para regularización de soportes.", "precio": 0.42, "estado": "provisional"},
+    "MT-IMP-PRIM": {"unidad": "l", "descripcion": "Imprimación tapaporos de resinas acrílicas en dispersión acuosa, para regularizar la absorción del soporte.", "precio": 3.80, "estado": "provisional"},
+    "MT-PER-BANDA": {"unidad": "m", "descripcion": "Banda perimetral de polietileno expandido de 10 mm para desolidarizar el recrecido de los paramentos.", "precio": 0.55, "estado": "provisional"},
+    "MT-SAC-ESC": {"unidad": "ud", "descripcion": "Saco de escombro de rafia de alta resistencia para retirada manual de residuos.", "precio": 0.65, "estado": "provisional"}
+  },
+
+  "maquinaria": {
+    "MQ-CORT-AGUA": {"unidad": "h", "descripcion": "Cortadora eléctrica de banco con disco de diamante y refrigeración por agua, incluida amortización y consumo.", "precio": 3.20, "estado": "provisional"},
+    "MQ-BATID": {"unidad": "h", "descripcion": "Batidora mezcladora eléctrica de doble varilla para amasado de morteros y adhesivos.", "precio": 1.60, "estado": "provisional"},
+    "MQ-MART-ELEC": {"unidad": "h", "descripcion": "Martillo eléctrico de demolición de 5 kg, incluida amortización y consumo.", "precio": 3.90, "estado": "provisional"},
+    "MQ-ASPIR": {"unidad": "h", "descripcion": "Aspirador industrial con filtro de polvo fino para limpieza de soporte y control de polvo.", "precio": 2.10, "estado": "provisional"},
+    "MQ-VENT-SUC": {"unidad": "h", "descripcion": "Sistema de ventosas de elevación para manipulación de piezas de gran formato.", "precio": 2.80, "estado": "provisional"}
+  }
+}

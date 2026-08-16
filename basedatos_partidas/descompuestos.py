@@ -26,7 +26,11 @@ from pathlib import Path
 BASE = Path(__file__).resolve().parent
 RAIZ = BASE.parent
 ORIGEN = BASE / "datos" / "descompuestos"
+RECURSOS = BASE / "datos" / "recursos.json"
 SALIDA = BASE / "salida" / "descompuestos"
+
+# Margen por defecto para pasar de coste directo a precio de venta del catálogo.
+MARGEN_DEFECTO = 0.30
 
 # Layout de 8 columnas (como DPT020.xlsx): A Código, D Unidad, E Descripción,
 # F Rendimiento, G Precio unitario, H Importe.
@@ -69,6 +73,50 @@ def _f_total(offsets: list[int]) -> str:
 F_COMPLEMENTARIOS = "=ROUND(INDIRECT(ADDRESS(ROW()+(0), COLUMN()+(-2), 1))*INDIRECT(ADDRESS(ROW()+(0), COLUMN()+(-1), 1))/100, 2)"
 
 
+def cargar_recursos() -> dict:
+    """Aplana datos/recursos.json en un mapa codigo -> ficha del recurso."""
+    if not RECURSOS.exists():
+        return {}
+    bruto = json.loads(RECURSOS.read_text(encoding="utf-8"))
+    plano: dict[str, dict] = {}
+    for grupo in ("materiales", "maquinaria", "mano_obra"):
+        for codigo, ficha in (bruto.get(grupo) or {}).items():
+            plano[codigo] = {**ficha, "grupo": grupo, "codigo": codigo}
+    return plano
+
+
+def resolver_recursos(partida: dict, catalogo: dict) -> list[dict]:
+    """Convierte las líneas de la partida en recursos completos.
+
+    Una línea puede venir de dos formas:
+      * `{"ref": "MO-OF1-SOL", "rendimiento": 0.40}`  -> hereda grupo, unidad,
+        descripción y precio del cuadro de recursos (recomendado).
+      * `{"grupo": ..., "codigo": ..., "unidad": ..., "descripcion": ...,
+         "rendimiento": ..., "precio": ...}` -> definida por completo en línea.
+    """
+    resueltos = []
+    for linea in partida.get("recursos", []):
+        ref = linea.get("ref")
+        if ref:
+            ficha = catalogo.get(ref)
+            if not ficha:
+                raise ValueError(
+                    f"{partida['codigo']}: el recurso «{ref}» no existe en recursos.json"
+                )
+            resueltos.append({
+                "grupo": ficha["grupo"],
+                "codigo": ref,
+                "unidad": linea.get("unidad") or ficha["unidad"],
+                "descripcion": linea.get("descripcion") or ficha["descripcion"],
+                "rendimiento": float(linea["rendimiento"]),
+                "precio": float(linea.get("precio", ficha["precio"])),
+            })
+        else:
+            resueltos.append({**linea, "rendimiento": float(linea["rendimiento"]),
+                              "precio": float(linea["precio"])})
+    return resueltos
+
+
 def construir_hoja(partida: dict, ruta: Path) -> dict:
     from openpyxl import Workbook
     from openpyxl.styles import Alignment, Border, Font, Side
@@ -105,7 +153,7 @@ def construir_hoja(partida: dict, ruta: Path) -> dict:
     filas_subtotal: list[int] = []   # filas donde queda cada subtotal
     totales: dict[str, float] = {}
 
-    recursos = partida.get("recursos", [])
+    recursos = partida["_recursos"]
     for clave, etiqueta in ORDEN_GRUPOS:
         del_grupo = [r for r in recursos if r.get("grupo") == clave]
         if not del_grupo:
@@ -194,9 +242,14 @@ def main(argv: list[str]) -> int:
     if not fuentes:
         sys.exit("No hay descompuestos que generar.")
 
+    catalogo_recursos = cargar_recursos()
+    print(f"Cuadro de recursos: {len(catalogo_recursos)} recursos cargados\n")
+
     fallos = 0
+    resumen_catalogo: list[dict] = []
     for fuente in fuentes:
         partida = json.loads(fuente.read_text(encoding="utf-8"))
+        partida["_recursos"] = resolver_recursos(partida, catalogo_recursos)
         destino = SALIDA / f"{partida['codigo']}.xlsx"
         resumen = construir_hoja(partida, destino)
         print(f"\n{partida['codigo']}  {partida['titulo']}")
@@ -221,10 +274,58 @@ def main(argv: list[str]) -> int:
               f"{len(p.get('filas', []))} filas")
         print(f"    costes leídos por la app: " + ", ".join(
             f"{k}={v:.2f}" for k, v in costes.items() if isinstance(v, (int, float))))
-        horas = sum(float(r["rendimiento"]) for r in partida.get("recursos", [])
-                    if r.get("grupo") == "mano_obra")
+        horas = sum(r["rendimiento"] for r in partida["_recursos"]
+                    if r["grupo"] == "mano_obra")
         print(f"    horas de mano de obra por {partida['unidad']}: {horas:.3f} h")
+
+        margen = float(partida.get("margen", MARGEN_DEFECTO))
+        coste = resumen["coste_directo"]
+        resumen_catalogo.append({
+            "codigo": partida["codigo"],
+            "capitulo": partida.get("capitulo", ""),
+            "titulo": partida["titulo"],
+            "descripcion": partida["descripcion"],
+            "unidad": partida["unidad"],
+            "coste_directo": coste,
+            "margen": margen,
+            "precio_venta": round(coste * (1 + margen), 2),
+            "horas": round(horas, 3),
+            "costes": resumen["totales"],
+        })
+
+    if resumen_catalogo:
+        escribir_catalogo(resumen_catalogo)
     return 1 if fallos else 0
+
+
+def escribir_catalogo(filas: list[dict]) -> None:
+    """Vuelca el resumen de todas las partidas al maestro del catálogo."""
+    ruta = BASE / "datos" / "partidas.csv"
+    cabeceras = [
+        "codigo", "capitulo", "partida", "descripcion", "unidad", "precio",
+        "categoria", "subcategoria", "coste_materiales", "coste_mano_obra",
+        "coste_complementarios", "coste_otros", "rendimiento",
+        "desperdicio_pct", "notas_tecnicas",
+    ]
+    import csv as _csv
+    with ruta.open("w", encoding="utf-8", newline="") as fh:
+        w = _csv.writer(fh, delimiter=";")
+        w.writerow(cabeceras)
+        for f in filas:
+            c = f["costes"]
+            w.writerow([
+                f["codigo"], f["capitulo"], f["titulo"], f["descripcion"],
+                "m2" if f["unidad"] == "m²" else f["unidad"],
+                f"{f['precio_venta']:.2f}",
+                f["capitulo"], "",
+                f"{c.get('materiales', 0):.2f}",
+                f"{c.get('mano_obra', 0):.2f}",
+                f"{c.get('complementarios', 0):.2f}",
+                f"{c.get('maquinaria', 0):.2f}",
+                f"{f['horas']:.3f} h/{f['unidad']}",
+                "", f"Coste directo {f['coste_directo']:.2f} EUR + margen {f['margen']*100:.0f}%",
+            ])
+    print(f"\nCatálogo consolidado -> {ruta.relative_to(RAIZ)} ({len(filas)} partidas)")
 
 
 if __name__ == "__main__":

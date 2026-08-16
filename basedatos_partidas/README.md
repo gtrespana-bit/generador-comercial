@@ -102,3 +102,46 @@ cacheado de una fórmula, y el lector del proyecto leería celdas vacías.
 Ejecutar: `python3 basedatos_partidas/descompuestos.py [CODIGO ...]`
 El script valida cada archivo con `es_formato_cype_xlsx` y `analizar_cype_xlsx`
 e imprime los costes tal y como los va a leer la aplicación.
+
+---
+
+# Cuadro de recursos (datos/recursos.json)
+
+**Fuente única de verdad de los precios.** Agrupa mano de obra, materiales y
+maquinaria. Cada partida referencia recursos por su código:
+
+```json
+{"ref": "MO-OF1-SOL", "rendimiento": 0.400}
+```
+
+y hereda unidad, descripción y precio del cuadro. Cambiar el precio de un
+recurso **recalcula automáticamente todas las partidas que lo usan**: no hay
+que tocar ninguna partida para actualizar el coste de la hora de oficial o el
+precio del porcelánico.
+
+Cada recurso lleva un campo `estado`. Todo lo que ponga `provisional` está
+pendiente de sustituir por el dato real de vuestros proveedores y convenio.
+
+## Cadena completa
+
+```
+datos/recursos.json  +  datos/descompuestos/*.json
+          │
+          ▼   descompuestos.py
+   salida/descompuestos/*.xlsx      (hoja de descompuesto, se sube una a una)
+          +
+   datos/partidas.csv               (maestro consolidado, regenerado)
+          │
+          ▼   construir.py
+   salida/catalogo_partidas.{csv,xlsx,json}   (carga masiva del catálogo)
+```
+
+El precio de venta del catálogo sale de `coste directo × (1 + margen)`, con
+`margen` por partida (0,30 por defecto).
+
+## Orden de ejecución
+
+```bash
+python3 basedatos_partidas/descompuestos.py   # 1. descompuestos + maestro
+python3 basedatos_partidas/construir.py       # 2. catálogo importable
+```

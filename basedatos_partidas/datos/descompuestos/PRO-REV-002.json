@@ -1,0 +1,20 @@
+{
+  "codigo": "PRO-REV-002",
+  "capitulo": "REVESTIMIENTOS",
+  "unidad": "m²",
+  "titulo": "Solado de gres porcelánico rectificado de gran formato 120x60 cm.",
+  "descripcion": "Suministro y colocación de pavimento de baldosa de gres porcelánico rectificado de gran formato, 120x60 cm y 10 mm de espesor, gama media. Colocación en capa fina con adhesivo cementoso mejorado C2 TE mediante doble encolado, manipulación de las piezas con sistema de ventosas, nivelación con cuñas para garantizar la planitud exigida por el formato y junta mínima de 2 mm rejuntada con mortero CG2. Incluye comprobación previa de la planitud del soporte, replanteo del despiece, cortes con cortadora de disco de diamante refrigerada por agua, limpieza final y retirada de restos. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
+  "margen": 0.30,
+  "complementarios_pct": 2,
+  "recursos": [
+    {"ref": "MT-POR-12060",  "rendimiento": 1.08},
+    {"ref": "MT-ADH-C2TE",   "rendimiento": 7.50},
+    {"ref": "MT-JUN-CG2",    "rendimiento": 0.30},
+    {"ref": "MT-CRU-NIV",    "rendimiento": 4.00},
+    {"ref": "MQ-CORT-AGUA",  "rendimiento": 0.110},
+    {"ref": "MQ-VENT-SUC",   "rendimiento": 0.150},
+    {"ref": "MQ-BATID",      "rendimiento": 0.060},
+    {"ref": "MO-OF1-SOL",    "rendimiento": 0.560},
+    {"ref": "MO-AYU-SOL",    "rendimiento": 0.560}
+  ]
+}

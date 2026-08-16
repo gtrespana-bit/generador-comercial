@@ -1,0 +1,16 @@
+{
+  "codigo": "PRO-DEM-001",
+  "capitulo": "DEMOLICIONES",
+  "unidad": "m²",
+  "titulo": "Demolición de pavimento cerámico existente y su capa de agarre.",
+  "descripcion": "Demolición de pavimento existente de baldosa cerámica o de gres y de su capa de agarre de mortero, ejecutada con martillo eléctrico manual, sin afectar a la capa de compresión del forjado ni a los elementos constructivos contiguos. Incluye protección previa de los paramentos y elementos que permanecen, control de polvo mediante aspiración, retirada manual de escombro en sacos hasta el punto de acopio y limpieza y barrido de la superficie resultante, dejándola preparada para recibir el nuevo soporte. No incluye el transporte a gestor autorizado, que se valora en su capítulo correspondiente. Medido en superficie realmente demolida.",
+  "margen": 0.30,
+  "complementarios_pct": 3,
+  "recursos": [
+    {"ref": "MT-SAC-ESC",    "rendimiento": 0.60},
+    {"ref": "MQ-MART-ELEC",  "rendimiento": 0.230},
+    {"ref": "MQ-ASPIR",      "rendimiento": 0.120},
+    {"ref": "MO-PEO-ESP",    "rendimiento": 0.240},
+    {"ref": "MO-PEO-ORD",    "rendimiento": 0.290}
+  ]
+}
