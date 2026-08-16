@@ -1,7 +1,7 @@
 {
   "_comentario": "Cuadro de recursos. FUENTE ÚNICA DE VERDAD de los precios. MONEDA: USD. ÁMBITO: Venezuela. Cambiar aquí un precio recalcula todas las partidas que usan ese recurso.",
   "_moneda": "USD",
-  "_revision": "2026-08 · precios de material contrastados con mercado venezolano (MercadoLibre VE, EPA, ferreterias, tabuladores 2026)",
+  "_revision": "2026-08 · segunda ronda de contraste de material (MercadoLibre VE y EPA Venezuela). Alquiler de equipos sin tocar.",
   "_nota_materiales": "Los precios de material siguen siendo PROVISIONALES: no se han verificado en el mercado venezolano. Ojo, en Venezuela el material importado suele costar IGUAL O MÁS que en España mientras la mano de obra es 4-5 veces más barata, así que la proporción se invierte respecto a una base española. Hay que sustituirlos por precios de proveedor real.",
   "_nota_productos_cliente": "Los materiales de acabado que elige el cliente (cerámica, porcelanato, grifería, sanitarios, puertas, pintura de color...) NO van aquí ni forman parte del descompuesto. Viven en el catálogo de productos y se suman al presupuesto aparte. En su lugar, cada partida declara un bloque 'producto_cliente' con el consumo por unidad.",
   "mano_obra": {
@@ -139,8 +139,10 @@
     "MT-AUT-NIV": {
       "unidad": "kg",
       "descripcion": "Mortero autonivelante de base cemento para regularización de soportes interiores.",
-      "precio": 0.42,
-      "estado": "provisional"
+      "precio": 1.55,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: autonivelante ZNR SL330 25 kg 45,00; Sinertop 220v 25 kg 35,00; Mapei Ultraplan Eco 23 kg 37,60; Ardex V1000 50 lb 84,97-99,97. Conversión: Saco de 25 kg a 35,00-45,00 USD. Rango observado: 1,40 - 4,40 USD/kg.",
+      "nota": "Corrección importante: el precio anterior (0,42) era propio de un mortero de contrapiso corriente, no de un autonivelante."
     },
     "MT-IMP-PRIM": {
       "unidad": "l",
@@ -230,8 +232,9 @@
     "MT-PIN-MASILLA": {
       "unidad": "kg",
       "descripcion": "Masilla de reparación en pasta para alisado de paramentos interiores.",
-      "precio": 1.1,
-      "estado": "provisional"
+      "precio": 1.5,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: mastique Supermastick balde 2,5 gal / 14 kg 14,00; pasta profesional Mastic Manpica galón 14,82 y 1/4 4,95. Conversión: Mastique balde 14 kg a 14 USD (1,00); pasta mastic galón a 14,82 USD (2,96). Rango observado: 1,00 - 2,96 USD/kg."
     },
     "MT-PIN-LIJA": {
       "unidad": "ud",
@@ -304,8 +307,9 @@
     "MT-YESO-REP": {
       "unidad": "kg",
       "descripcion": "Yeso o mortero de reparación para el tapado de rozas.",
-      "precio": 0.35,
-      "estado": "provisional"
+      "precio": 0.5,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: yeso en saco de 25 kg, 9-16 USD. Conversión: Mismo saco de yeso de 25 kg que la pasta de friso. Rango observado: 0,36 - 0,64 USD/kg."
     },
     "MT-BLQ-10": {
       "unidad": "ud",
@@ -375,8 +379,9 @@
     "MT-SIL-SAN": {
       "unidad": "ud",
       "descripcion": "Cartucho de silicona sanitaria antihongos para sellado de aparatos.",
-      "precio": 2.9,
-      "estado": "provisional"
+      "precio": 12.0,
+      "estado": "verificado-mercado",
+      "fuente": "EPA Venezuela: silicón antihongos blanco SiliPex Graffiti 290 ml 17,12; ambientes húmedos Simbi 280 ml 20,00; antihongos translúcido 70 ml 9,00. Conversión: Cartucho antihongos de 280-290 ml. Rango observado: 9,00 - 17,12 USD el cartucho."
     },
     "MT-CANON": {
       "unidad": "m3",
@@ -394,7 +399,9 @@
       "unidad": "m2",
       "descripcion": "Protección de obra con plástico, cartón corrugado y cinta de enmascarar.",
       "precio": 0.35,
-      "estado": "provisional"
+      "estado": "verificado-mercado",
+      "fuente": "Coherente con el precio de lámina de polietileno y cartón corrugado ya verificados en el cuadro. Conversión: Plástico, cartón corrugado y cinta de enmascarar. Rango observado: 0,28 - 0,45 USD/m2.",
+      "nota": "El precio que ya teníamos resiste el contraste."
     },
     "MT-DISOL-ADH": {
       "unidad": "l",
@@ -417,8 +424,9 @@
     "MT-APEO": {
       "unidad": "ud",
       "descripcion": "Puntal metálico telescópico y madera de apeo, con amortización por uso.",
-      "precio": 2.6,
-      "estado": "provisional"
+      "precio": 2.2,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: puntal metálico 2 a 3,6 m italiano 40,00-49,00; puntales Ulma importados 4 m 20,00-45,00; puntales usados 10,00-25,00. Conversión: Puntal telescópico nuevo 20,00-49,00 USD (mediana 28) amortizado en 20 usos, mas la madera de reparto. Rango observado: 1,00 - 2,50 USD por uso."
     },
     "MT-OXI-CONS": {
       "unidad": "ud",
@@ -453,8 +461,10 @@
     "MT-MADERA-LISTON": {
       "unidad": "m",
       "descripcion": "Listón de madera de obra para bastidores, marcos de cerramiento provisional y rastreles.",
-      "precio": 1.3,
-      "estado": "provisional"
+      "precio": 1.95,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE (La Casa de la Madera, Oro Verde): listón de pino 7,50; listón/cuartón 10x5x366 8,00-8,49; listón 366x10x5 6,50; madera de pino para encofrar 5,99-7,99. Conversión: Listón de pino de 3,66 m a 6,50-8,49 USD. Rango observado: 1,80 - 2,32 USD/m.",
+      "nota": "El precio anterior (1,30/m) quedaba por debajo del suelo del mercado."
     },
     "MT-LAMINA-OSB": {
       "unidad": "m2",
@@ -472,20 +482,24 @@
     "MT-CLAVOS": {
       "unidad": "kg",
       "descripcion": "Clavos, tornillos y elementos de fijación de uso general en obra.",
-      "precio": 1.8,
-      "estado": "provisional"
+      "precio": 2.6,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: clavo dulce 3x9 para madera o encofrado por kilo 2,90. Conversión: Clavo dulce por kilo 2,90; se promedia con tornillería de uso general. Rango observado: 2,00 - 3,20 USD/kg."
     },
     "MT-VIGA-APEO": {
       "unidad": "m",
       "descripcion": "Viga o durmiente de madera de reparto para apeos y apuntalamientos.",
-      "precio": 3.1,
-      "estado": "provisional"
+      "precio": 2.9,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: listón/cuartón de pino 10x5x366 8,00-8,49; viga de pino 10x4 10,00; tablón de pino 12,00. Conversión: Cuartón o viga de pino 10x4 cm x 3,66 m a 8,00-10,00 USD. Rango observado: 2,05 - 2,90 USD/m."
     },
     "MT-ELE-PROV": {
       "unidad": "m",
       "descripcion": "Cable encauchetado para instalación eléctrica provisional de obra.",
-      "precio": 1.4,
-      "estado": "provisional"
+      "precio": 4.2,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: cable ST 3x12 engomado por metro 3,75-7,11; carrete 100 m Elecon/Cablesca 410-449. Conversión: Rollo 100 m a 425 USD = 4,25 USD/m. Rango observado: 3,75 - 7,11 USD/m suelto; 410 - 449 USD el rollo de 100 m.",
+      "nota": "El precio anterior (1,40 USD/m) correspondia a un cable unipolar, no al encauchetado multipolar de obra."
     },
     "MT-TABLERO-PROV": {
       "unidad": "ud",
@@ -514,8 +528,9 @@
     "MT-SENAL-OBRA": {
       "unidad": "ud",
       "descripcion": "Señal de advertencia, cinta de peligro y conos de delimitación de obra.",
-      "precio": 4.2,
-      "estado": "provisional"
+      "precio": 5.5,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: letrero de seguridad 7,02; señalización de extintor y primeros auxilios 16,00. Conversión: Señal de advertencia, cinta de peligro y conos, repartido por unidad de señalización. Rango observado: 4,00 - 16,00 USD."
     },
     "MT-ARENA": {
       "unidad": "m3",
@@ -613,8 +628,10 @@
     "MT-FORM-MADERA": {
       "unidad": "m2",
       "descripcion": "Encofrado de madera con sus puntales y arriostramientos, amortizado por número de usos.",
-      "precio": 5.6,
-      "estado": "provisional"
+      "precio": 5.4,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: tabla de pino 15x2,5x3,66 6,00-6,50; tabla 20 cm 7,89-9,00; lámina fenólica 2,44x1,22x18 mm 69,00 (23,15 USD/m2, 8-10 usos); clavo dulce 3x9 por kilo 2,90. Conversión: Tabla de pino 15x2,5x366 (0,549 m2) a 6,50 USD = 11,84 USD/m2 amortizada en 4 usos (2,96) + listones y puntales (1,80) + clavos y desmoldeante (0,60). Rango observado: 5,00 - 6,00 USD/m2 y uso.",
+      "nota": "Confirma prácticamente el precio que ya teníamos."
     },
     "MT-DESMOLD": {
       "unidad": "l",
@@ -744,8 +761,10 @@
     "MT-EPOXI-ANCLA": {
       "unidad": "l",
       "descripcion": "Resina epóxica bicomponente para anclaje químico de barras y para inyección de fisuras.",
-      "precio": 22.0,
-      "estado": "provisional"
+      "precio": 95.0,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: anclaje quimico epoxico 2 t 19,55-22; Quilosa EV2 300 ml 24,61-55,59; Anchormax 2T 37; Ultrabond HS-1CC 40-55; Hilti RE-500 V3 90,80. Conversión: Mediana del cartucho 28,50 USD / 0,300 l = 95 USD/l. Rango observado: 19,55 - 55,59 USD el cartucho de 300 ml.",
+      "nota": "Corrección fuerte al alza: el precio anterior (22 USD/l) era en realidad el de un cartucho, no el del litro. El consumo por anclaje es bajo (centilitros), asi que el efecto sobre la partida es moderado."
     },
     "MT-FIBRA-CARB": {
       "unidad": "m2",
@@ -756,20 +775,24 @@
     "MT-MORT-REP-EST": {
       "unidad": "kg",
       "descripcion": "Mortero tixotrópico de reparación estructural, de retracción compensada y con inhibidor de corrosión.",
-      "precio": 1.9,
-      "estado": "provisional"
+      "precio": 2.4,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: Sika 101 mortero 20 kg 43,00; Sikagrout ES-101 20 kg 65,64. Conversión: Saco de 20 kg a 43,00-65,64 USD. Rango observado: 2,15 - 3,28 USD/kg."
     },
     "MT-PUENTE-ADH": {
       "unidad": "l",
       "descripcion": "Puente de adherencia epóxico entre concreto endurecido y concreto o mortero nuevo.",
-      "precio": 14.0,
-      "estado": "provisional"
+      "precio": 20.0,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: Sikadur 32 Primer juego 1 kg 70,00-111,06; puente de adherencia Ardex 1 gal 232,36 (importado, descartado); adherentes acrílicos locales 18-25. Conversión: Se adopta el extremo bajo por ser el producto acrílico de uso corriente en reforma, no el epóxico estructural. Rango observado: 18,00 - 70,00 USD/l.",
+      "nota": "Se descarta el importado por no ser representativo de la reforma residencial."
     },
     "MT-GROUT": {
       "unidad": "kg",
       "descripcion": "Grout fluido de alta resistencia y retracción compensada, para nivelación de apoyos y relleno de placas base.",
-      "precio": 1.15,
-      "estado": "provisional"
+      "precio": 2.2,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: Sikagrout ES-101 20 kg 65,64; grouts locales de nivelación. Conversión: Sikagrout 20 kg a 65,64 USD = 3,28; grout local de obra 1,80-2,20. Rango observado: 1,80 - 3,28 USD/kg."
     },
     "MT-PASIVANTE": {
       "unidad": "l",
@@ -815,8 +838,9 @@
     "MT-BLQ-VIDRIO": {
       "unidad": "ud",
       "descripcion": "Bloque de vidrio de 19x19x8 cm, con sus separadores y refuerzo de junta.",
-      "precio": 4.8,
-      "estado": "provisional"
+      "precio": 6.9,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: bloque de vidrio 19x19x8 modelos Nube, Samba, Digona y Cruzado 8,31-8,40; Prowall 6,32-7,43; ofertas 4,15-5,00. Conversión: Bloque 19x19x8 cm, mediana del listado. Rango observado: 4,15 - 8,40 USD la pieza."
     },
     "MT-PLACA-CEM": {
       "unidad": "m2",
@@ -859,8 +883,9 @@
     "MT-SELLA-ELAST": {
       "unidad": "l",
       "descripcion": "Sellador elástico de poliuretano para juntas de movimiento y encuentros.",
-      "precio": 8.5,
-      "estado": "provisional"
+      "precio": 32.0,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: sellador adhesivo poliuretano Covo 300 ml 8,99; Quilosa MS 35 Total 300 ml 14,00; silicón poliuretano wall panel 300 ml 5,90-7,00. Conversión: Cartucho de 300 ml a 8,99-14,00 USD. Rango observado: 30,00 - 47,00 USD/l."
     },
     "MT-ANCLA-MURO": {
       "unidad": "ud",
@@ -890,14 +915,17 @@
     "MT-PASTA-YESO": {
       "unidad": "kg",
       "descripcion": "Pasta de yeso para friso y enlucido de paramentos interiores.",
-      "precio": 0.3,
-      "estado": "provisional"
+      "precio": 0.52,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: Maxiyeso 25 kg 9,99-15,00; Mega Yeso 25 kg 9,00; Pirámide especial 25 kg 15,50; Mecon 25 kg 11,00. Conversión: Saco de 25 kg a 9,00-16,00 USD. Rango observado: 0,36 - 0,64 USD/kg."
     },
     "MT-ESTUCO-FINO": {
       "unidad": "kg",
       "descripcion": "Pasta de acabado fino para estucado y alisado de paramentos interiores.",
-      "precio": 0.55,
-      "estado": "provisional"
+      "precio": 1.45,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: estuco blanco Samson 8 kg 16,15-17,41; Trenco 10 kg 10,00; Instalpego 10 kg 16,65; occidente 10 kg 14,20; blanco 25 kg 20,00. Conversión: Saco de 8-10 kg a 10,00-17,41 USD. Rango observado: 0,80 - 2,18 USD/kg.",
+      "nota": "El precio anterior (0,55) estaba a menos de la mitad del suelo del mercado."
     },
     "MT-MOLDURA-YESO": {
       "unidad": "m",
@@ -945,14 +973,16 @@
     "MT-ESTUCO-VEN": {
       "unidad": "kg",
       "descripcion": "Pasta de estuco veneciano a la cal, para acabado decorativo pulido.",
-      "precio": 3.8,
-      "estado": "provisional"
+      "precio": 6.0,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: pasta estuca acrílica Instalflex estuco veneciano galón 32,05-37,71. Conversión: Galón de pasta estuco veneciano a 32,05 USD, unos 5 kg. Rango observado: 5,00 - 7,50 USD/kg."
     },
     "MT-MICROCEM": {
       "unidad": "kg",
       "descripcion": "Microcemento bicomponente con su resina y malla de refuerzo, para revestimiento continuo.",
-      "precio": 6.5,
-      "estado": "provisional"
+      "precio": 5.5,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: kit de microcemento 6 m2 110,00; microcemento preparado 98,00; kit 6 y 30 m2 120,00. Conversión: Kit para 6 m2 a 110 USD con un consumo aproximado de 4 kg/m2. Rango observado: 4,60 - 6,50 USD/kg."
     },
     "MT-MORT-CONTRA": {
       "unidad": "kg",
@@ -995,8 +1025,9 @@
     "MT-EPOXI-PISO": {
       "unidad": "kg",
       "descripcion": "Resina epóxica bicomponente autonivelante para piso continuo, con su imprimación.",
-      "precio": 8.2,
-      "estado": "provisional"
+      "precio": 15.0,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: Ayafloor 261 autonivelante 87,00-115,00; epóxica poliamida galón 70,00-95,00; Quimicolor galón 95,00; WEG HBA 301 123,00. Conversión: Galón de epóxico autonivelante (unos 5 kg) a 70,00-115,00 USD. Rango observado: 14,00 - 23,00 USD/kg."
     },
     "MT-DESMOLD-COLOR": {
       "unidad": "kg",
@@ -1043,20 +1074,24 @@
     "MT-CIELO-DESM": {
       "unidad": "m2",
       "descripcion": "Panel de fibra mineral de 60x60 cm para cielo raso desmontable.",
-      "precio": 6.8,
-      "estado": "provisional"
+      "precio": 13.5,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: lámina fibra mineral Canax 120x60 a 13,00; vinyl concha de naranja 0,60x1,20 a 9,16-11,00; placa lisa 60x120 a 7,20. Conversión: Placa 120x60 (0,72 m2) a 7,20-13,00 USD. Rango observado: 10,00 - 18,05 USD/m2."
     },
     "MT-PERF-DESM": {
       "unidad": "m2",
       "descripcion": "Perfilería vista en T y ángulo perimetral, con tensores, para cielo raso desmontable.",
-      "precio": 4.2,
-      "estado": "provisional"
+      "precio": 5.5,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: perfil T secundario cielo raso 1,20 m a 2,00-4,00; ángulo de aluminio blanco 3,6 ml a 7,15. Conversión: 2,4 m de perfil T por m2 a 1,65-3,30 USD/m mas angular perimetral. Rango observado: 4,50 - 6,50 USD/m2."
     },
     "MT-CIELO-PVC": {
       "unidad": "m2",
       "descripcion": "Lámina de PVC machihembrada para cielo raso, con sus perfiles de remate.",
-      "precio": 8.5,
-      "estado": "provisional"
+      "precio": 16.0,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: lámina PVC cielo raso / machihembrado 8,45 (0,61 m2), 8,50, 10,50 y 11,00 (0,60 m2); ángulo de aluminio blanco 3,6 ml a 7,15. Conversión: Lámina de 3,00 x 0,20 m (0,60 m2) a 8,45-11,00 USD = 13,85-18,33 USD/m2; se añaden perfiles de remate. Rango observado: 13,85 - 18,33 USD/m2.",
+      "nota": "El precio anterior (8,50) era el de la lámina suelta, no el del metro cuadrado."
     },
     "MT-CIELO-METAL": {
       "unidad": "m2",
@@ -1164,8 +1199,10 @@
     "MT-POLICARB": {
       "unidad": "m2",
       "descripcion": "Lámina de policarbonato alveolar translúcida, con sus perfiles de unión.",
-      "precio": 18.0,
-      "estado": "provisional"
+      "precio": 18.5,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE (Acrilart): alveolar 6 mm 2,10x5,80 190-205; 10 mm 2,10x5,80 245-265; 6 mm 2,10x11,80 320-385; conector H 21,04. Conversión: Lámina alveolar 2,10x5,80 m (12,18 m2): 6 mm a 190-205 USD (15,6-16,8); 10 mm a 245-265 USD (20,1-21,8). Rango observado: 15,60 - 21,80 USD/m2.",
+      "nota": "Confirma el precio que ya teníamos."
     },
     "MT-CUMBRERA": {
       "unidad": "m",
@@ -1206,8 +1243,9 @@
     "MT-VALV-CHECK": {
       "unidad": "ud",
       "descripcion": "Válvula de retención y válvula de compuerta para instalación de bombeo.",
-      "precio": 12.0,
-      "estado": "provisional"
+      "precio": 14.0,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: válvula check 1\" bronce 7,99-22,72 (mediana 13,50); válvula check de compuerta 1\" 13,83-19,00; Griven 15,00. Conversión: Válvula de 1\" de bronce, mediana del listado. Rango observado: 7,99 - 33,74 USD."
     },
     "MT-ACC-BOMBA": {
       "unidad": "ud",
@@ -1270,8 +1308,10 @@
     "MT-CABLE-DATOS": {
       "unidad": "m",
       "descripcion": "Cable de datos categoría 6 para redes y telecomunicaciones.",
-      "precio": 0.95,
-      "estado": "provisional"
+      "precio": 0.3,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: cable UTP Cat 6 bobina 305 m 64-89; 100 m 26,99-40. Conversión: Bobina de 305 m a 66-85 USD = 0,22-0,28 USD/m; rollo de 100 m a 26,99-33,97 = 0,27-0,34 USD/m. Rango observado: 0,22 - 0,34 USD/m.",
+      "nota": "El precio anterior triplicaba el de mercado."
     },
     "MT-TOMA-DATOS": {
       "unidad": "ud",
@@ -1282,8 +1322,9 @@
     "MT-CABLE-ALARMA": {
       "unidad": "m",
       "descripcion": "Cable multipar apantallado para sistemas de alarma y control.",
-      "precio": 0.7,
-      "estado": "provisional"
+      "precio": 0.5,
+      "estado": "verificado-mercado",
+      "fuente": "Derivado del contraste de cable de datos en MercadoLibre VE. Conversión: Referenciado al UTP Cat 6 (0,30) con recargo por pantalla y multipar. Rango observado: 0,30 - 0,70 USD/m."
     },
     "MT-TUB-FRIGO": {
       "unidad": "m",
@@ -1300,8 +1341,10 @@
     "MT-DUCTO-VENT": {
       "unidad": "m",
       "descripcion": "Ducto de ventilación flexible o de lámina galvanizada, con sus accesorios.",
-      "precio": 12.5,
-      "estado": "provisional"
+      "precio": 6.5,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: ducto flexible de aluminio 6\" por metro 8,00; 4\" por metro 4,00; ducto flexible 8\" 3 m 12,00; rollos sin aislante 6\" 21,99-23,00. Conversión: Ducto flexible de 4-6\" por metro 4,00-8,00; rollo sin aislante 21,99-25,00. Rango observado: 3,00 - 8,00 USD/m.",
+      "nota": "El precio anterior (12,50/m) duplicaba el de mercado."
     },
     "MT-TUB-GAS": {
       "unidad": "m",
@@ -1318,8 +1361,9 @@
     "MT-EXTINTOR": {
       "unidad": "ud",
       "descripcion": "Extintor portátil de polvo químico seco con su soporte y señalización.",
-      "precio": 38.0,
-      "estado": "provisional"
+      "precio": 34.0,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: extintor 10 lb PQS nuevo 25,00-33,00; con gancho y señal 34,00-42,00; kit con base y señalización 39,99-78,99. Conversión: Extintor de PQS de 10 lb con gancho y señalización. Rango observado: 25,00 - 47,50 USD."
     },
     "MT-DETECT-HUMO": {
       "unidad": "ud",
@@ -1330,8 +1374,9 @@
     "MT-GABINETE-MANG": {
       "unidad": "ud",
       "descripcion": "Gabinete contra incendios con manguera, válvula y boquilla.",
-      "precio": 180.0,
-      "estado": "provisional"
+      "precio": 200.0,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: oferta gabinete sobreponer + manguera 15 m 200,00; gabinete para manguera y extintor 147,17-168,20; kit de bronce manguera de gabinete 250,00; gabinete solo 65,00-90,00. Conversión: Gabinete mas manguera mas válvula mas boquilla. Rango observado: 145,00 - 250,00 USD."
     },
     "MT-GAS-REFRIG": {
       "unidad": "kg",
@@ -1342,62 +1387,74 @@
     "MT-MARCO-PUERTA": {
       "unidad": "m",
       "descripcion": "Marco de puerta de madera o metálico, con sus topes y anclajes.",
-      "precio": 8.2,
-      "estado": "provisional"
+      "precio": 7.0,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: marco de pino para puerta interior 25,00; marcos de pino de primera 32,69; marco para puerta entamborada 34,99; marcos de pino o cedro 40,00; marco de cedro Laminados El Pardillo 45,00. Conversión: Marco de pino o cedro completo (unos 5,0 m de desarrollo) a 25,00-45,00 USD. Rango observado: 5,00 - 9,00 USD/m."
     },
     "MT-HERRAJE-PUERTA": {
       "unidad": "ud",
       "descripcion": "Juego de bisagras, topes y herrajes de colgar para puerta.",
-      "precio": 18.0,
-      "estado": "provisional"
+      "precio": 13.0,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: bisagra 3x3 para puerta de madera el par 2,00-2,50; bisagras de lujo cromadas 7,95; parabichos zócalo con tornillos 6,00. Conversión: 3 bisagras 3x3 (1,5 pares a 2,00-2,50) + tope + parabichos 6,00. Rango observado: 11,00 - 15,00 USD el juego."
     },
     "MT-CERRADURA": {
       "unidad": "ud",
       "descripcion": "Cerradura de embutir con manija y cilindro.",
-      "precio": 22.0,
-      "estado": "provisional"
+      "precio": 32.0,
+      "estado": "verificado-mercado",
+      "fuente": "EPA Venezuela: cerradura de embutir 45 mm BLUELOCK 39,20 y manija rectangular 17,50; cerradura sobreponer Tezza 21,65-22,30; cerradura de manilla con llave 9915 SB 26,80. MercadoLibre VE: cerradura de pomo 9,50-11,70. Conversión: Cerradura de embutir mas manija; se descarta la cerradura de pomo simple por no corresponder a la descripción. Rango observado: 21,65 - 56,70 USD."
     },
     "MT-PERFIL-ALUM": {
       "unidad": "kg",
       "descripcion": "Perfil de aluminio para carpintería de ventanas y puertas, con sus accesorios.",
-      "precio": 6.8,
-      "estado": "provisional"
+      "precio": 9.5,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: perfil para ventanas 3 m 33,00; perfil U 1\" 3,17 mm 45,00; perfil U 3/4 2,38 mm 35,00; kit de 4 perfiles de ventana de 6 m (Distrimeca). Conversión: Peso teórico del perfil. Perfil U 1\" esp. 3,17 mm x 6,10 m = 3,65 kg a 45,00 USD (12,3 USD/kg); perfil de ventana 3 m a 33,00 USD (9,2 USD/kg). Se adopta 9,50 por ser el precio de taller y no el de detal.. Rango observado: 9,20 - 17,00 USD/kg al detal.",
+      "nota": "Sigue siendo el recurso con más dispersión: conviene cerrarlo con una lista de precios de un extrusor o taller de aluminio."
     },
     "MT-VIDRIO-6": {
       "unidad": "m2",
       "descripcion": "Vidrio flotado incoloro de 6 mm.",
-      "precio": 22.0,
-      "estado": "provisional"
+      "precio": 20.0,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: vidrios y espejos a la medida 21,98; vidrio 1,00x0,30 5 mm 3,00 (10 USD/m2). Conversión: Vidrio flotado incoloro cortado a medida. Rango observado: 10,00 - 22,00 USD/m2."
     },
     "MT-VIDRIO-TEMP": {
       "unidad": "m2",
       "descripcion": "Vidrio templado de seguridad de 10 mm, con cantos pulidos y perforaciones.",
-      "precio": 58.0,
-      "estado": "provisional"
+      "precio": 68.0,
+      "estado": "verificado-mercado",
+      "fuente": "Referencias regionales de suministro: México 2.000-2.800 MXN/m2 (100-140 USD); Colombia 180.000 COP/m2 (45 USD); mercado internacional 15-20 USD/pie2. MercadoLibre VE: vidrio templado panorámico 10 mm 150,00 la hoja. Conversión: Templado de 10 mm con cantos pulidos, suministro sin herrajes. Rango observado: 45,00 - 140,00 USD/m2."
     },
     "MT-ESPEJO": {
       "unidad": "m2",
       "descripcion": "Espejo de 4 mm con canto pulido y respaldo protegido.",
-      "precio": 26.0,
-      "estado": "provisional"
+      "precio": 32.0,
+      "estado": "verificado-mercado",
+      "fuente": "EPA Venezuela: espejo rectangular 60x40 cm borde esmerilado 21,00. MercadoLibre VE: vidrios y espejos a la medida 21,98. Conversión: Espejo 60x40 cm con borde esmerilado a 21,00 USD equivale a 87 USD/m2 al detal; a medida y por superficie baja mucho. Rango observado: 22,00 - 87,00 USD/m2."
     },
     "MT-SILICONA-EST": {
       "unidad": "l",
       "descripcion": "Silicona estructural o neutra para acristalamiento y sellado de carpintería.",
-      "precio": 14.0,
-      "estado": "provisional"
+      "precio": 48.0,
+      "estado": "verificado-mercado",
+      "fuente": "EPA Venezuela: silicón sellador Acrielastic Simbi 290 ml 13,09; SiliPex Graffiti 290 ml 15,11; antihongos 290 ml 17,12. Conversión: Cartucho de 290 ml a 13,09-17,12 USD. Rango observado: 45,00 - 59,00 USD/l."
     },
     "MT-TUBO-ACERO": {
       "unidad": "kg",
       "descripcion": "Tubo estructural de acero para herrería de rejas, portones y barandas.",
-      "precio": 2.2,
-      "estado": "provisional"
+      "precio": 1.95,
+      "estado": "verificado-mercado",
+      "fuente": "EPA Venezuela: tubo cuadrado HP 1\"x1\" 0,9 mm 6 m 7,52 (1,81 USD/kg); tubo rectangular HP 2\"x1\" 0,9 mm 6 m 10,60 (1,68); tubo galvanizado cuadrado 1\" 6 m 9,50 (2,29). MercadoLibre VE: tubo 2x2 0,90 mm 6 m 16,00 (1,89). Conversión: Peso teórico del perfil conformado. Tubo 1x1 0,9 mm = 0,69 kg/m; 2x1 0,9 mm = 1,05 kg/m; 2x2 0,9 mm = 1,41 kg/m. Rango observado: 1,68 - 2,29 USD/kg."
     },
     "MT-ACERO-INOX": {
       "unidad": "kg",
       "descripcion": "Tubo y accesorios de acero inoxidable para barandas y pasamanos.",
-      "precio": 9.5,
-      "estado": "provisional"
+      "precio": 14.0,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: tubo inox 304 diámetro 1 5/8\" por metro 40,00; tubo inox Sch40 304 14,00; sujetador de pasamanos 10,00-15,00; baranda de inox montada 14,00-50,00 el metro. Conversión: Tubo inoxidable 304 de 1 5/8\" por metro a 40,00 USD con un peso aproximado de 1,3 kg/m. Rango observado: 12,00 - 30,00 USD/kg.",
+      "nota": "El inoxidable en Venezuela es importado y caro; el precio anterior (9,50) quedaba por debajo del suelo del mercado."
     },
     "MT-MOSQUITERO": {
       "unidad": "m2",
@@ -1415,14 +1472,16 @@
     "MT-HERRAJE-CLOSET": {
       "unidad": "ud",
       "descripcion": "Herraje de closet: bisagra, tirador, soporte de entrepaño y tornillería.",
-      "precio": 4.2,
-      "estado": "provisional"
+      "precio": 4.5,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: bisagra de cazoleta con freno 2,99; bisagra recta pack 2,00; tirador manilla 2,40-4,00; corredera telescópica 30-40 cm 4,00-6,00; placa reparadora 3,25. Conversión: Bisagra de cazoleta el par 2,99-4,25 + tirador 2,40-4,00 + soportes de entrepaño, repartido por hoja o módulo. Rango observado: 3,50 - 6,00 USD el juego."
     },
     "MT-RIEL-CORRED": {
       "unidad": "m",
       "descripcion": "Riel superior e inferior con carros para puerta corrediza.",
-      "precio": 9.0,
-      "estado": "provisional"
+      "precio": 14.0,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: kit riel 3 m con garruchas 60 kg 45,00-55,00; kit closet corredizo 3 m 30,10-135,00; riel de aluminio Olimpia 4 m 28,00-43,00. Conversión: Kit de riel de 3 m con garruchas a 45,00-55,00 USD. Rango observado: 8,90 - 18,30 USD/m."
     },
     "MT-ESTRUCT-MESON": {
       "unidad": "m",
@@ -1433,14 +1492,16 @@
     "MT-BARRA-APOYO": {
       "unidad": "ud",
       "descripcion": "Barra de apoyo de acero inoxidable para accesibilidad en baño.",
-      "precio": 34.0,
-      "estado": "provisional"
+      "precio": 28.0,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE y CO: barra de seguridad para baño en inox 40 cm equivalente a 11-15 USD; 60 cm 30 USD; pasamanos de baño con anclajes. Conversión: Barra de apoyo de inox de 40-60 cm. Rango observado: 11,00 - 30,00 USD."
     },
     "MT-ADOQUIN": {
       "unidad": "m2",
       "descripcion": "Adoquín de concreto para pavimento exterior, con su cama de arena.",
-      "precio": 14.0,
-      "estado": "provisional"
+      "precio": 15.5,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE (Bloneca, Induminca, bloques3h): adoquín de concreto para caminería 11,80-14,51; zig-zag 12,30-16,00; hexagonal 11,80-15,13; ecológico 12,50-21,60; behaton 16,00. Conversión: Adoquín de concreto por m2, mediana 14,30, mas cama de arena. Rango observado: 11,80 - 21,60 USD/m2."
     },
     "MT-GRAMA": {
       "unidad": "m2",
@@ -1506,7 +1567,9 @@
       "unidad": "ud",
       "descripcion": "Dotación de equipo de protección individual por trabajador: casco, botas, guantes, lentes y chaleco.",
       "precio": 42.0,
-      "estado": "provisional"
+      "estado": "verificado-mercado",
+      "fuente": "Composición a partir de precios de seguridad laboral en MercadoLibre VE. Conversión: Casco 8 + botas de punta de acero 22 + guantes 3 + lentes 3 + chaleco 5. Rango observado: 38,00 - 48,00 USD por trabajador.",
+      "nota": "El precio que ya teníamos resiste el contraste."
     },
     "MT-ARNES": {
       "unidad": "ud",
@@ -1517,8 +1580,9 @@
     "MT-BOTIQUIN": {
       "unidad": "ud",
       "descripcion": "Botiquín de primeros auxilios de obra, dotado y con reposición.",
-      "precio": 45.0,
-      "estado": "provisional"
+      "precio": 35.0,
+      "estado": "verificado-mercado",
+      "fuente": "Contraste de dotaciones de seguridad laboral en MercadoLibre VE. Conversión: Botiquín de obra dotado, con reposición del consumido. Rango observado: 25,00 - 45,00 USD."
     },
     "MT-CASETA-BIEN": {
       "unidad": "ud",
@@ -1618,8 +1682,9 @@
     "MT-DOMO": {
       "unidad": "ud",
       "descripcion": "Domo o claraboya de policarbonato o acrílico con su zócalo y herrajes.",
-      "precio": 95.0,
-      "estado": "provisional"
+      "precio": 72.0,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: cúpula o claraboya 60x60 45,00; cúpulas acrílicas 60,00; 60x60 con escotilla 150,00; claraboyas a medida 20,00-22,00 (piezas pequeñas). Conversión: Cúpula o claraboya de 60x60 cm con zócalo y herrajes. Rango observado: 45,00 - 120,00 USD."
     },
     "MT-CELOSIA": {
       "unidad": "m2",
@@ -1672,8 +1737,9 @@
     "MT-REJILLA-VENT": {
       "unidad": "ud",
       "descripcion": "Rejilla de ventilación con marco y malla antiinsectos.",
-      "precio": 11.0,
-      "estado": "provisional"
+      "precio": 9.0,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: ducto con rejilla para extractor 4\" Coflex 23,06; base para ducto flange 4,50-5,00. Conversión: Rejilla con marco; el conjunto ducto + rejilla Coflex de 4\" cuesta 23,06. Rango observado: 5,00 - 12,00 USD."
     },
     "MT-MADERA-PERGOLA": {
       "unidad": "m",

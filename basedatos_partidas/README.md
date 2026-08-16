@@ -360,6 +360,61 @@ razonamiento de cada uno.
 | `verificado-mercado` | Contrastado con precios publicados del mercado venezolano |
 | `provisional` | Sin contrastar. Pendiente de precio de proveedor real |
 
+## Segunda ronda de contraste (agosto 2026)
+
+Fichero de evidencia: **`datos/contraste_mercado_2026-08.json`**.
+Se aplica con `python3 basedatos_partidas/contraste.py aplicar`.
+
+Cada entrada guarda el precio adoptado, el **rango observado**, la
+**conversión** de presentación comercial a unidad del cuadro y las **tiendas
+consultadas**. No es una lista de números sueltos: es una lista auditable, para
+que dentro de seis meses se pueda rehacer el mismo barrido y comparar.
+
+**51 recursos revisados: 33 al alza, 16 a la baja, 2 confirmados sin cambio.**
+El peso económico con precio cerrado pasó del **55,2 % al 79,6 %**.
+
+El **alquiler de equipos queda fuera de esta ronda** por decisión del cliente:
+los 43 recursos de maquinaria se mantienen tal y como estaban. El script los
+salta expresamente y lo deja escrito en el informe.
+
+### Errores de unidad que destapó el contraste
+
+Lo más valioso no fueron los ajustes de precio, sino tres precios que estaban
+mal por **confundir la presentación comercial con la unidad del cuadro**:
+
+| Recurso | Antes | Ahora | Qué pasaba |
+|---|---:|---:|---|
+| `MT-EPOXI-ANCLA` | 22,00 /l | 95,00 /l | Se había tomado el precio del **cartucho de 300 ml** como si fuera el del litro |
+| `MT-CIELO-PVC` | 8,50 /m² | 16,00 /m² | Se había tomado el precio de la **lámina de 0,60 m²** como si fuera el del m² |
+| `MT-AUT-NIV` | 0,42 /kg | 1,55 /kg | Se había puesto el precio de un **mortero de contrapiso corriente**, no el de un autonivelante |
+
+A los que se suman `MT-SELLA-ELAST`, `MT-SILICONA-EST` y `MT-SIL-SAN`, donde el
+cartucho de 290-300 ml se estaba tratando como litro.
+
+### Ajustes a la baja
+
+No todo subió. Bajaron los que estaban inflados: `MT-CABLE-DATOS` (−68 %, la
+bobina de 305 m sale a 0,22-0,28 USD/m), `MT-DUCTO-VENT` (−48 %),
+`MT-HERRAJE-PUERTA` (−28 %), `MT-DOMO` (−24 %), `MT-BOTIQUIN` (−22 %).
+
+### Precios que resistieron el contraste
+
+`MT-FORM-MADERA` (−3,6 %), `MT-POLICARB` (+2,8 %), `MT-HERRAJE-CLOSET` (+7,1 %),
+`MT-EPP` y `MT-PROT-OBRA` (sin cambio). Son señal de que el criterio de estimación
+del primer pase no iba desencaminado.
+
+### Fuentes de esta ronda
+
+- **EPA Venezuela** (`ve.epaenlinea.com`), catálogo en línea con precios en USD:
+  perfilería de acero, siliconas y selladores, cerraduras, espejos.
+- **MercadoLibre Venezuela**, listados por familia: madera, herrajes, vidrio,
+  epóxicos, cielos rasos, adoquines, seguridad, cableado, ventilación.
+- Cuando el recurso es un **conjunto** (juego de herrajes, gabinete con manguera,
+  dotación de EPP) no se busca el conjunto: se compone sumando sus partes con
+  las cantidades reales de obra, y así queda escrito en `conversion`.
+- Cuando el material se vende **por barra o perfil**, se convierte a kg por el
+  **peso teórico de la sección**, no por el peso que anuncia el vendedor.
+
 ## Verificación cruzada
 
 El catálogo recalculado se contrastó contra un presupuesto tipo de vivienda de

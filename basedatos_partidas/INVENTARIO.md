@@ -12,8 +12,13 @@ del proyecto.
 | Hojas de descompuesto `.xlsx` | 540 |
 | Partidas con producto de elección del cliente | 69 |
 | Recursos en el cuadro de precios | **311** |
-| — mano de obra / materiales / maquinaria | 10 / 42 / 12 |
-| — precios confirmados / provisionales | 10 / 54 |
+| — mano de obra / materiales / maquinaria | 17 / 251 / 43 |
+| — confirmados / verificados con el mercado / provisionales | 17 / 117 / 177 |
+| **Peso económico con precio cerrado** | **79,6 %** del coste directo |
+| — confirmado (mano de obra) | 20,2 % |
+| — verificado con el mercado venezolano | 59,4 % |
+| — provisional | 20,4 % (de los cuales 6,3 % es alquiler de equipos) |
+| Coste directo del catálogo | 15.745,67 USD |
 | Clasificación | 20 capítulos · 121 subcapítulos |
 | — capítulos con partidas / vacíos | **20 / 0** |
 | Moneda | USD (Venezuela) |
@@ -33,13 +38,16 @@ del proyecto. El catálogo masivo se detecta con **8 campos, 0 errores, 0 advert
 
 `datos/partidas.csv` **no se edita**: lo regenera el generador.
 
-## Los 3 programas
+## Los programas
 
 | Programa | Qué hace |
 |---|---|
 | `descompuestos.py` | Motor principal. Resuelve recursos, valida la jerarquía, calcula la cascada de costes, escribe las hojas `.xlsx`, el maestro y el árbol. Comprueba cada archivo contra el lector del proyecto. |
 | `construir.py` | Genera el catálogo masivo (`.csv`, `.xlsx`, `.json`) y lo valida con el importador real. |
-| `precios.py` | `exportar` / `aplicar`. Actualización de precios en bloque, ordenada por impacto, con copia de seguridad. |
+| `precios.py` | `exportar` / `aplicar`. Actualización de precios en bloque, ordenada por impacto, con copia de seguridad. Marca `confirmado`. |
+| `contraste.py` | `listar` / `aplicar`. Vuelca una ronda de contraste de mercado desde `datos/contraste_mercado_*.json`, marca `verificado-mercado` y escribe la evidencia en el campo `fuente`. Salta la maquinaria. |
+| `cobertura.py` | Informe de avance por capítulo y subcapítulo. |
+| `equidad.py` | Reparto del precio de venta y simulación de escenarios de tarifa. |
 
 ## Lo que se sube a la aplicación
 
@@ -113,9 +121,13 @@ python3 basedatos_partidas/construir.py
 
 ## Lo que falta
 
-1. **40 precios de material provisionales.** Es lo más urgente: en Venezuela el
-   material pesa mucho más que la mano de obra. Empezar por los 10 de más impacto
-   que lista `precios.py exportar`.
-2. **14 capítulos vacíos**: carpintería, cielos rasos, sanitarios, cubiertas,
-   impermeabilizaciones, gestión de residuos, seguridad y salud…
+1. **134 precios de material provisionales** (2.213 USD, el 14,1 % del coste
+   directo). Ya no son los de más peso: la segunda ronda de contraste cerró los
+   grandes. Lo que queda son piezas de proveedor especializado —tabique móvil,
+   mampara de oficina, fibra de carbono, trampa de grasa, accesorios de bombeo,
+   instalación de gas—, cada una con poco peso individual.
+2. **43 precios de alquiler de equipos** (997 USD, 6,3 %). **Fuera de alcance
+   por decisión del cliente**: se mantienen tal y como están.
 3. **Barra lateral**: el `arbol_catalogo.json` ya está, falta el front.
+4. **Ámbito obra nueva**: sin empezar. Requiere el texto de COVENIN 2000-2 y su
+   Suplemento N.º 1 de 1999 para poder codificar.
