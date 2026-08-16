@@ -810,6 +810,84 @@
       "descripcion": "Refuerzo interior de madera o perfil metálico para anclaje de cargas en tabique de yeso laminado.",
       "precio": 3.2,
       "estado": "provisional"
+    },
+    "MT-HIDROFUGO": {
+      "unidad": "l",
+      "descripcion": "Aditivo hidrófugo de masa para morteros de friso en exteriores y áreas húmedas.",
+      "precio": 4.2,
+      "estado": "provisional"
+    },
+    "MT-MORT-IMPER": {
+      "unidad": "kg",
+      "descripcion": "Mortero impermeabilizante cementoso bicomponente, flexible, para áreas húmedas bajo enchapado.",
+      "precio": 1.45,
+      "estado": "provisional"
+    },
+    "MT-PASTA-YESO": {
+      "unidad": "kg",
+      "descripcion": "Pasta de yeso para friso y enlucido de paramentos interiores.",
+      "precio": 0.3,
+      "estado": "provisional"
+    },
+    "MT-ESTUCO-FINO": {
+      "unidad": "kg",
+      "descripcion": "Pasta de acabado fino para estucado y alisado de paramentos interiores.",
+      "precio": 0.55,
+      "estado": "provisional"
+    },
+    "MT-MOLDURA-YESO": {
+      "unidad": "m",
+      "descripcion": "Moldura corrida de yeso o poliuretano para remates decorativos, con su pasta de agarre.",
+      "precio": 3.2,
+      "estado": "provisional"
+    },
+    "MT-PERFIL-REMATE": {
+      "unidad": "m",
+      "descripcion": "Perfil de aluminio o PVC para remate, esquinero y transición en enchapados.",
+      "precio": 2.6,
+      "estado": "provisional"
+    },
+    "MT-ANCLA-PIEDRA": {
+      "unidad": "ud",
+      "descripcion": "Anclaje metálico de acero inoxidable para fijación mecánica de piezas de piedra natural.",
+      "precio": 1.3,
+      "estado": "provisional"
+    },
+    "MT-ADH-PIEDRA": {
+      "unidad": "kg",
+      "descripcion": "Adhesivo cementoso blanco de altas prestaciones, específico para piedra natural sensible a manchas.",
+      "precio": 0.68,
+      "estado": "provisional"
+    },
+    "MT-CONS-PULIDO": {
+      "unidad": "m2",
+      "descripcion": "Consumibles de pulido y abrillantado: discos diamantados, abrasivos y cristalizador.",
+      "precio": 2.4,
+      "estado": "provisional"
+    },
+    "MT-SELLA-PIEDRA": {
+      "unidad": "l",
+      "descripcion": "Sellador hidrofugante y antimanchas para piedra natural y porcelanato poroso.",
+      "precio": 12.0,
+      "estado": "provisional"
+    },
+    "MT-PEGA-MURAL": {
+      "unidad": "kg",
+      "descripcion": "Pegamento mural para papel tapiz y revestimientos textiles.",
+      "precio": 3.1,
+      "estado": "provisional"
+    },
+    "MT-ESTUCO-VEN": {
+      "unidad": "kg",
+      "descripcion": "Pasta de estuco veneciano a la cal, para acabado decorativo pulido.",
+      "precio": 3.8,
+      "estado": "provisional"
+    },
+    "MT-MICROCEM": {
+      "unidad": "kg",
+      "descripcion": "Microcemento bicomponente con su resina y malla de refuerzo, para revestimiento continuo.",
+      "precio": 6.5,
+      "estado": "provisional"
     }
   },
   "maquinaria": {
@@ -1027,6 +1105,18 @@
       "unidad": "h",
       "descripcion": "Esmeriladora y cepillo de púas para limpieza y preparación de superficies metálicas.",
       "precio": 2.3,
+      "estado": "provisional"
+    },
+    "MQ-PROYECT-MORT": {
+      "unidad": "h",
+      "descripcion": "Máquina de proyección de mortero y pasta de yeso, con su compresor y mangueras.",
+      "precio": 6.8,
+      "estado": "provisional"
+    },
+    "MQ-PULIDORA": {
+      "unidad": "h",
+      "descripcion": "Pulidora y abrillantadora de piedra natural con aporte de agua.",
+      "precio": 4.5,
       "estado": "provisional"
     }
   }

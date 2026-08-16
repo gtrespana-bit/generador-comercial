@@ -1,0 +1,50 @@
+{
+  "codigo": "CT-07-01-030",
+  "ambito": "reforma",
+  "capitulo": "07",
+  "subcapitulo": "01",
+  "unidad": "m²",
+  "titulo": "Friso rústico texturado en fachada.",
+  "descripcion": "Revestimiento de fachada con friso rústico texturado, aplicado sobre friso base o directamente sobre la mampostería, con acabado obtenido por proyección o por peinado según la textura elegida. Incluye el trabajo desde andamio, la preparación y humedecido del soporte, la aplicación de la capa base, la ejecución de la textura de forma continua por paños completos entre juntas o quiebres para evitar que se marquen las paradas de trabajo, y el curado. La uniformidad del acabado depende de mantener la misma cuadrilla y la misma dosificación en todo el paño. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MOR-FRISO",
+      "rendimiento": 28.0
+    },
+    {
+      "ref": "MT-HIDROFUGO",
+      "rendimiento": 0.45
+    },
+    {
+      "ref": "MT-CEMENTO",
+      "rendimiento": 3.5
+    },
+    {
+      "ref": "MT-AGUA-OBRA",
+      "rendimiento": 0.018
+    },
+    {
+      "ref": "MQ-MEZCL",
+      "rendimiento": 0.065
+    },
+    {
+      "ref": "MQ-PROYECT-MORT",
+      "rendimiento": 0.09
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.26
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.52
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.33
+    }
+  ],
+  "codigo_covenin": ""
+}

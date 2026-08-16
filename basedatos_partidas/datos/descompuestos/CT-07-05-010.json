@@ -1,0 +1,40 @@
+{
+  "codigo": "CT-07-05-010",
+  "ambito": "reforma",
+  "capitulo": "07",
+  "subcapitulo": "05",
+  "unidad": "m²",
+  "titulo": "Revestimiento de paramento con papel tapiz.",
+  "descripcion": "Colocación de papel tapiz sobre paramento interior previamente preparado, con pegamento mural. Incluye la comprobación de que el soporte está liso, seco y con absorción uniforme, condición sin la cual las juntas se abren o se marcan las irregularidades, la aplicación del fondo sellador, el replanteo de la primera plomada, el corte de los paños respetando el ajuste del dibujo, el encolado y colocación con eliminación de burbujas y arrugas, el recorte de los excesos en rodapié y cielo, y la limpieza de restos de pegamento. El papel lo elige el cliente y se presupuesta aparte. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "producto_cliente": {
+    "tipo": "Papel tapiz o revestimiento mural elegido por el cliente",
+    "unidad": "m2",
+    "consumo": 1.15,
+    "nota": "Consumo con 15 % de desperdicio. En papeles con dibujo que requiere ajuste el desperdicio puede llegar al 25 %."
+  },
+  "recursos": [
+    {
+      "ref": "MT-PEGA-MURAL",
+      "rendimiento": 0.28
+    },
+    {
+      "ref": "MT-PIN-FONDO",
+      "rendimiento": 0.07
+    },
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.12
+    }
+  ],
+  "codigo_covenin": ""
+}

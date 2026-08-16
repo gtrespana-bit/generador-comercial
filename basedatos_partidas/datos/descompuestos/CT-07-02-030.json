@@ -1,0 +1,42 @@
+{
+  "codigo": "CT-07-02-030",
+  "ambito": "reforma",
+  "capitulo": "07",
+  "subcapitulo": "02",
+  "unidad": "m²",
+  "titulo": "Alisado de paramento con pasta de nivelación.",
+  "descripcion": "Alisado de paramento existente mediante aplicación de pasta de nivelación a llana, para corregir irregularidades menores, marcas de rodillo, gotelé fino o restos de acabados anteriores, dejando la superficie plana. Es la alternativa económica al picado y refriso cuando el paramento está sano pero con textura o defectos superficiales. Incluye el raspado de las partes sueltas, la aplicación del fondo fijador, el extendido de la pasta en una o dos manos según el defecto a corregir, el lijado con aspiración y el repaso final. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ESTUCO-FINO",
+      "rendimiento": 1.7
+    },
+    {
+      "ref": "MT-PIN-FONDO",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MT-PIN-LIJA",
+      "rendimiento": 0.16
+    },
+    {
+      "ref": "MQ-LIJAD",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-ASPIR",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.21
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.14
+    }
+  ],
+  "codigo_covenin": ""
+}

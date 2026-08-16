@@ -2186,15 +2186,88 @@
               "precio": 10.75,
               "horas": 0.75,
               "producto_cliente": false
+            },
+            {
+              "codigo": "CT-07-01-020",
+              "titulo": "Friso de mortero con hidrófugo en paramento exterior.",
+              "unidad": "m²",
+              "precio": 17.52,
+              "horas": 0.95,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-07-01-030",
+              "titulo": "Friso rústico texturado en fachada.",
+              "unidad": "m²",
+              "precio": 16.45,
+              "horas": 0.85,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-07-01-040",
+              "titulo": "Mortero impermeabilizante en área húmeda, base para enchapado.",
+              "unidad": "m²",
+              "precio": 12.4,
+              "horas": 0.55,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-07-01-050",
+              "titulo": "Regularización y repello de paramento existente.",
+              "unidad": "m²",
+              "precio": 12.23,
+              "horas": 0.7,
+              "producto_cliente": false
             }
           ],
-          "n": 1
+          "n": 5
         },
         {
           "codigo": "02",
           "nombre": "Pastas y acabados de yeso",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-07-02-010",
+              "titulo": "Friso de pasta de yeso en paramento interior.",
+              "unidad": "m²",
+              "precio": 9.04,
+              "horas": 0.45,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-07-02-020",
+              "titulo": "Estucado fino de pasta sobre friso.",
+              "unidad": "m²",
+              "precio": 6.38,
+              "horas": 0.55,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-07-02-030",
+              "titulo": "Alisado de paramento con pasta de nivelación.",
+              "unidad": "m²",
+              "precio": 4.34,
+              "horas": 0.35,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-07-02-040",
+              "titulo": "Moldura decorativa corrida de yeso.",
+              "unidad": "m",
+              "precio": 7.77,
+              "horas": 0.35,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-07-02-050",
+              "titulo": "Reparación puntual de friso de yeso.",
+              "unidad": "m²",
+              "precio": 8.45,
+              "horas": 0.5,
+              "producto_cliente": false
+            }
+          ],
+          "n": 5
         },
         {
           "codigo": "03",
@@ -2207,24 +2280,138 @@
               "precio": 10.87,
               "horas": 0.78,
               "producto_cliente": true
+            },
+            {
+              "codigo": "CT-07-03-020",
+              "titulo": "Enchapado de porcelanato de gran formato en pared.",
+              "unidad": "m²",
+              "precio": 14.5,
+              "horas": 1.05,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-07-03-030",
+              "titulo": "Enchapado cerámico en fachada o paramento exterior.",
+              "unidad": "m²",
+              "precio": 16.33,
+              "horas": 1.15,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-07-03-040",
+              "titulo": "Cenefa o listelo decorativo en enchapado.",
+              "unidad": "m",
+              "precio": 2.99,
+              "horas": 0.31,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-07-03-050",
+              "titulo": "Perfil de remate, esquinero o transición en enchapado.",
+              "unidad": "m",
+              "precio": 5.25,
+              "horas": 0.2,
+              "producto_cliente": false
             }
           ],
-          "n": 1
+          "n": 5
         },
         {
           "codigo": "04",
           "nombre": "Enchapado de piedra natural",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-07-04-010",
+              "titulo": "Enchapado de mármol o granito en pared, colocación en capa fina.",
+              "unidad": "m²",
+              "precio": 14.61,
+              "horas": 0.95,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-07-04-020",
+              "titulo": "Enchapado de laja o piedra natural irregular.",
+              "unidad": "m²",
+              "precio": 23.82,
+              "horas": 1.35,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-07-04-030",
+              "titulo": "Enchapado de piedra natural con anclaje mecánico.",
+              "unidad": "m²",
+              "precio": 31.46,
+              "horas": 1.75,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-07-04-040",
+              "titulo": "Zócalo de piedra natural.",
+              "unidad": "m",
+              "precio": 2.95,
+              "horas": 0.25,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-07-04-050",
+              "titulo": "Pulido y abrillantado de enchapado de piedra natural.",
+              "unidad": "m²",
+              "precio": 11.4,
+              "horas": 0.63,
+              "producto_cliente": false
+            }
+          ],
+          "n": 5
         },
         {
           "codigo": "05",
           "nombre": "Revestimientos decorativos y especiales",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-07-05-010",
+              "titulo": "Revestimiento de paramento con papel tapiz.",
+              "unidad": "m²",
+              "precio": 4.24,
+              "horas": 0.42,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-07-05-020",
+              "titulo": "Estuco veneciano o acabado decorativo mineral.",
+              "unidad": "m²",
+              "precio": 16.2,
+              "horas": 1.12,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-07-05-030",
+              "titulo": "Revestimiento de paramento con paneles decorativos.",
+              "unidad": "m²",
+              "precio": 13.64,
+              "horas": 0.51,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-07-05-040",
+              "titulo": "Forro de pared con machihembrado de madera.",
+              "unidad": "m²",
+              "precio": 30.64,
+              "horas": 0.65,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-07-05-050",
+              "titulo": "Revestimiento continuo de microcemento en paramento vertical.",
+              "unidad": "m²",
+              "precio": 42.94,
+              "horas": 1.45,
+              "producto_cliente": false
+            }
+          ],
+          "n": 5
         }
       ],
-      "n": 2
+      "n": 25
     },
     {
       "codigo": "08",
