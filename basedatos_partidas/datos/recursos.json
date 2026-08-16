@@ -1530,6 +1530,90 @@
       "descripcion": "Limpiador químico específico para fachadas, según el tipo de soporte y de mancha.",
       "precio": 9.4,
       "estado": "provisional"
+    },
+    "MT-BLQ-12": {
+      "unidad": "ud",
+      "descripcion": "Bloque de concreto hueco de 12x20x40 cm.",
+      "precio": 0.62,
+      "estado": "provisional"
+    },
+    "MT-STEELDECK": {
+      "unidad": "m2",
+      "descripcion": "Lámina colaborante de acero galvanizado tipo steel deck para losa mixta.",
+      "precio": 19.0,
+      "estado": "provisional"
+    },
+    "MT-CONECTOR-CORTE": {
+      "unidad": "ud",
+      "descripcion": "Conector de cortante soldable para losa mixta sobre estructura metálica.",
+      "precio": 1.4,
+      "estado": "provisional"
+    },
+    "MT-DOMO": {
+      "unidad": "ud",
+      "descripcion": "Domo o claraboya de policarbonato o acrílico con su zócalo y herrajes.",
+      "precio": 95.0,
+      "estado": "provisional"
+    },
+    "MT-CELOSIA": {
+      "unidad": "m2",
+      "descripcion": "Celosía o romanilla de aluminio para ventilación, con su marco.",
+      "precio": 26.0,
+      "estado": "provisional"
+    },
+    "MT-PANEL-PVC-BANO": {
+      "unidad": "m2",
+      "descripcion": "Panel de PVC o composite para revestimiento de paredes de baño, con sus perfiles.",
+      "precio": 13.5,
+      "estado": "provisional"
+    },
+    "MT-TRAMPA-GRASA": {
+      "unidad": "ud",
+      "descripcion": "Trampa de grasa prefabricada con su tapa y conexiones.",
+      "precio": 78.0,
+      "estado": "provisional"
+    },
+    "MT-TIMBRE": {
+      "unidad": "ud",
+      "descripcion": "Timbre con su pulsador y transformador.",
+      "precio": 14.0,
+      "estado": "provisional"
+    },
+    "MT-PINT-TRAFICO": {
+      "unidad": "l",
+      "descripcion": "Pintura de tráfico para demarcación de pisos y estacionamientos.",
+      "precio": 9.2,
+      "estado": "provisional"
+    },
+    "MT-PERFIL-CORTINERO": {
+      "unidad": "m",
+      "descripcion": "Riel de cortinero con sus soportes y accesorios.",
+      "precio": 7.4,
+      "estado": "provisional"
+    },
+    "MT-SELLA-FISURA": {
+      "unidad": "kg",
+      "descripcion": "Sellador elástico de fisuras en base a poliuretano o acrílico para exteriores.",
+      "precio": 4.8,
+      "estado": "provisional"
+    },
+    "MT-QUIMICO-LIMP-AC": {
+      "unidad": "ud",
+      "descripcion": "Producto químico espumante para limpieza de serpentines de climatización.",
+      "precio": 8.5,
+      "estado": "provisional"
+    },
+    "MT-REJILLA-VENT": {
+      "unidad": "ud",
+      "descripcion": "Rejilla de ventilación con marco y malla antiinsectos.",
+      "precio": 11.0,
+      "estado": "provisional"
+    },
+    "MT-MADERA-PERGOLA": {
+      "unidad": "m",
+      "descripcion": "Viga y listón de madera tratada para pérgola exterior.",
+      "precio": 6.8,
+      "estado": "provisional"
     }
   },
   "maquinaria": {

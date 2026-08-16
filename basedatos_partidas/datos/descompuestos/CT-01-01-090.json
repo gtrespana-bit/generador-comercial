@@ -1,0 +1,54 @@
+{
+  "codigo": "CT-01-01-090",
+  "ambito": "reforma",
+  "capitulo": "01",
+  "subcapitulo": "01",
+  "unidad": "ud",
+  "titulo": "Puerta provisional de acceso a la zona de obra.",
+  "descripcion": "Montaje de puerta provisional con cierre en el acceso a la zona de obra, para separar el área de trabajo de la zona en uso y controlar el acceso. Incluye el bastidor, el forro con lámina de madera, las bisagras y el cierre con candado, la banda de sellado perimetral que impide el paso de polvo, la señalización de acceso restringido y el desmontaje al finalizar. Medido por unidad instalada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-LAMINA-OSB",
+      "rendimiento": 2.2
+    },
+    {
+      "ref": "MT-MADERA-LISTON",
+      "rendimiento": 8.0
+    },
+    {
+      "ref": "MT-HERRAJE-PUERTA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-CLAVOS",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MT-PROT-PLAST",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MT-SENAL-OBRA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MQ-ATORN",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 1.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.7
+    }
+  ],
+  "codigo_covenin": ""
+}

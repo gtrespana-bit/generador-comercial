@@ -1,0 +1,46 @@
+{
+  "codigo": "CT-08-01-060",
+  "ambito": "reforma",
+  "capitulo": "08",
+  "subcapitulo": "01",
+  "unidad": "m²",
+  "titulo": "Reparación y parcheo puntual de piso existente.",
+  "descripcion": "Reparación puntual de piso existente mediante reposición de piezas sueltas, huecas o rotas, y resane de zonas deterioradas, conservando el resto del piso. Es la intervención que evita cambiar un piso completo por un daño localizado, y su éxito depende de disponer de piezas del mismo lote o de reubicar piezas tomadas de una zona oculta, como el interior de un closet, porque una pieza de otro lote canta a distancia. Incluye el levantado cuidadoso de las piezas afectadas, la limpieza del soporte, la reposición con adhesivo, la nivelación con las piezas contiguas, el rejuntado a tono y la limpieza. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ADH-C2TE",
+      "rendimiento": 5.5
+    },
+    {
+      "ref": "MT-JUN-CG2",
+      "rendimiento": 0.45
+    },
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MT-SAC-ESC",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MQ-CORT-AGUA",
+      "rendimiento": 0.13
+    },
+    {
+      "ref": "MQ-MART-ELEC",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-SOL",
+      "rendimiento": 0.78
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.42
+    }
+  ],
+  "codigo_covenin": ""
+}

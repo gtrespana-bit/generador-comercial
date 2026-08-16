@@ -1,0 +1,48 @@
+{
+  "codigo": "CT-17-01-050",
+  "ambito": "reforma",
+  "capitulo": "17",
+  "subcapitulo": "01",
+  "unidad": "ud",
+  "titulo": "Instalación de electrodoméstico empotrado.",
+  "descripcion": "Instalación de electrodoméstico empotrado en mueble de cocina, tal como horno, placa de cocción, microondas o lavavajillas, con sus conexiones. Incluye la verificación de que el hueco del mueble corresponde a las dimensiones y a la ventilación que exige el fabricante, requisito que si se ignora provoca sobrecalentamiento y la pérdida de la garantía, el ajuste del hueco si procede, el encastre y fijación del equipo, la conexión eléctrica, hidráulica o de gas según el caso y la puesta en marcha con prueba. El equipo lo elige el cliente y se presupuesta aparte. Medido por unidad instalada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "producto_cliente": {
+    "tipo": "Electrodoméstico empotrado elegido por el cliente",
+    "unidad": "ud",
+    "consumo": 1.0,
+    "nota": "La partida cubre solo la instalación."
+  },
+  "recursos": [
+    {
+      "ref": "MT-SELLA-ELAST",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MT-TORN",
+      "rendimiento": 10.0
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.14
+    },
+    {
+      "ref": "MQ-ATORN",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 0.9
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.4
+    }
+  ],
+  "codigo_covenin": ""
+}

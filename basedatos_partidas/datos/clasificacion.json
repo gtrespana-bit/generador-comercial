@@ -220,7 +220,8 @@
         "02": "Brocales, aceras y drenajes",
         "03": "Cerramientos de parcela",
         "04": "Jardinería y riego",
-        "05": "Instalaciones exteriores"
+        "05": "Instalaciones exteriores",
+        "06": "Elementos exteriores complementarios"
       }
     },
     "19": {
@@ -237,7 +238,8 @@
         "01": "Protecciones colectivas",
         "02": "Equipos de protección individual",
         "03": "Señalización de obra",
-        "04": "Instalaciones de bienestar"
+        "04": "Instalaciones de bienestar",
+        "05": "Gestión y documentación de seguridad"
       }
     }
   }

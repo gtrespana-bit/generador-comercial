@@ -1,0 +1,46 @@
+{
+  "codigo": "CT-08-06-070",
+  "ambito": "reforma",
+  "capitulo": "08",
+  "subcapitulo": "06",
+  "unidad": "m²",
+  "titulo": "Piso de gravilla lavada o chino lavado.",
+  "descripcion": "Piso continuo de gravilla lavada o chino lavado, formado por capa de mortero con árido seleccionado que se descubre mediante lavado superficial antes del fraguado completo. Es un acabado tradicional, muy antideslizante y por ello habitual en aceras, rampas, terrazas y bordes de piscina. Todo el resultado depende del momento del lavado: hecho demasiado pronto arrastra el árido y demasiado tarde no lo descubre. Incluye el vaciado y reglado, la siembra o mezcla del árido, la espera controlada, el lavado con agua a presión suave, la limpieza final y el curado. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MORT-CONTRA",
+      "rendimiento": 58.0
+    },
+    {
+      "ref": "MT-GRAVILLA",
+      "rendimiento": 0.03
+    },
+    {
+      "ref": "MT-CEMENTO",
+      "rendimiento": 5.0
+    },
+    {
+      "ref": "MT-CURADOR",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MQ-MEZCL",
+      "rendimiento": 0.075
+    },
+    {
+      "ref": "MQ-HIDROLAV",
+      "rendimiento": 0.09
+    },
+    {
+      "ref": "MO-OF1-SOL",
+      "rendimiento": 0.72
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.56
+    }
+  ],
+  "codigo_covenin": ""
+}

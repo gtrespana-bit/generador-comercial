@@ -1,0 +1,30 @@
+{
+  "codigo": "CT-19-02-030",
+  "ambito": "reforma",
+  "capitulo": "19",
+  "subcapitulo": "02",
+  "unidad": "m³",
+  "titulo": "Clasificación y recuperación de material aprovechable.",
+  "descripcion": "Clasificación en obra del material procedente de la demolición para separar lo aprovechable de lo desechable, con su acopio diferenciado y gestión. La chatarra, el cobre, el aluminio y el cartón tienen valor de recuperación que puede descontarse del presupuesto o quedar a favor del cliente, y su separación reduce además el volumen que va a vertedero y por tanto el costo del bote. Incluye la separación manual por tipo de material, el acopio diferenciado, la retirada de elementos extraños de la chatarra y la entrega o venta al gestor con su comprobante. Medido en volumen de material realmente clasificado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-SAC-ESC",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MT-PROT-OBRA",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.7
+    }
+  ],
+  "codigo_covenin": ""
+}

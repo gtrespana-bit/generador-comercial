@@ -1,0 +1,46 @@
+{
+  "codigo": "CT-10-02-040",
+  "ambito": "reforma",
+  "capitulo": "10",
+  "subcapitulo": "02",
+  "unidad": "m²",
+  "titulo": "Impermeabilización de muro enterrado por su cara interior.",
+  "descripcion": "Impermeabilización de muro enterrado por su cara interior mediante mortero cementoso de presión negativa, cuando no es posible excavar para tratarlo por el trasdós. Trabaja contra la presión del agua que empuja desde fuera, situación mucho más exigente que la de una impermeabilización convencional, de modo que exige un producto específico y un soporte perfectamente sano y rugoso. Incluye el picado del revestimiento existente hasta el soporte, el saneado y apertura del poro, el taponado de las vías de agua activas con cemento de fraguado rápido, el refuerzo de encuentros y las manos de mortero de presión negativa. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MORT-IMPER",
+      "rendimiento": 5.2
+    },
+    {
+      "ref": "MT-BANDA-REF",
+      "rendimiento": 1.2
+    },
+    {
+      "ref": "MT-CEMENTO",
+      "rendimiento": 2.5
+    },
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.22
+    },
+    {
+      "ref": "MQ-MART-ELEC",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MQ-BATID",
+      "rendimiento": 0.09
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.68
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.45
+    }
+  ],
+  "codigo_covenin": ""
+}

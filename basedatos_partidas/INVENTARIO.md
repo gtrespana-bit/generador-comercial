@@ -8,17 +8,17 @@ del proyecto.
 
 | | |
 |---|---:|
-| Partidas | **454** |
-| Hojas de descompuesto `.xlsx` | 454 |
+| Partidas | **540** |
+| Hojas de descompuesto `.xlsx` | 540 |
 | Partidas con producto de elección del cliente | 69 |
-| Recursos en el cuadro de precios | **286** |
+| Recursos en el cuadro de precios | **311** |
 | — mano de obra / materiales / maquinaria | 10 / 42 / 12 |
 | — precios confirmados / provisionales | 10 / 54 |
-| Clasificación | 20 capítulos · 115 subcapítulos |
+| Clasificación | 20 capítulos · 121 subcapítulos |
 | — capítulos con partidas / vacíos | **20 / 0** |
 | Moneda | USD (Venezuela) |
 
-**Validación**: las 454 partidas pasan `es_formato_cype_xlsx` y `analizar_cype_xlsx`
+**Validación**: las 540 partidas pasan `es_formato_cype_xlsx` y `analizar_cype_xlsx`
 del proyecto. El catálogo masivo se detecta con **8 campos, 0 errores, 0 advertencias**.
 
 ---
@@ -76,7 +76,7 @@ del proyecto. El catálogo masivo se detecta con **8 campos, 0 errores, 0 advert
 | 18 | Obras exteriores y urbanismo | 5 | 15 |
 | 19 | Gestión de residuos y limpieza | 3 | 6 |
 | 20 | Seguridad y salud en obra | 4 | 9 |
-| | **TOTAL** | **115** | **454** |
+| | **TOTAL** | **121** | **540** |
 
 Cobertura: **115/115 subcapítulos con contenido**.
 
