@@ -142,26 +142,29 @@
     {% endif %}
   </nav>
 
-  {% if request.state.usuario is defined %}
-  <div class="sidebar-session">
-    {% if request.state.organizacion is defined %}
-    <a href="/organizaciones" title="Cambiar organización"><strong>{{ request.state.organizacion.nombre }}</strong></a>
-    {% endif %}
-    <a class="sidebar-session-user" href="/cuenta" title="Mi cuenta">
-      <span class="sidebar-session-avatar" aria-hidden="true">{{ (request.state.usuario.nombre or request.state.usuario.email)[:1] | upper }}</span>
-      <span>{{ request.state.usuario.nombre or request.state.usuario.email }}</span>
-    </a>
-    <div class="sidebar-session-actions">
-      <a href="/cuenta">Mi cuenta</a>
-      <form action="/salir" method="post"><button type="submit">Cerrar sesión</button></form>
+  <div class="sidebar-footer">
+    {% if request.state.usuario is defined %}
+    <div class="sidebar-session">
+      {% if request.state.organizacion is defined %}
+      <a href="/organizaciones" title="Cambiar organización"><strong>{{ request.state.organizacion.nombre }}</strong></a>
+      {% endif %}
+      <a class="sidebar-session-user" href="/cuenta" title="Mi cuenta">
+        <span class="sidebar-session-avatar" aria-hidden="true">{{ (request.state.usuario.nombre or request.state.usuario.email)[:1] | upper }}</span>
+        <span>{{ request.state.usuario.nombre or request.state.usuario.email }}</span>
+      </a>
+      <div class="sidebar-session-actions">
+        <a href="/cuenta">Mi cuenta</a>
+        <form action="/salir" method="post"><button type="submit">Cerrar sesión</button></form>
+      </div>
     </div>
-  </div>
-  {% endif %}
+    {% endif %}
 
-  <button id="theme-toggle" class="theme-toggle-btn" aria-label="Cambiar tema" title="Modo claro / oscuro">
-    <svg class="theme-icon-light" width="14" height="14" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="9" cy="9" r="4"/><path d="M9 1v2M9 15v2M1 9h2M15 9h2M3.9 3.9l1.4 1.4M12.7 12.7l1.4 1.4M3.9 14.1l1.4-1.4M12.7 5.3l1.4-1.4"/></svg>
-    <svg class="theme-icon-dark cotizat-hidden" width="14" height="14" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M15.1 10.4A7 7 0 017.6 2.9 7 7 0 1015.1 10.4z"/></svg>
-  </button>
+    <button id="theme-toggle" class="theme-toggle-btn" type="button" aria-label="Cambiar tema" title="Modo claro / oscuro">
+      <svg class="theme-icon-light" width="14" height="14" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="9" cy="9" r="4"/><path d="M9 1v2M9 15v2M1 9h2M15 9h2M3.9 3.9l1.4 1.4M12.7 12.7l1.4 1.4M3.9 14.1l1.4-1.4M12.7 5.3l1.4-1.4"/></svg>
+      <svg class="theme-icon-dark cotizat-hidden" width="14" height="14" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M15.1 10.4A7 7 0 017.6 2.9 7 7 0 1015.1 10.4z"/></svg>
+      <span class="theme-toggle-label">Tema</span>
+    </button>
+  </div>
 </aside>
 <main class="content">
   {% block content %}{% endblock %}
