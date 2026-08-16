@@ -466,7 +466,7 @@ def escribir_catalogo(filas: list[dict]) -> None:
     ]
     import csv as _csv
     with ruta.open("w", encoding="utf-8", newline="") as fh:
-        w = _csv.writer(fh, delimiter=";")
+        w = _csv.writer(fh, delimiter=";", lineterminator="\n")
         w.writerow(cabeceras)
         for f in filas:
             c = f["costes"]

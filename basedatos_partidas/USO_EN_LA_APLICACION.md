@@ -185,4 +185,3 @@ importan exactamente igual que antes.
 - 540 partidas importadas → **20 capítulos y 121 subcapítulos** en la base de
   datos de la aplicación, que es justo la taxonomía del catálogo.
 - Los **391 tests** del proyecto siguen pasando.
-

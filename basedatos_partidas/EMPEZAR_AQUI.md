@@ -206,3 +206,21 @@ visto en un navegador real**. Queda por comprobar con la vista puesta:
 - **Aplicar «zócalo → rodapié» y «cazoleta → tragante» a ciegas.** Se comprobó
   que las 18 apariciones de zócalo y las de cazoleta eran todas correctas. Están
   en `_matizados` del glosario para que avisen sin marcar error.
+
+---
+
+# 8. Trampas conocidas del repositorio
+
+- **El CI comprueba espacios finales** con `git diff --check`. El módulo `csv`
+  de Python termina las líneas en `\r\n` por defecto y git lo marca como
+  espacio final. Los tres escritores de CSV llevan ya `lineterminator="\n"`;
+  si se añade otro, hay que ponérselo también. El BOM (`utf-8-sig`) sí se
+  conserva: es lo que hace que Excel abra bien las tildes.
+- **Renombrar el código de un recurso**: hay códigos que son prefijo de otros
+  (`MO-OF1-SOL` solador vive dentro de `MO-OF1-SOLD` soldador). `terminologia.py`
+  ya lo hace con límites de palabra; no sustituir códigos con un replace a secas.
+- **La sesión puede perder el HEAD local** y volver al punto de partida aunque
+  la rama remota esté completa. Antes de commitear, comprobar
+  `git rev-parse HEAD` contra `git rev-parse origin/<rama>`; si no coinciden y
+  el remoto va por delante, recuperar con `git reset --soft <tip remoto>`, que
+  conserva el árbol de trabajo.

@@ -99,7 +99,7 @@ def exportar() -> int:
 
     REVISION.parent.mkdir(parents=True, exist_ok=True)
     with REVISION.open("w", encoding="utf-8-sig", newline="") as fh:
-        w = csv.DictWriter(fh, fieldnames=CABECERAS, delimiter=";")
+        w = csv.DictWriter(fh, fieldnames=CABECERAS, delimiter=";", lineterminator="\n")
         w.writeheader()
         w.writerows(filas)
 

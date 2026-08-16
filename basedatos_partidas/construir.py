@@ -143,8 +143,11 @@ def validar_con_el_proyecto(ruta_csv: Path) -> dict:
 
 def escribir_csv(filas: list[dict]) -> Path:
     ruta = SALIDA / "catalogo_partidas.csv"
+    # `lineterminator="\n"`: el módulo csv termina las líneas en \r\n por
+    # defecto y git lo marca como espacio final, lo que rompe la revisión
+    # automática. El BOM se conserva para que Excel abra bien las tildes.
     with ruta.open("w", encoding="utf-8-sig", newline="") as fh:
-        w = csv.writer(fh, delimiter=";")
+        w = csv.writer(fh, delimiter=";", lineterminator="\n")
         w.writerow(CABECERAS_IMPORT)
         for f in filas:
             w.writerow([

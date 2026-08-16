@@ -243,10 +243,17 @@ def orden_aplicar(regenerar: bool = True) -> int:
                 continue
             texto = ruta.read_text(encoding="utf-8")
             nuevo, n = sustituir(texto, de, a)
-            # El renombrado de códigos es literal: son identificadores, no prosa.
+            # El renombrado de códigos es literal salvo por una cosa: un código
+            # puede ser prefijo de otro. `MO-OF1-SOL` (solador) vive dentro de
+            # `MO-OF1-SOLD` (soldador), y un replace a secas convertía el
+            # soldador en «MO-OF1-PISOD». Se exige que el código no siga con
+            # más caracteres de código ni por delante ni por detrás.
             for viejo, moderno in renombres.items():
-                if viejo in nuevo:
-                    nuevo = nuevo.replace(viejo, moderno)
+                nuevo = re.sub(
+                    rf"(?<![A-Za-z0-9-]){re.escape(viejo)}(?![A-Za-z0-9-])",
+                    moderno,
+                    nuevo,
+                )
             if nuevo != texto:
                 ruta.write_text(nuevo, encoding="utf-8")
                 n_cambio += n

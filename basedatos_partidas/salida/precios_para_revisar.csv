@@ -301,7 +301,7 @@ MO-OF1-ELE;mano_obra;Oficial de 1ª electricista.;h;5.5000;USD;confirmado;36;253
 MO-OF1-PLO;mano_obra;Oficial de 1ª plomero.;h;5.5000;USD;confirmado;33;221.10;;
 MO-OF1-PISO;mano_obra;Oficial de 1ª colocador de pisos.;h;5.5000;USD;confirmado;33;103.29;;
 MO-OF1-CARP;mano_obra;Oficial de 1ª carpintero de obra (encofrador).;h;5.5000;USD;confirmado;23;92.78;;
-MO-OF1-PISOD;mano_obra;Oficial de 1ª soldador.;h;5.5000;USD;confirmado;18;77.72;;
+MO-OF1-SOLD;mano_obra;Oficial de 1ª soldador.;h;5.5000;USD;confirmado;18;77.72;;
 MO-OF1-MON;mano_obra;Oficial de 1ª montador de prefabricados interiores.;h;5.5000;USD;confirmado;29;71.50;;
 MO-OF1-VIDR;mano_obra;Oficial de 1ª vidriero.;h;5.5000;USD;confirmado;10;53.24;;
 MO-OF1-PIN;mano_obra;Oficial de 1ª pintor.;h;5.5000;USD;confirmado;27;46.75;;

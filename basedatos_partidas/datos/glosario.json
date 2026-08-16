@@ -1,7 +1,16 @@
 {
   "_comentario": "Glosario de obra. Manda la terminología venezolana: es la que entiende el cliente que lee el presupuesto. Cada entrada cambia el texto en TODAS partes (recursos, clasificación y las 540 partidas) con una sola orden. Se aplica con: python3 basedatos_partidas/terminologia.py aplicar",
   "_como_funciona": "«de» es lo que se busca y «a» lo que se escribe. La sustitución respeta mayúscula inicial y plurales simples. «codigos» renombra además el código del recurso, y el cambio se arrastra a todas las partidas que lo usan.",
-  "cambios": [],
+  "cambios": [
+    {
+      "de": "zzz-no-tocar-texto-zzz",
+      "a": "zzz-no-tocar-texto-zzz",
+      "motivo": "Reparación: solo renombra el código del soldador, que un replace literal había roto al casar con el prefijo del solador.",
+      "codigos": {
+        "MO-OF1-PISOD": "MO-OF1-SOLD"
+      }
+    }
+  ],
   "_prohibidos": {
     "_comentario": "Términos peninsulares que no deben aparecer nunca en un presupuesto venezolano. La orden «auditar» los busca y avisa.",
     "hormigón": "concreto",
