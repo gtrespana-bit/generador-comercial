@@ -3369,6 +3369,8 @@ async def confirmar_importacion_presupuesto(request: Request, db: Session = Depe
 
 @app.get("/presupuestos/nuevo", response_class=HTMLResponse)
 def nuevo_presupuesto_form(request: Request, db: Session = Depends(get_db)):
+    from .services.catalogo_propio import asegurar_catalogo_propio
+    asegurar_catalogo_propio(db)
     cfg = _config(db)
     clientes = db.query(Cliente).order_by(Cliente.nombre).all()
     partidas_catalogo = db.query(Partida).order_by(Partida.ultimo_uso.desc(), Partida.usos.desc(), Partida.nombre).all()
@@ -5299,6 +5301,8 @@ def editar_presupuesto_form(presupuesto_id: int, request: Request, db: Session =
     presupuesto = db.get(Presupuesto, presupuesto_id)
     if presupuesto is None:
         return _redirect("/presupuestos", error="Presupuesto no encontrado.")
+    from .services.catalogo_propio import asegurar_catalogo_propio
+    asegurar_catalogo_propio(db)
     clientes = db.query(Cliente).order_by(Cliente.nombre).all()
     partidas_catalogo = db.query(Partida).order_by(Partida.ultimo_uso.desc(), Partida.usos.desc(), Partida.nombre).all()
     productos_catalogo = db.query(Producto).order_by(Producto.ultimo_uso.desc(), Producto.usos.desc(), Producto.nombre).all()
@@ -6413,6 +6417,10 @@ def _partida_catalogo_json(partida: Partida) -> dict:
 
 @app.get("/partidas", response_class=HTMLResponse)
 def listar_partidas(request: Request, q: str = "", db: Session = Depends(get_db)):
+    # Si la org aún tiene el catálogo de prueba (~50 partidas), se sustituye
+    # una sola vez por el catálogo propio (540 partidas + recursos).
+    from .services.catalogo_propio import asegurar_catalogo_propio
+    asegurar_catalogo_propio(db)
     query = db.query(Partida)
     if q.strip():
         like = f"%{q.strip()}%"
@@ -6891,6 +6899,9 @@ def _sincronizar_recursos(db: Session):
 
 @app.get("/recursos", response_class=HTMLResponse)
 def listar_recursos(request: Request, q: str = "", categoria: str = "", db: Session = Depends(get_db)):
+    # Si aún está el catálogo de prueba, se migra al propio (con recursos).
+    from .services.catalogo_propio import asegurar_catalogo_propio
+    asegurar_catalogo_propio(db)
     # Sincronización automática en cada vista: crea los recursos que falten
     # desde las descomposiciones (partidas y presupuestos) y actualiza usos.
     # Es idempotente y barato; así los tabs de mano de obra / materiales /
