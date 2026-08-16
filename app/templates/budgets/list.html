@@ -3,29 +3,30 @@
 {% block content %}
 <div class="page-head">
   <div>
+    <span class="page-eyebrow">Comercial</span>
     <h1>Presupuestos</h1>
-    <p class="subtitle">Gestión y control de propuestas comerciales</p>
+    <p class="subtitle">Propuestas comerciales y su seguimiento</p>
   </div>
   <div class="actions">
-    <a class="btn btn-sm btn-ai" href="/presupuestos/optimizar-precios" title="Analiza el margen y la actualidad de precios de tu propio catálogo de partidas">Optimización de precios</a>
-    <a class="btn" href="/presupuestos/importar">Importar Datos</a>
-    <a class="btn btn-primary" href="/presupuestos/nuevo">Nuevo Presupuesto</a>
+    <a class="btn btn-sm" href="/presupuestos/optimizar-precios" title="Analiza márgenes de tu catálogo">Optimizar precios</a>
+    <a class="btn btn-sm" href="/presupuestos/importar">Importar</a>
+    <a class="btn btn-primary" href="/presupuestos/nuevo">Nuevo presupuesto</a>
   </div>
 </div>
 
 <form class="filters" method="get" action="/presupuestos">
-  <input type="text" name="q" value="{{ q }}" placeholder="🔍 Buscar por cliente o n.º">
-  <select name="estado">
+  <input type="text" name="q" value="{{ q }}" placeholder="Buscar por cliente o n.º" aria-label="Buscar">
+  <select name="estado" aria-label="Estado">
     <option value="">Todos los estados</option>
     {% for e in estados %}
     <option value="{{ e }}" {{ 'selected' if estado == e else '' }}>{{ e | capitalize }}</option>
     {% endfor %}
   </select>
-  <input type="date" name="desde" value="{{ desde }}" title="Desde">
-  <input type="date" name="hasta" value="{{ hasta }}" title="Hasta">
+  <input type="date" name="desde" value="{{ desde }}" title="Desde" aria-label="Desde">
+  <input type="date" name="hasta" value="{{ hasta }}" title="Hasta" aria-label="Hasta">
   <button class="btn" type="submit">Filtrar</button>
-  <a class="btn btn-sm" href="/presupuestos/exportar?{{ request.query_params }}" title="Descargar CSV del historial (respeta los filtros)">📥 CSV</a>
-  {% if q or estado or desde or hasta %}<a class="btn btn-sm" href="/presupuestos">Limpiar</a>{% endif %}
+  <a class="btn btn-sm btn-ghost" href="/presupuestos/exportar?{{ request.query_params }}" title="Descargar CSV del historial">CSV</a>
+  {% if q or estado or desde or hasta %}<a class="btn btn-sm btn-ghost" href="/presupuestos">Limpiar</a>{% endif %}
 </form>
 
 <p class="hint csp-s-aded0dd9df">{{ total }} presupuesto(s) encontrado(s)</p>
@@ -45,16 +46,16 @@
         <td><span class="badge badge-{{ p.estado }}">{{ p.estado | capitalize }}</span></td>
         <td class="right"><strong>{{ p.total | money(p.moneda) }}</strong></td>
         <td class="right">
-          <div class="csp-s-814a5492b5">
-            <a class="btn btn-sm" href="/presupuestos/{{ p.id }}">Ver</a>
-            <a class="btn btn-sm" href="/presupuestos/{{ p.id }}/editar">✏️ Editar</a>
-            <a class="btn btn-sm" href="/presupuestos/{{ p.id }}/tiempos" title="Tiempo estimado de obra">⏱</a>
+          <div class="row-actions list-row-actions">
+            <a class="btn btn-sm btn-ghost" href="/presupuestos/{{ p.id }}">Ver</a>
+            <a class="btn btn-sm" href="/presupuestos/{{ p.id }}/editar">Editar</a>
+            <a class="btn btn-sm btn-ghost" href="/presupuestos/{{ p.id }}/tiempos" title="Tiempo estimado de obra">Tiempos</a>
             {% set wa = p.cliente.telefono | whatsapp('Hola ' ~ p.cliente.nombre ~ ', te comparto el presupuesto ' ~ p.numero ~ ' por un total de ' ~ (p.total | money(p.moneda)) ~ '.') %}
-            {% if wa %}<a class="btn btn-sm btn-whatsapp" href="{{ wa }}" target="_blank" title="Enviar por WhatsApp">💬</a>{% endif %}
+            {% if wa %}<a class="btn btn-sm btn-whatsapp" href="{{ wa }}" target="_blank" title="Enviar por WhatsApp">WhatsApp</a>{% endif %}
             <form method="post" action="/presupuestos/{{ p.id }}/duplicar" class="csp-s-a91548c594">
-              <button class="btn btn-sm" type="submit" title="Duplicar">📋</button>
+              <button class="btn btn-sm btn-ghost" type="submit" title="Duplicar">Duplicar</button>
             </form>
-            <a class="btn btn-sm" href="/presupuestos/{{ p.id }}/pdf" download="presupuesto_{{ p.numero }}.pdf" data-cotizat-click="download-pdf">PDF</a>
+            <a class="btn btn-sm btn-ghost" href="/presupuestos/{{ p.id }}/pdf" download="presupuesto_{{ p.numero }}.pdf" data-cotizat-click="download-pdf">PDF</a>
           </div>
         </td>
       </tr>
