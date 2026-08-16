@@ -1,509 +1,239 @@
 {
-  "_comentario": "Taxonomía jerárquica del catálogo. Tres niveles: capítulo (1 letra), subcapítulo (2 letras) y grupo (3 letras). El código de partida es GRUPO + 3 dígitos, p. ej. RSG010. Esta estructura es la que alimentará el árbol de la barra lateral del presupuestador. Añadir subcapítulos y grupos según se vayan creando partidas: aquí solo se declaran los que existen o se prevén.",
+  "_comentario": "Clasificación propia de CotizaT, adaptada al mercado de reforma y remodelación en Venezuela. DOS NIVELES de navegación: capítulo (2 dígitos) y subcapítulo (2 dígitos). El código de partida es CT-CC-SS-NNN.",
+  "_prefijo": "CT",
   "_moneda": "USD",
-  "_ambito": "Venezuela",
+  "_ambito": "reforma",
+  "_ambitos_previstos": {
+    "reforma": {
+      "descripcion": "Reforma, remodelación y obra menor sobre edificaciones existentes.",
+      "codificacion": "CT-CC-SS-NNN (propia de CotizaT)",
+      "base_legal": "La norma venezolana COVENIN 2000-2 codifica ÚNICAMENTE edificaciones nuevas y deja expresamente sin codificar las reparaciones y reformas de edificaciones existentes (Parte II.B nunca publicada). En este ámbito la codificación es libre.",
+      "estado": "en construcción"
+    },
+    "obra_nueva": {
+      "descripcion": "Edificaciones nuevas. PENDIENTE DE CREAR.",
+      "codificacion": "COVENIN 2000-2: M+9 dígitos (<1.000 m2), E+9 dígitos (1.000-10.000 m2), I+9 dígitos (>10.000 m2)",
+      "base_legal": "COVENIN-MINDUR 2000-92 Parte II.A, declarada OBLIGATORIA en Gaceta Oficial N 35.225 del 3 de junio de 1993. En obra nueva, especialmente ante organismos publicos y contralorias, la codificacion NO es libre: hay que usar la de la norma.",
+      "estado": "pendiente",
+      "requisito": "Conseguir el texto de la norma COVENIN 2000-2 y su Suplemento N 1 (1999) para replicar su arbol de capitulos y su esquema de codificacion exacto.",
+      "nota_diseno": "Las partidas de reforma y las de obra nueva comparten el mismo cuadro de recursos (recursos.json) y el mismo motor de descompuestos. Solo cambian el arbol de clasificacion y el esquema de codigo. Por eso cada partida lleva el campo 'ambito'."
+    }
+  },
+  "_nota_codificacion": "Codificación propia de CotizaT. No sigue ni reproduce la de ningún banco de precios de terceros. La norma venezolana COVENIN 2000-2 codifica únicamente edificaciones nuevas y deja expresamente sin codificar las reparaciones y reformas de edificaciones existentes, que es el ámbito de este catálogo.",
   "capitulos": {
-    "0": {
-      "nombre": "Actuaciones previas",
+    "01": {
+      "nombre": "Trabajos preliminares y provisionales",
       "subcapitulos": {
-        "0A": {
-          "nombre": "Andamios y maquinaria de elevación",
-          "grupos": {}
-        },
-        "0S": {
-          "nombre": "Sondeos y catas",
-          "grupos": {}
-        },
-        "0P": {
-          "nombre": "Protecciones y apeos",
-          "grupos": {}
-        },
-        "0L": {
-          "nombre": "Limpieza y desalojo previo",
-          "grupos": {}
-        }
+        "01": "Protecciones y cerramientos provisionales",
+        "02": "Andamios y medios de elevación",
+        "03": "Apeos y apuntalamientos",
+        "04": "Catas, sondeos y replanteos",
+        "05": "Servicios provisionales de obra"
       }
     },
-    "D": {
-      "nombre": "Demoliciones",
+    "02": {
+      "nombre": "Demoliciones y desmontajes",
       "subcapitulos": {
-        "DD": {
-          "nombre": "Cimentaciones",
-          "grupos": {
-            "DDS": "Zapatas y pedestales",
-            "DDM": "Vigas de riostra y muros",
-            "DDL": "Losas de fundación"
-          }
-        },
-        "DE": {
-          "nombre": "Estructuras",
-          "grupos": {
-            "DEC": "Concreto armado",
-            "DEA": "Estructura metálica",
-            "DEM": "Estructura de madera"
-          }
-        },
-        "DF": {
-          "nombre": "Fachadas",
-          "grupos": {
-            "DFF": "Muros de fachada",
-            "DFL": "Cerramientos ligeros",
-            "DFD": "Defensas y barandas"
-          }
-        },
-        "DP": {
-          "nombre": "Particiones",
-          "grupos": {
-            "DPT": "Tabiquería"
-          }
-        },
-        "DL": {
-          "nombre": "Carpintería, vidrios y protecciones solares",
-          "grupos": {
-            "DLP": "Puertas",
-            "DLV": "Ventanas",
-            "DLC": "Rejas y cerrajería",
-            "DLA": "Closets y muebles empotrados",
-            "DLG": "Vidrios"
-          }
-        },
-        "DH": {
-          "nombre": "Remates",
-          "grupos": {
-            "DHR": "Alféizares, dinteles y pasamanos"
-          }
-        },
-        "DI": {
-          "nombre": "Instalaciones",
-          "grupos": {
-            "DIS": "Desmontaje de aparatos",
-            "DIF": "Redes de agua y desagüe",
-            "DIE": "Redes eléctricas",
-            "DIC": "Climatización",
-            "DII": "Iluminación"
-          }
-        },
-        "DN": {
-          "nombre": "Aislamientos e impermeabilizaciones",
-          "grupos": {
-            "DNI": "Impermeabilizaciones",
-            "DNA": "Aislamientos"
-          }
-        },
-        "DQ": {
-          "nombre": "Cubiertas",
-          "grupos": {
-            "DQI": "Techos inclinados",
-            "DQP": "Cubiertas planas",
-            "DQC": "Canales y bajantes"
-          }
-        },
-        "DR": {
-          "nombre": "Revestimientos y trasdosados",
-          "grupos": {
-            "DRS": "Pisos y pavimentos",
-            "DRC": "Enchapados y piezas rígidas en paredes",
-            "DRF": "Revestimientos continuos (frisos, yeso, estuco)",
-            "DRT": "Cielos rasos",
-            "DRR": "Trasdosados",
-            "DRD": "Revestimientos decorativos",
-            "DRE": "Escaleras",
-            "DRQ": "Salpicados y morteros monocapa en fachada"
-          }
-        },
-        "DS": {
-          "nombre": "Equipamiento",
-          "grupos": {
-            "DSC": "Cocinas",
-            "DSB": "Baños",
-            "DSM": "Mobiliario fijo"
-          }
-        },
-        "DU": {
-          "nombre": "Urbanización interior de la parcela",
-          "grupos": {
-            "DUC": "Cerramientos de parcela",
-            "DUJ": "Jardinería",
-            "DUI": "Instalaciones exteriores"
-          }
-        },
-        "DM": {
-          "nombre": "Firmes y pavimentos exteriores",
-          "grupos": {
-            "DMP": "Pavimentos exteriores",
-            "DMB": "Brocales y cordones"
-          }
-        }
+        "01": "Pisos y pavimentos",
+        "02": "Revestimientos y frisos de pared",
+        "03": "Cielos rasos",
+        "04": "Trasdosados y forros",
+        "05": "Revestimientos decorativos",
+        "06": "Escaleras",
+        "07": "Fachadas y revestimientos exteriores",
+        "08": "Paredes y tabiquería",
+        "09": "Carpintería, herrería y vidrios",
+        "10": "Remates y elementos accesorios",
+        "11": "Instalaciones",
+        "12": "Impermeabilizaciones y aislamientos",
+        "13": "Techos y cubiertas",
+        "14": "Equipamiento y mobiliario fijo",
+        "15": "Estructuras",
+        "16": "Fundaciones",
+        "17": "Obras exteriores y urbanismo"
       }
     },
-    "A": {
-      "nombre": "Acondicionamiento del terreno",
+    "03": {
+      "nombre": "Movimiento de tierras",
       "subcapitulos": {
-        "AM": {
-          "nombre": "Movimiento de tierras",
-          "grupos": {}
-        },
-        "AS": {
-          "nombre": "Saneamiento enterrado",
-          "grupos": {}
-        },
-        "AN": {
-          "nombre": "Nivelación y compactación",
-          "grupos": {}
-        }
+        "01": "Limpieza y desbroce",
+        "02": "Excavaciones",
+        "03": "Rellenos y compactación",
+        "04": "Transporte de tierras"
       }
     },
-    "C": {
-      "nombre": "Cimentaciones",
+    "04": {
+      "nombre": "Fundaciones",
       "subcapitulos": {
-        "CS": {
-          "nombre": "Superficiales",
-          "grupos": {}
-        },
-        "CP": {
-          "nombre": "Profundas",
-          "grupos": {}
-        },
-        "CC": {
-          "nombre": "Contenciones",
-          "grupos": {}
-        }
+        "01": "Bases y zapatas",
+        "02": "Vigas de riostra",
+        "03": "Losas de fundación",
+        "04": "Muros de contención",
+        "05": "Pilotes y fundaciones profundas"
       }
     },
-    "E": {
+    "05": {
       "nombre": "Estructuras",
       "subcapitulos": {
-        "EH": {
-          "nombre": "Hormigón armado",
-          "grupos": {}
-        },
-        "EA": {
-          "nombre": "Acero",
-          "grupos": {}
-        },
-        "EM": {
-          "nombre": "Madera",
-          "grupos": {}
-        },
-        "EF": {
-          "nombre": "Fábrica estructural",
-          "grupos": {}
-        },
-        "ER": {
-          "nombre": "Refuerzos y recalces",
-          "grupos": {}
-        }
+        "01": "Concreto armado vaciado en sitio",
+        "02": "Estructura metálica",
+        "03": "Estructura de madera",
+        "04": "Losas y entrepisos",
+        "05": "Escaleras estructurales",
+        "06": "Refuerzos y reparaciones estructurales"
       }
     },
-    "F": {
-      "nombre": "Fachadas y particiones",
+    "06": {
+      "nombre": "Paredes y tabiquería",
       "subcapitulos": {
-        "FF": {
-          "nombre": "Fábrica no estructural",
-          "grupos": {
-            "FFB": "Bloque de concreto",
-            "FFL": "Ladrillo cerámico"
-          }
-        },
-        "FB": {
-          "nombre": "Tabiquería de entramado autoportante",
-          "grupos": {
-            "FBY": "De placas de yeso laminado",
-            "FBC": "De placas de cemento"
-          }
-        },
-        "FC": {
-          "nombre": "Dinteles, cargaderos y cajones de persiana",
-          "grupos": {}
-        },
-        "FD": {
-          "nombre": "Defensas y barandillas",
-          "grupos": {}
-        },
-        "FZ": {
-          "nombre": "Limpieza y tratamientos superficiales",
-          "grupos": {}
-        }
+        "01": "Bloque de concreto",
+        "02": "Bloque y ladrillo de arcilla",
+        "03": "Tabiquería de yeso laminado",
+        "04": "Tabiquería de otros materiales",
+        "05": "Dinteles, brocales y remates de vano"
       }
     },
-    "L": {
-      "nombre": "Carpintería, cerrajería, vidrios y protecciones solares",
+    "07": {
+      "nombre": "Frisos y revestimientos de pared",
       "subcapitulos": {
-        "LP": {
-          "nombre": "Puertas interiores",
-          "grupos": {}
-        },
-        "LE": {
-          "nombre": "Puertas de entrada",
-          "grupos": {}
-        },
-        "LV": {
-          "nombre": "Ventanas y balconeras",
-          "grupos": {}
-        },
-        "LA": {
-          "nombre": "Armarios y closets",
-          "grupos": {}
-        },
-        "LC": {
-          "nombre": "Cerrajería y rejas",
-          "grupos": {}
-        },
-        "LG": {
-          "nombre": "Vidrios",
-          "grupos": {}
-        }
+        "01": "Frisos y enlucidos de mortero",
+        "02": "Pastas y acabados de yeso",
+        "03": "Enchapado cerámico y porcelanato",
+        "04": "Enchapado de piedra natural",
+        "05": "Revestimientos decorativos y especiales"
       }
     },
-    "H": {
-      "nombre": "Remates y ayudas",
+    "08": {
+      "nombre": "Pisos y pavimentos",
       "subcapitulos": {
-        "HA": {
-          "nombre": "Ayudas de albañilería a instalaciones",
-          "grupos": {}
-        },
-        "HR": {
-          "nombre": "Remates y sellados",
-          "grupos": {}
-        }
+        "01": "Bases, contrapisos y nivelación",
+        "02": "Pisos cerámicos y porcelanato",
+        "03": "Pisos de piedra natural y granito",
+        "04": "Pisos de madera y laminados",
+        "05": "Pisos vinílicos y flexibles",
+        "06": "Pisos continuos de concreto y microcemento",
+        "07": "Rodapiés y remates de piso",
+        "08": "Revestimiento de escaleras"
       }
     },
-    "I": {
-      "nombre": "Instalaciones",
+    "09": {
+      "nombre": "Cielos rasos",
       "subcapitulos": {
-        "IF": {
-          "nombre": "Fontanería",
-          "grupos": {
-            "IFT": "Tuberías y montantes de agua",
-            "IFA": "Aparatos y puntos de agua",
-            "IFL": "Llaves y valvulería"
-          }
-        },
-        "IS": {
-          "nombre": "Saneamiento y desagües",
-          "grupos": {
-            "IST": "Tuberías y bajantes de desagüe",
-            "ISA": "Puntos de desagüe de aparatos"
-          }
-        },
-        "IE": {
-          "nombre": "Eléctrica",
-          "grupos": {
-            "IEC": "Canalizaciones y cableado",
-            "IEM": "Mecanismos y tomas",
-            "IET": "Tableros y protecciones"
-          }
-        },
-        "II": {
-          "nombre": "Iluminación",
-          "grupos": {}
-        },
-        "IC": {
-          "nombre": "Climatización y ventilación",
-          "grupos": {}
-        },
-        "IG": {
-          "nombre": "Gas",
-          "grupos": {}
-        },
-        "IT": {
-          "nombre": "Telecomunicaciones y datos",
-          "grupos": {}
-        },
-        "IP": {
-          "nombre": "Protección contra incendios",
-          "grupos": {}
-        },
-        "IH": {
-          "nombre": "Hidroneumáticos y bombeo",
-          "grupos": {}
-        }
+        "01": "Yeso laminado continuo",
+        "02": "Cielos desmontables y registrables",
+        "03": "Cielos de PVC y láminas",
+        "04": "Cielos de madera",
+        "05": "Molduras y remates"
       }
     },
-    "N": {
-      "nombre": "Aislamientos e impermeabilizaciones",
+    "10": {
+      "nombre": "Impermeabilizaciones y aislamientos",
       "subcapitulos": {
-        "NA": {
-          "nombre": "Aislamientos térmicos y acústicos",
-          "grupos": {}
-        },
-        "NI": {
-          "nombre": "Impermeabilizaciones",
-          "grupos": {}
-        }
+        "01": "Manto asfáltico",
+        "02": "Impermeabilizantes líquidos y acrílicos",
+        "03": "Impermeabilización de áreas húmedas",
+        "04": "Aislamiento térmico y acústico"
       }
     },
-    "Q": {
-      "nombre": "Cubiertas",
+    "11": {
+      "nombre": "Techos y cubiertas",
       "subcapitulos": {
-        "QI": {
-          "nombre": "Inclinadas",
-          "grupos": {}
-        },
-        "QP": {
-          "nombre": "Planas",
-          "grupos": {}
-        },
-        "QL": {
-          "nombre": "Lucernarios y translúcidas",
-          "grupos": {}
-        }
+        "01": "Estructura de techo",
+        "02": "Cubiertas de teja",
+        "03": "Cubiertas de lámina metálica",
+        "04": "Cubiertas planas y pendientados",
+        "05": "Canales, bajantes y remates"
       }
     },
-    "R": {
-      "nombre": "Revestimientos y trasdosados",
+    "12": {
+      "nombre": "Instalaciones sanitarias",
       "subcapitulos": {
-        "RS": {
-          "nombre": "Pavimentos",
-          "grupos": {
-            "RSA": "Morteros y pastas de nivelación",
-            "RSG": "Cerámicos y porcelánicos",
-            "RSP": "Piedra natural",
-            "RSM": "Madera y laminados",
-            "RSV": "Vinílicos y sintéticos",
-            "RSC": "Continuos de concreto y microcemento",
-            "RSD": "Remates de pavimento"
-          }
-        },
-        "RA": {
-          "nombre": "Revestimientos de paramentos con piezas rígidas",
-          "grupos": {
-            "RAG": "Alicatados cerámicos y porcelánicos",
-            "RAP": "Piedra natural"
-          }
-        },
-        "RP": {
-          "nombre": "Revestimientos continuos",
-          "grupos": {
-            "RPF": "Frisos y enlucidos",
-            "RPE": "Estucos y morteros decorativos"
-          }
-        },
-        "RI": {
-          "nombre": "Pinturas",
-          "grupos": {
-            "RII": "Interiores",
-            "RIE": "Exteriores",
-            "RIM": "Sobre madera y metal",
-            "RIP": "Preparación de soportes"
-          }
-        },
-        "RR": {
-          "nombre": "Trasdosados",
-          "grupos": {
-            "RRY": "De placas de yeso laminado"
-          }
-        },
-        "RT": {
-          "nombre": "Falsos techos",
-          "grupos": {
-            "RTY": "De placas de yeso laminado",
-            "RTD": "Desmontables y registrables"
-          }
-        }
+        "01": "Tuberías y montantes de agua",
+        "02": "Puntos de agua",
+        "03": "Llaves y valvulería",
+        "04": "Aparatos sanitarios y grifería",
+        "05": "Tuberías y bajantes de desagüe",
+        "06": "Puntos de desagüe",
+        "07": "Tanques, bombas e hidroneumáticos"
       }
     },
-    "S": {
-      "nombre": "Señalización y equipamiento",
+    "13": {
+      "nombre": "Instalaciones eléctricas",
       "subcapitulos": {
-        "SB": {
-          "nombre": "Aparatos sanitarios y grifería",
-          "grupos": {
-            "SBA": "Aparatos sanitarios",
-            "SBG": "Grifería y accesorios"
-          }
-        },
-        "SC": {
-          "nombre": "Mobiliario de cocina y encimeras",
-          "grupos": {}
-        },
-        "SE": {
-          "nombre": "Electrodomésticos",
-          "grupos": {}
-        },
-        "SS": {
-          "nombre": "Señalización",
-          "grupos": {}
-        }
+        "01": "Canalizaciones y cableado",
+        "02": "Puntos, mecanismos y tomas",
+        "03": "Tableros y protecciones",
+        "04": "Iluminación",
+        "05": "Acometidas y puesta a tierra",
+        "06": "Corrientes débiles y datos"
       }
     },
-    "U": {
-      "nombre": "Urbanización interior de la parcela",
+    "14": {
+      "nombre": "Instalaciones mecánicas y especiales",
       "subcapitulos": {
-        "UP": {
-          "nombre": "Pavimentos exteriores",
-          "grupos": {}
-        },
-        "UC": {
-          "nombre": "Cerramientos de parcela",
-          "grupos": {}
-        },
-        "UJ": {
-          "nombre": "Jardinería y riego",
-          "grupos": {}
-        },
-        "UI": {
-          "nombre": "Instalaciones exteriores",
-          "grupos": {}
-        }
+        "01": "Climatización y ventilación",
+        "02": "Gas doméstico",
+        "03": "Protección contra incendios",
+        "04": "Sistemas de respaldo eléctrico"
       }
     },
-    "G": {
-      "nombre": "Gestión de residuos",
+    "15": {
+      "nombre": "Herrería, carpintería y vidrios",
       "subcapitulos": {
-        "GT": {
-          "nombre": "Transporte de residuos",
-          "grupos": {
-            "GTR": "Retirada y transporte de escombro"
-          }
-        },
-        "GC": {
-          "nombre": "Contenedores y acopio",
-          "grupos": {}
-        }
+        "01": "Puertas interiores",
+        "02": "Puertas exteriores y de seguridad",
+        "03": "Ventanas y balconeras",
+        "04": "Rejas, portones y herrería",
+        "05": "Closets y muebles empotrados",
+        "06": "Vidrios y espejos",
+        "07": "Barandas y pasamanos"
       }
     },
-    "X": {
-      "nombre": "Control de calidad y ensayos",
+    "16": {
+      "nombre": "Pintura y acabados",
       "subcapitulos": {
-        "XE": {
-          "nombre": "Ensayos de materiales",
-          "grupos": {}
-        },
-        "XP": {
-          "nombre": "Pruebas de servicio",
-          "grupos": {}
-        }
+        "01": "Preparación de soportes",
+        "02": "Pintura interior",
+        "03": "Pintura exterior",
+        "04": "Esmaltes sobre madera y metal",
+        "05": "Recubrimientos especiales y decorativos"
       }
     },
-    "Y": {
-      "nombre": "Seguridad y salud",
+    "17": {
+      "nombre": "Equipamiento y mobiliario fijo",
       "subcapitulos": {
-        "YP": {
-          "nombre": "Protecciones individuales",
-          "grupos": {}
-        },
-        "YC": {
-          "nombre": "Protecciones colectivas",
-          "grupos": {}
-        },
-        "YS": {
-          "nombre": "Señalización de obra",
-          "grupos": {}
-        }
+        "01": "Mobiliario de cocina",
+        "02": "Mesones y topes",
+        "03": "Mobiliario de baño",
+        "04": "Accesorios y herrajes",
+        "05": "Mobiliario fijo diverso"
       }
     },
-    "Z": {
-      "nombre": "Eficiencia energética",
+    "18": {
+      "nombre": "Obras exteriores y urbanismo",
       "subcapitulos": {
-        "ZS": {
-          "nombre": "Solar fotovoltaica y térmica",
-          "grupos": {}
-        },
-        "ZA": {
-          "nombre": "Mejora de envolvente",
-          "grupos": {}
-        }
+        "01": "Pavimentos exteriores",
+        "02": "Brocales, aceras y drenajes",
+        "03": "Cerramientos de parcela",
+        "04": "Jardinería y riego",
+        "05": "Instalaciones exteriores"
+      }
+    },
+    "19": {
+      "nombre": "Gestión de residuos y limpieza",
+      "subcapitulos": {
+        "01": "Retiro y transporte de escombro",
+        "02": "Contenedores y acopio",
+        "03": "Limpieza final de obra"
+      }
+    },
+    "20": {
+      "nombre": "Seguridad y salud en obra",
+      "subcapitulos": {
+        "01": "Protecciones colectivas",
+        "02": "Equipos de protección individual",
+        "03": "Señalización de obra",
+        "04": "Instalaciones de bienestar"
       }
     }
   }

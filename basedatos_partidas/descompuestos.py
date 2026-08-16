@@ -79,23 +79,29 @@ def cargar_clasificacion() -> dict:
 
 
 def ubicar(partida: dict, taxonomia: dict) -> dict:
-    """Valida capítulo/subcapítulo/grupo y devuelve sus nombres legibles."""
+    """Valida capítulo y subcapítulo y devuelve sus nombres legibles.
+
+    Estructura de dos niveles: capítulo (2 dígitos) y subcapítulo (2 dígitos).
+    El código de partida debe ser ``PREFIJO-CC-SS-NNN`` y coincidir con ambos.
+    """
+    prefijo = taxonomia.get("_prefijo", "CT")
     caps = taxonomia.get("capitulos", {})
-    cap, sub, gru = partida.get("capitulo"), partida.get("subcapitulo"), partida.get("grupo")
+    cap, sub = partida.get("capitulo"), partida.get("subcapitulo")
     if cap not in caps:
         raise ValueError(f"{partida['codigo']}: capítulo «{cap}» no existe en clasificacion.json")
     subs = caps[cap]["subcapitulos"]
     if sub not in subs:
         raise ValueError(f"{partida['codigo']}: subcapítulo «{sub}» no existe en el capítulo {cap}")
-    grupos = subs[sub].get("grupos", {})
-    if gru not in grupos:
-        raise ValueError(f"{partida['codigo']}: grupo «{gru}» no existe en el subcapítulo {sub}")
-    if not partida["codigo"].startswith(gru):
-        raise ValueError(f"{partida['codigo']}: el código debe empezar por el grupo «{gru}»")
+    esperado = f"{prefijo}-{cap}-{sub}-"
+    if not partida["codigo"].startswith(esperado):
+        raise ValueError(f"{partida['codigo']}: el código debería empezar por «{esperado}»")
+    ambito = partida.get("ambito", "reforma")
+    if ambito != taxonomia.get("_ambito", "reforma"):
+        raise ValueError(f"{partida['codigo']}: ámbito «{ambito}» no corresponde a esta clasificación")
     return {
         "capitulo_cod": cap, "capitulo": caps[cap]["nombre"],
-        "subcapitulo_cod": sub, "subcapitulo": subs[sub]["nombre"],
-        "grupo_cod": gru, "grupo": grupos[gru],
+        "subcapitulo_cod": sub, "subcapitulo": subs[sub],
+        "ambito": ambito,
     }
 
 
@@ -284,7 +290,7 @@ def main(argv: list[str]) -> int:
         resumen = construir_hoja(partida, destino)
         u = partida["_ubicacion"]
         print(f"\n{partida['codigo']}  {partida['titulo']}")
-        print(f"  clasificación  : {u['capitulo']} › {u['subcapitulo']} › {u['grupo']}")
+        print(f"  clasificación  : {u['capitulo']} › {u['subcapitulo']}")
         print(f"  archivo        : {destino.relative_to(RAIZ)}")
         for clave, valor in resumen["totales"].items():
             print(f"  {clave:<16}: {valor:>8.2f} USD")
@@ -338,39 +344,6 @@ def main(argv: list[str]) -> int:
     return 1 if fallos else 0
 
 
-def escribir_arbol(filas: list[dict], taxonomia: dict) -> None:
-    """Genera el árbol jerárquico que alimentará la barra lateral."""
-    caps = taxonomia.get("capitulos", {})
-    arbol = []
-    for cod_cap, cap in caps.items():
-        nodo_subs = []
-        for cod_sub, sub in cap["subcapitulos"].items():
-            nodo_grupos = []
-            for cod_gru, nombre_gru in sub.get("grupos", {}).items():
-                hijas = [
-                    {"codigo": f["codigo"], "titulo": f["titulo"], "unidad": f["unidad"],
-                     "precio": f["precio_venta"], "horas": f["horas"],
-                     "producto_cliente": bool(f.get("producto_cliente"))}
-                    for f in filas if f["ubicacion"]["grupo_cod"] == cod_gru
-                ]
-                nodo_grupos.append({"codigo": cod_gru, "nombre": nombre_gru,
-                                    "partidas": hijas, "n": len(hijas)})
-            total_sub = sum(g["n"] for g in nodo_grupos)
-            nodo_subs.append({"codigo": cod_sub, "nombre": sub["nombre"],
-                              "grupos": nodo_grupos, "n": total_sub})
-        total_cap = sum(s["n"] for s in nodo_subs)
-        arbol.append({"codigo": cod_cap, "nombre": cap["nombre"],
-                      "subcapitulos": nodo_subs, "n": total_cap})
-
-    ruta = BASE / "salida" / "arbol_catalogo.json"
-    ruta.parent.mkdir(parents=True, exist_ok=True)
-    ruta.write_text(json.dumps({"moneda": taxonomia.get("_moneda", "USD"), "arbol": arbol},
-                               ensure_ascii=False, indent=2), encoding="utf-8")
-    con = sum(1 for c in arbol if c["n"])
-    print(f"Árbol de navegación   -> {ruta.relative_to(RAIZ)} "
-          f"({len(arbol)} capítulos, {con} con partidas)")
-
-
 def escribir_catalogo(filas: list[dict]) -> None:
     """Vuelca el resumen de todas las partidas al maestro del catálogo."""
     ruta = BASE / "datos" / "partidas.csv"
@@ -394,9 +367,9 @@ def escribir_catalogo(filas: list[dict]) -> None:
                          f"{pcl['tipo']} ({pcl['consumo']} {pcl['unidad']}/{f['unidad']})")
             w.writerow([
                 f["codigo"], u["capitulo"], f["titulo"], f["descripcion"],
-                {"m²":"m2","m³":"m3"}.get(f["unidad"], f["unidad"]),
+                {"m²": "m2", "m³": "m3"}.get(f["unidad"], f["unidad"]),
                 f"{f['precio_venta']:.2f}",
-                u["subcapitulo"], u["grupo"],
+                u["subcapitulo"], "",
                 f"{c.get('materiales', 0):.2f}",
                 f"{c.get('mano_obra', 0):.2f}",
                 f"{c.get('complementarios', 0):.2f}",
@@ -405,6 +378,36 @@ def escribir_catalogo(filas: list[dict]) -> None:
                 "", nota,
             ])
     print(f"\nCatálogo consolidado -> {ruta.relative_to(RAIZ)} ({len(filas)} partidas)")
+
+
+def escribir_arbol(filas: list[dict], taxonomia: dict) -> None:
+    """Genera el árbol jerárquico que alimentará la barra lateral."""
+    caps = taxonomia.get("capitulos", {})
+    arbol = []
+    for cod_cap, cap in caps.items():
+        nodo_subs = []
+        for cod_sub, nombre_sub in cap["subcapitulos"].items():
+            hijas = [
+                {"codigo": f["codigo"], "titulo": f["titulo"], "unidad": f["unidad"],
+                 "precio": f["precio_venta"], "horas": f["horas"],
+                 "producto_cliente": bool(f.get("producto_cliente"))}
+                for f in filas if f["ubicacion"]["subcapitulo_cod"] == cod_sub
+                and f["ubicacion"]["capitulo_cod"] == cod_cap
+            ]
+            nodo_subs.append({"codigo": cod_sub, "nombre": nombre_sub,
+                              "partidas": hijas, "n": len(hijas)})
+        arbol.append({"codigo": cod_cap, "nombre": cap["nombre"],
+                      "subcapitulos": nodo_subs, "n": sum(s["n"] for s in nodo_subs)})
+
+    ruta = BASE / "salida" / "arbol_catalogo.json"
+    ruta.parent.mkdir(parents=True, exist_ok=True)
+    ruta.write_text(json.dumps({"prefijo": taxonomia.get("_prefijo", "CT"),
+                                "ambito": taxonomia.get("_ambito", "reforma"),
+                                "moneda": taxonomia.get("_moneda", "USD"),
+                                "arbol": arbol}, ensure_ascii=False, indent=2), encoding="utf-8")
+    con = sum(1 for c in arbol if c["n"])
+    print(f"Árbol de navegación   -> {ruta.relative_to(RAIZ)} "
+          f"({len(arbol)} capítulos, {con} con partidas)")
 
 
 if __name__ == "__main__":

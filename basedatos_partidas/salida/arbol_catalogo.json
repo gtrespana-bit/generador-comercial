@@ -1,2093 +1,1830 @@
 {
+  "prefijo": "CT",
+  "ambito": "reforma",
   "moneda": "USD",
   "arbol": [
     {
-      "codigo": "0",
-      "nombre": "Actuaciones previas",
+      "codigo": "01",
+      "nombre": "Trabajos preliminares y provisionales",
       "subcapitulos": [
         {
-          "codigo": "0A",
-          "nombre": "Andamios y maquinaria de elevación",
-          "grupos": [],
+          "codigo": "01",
+          "nombre": "Protecciones y cerramientos provisionales",
+          "partidas": [],
           "n": 0
         },
         {
-          "codigo": "0S",
-          "nombre": "Sondeos y catas",
-          "grupos": [],
+          "codigo": "02",
+          "nombre": "Andamios y medios de elevación",
+          "partidas": [],
           "n": 0
         },
         {
-          "codigo": "0P",
-          "nombre": "Protecciones y apeos",
-          "grupos": [],
+          "codigo": "03",
+          "nombre": "Apeos y apuntalamientos",
+          "partidas": [],
           "n": 0
         },
         {
-          "codigo": "0L",
-          "nombre": "Limpieza y desalojo previo",
-          "grupos": [],
+          "codigo": "04",
+          "nombre": "Catas, sondeos y replanteos",
+          "partidas": [],
+          "n": 0
+        },
+        {
+          "codigo": "05",
+          "nombre": "Servicios provisionales de obra",
+          "partidas": [],
           "n": 0
         }
       ],
       "n": 0
     },
     {
-      "codigo": "D",
-      "nombre": "Demoliciones",
+      "codigo": "02",
+      "nombre": "Demoliciones y desmontajes",
       "subcapitulos": [
         {
-          "codigo": "DD",
-          "nombre": "Cimentaciones",
-          "grupos": [
+          "codigo": "01",
+          "nombre": "Pisos y pavimentos",
+          "partidas": [
             {
-              "codigo": "DDS",
-              "nombre": "Zapatas y pedestales",
-              "partidas": [
-                {
-                  "codigo": "DDS010",
-                  "titulo": "Demolición de zapata o pedestal de concreto armado.",
-                  "unidad": "m³",
-                  "precio": 113.98,
-                  "horas": 6.6,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 1
+              "codigo": "CT-02-01-010",
+              "titulo": "Demolición de piso cerámico y su capa de pega.",
+              "unidad": "m²",
+              "precio": 4.88,
+              "horas": 0.53,
+              "producto_cliente": false
             },
             {
-              "codigo": "DDM",
-              "nombre": "Vigas de riostra y muros",
-              "partidas": [
-                {
-                  "codigo": "DDM010",
-                  "titulo": "Demolición de viga de riostra o muro de contención de concreto.",
-                  "unidad": "m³",
-                  "precio": 104.61,
-                  "horas": 6.1,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 1
+              "codigo": "CT-02-01-020",
+              "titulo": "Demolición de rodapié cerámico.",
+              "unidad": "m",
+              "precio": 1.0,
+              "horas": 0.12,
+              "producto_cliente": false
             },
             {
-              "codigo": "DDL",
-              "nombre": "Losas de fundación",
-              "partidas": [
-                {
-                  "codigo": "DDL010",
-                  "titulo": "Demolición de losa de fundación de concreto armado.",
-                  "unidad": "m³",
-                  "precio": 119.83,
-                  "horas": 5.35,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 1
+              "codigo": "CT-02-01-030",
+              "titulo": "Demolición de piso de granito o terrazo en baldosa.",
+              "unidad": "m²",
+              "precio": 5.9,
+              "horas": 0.62,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-01-040",
+              "titulo": "Demolición de rodapié de granito o terrazo.",
+              "unidad": "m",
+              "precio": 1.17,
+              "horas": 0.14,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-01-050",
+              "titulo": "Demolición de piso de granito vaciado en sitio.",
+              "unidad": "m²",
+              "precio": 13.04,
+              "horas": 0.95,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-01-060",
+              "titulo": "Demolición de piso de cemento pulido.",
+              "unidad": "m²",
+              "precio": 6.92,
+              "horas": 0.7,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-01-070",
+              "titulo": "Demolición de rodapié de cemento.",
+              "unidad": "m",
+              "precio": 0.91,
+              "horas": 0.11,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-01-080",
+              "titulo": "Demolición de piso de piedra natural.",
+              "unidad": "m²",
+              "precio": 6.34,
+              "horas": 0.68,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-01-090",
+              "titulo": "Demolición de rodapié de piedra natural.",
+              "unidad": "m",
+              "precio": 1.25,
+              "horas": 0.15,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-01-100",
+              "titulo": "Levantado de piso de parquet o madera.",
+              "unidad": "m²",
+              "precio": 2.17,
+              "horas": 0.3,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-01-110",
+              "titulo": "Levantado de rodapié de madera.",
+              "unidad": "m",
+              "precio": 0.43,
+              "horas": 0.08,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-01-120",
+              "titulo": "Levantado de piso laminado.",
+              "unidad": "m²",
+              "precio": 1.26,
+              "horas": 0.18,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-01-130",
+              "titulo": "Levantado de piso vinílico, linóleo o alfombra.",
+              "unidad": "m²",
+              "precio": 2.12,
+              "horas": 0.22,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-01-140",
+              "titulo": "Demolición de piso continuo de concreto.",
+              "unidad": "m²",
+              "precio": 15.33,
+              "horas": 1.1,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-01-150",
+              "titulo": "Demolición de contrapiso o base de mortero de nivelación.",
+              "unidad": "m²",
+              "precio": 7.18,
+              "horas": 0.75,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-01-160",
+              "titulo": "Desmontaje de piso técnico registrable.",
+              "unidad": "m²",
+              "precio": 1.09,
+              "horas": 0.15,
+              "producto_cliente": false
             }
           ],
-          "n": 3
+          "n": 16
         },
         {
-          "codigo": "DE",
-          "nombre": "Estructuras",
-          "grupos": [
+          "codigo": "02",
+          "nombre": "Revestimientos y frisos de pared",
+          "partidas": [
             {
-              "codigo": "DEC",
-              "nombre": "Concreto armado",
-              "partidas": [
-                {
-                  "codigo": "DEC010",
-                  "titulo": "Demolición de columna de concreto armado.",
-                  "unidad": "m³",
-                  "precio": 119.95,
-                  "horas": 7.7,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DEC020",
-                  "titulo": "Demolición de viga de concreto armado.",
-                  "unidad": "m³",
-                  "precio": 134.08,
-                  "horas": 8.25,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DEC030",
-                  "titulo": "Demolición de losa de entrepiso maciza o nervada.",
-                  "unidad": "m²",
-                  "precio": 46.07,
-                  "horas": 3.0,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DEC040",
-                  "titulo": "Apertura de hueco en losa de concreto armado.",
-                  "unidad": "m²",
-                  "precio": 36.26,
-                  "horas": 3.2,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 4
+              "codigo": "CT-02-02-010",
+              "titulo": "Picado de enchapado cerámico en pared y su capa de pega.",
+              "unidad": "m²",
+              "precio": 6.25,
+              "horas": 0.7,
+              "producto_cliente": false
             },
             {
-              "codigo": "DEA",
-              "nombre": "Estructura metálica",
-              "partidas": [
-                {
-                  "codigo": "DEA010",
-                  "titulo": "Desmontaje de estructura metálica.",
-                  "unidad": "kg",
-                  "precio": 0.52,
-                  "horas": 0.042,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 1
+              "codigo": "CT-02-02-020",
+              "titulo": "Picado de enchapado de granito o terrazo en pared.",
+              "unidad": "m²",
+              "precio": 7.31,
+              "horas": 0.78,
+              "producto_cliente": false
             },
             {
-              "codigo": "DEM",
-              "nombre": "Estructura de madera",
-              "partidas": [
-                {
-                  "codigo": "DEM010",
-                  "titulo": "Desmontaje de estructura de madera.",
-                  "unidad": "m²",
-                  "precio": 13.18,
-                  "horas": 1.42,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 1
+              "codigo": "CT-02-02-030",
+              "titulo": "Picado de enchapado de piedra natural en pared.",
+              "unidad": "m²",
+              "precio": 7.67,
+              "horas": 0.82,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-02-040",
+              "titulo": "Desmontaje de enchapado de madera o machihembrado en pared.",
+              "unidad": "m²",
+              "precio": 2.21,
+              "horas": 0.32,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-02-050",
+              "titulo": "Desmontaje de revestimiento de láminas o paneles en pared.",
+              "unidad": "m²",
+              "precio": 1.56,
+              "horas": 0.22,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-02-060",
+              "titulo": "Picado de friso de mortero en paramento.",
+              "unidad": "m²",
+              "precio": 5.86,
+              "horas": 0.6,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-02-070",
+              "titulo": "Picado de friso de yeso o pasta en paramento.",
+              "unidad": "m²",
+              "precio": 3.65,
+              "horas": 0.38,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-02-080",
+              "titulo": "Picado de estuco o pasta decorativa en paramento.",
+              "unidad": "m²",
+              "precio": 4.3,
+              "horas": 0.45,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-02-090",
+              "titulo": "Repicado de superficie de concreto para mejorar adherencia.",
+              "unidad": "m²",
+              "precio": 4.37,
+              "horas": 0.5,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-02-100",
+              "titulo": "Eliminación de pintura en paramento mediante raspado y decapado.",
+              "unidad": "m²",
+              "precio": 5.15,
+              "horas": 0.52,
+              "producto_cliente": false
             }
           ],
-          "n": 6
+          "n": 10
         },
         {
-          "codigo": "DF",
-          "nombre": "Fachadas",
-          "grupos": [
+          "codigo": "03",
+          "nombre": "Cielos rasos",
+          "partidas": [
             {
-              "codigo": "DFF",
-              "nombre": "Muros de fachada",
-              "partidas": [
-                {
-                  "codigo": "DFF010",
-                  "titulo": "Demolición de muro de fachada de bloque o ladrillo.",
-                  "unidad": "m²",
-                  "precio": 8.49,
-                  "horas": 0.76,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 1
+              "codigo": "CT-02-03-010",
+              "titulo": "Demolición de cielo raso de yeso laminado y su estructura.",
+              "unidad": "m²",
+              "precio": 2.69,
+              "horas": 0.3,
+              "producto_cliente": false
             },
             {
-              "codigo": "DFL",
-              "nombre": "Cerramientos ligeros",
-              "partidas": [
-                {
-                  "codigo": "DFL010",
-                  "titulo": "Desmontaje de cerramiento ligero de láminas metálicas.",
-                  "unidad": "m²",
-                  "precio": 5.95,
-                  "horas": 0.58,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 1
+              "codigo": "CT-02-03-020",
+              "titulo": "Demolición de cielo raso de yeso vaciado o pasta.",
+              "unidad": "m²",
+              "precio": 4.91,
+              "horas": 0.48,
+              "producto_cliente": false
             },
             {
-              "codigo": "DFD",
-              "nombre": "Defensas y barandas",
-              "partidas": [
-                {
-                  "codigo": "DFD010",
-                  "titulo": "Desmontaje de baranda o pasamanos de balcón.",
-                  "unidad": "m",
-                  "precio": 5.79,
-                  "horas": 0.46,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DFD020",
-                  "titulo": "Desmontaje de reja de protección en fachada.",
-                  "unidad": "m²",
-                  "precio": 5.62,
-                  "horas": 0.42,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 2
-            }
-          ],
-          "n": 4
-        },
-        {
-          "codigo": "DP",
-          "nombre": "Particiones",
-          "grupos": [
+              "codigo": "CT-02-03-030",
+              "titulo": "Desmontaje de cielo raso desmontable de fibra mineral.",
+              "unidad": "m²",
+              "precio": 1.65,
+              "horas": 0.18,
+              "producto_cliente": false
+            },
             {
-              "codigo": "DPT",
-              "nombre": "Tabiquería",
-              "partidas": [
-                {
-                  "codigo": "DPT010",
-                  "titulo": "Demolición de tabique de bloque o ladrillo, incluidos sus revestimientos.",
-                  "unidad": "m²",
-                  "precio": 5.42,
-                  "horas": 0.58,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DPT020",
-                  "titulo": "Demolición de tabique de yeso laminado y su estructura.",
-                  "unidad": "m²",
-                  "precio": 2.89,
-                  "horas": 0.37,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DPT030",
-                  "titulo": "Demolición de muro de concreto no estructural.",
-                  "unidad": "m²",
-                  "precio": 17.5,
-                  "horas": 1.14,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DPT040",
-                  "titulo": "Apertura de vano en pared de bloque o ladrillo.",
-                  "unidad": "m²",
-                  "precio": 17.78,
-                  "horas": 1.55,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DPT050",
-                  "titulo": "Demolición de tabique de bloque de vidrio.",
-                  "unidad": "m²",
-                  "precio": 6.79,
-                  "horas": 0.69,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 5
+              "codigo": "CT-02-03-040",
+              "titulo": "Desmontaje de cielo raso de machihembrado de madera.",
+              "unidad": "m²",
+              "precio": 2.82,
+              "horas": 0.34,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-03-050",
+              "titulo": "Desmontaje de cielo raso de láminas de PVC o aluminio.",
+              "unidad": "m²",
+              "precio": 1.76,
+              "horas": 0.2,
+              "producto_cliente": false
             }
           ],
           "n": 5
         },
         {
-          "codigo": "DL",
-          "nombre": "Carpintería, vidrios y protecciones solares",
-          "grupos": [
+          "codigo": "04",
+          "nombre": "Trasdosados y forros",
+          "partidas": [
             {
-              "codigo": "DLP",
-              "nombre": "Puertas",
-              "partidas": [
-                {
-                  "codigo": "DLP010",
-                  "titulo": "Desmontaje de puerta interior con su marco.",
-                  "unidad": "ud",
-                  "precio": 4.23,
-                  "horas": 0.64,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DLP020",
-                  "titulo": "Desmontaje de puerta exterior o metálica con su marco.",
-                  "unidad": "ud",
-                  "precio": 11.54,
-                  "horas": 1.2,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 2
+              "codigo": "CT-02-04-010",
+              "titulo": "Demolición de trasdosado de yeso laminado y su estructura.",
+              "unidad": "m²",
+              "precio": 2.56,
+              "horas": 0.33,
+              "producto_cliente": false
             },
             {
-              "codigo": "DLV",
-              "nombre": "Ventanas",
-              "partidas": [
-                {
-                  "codigo": "DLV010",
-                  "titulo": "Desmontaje de ventana con su marco.",
-                  "unidad": "m²",
-                  "precio": 7.02,
-                  "horas": 0.84,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 1
+              "codigo": "CT-02-04-020",
+              "titulo": "Demolición de trasdosado de bloque o ladrillo adosado a muro.",
+              "unidad": "m²",
+              "precio": 6.21,
+              "horas": 0.62,
+              "producto_cliente": false
             },
             {
-              "codigo": "DLC",
-              "nombre": "Rejas y cerrajería",
-              "partidas": [
-                {
-                  "codigo": "DLC010",
-                  "titulo": "Desmontaje de reja o protector metálico interior.",
-                  "unidad": "m²",
-                  "precio": 4.71,
-                  "horas": 0.38,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 1
-            },
-            {
-              "codigo": "DLA",
-              "nombre": "Closets y muebles empotrados",
-              "partidas": [
-                {
-                  "codigo": "DLA010",
-                  "titulo": "Desmontaje de closet o mueble empotrado.",
-                  "unidad": "m²",
-                  "precio": 4.62,
-                  "horas": 0.6,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 1
-            },
-            {
-              "codigo": "DLG",
-              "nombre": "Vidrios",
-              "partidas": [
-                {
-                  "codigo": "DLG010",
-                  "titulo": "Retiro de vidrio de carpintería existente.",
-                  "unidad": "m²",
-                  "precio": 3.38,
-                  "horas": 0.46,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 1
-            }
-          ],
-          "n": 6
-        },
-        {
-          "codigo": "DH",
-          "nombre": "Remates",
-          "grupos": [
-            {
-              "codigo": "DHR",
-              "nombre": "Alféizares, dinteles y pasamanos",
-              "partidas": [
-                {
-                  "codigo": "DHR010",
-                  "titulo": "Desmontaje de alféizar o repisa de ventana.",
-                  "unidad": "m",
-                  "precio": 2.93,
-                  "horas": 0.31,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DHR020",
-                  "titulo": "Demolición de dintel prefabricado o cargadero.",
-                  "unidad": "m",
-                  "precio": 12.52,
-                  "horas": 1.05,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DHR030",
-                  "titulo": "Desmontaje de pasamanos de escalera.",
-                  "unidad": "m",
-                  "precio": 2.26,
-                  "horas": 0.28,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 3
+              "codigo": "CT-02-04-030",
+              "titulo": "Desmontaje de trasdosado directo de placa pegada al muro.",
+              "unidad": "m²",
+              "precio": 3.12,
+              "horas": 0.42,
+              "producto_cliente": false
             }
           ],
           "n": 3
         },
         {
-          "codigo": "DI",
+          "codigo": "05",
+          "nombre": "Revestimientos decorativos",
+          "partidas": [
+            {
+              "codigo": "CT-02-05-010",
+              "titulo": "Retiro de papel tapiz en paramento.",
+              "unidad": "m²",
+              "precio": 2.2,
+              "horas": 0.25,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-05-020",
+              "titulo": "Desmontaje de moldura decorativa de yeso o poliestireno.",
+              "unidad": "m",
+              "precio": 0.94,
+              "horas": 0.13,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-05-030",
+              "titulo": "Retiro de láminas decorativas, vinilos o espejos adheridos.",
+              "unidad": "m²",
+              "precio": 1.6,
+              "horas": 0.15,
+              "producto_cliente": false
+            }
+          ],
+          "n": 3
+        },
+        {
+          "codigo": "06",
+          "nombre": "Escaleras",
+          "partidas": [
+            {
+              "codigo": "CT-02-06-010",
+              "titulo": "Demolición de revestimiento cerámico de escalera.",
+              "unidad": "m²",
+              "precio": 7.27,
+              "horas": 0.85,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-06-020",
+              "titulo": "Demolición de revestimiento de granito o piedra natural en escalera.",
+              "unidad": "m²",
+              "precio": 8.58,
+              "horas": 0.98,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-06-030",
+              "titulo": "Demolición de zócalo escalonado de escalera.",
+              "unidad": "m",
+              "precio": 1.78,
+              "horas": 0.22,
+              "producto_cliente": false
+            }
+          ],
+          "n": 3
+        },
+        {
+          "codigo": "07",
+          "nombre": "Fachadas y revestimientos exteriores",
+          "partidas": [
+            {
+              "codigo": "CT-02-07-010",
+              "titulo": "Desmontaje de baranda o pasamanos de balcón.",
+              "unidad": "m",
+              "precio": 5.79,
+              "horas": 0.46,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-07-020",
+              "titulo": "Desmontaje de reja de protección en fachada.",
+              "unidad": "m²",
+              "precio": 5.62,
+              "horas": 0.42,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-07-030",
+              "titulo": "Demolición de muro de fachada de bloque o ladrillo.",
+              "unidad": "m²",
+              "precio": 8.49,
+              "horas": 0.76,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-07-040",
+              "titulo": "Desmontaje de cerramiento ligero de láminas metálicas.",
+              "unidad": "m²",
+              "precio": 5.95,
+              "horas": 0.58,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-07-050",
+              "titulo": "Picado de salpicado o graniplast en fachada.",
+              "unidad": "m²",
+              "precio": 7.11,
+              "horas": 0.7,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-07-060",
+              "titulo": "Picado de mortero monocapa en fachada.",
+              "unidad": "m²",
+              "precio": 8.02,
+              "horas": 0.78,
+              "producto_cliente": false
+            }
+          ],
+          "n": 6
+        },
+        {
+          "codigo": "08",
+          "nombre": "Paredes y tabiquería",
+          "partidas": [
+            {
+              "codigo": "CT-02-08-010",
+              "titulo": "Demolición de tabique de bloque o ladrillo, incluidos sus revestimientos.",
+              "unidad": "m²",
+              "precio": 5.42,
+              "horas": 0.58,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-08-020",
+              "titulo": "Demolición de tabique de yeso laminado y su estructura.",
+              "unidad": "m²",
+              "precio": 2.89,
+              "horas": 0.37,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-08-030",
+              "titulo": "Demolición de muro de concreto no estructural.",
+              "unidad": "m²",
+              "precio": 17.5,
+              "horas": 1.14,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-08-040",
+              "titulo": "Apertura de vano en pared de bloque o ladrillo.",
+              "unidad": "m²",
+              "precio": 17.78,
+              "horas": 1.55,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-08-050",
+              "titulo": "Demolición de tabique de bloque de vidrio.",
+              "unidad": "m²",
+              "precio": 6.79,
+              "horas": 0.69,
+              "producto_cliente": false
+            }
+          ],
+          "n": 5
+        },
+        {
+          "codigo": "09",
+          "nombre": "Carpintería, herrería y vidrios",
+          "partidas": [
+            {
+              "codigo": "CT-02-09-010",
+              "titulo": "Desmontaje de closet o mueble empotrado.",
+              "unidad": "m²",
+              "precio": 4.62,
+              "horas": 0.6,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-09-020",
+              "titulo": "Desmontaje de reja o protector metálico interior.",
+              "unidad": "m²",
+              "precio": 4.71,
+              "horas": 0.38,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-09-030",
+              "titulo": "Retiro de vidrio de carpintería existente.",
+              "unidad": "m²",
+              "precio": 3.38,
+              "horas": 0.46,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-09-040",
+              "titulo": "Desmontaje de puerta interior con su marco.",
+              "unidad": "ud",
+              "precio": 4.23,
+              "horas": 0.64,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-09-050",
+              "titulo": "Desmontaje de puerta exterior o metálica con su marco.",
+              "unidad": "ud",
+              "precio": 11.54,
+              "horas": 1.2,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-09-060",
+              "titulo": "Desmontaje de ventana con su marco.",
+              "unidad": "m²",
+              "precio": 7.02,
+              "horas": 0.84,
+              "producto_cliente": false
+            }
+          ],
+          "n": 6
+        },
+        {
+          "codigo": "10",
+          "nombre": "Remates y elementos accesorios",
+          "partidas": [
+            {
+              "codigo": "CT-02-10-010",
+              "titulo": "Desmontaje de alféizar o repisa de ventana.",
+              "unidad": "m",
+              "precio": 2.93,
+              "horas": 0.31,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-10-020",
+              "titulo": "Demolición de dintel prefabricado o cargadero.",
+              "unidad": "m",
+              "precio": 12.52,
+              "horas": 1.05,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-10-030",
+              "titulo": "Desmontaje de pasamanos de escalera.",
+              "unidad": "m",
+              "precio": 2.26,
+              "horas": 0.28,
+              "producto_cliente": false
+            }
+          ],
+          "n": 3
+        },
+        {
+          "codigo": "11",
           "nombre": "Instalaciones",
-          "grupos": [
+          "partidas": [
             {
-              "codigo": "DIS",
-              "nombre": "Desmontaje de aparatos",
-              "partidas": [
-                {
-                  "codigo": "DIS010",
-                  "titulo": "Desmontaje de aparato sanitario y su grifería.",
-                  "unidad": "ud",
-                  "precio": 4.55,
-                  "horas": 0.7,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DIS020",
-                  "titulo": "Desmontaje de fregadero y su grifería.",
-                  "unidad": "ud",
-                  "precio": 4.12,
-                  "horas": 0.64,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DIS030",
-                  "titulo": "Desmontaje de calentador de agua.",
-                  "unidad": "ud",
-                  "precio": 9.43,
-                  "horas": 1.5,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 3
+              "codigo": "CT-02-11-010",
+              "titulo": "Desmontaje de equipo de aire acondicionado tipo split.",
+              "unidad": "ud",
+              "precio": 16.84,
+              "horas": 2.5,
+              "producto_cliente": false
             },
             {
-              "codigo": "DIF",
-              "nombre": "Redes de agua y desagüe",
-              "partidas": [
-                {
-                  "codigo": "DIF010",
-                  "titulo": "Desmontaje de red de tuberías de agua o desagüe.",
-                  "unidad": "m",
-                  "precio": 4.2,
-                  "horas": 0.4,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 1
+              "codigo": "CT-02-11-020",
+              "titulo": "Desmontaje de red eléctrica y sus mecanismos.",
+              "unidad": "m",
+              "precio": 3.47,
+              "horas": 0.35,
+              "producto_cliente": false
             },
             {
-              "codigo": "DIE",
-              "nombre": "Redes eléctricas",
-              "partidas": [
-                {
-                  "codigo": "DIE010",
-                  "titulo": "Desmontaje de red eléctrica y sus mecanismos.",
-                  "unidad": "m",
-                  "precio": 3.47,
-                  "horas": 0.35,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DIE020",
-                  "titulo": "Desmontaje de tablero eléctrico.",
-                  "unidad": "ud",
-                  "precio": 10.96,
-                  "horas": 1.4,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 2
+              "codigo": "CT-02-11-030",
+              "titulo": "Desmontaje de tablero eléctrico.",
+              "unidad": "ud",
+              "precio": 10.96,
+              "horas": 1.4,
+              "producto_cliente": false
             },
             {
-              "codigo": "DIC",
-              "nombre": "Climatización",
-              "partidas": [
-                {
-                  "codigo": "DIC010",
-                  "titulo": "Desmontaje de equipo de aire acondicionado tipo split.",
-                  "unidad": "ud",
-                  "precio": 16.84,
-                  "horas": 2.5,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 1
+              "codigo": "CT-02-11-040",
+              "titulo": "Desmontaje de red de tuberías de agua o desagüe.",
+              "unidad": "m",
+              "precio": 4.2,
+              "horas": 0.4,
+              "producto_cliente": false
             },
             {
-              "codigo": "DII",
-              "nombre": "Iluminación",
-              "partidas": [
-                {
-                  "codigo": "DII010",
-                  "titulo": "Desmontaje de luminaria.",
-                  "unidad": "ud",
-                  "precio": 2.17,
-                  "horas": 0.28,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 1
+              "codigo": "CT-02-11-050",
+              "titulo": "Desmontaje de luminaria.",
+              "unidad": "ud",
+              "precio": 2.17,
+              "horas": 0.28,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-11-060",
+              "titulo": "Desmontaje de aparato sanitario y su grifería.",
+              "unidad": "ud",
+              "precio": 4.55,
+              "horas": 0.7,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-11-070",
+              "titulo": "Desmontaje de fregadero y su grifería.",
+              "unidad": "ud",
+              "precio": 4.12,
+              "horas": 0.64,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-11-080",
+              "titulo": "Desmontaje de calentador de agua.",
+              "unidad": "ud",
+              "precio": 9.43,
+              "horas": 1.5,
+              "producto_cliente": false
             }
           ],
           "n": 8
         },
         {
-          "codigo": "DN",
-          "nombre": "Aislamientos e impermeabilizaciones",
-          "grupos": [
+          "codigo": "12",
+          "nombre": "Impermeabilizaciones y aislamientos",
+          "partidas": [
             {
-              "codigo": "DNI",
-              "nombre": "Impermeabilizaciones",
-              "partidas": [
-                {
-                  "codigo": "DNI010",
-                  "titulo": "Retiro de manto asfáltico en cubierta.",
-                  "unidad": "m²",
-                  "precio": 3.44,
-                  "horas": 0.49,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DNI020",
-                  "titulo": "Retiro de impermeabilización líquida o acrílica.",
-                  "unidad": "m²",
-                  "precio": 3.34,
-                  "horas": 0.39,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 2
+              "codigo": "CT-02-12-010",
+              "titulo": "Retiro de aislamiento térmico o acústico.",
+              "unidad": "m²",
+              "precio": 1.99,
+              "horas": 0.24,
+              "producto_cliente": false
             },
             {
-              "codigo": "DNA",
-              "nombre": "Aislamientos",
-              "partidas": [
-                {
-                  "codigo": "DNA010",
-                  "titulo": "Retiro de aislamiento térmico o acústico.",
-                  "unidad": "m²",
-                  "precio": 1.99,
-                  "horas": 0.24,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 1
+              "codigo": "CT-02-12-020",
+              "titulo": "Retiro de manto asfáltico en cubierta.",
+              "unidad": "m²",
+              "precio": 3.44,
+              "horas": 0.49,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-12-030",
+              "titulo": "Retiro de impermeabilización líquida o acrílica.",
+              "unidad": "m²",
+              "precio": 3.34,
+              "horas": 0.39,
+              "producto_cliente": false
             }
           ],
           "n": 3
         },
         {
-          "codigo": "DQ",
-          "nombre": "Cubiertas",
-          "grupos": [
+          "codigo": "13",
+          "nombre": "Techos y cubiertas",
+          "partidas": [
             {
-              "codigo": "DQI",
-              "nombre": "Techos inclinados",
-              "partidas": [
-                {
-                  "codigo": "DQI010",
-                  "titulo": "Desmontaje de cubierta de teja.",
-                  "unidad": "m²",
-                  "precio": 9.44,
-                  "horas": 0.91,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DQI020",
-                  "titulo": "Desmontaje de cubierta de lámina metálica o acerolit.",
-                  "unidad": "m²",
-                  "precio": 6.81,
-                  "horas": 0.61,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DQI030",
-                  "titulo": "Desmontaje de estructura de techo.",
-                  "unidad": "m²",
-                  "precio": 14.46,
-                  "horas": 1.21,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 3
+              "codigo": "CT-02-13-010",
+              "titulo": "Desmontaje de canal de aguas lluvias.",
+              "unidad": "m",
+              "precio": 2.7,
+              "horas": 0.33,
+              "producto_cliente": false
             },
             {
-              "codigo": "DQP",
-              "nombre": "Cubiertas planas",
-              "partidas": [
-                {
-                  "codigo": "DQP010",
-                  "titulo": "Demolición de pendientado y protección de cubierta plana.",
-                  "unidad": "m²",
-                  "precio": 11.27,
-                  "horas": 0.84,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 1
+              "codigo": "CT-02-13-020",
+              "titulo": "Desmontaje de bajante de aguas lluvias.",
+              "unidad": "m",
+              "precio": 2.72,
+              "horas": 0.31,
+              "producto_cliente": false
             },
             {
-              "codigo": "DQC",
-              "nombre": "Canales y bajantes",
-              "partidas": [
-                {
-                  "codigo": "DQC010",
-                  "titulo": "Desmontaje de canal de aguas lluvias.",
-                  "unidad": "m",
-                  "precio": 2.7,
-                  "horas": 0.33,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DQC020",
-                  "titulo": "Desmontaje de bajante de aguas lluvias.",
-                  "unidad": "m",
-                  "precio": 2.72,
-                  "horas": 0.31,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 2
+              "codigo": "CT-02-13-030",
+              "titulo": "Desmontaje de cubierta de teja.",
+              "unidad": "m²",
+              "precio": 9.44,
+              "horas": 0.91,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-13-040",
+              "titulo": "Desmontaje de cubierta de lámina metálica o acerolit.",
+              "unidad": "m²",
+              "precio": 6.81,
+              "horas": 0.61,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-13-050",
+              "titulo": "Desmontaje de estructura de techo.",
+              "unidad": "m²",
+              "precio": 14.46,
+              "horas": 1.21,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-13-060",
+              "titulo": "Demolición de pendientado y protección de cubierta plana.",
+              "unidad": "m²",
+              "precio": 11.27,
+              "horas": 0.84,
+              "producto_cliente": false
             }
           ],
           "n": 6
         },
         {
-          "codigo": "DR",
-          "nombre": "Revestimientos y trasdosados",
-          "grupos": [
+          "codigo": "14",
+          "nombre": "Equipamiento y mobiliario fijo",
+          "partidas": [
             {
-              "codigo": "DRS",
-              "nombre": "Pisos y pavimentos",
-              "partidas": [
-                {
-                  "codigo": "DRS010",
-                  "titulo": "Demolición de piso cerámico y su capa de pega.",
-                  "unidad": "m²",
-                  "precio": 4.88,
-                  "horas": 0.53,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DRS015",
-                  "titulo": "Demolición de rodapié cerámico.",
-                  "unidad": "m",
-                  "precio": 1.0,
-                  "horas": 0.12,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DRS020",
-                  "titulo": "Demolición de piso de granito o terrazo en baldosa.",
-                  "unidad": "m²",
-                  "precio": 5.9,
-                  "horas": 0.62,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DRS025",
-                  "titulo": "Demolición de rodapié de granito o terrazo.",
-                  "unidad": "m",
-                  "precio": 1.17,
-                  "horas": 0.14,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DRS030",
-                  "titulo": "Demolición de piso de granito vaciado en sitio.",
-                  "unidad": "m²",
-                  "precio": 13.04,
-                  "horas": 0.95,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DRS040",
-                  "titulo": "Demolición de piso de cemento pulido.",
-                  "unidad": "m²",
-                  "precio": 6.92,
-                  "horas": 0.7,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DRS045",
-                  "titulo": "Demolición de rodapié de cemento.",
-                  "unidad": "m",
-                  "precio": 0.91,
-                  "horas": 0.11,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DRS050",
-                  "titulo": "Demolición de piso de piedra natural.",
-                  "unidad": "m²",
-                  "precio": 6.34,
-                  "horas": 0.68,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DRS055",
-                  "titulo": "Demolición de rodapié de piedra natural.",
-                  "unidad": "m",
-                  "precio": 1.25,
-                  "horas": 0.15,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DRS060",
-                  "titulo": "Levantado de piso de parquet o madera.",
-                  "unidad": "m²",
-                  "precio": 2.17,
-                  "horas": 0.3,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DRS065",
-                  "titulo": "Levantado de rodapié de madera.",
-                  "unidad": "m",
-                  "precio": 0.43,
-                  "horas": 0.08,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DRS070",
-                  "titulo": "Levantado de piso laminado.",
-                  "unidad": "m²",
-                  "precio": 1.26,
-                  "horas": 0.18,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DRS080",
-                  "titulo": "Levantado de piso vinílico, linóleo o alfombra.",
-                  "unidad": "m²",
-                  "precio": 2.12,
-                  "horas": 0.22,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DRS090",
-                  "titulo": "Demolición de piso continuo de concreto.",
-                  "unidad": "m²",
-                  "precio": 15.33,
-                  "horas": 1.1,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DRS100",
-                  "titulo": "Demolición de contrapiso o base de mortero de nivelación.",
-                  "unidad": "m²",
-                  "precio": 7.18,
-                  "horas": 0.75,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DRS110",
-                  "titulo": "Desmontaje de piso técnico registrable.",
-                  "unidad": "m²",
-                  "precio": 1.09,
-                  "horas": 0.15,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 16
+              "codigo": "CT-02-14-010",
+              "titulo": "Desmontaje de mueble de baño y sus accesorios.",
+              "unidad": "ud",
+              "precio": 6.86,
+              "horas": 0.96,
+              "producto_cliente": false
             },
             {
-              "codigo": "DRC",
-              "nombre": "Enchapados y piezas rígidas en paredes",
-              "partidas": [
-                {
-                  "codigo": "DRC010",
-                  "titulo": "Picado de enchapado cerámico en pared y su capa de pega.",
-                  "unidad": "m²",
-                  "precio": 6.25,
-                  "horas": 0.7,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DRC020",
-                  "titulo": "Picado de enchapado de granito o terrazo en pared.",
-                  "unidad": "m²",
-                  "precio": 7.31,
-                  "horas": 0.78,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DRC030",
-                  "titulo": "Picado de enchapado de piedra natural en pared.",
-                  "unidad": "m²",
-                  "precio": 7.67,
-                  "horas": 0.82,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DRC040",
-                  "titulo": "Desmontaje de enchapado de madera o machihembrado en pared.",
-                  "unidad": "m²",
-                  "precio": 2.21,
-                  "horas": 0.32,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DRC050",
-                  "titulo": "Desmontaje de revestimiento de láminas o paneles en pared.",
-                  "unidad": "m²",
-                  "precio": 1.56,
-                  "horas": 0.22,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 5
+              "codigo": "CT-02-14-020",
+              "titulo": "Desmontaje de mueble de cocina alto o bajo.",
+              "unidad": "m",
+              "precio": 5.11,
+              "horas": 0.66,
+              "producto_cliente": false
             },
             {
-              "codigo": "DRF",
-              "nombre": "Revestimientos continuos (frisos, yeso, estuco)",
-              "partidas": [
-                {
-                  "codigo": "DRF010",
-                  "titulo": "Picado de friso de mortero en paramento.",
-                  "unidad": "m²",
-                  "precio": 5.86,
-                  "horas": 0.6,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DRF020",
-                  "titulo": "Picado de friso de yeso o pasta en paramento.",
-                  "unidad": "m²",
-                  "precio": 3.65,
-                  "horas": 0.38,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DRF030",
-                  "titulo": "Picado de estuco o pasta decorativa en paramento.",
-                  "unidad": "m²",
-                  "precio": 4.3,
-                  "horas": 0.45,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DRF040",
-                  "titulo": "Repicado de superficie de concreto para mejorar adherencia.",
-                  "unidad": "m²",
-                  "precio": 4.37,
-                  "horas": 0.5,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DRF050",
-                  "titulo": "Eliminación de pintura en paramento mediante raspado y decapado.",
-                  "unidad": "m²",
-                  "precio": 5.15,
-                  "horas": 0.52,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 5
+              "codigo": "CT-02-14-030",
+              "titulo": "Desmontaje de mesón de cocina y su salpicadero.",
+              "unidad": "m",
+              "precio": 8.76,
+              "horas": 0.96,
+              "producto_cliente": false
             },
             {
-              "codigo": "DRT",
-              "nombre": "Cielos rasos",
-              "partidas": [
-                {
-                  "codigo": "DRT010",
-                  "titulo": "Demolición de cielo raso de yeso laminado y su estructura.",
-                  "unidad": "m²",
-                  "precio": 2.69,
-                  "horas": 0.3,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DRT020",
-                  "titulo": "Demolición de cielo raso de yeso vaciado o pasta.",
-                  "unidad": "m²",
-                  "precio": 4.91,
-                  "horas": 0.48,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DRT030",
-                  "titulo": "Desmontaje de cielo raso desmontable de fibra mineral.",
-                  "unidad": "m²",
-                  "precio": 1.65,
-                  "horas": 0.18,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DRT040",
-                  "titulo": "Desmontaje de cielo raso de machihembrado de madera.",
-                  "unidad": "m²",
-                  "precio": 2.82,
-                  "horas": 0.34,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DRT050",
-                  "titulo": "Desmontaje de cielo raso de láminas de PVC o aluminio.",
-                  "unidad": "m²",
-                  "precio": 1.76,
-                  "horas": 0.2,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 5
-            },
-            {
-              "codigo": "DRR",
-              "nombre": "Trasdosados",
-              "partidas": [
-                {
-                  "codigo": "DRR010",
-                  "titulo": "Demolición de trasdosado de yeso laminado y su estructura.",
-                  "unidad": "m²",
-                  "precio": 2.56,
-                  "horas": 0.33,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DRR020",
-                  "titulo": "Demolición de trasdosado de bloque o ladrillo adosado a muro.",
-                  "unidad": "m²",
-                  "precio": 6.21,
-                  "horas": 0.62,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DRR030",
-                  "titulo": "Desmontaje de trasdosado directo de placa pegada al muro.",
-                  "unidad": "m²",
-                  "precio": 3.12,
-                  "horas": 0.42,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 3
-            },
-            {
-              "codigo": "DRD",
-              "nombre": "Revestimientos decorativos",
-              "partidas": [
-                {
-                  "codigo": "DRD010",
-                  "titulo": "Retiro de papel tapiz en paramento.",
-                  "unidad": "m²",
-                  "precio": 2.2,
-                  "horas": 0.25,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DRD020",
-                  "titulo": "Desmontaje de moldura decorativa de yeso o poliestireno.",
-                  "unidad": "m",
-                  "precio": 0.94,
-                  "horas": 0.13,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DRD030",
-                  "titulo": "Retiro de láminas decorativas, vinilos o espejos adheridos.",
-                  "unidad": "m²",
-                  "precio": 1.6,
-                  "horas": 0.15,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 3
-            },
-            {
-              "codigo": "DRE",
-              "nombre": "Escaleras",
-              "partidas": [
-                {
-                  "codigo": "DRE010",
-                  "titulo": "Demolición de revestimiento cerámico de escalera.",
-                  "unidad": "m²",
-                  "precio": 7.27,
-                  "horas": 0.85,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DRE020",
-                  "titulo": "Demolición de revestimiento de granito o piedra natural en escalera.",
-                  "unidad": "m²",
-                  "precio": 8.58,
-                  "horas": 0.98,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DRE030",
-                  "titulo": "Demolición de zócalo escalonado de escalera.",
-                  "unidad": "m",
-                  "precio": 1.78,
-                  "horas": 0.22,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 3
-            },
-            {
-              "codigo": "DRQ",
-              "nombre": "Salpicados y morteros monocapa en fachada",
-              "partidas": [
-                {
-                  "codigo": "DRQ010",
-                  "titulo": "Picado de salpicado o graniplast en fachada.",
-                  "unidad": "m²",
-                  "precio": 7.11,
-                  "horas": 0.7,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DRQ020",
-                  "titulo": "Picado de mortero monocapa en fachada.",
-                  "unidad": "m²",
-                  "precio": 8.02,
-                  "horas": 0.78,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 2
-            }
-          ],
-          "n": 42
-        },
-        {
-          "codigo": "DS",
-          "nombre": "Equipamiento",
-          "grupos": [
-            {
-              "codigo": "DSC",
-              "nombre": "Cocinas",
-              "partidas": [
-                {
-                  "codigo": "DSC010",
-                  "titulo": "Desmontaje de mueble de cocina alto o bajo.",
-                  "unidad": "m",
-                  "precio": 5.11,
-                  "horas": 0.66,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DSC020",
-                  "titulo": "Desmontaje de mesón de cocina y su salpicadero.",
-                  "unidad": "m",
-                  "precio": 8.76,
-                  "horas": 0.96,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 2
-            },
-            {
-              "codigo": "DSB",
-              "nombre": "Baños",
-              "partidas": [
-                {
-                  "codigo": "DSB010",
-                  "titulo": "Desmontaje de mueble de baño y sus accesorios.",
-                  "unidad": "ud",
-                  "precio": 6.86,
-                  "horas": 0.96,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 1
-            },
-            {
-              "codigo": "DSM",
-              "nombre": "Mobiliario fijo",
-              "partidas": [
-                {
-                  "codigo": "DSM010",
-                  "titulo": "Desmontaje de mobiliario fijo diverso.",
-                  "unidad": "m²",
-                  "precio": 6.41,
-                  "horas": 0.7,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 1
+              "codigo": "CT-02-14-040",
+              "titulo": "Desmontaje de mobiliario fijo diverso.",
+              "unidad": "m²",
+              "precio": 6.41,
+              "horas": 0.7,
+              "producto_cliente": false
             }
           ],
           "n": 4
         },
         {
-          "codigo": "DU",
-          "nombre": "Urbanización interior de la parcela",
-          "grupos": [
+          "codigo": "15",
+          "nombre": "Estructuras",
+          "partidas": [
             {
-              "codigo": "DUC",
-              "nombre": "Cerramientos de parcela",
-              "partidas": [
-                {
-                  "codigo": "DUC010",
-                  "titulo": "Demolición de muro de cerca perimetral.",
-                  "unidad": "m²",
-                  "precio": 11.27,
-                  "horas": 0.84,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DUC020",
-                  "titulo": "Desmontaje de cerca de malla ciclónica.",
-                  "unidad": "m",
-                  "precio": 4.11,
-                  "horas": 0.42,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 2
+              "codigo": "CT-02-15-010",
+              "titulo": "Desmontaje de estructura metálica.",
+              "unidad": "kg",
+              "precio": 0.52,
+              "horas": 0.042,
+              "producto_cliente": false
             },
             {
-              "codigo": "DUJ",
-              "nombre": "Jardinería",
-              "partidas": [
-                {
-                  "codigo": "DUJ010",
-                  "titulo": "Tala y destronque de árbol.",
-                  "unidad": "ud",
-                  "precio": 89.1,
-                  "horas": 6.6,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 1
+              "codigo": "CT-02-15-020",
+              "titulo": "Demolición de columna de concreto armado.",
+              "unidad": "m³",
+              "precio": 119.95,
+              "horas": 7.7,
+              "producto_cliente": false
             },
             {
-              "codigo": "DUI",
-              "nombre": "Instalaciones exteriores",
-              "partidas": [
-                {
-                  "codigo": "DUI010",
-                  "titulo": "Demolición de tanquilla o registro enterrado.",
-                  "unidad": "ud",
-                  "precio": 33.71,
-                  "horas": 3.0,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 1
+              "codigo": "CT-02-15-030",
+              "titulo": "Demolición de viga de concreto armado.",
+              "unidad": "m³",
+              "precio": 134.08,
+              "horas": 8.25,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-15-040",
+              "titulo": "Demolición de losa de entrepiso maciza o nervada.",
+              "unidad": "m²",
+              "precio": 46.07,
+              "horas": 3.0,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-15-050",
+              "titulo": "Apertura de hueco en losa de concreto armado.",
+              "unidad": "m²",
+              "precio": 36.26,
+              "horas": 3.2,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-15-060",
+              "titulo": "Desmontaje de estructura de madera.",
+              "unidad": "m²",
+              "precio": 13.18,
+              "horas": 1.42,
+              "producto_cliente": false
             }
           ],
-          "n": 4
+          "n": 6
         },
         {
-          "codigo": "DM",
-          "nombre": "Firmes y pavimentos exteriores",
-          "grupos": [
+          "codigo": "16",
+          "nombre": "Fundaciones",
+          "partidas": [
             {
-              "codigo": "DMP",
-              "nombre": "Pavimentos exteriores",
-              "partidas": [
-                {
-                  "codigo": "DMP010",
-                  "titulo": "Demolición de pavimento exterior de concreto.",
-                  "unidad": "m²",
-                  "precio": 12.66,
-                  "horas": 0.62,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DMP020",
-                  "titulo": "Demolición de pavimento asfáltico.",
-                  "unidad": "m²",
-                  "precio": 8.8,
-                  "horas": 0.52,
-                  "producto_cliente": false
-                },
-                {
-                  "codigo": "DMP030",
-                  "titulo": "Levantado de pavimento de adoquín.",
-                  "unidad": "m²",
-                  "precio": 3.35,
-                  "horas": 0.55,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 3
+              "codigo": "CT-02-16-010",
+              "titulo": "Demolición de losa de fundación de concreto armado.",
+              "unidad": "m³",
+              "precio": 119.83,
+              "horas": 5.35,
+              "producto_cliente": false
             },
             {
-              "codigo": "DMB",
-              "nombre": "Brocales y cordones",
-              "partidas": [
-                {
-                  "codigo": "DMB010",
-                  "titulo": "Demolición de brocal o cordón de acera.",
-                  "unidad": "m",
-                  "precio": 7.1,
-                  "horas": 0.78,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 1
+              "codigo": "CT-02-16-020",
+              "titulo": "Demolición de viga de riostra o muro de contención de concreto.",
+              "unidad": "m³",
+              "precio": 104.61,
+              "horas": 6.1,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-16-030",
+              "titulo": "Demolición de zapata o pedestal de concreto armado.",
+              "unidad": "m³",
+              "precio": 113.98,
+              "horas": 6.6,
+              "producto_cliente": false
             }
           ],
-          "n": 4
+          "n": 3
+        },
+        {
+          "codigo": "17",
+          "nombre": "Obras exteriores y urbanismo",
+          "partidas": [
+            {
+              "codigo": "CT-02-17-010",
+              "titulo": "Demolición de brocal o cordón de acera.",
+              "unidad": "m",
+              "precio": 7.1,
+              "horas": 0.78,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-17-020",
+              "titulo": "Demolición de pavimento exterior de concreto.",
+              "unidad": "m²",
+              "precio": 12.66,
+              "horas": 0.62,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-17-030",
+              "titulo": "Demolición de pavimento asfáltico.",
+              "unidad": "m²",
+              "precio": 8.8,
+              "horas": 0.52,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-17-040",
+              "titulo": "Levantado de pavimento de adoquín.",
+              "unidad": "m²",
+              "precio": 3.35,
+              "horas": 0.55,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-17-050",
+              "titulo": "Demolición de muro de cerca perimetral.",
+              "unidad": "m²",
+              "precio": 11.27,
+              "horas": 0.84,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-17-060",
+              "titulo": "Desmontaje de cerca de malla ciclónica.",
+              "unidad": "m",
+              "precio": 4.11,
+              "horas": 0.42,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-17-070",
+              "titulo": "Demolición de tanquilla o registro enterrado.",
+              "unidad": "ud",
+              "precio": 33.71,
+              "horas": 3.0,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-02-17-080",
+              "titulo": "Tala y destronque de árbol.",
+              "unidad": "ud",
+              "precio": 89.1,
+              "horas": 6.6,
+              "producto_cliente": false
+            }
+          ],
+          "n": 8
         }
       ],
       "n": 98
     },
     {
-      "codigo": "A",
-      "nombre": "Acondicionamiento del terreno",
+      "codigo": "03",
+      "nombre": "Movimiento de tierras",
       "subcapitulos": [
         {
-          "codigo": "AM",
-          "nombre": "Movimiento de tierras",
-          "grupos": [],
+          "codigo": "01",
+          "nombre": "Limpieza y desbroce",
+          "partidas": [],
           "n": 0
         },
         {
-          "codigo": "AS",
-          "nombre": "Saneamiento enterrado",
-          "grupos": [],
+          "codigo": "02",
+          "nombre": "Excavaciones",
+          "partidas": [],
           "n": 0
         },
         {
-          "codigo": "AN",
-          "nombre": "Nivelación y compactación",
-          "grupos": [],
+          "codigo": "03",
+          "nombre": "Rellenos y compactación",
+          "partidas": [],
+          "n": 0
+        },
+        {
+          "codigo": "04",
+          "nombre": "Transporte de tierras",
+          "partidas": [],
           "n": 0
         }
       ],
       "n": 0
     },
     {
-      "codigo": "C",
-      "nombre": "Cimentaciones",
+      "codigo": "04",
+      "nombre": "Fundaciones",
       "subcapitulos": [
         {
-          "codigo": "CS",
-          "nombre": "Superficiales",
-          "grupos": [],
+          "codigo": "01",
+          "nombre": "Bases y zapatas",
+          "partidas": [],
           "n": 0
         },
         {
-          "codigo": "CP",
-          "nombre": "Profundas",
-          "grupos": [],
+          "codigo": "02",
+          "nombre": "Vigas de riostra",
+          "partidas": [],
           "n": 0
         },
         {
-          "codigo": "CC",
-          "nombre": "Contenciones",
-          "grupos": [],
+          "codigo": "03",
+          "nombre": "Losas de fundación",
+          "partidas": [],
+          "n": 0
+        },
+        {
+          "codigo": "04",
+          "nombre": "Muros de contención",
+          "partidas": [],
+          "n": 0
+        },
+        {
+          "codigo": "05",
+          "nombre": "Pilotes y fundaciones profundas",
+          "partidas": [],
           "n": 0
         }
       ],
       "n": 0
     },
     {
-      "codigo": "E",
+      "codigo": "05",
       "nombre": "Estructuras",
       "subcapitulos": [
         {
-          "codigo": "EH",
-          "nombre": "Hormigón armado",
-          "grupos": [],
+          "codigo": "01",
+          "nombre": "Concreto armado vaciado en sitio",
+          "partidas": [],
           "n": 0
         },
         {
-          "codigo": "EA",
-          "nombre": "Acero",
-          "grupos": [],
+          "codigo": "02",
+          "nombre": "Estructura metálica",
+          "partidas": [],
           "n": 0
         },
         {
-          "codigo": "EM",
-          "nombre": "Madera",
-          "grupos": [],
+          "codigo": "03",
+          "nombre": "Estructura de madera",
+          "partidas": [],
           "n": 0
         },
         {
-          "codigo": "EF",
-          "nombre": "Fábrica estructural",
-          "grupos": [],
+          "codigo": "04",
+          "nombre": "Losas y entrepisos",
+          "partidas": [],
           "n": 0
         },
         {
-          "codigo": "ER",
-          "nombre": "Refuerzos y recalces",
-          "grupos": [],
+          "codigo": "05",
+          "nombre": "Escaleras estructurales",
+          "partidas": [],
+          "n": 0
+        },
+        {
+          "codigo": "06",
+          "nombre": "Refuerzos y reparaciones estructurales",
+          "partidas": [],
           "n": 0
         }
       ],
       "n": 0
     },
     {
-      "codigo": "F",
-      "nombre": "Fachadas y particiones",
+      "codigo": "06",
+      "nombre": "Paredes y tabiquería",
       "subcapitulos": [
         {
-          "codigo": "FF",
-          "nombre": "Fábrica no estructural",
-          "grupos": [
+          "codigo": "01",
+          "nombre": "Bloque de concreto",
+          "partidas": [
             {
-              "codigo": "FFB",
-              "nombre": "Bloque de concreto",
-              "partidas": [
-                {
-                  "codigo": "FFB010",
-                  "titulo": "Tabique de bloque de concreto de 10 cm, recibido con mortero de pega.",
-                  "unidad": "m²",
-                  "precio": 18.29,
-                  "horas": 1.1,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 1
-            },
-            {
-              "codigo": "FFL",
-              "nombre": "Ladrillo cerámico",
-              "partidas": [],
-              "n": 0
+              "codigo": "CT-06-01-010",
+              "titulo": "Tabique de bloque de concreto de 10 cm, recibido con mortero de pega.",
+              "unidad": "m²",
+              "precio": 18.29,
+              "horas": 1.1,
+              "producto_cliente": false
             }
           ],
           "n": 1
         },
         {
-          "codigo": "FB",
-          "nombre": "Tabiquería de entramado autoportante",
-          "grupos": [
+          "codigo": "02",
+          "nombre": "Bloque y ladrillo de arcilla",
+          "partidas": [],
+          "n": 0
+        },
+        {
+          "codigo": "03",
+          "nombre": "Tabiquería de yeso laminado",
+          "partidas": [
             {
-              "codigo": "FBY",
-              "nombre": "De placas de yeso laminado",
-              "partidas": [
-                {
-                  "codigo": "FBY010",
-                  "titulo": "Tabique autoportante de placa de yeso laminado 15+70+15, doble placa por cara.",
-                  "unidad": "m²",
-                  "precio": 52.4,
-                  "horas": 0.7,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 1
-            },
-            {
-              "codigo": "FBC",
-              "nombre": "De placas de cemento",
-              "partidas": [],
-              "n": 0
+              "codigo": "CT-06-03-010",
+              "titulo": "Tabique autoportante de placa de yeso laminado 15+70+15, doble placa por cara.",
+              "unidad": "m²",
+              "precio": 52.4,
+              "horas": 0.7,
+              "producto_cliente": false
             }
           ],
           "n": 1
         },
         {
-          "codigo": "FC",
-          "nombre": "Dinteles, cargaderos y cajones de persiana",
-          "grupos": [],
+          "codigo": "04",
+          "nombre": "Tabiquería de otros materiales",
+          "partidas": [],
           "n": 0
         },
         {
-          "codigo": "FD",
-          "nombre": "Defensas y barandillas",
-          "grupos": [],
-          "n": 0
-        },
-        {
-          "codigo": "FZ",
-          "nombre": "Limpieza y tratamientos superficiales",
-          "grupos": [],
+          "codigo": "05",
+          "nombre": "Dinteles, brocales y remates de vano",
+          "partidas": [],
           "n": 0
         }
       ],
       "n": 2
     },
     {
-      "codigo": "L",
-      "nombre": "Carpintería, cerrajería, vidrios y protecciones solares",
+      "codigo": "07",
+      "nombre": "Frisos y revestimientos de pared",
       "subcapitulos": [
         {
-          "codigo": "LP",
-          "nombre": "Puertas interiores",
-          "grupos": [],
-          "n": 0
-        },
-        {
-          "codigo": "LE",
-          "nombre": "Puertas de entrada",
-          "grupos": [],
-          "n": 0
-        },
-        {
-          "codigo": "LV",
-          "nombre": "Ventanas y balconeras",
-          "grupos": [],
-          "n": 0
-        },
-        {
-          "codigo": "LA",
-          "nombre": "Armarios y closets",
-          "grupos": [],
-          "n": 0
-        },
-        {
-          "codigo": "LC",
-          "nombre": "Cerrajería y rejas",
-          "grupos": [],
-          "n": 0
-        },
-        {
-          "codigo": "LG",
-          "nombre": "Vidrios",
-          "grupos": [],
-          "n": 0
-        }
-      ],
-      "n": 0
-    },
-    {
-      "codigo": "H",
-      "nombre": "Remates y ayudas",
-      "subcapitulos": [
-        {
-          "codigo": "HA",
-          "nombre": "Ayudas de albañilería a instalaciones",
-          "grupos": [],
-          "n": 0
-        },
-        {
-          "codigo": "HR",
-          "nombre": "Remates y sellados",
-          "grupos": [],
-          "n": 0
-        }
-      ],
-      "n": 0
-    },
-    {
-      "codigo": "I",
-      "nombre": "Instalaciones",
-      "subcapitulos": [
-        {
-          "codigo": "IF",
-          "nombre": "Fontanería",
-          "grupos": [
+          "codigo": "01",
+          "nombre": "Frisos y enlucidos de mortero",
+          "partidas": [
             {
-              "codigo": "IFT",
-              "nombre": "Tuberías y montantes de agua",
-              "partidas": [
-                {
-                  "codigo": "IFT010",
-                  "titulo": "Tubería de agua de PPR de 20 mm, empotrada, incluso roza y resane.",
-                  "unidad": "m",
-                  "precio": 7.45,
-                  "horas": 0.46,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 1
-            },
-            {
-              "codigo": "IFA",
-              "nombre": "Aparatos y puntos de agua",
-              "partidas": [
-                {
-                  "codigo": "IFA010",
-                  "titulo": "Punto de agua fría y caliente para aparato sanitario.",
-                  "unidad": "ud",
-                  "precio": 37.22,
-                  "horas": 1.9,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 1
-            },
-            {
-              "codigo": "IFL",
-              "nombre": "Llaves y valvulería",
-              "partidas": [
-                {
-                  "codigo": "IFL010",
-                  "titulo": "Llave de paso de PPR de 20 mm, empotrada.",
-                  "unidad": "ud",
-                  "precio": 13.52,
-                  "horas": 0.7,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 1
-            }
-          ],
-          "n": 3
-        },
-        {
-          "codigo": "IS",
-          "nombre": "Saneamiento y desagües",
-          "grupos": [
-            {
-              "codigo": "IST",
-              "nombre": "Tuberías y bajantes de desagüe",
-              "partidas": [
-                {
-                  "codigo": "IST010",
-                  "titulo": "Tubería de desagüe de PVC sanitario de 4 pulgadas.",
-                  "unidad": "m",
-                  "precio": 11.04,
-                  "horas": 0.41,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 1
-            },
-            {
-              "codigo": "ISA",
-              "nombre": "Puntos de desagüe de aparatos",
-              "partidas": [
-                {
-                  "codigo": "ISA010",
-                  "titulo": "Punto de desagüe para aparato sanitario.",
-                  "unidad": "ud",
-                  "precio": 33.84,
-                  "horas": 1.7,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 1
-            }
-          ],
-          "n": 2
-        },
-        {
-          "codigo": "IE",
-          "nombre": "Eléctrica",
-          "grupos": [
-            {
-              "codigo": "IEC",
-              "nombre": "Canalizaciones y cableado",
-              "partidas": [
-                {
-                  "codigo": "IEC010",
-                  "titulo": "Canalización eléctrica empotrada con conduit de 20 mm y conductor 12 AWG.",
-                  "unidad": "m",
-                  "precio": 8.37,
-                  "horas": 0.34,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 1
-            },
-            {
-              "codigo": "IEM",
-              "nombre": "Mecanismos y tomas",
-              "partidas": [
-                {
-                  "codigo": "IEM010",
-                  "titulo": "Punto de interruptor o tomacorriente, incluso caja y mecanismo.",
-                  "unidad": "ud",
-                  "precio": 8.72,
-                  "horas": 0.33,
-                  "producto_cliente": true
-                }
-              ],
-              "n": 1
-            },
-            {
-              "codigo": "IET",
-              "nombre": "Tableros y protecciones",
-              "partidas": [],
-              "n": 0
-            }
-          ],
-          "n": 2
-        },
-        {
-          "codigo": "II",
-          "nombre": "Iluminación",
-          "grupos": [],
-          "n": 0
-        },
-        {
-          "codigo": "IC",
-          "nombre": "Climatización y ventilación",
-          "grupos": [],
-          "n": 0
-        },
-        {
-          "codigo": "IG",
-          "nombre": "Gas",
-          "grupos": [],
-          "n": 0
-        },
-        {
-          "codigo": "IT",
-          "nombre": "Telecomunicaciones y datos",
-          "grupos": [],
-          "n": 0
-        },
-        {
-          "codigo": "IP",
-          "nombre": "Protección contra incendios",
-          "grupos": [],
-          "n": 0
-        },
-        {
-          "codigo": "IH",
-          "nombre": "Hidroneumáticos y bombeo",
-          "grupos": [],
-          "n": 0
-        }
-      ],
-      "n": 7
-    },
-    {
-      "codigo": "N",
-      "nombre": "Aislamientos e impermeabilizaciones",
-      "subcapitulos": [
-        {
-          "codigo": "NA",
-          "nombre": "Aislamientos térmicos y acústicos",
-          "grupos": [],
-          "n": 0
-        },
-        {
-          "codigo": "NI",
-          "nombre": "Impermeabilizaciones",
-          "grupos": [],
-          "n": 0
-        }
-      ],
-      "n": 0
-    },
-    {
-      "codigo": "Q",
-      "nombre": "Cubiertas",
-      "subcapitulos": [
-        {
-          "codigo": "QI",
-          "nombre": "Inclinadas",
-          "grupos": [],
-          "n": 0
-        },
-        {
-          "codigo": "QP",
-          "nombre": "Planas",
-          "grupos": [],
-          "n": 0
-        },
-        {
-          "codigo": "QL",
-          "nombre": "Lucernarios y translúcidas",
-          "grupos": [],
-          "n": 0
-        }
-      ],
-      "n": 0
-    },
-    {
-      "codigo": "R",
-      "nombre": "Revestimientos y trasdosados",
-      "subcapitulos": [
-        {
-          "codigo": "RS",
-          "nombre": "Pavimentos",
-          "grupos": [
-            {
-              "codigo": "RSA",
-              "nombre": "Morteros y pastas de nivelación",
-              "partidas": [
-                {
-                  "codigo": "RSA010",
-                  "titulo": "Recrecido con mortero autonivelante de 5 mm de espesor medio.",
-                  "unidad": "m²",
-                  "precio": 8.02,
-                  "horas": 0.3,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 1
-            },
-            {
-              "codigo": "RSG",
-              "nombre": "Cerámicos y porcelánicos",
-              "partidas": [
-                {
-                  "codigo": "RSG010",
-                  "titulo": "Colocación de pavimento cerámico o porcelanato de formato estándar, en capa fina.",
-                  "unidad": "m²",
-                  "precio": 9.17,
-                  "horas": 0.6,
-                  "producto_cliente": true
-                },
-                {
-                  "codigo": "RSG020",
-                  "titulo": "Colocación de pavimento de porcelanato de gran formato, en capa fina.",
-                  "unidad": "m²",
-                  "precio": 12.51,
-                  "horas": 0.9,
-                  "producto_cliente": true
-                }
-              ],
-              "n": 2
-            },
-            {
-              "codigo": "RSP",
-              "nombre": "Piedra natural",
-              "partidas": [],
-              "n": 0
-            },
-            {
-              "codigo": "RSM",
-              "nombre": "Madera y laminados",
-              "partidas": [],
-              "n": 0
-            },
-            {
-              "codigo": "RSV",
-              "nombre": "Vinílicos y sintéticos",
-              "partidas": [],
-              "n": 0
-            },
-            {
-              "codigo": "RSC",
-              "nombre": "Continuos de concreto y microcemento",
-              "partidas": [],
-              "n": 0
-            },
-            {
-              "codigo": "RSD",
-              "nombre": "Remates de pavimento",
-              "partidas": [
-                {
-                  "codigo": "RSD010",
-                  "titulo": "Colocación de rodapié cerámico o de porcelanato.",
-                  "unidad": "m",
-                  "precio": 1.69,
-                  "horas": 0.165,
-                  "producto_cliente": true
-                }
-              ],
-              "n": 1
-            }
-          ],
-          "n": 4
-        },
-        {
-          "codigo": "RA",
-          "nombre": "Revestimientos de paramentos con piezas rígidas",
-          "grupos": [
-            {
-              "codigo": "RAG",
-              "nombre": "Alicatados cerámicos y porcelánicos",
-              "partidas": [
-                {
-                  "codigo": "RAG010",
-                  "titulo": "Alicatado de paramento interior con pieza cerámica o porcelanato, en capa fina.",
-                  "unidad": "m²",
-                  "precio": 10.87,
-                  "horas": 0.78,
-                  "producto_cliente": true
-                }
-              ],
-              "n": 1
-            },
-            {
-              "codigo": "RAP",
-              "nombre": "Piedra natural",
-              "partidas": [],
-              "n": 0
+              "codigo": "CT-07-01-010",
+              "titulo": "Friso de mortero maestreado sobre paramento interior, 1,5 cm de espesor.",
+              "unidad": "m²",
+              "precio": 10.75,
+              "horas": 0.75,
+              "producto_cliente": false
             }
           ],
           "n": 1
         },
         {
-          "codigo": "RP",
-          "nombre": "Revestimientos continuos",
-          "grupos": [
+          "codigo": "02",
+          "nombre": "Pastas y acabados de yeso",
+          "partidas": [],
+          "n": 0
+        },
+        {
+          "codigo": "03",
+          "nombre": "Enchapado cerámico y porcelanato",
+          "partidas": [
             {
-              "codigo": "RPF",
-              "nombre": "Frisos y enlucidos",
-              "partidas": [
-                {
-                  "codigo": "RPF010",
-                  "titulo": "Friso de mortero maestreado sobre paramento interior, 1,5 cm de espesor.",
-                  "unidad": "m²",
-                  "precio": 10.75,
-                  "horas": 0.75,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 1
-            },
-            {
-              "codigo": "RPE",
-              "nombre": "Estucos y morteros decorativos",
-              "partidas": [],
-              "n": 0
+              "codigo": "CT-07-03-010",
+              "titulo": "Alicatado de paramento interior con pieza cerámica o porcelanato, en capa fina.",
+              "unidad": "m²",
+              "precio": 10.87,
+              "horas": 0.78,
+              "producto_cliente": true
             }
           ],
           "n": 1
         },
         {
-          "codigo": "RI",
-          "nombre": "Pinturas",
-          "grupos": [
-            {
-              "codigo": "RII",
-              "nombre": "Interiores",
-              "partidas": [
-                {
-                  "codigo": "RII010",
-                  "titulo": "Pintura de caucho mate lavable en paramento interior, dos manos.",
-                  "unidad": "m²",
-                  "precio": 3.46,
-                  "horas": 0.255,
-                  "producto_cliente": true
-                }
-              ],
-              "n": 1
-            },
-            {
-              "codigo": "RIE",
-              "nombre": "Exteriores",
-              "partidas": [],
-              "n": 0
-            },
-            {
-              "codigo": "RIM",
-              "nombre": "Sobre madera y metal",
-              "partidas": [
-                {
-                  "codigo": "RIM010",
-                  "titulo": "Esmalte sintético sobre carpintería metálica o de madera, dos manos.",
-                  "unidad": "m²",
-                  "precio": 5.23,
-                  "horas": 0.42,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 1
-            },
-            {
-              "codigo": "RIP",
-              "nombre": "Preparación de soportes",
-              "partidas": [
-                {
-                  "codigo": "RIP010",
-                  "titulo": "Preparación de paramento interior para pintura: resane, alisado y fondo.",
-                  "unidad": "m²",
-                  "precio": 2.82,
-                  "horas": 0.22,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 1
-            }
-          ],
-          "n": 3
-        },
-        {
-          "codigo": "RR",
-          "nombre": "Trasdosados",
-          "grupos": [
-            {
-              "codigo": "RRY",
-              "nombre": "De placas de yeso laminado",
-              "partidas": [],
-              "n": 0
-            }
-          ],
+          "codigo": "04",
+          "nombre": "Enchapado de piedra natural",
+          "partidas": [],
           "n": 0
         },
         {
-          "codigo": "RT",
-          "nombre": "Falsos techos",
-          "grupos": [
-            {
-              "codigo": "RTY",
-              "nombre": "De placas de yeso laminado",
-              "partidas": [
-                {
-                  "codigo": "RTY010",
-                  "titulo": "Cielo raso continuo de placa de yeso laminado, estructura oculta suspendida.",
-                  "unidad": "m²",
-                  "precio": 18.47,
-                  "horas": 0.95,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 1
-            },
-            {
-              "codigo": "RTD",
-              "nombre": "Desmontables y registrables",
-              "partidas": [],
-              "n": 0
-            }
-          ],
-          "n": 1
-        }
-      ],
-      "n": 10
-    },
-    {
-      "codigo": "S",
-      "nombre": "Señalización y equipamiento",
-      "subcapitulos": [
-        {
-          "codigo": "SB",
-          "nombre": "Aparatos sanitarios y grifería",
-          "grupos": [
-            {
-              "codigo": "SBA",
-              "nombre": "Aparatos sanitarios",
-              "partidas": [
-                {
-                  "codigo": "SBA010",
-                  "titulo": "Instalación de inodoro con su conexión de agua y desagüe.",
-                  "unidad": "ud",
-                  "precio": 23.45,
-                  "horas": 1.8,
-                  "producto_cliente": true
-                },
-                {
-                  "codigo": "SBA020",
-                  "titulo": "Instalación de lavamanos con su grifería y desagüe.",
-                  "unidad": "ud",
-                  "precio": 36.45,
-                  "horas": 2.1,
-                  "producto_cliente": true
-                }
-              ],
-              "n": 2
-            },
-            {
-              "codigo": "SBG",
-              "nombre": "Grifería y accesorios",
-              "partidas": [],
-              "n": 0
-            }
-          ],
-          "n": 2
-        },
-        {
-          "codigo": "SC",
-          "nombre": "Mobiliario de cocina y encimeras",
-          "grupos": [],
-          "n": 0
-        },
-        {
-          "codigo": "SE",
-          "nombre": "Electrodomésticos",
-          "grupos": [],
-          "n": 0
-        },
-        {
-          "codigo": "SS",
-          "nombre": "Señalización",
-          "grupos": [],
+          "codigo": "05",
+          "nombre": "Revestimientos decorativos y especiales",
+          "partidas": [],
           "n": 0
         }
       ],
       "n": 2
     },
     {
-      "codigo": "U",
-      "nombre": "Urbanización interior de la parcela",
+      "codigo": "08",
+      "nombre": "Pisos y pavimentos",
       "subcapitulos": [
         {
-          "codigo": "UP",
-          "nombre": "Pavimentos exteriores",
-          "grupos": [],
-          "n": 0
-        },
-        {
-          "codigo": "UC",
-          "nombre": "Cerramientos de parcela",
-          "grupos": [],
-          "n": 0
-        },
-        {
-          "codigo": "UJ",
-          "nombre": "Jardinería y riego",
-          "grupos": [],
-          "n": 0
-        },
-        {
-          "codigo": "UI",
-          "nombre": "Instalaciones exteriores",
-          "grupos": [],
-          "n": 0
-        }
-      ],
-      "n": 0
-    },
-    {
-      "codigo": "G",
-      "nombre": "Gestión de residuos",
-      "subcapitulos": [
-        {
-          "codigo": "GT",
-          "nombre": "Transporte de residuos",
-          "grupos": [
+          "codigo": "01",
+          "nombre": "Bases, contrapisos y nivelación",
+          "partidas": [
             {
-              "codigo": "GTR",
-              "nombre": "Retirada y transporte de escombro",
-              "partidas": [
-                {
-                  "codigo": "GTR010",
-                  "titulo": "Retirada y transporte de escombro a vertedero autorizado.",
-                  "unidad": "m³",
-                  "precio": 16.07,
-                  "horas": 0.85,
-                  "producto_cliente": false
-                }
-              ],
-              "n": 1
+              "codigo": "CT-08-01-010",
+              "titulo": "Recrecido con mortero autonivelante de 5 mm de espesor medio.",
+              "unidad": "m²",
+              "precio": 8.02,
+              "horas": 0.3,
+              "producto_cliente": false
             }
           ],
           "n": 1
         },
         {
-          "codigo": "GC",
-          "nombre": "Contenedores y acopio",
-          "grupos": [],
+          "codigo": "02",
+          "nombre": "Pisos cerámicos y porcelanato",
+          "partidas": [
+            {
+              "codigo": "CT-08-02-010",
+              "titulo": "Colocación de pavimento cerámico o porcelanato de formato estándar, en capa fina.",
+              "unidad": "m²",
+              "precio": 9.17,
+              "horas": 0.6,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-08-02-020",
+              "titulo": "Colocación de pavimento de porcelanato de gran formato, en capa fina.",
+              "unidad": "m²",
+              "precio": 12.51,
+              "horas": 0.9,
+              "producto_cliente": true
+            }
+          ],
+          "n": 2
+        },
+        {
+          "codigo": "03",
+          "nombre": "Pisos de piedra natural y granito",
+          "partidas": [],
+          "n": 0
+        },
+        {
+          "codigo": "04",
+          "nombre": "Pisos de madera y laminados",
+          "partidas": [],
+          "n": 0
+        },
+        {
+          "codigo": "05",
+          "nombre": "Pisos vinílicos y flexibles",
+          "partidas": [],
+          "n": 0
+        },
+        {
+          "codigo": "06",
+          "nombre": "Pisos continuos de concreto y microcemento",
+          "partidas": [],
+          "n": 0
+        },
+        {
+          "codigo": "07",
+          "nombre": "Rodapiés y remates de piso",
+          "partidas": [
+            {
+              "codigo": "CT-08-07-010",
+              "titulo": "Colocación de rodapié cerámico o de porcelanato.",
+              "unidad": "m",
+              "precio": 1.69,
+              "horas": 0.165,
+              "producto_cliente": true
+            }
+          ],
+          "n": 1
+        },
+        {
+          "codigo": "08",
+          "nombre": "Revestimiento de escaleras",
+          "partidas": [],
+          "n": 0
+        }
+      ],
+      "n": 4
+    },
+    {
+      "codigo": "09",
+      "nombre": "Cielos rasos",
+      "subcapitulos": [
+        {
+          "codigo": "01",
+          "nombre": "Yeso laminado continuo",
+          "partidas": [
+            {
+              "codigo": "CT-09-01-010",
+              "titulo": "Cielo raso continuo de placa de yeso laminado, estructura oculta suspendida.",
+              "unidad": "m²",
+              "precio": 18.47,
+              "horas": 0.95,
+              "producto_cliente": false
+            }
+          ],
+          "n": 1
+        },
+        {
+          "codigo": "02",
+          "nombre": "Cielos desmontables y registrables",
+          "partidas": [],
+          "n": 0
+        },
+        {
+          "codigo": "03",
+          "nombre": "Cielos de PVC y láminas",
+          "partidas": [],
+          "n": 0
+        },
+        {
+          "codigo": "04",
+          "nombre": "Cielos de madera",
+          "partidas": [],
+          "n": 0
+        },
+        {
+          "codigo": "05",
+          "nombre": "Molduras y remates",
+          "partidas": [],
           "n": 0
         }
       ],
       "n": 1
     },
     {
-      "codigo": "X",
-      "nombre": "Control de calidad y ensayos",
+      "codigo": "10",
+      "nombre": "Impermeabilizaciones y aislamientos",
       "subcapitulos": [
         {
-          "codigo": "XE",
-          "nombre": "Ensayos de materiales",
-          "grupos": [],
+          "codigo": "01",
+          "nombre": "Manto asfáltico",
+          "partidas": [],
           "n": 0
         },
         {
-          "codigo": "XP",
-          "nombre": "Pruebas de servicio",
-          "grupos": [],
+          "codigo": "02",
+          "nombre": "Impermeabilizantes líquidos y acrílicos",
+          "partidas": [],
+          "n": 0
+        },
+        {
+          "codigo": "03",
+          "nombre": "Impermeabilización de áreas húmedas",
+          "partidas": [],
+          "n": 0
+        },
+        {
+          "codigo": "04",
+          "nombre": "Aislamiento térmico y acústico",
+          "partidas": [],
           "n": 0
         }
       ],
       "n": 0
     },
     {
-      "codigo": "Y",
-      "nombre": "Seguridad y salud",
+      "codigo": "11",
+      "nombre": "Techos y cubiertas",
       "subcapitulos": [
         {
-          "codigo": "YP",
-          "nombre": "Protecciones individuales",
-          "grupos": [],
+          "codigo": "01",
+          "nombre": "Estructura de techo",
+          "partidas": [],
           "n": 0
         },
         {
-          "codigo": "YC",
+          "codigo": "02",
+          "nombre": "Cubiertas de teja",
+          "partidas": [],
+          "n": 0
+        },
+        {
+          "codigo": "03",
+          "nombre": "Cubiertas de lámina metálica",
+          "partidas": [],
+          "n": 0
+        },
+        {
+          "codigo": "04",
+          "nombre": "Cubiertas planas y pendientados",
+          "partidas": [],
+          "n": 0
+        },
+        {
+          "codigo": "05",
+          "nombre": "Canales, bajantes y remates",
+          "partidas": [],
+          "n": 0
+        }
+      ],
+      "n": 0
+    },
+    {
+      "codigo": "12",
+      "nombre": "Instalaciones sanitarias",
+      "subcapitulos": [
+        {
+          "codigo": "01",
+          "nombre": "Tuberías y montantes de agua",
+          "partidas": [
+            {
+              "codigo": "CT-12-01-010",
+              "titulo": "Tubería de agua de PPR de 20 mm, empotrada, incluso roza y resane.",
+              "unidad": "m",
+              "precio": 7.45,
+              "horas": 0.46,
+              "producto_cliente": false
+            }
+          ],
+          "n": 1
+        },
+        {
+          "codigo": "02",
+          "nombre": "Puntos de agua",
+          "partidas": [
+            {
+              "codigo": "CT-12-02-010",
+              "titulo": "Punto de agua fría y caliente para aparato sanitario.",
+              "unidad": "ud",
+              "precio": 37.22,
+              "horas": 1.9,
+              "producto_cliente": false
+            }
+          ],
+          "n": 1
+        },
+        {
+          "codigo": "03",
+          "nombre": "Llaves y valvulería",
+          "partidas": [
+            {
+              "codigo": "CT-12-03-010",
+              "titulo": "Llave de paso de PPR de 20 mm, empotrada.",
+              "unidad": "ud",
+              "precio": 13.52,
+              "horas": 0.7,
+              "producto_cliente": false
+            }
+          ],
+          "n": 1
+        },
+        {
+          "codigo": "04",
+          "nombre": "Aparatos sanitarios y grifería",
+          "partidas": [
+            {
+              "codigo": "CT-12-04-010",
+              "titulo": "Instalación de inodoro con su conexión de agua y desagüe.",
+              "unidad": "ud",
+              "precio": 23.45,
+              "horas": 1.8,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-12-04-020",
+              "titulo": "Instalación de lavamanos con su grifería y desagüe.",
+              "unidad": "ud",
+              "precio": 36.45,
+              "horas": 2.1,
+              "producto_cliente": true
+            }
+          ],
+          "n": 2
+        },
+        {
+          "codigo": "05",
+          "nombre": "Tuberías y bajantes de desagüe",
+          "partidas": [
+            {
+              "codigo": "CT-12-05-010",
+              "titulo": "Tubería de desagüe de PVC sanitario de 4 pulgadas.",
+              "unidad": "m",
+              "precio": 11.04,
+              "horas": 0.41,
+              "producto_cliente": false
+            }
+          ],
+          "n": 1
+        },
+        {
+          "codigo": "06",
+          "nombre": "Puntos de desagüe",
+          "partidas": [
+            {
+              "codigo": "CT-12-06-010",
+              "titulo": "Punto de desagüe para aparato sanitario.",
+              "unidad": "ud",
+              "precio": 33.84,
+              "horas": 1.7,
+              "producto_cliente": false
+            }
+          ],
+          "n": 1
+        },
+        {
+          "codigo": "07",
+          "nombre": "Tanques, bombas e hidroneumáticos",
+          "partidas": [],
+          "n": 0
+        }
+      ],
+      "n": 7
+    },
+    {
+      "codigo": "13",
+      "nombre": "Instalaciones eléctricas",
+      "subcapitulos": [
+        {
+          "codigo": "01",
+          "nombre": "Canalizaciones y cableado",
+          "partidas": [
+            {
+              "codigo": "CT-13-01-010",
+              "titulo": "Canalización eléctrica empotrada con conduit de 20 mm y conductor 12 AWG.",
+              "unidad": "m",
+              "precio": 8.37,
+              "horas": 0.34,
+              "producto_cliente": false
+            }
+          ],
+          "n": 1
+        },
+        {
+          "codigo": "02",
+          "nombre": "Puntos, mecanismos y tomas",
+          "partidas": [
+            {
+              "codigo": "CT-13-02-010",
+              "titulo": "Punto de interruptor o tomacorriente, incluso caja y mecanismo.",
+              "unidad": "ud",
+              "precio": 8.72,
+              "horas": 0.33,
+              "producto_cliente": true
+            }
+          ],
+          "n": 1
+        },
+        {
+          "codigo": "03",
+          "nombre": "Tableros y protecciones",
+          "partidas": [],
+          "n": 0
+        },
+        {
+          "codigo": "04",
+          "nombre": "Iluminación",
+          "partidas": [],
+          "n": 0
+        },
+        {
+          "codigo": "05",
+          "nombre": "Acometidas y puesta a tierra",
+          "partidas": [],
+          "n": 0
+        },
+        {
+          "codigo": "06",
+          "nombre": "Corrientes débiles y datos",
+          "partidas": [],
+          "n": 0
+        }
+      ],
+      "n": 2
+    },
+    {
+      "codigo": "14",
+      "nombre": "Instalaciones mecánicas y especiales",
+      "subcapitulos": [
+        {
+          "codigo": "01",
+          "nombre": "Climatización y ventilación",
+          "partidas": [],
+          "n": 0
+        },
+        {
+          "codigo": "02",
+          "nombre": "Gas doméstico",
+          "partidas": [],
+          "n": 0
+        },
+        {
+          "codigo": "03",
+          "nombre": "Protección contra incendios",
+          "partidas": [],
+          "n": 0
+        },
+        {
+          "codigo": "04",
+          "nombre": "Sistemas de respaldo eléctrico",
+          "partidas": [],
+          "n": 0
+        }
+      ],
+      "n": 0
+    },
+    {
+      "codigo": "15",
+      "nombre": "Herrería, carpintería y vidrios",
+      "subcapitulos": [
+        {
+          "codigo": "01",
+          "nombre": "Puertas interiores",
+          "partidas": [],
+          "n": 0
+        },
+        {
+          "codigo": "02",
+          "nombre": "Puertas exteriores y de seguridad",
+          "partidas": [],
+          "n": 0
+        },
+        {
+          "codigo": "03",
+          "nombre": "Ventanas y balconeras",
+          "partidas": [],
+          "n": 0
+        },
+        {
+          "codigo": "04",
+          "nombre": "Rejas, portones y herrería",
+          "partidas": [],
+          "n": 0
+        },
+        {
+          "codigo": "05",
+          "nombre": "Closets y muebles empotrados",
+          "partidas": [],
+          "n": 0
+        },
+        {
+          "codigo": "06",
+          "nombre": "Vidrios y espejos",
+          "partidas": [],
+          "n": 0
+        },
+        {
+          "codigo": "07",
+          "nombre": "Barandas y pasamanos",
+          "partidas": [],
+          "n": 0
+        }
+      ],
+      "n": 0
+    },
+    {
+      "codigo": "16",
+      "nombre": "Pintura y acabados",
+      "subcapitulos": [
+        {
+          "codigo": "01",
+          "nombre": "Preparación de soportes",
+          "partidas": [
+            {
+              "codigo": "CT-16-01-010",
+              "titulo": "Preparación de paramento interior para pintura: resane, alisado y fondo.",
+              "unidad": "m²",
+              "precio": 2.82,
+              "horas": 0.22,
+              "producto_cliente": false
+            }
+          ],
+          "n": 1
+        },
+        {
+          "codigo": "02",
+          "nombre": "Pintura interior",
+          "partidas": [
+            {
+              "codigo": "CT-16-02-010",
+              "titulo": "Pintura de caucho mate lavable en paramento interior, dos manos.",
+              "unidad": "m²",
+              "precio": 3.46,
+              "horas": 0.255,
+              "producto_cliente": true
+            }
+          ],
+          "n": 1
+        },
+        {
+          "codigo": "03",
+          "nombre": "Pintura exterior",
+          "partidas": [],
+          "n": 0
+        },
+        {
+          "codigo": "04",
+          "nombre": "Esmaltes sobre madera y metal",
+          "partidas": [
+            {
+              "codigo": "CT-16-04-010",
+              "titulo": "Esmalte sintético sobre carpintería metálica o de madera, dos manos.",
+              "unidad": "m²",
+              "precio": 5.23,
+              "horas": 0.42,
+              "producto_cliente": false
+            }
+          ],
+          "n": 1
+        },
+        {
+          "codigo": "05",
+          "nombre": "Recubrimientos especiales y decorativos",
+          "partidas": [],
+          "n": 0
+        }
+      ],
+      "n": 3
+    },
+    {
+      "codigo": "17",
+      "nombre": "Equipamiento y mobiliario fijo",
+      "subcapitulos": [
+        {
+          "codigo": "01",
+          "nombre": "Mobiliario de cocina",
+          "partidas": [],
+          "n": 0
+        },
+        {
+          "codigo": "02",
+          "nombre": "Mesones y topes",
+          "partidas": [],
+          "n": 0
+        },
+        {
+          "codigo": "03",
+          "nombre": "Mobiliario de baño",
+          "partidas": [],
+          "n": 0
+        },
+        {
+          "codigo": "04",
+          "nombre": "Accesorios y herrajes",
+          "partidas": [],
+          "n": 0
+        },
+        {
+          "codigo": "05",
+          "nombre": "Mobiliario fijo diverso",
+          "partidas": [],
+          "n": 0
+        }
+      ],
+      "n": 0
+    },
+    {
+      "codigo": "18",
+      "nombre": "Obras exteriores y urbanismo",
+      "subcapitulos": [
+        {
+          "codigo": "01",
+          "nombre": "Pavimentos exteriores",
+          "partidas": [],
+          "n": 0
+        },
+        {
+          "codigo": "02",
+          "nombre": "Brocales, aceras y drenajes",
+          "partidas": [],
+          "n": 0
+        },
+        {
+          "codigo": "03",
+          "nombre": "Cerramientos de parcela",
+          "partidas": [],
+          "n": 0
+        },
+        {
+          "codigo": "04",
+          "nombre": "Jardinería y riego",
+          "partidas": [],
+          "n": 0
+        },
+        {
+          "codigo": "05",
+          "nombre": "Instalaciones exteriores",
+          "partidas": [],
+          "n": 0
+        }
+      ],
+      "n": 0
+    },
+    {
+      "codigo": "19",
+      "nombre": "Gestión de residuos y limpieza",
+      "subcapitulos": [
+        {
+          "codigo": "01",
+          "nombre": "Retiro y transporte de escombro",
+          "partidas": [
+            {
+              "codigo": "CT-19-01-010",
+              "titulo": "Retirada y transporte de escombro a vertedero autorizado.",
+              "unidad": "m³",
+              "precio": 16.07,
+              "horas": 0.85,
+              "producto_cliente": false
+            }
+          ],
+          "n": 1
+        },
+        {
+          "codigo": "02",
+          "nombre": "Contenedores y acopio",
+          "partidas": [],
+          "n": 0
+        },
+        {
+          "codigo": "03",
+          "nombre": "Limpieza final de obra",
+          "partidas": [],
+          "n": 0
+        }
+      ],
+      "n": 1
+    },
+    {
+      "codigo": "20",
+      "nombre": "Seguridad y salud en obra",
+      "subcapitulos": [
+        {
+          "codigo": "01",
           "nombre": "Protecciones colectivas",
-          "grupos": [],
+          "partidas": [],
           "n": 0
         },
         {
-          "codigo": "YS",
+          "codigo": "02",
+          "nombre": "Equipos de protección individual",
+          "partidas": [],
+          "n": 0
+        },
+        {
+          "codigo": "03",
           "nombre": "Señalización de obra",
-          "grupos": [],
-          "n": 0
-        }
-      ],
-      "n": 0
-    },
-    {
-      "codigo": "Z",
-      "nombre": "Eficiencia energética",
-      "subcapitulos": [
-        {
-          "codigo": "ZS",
-          "nombre": "Solar fotovoltaica y térmica",
-          "grupos": [],
+          "partidas": [],
           "n": 0
         },
         {
-          "codigo": "ZA",
-          "nombre": "Mejora de envolvente",
-          "grupos": [],
+          "codigo": "04",
+          "nombre": "Instalaciones de bienestar",
+          "partidas": [],
           "n": 0
         }
       ],

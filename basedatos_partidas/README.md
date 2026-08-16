@@ -268,3 +268,61 @@ El catálogo usa vocabulario de obra venezolano:
 | escayola | yeso |
 | fontanero | plomero |
 | bote de escombro | bote de escombro / retiro a vertedero |
+
+
+---
+
+# Codificación propia de CotizaT y ámbitos
+
+## Por qué se migró
+
+El catálogo nació usando la estructura y los códigos del Generador de Precios de
+CYPE (`DPT020`, `DRS020`, `RSG130`…). Se detectó que **cada banco de precios del
+sector usa una codificación propia y distinta** — BCCA `10SCS00002`, Extremadura
+`E10EGO110`, PREOC `U01AA007`, IVE `ERSA11$` — de modo que el código es la firma
+de identidad de cada base, no un estándar compartido. Coincidir carácter por
+carácter con CYPE creaba **riesgo de asociación** (arts. 6 y 11 LCD) además de
+colisiones reales: nuestro `DPT020` y el `DPT020` de CYPE significaban cosas
+distintas.
+
+Se migró a codificación propia el 16/08/2026. El contenido — descripciones,
+rendimientos y precios — no se tocó: era original desde el principio.
+
+`datos/mapa_migracion.json` guarda la equivalencia código antiguo → nuevo para
+trazabilidad interna. **No se publica ni se distribuye.**
+
+## Esquema
+
+```
+CT - CC - SS - NNN
+│    │    │    └── partida, de 10 en 10 para poder intercalar
+│    │    └─────── subcapítulo (2 dígitos)
+│    └──────────── capítulo (2 dígitos)
+└───────────────── prefijo de marca (CotizaT)
+```
+
+Dos niveles de navegación, 20 capítulos organizados según la práctica de obra
+venezolana: los frisos, los pisos, los cielos rasos y la herrería son capítulos
+de primer nivel, no subgrupos.
+
+## Dos ámbitos
+
+Cada partida lleva el campo `ambito`, y cada ámbito tiene su propia
+clasificación y su propio esquema de código:
+
+| Ámbito | Codificación | Base legal | Estado |
+|---|---|---|---|
+| **reforma** | `CT-CC-SS-NNN`, propia | COVENIN 2000-2 codifica solo edificaciones nuevas y deja **expresamente sin codificar** las reparaciones y reformas (Parte II.B nunca publicada). Codificación libre. | en construcción |
+| **obra nueva** | COVENIN 2000-2: `M`+9 dígitos (<1.000 m²), `E`+9 (1.000-10.000 m²), `I`+9 (>10.000 m²) | COVENIN-MINDUR 2000-92 Parte II.A, **obligatoria** por Gaceta Oficial N.º 35.225 del 3/6/1993. Ante organismos públicos y contralorías la codificación **no es libre**. | pendiente |
+
+Ambos ámbitos comparten el **mismo cuadro de recursos** (`recursos.json`) y el
+**mismo motor de descompuestos**. Solo cambian el árbol y el esquema de código.
+
+Cada partida tiene además el campo `codigo_covenin`, hoy vacío, para poder
+declarar la equivalencia cuando se disponga del texto de la norma.
+
+### Para arrancar obra nueva hace falta
+
+Conseguir la **COVENIN 2000-2 y su Suplemento N.º 1 (1999)** para replicar su
+árbol de capítulos y su esquema de codificación exactos. Sin la norma se puede
+avanzar en las partidas, pero no fijar los códigos definitivos.

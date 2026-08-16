@@ -1,0 +1,39 @@
+{
+  "codigo": "CT-13-01-010",
+  "ambito": "reforma",
+  "capitulo": "13",
+  "subcapitulo": "01",
+  "unidad": "m",
+  "titulo": "Canalización eléctrica empotrada con conduit de 20 mm y conductor 12 AWG.",
+  "descripcion": "Instalación de canalización eléctrica empotrada formada por tubería conduit corrugada de PVC de 20 mm y tres conductores de cobre THW calibre 12 AWG, incluyendo fase, neutro y tierra. Incluye replanteo del trazado, apertura de roza con rozadora eléctrica con captación de polvo, colocación y fijación del conduit, guiado y tendido de los conductores, identificación de circuitos y tapado de roza con mortero de reparación. No incluye cajas, mecanismos ni el acabado del paramento. Medido en longitud realmente instalada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ELE-TUB20",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-ELE-CABLE",
+      "rendimiento": 3.2
+    },
+    {
+      "ref": "MT-YESO-REP",
+      "rendimiento": 1.6
+    },
+    {
+      "ref": "MQ-ROZAD",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 0.19
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.15
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_anterior": "IEC010"
+}
