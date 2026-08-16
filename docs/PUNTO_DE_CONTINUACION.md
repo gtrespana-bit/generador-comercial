@@ -165,7 +165,10 @@ usuario correrá las pruebas).
 
 ## 3. Pendientes operativos del usuario (sin código)
 
-> **Estado al 15/08/2026 (tercera parte).** Ninguno bloquea el desarrollo, pero
+> **Guía paso a paso: `docs/PENDIENTES_OPERATIVOS.md`** (dónde está cada ajuste
+> en Supabase, GoDaddy y Vercel, con el DNS real ya comprobado).
+>
+> **Estado al 16/08/2026.** Ninguno bloquea el desarrollo, pero
 > siguen abiertos y hay que recordarlos en cada sesión:
 > 1. Añadir `https://cotizat.online/acceso` a las Redirect URLs de Supabase,
 >    subir el rate limit de emails a ~30/hora y dejar el cooldown en 60 s.
@@ -173,11 +176,15 @@ usuario correrá las pruebas).
 >    cambio de contraseña e invitaciones (con y sin cuenta previa) verificados.
 >    De ahí salió la corrección de UX de invitaciones descrita arriba; conviene
 >    repetir el caso «sin cuenta» tras desplegarla.
-> 3. Crear la redirección `soporte@cotizat.online` en GoDaddy.
+> 3. Crear `soporte@cotizat.online`. **Ojo**: GoDaddy retiró el reenvío
+>    gratuito y el dominio raíz **no tiene MX**, así que hoy un correo a esa
+>    dirección rebota. Alternativa gratuita (Forward Email / ImprovMX /
+>    Cloudflare) en `docs/PENDIENTES_OPERATIVOS.md` §3.
 > 4. Definir la razón social y añadir `COTIZAT_LEGAL_ENTITY` en Vercel
 >    (Production) + redeploy.
 > 5. **Vercel Hobby prohíbe el uso comercial** → pasar a Pro antes de cobrar al
->    primer cliente.
+>    primer cliente. **Aplazado por decisión del usuario** (16/08/2026):
+>    sin cobros todavía, no corre prisa.
 
 1. **Pruebas E2E** (el usuario las hará **después del PR #22**): registro +
    confirmación de email, recuperación de contraseña, e invitación real en
