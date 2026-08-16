@@ -8,17 +8,17 @@ del proyecto.
 
 | | |
 |---|---:|
-| Partidas | **27** |
-| Hojas de descompuesto `.xlsx` | 27 |
+| Partidas | **120** |
+| Hojas de descompuesto `.xlsx` | 120 |
 | Partidas con producto de elección del cliente | 8 |
-| Recursos en el cuadro de precios | **64** |
+| Recursos en el cuadro de precios | **78** |
 | — mano de obra / materiales / maquinaria | 10 / 42 / 12 |
 | — precios confirmados / provisionales | 10 / 54 |
 | Clasificación | 18 capítulos · 74 subcapítulos · 41 grupos |
 | — capítulos con partidas / vacíos | 6 / 12 |
 | Moneda | USD (Venezuela) |
 
-**Validación**: las 27 partidas pasan `es_formato_cype_xlsx` y `analizar_cype_xlsx`
+**Validación**: las 120 partidas pasan `es_formato_cype_xlsx` y `analizar_cype_xlsx`
 del proyecto. El catálogo masivo se detecta con **8 campos, 0 errores, 0 advertencias**.
 
 ---
@@ -52,42 +52,35 @@ del proyecto. El catálogo masivo se detecta con **8 campos, 0 errores, 0 advert
 
 ---
 
-## Las 14 partidas
+## Capítulo D · Demoliciones — **CERRADO**
 
-### D · Demoliciones
-| Código | Ud | Partida | Horas | Coste | Venta |
-|---|---|---|---:|---:|---:|
-| DRS010 | m² | Demolición de pavimento cerámico y capa de agarre | 0,530 | 3,55 | 4,62 |
+98 partidas en 13 subcapítulos y 42 grupos.
 
-### F · Fachadas y particiones
-| Código | Ud | Partida | Horas | Coste | Venta |
-|---|---|---|---:|---:|---:|
-| FBY010 | m² | Tabique autoportante PYL 15+70+15, doble placa | 0,700 | 40,31 | 52,40 |
+| Sub | Nombre | Part. | Grupos |
+|---|---|---:|---|
+| DD | Cimentaciones | 3 | DDS zapatas · DDM vigas y muros · DDL losas |
+| DE | Estructuras | 6 | DEC concreto (4) · DEA metálica · DEM madera |
+| DF | Fachadas | 4 | DFF muros · DFL ligeros · DFD defensas (2) |
+| DP | Particiones | 5 | DPT tabiquería (5) |
+| DL | Carpintería y vidrios | 6 | DLP puertas (2) · DLV ventanas · DLC rejas · DLA closets · DLG vidrios |
+| DH | Remates | 3 | DHR alféizares, dinteles y pasamanos |
+| DI | Instalaciones | 8 | DIS aparatos (3) · DIF agua · DIE eléctrica (2) · DIC clima · DII iluminación |
+| DN | Aislamientos e impermeabilizaciones | 3 | DNI impermeabilizaciones (2) · DNA aislamientos |
+| DQ | Cubiertas | 6 | DQI inclinadas (3) · DQP planas · DQC canales (2) |
+| DR | Revestimientos y trasdosados | 42 | DRS (16) · DRC (5) · DRF (5) · DRT (5) · DRR (3) · DRD (3) · DRE (3) · DRQ (2) |
+| DS | Equipamiento | 4 | DSC cocinas (2) · DSB baños · DSM mobiliario fijo |
+| DU | Urbanización de la parcela | 4 | DUC cerramientos (2) · DUJ jardinería · DUI instalaciones |
+| DM | Firmes y pavimentos exteriores | 4 | DMP pavimentos (3) · DMB brocales |
 
-### I · Instalaciones
-| Código | Ud | Partida | Horas | Coste | Venta |
-|---|---|---|---:|---:|---:|
-| IFT010 | m | Tubería de agua PPR 20 mm empotrada, con roza y resane | 0,460 | 5,73 | 7,45 |
-| IST010 | m | Tubería de desagüe PVC sanitario 4" | 0,410 | 8,49 | 11,04 |
-| IEC010 | m | Canalización conduit 20 mm + conductor 12 AWG | 0,340 | 6,44 | 8,37 |
-| IEM010 ⊕ | ud | Punto de interruptor o tomacorriente | 0,330 | 6,71 | 8,72 |
+## Otros capítulos en curso
 
-### R · Revestimientos y trasdosados
-| Código | Ud | Partida | Horas | Coste | Venta |
-|---|---|---|---:|---:|---:|
-| RSA010 | m² | Recrecido autonivelante 5 mm | 0,300 | 6,17 | 8,02 |
-| RSG010 ⊕ | m² | Pavimento cerámico/porcelanato formato estándar | 0,600 | 7,05 | 9,17 |
-| RSG020 ⊕ | m² | Pavimento porcelanato gran formato | 0,900 | 9,62 | 12,51 |
-| RSD010 ⊕ | m | Rodapié cerámico o porcelanato | 0,165 | 1,30 | 1,69 |
-| RAG010 ⊕ | m² | Alicatado de paramento interior | 0,780 | 8,36 | 10,87 |
-| RIP010 | m² | Preparación de paramento para pintura | 0,220 | 2,17 | 2,82 |
-| RII010 ⊕ | m² | Pintura de caucho mate, dos manos | 0,255 | 2,66 | 3,46 |
-| RIM010 | m² | Esmalte sintético sobre carpintería | 0,420 | 4,02 | 5,23 |
-
-⊕ = no incluye el material de acabado que elige el cliente.
-Venta = coste directo × 1,30.
-
----
+| Cap | Partidas | Estado |
+|---|---:|---|
+| F · Fachadas y particiones | 2 | FFB bloque · FBY yeso laminado |
+| I · Instalaciones | 7 | IFT · IFA · IFL · IST · ISA · IEC · IEM |
+| R · Revestimientos | 10 | RSA · RSG (2) · RSD · RAG · RPF · RII · RIM · RIP · RTY |
+| S · Equipamiento | 2 | SBA inodoro y lavamanos |
+| G · Gestión de residuos | 1 | GTR retiro de escombro |
 
 ## Cadena de generación
 

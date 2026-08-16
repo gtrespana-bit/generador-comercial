@@ -348,6 +348,18 @@
       "descripcion": "Solución humectante para reblandecimiento de papel tapiz y pegamentos murales.",
       "precio": 2.4,
       "estado": "provisional"
+    },
+    "MT-APEO": {
+      "unidad": "ud",
+      "descripcion": "Puntal metálico telescópico y madera de apeo, con amortización por uso.",
+      "precio": 2.6,
+      "estado": "provisional"
+    },
+    "MT-OXI-CONS": {
+      "unidad": "ud",
+      "descripcion": "Consumibles de oxicorte y soldadura: gas, boquillas y discos de corte de metal.",
+      "precio": 3.9,
+      "estado": "provisional"
     }
   },
   "maquinaria": {
@@ -439,6 +451,30 @@
       "unidad": "h",
       "descripcion": "Andamio tubular o de borriquetas para trabajos en altura, incluido montaje y desmontaje amortizados.",
       "precio": 1.9,
+      "estado": "provisional"
+    },
+    "MQ-RETRO": {
+      "unidad": "h",
+      "descripcion": "Retroexcavadora o minicargadora con martillo hidráulico y operador.",
+      "precio": 35.0,
+      "estado": "provisional"
+    },
+    "MQ-OXICORTE": {
+      "unidad": "h",
+      "descripcion": "Equipo de oxicorte para desguace de estructuras y elementos metálicos.",
+      "precio": 4.8,
+      "estado": "provisional"
+    },
+    "MQ-SIERRA": {
+      "unidad": "h",
+      "descripcion": "Sierra circular o motosierra para corte de elementos de madera.",
+      "precio": 2.9,
+      "estado": "provisional"
+    },
+    "MQ-MONTAC": {
+      "unidad": "h",
+      "descripcion": "Montacargas o pluma de obra para bajada de material desde plantas altas.",
+      "precio": 9.5,
       "estado": "provisional"
     }
   }

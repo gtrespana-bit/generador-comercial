@@ -27,13 +27,29 @@
     "D": {
       "nombre": "Demoliciones",
       "subcapitulos": {
+        "DD": {
+          "nombre": "Cimentaciones",
+          "grupos": {
+            "DDS": "Zapatas y pedestales",
+            "DDM": "Vigas de riostra y muros",
+            "DDL": "Losas de fundación"
+          }
+        },
         "DE": {
           "nombre": "Estructuras",
-          "grupos": {}
+          "grupos": {
+            "DEC": "Concreto armado",
+            "DEA": "Estructura metálica",
+            "DEM": "Estructura de madera"
+          }
         },
         "DF": {
           "nombre": "Fachadas",
-          "grupos": {}
+          "grupos": {
+            "DFF": "Muros de fachada",
+            "DFL": "Cerramientos ligeros",
+            "DFD": "Defensas y barandas"
+          }
         },
         "DP": {
           "nombre": "Particiones",
@@ -43,17 +59,44 @@
         },
         "DL": {
           "nombre": "Carpintería, vidrios y protecciones solares",
-          "grupos": {}
+          "grupos": {
+            "DLP": "Puertas",
+            "DLV": "Ventanas",
+            "DLC": "Rejas y cerrajería",
+            "DLA": "Closets y muebles empotrados",
+            "DLG": "Vidrios"
+          }
+        },
+        "DH": {
+          "nombre": "Remates",
+          "grupos": {
+            "DHR": "Alféizares, dinteles y pasamanos"
+          }
         },
         "DI": {
           "nombre": "Instalaciones",
           "grupos": {
-            "DIS": "Desmontaje de aparatos e instalaciones"
+            "DIS": "Desmontaje de aparatos",
+            "DIF": "Redes de agua y desagüe",
+            "DIE": "Redes eléctricas",
+            "DIC": "Climatización",
+            "DII": "Iluminación"
+          }
+        },
+        "DN": {
+          "nombre": "Aislamientos e impermeabilizaciones",
+          "grupos": {
+            "DNI": "Impermeabilizaciones",
+            "DNA": "Aislamientos"
           }
         },
         "DQ": {
           "nombre": "Cubiertas",
-          "grupos": {}
+          "grupos": {
+            "DQI": "Techos inclinados",
+            "DQP": "Cubiertas planas",
+            "DQC": "Canales y bajantes"
+          }
         },
         "DR": {
           "nombre": "Revestimientos y trasdosados",
@@ -70,11 +113,26 @@
         },
         "DS": {
           "nombre": "Equipamiento",
-          "grupos": {}
+          "grupos": {
+            "DSC": "Cocinas",
+            "DSB": "Baños",
+            "DSM": "Mobiliario fijo"
+          }
+        },
+        "DU": {
+          "nombre": "Urbanización interior de la parcela",
+          "grupos": {
+            "DUC": "Cerramientos de parcela",
+            "DUJ": "Jardinería",
+            "DUI": "Instalaciones exteriores"
+          }
         },
         "DM": {
           "nombre": "Firmes y pavimentos exteriores",
-          "grupos": {}
+          "grupos": {
+            "DMP": "Pavimentos exteriores",
+            "DMB": "Brocales y cordones"
+          }
         }
       }
     },

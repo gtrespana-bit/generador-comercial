@@ -394,7 +394,7 @@ def escribir_catalogo(filas: list[dict]) -> None:
                          f"{pcl['tipo']} ({pcl['consumo']} {pcl['unidad']}/{f['unidad']})")
             w.writerow([
                 f["codigo"], u["capitulo"], f["titulo"], f["descripcion"],
-                "m2" if f["unidad"] == "m²" else f["unidad"],
+                {"m²":"m2","m³":"m3"}.get(f["unidad"], f["unidad"]),
                 f"{f['precio_venta']:.2f}",
                 u["subcapitulo"], u["grupo"],
                 f"{c.get('materiales', 0):.2f}",

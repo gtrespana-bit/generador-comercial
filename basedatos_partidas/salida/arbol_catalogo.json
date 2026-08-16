@@ -37,16 +37,192 @@
       "nombre": "Demoliciones",
       "subcapitulos": [
         {
+          "codigo": "DD",
+          "nombre": "Cimentaciones",
+          "grupos": [
+            {
+              "codigo": "DDS",
+              "nombre": "Zapatas y pedestales",
+              "partidas": [
+                {
+                  "codigo": "DDS010",
+                  "titulo": "Demolición de zapata o pedestal de concreto armado.",
+                  "unidad": "m³",
+                  "precio": 113.98,
+                  "horas": 6.6,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 1
+            },
+            {
+              "codigo": "DDM",
+              "nombre": "Vigas de riostra y muros",
+              "partidas": [
+                {
+                  "codigo": "DDM010",
+                  "titulo": "Demolición de viga de riostra o muro de contención de concreto.",
+                  "unidad": "m³",
+                  "precio": 104.61,
+                  "horas": 6.1,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 1
+            },
+            {
+              "codigo": "DDL",
+              "nombre": "Losas de fundación",
+              "partidas": [
+                {
+                  "codigo": "DDL010",
+                  "titulo": "Demolición de losa de fundación de concreto armado.",
+                  "unidad": "m³",
+                  "precio": 119.83,
+                  "horas": 5.35,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 1
+            }
+          ],
+          "n": 3
+        },
+        {
           "codigo": "DE",
           "nombre": "Estructuras",
-          "grupos": [],
-          "n": 0
+          "grupos": [
+            {
+              "codigo": "DEC",
+              "nombre": "Concreto armado",
+              "partidas": [
+                {
+                  "codigo": "DEC010",
+                  "titulo": "Demolición de columna de concreto armado.",
+                  "unidad": "m³",
+                  "precio": 119.95,
+                  "horas": 7.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DEC020",
+                  "titulo": "Demolición de viga de concreto armado.",
+                  "unidad": "m³",
+                  "precio": 134.08,
+                  "horas": 8.25,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DEC030",
+                  "titulo": "Demolición de losa de entrepiso maciza o nervada.",
+                  "unidad": "m²",
+                  "precio": 46.07,
+                  "horas": 3.0,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DEC040",
+                  "titulo": "Apertura de hueco en losa de concreto armado.",
+                  "unidad": "m²",
+                  "precio": 36.26,
+                  "horas": 3.2,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 4
+            },
+            {
+              "codigo": "DEA",
+              "nombre": "Estructura metálica",
+              "partidas": [
+                {
+                  "codigo": "DEA010",
+                  "titulo": "Desmontaje de estructura metálica.",
+                  "unidad": "kg",
+                  "precio": 0.52,
+                  "horas": 0.042,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 1
+            },
+            {
+              "codigo": "DEM",
+              "nombre": "Estructura de madera",
+              "partidas": [
+                {
+                  "codigo": "DEM010",
+                  "titulo": "Desmontaje de estructura de madera.",
+                  "unidad": "m²",
+                  "precio": 13.18,
+                  "horas": 1.42,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 1
+            }
+          ],
+          "n": 6
         },
         {
           "codigo": "DF",
           "nombre": "Fachadas",
-          "grupos": [],
-          "n": 0
+          "grupos": [
+            {
+              "codigo": "DFF",
+              "nombre": "Muros de fachada",
+              "partidas": [
+                {
+                  "codigo": "DFF010",
+                  "titulo": "Demolición de muro de fachada de bloque o ladrillo.",
+                  "unidad": "m²",
+                  "precio": 8.49,
+                  "horas": 0.76,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 1
+            },
+            {
+              "codigo": "DFL",
+              "nombre": "Cerramientos ligeros",
+              "partidas": [
+                {
+                  "codigo": "DFL010",
+                  "titulo": "Desmontaje de cerramiento ligero de láminas metálicas.",
+                  "unidad": "m²",
+                  "precio": 5.95,
+                  "horas": 0.58,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 1
+            },
+            {
+              "codigo": "DFD",
+              "nombre": "Defensas y barandas",
+              "partidas": [
+                {
+                  "codigo": "DFD010",
+                  "titulo": "Desmontaje de baranda o pasamanos de balcón.",
+                  "unidad": "m",
+                  "precio": 5.79,
+                  "horas": 0.46,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DFD020",
+                  "titulo": "Desmontaje de reja de protección en fachada.",
+                  "unidad": "m²",
+                  "precio": 5.62,
+                  "horas": 0.42,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 2
+            }
+          ],
+          "n": 4
         },
         {
           "codigo": "DP",
@@ -63,18 +239,172 @@
                   "precio": 5.42,
                   "horas": 0.58,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "DPT020",
+                  "titulo": "Demolición de tabique de yeso laminado y su estructura.",
+                  "unidad": "m²",
+                  "precio": 2.89,
+                  "horas": 0.37,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DPT030",
+                  "titulo": "Demolición de muro de concreto no estructural.",
+                  "unidad": "m²",
+                  "precio": 17.5,
+                  "horas": 1.14,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DPT040",
+                  "titulo": "Apertura de vano en pared de bloque o ladrillo.",
+                  "unidad": "m²",
+                  "precio": 17.78,
+                  "horas": 1.55,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DPT050",
+                  "titulo": "Demolición de tabique de bloque de vidrio.",
+                  "unidad": "m²",
+                  "precio": 6.79,
+                  "horas": 0.69,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 5
+            }
+          ],
+          "n": 5
+        },
+        {
+          "codigo": "DL",
+          "nombre": "Carpintería, vidrios y protecciones solares",
+          "grupos": [
+            {
+              "codigo": "DLP",
+              "nombre": "Puertas",
+              "partidas": [
+                {
+                  "codigo": "DLP010",
+                  "titulo": "Desmontaje de puerta interior con su marco.",
+                  "unidad": "ud",
+                  "precio": 4.23,
+                  "horas": 0.64,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DLP020",
+                  "titulo": "Desmontaje de puerta exterior o metálica con su marco.",
+                  "unidad": "ud",
+                  "precio": 11.54,
+                  "horas": 1.2,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 2
+            },
+            {
+              "codigo": "DLV",
+              "nombre": "Ventanas",
+              "partidas": [
+                {
+                  "codigo": "DLV010",
+                  "titulo": "Desmontaje de ventana con su marco.",
+                  "unidad": "m²",
+                  "precio": 7.02,
+                  "horas": 0.84,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 1
+            },
+            {
+              "codigo": "DLC",
+              "nombre": "Rejas y cerrajería",
+              "partidas": [
+                {
+                  "codigo": "DLC010",
+                  "titulo": "Desmontaje de reja o protector metálico interior.",
+                  "unidad": "m²",
+                  "precio": 4.71,
+                  "horas": 0.38,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 1
+            },
+            {
+              "codigo": "DLA",
+              "nombre": "Closets y muebles empotrados",
+              "partidas": [
+                {
+                  "codigo": "DLA010",
+                  "titulo": "Desmontaje de closet o mueble empotrado.",
+                  "unidad": "m²",
+                  "precio": 4.62,
+                  "horas": 0.6,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 1
+            },
+            {
+              "codigo": "DLG",
+              "nombre": "Vidrios",
+              "partidas": [
+                {
+                  "codigo": "DLG010",
+                  "titulo": "Retiro de vidrio de carpintería existente.",
+                  "unidad": "m²",
+                  "precio": 3.38,
+                  "horas": 0.46,
+                  "producto_cliente": false
                 }
               ],
               "n": 1
             }
           ],
-          "n": 1
+          "n": 6
         },
         {
-          "codigo": "DL",
-          "nombre": "Carpintería, vidrios y protecciones solares",
-          "grupos": [],
-          "n": 0
+          "codigo": "DH",
+          "nombre": "Remates",
+          "grupos": [
+            {
+              "codigo": "DHR",
+              "nombre": "Alféizares, dinteles y pasamanos",
+              "partidas": [
+                {
+                  "codigo": "DHR010",
+                  "titulo": "Desmontaje de alféizar o repisa de ventana.",
+                  "unidad": "m",
+                  "precio": 2.93,
+                  "horas": 0.31,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DHR020",
+                  "titulo": "Demolición de dintel prefabricado o cargadero.",
+                  "unidad": "m",
+                  "precio": 12.52,
+                  "horas": 1.05,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DHR030",
+                  "titulo": "Desmontaje de pasamanos de escalera.",
+                  "unidad": "m",
+                  "precio": 2.26,
+                  "horas": 0.28,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 3
+            }
+          ],
+          "n": 3
         },
         {
           "codigo": "DI",
@@ -82,7 +412,7 @@
           "grupos": [
             {
               "codigo": "DIS",
-              "nombre": "Desmontaje de aparatos e instalaciones",
+              "nombre": "Desmontaje de aparatos",
               "partidas": [
                 {
                   "codigo": "DIS010",
@@ -91,18 +421,217 @@
                   "precio": 4.55,
                   "horas": 0.7,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "DIS020",
+                  "titulo": "Desmontaje de fregadero y su grifería.",
+                  "unidad": "ud",
+                  "precio": 4.12,
+                  "horas": 0.64,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DIS030",
+                  "titulo": "Desmontaje de calentador de agua.",
+                  "unidad": "ud",
+                  "precio": 9.43,
+                  "horas": 1.5,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 3
+            },
+            {
+              "codigo": "DIF",
+              "nombre": "Redes de agua y desagüe",
+              "partidas": [
+                {
+                  "codigo": "DIF010",
+                  "titulo": "Desmontaje de red de tuberías de agua o desagüe.",
+                  "unidad": "m",
+                  "precio": 4.2,
+                  "horas": 0.4,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 1
+            },
+            {
+              "codigo": "DIE",
+              "nombre": "Redes eléctricas",
+              "partidas": [
+                {
+                  "codigo": "DIE010",
+                  "titulo": "Desmontaje de red eléctrica y sus mecanismos.",
+                  "unidad": "m",
+                  "precio": 3.47,
+                  "horas": 0.35,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DIE020",
+                  "titulo": "Desmontaje de tablero eléctrico.",
+                  "unidad": "ud",
+                  "precio": 10.96,
+                  "horas": 1.4,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 2
+            },
+            {
+              "codigo": "DIC",
+              "nombre": "Climatización",
+              "partidas": [
+                {
+                  "codigo": "DIC010",
+                  "titulo": "Desmontaje de equipo de aire acondicionado tipo split.",
+                  "unidad": "ud",
+                  "precio": 16.84,
+                  "horas": 2.5,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 1
+            },
+            {
+              "codigo": "DII",
+              "nombre": "Iluminación",
+              "partidas": [
+                {
+                  "codigo": "DII010",
+                  "titulo": "Desmontaje de luminaria.",
+                  "unidad": "ud",
+                  "precio": 2.17,
+                  "horas": 0.28,
+                  "producto_cliente": false
                 }
               ],
               "n": 1
             }
           ],
-          "n": 1
+          "n": 8
+        },
+        {
+          "codigo": "DN",
+          "nombre": "Aislamientos e impermeabilizaciones",
+          "grupos": [
+            {
+              "codigo": "DNI",
+              "nombre": "Impermeabilizaciones",
+              "partidas": [
+                {
+                  "codigo": "DNI010",
+                  "titulo": "Retiro de manto asfáltico en cubierta.",
+                  "unidad": "m²",
+                  "precio": 3.44,
+                  "horas": 0.49,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DNI020",
+                  "titulo": "Retiro de impermeabilización líquida o acrílica.",
+                  "unidad": "m²",
+                  "precio": 3.34,
+                  "horas": 0.39,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 2
+            },
+            {
+              "codigo": "DNA",
+              "nombre": "Aislamientos",
+              "partidas": [
+                {
+                  "codigo": "DNA010",
+                  "titulo": "Retiro de aislamiento térmico o acústico.",
+                  "unidad": "m²",
+                  "precio": 1.99,
+                  "horas": 0.24,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 1
+            }
+          ],
+          "n": 3
         },
         {
           "codigo": "DQ",
           "nombre": "Cubiertas",
-          "grupos": [],
-          "n": 0
+          "grupos": [
+            {
+              "codigo": "DQI",
+              "nombre": "Techos inclinados",
+              "partidas": [
+                {
+                  "codigo": "DQI010",
+                  "titulo": "Desmontaje de cubierta de teja.",
+                  "unidad": "m²",
+                  "precio": 9.44,
+                  "horas": 0.91,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DQI020",
+                  "titulo": "Desmontaje de cubierta de lámina metálica o acerolit.",
+                  "unidad": "m²",
+                  "precio": 6.81,
+                  "horas": 0.61,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DQI030",
+                  "titulo": "Desmontaje de estructura de techo.",
+                  "unidad": "m²",
+                  "precio": 14.46,
+                  "horas": 1.21,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 3
+            },
+            {
+              "codigo": "DQP",
+              "nombre": "Cubiertas planas",
+              "partidas": [
+                {
+                  "codigo": "DQP010",
+                  "titulo": "Demolición de pendientado y protección de cubierta plana.",
+                  "unidad": "m²",
+                  "precio": 11.27,
+                  "horas": 0.84,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 1
+            },
+            {
+              "codigo": "DQC",
+              "nombre": "Canales y bajantes",
+              "partidas": [
+                {
+                  "codigo": "DQC010",
+                  "titulo": "Desmontaje de canal de aguas lluvias.",
+                  "unidad": "m",
+                  "precio": 2.7,
+                  "horas": 0.33,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DQC020",
+                  "titulo": "Desmontaje de bajante de aguas lluvias.",
+                  "unidad": "m",
+                  "precio": 2.72,
+                  "horas": 0.31,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 2
+            }
+          ],
+          "n": 6
         },
         {
           "codigo": "DR",
@@ -506,17 +1035,178 @@
         {
           "codigo": "DS",
           "nombre": "Equipamiento",
-          "grupos": [],
-          "n": 0
+          "grupos": [
+            {
+              "codigo": "DSC",
+              "nombre": "Cocinas",
+              "partidas": [
+                {
+                  "codigo": "DSC010",
+                  "titulo": "Desmontaje de mueble de cocina alto o bajo.",
+                  "unidad": "m",
+                  "precio": 5.11,
+                  "horas": 0.66,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DSC020",
+                  "titulo": "Desmontaje de mesón de cocina y su salpicadero.",
+                  "unidad": "m",
+                  "precio": 8.76,
+                  "horas": 0.96,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 2
+            },
+            {
+              "codigo": "DSB",
+              "nombre": "Baños",
+              "partidas": [
+                {
+                  "codigo": "DSB010",
+                  "titulo": "Desmontaje de mueble de baño y sus accesorios.",
+                  "unidad": "ud",
+                  "precio": 6.86,
+                  "horas": 0.96,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 1
+            },
+            {
+              "codigo": "DSM",
+              "nombre": "Mobiliario fijo",
+              "partidas": [
+                {
+                  "codigo": "DSM010",
+                  "titulo": "Desmontaje de mobiliario fijo diverso.",
+                  "unidad": "m²",
+                  "precio": 6.41,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 1
+            }
+          ],
+          "n": 4
+        },
+        {
+          "codigo": "DU",
+          "nombre": "Urbanización interior de la parcela",
+          "grupos": [
+            {
+              "codigo": "DUC",
+              "nombre": "Cerramientos de parcela",
+              "partidas": [
+                {
+                  "codigo": "DUC010",
+                  "titulo": "Demolición de muro de cerca perimetral.",
+                  "unidad": "m²",
+                  "precio": 11.27,
+                  "horas": 0.84,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DUC020",
+                  "titulo": "Desmontaje de cerca de malla ciclónica.",
+                  "unidad": "m",
+                  "precio": 4.11,
+                  "horas": 0.42,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 2
+            },
+            {
+              "codigo": "DUJ",
+              "nombre": "Jardinería",
+              "partidas": [
+                {
+                  "codigo": "DUJ010",
+                  "titulo": "Tala y destronque de árbol.",
+                  "unidad": "ud",
+                  "precio": 89.1,
+                  "horas": 6.6,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 1
+            },
+            {
+              "codigo": "DUI",
+              "nombre": "Instalaciones exteriores",
+              "partidas": [
+                {
+                  "codigo": "DUI010",
+                  "titulo": "Demolición de tanquilla o registro enterrado.",
+                  "unidad": "ud",
+                  "precio": 33.71,
+                  "horas": 3.0,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 1
+            }
+          ],
+          "n": 4
         },
         {
           "codigo": "DM",
           "nombre": "Firmes y pavimentos exteriores",
-          "grupos": [],
-          "n": 0
+          "grupos": [
+            {
+              "codigo": "DMP",
+              "nombre": "Pavimentos exteriores",
+              "partidas": [
+                {
+                  "codigo": "DMP010",
+                  "titulo": "Demolición de pavimento exterior de concreto.",
+                  "unidad": "m²",
+                  "precio": 12.66,
+                  "horas": 0.62,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DMP020",
+                  "titulo": "Demolición de pavimento asfáltico.",
+                  "unidad": "m²",
+                  "precio": 8.8,
+                  "horas": 0.52,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "DMP030",
+                  "titulo": "Levantado de pavimento de adoquín.",
+                  "unidad": "m²",
+                  "precio": 3.35,
+                  "horas": 0.55,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 3
+            },
+            {
+              "codigo": "DMB",
+              "nombre": "Brocales y cordones",
+              "partidas": [
+                {
+                  "codigo": "DMB010",
+                  "titulo": "Demolición de brocal o cordón de acera.",
+                  "unidad": "m",
+                  "precio": 7.1,
+                  "horas": 0.78,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 1
+            }
+          ],
+          "n": 4
         }
       ],
-      "n": 44
+      "n": 98
     },
     {
       "codigo": "A",
