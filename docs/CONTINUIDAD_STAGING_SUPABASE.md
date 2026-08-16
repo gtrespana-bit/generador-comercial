@@ -9,8 +9,9 @@ Fecha de corte de fondo: 14/08/2026 (America/Caracas).
 > en Supabase** las dos migraciones del bloque: `c2f6e8a1d934` (4 políticas de
 > `enlaces_propuesta` comprobadas) y `a3d7e9c1b5f2` (`baja_organizacion`
 > SECURITY DEFINER, propietario `postgres`). Cadena:
-> `b7c4a9e2d31f → c2f6e8a1d934 → a3d7e9c1b5f2`. El titular creó además el
-> **PR del bloque** desde `arena/01a00b99-generador-comercial` (ver §0quater
+> `b7c4a9e2d31f → c2f6e8a1d934 → a3d7e9c1b5f2`. El **PR #27 del bloque**
+> quedó creado desde `arena/01a00b99-generador-comercial`:
+> https://github.com/gtrespana-bit/generador-comercial/pull/27 (ver §0quater
 > del punto de continuación). El código desplegado aún exige `b7c4a9e2d31f`,
 > así que `/readyz` del entorno migrado responderá **503 (esperado)** hasta
 > desplegar la rama. Ver `docs/PUNTO_DE_CONTINUACION.md` §0ter y §0quater.

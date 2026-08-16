@@ -80,13 +80,14 @@ despliegue, `/readyz` debe volver a 200.
 
 ## 🚀 0quater. Cierre de bloque con PR del titular (16/08/2026)
 
-El titular creó el **PR #27** (siguiente número tras el #26, cerrado) desde
-`arena/01a00b99-generador-comercial` hacia `main` con todo el trabajo de la
-sesión. **Al volver, confirmar aquí el número y el estado** (abierto /
-fusionado) con:
+**PR #27 creado y ABIERTO** — https://github.com/gtrespana-bit/generador-comercial/pull/27
+desde `arena/01a00b99-generador-comercial` hacia `main`, con los 8 commits del
+bloque. **Al volver, confirmar el estado** (abierto / fusionado) con:
 
 ```bash
 gh pr list --head arena/01a00b99-generador-comercial --state all
+# o directamente:
+gh pr view 27 --json state,statusCheckRollup
 ```
 
 Commits que contiene el PR (en orden):
@@ -102,6 +103,8 @@ Commits que contiene el PR (en orden):
 6. `d3eb2a7` — Etapa 4 (primer bloque): autorización centralizada
    (`app/permisos.py`) y logs estructurados (`app/logs.py`).
 7. `2de721a` — documentación del traspaso de sesión (este §0quater y §7).
+8. `2a0d56d` y el commit de cierre documental posterior — traspaso definitivo
+   para el PR #27 con su número y enlace registrados.
 
 Estado verificado de la rama en el momento del PR:
 
@@ -413,12 +416,13 @@ no me pidas secretos.
 **Dónde quedó todo (16/08/2026, cierre de bloque con PR del titular).**
 
 - La rama `arena/01a00b99-generador-comercial` termina el bloque en el commit
-  `2de721a` y el titular creó el **PR #27** con todo ese trabajo (confirmar
-  con `gh pr list --head arena/01a00b99-generador-comercial --state all`; si
-  ya está fusionado, `main` contiene este código). El árbol de decisión «justo
-  después del PR» está en `docs/PUNTO_DE_CONTINUACION.md` §0quater: si el PR
-  sigue abierto, primera prioridad es dejarlo en verde; si está fusionado,
-  desplegar, verificar `/readyz` en 200 y ensayar el flujo real en staging.
+  `2a0d56d` y el **PR #27 quedó creado y abierto** con todo ese trabajo:
+  https://github.com/gtrespana-bit/generador-comercial/pull/27 (confirmar
+  estado con `gh pr view 27`; si ya está fusionado, `main` contiene este
+  código). El árbol de decisión «justo después del PR» está en
+  `docs/PUNTO_DE_CONTINUACION.md` §0quater: si el PR sigue abierto, primera
+  prioridad es dejarlo en verde; si está fusionado, desplegar, verificar
+  `/readyz` en 200 y ensayar el flujo real en staging.
 - Commits del bloque: `9fd5afa` (recuperación E3-016 a E3-019), `bd684e1`
   (E3-020/21 respaldo y restauración), `a0d2711` (E3-022/23 exportación y
   baja), `7ddb7de` (E3-024 monitorización), `2bf6d19` (migraciones aplicadas
