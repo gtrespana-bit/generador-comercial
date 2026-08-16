@@ -1,0 +1,60 @@
+{
+  "codigo": "CT-14-04-010",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "04",
+  "unidad": "ud",
+  "titulo": "Instalación de planta eléctrica de respaldo.",
+  "descripcion": "Instalación de planta eléctrica de respaldo, con su base antivibratoria, conexión eléctrica, sistema de escape y ventilación. Incluye la comprobación del emplazamiento en cuanto a ventilación, evacuación de gases y distancia a zonas habitadas por ruido, la ejecución de la base, el emplazamiento del equipo sobre elementos antivibratorios, la conexión de potencia hasta el punto de transferencia, la conducción del escape al exterior, la conexión del combustible y la puesta en marcha con prueba en carga. El equipo lo elige el cliente y se presupuesta aparte. Medido por unidad instalada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "producto_cliente": {
+    "tipo": "Planta eléctrica de la potencia y tipo elegidos por el cliente",
+    "unidad": "ud",
+    "consumo": 1.0,
+    "nota": "La partida cubre solo la instalación."
+  },
+  "recursos": [
+    {
+      "ref": "MT-CABLE-8",
+      "rendimiento": 22.0
+    },
+    {
+      "ref": "MT-ELE-TUB20",
+      "rendimiento": 12.0
+    },
+    {
+      "ref": "MT-BREAKER",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MT-CONC-210",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MT-DUCTO-VENT",
+      "rendimiento": 3.0
+    },
+    {
+      "ref": "MT-PLO-SOP",
+      "rendimiento": 6.0
+    },
+    {
+      "ref": "MQ-GRUA",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 4.2
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 1.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 2.8
+    }
+  ],
+  "codigo_covenin": ""
+}

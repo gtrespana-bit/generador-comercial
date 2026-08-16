@@ -88,6 +88,24 @@
       "descripcion": "Oficial de 1ª carpintero de madera estructural.",
       "precio": 5.5,
       "estado": "confirmado"
+    },
+    "MO-OF1-VIDR": {
+      "unidad": "h",
+      "descripcion": "Oficial de 1ª vidriero.",
+      "precio": 5.5,
+      "estado": "confirmado"
+    },
+    "MO-OF1-AC": {
+      "unidad": "h",
+      "descripcion": "Oficial de 1ª técnico en refrigeración y climatización.",
+      "precio": 5.5,
+      "estado": "confirmado"
+    },
+    "MO-OF1-JARD": {
+      "unidad": "h",
+      "descripcion": "Oficial de 1ª jardinero.",
+      "precio": 5.5,
+      "estado": "confirmado"
     }
   },
   "materiales": {
@@ -972,6 +990,480 @@
       "descripcion": "Platina divisoria de aluminio o bronce para juntas de granito vaciado en sitio.",
       "precio": 2.1,
       "estado": "provisional"
+    },
+    "MT-CIELO-DESM": {
+      "unidad": "m2",
+      "descripcion": "Panel de fibra mineral de 60x60 cm para cielo raso desmontable.",
+      "precio": 6.8,
+      "estado": "provisional"
+    },
+    "MT-PERF-DESM": {
+      "unidad": "m2",
+      "descripcion": "Perfilería vista en T y ángulo perimetral, con tensores, para cielo raso desmontable.",
+      "precio": 4.2,
+      "estado": "provisional"
+    },
+    "MT-CIELO-PVC": {
+      "unidad": "m2",
+      "descripcion": "Lámina de PVC machihembrada para cielo raso, con sus perfiles de remate.",
+      "precio": 8.5,
+      "estado": "provisional"
+    },
+    "MT-CIELO-METAL": {
+      "unidad": "m2",
+      "descripcion": "Lámina metálica lineal o en bandeja para cielo raso, prelacada.",
+      "precio": 14.0,
+      "estado": "provisional"
+    },
+    "MT-REGISTRO": {
+      "unidad": "ud",
+      "descripcion": "Tapa de registro practicable para cielo raso, con su marco.",
+      "precio": 12.0,
+      "estado": "provisional"
+    },
+    "MT-CORNISA": {
+      "unidad": "m",
+      "descripcion": "Perfil de cornisa para iluminación indirecta en cielo raso.",
+      "precio": 4.5,
+      "estado": "provisional"
+    },
+    "MT-MANTO-ASF": {
+      "unidad": "m2",
+      "descripcion": "Manto asfáltico prefabricado con armadura de poliéster, para impermeabilización de cubierta.",
+      "precio": 7.2,
+      "estado": "provisional"
+    },
+    "MT-IMPRIM-ASF": {
+      "unidad": "l",
+      "descripcion": "Imprimación asfáltica de base solvente, como puente de adherencia del manto.",
+      "precio": 3.9,
+      "estado": "provisional"
+    },
+    "MT-ACRIL-IMPER": {
+      "unidad": "l",
+      "descripcion": "Impermeabilizante acrílico elastomérico de aplicación líquida, con su malla de refuerzo.",
+      "precio": 5.4,
+      "estado": "provisional"
+    },
+    "MT-POLIUR-LIQ": {
+      "unidad": "kg",
+      "descripcion": "Membrana líquida de poliuretano de alta elasticidad y resistencia a la intemperie.",
+      "precio": 12.5,
+      "estado": "provisional"
+    },
+    "MT-GRAVILLA": {
+      "unidad": "m3",
+      "descripcion": "Gravilla lavada de protección para cubiertas impermeabilizadas.",
+      "precio": 24.0,
+      "estado": "provisional"
+    },
+    "MT-AISL-TERM": {
+      "unidad": "m2",
+      "descripcion": "Panel de aislamiento térmico de poliestireno o lana mineral para cubiertas y cielos.",
+      "precio": 4.8,
+      "estado": "provisional"
+    },
+    "MT-AISL-REFLECT": {
+      "unidad": "m2",
+      "descripcion": "Manta reflectiva de doble burbuja con foil de aluminio, para aislamiento bajo techo.",
+      "precio": 3.2,
+      "estado": "provisional"
+    },
+    "MT-BANDA-REF": {
+      "unidad": "m",
+      "descripcion": "Banda elástica de refuerzo para encuentros, esquinas y juntas en impermeabilizaciones.",
+      "precio": 2.8,
+      "estado": "provisional"
+    },
+    "MT-SELLA-PASE": {
+      "unidad": "ud",
+      "descripcion": "Kit de sellado de pase de tubería en impermeabilización, con collarín y masilla.",
+      "precio": 4.6,
+      "estado": "provisional"
+    },
+    "MT-TEJA-CRIOLLA": {
+      "unidad": "ud",
+      "descripcion": "Teja criolla de arcilla cocida, tipo canal.",
+      "precio": 0.75,
+      "estado": "provisional"
+    },
+    "MT-TEJA-ASF": {
+      "unidad": "m2",
+      "descripcion": "Teja asfáltica en shingle con su fieltro base y clavos de fijación.",
+      "precio": 9.5,
+      "estado": "provisional"
+    },
+    "MT-LAMINA-ZINC": {
+      "unidad": "m2",
+      "descripcion": "Lámina metálica acanalada galvanizada o prepintada para cubierta.",
+      "precio": 8.2,
+      "estado": "provisional"
+    },
+    "MT-PANEL-SAND": {
+      "unidad": "m2",
+      "descripcion": "Panel sándwich aislado con núcleo de poliuretano para cubierta.",
+      "precio": 22.0,
+      "estado": "provisional"
+    },
+    "MT-POLICARB": {
+      "unidad": "m2",
+      "descripcion": "Lámina de policarbonato alveolar translúcida, con sus perfiles de unión.",
+      "precio": 18.0,
+      "estado": "provisional"
+    },
+    "MT-CUMBRERA": {
+      "unidad": "m",
+      "descripcion": "Pieza de cumbrera y remate para cubierta, del material de la cubierta.",
+      "precio": 6.4,
+      "estado": "provisional"
+    },
+    "MT-CANAL-PVC": {
+      "unidad": "m",
+      "descripcion": "Canal de PVC o lámina galvanizada para recogida de aguas lluvias, con sus soportes.",
+      "precio": 7.8,
+      "estado": "provisional"
+    },
+    "MT-BAJANTE-PVC": {
+      "unidad": "m",
+      "descripcion": "Bajante de PVC para aguas lluvias, con sus abrazaderas y codos.",
+      "precio": 5.2,
+      "estado": "provisional"
+    },
+    "MT-TRAGANTE": {
+      "unidad": "ud",
+      "descripcion": "Tragante, boquilla o sumidero de cubierta con su rejilla y guardahojas.",
+      "precio": 14.0,
+      "estado": "provisional"
+    },
+    "MT-TORN-TECHO": {
+      "unidad": "ud",
+      "descripcion": "Tornillo autoperforante con arandela de neopreno para fijación de láminas de cubierta.",
+      "precio": 0.18,
+      "estado": "provisional"
+    },
+    "MT-PLOT-REG": {
+      "unidad": "ud",
+      "descripcion": "Pedestal regulable de polipropileno para piso flotante sobre cubierta.",
+      "precio": 3.4,
+      "estado": "provisional"
+    },
+    "MT-VALV-CHECK": {
+      "unidad": "ud",
+      "descripcion": "Válvula de retención y válvula de compuerta para instalación de bombeo.",
+      "precio": 12.0,
+      "estado": "provisional"
+    },
+    "MT-ACC-BOMBA": {
+      "unidad": "ud",
+      "descripcion": "Accesorios de conexión de bomba: uniones universales, manómetro, niples y soportes.",
+      "precio": 28.0,
+      "estado": "provisional"
+    },
+    "MT-TUB-PPR25": {
+      "unidad": "m",
+      "descripcion": "Tubería de polipropileno PPR de 25 mm para montantes y alimentación principal.",
+      "precio": 2.1,
+      "estado": "provisional"
+    },
+    "MT-FLOTANTE": {
+      "unidad": "ud",
+      "descripcion": "Válvula de flotante y accesorios de control de nivel para tanque de agua.",
+      "precio": 9.5,
+      "estado": "provisional"
+    },
+    "MT-TABLERO-DIST": {
+      "unidad": "ud",
+      "descripcion": "Tablero de distribución empotrable con barraje, para el número de circuitos de proyecto.",
+      "precio": 55.0,
+      "estado": "provisional"
+    },
+    "MT-BREAKER": {
+      "unidad": "ud",
+      "descripcion": "Interruptor termomagnético monopolar o bipolar para protección de circuito.",
+      "precio": 8.5,
+      "estado": "provisional"
+    },
+    "MT-DIFERENCIAL": {
+      "unidad": "ud",
+      "descripcion": "Interruptor diferencial de alta sensibilidad para protección de personas.",
+      "precio": 32.0,
+      "estado": "provisional"
+    },
+    "MT-CINTA-LED": {
+      "unidad": "m",
+      "descripcion": "Cinta LED con su fuente de alimentación y perfil de aluminio disipador.",
+      "precio": 6.2,
+      "estado": "provisional"
+    },
+    "MT-CABLE-8": {
+      "unidad": "m",
+      "descripcion": "Conductor de cobre THW calibre 8 AWG para acometidas y circuitos de fuerza.",
+      "precio": 2.1,
+      "estado": "provisional"
+    },
+    "MT-BARRA-TIERRA": {
+      "unidad": "ud",
+      "descripcion": "Electrodo de puesta a tierra de cobre con su conector y caja de inspección.",
+      "precio": 18.0,
+      "estado": "provisional"
+    },
+    "MT-CABLE-DATOS": {
+      "unidad": "m",
+      "descripcion": "Cable de datos categoría 6 para redes y telecomunicaciones.",
+      "precio": 0.95,
+      "estado": "provisional"
+    },
+    "MT-TOMA-DATOS": {
+      "unidad": "ud",
+      "descripcion": "Toma de datos o televisión con su placa y conector.",
+      "precio": 6.5,
+      "estado": "provisional"
+    },
+    "MT-CABLE-ALARMA": {
+      "unidad": "m",
+      "descripcion": "Cable multipar apantallado para sistemas de alarma y control.",
+      "precio": 0.7,
+      "estado": "provisional"
+    },
+    "MT-TUB-FRIGO": {
+      "unidad": "m",
+      "descripcion": "Par de tuberías frigoríficas de cobre aisladas, con cable de interconexión.",
+      "precio": 9.8,
+      "estado": "provisional"
+    },
+    "MT-SOPORTE-AC": {
+      "unidad": "ud",
+      "descripcion": "Soporte metálico galvanizado para unidad condensadora, con sus anclajes.",
+      "precio": 16.0,
+      "estado": "provisional"
+    },
+    "MT-DUCTO-VENT": {
+      "unidad": "m",
+      "descripcion": "Ducto de ventilación flexible o de lámina galvanizada, con sus accesorios.",
+      "precio": 12.5,
+      "estado": "provisional"
+    },
+    "MT-TUB-GAS": {
+      "unidad": "m",
+      "descripcion": "Tubería de cobre o acero para instalación de gas doméstico, con sus accesorios.",
+      "precio": 6.4,
+      "estado": "provisional"
+    },
+    "MT-REGUL-GAS": {
+      "unidad": "ud",
+      "descripcion": "Regulador de presión, llave de corte y accesorios para instalación de gas.",
+      "precio": 24.0,
+      "estado": "provisional"
+    },
+    "MT-EXTINTOR": {
+      "unidad": "ud",
+      "descripcion": "Extintor portátil de polvo químico seco con su soporte y señalización.",
+      "precio": 38.0,
+      "estado": "provisional"
+    },
+    "MT-DETECT-HUMO": {
+      "unidad": "ud",
+      "descripcion": "Detector de humo autónomo o direccionable, con su base.",
+      "precio": 22.0,
+      "estado": "provisional"
+    },
+    "MT-GABINETE-MANG": {
+      "unidad": "ud",
+      "descripcion": "Gabinete contra incendios con manguera, válvula y boquilla.",
+      "precio": 180.0,
+      "estado": "provisional"
+    },
+    "MT-GAS-REFRIG": {
+      "unidad": "kg",
+      "descripcion": "Gas refrigerante para carga de equipos de climatización.",
+      "precio": 18.0,
+      "estado": "provisional"
+    },
+    "MT-MARCO-PUERTA": {
+      "unidad": "m",
+      "descripcion": "Marco de puerta de madera o metálico, con sus topes y anclajes.",
+      "precio": 8.2,
+      "estado": "provisional"
+    },
+    "MT-HERRAJE-PUERTA": {
+      "unidad": "ud",
+      "descripcion": "Juego de bisagras, topes y herrajes de colgar para puerta.",
+      "precio": 18.0,
+      "estado": "provisional"
+    },
+    "MT-CERRADURA": {
+      "unidad": "ud",
+      "descripcion": "Cerradura de embutir con manija y cilindro.",
+      "precio": 22.0,
+      "estado": "provisional"
+    },
+    "MT-PERFIL-ALUM": {
+      "unidad": "kg",
+      "descripcion": "Perfil de aluminio para carpintería de ventanas y puertas, con sus accesorios.",
+      "precio": 6.8,
+      "estado": "provisional"
+    },
+    "MT-VIDRIO-6": {
+      "unidad": "m2",
+      "descripcion": "Vidrio flotado incoloro de 6 mm.",
+      "precio": 22.0,
+      "estado": "provisional"
+    },
+    "MT-VIDRIO-TEMP": {
+      "unidad": "m2",
+      "descripcion": "Vidrio templado de seguridad de 10 mm, con cantos pulidos y perforaciones.",
+      "precio": 58.0,
+      "estado": "provisional"
+    },
+    "MT-ESPEJO": {
+      "unidad": "m2",
+      "descripcion": "Espejo de 4 mm con canto pulido y respaldo protegido.",
+      "precio": 26.0,
+      "estado": "provisional"
+    },
+    "MT-SILICONA-EST": {
+      "unidad": "l",
+      "descripcion": "Silicona estructural o neutra para acristalamiento y sellado de carpintería.",
+      "precio": 14.0,
+      "estado": "provisional"
+    },
+    "MT-TUBO-ACERO": {
+      "unidad": "kg",
+      "descripcion": "Tubo estructural de acero para herrería de rejas, portones y barandas.",
+      "precio": 2.2,
+      "estado": "provisional"
+    },
+    "MT-ACERO-INOX": {
+      "unidad": "kg",
+      "descripcion": "Tubo y accesorios de acero inoxidable para barandas y pasamanos.",
+      "precio": 9.5,
+      "estado": "provisional"
+    },
+    "MT-MOSQUITERO": {
+      "unidad": "m2",
+      "descripcion": "Malla mosquitera con su bastidor de aluminio.",
+      "precio": 7.5,
+      "estado": "provisional"
+    },
+    "MT-MELAMINA": {
+      "unidad": "m2",
+      "descripcion": "Tablero de melamina de 18 mm con cantos aplicados, para closets y muebles.",
+      "precio": 16.0,
+      "estado": "provisional"
+    },
+    "MT-HERRAJE-CLOSET": {
+      "unidad": "ud",
+      "descripcion": "Herraje de closet: bisagra, tirador, soporte de entrepaño y tornillería.",
+      "precio": 4.2,
+      "estado": "provisional"
+    },
+    "MT-RIEL-CORRED": {
+      "unidad": "m",
+      "descripcion": "Riel superior e inferior con carros para puerta corrediza.",
+      "precio": 9.0,
+      "estado": "provisional"
+    },
+    "MT-ESTRUCT-MESON": {
+      "unidad": "m",
+      "descripcion": "Estructura de soporte de mesón en perfil metálico o mampostería, con su base.",
+      "precio": 12.0,
+      "estado": "provisional"
+    },
+    "MT-BARRA-APOYO": {
+      "unidad": "ud",
+      "descripcion": "Barra de apoyo de acero inoxidable para accesibilidad en baño.",
+      "precio": 34.0,
+      "estado": "provisional"
+    },
+    "MT-ADOQUIN": {
+      "unidad": "m2",
+      "descripcion": "Adoquín de concreto para pavimento exterior, con su cama de arena.",
+      "precio": 14.0,
+      "estado": "provisional"
+    },
+    "MT-GRAMA": {
+      "unidad": "m2",
+      "descripcion": "Grama en panes o alfombra, puesta en obra.",
+      "precio": 3.2,
+      "estado": "provisional"
+    },
+    "MT-TIERRA-ABON": {
+      "unidad": "m3",
+      "descripcion": "Tierra abonada y sustrato para jardinería.",
+      "precio": 28.0,
+      "estado": "provisional"
+    },
+    "MT-TUB-RIEGO": {
+      "unidad": "m",
+      "descripcion": "Tubería de polietileno y accesorios para red de riego.",
+      "precio": 1.6,
+      "estado": "provisional"
+    },
+    "MT-ASPERSOR": {
+      "unidad": "ud",
+      "descripcion": "Aspersor o gotero con su conexión a la red de riego.",
+      "precio": 8.5,
+      "estado": "provisional"
+    },
+    "MT-CANAL-DREN": {
+      "unidad": "m",
+      "descripcion": "Canal de drenaje lineal prefabricado con su rejilla.",
+      "precio": 22.0,
+      "estado": "provisional"
+    },
+    "MT-CONTENEDOR": {
+      "unidad": "ud",
+      "descripcion": "Alquiler mensual de contenedor de escombro, incluido su retiro y vaciado.",
+      "precio": 65.0,
+      "estado": "provisional"
+    },
+    "MT-CONS-LIMP": {
+      "unidad": "m2",
+      "descripcion": "Consumibles de limpieza final: detergentes, desincrustantes, paños y bolsas.",
+      "precio": 0.35,
+      "estado": "provisional"
+    },
+    "MT-BARANDA-PROV": {
+      "unidad": "m",
+      "descripcion": "Baranda provisional de borde con guardacuerpos, pasamanos y rodapié, amortizada por usos.",
+      "precio": 4.5,
+      "estado": "provisional"
+    },
+    "MT-RED-SEG": {
+      "unidad": "m2",
+      "descripcion": "Red de seguridad de poliamida con sus cuerdas de atado, amortizada por usos.",
+      "precio": 2.8,
+      "estado": "provisional"
+    },
+    "MT-LINEA-VIDA": {
+      "unidad": "m",
+      "descripcion": "Línea de vida horizontal con sus anclajes y absorbedor de energía.",
+      "precio": 6.2,
+      "estado": "provisional"
+    },
+    "MT-EPP": {
+      "unidad": "ud",
+      "descripcion": "Dotación de equipo de protección individual por trabajador: casco, botas, guantes, lentes y chaleco.",
+      "precio": 42.0,
+      "estado": "provisional"
+    },
+    "MT-ARNES": {
+      "unidad": "ud",
+      "descripcion": "Arnés de cuerpo completo con eslinga y absorbedor, para trabajo en altura.",
+      "precio": 55.0,
+      "estado": "provisional"
+    },
+    "MT-BOTIQUIN": {
+      "unidad": "ud",
+      "descripcion": "Botiquín de primeros auxilios de obra, dotado y con reposición.",
+      "precio": 45.0,
+      "estado": "provisional"
+    },
+    "MT-CASETA-BIEN": {
+      "unidad": "ud",
+      "descripcion": "Adecuación de zona de vestuario y comedor de obra, con mobiliario básico.",
+      "precio": 120.0,
+      "estado": "provisional"
     }
   },
   "maquinaria": {
@@ -1213,6 +1705,24 @@
       "unidad": "h",
       "descripcion": "Juego de moldes estampadores y rodillos para concreto impreso.",
       "precio": 4.8,
+      "estado": "provisional"
+    },
+    "MQ-RECUP-GAS": {
+      "unidad": "h",
+      "descripcion": "Equipo de recuperación de gas refrigerante y bomba de vacío para climatización.",
+      "precio": 6.5,
+      "estado": "provisional"
+    },
+    "MQ-HIDROLAV": {
+      "unidad": "h",
+      "descripcion": "Hidrolavadora de presión para limpieza de fachadas, pisos y acabados.",
+      "precio": 4.2,
+      "estado": "provisional"
+    },
+    "MQ-DOBLAD-TUBO": {
+      "unidad": "h",
+      "descripcion": "Dobladora y abocardadora de tubería de cobre para climatización y gas.",
+      "precio": 2.6,
       "estado": "provisional"
     }
   }

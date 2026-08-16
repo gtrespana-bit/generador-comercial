@@ -1,0 +1,50 @@
+{
+  "codigo": "CT-11-02-010",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "02",
+  "unidad": "m²",
+  "titulo": "Cubierta de teja criolla de arcilla.",
+  "descripcion": "Cubierta con teja criolla de arcilla cocida sobre listonado o base continua, recibida con mortero en aleros, cumbreras y bordes, y colocada en seco en el faldón. Incluye el replanteo de las hiladas para que la teja de remate no quede recortada, la colocación de la teja canal y cobija con el solape que exige la pendiente, el recibido con mortero de las piezas de borde que son las que levanta el viento, la formación de cumbreras y limatesas y la limpieza final. Medido en superficie realmente ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-TEJA-CRIOLLA",
+      "rendimiento": 28.0
+    },
+    {
+      "ref": "MT-MOR-PEGA",
+      "rendimiento": 9.5
+    },
+    {
+      "ref": "MT-MADERA-LISTON",
+      "rendimiento": 2.8
+    },
+    {
+      "ref": "MT-CLAVOS",
+      "rendimiento": 0.22
+    },
+    {
+      "ref": "MQ-MEZCL",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MQ-MONTAC",
+      "rendimiento": 0.13
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.38
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.78
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.62
+    }
+  ],
+  "codigo_covenin": ""
+}

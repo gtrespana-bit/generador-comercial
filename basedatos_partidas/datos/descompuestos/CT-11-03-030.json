@@ -1,0 +1,46 @@
+{
+  "codigo": "CT-11-03-030",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "03",
+  "unidad": "m²",
+  "titulo": "Cubierta translúcida de policarbonato alveolar.",
+  "descripcion": "Cubierta o lucernario con lámina de policarbonato alveolar sobre estructura, con perfiles de unión y sellado de alveolos. Los alveolos deben quedar sellados con cinta microperforada en la parte inferior y estanca en la superior, y orientados en el sentido de la pendiente: si se cierran mal, se llenan de condensación y polvo y la lámina se vuelve opaca en pocos meses. Incluye el replanteo, el corte, la colocación con la cara protegida contra la radiación ultravioleta hacia el exterior, el sellado de alveolos, el montaje de los perfiles de unión y los remates. Medido en superficie realmente ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-POLICARB",
+      "rendimiento": 1.08
+    },
+    {
+      "ref": "MT-TORN-TECHO",
+      "rendimiento": 6.0
+    },
+    {
+      "ref": "MT-SELLA-ELAST",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MT-CINTA-ENM",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MQ-ATORN",
+      "rendimiento": 0.13
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.28
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.48
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.32
+    }
+  ],
+  "codigo_covenin": ""
+}

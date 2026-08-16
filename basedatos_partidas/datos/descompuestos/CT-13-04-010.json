@@ -1,0 +1,44 @@
+{
+  "codigo": "CT-13-04-010",
+  "ambito": "reforma",
+  "capitulo": "13",
+  "subcapitulo": "04",
+  "unidad": "ud",
+  "titulo": "Instalación de luminaria empotrada en cielo raso.",
+  "descripcion": "Instalación de luminaria empotrada en cielo raso, con su conexión y ajuste. Incluye el replanteo de la posición coordinado con la estructura del cielo raso para no cortar una maestra, el corte del hueco con la herramienta adecuada al material, la conexión con conector rápido dejando holgura de cable para poder bajar la luminaria en un futuro mantenimiento, el montaje con sus muelles o clips y la prueba de encendido. La luminaria la elige el cliente y se presupuesta aparte. Medido por unidad instalada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "producto_cliente": {
+    "tipo": "Luminaria empotrada del modelo elegido por el cliente",
+    "unidad": "ud",
+    "consumo": 1.0,
+    "nota": "La partida cubre solo la instalación."
+  },
+  "recursos": [
+    {
+      "ref": "MT-ELE-CABLE",
+      "rendimiento": 1.2
+    },
+    {
+      "ref": "MT-ELE-CAJA",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.11
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.12
+    }
+  ],
+  "codigo_covenin": ""
+}

@@ -1,0 +1,50 @@
+{
+  "codigo": "CT-15-05-010",
+  "ambito": "reforma",
+  "capitulo": "15",
+  "subcapitulo": "05",
+  "unidad": "m²",
+  "titulo": "Closet empotrado a medida.",
+  "descripcion": "Fabricación e instalación de closet empotrado a medida en tablero de melamina, con su estructura, entrepaños, barras y cajones, según despiece acordado. Incluye la toma de medidas en obra comprobando plomos y escuadras del hueco, el despiece y corte de los tableros con cantos aplicados, el montaje de la estructura nivelada y aplomada mediante calzos, el ajuste al paramento con tapajuntas que absorbe las irregularidades del muro, el montaje de entrepaños, barras y cajones con sus correderas y la regulación final. Medido en superficie de frente de closet.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MELAMINA",
+      "rendimiento": 2.6
+    },
+    {
+      "ref": "MT-HERRAJE-CLOSET",
+      "rendimiento": 8.0
+    },
+    {
+      "ref": "MT-MADERA-LISTON",
+      "rendimiento": 1.6
+    },
+    {
+      "ref": "MT-TORN",
+      "rendimiento": 42.0
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.28
+    },
+    {
+      "ref": "MQ-ATORN",
+      "rendimiento": 0.32
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 1.7
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.85
+    }
+  ],
+  "codigo_covenin": ""
+}

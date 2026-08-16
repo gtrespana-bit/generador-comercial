@@ -1,0 +1,38 @@
+{
+  "codigo": "CT-15-06-020",
+  "ambito": "reforma",
+  "capitulo": "15",
+  "subcapitulo": "06",
+  "unidad": "m²",
+  "titulo": "Suministro y colocación de espejo.",
+  "descripcion": "Suministro y colocación de espejo con canto pulido, fijado al paramento mediante adhesivo específico y clips de seguridad. El adhesivo debe ser neutro y compatible con el respaldo del espejo: los adhesivos ácidos atacan la plata del reverso y producen manchas negras irreversibles en los bordes al cabo de unos meses. Incluye la comprobación de la planitud del soporte, la aplicación del adhesivo en cordones verticales que permiten la ventilación del reverso, la colocación de los clips o perfiles de seguridad y el sellado perimetral. Medido en superficie realmente ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ESPEJO",
+      "rendimiento": 1.04
+    },
+    {
+      "ref": "MT-SILICONA-EST",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MT-CLAVOS",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MO-OF1-VIDR",
+      "rendimiento": 0.56
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.28
+    }
+  ],
+  "codigo_covenin": ""
+}

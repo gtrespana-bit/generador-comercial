@@ -1,0 +1,38 @@
+{
+  "codigo": "CT-09-02-010",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "02",
+  "unidad": "m²",
+  "titulo": "Cielo raso desmontable de fibra mineral en retícula vista.",
+  "descripcion": "Cielo raso registrable formado por paneles de fibra mineral de 60x60 cm apoyados sobre perfilería vista en T suspendida de la losa, con ángulo perimetral. Su ventaja decisiva es el acceso total al plenum: toda la instalación que discurre por encima queda registrable sin romper nada, por lo que es la solución estándar en oficinas y locales. Incluye replanteo y nivelación con láser, ángulo perimetral, montaje de la retícula con tensores, colocación de los paneles y ajuste de los perimetrales mediante corte limpio. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CIELO-DESM",
+      "rendimiento": 1.06
+    },
+    {
+      "ref": "MT-PERF-DESM",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MQ-NIVEL-LASER",
+      "rendimiento": 0.03
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.33
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.22
+    }
+  ],
+  "codigo_covenin": ""
+}

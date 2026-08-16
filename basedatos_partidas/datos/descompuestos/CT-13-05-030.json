@@ -1,0 +1,42 @@
+{
+  "codigo": "CT-13-05-030",
+  "ambito": "reforma",
+  "capitulo": "13",
+  "subcapitulo": "05",
+  "unidad": "ud",
+  "titulo": "Caja de medidor y protección de servicio.",
+  "descripcion": "Montaje de la caja de medidor y de la protección general de servicio, con su base, canalizaciones de entrada y salida y precintado. Incluye el replanteo en la posición y altura que exige la compañía suministradora, requisito sin el cual no se autoriza la conexión, el anclaje de la caja, la entrada de canalizaciones con sus prensaestopas, el montaje de la protección general y la preparación para la inspección y precintado por parte de la compañía. Medido por unidad instalada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ELE-CAJA",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MT-BREAKER",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MT-CABLE-8",
+      "rendimiento": 6.0
+    },
+    {
+      "ref": "MT-MOR-PEGA",
+      "rendimiento": 8.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 1.8
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.9
+    }
+  ],
+  "codigo_covenin": ""
+}

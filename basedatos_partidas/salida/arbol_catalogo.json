@@ -2803,36 +2803,120 @@
               "precio": 18.47,
               "horas": 0.95,
               "producto_cliente": false
+            },
+            {
+              "codigo": "CT-09-01-020",
+              "titulo": "Cielo raso de yeso laminado con placa resistente a la humedad.",
+              "unidad": "m²",
+              "precio": 22.02,
+              "horas": 1.03,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-09-01-030",
+              "titulo": "Cielo raso de yeso laminado con doble placa, acústico.",
+              "unidad": "m²",
+              "precio": 34.68,
+              "horas": 1.4,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-09-01-040",
+              "titulo": "Foso o cajón de cortina en cielo raso de yeso laminado.",
+              "unidad": "m",
+              "precio": 20.11,
+              "horas": 0.87,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-09-01-050",
+              "titulo": "Registro practicable en cielo raso.",
+              "unidad": "ud",
+              "precio": 22.8,
+              "horas": 0.57,
+              "producto_cliente": false
+            }
+          ],
+          "n": 5
+        },
+        {
+          "codigo": "02",
+          "nombre": "Cielos desmontables y registrables",
+          "partidas": [
+            {
+              "codigo": "CT-09-02-010",
+              "titulo": "Cielo raso desmontable de fibra mineral en retícula vista.",
+              "unidad": "m²",
+              "precio": 19.2,
+              "horas": 0.55,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-09-02-020",
+              "titulo": "Cielo raso desmontable de bandeja metálica.",
+              "unidad": "m²",
+              "precio": 30.23,
+              "horas": 0.7,
+              "producto_cliente": false
+            }
+          ],
+          "n": 2
+        },
+        {
+          "codigo": "03",
+          "nombre": "Cielos de PVC y láminas",
+          "partidas": [
+            {
+              "codigo": "CT-09-03-010",
+              "titulo": "Cielo raso de láminas de PVC.",
+              "unidad": "m²",
+              "precio": 24.57,
+              "horas": 0.6,
+              "producto_cliente": false
             }
           ],
           "n": 1
         },
         {
-          "codigo": "02",
-          "nombre": "Cielos desmontables y registrables",
-          "partidas": [],
-          "n": 0
-        },
-        {
-          "codigo": "03",
-          "nombre": "Cielos de PVC y láminas",
-          "partidas": [],
-          "n": 0
-        },
-        {
           "codigo": "04",
           "nombre": "Cielos de madera",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-09-04-010",
+              "titulo": "Cielo raso de machihembrado de madera.",
+              "unidad": "m²",
+              "precio": 32.51,
+              "horas": 0.82,
+              "producto_cliente": false
+            }
+          ],
+          "n": 1
         },
         {
           "codigo": "05",
           "nombre": "Molduras y remates",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-09-05-010",
+              "titulo": "Moldura perimetral de remate en cielo raso.",
+              "unidad": "m",
+              "precio": 7.55,
+              "horas": 0.33,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-09-05-020",
+              "titulo": "Cornisa para iluminación indirecta en cielo raso.",
+              "unidad": "m",
+              "precio": 13.33,
+              "horas": 0.6,
+              "producto_cliente": false
+            }
+          ],
+          "n": 2
         }
       ],
-      "n": 1
+      "n": 11
     },
     {
       "codigo": "10",
@@ -2841,29 +2925,129 @@
         {
           "codigo": "01",
           "nombre": "Manto asfáltico",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-10-01-010",
+              "titulo": "Impermeabilización de cubierta con manto asfáltico.",
+              "unidad": "m²",
+              "precio": 18.55,
+              "horas": 0.72,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-10-01-020",
+              "titulo": "Refuerzo de encuentros y petos en impermeabilización asfáltica.",
+              "unidad": "m",
+              "precio": 20.4,
+              "horas": 0.78,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-10-01-030",
+              "titulo": "Protección de impermeabilización con capa de gravilla.",
+              "unidad": "m²",
+              "precio": 5.86,
+              "horas": 0.37,
+              "producto_cliente": false
+            }
+          ],
+          "n": 3
         },
         {
           "codigo": "02",
           "nombre": "Impermeabilizantes líquidos y acrílicos",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-10-02-010",
+              "titulo": "Impermeabilización con acrílico elastomérico y malla.",
+              "unidad": "m²",
+              "precio": 17.73,
+              "horas": 0.6,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-10-02-020",
+              "titulo": "Impermeabilización con membrana líquida de poliuretano.",
+              "unidad": "m²",
+              "precio": 34.33,
+              "horas": 0.71,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-10-02-030",
+              "titulo": "Impermeabilización con membrana cementosa flexible.",
+              "unidad": "m²",
+              "precio": 12.29,
+              "horas": 0.56,
+              "producto_cliente": false
+            }
+          ],
+          "n": 3
         },
         {
           "codigo": "03",
           "nombre": "Impermeabilización de áreas húmedas",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-10-03-010",
+              "titulo": "Impermeabilización de piso de baño o ducha bajo enchapado.",
+              "unidad": "m²",
+              "precio": 19.6,
+              "horas": 0.68,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-10-03-020",
+              "titulo": "Impermeabilización de jardinera o maceta de obra.",
+              "unidad": "m²",
+              "precio": 24.99,
+              "horas": 0.86,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-10-03-030",
+              "titulo": "Sellado de pase de tubería en impermeabilización.",
+              "unidad": "ud",
+              "precio": 14.04,
+              "horas": 0.57,
+              "producto_cliente": false
+            }
+          ],
+          "n": 3
         },
         {
           "codigo": "04",
           "nombre": "Aislamiento térmico y acústico",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-10-04-010",
+              "titulo": "Aislamiento térmico en cubierta.",
+              "unidad": "m²",
+              "precio": 8.57,
+              "horas": 0.26,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-10-04-020",
+              "titulo": "Aislamiento acústico en tabique o cielo raso.",
+              "unidad": "m²",
+              "precio": 6.2,
+              "horas": 0.22,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-10-04-030",
+              "titulo": "Aislamiento térmico reflectivo bajo cubierta.",
+              "unidad": "m²",
+              "precio": 8.72,
+              "horas": 0.36,
+              "producto_cliente": false
+            }
+          ],
+          "n": 3
         }
       ],
-      "n": 0
+      "n": 12
     },
     {
       "codigo": "11",
@@ -2872,35 +3056,152 @@
         {
           "codigo": "01",
           "nombre": "Estructura de techo",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-11-01-010",
+              "titulo": "Estructura metálica de techo.",
+              "unidad": "kg",
+              "precio": 4.15,
+              "horas": 0.106,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-11-01-020",
+              "titulo": "Estructura de madera de techo.",
+              "unidad": "m²",
+              "precio": 55.38,
+              "horas": 1.93,
+              "producto_cliente": false
+            }
+          ],
+          "n": 2
         },
         {
           "codigo": "02",
           "nombre": "Cubiertas de teja",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-11-02-010",
+              "titulo": "Cubierta de teja criolla de arcilla.",
+              "unidad": "m²",
+              "precio": 46.46,
+              "horas": 1.4,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-11-02-020",
+              "titulo": "Cubierta de teja asfáltica.",
+              "unidad": "m²",
+              "precio": 36.02,
+              "horas": 0.98,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-11-02-030",
+              "titulo": "Cumbrera y remates de cubierta de teja.",
+              "unidad": "m",
+              "precio": 15.2,
+              "horas": 0.54,
+              "producto_cliente": false
+            }
+          ],
+          "n": 3
         },
         {
           "codigo": "03",
           "nombre": "Cubiertas de lámina metálica",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-11-03-010",
+              "titulo": "Cubierta de lámina metálica acanalada.",
+              "unidad": "m²",
+              "precio": 22.52,
+              "horas": 0.68,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-11-03-020",
+              "titulo": "Cubierta de panel sándwich aislado.",
+              "unidad": "m²",
+              "precio": 42.72,
+              "horas": 0.78,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-11-03-030",
+              "titulo": "Cubierta translúcida de policarbonato alveolar.",
+              "unidad": "m²",
+              "precio": 34.32,
+              "horas": 0.8,
+              "producto_cliente": false
+            }
+          ],
+          "n": 3
         },
         {
           "codigo": "04",
           "nombre": "Cubiertas planas y pendientados",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-11-04-010",
+              "titulo": "Pendientado de cubierta plana con mortero aligerado.",
+              "unidad": "m²",
+              "precio": 18.62,
+              "horas": 0.88,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-11-04-020",
+              "titulo": "Torta de cemento de protección de cubierta.",
+              "unidad": "m²",
+              "precio": 26.6,
+              "horas": 0.92,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-11-04-030",
+              "titulo": "Piso flotante sobre pedestales en cubierta.",
+              "unidad": "m²",
+              "precio": 24.56,
+              "horas": 0.63,
+              "producto_cliente": true
+            }
+          ],
+          "n": 3
         },
         {
           "codigo": "05",
           "nombre": "Canales, bajantes y remates",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-11-05-010",
+              "titulo": "Canal de recogida de aguas lluvias.",
+              "unidad": "m",
+              "precio": 16.08,
+              "horas": 0.54,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-11-05-020",
+              "titulo": "Bajante de aguas lluvias.",
+              "unidad": "m",
+              "precio": 12.69,
+              "horas": 0.47,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-11-05-030",
+              "titulo": "Tragante o boquilla de desagüe de cubierta.",
+              "unidad": "ud",
+              "precio": 31.72,
+              "horas": 1.02,
+              "producto_cliente": false
+            }
+          ],
+          "n": 3
         }
       ],
-      "n": 0
+      "n": 14
     },
     {
       "codigo": "12",
@@ -2917,9 +3218,17 @@
               "precio": 7.45,
               "horas": 0.46,
               "producto_cliente": false
+            },
+            {
+              "codigo": "CT-12-01-020",
+              "titulo": "Montante de agua de PPR de 25 mm.",
+              "unidad": "m",
+              "precio": 8.15,
+              "horas": 0.49,
+              "producto_cliente": false
             }
           ],
-          "n": 1
+          "n": 2
         },
         {
           "codigo": "02",
@@ -2970,9 +3279,41 @@
               "precio": 36.45,
               "horas": 2.1,
               "producto_cliente": true
+            },
+            {
+              "codigo": "CT-12-04-030",
+              "titulo": "Instalación de ducha o regadera con su grifería.",
+              "unidad": "ud",
+              "precio": 17.78,
+              "horas": 1.65,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-12-04-040",
+              "titulo": "Instalación de fregadero con su grifería.",
+              "unidad": "ud",
+              "precio": 29.57,
+              "horas": 1.95,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-12-04-050",
+              "titulo": "Instalación de calentador de agua.",
+              "unidad": "ud",
+              "precio": 52.2,
+              "horas": 3.3,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-12-04-060",
+              "titulo": "Instalación de accesorios de baño.",
+              "unidad": "ud",
+              "precio": 9.84,
+              "horas": 1.2,
+              "producto_cliente": true
             }
           ],
-          "n": 2
+          "n": 6
         },
         {
           "codigo": "05",
@@ -3007,11 +3348,44 @@
         {
           "codigo": "07",
           "nombre": "Tanques, bombas e hidroneumáticos",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-12-07-010",
+              "titulo": "Instalación de tanque de agua.",
+              "unidad": "ud",
+              "precio": 91.56,
+              "horas": 5.6,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-12-07-020",
+              "titulo": "Instalación de bomba centrífuga de agua.",
+              "unidad": "ud",
+              "precio": 131.04,
+              "horas": 4.9,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-12-07-030",
+              "titulo": "Instalación de sistema hidroneumático.",
+              "unidad": "ud",
+              "precio": 208.94,
+              "horas": 7.0,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-12-07-040",
+              "titulo": "Instalación de tanque séptico prefabricado.",
+              "unidad": "ud",
+              "precio": 129.55,
+              "horas": 8.4,
+              "producto_cliente": true
+            }
+          ],
+          "n": 4
         }
       ],
-      "n": 7
+      "n": 16
     },
     {
       "codigo": "13",
@@ -3028,9 +3402,17 @@
               "precio": 8.37,
               "horas": 0.34,
               "producto_cliente": false
+            },
+            {
+              "codigo": "CT-13-01-020",
+              "titulo": "Canalización eléctrica en cielo raso o superficie.",
+              "unidad": "m",
+              "precio": 8.2,
+              "horas": 0.26,
+              "producto_cliente": false
             }
           ],
-          "n": 1
+          "n": 2
         },
         {
           "codigo": "02",
@@ -3043,36 +3425,152 @@
               "precio": 8.72,
               "horas": 0.33,
               "producto_cliente": true
+            },
+            {
+              "codigo": "CT-13-02-020",
+              "titulo": "Punto de fuerza para electrodoméstico o equipo.",
+              "unidad": "ud",
+              "precio": 77.82,
+              "horas": 1.8,
+              "producto_cliente": false
             }
           ],
-          "n": 1
+          "n": 2
         },
         {
           "codigo": "03",
           "nombre": "Tableros y protecciones",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-13-03-010",
+              "titulo": "Tablero eléctrico de distribución.",
+              "unidad": "ud",
+              "precio": 145.44,
+              "horas": 4.6,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-13-03-020",
+              "titulo": "Interruptor termomagnético de protección de circuito.",
+              "unidad": "ud",
+              "precio": 14.92,
+              "horas": 0.42,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-13-03-030",
+              "titulo": "Interruptor diferencial de protección de personas.",
+              "unidad": "ud",
+              "precio": 47.67,
+              "horas": 0.63,
+              "producto_cliente": false
+            }
+          ],
+          "n": 3
         },
         {
           "codigo": "04",
           "nombre": "Iluminación",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-13-04-010",
+              "titulo": "Instalación de luminaria empotrada en cielo raso.",
+              "unidad": "ud",
+              "precio": 5.2,
+              "horas": 0.42,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-13-04-020",
+              "titulo": "Instalación de luminaria de sobreponer o colgante.",
+              "unidad": "ud",
+              "precio": 5.94,
+              "horas": 0.51,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-13-04-030",
+              "titulo": "Iluminación lineal con cinta LED.",
+              "unidad": "m",
+              "precio": 12.44,
+              "horas": 0.32,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-13-04-040",
+              "titulo": "Instalación de reflector o luminaria de exterior.",
+              "unidad": "ud",
+              "precio": 10.57,
+              "horas": 0.74,
+              "producto_cliente": true
+            }
+          ],
+          "n": 4
         },
         {
           "codigo": "05",
           "nombre": "Acometidas y puesta a tierra",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-13-05-010",
+              "titulo": "Acometida eléctrica desde el punto de suministro.",
+              "unidad": "ud",
+              "precio": 159.8,
+              "horas": 6.8,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-13-05-020",
+              "titulo": "Puesta a tierra con electrodo.",
+              "unidad": "ud",
+              "precio": 65.88,
+              "horas": 2.8,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-13-05-030",
+              "titulo": "Caja de medidor y protección de servicio.",
+              "unidad": "ud",
+              "precio": 61.8,
+              "horas": 2.7,
+              "producto_cliente": false
+            }
+          ],
+          "n": 3
         },
         {
           "codigo": "06",
           "nombre": "Corrientes débiles y datos",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-13-06-010",
+              "titulo": "Punto de datos, telefonía o televisión.",
+              "unidad": "ud",
+              "precio": 50.08,
+              "horas": 1.45,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-13-06-020",
+              "titulo": "Instalación de videoportero o citófono.",
+              "unidad": "ud",
+              "precio": 72.27,
+              "horas": 3.9,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-13-06-030",
+              "titulo": "Punto de alarma, cámara o control de acceso.",
+              "unidad": "ud",
+              "precio": 46.8,
+              "horas": 1.7,
+              "producto_cliente": true
+            }
+          ],
+          "n": 3
         }
       ],
-      "n": 2
+      "n": 17
     },
     {
       "codigo": "14",
@@ -3081,29 +3579,137 @@
         {
           "codigo": "01",
           "nombre": "Climatización y ventilación",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-14-01-010",
+              "titulo": "Instalación de equipo de aire acondicionado tipo split.",
+              "unidad": "ud",
+              "precio": 153.26,
+              "horas": 5.1,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-14-01-020",
+              "titulo": "Tubería frigorífica y drenaje para climatización.",
+              "unidad": "m",
+              "precio": 19.99,
+              "horas": 0.54,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-14-01-030",
+              "titulo": "Instalación de extractor o ventilador.",
+              "unidad": "ud",
+              "precio": 58.73,
+              "horas": 1.65,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-14-01-040",
+              "titulo": "Ducto de ventilación.",
+              "unidad": "m",
+              "precio": 24.62,
+              "horas": 0.47,
+              "producto_cliente": false
+            }
+          ],
+          "n": 4
         },
         {
           "codigo": "02",
           "nombre": "Gas doméstico",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-14-02-010",
+              "titulo": "Tubería de gas doméstico.",
+              "unidad": "m",
+              "precio": 16.52,
+              "horas": 0.68,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-14-02-020",
+              "titulo": "Punto de gas para cocina o calentador.",
+              "unidad": "ud",
+              "precio": 62.63,
+              "horas": 1.65,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-14-02-030",
+              "titulo": "Regulador, medidor y protección de instalación de gas.",
+              "unidad": "ud",
+              "precio": 119.8,
+              "horas": 3.3,
+              "producto_cliente": false
+            }
+          ],
+          "n": 3
         },
         {
           "codigo": "03",
           "nombre": "Protección contra incendios",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-14-03-010",
+              "titulo": "Suministro y colocación de extintor portátil.",
+              "unidad": "ud",
+              "precio": 58.6,
+              "horas": 0.43,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-14-03-020",
+              "titulo": "Instalación de detector de humo y alarma.",
+              "unidad": "ud",
+              "precio": 44.1,
+              "horas": 0.87,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-14-03-030",
+              "titulo": "Instalación de gabinete contra incendios.",
+              "unidad": "ud",
+              "precio": 293.57,
+              "horas": 3.6,
+              "producto_cliente": false
+            }
+          ],
+          "n": 3
         },
         {
           "codigo": "04",
           "nombre": "Sistemas de respaldo eléctrico",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-14-04-010",
+              "titulo": "Instalación de planta eléctrica de respaldo.",
+              "unidad": "ud",
+              "precio": 253.28,
+              "horas": 8.4,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-14-04-020",
+              "titulo": "Instalación de sistema de respaldo con inversor y baterías.",
+              "unidad": "ud",
+              "precio": 137.74,
+              "horas": 5.4,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-14-04-030",
+              "titulo": "Tablero de transferencia entre red y respaldo.",
+              "unidad": "ud",
+              "precio": 168.39,
+              "horas": 4.2,
+              "producto_cliente": true
+            }
+          ],
+          "n": 3
         }
       ],
-      "n": 0
+      "n": 13
     },
     {
       "codigo": "15",
@@ -3112,47 +3718,246 @@
         {
           "codigo": "01",
           "nombre": "Puertas interiores",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-15-01-010",
+              "titulo": "Instalación de puerta interior de madera con su marco.",
+              "unidad": "ud",
+              "precio": 112.25,
+              "horas": 3.3,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-15-01-020",
+              "titulo": "Instalación de puerta corrediza interior.",
+              "unidad": "ud",
+              "precio": 81.07,
+              "horas": 3.6,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-15-01-030",
+              "titulo": "Instalación de cerradura y herrajes de puerta.",
+              "unidad": "ud",
+              "precio": 35.58,
+              "horas": 0.93,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-15-01-040",
+              "titulo": "Puerta de closet abatible o plegable.",
+              "unidad": "m²",
+              "precio": 60.42,
+              "horas": 1.35,
+              "producto_cliente": false
+            }
+          ],
+          "n": 4
         },
         {
           "codigo": "02",
           "nombre": "Puertas exteriores y de seguridad",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-15-02-010",
+              "titulo": "Instalación de puerta metálica exterior o de seguridad.",
+              "unidad": "ud",
+              "precio": 98.72,
+              "horas": 4.7,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-15-02-020",
+              "titulo": "Instalación de puerta de entrada de madera.",
+              "unidad": "ud",
+              "precio": 171.91,
+              "horas": 4.2,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-15-02-030",
+              "titulo": "Portón corredizo metálico.",
+              "unidad": "m²",
+              "precio": 104.45,
+              "horas": 2.3,
+              "producto_cliente": false
+            }
+          ],
+          "n": 3
         },
         {
           "codigo": "03",
           "nombre": "Ventanas y balconeras",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-15-03-010",
+              "titulo": "Ventana de aluminio corrediza.",
+              "unidad": "m²",
+              "precio": 109.98,
+              "horas": 1.8,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-15-03-020",
+              "titulo": "Ventana de aluminio batiente o proyectante.",
+              "unidad": "m²",
+              "precio": 117.65,
+              "horas": 2.1,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-15-03-030",
+              "titulo": "Ventana fija o paño panorámico.",
+              "unidad": "m²",
+              "precio": 97.25,
+              "horas": 1.7,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-15-03-040",
+              "titulo": "Mosquitero para ventana.",
+              "unidad": "m²",
+              "precio": 24.78,
+              "horas": 0.6,
+              "producto_cliente": false
+            }
+          ],
+          "n": 4
         },
         {
           "codigo": "04",
           "nombre": "Rejas, portones y herrería",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-15-04-010",
+              "titulo": "Reja de protección metálica para ventana o puerta.",
+              "unidad": "m²",
+              "precio": 87.18,
+              "horas": 1.8,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-15-04-020",
+              "titulo": "Portón de reja para acceso.",
+              "unidad": "m²",
+              "precio": 99.37,
+              "horas": 2.12,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-15-04-030",
+              "titulo": "Baranda metálica de protección.",
+              "unidad": "m",
+              "precio": 70.47,
+              "horas": 1.57,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-15-04-040",
+              "titulo": "Estructura metálica menor y marquesinas.",
+              "unidad": "kg",
+              "precio": 4.25,
+              "horas": 0.091,
+              "producto_cliente": false
+            }
+          ],
+          "n": 4
         },
         {
           "codigo": "05",
           "nombre": "Closets y muebles empotrados",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-15-05-010",
+              "titulo": "Closet empotrado a medida.",
+              "unidad": "m²",
+              "precio": 121.32,
+              "horas": 2.55,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-15-05-020",
+              "titulo": "Puerta corrediza de closet.",
+              "unidad": "m²",
+              "precio": 79.38,
+              "horas": 1.17,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-15-05-030",
+              "titulo": "Entrepaños y organizadores interiores de closet.",
+              "unidad": "m",
+              "precio": 31.12,
+              "horas": 0.63,
+              "producto_cliente": false
+            }
+          ],
+          "n": 3
         },
         {
           "codigo": "06",
           "nombre": "Vidrios y espejos",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-15-06-010",
+              "titulo": "Suministro y colocación de vidrio en carpintería.",
+              "unidad": "m²",
+              "precio": 37.63,
+              "horas": 0.75,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-15-06-020",
+              "titulo": "Suministro y colocación de espejo.",
+              "unidad": "m²",
+              "precio": 44.5,
+              "horas": 0.84,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-15-06-030",
+              "titulo": "Mampara de baño en vidrio templado.",
+              "unidad": "m²",
+              "precio": 129.18,
+              "horas": 1.87,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-15-06-040",
+              "titulo": "Baranda o cerramiento de vidrio templado.",
+              "unidad": "m²",
+              "precio": 163.81,
+              "horas": 2.1,
+              "producto_cliente": false
+            }
+          ],
+          "n": 4
         },
         {
           "codigo": "07",
           "nombre": "Barandas y pasamanos",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-15-07-010",
+              "titulo": "Pasamanos de madera sobre baranda o pared.",
+              "unidad": "m",
+              "precio": 21.1,
+              "horas": 0.78,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-15-07-020",
+              "titulo": "Baranda o pasamanos de acero inoxidable.",
+              "unidad": "m",
+              "precio": 85.59,
+              "horas": 1.35,
+              "producto_cliente": false
+            }
+          ],
+          "n": 2
         }
       ],
-      "n": 0
+      "n": 24
     },
     {
       "codigo": "16",
@@ -3169,9 +3974,17 @@
               "precio": 2.82,
               "horas": 0.22,
               "producto_cliente": false
+            },
+            {
+              "codigo": "CT-16-01-020",
+              "titulo": "Preparación de paramento exterior para pintura.",
+              "unidad": "m²",
+              "precio": 4.45,
+              "horas": 0.34,
+              "producto_cliente": false
             }
           ],
-          "n": 1
+          "n": 2
         },
         {
           "codigo": "02",
@@ -3184,15 +3997,48 @@
               "precio": 3.46,
               "horas": 0.255,
               "producto_cliente": true
+            },
+            {
+              "codigo": "CT-16-02-020",
+              "titulo": "Pintura de caucho satinada lavable en interior, dos manos.",
+              "unidad": "m²",
+              "precio": 3.76,
+              "horas": 0.285,
+              "producto_cliente": true
             }
           ],
-          "n": 1
+          "n": 2
         },
         {
           "codigo": "03",
           "nombre": "Pintura exterior",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-16-03-010",
+              "titulo": "Pintura de caucho para exterior, dos manos.",
+              "unidad": "m²",
+              "precio": 5.11,
+              "horas": 0.37,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-16-03-020",
+              "titulo": "Pintura elastomérica impermeabilizante de fachada.",
+              "unidad": "m²",
+              "precio": 13.17,
+              "horas": 0.51,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-16-03-030",
+              "titulo": "Pintura sobre concreto visto o superficie mineral.",
+              "unidad": "m²",
+              "precio": 6.83,
+              "horas": 0.45,
+              "producto_cliente": false
+            }
+          ],
+          "n": 3
         },
         {
           "codigo": "04",
@@ -3212,11 +4058,36 @@
         {
           "codigo": "05",
           "nombre": "Recubrimientos especiales y decorativos",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-16-05-010",
+              "titulo": "Pintura epóxica sobre piso o paramento.",
+              "unidad": "m²",
+              "precio": 15.82,
+              "horas": 0.56,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-16-05-020",
+              "titulo": "Acabado decorativo texturado.",
+              "unidad": "m²",
+              "precio": 8.18,
+              "horas": 0.78,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-16-05-030",
+              "titulo": "Barniz protector sobre madera interior.",
+              "unidad": "m²",
+              "precio": 7.53,
+              "horas": 0.48,
+              "producto_cliente": false
+            }
+          ],
+          "n": 3
         }
       ],
-      "n": 3
+      "n": 11
     },
     {
       "codigo": "17",
@@ -3225,35 +4096,144 @@
         {
           "codigo": "01",
           "nombre": "Mobiliario de cocina",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-17-01-010",
+              "titulo": "Mueble bajo de cocina a medida.",
+              "unidad": "m",
+              "precio": 124.88,
+              "horas": 3.15,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-17-01-020",
+              "titulo": "Mueble alto de cocina a medida.",
+              "unidad": "m",
+              "precio": 122.4,
+              "horas": 2.85,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-17-01-030",
+              "titulo": "Isla o península de cocina.",
+              "unidad": "m",
+              "precio": 169.75,
+              "horas": 3.9,
+              "producto_cliente": false
+            }
+          ],
+          "n": 3
         },
         {
           "codigo": "02",
           "nombre": "Mesones y topes",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-17-02-010",
+              "titulo": "Mesón de granito, cuarzo o piedra natural.",
+              "unidad": "m",
+              "precio": 22.59,
+              "horas": 1.8,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-17-02-020",
+              "titulo": "Mesón de concreto revestido.",
+              "unidad": "m",
+              "precio": 76.04,
+              "horas": 4.2,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-17-02-030",
+              "titulo": "Salpicadero de mesón.",
+              "unidad": "m",
+              "precio": 6.06,
+              "horas": 0.63,
+              "producto_cliente": true
+            }
+          ],
+          "n": 3
         },
         {
           "codigo": "03",
           "nombre": "Mobiliario de baño",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-17-03-010",
+              "titulo": "Mueble de baño con lavamanos.",
+              "unidad": "ud",
+              "precio": 32.77,
+              "horas": 1.95,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-17-03-020",
+              "titulo": "Espejo y botiquín de baño.",
+              "unidad": "ud",
+              "precio": 7.12,
+              "horas": 0.87,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-17-03-030",
+              "titulo": "Encimera de baño sobre mueble o estructura.",
+              "unidad": "m",
+              "precio": 13.69,
+              "horas": 1.4,
+              "producto_cliente": true
+            }
+          ],
+          "n": 3
         },
         {
           "codigo": "04",
           "nombre": "Accesorios y herrajes",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-17-04-010",
+              "titulo": "Instalación de barra de apoyo para accesibilidad.",
+              "unidad": "ud",
+              "precio": 67.0,
+              "horas": 0.98,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-17-04-020",
+              "titulo": "Juego de accesorios y herrajes de mobiliario.",
+              "unidad": "ud",
+              "precio": 53.09,
+              "horas": 1.1,
+              "producto_cliente": false
+            }
+          ],
+          "n": 2
         },
         {
           "codigo": "05",
           "nombre": "Mobiliario fijo diverso",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-17-05-010",
+              "titulo": "Repisa o estantería fija.",
+              "unidad": "m",
+              "precio": 27.48,
+              "horas": 0.6,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-17-05-020",
+              "titulo": "Mueble fijo a medida.",
+              "unidad": "m²",
+              "precio": 120.08,
+              "horas": 2.7,
+              "producto_cliente": false
+            }
+          ],
+          "n": 2
         }
       ],
-      "n": 0
+      "n": 13
     },
     {
       "codigo": "18",
@@ -3262,35 +4242,160 @@
         {
           "codigo": "01",
           "nombre": "Pavimentos exteriores",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-18-01-010",
+              "titulo": "Piso de concreto exterior con acabado escobillado.",
+              "unidad": "m²",
+              "precio": 28.26,
+              "horas": 0.8,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-18-01-020",
+              "titulo": "Pavimento de adoquín de concreto.",
+              "unidad": "m²",
+              "precio": 27.11,
+              "horas": 0.94,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-18-01-030",
+              "titulo": "Pavimento de gravilla o piedra suelta.",
+              "unidad": "m²",
+              "precio": 5.45,
+              "horas": 0.3,
+              "producto_cliente": false
+            }
+          ],
+          "n": 3
         },
         {
           "codigo": "02",
           "nombre": "Brocales, aceras y drenajes",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-18-02-010",
+              "titulo": "Brocal o bordillo de concreto.",
+              "unidad": "m",
+              "precio": 16.74,
+              "horas": 0.8,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-18-02-020",
+              "titulo": "Acera de concreto.",
+              "unidad": "m²",
+              "precio": 26.6,
+              "horas": 0.76,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-18-02-030",
+              "titulo": "Canal de drenaje lineal con rejilla.",
+              "unidad": "m",
+              "precio": 45.05,
+              "horas": 1.0,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-18-02-040",
+              "titulo": "Tanquilla o registro de drenaje.",
+              "unidad": "ud",
+              "precio": 113.89,
+              "horas": 6.8,
+              "producto_cliente": true
+            }
+          ],
+          "n": 4
         },
         {
           "codigo": "03",
           "nombre": "Cerramientos de parcela",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-18-03-010",
+              "titulo": "Cerca perimetral de bloque.",
+              "unidad": "m²",
+              "precio": 54.99,
+              "horas": 3.05,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-18-03-020",
+              "titulo": "Cerca de malla ciclónica.",
+              "unidad": "m",
+              "precio": 34.1,
+              "horas": 0.98,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-18-03-030",
+              "titulo": "Portón de acceso vehicular.",
+              "unidad": "m²",
+              "precio": 121.24,
+              "horas": 2.7,
+              "producto_cliente": false
+            }
+          ],
+          "n": 3
         },
         {
           "codigo": "04",
           "nombre": "Jardinería y riego",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-18-04-010",
+              "titulo": "Preparación de tierra y siembra de grama.",
+              "unidad": "m²",
+              "precio": 10.6,
+              "horas": 0.51,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-18-04-020",
+              "titulo": "Siembra de arbusto o árbol.",
+              "unidad": "ud",
+              "precio": 16.46,
+              "horas": 1.25,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-18-04-030",
+              "titulo": "Red de riego por goteo o aspersión.",
+              "unidad": "m",
+              "precio": 8.83,
+              "horas": 0.38,
+              "producto_cliente": false
+            }
+          ],
+          "n": 3
         },
         {
           "codigo": "05",
           "nombre": "Instalaciones exteriores",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-18-05-010",
+              "titulo": "Punto de iluminación exterior de jardín.",
+              "unidad": "ud",
+              "precio": 48.45,
+              "horas": 1.9,
+              "producto_cliente": true
+            },
+            {
+              "codigo": "CT-18-05-020",
+              "titulo": "Punto de agua exterior con llave de jardín.",
+              "unidad": "ud",
+              "precio": 35.78,
+              "horas": 1.6,
+              "producto_cliente": false
+            }
+          ],
+          "n": 2
         }
       ],
-      "n": 0
+      "n": 15
     },
     {
       "codigo": "19",
@@ -3307,24 +4412,66 @@
               "precio": 16.07,
               "horas": 0.85,
               "producto_cliente": false
+            },
+            {
+              "codigo": "CT-19-01-020",
+              "titulo": "Bajada de escombro desde plantas altas.",
+              "unidad": "m³",
+              "precio": 18.5,
+              "horas": 2.1,
+              "producto_cliente": false
             }
           ],
-          "n": 1
+          "n": 2
         },
         {
           "codigo": "02",
           "nombre": "Contenedores y acopio",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-19-02-010",
+              "titulo": "Contenedor de escombro, por mes de permanencia.",
+              "unidad": "ud",
+              "precio": 99.79,
+              "horas": 0.6,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-19-02-020",
+              "titulo": "Zona de acopio y clasificación de residuos.",
+              "unidad": "m²",
+              "precio": 7.76,
+              "horas": 0.3,
+              "producto_cliente": false
+            }
+          ],
+          "n": 2
         },
         {
           "codigo": "03",
           "nombre": "Limpieza final de obra",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-19-03-010",
+              "titulo": "Limpieza final de obra.",
+              "unidad": "m²",
+              "precio": 1.92,
+              "horas": 0.22,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-19-03-020",
+              "titulo": "Limpieza profunda de vidrios y acabados delicados.",
+              "unidad": "m²",
+              "precio": 2.38,
+              "horas": 0.3,
+              "producto_cliente": false
+            }
+          ],
+          "n": 2
         }
       ],
-      "n": 1
+      "n": 6
     },
     {
       "codigo": "20",
@@ -3333,29 +4480,105 @@
         {
           "codigo": "01",
           "nombre": "Protecciones colectivas",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-20-01-010",
+              "titulo": "Baranda provisional de protección de borde.",
+              "unidad": "m",
+              "precio": 11.05,
+              "horas": 0.4,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-20-01-020",
+              "titulo": "Red de seguridad en huecos y perímetros.",
+              "unidad": "m²",
+              "precio": 9.15,
+              "horas": 0.32,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-20-01-030",
+              "titulo": "Línea de vida para trabajos en altura.",
+              "unidad": "m",
+              "precio": 23.78,
+              "horas": 0.5,
+              "producto_cliente": false
+            }
+          ],
+          "n": 3
         },
         {
           "codigo": "02",
           "nombre": "Equipos de protección individual",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-20-02-010",
+              "titulo": "Dotación de equipo de protección individual por trabajador.",
+              "unidad": "ud",
+              "precio": 56.07,
+              "horas": 0.2,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-20-02-020",
+              "titulo": "Equipo de protección para trabajo en altura.",
+              "unidad": "ud",
+              "precio": 73.37,
+              "horas": 0.25,
+              "producto_cliente": false
+            }
+          ],
+          "n": 2
         },
         {
           "codigo": "03",
           "nombre": "Señalización de obra",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-20-03-010",
+              "titulo": "Señalización de seguridad de obra.",
+              "unidad": "ud",
+              "precio": 52.92,
+              "horas": 0.7,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-20-03-020",
+              "titulo": "Delimitación y acordonamiento de zonas de riesgo.",
+              "unidad": "m",
+              "precio": 4.47,
+              "horas": 0.13,
+              "producto_cliente": false
+            }
+          ],
+          "n": 2
         },
         {
           "codigo": "04",
           "nombre": "Instalaciones de bienestar",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-20-04-010",
+              "titulo": "Zona de vestuario y comedor de obra, por mes.",
+              "unidad": "ud",
+              "precio": 164.92,
+              "horas": 1.2,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-20-04-020",
+              "titulo": "Botiquín de primeros auxilios de obra.",
+              "unidad": "ud",
+              "precio": 66.33,
+              "horas": 0.35,
+              "producto_cliente": false
+            }
+          ],
+          "n": 2
         }
       ],
-      "n": 0
+      "n": 9
     }
   ]
 }

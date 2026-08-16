@@ -1,0 +1,58 @@
+{
+  "codigo": "CT-15-04-030",
+  "ambito": "reforma",
+  "capitulo": "15",
+  "subcapitulo": "04",
+  "unidad": "m",
+  "titulo": "Baranda metálica de protección.",
+  "descripcion": "Fabricación y montaje de baranda metálica de protección en balcón, terraza o escalera, con su pasamanos, montantes y barrotes, anclada al piso o al canto de la losa. La altura y la separación entre barrotes no son de diseño libre: responden a criterios de seguridad frente a caída y frente al paso de un niño entre ellos. Incluye la fabricación, el tratamiento anticorrosivo, el replanteo y anclaje mecánico de los montantes, el resane de los anclajes, la comprobación de la rigidez del conjunto frente a empuje horizontal y el acabado. Medido en longitud realmente instalada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-TUBO-ACERO",
+      "rendimiento": 11.0
+    },
+    {
+      "ref": "MT-ELECTRODO",
+      "rendimiento": 0.24
+    },
+    {
+      "ref": "MT-PINT-ANTICORR",
+      "rendimiento": 0.22
+    },
+    {
+      "ref": "MT-PERNO-ANCLA",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MT-EPOXI-ANCLA",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MT-YESO-REP",
+      "rendimiento": 1.2
+    },
+    {
+      "ref": "MQ-SOLDADORA",
+      "rendimiento": 0.48
+    },
+    {
+      "ref": "MQ-ESMERIL",
+      "rendimiento": 0.22
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-OF1-SOLD",
+      "rendimiento": 0.95
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.62
+    }
+  ],
+  "codigo_covenin": ""
+}

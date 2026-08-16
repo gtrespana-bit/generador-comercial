@@ -1,0 +1,42 @@
+{
+  "codigo": "CT-11-02-030",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "02",
+  "unidad": "m",
+  "titulo": "Cumbrera y remates de cubierta de teja.",
+  "descripcion": "Formación de cumbrera, limatesa o remate lateral en cubierta de teja, con piezas específicas recibidas con mortero y sellado. Es la línea por la que entra el agua cuando está mal resuelta, y también la que primero levanta el viento. Incluye el replanteo, la nivelación de la línea de cumbrera, la colocación de las piezas con solape en el sentido contrario a los vientos dominantes, el recibido con mortero y el sellado de los encuentros. Medido en longitud realmente ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CUMBRERA",
+      "rendimiento": 1.06
+    },
+    {
+      "ref": "MT-MOR-PEGA",
+      "rendimiento": 6.5
+    },
+    {
+      "ref": "MT-SELLA-ELAST",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MQ-MEZCL",
+      "rendimiento": 0.03
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.16
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.32
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.22
+    }
+  ],
+  "codigo_covenin": ""
+}

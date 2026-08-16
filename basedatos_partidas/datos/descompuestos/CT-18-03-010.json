@@ -1,0 +1,50 @@
+{
+  "codigo": "CT-18-03-010",
+  "ambito": "reforma",
+  "capitulo": "18",
+  "subcapitulo": "03",
+  "unidad": "m²",
+  "titulo": "Cerca perimetral de bloque.",
+  "descripcion": "Cerca perimetral de bloque de concreto con sus machones de confinamiento y viga de corona, frisada por ambas caras. Incluye el replanteo de la línea de lindero, la ejecución de la fundación corrida, el levantamiento de la mampostería a nivel y plomo, los machones de confinamiento a la separación de proyecto, la viga de corona, el friso por ambas caras y el remate superior con pendiente que evacúa el agua y protege la coronación. Medido en superficie realmente ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-BLQ-15",
+      "rendimiento": 12.8
+    },
+    {
+      "ref": "MT-MOR-PEGA",
+      "rendimiento": 13.0
+    },
+    {
+      "ref": "MT-MOR-FRISO",
+      "rendimiento": 44.0
+    },
+    {
+      "ref": "MT-ACERO-CAB",
+      "rendimiento": 4.2
+    },
+    {
+      "ref": "MT-CONC-210",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MT-ANCLA-MURO",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MQ-MEZCL",
+      "rendimiento": 0.14
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 1.55
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 1.5
+    }
+  ],
+  "codigo_covenin": ""
+}

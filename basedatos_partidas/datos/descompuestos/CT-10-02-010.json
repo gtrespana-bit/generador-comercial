@@ -1,0 +1,42 @@
+{
+  "codigo": "CT-10-02-010",
+  "ambito": "reforma",
+  "capitulo": "10",
+  "subcapitulo": "02",
+  "unidad": "m²",
+  "titulo": "Impermeabilización con acrílico elastomérico y malla.",
+  "descripcion": "Impermeabilización de cubierta o terraza con recubrimiento acrílico elastomérico aplicado en tres manos con malla de refuerzo intermedia. Es el sistema más usado en reforma por su facilidad de aplicación y de mantenimiento, ya que se repinta sin retirar lo anterior. Su durabilidad depende del espesor final alcanzado: aplicado con menos manos de las indicadas rinde una fracción de su vida útil. Incluye la limpieza y reparación del soporte, la imprimación, la primera mano, el embebido de la malla en fresco, y las manos de acabado hasta el consumo especificado por el fabricante. Medido en superficie realmente ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ACRIL-IMPER",
+      "rendimiento": 1.45
+    },
+    {
+      "ref": "MT-MALLA-JUNTA",
+      "rendimiento": 1.1
+    },
+    {
+      "ref": "MT-PUENTE-ADH",
+      "rendimiento": 0.09
+    },
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.36
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.24
+    }
+  ],
+  "codigo_covenin": ""
+}

@@ -1,0 +1,40 @@
+{
+  "codigo": "CT-17-03-020",
+  "ambito": "reforma",
+  "capitulo": "17",
+  "subcapitulo": "03",
+  "unidad": "ud",
+  "titulo": "Espejo y botiquín de baño.",
+  "descripcion": "Instalación de espejo y botiquín de baño, fijados al paramento con sus anclajes. Incluye el replanteo de la altura de uso y de su centrado respecto al lavamanos, el taladrado sobre el enchapado con broca de vidrio a baja velocidad y sin percusión, evitando la junta y los cantos donde la pieza se astilla, la colocación de tacos, el montaje y nivelación y el sellado perimetral cuando corresponda. El espejo o botiquín lo elige el cliente y se presupuesta aparte. Medido por unidad instalada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "producto_cliente": {
+    "tipo": "Espejo o botiquín de baño elegido por el cliente",
+    "unidad": "ud",
+    "consumo": 1.0,
+    "nota": "La partida cubre solo la instalación."
+  },
+  "recursos": [
+    {
+      "ref": "MT-SIL-SAN",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MT-CLAVOS",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.28
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 0.62
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.25
+    }
+  ],
+  "codigo_covenin": ""
+}

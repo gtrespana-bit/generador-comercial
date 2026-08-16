@@ -1,0 +1,56 @@
+{
+  "codigo": "CT-18-02-040",
+  "ambito": "reforma",
+  "capitulo": "18",
+  "subcapitulo": "02",
+  "unidad": "ud",
+  "titulo": "Tanquilla o registro de drenaje.",
+  "descripcion": "Construcción de tanquilla o registro de drenaje en mampostería o concreto, con su solera, paredes frisadas, tapa y conexiones. Incluye la excavación, el vaciado de la solera con la media caña de conducción que guía el flujo y evita la sedimentación, el levantamiento de las paredes, el friso interior impermeabilizado, la conexión de las tuberías de entrada y salida con sus cotas y pendientes, la colocación del marco y la tapa a la rasante del pavimento y la prueba de escurrimiento. Medido por unidad ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "producto_cliente": {
+    "tipo": "Marco y tapa de registro del tipo y carga elegidos por el cliente",
+    "unidad": "ud",
+    "consumo": 1.0,
+    "nota": "La partida cubre la obra civil de la tanquilla."
+  },
+  "recursos": [
+    {
+      "ref": "MT-BLQ-15",
+      "rendimiento": 26.0
+    },
+    {
+      "ref": "MT-MOR-PEGA",
+      "rendimiento": 34.0
+    },
+    {
+      "ref": "MT-MOR-FRISO",
+      "rendimiento": 42.0
+    },
+    {
+      "ref": "MT-CONC-210",
+      "rendimiento": 0.07
+    },
+    {
+      "ref": "MT-MORT-IMPER",
+      "rendimiento": 6.0
+    },
+    {
+      "ref": "MT-PLO-ACC4",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MQ-MEZCL",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 3.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 3.6
+    }
+  ],
+  "codigo_covenin": ""
+}
