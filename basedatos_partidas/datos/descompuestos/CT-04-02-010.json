@@ -1,0 +1,38 @@
+{
+  "codigo": "CT-04-02-010",
+  "ambito": "reforma",
+  "capitulo": "04",
+  "subcapitulo": "02",
+  "unidad": "kg",
+  "titulo": "Acero de refuerzo en vigas de riostra.",
+  "descripcion": "Suministro, corte, doblado, armado y colocación de acero de refuerzo en cabillas corrugadas en vigas de riostra, según los planos de despiece. El armado de viga exige más tiempo por kilogramo que el de zapata por el montaje de los estribos y por el trabajo en zanja estrecha. Incluye el corte y doblado de barras y estribos, el armado de la canasta con la separación de estribos indicada y su reducción en las zonas de confinamiento junto a los apoyos, el amarre con alambre, la colocación de separadores por las cuatro caras, el anclaje o solape con las esperas de las zapatas y la revisión del despiece antes del vaciado. Medido en peso de acero realmente colocado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ACERO-CAB",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-ALAMBRE",
+      "rendimiento": 0.013
+    },
+    {
+      "ref": "MT-SEPARADOR",
+      "rendimiento": 0.55
+    },
+    {
+      "ref": "MQ-CIZALLA",
+      "rendimiento": 0.014
+    },
+    {
+      "ref": "MO-OF1-CAB",
+      "rendimiento": 0.034
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.034
+    }
+  ],
+  "codigo_covenin": ""
+}

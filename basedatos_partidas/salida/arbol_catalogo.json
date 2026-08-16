@@ -1365,35 +1365,240 @@
         {
           "codigo": "01",
           "nombre": "Bases y zapatas",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-04-01-010",
+              "titulo": "Concreto pobre de limpieza bajo fundaciones, 5 cm de espesor.",
+              "unidad": "m²",
+              "precio": 8.41,
+              "horas": 0.17,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-04-01-020",
+              "titulo": "Acero de refuerzo en zapatas y bases.",
+              "unidad": "kg",
+              "precio": 2.3,
+              "horas": 0.056,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-04-01-030",
+              "titulo": "Encofrado y desencofrado de zapata.",
+              "unidad": "m²",
+              "precio": 13.77,
+              "horas": 0.96,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-04-01-040",
+              "titulo": "Concreto para zapata aislada.",
+              "unidad": "m³",
+              "precio": 167.7,
+              "horas": 1.62,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-04-01-050",
+              "titulo": "Concreto para zapata corrida.",
+              "unidad": "m³",
+              "precio": 166.6,
+              "horas": 1.45,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-04-01-060",
+              "titulo": "Pedestal de concreto armado sobre fundación.",
+              "unidad": "m³",
+              "precio": 243.11,
+              "horas": 5.0,
+              "producto_cliente": false
+            }
+          ],
+          "n": 6
         },
         {
           "codigo": "02",
           "nombre": "Vigas de riostra",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-04-02-010",
+              "titulo": "Acero de refuerzo en vigas de riostra.",
+              "unidad": "kg",
+              "precio": 2.39,
+              "horas": 0.068,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-04-02-020",
+              "titulo": "Encofrado y desencofrado de viga de riostra.",
+              "unidad": "m²",
+              "precio": 14.29,
+              "horas": 1.04,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-04-02-030",
+              "titulo": "Concreto para viga de riostra.",
+              "unidad": "m³",
+              "precio": 171.91,
+              "horas": 2.0,
+              "producto_cliente": false
+            }
+          ],
+          "n": 3
         },
         {
           "codigo": "03",
           "nombre": "Losas de fundación",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-04-03-010",
+              "titulo": "Barrera de vapor de polietileno bajo losa de fundación.",
+              "unidad": "m²",
+              "precio": 1.29,
+              "horas": 0.045,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-04-03-020",
+              "titulo": "Acero de refuerzo en losa de fundación.",
+              "unidad": "kg",
+              "precio": 2.27,
+              "horas": 0.052,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-04-03-030",
+              "titulo": "Malla electrosoldada de refuerzo en losa.",
+              "unidad": "m²",
+              "precio": 7.37,
+              "horas": 0.15,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-04-03-040",
+              "titulo": "Encofrado perimetral de losa de fundación.",
+              "unidad": "m²",
+              "precio": 14.11,
+              "horas": 1.0,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-04-03-050",
+              "titulo": "Concreto para losa de fundación.",
+              "unidad": "m³",
+              "precio": 182.77,
+              "horas": 1.56,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-04-03-060",
+              "titulo": "Acabado y curado de losa de fundación.",
+              "unidad": "m²",
+              "precio": 2.48,
+              "horas": 0.2,
+              "producto_cliente": false
+            }
+          ],
+          "n": 6
         },
         {
           "codigo": "04",
           "nombre": "Muros de contención",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-04-04-010",
+              "titulo": "Encofrado a dos caras de muro de contención.",
+              "unidad": "m²",
+              "precio": 16.43,
+              "horas": 1.24,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-04-04-020",
+              "titulo": "Acero de refuerzo en muro de contención.",
+              "unidad": "kg",
+              "precio": 2.37,
+              "horas": 0.062,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-04-04-030",
+              "titulo": "Concreto para muro de contención.",
+              "unidad": "m³",
+              "precio": 191.39,
+              "horas": 2.3,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-04-04-040",
+              "titulo": "Impermeabilización del trasdós de muro de contención.",
+              "unidad": "m²",
+              "precio": 11.62,
+              "horas": 0.42,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-04-04-050",
+              "titulo": "Drenaje de trasdós de muro con tubería y grava.",
+              "unidad": "m",
+              "precio": 21.94,
+              "horas": 0.46,
+              "producto_cliente": false
+            }
+          ],
+          "n": 5
         },
         {
           "codigo": "05",
           "nombre": "Pilotes y fundaciones profundas",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-04-05-010",
+              "titulo": "Perforación para pilote vaciado en sitio.",
+              "unidad": "m",
+              "precio": 21.85,
+              "horas": 0.74,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-04-05-020",
+              "titulo": "Acero de refuerzo en pilote.",
+              "unidad": "kg",
+              "precio": 2.61,
+              "horas": 0.076,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-04-05-030",
+              "titulo": "Concreto para pilote vaciado en sitio.",
+              "unidad": "m³",
+              "precio": 217.58,
+              "horas": 2.45,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-04-05-040",
+              "titulo": "Descabezado de pilote.",
+              "unidad": "ud",
+              "precio": 26.64,
+              "horas": 3.2,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-04-05-050",
+              "titulo": "Cabezal de pilotes de concreto armado.",
+              "unidad": "m³",
+              "precio": 231.7,
+              "horas": 3.85,
+              "producto_cliente": false
+            }
+          ],
+          "n": 5
         }
       ],
-      "n": 0
+      "n": 25
     },
     {
       "codigo": "05",

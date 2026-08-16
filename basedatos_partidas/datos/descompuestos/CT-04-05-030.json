@@ -1,0 +1,38 @@
+{
+  "codigo": "CT-04-05-030",
+  "ambito": "reforma",
+  "capitulo": "04",
+  "subcapitulo": "05",
+  "unidad": "m³",
+  "titulo": "Concreto para pilote vaciado en sitio.",
+  "descripcion": "Concreto premezclado de resistencia 250 kg/cm2 vaciado en pilote perforado, colocado mediante tubo tremie o embudo con tubo de descarga. Incluye la comprobación de la limpieza del fondo y de la posición de la canasta, la recepción del concreto con la fluidez adecuada para un vaciado sin vibrado en toda la profundidad, el vaciado continuo desde el fondo hacia arriba sin interrupciones que provoquen discontinuidades, el control del volumen realmente colocado frente al teórico como indicador de posibles sobreanchos o pérdidas, y el rebose de la cabeza para desalojar el concreto contaminado. Medido en volumen teórico según el diámetro y la longitud de proyecto.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONC-250",
+      "rendimiento": 1.15
+    },
+    {
+      "ref": "MT-ADITIVO",
+      "rendimiento": 1.8
+    },
+    {
+      "ref": "MQ-BOMBA-CONC",
+      "rendimiento": 0.13
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.7
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.75
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 1.0
+    }
+  ],
+  "codigo_covenin": ""
+}

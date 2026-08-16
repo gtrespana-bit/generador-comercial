@@ -64,6 +64,18 @@
       "descripcion": "Oficial de 1ª electricista.",
       "precio": 5.5,
       "estado": "confirmado"
+    },
+    "MO-OF1-CAB": {
+      "unidad": "h",
+      "descripcion": "Oficial de 1ª cabillero (armador de acero de refuerzo).",
+      "precio": 5.5,
+      "estado": "confirmado"
+    },
+    "MO-OF1-CARP": {
+      "unidad": "h",
+      "descripcion": "Oficial de 1ª carpintero de obra (encofrador).",
+      "precio": 5.5,
+      "estado": "confirmado"
     }
   },
   "materiales": {
@@ -486,6 +498,102 @@
       "descripcion": "Agua para amasado, humectación de rellenos y compactación.",
       "precio": 1.6,
       "estado": "provisional"
+    },
+    "MT-CONC-180": {
+      "unidad": "m3",
+      "descripcion": "Concreto premezclado de resistencia 180 kg/cm2, puesto en obra.",
+      "precio": 105.0,
+      "estado": "provisional"
+    },
+    "MT-CONC-210": {
+      "unidad": "m3",
+      "descripcion": "Concreto premezclado de resistencia 210 kg/cm2, puesto en obra.",
+      "precio": 115.0,
+      "estado": "provisional"
+    },
+    "MT-CONC-250": {
+      "unidad": "m3",
+      "descripcion": "Concreto premezclado de resistencia 250 kg/cm2, puesto en obra.",
+      "precio": 125.0,
+      "estado": "provisional"
+    },
+    "MT-CEMENTO": {
+      "unidad": "kg",
+      "descripcion": "Cemento Portland gris tipo I, en saco.",
+      "precio": 0.22,
+      "estado": "provisional"
+    },
+    "MT-ACERO-CAB": {
+      "unidad": "kg",
+      "descripcion": "Acero de refuerzo en cabillas corrugadas, límite elástico 4.200 kg/cm2, cortado y doblado.",
+      "precio": 1.35,
+      "estado": "provisional"
+    },
+    "MT-ALAMBRE": {
+      "unidad": "kg",
+      "descripcion": "Alambre recocido para amarre de acero de refuerzo.",
+      "precio": 1.9,
+      "estado": "provisional"
+    },
+    "MT-MALLA-ELEC": {
+      "unidad": "m2",
+      "descripcion": "Malla electrosoldada de acero para refuerzo de losas y pisos.",
+      "precio": 4.2,
+      "estado": "provisional"
+    },
+    "MT-SEPARADOR": {
+      "unidad": "ud",
+      "descripcion": "Separador plástico o de mortero para garantizar el recubrimiento del acero de refuerzo.",
+      "precio": 0.08,
+      "estado": "provisional"
+    },
+    "MT-FORM-MADERA": {
+      "unidad": "m2",
+      "descripcion": "Encofrado de madera con sus puntales y arriostramientos, amortizado por número de usos.",
+      "precio": 5.6,
+      "estado": "provisional"
+    },
+    "MT-DESMOLD": {
+      "unidad": "l",
+      "descripcion": "Desmoldeante para encofrados, que facilita el desencofrado y protege la madera.",
+      "precio": 2.8,
+      "estado": "provisional"
+    },
+    "MT-POLIET": {
+      "unidad": "m2",
+      "descripcion": "Lámina de polietileno de alta densidad como barrera de vapor bajo losas de piso.",
+      "precio": 0.65,
+      "estado": "provisional"
+    },
+    "MT-IMPERM-ASF": {
+      "unidad": "l",
+      "descripcion": "Impermeabilizante asfáltico en emulsión para protección de fundaciones y trasdós de muros.",
+      "precio": 4.5,
+      "estado": "provisional"
+    },
+    "MT-ADITIVO": {
+      "unidad": "l",
+      "descripcion": "Aditivo plastificante y reductor de agua para concreto.",
+      "precio": 3.2,
+      "estado": "provisional"
+    },
+    "MT-TUBO-DREN": {
+      "unidad": "m",
+      "descripcion": "Tubería de drenaje perforada corrugada con geotextil, para drenaje de trasdós de muro.",
+      "precio": 3.6,
+      "estado": "provisional"
+    },
+    "MT-GEOTEXTIL": {
+      "unidad": "m2",
+      "descripcion": "Geotextil no tejido para separación y filtro en drenajes y rellenos.",
+      "precio": 1.1,
+      "estado": "provisional"
+    },
+    "MT-CURADOR": {
+      "unidad": "l",
+      "descripcion": "Curador químico de membrana para concreto, que retiene el agua de fraguado.",
+      "precio": 3.4,
+      "estado": "provisional"
     }
   },
   "maquinaria": {
@@ -649,6 +757,36 @@
       "unidad": "h",
       "descripcion": "Desbrozadora de motor con hilo y disco, para limpieza de vegetación.",
       "precio": 2.7,
+      "estado": "provisional"
+    },
+    "MQ-VIBRADOR": {
+      "unidad": "h",
+      "descripcion": "Vibrador de aguja con motor, para compactación de concreto.",
+      "precio": 3.4,
+      "estado": "provisional"
+    },
+    "MQ-CIZALLA": {
+      "unidad": "h",
+      "descripcion": "Cizalla y dobladora de cabillas, incluida su amortización.",
+      "precio": 2.1,
+      "estado": "provisional"
+    },
+    "MQ-BOMBA-CONC": {
+      "unidad": "h",
+      "descripcion": "Bomba de concreto con su operador, para vaciados de difícil acceso o gran volumen.",
+      "precio": 45.0,
+      "estado": "provisional"
+    },
+    "MQ-PERF-PILOTE": {
+      "unidad": "h",
+      "descripcion": "Equipo de perforación rotatoria para pilotes vaciados en sitio, con operador.",
+      "precio": 55.0,
+      "estado": "provisional"
+    },
+    "MQ-ALISADORA": {
+      "unidad": "h",
+      "descripcion": "Alisadora mecánica de concreto tipo helicóptero, para acabado de losas.",
+      "precio": 5.2,
       "estado": "provisional"
     }
   }
