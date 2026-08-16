@@ -450,6 +450,42 @@
       "descripcion": "Señal de advertencia, cinta de peligro y conos de delimitación de obra.",
       "precio": 4.2,
       "estado": "provisional"
+    },
+    "MT-ARENA": {
+      "unidad": "m3",
+      "descripcion": "Arena lavada de río, puesta en obra, para camas de asiento y rellenos de zanja.",
+      "precio": 22.0,
+      "estado": "provisional"
+    },
+    "MT-PIEDRA-PIC": {
+      "unidad": "m3",
+      "descripcion": "Piedra picada de granulometría corriente, puesta en obra, para bases y drenajes.",
+      "precio": 26.0,
+      "estado": "provisional"
+    },
+    "MT-MAT-PRESTAMO": {
+      "unidad": "m3",
+      "descripcion": "Material granular seleccionado de préstamo, tipo granzón natural, puesto en obra para rellenos compactados.",
+      "precio": 18.0,
+      "estado": "provisional"
+    },
+    "MT-MADERA-ENTIB": {
+      "unidad": "m2",
+      "descripcion": "Tablón y puntal de madera para entibado de zanja, con amortización por número de usos.",
+      "precio": 3.4,
+      "estado": "provisional"
+    },
+    "MT-CANON-TIERRA": {
+      "unidad": "m3",
+      "descripcion": "Canon de vertido de tierra y material de excavación en botadero autorizado.",
+      "precio": 2.8,
+      "estado": "provisional"
+    },
+    "MT-AGUA-OBRA": {
+      "unidad": "m3",
+      "descripcion": "Agua para amasado, humectación de rellenos y compactación.",
+      "precio": 1.6,
+      "estado": "provisional"
     }
   },
   "maquinaria": {
@@ -589,6 +625,30 @@
       "unidad": "ud",
       "descripcion": "Alquiler mensual de baño portátil de obra, incluido su mantenimiento y vaciado periódico.",
       "precio": 55.0,
+      "estado": "provisional"
+    },
+    "MQ-COMPACT-SALTO": {
+      "unidad": "h",
+      "descripcion": "Compactador vibratorio de impacto tipo canguro, para compactación de zanjas y espacios reducidos.",
+      "precio": 4.5,
+      "estado": "provisional"
+    },
+    "MQ-PLANCHA-COMP": {
+      "unidad": "h",
+      "descripcion": "Plancha compactadora vibratoria, para compactación de superficies y bases.",
+      "precio": 3.8,
+      "estado": "provisional"
+    },
+    "MQ-BOMBA-ACHI": {
+      "unidad": "h",
+      "descripcion": "Bomba sumergible de achique con manguera de descarga, para agotamiento de excavaciones.",
+      "precio": 2.4,
+      "estado": "provisional"
+    },
+    "MQ-DESBROZ": {
+      "unidad": "h",
+      "descripcion": "Desbrozadora de motor con hilo y disco, para limpieza de vegetación.",
+      "precio": 2.7,
       "estado": "provisional"
     }
   }

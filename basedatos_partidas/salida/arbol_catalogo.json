@@ -1154,29 +1154,209 @@
         {
           "codigo": "01",
           "nombre": "Limpieza y desbroce",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-03-01-010",
+              "titulo": "Limpieza y desbroce manual del terreno.",
+              "unidad": "m²",
+              "precio": 1.08,
+              "horas": 0.115,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-03-01-020",
+              "titulo": "Limpieza y desbroce mecanizado del terreno.",
+              "unidad": "m²",
+              "precio": 0.91,
+              "horas": 0.04,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-03-01-030",
+              "titulo": "Descapote y retiro de capa vegetal.",
+              "unidad": "m²",
+              "precio": 1.65,
+              "horas": 0.075,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-03-01-040",
+              "titulo": "Retiro de raíces y obstáculos menores enterrados.",
+              "unidad": "m²",
+              "precio": 2.87,
+              "horas": 0.19,
+              "producto_cliente": false
+            }
+          ],
+          "n": 4
         },
         {
           "codigo": "02",
           "nombre": "Excavaciones",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-03-02-010",
+              "titulo": "Excavación manual en zanja para fundaciones.",
+              "unidad": "m³",
+              "precio": 12.77,
+              "horas": 2.6,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-03-02-020",
+              "titulo": "Excavación mecanizada en zanja para fundaciones.",
+              "unidad": "m³",
+              "precio": 7.38,
+              "horas": 0.46,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-03-02-030",
+              "titulo": "Excavación manual en zanja para instalaciones enterradas.",
+              "unidad": "m³",
+              "precio": 12.32,
+              "horas": 2.4,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-03-02-040",
+              "titulo": "Excavación mecanizada a cielo abierto.",
+              "unidad": "m³",
+              "precio": 5.19,
+              "horas": 0.3,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-03-02-050",
+              "titulo": "Excavación en material duro o roca.",
+              "unidad": "m³",
+              "precio": 30.21,
+              "horas": 1.1,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-03-02-060",
+              "titulo": "Excavación para tanque séptico, sumidero o tanque enterrado.",
+              "unidad": "m³",
+              "precio": 11.95,
+              "horas": 0.8,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-03-02-070",
+              "titulo": "Entibado de zanja con madera.",
+              "unidad": "m²",
+              "precio": 8.83,
+              "horas": 0.56,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-03-02-080",
+              "titulo": "Perfilado y compactación del fondo de excavación.",
+              "unidad": "m²",
+              "precio": 1.1,
+              "horas": 0.16,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-03-02-090",
+              "titulo": "Achicamiento de agua en excavación.",
+              "unidad": "hora",
+              "precio": 4.3,
+              "horas": 0.25,
+              "producto_cliente": false
+            }
+          ],
+          "n": 9
         },
         {
           "codigo": "03",
           "nombre": "Rellenos y compactación",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-03-03-010",
+              "titulo": "Relleno y compactación con material del sitio.",
+              "unidad": "m³",
+              "precio": 5.37,
+              "horas": 0.8,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-03-03-020",
+              "titulo": "Relleno y compactación con material granular de préstamo.",
+              "unidad": "m³",
+              "precio": 34.71,
+              "horas": 0.74,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-03-03-030",
+              "titulo": "Relleno de zanja de instalaciones con arena.",
+              "unidad": "m³",
+              "precio": 39.23,
+              "horas": 0.87,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-03-03-040",
+              "titulo": "Base de piedra picada compactada.",
+              "unidad": "m³",
+              "precio": 45.36,
+              "horas": 0.68,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-03-03-050",
+              "titulo": "Nivelación y compactación de terreno.",
+              "unidad": "m²",
+              "precio": 1.22,
+              "horas": 0.17,
+              "producto_cliente": false
+            }
+          ],
+          "n": 5
         },
         {
           "codigo": "04",
           "nombre": "Transporte de tierras",
-          "partidas": [],
-          "n": 0
+          "partidas": [
+            {
+              "codigo": "CT-03-04-010",
+              "titulo": "Carga manual y transporte de tierra sobrante a botadero.",
+              "unidad": "m³",
+              "precio": 14.17,
+              "horas": 1.1,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-03-04-020",
+              "titulo": "Carga mecanizada y transporte de tierra sobrante a botadero.",
+              "unidad": "m³",
+              "precio": 12.22,
+              "horas": 0.23,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-03-04-030",
+              "titulo": "Acopio provisional de tierra en obra para su reutilización.",
+              "unidad": "m³",
+              "precio": 3.44,
+              "horas": 0.32,
+              "producto_cliente": false
+            },
+            {
+              "codigo": "CT-03-04-040",
+              "titulo": "Suministro y transporte de material de préstamo a obra.",
+              "unidad": "m³",
+              "precio": 28.35,
+              "horas": 0.15,
+              "producto_cliente": false
+            }
+          ],
+          "n": 4
         }
       ],
-      "n": 0
+      "n": 22
     },
     {
       "codigo": "04",

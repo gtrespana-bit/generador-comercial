@@ -1,0 +1,34 @@
+{
+  "codigo": "CT-03-03-020",
+  "ambito": "reforma",
+  "capitulo": "03",
+  "subcapitulo": "03",
+  "unidad": "m³",
+  "titulo": "Relleno y compactación con material granular de préstamo.",
+  "descripcion": "Relleno con material granular seleccionado de préstamo, tipo granzón natural, extendido y compactado en capas de 20 cm de espesor máximo, empleado cuando el material del sitio no reúne las condiciones exigidas. Incluye el suministro y puesta en obra del material, su extendido por tongadas, la humectación hasta la humedad óptima, la compactación de cada capa hasta alcanzar la densidad especificada y el control del nivel final. Medido en volumen de relleno compactado según las dimensiones de proyecto.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MAT-PRESTAMO",
+      "rendimiento": 1.25
+    },
+    {
+      "ref": "MT-AGUA-OBRA",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-COMPACT-SALTO",
+      "rendimiento": 0.23
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.44
+    }
+  ],
+  "codigo_covenin": ""
+}
