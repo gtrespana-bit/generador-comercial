@@ -31,7 +31,7 @@ El presupuesto recibe únicamente:
 - capítulo, subcapítulo y apartado;
 - código actual, código anterior y código de clasificación;
 - usos y fecha de último uso;
-- un tesauro compacto de búsqueda.
+- un diccionario compacto de sinónimos.
 
 No viajan descripciones completas, costes, notas ni descompuestos. También se
 eliminó la lista HTML duplicada que existía detrás del buscador.
@@ -64,7 +64,7 @@ de las 5.000 hojas.
 
 ### 4. Búsqueda híbrida
 
-El índice incluye un tesauro normalizado y compacto para resultados
+El índice incluye un diccionario compacto de sinónimos para resultados
 instantáneos. Además, la búsqueda consulta bajo demanda:
 
 ```text

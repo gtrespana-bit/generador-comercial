@@ -5,7 +5,7 @@
 - Objetivo amplio: **5000** (brecha 4460)
 - Subcapítulos sin cobertura: **64**
 - Subcapítulos en estado crítico: **65**
-- Tesauro: **146 grupos · 661 términos · 18 capítulos**
+- Diccionario de sinónimos: **146 grupos · 661 términos · 18 capítulos**
 
 ## Estado por capítulo
 

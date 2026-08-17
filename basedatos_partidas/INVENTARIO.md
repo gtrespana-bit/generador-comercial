@@ -38,7 +38,7 @@ numérica v2 aprobada para reforma y remodelación en Venezuela.
 | `datos/descompuestos/*.json` | **Una partida por archivo**, con ruta v2, código anterior, descripción y recursos. |
 | `datos/mapa_migracion_v2.json` | Equivalencia de las 540 partidas `CT-CC-SS-NNN` → `CC.SS.AA.NNN`. |
 | `datos/objetivos_cobertura.json` | Metas 3.000/5.000, operaciones y variaciones por capítulo. |
-| `datos/sinonimos_busqueda.json` | Tesauro bidireccional: 146 grupos y 661 términos. |
+| `datos/sinonimos_busqueda.json` | Diccionario de sinónimos: 146 grupos y 661 términos. |
 
 `datos/partidas.csv` no se edita: lo regenera `descompuestos.py`.
 
@@ -137,7 +137,7 @@ aproximado de **3.000 partidas base** y un objetivo amplio de **4.000–5.000**.
 La aplicación ya superó una prueba sintética con 5.000 partidas mediante índice
 ligero, fichas bajo demanda, árbol progresivo y gestión paginada. La
 ocultación/restauración y actualización incremental ya están implantadas. La
-matriz 3.000/5.000 y el tesauro de 146 grupos cubren los 18 capítulos. El
+matriz 3.000/5.000 y el diccionario de sinónimos de 146 grupos cubren los 18 capítulos. El
 siguiente paso es producir las familias pendientes. Prioridades:
 
 1. Instalaciones sanitarias, eléctricas, climatización, ventilación, datos,

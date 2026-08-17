@@ -6530,7 +6530,7 @@ _PALABRAS_VACIAS_INDICE = frozenset({
 
 
 def _texto_indice_catalogo(partida: Partida) -> str:
-    """Tesauro compacto: conserva búsqueda técnica sin enviar descripciones."""
+    """Índice compacto de sinónimos: busca sin enviar descripciones."""
     bruto = " ".join((
         partida.nombre or "",
         partida.descripcion or "",

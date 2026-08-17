@@ -82,7 +82,7 @@ La matriz no mide únicamente cantidad. Según la familia exige combinaciones de
 Una familia no se considerará cerrada mientras el ciclo normal de trabajo siga
 obligando a crear conceptos manuales.
 
-## Tesauro de búsqueda
+## Diccionario de sinónimos
 
 Se creó:
 
@@ -95,7 +95,7 @@ Cobertura inicial:
 
 | Indicador | Resultado |
 |---|---:|
-| Grupos bidireccionales | **146** |
+| Grupos de palabras equivalentes | **146** |
 | Términos y expresiones | **661** |
 | Capítulos cubiertos | **18 de 18** |
 
@@ -112,7 +112,7 @@ comercial y vocabulario de oficio. Ejemplos:
 - mesón ↔ encimera ↔ tope;
 - closet ↔ armario ↔ ropero.
 
-El tesauro no cambia el texto de las partidas. Solo amplía la localización:
+El diccionario de sinónimos no cambia el texto de las partidas. Solo amplía la localización:
 CotizaT sigue mostrando terminología venezolana, pero entiende cómo busca cada
 usuario.
 
@@ -129,8 +129,8 @@ usuario.
 ## Validación
 
 - La matriz valida 18 capítulos, 172 subcapítulos y sumas exactas 3.000/5.000.
-- El tesauro valida cobertura de los 18 capítulos y bidireccionalidad de casos
-  críticos.
+- El diccionario cubre los 18 capítulos y funciona en ambos sentidos para los
+  casos críticos.
 - La búsqueda HTTP comprueba que «hormigón» encuentra partidas de concreto.
 - Las salidas CSV no generan espacios finales y abren correctamente en Excel.
 

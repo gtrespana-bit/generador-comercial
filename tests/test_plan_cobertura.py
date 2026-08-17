@@ -1,9 +1,9 @@
-"""Matriz de cobertura y tesauro del catálogo extenso."""
+"""Matriz de cobertura y diccionario de sinónimos del catálogo extenso."""
 from pathlib import Path
 
 from app.services.busqueda_catalogo import (
     alias_para_texto,
-    estadisticas_tesauro,
+    estadisticas_diccionario,
     variantes_consulta,
 )
 from basedatos_partidas.planificar_cobertura import construir
@@ -28,8 +28,8 @@ def test_matriz_cubre_los_18_capitulos_y_suma_objetivos():
     assert any(s["estado"] == "sin_cobertura" for s in subcapitulos)
 
 
-def test_tesauro_es_bidireccional_y_cubre_todos_los_capitulos():
-    estadisticas = estadisticas_tesauro()
+def test_diccionario_es_bidireccional_y_cubre_todos_los_capitulos():
+    estadisticas = estadisticas_diccionario()
     assert estadisticas["capitulos_cubiertos"] == 18
     assert estadisticas["grupos"] >= 140
     assert estadisticas["terminos"] >= 650

@@ -142,7 +142,7 @@ y el objetivo amplio de **4.000–5.000**. La carga progresiva, ficha bajo
 demanda, búsqueda híbrida y paginación ya están implantadas y probadas con
 5.000 partidas. La ocultación/restauración por organización y las altas
 incrementales también están implantadas. La matriz de 3.000/5.000 partidas y
-el tesauro de 146 grupos ya cubren los 18 capítulos. El siguiente paso es
+el diccionario de sinónimos de 146 grupos ya cubren los 18 capítulos. El siguiente paso es
 producir familias completas, comenzando por `09 Instalaciones`.
 
 La producción cerrará familias completas en este orden: `09 Instalaciones`,

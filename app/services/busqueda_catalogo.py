@@ -1,4 +1,4 @@
-"""Tesauro de búsqueda del catálogo, independiente del texto mostrado.
+"""Diccionario de búsqueda y sinónimos del catálogo.
 
 El vocabulario de obra cambia por país, oficio y proveedor. Este módulo hace
 bidireccionales los grupos de ``sinonimos_busqueda.json`` para que «hormigón»
@@ -94,7 +94,7 @@ def variantes_consulta(consulta: str) -> list[list[str]]:
     return resultado
 
 
-def estadisticas_tesauro() -> dict[str, int]:
+def estadisticas_diccionario() -> dict[str, int]:
     grupos = grupos_sinonimos()
     return {
         "grupos": len(grupos),

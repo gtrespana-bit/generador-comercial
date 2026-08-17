@@ -5,7 +5,7 @@ Fuentes:
 - clasificacion.json: árbol aprobado;
 - objetivos_cobertura.json: metas y criterios de producto;
 - descompuestos/*.json: cobertura real;
-- sinonimos_busqueda.json: tesauro por capítulo.
+- sinonimos_busqueda.json: diccionario de sinónimos por capítulo.
 
 Salidas regenerables:
 - salida/matriz_cobertura.json
@@ -170,7 +170,7 @@ def construir() -> dict:
         "brecha_amplia": total_amplio - len(partidas),
         "capitulos": capitulos_salida,
         "prioridades": prioridades,
-        "tesauro": {
+        "diccionario_sinonimos": {
             "grupos": len(sinonimos.get("grupos", [])),
             "terminos": sum(1 + len(g.get("alias", [])) for g in sinonimos.get("grupos", [])),
             "capitulos_cubiertos": len({
@@ -216,7 +216,7 @@ def escribir(matriz: dict) -> None:
         f"- Objetivo amplio: **{matriz['objetivo_amplio']}** (brecha {matriz['brecha_amplia']})",
         f"- Subcapítulos sin cobertura: **{estados['sin_cobertura']}**",
         f"- Subcapítulos en estado crítico: **{estados['critica']}**",
-        f"- Tesauro: **{matriz['tesauro']['grupos']} grupos · {matriz['tesauro']['terminos']} términos · {matriz['tesauro']['capitulos_cubiertos']} capítulos**",
+        f"- Diccionario de sinónimos: **{matriz['diccionario_sinonimos']['grupos']} grupos · {matriz['diccionario_sinonimos']['terminos']} términos · {matriz['diccionario_sinonimos']['capitulos_cubiertos']} capítulos**",
         "",
         "## Estado por capítulo",
         "",
@@ -253,9 +253,9 @@ def main() -> int:
         f"{matriz['objetivo_minimo']} mínimo · {matriz['objetivo_amplio']} amplio"
     )
     print(
-        f"Tesauro: {matriz['tesauro']['grupos']} grupos · "
-        f"{matriz['tesauro']['terminos']} términos · "
-        f"{matriz['tesauro']['capitulos_cubiertos']} capítulos"
+        f"Diccionario de sinónimos: {matriz['diccionario_sinonimos']['grupos']} grupos · "
+        f"{matriz['diccionario_sinonimos']['terminos']} términos · "
+        f"{matriz['diccionario_sinonimos']['capitulos_cubiertos']} capítulos"
     )
     print("Salidas: matriz_cobertura.json, matriz_cobertura.csv, RESUMEN_COBERTURA.md")
     return 0

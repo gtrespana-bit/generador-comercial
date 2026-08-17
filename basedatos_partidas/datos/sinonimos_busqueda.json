@@ -1,7 +1,7 @@
 {
   "_version": 1,
   "_ambito": "construccion_venezuela",
-  "_comentario": "Tesauro bidireccional para encontrar partidas con terminologia venezolana, internacional, comercial y de oficio.",
+  "_comentario": "Diccionario bidireccional de sinónimos para encontrar partidas con terminologia venezolana, internacional, comercial y de oficio.",
   "grupos": [
     {"capitulos": ["01"], "principal": "actuaciones previas", "alias": ["trabajos preliminares", "preliminares", "preparacion de obra", "implantacion de obra"]},
     {"capitulos": ["01"], "principal": "cata", "alias": ["cateo", "calicata", "apertura exploratoria", "inspeccion destructiva"]},
