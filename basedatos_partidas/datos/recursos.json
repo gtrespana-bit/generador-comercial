@@ -1802,6 +1802,54 @@
       "descripcion": "Viga y listón de madera tratada para pérgola exterior.",
       "precio": 6.8,
       "estado": "provisional"
+    },
+    "MT-PARARRAYOS-PDA": {
+      "unidad": "ud",
+      "descripcion": "Pararrayos con dispositivo de cebado (PDA), con su cabeza captadora, mástil de acero galvanizado y piezas de fijación y conexión. El precio no incluye el mástil de gran altura ni la estructura de soporte sobre cubierta.",
+      "precio": 380.0,
+      "estado": "provisional"
+    },
+    "MT-PARARRAYOS-PUNTA": {
+      "unidad": "ud",
+      "descripcion": "Pararrayos tipo Franklin de punta simple, con su soporte corto y piezas de conexión a la bajante.",
+      "precio": 65.0,
+      "estado": "provisional"
+    },
+    "MT-CABLE-COBRE-DESN": {
+      "unidad": "m",
+      "descripcion": "Cable de cobre desnudo de 35 mm2 para captación y bajante de protección contra rayos, con sus grapas de fijación.",
+      "precio": 4.5,
+      "estado": "provisional"
+    },
+    "MT-CONT-DESCARGAS": {
+      "unidad": "ud",
+      "descripcion": "Contador de descargas con su mando de comprobación, intercalado en la bajante del sistema de protección.",
+      "precio": 45.0,
+      "estado": "provisional"
+    },
+    "MT-DPS-1": {
+      "unidad": "ud",
+      "descripcion": "Protector contra sobretensiones transitorias tipo 1 (clase I), para montaje en el tablero principal o la acometida.",
+      "precio": 85.0,
+      "estado": "provisional"
+    },
+    "MT-DPS-2": {
+      "unidad": "ud",
+      "descripcion": "Protector contra sobretensiones transitorias tipo 2 (clase II), para montaje en tablero secundario de distribución.",
+      "precio": 45.0,
+      "estado": "provisional"
+    },
+    "MT-DPS-3": {
+      "unidad": "ud",
+      "descripcion": "Protector contra sobretensiones tipo 3 (clase III), supresor para equipos electrónicos sensibles.",
+      "precio": 25.0,
+      "estado": "provisional"
+    },
+    "MT-DPS-DATOS": {
+      "unidad": "ud",
+      "descripcion": "Protector contra sobretensiones para línea de datos y telecomunicaciones, con su conexión a tierra.",
+      "precio": 30.0,
+      "estado": "provisional"
     }
   },
   "maquinaria": {
@@ -2061,6 +2109,12 @@
       "unidad": "h",
       "descripcion": "Dobladora y abocardadora de tubería de cobre para climatización y gas.",
       "precio": 2.6,
+      "estado": "provisional"
+    },
+    "MQ-TELUROMETRO": {
+      "unidad": "h",
+      "descripcion": "Medidor de resistencia de puesta a tierra (telurómetro) con sus picas y cables de prueba.",
+      "precio": 12.0,
       "estado": "provisional"
     }
   }

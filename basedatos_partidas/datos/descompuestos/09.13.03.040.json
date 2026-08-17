@@ -1,0 +1,32 @@
+{
+  "codigo": "09.13.03.040",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "13",
+  "unidad": "ud",
+  "titulo": "Protector contra sobretensiones para línea de datos y telecomunicaciones.",
+  "descripcion": "Suministro e instalación de protector contra sobretensiones para línea de datos y telecomunicaciones, con su conexión a tierra. Incluye el intercalado del protector en la línea, la conexión del borne de tierra y la verificación de la continuidad de la señal. Medido por unidad instalada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-DPS-DATOS",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-CABLE-DATOS",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "03"
+}

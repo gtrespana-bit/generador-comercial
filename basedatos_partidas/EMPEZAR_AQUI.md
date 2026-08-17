@@ -20,13 +20,13 @@ presupuestos.
 
 | | |
 |---|---:|
-| Partidas | **540** |
-| Capítulos · subcapítulos · apartados con partidas | **18 · 172 · 147** |
-| Recursos en el cuadro de precios | 311 |
+| Partidas | **553** |
+| Capítulos · subcapítulos · apartados con partidas | **18 · 172 · 150** |
+| Recursos en el cuadro de precios | 320 |
 | Coste directo del catálogo | 15.733,15 USD |
 | **Peso económico con precio cerrado** | **79,6 %** |
 | Validación con el importador real | **0 errores · 0 advertencias** |
-| Tests del proyecto | **483 pasando · 6 omitidos** |
+| Tests del proyecto | **515 pasando · 6 omitidos** |
 
 Desglose del cuadro de precios:
 
@@ -35,7 +35,7 @@ Desglose del cuadro de precios:
 | `confirmado` (mano de obra, dato del cliente) | 17 | 3.180,69 | 20,2 % |
 | `verificado-mercado` (contrastado con VE) | 113 | 9.214,75 | 58,6 % |
 | `derivado` (morteros, salen del cemento) | 4 | 127,36 | 0,8 % |
-| `provisional` | 177 | 3.210,35 | 20,4 % |
+| `provisional` | 186 | 3.210,35 | 20,4 % |
 
 ---
 
@@ -144,6 +144,13 @@ demanda, búsqueda híbrida y paginación ya están implantadas y probadas con
 incrementales también están implantadas. La matriz de 3.000/5.000 partidas y
 el diccionario de sinónimos de 146 grupos ya cubren los 18 capítulos. El siguiente paso es
 producir familias completas, comenzando por `09 Instalaciones`.
+
+> **Progreso 17/08/2026:** primera familia de `09` cerrada: `09.13 Protección
+> contra rayos y sobretensiones` (13 partidas nuevas + 3 apartados + 9 recursos,
+> todos marcados `provisional`). Validación del importador real: 0 errores,
+> 0 advertencias sobre 553 partidas. Siguen sin cobertura `09.16 Transporte
+> vertical`, `09.17 Reparación, pruebas y puesta en marcha` y
+> `09.12 Domótica y automatización`.
 
 La producción cerrará familias completas en este orden: `09 Instalaciones`,
 `12 Revestimientos y acabados`, `07 Carpintería, herrería y vidrios`, `10/11

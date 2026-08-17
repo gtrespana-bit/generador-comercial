@@ -1,0 +1,32 @@
+{
+  "codigo": "09.13.02.040",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "13",
+  "unidad": "ud",
+  "titulo": "Unión equipotencial de la bajante con la red de tierra general.",
+  "descripcion": "Ejecución de la unión equipotencial entre la bajante del sistema de protección y la red de tierra general de la edificación, con conductor de cobre desnudo y elemento de conexión desmontable. Incluye el tendido del conductor de enlace, la conexión en ambos extremos y la protección del tramo expuesto. Medido por unión ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CABLE-COBRE-DESN",
+      "rendimiento": 3.0
+    },
+    {
+      "ref": "MT-PLO-SOP",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.3
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

@@ -1,0 +1,36 @@
+{
+  "codigo": "09.13.02.030",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "13",
+  "unidad": "ud",
+  "titulo": "Puesta a tierra dedicada para protección contra rayos.",
+  "descripcion": "Ejecución de puesta a tierra dedicada del sistema de protección contra rayos, con electrodos de cobre, su caja de inspección y la conexión a la bajante. Incluye la apertura y el hincado de los electrodos, la interconexión entre ellos con conductor de cobre desnudo, la conexión a la bajante mediante elemento separable, la instalación de la caja de inspección a nivel del piso terminado y la medición de la resistencia resultante. Medido por toma ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-BARRA-TIERRA",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MT-CABLE-COBRE-DESN",
+      "rendimiento": 6.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 1.0
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

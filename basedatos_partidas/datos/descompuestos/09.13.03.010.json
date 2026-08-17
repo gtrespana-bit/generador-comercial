@@ -1,0 +1,36 @@
+{
+  "codigo": "09.13.03.010",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "13",
+  "unidad": "ud",
+  "titulo": "Protector contra sobretensiones transitorias tipo 1 en tablero principal.",
+  "descripcion": "Suministro y montaje de protector contra sobretensiones transitorias tipo 1 (clase I) en el tablero principal, con su conexión a tierra. Incluye la elección del modelo según la corriente de descarga prevista, el montaje en el carril del tablero, la conexión de los conductores de fase, neutro y tierra con la sección indicada y lo más cortos posible, y la prueba de funcionamiento. Medido por unidad instalada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-DPS-1",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-CABLE-8",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.4
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "03"
+}

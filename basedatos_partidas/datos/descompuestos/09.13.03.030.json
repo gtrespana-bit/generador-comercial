@@ -1,0 +1,28 @@
+{
+  "codigo": "09.13.03.030",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "13",
+  "unidad": "ud",
+  "titulo": "Protector contra sobretensiones tipo 3 para equipos sensibles.",
+  "descripcion": "Suministro e instalación de protector contra sobretensiones tipo 3 (clase III) para equipos electrónicos sensibles, en el punto de conexión del equipo. Incluye la elección del supresor según el equipo protegido, su conexión y la verificación del funcionamiento. Medido por unidad instalada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-DPS-3",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.15
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "03"
+}

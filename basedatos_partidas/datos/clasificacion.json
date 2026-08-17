@@ -523,7 +523,11 @@
         },
         "13": {
           "nombre": "Protección contra rayos y sobretensiones",
-          "apartados": {}
+          "apartados": {
+            "01": "Captación y pararrayos",
+            "02": "Bajantes y puesta a tierra de protección",
+            "03": "Protectores contra sobretensiones"
+          }
         },
         "14": {
           "nombre": "Tanques, bombas e hidroneumáticos",

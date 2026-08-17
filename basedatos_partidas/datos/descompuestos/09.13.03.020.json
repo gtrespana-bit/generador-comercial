@@ -1,0 +1,36 @@
+{
+  "codigo": "09.13.03.020",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "13",
+  "unidad": "ud",
+  "titulo": "Protector contra sobretensiones transitorias tipo 2 en tablero secundario.",
+  "descripcion": "Suministro y montaje de protector contra sobretensiones transitorias tipo 2 (clase II) en tablero secundario de distribución, con su conexión a tierra. Incluye el montaje en el carril del tablero, la conexión de los conductores con la sección indicada y lo más cortos posible, y la prueba de funcionamiento. Medido por unidad instalada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-DPS-2",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-CABLE-8",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 0.8
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.3
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "03"
+}

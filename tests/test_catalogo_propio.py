@@ -28,6 +28,14 @@ from app.services.catalogo_propio import (
 )
 
 
+# La ampliación del catálogo extenso (lotes de producción) hace crecer estas
+# cifras. Se centralizan aquí para actualizarlas en un solo punto en cada lote.
+N_PARTIDAS = 553       # total de partidas oficiales del catálogo
+N_LEGACY = 540         # partidas migradas de la v1 con código CT- (no crece)
+N_APARTADOS = 150      # apartados de tercer nivel con partidas
+N_CATEGORIAS = 18 + 172 + N_APARTADOS
+
+
 def _session():
     engine = create_engine("sqlite://")
     Base.metadata.create_all(bind=engine)
@@ -41,11 +49,11 @@ def test_catalogo_propio_disponible_y_completo():
     assert disponible()
     datos = construir_catalogo()
     assert datos["ok"]
-    assert datos["n_partidas"] == 540
+    assert datos["n_partidas"] == N_PARTIDAS
     assert datos["n_recursos"] >= 300
     assert len([c for c in datos["categorias"] if c["nivel"] == 1]) == 18
     assert len([c for c in datos["categorias"] if c["nivel"] == 2]) == 172
-    assert len([c for c in datos["categorias"] if c["nivel"] == 3]) == 147
+    assert len([c for c in datos["categorias"] if c["nivel"] == 3]) == N_APARTADOS
 
     primera = datos["partidas"][0]
     assert re.fullmatch(r"\d{2}\.\d{2}\.\d{2}\.\d{3}", primera["codigo"])
@@ -69,7 +77,7 @@ def test_catalogo_masivo_conserva_codigo_y_tres_niveles():
     resultado = importer.validar_filas(analisis["filas"], mapeo)
     assert not resultado["errores"]
     assert not resultado["advertencias"]
-    assert len(resultado["filas"]) == 540
+    assert len(resultado["filas"]) == N_PARTIDAS
     primera = resultado["filas"][0]
     assert re.fullmatch(r"\d{2}\.\d{2}\.\d{2}\.\d{3}", primera["codigo"])
     assert primera["codigo_legacy"].startswith("CT-")
@@ -99,18 +107,18 @@ def test_sembrar_catalogo_carga_arbol_numerico_completo():
 
         sembrar_catalogo(db)
 
-        assert db.query(Partida).count() == 540
+        assert db.query(Partida).count() == N_PARTIDAS
         assert db.query(Partida).filter(
             Partida.version_catalogo == CATALOGO_VERSION
-        ).count() == 540
-        assert db.query(Partida).filter(Partida.codigo_legacy.like("CT-%")).count() == 540
-        assert db.query(Partida).filter(Partida.es_oficial.is_(True)).count() == 540
-        assert db.query(Partida).filter(Partida.catalogo_uid.isnot(None)).count() == 540
+        ).count() == N_PARTIDAS
+        assert db.query(Partida).filter(Partida.codigo_legacy.like("CT-%")).count() == N_LEGACY
+        assert db.query(Partida).filter(Partida.es_oficial.is_(True)).count() == N_PARTIDAS
+        assert db.query(Partida).filter(Partida.catalogo_uid.isnot(None)).count() == N_PARTIDAS
         assert db.query(Partida).filter(Partida.oculta.is_(True)).count() == 0
         assert db.query(Recurso).count() >= 300
         assert db.query(CategoriaPartida).filter_by(nivel=1, oficial=True).count() == 18
         assert db.query(CategoriaPartida).filter_by(nivel=2, oficial=True).count() == 172
-        assert db.query(CategoriaPartida).filter_by(nivel=3, oficial=True).count() == 147
+        assert db.query(CategoriaPartida).filter_by(nivel=3, oficial=True).count() == N_APARTADOS
         assert db.query(Partida).filter(Partida.categoria_id.is_(None)).count() == 0
         cfg = db.query(Configuracion).first()
         assert cfg.semilla_catalogo_aplicada is True
@@ -119,8 +127,8 @@ def test_sembrar_catalogo_carga_arbol_numerico_completo():
         # Idempotente al reintentar la carga directa.
         r = sembrar_catalogo_propio(db)
         assert r["partidas"] == 0
-        assert db.query(Partida).count() == 540
-        assert db.query(CategoriaPartida).count() == 337
+        assert db.query(Partida).count() == N_PARTIDAS
+        assert db.query(CategoriaPartida).count() == N_CATEGORIAS
     finally:
         db.close()
         engine.dispose()
@@ -284,7 +292,7 @@ def test_migrar_catalogo_prueba_elimina_antiguas_y_carga_propias():
         ).count() == 0
         assert db.query(Partida).filter(
             Partida.version_catalogo == CATALOGO_VERSION
-        ).count() == 540
+        ).count() == N_PARTIDAS
         assert db.query(Recurso).filter(Recurso.codigo == "MT-CEMENTO").count() == 1
 
         # Ya migrado: asegurar no vuelve a hacer trabajo.
@@ -315,7 +323,7 @@ def test_modo_demo_carga_catalogo_propio():
             "moneda_default": "USD",
             "iva_default": 16,
         }, "demo")
-        assert db.query(Partida).count() == 540
+        assert db.query(Partida).count() == N_PARTIDAS
         assert db.query(Partida).filter(
             Partida.codigo_legacy == "CT-01-01-010"
         ).count() == 1
