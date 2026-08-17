@@ -24,7 +24,7 @@ def acceso(request: Request, next: str = ""):
             "error": error,
             "msg": mensaje,
             "auth_configured": configurado,
-            "next": _next_seguro(next),
+            "next": _next_seguro(next, "/inicio"),
         },
     )
 
@@ -111,7 +111,7 @@ async def restablecer_clave(request: Request):
 @router.post("/acceso")
 async def iniciar_sesion(request: Request):
     form = await request.form()
-    destino = _next_seguro(form.get("next"))
+    destino = _next_seguro(form.get("next"), "/inicio")
     try:
         settings = SupabaseAuthSettings.from_environment()
         tokens = await run_in_threadpool(
@@ -331,7 +331,7 @@ def listar_organizaciones_web(
     db: Session = Depends(get_authenticated_db),
 ):
     if common.DATABASE_IS_SQLITE:
-        return _redirect("/")
+        return _redirect("/inicio")
     usuario = db.get(Usuario, db.info["usuario_id"])
     membresias = membresias_activas(db, usuario.id)
     return TEMPLATES.TemplateResponse(
@@ -363,7 +363,7 @@ def aceptar_invitacion_pendiente_web(
     donde exigir que rebusque el email era un paso muerto.
     """
     if common.DATABASE_IS_SQLITE:
-        return _redirect("/")
+        return _redirect("/inicio")
     usuario = db.get(Usuario, db.info["usuario_id"])
     identidad = request.state.supabase_identity
     try:
@@ -397,7 +397,7 @@ def nueva_organizacion_web(
     db: Session = Depends(get_authenticated_db),
 ):
     if common.DATABASE_IS_SQLITE:
-        return _redirect("/")
+        return _redirect("/inicio")
     usuario = db.get(Usuario, db.info["usuario_id"])
     pendientes = invitaciones_pendientes_para(db, usuario=usuario)
     # Quien llega aquí por el destino por omisión del registro puede tener una
@@ -418,7 +418,7 @@ async def crear_organizacion_web(
     db: Session = Depends(get_authenticated_db),
 ):
     if common.DATABASE_IS_SQLITE:
-        return _redirect("/")
+        return _redirect("/inicio")
     form = await request.form()
     nombre = str(form.get("nombre") or "").strip()[:200]
     if len(nombre) < 2:
@@ -454,7 +454,7 @@ def seleccionar_organizacion_web(
     db: Session = Depends(get_authenticated_db),
 ):
     if common.DATABASE_IS_SQLITE:
-        return _redirect("/")
+        return _redirect("/inicio")
     usuario_id = db.info["usuario_id"]
     membresia = (
         db.query(Membresia)
@@ -471,7 +471,7 @@ def seleccionar_organizacion_web(
         raise OrganizationAccessDenied(
             "No tienes acceso a la organización seleccionada."
         )
-    response = RedirectResponse("/", status_code=303)
+    response = RedirectResponse("/inicio", status_code=303)
     _set_organization_cookie(response, organizacion_id)
     return response
 
@@ -524,14 +524,14 @@ def _render_equipo(
 @router.get("/equipo", response_class=HTMLResponse)
 def gestionar_equipo_web(request: Request, db: Session = Depends(get_db)):
     if common.DATABASE_IS_SQLITE:
-        return _redirect("/")
+        return _redirect("/inicio")
     return _render_equipo(request, db)
 
 
 @router.post("/equipo/invitaciones", response_class=HTMLResponse)
 async def crear_invitacion_web(request: Request, db: Session = Depends(get_db)):
     if common.DATABASE_IS_SQLITE:
-        return _redirect("/")
+        return _redirect("/inicio")
     form = await request.form()
     try:
         # Valida primero el origen fijo para no persistir una invitación cuyo
@@ -600,7 +600,7 @@ def revocar_invitacion_web(
     db: Session = Depends(get_db),
 ):
     if common.DATABASE_IS_SQLITE:
-        return _redirect("/")
+        return _redirect("/inicio")
     invitacion = (
         db.query(InvitacionOrganizacion)
         .filter(
@@ -632,7 +632,7 @@ async def actualizar_membresia_web(
     db: Session = Depends(get_db),
 ):
     if common.DATABASE_IS_SQLITE:
-        return _redirect("/")
+        return _redirect("/inicio")
     membresia = (
         db.query(Membresia)
         .filter(
@@ -721,7 +721,7 @@ def aceptar_invitacion_web(
     db: Session = Depends(get_authenticated_db),
 ):
     if common.DATABASE_IS_SQLITE:
-        return _redirect("/")
+        return _redirect("/inicio")
     usuario = db.get(Usuario, db.info["usuario_id"])
     identidad = request.state.supabase_identity
     try:
@@ -764,7 +764,7 @@ def aceptar_invitacion_web(
 def bienvenida(request: Request, db: Session = Depends(get_db)):
     cfg = _config(db)
     if cfg.onboarding_completado:
-        return _redirect("/")
+        return _redirect("/inicio")
     return TEMPLATES.TemplateResponse(
         request,
         "onboarding.html",
@@ -776,7 +776,7 @@ def bienvenida(request: Request, db: Session = Depends(get_db)):
 async def finalizar_bienvenida(request: Request, db: Session = Depends(get_db)):
     cfg = _config(db)
     if cfg.onboarding_completado:
-        return _redirect("/")
+        return _redirect("/inicio")
     if not cfg.onboarding_iniciado_at:
         cfg.onboarding_iniciado_at = datetime.utcnow()
         db.commit()
@@ -804,7 +804,7 @@ async def finalizar_bienvenida(request: Request, db: Session = Depends(get_db)):
         if ruta:
             cfg.logo = ruta
             db.commit()
-    return _redirect("/", msg="Tu espacio de trabajo está listo. Completa la guía para crear tu primer PDF.")
+    return _redirect("/inicio", msg="Tu espacio de trabajo está listo. Completa la guía para crear tu primer PDF.")
 
 
 @router.post("/recorrido/catalogo-revisado")

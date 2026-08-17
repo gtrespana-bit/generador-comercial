@@ -11,7 +11,7 @@ router = APIRouter()
 # Inicio
 # ---------------------------------------------------------------------------
 
-@router.get("/", response_class=HTMLResponse)
+@router.get("/inicio", response_class=HTMLResponse)
 def inicio(request: Request, db: Session = Depends(get_db)):
     cfg = _config(db)
     if not cfg.onboarding_completado:

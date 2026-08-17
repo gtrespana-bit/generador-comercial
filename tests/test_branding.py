@@ -85,7 +85,7 @@ def test_inicio_renderiza_marca_y_propuesta_honesta():
     from app.main import app
 
     with TestClient(app) as client:
-        response = client.get("/")
+        response = client.get("/inicio")
     assert response.status_code == 200
     assert "Dashboard · CotizaT" in response.text
     assert VALUE_PROPOSITION in response.text

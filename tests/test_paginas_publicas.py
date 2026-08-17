@@ -17,6 +17,15 @@ def _get(path):
         return client.get(path)
 
 
+def test_home_es_la_landing_publica():
+    """La raíz («/») es la puerta de entrada pública, no el panel de trabajo."""
+    r = _get("/")
+    assert r.status_code == 200
+    assert "demostración" in r.text
+    assert "construcción" in r.text.lower()
+    assert "/acceso" in r.text  # enlace a iniciar sesión
+
+
 def test_landing_publica_sin_sesion():
     r = _get("/conocer")
     assert r.status_code == 200

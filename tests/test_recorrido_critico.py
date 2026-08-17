@@ -58,7 +58,7 @@ from app.services.onboarding import estado_recorrido_inicial
 
 # --- 1 y 2. Instalación limpia y primer inicio -----------------------------
 with TestClient(app) as client:
-    inicio = client.get('/', follow_redirects=False)
+    inicio = client.get('/inicio', follow_redirects=False)
     assert inicio.status_code == 303, inicio.status_code
     assert inicio.headers['location'] == '/bienvenida'
 
@@ -199,7 +199,7 @@ with TestClient(app) as client:
 
 # --- Reinicio: la instalación limpia no reinyecta datos ni repite el asistente
 with TestClient(app) as client:
-    r = client.get('/', follow_redirects=False)
+    r = client.get('/inicio', follow_redirects=False)
     assert r.status_code == 200, r.status_code
     with SessionLocal() as db:
         assert db.query(Presupuesto).count() == 1
@@ -274,7 +274,7 @@ with TestClient(app) as client:
         cfg = db.query(Configuracion).one()
         assert cfg.empresa_nombre == 'Empresa Anterior'
         assert cfg.onboarding_completado is True
-    r = client.get('/', follow_redirects=False)
+    r = client.get('/inicio', follow_redirects=False)
     assert r.status_code == 200, r.status_code
 """
     resultado = _ejecutar(script, tmp_path / "datos")

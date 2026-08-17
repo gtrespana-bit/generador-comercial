@@ -98,9 +98,19 @@ def descargar_archivo_legado_privado(
 # la identidad del producto. Por eso no dependen de get_db y están declaradas
 # como fronteras públicas en la auditoría de protección de rutas.
 
+@router.get("/", response_class=HTMLResponse, include_in_schema=False)
+def home_publica(request: Request):
+    """Página de inicio pública: la landing comercial es la puerta de entrada.
+
+    Quien llega sin sesión ve qué ofrece el producto, por qué elegirlo y cómo
+    empezar. El panel de trabajo vive en ``/inicio``, ya con sesión iniciada.
+    """
+    return TEMPLATES.TemplateResponse(request, "landing.html", {})
+
+
 @router.get("/conocer", response_class=HTMLResponse, include_in_schema=False)
 def landing_publica(request: Request):
-    """Landing comercial: problema, resultado, público y llamada a demo."""
+    """Alias histórico de la landing, conservado para no romper enlaces."""
     return TEMPLATES.TemplateResponse(request, "landing.html", {})
 
 

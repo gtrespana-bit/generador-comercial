@@ -128,7 +128,7 @@ def test_plantillas_no_contienen_handlers_y_inline_usa_nonce():
 
 def test_respuesta_real_publica_nonce_para_hoja_dinamica_sin_estilos_inline():
     with TestClient(cotizat_app) as client:
-        response = client.get("/")
+        response = client.get("/inicio")
     nonce = response.headers["content-security-policy"].split("'nonce-", 1)[1].split("'", 1)[0]
     assert re.search(
         rf'<script nonce="{nonce}" src="/static/js/csp_styles\.js(\?v=[^"]*)?"></script>',
@@ -235,6 +235,8 @@ def test_toda_ruta_comercial_exige_sesion_salvo_fronteras_publicas_o_locales():
         ("GET", "/healthz"),
         ("GET", "/readyz"),
         # Landing y páginas legales: contenido estático sin datos de tenant.
+        # La raíz («/») es ahora la landing pública; el panel vive en /inicio.
+        ("GET", "/"),
         ("GET", "/conocer"),
         ("GET", "/legal/{pagina}"),
     }

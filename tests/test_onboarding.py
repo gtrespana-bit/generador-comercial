@@ -252,7 +252,7 @@ def test_http_primer_inicio_redirige_y_completa_modo_limpio(tmp_path):
 from fastapi.testclient import TestClient
 from app.main import app
 with TestClient(app) as client:
-    inicio = client.get('/', follow_redirects=False)
+    inicio = client.get('/inicio', follow_redirects=False)
     assert inicio.status_code == 303
     assert inicio.headers['location'] == '/bienvenida'
     wizard = client.get('/bienvenida')
@@ -273,7 +273,7 @@ with TestClient(app) as client:
     assert fin.status_code == 303
     with SessionLocal() as db:
         assert db.query(Configuracion).one().onboarding_iniciado_at is not None
-    panel = client.get('/')
+    panel = client.get('/inicio')
     assert panel.status_code == 200
     assert 'Llega a tu primer PDF en cinco pasos' in panel.text
     assert 'action="/recorrido/catalogo-revisado"' in panel.text
