@@ -15,35 +15,48 @@ listados en [`USO_EN_LA_APLICACION.md`](USO_EN_LA_APLICACION.md).
 
 ```
 basedatos_partidas/
-├── datos/recursos.json  ← FUENTE ÚNICA DE PRECIOS
-├── datos/descompuestos/ ← 540 partidas, una por archivo
-├── descompuestos.py     ← genera las hojas y el maestro
-├── construir.py         ← genera y valida el catálogo
-└── salida/              ← ficheros listos para subir a la app
-    ├── catalogo_partidas.csv
-    ├── catalogo_partidas.xlsx
-    └── catalogo_partidas.json
+├── datos/recursos.json             ← FUENTE ÚNICA DE PRECIOS
+├── datos/clasificacion.json        ← árbol numérico de tres niveles
+├── datos/descompuestos/            ← 540 partidas, una por archivo
+├── datos/objetivos_cobertura.json  ← metas 3.000/5.000 por capítulo
+├── datos/sinonimos_busqueda.json   ← diccionario de sinónimos
+├── descompuestos.py                ← genera hojas, maestro y árbol
+├── construir.py                    ← genera y valida el catálogo importable
+├── planificar_cobertura.py         ← genera matriz y prioridades
+└── salida/                         ← catálogo, hojas e informes regenerables
 ```
 
 ## Cómo se usa
 
-1. Añadir/editar filas en `datos/partidas.csv` (separador `;`, UTF-8).
-2. Ejecutar: `python3 basedatos_partidas/construir.py`
-3. Subir `salida/catalogo_partidas.xlsx` (o el .csv) en la app:
-   **Partidas → Importar** (`/presupuestos/importar?destino=catalogo`).
+1. Añadir o editar la partida en `datos/descompuestos/*.json` y, si hace falta,
+   sus recursos en `datos/recursos.json`.
+2. Ejecutar:
+   ```bash
+   .venv/bin/python basedatos_partidas/descompuestos.py
+   .venv/bin/python basedatos_partidas/construir.py
+   .venv/bin/python basedatos_partidas/planificar_cobertura.py
+   ```
+3. Verificar terminología y cobertura.
+4. La aplicación carga directamente las fuentes empaquetadas; para una carga
+   manual también se puede usar `salida/catalogo_partidas.xlsx` desde
+   **Partidas → Importar**.
+
+`datos/partidas.csv` es un maestro **generado**: no se edita a mano.
 
 ## Columnas del maestro (`datos/partidas.csv`)
 
 | Columna | Obligatoria | Notas |
 |---|---|---|
-| `codigo` | recomendada | Código interno/externo. Se comprueba que no se repita. |
-| `capitulo` | sí | Capítulo de obra (ALBAÑILERÍA, FONTANERÍA…). |
-| `partida` | **sí** | Nombre. **Único** en todo el fichero: el catálogo omite duplicados (máx. 200 car.). |
+| `codigo` | sí | Código numérico `CC.SS.AA.NNN`, único. |
+| `codigo_legacy` | catálogo v2 | Alias histórico `CT-CC-SS-NNN`; también sirve como UID de las 540 actuales. |
+| `capitulo` | sí | Nombre del capítulo de obra. |
+| `partida` | **sí** | Nombre único (máx. 200 caracteres). |
 | `descripcion` | sí | Texto técnico/comercial largo. |
 | `unidad` | sí | `ud, m2, m, ml, m3, juego, hora, glb, kg`. `m²`→`m2` se normaliza solo. |
 | `precio` | sí | Precio unitario de venta, > 0. Acepta coma o punto decimal. |
-| `categoria` | no | Si se deja vacía se usa el capítulo. |
-| `subcategoria` | no | Solo informativa / JSON. |
+| `categoria` | sí | Capítulo numerado visible. |
+| `subcategoria` | sí | Subcapítulo numerado visible. |
+| `apartado` | sí | Tercer nivel numerado visible. |
 | `coste_materiales` | no | Desglose. La suma no puede superar al precio. |
 | `coste_mano_obra` | no | Desglose. |
 | `coste_complementarios` | no | Costes directos complementarios (estilo CYPE). |
@@ -64,11 +77,11 @@ basedatos_partidas/
 
 ## Correspondencia con el modelo `Partida`
 
-El asistente en modo catálogo (`_importar_a_catalogo`) rellena: `nombre`,
-`descripcion`, `precio_unitario`, `unidad`, `categoria`, `codigo_interno`,
-`codigo_externo`, `descomposicion_json` y los cuatro `coste_*`.
-El `.json` de salida conserva además `subcategoria`, `rendimiento`,
-`desperdicio_recomendado_pct` y `notas_tecnicas` para una carga enriquecida futura.
+La carga enriquecida rellena identificación, los tres niveles de clasificación,
+precio, unidad, descomposición, costes, tiempos y notas. Las partidas oficiales
+llevan además `catalogo_uid`, `es_oficial`, `oculta`, `version_catalogo` y
+`version_alta_catalogo`, lo que permite ocultarlas por organización y recibir
+altas incrementales sin duplicados.
 
 ---
 

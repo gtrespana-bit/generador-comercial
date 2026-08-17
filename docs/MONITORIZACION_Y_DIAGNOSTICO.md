@@ -1,7 +1,10 @@
 # Monitorización y diagnóstico de la operación web (E3-024)
 
 Fecha: **16/08/2026** · Suite: **453 passed, 6 skipped** · Sin migración nueva
-(el head sigue siendo `a3d7e9c1b5f2`; este bloque no cambia esquema).
+(el head al cerrar ese bloque era `a3d7e9c1b5f2`; este bloque no cambió esquema).
+
+> Estado actual: el head es `d6e2f9c4b8a1`; ver
+> `docs/PUNTO_DE_CONTINUACION.md`. Esta página conserva el histórico de E3-024.
 
 Con este bloque queda completo el **cierre funcional y operativo de la Etapa 3**
 (E3-016 a E3-024). El operador puede ahora ver de un vistazo si el despliegue

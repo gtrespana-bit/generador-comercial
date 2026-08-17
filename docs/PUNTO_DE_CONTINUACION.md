@@ -9,6 +9,43 @@ junto con `docs/CONTINUIDAD_STAGING_SUPABASE.md` (estado de staging/matriz) y
 
 ---
 
+## ✅ Cierre de sesión — catálogo extenso (16/08/2026)
+
+Rama fija de la sesión: `arena/01a00d6f-generador-comercial`, basada en
+`main` (`96d82c1`). El bloque deja terminadas y documentadas estas fases:
+
+1. **Taxonomía numérica v2:** 540 partidas reclasificadas en 18 capítulos,
+   172 subcapítulos y 147 apartados; código visible `CC.SS.AA.NNN` y alias
+   histórico conservado.
+2. **Escalabilidad:** índice ligero, ficha bajo demanda, caché, árbol progresivo,
+   búsqueda híbrida y gestión paginada; benchmark reproducible con 5.000
+   partidas.
+3. **Personalización por organización:** ocultar/restaurar oficiales, eliminar
+   personalizadas y recibir altas oficiales incrementales sin reactivar ocultas.
+4. **Plan de expansión:** matriz exacta 3.000/5.000 para 172 familias y
+   diccionario de sinónimos con 146 grupos y 661 términos en los 18 capítulos.
+
+Migraciones `f8a1b2c3d4e5` y `d6e2f9c4b8a1`: **ejecutadas en Supabase por el
+titular**. Head actual esperado por el runtime: **`d6e2f9c4b8a1`**.
+
+Validación de cierre: **483 tests superados y 6 omitidos**, 63 plantillas,
+compilación Python, JavaScript, lock de 42 dependencias, auditoría de datos
+sensibles, terminología venezolana y benchmark de 5.000 partidas.
+
+Documentos principales:
+
+- `docs/ESTRATEGIA_CATALOGO_EXTENSO.md`
+- `docs/FASE_1_CATALOGO_ESCALABLE.md`
+- `docs/FASE_2_VISIBILIDAD_CATALOGO.md`
+- `docs/FASE_3_MATRIZ_COBERTURA_Y_SINONIMOS.md`
+- `basedatos_partidas/salida/RESUMEN_COBERTURA.md`
+
+**Siguiente trabajo:** producción de familias completas, empezando por
+`09 Instalaciones` y luego `12 Revestimientos y acabados`. No requiere rediseñar
+la taxonomía ni la infraestructura de catálogo.
+
+---
+
 ## ✅ 0. Migración de visibilidad aplicada en Supabase (16/08/2026)
 
 El titular confirmó la ejecución de
@@ -23,14 +60,12 @@ de alta a `partidas`; no oculta ni elimina datos durante su ejecución.
 
 El titular confirmó la ejecución en Supabase de
 `docs/staging_upgrade_f8a1b2c3d4e5.sql`. La base queda en el head
-**`f8a1b2c3d4e5`**, sobre `a3d7e9c1b5f2`, que es también el head exigido por el
-runtime.
+**`f8a1b2c3d4e5`**, sobre `a3d7e9c1b5f2`. Fue el head intermedio anterior a
+`d6e2f9c4b8a1`.
 
 La migración añade el árbol de categorías, el vínculo de cada partida a su
 apartado, el código anterior y `version_catalogo`. No modifica presupuestos ni
-precios. Al desplegar el commit `3fde078`, `/readyz` debe responder 200; si el
-código anterior sigue desplegado puede existir una diferencia temporal de
-head. **Las secciones posteriores conservan el histórico del corte anterior y
+precios. **Las secciones posteriores conservan el histórico del corte anterior y
 por eso nombran `a3d7e9c1b5f2` como head.**
 
 ---

@@ -116,8 +116,9 @@ La fase 1 quedó completada el 16/08/2026:
 6. métricas de búsquedas sin resultado;
 7. pantalla de gestión paginada a 100 filas.
 
-La prueba sintética de 5.000 partidas abrió el editor en aproximadamente 1,68 s y la pantalla
-de gestión en 0,13 s. Detalle en `docs/FASE_1_CATALOGO_ESCALABLE.md`.
+La prueba sintética de 5.000 partidas abrió el editor entre 1,1 y 2,1 s en
+ejecuciones repetidas del sandbox y la pantalla de gestión alrededor de 0,13 s.
+Detalle en `docs/FASE_1_CATALOGO_ESCALABLE.md`.
 
 ## Control de calidad y condición de salida
 

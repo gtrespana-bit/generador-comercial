@@ -4,6 +4,9 @@ Fecha: **16/08/2026** · Suite: **423 passed, 6 skipped** · Sin migración nuev
 (el head de Alembic al cerrar este bloque era `c2f6e8a1d934`; el bloque
 siguiente lo llevó a `a3d7e9c1b5f2`, aplicada y verificada en Supabase).
 
+> Estado actual: el head es `d6e2f9c4b8a1`; esta página conserva el estado
+> histórico del bloque de respaldo. Ver `docs/PUNTO_DE_CONTINUACION.md`.
+
 Este documento describe la copia de seguridad **web** completa y verificable de
 una organización y su restauración controlada. Sustituye —para la versión
 web— la limitación histórica de «backups administrados sin descarga»: ahora el

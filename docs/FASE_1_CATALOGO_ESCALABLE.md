@@ -105,7 +105,7 @@ descomposición. Resultado en `TestClient`, sin caché de navegador:
 
 | Pantalla | Resultado |
 |---|---:|
-| Apertura del editor | **1,681 s** |
+| Apertura del editor | **1,1–2,1 s** en ejecuciones repetidas del sandbox |
 | HTML del editor sin comprimir | **3.497.057 bytes** |
 | Registros del índice | **5.000** |
 | Apertura de `/partidas` | **0,110 s** |
