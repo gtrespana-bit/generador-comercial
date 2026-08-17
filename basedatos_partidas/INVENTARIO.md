@@ -121,7 +121,9 @@ datos/descompuestos/*.json ─┘                  ├─► datos/partidas.csv
 - `Partida.categoria_id` apunta al apartado terciario.
 - Los nombres denormalizados se conservan por compatibilidad y exportación.
 - `codigo_legacy` conserva el código v1; el usuario ve el código numérico v2.
-- `version_catalogo=2` evita reaplicar la migración.
+- `version_catalogo` evita reaplicar la migración; se sube con cada ampliación
+  del catálogo (actualmente `CATALOGO_VERSION=3`) para que las instalaciones
+  existentes incorporen las partidas nuevas sin duplicar ni revivir borrados.
 - El esquema `f8a1b2c3d4e5` fue ejecutado en Supabase el 16/08/2026.
 - La actualización conserva ids y precios locales, no revive partidas borradas
   y no modifica partidas creadas por una organización.

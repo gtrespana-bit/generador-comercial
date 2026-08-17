@@ -243,32 +243,32 @@ def test_actualizacion_incremental_incorpora_nuevas_y_respeta_ocultas(monkeypatc
         base = construir_catalogo()
         nueva = dict(base["partidas"][0])
         nueva.update({
-            "catalogo_uid": "COTIZAT-V3-PRUEBA-001",
+            "catalogo_uid": "COTIZAT-V4-PRUEBA-001",
             "codigo": "01.02.01.990",
             "codigo_legacy": "",
-            "nombre": "Partida oficial incorporada en versión 3",
-            "version_alta_catalogo": 3,
+            "nombre": "Partida oficial incorporada en versión 4",
+            "version_alta_catalogo": 4,
         })
         fake = {**base, "partidas": [*base["partidas"], nueva], "n_partidas": 541}
-        monkeypatch.setattr(servicio, "CATALOGO_VERSION", 3)
+        monkeypatch.setattr(servicio, "CATALOGO_VERSION", 4)
         monkeypatch.setattr(servicio, "construir_catalogo", lambda: fake)
 
         resultado = servicio.actualizar_taxonomia_catalogo_propio(db)
         assert resultado["incorporadas"] == 1
         creada = db.query(Partida).filter_by(
-            catalogo_uid="COTIZAT-V3-PRUEBA-001"
+            catalogo_uid="COTIZAT-V4-PRUEBA-001"
         ).one()
         assert creada.es_oficial is True
         assert creada.oculta is False
-        assert creada.version_alta_catalogo == 3
+        assert creada.version_alta_catalogo == 4
         assert db.get(Partida, oculta.id).oculta is True
-        assert db.query(Configuracion).one().version_catalogo == 3
+        assert db.query(Configuracion).one().version_catalogo == 4
 
         # Reintentar la misma versión no duplica ni reactiva nada.
         segundo = servicio.actualizar_taxonomia_catalogo_propio(db)
         assert segundo["incorporadas"] == 0
         assert db.query(Partida).filter_by(
-            catalogo_uid="COTIZAT-V3-PRUEBA-001"
+            catalogo_uid="COTIZAT-V4-PRUEBA-001"
         ).count() == 1
         assert db.get(Partida, oculta.id).oculta is True
     finally:

@@ -32,7 +32,12 @@ _CLASIFICACION = _BASE_DATOS / "datos" / "clasificacion.json"
 
 # Mismo margen por defecto que basedatos_partidas/descompuestos.py
 MARGEN_DEFECTO = 0.30
-CATALOGO_VERSION = 2
+# Versión del catálogo propio. Cada ampliación del catálogo que añade partidas
+# nuevas debe subir esta versión: ``actualizar_taxonomia_catalogo_propio`` solo
+# incorpora conceptos cuyo ``version_alta_catalogo`` sea posterior a la versión
+# ya aplicada a una organización. Las partidas nuevas (sin ``codigo_legacy``)
+# heredan esta versión como su ``version_alta_catalogo``.
+CATALOGO_VERSION = 3
 
 # Unidades del generador → las que acepta el validador de la app
 _EQUIV_UNIDADES = {
@@ -107,7 +112,7 @@ def _redondear2(valor: float) -> float:
 
 @lru_cache(maxsize=1)
 def construir_catalogo() -> dict:
-    """Resuelve las 540 partidas y el cuadro de precios en memoria.
+    """Resuelve las partidas del catálogo y el cuadro de precios en memoria.
 
     El resultado se cachea: sembrar el catálogo y migrar una instalación
     antigua no vuelven a recorrer los JSON.
