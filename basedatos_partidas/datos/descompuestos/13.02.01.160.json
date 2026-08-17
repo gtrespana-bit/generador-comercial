@@ -1,0 +1,36 @@
+{
+  "codigo": "13.02.01.160",
+  "ambito": "reforma",
+  "capitulo": "13",
+  "subcapitulo": "02",
+  "unidad": "m",
+  "titulo": "Salpicadero de vidrio o acrílico.",
+  "descripcion": "Colocación de salpicadero de vidrio o acrílico sobre mesón, con fijación y sellado. Incluye el corte y la fijación.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-VIDRIO-TEMP",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MT-SILICONA-EST",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-VIDR",
+      "rendimiento": 0.7
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.35
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

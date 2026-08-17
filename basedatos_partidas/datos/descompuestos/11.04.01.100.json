@@ -1,0 +1,36 @@
+{
+  "codigo": "11.04.01.100",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "04",
+  "unidad": "m",
+  "titulo": "Alero de lámina metálica.",
+  "descripcion": "Ejecución de alero en cubierta de lámina metálica, con perfil de remate de borde atornillado. Incluye el replanteo, corte y fijación.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PERFIL-REMATE",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-TORN-TECHO",
+      "rendimiento": 3.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.03
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.14
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

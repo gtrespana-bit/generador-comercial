@@ -1,0 +1,36 @@
+{
+  "codigo": "11.09.01.070",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "09",
+  "unidad": "m",
+  "titulo": "Refuerzo de estructura de cubierta existente.",
+  "descripcion": "Refuerzo de estructura de cubierta existente con angulares o perfiles atornillados, para rigidizar. Incluye la fijación.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PERFIL-ACERO",
+      "rendimiento": 0.8
+    },
+    {
+      "ref": "MT-TORNILLO-EST",
+      "rendimiento": 3.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.04
+    },
+    {
+      "ref": "MO-OF1-SOLD",
+      "rendimiento": 0.22
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.18
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

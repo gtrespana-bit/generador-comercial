@@ -1,0 +1,36 @@
+{
+  "codigo": "11.06.01.080",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "06",
+  "unidad": "m",
+  "titulo": "Viga cumbrera de madera.",
+  "descripcion": "Colocación de viga cumbrera de madera en la parte superior de la cubierta, para apoyo de los pares. Incluye el replanteo y la fijación.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MADERA-EST",
+      "rendimiento": 0.012
+    },
+    {
+      "ref": "MT-HERRAJE-MAD",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.04
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.28
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

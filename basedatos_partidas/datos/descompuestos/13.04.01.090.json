@@ -1,0 +1,36 @@
+{
+  "codigo": "13.04.01.090",
+  "ambito": "reforma",
+  "capitulo": "13",
+  "subcapitulo": "04",
+  "unidad": "m",
+  "titulo": "Barra de colgar y soportes de closet.",
+  "descripcion": "Colocación de barra de colgar y soportes de closet, con fijación a los laterales. Incluye el replanteo y la fijación.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-HERRAJE-CLOSET",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MT-TORN",
+      "rendimiento": 6.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.3
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

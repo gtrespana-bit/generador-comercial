@@ -1,0 +1,44 @@
+{
+  "codigo": "13.01.01.130",
+  "ambito": "reforma",
+  "capitulo": "13",
+  "subcapitulo": "01",
+  "unidad": "m",
+  "titulo": "Mueble bajo de cocina con fregadero integrado.",
+  "descripcion": "Fabricación e instalación de mueble bajo de cocina con hueco para fregadero, en melamina. Incluye el despiece, armado y el recorte para el fregadero.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MELAMINA",
+      "rendimiento": 2.4
+    },
+    {
+      "ref": "MT-HERRAJE-CLOSET",
+      "rendimiento": 9.0
+    },
+    {
+      "ref": "MT-TORN",
+      "rendimiento": 46.0
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.34
+    },
+    {
+      "ref": "MQ-ATORN",
+      "rendimiento": 0.38
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 2.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 1.1
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

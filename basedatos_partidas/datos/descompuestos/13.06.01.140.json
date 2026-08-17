@@ -1,0 +1,32 @@
+{
+  "codigo": "13.06.01.140",
+  "ambito": "reforma",
+  "capitulo": "13",
+  "subcapitulo": "06",
+  "unidad": "ud",
+  "titulo": "Reparación de barra de apoyo.",
+  "descripcion": "Reparación de barra de apoyo con refijación o sustitución de anclajes. Incluye la revisión y la refijación.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PERNO-ANCLA",
+      "rendimiento": 3.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.25
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

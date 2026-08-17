@@ -1,0 +1,36 @@
+{
+  "codigo": "13.09.01.020",
+  "ambito": "reforma",
+  "capitulo": "13",
+  "subcapitulo": "09",
+  "unidad": "m²",
+  "titulo": "Cancha deportiva pintada.",
+  "descripcion": "Pintado de cancha deportiva con demarcación de líneas y pintura de tráfico. Incluye la limpieza y la aplicación.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PINT-TRAFICO",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MT-CINTA-ENM",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.12
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

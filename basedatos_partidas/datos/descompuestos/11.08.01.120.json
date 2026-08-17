@@ -1,0 +1,36 @@
+{
+  "codigo": "11.08.01.120",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "08",
+  "unidad": "m²",
+  "titulo": "Reparación de membrana de cubierta plana.",
+  "descripcion": "Reparación puntual de cubierta con sustitución del tramo dañado de membrana o lámina, con sellado de solapes. Incluye la limpieza y el sellado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-POLIUR-LIQ",
+      "rendimiento": 0.8
+    },
+    {
+      "ref": "MT-MALLA-JUNTA",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.28
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

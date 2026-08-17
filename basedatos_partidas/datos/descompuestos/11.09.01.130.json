@@ -1,0 +1,36 @@
+{
+  "codigo": "11.09.01.130",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "09",
+  "unidad": "m²",
+  "titulo": "Pintura impermeabilizante de cubierta metálica.",
+  "descripcion": "Aplicación de pintura impermeabilizante elastomérica sobre cubierta metálica, con dos manos. Incluye la limpieza y la aplicación.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ACRIL-IMPER",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MT-IMP-PRIM",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.16
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

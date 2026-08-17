@@ -1,0 +1,36 @@
+{
+  "codigo": "14.05.01.080",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "05",
+  "unidad": "m",
+  "titulo": "Riel de portón corredizo empotrado.",
+  "descripcion": "Ejecución de riel de portón corredizo empotrado en el pavimento, con base de concreto. Incluye la colocación y el nivelado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-RIEL-CORRED",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-CONC-210",
+      "rendimiento": 0.03
+    },
+    {
+      "ref": "MQ-MEZCL",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.32
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

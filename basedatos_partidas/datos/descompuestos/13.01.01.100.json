@@ -1,0 +1,42 @@
+{
+  "codigo": "13.01.01.100",
+  "ambito": "reforma",
+  "capitulo": "13",
+  "subcapitulo": "01",
+  "unidad": "ud",
+  "titulo": "Instalación de campana extractora con ducto.",
+  "descripcion": "Instalación de campana extractora de cocina con conexión a la extracción y fijación. Incluye el replanteo y la fijación. El equipo lo elige el cliente.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-DUCTO-VENT",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MT-TORN",
+      "rendimiento": 8.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 1.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.6
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01",
+  "producto_cliente": {
+    "tipo": "Campana extractora de cocina, del modelo elegido por el cliente",
+    "unidad": "ud",
+    "consumo": 1.0,
+    "nota": "La partida cubre solo la instalación. El equipo se toma del catálogo de productos."
+  }
+}

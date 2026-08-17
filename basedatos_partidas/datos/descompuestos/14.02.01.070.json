@@ -1,0 +1,40 @@
+{
+  "codigo": "14.02.01.070",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "02",
+  "unidad": "m",
+  "titulo": "Escalera exterior de concreto con pasamanos.",
+  "descripcion": "Ejecución de escalera exterior de concreto con previsión de pasamanos. Incluye el encofrado, el armado y el vaciado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONC-250",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MT-MALLA-ELEC",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MT-FORM-MADERA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MQ-VIBRADOR",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.8
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

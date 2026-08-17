@@ -1,0 +1,46 @@
+{
+  "codigo": "13.05.01.060",
+  "ambito": "reforma",
+  "capitulo": "13",
+  "subcapitulo": "05",
+  "unidad": "ud",
+  "titulo": "Instalación de calentador de agua eléctrico.",
+  "descripcion": "Instalación de calentador de agua eléctrico con conexión hidráulica y eléctrica. Incluye la conexión y la fijación. El equipo lo elige el cliente.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PLO-PPR20",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MT-PLO-ACC20",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MT-ELE-CABLE",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MO-OF1-PLO",
+      "rendimiento": 1.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.6
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01",
+  "producto_cliente": {
+    "tipo": "Calentador de agua eléctrico del modelo elegido por el cliente",
+    "unidad": "ud",
+    "consumo": 1.0,
+    "nota": "La partida cubre solo la instalación. El equipo se toma del catálogo de productos."
+  }
+}

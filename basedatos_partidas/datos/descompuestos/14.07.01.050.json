@@ -1,0 +1,40 @@
+{
+  "codigo": "14.07.01.050",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "07",
+  "unidad": "ud",
+  "titulo": "Válvula de zona de riego.",
+  "descripcion": "Instalación de válvula de zona de riego, con conexión a la red. Incluye la colocación y la conexión.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-VALV-CHECK",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MT-PLO-LLAVE",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-PLO-SOP",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-PLO",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.4
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

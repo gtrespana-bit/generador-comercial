@@ -1,0 +1,44 @@
+{
+  "codigo": "11.06.01.130",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "06",
+  "unidad": "m",
+  "titulo": "Viga de amarre perimetral de cubierta.",
+  "descripcion": "Ejecución de viga de amarre perimetral de concreto armado en el apoyo de la cubierta, con encofrado y curado. Incluye el armado y el vaciado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONC-210",
+      "rendimiento": 0.04
+    },
+    {
+      "ref": "MT-ACERO-CAB",
+      "rendimiento": 2.5
+    },
+    {
+      "ref": "MT-FORM-MADERA",
+      "rendimiento": 0.8
+    },
+    {
+      "ref": "MT-DESMOLD",
+      "rendimiento": 0.01
+    },
+    {
+      "ref": "MQ-VIBRADOR",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.4
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

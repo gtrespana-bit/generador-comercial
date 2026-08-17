@@ -1,0 +1,44 @@
+{
+  "codigo": "11.02.01.150",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "02",
+  "unidad": "m",
+  "titulo": "Borde y antepecho de cubierta plana.",
+  "descripcion": "Ejecución de peto o antepecho perimetral de concreto armado en cubierta plana, con encofrado y curado. Incluye el armado, el encofrado y el vaciado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONC-210",
+      "rendimiento": 0.03
+    },
+    {
+      "ref": "MT-ACERO-CAB",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MT-FORM-MADERA",
+      "rendimiento": 0.7
+    },
+    {
+      "ref": "MT-DESMOLD",
+      "rendimiento": 0.01
+    },
+    {
+      "ref": "MQ-VIBRADOR",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.4
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

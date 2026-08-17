@@ -1,0 +1,36 @@
+{
+  "codigo": "13.06.01.060",
+  "ambito": "reforma",
+  "capitulo": "13",
+  "subcapitulo": "06",
+  "unidad": "ud",
+  "titulo": "Barra de apoyo en ducha o bañera.",
+  "descripcion": "Colocación de barra de apoyo en ducha o bañera para accesibilidad, con fijación reforzada. Incluye el replanteo y la fijación.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-BARRA-APOYO",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-PERNO-ANCLA",
+      "rendimiento": 3.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.3
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

@@ -1,0 +1,36 @@
+{
+  "codigo": "14.01.01.080",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "01",
+  "unidad": "m²",
+  "titulo": "Pavimento de gravilla compactada.",
+  "descripcion": "Pavimento exterior de gravilla o piedra suelta sobre base nivelada, con geotextil de separación. Incluye el extendido y la nivelación.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-GRAVILLA",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MT-GEOTEXTIL",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MQ-COMPACT-SALTO",
+      "rendimiento": 0.03
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

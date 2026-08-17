@@ -1,0 +1,40 @@
+{
+  "codigo": "14.10.01.070",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "10",
+  "unidad": "m",
+  "titulo": "Rebosadero de piscina.",
+  "descripcion": "Ejecución de rebosadero de piscina, con canal de recogida y conexión a drenaje. Incluye la ejecución y la conexión.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONC-250",
+      "rendimiento": 0.04
+    },
+    {
+      "ref": "MT-CANAL-DREN",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-MALLA-ELEC",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MQ-VIBRADOR",
+      "rendimiento": 0.03
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.7
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.56
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

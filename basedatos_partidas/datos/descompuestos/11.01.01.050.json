@@ -1,0 +1,32 @@
+{
+  "codigo": "11.01.01.050",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "01",
+  "unidad": "m²",
+  "titulo": "Barrera de vapor bajo cubierta.",
+  "descripcion": "Colocación de lámina de polietileno como barrera de vapor bajo el aislamiento de cubierta, con solapes sellados y remontes en los paramentos. Incluye la limpieza del soporte y el sellado de los encuentros.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-POLIET",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-CINTA-ENM",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.06
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

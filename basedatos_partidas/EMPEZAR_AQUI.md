@@ -20,22 +20,11 @@ presupuestos.
 
 | | |
 |---|---:|
-| Partidas | **2.363** |
-| Capítulos · subcapítulos · apartados con partidas | **18 · 172 · 229** |
-| Recursos en el cuadro de precios | 391 |
-| Coste directo del catálogo | 15.733,15 USD |
-| **Peso económico con precio cerrado** | **79,6 %** |
+| Partidas | **2.735** |
+| Capítulos · subcapítulos · apartados con partidas | **18 · 172 · 236** |
+| Recursos en el cuadro de precios | 392 |
 | Validación con el importador real | **0 errores · 0 advertencias** |
 | Tests del proyecto | **515 pasando · 6 omitidos** |
-
-Desglose del cuadro de precios:
-
-| Estado | Recursos | Peso | % |
-|---|---:|---:|---:|
-| `confirmado` (mano de obra, dato del cliente) | 17 | 3.180,69 | 20,2 % |
-| `verificado-mercado` (contrastado con VE) | 113 | 9.214,75 | 58,6 % |
-| `derivado` (morteros, salen del cemento) | 4 | 127,36 | 0,8 % |
-| `provisional` | 186 | 3.210,35 | 20,4 % |
 
 ---
 
@@ -146,8 +135,6 @@ el diccionario de sinónimos de 146 grupos ya cubren los 18 capítulos. El sigui
 producir familias completas, comenzando por `09 Instalaciones`.
 
 > **Progreso 17/08/2026:**
-> - `09.13 Protección contra rayos y sobretensiones` (13 partidas).
-> - `09.12 Domótica y automatización` (18 partidas).
 > - **Capítulo 12 Revestimientos y acabados** completo hasta el mínimo (401/400).
 > - **Capítulo 07 Carpintería, herrería, vidrios y protección solar** completo
 >   hasta el mínimo (180/180).
@@ -161,7 +148,10 @@ producir familias completas, comenzando por `09 Instalaciones`.
 > - **Capítulo 05 Estructuras** completo hasta el mínimo (170/170).
 > - **Capítulo 08 Remates y ayudas** completo hasta el mínimo (120/120).
 > - **Capítulo 09 Instalaciones** completo hasta el mínimo (540/540).
-> Validación del importador real: 0 errores, 0 advertencias sobre 2.363 partidas.
+> - **Capítulo 11 Techos y cubiertas** completo hasta el mínimo (130/130).
+> - **Capítulo 13 Equipamiento, mobiliario y señalización** completo (140/140).
+> - **Capítulo 14 Obras exteriores y urbanismo** completo hasta el mínimo (160/160).
+> Validación del importador real: 0 errores, 0 advertencias sobre 2.735 partidas.
 
 La producción cerrará familias completas en este orden: `09 Instalaciones`,
 `12 Revestimientos y acabados`, `07 Carpintería, herrería y vidrios`, `10/11

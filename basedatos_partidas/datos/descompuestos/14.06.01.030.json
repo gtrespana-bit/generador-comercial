@@ -1,0 +1,36 @@
+{
+  "codigo": "14.06.01.030",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "06",
+  "unidad": "m²",
+  "titulo": "Siembra de grama en panes.",
+  "descripcion": "Preparación del terreno y siembra de grama en panes o alfombra, con nivelación y riego inicial. Incluye la preparación y la siembra.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-GRAMA",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-TIERRA-ABON",
+      "rendimiento": 0.01
+    },
+    {
+      "ref": "MT-AGUA-OBRA",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MO-OF1-JARD",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

@@ -1,0 +1,36 @@
+{
+  "codigo": "11.09.01.030",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "09",
+  "unidad": "m²",
+  "titulo": "Reparación de impermeabilización de cubierta plana.",
+  "descripcion": "Reparación de impermeabilización de cubierta plana con aplicación de membrana líquida sobre la zona dañada, con refuerzo de malla. Incluye la preparación y el sellado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-POLIUR-LIQ",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-MALLA-JUNTA",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.32
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

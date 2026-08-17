@@ -1,0 +1,32 @@
+{
+  "codigo": "11.08.01.110",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "08",
+  "unidad": "m²",
+  "titulo": "Revisión y limpieza de cubierta con informe.",
+  "descripcion": "Limpieza de cubierta con retirada de hojas, sedimentos y revisión de desagües y remates, con informe de estado. Incluye la limpieza de canales y tragantes.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-LIMP",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MQ-HIDROLAV",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.06
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

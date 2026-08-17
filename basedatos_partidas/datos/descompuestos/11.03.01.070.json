@@ -1,0 +1,40 @@
+{
+  "codigo": "11.03.01.070",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "03",
+  "unidad": "m²",
+  "titulo": "Cubierta de teja de concreto.",
+  "descripcion": "Cubierta de teja de concreto perfilada sobre listonado, clavada o atornillada, con remates de alero y cumbrera. Incluye el replanteo y la colocación.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-TEJA-CRIOLLA",
+      "rendimiento": 13.0
+    },
+    {
+      "ref": "MT-MADERA-LISTON",
+      "rendimiento": 2.5
+    },
+    {
+      "ref": "MT-TORN-TECHO",
+      "rendimiento": 6.0
+    },
+    {
+      "ref": "MQ-MONTAC",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.4
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

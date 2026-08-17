@@ -1,0 +1,40 @@
+{
+  "codigo": "14.11.01.030",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "11",
+  "unidad": "m²",
+  "titulo": "Pérgola de madera tratada.",
+  "descripcion": "Ejecución de pérgola de madera para exterior, con estructura de vigas y listones tratados. Incluye el armado y el montaje.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MADERA-PERGOLA",
+      "rendimiento": 2.8
+    },
+    {
+      "ref": "MT-PRESERV-MAD",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MT-PERNO-ANCLA",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.8
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

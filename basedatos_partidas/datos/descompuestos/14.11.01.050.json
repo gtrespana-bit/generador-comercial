@@ -1,0 +1,40 @@
+{
+  "codigo": "14.11.01.050",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "11",
+  "unidad": "m²",
+  "titulo": "Pérgola metálica para exterior.",
+  "descripcion": "Ejecución de pérgola metálica para exterior, con estructura de perfiles y pintura. Incluye el armado y el montaje.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PERFIL-ACERO",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MT-PINT-ANTICORR",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MT-PERNO-ANCLA",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MQ-SOLDADORA",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MO-OF1-SOLD",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.8
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

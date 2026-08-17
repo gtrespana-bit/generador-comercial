@@ -1,0 +1,40 @@
+{
+  "codigo": "14.01.01.070",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "01",
+  "unidad": "m²",
+  "titulo": "Pavimento de adoquín con confinamiento.",
+  "descripcion": "Pavimento exterior de adoquín de concreto sobre cama de arena y base compactada, con confinamiento perimetral. Incluye la colocación, el corte y la compactación.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ADOQUIN",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-ARENA",
+      "rendimiento": 0.055
+    },
+    {
+      "ref": "MQ-PLANCHA-COMP",
+      "rendimiento": 0.09
+    },
+    {
+      "ref": "MQ-CORT-AGUA",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.42
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.52
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

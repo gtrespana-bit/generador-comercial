@@ -1,0 +1,44 @@
+{
+  "codigo": "13.08.01.080",
+  "ambito": "reforma",
+  "capitulo": "13",
+  "subcapitulo": "08",
+  "unidad": "m",
+  "titulo": "Mueble de recepción.",
+  "descripcion": "Fabricación e instalación de mueble de recepción en melamina, con mesón y frentes. Incluye el despiece y el armado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MELAMINA",
+      "rendimiento": 2.8
+    },
+    {
+      "ref": "MT-HERRAJE-CLOSET",
+      "rendimiento": 9.0
+    },
+    {
+      "ref": "MT-TORN",
+      "rendimiento": 44.0
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.36
+    },
+    {
+      "ref": "MQ-ATORN",
+      "rendimiento": 0.36
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 2.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 1.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

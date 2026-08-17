@@ -1,0 +1,28 @@
+{
+  "codigo": "11.02.01.120",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "02",
+  "unidad": "m²",
+  "titulo": "Prueba de estanqueidad de cubierta plana.",
+  "descripcion": "Prueba de estanqueidad de la cubierta plana por inundación controlada, con registro del nivel y revisión de puntos singulares. Incluye el taponado de desagües, el llenado y la inspección.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-AGUA-OBRA",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.04
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

@@ -1,0 +1,36 @@
+{
+  "codigo": "11.08.01.150",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "08",
+  "unidad": "m",
+  "titulo": "Reposición de tornillería y solapes de cubierta.",
+  "descripcion": "Reposición de tornillería y sellado de solapes de cubierta metálica, para eliminar filtraciones. Incluye la sustitución y el sellado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-TORN-TECHO",
+      "rendimiento": 3.0
+    },
+    {
+      "ref": "MT-SELLA-ELAST",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.04
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.14
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

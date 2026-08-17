@@ -1,0 +1,40 @@
+{
+  "codigo": "13.02.01.080",
+  "ambito": "reforma",
+  "capitulo": "13",
+  "subcapitulo": "02",
+  "unidad": "m",
+  "titulo": "Mesón de lavadero con escurridor.",
+  "descripcion": "Ejecución de tope o mesón de área de lavado en concreto o piedra, con pendiente al desagüe. Incluye el armado y el acabado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONC-210",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MT-MALLA-ELEC",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MT-FORM-MADERA",
+      "rendimiento": 0.8
+    },
+    {
+      "ref": "MQ-VIBRADOR",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 1.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.7
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

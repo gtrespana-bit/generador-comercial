@@ -1,0 +1,36 @@
+{
+  "codigo": "14.09.01.120",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "09",
+  "unidad": "ud",
+  "titulo": "Reparación de iluminación exterior.",
+  "descripcion": "Reparación de iluminación exterior con sustitución de luminaria o cableado dañado. Incluye la sustitución.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ELE-CABLE",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MT-ELE-CAJA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 0.7
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.35
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

@@ -1,0 +1,36 @@
+{
+  "codigo": "14.03.01.050",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "03",
+  "unidad": "m",
+  "titulo": "Tubería de drenaje perforada con geotextil.",
+  "descripcion": "Colocación de tubería de drenaje perforada corrugada envuelta en geotextil, sobre cama de gravilla. Incluye la colocación y el relleno.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-TUBO-DREN",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-GEOTEXTIL",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-GRAVILLA",
+      "rendimiento": 0.03
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.24
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

@@ -1,0 +1,44 @@
+{
+  "codigo": "13.03.01.110",
+  "ambito": "reforma",
+  "capitulo": "13",
+  "subcapitulo": "03",
+  "unidad": "m",
+  "titulo": "Gabinetes altos de baño.",
+  "descripcion": "Fabricación e instalación de gabinete alto de baño en melamina hidrófuga, con puertas y entrepaños. Incluye el despiece y el armado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MELAMINA",
+      "rendimiento": 1.8
+    },
+    {
+      "ref": "MT-HERRAJE-CLOSET",
+      "rendimiento": 5.0
+    },
+    {
+      "ref": "MT-TORN",
+      "rendimiento": 26.0
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.26
+    },
+    {
+      "ref": "MQ-ATORN",
+      "rendimiento": 0.26
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 1.6
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.8
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

@@ -1,0 +1,36 @@
+{
+  "codigo": "11.03.01.110",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "03",
+  "unidad": "m²",
+  "titulo": "Sustitución de piezas de cubierta de teja.",
+  "descripcion": "Sustitución de piezas de teja rotas o desplazadas en el faldón, sin tocar la estructura. Incluye el levantado de las piezas dañadas y la recolocación con mortero en los remates.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-TEJA-CRIOLLA",
+      "rendimiento": 6.0
+    },
+    {
+      "ref": "MT-MOR-PEGA",
+      "rendimiento": 0.005
+    },
+    {
+      "ref": "MQ-MONTAC",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.45
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.36
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

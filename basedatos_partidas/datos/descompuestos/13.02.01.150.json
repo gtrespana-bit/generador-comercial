@@ -1,0 +1,36 @@
+{
+  "codigo": "13.02.01.150",
+  "ambito": "reforma",
+  "capitulo": "13",
+  "subcapitulo": "02",
+  "unidad": "m",
+  "titulo": "Estructura de soporte de mesón.",
+  "descripcion": "Ejecución de estructura de soporte de mesón en perfil metálico o mampostería, para apoyo del mesón. Incluye la fijación y el nivelado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ESTRUCT-MESON",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-TORNILLO-EST",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.7
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.35
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

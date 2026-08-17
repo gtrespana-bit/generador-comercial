@@ -1,0 +1,36 @@
+{
+  "codigo": "11.06.01.060",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "06",
+  "unidad": "m",
+  "titulo": "Correas de madera aserrada para cubierta.",
+  "descripcion": "Colocación de correas de madera sobre la estructura para apoyo de la cubierta, con fijación mecánica. Incluye el replanteo y la fijación.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MADERA-LISTON",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MT-CLAVOS",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.03
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.14
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

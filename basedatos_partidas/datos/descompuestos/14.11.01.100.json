@@ -1,0 +1,46 @@
+{
+  "codigo": "14.11.01.100",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "11",
+  "unidad": "m²",
+  "titulo": "Toldo o sombra exterior fija.",
+  "descripcion": "Instalación de toldo o sombra exterior fija, con estructura y tensado. Incluye la estructura y el tensado. El toldo lo elige el cliente.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-TOLDO",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-PERFIL-ACERO",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-PERNO-ANCLA",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.7
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.56
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01",
+  "producto_cliente": {
+    "tipo": "Toldo del modelo elegido por el cliente",
+    "unidad": "m²",
+    "consumo": 1.0,
+    "nota": "La partida cubre solo la instalación. El toldo se toma del catálogo de productos."
+  }
+}

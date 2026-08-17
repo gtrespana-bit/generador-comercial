@@ -1,0 +1,44 @@
+{
+  "codigo": "13.03.01.130",
+  "ambito": "reforma",
+  "capitulo": "13",
+  "subcapitulo": "03",
+  "unidad": "ud",
+  "titulo": "Mueble lavadero con fregadero.",
+  "descripcion": "Fabricación e instalación de mueble de lavadero con hueco para fregadero, en melamina hidrófuga. Incluye el despiece y el armado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MELAMINA",
+      "rendimiento": 2.2
+    },
+    {
+      "ref": "MT-HERRAJE-CLOSET",
+      "rendimiento": 7.0
+    },
+    {
+      "ref": "MT-TORN",
+      "rendimiento": 34.0
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.32
+    },
+    {
+      "ref": "MQ-ATORN",
+      "rendimiento": 0.32
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 1.0
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

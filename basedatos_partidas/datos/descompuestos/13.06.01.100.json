@@ -1,0 +1,36 @@
+{
+  "codigo": "13.06.01.100",
+  "ambito": "reforma",
+  "capitulo": "13",
+  "subcapitulo": "06",
+  "unidad": "ud",
+  "titulo": "Alarma de asistencia de baño.",
+  "descripcion": "Instalación de alarma o timbre de asistencia de baño para accesibilidad, con cableado y pulsador. Incluye la instalación y la conexión.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-TIMBRE",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-ELE-CABLE",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 0.7
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.35
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

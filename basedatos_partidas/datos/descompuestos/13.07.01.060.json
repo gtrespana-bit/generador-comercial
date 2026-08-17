@@ -1,0 +1,32 @@
+{
+  "codigo": "13.07.01.060",
+  "ambito": "reforma",
+  "capitulo": "13",
+  "subcapitulo": "07",
+  "unidad": "ud",
+  "titulo": "Señalización exterior de parcela.",
+  "descripcion": "Colocación de señal exterior de parcela o local, con fijación y anclaje. Incluye el replanteo y la fijación.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PERNO-ANCLA",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

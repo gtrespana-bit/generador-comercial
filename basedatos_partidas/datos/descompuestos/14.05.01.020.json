@@ -1,0 +1,46 @@
+{
+  "codigo": "14.05.01.020",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "05",
+  "unidad": "ud",
+  "titulo": "Portón vehicular corredizo.",
+  "descripcion": "Fabricación e instalación de portón de acceso vehicular metálico, con marco, bisagras y pintura. Incluye el montaje y la pintura. El portón lo elige el cliente.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-TUBO-ACERO",
+      "rendimiento": 12.0
+    },
+    {
+      "ref": "MT-PINT-ANTICORR",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MT-CERRADURA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MQ-SOLDADORA",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-OF1-SOLD",
+      "rendimiento": 2.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 2.0
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01",
+  "producto_cliente": {
+    "tipo": "Portón de acceso vehicular del modelo elegido por el cliente",
+    "unidad": "ud",
+    "consumo": 1.0,
+    "nota": "La partida cubre la fabricación e instalación. El portón se toma del catálogo de productos."
+  }
+}

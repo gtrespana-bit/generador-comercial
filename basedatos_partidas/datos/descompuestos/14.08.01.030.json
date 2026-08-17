@@ -1,0 +1,36 @@
+{
+  "codigo": "14.08.01.030",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "08",
+  "unidad": "m",
+  "titulo": "Acometida de agua exterior.",
+  "descripcion": "Ejecución de acometida de agua exterior desde la red a la edificación, con tubería y llave de corte. Incluye la conexión.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PLO-PPR20",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-PLO-LLAVE",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MT-PLO-SOP",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-OF1-PLO",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.32
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

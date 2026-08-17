@@ -1,0 +1,28 @@
+{
+  "codigo": "11.01.01.080",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "01",
+  "unidad": "m²",
+  "titulo": "Capa separadora de geotextil en cubierta.",
+  "descripcion": "Colocación de geotextil no tejido como capa separadora entre aislamiento y membrana impermeabilizante. Incluye el extendido, los solapes y el recorte en los encuentros.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-GEOTEXTIL",
+      "rendimiento": 1.1
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.04
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

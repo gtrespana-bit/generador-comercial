@@ -1,0 +1,36 @@
+{
+  "codigo": "14.08.01.100",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "08",
+  "unidad": "m",
+  "titulo": "Acometida de aguas servidas exterior.",
+  "descripcion": "Ejecución de acometida de aguas servidas exterior, con tubería de PVC y pendiente. Incluye la colocación.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PLO-PVC4",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-PLO-ACC4",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MT-ARENA",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MO-OF1-PLO",
+      "rendimiento": 0.45
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.36
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

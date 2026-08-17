@@ -1,0 +1,44 @@
+{
+  "codigo": "11.02.01.040",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "02",
+  "unidad": "m²",
+  "titulo": "Cubierta plana no transitable con membrana de PVC.",
+  "descripcion": "Impermeabilización de cubierta plana no transitable con membrana de PVC armado con poliéster, soldada en los solapes y remontada en los paramentos. Incluye imprimación, solapes soldados y remontes.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MEMBRANA-PVC",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-IMP-PRIM",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MT-PROT-OBRA",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MQ-SOLDADORA",
+      "rendimiento": 0.04
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.32
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.26
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

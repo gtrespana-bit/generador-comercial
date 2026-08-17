@@ -711,7 +711,9 @@
       "subcapitulos": {
         "01": {
           "nombre": "Formación de pendientes y bases",
-          "apartados": {}
+          "apartados": {
+            "01": "Formación de pendientes y bases"
+          }
         },
         "02": {
           "nombre": "Cubiertas planas transitables y no transitables",
@@ -733,7 +735,9 @@
         },
         "05": {
           "nombre": "Cubiertas ligeras y traslúcidas",
-          "apartados": {}
+          "apartados": {
+            "01": "Cubiertas ligeras y traslúcidas"
+          }
         },
         "06": {
           "nombre": "Estructuras y soportes de techo",
@@ -743,7 +747,9 @@
         },
         "07": {
           "nombre": "Claraboyas, lucernarios y accesos",
-          "apartados": {}
+          "apartados": {
+            "01": "Claraboyas, lucernarios y accesos"
+          }
         },
         "08": {
           "nombre": "Canales, bajantes, limahoyas y remates",
@@ -753,7 +759,9 @@
         },
         "09": {
           "nombre": "Reparación y mantenimiento de cubiertas",
-          "apartados": {}
+          "apartados": {
+            "01": "Reparación y mantenimiento de cubiertas"
+          }
         }
       }
     },
@@ -891,7 +899,9 @@
         },
         "05": {
           "nombre": "Electrodomésticos y equipos integrados",
-          "apartados": {}
+          "apartados": {
+            "01": "Electrodomésticos y equipos integrados"
+          }
         },
         "06": {
           "nombre": "Equipamiento accesible y ayudas técnicas",
@@ -913,7 +923,9 @@
         },
         "09": {
           "nombre": "Equipamiento deportivo, recreativo y especial",
-          "apartados": {}
+          "apartados": {
+            "01": "Equipamiento deportivo, recreativo y especial"
+          }
         }
       }
     },
@@ -976,7 +988,9 @@
         },
         "10": {
           "nombre": "Piscinas y áreas recreativas",
-          "apartados": {}
+          "apartados": {
+            "01": "Piscinas y áreas recreativas"
+          }
         },
         "11": {
           "nombre": "Pérgolas, jardineras y mobiliario exterior",

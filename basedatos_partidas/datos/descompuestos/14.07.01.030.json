@@ -1,0 +1,36 @@
+{
+  "codigo": "14.07.01.030",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "07",
+  "unidad": "m",
+  "titulo": "Línea de goteo para parterre.",
+  "descripcion": "Ejecución de línea de goteo para parterre, con tubería y goteros. Incluye la colocación y la conexión.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-TUB-RIEGO",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-ASPERSOR",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MT-PLO-SOP",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-OF1-JARD",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.24
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

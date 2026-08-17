@@ -1,0 +1,36 @@
+{
+  "codigo": "11.06.01.110",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "06",
+  "unidad": "m²",
+  "titulo": "Tratamiento preservante de estructura de madera.",
+  "descripcion": "Aplicación de preservante fungicida e insecticida sobre estructura de madera de techo, con dos manos. Incluye la limpieza y el tratamiento.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PRESERV-MAD",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MT-PIN-LIJA",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.04
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.14
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

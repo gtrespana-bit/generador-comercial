@@ -1,0 +1,36 @@
+{
+  "codigo": "13.08.01.160",
+  "ambito": "reforma",
+  "capitulo": "13",
+  "subcapitulo": "08",
+  "unidad": "ud",
+  "titulo": "Reparación de mobiliario fijo comercial.",
+  "descripcion": "Reparación de mobiliario fijo comercial con ajuste de herrajes y sustitución de piezas. Incluye la revisión y el ajuste.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-HERRAJE-CLOSET",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MT-TORN",
+      "rendimiento": 12.0
+    },
+    {
+      "ref": "MQ-ATORN",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.5
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

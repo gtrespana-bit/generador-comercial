@@ -1,0 +1,36 @@
+{
+  "codigo": "11.07.01.010",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "07",
+  "unidad": "ud",
+  "titulo": "Claraboya o lucernario de policarbonato.",
+  "descripcion": "Instalación de claraboya o lucernario de policarbonato sobre cubierta, con zócalo, fijación y sellado. Incluye la apertura del hueco y la colocación.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-DOMO",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-SILICONA-EST",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.7
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.56
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

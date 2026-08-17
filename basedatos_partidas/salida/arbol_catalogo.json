@@ -18873,8 +18873,151 @@
         {
           "codigo": "11.01",
           "nombre": "Formación de pendientes y bases",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "11.01.01",
+              "nombre": "Formación de pendientes y bases",
+              "partidas": [
+                {
+                  "codigo": "11.01.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Pendientado de cubierta con mortero aligerado.",
+                  "unidad": "m²",
+                  "precio": 14.14,
+                  "horas": 0.65,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.01.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Pendientado de cubierta con concreto ligero.",
+                  "unidad": "m²",
+                  "precio": 13.78,
+                  "horas": 0.72,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.01.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Regularización de soporte de cubierta plana.",
+                  "unidad": "m²",
+                  "precio": 5.94,
+                  "horas": 0.55,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.01.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Base de mortero para cubierta de teja.",
+                  "unidad": "m²",
+                  "precio": 8.88,
+                  "horas": 0.78,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.01.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Barrera de vapor bajo cubierta.",
+                  "unidad": "m²",
+                  "precio": 1.77,
+                  "horas": 0.14,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.01.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento térmico de cubierta plana con poliestireno.",
+                  "unidad": "m²",
+                  "precio": 8.19,
+                  "horas": 0.26,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.01.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento térmico de cubierta con lana mineral.",
+                  "unidad": "m²",
+                  "precio": 6.54,
+                  "horas": 0.26,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.01.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Capa separadora de geotextil en cubierta.",
+                  "unidad": "m²",
+                  "precio": 2.15,
+                  "horas": 0.09,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.01.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Replanteo de pendientes y niveles de cubierta.",
+                  "unidad": "m²",
+                  "precio": 0.77,
+                  "horas": 0.11,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.01.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Maestras de pendiente para cubierta.",
+                  "unidad": "m",
+                  "precio": 2.94,
+                  "horas": 0.32,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.01.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Relleno aligerado de cubierta con bloques de aliviano.",
+                  "unidad": "m²",
+                  "precio": 16.22,
+                  "horas": 0.42,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.01.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Capa de compresión de cubierta con malla.",
+                  "unidad": "m²",
+                  "precio": 15.82,
+                  "horas": 0.72,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.01.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Capa de mortero de protección de aislamiento.",
+                  "unidad": "m²",
+                  "precio": 6.7,
+                  "horas": 0.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.01.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Junta de dilatación de cubierta.",
+                  "unidad": "m",
+                  "precio": 14.42,
+                  "horas": 0.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.01.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Cazuela de recogida para desagüe de cubierta.",
+                  "unidad": "ud",
+                  "precio": 23.45,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 15
+            }
+          ],
+          "n": 15
         },
         {
           "codigo": "11.02",
@@ -18910,12 +19053,120 @@
                   "precio": 24.56,
                   "horas": 0.63,
                   "producto_cliente": true
+                },
+                {
+                  "codigo": "11.02.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Cubierta plana no transitable con membrana de PVC.",
+                  "unidad": "m²",
+                  "precio": 21.89,
+                  "horas": 0.58,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.02.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Cubierta plana transitable con baldosa.",
+                  "unidad": "m²",
+                  "precio": 7.87,
+                  "horas": 0.81,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.02.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Cubierta plana con acabado de gravilla.",
+                  "unidad": "m²",
+                  "precio": 2.47,
+                  "horas": 0.18,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.02.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Cubierta invertida con aislamiento exterior.",
+                  "unidad": "m²",
+                  "precio": 13.27,
+                  "horas": 0.26,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.02.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Cubierta plana con membrana líquida de poliuretano.",
+                  "unidad": "m²",
+                  "precio": 25.61,
+                  "horas": 0.54,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.02.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Cubierta plana con impermeabilización acrílica.",
+                  "unidad": "m²",
+                  "precio": 7.31,
+                  "horas": 0.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.02.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Remonte de impermeabilización en paramento.",
+                  "unidad": "m",
+                  "precio": 7.33,
+                  "horas": 0.22,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.02.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Encuentro de cubierta con peto o muro.",
+                  "unidad": "m",
+                  "precio": 10.18,
+                  "horas": 0.32,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.02.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Prueba de estanqueidad de cubierta plana.",
+                  "unidad": "m²",
+                  "precio": 0.81,
+                  "horas": 0.09,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.02.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Protección de membrana con plancha de cemento.",
+                  "unidad": "m²",
+                  "precio": 18.56,
+                  "horas": 0.72,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.02.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Cubierta plana de concreto armado.",
+                  "unidad": "m²",
+                  "precio": 48.75,
+                  "horas": 1.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.02.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Borde y antepecho de cubierta plana.",
+                  "unidad": "m",
+                  "precio": 17.16,
+                  "horas": 0.9,
+                  "producto_cliente": false
                 }
               ],
-              "n": 3
+              "n": 15
             }
           ],
-          "n": 3
+          "n": 15
         },
         {
           "codigo": "11.03",
@@ -18951,12 +19202,111 @@
                   "precio": 16.98,
                   "horas": 0.54,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "11.03.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Cubierta de teja criolla con canal y cobija.",
+                  "unidad": "m²",
+                  "precio": 44.21,
+                  "horas": 1.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.03.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Cubierta de teja criolla sobre base continua.",
+                  "unidad": "m²",
+                  "precio": 37.86,
+                  "horas": 1.53,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.03.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Cubierta de teja asfáltica en shingle.",
+                  "unidad": "m²",
+                  "precio": 18.25,
+                  "horas": 0.58,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.03.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Cubierta de teja de concreto.",
+                  "unidad": "m²",
+                  "precio": 26.13,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.03.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Cumbrera y limatesa de cubierta de teja.",
+                  "unidad": "m",
+                  "precio": 13.35,
+                  "horas": 0.58,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.03.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Alero de cubierta de teja.",
+                  "unidad": "m",
+                  "precio": 12.14,
+                  "horas": 0.72,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.03.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Listonado para cubierta de teja.",
+                  "unidad": "m²",
+                  "precio": 11.31,
+                  "horas": 0.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.03.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Sustitución de piezas de cubierta de teja.",
+                  "unidad": "m²",
+                  "precio": 11.56,
+                  "horas": 0.81,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.03.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Teja de remate de borde con gancho.",
+                  "unidad": "m",
+                  "precio": 8.76,
+                  "horas": 0.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.03.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Cubierta de teja de zinc acanalada vista.",
+                  "unidad": "m²",
+                  "precio": 17.9,
+                  "horas": 0.54,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.03.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Canalón oculto bajo alero de teja.",
+                  "unidad": "m",
+                  "precio": 13.91,
+                  "horas": 0.36,
+                  "producto_cliente": false
                 }
               ],
-              "n": 3
+              "n": 14
             }
           ],
-          "n": 3
+          "n": 14
         },
         {
           "codigo": "11.04",
@@ -19001,18 +19351,260 @@
                   "precio": 154.26,
                   "horas": 3.8,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "11.04.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Cubierta de lámina metálica acanalada galvanizada.",
+                  "unidad": "m²",
+                  "precio": 17.8,
+                  "horas": 0.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.04.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Cubierta de lámina metálica prepintada.",
+                  "unidad": "m²",
+                  "precio": 17.8,
+                  "horas": 0.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.04.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Cubierta de panel sándwich con núcleo de poliuretano.",
+                  "unidad": "m²",
+                  "precio": 34.64,
+                  "horas": 0.54,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.04.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Cubierta de lámina de zinc con fieltro base.",
+                  "unidad": "m²",
+                  "precio": 18.54,
+                  "horas": 0.54,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.04.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Cumbrera y caballete de lámina metálica.",
+                  "unidad": "m",
+                  "precio": 13.26,
+                  "horas": 0.36,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.04.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Alero de lámina metálica.",
+                  "unidad": "m",
+                  "precio": 6.29,
+                  "horas": 0.32,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.04.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Solape y sellado de cubierta metálica.",
+                  "unidad": "m",
+                  "precio": 5.51,
+                  "horas": 0.27,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.04.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Cubierta de lámina de policarbonato alveolar.",
+                  "unidad": "m²",
+                  "precio": 31.1,
+                  "horas": 0.54,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.04.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Cubierta de lámina de policarbonato compacto.",
+                  "unidad": "m²",
+                  "precio": 33.49,
+                  "horas": 0.58,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.04.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Cubierta de lámina de fibrocemento.",
+                  "unidad": "m²",
+                  "precio": 18.03,
+                  "horas": 0.54,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.04.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Bajante de aguas lluvias en cubierta metálica.",
+                  "unidad": "m",
+                  "precio": 10.56,
+                  "horas": 0.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.04.01.160",
+                  "codigo_legacy": "",
+                  "titulo": "Canalón de recogida en cubierta metálica.",
+                  "unidad": "m",
+                  "precio": 14.14,
+                  "horas": 0.4,
+                  "producto_cliente": false
                 }
               ],
-              "n": 4
+              "n": 16
             }
           ],
-          "n": 4
+          "n": 16
         },
         {
           "codigo": "11.05",
           "nombre": "Cubiertas ligeras y traslúcidas",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "11.05.01",
+              "nombre": "Cubiertas ligeras y traslúcidas",
+              "partidas": [
+                {
+                  "codigo": "11.05.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Cubierta ligera traslúcida de policarbonato.",
+                  "unidad": "m²",
+                  "precio": 34.01,
+                  "horas": 0.72,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.05.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Cubierta ligera de panel de fibra de vidrio.",
+                  "unidad": "m²",
+                  "precio": 29.84,
+                  "horas": 0.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.05.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Marquesina traslúcida de policarbonato.",
+                  "unidad": "m²",
+                  "precio": 37.53,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.05.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Cubierta de lona o toldo fijo.",
+                  "unidad": "m²",
+                  "precio": 75.18,
+                  "horas": 0.81,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.05.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Cubierta ligera de malla sombra.",
+                  "unidad": "m²",
+                  "precio": 10.0,
+                  "horas": 0.72,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.05.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Cubierta ligera de lámina de policarbonato curvo.",
+                  "unidad": "m²",
+                  "precio": 35.97,
+                  "horas": 0.76,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.05.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Cubierta ligera de lámina de zinc delgada.",
+                  "unidad": "m²",
+                  "precio": 21.48,
+                  "horas": 0.54,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.05.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Estructura ligera de apoyo para cubierta translúcida.",
+                  "unidad": "m²",
+                  "precio": 12.77,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.05.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Remate lateral de cubierta translúcida.",
+                  "unidad": "m",
+                  "precio": 6.6,
+                  "horas": 0.28,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.05.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Cubierta ligera de panel de policarbonato con junta de estanqueidad.",
+                  "unidad": "m²",
+                  "precio": 36.98,
+                  "horas": 0.72,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.05.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Cubierta ligera de paneles de policarbonato multicapa.",
+                  "unidad": "m²",
+                  "precio": 34.68,
+                  "horas": 0.72,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.05.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Tragante en cubierta translúcida.",
+                  "unidad": "ud",
+                  "precio": 23.11,
+                  "horas": 0.54,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.05.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Cubierta ligera de teja translúcida de policarbonato.",
+                  "unidad": "m²",
+                  "precio": 30.07,
+                  "horas": 0.54,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.05.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Cubierta ligera de lámina de acrílico.",
+                  "unidad": "m²",
+                  "precio": 33.49,
+                  "horas": 0.58,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 14
+            }
+          ],
+          "n": 14
         },
         {
           "codigo": "11.06",
@@ -19039,18 +19631,242 @@
                   "precio": 53.92,
                   "horas": 1.93,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "11.06.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Estructura metálica de techo a dos aguas.",
+                  "unidad": "m²",
+                  "precio": 25.75,
+                  "horas": 1.08,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.06.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Estructura de madera de techo a dos aguas.",
+                  "unidad": "m²",
+                  "precio": 30.09,
+                  "horas": 1.26,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.06.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Correas de acero para cubierta.",
+                  "unidad": "m",
+                  "precio": 6.67,
+                  "horas": 0.36,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.06.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Correas de madera aserrada para cubierta.",
+                  "unidad": "m",
+                  "precio": 6.01,
+                  "horas": 0.32,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.06.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Cercha metálica prefabricada de techo.",
+                  "unidad": "ud",
+                  "precio": 52.94,
+                  "horas": 2.16,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.06.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Viga cumbrera de madera.",
+                  "unidad": "m",
+                  "precio": 19.21,
+                  "horas": 0.63,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.06.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Refuerzo de estructura de techo con angulares.",
+                  "unidad": "m",
+                  "precio": 9.27,
+                  "horas": 0.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.06.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Pintura de protección de estructura de techo.",
+                  "unidad": "m²",
+                  "precio": 4.25,
+                  "horas": 0.36,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.06.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Tratamiento preservante de estructura de madera.",
+                  "unidad": "m²",
+                  "precio": 3.63,
+                  "horas": 0.32,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.06.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Apuntalamiento de estructura de techo existente.",
+                  "unidad": "m",
+                  "precio": 10.08,
+                  "horas": 0.54,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.06.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Viga de amarre perimetral de cubierta.",
+                  "unidad": "m",
+                  "precio": 20.87,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.06.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Anclaje de estructura de techo a la losa.",
+                  "unidad": "ud",
+                  "precio": 11.74,
+                  "horas": 0.54,
+                  "producto_cliente": false
                 }
               ],
-              "n": 2
+              "n": 14
             }
           ],
-          "n": 2
+          "n": 14
         },
         {
           "codigo": "11.07",
           "nombre": "Claraboyas, lucernarios y accesos",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "11.07.01",
+              "nombre": "Claraboyas, lucernarios y accesos",
+              "partidas": [
+                {
+                  "codigo": "11.07.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Claraboya o lucernario de policarbonato.",
+                  "unidad": "ud",
+                  "precio": 108.76,
+                  "horas": 1.26,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.07.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Claraboya practicable de cubierta.",
+                  "unidad": "ud",
+                  "precio": 111.18,
+                  "horas": 1.44,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.07.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Lucernario corrido de policarbonato.",
+                  "unidad": "m",
+                  "precio": 30.48,
+                  "horas": 1.08,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.07.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Zócalo de claraboya de concreto.",
+                  "unidad": "m",
+                  "precio": 12.4,
+                  "horas": 0.72,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.07.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Escalera de acceso a cubierta.",
+                  "unidad": "m",
+                  "precio": 20.18,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.07.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Línea de vida horizontal en cubierta.",
+                  "unidad": "m",
+                  "precio": 17.76,
+                  "horas": 0.54,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.07.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Gancho o anclaje de seguridad en cubierta.",
+                  "unidad": "ud",
+                  "precio": 8.27,
+                  "horas": 0.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.07.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Pase de instalaciones por cubierta.",
+                  "unidad": "ud",
+                  "precio": 11.36,
+                  "horas": 0.54,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.07.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Ventilación de cubierta con rejilla.",
+                  "unidad": "ud",
+                  "precio": 15.96,
+                  "horas": 0.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.07.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Claraboya de vidrio templado.",
+                  "unidad": "ud",
+                  "precio": 88.18,
+                  "horas": 1.44,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.07.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Marco perimetral de claraboya.",
+                  "unidad": "m",
+                  "precio": 8.31,
+                  "horas": 0.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.07.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Reparación de claraboya existente.",
+                  "unidad": "ud",
+                  "precio": 12.57,
+                  "horas": 0.72,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 12
+            }
+          ],
+          "n": 12
         },
         {
           "codigo": "11.08",
@@ -19113,21 +19929,245 @@
                   "precio": 22.2,
                   "horas": 1.0,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "11.08.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Canalón de alero de cubierta.",
+                  "unidad": "m",
+                  "precio": 14.14,
+                  "horas": 0.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.08.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Bajante de aguas lluvias con fijaciones.",
+                  "unidad": "m",
+                  "precio": 10.56,
+                  "horas": 0.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.08.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Boquilla de desagüe de cubierta con rejilla.",
+                  "unidad": "ud",
+                  "precio": 23.0,
+                  "horas": 0.63,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.08.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Remate de borde de cubierta con goterón.",
+                  "unidad": "m",
+                  "precio": 6.84,
+                  "horas": 0.32,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.08.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Revisión y limpieza de cubierta con informe.",
+                  "unidad": "m²",
+                  "precio": 0.78,
+                  "horas": 0.11,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.08.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Reparación de membrana de cubierta plana.",
+                  "unidad": "m²",
+                  "precio": 15.38,
+                  "horas": 0.63,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.08.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Reparación de canal o bajante.",
+                  "unidad": "m",
+                  "precio": 10.11,
+                  "horas": 0.54,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.08.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Limpieza de canalones y bajantes.",
+                  "unidad": "m",
+                  "precio": 0.74,
+                  "horas": 0.11,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.08.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Reposición de tornillería y solapes de cubierta.",
+                  "unidad": "m",
+                  "precio": 4.84,
+                  "horas": 0.32,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.08.01.160",
+                  "codigo_legacy": "",
+                  "titulo": "Sustitución de lámina de cubierta dañada.",
+                  "unidad": "m²",
+                  "precio": 12.91,
+                  "horas": 0.72,
+                  "producto_cliente": false
                 }
               ],
-              "n": 6
+              "n": 16
             }
           ],
-          "n": 6
+          "n": 16
         },
         {
           "codigo": "11.09",
           "nombre": "Reparación y mantenimiento de cubiertas",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "11.09.01",
+              "nombre": "Reparación y mantenimiento de cubiertas",
+              "partidas": [
+                {
+                  "codigo": "11.09.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Reparación de faldón de cubierta de lámina.",
+                  "unidad": "m²",
+                  "precio": 13.14,
+                  "horas": 0.76,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.09.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Reparación de faldón de cubierta de teja.",
+                  "unidad": "m²",
+                  "precio": 11.56,
+                  "horas": 0.81,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.09.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Reparación de impermeabilización de cubierta plana.",
+                  "unidad": "m²",
+                  "precio": 18.84,
+                  "horas": 0.72,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.09.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Revisión general de cubierta con informe.",
+                  "unidad": "ud",
+                  "precio": 19.03,
+                  "horas": 3.0,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.09.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Sustitución de cumbrera de cubierta.",
+                  "unidad": "m",
+                  "precio": 13.78,
+                  "horas": 0.63,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.09.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Reparación de claraboya o lucernario.",
+                  "unidad": "ud",
+                  "precio": 12.57,
+                  "horas": 0.72,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.09.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Refuerzo de estructura de cubierta existente.",
+                  "unidad": "m",
+                  "precio": 9.27,
+                  "horas": 0.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.09.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Tratamiento anticorrosivo de cubierta metálica.",
+                  "unidad": "m²",
+                  "precio": 4.25,
+                  "horas": 0.36,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.09.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Reparación de junta de dilatación de cubierta.",
+                  "unidad": "m",
+                  "precio": 14.73,
+                  "horas": 0.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.09.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Sustitución de bajante de aguas lluvias.",
+                  "unidad": "m",
+                  "precio": 11.41,
+                  "horas": 0.54,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.09.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Sustitución de canal de recogida de aguas lluvias.",
+                  "unidad": "m",
+                  "precio": 14.99,
+                  "horas": 0.54,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.09.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Limpieza de cubierta con hidrolavadora.",
+                  "unidad": "m²",
+                  "precio": 0.86,
+                  "horas": 0.11,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.09.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Pintura impermeabilizante de cubierta metálica.",
+                  "unidad": "m²",
+                  "precio": 5.06,
+                  "horas": 0.36,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "11.09.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Sustitución de tragante de cubierta.",
+                  "unidad": "ud",
+                  "precio": 23.54,
+                  "horas": 0.72,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 14
+            }
+          ],
+          "n": 14
         }
       ],
-      "n": 18
+      "n": 130
     },
     {
       "codigo": "12",
@@ -23118,12 +24158,120 @@
                   "precio": 192.05,
                   "horas": 3.6,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "13.01.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Mueble bajo de cocina con fregadero.",
+                  "unidad": "m",
+                  "precio": 139.3,
+                  "horas": 3.15,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.01.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Mueble alto de cocina con entrepaños.",
+                  "unidad": "m",
+                  "precio": 107.38,
+                  "horas": 2.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.01.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Isla de cocina con mesón.",
+                  "unidad": "m",
+                  "precio": 162.9,
+                  "horas": 3.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.01.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Instalación de campana extractora con ducto.",
+                  "unidad": "ud",
+                  "precio": 25.13,
+                  "horas": 1.8,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "13.01.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Instalación de electrodoméstico con conexiones.",
+                  "unidad": "ud",
+                  "precio": 19.21,
+                  "horas": 1.5,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "13.01.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Despensa de cocina con gavetas.",
+                  "unidad": "m",
+                  "precio": 136.58,
+                  "horas": 3.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.01.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Mueble bajo de cocina con fregadero integrado.",
+                  "unidad": "m",
+                  "precio": 137.8,
+                  "horas": 3.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.01.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Mueble de esquinero de cocina.",
+                  "unidad": "ud",
+                  "precio": 172.82,
+                  "horas": 3.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.01.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Mueble de despensa con gavetas y entrepaños.",
+                  "unidad": "m",
+                  "precio": 160.64,
+                  "horas": 3.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.01.01.160",
+                  "codigo_legacy": "",
+                  "titulo": "Tapa de mesón de cocina a medida.",
+                  "unidad": "m",
+                  "precio": 42.89,
+                  "horas": 1.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.01.01.170",
+                  "codigo_legacy": "",
+                  "titulo": "Faldón o panel de remate de cocina.",
+                  "unidad": "m",
+                  "precio": 30.76,
+                  "horas": 1.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.01.01.180",
+                  "codigo_legacy": "",
+                  "titulo": "Reparación de mueble de cocina.",
+                  "unidad": "ud",
+                  "precio": 36.11,
+                  "horas": 1.8,
+                  "producto_cliente": false
                 }
               ],
-              "n": 6
+              "n": 18
             }
           ],
-          "n": 6
+          "n": 18
         },
         {
           "codigo": "13.02",
@@ -23168,12 +24316,120 @@
                   "precio": 26.57,
                   "horas": 1.5,
                   "producto_cliente": true
+                },
+                {
+                  "codigo": "13.02.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Mesón de granito pulido.",
+                  "unidad": "m",
+                  "precio": 18.81,
+                  "horas": 2.1,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "13.02.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Mesón de concreto con acabado pulido.",
+                  "unidad": "m",
+                  "precio": 25.32,
+                  "horas": 2.25,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.02.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Salpicadero de mesón en piedra.",
+                  "unidad": "m",
+                  "precio": 11.32,
+                  "horas": 1.35,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.02.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Mesón de lavadero con escurridor.",
+                  "unidad": "m",
+                  "precio": 24.35,
+                  "horas": 2.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.02.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Mesón de cuarzo compacto.",
+                  "unidad": "m",
+                  "precio": 18.81,
+                  "horas": 2.1,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "13.02.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Mesón de granito vaciado en sitio.",
+                  "unidad": "m",
+                  "precio": 31.54,
+                  "horas": 3.0,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.02.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Perforación de mesón para grifería o fregadero.",
+                  "unidad": "ud",
+                  "precio": 9.05,
+                  "horas": 1.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.02.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Pulido y abrillantado de mesón de piedra.",
+                  "unidad": "m",
+                  "precio": 13.95,
+                  "horas": 1.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.02.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Sellado de juntas de mesón.",
+                  "unidad": "m",
+                  "precio": 7.6,
+                  "horas": 0.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.02.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Reparación de mesón de piedra.",
+                  "unidad": "m",
+                  "precio": 12.15,
+                  "horas": 1.35,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.02.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Estructura de soporte de mesón.",
+                  "unidad": "m",
+                  "precio": 29.0,
+                  "horas": 1.05,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.02.01.160",
+                  "codigo_legacy": "",
+                  "titulo": "Salpicadero de vidrio o acrílico.",
+                  "unidad": "m",
+                  "precio": 36.79,
+                  "horas": 1.05,
+                  "producto_cliente": false
                 }
               ],
-              "n": 4
+              "n": 16
             }
           ],
-          "n": 4
+          "n": 16
         },
         {
           "codigo": "13.03",
@@ -23209,12 +24465,129 @@
                   "precio": 19.59,
                   "horas": 1.4,
                   "producto_cliente": true
+                },
+                {
+                  "codigo": "13.03.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Mueble de baño suspendido con lavamanos.",
+                  "unidad": "ud",
+                  "precio": 106.92,
+                  "horas": 2.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.03.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Botiquín de baño con espejo integrado.",
+                  "unidad": "ud",
+                  "precio": 23.86,
+                  "horas": 0.9,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "13.03.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Mesón de baño con lavamanos integrado.",
+                  "unidad": "m",
+                  "precio": 12.96,
+                  "horas": 1.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.03.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Mueble de baño suspendido.",
+                  "unidad": "ud",
+                  "precio": 106.25,
+                  "horas": 2.85,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.03.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Botiquín de baño empotrado.",
+                  "unidad": "ud",
+                  "precio": 25.95,
+                  "horas": 1.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.03.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Espejo de baño con iluminación integrada.",
+                  "unidad": "ud",
+                  "precio": 27.05,
+                  "horas": 1.2,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "13.03.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Repisa de baño.",
+                  "unidad": "m",
+                  "precio": 21.26,
+                  "horas": 1.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.03.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Gabinetes altos de baño.",
+                  "unidad": "m",
+                  "precio": 92.16,
+                  "horas": 2.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.03.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Accesorio de baño (toallero, jabonera, etc.).",
+                  "unidad": "ud",
+                  "precio": 11.31,
+                  "horas": 0.75,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.03.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Mueble lavadero con fregadero.",
+                  "unidad": "ud",
+                  "precio": 118.43,
+                  "horas": 3.0,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.03.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Revestimiento de mueble de baño con lámina impermeable.",
+                  "unidad": "m²",
+                  "precio": 27.48,
+                  "horas": 1.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.03.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Reparación de mueble de baño.",
+                  "unidad": "ud",
+                  "precio": 33.99,
+                  "horas": 1.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.03.01.160",
+                  "codigo_legacy": "",
+                  "titulo": "Espejo de cuerpo entero de baño.",
+                  "unidad": "ud",
+                  "precio": 71.33,
+                  "horas": 1.05,
+                  "producto_cliente": true
                 }
               ],
-              "n": 3
+              "n": 16
             }
           ],
-          "n": 3
+          "n": 16
         },
         {
           "codigo": "13.04",
@@ -23250,18 +24623,269 @@
                   "precio": 34.07,
                   "horas": 0.63,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "13.04.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Closet de vestidor a medida.",
+                  "unidad": "m",
+                  "precio": 159.58,
+                  "horas": 3.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.04.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Puerta corrediza de closet con riel.",
+                  "unidad": "m²",
+                  "precio": 54.61,
+                  "horas": 2.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.04.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Organizadores interiores de closet.",
+                  "unidad": "m",
+                  "precio": 61.76,
+                  "horas": 1.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.04.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Closet de vestidor con cajoneras.",
+                  "unidad": "m",
+                  "precio": 196.52,
+                  "horas": 3.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.04.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Puerta abatible de closet.",
+                  "unidad": "ud",
+                  "precio": 68.43,
+                  "horas": 1.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.04.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Barra de colgar y soportes de closet.",
+                  "unidad": "m",
+                  "precio": 18.0,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.04.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Zapatero empotrado.",
+                  "unidad": "m",
+                  "precio": 123.27,
+                  "horas": 2.85,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.04.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Alacena o armario de almacenamiento.",
+                  "unidad": "m",
+                  "precio": 142.49,
+                  "horas": 3.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.04.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Mueble de dormitorio a medida (gavetero).",
+                  "unidad": "m",
+                  "precio": 117.05,
+                  "horas": 2.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.04.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Entrepaño flotante de pared.",
+                  "unidad": "m",
+                  "precio": 29.06,
+                  "horas": 1.05,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.04.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Puerta de closet con espejo.",
+                  "unidad": "m²",
+                  "precio": 92.61,
+                  "horas": 2.25,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.04.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Organizador de alacena con canastillas.",
+                  "unidad": "m",
+                  "precio": 48.13,
+                  "horas": 1.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.04.01.160",
+                  "codigo_legacy": "",
+                  "titulo": "Reparación de closet o armario.",
+                  "unidad": "ud",
+                  "precio": 33.99,
+                  "horas": 1.5,
+                  "producto_cliente": false
                 }
               ],
-              "n": 3
+              "n": 16
             }
           ],
-          "n": 3
+          "n": 16
         },
         {
           "codigo": "13.05",
           "nombre": "Electrodomésticos y equipos integrados",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "13.05.01",
+              "nombre": "Electrodomésticos y equipos integrados",
+              "partidas": [
+                {
+                  "codigo": "13.05.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Instalación de horno empotrado.",
+                  "unidad": "ud",
+                  "precio": 22.88,
+                  "horas": 1.5,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "13.05.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Instalación de lavaplatos empotrado.",
+                  "unidad": "ud",
+                  "precio": 22.65,
+                  "horas": 1.5,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "13.05.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Instalación de nevera empotrada.",
+                  "unidad": "ud",
+                  "precio": 10.24,
+                  "horas": 1.2,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "13.05.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Instalación de cocina eléctrica empotrada.",
+                  "unidad": "ud",
+                  "precio": 24.64,
+                  "horas": 1.65,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "13.05.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Instalación de microondas empotrado.",
+                  "unidad": "ud",
+                  "precio": 9.28,
+                  "horas": 1.05,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "13.05.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Instalación de calentador de agua eléctrico.",
+                  "unidad": "ud",
+                  "precio": 19.54,
+                  "horas": 1.8,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "13.05.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Instalación de calentador de agua a gas.",
+                  "unidad": "ud",
+                  "precio": 38.84,
+                  "horas": 2.1,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "13.05.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Instalación de extractor de aire de cocina.",
+                  "unidad": "ud",
+                  "precio": 23.06,
+                  "horas": 1.5,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "13.05.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Conexión de gas para cocina.",
+                  "unidad": "ud",
+                  "precio": 25.77,
+                  "horas": 1.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.05.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Conexión eléctrica de fuerza para cocina.",
+                  "unidad": "ud",
+                  "precio": 23.57,
+                  "horas": 1.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.05.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Instalación de lavadora empotrada.",
+                  "unidad": "ud",
+                  "precio": 25.9,
+                  "horas": 1.35,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "13.05.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Instalación de secadora.",
+                  "unidad": "ud",
+                  "precio": 18.12,
+                  "horas": 1.2,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "13.05.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Instalación de triturador de cocina.",
+                  "unidad": "ud",
+                  "precio": 16.55,
+                  "horas": 1.2,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "13.05.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Instalación de filtro de agua de cocina.",
+                  "unidad": "ud",
+                  "precio": 12.32,
+                  "horas": 1.05,
+                  "producto_cliente": true
+                }
+              ],
+              "n": 14
+            }
+          ],
+          "n": 14
         },
         {
           "codigo": "13.06",
@@ -23288,12 +24912,120 @@
                   "precio": 56.25,
                   "horas": 1.1,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "13.06.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Barra de apoyo de acero inoxidable.",
+                  "unidad": "ud",
+                  "precio": 51.53,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.06.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Herrajes y tiradores de mobiliario.",
+                  "unidad": "ud",
+                  "precio": 32.25,
+                  "horas": 1.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.06.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Asiento abatible de ducha para accesibilidad.",
+                  "unidad": "ud",
+                  "precio": 34.1,
+                  "horas": 1.05,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "13.06.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Barra de apoyo en ducha o bañera.",
+                  "unidad": "ud",
+                  "precio": 51.53,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.06.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Barra de apoyo en inodoro.",
+                  "unidad": "ud",
+                  "precio": 51.53,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.06.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Pasamanos de accesibilidad en pasillo.",
+                  "unidad": "m",
+                  "precio": 21.87,
+                  "horas": 0.75,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.06.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Rampa portátil de acceso.",
+                  "unidad": "ud",
+                  "precio": 17.16,
+                  "horas": 1.35,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.06.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Alarma de asistencia de baño.",
+                  "unidad": "ud",
+                  "precio": 27.01,
+                  "horas": 1.05,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.06.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Soporte de ducha teléfono accesible.",
+                  "unidad": "ud",
+                  "precio": 25.53,
+                  "horas": 0.75,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.06.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Placa de accesibilidad y rotulación braille.",
+                  "unidad": "ud",
+                  "precio": 3.21,
+                  "horas": 0.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.06.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Elevador de piscina o bañera para accesibilidad.",
+                  "unidad": "ud",
+                  "precio": 23.57,
+                  "horas": 1.8,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "13.06.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Reparación de barra de apoyo.",
+                  "unidad": "ud",
+                  "precio": 13.83,
+                  "horas": 0.75,
+                  "producto_cliente": false
                 }
               ],
-              "n": 2
+              "n": 14
             }
           ],
-          "n": 2
+          "n": 14
         },
         {
           "codigo": "13.07",
@@ -23311,12 +25043,129 @@
                   "precio": 3.47,
                   "horas": 0.23,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "13.07.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Señalización de seguridad pintada en piso.",
+                  "unidad": "m²",
+                  "precio": 5.76,
+                  "horas": 0.37,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.07.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Señalización de evacuación y emergencia.",
+                  "unidad": "ud",
+                  "precio": 10.48,
+                  "horas": 0.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.07.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Señalización de áreas y zonas interiores.",
+                  "unidad": "ud",
+                  "precio": 10.48,
+                  "horas": 0.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.07.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Rotulación de directorio de planta.",
+                  "unidad": "ud",
+                  "precio": 4.33,
+                  "horas": 0.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.07.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Señalización exterior de parcela.",
+                  "unidad": "ud",
+                  "precio": 9.88,
+                  "horas": 0.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.07.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Señal de prohibición o advertencia.",
+                  "unidad": "ud",
+                  "precio": 10.48,
+                  "horas": 0.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.07.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Demarcación de estacionamiento pintada.",
+                  "unidad": "m",
+                  "precio": 3.55,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.07.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Señalización de escaleras y pasamanos.",
+                  "unidad": "ud",
+                  "precio": 10.48,
+                  "horas": 0.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.07.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Placa de identificación de puerta.",
+                  "unidad": "ud",
+                  "precio": 3.21,
+                  "horas": 0.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.07.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Señalización fotoluminiscente de evacuación.",
+                  "unidad": "ud",
+                  "precio": 10.48,
+                  "horas": 0.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.07.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Demarcación de zona de seguridad pintada.",
+                  "unidad": "m²",
+                  "precio": 5.76,
+                  "horas": 0.37,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.07.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Rotulación corporativa de fachada.",
+                  "unidad": "ud",
+                  "precio": 13.83,
+                  "horas": 0.75,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.07.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Señalización de extintores y equipos de seguridad.",
+                  "unidad": "ud",
+                  "precio": 10.48,
+                  "horas": 0.45,
+                  "producto_cliente": false
                 }
               ],
-              "n": 1
+              "n": 14
             }
           ],
-          "n": 1
+          "n": 14
         },
         {
           "codigo": "13.08",
@@ -23343,21 +25192,299 @@
                   "precio": 134.28,
                   "horas": 2.7,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "13.08.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Estantería fija de pared.",
+                  "unidad": "m",
+                  "precio": 48.71,
+                  "horas": 1.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.08.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Mueble fijo con entrepaños y puertas.",
+                  "unidad": "m",
+                  "precio": 130.52,
+                  "horas": 3.15,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.08.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Mampara de oficina con perfilería.",
+                  "unidad": "m²",
+                  "precio": 70.47,
+                  "horas": 1.05,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "13.08.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Mostrador de atención.",
+                  "unidad": "m",
+                  "precio": 137.53,
+                  "horas": 3.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.08.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Estantería metálica de almacén.",
+                  "unidad": "m",
+                  "precio": 25.12,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.08.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Mueble de recepción.",
+                  "unidad": "m",
+                  "precio": 149.63,
+                  "horas": 3.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.08.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Taquilla o casillero de personal.",
+                  "unidad": "ud",
+                  "precio": 5.37,
+                  "horas": 0.75,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.08.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Barra de bar o cafetería.",
+                  "unidad": "m",
+                  "precio": 143.56,
+                  "horas": 3.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.08.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Mueble de vitrina expositora.",
+                  "unidad": "m",
+                  "precio": 162.63,
+                  "horas": 3.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.08.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Panel de corcho o pizarra de oficina.",
+                  "unidad": "ud",
+                  "precio": 4.33,
+                  "horas": 0.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.08.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Mostrador de exhibición comercial.",
+                  "unidad": "m",
+                  "precio": 164.78,
+                  "horas": 3.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.08.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Góndola o estantería comercial.",
+                  "unidad": "m",
+                  "precio": 20.68,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.08.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Mueble de área común (vestíbulo).",
+                  "unidad": "m",
+                  "precio": 124.54,
+                  "horas": 3.15,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.08.01.160",
+                  "codigo_legacy": "",
+                  "titulo": "Reparación de mobiliario fijo comercial.",
+                  "unidad": "ud",
+                  "precio": 33.99,
+                  "horas": 1.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.08.01.170",
+                  "codigo_legacy": "",
+                  "titulo": "Asiento o banqueta fija.",
+                  "unidad": "ud",
+                  "precio": 68.94,
+                  "horas": 2.1,
+                  "producto_cliente": false
                 }
               ],
-              "n": 2
+              "n": 17
             }
           ],
-          "n": 2
+          "n": 17
         },
         {
           "codigo": "13.09",
           "nombre": "Equipamiento deportivo, recreativo y especial",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "13.09.01",
+              "nombre": "Equipamiento deportivo, recreativo y especial",
+              "partidas": [
+                {
+                  "codigo": "13.09.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Equipamiento de parque infantil.",
+                  "unidad": "ud",
+                  "precio": 25.47,
+                  "horas": 2.1,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "13.09.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Cancha deportiva pintada.",
+                  "unidad": "m²",
+                  "precio": 5.76,
+                  "horas": 0.37,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.09.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Aro o tablero de baloncesto.",
+                  "unidad": "ud",
+                  "precio": 21.57,
+                  "horas": 1.5,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "13.09.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Red o portería deportiva.",
+                  "unidad": "ud",
+                  "precio": 21.57,
+                  "horas": 1.5,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "13.09.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Gimnasio exterior.",
+                  "unidad": "ud",
+                  "precio": 23.57,
+                  "horas": 1.8,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "13.09.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Banca de descanso exterior.",
+                  "unidad": "ud",
+                  "precio": 19.67,
+                  "horas": 1.2,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "13.09.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Mesa de picnic exterior.",
+                  "unidad": "ud",
+                  "precio": 20.62,
+                  "horas": 1.35,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "13.09.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Portería de fútbol sala.",
+                  "unidad": "ud",
+                  "precio": 29.34,
+                  "horas": 1.8,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "13.09.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Columpio o tobogán de parque.",
+                  "unidad": "ud",
+                  "precio": 25.47,
+                  "horas": 2.1,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "13.09.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Equipo de gimnasio interior.",
+                  "unidad": "ud",
+                  "precio": 21.57,
+                  "horas": 1.5,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "13.09.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Banca de jugadores de cancha.",
+                  "unidad": "ud",
+                  "precio": 19.67,
+                  "horas": 1.2,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "13.09.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Equipamiento de juegos de salón.",
+                  "unidad": "ud",
+                  "precio": 8.32,
+                  "horas": 1.2,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "13.09.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Soporte de bicicletas exterior.",
+                  "unidad": "ud",
+                  "precio": 18.71,
+                  "horas": 1.05,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "13.09.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Demarcación de cancha deportiva.",
+                  "unidad": "m",
+                  "precio": 2.89,
+                  "horas": 0.27,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "13.09.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Equipamiento recreativo de área común.",
+                  "unidad": "ud",
+                  "precio": 21.57,
+                  "horas": 1.5,
+                  "producto_cliente": true
+                }
+              ],
+              "n": 15
+            }
+          ],
+          "n": 15
         }
       ],
-      "n": 21
+      "n": 140
     },
     {
       "codigo": "14",
@@ -23415,12 +25542,111 @@
                   "precio": 86.2,
                   "horas": 5.22,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "14.01.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Piso de concreto exterior alisado.",
+                  "unidad": "m²",
+                  "precio": 26.96,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.01.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Pavimento de adoquín con confinamiento.",
+                  "unidad": "m²",
+                  "precio": 29.17,
+                  "horas": 0.94,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.01.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Pavimento de gravilla compactada.",
+                  "unidad": "m²",
+                  "precio": 5.59,
+                  "horas": 0.35,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.01.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Rampa vehicular de concreto armado.",
+                  "unidad": "m²",
+                  "precio": 37.12,
+                  "horas": 1.25,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.01.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Escalera exterior de concreto armado.",
+                  "unidad": "m",
+                  "precio": 40.57,
+                  "horas": 1.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.01.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Pavimento de concreto estampado.",
+                  "unidad": "m²",
+                  "precio": 24.6,
+                  "horas": 1.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.01.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Pavimento de concreto alisado con allanadora.",
+                  "unidad": "m²",
+                  "precio": 20.05,
+                  "horas": 0.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.01.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Pavimento de lajas de piedra.",
+                  "unidad": "m²",
+                  "precio": 9.44,
+                  "horas": 0.9,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "14.01.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Pavimento de baldosa exterior antideslizante.",
+                  "unidad": "m²",
+                  "precio": 7.9,
+                  "horas": 0.81,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "14.01.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Base compactada para pavimento exterior.",
+                  "unidad": "m²",
+                  "precio": 4.75,
+                  "horas": 0.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.01.01.160",
+                  "codigo_legacy": "",
+                  "titulo": "Junta de retracción en pavimento de concreto.",
+                  "unidad": "m",
+                  "precio": 3.56,
+                  "horas": 0.22,
+                  "producto_cliente": false
                 }
               ],
-              "n": 5
+              "n": 16
             }
           ],
-          "n": 5
+          "n": 16
         },
         {
           "codigo": "14.02",
@@ -23447,12 +25673,120 @@
                   "precio": 26.3,
                   "horas": 0.76,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "14.02.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Bordillo de concreto vaciado en sitio.",
+                  "unidad": "m",
+                  "precio": 12.19,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.02.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Acera de concreto con juntas.",
+                  "unidad": "m²",
+                  "precio": 22.62,
+                  "horas": 0.72,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.02.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Acera de adoquín.",
+                  "unidad": "m²",
+                  "precio": 28.41,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.02.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Rampa peatonal exterior.",
+                  "unidad": "m²",
+                  "precio": 29.41,
+                  "horas": 1.08,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.02.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Escalera exterior de concreto con pasamanos.",
+                  "unidad": "m",
+                  "precio": 40.47,
+                  "horas": 1.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.02.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Bordillo prefabricado de concreto.",
+                  "unidad": "m",
+                  "precio": 12.9,
+                  "horas": 0.54,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.02.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Cuneta de concreto para drenaje.",
+                  "unidad": "m",
+                  "precio": 14.96,
+                  "horas": 0.81,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.02.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Pasamanos exterior de acero.",
+                  "unidad": "m",
+                  "precio": 22.13,
+                  "horas": 0.75,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.02.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Peldaño de escalera exterior prefabricado.",
+                  "unidad": "ud",
+                  "precio": 15.42,
+                  "horas": 0.63,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.02.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Acera de piedra o loseta.",
+                  "unidad": "m²",
+                  "precio": 8.87,
+                  "horas": 0.81,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "14.02.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Rampa de acceso con baranda.",
+                  "unidad": "m",
+                  "precio": 31.12,
+                  "horas": 1.25,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.02.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Reparación de acera o brocal.",
+                  "unidad": "m",
+                  "precio": 6.33,
+                  "horas": 0.72,
+                  "producto_cliente": false
                 }
               ],
-              "n": 2
+              "n": 14
             }
           ],
-          "n": 2
+          "n": 14
         },
         {
           "codigo": "14.03",
@@ -23479,12 +25813,120 @@
                   "precio": 98.55,
                   "horas": 6.8,
                   "producto_cliente": true
+                },
+                {
+                  "codigo": "14.03.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Canal de drenaje con rejilla metálica.",
+                  "unidad": "m",
+                  "precio": 36.14,
+                  "horas": 0.72,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.03.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Registro de drenaje con tapa.",
+                  "unidad": "ud",
+                  "precio": 22.63,
+                  "horas": 1.25,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.03.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Tubería de drenaje perforada con geotextil.",
+                  "unidad": "m",
+                  "precio": 10.62,
+                  "horas": 0.54,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.03.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Pozo de drenaje o sumidero exterior.",
+                  "unidad": "ud",
+                  "precio": 42.35,
+                  "horas": 1.44,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.03.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Canaleta de desagüe de concreto.",
+                  "unidad": "m",
+                  "precio": 12.29,
+                  "horas": 0.72,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.03.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Drenaje francés con gravilla.",
+                  "unidad": "m",
+                  "precio": 13.9,
+                  "horas": 0.81,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.03.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Sumidero de patio o estacionamiento.",
+                  "unidad": "ud",
+                  "precio": 26.86,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.03.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Limpieza y mantenimiento de drenaje exterior.",
+                  "unidad": "m",
+                  "precio": 0.98,
+                  "horas": 0.14,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.03.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Reparación de canal de drenaje.",
+                  "unidad": "m",
+                  "precio": 22.31,
+                  "horas": 0.63,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.03.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Registro de inspección de drenaje.",
+                  "unidad": "ud",
+                  "precio": 25.39,
+                  "horas": 1.44,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.03.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Conexión de drenaje a red existente.",
+                  "unidad": "ud",
+                  "precio": 20.73,
+                  "horas": 1.44,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.03.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Tubería de drenaje de aguas lluvias exterior.",
+                  "unidad": "m",
+                  "precio": 9.1,
+                  "horas": 0.63,
+                  "producto_cliente": false
                 }
               ],
-              "n": 2
+              "n": 14
             }
           ],
-          "n": 2
+          "n": 14
         },
         {
           "codigo": "14.04",
@@ -23511,12 +25953,138 @@
                   "precio": 31.82,
                   "horas": 0.98,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "14.04.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Cerca de bloque con columnas.",
+                  "unidad": "m²",
+                  "precio": 27.77,
+                  "horas": 1.44,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.04.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Cerca de malla ciclónica sobre postes.",
+                  "unidad": "m",
+                  "precio": 15.59,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.04.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Cerca de tubos metálicos.",
+                  "unidad": "m",
+                  "precio": 15.4,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.04.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Muro de cerramiento de parcela de bloque.",
+                  "unidad": "m²",
+                  "precio": 28.17,
+                  "horas": 1.62,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.04.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Verja metálica de cerramiento.",
+                  "unidad": "m²",
+                  "precio": 23.11,
+                  "horas": 1.26,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.04.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Muro de contención de parcela.",
+                  "unidad": "m³",
+                  "precio": 167.02,
+                  "horas": 4.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.04.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Cerca de reja sobre murete de bloque.",
+                  "unidad": "m",
+                  "precio": 21.33,
+                  "horas": 1.26,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.04.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Portillo peatonal de cerramiento.",
+                  "unidad": "ud",
+                  "precio": 61.79,
+                  "horas": 1.44,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.04.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Reparación de cerca perimetral.",
+                  "unidad": "m",
+                  "precio": 7.07,
+                  "horas": 0.72,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.04.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Pintura de cerramiento metálico.",
+                  "unidad": "m²",
+                  "precio": 4.25,
+                  "horas": 0.36,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.04.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Muro de cerramiento con acabado de friso.",
+                  "unidad": "m²",
+                  "precio": 27.12,
+                  "horas": 1.62,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.04.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Columna de cerramiento de concreto.",
+                  "unidad": "m",
+                  "precio": 21.32,
+                  "horas": 1.08,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.04.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Base de muro de cerramiento.",
+                  "unidad": "m",
+                  "precio": 25.74,
+                  "horas": 1.08,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.04.01.160",
+                  "codigo_legacy": "",
+                  "titulo": "Cerca viva o seto perimetral.",
+                  "unidad": "m",
+                  "precio": 4.03,
+                  "horas": 0.54,
+                  "producto_cliente": true
                 }
               ],
-              "n": 2
+              "n": 16
             }
           ],
-          "n": 2
+          "n": 16
         },
         {
           "codigo": "14.05",
@@ -23534,12 +26102,129 @@
                   "precio": 109.95,
                   "horas": 2.7,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "14.05.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Portón vehicular corredizo.",
+                  "unidad": "ud",
+                  "precio": 102.5,
+                  "horas": 4.5,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "14.05.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Portón corredizo de acceso.",
+                  "unidad": "ud",
+                  "precio": 134.02,
+                  "horas": 4.5,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "14.05.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Portón peatonal de acceso.",
+                  "unidad": "ud",
+                  "precio": 75.13,
+                  "horas": 2.7,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "14.05.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Motorización de portón existente.",
+                  "unidad": "ud",
+                  "precio": 27.44,
+                  "horas": 3.0,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "14.05.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Portero eléctrico o videoportero de acceso.",
+                  "unidad": "ud",
+                  "precio": 18.93,
+                  "horas": 2.25,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "14.05.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Base de concreto para poste de portón.",
+                  "unidad": "ud",
+                  "precio": 17.34,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.05.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Riel de portón corredizo empotrado.",
+                  "unidad": "m",
+                  "precio": 27.09,
+                  "horas": 0.72,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.05.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Reparación de portón de acceso.",
+                  "unidad": "ud",
+                  "precio": 35.61,
+                  "horas": 2.16,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.05.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Cerradura de portón de acceso.",
+                  "unidad": "ud",
+                  "precio": 75.7,
+                  "horas": 1.05,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.05.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Baranda de acceso peatonal.",
+                  "unidad": "m",
+                  "precio": 22.13,
+                  "horas": 0.75,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.05.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Portón de malla para acceso.",
+                  "unidad": "ud",
+                  "precio": 40.08,
+                  "horas": 3.24,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "14.05.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Buzón de correspondencia empotrado.",
+                  "unidad": "ud",
+                  "precio": 4.33,
+                  "horas": 0.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.05.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Interruptor de apertura de portón.",
+                  "unidad": "ud",
+                  "precio": 15.05,
+                  "horas": 1.05,
+                  "producto_cliente": false
                 }
               ],
-              "n": 1
+              "n": 14
             }
           ],
-          "n": 1
+          "n": 14
         },
         {
           "codigo": "14.06",
@@ -23566,12 +26251,129 @@
                   "precio": 18.59,
                   "horas": 1.25,
                   "producto_cliente": true
+                },
+                {
+                  "codigo": "14.06.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Siembra de grama en panes.",
+                  "unidad": "m²",
+                  "precio": 7.55,
+                  "horas": 0.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.06.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Plantación de árbol ornamental.",
+                  "unidad": "ud",
+                  "precio": 6.59,
+                  "horas": 0.9,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "14.06.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Nivelación y preparación de terreno para jardín.",
+                  "unidad": "m²",
+                  "precio": 3.33,
+                  "horas": 0.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.06.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Abono y fertilización de área verde.",
+                  "unidad": "m²",
+                  "precio": 1.34,
+                  "horas": 0.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.06.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Siembra de plantas ornamentales.",
+                  "unidad": "m²",
+                  "precio": 4.58,
+                  "horas": 0.63,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "14.06.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Borde de jardín con brocal.",
+                  "unidad": "m",
+                  "precio": 12.9,
+                  "horas": 0.54,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.06.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Poda y mantenimiento de áreas verdes.",
+                  "unidad": "m²",
+                  "precio": 1.96,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.06.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Riego de implantación de área verde.",
+                  "unidad": "m²",
+                  "precio": 0.64,
+                  "horas": 0.08,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.06.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Tratamiento fitosanitario de área verde.",
+                  "unidad": "m²",
+                  "precio": 1.26,
+                  "horas": 0.14,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.06.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Cama de siembra con sustrato.",
+                  "unidad": "m²",
+                  "precio": 3.16,
+                  "horas": 0.22,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.06.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Siembra de grama en talud o pendiente.",
+                  "unidad": "m²",
+                  "precio": 8.05,
+                  "horas": 0.54,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.06.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Reposición de grama dañada.",
+                  "unidad": "m²",
+                  "precio": 4.75,
+                  "horas": 0.36,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.06.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Mulch o acolchado de parterre.",
+                  "unidad": "m²",
+                  "precio": 1.04,
+                  "horas": 0.11,
+                  "producto_cliente": false
                 }
               ],
-              "n": 2
+              "n": 15
             }
           ],
-          "n": 2
+          "n": 15
         },
         {
           "codigo": "14.07",
@@ -23589,12 +26391,129 @@
                   "precio": 8.78,
                   "horas": 0.38,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "14.07.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Red de riego por aspersión.",
+                  "unidad": "m",
+                  "precio": 9.71,
+                  "horas": 0.63,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.07.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Línea de goteo para parterre.",
+                  "unidad": "m",
+                  "precio": 7.33,
+                  "horas": 0.54,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.07.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Aspersor emergente de riego.",
+                  "unidad": "ud",
+                  "precio": 16.98,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.07.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Válvula de zona de riego.",
+                  "unidad": "ud",
+                  "precio": 17.37,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.07.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Programador de riego.",
+                  "unidad": "ud",
+                  "precio": 11.02,
+                  "horas": 1.2,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "14.07.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Acometida de riego con llave de corte.",
+                  "unidad": "ud",
+                  "precio": 15.34,
+                  "horas": 1.08,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.07.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Reparación de red de riego.",
+                  "unidad": "m",
+                  "precio": 7.41,
+                  "horas": 0.63,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.07.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Conexión de riego por goteo a tanque.",
+                  "unidad": "ud",
+                  "precio": 18.75,
+                  "horas": 1.08,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.07.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Línea de riego para jardín vertical.",
+                  "unidad": "m",
+                  "precio": 9.27,
+                  "horas": 0.72,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.07.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Punto de riego con manguera y aspersor.",
+                  "unidad": "ud",
+                  "precio": 24.95,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.07.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Red de riego con tubería principal.",
+                  "unidad": "m",
+                  "precio": 5.82,
+                  "horas": 0.54,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.07.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Drenaje y purga de red de riego.",
+                  "unidad": "ud",
+                  "precio": 11.05,
+                  "horas": 0.72,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.07.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Programación y puesta en marcha de riego.",
+                  "unidad": "ud",
+                  "precio": 9.52,
+                  "horas": 1.5,
+                  "producto_cliente": false
                 }
               ],
-              "n": 1
+              "n": 14
             }
           ],
-          "n": 1
+          "n": 14
         },
         {
           "codigo": "14.08",
@@ -23612,12 +26531,129 @@
                   "precio": 35.02,
                   "horas": 1.6,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "14.08.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Punto de agua exterior con manguera.",
+                  "unidad": "ud",
+                  "precio": 16.18,
+                  "horas": 1.08,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.08.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Acometida de agua exterior.",
+                  "unidad": "m",
+                  "precio": 7.92,
+                  "horas": 0.72,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.08.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Punto de desagüe exterior.",
+                  "unidad": "ud",
+                  "precio": 13.07,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.08.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Conexión de gas exterior.",
+                  "unidad": "m",
+                  "precio": 19.79,
+                  "horas": 0.72,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.08.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Acometida eléctrica exterior.",
+                  "unidad": "m",
+                  "precio": 7.46,
+                  "horas": 0.72,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.08.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Punto de electricidad exterior.",
+                  "unidad": "ud",
+                  "precio": 14.05,
+                  "horas": 1.08,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.08.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Conexión de bomba exterior.",
+                  "unidad": "ud",
+                  "precio": 34.59,
+                  "horas": 1.5,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "14.08.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Tendido de tubería exterior enterrada.",
+                  "unidad": "m",
+                  "precio": 7.01,
+                  "horas": 0.72,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.08.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Acometida de aguas servidas exterior.",
+                  "unidad": "m",
+                  "precio": 10.49,
+                  "horas": 0.81,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.08.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Caja de registro de servicios exterior.",
+                  "unidad": "ud",
+                  "precio": 19.46,
+                  "horas": 1.08,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.08.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Punto de agua para lavado de vehículo.",
+                  "unidad": "ud",
+                  "precio": 14.64,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.08.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Reparación de red exterior de servicios.",
+                  "unidad": "m",
+                  "precio": 5.95,
+                  "horas": 0.72,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.08.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Punto de drenaje de condensados exterior.",
+                  "unidad": "ud",
+                  "precio": 14.7,
+                  "horas": 0.9,
+                  "producto_cliente": false
                 }
               ],
-              "n": 1
+              "n": 14
             }
           ],
-          "n": 1
+          "n": 14
         },
         {
           "codigo": "14.09",
@@ -23635,18 +26671,269 @@
                   "precio": 40.56,
                   "horas": 1.9,
                   "producto_cliente": true
+                },
+                {
+                  "codigo": "14.09.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Iluminación exterior de caminería.",
+                  "unidad": "ud",
+                  "precio": 15.05,
+                  "horas": 1.05,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "14.09.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Poste de iluminación exterior.",
+                  "unidad": "ud",
+                  "precio": 25.4,
+                  "horas": 1.8,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "14.09.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Reflector exterior de seguridad.",
+                  "unidad": "ud",
+                  "precio": 10.86,
+                  "horas": 1.05,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "14.09.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Iluminación de caminería exterior.",
+                  "unidad": "m",
+                  "precio": 8.4,
+                  "horas": 0.9,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "14.09.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Tira LED exterior decorativa.",
+                  "unidad": "m",
+                  "precio": 13.43,
+                  "horas": 0.6,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "14.09.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Fotocélula o sensor crepuscular exterior.",
+                  "unidad": "ud",
+                  "precio": 9.13,
+                  "horas": 0.9,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "14.09.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Iluminación de fachada con reflectores.",
+                  "unidad": "ud",
+                  "precio": 12.71,
+                  "horas": 1.2,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "14.09.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Circuito de iluminación exterior.",
+                  "unidad": "m",
+                  "precio": 5.2,
+                  "horas": 0.54,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.09.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Aplique de pared exterior.",
+                  "unidad": "ud",
+                  "precio": 9.13,
+                  "horas": 0.9,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "14.09.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Iluminación de estacionamiento exterior.",
+                  "unidad": "ud",
+                  "precio": 12.71,
+                  "horas": 1.2,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "14.09.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Reparación de iluminación exterior.",
+                  "unidad": "ud",
+                  "precio": 10.08,
+                  "horas": 1.05,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.09.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Temporizador de iluminación exterior.",
+                  "unidad": "ud",
+                  "precio": 9.13,
+                  "horas": 0.9,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "14.09.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Baliza empotrada de piso exterior.",
+                  "unidad": "ud",
+                  "precio": 9.13,
+                  "horas": 0.9,
+                  "producto_cliente": true
                 }
               ],
-              "n": 1
+              "n": 14
             }
           ],
-          "n": 1
+          "n": 14
         },
         {
           "codigo": "14.10",
           "nombre": "Piscinas y áreas recreativas",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "14.10.01",
+              "nombre": "Piscinas y áreas recreativas",
+              "partidas": [
+                {
+                  "codigo": "14.10.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Piscina de concreto armado.",
+                  "unidad": "m²",
+                  "precio": 71.1,
+                  "horas": 2.5,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "14.10.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de piscina.",
+                  "unidad": "m²",
+                  "precio": 26.6,
+                  "horas": 0.72,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.10.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Borde o coronación de piscina.",
+                  "unidad": "m",
+                  "precio": 19.5,
+                  "horas": 1.08,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.10.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Escalera de piscina de concreto.",
+                  "unidad": "m",
+                  "precio": 30.47,
+                  "horas": 1.62,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.10.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Escalera metálica de piscina.",
+                  "unidad": "ud",
+                  "precio": 75.76,
+                  "horas": 1.35,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "14.10.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Equipo de filtrado de piscina.",
+                  "unidad": "ud",
+                  "precio": 32.24,
+                  "horas": 1.5,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "14.10.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Rebosadero de piscina.",
+                  "unidad": "m",
+                  "precio": 44.66,
+                  "horas": 1.26,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.10.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Boquillas de retorno y aspiración de piscina.",
+                  "unidad": "ud",
+                  "precio": 11.62,
+                  "horas": 1.08,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.10.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Ducha exterior de piscina.",
+                  "unidad": "ud",
+                  "precio": 18.34,
+                  "horas": 1.2,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "14.10.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Iluminación subacuática de piscina.",
+                  "unidad": "ud",
+                  "precio": 12.87,
+                  "horas": 1.35,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "14.10.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Limpieza y puesta en marcha de piscina.",
+                  "unidad": "ud",
+                  "precio": 21.33,
+                  "horas": 1.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.10.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Reparación de vaso de piscina.",
+                  "unidad": "m²",
+                  "precio": 19.5,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.10.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Cerramiento perimetral de piscina.",
+                  "unidad": "m",
+                  "precio": 15.34,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.10.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Pérgola o sombra de área de piscina.",
+                  "unidad": "m²",
+                  "precio": 39.7,
+                  "horas": 1.8,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 14
+            }
+          ],
+          "n": 14
         },
         {
           "codigo": "14.11",
@@ -23673,15 +26960,132 @@
                   "precio": 56.09,
                   "horas": 3.2,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "14.11.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Pérgola de madera tratada.",
+                  "unidad": "m²",
+                  "precio": 42.46,
+                  "horas": 1.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.11.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Jardinera de bloque revestido.",
+                  "unidad": "m",
+                  "precio": 18.27,
+                  "horas": 1.26,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.11.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Pérgola metálica para exterior.",
+                  "unidad": "m²",
+                  "precio": 28.33,
+                  "horas": 1.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.11.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Jardinera prefabricada exterior.",
+                  "unidad": "ud",
+                  "precio": 9.32,
+                  "horas": 0.9,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "14.11.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Banco de obra exterior.",
+                  "unidad": "m",
+                  "precio": 16.85,
+                  "horas": 1.08,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.11.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Mesa de obra exterior.",
+                  "unidad": "m²",
+                  "precio": 20.71,
+                  "horas": 1.26,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.11.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Parrillera de obra exterior.",
+                  "unidad": "ud",
+                  "precio": 23.0,
+                  "horas": 1.62,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.11.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Toldo o sombra exterior fija.",
+                  "unidad": "m²",
+                  "precio": 80.99,
+                  "horas": 1.26,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "14.11.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Cerramiento de terraza con celosía.",
+                  "unidad": "m²",
+                  "precio": 44.62,
+                  "horas": 1.08,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.11.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Mueble de exterior a medida.",
+                  "unidad": "m",
+                  "precio": 35.75,
+                  "horas": 2.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.11.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Reparación de pérgola o estructura exterior.",
+                  "unidad": "m²",
+                  "precio": 15.08,
+                  "horas": 1.44,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.11.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Jardinera de concreto prefabricado.",
+                  "unidad": "m",
+                  "precio": 16.73,
+                  "horas": 0.72,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "14.11.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Pérgola bioclimática exterior.",
+                  "unidad": "m²",
+                  "precio": 29.41,
+                  "horas": 1.98,
+                  "producto_cliente": true
                 }
               ],
-              "n": 2
+              "n": 15
             }
           ],
-          "n": 2
+          "n": 15
         }
       ],
-      "n": 19
+      "n": 160
     },
     {
       "codigo": "15",

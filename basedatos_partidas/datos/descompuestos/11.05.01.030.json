@@ -1,0 +1,44 @@
+{
+  "codigo": "11.05.01.030",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "05",
+  "unidad": "m²",
+  "titulo": "Marquesina traslúcida de policarbonato.",
+  "descripcion": "Marquesina traslúcida de policarbonato sobre estructura metálica ligera, con pendiente y canal de recogida. Incluye la estructura, la colocación y los remates.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-POLICARB",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-PERFIL-ACERO",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MT-TORN-TECHO",
+      "rendimiento": 5.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MQ-SOLDADORA",
+      "rendimiento": 0.03
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.4
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

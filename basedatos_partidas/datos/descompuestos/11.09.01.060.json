@@ -1,0 +1,36 @@
+{
+  "codigo": "11.09.01.060",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "09",
+  "unidad": "ud",
+  "titulo": "Reparación de claraboya o lucernario.",
+  "descripcion": "Reparación de claraboya o lucernario con sustitución del sellado y de piezas dañadas. Incluye la limpieza y el sellado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-SILICONA-EST",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MT-PERFIL-REMATE",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.32
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

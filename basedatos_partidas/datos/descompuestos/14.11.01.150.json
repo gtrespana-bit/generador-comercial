@@ -1,0 +1,46 @@
+{
+  "codigo": "14.11.01.150",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "11",
+  "unidad": "m²",
+  "titulo": "Pérgola bioclimática exterior.",
+  "descripcion": "Ejecución de pérgola bioclimática exterior, con estructura y lamas orientables. Incluye el montaje. El sistema lo elige el cliente.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PERFIL-ACERO",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MT-PINT-ANTICORR",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MT-PERNO-ANCLA",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MQ-SOLDADORA",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MO-OF1-SOLD",
+      "rendimiento": 1.1
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.88
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01",
+  "producto_cliente": {
+    "tipo": "Pérgola bioclimática del modelo elegido por el cliente",
+    "unidad": "m²",
+    "consumo": 1.0,
+    "nota": "La partida cubre el montaje. El sistema se toma del catálogo de productos."
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "codigo": "13.05.01.100",
+  "ambito": "reforma",
+  "capitulo": "13",
+  "subcapitulo": "05",
+  "unidad": "ud",
+  "titulo": "Conexión eléctrica de fuerza para cocina.",
+  "descripcion": "Ejecución de circuito eléctrico de fuerza para cocina, con cableado, protección y toma. Incluye el cableado y la conexión.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ELE-CABLE",
+      "rendimiento": 3.0
+    },
+    {
+      "ref": "MT-BREAKER",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-ELE-CAJA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.5
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

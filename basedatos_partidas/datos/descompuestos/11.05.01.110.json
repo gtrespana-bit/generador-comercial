@@ -1,0 +1,40 @@
+{
+  "codigo": "11.05.01.110",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "05",
+  "unidad": "m²",
+  "titulo": "Cubierta ligera de paneles de policarbonato multicapa.",
+  "descripcion": "Cubierta ligera de policarbonato multicapa de gran espesor para cerramiento de techos con alta exigencia térmica. Incluye la perfilería y la colocación.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-POLICARB",
+      "rendimiento": 1.1
+    },
+    {
+      "ref": "MT-PERFIL-ACERO",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-TORN-TECHO",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.32
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

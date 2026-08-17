@@ -1,0 +1,54 @@
+{
+  "codigo": "14.10.01.010",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "10",
+  "unidad": "m²",
+  "titulo": "Piscina de concreto armado.",
+  "descripcion": "Ejecución de piscina de concreto armado, con losa de fondo, muros y acabado. Incluye el encofrado, el armado y el vaciado. El revestimiento lo elige el cliente.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONC-250",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MT-ACERO-CAB",
+      "rendimiento": 8.0
+    },
+    {
+      "ref": "MT-MALLA-ELEC",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-FORM-MADERA",
+      "rendimiento": 1.2
+    },
+    {
+      "ref": "MT-DESMOLD",
+      "rendimiento": 0.04
+    },
+    {
+      "ref": "MQ-VIBRADOR",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 1.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 1.1
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01",
+  "producto_cliente": {
+    "tipo": "Revestimiento de piscina (azulejo, porcelanato) elegido por el cliente",
+    "unidad": "m²",
+    "consumo": 1.0,
+    "nota": "La partida cubre la estructura. El revestimiento se toma del catálogo de productos."
+  }
+}

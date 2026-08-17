@@ -1,0 +1,36 @@
+{
+  "codigo": "14.02.01.050",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "02",
+  "unidad": "m²",
+  "titulo": "Acera de adoquín.",
+  "descripcion": "Ejecución de acera de adoquín sobre cama de arena, con confinamiento perimetral. Incluye la colocación y la compactación.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ADOQUIN",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-ARENA",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MQ-PLANCHA-COMP",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.5
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

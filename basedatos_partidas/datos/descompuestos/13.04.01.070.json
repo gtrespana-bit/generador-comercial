@@ -1,0 +1,44 @@
+{
+  "codigo": "13.04.01.070",
+  "ambito": "reforma",
+  "capitulo": "13",
+  "subcapitulo": "04",
+  "unidad": "m",
+  "titulo": "Closet de vestidor con cajoneras.",
+  "descripcion": "Fabricación e instalación de closet de vestidor con cajoneras, barras y entrepaños, en melamina. Incluye el despiece y el armado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MELAMINA",
+      "rendimiento": 3.4
+    },
+    {
+      "ref": "MT-HERRAJE-CLOSET",
+      "rendimiento": 14.0
+    },
+    {
+      "ref": "MT-TORN",
+      "rendimiento": 50.0
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MQ-ATORN",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 2.6
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 1.3
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

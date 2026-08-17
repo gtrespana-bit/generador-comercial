@@ -1,0 +1,32 @@
+{
+  "codigo": "14.01.01.160",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "01",
+  "unidad": "m",
+  "titulo": "Junta de retracción en pavimento de concreto.",
+  "descripcion": "Ejecución de junta de retracción en pavimento de concreto con disco de corte y sellado. Incluye el corte y el sellado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-SELLA-ELAST",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MQ-CORT-AGUA",
+      "rendimiento": 0.03
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.1
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

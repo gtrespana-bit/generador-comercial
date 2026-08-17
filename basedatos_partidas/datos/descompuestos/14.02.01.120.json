@@ -1,0 +1,46 @@
+{
+  "codigo": "14.02.01.120",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "02",
+  "unidad": "m²",
+  "titulo": "Acera de piedra o loseta.",
+  "descripcion": "Ejecución de acera de piedra o loseta sobre cama de mortero, con juntas rellenadas. Incluye la colocación y el juntado. La piedra la elige el cliente.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ADH-PIEDRA",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MT-MOR-FRISO",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MT-JUN-CG2",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MQ-CORT-AGUA",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.45
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.36
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01",
+  "producto_cliente": {
+    "tipo": "Piedra o loseta exterior elegida por el cliente",
+    "unidad": "m²",
+    "consumo": 1.0,
+    "nota": "La partida cubre la colocación. La piedra se toma del catálogo de productos."
+  }
+}

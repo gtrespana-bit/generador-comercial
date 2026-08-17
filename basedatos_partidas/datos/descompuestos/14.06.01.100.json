@@ -1,0 +1,28 @@
+{
+  "codigo": "14.06.01.100",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "06",
+  "unidad": "m²",
+  "titulo": "Riego de implantación de área verde.",
+  "descripcion": "Riego de implantación de área verde tras la siembra, para asentamiento de la vegetación. Incluye el riego.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-AGUA-OBRA",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-JARD",
+      "rendimiento": 0.04
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.04
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

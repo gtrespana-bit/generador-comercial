@@ -1,0 +1,44 @@
+{
+  "codigo": "13.04.01.100",
+  "ambito": "reforma",
+  "capitulo": "13",
+  "subcapitulo": "04",
+  "unidad": "m",
+  "titulo": "Zapatero empotrado.",
+  "descripcion": "Fabricación e instalación de zapatero empotrado en melamina, con entrepaños inclinados. Incluye el despiece y el armado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MELAMINA",
+      "rendimiento": 2.2
+    },
+    {
+      "ref": "MT-HERRAJE-CLOSET",
+      "rendimiento": 8.0
+    },
+    {
+      "ref": "MT-TORN",
+      "rendimiento": 34.0
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MQ-ATORN",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 1.9
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.95
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

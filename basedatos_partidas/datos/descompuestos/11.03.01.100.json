@@ -1,0 +1,36 @@
+{
+  "codigo": "11.03.01.100",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "03",
+  "unidad": "m²",
+  "titulo": "Listonado para cubierta de teja.",
+  "descripcion": "Colocación de listonado de madera sobre la estructura para recibir la cubierta de teja, con separación según el solape de la pieza. Incluye el replanteo y la fijación.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MADERA-LISTON",
+      "rendimiento": 3.2
+    },
+    {
+      "ref": "MT-CLAVOS",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

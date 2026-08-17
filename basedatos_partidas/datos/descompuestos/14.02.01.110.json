@@ -1,0 +1,36 @@
+{
+  "codigo": "14.02.01.110",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "02",
+  "unidad": "ud",
+  "titulo": "Peldaño de escalera exterior prefabricado.",
+  "descripcion": "Colocación de peldaño prefabricado de concreto para escalera exterior. Incluye la colocación y el rejuntado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-DINTEL-PREF",
+      "rendimiento": 1.2
+    },
+    {
+      "ref": "MT-MOR-PEGA",
+      "rendimiento": 0.01
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.03
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.28
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

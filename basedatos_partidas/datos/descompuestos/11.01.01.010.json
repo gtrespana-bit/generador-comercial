@@ -1,0 +1,40 @@
+{
+  "codigo": "11.01.01.010",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "01",
+  "unidad": "m²",
+  "titulo": "Pendientado de cubierta con mortero aligerado.",
+  "descripcion": "Formación de pendientes sobre base de cubierta con mortero de cemento aligerado con arcilla expandida o poliestireno, para dirigir el agua hacia los puntos de desagüe. Incluye el replanteo de maestras, el relleno hasta espesores crecientes y el fratasado final de la superficie.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MOR-FRISO",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MT-BLOQUE-ALIV",
+      "rendimiento": 2.2
+    },
+    {
+      "ref": "MQ-MEZCL",
+      "rendimiento": 0.04
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.3
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

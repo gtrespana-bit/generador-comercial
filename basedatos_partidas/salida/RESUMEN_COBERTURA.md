@@ -1,10 +1,10 @@
 # Resumen de cobertura del catálogo
 
-- Partidas actuales: **2363**
-- Objetivo mínimo: **3000** (brecha 637)
-- Objetivo amplio: **5000** (brecha 2637)
-- Subcapítulos sin cobertura: **27**
-- Subcapítulos en estado crítico: **28**
+- Partidas actuales: **2735**
+- Objetivo mínimo: **3000** (brecha 265)
+- Objetivo amplio: **5000** (brecha 2265)
+- Subcapítulos sin cobertura: **20**
+- Subcapítulos en estado crítico: **9**
 - Diccionario de sinónimos: **146 grupos · 661 términos · 18 capítulos**
 
 ## Estado por capítulo
@@ -21,10 +21,10 @@
 | 08 | Remates y ayudas | 120 | 120 | 210 | 0 |
 | 09 | Instalaciones | 540 | 540 | 860 | 0 |
 | 10 | Aislamientos e impermeabilizaciones | 150 | 150 | 260 | 0 |
-| 11 | Techos y cubiertas | 18 | 130 | 220 | 112 |
+| 11 | Techos y cubiertas | 130 | 130 | 220 | 0 |
 | 12 | Revestimientos y acabados | 401 | 400 | 610 | -1 |
-| 13 | Equipamiento, mobiliario y señalización | 21 | 140 | 240 | 119 |
-| 14 | Obras exteriores y urbanismo | 19 | 160 | 280 | 141 |
+| 13 | Equipamiento, mobiliario y señalización | 140 | 140 | 240 | 0 |
+| 14 | Obras exteriores y urbanismo | 160 | 160 | 280 | 0 |
 | 15 | Gestión de residuos y limpieza | 8 | 50 | 90 | 42 |
 | 16 | Control de calidad y ensayos | 0 | 80 | 130 | 80 |
 | 17 | Seguridad y salud en obra | 11 | 60 | 100 | 49 |
@@ -43,8 +43,6 @@
 | 18.06 | Protección solar y control de ganancias térmicas | sin_cobertura | 0 | 11 | 11 |
 | 18.07 | Mejora de climatización y ventilación | sin_cobertura | 0 | 11 | 11 |
 | 18.08 | Iluminación eficiente y control | sin_cobertura | 0 | 11 | 11 |
-| 13.05 | Electrodomésticos y equipos integrados | sin_cobertura | 0 | 10 | 10 |
-| 13.09 | Equipamiento deportivo, recreativo y especial | sin_cobertura | 0 | 10 | 10 |
 | 16.01 | Ensayos de concreto, acero y mampostería | sin_cobertura | 0 | 10 | 10 |
 | 16.02 | Inspección de soldaduras, anclajes y estructura | sin_cobertura | 0 | 10 | 10 |
 | 16.03 | Pruebas de impermeabilización y estanqueidad | sin_cobertura | 0 | 10 | 10 |
@@ -53,14 +51,16 @@
 | 16.06 | Pruebas de climatización, ventilación y balanceo | sin_cobertura | 0 | 10 | 10 |
 | 16.07 | Termografía, humedad y diagnóstico no destructivo | sin_cobertura | 0 | 10 | 10 |
 | 16.08 | Puesta en marcha, protocolos y documentación final | sin_cobertura | 0 | 10 | 10 |
-| 11.01 | Formación de pendientes y bases | sin_cobertura | 0 | 9 | 9 |
-| 11.05 | Cubiertas ligeras y traslúcidas | sin_cobertura | 0 | 9 | 9 |
-| 11.07 | Claraboyas, lucernarios y accesos | sin_cobertura | 0 | 9 | 9 |
-| 11.09 | Reparación y mantenimiento de cubiertas | sin_cobertura | 0 | 9 | 9 |
-| 14.10 | Piscinas y áreas recreativas | sin_cobertura | 0 | 9 | 9 |
 | 15.05 | Residuos especiales o peligrosos | sin_cobertura | 0 | 5 | 5 |
 | 17.05 | Seguridad en excavaciones y espacios confinados | sin_cobertura | 0 | 5 | 5 |
 | 17.06 | Protección contra incendios durante la obra | sin_cobertura | 0 | 5 | 5 |
-| 11.04 | Cubiertas de lámina metálica | critica | 4 | 20 | 16 |
-| 11.08 | Canales, bajantes, limahoyas y remates | parcial | 6 | 22 | 16 |
-| 11.02 | Cubiertas planas transitables y no transitables | critica | 3 | 18 | 15 |
+| 15.07 | Limpieza final y entrega | critica | 2 | 9 | 7 |
+| 17.04 | Seguridad en trabajos en altura | critica | 2 | 9 | 7 |
+| 17.07 | Instalaciones de higiene y bienestar | critica | 2 | 9 | 7 |
+| 17.08 | Gestión, formación y documentación preventiva | critica | 2 | 9 | 7 |
+| 05.08 | Anclajes, juntas y conexiones | avanzada | 11 | 17 | 6 |
+| 06.01 | Fachadas de bloque o ladrillo | avanzada | 12 | 18 | 6 |
+| 06.02 | Fachadas ligeras y revestidas | avanzada | 12 | 18 | 6 |
+| 06.07 | Fachadas ventiladas y sistemas de aislamiento exterior | avanzada | 12 | 18 | 6 |
+| 06.08 | Celosías, defensas y cerramientos especiales | avanzada | 12 | 18 | 6 |
+| 15.01 | Clasificación y acopio de residuos | parcial | 2 | 8 | 6 |

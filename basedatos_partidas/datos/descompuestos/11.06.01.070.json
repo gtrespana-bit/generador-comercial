@@ -1,0 +1,40 @@
+{
+  "codigo": "11.06.01.070",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "06",
+  "unidad": "ud",
+  "titulo": "Cercha metálica prefabricada de techo.",
+  "descripcion": "Montaje de cercha metálica prefabricada para cubierta, con izado y fijación a los apoyos. Incluye el replanteo de apoyo y la fijación.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PERFIL-ACERO",
+      "rendimiento": 8.0
+    },
+    {
+      "ref": "MT-TORNILLO-EST",
+      "rendimiento": 6.0
+    },
+    {
+      "ref": "MQ-GRUA",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MQ-SOLDADORA",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-SOLD",
+      "rendimiento": 1.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.96
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

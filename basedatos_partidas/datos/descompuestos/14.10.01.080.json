@@ -1,0 +1,36 @@
+{
+  "codigo": "14.10.01.080",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "10",
+  "unidad": "ud",
+  "titulo": "Boquillas de retorno y aspiración de piscina.",
+  "descripcion": "Instalación de boquillas de retorno y aspiración de piscina, con conexión hidráulica. Incluye la conexión.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PLO-ABASTO",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-PLO-SOP",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-PLO",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.48
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

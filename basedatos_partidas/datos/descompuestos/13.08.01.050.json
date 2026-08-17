@@ -1,0 +1,42 @@
+{
+  "codigo": "13.08.01.050",
+  "ambito": "reforma",
+  "capitulo": "13",
+  "subcapitulo": "08",
+  "unidad": "m²",
+  "titulo": "Mampara de oficina con perfilería.",
+  "descripcion": "Instalación de mampara divisoria de oficina, con perfilería y paneles. Incluye el replanteo y el montaje. El sistema lo elige el cliente.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MAMPARA-OFI",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-TORN",
+      "rendimiento": 10.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.7
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.35
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01",
+  "producto_cliente": {
+    "tipo": "Sistema de mampara de oficina del modelo elegido por el cliente",
+    "unidad": "m²",
+    "consumo": 1.0,
+    "nota": "La partida cubre el montaje. El sistema se toma del catálogo de productos."
+  }
+}

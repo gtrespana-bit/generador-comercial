@@ -1,0 +1,44 @@
+{
+  "codigo": "13.08.01.130",
+  "ambito": "reforma",
+  "capitulo": "13",
+  "subcapitulo": "08",
+  "unidad": "m",
+  "titulo": "Mostrador de exhibición comercial.",
+  "descripcion": "Fabricación e instalación de mostrador de exhibición comercial, en melamina con vidrio. Incluye el despiece y el armado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MELAMINA",
+      "rendimiento": 2.6
+    },
+    {
+      "ref": "MT-VIDRIO-TEMP",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MT-HERRAJE-CLOSET",
+      "rendimiento": 8.0
+    },
+    {
+      "ref": "MT-TORN",
+      "rendimiento": 42.0
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.36
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 2.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 1.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

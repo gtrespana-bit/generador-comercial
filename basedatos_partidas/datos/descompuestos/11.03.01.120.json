@@ -1,0 +1,36 @@
+{
+  "codigo": "11.03.01.120",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "03",
+  "unidad": "m",
+  "titulo": "Teja de remate de borde con gancho.",
+  "descripcion": "Colocación de teja de borde o de remate de alero con gancho de fijación, para evitar el levantamiento por viento. Incluye la fijación mecánica de cada pieza.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-TEJA-CRIOLLA",
+      "rendimiento": 5.0
+    },
+    {
+      "ref": "MT-TORN-TECHO",
+      "rendimiento": 5.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.04
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.28
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.22
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

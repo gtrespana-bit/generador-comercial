@@ -1,0 +1,38 @@
+{
+  "codigo": "14.06.01.040",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "06",
+  "unidad": "ud",
+  "titulo": "Plantación de árbol ornamental.",
+  "descripcion": "Siembra de arbusto o árbol con hoyo de plantación, abono y riego. Incluye la excavación y la siembra. La planta la elige el cliente.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-TIERRA-ABON",
+      "rendimiento": 0.03
+    },
+    {
+      "ref": "MT-AGUA-OBRA",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MO-OF1-JARD",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.4
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01",
+  "producto_cliente": {
+    "tipo": "Arbusto o árbol elegido por el cliente",
+    "unidad": "ud",
+    "consumo": 1.0,
+    "nota": "La partida cubre la siembra. La planta se toma del catálogo de productos."
+  }
+}

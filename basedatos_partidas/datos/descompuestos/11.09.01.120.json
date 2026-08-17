@@ -1,0 +1,32 @@
+{
+  "codigo": "11.09.01.120",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "09",
+  "unidad": "m²",
+  "titulo": "Limpieza de cubierta con hidrolavadora.",
+  "descripcion": "Limpieza de cubierta con agua a presión para eliminar suciedad, hongos y sedimentos, previa a la impermeabilización o pintura. Incluye la limpieza a presión.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MQ-HIDROLAV",
+      "rendimiento": 0.03
+    },
+    {
+      "ref": "MT-CONS-LIMP",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.05
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}
