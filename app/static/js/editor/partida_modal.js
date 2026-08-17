@@ -302,9 +302,13 @@
   }
 
   function actualizarCatalogoLocal(partida) {
-    var indice = (editor.CATALOGO || []).findIndex(function (p) { return Number(p.id) === Number(partida.id); });
-    if (indice < 0) editor.CATALOGO.push(partida);
-    else editor.CATALOGO[indice] = Object.assign({}, editor.CATALOGO[indice], partida);
+    if (editor.Catalogo && editor.Catalogo.fusionarEnIndice) {
+      editor.Catalogo.fusionarEnIndice(partida);
+    } else {
+      var indice = (editor.CATALOGO || []).findIndex(function (p) { return Number(p.id) === Number(partida.id); });
+      if (indice < 0) editor.CATALOGO.push(partida);
+      else Object.assign(editor.CATALOGO[indice], partida);
+    }
   }
 
   async function guardar(event) {

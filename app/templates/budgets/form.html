@@ -265,7 +265,7 @@
       <div class="arbol-tools-row">
         <span id="arbol-contador" class="arbol-contador">—</span>
         <span class="arbol-acciones">
-          <button type="button" class="btn btn-xs btn-ghost" data-cotizat-click="arbol-expandir" title="Abrir todas las ramas">Abrir</button>
+          <button type="button" class="btn btn-xs btn-ghost" data-cotizat-click="arbol-expandir" title="Abrir capítulos y subcapítulos">Abrir</button>
           <button type="button" class="btn btn-xs btn-ghost" data-cotizat-click="arbol-plegar" title="Cerrar todas las ramas">Cerrar</button>
         </span>
       </div>
@@ -285,18 +285,8 @@
       <div class="catalog-search-wrap">
         <input type="text" id="buscar-partida" placeholder="Buscar…  Ctrl+K" autocomplete="off" aria-label="Buscar en catálogo" readonly data-cotizat-click="open-spotlight" title="Abrir buscador del catálogo (Ctrl+K)">
         <div id="catalogo-partidas">
-          {% if partidas_catalogo %}
-            {% for p in partidas_catalogo %}
-            <div class="partida-catalogo" data-nombre="{{ (p.nombre ~ ' ' ~ p.descripcion ~ ' ' ~ p.codigo_interno ~ ' ' ~ p.codigo_legacy ~ ' ' ~ p.subcategoria ~ ' ' ~ p.apartado ~ ' ' ~ p.proveedor)|lower }}" data-categoria="{{ p.categoria|lower }}" data-idx="{{ loop.index0 }}">
-              <button type="button" class="btn btn-sm csp-s-8bbfe4a61f" data-cotizat-click="budget-add-catalog" data-index="{{ loop.index0 }}">
-                <strong>{{ p.nombre }}</strong> <span class="csp-s-4198d64579">({{ p.unidad }})</span>
-              </button>
-              <span class="badge badge-categoria">{{ p.categoria }}</span>
-              <span class="csp-s-32a823a8ca">{{ p.precio_unitario | num }} $</span>
-            </div>
-            {% endfor %}
-          {% else %}
-            <div class="csp-s-5ee28be5f0">No hay partidas en el catálogo. <a class="link" href="/partidas/nueva" target="_blank">Crea la primera</a>.</div>
+          {% if not partidas_catalogo %}
+          <div class="csp-s-5ee28be5f0">No hay partidas en el catálogo. <a class="link" href="/partidas/nueva" target="_blank">Crea la primera</a>.</div>
           {% endif %}
         </div>
       </div>
@@ -845,30 +835,19 @@
   {% for p in partidas_catalogo %}{
     "id": {{ p.id | tojson }},
     "nombre": {{ p.nombre | tojson }},
-    "descripcion": {{ p.descripcion | tojson }},
-    "precio": {{ p.precio_unitario | tojson }},
-    "coste": {{ (p.coste if p.coste is not none else 0) | tojson }},
+    "precio": {{ p.precio | tojson }},
     "unidad": {{ p.unidad | tojson }},
     "categoria": {{ p.categoria | tojson }},
     "subcategoria": {{ p.subcategoria | tojson }},
     "apartado": {{ p.apartado | tojson }},
     "codigo_clasificacion": {{ p.codigo_clasificacion | tojson }},
     "codigo_legacy": {{ p.codigo_legacy | tojson }},
-    "codigo": {{ p.codigo_interno | tojson }},
+    "codigo": {{ p.codigo | tojson }},
     "codigo_interno": {{ p.codigo_interno | tojson }},
     "codigo_externo": {{ p.codigo_externo | tojson }},
-    "proveedor": {{ p.proveedor | tojson }},
-    "coste_materiales": {{ p.coste_materiales | tojson }},
-    "coste_mano_obra": {{ p.coste_mano_obra | tojson }},
-    "coste_complementarios": {{ p.coste_complementarios | tojson }},
-    "coste_otros": {{ p.coste_otros | tojson }},
-    "tiempo_estimado_horas": {{ p.tiempo_estimado_horas | tojson }},
-    "rendimiento": {{ p.rendimiento | tojson }},
-    "desperdicio_recomendado_pct": {{ p.desperdicio_recomendado_pct | tojson }},
-    "imagen": {{ p.imagen | tojson }},
-    "notas_tecnicas": {{ p.notas_tecnicas | tojson }},
-    "descomposicion": {% if p.descomposicion_json %}{{ p.descomposicion_json | tojson }}{% else %}null{% endif %},
-    "usos": {{ p.usos | tojson }}
+    "usos": {{ p.usos | tojson }},
+    "ultimo_uso": {{ p.ultimo_uso | tojson }},
+    "buscable": {{ p.buscable | tojson }}
   }{{ "," if not loop.last }}{% endfor %}
 ]
 </script>

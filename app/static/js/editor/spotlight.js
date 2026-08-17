@@ -18,6 +18,8 @@
   var meta = null;
   var activos = [];
   var seleccionado = 0;
+  var secuenciaBusqueda = 0;
+  var temporizadorRemoto = null;
 
   function sinTildes(texto) {
     return String(texto || "")
@@ -131,9 +133,11 @@
     document.body.classList.remove("spotlight-open");
     activos = [];
     seleccionado = 0;
+    clearTimeout(temporizadorRemoto);
+    secuenciaBusqueda += 1;
   }
 
-  function buscar(query) {
+  function buscar(query, remotos) {
     var catalogo = editor.CATALOGO || [];
     var q = sinTildes(query).trim();
     if (!q) {
@@ -151,7 +155,7 @@
     var out = [];
     catalogo.forEach(function (p, idx) {
       var blob = sinTildes(
-        [p.nombre, p.descripcion, p.codigo_interno, p.codigo_externo, p.codigo_legacy,
+        [p.nombre, p.buscable, p.codigo_interno, p.codigo_externo, p.codigo_legacy,
          p.codigo, p.categoria, p.subcategoria, p.apartado].join(" ")
       );
       var score = 0;
@@ -169,14 +173,40 @@
       }
       if (ok) out.push({ p: p, idx: idx, score: score + (p.usos || 0) });
     });
+    if (remotos && remotos.length) {
+      var presentes = Object.create(null);
+      out.forEach(function (r) { presentes[String(r.p.id)] = true; });
+      remotos.forEach(function (p) {
+        if (presentes[String(p.id)]) return;
+        var idx = catalogo.findIndex(function (item) { return Number(item.id) === Number(p.id); });
+        if (idx >= 0) out.push({ p: catalogo[idx], idx: idx, score: 25 + (p.usos || 0) });
+      });
+    }
     out.sort(function (a, b) {
       return b.score - a.score;
     });
     return out.slice(0, 60);
   }
 
-  function render(query) {
-    activos = buscar(query);
+  function programarBusquedaRemota(query) {
+    clearTimeout(temporizadorRemoto);
+    var consulta = String(query || "").trim();
+    var secuencia = ++secuenciaBusqueda;
+    if (consulta.length < 2 || !editor.Catalogo || !editor.Catalogo.buscarRemoto) return;
+    temporizadorRemoto = setTimeout(function () {
+      editor.Catalogo.buscarRemoto(consulta, 60).then(function (items) {
+        if (secuencia !== secuenciaBusqueda || !input || input.value.trim() !== consulta) return;
+        render(consulta, items, true);
+        if (!activos.length && editor.Catalogo.registrarSinResultados) {
+          editor.Catalogo.registrarSinResultados(consulta);
+        }
+      });
+    }, 160);
+  }
+
+  function render(query, remotos, omitirRemoto) {
+    if (!omitirRemoto) programarBusquedaRemota(query);
+    activos = buscar(query, remotos);
     seleccionado = 0;
     if (meta) {
       meta.textContent = activos.length

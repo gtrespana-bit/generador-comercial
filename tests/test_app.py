@@ -1,6 +1,7 @@
 import asyncio
 import json
 import os
+import re
 from datetime import date
 
 import pytest
@@ -671,6 +672,55 @@ def test_editar_presupuesto_form_render():
         assert "datos-catalogo" in resp.text
         assert "datos-productos" in resp.text
         assert "Guardar cambios" in resp.text or "guardar" in resp.text.lower()
+
+
+def test_editor_envia_indice_ligero_y_carga_ficha_bajo_demanda():
+    with TestClient(app) as client:
+        resp = client.get("/presupuestos/nuevo")
+        assert resp.status_code == 200
+        match = re.search(
+            r'id="datos-catalogo"[^>]*>\s*(.*?)\s*</script>',
+            resp.text,
+            re.DOTALL,
+        )
+        assert match
+        catalogo = json.loads(match.group(1))
+        assert catalogo
+        assert "buscable" in catalogo[0]
+        assert "descripcion" not in catalogo[0]
+        assert "descomposicion" not in catalogo[0]
+        # La demostración completa (540 partidas) antes superaba 3,3 MB.
+        assert len(resp.content) < 1_000_000
+
+        ficha = client.get(f"/partidas/{catalogo[0]['id']}/ficha")
+        assert ficha.status_code == 200
+        payload = ficha.json()
+        assert payload["ok"]
+        assert "descripcion" in payload["partida"]
+        assert "descomposicion" in payload["partida"]
+
+
+def test_busqueda_remota_cubre_descripcion_y_catalogo_se_pagina():
+    with TestClient(app) as client:
+        busqueda = client.get(
+            "/partidas/api/buscar",
+            params={"q": "distanciómetro", "limite": 10},
+        )
+        assert busqueda.status_code == 200
+        data = busqueda.json()
+        assert data["ok"]
+        assert any("Levantamiento" in p["nombre"] for p in data["resultados"])
+        metrica = client.post(
+            "/partidas/api/busqueda-sin-resultados",
+            json={"q": "partida técnica inexistente"},
+        )
+        assert metrica.status_code == 200
+        assert metrica.json()["ok"]
+
+        listado = client.get("/partidas")
+        assert listado.status_code == 200
+        assert listado.text.count('class="partida-tr"') <= 100
+        assert "Página <strong>1</strong>" in listado.text
 
 
 def test_flujo_completo_crear_y_modificar_presupuesto():

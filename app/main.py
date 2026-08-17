@@ -35,7 +35,7 @@ from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, Resp
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import or_
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, load_only
 from starlette.middleware.gzip import GZipMiddleware
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
@@ -3485,7 +3485,7 @@ def nuevo_presupuesto_form(request: Request, db: Session = Depends(get_db)):
     asegurar_catalogo_propio(db)
     cfg = _config(db)
     clientes = db.query(Cliente).order_by(Cliente.nombre).all()
-    partidas_catalogo = db.query(Partida).order_by(Partida.ultimo_uso.desc(), Partida.usos.desc(), Partida.nombre).all()
+    partidas_catalogo = _indice_catalogo_para_editor(db)
     productos_catalogo = db.query(Producto).order_by(Producto.ultimo_uso.desc(), Producto.usos.desc(), Producto.nombre).all()
     recursos_catalogo = db.query(Recurso).order_by(Recurso.ultimo_uso.desc(), Recurso.usos.desc(), Recurso.descripcion).all()
     plantillas = db.query(Plantilla).order_by(Plantilla.nombre).all()
@@ -5416,7 +5416,7 @@ def editar_presupuesto_form(presupuesto_id: int, request: Request, db: Session =
     from .services.catalogo_propio import asegurar_catalogo_propio
     asegurar_catalogo_propio(db)
     clientes = db.query(Cliente).order_by(Cliente.nombre).all()
-    partidas_catalogo = db.query(Partida).order_by(Partida.ultimo_uso.desc(), Partida.usos.desc(), Partida.nombre).all()
+    partidas_catalogo = _indice_catalogo_para_editor(db)
     productos_catalogo = db.query(Producto).order_by(Producto.ultimo_uso.desc(), Producto.usos.desc(), Producto.nombre).all()
     recursos_catalogo = db.query(Recurso).order_by(Recurso.ultimo_uso.desc(), Recurso.usos.desc(), Recurso.descripcion).all()
     plantillas = db.query(Plantilla).order_by(Plantilla.nombre).all()
@@ -6502,6 +6502,95 @@ async def _guardar_imagenes_galeria(form, prefijo: str, db: Session) -> list[str
 # Partidas (Catálogo reutilizable)
 # ---------------------------------------------------------------------------
 
+_CAMPOS_INDICE_CATALOGO = (
+    Partida.id,
+    Partida.nombre,
+    Partida.descripcion,
+    Partida.precio_unitario,
+    Partida.unidad,
+    Partida.categoria,
+    Partida.subcategoria,
+    Partida.apartado,
+    Partida.codigo_clasificacion,
+    Partida.codigo_legacy,
+    Partida.codigo_interno,
+    Partida.codigo_externo,
+    Partida.usos,
+    Partida.ultimo_uso,
+)
+
+_PALABRAS_VACIAS_INDICE = frozenset({
+    "para", "con", "sin", "desde", "hasta", "sobre", "entre", "incluye",
+    "incluido", "incluida", "mediante", "segun", "cada", "obra", "trabajo",
+    "ejecucion", "suministro", "colocacion", "formacion", "parte", "zona",
+    "elemento", "sistema", "material", "existente", "terminado", "total",
+})
+
+
+def _texto_indice_catalogo(partida: Partida) -> str:
+    """Tesauro compacto: conserva búsqueda técnica sin enviar descripciones."""
+    bruto = " ".join((
+        partida.nombre or "",
+        partida.descripcion or "",
+        partida.categoria or "",
+        partida.subcategoria or "",
+        partida.apartado or "",
+        partida.codigo_interno or "",
+        partida.codigo_legacy or "",
+    ))
+    normal = unicodedata.normalize("NFD", bruto.lower())
+    normal = "".join(c for c in normal if unicodedata.category(c) != "Mn")
+    palabras = re.findall(r"[a-z0-9]+", normal)
+    unicas: list[str] = []
+    vistas: set[str] = set()
+    for palabra in palabras:
+        if len(palabra) < 3 or palabra in _PALABRAS_VACIAS_INDICE or palabra in vistas:
+            continue
+        vistas.add(palabra)
+        unicas.append(palabra)
+        if len(unicas) >= 32:
+            break
+    return " ".join(unicas)[:280]
+
+
+def _partida_catalogo_indice(partida: Partida) -> dict:
+    """Registro pequeño para árboles/buscadores de hasta 5.000 partidas."""
+    codigo = partida.codigo_interno or partida.codigo_externo or ""
+    return {
+        "id": partida.id,
+        "nombre": partida.nombre or "",
+        "precio": partida.precio_unitario or 0.0,
+        "unidad": partida.unidad or "ud",
+        "categoria": partida.categoria or "99 Partidas personalizadas",
+        "subcategoria": partida.subcategoria or "",
+        "apartado": partida.apartado or "",
+        "codigo_clasificacion": partida.codigo_clasificacion or "",
+        "codigo_legacy": partida.codigo_legacy or "",
+        "codigo": codigo,
+        "codigo_interno": partida.codigo_interno or "",
+        "codigo_externo": partida.codigo_externo or "",
+        "usos": partida.usos or 0,
+        "ultimo_uso": partida.ultimo_uso.isoformat() if partida.ultimo_uso else "",
+        "buscable": _texto_indice_catalogo(partida),
+    }
+
+
+def _indice_catalogo_para_editor(db: Session) -> list[dict]:
+    partidas = (
+        db.query(Partida)
+        .options(load_only(*_CAMPOS_INDICE_CATALOGO))
+        .order_by(
+            Partida.categoria,
+            Partida.subcategoria,
+            Partida.apartado,
+            Partida.codigo_interno,
+            Partida.nombre,
+        )
+        .all()
+    )
+    return [_partida_catalogo_indice(partida) for partida in partidas]
+
+
 def _partida_catalogo_json(partida: Partida) -> dict:
     """Contrato único de una partida para el catálogo y el creador.
 
@@ -6551,20 +6640,28 @@ def _partida_catalogo_json(partida: Partida) -> dict:
 
 
 @app.get("/partidas", response_class=HTMLResponse)
-def listar_partidas(request: Request, q: str = "", db: Session = Depends(get_db)):
-    # Si la org aún tiene el catálogo de prueba (~50 partidas), se sustituye
-    # una sola vez por el catálogo propio (540 partidas + recursos).
+def listar_partidas(
+    request: Request,
+    q: str = "",
+    pagina: int = 1,
+    db: Session = Depends(get_db),
+):
+    # La tabla de gestión se pagina; el editor usa un índice compacto aparte.
     from .services.catalogo_propio import asegurar_catalogo_propio
     asegurar_catalogo_propio(db)
     query = db.query(Partida)
     if q.strip():
-        like = f"%{q.strip()}%"
+        like = f"%{q.strip()[:120]}%"
         query = query.filter(or_(
             Partida.nombre.ilike(like), Partida.categoria.ilike(like),
             Partida.subcategoria.ilike(like), Partida.apartado.ilike(like),
             Partida.codigo_interno.ilike(like), Partida.codigo_legacy.ilike(like),
             Partida.proveedor.ilike(like), Partida.descripcion.ilike(like),
         ))
+    total_partidas = query.count()
+    por_pagina = 100
+    total_paginas = max(1, math.ceil(total_partidas / por_pagina))
+    pagina = max(1, min(int(pagina or 1), total_paginas))
     partidas = query.order_by(
         Partida.categoria,
         Partida.subcategoria,
@@ -6572,7 +6669,7 @@ def listar_partidas(request: Request, q: str = "", db: Session = Depends(get_db)
         Partida.codigo_interno,
         Partida.ultimo_uso.desc(),
         Partida.nombre,
-    ).all()
+    ).offset((pagina - 1) * por_pagina).limit(por_pagina).all()
     catalogo_descompuestos = {}
     for partida in partidas:
         try:
@@ -6584,7 +6681,84 @@ def listar_partidas(request: Request, q: str = "", db: Session = Depends(get_db)
         CategoriaPartida.oficial.is_(False),
         CategoriaPartida.oficial.is_(None),
     )).order_by(CategoriaPartida.categoria, CategoriaPartida.subcategoria).all()
-    return TEMPLATES.TemplateResponse(request, "partidas/list.html", {"partidas": partidas, "q": q, "catalogo_descompuestos": catalogo_descompuestos, "categorias_catalogo": categorias_catalogo})
+    return TEMPLATES.TemplateResponse(request, "partidas/list.html", {
+        "partidas": partidas,
+        "q": q,
+        "catalogo_descompuestos": catalogo_descompuestos,
+        "categorias_catalogo": categorias_catalogo,
+        "total_partidas": total_partidas,
+        "pagina": pagina,
+        "total_paginas": total_paginas,
+        "por_pagina": por_pagina,
+    })
+
+
+@app.get("/partidas/api/buscar")
+def buscar_partidas_catalogo_api(
+    q: str = "",
+    limite: int = 60,
+    db: Session = Depends(get_db),
+):
+    """Búsqueda técnica bajo demanda sin descargar fichas/descompuestos."""
+    consulta = str(q or "").strip()[:120]
+    limite = max(1, min(int(limite or 60), 100))
+    query = db.query(Partida).options(load_only(*_CAMPOS_INDICE_CATALOGO))
+    terminos = re.findall(r"[\w.-]+", consulta, flags=re.UNICODE)[:6]
+    for termino in terminos:
+        like = f"%{termino[:40]}%"
+        query = query.filter(or_(
+            Partida.nombre.ilike(like),
+            Partida.descripcion.ilike(like),
+            Partida.categoria.ilike(like),
+            Partida.subcategoria.ilike(like),
+            Partida.apartado.ilike(like),
+            Partida.codigo_interno.ilike(like),
+            Partida.codigo_legacy.ilike(like),
+            Partida.proveedor.ilike(like),
+        ))
+    partidas = query.order_by(
+        Partida.usos.desc(), Partida.ultimo_uso.desc(), Partida.nombre
+    ).limit(limite).all() if terminos else []
+    return {
+        "ok": True,
+        "q": consulta,
+        "resultados": [_partida_catalogo_indice(p) for p in partidas],
+    }
+
+
+@app.post("/partidas/api/busqueda-sin-resultados")
+async def registrar_busqueda_catalogo_sin_resultados(
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    """Métrica interna para cubrir faltantes antes de que generen abandono."""
+    try:
+        payload = await request.json()
+    except (TypeError, ValueError):
+        payload = {}
+    consulta = re.sub(r"\s+", " ", str(payload.get("q") or "").strip())[:120]
+    if len(consulta) >= 2:
+        log.warning(
+            "catalogo_busqueda_sin_resultados",
+            extra={
+                "evento": "catalogo_busqueda_sin_resultados",
+                "organizacion_id": db.info.get("organizacion_id"),
+                "consulta": consulta,
+            },
+        )
+    return {"ok": True}
+
+
+@app.get("/partidas/{partida_id}/ficha")
+def ficha_partida_catalogo(partida_id: int, db: Session = Depends(get_db)):
+    """Ficha completa bajo demanda para preview, edición o inserción."""
+    partida = db.get(Partida, partida_id)
+    if partida is None:
+        return JSONResponse(
+            status_code=404,
+            content={"ok": False, "error": "Partida no encontrada."},
+        )
+    return {"ok": True, "partida": _partida_catalogo_json(partida)}
 
 
 @app.get("/partidas/{partida_id}/descomposicion")

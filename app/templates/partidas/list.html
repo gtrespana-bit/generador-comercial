@@ -3,7 +3,7 @@
 {% block content %}
 <div class="page-head csp-s-5d6e5a9c91">
   <div>
-    <h1 class="csp-s-93f4d4c3fe">Catálogo de Partidas <span class="csp-s-20db78cd99">{{ partidas|length }}</span></h1>
+    <h1 class="csp-s-93f4d4c3fe">Catálogo de Partidas <span class="csp-s-20db78cd99">{{ total_partidas }}</span></h1>
     <p class="subtitle">Reutilizables para tus presupuestos · capítulo, subcapítulo y apartado numéricos · preparadas para crecer sin desorden</p>
   </div>
   <div class="csp-s-33ff8b3e89">
@@ -15,11 +15,12 @@
 <!-- TOOLBAR SUPERIOR COMPACTA -->
 <div class="partidas-toolbar card csp-s-0d510e3476">
   <div class="toolbar-row">
-    <div class="toolbar-search">
+    <form class="toolbar-search" method="get" action="/partidas">
       <span class="search-icon" aria-hidden="true">⌕</span>
-      <input type="text" id="buscador" placeholder="Buscar por nombre, código, proveedor, descripción…" data-cotizat-input="partidas-filter" autocomplete="off">
-      <button id="clearSearch" class="btn btn-ghost btn-sm cotizat-hidden csp-s-dbb704fc6f" data-cotizat-click="partidas-clear-search" title="Limpiar">✕</button>
-    </div>
+      <input type="text" id="buscador" name="q" value="{{ q }}" placeholder="Buscar en todo el catálogo…" data-servidor="{{ '1' if q else '0' }}" data-cotizat-input="partidas-filter" autocomplete="off">
+      <button type="submit" class="btn btn-sm btn-ghost" title="Buscar en las {{ total_partidas }} partidas">Buscar</button>
+      <button type="button" id="clearSearch" class="btn btn-ghost btn-sm {{ '' if q else 'cotizat-hidden' }} csp-s-dbb704fc6f" data-cotizat-click="partidas-clear-search" title="Limpiar">✕</button>
+    </form>
     <div class="toolbar-actions">
       <div class="toolbar-meta" id="filterMeta"></div>
       <div class="toolbar-divider"></div>
@@ -62,7 +63,7 @@
     <div class="cat-sidebar-head">
       <div>
         <h3>Categorías</h3>
-        <span class="cat-sidebar-subtitle">{{ partidas|groupby('categoria')|list|length }} categorías · {{ partidas|length }} partidas</span>
+        <span class="cat-sidebar-subtitle">Página {{ pagina }}/{{ total_paginas }} · {{ partidas|length }} de {{ total_partidas }}</span>
       </div>
       <button class="btn-icon" id="btnCollapseSidebar" data-cotizat-click="partidas-toggle-sidebar" title="Contraer panel">⟨</button>
     </div>
@@ -79,7 +80,7 @@
       </details>
       <button class="category-btn active" data-cat="todas" id="btn-cat-todas" data-cotizat-click="partidas-filter-category">
         <span class="cat-btn-left"><span>📂</span><span class="cat-name">Todas</span></span>
-        <span class="cat-count">{{ partidas | length }}</span>
+        <span class="cat-count">{{ total_partidas }}</span>
       </button>
 
       {% for cat, cat_partidas in partidas | groupby('categoria') %}
@@ -130,7 +131,7 @@
 
   <!-- BOTÓN PARA RE-EXPANDIR CUANDO ESTÁ COLAPSADO -->
   <button id="catSidebarExpand" class="cat-sidebar-expand cotizat-hidden" data-cotizat-click="partidas-toggle-sidebar" title="Mostrar categorías">
-    <span>☰</span> <span>Categorías</span> <span class="badge csp-s-451d13ae38">{{ partidas|length }}</span>
+    <span>☰</span> <span>Categorías</span> <span class="badge csp-s-451d13ae38">{{ total_partidas }}</span>
   </button>
 
   <!-- CONTENIDO PRINCIPAL -->
@@ -351,14 +352,22 @@
     {% else %}
     <div class="card empty csp-s-d6e98c0fe2">
       <div class="csp-s-c7d3ba0dcc">📋</div>
-      <h3 class="csp-s-261f301f5a">Aún no hay partidas en el catálogo</h3>
-      <p class="hint csp-s-ff35838023">Crea tu primera partida o importa cientos desde Excel (formato CYPE o tabular). Una vez cargadas, organízalas por capítulo, subcapítulo y apartado para trabajar a gran escala.</p>
+      <h3 class="csp-s-261f301f5a">{{ 'No hay resultados' if q else 'Aún no hay partidas en el catálogo' }}</h3>
+      <p class="hint csp-s-ff35838023">{% if q %}No encontramos «{{ q }}» en todo el catálogo. Prueba otro término o código.{% else %}Crea tu primera partida o importa cientos desde Excel. Después podrás organizarlas por capítulo, subcapítulo y apartado.{% endif %}</p>
       <div class="csp-s-eb1a6b0356">
         <a href="/partidas/nueva" class="btn btn-primary">+ Nueva Partida</a>
         <a href="/presupuestos/importar?destino=catalogo" class="btn">⇧ Importar desde Excel</a>
       </div>
     </div>
     {% endfor %}
+
+    {% if total_paginas > 1 %}
+    <nav class="catalog-pagination" aria-label="Páginas del catálogo">
+      {% if pagina > 1 %}<a class="btn btn-sm" href="/partidas?pagina={{ pagina - 1 }}{% if q %}&q={{ q|urlencode }}{% endif %}">← Anterior</a>{% endif %}
+      <span>Página <strong>{{ pagina }}</strong> de {{ total_paginas }} · {{ total_partidas }} partidas</span>
+      {% if pagina < total_paginas %}<a class="btn btn-sm" href="/partidas?pagina={{ pagina + 1 }}{% if q %}&q={{ q|urlencode }}{% endif %}">Siguiente →</a>{% endif %}
+    </nav>
+    {% endif %}
 
     <div id="noResults" class="card empty cotizat-hidden csp-s-5a2dfef236">
       <p class="csp-s-6b2a94ea3b">Sin resultados</p>
@@ -604,6 +613,10 @@ function aplicarDisclosure(conBusqueda) {
 
 function clearSearch() {
   const inp = document.getElementById('buscador');
+  if (inp && inp.dataset.servidor === '1') {
+    window.location.href = '/partidas';
+    return;
+  }
   if (inp) { inp.value=''; filtrarPartidas(); inp.focus(); }
 }
 function clearFilters() {

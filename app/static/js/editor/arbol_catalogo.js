@@ -6,9 +6,9 @@
    «12 Revestimientos → 12.02 Frisos → 12.02.01 Mortero» sin recordar el
    nombre exacto.
 
-   Este panel dibuja capítulo → subcapítulo → apartado → partida a partir de los datos
-   que ya viajan en la página (window.EDITOR.CATALOGO), así que no añade
-   ninguna petición al servidor.
+   Este panel dibuja capítulo → subcapítulo → apartado desde un índice ligero.
+   Las hojas se renderizan al abrir una rama y la ficha completa se solicita
+   solo al previsualizar o insertar una partida.
 
    Formas de llevar una partida al presupuesto:
      · arrastrarla y soltarla sobre el capítulo que se quiera
@@ -31,6 +31,10 @@
   var SIN_SUBCAPITULO = "99.01 General";
   var SIN_APARTADO = "99.01.01 Trabajos diversos";
   var arrastrando = null;
+  var consultaActual = "";
+  var idsBusquedaRemota = null;
+  var temporizadorBusqueda = null;
+  var secuenciaBusqueda = 0;
 
   // ---------------------------------------------------------------------
   // Utilidades
@@ -51,7 +55,8 @@
   function textoBusqueda(p) {
     return sinTildes([
       p.nombre, p.descripcion, p.codigo_interno, p.codigo_externo,
-      p.codigo_legacy, p.categoria, p.subcategoria, p.apartado, p.unidad
+      p.codigo_legacy, p.categoria, p.subcategoria, p.apartado, p.unidad,
+      p.buscable
     ].join(" "));
   }
 
@@ -210,6 +215,21 @@
     posicionarPreview(hojaEl, el);
   }
 
+  function cargarYMostrarPreview(hojaEl, hoja) {
+    var d = hoja.dato;
+    if (!editor.Catalogo || typeof editor.Catalogo.obtenerFicha !== "function") {
+      mostrarPreview(hojaEl, d);
+      return;
+    }
+    editor.Catalogo.obtenerFicha(d).then(function (ficha) {
+      var sigueActivo = hojaEl.matches(":hover") || document.activeElement === hojaEl;
+      if (sigueActivo) mostrarPreview(hojaEl, ficha);
+    }).catch(function () {
+      var sigueActivo = hojaEl.matches(":hover") || document.activeElement === hojaEl;
+      if (sigueActivo) mostrarPreview(hojaEl, d);
+    });
+  }
+
   function posicionarPreview(ancla, el) {
     var r = ancla.getBoundingClientRect();
     var ancho = Math.min(320, window.innerWidth - 24);
@@ -262,12 +282,12 @@
     li.addEventListener("mouseenter", function () {
       clearTimeout(previewTimer);
       previewTimer = setTimeout(function () {
-        mostrarPreview(li, d);
+        cargarYMostrarPreview(li, hoja);
       }, 280);
     });
     li.addEventListener("mouseleave", ocultarPreview);
     li.addEventListener("focus", function () {
-      mostrarPreview(li, d);
+      cargarYMostrarPreview(li, hoja);
     });
     li.addEventListener("blur", ocultarPreview);
     li.addEventListener("dragstart", ocultarPreview);
@@ -331,9 +351,10 @@
           var cuerpoApartado = document.createElement("div");
           cuerpoApartado.className = "arbol-apartado-body";
           cuerpoApartado.hidden = true;
-          apartado.hojas.forEach(function (hoja) {
-            cuerpoApartado.appendChild(crearHoja(hoja));
-          });
+          // Las hojas se crean al abrir o buscar. Con 5.000 partidas esto
+          // evita miles de nodos DOM y cientos de fichas innecesarias.
+          bloqueApartado._catalogoApartado = apartado;
+          bloqueApartado._claveRender = "";
           bloqueApartado.appendChild(cabApartado);
           bloqueApartado.appendChild(cuerpoApartado);
           cuerpoSub.appendChild(bloqueApartado);
@@ -352,11 +373,43 @@
     cuerpo.replaceChildren(frag);
   }
 
+  function hojasDeApartado(bloqueApartado) {
+    var apartado = bloqueApartado && bloqueApartado._catalogoApartado;
+    if (!apartado) return [];
+    if (!consultaActual) return apartado.hojas;
+    return apartado.hojas.filter(function (hoja) {
+      return hoja.buscable.indexOf(consultaActual) !== -1 ||
+        (idsBusquedaRemota && idsBusquedaRemota[String(hoja.dato.id)]);
+    });
+  }
+
+  function poblarApartado(bloqueApartado, forzar) {
+    if (!bloqueApartado) return;
+    var cuerpoApartado = bloqueApartado.querySelector(".arbol-apartado-body");
+    if (!cuerpoApartado) return;
+    var clave = consultaActual
+      ? "q:" + consultaActual + ":" + (idsBusquedaRemota ? Object.keys(idsBusquedaRemota).length : 0)
+      : "todo";
+    if (!forzar && bloqueApartado._claveRender === clave) return;
+    var frag = document.createDocumentFragment();
+    hojasDeApartado(bloqueApartado).forEach(function (hoja) {
+      frag.appendChild(crearHoja(hoja));
+    });
+    cuerpoApartado.replaceChildren(frag);
+    bloqueApartado._claveRender = clave;
+  }
+
   function alternar(cabecera) {
     var destino = cabecera.nextElementSibling;
     if (!destino) return;
     var abierto = !destino.hidden;
-    destino.hidden = abierto;
+    if (abierto) {
+      destino.hidden = true;
+    } else {
+      var bloqueApartado = cabecera.closest(".arbol-apartado");
+      if (bloqueApartado) poblarApartado(bloqueApartado, false);
+      destino.hidden = false;
+    }
     cabecera.setAttribute("aria-expanded", abierto ? "false" : "true");
     cabecera.classList.toggle("abierto", !abierto);
   }
@@ -365,28 +418,28 @@
   // Búsqueda: filtra hojas y abre las ramas que conservan resultados
   // ---------------------------------------------------------------------
 
-  function filtrar(texto) {
-    var aguja = sinTildes(texto).trim();
+  function filtrar(texto, idsRemotos) {
+    consultaActual = sinTildes(texto).trim();
+    idsBusquedaRemota = idsRemotos || null;
     var visibles = 0;
 
     cuerpo.querySelectorAll(".arbol-capitulo").forEach(function (bloqueCap) {
       var vistasCap = 0;
-
       bloqueCap.querySelectorAll(".arbol-subcapitulo").forEach(function (bloqueSub) {
         var vistasSub = 0;
         bloqueSub.querySelectorAll(".arbol-apartado").forEach(function (bloqueApartado) {
-          var vistasApartado = 0;
-          bloqueApartado.querySelectorAll(".arbol-hoja").forEach(function (hoja) {
-            var casa = !aguja || hoja.dataset.buscable.indexOf(aguja) !== -1;
-            hoja.hidden = !casa;
-            if (casa) vistasApartado += 1;
-          });
+          var vistasApartado = hojasDeApartado(bloqueApartado).length;
           bloqueApartado.hidden = vistasApartado === 0;
           var cabApartado = bloqueApartado.querySelector(".arbol-apartado-head");
           var cuerpoApartado = bloqueApartado.querySelector(".arbol-apartado-body");
           if (cabApartado) {
             cabApartado.querySelector(".arbol-cuenta").textContent = String(vistasApartado);
-            var abrirApartado = Boolean(aguja) && vistasApartado > 0;
+            var abrirApartado = Boolean(consultaActual) && vistasApartado > 0;
+            if (abrirApartado) poblarApartado(bloqueApartado, true);
+            else if (bloqueApartado._claveRender.indexOf("q:") === 0) {
+              cuerpoApartado.replaceChildren();
+              bloqueApartado._claveRender = "";
+            }
             cuerpoApartado.hidden = !abrirApartado;
             cabApartado.classList.toggle("abierto", abrirApartado);
             cabApartado.setAttribute("aria-expanded", abrirApartado ? "true" : "false");
@@ -398,7 +451,7 @@
         var cuerpoSub = bloqueSub.querySelector(".arbol-sub-body");
         if (cabSub) {
           cabSub.querySelector(".arbol-cuenta").textContent = String(vistasSub);
-          var abrirSub = Boolean(aguja) && vistasSub > 0;
+          var abrirSub = Boolean(consultaActual) && vistasSub > 0;
           cuerpoSub.hidden = !abrirSub;
           cabSub.classList.toggle("abierto", abrirSub);
           cabSub.setAttribute("aria-expanded", abrirSub ? "true" : "false");
@@ -411,7 +464,7 @@
       var cuerpoCap = bloqueCap.querySelector(".arbol-cap-body");
       if (cabCap) {
         cabCap.querySelector(".arbol-cuenta").textContent = String(vistasCap);
-        var abrirCap = Boolean(aguja) && vistasCap > 0;
+        var abrirCap = Boolean(consultaActual) && vistasCap > 0;
         cuerpoCap.hidden = !abrirCap;
         cabCap.classList.toggle("abierto", abrirCap);
         cabCap.setAttribute("aria-expanded", abrirCap ? "true" : "false");
@@ -420,10 +473,30 @@
     });
 
     if (contador) {
-      contador.textContent = aguja
+      contador.textContent = consultaActual
         ? visibles + (visibles === 1 ? " partida" : " partidas")
         : (editor.CATALOGO || []).length + " partidas";
     }
+    return visibles;
+  }
+
+  function buscarConServidor(texto) {
+    clearTimeout(temporizadorBusqueda);
+    var consulta = String(texto || "").trim();
+    var secuencia = ++secuenciaBusqueda;
+    filtrar(consulta, null);
+    if (consulta.length < 2 || !editor.Catalogo || !editor.Catalogo.buscarRemoto) return;
+    temporizadorBusqueda = setTimeout(function () {
+      editor.Catalogo.buscarRemoto(consulta, 100).then(function (items) {
+        if (secuencia !== secuenciaBusqueda || consulta !== String(inputBuscar.value || "").trim()) return;
+        var ids = Object.create(null);
+        items.forEach(function (item) { ids[String(item.id)] = true; });
+        var visibles = filtrar(consulta, ids);
+        if (!visibles && editor.Catalogo.registrarSinResultados) {
+          editor.Catalogo.registrarSinResultados(consulta);
+        }
+      });
+    }, 180);
   }
 
   // ---------------------------------------------------------------------
@@ -525,11 +598,11 @@
     });
 
     if (inputBuscar) {
-      inputBuscar.addEventListener("input", function () { filtrar(inputBuscar.value); });
+      inputBuscar.addEventListener("input", function () { buscarConServidor(inputBuscar.value); });
       inputBuscar.addEventListener("keydown", function (event) {
         if (event.key !== "Escape") return;
         inputBuscar.value = "";
-        filtrar("");
+        buscarConServidor("");
       });
     }
 
@@ -571,7 +644,7 @@
   } catch (e) {}
 
   window.CotizatActions.register("arbol-expandir", function () {
-    cuerpo.querySelectorAll(".arbol-rama").forEach(function (rama) {
+    cuerpo.querySelectorAll(".arbol-cap-head, .arbol-sub-head").forEach(function (rama) {
       var destino = rama.nextElementSibling;
       if (destino && destino.hidden) alternar(rama);
     });

@@ -11,6 +11,101 @@
   "use strict";
 
   var editor = window.EDITOR;
+  var fichasCache = Object.create(null);
+  var peticionesFicha = Object.create(null);
+  var peticionesBusqueda = Object.create(null);
+  var busquedasVaciasRegistradas = Object.create(null);
+
+  function fusionarEnIndice(partida) {
+    var indice = (editor.CATALOGO || []).findIndex(function (p) {
+      return Number(p.id) === Number(partida.id);
+    });
+    if (indice < 0) {
+      partida._detalle_cargado = true;
+      editor.CATALOGO.push(partida);
+      return partida;
+    }
+    Object.assign(editor.CATALOGO[indice], partida, { _detalle_cargado: true });
+    return editor.CATALOGO[indice];
+  }
+
+  function obtenerFicha(indiceOItem) {
+    var item = typeof indiceOItem === "number"
+      ? (editor.CATALOGO || [])[indiceOItem]
+      : indiceOItem;
+    if (!item || !item.id) return Promise.reject(new Error("Partida no disponible"));
+    var id = String(item.id);
+    if (item._detalle_cargado || Object.prototype.hasOwnProperty.call(item, "descomposicion")) {
+      item._detalle_cargado = true;
+      fichasCache[id] = item;
+      return Promise.resolve(item);
+    }
+    if (fichasCache[id]) return Promise.resolve(fichasCache[id]);
+    if (peticionesFicha[id]) return peticionesFicha[id];
+    peticionesFicha[id] = fetch("/partidas/" + encodeURIComponent(id) + "/ficha", {
+      headers: { "Accept": "application/json" }
+    })
+      .then(function (respuesta) {
+        if (!respuesta.ok) throw new Error("No se pudo cargar la partida");
+        return respuesta.json();
+      })
+      .then(function (datos) {
+        if (!datos.ok || !datos.partida) throw new Error(datos.error || "Ficha no disponible");
+        var completa = fusionarEnIndice(datos.partida);
+        fichasCache[id] = completa;
+        delete peticionesFicha[id];
+        return completa;
+      })
+      .catch(function (error) {
+        delete peticionesFicha[id];
+        throw error;
+      });
+    return peticionesFicha[id];
+  }
+
+  function buscarRemoto(texto, limite) {
+    var consulta = String(texto || "").trim();
+    if (consulta.length < 2) return Promise.resolve([]);
+    var clave = consulta.toLowerCase() + "|" + String(limite || 60);
+    if (peticionesBusqueda[clave]) return peticionesBusqueda[clave];
+    peticionesBusqueda[clave] = fetch(
+      "/partidas/api/buscar?q=" + encodeURIComponent(consulta) +
+      "&limite=" + encodeURIComponent(limite || 60),
+      { headers: { "Accept": "application/json" } }
+    )
+      .then(function (respuesta) {
+        if (!respuesta.ok) throw new Error("No se pudo buscar en el catálogo");
+        return respuesta.json();
+      })
+      .then(function (datos) {
+        var porId = Object.create(null);
+        (editor.CATALOGO || []).forEach(function (item) { porId[String(item.id)] = item; });
+        var salida = (datos.resultados || []).map(function (resultado) {
+          var existente = porId[String(resultado.id)];
+          if (existente) {
+            Object.assign(existente, resultado);
+            return existente;
+          }
+          editor.CATALOGO.push(resultado);
+          return resultado;
+        });
+        return salida;
+      })
+      .catch(function () { return []; });
+    return peticionesBusqueda[clave];
+  }
+
+  function registrarSinResultados(texto) {
+    var consulta = String(texto || "").trim();
+    var clave = consulta.toLowerCase();
+    if (consulta.length < 2 || busquedasVaciasRegistradas[clave]) return;
+    busquedasVaciasRegistradas[clave] = true;
+    fetch("/partidas/api/busqueda-sin-resultados", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      body: JSON.stringify({ q: consulta })
+    }).catch(function () {});
+  }
 
   // -------------------------------------------------------------------------
   // Catálogo de partidas — buscador
@@ -45,7 +140,7 @@
           matches = editor.CATALOGO_UTILS.buscarEnCatalogo(
             editor.CATALOGO,
             f,
-            ["nombre", "descripcion", "categoria", "codigo", "proveedor"],
+            ["nombre", "buscable", "categoria", "subcategoria", "apartado", "codigo", "codigo_legacy"],
             ""
           );
         } else {
@@ -201,15 +296,12 @@
   // Agregar partida desde catálogo
   // -------------------------------------------------------------------------
 
-  function insertarEnCapitulo(idx, cap) {
-    var d = editor.CATALOGO[idx];
-    if (!d) return null;
+  function insertarFichaEnCapitulo(d, cap) {
     if (!cap) {
       var caps = editor.contCapitulos.querySelectorAll(".capitulo");
       cap = caps.length ? caps[caps.length - 1] : editor.Capitulo.crear({ nombre: "CAPÍTULO GENERAL" }, editor);
     }
     cap.classList.remove("collapsed");
-
     editor.pushUndo();
 
     var partida = editor.Partida.crearPartida(cap, {
@@ -243,27 +335,34 @@
 
     if (partida) {
       var row = partida.querySelector(".partida-row");
-      // Animación flash
       row.classList.add("flash");
       setTimeout(function () { row.classList.remove("flash"); }, 1200);
       partida.scrollIntoView({ behavior: "smooth", block: "center" });
-
       var ni = partida.querySelector(".partida-nombre-input");
       if (ni) setTimeout(function () { ni.focus(); }, 200);
     }
-
     editor.marcarCambio();
     return partida;
   }
 
-  function agregarDesdeCatalogo(idx) {
-    var partida = insertarEnCapitulo(idx, null);
+  function insertarEnCapitulo(idx, cap) {
+    var item = (editor.CATALOGO || [])[idx];
+    if (!item) return Promise.resolve(null);
+    return obtenerFicha(item)
+      .then(function (ficha) { return insertarFichaEnCapitulo(ficha, cap); })
+      .catch(function () {
+        alert("No se pudo cargar la ficha de la partida. Inténtalo de nuevo.");
+        return null;
+      });
+  }
 
+  function agregarDesdeCatalogo(idx) {
+    var promesa = insertarEnCapitulo(idx, null);
     var cat = document.getElementById("catalogo-partidas");
     if (cat) cat.classList.remove("open");
     var buscar = document.getElementById("buscar-partida");
     if (buscar) buscar.value = "";
-    return partida;
+    return promesa;
   }
 
   // -------------------------------------------------------------------------
@@ -325,9 +424,8 @@
   }
 
   function actualizarPrecioCatalogoLocal(partida) {
-    var idx = (editor.CATALOGO || []).findIndex(function (p) { return Number(p.id) === Number(partida.id); });
-    if (idx >= 0) editor.CATALOGO[idx] = Object.assign({}, editor.CATALOGO[idx], partida);
-    else editor.CATALOGO.push(partida);
+    var actual = fusionarEnIndice(partida);
+    fichasCache[String(partida.id)] = actual;
   }
 
   function mostrarOpcionPrecio(wrap, target, match) {
@@ -471,7 +569,13 @@
   editor.initCatalogo = init;
   editor.catalogo = { init: init };
   // Usado por la barra lateral en árbol para insertar en un capítulo concreto.
-  editor.Catalogo = { insertarEnCapitulo: insertarEnCapitulo };
+  editor.Catalogo = {
+    insertarEnCapitulo: insertarEnCapitulo,
+    obtenerFicha: obtenerFicha,
+    buscarRemoto: buscarRemoto,
+    registrarSinResultados: registrarSinResultados,
+    fusionarEnIndice: fusionarEnIndice
+  };
 
   // Exponer para las acciones declarativas del catálogo compartido.
   window.agregarDesdeCatalogo = agregarDesdeCatalogo;

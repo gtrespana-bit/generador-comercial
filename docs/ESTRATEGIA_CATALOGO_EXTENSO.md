@@ -104,18 +104,20 @@ que el usuario percibe como «eliminar de mi catálogo» debe comportarse como
 Esto requiere evolucionar el actual modelo de copia por organización con un
 estado explícito de visibilidad y una identidad oficial estable.
 
-## Requisito de rendimiento antes de crecer
+## Rendimiento para 5.000 partidas — implantado
 
-La página actual todavía transporta fichas completas del catálogo al navegador.
-Ese enfoque sirve para 540 partidas, pero no para 3.000–5.000. Antes de la
-expansión masiva se implantará:
+La fase 1 quedó completada el 16/08/2026:
 
 1. índice ligero para el árbol;
-2. búsqueda indexada o bajo demanda;
-3. carga de la ficha y el descompuesto solo al previsualizar o insertar;
-4. caché local de fichas ya utilizadas;
+2. búsqueda local y bajo demanda;
+3. carga de ficha y descompuesto solo al previsualizar o insertar;
+4. caché local de fichas y peticiones en curso;
 5. renderizado progresivo de ramas;
-6. métricas de búsquedas sin resultado, sin depender de quejas del cliente.
+6. métricas de búsquedas sin resultado;
+7. pantalla de gestión paginada a 100 filas.
+
+La prueba sintética de 5.000 partidas abrió el editor en aproximadamente 1,25 s y la pantalla
+de gestión en 0,110 s. Detalle en `docs/FASE_1_CATALOGO_ESCALABLE.md`.
 
 ## Control de calidad y condición de salida
 
@@ -139,8 +141,8 @@ en trabajo de catálogo antes de que las encuentre un cliente.
 
 ## Orden de ejecución
 
-1. Preparar la aplicación para navegar 5.000 partidas sin degradación.
-2. Incorporar ocultación/restauración por organización y actualización
+1. ✅ Preparar la aplicación para navegar 5.000 partidas sin degradación.
+2. **Siguiente:** incorporar ocultación/restauración por organización y actualización
    incremental del catálogo oficial.
 3. Construir inventario de cobertura y sinónimos por cada uno de los 18
    capítulos.

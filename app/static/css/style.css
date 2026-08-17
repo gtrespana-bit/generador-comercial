@@ -1096,6 +1096,15 @@ body.collapsed .theme-toggle-label,
 .partida-sub .desc { font-size: .76rem; color: var(--text-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; max-width: 320px; }
 .partida-sub .desc.empty { color: var(--text-muted); font-style: italic; }
 .partida-sub .prov { font-size: .72rem; color: var(--text-muted); white-space: nowrap; }
+.catalog-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .8rem;
+  margin: 1rem 0;
+  color: var(--text-muted);
+  font-size: .82rem;
+}
 .apartado-mini {
   flex: 0 0 auto;
   max-width: 15rem;

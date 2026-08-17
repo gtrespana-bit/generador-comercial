@@ -183,7 +183,7 @@
     var resultados = editor.CATALOGO.map(function (item) {
       var nombre = normalizar(item.nombre);
       var resto = normalizar(
-        (item.descripcion || "") + " " + (item.categoria || "") + " " +
+        (item.buscable || item.descripcion || "") + " " + (item.categoria || "") + " " +
         (item.subcategoria || "") + " " + (item.apartado || "")
       );
       var puntuacion = 0;
@@ -218,13 +218,24 @@
         nombre: cat.toUpperCase(),
         partidas: grupos[cat].map(function (item) {
           return {
-            partida_id: item.id,
+            catalogo_id: item.id,
             nombre: item.nombre,
             descripcion: item.descripcion || "",
             unidad: item.unidad || "ud",
             precio: item.precio,
             cantidad: 1,
             categoria: item.categoria || "",
+            subcategoria: item.subcategoria || "",
+            apartado: item.apartado || "",
+            codigo_interno: item.codigo_interno || item.codigo || "",
+            codigo_externo: item.codigo_externo || "",
+            proveedor: item.proveedor || "",
+            coste_materiales: item.coste_materiales || 0,
+            coste_mano_obra: item.coste_mano_obra || 0,
+            coste_complementarios: item.coste_complementarios || 0,
+            coste_otros: item.coste_otros || 0,
+            desperdicio_pct: item.desperdicio_recomendado_pct || 0,
+            descomposicion: item.descomposicion || null,
           };
         }),
       };
@@ -245,20 +256,24 @@
 
   function generarBorrador(texto) {
     var coincidencias = buscarCoincidenciasEnCatalogo(texto);
-    if (!coincidencias.length) return { total: 0, capitulos: 0 };
-
-    var nuevosCapitulos = agruparPorCategoria(coincidencias);
-
-    editor.pushUndo();
-    limpiarCapituloVacioInicial();
-    nuevosCapitulos.forEach(function (cap) {
-      editor.Capitulo.crear(cap, editor);
+    if (!coincidencias.length) return Promise.resolve({ total: 0, capitulos: 0 });
+    var cargas = coincidencias.map(function (item) {
+      return editor.Catalogo && editor.Catalogo.obtenerFicha
+        ? editor.Catalogo.obtenerFicha(item).catch(function () { return item; })
+        : Promise.resolve(item);
     });
-    editor.renumerar();
-    editor.recalcular();
-    editor.marcarCambio();
-
-    return { total: coincidencias.length, capitulos: nuevosCapitulos.length };
+    return Promise.all(cargas).then(function (fichas) {
+      var nuevosCapitulos = agruparPorCategoria(fichas);
+      editor.pushUndo();
+      limpiarCapituloVacioInicial();
+      nuevosCapitulos.forEach(function (cap) {
+        editor.Capitulo.crear(cap, editor);
+      });
+      editor.renumerar();
+      editor.recalcular();
+      editor.marcarCambio();
+      return { total: fichas.length, capitulos: nuevosCapitulos.length };
+    });
   }
 
   function initGenerador() {
@@ -284,17 +299,29 @@
           }
           return;
         }
-        var resultado = generarBorrador(texto);
-        if (!resultado.total) {
+        btnGenerar.disabled = true;
+        btnGenerar.textContent = "Preparando partidas…";
+        generarBorrador(texto).then(function (resultado) {
+          btnGenerar.disabled = false;
+          btnGenerar.textContent = "Generar borrador";
+          if (!resultado.total) {
+            if (salida) {
+              CotizatStyles.set(salida, "display", "block");
+              salida.textContent = "No se encontraron coincidencias en tu catálogo de partidas. Prueba con otras palabras, o agrega la partida en /partidas/nueva y vuelve a intentarlo.";
+            }
+            return;
+          }
+          if (salida) CotizatStyles.set(salida, "display", "none");
+          ta.value = "";
+          editor.cerrarModal("modal-generador");
+        }).catch(function () {
+          btnGenerar.disabled = false;
+          btnGenerar.textContent = "Generar borrador";
           if (salida) {
             CotizatStyles.set(salida, "display", "block");
-            salida.textContent = "No se encontraron coincidencias en tu catálogo de partidas. Prueba con otras palabras, o agrega la partida en /partidas/nueva y vuelve a intentarlo.";
+            salida.textContent = "No se pudieron cargar las fichas del catálogo. Inténtalo de nuevo.";
           }
-          return;
-        }
-        if (salida) CotizatStyles.set(salida, "display", "none");
-        ta.value = "";
-        editor.cerrarModal("modal-generador");
+        });
       });
     }
 
