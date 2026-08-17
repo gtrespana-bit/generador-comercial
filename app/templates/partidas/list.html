@@ -345,6 +345,7 @@
         {% endfor %}
         {% endif %}
       </div>
+  </section>
     {% else %}
     <div class="card empty csp-s-d6e98c0fe2">
       <div class="csp-s-c7d3ba0dcc">📋</div>
@@ -437,10 +438,12 @@ function filtrarCategoria(categoria) {
     const btn = document.getElementById(id);
     if (btn) {
       btn.classList.add('active');
-      // Acordeón: abrir solo el grupo pulsado, cerrar el resto.
+      // Toggle del acordeón: si el grupo ya está abierto se cierra; si no,
+      // se abre y se cierran los demás.
       const g = btn.closest('.cat-group');
+      const yaAbierto = g && g.classList.contains('expanded');
       document.querySelectorAll('.cat-group').forEach(otro => otro.classList.remove('expanded'));
-      if (g) g.classList.add('expanded');
+      if (g && !yaAbierto) g.classList.add('expanded');
     }
     expandSection(categoria);
   }
