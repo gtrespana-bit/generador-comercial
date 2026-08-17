@@ -127,7 +127,10 @@ datos/descompuestos/*.json ─┘                  ├─► datos/partidas.csv
 
 ## Siguiente ampliación
 
-La primera meta es llegar aproximadamente a **800 partidas**. Prioridades:
+Los hitos de 800 y 1.500 son internos. El catálogo general tendrá un mínimo
+aproximado de **3.000 partidas base** y un objetivo amplio de **4.000–5.000**.
+Antes de la carga masiva, la aplicación debe incorporar carga progresiva y
+ocultación/restauración de partidas oficiales por organización. Prioridades:
 
 1. Instalaciones sanitarias, eléctricas, climatización, ventilación, datos,
    seguridad y protección contra incendios.

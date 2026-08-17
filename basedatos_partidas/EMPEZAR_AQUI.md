@@ -134,16 +134,19 @@ previa. Sin esa variable el comportamiento es el de producción:
 
 ---
 
-# 6. SIGUIENTE PASO — primera ampliación hasta unas 800 partidas
+# 6. SIGUIENTE PASO — catálogo general extenso
 
-La reorganización ya está implantada. La prioridad de producto pasa a ser
-crear aproximadamente 260 partidas nuevas, cerrando cada familia completa en
-este orden: `09 Instalaciones`, `12 Revestimientos y acabados`, `07 Carpintería,
-herrería y vidrios`, `10/11 Impermeabilizaciones y techos`, y finalmente
-`08/16/18 Remates, control y rehabilitación energética`.
+La reorganización ya está implantada. Por decisión del titular, 800 y 1.500
+son solo hitos internos: el mínimo general será de unas **3.000 partidas base**
+y el objetivo amplio de **4.000–5.000**. Antes de multiplicar los datos hay que
+preparar la aplicación para carga progresiva y permitir ocultar/restaurar
+partidas oficiales por organización.
 
-Los precios y recursos nuevos deben contrastarse al mismo tiempo; no se añaden
-partidas con descompuestos de relleno.
+La producción cerrará familias completas en este orden: `09 Instalaciones`,
+`12 Revestimientos y acabados`, `07 Carpintería, herrería y vidrios`, `10/11
+Impermeabilizaciones y techos`, y finalmente `08/16/18 Remates, control y
+rehabilitación energética`. Los precios y recursos nuevos deben contrastarse
+al mismo tiempo; no se añaden partidas con descompuestos de relleno.
 
 ## 6.1 Trabajo paralelo: cerrar los 134 precios de material provisionales
 

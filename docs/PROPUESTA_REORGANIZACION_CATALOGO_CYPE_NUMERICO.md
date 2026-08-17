@@ -8,7 +8,12 @@
 > **Implantado:** las 540 partidas ya usan `CC.SS.AA.NNN`, están mapeadas en
 > 18 capítulos, 172 subcapítulos y 147 apartados con contenido. La base de
 > datos, el actualizador versionado y el árbol de tres niveles ya están
-> operativos. La siguiente fase es ampliar primero hasta unas 800 partidas.
+> operativos.
+>
+> **Decisión posterior del titular:** las metas de 800 y 1.200 se conservan
+> solo como hitos internos. El mínimo del catálogo general pasa a unas **3.000
+> partidas base** y el objetivo amplio a **4.000–5.000**. Esta decisión y sus
+> requisitos de rendimiento se detallan en `docs/ESTRATEGIA_CATALOGO_EXTENSO.md`.
 
 ---
 
@@ -33,7 +38,7 @@ Propongo además:
 2. Pasar de los 20 capítulos actuales a **18 capítulos principales más coherentes con el proceso constructivo**.
 3. Incorporar un tercer nivel real, llamado **apartado**.
 4. Mostrar siempre código, ruta y número de partidas en el árbol.
-5. Ampliar primero el catálogo a unas **800 partidas útiles** y, en rondas posteriores, a un objetivo de **1.150–1.250 partidas**.
+5. Usar 800 y 1.200 como hitos internos, con un mínimo general de **3.000 partidas base** y un objetivo amplio de **4.000–5.000**.
 6. No crear cientos de duplicados por color, marca o acabado: esas variaciones deben seguir resolviéndose con productos/opciones.
 7. Mantener código anterior, trazabilidad y vínculos de presupuestos durante la migración.
 
@@ -214,7 +219,7 @@ La siguiente estructura conserva la lógica general de CYPE, pero usa orden, nom
 | 17 | Seguridad y salud en obra | Seguridad y salud | 25–35 |
 | 18 | Rehabilitación energética | Capítulo nuevo | 25–40 |
 
-**Objetivo final razonable:** aproximadamente **1.150–1.250 partidas**. No recomiendo intentar llegar ahí en una sola carga.
+Los rangos de esta tabla eran la primera estimación de cobertura. Tras la decisión de producto posterior, son únicamente una **primera ronda interna**: el mínimo general es de unas **3.000 partidas base** y el objetivo amplio de **4.000–5.000**.
 
 ### Por qué 18 capítulos y no mantener los 20 actuales
 
@@ -590,7 +595,7 @@ No se creará una partida distinta solo por:
 
 Esto es esencial: si para «piso porcelánico» creamos 40 partidas por marca, formato y color, el catálogo vuelve a ser difícil de usar. Debe existir una familia técnica clara y las opciones comerciales deben vivir en productos.
 
-## 9.2 Primera ampliación: de 540 a unas 800 partidas
+## 9.2 Primer hito interno: de 540 a unas 800 partidas
 
 Prioridad alta, porque son trabajos frecuentes de reforma y hoy tienen poca profundidad:
 
@@ -644,7 +649,7 @@ Prioridad alta, porque son trabajos frecuentes de reforma y hoy tienen poca prof
 - Rozas, perforaciones, recibidos, bancadas y sellados.
 - Pruebas de presión, estanqueidad, puesta a tierra y funcionamiento.
 
-## 9.3 Segunda ampliación: de 800 a unas 1.050 partidas
+## 9.3 Segundo hito interno: de 800 a unas 1.500 partidas
 
 - Estructuras y refuerzos especializados.
 - Fachadas ventiladas, ligeras y sistemas de aislamiento exterior.
@@ -655,13 +660,20 @@ Prioridad alta, porque son trabajos frecuentes de reforma y hoy tienen poca prof
 - Urbanismo, piscinas y paisajismo.
 - Control de calidad y puesta en marcha.
 
-## 9.4 Tercera ampliación: objetivo de 1.150–1.250
+## 9.4 Cobertura general de lanzamiento: mínimo aproximado de 3.000
 
+- Completar el ciclo de suministro, colocación, demolición, reparación,
+  sustitución, mantenimiento y pruebas de cada familia.
 - Soluciones menos frecuentes o de mayor especialización.
-- Rehabilitación energética.
-- Accesibilidad avanzada.
-- Reparación de patologías.
+- Rehabilitación energética, accesibilidad y reparación de patologías.
 - Sistemas industriales, acústicos, de seguridad y especiales.
+- Presupuestos tipo completos sin recurrir a partidas manuales.
+
+## 9.5 Cobertura amplia: 4.000–5.000 partidas base
+
+La ampliación continúa sin techo artificial mientras exista una diferencia
+técnica, de medición, ejecución o coste real. Productos y parámetros resuelven
+variantes comerciales sin duplicar innecesariamente el árbol.
 
 Cada ronda deberá mantener el mismo nivel de calidad actual: descripción propia, unidad, recursos, rendimientos, costes, precio, criterio de medición y terminología venezolana.
 
@@ -698,7 +710,7 @@ Partida
 Ventajas:
 
 - Permite tres niveles hoy y más niveles en el futuro sin volver a alterar la tabla.
-- Evita repetir nombres de capítulo en las 1.200 partidas.
+- Evita repetir nombres de capítulo en miles de partidas.
 - Mantiene un orden explícito.
 - Permite categorías vacías preparadas para crecimiento.
 - Hace posible mover una rama completa.
@@ -755,7 +767,7 @@ Comportamiento propuesto:
 
 ### 10.4 Rendimiento
 
-Con 1.200 partidas no conviene pintar todo el árbol expandido en el DOM desde el inicio. Se recomienda:
+Con 3.000–5.000 partidas no se puede pintar ni transportar todo el catálogo completo al abrir la página. Se recomienda:
 
 - enviar un índice compacto;
 - renderizar hijos al abrir una rama;
@@ -830,26 +842,35 @@ Los presupuestos existentes son documentos históricos. No deben cambiar de nomb
 
 **Entregable:** las mismas 540 partidas, ya ordenadas y fáciles de navegar.
 
-### Fase 2 — Primera ampliación prioritaria
+### Fase 2 — Escalabilidad y personalización
 
-- Crear unas 260 partidas nuevas.
+- Preparar árbol, búsqueda y fichas para 5.000 partidas mediante carga progresiva.
+- Permitir ocultar/restaurar partidas oficiales por organización.
+- Incorporar nuevas partidas oficiales sin reactivar las ocultas.
+
+**Entregable:** experiencia rápida aunque el catálogo sea masivo.
+
+### Fase 3 — Hitos internos de producción
+
+- Superar 800 y después 1.500 partidas.
 - Priorizar instalaciones, acabados, carpintería e impermeabilización.
-- Completar recursos y precios de mercado.
+- Completar recursos y precios de mercado por familias enteras.
 
-**Entregable:** alrededor de 800 partidas.
+**Entregable:** lotes validados; no es todavía el techo del catálogo.
 
-### Fase 3 — Cobertura profesional
+### Fase 4 — Cobertura general
 
-- Añadir unas 250 partidas.
 - Completar estructura, fachadas, equipamiento, exteriores y sistemas especiales.
+- Cubrir instalación, desmontaje, reparación, sustitución, pruebas y mantenimiento.
 
-**Entregable:** alrededor de 1.050 partidas.
+**Entregable:** mínimo aproximado de **3.000 partidas base**.
 
-### Fase 4 — Cobertura avanzada
+### Fase 5 — Cobertura amplia
 
-- Añadir 100–200 partidas especializadas según uso real y búsquedas sin resultado.
+- Añadir especialidades, patologías y soluciones menos frecuentes.
+- Continuar según la matriz de cobertura, no solo según peticiones de clientes.
 
-**Entregable:** catálogo estable de aproximadamente 1.150–1.250 partidas.
+**Entregable:** **4.000–5.000 partidas base**, sin techo artificial.
 
 ---
 
@@ -910,7 +931,7 @@ Aprobar como dirección de trabajo:
 - **Tres niveles de clasificación** antes de la partida.
 - Código visible `CC.SS.AA.NNN`, totalmente numérico.
 - Migración de las 540 partidas existentes antes de ampliar.
-- Primera meta de **800 partidas** y objetivo posterior de **1.150–1.250**.
+- 800 y 1.500 como hitos internos; mínimo general de **3.000** y objetivo amplio de **4.000–5.000 partidas base**.
 - Estructura inspirada en la navegación de CYPE, pero taxonomía, terminología, códigos y datos propios.
 - Actualización versionada y no destructiva para organizaciones existentes.
 
