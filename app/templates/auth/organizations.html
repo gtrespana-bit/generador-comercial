@@ -1,29 +1,62 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Organizaciones · {{ product_name }}</title>
-  <style nonce="{{ request.state.csp_nonce }}">
-    :root{font-family:Inter,ui-sans-serif,system-ui,sans-serif;color:#17211d;background:#f3f7f5}*{box-sizing:border-box}body{margin:0;padding:30px 16px}main{width:min(100%,720px);margin:auto}header{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}.brand{font-size:1.4rem;font-weight:900;color:#0b5b38}h1{margin:0 0 8px}.muted{color:#66776f}.card{background:white;padding:20px;border-radius:14px;box-shadow:0 8px 30px rgba(10,48,34,.08);display:flex;align-items:center;justify-content:space-between;gap:16px;margin:12px 0}.role{display:inline-block;background:#e9f6ef;color:#11623f;border-radius:999px;padding:4px 9px;font-size:.78rem;font-weight:800}button,.button{border:0;border-radius:9px;background:#146c43;color:white;padding:11px 15px;font:inherit;font-weight:800;cursor:pointer;text-decoration:none;display:inline-block}.secondary{background:#e7f4ee;color:#0b5b38}.alert,.notice{border-radius:10px;padding:12px 14px;margin-bottom:18px}.alert{background:#fff0f0;color:#9b2529}.notice{background:#e9f6ef;color:#11623f}.empty{background:white;border:1px dashed #b7c9c0;padding:30px;border-radius:14px;text-align:center}form{margin:0}.invitation{border:1px solid #b7dcc7;background:#f4fbf7}
-  </style>
+  <link rel="icon" type="image/png" href="/static/icono.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/public.css">
 </head>
-<body><main>
-<header><span class="brand">{{ product_name }}</span><form action="/salir" method="post"><button class="secondary" type="submit">Cerrar sesión</button></form></header>
-<h1>Selecciona una organización</h1>
-<p class="muted">{{ usuario.email }} · El acceso se comprueba contra tu membresía activa.</p>
-{% if error %}<div class="alert">{{ error }}</div>{% endif %}
-{% if msg %}<div class="notice">{{ msg }}</div>{% endif %}
-{% for invitacion in invitaciones %}
-<div class="card invitation">
-  <div>
-    <strong>Te invitaron a un equipo</strong><br>
-    <span class="muted">Para {{ invitacion.email }} · rol <span class="role">{{ invitacion.rol }}</span></span>
-  </div>
-  <form action="/invitaciones/pendientes/{{ invitacion.id }}/aceptar" method="post"><button type="submit">Aceptar invitación</button></form>
+<body>
+<div class="page-stage">
+  <main class="page-card page-card-narrow">
+    <div class="page-head-row">
+      <a class="brand" href="/">
+        <span class="mark">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M7 3.5h6.5L18 8v11a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 19V5a1.5 1.5 0 0 1 1-1.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            <path d="M13.5 3.5V8H18" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            <path d="M9 14.5l2 2 4-4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        {{ product_name }}
+      </a>
+      <form action="/salir" method="post"><button class="btn" type="submit">Cerrar sesión</button></form>
+    </div>
+
+    <h1>Selecciona una organización</h1>
+    <p class="text-soft">{{ usuario.email }} · El acceso se comprueba contra tu membresía activa.</p>
+
+    {% if error %}<div class="alert error">{{ error }}</div>{% endif %}
+    {% if msg %}<div class="alert success">{{ msg }}</div>{% endif %}
+
+    {% for invitacion in invitaciones %}
+    <div class="org-card invitation">
+      <div>
+        <strong>Te invitaron a un equipo</strong>
+        <div class="text-soft small">Para {{ invitacion.email }} · rol <span class="role-badge">{{ invitacion.rol }}</span></div>
+      </div>
+      <form action="/invitaciones/pendientes/{{ invitacion.id }}/aceptar" method="post"><button class="btn btn-primary" type="submit">Aceptar invitación</button></form>
+    </div>
+    {% endfor %}
+
+    {% for membresia in membresias %}
+    <div class="org-card">
+      <div>
+        <strong>{{ membresia.organizacion.nombre }}</strong>
+        <div><span class="role-badge">{{ membresia.rol }}</span></div>
+      </div>
+      <form action="/organizaciones/{{ membresia.organizacion_id }}/seleccionar" method="post"><button class="btn btn-primary" type="submit">Entrar</button></form>
+    </div>
+    {% else %}
+      {% if not invitaciones %}<div class="empty"><p>Aún no perteneces a ninguna organización.</p></div>{% endif %}
+    {% endfor %}
+
+    <a class="btn btn-secondary mt-2" href="/organizaciones/nueva">Crear otra organización</a>
+  </main>
 </div>
-{% endfor %}
-{% for membresia in membresias %}
-<div class="card"><div><strong>{{ membresia.organizacion.nombre }}</strong><br><span class="role">{{ membresia.rol }}</span></div><form action="/organizaciones/{{ membresia.organizacion_id }}/seleccionar" method="post"><button type="submit">Entrar</button></form></div>
-{% else %}{% if not invitaciones %}<div class="empty"><p>Aún no perteneces a ninguna organización.</p></div>{% endif %}{% endfor %}
-<p><a class="button secondary" href="/organizaciones/nueva">Crear otra organización</a></p>
-</main></body></html>
+</body>
+</html>

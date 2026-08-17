@@ -16,7 +16,7 @@
 .coverage-good { background: #059669; }
 .coverage-warning { background: #d97706; }
 .coverage-danger { background: #e11d48; }
-.cat-dot-mano_obra { background: #f59e0b; }
+.cat-dot-mano_obra { background: #123f78; }
 .cat-dot-materiales { background: #0d9488; }
 .cat-dot-complementarios { background: #8b5cf6; }
 .cat-dot-otros { background: #64748b; }
@@ -72,7 +72,7 @@
 .csp-s-284473c560:not(#cotizat-csp-never) { text-align:center;padding:2rem; }
 .csp-s-28b29075b5:not(#cotizat-csp-never) { background:var(--bg-alt); }
 .csp-s-2968716aac:not(#cotizat-csp-never) { font-family:monospace;font-size:13px;color:var(--text-muted);min-width:52px; }
-.csp-s-29d4ad1ec3:not(#cotizat-csp-never) { background:#6366f1; }
+.csp-s-29d4ad1ec3:not(#cotizat-csp-never) { background:#123f78; }
 .csp-s-2cd1543b50:not(#cotizat-csp-never) { background:var(--green-soft);color:var(--green);font-weight:800;flex:0 0 auto; }
 .csp-s-2ebe03a855:not(#cotizat-csp-never) { font-size:.85rem;font-weight:500;color:var(--text-soft); }
 .csp-s-30e51cbec9:not(#cotizat-csp-never) { border-top:1px solid var(--border);padding-top:14px; }
