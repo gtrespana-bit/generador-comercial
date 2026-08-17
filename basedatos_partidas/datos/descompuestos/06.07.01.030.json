@@ -1,0 +1,44 @@
+{
+  "codigo": "06.07.01.030",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "07",
+  "unidad": "m2",
+  "titulo": "Fachada ventilada de piedra natural.",
+  "descripcion": "Ejecución de fachada ventilada de piedra natural ligera, con fijación mecánica. Incluye la subestructura y la colocación de la piedra. Medido por metro cuadrado ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-SUBESTRUCTURA",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-PIEDRA-FACHADA",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-PERNO-ANCLA",
+      "rendimiento": 5.0
+    },
+    {
+      "ref": "MT-PYL-LANA",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.22
+    },
+    {
+      "ref": "MO-OF1-ALI",
+      "rendimiento": 1.1
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.45
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

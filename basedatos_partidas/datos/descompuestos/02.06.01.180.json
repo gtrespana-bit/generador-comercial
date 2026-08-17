@@ -1,0 +1,40 @@
+{
+  "codigo": "02.06.01.180",
+  "ambito": "reforma",
+  "capitulo": "02",
+  "subcapitulo": "06",
+  "unidad": "m",
+  "titulo": "Desmontaje de soporte de toldo.",
+  "descripcion": "Desmontaje de soporte o brazo de toldo en fachada. Incluye la retirada del soporte. Medido por unidad desmontada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MT-SAC-ESC",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

@@ -1,11 +1,11 @@
 {
   "version": 1,
   "ambito": "catalogo_general_venezuela",
-  "partidas_actuales": 1156,
+  "partidas_actuales": 1460,
   "objetivo_minimo": 3000,
   "objetivo_amplio": 5000,
-  "brecha_minima": 1844,
-  "brecha_amplia": 3844,
+  "brecha_minima": 1540,
+  "brecha_amplia": 3540,
   "capitulos": [
     {
       "codigo": "01",
@@ -231,22 +231,22 @@
     {
       "codigo": "02",
       "nombre": "Demoliciones y desmontajes",
-      "partidas_actuales": 103,
+      "partidas_actuales": 265,
       "objetivo_minimo": 260,
       "objetivo_amplio": 420,
-      "brecha_minima": 157,
-      "brecha_amplia": 317,
+      "brecha_minima": -5,
+      "brecha_amplia": 155,
       "subcapitulos": [
         {
           "codigo": "02.01",
           "nombre": "Fundaciones",
-          "partidas_actuales": 3,
+          "partidas_actuales": 18,
           "apartados_actuales": 1,
-          "objetivo_minimo": 18,
-          "objetivo_amplio": 29,
-          "brecha_minima": 15,
-          "brecha_amplia": 26,
-          "estado": "critica",
+          "objetivo_minimo": 21,
+          "objetivo_amplio": 34,
+          "brecha_minima": 3,
+          "brecha_amplia": 16,
+          "estado": "avanzada",
           "operaciones_requeridas": [
             "desmontaje_con_recuperacion",
             "desmontaje_sin_recuperacion",
@@ -267,13 +267,13 @@
         {
           "codigo": "02.02",
           "nombre": "Estructuras",
-          "partidas_actuales": 7,
+          "partidas_actuales": 21,
           "apartados_actuales": 1,
           "objetivo_minimo": 21,
           "objetivo_amplio": 34,
-          "brecha_minima": 14,
-          "brecha_amplia": 27,
-          "estado": "parcial",
+          "brecha_minima": 0,
+          "brecha_amplia": 13,
+          "estado": "completa",
           "operaciones_requeridas": [
             "desmontaje_con_recuperacion",
             "desmontaje_sin_recuperacion",
@@ -294,13 +294,13 @@
         {
           "codigo": "02.03",
           "nombre": "Fachadas",
-          "partidas_actuales": 6,
+          "partidas_actuales": 21,
           "apartados_actuales": 1,
           "objetivo_minimo": 21,
           "objetivo_amplio": 34,
-          "brecha_minima": 15,
-          "brecha_amplia": 28,
-          "estado": "parcial",
+          "brecha_minima": 0,
+          "brecha_amplia": 13,
+          "estado": "completa",
           "operaciones_requeridas": [
             "desmontaje_con_recuperacion",
             "desmontaje_sin_recuperacion",
@@ -321,13 +321,13 @@
         {
           "codigo": "02.04",
           "nombre": "Paredes y particiones",
-          "partidas_actuales": 6,
+          "partidas_actuales": 21,
           "apartados_actuales": 1,
           "objetivo_minimo": 21,
           "objetivo_amplio": 34,
-          "brecha_minima": 15,
-          "brecha_amplia": 28,
-          "estado": "parcial",
+          "brecha_minima": 0,
+          "brecha_amplia": 13,
+          "estado": "completa",
           "operaciones_requeridas": [
             "desmontaje_con_recuperacion",
             "desmontaje_sin_recuperacion",
@@ -348,13 +348,13 @@
         {
           "codigo": "02.05",
           "nombre": "Carpintería, herrería, vidrios y protección solar",
-          "partidas_actuales": 6,
+          "partidas_actuales": 21,
           "apartados_actuales": 1,
           "objetivo_minimo": 21,
           "objetivo_amplio": 34,
-          "brecha_minima": 15,
-          "brecha_amplia": 28,
-          "estado": "parcial",
+          "brecha_minima": 0,
+          "brecha_amplia": 13,
+          "estado": "completa",
           "operaciones_requeridas": [
             "desmontaje_con_recuperacion",
             "desmontaje_sin_recuperacion",
@@ -375,13 +375,13 @@
         {
           "codigo": "02.06",
           "nombre": "Remates y elementos auxiliares",
-          "partidas_actuales": 3,
+          "partidas_actuales": 18,
           "apartados_actuales": 1,
-          "objetivo_minimo": 18,
-          "objetivo_amplio": 29,
-          "brecha_minima": 15,
-          "brecha_amplia": 26,
-          "estado": "critica",
+          "objetivo_minimo": 21,
+          "objetivo_amplio": 34,
+          "brecha_minima": 3,
+          "brecha_amplia": 16,
+          "estado": "avanzada",
           "operaciones_requeridas": [
             "desmontaje_con_recuperacion",
             "desmontaje_sin_recuperacion",
@@ -402,13 +402,13 @@
         {
           "codigo": "02.07",
           "nombre": "Instalaciones",
-          "partidas_actuales": 8,
+          "partidas_actuales": 22,
           "apartados_actuales": 5,
           "objetivo_minimo": 22,
-          "objetivo_amplio": 36,
-          "brecha_minima": 14,
-          "brecha_amplia": 28,
-          "estado": "parcial",
+          "objetivo_amplio": 35,
+          "brecha_minima": 0,
+          "brecha_amplia": 13,
+          "estado": "completa",
           "operaciones_requeridas": [
             "desmontaje_con_recuperacion",
             "desmontaje_sin_recuperacion",
@@ -429,13 +429,13 @@
         {
           "codigo": "02.08",
           "nombre": "Aislamientos e impermeabilizaciones",
-          "partidas_actuales": 3,
+          "partidas_actuales": 18,
           "apartados_actuales": 1,
-          "objetivo_minimo": 18,
-          "objetivo_amplio": 29,
-          "brecha_minima": 15,
-          "brecha_amplia": 26,
-          "estado": "critica",
+          "objetivo_minimo": 21,
+          "objetivo_amplio": 34,
+          "brecha_minima": 3,
+          "brecha_amplia": 16,
+          "estado": "avanzada",
           "operaciones_requeridas": [
             "desmontaje_con_recuperacion",
             "desmontaje_sin_recuperacion",
@@ -456,13 +456,13 @@
         {
           "codigo": "02.09",
           "nombre": "Techos y cubiertas",
-          "partidas_actuales": 6,
+          "partidas_actuales": 21,
           "apartados_actuales": 1,
-          "objetivo_minimo": 21,
-          "objetivo_amplio": 34,
-          "brecha_minima": 15,
-          "brecha_amplia": 28,
-          "estado": "parcial",
+          "objetivo_minimo": 22,
+          "objetivo_amplio": 35,
+          "brecha_minima": 1,
+          "brecha_amplia": 14,
+          "estado": "avanzada",
           "operaciones_requeridas": [
             "desmontaje_con_recuperacion",
             "desmontaje_sin_recuperacion",
@@ -485,10 +485,10 @@
           "nombre": "Revestimientos, pisos y cielos rasos",
           "partidas_actuales": 42,
           "apartados_actuales": 6,
-          "objetivo_minimo": 37,
-          "objetivo_amplio": 60,
+          "objetivo_minimo": 26,
+          "objetivo_amplio": 42,
           "brecha_minima": 0,
-          "brecha_amplia": 18,
+          "brecha_amplia": 0,
           "estado": "completa",
           "operaciones_requeridas": [
             "desmontaje_con_recuperacion",
@@ -510,13 +510,13 @@
         {
           "codigo": "02.11",
           "nombre": "Equipamiento y mobiliario fijo",
-          "partidas_actuales": 4,
+          "partidas_actuales": 19,
           "apartados_actuales": 1,
-          "objetivo_minimo": 19,
-          "objetivo_amplio": 30,
-          "brecha_minima": 15,
-          "brecha_amplia": 26,
-          "estado": "critica",
+          "objetivo_minimo": 21,
+          "objetivo_amplio": 34,
+          "brecha_minima": 2,
+          "brecha_amplia": 15,
+          "estado": "avanzada",
           "operaciones_requeridas": [
             "desmontaje_con_recuperacion",
             "desmontaje_sin_recuperacion",
@@ -537,13 +537,13 @@
         {
           "codigo": "02.12",
           "nombre": "Obras exteriores, firmes y pavimentos",
-          "partidas_actuales": 9,
+          "partidas_actuales": 23,
           "apartados_actuales": 1,
-          "objetivo_minimo": 23,
-          "objetivo_amplio": 37,
-          "brecha_minima": 14,
-          "brecha_amplia": 28,
-          "estado": "parcial",
+          "objetivo_minimo": 22,
+          "objetivo_amplio": 36,
+          "brecha_minima": 0,
+          "brecha_amplia": 13,
+          "estado": "completa",
           "operaciones_requeridas": [
             "desmontaje_con_recuperacion",
             "desmontaje_sin_recuperacion",
@@ -1222,22 +1222,22 @@
     {
       "codigo": "06",
       "nombre": "Fachadas y particiones",
-      "partidas_actuales": 38,
+      "partidas_actuales": 180,
       "objetivo_minimo": 180,
       "objetivo_amplio": 300,
-      "brecha_minima": 142,
-      "brecha_amplia": 262,
+      "brecha_minima": 0,
+      "brecha_amplia": 120,
       "subcapitulos": [
         {
           "codigo": "06.01",
           "nombre": "Fachadas de bloque o ladrillo",
-          "partidas_actuales": 0,
-          "apartados_actuales": 0,
-          "objetivo_minimo": 12,
-          "objetivo_amplio": 20,
-          "brecha_minima": 12,
-          "brecha_amplia": 20,
-          "estado": "sin_cobertura",
+          "partidas_actuales": 12,
+          "apartados_actuales": 3,
+          "objetivo_minimo": 18,
+          "objetivo_amplio": 30,
+          "brecha_minima": 6,
+          "brecha_amplia": 18,
+          "estado": "avanzada",
           "operaciones_requeridas": [
             "suministro_colocacion",
             "solo_colocacion",
@@ -1258,13 +1258,13 @@
         {
           "codigo": "06.02",
           "nombre": "Fachadas ligeras y revestidas",
-          "partidas_actuales": 0,
-          "apartados_actuales": 0,
-          "objetivo_minimo": 12,
-          "objetivo_amplio": 20,
-          "brecha_minima": 12,
-          "brecha_amplia": 20,
-          "estado": "sin_cobertura",
+          "partidas_actuales": 12,
+          "apartados_actuales": 3,
+          "objetivo_minimo": 18,
+          "objetivo_amplio": 30,
+          "brecha_minima": 6,
+          "brecha_amplia": 18,
+          "estado": "avanzada",
           "operaciones_requeridas": [
             "suministro_colocacion",
             "solo_colocacion",
@@ -1285,13 +1285,13 @@
         {
           "codigo": "06.03",
           "nombre": "Particiones de bloque o ladrillo",
-          "partidas_actuales": 15,
+          "partidas_actuales": 33,
           "apartados_actuales": 3,
-          "objetivo_minimo": 33,
-          "objetivo_amplio": 55,
-          "brecha_minima": 18,
-          "brecha_amplia": 40,
-          "estado": "parcial",
+          "objetivo_minimo": 23,
+          "objetivo_amplio": 39,
+          "brecha_minima": 0,
+          "brecha_amplia": 6,
+          "estado": "completa",
           "operaciones_requeridas": [
             "suministro_colocacion",
             "solo_colocacion",
@@ -1312,13 +1312,13 @@
         {
           "codigo": "06.04",
           "nombre": "Particiones de yeso laminado y sistemas secos",
-          "partidas_actuales": 6,
+          "partidas_actuales": 25,
           "apartados_actuales": 1,
-          "objetivo_minimo": 25,
-          "objetivo_amplio": 42,
-          "brecha_minima": 19,
-          "brecha_amplia": 36,
-          "estado": "critica",
+          "objetivo_minimo": 21,
+          "objetivo_amplio": 35,
+          "brecha_minima": 0,
+          "brecha_amplia": 10,
+          "estado": "completa",
           "operaciones_requeridas": [
             "suministro_colocacion",
             "solo_colocacion",
@@ -1339,13 +1339,13 @@
         {
           "codigo": "06.05",
           "nombre": "Particiones ligeras, móviles y acristaladas",
-          "partidas_actuales": 6,
+          "partidas_actuales": 25,
           "apartados_actuales": 2,
-          "objetivo_minimo": 25,
-          "objetivo_amplio": 42,
-          "brecha_minima": 19,
-          "brecha_amplia": 36,
-          "estado": "critica",
+          "objetivo_minimo": 21,
+          "objetivo_amplio": 35,
+          "brecha_minima": 0,
+          "brecha_amplia": 10,
+          "estado": "completa",
           "operaciones_requeridas": [
             "suministro_colocacion",
             "solo_colocacion",
@@ -1366,13 +1366,13 @@
         {
           "codigo": "06.06",
           "nombre": "Dinteles, frentes de losa y remates de vano",
-          "partidas_actuales": 7,
+          "partidas_actuales": 26,
           "apartados_actuales": 2,
-          "objetivo_minimo": 26,
-          "objetivo_amplio": 43,
-          "brecha_minima": 19,
-          "brecha_amplia": 36,
-          "estado": "parcial",
+          "objetivo_minimo": 22,
+          "objetivo_amplio": 36,
+          "brecha_minima": 0,
+          "brecha_amplia": 10,
+          "estado": "completa",
           "operaciones_requeridas": [
             "suministro_colocacion",
             "solo_colocacion",
@@ -1393,13 +1393,13 @@
         {
           "codigo": "06.07",
           "nombre": "Fachadas ventiladas y sistemas de aislamiento exterior",
-          "partidas_actuales": 0,
-          "apartados_actuales": 0,
-          "objetivo_minimo": 12,
-          "objetivo_amplio": 20,
-          "brecha_minima": 12,
-          "brecha_amplia": 20,
-          "estado": "sin_cobertura",
+          "partidas_actuales": 12,
+          "apartados_actuales": 2,
+          "objetivo_minimo": 18,
+          "objetivo_amplio": 30,
+          "brecha_minima": 6,
+          "brecha_amplia": 18,
+          "estado": "avanzada",
           "operaciones_requeridas": [
             "suministro_colocacion",
             "solo_colocacion",
@@ -1420,13 +1420,13 @@
         {
           "codigo": "06.08",
           "nombre": "Celosías, defensas y cerramientos especiales",
-          "partidas_actuales": 0,
-          "apartados_actuales": 0,
-          "objetivo_minimo": 12,
-          "objetivo_amplio": 20,
-          "brecha_minima": 12,
-          "brecha_amplia": 20,
-          "estado": "sin_cobertura",
+          "partidas_actuales": 12,
+          "apartados_actuales": 2,
+          "objetivo_minimo": 18,
+          "objetivo_amplio": 30,
+          "brecha_minima": 6,
+          "brecha_amplia": 18,
+          "estado": "avanzada",
           "operaciones_requeridas": [
             "suministro_colocacion",
             "solo_colocacion",
@@ -1447,13 +1447,13 @@
         {
           "codigo": "06.09",
           "nombre": "Limpieza, restauración y tratamiento de fachadas",
-          "partidas_actuales": 4,
+          "partidas_actuales": 23,
           "apartados_actuales": 1,
-          "objetivo_minimo": 23,
-          "objetivo_amplio": 38,
-          "brecha_minima": 19,
-          "brecha_amplia": 34,
-          "estado": "critica",
+          "objetivo_minimo": 21,
+          "objetivo_amplio": 35,
+          "brecha_minima": 0,
+          "brecha_amplia": 12,
+          "estado": "completa",
           "operaciones_requeridas": [
             "suministro_colocacion",
             "solo_colocacion",
@@ -5323,122 +5323,6 @@
       ]
     },
     {
-      "capitulo": "06",
-      "capitulo_nombre": "Fachadas y particiones",
-      "codigo": "06.01",
-      "nombre": "Fachadas de bloque o ladrillo",
-      "partidas_actuales": 0,
-      "apartados_actuales": 0,
-      "objetivo_minimo": 12,
-      "objetivo_amplio": 20,
-      "brecha_minima": 12,
-      "brecha_amplia": 20,
-      "estado": "sin_cobertura",
-      "operaciones_requeridas": [
-        "suministro_colocacion",
-        "solo_colocacion",
-        "reparacion",
-        "sustitucion",
-        "remates",
-        "limpieza_tratamiento"
-      ],
-      "variaciones_requeridas": [
-        "material",
-        "espesor",
-        "prestacion_termica_acustica",
-        "interior_exterior",
-        "altura",
-        "sistema"
-      ]
-    },
-    {
-      "capitulo": "06",
-      "capitulo_nombre": "Fachadas y particiones",
-      "codigo": "06.02",
-      "nombre": "Fachadas ligeras y revestidas",
-      "partidas_actuales": 0,
-      "apartados_actuales": 0,
-      "objetivo_minimo": 12,
-      "objetivo_amplio": 20,
-      "brecha_minima": 12,
-      "brecha_amplia": 20,
-      "estado": "sin_cobertura",
-      "operaciones_requeridas": [
-        "suministro_colocacion",
-        "solo_colocacion",
-        "reparacion",
-        "sustitucion",
-        "remates",
-        "limpieza_tratamiento"
-      ],
-      "variaciones_requeridas": [
-        "material",
-        "espesor",
-        "prestacion_termica_acustica",
-        "interior_exterior",
-        "altura",
-        "sistema"
-      ]
-    },
-    {
-      "capitulo": "06",
-      "capitulo_nombre": "Fachadas y particiones",
-      "codigo": "06.07",
-      "nombre": "Fachadas ventiladas y sistemas de aislamiento exterior",
-      "partidas_actuales": 0,
-      "apartados_actuales": 0,
-      "objetivo_minimo": 12,
-      "objetivo_amplio": 20,
-      "brecha_minima": 12,
-      "brecha_amplia": 20,
-      "estado": "sin_cobertura",
-      "operaciones_requeridas": [
-        "suministro_colocacion",
-        "solo_colocacion",
-        "reparacion",
-        "sustitucion",
-        "remates",
-        "limpieza_tratamiento"
-      ],
-      "variaciones_requeridas": [
-        "material",
-        "espesor",
-        "prestacion_termica_acustica",
-        "interior_exterior",
-        "altura",
-        "sistema"
-      ]
-    },
-    {
-      "capitulo": "06",
-      "capitulo_nombre": "Fachadas y particiones",
-      "codigo": "06.08",
-      "nombre": "Celosías, defensas y cerramientos especiales",
-      "partidas_actuales": 0,
-      "apartados_actuales": 0,
-      "objetivo_minimo": 12,
-      "objetivo_amplio": 20,
-      "brecha_minima": 12,
-      "brecha_amplia": 20,
-      "estado": "sin_cobertura",
-      "operaciones_requeridas": [
-        "suministro_colocacion",
-        "solo_colocacion",
-        "reparacion",
-        "sustitucion",
-        "remates",
-        "limpieza_tratamiento"
-      ],
-      "variaciones_requeridas": [
-        "material",
-        "espesor",
-        "prestacion_termica_acustica",
-        "interior_exterior",
-        "altura",
-        "sistema"
-      ]
-    },
-    {
       "capitulo": "18",
       "capitulo_nombre": "Rehabilitación energética",
       "codigo": "18.09",
@@ -6960,151 +6844,6 @@
       ]
     },
     {
-      "capitulo": "06",
-      "capitulo_nombre": "Fachadas y particiones",
-      "codigo": "06.04",
-      "nombre": "Particiones de yeso laminado y sistemas secos",
-      "partidas_actuales": 6,
-      "apartados_actuales": 1,
-      "objetivo_minimo": 25,
-      "objetivo_amplio": 42,
-      "brecha_minima": 19,
-      "brecha_amplia": 36,
-      "estado": "critica",
-      "operaciones_requeridas": [
-        "suministro_colocacion",
-        "solo_colocacion",
-        "reparacion",
-        "sustitucion",
-        "remates",
-        "limpieza_tratamiento"
-      ],
-      "variaciones_requeridas": [
-        "material",
-        "espesor",
-        "prestacion_termica_acustica",
-        "interior_exterior",
-        "altura",
-        "sistema"
-      ]
-    },
-    {
-      "capitulo": "06",
-      "capitulo_nombre": "Fachadas y particiones",
-      "codigo": "06.05",
-      "nombre": "Particiones ligeras, móviles y acristaladas",
-      "partidas_actuales": 6,
-      "apartados_actuales": 2,
-      "objetivo_minimo": 25,
-      "objetivo_amplio": 42,
-      "brecha_minima": 19,
-      "brecha_amplia": 36,
-      "estado": "critica",
-      "operaciones_requeridas": [
-        "suministro_colocacion",
-        "solo_colocacion",
-        "reparacion",
-        "sustitucion",
-        "remates",
-        "limpieza_tratamiento"
-      ],
-      "variaciones_requeridas": [
-        "material",
-        "espesor",
-        "prestacion_termica_acustica",
-        "interior_exterior",
-        "altura",
-        "sistema"
-      ]
-    },
-    {
-      "capitulo": "06",
-      "capitulo_nombre": "Fachadas y particiones",
-      "codigo": "06.06",
-      "nombre": "Dinteles, frentes de losa y remates de vano",
-      "partidas_actuales": 7,
-      "apartados_actuales": 2,
-      "objetivo_minimo": 26,
-      "objetivo_amplio": 43,
-      "brecha_minima": 19,
-      "brecha_amplia": 36,
-      "estado": "parcial",
-      "operaciones_requeridas": [
-        "suministro_colocacion",
-        "solo_colocacion",
-        "reparacion",
-        "sustitucion",
-        "remates",
-        "limpieza_tratamiento"
-      ],
-      "variaciones_requeridas": [
-        "material",
-        "espesor",
-        "prestacion_termica_acustica",
-        "interior_exterior",
-        "altura",
-        "sistema"
-      ]
-    },
-    {
-      "capitulo": "06",
-      "capitulo_nombre": "Fachadas y particiones",
-      "codigo": "06.09",
-      "nombre": "Limpieza, restauración y tratamiento de fachadas",
-      "partidas_actuales": 4,
-      "apartados_actuales": 1,
-      "objetivo_minimo": 23,
-      "objetivo_amplio": 38,
-      "brecha_minima": 19,
-      "brecha_amplia": 34,
-      "estado": "critica",
-      "operaciones_requeridas": [
-        "suministro_colocacion",
-        "solo_colocacion",
-        "reparacion",
-        "sustitucion",
-        "remates",
-        "limpieza_tratamiento"
-      ],
-      "variaciones_requeridas": [
-        "material",
-        "espesor",
-        "prestacion_termica_acustica",
-        "interior_exterior",
-        "altura",
-        "sistema"
-      ]
-    },
-    {
-      "capitulo": "06",
-      "capitulo_nombre": "Fachadas y particiones",
-      "codigo": "06.03",
-      "nombre": "Particiones de bloque o ladrillo",
-      "partidas_actuales": 15,
-      "apartados_actuales": 3,
-      "objetivo_minimo": 33,
-      "objetivo_amplio": 55,
-      "brecha_minima": 18,
-      "brecha_amplia": 40,
-      "estado": "parcial",
-      "operaciones_requeridas": [
-        "suministro_colocacion",
-        "solo_colocacion",
-        "reparacion",
-        "sustitucion",
-        "remates",
-        "limpieza_tratamiento"
-      ],
-      "variaciones_requeridas": [
-        "material",
-        "espesor",
-        "prestacion_termica_acustica",
-        "interior_exterior",
-        "altura",
-        "sistema"
-      ]
-    },
-    {
       "capitulo": "05",
       "capitulo_nombre": "Estructuras",
       "codigo": "05.04",
@@ -7339,238 +7078,6 @@
       ]
     },
     {
-      "capitulo": "02",
-      "capitulo_nombre": "Demoliciones y desmontajes",
-      "codigo": "02.01",
-      "nombre": "Fundaciones",
-      "partidas_actuales": 3,
-      "apartados_actuales": 1,
-      "objetivo_minimo": 18,
-      "objetivo_amplio": 29,
-      "brecha_minima": 15,
-      "brecha_amplia": 26,
-      "estado": "critica",
-      "operaciones_requeridas": [
-        "desmontaje_con_recuperacion",
-        "desmontaje_sin_recuperacion",
-        "demolicion_manual",
-        "demolicion_mecanica",
-        "carga",
-        "retiro"
-      ],
-      "variaciones_requeridas": [
-        "material",
-        "espesor",
-        "medio_manual_mecanico",
-        "recuperacion",
-        "altura",
-        "carga"
-      ]
-    },
-    {
-      "capitulo": "02",
-      "capitulo_nombre": "Demoliciones y desmontajes",
-      "codigo": "02.03",
-      "nombre": "Fachadas",
-      "partidas_actuales": 6,
-      "apartados_actuales": 1,
-      "objetivo_minimo": 21,
-      "objetivo_amplio": 34,
-      "brecha_minima": 15,
-      "brecha_amplia": 28,
-      "estado": "parcial",
-      "operaciones_requeridas": [
-        "desmontaje_con_recuperacion",
-        "desmontaje_sin_recuperacion",
-        "demolicion_manual",
-        "demolicion_mecanica",
-        "carga",
-        "retiro"
-      ],
-      "variaciones_requeridas": [
-        "material",
-        "espesor",
-        "medio_manual_mecanico",
-        "recuperacion",
-        "altura",
-        "carga"
-      ]
-    },
-    {
-      "capitulo": "02",
-      "capitulo_nombre": "Demoliciones y desmontajes",
-      "codigo": "02.04",
-      "nombre": "Paredes y particiones",
-      "partidas_actuales": 6,
-      "apartados_actuales": 1,
-      "objetivo_minimo": 21,
-      "objetivo_amplio": 34,
-      "brecha_minima": 15,
-      "brecha_amplia": 28,
-      "estado": "parcial",
-      "operaciones_requeridas": [
-        "desmontaje_con_recuperacion",
-        "desmontaje_sin_recuperacion",
-        "demolicion_manual",
-        "demolicion_mecanica",
-        "carga",
-        "retiro"
-      ],
-      "variaciones_requeridas": [
-        "material",
-        "espesor",
-        "medio_manual_mecanico",
-        "recuperacion",
-        "altura",
-        "carga"
-      ]
-    },
-    {
-      "capitulo": "02",
-      "capitulo_nombre": "Demoliciones y desmontajes",
-      "codigo": "02.05",
-      "nombre": "Carpintería, herrería, vidrios y protección solar",
-      "partidas_actuales": 6,
-      "apartados_actuales": 1,
-      "objetivo_minimo": 21,
-      "objetivo_amplio": 34,
-      "brecha_minima": 15,
-      "brecha_amplia": 28,
-      "estado": "parcial",
-      "operaciones_requeridas": [
-        "desmontaje_con_recuperacion",
-        "desmontaje_sin_recuperacion",
-        "demolicion_manual",
-        "demolicion_mecanica",
-        "carga",
-        "retiro"
-      ],
-      "variaciones_requeridas": [
-        "material",
-        "espesor",
-        "medio_manual_mecanico",
-        "recuperacion",
-        "altura",
-        "carga"
-      ]
-    },
-    {
-      "capitulo": "02",
-      "capitulo_nombre": "Demoliciones y desmontajes",
-      "codigo": "02.06",
-      "nombre": "Remates y elementos auxiliares",
-      "partidas_actuales": 3,
-      "apartados_actuales": 1,
-      "objetivo_minimo": 18,
-      "objetivo_amplio": 29,
-      "brecha_minima": 15,
-      "brecha_amplia": 26,
-      "estado": "critica",
-      "operaciones_requeridas": [
-        "desmontaje_con_recuperacion",
-        "desmontaje_sin_recuperacion",
-        "demolicion_manual",
-        "demolicion_mecanica",
-        "carga",
-        "retiro"
-      ],
-      "variaciones_requeridas": [
-        "material",
-        "espesor",
-        "medio_manual_mecanico",
-        "recuperacion",
-        "altura",
-        "carga"
-      ]
-    },
-    {
-      "capitulo": "02",
-      "capitulo_nombre": "Demoliciones y desmontajes",
-      "codigo": "02.08",
-      "nombre": "Aislamientos e impermeabilizaciones",
-      "partidas_actuales": 3,
-      "apartados_actuales": 1,
-      "objetivo_minimo": 18,
-      "objetivo_amplio": 29,
-      "brecha_minima": 15,
-      "brecha_amplia": 26,
-      "estado": "critica",
-      "operaciones_requeridas": [
-        "desmontaje_con_recuperacion",
-        "desmontaje_sin_recuperacion",
-        "demolicion_manual",
-        "demolicion_mecanica",
-        "carga",
-        "retiro"
-      ],
-      "variaciones_requeridas": [
-        "material",
-        "espesor",
-        "medio_manual_mecanico",
-        "recuperacion",
-        "altura",
-        "carga"
-      ]
-    },
-    {
-      "capitulo": "02",
-      "capitulo_nombre": "Demoliciones y desmontajes",
-      "codigo": "02.09",
-      "nombre": "Techos y cubiertas",
-      "partidas_actuales": 6,
-      "apartados_actuales": 1,
-      "objetivo_minimo": 21,
-      "objetivo_amplio": 34,
-      "brecha_minima": 15,
-      "brecha_amplia": 28,
-      "estado": "parcial",
-      "operaciones_requeridas": [
-        "desmontaje_con_recuperacion",
-        "desmontaje_sin_recuperacion",
-        "demolicion_manual",
-        "demolicion_mecanica",
-        "carga",
-        "retiro"
-      ],
-      "variaciones_requeridas": [
-        "material",
-        "espesor",
-        "medio_manual_mecanico",
-        "recuperacion",
-        "altura",
-        "carga"
-      ]
-    },
-    {
-      "capitulo": "02",
-      "capitulo_nombre": "Demoliciones y desmontajes",
-      "codigo": "02.11",
-      "nombre": "Equipamiento y mobiliario fijo",
-      "partidas_actuales": 4,
-      "apartados_actuales": 1,
-      "objetivo_minimo": 19,
-      "objetivo_amplio": 30,
-      "brecha_minima": 15,
-      "brecha_amplia": 26,
-      "estado": "critica",
-      "operaciones_requeridas": [
-        "desmontaje_con_recuperacion",
-        "desmontaje_sin_recuperacion",
-        "demolicion_manual",
-        "demolicion_mecanica",
-        "carga",
-        "retiro"
-      ],
-      "variaciones_requeridas": [
-        "material",
-        "espesor",
-        "medio_manual_mecanico",
-        "recuperacion",
-        "altura",
-        "carga"
-      ]
-    },
-    {
       "capitulo": "11",
       "capitulo_nombre": "Techos y cubiertas",
       "codigo": "11.02",
@@ -7686,93 +7193,6 @@
         "acabado",
         "accesibilidad",
         "tipo_equipo"
-      ]
-    },
-    {
-      "capitulo": "02",
-      "capitulo_nombre": "Demoliciones y desmontajes",
-      "codigo": "02.02",
-      "nombre": "Estructuras",
-      "partidas_actuales": 7,
-      "apartados_actuales": 1,
-      "objetivo_minimo": 21,
-      "objetivo_amplio": 34,
-      "brecha_minima": 14,
-      "brecha_amplia": 27,
-      "estado": "parcial",
-      "operaciones_requeridas": [
-        "desmontaje_con_recuperacion",
-        "desmontaje_sin_recuperacion",
-        "demolicion_manual",
-        "demolicion_mecanica",
-        "carga",
-        "retiro"
-      ],
-      "variaciones_requeridas": [
-        "material",
-        "espesor",
-        "medio_manual_mecanico",
-        "recuperacion",
-        "altura",
-        "carga"
-      ]
-    },
-    {
-      "capitulo": "02",
-      "capitulo_nombre": "Demoliciones y desmontajes",
-      "codigo": "02.07",
-      "nombre": "Instalaciones",
-      "partidas_actuales": 8,
-      "apartados_actuales": 5,
-      "objetivo_minimo": 22,
-      "objetivo_amplio": 36,
-      "brecha_minima": 14,
-      "brecha_amplia": 28,
-      "estado": "parcial",
-      "operaciones_requeridas": [
-        "desmontaje_con_recuperacion",
-        "desmontaje_sin_recuperacion",
-        "demolicion_manual",
-        "demolicion_mecanica",
-        "carga",
-        "retiro"
-      ],
-      "variaciones_requeridas": [
-        "material",
-        "espesor",
-        "medio_manual_mecanico",
-        "recuperacion",
-        "altura",
-        "carga"
-      ]
-    },
-    {
-      "capitulo": "02",
-      "capitulo_nombre": "Demoliciones y desmontajes",
-      "codigo": "02.12",
-      "nombre": "Obras exteriores, firmes y pavimentos",
-      "partidas_actuales": 9,
-      "apartados_actuales": 1,
-      "objetivo_minimo": 23,
-      "objetivo_amplio": 37,
-      "brecha_minima": 14,
-      "brecha_amplia": 28,
-      "estado": "parcial",
-      "operaciones_requeridas": [
-        "desmontaje_con_recuperacion",
-        "desmontaje_sin_recuperacion",
-        "demolicion_manual",
-        "demolicion_mecanica",
-        "carga",
-        "retiro"
-      ],
-      "variaciones_requeridas": [
-        "material",
-        "espesor",
-        "medio_manual_mecanico",
-        "recuperacion",
-        "altura",
-        "carga"
       ]
     },
     {
@@ -8828,6 +8248,122 @@
       ]
     },
     {
+      "capitulo": "06",
+      "capitulo_nombre": "Fachadas y particiones",
+      "codigo": "06.01",
+      "nombre": "Fachadas de bloque o ladrillo",
+      "partidas_actuales": 12,
+      "apartados_actuales": 3,
+      "objetivo_minimo": 18,
+      "objetivo_amplio": 30,
+      "brecha_minima": 6,
+      "brecha_amplia": 18,
+      "estado": "avanzada",
+      "operaciones_requeridas": [
+        "suministro_colocacion",
+        "solo_colocacion",
+        "reparacion",
+        "sustitucion",
+        "remates",
+        "limpieza_tratamiento"
+      ],
+      "variaciones_requeridas": [
+        "material",
+        "espesor",
+        "prestacion_termica_acustica",
+        "interior_exterior",
+        "altura",
+        "sistema"
+      ]
+    },
+    {
+      "capitulo": "06",
+      "capitulo_nombre": "Fachadas y particiones",
+      "codigo": "06.02",
+      "nombre": "Fachadas ligeras y revestidas",
+      "partidas_actuales": 12,
+      "apartados_actuales": 3,
+      "objetivo_minimo": 18,
+      "objetivo_amplio": 30,
+      "brecha_minima": 6,
+      "brecha_amplia": 18,
+      "estado": "avanzada",
+      "operaciones_requeridas": [
+        "suministro_colocacion",
+        "solo_colocacion",
+        "reparacion",
+        "sustitucion",
+        "remates",
+        "limpieza_tratamiento"
+      ],
+      "variaciones_requeridas": [
+        "material",
+        "espesor",
+        "prestacion_termica_acustica",
+        "interior_exterior",
+        "altura",
+        "sistema"
+      ]
+    },
+    {
+      "capitulo": "06",
+      "capitulo_nombre": "Fachadas y particiones",
+      "codigo": "06.07",
+      "nombre": "Fachadas ventiladas y sistemas de aislamiento exterior",
+      "partidas_actuales": 12,
+      "apartados_actuales": 2,
+      "objetivo_minimo": 18,
+      "objetivo_amplio": 30,
+      "brecha_minima": 6,
+      "brecha_amplia": 18,
+      "estado": "avanzada",
+      "operaciones_requeridas": [
+        "suministro_colocacion",
+        "solo_colocacion",
+        "reparacion",
+        "sustitucion",
+        "remates",
+        "limpieza_tratamiento"
+      ],
+      "variaciones_requeridas": [
+        "material",
+        "espesor",
+        "prestacion_termica_acustica",
+        "interior_exterior",
+        "altura",
+        "sistema"
+      ]
+    },
+    {
+      "capitulo": "06",
+      "capitulo_nombre": "Fachadas y particiones",
+      "codigo": "06.08",
+      "nombre": "Celosías, defensas y cerramientos especiales",
+      "partidas_actuales": 12,
+      "apartados_actuales": 2,
+      "objetivo_minimo": 18,
+      "objetivo_amplio": 30,
+      "brecha_minima": 6,
+      "brecha_amplia": 18,
+      "estado": "avanzada",
+      "operaciones_requeridas": [
+        "suministro_colocacion",
+        "solo_colocacion",
+        "reparacion",
+        "sustitucion",
+        "remates",
+        "limpieza_tratamiento"
+      ],
+      "variaciones_requeridas": [
+        "material",
+        "espesor",
+        "prestacion_termica_acustica",
+        "interior_exterior",
+        "altura",
+        "sistema"
+      ]
+    },
+    {
       "capitulo": "15",
       "capitulo_nombre": "Gestión de residuos y limpieza",
       "codigo": "15.01",
@@ -9277,6 +8813,93 @@
       ]
     },
     {
+      "capitulo": "02",
+      "capitulo_nombre": "Demoliciones y desmontajes",
+      "codigo": "02.01",
+      "nombre": "Fundaciones",
+      "partidas_actuales": 18,
+      "apartados_actuales": 1,
+      "objetivo_minimo": 21,
+      "objetivo_amplio": 34,
+      "brecha_minima": 3,
+      "brecha_amplia": 16,
+      "estado": "avanzada",
+      "operaciones_requeridas": [
+        "desmontaje_con_recuperacion",
+        "desmontaje_sin_recuperacion",
+        "demolicion_manual",
+        "demolicion_mecanica",
+        "carga",
+        "retiro"
+      ],
+      "variaciones_requeridas": [
+        "material",
+        "espesor",
+        "medio_manual_mecanico",
+        "recuperacion",
+        "altura",
+        "carga"
+      ]
+    },
+    {
+      "capitulo": "02",
+      "capitulo_nombre": "Demoliciones y desmontajes",
+      "codigo": "02.06",
+      "nombre": "Remates y elementos auxiliares",
+      "partidas_actuales": 18,
+      "apartados_actuales": 1,
+      "objetivo_minimo": 21,
+      "objetivo_amplio": 34,
+      "brecha_minima": 3,
+      "brecha_amplia": 16,
+      "estado": "avanzada",
+      "operaciones_requeridas": [
+        "desmontaje_con_recuperacion",
+        "desmontaje_sin_recuperacion",
+        "demolicion_manual",
+        "demolicion_mecanica",
+        "carga",
+        "retiro"
+      ],
+      "variaciones_requeridas": [
+        "material",
+        "espesor",
+        "medio_manual_mecanico",
+        "recuperacion",
+        "altura",
+        "carga"
+      ]
+    },
+    {
+      "capitulo": "02",
+      "capitulo_nombre": "Demoliciones y desmontajes",
+      "codigo": "02.08",
+      "nombre": "Aislamientos e impermeabilizaciones",
+      "partidas_actuales": 18,
+      "apartados_actuales": 1,
+      "objetivo_minimo": 21,
+      "objetivo_amplio": 34,
+      "brecha_minima": 3,
+      "brecha_amplia": 16,
+      "estado": "avanzada",
+      "operaciones_requeridas": [
+        "desmontaje_con_recuperacion",
+        "desmontaje_sin_recuperacion",
+        "demolicion_manual",
+        "demolicion_mecanica",
+        "carga",
+        "retiro"
+      ],
+      "variaciones_requeridas": [
+        "material",
+        "espesor",
+        "medio_manual_mecanico",
+        "recuperacion",
+        "altura",
+        "carga"
+      ]
+    },
+    {
       "capitulo": "10",
       "capitulo_nombre": "Aislamientos e impermeabilizaciones",
       "codigo": "10.03",
@@ -9434,6 +9057,35 @@
       ]
     },
     {
+      "capitulo": "02",
+      "capitulo_nombre": "Demoliciones y desmontajes",
+      "codigo": "02.11",
+      "nombre": "Equipamiento y mobiliario fijo",
+      "partidas_actuales": 19,
+      "apartados_actuales": 1,
+      "objetivo_minimo": 21,
+      "objetivo_amplio": 34,
+      "brecha_minima": 2,
+      "brecha_amplia": 15,
+      "estado": "avanzada",
+      "operaciones_requeridas": [
+        "desmontaje_con_recuperacion",
+        "desmontaje_sin_recuperacion",
+        "demolicion_manual",
+        "demolicion_mecanica",
+        "carga",
+        "retiro"
+      ],
+      "variaciones_requeridas": [
+        "material",
+        "espesor",
+        "medio_manual_mecanico",
+        "recuperacion",
+        "altura",
+        "carga"
+      ]
+    },
+    {
       "capitulo": "12",
       "capitulo_nombre": "Revestimientos y acabados",
       "codigo": "12.08",
@@ -9495,6 +9147,35 @@
         "transito",
         "acabado",
         "metodo_colocacion"
+      ]
+    },
+    {
+      "capitulo": "02",
+      "capitulo_nombre": "Demoliciones y desmontajes",
+      "codigo": "02.09",
+      "nombre": "Techos y cubiertas",
+      "partidas_actuales": 21,
+      "apartados_actuales": 1,
+      "objetivo_minimo": 22,
+      "objetivo_amplio": 35,
+      "brecha_minima": 1,
+      "brecha_amplia": 14,
+      "estado": "avanzada",
+      "operaciones_requeridas": [
+        "desmontaje_con_recuperacion",
+        "desmontaje_sin_recuperacion",
+        "demolicion_manual",
+        "demolicion_mecanica",
+        "carga",
+        "retiro"
+      ],
+      "variaciones_requeridas": [
+        "material",
+        "espesor",
+        "medio_manual_mecanico",
+        "recuperacion",
+        "altura",
+        "carga"
       ]
     },
     {
@@ -9594,14 +9275,14 @@
     {
       "capitulo": "02",
       "capitulo_nombre": "Demoliciones y desmontajes",
-      "codigo": "02.10",
-      "nombre": "Revestimientos, pisos y cielos rasos",
-      "partidas_actuales": 42,
-      "apartados_actuales": 6,
-      "objetivo_minimo": 37,
-      "objetivo_amplio": 60,
+      "codigo": "02.02",
+      "nombre": "Estructuras",
+      "partidas_actuales": 21,
+      "apartados_actuales": 1,
+      "objetivo_minimo": 21,
+      "objetivo_amplio": 34,
       "brecha_minima": 0,
-      "brecha_amplia": 18,
+      "brecha_amplia": 13,
       "estado": "completa",
       "operaciones_requeridas": [
         "desmontaje_con_recuperacion",
@@ -9618,6 +9299,325 @@
         "recuperacion",
         "altura",
         "carga"
+      ]
+    },
+    {
+      "capitulo": "02",
+      "capitulo_nombre": "Demoliciones y desmontajes",
+      "codigo": "02.03",
+      "nombre": "Fachadas",
+      "partidas_actuales": 21,
+      "apartados_actuales": 1,
+      "objetivo_minimo": 21,
+      "objetivo_amplio": 34,
+      "brecha_minima": 0,
+      "brecha_amplia": 13,
+      "estado": "completa",
+      "operaciones_requeridas": [
+        "desmontaje_con_recuperacion",
+        "desmontaje_sin_recuperacion",
+        "demolicion_manual",
+        "demolicion_mecanica",
+        "carga",
+        "retiro"
+      ],
+      "variaciones_requeridas": [
+        "material",
+        "espesor",
+        "medio_manual_mecanico",
+        "recuperacion",
+        "altura",
+        "carga"
+      ]
+    },
+    {
+      "capitulo": "02",
+      "capitulo_nombre": "Demoliciones y desmontajes",
+      "codigo": "02.04",
+      "nombre": "Paredes y particiones",
+      "partidas_actuales": 21,
+      "apartados_actuales": 1,
+      "objetivo_minimo": 21,
+      "objetivo_amplio": 34,
+      "brecha_minima": 0,
+      "brecha_amplia": 13,
+      "estado": "completa",
+      "operaciones_requeridas": [
+        "desmontaje_con_recuperacion",
+        "desmontaje_sin_recuperacion",
+        "demolicion_manual",
+        "demolicion_mecanica",
+        "carga",
+        "retiro"
+      ],
+      "variaciones_requeridas": [
+        "material",
+        "espesor",
+        "medio_manual_mecanico",
+        "recuperacion",
+        "altura",
+        "carga"
+      ]
+    },
+    {
+      "capitulo": "02",
+      "capitulo_nombre": "Demoliciones y desmontajes",
+      "codigo": "02.05",
+      "nombre": "Carpintería, herrería, vidrios y protección solar",
+      "partidas_actuales": 21,
+      "apartados_actuales": 1,
+      "objetivo_minimo": 21,
+      "objetivo_amplio": 34,
+      "brecha_minima": 0,
+      "brecha_amplia": 13,
+      "estado": "completa",
+      "operaciones_requeridas": [
+        "desmontaje_con_recuperacion",
+        "desmontaje_sin_recuperacion",
+        "demolicion_manual",
+        "demolicion_mecanica",
+        "carga",
+        "retiro"
+      ],
+      "variaciones_requeridas": [
+        "material",
+        "espesor",
+        "medio_manual_mecanico",
+        "recuperacion",
+        "altura",
+        "carga"
+      ]
+    },
+    {
+      "capitulo": "02",
+      "capitulo_nombre": "Demoliciones y desmontajes",
+      "codigo": "02.07",
+      "nombre": "Instalaciones",
+      "partidas_actuales": 22,
+      "apartados_actuales": 5,
+      "objetivo_minimo": 22,
+      "objetivo_amplio": 35,
+      "brecha_minima": 0,
+      "brecha_amplia": 13,
+      "estado": "completa",
+      "operaciones_requeridas": [
+        "desmontaje_con_recuperacion",
+        "desmontaje_sin_recuperacion",
+        "demolicion_manual",
+        "demolicion_mecanica",
+        "carga",
+        "retiro"
+      ],
+      "variaciones_requeridas": [
+        "material",
+        "espesor",
+        "medio_manual_mecanico",
+        "recuperacion",
+        "altura",
+        "carga"
+      ]
+    },
+    {
+      "capitulo": "02",
+      "capitulo_nombre": "Demoliciones y desmontajes",
+      "codigo": "02.10",
+      "nombre": "Revestimientos, pisos y cielos rasos",
+      "partidas_actuales": 42,
+      "apartados_actuales": 6,
+      "objetivo_minimo": 26,
+      "objetivo_amplio": 42,
+      "brecha_minima": 0,
+      "brecha_amplia": 0,
+      "estado": "completa",
+      "operaciones_requeridas": [
+        "desmontaje_con_recuperacion",
+        "desmontaje_sin_recuperacion",
+        "demolicion_manual",
+        "demolicion_mecanica",
+        "carga",
+        "retiro"
+      ],
+      "variaciones_requeridas": [
+        "material",
+        "espesor",
+        "medio_manual_mecanico",
+        "recuperacion",
+        "altura",
+        "carga"
+      ]
+    },
+    {
+      "capitulo": "02",
+      "capitulo_nombre": "Demoliciones y desmontajes",
+      "codigo": "02.12",
+      "nombre": "Obras exteriores, firmes y pavimentos",
+      "partidas_actuales": 23,
+      "apartados_actuales": 1,
+      "objetivo_minimo": 22,
+      "objetivo_amplio": 36,
+      "brecha_minima": 0,
+      "brecha_amplia": 13,
+      "estado": "completa",
+      "operaciones_requeridas": [
+        "desmontaje_con_recuperacion",
+        "desmontaje_sin_recuperacion",
+        "demolicion_manual",
+        "demolicion_mecanica",
+        "carga",
+        "retiro"
+      ],
+      "variaciones_requeridas": [
+        "material",
+        "espesor",
+        "medio_manual_mecanico",
+        "recuperacion",
+        "altura",
+        "carga"
+      ]
+    },
+    {
+      "capitulo": "06",
+      "capitulo_nombre": "Fachadas y particiones",
+      "codigo": "06.03",
+      "nombre": "Particiones de bloque o ladrillo",
+      "partidas_actuales": 33,
+      "apartados_actuales": 3,
+      "objetivo_minimo": 23,
+      "objetivo_amplio": 39,
+      "brecha_minima": 0,
+      "brecha_amplia": 6,
+      "estado": "completa",
+      "operaciones_requeridas": [
+        "suministro_colocacion",
+        "solo_colocacion",
+        "reparacion",
+        "sustitucion",
+        "remates",
+        "limpieza_tratamiento"
+      ],
+      "variaciones_requeridas": [
+        "material",
+        "espesor",
+        "prestacion_termica_acustica",
+        "interior_exterior",
+        "altura",
+        "sistema"
+      ]
+    },
+    {
+      "capitulo": "06",
+      "capitulo_nombre": "Fachadas y particiones",
+      "codigo": "06.04",
+      "nombre": "Particiones de yeso laminado y sistemas secos",
+      "partidas_actuales": 25,
+      "apartados_actuales": 1,
+      "objetivo_minimo": 21,
+      "objetivo_amplio": 35,
+      "brecha_minima": 0,
+      "brecha_amplia": 10,
+      "estado": "completa",
+      "operaciones_requeridas": [
+        "suministro_colocacion",
+        "solo_colocacion",
+        "reparacion",
+        "sustitucion",
+        "remates",
+        "limpieza_tratamiento"
+      ],
+      "variaciones_requeridas": [
+        "material",
+        "espesor",
+        "prestacion_termica_acustica",
+        "interior_exterior",
+        "altura",
+        "sistema"
+      ]
+    },
+    {
+      "capitulo": "06",
+      "capitulo_nombre": "Fachadas y particiones",
+      "codigo": "06.05",
+      "nombre": "Particiones ligeras, móviles y acristaladas",
+      "partidas_actuales": 25,
+      "apartados_actuales": 2,
+      "objetivo_minimo": 21,
+      "objetivo_amplio": 35,
+      "brecha_minima": 0,
+      "brecha_amplia": 10,
+      "estado": "completa",
+      "operaciones_requeridas": [
+        "suministro_colocacion",
+        "solo_colocacion",
+        "reparacion",
+        "sustitucion",
+        "remates",
+        "limpieza_tratamiento"
+      ],
+      "variaciones_requeridas": [
+        "material",
+        "espesor",
+        "prestacion_termica_acustica",
+        "interior_exterior",
+        "altura",
+        "sistema"
+      ]
+    },
+    {
+      "capitulo": "06",
+      "capitulo_nombre": "Fachadas y particiones",
+      "codigo": "06.06",
+      "nombre": "Dinteles, frentes de losa y remates de vano",
+      "partidas_actuales": 26,
+      "apartados_actuales": 2,
+      "objetivo_minimo": 22,
+      "objetivo_amplio": 36,
+      "brecha_minima": 0,
+      "brecha_amplia": 10,
+      "estado": "completa",
+      "operaciones_requeridas": [
+        "suministro_colocacion",
+        "solo_colocacion",
+        "reparacion",
+        "sustitucion",
+        "remates",
+        "limpieza_tratamiento"
+      ],
+      "variaciones_requeridas": [
+        "material",
+        "espesor",
+        "prestacion_termica_acustica",
+        "interior_exterior",
+        "altura",
+        "sistema"
+      ]
+    },
+    {
+      "capitulo": "06",
+      "capitulo_nombre": "Fachadas y particiones",
+      "codigo": "06.09",
+      "nombre": "Limpieza, restauración y tratamiento de fachadas",
+      "partidas_actuales": 23,
+      "apartados_actuales": 1,
+      "objetivo_minimo": 21,
+      "objetivo_amplio": 35,
+      "brecha_minima": 0,
+      "brecha_amplia": 12,
+      "estado": "completa",
+      "operaciones_requeridas": [
+        "suministro_colocacion",
+        "solo_colocacion",
+        "reparacion",
+        "sustitucion",
+        "remates",
+        "limpieza_tratamiento"
+      ],
+      "variaciones_requeridas": [
+        "material",
+        "espesor",
+        "prestacion_termica_acustica",
+        "interior_exterior",
+        "altura",
+        "sistema"
       ]
     },
     {

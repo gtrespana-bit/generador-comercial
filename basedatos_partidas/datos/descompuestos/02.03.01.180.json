@@ -1,0 +1,44 @@
+{
+  "codigo": "02.03.01.180",
+  "ambito": "reforma",
+  "capitulo": "02",
+  "subcapitulo": "03",
+  "unidad": "m2",
+  "titulo": "Demolición de antepecho de fachada.",
+  "descripcion": "Demolición de antepecho o peto de fachada de mampostería. Incluye la demolición y la retirada del escombro. Medido por metro cuadrado demolido.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MT-SAC-ESC",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MQ-MART-ELEC",
+      "rendimiento": 0.7
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.7
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.8
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

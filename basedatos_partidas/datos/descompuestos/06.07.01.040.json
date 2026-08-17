@@ -1,0 +1,44 @@
+{
+  "codigo": "06.07.01.040",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "07",
+  "unidad": "m2",
+  "titulo": "Fachada ventilada de fibrocemento.",
+  "descripcion": "Ejecución de fachada ventilada de panel de fibrocemento, con subestructura. Incluye la subestructura y la colocación de los paneles. Medido por metro cuadrado ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-SUBESTRUCTURA",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-PLACA-FACHADA",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-PYL-LANA",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-TORN-TECHO",
+      "rendimiento": 6.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.7
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.25
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

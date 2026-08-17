@@ -1,0 +1,36 @@
+{
+  "codigo": "06.09.01.220",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "09",
+  "unidad": "m2",
+  "titulo": "Restauración de moldura de fachada.",
+  "descripcion": "Restauración de moldura o cornisa de fachada. Incluye la reintegración y el acabado. Medido por metro lineal restaurado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MOLDURA-YESO",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-MORT-REP-EST",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

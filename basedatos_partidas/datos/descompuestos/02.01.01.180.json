@@ -1,0 +1,44 @@
+{
+  "codigo": "02.01.01.180",
+  "ambito": "reforma",
+  "capitulo": "02",
+  "subcapitulo": "01",
+  "unidad": "m3",
+  "titulo": "Demolición de contrapiso de fundación.",
+  "descripcion": "Demolición de contrapiso o relleno de fundación, con medios mecánicos. Incluye la demolición y la retirada del material. Medido por metro cúbico demolido.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.8
+    },
+    {
+      "ref": "MT-SAC-ESC",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MQ-MART-NEUM",
+      "rendimiento": 1.2
+    },
+    {
+      "ref": "MQ-RETRO",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 1.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

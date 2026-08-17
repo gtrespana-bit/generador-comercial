@@ -1,0 +1,36 @@
+{
+  "codigo": "02.06.01.130",
+  "ambito": "reforma",
+  "capitulo": "02",
+  "subcapitulo": "06",
+  "unidad": "m",
+  "titulo": "Desmontaje de soporte de aparato de aire.",
+  "descripcion": "Desmontaje de soporte metálico de aparato de aire acondicionado en fachada. Incluye la retirada del soporte. Medido por unidad desmontada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-OXI-CONS",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MQ-OXICORTE",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-SOLD",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.4
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

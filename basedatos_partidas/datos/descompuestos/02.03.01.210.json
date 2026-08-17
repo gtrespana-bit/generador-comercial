@@ -1,0 +1,44 @@
+{
+  "codigo": "02.03.01.210",
+  "ambito": "reforma",
+  "capitulo": "02",
+  "subcapitulo": "03",
+  "unidad": "m2",
+  "titulo": "Desmontaje de publicidad o letrero de fachada.",
+  "descripcion": "Desmontaje de letrero, rótulo o publicidad de fachada, con retirada de fijaciones. Incluye la retirada del elemento y sus soportes. Medido por unidad desmontada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MT-SAC-ESC",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.5
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

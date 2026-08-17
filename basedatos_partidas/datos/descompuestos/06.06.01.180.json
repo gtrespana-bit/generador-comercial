@@ -1,0 +1,36 @@
+{
+  "codigo": "06.06.01.180",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "06",
+  "unidad": "m",
+  "titulo": "Dintel prefabricado de concreto armado.",
+  "descripcion": "Colocación de dintel prefabricado de concreto armado sobre vano. Incluye el izado y la colocación del dintel. Medido por metro lineal ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-DINTEL-PREF",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-MOR-PEGA",
+      "rendimiento": 0.004
+    },
+    {
+      "ref": "MQ-MEZCL",
+      "rendimiento": 0.04
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.3
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

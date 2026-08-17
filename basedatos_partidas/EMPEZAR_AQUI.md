@@ -20,9 +20,9 @@ presupuestos.
 
 | | |
 |---|---:|
-| Partidas | **1.156** |
-| Capítulos · subcapítulos · apartados con partidas | **18 · 172 · 180** |
-| Recursos en el cuadro de precios | 377 |
+| Partidas | **1.460** |
+| Capítulos · subcapítulos · apartados con partidas | **18 · 172 · 190** |
+| Recursos en el cuadro de precios | 382 |
 | Coste directo del catálogo | 15.733,15 USD |
 | **Peso económico con precio cerrado** | **79,6 %** |
 | Validación con el importador real | **0 errores · 0 advertencias** |
@@ -153,7 +153,9 @@ producir familias completas, comenzando por `09 Instalaciones`.
 >   hasta el mínimo (180/180).
 > - **Capítulo 10 Aislamientos e impermeabilizaciones** completo hasta el
 >   mínimo (150/150).
-> Validación del importador real: 0 errores, 0 advertencias sobre 1.156 partidas.
+> - **Capítulo 02 Demoliciones y desmontajes** completo hasta el mínimo (265/260).
+> - **Capítulo 06 Fachadas y particiones** completo hasta el mínimo (180/180).
+> Validación del importador real: 0 errores, 0 advertencias sobre 1.460 partidas.
 
 La producción cerrará familias completas en este orden: `09 Instalaciones`,
 `12 Revestimientos y acabados`, `07 Carpintería, herrería y vidrios`, `10/11

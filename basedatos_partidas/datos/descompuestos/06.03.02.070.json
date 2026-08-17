@@ -1,0 +1,36 @@
+{
+  "codigo": "06.03.02.070",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "03",
+  "unidad": "m2",
+  "titulo": "Tabique de bloque de arcilla a media altura.",
+  "descripcion": "Ejecución de tabique de bloque de arcilla a media altura. Incluye la mampostería y el remate. Medido por metro cuadrado ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-BLQ-ARC-10",
+      "rendimiento": 12.8
+    },
+    {
+      "ref": "MT-MOR-PEGA",
+      "rendimiento": 0.0095
+    },
+    {
+      "ref": "MQ-MEZCL",
+      "rendimiento": 0.07
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.65
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.6
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

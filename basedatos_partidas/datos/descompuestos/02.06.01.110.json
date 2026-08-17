@@ -1,0 +1,40 @@
+{
+  "codigo": "02.06.01.110",
+  "ambito": "reforma",
+  "capitulo": "02",
+  "subcapitulo": "06",
+  "unidad": "m",
+  "titulo": "Desmontaje de cumbrera o remate de techo.",
+  "descripcion": "Desmontaje de cumbrera o remate de cubierta. Incluye la retirada del remate y sus fijaciones. Medido por metro lineal desmontado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MT-SAC-ESC",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

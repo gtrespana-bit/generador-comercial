@@ -1,0 +1,44 @@
+{
+  "codigo": "06.04.01.140",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "04",
+  "unidad": "m2",
+  "titulo": "Trasdosado directo de placa de yeso.",
+  "descripcion": "Ejecución de trasdosado directo de placa de yeso adherida al muro. Incluye la aplicación de pasta y la colocación de la placa. Medido por metro cuadrado ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PYL-PLACA125",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-PYL-PASTA-AGARRE",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MT-PYL-PASTA",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MT-TORN",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MQ-ATORN",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.12
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

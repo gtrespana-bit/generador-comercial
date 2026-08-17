@@ -1,0 +1,40 @@
+{
+  "codigo": "06.05.02.110",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "05",
+  "unidad": "m2",
+  "titulo": "Mampara de ducha a ras de piso.",
+  "descripcion": "Ejecución de mampara de ducha a ras de piso, de vidrio templado. Incluye la toma de medidas, el montaje y el sellado. Medido por metro cuadrado ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-VIDRIO-TEMP",
+      "rendimiento": 1.02
+    },
+    {
+      "ref": "MT-PERFIL-ALUM",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MT-SIL-SAN",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.14
+    },
+    {
+      "ref": "MO-OF1-VIDR",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.45
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

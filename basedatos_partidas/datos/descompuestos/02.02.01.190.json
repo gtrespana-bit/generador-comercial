@@ -1,0 +1,44 @@
+{
+  "codigo": "02.02.01.190",
+  "ambito": "reforma",
+  "capitulo": "02",
+  "subcapitulo": "02",
+  "unidad": "m3",
+  "titulo": "Demolición de contrafuerte de concreto.",
+  "descripcion": "Demolición de contrafuerte o machón de concreto armado. Incluye el corte del acero, la demolición y la retirada. Medido por metro cúbico demolido.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MT-OXI-CONS",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MQ-MART-NEUM",
+      "rendimiento": 2.6
+    },
+    {
+      "ref": "MQ-OXICORTE",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.9
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 2.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 2.4
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

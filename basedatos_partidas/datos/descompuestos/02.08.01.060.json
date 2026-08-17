@@ -1,0 +1,36 @@
+{
+  "codigo": "02.08.01.060",
+  "ambito": "reforma",
+  "capitulo": "02",
+  "subcapitulo": "08",
+  "unidad": "m2",
+  "titulo": "Retiro de manta reflectiva.",
+  "descripcion": "Retiro de manta reflectiva de aislamiento. Incluye la retirada de la manta. Medido por metro cuadrado retirado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MT-SAC-ESC",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.25
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

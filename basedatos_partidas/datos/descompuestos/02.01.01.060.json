@@ -1,0 +1,44 @@
+{
+  "codigo": "02.01.01.060",
+  "ambito": "reforma",
+  "capitulo": "02",
+  "subcapitulo": "01",
+  "unidad": "m",
+  "titulo": "Corte y demolición de viga de fundación.",
+  "descripcion": "Corte y demolición de viga de fundación o de riostra, con corte de acero y demolición mecánica. Incluye el corte de los extremos y la retirada del escombro. Medido por metro lineal demolido.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.8
+    },
+    {
+      "ref": "MT-OXI-CONS",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MQ-MART-NEUM",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MQ-OXICORTE",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 1.1
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

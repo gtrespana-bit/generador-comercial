@@ -1,0 +1,40 @@
+{
+  "codigo": "06.08.02.020",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "08",
+  "unidad": "m2",
+  "titulo": "Barandilla de fachada con defensa.",
+  "descripcion": "Suministro y colocación de barandilla de fachada con defensa de seguridad. Incluye la fabricación y el montaje. Medido por metro lineal instalado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-TUBO-ACERO",
+      "rendimiento": 6.0
+    },
+    {
+      "ref": "MT-ELECTRODO",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MT-PINT-ANTICORR",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MQ-SOLDADORA",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-OF1-SOLD",
+      "rendimiento": 0.7
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.25
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

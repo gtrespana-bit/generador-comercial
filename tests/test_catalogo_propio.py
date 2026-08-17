@@ -30,9 +30,9 @@ from app.services.catalogo_propio import (
 
 # La ampliación del catálogo extenso (lotes de producción) hace crecer estas
 # cifras. Se centralizan aquí para actualizarlas en un solo punto en cada lote.
-N_PARTIDAS = 1156       # total de partidas oficiales del catálogo
+N_PARTIDAS = 1460       # total de partidas oficiales del catálogo
 N_LEGACY = 540         # partidas migradas de la v1 con código CT- (no crece)
-N_APARTADOS = 180      # apartados de tercer nivel con partidas
+N_APARTADOS = 190      # apartados de tercer nivel con partidas
 N_CATEGORIAS = 18 + 172 + N_APARTADOS
 
 
@@ -192,7 +192,12 @@ def test_actualizar_v1_conserva_id_precio_borrados_y_partidas_del_usuario():
 def test_asegurar_actualiza_catalogo_v1_grande_una_sola_vez():
     engine, db = _session()
     try:
-        fuentes = construir_catalogo()["partidas"][:100]
+        # Solo las partidas migradas de la v1 llevan ``codigo_legacy`` (CT-...).
+        # Las partidas nuevas de la ampliación del catálogo no lo tienen y no
+        # entran en la migración v1→v2.
+        fuentes = [
+            p for p in construir_catalogo()["partidas"] if p["codigo_legacy"]
+        ][:100]
         for item in fuentes:
             db.add(Partida(
                 nombre=item["nombre"],

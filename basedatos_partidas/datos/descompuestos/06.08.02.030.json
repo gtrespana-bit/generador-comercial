@@ -1,0 +1,40 @@
+{
+  "codigo": "06.08.02.030",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "08",
+  "unidad": "m2",
+  "titulo": "Protección de fachada contra impactos.",
+  "descripcion": "Colocación de protección de fachada contra impactos. Incluye la fijación de la protección. Medido por metro cuadrado instalado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PERFIL-ACERO",
+      "rendimiento": 6.0
+    },
+    {
+      "ref": "MT-ELECTRODO",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MT-PINT-ANTICORR",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MQ-SOLDADORA",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-OF1-SOLD",
+      "rendimiento": 0.7
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.25
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

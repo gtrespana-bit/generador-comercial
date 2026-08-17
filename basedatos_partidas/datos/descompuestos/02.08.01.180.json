@@ -1,0 +1,36 @@
+{
+  "codigo": "02.08.01.180",
+  "ambito": "reforma",
+  "capitulo": "02",
+  "subcapitulo": "08",
+  "unidad": "m2",
+  "titulo": "Retiro de panel de lana mineral.",
+  "descripcion": "Retiro de panel de lana mineral de tabique o cielo. Incluye la retirada del panel. Medido por metro cuadrado retirado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MT-SAC-ESC",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MQ-ASPIR",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.3
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

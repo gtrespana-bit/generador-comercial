@@ -1,0 +1,40 @@
+{
+  "codigo": "06.05.02.090",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "05",
+  "unidad": "m2",
+  "titulo": "Mampara de baño de vidrio esmerilado.",
+  "descripcion": "Ejecución de mampara de baño de vidrio esmerilado. Incluye el montaje del perfil y el acristalamiento. Medido por metro cuadrado ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-VIDRIO-ARENA",
+      "rendimiento": 1.02
+    },
+    {
+      "ref": "MT-PERFIL-ALUM",
+      "rendimiento": 1.8
+    },
+    {
+      "ref": "MT-SIL-SAN",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MO-OF1-VIDR",
+      "rendimiento": 0.9
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.4
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

@@ -1,0 +1,40 @@
+{
+  "codigo": "06.05.01.100",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "05",
+  "unidad": "m2",
+  "titulo": "División liviana con revestimiento de melamina.",
+  "descripcion": "Ejecución de división liviana con revestimiento de melamina. Incluye la estructura y el revestimiento. Medido por metro cuadrado ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MELAMINA",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-MADERA-LISTON",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MT-PERFIL-REMATE",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 0.55
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

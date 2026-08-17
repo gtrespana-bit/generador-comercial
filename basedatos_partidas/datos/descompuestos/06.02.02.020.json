@@ -1,0 +1,36 @@
+{
+  "codigo": "06.02.02.020",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "02",
+  "unidad": "m2",
+  "titulo": "Fachada de chapa metálica perfilada.",
+  "descripcion": "Ejecución de fachada de chapa metálica perfilada, con fijación a estructura. Incluye la colocación de la chapa y el remate. Medido por metro cuadrado ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-LAMINA-ZINC",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-TORN-TECHO",
+      "rendimiento": 8.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.15
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

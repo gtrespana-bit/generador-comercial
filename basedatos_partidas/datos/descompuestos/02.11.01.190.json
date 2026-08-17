@@ -1,0 +1,36 @@
+{
+  "codigo": "02.11.01.190",
+  "ambito": "reforma",
+  "capitulo": "02",
+  "subcapitulo": "11",
+  "unidad": "ud",
+  "titulo": "Desmontaje de repisa de cocina.",
+  "descripcion": "Desmontaje de repisa o estante de cocina. Incluye la retirada de la repisa. Medido por unidad desmontada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MT-SAC-ESC",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.3
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

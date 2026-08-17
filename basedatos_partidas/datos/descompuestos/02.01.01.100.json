@@ -1,0 +1,40 @@
+{
+  "codigo": "02.01.01.100",
+  "ambito": "reforma",
+  "capitulo": "02",
+  "subcapitulo": "01",
+  "unidad": "m3",
+  "titulo": "Demolición de sobrecimiento de concreto.",
+  "descripcion": "Demolición de sobrecimiento o arranque de muro de concreto, con medios mecánicos. Incluye la demolición y la retirada del escombro. Medido por metro cúbico demolido.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MT-SAC-ESC",
+      "rendimiento": 1.2
+    },
+    {
+      "ref": "MQ-MART-ELEC",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.7
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 1.6
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 1.8
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

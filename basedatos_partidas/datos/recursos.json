@@ -2192,6 +2192,36 @@
       "descripcion": "Geocompuesto drenante con malla y núcleo para drenaje de cubiertas y muros.",
       "precio": 2.2,
       "estado": "provisional"
+    },
+    "MT-PLACA-FACHADA": {
+      "unidad": "m2",
+      "descripcion": "Panel de fachada ventilada (composite de aluminio, fibrocemento o cerámico extruido), con sus fijaciones ocultas.",
+      "precio": 42.0,
+      "estado": "provisional"
+    },
+    "MT-MALLA-FACH": {
+      "unidad": "m2",
+      "descripcion": "Malla de fibra de vidrio antiálcalis para refuerzo de revestimiento continuo de fachada (SATE).",
+      "precio": 1.8,
+      "estado": "provisional"
+    },
+    "MT-SUBESTRUCTURA": {
+      "unidad": "m2",
+      "descripcion": "Subestructura de fachada ventilada en perfiles de aluminio, con anclajes y remates.",
+      "precio": 18.0,
+      "estado": "provisional"
+    },
+    "MT-LADRILLO-VISTO": {
+      "unidad": "ud",
+      "descripcion": "Ladrillo caravista de arcilla para fachadas de ladrillo visto, con junta fina.",
+      "precio": 0.3,
+      "estado": "provisional"
+    },
+    "MT-PIEDRA-FACHADA": {
+      "unidad": "m2",
+      "descripcion": "Aplacado de piedra natural ligera para fachada ventilada, con fijación mecánica.",
+      "precio": 38.0,
+      "estado": "provisional"
     }
   },
   "maquinaria": {

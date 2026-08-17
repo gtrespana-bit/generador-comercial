@@ -1,0 +1,40 @@
+{
+  "codigo": "02.09.01.200",
+  "ambito": "reforma",
+  "capitulo": "02",
+  "subcapitulo": "09",
+  "unidad": "m2",
+  "titulo": "Desmontaje de canalón de cubierta.",
+  "descripcion": "Desmontaje de canalón de cubierta, con retirada de soportes. Incluye la retirada del canalón. Medido por metro cuadrado desmontado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MT-SAC-ESC",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

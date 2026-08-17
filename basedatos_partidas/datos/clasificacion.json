@@ -286,11 +286,19 @@
       "subcapitulos": {
         "01": {
           "nombre": "Fachadas de bloque o ladrillo",
-          "apartados": {}
+          "apartados": {
+            "01": "Fachadas de bloque de concreto",
+            "02": "Fachadas de ladrillo y bloque de arcilla",
+            "03": "Fachadas de ladrillo visto"
+          }
         },
         "02": {
           "nombre": "Fachadas ligeras y revestidas",
-          "apartados": {}
+          "apartados": {
+            "01": "Fachadas de placa de cemento",
+            "02": "Fachadas de panel sándwich y chapa",
+            "03": "Fachadas revestidas ligeras"
+          }
         },
         "03": {
           "nombre": "Particiones de bloque o ladrillo",
@@ -322,11 +330,17 @@
         },
         "07": {
           "nombre": "Fachadas ventiladas y sistemas de aislamiento exterior",
-          "apartados": {}
+          "apartados": {
+            "01": "Fachadas ventiladas de panel",
+            "02": "Sistemas de aislamiento térmico exterior (SATE)"
+          }
         },
         "08": {
           "nombre": "Celosías, defensas y cerramientos especiales",
-          "apartados": {}
+          "apartados": {
+            "01": "Celosías y cerramientos de fachada",
+            "02": "Defensas y protecciones de fachada"
+          }
         },
         "09": {
           "nombre": "Limpieza, restauración y tratamiento de fachadas",

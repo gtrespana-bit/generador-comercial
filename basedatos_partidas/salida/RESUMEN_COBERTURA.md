@@ -1,10 +1,10 @@
 # Resumen de cobertura del catálogo
 
-- Partidas actuales: **1156**
-- Objetivo mínimo: **3000** (brecha 1844)
-- Objetivo amplio: **5000** (brecha 3844)
-- Subcapítulos sin cobertura: **51**
-- Subcapítulos en estado crítico: **51**
+- Partidas actuales: **1460**
+- Objetivo mínimo: **3000** (brecha 1540)
+- Objetivo amplio: **5000** (brecha 3540)
+- Subcapítulos sin cobertura: **47**
+- Subcapítulos en estado crítico: **44**
 - Diccionario de sinónimos: **146 grupos · 661 términos · 18 capítulos**
 
 ## Estado por capítulo
@@ -12,11 +12,11 @@
 | Cap. | Capítulo | Actual | Mínimo | Amplio | Brecha mínima |
 |---|---|---:|---:|---:|---:|
 | 01 | Actuaciones previas | 28 | 100 | 170 | 72 |
-| 02 | Demoliciones y desmontajes | 103 | 260 | 420 | 157 |
+| 02 | Demoliciones y desmontajes | 265 | 260 | 420 | -5 |
 | 03 | Acondicionamiento del terreno | 24 | 80 | 140 | 56 |
 | 04 | Fundaciones | 28 | 100 | 180 | 72 |
 | 05 | Estructuras | 38 | 170 | 300 | 132 |
-| 06 | Fachadas y particiones | 38 | 180 | 300 | 142 |
+| 06 | Fachadas y particiones | 180 | 180 | 300 | 0 |
 | 07 | Carpintería, herrería, vidrios y protección solar | 180 | 180 | 300 | 0 |
 | 08 | Remates y ayudas | 0 | 120 | 210 | 120 |
 | 09 | Instalaciones | 89 | 540 | 860 | 451 |
@@ -45,10 +45,6 @@
 | 08.04 | Sellados, juntas y encuentros | sin_cobertura | 0 | 13 | 13 |
 | 08.05 | Alféizares, vierteaguas, pasamanos y coronaciones | sin_cobertura | 0 | 13 | 13 |
 | 08.06 | Bancadas, soportes y bases de equipos | sin_cobertura | 0 | 13 | 13 |
-| 06.01 | Fachadas de bloque o ladrillo | sin_cobertura | 0 | 12 | 12 |
-| 06.02 | Fachadas ligeras y revestidas | sin_cobertura | 0 | 12 | 12 |
-| 06.07 | Fachadas ventiladas y sistemas de aislamiento exterior | sin_cobertura | 0 | 12 | 12 |
-| 06.08 | Celosías, defensas y cerramientos especiales | sin_cobertura | 0 | 12 | 12 |
 | 18.09 | Incorporación de energías renovables | sin_cobertura | 0 | 12 | 12 |
 | 05.01 | Encofrados, cimbras y apeos de ejecución | sin_cobertura | 0 | 11 | 11 |
 | 05.02 | Acero de refuerzo | sin_cobertura | 0 | 11 | 11 |
@@ -64,3 +60,7 @@
 | 13.05 | Electrodomésticos y equipos integrados | sin_cobertura | 0 | 10 | 10 |
 | 13.09 | Equipamiento deportivo, recreativo y especial | sin_cobertura | 0 | 10 | 10 |
 | 16.01 | Ensayos de concreto, acero y mampostería | sin_cobertura | 0 | 10 | 10 |
+| 16.02 | Inspección de soldaduras, anclajes y estructura | sin_cobertura | 0 | 10 | 10 |
+| 16.03 | Pruebas de impermeabilización y estanqueidad | sin_cobertura | 0 | 10 | 10 |
+| 16.04 | Pruebas de instalaciones sanitarias | sin_cobertura | 0 | 10 | 10 |
+| 16.05 | Pruebas eléctricas y de puesta a tierra | sin_cobertura | 0 | 10 | 10 |

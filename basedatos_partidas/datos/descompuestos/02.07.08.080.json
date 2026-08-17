@@ -1,0 +1,32 @@
+{
+  "codigo": "02.07.08.080",
+  "ambito": "reforma",
+  "capitulo": "02",
+  "subcapitulo": "07",
+  "unidad": "ud",
+  "titulo": "Desmontaje de interruptor diferencial.",
+  "descripcion": "Desmontaje de interruptor diferencial o protecciones de tablero. Incluye la retirada del elemento. Medido por unidad desmontada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MT-SAC-ESC",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "08"
+}

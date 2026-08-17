@@ -1,0 +1,32 @@
+{
+  "codigo": "02.07.08.030",
+  "ambito": "reforma",
+  "capitulo": "02",
+  "subcapitulo": "07",
+  "unidad": "ud",
+  "titulo": "Desmontaje de lavadora o secadora.",
+  "descripcion": "Desmontaje de lavadora o secadora empotrada, con desconexión. Incluye la desconexión y la retirada del equipo. Medido por unidad desmontada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MT-SAC-ESC",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MO-OF1-PLO",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.3
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "08"
+}

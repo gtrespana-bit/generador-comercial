@@ -1,0 +1,36 @@
+{
+  "codigo": "06.09.01.230",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "09",
+  "unidad": "m2",
+  "titulo": "Tratamiento anticarbónico de fachada.",
+  "descripcion": "Aplicación de tratamiento anticarbónico o protector de fachada. Incluye la limpieza previa y la aplicación. Medido por metro cuadrado tratado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PASIVANTE",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.15
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

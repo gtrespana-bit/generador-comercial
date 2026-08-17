@@ -1,0 +1,44 @@
+{
+  "codigo": "02.09.01.170",
+  "ambito": "reforma",
+  "capitulo": "02",
+  "subcapitulo": "09",
+  "unidad": "m2",
+  "titulo": "Demolición de losa de cubierta aligerada.",
+  "descripcion": "Demolición de losa de cubierta aligerada. Incluye el apuntalamiento, el corte del acero y la retirada. Medido por metro cuadrado demolido.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 1.4
+    },
+    {
+      "ref": "MT-OXI-CONS",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MQ-MART-NEUM",
+      "rendimiento": 1.8
+    },
+    {
+      "ref": "MQ-OXICORTE",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.7
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 1.6
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 1.7
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

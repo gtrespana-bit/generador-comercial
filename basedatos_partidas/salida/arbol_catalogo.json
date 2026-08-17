@@ -397,12 +397,147 @@
                   "precio": 113.98,
                   "horas": 6.6,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "02.01.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de muro de sótano de concreto armado.",
+                  "unidad": "m3",
+                  "precio": 84.28,
+                  "horas": 5.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.01.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de platea de fundación.",
+                  "unidad": "m3",
+                  "precio": 71.89,
+                  "horas": 5.0,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.01.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Corte y demolición de viga de fundación.",
+                  "unidad": "m",
+                  "precio": 33.94,
+                  "horas": 2.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.01.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de cabezal de pilote.",
+                  "unidad": "m3",
+                  "precio": 77.88,
+                  "horas": 5.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.01.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de fundación de mampostería.",
+                  "unidad": "m3",
+                  "precio": 85.09,
+                  "horas": 4.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.01.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Corte de muro de fundación con disco.",
+                  "unidad": "m",
+                  "precio": 11.73,
+                  "horas": 1.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.01.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de sobrecimiento de concreto.",
+                  "unidad": "m3",
+                  "precio": 35.16,
+                  "horas": 4.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.01.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de base de concreto ciclópeo.",
+                  "unidad": "m3",
+                  "precio": 92.95,
+                  "horas": 4.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.01.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Apertura de hueco en losa de fundación.",
+                  "unidad": "m2",
+                  "precio": 20.76,
+                  "horas": 2.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.01.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de muro de piedra de fundación.",
+                  "unidad": "m3",
+                  "precio": 85.72,
+                  "horas": 4.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.01.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de encofrado perdido en fundación.",
+                  "unidad": "m",
+                  "precio": 5.11,
+                  "horas": 0.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.01.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de viga de corona de fundación.",
+                  "unidad": "m3",
+                  "precio": 71.89,
+                  "horas": 5.0,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.01.01.160",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de pedestal de concreto armado.",
+                  "unidad": "m3",
+                  "precio": 78.01,
+                  "horas": 5.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.01.01.170",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de losa de piso de sótano.",
+                  "unidad": "m2",
+                  "precio": 37.53,
+                  "horas": 2.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.01.01.180",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de contrapiso de fundación.",
+                  "unidad": "m3",
+                  "precio": 57.55,
+                  "horas": 2.6,
+                  "producto_cliente": false
                 }
               ],
-              "n": 3
+              "n": 18
             }
           ],
-          "n": 3
+          "n": 18
         },
         {
           "codigo": "02.02",
@@ -474,12 +609,138 @@
                   "precio": 6.93,
                   "horas": 0.68,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "02.02.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de escalera estructural de concreto armado.",
+                  "unidad": "m3",
+                  "precio": 78.53,
+                  "horas": 5.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.02.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de viga de amarre.",
+                  "unidad": "m",
+                  "precio": 33.94,
+                  "horas": 2.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.02.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de losa nervada.",
+                  "unidad": "m2",
+                  "precio": 49.46,
+                  "horas": 3.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.02.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de muro estructural de concreto.",
+                  "unidad": "m3",
+                  "precio": 85.29,
+                  "horas": 6.0,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.02.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de correa o viga metálica.",
+                  "unidad": "m",
+                  "precio": 9.52,
+                  "horas": 0.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.02.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de losa de concreto con nervios.",
+                  "unidad": "m2",
+                  "precio": 55.59,
+                  "horas": 4.0,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.02.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de columna de concreto.",
+                  "unidad": "m",
+                  "precio": 44.06,
+                  "horas": 3.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.02.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Corte de losa para escalera o montacargas.",
+                  "unidad": "m2",
+                  "precio": 25.7,
+                  "horas": 2.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.02.01.160",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de mezzanina de concreto.",
+                  "unidad": "m2",
+                  "precio": 49.46,
+                  "horas": 3.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.02.01.170",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de celosía o cercha metálica.",
+                  "unidad": "m",
+                  "precio": 18.84,
+                  "horas": 1.0,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.02.01.180",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de losa de techo de concreto.",
+                  "unidad": "m2",
+                  "precio": 49.46,
+                  "horas": 3.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.02.01.190",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de contrafuerte de concreto.",
+                  "unidad": "m3",
+                  "precio": 78.01,
+                  "horas": 5.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.02.01.200",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de losa colaborante metálica.",
+                  "unidad": "m2",
+                  "precio": 9.52,
+                  "horas": 0.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.02.01.210",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de muro de carga de concreto.",
+                  "unidad": "m3",
+                  "precio": 85.29,
+                  "horas": 6.0,
+                  "producto_cliente": false
                 }
               ],
-              "n": 7
+              "n": 21
             }
           ],
-          "n": 7
+          "n": 21
         },
         {
           "codigo": "02.03",
@@ -542,12 +803,147 @@
                   "precio": 8.02,
                   "horas": 0.78,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "02.03.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de muro cortina de vidrio.",
+                  "unidad": "m2",
+                  "precio": 12.61,
+                  "horas": 1.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.03.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de revestimiento de fachada ventilada.",
+                  "unidad": "m2",
+                  "precio": 10.56,
+                  "horas": 1.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.03.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de celosía de fachada.",
+                  "unidad": "m2",
+                  "precio": 8.61,
+                  "horas": 1.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.03.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de muro de fachada de concreto.",
+                  "unidad": "m2",
+                  "precio": 44.06,
+                  "horas": 3.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.03.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de revestimiento de piedra en fachada.",
+                  "unidad": "m2",
+                  "precio": 11.9,
+                  "horas": 1.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.03.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de muro de fachada de mampostería.",
+                  "unidad": "m2",
+                  "precio": 17.0,
+                  "horas": 2.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.03.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de panel sándwich de fachada.",
+                  "unidad": "m2",
+                  "precio": 8.61,
+                  "horas": 1.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.03.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Picado de aplacado cerámico de fachada.",
+                  "unidad": "m2",
+                  "precio": 10.05,
+                  "horas": 1.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.03.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de bajante o canalón de fachada.",
+                  "unidad": "m",
+                  "precio": 4.17,
+                  "horas": 0.65,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.03.01.160",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de cornisa o remate de fachada.",
+                  "unidad": "m2",
+                  "precio": 17.0,
+                  "horas": 2.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.03.01.170",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de marquesina de fachada.",
+                  "unidad": "m2",
+                  "precio": 18.64,
+                  "horas": 1.0,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.03.01.180",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de antepecho de fachada.",
+                  "unidad": "m2",
+                  "precio": 15.51,
+                  "horas": 1.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.03.01.190",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de persiana de fachada.",
+                  "unidad": "m2",
+                  "precio": 8.89,
+                  "horas": 1.35,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.03.01.200",
+                  "codigo_legacy": "",
+                  "titulo": "Picado de friso de fachada.",
+                  "unidad": "m2",
+                  "precio": 10.56,
+                  "horas": 1.35,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.03.01.210",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de publicidad o letrero de fachada.",
+                  "unidad": "m2",
+                  "precio": 9.29,
+                  "horas": 1.4,
+                  "producto_cliente": false
                 }
               ],
-              "n": 6
+              "n": 21
             }
           ],
-          "n": 6
+          "n": 21
         },
         {
           "codigo": "02.04",
@@ -610,12 +1006,147 @@
                   "precio": 17.71,
                   "horas": 1.9,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "02.04.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de tabique de placa de cemento.",
+                  "unidad": "m2",
+                  "precio": 5.5,
+                  "horas": 0.65,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.04.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de pared de mampostería estructural.",
+                  "unidad": "m2",
+                  "precio": 29.16,
+                  "horas": 2.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.04.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de tabique de ladrillo macizo.",
+                  "unidad": "m2",
+                  "precio": 12.97,
+                  "horas": 1.65,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.04.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de tabique de bloque de arcilla.",
+                  "unidad": "m2",
+                  "precio": 12.97,
+                  "horas": 1.65,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.04.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de tabique de madera.",
+                  "unidad": "m2",
+                  "precio": 7.46,
+                  "horas": 1.05,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.04.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de tabique de panel liviano.",
+                  "unidad": "m2",
+                  "precio": 5.08,
+                  "horas": 0.65,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.04.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Apertura de rozas en pared para instalaciones.",
+                  "unidad": "m",
+                  "precio": 2.6,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.04.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de muro de bloque de concreto.",
+                  "unidad": "m2",
+                  "precio": 15.05,
+                  "horas": 1.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.04.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de tabique de doble placa de yeso.",
+                  "unidad": "m2",
+                  "precio": 6.12,
+                  "horas": 0.75,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.04.01.160",
+                  "codigo_legacy": "",
+                  "titulo": "Apertura de vano en muro de concreto.",
+                  "unidad": "m",
+                  "precio": 16.33,
+                  "horas": 1.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.04.01.170",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de tabique de bloque de vidrio existente.",
+                  "unidad": "m2",
+                  "precio": 11.84,
+                  "horas": 1.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.04.01.180",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de pared de bloques con armado.",
+                  "unidad": "m2",
+                  "precio": 31.68,
+                  "horas": 2.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.04.01.190",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de tabique de fibra o panel.",
+                  "unidad": "m2",
+                  "precio": 5.08,
+                  "horas": 0.65,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.04.01.200",
+                  "codigo_legacy": "",
+                  "titulo": "Apertura de roza en muro de concreto.",
+                  "unidad": "m",
+                  "precio": 3.42,
+                  "horas": 0.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.04.01.210",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de pared de ladrillo a la vista.",
+                  "unidad": "m2",
+                  "precio": 12.97,
+                  "horas": 1.65,
+                  "producto_cliente": false
                 }
               ],
-              "n": 6
+              "n": 21
             }
           ],
-          "n": 6
+          "n": 21
         },
         {
           "codigo": "02.05",
@@ -678,12 +1209,147 @@
                   "precio": 7.23,
                   "horas": 0.84,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "02.05.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de puerta interior corrediza.",
+                  "unidad": "ud",
+                  "precio": 5.2,
+                  "horas": 0.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.05.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de puerta plegable.",
+                  "unidad": "ud",
+                  "precio": 5.2,
+                  "horas": 0.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.05.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de marco de puerta.",
+                  "unidad": "ud",
+                  "precio": 6.49,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.05.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de ventana de aluminio.",
+                  "unidad": "ud",
+                  "precio": 5.97,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.05.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de ventana de madera.",
+                  "unidad": "ud",
+                  "precio": 6.19,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.05.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de persiana enrollable.",
+                  "unidad": "ud",
+                  "precio": 5.97,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.05.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de mosquitero.",
+                  "unidad": "ud",
+                  "precio": 3.3,
+                  "horas": 0.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.05.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de puerta blindada.",
+                  "unidad": "ud",
+                  "precio": 9.23,
+                  "horas": 1.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.05.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de portón corredizo.",
+                  "unidad": "ud",
+                  "precio": 26.12,
+                  "horas": 1.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.05.01.160",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de reja de protección.",
+                  "unidad": "ud",
+                  "precio": 11.58,
+                  "horas": 1.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.05.01.170",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de baranda metálica.",
+                  "unidad": "ud",
+                  "precio": 9.06,
+                  "horas": 1.0,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.05.01.180",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de celosía o romanilla.",
+                  "unidad": "ud",
+                  "precio": 3.91,
+                  "horas": 0.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.05.01.190",
+                  "codigo_legacy": "",
+                  "titulo": "Retiro de vidrio de fachada.",
+                  "unidad": "m2",
+                  "precio": 6.37,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.05.01.200",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de mampara de baño.",
+                  "unidad": "ud",
+                  "precio": 7.14,
+                  "horas": 1.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.05.01.210",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de caja de persiana.",
+                  "unidad": "ud",
+                  "precio": 6.49,
+                  "horas": 0.9,
+                  "producto_cliente": false
                 }
               ],
-              "n": 6
+              "n": 21
             }
           ],
-          "n": 6
+          "n": 21
         },
         {
           "codigo": "02.06",
@@ -719,12 +1385,147 @@
                   "precio": 2.33,
                   "horas": 0.28,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "02.06.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de canalón de alero.",
+                  "unidad": "m",
+                  "precio": 4.17,
+                  "horas": 0.65,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.06.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de remate o tapajuntas.",
+                  "unidad": "m",
+                  "precio": 2.81,
+                  "horas": 0.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.06.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de vierteaguas.",
+                  "unidad": "m",
+                  "precio": 7.44,
+                  "horas": 0.95,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.06.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de pasamanos metálico.",
+                  "unidad": "m",
+                  "precio": 7.27,
+                  "horas": 0.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.06.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de moldura decorativa.",
+                  "unidad": "m",
+                  "precio": 2.73,
+                  "horas": 0.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.06.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de zócalo o rodapié.",
+                  "unidad": "m",
+                  "precio": 2.5,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.06.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de cornisa de yeso.",
+                  "unidad": "m",
+                  "precio": 6.17,
+                  "horas": 0.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.06.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de cumbrera o remate de techo.",
+                  "unidad": "m",
+                  "precio": 3.0,
+                  "horas": 0.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.06.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de canaleta de drenaje.",
+                  "unidad": "m",
+                  "precio": 3.38,
+                  "horas": 0.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.06.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de soporte de aparato de aire.",
+                  "unidad": "m",
+                  "precio": 7.27,
+                  "horas": 0.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.06.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de antepecho de metal.",
+                  "unidad": "m",
+                  "precio": 2.81,
+                  "horas": 0.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.06.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de bancada de equipo.",
+                  "unidad": "m",
+                  "precio": 12.35,
+                  "horas": 1.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.06.01.160",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de rejilla de ventilación.",
+                  "unidad": "m",
+                  "precio": 2.08,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.06.01.170",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de tapa de registro.",
+                  "unidad": "m",
+                  "precio": 2.08,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.06.01.180",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de soporte de toldo.",
+                  "unidad": "m",
+                  "precio": 3.38,
+                  "horas": 0.45,
+                  "producto_cliente": false
                 }
               ],
-              "n": 3
+              "n": 18
             }
           ],
-          "n": 3
+          "n": 18
         },
         {
           "codigo": "02.07",
@@ -742,9 +1543,18 @@
                   "precio": 17.13,
                   "horas": 2.5,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "02.07.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de unidad condensadora de aire.",
+                  "unidad": "ud",
+                  "precio": 10.43,
+                  "horas": 1.2,
+                  "producto_cliente": false
                 }
               ],
-              "n": 1
+              "n": 2
             },
             {
               "codigo": "02.07.02",
@@ -767,9 +1577,27 @@
                   "precio": 11.4,
                   "horas": 1.4,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "02.07.02.030",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de bandeja portacables.",
+                  "unidad": "m",
+                  "precio": 2.81,
+                  "horas": 0.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.07.02.040",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de canalización eléctrica vista.",
+                  "unidad": "m",
+                  "precio": 2.15,
+                  "horas": 0.3,
+                  "producto_cliente": false
                 }
               ],
-              "n": 2
+              "n": 4
             },
             {
               "codigo": "02.07.03",
@@ -792,9 +1620,36 @@
                   "precio": 4.55,
                   "horas": 0.7,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "02.07.03.030",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de tubería de agua de PPR.",
+                  "unidad": "m",
+                  "precio": 2.15,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.07.03.040",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de tubería de desagüe.",
+                  "unidad": "m",
+                  "precio": 2.11,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.07.03.050",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de grifería.",
+                  "unidad": "ud",
+                  "precio": 3.22,
+                  "horas": 0.5,
+                  "producto_cliente": false
                 }
               ],
-              "n": 2
+              "n": 5
             },
             {
               "codigo": "02.07.04",
@@ -808,9 +1663,18 @@
                   "precio": 2.21,
                   "horas": 0.28,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "02.07.04.020",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de lámpara de techo.",
+                  "unidad": "ud",
+                  "precio": 2.44,
+                  "horas": 0.35,
+                  "producto_cliente": false
                 }
               ],
-              "n": 1
+              "n": 2
             },
             {
               "codigo": "02.07.08",
@@ -833,12 +1697,75 @@
                   "precio": 9.54,
                   "horas": 1.5,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "02.07.08.030",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de lavadora o secadora.",
+                  "unidad": "ud",
+                  "precio": 4.51,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.07.08.040",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de campana extractora.",
+                  "unidad": "ud",
+                  "precio": 4.72,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.07.08.050",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de cocina empotrada.",
+                  "unidad": "ud",
+                  "precio": 4.51,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.07.08.060",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de calentador de paso.",
+                  "unidad": "ud",
+                  "precio": 4.51,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.07.08.070",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de extractor de baño.",
+                  "unidad": "ud",
+                  "precio": 3.39,
+                  "horas": 0.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.07.08.080",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de interruptor diferencial.",
+                  "unidad": "ud",
+                  "precio": 2.87,
+                  "horas": 0.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.07.08.090",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de portarrollo o toallero.",
+                  "unidad": "ud",
+                  "precio": 2.44,
+                  "horas": 0.35,
+                  "producto_cliente": false
                 }
               ],
-              "n": 2
+              "n": 9
             }
           ],
-          "n": 8
+          "n": 22
         },
         {
           "codigo": "02.08",
@@ -874,12 +1801,147 @@
                   "precio": 3.34,
                   "horas": 0.39,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "02.08.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Retiro de aislamiento térmico en cubierta.",
+                  "unidad": "m2",
+                  "precio": 4.0,
+                  "horas": 0.65,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.08.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Retiro de lámina drenante.",
+                  "unidad": "m2",
+                  "precio": 3.24,
+                  "horas": 0.55,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.08.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Retiro de manta reflectiva.",
+                  "unidad": "m2",
+                  "precio": 2.69,
+                  "horas": 0.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.08.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Retiro de membrana de PVC.",
+                  "unidad": "m2",
+                  "precio": 3.89,
+                  "horas": 0.65,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.08.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Retiro de aislamiento de tubería.",
+                  "unidad": "m2",
+                  "precio": 2.15,
+                  "horas": 0.35,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.08.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Retiro de aislamiento de muro.",
+                  "unidad": "m2",
+                  "precio": 4.43,
+                  "horas": 0.65,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.08.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Retiro de barrera de vapor.",
+                  "unidad": "m2",
+                  "precio": 2.33,
+                  "horas": 0.38,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.08.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Retiro de impermeabilización de muro enterrado.",
+                  "unidad": "m2",
+                  "precio": 5.33,
+                  "horas": 0.75,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.08.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Retiro de mortero impermeabilizante.",
+                  "unidad": "m2",
+                  "precio": 6.47,
+                  "horas": 0.85,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.08.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Retiro de sellado de juntas.",
+                  "unidad": "m2",
+                  "precio": 1.69,
+                  "horas": 0.27,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.08.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Retiro de aislamiento de fachada ventilada.",
+                  "unidad": "m2",
+                  "precio": 4.43,
+                  "horas": 0.65,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.08.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Retiro de geotextil.",
+                  "unidad": "m2",
+                  "precio": 2.33,
+                  "horas": 0.38,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.08.01.160",
+                  "codigo_legacy": "",
+                  "titulo": "Retiro de aislamiento de tanque.",
+                  "unidad": "m2",
+                  "precio": 3.9,
+                  "horas": 0.65,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.08.01.170",
+                  "codigo_legacy": "",
+                  "titulo": "Retiro de aislamiento de piso.",
+                  "unidad": "m2",
+                  "precio": 3.26,
+                  "horas": 0.55,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.08.01.180",
+                  "codigo_legacy": "",
+                  "titulo": "Retiro de panel de lana mineral.",
+                  "unidad": "m2",
+                  "precio": 3.31,
+                  "horas": 0.55,
+                  "producto_cliente": false
                 }
               ],
-              "n": 3
+              "n": 18
             }
           ],
-          "n": 3
+          "n": 18
         },
         {
           "codigo": "02.09",
@@ -942,12 +2004,147 @@
                   "precio": 11.27,
                   "horas": 0.84,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "02.09.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de cubierta de policarbonato.",
+                  "unidad": "m2",
+                  "precio": 8.18,
+                  "horas": 1.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.09.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de cubierta de panel sándwich.",
+                  "unidad": "m2",
+                  "precio": 8.22,
+                  "horas": 1.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.09.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de cubierta de concreto.",
+                  "unidad": "m2",
+                  "precio": 49.46,
+                  "horas": 3.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.09.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de cubierta de lámina de zinc.",
+                  "unidad": "m2",
+                  "precio": 6.94,
+                  "horas": 1.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.09.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de techo de fibrocemento.",
+                  "unidad": "m2",
+                  "precio": 7.94,
+                  "horas": 1.25,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.09.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de viga de techo de madera.",
+                  "unidad": "m",
+                  "precio": 7.1,
+                  "horas": 1.05,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.09.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de pendientado de cubierta.",
+                  "unidad": "m2",
+                  "precio": 15.05,
+                  "horas": 1.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.09.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de claraboya o domo.",
+                  "unidad": "m",
+                  "precio": 5.45,
+                  "horas": 0.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.09.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de impermeabilización de cubierta.",
+                  "unidad": "m2",
+                  "precio": 3.89,
+                  "horas": 0.65,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.09.01.160",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de techo de madera machihembrada.",
+                  "unidad": "m2",
+                  "precio": 7.02,
+                  "horas": 1.05,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.09.01.170",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de losa de cubierta aligerada.",
+                  "unidad": "m2",
+                  "precio": 55.59,
+                  "horas": 4.0,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.09.01.180",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de caballete de techo.",
+                  "unidad": "m",
+                  "precio": 3.0,
+                  "horas": 0.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.09.01.190",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de techo de lona o membrana tensada.",
+                  "unidad": "m2",
+                  "precio": 5.62,
+                  "horas": 0.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.09.01.200",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de canalón de cubierta.",
+                  "unidad": "m2",
+                  "precio": 2.96,
+                  "horas": 0.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.09.01.210",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de bajante de aguas lluvias con soportes.",
+                  "unidad": "m",
+                  "precio": 2.86,
+                  "horas": 0.4,
+                  "producto_cliente": false
                 }
               ],
-              "n": 6
+              "n": 21
             }
           ],
-          "n": 6
+          "n": 21
         },
         {
           "codigo": "02.10",
@@ -1419,12 +2616,147 @@
                   "precio": 6.54,
                   "horas": 0.7,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "02.11.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de closet empotrado.",
+                  "unidad": "ud",
+                  "precio": 7.14,
+                  "horas": 1.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.11.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de estante o repisa fija.",
+                  "unidad": "ud",
+                  "precio": 4.68,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.11.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de mueble de cocina con piedra.",
+                  "unidad": "ud",
+                  "precio": 8.44,
+                  "horas": 1.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.11.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de campana de cocina.",
+                  "unidad": "ud",
+                  "precio": 4.72,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.11.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de mueble de baño empotrado.",
+                  "unidad": "ud",
+                  "precio": 5.89,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.11.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de espejo empotrado.",
+                  "unidad": "ud",
+                  "precio": 3.46,
+                  "horas": 0.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.11.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de barra de cocina.",
+                  "unidad": "ud",
+                  "precio": 7.98,
+                  "horas": 1.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.11.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de mueble de lavadero.",
+                  "unidad": "ud",
+                  "precio": 5.89,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.11.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de tablero o mesón de oficina.",
+                  "unidad": "ud",
+                  "precio": 5.89,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.11.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de perchero o gancho fijo.",
+                  "unidad": "ud",
+                  "precio": 2.44,
+                  "horas": 0.35,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.11.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de cortinero.",
+                  "unidad": "ud",
+                  "precio": 2.44,
+                  "horas": 0.35,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.11.01.160",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de zapatero empotrado.",
+                  "unidad": "ud",
+                  "precio": 5.89,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.11.01.170",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de mueble de cocina alto.",
+                  "unidad": "ud",
+                  "precio": 5.89,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.11.01.180",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de mobiliario de baño.",
+                  "unidad": "ud",
+                  "precio": 5.89,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.11.01.190",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de repisa de cocina.",
+                  "unidad": "ud",
+                  "precio": 4.64,
+                  "horas": 0.7,
+                  "producto_cliente": false
                 }
               ],
-              "n": 4
+              "n": 19
             }
           ],
-          "n": 4
+          "n": 19
         },
         {
           "codigo": "02.12",
@@ -1514,15 +2846,141 @@
                   "precio": 8.48,
                   "horas": 0.84,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "02.12.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de acera de concreto.",
+                  "unidad": "m2",
+                  "precio": 37.87,
+                  "horas": 1.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.12.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de bordillo de acera.",
+                  "unidad": "m",
+                  "precio": 9.91,
+                  "horas": 1.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.12.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de rampa de concreto.",
+                  "unidad": "m2",
+                  "precio": 24.08,
+                  "horas": 1.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.12.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Levantado de adoquín con recuperación.",
+                  "unidad": "m2",
+                  "precio": 12.92,
+                  "horas": 0.65,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.12.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de muro de cerca.",
+                  "unidad": "m",
+                  "precio": 20.93,
+                  "horas": 1.65,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.12.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de cerca de malla.",
+                  "unidad": "m",
+                  "precio": 4.89,
+                  "horas": 0.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.12.01.160",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de pavimento de concreto exterior.",
+                  "unidad": "m2",
+                  "precio": 45.24,
+                  "horas": 2.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.12.01.170",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de pavimento asfáltico de estacionamiento.",
+                  "unidad": "m2",
+                  "precio": 34.71,
+                  "horas": 1.65,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.12.01.180",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de tanquilla o registro.",
+                  "unidad": "m2",
+                  "precio": 12.35,
+                  "horas": 1.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.12.01.190",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de jardinera exterior.",
+                  "unidad": "m2",
+                  "precio": 11.99,
+                  "horas": 1.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.12.01.200",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de base de concreto exterior.",
+                  "unidad": "m2",
+                  "precio": 24.08,
+                  "horas": 1.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.12.01.210",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de portón exterior.",
+                  "unidad": "m",
+                  "precio": 26.12,
+                  "horas": 1.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.12.01.220",
+                  "codigo_legacy": "",
+                  "titulo": "Demolición de escalera exterior.",
+                  "unidad": "m2",
+                  "precio": 26.86,
+                  "horas": 2.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "02.12.01.230",
+                  "codigo_legacy": "",
+                  "titulo": "Desmontaje de canal de drenaje exterior.",
+                  "unidad": "m",
+                  "precio": 3.38,
+                  "horas": 0.4,
+                  "producto_cliente": false
                 }
               ],
-              "n": 9
+              "n": 23
             }
           ],
-          "n": 9
+          "n": 23
         }
       ],
-      "n": 103
+      "n": 265
     },
     {
       "codigo": "03",
@@ -2628,14 +4086,274 @@
         {
           "codigo": "06.01",
           "nombre": "Fachadas de bloque o ladrillo",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "06.01.01",
+              "nombre": "Fachadas de bloque de concreto",
+              "partidas": [
+                {
+                  "codigo": "06.01.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Fachada de bloque de concreto de 15 cm.",
+                  "unidad": "m2",
+                  "precio": 19.42,
+                  "horas": 1.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.01.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Fachada de bloque de concreto de 20 cm.",
+                  "unidad": "m2",
+                  "precio": 23.09,
+                  "horas": 1.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.01.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Fachada de bloque de concreto con friso.",
+                  "unidad": "m2",
+                  "precio": 25.49,
+                  "horas": 1.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.01.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Fachada de bloque de concreto con acabado a la vista.",
+                  "unidad": "m2",
+                  "precio": 19.79,
+                  "horas": 1.25,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.01.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Fachada de bloque de concreto con refuerzo.",
+                  "unidad": "m2",
+                  "precio": 26.66,
+                  "horas": 1.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.01.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Fachada de bloque de concreto de 12 cm.",
+                  "unidad": "m2",
+                  "precio": 16.9,
+                  "horas": 1.1,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 6
+            },
+            {
+              "codigo": "06.01.02",
+              "nombre": "Fachadas de ladrillo y bloque de arcilla",
+              "partidas": [
+                {
+                  "codigo": "06.01.02.010",
+                  "codigo_legacy": "",
+                  "titulo": "Fachada de bloque de arcilla de 15 cm.",
+                  "unidad": "m2",
+                  "precio": 18.24,
+                  "horas": 1.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.01.02.020",
+                  "codigo_legacy": "",
+                  "titulo": "Fachada de ladrillo macizo de arcilla.",
+                  "unidad": "m2",
+                  "precio": 30.58,
+                  "horas": 1.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.01.02.030",
+                  "codigo_legacy": "",
+                  "titulo": "Fachada de bloque de arcilla con friso.",
+                  "unidad": "m2",
+                  "precio": 24.32,
+                  "horas": 1.8,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 3
+            },
+            {
+              "codigo": "06.01.03",
+              "nombre": "Fachadas de ladrillo visto",
+              "partidas": [
+                {
+                  "codigo": "06.01.03.010",
+                  "codigo_legacy": "",
+                  "titulo": "Fachada de ladrillo visto.",
+                  "unidad": "m2",
+                  "precio": 36.17,
+                  "horas": 1.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.01.03.020",
+                  "codigo_legacy": "",
+                  "titulo": "Fachada de ladrillo visto con juntas coloreadas.",
+                  "unidad": "m2",
+                  "precio": 37.35,
+                  "horas": 1.75,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.01.03.030",
+                  "codigo_legacy": "",
+                  "titulo": "Fachada de ladrillo visto con cámara.",
+                  "unidad": "m2",
+                  "precio": 40.76,
+                  "horas": 1.9,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 3
+            }
+          ],
+          "n": 12
         },
         {
           "codigo": "06.02",
           "nombre": "Fachadas ligeras y revestidas",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "06.02.01",
+              "nombre": "Fachadas de placa de cemento",
+              "partidas": [
+                {
+                  "codigo": "06.02.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Fachada ligera de placa de cemento.",
+                  "unidad": "m2",
+                  "precio": 27.76,
+                  "horas": 0.63,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.02.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Fachada ligera de placa de cemento con aislamiento.",
+                  "unidad": "m2",
+                  "precio": 33.16,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.02.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Fachada ligera de placa de cemento exterior.",
+                  "unidad": "m2",
+                  "precio": 36.82,
+                  "horas": 0.68,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 3
+            },
+            {
+              "codigo": "06.02.02",
+              "nombre": "Fachadas de panel sándwich y chapa",
+              "partidas": [
+                {
+                  "codigo": "06.02.02.010",
+                  "codigo_legacy": "",
+                  "titulo": "Fachada de panel sándwich.",
+                  "unidad": "m2",
+                  "precio": 35.76,
+                  "horas": 0.57,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.02.02.020",
+                  "codigo_legacy": "",
+                  "titulo": "Fachada de chapa metálica perfilada.",
+                  "unidad": "m2",
+                  "precio": 18.85,
+                  "horas": 0.55,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.02.02.030",
+                  "codigo_legacy": "",
+                  "titulo": "Fachada de panel sándwich con remates.",
+                  "unidad": "m2",
+                  "precio": 39.33,
+                  "horas": 0.66,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.02.02.040",
+                  "codigo_legacy": "",
+                  "titulo": "Fachada de chapa con aislamiento.",
+                  "unidad": "m2",
+                  "precio": 26.0,
+                  "horas": 0.63,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.02.02.050",
+                  "codigo_legacy": "",
+                  "titulo": "Fachada de chapa metálica con junta alzada.",
+                  "unidad": "m2",
+                  "precio": 18.99,
+                  "horas": 0.57,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 5
+            },
+            {
+              "codigo": "06.02.03",
+              "nombre": "Fachadas revestidas ligeras",
+              "partidas": [
+                {
+                  "codigo": "06.02.03.010",
+                  "codigo_legacy": "",
+                  "titulo": "Fachada revestida con lámina de aluminio.",
+                  "unidad": "m2",
+                  "precio": 114.04,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.02.03.020",
+                  "codigo_legacy": "",
+                  "titulo": "Fachada revestida con placa fenólica.",
+                  "unidad": "m2",
+                  "precio": 101.56,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.02.03.030",
+                  "codigo_legacy": "",
+                  "titulo": "Fachada revestida con listones de madera.",
+                  "unidad": "m2",
+                  "precio": 22.22,
+                  "horas": 0.75,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.02.03.040",
+                  "codigo_legacy": "",
+                  "titulo": "Fachada revestida con gres porcelánico.",
+                  "unidad": "m2",
+                  "precio": 47.12,
+                  "horas": 1.3,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 4
+            }
+          ],
+          "n": 12
         },
         {
           "codigo": "06.03",
@@ -2707,9 +4425,81 @@
                   "precio": 18.03,
                   "horas": 1.14,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "06.03.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Tabique de bloque de concreto con friso.",
+                  "unidad": "m2",
+                  "precio": 27.2,
+                  "horas": 2.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.03.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Tabique de bloque de concreto de 15 cm con friso.",
+                  "unidad": "m2",
+                  "precio": 30.6,
+                  "horas": 2.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.03.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Tabique de bloque de concreto con refuerzo.",
+                  "unidad": "m2",
+                  "precio": 22.79,
+                  "horas": 1.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.03.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Tabique de bloque de concreto a media altura.",
+                  "unidad": "m2",
+                  "precio": 20.18,
+                  "horas": 1.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.03.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Tabique de bloque de concreto con juntas finas.",
+                  "unidad": "m2",
+                  "precio": 16.51,
+                  "horas": 1.15,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.03.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Tabique de bloque de concreto con viga de amarre.",
+                  "unidad": "m2",
+                  "precio": 21.88,
+                  "horas": 1.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.03.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Tabique de bloque de concreto con cámara de instalaciones.",
+                  "unidad": "m2",
+                  "precio": 17.85,
+                  "horas": 1.25,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.03.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Tabique de bloque de concreto con junta de dilatación.",
+                  "unidad": "m2",
+                  "precio": 19.51,
+                  "horas": 1.2,
+                  "producto_cliente": false
                 }
               ],
-              "n": 7
+              "n": 15
             },
             {
               "codigo": "06.03.02",
@@ -2750,9 +4540,54 @@
                   "precio": 39.01,
                   "horas": 2.4,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "06.03.02.050",
+                  "codigo_legacy": "",
+                  "titulo": "Tabique de bloque de arcilla con friso.",
+                  "unidad": "m2",
+                  "precio": 25.51,
+                  "horas": 2.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.03.02.060",
+                  "codigo_legacy": "",
+                  "titulo": "Tabique de ladrillo macizo.",
+                  "unidad": "m2",
+                  "precio": 30.58,
+                  "horas": 1.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.03.02.070",
+                  "codigo_legacy": "",
+                  "titulo": "Tabique de bloque de arcilla a media altura.",
+                  "unidad": "m2",
+                  "precio": 15.42,
+                  "horas": 1.25,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.03.02.080",
+                  "codigo_legacy": "",
+                  "titulo": "Tabique de bloque de arcilla de 15 cm.",
+                  "unidad": "m2",
+                  "precio": 18.24,
+                  "horas": 1.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.03.02.090",
+                  "codigo_legacy": "",
+                  "titulo": "Tabique de ladrillo visto interior.",
+                  "unidad": "m2",
+                  "precio": 36.17,
+                  "horas": 1.7,
+                  "producto_cliente": false
                 }
               ],
-              "n": 4
+              "n": 9
             },
             {
               "codigo": "06.03.03",
@@ -2793,12 +4628,57 @@
                   "precio": 10.5,
                   "horas": 0.6,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "06.03.03.050",
+                  "codigo_legacy": "",
+                  "titulo": "Mampostería estructural de bloque de 10 cm.",
+                  "unidad": "m2",
+                  "precio": 24.56,
+                  "horas": 1.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.03.03.060",
+                  "codigo_legacy": "",
+                  "titulo": "Mampostería estructural de bloque de 15 cm.",
+                  "unidad": "m2",
+                  "precio": 34.07,
+                  "horas": 1.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.03.03.070",
+                  "codigo_legacy": "",
+                  "titulo": "Mampostería estructural de bloque de 20 cm.",
+                  "unidad": "m2",
+                  "precio": 39.83,
+                  "horas": 1.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.03.03.080",
+                  "codigo_legacy": "",
+                  "titulo": "Mampostería estructural con bloque canal.",
+                  "unidad": "m2",
+                  "precio": 34.38,
+                  "horas": 1.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.03.03.090",
+                  "codigo_legacy": "",
+                  "titulo": "Mampostería estructural de bloque de arcilla.",
+                  "unidad": "m2",
+                  "precio": 26.66,
+                  "horas": 1.7,
+                  "producto_cliente": false
                 }
               ],
-              "n": 4
+              "n": 9
             }
           ],
-          "n": 15
+          "n": 33
         },
         {
           "codigo": "06.04",
@@ -2861,12 +4741,183 @@
                   "precio": 5.93,
                   "horas": 0.33,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "06.04.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Tabique de yeso laminado con aislamiento acústico.",
+                  "unidad": "m2",
+                  "precio": 39.38,
+                  "horas": 0.63,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.04.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Tabique de yeso laminado con placa de alta dureza.",
+                  "unidad": "m2",
+                  "precio": 43.42,
+                  "horas": 0.57,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.04.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Tabique de yeso laminado con placa ignífuga.",
+                  "unidad": "m2",
+                  "precio": 45.55,
+                  "horas": 0.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.04.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Tabique de yeso laminado en zona húmeda.",
+                  "unidad": "m2",
+                  "precio": 47.75,
+                  "horas": 0.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.04.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Tabique de yeso laminado de gran altura.",
+                  "unidad": "m2",
+                  "precio": 36.45,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.04.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Tabique de yeso laminado con banda perimetral.",
+                  "unidad": "m2",
+                  "precio": 34.98,
+                  "horas": 0.57,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.04.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Trasdosado autoportante con lana.",
+                  "unidad": "m2",
+                  "precio": 28.12,
+                  "horas": 0.56,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.04.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Trasdosado directo de placa de yeso.",
+                  "unidad": "m2",
+                  "precio": 14.44,
+                  "horas": 0.42,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.04.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Tabique de yeso laminado con doble placa.",
+                  "unidad": "m2",
+                  "precio": 54.46,
+                  "horas": 0.85,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.04.01.160",
+                  "codigo_legacy": "",
+                  "titulo": "Tabique de yeso laminado con refuerzo de cargas.",
+                  "unidad": "m2",
+                  "precio": 38.99,
+                  "horas": 0.68,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.04.01.170",
+                  "codigo_legacy": "",
+                  "titulo": "Tabique de yeso laminado curvo.",
+                  "unidad": "m2",
+                  "precio": 38.53,
+                  "horas": 0.85,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.04.01.180",
+                  "codigo_legacy": "",
+                  "titulo": "Tabique de yeso laminado con cajón de instalaciones.",
+                  "unidad": "m2",
+                  "precio": 36.74,
+                  "horas": 0.72,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.04.01.190",
+                  "codigo_legacy": "",
+                  "titulo": "Tabique de yeso laminado con junta de dilatación.",
+                  "unidad": "m2",
+                  "precio": 37.04,
+                  "horas": 0.61,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.04.01.200",
+                  "codigo_legacy": "",
+                  "titulo": "Tabique de yeso laminado con placa perforada.",
+                  "unidad": "m2",
+                  "precio": 39.27,
+                  "horas": 0.61,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.04.01.210",
+                  "codigo_legacy": "",
+                  "titulo": "Tabique de yeso laminado en áticos.",
+                  "unidad": "m2",
+                  "precio": 35.48,
+                  "horas": 0.68,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.04.01.220",
+                  "codigo_legacy": "",
+                  "titulo": "Tabique de yeso laminado con cámara para instalaciones.",
+                  "unidad": "m2",
+                  "precio": 34.05,
+                  "horas": 0.57,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.04.01.230",
+                  "codigo_legacy": "",
+                  "titulo": "Tabique de yeso laminado de una sola placa.",
+                  "unidad": "m2",
+                  "precio": 33.9,
+                  "horas": 0.55,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.04.01.240",
+                  "codigo_legacy": "",
+                  "titulo": "Tabique de yeso laminado con placa de alta dureza doble.",
+                  "unidad": "m2",
+                  "precio": 73.22,
+                  "horas": 0.85,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.04.01.250",
+                  "codigo_legacy": "",
+                  "titulo": "Tabique de yeso laminado con bastidor de madera.",
+                  "unidad": "m2",
+                  "precio": 33.79,
+                  "horas": 0.6,
+                  "producto_cliente": false
                 }
               ],
-              "n": 6
+              "n": 25
             }
           ],
-          "n": 6
+          "n": 25
         },
         {
           "codigo": "06.05",
@@ -2911,9 +4962,72 @@
                   "precio": 32.9,
                   "horas": 0.7,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "06.05.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Tabique de placa de cemento con aislamiento.",
+                  "unidad": "m2",
+                  "precio": 33.16,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.05.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Tabique de panel liviano prefabricado.",
+                  "unidad": "m2",
+                  "precio": 28.91,
+                  "horas": 0.55,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.05.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "División de machihembrado de madera.",
+                  "unidad": "m2",
+                  "precio": 26.4,
+                  "horas": 0.75,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.05.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "División de bloques de vidrio.",
+                  "unidad": "m2",
+                  "precio": 228.79,
+                  "horas": 1.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.05.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "División liviana de placa de cemento.",
+                  "unidad": "m2",
+                  "precio": 27.76,
+                  "horas": 0.63,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.05.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "División liviana con revestimiento de melamina.",
+                  "unidad": "m2",
+                  "precio": 38.3,
+                  "horas": 0.75,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.05.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "División liviana con panel de PVC.",
+                  "unidad": "m2",
+                  "precio": 29.91,
+                  "horas": 0.63,
+                  "producto_cliente": false
                 }
               ],
-              "n": 4
+              "n": 11
             },
             {
               "codigo": "06.05.02",
@@ -2936,12 +5050,120 @@
                   "precio": 217.59,
                   "horas": 1.8,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "06.05.02.030",
+                  "codigo_legacy": "",
+                  "titulo": "Mampara divisoria de oficina con puerta.",
+                  "unidad": "m2",
+                  "precio": 96.54,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.05.02.040",
+                  "codigo_legacy": "",
+                  "titulo": "Mampara acristalada de oficina.",
+                  "unidad": "m2",
+                  "precio": 156.03,
+                  "horas": 1.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.05.02.050",
+                  "codigo_legacy": "",
+                  "titulo": "Tabique móvil o plegable acústico.",
+                  "unidad": "m2",
+                  "precio": 210.38,
+                  "horas": 0.85,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.05.02.060",
+                  "codigo_legacy": "",
+                  "titulo": "Mampara divisoria con panel de vidrio.",
+                  "unidad": "m2",
+                  "precio": 146.03,
+                  "horas": 1.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.05.02.070",
+                  "codigo_legacy": "",
+                  "titulo": "Mampara de oficina con panel textil.",
+                  "unidad": "m2",
+                  "precio": 89.21,
+                  "horas": 0.63,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.05.02.080",
+                  "codigo_legacy": "",
+                  "titulo": "Tabique móvil corredero.",
+                  "unidad": "m2",
+                  "precio": 214.06,
+                  "horas": 0.85,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.05.02.090",
+                  "codigo_legacy": "",
+                  "titulo": "Mampara de baño de vidrio esmerilado.",
+                  "unidad": "m2",
+                  "precio": 73.26,
+                  "horas": 1.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.05.02.100",
+                  "codigo_legacy": "",
+                  "titulo": "Mampara de oficina con doble acristalamiento.",
+                  "unidad": "m2",
+                  "precio": 145.64,
+                  "horas": 1.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.05.02.110",
+                  "codigo_legacy": "",
+                  "titulo": "Mampara de ducha a ras de piso.",
+                  "unidad": "m2",
+                  "precio": 125.65,
+                  "horas": 1.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.05.02.120",
+                  "codigo_legacy": "",
+                  "titulo": "Mampara divisoria con vidrio laminado.",
+                  "unidad": "m2",
+                  "precio": 111.81,
+                  "horas": 1.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.05.02.130",
+                  "codigo_legacy": "",
+                  "titulo": "Tabique plegable de paneles.",
+                  "unidad": "m2",
+                  "precio": 219.28,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.05.02.140",
+                  "codigo_legacy": "",
+                  "titulo": "Mampara de oficina con perfilería vista.",
+                  "unidad": "m2",
+                  "precio": 87.98,
+                  "horas": 1.2,
+                  "producto_cliente": false
                 }
               ],
-              "n": 2
+              "n": 14
             }
           ],
-          "n": 6
+          "n": 25
         },
         {
           "codigo": "06.06",
@@ -2995,9 +5217,126 @@
                   "precio": 9.84,
                   "horas": 0.3,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "06.06.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Dintel de concreto armado encofrado en sitio.",
+                  "unidad": "m",
+                  "precio": 15.76,
+                  "horas": 1.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.06.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Dintel de bloque canal con refuerzo.",
+                  "unidad": "m",
+                  "precio": 16.69,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.06.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Formación de jambas y mochetas de vano con mortero.",
+                  "unidad": "m",
+                  "precio": 7.25,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.06.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Brocal o antepecho de ventana de concreto.",
+                  "unidad": "m",
+                  "precio": 11.88,
+                  "horas": 1.0,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.06.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Remate y sellado de encuentro pared-estructura.",
+                  "unidad": "m",
+                  "precio": 14.74,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.06.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Remate de vano con perfil de aluminio.",
+                  "unidad": "m",
+                  "precio": 9.44,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.06.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Dintel metálico para vano.",
+                  "unidad": "m",
+                  "precio": 23.66,
+                  "horas": 0.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.06.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Vierteaguas de concreto.",
+                  "unidad": "m",
+                  "precio": 10.44,
+                  "horas": 0.95,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.06.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Remate de mocheta con cantonera.",
+                  "unidad": "m",
+                  "precio": 6.12,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.06.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Dintel de madera para vano.",
+                  "unidad": "m",
+                  "precio": 9.1,
+                  "horas": 0.65,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.06.01.160",
+                  "codigo_legacy": "",
+                  "titulo": "Remate de vano con piedra artificial.",
+                  "unidad": "m",
+                  "precio": 3.55,
+                  "horas": 0.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.06.01.170",
+                  "codigo_legacy": "",
+                  "titulo": "Refuerzo de vano con perfil de acero.",
+                  "unidad": "m",
+                  "precio": 14.3,
+                  "horas": 0.65,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.06.01.180",
+                  "codigo_legacy": "",
+                  "titulo": "Dintel prefabricado de concreto armado.",
+                  "unidad": "m",
+                  "precio": 13.95,
+                  "horas": 0.7,
+                  "producto_cliente": false
                 }
               ],
-              "n": 5
+              "n": 18
             },
             {
               "codigo": "06.06.02",
@@ -3020,24 +5359,324 @@
                   "precio": 36.87,
                   "horas": 0.8,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "06.06.02.030",
+                  "codigo_legacy": "",
+                  "titulo": "Tratamiento de frente de losa en fachada.",
+                  "unidad": "m",
+                  "precio": 10.02,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.06.02.040",
+                  "codigo_legacy": "",
+                  "titulo": "Cajón de persiana en dintel con registro.",
+                  "unidad": "m",
+                  "precio": 33.09,
+                  "horas": 0.85,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.06.02.050",
+                  "codigo_legacy": "",
+                  "titulo": "Remate de frente de losa con perfil.",
+                  "unidad": "m",
+                  "precio": 6.79,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.06.02.060",
+                  "codigo_legacy": "",
+                  "titulo": "Cajón de persiana aislado.",
+                  "unidad": "m",
+                  "precio": 34.88,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.06.02.070",
+                  "codigo_legacy": "",
+                  "titulo": "Remate de losa con cornisa.",
+                  "unidad": "m",
+                  "precio": 7.85,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.06.02.080",
+                  "codigo_legacy": "",
+                  "titulo": "Remate de frente de losa con aislamiento.",
+                  "unidad": "m",
+                  "precio": 10.13,
+                  "horas": 0.7,
+                  "producto_cliente": false
                 }
               ],
-              "n": 2
+              "n": 8
             }
           ],
-          "n": 7
+          "n": 26
         },
         {
           "codigo": "06.07",
           "nombre": "Fachadas ventiladas y sistemas de aislamiento exterior",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "06.07.01",
+              "nombre": "Fachadas ventiladas de panel",
+              "partidas": [
+                {
+                  "codigo": "06.07.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Fachada ventilada de panel composite.",
+                  "unidad": "m2",
+                  "precio": 95.71,
+                  "horas": 0.95,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.07.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Fachada ventilada de gres porcelánico.",
+                  "unidad": "m2",
+                  "precio": 51.74,
+                  "horas": 1.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.07.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Fachada ventilada de piedra natural.",
+                  "unidad": "m2",
+                  "precio": 107.05,
+                  "horas": 1.55,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.07.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Fachada ventilada de fibrocemento.",
+                  "unidad": "m2",
+                  "precio": 95.71,
+                  "horas": 0.95,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.07.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Fachada ventilada de listones de madera.",
+                  "unidad": "m2",
+                  "precio": 48.35,
+                  "horas": 0.95,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 5
+            },
+            {
+              "codigo": "06.07.02",
+              "nombre": "Sistemas de aislamiento térmico exterior (SATE)",
+              "partidas": [
+                {
+                  "codigo": "06.07.02.010",
+                  "codigo_legacy": "",
+                  "titulo": "Sistema de aislamiento térmico exterior (SATE).",
+                  "unidad": "m2",
+                  "precio": 32.63,
+                  "horas": 0.85,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.07.02.020",
+                  "codigo_legacy": "",
+                  "titulo": "SATE con acabado acrílico.",
+                  "unidad": "m2",
+                  "precio": 27.35,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.07.02.030",
+                  "codigo_legacy": "",
+                  "titulo": "SATE con panel de alta densidad.",
+                  "unidad": "m2",
+                  "precio": 39.26,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.07.02.040",
+                  "codigo_legacy": "",
+                  "titulo": "SATE en fachada con remates.",
+                  "unidad": "m2",
+                  "precio": 22.4,
+                  "horas": 0.95,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.07.02.050",
+                  "codigo_legacy": "",
+                  "titulo": "SATE con lana mineral.",
+                  "unidad": "m2",
+                  "precio": 36.01,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.07.02.060",
+                  "codigo_legacy": "",
+                  "titulo": "SATE de zócalo con panel de alta densidad.",
+                  "unidad": "m2",
+                  "precio": 39.79,
+                  "horas": 0.95,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.07.02.070",
+                  "codigo_legacy": "",
+                  "titulo": "SATE de muro con acabado texturado.",
+                  "unidad": "m2",
+                  "precio": 23.11,
+                  "horas": 0.95,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 7
+            }
+          ],
+          "n": 12
         },
         {
           "codigo": "06.08",
           "nombre": "Celosías, defensas y cerramientos especiales",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "06.08.01",
+              "nombre": "Celosías y cerramientos de fachada",
+              "partidas": [
+                {
+                  "codigo": "06.08.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Celosía de fachada de aluminio.",
+                  "unidad": "m2",
+                  "precio": 68.8,
+                  "horas": 0.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.08.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Celosía de fachada de madera.",
+                  "unidad": "m2",
+                  "precio": 22.95,
+                  "horas": 0.92,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.08.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Celosía cerámica de fachada.",
+                  "unidad": "m2",
+                  "precio": 28.95,
+                  "horas": 1.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.08.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Cerramiento de lamas orientables.",
+                  "unidad": "m2",
+                  "precio": 75.49,
+                  "horas": 0.87,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.08.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Celosía metálica decorativa.",
+                  "unidad": "m2",
+                  "precio": 35.06,
+                  "horas": 1.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.08.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Celosía de fachada de acero.",
+                  "unidad": "m2",
+                  "precio": 35.06,
+                  "horas": 1.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.08.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Cerramiento de fachada con lamas de PVC.",
+                  "unidad": "m2",
+                  "precio": 23.34,
+                  "horas": 0.8,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 7
+            },
+            {
+              "codigo": "06.08.02",
+              "nombre": "Defensas y protecciones de fachada",
+              "partidas": [
+                {
+                  "codigo": "06.08.02.010",
+                  "codigo_legacy": "",
+                  "titulo": "Malla de protección de fachada.",
+                  "unidad": "m2",
+                  "precio": 21.78,
+                  "horas": 0.55,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.08.02.020",
+                  "codigo_legacy": "",
+                  "titulo": "Barandilla de fachada con defensa.",
+                  "unidad": "m2",
+                  "precio": 25.35,
+                  "horas": 0.95,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.08.02.030",
+                  "codigo_legacy": "",
+                  "titulo": "Protección de fachada contra impactos.",
+                  "unidad": "m2",
+                  "precio": 25.35,
+                  "horas": 0.95,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.08.02.040",
+                  "codigo_legacy": "",
+                  "titulo": "Defensa de fachada con reja.",
+                  "unidad": "m2",
+                  "precio": 53.82,
+                  "horas": 1.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.08.02.050",
+                  "codigo_legacy": "",
+                  "titulo": "Defensa de fachada de acero inoxidable.",
+                  "unidad": "m2",
+                  "precio": 132.55,
+                  "horas": 1.25,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 5
+            }
+          ],
+          "n": 12
         },
         {
           "codigo": "06.09",
@@ -3082,15 +5721,186 @@
                   "precio": 6.42,
                   "horas": 0.33,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "06.09.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Limpieza de fachada con proyección de arena.",
+                  "unidad": "m2",
+                  "precio": 3.93,
+                  "horas": 0.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.09.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Limpieza de fachada con cepillado en seco.",
+                  "unidad": "m2",
+                  "precio": 2.46,
+                  "horas": 0.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.09.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Limpieza de fachada con hidrolavado a presión.",
+                  "unidad": "m2",
+                  "precio": 3.2,
+                  "horas": 0.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.09.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Tratamiento fungicida de fachada.",
+                  "unidad": "m2",
+                  "precio": 3.65,
+                  "horas": 0.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.09.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Eliminación de grafitis en fachada.",
+                  "unidad": "m2",
+                  "precio": 7.58,
+                  "horas": 0.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.09.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Eliminación de eflorescencias en fachada.",
+                  "unidad": "m2",
+                  "precio": 5.85,
+                  "horas": 0.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.09.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Reparación de fisuras en fachada.",
+                  "unidad": "m2",
+                  "precio": 4.37,
+                  "horas": 0.35,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.09.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Restauración de friso de fachada.",
+                  "unidad": "m2",
+                  "precio": 8.41,
+                  "horas": 0.75,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.09.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Restauración de revestimiento de fachada.",
+                  "unidad": "m2",
+                  "precio": 9.46,
+                  "horas": 1.0,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.09.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Aplicación de hidrofugante en fachada.",
+                  "unidad": "m2",
+                  "precio": 3.67,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.09.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Protección anti-graffiti de fachada.",
+                  "unidad": "m2",
+                  "precio": 5.56,
+                  "horas": 0.36,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.09.01.160",
+                  "codigo_legacy": "",
+                  "titulo": "Limpieza química de fachada de piedra.",
+                  "unidad": "m2",
+                  "precio": 7.55,
+                  "horas": 0.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.09.01.170",
+                  "codigo_legacy": "",
+                  "titulo": "Limpieza de fachada de ladrillo visto.",
+                  "unidad": "m2",
+                  "precio": 5.94,
+                  "horas": 0.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.09.01.180",
+                  "codigo_legacy": "",
+                  "titulo": "Restauración de juntas de fachada.",
+                  "unidad": "m2",
+                  "precio": 6.63,
+                  "horas": 0.75,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.09.01.190",
+                  "codigo_legacy": "",
+                  "titulo": "Tratamiento de humedad en fachada.",
+                  "unidad": "m2",
+                  "precio": 4.56,
+                  "horas": 0.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.09.01.200",
+                  "codigo_legacy": "",
+                  "titulo": "Reparación de muro de fachada.",
+                  "unidad": "m2",
+                  "precio": 24.93,
+                  "horas": 0.75,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.09.01.210",
+                  "codigo_legacy": "",
+                  "titulo": "Limpieza de fachada con agua a baja presión.",
+                  "unidad": "m2",
+                  "precio": 2.76,
+                  "horas": 0.36,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.09.01.220",
+                  "codigo_legacy": "",
+                  "titulo": "Restauración de moldura de fachada.",
+                  "unidad": "m2",
+                  "precio": 11.62,
+                  "horas": 0.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.09.01.230",
+                  "codigo_legacy": "",
+                  "titulo": "Tratamiento anticarbónico de fachada.",
+                  "unidad": "m2",
+                  "precio": 3.9,
+                  "horas": 0.3,
+                  "producto_cliente": false
                 }
               ],
-              "n": 4
+              "n": 23
             }
           ],
-          "n": 4
+          "n": 23
         }
       ],
-      "n": 38
+      "n": 180
     },
     {
       "codigo": "07",

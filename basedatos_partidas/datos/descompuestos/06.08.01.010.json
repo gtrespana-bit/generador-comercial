@@ -1,0 +1,40 @@
+{
+  "codigo": "06.08.01.010",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "08",
+  "unidad": "m2",
+  "titulo": "Celosía de fachada de aluminio.",
+  "descripcion": "Suministro y colocación de celosía de fachada de aluminio, con lamas fijas o orientables. Incluye la subestructura y la colocación de las lamas. Medido por metro cuadrado instalado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CELOSIA",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-PERFIL-ALUM",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MT-PLO-SOP",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

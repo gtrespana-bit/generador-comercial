@@ -1,0 +1,40 @@
+{
+  "codigo": "06.08.02.040",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "08",
+  "unidad": "m2",
+  "titulo": "Defensa de fachada con reja.",
+  "descripcion": "Suministro y colocación de defensa de fachada con reja. Incluye la fabricación y el montaje. Medido por metro cuadrado instalado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-TUBO-ACERO",
+      "rendimiento": 14.0
+    },
+    {
+      "ref": "MT-ELECTRODO",
+      "rendimiento": 0.28
+    },
+    {
+      "ref": "MT-PINT-ANTICORR",
+      "rendimiento": 0.26
+    },
+    {
+      "ref": "MQ-SOLDADORA",
+      "rendimiento": 0.55
+    },
+    {
+      "ref": "MO-OF1-SOLD",
+      "rendimiento": 1.1
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.7
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}
