@@ -27116,12 +27116,66 @@
                   "precio": 7.15,
                   "horas": 1.1,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "15.01.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Sacos de rafia para clasificación de residuos.",
+                  "unidad": "ud",
+                  "precio": 0.99,
+                  "horas": 0.03,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "15.01.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Zona de acopio de chatarra metálica.",
+                  "unidad": "m²",
+                  "precio": 3.19,
+                  "horas": 0.15,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "15.01.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Zona de acopio de cartón y embalajes.",
+                  "unidad": "m²",
+                  "precio": 3.19,
+                  "horas": 0.15,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "15.01.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Zona de acopio de madera y pallets.",
+                  "unidad": "m²",
+                  "precio": 3.19,
+                  "horas": 0.15,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "15.01.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Separación selectiva de residuos en origen.",
+                  "unidad": "m³",
+                  "precio": 2.04,
+                  "horas": 0.35,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "15.01.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Identificación y etiquetado de contenedores de residuos.",
+                  "unidad": "ud",
+                  "precio": 2.63,
+                  "horas": 0.1,
+                  "producto_cliente": false
                 }
               ],
-              "n": 2
+              "n": 8
             }
           ],
-          "n": 2
+          "n": 8
         },
         {
           "codigo": "15.02",
@@ -27139,12 +27193,66 @@
                   "precio": 18.5,
                   "horas": 2.1,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "15.02.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Bajada de escombro por escombrera o ducto.",
+                  "unidad": "m³",
+                  "precio": 2.67,
+                  "horas": 0.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "15.02.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Bajada de escombro por medios manuales.",
+                  "unidad": "m³",
+                  "precio": 4.19,
+                  "horas": 0.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "15.02.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Bajada de escombro por montacargas.",
+                  "unidad": "m³",
+                  "precio": 4.34,
+                  "horas": 0.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "15.02.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Carga manual de escombro sobre contenedor.",
+                  "unidad": "m³",
+                  "precio": 2.11,
+                  "horas": 0.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "15.02.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Carga mecánica de escombro sobre vehículo.",
+                  "unidad": "m³",
+                  "precio": 2.99,
+                  "horas": 0.15,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "15.02.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Movimiento interno de escombro a zona de acopio.",
+                  "unidad": "m³",
+                  "precio": 2.33,
+                  "horas": 0.45,
+                  "producto_cliente": false
                 }
               ],
-              "n": 1
+              "n": 7
             }
           ],
-          "n": 1
+          "n": 7
         },
         {
           "codigo": "15.03",
@@ -27162,12 +27270,66 @@
                   "precio": 104.05,
                   "horas": 0.6,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "15.03.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Contenedor de escombro de 3 m³, por mes.",
+                  "unidad": "ud",
+                  "precio": 86.27,
+                  "horas": 0.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "15.03.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Contenedor de chatarra metálica.",
+                  "unidad": "ud",
+                  "precio": 86.27,
+                  "horas": 0.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "15.03.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Contenedor de residuos de madera.",
+                  "unidad": "ud",
+                  "precio": 86.27,
+                  "horas": 0.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "15.03.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Saco big-bag de escombro.",
+                  "unidad": "ud",
+                  "precio": 4.11,
+                  "horas": 0.15,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "15.03.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Contenedor de residuos mezclados.",
+                  "unidad": "ud",
+                  "precio": 86.27,
+                  "horas": 0.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "15.03.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Acopio de escombro en sacos apilados.",
+                  "unidad": "m³",
+                  "precio": 2.37,
+                  "horas": 0.25,
+                  "producto_cliente": false
                 }
               ],
-              "n": 1
+              "n": 7
             }
           ],
-          "n": 1
+          "n": 7
         },
         {
           "codigo": "15.04",
@@ -27185,18 +27347,134 @@
                   "precio": 16.07,
                   "horas": 0.85,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "15.04.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Transporte de escombro a vertedero autorizado.",
+                  "unidad": "m³",
+                  "precio": 6.47,
+                  "horas": 0.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "15.04.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Canon de vertido de escombro mezclado.",
+                  "unidad": "m³",
+                  "precio": 4.84,
+                  "horas": 0.05,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "15.04.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Retirada de chatarra metálica a gestor.",
+                  "unidad": "kg",
+                  "precio": 0.47,
+                  "horas": 0.05,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "15.04.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Retirada de cartón y embalajes a reciclaje.",
+                  "unidad": "m³",
+                  "precio": 1.64,
+                  "horas": 0.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "15.04.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Retirada de madera y pallets a reciclaje.",
+                  "unidad": "m³",
+                  "precio": 1.64,
+                  "horas": 0.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "15.04.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Disposición de tierra de excavación.",
+                  "unidad": "m³",
+                  "precio": 5.32,
+                  "horas": 0.1,
+                  "producto_cliente": false
                 }
               ],
-              "n": 1
+              "n": 7
             }
           ],
-          "n": 1
+          "n": 7
         },
         {
           "codigo": "15.05",
           "nombre": "Residuos especiales o peligrosos",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "15.05.01",
+              "nombre": "Residuos especiales o peligrosos",
+              "partidas": [
+                {
+                  "codigo": "15.05.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Retiro de residuos de pinturas y disolventes.",
+                  "unidad": "ud",
+                  "precio": 3.55,
+                  "horas": 0.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "15.05.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Retiro de residuos peligrosos menores.",
+                  "unidad": "ud",
+                  "precio": 3.55,
+                  "horas": 0.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "15.05.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Retiro de tubos fluorescentes y lámparas.",
+                  "unidad": "ud",
+                  "precio": 2.24,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "15.05.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Retiro de baterías y pilas de obra.",
+                  "unidad": "ud",
+                  "precio": 1.77,
+                  "horas": 0.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "15.05.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Gestión de aceites y lubricantes usados.",
+                  "unidad": "ud",
+                  "precio": 2.89,
+                  "horas": 0.35,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "15.05.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Neutralización y limpieza de derrame menor.",
+                  "unidad": "m²",
+                  "precio": 2.5,
+                  "horas": 0.4,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 6
+            }
+          ],
+          "n": 6
         },
         {
           "codigo": "15.06",
@@ -27214,12 +27492,66 @@
                   "precio": 1.29,
                   "horas": 0.13,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "15.06.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Limpieza diaria de zonas de trabajo.",
+                  "unidad": "m²",
+                  "precio": 0.39,
+                  "horas": 0.08,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "15.06.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Limpieza semanal de la obra.",
+                  "unidad": "m²",
+                  "precio": 0.66,
+                  "horas": 0.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "15.06.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Limpieza de zonas de paso y accesos.",
+                  "unidad": "m²",
+                  "precio": 0.29,
+                  "horas": 0.06,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "15.06.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Limpieza de restos de mortero y adhesivos.",
+                  "unidad": "m²",
+                  "precio": 0.74,
+                  "horas": 0.15,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "15.06.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Limpieza de escombro disperso en pisos.",
+                  "unidad": "m²",
+                  "precio": 0.73,
+                  "horas": 0.12,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "15.06.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Retirada de embalajes de la zona de trabajo.",
+                  "unidad": "m²",
+                  "precio": 0.68,
+                  "horas": 0.1,
+                  "producto_cliente": false
                 }
               ],
-              "n": 1
+              "n": 7
             }
           ],
-          "n": 1
+          "n": 7
         },
         {
           "codigo": "15.07",
@@ -27246,15 +27578,69 @@
                   "precio": 2.38,
                   "horas": 0.3,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "15.07.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Limpieza final de obra para entrega.",
+                  "unidad": "m²",
+                  "precio": 0.59,
+                  "horas": 0.12,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "15.07.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Limpieza de vidrios y carpintería.",
+                  "unidad": "m²",
+                  "precio": 0.99,
+                  "horas": 0.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "15.07.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Limpieza de aparatos sanitarios y grifería.",
+                  "unidad": "ud",
+                  "precio": 0.79,
+                  "horas": 0.15,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "15.07.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Limpieza de pisos con pulidora.",
+                  "unidad": "m²",
+                  "precio": 0.57,
+                  "horas": 0.08,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "15.07.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Desinfección de zonas húmedas.",
+                  "unidad": "m²",
+                  "precio": 0.52,
+                  "horas": 0.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "15.07.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Retirada final de protecciones y limpieza general.",
+                  "unidad": "glb",
+                  "precio": 9.65,
+                  "horas": 2.0,
+                  "producto_cliente": false
                 }
               ],
-              "n": 2
+              "n": 8
             }
           ],
-          "n": 2
+          "n": 8
         }
       ],
-      "n": 8
+      "n": 50
     },
     {
       "codigo": "16",
@@ -27263,53 +27649,837 @@
         {
           "codigo": "16.01",
           "nombre": "Ensayos de concreto, acero y mampostería",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "16.01.01",
+              "nombre": "Ensayos de concreto, acero y mampostería",
+              "partidas": [
+                {
+                  "codigo": "16.01.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Toma de muestras de concreto para ensayo.",
+                  "unidad": "ud",
+                  "precio": 4.77,
+                  "horas": 0.75,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.01.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Ensayo de compresión de probeta de concreto.",
+                  "unidad": "ud",
+                  "precio": 2.86,
+                  "horas": 0.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.01.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Ensayo de asentamiento (slump) del concreto.",
+                  "unidad": "ud",
+                  "precio": 1.9,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.01.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Ensayo de acero de refuerzo a tracción.",
+                  "unidad": "ud",
+                  "precio": 2.86,
+                  "horas": 0.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.01.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Ensayo de compresión de bloques de mampostería.",
+                  "unidad": "ud",
+                  "precio": 2.86,
+                  "horas": 0.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.01.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Ensayo de mortero de pega.",
+                  "unidad": "ud",
+                  "precio": 2.86,
+                  "horas": 0.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.01.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Ensayo de granulometría de agregados.",
+                  "unidad": "ud",
+                  "precio": 2.86,
+                  "horas": 0.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.01.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Control de recubrimiento de armadura.",
+                  "unidad": "m²",
+                  "precio": 1.13,
+                  "horas": 0.15,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.01.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Ensayo de resistencia de piso de concreto.",
+                  "unidad": "ud",
+                  "precio": 1.78,
+                  "horas": 0.23,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.01.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Verificación de plomos y niveles de muros.",
+                  "unidad": "m²",
+                  "precio": 0.55,
+                  "horas": 0.08,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 10
+            }
+          ],
+          "n": 10
         },
         {
           "codigo": "16.02",
           "nombre": "Inspección de soldaduras, anclajes y estructura",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "16.02.01",
+              "nombre": "Inspección de soldaduras, anclajes y estructura",
+              "partidas": [
+                {
+                  "codigo": "16.02.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Inspección visual de soldadura.",
+                  "unidad": "m",
+                  "precio": 1.44,
+                  "horas": 0.23,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.02.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Ensayo de líquidos penetrantes en soldadura.",
+                  "unidad": "ud",
+                  "precio": 2.86,
+                  "horas": 0.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.02.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Ensayo de partículas magnéticas en soldadura.",
+                  "unidad": "ud",
+                  "precio": 2.86,
+                  "horas": 0.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.02.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Ensayo ultrasónico de soldadura.",
+                  "unidad": "ud",
+                  "precio": 3.81,
+                  "horas": 0.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.02.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Ensayo radiográfico de soldadura.",
+                  "unidad": "ud",
+                  "precio": 4.77,
+                  "horas": 0.75,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.02.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Prueba de carga de anclaje químico.",
+                  "unidad": "ud",
+                  "precio": 3.81,
+                  "horas": 0.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.02.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Control de apriete de pernos estructurales.",
+                  "unidad": "ud",
+                  "precio": 1.9,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.02.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Inspección dimensional de estructura metálica.",
+                  "unidad": "m²",
+                  "precio": 0.82,
+                  "horas": 0.12,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.02.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Ensayo de adherencia de anclaje de fachada.",
+                  "unidad": "ud",
+                  "precio": 3.35,
+                  "horas": 0.53,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.02.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Prueba de carga de estructura de techo.",
+                  "unidad": "glb",
+                  "precio": 9.52,
+                  "horas": 1.5,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 10
+            }
+          ],
+          "n": 10
         },
         {
           "codigo": "16.03",
           "nombre": "Pruebas de impermeabilización y estanqueidad",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "16.03.01",
+              "nombre": "Pruebas de impermeabilización y estanqueidad",
+              "partidas": [
+                {
+                  "codigo": "16.03.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Prueba de estanqueidad de cubierta por inundación.",
+                  "unidad": "m²",
+                  "precio": 0.68,
+                  "horas": 0.11,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.03.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Prueba de estanqueidad de baño o ducha.",
+                  "unidad": "ud",
+                  "precio": 5.45,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.03.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Prueba de estanqueidad de terraza.",
+                  "unidad": "m²",
+                  "precio": 0.68,
+                  "horas": 0.11,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.03.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Inspección de membrana impermeabilizante.",
+                  "unidad": "m²",
+                  "precio": 0.42,
+                  "horas": 0.07,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.03.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Prueba de vacío en solapes de membrana.",
+                  "unidad": "m",
+                  "precio": 0.85,
+                  "horas": 0.12,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.03.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Prueba de estanqueidad de piscina.",
+                  "unidad": "glb",
+                  "precio": 19.03,
+                  "horas": 3.0,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.03.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Prueba de estanqueidad de tanque.",
+                  "unidad": "ud",
+                  "precio": 7.62,
+                  "horas": 1.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.03.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Control de pendientes de evacuación.",
+                  "unidad": "m²",
+                  "precio": 0.4,
+                  "horas": 0.06,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.03.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Ensayo de impermeabilización de muro enterrado.",
+                  "unidad": "m²",
+                  "precio": 0.55,
+                  "horas": 0.09,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.03.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Informe de estanqueidad con protocolo.",
+                  "unidad": "glb",
+                  "precio": 4.77,
+                  "horas": 0.75,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 10
+            }
+          ],
+          "n": 10
         },
         {
           "codigo": "16.04",
           "nombre": "Pruebas de instalaciones sanitarias",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "16.04.01",
+              "nombre": "Pruebas de instalaciones sanitarias",
+              "partidas": [
+                {
+                  "codigo": "16.04.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Prueba hidrostática de tubería de agua.",
+                  "unidad": "m",
+                  "precio": 0.6,
+                  "horas": 0.08,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.04.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Prueba de fugas de tubería de gas.",
+                  "unidad": "m",
+                  "precio": 0.68,
+                  "horas": 0.09,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.04.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Prueba de desagüe por vaciado.",
+                  "unidad": "ud",
+                  "precio": 2.86,
+                  "horas": 0.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.04.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Prueba de ventilación de desagüe.",
+                  "unidad": "ud",
+                  "precio": 2.86,
+                  "horas": 0.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.04.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Prueba de presión de la red de agua.",
+                  "unidad": "glb",
+                  "precio": 6.81,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.04.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Verificación de pendientes de desagüe.",
+                  "unidad": "m",
+                  "precio": 0.33,
+                  "horas": 0.05,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.04.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Prueba de estanqueidad de trampa de grasa.",
+                  "unidad": "ud",
+                  "precio": 3.81,
+                  "horas": 0.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.04.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Prueba de funcionamiento de válvulas.",
+                  "unidad": "ud",
+                  "precio": 1.9,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.04.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Informe de pruebas sanitarias.",
+                  "unidad": "glb",
+                  "precio": 4.77,
+                  "horas": 0.75,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.04.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Prueba de descarga de inodoro y lavamanos.",
+                  "unidad": "ud",
+                  "precio": 1.9,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 10
+            }
+          ],
+          "n": 10
         },
         {
           "codigo": "16.05",
           "nombre": "Pruebas eléctricas y de puesta a tierra",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "16.05.01",
+              "nombre": "Pruebas eléctricas y de puesta a tierra",
+              "partidas": [
+                {
+                  "codigo": "16.05.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Medición de resistencia de puesta a tierra.",
+                  "unidad": "ud",
+                  "precio": 3.48,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.05.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Prueba de continuidad de conductores.",
+                  "unidad": "ud",
+                  "precio": 1.61,
+                  "horas": 0.23,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.05.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Prueba de aislamiento de conductores.",
+                  "unidad": "ud",
+                  "precio": 2.18,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.05.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Prueba de disparo de diferenciales.",
+                  "unidad": "ud",
+                  "precio": 1.44,
+                  "horas": 0.23,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.05.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Prueba de disparo de termomagnéticos.",
+                  "unidad": "ud",
+                  "precio": 1.44,
+                  "horas": 0.23,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.05.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Verificación de polaridad y neutro.",
+                  "unidad": "ud",
+                  "precio": 1.07,
+                  "horas": 0.15,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.05.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Medición de tensión y frecuencia.",
+                  "unidad": "glb",
+                  "precio": 1.13,
+                  "horas": 0.15,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.05.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Prueba de iluminación de circuitos.",
+                  "unidad": "ud",
+                  "precio": 0.96,
+                  "horas": 0.15,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.05.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Prueba de puesta en marcha de tablero.",
+                  "unidad": "ud",
+                  "precio": 3.81,
+                  "horas": 0.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.05.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Informe de pruebas eléctricas.",
+                  "unidad": "glb",
+                  "precio": 4.77,
+                  "horas": 0.75,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 10
+            }
+          ],
+          "n": 10
         },
         {
           "codigo": "16.06",
           "nombre": "Pruebas de climatización, ventilación y balanceo",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "16.06.01",
+              "nombre": "Pruebas de climatización, ventilación y balanceo",
+              "partidas": [
+                {
+                  "codigo": "16.06.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Prueba de vacío de sistema de climatización.",
+                  "unidad": "ud",
+                  "precio": 6.47,
+                  "horas": 0.75,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.06.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Prueba de presión de gas refrigerante.",
+                  "unidad": "ud",
+                  "precio": 4.15,
+                  "horas": 0.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.06.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Carga de gas refrigerante.",
+                  "unidad": "ud",
+                  "precio": 16.48,
+                  "horas": 0.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.06.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Balanceo de caudales de ventilación.",
+                  "unidad": "ud",
+                  "precio": 3.2,
+                  "horas": 0.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.06.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Prueba de funcionamiento de extractores.",
+                  "unidad": "ud",
+                  "precio": 2.08,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.06.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Prueba de temperatura de impulsión.",
+                  "unidad": "ud",
+                  "precio": 2.08,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.06.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Limpieza de serpentines y filtros.",
+                  "unidad": "ud",
+                  "precio": 8.44,
+                  "horas": 0.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.06.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Prueba de drenaje de condensados.",
+                  "unidad": "ud",
+                  "precio": 1.9,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.06.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Puesta en servicio de climatización con ajuste.",
+                  "unidad": "glb",
+                  "precio": 9.52,
+                  "horas": 1.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.06.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Informe de puesta en marcha de climatización.",
+                  "unidad": "glb",
+                  "precio": 4.77,
+                  "horas": 0.75,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 10
+            }
+          ],
+          "n": 10
         },
         {
           "codigo": "16.07",
           "nombre": "Termografía, humedad y diagnóstico no destructivo",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "16.07.01",
+              "nombre": "Termografía, humedad y diagnóstico no destructivo",
+              "partidas": [
+                {
+                  "codigo": "16.07.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Termografía infrarroja de fachada.",
+                  "unidad": "m²",
+                  "precio": 0.56,
+                  "horas": 0.08,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.07.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Termografía infrarroja de cubierta.",
+                  "unidad": "m²",
+                  "precio": 0.56,
+                  "horas": 0.08,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.07.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Termografía de instalación eléctrica.",
+                  "unidad": "glb",
+                  "precio": 3.2,
+                  "horas": 0.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.07.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Medición de humedad de muros.",
+                  "unidad": "m²",
+                  "precio": 0.56,
+                  "horas": 0.08,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.07.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Medición de humedad de piso.",
+                  "unidad": "m²",
+                  "precio": 0.44,
+                  "horas": 0.06,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.07.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Detección de armadura y tuberías empotradas.",
+                  "unidad": "m",
+                  "precio": 0.6,
+                  "horas": 0.08,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.07.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Inspección de fisuras y diagnóstico estructural.",
+                  "unidad": "m",
+                  "precio": 0.87,
+                  "horas": 0.12,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.07.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Ensayo de esclerometría en elementos de concreto.",
+                  "unidad": "ud",
+                  "precio": 1.42,
+                  "horas": 0.18,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.07.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Medición de espesor de recubrimiento.",
+                  "unidad": "m²",
+                  "precio": 0.56,
+                  "horas": 0.08,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.07.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Informe de diagnóstico no destructivo.",
+                  "unidad": "glb",
+                  "precio": 4.77,
+                  "horas": 0.75,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 10
+            }
+          ],
+          "n": 10
         },
         {
           "codigo": "16.08",
           "nombre": "Puesta en marcha, protocolos y documentación final",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "16.08.01",
+              "nombre": "Puesta en marcha, protocolos y documentación final",
+              "partidas": [
+                {
+                  "codigo": "16.08.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Protocolo de pruebas de puesta en marcha.",
+                  "unidad": "glb",
+                  "precio": 9.52,
+                  "horas": 1.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.08.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Protocolo de entrega de instalaciones.",
+                  "unidad": "glb",
+                  "precio": 9.52,
+                  "horas": 1.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.08.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Documentación final de obra.",
+                  "unidad": "glb",
+                  "precio": 14.27,
+                  "horas": 2.25,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.08.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Certificación de instalación eléctrica.",
+                  "unidad": "glb",
+                  "precio": 9.52,
+                  "horas": 1.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.08.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Certificación de instalación de gas.",
+                  "unidad": "glb",
+                  "precio": 9.52,
+                  "horas": 1.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.08.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Certificación de impermeabilización.",
+                  "unidad": "glb",
+                  "precio": 7.62,
+                  "horas": 1.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.08.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Manual de uso y mantenimiento.",
+                  "unidad": "glb",
+                  "precio": 14.27,
+                  "horas": 2.25,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.08.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Acta de recepción de obra.",
+                  "unidad": "glb",
+                  "precio": 7.62,
+                  "horas": 1.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.08.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Prueba integral de sistemas.",
+                  "unidad": "glb",
+                  "precio": 19.03,
+                  "horas": 3.0,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "16.08.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Informe de conformidad con proyecto.",
+                  "unidad": "glb",
+                  "precio": 11.43,
+                  "horas": 1.8,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 10
+            }
+          ],
+          "n": 10
         }
       ],
-      "n": 0
+      "n": 80
     },
     {
       "codigo": "17",
@@ -27340,12 +28510,66 @@
                   "precio": 8.2,
                   "horas": 0.32,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "17.01.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Baranda de protección en perímetro de losa.",
+                  "unidad": "m",
+                  "precio": 8.31,
+                  "horas": 0.32,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "17.01.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Red de seguridad en hueco de escalera.",
+                  "unidad": "m²",
+                  "precio": 5.97,
+                  "horas": 0.32,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "17.01.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Protección de hueco con tabla y barandilla.",
+                  "unidad": "ud",
+                  "precio": 7.88,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "17.01.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Marquesina de protección de acceso.",
+                  "unidad": "m²",
+                  "precio": 6.57,
+                  "horas": 0.64,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "17.01.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Protección de borde con red vertical.",
+                  "unidad": "m",
+                  "precio": 5.97,
+                  "horas": 0.32,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "17.01.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Cubrición de huecos de ascensor.",
+                  "unidad": "m²",
+                  "precio": 6.47,
+                  "horas": 0.25,
+                  "producto_cliente": false
                 }
               ],
-              "n": 2
+              "n": 8
             }
           ],
-          "n": 2
+          "n": 8
         },
         {
           "codigo": "17.02",
@@ -27363,12 +28587,75 @@
                   "precio": 56.07,
                   "horas": 0.2,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "17.02.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Dotación de casco de seguridad.",
+                  "unidad": "ud",
+                  "precio": 11.12,
+                  "horas": 0.02,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "17.02.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Dotación de guantes y calzado de seguridad.",
+                  "unidad": "ud",
+                  "precio": 16.64,
+                  "horas": 0.02,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "17.02.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Dotación de protección ocular y auditiva.",
+                  "unidad": "ud",
+                  "precio": 11.12,
+                  "horas": 0.02,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "17.02.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Dotación de mascarilla y protección respiratoria.",
+                  "unidad": "ud",
+                  "precio": 8.36,
+                  "horas": 0.02,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "17.02.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Dotación de chaleco reflectivo.",
+                  "unidad": "ud",
+                  "precio": 5.6,
+                  "horas": 0.02,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "17.02.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Arnés de seguridad de cuerpo completo.",
+                  "unidad": "ud",
+                  "precio": 72.31,
+                  "horas": 0.02,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "17.02.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Reposición de EPI durante la obra.",
+                  "unidad": "glb",
+                  "precio": 110.75,
+                  "horas": 0.1,
+                  "producto_cliente": false
                 }
               ],
-              "n": 1
+              "n": 8
             }
           ],
-          "n": 1
+          "n": 8
         },
         {
           "codigo": "17.03",
@@ -27395,12 +28682,66 @@
                   "precio": 5.5,
                   "horas": 0.13,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "17.03.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Señalización de riesgos en obra.",
+                  "unidad": "ud",
+                  "precio": 7.68,
+                  "horas": 0.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "17.03.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Delimitación con cinta de peligro.",
+                  "unidad": "m",
+                  "precio": 1.68,
+                  "horas": 0.05,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "17.03.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Cierre perimetral de la obra.",
+                  "unidad": "m",
+                  "precio": 5.2,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "17.03.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Señalización de vías de evacuación.",
+                  "unidad": "ud",
+                  "precio": 7.59,
+                  "horas": 0.08,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "17.03.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Control de accesos a la obra.",
+                  "unidad": "glb",
+                  "precio": 3.68,
+                  "horas": 0.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "17.03.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Iluminación de emergencia en obra.",
+                  "unidad": "ud",
+                  "precio": 14.38,
+                  "horas": 0.3,
+                  "producto_cliente": false
                 }
               ],
-              "n": 2
+              "n": 8
             }
           ],
-          "n": 2
+          "n": 8
         },
         {
           "codigo": "17.04",
@@ -27418,9 +28759,63 @@
                   "precio": 30.21,
                   "horas": 0.5,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "17.04.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Punto de anclaje de línea de vida.",
+                  "unidad": "ud",
+                  "precio": 21.31,
+                  "horas": 0.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "17.04.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Eslinga y absorbedor de energía.",
+                  "unidad": "ud",
+                  "precio": 36.21,
+                  "horas": 0.02,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "17.04.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Andamio con barandilla de protección.",
+                  "unidad": "m²",
+                  "precio": 3.5,
+                  "horas": 0.48,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "17.04.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Red de seguridad horizontal en cubierta.",
+                  "unidad": "m²",
+                  "precio": 6.16,
+                  "horas": 0.35,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "17.04.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Escalera de mano con fijación.",
+                  "unidad": "ud",
+                  "precio": 1.56,
+                  "horas": 0.15,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "17.04.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Punto de anclaje en fachada.",
+                  "unidad": "ud",
+                  "precio": 21.31,
+                  "horas": 0.45,
+                  "producto_cliente": false
                 }
               ],
-              "n": 1
+              "n": 7
             },
             {
               "codigo": "17.04.02",
@@ -27439,19 +28834,143 @@
               "n": 1
             }
           ],
-          "n": 2
+          "n": 8
         },
         {
           "codigo": "17.05",
           "nombre": "Seguridad en excavaciones y espacios confinados",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "17.05.01",
+              "nombre": "Seguridad en excavaciones y espacios confinados",
+              "partidas": [
+                {
+                  "codigo": "17.05.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Entibado de zanja.",
+                  "unidad": "m²",
+                  "precio": 6.07,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "17.05.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Protección de borde de excavación.",
+                  "unidad": "m",
+                  "precio": 8.05,
+                  "horas": 0.15,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "17.05.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Ventilación de espacio confinado.",
+                  "unidad": "glb",
+                  "precio": 2.21,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "17.05.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Medición de atmósfera en espacio confinado.",
+                  "unidad": "glb",
+                  "precio": 1.43,
+                  "horas": 0.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "17.05.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Protección de zanja con señalización nocturna.",
+                  "unidad": "m",
+                  "precio": 2.63,
+                  "horas": 0.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "17.05.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Escalera de acceso a excavación.",
+                  "unidad": "ud",
+                  "precio": 1.56,
+                  "horas": 0.15,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 6
+            }
+          ],
+          "n": 6
         },
         {
           "codigo": "17.06",
           "nombre": "Protección contra incendios durante la obra",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "17.06.01",
+              "nombre": "Protección contra incendios durante la obra",
+              "partidas": [
+                {
+                  "codigo": "17.06.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Extintor portátil de obra.",
+                  "unidad": "ud",
+                  "precio": 46.54,
+                  "horas": 0.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "17.06.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Extintor de CO2 para cuadro eléctrico.",
+                  "unidad": "ud",
+                  "precio": 45.1,
+                  "horas": 0.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "17.06.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Señalización de extintores.",
+                  "unidad": "ud",
+                  "precio": 2.41,
+                  "horas": 0.05,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "17.06.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Retirada de material combustible.",
+                  "unidad": "m²",
+                  "precio": 1.18,
+                  "horas": 0.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "17.06.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Protección ignífuga de estructura de madera.",
+                  "unidad": "m²",
+                  "precio": 4.32,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "17.06.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Corte de oxicorte con pantalla de protección.",
+                  "unidad": "glb",
+                  "precio": 11.3,
+                  "horas": 0.2,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 6
+            }
+          ],
+          "n": 6
         },
         {
           "codigo": "17.07",
@@ -27478,12 +28997,66 @@
                   "precio": 54.9,
                   "horas": 0.35,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "17.07.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Adecuación de zona de vestuario y comedor.",
+                  "unidad": "glb",
+                  "precio": 159.86,
+                  "horas": 0.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "17.07.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Baño químico portátil, por mes.",
+                  "unidad": "ud",
+                  "precio": 72.45,
+                  "horas": 0.05,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "17.07.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Agua potable para el personal.",
+                  "unidad": "glb",
+                  "precio": 1.51,
+                  "horas": 0.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "17.07.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Botiquín de primeros auxilios.",
+                  "unidad": "ud",
+                  "precio": 46.19,
+                  "horas": 0.05,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "17.07.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Reposición de botiquín de primeros auxilios.",
+                  "unidad": "glb",
+                  "precio": 23.22,
+                  "horas": 0.05,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "17.07.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Camilla de evacuación.",
+                  "unidad": "ud",
+                  "precio": 23.44,
+                  "horas": 0.1,
+                  "producto_cliente": false
                 }
               ],
-              "n": 2
+              "n": 8
             }
           ],
-          "n": 2
+          "n": 8
         },
         {
           "codigo": "17.08",
@@ -27510,15 +29083,69 @@
                   "precio": 47.92,
                   "horas": 6.0,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "17.08.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Charla de inducción en seguridad.",
+                  "unidad": "glb",
+                  "precio": 9.52,
+                  "horas": 1.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "17.08.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Formación específica en trabajos en altura.",
+                  "unidad": "glb",
+                  "precio": 19.03,
+                  "horas": 3.0,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "17.08.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Formación en manejo de equipos.",
+                  "unidad": "glb",
+                  "precio": 14.27,
+                  "horas": 2.25,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "17.08.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Plan de seguridad y salud de la obra.",
+                  "unidad": "glb",
+                  "precio": 19.03,
+                  "horas": 3.0,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "17.08.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Documentación preventiva y registros.",
+                  "unidad": "glb",
+                  "precio": 14.27,
+                  "horas": 2.25,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "17.08.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Inspección de seguridad periódica.",
+                  "unidad": "glb",
+                  "precio": 9.52,
+                  "horas": 1.5,
+                  "producto_cliente": false
                 }
               ],
-              "n": 2
+              "n": 8
             }
           ],
-          "n": 2
+          "n": 8
         }
       ],
-      "n": 11
+      "n": 60
     },
     {
       "codigo": "18",
@@ -27527,59 +29154,1031 @@
         {
           "codigo": "18.01",
           "nombre": "Diagnóstico y evaluación energética",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "18.01.01",
+              "nombre": "Diagnóstico y evaluación energética",
+              "partidas": [
+                {
+                  "codigo": "18.01.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Evaluación energética de la vivienda.",
+                  "unidad": "glb",
+                  "precio": 29.59,
+                  "horas": 4.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.01.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Diagnóstico de puentes térmicos.",
+                  "unidad": "glb",
+                  "precio": 20.41,
+                  "horas": 3.0,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.01.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Auditoría de consumos energéticos.",
+                  "unidad": "glb",
+                  "precio": 19.03,
+                  "horas": 3.0,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.01.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Medición de infiltraciones de aire.",
+                  "unidad": "glb",
+                  "precio": 15.3,
+                  "horas": 2.25,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.01.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Informe de certificación energética.",
+                  "unidad": "glb",
+                  "precio": 14.27,
+                  "horas": 2.25,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.01.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Estudio de viabilidad de energías renovables.",
+                  "unidad": "glb",
+                  "precio": 14.27,
+                  "horas": 2.25,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.01.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Medición de espesores de aislamiento existente.",
+                  "unidad": "m²",
+                  "precio": 0.56,
+                  "horas": 0.08,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.01.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Inspección de carpintería y vidrios.",
+                  "unidad": "ud",
+                  "precio": 3.81,
+                  "horas": 0.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.01.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Levantamiento de la envolvente térmica.",
+                  "unidad": "m²",
+                  "precio": 0.82,
+                  "horas": 0.12,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.01.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Propuesta de medidas de rehabilitación energética.",
+                  "unidad": "glb",
+                  "precio": 19.03,
+                  "horas": 3.0,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.01.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Seguimiento y medición de ahorro energético.",
+                  "unidad": "glb",
+                  "precio": 14.27,
+                  "horas": 2.25,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 11
+            }
+          ],
+          "n": 11
         },
         {
           "codigo": "18.02",
           "nombre": "Mejora térmica de fachadas",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "18.02.01",
+              "nombre": "Mejora térmica de fachadas",
+              "partidas": [
+                {
+                  "codigo": "18.02.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento de fachada con poliestireno extruido.",
+                  "unidad": "m²",
+                  "precio": 17.3,
+                  "horas": 0.72,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.02.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento de fachada con lana de roca.",
+                  "unidad": "m²",
+                  "precio": 14.55,
+                  "horas": 0.72,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.02.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "SATE de fachada con poliestireno expandido.",
+                  "unidad": "m²",
+                  "precio": 16.04,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.02.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Fachada ventilada con subestructura y aislamiento.",
+                  "unidad": "m²",
+                  "precio": 36.83,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.02.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Revestimiento de fachada con panel composite.",
+                  "unidad": "m²",
+                  "precio": 87.14,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.02.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento de fachada con lana mineral proyectada.",
+                  "unidad": "m²",
+                  "precio": 12.75,
+                  "horas": 0.72,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.02.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Inyección de aislamiento en cámara de fachada.",
+                  "unidad": "m²",
+                  "precio": 11.26,
+                  "horas": 0.63,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.02.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Refuerzo de aislamiento en petos y cantos.",
+                  "unidad": "m",
+                  "precio": 9.13,
+                  "horas": 0.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.02.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Remate de aislamiento en esquinas y juntas.",
+                  "unidad": "m",
+                  "precio": 3.74,
+                  "horas": 0.36,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.02.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Tratamiento de puentes térmicos de fachada.",
+                  "unidad": "m",
+                  "precio": 7.54,
+                  "horas": 0.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.02.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Acabado de fachada aislada con mortero.",
+                  "unidad": "m²",
+                  "precio": 8.83,
+                  "horas": 0.63,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 11
+            }
+          ],
+          "n": 11
         },
         {
           "codigo": "18.03",
           "nombre": "Mejora térmica de techos y cubiertas",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "18.03.01",
+              "nombre": "Mejora térmica de techos y cubiertas",
+              "partidas": [
+                {
+                  "codigo": "18.03.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento de techo con poliestireno extruido.",
+                  "unidad": "m²",
+                  "precio": 11.97,
+                  "horas": 0.27,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.03.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento de techo con lana de roca.",
+                  "unidad": "m²",
+                  "precio": 9.22,
+                  "horas": 0.27,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.03.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento de cubierta con manta reflectiva.",
+                  "unidad": "m²",
+                  "precio": 5.79,
+                  "horas": 0.22,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.03.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento de cubierta plana con lana mineral.",
+                  "unidad": "m²",
+                  "precio": 6.59,
+                  "horas": 0.27,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.03.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento de techo entre viguetas.",
+                  "unidad": "m²",
+                  "precio": 9.76,
+                  "horas": 0.36,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.03.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Barrera de vapor en cubierta.",
+                  "unidad": "m²",
+                  "precio": 1.77,
+                  "horas": 0.14,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.03.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento de techo con celulosa insuflada.",
+                  "unidad": "m²",
+                  "precio": 10.84,
+                  "horas": 0.54,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.03.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Refuerzo de aislamiento en cumbrera.",
+                  "unidad": "m",
+                  "precio": 6.12,
+                  "horas": 0.36,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.03.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento de lucernario o claraboya.",
+                  "unidad": "ud",
+                  "precio": 11.35,
+                  "horas": 0.54,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.03.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Cubierta fría con aislamiento y ventilación.",
+                  "unidad": "m²",
+                  "precio": 13.75,
+                  "horas": 0.63,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.03.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento de techo de entrepiso no acondicionado.",
+                  "unidad": "m²",
+                  "precio": 11.97,
+                  "horas": 0.27,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 11
+            }
+          ],
+          "n": 11
         },
         {
           "codigo": "18.04",
           "nombre": "Mejora térmica de pisos y entrepisos",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "18.04.01",
+              "nombre": "Mejora térmica de pisos y entrepisos",
+              "partidas": [
+                {
+                  "codigo": "18.04.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento de piso con poliestireno.",
+                  "unidad": "m²",
+                  "precio": 11.67,
+                  "horas": 0.22,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.04.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento de piso con manta reflectiva.",
+                  "unidad": "m²",
+                  "precio": 5.5,
+                  "horas": 0.18,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.04.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento perimetral de piso.",
+                  "unidad": "m",
+                  "precio": 4.58,
+                  "horas": 0.27,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.04.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento de entrepiso entre viviendas.",
+                  "unidad": "m²",
+                  "precio": 9.22,
+                  "horas": 0.27,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.04.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento de piso sobre cámara sanitaria.",
+                  "unidad": "m²",
+                  "precio": 11.97,
+                  "horas": 0.27,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.04.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento de piso de ático.",
+                  "unidad": "m²",
+                  "precio": 9.22,
+                  "horas": 0.27,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.04.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Banda perimetral en encuentro piso-muro.",
+                  "unidad": "m",
+                  "precio": 1.43,
+                  "horas": 0.11,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.04.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento de piso con panel rígido de lana.",
+                  "unidad": "m²",
+                  "precio": 6.29,
+                  "horas": 0.22,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.04.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Tratamiento de puente térmico en canto de losa.",
+                  "unidad": "m",
+                  "precio": 4.9,
+                  "horas": 0.32,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.04.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento de piso de garaje.",
+                  "unidad": "m²",
+                  "precio": 11.97,
+                  "horas": 0.27,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.04.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Regularización con mortero aislante.",
+                  "unidad": "m²",
+                  "precio": 9.09,
+                  "horas": 0.54,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 11
+            }
+          ],
+          "n": 11
         },
         {
           "codigo": "18.05",
           "nombre": "Sustitución y mejora de ventanas y vidrios",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "18.05.01",
+              "nombre": "Sustitución y mejora de ventanas y vidrios",
+              "partidas": [
+                {
+                  "codigo": "18.05.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Sustitución de ventana por doble acristalamiento.",
+                  "unidad": "m²",
+                  "precio": 84.89,
+                  "horas": 0.9,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "18.05.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Sustitución de ventana por vidrio templado.",
+                  "unidad": "m²",
+                  "precio": 102.8,
+                  "horas": 0.9,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "18.05.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Sustitución de ventana por vidrio de control solar.",
+                  "unidad": "m²",
+                  "precio": 84.89,
+                  "horas": 0.9,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "18.05.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Sustitución de ventana con marco aislante.",
+                  "unidad": "m²",
+                  "precio": 95.19,
+                  "horas": 1.05,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "18.05.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Sellado perimetral de ventanas.",
+                  "unidad": "m",
+                  "precio": 5.73,
+                  "horas": 0.22,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.05.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Sustitución de junta de estanqueidad de ventana.",
+                  "unidad": "m",
+                  "precio": 2.98,
+                  "horas": 0.18,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.05.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Calafateado de carpintería exterior.",
+                  "unidad": "m",
+                  "precio": 3.85,
+                  "horas": 0.22,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.05.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Persiana aislante con cajón estanco.",
+                  "unidad": "m²",
+                  "precio": 99.7,
+                  "horas": 0.75,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "18.05.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Sustitución de puerta exterior con aislamiento.",
+                  "unidad": "ud",
+                  "precio": 22.46,
+                  "horas": 1.5,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "18.05.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Burlete de estanqueidad en puertas.",
+                  "unidad": "m",
+                  "precio": 2.54,
+                  "horas": 0.14,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.05.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Ventana de doble acristalamiento con gas argón.",
+                  "unidad": "m²",
+                  "precio": 95.19,
+                  "horas": 1.05,
+                  "producto_cliente": true
+                }
+              ],
+              "n": 11
+            }
+          ],
+          "n": 11
         },
         {
           "codigo": "18.06",
           "nombre": "Protección solar y control de ganancias térmicas",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "18.06.01",
+              "nombre": "Protección solar y control de ganancias térmicas",
+              "partidas": [
+                {
+                  "codigo": "18.06.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Toldo exterior de protección solar.",
+                  "unidad": "m²",
+                  "precio": 73.07,
+                  "horas": 0.6,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "18.06.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Persiana enrollable de aluminio para control solar.",
+                  "unidad": "m²",
+                  "precio": 99.7,
+                  "horas": 0.75,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "18.06.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Celosía o romanilla de sombreado.",
+                  "unidad": "m²",
+                  "precio": 41.52,
+                  "horas": 0.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.06.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Pérgola de sombreado exterior.",
+                  "unidad": "m²",
+                  "precio": 31.49,
+                  "horas": 1.44,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.06.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Lámina de control solar en vidrios.",
+                  "unidad": "m²",
+                  "precio": 4.71,
+                  "horas": 0.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.06.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Cortina térmica interior.",
+                  "unidad": "m²",
+                  "precio": 10.75,
+                  "horas": 0.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.06.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Motorización de persiana existente.",
+                  "unidad": "ud",
+                  "precio": 70.71,
+                  "horas": 0.9,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "18.06.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Automatización de toldo con sensor solar.",
+                  "unidad": "ud",
+                  "precio": 36.57,
+                  "horas": 0.9,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "18.06.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Marquesina de sombreado.",
+                  "unidad": "m²",
+                  "precio": 34.62,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.06.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Vegetación de sombreado de fachada.",
+                  "unidad": "m",
+                  "precio": 4.0,
+                  "horas": 0.54,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "18.06.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Película reflectiva en cubierta.",
+                  "unidad": "m²",
+                  "precio": 5.5,
+                  "horas": 0.18,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 11
+            }
+          ],
+          "n": 11
         },
         {
           "codigo": "18.07",
           "nombre": "Mejora de climatización y ventilación",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "18.07.01",
+              "nombre": "Mejora de climatización y ventilación",
+              "partidas": [
+                {
+                  "codigo": "18.07.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Sustitución de equipo de climatización eficiente.",
+                  "unidad": "ud",
+                  "precio": 98.41,
+                  "horas": 3.0,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "18.07.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Termostato programable.",
+                  "unidad": "ud",
+                  "precio": 78.05,
+                  "horas": 0.75,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "18.07.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Limpieza y mantenimiento de climatización.",
+                  "unidad": "ud",
+                  "precio": 9.39,
+                  "horas": 0.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.07.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento de conductos de climatización.",
+                  "unidad": "m",
+                  "precio": 5.49,
+                  "horas": 0.36,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.07.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Ventilación mecánica controlada.",
+                  "unidad": "ud",
+                  "precio": 64.01,
+                  "horas": 2.25,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "18.07.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Recuperador de calor.",
+                  "unidad": "ud",
+                  "precio": 50.62,
+                  "horas": 1.5,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "18.07.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Sustitución de ductos de ventilación.",
+                  "unidad": "m",
+                  "precio": 15.89,
+                  "horas": 0.54,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.07.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Ventilación natural con rejillas regulables.",
+                  "unidad": "ud",
+                  "precio": 14.7,
+                  "horas": 0.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.07.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Zonificación del sistema de climatización.",
+                  "unidad": "ud",
+                  "precio": 73.33,
+                  "horas": 1.2,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "18.07.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Calibración y balanceo del sistema.",
+                  "unidad": "glb",
+                  "precio": 6.23,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.07.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Sellado de conductos de climatización.",
+                  "unidad": "m",
+                  "precio": 2.7,
+                  "horas": 0.27,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 11
+            }
+          ],
+          "n": 11
         },
         {
           "codigo": "18.08",
           "nombre": "Iluminación eficiente y control",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "18.08.01",
+              "nombre": "Iluminación eficiente y control",
+              "partidas": [
+                {
+                  "codigo": "18.08.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Sustitución de luminarias por LED.",
+                  "unidad": "ud",
+                  "precio": 7.29,
+                  "horas": 0.75,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "18.08.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Iluminación LED con sensor de presencia.",
+                  "unidad": "ud",
+                  "precio": 38.66,
+                  "horas": 0.75,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "18.08.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Tira LED de iluminación eficiente.",
+                  "unidad": "m",
+                  "precio": 12.92,
+                  "horas": 0.53,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "18.08.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Regulación de iluminación con dimmer.",
+                  "unidad": "ud",
+                  "precio": 63.97,
+                  "horas": 0.6,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "18.08.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Sensor de luz natural para iluminación.",
+                  "unidad": "ud",
+                  "precio": 33.77,
+                  "horas": 0.6,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "18.08.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Iluminación exterior LED con fotocélula.",
+                  "unidad": "ud",
+                  "precio": 36.57,
+                  "horas": 0.9,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "18.08.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Sustitución de lámparas halógenas por LED.",
+                  "unidad": "ud",
+                  "precio": 3.25,
+                  "horas": 0.45,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "18.08.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Sistema de control de iluminación por zonas.",
+                  "unidad": "ud",
+                  "precio": 54.59,
+                  "horas": 1.05,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "18.08.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Iluminación de bajo consumo en áreas comunes.",
+                  "unidad": "ud",
+                  "precio": 9.13,
+                  "horas": 0.9,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "18.08.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Verificación de eficiencia de iluminación.",
+                  "unidad": "glb",
+                  "precio": 4.15,
+                  "horas": 0.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.08.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Temporizador de iluminación de zonas comunes.",
+                  "unidad": "ud",
+                  "precio": 41.65,
+                  "horas": 0.6,
+                  "producto_cliente": true
+                }
+              ],
+              "n": 11
+            }
+          ],
+          "n": 11
         },
         {
           "codigo": "18.09",
           "nombre": "Incorporación de energías renovables",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "18.09.01",
+              "nombre": "Incorporación de energías renovables",
+              "partidas": [
+                {
+                  "codigo": "18.09.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Instalación de panel solar fotovoltaico.",
+                  "unidad": "ud",
+                  "precio": 252.62,
+                  "horas": 2.25,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "18.09.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Instalación de inversor fotovoltaico.",
+                  "unidad": "ud",
+                  "precio": 379.91,
+                  "horas": 1.5,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "18.09.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Instalación de banco de baterías para fotovoltaica.",
+                  "unidad": "ud",
+                  "precio": 301.13,
+                  "horas": 1.5,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "18.09.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Sistema de agua caliente solar.",
+                  "unidad": "ud",
+                  "precio": 17.04,
+                  "horas": 1.8,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "18.09.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Estructura soporte de paneles solares.",
+                  "unidad": "m²",
+                  "precio": 17.68,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.09.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Conexión de sistema fotovoltaico a red.",
+                  "unidad": "glb",
+                  "precio": 22.91,
+                  "horas": 1.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.09.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Medidor bidireccional de energía.",
+                  "unidad": "ud",
+                  "precio": 9.13,
+                  "horas": 0.9,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "18.09.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Aerotermia para agua caliente.",
+                  "unidad": "ud",
+                  "precio": 47.59,
+                  "horas": 2.25,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "18.09.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Generación de respaldo con baterías.",
+                  "unidad": "glb",
+                  "precio": 670.79,
+                  "horas": 1.8,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "18.09.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Monitorización de producción fotovoltaica.",
+                  "unidad": "glb",
+                  "precio": 11.02,
+                  "horas": 1.2,
+                  "producto_cliente": true
+                },
+                {
+                  "codigo": "18.09.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Mantenimiento de sistema fotovoltaico.",
+                  "unidad": "glb",
+                  "precio": 7.71,
+                  "horas": 1.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "18.09.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Estructura de paneles solares sobre techo inclinado.",
+                  "unidad": "m²",
+                  "precio": 13.07,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 12
+            }
+          ],
+          "n": 12
         }
       ],
-      "n": 0
+      "n": 100
     }
   ]
 }

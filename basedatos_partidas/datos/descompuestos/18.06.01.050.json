@@ -1,0 +1,28 @@
+{
+  "codigo": "18.06.01.050",
+  "ambito": "reforma",
+  "capitulo": "18",
+  "subcapitulo": "06",
+  "unidad": "m²",
+  "titulo": "Lámina de control solar en vidrios.",
+  "descripcion": "Aplicación de lámina de control solar sobre los vidrios, para reducir la ganancia térmica.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ANTI-GRAFFITI",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-VIDR",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.15
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

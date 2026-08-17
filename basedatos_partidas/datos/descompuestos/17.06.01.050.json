@@ -1,0 +1,32 @@
+{
+  "codigo": "17.06.01.050",
+  "ambito": "reforma",
+  "capitulo": "17",
+  "subcapitulo": "06",
+  "unidad": "m²",
+  "titulo": "Protección ignífuga de estructura de madera.",
+  "descripcion": "Aplicación de tratamiento ignífugo sobre estructura de madera de obra, para mejorar su resistencia al fuego.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PIN-IGNFUGA",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.04
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.1
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

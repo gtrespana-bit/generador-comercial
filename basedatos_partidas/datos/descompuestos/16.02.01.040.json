@@ -1,0 +1,24 @@
+{
+  "codigo": "16.02.01.040",
+  "ambito": "reforma",
+  "capitulo": "16",
+  "subcapitulo": "02",
+  "unidad": "ud",
+  "titulo": "Ensayo ultrasónico de soldadura.",
+  "descripcion": "Ensayo ultrasónico de soldaduras estructurales, para detección de defectos internos, con informe.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MO-OF1-SOLD",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

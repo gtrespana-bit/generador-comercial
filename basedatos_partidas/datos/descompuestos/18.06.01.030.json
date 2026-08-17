@@ -1,0 +1,36 @@
+{
+  "codigo": "18.06.01.030",
+  "ambito": "reforma",
+  "capitulo": "18",
+  "subcapitulo": "06",
+  "unidad": "m²",
+  "titulo": "Celosía o romanilla de sombreado.",
+  "descripcion": "Colocación de celosía o romanilla de aluminio para sombreado, reduciendo la ganancia solar.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CELOSIA",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-PERFIL-REMATE",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

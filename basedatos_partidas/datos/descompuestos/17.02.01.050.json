@@ -1,0 +1,24 @@
+{
+  "codigo": "17.02.01.050",
+  "ambito": "reforma",
+  "capitulo": "17",
+  "subcapitulo": "02",
+  "unidad": "ud",
+  "titulo": "Dotación de mascarilla y protección respiratoria.",
+  "descripcion": "Dotación de mascarilla y protección respiratoria para trabajos con polvo o vapores.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-EPP",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.02
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

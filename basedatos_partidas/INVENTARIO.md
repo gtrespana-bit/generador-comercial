@@ -7,9 +7,9 @@ numérica v2 aprobada para reforma y remodelación en Venezuela.
 
 | | |
 |---|---:|
-| Partidas | **2.735** |
-| Hojas de descompuesto `.xlsx` | 2.735 |
-| Partidas con producto de elección del cliente | 328 |
+| Partidas | **3.006** |
+| Hojas de descompuesto `.xlsx` | 3.006 |
+| Partidas con producto de elección del cliente | 363 |
 | Recursos en el cuadro de precios | **392** |
 | — mano de obra / materiales / maquinaria | 17 / 331 / 44 |
 | — confirmados / verificados con el mercado / derivados / provisionales | 17 / 131 / 4 / 196 |
@@ -17,7 +17,7 @@ numérica v2 aprobada para reforma y remodelación en Venezuela.
 | — confirmado (mano de obra) | 20,2 % |
 | — verificado con el mercado venezolano | 59,4 % |
 | — provisional | ≈ 15 % (consumibles de bajo valor + especialidades B2B/importación; el alquiler de equipos se mantiene fuera de alcance) |
-| Clasificación v2 | **18 capítulos · 172 subcapítulos · 236 apartados** |
+| Clasificación v2 | **18 capítulos · 172 subcapítulos · 256 apartados** |
 | Código visible | `CC.SS.AA.NNN` |
 | Moneda | USD (Venezuela) |
 

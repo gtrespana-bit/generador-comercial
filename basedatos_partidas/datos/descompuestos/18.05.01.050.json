@@ -1,0 +1,32 @@
+{
+  "codigo": "18.05.01.050",
+  "ambito": "reforma",
+  "capitulo": "18",
+  "subcapitulo": "05",
+  "unidad": "m",
+  "titulo": "Sellado perimetral de ventanas.",
+  "descripcion": "Sellado del perímetro de las ventanas, para eliminar las infiltraciones de aire.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-SELLA-ELAST",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MT-SILICONA-EST",
+      "rendimiento": 0.03
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.1
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

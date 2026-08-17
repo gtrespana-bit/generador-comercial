@@ -1029,7 +1029,9 @@
         },
         "05": {
           "nombre": "Residuos especiales o peligrosos",
-          "apartados": {}
+          "apartados": {
+            "01": "Residuos especiales o peligrosos"
+          }
         },
         "06": {
           "nombre": "Limpieza durante la obra",
@@ -1050,35 +1052,51 @@
       "subcapitulos": {
         "01": {
           "nombre": "Ensayos de concreto, acero y mampostería",
-          "apartados": {}
+          "apartados": {
+            "01": "Ensayos de concreto, acero y mampostería"
+          }
         },
         "02": {
           "nombre": "Inspección de soldaduras, anclajes y estructura",
-          "apartados": {}
+          "apartados": {
+            "01": "Inspección de soldaduras, anclajes y estructura"
+          }
         },
         "03": {
           "nombre": "Pruebas de impermeabilización y estanqueidad",
-          "apartados": {}
+          "apartados": {
+            "01": "Pruebas de impermeabilización y estanqueidad"
+          }
         },
         "04": {
           "nombre": "Pruebas de instalaciones sanitarias",
-          "apartados": {}
+          "apartados": {
+            "01": "Pruebas de instalaciones sanitarias"
+          }
         },
         "05": {
           "nombre": "Pruebas eléctricas y de puesta a tierra",
-          "apartados": {}
+          "apartados": {
+            "01": "Pruebas eléctricas y de puesta a tierra"
+          }
         },
         "06": {
           "nombre": "Pruebas de climatización, ventilación y balanceo",
-          "apartados": {}
+          "apartados": {
+            "01": "Pruebas de climatización, ventilación y balanceo"
+          }
         },
         "07": {
           "nombre": "Termografía, humedad y diagnóstico no destructivo",
-          "apartados": {}
+          "apartados": {
+            "01": "Termografía, humedad y diagnóstico no destructivo"
+          }
         },
         "08": {
           "nombre": "Puesta en marcha, protocolos y documentación final",
-          "apartados": {}
+          "apartados": {
+            "01": "Puesta en marcha, protocolos y documentación final"
+          }
         }
       }
     },
@@ -1112,11 +1130,15 @@
         },
         "05": {
           "nombre": "Seguridad en excavaciones y espacios confinados",
-          "apartados": {}
+          "apartados": {
+            "01": "Seguridad en excavaciones y espacios confinados"
+          }
         },
         "06": {
           "nombre": "Protección contra incendios durante la obra",
-          "apartados": {}
+          "apartados": {
+            "01": "Protección contra incendios durante la obra"
+          }
         },
         "07": {
           "nombre": "Instalaciones de higiene y bienestar",
@@ -1137,39 +1159,57 @@
       "subcapitulos": {
         "01": {
           "nombre": "Diagnóstico y evaluación energética",
-          "apartados": {}
+          "apartados": {
+            "01": "Diagnóstico y evaluación energética"
+          }
         },
         "02": {
           "nombre": "Mejora térmica de fachadas",
-          "apartados": {}
+          "apartados": {
+            "01": "Mejora térmica de fachadas"
+          }
         },
         "03": {
           "nombre": "Mejora térmica de techos y cubiertas",
-          "apartados": {}
+          "apartados": {
+            "01": "Mejora térmica de techos y cubiertas"
+          }
         },
         "04": {
           "nombre": "Mejora térmica de pisos y entrepisos",
-          "apartados": {}
+          "apartados": {
+            "01": "Mejora térmica de pisos y entrepisos"
+          }
         },
         "05": {
           "nombre": "Sustitución y mejora de ventanas y vidrios",
-          "apartados": {}
+          "apartados": {
+            "01": "Sustitución y mejora de ventanas y vidrios"
+          }
         },
         "06": {
           "nombre": "Protección solar y control de ganancias térmicas",
-          "apartados": {}
+          "apartados": {
+            "01": "Protección solar y control de ganancias térmicas"
+          }
         },
         "07": {
           "nombre": "Mejora de climatización y ventilación",
-          "apartados": {}
+          "apartados": {
+            "01": "Mejora de climatización y ventilación"
+          }
         },
         "08": {
           "nombre": "Iluminación eficiente y control",
-          "apartados": {}
+          "apartados": {
+            "01": "Iluminación eficiente y control"
+          }
         },
         "09": {
           "nombre": "Incorporación de energías renovables",
-          "apartados": {}
+          "apartados": {
+            "01": "Incorporación de energías renovables"
+          }
         }
       }
     }

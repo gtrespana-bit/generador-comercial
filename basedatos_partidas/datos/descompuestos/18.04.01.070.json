@@ -1,0 +1,28 @@
+{
+  "codigo": "18.04.01.070",
+  "ambito": "reforma",
+  "capitulo": "18",
+  "subcapitulo": "04",
+  "unidad": "m",
+  "titulo": "Banda perimetral en encuentro piso-muro.",
+  "descripcion": "Colocación de banda perimetral elástica en el encuentro piso-muro, para eliminar el puente acústico y térmico.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PER-BANDA",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.05
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

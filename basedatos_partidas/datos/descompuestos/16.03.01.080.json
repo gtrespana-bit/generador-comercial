@@ -1,0 +1,28 @@
+{
+  "codigo": "16.03.01.080",
+  "ambito": "reforma",
+  "capitulo": "16",
+  "subcapitulo": "03",
+  "unidad": "m²",
+  "titulo": "Control de pendientes de evacuación.",
+  "descripcion": "Verificación de las pendientes de evacuación de cubiertas y pisos húmedos, con nivel láser.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MQ-NIVEL-LASER",
+      "rendimiento": 0.01
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.04
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.02
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

@@ -1,0 +1,24 @@
+{
+  "codigo": "16.06.01.100",
+  "ambito": "reforma",
+  "capitulo": "16",
+  "subcapitulo": "06",
+  "unidad": "glb",
+  "titulo": "Informe de puesta en marcha de climatización.",
+  "descripcion": "Emisión de informe de puesta en marcha del sistema de climatización, con protocolo de resultados.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MO-OF1-AC",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.25
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

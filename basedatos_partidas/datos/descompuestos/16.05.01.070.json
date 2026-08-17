@@ -1,0 +1,28 @@
+{
+  "codigo": "16.05.01.070",
+  "ambito": "reforma",
+  "capitulo": "16",
+  "subcapitulo": "05",
+  "unidad": "glb",
+  "titulo": "Medición de tensión y frecuencia.",
+  "descripcion": "Medición de la tensión y frecuencia de la acometida eléctrica, para verificar la calidad del suministro.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MQ-DETECTOR",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.05
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

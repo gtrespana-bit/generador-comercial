@@ -30,9 +30,9 @@ from app.services.catalogo_propio import (
 
 # La ampliación del catálogo extenso (lotes de producción) hace crecer estas
 # cifras. Se centralizan aquí para actualizarlas en un solo punto en cada lote.
-N_PARTIDAS = 2735       # total de partidas oficiales del catálogo
+N_PARTIDAS = 3006       # total de partidas oficiales del catálogo
 N_LEGACY = 540         # partidas migradas de la v1 con código CT- (no crece)
-N_APARTADOS = 236      # apartados de tercer nivel con partidas
+N_APARTADOS = 256      # apartados de tercer nivel con partidas
 N_CATEGORIAS = 18 + 172 + N_APARTADOS
 
 

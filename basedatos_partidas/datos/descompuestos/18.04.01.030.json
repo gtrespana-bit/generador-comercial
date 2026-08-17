@@ -1,0 +1,28 @@
+{
+  "codigo": "18.04.01.030",
+  "ambito": "reforma",
+  "capitulo": "18",
+  "subcapitulo": "04",
+  "unidad": "m",
+  "titulo": "Aislamiento perimetral de piso.",
+  "descripcion": "Colocación de aislamiento en el perímetro del piso, para evitar el puente térmico con el terreno.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-POLIESTIRENO-EXT",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.12
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

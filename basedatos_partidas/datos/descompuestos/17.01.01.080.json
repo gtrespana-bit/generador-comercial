@@ -1,0 +1,28 @@
+{
+  "codigo": "17.01.01.080",
+  "ambito": "reforma",
+  "capitulo": "17",
+  "subcapitulo": "01",
+  "unidad": "m²",
+  "titulo": "Cubrición de huecos de ascensor.",
+  "descripcion": "Cubrición de huecos de ascensor con tabla y barandilla, para prevenir caídas durante la obra.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-BARANDA-PROV",
+      "rendimiento": 0.8
+    },
+    {
+      "ref": "MT-MALLA-OBRA",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.25
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

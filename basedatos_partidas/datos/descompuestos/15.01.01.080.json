@@ -1,0 +1,24 @@
+{
+  "codigo": "15.01.01.080",
+  "ambito": "reforma",
+  "capitulo": "15",
+  "subcapitulo": "01",
+  "unidad": "ud",
+  "titulo": "Identificación y etiquetado de contenedores de residuos.",
+  "descripcion": "Colocación de identificación y etiquetado sobre los contenedores o zonas de acopio, indicando el tipo de residuo admitido.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-SENAL-OBRA",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.1
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

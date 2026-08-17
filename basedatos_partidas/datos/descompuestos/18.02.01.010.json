@@ -1,0 +1,36 @@
+{
+  "codigo": "18.02.01.010",
+  "ambito": "reforma",
+  "capitulo": "18",
+  "subcapitulo": "02",
+  "unidad": "m²",
+  "titulo": "Aislamiento de fachada con poliestireno extruido.",
+  "descripcion": "Colocación de panel de poliestireno extruido sobre fachada, fijado y con capa de protección.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-POLIESTIRENO-EXT",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-MALLA-FACH",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.32
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

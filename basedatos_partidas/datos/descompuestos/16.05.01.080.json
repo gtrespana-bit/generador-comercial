@@ -1,0 +1,24 @@
+{
+  "codigo": "16.05.01.080",
+  "ambito": "reforma",
+  "capitulo": "16",
+  "subcapitulo": "05",
+  "unidad": "ud",
+  "titulo": "Prueba de iluminación de circuitos.",
+  "descripcion": "Verificación del funcionamiento de los circuitos de iluminación, encendiendo y comprobando cada punto.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.05
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

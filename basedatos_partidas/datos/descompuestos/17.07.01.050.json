@@ -1,0 +1,24 @@
+{
+  "codigo": "17.07.01.050",
+  "ambito": "reforma",
+  "capitulo": "17",
+  "subcapitulo": "07",
+  "unidad": "glb",
+  "titulo": "Agua potable para el personal.",
+  "descripcion": "Suministro de agua potable para el personal de obra, conforme a la normativa de higiene.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-AGUA-OBRA",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.1
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

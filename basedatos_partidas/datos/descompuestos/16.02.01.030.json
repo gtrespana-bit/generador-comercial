@@ -1,0 +1,24 @@
+{
+  "codigo": "16.02.01.030",
+  "ambito": "reforma",
+  "capitulo": "16",
+  "subcapitulo": "02",
+  "unidad": "ud",
+  "titulo": "Ensayo de partículas magnéticas en soldadura.",
+  "descripcion": "Ensayo de partículas magnéticas para detección de discontinuidades en soldaduras de acero, con informe.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MO-OF1-SOLD",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.15
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

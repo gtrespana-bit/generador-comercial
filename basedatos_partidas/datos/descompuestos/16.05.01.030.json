@@ -1,0 +1,28 @@
+{
+  "codigo": "16.05.01.030",
+  "ambito": "reforma",
+  "capitulo": "16",
+  "subcapitulo": "05",
+  "unidad": "ud",
+  "titulo": "Prueba de aislamiento de conductores.",
+  "descripcion": "Prueba de resistencia de aislamiento de los conductores, con megóhmetro, para verificar la ausencia de fugas.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MQ-DETECTOR",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.1
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

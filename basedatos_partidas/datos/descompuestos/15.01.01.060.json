@@ -1,0 +1,32 @@
+{
+  "codigo": "15.01.01.060",
+  "ambito": "reforma",
+  "capitulo": "15",
+  "subcapitulo": "01",
+  "unidad": "m²",
+  "titulo": "Zona de acopio de madera y pallets.",
+  "descripcion": "Habilitación de zona de acopio de madera y pallets para su reutilización o reciclaje, delimitada y señalizada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MALLA-OBRA",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MT-SENAL-OBRA",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MT-PROT-OBRA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.15
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

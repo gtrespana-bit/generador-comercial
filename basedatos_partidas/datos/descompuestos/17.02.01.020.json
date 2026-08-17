@@ -1,0 +1,24 @@
+{
+  "codigo": "17.02.01.020",
+  "ambito": "reforma",
+  "capitulo": "17",
+  "subcapitulo": "02",
+  "unidad": "ud",
+  "titulo": "Dotación de casco de seguridad.",
+  "descripcion": "Dotación de casco de seguridad para el personal de obra, conforme a la normativa.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-EPP",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.02
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

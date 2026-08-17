@@ -1,0 +1,40 @@
+{
+  "codigo": "18.09.01.050",
+  "ambito": "reforma",
+  "capitulo": "18",
+  "subcapitulo": "09",
+  "unidad": "m²",
+  "titulo": "Estructura soporte de paneles solares.",
+  "descripcion": "Ejecución de estructura soporte de paneles solares, con perfiles y fijación.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PERFIL-ACERO",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MT-PINT-ANTICORR",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MT-TORNILLO-EST",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-SOLD",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.4
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

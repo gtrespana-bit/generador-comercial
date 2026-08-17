@@ -1,0 +1,36 @@
+{
+  "codigo": "18.07.01.070",
+  "ambito": "reforma",
+  "capitulo": "18",
+  "subcapitulo": "07",
+  "unidad": "m",
+  "titulo": "Sustitución de ductos de ventilación.",
+  "descripcion": "Sustitución de ductos de ventilación, para mejorar la eficiencia del sistema.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-DUCTO-VENT",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-REJILLA-VENT",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-AC",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.24
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

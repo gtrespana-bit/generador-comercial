@@ -1,0 +1,36 @@
+{
+  "codigo": "18.02.01.110",
+  "ambito": "reforma",
+  "capitulo": "18",
+  "subcapitulo": "02",
+  "unidad": "m²",
+  "titulo": "Acabado de fachada aislada con mortero.",
+  "descripcion": "Acabado de fachada aislada con mortero de protección y malla, listo para el revestimiento final.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MOR-FRISO",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MT-MALLA-FACH",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MQ-MEZCL",
+      "rendimiento": 0.03
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.28
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

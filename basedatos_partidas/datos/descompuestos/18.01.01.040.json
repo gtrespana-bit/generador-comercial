@@ -1,0 +1,28 @@
+{
+  "codigo": "18.01.01.040",
+  "ambito": "reforma",
+  "capitulo": "18",
+  "subcapitulo": "01",
+  "unidad": "glb",
+  "titulo": "Medición de infiltraciones de aire.",
+  "descripcion": "Medición de las infiltraciones de aire de la vivienda, para evaluar la estanqueidad de la envolvente.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MQ-DETECTOR",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.75
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

@@ -1,0 +1,36 @@
+{
+  "codigo": "18.02.01.050",
+  "ambito": "reforma",
+  "capitulo": "18",
+  "subcapitulo": "02",
+  "unidad": "m²",
+  "titulo": "Revestimiento de fachada con panel composite.",
+  "descripcion": "Colocación de panel composite sobre fachada, con fijación mecánica, para mejorar el aislamiento y la estética.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PLACA-FACHADA",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-SUBESTRUCTURA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.4
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

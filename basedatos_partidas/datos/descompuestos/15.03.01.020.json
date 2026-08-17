@@ -1,0 +1,24 @@
+{
+  "codigo": "15.03.01.020",
+  "ambito": "reforma",
+  "capitulo": "15",
+  "subcapitulo": "03",
+  "unidad": "ud",
+  "titulo": "Contenedor de escombro de 3 m³, por mes.",
+  "descripcion": "Alquiler mensual de contenedor de escombro de 3 m³, con su colocación y retirada por el gestor.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONTENEDOR",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

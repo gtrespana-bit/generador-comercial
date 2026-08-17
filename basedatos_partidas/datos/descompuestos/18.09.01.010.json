@@ -1,0 +1,42 @@
+{
+  "codigo": "18.09.01.010",
+  "ambito": "reforma",
+  "capitulo": "18",
+  "subcapitulo": "09",
+  "unidad": "ud",
+  "titulo": "Instalación de panel solar fotovoltaico.",
+  "descripcion": "Instalación de panel solar fotovoltaico, con estructura y conexión. El panel lo elige el cliente.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PANEL-SOLAR",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-TORN-TECHO",
+      "rendimiento": 6.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.75
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01",
+  "producto_cliente": {
+    "tipo": "Panel solar elegido por el cliente",
+    "unidad": "ud",
+    "consumo": 1.0,
+    "nota": "La partida cubre solo la instalación. El panel se toma del catálogo de productos."
+  }
+}

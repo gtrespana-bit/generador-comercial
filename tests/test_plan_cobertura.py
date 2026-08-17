@@ -25,7 +25,9 @@ def test_matriz_cubre_los_18_capitulos_y_suma_objetivos():
     assert sum(s["objetivo_amplio"] for s in subcapitulos) == 5000
     assert all(s["operaciones_requeridas"] for s in subcapitulos)
     assert all(s["variaciones_requeridas"] for s in subcapitulos)
-    assert any(s["estado"] == "sin_cobertura" for s in subcapitulos)
+    # Todos los subcapítulos tienen cobertura: el mínimo de 3.000 partidas se
+    # alcanzó y ya no queda ningún subcapítulo vacío.
+    assert not any(s["estado"] == "sin_cobertura" for s in subcapitulos)
 
 
 def test_diccionario_es_bidireccional_y_cubre_todos_los_capitulos():

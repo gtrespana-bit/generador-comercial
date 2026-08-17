@@ -1,0 +1,28 @@
+{
+  "codigo": "18.03.01.040",
+  "ambito": "reforma",
+  "capitulo": "18",
+  "subcapitulo": "03",
+  "unidad": "m²",
+  "titulo": "Aislamiento de cubierta plana con lana mineral.",
+  "descripcion": "Colocación de panel de lana mineral sobre cubierta plana, previo a la impermeabilización.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PYL-LANA",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.12
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

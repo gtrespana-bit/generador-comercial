@@ -1,0 +1,24 @@
+{
+  "codigo": "17.02.01.040",
+  "ambito": "reforma",
+  "capitulo": "17",
+  "subcapitulo": "02",
+  "unidad": "ud",
+  "titulo": "Dotación de protección ocular y auditiva.",
+  "descripcion": "Dotación de protección ocular (gafas) y auditiva (tapones) para trabajos con riesgo.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-EPP",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.02
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

@@ -1,0 +1,24 @@
+{
+  "codigo": "18.01.01.080",
+  "ambito": "reforma",
+  "capitulo": "18",
+  "subcapitulo": "01",
+  "unidad": "ud",
+  "titulo": "Inspección de carpintería y vidrios.",
+  "descripcion": "Inspección del estado de la carpintería y vidrios, para evaluar su contribución a las pérdidas térmicas.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

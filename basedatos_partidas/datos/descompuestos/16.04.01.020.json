@@ -1,0 +1,28 @@
+{
+  "codigo": "16.04.01.020",
+  "ambito": "reforma",
+  "capitulo": "16",
+  "subcapitulo": "04",
+  "unidad": "m",
+  "titulo": "Prueba de fugas de tubería de gas.",
+  "descripcion": "Prueba de estanqueidad de la tubería de gas con manómetro y jabón detector, para verificar la ausencia de fugas.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MQ-DETECTOR",
+      "rendimiento": 0.03
+    },
+    {
+      "ref": "MO-OF1-PLO",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.03
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

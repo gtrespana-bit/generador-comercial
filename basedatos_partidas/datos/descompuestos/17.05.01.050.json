@@ -1,0 +1,24 @@
+{
+  "codigo": "17.05.01.050",
+  "ambito": "reforma",
+  "capitulo": "17",
+  "subcapitulo": "05",
+  "unidad": "m",
+  "titulo": "Protección de zanja con señalización nocturna.",
+  "descripcion": "Señalización y balizamiento nocturno de zanja abierta, para prevenir accidentes de tránsito.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-SENAL-OBRA",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.1
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

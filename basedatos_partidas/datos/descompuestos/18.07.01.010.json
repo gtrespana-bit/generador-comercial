@@ -1,0 +1,42 @@
+{
+  "codigo": "18.07.01.010",
+  "ambito": "reforma",
+  "capitulo": "18",
+  "subcapitulo": "07",
+  "unidad": "ud",
+  "titulo": "Sustitución de equipo de climatización eficiente.",
+  "descripcion": "Sustitución de equipo de climatización por uno de alta eficiencia, con conexión y puesta en marcha. El equipo lo elige el cliente.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-TUB-FRIGO",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MT-SOPORTE-AC",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-OF1-AC",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 1.0
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01",
+  "producto_cliente": {
+    "tipo": "Equipo de climatización eficiente elegido por el cliente",
+    "unidad": "ud",
+    "consumo": 1.0,
+    "nota": "La partida cubre solo la instalación. El equipo se toma del catálogo de productos."
+  }
+}

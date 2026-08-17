@@ -1,0 +1,24 @@
+{
+  "codigo": "16.08.01.040",
+  "ambito": "reforma",
+  "capitulo": "16",
+  "subcapitulo": "08",
+  "unidad": "glb",
+  "titulo": "Certificación de instalación eléctrica.",
+  "descripcion": "Emisión de la certificación de la instalación eléctrica, con las mediciones y pruebas realizadas.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.5
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

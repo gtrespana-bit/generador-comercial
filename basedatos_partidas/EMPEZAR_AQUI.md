@@ -20,8 +20,8 @@ presupuestos.
 
 | | |
 |---|---:|
-| Partidas | **2.735** |
-| Capítulos · subcapítulos · apartados con partidas | **18 · 172 · 236** |
+| Partidas | **3.006** |
+| Capítulos · subcapítulos · apartados con partidas | **18 · 172 · 256** |
 | Recursos en el cuadro de precios | 392 |
 | Validación con el importador real | **0 errores · 0 advertencias** |
 | Tests del proyecto | **515 pasando · 6 omitidos** |
@@ -151,7 +151,11 @@ producir familias completas, comenzando por `09 Instalaciones`.
 > - **Capítulo 11 Techos y cubiertas** completo hasta el mínimo (130/130).
 > - **Capítulo 13 Equipamiento, mobiliario y señalización** completo (140/140).
 > - **Capítulo 14 Obras exteriores y urbanismo** completo hasta el mínimo (160/160).
-> Validación del importador real: 0 errores, 0 advertencias sobre 2.735 partidas.
+> - **Capítulo 15 Gestión de residuos y limpieza** completo (50/50).
+> - **Capítulo 16 Control de calidad y ensayos** completo (80/80).
+> - **Capítulo 17 Seguridad y salud en obra** completo (60/60).
+> - **Capítulo 18 Rehabilitación energética** completo (100/100).
+> **Objetivo mínimo de 3.000 partidas alcanzado** (3.006, 0 errores, 0 advertencias).
 
 La producción cerrará familias completas en este orden: `09 Instalaciones`,
 `12 Revestimientos y acabados`, `07 Carpintería, herrería y vidrios`, `10/11
