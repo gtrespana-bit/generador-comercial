@@ -376,7 +376,17 @@ app.add_middleware(RegistroErroresMiddleware)
 # Compresión gzip de HTML/CSS/JS/JSON: la página de partidas (~5 MB sin
 # comprimir) viaja a una fracción de su tamaño y la carga se percibe mucho
 # más rápida. Queda en la capa más exterior para envolver el resto.
-app.add_middleware(GZipMiddleware, minimum_size=500)
+# Se excluyen los binarios ya comprimidos (PDF, Office, imágenes, fuentes):
+# volver a comprimirlos solo consume CPU sin reducir el tamaño.
+app.add_middleware(
+    GZipMiddleware,
+    minimum_size=500,
+    exclude_content_types=(
+        "application/pdf",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "application/vnd.ms-excel",
+    ),
+)
 
 
 def _respuesta_auth_json(request: Request) -> bool:
