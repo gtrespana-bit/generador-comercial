@@ -229,6 +229,43 @@ TEMPLATES.env.filters["num"] = fmt_num
 TEMPLATES.env.filters["cant"] = fmt_cantidad
 TEMPLATES.env.filters["fecha"] = fmt_fecha
 TEMPLATES.env.filters["archivo_url"] = file_url
+
+
+def _static_version() -> str:
+    """Huella corta y estable para cachear los estáticos con URLs versionadas.
+
+    En Vercel se deriva del commit desplegado; en local, del HEAD de git. Cada
+    despliegue produce una versión distinta, así que cambiar un CSS/JS cambia
+    su URL y el navegador lo descarga una sola vez (inmutable).
+    """
+    version = os.environ.get("VERCEL_GIT_COMMIT_SHA") or os.environ.get("COTIZAT_BUILD_ID", "")
+    version = version.strip()
+    if version:
+        return version[:12]
+    try:
+        import subprocess
+        out = subprocess.run(
+            ["git", "rev-parse", "--short=12", "HEAD"],
+            cwd=str(BASE_DIR), capture_output=True, text=True, timeout=5,
+        )
+        if out.returncode == 0 and out.stdout.strip():
+            return out.stdout.strip()
+    except Exception:
+        pass
+    return "dev"
+
+
+STATIC_VERSION = _static_version()
+
+
+def _asset_url(path: str) -> str:
+    """URL de un recurso estático con la huella de versión (?v=...)."""
+    p = str(path or "").lstrip("/")
+    return f"/static/{p}?v={STATIC_VERSION}"
+
+
+TEMPLATES.env.filters["asset"] = _asset_url
+TEMPLATES.env.globals["STATIC_VERSION"] = STATIC_VERSION
 TEMPLATES.env.globals.update(
     product_name=PRODUCT_NAME,
     value_proposition=VALUE_PROPOSITION,
@@ -527,10 +564,17 @@ class _StaticFilesConCaché(StaticFiles):
 
     async def get_response(self, path: str, scope: Scope):
         response = await super().get_response(path, scope)
-        response.headers["Cache-Control"] = (
-            "public, max-age=0, must-revalidate, "
-            "s-maxage=31536000, stale-while-revalidate=604800"
-        )
+        query = scope.get("query_string", b"").decode("latin-1")
+        if "v=" in query:
+            # URL versionada (huella de despliegue): el contenido no cambia
+            # para una versión dada, así que el navegador la cachea para
+            # siempre y no vuelve a revalidar jamás.
+            response.headers["Cache-Control"] = "public, max-age=31536000, immutable"
+        else:
+            response.headers["Cache-Control"] = (
+                "public, max-age=0, must-revalidate, "
+                "s-maxage=31536000, stale-while-revalidate=604800"
+            )
         return response
 
 

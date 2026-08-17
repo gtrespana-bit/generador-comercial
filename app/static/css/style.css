@@ -1105,6 +1105,9 @@ body.collapsed .theme-toggle-label,
 .margen-na { color: var(--text-muted); }
 .row-actions { display: flex; gap: 4px; justify-content: flex-end; opacity: .85; }
 .partidas-table tbody tr:hover .row-actions { opacity: 1; }
+.mostrar-mas-fila td { text-align: center; background: var(--surface-alt); }
+.mostrar-mas-fila .btn { margin: 0.25rem 0; }
+
 .descomp-row td { background: var(--bg); }
 .descomp-details { padding: .55rem .9rem .85rem; }
 .descomp-details summary { cursor: pointer; font-size: .82rem; font-weight: 600; color: var(--accent); list-style: none; display: flex; align-items: center; gap: .4rem; }
@@ -4652,6 +4655,67 @@ body:has(.catalog-layout) .content {
 .catalog-main .empty h3 {
   letter-spacing: -0.02em;
   font-weight: 700;
+}
+
+/* ── Estado vacío premium (se aplica a .empty y .card.empty en todo el app) ── */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-align: center;
+  padding: 2.6rem 1.5rem;
+}
+.empty .empty-icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  margin-bottom: 0.35rem;
+  border-radius: 14px;
+  background: var(--accent-soft);
+  color: var(--accent-h);
+  font-size: 1.5rem;
+}
+.empty h3 {
+  margin: 0;
+  font-size: 1.02rem;
+  letter-spacing: -0.02em;
+}
+.empty p {
+  max-width: 34rem;
+  margin: 0;
+  color: var(--text-soft);
+  line-height: 1.55;
+}
+.empty .btn { margin-top: 0.4rem; }
+
+/* ── Skeleton (carga bajo demanda de la descomposición) ── */
+.skeleton {
+  border-radius: 6px;
+  background: linear-gradient(
+    90deg,
+    var(--surface-hover) 25%,
+    var(--surface-alt) 50%,
+    var(--surface-hover) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.3s ease-in-out infinite;
+}
+.skeleton-row {
+  display: flex;
+  gap: 0.6rem;
+  padding: 0.4rem 0;
+  align-items: center;
+}
+.skeleton-cell { height: 14px; }
+.skeleton-cell.wide { flex: 1; }
+.skeleton-cell.med { width: 120px; }
+.skeleton-cell.small { width: 60px; }
+@keyframes skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
 /* ==========================================================================

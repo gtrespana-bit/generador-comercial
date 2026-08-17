@@ -571,6 +571,42 @@ function filtrarPartidas() {
     }
   }
   updateBulkBarPartidas();
+  aplicarDisclosure(Boolean(q));
+}
+
+// Revelación progresiva: en secciones muy grandes se muestra un primer tramo y
+// un botón «Mostrar N más». Al buscar se muestran todas las coincidencias sin
+// límite (el usuario espera ver todo lo que coincide). Mantiene el DOM y el
+// primer pintado acotados en catálogos de 1000+ partidas sin renunciar a la
+// búsqueda instantánea.
+const PARTIDAS_POR_TRAMO = 80;
+
+function aplicarDisclosure(conBusqueda) {
+  document.querySelectorAll('.subcat-section').forEach(sub => {
+    sub.querySelectorAll('.mostrar-mas-fila').forEach(e => e.remove());
+    if (conBusqueda) return;
+    const filas = [...sub.querySelectorAll('.partida-tr')].filter(r => !CotizatStyles.isHidden(r));
+    if (filas.length <= PARTIDAS_POR_TRAMO) return;
+    filas.slice(PARTIDAS_POR_TRAMO).forEach(r => CotizatStyles.set(r, "display", 'none'));
+    const tbody = sub.querySelector('tbody');
+    if (!tbody) return;
+    const tr = document.createElement('tr');
+    tr.className = 'mostrar-mas-fila';
+    const td = document.createElement('td');
+    td.colSpan = 9;
+    td.className = 'csp-s-1305fa8339';
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'btn btn-sm';
+    btn.textContent = `Mostrar ${filas.length - PARTIDAS_POR_TRAMO} partidas más`;
+    btn.addEventListener('click', () => {
+      filas.forEach(r => CotizatStyles.set(r, "display", ''));
+      tr.remove();
+    });
+    td.appendChild(btn);
+    tr.appendChild(td);
+    tbody.appendChild(tr);
+  });
 }
 
 function clearSearch() {

@@ -5,14 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{% block title %}Inicio{% endblock %} · {{ product_name }}</title>
 <link rel="icon" type="image/png" href="/static/icono.png">
-<script src="/static/js/recovery_redirect.js"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<script src="/static/js/fonts.js" defer></script>
-<link rel="stylesheet" href="/static/css/style.css">
-<link rel="stylesheet" href="/static/css/csp.css">
-<script nonce="{{ request.state.csp_nonce }}" src="/static/js/csp_styles.js"></script>
-<script src="/static/js/csp_events.js"></script>
+<script src="{{ 'js/recovery_redirect.js' | asset }}"></script>
+<link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+<link rel="stylesheet" href="{{ 'css/style.css' | asset }}">
+<link rel="stylesheet" href="{{ 'css/csp.css' | asset }}">
+<script nonce="{{ request.state.csp_nonce }}" src="{{ 'js/csp_styles.js' | asset }}"></script>
+<script src="{{ 'js/csp_events.js' | asset }}"></script>
 </head>
 <body spellcheck="true" class="{% block body_class %}{% endblock %}"{% if request.url.path in ['/', '/presupuestos'] %} data-refresh-expired="1"{% endif %}>
 <script nonce="{{ request.state.csp_nonce }}">

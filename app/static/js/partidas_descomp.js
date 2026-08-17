@@ -18,6 +18,18 @@
     return el;
   }
 
+  function esqueleto(holder) {
+    holder.replaceChildren();
+    var anchos = ["wide", "med", "small", "med"];
+    for (var f = 0; f < 3; f++) {
+      var fila = crear("div", "skeleton-row");
+      anchos.forEach(function (clase) {
+        fila.appendChild(crear("div", "skeleton skeleton-cell " + clase));
+      });
+      holder.appendChild(fila);
+    }
+  }
+
   function construirTabla(filas) {
     var tabla = crear("table", "table descomp-table");
     var thead = crear("thead");
@@ -64,6 +76,7 @@
     var holder = details.querySelector(".descomp-holder");
     if (!holder) return;
     details.setAttribute("data-descomp-cargado", "1");
+    esqueleto(holder);
 
     fetch("/partidas/" + encodeURIComponent(id) + "/descomposicion", {
       headers: { Accept: "application/json" },
