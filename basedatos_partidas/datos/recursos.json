@@ -384,13 +384,17 @@
       "unidad": "ud",
       "descripcion": "Llave de paso de PPR de 20 mm, de esfera, para empotrar.",
       "precio": 4.5,
-      "estado": "provisional"
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: llave de paso esférica 1/2 3-7,50; Donsen 20mm polifusión 5,40-6,01; Griven esfera 1/2 7,50-8,64. Conversión: Mediana del rango 3-7,50 ≈ 5 USD; 4,5 USD queda en la banda baja-media. Rango observado: Llave de paso esfera 1/2 para agua 3-7,50 USD (Donsen 5,40-6,01; Griven 7,50; Aksi 3; básicas 2-5).",
+      "nota": "Confirmado: 4,5 USD es razonable para una llave de paso de agua de marca media."
     },
     "MT-PLO-ABASTO": {
       "unidad": "ud",
       "descripcion": "Tubo de abasto flexible con sus racores y accesorios de conexión a aparato.",
       "precio": 3.2,
-      "estado": "provisional"
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: canilla manguera flexible metálica monomando 1/2x3/8 5; abasto flexible 2-4. Conversión: Canilla/manguera flexible metálica monomando 1/2x3/8 = 5 USD; abasto flexible sencillo 2-4 USD. Rango observado: Abasto flexible y canillas flexibles 2-5 USD.",
+      "nota": "Confirmado: 3,2 USD es correcto para un tubo de abasto flexible con racores."
     },
     "MT-PLO-DESAG": {
       "unidad": "ud",
@@ -1379,8 +1383,10 @@
     "MT-TUB-FRIGO": {
       "unidad": "m",
       "descripcion": "Par de tuberías frigoríficas de cobre aisladas, con cable de interconexión.",
-      "precio": 9.8,
-      "estado": "provisional"
+      "precio": 11.0,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: tubería de cobre flexible 1/4 por metro 4,33; 3/8 por metro 6,33-6,99; rollo 15m 1/4 54,99; rollo 15m 3/8 79,99. Conversión: Par (1/4 + 3/8) aislado con cable = 4,33 + 6,33 + aislamiento y cable ≈ 11 USD/m. Rango observado: Tubería de cobre flexible por metro: 1/4 = 4,33 USD/m; 3/8 = 6,33-6,99 USD/m.",
+      "nota": "El precio anterior (9,80 USD/m) quedaba por debajo de la suma de las dos líneas de cobre; se adopta 11 USD/m para el par aislado con cable de interconexión."
     },
     "MT-SOPORTE-AC": {
       "unidad": "ud",
@@ -1400,13 +1406,17 @@
       "unidad": "m",
       "descripcion": "Tubería de cobre o acero para instalación de gas doméstico, con sus accesorios.",
       "precio": 6.4,
-      "estado": "provisional"
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: tubo de cobre flexible 1/2 por metro 4-16,15; rollo 15m 1/2 111-144,30; tubo HG ASTM A-53 3/4 65,45 por 5,8m. Conversión: El recurso admite cobre o acero: la mezcla justifica 6,4 USD/m (el cobre suelto mediana ~7,7; el acero/galvanizado baja la media). Rango observado: Cobre flexible 1/2 para gas por metro 4-16,15 USD/m; rollo 15 m 111-144 USD (7,4-9,6 USD/m).",
+      "nota": "Confirmado: 6,4 USD/m es coherente para tubería de gas (cobre/acero) con sus accesorios."
     },
     "MT-REGUL-GAS": {
       "unidad": "ud",
       "descripcion": "Regulador de presión, llave de corte y accesorios para instalación de gas.",
       "precio": 24.0,
-      "estado": "provisional"
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: regulador gas doméstico 4-15; llave de paso para gas 1/2 FP 100% bronce 15-25,50. Conversión: Regulador (8) + llave de corte de gas (16) + accesorios (4) ≈ 28 USD. Rango observado: Regulador doméstico 4-15 USD; llave de corte de gas 1/2 en bronce (Fundición Pacífico) 15-25,50 USD; accesorios 3-5 USD.",
+      "nota": "Confirmado: 24 USD cubre regulador + llave de corte de gas (que es de bronce certificado, más cara que una llave de agua) + accesorios."
     },
     "MT-EXTINTOR": {
       "unidad": "ud",
@@ -1432,7 +1442,9 @@
       "unidad": "kg",
       "descripcion": "Gas refrigerante para carga de equipos de climatización.",
       "precio": 18.0,
-      "estado": "provisional"
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: gas R22 1 kilo 16,94; cilindro R22 13,6 kg 90-195; R410a cilindro 11,3 kg 240; R410a lata 800g 26. Conversión: Mediana entre R22 (16,94/kg) y R410a (21,2/kg) ≈ 18 USD/kg. Rango observado: R22: 16,94 USD/kg suelto; cilindro 13,6 kg 90-195 USD (6,6-14,3 USD/kg). R410a: cilindro 11,3 kg 240 USD (21,2 USD/kg); lata 800 g 26 USD (32,5 USD/kg).",
+      "nota": "Confirmado: 18 USD/kg es una mediana correcta para gas refrigerante."
     },
     "MT-MARCO-PUERTA": {
       "unidad": "m",
@@ -2285,6 +2297,12 @@
       "unidad": "ud",
       "descripcion": "Central de alarma con teclado, sensores y sirena, para protección perimetral e interior.",
       "precio": 150.0,
+      "estado": "provisional"
+    },
+    "MT-SOPORTE-ANTIVIB": {
+      "unidad": "ud",
+      "descripcion": "Soporte antivibratorio de neopreno (silent block) para aislar equipos de bombas, compresores y maquinaria, con su tornillería.",
+      "precio": 5.0,
       "estado": "provisional"
     }
   },

@@ -10186,7 +10186,7 @@
                   "codigo_legacy": "",
                   "titulo": "Colocación de espejo de pared.",
                   "unidad": "m2",
-                  "precio": 90.86,
+                  "precio": 54.63,
                   "horas": 0.65,
                   "producto_cliente": false
                 },
@@ -10294,7 +10294,7 @@
                   "codigo_legacy": "",
                   "titulo": "Espejo de vestir de cuerpo entero.",
                   "unidad": "m2",
-                  "precio": 154.17,
+                  "precio": 81.69,
                   "horas": 0.8,
                   "producto_cliente": false
                 },
@@ -14029,7 +14029,7 @@
                   "codigo_legacy": "CT-14-01-010",
                   "titulo": "Instalación de equipo de aire acondicionado tipo split.",
                   "unidad": "ud",
-                  "precio": 181.95,
+                  "precio": 188.24,
                   "horas": 5.1,
                   "producto_cliente": true
                 },
@@ -14038,7 +14038,7 @@
                   "codigo_legacy": "CT-14-01-020",
                   "titulo": "Tubería frigorífica y drenaje para climatización.",
                   "unidad": "m",
-                  "precio": 20.31,
+                  "precio": 21.97,
                   "horas": 0.54,
                   "producto_cliente": false
                 },
@@ -14056,7 +14056,7 @@
                   "codigo_legacy": "",
                   "titulo": "Instalación de equipo split inverter.",
                   "unidad": "ud",
-                  "precio": 92.1,
+                  "precio": 98.41,
                   "horas": 3.0,
                   "producto_cliente": false
                 },
@@ -14065,7 +14065,7 @@
                   "codigo_legacy": "",
                   "titulo": "Instalación de equipo multisplit.",
                   "unidad": "ud",
-                  "precio": 92.1,
+                  "precio": 98.41,
                   "horas": 3.0,
                   "producto_cliente": false
                 },
@@ -14074,7 +14074,7 @@
                   "codigo_legacy": "",
                   "titulo": "Instalación de equipo de ventana.",
                   "unidad": "ud",
-                  "precio": 92.1,
+                  "precio": 98.41,
                   "horas": 3.0,
                   "producto_cliente": false
                 },
@@ -14083,7 +14083,7 @@
                   "codigo_legacy": "",
                   "titulo": "Instalación de equipo de piso-techo.",
                   "unidad": "ud",
-                  "precio": 92.1,
+                  "precio": 98.41,
                   "horas": 3.0,
                   "producto_cliente": false
                 },
@@ -14092,7 +14092,7 @@
                   "codigo_legacy": "",
                   "titulo": "Instalación de equipo cassette.",
                   "unidad": "ud",
-                  "precio": 92.1,
+                  "precio": 98.41,
                   "horas": 3.0,
                   "producto_cliente": false
                 },
@@ -14101,7 +14101,7 @@
                   "codigo_legacy": "",
                   "titulo": "Instalación de unidad interior.",
                   "unidad": "ud",
-                  "precio": 92.1,
+                  "precio": 98.41,
                   "horas": 3.0,
                   "producto_cliente": false
                 },
@@ -14110,7 +14110,7 @@
                   "codigo_legacy": "",
                   "titulo": "Instalación de unidad condensadora.",
                   "unidad": "ud",
-                  "precio": 92.1,
+                  "precio": 98.41,
                   "horas": 3.0,
                   "producto_cliente": false
                 },
@@ -14119,7 +14119,7 @@
                   "codigo_legacy": "",
                   "titulo": "Tubería frigorífica y drenaje.",
                   "unidad": "ud",
-                  "precio": 92.1,
+                  "precio": 98.41,
                   "horas": 3.0,
                   "producto_cliente": false
                 },
@@ -14128,7 +14128,7 @@
                   "codigo_legacy": "",
                   "titulo": "Carga de refrigerante.",
                   "unidad": "ud",
-                  "precio": 92.1,
+                  "precio": 98.41,
                   "horas": 3.0,
                   "producto_cliente": false
                 },
@@ -14137,7 +14137,7 @@
                   "codigo_legacy": "",
                   "titulo": "Instalación de termostato.",
                   "unidad": "ud",
-                  "precio": 92.1,
+                  "precio": 98.41,
                   "horas": 3.0,
                   "producto_cliente": false
                 },
@@ -14146,7 +14146,7 @@
                   "codigo_legacy": "",
                   "titulo": "Instalación de sistema de conductos.",
                   "unidad": "ud",
-                  "precio": 92.1,
+                  "precio": 98.41,
                   "horas": 3.0,
                   "producto_cliente": false
                 },
@@ -14155,7 +14155,7 @@
                   "codigo_legacy": "",
                   "titulo": "Instalación de rejilla de suministro.",
                   "unidad": "ud",
-                  "precio": 92.1,
+                  "precio": 98.41,
                   "horas": 3.0,
                   "producto_cliente": false
                 },
@@ -14164,7 +14164,7 @@
                   "codigo_legacy": "",
                   "titulo": "Instalación de rejilla de retorno.",
                   "unidad": "ud",
-                  "precio": 92.1,
+                  "precio": 98.41,
                   "horas": 3.0,
                   "producto_cliente": false
                 },
@@ -14173,7 +14173,7 @@
                   "codigo_legacy": "",
                   "titulo": "Instalación de equipo de precisión.",
                   "unidad": "ud",
-                  "precio": 92.1,
+                  "precio": 98.41,
                   "horas": 3.0,
                   "producto_cliente": false
                 },
@@ -14182,7 +14182,7 @@
                   "codigo_legacy": "",
                   "titulo": "Instalación de equipo de confort.",
                   "unidad": "ud",
-                  "precio": 92.1,
+                  "precio": 98.41,
                   "horas": 3.0,
                   "producto_cliente": false
                 },
@@ -14191,7 +14191,7 @@
                   "codigo_legacy": "",
                   "titulo": "Instalación de equipo para dormitorio.",
                   "unidad": "ud",
-                  "precio": 92.1,
+                  "precio": 98.41,
                   "horas": 3.0,
                   "producto_cliente": false
                 },
@@ -14200,7 +14200,7 @@
                   "codigo_legacy": "",
                   "titulo": "Instalación de equipo para sala.",
                   "unidad": "ud",
-                  "precio": 92.1,
+                  "precio": 98.41,
                   "horas": 3.0,
                   "producto_cliente": false
                 },
@@ -14209,7 +14209,7 @@
                   "codigo_legacy": "",
                   "titulo": "Instalación de equipo para oficina.",
                   "unidad": "ud",
-                  "precio": 92.1,
+                  "precio": 98.41,
                   "horas": 3.0,
                   "producto_cliente": false
                 },
@@ -14218,7 +14218,7 @@
                   "codigo_legacy": "",
                   "titulo": "Instalación de equipo para comercio.",
                   "unidad": "ud",
-                  "precio": 92.1,
+                  "precio": 98.41,
                   "horas": 3.0,
                   "producto_cliente": false
                 },
@@ -14227,7 +14227,7 @@
                   "codigo_legacy": "",
                   "titulo": "Instalación de equipo para restaurante.",
                   "unidad": "ud",
-                  "precio": 92.1,
+                  "precio": 98.41,
                   "horas": 3.0,
                   "producto_cliente": false
                 },
@@ -14236,7 +14236,7 @@
                   "codigo_legacy": "",
                   "titulo": "Instalación de equipo para local.",
                   "unidad": "ud",
-                  "precio": 92.1,
+                  "precio": 98.41,
                   "horas": 3.0,
                   "producto_cliente": false
                 },
@@ -14245,7 +14245,7 @@
                   "codigo_legacy": "",
                   "titulo": "Instalación de equipo para consultorio.",
                   "unidad": "ud",
-                  "precio": 92.1,
+                  "precio": 98.41,
                   "horas": 3.0,
                   "producto_cliente": false
                 },
@@ -14254,7 +14254,7 @@
                   "codigo_legacy": "",
                   "titulo": "Instalación de equipo para habitación.",
                   "unidad": "ud",
-                  "precio": 92.1,
+                  "precio": 98.41,
                   "horas": 3.0,
                   "producto_cliente": false
                 },
@@ -14263,7 +14263,7 @@
                   "codigo_legacy": "",
                   "titulo": "Instalación de equipo para estudio.",
                   "unidad": "ud",
-                  "precio": 92.1,
+                  "precio": 98.41,
                   "horas": 3.0,
                   "producto_cliente": false
                 },
@@ -14272,7 +14272,7 @@
                   "codigo_legacy": "",
                   "titulo": "Instalación de equipo para terraza.",
                   "unidad": "ud",
-                  "precio": 92.1,
+                  "precio": 98.41,
                   "horas": 3.0,
                   "producto_cliente": false
                 },
@@ -14281,7 +14281,7 @@
                   "codigo_legacy": "",
                   "titulo": "Instalación de equipo para garaje.",
                   "unidad": "ud",
-                  "precio": 92.1,
+                  "precio": 98.41,
                   "horas": 3.0,
                   "producto_cliente": false
                 },
@@ -14290,7 +14290,7 @@
                   "codigo_legacy": "",
                   "titulo": "Instalación de equipo para depósito.",
                   "unidad": "ud",
-                  "precio": 92.1,
+                  "precio": 98.41,
                   "horas": 3.0,
                   "producto_cliente": false
                 },
@@ -14299,7 +14299,7 @@
                   "codigo_legacy": "",
                   "titulo": "Instalación de equipo split de pared.",
                   "unidad": "ud",
-                  "precio": 92.1,
+                  "precio": 98.41,
                   "horas": 3.0,
                   "producto_cliente": false
                 },
@@ -14308,7 +14308,7 @@
                   "codigo_legacy": "",
                   "titulo": "Instalación de equipo de techo.",
                   "unidad": "ud",
-                  "precio": 92.1,
+                  "precio": 98.41,
                   "horas": 3.0,
                   "producto_cliente": false
                 },
@@ -14317,7 +14317,7 @@
                   "codigo_legacy": "",
                   "titulo": "Instalación de equipo de piso.",
                   "unidad": "ud",
-                  "precio": 92.1,
+                  "precio": 98.41,
                   "horas": 3.0,
                   "producto_cliente": false
                 }
@@ -17678,7 +17678,7 @@
                   "codigo_legacy": "",
                   "titulo": "Aislamiento de vibraciones en equipo.",
                   "unidad": "m2",
-                  "precio": 101.66,
+                  "precio": 43.89,
                   "horas": 0.85,
                   "producto_cliente": false
                 }
@@ -20129,7 +20129,7 @@
                   "codigo_legacy": "",
                   "titulo": "Revestimiento de espejo en pared.",
                   "unidad": "m2",
-                  "precio": 90.86,
+                  "precio": 54.63,
                   "horas": 0.65,
                   "producto_cliente": false
                 },
@@ -20183,7 +20183,7 @@
                   "codigo_legacy": "",
                   "titulo": "Revestimiento de vidrio decorativo lacado.",
                   "unidad": "m2",
-                  "precio": 113.83,
+                  "precio": 77.58,
                   "horas": 0.65,
                   "producto_cliente": false
                 },
