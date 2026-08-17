@@ -985,6 +985,11 @@ body.collapsed .theme-toggle-label,
 .cat-group { margin-bottom: 2px; }
 .subcat-list { display: none; margin: 3px 0 6px 18px; padding-left: 10px; border-left: 1.5px solid var(--border); flex-direction: column; gap: 1px; }
 .cat-group.expanded .subcat-list { display: flex; }
+/* Árbol del catálogo como <details>: contraído por defecto, se abre bajo demanda. */
+.cat-group > summary { list-style: none; }
+.cat-group > summary::-webkit-details-marker { display: none; }
+.cat-group[open] .subcat-list { display: flex; }
+.cat-group[open] .cat-arrow { transform: rotate(90deg); }
 .subcat-btn {
   display: flex; align-items: center; justify-content: space-between; gap: .4rem; width: 100%;
   padding: 5px 8px; border-radius: 7px; border: 1px solid transparent; background: transparent;

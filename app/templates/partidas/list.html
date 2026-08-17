@@ -90,53 +90,36 @@
         </form>
         <span class="hint">Para crear una subcategoría, elige/escribe primero su categoría.</span>
       </details>
-      <button class="category-btn active" data-cat="todas" id="btn-cat-todas" data-cotizat-click="partidas-filter-category">
+      <a class="category-btn {% if not categoria_actual %}active{% endif %}" id="btn-cat-todas" href="/partidas{% if vista == 'ocultas' %}?vista=ocultas{% endif %}">
         <span class="cat-btn-left"><span>📂</span><span class="cat-name">Todas</span></span>
         <span class="cat-count">{{ total_partidas }}</span>
-      </button>
+      </a>
 
-      {% for cat, cat_partidas in partidas | groupby('categoria') %}
-      {% set sub_groups = cat_partidas|groupby('subcategoria') %}
-      {% set sub_count = sub_groups|length %}
-      {% set has_subs = (sub_groups|length > 1) or (sub_groups|length==1 and (sub_groups[0][0]|string).strip() != "" ) %}
-      <div class="cat-group {% if has_subs %}has-subs{% endif %}" data-cat="{{ cat }}">
-        <button class="category-btn {% if not has_subs %}no-subs{% endif %} drop-category" data-cat="{{ cat }}" data-cotizat-click="partidas-filter-category" id="btn-cat-{{ cat|replace(' ', '_') }}">
+      {% for cap in arbol_categorias %}
+      <details class="cat-group has-subs" data-cat="{{ cap.categoria }}" {% if categoria_actual == cap.categoria %}open{% endif %}>
+        <summary class="category-btn drop-category" data-cat="{{ cap.categoria }}" title="{{ cap.categoria }}">
           <span class="cat-btn-left">
-            {% if has_subs %}<span class="cat-arrow">▸</span>{% else %}<span class="csp-s-9188d8120f"></span>{% endif %}
+            <span class="cat-arrow">▸</span>
             <span>🏷️</span>
-            <span class="cat-name" title="{{ cat }}">{{ cat }}</span>
+            <span class="cat-name">{{ cap.categoria }}</span>
           </span>
-          <span class="cat-count">{{ cat_partidas | length }}</span>
-        </button>
-        {% if has_subs %}
-        <div class="subcat-list" id="subcat-list-{{ cat|replace(' ', '_') }}">
-          {% for subcat, sub_partidas in sub_groups|sort(attribute='grouper') %}
-          {% set label = subcat if (subcat|string).strip() != "" else "Sin subcategoría" %}
-          {% set sid = (cat ~ '::' ~ (subcat if (subcat|string).strip() != "" else '__none__')) %}
-          <button class="subcat-btn drop-subcategory" data-cat="{{ cat }}" data-subcat="{{ subcat }}" title="{{ label }} · {{ sub_partidas|length }} partidas" data-cotizat-click="partidas-filter-subcategory">
-            <span class="subcat-name">{{ label }}</span>
-            <span class="subcat-count">{{ sub_partidas|length }}</span>
-          </button>
+          <span class="cat-count">{{ cap.total }}</span>
+        </summary>
+        <div class="subcat-list">
+          <a class="subcat-btn {% if categoria_actual == cap.categoria and not subcategoria_actual %}active{% endif %}" href="/partidas?categoria={{ cap.categoria|urlencode }}{% if vista == 'ocultas' %}&vista=ocultas{% endif %}" title="Ver todas las partidas de {{ cap.categoria }}">
+            <span class="subcat-name">Todas ({{ cap.total }})</span>
+          </a>
+          {% for sub in cap.subcapitulos %}
+          <a class="subcat-btn drop-subcategory {% if subcategoria_actual == sub.subcategoria %}active{% endif %}" href="/partidas?categoria={{ cap.categoria|urlencode }}&subcategoria={{ sub.subcategoria|urlencode }}{% if vista == 'ocultas' %}&vista=ocultas{% endif %}" title="{{ sub.subcategoria }} · {{ sub.total }} partidas">
+            <span class="subcat-name">{{ sub.subcategoria }}</span>
+            <span class="subcat-count">{{ sub.total }}</span>
+          </a>
           {% endfor %}
         </div>
-        {% endif %}
-      </div>
-      {% endfor %}
-
-      {% for registro in categorias_catalogo if registro.categoria not in (partidas|map(attribute='categoria')|list) and not registro.subcategoria %}
-      <div class="cat-group" data-cat="{{ registro.categoria }}">
-        <button class="category-btn drop-category" data-cat="{{ registro.categoria }}" data-cotizat-click="partidas-filter-category">
-          <span class="cat-btn-left"><span>🏷️</span><span class="cat-name">{{ registro.categoria }}</span></span><span class="cat-count">0</span>
-        </button>
-      </div>
-      {% endfor %}
-      {% for registro in categorias_catalogo if registro.subcategoria %}
-      <button class="subcat-btn drop-subcategory saved-subcategory" data-cat="{{ registro.categoria }}" data-subcat="{{ registro.subcategoria }}" title="Subcategoría creada; arrastra aquí partidas de {{ registro.categoria }}">
-        <span class="subcat-name">↳ {{ registro.categoria }} · {{ registro.subcategoria }}</span><span class="subcat-count">Nueva</span>
-      </button>
+      </details>
       {% endfor %}
       <div class="sidebar-help">
-        <span class="hint">💡 Clic en categoría para filtrar. Clic en ▸ para ver subcategorías. Combina con el buscador.</span>
+        <span class="hint">💡 Clic en un capítulo para ver sus subcapítulos. Clic en un subcapítulo para filtrar. Combina con el buscador.</span>
       </div>
     </div>
   </aside>
@@ -150,7 +133,7 @@
   <div class="catalog-main" id="catalogMain">
     {% for cat, cat_partidas in partidas | groupby('categoria') %}
     {% set sub_groups = cat_partidas|groupby('subcategoria') %}
-    <section class="cat-section collapsed" data-categoria="{{ cat }}" id="group-{{ cat|replace(' ', '_') }}">
+    <section class="cat-section {% if not categoria_actual %}collapsed{% endif %}" data-categoria="{{ cat }}" id="group-{{ cat|replace(' ', '_') }}">
       <header class="cat-section-head drop-category" data-cotizat-click="partidas-toggle-section">
         <button class="cat-toggle" aria-label="Contraer">▼</button>
         <div class="cat-title-wrap">
@@ -387,10 +370,14 @@
     {% endfor %}
 
     {% if total_paginas > 1 %}
+    {% set qs_filtro = '' %}
+    {% if categoria_actual %}{% set qs_filtro = qs_filtro ~ '&categoria=' ~ categoria_actual|urlencode %}{% endif %}
+    {% if subcategoria_actual %}{% set qs_filtro = qs_filtro ~ '&subcategoria=' ~ subcategoria_actual|urlencode %}{% endif %}
+    {% if q %}{% set qs_filtro = qs_filtro ~ '&q=' ~ q|urlencode %}{% endif %}
     <nav class="catalog-pagination" aria-label="Páginas del catálogo">
-      {% if pagina > 1 %}<a class="btn btn-sm" href="/partidas?pagina={{ pagina - 1 }}{% if vista == 'ocultas' %}&vista=ocultas{% endif %}{% if q %}&q={{ q|urlencode }}{% endif %}">← Anterior</a>{% endif %}
+      {% if pagina > 1 %}<a class="btn btn-sm" href="/partidas?pagina={{ pagina - 1 }}{% if vista == 'ocultas' %}&vista=ocultas{% endif %}{{ qs_filtro }}">← Anterior</a>{% endif %}
       <span>Página <strong>{{ pagina }}</strong> de {{ total_paginas }} · {{ total_partidas }} partidas</span>
-      {% if pagina < total_paginas %}<a class="btn btn-sm" href="/partidas?pagina={{ pagina + 1 }}{% if vista == 'ocultas' %}&vista=ocultas{% endif %}{% if q %}&q={{ q|urlencode }}{% endif %}">Siguiente →</a>{% endif %}
+      {% if pagina < total_paginas %}<a class="btn btn-sm" href="/partidas?pagina={{ pagina + 1 }}{% if vista == 'ocultas' %}&vista=ocultas{% endif %}{{ qs_filtro }}">Siguiente →</a>{% endif %}
     </nav>
     {% endif %}
 

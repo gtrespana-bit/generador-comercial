@@ -1,6 +1,7 @@
 """Catálogo de partidas."""  # E4-001 — router por dominio
 
 from fastapi import APIRouter
+from sqlalchemy import func
 
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
 
@@ -104,16 +105,26 @@ def listar_partidas(
     q: str = "",
     pagina: int = 1,
     vista: str = "activas",
+    categoria: str = "",
+    subcategoria: str = "",
     db: Session = Depends(get_db),
 ):
     # La tabla de gestión se pagina; el editor usa un índice compacto aparte.
     from ..services.catalogo_propio import asegurar_catalogo_propio
     asegurar_catalogo_propio(db)
     vista = "ocultas" if vista == "ocultas" else "activas"
+    categoria = str(categoria or "").strip()
+    subcategoria = str(subcategoria or "").strip()
+    if subcategoria and not categoria:
+        categoria = ""
     total_ocultas = db.query(Partida).filter(Partida.oculta.is_(True)).count()
     query = db.query(Partida).filter(
         Partida.oculta.is_(vista == "ocultas")
     )
+    if categoria:
+        query = query.filter(Partida.categoria == categoria)
+        if subcategoria:
+            query = query.filter(Partida.subcategoria == subcategoria)
     if q.strip():
         query, _ = _aplicar_busqueda_catalogo(query, q.strip()[:120])
     total_partidas = query.count()
@@ -135,15 +146,62 @@ def listar_partidas(
             catalogo_descompuestos[partida.id] = valor.get("filas", []) if isinstance(valor, dict) else valor
         except (TypeError, ValueError):
             catalogo_descompuestos[partida.id] = []
-    categorias_catalogo = db.query(CategoriaPartida).filter(or_(
-        CategoriaPartida.oficial.is_(False),
-        CategoriaPartida.oficial.is_(None),
-    )).order_by(CategoriaPartida.categoria, CategoriaPartida.subcategoria).all()
+
+    # Barra lateral: árbol oficial completo (capítulo → subcapítulo) con el
+    # total de partidas por nodo, independiente de la paginación y del filtro
+    # activo. La barra es la navegación del catálogo, no un resumen de la
+    # página cargada: así se ven siempre los 18 capítulos, contraídos.
+    nodos_oficiales = (
+        db.query(CategoriaPartida)
+        .filter(CategoriaPartida.oficial.is_(True), CategoriaPartida.activa.is_(True))
+        .all()
+    )
+    capitulos = sorted(
+        (n for n in nodos_oficiales if n.nivel == 1),
+        key=lambda n: n.codigo_completo,
+    )
+    hijos_por_padre: dict[int, list[CategoriaPartida]] = {}
+    for nodo in nodos_oficiales:
+        if nodo.nivel == 2 and nodo.parent_id is not None:
+            hijos_por_padre.setdefault(nodo.parent_id, []).append(nodo)
+    ocultas_filtro = vista == "ocultas"
+    conteo_capitulos = dict(
+        db.query(Partida.categoria, func.count(Partida.id))
+        .filter(Partida.oculta.is_(ocultas_filtro))
+        .group_by(Partida.categoria)
+        .all()
+    )
+    conteo_subcapitulos = dict(
+        db.query(Partida.subcategoria, func.count(Partida.id))
+        .filter(Partida.oculta.is_(ocultas_filtro))
+        .group_by(Partida.subcategoria)
+        .all()
+    )
+    arbol_categorias = []
+    for capitulo in capitulos:
+        subcapitulos = sorted(
+            hijos_por_padre.get(capitulo.id, []),
+            key=lambda n: n.codigo_completo,
+        )
+        arbol_categorias.append({
+            "categoria": capitulo.categoria,
+            "total": int(conteo_capitulos.get(capitulo.categoria, 0)),
+            "subcapitulos": [
+                {
+                    "subcategoria": sub.subcategoria,
+                    "nombre": sub.nombre,
+                    "total": int(conteo_subcapitulos.get(sub.subcategoria, 0)),
+                }
+                for sub in subcapitulos
+            ],
+        })
     return TEMPLATES.TemplateResponse(request, "partidas/list.html", {
         "partidas": partidas,
         "q": q,
         "catalogo_descompuestos": catalogo_descompuestos,
-        "categorias_catalogo": categorias_catalogo,
+        "arbol_categorias": arbol_categorias,
+        "categoria_actual": categoria,
+        "subcategoria_actual": subcategoria,
         "total_partidas": total_partidas,
         "pagina": pagina,
         "total_paginas": total_paginas,
