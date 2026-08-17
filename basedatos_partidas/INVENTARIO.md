@@ -117,6 +117,7 @@ datos/descompuestos/*.json ─┘                  ├─► datos/partidas.csv
 - Los nombres denormalizados se conservan por compatibilidad y exportación.
 - `codigo_legacy` conserva el código v1; el usuario ve el código numérico v2.
 - `version_catalogo=2` evita reaplicar la migración.
+- El esquema `f8a1b2c3d4e5` fue ejecutado en Supabase el 16/08/2026.
 - La actualización conserva ids y precios locales, no revive partidas borradas
   y no modifica partidas creadas por una organización.
 - El árbol del presupuestador muestra tres ramas, busca por toda la ruta y

@@ -2,6 +2,12 @@
 
 Fecha de corte de fondo: 14/08/2026 (America/Caracas).
 
+> **Actualización 16/08/2026 — taxonomía numérica v2:** el titular confirmó la
+> ejecución en Supabase de `docs/staging_upgrade_f8a1b2c3d4e5.sql`. El head de
+> la base y el exigido por el runtime es ahora `f8a1b2c3d4e5`. Al desplegar el
+> commit `3fde078`, `/readyz` debe responder 200. La nota siguiente se conserva
+> como histórico del bloque anterior.
+
 > **Actualización de rama 16/08/2026 (cierre de bloque con PR del titular):**
 > el bloque de cierre operativo (E3-016 a E3-024) y el primer bloque de la
 > Etapa 4 (autorización centralizada y logs estructurados) están completos en
