@@ -1,6 +1,6 @@
 # Punto exacto de continuación
 
-Fecha de corte: **16/08/2026, cierre de bloque con PR del titular (Etapa 3 cerrada; Etapa 4 iniciada)** (America/Caracas).
+Fecha de corte: **16/08/2026, cierre de catálogo extenso con PR #31 abierto** (America/Caracas).
 
 Este documento retoma el trabajo sin depender del historial del chat. Describe
 **dónde quedó exactamente** el trabajo y **qué sigue**, en ese orden. Léelo
@@ -31,6 +31,12 @@ titular**. Head actual esperado por el runtime: **`d6e2f9c4b8a1`**.
 Validación de cierre: **483 tests superados y 6 omitidos**, 63 plantillas,
 compilación Python, JavaScript, lock de 42 dependencias, auditoría de datos
 sensibles, terminología venezolana y benchmark de 5.000 partidas.
+
+**PR #31 abierto hacia `main`:**
+https://github.com/gtrespana-bit/generador-comercial/pull/31
+
+Al crear el PR, CI y Vercel quedaron en ejecución. Comprobar su resultado antes
+de fusionar con `gh pr checks 31`.
 
 Documentos principales:
 
