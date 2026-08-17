@@ -82,7 +82,7 @@
           <tr draggable="true" class="producto-tr" data-id="{{ p.id }}" data-nombre="{{ (p.nombre ~ ' ' ~ p.descripcion ~ ' ' ~ p.categoria ~ ' ' ~ p.marca ~ ' ' ~ p.modelo ~ ' ' ~ p.sku ~ ' ' ~ p.proveedor ~ ' ' ~ p.color ~ ' ' ~ p.acabado) | lower }}">
             <td><input type="checkbox" class="row-check" data-id="{{ p.id }}" data-cotizat-change="productos-row-check"> <td>
               {% if p.imagen %}
-              <img src="{{ p.imagen | archivo_url }}" alt="{{ p.nombre }}" class="csp-s-55a1a17655">
+              <img src="{{ p.imagen | archivo_url }}" alt="{{ p.nombre }}" loading="lazy" decoding="async" class="csp-s-55a1a17655">
               {% else %}
               <span class="csp-s-8bcf1c6072">🛍️</span>
               {% endif %}

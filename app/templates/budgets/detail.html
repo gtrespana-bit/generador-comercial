@@ -185,7 +185,7 @@
           {% if specs %}<div class="csp-s-1b5784f27a">{{ specs }}</div>{% endif %}
           {% if op_imagen %}
           <div class="csp-s-97673d5a5a">
-            <img src="{{ op_imagen | archivo_url }}" alt="{{ op_nombre }}" class="csp-s-5f3c4a8792">
+            <img src="{{ op_imagen | archivo_url }}" alt="{{ op_nombre }}" loading="lazy" decoding="async" class="csp-s-5f3c4a8792">
           </div>
           {% endif %}
         </div>
@@ -197,7 +197,7 @@
       <strong>Producto presupuestado:</strong>
       {% if part.producto_precio is not none %}<strong>{{ part.producto_precio | num }} {{ p.moneda | replace('USD','$') }} / {{ part.producto_unidad or part.unidad }}</strong>&nbsp;&nbsp;{% endif %}
       <em class="muted">{{ part.producto_nombre }}</em>
-      {% if part.producto_imagen %}<br><img src="{{ part.producto_imagen | archivo_url }}" alt="Producto">{% endif %}
+      {% if part.producto_imagen %}<br><img src="{{ part.producto_imagen | archivo_url }}" alt="Producto" loading="lazy" decoding="async">{% endif %}
     </div>
     {% endif %}
     {% endif %}

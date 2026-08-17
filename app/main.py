@@ -36,6 +36,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import or_
 from sqlalchemy.orm import Session
+from starlette.middleware.gzip import GZipMiddleware
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
 from .branding import LEGAL_ENTITY, PRODUCT_NAME, SUPPORT_EMAIL, VALUE_PROPOSITION
@@ -372,6 +373,10 @@ app.add_middleware(WebSecurityMiddleware, enforce_csrf=not DATABASE_IS_SQLITE)
 # Añadido el último para quedar en la capa exterior: así ve cualquier
 # excepción no manejada de las rutas y del resto de middlewares (E3-024).
 app.add_middleware(RegistroErroresMiddleware)
+# Compresión gzip de HTML/CSS/JS/JSON: la página de partidas (~5 MB sin
+# comprimir) viaja a una fracción de su tamaño y la carga se percibe mucho
+# más rápida. Queda en la capa más exterior para envolver el resto.
+app.add_middleware(GZipMiddleware, minimum_size=500)
 
 
 def _respuesta_auth_json(request: Request) -> bool:
@@ -499,6 +504,26 @@ async def _licencia_suspendida(request: Request, exc: LicenciaSuspendidaError):
 def _bloquear_upload_estatico_legado(_legacy_path: str) -> Response:
     return Response(status_code=404)
 
+
+class _StaticFilesConCaché(StaticFiles):
+    """Sirve /static con cabeceras de caché correctas.
+
+    Los navegadores revalidan (``max-age=0, must-revalidate``, con ETag que ya
+    añade StaticFiles) para no servir nunca una hoja o script desactualizado
+    tras un despliegue. La CDN compartida (Vercel) puede cachear hasta un año
+    (``s-maxage``) y responder desde el borde con ``stale-while-revalidate``,
+    evitando que cada recurso dispare una invocación serverless en frío.
+    """
+
+    async def get_response(self, path: str, scope: Scope):
+        response = await super().get_response(path, scope)
+        response.headers["Cache-Control"] = (
+            "public, max-age=0, must-revalidate, "
+            "s-maxage=31536000, stale-while-revalidate=604800"
+        )
+        return response
+
+
 if DATABASE_IS_SQLITE:
     try:
         UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
@@ -518,7 +543,7 @@ else:
     app.get("/static/uploads/{_legacy_path:path}", include_in_schema=False)(
         _bloquear_upload_estatico_legado
     )
-app.mount("/static", StaticFiles(directory=str(BASE_DIR / "app" / "static")), name="static")
+app.mount("/static", _StaticFilesConCaché(directory=str(BASE_DIR / "app" / "static")), name="static")
 
 
 @app.get("/favicon.ico", include_in_schema=False)
