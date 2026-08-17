@@ -705,7 +705,11 @@
         },
         "07": {
           "nombre": "Trasdosados y forros interiores",
-          "apartados": {}
+          "apartados": {
+            "01": "Trasdosados autoportantes de placa de yeso laminado",
+            "02": "Trasdosados directos y forros adheridos",
+            "03": "Forros de placa de cemento y protección"
+          }
         },
         "08": {
           "nombre": "Cielos rasos continuos",

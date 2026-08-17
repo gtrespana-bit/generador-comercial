@@ -1946,6 +1946,24 @@
       "descripcion": "Teclado o pulsador de escenas para activación directa de ambientes preconfigurados.",
       "precio": 35.0,
       "estado": "provisional"
+    },
+    "MT-PYL-PLACA-HD": {
+      "unidad": "m2",
+      "descripcion": "Placa de yeso laminado de alta dureza, de 12,5 mm, para paramentos interiores sometidos a impacto y zonas de tránsito.",
+      "precio": 9.8,
+      "estado": "provisional"
+    },
+    "MT-PYL-PLACA-IG": {
+      "unidad": "m2",
+      "descripcion": "Placa de yeso laminado resistente al fuego (tipo F), de 15 mm, para protección de instalaciones y estructura.",
+      "precio": 10.5,
+      "estado": "provisional"
+    },
+    "MT-PYL-PASTA-AGARRE": {
+      "unidad": "kg",
+      "descripcion": "Pasta de agarre de base yeso para fijación de placa de yeso laminado directamente al paramento en trasdosado directo.",
+      "precio": 0.4,
+      "estado": "provisional"
     }
   },
   "maquinaria": {

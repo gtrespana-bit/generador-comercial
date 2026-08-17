@@ -1,0 +1,52 @@
+{
+  "codigo": "12.07.03.030",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "07",
+  "unidad": "m2",
+  "titulo": "Forro ignífugo de placa de yeso para protección de instalaciones.",
+  "descripcion": "Suministro y montaje de forro ignífugo de placa de yeso laminado resistente al fuego de 15 mm, sobre estructura metálica, para protección de instalaciones, conductos o estructura. Incluye la estructura, el atornillado de la placa, el tratamiento de juntas y el sellado de los pasos de instalaciones. Medido por metro cuadrado de forro terminado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PYL-MONT",
+      "rendimiento": 2.2
+    },
+    {
+      "ref": "MT-PYL-CANAL",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MT-PYL-BANDA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-PYL-PLACA-IG",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-PYL-PASTA",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MT-TORN",
+      "rendimiento": 12.0
+    },
+    {
+      "ref": "MQ-ATORN",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.36
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.15
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "03"
+}

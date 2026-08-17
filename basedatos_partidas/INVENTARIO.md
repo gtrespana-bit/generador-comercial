@@ -7,18 +7,18 @@ numérica v2 aprobada para reforma y remodelación en Venezuela.
 
 | | |
 |---|---:|
-| Partidas | **571** |
-| Hojas de descompuesto `.xlsx` | 571 |
+| Partidas | **586** |
+| Hojas de descompuesto `.xlsx` | 586 |
 | Partidas con producto de elección del cliente | 69 |
-| Recursos en el cuadro de precios | **336** |
-| — mano de obra / materiales / maquinaria | 17 / 275 / 44 |
-| — confirmados / verificados con el mercado / provisionales | 17 / 113 / 202 |
+| Recursos en el cuadro de precios | **339** |
+| — mano de obra / materiales / maquinaria | 17 / 278 / 44 |
+| — confirmados / verificados con el mercado / provisionales | 17 / 113 / 205 |
 | **Peso económico con precio cerrado** | **79,6 %** del coste directo |
 | — confirmado (mano de obra) | 20,2 % |
 | — verificado con el mercado venezolano | 59,4 % |
 | — provisional | 20,4 % (de los cuales 6,3 % es alquiler de equipos) |
 | Coste directo del catálogo | 15.745,67 USD |
-| Clasificación v2 | **18 capítulos · 172 subcapítulos · 155 apartados con partidas** |
+| Clasificación v2 | **18 capítulos · 172 subcapítulos · 158 apartados con partidas** |
 | — capítulos con partidas / preparados para ampliación | **15 / 3** |
 | Código visible | `CC.SS.AA.NNN` |
 | Moneda | USD (Venezuela) |
@@ -85,14 +85,14 @@ numérica v2 aprobada para reforma y remodelación en Venezuela.
 | 09 | Instalaciones | 17 | 31 | 89 |
 | 10 | Aislamientos e impermeabilizaciones | 9 | 4 | 16 |
 | 11 | Techos y cubiertas | 9 | 5 | 18 |
-| 12 | Revestimientos y acabados | 14 | 24 | 104 |
+| 12 | Revestimientos y acabados | 14 | 27 | 119 |
 | 13 | Equipamiento, mobiliario y señalización | 9 | 7 | 21 |
 | 14 | Obras exteriores y urbanismo | 11 | 10 | 19 |
 | 15 | Gestión de residuos y limpieza | 7 | 6 | 8 |
 | 16 | Control de calidad y ensayos | 8 | 0 | 0 |
 | 17 | Seguridad y salud en obra | 8 | 7 | 11 |
 | 18 | Rehabilitación energética | 9 | 0 | 0 |
-| | **TOTAL** | **172** | **155** | **571** |
+| | **TOTAL** | **172** | **158** | **586** |
 
 Los capítulos 08, 16 y 18 están deliberadamente preparados para la primera
 ampliación. No se inventaron partidas de relleno solo para que aparezcan llenos.
@@ -150,8 +150,9 @@ siguiente paso es producir las familias pendientes. Prioridades:
 **Progreso 17/08/2026:**
 - `09.13 Protección contra rayos y sobretensiones` (13 partidas).
 - `09.12 Domótica y automatización` (18 partidas; objetivo mínimo alcanzado).
-Siguen sin cobertura `09.16 Transporte vertical` y `09.17 Reparación, pruebas y
-puesta en marcha`.
+- `12.07 Trasdosados y forros interiores` (15 partidas; objetivo mínimo alcanzado).
+Siguen sin cobertura en `12` `12.14 Tratamientos de protección y restauración`;
+las críticas son pintura (12.10/12.11/12.12) y recubrimientos (12.13).
 
-Siguen pendientes 158 precios de material provisionales. Los 44 precios de
+Siguen pendientes 161 precios de material provisionales. Los 44 precios de
 alquiler de equipos permanecen fuera de alcance por decisión del cliente.

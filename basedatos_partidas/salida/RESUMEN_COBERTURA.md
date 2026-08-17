@@ -1,9 +1,9 @@
 # Resumen de cobertura del catálogo
 
-- Partidas actuales: **571**
-- Objetivo mínimo: **3000** (brecha 2429)
-- Objetivo amplio: **5000** (brecha 4429)
-- Subcapítulos sin cobertura: **62**
+- Partidas actuales: **586**
+- Objetivo mínimo: **3000** (brecha 2414)
+- Objetivo amplio: **5000** (brecha 4414)
+- Subcapítulos sin cobertura: **61**
 - Subcapítulos en estado crítico: **65**
 - Diccionario de sinónimos: **146 grupos · 661 términos · 18 capítulos**
 
@@ -22,7 +22,7 @@
 | 09 | Instalaciones | 89 | 540 | 860 | 451 |
 | 10 | Aislamientos e impermeabilizaciones | 16 | 150 | 260 | 134 |
 | 11 | Techos y cubiertas | 18 | 130 | 220 | 112 |
-| 12 | Revestimientos y acabados | 104 | 400 | 610 | 296 |
+| 12 | Revestimientos y acabados | 119 | 400 | 610 | 281 |
 | 13 | Equipamiento, mobiliario y señalización | 21 | 140 | 240 | 119 |
 | 14 | Obras exteriores y urbanismo | 19 | 160 | 280 | 141 |
 | 15 | Gestión de residuos y limpieza | 8 | 50 | 90 | 42 |
@@ -36,11 +36,10 @@
 |---|---|---|---:|---:|---:|
 | 09.16 | Transporte vertical y accesibilidad mecánica | sin_cobertura | 0 | 17 | 17 |
 | 09.17 | Reparación, pruebas y puesta en marcha | sin_cobertura | 0 | 17 | 17 |
-| 12.07 | Trasdosados y forros interiores | sin_cobertura | 0 | 15 | 15 |
-| 12.14 | Tratamientos de protección y restauración de acabados | sin_cobertura | 0 | 15 | 15 |
 | 08.07 | Forrados, cajones y tapajuntas | sin_cobertura | 0 | 14 | 14 |
 | 08.08 | Perfiles decorativos, molduras y remates especiales | sin_cobertura | 0 | 14 | 14 |
 | 08.09 | Sellado cortafuego de pasos de instalaciones | sin_cobertura | 0 | 14 | 14 |
+| 12.14 | Tratamientos de protección y restauración de acabados | sin_cobertura | 0 | 14 | 14 |
 | 08.01 | Ayudas de albañilería para instalaciones | sin_cobertura | 0 | 13 | 13 |
 | 08.02 | Rozas, perforaciones y pasos | sin_cobertura | 0 | 13 | 13 |
 | 08.03 | Recibido de marcos, equipos y pequeños elementos | sin_cobertura | 0 | 13 | 13 |
@@ -64,3 +63,4 @@
 | 07.09 | Herrajes, cerraduras y automatismos | sin_cobertura | 0 | 11 | 11 |
 | 07.10 | Ajustes, reparación y restauración | sin_cobertura | 0 | 11 | 11 |
 | 10.02 | Aislamiento acústico y control de vibraciones | sin_cobertura | 0 | 11 | 11 |
+| 18.01 | Diagnóstico y evaluación energética | sin_cobertura | 0 | 11 | 11 |
