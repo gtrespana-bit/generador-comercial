@@ -103,8 +103,8 @@ CONFIG_PROCESO = frozenset({
     "onboarding_completado", "onboarding_modo", "onboarding_iniciado_at",
     "onboarding_completado_at", "onboarding_catalogo_revisado",
     "onboarding_pdf_descargado", "primer_pdf_at",
-    "semilla_catalogo_aplicada", "semilla_productos_aplicada",
-    "semilla_recetas_aplicada",
+    "semilla_catalogo_aplicada", "version_catalogo",
+    "semilla_productos_aplicada", "semilla_recetas_aplicada",
 })
 
 _OMITIDO = {
@@ -150,7 +150,11 @@ class TablaRespaldo:
 
 # Orden de exportación y restauración: los padres van antes que los hijos.
 TABLAS_RESPALDO: tuple[TablaRespaldo, ...] = (
-    TablaRespaldo(CategoriaPartida, "categorias_partidas.json", ("categoria", "subcategoria")),
+    TablaRespaldo(
+        CategoriaPartida,
+        "categorias_partidas.json",
+        ("codigo_completo", "categoria", "subcategoria", "nombre"),
+    ),
     TablaRespaldo(Partida, "partidas.json", ("nombre",)),
     TablaRespaldo(Producto, "productos.json", ("nombre",)),
     TablaRespaldo(Recurso, "recursos.json", ("codigo", "descripcion")),

@@ -43,6 +43,8 @@ MAX_COLUMNAS_CYPE = 50
 UNIDADES_COMUNES = {"ud", "m2", "m", "ml", "m3", "juego", "hora", "glb", "kg"}
 
 CAMPOS_IMPORTABLES = (
+    "codigo",
+    "codigo_legacy",
     "capitulo",
     "partida",
     "descripcion",
@@ -50,10 +52,14 @@ CAMPOS_IMPORTABLES = (
     "cantidad",
     "precio",
     "categoria",
+    "subcategoria",
+    "apartado",
     "tipo_partida",
 )
 
 ETIQUETAS_CAMPOS = {
+    "codigo": "Código",
+    "codigo_legacy": "Código anterior",
     "capitulo": "Capítulo",
     "partida": "Partida",
     "descripcion": "Descripción",
@@ -61,11 +67,15 @@ ETIQUETAS_CAMPOS = {
     "cantidad": "Cantidad",
     "precio": "Precio unitario",
     "categoria": "Categoría",
+    "subcategoria": "Subcategoría",
+    "apartado": "Apartado",
     "tipo_partida": "Tipo de partida",
 }
 
 # Los sinónimos se normalizan sin tildes, espacios ni puntuación.
 ALIAS_CAMPOS = {
+    "codigo": {"codigo", "codigopartida", "code"},
+    "codigo_legacy": {"codigoanterior", "codigolegado", "codigolegacy", "legacycode"},
     "capitulo": {"capitulo", "cap", "chapter", "grupo", "seccion"},
     "partida": {"partida", "nombre", "item", "concepto", "trabajo", "descripcioncorta"},
     "descripcion": {"descripcion", "detalle", "descripciontecnica", "observaciones"},
@@ -73,6 +83,8 @@ ALIAS_CAMPOS = {
     "cantidad": {"cantidad", "cant", "qty", "cantidadtotal"},
     "precio": {"precio", "preciounitario", "punitario", "valorunitario", "unitprice", "preciousd"},
     "categoria": {"categoria", "category", "familia"},
+    "subcategoria": {"subcategoria", "subcapitulo", "subcategory"},
+    "apartado": {"apartado", "tercernivel", "seccioncatalogo"},
     "tipo_partida": {"tipo", "tipopartida", "tipoitem", "itemtype"},
 }
 
@@ -434,7 +446,7 @@ def _clasificar_filas_cype(
 def _etiqueta_previa(filas: list[dict], hasta_fila: int, prefijos: tuple[str, ...]) -> str:
     """Lee una etiqueta «Clave: valor» escrita encima de la cabecera de partida.
 
-    Permite que un descompuesto declare a qué capítulo y subcapítulo pertenece
+    Permite que un descompuesto declare capítulo, subcapítulo y apartado
     sin alterar el formato de la tabla. Los descompuestos que no la traigan
     (como los de CYPE) simplemente devuelven cadena vacía.
     """
@@ -531,6 +543,7 @@ def analizar_cype_xlsx(contenido: bytes) -> dict:
                 "descripcion": descripcion_larga,
                 "capitulo": _etiqueta_previa(filas, cabecera["fila"], ("capitulo",)),
                 "subcapitulo": _etiqueta_previa(filas, cabecera["fila"], ("subcapitulo", "subcategoria")),
+                "apartado": _etiqueta_previa(filas, cabecera["fila"], ("apartado",)),
                 "fila_cabecera": cabecera["fila"],
                 "fila_encabezados": fila_encabezados,
                 "columnas": columnas,
@@ -812,6 +825,8 @@ def validar_filas(
         if tipo_texto and normalizar(tipo_texto) not in TIPOS_PARTIDA:
             advertencias.append(_advertencia(numero_fila, f"Tipo «{tipo_texto}» no reconocido; se importará como incluida."))
         item = {
+            "codigo": _celda(fila, mapeo, "codigo"),
+            "codigo_legacy": _celda(fila, mapeo, "codigo_legacy"),
             "capitulo": capitulo.strip().upper(),
             "nombre": nombre,
             "descripcion": _celda(fila, mapeo, "descripcion"),
@@ -819,6 +834,8 @@ def validar_filas(
             "cantidad": cantidad,
             "precio": precio,
             "categoria": _celda(fila, mapeo, "categoria") or "General",
+            "subcategoria": _celda(fila, mapeo, "subcategoria"),
+            "apartado": _celda(fila, mapeo, "apartado"),
             "tipo_partida": tipo,
         }
         clave = (normalizar(item["capitulo"]), normalizar(nombre), normalizar(unidad), cantidad, precio)

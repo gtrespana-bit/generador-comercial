@@ -3,10 +3,10 @@
 
    El buscador de la barra de herramientas devuelve una lista plana. Con un
    catálogo de 540 partidas eso deja de servir: hace falta poder recorrer
-   «Capítulo 07 → Frisos y enlucidos → los seis frisos que hay» sin recordar
-   el nombre exacto.
+   «12 Revestimientos → 12.02 Frisos → 12.02.01 Mortero» sin recordar el
+   nombre exacto.
 
-   Este panel dibuja capítulo → subcapítulo → partida a partir de los datos
+   Este panel dibuja capítulo → subcapítulo → apartado → partida a partir de los datos
    que ya viajan en la página (window.EDITOR.CATALOGO), así que no añade
    ninguna petición al servidor.
 
@@ -27,8 +27,9 @@
   var cuerpo = panel.querySelector(".arbol-body");
   var inputBuscar = document.getElementById("arbol-buscar");
   var contador = document.getElementById("arbol-contador");
-  var SIN_CAPITULO = "Sin capítulo";
-  var SIN_SUBCAPITULO = "General";
+  var SIN_CAPITULO = "99 Partidas personalizadas";
+  var SIN_SUBCAPITULO = "99.01 General";
+  var SIN_APARTADO = "99.01.01 Trabajos diversos";
   var arrastrando = null;
 
   // ---------------------------------------------------------------------
@@ -50,7 +51,7 @@
   function textoBusqueda(p) {
     return sinTildes([
       p.nombre, p.descripcion, p.codigo_interno, p.codigo_externo,
-      p.categoria, p.subcategoria, p.unidad
+      p.codigo_legacy, p.categoria, p.subcategoria, p.apartado, p.unidad
     ].join(" "));
   }
 
@@ -66,6 +67,7 @@
     catalogo.forEach(function (p, idx) {
       var nombreCap = String(p.categoria || "").trim() || SIN_CAPITULO;
       var nombreSub = String(p.subcategoria || "").trim() || SIN_SUBCAPITULO;
+      var nombreApartado = String(p.apartado || "").trim() || SIN_APARTADO;
 
       var cap = indiceCap[nombreCap];
       if (!cap) {
@@ -75,11 +77,23 @@
       }
       var sub = cap.indiceSub[nombreSub];
       if (!sub) {
-        sub = { nombre: nombreSub, hojas: [] };
+        sub = {
+          nombre: nombreSub,
+          apartados: [],
+          indiceApartado: Object.create(null),
+          total: 0
+        };
         cap.indiceSub[nombreSub] = sub;
         cap.subs.push(sub);
       }
-      sub.hojas.push({ idx: idx, dato: p, buscable: textoBusqueda(p) });
+      var apartado = sub.indiceApartado[nombreApartado];
+      if (!apartado) {
+        apartado = { nombre: nombreApartado, hojas: [] };
+        sub.indiceApartado[nombreApartado] = apartado;
+        sub.apartados.push(apartado);
+      }
+      apartado.hojas.push({ idx: idx, dato: p, buscable: textoBusqueda(p) });
+      sub.total += 1;
       cap.total += 1;
     });
 
@@ -89,11 +103,14 @@
     capitulos.forEach(function (cap) {
       cap.subs.sort(function (a, b) { return colador.compare(a.nombre, b.nombre); });
       cap.subs.forEach(function (sub) {
-        sub.hojas.sort(function (a, b) {
-          return colador.compare(
-            a.dato.codigo_externo || a.dato.nombre,
-            b.dato.codigo_externo || b.dato.nombre
-          );
+        sub.apartados.sort(function (a, b) { return colador.compare(a.nombre, b.nombre); });
+        sub.apartados.forEach(function (apartado) {
+          apartado.hojas.sort(function (a, b) {
+            return colador.compare(
+              a.dato.codigo_interno || a.dato.codigo_externo || a.dato.nombre,
+              b.dato.codigo_interno || b.dato.codigo_externo || b.dato.nombre
+            );
+          });
         });
       });
     });
@@ -158,11 +175,11 @@
       "arbol-preview-precio",
       num(d.precio).toFixed(2) + " $ / " + (d.unidad || "ud")
     ));
-    if (d.categoria || d.subcategoria) {
+    if (d.categoria || d.subcategoria || d.apartado) {
       el.appendChild(nodoPreview(
         "div",
         "arbol-preview-ruta",
-        [d.categoria, d.subcategoria].filter(Boolean).join(" · ")
+        [d.categoria, d.subcategoria, d.apartado].filter(Boolean).join(" › ")
       ));
     }
     if (d.descripcion) {
@@ -298,12 +315,29 @@
         var bloqueSub = document.createElement("div");
         bloqueSub.className = "arbol-subcapitulo";
 
-        var cabSub = crearRama(sub.nombre, sub.hojas.length, "arbol-sub-head");
+        var cabSub = crearRama(sub.nombre, sub.total, "arbol-sub-head");
         var cuerpoSub = document.createElement("div");
         cuerpoSub.className = "arbol-sub-body";
         cuerpoSub.hidden = true;
 
-        sub.hojas.forEach(function (hoja) { cuerpoSub.appendChild(crearHoja(hoja)); });
+        sub.apartados.forEach(function (apartado) {
+          var bloqueApartado = document.createElement("div");
+          bloqueApartado.className = "arbol-apartado";
+          var cabApartado = crearRama(
+            apartado.nombre,
+            apartado.hojas.length,
+            "arbol-apartado-head"
+          );
+          var cuerpoApartado = document.createElement("div");
+          cuerpoApartado.className = "arbol-apartado-body";
+          cuerpoApartado.hidden = true;
+          apartado.hojas.forEach(function (hoja) {
+            cuerpoApartado.appendChild(crearHoja(hoja));
+          });
+          bloqueApartado.appendChild(cabApartado);
+          bloqueApartado.appendChild(cuerpoApartado);
+          cuerpoSub.appendChild(bloqueApartado);
+        });
 
         bloqueSub.appendChild(cabSub);
         bloqueSub.appendChild(cuerpoSub);
@@ -340,10 +374,24 @@
 
       bloqueCap.querySelectorAll(".arbol-subcapitulo").forEach(function (bloqueSub) {
         var vistasSub = 0;
-        bloqueSub.querySelectorAll(".arbol-hoja").forEach(function (hoja) {
-          var casa = !aguja || hoja.dataset.buscable.indexOf(aguja) !== -1;
-          hoja.hidden = !casa;
-          if (casa) vistasSub += 1;
+        bloqueSub.querySelectorAll(".arbol-apartado").forEach(function (bloqueApartado) {
+          var vistasApartado = 0;
+          bloqueApartado.querySelectorAll(".arbol-hoja").forEach(function (hoja) {
+            var casa = !aguja || hoja.dataset.buscable.indexOf(aguja) !== -1;
+            hoja.hidden = !casa;
+            if (casa) vistasApartado += 1;
+          });
+          bloqueApartado.hidden = vistasApartado === 0;
+          var cabApartado = bloqueApartado.querySelector(".arbol-apartado-head");
+          var cuerpoApartado = bloqueApartado.querySelector(".arbol-apartado-body");
+          if (cabApartado) {
+            cabApartado.querySelector(".arbol-cuenta").textContent = String(vistasApartado);
+            var abrirApartado = Boolean(aguja) && vistasApartado > 0;
+            cuerpoApartado.hidden = !abrirApartado;
+            cabApartado.classList.toggle("abierto", abrirApartado);
+            cabApartado.setAttribute("aria-expanded", abrirApartado ? "true" : "false");
+          }
+          vistasSub += vistasApartado;
         });
         bloqueSub.hidden = vistasSub === 0;
         var cabSub = bloqueSub.querySelector(".arbol-sub-head");
@@ -497,7 +545,7 @@
   function aplicarEstadoPlegado(plegado) {
     panel.classList.toggle("plegado", plegado);
     // El contenedor grid debe soltar la columna: si no, el panel se pliega
-    // pero sigue ocupando 280–320 px y no se gana espacio de trabajo.
+    // pero sigue ocupando 280–360 px y no se gana espacio de trabajo.
     var layout = panel.closest(".builder-con-arbol");
     if (layout) layout.classList.toggle("arbol-plegado", plegado);
     try {

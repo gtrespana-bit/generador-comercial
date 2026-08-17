@@ -1,0 +1,44 @@
+{
+  "codigo": "12.05.07.040",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "05",
+  "unidad": "m²",
+  "titulo": "Piso epóxico autonivelante.",
+  "descripcion": "Piso continuo de resina epóxica autonivelante, con imprimación y capa de acabado, para áreas industriales, cocinas, laboratorios y estacionamientos. Ofrece una superficie sin juntas, impermeable y resistente a productos químicos. Exige un soporte con humedad por debajo del límite del fabricante: aplicado sobre concreto húmedo, la presión de vapor despega la resina en escamas. Incluye el granallado o lijado del soporte para abrir el poro, la medición de humedad, la imprimación, el sellado de fisuras y juntas, la aplicación de la capa autonivelante con desaireado por rodillo de púas y el respeto de los tiempos de curado antes de la puesta en servicio. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-EPOXI-PISO",
+      "rendimiento": 2.4
+    },
+    {
+      "ref": "MT-PUENTE-ADH",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MQ-LIJAD",
+      "rendimiento": 0.22
+    },
+    {
+      "ref": "MQ-ASPIR",
+      "rendimiento": 0.13
+    },
+    {
+      "ref": "MO-OF1-PISO",
+      "rendimiento": 0.52
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.3
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-08-06-040",
+  "apartado": "07"
+}

@@ -34,7 +34,7 @@
 
   {% if resultados.partidas %}
   <section class="card search-group"><div class="search-group-head"><h2>📋 Partidas</h2><span class="badge">{{ resultados.partidas | length }}</span></div>
-    {% for partida in resultados.partidas %}<a class="search-result" href="/partidas/{{ partida.id }}/editar"><strong>{{ partida.nombre }}</strong><small>{% if partida.codigo_interno %}{{ partida.codigo_interno }} · {% endif %}{{ partida.categoria }}{% if partida.subcategoria %} · {{ partida.subcategoria }}{% endif %} · {{ partida.precio_unitario | money }}</small></a>{% endfor %}
+    {% for partida in resultados.partidas %}<a class="search-result" href="/partidas/{{ partida.id }}/editar"><strong>{{ partida.nombre }}</strong><small>{% if partida.codigo_interno %}{{ partida.codigo_interno }} · {% endif %}{{ partida.categoria }}{% if partida.subcategoria %} › {{ partida.subcategoria }}{% endif %}{% if partida.apartado %} › {{ partida.apartado }}{% endif %} · {{ partida.precio_unitario | money }}</small></a>{% endfor %}
   </section>{% endif %}
 
   {% if resultados.productos %}

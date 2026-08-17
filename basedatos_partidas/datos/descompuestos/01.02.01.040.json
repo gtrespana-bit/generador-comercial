@@ -1,0 +1,24 @@
+{
+  "codigo": "01.02.01.040",
+  "ambito": "reforma",
+  "capitulo": "01",
+  "subcapitulo": "02",
+  "unidad": "m²",
+  "titulo": "Levantamiento de medidas del inmueble existente.",
+  "descripcion": "Levantamiento en sitio de las medidas del inmueble existente, con toma de dimensiones de ambientes, alturas libres, vanos, y posición de instalaciones y elementos estructurales visibles, para elaborar el plano de estado actual sobre el que se proyecta la reforma. Incluye la medición con distanciómetro y cinta, la comprobación de escuadras y desplomes, el croquis acotado en sitio, el registro fotográfico de cada ambiente y la anotación de patologías aparentes. Medido en superficie de inmueble realmente levantada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MQ-NIVEL-LASER",
+      "rendimiento": 0.04
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.07
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-01-04-050",
+  "apartado": "01"
+}

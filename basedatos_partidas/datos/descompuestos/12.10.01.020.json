@@ -1,0 +1,42 @@
+{
+  "codigo": "12.10.01.020",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "10",
+  "unidad": "m²",
+  "titulo": "Pintura de caucho satinada lavable en interior, dos manos.",
+  "descripcion": "Aplicación de dos manos de pintura de caucho satinada lavable sobre paramento interior preparado. El acabado satinado resiste la limpieza mucho mejor que el mate, lo que lo hace preferible en cocinas, baños, pasillos y áreas infantiles, aunque marca más las irregularidades del soporte, por lo que exige una preparación más cuidada. Incluye la protección del entorno, el recorte de cantos y encuentros a brocha, la aplicación con rodillo en manos cruzadas, el lijado suave intermedio y los repasos finales. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "producto_cliente": {
+    "tipo": "Pintura satinada en el color elegido por el cliente",
+    "unidad": "l",
+    "consumo": 0.3,
+    "nota": "Consumo de 0,30 l/m² para las dos manos. En colores intensos puede requerir una tercera mano."
+  },
+  "recursos": [
+    {
+      "ref": "MT-PIN-CAUCHO",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MT-PIN-LIJA",
+      "rendimiento": 0.14
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.16
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.19
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.095
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-16-02-020",
+  "apartado": "01"
+}

@@ -1,0 +1,49 @@
+{
+  "codigo": "02.02.01.010",
+  "ambito": "reforma",
+  "capitulo": "02",
+  "subcapitulo": "02",
+  "unidad": "kg",
+  "titulo": "Desmontaje de estructura metálica.",
+  "descripcion": "Desmontaje de estructura metálica de acero, formada por perfiles laminados o armados, ejecutado mediante oxicorte y desatornillado según el tipo de unión, con apeo previo de los elementos que permanecen. Incluye el estudio del orden de desmontaje para mantener la estabilidad del conjunto en todo momento, el eslingado y sostenimiento de las piezas antes de liberarlas, el corte en tramos transportables, el descenso a nivel de acopio y la clasificación del acero para su venta o gestión como chatarra, cuyo valor de recuperación puede descontarse al cliente. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en peso realmente desmontado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-OXI-CONS",
+      "rendimiento": 0.012
+    },
+    {
+      "ref": "MT-APEO",
+      "rendimiento": 0.004
+    },
+    {
+      "ref": "MQ-OXICORTE",
+      "rendimiento": 0.014
+    },
+    {
+      "ref": "MQ-MONTAC",
+      "rendimiento": 0.006
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.01
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.016
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.014
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.012
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_anterior": "DEA010",
+  "codigo_legacy": "CT-02-15-010",
+  "apartado": "01"
+}

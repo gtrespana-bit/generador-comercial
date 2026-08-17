@@ -1,0 +1,36 @@
+{
+  "codigo": "10.01.01.010",
+  "ambito": "reforma",
+  "capitulo": "10",
+  "subcapitulo": "01",
+  "unidad": "m²",
+  "titulo": "Aislamiento térmico en cubierta.",
+  "descripcion": "Colocación de panel de aislamiento térmico sobre la cubierta, bajo la protección o la impermeabilización según el sistema. En clima tropical el aislamiento de cubierta es la medida con mayor impacto sobre el confort y sobre el consumo de aire acondicionado, muy por encima del aislamiento de fachada, porque la cubierta es la superficie que recibe la radiación solar directa durante todo el día. Incluye la nivelación del soporte, la colocación de los paneles a junta contrapeada y encajados sin holguras, ya que cualquier junta abierta es un puente térmico, y su fijación o lastrado. Medido en superficie realmente ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-AISL-TERM",
+      "rendimiento": 1.06
+    },
+    {
+      "ref": "MT-CINTA-ENM",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MQ-MONTAC",
+      "rendimiento": 0.04
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.13
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.13
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-10-04-010",
+  "apartado": "01"
+}

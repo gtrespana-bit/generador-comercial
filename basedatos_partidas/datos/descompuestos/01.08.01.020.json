@@ -1,0 +1,36 @@
+{
+  "codigo": "01.08.01.020",
+  "ambito": "reforma",
+  "capitulo": "01",
+  "subcapitulo": "08",
+  "unidad": "ud",
+  "titulo": "Punto de agua provisional de obra.",
+  "descripcion": "Instalación de punto de agua provisional para el amasado de morteros, la limpieza y el consumo de la obra, formado por derivación desde la red existente con llave de paso, manguera reforzada hasta el frente de trabajo y punto de descarga con recogida. Incluye la comprobación de la presión disponible, el montaje de la llave y los accesorios, el tendido de la manguera por recorridos protegidos del tránsito, la previsión de la evacuación del agua utilizada para no inundar zonas terminadas, el mantenimiento durante la obra y el desmontaje final con reposición del punto de toma. Medido por punto realmente instalado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-LLAVE-PROV",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-MANGUERA",
+      "rendimiento": 22.0
+    },
+    {
+      "ref": "MT-CLAVOS",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-OF1-PLO",
+      "rendimiento": 1.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.7
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-01-05-020",
+  "apartado": "01"
+}

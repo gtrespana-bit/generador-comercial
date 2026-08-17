@@ -1,0 +1,32 @@
+{
+  "codigo": "03.02.01.010",
+  "ambito": "reforma",
+  "capitulo": "03",
+  "subcapitulo": "02",
+  "unidad": "m³",
+  "titulo": "Excavación mecanizada a cielo abierto.",
+  "descripcion": "Excavación mecanizada a cielo abierto para vaciado general, rebaje de cota o formación de plataforma, mediante retroexcavadora o minicargadora, en terreno de consistencia media. Incluye el replanteo y marcado de la cota final, la excavación por tongadas, el acopio del material en obra o su carga directa sobre camión, el refine manual de los bordes y taludes, y el control topográfico de la cota alcanzada. No incluye el transporte del material sobrante a botadero, que se valora en el subcapítulo de transporte de tierras. Medido en volumen teórico de excavación según las cotas de proyecto.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MQ-RETRO",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MQ-NIVEL-LASER",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.18
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-03-02-040",
+  "apartado": "01"
+}

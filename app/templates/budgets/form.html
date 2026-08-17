@@ -287,7 +287,7 @@
         <div id="catalogo-partidas">
           {% if partidas_catalogo %}
             {% for p in partidas_catalogo %}
-            <div class="partida-catalogo" data-nombre="{{ (p.nombre ~ ' ' ~ p.descripcion ~ ' ' ~ p.codigo_interno ~ ' ' ~ p.subcategoria ~ ' ' ~ p.proveedor)|lower }}" data-categoria="{{ p.categoria|lower }}" data-idx="{{ loop.index0 }}">
+            <div class="partida-catalogo" data-nombre="{{ (p.nombre ~ ' ' ~ p.descripcion ~ ' ' ~ p.codigo_interno ~ ' ' ~ p.codigo_legacy ~ ' ' ~ p.subcategoria ~ ' ' ~ p.apartado ~ ' ' ~ p.proveedor)|lower }}" data-categoria="{{ p.categoria|lower }}" data-idx="{{ loop.index0 }}">
               <button type="button" class="btn btn-sm csp-s-8bbfe4a61f" data-cotizat-click="budget-add-catalog" data-index="{{ loop.index0 }}">
                 <strong>{{ p.nombre }}</strong> <span class="csp-s-4198d64579">({{ p.unidad }})</span>
               </button>
@@ -851,6 +851,9 @@
     "unidad": {{ p.unidad | tojson }},
     "categoria": {{ p.categoria | tojson }},
     "subcategoria": {{ p.subcategoria | tojson }},
+    "apartado": {{ p.apartado | tojson }},
+    "codigo_clasificacion": {{ p.codigo_clasificacion | tojson }},
+    "codigo_legacy": {{ p.codigo_legacy | tojson }},
     "codigo": {{ p.codigo_interno | tojson }},
     "codigo_interno": {{ p.codigo_interno | tojson }},
     "codigo_externo": {{ p.codigo_externo | tojson }},

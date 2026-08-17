@@ -1,0 +1,54 @@
+{
+  "codigo": "07.01.01.020",
+  "ambito": "reforma",
+  "capitulo": "07",
+  "subcapitulo": "01",
+  "unidad": "ud",
+  "titulo": "Instalación de puerta corrediza interior.",
+  "descripcion": "Instalación de puerta corrediza interior, vista sobre el paramento o embutida en tabique, con su riel, carros y guías. Incluye la comprobación del refuerzo del paramento donde se ancla el riel, que debe soportar el peso de la hoja en voladizo, el montaje y nivelación del riel, el colgado de la hoja con sus carros, la colocación de la guía inferior, el ajuste del recorrido y de los topes, y la comprobación de que la hoja desliza sin rozar en todo el recorrido. La puerta la elige el cliente y se presupuesta aparte. Medido por unidad instalada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "producto_cliente": {
+    "tipo": "Hoja de puerta corrediza del modelo elegido por el cliente",
+    "unidad": "ud",
+    "consumo": 1.0,
+    "nota": "La partida cubre riel, herrajes e instalación."
+  },
+  "recursos": [
+    {
+      "ref": "MT-RIEL-CORRED",
+      "rendimiento": 2.2
+    },
+    {
+      "ref": "MT-HERRAJE-PUERTA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-MADERA-LISTON",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MT-TORN",
+      "rendimiento": 16.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.32
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.13
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 2.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 1.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-15-01-020",
+  "apartado": "01"
+}

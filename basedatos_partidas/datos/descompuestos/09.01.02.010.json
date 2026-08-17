@@ -1,0 +1,48 @@
+{
+  "codigo": "09.01.02.010",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "01",
+  "unidad": "ud",
+  "titulo": "Punto de agua fría y caliente para aparato sanitario.",
+  "descripcion": "Ejecución de punto de agua para aparato sanitario, formado por las derivaciones de agua fría y caliente en tubería de PPR de 20 mm desde el montante más próximo hasta la salida del aparato, con una longitud media de 2,5 m por punto. Incluye replanteo de la altura y separación normalizadas de las tomas, apertura de roza, montaje de la tubería con uniones por termofusión, codos de salida con refuerzo metálico anclados al paramento, prueba de estanqueidad a presión de la derivación, taponado provisional hasta la instalación del aparato y tapado de roza con mortero de reparación. No incluye la grifería ni el aparato. Medido por punto terminado y probado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PLO-PPR20",
+      "rendimiento": 5.2
+    },
+    {
+      "ref": "MT-PLO-ACC20",
+      "rendimiento": 6.5
+    },
+    {
+      "ref": "MT-PLO-SOP",
+      "rendimiento": 3.0
+    },
+    {
+      "ref": "MT-YESO-REP",
+      "rendimiento": 7.0
+    },
+    {
+      "ref": "MQ-ROZAD",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MQ-TERMOF",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MO-OF1-PLO",
+      "rendimiento": 1.1
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.8
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-12-02-010",
+  "apartado": "02"
+}

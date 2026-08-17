@@ -1,0 +1,36 @@
+{
+  "codigo": "06.04.01.060",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "04",
+  "unidad": "ud",
+  "titulo": "Refuerzo interior para anclaje de cargas en tabique de yeso laminado.",
+  "descripcion": "Colocación de refuerzo interior de madera o perfil metálico entre montantes del tabique de yeso laminado, en la posición prevista para colgar mobiliario, televisores, lavamanos suspendidos, barras de apoyo o cualquier carga puntual. Debe replantearse y montarse antes de cerrar el tabique: resolverlo después obliga a abrir la placa. Incluye el replanteo de la altura y posición exactas según el elemento a soportar, el corte y fijación del refuerzo a los montantes, y el registro de su posición en el plano para poder localizarlo una vez cerrado y acabado el tabique. Medido por refuerzo realmente colocado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-REFUERZO-PYL",
+      "rendimiento": 0.8
+    },
+    {
+      "ref": "MT-TORN",
+      "rendimiento": 8.0
+    },
+    {
+      "ref": "MQ-ATORN",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.22
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.11
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-06-03-060",
+  "apartado": "01"
+}

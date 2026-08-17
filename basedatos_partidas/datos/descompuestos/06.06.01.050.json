@@ -1,0 +1,40 @@
+{
+  "codigo": "06.06.01.050",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "06",
+  "unidad": "m",
+  "titulo": "Remate y sellado del encuentro de pared con estructura.",
+  "descripcion": "Tratamiento del encuentro entre la pared de mampostería o tabiquería y los elementos estructurales de concreto, mediante malla de refuerzo de junta y sellado elástico donde el proyecto prevea movimiento diferencial. La junta entre dos materiales de distinto comportamiento es donde aparece la fisura casi con seguridad si se frisa por encima sin tratarla, y es uno de los defectos por los que más se reclama tras la entrega. Incluye la limpieza y apertura de la junta, la colocación de la malla o banda de refuerzo solapada a ambos lados, la aplicación del sellador elástico donde corresponda y el repaso previo al friso. Medido en longitud de encuentro realmente tratada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MALLA-JUNTA",
+      "rendimiento": 1.1
+    },
+    {
+      "ref": "MT-SELLA-ELAST",
+      "rendimiento": 0.14
+    },
+    {
+      "ref": "MT-MOR-FRISO",
+      "rendimiento": 0.0025
+    },
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.12
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-06-05-050",
+  "apartado": "01"
+}

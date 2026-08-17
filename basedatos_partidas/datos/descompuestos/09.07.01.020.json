@@ -1,0 +1,44 @@
+{
+  "codigo": "09.07.01.020",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "07",
+  "unidad": "m",
+  "titulo": "Tubería frigorífica y drenaje para climatización.",
+  "descripcion": "Tendido de la interconexión entre unidades de climatización, con par de tuberías frigoríficas de cobre aisladas, cable de interconexión y tubería de drenaje, por canalización o bandeja. Incluye el replanteo del recorrido buscando la menor longitud y el menor número de curvas, ya que cada metro y cada codo penalizan el rendimiento del equipo, el doblado sin estrangular la sección, el aislamiento continuo de ambas líneas incluidos los codos porque cualquier tramo desnudo condensa y gotea, la fijación con abrazaderas y el drenaje con pendiente continua hacia el punto de vertido. Medido en longitud realmente instalada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-TUB-FRIGO",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-PLO-SOP",
+      "rendimiento": 2.2
+    },
+    {
+      "ref": "MT-YESO-REP",
+      "rendimiento": 1.6
+    },
+    {
+      "ref": "MQ-DOBLAD-TUBO",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MQ-ROZAD",
+      "rendimiento": 0.13
+    },
+    {
+      "ref": "MO-OF1-AC",
+      "rendimiento": 0.32
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.22
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-14-01-020",
+  "apartado": "01"
+}

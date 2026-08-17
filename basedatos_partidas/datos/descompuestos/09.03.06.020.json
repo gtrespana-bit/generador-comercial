@@ -1,0 +1,48 @@
+{
+  "codigo": "09.03.06.020",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "03",
+  "unidad": "ud",
+  "titulo": "Reubicación de punto eléctrico existente.",
+  "descripcion": "Reubicación de un punto eléctrico existente, con el traslado de la caja y del mecanismo a la nueva posición y el anulado del punto anterior. Es de las intervenciones más frecuentes en reforma al cambiar la distribución del mobiliario. Incluye el corte y verificación de ausencia de tensión, la apertura de la nueva roza y caja, el desvío del conductor con caja de derivación registrable, ya que un empalme enterrado sin registro es una falla futura imposible de localizar, el montaje del mecanismo en la nueva posición, el tapado y resane de la caja anulada y la prueba. Medido por punto reubicado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ELE-TUB20",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MT-ELE-CABLE",
+      "rendimiento": 8.0
+    },
+    {
+      "ref": "MT-ELE-CAJA",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MT-ELE-MECA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-YESO-REP",
+      "rendimiento": 6.0
+    },
+    {
+      "ref": "MQ-ROZAD",
+      "rendimiento": 0.28
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 0.9
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.55
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-13-02-030",
+  "apartado": "06"
+}

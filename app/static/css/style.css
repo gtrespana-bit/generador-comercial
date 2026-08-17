@@ -1096,6 +1096,19 @@ body.collapsed .theme-toggle-label,
 .partida-sub .desc { font-size: .76rem; color: var(--text-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; max-width: 320px; }
 .partida-sub .desc.empty { color: var(--text-muted); font-style: italic; }
 .partida-sub .prov { font-size: .72rem; color: var(--text-muted); white-space: nowrap; }
+.apartado-mini {
+  flex: 0 0 auto;
+  max-width: 15rem;
+  padding: .08rem .35rem;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: .66rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .has-img { font-size: .75rem; }
 .und-badge { background: var(--bg); border: 1px solid var(--border); padding: 2px 6px; border-radius: 999px; font-size: .72rem; font-weight: 700; color: var(--text-secondary); }
 .coste-val { color: var(--text-soft); font-variant-numeric: tabular-nums; }
@@ -3479,13 +3492,13 @@ body.beneficio-on .partida-row {
    Barra lateral del catálogo en árbol (editor de presupuestos)
 
    Con 540 partidas la lista plana del buscador deja de servir. Este panel
-   permite recorrer capítulo → subcapítulo → partida y arrastrar al capítulo
+   permite recorrer capítulo → subcapítulo → apartado → partida y arrastrar al capítulo
    que se quiera del presupuesto.
    ========================================================================== */
 
 .builder-con-arbol {
   display: grid;
-  grid-template-columns: minmax(240px, 320px) minmax(0, 1fr);
+  grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
   gap: 1rem;
   align-items: start;
   transition: grid-template-columns var(--dur-slow) var(--ease-out);
@@ -3620,8 +3633,15 @@ body.beneficio-on .partida-row {
 }
 .arbol-cap-head { font-size: .82rem; font-weight: 600; }
 .arbol-sub-head { font-size: .78rem; color: var(--text-secondary); }
-.arbol-cap-body { padding-left: .55rem; border-left: 1px solid var(--border); margin-left: .55rem; }
-.arbol-sub-body { padding-left: .55rem; border-left: 1px solid var(--border); margin-left: .55rem; }
+.arbol-apartado-head { font-size: .74rem; color: var(--text-muted); }
+.arbol-cap-body,
+.arbol-sub-body,
+.arbol-apartado-body {
+  padding-left: .48rem;
+  border-left: 1px solid var(--border);
+  margin-left: .48rem;
+}
+.arbol-apartado-head .arbol-cuenta { background: transparent; }
 
 .arbol-hoja {
   display: flex;

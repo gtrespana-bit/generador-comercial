@@ -1,0 +1,36 @@
+{
+  "codigo": "03.04.01.050",
+  "ambito": "reforma",
+  "capitulo": "03",
+  "subcapitulo": "04",
+  "unidad": "m²",
+  "titulo": "Nivelación y compactación de terreno.",
+  "descripcion": "Nivelación y compactación de la superficie del terreno tras el desbroce o el relleno, hasta dejarla a la cota y con la pendiente de proyecto y con la densidad necesaria para recibir la capa siguiente. Incluye el repaso de la superficie con retirada de los puntos altos y aporte en los bajos, la humectación hasta la humedad óptima, la compactación con plancha vibratoria en pasadas cruzadas y la comprobación de cotas y pendientes con nivel láser. Medido en superficie realmente nivelada y compactada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-AGUA-OBRA",
+      "rendimiento": 0.025
+    },
+    {
+      "ref": "MQ-PLANCHA-COMP",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MQ-NIVEL-LASER",
+      "rendimiento": 0.015
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.07
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.1
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-03-03-050",
+  "apartado": "01"
+}

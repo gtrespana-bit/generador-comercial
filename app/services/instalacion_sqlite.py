@@ -490,16 +490,44 @@ def importar_instalacion(db, contenido: bytes, sha256_esperado: str = "") -> dic
 
     # --- Catálogos reutilizables -------------------------------------------
     categorias_existentes = {
-        (c.categoria, c.subcategoria or "")
+        (
+            c.codigo_completo or "",
+            c.categoria,
+            c.subcategoria or "",
+            c.nombre or "",
+        ): c
         for c in db.query(CategoriaPartida).all()
     }
-    for fila in datos["categorias_partidas"]:
-        clave = (str(fila.get("categoria", "")).strip(), str(fila.get("subcategoria") or "").strip())
-        if not clave[0] or clave in categorias_existentes:
+    mapa_categorias: dict[int, int] = {}
+    # Padres antes que hijos para poder reconstruir la FK autorreferente.
+    filas_categorias = sorted(
+        datos["categorias_partidas"],
+        key=lambda f: (int(f.get("nivel") or 1), str(f.get("codigo_completo") or "")),
+    )
+    for fila in filas_categorias:
+        clave = (
+            str(fila.get("codigo_completo") or "").strip(),
+            str(fila.get("categoria", "")).strip(),
+            str(fila.get("subcategoria") or "").strip(),
+            str(fila.get("nombre") or "").strip(),
+        )
+        if not clave[1]:
             omitidos["categorias"] += 1
             continue
-        db.add(CategoriaPartida(**_kwargs_modelo(CategoriaPartida, fila)))
-        categorias_existentes.add(clave)
+        existente = categorias_existentes.get(clave)
+        if existente is not None:
+            mapa_categorias[int(fila.get("id") or 0)] = existente.id
+            omitidos["categorias"] += 1
+            continue
+        kwargs = _kwargs_modelo(CategoriaPartida, fila, ("parent_id",))
+        parent_origen = int(fila.get("parent_id") or 0)
+        if parent_origen:
+            kwargs["parent_id"] = mapa_categorias.get(parent_origen)
+        nodo = CategoriaPartida(**kwargs)
+        db.add(nodo)
+        db.flush()
+        mapa_categorias[int(fila.get("id") or 0)] = nodo.id
+        categorias_existentes[clave] = nodo
         importados["categorias"] += 1
 
     claves_recursos = {r.clave for r in db.query(Recurso).all()}
@@ -525,7 +553,10 @@ def importar_instalacion(db, contenido: bytes, sha256_esperado: str = "") -> dic
             mapa_partidas[fila["id"]] = existente.id
             omitidos["partidas_catalogo"] += 1
             continue
-        kwargs = _kwargs_modelo(Partida, fila)
+        kwargs = _kwargs_modelo(Partida, fila, ("categoria_id",))
+        categoria_origen = int(fila.get("categoria_id") or 0)
+        if categoria_origen:
+            kwargs["categoria_id"] = mapa_categorias.get(categoria_origen)
         archivos_omitidos += _limpiar_archivos(kwargs, ("imagen",))
         partida = Partida(**kwargs)
         db.add(partida)

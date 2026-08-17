@@ -1,0 +1,32 @@
+{
+  "codigo": "17.07.01.020",
+  "ambito": "reforma",
+  "capitulo": "17",
+  "subcapitulo": "07",
+  "unidad": "ud",
+  "titulo": "Botiquín de primeros auxilios de obra.",
+  "descripcion": "Suministro y colocación del botiquín de primeros auxilios de obra, dotado y con reposición durante la ejecución. Incluye la colocación en punto visible, accesible y conocido por todo el personal, la revisión periódica del contenido y de las fechas de caducidad, la reposición de lo consumido y la señalización de su ubicación junto con los teléfonos de emergencia. Medido por botiquín instalado y mantenido.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-BOTIQUIN",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-SENAL-OBRA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.35
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-20-04-020",
+  "apartado": "01"
+}

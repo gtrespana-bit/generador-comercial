@@ -1,0 +1,40 @@
+{
+  "codigo": "06.09.01.010",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "09",
+  "unidad": "m²",
+  "titulo": "Limpieza de fachada con hidrolavado.",
+  "descripcion": "Limpieza de fachada mediante hidrolavado a presión regulada según el tipo de soporte, con retirada de polvo, hollín y depósitos superficiales. La presión debe ajustarse al material: la que limpia un concreto sano descarna un friso envejecido o abre la junta de un ladrillo visto, de modo que se ensaya siempre en una zona poco visible antes de atacar el paño. Incluye la protección de carpinterías, mecanismos y del paso a pie de fachada, el acordonamiento, el lavado por paños de arriba hacia abajo, el enjuague y la recogida del agua de escorrentía. Medido en superficie realmente ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-LIMP",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MT-PROT-OBRA",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MQ-HIDROLAV",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.13
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.13
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-06-09-010",
+  "apartado": "01"
+}

@@ -1,0 +1,48 @@
+{
+  "codigo": "02.10.03.060",
+  "ambito": "reforma",
+  "capitulo": "02",
+  "subcapitulo": "10",
+  "unidad": "m²",
+  "titulo": "Picado de friso en techo o cara inferior de losa.",
+  "descripcion": "Picado de friso de mortero o de pasta en el techo o en la cara inferior de la losa, ejecutado con medios manuales y martillo eléctrico trabajando por encima de la cabeza. La posición de trabajo reduce mucho el rendimiento frente al mismo picado en pared, y el material cae directamente sobre el operario y sobre el piso, lo que obliga a protección facial y a cubrir el ambiente completo. Incluye la protección integral del ambiente, el sondeo por golpeo, el picado por sectores, el control de polvo, el retiro del escombro y la limpieza. No incluye el bote del escombro. Medido en superficie realmente ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-SAC-ESC",
+      "rendimiento": 0.65
+    },
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.14
+    },
+    {
+      "ref": "MT-PROT-OBRA",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MQ-MART-ELEC",
+      "rendimiento": 0.24
+    },
+    {
+      "ref": "MQ-ASPIR",
+      "rendimiento": 0.17
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.31
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.33
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-02-03-060",
+  "apartado": "03"
+}

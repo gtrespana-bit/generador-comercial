@@ -3,7 +3,7 @@
 > Documento de traspaso. Si abres una ventana de chat nueva, lee esto primero
 > y no vuelvas a levantar lo que ya está decidido.
 >
-> Última actualización: 16/08/2026, justo antes del pull request.
+> Última actualización: 16/08/2026, tras implantar la taxonomía numérica v2.
 
 ---
 
@@ -21,12 +21,12 @@ presupuestos.
 | | |
 |---|---:|
 | Partidas | **540** |
-| Capítulos · subcapítulos | 20 · 121 (todos con contenido) |
+| Capítulos · subcapítulos · apartados con partidas | **18 · 172 · 147** |
 | Recursos en el cuadro de precios | 311 |
 | Coste directo del catálogo | 15.733,15 USD |
 | **Peso económico con precio cerrado** | **79,6 %** |
 | Validación con el importador real | **0 errores · 0 advertencias** |
-| Tests del proyecto | **391 pasando** |
+| Tests del proyecto | **474 pasando · 6 omitidos** |
 
 Desglose del cuadro de precios:
 
@@ -47,7 +47,8 @@ Desglose del cuadro de precios:
    vaciado en sitio. Está vigilado por `terminologia.py auditar`.
 2. **CYPE no se toca.** Es un producto comercial vivo. Se rechazó extraerla por
    el derecho *sui generis* (art. 133 TRLPI) y por riesgo de competencia
-   desleal si se copiara su codificación. Codificación propia `CT-CC-SS-NNN`.
+   desleal si se copiara su codificación. Codificación propia visible
+   `CC.SS.AA.NNN`; el antiguo `CT-CC-SS-NNN` solo queda como alias histórico.
 3. **Mano de obra: no se baja.** Oficial 5,50 USD/h, ayudante especializado
    4,00, ayudante 3,50. Es una decisión de negocio del cliente: paga por encima
    del mercado por principio. Con esas tarifas al trabajador le llega el 16,5 %
@@ -76,9 +77,10 @@ basedatos_partidas/
 ├── USO_EN_LA_APLICACION.md      carga masiva, propagación de precios, barra lateral
 ├── datos/
 │   ├── recursos.json            FUENTE ÚNICA DE PRECIOS
-│   ├── clasificacion.json       20 capítulos · 121 subcapítulos
+│   ├── clasificacion.json       18 capítulos · 172 subcapítulos · 147 apartados
 │   ├── glosario.json            vocabulario venezolano
 │   ├── contraste_mercado_2026-08.json   evidencia de precios con fuente
+│   ├── mapa_migracion_v2.json   540 equivalencias de código v1 → v2
 │   └── descompuestos/*.json     540 partidas, una por archivo
 ├── salida/                      540 .xlsx + catálogo + árbol (se regenera)
 ├── descompuestos.py construir.py    motor
@@ -132,9 +134,18 @@ previa. Sin esa variable el comportamiento es el de producción:
 
 ---
 
-# 6. SIGUIENTE PASO — por dónde empezar
+# 6. SIGUIENTE PASO — primera ampliación hasta unas 800 partidas
 
-## 6.1 Prioridad 1: cerrar los 134 precios de material provisionales
+La reorganización ya está implantada. La prioridad de producto pasa a ser
+crear aproximadamente 260 partidas nuevas, cerrando cada familia completa en
+este orden: `09 Instalaciones`, `12 Revestimientos y acabados`, `07 Carpintería,
+herrería y vidrios`, `10/11 Impermeabilizaciones y techos`, y finalmente
+`08/16/18 Remates, control y rehabilitación energética`.
+
+Los precios y recursos nuevos deben contrastarse al mismo tiempo; no se añaden
+partidas con descompuestos de relleno.
+
+## 6.1 Trabajo paralelo: cerrar los 134 precios de material provisionales
 
 Son 2.213 USD, el 14,1 % del coste directo. Ya no son los de más peso: la
 segunda ronda cerró los grandes. Lo que queda son piezas de proveedor
@@ -184,8 +195,8 @@ visto en un navegador real**. Queda por comprobar con la vista puesta:
 
 - **Ámbito obra nueva.** No iniciado. Requiere el texto de **COVENIN 2000-2** y
   su **Suplemento N.º 1 de 1999**, que el cliente no tiene. La codificación
-  quedó preparada: cada partida lleva `ambito` y `codigo_covenin` vacío, y
-  `clasificacion.json` declara `_ambitos_previstos`.
+  cada partida conserva `ambito=reforma`; obra nueva tendrá una clasificación
+  independiente cuando se disponga de la norma.
 - **Alquiler de equipos.** 43 recursos, 997 USD. Congelado por decisión del
   cliente; solo se retoma si él lo pide.
 

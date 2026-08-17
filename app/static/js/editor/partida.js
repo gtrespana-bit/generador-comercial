@@ -1637,6 +1637,7 @@
               precio_base: item.precio || 0,
               categoria: item.categoria || "",
               subcategoria: item.subcategoria || "",
+              apartado: item.apartado || "",
               codigo_interno: item.codigo_interno || item.codigo || "",
               codigo_externo: item.codigo_externo || "",
               proveedor: item.proveedor || "",

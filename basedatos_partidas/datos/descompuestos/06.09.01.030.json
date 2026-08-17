@@ -1,0 +1,44 @@
+{
+  "codigo": "06.09.01.030",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "09",
+  "unidad": "m²",
+  "titulo": "Limpieza química de fachada y eliminación de manchas.",
+  "descripcion": "Limpieza química de fachada para eliminar eflorescencias, manchas de óxido, restos de mortero, grafitis o depósitos incrustados, con el producto específico para cada tipo de mancha y de soporte. La elección del producto es lo determinante: un limpiador ácido sobre mármol, granito pulido o aluminio anodizado produce un daño irreversible que resulta peor que la mancha original, por lo que se ensaya siempre en zona oculta. Incluye la identificación del tipo de mancha, el ensayo previo, la protección del entorno, la aplicación con su tiempo de actuación, el cepillado, la neutralización y el enjuague abundante. Medido en superficie realmente ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-LIMP-QUIM",
+      "rendimiento": 0.22
+    },
+    {
+      "ref": "MT-CONS-LIMP",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MT-PROT-OBRA",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MQ-HIDROLAV",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.24
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.18
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-06-09-030",
+  "apartado": "01"
+}

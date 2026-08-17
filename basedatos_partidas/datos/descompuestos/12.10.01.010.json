@@ -1,0 +1,42 @@
+{
+  "codigo": "12.10.01.010",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "10",
+  "unidad": "m²",
+  "titulo": "Pintura de caucho mate lavable en paramento interior, dos manos.",
+  "descripcion": "Aplicación de dos manos de pintura de caucho acrílico mate lavable sobre paramento interior previamente preparado e imprimado, aplicada con rodillo y brocha en encuentros y remates, con el lijado intermedio necesario entre manos y respetando los tiempos de secado del fabricante. Incluye protección del entorno, recorte de cantos y esquinas, repasos finales y limpieza del área de trabajo. El color lo elige el cliente. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "producto_cliente": {
+    "tipo": "Pintura de caucho en el color elegido por el cliente (si se sale de la base blanca estándar)",
+    "unidad": "l",
+    "consumo": 0.28,
+    "nota": "Consumo de 0,28 l/m² para las dos manos, con rendimiento medio de 7 m²/l por mano. En colores intensos o sobre fondo oscuro puede requerir una tercera mano."
+  },
+  "recursos": [
+    {
+      "ref": "MT-PIN-CAUCHO",
+      "rendimiento": 0.28
+    },
+    {
+      "ref": "MT-PIN-LIJA",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.17
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.085
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-16-02-010",
+  "apartado": "01"
+}

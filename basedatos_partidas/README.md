@@ -60,7 +60,7 @@ basedatos_partidas/
   desglose de costes incoherente, descripciones o capítulos vacíos, unidades raras.
 - **Compatibilidad real**: pasa el CSV generado por `leer_csv` → `analizar_matriz`
   → `detectar_mapeo` → `validar_filas` del propio proyecto. El objetivo es siempre
-  **8 campos detectados, 0 errores, 0 advertencias**.
+  **12 campos detectados, 0 errores, 0 advertencias**.
 
 ## Correspondencia con el modelo `Partida`
 
@@ -161,24 +161,23 @@ python3 basedatos_partidas/construir.py       # 2. catálogo importable
 
 # Clasificación jerárquica (datos/clasificacion.json)
 
-Tres niveles, pensados para alimentar el árbol de la barra lateral del presupuestador:
+Tres niveles numéricos alimentan el árbol de la barra lateral:
 
-```
-Capítulo (1 letra)  →  Subcapítulo (2 letras)  →  Grupo (3 letras)  →  Partida (grupo + 3 dígitos)
-
-R  Revestimientos y trasdosados
-└─ RS  Pavimentos
-   └─ RSG  Cerámicos y porcelánicos
-      ├─ RSG010  Pavimento formato estándar
-      └─ RSG020  Pavimento gran formato
+```text
+12  Revestimientos y acabados
+└─ 12.05  Pisos, pavimentos y sus bases
+   └─ 12.05.03  Pisos cerámicos y porcelanato
+      ├─ 12.05.03.010  Piso cerámico colocado con adhesivo
+      └─ 12.05.03.020  Piso de porcelanato colocado con adhesivo
 ```
 
-Cada partida declara `capitulo`, `subcapitulo` y `grupo`. El generador **valida** que los
-tres existan en `clasificacion.json` y que el código empiece por el grupo; si no, falla.
-Así es imposible que se cuele una partida descolgada del árbol.
+Cada partida declara `capitulo`, `subcapitulo` y `apartado`. El generador
+valida los tres nodos y exige que el código `CC.SS.AA.NNN` empiece por esa ruta.
+El antiguo código `CT-CC-SS-NNN` queda en `codigo_legacy` y en
+`mapa_migracion_v2.json` para trazabilidad.
 
-Hay **18 capítulos** declarados desde el principio, aunque estén vacíos: el árbol se
-construye completo y las ramas se van llenando.
+Hay **18 capítulos y 172 subcapítulos** preparados. Los apartados se crean con
+contenido real; actualmente hay 147 con las 540 partidas migradas.
 
 ## Salida para el front
 
@@ -341,7 +340,7 @@ deportivo) y no en interiores, donde es «piso».
 ## La auditoría solo mira lo que ve el cliente
 
 Recorre el título y la descripción de cada partida, la descripción de cada
-recurso y los nombres de capítulo y subcapítulo. **No** mira `fuente` ni
+recurso y los nombres de capítulo, subcapítulo y apartado. **No** mira `fuente` ni
 `nota`: son apuntes internos de procedencia que citan nombres comerciales tal
 cual los publica el vendedor («bisagra de cazoleta»), y auditarlos solo
 produce falsas alarmas.
@@ -454,17 +453,17 @@ trazabilidad interna. **No se publica ni se distribuye.**
 
 ## Esquema
 
-```
-CT - CC - SS - NNN
-│    │    │    └── partida, de 10 en 10 para poder intercalar
-│    │    └─────── subcapítulo (2 dígitos)
-│    └──────────── capítulo (2 dígitos)
-└───────────────── prefijo de marca (CotizaT)
+```text
+CC . SS . AA . NNN
+│    │    │     └── partida, de 10 en 10 para poder intercalar
+│    │    └──────── apartado (2 dígitos)
+│    └───────────── subcapítulo (2 dígitos)
+└────────────────── capítulo (2 dígitos)
 ```
 
-Dos niveles de navegación, 20 capítulos organizados según la práctica de obra
-venezolana: los frisos, los pisos, los cielos rasos y la herrería son capítulos
-de primer nivel, no subgrupos.
+Tres niveles de clasificación y 18 capítulos. Instalaciones comparten el
+capítulo 09; frisos, pisos, cielos rasos y pintura se ordenan dentro de
+`12 Revestimientos y acabados`.
 
 ## Dos ámbitos
 
@@ -473,7 +472,7 @@ clasificación y su propio esquema de código:
 
 | Ámbito | Codificación | Base legal | Estado |
 |---|---|---|---|
-| **reforma** | `CT-CC-SS-NNN`, propia | COVENIN 2000-2 codifica solo edificaciones nuevas y deja **expresamente sin codificar** las reparaciones y reformas (Parte II.B nunca publicada). Codificación libre. | en construcción |
+| **reforma** | `CC.SS.AA.NNN`, propia | COVENIN 2000-2 codifica solo edificaciones nuevas y deja **expresamente sin codificar** las reparaciones y reformas (Parte II.B nunca publicada). Codificación libre. | en construcción |
 | **obra nueva** | COVENIN 2000-2: `M`+9 dígitos (<1.000 m²), `E`+9 (1.000-10.000 m²), `I`+9 (>10.000 m²) | COVENIN-MINDUR 2000-92 Parte II.A, **obligatoria** por Gaceta Oficial N.º 35.225 del 3/6/1993. Ante organismos públicos y contralorías la codificación **no es libre**. | pendiente |
 
 Ambos ámbitos comparten el **mismo cuadro de recursos** (`recursos.json`) y el

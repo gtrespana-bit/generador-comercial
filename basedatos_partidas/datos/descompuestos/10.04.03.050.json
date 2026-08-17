@@ -1,0 +1,48 @@
+{
+  "codigo": "10.04.03.050",
+  "ambito": "reforma",
+  "capitulo": "10",
+  "subcapitulo": "04",
+  "unidad": "m",
+  "titulo": "Sellado de fisuras en cubierta previo a impermeabilización.",
+  "descripcion": "Apertura, limpieza y sellado de fisuras en la superficie de cubierta antes de aplicar la impermeabilización, con sellador elástico y banda de refuerzo. Impermeabilizar sobre una fisura sin tratar no la resuelve: el movimiento se transmite a la membrana y la rompe en la misma línea al poco tiempo. Incluye el mapeo de las fisuras, su apertura en forma de cajeado, la limpieza y aspirado, la imprimación, el relleno con sellador elástico y la colocación de la banda de refuerzo embebida. Medido en longitud de fisura realmente tratada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-SELLA-FISURA",
+      "rendimiento": 0.55
+    },
+    {
+      "ref": "MT-BANDA-REF",
+      "rendimiento": 1.1
+    },
+    {
+      "ref": "MT-PUENTE-ADH",
+      "rendimiento": 0.07
+    },
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.14
+    },
+    {
+      "ref": "MQ-AMOLA",
+      "rendimiento": 0.13
+    },
+    {
+      "ref": "MQ-ASPIR",
+      "rendimiento": 0.07
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.32
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.18
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-10-02-050",
+  "apartado": "03"
+}

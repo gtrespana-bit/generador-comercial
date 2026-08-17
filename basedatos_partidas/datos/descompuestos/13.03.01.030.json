@@ -1,0 +1,42 @@
+{
+  "codigo": "13.03.01.030",
+  "ambito": "reforma",
+  "capitulo": "13",
+  "subcapitulo": "03",
+  "unidad": "m",
+  "titulo": "Mesón de baño sobre mueble o estructura.",
+  "descripcion": "Suministro e instalación de mesón de baño en piedra, cuarzo o material compacto, sobre mueble o estructura, con el recorte del lavamanos y su canto trabajado. Incluye la plantilla en obra sobre el mueble ya instalado, el mecanizado del recorte según sea lavamanos sobrepuesto, empotrado o bajo mesón, el presentado y nivelado, el sellado del canto de corte y el sellado perimetral contra la pared. El material lo elige el cliente y se presupuesta aparte. Medido en longitud de mesón.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "producto_cliente": {
+    "tipo": "Tablero de mesón de baño elegido por el cliente",
+    "unidad": "m",
+    "consumo": 1.08,
+    "nota": "Consumo con 8 % de desperdicio. Indicar en el pedido el tipo de montaje del lavamanos."
+  },
+  "recursos": [
+    {
+      "ref": "MT-ADH-PIEDRA",
+      "rendimiento": 1.2
+    },
+    {
+      "ref": "MT-SILICONA-EST",
+      "rendimiento": 0.14
+    },
+    {
+      "ref": "MQ-CORT-AGUA",
+      "rendimiento": 0.22
+    },
+    {
+      "ref": "MO-OF1-PISO",
+      "rendimiento": 0.9
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.5
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-17-03-030",
+  "apartado": "01"
+}

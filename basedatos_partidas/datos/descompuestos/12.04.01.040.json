@@ -1,0 +1,48 @@
+{
+  "codigo": "12.04.01.040",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "04",
+  "unidad": "m²",
+  "titulo": "Forro de pared con machihembrado de madera.",
+  "descripcion": "Forro de paramento interior con machihembrado de madera montado sobre rastrelado fijado a la pared, con cámara de ventilación posterior. La cámara y el tratamiento preservante son lo que evita que la madera se pudra por la humedad que pueda transmitir el muro, problema habitual cuando el machihembrado se clava directamente contra el paramento. Incluye el replanteo, el montaje y nivelación del rastrelado, la aplicación del preservante en todas las caras y testas, el montaje del machihembrado con encaje a presión, el remate perimetral con molduras y el lijado final. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MACHIH-MAD",
+      "rendimiento": 1.08
+    },
+    {
+      "ref": "MT-MADERA-LISTON",
+      "rendimiento": 3.2
+    },
+    {
+      "ref": "MT-CLAVOS",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MT-PRESERV-MAD",
+      "rendimiento": 0.24
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.13
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.09
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.25
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-07-05-040",
+  "apartado": "01"
+}

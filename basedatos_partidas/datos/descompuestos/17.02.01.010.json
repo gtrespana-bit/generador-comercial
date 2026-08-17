@@ -1,0 +1,24 @@
+{
+  "codigo": "17.02.01.010",
+  "ambito": "reforma",
+  "capitulo": "17",
+  "subcapitulo": "02",
+  "unidad": "ud",
+  "titulo": "Dotación de equipo de protección individual por trabajador.",
+  "descripcion": "Suministro de la dotación de equipo de protección individual para un trabajador: casco, botas de seguridad, guantes, lentes, protección auditiva y chaleco reflectante, con su reposición durante la obra. Incluye la entrega documentada de los equipos, que acredita el cumplimiento de la obligación del empleador, la verificación del estado y de la talla, la formación básica sobre su uso y la reposición de los elementos deteriorados a lo largo de la obra. Medido por dotación entregada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-EPP",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-20-02-010",
+  "apartado": "01"
+}

@@ -1,0 +1,42 @@
+{
+  "codigo": "09.01.04.060",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "01",
+  "unidad": "ud",
+  "titulo": "Instalación de accesorios de baño.",
+  "descripcion": "Montaje del juego de accesorios de baño: toallero, portarrollos, jabonera, percha y repisa, fijados al enchapado. Incluye el replanteo de las alturas y posiciones de uso coordinadas con el despiece del enchapado para taladrar en el centro de la pieza y no sobre la junta ni cerca del canto, donde la cerámica se astilla, el taladrado con broca de vidrio a baja velocidad y sin percusión, la colocación de tacos y el montaje de los accesorios. Los accesorios los elige el cliente y se presupuestan aparte. Medido por juego instalado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "producto_cliente": {
+    "tipo": "Juego de accesorios de baño elegido por el cliente",
+    "unidad": "ud",
+    "consumo": 1.0,
+    "nota": "La partida cubre solo el montaje."
+  },
+  "recursos": [
+    {
+      "ref": "MT-SIL-SAN",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MT-CLAVOS",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-OF1-PLO",
+      "rendimiento": 0.9
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.3
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-12-04-060",
+  "apartado": "04"
+}

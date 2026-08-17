@@ -1,245 +1,1043 @@
 {
-  "_comentario": "Clasificación propia de CotizaT, adaptada al mercado de reforma y remodelación en Venezuela. DOS NIVELES de navegación: capítulo (2 dígitos) y subcapítulo (2 dígitos). El código de partida es CT-CC-SS-NNN.",
-  "_prefijo": "CT",
+  "_comentario": "Clasificación numérica propia de CotizaT para reforma y remodelación en Venezuela. Tres niveles de navegación: capítulo, subcapítulo y apartado.",
+  "_version": 2,
+  "_prefijo": "",
   "_moneda": "USD",
   "_ambito": "reforma",
-  "_ambitos_previstos": {
-    "reforma": {
-      "descripcion": "Reforma, remodelación y obra menor sobre edificaciones existentes.",
-      "codificacion": "CT-CC-SS-NNN (propia de CotizaT)",
-      "base_legal": "La norma venezolana COVENIN 2000-2 codifica ÚNICAMENTE edificaciones nuevas y deja expresamente sin codificar las reparaciones y reformas de edificaciones existentes (Parte II.B nunca publicada). En este ámbito la codificación es libre.",
-      "estado": "en construcción"
-    },
-    "obra_nueva": {
-      "descripcion": "Edificaciones nuevas. PENDIENTE DE CREAR.",
-      "codificacion": "COVENIN 2000-2: M+9 dígitos (<1.000 m2), E+9 dígitos (1.000-10.000 m2), I+9 dígitos (>10.000 m2)",
-      "base_legal": "COVENIN-MINDUR 2000-92 Parte II.A, declarada OBLIGATORIA en Gaceta Oficial N 35.225 del 3 de junio de 1993. En obra nueva, especialmente ante organismos publicos y contralorias, la codificacion NO es libre: hay que usar la de la norma.",
-      "estado": "pendiente",
-      "requisito": "Conseguir el texto de la norma COVENIN 2000-2 y su Suplemento N 1 (1999) para replicar su arbol de capitulos y su esquema de codificacion exacto.",
-      "nota_diseno": "Las partidas de reforma y las de obra nueva comparten el mismo cuadro de recursos (recursos.json) y el mismo motor de descompuestos. Solo cambian el arbol de clasificacion y el esquema de codigo. Por eso cada partida lleva el campo 'ambito'."
-    }
-  },
-  "_nota_codificacion": "Codificación propia de CotizaT. No sigue ni reproduce la de ningún banco de precios de terceros. La norma venezolana COVENIN 2000-2 codifica únicamente edificaciones nuevas y deja expresamente sin codificar las reparaciones y reformas de edificaciones existentes, que es el ámbito de este catálogo.",
+  "_formato_codigo": "CC.SS.AA.NNN",
+  "_nota_codificacion": "Código visible totalmente numérico y propio. Los códigos CT-CC-SS-NNN de la versión 1 se conservan en codigo_legacy y mapa_migracion_v2.json.",
   "capitulos": {
     "01": {
-      "nombre": "Trabajos preliminares y provisionales",
+      "nombre": "Actuaciones previas",
       "subcapitulos": {
-        "01": "Protecciones y cerramientos provisionales",
-        "02": "Andamios y medios de elevación",
-        "03": "Apeos y apuntalamientos",
-        "04": "Catas, sondeos y replanteos",
-        "05": "Servicios provisionales de obra"
+        "01": {
+          "nombre": "Desconexión y aislamiento de servicios existentes",
+          "apartados": {}
+        },
+        "02": {
+          "nombre": "Inspecciones, levantamientos, catas y diagnóstico",
+          "apartados": {
+            "01": "Catas, detección y levantamientos"
+          }
+        },
+        "03": {
+          "nombre": "Protección de elementos existentes",
+          "apartados": {
+            "01": "Protección de superficies, mobiliario y elementos"
+          }
+        },
+        "04": {
+          "nombre": "Cerramientos, barreras de polvo y control de accesos",
+          "apartados": {}
+        },
+        "05": {
+          "nombre": "Andamios y medios de elevación",
+          "apartados": {
+            "01": "Andamios y medios de elevación"
+          }
+        },
+        "06": {
+          "nombre": "Apeos, apuntalamientos y estabilización provisional",
+          "apartados": {
+            "01": "Apeos y apuntalamientos"
+          }
+        },
+        "07": {
+          "nombre": "Replanteos y control geométrico",
+          "apartados": {
+            "01": "Replanteo y trazado"
+          }
+        },
+        "08": {
+          "nombre": "Instalaciones provisionales y servicios de obra",
+          "apartados": {
+            "01": "Servicios e instalaciones provisionales"
+          }
+        }
       }
     },
     "02": {
       "nombre": "Demoliciones y desmontajes",
       "subcapitulos": {
-        "01": "Pisos y pavimentos",
-        "02": "Revestimientos y frisos de pared",
-        "03": "Cielos rasos",
-        "04": "Trasdosados y forros",
-        "05": "Revestimientos decorativos",
-        "06": "Escaleras",
-        "07": "Fachadas y revestimientos exteriores",
-        "08": "Paredes y tabiquería",
-        "09": "Carpintería, herrería y vidrios",
-        "10": "Remates y elementos accesorios",
-        "11": "Instalaciones",
-        "12": "Impermeabilizaciones y aislamientos",
-        "13": "Techos y cubiertas",
-        "14": "Equipamiento y mobiliario fijo",
-        "15": "Estructuras",
-        "16": "Fundaciones",
-        "17": "Obras exteriores y urbanismo"
+        "01": {
+          "nombre": "Fundaciones",
+          "apartados": {
+            "01": "Fundaciones"
+          }
+        },
+        "02": {
+          "nombre": "Estructuras",
+          "apartados": {
+            "01": "Estructuras"
+          }
+        },
+        "03": {
+          "nombre": "Fachadas",
+          "apartados": {
+            "01": "Fachadas y revestimientos exteriores"
+          }
+        },
+        "04": {
+          "nombre": "Paredes y particiones",
+          "apartados": {
+            "01": "Paredes, tabiques y apertura de vanos"
+          }
+        },
+        "05": {
+          "nombre": "Carpintería, herrería, vidrios y protección solar",
+          "apartados": {
+            "01": "Carpintería, herrería y vidrios"
+          }
+        },
+        "06": {
+          "nombre": "Remates y elementos auxiliares",
+          "apartados": {
+            "01": "Remates y elementos accesorios"
+          }
+        },
+        "07": {
+          "nombre": "Instalaciones",
+          "apartados": {
+            "01": "Climatización",
+            "02": "Instalaciones eléctricas",
+            "03": "Instalaciones sanitarias",
+            "04": "Iluminación",
+            "08": "Instalaciones diversas"
+          }
+        },
+        "08": {
+          "nombre": "Aislamientos e impermeabilizaciones",
+          "apartados": {
+            "01": "Aislamientos e impermeabilizaciones"
+          }
+        },
+        "09": {
+          "nombre": "Techos y cubiertas",
+          "apartados": {
+            "01": "Techos, cubiertas y drenajes"
+          }
+        },
+        "10": {
+          "nombre": "Revestimientos, pisos y cielos rasos",
+          "apartados": {
+            "01": "Pisos y pavimentos",
+            "02": "Revestimientos y frisos de pared",
+            "03": "Cielos rasos",
+            "04": "Trasdosados y forros",
+            "05": "Revestimientos decorativos",
+            "06": "Escaleras y sus revestimientos"
+          }
+        },
+        "11": {
+          "nombre": "Equipamiento y mobiliario fijo",
+          "apartados": {
+            "01": "Equipamiento y mobiliario fijo"
+          }
+        },
+        "12": {
+          "nombre": "Obras exteriores, firmes y pavimentos",
+          "apartados": {
+            "01": "Obras exteriores y urbanismo"
+          }
+        }
       }
     },
     "03": {
-      "nombre": "Movimiento de tierras",
+      "nombre": "Acondicionamiento del terreno",
       "subcapitulos": {
-        "01": "Limpieza y desbroce",
-        "02": "Excavaciones",
-        "03": "Rellenos y compactación",
-        "04": "Transporte de tierras"
+        "01": {
+          "nombre": "Limpieza, desbroce y retiro de capa vegetal",
+          "apartados": {
+            "01": "Limpieza y desbroce"
+          }
+        },
+        "02": {
+          "nombre": "Excavaciones a cielo abierto",
+          "apartados": {
+            "01": "Excavaciones generales"
+          }
+        },
+        "03": {
+          "nombre": "Zanjas, pozos y excavaciones localizadas",
+          "apartados": {
+            "01": "Zanjas, pozos y excavaciones localizadas"
+          }
+        },
+        "04": {
+          "nombre": "Rellenos, bases y compactación",
+          "apartados": {
+            "01": "Rellenos y compactación"
+          }
+        },
+        "05": {
+          "nombre": "Drenaje provisional, achique y estabilización",
+          "apartados": {}
+        },
+        "06": {
+          "nombre": "Carga y transporte de tierras",
+          "apartados": {
+            "01": "Carga y transporte de tierras"
+          }
+        }
       }
     },
     "04": {
       "nombre": "Fundaciones",
       "subcapitulos": {
-        "01": "Bases y zapatas",
-        "02": "Vigas de riostra",
-        "03": "Losas de fundación",
-        "04": "Muros de contención",
-        "05": "Pilotes y fundaciones profundas"
+        "01": {
+          "nombre": "Preparación y mejoramiento del terreno",
+          "apartados": {}
+        },
+        "02": {
+          "nombre": "Bases y zapatas",
+          "apartados": {
+            "01": "Bases y zapatas"
+          }
+        },
+        "03": {
+          "nombre": "Vigas de riostra y vigas de fundación",
+          "apartados": {
+            "01": "Vigas de riostra"
+          }
+        },
+        "04": {
+          "nombre": "Losas de fundación",
+          "apartados": {
+            "01": "Losas de fundación"
+          }
+        },
+        "05": {
+          "nombre": "Muros de contención",
+          "apartados": {
+            "01": "Muros de contención"
+          }
+        },
+        "06": {
+          "nombre": "Pilotes y fundaciones profundas",
+          "apartados": {
+            "01": "Pilotes y fundaciones profundas"
+          }
+        },
+        "07": {
+          "nombre": "Drenaje y protección de fundaciones",
+          "apartados": {}
+        },
+        "08": {
+          "nombre": "Reparación y refuerzo de fundaciones",
+          "apartados": {}
+        }
       }
     },
     "05": {
       "nombre": "Estructuras",
       "subcapitulos": {
-        "01": "Concreto armado vaciado en sitio",
-        "02": "Estructura metálica",
-        "03": "Estructura de madera",
-        "04": "Losas y entrepisos",
-        "05": "Escaleras estructurales",
-        "06": "Refuerzos y reparaciones estructurales"
+        "01": {
+          "nombre": "Encofrados, cimbras y apeos de ejecución",
+          "apartados": {}
+        },
+        "02": {
+          "nombre": "Acero de refuerzo",
+          "apartados": {}
+        },
+        "03": {
+          "nombre": "Concreto estructural vaciado en sitio",
+          "apartados": {
+            "01": "Elementos de concreto armado"
+          }
+        },
+        "04": {
+          "nombre": "Estructuras metálicas",
+          "apartados": {
+            "01": "Estructura metálica"
+          }
+        },
+        "05": {
+          "nombre": "Estructuras de madera",
+          "apartados": {
+            "01": "Estructura de madera"
+          }
+        },
+        "06": {
+          "nombre": "Losas y entrepisos",
+          "apartados": {
+            "01": "Losas y entrepisos"
+          }
+        },
+        "07": {
+          "nombre": "Escaleras y rampas estructurales",
+          "apartados": {
+            "01": "Escaleras estructurales"
+          }
+        },
+        "08": {
+          "nombre": "Anclajes, juntas y conexiones",
+          "apartados": {}
+        },
+        "09": {
+          "nombre": "Reparación y refuerzo estructural",
+          "apartados": {
+            "01": "Refuerzos y reparaciones estructurales"
+          }
+        }
       }
     },
     "06": {
-      "nombre": "Paredes y tabiquería",
+      "nombre": "Fachadas y particiones",
       "subcapitulos": {
-        "01": "Bloque de concreto",
-        "02": "Bloque y ladrillo de arcilla",
-        "03": "Tabiquería de yeso laminado",
-        "04": "Tabiquería de otros materiales",
-        "05": "Dinteles, brocales y remates de vano",
-        "06": "Mampostería estructural",
-        "07": "Frentes de losa y cajones de persiana",
-        "08": "Mamparas y tabiques móviles",
-        "09": "Limpieza y tratamiento de fachadas"
+        "01": {
+          "nombre": "Fachadas de bloque o ladrillo",
+          "apartados": {}
+        },
+        "02": {
+          "nombre": "Fachadas ligeras y revestidas",
+          "apartados": {}
+        },
+        "03": {
+          "nombre": "Particiones de bloque o ladrillo",
+          "apartados": {
+            "01": "Bloque de concreto",
+            "02": "Bloque y ladrillo de arcilla",
+            "03": "Mampostería estructural"
+          }
+        },
+        "04": {
+          "nombre": "Particiones de yeso laminado y sistemas secos",
+          "apartados": {
+            "01": "Tabiquería de yeso laminado"
+          }
+        },
+        "05": {
+          "nombre": "Particiones ligeras, móviles y acristaladas",
+          "apartados": {
+            "01": "Tabiquería de otros materiales",
+            "02": "Mamparas y tabiques móviles"
+          }
+        },
+        "06": {
+          "nombre": "Dinteles, frentes de losa y remates de vano",
+          "apartados": {
+            "01": "Dinteles y remates de vano",
+            "02": "Frentes de losa y cajones de persiana"
+          }
+        },
+        "07": {
+          "nombre": "Fachadas ventiladas y sistemas de aislamiento exterior",
+          "apartados": {}
+        },
+        "08": {
+          "nombre": "Celosías, defensas y cerramientos especiales",
+          "apartados": {}
+        },
+        "09": {
+          "nombre": "Limpieza, restauración y tratamiento de fachadas",
+          "apartados": {
+            "01": "Limpieza y tratamiento de fachadas"
+          }
+        }
       }
     },
     "07": {
-      "nombre": "Frisos y revestimientos de pared",
+      "nombre": "Carpintería, herrería, vidrios y protección solar",
       "subcapitulos": {
-        "01": "Frisos y enlucidos de mortero",
-        "02": "Pastas y acabados de yeso",
-        "03": "Enchapado cerámico y porcelanato",
-        "04": "Enchapado de piedra natural",
-        "05": "Revestimientos decorativos y especiales"
+        "01": {
+          "nombre": "Puertas interiores",
+          "apartados": {
+            "01": "Puertas interiores"
+          }
+        },
+        "02": {
+          "nombre": "Puertas exteriores y de seguridad",
+          "apartados": {
+            "01": "Puertas exteriores y de seguridad"
+          }
+        },
+        "03": {
+          "nombre": "Ventanas, balconeras y paños fijos",
+          "apartados": {
+            "01": "Ventanas y balconeras"
+          }
+        },
+        "04": {
+          "nombre": "Portones, rejas y cierres metálicos",
+          "apartados": {
+            "01": "Rejas, portones y herrería",
+            "02": "Portones metálicos"
+          }
+        },
+        "05": {
+          "nombre": "Barandas y pasamanos",
+          "apartados": {
+            "01": "Barandas y pasamanos",
+            "02": "Barandas metálicas"
+          }
+        },
+        "06": {
+          "nombre": "Vidrios, espejos y cerramientos de vidrio",
+          "apartados": {
+            "01": "Vidrios y espejos"
+          }
+        },
+        "07": {
+          "nombre": "Mamparas de baño y divisiones acristaladas",
+          "apartados": {
+            "01": "Mamparas de baño"
+          }
+        },
+        "08": {
+          "nombre": "Persianas, celosías, mosquiteros y protección solar",
+          "apartados": {}
+        },
+        "09": {
+          "nombre": "Herrajes, cerraduras y automatismos",
+          "apartados": {}
+        },
+        "10": {
+          "nombre": "Ajustes, reparación y restauración",
+          "apartados": {}
+        }
       }
     },
     "08": {
-      "nombre": "Pisos y pavimentos",
+      "nombre": "Remates y ayudas",
       "subcapitulos": {
-        "01": "Bases, afirmados y nivelación",
-        "02": "Pisos cerámicos y porcelanato",
-        "03": "Pisos de piedra natural y granito",
-        "04": "Pisos de madera y laminados",
-        "05": "Pisos vinílicos y flexibles",
-        "06": "Pisos continuos de concreto y microcemento",
-        "07": "Rodapiés y remates de piso",
-        "08": "Revestimiento de escaleras"
+        "01": {
+          "nombre": "Ayudas de albañilería para instalaciones",
+          "apartados": {}
+        },
+        "02": {
+          "nombre": "Rozas, perforaciones y pasos",
+          "apartados": {}
+        },
+        "03": {
+          "nombre": "Recibido de marcos, equipos y pequeños elementos",
+          "apartados": {}
+        },
+        "04": {
+          "nombre": "Sellados, juntas y encuentros",
+          "apartados": {}
+        },
+        "05": {
+          "nombre": "Alféizares, vierteaguas, pasamanos y coronaciones",
+          "apartados": {}
+        },
+        "06": {
+          "nombre": "Bancadas, soportes y bases de equipos",
+          "apartados": {}
+        },
+        "07": {
+          "nombre": "Forrados, cajones y tapajuntas",
+          "apartados": {}
+        },
+        "08": {
+          "nombre": "Perfiles decorativos, molduras y remates especiales",
+          "apartados": {}
+        },
+        "09": {
+          "nombre": "Sellado cortafuego de pasos de instalaciones",
+          "apartados": {}
+        }
       }
     },
     "09": {
-      "nombre": "Cielos rasos",
+      "nombre": "Instalaciones",
       "subcapitulos": {
-        "01": "Yeso laminado continuo",
-        "02": "Cielos desmontables y registrables",
-        "03": "Cielos de PVC y láminas",
-        "04": "Cielos de madera",
-        "05": "Molduras y remates"
+        "01": {
+          "nombre": "Agua potable y agua caliente",
+          "apartados": {
+            "01": "Tuberías y montantes de agua",
+            "02": "Puntos de agua",
+            "03": "Llaves y valvulería",
+            "04": "Aparatos sanitarios y grifería"
+          }
+        },
+        "02": {
+          "nombre": "Desagüe sanitario y aguas pluviales",
+          "apartados": {
+            "01": "Tuberías y bajantes de desagüe",
+            "02": "Puntos de desagüe"
+          }
+        },
+        "03": {
+          "nombre": "Instalaciones eléctricas",
+          "apartados": {
+            "01": "Acometidas y puesta a tierra",
+            "02": "Puesta a tierra",
+            "03": "Tableros y protecciones",
+            "04": "Canalizaciones y cableado",
+            "05": "Conductores y cableado",
+            "06": "Puntos, mecanismos y tomacorrientes",
+            "07": "Interruptores y tomacorrientes"
+          }
+        },
+        "04": {
+          "nombre": "Iluminación",
+          "apartados": {
+            "01": "Iluminación interior y exterior"
+          }
+        },
+        "05": {
+          "nombre": "Telecomunicaciones y datos",
+          "apartados": {
+            "01": "Corrientes débiles y datos"
+          }
+        },
+        "06": {
+          "nombre": "Audiovisuales, porteros e intercomunicación",
+          "apartados": {
+            "01": "Audiovisuales e intercomunicación"
+          }
+        },
+        "07": {
+          "nombre": "Climatización y refrigeración",
+          "apartados": {
+            "01": "Climatización y ventilación"
+          }
+        },
+        "08": {
+          "nombre": "Ventilación y extracción",
+          "apartados": {
+            "01": "Ventilación y extracción"
+          }
+        },
+        "09": {
+          "nombre": "Gas combustible",
+          "apartados": {
+            "01": "Gas doméstico"
+          }
+        },
+        "10": {
+          "nombre": "Protección contra incendios",
+          "apartados": {
+            "01": "Protección contra incendios"
+          }
+        },
+        "11": {
+          "nombre": "Seguridad, alarmas, CCTV y control de acceso",
+          "apartados": {
+            "01": "Alarmas, CCTV y seguridad"
+          }
+        },
+        "12": {
+          "nombre": "Domótica y automatización",
+          "apartados": {}
+        },
+        "13": {
+          "nombre": "Protección contra rayos y sobretensiones",
+          "apartados": {}
+        },
+        "14": {
+          "nombre": "Tanques, bombas e hidroneumáticos",
+          "apartados": {
+            "01": "Tanques, bombas e hidroneumáticos"
+          }
+        },
+        "15": {
+          "nombre": "Generación, respaldo y energía solar fotovoltaica",
+          "apartados": {
+            "01": "Sistemas de respaldo eléctrico"
+          }
+        },
+        "16": {
+          "nombre": "Transporte vertical y accesibilidad mecánica",
+          "apartados": {}
+        },
+        "17": {
+          "nombre": "Reparación, pruebas y puesta en marcha",
+          "apartados": {}
+        }
       }
     },
     "10": {
-      "nombre": "Impermeabilizaciones y aislamientos",
+      "nombre": "Aislamientos e impermeabilizaciones",
       "subcapitulos": {
-        "01": "Manto asfáltico",
-        "02": "Impermeabilizantes líquidos y acrílicos",
-        "03": "Impermeabilización de áreas húmedas",
-        "04": "Aislamiento térmico y acústico"
+        "01": {
+          "nombre": "Aislamiento térmico",
+          "apartados": {
+            "01": "Aislamiento térmico y acústico"
+          }
+        },
+        "02": {
+          "nombre": "Aislamiento acústico y control de vibraciones",
+          "apartados": {}
+        },
+        "03": {
+          "nombre": "Impermeabilización de fundaciones y muros enterrados",
+          "apartados": {}
+        },
+        "04": {
+          "nombre": "Impermeabilización de techos y terrazas",
+          "apartados": {
+            "02": "Manto asfáltico",
+            "03": "Impermeabilizantes líquidos y acrílicos"
+          }
+        },
+        "05": {
+          "nombre": "Impermeabilización de baños, cocinas y áreas húmedas",
+          "apartados": {
+            "01": "Impermeabilización de áreas húmedas"
+          }
+        },
+        "06": {
+          "nombre": "Impermeabilización de tanques, piscinas y jardineras",
+          "apartados": {}
+        },
+        "07": {
+          "nombre": "Drenajes, geotextiles y capas separadoras",
+          "apartados": {}
+        },
+        "08": {
+          "nombre": "Sellado de juntas y estanqueidad",
+          "apartados": {}
+        },
+        "09": {
+          "nombre": "Tratamiento de filtraciones, humedad y capilaridad",
+          "apartados": {}
+        }
       }
     },
     "11": {
       "nombre": "Techos y cubiertas",
       "subcapitulos": {
-        "01": "Estructura de techo",
-        "02": "Cubiertas de teja",
-        "03": "Cubiertas de lámina metálica",
-        "04": "Cubiertas planas y pendientados",
-        "05": "Canales, bajantes y remates"
+        "01": {
+          "nombre": "Formación de pendientes y bases",
+          "apartados": {}
+        },
+        "02": {
+          "nombre": "Cubiertas planas transitables y no transitables",
+          "apartados": {
+            "01": "Cubiertas planas y formación de pendientes"
+          }
+        },
+        "03": {
+          "nombre": "Cubiertas de teja",
+          "apartados": {
+            "01": "Cubiertas de teja"
+          }
+        },
+        "04": {
+          "nombre": "Cubiertas de lámina metálica",
+          "apartados": {
+            "01": "Cubiertas de lámina metálica"
+          }
+        },
+        "05": {
+          "nombre": "Cubiertas ligeras y traslúcidas",
+          "apartados": {}
+        },
+        "06": {
+          "nombre": "Estructuras y soportes de techo",
+          "apartados": {
+            "01": "Estructura de techo"
+          }
+        },
+        "07": {
+          "nombre": "Claraboyas, lucernarios y accesos",
+          "apartados": {}
+        },
+        "08": {
+          "nombre": "Canales, bajantes, limahoyas y remates",
+          "apartados": {
+            "01": "Canales, bajantes y remates"
+          }
+        },
+        "09": {
+          "nombre": "Reparación y mantenimiento de cubiertas",
+          "apartados": {}
+        }
       }
     },
     "12": {
-      "nombre": "Instalaciones sanitarias",
+      "nombre": "Revestimientos y acabados",
       "subcapitulos": {
-        "01": "Tuberías y montantes de agua",
-        "02": "Puntos de agua",
-        "03": "Llaves y valvulería",
-        "04": "Aparatos sanitarios y grifería",
-        "05": "Tuberías y bajantes de desagüe",
-        "06": "Puntos de desagüe",
-        "07": "Tanques, bombas e hidroneumáticos"
+        "01": {
+          "nombre": "Preparación, reparación y regularización de soportes",
+          "apartados": {
+            "01": "Preparación de soportes para pintura"
+          }
+        },
+        "02": {
+          "nombre": "Frisos, enlucidos y revestimientos de mortero",
+          "apartados": {
+            "01": "Frisos y enlucidos de mortero",
+            "02": "Pastas y acabados de yeso"
+          }
+        },
+        "03": {
+          "nombre": "Enchapados de pared de piezas rígidas",
+          "apartados": {
+            "01": "Cerámica y porcelanato en paredes",
+            "02": "Piedra natural en paredes"
+          }
+        },
+        "04": {
+          "nombre": "Revestimientos decorativos y especiales de pared",
+          "apartados": {
+            "01": "Revestimientos decorativos y especiales"
+          }
+        },
+        "05": {
+          "nombre": "Pisos, pavimentos y sus bases",
+          "apartados": {
+            "01": "Bases, afirmados y nivelación",
+            "03": "Pisos cerámicos y porcelanato",
+            "04": "Pisos de piedra, granito y terrazo",
+            "05": "Pisos de madera y laminados",
+            "06": "Pisos vinílicos y flexibles",
+            "07": "Pisos continuos de concreto y microcemento"
+          }
+        },
+        "06": {
+          "nombre": "Escaleras, rodapiés, juntas y remates de piso",
+          "apartados": {
+            "01": "Rodapiés y remates de piso",
+            "02": "Revestimiento de escaleras"
+          }
+        },
+        "07": {
+          "nombre": "Trasdosados y forros interiores",
+          "apartados": {}
+        },
+        "08": {
+          "nombre": "Cielos rasos continuos",
+          "apartados": {
+            "01": "Cielos rasos continuos de yeso laminado"
+          }
+        },
+        "09": {
+          "nombre": "Cielos rasos desmontables y ligeros",
+          "apartados": {
+            "01": "Cielos desmontables y registrables",
+            "02": "Cielos de PVC y láminas",
+            "03": "Cielos de madera",
+            "04": "Molduras y remates de cielo raso"
+          }
+        },
+        "10": {
+          "nombre": "Pintura interior",
+          "apartados": {
+            "01": "Pintura interior"
+          }
+        },
+        "11": {
+          "nombre": "Pintura exterior",
+          "apartados": {
+            "01": "Pintura exterior"
+          }
+        },
+        "12": {
+          "nombre": "Pintura y protección de madera y metal",
+          "apartados": {
+            "01": "Esmaltes y pintura sobre madera y metal",
+            "02": "Barnices y protectores de madera"
+          }
+        },
+        "13": {
+          "nombre": "Recubrimientos continuos, industriales y decorativos",
+          "apartados": {
+            "01": "Recubrimientos especiales y decorativos"
+          }
+        },
+        "14": {
+          "nombre": "Tratamientos de protección y restauración de acabados",
+          "apartados": {}
+        }
       }
     },
     "13": {
-      "nombre": "Instalaciones eléctricas",
+      "nombre": "Equipamiento, mobiliario y señalización",
       "subcapitulos": {
-        "01": "Canalizaciones y cableado",
-        "02": "Puntos, mecanismos y tomas",
-        "03": "Tableros y protecciones",
-        "04": "Iluminación",
-        "05": "Acometidas y puesta a tierra",
-        "06": "Corrientes débiles y datos"
+        "01": {
+          "nombre": "Mobiliario de cocina",
+          "apartados": {
+            "01": "Mobiliario de cocina"
+          }
+        },
+        "02": {
+          "nombre": "Mesones, topes y salpicaderos",
+          "apartados": {
+            "01": "Mesones y topes"
+          }
+        },
+        "03": {
+          "nombre": "Mobiliario y equipamiento de baño",
+          "apartados": {
+            "01": "Mobiliario de baño"
+          }
+        },
+        "04": {
+          "nombre": "Closets, alacenas y almacenamiento fijo",
+          "apartados": {
+            "01": "Closets y muebles empotrados"
+          }
+        },
+        "05": {
+          "nombre": "Electrodomésticos y equipos integrados",
+          "apartados": {}
+        },
+        "06": {
+          "nombre": "Equipamiento accesible y ayudas técnicas",
+          "apartados": {
+            "01": "Accesorios, herrajes y ayudas técnicas"
+          }
+        },
+        "07": {
+          "nombre": "Señalización interior y exterior",
+          "apartados": {
+            "01": "Demarcación y señalización pintada"
+          }
+        },
+        "08": {
+          "nombre": "Equipamiento comercial, oficina y áreas comunes",
+          "apartados": {
+            "01": "Mobiliario fijo diverso"
+          }
+        },
+        "09": {
+          "nombre": "Equipamiento deportivo, recreativo y especial",
+          "apartados": {}
+        }
       }
     },
     "14": {
-      "nombre": "Instalaciones mecánicas y especiales",
+      "nombre": "Obras exteriores y urbanismo",
       "subcapitulos": {
-        "01": "Climatización y ventilación",
-        "02": "Gas doméstico",
-        "03": "Protección contra incendios",
-        "04": "Sistemas de respaldo eléctrico"
+        "01": {
+          "nombre": "Pavimentos exteriores",
+          "apartados": {
+            "01": "Pavimentos exteriores"
+          }
+        },
+        "02": {
+          "nombre": "Aceras, brocales, rampas y escaleras exteriores",
+          "apartados": {
+            "01": "Brocales, aceras y drenajes"
+          }
+        },
+        "03": {
+          "nombre": "Drenaje exterior",
+          "apartados": {
+            "01": "Canales y registros de drenaje"
+          }
+        },
+        "04": {
+          "nombre": "Muros, cercas y cerramientos de parcela",
+          "apartados": {
+            "01": "Cerramientos de parcela"
+          }
+        },
+        "05": {
+          "nombre": "Portones y accesos exteriores",
+          "apartados": {
+            "01": "Portones de acceso"
+          }
+        },
+        "06": {
+          "nombre": "Jardinería y tratamiento del terreno",
+          "apartados": {
+            "01": "Jardinería y riego"
+          }
+        },
+        "07": {
+          "nombre": "Redes de riego",
+          "apartados": {
+            "01": "Riego por goteo y aspersión"
+          }
+        },
+        "08": {
+          "nombre": "Redes exteriores de servicios",
+          "apartados": {
+            "01": "Instalaciones exteriores"
+          }
+        },
+        "09": {
+          "nombre": "Iluminación exterior",
+          "apartados": {
+            "01": "Iluminación exterior"
+          }
+        },
+        "10": {
+          "nombre": "Piscinas y áreas recreativas",
+          "apartados": {}
+        },
+        "11": {
+          "nombre": "Pérgolas, jardineras y mobiliario exterior",
+          "apartados": {
+            "01": "Elementos exteriores complementarios"
+          }
+        }
       }
     },
     "15": {
-      "nombre": "Herrería, carpintería y vidrios",
+      "nombre": "Gestión de residuos y limpieza",
       "subcapitulos": {
-        "01": "Puertas interiores",
-        "02": "Puertas exteriores y de seguridad",
-        "03": "Ventanas y balconeras",
-        "04": "Rejas, portones y herrería",
-        "05": "Closets y muebles empotrados",
-        "06": "Vidrios y espejos",
-        "07": "Barandas y pasamanos"
+        "01": {
+          "nombre": "Clasificación y acopio de residuos",
+          "apartados": {
+            "01": "Clasificación y acopio de residuos"
+          }
+        },
+        "02": {
+          "nombre": "Bajada, carga y movimiento interno de escombros",
+          "apartados": {
+            "01": "Bajada y movimiento interno de escombros"
+          }
+        },
+        "03": {
+          "nombre": "Contenedores y medios de almacenamiento",
+          "apartados": {
+            "01": "Contenedores y acopio"
+          }
+        },
+        "04": {
+          "nombre": "Transporte y disposición autorizada",
+          "apartados": {
+            "01": "Retiro y transporte de escombro"
+          }
+        },
+        "05": {
+          "nombre": "Residuos especiales o peligrosos",
+          "apartados": {}
+        },
+        "06": {
+          "nombre": "Limpieza durante la obra",
+          "apartados": {
+            "01": "Limpieza durante la obra"
+          }
+        },
+        "07": {
+          "nombre": "Limpieza final y entrega",
+          "apartados": {
+            "01": "Limpieza de obra"
+          }
+        }
       }
     },
     "16": {
-      "nombre": "Pintura y acabados",
+      "nombre": "Control de calidad y ensayos",
       "subcapitulos": {
-        "01": "Preparación de soportes",
-        "02": "Pintura interior",
-        "03": "Pintura exterior",
-        "04": "Esmaltes sobre madera y metal",
-        "05": "Recubrimientos especiales y decorativos"
+        "01": {
+          "nombre": "Ensayos de concreto, acero y mampostería",
+          "apartados": {}
+        },
+        "02": {
+          "nombre": "Inspección de soldaduras, anclajes y estructura",
+          "apartados": {}
+        },
+        "03": {
+          "nombre": "Pruebas de impermeabilización y estanqueidad",
+          "apartados": {}
+        },
+        "04": {
+          "nombre": "Pruebas de instalaciones sanitarias",
+          "apartados": {}
+        },
+        "05": {
+          "nombre": "Pruebas eléctricas y de puesta a tierra",
+          "apartados": {}
+        },
+        "06": {
+          "nombre": "Pruebas de climatización, ventilación y balanceo",
+          "apartados": {}
+        },
+        "07": {
+          "nombre": "Termografía, humedad y diagnóstico no destructivo",
+          "apartados": {}
+        },
+        "08": {
+          "nombre": "Puesta en marcha, protocolos y documentación final",
+          "apartados": {}
+        }
       }
     },
     "17": {
-      "nombre": "Equipamiento y mobiliario fijo",
+      "nombre": "Seguridad y salud en obra",
       "subcapitulos": {
-        "01": "Mobiliario de cocina",
-        "02": "Mesones y topes",
-        "03": "Mobiliario de baño",
-        "04": "Accesorios y herrajes",
-        "05": "Mobiliario fijo diverso"
+        "01": {
+          "nombre": "Protecciones colectivas",
+          "apartados": {
+            "01": "Protecciones colectivas"
+          }
+        },
+        "02": {
+          "nombre": "Equipos de protección individual",
+          "apartados": {
+            "01": "Equipos de protección individual"
+          }
+        },
+        "03": {
+          "nombre": "Señalización, delimitación y control de accesos",
+          "apartados": {
+            "01": "Señalización y delimitación"
+          }
+        },
+        "04": {
+          "nombre": "Seguridad en trabajos en altura",
+          "apartados": {
+            "01": "Líneas de vida y protección en altura",
+            "02": "Equipos para trabajo en altura"
+          }
+        },
+        "05": {
+          "nombre": "Seguridad en excavaciones y espacios confinados",
+          "apartados": {}
+        },
+        "06": {
+          "nombre": "Protección contra incendios durante la obra",
+          "apartados": {}
+        },
+        "07": {
+          "nombre": "Instalaciones de higiene y bienestar",
+          "apartados": {
+            "01": "Instalaciones de bienestar"
+          }
+        },
+        "08": {
+          "nombre": "Gestión, formación y documentación preventiva",
+          "apartados": {
+            "01": "Gestión y documentación de seguridad"
+          }
+        }
       }
     },
     "18": {
-      "nombre": "Obras exteriores y urbanismo",
+      "nombre": "Rehabilitación energética",
       "subcapitulos": {
-        "01": "Pavimentos exteriores",
-        "02": "Brocales, aceras y drenajes",
-        "03": "Cerramientos de parcela",
-        "04": "Jardinería y riego",
-        "05": "Instalaciones exteriores",
-        "06": "Elementos exteriores complementarios"
-      }
-    },
-    "19": {
-      "nombre": "Gestión de residuos y limpieza",
-      "subcapitulos": {
-        "01": "Retiro y transporte de escombro",
-        "02": "Contenedores y acopio",
-        "03": "Limpieza final de obra"
-      }
-    },
-    "20": {
-      "nombre": "Seguridad y salud en obra",
-      "subcapitulos": {
-        "01": "Protecciones colectivas",
-        "02": "Equipos de protección individual",
-        "03": "Señalización de obra",
-        "04": "Instalaciones de bienestar",
-        "05": "Gestión y documentación de seguridad"
+        "01": {
+          "nombre": "Diagnóstico y evaluación energética",
+          "apartados": {}
+        },
+        "02": {
+          "nombre": "Mejora térmica de fachadas",
+          "apartados": {}
+        },
+        "03": {
+          "nombre": "Mejora térmica de techos y cubiertas",
+          "apartados": {}
+        },
+        "04": {
+          "nombre": "Mejora térmica de pisos y entrepisos",
+          "apartados": {}
+        },
+        "05": {
+          "nombre": "Sustitución y mejora de ventanas y vidrios",
+          "apartados": {}
+        },
+        "06": {
+          "nombre": "Protección solar y control de ganancias térmicas",
+          "apartados": {}
+        },
+        "07": {
+          "nombre": "Mejora de climatización y ventilación",
+          "apartados": {}
+        },
+        "08": {
+          "nombre": "Iluminación eficiente y control",
+          "apartados": {}
+        },
+        "09": {
+          "nombre": "Incorporación de energías renovables",
+          "apartados": {}
+        }
       }
     }
   }

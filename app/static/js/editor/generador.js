@@ -182,7 +182,10 @@
 
     var resultados = editor.CATALOGO.map(function (item) {
       var nombre = normalizar(item.nombre);
-      var resto = normalizar((item.descripcion || "") + " " + (item.categoria || "") + " " + (item.subcategoria || ""));
+      var resto = normalizar(
+        (item.descripcion || "") + " " + (item.categoria || "") + " " +
+        (item.subcategoria || "") + " " + (item.apartado || "")
+      );
       var puntuacion = 0;
       var coincidencias = 0;
 

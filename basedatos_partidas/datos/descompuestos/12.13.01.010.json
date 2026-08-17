@@ -1,0 +1,44 @@
+{
+  "codigo": "12.13.01.010",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "13",
+  "unidad": "m²",
+  "titulo": "Pintura epóxica sobre piso o paramento.",
+  "descripcion": "Aplicación de pintura epóxica bicomponente sobre piso o paramento, con imprimación y dos manos de acabado, para áreas de tránsito intenso, cocinas industriales y talleres. Exige mezclar los dos componentes en la proporción exacta y aplicar dentro del tiempo de vida útil de la mezcla, que es corto: pasado ese tiempo el producto sigue pareciendo utilizable pero ya no cura correctamente. Incluye la preparación mecánica del soporte para abrir el poro, la medición de humedad, la imprimación, la mezcla controlada y la aplicación de las manos con los tiempos de repintado del fabricante. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-EPOXI-PISO",
+      "rendimiento": 0.85
+    },
+    {
+      "ref": "MT-PUENTE-ADH",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MT-PIN-LIJA",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MQ-LIJAD",
+      "rendimiento": 0.17
+    },
+    {
+      "ref": "MQ-ASPIR",
+      "rendimiento": 0.09
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.36
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-16-05-010",
+  "apartado": "01"
+}

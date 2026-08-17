@@ -1,0 +1,48 @@
+{
+  "codigo": "09.01.01.030",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "01",
+  "unidad": "m",
+  "titulo": "Sustitución de tramo de tubería de agua existente.",
+  "descripcion": "Sustitución de un tramo de tubería de agua existente en mal estado, con el corte, retiro y reposición del tramo y sus conexiones. En reforma es una intervención muy frecuente al sustituir tramos de hierro galvanizado corroído, y el punto delicado es la unión con la tubería que permanece, que debe hacerse con adaptador compatible entre materiales distintos y no forzando roscas. Incluye el cierre y vaciado de la red, la localización y apertura de roza, el corte y retiro del tramo, la instalación del nuevo con sus adaptadores, la prueba de presión y el resane. Medido en longitud realmente sustituida.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PLO-PPR20",
+      "rendimiento": 1.1
+    },
+    {
+      "ref": "MT-PLO-ACC20",
+      "rendimiento": 1.2
+    },
+    {
+      "ref": "MT-YESO-REP",
+      "rendimiento": 2.2
+    },
+    {
+      "ref": "MT-PLO-SOP",
+      "rendimiento": 0.8
+    },
+    {
+      "ref": "MQ-ROZAD",
+      "rendimiento": 0.16
+    },
+    {
+      "ref": "MQ-TERMOF",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-PLO",
+      "rendimiento": 0.42
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.28
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-12-01-030",
+  "apartado": "01"
+}

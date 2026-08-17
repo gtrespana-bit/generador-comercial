@@ -4,7 +4,7 @@
 <div class="page-head csp-s-5d6e5a9c91">
   <div>
     <h1 class="csp-s-93f4d4c3fe">Catálogo de Partidas <span class="csp-s-20db78cd99">{{ partidas|length }}</span></h1>
-    <p class="subtitle">Reutilizables para tus presupuestos · organizadas por categoría y subcategoría · diseñadas para catálogos de 100–1.000 partidas</p>
+    <p class="subtitle">Reutilizables para tus presupuestos · capítulo, subcapítulo y apartado numéricos · preparadas para crecer sin desorden</p>
   </div>
   <div class="csp-s-33ff8b3e89">
     <a href="/presupuestos/importar?destino=catalogo" class="btn" title="Importa partidas desde Excel/CSV (formato CYPE o tabular) directamente al catálogo">Importar Excel</a>
@@ -181,7 +181,7 @@
                 {% set coste = (p.coste_materiales or 0) + (p.coste_mano_obra or 0) + (p.coste_complementarios or 0) + (p.coste_otros or 0) %}
                 {% set margen = (p.precio_unitario or 0) - coste %}
                 {% set recursos = catalogo_descompuestos.get(p.id, []) %}
-                <tr draggable="true" class="partida-tr" data-id="{{ p.id }}" data-categoria="{{ p.categoria }}" data-subcategoria="{{ p.subcategoria }}" data-nombre="{{ (p.nombre ~ ' ' ~ p.descripcion ~ ' ' ~ p.categoria ~ ' ' ~ p.subcategoria ~ ' ' ~ p.codigo_interno ~ ' ' ~ p.codigo_externo ~ ' ' ~ p.proveedor) | lower }}" data-precio="{{ p.precio_unitario }}" data-coste="{{ coste }}" data-usos="{{ p.usos or 0 }}">
+                <tr draggable="true" class="partida-tr" data-id="{{ p.id }}" data-categoria="{{ p.categoria }}" data-subcategoria="{{ p.subcategoria }}" data-apartado="{{ p.apartado }}" data-nombre="{{ (p.nombre ~ ' ' ~ p.descripcion ~ ' ' ~ p.categoria ~ ' ' ~ p.subcategoria ~ ' ' ~ p.apartado ~ ' ' ~ p.codigo_interno ~ ' ' ~ p.codigo_legacy ~ ' ' ~ p.codigo_externo ~ ' ' ~ p.proveedor) | lower }}" data-precio="{{ p.precio_unitario }}" data-coste="{{ coste }}" data-usos="{{ p.usos or 0 }}">
                   <td class="col-check"><input type="checkbox" class="row-check" data-id="{{ p.id }}" data-cotizat-change="partidas-row-check"></td>
                   <td class="col-code">
                     {% if p.codigo_interno or p.codigo_externo %}
@@ -196,6 +196,7 @@
                       {% if p.usos and p.usos > 0 %}<span class="usos-mini" title="Usada {{ p.usos }} veces">🔥{{ p.usos }}</span>{% endif %}
                     </div>
                     <div class="partida-sub">
+                      {% if p.apartado %}<span class="apartado-mini" title="Ruta del catálogo">{{ p.apartado }}</span>{% endif %}
                       {% if p.descripcion %}
                         <span class="desc" title="{{ p.descripcion }}">{{ p.descripcion }}</span>
                       {% else %}
@@ -279,7 +280,7 @@
                 {% set coste = (p.coste_materiales or 0) + (p.coste_mano_obra or 0) + (p.coste_complementarios or 0) + (p.coste_otros or 0) %}
                 {% set margen = (p.precio_unitario or 0) - coste %}
                 {% set recursos = catalogo_descompuestos.get(p.id, []) %}
-                <tr draggable="true" class="partida-tr" data-id="{{ p.id }}" data-categoria="{{ p.categoria }}" data-subcategoria="{{ p.subcategoria }}" data-nombre="{{ (p.nombre ~ ' ' ~ p.descripcion ~ ' ' ~ p.categoria ~ ' ' ~ p.subcategoria ~ ' ' ~ p.codigo_interno ~ ' ' ~ p.codigo_externo ~ ' ' ~ p.proveedor) | lower }}" data-precio="{{ p.precio_unitario }}" data-coste="{{ coste }}" data-usos="{{ p.usos or 0 }}">
+                <tr draggable="true" class="partida-tr" data-id="{{ p.id }}" data-categoria="{{ p.categoria }}" data-subcategoria="{{ p.subcategoria }}" data-apartado="{{ p.apartado }}" data-nombre="{{ (p.nombre ~ ' ' ~ p.descripcion ~ ' ' ~ p.categoria ~ ' ' ~ p.subcategoria ~ ' ' ~ p.apartado ~ ' ' ~ p.codigo_interno ~ ' ' ~ p.codigo_legacy ~ ' ' ~ p.codigo_externo ~ ' ' ~ p.proveedor) | lower }}" data-precio="{{ p.precio_unitario }}" data-coste="{{ coste }}" data-usos="{{ p.usos or 0 }}">
                   <td class="col-check"><input type="checkbox" class="row-check" data-id="{{ p.id }}" data-cotizat-change="partidas-row-check"></td>
                   <td class="col-code">
                     {% if p.codigo_interno or p.codigo_externo %}
@@ -294,6 +295,7 @@
                       {% if p.usos and p.usos > 0 %}<span class="usos-mini" title="Usada {{ p.usos }} veces">🔥{{ p.usos }}</span>{% endif %}
                     </div>
                     <div class="partida-sub">
+                      {% if p.apartado %}<span class="apartado-mini" title="Ruta del catálogo">{{ p.apartado }}</span>{% endif %}
                       {% if p.descripcion %}
                         <span class="desc" title="{{ p.descripcion }}">{{ p.descripcion }}</span>
                       {% else %}
@@ -350,7 +352,7 @@
     <div class="card empty csp-s-d6e98c0fe2">
       <div class="csp-s-c7d3ba0dcc">📋</div>
       <h3 class="csp-s-261f301f5a">Aún no hay partidas en el catálogo</h3>
-      <p class="hint csp-s-ff35838023">Crea tu primera partida o importa cientos desde Excel (formato CYPE o tabular). Una vez cargadas, organízalas por categoría y subcategoría para trabajar a gran escala.</p>
+      <p class="hint csp-s-ff35838023">Crea tu primera partida o importa cientos desde Excel (formato CYPE o tabular). Una vez cargadas, organízalas por capítulo, subcapítulo y apartado para trabajar a gran escala.</p>
       <div class="csp-s-eb1a6b0356">
         <a href="/partidas/nueva" class="btn btn-primary">+ Nueva Partida</a>
         <a href="/presupuestos/importar?destino=catalogo" class="btn">⇧ Importar desde Excel</a>

@@ -1,0 +1,40 @@
+{
+  "codigo": "12.02.01.060",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "02",
+  "unidad": "m²",
+  "titulo": "Friso de mortero proyectado mecánicamente.",
+  "descripcion": "Friso de mortero aplicado mediante máquina de proyección, maestreado y fratasado. La proyección mecánica multiplica el rendimiento frente al tendido a mano y mejora la compactación y la adherencia del mortero contra el soporte, por lo que compensa a partir de superficies medianas. Incluye la limpieza y humedecido del soporte, la colocación de maestras y cantoneras, el amasado y bombeo continuo, la proyección por franjas, el reglado, el fratasado y el curado. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MOR-FRISO",
+      "rendimiento": 0.028
+    },
+    {
+      "ref": "MT-MALLA-ESQ",
+      "rendimiento": 0.45
+    },
+    {
+      "ref": "MT-AGUA-OBRA",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MQ-PROYECT-MORT",
+      "rendimiento": 0.16
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.29
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.23
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-07-01-060",
+  "apartado": "01"
+}

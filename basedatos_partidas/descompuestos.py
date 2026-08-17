@@ -79,28 +79,40 @@ def cargar_clasificacion() -> dict:
 
 
 def ubicar(partida: dict, taxonomia: dict) -> dict:
-    """Valida capítulo y subcapítulo y devuelve sus nombres legibles.
+    """Valida la ruta numérica de tres niveles y devuelve nombres legibles.
 
-    Estructura de dos niveles: capítulo (2 dígitos) y subcapítulo (2 dígitos).
-    El código de partida debe ser ``PREFIJO-CC-SS-NNN`` y coincidir con ambos.
+    La taxonomía v2 usa capítulo, subcapítulo y apartado. El código visible
+    ``CC.SS.AA.NNN`` debe coincidir con los tres segmentos declarados en la
+    partida; el antiguo ``CT-CC-SS-NNN`` solo se conserva como trazabilidad.
     """
-    prefijo = taxonomia.get("_prefijo", "CT")
     caps = taxonomia.get("capitulos", {})
-    cap, sub = partida.get("capitulo"), partida.get("subcapitulo")
+    cap = str(partida.get("capitulo") or "")
+    sub = str(partida.get("subcapitulo") or "")
+    apartado = str(partida.get("apartado") or "")
     if cap not in caps:
         raise ValueError(f"{partida['codigo']}: capítulo «{cap}» no existe en clasificacion.json")
-    subs = caps[cap]["subcapitulos"]
+    subs = caps[cap].get("subcapitulos") or {}
     if sub not in subs:
         raise ValueError(f"{partida['codigo']}: subcapítulo «{sub}» no existe en el capítulo {cap}")
-    esperado = f"{prefijo}-{cap}-{sub}-"
-    if not partida["codigo"].startswith(esperado):
+    nodo_sub = subs[sub]
+    apartados = nodo_sub.get("apartados") or {}
+    if apartado not in apartados:
+        raise ValueError(
+            f"{partida['codigo']}: apartado «{apartado}» no existe en {cap}.{sub}"
+        )
+    esperado = f"{cap}.{sub}.{apartado}."
+    if not str(partida["codigo"]).startswith(esperado):
         raise ValueError(f"{partida['codigo']}: el código debería empezar por «{esperado}»")
     ambito = partida.get("ambito", "reforma")
     if ambito != taxonomia.get("_ambito", "reforma"):
         raise ValueError(f"{partida['codigo']}: ámbito «{ambito}» no corresponde a esta clasificación")
     return {
-        "capitulo_cod": cap, "capitulo": caps[cap]["nombre"],
-        "subcapitulo_cod": sub, "subcapitulo": subs[sub],
+        "capitulo_cod": cap,
+        "capitulo": caps[cap]["nombre"],
+        "subcapitulo_cod": sub,
+        "subcapitulo": nodo_sub["nombre"],
+        "apartado_cod": apartado,
+        "apartado": apartados[apartado],
         "ambito": ambito,
     }
 
@@ -261,16 +273,24 @@ def construir_hoja(partida: dict, ruta: Path) -> dict:
     fino = Side(style="thin", color="999999")
 
     # --- Etiquetas de clasificación (filas 1 y 2) ---
-    # Van encima de la cabecera de partida y en la columna A sola, así que el
-    # lector del proyecto no las confunde con la fila de la partida (que exige
-    # código, unidad y título). Sirven para que al importar el descompuesto el
-    # catálogo conserve su capítulo y su subcapítulo, y pueda dibujarse el
-    # árbol de la barra lateral.
+    # Van encima de la partida. Subcapítulo y apartado comparten la fila 2 en
+    # celdas distintas para que ambos queden antes de la cabecera de la partida
+    # y el importador pueda recuperarlos sin confundirlos con ella.
     ubicacion = partida.get("_ubicacion") or {}
     if ubicacion.get("capitulo"):
         ws.cell(1, 1, f"Capítulo: {ubicacion['capitulo_cod']} {ubicacion['capitulo']}")
     if ubicacion.get("subcapitulo"):
-        ws.cell(2, 1, f"Subcapítulo: {ubicacion['subcapitulo']}")
+        ws.cell(
+            2, 1,
+            f"Subcapítulo: {ubicacion['capitulo_cod']}.{ubicacion['subcapitulo_cod']} "
+            f"{ubicacion['subcapitulo']}",
+        )
+    if ubicacion.get("apartado"):
+        ws.cell(
+            2, 5,
+            f"Apartado: {ubicacion['capitulo_cod']}.{ubicacion['subcapitulo_cod']}."
+            f"{ubicacion['apartado_cod']} {ubicacion['apartado']}",
+        )
 
     # --- Cabecera de la partida (filas 3 y 5) ---
     ws.cell(3, 1, partida["codigo"]).font = negrita
@@ -401,7 +421,9 @@ def main(argv: list[str]) -> int:
         resumen = construir_hoja(partida, destino)
         u = partida["_ubicacion"]
         print(f"\n{partida['codigo']}  {partida['titulo']}")
-        print(f"  clasificación  : {u['capitulo']} › {u['subcapitulo']}")
+        print(
+            f"  clasificación  : {u['capitulo']} › {u['subcapitulo']} › {u['apartado']}"
+        )
         print(f"  archivo        : {destino.relative_to(RAIZ)}")
         for clave, valor in resumen["totales"].items():
             print(f"  {clave:<16}: {valor:>8.2f} USD")
@@ -436,6 +458,7 @@ def main(argv: list[str]) -> int:
         coste = resumen["coste_directo"]
         resumen_catalogo.append({
             "codigo": partida["codigo"],
+            "codigo_legacy": partida.get("codigo_legacy", ""),
             "ubicacion": partida["_ubicacion"],
             "producto_cliente": pc,
             "capitulo": partida["_ubicacion"]["capitulo"],
@@ -459,8 +482,8 @@ def escribir_catalogo(filas: list[dict]) -> None:
     """Vuelca el resumen de todas las partidas al maestro del catálogo."""
     ruta = BASE / "datos" / "partidas.csv"
     cabeceras = [
-        "codigo", "capitulo", "partida", "descripcion", "unidad", "precio",
-        "categoria", "subcategoria", "coste_materiales", "coste_mano_obra",
+        "codigo", "codigo_legacy", "capitulo", "partida", "descripcion", "unidad", "precio",
+        "categoria", "subcategoria", "apartado", "coste_materiales", "coste_mano_obra",
         "coste_complementarios", "coste_otros", "rendimiento",
         "desperdicio_pct", "notas_tecnicas",
     ]
@@ -477,10 +500,13 @@ def escribir_catalogo(filas: list[dict]) -> None:
                 nota += (f" | NO INCLUYE el producto de elección del cliente: "
                          f"{pcl['tipo']} ({pcl['consumo']} {pcl['unidad']}/{f['unidad']})")
             w.writerow([
-                f["codigo"], u["capitulo"], f["titulo"], f["descripcion"],
+                f["codigo"], f.get("codigo_legacy", ""), u["capitulo"],
+                f["titulo"], f["descripcion"],
                 {"m²": "m2", "m³": "m3"}.get(f["unidad"], f["unidad"]),
                 f"{f['precio_venta']:.2f}",
-                u["subcapitulo"], "",
+                f"{u['capitulo_cod']} {u['capitulo']}",
+                f"{u['capitulo_cod']}.{u['subcapitulo_cod']} {u['subcapitulo']}",
+                f"{u['capitulo_cod']}.{u['subcapitulo_cod']}.{u['apartado_cod']} {u['apartado']}",
                 f"{c.get('materiales', 0):.2f}",
                 f"{c.get('mano_obra', 0):.2f}",
                 f"{c.get('complementarios', 0):.2f}",
@@ -492,33 +518,65 @@ def escribir_catalogo(filas: list[dict]) -> None:
 
 
 def escribir_arbol(filas: list[dict], taxonomia: dict) -> None:
-    """Genera el árbol jerárquico que alimentará la barra lateral."""
+    """Genera capítulo → subcapítulo → apartado → partida."""
     caps = taxonomia.get("capitulos", {})
     arbol = []
     for cod_cap, cap in caps.items():
         nodo_subs = []
-        for cod_sub, nombre_sub in cap["subcapitulos"].items():
-            hijas = [
-                {"codigo": f["codigo"], "titulo": f["titulo"], "unidad": f["unidad"],
-                 "precio": f["precio_venta"], "horas": f["horas"],
-                 "producto_cliente": bool(f.get("producto_cliente"))}
-                for f in filas if f["ubicacion"]["subcapitulo_cod"] == cod_sub
-                and f["ubicacion"]["capitulo_cod"] == cod_cap
-            ]
-            nodo_subs.append({"codigo": cod_sub, "nombre": nombre_sub,
-                              "partidas": hijas, "n": len(hijas)})
-        arbol.append({"codigo": cod_cap, "nombre": cap["nombre"],
-                      "subcapitulos": nodo_subs, "n": sum(s["n"] for s in nodo_subs)})
+        for cod_sub, sub in cap["subcapitulos"].items():
+            nodo_apartados = []
+            for cod_apartado, nombre_apartado in sub.get("apartados", {}).items():
+                hijas = [
+                    {
+                        "codigo": f["codigo"],
+                        "codigo_legacy": f.get("codigo_legacy", ""),
+                        "titulo": f["titulo"],
+                        "unidad": f["unidad"],
+                        "precio": f["precio_venta"],
+                        "horas": f["horas"],
+                        "producto_cliente": bool(f.get("producto_cliente")),
+                    }
+                    for f in filas
+                    if f["ubicacion"]["capitulo_cod"] == cod_cap
+                    and f["ubicacion"]["subcapitulo_cod"] == cod_sub
+                    and f["ubicacion"]["apartado_cod"] == cod_apartado
+                ]
+                nodo_apartados.append({
+                    "codigo": f"{cod_cap}.{cod_sub}.{cod_apartado}",
+                    "nombre": nombre_apartado,
+                    "partidas": hijas,
+                    "n": len(hijas),
+                })
+            nodo_subs.append({
+                "codigo": f"{cod_cap}.{cod_sub}",
+                "nombre": sub["nombre"],
+                "apartados": nodo_apartados,
+                "n": sum(a["n"] for a in nodo_apartados),
+            })
+        arbol.append({
+            "codigo": cod_cap,
+            "nombre": cap["nombre"],
+            "subcapitulos": nodo_subs,
+            "n": sum(s["n"] for s in nodo_subs),
+        })
 
     ruta = BASE / "salida" / "arbol_catalogo.json"
     ruta.parent.mkdir(parents=True, exist_ok=True)
-    ruta.write_text(json.dumps({"prefijo": taxonomia.get("_prefijo", "CT"),
-                                "ambito": taxonomia.get("_ambito", "reforma"),
-                                "moneda": taxonomia.get("_moneda", "USD"),
-                                "arbol": arbol}, ensure_ascii=False, indent=2), encoding="utf-8")
+    ruta.write_text(json.dumps({
+        "version": taxonomia.get("_version", 2),
+        "formato_codigo": taxonomia.get("_formato_codigo", "CC.SS.AA.NNN"),
+        "ambito": taxonomia.get("_ambito", "reforma"),
+        "moneda": taxonomia.get("_moneda", "USD"),
+        "arbol": arbol,
+    }, ensure_ascii=False, indent=2), encoding="utf-8")
     con = sum(1 for c in arbol if c["n"])
-    print(f"Árbol de navegación   -> {ruta.relative_to(RAIZ)} "
-          f"({len(arbol)} capítulos, {con} con partidas)")
+    n_apartados = sum(
+        len(s["apartados"]) for c in arbol for s in c["subcapitulos"]
+    )
+    print(
+        f"Árbol de navegación   -> {ruta.relative_to(RAIZ)} "
+        f"({len(arbol)} capítulos, {con} con partidas, {n_apartados} apartados)"
+    )
 
 
 if __name__ == "__main__":

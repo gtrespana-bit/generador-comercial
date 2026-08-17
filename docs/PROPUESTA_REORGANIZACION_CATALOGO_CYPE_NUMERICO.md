@@ -2,8 +2,13 @@
 
 **Referencia de navegación:** Generador de Precios de CYPE, ámbito Rehabilitación  
 **Propuesta propia:** estructura numérica, terminología venezolana y datos originales de CotizaT  
-**Fecha:** 17/08/2026  
-**Estado:** propuesta para aprobación; todavía no es una migración ejecutada
+**Fecha:** 16/08/2026
+**Estado:** aprobada; fases 0 y 1 implantadas el 16/08/2026
+
+> **Implantado:** las 540 partidas ya usan `CC.SS.AA.NNN`, están mapeadas en
+> 18 capítulos, 172 subcapítulos y 147 apartados con contenido. La base de
+> datos, el actualizador versionado y el árbol de tres niveles ya están
+> operativos. La siguiente fase es ampliar primero hasta unas 800 partidas.
 
 ---
 
@@ -664,7 +669,7 @@ Cada ronda deberá mantener el mismo nivel de calidad actual: descripción propi
 
 ## 10. Cambios necesarios en la aplicación
 
-La reorganización no se resuelve solo editando `clasificacion.json`. La aplicación actual tiene dos niveles; hay que hacer un cambio de modelo y de interfaz.
+La reorganización no se resolvía solo editando `clasificacion.json`: exigía cambiar modelo e interfaz. Ese soporte de tres niveles quedó implantado en la fase 1.
 
 ### 10.1 Modelo de datos recomendado
 

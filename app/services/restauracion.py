@@ -259,6 +259,15 @@ def _restaurar_tabla(
     }
     tabla_nombre = especificacion.modelo.__tablename__
     mapa = mapas.setdefault(tabla_nombre, {})
+    if tabla_nombre == "categorias_partidas":
+        # La tabla es autorreferente: restaura padres antes que hijos.
+        filas = sorted(
+            filas,
+            key=lambda f: (
+                int(f.get("nivel") or 1),
+                str(f.get("codigo_completo") or ""),
+            ),
+        )
     for fila in filas:
         try:
             valores: dict[str, Any] = {}

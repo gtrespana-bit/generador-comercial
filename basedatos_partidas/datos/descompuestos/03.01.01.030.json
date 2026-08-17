@@ -1,0 +1,28 @@
+{
+  "codigo": "03.01.01.030",
+  "ambito": "reforma",
+  "capitulo": "03",
+  "subcapitulo": "01",
+  "unidad": "m²",
+  "titulo": "Descapote y retiro de capa vegetal.",
+  "descripcion": "Descapote del terreno mediante retiro de la capa vegetal superficial, de unos 20 cm de espesor medio, hasta alcanzar el terreno firme apto para recibir fundaciones o rellenos. La capa vegetal es compresible y no admite carga, de modo que su retiro es condición previa a cualquier cimentación. Incluye el replanteo del área, la excavación de la capa con medios mecánicos o manuales según el acceso, su amontonamiento separado del resto del material por si el cliente desea reutilizarla en jardinería, y el perfilado de la superficie resultante. No incluye el transporte del material sobrante a botadero, que se valora en el subcapítulo de transporte de tierras. Medido en superficie realmente descapotada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MQ-RETRO",
+      "rendimiento": 0.028
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.03
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.045
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-03-01-030",
+  "apartado": "01"
+}

@@ -156,7 +156,8 @@
       main.appendChild(nombre);
 
       var meta = document.createElement("div");
-      meta.textContent = [item.categoria, item.subcategoria, item.proveedor].filter(Boolean).join(" · ");
+      meta.textContent = [item.categoria, item.subcategoria, item.apartado, item.proveedor]
+        .filter(Boolean).join(" › ");
       CotizatStyles.setCssText(meta, "font-size:0.72rem; color:var(--text-muted); margin-top:2px;");
       main.appendChild(meta);
       div.appendChild(main);
@@ -220,6 +221,7 @@
       cantidad: 1,
       categoria: d.categoria || "",
       subcategoria: d.subcategoria || "",
+      apartado: d.apartado || "",
       codigo_interno: d.codigo_interno || d.codigo || "",
       codigo_externo: d.codigo_externo || "",
       proveedor: d.proveedor || "",

@@ -2444,8 +2444,9 @@ def busqueda_global(request: Request, q: str = "", db: Session = Depends(get_db)
         )).order_by(Factura.id.desc()).limit(12).all()
         resultados["partidas"] = db.query(Partida).filter(or_(
             Partida.nombre.ilike(like), Partida.descripcion.ilike(like),
-            Partida.codigo_interno.ilike(like), Partida.categoria.ilike(like),
-            Partida.subcategoria.ilike(like), Partida.proveedor.ilike(like),
+            Partida.codigo_interno.ilike(like), Partida.codigo_legacy.ilike(like),
+            Partida.categoria.ilike(like), Partida.subcategoria.ilike(like),
+            Partida.apartado.ilike(like), Partida.proveedor.ilike(like),
         )).order_by(Partida.ultimo_uso.desc(), Partida.nombre).limit(12).all()
         resultados["productos"] = db.query(Producto).filter(or_(
             Producto.nombre.ilike(like), Producto.descripcion.ilike(like), Producto.sku.ilike(like),
@@ -3223,6 +3224,10 @@ def _importar_a_catalogo(db: Session, filas: list[dict], formato: str) -> tuple[
             else:
                 categoria = "CYPE" if es_cype else "General"
         subcategoria = str(item.get("subcapitulo") or item.get("subcategoria") or "").strip()
+        apartado = str(item.get("apartado") or "").strip()
+        codigo = str(item.get("codigo") or item.get("codigo_externo") or "").strip()
+        codigo_legacy = str(item.get("codigo_legacy") or "").strip()
+        es_codigo_v2 = bool(re.fullmatch(r"\d{2}\.\d{2}\.\d{2}\.\d{3}", codigo))
         db.add(Partida(
             nombre=nombre,
             descripcion=str(item.get("descripcion", "")).strip(),
@@ -3230,11 +3235,16 @@ def _importar_a_catalogo(db: Session, filas: list[dict], formato: str) -> tuple[
             unidad=str(item.get("unidad", "ud")).strip() or "ud",
             categoria=categoria,
             subcategoria=subcategoria[:80],
-            codigo_interno=str(item.get("codigo") or item.get("codigo_externo") or "").strip(),
-            codigo_externo=str(item.get("codigo") or item.get("codigo_externo") or "").strip(),
+            apartado=apartado[:120],
+            codigo_interno=codigo,
+            codigo_externo=codigo,
+            codigo_legacy=codigo_legacy[:80],
+            codigo_clasificacion=codigo[:8] if es_codigo_v2 else "",
+            version_catalogo=2 if es_codigo_v2 and codigo_legacy.startswith("CT-") else 0,
             descomposicion_json=json.dumps({
                 "origen": "cype" if es_cype else "manual",
-                "codigo": str(item.get("codigo") or item.get("codigo_externo") or ""),
+                "codigo": codigo,
+                "codigo_legacy": codigo_legacy,
                 "unidad": str(item.get("unidad") or "ud"),
                 "filas": item.get("filas", []),
             }, ensure_ascii=False),
@@ -6423,6 +6433,7 @@ def _datos_partida_catalogo(form):
         "categoria": str(form.get("categoria", "General")).strip() or "General",
         "codigo_interno": str(form.get("codigo_interno", "")).strip(),
         "subcategoria": str(form.get("subcategoria", "")).strip(),
+        "apartado": str(form.get("apartado", "")).strip(),
         "coste_materiales": max(0.0, _f(form.get("coste_materiales"))),
         "coste_mano_obra": max(0.0, _f(form.get("coste_mano_obra"))),
         "coste_complementarios": max(0.0, _f(form.get("coste_complementarios"))),
@@ -6436,6 +6447,24 @@ def _datos_partida_catalogo(form):
         "desperdicio_recomendado_pct": max(0.0, min(100.0, _f(form.get("desperdicio_recomendado_pct")))),
         "notas_tecnicas": str(form.get("notas_tecnicas", "")).strip(),
     }
+
+
+def _desvincular_clasificacion_si_cambio(partida: Partida, datos: dict) -> None:
+    """Evita que una ruta editada a mano siga apuntando al nodo oficial viejo."""
+    anterior = (
+        partida.categoria or "",
+        partida.subcategoria or "",
+        partida.apartado or "",
+    )
+    nueva = (
+        datos.get("categoria") or "",
+        datos.get("subcategoria") or "",
+        datos.get("apartado") or "",
+    )
+    if anterior != nueva:
+        partida.categoria_id = None
+        partida.codigo_clasificacion = ""
+        partida.version_catalogo = 0
 
 
 def _datos_producto_catalogo(form):
@@ -6496,6 +6525,10 @@ def _partida_catalogo_json(partida: Partida) -> dict:
         "unidad": partida.unidad or "ud",
         "categoria": partida.categoria or "General",
         "subcategoria": partida.subcategoria or "",
+        "apartado": partida.apartado or "",
+        "codigo_clasificacion": partida.codigo_clasificacion or "",
+        "codigo_legacy": partida.codigo_legacy or "",
+        "ruta": partida.ruta_catalogo,
         "codigo": partida.codigo_interno or partida.codigo_externo or "",
         "codigo_interno": partida.codigo_interno or "",
         "codigo_externo": partida.codigo_externo or "",
@@ -6528,10 +6561,18 @@ def listar_partidas(request: Request, q: str = "", db: Session = Depends(get_db)
         like = f"%{q.strip()}%"
         query = query.filter(or_(
             Partida.nombre.ilike(like), Partida.categoria.ilike(like),
-            Partida.subcategoria.ilike(like), Partida.codigo_interno.ilike(like),
+            Partida.subcategoria.ilike(like), Partida.apartado.ilike(like),
+            Partida.codigo_interno.ilike(like), Partida.codigo_legacy.ilike(like),
             Partida.proveedor.ilike(like), Partida.descripcion.ilike(like),
         ))
-    partidas = query.order_by(Partida.categoria, Partida.subcategoria, Partida.ultimo_uso.desc(), Partida.nombre).all()
+    partidas = query.order_by(
+        Partida.categoria,
+        Partida.subcategoria,
+        Partida.apartado,
+        Partida.codigo_interno,
+        Partida.ultimo_uso.desc(),
+        Partida.nombre,
+    ).all()
     catalogo_descompuestos = {}
     for partida in partidas:
         try:
@@ -6539,7 +6580,10 @@ def listar_partidas(request: Request, q: str = "", db: Session = Depends(get_db)
             catalogo_descompuestos[partida.id] = valor.get("filas", []) if isinstance(valor, dict) else valor
         except (TypeError, ValueError):
             catalogo_descompuestos[partida.id] = []
-    categorias_catalogo = db.query(CategoriaPartida).order_by(CategoriaPartida.categoria, CategoriaPartida.subcategoria).all()
+    categorias_catalogo = db.query(CategoriaPartida).filter(or_(
+        CategoriaPartida.oficial.is_(False),
+        CategoriaPartida.oficial.is_(None),
+    )).order_by(CategoriaPartida.categoria, CategoriaPartida.subcategoria).all()
     return TEMPLATES.TemplateResponse(request, "partidas/list.html", {"partidas": partidas, "q": q, "catalogo_descompuestos": catalogo_descompuestos, "categorias_catalogo": categorias_catalogo})
 
 
@@ -6566,7 +6610,10 @@ def descomposicion_partida(partida_id: int, db: Session = Depends(get_db)):
 @app.get("/partidas/exportar")
 def exportar_partidas(formato: str = "csv", db: Session = Depends(get_db)):
     """Exportar catálogo de partidas a CSV o Excel con formato profesional."""
-    partidas = db.query(Partida).order_by(Partida.categoria, Partida.subcategoria, Partida.nombre).all()
+    partidas = db.query(Partida).order_by(
+        Partida.categoria, Partida.subcategoria, Partida.apartado,
+        Partida.codigo_interno, Partida.nombre,
+    ).all()
 
     if formato.lower() == "excel" or formato.lower() == "xlsx":
         from .services.excel_export import exportar_catalogo_partidas_excel
@@ -6578,14 +6625,15 @@ def exportar_partidas(formato: str = "csv", db: Session = Depends(get_db)):
         )
 
     filas = [[
-        "Código", "Nombre", "Descripción", "Unidad", "Precio unitario", "Categoría", "Subcategoría",
-        "Coste materiales", "Coste mano de obra", "Coste complementarios", "Otros costes", "Tiempo estimado (h)", "Proveedor",
+        "Código", "Código anterior", "Nombre", "Descripción", "Unidad", "Precio unitario",
+        "Capítulo", "Subcapítulo", "Apartado", "Coste materiales", "Coste mano de obra", "Coste complementarios", "Otros costes", "Tiempo estimado (h)", "Proveedor",
         "Rendimiento", "Desperdicio recomendado (%)", "Notas técnicas", "Última actualización de precio", "Usos",
     ]]
     for p in partidas:
         filas.append([
-            p.codigo_interno, p.nombre, p.descripcion, p.unidad,
-            f"{p.precio_unitario:.2f}".replace(".", ","), p.categoria, p.subcategoria,
+            p.codigo_interno, p.codigo_legacy, p.nombre, p.descripcion, p.unidad,
+            f"{p.precio_unitario:.2f}".replace(".", ","),
+            p.categoria, p.subcategoria, p.apartado,
             f"{(p.coste_materiales or 0):.2f}".replace(".", ","),
             f"{(p.coste_mano_obra or 0):.2f}".replace(".", ","),
             f"{(p.coste_complementarios or 0):.2f}".replace(".", ","),
@@ -6715,6 +6763,7 @@ async def guardar_partida_desde_presupuesto(request: Request, db: Session = Depe
         precio_anterior = None
     else:
         precio_anterior = partida.precio_unitario or 0.0
+        _desvincular_clasificacion_si_cambio(partida, datos)
     partida.nombre = nombre
     for campo, valor in datos.items():
         setattr(partida, campo, valor)
@@ -6802,6 +6851,7 @@ async def actualizar_partida(partida_id: int, request: Request, db: Session = De
     datos["descomposicion_json"] = json.dumps({"origen": "manual", "codigo": str(form.get("codigo_externo", "")), "unidad": datos["unidad"], "filas": filas_catalogo}, ensure_ascii=False)
     datos["codigo_externo"] = str(form.get("codigo_externo", "")).strip()
     precio_anterior = partida.precio_unitario or 0
+    _desvincular_clasificacion_si_cambio(partida, datos)
     partida.nombre = nombre
     for campo, valor in datos.items():
         setattr(partida, campo, valor)
@@ -6949,6 +6999,10 @@ async def bulk_move_partidas_category(request: Request, db: Session = Depends(ge
         p = db.get(Partida, pid)
         if p:
             p.subcategoria = ""
+            p.apartado = ""
+            p.categoria_id = None
+            p.codigo_clasificacion = ""
+            p.version_catalogo = 0
     db.commit()
     return _redirect("/partidas", msg=f"Se movieron {count} partidas a «{new_cat}».")
 
@@ -6968,6 +7022,10 @@ async def bulk_move_partidas_subcategory(request: Request, db: Session = Depends
         return _redirect("/partidas", error="Solo puedes mover a una subcategoría partidas que ya pertenecen a esa categoría.")
     for partida in partidas:
         partida.subcategoria = subcategoria
+        partida.apartado = ""
+        partida.categoria_id = None
+        partida.codigo_clasificacion = ""
+        partida.version_catalogo = 0
     db.commit()
     return _redirect("/partidas", msg=f"Se movieron {len(partidas)} partidas a «{categoria} · {subcategoria}».")
 

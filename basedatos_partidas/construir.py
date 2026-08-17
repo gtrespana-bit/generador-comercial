@@ -30,6 +30,8 @@ SALIDA = BASE / "salida"
 
 # Cabeceras que el importador reconoce automáticamente (ALIAS_CAMPOS).
 CABECERAS_IMPORT = [
+    "Código",
+    "Código anterior",
     "Capítulo",
     "Partida",
     "Descripción",
@@ -37,6 +39,8 @@ CABECERAS_IMPORT = [
     "Cantidad",
     "Precio unitario",
     "Categoría",
+    "Subcategoría",
+    "Apartado",
     "Tipo",
 ]
 
@@ -151,6 +155,8 @@ def escribir_csv(filas: list[dict]) -> Path:
         w.writerow(CABECERAS_IMPORT)
         for f in filas:
             w.writerow([
+                f.get("codigo", ""),
+                f.get("codigo_legacy", ""),
                 f.get("capitulo", ""),
                 f.get("partida", ""),
                 f.get("descripcion", ""),
@@ -158,6 +164,8 @@ def escribir_csv(filas: list[dict]) -> Path:
                 "1",
                 f"{num(f.get('precio')):.2f}".replace(".", ","),
                 f.get("categoria") or f.get("capitulo", "General"),
+                f.get("subcategoria", ""),
+                f.get("apartado", ""),
                 "incluida",
             ])
     return ruta
@@ -181,6 +189,8 @@ def escribir_xlsx(filas: list[dict]) -> Path | None:
         celda.font, celda.fill = cabecera, relleno
     for f in filas:
         ws.append([
+            f.get("codigo", ""),
+            f.get("codigo_legacy", ""),
             f.get("capitulo", ""),
             f.get("partida", ""),
             f.get("descripcion", ""),
@@ -188,12 +198,14 @@ def escribir_xlsx(filas: list[dict]) -> Path | None:
             1,
             round(num(f.get("precio")), 2),
             f.get("categoria") or f.get("capitulo", "General"),
+            f.get("subcategoria", ""),
+            f.get("apartado", ""),
             "incluida",
         ])
-    for col, ancho in zip("ABCDEFGH", (22, 55, 90, 10, 10, 14, 20, 12)):
+    for col, ancho in zip("ABCDEFGHIJKL", (18, 18, 28, 55, 90, 10, 10, 14, 28, 36, 42, 12)):
         ws.column_dimensions[col].width = ancho
     for fila in ws.iter_rows(min_row=2):
-        fila[2].alignment = Alignment(wrap_text=True, vertical="top")
+        fila[4].alignment = Alignment(wrap_text=True, vertical="top")
     ws.freeze_panes = "A2"
     wb.save(ruta)
     return ruta
@@ -205,6 +217,7 @@ def escribir_json(filas: list[dict]) -> Path:
     for f in filas:
         payload.append({
             "codigo": f.get("codigo", ""),
+            "codigo_legacy": f.get("codigo_legacy", ""),
             "capitulo": f.get("capitulo", ""),
             "nombre": f.get("partida", ""),
             "descripcion": f.get("descripcion", ""),
@@ -212,6 +225,7 @@ def escribir_json(filas: list[dict]) -> Path:
             "precio_unitario": round(num(f.get("precio")), 2),
             "categoria": f.get("categoria") or f.get("capitulo", "General"),
             "subcategoria": f.get("subcategoria", ""),
+            "apartado": f.get("apartado", ""),
             "coste_materiales": round(num(f.get("coste_materiales")), 2),
             "coste_mano_obra": round(num(f.get("coste_mano_obra")), 2),
             "coste_complementarios": round(num(f.get("coste_complementarios")), 2),

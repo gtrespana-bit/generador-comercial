@@ -1,0 +1,48 @@
+{
+  "codigo": "05.05.01.010",
+  "ambito": "reforma",
+  "capitulo": "05",
+  "subcapitulo": "05",
+  "unidad": "m³",
+  "titulo": "Suministro y montaje de estructura de madera.",
+  "descripcion": "Suministro y montaje de estructura de madera aserrada formada por vigas, pares y tirantes, con uniones ejecutadas mediante herrajes metálicos o ensambles tradicionales. Incluye la recepción y verificación de la escuadría, la humedad y la ausencia de defectos que comprometan la capacidad, el corte y labra de las piezas, el presentado y ajuste de las uniones, el izado y montaje con apeo provisional, la fijación definitiva, la comprobación geométrica del conjunto y el ajuste de contraflechas. No incluye el tratamiento preservante ni los herrajes, que se valoran aparte. Medido en volumen de madera realmente colocada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MADERA-EST",
+      "rendimiento": 1.06
+    },
+    {
+      "ref": "MT-CLAVOS",
+      "rendimiento": 2.2
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 1.8
+    },
+    {
+      "ref": "MQ-MONTAC",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 1.6
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 7.5
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 5.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 3.0
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-05-03-010",
+  "apartado": "01"
+}

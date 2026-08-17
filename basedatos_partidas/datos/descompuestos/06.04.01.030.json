@@ -1,0 +1,64 @@
+{
+  "codigo": "06.04.01.030",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "04",
+  "unidad": "m²",
+  "titulo": "Tabique de yeso laminado con placa resistente a la humedad.",
+  "descripcion": "Tabique autoportante ejecutado con placa de yeso laminado resistente a la humedad en las caras expuestas, para baños, cocinas y áreas de servicio. La placa resistente a la humedad no es impermeable: retrasa la absorción, pero en las zonas de contacto directo con el agua debe complementarse con una impermeabilización bajo el enchapado, que se valora aparte. Incluye el replanteo, la banda estanca perimetral, el montaje de canales y montantes con la separación reducida que exige recibir el enchapado, el atornillado de las placas, el aislamiento de la cámara, el tratamiento de juntas y el lijado. Medido a cinta corrida descontando huecos mayores de 2 m².",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PYL-CANAL",
+      "rendimiento": 0.85
+    },
+    {
+      "ref": "MT-PYL-MONT",
+      "rendimiento": 3.8
+    },
+    {
+      "ref": "MT-PYL-PLACA-RH",
+      "rendimiento": 2.1
+    },
+    {
+      "ref": "MT-PYL-LANA",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-PYL-BANDA",
+      "rendimiento": 1.7
+    },
+    {
+      "ref": "MT-PYL-PASTA",
+      "rendimiento": 0.7
+    },
+    {
+      "ref": "MT-TORN",
+      "rendimiento": 26.0
+    },
+    {
+      "ref": "MT-SELLA-ELAST",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-ATORN",
+      "rendimiento": 0.16
+    },
+    {
+      "ref": "MQ-LIJAD",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.35
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-06-03-030",
+  "apartado": "01"
+}

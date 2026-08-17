@@ -151,7 +151,8 @@
     var out = [];
     catalogo.forEach(function (p, idx) {
       var blob = sinTildes(
-        [p.nombre, p.descripcion, p.codigo_interno, p.codigo_externo, p.codigo, p.categoria, p.subcategoria].join(" ")
+        [p.nombre, p.descripcion, p.codigo_interno, p.codigo_externo, p.codigo_legacy,
+         p.codigo, p.categoria, p.subcategoria, p.apartado].join(" ")
       );
       var score = 0;
       var ok = true;
@@ -188,7 +189,7 @@
       lista.appendChild(crearElemento(
         "div",
         { className: "spotlight-empty" },
-        "No hay partidas que coincidan. Prueba otro término o el código CT-…"
+        "No hay partidas que coincidan. Prueba otro término o un código como 09.03…"
       ));
       return;
     }
@@ -196,7 +197,7 @@
     activos.forEach(function (item, i) {
       var p = item.p;
       var codigo = p.codigo_externo || p.codigo_interno || p.codigo || "";
-      var ruta = [p.categoria, p.subcategoria].filter(Boolean).join(" · ");
+      var ruta = [p.categoria, p.subcategoria, p.apartado].filter(Boolean).join(" › ");
 
       var btn = crearElemento("button", {
         type: "button",

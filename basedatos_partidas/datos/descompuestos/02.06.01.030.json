@@ -1,0 +1,41 @@
+{
+  "codigo": "02.06.01.030",
+  "ambito": "reforma",
+  "capitulo": "02",
+  "subcapitulo": "06",
+  "unidad": "m",
+  "titulo": "Desmontaje de pasamanos de escalera.",
+  "descripcion": "Desmontaje de pasamanos de escalera, sea de madera, metálico o de obra, junto con sus soportes y anclajes al paramento o a la baranda. Ejecutado con medios manuales, atornillador y amoladora según el tipo de fijación. Incluye el sostenimiento del elemento durante el desmontaje, el corte o extracción de los anclajes, el resane de los huecos que queden en el paramento, la clasificación del material recuperable y el retiro hasta el punto de acopio. Si el cliente desea conservar el elemento, se desmonta con cuidado y se acopia protegido, lo que reduce el rendimiento y debe advertirse en el presupuesto. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en longitud realmente desmontada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MT-YESO-REP",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MQ-AMOLA",
+      "rendimiento": 0.07
+    },
+    {
+      "ref": "MQ-ATORN",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.14
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.14
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_anterior": "DHR030",
+  "codigo_legacy": "CT-02-10-030",
+  "apartado": "01"
+}

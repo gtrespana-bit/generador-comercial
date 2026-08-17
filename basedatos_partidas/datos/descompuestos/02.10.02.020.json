@@ -1,0 +1,45 @@
+{
+  "codigo": "02.10.02.020",
+  "ambito": "reforma",
+  "capitulo": "02",
+  "subcapitulo": "10",
+  "unidad": "m²",
+  "titulo": "Picado de enchapado de granito o terrazo en pared.",
+  "descripcion": "Picado de enchapado de granito o terrazo prefabricado existente en pared, incluida su capa de asiento de mortero, ejecutado con martillo eléctrico manual. Por el mayor espesor y peso de estas piezas frente al enchapado cerámico, el rendimiento es menor y el escombro más pesado. Incluye la protección de pisos y ambientes contiguos, el control de polvo, el retiro manual del escombro en sacos hasta el punto de acopio y el repicado de los restos de mortero adheridos al paramento. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en superficie realmente picada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-SAC-ESC",
+      "rendimiento": 0.95
+    },
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MT-PROT-OBRA",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MQ-MART-ELEC",
+      "rendimiento": 0.36
+    },
+    {
+      "ref": "MQ-ASPIR",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.39
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.39
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_anterior": "DRC020",
+  "codigo_legacy": "CT-02-02-020",
+  "apartado": "02"
+}

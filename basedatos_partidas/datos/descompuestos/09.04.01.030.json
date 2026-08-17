@@ -1,0 +1,40 @@
+{
+  "codigo": "09.04.01.030",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "04",
+  "unidad": "m",
+  "titulo": "Iluminación lineal con cinta LED.",
+  "descripcion": "Suministro e instalación de cinta LED con su perfil de aluminio disipador, difusor y fuente de alimentación, para iluminación indirecta en cornisas, bajo muebles o en nichos. El perfil de aluminio no es decorativo: disipa el calor de los diodos, y sin él la cinta pierde luminosidad y vida útil rápidamente. Incluye el replanteo, el montaje del perfil, la colocación de la cinta con corte solo por los puntos marcados, la conexión y el emplazamiento de la fuente en punto registrable, y la prueba. Medido en longitud realmente instalada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CINTA-LED",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-ELE-CABLE",
+      "rendimiento": 1.2
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 0.23
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.09
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-13-04-030",
+  "apartado": "01"
+}

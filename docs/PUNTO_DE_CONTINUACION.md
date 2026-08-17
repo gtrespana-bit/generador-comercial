@@ -9,6 +9,24 @@ junto con `docs/CONTINUIDAD_STAGING_SUPABASE.md` (estado de staging/matriz) y
 
 ---
 
+## ⚠️ 0. Nueva migración pendiente de aplicar en Supabase (16/08/2026)
+
+La taxonomía numérica v2 añade el head **`f8a1b2c3d4e5`** sobre
+`a3d7e9c1b5f2`. El runtime ya exige el head nuevo. Antes de desplegar esta
+versión hay que ejecutar, con el rol administrativo:
+
+```text
+docs/staging_upgrade_f8a1b2c3d4e5.sql
+```
+
+La migración añade el árbol de categorías, el vínculo de cada partida a su
+apartado, el código anterior y `version_catalogo`. No modifica presupuestos ni
+precios. Hasta aplicar el script, `/readyz` devolverá 503 por diferencia de
+head, como protección deliberada. **Las secciones posteriores conservan el
+histórico del corte anterior y por eso nombran `a3d7e9c1b5f2` como head.**
+
+---
+
 ## ⚠️ 0bis. Recuperación de sesión del 16/08/2026 (léase antes que el resto)
 
 La rama `arena/01a00b99-generador-comercial` se recuperó en una sesión nueva a

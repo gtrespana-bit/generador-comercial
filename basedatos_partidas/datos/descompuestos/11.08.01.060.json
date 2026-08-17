@@ -1,0 +1,48 @@
+{
+  "codigo": "11.08.01.060",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "08",
+  "unidad": "m²",
+  "titulo": "Reparación puntual de cubierta.",
+  "descripcion": "Reparación puntual de cubierta en zonas con filtración localizada, con saneado del área, reposición de la impermeabilización y refuerzo del punto de fallo. Incluye la localización del origen real de la filtración, que rara vez coincide con el punto donde aparece la mancha en el techo porque el agua recorre la losa antes de caer, el saneado del área afectada, la imprimación, la reposición del sistema con solape amplio sobre lo existente, el refuerzo del punto singular y la prueba de estanqueidad. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ACRIL-IMPER",
+      "rendimiento": 1.3
+    },
+    {
+      "ref": "MT-BANDA-REF",
+      "rendimiento": 1.6
+    },
+    {
+      "ref": "MT-SELLA-FISURA",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MQ-ASPIR",
+      "rendimiento": 0.09
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.62
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.38
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-11-05-060",
+  "apartado": "01"
+}

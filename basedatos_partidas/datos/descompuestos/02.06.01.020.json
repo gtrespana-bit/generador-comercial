@@ -1,0 +1,53 @@
+{
+  "codigo": "02.06.01.020",
+  "ambito": "reforma",
+  "capitulo": "02",
+  "subcapitulo": "06",
+  "unidad": "m",
+  "titulo": "Demolición de dintel prefabricado o cargadero.",
+  "descripcion": "Demolición de dintel prefabricado o cargadero de concreto sobre hueco de puerta o ventana, ejecutada con martillo eléctrico previo apeo del muro superior. Incluye la validación previa de la carga que transmite el dintel y el montaje del apeo provisional mediante puntales, operación imprescindible antes de cualquier corte, la demolición por tramos, el corte de la armadura, el retiro del escombro y el repaso del apoyo para recibir el nuevo dintel. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en longitud realmente demolida.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-SAC-ESC",
+      "rendimiento": 0.55
+    },
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MT-APEO",
+      "rendimiento": 0.8
+    },
+    {
+      "ref": "MT-OXI-CONS",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MQ-MART-ELEC",
+      "rendimiento": 0.32
+    },
+    {
+      "ref": "MQ-OXICORTE",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.42
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.33
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_anterior": "DHR020",
+  "codigo_legacy": "CT-02-10-020",
+  "apartado": "01"
+}

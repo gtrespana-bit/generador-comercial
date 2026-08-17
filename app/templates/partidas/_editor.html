@@ -7,8 +7,9 @@
     </div>
     <div class="form-grid catalog-editor-grid">
       <div class="field field-full"><label>Nombre de la partida *</label><input name="nombre" required value="{{ partida.nombre if partida else '' }}" placeholder="p. ej. Enfoscado maestreado"></div>
-      <div class="field"><label>Categoría</label><input name="categoria" list="categorias-disponibles" value="{{ partida.categoria if partida else 'General' }}" placeholder="General"></div>
-      <div class="field"><label>Subcategoría</label><input name="subcategoria" value="{{ partida.subcategoria if partida else '' }}" placeholder="p. ej. Revestimientos"></div>
+      <div class="field"><label>Capítulo</label><input name="categoria" list="categorias-disponibles" value="{{ partida.categoria if partida else '99 Partidas personalizadas' }}" placeholder="99 Partidas personalizadas"></div>
+      <div class="field"><label>Subcapítulo</label><input name="subcategoria" value="{{ partida.subcategoria if partida else '' }}" placeholder="p. ej. 99.01 General"></div>
+      <div class="field"><label>Apartado</label><input name="apartado" value="{{ partida.apartado if partida else '' }}" placeholder="p. ej. 99.01.01 Trabajos diversos"></div>
       <div class="field"><label>Unidad de la partida</label><input name="unidad" value="{{ partida.unidad if partida else 'ud' }}" placeholder="m², m³, ud…"></div>
       <div class="field"><label>Código de partida</label><input name="codigo_externo" value="{{ partida.codigo_externo if partida else '' }}" placeholder="RBE030"></div>
       <div class="field field-full"><label>Descripción técnica</label><textarea name="descripcion" rows="4" placeholder="Alcance, materiales, ejecución, normativa y acabado…">{{ partida.descripcion if partida else '' }}</textarea></div>

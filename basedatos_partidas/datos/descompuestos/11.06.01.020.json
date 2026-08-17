@@ -1,0 +1,52 @@
+{
+  "codigo": "11.06.01.020",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "06",
+  "unidad": "m²",
+  "titulo": "Estructura de madera de techo.",
+  "descripcion": "Suministro y montaje de estructura de madera de techo formada por pares, correas y tirantes, con uniones mediante herrajes metálicos, y su tratamiento preservante. Incluye la selección de las piezas verificando escuadría y ausencia de defectos, el corte y labra, el izado y montaje con apeo provisional, la fijación con herrajes, la aplicación del preservante en todas las caras y muy especialmente en las testas y zonas de apoyo, y la comprobación de niveles y pendientes. Medido en superficie realmente ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MADERA-EST",
+      "rendimiento": 0.042
+    },
+    {
+      "ref": "MT-HERRAJE-MAD",
+      "rendimiento": 2.6
+    },
+    {
+      "ref": "MT-PRESERV-MAD",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MT-CLAVOS",
+      "rendimiento": 0.45
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.28
+    },
+    {
+      "ref": "MQ-MONTAC",
+      "rendimiento": 0.09
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.32
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 1.15
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.78
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-11-01-020",
+  "apartado": "01"
+}

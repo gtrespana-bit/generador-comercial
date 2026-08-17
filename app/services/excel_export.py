@@ -571,11 +571,11 @@ def exportar_catalogo_partidas_excel(partidas):
     ws["A2"] = f"Total: {len(partidas)} partidas"
     ws["A2"].font = _SUBTITLE_FONT
 
-    headers = ["Código", "Nombre", "Descripción", "Unidad", "Precio unit.",
-               "Categoría", "Subcategoría", "Coste materiales",
-               "Coste mano obra", "Complementarios", "Otros",
-               "Tiempo est.", "Proveedor", "Rendimiento",
-               "Desperdicio %", "Notas técnicas", "Última actualización", "Usos"]
+    headers = ["Código", "Código anterior", "Nombre", "Descripción", "Unidad",
+               "Precio unit.", "Capítulo", "Subcapítulo", "Apartado",
+               "Coste materiales", "Coste mano obra", "Complementarios", "Otros",
+               "Tiempo est.", "Proveedor", "Rendimiento", "Desperdicio %",
+               "Notas técnicas", "Última actualización", "Usos"]
 
     row = 4
     for col, h in enumerate(headers, 1):
@@ -585,35 +585,38 @@ def exportar_catalogo_partidas_excel(partidas):
     row = 5
     alt = False
     for p in partidas:
-        ws.cell(row=row, column=1, value=p.codigo_interno or "")
-        ws.cell(row=row, column=2, value=p.nombre or "")
-        ws.cell(row=row, column=3, value=p.descripcion or "")
-        ws.cell(row=row, column=4, value=p.unidad or "ud")
-        ws.cell(row=row, column=5, value=_money(p.precio_unitario))
-        ws.cell(row=row, column=5).number_format = _CURRENCY_FMT
-        ws.cell(row=row, column=6, value=p.categoria or "")
-        ws.cell(row=row, column=7, value=p.subcategoria or "")
-        ws.cell(row=row, column=8, value=_money(p.coste_materiales))
-        ws.cell(row=row, column=8).number_format = _CURRENCY_FMT
-        ws.cell(row=row, column=9, value=_money(p.coste_mano_obra))
-        ws.cell(row=row, column=9).number_format = _CURRENCY_FMT
-        ws.cell(row=row, column=10, value=_money(p.coste_complementarios))
-        ws.cell(row=row, column=10).number_format = _CURRENCY_FMT
-        ws.cell(row=row, column=11, value=_money(p.coste_otros))
-        ws.cell(row=row, column=11).number_format = _CURRENCY_FMT
-        ws.cell(row=row, column=12, value=p.tiempo_estimado_horas or "")
-        ws.cell(row=row, column=13, value=p.proveedor or "")
-        ws.cell(row=row, column=14, value=p.rendimiento or "")
-        ws.cell(row=row, column=15, value=p.desperdicio_recomendado_pct or 0)
-        ws.cell(row=row, column=15).number_format = '0.00"%"'
-        ws.cell(row=row, column=16, value=p.notas_tecnicas or "")
-        ws.cell(row=row, column=17, value=p.fecha_actualizacion_precio.isoformat() if p.fecha_actualizacion_precio else "")
-        ws.cell(row=row, column=18, value=p.usos or 0)
+        valores = [
+            p.codigo_interno or "",
+            p.codigo_legacy or "",
+            p.nombre or "",
+            p.descripcion or "",
+            p.unidad or "ud",
+            _money(p.precio_unitario),
+            p.categoria or "",
+            p.subcategoria or "",
+            p.apartado or "",
+            _money(p.coste_materiales),
+            _money(p.coste_mano_obra),
+            _money(p.coste_complementarios),
+            _money(p.coste_otros),
+            p.tiempo_estimado_horas or "",
+            p.proveedor or "",
+            p.rendimiento or "",
+            p.desperdicio_recomendado_pct or 0,
+            p.notas_tecnicas or "",
+            p.fecha_actualizacion_precio.isoformat() if p.fecha_actualizacion_precio else "",
+            p.usos or 0,
+        ]
+        for col, valor in enumerate(valores, 1):
+            ws.cell(row=row, column=col, value=valor)
+        for col in (6, 10, 11, 12, 13):
+            ws.cell(row=row, column=col).number_format = _CURRENCY_FMT
+        ws.cell(row=row, column=17).number_format = '0.00"%"'
 
         for col in range(1, len(headers) + 1):
             c = ws.cell(row=row, column=col)
             c.border = _BORDER
-            if col in (5, 8, 9, 10, 11, 15):
+            if col in (6, 10, 11, 12, 13, 17):
                 c.alignment = Alignment(horizontal="right")
             if alt:
                 c.fill = _ODD_FILL
@@ -621,8 +624,8 @@ def exportar_catalogo_partidas_excel(partidas):
         row += 1
 
     _auto_width(ws)
-    ws.column_dimensions["C"].width = 50
-    ws.column_dimensions["P"].width = 30
+    ws.column_dimensions["D"].width = 50
+    ws.column_dimensions["R"].width = 30
 
     buf = io.BytesIO()
     wb.save(buf)
