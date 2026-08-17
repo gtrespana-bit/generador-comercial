@@ -2253,28 +2253,51 @@ def inicio(request: Request, db: Session = Depends(get_db)):
     cfg = _config(db)
     if not cfg.onboarding_completado:
         return _redirect("/bienvenida")
-    total_presupuestos = db.query(Presupuesto).count()
-    total_clientes = db.query(Cliente).count()
-    por_estado = {e: db.query(Presupuesto).filter(Presupuesto.estado == e).count() for e in ESTADOS}
-    aprobados = db.query(Presupuesto).filter(Presupuesto.estado == "aprobado").all()
-    importe_aprobado = sum(p.total for p in aprobados)
-    recientes = db.query(Presupuesto).order_by(Presupuesto.id.desc()).limit(6).all()
-    # Presupuestos enviados que vencen en los próximos 7 días
     hoy = date.today()
     fin_semana = hoy + timedelta(days=7)
-    por_vencer = sum(
-        1 for p in db.query(Presupuesto).filter(Presupuesto.estado == "enviado").all()
-        if p.validez_dias and hoy <= p.fecha + timedelta(days=p.validez_dias) <= fin_semana
-    )
-    total_facturas = db.query(Factura).count()
     mes_inicio = hoy.replace(day=1)
-    presupuestos_mes = [p for p in db.query(Presupuesto).filter(Presupuesto.fecha >= mes_inicio).all()]
-    enviados_mes = sum(1 for p in presupuestos_mes if p.estado in ("enviado", "reenviado"))
-    aprobados_mes = [p for p in presupuestos_mes if p.estado in ("aprobado", "aprobado_parcialmente")]
-    total_enviados = sum(1 for p in db.query(Presupuesto).all() if p.estado in ("enviado", "reenviado", "aprobado", "aprobado_parcialmente", "en_ejecucion", "finalizado"))
-    total_aprobados = sum(1 for p in db.query(Presupuesto).all() if p.estado in ("aprobado", "aprobado_parcialmente", "en_ejecucion", "finalizado"))
-    descuentos_concedidos = sum(p.descuento_monto for p in db.query(Presupuesto).all())
-    margen_estimado = sum(p.margen for p in db.query(Presupuesto).filter(Presupuesto.estado.in_(["aprobado", "aprobado_parcialmente", "en_ejecucion", "finalizado"])).all())
+
+    # Una sola lectura del histórico: antes cada indicador hacía su propia
+    # pasada completa sobre ``presupuestos`` (hasta ~10 consultas a la tabla
+    # entera). Con catálogos y presupuestos creciendo, esto se traduce en un
+    # dashboard visiblemente más rápido en instalaciones grandes.
+    estados_aprobados = ("aprobado", "aprobado_parcialmente", "en_ejecucion", "finalizado")
+    estados_enviados = ("enviado", "reenviado", *estados_aprobados)
+    todos = db.query(Presupuesto).all()
+
+    total_presupuestos = len(todos)
+    por_estado = {e: 0 for e in ESTADOS}
+    importe_aprobado = 0.0
+    descuentos_concedidos = 0.0
+    margen_estimado = 0.0
+    total_enviados = 0
+    total_aprobados = 0
+    por_vencer = 0
+    presupuestos_mes = []
+    enviados_mes = 0
+    aprobados_mes = []
+    for p in todos:
+        por_estado[p.estado] = por_estado.get(p.estado, 0) + 1
+        if p.estado == "aprobado":
+            importe_aprobado += p.total or 0
+        descuentos_concedidos += p.descuento_monto or 0
+        if p.estado in estados_enviados:
+            total_enviados += 1
+        if p.estado in estados_aprobados:
+            total_aprobados += 1
+            margen_estimado += p.margen or 0
+        if p.estado == "enviado" and p.validez_dias and hoy <= p.fecha + timedelta(days=p.validez_dias) <= fin_semana:
+            por_vencer += 1
+        if p.fecha and p.fecha >= mes_inicio:
+            presupuestos_mes.append(p)
+            if p.estado in ("enviado", "reenviado"):
+                enviados_mes += 1
+            if p.estado in ("aprobado", "aprobado_parcialmente"):
+                aprobados_mes.append(p)
+
+    recientes = sorted(todos, key=lambda p: p.id, reverse=True)[:6]
+    total_clientes = db.query(Cliente).count()
+    total_facturas = db.query(Factura).count()
     proyectos_activos = db.query(Proyecto).filter(Proyecto.estado.in_(["en_ejecucion", "pausado"])).count()
     analisis_precios = analizar_catalogo_partidas(db)
     recorrido_inicial = (
@@ -6474,6 +6497,26 @@ def listar_partidas(request: Request, q: str = "", db: Session = Depends(get_db)
             catalogo_descompuestos[partida.id] = []
     categorias_catalogo = db.query(CategoriaPartida).order_by(CategoriaPartida.categoria, CategoriaPartida.subcategoria).all()
     return TEMPLATES.TemplateResponse(request, "partidas/list.html", {"partidas": partidas, "q": q, "catalogo_descompuestos": catalogo_descompuestos, "categorias_catalogo": categorias_catalogo})
+
+
+@app.get("/partidas/{partida_id}/descomposicion")
+def descomposicion_partida(partida_id: int, db: Session = Depends(get_db)):
+    """Filas de recursos de una partida del catálogo (carga bajo demanda).
+
+    La página de Partidas ya no emite las ~540 tablas de descomposición en el
+    HTML inicial: cada una se pide aquí solo cuando el usuario la despliega,
+    lo que reduce el peso y el DOM de la lista a una fracción.
+    """
+    partida = db.get(Partida, partida_id)
+    if partida is None:
+        return {"ok": False, "error": "Partida no encontrada."}
+    try:
+        valor = json.loads(partida.descomposicion_json or "[]")
+    except (TypeError, ValueError):
+        valor = []
+    filas = valor.get("filas", []) if isinstance(valor, dict) else valor
+    filas = [f for f in filas if isinstance(f, dict) and f.get("tipo") == "recurso"]
+    return {"ok": True, "filas": filas}
 
 
 @app.get("/partidas/exportar")

@@ -1026,6 +1026,7 @@ body.collapsed .theme-toggle-label,
   font-size: .62rem; color: var(--text-soft); flex-shrink: 0; transition: transform .18s, background .15s;
 }
 .cat-section.collapsed .cat-toggle { transform: rotate(-90deg); }
+.cat-section.collapsed .cat-section-body { display: none; }
 .cat-title-wrap { min-width: 0; flex: 1; }
 .cat-title { margin: 0; font-size: .98rem; font-weight: 800; color: var(--text); display: flex; align-items: center; gap: .5rem; letter-spacing: -.01em; }
 .cat-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--accent); flex-shrink: 0; box-shadow: 0 0 0 3px var(--accent-soft); }
