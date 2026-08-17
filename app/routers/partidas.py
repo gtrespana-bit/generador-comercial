@@ -109,7 +109,10 @@ def listar_partidas(
     subcategoria: str = "",
     db: Session = Depends(get_db),
 ):
-    # La tabla de gestión se pagina; el editor usa un índice compacto aparte.
+    # La tabla de gestión ya no se pagina en la vista de navegación: el árbol
+    # completo se monta contraído y las filas de cada subcapítulo se cargan
+    # bajo demanda (ver /partidas/api/filas). Solo la búsqueda y el filtro de
+    # una subcategoría concreta renderizan filas en el servidor.
     from ..services.catalogo_propio import asegurar_catalogo_propio
     asegurar_catalogo_propio(db)
     vista = "ocultas" if vista == "ocultas" else "activas"
@@ -117,35 +120,45 @@ def listar_partidas(
     subcategoria = str(subcategoria or "").strip()
     if subcategoria and not categoria:
         categoria = ""
+    q = str(q or "").strip()
     total_ocultas = db.query(Partida).filter(Partida.oculta.is_(True)).count()
-    query = db.query(Partida).filter(
-        Partida.oculta.is_(vista == "ocultas")
-    )
-    if categoria:
-        query = query.filter(Partida.categoria == categoria)
-        if subcategoria:
-            query = query.filter(Partida.subcategoria == subcategoria)
-    if q.strip():
-        query, _ = _aplicar_busqueda_catalogo(query, q.strip()[:120])
-    total_partidas = query.count()
+
+    modo_directo = bool(q) or bool(subcategoria)
     por_pagina = 100
-    total_paginas = max(1, math.ceil(total_partidas / por_pagina))
-    pagina = max(1, min(int(pagina or 1), total_paginas))
-    partidas = query.order_by(
-        Partida.categoria,
-        Partida.subcategoria,
-        Partida.apartado,
-        Partida.codigo_interno,
-        Partida.ultimo_uso.desc(),
-        Partida.nombre,
-    ).offset((pagina - 1) * por_pagina).limit(por_pagina).all()
-    catalogo_descompuestos = {}
-    for partida in partidas:
-        try:
-            valor = json.loads(partida.descomposicion_json or "[]")
-            catalogo_descompuestos[partida.id] = valor.get("filas", []) if isinstance(valor, dict) else valor
-        except (TypeError, ValueError):
-            catalogo_descompuestos[partida.id] = []
+    if modo_directo:
+        query = db.query(Partida).filter(Partida.oculta.is_(vista == "ocultas"))
+        if categoria:
+            query = query.filter(Partida.categoria == categoria)
+            if subcategoria:
+                query = query.filter(Partida.subcategoria == subcategoria)
+        if q:
+            query, _ = _aplicar_busqueda_catalogo(query, q[:120])
+        total_partidas = query.count()
+        total_paginas = max(1, math.ceil(total_partidas / por_pagina))
+        pagina = max(1, min(int(pagina or 1), total_paginas))
+        partidas = query.order_by(
+            Partida.categoria,
+            Partida.subcategoria,
+            Partida.apartado,
+            Partida.codigo_interno,
+            Partida.ultimo_uso.desc(),
+            Partida.nombre,
+        ).offset((pagina - 1) * por_pagina).limit(por_pagina).all()
+        catalogo_descompuestos = {}
+        for partida in partidas:
+            try:
+                valor = json.loads(partida.descomposicion_json or "[]")
+                catalogo_descompuestos[partida.id] = valor.get("filas", []) if isinstance(valor, dict) else valor
+            except (TypeError, ValueError):
+                catalogo_descompuestos[partida.id] = []
+    else:
+        partidas = []
+        catalogo_descompuestos = {}
+        total_partidas = db.query(Partida).filter(
+            Partida.oculta.is_(vista == "ocultas")
+        ).count()
+        total_paginas = 1
+        pagina = 1
 
     # Barra lateral: árbol oficial completo (capítulo → subcapítulo) con el
     # total de partidas por nodo, independiente de la paginación y del filtro
@@ -209,6 +222,66 @@ def listar_partidas(
         "vista": vista,
         "total_ocultas": total_ocultas,
     })
+
+
+@router.get("/partidas/api/filas")
+def filas_subcategoria_catalogo(
+    categoria: str,
+    subcategoria: str,
+    vista: str = "activas",
+    db: Session = Depends(get_db),
+):
+    """Devuelve las partidas de un subcapítulo como JSON.
+
+    La vista de navegación monta el árbol completo contraído y pide aquí las
+    filas de cada subcapítulo solo cuando el usuario lo despliega, para que la
+    primera carga sea instantánea aunque el catálogo tenga miles de partidas.
+    El navegador construye las filas con el DOM API (sin inyectar HTML), de
+    acuerdo con la política CSP estricta del proyecto.
+    """
+    vista = "ocultas" if vista == "ocultas" else "activas"
+    filas = (
+        db.query(Partida)
+        .filter(
+            Partida.oculta.is_(vista == "ocultas"),
+            Partida.categoria == categoria,
+            Partida.subcategoria == subcategoria,
+        )
+        .order_by(Partida.apartado, Partida.codigo_interno, Partida.nombre)
+        .all()
+    )
+    partidas = []
+    for p in filas:
+        try:
+            valor = json.loads(p.descomposicion_json or "[]")
+            descomp = valor.get("filas", []) if isinstance(valor, dict) else valor
+        except (TypeError, ValueError):
+            descomp = []
+        n_recursos = sum(
+            1 for f in descomp
+            if isinstance(f, dict) and f.get("tipo") == "recurso"
+        )
+        partidas.append({
+            "id": p.id,
+            "nombre": p.nombre or "",
+            "descripcion": p.descripcion or "",
+            "unidad": p.unidad or "ud",
+            "precio": p.precio_unitario or 0.0,
+            "categoria": p.categoria or "",
+            "subcategoria": p.subcategoria or "",
+            "apartado": p.apartado or "",
+            "codigo": p.codigo_interno or p.codigo_externo or "",
+            "proveedor": p.proveedor or "",
+            "usos": p.usos or 0,
+            "imagen": bool(p.imagen),
+            "es_oficial": bool(p.es_oficial),
+            "coste_materiales": p.coste_materiales or 0.0,
+            "coste_mano_obra": p.coste_mano_obra or 0.0,
+            "coste_complementarios": p.coste_complementarios or 0.0,
+            "coste_otros": p.coste_otros or 0.0,
+            "recursos": n_recursos,
+        })
+    return {"ok": True, "partidas": partidas}
 
 
 @router.get("/partidas/api/buscar")
