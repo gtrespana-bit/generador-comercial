@@ -753,7 +753,11 @@
         },
         "14": {
           "nombre": "Tratamientos de protección y restauración de acabados",
-          "apartados": {}
+          "apartados": {
+            "01": "Limpieza y restauración de paramentos",
+            "02": "Hidrofugación y protección de superficies",
+            "03": "Restauración de madera y elementos decorativos"
+          }
         }
       }
     },

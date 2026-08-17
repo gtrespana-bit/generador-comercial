@@ -1,0 +1,40 @@
+{
+  "codigo": "12.09.01.050",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "09",
+  "unidad": "m2",
+  "titulo": "Cielo desmontable con aislamiento acústico.",
+  "descripcion": "Cielo raso desmontable de fibra mineral con panel de lana en la cámara, para aislamiento acústico. Incluye la estructura, la lana, los paneles y el remate perimetral. Medido por metro cuadrado ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CIELO-DESM",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-PERF-DESM",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-PYL-LANA",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-PERFIL-REMATE",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.42
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.18
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

@@ -1,0 +1,32 @@
+{
+  "codigo": "12.01.01.070",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "01",
+  "unidad": "m",
+  "titulo": "Reparación de grietas con malla de refuerzo.",
+  "descripcion": "Reparación de grietas en paramento con apertura, colocación de malla de refuerzo y sellado con mortero. Incluye la apertura de la grieta, la malla y el relleno. Medido por metro lineal reparado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MALLA-JUNTA",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MT-MORT-REP-EST",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.1
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

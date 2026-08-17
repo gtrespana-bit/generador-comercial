@@ -1,0 +1,44 @@
+{
+  "codigo": "12.11.01.060",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "11",
+  "unidad": "m2",
+  "titulo": "Pintura de fachada con acabado satinado, dos manos.",
+  "descripcion": "Aplicación de pintura de caucho exterior con acabado satinado sobre fachada, con dos manos. Incluye la preparación del soporte y las dos manos de acabado satinado. Medido por metro cuadrado pintado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PIN-CAUCHO",
+      "rendimiento": 0.32
+    },
+    {
+      "ref": "MT-PIN-FONDO",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MT-PIN-LIJA",
+      "rendimiento": 0.16
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.23
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.22
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.12
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

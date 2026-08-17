@@ -1,0 +1,40 @@
+{
+  "codigo": "12.12.01.080",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "12",
+  "unidad": "ud",
+  "titulo": "Pintura de puerta de madera con desmontaje de herrajes.",
+  "descripcion": "Pintura de una puerta de madera con desmontaje y remontaje de herrajes, con fondo y dos manos de esmalte. Incluye la retirada de herrajes, la preparación, la pintura por ambas caras y el remontaje. Medido por hoja de puerta pintada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PIN-ESMALTE",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MT-PIN-FONDO",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MT-PIN-LIJA",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.3
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

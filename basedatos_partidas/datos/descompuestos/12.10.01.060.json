@@ -1,0 +1,40 @@
+{
+  "codigo": "12.10.01.060",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "10",
+  "unidad": "m2",
+  "titulo": "Pintura antimoho para cocina y baño.",
+  "descripcion": "Aplicación de pintura acrílica antihongos en paramentos de cocina, baño o local con condensación, con dos manos. Incluye la limpieza de la superficie, el tratamiento previo de las zonas afectadas y las dos manos de pintura antimoho. Medido por metro cuadrado pintado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PIN-ANTIMOHO",
+      "rendimiento": 0.26
+    },
+    {
+      "ref": "MT-FUNGICIDA",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MT-PIN-LIJA",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.14
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.09
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

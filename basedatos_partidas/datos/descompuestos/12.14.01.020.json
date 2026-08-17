@@ -1,0 +1,36 @@
+{
+  "codigo": "12.14.01.020",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "14",
+  "unidad": "m2",
+  "titulo": "Restauración y rejuntado de enchapado existente.",
+  "descripcion": "Restauración de enchapado existente con retirada del mortero de juntas deteriorado y rejuntado con mortero nuevo. Incluye el vaciado de las juntas, la limpieza y el relleno con el mortero adecuado. Medido por metro cuadrado restaurado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-JUN-CG2",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MQ-AMOLA",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-ALI",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.15
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

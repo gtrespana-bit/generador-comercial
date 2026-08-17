@@ -1,0 +1,36 @@
+{
+  "codigo": "12.14.03.030",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "14",
+  "unidad": "m2",
+  "titulo": "Reintegración y pulido de granito vaciado en sitio.",
+  "descripcion": "Reintegración de faltantes y pulido de piso de granito vaciado en sitio, para recuperar su acabado. Incluye el resane de las zonas dañadas y el pulido y abrillantado del conjunto. Medido por metro cuadrado restaurado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-GRANO-MARMOL",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-CONS-PULIDO",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MQ-PULIDORA",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MO-OF1-ALI",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.12
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "03"
+}

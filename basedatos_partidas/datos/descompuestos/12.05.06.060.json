@@ -1,0 +1,40 @@
+{
+  "codigo": "12.05.06.060",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "05",
+  "unidad": "m2",
+  "titulo": "Piso vinílico de lujo tipo SPC.",
+  "descripcion": "Colocación de piso vinílico de lujo tipo SPC (núcleo rígido) flotante, con manta acústica. Incluye la preparación, la colocación flotante y el remate. Medido por metro cuadrado colocado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ADH-VINIL",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MT-MANTA-ACUS",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-PERFIL-TRANS",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-PISO",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "06"
+}

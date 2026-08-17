@@ -1,0 +1,40 @@
+{
+  "codigo": "12.10.01.080",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "10",
+  "unidad": "m2",
+  "titulo": "Pintura de pizarra efecto tiza en paramento.",
+  "descripcion": "Aplicación de pintura de pizarra efecto tiza en paramento interior, con dos manos sobre fondo preparado. Incluye el fondo sellador, las dos manos de pintura de pizarra y el curado previo a su uso. Medido por metro cuadrado pintado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PIN-TIZA",
+      "rendimiento": 0.22
+    },
+    {
+      "ref": "MT-PIN-FONDO",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MT-PIN-LIJA",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.14
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.09
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

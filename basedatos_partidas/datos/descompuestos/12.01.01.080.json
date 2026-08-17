@@ -1,0 +1,32 @@
+{
+  "codigo": "12.01.01.080",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "01",
+  "unidad": "m2",
+  "titulo": "Nivelación puntual de paramento con pasta.",
+  "descripcion": "Nivelación puntual de paramento con pasta de nivelación para alisar zonas irregulares previo al acabado. Incluye la aplicación de la pasta y el lijado. Medido por metro cuadrado nivelado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ESTUCO-FINO",
+      "rendimiento": 1.2
+    },
+    {
+      "ref": "MT-PIN-LIJA",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.06
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

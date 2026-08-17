@@ -1,0 +1,32 @@
+{
+  "codigo": "12.06.02.090",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "06",
+  "unidad": "m",
+  "titulo": "Peldaño prefabricado de concreto.",
+  "descripcion": "Suministro y colocación de peldaño prefabricado de concreto sobre estructura existente. Incluye la preparación del soporte, la colocación y el nivelado del peldaño. Medido por unidad de peldaño colocada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MOR-PEGA",
+      "rendimiento": 0.01
+    },
+    {
+      "ref": "MT-PUENTE-ADH",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

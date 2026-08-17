@@ -1,0 +1,32 @@
+{
+  "codigo": "12.02.01.150",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "02",
+  "unidad": "m2",
+  "titulo": "Friso impermeabilizante en muro de contención.",
+  "descripcion": "Aplicación de friso con mortero impermeabilizante en muro de contención o de sótano. Incluye la preparación del soporte y la aplicación del mortero impermeabilizante. Medido por metro cuadrado frisado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MORT-IMPER",
+      "rendimiento": 6.0
+    },
+    {
+      "ref": "MT-MALLA-JUNTA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.45
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

@@ -1,0 +1,32 @@
+{
+  "codigo": "12.14.02.040",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "14",
+  "unidad": "m2",
+  "titulo": "Tratamiento fungicida de paramento con moho.",
+  "descripcion": "Tratamiento fungicida de paramento afectado por moho o algas, con limpieza y aplicación del producto. Incluye la limpieza de la zona y la aplicación del fungicida para evitar la reaparición. Medido por metro cuadrado tratado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-FUNGICIDA",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MT-CONS-LIMP",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.08
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

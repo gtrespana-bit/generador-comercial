@@ -1,0 +1,36 @@
+{
+  "codigo": "12.05.05.060",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "05",
+  "unidad": "m2",
+  "titulo": "Piso de parquet colocado en espiga.",
+  "descripcion": "Colocación de piso de parquet encolado en espiga, sobre afirmado nivelado. Incluye el replanteo del patrón, el encolado y el lijado. Medido por metro cuadrado colocado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ADH-MADERA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-MANTA-ACUS",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MQ-LIJAD-PISO",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.4
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "05"
+}

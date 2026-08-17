@@ -1,0 +1,32 @@
+{
+  "codigo": "12.14.03.020",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "14",
+  "unidad": "m2",
+  "titulo": "Cristalizado y abrillantado de piso de piedra.",
+  "descripcion": "Cristalizado y abrillantado de piso de piedra natural o granito, para recuperar el brillo y la protección superficial. Incluye el pulido mecánico con abrasivos y el abrillantado final. Medido por metro cuadrado abrillantado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-PULIDO",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MQ-PULIDORA",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-ALI",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.1
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "03"
+}

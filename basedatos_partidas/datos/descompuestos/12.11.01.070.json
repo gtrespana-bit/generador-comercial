@@ -1,0 +1,44 @@
+{
+  "codigo": "12.11.01.070",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "11",
+  "unidad": "m2",
+  "titulo": "Pintura de fachada con acabado texturado.",
+  "descripcion": "Aplicación de pintura exterior con acabado texturado o gota sobre fachada, con dos manos. Incluye la preparación del soporte y la aplicación del revestimiento texturado. Medido por metro cuadrado pintado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PIN-CAUCHO",
+      "rendimiento": 0.34
+    },
+    {
+      "ref": "MT-PIN-FONDO",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.14
+    },
+    {
+      "ref": "MQ-PROYECT-MORT",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.23
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

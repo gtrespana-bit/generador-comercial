@@ -1,0 +1,40 @@
+{
+  "codigo": "12.13.01.040",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "13",
+  "unidad": "m2",
+  "titulo": "Recubrimiento epóxico antideslizante para piso.",
+  "descripcion": "Aplicación de recubrimiento epóxico antideslizante sobre piso interior o exterior, con capa de imprimación y acabado con árido. Incluye la preparación, la imprimación y el acabado antideslizante. Medido por metro cuadrado recubierto.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-EPOXI-PISO",
+      "rendimiento": 0.9
+    },
+    {
+      "ref": "MT-PUENTE-ADH",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MT-PIN-LIJA",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MQ-LIJAD",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.42
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

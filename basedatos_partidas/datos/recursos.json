@@ -1964,6 +1964,66 @@
       "descripcion": "Pasta de agarre de base yeso para fijación de placa de yeso laminado directamente al paramento en trasdosado directo.",
       "precio": 0.4,
       "estado": "provisional"
+    },
+    "MT-PIN-ANTIMOHO": {
+      "unidad": "l",
+      "descripcion": "Pintura acrílica antihongos y antimoho para interiores de cocinas, baños y locales con condensación.",
+      "precio": 5.5,
+      "estado": "provisional"
+    },
+    "MT-PIN-TIZA": {
+      "unidad": "l",
+      "descripcion": "Pintura de pizarra efecto tiza, lavable, para paredes de uso escolar, infantil o de oficina.",
+      "precio": 9.0,
+      "estado": "provisional"
+    },
+    "MT-PIN-MAGNETICA": {
+      "unidad": "l",
+      "descripcion": "Pintura magnética de base para paredes sobre las que se quiere fijar imanes.",
+      "precio": 14.0,
+      "estado": "provisional"
+    },
+    "MT-PIN-CAL": {
+      "unidad": "kg",
+      "descripcion": "Cal hidratada para pintura mineral interior de sótanos, depósitos y paramentos transpirables.",
+      "precio": 1.8,
+      "estado": "provisional"
+    },
+    "MT-PIN-SEMIBRILLO": {
+      "unidad": "l",
+      "descripcion": "Pintura de caucho semibrillo lavable para interiores de alto tránsito y escuelas.",
+      "precio": 4.6,
+      "estado": "provisional"
+    },
+    "MT-LACA-MADERA": {
+      "unidad": "l",
+      "descripcion": "Laca nitrocelulósica o al agua para acabado de carpintería interior de madera.",
+      "precio": 8.0,
+      "estado": "provisional"
+    },
+    "MT-BARNIZ-MARINO": {
+      "unidad": "l",
+      "descripcion": "Barniz marino o de exterior de alta resistencia para madera expuesta a la intemperie.",
+      "precio": 11.0,
+      "estado": "provisional"
+    },
+    "MT-ESMALTE-AGUA": {
+      "unidad": "l",
+      "descripcion": "Esmalte al agua satinado para carpintería interior de madera y metal.",
+      "precio": 6.5,
+      "estado": "provisional"
+    },
+    "MT-POLIURETANO-PISO": {
+      "unidad": "kg",
+      "descripcion": "Recubrimiento de poliuretano bicomponente para piso, con resistencia a la abrasión.",
+      "precio": 12.0,
+      "estado": "provisional"
+    },
+    "MT-LASUR": {
+      "unidad": "l",
+      "descripcion": "Lasur o protector decorativo para madera exterior que deja ver la veta.",
+      "precio": 9.5,
+      "estado": "provisional"
     }
   },
   "maquinaria": {

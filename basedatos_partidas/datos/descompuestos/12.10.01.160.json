@@ -1,0 +1,40 @@
+{
+  "codigo": "12.10.01.160",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "10",
+  "unidad": "m2",
+  "titulo": "Retoque y repaso puntual de pintura interior.",
+  "descripcion": "Retoque y repaso puntual de pintura interior en zonas dañadas o desgastadas, con una mano de acabado. Incluye la limpieza de la zona, el resane de pequeños desperfectos y la mano de retoque. Medido por metro cuadrado retocado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PIN-CAUCHO",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MT-PIN-MASILLA",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MT-PIN-LIJA",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.14
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.09
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

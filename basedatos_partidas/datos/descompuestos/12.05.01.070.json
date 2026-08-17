@@ -1,0 +1,32 @@
+{
+  "codigo": "12.05.01.070",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "05",
+  "unidad": "m2",
+  "titulo": "Afirmado de concreto aligerado.",
+  "descripcion": "Afirmado de concreto aligerado con anime de poliestireno como relleno, para nivelación de pisos. Incluye el replanteo, el vaciado y la nivelación. Medido por metro cuadrado ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONC-180",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MT-ANIME-ALIV",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.18
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

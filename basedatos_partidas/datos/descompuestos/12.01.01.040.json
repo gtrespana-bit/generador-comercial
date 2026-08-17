@@ -1,0 +1,32 @@
+{
+  "codigo": "12.01.01.040",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "01",
+  "unidad": "m2",
+  "titulo": "Regularización de paramento con mortero de nivelación.",
+  "descripcion": "Regularización de paramento interior con mortero de nivelación para corregir desniveles previo al acabado. Incluye el replanteo, la aplicación y el afinado. Medido por metro cuadrado regularizado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MORT-REP-EST",
+      "rendimiento": 6.0
+    },
+    {
+      "ref": "MT-PUENTE-ADH",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.15
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

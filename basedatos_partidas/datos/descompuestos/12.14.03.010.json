@@ -1,0 +1,40 @@
+{
+  "codigo": "12.14.03.010",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "14",
+  "unidad": "m2",
+  "titulo": "Restauración de carpintería de madera con decapado y barnizado.",
+  "descripcion": "Restauración de carpintería de madera con decapado del acabado anterior, lijado y barnizado nuevo. Incluye el decapado, el lijado, el fondo y las dos manos de barniz. Medido por metro cuadrado restaurado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-DECAP",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MT-BARNIZ-PISO",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MT-PIN-LIJA",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MQ-LIJAD",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.15
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "03"
+}

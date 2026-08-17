@@ -1,0 +1,32 @@
+{
+  "codigo": "12.01.01.130",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "01",
+  "unidad": "m2",
+  "titulo": "Preparación de soporte de madera para pintura.",
+  "descripcion": "Preparación de soporte de madera para pintura, con lijado, limpieza y aplicación de fondo tapaporos. Incluye el lijado y la aplicación del fondo. Medido por metro cuadrado preparado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PIN-FONDO",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MT-PIN-LIJA",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.06
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

@@ -1,0 +1,36 @@
+{
+  "codigo": "12.03.01.110",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "03",
+  "unidad": "m2",
+  "titulo": "Salpicadero de cocina entre muebles.",
+  "descripcion": "Enchapado del salpicadero de cocina entre mesón y muebles altos, con pieza cerámica o porcelanato. Incluye la preparación, la colocación y el rejuntado de la franja. Medido por metro cuadrado enchapado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ADH-C2TE",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MT-JUN-CG2",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MQ-CORT-AGUA",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-ALI",
+      "rendimiento": 0.75
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.3
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

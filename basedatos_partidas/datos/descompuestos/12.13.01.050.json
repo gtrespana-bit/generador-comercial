@@ -1,0 +1,40 @@
+{
+  "codigo": "12.13.01.050",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "13",
+  "unidad": "m2",
+  "titulo": "Pintura epóxica sobre paramento vertical.",
+  "descripcion": "Aplicación de pintura epóxica sobre paramento vertical, con imprimación y dos manos. Incluye la preparación del soporte, la imprimación y las dos manos de pintura epóxica. Medido por metro cuadrado pintado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-EPOXI-PISO",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MT-PUENTE-ADH",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MT-PIN-LIJA",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.14
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}
