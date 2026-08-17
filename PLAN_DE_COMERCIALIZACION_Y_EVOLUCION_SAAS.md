@@ -609,7 +609,16 @@ rama: hasta entonces `/readyz` del entorno migrado responde 503 (esperado).
 
 ## 4.1 Refactorización estructural
 
-- [ ] **E4-001 — Dividir `app/main.py` en routers por dominio.**
+- [x] **E4-001 — Dividir `app/main.py` en routers por dominio.**
+  Completado el 17/08/2026: `app/main.py` (antes ~8.200 líneas) queda como
+  esqueleto de montaje (middlewares, manejadores de excepción, estáticos y
+  rutas de sistema) y las rutas de negocio viven en `app/routers/`, un módulo
+  por dominio (`auth`, `publico`, `admin`, `inicio`, `clientes`,
+  `presupuestos`, `configuracion`, `partidas`, `productos`, `recursos`,
+  `plantillas`, `recetas`). Los helpers, el entorno Jinja y las constantes
+  compartidas están en `app/routers/common.py`; cada router los importa con
+  `from .common import *` y los nombres mutables que los tests parchean se
+  leen por referencia (`common.NOMBRE`). Suite completa en verde.
 - [x] **E4-002 — Extraer servicios de aplicación y reglas de autorización.**
   Los servicios viven en `app/services/` (licencias, propuestas, respaldo,
   restauración, exportación, baja, operación…) y las reglas de autorización

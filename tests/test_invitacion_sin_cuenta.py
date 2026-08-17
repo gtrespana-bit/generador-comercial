@@ -30,6 +30,7 @@ from starlette.requests import Request
 from starlette.testclient import TestClient
 
 from app import main as main_module
+from app.routers import common
 from app.auth import (
     ACCESS_COOKIE,
     ORGANIZATION_COOKIE,
@@ -98,7 +99,7 @@ def invitado_recien_registrado(monkeypatch):
         }
 
     # Modo PostgreSQL simulado: las rutas de organización se apagan en SQLite.
-    monkeypatch.setattr(main_module, "DATABASE_IS_SQLITE", False)
+    monkeypatch.setattr(common, "DATABASE_IS_SQLITE", False)
 
     identidad = SupabaseIdentity(
         auth_user_id=AUTH_ID,

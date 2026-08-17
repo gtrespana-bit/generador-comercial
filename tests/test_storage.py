@@ -187,9 +187,10 @@ def test_referencia_oculta_no_puede_inyectar_imagen_de_otro_tenant(tenant_db, tm
 
 def test_proxy_privado_rechaza_otra_organizacion(tenant_db, tmp_path, monkeypatch):
     from app import main
+    from app.routers import common
     backend = storage.LocalStorage(tmp_path / "private")
     monkeypatch.setattr(storage, "get_storage_backend", lambda: backend)
-    monkeypatch.setattr(main, "get_storage_backend", lambda: backend)
+    monkeypatch.setattr(common, "get_storage_backend", lambda: backend)
     stored = storage.save_object(tenant_db, b"archivo", "anexos", "anexo.pdf", "application/pdf")
     tenant_db.commit()
     ok = main.descargar_archivo_privado(stored.object_key, db=tenant_db)

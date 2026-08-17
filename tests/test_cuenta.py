@@ -15,6 +15,7 @@ from starlette.responses import Response
 from starlette.testclient import TestClient
 
 from app import main as main_module
+from app.routers import common
 from app.auth import (
     ACCESS_COOKIE,
     ORGANIZATION_COOKIE,
@@ -91,7 +92,7 @@ def entorno(monkeypatch):
         usuario_id = usuario.id
         organizacion_id = organizacion.id
 
-    monkeypatch.setattr(main_module, "DATABASE_IS_SQLITE", False)
+    monkeypatch.setattr(common, "DATABASE_IS_SQLITE", False)
 
     def _db_autenticada():
         db = Session()
@@ -133,7 +134,7 @@ def test_panel_muestra_perfil_organizaciones_y_salida(entorno):
 def test_perfil_actualiza_nombre_local_y_metadato_de_supabase(entorno, monkeypatch):
     Session, usuario_id = entorno
     doble = ClienteAuthDoble([_identidad()])
-    monkeypatch.setattr(main_module, "SupabaseAuthClient", lambda _s=None: doble)
+    monkeypatch.setattr(common, "SupabaseAuthClient", lambda _s=None: doble)
 
     with _cliente(entorno) as client:
         response = client.post(
@@ -176,7 +177,7 @@ def test_cambio_de_clave_reautentica_y_cierra_la_sesion(entorno, monkeypatch):
         },
         _identidad(),  # PUT /auth/v1/user con la contraseña nueva
     ])
-    monkeypatch.setattr(main_module, "SupabaseAuthClient", lambda _s=None: doble)
+    monkeypatch.setattr(common, "SupabaseAuthClient", lambda _s=None: doble)
 
     with _cliente(entorno) as client:
         response = client.post(
@@ -207,7 +208,7 @@ def test_cambio_de_clave_reautentica_y_cierra_la_sesion(entorno, monkeypatch):
 
 def test_cambio_de_clave_exige_la_actual_correcta_sin_actualizar(entorno, monkeypatch):
     doble = ClienteAuthDoble(error=InvalidCredentials("Email, contraseña o sesión no válidos."))
-    monkeypatch.setattr(main_module, "SupabaseAuthClient", lambda _s=None: doble)
+    monkeypatch.setattr(common, "SupabaseAuthClient", lambda _s=None: doble)
 
     with _cliente(entorno) as client:
         response = client.post(
@@ -229,7 +230,7 @@ def test_cambio_de_clave_valida_confirmacion_y_longitud_antes_de_supabase(
     entorno, monkeypatch
 ):
     doble = ClienteAuthDoble()
-    monkeypatch.setattr(main_module, "SupabaseAuthClient", lambda _s=None: doble)
+    monkeypatch.setattr(common, "SupabaseAuthClient", lambda _s=None: doble)
 
     with _cliente(entorno) as client:
         distintas = client.post(
@@ -257,7 +258,7 @@ def test_cambio_de_clave_valida_confirmacion_y_longitud_antes_de_supabase(
 
 def test_salir_revoca_en_supabase_y_borra_las_cookies(entorno, monkeypatch):
     doble = ClienteAuthDoble()
-    monkeypatch.setattr(main_module, "SupabaseAuthClient", lambda _s=None: doble)
+    monkeypatch.setattr(common, "SupabaseAuthClient", lambda _s=None: doble)
 
     with _cliente(entorno) as client:
         response = client.post(
@@ -276,7 +277,7 @@ def test_salir_revoca_en_supabase_y_borra_las_cookies(entorno, monkeypatch):
 
 def test_salir_cierra_la_sesion_aunque_supabase_falle(entorno, monkeypatch):
     doble = ClienteAuthDoble(error=AuthError("Supabase no responde."))
-    monkeypatch.setattr(main_module, "SupabaseAuthClient", lambda _s=None: doble)
+    monkeypatch.setattr(common, "SupabaseAuthClient", lambda _s=None: doble)
 
     with _cliente(entorno) as client:
         response = client.post(

@@ -19,6 +19,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
 from app import main as main_module
+from app.routers import common
 from app import storage
 from app.database import Base, get_db
 from app.main import app
@@ -58,8 +59,8 @@ def dos_organizaciones(tmp_path, monkeypatch):
 
     backend = storage.LocalStorage(tmp_path / "private")
     monkeypatch.setattr(storage, "get_storage_backend", lambda: backend)
-    monkeypatch.setattr(main_module, "get_storage_backend", lambda: backend)
-    monkeypatch.setattr(main_module, "DATABASE_IS_SQLITE", False)
+    monkeypatch.setattr(common, "get_storage_backend", lambda: backend)
+    monkeypatch.setattr(common, "DATABASE_IS_SQLITE", False)
 
     activa = {"organizacion_id": ids[0]}
 

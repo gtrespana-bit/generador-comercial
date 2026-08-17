@@ -10,6 +10,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
 from app import main as main_module
+from app.routers import common
 from app.database import Base, get_db, get_public_proposal_db
 from app.main import app
 from app.models import (
@@ -145,7 +146,7 @@ def test_crear_enlace_congela_pdf_muestra_secreto_una_vez_y_cambia_estado(
         "generar_pdf",
         lambda presupuesto, cfg: BytesIO(b"%PDF-1.4\npropuesta publica"),
     )
-    monkeypatch.setattr(main_module, "DATABASE_IS_SQLITE", True)
+    monkeypatch.setattr(common, "DATABASE_IS_SQLITE", True)
     with cliente_web() as client:
         respuesta = crear_desde_web(client, ids[2])
 
@@ -174,7 +175,7 @@ def test_pagina_publica_y_pdf_solo_exponen_la_propuesta(entorno_enlaces, monkeyp
         "generar_pdf",
         lambda presupuesto, cfg: BytesIO(b"%PDF-1.4\ncontenido exacto"),
     )
-    monkeypatch.setattr(main_module, "DATABASE_IS_SQLITE", True)
+    monkeypatch.setattr(common, "DATABASE_IS_SQLITE", True)
     with cliente_web() as client:
         creada = crear_desde_web(client, ids[2])
         url = extraer_url(creada.text)
@@ -203,7 +204,7 @@ def test_token_falso_revocado_y_caducado_responden_igual(entorno_enlaces, monkey
         "generar_pdf",
         lambda presupuesto, cfg: BytesIO(b"%PDF-1.4\nrevocable"),
     )
-    monkeypatch.setattr(main_module, "DATABASE_IS_SQLITE", True)
+    monkeypatch.setattr(common, "DATABASE_IS_SQLITE", True)
     with cliente_web() as client:
         creada = crear_desde_web(client, ids[2])
         url = extraer_url(creada.text)
@@ -291,10 +292,10 @@ def test_aceptacion_publica_registra_identidad_version_y_una_sola_respuesta(
         "generar_pdf",
         lambda presupuesto, cfg: BytesIO(b"%PDF-1.4\\naceptacion"),
     )
-    monkeypatch.setattr(main_module, "DATABASE_IS_SQLITE", True)
+    monkeypatch.setattr(common, "DATABASE_IS_SQLITE", True)
     avisos = []
     monkeypatch.setattr(
-        main_module,
+        common,
         "enviar_respuesta_propuesta_por_email",
         lambda **kwargs: avisos.append(kwargs) or "aviso-aceptacion-1",
     )
@@ -361,7 +362,7 @@ def test_respuesta_exige_declaracion_y_datos_validos(entorno_enlaces, monkeypatc
         "generar_pdf",
         lambda presupuesto, cfg: BytesIO(b"%PDF-1.4\\nvalidacion"),
     )
-    monkeypatch.setattr(main_module, "DATABASE_IS_SQLITE", True)
+    monkeypatch.setattr(common, "DATABASE_IS_SQLITE", True)
     with cliente_web() as client:
         creada = crear_desde_web(client, ids[2])
         url = extraer_url(creada.text)
@@ -446,9 +447,9 @@ def test_fallo_de_aviso_no_pierde_respuesta_y_admite_reintento(
         "generar_pdf",
         lambda presupuesto, cfg: BytesIO(b"%PDF-1.4\\nreintento"),
     )
-    monkeypatch.setattr(main_module, "DATABASE_IS_SQLITE", True)
+    monkeypatch.setattr(common, "DATABASE_IS_SQLITE", True)
     monkeypatch.setattr(
-        main_module,
+        common,
         "enviar_respuesta_propuesta_por_email",
         lambda **_kwargs: (_ for _ in ()).throw(
             main_module.EmailSendError("Proveedor temporalmente caído.")
@@ -480,7 +481,7 @@ def test_fallo_de_aviso_no_pierde_respuesta_y_admite_reintento(
         assert db.get(Presupuesto, ids[2]).estado == "rechazado"
 
     monkeypatch.setattr(
-        main_module,
+        common,
         "enviar_respuesta_propuesta_por_email",
         lambda **_kwargs: "aviso-reintentado",
     )

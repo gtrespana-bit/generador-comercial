@@ -10,6 +10,7 @@ from starlette.routing import Route
 from starlette.testclient import TestClient
 
 from app import main as main_module
+from app.routers import common
 from app.database import get_authenticated_db, get_db, get_operator_db
 from app.main import app as cotizat_app
 from app.security import AuthRateLimitMiddleware, WebSecurityMiddleware
@@ -264,7 +265,7 @@ def test_sincronizacion_de_vencidos_respeta_rol_lectura(monkeypatch):
         info = {"rol_membresia": "lectura"}
 
     monkeypatch.setattr(
-        main_module,
+        common,
         "marcar_vencidos",
         lambda _db: (_ for _ in ()).throw(AssertionError("no debe escribir")),
     )
@@ -276,7 +277,7 @@ def test_sincronizacion_de_vencidos_respeta_rol_lectura(monkeypatch):
     class WriteDB:
         info = {"rol_membresia": "miembro"}
 
-    monkeypatch.setattr(main_module, "marcar_vencidos", lambda _db: 3)
+    monkeypatch.setattr(common, "marcar_vencidos", lambda _db: 3)
     assert main_module.actualizar_presupuestos_vencidos(WriteDB()) == {
         "ok": True,
         "actualizados": 3,
