@@ -174,10 +174,10 @@ def test_validar_en_produccion_con_todo_configurado_ok(monkeypatch):
 
 def test_validar_no_revela_el_valor_de_las_credenciales(monkeypatch):
     """Aunque falte o sobre una credencial, el mensaje nunca lleva su valor."""
-    monkeypatch.setenv("SUPABASE_SECRET_KEY", "sb_secret_abcdefghijklmnopqrstuvwxyz")
+    monkeypatch.setenv("SUPABASE_SECRET_KEY", "sb_secret_de_prueba_abcdefghijklmnop")
     resultado = validar(Entorno.PRODUCCION)
     texto = " ".join(p.mensaje for p in resultado.problemas)
-    assert "sb_secret_abcdefghijklmnopqrstuvwxyz" not in texto
+    assert "sb_secret_de_prueba_abcdefghijklmnop" not in texto
 
 
 # ---------------------------------------------------------------------------

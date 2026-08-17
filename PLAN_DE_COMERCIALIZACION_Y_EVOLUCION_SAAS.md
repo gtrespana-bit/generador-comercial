@@ -664,8 +664,12 @@ rama: hasta entonces `/readyz` del entorno migrado responde 503 (esperado).
   El criterio se aplica mediante eventos SQLAlchemy y políticas RLS sobre cada modelo tenant; falta validación de integración real.
 - [~] **E4-015 — Crear pruebas automáticas de aislamiento para cada dominio.**
   Cobertura en `tests/test_tenancy.py`, `tests/test_storage.py` y `tests/test_rls.py`, incluidos metadatos, claves, proxy, cobertura de tablas/políticas y contexto parametrizado; faltan dominios y la integración PostgreSQL real.
-- [~] **E4-016 — Auditar acceso directo por identificadores.**
-  La prueba inicial cubre cliente y capítulo; falta inventario completo de rutas.
+- [x] **E4-016 — Auditar acceso directo por identificadores.**
+  Completado el 17/08/2026 con `tests/test_inventario_aislamiento.py`: inventario
+  auto-mantenido que construye una instancia de **cada** modelo `TenantMixin`
+  (los 29) en la organización A y comprueba desde B que `db.get(Modelo, id)`
+  devuelve `None` para cada uno, con sanity de que en A sí resuelve. Si se
+  añade un modelo nuevo sin incluirlo en el grafo, la prueba falla nombrándolo.
 - [~] **E4-017 — Auditar archivos y URLs firmadas.**
   Objetos nuevos usan proxy privado y `/static/uploads` se bloquea en PostgreSQL; falta auditoría externa y decidir URLs firmadas cortas para descargas grandes.
 
