@@ -160,7 +160,7 @@
         {% set single_empty = sub_groups|length==1 and (sub_groups[0][0]|string).strip()=="" %}
         {% if single_empty %}
         {% set sub_partidas = sub_groups[0][1] %}
-        <div class="subcat-section no-subcat-header collapsed" data-categoria="{{ cat }}" data-subcategoria="">
+        <div class="subcat-section no-subcat-header" data-categoria="{{ cat }}" data-subcategoria="">
           <div class="subcat-body">
             <table class="partidas-table">
               <thead>
@@ -247,7 +247,7 @@
         {% else %}
         {% for subcat, sub_partidas in sub_groups|sort(attribute='grouper') %}
         {% set label = subcat if (subcat|string).strip() != "" else "Sin subcategoría" %}
-        <div class="subcat-section collapsed" data-categoria="{{ cat }}" data-subcategoria="{{ subcat }}">
+        <div class="subcat-section" data-categoria="{{ cat }}" data-subcategoria="{{ subcat }}">
           <header class="subcat-head drop-subcategory" data-cotizat-click="partidas-toggle-subcategory">
             <span class="subcat-toggle">▼</span>
             <span class="subcat-label">{{ label }}</span>
@@ -402,23 +402,6 @@ function toggleCatSidebar() {
   }
 }
 
-// --- CATEGORÍA expand/collapse in sidebar (show subcats) ---
-document.addEventListener('click', (e) => {
-  const btn = e.target.closest('.cat-group.has-subs .category-btn');
-  // we already have click handler for filtrarCategoria, but also toggle expanded
-  // distinguish: if user clicked arrow area? we toggle expanded on any click but keep filter
-  // Instead, separate: clicking cat-group arrow should expand without filtering? We'll handle via double duty: expand always on click
-  // To avoid interfering, we just toggle expanded when has-subs
-  const group = e.target.closest('.cat-group');
-  if (group && group.classList.contains('has-subs')) {
-    // if click was on the button itself, toggle expanded state
-    if (btn) {
-      group.classList.toggle('expanded');
-      // persist? not needed
-    }
-  }
-});
-
 function expandSection(categoria) {
   const section = document.getElementById('group-' + categoria.replace(/ /g, '_'));
   if (!section) return section;
@@ -446,14 +429,17 @@ function filtrarCategoria(categoria) {
   if (categoria === 'todas') {
     const allBtn = document.getElementById('btn-cat-todas');
     if (allBtn) allBtn.classList.add('active');
-    // expand all groups visually? keep collapsed state as is
+    // Vista «Todas»: barra lateral contraída y categorías principales colapsadas.
+    document.querySelectorAll('.cat-group').forEach(g => g.classList.remove('expanded'));
+    toggleAllCats(false);
   } else {
     const id = 'btn-cat-' + categoria.replace(/ /g, '_');
     const btn = document.getElementById(id);
     if (btn) {
       btn.classList.add('active');
-      // ensure its group is expanded to show subcats
+      // Acordeón: abrir solo el grupo pulsado, cerrar el resto.
       const g = btn.closest('.cat-group');
+      document.querySelectorAll('.cat-group').forEach(otro => otro.classList.remove('expanded'));
       if (g) g.classList.add('expanded');
     }
     expandSection(categoria);
@@ -470,6 +456,8 @@ function filtrarSubcategoria(categoria, subcategoria) {
   const catBtnId = 'btn-cat-' + categoria.replace(/ /g, '_');
   const catBtn = document.getElementById(catBtnId);
   if (catBtn) catBtn.classList.add('active');
+  // Acordeón: abrir solo el grupo de la categoría, cerrar el resto.
+  document.querySelectorAll('.cat-group').forEach(otro => otro.classList.remove('expanded'));
   const group = catBtn ? catBtn.closest('.cat-group') : null;
   if (group) group.classList.add('expanded');
   // mark subcat active
@@ -972,13 +960,6 @@ document.addEventListener('DOMContentLoaded', () => {
     CotizatStyles.set(expandBtn, "display", 'inline-flex');
     document.getElementById('catalogLayout')?.classList.add('sidebar-hidden');
   }
-  // auto-expand first categories? keep all expanded initially
-  document.querySelectorAll('.cat-group.has-subs').forEach(g=>{
-    // expand first two by default for discoverability? Instead keep collapsed initially? Show expanded for active?
-    // We'll expand all that have subs by default to show structure, but not too much
-    // Let's expand all initially
-    g.classList.add('expanded');
-  });
   makeTableSortable();
   initDragAndDropPartidas();
   filtrarPartidas();
