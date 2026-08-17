@@ -623,8 +623,16 @@ rama: hasta entonces `/readyz` del entorno migrado responde 503 (esperado).
   Los servicios viven en `app/services/` (licencias, propuestas, respaldo,
   restauración, exportación, baja, operación…) y las reglas de autorización
   quedaron centralizadas en `app/permisos.py` el 16/08/2026.
-- [~] **E4-003 — Crear configuración separada por entorno.**
-  `DATABASE_URL` ya separa persistencia web; faltan secretos, almacenamiento y políticas completas por entorno.
+- [x] **E4-003 — Crear configuración separada por entorno.**
+  Completado el 17/08/2026 con `app/config.py`: detecta el entorno
+  (`COTIZAT_ENV` → `VERCEL_ENV` → pytest → desarrollo), mantiene el catálogo
+  único de variables (incluida la marca de cuáles son secretas) y valida por
+  entorno sin revelar valores (`validar()` / `resumen_configuracion()`). El
+  entorno aparece en `/readyz` y el resumen completo en el panel del operador
+  (`/admin/operacion`). Los resolvers finos existentes (`SupabaseAuthSettings`,
+  `StorageSettings`, `EmailSettings`, `DatabaseSettings`) siguen siendo la capa
+  de validación de formato; `app/config.py` es la fuente de verdad del
+  entorno y de la superficie de configuración.
 - [x] **E4-004 — Introducir migraciones versionadas con Alembic.**
   Adelantada y completada como E1W-003.
 - [-] **E4-005 — Mantener SQLite para escritorio y PostgreSQL para SaaS, si continúa el producto híbrido.**

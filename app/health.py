@@ -193,6 +193,14 @@ def readiness(engine: Engine | None = None) -> HealthStatus:
     checks: dict[str, str] = {}
     errors: list[str] = []
 
+    # Informativo: el entorno detectado (E4-003). No falla por sí mismo; la
+    # validación por entorno vive en ``app.config.validar`` y se expone en el
+    # panel del operador. Los chequeos de Auth/Storage/URL siguen siendo los
+    # que convierten una falta real en un 503.
+    from .config import entorno_actual
+
+    checks["entorno"] = entorno_actual().etiqueta
+
     auth_state, auth_error = _check_auth_configuration()
     checks["auth"] = auth_state
     if auth_error:

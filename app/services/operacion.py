@@ -205,6 +205,7 @@ class RegistroErroresMiddleware:
 def diagnostico_operacion() -> dict[str, Any]:
     """Diagnóstico completo para el panel del operador (sin datos de tenant)."""
     salud = run_readiness()
+    from ..config import resumen_configuracion
     from ..storage import get_storage_backend
 
     try:
@@ -229,6 +230,7 @@ def diagnostico_operacion() -> dict[str, Any]:
                 else ("exigida" if exigencia_licencia_activada() else "no-exigida")
             ),
             "operadores": sorted(operadores_configurados()),
+            "configuracion": resumen_configuracion(),
             "arrancado_hace_segundos": int(
                 (datetime.utcnow() - _INICIO_PROCESO).total_seconds()
             ),
