@@ -4,7 +4,7 @@
 <div class="page-head">
   <div>
     <h1>Importar partidas</h1>
-    <p class="subtitle">Importa tablas o descompuestos CYPE. El formato CYPE conserva la matriz completa, fórmulas y archivo original de cada partida.</p>
+    <p class="subtitle">Importa tablas o descompuestos de partidas. El formato de descompuesto conserva la matriz completa, fórmulas y archivo original de cada partida.</p>
   </div>
   <a class="btn" href="{{ '/partidas' if modo_catalogo else '/presupuestos' }}">← Volver a {{ 'partidas' if modo_catalogo else 'presupuestos' }}</a>
 </div>
@@ -15,12 +15,12 @@
 
 <div class="card" id="import-source-card">
   <h2>1. Carga los datos</h2>
-  <p class="hint">Para archivos como <strong>DPT020.xlsx</strong>, selecciona uno o varios <strong>.xlsx</strong> de CYPE: se detectará cada partida, fila, celda y fórmula sin convertirlo en una tabla plana. También se admiten CSV/Excel tabulares.</p>
+  <p class="hint">Para archivos como <strong>DPT020.xlsx</strong>, selecciona uno o varios <strong>.xlsx</strong> de descompuesto: se detectará cada partida, fila, celda y fórmula sin convertirlo en una tabla plana. También se admiten CSV/Excel tabulares.</p>
   <div class="form-grid">
     <div class="field">
       <label>Archivo CSV o Excel</label>
       <input type="file" id="import-file" multiple accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
-      <p class="hint">Puedes seleccionar varios archivos solo si todos son descompuestos CYPE.</p>
+      <p class="hint">Puedes seleccionar varios archivos solo si todos son descompuestos.</p>
     </div>
     <div class="field" id="import-header-field">
       <label>Primera fila (solo formato tabular)</label>
@@ -82,7 +82,7 @@
       </select>
     </div>
     <div class="field import-cype-only import-hidden" id="import-cype-chapter-field">
-      <label>Capítulo para las partidas CYPE</label>
+      <label>Capítulo para las partidas</label>
       <input type="text" id="import-cype-chapter" value="PARTIDAS IMPORTADAS" maxlength="200">
       <p class="hint">Cada hoja/archivo detectado será una partida y conservará su descompuesto completo dentro de este capítulo.</p>
     </div>
@@ -179,7 +179,7 @@
     CotizatStyles.set(document.getElementById('import-preview-table'), "display", activo ? 'none' : '');
     var chapterField = document.getElementById('import-cype-chapter-field');
     if (chapterField) chapterField.classList.toggle('import-hidden', !activo);
-    document.getElementById('import-review-title').textContent = activo ? '2. Revisa las partidas y filas CYPE detectadas' : '2. Revisa la detección de columnas';
+    document.getElementById('import-review-title').textContent = activo ? '2. Revisa las partidas y filas detectadas' : '2. Revisa la detección de columnas';
     document.getElementById('import-review-hint').textContent = activo
       ? 'Cada fila y columna se conserva con su número original. Los resultados de fórmula y las fórmulas se guardan, junto con el archivo .xlsx original.'
       : 'El sistema propone una asignación. Solo Partida es obligatoria; ajusta cualquier columna antes de validar.';
@@ -277,7 +277,7 @@
       summary.className = 'import-summary error'; validationCard.classList.remove('import-hidden'); return;
     }
     var errors = data.errores || [], warnings = data.advertencias || [];
-    var etiqueta = esCype() ? 'partida(s) CYPE' : 'partida(s)';
+    var etiqueta = esCype() ? 'partida(s) de descompuesto' : 'partida(s)';
     summary.textContent = data.filas.length + ' ' + etiqueta + ' lista(s) · ' + errors.length + ' error(es) · ' + warnings.length + ' advertencia(s)';
     summary.className = 'import-summary ' + (errors.length ? 'error' : warnings.length ? 'warning' : 'ok');
     errors.forEach(function (issue) { issues.appendChild(issueLine(issue, 'error')); });

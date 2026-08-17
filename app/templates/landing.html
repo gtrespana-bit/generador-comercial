@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{{ product_name }} — Presupuestos de obra claros, editables y listos para presentar</title>
-  <meta name="description" content="Convierte tu catálogo y tus precios en presupuestos de construcción y remodelación profesionales en PDF. Para empresas que hoy trabajan con papel o Excel.">
+  <title>{{ product_name }} — Presupuestos de construcción y remodelación para Venezuela</title>
+  <meta name="description" content="Presupuestos de obra profesionales en minutos. Más de 3.000 partidas clasificadas con precios en USD contrastados con el mercado venezolano. PDF con tu logo, versiones, aprobaciones y cobros.">
   <link rel="icon" type="image/png" href="/static/icono.png">
-      <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+  <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
   <link rel="stylesheet" href="{{ 'css/public.css' | asset }}">
 </head>
 <body class="landing">
@@ -23,22 +23,56 @@
   </a>
   <div class="nav-links">
     <a class="entrar" href="/acceso">Iniciar sesión</a>
-    <a class="btn btn-primary" href="mailto:{{ email_soporte }}?subject=Quiero%20una%20demostraci%C3%B3n%20de%20{{ product_name }}">Solicitar demostración</a>
+    <a class="btn btn-primary" href="#demo">Solicitar demostración</a>
   </div>
 </nav>
 
 <header class="hero">
   <div class="hero-int">
-    <span class="hero-kicker">Presupuestos de obra · Construcción y remodelación</span>
-    <h1>Deja el Excel: presupuestos claros, editables y listos para presentar.</h1>
-    <p class="sub">{{ product_name }} convierte tu catálogo y tus precios en presupuestos profesionales en PDF —con capítulos, mediciones, alternativas de producto y control de aprobaciones— para empresas de construcción y remodelación.</p>
+    <span class="hero-kicker">🇻🇪 Hecho para Venezuela · Construcción y remodelación</span>
+    <h1>Presupuestos de obra que se ven profesionales, se hacen en minutos.</h1>
+    <p class="sub">{{ product_name }} convierte tu catálogo y tus precios en presupuestos claros, editables y listos para presentar: capítulos, mediciones, alternativas de producto, versiones y aprobaciones. Sin Excel, sin pegar y copiar.</p>
     <div class="acciones">
-      <a class="btn btn-primary" href="mailto:{{ email_soporte }}?subject=Quiero%20una%20demostraci%C3%B3n%20de%20{{ product_name }}">Solicitar una demostración</a>
+      <a class="btn btn-primary" href="#demo">Solicitar una demostración</a>
       <a class="btn btn-secondary" href="/static/pdf/presupuesto-ejemplo.pdf" target="_blank" rel="noopener">Ver un presupuesto de ejemplo (PDF)</a>
-      <a class="btn" href="/acceso">Ya tengo cuenta</a>
+    </div>
+
+    <div class="hero-stats" role="list">
+      <div class="stat" role="listitem">
+        <strong>{{ catalogo().partidas_txt }}</strong>
+        <span>partidas listas para usar</span>
+      </div>
+      <div class="stat" role="listitem">
+        <strong>{{ catalogo().capitulos }}</strong>
+        <span>capítulos de obra</span>
+      </div>
+      <div class="stat" role="listitem">
+        <strong>USD</strong>
+        <span>precios contrastados</span>
+      </div>
     </div>
   </div>
 </header>
+
+<section class="banner-catalogo">
+  <div class="banner-int">
+    <div class="banner-texto">
+      <h2>El catálogo más completo para presupuestar en Venezuela.</h2>
+      <p>{{ catalogo().partidas_txt }} partidas organizadas en {{ catalogo().capitulos }} capítulos y {{ catalogo().subcapitulos }} subcapítulos, con precios en USD contrastados con el mercado venezolano y en revisión continua. No empiezas de cero: llegas con una base de precios real y propia.</p>
+      <ul class="banner-lista">
+        <li><span class="check">✓</span> Terminología venezolana: concreto, friso, cielo raso, rodapié, plomero.</li>
+        <li><span class="check">✓</span> Precios en dólares, los que usa el sector construcción en Venezuela.</li>
+        <li><span class="check">✓</span> Descomposición técnica de cada partida: materiales, mano de obra y equipo.</li>
+        <li><span class="check">✓</span> Se actualiza periódicamente para seguir el mercado.</li>
+      </ul>
+    </div>
+    <div class="banner-cifras">
+      <div class="cifra"><strong>{{ catalogo().partidas_txt }}</strong><span>partidas</span></div>
+      <div class="cifra"><strong>{{ catalogo().capitulos }}</strong><span>capítulos</span></div>
+      <div class="cifra"><strong>{{ catalogo().subcapitulos }}</strong><span>subcapítulos</span></div>
+    </div>
+  </div>
+</section>
 
 <section>
   <h2>¿Te suena?</h2>
@@ -47,7 +81,7 @@
     <div class="tarjeta">
       <div class="icon">📚</div>
       <h3>Tu catálogo, de una vez</h3>
-      <p>Partidas con precios, costes y descomposición técnica. Importa desde Excel —incluidos descompuestos de CYPE— o desde tu instalación local anterior. Cárgalo una vez, úsalo siempre.</p>
+      <p>Partidas con precios, costes y descomposición técnica. Importa desde Excel o desde tu instalación local anterior. Cárgalo una vez, úsalo siempre.</p>
     </div>
     <div class="tarjeta">
       <div class="icon">⚡</div>
@@ -78,17 +112,39 @@
   </div>
 </section>
 
+<section class="franja venezuela">
+  <h2>Pensado para Venezuela, no adaptado después.</h2>
+  <p class="intro">No es una herramienta genérica traducida. {{ product_name }} nace con la forma de trabajar de las constructoras y remodeladores venezolanos.</p>
+  <div class="grid3">
+    <div class="tarjeta">
+      <div class="icon">💵</div>
+      <h3>Precios en dólares</h3>
+      <p>Cotiza en USD, la moneda con la que el sector construcción presupuesta en Venezuela. Sin conversiones ni tipos de cambio improvisados.</p>
+    </div>
+    <div class="tarjeta">
+      <div class="icon">🧱</div>
+      <h3>Vocabulario de aquí</h3>
+      <p>Concreto, friso, cielo raso, rodapié, plomero, granito vaciado en sitio. Los nombres que usa tu cliente y tu cuadrilla, no los de otro país.</p>
+    </div>
+    <div class="tarjeta">
+      <div class="icon">📈</div>
+      <h3>Precios que se actualizan</h3>
+      <p>La base de precios se contrasta con el mercado venezolano y se revisa periódicamente, para que no cotices con cifras de hace un año.</p>
+    </div>
+  </div>
+</section>
+
 <section class="franja">
   <h2>De cero a tu primer presupuesto en menos de 20 minutos</h2>
   <ul class="pasos">
     <li>Crea tu cuenta y tu organización: nombre de tu empresa, moneda e IVA.</li>
-    <li>Carga tu catálogo: impórtalo desde Excel o crea tus primeras partidas.</li>
+    <li>Parte de un catálogo con miles de partidas o importa el tuyo desde Excel.</li>
     <li>Crea el cliente, arma el presupuesto por capítulos y descarga el PDF con tu logo.</li>
   </ul>
   <p class="intro">¿Vienes de la versión de escritorio? Importa toda tu instalación —catálogo, clientes, presupuestos y proyectos— con el asistente integrado, con resumen previo y confirmación explícita.</p>
 </section>
 
-<section>
+<section id="precios">
   <h2>Precio de lanzamiento</h2>
   <p class="intro">Oferta fundadora para las primeras empresas. El precio contratado se respeta durante todo el período pagado.</p>
   <div class="precios">
@@ -121,11 +177,12 @@
   </div>
 </section>
 
-<section class="franja">
-  <h2>¿Para quién es?</h2>
-  <p class="intro">Para constructoras pequeñas y medianas, remodeladores, contratistas e instaladores de Latinoamérica que hoy presupuestan con papel, Word o Excel y quieren presentar mejor, responder más rápido y no perder el control de versiones, aprobaciones y cobros. Si haces entre 2 y 50 presupuestos al mes, esto es para ti.</p>
+<section class="franja cta-final" id="demo">
+  <h2>¿Listo para dejar de presupuestar a mano?</h2>
+  <p class="intro">Cuéntanos de tu empresa y te mostramos cómo se vería tu primer presupuesto con tus propios datos. Sin compromiso.</p>
   <div class="acciones mt-3">
     <a class="btn btn-primary" href="mailto:{{ email_soporte }}?subject=Quiero%20una%20demostraci%C3%B3n%20de%20{{ product_name }}&body=Hola%2C%20me%20interesa%20una%20demostraci%C3%B3n.%0A%0AMi%20empresa%3A%20%0AA%20qu%C3%A9%20nos%20dedicamos%3A%20%0APresupuestos%20al%20mes%20(aprox)%3A%20">Solicitar una demostración gratuita</a>
+    <a class="btn btn-secondary" href="/acceso">Empezar ahora</a>
   </div>
 </section>
 

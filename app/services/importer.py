@@ -525,7 +525,7 @@ def analizar_cype_xlsx(contenido: bytes) -> dict:
             cabecera = _buscar_cabecera_partida(filas, fila_encabezados)
             if cabecera is None:
                 raise ErrorImportacion(
-                    f"Se detectó la tabla CYPE en «{hoja_formula.title}», pero no su cabecera de partida (código, unidad y descripción)."
+                    f"Se detectó la tabla de descompuesto en «{hoja_formula.title}», pero no su cabecera de partida (código, unidad y descripción)."
                 )
             filas, costes, coste_directo = _clasificar_filas_cype(filas, fila_encabezados, posiciones)
             descripcion_larga = ""
@@ -562,7 +562,7 @@ def analizar_cype_xlsx(contenido: bytes) -> dict:
         libro_valores.close()
 
     if not partidas:
-        raise ErrorImportacion("No se encontró una hoja con el formato de descompuesto CYPE (Código, Unidad, Descripción, Rendimiento, Precio unitario e Importe).")
+        raise ErrorImportacion("No se encontró una hoja con el formato de descompuesto (Código, Unidad, Descripción, Rendimiento, Precio unitario e Importe).")
     return {
         "formato": "cype_descompuesto",
         "partidas": partidas,

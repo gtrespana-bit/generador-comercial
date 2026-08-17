@@ -118,7 +118,7 @@
           {% if part.descomposicion_cype.origen == 'manual' %}
           <div class="cype-origin-note">🧮 Descomposición de costes: {{ part.descomposicion_cype.filas | length }} filas de recursos · <a class="link" href="/presupuestos/{{ p.id }}/partidas/{{ part.id }}/descomposicion">Ver costes</a></div>
           {% else %}
-          <div class="cype-origin-note">📐 Descompuesto CYPE: {{ part.descomposicion_cype.filas | length }} filas y {{ part.descomposicion_cype.columnas | length }} columnas conservadas · <a class="link" href="/presupuestos/{{ p.id }}/partidas/{{ part.id }}/descomposicion">Ver matriz y costes</a>{% if part.descomposicion_cype.archivo_origen %} · <a class="link" href="{{ part.descomposicion_cype.archivo_origen | archivo_url(true) }}" download>Descargar Excel original</a>{% endif %}</div>
+          <div class="cype-origin-note">📐 Descompuesto técnico: {{ part.descomposicion_cype.filas | length }} filas y {{ part.descomposicion_cype.columnas | length }} columnas conservadas · <a class="link" href="/presupuestos/{{ p.id }}/partidas/{{ part.id }}/descomposicion">Ver matriz y costes</a>{% if part.descomposicion_cype.archivo_origen %} · <a class="link" href="{{ part.descomposicion_cype.archivo_origen | archivo_url(true) }}" download>Descargar Excel original</a>{% endif %}</div>
           {% endif %}
           {% endif %}
         </td>

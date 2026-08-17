@@ -232,7 +232,7 @@
         var importeObraLinea = FMT.redondear2(importe - importeProducto);
         var costeProductoLinea = hayProducto ? FMT.redondear2(cant * costeProducto) : 0;
 
-        // En las partidas con descompuesto CYPE el coste directo ya incluye
+        // En las partidas con descompuesto importado el coste directo ya incluye
         // sus propios redondeos y NO se le aplica el desperdicio de la
         // partida (misma regla que el servidor). En el resto (descompuesto
         // manual o solo campos de coste) el desperdicio sí se aplica.

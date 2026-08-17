@@ -2110,7 +2110,7 @@
       var origenDescomp = (datos.descomposicion && datos.descomposicion.origen) || "";
 
       if ((datos.tiene_descomposicion_cype && origenDescomp === "cype") || (datos.tiene_descomposicion_cype && !origenDescomp)) {
-        var avisoCype = editor.FMT.h("div", "cype-origin-note", "📐 Esta partida conserva el descompuesto CYPE \u00ab" + (datos.nombre_descomposicion_cype || "archivo original") + "\u00bb. Edita abajo los rendimientos y precios de sus recursos; el coste directo se recalcula con las reglas del formato original.");
+        var avisoCype = editor.FMT.h("div", "cype-origin-note", "📐 Esta partida conserva el descompuesto \u00ab" + (datos.nombre_descomposicion_cype || "archivo original") + "\u00bb. Edita abajo los rendimientos y precios de sus recursos; el coste directo se recalcula con las reglas del formato original.");
         det.appendChild(avisoCype);
       } else if (origenDescomp === "manual") {
         var avisoManual = editor.FMT.h("div", "cype-origin-note", "🧮 Esta partida tiene una descomposición de costes propia. El importe de cada fila se calcula como Rendimiento × Precio unitario.");
@@ -2245,7 +2245,7 @@
           });
           var desp = editorInst.FMT.parseNum((partidaWrap.querySelector('[data-f="p_desperdicio_pct"]')||{}).value);
           // El producto asociado también es coste (compra real del material);
-          // y en partidas con descompuesto CYPE el desperdicio no se aplica
+          // y en partidas con descompuesto importado el desperdicio no se aplica
           // (misma regla que el servidor).
           var costeProducto = editorInst.FMT.parseNum((partidaWrap.querySelector('[data-f="p_prod_coste"]')||{}).value);
           var esCype = false;

@@ -265,6 +265,53 @@ def _asset_url(path: str) -> str:
     return f"/static/{p}?v={STATIC_VERSION}"
 
 
+def cifras_catalogo() -> dict:
+    """Cifras del catálogo propio para la landing y el marketing.
+
+    Se leen de ``basedatos_partidas`` (clasificación y descompuestos) sin
+    tocar la base de datos ni la sesión, y se cachean: son estáticas entre
+    regeneraciones del catálogo.
+    """
+    from functools import lru_cache
+
+    @lru_cache(maxsize=1)
+    def _leer() -> dict:
+        try:
+            base = Path(__file__).resolve().parents[2] / "basedatos_partidas"
+            descompuestos = base / "datos" / "descompuestos"
+            clasif = json.loads(
+                (base / "datos" / "clasificacion.json").read_text(encoding="utf-8")
+            )
+            capitulos = clasif.get("capitulos", {})
+            subcapitulos = sum(len(c.get("subcapitulos", {})) for c in capitulos.values())
+            apartados = sum(
+                len(s.get("apartados", {}))
+                for c in capitulos.values()
+                for s in c.get("subcapitulos", {}).values()
+            )
+            n_partidas = len(list(descompuestos.glob("*.json"))) if descompuestos.is_dir() else 0
+            return {
+                "partidas": n_partidas,
+                "partidas_txt": f"{n_partidas:,}".replace(",", "."),
+                "capitulos": len(capitulos),
+                "subcapitulos": subcapitulos,
+                "subcapitulos_txt": f"{subcapitulos:,}".replace(",", "."),
+                "apartados": apartados,
+            }
+        except Exception:
+            # Nunca romper la aplicación por un recuento de marketing.
+            return {
+                "partidas": 3000,
+                "partidas_txt": "3.000",
+                "capitulos": 18,
+                "subcapitulos": 172,
+                "subcapitulos_txt": "172",
+                "apartados": 0,
+            }
+
+    return _leer()
+
+
 TEMPLATES.env.filters["asset"] = _asset_url
 TEMPLATES.env.globals["STATIC_VERSION"] = STATIC_VERSION
 TEMPLATES.env.globals.update(
@@ -273,6 +320,7 @@ TEMPLATES.env.globals.update(
     database_is_sqlite=DATABASE_IS_SQLITE,
     titular_legal=LEGAL_ENTITY,
     email_soporte=SUPPORT_EMAIL,
+    catalogo=cifras_catalogo,
 )
 
 
