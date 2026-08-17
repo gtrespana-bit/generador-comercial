@@ -1,0 +1,32 @@
+{
+  "codigo": "10.07.02.020",
+  "ambito": "reforma",
+  "capitulo": "10",
+  "subcapitulo": "07",
+  "unidad": "m2",
+  "titulo": "Capa de protección con gravilla.",
+  "descripcion": "Colocación de capa de protección de gravilla sobre impermeabilización. Incluye la extensión de la gravilla y el nivelado. Medido por metro cuadrado colocado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-GRAVILLA",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MQ-VOLQ",
+      "rendimiento": 0.03
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.05
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

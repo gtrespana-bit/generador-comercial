@@ -7,12 +7,12 @@ numérica v2 aprobada para reforma y remodelación en Venezuela.
 
 | | |
 |---|---:|
-| Partidas | **868** |
-| Hojas de descompuesto `.xlsx` | 868 |
+| Partidas | **1.156** |
+| Hojas de descompuesto `.xlsx` | 1.156 |
 | Partidas con producto de elección del cliente | 69 |
-| Recursos en el cuadro de precios | **359** |
-| — mano de obra / materiales / maquinaria | 17 / 298 / 44 |
-| — confirmados / verificados con el mercado / provisionales | 17 / 113 / 225 |
+| Recursos en el cuadro de precios | **377** |
+| — mano de obra / materiales / maquinaria | 17 / 316 / 44 |
+| — confirmados / verificados con el mercado / provisionales | 17 / 113 / 243 |
 | **Peso económico con precio cerrado** | **79,6 %** del coste directo |
 | — confirmado (mano de obra) | 20,2 % |
 | — verificado con el mercado venezolano | 59,4 % |
@@ -80,10 +80,10 @@ numérica v2 aprobada para reforma y remodelación en Venezuela.
 | 04 | Fundaciones | 8 | 5 | 28 |
 | 05 | Estructuras | 9 | 6 | 38 |
 | 06 | Fachadas y particiones | 9 | 9 | 38 |
-| 07 | Carpintería, herrería, vidrios y protección solar | 10 | 9 | 26 |
+| 07 | Carpintería, herrería, vidrios y protección solar | 10 | 16 | 180 |
 | 08 | Remates y ayudas | 9 | 0 | 0 |
 | 09 | Instalaciones | 17 | 31 | 89 |
-| 10 | Aislamientos e impermeabilizaciones | 9 | 4 | 16 |
+| 10 | Aislamientos e impermeabilizaciones | 9 | 16 | 150 |
 | 11 | Techos y cubiertas | 9 | 5 | 18 |
 | 12 | Revestimientos y acabados | 14 | 27 | 401 |
 | 13 | Equipamiento, mobiliario y señalización | 9 | 7 | 21 |
@@ -92,7 +92,7 @@ numérica v2 aprobada para reforma y remodelación en Venezuela.
 | 16 | Control de calidad y ensayos | 8 | 0 | 0 |
 | 17 | Seguridad y salud en obra | 8 | 7 | 11 |
 | 18 | Rehabilitación energética | 9 | 0 | 0 |
-| | **TOTAL** | **172** | **161** | **868** |
+| | **TOTAL** | **172** | **180** | **1.156** |
 
 Los capítulos 08, 16 y 18 están deliberadamente preparados para la primera
 ampliación. No se inventaron partidas de relleno solo para que aparezcan llenos.
@@ -149,13 +149,16 @@ siguiente paso es producir las familias pendientes. Prioridades:
 
 **Progreso 17/08/2026:**
 - `09.13 Protección contra rayos y sobretensiones` (13 partidas).
-- `09.12 Domótica y automatización` (18 partidas; objetivo mínimo alcanzado).
-- **Capítulo 12 Revestimientos y acabados completo hasta el mínimo**: de 104 a
-  **401 partidas** (+297), alcanzando y superando el objetivo mínimo de 400 del
-  capítulo. Las 14 familias quedan en estado `completa` (7) o `avanzada` (7);
-  no queda ninguna `sin_cobertura`, `critica` ni `parcial`. Siguen pendientes
-  variantes reales para acercarse al objetivo amplio de 610, sin recurrir a
-  relleno.
+- `09.12 Domótica y automatización` (18 partidas).
+- **Capítulo 12 Revestimientos y acabados completo hasta el mínimo** (401/400).
+- **Capítulo 07 Carpintería, herrería, vidrios y protección solar completo
+  hasta el mínimo** (180/180): de 26 a 180 partidas; las 10 familias pasan a
+  `completa` (6) o `avanzada` (4), incluidas las tres que estaban vacías
+  (persianas/celosías, herrajes/automatismos y reparación/restauración).
+- **Capítulo 10 Aislamientos e impermeabilizaciones completo hasta el mínimo**
+  (150/150): de 16 a 150 partidas; las 9 familias pasan a `completa` (3) o
+  `avanzada` (6), incluidas las seis que estaban vacías (acústica, fundaciones
+  y muros, tanques/piscinas, drenajes, sellado de juntas y filtraciones).
 
-Siguen pendientes 181 precios de material provisionales. Los 44 precios de
+Siguen pendientes 199 precios de material provisionales. Los 44 precios de
 alquiler de equipos permanecen fuera de alcance por decisión del cliente.

@@ -1,0 +1,36 @@
+{
+  "codigo": "10.07.01.060",
+  "ambito": "reforma",
+  "capitulo": "10",
+  "subcapitulo": "07",
+  "unidad": "m2",
+  "titulo": "Capa drenante con geocompuesto.",
+  "descripcion": "Colocación de geocompuesto drenante en muro o cubierta. Incluye la colocación del geocompuesto y el remate. Medido por metro cuadrado colocado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MALLA-DREN",
+      "rendimiento": 1.1
+    },
+    {
+      "ref": "MT-PLO-SOP",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.1
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

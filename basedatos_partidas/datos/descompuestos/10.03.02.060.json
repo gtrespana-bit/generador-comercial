@@ -1,0 +1,36 @@
+{
+  "codigo": "10.03.02.060",
+  "ambito": "reforma",
+  "capitulo": "10",
+  "subcapitulo": "03",
+  "unidad": "m2",
+  "titulo": "Barrera anticapilaridad en arranque de muro.",
+  "descripcion": "Colocación de barrera anticapilaridad en el arranque del muro, sobre la fundación. Incluye la colocación de la lámina y el remate. Medido por metro lineal colocado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-BARRERA-ANTICAP",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-IMPRIM-ASF",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.06
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

@@ -1,0 +1,36 @@
+{
+  "codigo": "10.02.01.040",
+  "ambito": "reforma",
+  "capitulo": "10",
+  "subcapitulo": "02",
+  "unidad": "m2",
+  "titulo": "Aislamiento acústico de conducto.",
+  "descripcion": "Suministro y colocación de aislamiento acústico en conductos de ventilación o climatización. Incluye la colocación del aislamiento y el sellado. Medido por metro cuadrado aislado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-LANA-ROCA",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-CINTA-ENM",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.1
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

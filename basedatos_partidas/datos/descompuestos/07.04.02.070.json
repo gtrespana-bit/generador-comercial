@@ -1,0 +1,48 @@
+{
+  "codigo": "07.04.02.070",
+  "ambito": "reforma",
+  "capitulo": "07",
+  "subcapitulo": "04",
+  "unidad": "ud",
+  "titulo": "Portón peatonal de reja.",
+  "descripcion": "Suministro y colocación de portón peatonal de reja de tubo, con bisagras y cerradura. Incluye la fabricación, el montaje y el anclaje. Medido por unidad instalada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-TUBO-ACERO",
+      "rendimiento": 20.0
+    },
+    {
+      "ref": "MT-ELECTRODO",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MT-CERRADURA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-PINT-ANTICORR",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MQ-SOLDADORA",
+      "rendimiento": 0.7
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-OF1-SOLD",
+      "rendimiento": 2.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 1.0
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

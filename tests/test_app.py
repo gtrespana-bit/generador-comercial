@@ -744,8 +744,12 @@ def test_editor_envia_indice_ligero_y_carga_ficha_bajo_demanda():
         assert "buscable" in catalogo[0]
         assert "descripcion" not in catalogo[0]
         assert "descomposicion" not in catalogo[0]
-        # La demostración completa (540 partidas) antes superaba 3,3 MB.
-        assert len(resp.content) < 1_000_000
+        # El índice ligero no embebe la ficha completa (descripción +
+        # descomposición), que superaría varios MB. El catálogo ha crecido de
+        # 540 a más de 1.000 partidas, así que el presupuesto se ajusta al
+        # tamaño real del índice ligero (unos 1,1 MB) con margen; la
+        # demostración completa con fichas superaría los 7 MB.
+        assert len(resp.content) < 3_000_000
 
         ficha = client.get(f"/partidas/{catalogo[0]['id']}/ficha")
         assert ficha.status_code == 200

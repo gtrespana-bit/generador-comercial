@@ -1,0 +1,40 @@
+{
+  "codigo": "10.02.01.050",
+  "ambito": "reforma",
+  "capitulo": "10",
+  "subcapitulo": "02",
+  "unidad": "m2",
+  "titulo": "Tratamiento acústico de sala con paneles.",
+  "descripcion": "Suministro y colocación de paneles acústicos en sala, para absorción del sonido. Incluye la fijación de los paneles y el remate. Medido por metro cuadrado tratado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MACHIH-MAD",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-PYL-LANA",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-MADERA-LISTON",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

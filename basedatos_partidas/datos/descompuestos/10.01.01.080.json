@@ -1,0 +1,36 @@
+{
+  "codigo": "10.01.01.080",
+  "ambito": "reforma",
+  "capitulo": "10",
+  "subcapitulo": "01",
+  "unidad": "m2",
+  "titulo": "Aislamiento térmico de cubierta con panel sándwich.",
+  "descripcion": "Suministro y colocación de panel sándwich aislado en cubierta. Incluye la fijación del panel y el remate de juntas. Medido por metro cuadrado aislado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PANEL-SAND",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-TORN-TECHO",
+      "rendimiento": 6.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.15
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

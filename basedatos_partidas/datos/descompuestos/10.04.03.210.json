@@ -1,0 +1,36 @@
+{
+  "codigo": "10.04.03.210",
+  "ambito": "reforma",
+  "capitulo": "10",
+  "subcapitulo": "04",
+  "unidad": "m2",
+  "titulo": "Impermeabilización de cubierta con manta reflectiva.",
+  "descripcion": "Impermeabilización de cubierta con membrana y manta reflectiva de protección. Incluye la impermeabilización y la colocación de la manta reflectiva. Medido por metro cuadrado impermeabilizado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MANTO-ASF",
+      "rendimiento": 1.15
+    },
+    {
+      "ref": "MT-AISL-REFLECT",
+      "rendimiento": 1.1
+    },
+    {
+      "ref": "MT-IMPRIM-ASF",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.35
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "03"
+}

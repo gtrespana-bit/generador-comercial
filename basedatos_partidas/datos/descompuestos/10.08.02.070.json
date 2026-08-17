@@ -1,0 +1,32 @@
+{
+  "codigo": "10.08.02.070",
+  "ambito": "reforma",
+  "capitulo": "10",
+  "subcapitulo": "08",
+  "unidad": "m",
+  "titulo": "Sellado de junta de encuentro piso-pared.",
+  "descripcion": "Sellado de junta de encuentro piso-pared con sellador sanitario. Incluye la limpieza de la junta y la aplicación del sellador. Medido por metro lineal sellado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-SIL-SAN",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.04
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

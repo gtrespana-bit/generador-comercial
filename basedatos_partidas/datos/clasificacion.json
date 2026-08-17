@@ -385,15 +385,25 @@
         },
         "08": {
           "nombre": "Persianas, celosías, mosquiteros y protección solar",
-          "apartados": {}
+          "apartados": {
+            "01": "Persianas, cortinas y toldos",
+            "02": "Celosías y romanillas",
+            "03": "Mosquiteros"
+          }
         },
         "09": {
           "nombre": "Herrajes, cerraduras y automatismos",
-          "apartados": {}
+          "apartados": {
+            "01": "Cerraduras y herrajes",
+            "02": "Automatismos de puertas y portones"
+          }
         },
         "10": {
           "nombre": "Ajustes, reparación y restauración",
-          "apartados": {}
+          "apartados": {
+            "01": "Ajuste y reparación de carpintería",
+            "02": "Restauración de madera y vidrio"
+          }
         }
       }
     },
@@ -568,11 +578,17 @@
         },
         "02": {
           "nombre": "Aislamiento acústico y control de vibraciones",
-          "apartados": {}
+          "apartados": {
+            "01": "Aislamiento acústico",
+            "02": "Suelos flotantes y control de vibraciones"
+          }
         },
         "03": {
           "nombre": "Impermeabilización de fundaciones y muros enterrados",
-          "apartados": {}
+          "apartados": {
+            "01": "Impermeabilización de fundaciones",
+            "02": "Impermeabilización de muros enterrados"
+          }
         },
         "04": {
           "nombre": "Impermeabilización de techos y terrazas",
@@ -589,19 +605,31 @@
         },
         "06": {
           "nombre": "Impermeabilización de tanques, piscinas y jardineras",
-          "apartados": {}
+          "apartados": {
+            "01": "Impermeabilización de piscinas",
+            "02": "Impermeabilización de tanques y jardineras"
+          }
         },
         "07": {
           "nombre": "Drenajes, geotextiles y capas separadoras",
-          "apartados": {}
+          "apartados": {
+            "01": "Drenajes y geotextiles",
+            "02": "Capas separadoras y de protección"
+          }
         },
         "08": {
           "nombre": "Sellado de juntas y estanqueidad",
-          "apartados": {}
+          "apartados": {
+            "01": "Sellado de juntas de construcción",
+            "02": "Sellado de juntas de dilatación"
+          }
         },
         "09": {
           "nombre": "Tratamiento de filtraciones, humedad y capilaridad",
-          "apartados": {}
+          "apartados": {
+            "01": "Tratamiento de filtraciones",
+            "02": "Tratamiento de humedad y capilaridad"
+          }
         }
       }
     },

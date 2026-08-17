@@ -1,0 +1,44 @@
+{
+  "codigo": "07.04.02.050",
+  "ambito": "reforma",
+  "capitulo": "07",
+  "subcapitulo": "04",
+  "unidad": "ud",
+  "titulo": "Portón de acero inoxidable para acceso.",
+  "descripcion": "Suministro y colocación de portón de acero inoxidable para acceso, con bisagras y cerradura. Incluye la fabricación, el montaje y el anclaje. Medido por unidad instalada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ACERO-INOX",
+      "rendimiento": 36.0
+    },
+    {
+      "ref": "MT-ELECTRODO",
+      "rendimiento": 0.55
+    },
+    {
+      "ref": "MT-CERRADURA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MQ-SOLDADORA",
+      "rendimiento": 1.1
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MO-OF1-SOLD",
+      "rendimiento": 3.6
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 1.4
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

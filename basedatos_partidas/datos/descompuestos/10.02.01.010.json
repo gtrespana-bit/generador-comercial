@@ -1,0 +1,36 @@
+{
+  "codigo": "10.02.01.010",
+  "ambito": "reforma",
+  "capitulo": "10",
+  "subcapitulo": "02",
+  "unidad": "m2",
+  "titulo": "Aislamiento acústico de tabique con lana mineral.",
+  "descripcion": "Suministro y colocación de lana mineral en tabique o trasdosado, para aislamiento acústico. Incluye la colocación de la lana en la cámara. Medido por metro cuadrado aislado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PYL-LANA",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-PYL-MONT",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.1
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

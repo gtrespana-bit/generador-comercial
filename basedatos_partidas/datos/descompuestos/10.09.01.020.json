@@ -1,0 +1,36 @@
+{
+  "codigo": "10.09.01.020",
+  "ambito": "reforma",
+  "capitulo": "10",
+  "subcapitulo": "09",
+  "unidad": "m2",
+  "titulo": "Tratamiento de filtración en techo.",
+  "descripcion": "Tratamiento de filtración en techo con localización, saneado y sellado. Incluye la localización de la filtración, el saneado y el sellado. Medido por metro cuadrado tratado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-RESINA-INYEC",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MT-SELLA-ELAST",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

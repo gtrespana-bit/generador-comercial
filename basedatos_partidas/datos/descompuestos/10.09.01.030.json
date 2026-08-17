@@ -1,0 +1,36 @@
+{
+  "codigo": "10.09.01.030",
+  "ambito": "reforma",
+  "capitulo": "10",
+  "subcapitulo": "09",
+  "unidad": "m2",
+  "titulo": "Reparación de filtración en muro enterrado.",
+  "descripcion": "Reparación de filtración en muro enterrado, con saneado y sellado. Incluye la localización, el saneado y el sellado de la filtración. Medido por metro cuadrado reparado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MORT-IMPER",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MT-RESINA-INYEC",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MQ-INYECTORA",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.55
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.22
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

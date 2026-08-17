@@ -1,0 +1,36 @@
+{
+  "codigo": "10.09.01.010",
+  "ambito": "reforma",
+  "capitulo": "10",
+  "subcapitulo": "09",
+  "unidad": "m",
+  "titulo": "Inyección de resina en fisura.",
+  "descripcion": "Inyección de resina en fisura para sellar filtraciones en muro o losa. Incluye la preparación de la fisura, la colocación de boquillas y la inyección. Medido por metro lineal inyectado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-RESINA-INYEC",
+      "rendimiento": 0.8
+    },
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-INYECTORA",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.15
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

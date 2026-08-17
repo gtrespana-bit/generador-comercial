@@ -1,0 +1,36 @@
+{
+  "codigo": "10.01.01.140",
+  "ambito": "reforma",
+  "capitulo": "10",
+  "subcapitulo": "01",
+  "unidad": "m2",
+  "titulo": "Aislamiento térmico bajo techo inclinado.",
+  "descripcion": "Suministro y colocación de aislamiento térmico bajo techo inclinado, con panel de lana o reflectivo. Incluye la colocación del panel y el remate. Medido por metro cuadrado aislado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-AISL-REFLECT",
+      "rendimiento": 1.1
+    },
+    {
+      "ref": "MT-PLO-SOP",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.08
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

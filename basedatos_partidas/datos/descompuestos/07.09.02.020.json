@@ -1,0 +1,32 @@
+{
+  "codigo": "07.09.02.020",
+  "ambito": "reforma",
+  "capitulo": "07",
+  "subcapitulo": "09",
+  "unidad": "ud",
+  "titulo": "Automatización de portón batiente existente.",
+  "descripcion": "Automatización de un portón batiente existente, con motores y mando. Incluye el montaje de los motores y la programación. Medido por unidad automatizada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-AUTOM-PORTON",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 3.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 1.0
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

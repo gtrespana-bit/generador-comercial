@@ -1,0 +1,44 @@
+{
+  "codigo": "07.05.02.100",
+  "ambito": "reforma",
+  "capitulo": "07",
+  "subcapitulo": "05",
+  "unidad": "m",
+  "titulo": "Baranda de acero inoxidable con tensores.",
+  "descripcion": "Suministro y colocación de baranda de acero inoxidable con pasamanos y tensores horizontales. Incluye la fabricación, el montaje y el tensado. Medido por metro lineal instalado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ACERO-INOX",
+      "rendimiento": 3.0
+    },
+    {
+      "ref": "MT-ELECTRODO",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MT-PERNO-ANCLA",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MQ-SOLDADORA",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-SOLD",
+      "rendimiento": 0.7
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.25
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

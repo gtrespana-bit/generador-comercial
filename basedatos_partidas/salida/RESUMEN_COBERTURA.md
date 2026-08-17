@@ -1,10 +1,10 @@
 # Resumen de cobertura del catálogo
 
-- Partidas actuales: **868**
-- Objetivo mínimo: **3000** (brecha 2132)
-- Objetivo amplio: **5000** (brecha 4132)
-- Subcapítulos sin cobertura: **60**
-- Subcapítulos en estado crítico: **58**
+- Partidas actuales: **1156**
+- Objetivo mínimo: **3000** (brecha 1844)
+- Objetivo amplio: **5000** (brecha 3844)
+- Subcapítulos sin cobertura: **51**
+- Subcapítulos en estado crítico: **51**
 - Diccionario de sinónimos: **146 grupos · 661 términos · 18 capítulos**
 
 ## Estado por capítulo
@@ -17,10 +17,10 @@
 | 04 | Fundaciones | 28 | 100 | 180 | 72 |
 | 05 | Estructuras | 38 | 170 | 300 | 132 |
 | 06 | Fachadas y particiones | 38 | 180 | 300 | 142 |
-| 07 | Carpintería, herrería, vidrios y protección solar | 26 | 180 | 300 | 154 |
+| 07 | Carpintería, herrería, vidrios y protección solar | 180 | 180 | 300 | 0 |
 | 08 | Remates y ayudas | 0 | 120 | 210 | 120 |
 | 09 | Instalaciones | 89 | 540 | 860 | 451 |
-| 10 | Aislamientos e impermeabilizaciones | 16 | 150 | 260 | 134 |
+| 10 | Aislamientos e impermeabilizaciones | 150 | 150 | 260 | 0 |
 | 11 | Techos y cubiertas | 18 | 130 | 220 | 112 |
 | 12 | Revestimientos y acabados | 401 | 400 | 610 | -1 |
 | 13 | Equipamiento, mobiliario y señalización | 21 | 140 | 240 | 119 |
@@ -49,18 +49,18 @@
 | 06.02 | Fachadas ligeras y revestidas | sin_cobertura | 0 | 12 | 12 |
 | 06.07 | Fachadas ventiladas y sistemas de aislamiento exterior | sin_cobertura | 0 | 12 | 12 |
 | 06.08 | Celosías, defensas y cerramientos especiales | sin_cobertura | 0 | 12 | 12 |
-| 10.03 | Impermeabilización de fundaciones y muros enterrados | sin_cobertura | 0 | 12 | 12 |
-| 10.06 | Impermeabilización de tanques, piscinas y jardineras | sin_cobertura | 0 | 12 | 12 |
-| 10.07 | Drenajes, geotextiles y capas separadoras | sin_cobertura | 0 | 12 | 12 |
-| 10.08 | Sellado de juntas y estanqueidad | sin_cobertura | 0 | 12 | 12 |
-| 10.09 | Tratamiento de filtraciones, humedad y capilaridad | sin_cobertura | 0 | 12 | 12 |
 | 18.09 | Incorporación de energías renovables | sin_cobertura | 0 | 12 | 12 |
 | 05.01 | Encofrados, cimbras y apeos de ejecución | sin_cobertura | 0 | 11 | 11 |
 | 05.02 | Acero de refuerzo | sin_cobertura | 0 | 11 | 11 |
 | 05.08 | Anclajes, juntas y conexiones | sin_cobertura | 0 | 11 | 11 |
-| 07.08 | Persianas, celosías, mosquiteros y protección solar | sin_cobertura | 0 | 11 | 11 |
-| 07.09 | Herrajes, cerraduras y automatismos | sin_cobertura | 0 | 11 | 11 |
-| 07.10 | Ajustes, reparación y restauración | sin_cobertura | 0 | 11 | 11 |
-| 10.02 | Aislamiento acústico y control de vibraciones | sin_cobertura | 0 | 11 | 11 |
 | 18.01 | Diagnóstico y evaluación energética | sin_cobertura | 0 | 11 | 11 |
 | 18.02 | Mejora térmica de fachadas | sin_cobertura | 0 | 11 | 11 |
+| 18.03 | Mejora térmica de techos y cubiertas | sin_cobertura | 0 | 11 | 11 |
+| 18.04 | Mejora térmica de pisos y entrepisos | sin_cobertura | 0 | 11 | 11 |
+| 18.05 | Sustitución y mejora de ventanas y vidrios | sin_cobertura | 0 | 11 | 11 |
+| 18.06 | Protección solar y control de ganancias térmicas | sin_cobertura | 0 | 11 | 11 |
+| 18.07 | Mejora de climatización y ventilación | sin_cobertura | 0 | 11 | 11 |
+| 18.08 | Iluminación eficiente y control | sin_cobertura | 0 | 11 | 11 |
+| 13.05 | Electrodomésticos y equipos integrados | sin_cobertura | 0 | 10 | 10 |
+| 13.09 | Equipamiento deportivo, recreativo y especial | sin_cobertura | 0 | 10 | 10 |
+| 16.01 | Ensayos de concreto, acero y mampostería | sin_cobertura | 0 | 10 | 10 |

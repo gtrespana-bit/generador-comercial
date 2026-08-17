@@ -2084,6 +2084,114 @@
       "descripcion": "Resina acrílica decorativa para recubrimientos continuos de paredes y pisos.",
       "precio": 9.0,
       "estado": "provisional"
+    },
+    "MT-PERSIANA-ALU": {
+      "unidad": "m2",
+      "descripcion": "Persiana enrollable de aluminio con su cajón y cinta o motor, para protección solar y oscurecimiento.",
+      "precio": 55.0,
+      "estado": "provisional"
+    },
+    "MT-TOLDO": {
+      "unidad": "m2",
+      "descripcion": "Toldo extensible de lona con brazos y soportes, para protección solar en fachadas.",
+      "precio": 48.0,
+      "estado": "provisional"
+    },
+    "MT-VIDRIO-LAM": {
+      "unidad": "m2",
+      "descripcion": "Vidrio laminado de seguridad con butiral, para acristalamiento de protección.",
+      "precio": 42.0,
+      "estado": "provisional"
+    },
+    "MT-VIDRIO-DOBLE": {
+      "unidad": "m2",
+      "descripcion": "Doble acristalamiento con cámara de aire, para aislamiento térmico y acústico.",
+      "precio": 55.0,
+      "estado": "provisional"
+    },
+    "MT-VIDRIO-ARENA": {
+      "unidad": "m2",
+      "descripcion": "Vidrio arenado o esmerilado para privacidad en mamparas y divisiones.",
+      "precio": 28.0,
+      "estado": "provisional"
+    },
+    "MT-AUTOM-PORTON": {
+      "unidad": "ud",
+      "descripcion": "Motor y automatismo para portón corredizo o batiente, con mandos y finales de carrera.",
+      "precio": 180.0,
+      "estado": "provisional"
+    },
+    "MT-CIERRA-PUERTA": {
+      "unidad": "ud",
+      "descripcion": "Cierra-puertas hidráulico para puertas de tránsito, con brazo y regulación.",
+      "precio": 35.0,
+      "estado": "provisional"
+    },
+    "MT-CERRADURA-MULTI": {
+      "unidad": "ud",
+      "descripcion": "Cerradura multipunto de seguridad con cilindro y cerraderos, para puerta de acceso.",
+      "precio": 55.0,
+      "estado": "provisional"
+    },
+    "MT-HERRAJE-CORRED": {
+      "unidad": "ud",
+      "descripcion": "Herrajes de puerta corredera de madera o vidrio, con carros, guías y topes.",
+      "precio": 18.0,
+      "estado": "provisional"
+    },
+    "MT-POLIESTIRENO-EXT": {
+      "unidad": "m2",
+      "descripcion": "Panel de poliestireno extruido (XPS) para aislamiento térmico de cubiertas, muros y pisos.",
+      "precio": 7.5,
+      "estado": "provisional"
+    },
+    "MT-LANA-ROCA": {
+      "unidad": "m2",
+      "descripcion": "Panel de lana de roca para aislamiento térmico y acústico y protección contra incendios.",
+      "precio": 5.5,
+      "estado": "provisional"
+    },
+    "MT-MEMBRANA-PVC": {
+      "unidad": "m2",
+      "descripcion": "Membrana impermeabilizante de PVC armado con poliéster, para cubiertas y terrazas.",
+      "precio": 12.0,
+      "estado": "provisional"
+    },
+    "MT-BENTONITA": {
+      "unidad": "m2",
+      "descripcion": "Geocompuesto de bentonita sódica para impermeabilización de muros enterrados y fundaciones.",
+      "precio": 9.0,
+      "estado": "provisional"
+    },
+    "MT-LAMINA-DREN": {
+      "unidad": "m2",
+      "descripcion": "Lámina drenante nodular de polietileno para protección y drenaje de muros enterrados.",
+      "precio": 6.5,
+      "estado": "provisional"
+    },
+    "MT-BARRERA-ANTICAP": {
+      "unidad": "m",
+      "descripcion": "Barrera anticapilaridad de lámina bituminosa o de polietileno para muros.",
+      "precio": 3.2,
+      "estado": "provisional"
+    },
+    "MT-RESINA-INYEC": {
+      "unidad": "l",
+      "descripcion": "Resina de inyección para sellado de fisuras y filtraciones en muros y estructuras.",
+      "precio": 18.0,
+      "estado": "provisional"
+    },
+    "MT-SELLA-BENTONITA": {
+      "unidad": "m",
+      "descripcion": "Cordón de bentonita expansiva para sellado de juntas de hormigonado y pasos.",
+      "precio": 4.0,
+      "estado": "provisional"
+    },
+    "MT-MALLA-DREN": {
+      "unidad": "m2",
+      "descripcion": "Geocompuesto drenante con malla y núcleo para drenaje de cubiertas y muros.",
+      "precio": 2.2,
+      "estado": "provisional"
     }
   },
   "maquinaria": {

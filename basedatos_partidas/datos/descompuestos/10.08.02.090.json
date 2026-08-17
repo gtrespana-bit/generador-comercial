@@ -1,0 +1,32 @@
+{
+  "codigo": "10.08.02.090",
+  "ambito": "reforma",
+  "capitulo": "10",
+  "subcapitulo": "08",
+  "unidad": "m",
+  "titulo": "Sellado de junta en tanque.",
+  "descripcion": "Sellado de junta en tanque de agua con sellador apto para inmersión. Incluye la limpieza de la junta y la aplicación. Medido por metro lineal sellado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-SELLA-ELAST",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.08
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

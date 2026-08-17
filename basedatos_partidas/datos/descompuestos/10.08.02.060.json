@@ -1,0 +1,32 @@
+{
+  "codigo": "10.08.02.060",
+  "ambito": "reforma",
+  "capitulo": "10",
+  "subcapitulo": "08",
+  "unidad": "m",
+  "titulo": "Sellado de paso de instalaciones en muro.",
+  "descripcion": "Sellado de paso de instalaciones en muro o losa, con sellador y collarín. Incluye la preparación del pase y el sellado. Medido por unidad sellada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-SELLA-PASE",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-SELLA-ELAST",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.06
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

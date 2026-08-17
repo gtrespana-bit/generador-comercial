@@ -32,7 +32,11 @@ import unicodedata
 from decimal import Decimal, ROUND_HALF_UP
 from typing import Any
 
-MAX_FILAS = 1000
+# El catálogo general de CotizaT apunta a 3.000–5.000 partidas base (ver
+# `docs/ESTRATEGIA_CATALOGO_EXTENSO.md`), de modo que la importación masiva
+# debe admitir ese volumen. Se alinea con MAX_FILAS_CYPE (5.000); el límite
+# de 8 MB sigue protegiendo el tamaño de los archivos subidos.
+MAX_FILAS = 5000
 MAX_COLUMNAS = 30
 MAX_BYTES = 8 * 1024 * 1024
 # El formato CYPE contiene celdas vacías intencionadas y, en ocasiones, una

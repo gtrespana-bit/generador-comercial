@@ -1,0 +1,40 @@
+{
+  "codigo": "07.05.02.120",
+  "ambito": "reforma",
+  "capitulo": "07",
+  "subcapitulo": "05",
+  "unidad": "m",
+  "titulo": "Baranda de aluminio para balcón.",
+  "descripcion": "Suministro y colocación de baranda de aluminio para balcón, con montantes y pasamanos. Incluye la fabricación, el montaje y el anclaje. Medido por metro lineal instalado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PERFIL-ALUM",
+      "rendimiento": 2.5
+    },
+    {
+      "ref": "MT-PERNO-ANCLA",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MT-SILICONA-EST",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

@@ -3166,12 +3166,174 @@
                   "precio": 13.23,
                   "horas": 1.8,
                   "producto_cliente": true
+                },
+                {
+                  "codigo": "07.01.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Puerta interior de madera maciza.",
+                  "unidad": "ud",
+                  "precio": 102.53,
+                  "horas": 3.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.01.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Puerta interior enchapada en melamina.",
+                  "unidad": "ud",
+                  "precio": 131.26,
+                  "horas": 3.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.01.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Puerta interior lacada en blanco.",
+                  "unidad": "ud",
+                  "precio": 92.2,
+                  "horas": 3.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.01.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Puerta de vaivén para cocina o servicio.",
+                  "unidad": "ud",
+                  "precio": 109.99,
+                  "horas": 3.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.01.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Puerta doble de madera para sala.",
+                  "unidad": "ud",
+                  "precio": 189.35,
+                  "horas": 4.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.01.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Puerta de closet corrediza de madera.",
+                  "unidad": "ud",
+                  "precio": 151.66,
+                  "horas": 3.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.01.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Puerta plegable de PVC para closet.",
+                  "unidad": "ud",
+                  "precio": 114.71,
+                  "horas": 2.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.01.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Puerta interior de vidrio sin marco.",
+                  "unidad": "ud",
+                  "precio": 216.03,
+                  "horas": 2.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.01.01.160",
+                  "codigo_legacy": "",
+                  "titulo": "Puerta interior con panel de vidrio.",
+                  "unidad": "ud",
+                  "precio": 101.65,
+                  "horas": 3.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.01.01.170",
+                  "codigo_legacy": "",
+                  "titulo": "Marco de madera para puerta interior.",
+                  "unidad": "ud",
+                  "precio": 76.79,
+                  "horas": 2.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.01.01.180",
+                  "codigo_legacy": "",
+                  "titulo": "Puerta de closet abatible de melamina.",
+                  "unidad": "ud",
+                  "precio": 87.2,
+                  "horas": 2.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.01.01.190",
+                  "codigo_legacy": "",
+                  "titulo": "Puerta interior de MDF pintado.",
+                  "unidad": "ud",
+                  "precio": 89.78,
+                  "horas": 3.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.01.01.200",
+                  "codigo_legacy": "",
+                  "titulo": "Puerta plegable de madera para espacio reducido.",
+                  "unidad": "ud",
+                  "precio": 128.7,
+                  "horas": 3.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.01.01.210",
+                  "codigo_legacy": "",
+                  "titulo": "Puerta interior con rejilla de ventilación.",
+                  "unidad": "ud",
+                  "precio": 97.71,
+                  "horas": 3.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.01.01.220",
+                  "codigo_legacy": "",
+                  "titulo": "Puerta de cocina con celosía superior.",
+                  "unidad": "ud",
+                  "precio": 104.87,
+                  "horas": 3.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.01.01.230",
+                  "codigo_legacy": "",
+                  "titulo": "Puerta interior de cristal corrediza.",
+                  "unidad": "ud",
+                  "precio": 271.49,
+                  "horas": 2.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.01.01.240",
+                  "codigo_legacy": "",
+                  "titulo": "Puerta interior con bisagras ocultas.",
+                  "unidad": "ud",
+                  "precio": 134.98,
+                  "horas": 3.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.01.01.250",
+                  "codigo_legacy": "",
+                  "titulo": "Puerta interior de acero galvanizado.",
+                  "unidad": "ud",
+                  "precio": 108.08,
+                  "horas": 3.4,
+                  "producto_cliente": false
                 }
               ],
-              "n": 7
+              "n": 25
             }
           ],
-          "n": 7
+          "n": 25
         },
         {
           "codigo": "07.02",
@@ -3198,12 +3360,165 @@
                   "precio": 163.58,
                   "horas": 4.2,
                   "producto_cliente": true
+                },
+                {
+                  "codigo": "07.02.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Puerta principal de madera maciza exterior.",
+                  "unidad": "ud",
+                  "precio": 179.28,
+                  "horas": 4.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.02.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Puerta blindada de seguridad.",
+                  "unidad": "ud",
+                  "precio": 220.34,
+                  "horas": 4.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.02.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Puerta exterior de aluminio con vidrio.",
+                  "unidad": "ud",
+                  "precio": 338.27,
+                  "horas": 2.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.02.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Puerta de acero para entrada de servicio.",
+                  "unidad": "ud",
+                  "precio": 149.08,
+                  "horas": 2.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.02.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Puerta exterior de PVC.",
+                  "unidad": "ud",
+                  "precio": 160.77,
+                  "horas": 3.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.02.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Puerta de entrada con espejo de seguridad.",
+                  "unidad": "ud",
+                  "precio": 178.71,
+                  "horas": 4.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.02.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Puerta de acceso con cierra-puertas.",
+                  "unidad": "ud",
+                  "precio": 149.11,
+                  "horas": 3.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.02.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Puerta de reja de acceso con cerradura.",
+                  "unidad": "ud",
+                  "precio": 113.22,
+                  "horas": 3.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.02.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Puerta de acceso de acero inoxidable.",
+                  "unidad": "ud",
+                  "precio": 341.57,
+                  "horas": 3.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.02.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Puerta de acceso con barra antipánico.",
+                  "unidad": "ud",
+                  "precio": 169.88,
+                  "horas": 4.0,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.02.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Puerta de acceso con cerradura electrónica.",
+                  "unidad": "ud",
+                  "precio": 122.17,
+                  "horas": 2.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.02.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Puerta de acceso de madera con panel vidriado.",
+                  "unidad": "ud",
+                  "precio": 198.48,
+                  "horas": 4.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.02.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Puerta de acceso de madera con montante de vidrio.",
+                  "unidad": "ud",
+                  "precio": 139.59,
+                  "horas": 3.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.02.01.160",
+                  "codigo_legacy": "",
+                  "titulo": "Puerta de acceso de madera con dintel de vidrio.",
+                  "unidad": "ud",
+                  "precio": 124.77,
+                  "horas": 2.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.02.01.170",
+                  "codigo_legacy": "",
+                  "titulo": "Puerta de acceso de madera con doble cerradura.",
+                  "unidad": "ud",
+                  "precio": 207.52,
+                  "horas": 4.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.02.01.180",
+                  "codigo_legacy": "",
+                  "titulo": "Puerta de acceso de madera con mirilla.",
+                  "unidad": "ud",
+                  "precio": 178.71,
+                  "horas": 4.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.02.01.190",
+                  "codigo_legacy": "",
+                  "titulo": "Puerta de acceso de madera con refuerzo metálico.",
+                  "unidad": "ud",
+                  "precio": 188.11,
+                  "horas": 4.6,
+                  "producto_cliente": false
                 }
               ],
-              "n": 2
+              "n": 19
             }
           ],
-          "n": 2
+          "n": 19
         },
         {
           "codigo": "07.03",
@@ -3266,12 +3581,174 @@
                   "precio": 75.06,
                   "horas": 1.18,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "07.03.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Ventana de aluminio con doble acristalamiento.",
+                  "unidad": "m2",
+                  "precio": 175.33,
+                  "horas": 1.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.03.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Ventana de aluminio con vidrio de seguridad.",
+                  "unidad": "m2",
+                  "precio": 157.91,
+                  "horas": 1.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.03.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Ventana de aluminio corrediza con mosquitero.",
+                  "unidad": "m2",
+                  "precio": 122.17,
+                  "horas": 1.35,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.03.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Balconera de aluminio corrediza.",
+                  "unidad": "m2",
+                  "precio": 199.97,
+                  "horas": 1.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.03.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Ventana de PVC con doble acristalamiento.",
+                  "unidad": "m2",
+                  "precio": 162.85,
+                  "horas": 1.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.03.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Ventana de madera con vidrio.",
+                  "unidad": "m2",
+                  "precio": 81.12,
+                  "horas": 1.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.03.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Paño fijo de vidrio templado en fachada.",
+                  "unidad": "m2",
+                  "precio": 170.94,
+                  "horas": 1.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.03.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Ventana proyectante de aluminio.",
+                  "unidad": "m2",
+                  "precio": 128.8,
+                  "horas": 1.35,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.03.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Ventana oscilobatiente de aluminio.",
+                  "unidad": "m2",
+                  "precio": 135.63,
+                  "horas": 1.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.03.01.160",
+                  "codigo_legacy": "",
+                  "titulo": "Ventana de aluminio con rejilla de ventilación.",
+                  "unidad": "m2",
+                  "precio": 129.06,
+                  "horas": 1.35,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.03.01.170",
+                  "codigo_legacy": "",
+                  "titulo": "Ventana de aluminio a una hoja batiente.",
+                  "unidad": "m2",
+                  "precio": 128.45,
+                  "horas": 1.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.03.01.180",
+                  "codigo_legacy": "",
+                  "titulo": "Ventana de madera con celosía de ventilación.",
+                  "unidad": "m2",
+                  "precio": 89.65,
+                  "horas": 1.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.03.01.190",
+                  "codigo_legacy": "",
+                  "titulo": "Ventana de aluminio a dos hojas corredizas.",
+                  "unidad": "m2",
+                  "precio": 135.68,
+                  "horas": 1.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.03.01.200",
+                  "codigo_legacy": "",
+                  "titulo": "Ventana fija de aluminio para local.",
+                  "unidad": "m2",
+                  "precio": 121.85,
+                  "horas": 1.25,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.03.01.210",
+                  "codigo_legacy": "",
+                  "titulo": "Ventana de aluminio con vidrio esmerilado.",
+                  "unidad": "m2",
+                  "precio": 139.16,
+                  "horas": 1.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.03.01.220",
+                  "codigo_legacy": "",
+                  "titulo": "Ventana de madera corrediza.",
+                  "unidad": "m2",
+                  "precio": 81.84,
+                  "horas": 1.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.03.01.230",
+                  "codigo_legacy": "",
+                  "titulo": "Ventana de PVC corrediza.",
+                  "unidad": "m2",
+                  "precio": 115.97,
+                  "horas": 1.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.03.01.240",
+                  "codigo_legacy": "",
+                  "titulo": "Ventana de aluminio con apertura a proyección.",
+                  "unidad": "m2",
+                  "precio": 135.68,
+                  "horas": 1.45,
+                  "producto_cliente": false
                 }
               ],
-              "n": 6
+              "n": 24
             }
           ],
-          "n": 6
+          "n": 24
         },
         {
           "codigo": "07.04",
@@ -3307,9 +3784,72 @@
                   "precio": 4.24,
                   "horas": 0.091,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "07.04.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Reja fija de tubo para ventana.",
+                  "unidad": "m2",
+                  "precio": 72.45,
+                  "horas": 1.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.04.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Reja de tubo con marco para puerta.",
+                  "unidad": "m2",
+                  "precio": 105.62,
+                  "horas": 2.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.04.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Reja de acero inoxidable para ventana.",
+                  "unidad": "m2",
+                  "precio": 291.47,
+                  "horas": 1.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.04.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Reja decorativa de forja para ventana.",
+                  "unidad": "m2",
+                  "precio": 88.92,
+                  "horas": 2.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.04.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Reja batiente de tubo para ventana.",
+                  "unidad": "m2",
+                  "precio": 106.35,
+                  "horas": 2.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.04.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Cerrajera de protección para ventana.",
+                  "unidad": "m2",
+                  "precio": 64.88,
+                  "horas": 1.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.04.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Estructura metálica menor para marquesina.",
+                  "unidad": "m2",
+                  "precio": 76.44,
+                  "horas": 2.3,
+                  "producto_cliente": false
                 }
               ],
-              "n": 3
+              "n": 10
             },
             {
               "codigo": "07.04.02",
@@ -3323,12 +3863,102 @@
                   "precio": 94.6,
                   "horas": 2.3,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "07.04.02.020",
+                  "codigo_legacy": "",
+                  "titulo": "Portón corredizo de tubo de acero.",
+                  "unidad": "ud",
+                  "precio": 266.07,
+                  "horas": 5.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.04.02.030",
+                  "codigo_legacy": "",
+                  "titulo": "Portón batiente de tubo de acero.",
+                  "unidad": "ud",
+                  "precio": 182.22,
+                  "horas": 5.0,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.04.02.040",
+                  "codigo_legacy": "",
+                  "titulo": "Portón metálico para garaje con marco.",
+                  "unidad": "ud",
+                  "precio": 197.8,
+                  "horas": 5.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.04.02.050",
+                  "codigo_legacy": "",
+                  "titulo": "Portón de acero inoxidable para acceso.",
+                  "unidad": "ud",
+                  "precio": 745.55,
+                  "horas": 5.0,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.04.02.060",
+                  "codigo_legacy": "",
+                  "titulo": "Portón levadizo de garaje.",
+                  "unidad": "ud",
+                  "precio": 169.38,
+                  "horas": 6.0,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.04.02.070",
+                  "codigo_legacy": "",
+                  "titulo": "Portón peatonal de reja.",
+                  "unidad": "ud",
+                  "precio": 123.12,
+                  "horas": 3.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.04.02.080",
+                  "codigo_legacy": "",
+                  "titulo": "Portón corredizo de acero con hoja ciega.",
+                  "unidad": "ud",
+                  "precio": 285.64,
+                  "horas": 6.0,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.04.02.090",
+                  "codigo_legacy": "",
+                  "titulo": "Portón de dos hojas para acceso vehicular.",
+                  "unidad": "ud",
+                  "precio": 197.8,
+                  "horas": 5.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.04.02.100",
+                  "codigo_legacy": "",
+                  "titulo": "Portón corredizo con automatismo.",
+                  "unidad": "ud",
+                  "precio": 512.03,
+                  "horas": 7.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.04.02.110",
+                  "codigo_legacy": "",
+                  "titulo": "Portón batiente de dos hojas con automatismo.",
+                  "unidad": "ud",
+                  "precio": 679.93,
+                  "horas": 7.6,
+                  "producto_cliente": false
                 }
               ],
-              "n": 1
+              "n": 11
             }
           ],
-          "n": 4
+          "n": 21
         },
         {
           "codigo": "07.05",
@@ -3355,9 +3985,27 @@
                   "precio": 117.64,
                   "horas": 1.35,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "07.05.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Pasamanos de madera para escalera con soportes metálicos.",
+                  "unidad": "m",
+                  "precio": 8.09,
+                  "horas": 0.42,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.05.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Pasamanos de acero inoxidable sobre escalera.",
+                  "unidad": "m",
+                  "precio": 31.59,
+                  "horas": 0.42,
+                  "producto_cliente": false
                 }
               ],
-              "n": 2
+              "n": 4
             },
             {
               "codigo": "07.05.02",
@@ -3371,12 +4019,165 @@
                   "precio": 72.29,
                   "horas": 1.57,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "07.05.02.020",
+                  "codigo_legacy": "",
+                  "titulo": "Baranda de acero inoxidable con vidrio.",
+                  "unidad": "m",
+                  "precio": 107.37,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.05.02.030",
+                  "codigo_legacy": "",
+                  "titulo": "Baranda de tubo de acero galvanizado.",
+                  "unidad": "m",
+                  "precio": 31.06,
+                  "horas": 0.95,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.05.02.040",
+                  "codigo_legacy": "",
+                  "titulo": "Baranda de acero inoxidable para balcón.",
+                  "unidad": "m",
+                  "precio": 89.08,
+                  "horas": 1.05,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.05.02.050",
+                  "codigo_legacy": "",
+                  "titulo": "Baranda de forja decorativa.",
+                  "unidad": "m",
+                  "precio": 36.54,
+                  "horas": 1.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.05.02.060",
+                  "codigo_legacy": "",
+                  "titulo": "Baranda de madera para escalera interior.",
+                  "unidad": "m",
+                  "precio": 14.87,
+                  "horas": 0.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.05.02.070",
+                  "codigo_legacy": "",
+                  "titulo": "Baranda de acero con pasamanos de madera.",
+                  "unidad": "m",
+                  "precio": 25.53,
+                  "horas": 0.95,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.05.02.080",
+                  "codigo_legacy": "",
+                  "titulo": "Baranda de protección de cubierta.",
+                  "unidad": "m",
+                  "precio": 31.06,
+                  "horas": 0.95,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.05.02.090",
+                  "codigo_legacy": "",
+                  "titulo": "Baranda de vidrio sin montantes verticales.",
+                  "unidad": "m",
+                  "precio": 83.63,
+                  "horas": 0.82,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.05.02.100",
+                  "codigo_legacy": "",
+                  "titulo": "Baranda de acero inoxidable con tensores.",
+                  "unidad": "m",
+                  "precio": 69.65,
+                  "horas": 0.95,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.05.02.110",
+                  "codigo_legacy": "",
+                  "titulo": "Pasamanos de acero para escalera exterior.",
+                  "unidad": "m",
+                  "precio": 9.45,
+                  "horas": 0.35,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.05.02.120",
+                  "codigo_legacy": "",
+                  "titulo": "Baranda de aluminio para balcón.",
+                  "unidad": "m",
+                  "precio": 46.7,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.05.02.130",
+                  "codigo_legacy": "",
+                  "titulo": "Baranda de madera para balcón interior.",
+                  "unidad": "m",
+                  "precio": 14.87,
+                  "horas": 0.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.05.02.140",
+                  "codigo_legacy": "",
+                  "titulo": "Baranda de acero con plancha perforada.",
+                  "unidad": "m",
+                  "precio": 29.77,
+                  "horas": 1.05,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.05.02.150",
+                  "codigo_legacy": "",
+                  "titulo": "Baranda de acero inoxidable para piscina.",
+                  "unidad": "m",
+                  "precio": 89.08,
+                  "horas": 1.05,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.05.02.160",
+                  "codigo_legacy": "",
+                  "titulo": "Baranda de acero con relleno de malla.",
+                  "unidad": "m",
+                  "precio": 26.69,
+                  "horas": 1.05,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.05.02.170",
+                  "codigo_legacy": "",
+                  "titulo": "Baranda de escalera con zanca de madera.",
+                  "unidad": "m",
+                  "precio": 16.15,
+                  "horas": 0.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.05.02.180",
+                  "codigo_legacy": "",
+                  "titulo": "Baranda de acero galvanizado con pasamanos de madera.",
+                  "unidad": "m",
+                  "precio": 25.53,
+                  "horas": 0.95,
+                  "producto_cliente": false
                 }
               ],
-              "n": 1
+              "n": 18
             }
           ],
-          "n": 3
+          "n": 22
         },
         {
           "codigo": "07.06",
@@ -3412,12 +4213,165 @@
                   "precio": 215.11,
                   "horas": 2.1,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "07.06.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Colocación de vidrio templado en carpintería.",
+                  "unidad": "m2",
+                  "precio": 107.3,
+                  "horas": 0.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.06.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Colocación de vidrio laminado de seguridad.",
+                  "unidad": "m2",
+                  "precio": 72.14,
+                  "horas": 0.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.06.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Colocación de doble acristalamiento.",
+                  "unidad": "m2",
+                  "precio": 90.08,
+                  "horas": 0.85,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.06.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Colocación de espejo de pared.",
+                  "unidad": "m2",
+                  "precio": 90.86,
+                  "horas": 0.65,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.06.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Cerramiento de vidrio templado en terraza.",
+                  "unidad": "m2",
+                  "precio": 168.51,
+                  "horas": 1.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.06.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Muro cortina de vidrio templado.",
+                  "unidad": "m2",
+                  "precio": 212.98,
+                  "horas": 2.0,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.06.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Colocación de vidrio esmerilado en división.",
+                  "unidad": "m2",
+                  "precio": 53.21,
+                  "horas": 0.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.06.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Colocación de vidrio en marco existente.",
+                  "unidad": "m2",
+                  "precio": 42.77,
+                  "horas": 0.85,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.06.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Vidrio blindado de seguridad.",
+                  "unidad": "m2",
+                  "precio": 82.73,
+                  "horas": 1.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.06.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Espejo de baño con marco.",
+                  "unidad": "m2",
+                  "precio": 55.48,
+                  "horas": 0.65,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.06.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Techo de vidrio en patio interior.",
+                  "unidad": "m2",
+                  "precio": 204.39,
+                  "horas": 2.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.06.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Ventanal de vidrio fijo interior.",
+                  "unidad": "m2",
+                  "precio": 99.66,
+                  "horas": 1.15,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.06.01.160",
+                  "codigo_legacy": "",
+                  "titulo": "Sustitución de vidrio en ventana.",
+                  "unidad": "m2",
+                  "precio": 42.77,
+                  "horas": 0.85,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.06.01.170",
+                  "codigo_legacy": "",
+                  "titulo": "Vidrio decorativo grabado.",
+                  "unidad": "m2",
+                  "precio": 53.56,
+                  "horas": 0.85,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.06.01.180",
+                  "codigo_legacy": "",
+                  "titulo": "Cerramiento de vidrio en pasillo.",
+                  "unidad": "m2",
+                  "precio": 171.13,
+                  "horas": 1.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.06.01.190",
+                  "codigo_legacy": "",
+                  "titulo": "Espejo de vestir de cuerpo entero.",
+                  "unidad": "m2",
+                  "precio": 154.17,
+                  "horas": 0.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.06.01.200",
+                  "codigo_legacy": "",
+                  "titulo": "Vidrio de seguridad para puerta de acceso.",
+                  "unidad": "m2",
+                  "precio": 72.14,
+                  "horas": 0.8,
+                  "producto_cliente": false
                 }
               ],
-              "n": 3
+              "n": 20
             }
           ],
-          "n": 3
+          "n": 20
         },
         {
           "codigo": "07.07",
@@ -3435,33 +4389,517 @@
                   "precio": 156.06,
                   "horas": 1.87,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "07.07.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Mampara de baño fija de vidrio templado.",
+                  "unidad": "m2",
+                  "precio": 156.06,
+                  "horas": 1.87,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.07.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Mampara de ducha abatible.",
+                  "unidad": "m2",
+                  "precio": 143.95,
+                  "horas": 2.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.07.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Mampara de ducha corrediza.",
+                  "unidad": "m2",
+                  "precio": 147.22,
+                  "horas": 2.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.07.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "División de oficina acristalada.",
+                  "unidad": "m2",
+                  "precio": 165.84,
+                  "horas": 1.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.07.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Mampara de baño con perfil de acero inoxidable.",
+                  "unidad": "m2",
+                  "precio": 158.18,
+                  "horas": 2.0,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.07.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "División de baño con vidrio esmerilado.",
+                  "unidad": "m2",
+                  "precio": 95.59,
+                  "horas": 1.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.07.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Cabina de ducha completa de vidrio.",
+                  "unidad": "m2",
+                  "precio": 155.6,
+                  "horas": 2.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.07.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Mampara de bañera de vidrio.",
+                  "unidad": "m2",
+                  "precio": 143.47,
+                  "horas": 1.95,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.07.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Separador de cocina con vidrio.",
+                  "unidad": "m2",
+                  "precio": 150.22,
+                  "horas": 1.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.07.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Mampara de ducha sin perfil.",
+                  "unidad": "m2",
+                  "precio": 136.98,
+                  "horas": 2.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.07.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Mampara divisoria de baño para inodoro.",
+                  "unidad": "m2",
+                  "precio": 88.89,
+                  "horas": 1.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.07.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Cerramiento de ducha a ras de piso.",
+                  "unidad": "m2",
+                  "precio": 141.52,
+                  "horas": 2.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.07.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Mampara de vidrio para local comercial.",
+                  "unidad": "m2",
+                  "precio": 170.33,
+                  "horas": 2.0,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.07.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Mampara de ducha plegable.",
+                  "unidad": "m2",
+                  "precio": 146.37,
+                  "horas": 2.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.07.01.160",
+                  "codigo_legacy": "",
+                  "titulo": "Separador de ambientes de vidrio.",
+                  "unidad": "m2",
+                  "precio": 150.22,
+                  "horas": 1.45,
+                  "producto_cliente": false
                 }
               ],
-              "n": 1
+              "n": 16
             }
           ],
-          "n": 1
+          "n": 16
         },
         {
           "codigo": "07.08",
           "nombre": "Persianas, celosías, mosquiteros y protección solar",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "07.08.01",
+              "nombre": "Persianas, cortinas y toldos",
+              "partidas": [
+                {
+                  "codigo": "07.08.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Persiana enrollable de aluminio.",
+                  "unidad": "m2",
+                  "precio": 107.6,
+                  "horas": 0.82,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.08.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Persiana enrollable motorizada.",
+                  "unidad": "m2",
+                  "precio": 157.82,
+                  "horas": 1.22,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.08.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Toldo extensible de lona.",
+                  "unidad": "m2",
+                  "precio": 84.53,
+                  "horas": 0.95,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 3
+            },
+            {
+              "codigo": "07.08.02",
+              "nombre": "Celosías y romanillas",
+              "partidas": [
+                {
+                  "codigo": "07.08.02.010",
+                  "codigo_legacy": "",
+                  "titulo": "Celosía fija de aluminio para ventilación.",
+                  "unidad": "m2",
+                  "precio": 55.6,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.08.02.020",
+                  "codigo_legacy": "",
+                  "titulo": "Celosía de madera para ventilación.",
+                  "unidad": "m2",
+                  "precio": 19.16,
+                  "horas": 0.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.08.02.030",
+                  "codigo_legacy": "",
+                  "titulo": "Romanilla de aluminio para fachada.",
+                  "unidad": "m2",
+                  "precio": 62.24,
+                  "horas": 0.75,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 3
+            },
+            {
+              "codigo": "07.08.03",
+              "nombre": "Mosquiteros",
+              "partidas": [
+                {
+                  "codigo": "07.08.03.010",
+                  "codigo_legacy": "",
+                  "titulo": "Mosquitero fijo de marco.",
+                  "unidad": "m2",
+                  "precio": 41.0,
+                  "horas": 0.55,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.08.03.020",
+                  "codigo_legacy": "",
+                  "titulo": "Mosquitero corredizo.",
+                  "unidad": "m2",
+                  "precio": 76.36,
+                  "horas": 0.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.08.03.030",
+                  "codigo_legacy": "",
+                  "titulo": "Mosquitero enrollable.",
+                  "unidad": "m2",
+                  "precio": 35.66,
+                  "horas": 0.68,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.08.03.040",
+                  "codigo_legacy": "",
+                  "titulo": "Mosquitero para puerta.",
+                  "unidad": "m2",
+                  "precio": 54.9,
+                  "horas": 0.68,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.08.03.050",
+                  "codigo_legacy": "",
+                  "titulo": "Malla antiinsectos en ventana.",
+                  "unidad": "m2",
+                  "precio": 34.19,
+                  "horas": 0.47,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 5
+            }
+          ],
+          "n": 11
         },
         {
           "codigo": "07.09",
           "nombre": "Herrajes, cerraduras y automatismos",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "07.09.01",
+              "nombre": "Cerraduras y herrajes",
+              "partidas": [
+                {
+                  "codigo": "07.09.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Instalación de cerradura de seguridad.",
+                  "unidad": "ud",
+                  "precio": 83.97,
+                  "horas": 1.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.09.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Instalación de cerradura electrónica.",
+                  "unidad": "ud",
+                  "precio": 56.39,
+                  "horas": 2.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.09.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Sustitución de cerradura de puerta.",
+                  "unidad": "ud",
+                  "precio": 51.75,
+                  "horas": 1.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.09.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Cambio de cilindro de cerradura.",
+                  "unidad": "ud",
+                  "precio": 22.68,
+                  "horas": 0.85,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.09.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Instalación de herrajes de puerta.",
+                  "unidad": "ud",
+                  "precio": 24.82,
+                  "horas": 1.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.09.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Instalación de cierra-puertas.",
+                  "unidad": "ud",
+                  "precio": 52.98,
+                  "horas": 1.0,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.09.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Instalación de herrajes de corredera.",
+                  "unidad": "ud",
+                  "precio": 88.43,
+                  "horas": 1.4,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 7
+            },
+            {
+              "codigo": "07.09.02",
+              "nombre": "Automatismos de puertas y portones",
+              "partidas": [
+                {
+                  "codigo": "07.09.02.010",
+                  "codigo_legacy": "",
+                  "titulo": "Automatización de portón corredizo existente.",
+                  "unidad": "ud",
+                  "precio": 258.86,
+                  "horas": 3.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.09.02.020",
+                  "codigo_legacy": "",
+                  "titulo": "Automatización de portón batiente existente.",
+                  "unidad": "ud",
+                  "precio": 499.93,
+                  "horas": 4.0,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.09.02.030",
+                  "codigo_legacy": "",
+                  "titulo": "Instalación de videoportero.",
+                  "unidad": "ud",
+                  "precio": 32.89,
+                  "horas": 3.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.09.02.040",
+                  "codigo_legacy": "",
+                  "titulo": "Instalación de cerradura con apertura remota.",
+                  "unidad": "ud",
+                  "precio": 64.86,
+                  "horas": 2.8,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 4
+            }
+          ],
+          "n": 11
         },
         {
           "codigo": "07.10",
           "nombre": "Ajustes, reparación y restauración",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "07.10.01",
+              "nombre": "Ajuste y reparación de carpintería",
+              "partidas": [
+                {
+                  "codigo": "07.10.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Ajuste de puerta descolgada.",
+                  "unidad": "ud",
+                  "precio": 8.12,
+                  "horas": 1.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.10.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Reparación de puerta con reposición de herrajes.",
+                  "unidad": "ud",
+                  "precio": 26.72,
+                  "horas": 1.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.10.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Reparación de ventana con ajuste de herrajes.",
+                  "unidad": "m2",
+                  "precio": 4.93,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.10.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Ajuste de portón corredizo.",
+                  "unidad": "ud",
+                  "precio": 11.06,
+                  "horas": 1.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.10.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Reparación de reja con sustitución de tubo.",
+                  "unidad": "m",
+                  "precio": 13.42,
+                  "horas": 0.85,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.10.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Reparación de celosía de aluminio.",
+                  "unidad": "ud",
+                  "precio": 22.36,
+                  "horas": 0.85,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.10.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Reparación de persiana enrollable.",
+                  "unidad": "ud",
+                  "precio": 19.47,
+                  "horas": 1.1,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 7
+            },
+            {
+              "codigo": "07.10.02",
+              "nombre": "Restauración de madera y vidrio",
+              "partidas": [
+                {
+                  "codigo": "07.10.02.010",
+                  "codigo_legacy": "",
+                  "titulo": "Restauración de puerta de madera.",
+                  "unidad": "m2",
+                  "precio": 10.52,
+                  "horas": 1.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.10.02.020",
+                  "codigo_legacy": "",
+                  "titulo": "Restauración de ventana de madera.",
+                  "unidad": "m2",
+                  "precio": 12.17,
+                  "horas": 1.35,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.10.02.030",
+                  "codigo_legacy": "",
+                  "titulo": "Restauración de baranda de madera.",
+                  "unidad": "m2",
+                  "precio": 10.27,
+                  "horas": 1.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "07.10.02.040",
+                  "codigo_legacy": "",
+                  "titulo": "Sustitución de vidrio roto en carpintería.",
+                  "unidad": "m2",
+                  "precio": 42.77,
+                  "horas": 0.85,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 4
+            }
+          ],
+          "n": 11
         }
       ],
-      "n": 26
+      "n": 180
     },
     {
       "codigo": "08",
@@ -4704,24 +6142,450 @@
                   "precio": 8.72,
                   "horas": 0.36,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "10.01.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento térmico de muro con poliestireno extruido.",
+                  "unidad": "m2",
+                  "precio": 15.39,
+                  "horas": 0.42,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.01.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento térmico de piso con poliestireno.",
+                  "unidad": "m2",
+                  "precio": 13.35,
+                  "horas": 0.28,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.01.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento térmico de muro con lana de roca.",
+                  "unidad": "m2",
+                  "precio": 11.35,
+                  "horas": 0.35,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.01.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento térmico de fachada por el exterior.",
+                  "unidad": "m2",
+                  "precio": 20.06,
+                  "horas": 0.65,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.01.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento térmico de cubierta con panel sándwich.",
+                  "unidad": "m2",
+                  "precio": 35.62,
+                  "horas": 0.55,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.01.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento térmico reflectivo en fachada.",
+                  "unidad": "m2",
+                  "precio": 6.47,
+                  "horas": 0.21,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.01.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento térmico de tubería.",
+                  "unidad": "m2",
+                  "precio": 5.23,
+                  "horas": 0.17,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.01.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento térmico de losa con poliestireno.",
+                  "unidad": "m2",
+                  "precio": 13.49,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.01.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento de pared medianera con lana de roca.",
+                  "unidad": "m2",
+                  "precio": 15.89,
+                  "horas": 0.38,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.01.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento térmico de muro por el interior.",
+                  "unidad": "m2",
+                  "precio": 30.04,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.01.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento térmico bajo techo inclinado.",
+                  "unidad": "m2",
+                  "precio": 7.8,
+                  "horas": 0.28,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.01.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento térmico de techo con poliestireno.",
+                  "unidad": "m2",
+                  "precio": 13.97,
+                  "horas": 0.38,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.01.01.160",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento térmico de fachada con panel sándwich.",
+                  "unidad": "m2",
+                  "precio": 35.76,
+                  "horas": 0.57,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.01.01.170",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento de puente térmico en vigas.",
+                  "unidad": "m2",
+                  "precio": 14.21,
+                  "horas": 0.42,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.01.01.180",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento térmico de suelo radiante.",
+                  "unidad": "m2",
+                  "precio": 13.49,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.01.01.190",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento térmico de depósito de agua.",
+                  "unidad": "m2",
+                  "precio": 9.74,
+                  "horas": 0.35,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.01.01.200",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento térmico de conducto de climatización.",
+                  "unidad": "m2",
+                  "precio": 9.35,
+                  "horas": 0.35,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.01.01.210",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento térmico de cubierta transitable.",
+                  "unidad": "m2",
+                  "precio": 14.3,
+                  "horas": 0.35,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.01.01.220",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento térmico de tabique con doble panel.",
+                  "unidad": "m2",
+                  "precio": 25.18,
+                  "horas": 0.47,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.01.01.230",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento reflectivo de techo metálico.",
+                  "unidad": "m2",
+                  "precio": 6.47,
+                  "horas": 0.21,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.01.01.240",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento térmico de cámara de aire con reflectivo.",
+                  "unidad": "m2",
+                  "precio": 6.47,
+                  "horas": 0.21,
+                  "producto_cliente": false
                 }
               ],
-              "n": 3
+              "n": 24
             }
           ],
-          "n": 3
+          "n": 24
         },
         {
           "codigo": "10.02",
           "nombre": "Aislamiento acústico y control de vibraciones",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "10.02.01",
+              "nombre": "Aislamiento acústico",
+              "partidas": [
+                {
+                  "codigo": "10.02.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento acústico de tabique con lana mineral.",
+                  "unidad": "m2",
+                  "precio": 13.05,
+                  "horas": 0.35,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.02.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento acústico de medianería.",
+                  "unidad": "m2",
+                  "precio": 23.95,
+                  "horas": 0.55,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.02.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento acústico de cielo raso.",
+                  "unidad": "m2",
+                  "precio": 11.74,
+                  "horas": 0.35,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.02.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento acústico de conducto.",
+                  "unidad": "m2",
+                  "precio": 10.4,
+                  "horas": 0.35,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.02.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Tratamiento acústico de sala con paneles.",
+                  "unidad": "m2",
+                  "precio": 29.98,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 5
+            },
+            {
+              "codigo": "10.02.02",
+              "nombre": "Suelos flotantes y control de vibraciones",
+              "partidas": [
+                {
+                  "codigo": "10.02.02.010",
+                  "codigo_legacy": "",
+                  "titulo": "Suelo flotante acústico con manta.",
+                  "unidad": "m2",
+                  "precio": 3.41,
+                  "horas": 0.17,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.02.02.020",
+                  "codigo_legacy": "",
+                  "titulo": "Suelo flotante con panel de lana mineral.",
+                  "unidad": "m2",
+                  "precio": 10.71,
+                  "horas": 0.24,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.02.02.030",
+                  "codigo_legacy": "",
+                  "titulo": "Banda perimetral de desolidarización.",
+                  "unidad": "m2",
+                  "precio": 1.34,
+                  "horas": 0.07,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.02.02.040",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento de impacto en piso.",
+                  "unidad": "m2",
+                  "precio": 4.26,
+                  "horas": 0.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.02.02.050",
+                  "codigo_legacy": "",
+                  "titulo": "Suelo flotante con doble manta acústica.",
+                  "unidad": "m2",
+                  "precio": 6.11,
+                  "horas": 0.28,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.02.02.060",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento de vibraciones en equipo.",
+                  "unidad": "m2",
+                  "precio": 101.66,
+                  "horas": 0.85,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 6
+            }
+          ],
+          "n": 11
         },
         {
           "codigo": "10.03",
           "nombre": "Impermeabilización de fundaciones y muros enterrados",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "10.03.01",
+              "nombre": "Impermeabilización de fundaciones",
+              "partidas": [
+                {
+                  "codigo": "10.03.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de fundación con manto asfáltico.",
+                  "unidad": "m2",
+                  "precio": 16.25,
+                  "horas": 0.72,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.03.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de fundación con bentonita.",
+                  "unidad": "m2",
+                  "precio": 17.97,
+                  "horas": 0.55,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 2
+            },
+            {
+              "codigo": "10.03.02",
+              "nombre": "Impermeabilización de muros enterrados",
+              "partidas": [
+                {
+                  "codigo": "10.03.02.010",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de muro enterrado con manto.",
+                  "unidad": "m2",
+                  "precio": 16.59,
+                  "horas": 0.77,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.03.02.020",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de muro enterrado con membrana líquida.",
+                  "unidad": "m2",
+                  "precio": 28.81,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.03.02.030",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de muro enterrado con bentonita.",
+                  "unidad": "m2",
+                  "precio": 18.11,
+                  "horas": 0.57,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.03.02.040",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de muro enterrado con cementosa.",
+                  "unidad": "m2",
+                  "precio": 12.03,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.03.02.050",
+                  "codigo_legacy": "",
+                  "titulo": "Protección de impermeabilización con lámina drenante.",
+                  "unidad": "m2",
+                  "precio": 13.07,
+                  "horas": 0.42,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.03.02.060",
+                  "codigo_legacy": "",
+                  "titulo": "Barrera anticapilaridad en arranque de muro.",
+                  "unidad": "m2",
+                  "precio": 6.5,
+                  "horas": 0.21,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.03.02.070",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de muro enterrado con manto autoadherido.",
+                  "unidad": "m2",
+                  "precio": 15.68,
+                  "horas": 0.68,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.03.02.080",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de muro enterrado con lámina de PVC.",
+                  "unidad": "m2",
+                  "precio": 22.79,
+                  "horas": 0.63,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.03.02.090",
+                  "codigo_legacy": "",
+                  "titulo": "Sellado de juntas de hormigonado con bentonita.",
+                  "unidad": "m2",
+                  "precio": 6.5,
+                  "horas": 0.14,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.03.02.100",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de sótano con membrana líquida.",
+                  "unidad": "m2",
+                  "precio": 28.81,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 10
+            }
+          ],
+          "n": 12
         },
         {
           "codigo": "10.04",
@@ -4757,9 +6621,45 @@
                   "precio": 5.86,
                   "horas": 0.37,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "10.04.02.040",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de cubierta con doble manto.",
+                  "unidad": "m2",
+                  "precio": 26.73,
+                  "horas": 0.95,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.04.02.050",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de cubierta con manto autoadherido.",
+                  "unidad": "m2",
+                  "precio": 15.86,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.04.02.060",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de cubierta con protección de gravilla.",
+                  "unidad": "m2",
+                  "precio": 17.38,
+                  "horas": 0.85,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.04.02.070",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de cubierta con membrana de PVC.",
+                  "unidad": "m2",
+                  "precio": 22.79,
+                  "horas": 0.63,
+                  "producto_cliente": false
                 }
               ],
-              "n": 3
+              "n": 7
             },
             {
               "codigo": "10.04.03",
@@ -4809,12 +6709,165 @@
                   "precio": 13.29,
                   "horas": 0.5,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "10.04.03.060",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de terraza con membrana líquida.",
+                  "unidad": "m2",
+                  "precio": 28.81,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.04.03.070",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de balcón con acrílico elastomérico.",
+                  "unidad": "m2",
+                  "precio": 16.38,
+                  "horas": 0.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.04.03.080",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de techo con cementosa flexible.",
+                  "unidad": "m2",
+                  "precio": 12.03,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.04.03.090",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de cubierta con poliurea.",
+                  "unidad": "m2",
+                  "precio": 35.62,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.04.03.100",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de peto y remate de cubierta.",
+                  "unidad": "m2",
+                  "precio": 14.86,
+                  "horas": 0.65,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.04.03.110",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de canaleta de cubierta.",
+                  "unidad": "m2",
+                  "precio": 29.03,
+                  "horas": 0.55,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.04.03.120",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de techo de concreto.",
+                  "unidad": "m2",
+                  "precio": 28.81,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.04.03.130",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de terraza con baldosa flotante.",
+                  "unidad": "m2",
+                  "precio": 46.33,
+                  "horas": 0.77,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.04.03.140",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de techo metálico.",
+                  "unidad": "m2",
+                  "precio": 13.85,
+                  "horas": 0.64,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.04.03.150",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de techo de teja.",
+                  "unidad": "m2",
+                  "precio": 24.82,
+                  "horas": 0.63,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.04.03.160",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de cubierta invertida.",
+                  "unidad": "m2",
+                  "precio": 28.48,
+                  "horas": 1.0,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.04.03.170",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de losa de techo entre pisos.",
+                  "unidad": "m2",
+                  "precio": 12.03,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.04.03.180",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de terraza con acabado decorativo.",
+                  "unidad": "m2",
+                  "precio": 15.11,
+                  "horas": 0.64,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.04.03.190",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de techo con capa de protección.",
+                  "unidad": "m2",
+                  "precio": 33.34,
+                  "horas": 0.77,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.04.03.200",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de techo de madera.",
+                  "unidad": "m2",
+                  "precio": 13.36,
+                  "horas": 0.64,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.04.03.210",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de cubierta con manta reflectiva.",
+                  "unidad": "m2",
+                  "precio": 20.18,
+                  "horas": 0.85,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.04.03.220",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de remate de chimenea.",
+                  "unidad": "m2",
+                  "precio": 19.88,
+                  "horas": 0.9,
+                  "producto_cliente": false
                 }
               ],
-              "n": 5
+              "n": 22
             }
           ],
-          "n": 8
+          "n": 29
         },
         {
           "codigo": "10.05",
@@ -4868,39 +6921,720 @@
                   "precio": 17.99,
                   "horas": 0.76,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "10.05.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de muro de ducha.",
+                  "unidad": "m2",
+                  "precio": 15.02,
+                  "horas": 0.68,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.05.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de piso de cocina.",
+                  "unidad": "m2",
+                  "precio": 16.84,
+                  "horas": 0.68,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.05.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de lavandería.",
+                  "unidad": "m2",
+                  "precio": 15.02,
+                  "horas": 0.68,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.05.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de zona de bañera.",
+                  "unidad": "m2",
+                  "precio": 18.92,
+                  "horas": 0.73,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.05.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de cuarto de máquinas.",
+                  "unidad": "m2",
+                  "precio": 14.29,
+                  "horas": 0.68,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.05.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Sellado perimetral de ducha con banda.",
+                  "unidad": "m",
+                  "precio": 8.66,
+                  "horas": 0.21,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.05.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de techo de baño.",
+                  "unidad": "m2",
+                  "precio": 11.23,
+                  "horas": 0.73,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.05.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de piso de ducha con pendiente.",
+                  "unidad": "m2",
+                  "precio": 20.48,
+                  "horas": 0.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.05.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de muro de cocina.",
+                  "unidad": "m2",
+                  "precio": 14.29,
+                  "horas": 0.68,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.05.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de piso de baño existente.",
+                  "unidad": "m2",
+                  "precio": 17.47,
+                  "horas": 0.73,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.05.01.160",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de sauna o vapor.",
+                  "unidad": "m2",
+                  "precio": 27.43,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.05.01.170",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de piscina interior.",
+                  "unidad": "m2",
+                  "precio": 17.37,
+                  "horas": 0.85,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.05.01.180",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de área de piscina de spa.",
+                  "unidad": "m2",
+                  "precio": 12.42,
+                  "horas": 0.78,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.05.01.190",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de balcón con manta.",
+                  "unidad": "m2",
+                  "precio": 16.78,
+                  "horas": 0.75,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.05.01.200",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de zona de riego interior.",
+                  "unidad": "m2",
+                  "precio": 14.29,
+                  "horas": 0.68,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.05.01.210",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de baño con membrana líquida.",
+                  "unidad": "m2",
+                  "precio": 27.43,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.05.01.220",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de cocina con membrana líquida.",
+                  "unidad": "m2",
+                  "precio": 27.43,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.05.01.230",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de ducha con membrana de PVC.",
+                  "unidad": "m2",
+                  "precio": 26.74,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.05.01.240",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de cuarto húmedo con cementosa.",
+                  "unidad": "m2",
+                  "precio": 16.84,
+                  "horas": 0.68,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.05.01.250",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de piso de baño con pendiente.",
+                  "unidad": "m2",
+                  "precio": 20.48,
+                  "horas": 0.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.05.01.260",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de baño existente con membrana.",
+                  "unidad": "m2",
+                  "precio": 27.43,
+                  "horas": 0.7,
+                  "producto_cliente": false
                 }
               ],
-              "n": 5
+              "n": 26
             }
           ],
-          "n": 5
+          "n": 26
         },
         {
           "codigo": "10.06",
           "nombre": "Impermeabilización de tanques, piscinas y jardineras",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "10.06.01",
+              "nombre": "Impermeabilización de piscinas",
+              "partidas": [
+                {
+                  "codigo": "10.06.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de piscina con membrana líquida.",
+                  "unidad": "m2",
+                  "precio": 29.29,
+                  "horas": 0.77,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.06.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de piscina con cementosa.",
+                  "unidad": "m2",
+                  "precio": 17.37,
+                  "horas": 0.85,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.06.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de piscina con manto de PVC.",
+                  "unidad": "m2",
+                  "precio": 35.62,
+                  "horas": 0.85,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 3
+            },
+            {
+              "codigo": "10.06.02",
+              "nombre": "Impermeabilización de tanques y jardineras",
+              "partidas": [
+                {
+                  "codigo": "10.06.02.010",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de tanque de agua con membrana cementosa.",
+                  "unidad": "m2",
+                  "precio": 18.46,
+                  "horas": 0.78,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.06.02.020",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de jardinera de obra.",
+                  "unidad": "m2",
+                  "precio": 27.43,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.06.02.030",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de tanque de concreto.",
+                  "unidad": "m2",
+                  "precio": 12.42,
+                  "horas": 0.78,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.06.02.040",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de piscina con doble membrana.",
+                  "unidad": "m2",
+                  "precio": 48.31,
+                  "horas": 0.93,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.06.02.050",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de tanque metálico.",
+                  "unidad": "m2",
+                  "precio": 28.51,
+                  "horas": 0.77,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.06.02.060",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de piscina elevada.",
+                  "unidad": "m2",
+                  "precio": 17.37,
+                  "horas": 0.85,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.06.02.070",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de jardinera con drenaje.",
+                  "unidad": "m2",
+                  "precio": 15.03,
+                  "horas": 0.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.06.02.080",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de piscina de fibra.",
+                  "unidad": "m2",
+                  "precio": 29.29,
+                  "horas": 0.77,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.06.02.090",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de fuente ornamental.",
+                  "unidad": "m2",
+                  "precio": 27.43,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 9
+            }
+          ],
+          "n": 12
         },
         {
           "codigo": "10.07",
           "nombre": "Drenajes, geotextiles y capas separadoras",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "10.07.01",
+              "nombre": "Drenajes y geotextiles",
+              "partidas": [
+                {
+                  "codigo": "10.07.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Drenaje perimetral con tubería perforada.",
+                  "unidad": "m",
+                  "precio": 17.15,
+                  "horas": 0.75,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.07.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Colocación de geotextil separador.",
+                  "unidad": "m2",
+                  "precio": 2.47,
+                  "horas": 0.12,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.07.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Capa drenante con lámina nodular.",
+                  "unidad": "m2",
+                  "precio": 13.07,
+                  "horas": 0.42,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.07.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Drenaje de cubierta con canaleta.",
+                  "unidad": "m",
+                  "precio": 15.72,
+                  "horas": 0.55,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.07.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Drenaje de jardín con tubería perforada.",
+                  "unidad": "m",
+                  "precio": 15.33,
+                  "horas": 0.65,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.07.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Capa drenante con geocompuesto.",
+                  "unidad": "m2",
+                  "precio": 6.79,
+                  "horas": 0.35,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 6
+            },
+            {
+              "codigo": "10.07.02",
+              "nombre": "Capas separadoras y de protección",
+              "partidas": [
+                {
+                  "codigo": "10.07.02.010",
+                  "codigo_legacy": "",
+                  "titulo": "Capa separadora de polietileno.",
+                  "unidad": "m2",
+                  "precio": 1.82,
+                  "horas": 0.12,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.07.02.020",
+                  "codigo_legacy": "",
+                  "titulo": "Capa de protección con gravilla.",
+                  "unidad": "m2",
+                  "precio": 3.24,
+                  "horas": 0.15,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.07.02.030",
+                  "codigo_legacy": "",
+                  "titulo": "Capa de protección con mortero.",
+                  "unidad": "m2",
+                  "precio": 11.56,
+                  "horas": 0.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.07.02.040",
+                  "codigo_legacy": "",
+                  "titulo": "Capa separadora geotextil en terraza.",
+                  "unidad": "m2",
+                  "precio": 2.47,
+                  "horas": 0.12,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.07.02.050",
+                  "codigo_legacy": "",
+                  "titulo": "Drenaje de trasdós con geotextil y grava.",
+                  "unidad": "m",
+                  "precio": 9.67,
+                  "horas": 0.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.07.02.060",
+                  "codigo_legacy": "",
+                  "titulo": "Capa drenante de cubierta ajardinada.",
+                  "unidad": "m2",
+                  "precio": 8.75,
+                  "horas": 0.42,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 6
+            }
+          ],
+          "n": 12
         },
         {
           "codigo": "10.08",
           "nombre": "Sellado de juntas y estanqueidad",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "10.08.01",
+              "nombre": "Sellado de juntas de construcción",
+              "partidas": [
+                {
+                  "codigo": "10.08.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Sellado de junta de construcción con poliuretano.",
+                  "unidad": "m",
+                  "precio": 14.2,
+                  "horas": 0.21,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.08.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Sellado de junta de hormigonado con bentonita.",
+                  "unidad": "m",
+                  "precio": 6.5,
+                  "horas": 0.14,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.08.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Sellado de junta con banda de PVC.",
+                  "unidad": "m",
+                  "precio": 9.76,
+                  "horas": 0.17,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 3
+            },
+            {
+              "codigo": "10.08.02",
+              "nombre": "Sellado de juntas de dilatación",
+              "partidas": [
+                {
+                  "codigo": "10.08.02.010",
+                  "codigo_legacy": "",
+                  "titulo": "Sellado de junta de dilatación en piso.",
+                  "unidad": "m",
+                  "precio": 17.39,
+                  "horas": 0.26,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.08.02.020",
+                  "codigo_legacy": "",
+                  "titulo": "Sellado de junta de dilatación en fachada.",
+                  "unidad": "m",
+                  "precio": 16.73,
+                  "horas": 0.28,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.08.02.030",
+                  "codigo_legacy": "",
+                  "titulo": "Sellado de junta de dilatación en cubierta.",
+                  "unidad": "m",
+                  "precio": 16.64,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.08.02.040",
+                  "codigo_legacy": "",
+                  "titulo": "Sellado de junta en piscina.",
+                  "unidad": "m",
+                  "precio": 14.51,
+                  "horas": 0.26,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.08.02.050",
+                  "codigo_legacy": "",
+                  "titulo": "Sellado de junta perimetral de muro.",
+                  "unidad": "m",
+                  "precio": 14.04,
+                  "horas": 0.21,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.08.02.060",
+                  "codigo_legacy": "",
+                  "titulo": "Sellado de paso de instalaciones en muro.",
+                  "unidad": "m",
+                  "precio": 11.6,
+                  "horas": 0.21,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.08.02.070",
+                  "codigo_legacy": "",
+                  "titulo": "Sellado de junta de encuentro piso-pared.",
+                  "unidad": "m",
+                  "precio": 7.29,
+                  "horas": 0.14,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.08.02.080",
+                  "codigo_legacy": "",
+                  "titulo": "Sellado de junta de dilatación en escalera.",
+                  "unidad": "m",
+                  "precio": 17.39,
+                  "horas": 0.26,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.08.02.090",
+                  "codigo_legacy": "",
+                  "titulo": "Sellado de junta en tanque.",
+                  "unidad": "m",
+                  "precio": 14.35,
+                  "horas": 0.26,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 9
+            }
+          ],
+          "n": 12
         },
         {
           "codigo": "10.09",
           "nombre": "Tratamiento de filtraciones, humedad y capilaridad",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "10.09.01",
+              "nombre": "Tratamiento de filtraciones",
+              "partidas": [
+                {
+                  "codigo": "10.09.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Inyección de resina en fisura.",
+                  "unidad": "m",
+                  "precio": 23.1,
+                  "horas": 0.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.09.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Tratamiento de filtración en techo.",
+                  "unidad": "m2",
+                  "precio": 29.17,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.09.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Reparación de filtración en muro enterrado.",
+                  "unidad": "m2",
+                  "precio": 21.55,
+                  "horas": 0.77,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.09.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Tratamiento de filtración en piscina.",
+                  "unidad": "m2",
+                  "precio": 31.97,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.09.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Reparación de filtración en terraza.",
+                  "unidad": "m2",
+                  "precio": 24.67,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 5
+            },
+            {
+              "codigo": "10.09.02",
+              "nombre": "Tratamiento de humedad y capilaridad",
+              "partidas": [
+                {
+                  "codigo": "10.09.02.010",
+                  "codigo_legacy": "",
+                  "titulo": "Tratamiento de humedad ascendente por capilaridad.",
+                  "unidad": "m2",
+                  "precio": 9.87,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.09.02.020",
+                  "codigo_legacy": "",
+                  "titulo": "Tratamiento antihumedad de muro interior.",
+                  "unidad": "m2",
+                  "precio": 11.88,
+                  "horas": 0.72,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.09.02.030",
+                  "codigo_legacy": "",
+                  "titulo": "Saneado de muro con eflorescencias salinas.",
+                  "unidad": "m2",
+                  "precio": 7.45,
+                  "horas": 0.42,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.09.02.040",
+                  "codigo_legacy": "",
+                  "titulo": "Tratamiento de humedad en sótano.",
+                  "unidad": "m2",
+                  "precio": 12.14,
+                  "horas": 0.72,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.09.02.050",
+                  "codigo_legacy": "",
+                  "titulo": "Tratamiento de humedad por condensación.",
+                  "unidad": "m2",
+                  "precio": 3.58,
+                  "horas": 0.28,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.09.02.060",
+                  "codigo_legacy": "",
+                  "titulo": "Barrera antihumedad en piso.",
+                  "unidad": "m2",
+                  "precio": 3.22,
+                  "horas": 0.14,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "10.09.02.070",
+                  "codigo_legacy": "",
+                  "titulo": "Tratamiento de humedad en muro de piedra.",
+                  "unidad": "m2",
+                  "precio": 6.1,
+                  "horas": 0.35,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 7
+            }
+          ],
+          "n": 12
         }
       ],
-      "n": 16
+      "n": 150
     },
     {
       "codigo": "11",
