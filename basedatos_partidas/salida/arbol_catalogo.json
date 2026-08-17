@@ -12820,7 +12820,7 @@
                   "codigo_legacy": "CT-13-03-030",
                   "titulo": "Interruptor diferencial de protección de personas.",
                   "unidad": "ud",
-                  "precio": 47.12,
+                  "precio": 41.87,
                   "horas": 0.63,
                   "producto_cliente": false
                 },
@@ -12838,7 +12838,7 @@
                   "codigo_legacy": "",
                   "titulo": "Tablero eléctrico con protecciones.",
                   "unidad": "ud",
-                  "precio": 164.06,
+                  "precio": 158.81,
                   "horas": 3.0,
                   "producto_cliente": false
                 },
@@ -12856,7 +12856,7 @@
                   "codigo_legacy": "",
                   "titulo": "Interruptor diferencial.",
                   "unidad": "ud",
-                  "precio": 45.07,
+                  "precio": 39.82,
                   "horas": 0.45,
                   "producto_cliente": false
                 },
@@ -17258,7 +17258,7 @@
                   "codigo_legacy": "",
                   "titulo": "Reparación de tablero eléctrico.",
                   "unidad": "ud",
-                  "precio": 46.05,
+                  "precio": 43.42,
                   "horas": 2.3,
                   "producto_cliente": false
                 },

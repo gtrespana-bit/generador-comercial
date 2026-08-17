@@ -1,0 +1,58 @@
+{
+  "_comentario": "Tercera ronda de contraste de precios contra el mercado venezolano (agosto 2026). Foco: instalaciones eléctricas (interruptores termomagnéticos, diferenciales, tableros, puesta a tierra, cable). Cada entrada lleva el precio adoptado, el rango observado y la fuente. Se aplica con: python3 basedatos_partidas/contraste.py aplicar",
+  "_moneda": "USD",
+  "_fecha": "2026-08",
+  "_metodo": "Barrido de listados de MercadoLibre Venezuela y catálogo en línea de EPA Venezuela (precios publicados en USD). Criterio: mediana del rango observado, descartando piezas de importación puntual de gama alta (ABB/Schneider/Siemens) y artículos usados. Se confirman también los precios eléctricos ya contrastados en rondas anteriores con su fuente, para dejar trazabilidad.",
+  "_alcance": "NO se han tocado los recursos del grupo «maquinaria» (alquiler de equipos): se mantienen tal y como estaban por decisión del cliente.",
+
+  "precios": {
+
+    "MT-DIFERENCIAL": {
+      "precio": 28.0,
+      "rango_observado": "16,66 - 48,99 USD el diferencial 2 polos 25-40 A 30 mA (marcas Steck, Tosun, DYD, RCCB genérico)",
+      "conversion": "Mediana del rango: DYD 25A 16,66; RCCB 2P 63A 16-26,82; Steck SDR22530 29,99; Steck SDR24030 41,64; RCCB 4P 63A 39-47",
+      "fuente": "MercadoLibre VE: interruptor/disyuntor diferencial 2P 25A y 40A 30mA Steck 29,99-48,99; DYD-25A 16,66; RCCB 2P 63A 16-36,01; Tosun Lux 34,09-37,20.",
+      "comentario": "El precio anterior (32 USD) quedaba por encima de la mediana de un diferencial residencial 30 mA. Se adopta 28 USD como mediana representativa de un 2P 25-40 A de marca media."
+    },
+
+    "MT-BREAKER": {
+      "precio": 7.5,
+      "rango_observado": "1P 16-32 A: 3,10-4,16 USD; 2P 20-25 A: 6-9 USD; 3P 20-63 A: 9-15 USD",
+      "conversion": "Mediana de un termomagnético residencial (entre monopolar y bipolar): 1P Andeli/Chint 3,10-4,16; 2P Andeli/Chint 6-9",
+      "fuente": "MercadoLibre VE: breaker 1x20A Andeli 3,10-4,16; 1x16A Chint 3,82; 2x20A Andeli/Chint 6-9,44; 2x25A 7,43; 3x20A 9,37.",
+      "comentario": "Confirmado: 7,50 USD es una mediana correcta para un termomagnético monopolar/bipolar de marca media."
+    },
+
+    "MT-TABLERO-DIST": {
+      "precio": 48.0,
+      "rango_observado": "28 - 66 USD el tablero/centro de carga de 8 circuitos",
+      "conversion": "Mediana: EPA 66; electronica.com.ve 36,40; MercadoLibre 28-55",
+      "fuente": "EPA Venezuela: tablero 8 circuitos con tapa-puerta 66 USD; electronica.com.ve 36,40; MercadoLibre VE: tablero 8 circuitos 25-55 (Lumistar, Taelinca, Security, Classic Lux).",
+      "comentario": "Confirmado: 48 USD queda en la parte media-alta del rango de un tablero de distribución de 8 circuitos."
+    },
+
+    "MT-TABLERO-PROV": {
+      "precio": 45.0,
+      "rango_observado": "Tablero de 8 circuitos 25-66 USD + diferencial 16-30 USD (composición de un tablero provisional con diferencial)",
+      "conversion": "Tablero 8 circuitos (40) + diferencial 2P 30mA (28) ≈ 68 USD; el provisional suele ser 4-6 circuitos sin puerta: 45 USD es razonable",
+      "fuente": "MercadoLibre VE y EPA: tablero 8 circuitos 25-66; diferencial 2P 25-40A 30mA 16-30.",
+      "comentario": "Confirmado: el precio cubre caja de obra + diferencial de protección."
+    },
+
+    "MT-BARRA-TIERRA": {
+      "precio": 18.0,
+      "rango_observado": "20 USD la barra copperweld 5/8 de 1,5 m con conector (MercadoLibre VE)",
+      "conversion": "Barra copperweld 5/8 1,5 m con conector 20 USD; el recurso incluye caja de registro, por lo que 18 USD queda ligeramente holgado",
+      "fuente": "MercadoLibre VE: barra de tierra copperweld 5/8 1,5m con conector 20 USD.",
+      "comentario": "Confirmado: 18 USD es correcto para electrodo + conector (sin incluir la caja completa)."
+    },
+
+    "MT-CABLE-COBRE-DESN": {
+      "precio": 4.5,
+      "rango_observado": "Cobre desnudo calibre 2-2/0 (33-67 mm2): 2.800-37.000 Bs por tramo; cobre ~9-10 USD/kg",
+      "conversion": "35 mm2 ≈ 0,31 kg/m de cobre → ~3 USD/m solo de cobre + margen de distribución; 4,5 USD/m es coherente",
+      "fuente": "MercadoLibre VE: cable desnudo #2/#4 y 2/0 para puesta a tierra (Bs 500-37.028 por tramo); cotización de cobre electrolítico 9-10 USD/kg.",
+      "comentario": "Confirmado por valor del cobre: 4,5 USD/m para desnudo 35 mm2 es correcto."
+    }
+  }
+}
