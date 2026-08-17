@@ -671,7 +671,7 @@ rama: hasta entonces `/readyz` del entorno migrado responde 503 (esperado).
   devuelve `None` para cada uno, con sanity de que en A sí resuelve. Si se
   añade un modelo nuevo sin incluirlo en el grafo, la prueba falla nombrándolo.
 - [~] **E4-017 — Auditar archivos y URLs firmadas.**
-  Objetos nuevos usan proxy privado y `/static/uploads` se bloquea en PostgreSQL; falta auditoría externa y decidir URLs firmadas cortas para descargas grandes.
+  Objetos nuevos usan proxy privado y `/static/uploads` se bloquea en PostgreSQL. El 17/08/2026 se añadió la auditoría estática completa (`tests/test_auditoria_archivos.py`): recorre todo `app/` (Python, plantillas, JS y CSS) prohibiendo marcadores de URLs públicas/firmadas y enlaces directos al bucket, con regresión sobre `file_url` y `SupabaseStorage`. La decisión de **no** introducir URLs firmadas cortas por ahora queda documentada en `docs/ADR-002_URLS_FIRMADAS_ARCHIVOS.md` (propuesta, pendiente de confirmación del propietario). Falta únicamente la auditoría externa manual (confirmar en el navegador que la URL pública del objeto responde acceso denegado), que es operativa del titular.
 
 ## 4.4 Infraestructura
 
