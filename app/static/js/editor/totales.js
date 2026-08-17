@@ -20,9 +20,17 @@
       var descuentoChip = document.createElement("span");
       descuentoChip.className = "ecb-chip muted";
       descuentoChip.id = "descuento-chip";
-      descuentoChip.innerHTML =
-        '<span id="descuento-fill" class="ecb-descuento-fill" hidden></span>' +
-        '<span id="descuento-text"></span>';
+
+      var descuentoFill = document.createElement("span");
+      descuentoFill.id = "descuento-fill";
+      descuentoFill.className = "ecb-descuento-fill";
+      descuentoFill.hidden = true;
+
+      var descuentoText = document.createElement("span");
+      descuentoText.id = "descuento-text";
+
+      descuentoChip.appendChild(descuentoFill);
+      descuentoChip.appendChild(descuentoText);
       meta.appendChild(descuentoChip);
     }
 

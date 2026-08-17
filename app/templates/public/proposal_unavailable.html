@@ -2,16 +2,29 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex,nofollow,noarchive">
   <title>Propuesta no disponible · CotizaT</title>
-  <style nonce="{{ request.state.csp_nonce }}">
-    :root { font-family:Inter,ui-sans-serif,system-ui,sans-serif; color:#17211d; background:#f3f7f5; }
-    body { margin:0; min-height:100vh; display:grid; place-items:center; padding:24px; }
-    main { width:min(540px,100%); background:white; border-radius:18px; padding:34px; box-shadow:0 12px 36px rgba(10,48,34,.09); text-align:center; }
-    h1 { margin:0 0 12px; font-size:1.7rem; }
-    p { color:#596d63; line-height:1.6; margin:0; }
-  </style>
+  <link rel="icon" type="image/png" href="/static/icono.png">
+      <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}">
 </head>
-<body><main><h1>Propuesta no disponible</h1><p>El enlace no es válido, caducó o fue revocado. Solicita un enlace nuevo a la empresa que preparó el presupuesto.</p></main></body>
+<body>
+<div class="auth-stage">
+  <main class="prop-unavailable">
+    <a class="brand" href="/">
+      <span class="mark">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M7 3.5h6.5L18 8v11a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 19V5a1.5 1.5 0 0 1 1-1.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M13.5 3.5V8H18" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M9 14.5l2 2 4-4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      CotizaT
+    </a>
+    <h1 class="mt-2">Propuesta no disponible</h1>
+    <p>El enlace no es válido, caducó o fue revocado. Solicita un enlace nuevo a la empresa que preparó el presupuesto.</p>
+  </main>
+</div>
+</body>
 </html>

@@ -122,4 +122,6 @@ def test_el_script_se_carga_en_las_paginas_donde_puede_aterrizar():
     """Login y layout general: los dos destinos a los que Supabase desvía."""
     for plantilla in ("app/templates/auth/access.html", "app/templates/base.html"):
         contenido = Path(plantilla).read_text(encoding="utf-8")
-        assert "/static/js/recovery_redirect.js" in contenido, plantilla
+        # La ruta se emite a través del filtro ``asset`` (versión cacheada), así
+        # que basta con comprobar que el nombre del script está referenciado.
+        assert "recovery_redirect.js" in contenido, plantilla

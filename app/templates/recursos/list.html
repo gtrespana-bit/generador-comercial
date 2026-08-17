@@ -100,7 +100,7 @@
       {% for cat in categorias %}
         {% set cat_recursos = recursos|selectattr('categoria','equalto',cat)|list %}
         {% if cat_recursos %}
-        <section class="cat-section" data-categoria="{{ cat }}" id="group-{{ cat }}">
+        <section class="cat-section collapsed" data-categoria="{{ cat }}" id="group-{{ cat }}">
           <header class="cat-section-head" data-cotizat-click="recursos-toggle-section">
             <button class="cat-toggle">▼</button>
             <div class="cat-title-wrap">
@@ -226,6 +226,11 @@ function filtrarCategoria(cat){
   categoriaSeleccionada=cat;
   if(cat==='todas') document.getElementById('btn-cat-todas')?.classList.add('active');
   else document.getElementById('btn-cat-'+cat)?.classList.add('active');
+  // Al elegir una familia concreta, expandir su sección para ver los recursos.
+  if(cat!=='todas'){
+    const sec=document.getElementById('group-'+cat);
+    if(sec && sec.classList.contains('collapsed')) toggleCatSection(sec.querySelector('.cat-section-head'));
+  }
   filtrarRecursos();
 }
 function filtrarRecursos(){

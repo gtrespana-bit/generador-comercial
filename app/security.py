@@ -216,9 +216,9 @@ class WebSecurityMiddleware:
                         + b"frame-ancestors " + antecesores + b"; form-action 'self'; "
                         + f"script-src 'self' 'nonce-{nonce}'; ".encode("ascii")
                         + b"script-src-attr 'none'; "
-                        + f"style-src 'self' 'nonce-{nonce}' https://fonts.googleapis.com; ".encode("ascii")
+                        + f"style-src 'self' 'nonce-{nonce}'; ".encode("ascii")
                         + b"style-src-attr 'none'; "
-                        + b"font-src 'self' https://fonts.gstatic.com data:; "
+                        + b"font-src 'self' data:; "
                         + b"img-src 'self' data: blob:; connect-src 'self'; "
                         + b"frame-src 'self' blob:"
                     ),

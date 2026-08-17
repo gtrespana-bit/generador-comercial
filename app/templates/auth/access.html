@@ -5,72 +5,81 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Acceso · {{ product_name }}</title>
   <link rel="icon" type="image/png" href="/static/icono.png">
+      <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}">
   <script src="/static/js/recovery_redirect.js"></script>
-  <style nonce="{{ request.state.csp_nonce }}">
-    :root { font-family: Inter, ui-sans-serif, system-ui, sans-serif; color: #17211d; background: #f3f7f5; }
-    * { box-sizing: border-box; }
-    body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 28px 16px; }
-    main { width: min(100%, 880px); display: grid; grid-template-columns: 1fr 1fr; background: white; border-radius: 22px; overflow: hidden; box-shadow: 0 24px 70px rgba(10, 48, 34, .14); }
-    header { padding: 52px 44px; background: #073c2b; color: white; display: flex; flex-direction: column; justify-content: space-between; min-height: 560px; }
-    header strong { font-size: 1.5rem; }
-    header h1 { font-size: clamp(2rem, 5vw, 3.2rem); line-height: 1.05; margin: 40px 0 18px; }
-    header p { color: #cce8dc; line-height: 1.6; }
-    .forms { padding: 38px; }
-    h2 { margin: 0 0 20px; }
-    form + form { border-top: 1px solid #e3ebe7; margin-top: 30px; padding-top: 28px; }
-    label { display: block; font-weight: 700; margin: 14px 0 7px; font-size: .9rem; }
-    input { width: 100%; border: 1px solid #b9c8c1; border-radius: 10px; padding: 12px 13px; font: inherit; }
-    input:focus { outline: 3px solid #c7f1df; border-color: #16865a; }
-    button { width: 100%; border: 0; border-radius: 10px; padding: 13px; margin-top: 19px; background: #146c43; color: white; font: inherit; font-weight: 800; cursor: pointer; }
-    .secondary { background: #e7f4ee; color: #0b5b38; }
-    .alert { border-radius: 10px; padding: 12px 14px; margin-bottom: 18px; line-height: 1.4; }
-    .error { background: #fff0f0; color: #9b2529; }
-    .success { background: #eaf8f1; color: #11623f; }
-    .note { font-size: .83rem; color: #65766e; line-height: 1.45; }
-    @media (max-width: 760px) { main { grid-template-columns: 1fr; } header { min-height: auto; padding: 34px; } .forms { padding: 30px 24px; } }
-  </style>
 </head>
 <body>
-<main>
-  <header>
-    <strong>{{ product_name }}</strong>
-    <div>
-      <h1>Tu operación comercial, en un espacio privado.</h1>
-      <p>Presupuestos, partidas y precios organizados por empresa. La identidad la valida Supabase Auth y CotizaT autoriza cada organización por membresía.</p>
-    </div>
-    <small>Construcción y remodelación para Latinoamérica</small>
-  </header>
-  <section class="forms">
-    {% if error %}<div class="alert error">{{ error }}</div>{% endif %}
-    {% if msg %}<div class="alert success">{{ msg }}</div>{% endif %}
+<div class="auth-stage">
+  <main class="auth-split">
+    <aside class="auth-split-panel">
+      <a class="brand" href="/conocer">
+        <span class="mark mark-lg">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M7 3.5h6.5L18 8v11a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 19V5a1.5 1.5 0 0 1 1-1.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            <path d="M13.5 3.5V8H18" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            <path d="M9 14.5l2 2 4-4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        {{ product_name }}
+      </a>
+      <div>
+        <h1>Tu operación comercial, en un espacio privado.</h1>
+        <p>Presupuestos, partidas y precios organizados por empresa. Cada organización es un espacio aislado, con roles de equipo y versiones inmutables de cada documento.</p>
+        <ul>
+          <li><span class="check">✓</span> Presupuestos claros y listos para presentar en PDF</li>
+          <li><span class="check">✓</span> Catálogo de partidas y precios reutilizable</li>
+          <li><span class="check">✓</span> Tu equipo, con roles y control de aprobaciones</li>
+        </ul>
+      </div>
+      <small class="panel-foot">Construcción y remodelación para Latinoamérica</small>
+    </aside>
 
-    <h2>Iniciar sesión</h2>
-    <form method="post" action="/acceso">
-      <input type="hidden" name="next" value="{{ next }}">
-      <label for="login-email">Email</label>
-      <input id="login-email" name="email" type="email" autocomplete="email" required {% if not auth_configured %}disabled{% endif %}>
-      <label for="login-password">Contraseña</label>
-      <input id="login-password" name="password" type="password" autocomplete="current-password" required {% if not auth_configured %}disabled{% endif %}>
-      <button type="submit" {% if not auth_configured %}disabled{% endif %}>Entrar a CotizaT</button>
-      <p class="note"><a href="/recuperar-acceso">¿Olvidaste tu contraseña?</a></p>
-    </form>
+    <section class="auth-split-forms">
+      {% if error %}<div class="alert error">{{ error }}</div>{% endif %}
+      {% if msg %}<div class="alert success">{{ msg }}</div>{% endif %}
 
-    <form method="post" action="/registro">
-      <h2>Crear cuenta</h2>
-      <input type="hidden" name="next" value="{{ next or '/organizaciones/nueva' }}">
-      <label for="signup-name">Nombre</label>
-      <input id="signup-name" name="nombre" autocomplete="name" maxlength="200" required {% if not auth_configured %}disabled{% endif %}>
-      <label for="signup-email">Email</label>
-      <input id="signup-email" name="email" type="email" autocomplete="email" required {% if not auth_configured %}disabled{% endif %}>
-      <label for="signup-password">Contraseña</label>
-      <input id="signup-password" name="password" type="password" minlength="8" autocomplete="new-password" required {% if not auth_configured %}disabled{% endif %}>
-      <label for="signup-confirmation">Repite la contraseña</label>
-      <input id="signup-confirmation" name="password_confirmation" type="password" minlength="8" autocomplete="new-password" required {% if not auth_configured %}disabled{% endif %}>
-      <button class="secondary" type="submit" {% if not auth_configured %}disabled{% endif %}>Crear mi espacio</button>
-    </form>
-    <p class="note">Las contraseñas se envían directamente a Supabase Auth y no se almacenan en la base de CotizaT.</p>
-    <p class="note">Al crear una cuenta aceptas los <a href="/legal/terminos">términos del servicio</a> y la <a href="/legal/privacidad">política de privacidad</a>.</p>
-  </section>
-</main>
+      <h2>Iniciar sesión</h2>
+      <form method="post" action="/acceso">
+        <input type="hidden" name="next" value="{{ next }}">
+        <div class="field">
+          <label for="login-email">Email</label>
+          <input id="login-email" name="email" type="email" autocomplete="email" required {% if not auth_configured %}disabled{% endif %}>
+        </div>
+        <div class="field">
+          <label for="login-password">Contraseña</label>
+          <input id="login-password" name="password" type="password" autocomplete="current-password" required {% if not auth_configured %}disabled{% endif %}>
+        </div>
+        <button class="btn btn-primary btn-block" type="submit" {% if not auth_configured %}disabled{% endif %}>Entrar a {{ product_name }}</button>
+        <p class="small text-muted mt-2"><a href="/recuperar-acceso">¿Olvidaste tu contraseña?</a></p>
+      </form>
+
+      <form method="post" action="/registro">
+        <h2>Crear cuenta</h2>
+        <input type="hidden" name="next" value="{{ next or '/organizaciones/nueva' }}">
+        <div class="field">
+          <label for="signup-name">Nombre</label>
+          <input id="signup-name" name="nombre" autocomplete="name" maxlength="200" required {% if not auth_configured %}disabled{% endif %}>
+        </div>
+        <div class="field">
+          <label for="signup-email">Email</label>
+          <input id="signup-email" name="email" type="email" autocomplete="email" required {% if not auth_configured %}disabled{% endif %}>
+        </div>
+        <div class="field">
+          <label for="signup-password">Contraseña</label>
+          <input id="signup-password" name="password" type="password" minlength="8" autocomplete="new-password" required {% if not auth_configured %}disabled{% endif %}>
+        </div>
+        <div class="field">
+          <label for="signup-confirmation">Repite la contraseña</label>
+          <input id="signup-confirmation" name="password_confirmation" type="password" minlength="8" autocomplete="new-password" required {% if not auth_configured %}disabled{% endif %}>
+        </div>
+        <button class="btn btn-secondary btn-block" type="submit" {% if not auth_configured %}disabled{% endif %}>Crear mi espacio</button>
+      </form>
+
+      <p class="small text-muted mt-3">Las contraseñas se envían directamente a Supabase Auth y no se almacenan en la base de {{ product_name }}.</p>
+      <p class="small text-muted">Al crear una cuenta aceptas los <a href="/legal/terminos">términos del servicio</a> y la <a href="/legal/privacidad">política de privacidad</a>.</p>
+    </section>
+  </main>
+</div>
 </body>
 </html>

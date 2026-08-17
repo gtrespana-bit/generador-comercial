@@ -129,7 +129,10 @@ def test_respuesta_real_publica_nonce_para_hoja_dinamica_sin_estilos_inline():
     with TestClient(cotizat_app) as client:
         response = client.get("/")
     nonce = response.headers["content-security-policy"].split("'nonce-", 1)[1].split("'", 1)[0]
-    assert f'<script nonce="{nonce}" src="/static/js/csp_styles.js"></script>' in response.text
+    assert re.search(
+        rf'<script nonce="{nonce}" src="/static/js/csp_styles\.js(\?v=[^"]*)?"></script>',
+        response.text,
+    )
     assert not re.search(r"\sstyle\s*=", response.text, re.IGNORECASE)
 
 

@@ -44,6 +44,16 @@
   function set(element, property, value) {
     var name = cssName(property);
     if (!name || !element) return;
+    var vacio = value === null || value === undefined || String(value) === "";
+    // No crear una regla CSSOM para una propiedad que no va a pintar nada:
+    // la primera pasada de filtrado sobre catálogos grandes (p. ej. 540
+    // partidas) llamaba insertRule una vez por nodo y congelaba la pestaña.
+    if (vacio && !(element.setAttribute && records.get(element))) {
+      if (name === "display" && element.classList) {
+        element.classList.remove("cotizat-hidden");
+      }
+      return;
+    }
     var record = recordFor(element);
     if (!record) return;
 

@@ -1,61 +1,91 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Equipo · {{ product_name }}</title>
-  <style nonce="{{ request.state.csp_nonce }}">
-    :root{font-family:Inter,ui-sans-serif,system-ui,sans-serif;color:#17211d;background:#f3f7f5}*{box-sizing:border-box}body{margin:0;padding:30px 16px}main{width:min(100%,920px);margin:auto}header{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:24px}.brand{font-size:1.35rem;font-weight:900;color:#0b5b38}h1,h2{margin:0 0 8px}.muted{color:#66776f;line-height:1.5}.panel,.card{background:white;border-radius:14px;box-shadow:0 8px 30px rgba(10,48,34,.08)}.panel{padding:22px;margin:18px 0}.card{padding:16px;margin:10px 0;display:flex;align-items:center;justify-content:space-between;gap:18px}.grid{display:grid;grid-template-columns:minmax(220px,1fr) 180px auto;gap:10px;align-items:end}label{display:block;font-weight:800;margin-bottom:7px}input,select{width:100%;border:1px solid #b9c8c1;border-radius:9px;padding:11px;font:inherit}button,.button{border:0;border-radius:9px;background:#146c43;color:white;padding:11px 15px;font:inherit;font-weight:800;cursor:pointer;text-decoration:none;display:inline-block}.secondary{background:#e7f4ee;color:#0b5b38}.danger{background:#fff0f0;color:#9b2529}.alert,.notice{border-radius:10px;padding:12px 14px;margin:14px 0}.alert{background:#fff0f0;color:#9b2529}.notice{background:#e9f6ef;color:#11623f}.role{display:inline-block;background:#e9f6ef;color:#11623f;border-radius:999px;padding:4px 9px;font-size:.78rem;font-weight:800}.member-form{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.member-form select{width:auto}.check{display:flex;align-items:center;gap:6px;margin:0;font-weight:700}.check input{width:auto}.link-box{margin-top:14px;padding:14px;background:#f4faf7;border:1px solid #bcdcca;border-radius:10px}.link-box input{font-family:ui-monospace,monospace}.empty{border:1px dashed #b7c9c0;padding:20px;border-radius:12px;text-align:center;color:#66776f}@media(max-width:700px){.grid{grid-template-columns:1fr}.card{align-items:flex-start;flex-direction:column}.member-form{width:100%}}
-  </style>
+  <link rel="icon" type="image/png" href="/static/icono.png">
+      <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}">
 </head>
-<body><main>
-<header><div><span class="brand">{{ product_name }}</span><h1>Equipo de {{ request.state.organizacion.nombre }}</h1></div><a class="button secondary" href="/">Volver</a></header>
-<p class="muted">Solo propietarios y administradores gestionan el equipo. La propiedad no se transfiere desde esta pantalla.</p>
-{% if error %}<div class="alert">{{ error }}</div>{% endif %}
-{% if msg %}<div class="notice">{{ msg }}</div>{% endif %}
+<body>
+<div class="page-stage">
+  <main class="page-card">
+    <div class="page-head-row">
+      <div>
+        <a class="brand" href="/">
+          <span class="mark">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M7 3.5h6.5L18 8v11a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 19V5a1.5 1.5 0 0 1 1-1.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+              <path d="M13.5 3.5V8H18" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+              <path d="M9 14.5l2 2 4-4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          {{ product_name }}
+        </a>
+        <h1 class="mt-1">Equipo de {{ request.state.organizacion.nombre }}</h1>
+      </div>
+      <a class="btn" href="/">Volver</a>
+    </div>
 
-<section class="panel">
-  <h2>Invitar a una persona</h2>
-  <p class="muted">El enlace es de un solo uso, caduca en 7 días y solo funciona con el email verificado indicado.</p>
-  <form class="grid" action="/equipo/invitaciones" method="post">
-    <div><label for="email">Email</label><input id="email" name="email" type="email" maxlength="254" autocomplete="email" required></div>
-    <div><label for="rol">Rol</label><select id="rol" name="rol">
-      {% if actor_rol == 'propietario' %}<option value="administrador">Administrador</option>{% endif %}
-      <option value="miembro" selected>Miembro</option>
-      <option value="lectura">Solo lectura</option>
-    </select></div>
-    <button type="submit">Crear invitación</button>
-  </form>
-  {% if invitation_link %}<div class="link-box"><strong>Enlace generado</strong><p class="muted">El correo no pudo enviarse. Cópialo ahora y compártelo por un canal seguro: el secreto no se vuelve a mostrar.</p><input value="{{ invitation_link }}" readonly aria-label="Enlace de invitación"></div>{% endif %}
-</section>
+    <p class="text-soft">Solo propietarios y administradores gestionan el equipo. La propiedad no se transfiere desde esta pantalla.</p>
 
-<section class="panel">
-  <h2>Miembros</h2>
-  {% for membresia in membresias %}
-  <div class="card">
-    <div><strong>{{ membresia.usuario.nombre or membresia.usuario.email }}</strong><br><span class="muted">{{ membresia.usuario.email }}</span> <span class="role">{{ membresia.rol }}</span>{% if not membresia.activa %} <span class="role">inactiva</span>{% endif %}</div>
-    {% if membresia.rol == 'propietario' or (actor_rol != 'propietario' and membresia.rol == 'administrador') %}
-      <span class="muted">Sin cambios disponibles</span>
-    {% else %}
-    <form class="member-form" action="/equipo/membresias/{{ membresia.id }}" method="post">
-      <select name="rol" aria-label="Rol de {{ membresia.usuario.email }}">
-        {% if actor_rol == 'propietario' %}<option value="administrador" {{ 'selected' if membresia.rol == 'administrador' else '' }}>Administrador</option>{% endif %}
-        <option value="miembro" {{ 'selected' if membresia.rol == 'miembro' else '' }}>Miembro</option>
-        <option value="lectura" {{ 'selected' if membresia.rol == 'lectura' else '' }}>Solo lectura</option>
-      </select>
-      <label class="check"><input type="checkbox" name="activa" value="1" {{ 'checked' if membresia.activa else '' }}> Activa</label>
-      <button type="submit">Guardar</button>
-    </form>
-    {% endif %}
-  </div>
-  {% else %}<div class="empty">No hay miembros.</div>{% endfor %}
-</section>
+    {% if error %}<div class="alert error">{{ error }}</div>{% endif %}
+    {% if msg %}<div class="alert success">{{ msg }}</div>{% endif %}
 
-<section class="panel">
-  <h2>Invitaciones pendientes</h2>
-  {% for invitacion in invitaciones %}
-  <div class="card"><div><strong>{{ invitacion.email }}</strong><br><span class="role">{{ invitacion.rol }}</span> <span class="muted">· {% if invitacion.expires_at <= ahora %}caducada{% else %}vence {{ invitacion.expires_at.strftime('%d/%m/%Y %H:%M') }} UTC{% endif %}</span></div>
-    {% if actor_rol == 'propietario' or invitacion.rol != 'administrador' %}<form action="/equipo/invitaciones/{{ invitacion.id }}/revocar" method="post"><button class="danger" type="submit">Revocar</button></form>{% endif %}
-  </div>
-  {% else %}<div class="empty">No hay invitaciones pendientes.</div>{% endfor %}
-</section>
-</main></body></html>
+    <section class="panel">
+      <h2>Invitar a una persona</h2>
+      <p class="muted">El enlace es de un solo uso, caduca en 7 días y solo funciona con el email verificado indicado.</p>
+      <form class="team-grid" action="/equipo/invitaciones" method="post">
+        <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" maxlength="254" autocomplete="email" required></div>
+        <div class="field"><label for="rol">Rol</label><select id="rol" name="rol">
+          {% if actor_rol == 'propietario' %}<option value="administrador">Administrador</option>{% endif %}
+          <option value="miembro" selected>Miembro</option>
+          <option value="lectura">Solo lectura</option>
+        </select></div>
+        <button class="btn btn-primary" type="submit">Crear invitación</button>
+      </form>
+      {% if invitation_link %}<div class="link-box"><strong>Enlace generado</strong><p class="muted">El correo no pudo enviarse. Cópialo ahora y compártelo por un canal seguro: el secreto no se vuelve a mostrar.</p><input value="{{ invitation_link }}" readonly aria-label="Enlace de invitación"></div>{% endif %}
+    </section>
+
+    <section class="panel">
+      <h2>Miembros</h2>
+      {% for membresia in membresias %}
+      <div class="org-card">
+        <div>
+          <strong>{{ membresia.usuario.nombre or membresia.usuario.email }}</strong>
+          <div class="text-soft small">{{ membresia.usuario.email }} <span class="role-badge">{{ membresia.rol }}</span>{% if not membresia.activa %} <span class="role-badge">inactiva</span>{% endif %}</div>
+        </div>
+        {% if membresia.rol == 'propietario' or (actor_rol != 'propietario' and membresia.rol == 'administrador') %}
+          <span class="text-muted small">Sin cambios disponibles</span>
+        {% else %}
+        <form class="member-form" action="/equipo/membresias/{{ membresia.id }}" method="post">
+          <select name="rol" aria-label="Rol de {{ membresia.usuario.email }}">
+            {% if actor_rol == 'propietario' %}<option value="administrador" {{ 'selected' if membresia.rol == 'administrador' else '' }}>Administrador</option>{% endif %}
+            <option value="miembro" {{ 'selected' if membresia.rol == 'miembro' else '' }}>Miembro</option>
+            <option value="lectura" {{ 'selected' if membresia.rol == 'lectura' else '' }}>Solo lectura</option>
+          </select>
+          <label class="check"><input type="checkbox" name="activa" value="1" {{ 'checked' if membresia.activa else '' }}> Activa</label>
+          <button class="btn btn-sm" type="submit">Guardar</button>
+        </form>
+        {% endif %}
+      </div>
+      {% else %}<div class="empty">No hay miembros.</div>{% endfor %}
+    </section>
+
+    <section class="panel">
+      <h2>Invitaciones pendientes</h2>
+      {% for invitacion in invitaciones %}
+      <div class="org-card">
+        <div>
+          <strong>{{ invitacion.email }}</strong>
+          <div><span class="role-badge">{{ invitacion.rol }}</span> <span class="text-muted small">· {% if invitacion.expires_at <= ahora %}caducada{% else %}vence {{ invitacion.expires_at.strftime('%d/%m/%Y %H:%M') }} UTC{% endif %}</span></div>
+        </div>
+        {% if actor_rol == 'propietario' or invitacion.rol != 'administrador' %}<form action="/equipo/invitaciones/{{ invitacion.id }}/revocar" method="post"><button class="btn btn-danger" type="submit">Revocar</button></form>{% endif %}
+      </div>
+      {% else %}<div class="empty">No hay invitaciones pendientes.</div>{% endfor %}
+    </section>
+  </main>
+</div>
+</body>
+</html>

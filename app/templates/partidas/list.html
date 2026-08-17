@@ -137,7 +137,7 @@
   <div class="catalog-main" id="catalogMain">
     {% for cat, cat_partidas in partidas | groupby('categoria') %}
     {% set sub_groups = cat_partidas|groupby('subcategoria') %}
-    <section class="cat-section" data-categoria="{{ cat }}" id="group-{{ cat|replace(' ', '_') }}">
+    <section class="cat-section collapsed" data-categoria="{{ cat }}" id="group-{{ cat|replace(' ', '_') }}">
       <header class="cat-section-head drop-category" data-cotizat-click="partidas-toggle-section">
         <button class="cat-toggle" aria-label="Contraer">▼</button>
         <div class="cat-title-wrap">
@@ -232,18 +232,9 @@
                 {% if recursos %}
                 <tr class="descomp-row" data-parent="{{ p.id }}">
                   <td colspan="9" class="csp-s-1305fa8339">
-                    <details class="descomp-details">
+                    <details class="descomp-details" data-descomp="{{ p.id }}">
                       <summary><span class="descomp-summary-label">▾ Descomposición ({{ recursos|selectattr('tipo','equalto','recurso')|list|length }} recursos)</span> <span class="hint csp-s-a7d39f24f0">Clic para ver</span></summary>
-                      <div class="table-wrap csp-s-abe228aee0">
-                        <table class="table descomp-table">
-                          <thead><tr><th>Categoría</th><th>Código</th><th>Und.</th><th>Descripción</th><th class="right">Rend.</th><th class="right">Precio</th><th class="right">Importe</th></tr></thead>
-                          <tbody>
-                          {% for r in recursos if r.tipo == 'recurso' %}
-                            <tr><td><span class="badge csp-s-9f32b4b1a6">{{ r.categoria or r.grupo or 'otros' }}</span></td><td><code class="csp-s-fd9c8d013c">{{ r.codigo or '—' }}</code></td><td>{{ r.unidad or '—' }}</td><td class="csp-s-6c21943208" title="{{ r.descripcion }}">{{ r.descripcion }}</td><td class="right">{{ r.rendimiento }}</td><td class="right">{{ r.precio }}</td><td class="right"><strong>{{ r.importe }}</strong></td></tr>
-                          {% endfor %}
-                          </tbody>
-                        </table>
-                      </div>
+                      <div class="table-wrap descomp-holder csp-s-abe228aee0"></div>
                     </details>
                   </td>
                 </tr>
@@ -339,18 +330,9 @@
                 {% if recursos %}
                 <tr class="descomp-row" data-parent="{{ p.id }}">
                   <td colspan="9" class="csp-s-1305fa8339">
-                    <details class="descomp-details">
+                    <details class="descomp-details" data-descomp="{{ p.id }}">
                       <summary><span class="descomp-summary-label">▾ Descomposición ({{ recursos|selectattr('tipo','equalto','recurso')|list|length }} recursos)</span> <span class="hint csp-s-a7d39f24f0">Clic para ver</span></summary>
-                      <div class="table-wrap csp-s-abe228aee0">
-                        <table class="table descomp-table">
-                          <thead><tr><th>Categoría</th><th>Código</th><th>Und.</th><th>Descripción</th><th class="right">Rend.</th><th class="right">Precio</th><th class="right">Importe</th></tr></thead>
-                          <tbody>
-                          {% for r in recursos if r.tipo == 'recurso' %}
-                            <tr><td><span class="badge csp-s-9f32b4b1a6">{{ r.categoria or r.grupo or 'otros' }}</span></td><td><code class="csp-s-fd9c8d013c">{{ r.codigo or '—' }}</code></td><td>{{ r.unidad or '—' }}</td><td class="csp-s-6c21943208" title="{{ r.descripcion }}">{{ r.descripcion }}</td><td class="right">{{ r.rendimiento }}</td><td class="right">{{ r.precio }}</td><td class="right"><strong>{{ r.importe }}</strong></td></tr>
-                          {% endfor %}
-                          </tbody>
-                        </table>
-                      </div>
+                      <div class="table-wrap descomp-holder csp-s-abe228aee0"></div>
                     </details>
                   </td>
                 </tr>
@@ -363,6 +345,7 @@
         {% endfor %}
         {% endif %}
       </div>
+  </section>
     {% else %}
     <div class="card empty csp-s-d6e98c0fe2">
       <div class="csp-s-c7d3ba0dcc">📋</div>
@@ -420,22 +403,23 @@ function toggleCatSidebar() {
   }
 }
 
-// --- CATEGORÍA expand/collapse in sidebar (show subcats) ---
-document.addEventListener('click', (e) => {
-  const btn = e.target.closest('.cat-group.has-subs .category-btn');
-  // we already have click handler for filtrarCategoria, but also toggle expanded
-  // distinguish: if user clicked arrow area? we toggle expanded on any click but keep filter
-  // Instead, separate: clicking cat-group arrow should expand without filtering? We'll handle via double duty: expand always on click
-  // To avoid interfering, we just toggle expanded when has-subs
-  const group = e.target.closest('.cat-group');
-  if (group && group.classList.contains('has-subs')) {
-    // if click was on the button itself, toggle expanded state
-    if (btn) {
-      group.classList.toggle('expanded');
-      // persist? not needed
-    }
-  }
-});
+function expandSection(categoria) {
+  const section = document.getElementById('group-' + categoria.replace(/ /g, '_'));
+  if (!section) return section;
+  section.classList.remove('collapsed');
+  const body = section.querySelector('.cat-section-body');
+  if (body) CotizatStyles.set(body, "display", '');
+  const tg = section.querySelector('.cat-toggle');
+  if (tg) tg.textContent = '▼';
+  return section;
+}
+
+function expandSubcat(categoria, subcategoria) {
+  const section = expandSection(categoria);
+  if (!section) return;
+  const subEl = [...section.querySelectorAll('.subcat-section')].find(s => (s.dataset.subcategoria || '') === subcategoria);
+  if (subEl) subEl.classList.remove('collapsed');
+}
 
 function filtrarCategoria(categoria) {
   // update active state for category buttons
@@ -446,16 +430,22 @@ function filtrarCategoria(categoria) {
   if (categoria === 'todas') {
     const allBtn = document.getElementById('btn-cat-todas');
     if (allBtn) allBtn.classList.add('active');
-    // expand all groups visually? keep collapsed state as is
+    // Vista «Todas»: barra lateral contraída y categorías principales colapsadas.
+    document.querySelectorAll('.cat-group').forEach(g => g.classList.remove('expanded'));
+    toggleAllCats(false);
   } else {
     const id = 'btn-cat-' + categoria.replace(/ /g, '_');
     const btn = document.getElementById(id);
     if (btn) {
       btn.classList.add('active');
-      // ensure its group is expanded to show subcats
+      // Toggle del acordeón: si el grupo ya está abierto se cierra; si no,
+      // se abre y se cierran los demás.
       const g = btn.closest('.cat-group');
-      if (g) g.classList.add('expanded');
+      const yaAbierto = g && g.classList.contains('expanded');
+      document.querySelectorAll('.cat-group').forEach(otro => otro.classList.remove('expanded'));
+      if (g && !yaAbierto) g.classList.add('expanded');
     }
+    expandSection(categoria);
   }
   filtrarPartidas();
 }
@@ -469,12 +459,15 @@ function filtrarSubcategoria(categoria, subcategoria) {
   const catBtnId = 'btn-cat-' + categoria.replace(/ /g, '_');
   const catBtn = document.getElementById(catBtnId);
   if (catBtn) catBtn.classList.add('active');
+  // Acordeón: abrir solo el grupo de la categoría, cerrar el resto.
+  document.querySelectorAll('.cat-group').forEach(otro => otro.classList.remove('expanded'));
   const group = catBtn ? catBtn.closest('.cat-group') : null;
   if (group) group.classList.add('expanded');
   // mark subcat active
   document.querySelectorAll('.subcat-btn').forEach(b => {
     if (b.dataset.cat === categoria && b.dataset.subcat === subcategoria) b.classList.add('active');
   });
+  expandSubcat(categoria, subcategoria);
   filtrarPartidas();
 }
 
@@ -512,7 +505,7 @@ function filtrarPartidas() {
           CotizatStyles.set(row, "display", '');
           // also show its descomp row if exists
           const descomp = subsec.querySelector(`.descomp-row[data-parent="${row.dataset.id}"]`);
-          if (descomp) CotizatStyles.toggle(descomp, !CotizatStyles.isHidden(row));
+          if (descomp) CotizatStyles.set(descomp, "display", '');
           visibleInSub++;
         } else {
           CotizatStyles.set(row, "display", 'none');
@@ -569,6 +562,42 @@ function filtrarPartidas() {
     }
   }
   updateBulkBarPartidas();
+  aplicarDisclosure(Boolean(q));
+}
+
+// Revelación progresiva: en secciones muy grandes se muestra un primer tramo y
+// un botón «Mostrar N más». Al buscar se muestran todas las coincidencias sin
+// límite (el usuario espera ver todo lo que coincide). Mantiene el DOM y el
+// primer pintado acotados en catálogos de 1000+ partidas sin renunciar a la
+// búsqueda instantánea.
+const PARTIDAS_POR_TRAMO = 80;
+
+function aplicarDisclosure(conBusqueda) {
+  document.querySelectorAll('.subcat-section').forEach(sub => {
+    sub.querySelectorAll('.mostrar-mas-fila').forEach(e => e.remove());
+    if (conBusqueda) return;
+    const filas = [...sub.querySelectorAll('.partida-tr')].filter(r => !CotizatStyles.isHidden(r));
+    if (filas.length <= PARTIDAS_POR_TRAMO) return;
+    filas.slice(PARTIDAS_POR_TRAMO).forEach(r => CotizatStyles.set(r, "display", 'none'));
+    const tbody = sub.querySelector('tbody');
+    if (!tbody) return;
+    const tr = document.createElement('tr');
+    tr.className = 'mostrar-mas-fila';
+    const td = document.createElement('td');
+    td.colSpan = 9;
+    td.className = 'csp-s-1305fa8339';
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'btn btn-sm';
+    btn.textContent = `Mostrar ${filas.length - PARTIDAS_POR_TRAMO} partidas más`;
+    btn.addEventListener('click', () => {
+      filas.forEach(r => CotizatStyles.set(r, "display", ''));
+      tr.remove();
+    });
+    td.appendChild(btn);
+    tr.appendChild(td);
+    tbody.appendChild(tr);
+  });
 }
 
 function clearSearch() {
@@ -934,16 +963,10 @@ document.addEventListener('DOMContentLoaded', () => {
     CotizatStyles.set(expandBtn, "display", 'inline-flex');
     document.getElementById('catalogLayout')?.classList.add('sidebar-hidden');
   }
-  // auto-expand first categories? keep all expanded initially
-  document.querySelectorAll('.cat-group.has-subs').forEach(g=>{
-    // expand first two by default for discoverability? Instead keep collapsed initially? Show expanded for active?
-    // We'll expand all that have subs by default to show structure, but not too much
-    // Let's expand all initially
-    g.classList.add('expanded');
-  });
   makeTableSortable();
   initDragAndDropPartidas();
   filtrarPartidas();
 });
 </script>
+<script src="/static/js/partidas_descomp.js"></script>
 {% endblock %}
