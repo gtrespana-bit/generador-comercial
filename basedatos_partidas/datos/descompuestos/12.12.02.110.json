@@ -1,0 +1,40 @@
+{
+  "codigo": "12.12.02.110",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "12",
+  "unidad": "m2",
+  "titulo": "Pintura ignífuga sobre madera.",
+  "descripcion": "Aplicación de pintura intumescente ignífuga sobre madera estructural o de acabado. Incluye la preparación y la aplicación de las capas necesarias. Medido por metro cuadrado pintado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PIN-IGNFUGA",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MT-PIN-FONDO",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MT-PIN-LIJA",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.14
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.09
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

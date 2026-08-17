@@ -1,0 +1,40 @@
+{
+  "codigo": "12.10.01.280",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "10",
+  "unidad": "m",
+  "titulo": "Pintura de guarda o friso decorativo interior.",
+  "descripcion": "Aplicación de guarda o friso decorativo interior pintado, con una o dos manos. Incluye el enmascarado de la línea y la aplicación. Medido por metro lineal pintado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PIN-CAUCHO",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MT-CINTA-ENM",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MT-PIN-LIJA",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.14
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.09
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

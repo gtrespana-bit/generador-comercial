@@ -1,0 +1,32 @@
+{
+  "codigo": "12.02.02.110",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "02",
+  "unidad": "m2",
+  "titulo": "Guarnecido de yeso en techo.",
+  "descripcion": "Guarnecido de yeso en techo interior, con maestras y acabado fino. Incluye la aplicación de la pasta de yeso y el afinado. Medido por metro cuadrado guarnecido.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PASTA-YESO",
+      "rendimiento": 13.0
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.45
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.18
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

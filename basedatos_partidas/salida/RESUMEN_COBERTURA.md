@@ -1,8 +1,8 @@
 # Resumen de cobertura del catálogo
 
-- Partidas actuales: **717**
-- Objetivo mínimo: **3000** (brecha 2283)
-- Objetivo amplio: **5000** (brecha 4283)
+- Partidas actuales: **868**
+- Objetivo mínimo: **3000** (brecha 2132)
+- Objetivo amplio: **5000** (brecha 4132)
 - Subcapítulos sin cobertura: **60**
 - Subcapítulos en estado crítico: **58**
 - Diccionario de sinónimos: **146 grupos · 661 términos · 18 capítulos**
@@ -22,7 +22,7 @@
 | 09 | Instalaciones | 89 | 540 | 860 | 451 |
 | 10 | Aislamientos e impermeabilizaciones | 16 | 150 | 260 | 134 |
 | 11 | Techos y cubiertas | 18 | 130 | 220 | 112 |
-| 12 | Revestimientos y acabados | 250 | 400 | 610 | 150 |
+| 12 | Revestimientos y acabados | 401 | 400 | 610 | -1 |
 | 13 | Equipamiento, mobiliario y señalización | 21 | 140 | 240 | 119 |
 | 14 | Obras exteriores y urbanismo | 19 | 160 | 280 | 141 |
 | 15 | Gestión de residuos y limpieza | 8 | 50 | 90 | 42 |

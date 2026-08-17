@@ -1,0 +1,36 @@
+{
+  "codigo": "12.03.02.100",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "03",
+  "unidad": "m2",
+  "titulo": "Enchapado de piedra con junta ancha de mortero.",
+  "descripcion": "Enchapado de paramento con pieza de piedra natural colocada con junta ancha de mortero. Incluye la preparación del soporte, la colocación y el rejuntado ancho. Medido por metro cuadrado enchapado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ADH-PIEDRA",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MT-MORT-IMPER",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MQ-CORT-AGUA",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MO-OF1-ALI",
+      "rendimiento": 0.9
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.35
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

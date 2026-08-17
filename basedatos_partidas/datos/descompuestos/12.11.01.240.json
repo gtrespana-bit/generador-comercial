@@ -1,0 +1,40 @@
+{
+  "codigo": "12.11.01.240",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "11",
+  "unidad": "m2",
+  "titulo": "Pintura de portón o puerta metálica exterior.",
+  "descripcion": "Aplicación de esmalte sobre portón o puerta metálica exterior, con fondo anticorrosivo y dos manos. Incluye la limpieza, el fondo y las dos manos. Medido por metro cuadrado pintado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PINT-ANTICORR",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MT-PIN-ESMALTE",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MQ-ESMERIL",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.14
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.12
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

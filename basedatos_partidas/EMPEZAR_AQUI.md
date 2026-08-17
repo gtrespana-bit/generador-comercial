@@ -20,9 +20,9 @@ presupuestos.
 
 | | |
 |---|---:|
-| Partidas | **717** |
+| Partidas | **868** |
 | Capítulos · subcapítulos · apartados con partidas | **18 · 172 · 161** |
-| Recursos en el cuadro de precios | 349 |
+| Recursos en el cuadro de precios | 359 |
 | Coste directo del catálogo | 15.733,15 USD |
 | **Peso económico con precio cerrado** | **79,6 %** |
 | Validación con el importador real | **0 errores · 0 advertencias** |
@@ -148,10 +148,10 @@ producir familias completas, comenzando por `09 Instalaciones`.
 > **Progreso 17/08/2026:**
 > - `09.13 Protección contra rayos y sobretensiones` (13 partidas).
 > - `09.12 Domótica y automatización` (18 partidas).
-> - **Capítulo 12 Revestimientos y acabados en pasada general**: 104 → 250
->   partidas, con las 14 familias cubiertas (sin huecos `sin_cobertura` ni
->   `critica`). Queda a 150 partidas de su mínimo de 400.
-> Validación del importador real: 0 errores, 0 advertencias sobre 717 partidas.
+> - **Capítulo 12 Revestimientos y acabados completo hasta el mínimo**: 104 →
+>   401 partidas, superando el objetivo mínimo de 400. Las 14 familias en
+>   estado `completa` (7) o `avanzada` (7).
+> Validación del importador real: 0 errores, 0 advertencias sobre 868 partidas.
 
 La producción cerrará familias completas en este orden: `09 Instalaciones`,
 `12 Revestimientos y acabados`, `07 Carpintería, herrería y vidrios`, `10/11

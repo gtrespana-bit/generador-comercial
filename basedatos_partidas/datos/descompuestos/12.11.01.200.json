@@ -1,0 +1,36 @@
+{
+  "codigo": "12.11.01.200",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "11",
+  "unidad": "m2",
+  "titulo": "Hidrofugación con siloxano de fachada.",
+  "descripcion": "Aplicación de hidrofugante a base de siloxano sobre fachada, permeable al vapor. Incluye la limpieza previa y la aplicación del hidrofugante. Medido por metro cuadrado tratado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-SILOXANO",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.14
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.08
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

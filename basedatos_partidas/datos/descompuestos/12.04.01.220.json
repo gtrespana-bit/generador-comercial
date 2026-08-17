@@ -1,0 +1,32 @@
+{
+  "codigo": "12.04.01.220",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "04",
+  "unidad": "m2",
+  "titulo": "Mural decorativo pintado a mano.",
+  "descripcion": "Ejecución de mural decorativo pintado a mano sobre paramento, según diseño. Incluye el replanteo del diseño, la pintura y el acabado protector. Medido por metro cuadrado de mural.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PIN-CAUCHO",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MT-PIN-LIJA",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 1.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.3
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

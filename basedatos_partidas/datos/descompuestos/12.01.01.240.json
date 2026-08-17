@@ -1,0 +1,32 @@
+{
+  "codigo": "12.01.01.240",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "01",
+  "unidad": "m2",
+  "titulo": "Eliminación de restos de adhesivo en paramento.",
+  "descripcion": "Eliminación de restos de adhesivo y pintura vieja en paramento, con decapante o raspado, previo al nuevo acabado. Incluye la limpieza de la superficie. Medido por metro cuadrado limpiado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-DISOL-ADH",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.1
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

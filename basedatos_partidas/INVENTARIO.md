@@ -7,12 +7,12 @@ numérica v2 aprobada para reforma y remodelación en Venezuela.
 
 | | |
 |---|---:|
-| Partidas | **717** |
-| Hojas de descompuesto `.xlsx` | 717 |
+| Partidas | **868** |
+| Hojas de descompuesto `.xlsx` | 868 |
 | Partidas con producto de elección del cliente | 69 |
-| Recursos en el cuadro de precios | **349** |
-| — mano de obra / materiales / maquinaria | 17 / 288 / 44 |
-| — confirmados / verificados con el mercado / provisionales | 17 / 113 / 215 |
+| Recursos en el cuadro de precios | **359** |
+| — mano de obra / materiales / maquinaria | 17 / 298 / 44 |
+| — confirmados / verificados con el mercado / provisionales | 17 / 113 / 225 |
 | **Peso económico con precio cerrado** | **79,6 %** del coste directo |
 | — confirmado (mano de obra) | 20,2 % |
 | — verificado con el mercado venezolano | 59,4 % |
@@ -85,14 +85,14 @@ numérica v2 aprobada para reforma y remodelación en Venezuela.
 | 09 | Instalaciones | 17 | 31 | 89 |
 | 10 | Aislamientos e impermeabilizaciones | 9 | 4 | 16 |
 | 11 | Techos y cubiertas | 9 | 5 | 18 |
-| 12 | Revestimientos y acabados | 14 | 27 | 250 |
+| 12 | Revestimientos y acabados | 14 | 27 | 401 |
 | 13 | Equipamiento, mobiliario y señalización | 9 | 7 | 21 |
 | 14 | Obras exteriores y urbanismo | 11 | 10 | 19 |
 | 15 | Gestión de residuos y limpieza | 7 | 6 | 8 |
 | 16 | Control de calidad y ensayos | 8 | 0 | 0 |
 | 17 | Seguridad y salud en obra | 8 | 7 | 11 |
 | 18 | Rehabilitación energética | 9 | 0 | 0 |
-| | **TOTAL** | **172** | **161** | **717** |
+| | **TOTAL** | **172** | **161** | **868** |
 
 Los capítulos 08, 16 y 18 están deliberadamente preparados para la primera
 ampliación. No se inventaron partidas de relleno solo para que aparezcan llenos.
@@ -150,11 +150,12 @@ siguiente paso es producir las familias pendientes. Prioridades:
 **Progreso 17/08/2026:**
 - `09.13 Protección contra rayos y sobretensiones` (13 partidas).
 - `09.12 Domótica y automatización` (18 partidas; objetivo mínimo alcanzado).
-- `12.07 Trasdosados y forros interiores` (15 partidas).
-- **Capítulo 12 completo en pasada general**: las 14 familias de Revestimientos
-  y acabados pasan de 104 a **250 partidas** (+146). Ninguna familia queda en
-  estado `sin_cobertura` ni `critica`; el capítulo queda a 150 partidas de su
-  mínimo de 400 (brecha pendiente de llenar sin recurrir a relleno).
+- **Capítulo 12 Revestimientos y acabados completo hasta el mínimo**: de 104 a
+  **401 partidas** (+297), alcanzando y superando el objetivo mínimo de 400 del
+  capítulo. Las 14 familias quedan en estado `completa` (7) o `avanzada` (7);
+  no queda ninguna `sin_cobertura`, `critica` ni `parcial`. Siguen pendientes
+  variantes reales para acercarse al objetivo amplio de 610, sin recurrir a
+  relleno.
 
-Siguen pendientes 171 precios de material provisionales. Los 44 precios de
+Siguen pendientes 181 precios de material provisionales. Los 44 precios de
 alquiler de equipos permanecen fuera de alcance por decisión del cliente.

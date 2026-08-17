@@ -1,0 +1,40 @@
+{
+  "codigo": "12.10.01.240",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "10",
+  "unidad": "m2",
+  "titulo": "Pintura de techo con rodillo extensible.",
+  "descripcion": "Aplicación de pintura de caucho en techo con rodillo extensible, con dos manos. Incluye la preparación y las dos manos de pintura. Medido por metro cuadrado pintado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PIN-CAUCHO",
+      "rendimiento": 0.28
+    },
+    {
+      "ref": "MT-PIN-FONDO",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MT-PIN-LIJA",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.14
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.09
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

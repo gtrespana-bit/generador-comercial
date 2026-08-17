@@ -1,0 +1,36 @@
+{
+  "codigo": "12.12.02.070",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "12",
+  "unidad": "m2",
+  "titulo": "Aplicación de tinte para madera.",
+  "descripcion": "Aplicación de tinte o colorante para madera interior, con una o dos manos. Incluye la preparación de la madera y la aplicación del tinte. Medido por metro cuadrado teñido.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-TINTE-MAD",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MT-PIN-LIJA",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.14
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.09
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

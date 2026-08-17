@@ -1,0 +1,36 @@
+{
+  "codigo": "12.06.01.100",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "06",
+  "unidad": "m",
+  "titulo": "Rodapié de PVC con canaleta de instalaciones.",
+  "descripcion": "Colocación de rodapié de PVC con canaleta integrada para el paso de instalaciones. Incluye la fijación del rodapié-canaleta y el remate. Medido por metro lineal colocado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PERFIL-REMATE",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-ADH-VINIL",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.04
+    },
+    {
+      "ref": "MO-OF1-PISO",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.04
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

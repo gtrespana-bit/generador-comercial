@@ -1,0 +1,36 @@
+{
+  "codigo": "12.03.01.180",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "03",
+  "unidad": "m2",
+  "titulo": "Enchapado de piscina con pieza cerámica.",
+  "descripcion": "Enchapado de vaso de piscina con pieza cerámica o mosaico, sobre impermeabilización. Incluye la preparación, la colocación y el rejuntado con mortero apto para inmersión. Medido por metro cuadrado enchapado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MOSAICO",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-ADH-C2TE",
+      "rendimiento": 5.0
+    },
+    {
+      "ref": "MT-JUN-CG2",
+      "rendimiento": 0.8
+    },
+    {
+      "ref": "MO-OF1-ALI",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.4
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

@@ -1,0 +1,40 @@
+{
+  "codigo": "12.04.01.280",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "04",
+  "unidad": "m2",
+  "titulo": "Revestimiento de panel perforado acústico decorativo.",
+  "descripcion": "Revestimiento de paramento con panel perforado acústico decorativo, con bastidor. Incluye la preparación del soporte, la colocación del panel y el remate. Medido por metro cuadrado revestido.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MACHIH-MAD",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-PYL-LANA",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-MADERA-LISTON",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

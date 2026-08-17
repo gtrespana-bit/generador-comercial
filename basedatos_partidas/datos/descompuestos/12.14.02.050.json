@@ -1,0 +1,36 @@
+{
+  "codigo": "12.14.02.050",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "14",
+  "unidad": "m2",
+  "titulo": "Hidrofugación de cubierta de teja.",
+  "descripcion": "Aplicación de hidrofugante sobre cubierta de teja, para repeler el agua y evitar la absorción. Incluye la limpieza previa y la aplicación del hidrofugante. Medido por metro cuadrado tratado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-SILOXANO",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.1
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

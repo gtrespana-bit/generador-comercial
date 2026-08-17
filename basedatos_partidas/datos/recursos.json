@@ -2024,6 +2024,66 @@
       "descripcion": "Lasur o protector decorativo para madera exterior que deja ver la veta.",
       "precio": 9.5,
       "estado": "provisional"
+    },
+    "MT-MOSAICO": {
+      "unidad": "m2",
+      "descripcion": "Mosaico vítreo o cerámico en malla para revestimiento de paredes y superficies curvas.",
+      "precio": 18.0,
+      "estado": "provisional"
+    },
+    "MT-VIDRIO-DECOR": {
+      "unidad": "m2",
+      "descripcion": "Vidrio decorativo lacado, grabado o de color para revestimiento de pared.",
+      "precio": 45.0,
+      "estado": "provisional"
+    },
+    "MT-FIBRA-NAT": {
+      "unidad": "m2",
+      "descripcion": "Revestimiento de fibra natural tejida (sisal, yute, bambú) para paredes decorativas.",
+      "precio": 22.0,
+      "estado": "provisional"
+    },
+    "MT-PIN-IGNFUGA": {
+      "unidad": "l",
+      "descripcion": "Pintura intumescente ignífuga para protección de estructura metálica y madera.",
+      "precio": 12.0,
+      "estado": "provisional"
+    },
+    "MT-ANTI-GRAFFITI": {
+      "unidad": "l",
+      "descripcion": "Protector anti-graffiti para superficies pintadas, que facilita la limpieza de pintadas.",
+      "precio": 14.0,
+      "estado": "provisional"
+    },
+    "MT-SILOXANO": {
+      "unidad": "l",
+      "descripcion": "Hidrofugante a base de siloxano para fachadas, permeable al vapor de agua.",
+      "precio": 13.0,
+      "estado": "provisional"
+    },
+    "MT-TINTE-MAD": {
+      "unidad": "l",
+      "descripcion": "Tinte o colorante para madera, de base al agua o al disolvente.",
+      "precio": 7.5,
+      "estado": "provisional"
+    },
+    "MT-POLIUREA": {
+      "unidad": "kg",
+      "descripcion": "Membrana de poliurea de aplicación en caliente para impermeabilización y recubrimiento de alta resistencia.",
+      "precio": 14.0,
+      "estado": "provisional"
+    },
+    "MT-CUARZO-COLOR": {
+      "unidad": "kg",
+      "descripcion": "Árido de cuarzo coloreado para recubrimientos decorativos antideslizantes.",
+      "precio": 1.2,
+      "estado": "provisional"
+    },
+    "MT-RESINA-ACRIL": {
+      "unidad": "kg",
+      "descripcion": "Resina acrílica decorativa para recubrimientos continuos de paredes y pisos.",
+      "precio": 9.0,
+      "estado": "provisional"
     }
   },
   "maquinaria": {

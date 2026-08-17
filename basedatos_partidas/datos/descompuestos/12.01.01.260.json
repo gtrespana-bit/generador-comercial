@@ -1,0 +1,32 @@
+{
+  "codigo": "12.01.01.260",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "01",
+  "unidad": "m2",
+  "titulo": "Tratamiento de óxido en paramento de concreto.",
+  "descripcion": "Tratamiento de manchas de óxido en paramento de concreto, con limpieza y aplicación de producto pasivante. Incluye la limpieza de la zona y el tratamiento. Medido por metro cuadrado tratado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PASIVANTE",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MQ-ESMERIL",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.06
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

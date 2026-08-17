@@ -1,0 +1,40 @@
+{
+  "codigo": "12.11.01.140",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "11",
+  "unidad": "m2",
+  "titulo": "Tratamiento de salitre y pintura de muro exterior.",
+  "descripcion": "Tratamiento de salitre en muro exterior seguido de dos manos de pintura. Incluye el saneado del salitre, el tratamiento y las dos manos. Medido por metro cuadrado tratado y pintado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-LIMP-QUIM",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MT-PIN-CAUCHO",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.14
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.28
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.14
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.23
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

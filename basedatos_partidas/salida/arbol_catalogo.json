@@ -5320,12 +5320,120 @@
                   "precio": 1.39,
                   "horas": 0.1,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "12.01.01.170",
+                  "codigo_legacy": "",
+                  "titulo": "Limpieza de paramento con agua a presión.",
+                  "unidad": "m2",
+                  "precio": 1.14,
+                  "horas": 0.13,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.01.01.180",
+                  "codigo_legacy": "",
+                  "titulo": "Rasqueteado de friso existente deteriorado.",
+                  "unidad": "m2",
+                  "precio": 3.29,
+                  "horas": 0.36,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.01.01.190",
+                  "codigo_legacy": "",
+                  "titulo": "Reparación de esquina con cantonera.",
+                  "unidad": "m",
+                  "precio": 5.93,
+                  "horas": 0.28,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.01.01.200",
+                  "codigo_legacy": "",
+                  "titulo": "Saneado de paramento con eflorescencias.",
+                  "unidad": "m2",
+                  "precio": 4.41,
+                  "horas": 0.26,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.01.01.210",
+                  "codigo_legacy": "",
+                  "titulo": "Preparación de soporte para microcemento.",
+                  "unidad": "m2",
+                  "precio": 9.66,
+                  "horas": 0.42,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.01.01.220",
+                  "codigo_legacy": "",
+                  "titulo": "Preparación de soporte para papel tapiz.",
+                  "unidad": "m2",
+                  "precio": 3.65,
+                  "horas": 0.21,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.01.01.230",
+                  "codigo_legacy": "",
+                  "titulo": "Regularización de techo previo a cielo raso.",
+                  "unidad": "m2",
+                  "precio": 16.32,
+                  "horas": 0.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.01.01.240",
+                  "codigo_legacy": "",
+                  "titulo": "Eliminación de restos de adhesivo en paramento.",
+                  "unidad": "m2",
+                  "precio": 3.21,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.01.01.250",
+                  "codigo_legacy": "",
+                  "titulo": "Reparación de junta de dilatación en paramento.",
+                  "unidad": "m",
+                  "precio": 10.36,
+                  "horas": 0.28,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.01.01.260",
+                  "codigo_legacy": "",
+                  "titulo": "Tratamiento de óxido en paramento de concreto.",
+                  "unidad": "m2",
+                  "precio": 3.52,
+                  "horas": 0.21,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.01.01.270",
+                  "codigo_legacy": "",
+                  "titulo": "Nivelación de paramento con nivel láser.",
+                  "unidad": "m2",
+                  "precio": 1.34,
+                  "horas": 0.17,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.01.01.280",
+                  "codigo_legacy": "",
+                  "titulo": "Preparación de soporte de metal para pintura.",
+                  "unidad": "m2",
+                  "precio": 3.03,
+                  "horas": 0.2,
+                  "producto_cliente": false
                 }
               ],
-              "n": 16
+              "n": 28
             }
           ],
-          "n": 16
+          "n": 28
         },
         {
           "codigo": "12.02",
@@ -5469,9 +5577,45 @@
                   "precio": 15.6,
                   "horas": 0.65,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "12.02.01.160",
+                  "codigo_legacy": "",
+                  "titulo": "Friso de mortero coloreado en paramento.",
+                  "unidad": "m2",
+                  "precio": 7.29,
+                  "horas": 0.62,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.02.01.170",
+                  "codigo_legacy": "",
+                  "titulo": "Friso de mortero en zonas estrechas y mochetas.",
+                  "unidad": "m2",
+                  "precio": 7.29,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.02.01.180",
+                  "codigo_legacy": "",
+                  "titulo": "Friso bruñido de mortero.",
+                  "unidad": "m2",
+                  "precio": 7.14,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.02.01.190",
+                  "codigo_legacy": "",
+                  "titulo": "Friso de mortero sobre muro de piedra.",
+                  "unidad": "m2",
+                  "precio": 8.36,
+                  "horas": 0.72,
+                  "producto_cliente": false
                 }
               ],
-              "n": 15
+              "n": 19
             },
             {
               "codigo": "12.02.02",
@@ -5566,12 +5710,39 @@
                   "precio": 12.15,
                   "horas": 0.5,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "12.02.02.110",
+                  "codigo_legacy": "",
+                  "titulo": "Guarnecido de yeso en techo.",
+                  "unidad": "m2",
+                  "precio": 13.46,
+                  "horas": 0.63,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.02.02.120",
+                  "codigo_legacy": "",
+                  "titulo": "Enlucido de yeso con acabado espatulado.",
+                  "unidad": "m2",
+                  "precio": 12.92,
+                  "horas": 0.55,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.02.02.130",
+                  "codigo_legacy": "",
+                  "titulo": "Reparación de junta de yeso en techo.",
+                  "unidad": "m2",
+                  "precio": 3.65,
+                  "horas": 0.28,
+                  "producto_cliente": false
                 }
               ],
-              "n": 10
+              "n": 13
             }
           ],
-          "n": 25
+          "n": 32
         },
         {
           "codigo": "12.03",
@@ -5697,9 +5868,54 @@
                   "precio": 23.75,
                   "horas": 1.25,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "12.03.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Enchapado de mosaico vítreo en pared.",
+                  "unidad": "m2",
+                  "precio": 36.28,
+                  "horas": 1.25,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.03.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Enchapado con junta coloreada decorativa.",
+                  "unidad": "m2",
+                  "precio": 9.8,
+                  "horas": 1.0,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.03.01.160",
+                  "codigo_legacy": "",
+                  "titulo": "Revestimiento de columna con pieza cerámica.",
+                  "unidad": "m2",
+                  "precio": 11.88,
+                  "horas": 1.25,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.03.01.170",
+                  "codigo_legacy": "",
+                  "titulo": "Enchapado de gres porcelánico técnico.",
+                  "unidad": "m2",
+                  "precio": 10.95,
+                  "horas": 1.12,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.03.01.180",
+                  "codigo_legacy": "",
+                  "titulo": "Enchapado de piscina con pieza cerámica.",
+                  "unidad": "m2",
+                  "precio": 37.66,
+                  "horas": 1.4,
+                  "producto_cliente": false
                 }
               ],
-              "n": 13
+              "n": 18
             },
             {
               "codigo": "12.03.02",
@@ -5785,12 +6001,48 @@
                   "precio": 4.8,
                   "horas": 0.45,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "12.03.02.100",
+                  "codigo_legacy": "",
+                  "titulo": "Enchapado de piedra con junta ancha de mortero.",
+                  "unidad": "m2",
+                  "precio": 14.3,
+                  "horas": 1.25,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.03.02.110",
+                  "codigo_legacy": "",
+                  "titulo": "Enchapado de piedra en fachada ventilada.",
+                  "unidad": "m2",
+                  "precio": 26.96,
+                  "horas": 2.0,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.03.02.120",
+                  "codigo_legacy": "",
+                  "titulo": "Enchapado de mármol en zócalo o mocheta.",
+                  "unidad": "m2",
+                  "precio": 12.29,
+                  "horas": 1.25,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.03.02.130",
+                  "codigo_legacy": "",
+                  "titulo": "Restauración de enchapado de piedra con reintegración.",
+                  "unidad": "m2",
+                  "precio": 10.1,
+                  "horas": 1.1,
+                  "producto_cliente": false
                 }
               ],
-              "n": 9
+              "n": 13
             }
           ],
-          "n": 22
+          "n": 31
         },
         {
           "codigo": "12.04",
@@ -5943,12 +6195,120 @@
                   "precio": 27.69,
                   "horas": 0.95,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "12.04.01.170",
+                  "codigo_legacy": "",
+                  "titulo": "Estuco a la cal decorativo.",
+                  "unidad": "m2",
+                  "precio": 18.73,
+                  "horas": 1.05,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.04.01.180",
+                  "codigo_legacy": "",
+                  "titulo": "Revestimiento de fibra natural tejida.",
+                  "unidad": "m2",
+                  "precio": 38.29,
+                  "horas": 0.68,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.04.01.190",
+                  "codigo_legacy": "",
+                  "titulo": "Revestimiento de vidrio decorativo lacado.",
+                  "unidad": "m2",
+                  "precio": 113.83,
+                  "horas": 0.65,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.04.01.200",
+                  "codigo_legacy": "",
+                  "titulo": "Revestimiento de bambú.",
+                  "unidad": "m2",
+                  "precio": 26.32,
+                  "horas": 0.75,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.04.01.210",
+                  "codigo_legacy": "",
+                  "titulo": "Revestimiento de tablero OSB decorativo.",
+                  "unidad": "m2",
+                  "precio": 25.65,
+                  "horas": 0.75,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.04.01.220",
+                  "codigo_legacy": "",
+                  "titulo": "Mural decorativo pintado a mano.",
+                  "unidad": "m2",
+                  "precio": 11.73,
+                  "horas": 1.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.04.01.230",
+                  "codigo_legacy": "",
+                  "titulo": "Revestimiento de gres porcelánico imitación madera.",
+                  "unidad": "m2",
+                  "precio": 10.96,
+                  "horas": 1.12,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.04.01.240",
+                  "codigo_legacy": "",
+                  "titulo": "Revestimiento de metal expandido decorativo.",
+                  "unidad": "m2",
+                  "precio": 11.32,
+                  "horas": 0.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.04.01.250",
+                  "codigo_legacy": "",
+                  "titulo": "Revestimiento de plancha de melamina.",
+                  "unidad": "m2",
+                  "precio": 38.22,
+                  "horas": 0.75,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.04.01.260",
+                  "codigo_legacy": "",
+                  "titulo": "Microcemento en techo decorativo.",
+                  "unidad": "m2",
+                  "precio": 29.09,
+                  "horas": 1.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.04.01.270",
+                  "codigo_legacy": "",
+                  "titulo": "Revestimiento de placas de cemento decorativo.",
+                  "unidad": "m2",
+                  "precio": 28.29,
+                  "horas": 0.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.04.01.280",
+                  "codigo_legacy": "",
+                  "titulo": "Revestimiento de panel perforado acústico decorativo.",
+                  "unidad": "m2",
+                  "precio": 30.8,
+                  "horas": 0.8,
+                  "producto_cliente": false
                 }
               ],
-              "n": 16
+              "n": 28
             }
           ],
-          "n": 16
+          "n": 28
         },
         {
           "codigo": "12.05",
@@ -6501,9 +6861,36 @@
                   "precio": 4.86,
                   "horas": 0.17,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "12.06.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Rodapié de PVC con canaleta de instalaciones.",
+                  "unidad": "m",
+                  "precio": 5.08,
+                  "horas": 0.16,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.06.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Rodapié de madera lacada.",
+                  "unidad": "m",
+                  "precio": 6.08,
+                  "horas": 0.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.06.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Rodapié de porcelanato rectificado.",
+                  "unidad": "m",
+                  "precio": 1.87,
+                  "horas": 0.21,
+                  "producto_cliente": false
                 }
               ],
-              "n": 9
+              "n": 12
             },
             {
               "codigo": "12.06.02",
@@ -6589,12 +6976,84 @@
                   "precio": 7.15,
                   "horas": 0.7,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "12.06.02.100",
+                  "codigo_legacy": "",
+                  "titulo": "Peldaño de madera flotante.",
+                  "unidad": "m",
+                  "precio": 9.83,
+                  "horas": 0.55,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.06.02.110",
+                  "codigo_legacy": "",
+                  "titulo": "Revestimiento de rampa antideslizante.",
+                  "unidad": "m",
+                  "precio": 10.61,
+                  "horas": 0.85,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.06.02.120",
+                  "codigo_legacy": "",
+                  "titulo": "Nariz de peldaño de metal.",
+                  "unidad": "m",
+                  "precio": 5.49,
+                  "horas": 0.17,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.06.02.130",
+                  "codigo_legacy": "",
+                  "titulo": "Revestimiento de escalera completa con porcelanato.",
+                  "unidad": "m",
+                  "precio": 6.08,
+                  "horas": 0.56,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.06.02.140",
+                  "codigo_legacy": "",
+                  "titulo": "Revestimiento de peldaño con piedra recuperada.",
+                  "unidad": "m",
+                  "precio": 4.78,
+                  "horas": 0.56,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.06.02.150",
+                  "codigo_legacy": "",
+                  "titulo": "Revestimiento de rellano con piedra natural.",
+                  "unidad": "m2",
+                  "precio": 11.04,
+                  "horas": 0.98,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.06.02.160",
+                  "codigo_legacy": "",
+                  "titulo": "Junta de dilatación en escalera.",
+                  "unidad": "m",
+                  "precio": 15.29,
+                  "horas": 0.28,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.06.02.170",
+                  "codigo_legacy": "",
+                  "titulo": "Pasamanos de madera sobre escalera.",
+                  "unidad": "m",
+                  "precio": 7.98,
+                  "horas": 0.4,
+                  "producto_cliente": false
                 }
               ],
-              "n": 9
+              "n": 17
             }
           ],
-          "n": 18
+          "n": 29
         },
         {
           "codigo": "12.07",
@@ -6657,9 +7116,54 @@
                   "precio": 27.91,
                   "horas": 0.56,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "12.07.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Trasdosado con doble placa y aislamiento.",
+                  "unidad": "m2",
+                  "precio": 38.47,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.07.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Trasdosado con barrera de vapor.",
+                  "unidad": "m2",
+                  "precio": 24.05,
+                  "horas": 0.56,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.07.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Trasdosado curvo de placa de yeso.",
+                  "unidad": "m2",
+                  "precio": 27.48,
+                  "horas": 0.87,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.07.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Trasdosado con placa perforada acústica.",
+                  "unidad": "m2",
+                  "precio": 28.35,
+                  "horas": 0.63,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.07.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Formación de cajón para instalaciones en trasdosado.",
+                  "unidad": "m",
+                  "precio": 14.07,
+                  "horas": 0.42,
+                  "producto_cliente": false
                 }
               ],
-              "n": 6
+              "n": 11
             },
             {
               "codigo": "12.07.02",
@@ -6709,9 +7213,36 @@
                   "precio": 2.96,
                   "horas": 0.2,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "12.07.02.060",
+                  "codigo_legacy": "",
+                  "titulo": "Trasdosado directo con placa de alta dureza.",
+                  "unidad": "m2",
+                  "precio": 19.28,
+                  "horas": 0.44,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.07.02.070",
+                  "codigo_legacy": "",
+                  "titulo": "Forro de placa de yeso sobre estructura para medianería.",
+                  "unidad": "m2",
+                  "precio": 22.97,
+                  "horas": 0.53,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.07.02.080",
+                  "codigo_legacy": "",
+                  "titulo": "Forro de placa de cemento exterior.",
+                  "unidad": "m2",
+                  "precio": 27.53,
+                  "horas": 0.6,
+                  "producto_cliente": false
                 }
               ],
-              "n": 5
+              "n": 8
             },
             {
               "codigo": "12.07.03",
@@ -6752,12 +7283,48 @@
                   "precio": 8.48,
                   "horas": 0.7,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "12.07.03.050",
+                  "codigo_legacy": "",
+                  "titulo": "Forro ignífugo de conducto de instalaciones.",
+                  "unidad": "m2",
+                  "precio": 28.96,
+                  "horas": 0.58,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.07.03.060",
+                  "codigo_legacy": "",
+                  "titulo": "Forro de placa de cemento en fachada.",
+                  "unidad": "m2",
+                  "precio": 27.76,
+                  "horas": 0.63,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.07.03.070",
+                  "codigo_legacy": "",
+                  "titulo": "Forro de placa de yeso con registro de acceso.",
+                  "unidad": "m2",
+                  "precio": 24.88,
+                  "horas": 0.58,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.07.03.080",
+                  "codigo_legacy": "",
+                  "titulo": "Reparación de forro de placa de cemento.",
+                  "unidad": "m2",
+                  "precio": 10.47,
+                  "horas": 0.68,
+                  "producto_cliente": false
                 }
               ],
-              "n": 4
+              "n": 8
             }
           ],
-          "n": 15
+          "n": 27
         },
         {
           "codigo": "12.08",
@@ -6892,12 +7459,120 @@
                   "precio": 16.12,
                   "horas": 0.68,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "12.08.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Cielo raso continuo con doble placa y aislamiento.",
+                  "unidad": "m2",
+                  "precio": 38.78,
+                  "horas": 0.82,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.08.01.160",
+                  "codigo_legacy": "",
+                  "titulo": "Cielo raso continuo con placa perforada acústica.",
+                  "unidad": "m2",
+                  "precio": 26.7,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.08.01.170",
+                  "codigo_legacy": "",
+                  "titulo": "Cielo raso continuo en voladizo exterior.",
+                  "unidad": "m2",
+                  "precio": 26.23,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.08.01.180",
+                  "codigo_legacy": "",
+                  "titulo": "Cielo raso continuo con foso de iluminación integrada.",
+                  "unidad": "m2",
+                  "precio": 23.22,
+                  "horas": 0.75,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.08.01.190",
+                  "codigo_legacy": "",
+                  "titulo": "Cielo raso continuo a doble altura.",
+                  "unidad": "m2",
+                  "precio": 24.6,
+                  "horas": 0.82,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.08.01.200",
+                  "codigo_legacy": "",
+                  "titulo": "Remate decorativo perimetral de cielo raso.",
+                  "unidad": "m",
+                  "precio": 5.95,
+                  "horas": 0.17,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.08.01.210",
+                  "codigo_legacy": "",
+                  "titulo": "Cielo raso de placa de yeso en foso de escalera.",
+                  "unidad": "m2",
+                  "precio": 21.75,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.08.01.220",
+                  "codigo_legacy": "",
+                  "titulo": "Cielo raso continuo con junta de dilatación.",
+                  "unidad": "m2",
+                  "precio": 23.79,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.08.01.230",
+                  "codigo_legacy": "",
+                  "titulo": "Cielo raso continuo de placa de yeso en baño.",
+                  "unidad": "m2",
+                  "precio": 28.37,
+                  "horas": 0.68,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.08.01.240",
+                  "codigo_legacy": "",
+                  "titulo": "Cielo raso de placa de yeso con lucernario.",
+                  "unidad": "m2",
+                  "precio": 27.47,
+                  "horas": 0.75,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.08.01.250",
+                  "codigo_legacy": "",
+                  "titulo": "Cielo raso continuo con tapa de registro.",
+                  "unidad": "m2",
+                  "precio": 23.32,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.08.01.260",
+                  "codigo_legacy": "",
+                  "titulo": "Reparación de cielo raso con sustitución de placa.",
+                  "unidad": "m2",
+                  "precio": 16.12,
+                  "horas": 0.68,
+                  "producto_cliente": false
                 }
               ],
-              "n": 14
+              "n": 26
             }
           ],
-          "n": 14
+          "n": 26
         },
         {
           "codigo": "12.09",
@@ -6951,9 +7626,45 @@
                   "precio": 36.37,
                   "horas": 0.6,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "12.09.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Cielo desmontable de lámina de aluminio.",
+                  "unidad": "m2",
+                  "precio": 31.59,
+                  "horas": 0.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.09.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Cielo desmontable de malla o grilla.",
+                  "unidad": "m2",
+                  "precio": 31.81,
+                  "horas": 0.53,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.09.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Cielo desmontable de alta absorción acústica.",
+                  "unidad": "m2",
+                  "precio": 31.14,
+                  "horas": 0.53,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.09.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Cielo desmontable con sistema de clips.",
+                  "unidad": "m2",
+                  "precio": 30.91,
+                  "horas": 0.5,
+                  "producto_cliente": false
                 }
               ],
-              "n": 5
+              "n": 9
             },
             {
               "codigo": "12.09.02",
@@ -6985,9 +7696,18 @@
                   "precio": 32.81,
                   "horas": 0.56,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "12.09.02.040",
+                  "codigo_legacy": "",
+                  "titulo": "Cielo raso de PVC para local comercial.",
+                  "unidad": "m2",
+                  "precio": 32.81,
+                  "horas": 0.56,
+                  "producto_cliente": false
                 }
               ],
-              "n": 3
+              "n": 4
             },
             {
               "codigo": "12.09.03",
@@ -7019,9 +7739,27 @@
                   "precio": 32.16,
                   "horas": 0.8,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "12.09.03.040",
+                  "codigo_legacy": "",
+                  "titulo": "Cielo raso de listones de madera con junta abierta.",
+                  "unidad": "m2",
+                  "precio": 26.79,
+                  "horas": 0.75,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.09.03.050",
+                  "codigo_legacy": "",
+                  "titulo": "Cielo raso de tablero decorativo de madera.",
+                  "unidad": "m2",
+                  "precio": 27.01,
+                  "horas": 0.75,
+                  "producto_cliente": false
                 }
               ],
-              "n": 3
+              "n": 5
             },
             {
               "codigo": "12.09.04",
@@ -7071,12 +7809,48 @@
                   "precio": 5.95,
                   "horas": 0.17,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "12.09.04.060",
+                  "codigo_legacy": "",
+                  "titulo": "Borde de sombra en cielo desmontable.",
+                  "unidad": "m",
+                  "precio": 12.12,
+                  "horas": 0.42,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.09.04.070",
+                  "codigo_legacy": "",
+                  "titulo": "Registro de acceso en cielo desmontable.",
+                  "unidad": "m",
+                  "precio": 19.32,
+                  "horas": 0.35,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.09.04.080",
+                  "codigo_legacy": "",
+                  "titulo": "Cielo desmontable con foseado perimetral.",
+                  "unidad": "m2",
+                  "precio": 34.29,
+                  "horas": 0.63,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.09.04.090",
+                  "codigo_legacy": "",
+                  "titulo": "Perfil de cierre entre cielos de distinta cota.",
+                  "unidad": "m",
+                  "precio": 5.95,
+                  "horas": 0.17,
+                  "producto_cliente": false
                 }
               ],
-              "n": 5
+              "n": 9
             }
           ],
-          "n": 16
+          "n": 27
         },
         {
           "codigo": "12.10",
@@ -7247,12 +8021,111 @@
                   "precio": 3.98,
                   "horas": 0.27,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "12.10.01.190",
+                  "codigo_legacy": "",
+                  "titulo": "Pintura ignífuga intumescente interior.",
+                  "unidad": "m2",
+                  "precio": 12.32,
+                  "horas": 0.39,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.10.01.200",
+                  "codigo_legacy": "",
+                  "titulo": "Pintura acrílica lavable en cocina.",
+                  "unidad": "m2",
+                  "precio": 3.78,
+                  "horas": 0.27,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.10.01.210",
+                  "codigo_legacy": "",
+                  "titulo": "Pintura de señalización de seguridad interior.",
+                  "unidad": "m2",
+                  "precio": 6.85,
+                  "horas": 0.39,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.10.01.220",
+                  "codigo_legacy": "",
+                  "titulo": "Pintura de estructura metálica interior.",
+                  "unidad": "m2",
+                  "precio": 5.49,
+                  "horas": 0.27,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.10.01.230",
+                  "codigo_legacy": "",
+                  "titulo": "Pintura de pared con plantilla decorativa.",
+                  "unidad": "m2",
+                  "precio": 6.14,
+                  "horas": 0.69,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.10.01.240",
+                  "codigo_legacy": "",
+                  "titulo": "Pintura de techo con rodillo extensible.",
+                  "unidad": "m2",
+                  "precio": 4.26,
+                  "horas": 0.29,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.10.01.250",
+                  "codigo_legacy": "",
+                  "titulo": "Pintura satinada de locales de alta humedad.",
+                  "unidad": "m2",
+                  "precio": 4.0,
+                  "horas": 0.27,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.10.01.260",
+                  "codigo_legacy": "",
+                  "titulo": "Pintura de paramento con acabado perlado.",
+                  "unidad": "m2",
+                  "precio": 5.95,
+                  "horas": 0.49,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.10.01.270",
+                  "codigo_legacy": "",
+                  "titulo": "Repintado integral de vivienda con desalojo.",
+                  "unidad": "m2",
+                  "precio": 3.55,
+                  "horas": 0.27,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.10.01.280",
+                  "codigo_legacy": "",
+                  "titulo": "Pintura de guarda o friso decorativo interior.",
+                  "unidad": "m",
+                  "precio": 1.86,
+                  "horas": 0.17,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.10.01.290",
+                  "codigo_legacy": "",
+                  "titulo": "Pintura de sótano o garaje interior.",
+                  "unidad": "m2",
+                  "precio": 4.12,
+                  "horas": 0.27,
+                  "producto_cliente": false
                 }
               ],
-              "n": 18
+              "n": 29
             }
           ],
-          "n": 18
+          "n": 29
         },
         {
           "codigo": "12.11",
@@ -7369,12 +8242,129 @@
                   "precio": 6.36,
                   "horas": 0.42,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "12.11.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Pintura de fachada con puente de adherencia.",
+                  "unidad": "m2",
+                  "precio": 7.32,
+                  "horas": 0.38,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.11.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Tratamiento de salitre y pintura de muro exterior.",
+                  "unidad": "m2",
+                  "precio": 6.83,
+                  "horas": 0.42,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.11.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Pintura de fachada a dos colores.",
+                  "unidad": "m2",
+                  "precio": 5.43,
+                  "horas": 0.44,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.11.01.160",
+                  "codigo_legacy": "",
+                  "titulo": "Pintura de zócalo exterior.",
+                  "unidad": "m2",
+                  "precio": 4.28,
+                  "horas": 0.32,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.11.01.170",
+                  "codigo_legacy": "",
+                  "titulo": "Pintura de cubierta o techo exterior.",
+                  "unidad": "m2",
+                  "precio": 5.49,
+                  "horas": 0.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.11.01.180",
+                  "codigo_legacy": "",
+                  "titulo": "Pintura de fachada con acabado mate.",
+                  "unidad": "m2",
+                  "precio": 5.11,
+                  "horas": 0.34,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.11.01.190",
+                  "codigo_legacy": "",
+                  "titulo": "Pintura de fachada con hidrolavado previo.",
+                  "unidad": "m2",
+                  "precio": 4.78,
+                  "horas": 0.34,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.11.01.200",
+                  "codigo_legacy": "",
+                  "titulo": "Hidrofugación con siloxano de fachada.",
+                  "unidad": "m2",
+                  "precio": 5.5,
+                  "horas": 0.26,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.11.01.210",
+                  "codigo_legacy": "",
+                  "titulo": "Protector anti-graffiti sobre fachada.",
+                  "unidad": "m2",
+                  "precio": 5.54,
+                  "horas": 0.28,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.11.01.220",
+                  "codigo_legacy": "",
+                  "titulo": "Pintura de muro de contención exterior.",
+                  "unidad": "m2",
+                  "precio": 5.11,
+                  "horas": 0.34,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.11.01.230",
+                  "codigo_legacy": "",
+                  "titulo": "Pintura de fachada de bloque de concreto.",
+                  "unidad": "m2",
+                  "precio": 5.69,
+                  "horas": 0.38,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.11.01.240",
+                  "codigo_legacy": "",
+                  "titulo": "Pintura de portón o puerta metálica exterior.",
+                  "unidad": "m2",
+                  "precio": 6.49,
+                  "horas": 0.42,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.11.01.250",
+                  "codigo_legacy": "",
+                  "titulo": "Pintura de fachada con esquema de mantenimiento.",
+                  "unidad": "m2",
+                  "precio": 4.65,
+                  "horas": 0.34,
+                  "producto_cliente": false
                 }
               ],
-              "n": 12
+              "n": 25
             }
           ],
-          "n": 12
+          "n": 25
         },
         {
           "codigo": "12.12",
@@ -7455,9 +8445,54 @@
                   "precio": 13.66,
                   "horas": 1.3,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "12.12.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Pintura de mueble de cocina lacado.",
+                  "unidad": "m2",
+                  "precio": 6.44,
+                  "horas": 0.49,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.12.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Pintura de closet con esmalte.",
+                  "unidad": "m2",
+                  "precio": 5.69,
+                  "horas": 0.44,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.12.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Pintura de persiana de madera.",
+                  "unidad": "m2",
+                  "precio": 6.08,
+                  "horas": 0.47,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.12.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Pintura de pasamanos metálico.",
+                  "unidad": "m",
+                  "precio": 2.81,
+                  "horas": 0.24,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.12.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Pintura de puerta metálica.",
+                  "unidad": "m2",
+                  "precio": 6.5,
+                  "horas": 0.41,
+                  "producto_cliente": false
                 }
               ],
-              "n": 8
+              "n": 13
             },
             {
               "codigo": "12.12.02",
@@ -7516,12 +8551,75 @@
                   "precio": 5.71,
                   "horas": 0.4,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "12.12.02.070",
+                  "codigo_legacy": "",
+                  "titulo": "Aplicación de tinte para madera.",
+                  "unidad": "m2",
+                  "precio": 4.15,
+                  "horas": 0.34,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.12.02.080",
+                  "codigo_legacy": "",
+                  "titulo": "Barnizado de puerta de madera.",
+                  "unidad": "m2",
+                  "precio": 5.95,
+                  "horas": 0.44,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.12.02.090",
+                  "codigo_legacy": "",
+                  "titulo": "Protección de madera estructural con barniz.",
+                  "unidad": "m2",
+                  "precio": 5.28,
+                  "horas": 0.39,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.12.02.100",
+                  "codigo_legacy": "",
+                  "titulo": "Lasur para pérgola o madera exterior.",
+                  "unidad": "m2",
+                  "precio": 5.72,
+                  "horas": 0.39,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.12.02.110",
+                  "codigo_legacy": "",
+                  "titulo": "Pintura ignífuga sobre madera.",
+                  "unidad": "m2",
+                  "precio": 11.63,
+                  "horas": 0.44,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.12.02.120",
+                  "codigo_legacy": "",
+                  "titulo": "Barnizado de mueble de madera exterior.",
+                  "unidad": "m2",
+                  "precio": 5.77,
+                  "horas": 0.41,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.12.02.130",
+                  "codigo_legacy": "",
+                  "titulo": "Laca para puertas de interior.",
+                  "unidad": "m2",
+                  "precio": 6.15,
+                  "horas": 0.45,
+                  "producto_cliente": false
                 }
               ],
-              "n": 6
+              "n": 13
             }
           ],
-          "n": 14
+          "n": 26
         },
         {
           "codigo": "12.13",
@@ -7593,12 +8691,156 @@
                   "precio": 6.49,
                   "horas": 0.35,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "12.13.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Microcemento en techo.",
+                  "unidad": "m2",
+                  "precio": 29.09,
+                  "horas": 1.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.13.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Membrana de poliurea sobre cubierta.",
+                  "unidad": "m2",
+                  "precio": 35.62,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.13.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Recubrimiento epóxico decorativo con escamas.",
+                  "unidad": "m2",
+                  "precio": 24.24,
+                  "horas": 0.65,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.13.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Recubrimiento de cuarzo coloreado antideslizante.",
+                  "unidad": "m2",
+                  "precio": 22.32,
+                  "horas": 0.58,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.13.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Recubrimiento antiderrapante de rampa.",
+                  "unidad": "m2",
+                  "precio": 23.5,
+                  "horas": 0.58,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.13.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Sellado de piso de concreto.",
+                  "unidad": "m2",
+                  "precio": 2.87,
+                  "horas": 0.17,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.13.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Recubrimiento de resina acrílica decorativa.",
+                  "unidad": "m2",
+                  "precio": 15.52,
+                  "horas": 0.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.13.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Recubrimiento epóxico autodrenante de piso.",
+                  "unidad": "m2",
+                  "precio": 27.3,
+                  "horas": 0.65,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.13.01.160",
+                  "codigo_legacy": "",
+                  "titulo": "Recubrimiento de poliuretano cementoso.",
+                  "unidad": "m2",
+                  "precio": 19.18,
+                  "horas": 0.58,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.13.01.170",
+                  "codigo_legacy": "",
+                  "titulo": "Recubrimiento epóxico en paramento de cocina industrial.",
+                  "unidad": "m2",
+                  "precio": 15.04,
+                  "horas": 0.46,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.13.01.180",
+                  "codigo_legacy": "",
+                  "titulo": "Recubrimiento de resina en cámara frigorífica.",
+                  "unidad": "m2",
+                  "precio": 24.44,
+                  "horas": 0.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.13.01.190",
+                  "codigo_legacy": "",
+                  "titulo": "Resalte sanitario de resina en encuentro piso-pared.",
+                  "unidad": "m",
+                  "precio": 9.49,
+                  "horas": 0.35,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.13.01.200",
+                  "codigo_legacy": "",
+                  "titulo": "Recubrimiento conductor antiestático de piso.",
+                  "unidad": "m2",
+                  "precio": 28.74,
+                  "horas": 0.65,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.13.01.210",
+                  "codigo_legacy": "",
+                  "titulo": "Recubrimiento de fachada con mortero acrílico.",
+                  "unidad": "m2",
+                  "precio": 16.57,
+                  "horas": 0.58,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.13.01.220",
+                  "codigo_legacy": "",
+                  "titulo": "Recubrimiento reflectivo de cubierta.",
+                  "unidad": "m2",
+                  "precio": 6.92,
+                  "horas": 0.37,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.13.01.230",
+                  "codigo_legacy": "",
+                  "titulo": "Recubrimiento decorativo texturado de pared.",
+                  "unidad": "m2",
+                  "precio": 15.35,
+                  "horas": 0.8,
+                  "producto_cliente": false
                 }
               ],
-              "n": 7
+              "n": 23
             }
           ],
-          "n": 7
+          "n": 23
         },
         {
           "codigo": "12.14",
@@ -7643,9 +8885,54 @@
                   "precio": 6.86,
                   "horas": 0.42,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "12.14.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Restauración de molduras de yeso.",
+                  "unidad": "m2",
+                  "precio": 7.6,
+                  "horas": 0.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.14.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Reintegración de juntas de mármol.",
+                  "unidad": "m2",
+                  "precio": 4.85,
+                  "horas": 0.47,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.14.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Tratamiento de madera carcomida.",
+                  "unidad": "m2",
+                  "precio": 5.53,
+                  "horas": 0.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.14.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Limpieza de paramento de ladrillo visto.",
+                  "unidad": "m2",
+                  "precio": 4.46,
+                  "horas": 0.26,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.14.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Restauración de papel tapiz.",
+                  "unidad": "m2",
+                  "precio": 5.99,
+                  "horas": 0.65,
+                  "producto_cliente": false
                 }
               ],
-              "n": 4
+              "n": 9
             },
             {
               "codigo": "12.14.02",
@@ -7686,9 +8973,36 @@
                   "precio": 2.76,
                   "horas": 0.23,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "12.14.02.050",
+                  "codigo_legacy": "",
+                  "titulo": "Hidrofugación de cubierta de teja.",
+                  "unidad": "m2",
+                  "precio": 5.6,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.14.02.060",
+                  "codigo_legacy": "",
+                  "titulo": "Protección anti-graffiti de fachada pintada.",
+                  "unidad": "m2",
+                  "precio": 5.46,
+                  "horas": 0.28,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.14.02.070",
+                  "codigo_legacy": "",
+                  "titulo": "Hidrofugación de paramento de concreto.",
+                  "unidad": "m2",
+                  "precio": 3.65,
+                  "horas": 0.26,
+                  "producto_cliente": false
                 }
               ],
-              "n": 4
+              "n": 7
             },
             {
               "codigo": "12.14.03",
@@ -7720,15 +9034,60 @@
                   "precio": 5.51,
                   "horas": 0.47,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "12.14.03.040",
+                  "codigo_legacy": "",
+                  "titulo": "Restauración de carpintería de madera con masilla.",
+                  "unidad": "m2",
+                  "precio": 6.8,
+                  "horas": 0.52,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.14.03.050",
+                  "codigo_legacy": "",
+                  "titulo": "Abrillantado de piso de mármol.",
+                  "unidad": "m2",
+                  "precio": 4.43,
+                  "horas": 0.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.14.03.060",
+                  "codigo_legacy": "",
+                  "titulo": "Restauración de piso de madera.",
+                  "unidad": "m2",
+                  "precio": 9.23,
+                  "horas": 0.68,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.14.03.070",
+                  "codigo_legacy": "",
+                  "titulo": "Limpieza y abrillantado de piso de granito.",
+                  "unidad": "m2",
+                  "precio": 4.43,
+                  "horas": 0.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "12.14.03.080",
+                  "codigo_legacy": "",
+                  "titulo": "Restauración de enlucido con mortero de cal.",
+                  "unidad": "m2",
+                  "precio": 6.23,
+                  "horas": 0.55,
+                  "producto_cliente": false
                 }
               ],
-              "n": 3
+              "n": 8
             }
           ],
-          "n": 11
+          "n": 24
         }
       ],
-      "n": 250
+      "n": 401
     },
     {
       "codigo": "13",

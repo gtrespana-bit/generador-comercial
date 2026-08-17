@@ -1,0 +1,48 @@
+{
+  "codigo": "12.08.01.240",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "08",
+  "unidad": "m2",
+  "titulo": "Cielo raso de placa de yeso con lucernario.",
+  "descripcion": "Cielo raso continuo de placa de yeso con marco y remate para lucernario o claraboya. Incluye la estructura, la placa, el marco del lucernario y el tratamiento de juntas. Medido por metro cuadrado ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PYL-PERF-CR",
+      "rendimiento": 1.1
+    },
+    {
+      "ref": "MT-PYL-PLACA125",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-DOMO",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MT-PYL-PASTA",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MT-TORN-TECHO",
+      "rendimiento": 12.0
+    },
+    {
+      "ref": "MQ-ATORN",
+      "rendimiento": 0.16
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.55
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

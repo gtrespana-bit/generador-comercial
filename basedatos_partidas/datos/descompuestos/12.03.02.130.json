@@ -1,0 +1,36 @@
+{
+  "codigo": "12.03.02.130",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "03",
+  "unidad": "m2",
+  "titulo": "Restauración de enchapado de piedra con reintegración.",
+  "descripcion": "Restauración de enchapado de piedra natural con reintegración de piezas faltantes y rejuntado. Incluye la reposición de las piezas y el rejuntado del conjunto. Medido por metro cuadrado restaurado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ADH-PIEDRA",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MT-JUN-CG2",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MT-CONS-PULIDO",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-ALI",
+      "rendimiento": 0.8
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.3
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

@@ -1,0 +1,40 @@
+{
+  "codigo": "12.09.01.060",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "09",
+  "unidad": "m2",
+  "titulo": "Cielo desmontable de lámina de aluminio.",
+  "descripcion": "Cielo raso desmontable de lámina de aluminio lineal, con perfilería de suspensión. Incluye la estructura, la colocación de las láminas y el remate perimetral. Medido por metro cuadrado ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CIELO-METAL",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-PERF-DESM",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-PERFIL-REMATE",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MQ-NIVEL-LASER",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.15
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

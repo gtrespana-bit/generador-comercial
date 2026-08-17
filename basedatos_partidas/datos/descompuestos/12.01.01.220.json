@@ -1,0 +1,36 @@
+{
+  "codigo": "12.01.01.220",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "01",
+  "unidad": "m2",
+  "titulo": "Preparación de soporte para papel tapiz.",
+  "descripcion": "Preparación de soporte para la colocación de papel tapiz, con resane, lijado e imprimación. Incluye el alisado y la aplicación de la imprimación. Medido por metro cuadrado preparado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PIN-FONDO",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MT-ESTUCO-FINO",
+      "rendimiento": 0.8
+    },
+    {
+      "ref": "MT-PIN-LIJA",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.06
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}
