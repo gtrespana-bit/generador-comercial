@@ -7,8 +7,8 @@ numérica v2 aprobada para reforma y remodelación en Venezuela.
 
 | | |
 |---|---:|
-| Partidas | **1.460** |
-| Hojas de descompuesto `.xlsx` | 1.460 |
+| Partidas | **1.660** |
+| Hojas de descompuesto `.xlsx` | 1.660 |
 | Partidas con producto de elección del cliente | 69 |
 | Recursos en el cuadro de precios | **382** |
 | — mano de obra / materiales / maquinaria | 17 / 321 / 44 |
@@ -74,10 +74,10 @@ numérica v2 aprobada para reforma y remodelación en Venezuela.
 
 | Cap. | Nombre | Subcap. | Apart. con partidas | Partidas |
 |---|---|---:|---:|---:|
-| 01 | Actuaciones previas | 8 | 6 | 28 |
+| 01 | Actuaciones previas | 8 | 8 | 100 |
 | 02 | Demoliciones y desmontajes | 12 | 21 | 265 |
-| 03 | Acondicionamiento del terreno | 6 | 5 | 24 |
-| 04 | Fundaciones | 8 | 5 | 28 |
+| 03 | Acondicionamiento del terreno | 6 | 7 | 80 |
+| 04 | Fundaciones | 8 | 9 | 100 |
 | 05 | Estructuras | 9 | 6 | 38 |
 | 06 | Fachadas y particiones | 9 | 16 | 180 |
 | 07 | Carpintería, herrería, vidrios y protección solar | 10 | 16 | 180 |
@@ -92,7 +92,7 @@ numérica v2 aprobada para reforma y remodelación en Venezuela.
 | 16 | Control de calidad y ensayos | 8 | 0 | 0 |
 | 17 | Seguridad y salud en obra | 8 | 7 | 11 |
 | 18 | Rehabilitación energética | 9 | 0 | 0 |
-| | **TOTAL** | **172** | **190** | **1.460** |
+| | **TOTAL** | **172** | **202** | **1.660** |
 
 Los capítulos 08, 16 y 18 están deliberadamente preparados para la primera
 ampliación. No se inventaron partidas de relleno solo para que aparezcan llenos.
@@ -156,12 +156,12 @@ siguiente paso es producir las familias pendientes. Prioridades:
 - **Capítulo 10 Aislamientos e impermeabilizaciones completo hasta el mínimo**
   (150/150).
 - **Capítulo 02 Demoliciones y desmontajes completo hasta el mínimo**
-  (265/260): de 103 a 265 partidas; las 12 familias en `completa` (7) o
-  `avanzada` (5).
-- **Capítulo 06 Fachadas y particiones completo hasta el mínimo** (180/180):
-  de 38 a 180 partidas; las 9 familias en `completa` (5) o `avanzada` (4),
-  incluidas las cuatro vacías (fachadas de bloque/ladrillo, ligeras,
-  ventiladas/SATE y celosías/defensas).
+  (265/260).
+- **Capítulo 06 Fachadas y particiones completo hasta el mínimo** (180/180).
+- **Capítulo 01 Actuaciones previas completo hasta el mínimo** (100/100).
+- **Capítulo 03 Acondicionamiento del terreno completo hasta el mínimo**
+  (80/80).
+- **Capítulo 04 Fundaciones completo hasta el mínimo** (100/100).
 
 Siguen pendientes 204 precios de material provisionales. Los 44 precios de
 alquiler de equipos permanecen fuera de alcance por decisión del cliente.

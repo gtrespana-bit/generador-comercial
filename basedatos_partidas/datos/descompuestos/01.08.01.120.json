@@ -1,0 +1,36 @@
+{
+  "codigo": "01.08.01.120",
+  "ambito": "reforma",
+  "capitulo": "01",
+  "subcapitulo": "08",
+  "unidad": "ud",
+  "titulo": "Extintor de obra.",
+  "descripcion": "Suministro y colocación de extintor de obra. Incluye la fijación y la señalización. Medido por extintor suministrado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-EXTINTOR",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-SENAL-OBRA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.15
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

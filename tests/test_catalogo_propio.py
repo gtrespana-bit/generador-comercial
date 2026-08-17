@@ -30,9 +30,9 @@ from app.services.catalogo_propio import (
 
 # La ampliación del catálogo extenso (lotes de producción) hace crecer estas
 # cifras. Se centralizan aquí para actualizarlas en un solo punto en cada lote.
-N_PARTIDAS = 1460       # total de partidas oficiales del catálogo
+N_PARTIDAS = 1660       # total de partidas oficiales del catálogo
 N_LEGACY = 540         # partidas migradas de la v1 con código CT- (no crece)
-N_APARTADOS = 190      # apartados de tercer nivel con partidas
+N_APARTADOS = 202      # apartados de tercer nivel con partidas
 N_CATEGORIAS = 18 + 172 + N_APARTADOS
 
 
@@ -55,7 +55,10 @@ def test_catalogo_propio_disponible_y_completo():
     assert len([c for c in datos["categorias"] if c["nivel"] == 2]) == 172
     assert len([c for c in datos["categorias"] if c["nivel"] == 3]) == N_APARTADOS
 
-    primera = datos["partidas"][0]
+    # Se valida una partida migrada de la v1 (con codigo_legacy CT-...). Las
+    # partidas nuevas de la ampliación van primero en orden de código y no
+    # llevan codigo_legacy.
+    primera = next(p for p in datos["partidas"] if p["codigo_legacy"].startswith("CT-"))
     assert re.fullmatch(r"\d{2}\.\d{2}\.\d{2}\.\d{3}", primera["codigo"])
     assert primera["codigo_legacy"].startswith("CT-")
     assert primera["categoria"].startswith("01 ")
@@ -78,7 +81,7 @@ def test_catalogo_masivo_conserva_codigo_y_tres_niveles():
     assert not resultado["errores"]
     assert not resultado["advertencias"]
     assert len(resultado["filas"]) == N_PARTIDAS
-    primera = resultado["filas"][0]
+    primera = next(f for f in resultado["filas"] if f["codigo_legacy"].startswith("CT-"))
     assert re.fullmatch(r"\d{2}\.\d{2}\.\d{2}\.\d{3}", primera["codigo"])
     assert primera["codigo_legacy"].startswith("CT-")
     assert primera["categoria"].startswith("01 ")
@@ -137,7 +140,9 @@ def test_sembrar_catalogo_carga_arbol_numerico_completo():
 def test_actualizar_v1_conserva_id_precio_borrados_y_partidas_del_usuario():
     engine, db = _session()
     try:
-        fuente = construir_catalogo()["partidas"][0]
+        fuente = next(
+            p for p in construir_catalogo()["partidas"] if p["codigo_legacy"]
+        )
         oficial = Partida(
             nombre=fuente["nombre"],
             precio_unitario=987.65,  # ajuste local que no debe sobrescribirse

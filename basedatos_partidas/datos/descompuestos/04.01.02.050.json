@@ -1,0 +1,28 @@
+{
+  "codigo": "04.01.02.050",
+  "ambito": "reforma",
+  "capitulo": "04",
+  "subcapitulo": "01",
+  "unidad": "m2",
+  "titulo": "Limpieza y saneo de fondo de fundación.",
+  "descripcion": "Limpieza y saneo del fondo de fundación previo al vaciado. Incluye la limpieza. Medido por metro cuadrado saneado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.08
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

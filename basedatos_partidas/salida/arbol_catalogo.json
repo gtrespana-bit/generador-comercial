@@ -11,8 +11,86 @@
         {
           "codigo": "01.01",
           "nombre": "Desconexión y aislamiento de servicios existentes",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "01.01.01",
+              "nombre": "Desconexión de instalaciones",
+              "partidas": [
+                {
+                  "codigo": "01.01.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Desconexión de instalación eléctrica existente.",
+                  "unidad": "ud",
+                  "precio": 8.41,
+                  "horas": 1.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.01.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Desconexión de instalación de agua.",
+                  "unidad": "ud",
+                  "precio": 11.84,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.01.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Desconexión de instalación de gas.",
+                  "unidad": "ud",
+                  "precio": 13.18,
+                  "horas": 1.05,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.01.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Desconexión de equipo de aire acondicionado.",
+                  "unidad": "ud",
+                  "precio": 10.47,
+                  "horas": 1.2,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 4
+            },
+            {
+              "codigo": "01.01.02",
+              "nombre": "Aislamiento y cierre de servicios",
+              "partidas": [
+                {
+                  "codigo": "01.01.02.010",
+                  "codigo_legacy": "",
+                  "titulo": "Cierre y bloqueo de suministro eléctrico.",
+                  "unidad": "ud",
+                  "precio": 5.25,
+                  "horas": 0.75,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.01.02.020",
+                  "codigo_legacy": "",
+                  "titulo": "Cierre y drenaje de instalación de agua.",
+                  "unidad": "ud",
+                  "precio": 5.56,
+                  "horas": 0.75,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.01.02.030",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento de servicio de gas existente.",
+                  "unidad": "ud",
+                  "precio": 12.18,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 3
+            }
+          ],
+          "n": 7
         },
         {
           "codigo": "01.02",
@@ -57,12 +135,102 @@
                   "precio": 0.62,
                   "horas": 0.07,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "01.02.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Cata en techo para reconocimiento de losa.",
+                  "unidad": "m",
+                  "precio": 5.68,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.02.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Cata en muro para reconocimiento de espesor.",
+                  "unidad": "m",
+                  "precio": 4.88,
+                  "horas": 0.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.02.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Ensayo de carga o prueba de estructura existente.",
+                  "unidad": "ud",
+                  "precio": 17.02,
+                  "horas": 2.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.02.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Levantamiento de patologías de paramentos.",
+                  "unidad": "m2",
+                  "precio": 2.05,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.02.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Prueba de estanqueidad de instalación de agua.",
+                  "unidad": "ud",
+                  "precio": 9.0,
+                  "horas": 1.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.02.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Detección de armadura en concreto.",
+                  "unidad": "ud",
+                  "precio": 3.55,
+                  "horas": 0.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.02.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Levantamiento topográfico interior.",
+                  "unidad": "m2",
+                  "precio": 1.61,
+                  "horas": 0.23,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.02.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Cata para localización de tubería enterrada.",
+                  "unidad": "ud",
+                  "precio": 7.55,
+                  "horas": 1.0,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.02.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Diagnóstico de humedades en paramento.",
+                  "unidad": "ud",
+                  "precio": 2.87,
+                  "horas": 0.37,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.02.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Levantamiento de instalaciones existentes.",
+                  "unidad": "m2",
+                  "precio": 1.61,
+                  "horas": 0.23,
+                  "producto_cliente": false
                 }
               ],
-              "n": 4
+              "n": 14
             }
           ],
-          "n": 4
+          "n": 14
         },
         {
           "codigo": "01.03",
@@ -152,18 +320,168 @@
                   "precio": 91.31,
                   "horas": 2.1,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "01.03.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Protección de escalera existente.",
+                  "unidad": "m2",
+                  "precio": 2.61,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.03.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Protección de ventanas y vidrios.",
+                  "unidad": "m2",
+                  "precio": 2.37,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.03.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Protección de puerta existente.",
+                  "unidad": "m2",
+                  "precio": 2.46,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.03.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Protección de baranda o pasamanos existente.",
+                  "unidad": "m",
+                  "precio": 1.4,
+                  "horas": 0.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.03.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Protección de cielo raso existente.",
+                  "unidad": "m2",
+                  "precio": 2.98,
+                  "horas": 0.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.03.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Protección de zócalo o rodapié existente.",
+                  "unidad": "m",
+                  "precio": 1.26,
+                  "horas": 0.16,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.03.01.160",
+                  "codigo_legacy": "",
+                  "titulo": "Protección de sanitarios y grifería existente.",
+                  "unidad": "m2",
+                  "precio": 2.39,
+                  "horas": 0.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.03.01.170",
+                  "codigo_legacy": "",
+                  "titulo": "Protección de mesón o mueble de cocina.",
+                  "unidad": "m2",
+                  "precio": 2.82,
+                  "horas": 0.36,
+                  "producto_cliente": false
                 }
               ],
-              "n": 9
+              "n": 17
             }
           ],
-          "n": 9
+          "n": 17
         },
         {
           "codigo": "01.04",
           "nombre": "Cerramientos, barreras de polvo y control de accesos",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "01.04.01",
+              "nombre": "Cerramientos y barreras de polvo",
+              "partidas": [
+                {
+                  "codigo": "01.04.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Barrera antipolvo con lámina plástica.",
+                  "unidad": "m2",
+                  "precio": 2.37,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.04.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Cerramiento de vano con lámina de madera.",
+                  "unidad": "m2",
+                  "precio": 24.71,
+                  "horas": 0.65,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.04.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Junta de estanqueidad antipolvo en vano.",
+                  "unidad": "m",
+                  "precio": 1.37,
+                  "horas": 0.16,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.04.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Mampara antipolvo con puerta.",
+                  "unidad": "m2",
+                  "precio": 11.35,
+                  "horas": 0.5,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 4
+            },
+            {
+              "codigo": "01.04.02",
+              "nombre": "Control de accesos y señalización de obra",
+              "partidas": [
+                {
+                  "codigo": "01.04.02.010",
+                  "codigo_legacy": "",
+                  "titulo": "Señalización y delimitación de zona de obra.",
+                  "unidad": "m2",
+                  "precio": 3.06,
+                  "horas": 0.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.04.02.020",
+                  "codigo_legacy": "",
+                  "titulo": "Control de acceso a zona de obra.",
+                  "unidad": "m2",
+                  "precio": 8.9,
+                  "horas": 0.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.04.02.030",
+                  "codigo_legacy": "",
+                  "titulo": "Cartel informativo de obra.",
+                  "unidad": "ud",
+                  "precio": 9.17,
+                  "horas": 0.35,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 3
+            }
+          ],
+          "n": 7
         },
         {
           "codigo": "01.05",
@@ -217,12 +535,102 @@
                   "precio": 8.67,
                   "horas": 0.36,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "01.05.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Andamio tubular de fachada con plataforma.",
+                  "unidad": "m2",
+                  "precio": 10.63,
+                  "horas": 0.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.05.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Andamio colgante para trabajos en fachada.",
+                  "unidad": "m2",
+                  "precio": 9.45,
+                  "horas": 0.75,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.05.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Andamio interior móvil.",
+                  "unidad": "m2",
+                  "precio": 5.67,
+                  "horas": 0.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.05.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Andamio de borriquetas para interior.",
+                  "unidad": "m2",
+                  "precio": 4.73,
+                  "horas": 0.36,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.05.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Andamio de fachada con red de seguridad.",
+                  "unidad": "m2",
+                  "precio": 11.87,
+                  "horas": 0.62,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.05.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Andamio de fachada con protección de malla.",
+                  "unidad": "m2",
+                  "precio": 9.13,
+                  "horas": 0.62,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.05.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Plataforma elevadora móvil de tijera.",
+                  "unidad": "m2",
+                  "precio": 7.5,
+                  "horas": 0.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.05.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Plataforma elevadora articulada.",
+                  "unidad": "m2",
+                  "precio": 9.23,
+                  "horas": 0.48,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.05.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Escalera de acceso provisional.",
+                  "unidad": "m",
+                  "precio": 14.26,
+                  "horas": 0.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.05.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Rampa provisional de acceso.",
+                  "unidad": "m2",
+                  "precio": 17.16,
+                  "horas": 0.8,
+                  "producto_cliente": false
                 }
               ],
-              "n": 5
+              "n": 15
             }
           ],
-          "n": 5
+          "n": 15
         },
         {
           "codigo": "01.06",
@@ -267,12 +675,102 @@
                   "precio": 17.12,
                   "horas": 0.6,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "01.06.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Apeo de losa con puntales y durmientes.",
+                  "unidad": "m2",
+                  "precio": 14.0,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.06.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Apeo de viga con puntales.",
+                  "unidad": "m",
+                  "precio": 11.47,
+                  "horas": 0.55,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.06.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Apuntalamiento de muro con madera.",
+                  "unidad": "m2",
+                  "precio": 13.29,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.06.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Apeo de cubierta o techo.",
+                  "unidad": "m2",
+                  "precio": 14.14,
+                  "horas": 0.72,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.06.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Apeo de dintel durante apertura de vano.",
+                  "unidad": "m",
+                  "precio": 9.45,
+                  "horas": 0.48,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.06.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Estabilización de muro con arriostramiento.",
+                  "unidad": "m2",
+                  "precio": 16.08,
+                  "horas": 0.85,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.06.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Apeo de fachada durante demolición parcial.",
+                  "unidad": "m2",
+                  "precio": 14.0,
+                  "horas": 0.72,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.06.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Apeo de escalera existente.",
+                  "unidad": "m",
+                  "precio": 10.56,
+                  "horas": 0.52,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.06.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Apeo de forjado con torres de carga.",
+                  "unidad": "m2",
+                  "precio": 15.76,
+                  "horas": 0.77,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.06.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Apuntalamiento de talud interior.",
+                  "unidad": "m2",
+                  "precio": 13.51,
+                  "horas": 0.7,
+                  "producto_cliente": false
                 }
               ],
-              "n": 4
+              "n": 14
             }
           ],
-          "n": 4
+          "n": 14
         },
         {
           "codigo": "01.07",
@@ -290,12 +788,102 @@
                   "precio": 0.77,
                   "horas": 0.09,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "01.07.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Replanteo de ejes de muros.",
+                  "unidad": "m",
+                  "precio": 1.31,
+                  "horas": 0.18,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.07.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Replanteo de niveles y pendientes.",
+                  "unidad": "m",
+                  "precio": 1.13,
+                  "horas": 0.15,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.07.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Control geométrico de paramentos.",
+                  "unidad": "m2",
+                  "precio": 1.29,
+                  "horas": 0.18,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.07.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Replanteo de instalaciones.",
+                  "unidad": "ud",
+                  "precio": 8.48,
+                  "horas": 1.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.07.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Replanteo de vanos y carpintería.",
+                  "unidad": "m",
+                  "precio": 1.31,
+                  "horas": 0.18,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.07.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Replanteo de cielos rasos.",
+                  "unidad": "m2",
+                  "precio": 1.31,
+                  "horas": 0.18,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.07.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Replanteo de escalera.",
+                  "unidad": "ud",
+                  "precio": 8.78,
+                  "horas": 1.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.07.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Control de planitud de pisos.",
+                  "unidad": "m2",
+                  "precio": 1.08,
+                  "horas": 0.15,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.07.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Replanteo de desagües y pendientes.",
+                  "unidad": "m",
+                  "precio": 1.31,
+                  "horas": 0.18,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.07.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Replanteo de particiones.",
+                  "unidad": "m2",
+                  "precio": 1.29,
+                  "horas": 0.18,
+                  "producto_cliente": false
                 }
               ],
-              "n": 1
+              "n": 11
             }
           ],
-          "n": 1
+          "n": 11
         },
         {
           "codigo": "01.08",
@@ -349,15 +937,105 @@
                   "precio": 180.15,
                   "horas": 5.2,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "01.08.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Acometida eléctrica provisional de obra.",
+                  "unidad": "ud",
+                  "precio": 217.63,
+                  "horas": 4.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.08.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Punto de agua provisional con llave y manguera.",
+                  "unidad": "ud",
+                  "precio": 32.83,
+                  "horas": 1.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.08.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Iluminación provisional con reflectores.",
+                  "unidad": "ud",
+                  "precio": 77.14,
+                  "horas": 1.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.08.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Baño portátil de obra, por mes.",
+                  "unidad": "ud",
+                  "precio": 75.17,
+                  "horas": 0.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.08.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Caseta de acopio de materiales, por mes.",
+                  "unidad": "ud",
+                  "precio": 160.51,
+                  "horas": 0.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.08.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Suministro de botiquín de primeros auxilios.",
+                  "unidad": "ud",
+                  "precio": 47.89,
+                  "horas": 0.35,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.08.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Extintor de obra.",
+                  "unidad": "ud",
+                  "precio": 53.81,
+                  "horas": 0.35,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.08.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Zona de lavado de herramienta.",
+                  "unidad": "ud",
+                  "precio": 21.88,
+                  "horas": 1.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.08.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Acometida provisional de agua.",
+                  "unidad": "ud",
+                  "precio": 50.56,
+                  "horas": 2.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "01.08.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Red provisional de desagüe de obra.",
+                  "unidad": "ud",
+                  "precio": 52.26,
+                  "horas": 1.8,
+                  "producto_cliente": false
                 }
               ],
-              "n": 5
+              "n": 15
             }
           ],
-          "n": 5
+          "n": 15
         }
       ],
-      "n": 28
+      "n": 100
     },
     {
       "codigo": "02",
@@ -3029,12 +3707,102 @@
                   "precio": 2.87,
                   "horas": 0.19,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "03.01.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Desbroce de vegetación arbustiva.",
+                  "unidad": "m2",
+                  "precio": 0.72,
+                  "horas": 0.1,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.01.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Desbroce con retiro de capa vegetal.",
+                  "unidad": "m2",
+                  "precio": 2.5,
+                  "horas": 0.16,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.01.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Retiro de obstáculos y escombros superficiales.",
+                  "unidad": "m2",
+                  "precio": 3.12,
+                  "horas": 0.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.01.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Limpieza de terreno en pendiente.",
+                  "unidad": "m2",
+                  "precio": 1.31,
+                  "horas": 0.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.01.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Retiro de tocones de árboles.",
+                  "unidad": "m2",
+                  "precio": 13.62,
+                  "horas": 0.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.01.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Descapote de terreno con topografía.",
+                  "unidad": "m2",
+                  "precio": 2.85,
+                  "horas": 0.16,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.01.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Limpieza de terreno con escombros de demolición.",
+                  "unidad": "m2",
+                  "precio": 4.86,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.01.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Retiro de pavimento vegetal o grama.",
+                  "unidad": "m2",
+                  "precio": 0.81,
+                  "horas": 0.12,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.01.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Limpieza de terreno con maleza alta.",
+                  "unidad": "m2",
+                  "precio": 1.16,
+                  "horas": 0.16,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.01.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Retiro de capa de asfalto superficial.",
+                  "unidad": "m2",
+                  "precio": 6.11,
+                  "horas": 0.4,
+                  "producto_cliente": false
                 }
               ],
-              "n": 4
+              "n": 14
             }
           ],
-          "n": 4
+          "n": 14
         },
         {
           "codigo": "03.02",
@@ -3097,12 +3865,102 @@
                   "precio": 20.35,
                   "horas": 3.7,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "03.02.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Excavación a cielo abierto en terreno blando.",
+                  "unidad": "m3",
+                  "precio": 5.99,
+                  "horas": 0.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.02.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Excavación a cielo abierto en terreno duro.",
+                  "unidad": "m3",
+                  "precio": 9.11,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.02.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Excavación a cielo abierto con taludes.",
+                  "unidad": "m3",
+                  "precio": 7.37,
+                  "horas": 0.24,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.02.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Perfilado y limpieza de fondo de excavación.",
+                  "unidad": "m2",
+                  "precio": 1.31,
+                  "horas": 0.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.02.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Excavación para cimientos de edificación.",
+                  "unidad": "m3",
+                  "precio": 7.37,
+                  "horas": 0.24,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.02.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Excavación para piscina o tanque.",
+                  "unidad": "m3",
+                  "precio": 7.37,
+                  "horas": 0.24,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.02.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Excavación de sótano.",
+                  "unidad": "m3",
+                  "precio": 7.6,
+                  "horas": 0.24,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.02.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Excavación en terreno con agua.",
+                  "unidad": "m3",
+                  "precio": 10.08,
+                  "horas": 0.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.02.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Excavación de explanada.",
+                  "unidad": "m3",
+                  "precio": 5.99,
+                  "horas": 0.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.02.01.160",
+                  "codigo_legacy": "",
+                  "titulo": "Excavación a cielo abierto con retiro lateral.",
+                  "unidad": "m3",
+                  "precio": 5.99,
+                  "horas": 0.2,
+                  "producto_cliente": false
                 }
               ],
-              "n": 6
+              "n": 16
             }
           ],
-          "n": 6
+          "n": 16
         },
         {
           "codigo": "03.03",
@@ -3147,12 +4005,102 @@
                   "precio": 9.02,
                   "horas": 0.56,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "03.03.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Excavación de pozo para fundación.",
+                  "unidad": "m3",
+                  "precio": 6.3,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.03.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Excavación de zanja con entibado.",
+                  "unidad": "m3",
+                  "precio": 10.89,
+                  "horas": 0.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.03.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Zanja para tubería de drenaje.",
+                  "unidad": "m",
+                  "precio": 4.52,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.03.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Zanja para tubería de agua.",
+                  "unidad": "m",
+                  "precio": 3.74,
+                  "horas": 0.24,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.03.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Zanja para tubería eléctrica.",
+                  "unidad": "m",
+                  "precio": 3.74,
+                  "horas": 0.24,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.03.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Excavación localizada a mano en interior.",
+                  "unidad": "m3",
+                  "precio": 5.08,
+                  "horas": 0.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.03.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Zanja para cable de datos.",
+                  "unidad": "m",
+                  "precio": 3.04,
+                  "horas": 0.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.03.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Zanja para gas.",
+                  "unidad": "m",
+                  "precio": 3.74,
+                  "horas": 0.24,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.03.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Excavación de registro enterrado.",
+                  "unidad": "m3",
+                  "precio": 7.98,
+                  "horas": 0.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.03.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Zanja de fundación corrida.",
+                  "unidad": "m",
+                  "precio": 4.52,
+                  "horas": 0.3,
+                  "producto_cliente": false
                 }
               ],
-              "n": 4
+              "n": 14
             }
           ],
-          "n": 4
+          "n": 14
         },
         {
           "codigo": "03.04",
@@ -3206,18 +4154,177 @@
                   "precio": 1.22,
                   "horas": 0.17,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "03.04.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Relleno compactado en capas.",
+                  "unidad": "m3",
+                  "precio": 2.04,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.04.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Relleno con material granular.",
+                  "unidad": "m3",
+                  "precio": 42.39,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.04.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Base de piedra picada compactada para pavimento.",
+                  "unidad": "m2",
+                  "precio": 6.8,
+                  "horas": 0.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.04.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Base de arena compactada.",
+                  "unidad": "m2",
+                  "precio": 4.5,
+                  "horas": 0.16,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.04.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Nivelación y compactación de subrasante.",
+                  "unidad": "m2",
+                  "precio": 1.09,
+                  "horas": 0.16,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.04.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Relleno de zanja con arena.",
+                  "unidad": "m3",
+                  "precio": 36.21,
+                  "horas": 0.24,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.04.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Relleno con material de excavación reutilizado.",
+                  "unidad": "m3",
+                  "precio": 1.95,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.04.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Compactación de terraplén.",
+                  "unidad": "m2",
+                  "precio": 1.09,
+                  "horas": 0.16,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.04.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Relleno estructural con piedra picada.",
+                  "unidad": "m3",
+                  "precio": 45.99,
+                  "horas": 0.3,
+                  "producto_cliente": false
                 }
               ],
-              "n": 5
+              "n": 14
             }
           ],
-          "n": 5
+          "n": 14
         },
         {
           "codigo": "03.05",
           "nombre": "Drenaje provisional, achique y estabilización",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "03.05.01",
+              "nombre": "Achique y drenaje provisional",
+              "partidas": [
+                {
+                  "codigo": "03.05.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Achique de agua en excavación.",
+                  "unidad": "m3",
+                  "precio": 3.06,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.05.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Drenaje provisional con tubería perforada.",
+                  "unidad": "m",
+                  "precio": 10.22,
+                  "horas": 0.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.05.01.030",
+                  "codigo_legacy": "",
+                  "titulo": "Cuneta provisional de desvío de aguas.",
+                  "unidad": "m",
+                  "precio": 3.55,
+                  "horas": 0.3,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 3
+            },
+            {
+              "codigo": "03.05.02",
+              "nombre": "Estabilización de taludes y fondos",
+              "partidas": [
+                {
+                  "codigo": "03.05.02.010",
+                  "codigo_legacy": "",
+                  "titulo": "Estabilización de fondo de excavación.",
+                  "unidad": "m2",
+                  "precio": 4.91,
+                  "horas": 0.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.05.02.020",
+                  "codigo_legacy": "",
+                  "titulo": "Protección de talud con geotextil.",
+                  "unidad": "m2",
+                  "precio": 2.69,
+                  "horas": 0.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.05.02.030",
+                  "codigo_legacy": "",
+                  "titulo": "Estabilización de talud con malla.",
+                  "unidad": "m2",
+                  "precio": 15.35,
+                  "horas": 0.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.05.02.040",
+                  "codigo_legacy": "",
+                  "titulo": "Estabilización de fondo con material granular.",
+                  "unidad": "m2",
+                  "precio": 5.89,
+                  "horas": 0.24,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 4
+            }
+          ],
+          "n": 7
         },
         {
           "codigo": "03.06",
@@ -3271,15 +4378,105 @@
                   "precio": 7.89,
                   "horas": 1.6,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "03.06.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Carga mecanizada de tierra sobrante.",
+                  "unidad": "m3",
+                  "precio": 4.46,
+                  "horas": 0.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.06.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Transporte de tierra sobrante a botadero.",
+                  "unidad": "m3",
+                  "precio": 7.02,
+                  "horas": 0.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.06.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Transporte de escombro a vertedero.",
+                  "unidad": "m3",
+                  "precio": 7.94,
+                  "horas": 0.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.06.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Acopio y reutilización de tierra en obra.",
+                  "unidad": "m3",
+                  "precio": 3.47,
+                  "horas": 0.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.06.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Suministro de material de préstamo.",
+                  "unidad": "m3",
+                  "precio": 43.78,
+                  "horas": 0.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.06.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Suministro de arena lavada.",
+                  "unidad": "m3",
+                  "precio": 35.13,
+                  "horas": 0.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.06.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Carga manual de tierra sobrante.",
+                  "unidad": "m3",
+                  "precio": 4.67,
+                  "horas": 0.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.06.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Transporte interno con carretilla.",
+                  "unidad": "m3",
+                  "precio": 2.47,
+                  "horas": 0.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.06.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Suministro de piedra picada.",
+                  "unidad": "m3",
+                  "precio": 43.78,
+                  "horas": 0.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "03.06.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Suministro de gravilla.",
+                  "unidad": "m3",
+                  "precio": 38.01,
+                  "horas": 0.2,
+                  "producto_cliente": false
                 }
               ],
-              "n": 5
+              "n": 15
             }
           ],
-          "n": 5
+          "n": 15
         }
       ],
-      "n": 24
+      "n": 80
     },
     {
       "codigo": "04",
@@ -3288,8 +4485,86 @@
         {
           "codigo": "04.01",
           "nombre": "Preparación y mejoramiento del terreno",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "04.01.01",
+              "nombre": "Mejoramiento y sustitución de terreno",
+              "partidas": [
+                {
+                  "codigo": "04.01.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Sustitución de terreno con material granular.",
+                  "unidad": "m3",
+                  "precio": 50.15,
+                  "horas": 0.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.01.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Mejoramiento de suelo con cemento.",
+                  "unidad": "m3",
+                  "precio": 27.82,
+                  "horas": 0.55,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 2
+            },
+            {
+              "codigo": "04.01.02",
+              "nombre": "Compactación y nivelación de fundación",
+              "partidas": [
+                {
+                  "codigo": "04.01.02.010",
+                  "codigo_legacy": "",
+                  "titulo": "Nivelación y compactación de fondo de fundación.",
+                  "unidad": "m2",
+                  "precio": 1.09,
+                  "horas": 0.16,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.01.02.020",
+                  "codigo_legacy": "",
+                  "titulo": "Riego y compactación de fundación.",
+                  "unidad": "m2",
+                  "precio": 1.14,
+                  "horas": 0.16,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.01.02.030",
+                  "codigo_legacy": "",
+                  "titulo": "Verificación de capacidad portante.",
+                  "unidad": "m2",
+                  "precio": 1.23,
+                  "horas": 0.18,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.01.02.040",
+                  "codigo_legacy": "",
+                  "titulo": "Mejoramiento de fundación con geotextil.",
+                  "unidad": "m2",
+                  "precio": 2.5,
+                  "horas": 0.16,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.01.02.050",
+                  "codigo_legacy": "",
+                  "titulo": "Limpieza y saneo de fondo de fundación.",
+                  "unidad": "m2",
+                  "precio": 0.94,
+                  "horas": 0.16,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 5
+            }
+          ],
+          "n": 7
         },
         {
           "codigo": "04.02",
@@ -3379,12 +4654,93 @@
                   "precio": 173.78,
                   "horas": 4.7,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "04.02.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Concreto pobre de limpieza bajo fundación.",
+                  "unidad": "m2",
+                  "precio": 8.62,
+                  "horas": 0.35,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.02.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Concreto para zapata combinada.",
+                  "unidad": "m3",
+                  "precio": 151.23,
+                  "horas": 1.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.02.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Concreto para zapata de medianería.",
+                  "unidad": "m3",
+                  "precio": 151.23,
+                  "horas": 1.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.02.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Acero de refuerzo en zapata.",
+                  "unidad": "kg",
+                  "precio": 2.04,
+                  "horas": 0.045,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.02.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Encofrado de zapata.",
+                  "unidad": "m2",
+                  "precio": 12.96,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.02.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Concreto para base de equipo.",
+                  "unidad": "m3",
+                  "precio": 151.96,
+                  "horas": 1.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.02.01.160",
+                  "codigo_legacy": "",
+                  "titulo": "Recalce de zapata con concreto.",
+                  "unidad": "m3",
+                  "precio": 168.9,
+                  "horas": 1.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.02.01.170",
+                  "codigo_legacy": "",
+                  "titulo": "Refuerzo de zapata existente con acero.",
+                  "unidad": "kg",
+                  "precio": 14.61,
+                  "horas": 0.06,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.02.01.180",
+                  "codigo_legacy": "",
+                  "titulo": "Concreto para pedestal de concreto armado.",
+                  "unidad": "m3",
+                  "precio": 151.96,
+                  "horas": 1.5,
+                  "producto_cliente": false
                 }
               ],
-              "n": 9
+              "n": 18
             }
           ],
-          "n": 9
+          "n": 18
         },
         {
           "codigo": "04.03",
@@ -3420,12 +4776,102 @@
                   "precio": 162.27,
                   "horas": 2.0,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "04.03.01.040",
+                  "codigo_legacy": "",
+                  "titulo": "Acero de refuerzo en viga de riostra.",
+                  "unidad": "kg",
+                  "precio": 2.04,
+                  "horas": 0.045,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.03.01.050",
+                  "codigo_legacy": "",
+                  "titulo": "Encofrado de viga de riostra.",
+                  "unidad": "m2",
+                  "precio": 12.96,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.03.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Vaciado de concreto en viga de riostra.",
+                  "unidad": "m3",
+                  "precio": 151.23,
+                  "horas": 1.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.03.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Concreto para viga de fundación.",
+                  "unidad": "m3",
+                  "precio": 151.23,
+                  "horas": 1.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.03.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Acero de refuerzo en viga de fundación.",
+                  "unidad": "kg",
+                  "precio": 2.04,
+                  "horas": 0.045,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.03.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Viga de riostra con bloque lateral.",
+                  "unidad": "m",
+                  "precio": 23.5,
+                  "horas": 1.0,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.03.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Viga de fundación sobre suelo mejorado.",
+                  "unidad": "m",
+                  "precio": 18.89,
+                  "horas": 0.85,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.03.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Encofrado de viga de fundación.",
+                  "unidad": "m2",
+                  "precio": 12.96,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.03.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Concreto para viga de amarre.",
+                  "unidad": "m3",
+                  "precio": 151.23,
+                  "horas": 1.4,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.03.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Viga de riostra con junta de dilatación.",
+                  "unidad": "m",
+                  "precio": 18.06,
+                  "horas": 0.85,
+                  "producto_cliente": false
                 }
               ],
-              "n": 3
+              "n": 13
             }
           ],
-          "n": 3
+          "n": 13
         },
         {
           "codigo": "04.04",
@@ -3488,12 +4934,102 @@
                   "precio": 2.48,
                   "horas": 0.2,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "04.04.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Barrera de vapor bajo losa de fundación.",
+                  "unidad": "m2",
+                  "precio": 1.85,
+                  "horas": 0.16,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.04.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Aislamiento térmico bajo losa de fundación.",
+                  "unidad": "m2",
+                  "precio": 11.83,
+                  "horas": 0.24,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.04.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Colocación de acero en losa de fundación.",
+                  "unidad": "kg",
+                  "precio": 2.04,
+                  "horas": 0.045,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.04.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Malla electrosoldada en losa.",
+                  "unidad": "m2",
+                  "precio": 7.5,
+                  "horas": 0.13,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.04.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Encofrado perimetral de losa.",
+                  "unidad": "m",
+                  "precio": 6.32,
+                  "horas": 0.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.04.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Vaciado de concreto en losa de fundación.",
+                  "unidad": "m3",
+                  "precio": 150.05,
+                  "horas": 1.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.04.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Acabado de losa de fundación.",
+                  "unidad": "m2",
+                  "precio": 2.83,
+                  "horas": 0.35,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.04.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Losa de fundación aligerada con anime.",
+                  "unidad": "m2",
+                  "precio": 31.2,
+                  "horas": 0.85,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.04.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Junta de dilatación en losa de fundación.",
+                  "unidad": "m",
+                  "precio": 9.72,
+                  "horas": 0.35,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.04.01.160",
+                  "codigo_legacy": "",
+                  "titulo": "Losa de fundación con aditivo impermeabilizante.",
+                  "unidad": "m2",
+                  "precio": 17.91,
+                  "horas": 0.75,
+                  "producto_cliente": false
                 }
               ],
-              "n": 6
+              "n": 16
             }
           ],
-          "n": 6
+          "n": 16
         },
         {
           "codigo": "04.05",
@@ -3547,12 +5083,102 @@
                   "precio": 22.78,
                   "horas": 0.46,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "04.05.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Encofrado de muro de contención a dos caras.",
+                  "unidad": "m2",
+                  "precio": 13.91,
+                  "horas": 0.85,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.05.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Colocación de acero en muro de contención.",
+                  "unidad": "kg",
+                  "precio": 2.04,
+                  "horas": 0.045,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.05.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Vaciado de concreto en muro de contención.",
+                  "unidad": "m3",
+                  "precio": 165.31,
+                  "horas": 1.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.05.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de trasdós de muro.",
+                  "unidad": "m2",
+                  "precio": 10.76,
+                  "horas": 0.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.05.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Drenaje de trasdós con tubería y grava.",
+                  "unidad": "m",
+                  "precio": 13.74,
+                  "horas": 0.55,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.05.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Muro de contención con acabado visto.",
+                  "unidad": "m2",
+                  "precio": 46.68,
+                  "horas": 1.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.05.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Muro de contención de bloque con refuerzo.",
+                  "unidad": "m",
+                  "precio": 32.47,
+                  "horas": 1.6,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.05.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Muro de contención con junta de dilatación.",
+                  "unidad": "m",
+                  "precio": 36.63,
+                  "horas": 1.0,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.05.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Reparación de muro de contención.",
+                  "unidad": "m2",
+                  "precio": 26.66,
+                  "horas": 0.8,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.05.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Refuerzo de muro de contención existente.",
+                  "unidad": "m2",
+                  "precio": 33.03,
+                  "horas": 1.3,
+                  "producto_cliente": false
                 }
               ],
-              "n": 5
+              "n": 15
             }
           ],
-          "n": 5
+          "n": 15
         },
         {
           "codigo": "04.06",
@@ -3606,27 +5232,291 @@
                   "precio": 221.9,
                   "horas": 3.85,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "04.06.01.060",
+                  "codigo_legacy": "",
+                  "titulo": "Perforación de pilote vaciado en sitio.",
+                  "unidad": "m",
+                  "precio": 32.24,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.06.01.070",
+                  "codigo_legacy": "",
+                  "titulo": "Colocación de acero en pilote.",
+                  "unidad": "kg",
+                  "precio": 2.04,
+                  "horas": 0.045,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.06.01.080",
+                  "codigo_legacy": "",
+                  "titulo": "Vaciado de concreto en pilote.",
+                  "unidad": "m3",
+                  "precio": 171.15,
+                  "horas": 1.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.06.01.090",
+                  "codigo_legacy": "",
+                  "titulo": "Descabezado de pilote de concreto.",
+                  "unidad": "m",
+                  "precio": 11.6,
+                  "horas": 1.0,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.06.01.100",
+                  "codigo_legacy": "",
+                  "titulo": "Concreto para cabezal de pilotes.",
+                  "unidad": "m3",
+                  "precio": 165.31,
+                  "horas": 1.5,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.06.01.110",
+                  "codigo_legacy": "",
+                  "titulo": "Acero de refuerzo en cabezal de pilotes.",
+                  "unidad": "kg",
+                  "precio": 2.04,
+                  "horas": 0.045,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.06.01.120",
+                  "codigo_legacy": "",
+                  "titulo": "Encofrado de cabezal de pilotes.",
+                  "unidad": "m2",
+                  "precio": 12.96,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.06.01.130",
+                  "codigo_legacy": "",
+                  "titulo": "Concreto para pilote de sección grande.",
+                  "unidad": "m3",
+                  "precio": 171.15,
+                  "horas": 1.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.06.01.140",
+                  "codigo_legacy": "",
+                  "titulo": "Pilote con camisa metálica.",
+                  "unidad": "m2",
+                  "precio": 68.15,
+                  "horas": 1.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.06.01.150",
+                  "codigo_legacy": "",
+                  "titulo": "Concreto para pila de puente.",
+                  "unidad": "m3",
+                  "precio": 190.49,
+                  "horas": 1.35,
+                  "producto_cliente": false
                 }
               ],
-              "n": 5
+              "n": 15
             }
           ],
-          "n": 5
+          "n": 15
         },
         {
           "codigo": "04.07",
           "nombre": "Drenaje y protección de fundaciones",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "04.07.01",
+              "nombre": "Drenaje de fundaciones",
+              "partidas": [
+                {
+                  "codigo": "04.07.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Drenaje perimetral de fundación.",
+                  "unidad": "m",
+                  "precio": 15.28,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.07.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Drenaje con canaleta de fundación.",
+                  "unidad": "m",
+                  "precio": 36.93,
+                  "horas": 0.55,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 2
+            },
+            {
+              "codigo": "04.07.02",
+              "nombre": "Protección e impermeabilización de fundaciones",
+              "partidas": [
+                {
+                  "codigo": "04.07.02.010",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de fundación con manto.",
+                  "unidad": "m2",
+                  "precio": 16.25,
+                  "horas": 0.72,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.07.02.020",
+                  "codigo_legacy": "",
+                  "titulo": "Protección de fundación con lámina drenante.",
+                  "unidad": "m2",
+                  "precio": 13.07,
+                  "horas": 0.42,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.07.02.030",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de fundación con geocompuesto de bentonita.",
+                  "unidad": "m2",
+                  "precio": 17.97,
+                  "horas": 0.55,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.07.02.040",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de fundación con cementosa.",
+                  "unidad": "m2",
+                  "precio": 12.03,
+                  "horas": 0.7,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.07.02.050",
+                  "codigo_legacy": "",
+                  "titulo": "Protección de fundación contra raíces.",
+                  "unidad": "m2",
+                  "precio": 3.85,
+                  "horas": 0.2,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.07.02.060",
+                  "codigo_legacy": "",
+                  "titulo": "Impermeabilización de losa de fundación.",
+                  "unidad": "m2",
+                  "precio": 15.57,
+                  "horas": 0.68,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 6
+            }
+          ],
+          "n": 8
         },
         {
           "codigo": "04.08",
           "nombre": "Reparación y refuerzo de fundaciones",
-          "apartados": [],
-          "n": 0
+          "apartados": [
+            {
+              "codigo": "04.08.01",
+              "nombre": "Reparación de fundaciones",
+              "partidas": [
+                {
+                  "codigo": "04.08.01.010",
+                  "codigo_legacy": "",
+                  "titulo": "Reparación de fundación con mortero.",
+                  "unidad": "m2",
+                  "precio": 34.11,
+                  "horas": 0.9,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.08.01.020",
+                  "codigo_legacy": "",
+                  "titulo": "Reparación de fisuras en fundación.",
+                  "unidad": "m2",
+                  "precio": 23.1,
+                  "horas": 0.5,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 2
+            },
+            {
+              "codigo": "04.08.02",
+              "nombre": "Refuerzo de fundaciones",
+              "partidas": [
+                {
+                  "codigo": "04.08.02.010",
+                  "codigo_legacy": "",
+                  "titulo": "Refuerzo de fundación con encamisado.",
+                  "unidad": "m2",
+                  "precio": 44.58,
+                  "horas": 1.3,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.08.02.020",
+                  "codigo_legacy": "",
+                  "titulo": "Refuerzo de fundación con fibra de carbono.",
+                  "unidad": "m2",
+                  "precio": 84.14,
+                  "horas": 1.05,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.08.02.030",
+                  "codigo_legacy": "",
+                  "titulo": "Refuerzo de zapata con ampliación.",
+                  "unidad": "m2",
+                  "precio": 56.67,
+                  "horas": 1.45,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.08.02.040",
+                  "codigo_legacy": "",
+                  "titulo": "Refuerzo de fundación con micropilotes.",
+                  "unidad": "m2",
+                  "precio": 43.54,
+                  "horas": 1.0,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.08.02.050",
+                  "codigo_legacy": "",
+                  "titulo": "Refuerzo de fundación con mortero de alta resistencia.",
+                  "unidad": "m2",
+                  "precio": 43.39,
+                  "horas": 0.95,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "04.08.02.060",
+                  "codigo_legacy": "",
+                  "titulo": "Refuerzo de fundación con recalce.",
+                  "unidad": "m2",
+                  "precio": 32.9,
+                  "horas": 1.45,
+                  "producto_cliente": false
+                }
+              ],
+              "n": 6
+            }
+          ],
+          "n": 8
         }
       ],
-      "n": 28
+      "n": 100
     },
     {
       "codigo": "05",

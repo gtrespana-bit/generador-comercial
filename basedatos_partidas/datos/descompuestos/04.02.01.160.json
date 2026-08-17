@@ -1,0 +1,36 @@
+{
+  "codigo": "04.02.01.160",
+  "ambito": "reforma",
+  "capitulo": "04",
+  "subcapitulo": "02",
+  "unidad": "m3",
+  "titulo": "Recalce de zapata con concreto.",
+  "descripcion": "Recalce de zapata existente con concreto. Incluye el saneo y el vaciado. Medido por metro cúbico ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONC-250",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-PUENTE-ADH",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-VIBRADOR",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.7
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

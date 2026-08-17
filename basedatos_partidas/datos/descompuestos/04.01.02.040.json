@@ -1,0 +1,32 @@
+{
+  "codigo": "04.01.02.040",
+  "ambito": "reforma",
+  "capitulo": "04",
+  "subcapitulo": "01",
+  "unidad": "m2",
+  "titulo": "Mejoramiento de fundación con geotextil.",
+  "descripcion": "Colocación de geotextil de separación en fondo de fundación. Incluye la colocación del geotextil. Medido por metro cuadrado colocado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-GEOTEXTIL",
+      "rendimiento": 1.1
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.03
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.08
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

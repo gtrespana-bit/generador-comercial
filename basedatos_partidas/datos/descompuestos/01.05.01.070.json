@@ -1,0 +1,32 @@
+{
+  "codigo": "01.05.01.070",
+  "ambito": "reforma",
+  "capitulo": "01",
+  "subcapitulo": "05",
+  "unidad": "m2",
+  "titulo": "Andamio colgante para trabajos en fachada.",
+  "descripcion": "Montaje y uso de andamio colgante o silleta para trabajos en fachada. Incluye el montaje y la operación. Medido por metro cuadrado de fachada atendida.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-APEO",
+      "rendimiento": 1.2
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.35
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

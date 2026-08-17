@@ -1,0 +1,32 @@
+{
+  "codigo": "03.05.02.010",
+  "ambito": "reforma",
+  "capitulo": "03",
+  "subcapitulo": "05",
+  "unidad": "m2",
+  "titulo": "Estabilización de fondo de excavación.",
+  "descripcion": "Estabilización de fondo de excavación con capa de piedra. Incluye la colocación y la compactación. Medido por metro cuadrado estabilizado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PIEDRA-PIC",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-PLANCHA-COMP",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.1
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

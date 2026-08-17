@@ -1,0 +1,32 @@
+{
+  "codigo": "01.02.01.120",
+  "ambito": "reforma",
+  "capitulo": "01",
+  "subcapitulo": "02",
+  "unidad": "ud",
+  "titulo": "Cata para localización de tubería enterrada.",
+  "descripcion": "Cata para localización de tubería enterrada. Incluye la apertura y la limpieza. Medido por cata realizada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MQ-MART-ELEC",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.5
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

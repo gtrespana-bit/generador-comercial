@@ -1,0 +1,36 @@
+{
+  "codigo": "01.05.01.140",
+  "ambito": "reforma",
+  "capitulo": "01",
+  "subcapitulo": "05",
+  "unidad": "m",
+  "titulo": "Escalera de acceso provisional.",
+  "descripcion": "Colocación de escalera de acceso provisional a la zona de obra. Incluye el montaje de la escalera. Medido por metro lineal colocado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MADERA-LISTON",
+      "rendimiento": 3.0
+    },
+    {
+      "ref": "MT-CLAVOS",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.3
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

@@ -1,0 +1,32 @@
+{
+  "codigo": "01.03.01.170",
+  "ambito": "reforma",
+  "capitulo": "01",
+  "subcapitulo": "03",
+  "unidad": "m2",
+  "titulo": "Protección de mesón o mueble de cocina.",
+  "descripcion": "Protección de mesón o mueble de cocina existente. Incluye el forrado con cartón y lámina. Medido por metro cuadrado protegido.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PROT-CARTON",
+      "rendimiento": 1.1
+    },
+    {
+      "ref": "MT-CINTA-ENM",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.18
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

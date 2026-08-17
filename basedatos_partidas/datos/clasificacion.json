@@ -12,7 +12,10 @@
       "subcapitulos": {
         "01": {
           "nombre": "Desconexión y aislamiento de servicios existentes",
-          "apartados": {}
+          "apartados": {
+            "01": "Desconexión de instalaciones",
+            "02": "Aislamiento y cierre de servicios"
+          }
         },
         "02": {
           "nombre": "Inspecciones, levantamientos, catas y diagnóstico",
@@ -28,7 +31,10 @@
         },
         "04": {
           "nombre": "Cerramientos, barreras de polvo y control de accesos",
-          "apartados": {}
+          "apartados": {
+            "01": "Cerramientos y barreras de polvo",
+            "02": "Control de accesos y señalización de obra"
+          }
         },
         "05": {
           "nombre": "Andamios y medios de elevación",
@@ -171,7 +177,10 @@
         },
         "05": {
           "nombre": "Drenaje provisional, achique y estabilización",
-          "apartados": {}
+          "apartados": {
+            "01": "Achique y drenaje provisional",
+            "02": "Estabilización de taludes y fondos"
+          }
         },
         "06": {
           "nombre": "Carga y transporte de tierras",
@@ -186,7 +195,10 @@
       "subcapitulos": {
         "01": {
           "nombre": "Preparación y mejoramiento del terreno",
-          "apartados": {}
+          "apartados": {
+            "01": "Mejoramiento y sustitución de terreno",
+            "02": "Compactación y nivelación de fundación"
+          }
         },
         "02": {
           "nombre": "Bases y zapatas",
@@ -220,11 +232,17 @@
         },
         "07": {
           "nombre": "Drenaje y protección de fundaciones",
-          "apartados": {}
+          "apartados": {
+            "01": "Drenaje de fundaciones",
+            "02": "Protección e impermeabilización de fundaciones"
+          }
         },
         "08": {
           "nombre": "Reparación y refuerzo de fundaciones",
-          "apartados": {}
+          "apartados": {
+            "01": "Reparación de fundaciones",
+            "02": "Refuerzo de fundaciones"
+          }
         }
       }
     },

@@ -1,0 +1,32 @@
+{
+  "codigo": "03.01.01.080",
+  "ambito": "reforma",
+  "capitulo": "03",
+  "subcapitulo": "01",
+  "unidad": "m2",
+  "titulo": "Limpieza de terreno en pendiente.",
+  "descripcion": "Limpieza y desbroce de terreno en pendiente. Incluye la limpieza manual y mecanizada. Medido por metro cuadrado limpiado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MQ-DESBROZ",
+      "rendimiento": 0.03
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.1
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

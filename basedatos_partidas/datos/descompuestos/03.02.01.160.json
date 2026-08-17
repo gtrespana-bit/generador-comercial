@@ -1,0 +1,36 @@
+{
+  "codigo": "03.02.01.160",
+  "ambito": "reforma",
+  "capitulo": "03",
+  "subcapitulo": "02",
+  "unidad": "m3",
+  "titulo": "Excavación a cielo abierto con retiro lateral.",
+  "descripcion": "Excavación mecanizada a cielo abierto con retiro lateral del material. Incluye la excavación y el acopio del material retirado. Medido por metro cúbico excavado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-RETRO",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MQ-VOLQ",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.1
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

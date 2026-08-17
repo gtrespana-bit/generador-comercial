@@ -1,0 +1,32 @@
+{
+  "codigo": "04.06.01.060",
+  "ambito": "reforma",
+  "capitulo": "04",
+  "subcapitulo": "06",
+  "unidad": "m",
+  "titulo": "Perforación de pilote vaciado en sitio.",
+  "descripcion": "Perforación para pilote vaciado en sitio. Incluye la perforación. Medido por metro lineal perforado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MQ-PERF-PILOTE",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MQ-GRUA",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.3
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

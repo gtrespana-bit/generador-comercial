@@ -1,0 +1,32 @@
+{
+  "codigo": "01.02.01.070",
+  "ambito": "reforma",
+  "capitulo": "01",
+  "subcapitulo": "02",
+  "unidad": "ud",
+  "titulo": "Ensayo de carga o prueba de estructura existente.",
+  "descripcion": "Realización de ensayo o prueba de carga de estructura existente. Incluye la preparación y la medición. Medido por ensayo realizado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MQ-NIVEL-LASER",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 1.0
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

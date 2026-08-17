@@ -1,0 +1,32 @@
+{
+  "codigo": "04.01.02.020",
+  "ambito": "reforma",
+  "capitulo": "04",
+  "subcapitulo": "01",
+  "unidad": "m2",
+  "titulo": "Riego y compactación de fundación.",
+  "descripcion": "Riego y compactación del fondo de fundación. Incluye el riego y la compactación. Medido por metro cuadrado ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-AGUA-OBRA",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MQ-PLANCHA-COMP",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.08
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

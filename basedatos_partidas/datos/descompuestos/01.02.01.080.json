@@ -1,0 +1,28 @@
+{
+  "codigo": "01.02.01.080",
+  "ambito": "reforma",
+  "capitulo": "01",
+  "subcapitulo": "02",
+  "unidad": "m2",
+  "titulo": "Levantamiento de patologías de paramentos.",
+  "descripcion": "Levantamiento de patologías de paramentos (humedades, fisuras, desprendimientos). Incluye la inspección y el registro. Medido por metro cuadrado inspeccionado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MQ-NIVEL-LASER",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.1
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

@@ -1,20 +1,20 @@
 # Resumen de cobertura del catálogo
 
-- Partidas actuales: **1460**
-- Objetivo mínimo: **3000** (brecha 1540)
-- Objetivo amplio: **5000** (brecha 3540)
-- Subcapítulos sin cobertura: **47**
-- Subcapítulos en estado crítico: **44**
+- Partidas actuales: **1660**
+- Objetivo mínimo: **3000** (brecha 1340)
+- Objetivo amplio: **5000** (brecha 3340)
+- Subcapítulos sin cobertura: **41**
+- Subcapítulos en estado crítico: **42**
 - Diccionario de sinónimos: **146 grupos · 661 términos · 18 capítulos**
 
 ## Estado por capítulo
 
 | Cap. | Capítulo | Actual | Mínimo | Amplio | Brecha mínima |
 |---|---|---:|---:|---:|---:|
-| 01 | Actuaciones previas | 28 | 100 | 170 | 72 |
+| 01 | Actuaciones previas | 100 | 100 | 170 | 0 |
 | 02 | Demoliciones y desmontajes | 265 | 260 | 420 | -5 |
-| 03 | Acondicionamiento del terreno | 24 | 80 | 140 | 56 |
-| 04 | Fundaciones | 28 | 100 | 180 | 72 |
+| 03 | Acondicionamiento del terreno | 80 | 80 | 140 | 0 |
+| 04 | Fundaciones | 100 | 100 | 180 | 0 |
 | 05 | Estructuras | 38 | 170 | 300 | 132 |
 | 06 | Fachadas y particiones | 180 | 180 | 300 | 0 |
 | 07 | Carpintería, herrería, vidrios y protección solar | 180 | 180 | 300 | 0 |

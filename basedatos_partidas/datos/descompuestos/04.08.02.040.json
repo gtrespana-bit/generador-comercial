@@ -1,0 +1,40 @@
+{
+  "codigo": "04.08.02.040",
+  "ambito": "reforma",
+  "capitulo": "04",
+  "subcapitulo": "08",
+  "unidad": "m2",
+  "titulo": "Refuerzo de fundación con micropilotes.",
+  "descripcion": "Refuerzo de fundación con micropilotes. Incluye la perforación y el vaciado. Medido por metro lineal reforzado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MQ-PERF-PILOTE",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MT-CONC-250",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MT-ACERO-CAB",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MQ-GRUA",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.4
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

@@ -1,0 +1,32 @@
+{
+  "codigo": "01.03.01.150",
+  "ambito": "reforma",
+  "capitulo": "01",
+  "subcapitulo": "03",
+  "unidad": "m",
+  "titulo": "Protección de zócalo o rodapié existente.",
+  "descripcion": "Protección de zócalo o rodapié existente. Incluye el forrado con cartón. Medido por metro lineal protegido.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PROT-CARTON",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MT-CINTA-ENM",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.08
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

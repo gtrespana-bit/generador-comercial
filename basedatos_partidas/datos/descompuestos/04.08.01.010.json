@@ -1,0 +1,36 @@
+{
+  "codigo": "04.08.01.010",
+  "ambito": "reforma",
+  "capitulo": "04",
+  "subcapitulo": "08",
+  "unidad": "m2",
+  "titulo": "Reparación de fundación con mortero.",
+  "descripcion": "Reparación de fundación con mortero de reparación estructural. Incluye el saneo y la reparación. Medido por metro cuadrado reparado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MORT-REP-EST",
+      "rendimiento": 8.0
+    },
+    {
+      "ref": "MT-PUENTE-ADH",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MQ-BATID",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.55
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.35
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

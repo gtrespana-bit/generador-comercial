@@ -1,0 +1,36 @@
+{
+  "codigo": "03.02.01.130",
+  "ambito": "reforma",
+  "capitulo": "03",
+  "subcapitulo": "02",
+  "unidad": "m3",
+  "titulo": "Excavación de sótano.",
+  "descripcion": "Excavación de sótano, con retirada de tierras. Incluye la excavación y el acopio. Medido por metro cúbico excavado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MQ-RETRO",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-VOLQ",
+      "rendimiento": 0.07
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.12
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

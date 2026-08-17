@@ -1,0 +1,36 @@
+{
+  "codigo": "04.08.01.020",
+  "ambito": "reforma",
+  "capitulo": "04",
+  "subcapitulo": "08",
+  "unidad": "m2",
+  "titulo": "Reparación de fisuras en fundación.",
+  "descripcion": "Reparación de fisuras en fundación con inyección de resina. Incluye la inyección. Medido por metro lineal reparado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-RESINA-INYEC",
+      "rendimiento": 0.8
+    },
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-INYECTORA",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.15
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

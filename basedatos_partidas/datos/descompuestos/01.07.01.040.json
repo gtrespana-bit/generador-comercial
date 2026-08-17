@@ -1,0 +1,28 @@
+{
+  "codigo": "01.07.01.040",
+  "ambito": "reforma",
+  "capitulo": "01",
+  "subcapitulo": "07",
+  "unidad": "m2",
+  "titulo": "Control geométrico de paramentos.",
+  "descripcion": "Control geométrico de plomos y niveles de paramentos. Incluye la verificación con nivel láser. Medido por metro cuadrado verificado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MQ-NIVEL-LASER",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.06
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

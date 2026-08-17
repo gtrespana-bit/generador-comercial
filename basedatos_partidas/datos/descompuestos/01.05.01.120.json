@@ -1,0 +1,28 @@
+{
+  "codigo": "01.05.01.120",
+  "ambito": "reforma",
+  "capitulo": "01",
+  "subcapitulo": "05",
+  "unidad": "m2",
+  "titulo": "Plataforma elevadora móvil de tijera.",
+  "descripcion": "Uso de plataforma elevadora móvil de tijera para trabajos en altura. Incluye la operación. Medido por metro cuadrado de superficie atendida.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MQ-MONTAC",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.15
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}
