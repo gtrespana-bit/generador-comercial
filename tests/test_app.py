@@ -765,6 +765,11 @@ def test_busqueda_remota_cubre_descripcion_y_catalogo_se_pagina():
         data = busqueda.json()
         assert data["ok"]
         assert any("Levantamiento" in p["nombre"] for p in data["resultados"])
+        sinonimo = client.get(
+            "/partidas/api/buscar", params={"q": "hormigón", "limite": 20}
+        ).json()
+        assert sinonimo["resultados"]
+        assert any("concreto" in p["nombre"].lower() for p in sinonimo["resultados"])
         metrica = client.post(
             "/partidas/api/busqueda-sin-resultados",
             json={"q": "partida técnica inexistente"},

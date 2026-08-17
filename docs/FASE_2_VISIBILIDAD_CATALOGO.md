@@ -1,7 +1,7 @@
 # Fase 2 — Visibilidad y actualización incremental del catálogo
 
 **Estado de código:** completada el 16/08/2026
-**Estado de Supabase:** migración pendiente de ejecutar
+**Estado de Supabase:** migración `d6e2f9c4b8a1` aplicada por el titular
 
 ## Objetivo
 

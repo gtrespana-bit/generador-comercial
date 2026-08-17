@@ -9,18 +9,13 @@ junto con `docs/CONTINUIDAD_STAGING_SUPABASE.md` (estado de staging/matriz) y
 
 ---
 
-## ⚠️ 0. Migración de visibilidad pendiente en Supabase (16/08/2026)
+## ✅ 0. Migración de visibilidad aplicada en Supabase (16/08/2026)
 
-La fase 2 añade el head **`d6e2f9c4b8a1`** sobre `f8a1b2c3d4e5`. Antes de
-desplegar este código hay que ejecutar con el rol administrativo:
-
-```text
-docs/staging_upgrade_d6e2f9c4b8a1.sql
-```
-
-Añade identidad estable, marca oficial, visibilidad por organización y versión
-de alta a `partidas`. No oculta ni elimina datos durante la migración. Hasta
-aplicarla, el nuevo runtime devolverá 503 en `/readyz` por diferencia de head.
+El titular confirmó la ejecución de
+`docs/staging_upgrade_d6e2f9c4b8a1.sql`. La base queda en el head
+**`d6e2f9c4b8a1`**, que coincide con el exigido por el runtime. La migración
+añade identidad estable, marca oficial, visibilidad por organización y versión
+de alta a `partidas`; no oculta ni elimina datos durante su ejecución.
 
 ---
 

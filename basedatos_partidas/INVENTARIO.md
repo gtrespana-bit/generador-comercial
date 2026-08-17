@@ -25,7 +25,7 @@ numérica v2 aprobada para reforma y remodelación en Venezuela.
 
 **Validación:** las 540 partidas pasan `es_formato_cype_xlsx` y
 `analizar_cype_xlsx`. El catálogo masivo se detecta con **12 campos, 0 errores y
-0 advertencias**. La suite de aplicación pasa con **480 tests y 6 omitidos**.
+0 advertencias**. La suite de aplicación pasa con **483 tests y 6 omitidos**.
 
 ---
 
@@ -37,6 +37,8 @@ numérica v2 aprobada para reforma y remodelación en Venezuela.
 | `datos/clasificacion.json` | **Taxonomía v2.** Capítulos, subcapítulos y apartados. |
 | `datos/descompuestos/*.json` | **Una partida por archivo**, con ruta v2, código anterior, descripción y recursos. |
 | `datos/mapa_migracion_v2.json` | Equivalencia de las 540 partidas `CT-CC-SS-NNN` → `CC.SS.AA.NNN`. |
+| `datos/objetivos_cobertura.json` | Metas 3.000/5.000, operaciones y variaciones por capítulo. |
+| `datos/sinonimos_busqueda.json` | Tesauro bidireccional: 146 grupos y 661 términos. |
 
 `datos/partidas.csv` no se edita: lo regenera `descompuestos.py`.
 
@@ -52,6 +54,7 @@ numérica v2 aprobada para reforma y remodelación en Venezuela.
 | `precio.py` | Cambia un recurso y simula su impacto antes de escribir. |
 | `terminologia.py` | Aplica y audita vocabulario venezolano en recursos, árbol y partidas. |
 | `cobertura.py` | Informe por capítulo, subcapítulo y apartado. |
+| `planificar_cobertura.py` | Genera matriz JSON/CSV y prioridades desde los objetivos. |
 | `equidad.py` | Reparto del precio de venta y simulación de tarifas. |
 
 ## Salidas
@@ -62,6 +65,8 @@ numérica v2 aprobada para reforma y remodelación en Venezuela.
 | `salida/catalogo_partidas.xlsx` | Carga masiva del catálogo. |
 | `salida/arbol_catalogo.json` | Árbol capítulo → subcapítulo → apartado → partida. |
 | `salida/precios_para_revisar.csv` | Plantilla de revisión de precios. |
+| `salida/matriz_cobertura.{json,csv}` | 172 familias con estado, metas y brechas. |
+| `salida/RESUMEN_COBERTURA.md` | Tablero de avance y primeras prioridades. |
 
 ---
 
@@ -131,8 +136,9 @@ Los hitos de 800 y 1.500 son internos. El catálogo general tendrá un mínimo
 aproximado de **3.000 partidas base** y un objetivo amplio de **4.000–5.000**.
 La aplicación ya superó una prueba sintética con 5.000 partidas mediante índice
 ligero, fichas bajo demanda, árbol progresivo y gestión paginada. La
-ocultación/restauración y actualización incremental ya están implantadas. El
-siguiente paso es la matriz exhaustiva de cobertura y sinónimos. Prioridades:
+ocultación/restauración y actualización incremental ya están implantadas. La
+matriz 3.000/5.000 y el tesauro de 146 grupos cubren los 18 capítulos. El
+siguiente paso es producir las familias pendientes. Prioridades:
 
 1. Instalaciones sanitarias, eléctricas, climatización, ventilación, datos,
    seguridad y protección contra incendios.

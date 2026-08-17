@@ -6550,9 +6550,18 @@ def _texto_indice_catalogo(partida: Partida) -> str:
             continue
         vistas.add(palabra)
         unicas.append(palabra)
-        if len(unicas) >= 32:
+        if len(unicas) >= 24:
             break
-    return " ".join(unicas)[:280]
+    from .services.busqueda_catalogo import alias_para_texto
+    capitulo = (partida.codigo_clasificacion or partida.categoria or "")[:2]
+    for alias in alias_para_texto(bruto, capitulo):
+        if alias in vistas:
+            continue
+        vistas.add(alias)
+        unicas.append(alias)
+        if len(unicas) >= 40:
+            break
+    return " ".join(unicas)[:320]
 
 
 def _partida_catalogo_indice(partida: Partida) -> dict:
@@ -6592,6 +6601,58 @@ def _indice_catalogo_para_editor(db: Session) -> list[dict]:
         .all()
     )
     return [_partida_catalogo_indice(partida) for partida in partidas]
+
+
+def _aplicar_busqueda_catalogo(query, consulta: str):
+    """Aplica AND entre palabras y OR entre sinónimos/campos."""
+    from .services.busqueda_catalogo import variantes_consulta
+    grupos = variantes_consulta(consulta)
+    campos = (
+        Partida.nombre,
+        Partida.descripcion,
+        Partida.categoria,
+        Partida.subcategoria,
+        Partida.apartado,
+        Partida.codigo_interno,
+        Partida.codigo_legacy,
+        Partida.proveedor,
+    )
+    for variantes in grupos:
+        condiciones = []
+        for variante in variantes:
+            like = f"%{variante[:40]}%"
+            condiciones.extend(campo.ilike(like) for campo in campos)
+        query = query.filter(or_(*condiciones))
+    return query, grupos
+
+
+def _puntuar_busqueda_catalogo(partida: Partida, consulta: str, grupos: list[list[str]]) -> float:
+    from .services.busqueda_catalogo import normalizar
+    nombre = normalizar(partida.nombre or "")
+    ruta = normalizar(" ".join((
+        partida.categoria or "", partida.subcategoria or "", partida.apartado or ""
+    )))
+    descripcion = normalizar(partida.descripcion or "")
+    consulta_normal = normalizar(consulta)
+    puntuacion = min(partida.usos or 0, 50) * 0.1
+    if consulta_normal and consulta_normal in nombre:
+        puntuacion += 120
+    for variantes in grupos:
+        mejor = 0
+        for variante in variantes:
+            termino = normalizar(variante)
+            if not termino:
+                continue
+            if nombre.startswith(termino):
+                mejor = max(mejor, 70)
+            elif termino in nombre:
+                mejor = max(mejor, 50)
+            elif termino in ruta:
+                mejor = max(mejor, 30)
+            elif termino in descripcion:
+                mejor = max(mejor, 5)
+        puntuacion += mejor
+    return puntuacion
 
 
 def _partida_catalogo_json(partida: Partida) -> dict:
@@ -6663,13 +6724,7 @@ def listar_partidas(
         Partida.oculta.is_(vista == "ocultas")
     )
     if q.strip():
-        like = f"%{q.strip()[:120]}%"
-        query = query.filter(or_(
-            Partida.nombre.ilike(like), Partida.categoria.ilike(like),
-            Partida.subcategoria.ilike(like), Partida.apartado.ilike(like),
-            Partida.codigo_interno.ilike(like), Partida.codigo_legacy.ilike(like),
-            Partida.proveedor.ilike(like), Partida.descripcion.ilike(like),
-        ))
+        query, _ = _aplicar_busqueda_catalogo(query, q.strip()[:120])
     total_partidas = query.count()
     por_pagina = 100
     total_paginas = max(1, math.ceil(total_partidas / por_pagina))
@@ -6719,22 +6774,14 @@ def buscar_partidas_catalogo_api(
     query = db.query(Partida).filter(
         Partida.oculta.is_(False)
     ).options(load_only(*_CAMPOS_INDICE_CATALOGO))
-    terminos = re.findall(r"[\w.-]+", consulta, flags=re.UNICODE)[:6]
-    for termino in terminos:
-        like = f"%{termino[:40]}%"
-        query = query.filter(or_(
-            Partida.nombre.ilike(like),
-            Partida.descripcion.ilike(like),
-            Partida.categoria.ilike(like),
-            Partida.subcategoria.ilike(like),
-            Partida.apartado.ilike(like),
-            Partida.codigo_interno.ilike(like),
-            Partida.codigo_legacy.ilike(like),
-            Partida.proveedor.ilike(like),
-        ))
-    partidas = query.order_by(
+    query, grupos = _aplicar_busqueda_catalogo(query, consulta)
+    candidatas = query.order_by(
         Partida.usos.desc(), Partida.ultimo_uso.desc(), Partida.nombre
-    ).limit(limite).all() if terminos else []
+    ).limit(max(100, min(500, limite * 8))).all() if grupos else []
+    partidas = sorted(
+        candidatas,
+        key=lambda p: (-_puntuar_busqueda_catalogo(p, consulta, grupos), p.nombre),
+    )[:limite]
     return {
         "ok": True,
         "q": consulta,

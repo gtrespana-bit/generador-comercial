@@ -105,11 +105,11 @@ descomposición. Resultado en `TestClient`, sin caché de navegador:
 
 | Pantalla | Resultado |
 |---|---:|
-| Apertura del editor | **1,245 s** |
-| HTML del editor sin comprimir | **3.479.606 bytes** |
+| Apertura del editor | **1,681 s** |
+| HTML del editor sin comprimir | **3.497.057 bytes** |
 | Registros del índice | **5.000** |
 | Apertura de `/partidas` | **0,110 s** |
-| HTML de gestión | **519.405 bytes** |
+| HTML de gestión | **524.938 bytes** |
 | Filas renderizadas en gestión | **100** |
 
 La respuesta real viaja además bajo `GZipMiddleware`, por lo que el tamaño de
@@ -120,7 +120,7 @@ MB a menos de 1 MB en la regresión automatizada.
 
 ## Validación
 
-- 480 tests superados y 6 omitidos por requerir PostgreSQL administrativo.
+- 483 tests superados y 6 omitidos por requerir PostgreSQL administrativo.
 - JavaScript validado con `node --check`.
 - 63 plantillas Jinja parseadas.
 - 42 dependencias directas coherentes con el lock.
