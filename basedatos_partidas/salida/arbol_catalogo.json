@@ -6039,7 +6039,7 @@
                   "codigo_legacy": "CT-05-02-030",
                   "titulo": "Soldadura de conexiones estructurales en obra.",
                   "unidad": "m",
-                  "precio": 8.35,
+                  "precio": 8.49,
                   "horas": 0.6,
                   "producto_cliente": false
                 },
@@ -6048,7 +6048,7 @@
                   "codigo_legacy": "CT-05-02-040",
                   "titulo": "Imprimación anticorrosiva de estructura metálica.",
                   "unidad": "m²",
-                  "precio": 6.2,
+                  "precio": 6.54,
                   "horas": 0.38,
                   "producto_cliente": false
                 },
@@ -6084,7 +6084,7 @@
                   "codigo_legacy": "",
                   "titulo": "Soldadura de conexiones estructurales.",
                   "unidad": "m",
-                  "precio": 5.06,
+                  "precio": 5.1,
                   "horas": 0.45,
                   "producto_cliente": false
                 },
@@ -6093,7 +6093,7 @@
                   "codigo_legacy": "",
                   "titulo": "Imprimación anticorrosiva de estructura.",
                   "unidad": "m2",
-                  "precio": 3.68,
+                  "precio": 3.84,
                   "horas": 0.3,
                   "producto_cliente": false
                 },
@@ -6111,7 +6111,7 @@
                   "codigo_legacy": "",
                   "titulo": "Estructura metálica para mezzanina.",
                   "unidad": "m2",
-                  "precio": 67.26,
+                  "precio": 67.34,
                   "horas": 1.9,
                   "producto_cliente": false
                 },
@@ -6120,7 +6120,7 @@
                   "codigo_legacy": "",
                   "titulo": "Estructura metálica para cubierta.",
                   "unidad": "m2",
-                  "precio": 45.36,
+                  "precio": 45.41,
                   "horas": 1.4,
                   "producto_cliente": false
                 },
@@ -6129,7 +6129,7 @@
                   "codigo_legacy": "",
                   "titulo": "Columna metálica.",
                   "unidad": "m",
-                  "precio": 55.64,
+                  "precio": 55.69,
                   "horas": 1.5,
                   "producto_cliente": false
                 },
@@ -6138,7 +6138,7 @@
                   "codigo_legacy": "",
                   "titulo": "Viga metálica.",
                   "unidad": "m",
-                  "precio": 64.6,
+                  "precio": 64.66,
                   "horas": 1.65,
                   "producto_cliente": false
                 },
@@ -6147,7 +6147,7 @@
                   "codigo_legacy": "",
                   "titulo": "Estructura metálica para escalera.",
                   "unidad": "m2",
-                  "precio": 52.57,
+                  "precio": 52.64,
                   "horas": 1.7,
                   "producto_cliente": false
                 },
@@ -6156,7 +6156,7 @@
                   "codigo_legacy": "",
                   "titulo": "Estructura metálica para marquesina.",
                   "unidad": "m2",
-                  "precio": 36.13,
+                  "precio": 36.18,
                   "horas": 1.25,
                   "producto_cliente": false
                 },
@@ -6165,7 +6165,7 @@
                   "codigo_legacy": "",
                   "titulo": "Estructura metálica para techo ligero.",
                   "unidad": "m2",
-                  "precio": 29.5,
+                  "precio": 29.55,
                   "horas": 1.1,
                   "producto_cliente": false
                 },
@@ -6183,7 +6183,7 @@
                   "codigo_legacy": "",
                   "titulo": "Estructura metálica con protección anticorrosiva.",
                   "unidad": "m2",
-                  "precio": 37.7,
+                  "precio": 38.01,
                   "horas": 1.25,
                   "producto_cliente": false
                 },
@@ -6192,7 +6192,7 @@
                   "codigo_legacy": "",
                   "titulo": "Estructura metálica para entrepiso ligero.",
                   "unidad": "m2",
-                  "precio": 42.07,
+                  "precio": 42.12,
                   "horas": 1.35,
                   "producto_cliente": false
                 },
@@ -6201,7 +6201,7 @@
                   "codigo_legacy": "",
                   "titulo": "Viga de amarre metálica.",
                   "unidad": "m",
-                  "precio": 27.18,
+                  "precio": 27.21,
                   "horas": 0.8,
                   "producto_cliente": false
                 },
@@ -6210,7 +6210,7 @@
                   "codigo_legacy": "",
                   "titulo": "Refuerzo metálico de losa.",
                   "unidad": "m2",
-                  "precio": 49.06,
+                  "precio": 49.13,
                   "horas": 1.55,
                   "producto_cliente": false
                 }
@@ -6729,7 +6729,7 @@
                   "codigo_legacy": "",
                   "titulo": "Escalera metálica de estructura.",
                   "unidad": "m2",
-                  "precio": 63.66,
+                  "precio": 63.75,
                   "horas": 2.1,
                   "producto_cliente": false
                 },
@@ -6756,7 +6756,7 @@
                   "codigo_legacy": "",
                   "titulo": "Escalera metálica con peldaños de rejilla.",
                   "unidad": "m2",
-                  "precio": 69.51,
+                  "precio": 69.59,
                   "horas": 2.2,
                   "producto_cliente": false
                 },
@@ -6765,7 +6765,7 @@
                   "codigo_legacy": "",
                   "titulo": "Rampa metálica estructural.",
                   "unidad": "m2",
-                  "precio": 55.86,
+                  "precio": 55.93,
                   "horas": 1.8,
                   "producto_cliente": false
                 },
@@ -6783,7 +6783,7 @@
                   "codigo_legacy": "",
                   "titulo": "Escalera metálica de caracol.",
                   "unidad": "m2",
-                  "precio": 78.04,
+                  "precio": 78.14,
                   "horas": 2.6,
                   "producto_cliente": false
                 },
@@ -6819,7 +6819,7 @@
                   "codigo_legacy": "",
                   "titulo": "Escalera metálica con baranda.",
                   "unidad": "m2",
-                  "precio": 69.51,
+                  "precio": 69.59,
                   "horas": 2.2,
                   "producto_cliente": false
                 },
@@ -6846,7 +6846,7 @@
                   "codigo_legacy": "",
                   "titulo": "Escalera metálica de emergencia.",
                   "unidad": "m2",
-                  "precio": 78.04,
+                  "precio": 78.14,
                   "horas": 2.6,
                   "producto_cliente": false
                 }
@@ -6905,7 +6905,7 @@
                   "codigo_legacy": "",
                   "titulo": "Soldadura estructural en obra.",
                   "unidad": "m",
-                  "precio": 5.97,
+                  "precio": 6.02,
                   "horas": 0.5,
                   "producto_cliente": false
                 },
@@ -6932,7 +6932,7 @@
                   "codigo_legacy": "",
                   "titulo": "Conexión soldada de placa base.",
                   "unidad": "m",
-                  "precio": 7.01,
+                  "precio": 7.07,
                   "horas": 0.58,
                   "producto_cliente": false
                 }
@@ -7043,7 +7043,7 @@
                   "codigo_legacy": "CT-05-06-070",
                   "titulo": "Refuerzo de losa o viga con perfil metálico.",
                   "unidad": "m",
-                  "precio": 262.18,
+                  "precio": 262.6,
                   "horas": 4.9,
                   "producto_cliente": false
                 },
@@ -7097,7 +7097,7 @@
                   "codigo_legacy": "",
                   "titulo": "Refuerzo de losa con perfil metálico.",
                   "unidad": "m2",
-                  "precio": 49.06,
+                  "precio": 49.13,
                   "horas": 1.55,
                   "producto_cliente": false
                 },
@@ -7160,7 +7160,7 @@
                   "codigo_legacy": "",
                   "titulo": "Refuerzo de estructura con perfil.",
                   "unidad": "m2",
-                  "precio": 42.43,
+                  "precio": 42.48,
                   "horas": 1.4,
                   "producto_cliente": false
                 },
@@ -8407,7 +8407,7 @@
                   "codigo_legacy": "",
                   "titulo": "Dintel metálico para vano.",
                   "unidad": "m",
-                  "precio": 23.66,
+                  "precio": 23.8,
                   "horas": 0.8,
                   "producto_cliente": false
                 },
@@ -8452,7 +8452,7 @@
                   "codigo_legacy": "",
                   "titulo": "Refuerzo de vano con perfil de acero.",
                   "unidad": "m",
-                  "precio": 14.3,
+                  "precio": 14.4,
                   "horas": 0.65,
                   "producto_cliente": false
                 },
@@ -8728,7 +8728,7 @@
                   "codigo_legacy": "",
                   "titulo": "Celosía metálica decorativa.",
                   "unidad": "m2",
-                  "precio": 35.06,
+                  "precio": 35.32,
                   "horas": 1.4,
                   "producto_cliente": false
                 },
@@ -8737,7 +8737,7 @@
                   "codigo_legacy": "",
                   "titulo": "Celosía de fachada de acero.",
                   "unidad": "m2",
-                  "precio": 35.06,
+                  "precio": 35.32,
                   "horas": 1.4,
                   "producto_cliente": false
                 },
@@ -8771,7 +8771,7 @@
                   "codigo_legacy": "",
                   "titulo": "Barandilla de fachada con defensa.",
                   "unidad": "m2",
-                  "precio": 25.35,
+                  "precio": 25.54,
                   "horas": 0.95,
                   "producto_cliente": false
                 },
@@ -8780,7 +8780,7 @@
                   "codigo_legacy": "",
                   "titulo": "Protección de fachada contra impactos.",
                   "unidad": "m2",
-                  "precio": 25.35,
+                  "precio": 25.54,
                   "horas": 0.95,
                   "producto_cliente": false
                 },
@@ -8789,7 +8789,7 @@
                   "codigo_legacy": "",
                   "titulo": "Defensa de fachada con reja.",
                   "unidad": "m2",
-                  "precio": 53.82,
+                  "precio": 54.17,
                   "horas": 1.8,
                   "producto_cliente": false
                 },
@@ -8798,7 +8798,7 @@
                   "codigo_legacy": "",
                   "titulo": "Defensa de fachada de acero inoxidable.",
                   "unidad": "m2",
-                  "precio": 132.55,
+                  "precio": 132.59,
                   "horas": 1.25,
                   "producto_cliente": false
                 }
@@ -9094,7 +9094,7 @@
                   "codigo_legacy": "CT-15-01-060",
                   "titulo": "Marco y contramarco metálico para vano.",
                   "unidad": "m",
-                  "precio": 19.15,
+                  "precio": 19.27,
                   "horas": 0.7,
                   "producto_cliente": false
                 },
@@ -9306,7 +9306,7 @@
                   "codigo_legacy": "",
                   "titulo": "Puerta principal de madera maciza exterior.",
                   "unidad": "ud",
-                  "precio": 179.28,
+                  "precio": 166.15,
                   "horas": 4.3,
                   "producto_cliente": false
                 },
@@ -9315,7 +9315,7 @@
                   "codigo_legacy": "",
                   "titulo": "Puerta blindada de seguridad.",
                   "unidad": "ud",
-                  "precio": 220.34,
+                  "precio": 207.21,
                   "horas": 4.8,
                   "producto_cliente": false
                 },
@@ -9333,7 +9333,7 @@
                   "codigo_legacy": "",
                   "titulo": "Puerta de acero para entrada de servicio.",
                   "unidad": "ud",
-                  "precio": 149.08,
+                  "precio": 149.4,
                   "horas": 2.9,
                   "producto_cliente": false
                 },
@@ -9351,7 +9351,7 @@
                   "codigo_legacy": "",
                   "titulo": "Puerta de entrada con espejo de seguridad.",
                   "unidad": "ud",
-                  "precio": 178.71,
+                  "precio": 165.58,
                   "horas": 4.3,
                   "producto_cliente": false
                 },
@@ -9369,7 +9369,7 @@
                   "codigo_legacy": "",
                   "titulo": "Puerta de reja de acceso con cerradura.",
                   "unidad": "ud",
-                  "precio": 113.22,
+                  "precio": 113.62,
                   "horas": 3.4,
                   "producto_cliente": false
                 },
@@ -9405,7 +9405,7 @@
                   "codigo_legacy": "",
                   "titulo": "Puerta de acceso de madera con panel vidriado.",
                   "unidad": "ud",
-                  "precio": 198.48,
+                  "precio": 185.35,
                   "horas": 4.3,
                   "producto_cliente": false
                 },
@@ -9432,7 +9432,7 @@
                   "codigo_legacy": "",
                   "titulo": "Puerta de acceso de madera con doble cerradura.",
                   "unidad": "ud",
-                  "precio": 207.52,
+                  "precio": 194.39,
                   "horas": 4.3,
                   "producto_cliente": false
                 },
@@ -9441,7 +9441,7 @@
                   "codigo_legacy": "",
                   "titulo": "Puerta de acceso de madera con mirilla.",
                   "unidad": "ud",
-                  "precio": 178.71,
+                  "precio": 165.58,
                   "horas": 4.3,
                   "producto_cliente": false
                 },
@@ -9450,7 +9450,7 @@
                   "codigo_legacy": "",
                   "titulo": "Puerta de acceso de madera con refuerzo metálico.",
                   "unidad": "ud",
-                  "precio": 188.11,
+                  "precio": 174.98,
                   "horas": 4.6,
                   "producto_cliente": false
                 }
@@ -9703,7 +9703,7 @@
                   "codigo_legacy": "CT-15-04-010",
                   "titulo": "Reja de protección metálica para ventana o puerta.",
                   "unidad": "m²",
-                  "precio": 73.44,
+                  "precio": 73.79,
                   "horas": 1.8,
                   "producto_cliente": false
                 },
@@ -9712,7 +9712,7 @@
                   "codigo_legacy": "CT-15-04-020",
                   "titulo": "Portón de reja para acceso.",
                   "unidad": "m²",
-                  "precio": 92.08,
+                  "precio": 92.46,
                   "horas": 2.12,
                   "producto_cliente": false
                 },
@@ -9721,7 +9721,7 @@
                   "codigo_legacy": "CT-15-04-040",
                   "titulo": "Estructura metálica menor y marquesinas.",
                   "unidad": "kg",
-                  "precio": 4.24,
+                  "precio": 4.26,
                   "horas": 0.091,
                   "producto_cliente": false
                 },
@@ -9730,7 +9730,7 @@
                   "codigo_legacy": "",
                   "titulo": "Reja fija de tubo para ventana.",
                   "unidad": "m2",
-                  "precio": 72.45,
+                  "precio": 72.8,
                   "horas": 1.8,
                   "producto_cliente": false
                 },
@@ -9739,7 +9739,7 @@
                   "codigo_legacy": "",
                   "titulo": "Reja de tubo con marco para puerta.",
                   "unidad": "m2",
-                  "precio": 105.62,
+                  "precio": 106.03,
                   "horas": 2.2,
                   "producto_cliente": false
                 },
@@ -9748,7 +9748,7 @@
                   "codigo_legacy": "",
                   "titulo": "Reja de acero inoxidable para ventana.",
                   "unidad": "m2",
-                  "precio": 291.47,
+                  "precio": 291.55,
                   "horas": 1.9,
                   "producto_cliente": false
                 },
@@ -9757,7 +9757,7 @@
                   "codigo_legacy": "",
                   "titulo": "Reja decorativa de forja para ventana.",
                   "unidad": "m2",
-                  "precio": 88.92,
+                  "precio": 89.32,
                   "horas": 2.5,
                   "producto_cliente": false
                 },
@@ -9766,7 +9766,7 @@
                   "codigo_legacy": "",
                   "titulo": "Reja batiente de tubo para ventana.",
                   "unidad": "m2",
-                  "precio": 106.35,
+                  "precio": 106.74,
                   "horas": 2.3,
                   "producto_cliente": false
                 },
@@ -9775,7 +9775,7 @@
                   "codigo_legacy": "",
                   "titulo": "Cerrajera de protección para ventana.",
                   "unidad": "m2",
-                  "precio": 64.88,
+                  "precio": 65.22,
                   "horas": 1.6,
                   "producto_cliente": false
                 },
@@ -9784,7 +9784,7 @@
                   "codigo_legacy": "",
                   "titulo": "Estructura metálica menor para marquesina.",
                   "unidad": "m2",
-                  "precio": 76.44,
+                  "precio": 76.87,
                   "horas": 2.3,
                   "producto_cliente": false
                 }
@@ -9800,7 +9800,7 @@
                   "codigo_legacy": "CT-15-02-030",
                   "titulo": "Portón corredizo metálico.",
                   "unidad": "m²",
-                  "precio": 94.6,
+                  "precio": 95.0,
                   "horas": 2.3,
                   "producto_cliente": false
                 },
@@ -9809,7 +9809,7 @@
                   "codigo_legacy": "",
                   "titulo": "Portón corredizo de tubo de acero.",
                   "unidad": "ud",
-                  "precio": 266.07,
+                  "precio": 266.85,
                   "horas": 5.6,
                   "producto_cliente": false
                 },
@@ -9818,7 +9818,7 @@
                   "codigo_legacy": "",
                   "titulo": "Portón batiente de tubo de acero.",
                   "unidad": "ud",
-                  "precio": 182.22,
+                  "precio": 182.94,
                   "horas": 5.0,
                   "producto_cliente": false
                 },
@@ -9827,7 +9827,7 @@
                   "codigo_legacy": "",
                   "titulo": "Portón metálico para garaje con marco.",
                   "unidad": "ud",
-                  "precio": 197.8,
+                  "precio": 198.58,
                   "horas": 5.6,
                   "producto_cliente": false
                 },
@@ -9836,7 +9836,7 @@
                   "codigo_legacy": "",
                   "titulo": "Portón de acero inoxidable para acceso.",
                   "unidad": "ud",
-                  "precio": 745.55,
+                  "precio": 745.69,
                   "horas": 5.0,
                   "producto_cliente": false
                 },
@@ -9845,7 +9845,7 @@
                   "codigo_legacy": "",
                   "titulo": "Portón levadizo de garaje.",
                   "unidad": "ud",
-                  "precio": 169.38,
+                  "precio": 170.17,
                   "horas": 6.0,
                   "producto_cliente": false
                 },
@@ -9854,7 +9854,7 @@
                   "codigo_legacy": "",
                   "titulo": "Portón peatonal de reja.",
                   "unidad": "ud",
-                  "precio": 123.12,
+                  "precio": 123.58,
                   "horas": 3.2,
                   "producto_cliente": false
                 },
@@ -9863,7 +9863,7 @@
                   "codigo_legacy": "",
                   "titulo": "Portón corredizo de acero con hoja ciega.",
                   "unidad": "ud",
-                  "precio": 285.64,
+                  "precio": 286.55,
                   "horas": 6.0,
                   "producto_cliente": false
                 },
@@ -9872,7 +9872,7 @@
                   "codigo_legacy": "",
                   "titulo": "Portón de dos hojas para acceso vehicular.",
                   "unidad": "ud",
-                  "precio": 197.8,
+                  "precio": 198.58,
                   "horas": 5.6,
                   "producto_cliente": false
                 },
@@ -9881,7 +9881,7 @@
                   "codigo_legacy": "",
                   "titulo": "Portón corredizo con automatismo.",
                   "unidad": "ud",
-                  "precio": 275.69,
+                  "precio": 276.48,
                   "horas": 7.1,
                   "producto_cliente": true
                 },
@@ -9890,7 +9890,7 @@
                   "codigo_legacy": "",
                   "titulo": "Portón batiente de dos hojas con automatismo.",
                   "unidad": "ud",
-                  "precio": 207.25,
+                  "precio": 207.87,
                   "horas": 7.6,
                   "producto_cliente": true
                 }
@@ -9956,7 +9956,7 @@
                   "codigo_legacy": "CT-15-04-030",
                   "titulo": "Baranda metálica de protección.",
                   "unidad": "m",
-                  "precio": 72.29,
+                  "precio": 72.59,
                   "horas": 1.57,
                   "producto_cliente": false
                 },
@@ -9974,7 +9974,7 @@
                   "codigo_legacy": "",
                   "titulo": "Baranda de tubo de acero galvanizado.",
                   "unidad": "m",
-                  "precio": 31.06,
+                  "precio": 31.25,
                   "horas": 0.95,
                   "producto_cliente": false
                 },
@@ -9983,7 +9983,7 @@
                   "codigo_legacy": "",
                   "titulo": "Baranda de acero inoxidable para balcón.",
                   "unidad": "m",
-                  "precio": 89.08,
+                  "precio": 89.13,
                   "horas": 1.05,
                   "producto_cliente": false
                 },
@@ -9992,7 +9992,7 @@
                   "codigo_legacy": "",
                   "titulo": "Baranda de forja decorativa.",
                   "unidad": "m",
-                  "precio": 36.54,
+                  "precio": 36.8,
                   "horas": 1.2,
                   "producto_cliente": false
                 },
@@ -10010,7 +10010,7 @@
                   "codigo_legacy": "",
                   "titulo": "Baranda de acero con pasamanos de madera.",
                   "unidad": "m",
-                  "precio": 25.53,
+                  "precio": 25.74,
                   "horas": 0.95,
                   "producto_cliente": false
                 },
@@ -10019,7 +10019,7 @@
                   "codigo_legacy": "",
                   "titulo": "Baranda de protección de cubierta.",
                   "unidad": "m",
-                  "precio": 31.06,
+                  "precio": 31.25,
                   "horas": 0.95,
                   "producto_cliente": false
                 },
@@ -10037,7 +10037,7 @@
                   "codigo_legacy": "",
                   "titulo": "Baranda de acero inoxidable con tensores.",
                   "unidad": "m",
-                  "precio": 69.65,
+                  "precio": 69.69,
                   "horas": 0.95,
                   "producto_cliente": false
                 },
@@ -10046,7 +10046,7 @@
                   "codigo_legacy": "",
                   "titulo": "Pasamanos de acero para escalera exterior.",
                   "unidad": "m",
-                  "precio": 9.45,
+                  "precio": 9.53,
                   "horas": 0.35,
                   "producto_cliente": false
                 },
@@ -10073,7 +10073,7 @@
                   "codigo_legacy": "",
                   "titulo": "Baranda de acero con plancha perforada.",
                   "unidad": "m",
-                  "precio": 29.77,
+                  "precio": 29.98,
                   "horas": 1.05,
                   "producto_cliente": false
                 },
@@ -10082,7 +10082,7 @@
                   "codigo_legacy": "",
                   "titulo": "Baranda de acero inoxidable para piscina.",
                   "unidad": "m",
-                  "precio": 89.08,
+                  "precio": 89.13,
                   "horas": 1.05,
                   "producto_cliente": false
                 },
@@ -10091,7 +10091,7 @@
                   "codigo_legacy": "",
                   "titulo": "Baranda de acero con relleno de malla.",
                   "unidad": "m",
-                  "precio": 26.69,
+                  "precio": 26.88,
                   "horas": 1.05,
                   "producto_cliente": false
                 },
@@ -10109,7 +10109,7 @@
                   "codigo_legacy": "",
                   "titulo": "Baranda de acero galvanizado con pasamanos de madera.",
                   "unidad": "m",
-                  "precio": 25.53,
+                  "precio": 25.74,
                   "horas": 0.95,
                   "producto_cliente": false
                 }
@@ -10611,7 +10611,7 @@
                   "codigo_legacy": "",
                   "titulo": "Instalación de cerradura de seguridad.",
                   "unidad": "ud",
-                  "precio": 83.97,
+                  "precio": 70.84,
                   "horas": 1.7,
                   "producto_cliente": false
                 },
@@ -10767,7 +10767,7 @@
                   "codigo_legacy": "",
                   "titulo": "Reparación de reja con sustitución de tubo.",
                   "unidad": "m",
-                  "precio": 13.42,
+                  "precio": 13.52,
                   "horas": 0.85,
                   "producto_cliente": false
                 },
@@ -11602,7 +11602,7 @@
                   "codigo_legacy": "",
                   "titulo": "Soporte metálico para equipo.",
                   "unidad": "ud",
-                  "precio": 41.29,
+                  "precio": 41.33,
                   "horas": 1.1,
                   "producto_cliente": false
                 },
@@ -19027,7 +19027,7 @@
                   "codigo_legacy": "CT-11-01-010",
                   "titulo": "Estructura metálica de techo.",
                   "unidad": "kg",
-                  "precio": 4.29,
+                  "precio": 4.32,
                   "horas": 0.106,
                   "producto_cliente": false
                 },
@@ -19389,7 +19389,7 @@
                   "codigo_legacy": "",
                   "titulo": "Preparación de soporte de metal para pintura.",
                   "unidad": "m2",
-                  "precio": 3.03,
+                  "precio": 3.19,
                   "horas": 0.2,
                   "producto_cliente": false
                 }
@@ -22018,7 +22018,7 @@
                   "codigo_legacy": "",
                   "titulo": "Pintura de estructura metálica interior.",
                   "unidad": "m2",
-                  "precio": 5.49,
+                  "precio": 5.64,
                   "horas": 0.27,
                   "producto_cliente": false
                 },
@@ -22203,7 +22203,7 @@
                   "codigo_legacy": "",
                   "titulo": "Pintura de reja, verja o elemento metálico exterior.",
                   "unidad": "m2",
-                  "precio": 6.36,
+                  "precio": 6.51,
                   "horas": 0.42,
                   "producto_cliente": false
                 },
@@ -22311,7 +22311,7 @@
                   "codigo_legacy": "",
                   "titulo": "Pintura de portón o puerta metálica exterior.",
                   "unidad": "m2",
-                  "precio": 6.49,
+                  "precio": 6.64,
                   "horas": 0.42,
                   "producto_cliente": false
                 },
@@ -22370,7 +22370,7 @@
                   "codigo_legacy": "",
                   "titulo": "Pintura anticorrosiva sobre estructura metálica.",
                   "unidad": "m2",
-                  "precio": 6.01,
+                  "precio": 6.32,
                   "horas": 0.4,
                   "producto_cliente": false
                 },
@@ -22379,7 +22379,7 @@
                   "codigo_legacy": "",
                   "titulo": "Esmalte sobre carpintería metálica exterior.",
                   "unidad": "m2",
-                  "precio": 6.5,
+                  "precio": 6.63,
                   "horas": 0.44,
                   "producto_cliente": false
                 },
@@ -22388,7 +22388,7 @@
                   "codigo_legacy": "",
                   "titulo": "Pintura de tuberías y conducciones metálicas.",
                   "unidad": "m",
-                  "precio": 2.17,
+                  "precio": 2.24,
                   "horas": 0.16,
                   "producto_cliente": false
                 },
@@ -22442,7 +22442,7 @@
                   "codigo_legacy": "",
                   "titulo": "Pintura de pasamanos metálico.",
                   "unidad": "m",
-                  "precio": 2.81,
+                  "precio": 2.86,
                   "horas": 0.24,
                   "producto_cliente": false
                 },
@@ -22451,7 +22451,7 @@
                   "codigo_legacy": "",
                   "titulo": "Pintura de puerta metálica.",
                   "unidad": "m2",
-                  "precio": 6.5,
+                  "precio": 6.66,
                   "horas": 0.41,
                   "producto_cliente": false
                 }
@@ -23508,7 +23508,7 @@
                   "codigo_legacy": "CT-18-03-020",
                   "titulo": "Cerca de malla ciclónica.",
                   "unidad": "m",
-                  "precio": 31.72,
+                  "precio": 31.82,
                   "horas": 0.98,
                   "producto_cliente": false
                 }
@@ -23531,7 +23531,7 @@
                   "codigo_legacy": "CT-18-03-030",
                   "titulo": "Portón de acceso vehicular.",
                   "unidad": "m²",
-                  "precio": 109.5,
+                  "precio": 109.95,
                   "horas": 2.7,
                   "producto_cliente": false
                 }

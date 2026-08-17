@@ -1,0 +1,74 @@
+{
+  "_comentario": "Quinta ronda de contraste de precios contra el mercado venezolano (agosto 2026). Foco: soldadura, pinturas, seguridad, plomería, agregados y herrería. Cada entrada lleva el precio adoptado, el rango observado y la fuente. Se aplica con: python3 basedatos_partidas/contraste.py aplicar",
+  "_moneda": "USD",
+  "_fecha": "2026-08",
+  "_metodo": "Barrido de listados de MercadoLibre Venezuela y catálogo EPA Venezuela (precios en USD). Criterio: mediana del rango observado, descartando importaciones puntuales de gama alta y artículos usados.",
+  "_alcance": "NO se han tocado los recursos del grupo «maquinaria» (alquiler de equipos).",
+
+  "precios": {
+
+    "MT-ELECTRODO": {
+      "precio": 5.0,
+      "rango_observado": "Electrodo 6013: 4,50 - 9,14 USD/kg",
+      "conversion": "Mediana: Metco 4,50; Hoffman 5,00; Weld 6,65-9,00; EPA Lincoln 9,14",
+      "fuente": "EPA Venezuela: electrodo 6013 3/32 1kg Lincoln 9,14; MercadoLibre VE: 6013 Metco 4,50/kg, Hoffman 5,00, Weld 6,65-9,00.",
+      "comentario": "4,80 USD/kg quedaba en la banda baja; se adopta 5,00 USD/kg como mediana."
+    },
+
+    "MT-PINT-ANTICORR": {
+      "precio": 8.0,
+      "rango_observado": "Fondo/imprimación anticorrosiva galón (3,785 l): 30 - 52 USD",
+      "conversion": "35 USD/galón ÷ 3,785 l = 9,2 USD/l; 1/4 galón 16-18 USD = 17-19 USD/l. Mediana ~8-9 USD/l",
+      "fuente": "MercadoLibre VE: fondo cromato de zinc galón 35-52 (Aya, VP, Colvents); esmalte 3 en 1 anticorrosivo galón Tepuy 30,67-33,71.",
+      "comentario": "7,20 USD/l era algo bajo; se adopta 8,00 USD/l para imprimación anticorrosiva de fondo."
+    },
+
+    "MT-PINT-TRAFICO": {
+      "precio": 9.2,
+      "rango_observado": "Pintura de tráfico amarilla/blanca galón: 35 USD (base solvente 45-54; reflectiva 40-65)",
+      "conversion": "35 USD/galón ÷ 3,785 l = 9,2 USD/l",
+      "fuente": "MercadoLibre VE: pintura de alto tráfico galón 35; demarcación VP vial amarillo mate galón 36,57-47,99; base solvente 45-54.",
+      "comentario": "Confirmado: 9,20 USD/l es correcto para pintura de tráfico estándar."
+    },
+
+    "MT-ARNES": {
+      "precio": 55.0,
+      "rango_observado": "Arnés de cuerpo completo certificado: 33 - 65 USD",
+      "conversion": "Mediana del rango (Paloma 50,73; Truper 65; Tolsen 48,60-54; Ingco 3 anillos 61,77)",
+      "fuente": "MercadoLibre VE: arnés de seguridad 4 anillos Paloma 50,73; corporal 3 anillos 33; Truper 65; Tolsen 48,60-54.",
+      "comentario": "Confirmado: 55 USD es correcto para arnés de cuerpo completo con eslinga y absorbedor."
+    },
+
+    "MT-CERRADURA-MULTI": {
+      "precio": 45.0,
+      "rango_observado": "Cerradura multipunto/multilock: 24,99 - 95 USD",
+      "conversion": "Multilock básica 24,99-28; kit 60mm 24,99-39,99; Securemme bancaria 60mm 95. Mediana de un multipunto de seguridad con cilindro ~40-45",
+      "fuente": "MercadoLibre VE: cerradura tipo multiloc 27,99-28; kit multilock 60mm 24,99-39,99; Securemme multilock 60mm 95.",
+      "comentario": "55 USD quedaba alto; se adopta 45 USD para un multipunto de seguridad con cilindro."
+    },
+
+    "MT-FLOTANTE": {
+      "precio": 9.5,
+      "rango_observado": "Válvula de flotante para tanque: 4 - 12 USD (Exceline 1/2 7,04-12,30; EPA 14,95)",
+      "conversion": "Mediana del rango 1/2 y 3/4: 7,99-10,99",
+      "fuente": "MercadoLibre VE: válvula 1/2 con flotador Exceline 7,04-12,30; 3/4 7,99-10,81; EPA Venezuela: flotante 1/2 14,95.",
+      "comentario": "Confirmado: 9,50 USD es correcto para válvula de flotante con accesorios de control de nivel."
+    },
+
+    "MT-ALAMBRE": {
+      "precio": 1.9,
+      "rango_observado": "Alambre recocido negro de amarre: 1,4 - 1,9 USD/kg",
+      "conversion": "Rollo 25 kg ~1,4-1,6 USD/kg; por kilo 1,88 USD",
+      "fuente": "Referencias de alambre recocido C-17 de amarre en ferretería (1,4-1,9 USD/kg).",
+      "comentario": "Confirmado: 1,90 USD/kg es correcto para alambre recocido de amarre de acero."
+    },
+
+    "MT-GRAVILLA": {
+      "precio": 24.0,
+      "rango_observado": "Piedra picada 3/4 por m3 puesto en obra: 17 - 29 USD",
+      "conversion": "Mediana del rango por m3 (17, 23, 25, 26, 28,93, 29)",
+      "fuente": "MercadoLibre VE: piedra picada 3/4 por m3 17-29; piedra picada 3/4 puesto en sitio 25-26.",
+      "comentario": "Confirmado: 24 USD/m3 es correcto para gravilla/piedra picada lavada."
+    }
+  }
+}
