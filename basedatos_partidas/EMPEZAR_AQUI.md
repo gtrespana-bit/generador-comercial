@@ -20,9 +20,9 @@ presupuestos.
 
 | | |
 |---|---:|
-| Partidas | **553** |
-| Capítulos · subcapítulos · apartados con partidas | **18 · 172 · 150** |
-| Recursos en el cuadro de precios | 320 |
+| Partidas | **571** |
+| Capítulos · subcapítulos · apartados con partidas | **18 · 172 · 155** |
+| Recursos en el cuadro de precios | 336 |
 | Coste directo del catálogo | 15.733,15 USD |
 | **Peso económico con precio cerrado** | **79,6 %** |
 | Validación con el importador real | **0 errores · 0 advertencias** |
@@ -145,12 +145,12 @@ incrementales también están implantadas. La matriz de 3.000/5.000 partidas y
 el diccionario de sinónimos de 146 grupos ya cubren los 18 capítulos. El siguiente paso es
 producir familias completas, comenzando por `09 Instalaciones`.
 
-> **Progreso 17/08/2026:** primera familia de `09` cerrada: `09.13 Protección
-> contra rayos y sobretensiones` (13 partidas nuevas + 3 apartados + 9 recursos,
-> todos marcados `provisional`). Validación del importador real: 0 errores,
-> 0 advertencias sobre 553 partidas. Siguen sin cobertura `09.16 Transporte
-> vertical`, `09.17 Reparación, pruebas y puesta en marcha` y
-> `09.12 Domótica y automatización`.
+> **Progreso 17/08/2026:**
+> - `09.13 Protección contra rayos y sobretensiones` (13 partidas + 3 apartados + 9 recursos).
+> - `09.12 Domótica y automatización` (18 partidas + 5 apartados + 16 recursos; objetivo mínimo alcanzado).
+> Validación del importador real: 0 errores, 0 advertencias sobre 571 partidas.
+> Siguen sin cobertura `09.16 Transporte vertical` y `09.17 Reparación, pruebas
+> y puesta en marcha`.
 
 La producción cerrará familias completas en este orden: `09 Instalaciones`,
 `12 Revestimientos y acabados`, `07 Carpintería, herrería y vidrios`, `10/11

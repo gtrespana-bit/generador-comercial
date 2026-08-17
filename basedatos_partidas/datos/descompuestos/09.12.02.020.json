@@ -1,0 +1,36 @@
+{
+  "codigo": "09.12.02.020",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "12",
+  "unidad": "ud",
+  "titulo": "Sensor magnético de apertura de puerta o ventana.",
+  "descripcion": "Suministro e instalación de sensor magnético de apertura para puertas y ventanas, con su emisor y soporte, integrado en la central domótica. Incluye el replanteo del punto de montaje, la fijación del imán y del emisor alineados, la conexión o emparejamiento y la prueba de apertura y cierre. Medido por sensor instalado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-DOM-SENSOR-PUERTA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-PLO-SOP",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

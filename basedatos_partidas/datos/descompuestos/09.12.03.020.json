@@ -1,0 +1,36 @@
+{
+  "codigo": "09.12.03.020",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "12",
+  "unidad": "ud",
+  "titulo": "Módulo regulador para atenuación de iluminación.",
+  "descripcion": "Suministro e instalación de módulo regulador (dimmer) para atenuación de iluminación, integrado en la central domótica. Incluye la verificación de compatibilidad de la carga a regular, el montaje, la conexión, la configuración y la prueba de atenuación en todo el rango. Medido por módulo instalado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-DOM-DIMMER",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-CABLE-8",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MT-ELE-CAJA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.4
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "03"
+}

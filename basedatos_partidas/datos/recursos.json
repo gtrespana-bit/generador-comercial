@@ -1850,6 +1850,102 @@
       "descripcion": "Protector contra sobretensiones para línea de datos y telecomunicaciones, con su conexión a tierra.",
       "precio": 30.0,
       "estado": "provisional"
+    },
+    "MT-DOM-CENTRAL": {
+      "unidad": "ud",
+      "descripcion": "Central domótica o controlador principal, con su fuente de alimentación y el software de configuración. El precio no incluye los módulos de actuación ni los sensores periféricos.",
+      "precio": 180.0,
+      "estado": "provisional"
+    },
+    "MT-DOM-PASARELA": {
+      "unidad": "ud",
+      "descripcion": "Pasarela de comunicación que integra protocolos de distintos fabricantes (Zigbee, Z-Wave, WiFi, bus cableado) con la central domótica.",
+      "precio": 90.0,
+      "estado": "provisional"
+    },
+    "MT-DOM-REPETIDOR": {
+      "unidad": "ud",
+      "descripcion": "Repetidor o extensor de señal inalámbrica para ampliar la cobertura de la red domótica.",
+      "precio": 45.0,
+      "estado": "provisional"
+    },
+    "MT-DOM-SENSOR-MOV": {
+      "unidad": "ud",
+      "descripcion": "Sensor de movimiento o presencia para iluminación y alarmas, con su soporte de montaje.",
+      "precio": 25.0,
+      "estado": "provisional"
+    },
+    "MT-DOM-SENSOR-PUERTA": {
+      "unidad": "ud",
+      "descripcion": "Sensor magnético de apertura para puertas y ventanas, con su emisor y su soporte de montaje.",
+      "precio": 18.0,
+      "estado": "provisional"
+    },
+    "MT-DOM-SENSOR-TEMP": {
+      "unidad": "ud",
+      "descripcion": "Sensor de temperatura y humedad ambiente con comunicación a la central domótica.",
+      "precio": 22.0,
+      "estado": "provisional"
+    },
+    "MT-DOM-SENSOR-INUND": {
+      "unidad": "ud",
+      "descripcion": "Detector de inundación o fuga de agua por contacto, con aviso a la central domótica.",
+      "precio": 20.0,
+      "estado": "provisional"
+    },
+    "MT-DOM-SENSOR-GAS": {
+      "unidad": "ud",
+      "descripcion": "Detector de gas doméstico con alarma local y comunicación a la central domótica.",
+      "precio": 30.0,
+      "estado": "provisional"
+    },
+    "MT-DOM-SENSOR-LUZ": {
+      "unidad": "ud",
+      "descripcion": "Sensor de nivel de luz para automatización de iluminación y persianas.",
+      "precio": 22.0,
+      "estado": "provisional"
+    },
+    "MT-DOM-ACTUADOR": {
+      "unidad": "ud",
+      "descripcion": "Módulo de actuación on/off (relé) para control de circuitos de iluminación y cargas, montaje en carril o empotrado.",
+      "precio": 40.0,
+      "estado": "provisional"
+    },
+    "MT-DOM-DIMMER": {
+      "unidad": "ud",
+      "descripcion": "Módulo regulador (dimmer) para atenuación de iluminación, compatible con la central domótica.",
+      "precio": 45.0,
+      "estado": "provisional"
+    },
+    "MT-DOM-PERSIANA": {
+      "unidad": "ud",
+      "descripcion": "Módulo de control de persiana, cortina o toldo motorizado, con detección de final de carrera.",
+      "precio": 48.0,
+      "estado": "provisional"
+    },
+    "MT-DOM-ENCHUFE": {
+      "unidad": "ud",
+      "descripcion": "Módulo de enchufe inteligente para medición y control on/off de cargas enchufables.",
+      "precio": 28.0,
+      "estado": "provisional"
+    },
+    "MT-DOM-TERMOSTATO": {
+      "unidad": "ud",
+      "descripcion": "Termostato inteligente para control de climatización, con programación horaria y comunicación a la central domótica.",
+      "precio": 55.0,
+      "estado": "provisional"
+    },
+    "MT-DOM-PANEL": {
+      "unidad": "ud",
+      "descripcion": "Panel táctil de pared para control y visualización del sistema domótico, con su caja de empotrar.",
+      "precio": 90.0,
+      "estado": "provisional"
+    },
+    "MT-DOM-TECLADO": {
+      "unidad": "ud",
+      "descripcion": "Teclado o pulsador de escenas para activación directa de ambientes preconfigurados.",
+      "precio": 35.0,
+      "estado": "provisional"
     }
   },
   "maquinaria": {

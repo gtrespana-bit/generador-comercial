@@ -1,0 +1,36 @@
+{
+  "codigo": "09.12.02.050",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "12",
+  "unidad": "ud",
+  "titulo": "Detector de gas doméstico con alarma.",
+  "descripcion": "Suministro e instalación de detector de gas doméstico con alarma local y comunicación a la central domótica. Incluye la elección del punto de montaje según la densidad del gas detectado, la fijación, la conexión de alimentación, el emparejamiento y la prueba de detección. Medido por detector instalado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-DOM-SENSOR-GAS",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-ELE-CAJA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 0.7
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.3
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

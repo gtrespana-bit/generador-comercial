@@ -519,7 +519,13 @@
         },
         "12": {
           "nombre": "Domótica y automatización",
-          "apartados": {}
+          "apartados": {
+            "01": "Central de control y pasarelas",
+            "02": "Sensores y detectores",
+            "03": "Actuadores y módulos de control",
+            "04": "Puntos de control y paneles",
+            "05": "Programación y puesta en marcha"
+          }
         },
         "13": {
           "nombre": "Protección contra rayos y sobretensiones",

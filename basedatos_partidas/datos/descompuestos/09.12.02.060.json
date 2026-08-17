@@ -1,0 +1,36 @@
+{
+  "codigo": "09.12.02.060",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "12",
+  "unidad": "ud",
+  "titulo": "Sensor de nivel de luz para automatización.",
+  "descripcion": "Suministro e instalación de sensor de nivel de luz para automatización de iluminación y persianas, integrado en la central domótica. Incluye el replanteo del punto con exposición representativa, la fijación, el emparejamiento y la calibración del umbral de disparo. Medido por sensor instalado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-DOM-SENSOR-LUZ",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-PLO-SOP",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}
