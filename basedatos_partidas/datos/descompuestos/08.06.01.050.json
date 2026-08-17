@@ -1,0 +1,40 @@
+{
+  "codigo": "08.06.01.050",
+  "ambito": "reforma",
+  "capitulo": "08",
+  "subcapitulo": "06",
+  "unidad": "ud",
+  "titulo": "Base de concreto para bomba.",
+  "descripcion": "Ejecución de base de concreto para bomba. Incluye el vaciado y el acabado. Medido por unidad ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONC-210",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MT-ACERO-CAB",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MT-FORM-MADERA",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MQ-VIBRADOR",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.55
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.35
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

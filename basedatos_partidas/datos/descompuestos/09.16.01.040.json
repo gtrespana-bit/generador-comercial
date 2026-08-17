@@ -1,0 +1,36 @@
+{
+  "codigo": "09.16.01.040",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "16",
+  "unidad": "ud",
+  "titulo": "Instalación de plataforma elevadora.",
+  "descripcion": "Instalación de plataforma elevadora vertical para accesibilidad. Incluye el montaje y la puesta en marcha. Medido por unidad instalada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.8
+    },
+    {
+      "ref": "MQ-GRUA",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 14.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 7.0
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

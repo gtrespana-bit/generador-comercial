@@ -1,0 +1,36 @@
+{
+  "codigo": "08.05.01.060",
+  "ambito": "reforma",
+  "capitulo": "08",
+  "subcapitulo": "05",
+  "unidad": "m",
+  "titulo": "Alféizar de madera.",
+  "descripcion": "Colocación de alféizar de madera. Incluye la fijación y el acabado. Medido por metro lineal ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MADERA-LISTON",
+      "rendimiento": 1.2
+    },
+    {
+      "ref": "MT-PRESERV-MAD",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.18
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

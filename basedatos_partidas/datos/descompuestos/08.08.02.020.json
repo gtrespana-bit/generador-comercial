@@ -1,0 +1,36 @@
+{
+  "codigo": "08.08.02.020",
+  "ambito": "reforma",
+  "capitulo": "08",
+  "subcapitulo": "08",
+  "unidad": "m",
+  "titulo": "Remate especial de fachada.",
+  "descripcion": "Colocación de remate especial de fachada. Incluye la fijación. Medido por metro lineal colocado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PERFIL-REMATE",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-SILICONA-EST",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.22
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.1
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

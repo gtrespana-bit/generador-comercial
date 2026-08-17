@@ -251,11 +251,18 @@
       "subcapitulos": {
         "01": {
           "nombre": "Encofrados, cimbras y apeos de ejecución",
-          "apartados": {}
+          "apartados": {
+            "01": "Encofrados de madera",
+            "02": "Encofrados metálicos y sistemas",
+            "03": "Cimbras y apeos de ejecución"
+          }
         },
         "02": {
           "nombre": "Acero de refuerzo",
-          "apartados": {}
+          "apartados": {
+            "01": "Acero de refuerzo en elementos",
+            "02": "Malla y separadores"
+          }
         },
         "03": {
           "nombre": "Concreto estructural vaciado en sitio",
@@ -289,7 +296,10 @@
         },
         "08": {
           "nombre": "Anclajes, juntas y conexiones",
-          "apartados": {}
+          "apartados": {
+            "01": "Anclajes y conexiones",
+            "02": "Juntas estructurales"
+          }
         },
         "09": {
           "nombre": "Reparación y refuerzo estructural",
@@ -444,39 +454,64 @@
       "subcapitulos": {
         "01": {
           "nombre": "Ayudas de albañilería para instalaciones",
-          "apartados": {}
+          "apartados": {
+            "01": "Ayudas de albañilería para instalaciones"
+          }
         },
         "02": {
           "nombre": "Rozas, perforaciones y pasos",
-          "apartados": {}
+          "apartados": {
+            "01": "Rozas y regatas",
+            "02": "Perforaciones y pasos"
+          }
         },
         "03": {
           "nombre": "Recibido de marcos, equipos y pequeños elementos",
-          "apartados": {}
+          "apartados": {
+            "01": "Recibido de marcos y premarcos",
+            "02": "Recibido de equipos y elementos"
+          }
         },
         "04": {
           "nombre": "Sellados, juntas y encuentros",
-          "apartados": {}
+          "apartados": {
+            "01": "Sellados y juntas",
+            "02": "Encuentros y remates de estanqueidad"
+          }
         },
         "05": {
           "nombre": "Alféizares, vierteaguas, pasamanos y coronaciones",
-          "apartados": {}
+          "apartados": {
+            "01": "Alféizares y vierteaguas",
+            "02": "Coronaciones y remates de cubierta"
+          }
         },
         "06": {
           "nombre": "Bancadas, soportes y bases de equipos",
-          "apartados": {}
+          "apartados": {
+            "01": "Bancadas y soportes",
+            "02": "Bases de equipos"
+          }
         },
         "07": {
           "nombre": "Forrados, cajones y tapajuntas",
-          "apartados": {}
+          "apartados": {
+            "01": "Forrados y cajones",
+            "02": "Tapajuntas y remates de carpintería"
+          }
         },
         "08": {
           "nombre": "Perfiles decorativos, molduras y remates especiales",
-          "apartados": {}
+          "apartados": {
+            "01": "Molduras y perfiles decorativos",
+            "02": "Remates especiales"
+          }
         },
         "09": {
           "nombre": "Sellado cortafuego de pasos de instalaciones",
-          "apartados": {}
+          "apartados": {
+            "01": "Sellado cortafuego de pasos"
+          }
         }
       }
     },
@@ -591,11 +626,17 @@
         },
         "16": {
           "nombre": "Transporte vertical y accesibilidad mecánica",
-          "apartados": {}
+          "apartados": {
+            "01": "Ascensores y plataformas",
+            "02": "Salvaescaleras y elevadores de accesibilidad"
+          }
         },
         "17": {
           "nombre": "Reparación, pruebas y puesta en marcha",
-          "apartados": {}
+          "apartados": {
+            "01": "Pruebas y puesta en marcha",
+            "02": "Reparación de instalaciones"
+          }
         }
       }
     },

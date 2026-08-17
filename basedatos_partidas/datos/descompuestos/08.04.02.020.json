@@ -1,0 +1,32 @@
+{
+  "codigo": "08.04.02.020",
+  "ambito": "reforma",
+  "capitulo": "08",
+  "subcapitulo": "04",
+  "unidad": "m",
+  "titulo": "Remate de encuentro de materiales.",
+  "descripcion": "Remate de encuentro entre materiales distintos. Incluye el sellado. Medido por metro lineal ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-SELLA-ELAST",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MT-PERFIL-REMATE",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.05
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

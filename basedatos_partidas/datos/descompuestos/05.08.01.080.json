@@ -1,0 +1,36 @@
+{
+  "codigo": "05.08.01.080",
+  "ambito": "reforma",
+  "capitulo": "05",
+  "subcapitulo": "08",
+  "unidad": "m",
+  "titulo": "Conexión soldada de placa base.",
+  "descripcion": "Ejecución de conexión soldada de placa base. Incluye la soldadura. Medido por metro lineal soldado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ELECTRODO",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MQ-SOLDADORA",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MQ-ESMERIL",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-SOLD",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.18
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

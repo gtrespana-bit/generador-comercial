@@ -1,0 +1,36 @@
+{
+  "codigo": "05.09.01.170",
+  "ambito": "reforma",
+  "capitulo": "05",
+  "subcapitulo": "09",
+  "unidad": "m2",
+  "titulo": "Refuerzo con mortero de alta resistencia.",
+  "descripcion": "Refuerzo con mortero de alta resistencia. Incluye la aplicación. Medido por metro cuadrado reforzado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-GROUT",
+      "rendimiento": 12.0
+    },
+    {
+      "ref": "MT-PUENTE-ADH",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-BATID",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.35
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

@@ -1,0 +1,36 @@
+{
+  "codigo": "09.01.01.050",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "01",
+  "unidad": "m",
+  "titulo": "Tubería de agua de cobre.",
+  "descripcion": "Suministro e instalación de tubería de agua de cobre. Incluye el montaje y la soldadura. Medido por metro lineal instalado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-TUB-GAS",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-PLO-SOP",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MQ-DOBLAD-TUBO",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MO-OF1-PLO",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.08
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

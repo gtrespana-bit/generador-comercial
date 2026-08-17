@@ -1,0 +1,40 @@
+{
+  "codigo": "05.05.01.180",
+  "ambito": "reforma",
+  "capitulo": "05",
+  "subcapitulo": "05",
+  "unidad": "m",
+  "titulo": "Correa de madera con tratamiento.",
+  "descripcion": "Suministro y colocación de correa de madera con tratamiento preservante. Incluye la colocación y el tratamiento. Medido por metro lineal colocado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MADERA-LISTON",
+      "rendimiento": 1.8
+    },
+    {
+      "ref": "MT-PRESERV-MAD",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MT-CLAVOS",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 0.32
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.15
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

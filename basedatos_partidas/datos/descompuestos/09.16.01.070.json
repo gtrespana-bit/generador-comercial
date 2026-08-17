@@ -1,0 +1,36 @@
+{
+  "codigo": "09.16.01.070",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "16",
+  "unidad": "ud",
+  "titulo": "Instalación de ascensor de carga.",
+  "descripcion": "Instalación de ascensor de carga. Incluye el montaje y la puesta en marcha. Medido por unidad instalada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 1.2
+    },
+    {
+      "ref": "MQ-GRUA",
+      "rendimiento": 2.5
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 22.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 11.0
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

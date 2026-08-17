@@ -1,0 +1,44 @@
+{
+  "codigo": "08.07.01.020",
+  "ambito": "reforma",
+  "capitulo": "08",
+  "subcapitulo": "07",
+  "unidad": "m",
+  "titulo": "Cajón para instalaciones.",
+  "descripcion": "Formación de cajón para ocultar instalaciones. Incluye la estructura y la placa. Medido por metro lineal ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PYL-MONT",
+      "rendimiento": 1.2
+    },
+    {
+      "ref": "MT-PYL-PLACA125",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MT-PYL-PASTA",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MT-TORN",
+      "rendimiento": 6.0
+    },
+    {
+      "ref": "MQ-ATORN",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.15
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

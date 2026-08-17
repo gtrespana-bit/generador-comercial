@@ -1,0 +1,40 @@
+{
+  "codigo": "09.15.01.300",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "15",
+  "unidad": "ud",
+  "titulo": "Instalación de planta eléctrica a gas.",
+  "descripcion": "Instalación de planta eléctrica a gas., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PANEL-SOLAR",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MT-INVERSOR",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MT-BATERIA",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 1.0
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

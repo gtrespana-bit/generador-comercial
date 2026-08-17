@@ -1,0 +1,32 @@
+{
+  "codigo": "05.03.01.220",
+  "ambito": "reforma",
+  "capitulo": "05",
+  "subcapitulo": "03",
+  "unidad": "m2",
+  "titulo": "Acabado de superficie de concreto.",
+  "descripcion": "Acabado de superficie de concreto estructural. Incluye el alisado y el acabado. Medido por metro cuadrado acabado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MQ-ALISADORA",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MT-CURADOR",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.15
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

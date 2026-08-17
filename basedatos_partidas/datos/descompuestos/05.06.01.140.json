@@ -1,0 +1,36 @@
+{
+  "codigo": "05.06.01.140",
+  "ambito": "reforma",
+  "capitulo": "05",
+  "subcapitulo": "06",
+  "unidad": "m2",
+  "titulo": "Losa maciza con malla electrosoldada.",
+  "descripcion": "Ejecución de losa maciza con malla electrosoldada. Incluye la malla y el vaciado. Medido por metro cuadrado ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MALLA-ELEC",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-CONC-210",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MQ-VIBRADOR",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.45
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

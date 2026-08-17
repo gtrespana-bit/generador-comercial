@@ -1,0 +1,36 @@
+{
+  "codigo": "05.07.01.080",
+  "ambito": "reforma",
+  "capitulo": "05",
+  "subcapitulo": "07",
+  "unidad": "m2",
+  "titulo": "Escalera metálica de estructura.",
+  "descripcion": "Suministro y montaje de escalera metálica estructural. Incluye el montaje y la fijación. Medido por metro cuadrado montado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PERFIL-ACERO",
+      "rendimiento": 18.0
+    },
+    {
+      "ref": "MT-ELECTRODO",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MQ-SOLDADORA",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-OF1-SOLD",
+      "rendimiento": 1.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.7
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

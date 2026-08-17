@@ -1,0 +1,40 @@
+{
+  "codigo": "09.10.01.050",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "10",
+  "unidad": "ud",
+  "titulo": "Instalación de extintor de espuma.",
+  "descripcion": "Instalación de extintor de espuma., con fijación y señalización. Incluye la fijación y la señalización. Medido por unidad instalada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-EXTINTOR",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MT-DETECT-HUMO",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MT-SENAL-OBRA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.25
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

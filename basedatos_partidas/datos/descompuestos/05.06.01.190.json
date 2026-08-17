@@ -1,0 +1,40 @@
+{
+  "codigo": "05.06.01.190",
+  "ambito": "reforma",
+  "capitulo": "05",
+  "subcapitulo": "06",
+  "unidad": "m2",
+  "titulo": "Losa de concreto aligerada con bloques.",
+  "descripcion": "Ejecución de losa de concreto aligerada con bloques. Incluye la colocación de bloques y el vaciado. Medido por metro cuadrado ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-BLOQUE-ALIV",
+      "rendimiento": 8.0
+    },
+    {
+      "ref": "MT-CONC-210",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MT-ACERO-CAB",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MQ-VIBRADOR",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.75
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.5
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

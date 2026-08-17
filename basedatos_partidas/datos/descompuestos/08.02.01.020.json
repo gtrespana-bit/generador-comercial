@@ -1,0 +1,36 @@
+{
+  "codigo": "08.02.01.020",
+  "ambito": "reforma",
+  "capitulo": "08",
+  "subcapitulo": "02",
+  "unidad": "m",
+  "titulo": "Roza en muro de concreto.",
+  "descripcion": "Apertura de roza en muro de concreto. Incluye la ejecución de la roza. Medido por metro lineal ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MQ-ROZAD",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MQ-ASPIR",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

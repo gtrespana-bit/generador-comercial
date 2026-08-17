@@ -1,0 +1,36 @@
+{
+  "codigo": "09.13.02.060",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "13",
+  "unidad": "ud",
+  "titulo": "Bajante de aluminio.",
+  "descripcion": "Ejecución de bajante de aluminio., con conexión. Incluye la conexión y la fijación. Medido por unidad ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CABLE-COBRE-DESN",
+      "rendimiento": 3.0
+    },
+    {
+      "ref": "MT-PLO-SOP",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 0.7
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.35
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

@@ -1,10 +1,10 @@
 # Resumen de cobertura del catálogo
 
-- Partidas actuales: **1660**
-- Objetivo mínimo: **3000** (brecha 1340)
-- Objetivo amplio: **5000** (brecha 3340)
-- Subcapítulos sin cobertura: **41**
-- Subcapítulos en estado crítico: **42**
+- Partidas actuales: **2363**
+- Objetivo mínimo: **3000** (brecha 637)
+- Objetivo amplio: **5000** (brecha 2637)
+- Subcapítulos sin cobertura: **27**
+- Subcapítulos en estado crítico: **28**
 - Diccionario de sinónimos: **146 grupos · 661 términos · 18 capítulos**
 
 ## Estado por capítulo
@@ -15,11 +15,11 @@
 | 02 | Demoliciones y desmontajes | 265 | 260 | 420 | -5 |
 | 03 | Acondicionamiento del terreno | 80 | 80 | 140 | 0 |
 | 04 | Fundaciones | 100 | 100 | 180 | 0 |
-| 05 | Estructuras | 38 | 170 | 300 | 132 |
+| 05 | Estructuras | 170 | 170 | 300 | 0 |
 | 06 | Fachadas y particiones | 180 | 180 | 300 | 0 |
 | 07 | Carpintería, herrería, vidrios y protección solar | 180 | 180 | 300 | 0 |
-| 08 | Remates y ayudas | 0 | 120 | 210 | 120 |
-| 09 | Instalaciones | 89 | 540 | 860 | 451 |
+| 08 | Remates y ayudas | 120 | 120 | 210 | 0 |
+| 09 | Instalaciones | 540 | 540 | 860 | 0 |
 | 10 | Aislamientos e impermeabilizaciones | 150 | 150 | 260 | 0 |
 | 11 | Techos y cubiertas | 18 | 130 | 220 | 112 |
 | 12 | Revestimientos y acabados | 401 | 400 | 610 | -1 |
@@ -34,21 +34,7 @@
 
 | Código | Familia | Estado | Actual | Objetivo | Brecha |
 |---|---|---|---:|---:|---:|
-| 09.16 | Transporte vertical y accesibilidad mecánica | sin_cobertura | 0 | 17 | 17 |
-| 09.17 | Reparación, pruebas y puesta en marcha | sin_cobertura | 0 | 17 | 17 |
-| 08.07 | Forrados, cajones y tapajuntas | sin_cobertura | 0 | 14 | 14 |
-| 08.08 | Perfiles decorativos, molduras y remates especiales | sin_cobertura | 0 | 14 | 14 |
-| 08.09 | Sellado cortafuego de pasos de instalaciones | sin_cobertura | 0 | 14 | 14 |
-| 08.01 | Ayudas de albañilería para instalaciones | sin_cobertura | 0 | 13 | 13 |
-| 08.02 | Rozas, perforaciones y pasos | sin_cobertura | 0 | 13 | 13 |
-| 08.03 | Recibido de marcos, equipos y pequeños elementos | sin_cobertura | 0 | 13 | 13 |
-| 08.04 | Sellados, juntas y encuentros | sin_cobertura | 0 | 13 | 13 |
-| 08.05 | Alféizares, vierteaguas, pasamanos y coronaciones | sin_cobertura | 0 | 13 | 13 |
-| 08.06 | Bancadas, soportes y bases de equipos | sin_cobertura | 0 | 13 | 13 |
 | 18.09 | Incorporación de energías renovables | sin_cobertura | 0 | 12 | 12 |
-| 05.01 | Encofrados, cimbras y apeos de ejecución | sin_cobertura | 0 | 11 | 11 |
-| 05.02 | Acero de refuerzo | sin_cobertura | 0 | 11 | 11 |
-| 05.08 | Anclajes, juntas y conexiones | sin_cobertura | 0 | 11 | 11 |
 | 18.01 | Diagnóstico y evaluación energética | sin_cobertura | 0 | 11 | 11 |
 | 18.02 | Mejora térmica de fachadas | sin_cobertura | 0 | 11 | 11 |
 | 18.03 | Mejora térmica de techos y cubiertas | sin_cobertura | 0 | 11 | 11 |
@@ -64,3 +50,17 @@
 | 16.03 | Pruebas de impermeabilización y estanqueidad | sin_cobertura | 0 | 10 | 10 |
 | 16.04 | Pruebas de instalaciones sanitarias | sin_cobertura | 0 | 10 | 10 |
 | 16.05 | Pruebas eléctricas y de puesta a tierra | sin_cobertura | 0 | 10 | 10 |
+| 16.06 | Pruebas de climatización, ventilación y balanceo | sin_cobertura | 0 | 10 | 10 |
+| 16.07 | Termografía, humedad y diagnóstico no destructivo | sin_cobertura | 0 | 10 | 10 |
+| 16.08 | Puesta en marcha, protocolos y documentación final | sin_cobertura | 0 | 10 | 10 |
+| 11.01 | Formación de pendientes y bases | sin_cobertura | 0 | 9 | 9 |
+| 11.05 | Cubiertas ligeras y traslúcidas | sin_cobertura | 0 | 9 | 9 |
+| 11.07 | Claraboyas, lucernarios y accesos | sin_cobertura | 0 | 9 | 9 |
+| 11.09 | Reparación y mantenimiento de cubiertas | sin_cobertura | 0 | 9 | 9 |
+| 14.10 | Piscinas y áreas recreativas | sin_cobertura | 0 | 9 | 9 |
+| 15.05 | Residuos especiales o peligrosos | sin_cobertura | 0 | 5 | 5 |
+| 17.05 | Seguridad en excavaciones y espacios confinados | sin_cobertura | 0 | 5 | 5 |
+| 17.06 | Protección contra incendios durante la obra | sin_cobertura | 0 | 5 | 5 |
+| 11.04 | Cubiertas de lámina metálica | critica | 4 | 20 | 16 |
+| 11.08 | Canales, bajantes, limahoyas y remates | parcial | 6 | 22 | 16 |
+| 11.02 | Cubiertas planas transitables y no transitables | critica | 3 | 18 | 15 |

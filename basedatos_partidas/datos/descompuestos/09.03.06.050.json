@@ -1,0 +1,36 @@
+{
+  "codigo": "09.03.06.050",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "03",
+  "unidad": "ud",
+  "titulo": "Punto de fuerza para horno.",
+  "descripcion": "Punto de fuerza para horno empotrado. Incluye la conexión. Medido por punto ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ELE-CABLE",
+      "rendimiento": 6.0
+    },
+    {
+      "ref": "MT-ELE-CAJA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-ELE-MECA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.3
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "06"
+}

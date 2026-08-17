@@ -1,0 +1,36 @@
+{
+  "codigo": "09.02.01.120",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "02",
+  "unidad": "m",
+  "titulo": "Montante de desagüe de cocina.",
+  "descripcion": "Ejecución de montante de desagüe de cocina., con conexión. Incluye la conexión y la fijación. Medido por metro lineal ejecutado/a.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PLO-PVC4",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-PLO-ACC4",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-PLO",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.12
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

@@ -1,0 +1,36 @@
+{
+  "codigo": "05.05.01.060",
+  "ambito": "reforma",
+  "capitulo": "05",
+  "subcapitulo": "05",
+  "unidad": "m",
+  "titulo": "Correas de madera para cubierta.",
+  "descripcion": "Suministro y colocación de correas de madera para cubierta. Incluye la colocación y la fijación. Medido por metro lineal colocado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MADERA-LISTON",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MT-CLAVOS",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.15
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

@@ -1,0 +1,36 @@
+{
+  "codigo": "08.03.01.040",
+  "ambito": "reforma",
+  "capitulo": "08",
+  "subcapitulo": "03",
+  "unidad": "ud",
+  "titulo": "Recibido de premarco metálico.",
+  "descripcion": "Recibido de premarco metálico de puerta. Incluye el recibido y el nivelado. Medido por unidad recibida.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MORT-REP-EST",
+      "rendimiento": 3.0
+    },
+    {
+      "ref": "MT-PLO-SOP",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.4
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

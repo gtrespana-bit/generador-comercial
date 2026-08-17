@@ -1,0 +1,28 @@
+{
+  "codigo": "09.17.02.120",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "17",
+  "unidad": "ud",
+  "titulo": "Reparación de inversor.",
+  "descripcion": "Ejecución de reparación de inversor., con verificación. Incluye la verificación y el ajuste. Medido por unidad ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MQ-DETECTOR",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.8
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

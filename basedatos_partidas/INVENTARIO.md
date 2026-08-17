@@ -7,12 +7,12 @@ numérica v2 aprobada para reforma y remodelación en Venezuela.
 
 | | |
 |---|---:|
-| Partidas | **1.660** |
-| Hojas de descompuesto `.xlsx` | 1.660 |
+| Partidas | **2.363** |
+| Hojas de descompuesto `.xlsx` | 2.363 |
 | Partidas con producto de elección del cliente | 69 |
-| Recursos en el cuadro de precios | **382** |
-| — mano de obra / materiales / maquinaria | 17 / 321 / 44 |
-| — confirmados / verificados con el mercado / provisionales | 17 / 113 / 248 |
+| Recursos en el cuadro de precios | **391** |
+| — mano de obra / materiales / maquinaria | 17 / 330 / 44 |
+| — confirmados / verificados con el mercado / provisionales | 17 / 113 / 257 |
 | **Peso económico con precio cerrado** | **79,6 %** del coste directo |
 | — confirmado (mano de obra) | 20,2 % |
 | — verificado con el mercado venezolano | 59,4 % |
@@ -74,25 +74,25 @@ numérica v2 aprobada para reforma y remodelación en Venezuela.
 
 | Cap. | Nombre | Subcap. | Apart. con partidas | Partidas |
 |---|---|---:|---:|---:|
-| 01 | Actuaciones previas | 8 | 8 | 100 |
+| 01 | Actuaciones previas | 8 | 10 | 100 |
 | 02 | Demoliciones y desmontajes | 12 | 21 | 265 |
 | 03 | Acondicionamiento del terreno | 6 | 7 | 80 |
-| 04 | Fundaciones | 8 | 9 | 100 |
-| 05 | Estructuras | 9 | 6 | 38 |
-| 06 | Fachadas y particiones | 9 | 16 | 180 |
+| 04 | Fundaciones | 8 | 11 | 100 |
+| 05 | Estructuras | 9 | 13 | 170 |
+| 06 | Fachadas y particiones | 9 | 19 | 180 |
 | 07 | Carpintería, herrería, vidrios y protección solar | 10 | 16 | 180 |
-| 08 | Remates y ayudas | 9 | 0 | 0 |
-| 09 | Instalaciones | 17 | 31 | 89 |
+| 08 | Remates y ayudas | 9 | 16 | 120 |
+| 09 | Instalaciones | 17 | 35 | 540 |
 | 10 | Aislamientos e impermeabilizaciones | 9 | 16 | 150 |
 | 11 | Techos y cubiertas | 9 | 5 | 18 |
-| 12 | Revestimientos y acabados | 14 | 27 | 401 |
+| 12 | Revestimientos y acabados | 14 | 30 | 401 |
 | 13 | Equipamiento, mobiliario y señalización | 9 | 7 | 21 |
 | 14 | Obras exteriores y urbanismo | 11 | 10 | 19 |
 | 15 | Gestión de residuos y limpieza | 7 | 6 | 8 |
 | 16 | Control de calidad y ensayos | 8 | 0 | 0 |
 | 17 | Seguridad y salud en obra | 8 | 7 | 11 |
 | 18 | Rehabilitación energética | 9 | 0 | 0 |
-| | **TOTAL** | **172** | **202** | **1.660** |
+| | **TOTAL** | **172** | **229** | **2.363** |
 
 Los capítulos 08, 16 y 18 están deliberadamente preparados para la primera
 ampliación. No se inventaron partidas de relleno solo para que aparezcan llenos.
@@ -162,6 +162,10 @@ siguiente paso es producir las familias pendientes. Prioridades:
 - **Capítulo 03 Acondicionamiento del terreno completo hasta el mínimo**
   (80/80).
 - **Capítulo 04 Fundaciones completo hasta el mínimo** (100/100).
+- **Capítulo 05 Estructuras completo hasta el mínimo** (170/170).
+- **Capítulo 08 Remates y ayudas completo hasta el mínimo** (120/120).
+- **Capítulo 09 Instalaciones completo hasta el mínimo** (540/540), el
+  capítulo más extenso del catálogo.
 
-Siguen pendientes 204 precios de material provisionales. Los 44 precios de
+Siguen pendientes 257 precios de material provisionales. Los 44 precios de
 alquiler de equipos permanecen fuera de alcance por decisión del cliente.

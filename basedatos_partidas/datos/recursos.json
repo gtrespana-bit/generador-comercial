@@ -2222,6 +2222,60 @@
       "descripcion": "Aplacado de piedra natural ligera para fachada ventilada, con fijación mecánica.",
       "precio": 38.0,
       "estado": "provisional"
+    },
+    "MT-MASTIC-CORTAFUEGO": {
+      "unidad": "kg",
+      "descripcion": "Masilla o mortero intumescente para sellado cortafuego de pasos de instalaciones en muros y losas.",
+      "precio": 6.5,
+      "estado": "provisional"
+    },
+    "MT-BOMBA-AGUA": {
+      "unidad": "ud",
+      "descripcion": "Bomba centrífuga de agua para suministro doméstico, con su control y accesorios de conexión.",
+      "precio": 160.0,
+      "estado": "provisional"
+    },
+    "MT-HIDRONEUMATICO": {
+      "unidad": "ud",
+      "descripcion": "Sistema hidroneumático con tanque de presión, bomba y control, para presión constante de agua.",
+      "precio": 240.0,
+      "estado": "provisional"
+    },
+    "MT-PLANTA-ELEC": {
+      "unidad": "ud",
+      "descripcion": "Planta eléctrica de respaldo con motor diésel o gasolina y tablero de arranque, para suministro de emergencia.",
+      "precio": 1200.0,
+      "estado": "provisional"
+    },
+    "MT-BATERIA": {
+      "unidad": "ud",
+      "descripcion": "Batería de ciclo profundo para sistema de respaldo eléctrico, de plomo-ácido o litio.",
+      "precio": 220.0,
+      "estado": "provisional"
+    },
+    "MT-INVERSOR": {
+      "unidad": "ud",
+      "descripcion": "Inversor de corriente para sistema de respaldo, con su control de carga.",
+      "precio": 280.0,
+      "estado": "provisional"
+    },
+    "MT-PANEL-SOLAR": {
+      "unidad": "ud",
+      "descripcion": "Panel fotovoltaico para generación de energía, con su estructura de fijación.",
+      "precio": 180.0,
+      "estado": "provisional"
+    },
+    "MT-CAMARA-CCTV": {
+      "unidad": "ud",
+      "descripcion": "Cámara de video vigilancia CCTV, con su soporte y cable de conexión.",
+      "precio": 85.0,
+      "estado": "provisional"
+    },
+    "MT-ALARMA": {
+      "unidad": "ud",
+      "descripcion": "Central de alarma con teclado, sensores y sirena, para protección perimetral e interior.",
+      "precio": 150.0,
+      "estado": "provisional"
     }
   },
   "maquinaria": {

@@ -1,0 +1,40 @@
+{
+  "codigo": "09.05.01.260",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "05",
+  "unidad": "ud",
+  "titulo": "Punto de datos en estudio.",
+  "descripcion": "Ejecución de punto de datos en estudio., con canalización y conexión. Incluye el tendido del cable y la conexión. Medido por punto ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CABLE-DATOS",
+      "rendimiento": 6.0
+    },
+    {
+      "ref": "MT-TOMA-DATOS",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-ELE-CAJA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.3
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

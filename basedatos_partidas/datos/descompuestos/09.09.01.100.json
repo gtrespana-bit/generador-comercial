@@ -1,0 +1,36 @@
+{
+  "codigo": "09.09.01.100",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "09",
+  "unidad": "ud",
+  "titulo": "Instalación de regulador de gas.",
+  "descripcion": "Ejecución de instalación de regulador de gas., con conexión y prueba. Incluye la conexión y la prueba de estanqueidad. Medido por unidad ejecutado/a.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-TUB-GAS",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-REGUL-GAS",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MO-OF1-PLO",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.15
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

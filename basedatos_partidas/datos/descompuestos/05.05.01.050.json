@@ -1,0 +1,36 @@
+{
+  "codigo": "05.05.01.050",
+  "ambito": "reforma",
+  "capitulo": "05",
+  "subcapitulo": "05",
+  "unidad": "m3",
+  "titulo": "Montaje de estructura de madera en obra.",
+  "descripcion": "Suministro y montaje de estructura de madera. Incluye el montaje y la fijación. Medido por metro cúbico montado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MADERA-EST",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-HERRAJE-MAD",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 1.0
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

@@ -1,0 +1,40 @@
+{
+  "codigo": "09.01.02.050",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "01",
+  "unidad": "ud",
+  "titulo": "Punto de agua para jardín.",
+  "descripcion": "Punto de agua para jardín o exterior. Incluye la conexión y la llave. Medido por punto ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PLO-PPR20",
+      "rendimiento": 3.0
+    },
+    {
+      "ref": "MT-PLO-LLAVE",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-MANGUERA",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MQ-TERMOF",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MO-OF1-PLO",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.25
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

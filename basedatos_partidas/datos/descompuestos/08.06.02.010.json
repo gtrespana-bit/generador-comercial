@@ -1,0 +1,40 @@
+{
+  "codigo": "08.06.02.010",
+  "ambito": "reforma",
+  "capitulo": "08",
+  "subcapitulo": "06",
+  "unidad": "ud",
+  "titulo": "Soporte metálico para equipo.",
+  "descripcion": "Suministro y colocación de soporte metálico para equipo. Incluye el anclaje del soporte. Medido por unidad colocado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PERFIL-ACERO",
+      "rendimiento": 8.0
+    },
+    {
+      "ref": "MT-ELECTRODO",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MT-PERNO-ANCLA",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MQ-SOLDADORA",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-OF1-SOLD",
+      "rendimiento": 0.7
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.4
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

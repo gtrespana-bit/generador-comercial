@@ -1,0 +1,32 @@
+{
+  "codigo": "08.01.01.050",
+  "ambito": "reforma",
+  "capitulo": "08",
+  "subcapitulo": "01",
+  "unidad": "ud",
+  "titulo": "Ayuda de albañilería para datos y telecomunicaciones.",
+  "descripcion": "Ayuda de albañilería para instalación de datos: pasos y tapado. Incluye la apertura de pasos y el resane. Medido por unidad de ayuda.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-YESO-REP",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MQ-ROZAD",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.42
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.35
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

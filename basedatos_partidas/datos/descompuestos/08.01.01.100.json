@@ -1,0 +1,32 @@
+{
+  "codigo": "08.01.01.100",
+  "ambito": "reforma",
+  "capitulo": "08",
+  "subcapitulo": "01",
+  "unidad": "m",
+  "titulo": "Apertura y tapado de paso en muro.",
+  "descripcion": "Apertura y tapado de paso de instalación en muro. Incluye la apertura y el resane. Medido por metro lineal ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-YESO-REP",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MQ-ROZAD",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.25
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

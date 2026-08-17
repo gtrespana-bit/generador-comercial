@@ -1,0 +1,36 @@
+{
+  "codigo": "08.08.01.080",
+  "ambito": "reforma",
+  "capitulo": "08",
+  "subcapitulo": "08",
+  "unidad": "m",
+  "titulo": "Moldura de madera.",
+  "descripcion": "Colocación de moldura de madera. Incluye la fijación y el acabado. Medido por metro lineal colocado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MADERA-LISTON",
+      "rendimiento": 1.1
+    },
+    {
+      "ref": "MT-CLAVOS",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.12
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

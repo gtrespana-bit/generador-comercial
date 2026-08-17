@@ -1,0 +1,36 @@
+{
+  "codigo": "05.09.01.200",
+  "ambito": "reforma",
+  "capitulo": "05",
+  "subcapitulo": "09",
+  "unidad": "m2",
+  "titulo": "Refuerzo de estructura con perfil.",
+  "descripcion": "Refuerzo de estructura con perfil metálico. Incluye el montaje del refuerzo. Medido por metro cuadrado reforzado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PERFIL-ACERO",
+      "rendimiento": 12.0
+    },
+    {
+      "ref": "MT-ELECTRODO",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MQ-SOLDADORA",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MO-OF1-SOLD",
+      "rendimiento": 0.9
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.5
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

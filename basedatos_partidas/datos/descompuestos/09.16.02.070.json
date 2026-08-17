@@ -1,0 +1,36 @@
+{
+  "codigo": "09.16.02.070",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "16",
+  "unidad": "ud",
+  "titulo": "Instalación de elevador de silla.",
+  "descripcion": "Instalación de elevador de silla., con montaje y puesta en marcha. Incluye el montaje. Medido por unidad instalada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MQ-GRUA",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 18.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 9.0
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

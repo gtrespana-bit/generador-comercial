@@ -1,0 +1,36 @@
+{
+  "codigo": "09.16.01.060",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "16",
+  "unidad": "ud",
+  "titulo": "Instalación de ascensor panorámico.",
+  "descripcion": "Instalación de ascensor panorámico con estructura de vidrio. Incluye el montaje y la puesta en marcha. Medido por unidad instalada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 1.3
+    },
+    {
+      "ref": "MQ-GRUA",
+      "rendimiento": 3.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 3.0
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 26.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 13.0
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

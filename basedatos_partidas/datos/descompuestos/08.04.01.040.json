@@ -1,0 +1,32 @@
+{
+  "codigo": "08.04.01.040",
+  "ambito": "reforma",
+  "capitulo": "08",
+  "subcapitulo": "04",
+  "unidad": "m",
+  "titulo": "Sellado de junta perimetral de ventana.",
+  "descripcion": "Sellado de junta perimetral de ventana. Incluye la limpieza y el sellado. Medido por metro lineal sellado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-SILICONA-EST",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-VIDR",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.06
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

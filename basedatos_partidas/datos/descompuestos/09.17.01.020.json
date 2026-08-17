@@ -1,0 +1,28 @@
+{
+  "codigo": "09.17.01.020",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "17",
+  "unidad": "ud",
+  "titulo": "Prueba de instalación eléctrica.",
+  "descripcion": "Prueba de instalación eléctrica con medición de continuidad y aislamiento. Incluye la medición y el informe. Medido por instalación probada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MQ-DETECTOR",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 1.0
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

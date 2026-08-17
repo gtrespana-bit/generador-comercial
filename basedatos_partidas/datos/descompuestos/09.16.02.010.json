@@ -1,0 +1,32 @@
+{
+  "codigo": "09.16.02.010",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "16",
+  "unidad": "ud",
+  "titulo": "Instalación de salvaescaleras.",
+  "descripcion": "Instalación de salvaescaleras para accesibilidad. Incluye el montaje del riel y la silla. Medido por unidad instalada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 10.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 5.0
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

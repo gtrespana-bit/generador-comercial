@@ -1,0 +1,44 @@
+{
+  "codigo": "09.14.01.290",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "14",
+  "unidad": "ud",
+  "titulo": "Instalación de bomba de agua potable.",
+  "descripcion": "Instalación de bomba de agua potable., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-BOMBA-AGUA",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MT-FLOTANTE",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-VALV-CHECK",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-PLO-SOP",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-OF1-PLO",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 1.0
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

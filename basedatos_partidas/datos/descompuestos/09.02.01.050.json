@@ -1,0 +1,36 @@
+{
+  "codigo": "09.02.01.050",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "02",
+  "unidad": "m",
+  "titulo": "Tubería de desagüe de 2 pulgadas.",
+  "descripcion": "Suministro e instalación de tubería de desagüe de PVC de 2 pulgadas. Incluye el montaje. Medido por metro lineal instalado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PLO-PVC4",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MT-PLO-ACC4",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-PLO",
+      "rendimiento": 0.11
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.07
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

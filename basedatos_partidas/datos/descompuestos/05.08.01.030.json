@@ -1,0 +1,32 @@
+{
+  "codigo": "05.08.01.030",
+  "ambito": "reforma",
+  "capitulo": "05",
+  "subcapitulo": "08",
+  "unidad": "ud",
+  "titulo": "Conector de cortante en losa mixta.",
+  "descripcion": "Colocación de conector de cortante soldable en losa mixta. Incluye la soldadura del conector. Medido por conector colocado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONECTOR-CORTE",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MQ-SOLDADORA",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-SOLD",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.08
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

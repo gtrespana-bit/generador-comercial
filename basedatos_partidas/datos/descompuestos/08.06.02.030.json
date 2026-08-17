@@ -1,0 +1,40 @@
+{
+  "codigo": "08.06.02.030",
+  "ambito": "reforma",
+  "capitulo": "08",
+  "subcapitulo": "06",
+  "unidad": "ud",
+  "titulo": "Base de bomba de agua.",
+  "descripcion": "Ejecución de base para bomba de agua. Incluye el vaciado y los anclajes. Medido por unidad ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONC-210",
+      "rendimiento": 0.04
+    },
+    {
+      "ref": "MT-PERNO-ANCLA",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MT-FORM-MADERA",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MQ-VIBRADOR",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.35
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}
