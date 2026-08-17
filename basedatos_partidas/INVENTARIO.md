@@ -167,5 +167,5 @@ siguiente paso es producir las familias pendientes. Prioridades:
 - **Capítulo 09 Instalaciones completo hasta el mínimo** (540/540), el
   capítulo más extenso del catálogo.
 
-Siguen pendientes 257 precios de material provisionales. Los 44 precios de
+Siguen pendientes 213 precios de material provisionales. Los 44 precios de
 alquiler de equipos permanecen fuera de alcance por decisión del cliente.
