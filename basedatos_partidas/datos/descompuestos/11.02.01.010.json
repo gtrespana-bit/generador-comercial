@@ -1,0 +1,40 @@
+{
+  "codigo": "11.02.01.010",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "02",
+  "unidad": "m²",
+  "titulo": "Pendientado de cubierta plana con mortero aligerado.",
+  "descripcion": "Formación de pendientes en cubierta plana mediante relleno de mortero aligerado, con el espesor variable necesario para dirigir el agua hacia los tragantes con la pendiente mínima de proyecto. Es la capa que determina si la cubierta evacúa o empoza, y el error más común es dejar pendiente insuficiente o contrapendientes junto a los petos. Incluye el replanteo de las líneas de limatesa y de los puntos bajos en los tragantes, la colocación de maestras, el extendido y reglado del mortero, el fratasado y el curado. Medido en superficie realmente ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MORT-AFIRM",
+      "rendimiento": 0.068
+    },
+    {
+      "ref": "MT-CEMENTO",
+      "rendimiento": 5.0
+    },
+    {
+      "ref": "MT-AGUA-OBRA",
+      "rendimiento": 0.03
+    },
+    {
+      "ref": "MQ-MEZCL",
+      "rendimiento": 0.085
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.48
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-11-04-010",
+  "apartado": "01"
+}

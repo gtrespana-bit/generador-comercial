@@ -1,0 +1,36 @@
+{
+  "codigo": "15.01.01.010",
+  "ambito": "reforma",
+  "capitulo": "15",
+  "subcapitulo": "01",
+  "unidad": "m²",
+  "titulo": "Zona de acopio y clasificación de residuos.",
+  "descripcion": "Habilitación de zona de acopio y clasificación de residuos de obra, con delimitación, señalización y separación por tipo de material. La clasificación en origen no es solo una exigencia ambiental: permite recuperar el valor de la chatarra y del cartón, y abarata el bote al reducir el volumen de mezcla que va a vertedero. Incluye la delimitación de la zona, la protección del piso, la colocación de los contenedores o sacos por tipo de residuo, su señalización y el mantenimiento del orden durante la obra. Medido en superficie de zona habilitada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MALLA-OBRA",
+      "rendimiento": 1.1
+    },
+    {
+      "ref": "MT-PROT-OBRA",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-SENAL-OBRA",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MT-SAC-ESC",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.3
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-19-02-020",
+  "apartado": "01"
+}

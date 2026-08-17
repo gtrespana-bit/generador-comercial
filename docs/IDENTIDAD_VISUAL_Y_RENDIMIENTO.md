@@ -1,7 +1,10 @@
 # Identidad visual, usabilidad y rendimiento del frontend (pasada 2026-08)
 
 Fecha: **16/08/2026** · Suite: **470 passed, 6 skipped** · Sin migración nueva
-(el head sigue siendo `a3d7e9c1b5f2`; este bloque no cambia esquema).
+(el head al cerrar ese bloque era `a3d7e9c1b5f2`; este bloque no cambió esquema).
+
+> Estado actual: el head es `d6e2f9c4b8a1`. El rendimiento del catálogo fue
+> ampliado después para 5.000 partidas; ver `docs/FASE_1_CATALOGO_ESCALABLE.md`.
 
 Esta pasada resuelve los fallos de CI que bloqueaban el despliegue de Vercel,
 unifica la identidad visual de toda la superficie (pública y autenticada) y

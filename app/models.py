@@ -1101,6 +1101,10 @@ class Configuracion(TenantMixin, Base):
     # no se vuelve a inyectar automáticamente (evita que partidas borradas
     # reaparezcan tras una actualización).
     semilla_catalogo_aplicada = Column(Boolean, default=False)
+    # Versión estructural del catálogo oficial aplicada a la organización.
+    # Es independiente de la bandera de semilla: una actualización puede
+    # reclasificar partidas oficiales existentes sin resucitar las borradas.
+    version_catalogo = Column(Integer, default=0)
     semilla_productos_aplicada = Column(Boolean, default=False)
     semilla_recetas_aplicada = Column(Boolean, default=False)
 
@@ -1142,14 +1146,55 @@ class RecetaEstancia(TenantMixin, Base):
 
 
 class CategoriaPartida(TenantMixin, Base):
-    """Estructura explícita del catálogo, incluso cuando aún no tiene partidas."""
+    """Nodo del árbol capítulo → subcapítulo → apartado.
+
+    ``categoria`` y ``subcategoria`` se mantienen durante la transición para
+    copias antiguas y categorías creadas por el usuario. Los campos nuevos
+    representan la jerarquía de forma normalizada y permiten ordenar por
+    código en lugar de por texto.
+    """
 
     __tablename__ = "categorias_partidas"
+    __table_args__ = (
+        UniqueConstraint(
+            "organizacion_id", "codigo_completo",
+            name="uq_categoria_partida_organizacion_codigo",
+        ),
+    )
 
     id = Column(Integer, primary_key=True)
     categoria = Column(String(80), nullable=False)
     subcategoria = Column(String(80), default="")
+    parent_id = Column(
+        Integer,
+        ForeignKey("categorias_partidas.id", ondelete="CASCADE"),
+        nullable=True,
+        index=True,
+    )
+    codigo_segmento = Column(String(2), default="")
+    # NULL para categorías libres: PostgreSQL/SQLite permiten varios NULL bajo
+    # la restricción única, mientras los nodos oficiales sí quedan protegidos.
+    codigo_completo = Column(String(8), nullable=True)
+    nombre = Column(String(120), default="")
+    nivel = Column(Integer, default=1)
+    orden = Column(Integer, default=0)
+    ambito = Column(String(30), default="reforma")
+    activa = Column(Boolean, default=True)
+    oficial = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+    parent = relationship(
+        "CategoriaPartida",
+        remote_side="CategoriaPartida.id",
+        back_populates="hijos",
+    )
+    hijos = relationship(
+        "CategoriaPartida",
+        back_populates="parent",
+        cascade="all, delete-orphan",
+        single_parent=True,
+    )
+    partidas = relationship("Partida", back_populates="nodo_categoria")
 
 
 class Partida(TenantMixin, Base):
@@ -1158,6 +1203,10 @@ class Partida(TenantMixin, Base):
     __tablename__ = "partidas"
     __table_args__ = (
         UniqueConstraint("organizacion_id", "nombre", name="uq_partida_organizacion_nombre"),
+        UniqueConstraint(
+            "organizacion_id", "catalogo_uid",
+            name="uq_partida_organizacion_catalogo_uid",
+        ),
     )
 
     id = Column(Integer, primary_key=True)
@@ -1172,6 +1221,22 @@ class Partida(TenantMixin, Base):
     # constructor de presupuestos en un formulario complejo.
     codigo_interno = Column(String(80), default="")
     subcategoria = Column(String(80), default="")
+    apartado = Column(String(120), default="")
+    categoria_id = Column(
+        Integer,
+        ForeignKey("categorias_partidas.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    codigo_clasificacion = Column(String(20), default="")
+    codigo_legacy = Column(String(80), default="")
+    version_catalogo = Column(Integer, default=0)
+    # Identidad estable del registro oficial, independiente de su código/ruta.
+    # NULL identifica partidas creadas por la propia organización.
+    catalogo_uid = Column(String(100), nullable=True)
+    es_oficial = Column(Boolean, default=False)
+    oculta = Column(Boolean, default=False)
+    version_alta_catalogo = Column(Integer, default=0)
     coste_materiales = Column(Float, default=0.0)
     coste_mano_obra = Column(Float, default=0.0)
     coste_complementarios = Column(Float, default=0.0)  # costes directos complementarios CYPE
@@ -1193,6 +1258,16 @@ class Partida(TenantMixin, Base):
     descomposicion_json = Column(Text, default="[]")
     fecha_actualizacion_precio = Column(DateTime, default=datetime.utcnow)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+    nodo_categoria = relationship("CategoriaPartida", back_populates="partidas")
+
+    @property
+    def ruta_catalogo(self) -> str:
+        """Ruta legible sin segmentos vacíos para vistas y exportaciones."""
+        return " › ".join(
+            valor for valor in (self.categoria, self.subcategoria, self.apartado)
+            if (valor or "").strip()
+        )
 
     @property
     def coste(self) -> float:
@@ -1704,14 +1779,35 @@ def migrar(engine):
             ("tarifa_hora_media", "FLOAT DEFAULT 8"),
             ("estimar_tiempo_por_coste", "BOOLEAN DEFAULT 1"),
             ("semilla_catalogo_aplicada", "BOOLEAN DEFAULT 0"),
+            ("version_catalogo", "INTEGER DEFAULT 0"),
             ("semilla_productos_aplicada", "BOOLEAN DEFAULT 0"),
             ("semilla_recetas_aplicada", "BOOLEAN DEFAULT 0"),
+        ],
+        "categorias_partidas": [
+            ("parent_id", "INTEGER REFERENCES categorias_partidas(id)"),
+            ("codigo_segmento", "VARCHAR(2) DEFAULT ''"),
+            ("codigo_completo", "VARCHAR(8)"),
+            ("nombre", "VARCHAR(120) DEFAULT ''"),
+            ("nivel", "INTEGER DEFAULT 1"),
+            ("orden", "INTEGER DEFAULT 0"),
+            ("ambito", "VARCHAR(30) DEFAULT 'reforma'"),
+            ("activa", "BOOLEAN DEFAULT 1"),
+            ("oficial", "BOOLEAN DEFAULT 0"),
         ],
         "partidas": [
             ("usos", "INTEGER DEFAULT 0"),
             ("ultimo_uso", "DATETIME"),
             ("codigo_interno", "VARCHAR(80) DEFAULT ''"),
             ("subcategoria", "VARCHAR(80) DEFAULT ''"),
+            ("apartado", "VARCHAR(120) DEFAULT ''"),
+            ("categoria_id", "INTEGER REFERENCES categorias_partidas(id)"),
+            ("codigo_clasificacion", "VARCHAR(20) DEFAULT ''"),
+            ("codigo_legacy", "VARCHAR(80) DEFAULT ''"),
+            ("version_catalogo", "INTEGER DEFAULT 0"),
+            ("catalogo_uid", "VARCHAR(100)"),
+            ("es_oficial", "BOOLEAN DEFAULT 0"),
+            ("oculta", "BOOLEAN DEFAULT 0"),
+            ("version_alta_catalogo", "INTEGER DEFAULT 0"),
             ("coste_materiales", "FLOAT DEFAULT 0"),
             ("coste_mano_obra", "FLOAT DEFAULT 0"),
             ("coste_complementarios", "FLOAT DEFAULT 0"),
@@ -1959,6 +2055,11 @@ def migrar(engine):
             "CREATE INDEX IF NOT EXISTS ix_presupuestos_numero ON presupuestos (numero)",
             "CREATE INDEX IF NOT EXISTS ix_facturas_cliente ON facturas (client_id)",
             "CREATE INDEX IF NOT EXISTS ix_items_capitulo ON presupuesto_items (capitulo_id)",
+            "CREATE INDEX IF NOT EXISTS ix_partidas_categoria_id ON partidas (categoria_id)",
+            "CREATE INDEX IF NOT EXISTS ix_partidas_catalogo_uid ON partidas (catalogo_uid)",
+            "CREATE INDEX IF NOT EXISTS ix_partidas_oculta ON partidas (oculta)",
+            "CREATE INDEX IF NOT EXISTS ix_categorias_partidas_parent_id ON categorias_partidas (parent_id)",
+            "CREATE INDEX IF NOT EXISTS ix_categorias_partidas_codigo ON categorias_partidas (codigo_completo)",
             "CREATE INDEX IF NOT EXISTS ix_descomposiciones_partida ON descomposiciones_partida (partida_id)",
             "CREATE INDEX IF NOT EXISTS ix_descomposicion_filas_orden ON descomposicion_filas (descomposicion_id, orden)",
             "CREATE INDEX IF NOT EXISTS ix_recursos_categoria ON recursos (categoria)",

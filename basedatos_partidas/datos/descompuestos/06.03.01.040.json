@@ -1,0 +1,40 @@
+{
+  "codigo": "06.03.01.040",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "03",
+  "unidad": "m²",
+  "titulo": "Pared de bloque de concreto a la vista.",
+  "descripcion": "Pared de bloque de concreto ejecutada con acabado a la vista, sin friso posterior, con selección previa de las piezas y junta trabajada y rehundida. Al no haber friso que corrija los defectos, el trabajo exige un aparejo cuidado, plomos y niveles exactos y limpieza continua de la superficie, lo que reduce sensiblemente el rendimiento frente a una pared destinada a frisar. Incluye la selección y descarte de piezas defectuosas o descantilladas, el replanteo del despiece para evitar cortes en zonas vistas, la colocación con junta constante, el rehundido y perfilado de la junta con el mortero aún fresco y la limpieza inmediata de los rebabes. No incluye el tratamiento hidrofugante final. Medido a cinta corrida descontando huecos mayores de 2 m².",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-BLQ-15",
+      "rendimiento": 13.2
+    },
+    {
+      "ref": "MT-MOR-PEGA",
+      "rendimiento": 0.0135
+    },
+    {
+      "ref": "MT-ANCLA-MURO",
+      "rendimiento": 1.2
+    },
+    {
+      "ref": "MQ-MEZCL",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.95
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.85
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-06-01-040",
+  "apartado": "01"
+}

@@ -1,0 +1,49 @@
+{
+  "codigo": "02.12.01.020",
+  "ambito": "reforma",
+  "capitulo": "02",
+  "subcapitulo": "12",
+  "unidad": "m²",
+  "titulo": "Demolición de pavimento exterior de concreto.",
+  "descripcion": "Demolición de pavimento exterior de concreto, en acera, patio o vía de acceso, de hasta 15 cm de espesor, ejecutada con martillo hidráulico montado sobre retroexcavadora. Incluye la comprobación previa de que no discurren instalaciones enterradas bajo el pavimento, el corte perimetral con disco de diamante para delimitar la zona de intervención, el acordonamiento del área de trabajo, la fragmentación del concreto en piezas cargables, el corte y separación de la malla de refuerzo si la tuviera, el acopio del escombro y la limpieza. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en superficie realmente demolida.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MT-PROT-OBRA",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MQ-RETRO",
+      "rendimiento": 0.13
+    },
+    {
+      "ref": "MQ-MART-NEUM",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MQ-AMOLA",
+      "rendimiento": 0.09
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.14
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.22
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.26
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_anterior": "DMP010",
+  "codigo_legacy": "CT-02-17-020",
+  "apartado": "01"
+}

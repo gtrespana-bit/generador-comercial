@@ -1,0 +1,32 @@
+{
+  "codigo": "03.03.01.030",
+  "ambito": "reforma",
+  "capitulo": "03",
+  "subcapitulo": "03",
+  "unidad": "m³",
+  "titulo": "Excavación manual en zanja para instalaciones enterradas.",
+  "descripcion": "Excavación manual en zanja de sección reducida para el tendido de tuberías de agua, desagüe o canalizaciones eléctricas enterradas, con la pendiente que exija la instalación. Se ejecuta a mano precisamente porque en zonas construidas el riesgo de romper una instalación existente hace desaconsejable la máquina. Incluye el replanteo del trazado, la excavación por capas con vigilancia continua, el acopio del material junto a la zanja, el perfilado del fondo con la pendiente requerida y el mantenimiento de la zanja señalizada mientras permanezca abierta. No incluye el transporte del material sobrante a botadero, que se valora en el subcapítulo de transporte de tierras. Medido en volumen teórico de excavación según las dimensiones de proyecto.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.14
+    },
+    {
+      "ref": "MT-SENAL-OBRA",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.85
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 1.55
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-03-02-030",
+  "apartado": "01"
+}

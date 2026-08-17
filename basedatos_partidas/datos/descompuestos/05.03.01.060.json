@@ -1,0 +1,44 @@
+{
+  "codigo": "05.03.01.060",
+  "ambito": "reforma",
+  "capitulo": "05",
+  "subcapitulo": "03",
+  "unidad": "m³",
+  "titulo": "Concreto para viga.",
+  "descripcion": "Concreto premezclado de resistencia 250 kg/cm2 vaciado en viga, incluida su compactación por vibrado y su curado. Incluye la revisión previa del armado, del apuntalamiento y del recubrimiento, la recepción y comprobación del concreto, el vaciado continuo evitando juntas frías y respetando la posición de las juntas de construcción previstas en el tercio central del vano, la compactación con vibrador de aguja, el reglado de la cara superior, el curado y el desapuntalamiento escalonado una vez alcanzada la resistencia. Medido en volumen teórico según las dimensiones de proyecto.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONC-250",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-CURADOR",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MQ-VIBRADOR",
+      "rendimiento": 0.32
+    },
+    {
+      "ref": "MQ-MONTAC",
+      "rendimiento": 0.07
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.78
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.72
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.9
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-05-01-060",
+  "apartado": "01"
+}

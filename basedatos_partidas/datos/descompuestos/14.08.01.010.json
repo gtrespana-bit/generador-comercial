@@ -1,0 +1,44 @@
+{
+  "codigo": "14.08.01.010",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "08",
+  "unidad": "ud",
+  "titulo": "Punto de agua exterior con llave de jardín.",
+  "descripcion": "Punto de agua exterior con su derivación, llave de jardín y remate. Incluye la derivación desde la red con su llave de corte accesible, la canalización enterrada o empotrada, el montaje de la llave de jardín con su rosca para manguera, el anclaje del conjunto para que no gire al maniobrar, que es lo que termina rompiendo la conexión, y la prueba de estanqueidad. Medido por punto terminado y probado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PLO-PPR20",
+      "rendimiento": 6.0
+    },
+    {
+      "ref": "MT-PLO-ACC20",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MT-LLAVE-PROV",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-MOR-PEGA",
+      "rendimiento": 0.006
+    },
+    {
+      "ref": "MQ-TERMOF",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-PLO",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.6
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-18-05-020",
+  "apartado": "01"
+}

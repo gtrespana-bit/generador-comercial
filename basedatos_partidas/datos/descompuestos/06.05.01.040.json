@@ -1,0 +1,48 @@
+{
+  "codigo": "06.05.01.040",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "05",
+  "unidad": "m²",
+  "titulo": "División liviana de machihembrado de madera.",
+  "descripcion": "División interior ejecutada con machihembrado de madera sobre rastreles, fijada a piso, techo y paramentos. Se emplea en divisiones ligeras, forros y cerramientos de carácter decorativo o en construcción tradicional. Incluye el replanteo, el montaje y nivelación del rastrelado, la aplicación de preservante en las piezas y muy especialmente en las testas y zonas de apoyo, el montaje del machihembrado con encaje a presión, el remate perimetral con molduras y el lijado final. Medido a cinta corrida descontando huecos mayores de 2 m².",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MACHIH-MAD",
+      "rendimiento": 1.08
+    },
+    {
+      "ref": "MT-MADERA-LISTON",
+      "rendimiento": 3.6
+    },
+    {
+      "ref": "MT-CLAVOS",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MT-PRESERV-MAD",
+      "rendimiento": 0.22
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.14
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.09
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 0.42
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.28
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-06-04-040",
+  "apartado": "01"
+}

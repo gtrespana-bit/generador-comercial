@@ -39,6 +39,10 @@ class FormatoJSON(logging.Formatter):
             "logger": record.name,
             "msg": redactar(record.getMessage()),
         }
+        for campo in ("evento", "organizacion_id", "consulta"):
+            valor = getattr(record, campo, None)
+            if valor not in (None, ""):
+                payload[campo] = redactar(valor) if isinstance(valor, str) else valor
         if record.exc_info:
             payload["traceback"] = redactar(
                 "".join(traceback.format_exception(*record.exc_info))

@@ -8,12 +8,14 @@ from app.database import Base, _aplicar_contexto_postgresql
 from app.models import TenantMixin
 from migrations.versions import c93e7a4d20f1_add_application_role_and_tenant_rls as migration
 from migrations.versions import (
-    a3d7e9c1b5f2_baja_organizacion_function as head_migration,
+    a3d7e9c1b5f2_baja_organizacion_function as baja_migration,
     b7c4a9e2d31f_license_cutoff_and_operator_visibility as licenses_access_migration,
     c2f6e8a1d934_public_proposal_links as proposal_links_migration,
     d7f2a9c41e63_fix_invitation_select_policy_on_acceptance as invitation_migration,
     e1a4b7c9d2f0_harden_alembic_version_visibility as alembic_migration,
     f4c1d8e37a95_add_operator_licenses as licenses_migration,
+    f8a1b2c3d4e5_catalog_taxonomy_v2 as taxonomy_migration,
+    d6e2f9c4b8a1_catalog_visibility as head_migration,
 )
 
 
@@ -143,7 +145,9 @@ def test_head_exigido_por_runtime_coincide_con_alembic():
     esquema que la base no tiene todavía (o al revés).
     """
     assert database_module.EXPECTED_ALEMBIC_HEAD == head_migration.revision
-    assert head_migration.down_revision == proposal_links_migration.revision
+    assert head_migration.down_revision == taxonomy_migration.revision
+    assert taxonomy_migration.down_revision == baja_migration.revision
+    assert baja_migration.down_revision == proposal_links_migration.revision
     assert proposal_links_migration.down_revision == licenses_access_migration.revision
     assert licenses_access_migration.down_revision == licenses_migration.revision
     assert licenses_migration.down_revision == alembic_migration.revision

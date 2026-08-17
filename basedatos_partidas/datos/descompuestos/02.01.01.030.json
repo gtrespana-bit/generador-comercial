@@ -1,0 +1,49 @@
+{
+  "codigo": "02.01.01.030",
+  "ambito": "reforma",
+  "capitulo": "02",
+  "subcapitulo": "01",
+  "unidad": "m³",
+  "titulo": "Demolición de zapata o pedestal de concreto armado.",
+  "descripcion": "Demolición de zapata aislada o pedestal de concreto armado, ejecutada con martillo neumático y corte de la armadura con oxicorte o amoladora. Requiere comprobación estructural previa de que el elemento ya no cumple función portante o de que la estructura está debidamente apeada. Incluye la excavación de descubrimiento del elemento si estuviera enterrado, la protección del entorno, el corte y retiro de las barras de acero, la fragmentación del concreto en piezas manejables y su acopio, y el relleno del hueco resultante si el proyecto lo requiere. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en volumen realmente demolido.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 2.2
+    },
+    {
+      "ref": "MT-OXI-CONS",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MQ-MART-NEUM",
+      "rendimiento": 3.4
+    },
+    {
+      "ref": "MQ-OXICORTE",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MQ-RETRO",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 1.1
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 2.6
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 2.9
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_anterior": "DDS010",
+  "codigo_legacy": "CT-02-16-030",
+  "apartado": "01"
+}

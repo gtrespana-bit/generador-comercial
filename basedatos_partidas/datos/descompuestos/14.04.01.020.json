@@ -1,0 +1,52 @@
+{
+  "codigo": "14.04.01.020",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "04",
+  "unidad": "m",
+  "titulo": "Cerca de malla ciclónica.",
+  "descripcion": "Cerca perimetral de malla ciclónica con sus postes, tensores, alambre de púas de coronación y dados de concreto. Incluye el replanteo de la línea, la excavación y vaciado de los dados de los postes, el aplomado y arriostramiento de los postes de esquina y de tiro que son los que reciben toda la tensión de la malla, el tendido y tensado de la malla con su alambre de amarre, la colocación de los tensores y el remate de coronación. Medido en longitud realmente ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-TUBO-ACERO",
+      "rendimiento": 6.4
+    },
+    {
+      "ref": "MT-MALLA-OBRA",
+      "rendimiento": 2.2
+    },
+    {
+      "ref": "MT-CONC-210",
+      "rendimiento": 0.03
+    },
+    {
+      "ref": "MT-ALAMBRE",
+      "rendimiento": 0.55
+    },
+    {
+      "ref": "MT-PINT-ANTICORR",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-MEZCL",
+      "rendimiento": 0.03
+    },
+    {
+      "ref": "MQ-SOLDADORA",
+      "rendimiento": 0.09
+    },
+    {
+      "ref": "MO-OF1-SOLD",
+      "rendimiento": 0.42
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.56
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-18-03-020",
+  "apartado": "01"
+}

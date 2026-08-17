@@ -1,0 +1,44 @@
+{
+  "codigo": "13.06.01.010",
+  "ambito": "reforma",
+  "capitulo": "13",
+  "subcapitulo": "06",
+  "unidad": "ud",
+  "titulo": "Instalación de barra de apoyo para accesibilidad.",
+  "descripcion": "Suministro e instalación de barra de apoyo de acero inoxidable en baño accesible, anclada al paramento. El anclaje es lo crítico: una barra de apoyo debe resistir el peso completo de una persona apoyándose o cayendo sobre ella, de modo que la fijación con tacos plásticos sobre yeso laminado sin refuerzo interior no cumple ninguna función más que decorativa. Incluye la comprobación o ejecución del refuerzo del soporte, el replanteo de la altura y posición normalizadas, el taladrado, el anclaje mecánico o químico según el soporte y la prueba de carga. Medido por unidad instalada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-BARRA-APOYO",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-PERNO-ANCLA",
+      "rendimiento": 3.0
+    },
+    {
+      "ref": "MT-EPOXI-ANCLA",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MT-SIL-SAN",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.26
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 0.7
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.28
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-17-04-010",
+  "apartado": "01"
+}

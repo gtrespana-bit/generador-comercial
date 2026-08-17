@@ -1,0 +1,24 @@
+{
+  "codigo": "01.08.01.040",
+  "ambito": "reforma",
+  "capitulo": "01",
+  "subcapitulo": "08",
+  "unidad": "ud",
+  "titulo": "Baño portátil de obra, por mes de permanencia.",
+  "descripcion": "Puesta a disposición de baño portátil para el personal de obra, incluido su traslado, emplazamiento, mantenimiento y vaciado periódico durante un mes. Es exigible en obras sin servicios sanitarios utilizables y evita el uso de los del inmueble en reforma. Incluye el transporte y colocación en punto accesible al camión de servicio, el suministro de consumibles, el vaciado y limpieza periódicos y el retiro al finalizar el periodo. Medido por mes de permanencia.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MQ-BANO-PORT",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.35
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-01-05-040",
+  "apartado": "01"
+}

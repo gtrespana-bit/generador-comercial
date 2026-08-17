@@ -1,0 +1,28 @@
+{
+  "codigo": "01.05.01.030",
+  "ambito": "reforma",
+  "capitulo": "01",
+  "subcapitulo": "05",
+  "unidad": "m²",
+  "titulo": "Andamio interior móvil o sobre borriquetas.",
+  "descripcion": "Andamio interior rodante o plataforma sobre borriquetas para trabajos en altura en interiores, tales como cielos rasos, frisos de pared alta y pintura. Incluye el traslado del equipo a obra, su montaje y nivelación, la colocación de barandas cuando la altura de trabajo lo exija, los desplazamientos y ajustes de altura sucesivos a lo largo de la jornada, el desmontaje y el retiro. Medido en superficie de techo o de paramento realmente atendida desde el andamio.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.55
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.045
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.045
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-01-02-030",
+  "apartado": "01"
+}

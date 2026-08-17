@@ -1,0 +1,40 @@
+{
+  "_version": 1,
+  "_comentario": "Objetivos de cobertura del catalogo general. Los totales minimos suman 3000 y los amplios 5000 partidas base.",
+  "perfiles_operacion": {
+    "preparacion": ["inspeccion", "proteccion", "montaje", "permanencia", "desmontaje", "reposicion"],
+    "demolicion": ["desmontaje_con_recuperacion", "desmontaje_sin_recuperacion", "demolicion_manual", "demolicion_mecanica", "carga", "retiro"],
+    "terreno": ["replanteo", "ejecucion_manual", "ejecucion_mecanica", "carga", "transporte", "control_calidad"],
+    "estructura": ["suministro_ejecucion", "solo_ejecucion", "reparacion", "refuerzo", "sustitucion", "prueba_control"],
+    "cerramientos": ["suministro_colocacion", "solo_colocacion", "reparacion", "sustitucion", "remates", "limpieza_tratamiento"],
+    "instalaciones": ["suministro_instalacion", "solo_instalacion", "punto_completo", "reparacion", "sustitucion", "prueba_puesta_marcha", "mantenimiento"],
+    "impermeabilizacion": ["preparacion_soporte", "imprimacion", "suministro_aplicacion", "puntos_singulares", "proteccion", "reparacion", "prueba_estanqueidad"],
+    "acabados": ["preparacion_soporte", "suministro_colocacion", "solo_colocacion", "reparacion", "sustitucion", "juntas_remates", "proteccion_limpieza"],
+    "equipamiento": ["suministro_montaje", "solo_montaje", "ajuste", "reparacion", "sustitucion", "mantenimiento"],
+    "exteriores": ["preparacion", "suministro_ejecucion", "solo_ejecucion", "reparacion", "sustitucion", "mantenimiento", "pruebas"],
+    "residuos": ["clasificacion", "acopio", "movimiento_interno", "carga", "transporte", "disposicion", "limpieza"],
+    "control": ["inspeccion", "toma_muestra", "ensayo", "prueba_servicio", "informe", "puesta_marcha"],
+    "seguridad": ["suministro", "instalacion", "permanencia", "mantenimiento", "retiro", "formacion_documentacion"],
+    "energia": ["diagnostico", "suministro_instalacion", "mejora", "regulacion", "prueba", "medicion_ahorro", "mantenimiento"]
+  },
+  "capitulos": {
+    "01": {"objetivo_minimo": 100, "objetivo_amplio": 170, "perfil": "preparacion", "variaciones": ["elemento_protegido", "altura", "duracion", "acceso", "medio_auxiliar"]},
+    "02": {"objetivo_minimo": 260, "objetivo_amplio": 420, "perfil": "demolicion", "variaciones": ["material", "espesor", "medio_manual_mecanico", "recuperacion", "altura", "carga"]},
+    "03": {"objetivo_minimo": 80, "objetivo_amplio": 140, "perfil": "terreno", "variaciones": ["tipo_terreno", "profundidad", "acceso", "medio_manual_mecanico", "distancia_transporte"]},
+    "04": {"objetivo_minimo": 100, "objetivo_amplio": 180, "perfil": "estructura", "variaciones": ["tipologia", "concreto", "acero", "dimensiones", "terreno", "reparacion_refuerzo"]},
+    "05": {"objetivo_minimo": 170, "objetivo_amplio": 300, "perfil": "estructura", "variaciones": ["material_estructural", "elemento", "seccion", "resistencia", "altura", "reparacion_refuerzo"]},
+    "06": {"objetivo_minimo": 180, "objetivo_amplio": 300, "perfil": "cerramientos", "variaciones": ["material", "espesor", "prestacion_termica_acustica", "interior_exterior", "altura", "sistema"]},
+    "07": {"objetivo_minimo": 180, "objetivo_amplio": 300, "perfil": "cerramientos", "variaciones": ["material", "tipo_apertura", "dimensiones", "vidrio", "seguridad", "automatizacion", "acabado"]},
+    "08": {"objetivo_minimo": 120, "objetivo_amplio": 210, "perfil": "cerramientos", "variaciones": ["soporte", "diametro_dimension", "profundidad", "material_fijacion", "resistencia_fuego"]},
+    "09": {"objetivo_minimo": 540, "objetivo_amplio": 860, "perfil": "instalaciones", "variaciones": ["material", "diametro_seccion", "potencia_capacidad", "empotrar_superficie", "prestacion", "equipo", "prueba"]},
+    "10": {"objetivo_minimo": 150, "objetivo_amplio": 260, "perfil": "impermeabilizacion", "variaciones": ["soporte", "sistema", "espesor", "exposicion", "transitable", "agua_presion", "patologia"]},
+    "11": {"objetivo_minimo": 130, "objetivo_amplio": 220, "perfil": "cerramientos", "variaciones": ["tipologia", "material_cobertura", "pendiente", "soporte", "aislamiento", "remate", "reparacion"]},
+    "12": {"objetivo_minimo": 400, "objetivo_amplio": 610, "perfil": "acabados", "variaciones": ["soporte", "material", "formato", "interior_exterior", "humedad", "transito", "acabado", "metodo_colocacion"]},
+    "13": {"objetivo_minimo": 140, "objetivo_amplio": 240, "perfil": "equipamiento", "variaciones": ["material", "modulo", "dimensiones", "acabado", "accesibilidad", "tipo_equipo"]},
+    "14": {"objetivo_minimo": 160, "objetivo_amplio": 280, "perfil": "exteriores", "variaciones": ["uso_peatonal_vehicular", "material", "drenaje", "exposicion", "vegetacion", "caudal", "mantenimiento"]},
+    "15": {"objetivo_minimo": 50, "objetivo_amplio": 90, "perfil": "residuos", "variaciones": ["tipo_residuo", "medio_acopio", "altura_bajada", "distancia", "frecuencia", "tratamiento"]},
+    "16": {"objetivo_minimo": 80, "objetivo_amplio": 130, "perfil": "control", "variaciones": ["sistema_ensayado", "norma", "numero_muestras", "destructivo_no_destructivo", "informe"]},
+    "17": {"objetivo_minimo": 60, "objetivo_amplio": 100, "perfil": "seguridad", "variaciones": ["riesgo", "duracion", "numero_trabajadores", "altura", "proteccion_colectiva_individual"]},
+    "18": {"objetivo_minimo": 100, "objetivo_amplio": 190, "perfil": "energia", "variaciones": ["elemento_envolvente", "clima", "aislamiento", "eficiencia_equipo", "control", "renovable", "medicion"]}
+  }
+}

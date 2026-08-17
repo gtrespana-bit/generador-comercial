@@ -1,0 +1,52 @@
+{
+  "codigo": "06.05.02.020",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "05",
+  "unidad": "m²",
+  "titulo": "Tabique móvil o plegable.",
+  "descripcion": "Suministro e instalación de tabique móvil o plegable suspendido de riel, para dividir o unir ambientes según el uso. Todo el peso cuelga del riel superior, de modo que la estructura de la que se suspende debe estar dimensionada y verificada antes del montaje: es el punto donde fallan estas instalaciones. Incluye la comprobación y refuerzo del apoyo estructural, el montaje y nivelación del riel, el colgado de los paneles con sus carros, el ajuste de los sellos superior e inferior que aportan el aislamiento acústico, la regulación del recorrido y del apilamiento y la prueba de maniobra completa. Medido en superficie realmente ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-TABIQUE-MOVIL",
+      "rendimiento": 1.03
+    },
+    {
+      "ref": "MT-PERFIL-ACERO",
+      "rendimiento": 4.2
+    },
+    {
+      "ref": "MT-PERNO-ANCLA",
+      "rendimiento": 2.2
+    },
+    {
+      "ref": "MT-SELLA-ELAST",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-SOLDADORA",
+      "rendimiento": 0.14
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.22
+    },
+    {
+      "ref": "MQ-MONTAC",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 1.1
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.7
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-06-08-020",
+  "apartado": "02"
+}

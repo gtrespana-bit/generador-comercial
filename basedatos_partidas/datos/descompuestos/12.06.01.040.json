@@ -1,0 +1,36 @@
+{
+  "codigo": "12.06.01.040",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "06",
+  "unidad": "m",
+  "titulo": "Perfil de transición entre pisos.",
+  "descripcion": "Suministro y colocación de perfil de transición de aluminio entre pisos de distinto material o de distinto nivel, generalmente en umbrales de puerta. Resuelve el encuentro protegiendo los cantos de ambos pisos y absorbiendo la diferencia de cota, que es donde se producen los tropiezos y los desportillados. Incluye el replanteo, el corte a medida, el taladrado y fijación con tacos o el encolado según el sistema, y el sellado de los bordes. Medido en longitud realmente colocada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PERFIL-TRANS",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-SELLA-ELAST",
+      "rendimiento": 0.03
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MO-OF1-PISO",
+      "rendimiento": 0.13
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.06
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-08-07-040",
+  "apartado": "01"
+}

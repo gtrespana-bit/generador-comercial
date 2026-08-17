@@ -1,0 +1,40 @@
+{
+  "codigo": "13.07.01.010",
+  "ambito": "reforma",
+  "capitulo": "13",
+  "subcapitulo": "07",
+  "unidad": "m",
+  "titulo": "Demarcación y señalización pintada en piso.",
+  "descripcion": "Demarcación de líneas, símbolos y zonas en piso con pintura de tráfico, para estacionamientos, circulaciones y áreas de seguridad. Incluye la limpieza y desengrasado de la franja, el replanteo y encintado de las líneas, la aplicación de la pintura en dos manos con el espesor que garantiza la durabilidad frente al rodado, el retiro de la cinta en fresco para obtener el borde limpio y el acordonamiento hasta el secado. Medido en longitud de línea realmente ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PINT-TRAFICO",
+      "rendimiento": 0.13
+    },
+    {
+      "ref": "MT-CINTA-ENM",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MT-CONS-LIMP",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.09
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.14
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.09
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-16-05-040",
+  "apartado": "01"
+}

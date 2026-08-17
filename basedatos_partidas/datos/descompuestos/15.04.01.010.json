@@ -1,0 +1,28 @@
+{
+  "codigo": "15.04.01.010",
+  "ambito": "reforma",
+  "capitulo": "15",
+  "subcapitulo": "04",
+  "unidad": "m³",
+  "titulo": "Retirada y transporte de escombro a vertedero autorizado.",
+  "descripcion": "Retirada de escombro procedente de demoliciones desde el punto de acopio de la obra y transporte en camión volqueta hasta vertedero o botadero autorizado, incluido el canon de vertido. Incluye la carga manual del escombro sobre el vehículo, el amarre y cubrición de la carga para evitar derrames durante el trayecto, el traslado con una distancia media considerada de 25 km, la descarga y la limpieza de la zona de carga. Medido por metro cúbico de escombro esponjado realmente retirado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CANON",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MQ-VOLQ",
+      "rendimiento": 0.32
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.85
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-19-01-010",
+  "apartado": "01"
+}

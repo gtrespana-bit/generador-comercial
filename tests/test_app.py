@@ -1,6 +1,7 @@
 import asyncio
 import json
 import os
+import re
 from datetime import date
 
 import pytest
@@ -252,6 +253,61 @@ def test_eliminar_partida_del_catalogo_desvincula_lineas_de_presupuesto():
         item = db.get(PresupuestoItem, linea.id)
         assert item is not None
         assert item.partida_catalogo_id is None
+    finally:
+        db.close()
+        engine.dispose()
+
+
+def test_eliminar_partida_oficial_la_oculta_y_permite_restaurarla():
+    engine = create_engine(
+        "sqlite://",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
+    Base.metadata.create_all(engine)
+    Session = sessionmaker(bind=engine)
+    db = Session()
+    try:
+        db.add(Organizacion(nombre="Empresa", slug="empresa-visibilidad"))
+        db.flush()
+        cliente = Cliente(nombre="Cliente")
+        oficial = Partida(
+            nombre="Partida oficial",
+            precio_unitario=30,
+            catalogo_uid="OFICIAL-001",
+            es_oficial=True,
+            version_catalogo=2,
+        )
+        db.add_all([cliente, oficial])
+        db.commit()
+        presupuesto = Presupuesto(
+            numero="PRE-HIDE-001", year=date.today().year, fecha=date.today(),
+            client_id=cliente.id,
+        )
+        capitulo = Capitulo(nombre="CAPÍTULO", orden=1)
+        linea = PresupuestoItem(
+            nombre=oficial.nombre, unidad="ud", cantidad=1,
+            precio_unitario=30, orden=1, partida_catalogo_id=oficial.id,
+        )
+        capitulo.partidas.append(linea)
+        presupuesto.capitulos.append(capitulo)
+        db.add(presupuesto)
+        db.commit()
+
+        from app.main import eliminar_partida, restaurar_partida
+
+        respuesta = eliminar_partida(oficial.id, db)
+        assert respuesta.status_code == 303
+        db.expire_all()
+        guardada = db.get(Partida, oficial.id)
+        assert guardada is not None
+        assert guardada.oculta is True
+        assert db.get(PresupuestoItem, linea.id).partida_catalogo_id == oficial.id
+
+        restaurada = restaurar_partida(oficial.id, db)
+        assert restaurada.status_code == 303
+        db.expire_all()
+        assert db.get(Partida, oficial.id).oculta is False
     finally:
         db.close()
         engine.dispose()
@@ -671,6 +727,90 @@ def test_editar_presupuesto_form_render():
         assert "datos-catalogo" in resp.text
         assert "datos-productos" in resp.text
         assert "Guardar cambios" in resp.text or "guardar" in resp.text.lower()
+
+
+def test_editor_envia_indice_ligero_y_carga_ficha_bajo_demanda():
+    with TestClient(app) as client:
+        resp = client.get("/presupuestos/nuevo")
+        assert resp.status_code == 200
+        match = re.search(
+            r'id="datos-catalogo"[^>]*>\s*(.*?)\s*</script>',
+            resp.text,
+            re.DOTALL,
+        )
+        assert match
+        catalogo = json.loads(match.group(1))
+        assert catalogo
+        assert "buscable" in catalogo[0]
+        assert "descripcion" not in catalogo[0]
+        assert "descomposicion" not in catalogo[0]
+        # La demostración completa (540 partidas) antes superaba 3,3 MB.
+        assert len(resp.content) < 1_000_000
+
+        ficha = client.get(f"/partidas/{catalogo[0]['id']}/ficha")
+        assert ficha.status_code == 200
+        payload = ficha.json()
+        assert payload["ok"]
+        assert "descripcion" in payload["partida"]
+        assert "descomposicion" in payload["partida"]
+
+
+def test_busqueda_remota_cubre_descripcion_y_catalogo_se_pagina():
+    with TestClient(app) as client:
+        busqueda = client.get(
+            "/partidas/api/buscar",
+            params={"q": "distanciómetro", "limite": 10},
+        )
+        assert busqueda.status_code == 200
+        data = busqueda.json()
+        assert data["ok"]
+        assert any("Levantamiento" in p["nombre"] for p in data["resultados"])
+        sinonimo = client.get(
+            "/partidas/api/buscar", params={"q": "hormigón", "limite": 20}
+        ).json()
+        assert sinonimo["resultados"]
+        assert any("concreto" in p["nombre"].lower() for p in sinonimo["resultados"])
+        metrica = client.post(
+            "/partidas/api/busqueda-sin-resultados",
+            json={"q": "partida técnica inexistente"},
+        )
+        assert metrica.status_code == 200
+        assert metrica.json()["ok"]
+
+        listado = client.get("/partidas")
+        assert listado.status_code == 200
+        assert listado.text.count('class="partida-tr"') <= 100
+        assert "Página <strong>1</strong>" in listado.text
+
+
+def test_partida_oculta_desaparece_del_editor_y_aparece_en_su_vista():
+    with TestClient(app) as client:
+        encontrada = client.get(
+            "/partidas/api/buscar", params={"q": "Levantamiento de medidas"}
+        ).json()["resultados"][0]
+        partida_id = encontrada["id"]
+        nombre = encontrada["nombre"]
+        try:
+            respuesta = client.post(
+                f"/partidas/{partida_id}/eliminar", follow_redirects=False
+            )
+            assert respuesta.status_code == 303
+            resultados = client.get(
+                "/partidas/api/buscar", params={"q": "Levantamiento de medidas"}
+            ).json()["resultados"]
+            assert all(p["id"] != partida_id for p in resultados)
+            ocultas = client.get("/partidas", params={"vista": "ocultas"})
+            assert ocultas.status_code == 200
+            assert nombre in ocultas.text
+            editor = client.get("/presupuestos/nuevo")
+            match = re.search(
+                r'id="datos-catalogo"[^>]*>\s*(.*?)\s*</script>',
+                editor.text,
+                re.DOTALL,
+            )
+            assert all(p["id"] != partida_id for p in json.loads(match.group(1)))
+        finally:
+            client.post(f"/partidas/{partida_id}/restaurar")
 
 
 def test_flujo_completo_crear_y_modificar_presupuesto():

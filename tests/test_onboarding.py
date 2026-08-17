@@ -80,7 +80,8 @@ def test_modo_demo_crea_contenido_ficticio_identificado():
         assert cfg.onboarding_modo == "demo"
         # Catálogo propio de basedatos_partidas (540 partidas + recursos).
         assert db.query(Partida).count() >= 500
-        assert db.query(Partida).filter(Partida.codigo_interno.like("CT-%")).count() >= 500
+        assert db.query(Partida).filter(Partida.codigo_legacy.like("CT-%")).count() >= 500
+        assert db.query(Partida).filter(Partida.version_catalogo == 2).count() >= 500
         assert db.query(Producto).count() >= 3
         assert db.query(RecetaEstancia).count() >= 6
         cliente = db.query(Cliente).one()

@@ -11,10 +11,10 @@ alcance, y genera documentos PDF profesionales.
 > **Dirección del producto:** CotizaT se desarrolla browser-first. Durante la
 > transición puede ejecutarse localmente en el navegador con SQLite, pero la
 > versión alojada usa PostgreSQL, organizaciones aisladas y almacenamiento
-> externo. Todavía no debe publicarse: Supabase Auth y la abstracción de
-> Storage privado ya están implementados, pero faltan pruebas reales de ambos,
-> aprovisionar el bucket privado, validar Auth/Storage en despliegue real y
-> completar el endurecimiento RLS/CSP antes de publicar.
+> externo. Supabase Auth, Storage privado, RLS/CSP y el entorno de staging ya
+> están implantados. Antes de un despliegue público debe seguirse el control
+> operativo y de pilotos de `docs/PUNTO_DE_CONTINUACION.md`; el head de esquema
+> vigente es `d6e2f9c4b8a1`.
 >
 > Sus sugerencias se basan en coincidencias deterministas sobre el catálogo del
 > usuario; no se presentan como inteligencia artificial.

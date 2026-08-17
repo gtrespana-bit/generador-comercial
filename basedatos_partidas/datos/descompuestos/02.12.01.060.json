@@ -1,0 +1,41 @@
+{
+  "codigo": "02.12.01.060",
+  "ambito": "reforma",
+  "capitulo": "02",
+  "subcapitulo": "12",
+  "unidad": "m",
+  "titulo": "Desmontaje de cerca de malla ciclónica.",
+  "descripcion": "Desmontaje de cerca de malla ciclónica o alfajol, incluidos los tubos o postes de soporte, los tensores, el alambre de púas de coronación y las bases de concreto de los postes. Ejecutado con medios manuales, amoladora y martillo eléctrico. Incluye el destensado previo de la malla, el corte y enrollado en tramos manejables, la extracción de los postes con demolición de sus dados de concreto, el relleno de los huecos resultantes, la clasificación del material recuperable y el retiro. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en longitud realmente desmontada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-SAC-ESC",
+      "rendimiento": 0.45
+    },
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MQ-AMOLA",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-MART-ELEC",
+      "rendimiento": 0.16
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.19
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.23
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_anterior": "DUC020",
+  "codigo_legacy": "CT-02-17-060",
+  "apartado": "01"
+}

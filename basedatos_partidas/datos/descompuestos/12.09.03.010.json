@@ -1,0 +1,48 @@
+{
+  "codigo": "12.09.03.010",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "09",
+  "unidad": "m²",
+  "titulo": "Cielo raso de machihembrado de madera.",
+  "descripcion": "Cielo raso con machihembrado de madera sobre rastrelado suspendido de la losa, con cámara ventilada y tratamiento preservante. En clima tropical la ventilación de la cámara y el preservante en todas las caras, incluidas las testas, son lo que evita el ataque de comején y la pudrición. Incluye replanteo y nivelación del rastrelado, aplicación del preservante, montaje del machihembrado con clavado oculto, remate perimetral con moldura y lijado final. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MACHIH-MAD",
+      "rendimiento": 1.08
+    },
+    {
+      "ref": "MT-MADERA-LISTON",
+      "rendimiento": 3.4
+    },
+    {
+      "ref": "MT-PRESERV-MAD",
+      "rendimiento": 0.26
+    },
+    {
+      "ref": "MT-CLAVOS",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.14
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.17
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 0.52
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.3
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-09-04-010",
+  "apartado": "03"
+}

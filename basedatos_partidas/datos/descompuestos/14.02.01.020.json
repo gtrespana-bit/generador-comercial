@@ -1,0 +1,52 @@
+{
+  "codigo": "14.02.01.020",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "02",
+  "unidad": "m²",
+  "titulo": "Acera de concreto.",
+  "descripcion": "Acera de concreto de 8 cm sobre base compactada, con juntas de control y acabado antideslizante, con la pendiente transversal de evacuación. Incluye el replanteo de rasantes y pendientes, el encofrado perimetral, la colocación de la malla, el vaciado y reglado, el acabado, el aserrado o formación de juntas de control a la separación indicada y el curado. Medido en superficie realmente ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONC-210",
+      "rendimiento": 0.086
+    },
+    {
+      "ref": "MT-MALLA-ELEC",
+      "rendimiento": 1.06
+    },
+    {
+      "ref": "MT-FORM-MADERA",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MT-SEPARADOR",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MT-CURADOR",
+      "rendimiento": 0.14
+    },
+    {
+      "ref": "MQ-VIBRADOR",
+      "rendimiento": 0.045
+    },
+    {
+      "ref": "MQ-AMOLA",
+      "rendimiento": 0.045
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.34
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.42
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-18-02-020",
+  "apartado": "01"
+}

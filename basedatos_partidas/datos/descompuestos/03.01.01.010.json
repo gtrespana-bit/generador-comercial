@@ -1,0 +1,36 @@
+{
+  "codigo": "03.01.01.010",
+  "ambito": "reforma",
+  "capitulo": "03",
+  "subcapitulo": "01",
+  "unidad": "m²",
+  "titulo": "Limpieza y desbroce manual del terreno.",
+  "descripcion": "Limpieza y desbroce manual del terreno, con retiro de maleza, hierba, arbustos y basura acumulada, hasta dejar la superficie despejada para el replanteo. Se emplea en parcelas pequeñas o de acceso restringido donde no entra maquinaria. Incluye el corte de la vegetación con desbrozadora, el arranque manual de raíces superficiales, el recogido y ensacado de los residuos, su traslado al punto de acopio y el barrido final de la superficie. No incluye el transporte del material sobrante a botadero, que se valora en el subcapítulo de transporte de tierras. Medido en superficie realmente desbrozada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-SAC-ESC",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.04
+    },
+    {
+      "ref": "MQ-DESBROZ",
+      "rendimiento": 0.045
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.045
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.07
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-03-01-010",
+  "apartado": "01"
+}

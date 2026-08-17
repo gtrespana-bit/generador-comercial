@@ -1,0 +1,56 @@
+{
+  "codigo": "14.11.01.010",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "11",
+  "unidad": "m²",
+  "titulo": "Pérgola de madera para exterior.",
+  "descripcion": "Fabricación y montaje de pérgola de madera tratada para exterior, con sus pilares, vigas, correas y anclajes a la base. En clima tropical el punto de fallo es siempre el encuentro del pilar con el piso: la madera en contacto directo con el concreto absorbe humedad por capilaridad y se pudre desde la base, de modo que debe apoyarse sobre herraje metálico que la separe del piso. Incluye la ejecución de los dados de anclaje, el montaje de los herrajes separadores, el corte y labra de las piezas, el montaje de la estructura con apeo provisional, la fijación con herrajes y el tratamiento preservante en todas las caras y testas. Medido en superficie realmente ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MADERA-PERGOLA",
+      "rendimiento": 4.6
+    },
+    {
+      "ref": "MT-HERRAJE-MAD",
+      "rendimiento": 3.2
+    },
+    {
+      "ref": "MT-PRESERV-MAD",
+      "rendimiento": 0.42
+    },
+    {
+      "ref": "MT-CONC-210",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MT-PERNO-ANCLA",
+      "rendimiento": 1.6
+    },
+    {
+      "ref": "MT-CLAVOS",
+      "rendimiento": 0.28
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.32
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.24
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 1.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.9
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-18-06-010",
+  "apartado": "01"
+}

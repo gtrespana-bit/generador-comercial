@@ -2,6 +2,15 @@
 
 Fecha de corte de fondo: 14/08/2026 (America/Caracas).
 
+> **Actualización 16/08/2026 — visibilidad por organización:** el titular
+> confirmó la ejecución de `docs/staging_upgrade_d6e2f9c4b8a1.sql`. Supabase y
+> el runtime quedan en el head `d6e2f9c4b8a1`.
+
+> **Actualización 16/08/2026 — taxonomía numérica v2:** el titular confirmó la
+> ejecución en Supabase de `docs/staging_upgrade_f8a1b2c3d4e5.sql`.
+> `f8a1b2c3d4e5` fue el head intermedio anterior a `d6e2f9c4b8a1`. La nota
+> siguiente se conserva como histórico del bloque anterior.
+
 > **Actualización de rama 16/08/2026 (cierre de bloque con PR del titular):**
 > el bloque de cierre operativo (E3-016 a E3-024) y el primer bloque de la
 > Etapa 4 (autorización centralizada y logs estructurados) están completos en

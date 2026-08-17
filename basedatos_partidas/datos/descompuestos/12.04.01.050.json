@@ -1,0 +1,48 @@
+{
+  "codigo": "12.04.01.050",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "04",
+  "unidad": "m²",
+  "titulo": "Revestimiento continuo de microcemento en paramento vertical.",
+  "descripcion": "Revestimiento continuo de microcemento en paramento vertical, aplicado en capas sucesivas con malla de refuerzo, con acabado sellado. Ofrece una superficie continua sin juntas, muy demandada en baños y espacios contemporáneos, pero es extremadamente sensible a la calidad del soporte: cualquier fisura o movimiento del paramento se refleja en el acabado. Incluye la comprobación y estabilización del soporte, la imprimación, la aplicación de la capa base con malla, las capas de acabado con la textura elegida, el lijado entre capas y la aplicación de las manos de sellador protector. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MICROCEM",
+      "rendimiento": 3.2
+    },
+    {
+      "ref": "MT-PUENTE-ADH",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MT-MALLA-JUNTA",
+      "rendimiento": 1.1
+    },
+    {
+      "ref": "MT-PIN-LIJA",
+      "rendimiento": 0.22
+    },
+    {
+      "ref": "MQ-LIJAD",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MQ-BATID",
+      "rendimiento": 0.07
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.4
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-07-05-050",
+  "apartado": "01"
+}

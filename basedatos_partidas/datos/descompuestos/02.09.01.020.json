@@ -1,0 +1,41 @@
+{
+  "codigo": "02.09.01.020",
+  "ambito": "reforma",
+  "capitulo": "02",
+  "subcapitulo": "09",
+  "unidad": "m",
+  "titulo": "Desmontaje de bajante de aguas lluvias.",
+  "descripcion": "Desmontaje de bajante de aguas lluvias, vista o empotrada, incluidos las abrazaderas, los codos y las piezas de conexión, ejecutado con medios manuales desde andamio. Incluye el acordonamiento de la zona inferior, el corte de la bajante en tramos manejables, la extracción de las abrazaderas ancladas a la fachada, el resane de los huecos de anclaje, el taponado provisional de la conexión a la red que permanece y el retiro del material. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en longitud realmente desmontada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.09
+    },
+    {
+      "ref": "MT-YESO-REP",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MT-PROT-OBRA",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.16
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_anterior": "DQC020",
+  "codigo_legacy": "CT-02-13-020",
+  "apartado": "01"
+}

@@ -41,6 +41,21 @@ def test_formato_json_es_parseable_y_con_campos_esperados():
     assert "traceback" not in payload
 
 
+def test_formato_json_incluye_metricas_seguras_del_catalogo():
+    formateador = FormatoJSON()
+    registro = logging.LogRecord(
+        name=LOGGER_NOMBRE, level=logging.WARNING, pathname="x", lineno=1,
+        msg="catalogo_busqueda_sin_resultados", args=(), exc_info=None,
+    )
+    registro.evento = "catalogo_busqueda_sin_resultados"
+    registro.organizacion_id = 7
+    registro.consulta = "impermeabilización especial"
+    payload = json.loads(formateador.format(registro))
+    assert payload["evento"] == "catalogo_busqueda_sin_resultados"
+    assert payload["organizacion_id"] == 7
+    assert payload["consulta"] == "impermeabilización especial"
+
+
 def test_formato_json_incluye_traza_redactada():
     formateador = FormatoJSON()
     try:

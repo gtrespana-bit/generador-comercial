@@ -1,0 +1,40 @@
+{
+  "codigo": "04.04.01.050",
+  "ambito": "reforma",
+  "capitulo": "04",
+  "subcapitulo": "04",
+  "unidad": "m³",
+  "titulo": "Concreto para losa de fundación.",
+  "descripcion": "Concreto premezclado de resistencia 250 kg/cm2 vaciado en losa de fundación, incluida su compactación por vibrado. Incluye la revisión previa del armado, de los separadores y de la barrera de vapor, la recepción y comprobación del concreto, el vaciado continuo por franjas evitando las juntas frías, la compactación con vibrador de aguja, el reglado a la cota mediante maestras y el sangrado del agua de exudación antes del acabado. No incluye el acabado superficial ni el curado, que se valoran en la partida siguiente. Medido en volumen teórico según las dimensiones de proyecto.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONC-250",
+      "rendimiento": 1.04
+    },
+    {
+      "ref": "MQ-VIBRADOR",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MQ-BOMBA-CONC",
+      "rendimiento": 0.045
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.48
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.68
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-04-03-050",
+  "apartado": "01"
+}

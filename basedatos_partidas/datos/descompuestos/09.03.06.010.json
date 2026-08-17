@@ -1,0 +1,48 @@
+{
+  "codigo": "09.03.06.010",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "03",
+  "unidad": "ud",
+  "titulo": "Punto de fuerza para electrodoméstico o equipo.",
+  "descripcion": "Punto de fuerza dedicado para electrodoméstico o equipo de consumo elevado, con conductor de mayor calibre, su toma específica y protección independiente en el tablero. Los equipos de alto consumo como aire acondicionado, calentador, cocina eléctrica o secadora exigen circuito propio: compartirlo con tomas generales es la causa más frecuente de sobrecalentamiento de conductores. Incluye la canalización, el conductor de calibre adecuado a la potencia, la caja y la toma, el conexionado y la comprobación de continuidad y de caída de tensión. Medido por punto terminado y probado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ELE-TUB20",
+      "rendimiento": 6.0
+    },
+    {
+      "ref": "MT-CABLE-8",
+      "rendimiento": 18.0
+    },
+    {
+      "ref": "MT-ELE-CAJA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-ELE-MECA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-YESO-REP",
+      "rendimiento": 6.0
+    },
+    {
+      "ref": "MQ-ROZAD",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 1.1
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.7
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-13-02-020",
+  "apartado": "06"
+}

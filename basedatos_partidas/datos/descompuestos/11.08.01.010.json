@@ -1,0 +1,44 @@
+{
+  "codigo": "11.08.01.010",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "08",
+  "unidad": "m",
+  "titulo": "Canal de recogida de aguas lluvias.",
+  "descripcion": "Suministro y montaje de canal de recogida de aguas lluvias en alero, con sus soportes, uniones, tapas y conexión a bajante. La pendiente hacia la bajante es lo que decide si el canal evacúa o rebosa: un canal montado a nivel se llena de agua y de hojas y termina desbordando sobre la fachada. Incluye el replanteo con la pendiente mínima hacia el punto de desagüe, la colocación de los soportes con la separación indicada, el montaje del canal, el sellado de uniones, la colocación de tapas de extremo y la conexión a la bajante. Medido en longitud realmente montada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CANAL-PVC",
+      "rendimiento": 1.06
+    },
+    {
+      "ref": "MT-SELLA-ELAST",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MT-TORN",
+      "rendimiento": 8.0
+    },
+    {
+      "ref": "MQ-ATORN",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.22
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.32
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.22
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-11-05-010",
+  "apartado": "01"
+}

@@ -1,0 +1,44 @@
+{
+  "codigo": "05.06.01.030",
+  "ambito": "reforma",
+  "capitulo": "05",
+  "subcapitulo": "06",
+  "unidad": "m³",
+  "titulo": "Concreto para losa maciza.",
+  "descripcion": "Concreto premezclado de resistencia 250 kg/cm2 vaciado en losa maciza de entrepiso o techo, incluida su compactación por vibrado y su curado. Incluye la revisión previa del encofrado, del apuntalamiento, del armado y de los recubrimientos, la recepción y comprobación del concreto, el vaciado continuo por franjas evitando juntas frías, la compactación con vibrador de aguja, el reglado a la cota mediante maestras, el flotado de la superficie y el curado durante los primeros días. Medido en volumen teórico según las dimensiones de proyecto.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONC-250",
+      "rendimiento": 1.04
+    },
+    {
+      "ref": "MT-CURADOR",
+      "rendimiento": 0.24
+    },
+    {
+      "ref": "MQ-VIBRADOR",
+      "rendimiento": 0.22
+    },
+    {
+      "ref": "MQ-BOMBA-CONC",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.48
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.52
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.72
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-05-04-030",
+  "apartado": "01"
+}

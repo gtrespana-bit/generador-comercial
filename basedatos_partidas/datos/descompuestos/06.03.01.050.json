@@ -1,0 +1,64 @@
+{
+  "codigo": "06.03.01.050",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "03",
+  "unidad": "m",
+  "titulo": "Machón o columna de confinamiento en pared de bloque.",
+  "descripcion": "Machón o columna de confinamiento de concreto armado vaciado dentro del paño de mampostería, que junto con la viga de corona conforma el sistema de mampostería confinada. Su función es dotar a la pared de capacidad frente a acciones sísmicas, por lo que su ejecución no es opcional en los paños que el proyecto define como confinados. Incluye el armado con sus cabillas longitudinales y estribos, el amarre de las esperas a la fundación y a la viga superior, el dentado o la colocación de conectores en el borde de la mampostería para garantizar la trabazón, el encofrado, el vaciado con concreto de 210 kg/cm2, el vibrado y el desencofrado. Medido en longitud realmente ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONC-210",
+      "rendimiento": 0.028
+    },
+    {
+      "ref": "MT-ACERO-CAB",
+      "rendimiento": 6.2
+    },
+    {
+      "ref": "MT-ALAMBRE",
+      "rendimiento": 0.11
+    },
+    {
+      "ref": "MT-FORM-MADERA",
+      "rendimiento": 0.85
+    },
+    {
+      "ref": "MT-CLAVOS",
+      "rendimiento": 0.22
+    },
+    {
+      "ref": "MT-DESMOLD",
+      "rendimiento": 0.055
+    },
+    {
+      "ref": "MQ-CIZALLA",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MQ-VIBRADOR",
+      "rendimiento": 0.07
+    },
+    {
+      "ref": "MO-OF1-CAB",
+      "rendimiento": 0.28
+    },
+    {
+      "ref": "MO-OF1-CARP",
+      "rendimiento": 0.42
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.9
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-06-01-050",
+  "apartado": "01"
+}

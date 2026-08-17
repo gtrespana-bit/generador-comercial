@@ -1,0 +1,56 @@
+{
+  "codigo": "14.05.01.010",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "05",
+  "unidad": "m²",
+  "titulo": "Portón de acceso vehicular.",
+  "descripcion": "Fabricación e instalación de portón de acceso vehicular, abatible o corredizo, con su bastidor, forro, herrajes y anclajes. Incluye la fabricación del bastidor reforzado dimensionado para el vano, el tratamiento anticorrosivo, la ejecución o comprobación de los machones o del riel según el tipo de apertura, el montaje y nivelación, el ajuste del recorrido y de los topes, la colocación de la cerradura o pasador y la previsión de la canalización eléctrica si va a motorizarse. Medido en superficie realmente ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-TUBO-ACERO",
+      "rendimiento": 22.0
+    },
+    {
+      "ref": "MT-LAMINA-ZINC",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-ELECTRODO",
+      "rendimiento": 0.42
+    },
+    {
+      "ref": "MT-PINT-ANTICORR",
+      "rendimiento": 0.32
+    },
+    {
+      "ref": "MT-PERNO-ANCLA",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MQ-SOLDADORA",
+      "rendimiento": 0.8
+    },
+    {
+      "ref": "MQ-ESMERIL",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MO-OF1-SOLD",
+      "rendimiento": 1.7
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 1.0
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-18-03-030",
+  "apartado": "01"
+}

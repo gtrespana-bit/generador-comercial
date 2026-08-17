@@ -1,0 +1,72 @@
+{
+  "codigo": "06.06.01.020",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "06",
+  "unidad": "m",
+  "titulo": "Dintel de concreto armado vaciado en sitio.",
+  "descripcion": "Dintel de concreto armado vaciado en sitio sobre vano de puerta o ventana, con su armado, encofrado y entregas de apoyo. Se emplea cuando la luz del vano, la carga que recibe o la geometría no admiten un dintel prefabricado. Incluye el apeo provisional de la fábrica superior, el armado con sus cabillas y estribos, el encofrado del fondo y los laterales apoyado sobre puntales, el vaciado con concreto de 210 kg/cm2, el vibrado, el curado y el desencofrado y desapeo una vez alcanzada la resistencia. Medido en longitud realmente ejecutada, incluidas las entregas.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONC-210",
+      "rendimiento": 0.024
+    },
+    {
+      "ref": "MT-ACERO-CAB",
+      "rendimiento": 5.2
+    },
+    {
+      "ref": "MT-ALAMBRE",
+      "rendimiento": 0.09
+    },
+    {
+      "ref": "MT-FORM-MADERA",
+      "rendimiento": 0.8
+    },
+    {
+      "ref": "MT-APEO",
+      "rendimiento": 0.45
+    },
+    {
+      "ref": "MT-CLAVOS",
+      "rendimiento": 0.22
+    },
+    {
+      "ref": "MT-DESMOLD",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MT-CURADOR",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MQ-CIZALLA",
+      "rendimiento": 0.07
+    },
+    {
+      "ref": "MQ-VIBRADOR",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MO-OF1-CAB",
+      "rendimiento": 0.24
+    },
+    {
+      "ref": "MO-OF1-CARP",
+      "rendimiento": 0.52
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.98
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-06-05-020",
+  "apartado": "01"
+}

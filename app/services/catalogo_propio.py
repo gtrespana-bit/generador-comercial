@@ -16,9 +16,10 @@ import sys
 from functools import lru_cache
 from pathlib import Path
 
+from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
-from ..models import CategoriaPartida, Partida, Recurso
+from ..models import CategoriaPartida, Configuracion, Partida, Recurso
 
 log = logging.getLogger("cotizat")
 
@@ -31,6 +32,7 @@ _CLASIFICACION = _BASE_DATOS / "datos" / "clasificacion.json"
 
 # Mismo margen por defecto que basedatos_partidas/descompuestos.py
 MARGEN_DEFECTO = 0.30
+CATALOGO_VERSION = 2
 
 # Unidades del generador → las que acepta el validador de la app
 _EQUIV_UNIDADES = {
@@ -117,17 +119,47 @@ def construir_catalogo() -> dict:
     catalogo_recursos = mod.cargar_recursos()
     taxonomia = mod.cargar_clasificacion()
 
-    categorias: list[tuple[str, str]] = []
-    for _cod, cap in (taxonomia.get("capitulos") or {}).items():
+    # Nodos normalizados del árbol. Las etiquetas denormalizadas viajan
+    # también en cada nodo para mantener compatibles las vistas y copias v1.
+    categorias: list[dict] = []
+    for cod_cap, cap in (taxonomia.get("capitulos") or {}).items():
         nombre_cap = str(cap.get("nombre") or "").strip()
         if not nombre_cap:
             continue
-        subs = cap.get("subcapitulos") or {}
-        if not subs:
-            categorias.append((nombre_cap, ""))
-            continue
-        for _sc, nombre_sub in subs.items():
-            categorias.append((nombre_cap, str(nombre_sub or "").strip()))
+        etiqueta_cap = f"{cod_cap} {nombre_cap}"
+        categorias.append({
+            "codigo": cod_cap,
+            "segmento": cod_cap,
+            "nombre": nombre_cap,
+            "nivel": 1,
+            "parent_codigo": None,
+            "categoria": etiqueta_cap,
+            "subcategoria": "",
+        })
+        for cod_sub, sub in (cap.get("subcapitulos") or {}).items():
+            nombre_sub = str(sub.get("nombre") or "").strip()
+            codigo_sub = f"{cod_cap}.{cod_sub}"
+            etiqueta_sub = f"{codigo_sub} {nombre_sub}"
+            categorias.append({
+                "codigo": codigo_sub,
+                "segmento": cod_sub,
+                "nombre": nombre_sub,
+                "nivel": 2,
+                "parent_codigo": cod_cap,
+                "categoria": etiqueta_cap,
+                "subcategoria": etiqueta_sub,
+            })
+            for cod_ap, nombre_ap in (sub.get("apartados") or {}).items():
+                codigo_ap = f"{codigo_sub}.{cod_ap}"
+                categorias.append({
+                    "codigo": codigo_ap,
+                    "segmento": cod_ap,
+                    "nombre": str(nombre_ap or "").strip(),
+                    "nivel": 3,
+                    "parent_codigo": codigo_sub,
+                    "categoria": etiqueta_cap,
+                    "subcategoria": etiqueta_sub,
+                })
 
     recursos_out: list[dict] = []
     for codigo, ficha in catalogo_recursos.items():
@@ -216,8 +248,13 @@ def construir_catalogo() -> dict:
         codigo = str(partida.get("codigo") or fuente.stem)
         nombre_cap = str(ubicacion.get("capitulo") or "").strip()
         nombre_sub = str(ubicacion.get("subcapitulo") or "").strip()
-        # La barra lateral agrupa por categoria (capítulo) y subcategoria.
-        # Se guardan los nombres legibles, no el código CT-CC.
+        nombre_apartado = str(ubicacion.get("apartado") or "").strip()
+        cod_cap = ubicacion["capitulo_cod"]
+        cod_sub = f"{cod_cap}.{ubicacion['subcapitulo_cod']}"
+        cod_apartado = f"{cod_sub}.{ubicacion['apartado_cod']}"
+        etiqueta_cap = f"{cod_cap} {nombre_cap}"
+        etiqueta_sub = f"{cod_sub} {nombre_sub}"
+        etiqueta_apartado = f"{cod_apartado} {nombre_apartado}"
         notas = f"Coste directo {coste_directo:.2f} USD + margen {margen * 100:.0f}%"
         pc = partida.get("producto_cliente")
         if isinstance(pc, dict) and pc:
@@ -227,14 +264,25 @@ def construir_catalogo() -> dict:
                 f"({pc.get('consumo', '')} {pc.get('unidad', '')}/{unidad})"
             )
 
+        codigo_legacy = str(partida.get("codigo_legacy") or "")
+        catalogo_uid = str(partida.get("catalogo_uid") or codigo_legacy or codigo)
+        version_alta = int(
+            partida.get("version_alta_catalogo")
+            or (2 if codigo_legacy else CATALOGO_VERSION)
+        )
         partidas_out.append({
             "codigo": codigo,
+            "codigo_legacy": codigo_legacy,
+            "catalogo_uid": catalogo_uid,
+            "version_alta_catalogo": version_alta,
+            "codigo_clasificacion": cod_apartado,
             "nombre": str(partida.get("titulo") or codigo).strip(),
             "descripcion": str(partida.get("descripcion") or "").strip(),
             "unidad": unidad,
             "precio_unitario": precio_venta,
-            "categoria": nombre_cap or "General",
-            "subcategoria": nombre_sub,
+            "categoria": etiqueta_cap or "99 Partidas personalizadas",
+            "subcategoria": etiqueta_sub,
+            "apartado": etiqueta_apartado,
             "coste_materiales": costes["materiales"],
             "coste_mano_obra": costes["mano_obra"],
             "coste_complementarios": costes["complementarios"],
@@ -244,7 +292,9 @@ def construir_catalogo() -> dict:
             "notas_tecnicas": notas,
             "descomposicion_json": json.dumps({
                 "origen": "catalogo_propio",
+                "version_catalogo": CATALOGO_VERSION,
                 "codigo": codigo,
+                "codigo_legacy": str(partida.get("codigo_legacy") or ""),
                 "unidad": unidad,
                 "filas": filas,
             }, ensure_ascii=False),
@@ -260,17 +310,39 @@ def construir_catalogo() -> dict:
     }
 
 
-def _sembrar_categorias(db: Session, categorias: list[tuple[str, str]]) -> None:
+def _sembrar_categorias(
+    db: Session, categorias: list[dict]
+) -> dict[str, CategoriaPartida]:
+    """Crea/actualiza el árbol oficial y devuelve sus nodos por código."""
     existentes = {
-        (c.categoria or "", c.subcategoria or "")
-        for c in db.query(CategoriaPartida).all()
+        c.codigo_completo: c
+        for c in db.query(CategoriaPartida).filter(
+            CategoriaPartida.codigo_completo.isnot(None)
+        ).all()
+        if c.codigo_completo
     }
-    for categoria, subcategoria in categorias:
-        clave = (categoria[:80], (subcategoria or "")[:80])
-        if not clave[0] or clave in existentes:
-            continue
-        db.add(CategoriaPartida(categoria=clave[0], subcategoria=clave[1]))
-        existentes.add(clave)
+    # Primero padres y después hijos; el flush asigna ids para las FK.
+    for item in sorted(categorias, key=lambda c: (c["nivel"], c["codigo"])):
+        codigo = item["codigo"]
+        nodo = existentes.get(codigo)
+        parent = existentes.get(item.get("parent_codigo"))
+        if nodo is None:
+            nodo = CategoriaPartida(categoria=item["categoria"][:80])
+            db.add(nodo)
+            existentes[codigo] = nodo
+        nodo.categoria = item["categoria"][:80]
+        nodo.subcategoria = (item.get("subcategoria") or "")[:80]
+        nodo.parent = parent
+        nodo.codigo_segmento = item["segmento"]
+        nodo.codigo_completo = codigo
+        nodo.nombre = item["nombre"][:120]
+        nodo.nivel = int(item["nivel"])
+        nodo.orden = int(item["segmento"])
+        nodo.ambito = "reforma"
+        nodo.activa = True
+        nodo.oficial = True
+        db.flush()
+    return existentes
 
 
 def _sembrar_recursos(db: Session, recursos: list[dict]) -> int:
@@ -297,32 +369,53 @@ def _sembrar_recursos(db: Session, recursos: list[dict]) -> int:
     return creados
 
 
-def _sembrar_partidas(db: Session, partidas: list[dict]) -> int:
-    """Crea partidas del catálogo propio que aún no existan (por nombre)."""
+def _crear_partida_oficial(
+    item: dict,
+    nodos: dict[str, CategoriaPartida],
+) -> Partida:
+    codigo = str(item.get("codigo") or "")
+    return Partida(
+        nombre=str(item.get("nombre") or codigo)[:200],
+        descripcion=item.get("descripcion") or "",
+        precio_unitario=float(item.get("precio_unitario") or 0),
+        unidad=(item.get("unidad") or "ud")[:30],
+        categoria=(item.get("categoria") or "General")[:80],
+        subcategoria=(item.get("subcategoria") or "")[:80],
+        apartado=(item.get("apartado") or "")[:120],
+        nodo_categoria=nodos.get(item.get("codigo_clasificacion")),
+        codigo_clasificacion=(item.get("codigo_clasificacion") or "")[:20],
+        codigo_legacy=(item.get("codigo_legacy") or "")[:80],
+        version_catalogo=CATALOGO_VERSION,
+        catalogo_uid=(item.get("catalogo_uid") or "")[:100] or None,
+        es_oficial=True,
+        oculta=False,
+        version_alta_catalogo=int(item.get("version_alta_catalogo") or CATALOGO_VERSION),
+        codigo_interno=codigo[:80],
+        codigo_externo=codigo[:100],
+        coste_materiales=float(item.get("coste_materiales") or 0),
+        coste_mano_obra=float(item.get("coste_mano_obra") or 0),
+        coste_complementarios=float(item.get("coste_complementarios") or 0),
+        coste_otros=float(item.get("coste_otros") or 0),
+        tiempo_estimado_horas=item.get("tiempo_estimado_horas"),
+        rendimiento=(item.get("rendimiento") or "")[:120],
+        notas_tecnicas=item.get("notas_tecnicas") or "",
+        descomposicion_json=item.get("descomposicion_json") or "[]",
+    )
+
+
+def _sembrar_partidas(
+    db: Session,
+    partidas: list[dict],
+    nodos: dict[str, CategoriaPartida],
+) -> int:
+    """Crea partidas oficiales ausentes en una instalación nueva."""
     existentes = {p.nombre for p in db.query(Partida.nombre).all()}
     creadas = 0
     for item in partidas:
         nombre = (item.get("nombre") or "").strip()
         if not nombre or nombre in existentes:
             continue
-        db.add(Partida(
-            nombre=nombre[:200],
-            descripcion=item.get("descripcion") or "",
-            precio_unitario=float(item.get("precio_unitario") or 0),
-            unidad=(item.get("unidad") or "ud")[:30],
-            categoria=(item.get("categoria") or "General")[:80],
-            subcategoria=(item.get("subcategoria") or "")[:80],
-            codigo_interno=(item.get("codigo") or "")[:80],
-            codigo_externo=(item.get("codigo") or "")[:100],
-            coste_materiales=float(item.get("coste_materiales") or 0),
-            coste_mano_obra=float(item.get("coste_mano_obra") or 0),
-            coste_complementarios=float(item.get("coste_complementarios") or 0),
-            coste_otros=float(item.get("coste_otros") or 0),
-            tiempo_estimado_horas=item.get("tiempo_estimado_horas"),
-            rendimiento=(item.get("rendimiento") or "")[:120],
-            notas_tecnicas=item.get("notas_tecnicas") or "",
-            descomposicion_json=item.get("descomposicion_json") or "[]",
-        ))
+        db.add(_crear_partida_oficial(item, nodos))
         existentes.add(nombre)
         creadas += 1
     return creadas
@@ -342,9 +435,12 @@ def sembrar_catalogo_propio(db: Session) -> dict:
         )
         return {"ok": False, "partidas": 0, "recursos": 0}
 
-    _sembrar_categorias(db, datos["categorias"])
+    nodos = _sembrar_categorias(db, datos["categorias"])
     n_rec = _sembrar_recursos(db, datos["recursos"])
-    n_par = _sembrar_partidas(db, datos["partidas"])
+    n_par = _sembrar_partidas(db, datos["partidas"], nodos)
+    cfg = db.query(Configuracion).first()
+    if cfg is not None:
+        cfg.version_catalogo = CATALOGO_VERSION
     db.commit()
     log.info(
         "Catálogo propio sembrado: %s partidas nuevas, %s recursos nuevos "
@@ -355,9 +451,107 @@ def sembrar_catalogo_propio(db: Session) -> dict:
             "total_partidas": datos["n_partidas"], "total_recursos": datos["n_recursos"]}
 
 
+def actualizar_taxonomia_catalogo_propio(db: Session) -> dict:
+    """Reclasifica partidas oficiales v1 sin alterar precios del usuario.
+
+    Se busca por código legado/actual y se conserva el mismo ``Partida.id``;
+    por eso las líneas de presupuestos siguen vinculadas. Solo cambian ruta,
+    código visible y metadatos de versión. Conserva la visibilidad elegida por
+    la organización e incorpora únicamente altas de versiones posteriores.
+    """
+    datos = construir_catalogo()
+    if not datos.get("ok"):
+        return {"ok": False, "actualizadas": 0}
+    nodos = _sembrar_categorias(db, datos["categorias"])
+    cfg = db.query(Configuracion).first()
+    version_previa = int(getattr(cfg, "version_catalogo", 0) or 0)
+
+    existentes = db.query(Partida).all()
+    por_codigo: dict[str, Partida] = {}
+    por_uid: dict[str, Partida] = {}
+    nombres = {p.nombre for p in existentes}
+    for partida in existentes:
+        if partida.catalogo_uid:
+            por_uid.setdefault(str(partida.catalogo_uid), partida)
+        for codigo in (
+            partida.codigo_legacy,
+            partida.codigo_interno,
+            partida.codigo_externo,
+        ):
+            codigo = str(codigo or "").strip()
+            if codigo:
+                por_codigo.setdefault(codigo, partida)
+
+    actualizadas = 0
+    incorporadas = 0
+    for item in datos["partidas"]:
+        uid = str(item.get("catalogo_uid") or "")
+        legacy = str(item.get("codigo_legacy") or "")
+        nuevo = str(item.get("codigo") or "")
+        version_alta = int(item.get("version_alta_catalogo") or CATALOGO_VERSION)
+        partida = por_uid.get(uid) or por_codigo.get(legacy) or por_codigo.get(nuevo)
+        if partida is None:
+            # En v2 se respetan los borrados físicos anteriores. A partir de
+            # ahí, solo se incorporan conceptos cuya versión de alta sea
+            # posterior a la versión ya aplicada a la organización.
+            if (
+                version_previa >= 2
+                and version_alta > version_previa
+                and str(item.get("nombre") or "") not in nombres
+            ):
+                nueva = _crear_partida_oficial(item, nodos)
+                db.add(nueva)
+                nombres.add(nueva.nombre)
+                por_uid[uid] = nueva
+                incorporadas += 1
+            continue
+        partida.categoria = item["categoria"][:80]
+        partida.subcategoria = item["subcategoria"][:80]
+        partida.apartado = item["apartado"][:120]
+        partida.nodo_categoria = nodos.get(item["codigo_clasificacion"])
+        partida.codigo_clasificacion = item["codigo_clasificacion"][:20]
+        partida.codigo_legacy = legacy[:80]
+        partida.codigo_interno = nuevo[:80]
+        partida.codigo_externo = nuevo[:100]
+        partida.version_catalogo = CATALOGO_VERSION
+        partida.catalogo_uid = uid[:100] or None
+        partida.es_oficial = True
+        # Nunca se fuerza ``oculta=False``: es una preferencia de la organización.
+        partida.version_alta_catalogo = version_alta
+        # El descompuesto puede haber sido ajustado por la organización. Solo
+        # actualizamos sus metadatos de identidad, nunca recursos ni precios.
+        try:
+            descomp = json.loads(partida.descomposicion_json or "[]")
+        except (TypeError, ValueError):
+            descomp = []
+        if isinstance(descomp, dict):
+            descomp["codigo"] = nuevo
+            descomp["codigo_legacy"] = legacy
+            descomp["version_catalogo"] = CATALOGO_VERSION
+            partida.descomposicion_json = json.dumps(descomp, ensure_ascii=False)
+        actualizadas += 1
+
+    if cfg is not None:
+        cfg.version_catalogo = CATALOGO_VERSION
+    db.commit()
+    log.info(
+        "Catálogo v%s aplicado: %s actualizadas, %s nuevas.",
+        CATALOGO_VERSION,
+        actualizadas,
+        incorporadas,
+    )
+    return {
+        "ok": True,
+        "version": CATALOGO_VERSION,
+        "actualizadas": actualizadas,
+        "incorporadas": incorporadas,
+        "total_fuente": datos["n_partidas"],
+    }
+
+
 # Nombres del catálogo de demostración antiguo (app/seeds.CATALOGO_PARTIDAS +
 # PARTIDAS_NUEVAS). Se eliminan al migrar a la base propia; no se tocan
-# partidas con código CT-* ni las creadas por el usuario.
+# partidas oficiales (v1/v2) ni las creadas por el usuario.
 NOMBRES_CATALOGO_PRUEBA = frozenset({
     "Demolición de partición interior de bloque",
     "Demolición de pavimento cerámico",
@@ -420,17 +614,33 @@ NOMBRES_CATALOGO_PRUEBA = frozenset({
 })
 
 
+def _cantidad_partidas_oficiales(db: Session) -> int:
+    """Cuenta solo códigos que pertenecen realmente a nuestra fuente."""
+    ids = {
+        p.id for p in db.query(Partida).filter(or_(
+            Partida.codigo_legacy.like("CT-%"),
+            Partida.version_catalogo >= CATALOGO_VERSION,
+        )).all()
+    }
+    codigos_v1 = {
+        str(p.get("codigo_legacy") or "")
+        for p in construir_catalogo().get("partidas", [])
+    }
+    for partida in db.query(Partida).filter(
+        Partida.codigo_interno.like("CT-%")
+    ).all():
+        if partida.codigo_interno in codigos_v1:
+            ids.add(partida.id)
+    return len(ids)
+
+
 def _parece_catalogo_prueba(db: Session) -> bool:
     """True si el catálogo actual es (o es solo) el de demostración antiguo."""
     total = db.query(Partida).count()
     if total == 0:
         return False
-    # Si ya hay partidas del catálogo propio (código CT-…), no tocar.
-    propias = (
-        db.query(Partida)
-        .filter(Partida.codigo_interno.like("CT-%"))
-        .count()
-    )
+    # Si ya hay partidas propias v1 o v2, no tocar.
+    propias = _cantidad_partidas_oficiales(db)
     if propias > 0:
         return False
     if total > 80:
@@ -445,23 +655,19 @@ def _parece_catalogo_prueba(db: Session) -> bool:
 def migrar_catalogo_prueba_a_propio(db: Session) -> dict:
     """Sustituye el catálogo de prueba por el propio si aún no se ha hecho.
 
-    - No borra partidas con código CT-* ni las que el usuario haya creado
-      con otro nombre.
+    - No borra partidas oficiales v1/v2 ni las creadas por el usuario.
     - Desvincula las líneas de presupuesto que apuntaban a las partidas
       eliminadas (el precio ya está copiado en la línea).
-    - Es idempotente: si ya hay partidas CT-* no hace nada destructivo.
+    - Es idempotente y aplica la taxonomía vigente sin trabajo destructivo.
     """
     from ..models import PresupuestoItem
 
     if not disponible():
         return {"ok": False, "motivo": "catalogo_no_disponible"}
 
-    propias_antes = (
-        db.query(Partida).filter(Partida.codigo_interno.like("CT-%")).count()
-    )
-    if propias_antes >= 100:
-        # Ya migrado / sembrado: solo rellenar huecos (idempotente).
-        return {"ok": True, "ya_migrado": True, **sembrar_catalogo_propio(db)}
+    propias_antes = _cantidad_partidas_oficiales(db)
+    if propias_antes > 0:
+        return {"ok": True, "ya_migrado": True, **actualizar_taxonomia_catalogo_propio(db)}
 
     borradas = 0
     if _parece_catalogo_prueba(db):
@@ -493,40 +699,48 @@ def migrar_catalogo_prueba_a_propio(db: Session) -> dict:
 
 
 def asegurar_catalogo_propio(db: Session) -> dict | None:
-    """Migración perezosa al abrir catálogo / editor.
+    """Aplica de forma perezosa la semilla antigua y la taxonomía v2.
 
-    Si la organización todavía tiene el catálogo de prueba (~50 partidas sin
-    código CT-*) lo sustituye por el propio. Si ya está migrado, no hace nada
-    costoso (un COUNT sobre codigo_interno). No toca instalaciones en limpio
-    (0 partidas): esas se rellenan solo con el modo demo o importando.
+    Una organización que ya tiene el catálogo oficial se reclasifica una sola
+    vez conservando ids, precios y borrados. Una instalación limpia o con un
+    catálogo exclusivamente particular nunca recibe 540 partidas por sorpresa.
     """
     if not disponible():
         return None
     try:
-        propias = (
-            db.query(Partida)
-            .filter(Partida.codigo_interno.like("CT-%"))
-            .count()
-        )
+        propias = _cantidad_partidas_oficiales(db)
+        cfg = db.query(Configuracion).first()
+        version = int(getattr(cfg, "version_catalogo", 0) or 0)
     except Exception:
         return None
-    if propias >= 100:
-        return None
+
     try:
+        if propias > 0:
+            codigos_v1 = {
+                str(p.get("codigo_legacy") or "")
+                for p in construir_catalogo().get("partidas", [])
+            }
+            candidatas = db.query(Partida).filter(or_(
+                Partida.codigo_interno.like("CT-%"),
+                Partida.codigo_legacy.like("CT-%"),
+            )).all()
+            antiguas = any(p.codigo_interno in codigos_v1 for p in candidatas)
+            sin_identidad = any(
+                (p.codigo_legacy in codigos_v1 or p.codigo_interno in codigos_v1)
+                and (not p.es_oficial or not p.catalogo_uid)
+                for p in candidatas
+            )
+            if version < CATALOGO_VERSION or antiguas or sin_identidad:
+                return actualizar_taxonomia_catalogo_propio(db)
+            return None
+
         total = db.query(Partida).count()
-    except Exception:
-        return None
-    # Limpio o sin datos: no inyectar el catálogo a la fuerza.
-    if total == 0:
-        return None
-    if not _parece_catalogo_prueba(db) and propias == 0:
-        # Tiene partidas del usuario (nombres propios): no las borramos ni
-        # mezclamos 540 de golpe; puede importar cuando quiera.
-        return None
-    try:
+        # Limpio o con partidas solo del usuario: no inyectar el catálogo.
+        if total == 0 or not _parece_catalogo_prueba(db):
+            return None
         return migrar_catalogo_prueba_a_propio(db)
     except Exception:
-        log.exception("No se pudo migrar el catálogo de prueba al propio.")
+        log.exception("No se pudo actualizar el catálogo propio.")
         try:
             db.rollback()
         except Exception:

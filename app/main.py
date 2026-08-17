@@ -35,7 +35,7 @@ from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, Resp
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import or_
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, load_only
 from starlette.middleware.gzip import GZipMiddleware
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
@@ -2442,10 +2442,13 @@ def busqueda_global(request: Request, q: str = "", db: Session = Depends(get_db)
             Factura.numero.ilike(like), Factura.titulo.ilike(like),
             Factura.direccion_obra.ilike(like), Cliente.nombre.ilike(like),
         )).order_by(Factura.id.desc()).limit(12).all()
-        resultados["partidas"] = db.query(Partida).filter(or_(
+        resultados["partidas"] = db.query(Partida).filter(
+            Partida.oculta.is_(False)
+        ).filter(or_(
             Partida.nombre.ilike(like), Partida.descripcion.ilike(like),
-            Partida.codigo_interno.ilike(like), Partida.categoria.ilike(like),
-            Partida.subcategoria.ilike(like), Partida.proveedor.ilike(like),
+            Partida.codigo_interno.ilike(like), Partida.codigo_legacy.ilike(like),
+            Partida.categoria.ilike(like), Partida.subcategoria.ilike(like),
+            Partida.apartado.ilike(like), Partida.proveedor.ilike(like),
         )).order_by(Partida.ultimo_uso.desc(), Partida.nombre).limit(12).all()
         resultados["productos"] = db.query(Producto).filter(or_(
             Producto.nombre.ilike(like), Producto.descripcion.ilike(like), Producto.sku.ilike(like),
@@ -3223,6 +3226,10 @@ def _importar_a_catalogo(db: Session, filas: list[dict], formato: str) -> tuple[
             else:
                 categoria = "CYPE" if es_cype else "General"
         subcategoria = str(item.get("subcapitulo") or item.get("subcategoria") or "").strip()
+        apartado = str(item.get("apartado") or "").strip()
+        codigo = str(item.get("codigo") or item.get("codigo_externo") or "").strip()
+        codigo_legacy = str(item.get("codigo_legacy") or "").strip()
+        es_codigo_v2 = bool(re.fullmatch(r"\d{2}\.\d{2}\.\d{2}\.\d{3}", codigo))
         db.add(Partida(
             nombre=nombre,
             descripcion=str(item.get("descripcion", "")).strip(),
@@ -3230,11 +3237,16 @@ def _importar_a_catalogo(db: Session, filas: list[dict], formato: str) -> tuple[
             unidad=str(item.get("unidad", "ud")).strip() or "ud",
             categoria=categoria,
             subcategoria=subcategoria[:80],
-            codigo_interno=str(item.get("codigo") or item.get("codigo_externo") or "").strip(),
-            codigo_externo=str(item.get("codigo") or item.get("codigo_externo") or "").strip(),
+            apartado=apartado[:120],
+            codigo_interno=codigo,
+            codigo_externo=codigo,
+            codigo_legacy=codigo_legacy[:80],
+            codigo_clasificacion=codigo[:8] if es_codigo_v2 else "",
+            version_catalogo=2 if es_codigo_v2 and codigo_legacy.startswith("CT-") else 0,
             descomposicion_json=json.dumps({
                 "origen": "cype" if es_cype else "manual",
-                "codigo": str(item.get("codigo") or item.get("codigo_externo") or ""),
+                "codigo": codigo,
+                "codigo_legacy": codigo_legacy,
                 "unidad": str(item.get("unidad") or "ud"),
                 "filas": item.get("filas", []),
             }, ensure_ascii=False),
@@ -3475,7 +3487,7 @@ def nuevo_presupuesto_form(request: Request, db: Session = Depends(get_db)):
     asegurar_catalogo_propio(db)
     cfg = _config(db)
     clientes = db.query(Cliente).order_by(Cliente.nombre).all()
-    partidas_catalogo = db.query(Partida).order_by(Partida.ultimo_uso.desc(), Partida.usos.desc(), Partida.nombre).all()
+    partidas_catalogo = _indice_catalogo_para_editor(db)
     productos_catalogo = db.query(Producto).order_by(Producto.ultimo_uso.desc(), Producto.usos.desc(), Producto.nombre).all()
     recursos_catalogo = db.query(Recurso).order_by(Recurso.ultimo_uso.desc(), Recurso.usos.desc(), Recurso.descripcion).all()
     plantillas = db.query(Plantilla).order_by(Plantilla.nombre).all()
@@ -5406,7 +5418,7 @@ def editar_presupuesto_form(presupuesto_id: int, request: Request, db: Session =
     from .services.catalogo_propio import asegurar_catalogo_propio
     asegurar_catalogo_propio(db)
     clientes = db.query(Cliente).order_by(Cliente.nombre).all()
-    partidas_catalogo = db.query(Partida).order_by(Partida.ultimo_uso.desc(), Partida.usos.desc(), Partida.nombre).all()
+    partidas_catalogo = _indice_catalogo_para_editor(db)
     productos_catalogo = db.query(Producto).order_by(Producto.ultimo_uso.desc(), Producto.usos.desc(), Producto.nombre).all()
     recursos_catalogo = db.query(Recurso).order_by(Recurso.ultimo_uso.desc(), Recurso.usos.desc(), Recurso.descripcion).all()
     plantillas = db.query(Plantilla).order_by(Plantilla.nombre).all()
@@ -6423,6 +6435,7 @@ def _datos_partida_catalogo(form):
         "categoria": str(form.get("categoria", "General")).strip() or "General",
         "codigo_interno": str(form.get("codigo_interno", "")).strip(),
         "subcategoria": str(form.get("subcategoria", "")).strip(),
+        "apartado": str(form.get("apartado", "")).strip(),
         "coste_materiales": max(0.0, _f(form.get("coste_materiales"))),
         "coste_mano_obra": max(0.0, _f(form.get("coste_mano_obra"))),
         "coste_complementarios": max(0.0, _f(form.get("coste_complementarios"))),
@@ -6436,6 +6449,24 @@ def _datos_partida_catalogo(form):
         "desperdicio_recomendado_pct": max(0.0, min(100.0, _f(form.get("desperdicio_recomendado_pct")))),
         "notas_tecnicas": str(form.get("notas_tecnicas", "")).strip(),
     }
+
+
+def _desvincular_clasificacion_si_cambio(partida: Partida, datos: dict) -> None:
+    """Evita que una ruta editada a mano siga apuntando al nodo oficial viejo."""
+    anterior = (
+        partida.categoria or "",
+        partida.subcategoria or "",
+        partida.apartado or "",
+    )
+    nueva = (
+        datos.get("categoria") or "",
+        datos.get("subcategoria") or "",
+        datos.get("apartado") or "",
+    )
+    if anterior != nueva:
+        partida.categoria_id = None
+        partida.codigo_clasificacion = ""
+        partida.version_catalogo = 0
 
 
 def _datos_producto_catalogo(form):
@@ -6473,6 +6504,157 @@ async def _guardar_imagenes_galeria(form, prefijo: str, db: Session) -> list[str
 # Partidas (Catálogo reutilizable)
 # ---------------------------------------------------------------------------
 
+_CAMPOS_INDICE_CATALOGO = (
+    Partida.id,
+    Partida.nombre,
+    Partida.descripcion,
+    Partida.precio_unitario,
+    Partida.unidad,
+    Partida.categoria,
+    Partida.subcategoria,
+    Partida.apartado,
+    Partida.codigo_clasificacion,
+    Partida.codigo_legacy,
+    Partida.codigo_interno,
+    Partida.codigo_externo,
+    Partida.usos,
+    Partida.ultimo_uso,
+)
+
+_PALABRAS_VACIAS_INDICE = frozenset({
+    "para", "con", "sin", "desde", "hasta", "sobre", "entre", "incluye",
+    "incluido", "incluida", "mediante", "segun", "cada", "obra", "trabajo",
+    "ejecucion", "suministro", "colocacion", "formacion", "parte", "zona",
+    "elemento", "sistema", "material", "existente", "terminado", "total",
+})
+
+
+def _texto_indice_catalogo(partida: Partida) -> str:
+    """Índice compacto de sinónimos: busca sin enviar descripciones."""
+    bruto = " ".join((
+        partida.nombre or "",
+        partida.descripcion or "",
+        partida.categoria or "",
+        partida.subcategoria or "",
+        partida.apartado or "",
+        partida.codigo_interno or "",
+        partida.codigo_legacy or "",
+    ))
+    normal = unicodedata.normalize("NFD", bruto.lower())
+    normal = "".join(c for c in normal if unicodedata.category(c) != "Mn")
+    palabras = re.findall(r"[a-z0-9]+", normal)
+    unicas: list[str] = []
+    vistas: set[str] = set()
+    for palabra in palabras:
+        if len(palabra) < 3 or palabra in _PALABRAS_VACIAS_INDICE or palabra in vistas:
+            continue
+        vistas.add(palabra)
+        unicas.append(palabra)
+        if len(unicas) >= 24:
+            break
+    from .services.busqueda_catalogo import alias_para_texto
+    capitulo = (partida.codigo_clasificacion or partida.categoria or "")[:2]
+    for alias in alias_para_texto(bruto, capitulo):
+        if alias in vistas:
+            continue
+        vistas.add(alias)
+        unicas.append(alias)
+        if len(unicas) >= 40:
+            break
+    return " ".join(unicas)[:320]
+
+
+def _partida_catalogo_indice(partida: Partida) -> dict:
+    """Registro pequeño para árboles/buscadores de hasta 5.000 partidas."""
+    codigo = partida.codigo_interno or partida.codigo_externo or ""
+    return {
+        "id": partida.id,
+        "nombre": partida.nombre or "",
+        "precio": partida.precio_unitario or 0.0,
+        "unidad": partida.unidad or "ud",
+        "categoria": partida.categoria or "99 Partidas personalizadas",
+        "subcategoria": partida.subcategoria or "",
+        "apartado": partida.apartado or "",
+        "codigo_clasificacion": partida.codigo_clasificacion or "",
+        "codigo_legacy": partida.codigo_legacy or "",
+        "codigo": codigo,
+        "codigo_interno": partida.codigo_interno or "",
+        "codigo_externo": partida.codigo_externo or "",
+        "usos": partida.usos or 0,
+        "ultimo_uso": partida.ultimo_uso.isoformat() if partida.ultimo_uso else "",
+        "buscable": _texto_indice_catalogo(partida),
+    }
+
+
+def _indice_catalogo_para_editor(db: Session) -> list[dict]:
+    partidas = (
+        db.query(Partida)
+        .filter(Partida.oculta.is_(False))
+        .options(load_only(*_CAMPOS_INDICE_CATALOGO))
+        .order_by(
+            Partida.categoria,
+            Partida.subcategoria,
+            Partida.apartado,
+            Partida.codigo_interno,
+            Partida.nombre,
+        )
+        .all()
+    )
+    return [_partida_catalogo_indice(partida) for partida in partidas]
+
+
+def _aplicar_busqueda_catalogo(query, consulta: str):
+    """Aplica AND entre palabras y OR entre sinónimos/campos."""
+    from .services.busqueda_catalogo import variantes_consulta
+    grupos = variantes_consulta(consulta)
+    campos = (
+        Partida.nombre,
+        Partida.descripcion,
+        Partida.categoria,
+        Partida.subcategoria,
+        Partida.apartado,
+        Partida.codigo_interno,
+        Partida.codigo_legacy,
+        Partida.proveedor,
+    )
+    for variantes in grupos:
+        condiciones = []
+        for variante in variantes:
+            like = f"%{variante[:40]}%"
+            condiciones.extend(campo.ilike(like) for campo in campos)
+        query = query.filter(or_(*condiciones))
+    return query, grupos
+
+
+def _puntuar_busqueda_catalogo(partida: Partida, consulta: str, grupos: list[list[str]]) -> float:
+    from .services.busqueda_catalogo import normalizar
+    nombre = normalizar(partida.nombre or "")
+    ruta = normalizar(" ".join((
+        partida.categoria or "", partida.subcategoria or "", partida.apartado or ""
+    )))
+    descripcion = normalizar(partida.descripcion or "")
+    consulta_normal = normalizar(consulta)
+    puntuacion = min(partida.usos or 0, 50) * 0.1
+    if consulta_normal and consulta_normal in nombre:
+        puntuacion += 120
+    for variantes in grupos:
+        mejor = 0
+        for variante in variantes:
+            termino = normalizar(variante)
+            if not termino:
+                continue
+            if nombre.startswith(termino):
+                mejor = max(mejor, 70)
+            elif termino in nombre:
+                mejor = max(mejor, 50)
+            elif termino in ruta:
+                mejor = max(mejor, 30)
+            elif termino in descripcion:
+                mejor = max(mejor, 5)
+        puntuacion += mejor
+    return puntuacion
+
+
 def _partida_catalogo_json(partida: Partida) -> dict:
     """Contrato único de una partida para el catálogo y el creador.
 
@@ -6496,6 +6678,14 @@ def _partida_catalogo_json(partida: Partida) -> dict:
         "unidad": partida.unidad or "ud",
         "categoria": partida.categoria or "General",
         "subcategoria": partida.subcategoria or "",
+        "apartado": partida.apartado or "",
+        "codigo_clasificacion": partida.codigo_clasificacion or "",
+        "codigo_legacy": partida.codigo_legacy or "",
+        "catalogo_uid": partida.catalogo_uid or "",
+        "es_oficial": bool(partida.es_oficial),
+        "oculta": bool(partida.oculta),
+        "version_alta_catalogo": partida.version_alta_catalogo or 0,
+        "ruta": partida.ruta_catalogo,
         "codigo": partida.codigo_interno or partida.codigo_externo or "",
         "codigo_interno": partida.codigo_interno or "",
         "codigo_externo": partida.codigo_externo or "",
@@ -6518,20 +6708,35 @@ def _partida_catalogo_json(partida: Partida) -> dict:
 
 
 @app.get("/partidas", response_class=HTMLResponse)
-def listar_partidas(request: Request, q: str = "", db: Session = Depends(get_db)):
-    # Si la org aún tiene el catálogo de prueba (~50 partidas), se sustituye
-    # una sola vez por el catálogo propio (540 partidas + recursos).
+def listar_partidas(
+    request: Request,
+    q: str = "",
+    pagina: int = 1,
+    vista: str = "activas",
+    db: Session = Depends(get_db),
+):
+    # La tabla de gestión se pagina; el editor usa un índice compacto aparte.
     from .services.catalogo_propio import asegurar_catalogo_propio
     asegurar_catalogo_propio(db)
-    query = db.query(Partida)
+    vista = "ocultas" if vista == "ocultas" else "activas"
+    total_ocultas = db.query(Partida).filter(Partida.oculta.is_(True)).count()
+    query = db.query(Partida).filter(
+        Partida.oculta.is_(vista == "ocultas")
+    )
     if q.strip():
-        like = f"%{q.strip()}%"
-        query = query.filter(or_(
-            Partida.nombre.ilike(like), Partida.categoria.ilike(like),
-            Partida.subcategoria.ilike(like), Partida.codigo_interno.ilike(like),
-            Partida.proveedor.ilike(like), Partida.descripcion.ilike(like),
-        ))
-    partidas = query.order_by(Partida.categoria, Partida.subcategoria, Partida.ultimo_uso.desc(), Partida.nombre).all()
+        query, _ = _aplicar_busqueda_catalogo(query, q.strip()[:120])
+    total_partidas = query.count()
+    por_pagina = 100
+    total_paginas = max(1, math.ceil(total_partidas / por_pagina))
+    pagina = max(1, min(int(pagina or 1), total_paginas))
+    partidas = query.order_by(
+        Partida.categoria,
+        Partida.subcategoria,
+        Partida.apartado,
+        Partida.codigo_interno,
+        Partida.ultimo_uso.desc(),
+        Partida.nombre,
+    ).offset((pagina - 1) * por_pagina).limit(por_pagina).all()
     catalogo_descompuestos = {}
     for partida in partidas:
         try:
@@ -6539,8 +6744,84 @@ def listar_partidas(request: Request, q: str = "", db: Session = Depends(get_db)
             catalogo_descompuestos[partida.id] = valor.get("filas", []) if isinstance(valor, dict) else valor
         except (TypeError, ValueError):
             catalogo_descompuestos[partida.id] = []
-    categorias_catalogo = db.query(CategoriaPartida).order_by(CategoriaPartida.categoria, CategoriaPartida.subcategoria).all()
-    return TEMPLATES.TemplateResponse(request, "partidas/list.html", {"partidas": partidas, "q": q, "catalogo_descompuestos": catalogo_descompuestos, "categorias_catalogo": categorias_catalogo})
+    categorias_catalogo = db.query(CategoriaPartida).filter(or_(
+        CategoriaPartida.oficial.is_(False),
+        CategoriaPartida.oficial.is_(None),
+    )).order_by(CategoriaPartida.categoria, CategoriaPartida.subcategoria).all()
+    return TEMPLATES.TemplateResponse(request, "partidas/list.html", {
+        "partidas": partidas,
+        "q": q,
+        "catalogo_descompuestos": catalogo_descompuestos,
+        "categorias_catalogo": categorias_catalogo,
+        "total_partidas": total_partidas,
+        "pagina": pagina,
+        "total_paginas": total_paginas,
+        "por_pagina": por_pagina,
+        "vista": vista,
+        "total_ocultas": total_ocultas,
+    })
+
+
+@app.get("/partidas/api/buscar")
+def buscar_partidas_catalogo_api(
+    q: str = "",
+    limite: int = 60,
+    db: Session = Depends(get_db),
+):
+    """Búsqueda técnica bajo demanda sin descargar fichas/descompuestos."""
+    consulta = str(q or "").strip()[:120]
+    limite = max(1, min(int(limite or 60), 100))
+    query = db.query(Partida).filter(
+        Partida.oculta.is_(False)
+    ).options(load_only(*_CAMPOS_INDICE_CATALOGO))
+    query, grupos = _aplicar_busqueda_catalogo(query, consulta)
+    candidatas = query.order_by(
+        Partida.usos.desc(), Partida.ultimo_uso.desc(), Partida.nombre
+    ).limit(max(100, min(500, limite * 8))).all() if grupos else []
+    partidas = sorted(
+        candidatas,
+        key=lambda p: (-_puntuar_busqueda_catalogo(p, consulta, grupos), p.nombre),
+    )[:limite]
+    return {
+        "ok": True,
+        "q": consulta,
+        "resultados": [_partida_catalogo_indice(p) for p in partidas],
+    }
+
+
+@app.post("/partidas/api/busqueda-sin-resultados")
+async def registrar_busqueda_catalogo_sin_resultados(
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    """Métrica interna para cubrir faltantes antes de que generen abandono."""
+    try:
+        payload = await request.json()
+    except (TypeError, ValueError):
+        payload = {}
+    consulta = re.sub(r"\s+", " ", str(payload.get("q") or "").strip())[:120]
+    if len(consulta) >= 2:
+        log.warning(
+            "catalogo_busqueda_sin_resultados",
+            extra={
+                "evento": "catalogo_busqueda_sin_resultados",
+                "organizacion_id": db.info.get("organizacion_id"),
+                "consulta": consulta,
+            },
+        )
+    return {"ok": True}
+
+
+@app.get("/partidas/{partida_id}/ficha")
+def ficha_partida_catalogo(partida_id: int, db: Session = Depends(get_db)):
+    """Ficha completa bajo demanda para preview, edición o inserción."""
+    partida = db.get(Partida, partida_id)
+    if partida is None:
+        return JSONResponse(
+            status_code=404,
+            content={"ok": False, "error": "Partida no encontrada."},
+        )
+    return {"ok": True, "partida": _partida_catalogo_json(partida)}
 
 
 @app.get("/partidas/{partida_id}/descomposicion")
@@ -6564,9 +6845,19 @@ def descomposicion_partida(partida_id: int, db: Session = Depends(get_db)):
 
 
 @app.get("/partidas/exportar")
-def exportar_partidas(formato: str = "csv", db: Session = Depends(get_db)):
-    """Exportar catálogo de partidas a CSV o Excel con formato profesional."""
-    partidas = db.query(Partida).order_by(Partida.categoria, Partida.subcategoria, Partida.nombre).all()
+def exportar_partidas(
+    formato: str = "csv",
+    incluir_ocultas: bool = False,
+    db: Session = Depends(get_db),
+):
+    """Exporta las partidas visibles; las ocultas son opt-in."""
+    query = db.query(Partida)
+    if not incluir_ocultas:
+        query = query.filter(Partida.oculta.is_(False))
+    partidas = query.order_by(
+        Partida.categoria, Partida.subcategoria, Partida.apartado,
+        Partida.codigo_interno, Partida.nombre,
+    ).all()
 
     if formato.lower() == "excel" or formato.lower() == "xlsx":
         from .services.excel_export import exportar_catalogo_partidas_excel
@@ -6578,14 +6869,15 @@ def exportar_partidas(formato: str = "csv", db: Session = Depends(get_db)):
         )
 
     filas = [[
-        "Código", "Nombre", "Descripción", "Unidad", "Precio unitario", "Categoría", "Subcategoría",
-        "Coste materiales", "Coste mano de obra", "Coste complementarios", "Otros costes", "Tiempo estimado (h)", "Proveedor",
+        "Código", "Código anterior", "Nombre", "Descripción", "Unidad", "Precio unitario",
+        "Capítulo", "Subcapítulo", "Apartado", "Coste materiales", "Coste mano de obra", "Coste complementarios", "Otros costes", "Tiempo estimado (h)", "Proveedor",
         "Rendimiento", "Desperdicio recomendado (%)", "Notas técnicas", "Última actualización de precio", "Usos",
     ]]
     for p in partidas:
         filas.append([
-            p.codigo_interno, p.nombre, p.descripcion, p.unidad,
-            f"{p.precio_unitario:.2f}".replace(".", ","), p.categoria, p.subcategoria,
+            p.codigo_interno, p.codigo_legacy, p.nombre, p.descripcion, p.unidad,
+            f"{p.precio_unitario:.2f}".replace(".", ","),
+            p.categoria, p.subcategoria, p.apartado,
             f"{(p.coste_materiales or 0):.2f}".replace(".", ","),
             f"{(p.coste_mano_obra or 0):.2f}".replace(".", ","),
             f"{(p.coste_complementarios or 0):.2f}".replace(".", ","),
@@ -6715,6 +7007,7 @@ async def guardar_partida_desde_presupuesto(request: Request, db: Session = Depe
         precio_anterior = None
     else:
         precio_anterior = partida.precio_unitario or 0.0
+        _desvincular_clasificacion_si_cambio(partida, datos)
     partida.nombre = nombre
     for campo, valor in datos.items():
         setattr(partida, campo, valor)
@@ -6802,6 +7095,7 @@ async def actualizar_partida(partida_id: int, request: Request, db: Session = De
     datos["descomposicion_json"] = json.dumps({"origen": "manual", "codigo": str(form.get("codigo_externo", "")), "unidad": datos["unidad"], "filas": filas_catalogo}, ensure_ascii=False)
     datos["codigo_externo"] = str(form.get("codigo_externo", "")).strip()
     precio_anterior = partida.precio_unitario or 0
+    _desvincular_clasificacion_si_cambio(partida, datos)
     partida.nombre = nombre
     for campo, valor in datos.items():
         setattr(partida, campo, valor)
@@ -6829,7 +7123,7 @@ def _desvincular_partidas_del_catalogo(db: Session, partida_ids) -> None:
 
     ``presupuesto_items.partida_catalogo_id`` solo recuerda de qué partida
     maestra se copió una línea; el precio ya está copiado en la propia línea.
-    Borrar una partida del catálogo no debe borrar presupuestos: se anula la
+    Borrar una partida personalizada no debe borrar presupuestos: se anula la
     referencia (FK a NULL) antes del borrado para no violar la integridad
     referencial.
     """
@@ -6843,17 +7137,49 @@ def _desvincular_partidas_del_catalogo(db: Session, partida_ids) -> None:
     )
 
 
+def _es_partida_oficial(partida: Partida) -> bool:
+    return bool(
+        partida.es_oficial
+        or partida.catalogo_uid
+        or (
+            (partida.codigo_legacy or "").startswith("CT-")
+            and (partida.version_catalogo or 0) >= 2
+        )
+    )
+
+
 @app.post("/partidas/{partida_id}/eliminar")
 def eliminar_partida(partida_id: int, db: Session = Depends(get_db)):
     partida = db.get(Partida, partida_id)
     if partida is None:
         return _redirect("/partidas", error="Partida no encontrada.")
+    if _es_partida_oficial(partida):
+        partida.es_oficial = True
+        partida.oculta = True
+        db.commit()
+        return _redirect(
+            "/partidas",
+            msg="Partida oficial ocultada para esta organización.",
+        )
     referencia = partida.imagen
     _desvincular_partidas_del_catalogo(db, [partida_id])
     db.delete(partida)
     _borrar_imagen(referencia, db)
     db.commit()
-    return _redirect("/partidas", msg="Partida eliminada.")
+    return _redirect("/partidas", msg="Partida personalizada eliminada.")
+
+
+@app.post("/partidas/{partida_id}/restaurar")
+def restaurar_partida(partida_id: int, db: Session = Depends(get_db)):
+    partida = db.get(Partida, partida_id)
+    if partida is None:
+        return _redirect("/partidas?vista=ocultas", error="Partida no encontrada.")
+    partida.oculta = False
+    db.commit()
+    return _redirect(
+        "/partidas?vista=ocultas",
+        msg="Partida restaurada en el catálogo activo.",
+    )
 
 @app.post("/partidas/bulk-delete")
 async def bulk_delete_partidas(request: Request, db: Session = Depends(get_db)):
@@ -6872,20 +7198,49 @@ async def bulk_delete_partidas(request: Request, db: Session = Depends(get_db)):
             pass
     if not ids:
         return _redirect("/partidas", error="No se seleccionaron partidas.")
-    _desvincular_partidas_del_catalogo(db, ids)
-    count = 0
-    referencias = set()
-    for pid in ids:
-        p = db.get(Partida, pid)
-        if p:
-            referencias.add(p.imagen)
-            db.delete(p)
-            count += 1
+    partidas = [p for p in db.query(Partida).filter(Partida.id.in_(ids)).all()]
+    oficiales = [p for p in partidas if _es_partida_oficial(p)]
+    personalizadas = [p for p in partidas if not _es_partida_oficial(p)]
+    if not oficiales and not personalizadas:
+        return _redirect("/partidas", error="No se encontraron las partidas seleccionadas.")
+    for partida in oficiales:
+        partida.es_oficial = True
+        partida.oculta = True
+    ids_personalizadas = [p.id for p in personalizadas]
+    _desvincular_partidas_del_catalogo(db, ids_personalizadas)
+    referencias = {p.imagen for p in personalizadas if p.imagen}
+    for partida in personalizadas:
+        db.delete(partida)
     db.flush()
     for referencia in referencias:
         _borrar_imagen(referencia, db)
     db.commit()
-    return _redirect("/partidas", msg=f"Se eliminaron {count} partidas.")
+    partes = []
+    if oficiales:
+        partes.append(f"{len(oficiales)} oficial(es) ocultada(s)")
+    if personalizadas:
+        partes.append(f"{len(personalizadas)} personalizada(s) eliminada(s)")
+    return _redirect("/partidas", msg="; ".join(partes) + ".")
+
+
+@app.post("/partidas/bulk-restore")
+async def bulk_restore_partidas(request: Request, db: Session = Depends(get_db)):
+    form = await request.form()
+    ids = [int(x) for x in form.getlist("ids") if str(x).strip()]
+    if not ids:
+        return _redirect(
+            "/partidas?vista=ocultas", error="No se seleccionaron partidas."
+        )
+    partidas = db.query(Partida).filter(
+        Partida.id.in_(ids), Partida.oculta.is_(True)
+    ).all()
+    for partida in partidas:
+        partida.oculta = False
+    db.commit()
+    return _redirect(
+        "/partidas?vista=ocultas",
+        msg=f"Se restauraron {len(partidas)} partidas.",
+    )
 
 @app.post("/partidas/bulk-export-selected")
 async def bulk_export_selected_partidas(request: Request, db: Session = Depends(get_db)):
@@ -6949,6 +7304,10 @@ async def bulk_move_partidas_category(request: Request, db: Session = Depends(ge
         p = db.get(Partida, pid)
         if p:
             p.subcategoria = ""
+            p.apartado = ""
+            p.categoria_id = None
+            p.codigo_clasificacion = ""
+            p.version_catalogo = 0
     db.commit()
     return _redirect("/partidas", msg=f"Se movieron {count} partidas a «{new_cat}».")
 
@@ -6968,6 +7327,10 @@ async def bulk_move_partidas_subcategory(request: Request, db: Session = Depends
         return _redirect("/partidas", error="Solo puedes mover a una subcategoría partidas que ya pertenecen a esa categoría.")
     for partida in partidas:
         partida.subcategoria = subcategoria
+        partida.apartado = ""
+        partida.categoria_id = None
+        partida.codigo_clasificacion = ""
+        partida.version_catalogo = 0
     db.commit()
     return _redirect("/partidas", msg=f"Se movieron {len(partidas)} partidas a «{categoria} · {subcategoria}».")
 

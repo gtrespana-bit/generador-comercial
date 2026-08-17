@@ -1,0 +1,28 @@
+{
+  "codigo": "01.05.01.020",
+  "ambito": "reforma",
+  "capitulo": "01",
+  "subcapitulo": "05",
+  "unidad": "m²",
+  "titulo": "Permanencia adicional de andamio de fachada, por mes.",
+  "descripcion": "Permanencia de andamio tubular de fachada más allá del primer mes ya incluido en la partida de montaje, con las revisiones periódicas del conjunto que exige mantenerlo en servicio. Incluye la inspección mensual de apoyos, arriostramientos, plataformas y protecciones colectivas, el reapriete de uniones, la reposición de los elementos deteriorados y el registro de las revisiones. Medido en superficie de andamio por cada mes adicional de permanencia.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.9
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.03
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.03
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-01-02-020",
+  "apartado": "01"
+}

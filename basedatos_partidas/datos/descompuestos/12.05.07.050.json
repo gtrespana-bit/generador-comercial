@@ -1,0 +1,40 @@
+{
+  "codigo": "12.05.07.050",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "05",
+  "unidad": "m²",
+  "titulo": "Endurecedor superficial y sellado de piso de concreto.",
+  "descripcion": "Tratamiento de piso de concreto mediante endurecedor superficial espolvoreado y sellado final, para aumentar su resistencia a la abrasión y reducir el desprendimiento de polvo. Es la solución económica para estacionamientos, depósitos y áreas de servicio donde no se justifica un piso epóxico. Incluye la espolvoreada del endurecedor sobre el concreto fresco en el momento adecuado, su incorporación mediante alisado mecánico, el curado y la aplicación de las manos de sellador acrílico una vez seco. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ENDURECEDOR",
+      "rendimiento": 4.5
+    },
+    {
+      "ref": "MT-SELLA-CONC",
+      "rendimiento": 0.22
+    },
+    {
+      "ref": "MT-CURADOR",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MQ-ALISADORA",
+      "rendimiento": 0.07
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.23
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-08-06-050",
+  "apartado": "07"
+}

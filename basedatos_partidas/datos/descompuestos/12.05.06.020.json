@@ -1,0 +1,42 @@
+{
+  "codigo": "12.05.06.020",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "05",
+  "unidad": "m²",
+  "titulo": "Piso vinílico en baldosa o lama.",
+  "descripcion": "Colocación de piso vinílico en baldosa o lama, tipo LVT, autoadhesivo, encolado o de encastre según el sistema. Combina la facilidad de reposición pieza a pieza con un aspecto muy próximo al de la madera o la piedra. Incluye la comprobación de planitud, limpieza y humedad del soporte, el replanteo del despiece para centrar el paño y evitar piezas estrechas en los bordes, la colocación con junta a matajunta, el paso de rodillo en los sistemas encolados, los cortes de ajuste en marcos y tuberías y el remate perimetral. El material lo elige el cliente y se presupuesta aparte. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "producto_cliente": {
+    "tipo": "Baldosa o lama vinílica tipo LVT elegida por el cliente",
+    "unidad": "m2",
+    "consumo": 1.07,
+    "nota": "Consumo con 7 % de desperdicio por cortes de ajuste."
+  },
+  "recursos": [
+    {
+      "ref": "MT-ADH-VINIL",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.09
+    },
+    {
+      "ref": "MQ-ASPIR",
+      "rendimiento": 0.055
+    },
+    {
+      "ref": "MO-OF1-PISO",
+      "rendimiento": 0.28
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.14
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-08-05-020",
+  "apartado": "06"
+}

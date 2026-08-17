@@ -1,0 +1,45 @@
+{
+  "codigo": "02.12.01.080",
+  "ambito": "reforma",
+  "capitulo": "02",
+  "subcapitulo": "12",
+  "unidad": "ud",
+  "titulo": "Tala y destronque de árbol.",
+  "descripcion": "Tala y destronque de árbol de porte medio situado en el interior de la parcela, incluidos el desrame previo, el troceado del fuste, la extracción del tocón y del sistema radicular superficial y el relleno del hueco resultante. Ejecutado con motosierra y retroexcavadora. Incluye la comprobación previa de que la especie no está protegida y de que se cuenta con la autorización municipal cuando sea exigible, el acordonamiento de la zona de caída, el desrame descendente, el troceado en piezas transportables, la extracción del tocón y el relleno y compactación del hueco. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido por unidad talada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 1.6
+    },
+    {
+      "ref": "MT-PROT-OBRA",
+      "rendimiento": 2.5
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 1.8
+    },
+    {
+      "ref": "MQ-RETRO",
+      "rendimiento": 0.9
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 2.2
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 2.4
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_anterior": "DUJ010",
+  "codigo_legacy": "CT-02-17-080",
+  "apartado": "01"
+}

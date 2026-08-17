@@ -1,0 +1,54 @@
+{
+  "codigo": "07.02.01.010",
+  "ambito": "reforma",
+  "capitulo": "07",
+  "subcapitulo": "02",
+  "unidad": "ud",
+  "titulo": "Instalación de puerta metálica exterior o de seguridad.",
+  "descripcion": "Instalación de puerta metálica exterior o de seguridad con su marco, anclajes y cerradura. Por su peso requiere dos operarios y anclaje mecánico al muro, no espuma. Incluye la comprobación del vano, el presentado y aplomado del marco con cuñas, el taladrado y anclaje mecánico en los puntos previstos, el macizado del perímetro con mortero, el colgado y ajuste de la hoja, el montaje de la cerradura de seguridad y la comprobación del cierre en los tres puntos. La puerta la elige el cliente y se presupuesta aparte. Medido por unidad instalada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "producto_cliente": {
+    "tipo": "Puerta metálica exterior o de seguridad elegida por el cliente",
+    "unidad": "ud",
+    "consumo": 1.0,
+    "nota": "La partida cubre anclajes, macizado, cerradura e instalación."
+  },
+  "recursos": [
+    {
+      "ref": "MT-CERRADURA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-MOR-PEGA",
+      "rendimiento": 0.014
+    },
+    {
+      "ref": "MT-PERNO-ANCLA",
+      "rendimiento": 8.0
+    },
+    {
+      "ref": "MT-SELLA-ELAST",
+      "rendimiento": 0.14
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.55
+    },
+    {
+      "ref": "MO-OF1-SOLD",
+      "rendimiento": 1.4
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 1.1
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 2.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-15-02-010",
+  "apartado": "01"
+}

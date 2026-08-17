@@ -15,35 +15,48 @@ listados en [`USO_EN_LA_APLICACION.md`](USO_EN_LA_APLICACION.md).
 
 ```
 basedatos_partidas/
-├── datos/recursos.json  ← FUENTE ÚNICA DE PRECIOS
-├── datos/descompuestos/ ← 540 partidas, una por archivo
-├── descompuestos.py     ← genera las hojas y el maestro
-├── construir.py         ← genera y valida el catálogo
-└── salida/              ← ficheros listos para subir a la app
-    ├── catalogo_partidas.csv
-    ├── catalogo_partidas.xlsx
-    └── catalogo_partidas.json
+├── datos/recursos.json             ← FUENTE ÚNICA DE PRECIOS
+├── datos/clasificacion.json        ← árbol numérico de tres niveles
+├── datos/descompuestos/            ← 540 partidas, una por archivo
+├── datos/objetivos_cobertura.json  ← metas 3.000/5.000 por capítulo
+├── datos/sinonimos_busqueda.json   ← diccionario de sinónimos
+├── descompuestos.py                ← genera hojas, maestro y árbol
+├── construir.py                    ← genera y valida el catálogo importable
+├── planificar_cobertura.py         ← genera matriz y prioridades
+└── salida/                         ← catálogo, hojas e informes regenerables
 ```
 
 ## Cómo se usa
 
-1. Añadir/editar filas en `datos/partidas.csv` (separador `;`, UTF-8).
-2. Ejecutar: `python3 basedatos_partidas/construir.py`
-3. Subir `salida/catalogo_partidas.xlsx` (o el .csv) en la app:
-   **Partidas → Importar** (`/presupuestos/importar?destino=catalogo`).
+1. Añadir o editar la partida en `datos/descompuestos/*.json` y, si hace falta,
+   sus recursos en `datos/recursos.json`.
+2. Ejecutar:
+   ```bash
+   .venv/bin/python basedatos_partidas/descompuestos.py
+   .venv/bin/python basedatos_partidas/construir.py
+   .venv/bin/python basedatos_partidas/planificar_cobertura.py
+   ```
+3. Verificar terminología y cobertura.
+4. La aplicación carga directamente las fuentes empaquetadas; para una carga
+   manual también se puede usar `salida/catalogo_partidas.xlsx` desde
+   **Partidas → Importar**.
+
+`datos/partidas.csv` es un maestro **generado**: no se edita a mano.
 
 ## Columnas del maestro (`datos/partidas.csv`)
 
 | Columna | Obligatoria | Notas |
 |---|---|---|
-| `codigo` | recomendada | Código interno/externo. Se comprueba que no se repita. |
-| `capitulo` | sí | Capítulo de obra (ALBAÑILERÍA, FONTANERÍA…). |
-| `partida` | **sí** | Nombre. **Único** en todo el fichero: el catálogo omite duplicados (máx. 200 car.). |
+| `codigo` | sí | Código numérico `CC.SS.AA.NNN`, único. |
+| `codigo_legacy` | catálogo v2 | Alias histórico `CT-CC-SS-NNN`; también sirve como UID de las 540 actuales. |
+| `capitulo` | sí | Nombre del capítulo de obra. |
+| `partida` | **sí** | Nombre único (máx. 200 caracteres). |
 | `descripcion` | sí | Texto técnico/comercial largo. |
 | `unidad` | sí | `ud, m2, m, ml, m3, juego, hora, glb, kg`. `m²`→`m2` se normaliza solo. |
 | `precio` | sí | Precio unitario de venta, > 0. Acepta coma o punto decimal. |
-| `categoria` | no | Si se deja vacía se usa el capítulo. |
-| `subcategoria` | no | Solo informativa / JSON. |
+| `categoria` | sí | Capítulo numerado visible. |
+| `subcategoria` | sí | Subcapítulo numerado visible. |
+| `apartado` | sí | Tercer nivel numerado visible. |
 | `coste_materiales` | no | Desglose. La suma no puede superar al precio. |
 | `coste_mano_obra` | no | Desglose. |
 | `coste_complementarios` | no | Costes directos complementarios (estilo CYPE). |
@@ -60,15 +73,15 @@ basedatos_partidas/
   desglose de costes incoherente, descripciones o capítulos vacíos, unidades raras.
 - **Compatibilidad real**: pasa el CSV generado por `leer_csv` → `analizar_matriz`
   → `detectar_mapeo` → `validar_filas` del propio proyecto. El objetivo es siempre
-  **8 campos detectados, 0 errores, 0 advertencias**.
+  **12 campos detectados, 0 errores, 0 advertencias**.
 
 ## Correspondencia con el modelo `Partida`
 
-El asistente en modo catálogo (`_importar_a_catalogo`) rellena: `nombre`,
-`descripcion`, `precio_unitario`, `unidad`, `categoria`, `codigo_interno`,
-`codigo_externo`, `descomposicion_json` y los cuatro `coste_*`.
-El `.json` de salida conserva además `subcategoria`, `rendimiento`,
-`desperdicio_recomendado_pct` y `notas_tecnicas` para una carga enriquecida futura.
+La carga enriquecida rellena identificación, los tres niveles de clasificación,
+precio, unidad, descomposición, costes, tiempos y notas. Las partidas oficiales
+llevan además `catalogo_uid`, `es_oficial`, `oculta`, `version_catalogo` y
+`version_alta_catalogo`, lo que permite ocultarlas por organización y recibir
+altas incrementales sin duplicados.
 
 ---
 
@@ -161,24 +174,23 @@ python3 basedatos_partidas/construir.py       # 2. catálogo importable
 
 # Clasificación jerárquica (datos/clasificacion.json)
 
-Tres niveles, pensados para alimentar el árbol de la barra lateral del presupuestador:
+Tres niveles numéricos alimentan el árbol de la barra lateral:
 
-```
-Capítulo (1 letra)  →  Subcapítulo (2 letras)  →  Grupo (3 letras)  →  Partida (grupo + 3 dígitos)
-
-R  Revestimientos y trasdosados
-└─ RS  Pavimentos
-   └─ RSG  Cerámicos y porcelánicos
-      ├─ RSG010  Pavimento formato estándar
-      └─ RSG020  Pavimento gran formato
+```text
+12  Revestimientos y acabados
+└─ 12.05  Pisos, pavimentos y sus bases
+   └─ 12.05.03  Pisos cerámicos y porcelanato
+      ├─ 12.05.03.010  Piso cerámico colocado con adhesivo
+      └─ 12.05.03.020  Piso de porcelanato colocado con adhesivo
 ```
 
-Cada partida declara `capitulo`, `subcapitulo` y `grupo`. El generador **valida** que los
-tres existan en `clasificacion.json` y que el código empiece por el grupo; si no, falla.
-Así es imposible que se cuele una partida descolgada del árbol.
+Cada partida declara `capitulo`, `subcapitulo` y `apartado`. El generador
+valida los tres nodos y exige que el código `CC.SS.AA.NNN` empiece por esa ruta.
+El antiguo código `CT-CC-SS-NNN` queda en `codigo_legacy` y en
+`mapa_migracion_v2.json` para trazabilidad.
 
-Hay **18 capítulos** declarados desde el principio, aunque estén vacíos: el árbol se
-construye completo y las ramas se van llenando.
+Hay **18 capítulos y 172 subcapítulos** preparados. Los apartados se crean con
+contenido real; actualmente hay 147 con las 540 partidas migradas.
 
 ## Salida para el front
 
@@ -341,7 +353,7 @@ deportivo) y no en interiores, donde es «piso».
 ## La auditoría solo mira lo que ve el cliente
 
 Recorre el título y la descripción de cada partida, la descripción de cada
-recurso y los nombres de capítulo y subcapítulo. **No** mira `fuente` ni
+recurso y los nombres de capítulo, subcapítulo y apartado. **No** mira `fuente` ni
 `nota`: son apuntes internos de procedencia que citan nombres comerciales tal
 cual los publica el vendedor («bisagra de cazoleta»), y auditarlos solo
 produce falsas alarmas.
@@ -454,17 +466,17 @@ trazabilidad interna. **No se publica ni se distribuye.**
 
 ## Esquema
 
-```
-CT - CC - SS - NNN
-│    │    │    └── partida, de 10 en 10 para poder intercalar
-│    │    └─────── subcapítulo (2 dígitos)
-│    └──────────── capítulo (2 dígitos)
-└───────────────── prefijo de marca (CotizaT)
+```text
+CC . SS . AA . NNN
+│    │    │     └── partida, de 10 en 10 para poder intercalar
+│    │    └──────── apartado (2 dígitos)
+│    └───────────── subcapítulo (2 dígitos)
+└────────────────── capítulo (2 dígitos)
 ```
 
-Dos niveles de navegación, 20 capítulos organizados según la práctica de obra
-venezolana: los frisos, los pisos, los cielos rasos y la herrería son capítulos
-de primer nivel, no subgrupos.
+Tres niveles de clasificación y 18 capítulos. Instalaciones comparten el
+capítulo 09; frisos, pisos, cielos rasos y pintura se ordenan dentro de
+`12 Revestimientos y acabados`.
 
 ## Dos ámbitos
 
@@ -473,7 +485,7 @@ clasificación y su propio esquema de código:
 
 | Ámbito | Codificación | Base legal | Estado |
 |---|---|---|---|
-| **reforma** | `CT-CC-SS-NNN`, propia | COVENIN 2000-2 codifica solo edificaciones nuevas y deja **expresamente sin codificar** las reparaciones y reformas (Parte II.B nunca publicada). Codificación libre. | en construcción |
+| **reforma** | `CC.SS.AA.NNN`, propia | COVENIN 2000-2 codifica solo edificaciones nuevas y deja **expresamente sin codificar** las reparaciones y reformas (Parte II.B nunca publicada). Codificación libre. | en construcción |
 | **obra nueva** | COVENIN 2000-2: `M`+9 dígitos (<1.000 m²), `E`+9 (1.000-10.000 m²), `I`+9 (>10.000 m²) | COVENIN-MINDUR 2000-92 Parte II.A, **obligatoria** por Gaceta Oficial N.º 35.225 del 3/6/1993. Ante organismos públicos y contralorías la codificación **no es libre**. | pendiente |
 
 Ambos ámbitos comparten el **mismo cuadro de recursos** (`recursos.json`) y el

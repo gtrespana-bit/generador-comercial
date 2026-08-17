@@ -291,7 +291,7 @@
       return (datos.id && Number(p.id) === Number(datos.id)) || normalizar(p.nombre) === normalizar(datos.nombre);
     });
     if (indiceExistente >= 0) {
-      editor.CATALOGO[indiceExistente] = Object.assign({}, editor.CATALOGO[indiceExistente], datos);
+      Object.assign(editor.CATALOGO[indiceExistente], datos, { _detalle_cargado: true });
       return editor.CATALOGO[indiceExistente];
     }
     var nueva = {
@@ -310,7 +310,8 @@
       coste_otros: Number(datos.coste_otros || 0),
       desperdicio_recomendado_pct: Number(datos.desperdicio_pct || 0),
       descomposicion: datos.descomposicion || null,
-      usos: 1
+      usos: 1,
+      _detalle_cargado: true
     };
     editor.CATALOGO.push(nueva);
     return nueva;

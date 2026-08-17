@@ -177,6 +177,7 @@
     set("nombre", ficha.nombre);
     set("categoria", ficha.categoria);
     set("subcategoria", ficha.subcategoria || "");
+    set("apartado", ficha.apartado || "");
     set("unidad", ficha.unidad);
     set("codigo_externo", ficha.codigo_externo || "");
     set("descripcion", ficha.descripcion);
@@ -301,9 +302,13 @@
   }
 
   function actualizarCatalogoLocal(partida) {
-    var indice = (editor.CATALOGO || []).findIndex(function (p) { return Number(p.id) === Number(partida.id); });
-    if (indice < 0) editor.CATALOGO.push(partida);
-    else editor.CATALOGO[indice] = Object.assign({}, editor.CATALOGO[indice], partida);
+    if (editor.Catalogo && editor.Catalogo.fusionarEnIndice) {
+      editor.Catalogo.fusionarEnIndice(partida);
+    } else {
+      var indice = (editor.CATALOGO || []).findIndex(function (p) { return Number(p.id) === Number(partida.id); });
+      if (indice < 0) editor.CATALOGO.push(partida);
+      else Object.assign(editor.CATALOGO[indice], partida);
+    }
   }
 
   async function guardar(event) {
@@ -367,6 +372,7 @@
         precio_base: num(valor("precio_unitario")),
         categoria: fichaGuardada ? fichaGuardada.categoria : valor("categoria"),
         subcategoria: fichaGuardada ? fichaGuardada.subcategoria : valor("subcategoria"),
+        apartado: fichaGuardada ? fichaGuardada.apartado : valor("apartado"),
         codigo_interno: fichaGuardada ? fichaGuardada.codigo_interno : valor("codigo_interno"),
         codigo_externo: fichaGuardada ? fichaGuardada.codigo_externo : valor("codigo_externo"),
         proveedor: fichaGuardada ? fichaGuardada.proveedor : valor("proveedor"),

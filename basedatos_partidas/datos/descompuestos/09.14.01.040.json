@@ -1,0 +1,54 @@
+{
+  "codigo": "09.14.01.040",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "14",
+  "unidad": "ud",
+  "titulo": "Instalación de tanque séptico prefabricado.",
+  "descripcion": "Instalación de tanque séptico prefabricado en excavación previamente ejecutada, con sus conexiones de entrada y salida y su tapa de registro. Incluye la comprobación y nivelación del fondo de apoyo, el descenso y emplazamiento del tanque, la conexión de la tubería de entrada y de salida al campo de infiltración o sumidero respetando las cotas y pendientes, el relleno perimetral por capas con el tanque lleno de agua para evitar que la presión del terreno lo deforme, la colocación de la tapa de registro accesible y la prueba de estanqueidad. No incluye la excavación. El tanque lo elige el cliente y se presupuesta aparte. Medido por unidad instalada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "producto_cliente": {
+    "tipo": "Tanque séptico prefabricado de la capacidad elegida por el cliente",
+    "unidad": "ud",
+    "consumo": 1.0,
+    "nota": "La partida cubre solo la instalación."
+  },
+  "recursos": [
+    {
+      "ref": "MT-PLO-PVC4",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MT-PLO-ACC4",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MT-ARENA",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MT-MOR-PEGA",
+      "rendimiento": 0.012
+    },
+    {
+      "ref": "MQ-RETRO",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-OF1-PLO",
+      "rendimiento": 3.4
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 2.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 2.8
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-12-07-040",
+  "apartado": "01"
+}

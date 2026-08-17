@@ -103,12 +103,22 @@ def textos_de_cliente():
             if ficha.get("descripcion"):
                 yield ("recursos.json", codigo, ficha["descripcion"])
 
-    # Clasificación: nombres de capítulo y de subcapítulo.
+    # Clasificación: nombres de capítulo, subcapítulo y apartado.
     clasif = json.loads(CLASIFICACION.read_text(encoding="utf-8"))
     for cod, cap in (clasif.get("capitulos") or {}).items():
         yield ("clasificacion.json", f"cap {cod}", cap.get("nombre", ""))
-        for sub, nombre in (cap.get("subcapitulos") or {}).items():
-            yield ("clasificacion.json", f"cap {cod}.{sub}", nombre)
+        for sub, nodo_sub in (cap.get("subcapitulos") or {}).items():
+            yield (
+                "clasificacion.json",
+                f"sub {cod}.{sub}",
+                nodo_sub.get("nombre", ""),
+            )
+            for apartado, nombre in (nodo_sub.get("apartados") or {}).items():
+                yield (
+                    "clasificacion.json",
+                    f"apartado {cod}.{sub}.{apartado}",
+                    nombre,
+                )
 
     # Partidas: título y descripción larga.
     for ruta in sorted(DESCOMPUESTOS.glob("*.json")):

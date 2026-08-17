@@ -5,6 +5,9 @@ Fecha: **16/08/2026** · Suite: **441 passed, 6 skipped** · Migración nueva:
 en Supabase el 16/08/2026**: `baja_organizacion` con `security_definer = true`
 y propietario `postgres`, según la verificación del titular.
 
+> Estado actual: la cadena continuó hasta `d6e2f9c4b8a1`; ver
+> `docs/PUNTO_DE_CONTINUACION.md`. La migración aquí descrita sigue aplicada.
+
 Este bloque cierra la portabilidad del dato y el ciclo de salida de una
 organización: llevarse los datos en un formato abierto (E3-022) y darse de
 baja con borrado verificado (E3-023). Se apoya en el respaldo verificable de

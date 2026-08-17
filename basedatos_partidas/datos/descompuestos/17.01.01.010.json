@@ -1,0 +1,40 @@
+{
+  "codigo": "17.01.01.010",
+  "ambito": "reforma",
+  "capitulo": "17",
+  "subcapitulo": "01",
+  "unidad": "m",
+  "titulo": "Baranda provisional de protección de borde.",
+  "descripcion": "Baranda provisional de protección en bordes de losa, huecos, escaleras y aberturas, con guardacuerpos, pasamanos, barra intermedia y rodapié. Es la protección colectiva que evita las caídas a distinto nivel, que son la primera causa de accidente grave en obra. Debe montarse antes de que exista el riesgo, no después. Incluye el montaje de los guardacuerpos con su fijación, la colocación de pasamanos, barra intermedia y rodapié que impide la caída de material, la revisión periódica del conjunto y su desmontaje cuando se coloque la protección definitiva. Medido en longitud realmente protegida.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-BARANDA-PROV",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-MADERA-LISTON",
+      "rendimiento": 1.2
+    },
+    {
+      "ref": "MT-CLAVOS",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.07
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-20-01-010",
+  "apartado": "01"
+}

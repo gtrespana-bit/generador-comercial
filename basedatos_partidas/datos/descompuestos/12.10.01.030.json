@@ -1,0 +1,50 @@
+{
+  "codigo": "12.10.01.030",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "10",
+  "unidad": "m²",
+  "titulo": "Pintura de cielo raso, dos manos.",
+  "descripcion": "Aplicación de dos manos de pintura sobre cielo raso previamente preparado, con rodillo de mango extensible y brocha en encuentros. Pintar por encima de la cabeza rinde bastante menos que en pared, obliga a proteger todo el piso y el mobiliario por el goteo y penaliza el acabado si no se mantiene el borde húmedo, ya que los solapes se marcan mucho más con la luz rasante que llega desde las ventanas. Incluye la protección integral del ambiente, el recorte de perímetros, la aplicación en manos cruzadas y los repasos finales. Medido en superficie realmente ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "producto_cliente": {
+    "tipo": "Pintura de cielo raso en el color elegido por el cliente",
+    "unidad": "l",
+    "consumo": 0.29,
+    "nota": "Consumo de 0,29 l/m² para las dos manos."
+  },
+  "recursos": [
+    {
+      "ref": "MT-PIN-CAUCHO",
+      "rendimiento": 0.29
+    },
+    {
+      "ref": "MT-PIN-LIJA",
+      "rendimiento": 0.14
+    },
+    {
+      "ref": "MT-PROT-OBRA",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.19
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.13
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.21
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.11
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-16-02-030",
+  "apartado": "01"
+}

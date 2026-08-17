@@ -1,0 +1,24 @@
+{
+  "codigo": "17.08.01.020",
+  "ambito": "reforma",
+  "capitulo": "17",
+  "subcapitulo": "08",
+  "unidad": "ud",
+  "titulo": "Plan de seguridad y documentación de obra.",
+  "descripcion": "Elaboración y mantenimiento del plan de seguridad de la obra y de su documentación asociada, con la identificación de riesgos, las medidas preventivas y el registro de las actuaciones. Incluye la redacción del plan adaptado a la obra concreta y no un modelo genérico, la identificación de los riesgos por fase y por tarea, la definición de las protecciones colectivas e individuales, la relación de teléfonos de emergencia y centro asistencial más próximo, el libro de incidencias y la actualización del plan cuando cambien las condiciones de la obra. Medido por plan elaborado y mantenido.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-BOTIQUIN",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 6.0
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-20-05-020",
+  "apartado": "01"
+}
