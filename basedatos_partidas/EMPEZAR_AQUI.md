@@ -26,7 +26,7 @@ presupuestos.
 | Coste directo del catálogo | 15.733,15 USD |
 | **Peso económico con precio cerrado** | **79,6 %** |
 | Validación con el importador real | **0 errores · 0 advertencias** |
-| Tests del proyecto | **477 pasando · 6 omitidos** |
+| Tests del proyecto | **480 pasando · 6 omitidos** |
 
 Desglose del cuadro de precios:
 
@@ -140,8 +140,9 @@ La reorganización ya está implantada. Por decisión del titular, 800 y 1.500
 son solo hitos internos: el mínimo general será de unas **3.000 partidas base**
 y el objetivo amplio de **4.000–5.000**. La carga progresiva, ficha bajo
 demanda, búsqueda híbrida y paginación ya están implantadas y probadas con
-5.000 partidas. El siguiente paso es ocultar/restaurar partidas oficiales por
-organización.
+5.000 partidas. La ocultación/restauración por organización y las altas
+incrementales también están implantadas. El siguiente paso es construir la
+matriz de cobertura y sinónimos de los 18 capítulos.
 
 La producción cerrará familias completas en este orden: `09 Instalaciones`,
 `12 Revestimientos y acabados`, `07 Carpintería, herrería y vidrios`, `10/11

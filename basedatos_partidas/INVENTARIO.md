@@ -25,7 +25,7 @@ numérica v2 aprobada para reforma y remodelación en Venezuela.
 
 **Validación:** las 540 partidas pasan `es_formato_cype_xlsx` y
 `analizar_cype_xlsx`. El catálogo masivo se detecta con **12 campos, 0 errores y
-0 advertencias**. La suite de aplicación pasa con **477 tests y 6 omitidos**.
+0 advertencias**. La suite de aplicación pasa con **480 tests y 6 omitidos**.
 
 ---
 
@@ -130,8 +130,9 @@ datos/descompuestos/*.json ─┘                  ├─► datos/partidas.csv
 Los hitos de 800 y 1.500 son internos. El catálogo general tendrá un mínimo
 aproximado de **3.000 partidas base** y un objetivo amplio de **4.000–5.000**.
 La aplicación ya superó una prueba sintética con 5.000 partidas mediante índice
-ligero, fichas bajo demanda, árbol progresivo y gestión paginada. El siguiente
-paso es ocultación/restauración de partidas oficiales por organización. Prioridades:
+ligero, fichas bajo demanda, árbol progresivo y gestión paginada. La
+ocultación/restauración y actualización incremental ya están implantadas. El
+siguiente paso es la matriz exhaustiva de cobertura y sinónimos. Prioridades:
 
 1. Instalaciones sanitarias, eléctricas, climatización, ventilación, datos,
    seguridad y protección contra incendios.

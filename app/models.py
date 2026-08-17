@@ -1203,6 +1203,10 @@ class Partida(TenantMixin, Base):
     __tablename__ = "partidas"
     __table_args__ = (
         UniqueConstraint("organizacion_id", "nombre", name="uq_partida_organizacion_nombre"),
+        UniqueConstraint(
+            "organizacion_id", "catalogo_uid",
+            name="uq_partida_organizacion_catalogo_uid",
+        ),
     )
 
     id = Column(Integer, primary_key=True)
@@ -1227,6 +1231,12 @@ class Partida(TenantMixin, Base):
     codigo_clasificacion = Column(String(20), default="")
     codigo_legacy = Column(String(80), default="")
     version_catalogo = Column(Integer, default=0)
+    # Identidad estable del registro oficial, independiente de su código/ruta.
+    # NULL identifica partidas creadas por la propia organización.
+    catalogo_uid = Column(String(100), nullable=True)
+    es_oficial = Column(Boolean, default=False)
+    oculta = Column(Boolean, default=False)
+    version_alta_catalogo = Column(Integer, default=0)
     coste_materiales = Column(Float, default=0.0)
     coste_mano_obra = Column(Float, default=0.0)
     coste_complementarios = Column(Float, default=0.0)  # costes directos complementarios CYPE
@@ -1794,6 +1804,10 @@ def migrar(engine):
             ("codigo_clasificacion", "VARCHAR(20) DEFAULT ''"),
             ("codigo_legacy", "VARCHAR(80) DEFAULT ''"),
             ("version_catalogo", "INTEGER DEFAULT 0"),
+            ("catalogo_uid", "VARCHAR(100)"),
+            ("es_oficial", "BOOLEAN DEFAULT 0"),
+            ("oculta", "BOOLEAN DEFAULT 0"),
+            ("version_alta_catalogo", "INTEGER DEFAULT 0"),
             ("coste_materiales", "FLOAT DEFAULT 0"),
             ("coste_mano_obra", "FLOAT DEFAULT 0"),
             ("coste_complementarios", "FLOAT DEFAULT 0"),
@@ -2042,6 +2056,8 @@ def migrar(engine):
             "CREATE INDEX IF NOT EXISTS ix_facturas_cliente ON facturas (client_id)",
             "CREATE INDEX IF NOT EXISTS ix_items_capitulo ON presupuesto_items (capitulo_id)",
             "CREATE INDEX IF NOT EXISTS ix_partidas_categoria_id ON partidas (categoria_id)",
+            "CREATE INDEX IF NOT EXISTS ix_partidas_catalogo_uid ON partidas (catalogo_uid)",
+            "CREATE INDEX IF NOT EXISTS ix_partidas_oculta ON partidas (oculta)",
             "CREATE INDEX IF NOT EXISTS ix_categorias_partidas_parent_id ON categorias_partidas (parent_id)",
             "CREATE INDEX IF NOT EXISTS ix_categorias_partidas_codigo ON categorias_partidas (codigo_completo)",
             "CREATE INDEX IF NOT EXISTS ix_descomposiciones_partida ON descomposiciones_partida (partida_id)",

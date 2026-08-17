@@ -142,9 +142,9 @@ en trabajo de catálogo antes de que las encuentre un cliente.
 ## Orden de ejecución
 
 1. ✅ Preparar la aplicación para navegar 5.000 partidas sin degradación.
-2. **Siguiente:** incorporar ocultación/restauración por organización y actualización
+2. ✅ Incorporar ocultación/restauración por organización y actualización
    incremental del catálogo oficial.
-3. Construir inventario de cobertura y sinónimos por cada uno de los 18
+3. **Siguiente:** construir inventario de cobertura y sinónimos por cada uno de los 18
    capítulos.
 4. Producir familias completas, comenzando por instalaciones y acabados.
 5. Validar cada lote con importador, terminología, precios y presupuestos tipo.

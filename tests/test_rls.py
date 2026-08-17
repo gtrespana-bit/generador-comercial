@@ -14,7 +14,8 @@ from migrations.versions import (
     d7f2a9c41e63_fix_invitation_select_policy_on_acceptance as invitation_migration,
     e1a4b7c9d2f0_harden_alembic_version_visibility as alembic_migration,
     f4c1d8e37a95_add_operator_licenses as licenses_migration,
-    f8a1b2c3d4e5_catalog_taxonomy_v2 as head_migration,
+    f8a1b2c3d4e5_catalog_taxonomy_v2 as taxonomy_migration,
+    d6e2f9c4b8a1_catalog_visibility as head_migration,
 )
 
 
@@ -144,7 +145,8 @@ def test_head_exigido_por_runtime_coincide_con_alembic():
     esquema que la base no tiene todavía (o al revés).
     """
     assert database_module.EXPECTED_ALEMBIC_HEAD == head_migration.revision
-    assert head_migration.down_revision == baja_migration.revision
+    assert head_migration.down_revision == taxonomy_migration.revision
+    assert taxonomy_migration.down_revision == baja_migration.revision
     assert baja_migration.down_revision == proposal_links_migration.revision
     assert proposal_links_migration.down_revision == licenses_access_migration.revision
     assert licenses_access_migration.down_revision == licenses_migration.revision

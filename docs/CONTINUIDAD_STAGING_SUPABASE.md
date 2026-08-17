@@ -2,6 +2,11 @@
 
 Fecha de corte de fondo: 14/08/2026 (America/Caracas).
 
+> **Pendiente 16/08/2026 — visibilidad por organización:** antes de desplegar
+> la fase 2 ejecutar `docs/staging_upgrade_d6e2f9c4b8a1.sql`. El nuevo head
+> exigido será `d6e2f9c4b8a1`; la base confirmada continúa en `f8a1b2c3d4e5`
+> hasta que el titular aplique ese script.
+
 > **Actualización 16/08/2026 — taxonomía numérica v2:** el titular confirmó la
 > ejecución en Supabase de `docs/staging_upgrade_f8a1b2c3d4e5.sql`. El head de
 > la base y el exigido por el runtime es ahora `f8a1b2c3d4e5`. Al desplegar el

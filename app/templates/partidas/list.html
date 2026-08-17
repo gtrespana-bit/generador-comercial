@@ -4,11 +4,16 @@
 <div class="page-head csp-s-5d6e5a9c91">
   <div>
     <h1 class="csp-s-93f4d4c3fe">Catálogo de Partidas <span class="csp-s-20db78cd99">{{ total_partidas }}</span></h1>
-    <p class="subtitle">Reutilizables para tus presupuestos · capítulo, subcapítulo y apartado numéricos · preparadas para crecer sin desorden</p>
+    <p class="subtitle">{% if vista == 'ocultas' %}Partidas apartadas de la navegación de esta organización{% else %}Reutilizables para tus presupuestos · capítulo, subcapítulo y apartado numéricos{% endif %}</p>
   </div>
   <div class="csp-s-33ff8b3e89">
-    <a href="/presupuestos/importar?destino=catalogo" class="btn" title="Importa partidas desde Excel/CSV (formato CYPE o tabular) directamente al catálogo">Importar Excel</a>
+    {% if vista == 'ocultas' %}
+    <a href="/partidas" class="btn">← Catálogo activo</a>
+    {% else %}
+    <a href="/partidas?vista=ocultas" class="btn">Ocultas <span class="badge">{{ total_ocultas }}</span></a>
+    <a href="/presupuestos/importar?destino=catalogo" class="btn" title="Importa partidas desde Excel/CSV directamente al catálogo">Importar Excel</a>
     <a href="/partidas/nueva" class="btn btn-primary">Nueva partida</a>
+    {% endif %}
   </div>
 </div>
 
@@ -16,6 +21,7 @@
 <div class="partidas-toolbar card csp-s-0d510e3476">
   <div class="toolbar-row">
     <form class="toolbar-search" method="get" action="/partidas">
+      {% if vista == 'ocultas' %}<input type="hidden" name="vista" value="ocultas">{% endif %}
       <span class="search-icon" aria-hidden="true">⌕</span>
       <input type="text" id="buscador" name="q" value="{{ q }}" placeholder="Buscar en todo el catálogo…" data-servidor="{{ '1' if q else '0' }}" data-cotizat-input="partidas-filter" autocomplete="off">
       <button type="submit" class="btn btn-sm btn-ghost" title="Buscar en las {{ total_partidas }} partidas">Buscar</button>
@@ -26,11 +32,13 @@
       <div class="toolbar-divider"></div>
       <button class="btn btn-sm" data-cotizat-click="partidas-expand-all" title="Expandir categorías y subcategorías">Expandir</button>
       <button class="btn btn-sm" data-cotizat-click="partidas-collapse-all" title="Contraer categorías y subcategorías">Contraer</button>
+      {% if vista != 'ocultas' %}
       <form method="post" action="/partidas/ajustar" data-confirm="¿Ajustar TODAS las partidas visibles con este %?" class="csp-s-014fb690a1">
         <input type="number" name="porcentaje" step="any" placeholder="± %" required class="csp-s-d3156a880b">
-        <button class="btn btn-sm" type="submit" title="Ajustar precios de todas las partidas del catálogo">% Precios</button>
+        <button class="btn btn-sm" type="submit" title="Ajustar precios del catálogo">% Precios</button>
       </form>
-      <a class="btn btn-sm" href="/partidas/exportar" title="Exportar catálogo completo">CSV</a>
+      <a class="btn btn-sm" href="/partidas/exportar" title="Exportar catálogo activo">CSV</a>
+      {% endif %}
     </div>
   </div>
 
@@ -39,7 +47,10 @@
     <div class="bulk-left">
       <span class="bulk-count"><strong id="sel-count-partidas">0</strong> seleccionadas</span>
       <span class="bulk-sep"></span>
-      <button type="button" class="btn btn-sm btn-danger" data-cotizat-click="partidas-bulk-delete">🗑 Eliminar</button>
+      {% if vista == 'ocultas' %}
+      <button type="button" class="btn btn-sm btn-primary" data-cotizat-click="partidas-bulk-restore">↩ Restaurar</button>
+      {% else %}
+      <button type="button" class="btn btn-sm btn-danger" data-cotizat-click="partidas-bulk-delete">🗑 Ocultar / eliminar</button>
       <button type="button" class="btn btn-sm" data-cotizat-click="partidas-bulk-export">📥 Exportar</button>
       <div class="bulk-move">
         <input type="text" id="move-cat-partidas" placeholder="Nueva categoría" list="categorias-datalist-partidas">
@@ -47,11 +58,12 @@
         <input type="text" id="move-subcat-partidas" placeholder="Subcategoría" list="subcategorias-datalist-partidas">
         <button type="button" class="btn btn-sm" data-cotizat-click="partidas-bulk-move-subcategory">↳ A subcategoría</button>
       </div>
+      {% endif %}
     </div>
     <div class="bulk-right">
       <button type="button" class="btn btn-sm" data-cotizat-click="partidas-select-visible">Sel. visibles</button>
       <button type="button" class="btn btn-sm" data-cotizat-click="partidas-select-none">Limpiar</button>
-      <button type="button" class="btn btn-sm btn-danger" data-cotizat-click="partidas-delete-visible" title="Borra todo lo que está filtrado y visible">Borrar visibles</button>
+      {% if vista != 'ocultas' %}<button type="button" class="btn btn-sm btn-danger" data-cotizat-click="partidas-delete-visible" title="Oculta oficiales y elimina personalizadas visibles">Procesar visibles</button>{% endif %}
       <button type="button" class="btn btn-ghost btn-sm" data-cotizat-click="partidas-select-none" title="Cerrar">✕</button>
     </div>
   </div>
@@ -152,7 +164,7 @@
             <input type="checkbox" class="cat-select-all" data-cotizat-change="partidas-select-category"> <span class="csp-s-6b643de52a">Sel.</span>
           </label>
           <button type="button" class="btn btn-sm" data-cotizat-click="partidas-toggle-section-button" title="Contraer/Expandir">⤢</button>
-          <button type="button" class="btn btn-sm btn-ghost csp-s-be52c7a071" data-cotizat-click="partidas-delete-category" title="Borrar categoría completa">🗑</button>
+          {% if vista != 'ocultas' %}<button type="button" class="btn btn-sm btn-ghost csp-s-be52c7a071" data-cotizat-click="partidas-delete-category" title="Ocultar oficiales y eliminar personalizadas visibles">🗑</button>{% endif %}
         </div>
         <span class="cat-badge">{{ cat_partidas|length }}</span>
       </header>
@@ -182,7 +194,7 @@
                 {% set coste = (p.coste_materiales or 0) + (p.coste_mano_obra or 0) + (p.coste_complementarios or 0) + (p.coste_otros or 0) %}
                 {% set margen = (p.precio_unitario or 0) - coste %}
                 {% set recursos = catalogo_descompuestos.get(p.id, []) %}
-                <tr draggable="true" class="partida-tr" data-id="{{ p.id }}" data-categoria="{{ p.categoria }}" data-subcategoria="{{ p.subcategoria }}" data-apartado="{{ p.apartado }}" data-nombre="{{ (p.nombre ~ ' ' ~ p.descripcion ~ ' ' ~ p.categoria ~ ' ' ~ p.subcategoria ~ ' ' ~ p.apartado ~ ' ' ~ p.codigo_interno ~ ' ' ~ p.codigo_legacy ~ ' ' ~ p.codigo_externo ~ ' ' ~ p.proveedor) | lower }}" data-precio="{{ p.precio_unitario }}" data-coste="{{ coste }}" data-usos="{{ p.usos or 0 }}">
+                <tr {% if vista != 'ocultas' %}draggable="true"{% endif %} class="partida-tr" data-id="{{ p.id }}" data-categoria="{{ p.categoria }}" data-subcategoria="{{ p.subcategoria }}" data-apartado="{{ p.apartado }}" data-nombre="{{ (p.nombre ~ ' ' ~ p.descripcion ~ ' ' ~ p.categoria ~ ' ' ~ p.subcategoria ~ ' ' ~ p.apartado ~ ' ' ~ p.codigo_interno ~ ' ' ~ p.codigo_legacy ~ ' ' ~ p.codigo_externo ~ ' ' ~ p.proveedor) | lower }}" data-precio="{{ p.precio_unitario }}" data-coste="{{ coste }}" data-usos="{{ p.usos or 0 }}">
                   <td class="col-check"><input type="checkbox" class="row-check" data-id="{{ p.id }}" data-cotizat-change="partidas-row-check"></td>
                   <td class="col-code">
                     {% if p.codigo_interno or p.codigo_externo %}
@@ -224,10 +236,16 @@
                   <td class="col-usos right" data-usos="{{ p.usos or 0}}">{{ p.usos or 0 }}</td>
                   <td class="col-actions right">
                     <div class="row-actions">
-                      <a href="/partidas/{{ p.id }}/editar" class="btn btn-sm btn-ghost" title="Editar">✏️</a>
-                      <form method="post" action="/partidas/{{ p.id }}/eliminar" class="csp-s-a91548c594" data-confirm="¿Eliminar «{{ p.nombre }}» del catálogo?">
-                        <button type="submit" class="btn btn-sm btn-ghost csp-s-be52c7a071" title="Eliminar">✕</button>
+                      {% if vista == 'ocultas' %}
+                      <form method="post" action="/partidas/{{ p.id }}/restaurar">
+                        <button type="submit" class="btn btn-sm btn-primary" title="Restaurar en el catálogo">↩ Restaurar</button>
                       </form>
+                      {% else %}
+                      <a href="/partidas/{{ p.id }}/editar" class="btn btn-sm btn-ghost" title="Editar">✏️</a>
+                      <form method="post" action="/partidas/{{ p.id }}/eliminar" class="csp-s-a91548c594" data-confirm="{% if p.es_oficial %}¿Ocultar «{{ p.nombre }}» para esta organización? Podrás restaurarla después.{% else %}¿Eliminar definitivamente «{{ p.nombre }}»?{% endif %}">
+                        <button type="submit" class="btn btn-sm btn-ghost csp-s-be52c7a071" title="{{ 'Ocultar' if p.es_oficial else 'Eliminar' }}">{{ '◉' if p.es_oficial else '✕' }}</button>
+                      </form>
+                      {% endif %}
                     </div>
                   </td>
                 </tr>
@@ -281,7 +299,7 @@
                 {% set coste = (p.coste_materiales or 0) + (p.coste_mano_obra or 0) + (p.coste_complementarios or 0) + (p.coste_otros or 0) %}
                 {% set margen = (p.precio_unitario or 0) - coste %}
                 {% set recursos = catalogo_descompuestos.get(p.id, []) %}
-                <tr draggable="true" class="partida-tr" data-id="{{ p.id }}" data-categoria="{{ p.categoria }}" data-subcategoria="{{ p.subcategoria }}" data-apartado="{{ p.apartado }}" data-nombre="{{ (p.nombre ~ ' ' ~ p.descripcion ~ ' ' ~ p.categoria ~ ' ' ~ p.subcategoria ~ ' ' ~ p.apartado ~ ' ' ~ p.codigo_interno ~ ' ' ~ p.codigo_legacy ~ ' ' ~ p.codigo_externo ~ ' ' ~ p.proveedor) | lower }}" data-precio="{{ p.precio_unitario }}" data-coste="{{ coste }}" data-usos="{{ p.usos or 0 }}">
+                <tr {% if vista != 'ocultas' %}draggable="true"{% endif %} class="partida-tr" data-id="{{ p.id }}" data-categoria="{{ p.categoria }}" data-subcategoria="{{ p.subcategoria }}" data-apartado="{{ p.apartado }}" data-nombre="{{ (p.nombre ~ ' ' ~ p.descripcion ~ ' ' ~ p.categoria ~ ' ' ~ p.subcategoria ~ ' ' ~ p.apartado ~ ' ' ~ p.codigo_interno ~ ' ' ~ p.codigo_legacy ~ ' ' ~ p.codigo_externo ~ ' ' ~ p.proveedor) | lower }}" data-precio="{{ p.precio_unitario }}" data-coste="{{ coste }}" data-usos="{{ p.usos or 0 }}">
                   <td class="col-check"><input type="checkbox" class="row-check" data-id="{{ p.id }}" data-cotizat-change="partidas-row-check"></td>
                   <td class="col-code">
                     {% if p.codigo_interno or p.codigo_externo %}
@@ -323,10 +341,16 @@
                   <td class="col-usos right" data-usos="{{ p.usos or 0}}">{{ p.usos or 0 }}</td>
                   <td class="col-actions right">
                     <div class="row-actions">
-                      <a href="/partidas/{{ p.id }}/editar" class="btn btn-sm btn-ghost" title="Editar">✏️</a>
-                      <form method="post" action="/partidas/{{ p.id }}/eliminar" class="csp-s-a91548c594" data-confirm="¿Eliminar «{{ p.nombre }}» del catálogo?">
-                        <button type="submit" class="btn btn-sm btn-ghost csp-s-be52c7a071" title="Eliminar">✕</button>
+                      {% if vista == 'ocultas' %}
+                      <form method="post" action="/partidas/{{ p.id }}/restaurar">
+                        <button type="submit" class="btn btn-sm btn-primary" title="Restaurar en el catálogo">↩ Restaurar</button>
                       </form>
+                      {% else %}
+                      <a href="/partidas/{{ p.id }}/editar" class="btn btn-sm btn-ghost" title="Editar">✏️</a>
+                      <form method="post" action="/partidas/{{ p.id }}/eliminar" class="csp-s-a91548c594" data-confirm="{% if p.es_oficial %}¿Ocultar «{{ p.nombre }}» para esta organización? Podrás restaurarla después.{% else %}¿Eliminar definitivamente «{{ p.nombre }}»?{% endif %}">
+                        <button type="submit" class="btn btn-sm btn-ghost csp-s-be52c7a071" title="{{ 'Ocultar' if p.es_oficial else 'Eliminar' }}">{{ '◉' if p.es_oficial else '✕' }}</button>
+                      </form>
+                      {% endif %}
                     </div>
                   </td>
                 </tr>
@@ -352,20 +376,21 @@
     {% else %}
     <div class="card empty csp-s-d6e98c0fe2">
       <div class="csp-s-c7d3ba0dcc">📋</div>
-      <h3 class="csp-s-261f301f5a">{{ 'No hay resultados' if q else 'Aún no hay partidas en el catálogo' }}</h3>
-      <p class="hint csp-s-ff35838023">{% if q %}No encontramos «{{ q }}» en todo el catálogo. Prueba otro término o código.{% else %}Crea tu primera partida o importa cientos desde Excel. Después podrás organizarlas por capítulo, subcapítulo y apartado.{% endif %}</p>
+      <h3 class="csp-s-261f301f5a">{% if q %}No hay resultados{% elif vista == 'ocultas' %}No hay partidas ocultas{% else %}Aún no hay partidas en el catálogo{% endif %}</h3>
+      <p class="hint csp-s-ff35838023">{% if q %}No encontramos «{{ q }}» en esta vista. Prueba otro término o código.{% elif vista == 'ocultas' %}Las partidas oficiales que ocultes aparecerán aquí y podrás restaurarlas.{% else %}Crea tu primera partida o importa cientos desde Excel. Después podrás organizarlas por capítulo, subcapítulo y apartado.{% endif %}</p>
       <div class="csp-s-eb1a6b0356">
+        {% if vista == 'ocultas' %}<a href="/partidas" class="btn btn-primary">Volver al catálogo activo</a>{% else %}
         <a href="/partidas/nueva" class="btn btn-primary">+ Nueva Partida</a>
-        <a href="/presupuestos/importar?destino=catalogo" class="btn">⇧ Importar desde Excel</a>
+        <a href="/presupuestos/importar?destino=catalogo" class="btn">⇧ Importar desde Excel</a>{% endif %}
       </div>
     </div>
     {% endfor %}
 
     {% if total_paginas > 1 %}
     <nav class="catalog-pagination" aria-label="Páginas del catálogo">
-      {% if pagina > 1 %}<a class="btn btn-sm" href="/partidas?pagina={{ pagina - 1 }}{% if q %}&q={{ q|urlencode }}{% endif %}">← Anterior</a>{% endif %}
+      {% if pagina > 1 %}<a class="btn btn-sm" href="/partidas?pagina={{ pagina - 1 }}{% if vista == 'ocultas' %}&vista=ocultas{% endif %}{% if q %}&q={{ q|urlencode }}{% endif %}">← Anterior</a>{% endif %}
       <span>Página <strong>{{ pagina }}</strong> de {{ total_paginas }} · {{ total_partidas }} partidas</span>
-      {% if pagina < total_paginas %}<a class="btn btn-sm" href="/partidas?pagina={{ pagina + 1 }}{% if q %}&q={{ q|urlencode }}{% endif %}">Siguiente →</a>{% endif %}
+      {% if pagina < total_paginas %}<a class="btn btn-sm" href="/partidas?pagina={{ pagina + 1 }}{% if vista == 'ocultas' %}&vista=ocultas{% endif %}{% if q %}&q={{ q|urlencode }}{% endif %}">Siguiente →</a>{% endif %}
     </nav>
     {% endif %}
 
@@ -614,7 +639,7 @@ function aplicarDisclosure(conBusqueda) {
 function clearSearch() {
   const inp = document.getElementById('buscador');
   if (inp && inp.dataset.servidor === '1') {
-    window.location.href = '/partidas';
+    window.location.href = '/partidas{% if vista == "ocultas" %}?vista=ocultas{% endif %}';
     return;
   }
   if (inp) { inp.value=''; filtrarPartidas(); inp.focus(); }
@@ -763,7 +788,7 @@ async function deleteAllVisiblePartidas() {
     if (ch) visibleChecks.push(ch.dataset.id);
   });
   if (!visibleChecks.length) return alert('No hay partidas visibles.');
-  if (!confirm(`¿Eliminar las ${visibleChecks.length} partidas actualmente visibles? Esta acción es irreversible.`)) return;
+  if (!confirm(`¿Procesar las ${visibleChecks.length} partidas visibles? Las oficiales se ocultarán y las personalizadas se eliminarán.`)) return;
   const fd = new FormData();
   visibleChecks.forEach(id => fd.append('ids', id));
   const res = await fetch('/partidas/bulk-delete', {method:'POST', body: fd});
@@ -774,16 +799,26 @@ async function deleteAllVisiblePartidas() {
 async function bulkDeletePartidas() {
   const ids = Array.from(document.querySelectorAll('.row-check:checked')).map(c => c.dataset.id);
   if (!ids.length) return;
-  if (!confirm(`¿Eliminar ${ids.length} partidas del catálogo? Esta acción es irreversible.`)) return;
+  if (!confirm(`¿Procesar ${ids.length} partidas? Las oficiales se ocultarán y las personalizadas se eliminarán.`)) return;
   const fd = new FormData();
   ids.forEach(id => fd.append('ids', id));
   const res = await fetch('/partidas/bulk-delete', { method: 'POST', body: fd });
   if (res.redirected) window.location = res.url;
   else if (res.ok) window.location.reload();
-  else alert('Error al eliminar');
+  else alert('No se pudo procesar la selección.');
+}
+async function bulkRestorePartidas() {
+  const ids = Array.from(document.querySelectorAll('.row-check:checked')).map(c => c.dataset.id);
+  if (!ids.length) return;
+  const fd = new FormData();
+  ids.forEach(id => fd.append('ids', id));
+  const res = await fetch('/partidas/bulk-restore', { method: 'POST', body: fd });
+  if (res.redirected) window.location = res.url;
+  else if (res.ok) window.location.reload();
+  else alert('No se pudo restaurar la selección.');
 }
 function deleteCategory(cat) {
-  if (!confirm(`¿Eliminar TODAS las partidas de la categoría «${cat}»? Esta acción es irreversible.`)) return;
+  if (!confirm(`¿Procesar las partidas visibles de «${cat}»? Las oficiales se ocultarán y las personalizadas se eliminarán.`)) return;
   const sec = document.getElementById('group-' + cat.replace(/ /g, '_'));
   if (!sec) return;
   const ids = [];
@@ -937,6 +972,7 @@ window.CotizatActions.register('partidas-clear-search', () => clearSearch());
 window.CotizatActions.register('partidas-expand-all', () => toggleAllCats(true));
 window.CotizatActions.register('partidas-collapse-all', () => toggleAllCats(false));
 window.CotizatActions.register('partidas-bulk-delete', () => bulkDeletePartidas());
+window.CotizatActions.register('partidas-bulk-restore', () => bulkRestorePartidas());
 window.CotizatActions.register('partidas-bulk-export', () => bulkExportSelectedPartidas());
 window.CotizatActions.register('partidas-bulk-move-category', () => bulkMoveCategoryPartidas());
 window.CotizatActions.register('partidas-bulk-move-subcategory', () => bulkMoveSubcategoryPartidas());

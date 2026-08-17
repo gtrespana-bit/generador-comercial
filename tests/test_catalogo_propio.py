@@ -104,6 +104,9 @@ def test_sembrar_catalogo_carga_arbol_numerico_completo():
             Partida.version_catalogo == CATALOGO_VERSION
         ).count() == 540
         assert db.query(Partida).filter(Partida.codigo_legacy.like("CT-%")).count() == 540
+        assert db.query(Partida).filter(Partida.es_oficial.is_(True)).count() == 540
+        assert db.query(Partida).filter(Partida.catalogo_uid.isnot(None)).count() == 540
+        assert db.query(Partida).filter(Partida.oculta.is_(True)).count() == 0
         assert db.query(Recurso).count() >= 300
         assert db.query(CategoriaPartida).filter_by(nivel=1, oficial=True).count() == 18
         assert db.query(CategoriaPartida).filter_by(nivel=2, oficial=True).count() == 172
@@ -157,11 +160,18 @@ def test_actualizar_v1_conserva_id_precio_borrados_y_partidas_del_usuario():
         assert migrada.precio_unitario == 987.65
         assert migrada.codigo_interno == fuente["codigo"]
         assert migrada.codigo_legacy == fuente["codigo_legacy"]
+        assert migrada.catalogo_uid == fuente["catalogo_uid"]
+        assert migrada.es_oficial is True
+        assert migrada.version_alta_catalogo == 2
         assert migrada.apartado == fuente["apartado"]
         assert migrada.categoria_id is not None
         descomp = json.loads(migrada.descomposicion_json)
         assert descomp["codigo"] == fuente["codigo"]
         assert descomp["filas"][0]["codigo"] == "LOCAL"
+        migrada.oculta = True
+        db.commit()
+        actualizar_taxonomia_catalogo_propio(db)
+        assert db.get(Partida, id_anterior).oculta is True
         # No reaparecen las otras 539 oficiales que no estaban en la BD.
         assert db.query(Partida).count() == 2
         assert particular.codigo_interno == ""
@@ -197,6 +207,52 @@ def test_asegurar_actualiza_catalogo_v1_grande_una_sola_vez():
         ).count() == 0
         assert db.query(Configuracion).one().version_catalogo == CATALOGO_VERSION
         assert asegurar_catalogo_propio(db) is None
+    finally:
+        db.close()
+        engine.dispose()
+
+
+def test_actualizacion_incremental_incorpora_nuevas_y_respeta_ocultas(monkeypatch):
+    import app.services.catalogo_propio as servicio
+
+    engine, db = _session()
+    try:
+        sembrar_catalogo_propio(db)
+        oculta = db.query(Partida).filter(Partida.es_oficial.is_(True)).first()
+        oculta.oculta = True
+        db.commit()
+
+        base = construir_catalogo()
+        nueva = dict(base["partidas"][0])
+        nueva.update({
+            "catalogo_uid": "COTIZAT-V3-PRUEBA-001",
+            "codigo": "01.02.01.990",
+            "codigo_legacy": "",
+            "nombre": "Partida oficial incorporada en versión 3",
+            "version_alta_catalogo": 3,
+        })
+        fake = {**base, "partidas": [*base["partidas"], nueva], "n_partidas": 541}
+        monkeypatch.setattr(servicio, "CATALOGO_VERSION", 3)
+        monkeypatch.setattr(servicio, "construir_catalogo", lambda: fake)
+
+        resultado = servicio.actualizar_taxonomia_catalogo_propio(db)
+        assert resultado["incorporadas"] == 1
+        creada = db.query(Partida).filter_by(
+            catalogo_uid="COTIZAT-V3-PRUEBA-001"
+        ).one()
+        assert creada.es_oficial is True
+        assert creada.oculta is False
+        assert creada.version_alta_catalogo == 3
+        assert db.get(Partida, oculta.id).oculta is True
+        assert db.query(Configuracion).one().version_catalogo == 3
+
+        # Reintentar la misma versión no duplica ni reactiva nada.
+        segundo = servicio.actualizar_taxonomia_catalogo_propio(db)
+        assert segundo["incorporadas"] == 0
+        assert db.query(Partida).filter_by(
+            catalogo_uid="COTIZAT-V3-PRUEBA-001"
+        ).count() == 1
+        assert db.get(Partida, oculta.id).oculta is True
     finally:
         db.close()
         engine.dispose()

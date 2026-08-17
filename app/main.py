@@ -2442,7 +2442,9 @@ def busqueda_global(request: Request, q: str = "", db: Session = Depends(get_db)
             Factura.numero.ilike(like), Factura.titulo.ilike(like),
             Factura.direccion_obra.ilike(like), Cliente.nombre.ilike(like),
         )).order_by(Factura.id.desc()).limit(12).all()
-        resultados["partidas"] = db.query(Partida).filter(or_(
+        resultados["partidas"] = db.query(Partida).filter(
+            Partida.oculta.is_(False)
+        ).filter(or_(
             Partida.nombre.ilike(like), Partida.descripcion.ilike(like),
             Partida.codigo_interno.ilike(like), Partida.codigo_legacy.ilike(like),
             Partida.categoria.ilike(like), Partida.subcategoria.ilike(like),
@@ -6578,6 +6580,7 @@ def _partida_catalogo_indice(partida: Partida) -> dict:
 def _indice_catalogo_para_editor(db: Session) -> list[dict]:
     partidas = (
         db.query(Partida)
+        .filter(Partida.oculta.is_(False))
         .options(load_only(*_CAMPOS_INDICE_CATALOGO))
         .order_by(
             Partida.categoria,
@@ -6617,6 +6620,10 @@ def _partida_catalogo_json(partida: Partida) -> dict:
         "apartado": partida.apartado or "",
         "codigo_clasificacion": partida.codigo_clasificacion or "",
         "codigo_legacy": partida.codigo_legacy or "",
+        "catalogo_uid": partida.catalogo_uid or "",
+        "es_oficial": bool(partida.es_oficial),
+        "oculta": bool(partida.oculta),
+        "version_alta_catalogo": partida.version_alta_catalogo or 0,
         "ruta": partida.ruta_catalogo,
         "codigo": partida.codigo_interno or partida.codigo_externo or "",
         "codigo_interno": partida.codigo_interno or "",
@@ -6644,12 +6651,17 @@ def listar_partidas(
     request: Request,
     q: str = "",
     pagina: int = 1,
+    vista: str = "activas",
     db: Session = Depends(get_db),
 ):
     # La tabla de gestión se pagina; el editor usa un índice compacto aparte.
     from .services.catalogo_propio import asegurar_catalogo_propio
     asegurar_catalogo_propio(db)
-    query = db.query(Partida)
+    vista = "ocultas" if vista == "ocultas" else "activas"
+    total_ocultas = db.query(Partida).filter(Partida.oculta.is_(True)).count()
+    query = db.query(Partida).filter(
+        Partida.oculta.is_(vista == "ocultas")
+    )
     if q.strip():
         like = f"%{q.strip()[:120]}%"
         query = query.filter(or_(
@@ -6690,6 +6702,8 @@ def listar_partidas(
         "pagina": pagina,
         "total_paginas": total_paginas,
         "por_pagina": por_pagina,
+        "vista": vista,
+        "total_ocultas": total_ocultas,
     })
 
 
@@ -6702,7 +6716,9 @@ def buscar_partidas_catalogo_api(
     """Búsqueda técnica bajo demanda sin descargar fichas/descompuestos."""
     consulta = str(q or "").strip()[:120]
     limite = max(1, min(int(limite or 60), 100))
-    query = db.query(Partida).options(load_only(*_CAMPOS_INDICE_CATALOGO))
+    query = db.query(Partida).filter(
+        Partida.oculta.is_(False)
+    ).options(load_only(*_CAMPOS_INDICE_CATALOGO))
     terminos = re.findall(r"[\w.-]+", consulta, flags=re.UNICODE)[:6]
     for termino in terminos:
         like = f"%{termino[:40]}%"
@@ -6782,9 +6798,16 @@ def descomposicion_partida(partida_id: int, db: Session = Depends(get_db)):
 
 
 @app.get("/partidas/exportar")
-def exportar_partidas(formato: str = "csv", db: Session = Depends(get_db)):
-    """Exportar catálogo de partidas a CSV o Excel con formato profesional."""
-    partidas = db.query(Partida).order_by(
+def exportar_partidas(
+    formato: str = "csv",
+    incluir_ocultas: bool = False,
+    db: Session = Depends(get_db),
+):
+    """Exporta las partidas visibles; las ocultas son opt-in."""
+    query = db.query(Partida)
+    if not incluir_ocultas:
+        query = query.filter(Partida.oculta.is_(False))
+    partidas = query.order_by(
         Partida.categoria, Partida.subcategoria, Partida.apartado,
         Partida.codigo_interno, Partida.nombre,
     ).all()
@@ -7053,7 +7076,7 @@ def _desvincular_partidas_del_catalogo(db: Session, partida_ids) -> None:
 
     ``presupuesto_items.partida_catalogo_id`` solo recuerda de qué partida
     maestra se copió una línea; el precio ya está copiado en la propia línea.
-    Borrar una partida del catálogo no debe borrar presupuestos: se anula la
+    Borrar una partida personalizada no debe borrar presupuestos: se anula la
     referencia (FK a NULL) antes del borrado para no violar la integridad
     referencial.
     """
@@ -7067,17 +7090,49 @@ def _desvincular_partidas_del_catalogo(db: Session, partida_ids) -> None:
     )
 
 
+def _es_partida_oficial(partida: Partida) -> bool:
+    return bool(
+        partida.es_oficial
+        or partida.catalogo_uid
+        or (
+            (partida.codigo_legacy or "").startswith("CT-")
+            and (partida.version_catalogo or 0) >= 2
+        )
+    )
+
+
 @app.post("/partidas/{partida_id}/eliminar")
 def eliminar_partida(partida_id: int, db: Session = Depends(get_db)):
     partida = db.get(Partida, partida_id)
     if partida is None:
         return _redirect("/partidas", error="Partida no encontrada.")
+    if _es_partida_oficial(partida):
+        partida.es_oficial = True
+        partida.oculta = True
+        db.commit()
+        return _redirect(
+            "/partidas",
+            msg="Partida oficial ocultada para esta organización.",
+        )
     referencia = partida.imagen
     _desvincular_partidas_del_catalogo(db, [partida_id])
     db.delete(partida)
     _borrar_imagen(referencia, db)
     db.commit()
-    return _redirect("/partidas", msg="Partida eliminada.")
+    return _redirect("/partidas", msg="Partida personalizada eliminada.")
+
+
+@app.post("/partidas/{partida_id}/restaurar")
+def restaurar_partida(partida_id: int, db: Session = Depends(get_db)):
+    partida = db.get(Partida, partida_id)
+    if partida is None:
+        return _redirect("/partidas?vista=ocultas", error="Partida no encontrada.")
+    partida.oculta = False
+    db.commit()
+    return _redirect(
+        "/partidas?vista=ocultas",
+        msg="Partida restaurada en el catálogo activo.",
+    )
 
 @app.post("/partidas/bulk-delete")
 async def bulk_delete_partidas(request: Request, db: Session = Depends(get_db)):
@@ -7096,20 +7151,49 @@ async def bulk_delete_partidas(request: Request, db: Session = Depends(get_db)):
             pass
     if not ids:
         return _redirect("/partidas", error="No se seleccionaron partidas.")
-    _desvincular_partidas_del_catalogo(db, ids)
-    count = 0
-    referencias = set()
-    for pid in ids:
-        p = db.get(Partida, pid)
-        if p:
-            referencias.add(p.imagen)
-            db.delete(p)
-            count += 1
+    partidas = [p for p in db.query(Partida).filter(Partida.id.in_(ids)).all()]
+    oficiales = [p for p in partidas if _es_partida_oficial(p)]
+    personalizadas = [p for p in partidas if not _es_partida_oficial(p)]
+    if not oficiales and not personalizadas:
+        return _redirect("/partidas", error="No se encontraron las partidas seleccionadas.")
+    for partida in oficiales:
+        partida.es_oficial = True
+        partida.oculta = True
+    ids_personalizadas = [p.id for p in personalizadas]
+    _desvincular_partidas_del_catalogo(db, ids_personalizadas)
+    referencias = {p.imagen for p in personalizadas if p.imagen}
+    for partida in personalizadas:
+        db.delete(partida)
     db.flush()
     for referencia in referencias:
         _borrar_imagen(referencia, db)
     db.commit()
-    return _redirect("/partidas", msg=f"Se eliminaron {count} partidas.")
+    partes = []
+    if oficiales:
+        partes.append(f"{len(oficiales)} oficial(es) ocultada(s)")
+    if personalizadas:
+        partes.append(f"{len(personalizadas)} personalizada(s) eliminada(s)")
+    return _redirect("/partidas", msg="; ".join(partes) + ".")
+
+
+@app.post("/partidas/bulk-restore")
+async def bulk_restore_partidas(request: Request, db: Session = Depends(get_db)):
+    form = await request.form()
+    ids = [int(x) for x in form.getlist("ids") if str(x).strip()]
+    if not ids:
+        return _redirect(
+            "/partidas?vista=ocultas", error="No se seleccionaron partidas."
+        )
+    partidas = db.query(Partida).filter(
+        Partida.id.in_(ids), Partida.oculta.is_(True)
+    ).all()
+    for partida in partidas:
+        partida.oculta = False
+    db.commit()
+    return _redirect(
+        "/partidas?vista=ocultas",
+        msg=f"Se restauraron {len(partidas)} partidas.",
+    )
 
 @app.post("/partidas/bulk-export-selected")
 async def bulk_export_selected_partidas(request: Request, db: Session = Depends(get_db)):

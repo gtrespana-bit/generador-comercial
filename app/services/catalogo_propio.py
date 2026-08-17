@@ -264,9 +264,17 @@ def construir_catalogo() -> dict:
                 f"({pc.get('consumo', '')} {pc.get('unidad', '')}/{unidad})"
             )
 
+        codigo_legacy = str(partida.get("codigo_legacy") or "")
+        catalogo_uid = str(partida.get("catalogo_uid") or codigo_legacy or codigo)
+        version_alta = int(
+            partida.get("version_alta_catalogo")
+            or (2 if codigo_legacy else CATALOGO_VERSION)
+        )
         partidas_out.append({
             "codigo": codigo,
-            "codigo_legacy": str(partida.get("codigo_legacy") or ""),
+            "codigo_legacy": codigo_legacy,
+            "catalogo_uid": catalogo_uid,
+            "version_alta_catalogo": version_alta,
             "codigo_clasificacion": cod_apartado,
             "nombre": str(partida.get("titulo") or codigo).strip(),
             "descripcion": str(partida.get("descripcion") or "").strip(),
@@ -361,6 +369,40 @@ def _sembrar_recursos(db: Session, recursos: list[dict]) -> int:
     return creados
 
 
+def _crear_partida_oficial(
+    item: dict,
+    nodos: dict[str, CategoriaPartida],
+) -> Partida:
+    codigo = str(item.get("codigo") or "")
+    return Partida(
+        nombre=str(item.get("nombre") or codigo)[:200],
+        descripcion=item.get("descripcion") or "",
+        precio_unitario=float(item.get("precio_unitario") or 0),
+        unidad=(item.get("unidad") or "ud")[:30],
+        categoria=(item.get("categoria") or "General")[:80],
+        subcategoria=(item.get("subcategoria") or "")[:80],
+        apartado=(item.get("apartado") or "")[:120],
+        nodo_categoria=nodos.get(item.get("codigo_clasificacion")),
+        codigo_clasificacion=(item.get("codigo_clasificacion") or "")[:20],
+        codigo_legacy=(item.get("codigo_legacy") or "")[:80],
+        version_catalogo=CATALOGO_VERSION,
+        catalogo_uid=(item.get("catalogo_uid") or "")[:100] or None,
+        es_oficial=True,
+        oculta=False,
+        version_alta_catalogo=int(item.get("version_alta_catalogo") or CATALOGO_VERSION),
+        codigo_interno=codigo[:80],
+        codigo_externo=codigo[:100],
+        coste_materiales=float(item.get("coste_materiales") or 0),
+        coste_mano_obra=float(item.get("coste_mano_obra") or 0),
+        coste_complementarios=float(item.get("coste_complementarios") or 0),
+        coste_otros=float(item.get("coste_otros") or 0),
+        tiempo_estimado_horas=item.get("tiempo_estimado_horas"),
+        rendimiento=(item.get("rendimiento") or "")[:120],
+        notas_tecnicas=item.get("notas_tecnicas") or "",
+        descomposicion_json=item.get("descomposicion_json") or "[]",
+    )
+
+
 def _sembrar_partidas(
     db: Session,
     partidas: list[dict],
@@ -373,30 +415,7 @@ def _sembrar_partidas(
         nombre = (item.get("nombre") or "").strip()
         if not nombre or nombre in existentes:
             continue
-        codigo = item.get("codigo") or ""
-        db.add(Partida(
-            nombre=nombre[:200],
-            descripcion=item.get("descripcion") or "",
-            precio_unitario=float(item.get("precio_unitario") or 0),
-            unidad=(item.get("unidad") or "ud")[:30],
-            categoria=(item.get("categoria") or "General")[:80],
-            subcategoria=(item.get("subcategoria") or "")[:80],
-            apartado=(item.get("apartado") or "")[:120],
-            nodo_categoria=nodos.get(item.get("codigo_clasificacion")),
-            codigo_clasificacion=(item.get("codigo_clasificacion") or "")[:20],
-            codigo_legacy=(item.get("codigo_legacy") or "")[:80],
-            version_catalogo=CATALOGO_VERSION,
-            codigo_interno=codigo[:80],
-            codigo_externo=codigo[:100],
-            coste_materiales=float(item.get("coste_materiales") or 0),
-            coste_mano_obra=float(item.get("coste_mano_obra") or 0),
-            coste_complementarios=float(item.get("coste_complementarios") or 0),
-            coste_otros=float(item.get("coste_otros") or 0),
-            tiempo_estimado_horas=item.get("tiempo_estimado_horas"),
-            rendimiento=(item.get("rendimiento") or "")[:120],
-            notas_tecnicas=item.get("notas_tecnicas") or "",
-            descomposicion_json=item.get("descomposicion_json") or "[]",
-        ))
+        db.add(_crear_partida_oficial(item, nodos))
         existentes.add(nombre)
         creadas += 1
     return creadas
@@ -437,17 +456,23 @@ def actualizar_taxonomia_catalogo_propio(db: Session) -> dict:
 
     Se busca por código legado/actual y se conserva el mismo ``Partida.id``;
     por eso las líneas de presupuestos siguen vinculadas. Solo cambian ruta,
-    código visible y metadatos de versión. Las partidas borradas no reaparecen
-    y las creadas por la organización no se tocan.
+    código visible y metadatos de versión. Conserva la visibilidad elegida por
+    la organización e incorpora únicamente altas de versiones posteriores.
     """
     datos = construir_catalogo()
     if not datos.get("ok"):
         return {"ok": False, "actualizadas": 0}
     nodos = _sembrar_categorias(db, datos["categorias"])
+    cfg = db.query(Configuracion).first()
+    version_previa = int(getattr(cfg, "version_catalogo", 0) or 0)
 
     existentes = db.query(Partida).all()
     por_codigo: dict[str, Partida] = {}
+    por_uid: dict[str, Partida] = {}
+    nombres = {p.nombre for p in existentes}
     for partida in existentes:
+        if partida.catalogo_uid:
+            por_uid.setdefault(str(partida.catalogo_uid), partida)
         for codigo in (
             partida.codigo_legacy,
             partida.codigo_interno,
@@ -458,13 +483,27 @@ def actualizar_taxonomia_catalogo_propio(db: Session) -> dict:
                 por_codigo.setdefault(codigo, partida)
 
     actualizadas = 0
+    incorporadas = 0
     for item in datos["partidas"]:
+        uid = str(item.get("catalogo_uid") or "")
         legacy = str(item.get("codigo_legacy") or "")
         nuevo = str(item.get("codigo") or "")
-        partida = por_codigo.get(legacy) or por_codigo.get(nuevo)
+        version_alta = int(item.get("version_alta_catalogo") or CATALOGO_VERSION)
+        partida = por_uid.get(uid) or por_codigo.get(legacy) or por_codigo.get(nuevo)
         if partida is None:
-            # Respeta una eliminación explícita: esta ruta es actualización,
-            # no una segunda siembra del catálogo.
+            # En v2 se respetan los borrados físicos anteriores. A partir de
+            # ahí, solo se incorporan conceptos cuya versión de alta sea
+            # posterior a la versión ya aplicada a la organización.
+            if (
+                version_previa >= 2
+                and version_alta > version_previa
+                and str(item.get("nombre") or "") not in nombres
+            ):
+                nueva = _crear_partida_oficial(item, nodos)
+                db.add(nueva)
+                nombres.add(nueva.nombre)
+                por_uid[uid] = nueva
+                incorporadas += 1
             continue
         partida.categoria = item["categoria"][:80]
         partida.subcategoria = item["subcategoria"][:80]
@@ -475,6 +514,10 @@ def actualizar_taxonomia_catalogo_propio(db: Session) -> dict:
         partida.codigo_interno = nuevo[:80]
         partida.codigo_externo = nuevo[:100]
         partida.version_catalogo = CATALOGO_VERSION
+        partida.catalogo_uid = uid[:100] or None
+        partida.es_oficial = True
+        # Nunca se fuerza ``oculta=False``: es una preferencia de la organización.
+        partida.version_alta_catalogo = version_alta
         # El descompuesto puede haber sido ajustado por la organización. Solo
         # actualizamos sus metadatos de identidad, nunca recursos ni precios.
         try:
@@ -488,19 +531,20 @@ def actualizar_taxonomia_catalogo_propio(db: Session) -> dict:
             partida.descomposicion_json = json.dumps(descomp, ensure_ascii=False)
         actualizadas += 1
 
-    cfg = db.query(Configuracion).first()
     if cfg is not None:
         cfg.version_catalogo = CATALOGO_VERSION
     db.commit()
     log.info(
-        "Taxonomía de catálogo v%s aplicada: %s partidas oficiales reclasificadas.",
+        "Catálogo v%s aplicado: %s actualizadas, %s nuevas.",
         CATALOGO_VERSION,
         actualizadas,
+        incorporadas,
     )
     return {
         "ok": True,
         "version": CATALOGO_VERSION,
         "actualizadas": actualizadas,
+        "incorporadas": incorporadas,
         "total_fuente": datos["n_partidas"],
     }
 
@@ -676,13 +720,17 @@ def asegurar_catalogo_propio(db: Session) -> dict | None:
                 str(p.get("codigo_legacy") or "")
                 for p in construir_catalogo().get("partidas", [])
             }
-            antiguas = any(
-                p.codigo_interno in codigos_v1
-                for p in db.query(Partida).filter(
-                    Partida.codigo_interno.like("CT-%")
-                ).all()
+            candidatas = db.query(Partida).filter(or_(
+                Partida.codigo_interno.like("CT-%"),
+                Partida.codigo_legacy.like("CT-%"),
+            )).all()
+            antiguas = any(p.codigo_interno in codigos_v1 for p in candidatas)
+            sin_identidad = any(
+                (p.codigo_legacy in codigos_v1 or p.codigo_interno in codigos_v1)
+                and (not p.es_oficial or not p.catalogo_uid)
+                for p in candidatas
             )
-            if version < CATALOGO_VERSION or antiguas:
+            if version < CATALOGO_VERSION or antiguas or sin_identidad:
                 return actualizar_taxonomia_catalogo_propio(db)
             return None
 

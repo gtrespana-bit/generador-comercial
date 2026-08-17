@@ -120,7 +120,7 @@ MB a menos de 1 MB en la regresión automatizada.
 
 ## Validación
 
-- 477 tests superados y 6 omitidos por requerir PostgreSQL administrativo.
+- 480 tests superados y 6 omitidos por requerir PostgreSQL administrativo.
 - JavaScript validado con `node --check`.
 - 63 plantillas Jinja parseadas.
 - 42 dependencias directas coherentes con el lock.
@@ -128,8 +128,7 @@ MB a menos de 1 MB en la regresión automatizada.
 - Pruebas nuevas verifican índice ligero, ficha bajo demanda, búsqueda en
   descripción y paginación de 100 filas.
 
-## Siguiente fase
+## Fase siguiente completada
 
-Implantar ocultación/restauración de partidas oficiales por organización y
-actualización incremental: una partida ocultada no debe reaparecer, mientras
-las nuevas partidas oficiales sí deben incorporarse automáticamente.
+La ocultación/restauración por organización y la actualización incremental se
+implantaron en la fase 2. Véase `docs/FASE_2_VISIBILIDAD_CATALOGO.md`.
