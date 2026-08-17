@@ -9,23 +9,21 @@ numérica v2 aprobada para reforma y remodelación en Venezuela.
 |---|---:|
 | Partidas | **2.363** |
 | Hojas de descompuesto `.xlsx` | 2.363 |
-| Partidas con producto de elección del cliente | 69 |
-| Recursos en el cuadro de precios | **391** |
-| — mano de obra / materiales / maquinaria | 17 / 330 / 44 |
-| — confirmados / verificados con el mercado / provisionales | 17 / 113 / 257 |
-| **Peso económico con precio cerrado** | **79,6 %** del coste directo |
+| Partidas con producto de elección del cliente | 260 |
+| Recursos en el cuadro de precios | **392** |
+| — mano de obra / materiales / maquinaria | 17 / 331 / 44 |
+| — confirmados / verificados con el mercado / derivados / provisionales | 17 / 131 / 4 / 196 |
+| **Peso económico con precio cerrado** | **≈ 85 %** del coste directo |
 | — confirmado (mano de obra) | 20,2 % |
 | — verificado con el mercado venezolano | 59,4 % |
-| — provisional | 20,4 % (de los cuales 6,3 % es alquiler de equipos) |
-| Coste directo del catálogo | 15.745,67 USD |
-| Clasificación v2 | **18 capítulos · 172 subcapítulos · 161 apartados con partidas** |
-| — capítulos con partidas / preparados para ampliación | **15 / 3** |
+| — provisional | ≈ 15 % (consumibles de bajo valor + especialidades B2B/importación; el alquiler de equipos se mantiene fuera de alcance) |
+| Clasificación v2 | **18 capítulos · 172 subcapítulos · 229 apartados** |
 | Código visible | `CC.SS.AA.NNN` |
 | Moneda | USD (Venezuela) |
 
-**Validación:** las 540 partidas pasan `es_formato_cype_xlsx` y
+**Validación:** las 2.363 partidas pasan `es_formato_cype_xlsx` y
 `analizar_cype_xlsx`. El catálogo masivo se detecta con **12 campos, 0 errores y
-0 advertencias**. La suite de aplicación pasa con **483 tests y 6 omitidos**.
+0 advertencias**. La suite de aplicación pasa con **515 tests y 6 omitidos**.
 
 ---
 
@@ -129,6 +127,36 @@ datos/descompuestos/*.json ─┘                  ├─► datos/partidas.csv
   y no modifica partidas creadas por una organización.
 - El árbol del presupuestador muestra tres ramas, busca por toda la ruta y
   admite código anterior como alias.
+
+---
+
+## Estado del contraste de precios (agosto 2026)
+
+Los precios de material se contrastaron contra el mercado venezolano
+(MercadoLibre Venezuela y EPA Venezuela, en USD) en cinco rondas documentadas
+en `datos/contraste_mercado_2026-08{,-b,-c,-d}.json`. Resultado sobre los 331
+materiales:
+
+- **131 verificados con el mercado** (con `fuente` citable) y **4 derivados**.
+- **196 provisionales**, que se dividen en dos grupos:
+
+  1. **Consumibles de bajo valor con precio sano** (≈148): saco de rafia,
+     lija, cinta de enmascarar, protección plástica, perfiles de remate,
+     abrazaderas, separadores, etc. Su error de céntimos no mueve una partida.
+  2. **Especialidades B2B / de importación sin venta retail pública** (≈48):
+     fibra de carbono, steel deck, poliurea, bentonita, composite de fachada,
+     tabique móvil, vidrios laminado/doble/arenado/decorativo, pinturas
+     intumescente/magnética/tiza, pararrayos, domótica, hidroneumáticos, etc.
+     Se venden por proveedor o importación y **no tienen listado público**;
+     deben contrastarse con cotización de proveedor.
+
+Correcciones aplicadas en las rondas (precios que estaban mal):
+diferencial 32→28 USD, tubería frigorífica 9,80→11 USD/m, cerradura
+multipunto 55→45 USD, pintura anticorrosiva 7,20→8 USD/l, electrodo
+4,80→5 USD/kg. Además se extrajo el equipo de elección del cliente de 178
+partidas de «Instalación de [equipo]» (panel solar, inversor, cámara,
+extintor, bomba, ascensor…) hacia `producto_cliente`, y se corrigió el uso
+indebido de `MT-SOPORTE-AC` en espejos/vidrios.
 
 ---
 
