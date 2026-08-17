@@ -35,8 +35,8 @@ sensibles, terminología venezolana y benchmark de 5.000 partidas.
 **PR #31 abierto hacia `main`:**
 https://github.com/gtrespana-bit/generador-comercial/pull/31
 
-Al crear el PR, CI y Vercel quedaron en ejecución. Comprobar su resultado antes
-de fusionar con `gh pr checks 31`.
+Checks del PR verificados en verde tras el último push: **CI, Vercel y Vercel
+Preview Comments aprobados**. El PR queda listo para revisión y fusión.
 
 Documentos principales:
 
