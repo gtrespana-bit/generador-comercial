@@ -10,14 +10,6 @@
   "complementarios_pct": 1,
   "recursos": [
     {
-      "ref": "MT-EXTINTOR",
-      "rendimiento": 0.5
-    },
-    {
-      "ref": "MT-DETECT-HUMO",
-      "rendimiento": 0.5
-    },
-    {
       "ref": "MT-SENAL-OBRA",
       "rendimiento": 1.0
     },
@@ -36,5 +28,11 @@
   ],
   "codigo_covenin": "",
   "codigo_legacy": "",
-  "apartado": "01"
+  "apartado": "01",
+  "producto_cliente": {
+    "tipo": "Detector de humo, del modelo elegido por el cliente",
+    "unidad": "ud",
+    "consumo": 1.0,
+    "nota": "La partida cubre solo la instalación. El equipo se toma del catálogo de productos y su precio no está incluido."
+  }
 }

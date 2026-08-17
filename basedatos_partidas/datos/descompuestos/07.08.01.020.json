@@ -18,10 +18,6 @@
       "rendimiento": 1.0
     },
     {
-      "ref": "MT-AUTOM-PORTON",
-      "rendimiento": 0.2
-    },
-    {
       "ref": "MT-PLO-SOP",
       "rendimiento": 4.0
     },
@@ -44,5 +40,11 @@
   ],
   "codigo_covenin": "",
   "codigo_legacy": "",
-  "apartado": "01"
+  "apartado": "01",
+  "producto_cliente": {
+    "tipo": "Automatismo (motor) de portón, del modelo elegido por el cliente",
+    "unidad": "ud",
+    "consumo": 1.0,
+    "nota": "La partida cubre solo la instalación. El equipo se toma del catálogo de productos y su precio no está incluido."
+  }
 }

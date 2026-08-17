@@ -10,10 +10,6 @@
   "complementarios_pct": 1,
   "recursos": [
     {
-      "ref": "MT-BOMBA-AGUA",
-      "rendimiento": 0.5
-    },
-    {
       "ref": "MT-FLOTANTE",
       "rendimiento": 1.0
     },
@@ -40,5 +36,11 @@
   ],
   "codigo_covenin": "",
   "codigo_legacy": "",
-  "apartado": "01"
+  "apartado": "01",
+  "producto_cliente": {
+    "tipo": "Tanque de agua caliente, del modelo elegido por el cliente",
+    "unidad": "ud",
+    "consumo": 1.0,
+    "nota": "La partida cubre solo la instalación. El equipo se toma del catálogo de productos y su precio no está incluido."
+  }
 }

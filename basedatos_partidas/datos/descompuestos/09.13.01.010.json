@@ -10,14 +10,6 @@
   "complementarios_pct": 1,
   "recursos": [
     {
-      "ref": "MT-PARARRAYOS-PDA",
-      "rendimiento": 1.0
-    },
-    {
-      "ref": "MT-CONT-DESCARGAS",
-      "rendimiento": 1.0
-    },
-    {
       "ref": "MT-CABLE-COBRE-DESN",
       "rendimiento": 3.0
     },
@@ -44,5 +36,11 @@
   ],
   "codigo_covenin": "",
   "codigo_legacy": "",
-  "apartado": "01"
+  "apartado": "01",
+  "producto_cliente": {
+    "tipo": "Pararrayos con dispositivo de cebado sobre mástil en cubierta, del modelo elegido por el cliente",
+    "unidad": "ud",
+    "consumo": 1.0,
+    "nota": "La partida cubre solo la instalación. El equipo se toma del catálogo de productos y su precio no está incluido."
+  }
 }

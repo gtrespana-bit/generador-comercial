@@ -10,10 +10,6 @@
   "complementarios_pct": 1,
   "recursos": [
     {
-      "ref": "MT-DOM-TERMOSTATO",
-      "rendimiento": 1.0
-    },
-    {
       "ref": "MT-CABLE-8",
       "rendimiento": 2.0
     },
@@ -36,5 +32,11 @@
   ],
   "codigo_covenin": "",
   "codigo_legacy": "",
-  "apartado": "03"
+  "apartado": "03",
+  "producto_cliente": {
+    "tipo": "Termostato inteligente para control de climatización, del modelo elegido por el cliente",
+    "unidad": "ud",
+    "consumo": 1.0,
+    "nota": "La partida cubre solo la instalación. El equipo se toma del catálogo de productos y su precio no está incluido."
+  }
 }

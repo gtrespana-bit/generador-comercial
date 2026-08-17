@@ -10,18 +10,6 @@
   "complementarios_pct": 1,
   "recursos": [
     {
-      "ref": "MT-PANEL-SOLAR",
-      "rendimiento": 0.5
-    },
-    {
-      "ref": "MT-INVERSOR",
-      "rendimiento": 0.3
-    },
-    {
-      "ref": "MT-BATERIA",
-      "rendimiento": 0.3
-    },
-    {
       "ref": "MQ-TALADRO",
       "rendimiento": 0.3
     },
@@ -36,5 +24,11 @@
   ],
   "codigo_covenin": "",
   "codigo_legacy": "",
-  "apartado": "01"
+  "apartado": "01",
+  "producto_cliente": {
+    "tipo": "Tablero de transferencia, del modelo elegido por el cliente",
+    "unidad": "ud",
+    "consumo": 1.0,
+    "nota": "La partida cubre solo la instalación. El equipo se toma del catálogo de productos y su precio no está incluido."
+  }
 }

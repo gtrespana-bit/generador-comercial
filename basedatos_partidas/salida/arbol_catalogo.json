@@ -997,9 +997,9 @@
                   "codigo_legacy": "",
                   "titulo": "Extintor de obra.",
                   "unidad": "ud",
-                  "precio": 53.81,
+                  "precio": 9.17,
                   "horas": 0.35,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "01.08.01.130",
@@ -9881,18 +9881,18 @@
                   "codigo_legacy": "",
                   "titulo": "Portón corredizo con automatismo.",
                   "unidad": "ud",
-                  "precio": 512.03,
+                  "precio": 275.69,
                   "horas": 7.1,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "07.04.02.110",
                   "codigo_legacy": "",
                   "titulo": "Portón batiente de dos hojas con automatismo.",
                   "unidad": "ud",
-                  "precio": 679.93,
+                  "precio": 207.25,
                   "horas": 7.6,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 }
               ],
               "n": 11
@@ -10493,9 +10493,9 @@
                   "codigo_legacy": "",
                   "titulo": "Persiana enrollable motorizada.",
                   "unidad": "m2",
-                  "precio": 157.82,
+                  "precio": 110.55,
                   "horas": 1.22,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "07.08.01.030",
@@ -10681,18 +10681,18 @@
                   "codigo_legacy": "",
                   "titulo": "Automatización de portón corredizo existente.",
                   "unidad": "ud",
-                  "precio": 258.86,
+                  "precio": 22.52,
                   "horas": 3.3,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "07.09.02.020",
                   "codigo_legacy": "",
                   "titulo": "Automatización de portón batiente existente.",
                   "unidad": "ud",
-                  "precio": 499.93,
+                  "precio": 27.25,
                   "horas": 4.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "07.09.02.030",
@@ -11206,9 +11206,9 @@
                   "codigo_legacy": "",
                   "titulo": "Recibido de barra de apoyo.",
                   "unidad": "ud",
-                  "precio": 59.48,
+                  "precio": 22.71,
                   "horas": 0.8,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "08.03.02.050",
@@ -14989,270 +14989,270 @@
                   "codigo_legacy": "",
                   "titulo": "Instalación de extintor de CO2.",
                   "unidad": "ud",
-                  "precio": 49.04,
+                  "precio": 12.27,
                   "horas": 0.75,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.10.01.050",
                   "codigo_legacy": "",
                   "titulo": "Instalación de extintor de espuma.",
                   "unidad": "ud",
-                  "precio": 49.04,
+                  "precio": 12.27,
                   "horas": 0.75,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.10.01.060",
                   "codigo_legacy": "",
                   "titulo": "Instalación de detector de humo.",
                   "unidad": "ud",
-                  "precio": 49.04,
+                  "precio": 12.27,
                   "horas": 0.75,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.10.01.070",
                   "codigo_legacy": "",
                   "titulo": "Instalación de detector de calor.",
                   "unidad": "ud",
-                  "precio": 49.04,
+                  "precio": 12.27,
                   "horas": 0.75,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.10.01.080",
                   "codigo_legacy": "",
                   "titulo": "Instalación de alarma de incendio.",
                   "unidad": "ud",
-                  "precio": 49.04,
+                  "precio": 12.27,
                   "horas": 0.75,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.10.01.090",
                   "codigo_legacy": "",
                   "titulo": "Instalación de pulsador de alarma.",
                   "unidad": "ud",
-                  "precio": 49.04,
+                  "precio": 12.27,
                   "horas": 0.75,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.10.01.100",
                   "codigo_legacy": "",
                   "titulo": "Instalación de sirena.",
                   "unidad": "ud",
-                  "precio": 49.04,
+                  "precio": 12.27,
                   "horas": 0.75,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.10.01.110",
                   "codigo_legacy": "",
                   "titulo": "Instalación de luz de emergencia.",
                   "unidad": "ud",
-                  "precio": 49.04,
+                  "precio": 12.27,
                   "horas": 0.75,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.10.01.120",
                   "codigo_legacy": "",
                   "titulo": "Instalación de señalización de evacuación.",
                   "unidad": "ud",
-                  "precio": 49.04,
+                  "precio": 12.27,
                   "horas": 0.75,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.10.01.130",
                   "codigo_legacy": "",
                   "titulo": "Instalación de rociador.",
                   "unidad": "ud",
-                  "precio": 49.04,
+                  "precio": 12.27,
                   "horas": 0.75,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.10.01.140",
                   "codigo_legacy": "",
                   "titulo": "Instalación de gabinete de manguera.",
                   "unidad": "ud",
-                  "precio": 49.04,
+                  "precio": 12.27,
                   "horas": 0.75,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.10.01.150",
                   "codigo_legacy": "",
                   "titulo": "Instalación de hidrante.",
                   "unidad": "ud",
-                  "precio": 49.04,
+                  "precio": 12.27,
                   "horas": 0.75,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.10.01.160",
                   "codigo_legacy": "",
                   "titulo": "Instalación de central de incendios.",
                   "unidad": "ud",
-                  "precio": 49.04,
+                  "precio": 12.27,
                   "horas": 0.75,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.10.01.170",
                   "codigo_legacy": "",
                   "titulo": "Instalación de detectores en dormitorio.",
                   "unidad": "ud",
-                  "precio": 49.04,
+                  "precio": 12.27,
                   "horas": 0.75,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.10.01.180",
                   "codigo_legacy": "",
                   "titulo": "Instalación de detectores en cocina.",
                   "unidad": "ud",
-                  "precio": 49.04,
+                  "precio": 12.27,
                   "horas": 0.75,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.10.01.190",
                   "codigo_legacy": "",
                   "titulo": "Instalación de detectores en garaje.",
                   "unidad": "ud",
-                  "precio": 49.04,
+                  "precio": 12.27,
                   "horas": 0.75,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.10.01.200",
                   "codigo_legacy": "",
                   "titulo": "Instalación de detectores en depósito.",
                   "unidad": "ud",
-                  "precio": 49.04,
+                  "precio": 12.27,
                   "horas": 0.75,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.10.01.210",
                   "codigo_legacy": "",
                   "titulo": "Instalación de detectores en sala.",
                   "unidad": "ud",
-                  "precio": 49.04,
+                  "precio": 12.27,
                   "horas": 0.75,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.10.01.220",
                   "codigo_legacy": "",
                   "titulo": "Instalación de detectores en pasillo.",
                   "unidad": "ud",
-                  "precio": 49.04,
+                  "precio": 12.27,
                   "horas": 0.75,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.10.01.230",
                   "codigo_legacy": "",
                   "titulo": "Instalación de detectores en escalera.",
                   "unidad": "ud",
-                  "precio": 49.04,
+                  "precio": 12.27,
                   "horas": 0.75,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.10.01.240",
                   "codigo_legacy": "",
                   "titulo": "Instalación de extintor en cocina.",
                   "unidad": "ud",
-                  "precio": 49.04,
+                  "precio": 12.27,
                   "horas": 0.75,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.10.01.250",
                   "codigo_legacy": "",
                   "titulo": "Instalación de extintor en garaje.",
                   "unidad": "ud",
-                  "precio": 49.04,
+                  "precio": 12.27,
                   "horas": 0.75,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.10.01.260",
                   "codigo_legacy": "",
                   "titulo": "Instalación de extintor en local.",
                   "unidad": "ud",
-                  "precio": 49.04,
+                  "precio": 12.27,
                   "horas": 0.75,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.10.01.270",
                   "codigo_legacy": "",
                   "titulo": "Instalación de extintor en comercio.",
                   "unidad": "ud",
-                  "precio": 49.04,
+                  "precio": 12.27,
                   "horas": 0.75,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.10.01.280",
                   "codigo_legacy": "",
                   "titulo": "Instalación de extintor en oficina.",
                   "unidad": "ud",
-                  "precio": 49.04,
+                  "precio": 12.27,
                   "horas": 0.75,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.10.01.290",
                   "codigo_legacy": "",
                   "titulo": "Instalación de extintor en depósito.",
                   "unidad": "ud",
-                  "precio": 49.04,
+                  "precio": 12.27,
                   "horas": 0.75,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.10.01.300",
                   "codigo_legacy": "",
                   "titulo": "Instalación de extintor en terraza.",
                   "unidad": "ud",
-                  "precio": 49.04,
+                  "precio": 12.27,
                   "horas": 0.75,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.10.01.310",
                   "codigo_legacy": "",
                   "titulo": "Instalación de extintor de polvo.",
                   "unidad": "ud",
-                  "precio": 49.04,
+                  "precio": 12.27,
                   "horas": 0.75,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.10.01.320",
                   "codigo_legacy": "",
                   "titulo": "Instalación de detector combinado.",
                   "unidad": "ud",
-                  "precio": 49.04,
+                  "precio": 12.27,
                   "horas": 0.75,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.10.01.330",
                   "codigo_legacy": "",
                   "titulo": "Instalación de señal de salida.",
                   "unidad": "ud",
-                  "precio": 49.04,
+                  "precio": 12.27,
                   "horas": 0.75,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 }
               ],
               "n": 33
@@ -15282,279 +15282,279 @@
                   "codigo_legacy": "",
                   "titulo": "Instalación de alarma perimetral.",
                   "unidad": "ud",
-                  "precio": 126.84,
+                  "precio": 11.95,
                   "horas": 1.2,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.11.01.030",
                   "codigo_legacy": "",
                   "titulo": "Instalación de alarma interior.",
                   "unidad": "ud",
-                  "precio": 126.84,
+                  "precio": 11.95,
                   "horas": 1.2,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.11.01.040",
                   "codigo_legacy": "",
                   "titulo": "Instalación de cámara de seguridad.",
                   "unidad": "ud",
-                  "precio": 126.84,
+                  "precio": 11.95,
                   "horas": 1.2,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.11.01.050",
                   "codigo_legacy": "",
                   "titulo": "Instalación de cámara exterior.",
                   "unidad": "ud",
-                  "precio": 126.84,
+                  "precio": 11.95,
                   "horas": 1.2,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.11.01.060",
                   "codigo_legacy": "",
                   "titulo": "Instalación de cámara interior.",
                   "unidad": "ud",
-                  "precio": 126.84,
+                  "precio": 11.95,
                   "horas": 1.2,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.11.01.070",
                   "codigo_legacy": "",
                   "titulo": "Instalación de grabador de video.",
                   "unidad": "ud",
-                  "precio": 126.84,
+                  "precio": 11.95,
                   "horas": 1.2,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.11.01.080",
                   "codigo_legacy": "",
                   "titulo": "Instalación de monitor de vigilancia.",
                   "unidad": "ud",
-                  "precio": 126.84,
+                  "precio": 11.95,
                   "horas": 1.2,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.11.01.090",
                   "codigo_legacy": "",
                   "titulo": "Instalación de control de acceso.",
                   "unidad": "ud",
-                  "precio": 126.84,
+                  "precio": 11.95,
                   "horas": 1.2,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.11.01.100",
                   "codigo_legacy": "",
                   "titulo": "Instalación de lector de tarjetas.",
                   "unidad": "ud",
-                  "precio": 126.84,
+                  "precio": 11.95,
                   "horas": 1.2,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.11.01.110",
                   "codigo_legacy": "",
                   "titulo": "Instalación de teclado de acceso.",
                   "unidad": "ud",
-                  "precio": 126.84,
+                  "precio": 11.95,
                   "horas": 1.2,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.11.01.120",
                   "codigo_legacy": "",
                   "titulo": "Instalación de sensor de puerta.",
                   "unidad": "ud",
-                  "precio": 126.84,
+                  "precio": 11.95,
                   "horas": 1.2,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.11.01.130",
                   "codigo_legacy": "",
                   "titulo": "Instalación de sensor de ventana.",
                   "unidad": "ud",
-                  "precio": 126.84,
+                  "precio": 11.95,
                   "horas": 1.2,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.11.01.140",
                   "codigo_legacy": "",
                   "titulo": "Instalación de sensor de movimiento.",
                   "unidad": "ud",
-                  "precio": 126.84,
+                  "precio": 11.95,
                   "horas": 1.2,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.11.01.150",
                   "codigo_legacy": "",
                   "titulo": "Instalación de sirena de alarma.",
                   "unidad": "ud",
-                  "precio": 126.84,
+                  "precio": 11.95,
                   "horas": 1.2,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.11.01.160",
                   "codigo_legacy": "",
                   "titulo": "Instalación de panel de alarma.",
                   "unidad": "ud",
-                  "precio": 126.84,
+                  "precio": 11.95,
                   "horas": 1.2,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.11.01.170",
                   "codigo_legacy": "",
                   "titulo": "Instalación de sistema CCTV.",
                   "unidad": "ud",
-                  "precio": 126.84,
+                  "precio": 11.95,
                   "horas": 1.2,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.11.01.180",
                   "codigo_legacy": "",
                   "titulo": "Instalación de sistema de alarma.",
                   "unidad": "ud",
-                  "precio": 126.84,
+                  "precio": 11.95,
                   "horas": 1.2,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.11.01.190",
                   "codigo_legacy": "",
                   "titulo": "Instalación de sistema de acceso.",
                   "unidad": "ud",
-                  "precio": 126.84,
+                  "precio": 11.95,
                   "horas": 1.2,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.11.01.200",
                   "codigo_legacy": "",
                   "titulo": "Instalación de cámara de garaje.",
                   "unidad": "ud",
-                  "precio": 126.84,
+                  "precio": 11.95,
                   "horas": 1.2,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.11.01.210",
                   "codigo_legacy": "",
                   "titulo": "Instalación de cámara de entrada.",
                   "unidad": "ud",
-                  "precio": 126.84,
+                  "precio": 11.95,
                   "horas": 1.2,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.11.01.220",
                   "codigo_legacy": "",
                   "titulo": "Instalación de cámara de terraza.",
                   "unidad": "ud",
-                  "precio": 126.84,
+                  "precio": 11.95,
                   "horas": 1.2,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.11.01.230",
                   "codigo_legacy": "",
                   "titulo": "Instalación de cámara de jardín.",
                   "unidad": "ud",
-                  "precio": 126.84,
+                  "precio": 11.95,
                   "horas": 1.2,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.11.01.240",
                   "codigo_legacy": "",
                   "titulo": "Instalación de cámara de local.",
                   "unidad": "ud",
-                  "precio": 126.84,
+                  "precio": 11.95,
                   "horas": 1.2,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.11.01.250",
                   "codigo_legacy": "",
                   "titulo": "Instalación de cámara de comercio.",
                   "unidad": "ud",
-                  "precio": 126.84,
+                  "precio": 11.95,
                   "horas": 1.2,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.11.01.260",
                   "codigo_legacy": "",
                   "titulo": "Instalación de alarma con sensores.",
                   "unidad": "ud",
-                  "precio": 135.37,
+                  "precio": 11.95,
                   "horas": 1.2,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.11.01.270",
                   "codigo_legacy": "",
                   "titulo": "Instalación de cámara con grabador.",
                   "unidad": "ud",
-                  "precio": 135.37,
+                  "precio": 11.95,
                   "horas": 1.2,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.11.01.280",
                   "codigo_legacy": "",
                   "titulo": "Instalación de control de acceso biométrico.",
                   "unidad": "ud",
-                  "precio": 135.37,
+                  "precio": 11.95,
                   "horas": 1.2,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.11.01.290",
                   "codigo_legacy": "",
                   "titulo": "Instalación de sensor de puerta y ventana.",
                   "unidad": "ud",
-                  "precio": 135.37,
+                  "precio": 11.95,
                   "horas": 1.2,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.11.01.300",
                   "codigo_legacy": "",
                   "titulo": "Instalación de sirena exterior.",
                   "unidad": "ud",
-                  "precio": 135.37,
+                  "precio": 11.95,
                   "horas": 1.2,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.11.01.310",
                   "codigo_legacy": "",
                   "titulo": "Instalación de panel de control.",
                   "unidad": "ud",
-                  "precio": 135.37,
+                  "precio": 11.95,
                   "horas": 1.2,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.11.01.320",
                   "codigo_legacy": "",
                   "titulo": "Instalación de sistema de video vigilancia.",
                   "unidad": "ud",
-                  "precio": 135.37,
+                  "precio": 11.95,
                   "horas": 1.2,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 }
               ],
               "n": 32
@@ -15575,27 +15575,27 @@
                   "codigo_legacy": "",
                   "titulo": "Central domótica con configuración inicial.",
                   "unidad": "ud",
-                  "precio": 262.78,
+                  "precio": 26.44,
                   "horas": 3.5,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.12.01.020",
                   "codigo_legacy": "",
                   "titulo": "Pasarela de comunicación entre protocolos.",
                   "unidad": "ud",
-                  "precio": 132.94,
+                  "precio": 14.77,
                   "horas": 2.1,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.12.01.030",
                   "codigo_legacy": "",
                   "titulo": "Repetidor de señal inalámbrica para la red domótica.",
                   "unidad": "ud",
-                  "precio": 66.64,
+                  "precio": 7.55,
                   "horas": 1.1,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.12.01.040",
@@ -15627,54 +15627,54 @@
                   "codigo_legacy": "",
                   "titulo": "Sensor de movimiento para iluminación y alarmas.",
                   "unidad": "ud",
-                  "precio": 42.76,
+                  "precio": 9.93,
                   "horas": 1.1,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.12.02.020",
                   "codigo_legacy": "",
                   "titulo": "Sensor magnético de apertura de puerta o ventana.",
                   "unidad": "ud",
-                  "precio": 29.77,
+                  "precio": 6.14,
                   "horas": 0.8,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.12.02.030",
                   "codigo_legacy": "",
                   "titulo": "Sensor de temperatura y humedad ambiente.",
                   "unidad": "ud",
-                  "precio": 34.29,
+                  "precio": 5.41,
                   "horas": 0.7,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.12.02.040",
                   "codigo_legacy": "",
                   "titulo": "Detector de inundación o fuga de agua.",
                   "unidad": "ud",
-                  "precio": 31.38,
+                  "precio": 5.12,
                   "horas": 0.7,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.12.02.050",
                   "codigo_legacy": "",
                   "titulo": "Detector de gas doméstico con alarma.",
                   "unidad": "ud",
-                  "precio": 47.66,
+                  "precio": 8.27,
                   "horas": 1.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.12.02.060",
                   "codigo_legacy": "",
                   "titulo": "Sensor de nivel de luz para automatización.",
                   "unidad": "ud",
-                  "precio": 34.29,
+                  "precio": 5.41,
                   "horas": 0.7,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.12.02.070",
@@ -15715,45 +15715,45 @@
                   "codigo_legacy": "",
                   "titulo": "Módulo de actuación on/off para circuitos de iluminación.",
                   "unidad": "ud",
-                  "precio": 67.22,
+                  "precio": 14.7,
                   "horas": 1.4,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.12.03.020",
                   "codigo_legacy": "",
                   "titulo": "Módulo regulador para atenuación de iluminación.",
                   "unidad": "ud",
-                  "precio": 72.44,
+                  "precio": 13.35,
                   "horas": 1.4,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.12.03.030",
                   "codigo_legacy": "",
                   "titulo": "Módulo de control de persiana o cortina motorizada.",
                   "unidad": "ud",
-                  "precio": 77.82,
+                  "precio": 14.79,
                   "horas": 1.6,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.12.03.040",
                   "codigo_legacy": "",
                   "titulo": "Módulo de enchufe inteligente para cargas enchufables.",
                   "unidad": "ud",
-                  "precio": 40.35,
+                  "precio": 3.59,
                   "horas": 0.55,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.12.03.050",
                   "codigo_legacy": "",
                   "titulo": "Termostato inteligente para control de climatización.",
                   "unidad": "ud",
-                  "precio": 88.36,
+                  "precio": 16.15,
                   "horas": 1.6,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.12.03.060",
@@ -15794,18 +15794,18 @@
                   "codigo_legacy": "",
                   "titulo": "Panel táctil de pared para el sistema domótico.",
                   "unidad": "ud",
-                  "precio": 137.11,
+                  "precio": 18.94,
                   "horas": 2.1,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.12.04.020",
                   "codigo_legacy": "",
                   "titulo": "Teclado de escenas para activación directa.",
                   "unidad": "ud",
-                  "precio": 54.85,
+                  "precio": 8.89,
                   "horas": 1.1,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.12.04.030",
@@ -15878,18 +15878,18 @@
                   "codigo_legacy": "",
                   "titulo": "Pararrayos con dispositivo de cebado sobre mástil en cubierta.",
                   "unidad": "ud",
-                  "precio": 608.11,
+                  "precio": 50.09,
                   "horas": 4.5,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.13.01.020",
                   "codigo_legacy": "",
                   "titulo": "Pararrayos tipo Franklin de punta simple sobre soporte.",
                   "unidad": "ud",
-                  "precio": 113.44,
+                  "precio": 28.09,
                   "horas": 2.3,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.13.01.030",
@@ -15966,9 +15966,9 @@
                   "codigo_legacy": "",
                   "titulo": "Bajante con contador de descargas y mando de comprobación.",
                   "unidad": "ud",
-                  "precio": 78.91,
+                  "precio": 19.82,
                   "horas": 1.2,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.13.02.030",
@@ -16045,36 +16045,36 @@
                   "codigo_legacy": "",
                   "titulo": "Protector contra sobretensiones transitorias tipo 1 en tablero principal.",
                   "unidad": "ud",
-                  "precio": 124.76,
+                  "precio": 13.16,
                   "horas": 1.4,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.13.03.020",
                   "codigo_legacy": "",
                   "titulo": "Protector contra sobretensiones transitorias tipo 2 en tablero secundario.",
                   "unidad": "ud",
-                  "precio": 69.29,
+                  "precio": 10.21,
                   "horas": 1.1,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.13.03.030",
                   "codigo_legacy": "",
                   "titulo": "Protector contra sobretensiones tipo 3 para equipos sensibles.",
                   "unidad": "ud",
-                  "precio": 36.41,
+                  "precio": 3.59,
                   "horas": 0.55,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.13.03.040",
                   "codigo_legacy": "",
                   "titulo": "Protector contra sobretensiones para línea de datos y telecomunicaciones.",
                   "unidad": "ud",
-                  "precio": 44.32,
+                  "precio": 4.93,
                   "horas": 0.7,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.13.03.050",
@@ -16185,270 +16185,270 @@
                   "codigo_legacy": "",
                   "titulo": "Instalación de bomba de agua.",
                   "unidad": "ud",
-                  "precio": 157.89,
+                  "precio": 52.84,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.14.01.060",
                   "codigo_legacy": "",
                   "titulo": "Instalación de tanque elevado.",
                   "unidad": "ud",
-                  "precio": 157.89,
+                  "precio": 52.84,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.14.01.070",
                   "codigo_legacy": "",
                   "titulo": "Instalación de tanque enterrado.",
                   "unidad": "ud",
-                  "precio": 157.89,
+                  "precio": 52.84,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.14.01.080",
                   "codigo_legacy": "",
                   "titulo": "Instalación de bomba sumergible.",
                   "unidad": "ud",
-                  "precio": 157.89,
+                  "precio": 52.84,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.14.01.090",
                   "codigo_legacy": "",
                   "titulo": "Instalación de bomba presurizadora.",
                   "unidad": "ud",
-                  "precio": 157.89,
+                  "precio": 52.84,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.14.01.100",
                   "codigo_legacy": "",
                   "titulo": "Instalación de tanque de presión.",
                   "unidad": "ud",
-                  "precio": 157.89,
+                  "precio": 52.84,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.14.01.110",
                   "codigo_legacy": "",
                   "titulo": "Instalación de válvula de flotante.",
                   "unidad": "ud",
-                  "precio": 157.89,
+                  "precio": 52.84,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.14.01.120",
                   "codigo_legacy": "",
                   "titulo": "Instalación de tanque de reserva.",
                   "unidad": "ud",
-                  "precio": 157.89,
+                  "precio": 52.84,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.14.01.130",
                   "codigo_legacy": "",
                   "titulo": "Instalación de bomba de achique.",
                   "unidad": "ud",
-                  "precio": 157.89,
+                  "precio": 52.84,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.14.01.140",
                   "codigo_legacy": "",
                   "titulo": "Instalación de bomba de recirculación.",
                   "unidad": "ud",
-                  "precio": 157.89,
+                  "precio": 52.84,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.14.01.150",
                   "codigo_legacy": "",
                   "titulo": "Instalación de tanque de agua caliente.",
                   "unidad": "ud",
-                  "precio": 157.89,
+                  "precio": 52.84,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.14.01.160",
                   "codigo_legacy": "",
                   "titulo": "Instalación de sistema de bombeo.",
                   "unidad": "ud",
-                  "precio": 157.89,
+                  "precio": 52.84,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.14.01.170",
                   "codigo_legacy": "",
                   "titulo": "Instalación de bomba de piscina.",
                   "unidad": "ud",
-                  "precio": 157.89,
+                  "precio": 52.84,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.14.01.180",
                   "codigo_legacy": "",
                   "titulo": "Instalación de tanque séptico.",
                   "unidad": "ud",
-                  "precio": 157.89,
+                  "precio": 52.84,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.14.01.190",
                   "codigo_legacy": "",
                   "titulo": "Instalación de bomba de pozo.",
                   "unidad": "ud",
-                  "precio": 157.89,
+                  "precio": 52.84,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.14.01.200",
                   "codigo_legacy": "",
                   "titulo": "Instalación de tanque de tormenta.",
                   "unidad": "ud",
-                  "precio": 157.89,
+                  "precio": 52.84,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.14.01.210",
                   "codigo_legacy": "",
                   "titulo": "Instalación de bomba contra incendios.",
                   "unidad": "ud",
-                  "precio": 157.89,
+                  "precio": 52.84,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.14.01.220",
                   "codigo_legacy": "",
                   "titulo": "Instalación de tanque cisterna.",
                   "unidad": "ud",
-                  "precio": 157.89,
+                  "precio": 52.84,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.14.01.230",
                   "codigo_legacy": "",
                   "titulo": "Instalación de bomba de riego.",
                   "unidad": "ud",
-                  "precio": 157.89,
+                  "precio": 52.84,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.14.01.240",
                   "codigo_legacy": "",
                   "titulo": "Instalación de tanque de agua potable.",
                   "unidad": "ud",
-                  "precio": 157.89,
+                  "precio": 52.84,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.14.01.250",
                   "codigo_legacy": "",
                   "titulo": "Instalación de bomba centrífuga.",
                   "unidad": "ud",
-                  "precio": 157.89,
+                  "precio": 52.84,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.14.01.260",
                   "codigo_legacy": "",
                   "titulo": "Instalación de bomba de superficie.",
                   "unidad": "ud",
-                  "precio": 157.89,
+                  "precio": 52.84,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.14.01.270",
                   "codigo_legacy": "",
                   "titulo": "Instalación de tanque de agua elevado.",
                   "unidad": "ud",
-                  "precio": 157.89,
+                  "precio": 52.84,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.14.01.280",
                   "codigo_legacy": "",
                   "titulo": "Instalación de tanque de agua enterrado.",
                   "unidad": "ud",
-                  "precio": 157.89,
+                  "precio": 52.84,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.14.01.290",
                   "codigo_legacy": "",
                   "titulo": "Instalación de bomba de agua potable.",
                   "unidad": "ud",
-                  "precio": 157.89,
+                  "precio": 52.84,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.14.01.300",
                   "codigo_legacy": "",
                   "titulo": "Instalación de bomba de agua residual.",
                   "unidad": "ud",
-                  "precio": 157.89,
+                  "precio": 52.84,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.14.01.310",
                   "codigo_legacy": "",
                   "titulo": "Sistema hidroneumático de presión constante.",
                   "unidad": "ud",
-                  "precio": 157.89,
+                  "precio": 52.84,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.14.01.320",
                   "codigo_legacy": "",
                   "titulo": "Instalación de tanque de presión hidroneumático.",
                   "unidad": "ud",
-                  "precio": 157.89,
+                  "precio": 52.84,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.14.01.330",
                   "codigo_legacy": "",
                   "titulo": "Instalación de bomba presurizadora de agua.",
                   "unidad": "ud",
-                  "precio": 139.5,
+                  "precio": 34.46,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.14.01.340",
                   "codigo_legacy": "",
                   "titulo": "Instalación de tanque de reserva de agua.",
                   "unidad": "ud",
-                  "precio": 139.5,
+                  "precio": 34.46,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 }
               ],
               "n": 34
@@ -16496,270 +16496,270 @@
                   "codigo_legacy": "",
                   "titulo": "Instalación de panel solar.",
                   "unidad": "ud",
-                  "precio": 334.75,
+                  "precio": 19.63,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.15.01.050",
                   "codigo_legacy": "",
                   "titulo": "Instalación de inversor.",
                   "unidad": "ud",
-                  "precio": 334.75,
+                  "precio": 19.63,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.15.01.060",
                   "codigo_legacy": "",
                   "titulo": "Instalación de batería.",
                   "unidad": "ud",
-                  "precio": 334.75,
+                  "precio": 19.63,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.15.01.070",
                   "codigo_legacy": "",
                   "titulo": "Instalación de planta eléctrica.",
                   "unidad": "ud",
-                  "precio": 334.75,
+                  "precio": 19.63,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.15.01.080",
                   "codigo_legacy": "",
                   "titulo": "Instalación de tablero de transferencia.",
                   "unidad": "ud",
-                  "precio": 334.75,
+                  "precio": 19.63,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.15.01.090",
                   "codigo_legacy": "",
                   "titulo": "Instalación de regulador de carga.",
                   "unidad": "ud",
-                  "precio": 334.75,
+                  "precio": 19.63,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.15.01.100",
                   "codigo_legacy": "",
                   "titulo": "Instalación de sistema solar.",
                   "unidad": "ud",
-                  "precio": 334.75,
+                  "precio": 19.63,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.15.01.110",
                   "codigo_legacy": "",
                   "titulo": "Instalación de banco de baterías.",
                   "unidad": "ud",
-                  "precio": 334.75,
+                  "precio": 19.63,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.15.01.120",
                   "codigo_legacy": "",
                   "titulo": "Instalación de inversor híbrido.",
                   "unidad": "ud",
-                  "precio": 334.75,
+                  "precio": 19.63,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.15.01.130",
                   "codigo_legacy": "",
                   "titulo": "Instalación de panel solar en techo.",
                   "unidad": "ud",
-                  "precio": 334.75,
+                  "precio": 19.63,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.15.01.140",
                   "codigo_legacy": "",
                   "titulo": "Instalación de panel solar en terraza.",
                   "unidad": "ud",
-                  "precio": 334.75,
+                  "precio": 19.63,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.15.01.150",
                   "codigo_legacy": "",
                   "titulo": "Instalación de panel solar en jardín.",
                   "unidad": "ud",
-                  "precio": 334.75,
+                  "precio": 19.63,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.15.01.160",
                   "codigo_legacy": "",
                   "titulo": "Instalación de estructura de paneles.",
                   "unidad": "ud",
-                  "precio": 334.75,
+                  "precio": 19.63,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.15.01.170",
                   "codigo_legacy": "",
                   "titulo": "Instalación de cableado solar.",
                   "unidad": "ud",
-                  "precio": 334.75,
+                  "precio": 19.63,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.15.01.180",
                   "codigo_legacy": "",
                   "titulo": "Instalación de protecciones solares.",
                   "unidad": "ud",
-                  "precio": 334.75,
+                  "precio": 19.63,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.15.01.190",
                   "codigo_legacy": "",
                   "titulo": "Instalación de medidor bidireccional.",
                   "unidad": "ud",
-                  "precio": 334.75,
+                  "precio": 19.63,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.15.01.200",
                   "codigo_legacy": "",
                   "titulo": "Instalación de sistema de respaldo.",
                   "unidad": "ud",
-                  "precio": 334.75,
+                  "precio": 19.63,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.15.01.210",
                   "codigo_legacy": "",
                   "titulo": "Instalación de planta de respaldo.",
                   "unidad": "ud",
-                  "precio": 334.75,
+                  "precio": 19.63,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.15.01.220",
                   "codigo_legacy": "",
                   "titulo": "Instalación de batería de litio.",
                   "unidad": "ud",
-                  "precio": 334.75,
+                  "precio": 19.63,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.15.01.230",
                   "codigo_legacy": "",
                   "titulo": "Instalación de batería de plomo.",
                   "unidad": "ud",
-                  "precio": 334.75,
+                  "precio": 19.63,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.15.01.240",
                   "codigo_legacy": "",
                   "titulo": "Instalación de inversor de red.",
                   "unidad": "ud",
-                  "precio": 334.75,
+                  "precio": 19.63,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.15.01.250",
                   "codigo_legacy": "",
                   "titulo": "Instalación de inversor aislado.",
                   "unidad": "ud",
-                  "precio": 334.75,
+                  "precio": 19.63,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.15.01.260",
                   "codigo_legacy": "",
                   "titulo": "Instalación de sistema fotovoltaico.",
                   "unidad": "ud",
-                  "precio": 334.75,
+                  "precio": 19.63,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.15.01.270",
                   "codigo_legacy": "",
                   "titulo": "Instalación de panel solar doméstico.",
                   "unidad": "ud",
-                  "precio": 334.75,
+                  "precio": 19.63,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.15.01.280",
                   "codigo_legacy": "",
                   "titulo": "Instalación de panel solar comercial.",
                   "unidad": "ud",
-                  "precio": 334.75,
+                  "precio": 19.63,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.15.01.290",
                   "codigo_legacy": "",
                   "titulo": "Instalación de planta eléctrica diésel.",
                   "unidad": "ud",
-                  "precio": 334.75,
+                  "precio": 19.63,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.15.01.300",
                   "codigo_legacy": "",
                   "titulo": "Instalación de planta eléctrica a gas.",
                   "unidad": "ud",
-                  "precio": 334.75,
+                  "precio": 19.63,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.15.01.310",
                   "codigo_legacy": "",
                   "titulo": "Instalación de panel solar de 400W.",
                   "unidad": "ud",
-                  "precio": 334.75,
+                  "precio": 19.63,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.15.01.320",
                   "codigo_legacy": "",
                   "titulo": "Instalación de inversor de 3kW.",
                   "unidad": "ud",
-                  "precio": 334.75,
+                  "precio": 19.63,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.15.01.330",
                   "codigo_legacy": "",
                   "titulo": "Instalación de batería de 200Ah.",
                   "unidad": "ud",
-                  "precio": 334.75,
+                  "precio": 19.63,
                   "horas": 3.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 }
               ],
               "n": 33
@@ -16780,36 +16780,36 @@
                   "codigo_legacy": "",
                   "titulo": "Instalación de ascensor unifamiliar.",
                   "unidad": "ud",
-                  "precio": 321.81,
+                  "precio": 320.37,
                   "horas": 30.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.16.01.020",
                   "codigo_legacy": "",
                   "titulo": "Instalación de ascensor de dos paradas.",
                   "unidad": "ud",
-                  "precio": 392.68,
+                  "precio": 390.95,
                   "horas": 36.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.16.01.030",
                   "codigo_legacy": "",
                   "titulo": "Instalación de montacargas.",
                   "unidad": "ud",
-                  "precio": 282.75,
+                  "precio": 281.31,
                   "horas": 24.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.16.01.040",
                   "codigo_legacy": "",
                   "titulo": "Instalación de plataforma elevadora.",
                   "unidad": "ud",
-                  "precio": 231.92,
+                  "precio": 230.76,
                   "horas": 21.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.16.01.050",
@@ -16825,54 +16825,54 @@
                   "codigo_legacy": "",
                   "titulo": "Instalación de ascensor panorámico.",
                   "unidad": "ud",
-                  "precio": 444.35,
+                  "precio": 442.48,
                   "horas": 39.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.16.01.070",
                   "codigo_legacy": "",
                   "titulo": "Instalación de ascensor de carga.",
                   "unidad": "ud",
-                  "precio": 372.66,
+                  "precio": 370.93,
                   "horas": 33.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.16.01.080",
                   "codigo_legacy": "",
                   "titulo": "Instalación de ascensor hidráulico.",
                   "unidad": "ud",
-                  "precio": 321.96,
+                  "precio": 320.37,
                   "horas": 30.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.16.01.090",
                   "codigo_legacy": "",
                   "titulo": "Instalación de ascensor de tracción.",
                   "unidad": "ud",
-                  "precio": 372.66,
+                  "precio": 370.93,
                   "horas": 33.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.16.01.100",
                   "codigo_legacy": "",
                   "titulo": "Instalación de ascensor sin cuarto de máquinas.",
                   "unidad": "ud",
-                  "precio": 321.81,
+                  "precio": 320.37,
                   "horas": 30.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.16.01.110",
                   "codigo_legacy": "",
                   "titulo": "Instalación de montacargas de cocina.",
                   "unidad": "ud",
-                  "precio": 161.06,
+                  "precio": 160.19,
                   "horas": 15.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.16.01.120",
@@ -16888,81 +16888,81 @@
                   "codigo_legacy": "",
                   "titulo": "Instalación de ascensor de 3 paradas.",
                   "unidad": "ud",
-                  "precio": 302.78,
+                  "precio": 301.33,
                   "horas": 27.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.16.01.140",
                   "codigo_legacy": "",
                   "titulo": "Instalación de ascensor de 4 paradas.",
                   "unidad": "ud",
-                  "precio": 302.78,
+                  "precio": 301.33,
                   "horas": 27.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.16.01.150",
                   "codigo_legacy": "",
                   "titulo": "Instalación de ascensor de 5 paradas.",
                   "unidad": "ud",
-                  "precio": 302.78,
+                  "precio": 301.33,
                   "horas": 27.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.16.01.160",
                   "codigo_legacy": "",
                   "titulo": "Instalación de ascensor de 6 paradas.",
                   "unidad": "ud",
-                  "precio": 302.78,
+                  "precio": 301.33,
                   "horas": 27.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.16.01.170",
                   "codigo_legacy": "",
                   "titulo": "Instalación de ascensor para discapacitados.",
                   "unidad": "ud",
-                  "precio": 302.78,
+                  "precio": 301.33,
                   "horas": 27.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.16.01.180",
                   "codigo_legacy": "",
                   "titulo": "Instalación de ascensor de carga pesada.",
                   "unidad": "ud",
-                  "precio": 302.78,
+                  "precio": 301.33,
                   "horas": 27.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.16.01.190",
                   "codigo_legacy": "",
                   "titulo": "Modernización de ascensor existente.",
                   "unidad": "ud",
-                  "precio": 302.78,
+                  "precio": 301.33,
                   "horas": 27.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.16.01.200",
                   "codigo_legacy": "",
                   "titulo": "Instalación de ascensor de alta velocidad.",
                   "unidad": "ud",
-                  "precio": 302.78,
+                  "precio": 301.33,
                   "horas": 27.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.16.01.210",
                   "codigo_legacy": "",
                   "titulo": "Instalación de montacargas de carga.",
                   "unidad": "ud",
-                  "precio": 302.78,
+                  "precio": 301.33,
                   "horas": 27.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 }
               ],
               "n": 21
@@ -16976,72 +16976,72 @@
                   "codigo_legacy": "",
                   "titulo": "Instalación de salvaescaleras.",
                   "unidad": "ud",
-                  "precio": 99.01,
+                  "precio": 98.15,
                   "horas": 15.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.16.02.020",
                   "codigo_legacy": "",
                   "titulo": "Instalación de elevador de plataforma.",
                   "unidad": "ud",
-                  "precio": 180.63,
+                  "precio": 179.62,
                   "horas": 18.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.16.02.030",
                   "codigo_legacy": "",
                   "titulo": "Instalación de salvaescaleras de plataforma.",
                   "unidad": "ud",
-                  "precio": 108.54,
+                  "precio": 107.67,
                   "horas": 16.5,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.16.02.040",
                   "codigo_legacy": "",
                   "titulo": "Instalación de elevador de fachada.",
                   "unidad": "ud",
-                  "precio": 222.39,
+                  "precio": 221.25,
                   "horas": 19.5,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.16.02.050",
                   "codigo_legacy": "",
                   "titulo": "Instalación de silla salvaescaleras.",
                   "unidad": "ud",
-                  "precio": 88.76,
+                  "precio": 88.04,
                   "horas": 13.5,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.16.02.060",
                   "codigo_legacy": "",
                   "titulo": "Instalación de plataforma salvaescaleras.",
                   "unidad": "ud",
-                  "precio": 302.78,
+                  "precio": 301.33,
                   "horas": 27.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.16.02.070",
                   "codigo_legacy": "",
                   "titulo": "Instalación de elevador de silla.",
                   "unidad": "ud",
-                  "precio": 302.78,
+                  "precio": 301.33,
                   "horas": 27.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 },
                 {
                   "codigo": "09.16.02.080",
                   "codigo_legacy": "",
                   "titulo": "Instalación de rampa mecánica.",
                   "unidad": "ud",
-                  "precio": 302.78,
+                  "precio": 301.33,
                   "horas": 27.0,
-                  "producto_cliente": false
+                  "producto_cliente": true
                 }
               ],
               "n": 8

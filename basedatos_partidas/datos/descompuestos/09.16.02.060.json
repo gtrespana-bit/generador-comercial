@@ -10,10 +10,6 @@
   "complementarios_pct": 1,
   "recursos": [
     {
-      "ref": "MT-CONS-DEM",
-      "rendimiento": 1.0
-    },
-    {
       "ref": "MQ-GRUA",
       "rendimiento": 2.0
     },
@@ -32,5 +28,11 @@
   ],
   "codigo_covenin": "",
   "codigo_legacy": "",
-  "apartado": "02"
+  "apartado": "02",
+  "producto_cliente": {
+    "tipo": "Plataforma salvaescaleras, del modelo elegido por el cliente",
+    "unidad": "ud",
+    "consumo": 1.0,
+    "nota": "La partida cubre solo la instalación. El equipo se toma del catálogo de productos y su precio no está incluido."
+  }
 }

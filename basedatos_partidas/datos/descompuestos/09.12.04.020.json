@@ -10,10 +10,6 @@
   "complementarios_pct": 1,
   "recursos": [
     {
-      "ref": "MT-DOM-TECLADO",
-      "rendimiento": 1.0
-    },
-    {
       "ref": "MT-ELE-CAJA",
       "rendimiento": 1.0
     },
@@ -32,5 +28,11 @@
   ],
   "codigo_covenin": "",
   "codigo_legacy": "",
-  "apartado": "04"
+  "apartado": "04",
+  "producto_cliente": {
+    "tipo": "Teclado de escenas para activación directa, del modelo elegido por el cliente",
+    "unidad": "ud",
+    "consumo": 1.0,
+    "nota": "La partida cubre solo la instalación. El equipo se toma del catálogo de productos y su precio no está incluido."
+  }
 }

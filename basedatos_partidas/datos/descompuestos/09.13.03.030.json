@@ -10,10 +10,6 @@
   "complementarios_pct": 1,
   "recursos": [
     {
-      "ref": "MT-DPS-3",
-      "rendimiento": 1.0
-    },
-    {
       "ref": "MO-OF1-ELE",
       "rendimiento": 0.4
     },
@@ -24,5 +20,11 @@
   ],
   "codigo_covenin": "",
   "codigo_legacy": "",
-  "apartado": "03"
+  "apartado": "03",
+  "producto_cliente": {
+    "tipo": "Protector contra sobretensiones tipo 3 para equipos sensibles, del modelo elegido por el cliente",
+    "unidad": "ud",
+    "consumo": 1.0,
+    "nota": "La partida cubre solo la instalación. El equipo se toma del catálogo de productos y su precio no está incluido."
+  }
 }

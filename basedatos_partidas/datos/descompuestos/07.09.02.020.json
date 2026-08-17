@@ -10,10 +10,6 @@
   "complementarios_pct": 1,
   "recursos": [
     {
-      "ref": "MT-AUTOM-PORTON",
-      "rendimiento": 2.0
-    },
-    {
       "ref": "MQ-TALADRO",
       "rendimiento": 0.5
     },
@@ -28,5 +24,11 @@
   ],
   "codigo_covenin": "",
   "codigo_legacy": "",
-  "apartado": "02"
+  "apartado": "02",
+  "producto_cliente": {
+    "tipo": "Automatismo (motor) de portón, del modelo elegido por el cliente",
+    "unidad": "ud",
+    "consumo": 1.0,
+    "nota": "La partida cubre solo la instalación. El equipo se toma del catálogo de productos y su precio no está incluido."
+  }
 }
