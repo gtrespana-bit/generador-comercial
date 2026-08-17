@@ -751,7 +751,7 @@
                 {
                   "codigo": "01.06.01.130",
                   "codigo_legacy": "",
-                  "titulo": "Apeo de forjado con torres de carga.",
+                  "titulo": "Apeo de losa con torres de carga.",
                   "unidad": "m2",
                   "precio": 15.76,
                   "horas": 0.77,
@@ -20718,7 +20718,7 @@
                 {
                   "codigo": "12.02.02.110",
                   "codigo_legacy": "",
-                  "titulo": "Guarnecido de yeso en techo.",
+                  "titulo": "Friso de yeso en techo.",
                   "unidad": "m2",
                   "precio": 13.46,
                   "horas": 0.63,
@@ -24936,7 +24936,7 @@
                   "codigo_legacy": "",
                   "titulo": "Asiento abatible de ducha para accesibilidad.",
                   "unidad": "ud",
-                  "precio": 34.1,
+                  "precio": 15.72,
                   "horas": 1.05,
                   "producto_cliente": true
                 },
@@ -29783,7 +29783,7 @@
                   "codigo_legacy": "",
                   "titulo": "Motorización de persiana existente.",
                   "unidad": "ud",
-                  "precio": 70.71,
+                  "precio": 7.68,
                   "horas": 0.9,
                   "producto_cliente": true
                 },
@@ -29792,7 +29792,7 @@
                   "codigo_legacy": "",
                   "titulo": "Automatización de toldo con sensor solar.",
                   "unidad": "ud",
-                  "precio": 36.57,
+                  "precio": 7.68,
                   "horas": 0.9,
                   "producto_cliente": true
                 },
@@ -29851,7 +29851,7 @@
                   "codigo_legacy": "",
                   "titulo": "Termostato programable.",
                   "unidad": "ud",
-                  "precio": 78.05,
+                  "precio": 5.84,
                   "horas": 0.75,
                   "producto_cliente": true
                 },
@@ -29914,7 +29914,7 @@
                   "codigo_legacy": "",
                   "titulo": "Zonificación del sistema de climatización.",
                   "unidad": "ud",
-                  "precio": 73.33,
+                  "precio": 20.81,
                   "horas": 1.2,
                   "producto_cliente": true
                 },
@@ -29964,7 +29964,7 @@
                   "codigo_legacy": "",
                   "titulo": "Iluminación LED con sensor de presencia.",
                   "unidad": "ud",
-                  "precio": 38.66,
+                  "precio": 5.84,
                   "horas": 0.75,
                   "producto_cliente": true
                 },
@@ -29982,7 +29982,7 @@
                   "codigo_legacy": "",
                   "titulo": "Regulación de iluminación con dimmer.",
                   "unidad": "ud",
-                  "precio": 63.97,
+                  "precio": 4.89,
                   "horas": 0.6,
                   "producto_cliente": true
                 },
@@ -29991,7 +29991,7 @@
                   "codigo_legacy": "",
                   "titulo": "Sensor de luz natural para iluminación.",
                   "unidad": "ud",
-                  "precio": 33.77,
+                  "precio": 4.89,
                   "horas": 0.6,
                   "producto_cliente": true
                 },
@@ -30000,7 +30000,7 @@
                   "codigo_legacy": "",
                   "titulo": "Iluminación exterior LED con fotocélula.",
                   "unidad": "ud",
-                  "precio": 36.57,
+                  "precio": 7.68,
                   "horas": 0.9,
                   "producto_cliente": true
                 },
@@ -30018,7 +30018,7 @@
                   "codigo_legacy": "",
                   "titulo": "Sistema de control de iluminación por zonas.",
                   "unidad": "ud",
-                  "precio": 54.59,
+                  "precio": 8.63,
                   "horas": 1.05,
                   "producto_cliente": true
                 },
@@ -30045,7 +30045,7 @@
                   "codigo_legacy": "",
                   "titulo": "Temporizador de iluminación de zonas comunes.",
                   "unidad": "ud",
-                  "precio": 41.65,
+                  "precio": 4.89,
                   "horas": 0.6,
                   "producto_cliente": true
                 }
@@ -30068,7 +30068,7 @@
                   "codigo_legacy": "",
                   "titulo": "Instalación de panel solar fotovoltaico.",
                   "unidad": "ud",
-                  "precio": 252.62,
+                  "precio": 16.28,
                   "horas": 2.25,
                   "producto_cliente": true
                 },
@@ -30077,7 +30077,7 @@
                   "codigo_legacy": "",
                   "titulo": "Instalación de inversor fotovoltaico.",
                   "unidad": "ud",
-                  "precio": 379.91,
+                  "precio": 12.27,
                   "horas": 1.5,
                   "producto_cliente": true
                 },
@@ -30086,7 +30086,7 @@
                   "codigo_legacy": "",
                   "titulo": "Instalación de banco de baterías para fotovoltaica.",
                   "unidad": "ud",
-                  "precio": 301.13,
+                  "precio": 12.27,
                   "horas": 1.5,
                   "producto_cliente": true
                 },
@@ -30140,7 +30140,7 @@
                   "codigo_legacy": "",
                   "titulo": "Generación de respaldo con baterías.",
                   "unidad": "glb",
-                  "precio": 670.79,
+                  "precio": 14.29,
                   "horas": 1.8,
                   "producto_cliente": true
                 },

@@ -10,10 +10,6 @@
   "complementarios_pct": 1,
   "recursos": [
     {
-      "ref": "MT-PANEL-SOLAR",
-      "rendimiento": 1.0
-    },
-    {
       "ref": "MT-TORN-TECHO",
       "rendimiento": 6.0
     },

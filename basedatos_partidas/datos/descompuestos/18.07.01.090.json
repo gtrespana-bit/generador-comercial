@@ -14,10 +14,6 @@
       "rendimiento": 1.5
     },
     {
-      "ref": "MT-DOM-ACTUADOR",
-      "rendimiento": 1.0
-    },
-    {
       "ref": "MQ-TALADRO",
       "rendimiento": 0.2
     },

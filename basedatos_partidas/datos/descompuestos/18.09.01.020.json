@@ -10,10 +10,6 @@
   "complementarios_pct": 1,
   "recursos": [
     {
-      "ref": "MT-INVERSOR",
-      "rendimiento": 1.0
-    },
-    {
       "ref": "MT-ELE-CABLE",
       "rendimiento": 3.0
     },

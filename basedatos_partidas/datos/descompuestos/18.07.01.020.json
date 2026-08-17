@@ -10,10 +10,6 @@
   "complementarios_pct": 1,
   "recursos": [
     {
-      "ref": "MT-DOM-TERMOSTATO",
-      "rendimiento": 1.0
-    },
-    {
       "ref": "MT-ELE-CABLE",
       "rendimiento": 1.0
     },

@@ -10,10 +10,6 @@
   "complementarios_pct": 1,
   "recursos": [
     {
-      "ref": "MT-BARRA-APOYO",
-      "rendimiento": 0.5
-    },
-    {
       "ref": "MT-PERNO-ANCLA",
       "rendimiento": 3.0
     },
