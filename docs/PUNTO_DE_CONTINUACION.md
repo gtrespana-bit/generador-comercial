@@ -1,12 +1,76 @@
 # Punto exacto de continuación
 
-Fecha de corte: **18/08/2026, checkout de planes + panel admin premium + gestión de organización, con PR #33 abierto** (America/Caracas).
+Fecha de corte: **18/08/2026, hotfix de `/inicio` 500 + cierre del bloque checkout/admin/organización (PR #33 abierto)** (America/Caracas).
 
 Este documento retoma el trabajo sin depender del historial del chat. Describe
 **dónde quedó exactamente** el trabajo y **qué sigue**, en ese orden. Léelo
 junto con `basedatos_partidas/EMPEZAR_AQUI.md` (reglas y progreso del catálogo),
 `basedatos_partidas/INVENTARIO.md` (cifras y contraste de precios) y
 `PLAN_DE_COMERCIALIZACION_Y_EVOLUCION_SAAS.md` (§1.9 y §11).
+
+---
+
+## 🔧 Hotfix — `/inicio` devolvía 500 tras login (18/08/2026)
+
+**Síntoma.** Tras el PR #33, todo login (incluso con credenciales correctas)
+acababa con un `500` en `/inicio`. El log de Vercel mostraba:
+
+```
+sqlalchemy.exc.InternalError: (psycopg.errors.InFailedSqlTransaction)
+  current transaction is aborted, commands ignored until end of transaction block
+File "/var/task/app/routers/inicio.py", line 16, in inicio
+    cfg = _config(db)
+File "/var/task/app/routers/common.py", line 354, in _config
+    cfg = db.query(Configuracion).first()
+```
+
+**Causa.** El bloque añadió `_resumen_licencia_para_request()` para alimentar
+la píldora del menú lateral y la tarjeta "Tu plan" de Configuración
+(`app/database.py`). La función envuelve la consulta al resumen en un
+`try/except Exception` y devuelve un dict vacío si falla — pero la sesión
+SQLAlchemy queda con la transacción abortada. En psycopg eso significa que
+**toda consulta posterior** en la misma sesión falla con
+`InFailedSqlTransaction` hasta un `ROLLBACK`. La primera consulta del handler
+de `/inicio` (un SELECT trivial a `configuracion`) es la que explota, aunque
+no tenga nada que ver con el resumen.
+
+La rama PostgreSQL de `resumen_licencia_cliente` llama a
+`cotizat_security.organization_license_info(:org)`, función SECURITY DEFINER
+que internamente consulta `public.licencias` (tabla con `FORCE ROW LEVEL
+SECURITY`). Si la función falla por permisos, RLS o claim ausente, el
+`except` la silencia pero no libera la transacción rota. **SQLite local no
+reproducía el bug** (cada sentencia abre su propia transacción), por eso los
+tests no lo cazaron.
+
+**Corrección** (commit único en este branch, **NO fusionado todavía**):
+
+- `app/database.py` — `db.rollback()` dentro del `except` de
+  `_resumen_licencia_para_request`, con un `try/except` interno por si la
+  propia `rollback` falla (conexión ya cerrada).
+- `tests/test_database_resilience.py` (nuevo) — 2 regresiones:
+  1. `test_resumen_licencia_hace_rollback_si_la_consulta_falla`: comprueba
+     que el helper llama a `db.rollback()` cuando la consulta interna lanza
+     (este test **falla sin la corrección**, pasa con ella).
+  2. `test_resumen_licencia_rollback_fallido_no_empeora_la_situacion`:
+     cubre el caso patológico en que la propia `rollback` falla.
+
+**Por qué el fix del cliente y no otro.** Se descartó relajar el `try/except`
+porque ocultar el error original impedirá diagnosticar el fallo real de la
+función en producción. Tampoco se modificó la migración `f9d4c2a7e5b3` (ya
+aplicada en Supabase) ni `resumen_licencia_cliente` (un único llamador, ya
+blindado por el helper). La causa última del fallo de la función SECURITY
+DEFINER —probablemente una combinación de SECURITY DEFINER + RLS en
+`licencias` que hace que la lectura interna devuelva 0 filas para el cliente
+común, o un claim de organización ausente en alguna sesión— conviene
+investigarla aparte. **Si la organización del cliente tiene una licencia
+vigente y la píldora del menú lateral sigue mostrando "Sin plan", ahí está
+el siguiente cabo suelto.**
+
+**Verificación.** Suite completa: **545 passed, 6 skipped** (543 del PR #33
++ 2 regresiones nuevas). `git diff --check` limpio.
+
+**Despliegue.** Tan pronto se fusione el PR (ver §0quater para el flujo),
+Vercel debe redeployar `main` con el fix. `/readyz` debería seguir en 200.
 
 ---
 
@@ -140,19 +204,22 @@ Head esperado por el runtime: **`f9d4c2a7e5b3`** (`EXPECTED_ALEMBIC_HEAD` en
 
 1. **Fusionar el PR #33 y desplegar `main`** (Vercel). Con las migraciones ya
    aplicadas, `/readyz` debe volver a 200 tras el despliegue.
-2. **Ensayar el flujo de compra real en staging** con una organización de
+2. **Fusionar el PR del hotfix de `/inicio`** (commit único en este mismo
+   branch) — sin él, el login sigue roto en Vercel. Ver §Hotfix al inicio de
+   este documento.
+3. **Ensayar el flujo de compra real en staging** con una organización de
    prueba: comprar → comprobante → email → activar desde `/admin` → el cliente
    ve "Tu plan" con fecha y días.
-3. Decisión pendiente del titular: **recibo PDF de la compra** para el cliente
+4. Decisión pendiente del titular: **recibo PDF de la compra** para el cliente
    (existe `recibo_licencia.py` para el panel; falta el equivalente para el
    cliente) y **corte automático** (`COTIZAT_EXIGIR_LICENCIA=true`) — ya está
    implementado el corte, falta la licencia de cortesía al titular y el switch
    en Vercel (ver `docs/PANEL_DE_OPERADOR.md` §6 y `docs/PROCESO_PILOTOS.md`).
-4. Catálogo: objetivo amplio de **5.000 partidas** (brecha ~1.994) y cierre de
+5. Catálogo: objetivo amplio de **5.000 partidas** (brecha ~1.994) y cierre de
    los **~196 precios provisionales B2B** (requiere cotización del titular).
-5. Decisión del titular sobre **revisar los rendimientos** de mano de obra del
+6. Decisión del titular sobre **revisar los rendimientos** de mano de obra del
    catálogo (comentó que algunos "están fatal"; no se tocaron).
-6. Opcional: video/tour grabado (Loom) cuando el titular lo grabe.
+7. Opcional: video/tour grabado (Loom) cuando el titular lo grabe.
 
 ---
 

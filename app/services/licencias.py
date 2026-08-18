@@ -322,6 +322,14 @@ def resumen_licencia_cliente(
     (escritorio/pruebas) basta la consulta directa.
 
     Devuelve ``{activo, plan_label, vence, dias_restantes, metodo_cobro}``.
+
+    **Importante:** esta función **no** hace rollback si la consulta falla. El
+    único llamador en el flujo de request es
+    :func:`app.database._resumen_licencia_para_request`, que envuelve la
+    llamada en ``try/except`` y libera la transacción. Llamarla directamente
+    desde otra ruta sin esa protección envenenaría la sesión de psycopg y la
+    siguiente consulta del mismo handler fallaría con
+    ``InFailedSqlTransaction`` (regresión real en Vercel, 18/08/2026).
     """
     hoy = hoy or date.today()
     if db.get_bind().dialect.name == "postgresql":
