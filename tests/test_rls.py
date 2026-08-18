@@ -16,6 +16,7 @@ from migrations.versions import (
     e1a4b7c9d2f0_harden_alembic_version_visibility as alembic_migration,
     e5f2a8d31b6c_add_plan_purchases as plan_purchases_migration,
     f9d4c2a7e5b3_organization_license_info as head_migration,
+    a1b2c3d4e5f6_fix_license_info_type_mismatch as hotfix_migration,
     f4c1d8e37a95_add_operator_licenses as licenses_migration,
     f8a1b2c3d4e5_catalog_taxonomy_v2 as taxonomy_migration,
 )
@@ -146,7 +147,8 @@ def test_head_exigido_por_runtime_coincide_con_alembic():
     Si divergen, `/readyz` responde 503 en producción: el código espera un
     esquema que la base no tiene todavía (o al revés).
     """
-    assert database_module.EXPECTED_ALEMBIC_HEAD == head_migration.revision
+    assert database_module.EXPECTED_ALEMBIC_HEAD == hotfix_migration.revision
+    assert hotfix_migration.down_revision == head_migration.revision
     assert head_migration.down_revision == plan_purchases_migration.revision
     assert plan_purchases_migration.down_revision == catalog_visibility_migration.revision
     assert catalog_visibility_migration.down_revision == taxonomy_migration.revision

@@ -91,7 +91,7 @@ DATABASE_URL = DATABASE.url
 DATABASE_BACKEND = DATABASE.backend
 DATABASE_IS_SQLITE = DATABASE.is_sqlite
 DB_PATH = DATABASE.sqlite_path
-EXPECTED_ALEMBIC_HEAD = "f9d4c2a7e5b3"
+EXPECTED_ALEMBIC_HEAD = "a1b2c3d4e5f6"
 
 # Copias de seguridad automáticas y manuales (solo corresponden al modo
 # SQLite local; PostgreSQL tendrá backups administrados fuera del proceso).
@@ -320,6 +320,30 @@ def get_db(request: Request = None):
         if DATABASE_IS_SQLITE:
             db.info["organizacion_id"] = _organizacion_sqlite_desde_entorno()
             if request is not None:
+                # SQLite (escritorio/desarrollo) no tiene Supabase Auth: exponemos
+                # una organización y usuario sintéticos para que la barra lateral
+                # pueda mostrar el estado del plan (evita el "Sin plan" fantasma
+                # cuando sí hay licencia pero el template exigía usuario definido).
+                try:
+                    from .models import Organizacion as _Org
+                    org = db.get(_Org, int(db.info.get("organizacion_id") or 0))
+                    if org is not None:
+                        request.state.organizacion = org
+                        # Usuario sintético local para que el bloque de sesión se renderice
+                        from types import SimpleNamespace
+                        request.state.usuario = SimpleNamespace(
+                            nombre=org.nombre,
+                            email="",
+                            id=0,
+                        )
+                        # Membresía sintética para cumplir el check de rol en el template
+                        request.state.membresia = SimpleNamespace(
+                            rol="propietario",
+                            organizacion=org,
+                            organizacion_id=org.id,
+                        )
+                except Exception:
+                    pass
                 request.state.licencia_resumen = _resumen_licencia_para_request(
                     db, int(db.info.get("organizacion_id") or 0)
                 )
