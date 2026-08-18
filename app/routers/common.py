@@ -41,7 +41,7 @@ from starlette.middleware.gzip import GZipMiddleware
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
 from ..branding import LEGAL_ENTITY, PRODUCT_NAME, SUPPORT_EMAIL, VALUE_PROPOSITION
-from ..security import AuthRateLimitMiddleware, WebSecurityMiddleware
+from ..security import AuthRateLimitMiddleware, WebSecurityMiddleware, ip_de_request
 from ..database import (
     BACKUPS_DIR,
     BASE_DIR,
@@ -55,6 +55,7 @@ from ..database import (
     establecer_contexto_organizacion,
     get_authenticated_db,
     get_db,
+    get_db_renovacion,
     get_operator_db,
     get_public_proposal_db,
     init_db,
@@ -142,9 +143,21 @@ from ..services.licencias import (
     enviar_avisos_vencimiento,
     exigencia_licencia_activada,
     resumen_organizaciones,
+    suspender_organizacion,
     totales,
 )
-from ..services.recibo_licencia import generar_recibo_licencia_pdf, numero_recibo
+from ..services.recibo_licencia import (
+    generar_recibo_licencia_pdf,
+    licencia_de_compra,
+    numero_recibo,
+)
+from ..services.identidad_registro import es_desechable, normalizar_email
+from ..services.prueba_gratuita import (
+    conceder_prueba,
+    dias_de_prueba,
+    prueba_activada,
+    prueba_ya_usada,
+)
 from ..services.propuestas import (
     DURACIONES_ENLACE,
     GestionEnlacePropuestaError,
@@ -322,6 +335,12 @@ TEMPLATES.env.globals.update(
     titular_legal=LEGAL_ENTITY,
     email_soporte=SUPPORT_EMAIL,
     catalogo=cifras_catalogo,
+    # Funciones, no valores: la prueba se puede apagar cambiando
+    # COTIZAT_DIAS_PRUEBA sin volver a desplegar, y la página pública tiene que
+    # enterarse en el mismo instante. Anunciar «7 días gratis» cuando la prueba
+    # ya no se concede sería publicidad falsa servida por nuestra propia caché.
+    dias_de_prueba=dias_de_prueba,
+    hay_prueba_gratuita=prueba_activada,
 )
 
 

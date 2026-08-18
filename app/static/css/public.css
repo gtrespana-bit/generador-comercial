@@ -620,6 +620,82 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
 }
 .landing .nota-honesta strong { color: var(--amber); }
 
+/* --------------------------------------------------------------------------
+   Prueba gratuita en las páginas públicas.
+
+   Verde y no el azul de marca: es la única promesa de la página que no cuesta
+   dinero, y tiene que distinguirse de un vistazo del resto de llamadas a la
+   acción. Todos estos bloques desaparecen solos si COTIZAT_DIAS_PRUEBA=0.
+   -------------------------------------------------------------------------- */
+.landing .hero-prueba {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.32rem 0.8rem;
+  border: 1px solid rgba(5, 150, 105, 0.28);
+  border-radius: 999px;
+  background: var(--green-soft);
+  color: #047857;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  margin: 0 0 1.4rem 0.5rem;
+}
+.landing .hero-letra-pequena {
+  margin-top: 0.85rem;
+  font-size: 0.85rem;
+  color: var(--text-soft);
+}
+
+.landing .prueba-destacada {
+  background: var(--green-soft);
+  border: 1px solid rgba(5, 150, 105, 0.25);
+  border-radius: var(--radius);
+  padding: 1.5rem 1.6rem;
+  max-width: 800px;
+  margin: 0 auto 2rem;
+  text-align: center;
+}
+.landing .prueba-destacada h3 {
+  margin: 0 0 0.5rem;
+  color: #047857;
+  font-size: 1.35rem;
+}
+.landing .prueba-destacada p {
+  margin: 0 0 1.1rem;
+  color: #065f46;
+  line-height: 1.6;
+}
+.landing .prueba-destacada .btn {
+  margin: 0;
+}
+
+.pago-page .pago-prueba {
+  margin: 0.9rem auto 0;
+  max-width: 620px;
+  padding: 0.7rem 1rem;
+  border: 1px solid rgba(5, 150, 105, 0.28);
+  border-radius: var(--radius-sm);
+  background: var(--green-soft);
+  color: #065f46;
+  font-size: 0.92rem;
+}
+.pago-page .pago-prueba a {
+  color: #047857;
+  font-weight: 700;
+}
+
+.auth-split-forms .auth-prueba {
+  margin: -0.35rem 0 0.9rem;
+  padding: 0.6rem 0.85rem;
+  border: 1px solid rgba(5, 150, 105, 0.25);
+  border-radius: var(--radius-sm);
+  background: var(--green-soft);
+  color: #065f46;
+  font-size: 0.87rem;
+  line-height: 1.5;
+}
+
 .landing footer {
   background: var(--surface);
   border-top: 1px solid var(--border);
@@ -2287,6 +2363,21 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
   line-height: 1.25;
   margin: 1.5rem 0 0.8rem;
   color: #1a1a2e;
+}
+
+/* Aviso contextual del hero de planes: explica por qué se ha llegado aquí
+   (por ejemplo, prueba gratuita ya consumida). Tono informativo, no de error:
+   la persona no ha hecho nada mal. */
+.pago-page .pago-aviso {
+  margin: 1.2rem auto 0;
+  max-width: 560px;
+  padding: 0.85rem 1.1rem;
+  border-radius: 10px;
+  background: #eef4ff;
+  border: 1px solid #cfe0ff;
+  color: #234;
+  font-size: 0.92rem;
+  line-height: 1.5;
 }
 
 .pago-page .pago-planes {

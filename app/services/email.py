@@ -418,6 +418,75 @@ def enviar_aviso_licencia(
     return envio_id
 
 
+def enviar_activacion_plan_por_email(
+    *,
+    email: str,
+    organizacion_nombre: str,
+    plan_nombre: str,
+    importe_texto: str,
+    metodo_nombre: str,
+    inicio: date,
+    vence: date,
+    recibo_pdf: bytes = b"",
+    recibo_nombre: str = "recibo.pdf",
+) -> str:
+    """Avisa al comprador de que su plan quedó activo, con el recibo adjunto.
+
+    Lo dispara el operador al activar la compra en ``/admin/compras``: con
+    cobro manual (E1-059) la activación no es instantánea, así que el cliente
+    necesita saber cuándo empieza a contar su acceso y hasta qué día llega.
+
+    El recibo se adjunta si se pudo generar; si falta, el correo se envía
+    igualmente porque el aviso importa más que el papel (y el cliente siempre
+    puede descargarlo desde Configuración). El envío nunca es la fuente de
+    verdad: la licencia ya está concedida y confirmada en la base antes de
+    llamar aquí.
+    """
+    settings = EmailSettings.from_environment()
+    contexto = {
+        "product_name": PRODUCT_NAME,
+        "organizacion_nombre": str(organizacion_nombre or "").strip(),
+        "plan_nombre": str(plan_nombre or "tu plan").strip(),
+        "importe_texto": str(importe_texto or "").strip(),
+        "metodo_nombre": str(metodo_nombre or "").strip(),
+        "inicio": inicio,
+        "vence": vence,
+        "soporte_email": _soporte_email(),
+        "anio": datetime.utcnow().year,
+    }
+    asunto = (
+        f"Tu {contexto['plan_nombre'].lower()} está activo hasta el "
+        f"{vence.strftime('%d/%m/%Y')} · {PRODUCT_NAME}"
+    )[:200]
+    html = _jinja.get_template("emails/plan_activado.html").render(**contexto)
+    texto = _jinja.get_template("emails/plan_activado.txt").render(**contexto)
+
+    adjuntos: tuple[EmailAttachment, ...] = ()
+    if recibo_pdf:
+        adjuntos = (
+            EmailAttachment(
+                filename=Path(recibo_nombre or "recibo.pdf").name or "recibo.pdf",
+                content=recibo_pdf,
+            ),
+        )
+    try:
+        envio_id = _post_resend(
+            settings,
+            to=email,
+            subject=asunto,
+            html=html,
+            text=texto,
+            attachments=adjuntos,
+        )
+    except EmailSendError as exc:
+        logger.warning(
+            "No se pudo avisar de la activación del plan a %s (%s).", email, exc
+        )
+        raise
+    logger.info("Activación de plan notificada a %s (id %s).", email, envio_id)
+    return envio_id
+
+
 def enviar_solicitud_demo_por_email(
     *,
     nombre: str,

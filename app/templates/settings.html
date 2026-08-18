@@ -20,6 +20,11 @@
         Vence el {{ licencia.vence.strftime("%d/%m/%Y") }} · {{ licencia.dias_restantes }} día{{ "s" if licencia.dias_restantes != 1 }} restante{{ "s" if licencia.dias_restantes != 1 }}
         {% if licencia.metodo_cobro %} · pagado por {{ licencia.metodo_cobro }}{% endif %}
       </span>
+      {% if compra_recibo %}
+      <p class="plan-recibo">
+        <a href="/pago/recibo/{{ compra_recibo.id }}.pdf">Descargar recibo (PDF)</a>
+      </p>
+      {% endif %}
     </div>
   </div>
   {% else %}

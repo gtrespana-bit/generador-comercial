@@ -13,6 +13,8 @@ Estado al escribir esta guía:
 | 4 | Razón social → `COTIZAT_LEGAL_ENTITY` | **pendiente** (no urgente) |
 | 5 | Vercel Hobby → Pro | **aplazado por decisión del usuario** |
 | 6 | Panel de operador E1-060: migración `f4c1d8e37a95` + `COTIZAT_OPERADORES` | ✅ **completado** (16/08/2026): script `docs/staging_upgrade_f4c1d8e37a95.sql` aplicado en Supabase, variable en Vercel, panel verificado por el titular en `https://cotizat.online/admin/licencias` |
+| 7 | Migración `a3d9c1e75b28` (prueba gratuita) | ✅ **completado** (18/08/2026): `docs/staging_upgrade_a3d9c1e75b28.sql` aplicado en Supabase |
+| 8 | **Activar `COTIZAT_EXIGIR_LICENCIA=true`** | **pendiente** — es el último paso del lanzamiento; requiere que el PR #38 esté desplegado antes (ver §8) |
 
 ---
 
@@ -199,3 +201,71 @@ para no perderlo de vista:
   No es una optimización: es cumplir el contrato de la plataforma.
 
 Nada de esto afecta al código ni al despliegue actual.
+
+---
+
+## 8. Activar el cobro: `COTIZAT_EXIGIR_LICENCIA=true`
+
+Este es **el último paso del lanzamiento** y el único que convierte CotizaT en
+un producto de pago. Hasta que se dé, todo el sistema de licencias existe y se
+ve en el panel, pero **no corta el acceso a nadie**: la comprobación de vigencia
+está desactivada por la variable.
+
+### Antes de tocar nada: el orden importa
+
+**Primero se despliega el PR #38, después se activa el interruptor.** No es una
+preferencia, es una dependencia real:
+
+- La **prueba gratuita de 7 días** viaja en ese PR. Es lo que cubre a las
+  organizaciones recién registradas.
+- Si activas el interruptor **sin** ese código desplegado, cada organización
+  nueva nace sin licencia de ningún tipo y queda **suspendida desde el primer
+  minuto**, antes incluso de ver el producto.
+
+Con el PR desplegado, el registro concede la prueba automáticamente y el orden
+deja de ser un problema.
+
+### Lo que NO tienes que temer
+
+**Tú no puedes quedarte fuera de tu propio panel.** El panel de operador
+(`/admin/*`) cuelga de `get_operator_db`, que comprueba dos cosas —que estés
+autenticado y que tu correo esté en `COTIZAT_OPERADORES`— y **no mira licencias
+en ningún momento**. El corte por vigencia vive en `get_db`, que es la sesión
+del uso normal del producto.
+
+Dicho de otro modo: aunque tu organización apareciera suspendida, seguirías
+entrando en `/admin/licencias` y podrías concederte una licencia de cortesía a
+ti mismo. Da igual si lo haces antes o después de activar el interruptor.
+
+### Los pasos
+
+1. Comprueba que el PR #38 está **fusionado y desplegado** en producción.
+2. Visita `https://cotizat.online/readyz` y confirma que dice
+   `"alembic": "head:a3d9c1e75b28"`. Si dice otra cosa, la migración no está
+   aplicada y **no debes continuar**.
+3. Vercel → tu proyecto → **Settings → Environment Variables**.
+4. Añade o edita `COTIZAT_EXIGIR_LICENCIA` con valor `true`, con el scope
+   **Production** marcado. Se aceptan como verdaderos: `1`, `true`, `on`, `si`
+   y `sí`; cualquier otra cosa se lee como falso.
+5. **Redeploy.** Las variables de entorno no se aplican en caliente: si no
+   redespliegas, no cambia nada.
+6. Vuelve a `/readyz` y confirma que ahora dice `"licencias": "exigida"`. Si
+   sigue diciendo `"no-exigida"`, el redeploy no cogió la variable.
+
+### Cómo revertir, si algo va mal
+
+Pon `COTIZAT_EXIGIR_LICENCIA=false` y vuelve a desplegar. **No borra ni modifica
+ningún dato**: la variable solo decide si se comprueba la vigencia de la
+licencia. Las licencias, las pruebas concedidas y las compras siguen
+exactamente donde estaban, y al reactivar el interruptor todo vuelve a aplicarse
+igual. Es una decisión reversible en dos minutos, no un punto de no retorno.
+
+### Qué verán los clientes al vencer
+
+No se quedan encerrados. De las rutas de la aplicación, **144 se cortan y 44
+siguen accesibles**, elegidas a propósito para que un cliente vencido pueda
+pagar y recuperarse solo: todo `/pago/*`, `/acceso`, el registro, la
+recuperación de contraseña, `/cuenta`, `/organizaciones`, las invitaciones, las
+páginas legales, `/conocer` y las propuestas públicas que ya hubiera enviado.
+Lo que se corta es generar trabajo nuevo. Sus datos siguen ahí, que es
+justamente lo que promete el texto público.

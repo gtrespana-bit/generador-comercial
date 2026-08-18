@@ -137,8 +137,18 @@ def pagina_legal(pagina: str, request: Request):
 
 @router.get("/pago", response_class=HTMLResponse, include_in_schema=False)
 def pagina_pago(request: Request):
-    """Página pública de planes y métodos de pago."""
-    return TEMPLATES.TemplateResponse(request, "pago.html", {})
+    """Página pública de planes y métodos de pago.
+
+    Acepta un `msg` en la query para poder explicar cómo se ha llegado aquí:
+    quien acaba de crear una organización sin prueba disponible aterriza en
+    esta pantalla y merece saber por qué, en vez de encontrarse una lista de
+    precios sin contexto.
+    """
+    return TEMPLATES.TemplateResponse(
+        request,
+        "pago.html",
+        {"msg": request.query_params.get("msg", "")[:300]},
+    )
 
 
 # ---------------------------------------------------------------------------

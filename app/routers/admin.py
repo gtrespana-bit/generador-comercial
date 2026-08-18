@@ -3,6 +3,7 @@
 from fastapi import APIRouter
 
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
+from ..datos_pago import PLANES
 
 router = APIRouter()
 
@@ -96,11 +97,118 @@ def panel_operacion(request: Request, db: Session = Depends(get_operator_db)):
     )
 
 
+#: Importe por omisión de una licencia de pago según su duración, tomado de
+#: los planes publicados (`app/datos_pago.py`): así el botón rápido «pago
+#: anual» no obliga a teclear 89.00 cada vez, y un importe distinto sigue
+#: pudiendo escribirse en el formulario completo.
+_IMPORTE_POR_DURACION = {
+    ficha["duracion_licencia"]: ficha["importe"] for ficha in PLANES.values()
+}
+
+#: Páginas del panel a las que una acción puede devolver al operador.
+#: Se valida contra esta lista en vez de aceptar cualquier URL: un `volver`
+#: libre en un formulario es una redirección abierta.
+_DESTINOS_PANEL = {"/admin", "/admin/licencias"}
+
+
+def _volver_a(form, por_omision: str = "/admin/licencias") -> str:
+    """Destino de la redirección tras una acción, limitado a las páginas del panel.
+
+    Las mismas acciones se disparan desde `/admin` y desde `/admin/licencias`;
+    devolver siempre al listado de licencias sacaría al operador de la pantalla
+    en la que estaba trabajando.
+    """
+    destino = str(form.get("volver") or "").strip()
+    return destino if destino in _DESTINOS_PANEL else por_omision
+
+
+@router.post("/admin/organizaciones/{organizacion_id}/conceder", include_in_schema=False)
+async def conceder_licencia_rapida(
+    organizacion_id: int, request: Request, db: Session = Depends(get_operator_db)
+):
+    """Concede una licencia a una organización concreta, en un solo gesto.
+
+    Es la versión de dos clics de `POST /admin/licencias`: la organización va
+    en la URL (viene de la fila en la que está el operador, que ya no tiene que
+    buscarla en un desplegable) y el resto son valores por omisión sensatos.
+    Cuando el caso es raro —importe atípico, referencia, notas— sigue estando
+    el formulario completo.
+    """
+    form = await request.form()
+    destino = _volver_a(form, "/admin")
+    origen = str(form.get("origen") or "").strip().lower()
+    duracion = str(form.get("duracion") or "").strip()
+    importe = form.get("importe")
+    if importe in (None, ""):
+        # Una licencia de pago exige importe: si no lo indican, se toma el del
+        # plan publicado que corresponde a la duración elegida.
+        importe = _IMPORTE_POR_DURACION.get(duracion, 0.0) if origen == "pago" else 0.0
+    try:
+        licencia = crear_licencia(
+            db,
+            organizacion_id=organizacion_id,
+            origen=origen,
+            duracion=duracion,
+            importe=importe,
+            moneda=str(form.get("moneda") or "USD"),
+            metodo_cobro=str(form.get("metodo_cobro") or ""),
+            referencia=str(form.get("referencia") or ""),
+            notas=str(form.get("notas") or ""),
+            operador_email=str(db.info.get("auth_email") or ""),
+        )
+        nombre = licencia.organizacion.nombre if licencia.organizacion else ""
+        vence = licencia.vence.strftime("%d/%m/%Y")
+        db.commit()
+    except (GestionLicenciaError, ValueError) as exc:
+        db.rollback()
+        return _redirect(destino, error=str(exc))
+    except Exception:
+        db.rollback()
+        log.error("Error concediendo la licencia:\n%s", traceback.format_exc())
+        raise
+    return _redirect(destino, msg=f"{nombre}: acceso concedido hasta el {vence}.")
+
+
+@router.post(
+    "/admin/organizaciones/{organizacion_id}/suspender", include_in_schema=False
+)
+async def suspender_organizacion_web(
+    organizacion_id: int, request: Request, db: Session = Depends(get_operator_db)
+):
+    """Corta el acceso de una organización cancelando toda su cadena activa.
+
+    Cancelar una sola licencia no corta el acceso si hay renovaciones
+    encadenadas detrás: el operador cree haber suspendido y el cliente sigue
+    dentro. Por eso el botón «suspender» actúa sobre la cadena completa.
+    """
+    form = await request.form()
+    destino = _volver_a(form, "/admin")
+    try:
+        canceladas = suspender_organizacion(
+            db,
+            organizacion_id=organizacion_id,
+            motivo=str(form.get("motivo") or ""),
+            operador_email=str(db.info.get("auth_email") or ""),
+        )
+        cuantas = len(canceladas)
+        db.commit()
+    except GestionLicenciaError as exc:
+        db.rollback()
+        return _redirect(destino, error=str(exc))
+    except Exception:
+        db.rollback()
+        log.error("Error suspendiendo la organización:\n%s", traceback.format_exc())
+        raise
+    detalle = "1 licencia" if cuantas == 1 else f"{cuantas} licencias"
+    return _redirect(destino, msg=f"Acceso suspendido ({detalle} cancelada/s).")
+
+
 @router.post("/admin/licencias", include_in_schema=False)
 async def crear_licencia_web(
     request: Request, db: Session = Depends(get_operator_db)
 ):
     form = await request.form()
+    destino = _volver_a(form)
     try:
         crear_licencia(
             db,
@@ -117,12 +225,12 @@ async def crear_licencia_web(
         db.commit()
     except (GestionLicenciaError, ValueError) as exc:
         db.rollback()
-        return _redirect("/admin/licencias", error=str(exc))
+        return _redirect(destino, error=str(exc))
     except Exception:
         db.rollback()
         log.error("Error creando la licencia:\n%s", traceback.format_exc())
         raise
-    return _redirect("/admin/licencias", msg="Licencia registrada.")
+    return _redirect(destino, msg="Licencia registrada.")
 
 
 @router.post("/admin/licencias/{licencia_id}/cancelar", include_in_schema=False)
@@ -130,6 +238,7 @@ async def cancelar_licencia_web(
     licencia_id: int, request: Request, db: Session = Depends(get_operator_db)
 ):
     form = await request.form()
+    destino = _volver_a(form)
     try:
         cancelar_licencia(
             db,
@@ -140,12 +249,12 @@ async def cancelar_licencia_web(
         db.commit()
     except GestionLicenciaError as exc:
         db.rollback()
-        return _redirect("/admin/licencias", error=str(exc))
+        return _redirect(destino, error=str(exc))
     except Exception:
         db.rollback()
         log.error("Error cancelando la licencia:\n%s", traceback.format_exc())
         raise
-    return _redirect("/admin/licencias", msg="Licencia cancelada.")
+    return _redirect(destino, msg="Licencia cancelada.")
 
 
 @router.get("/admin/licencias/{licencia_id}/recibo.pdf", include_in_schema=False)
@@ -274,7 +383,7 @@ def activar_compra_web(
     from ..services.compras import GestionCompraError, activar_compra
 
     try:
-        _compra, licencia = activar_compra(
+        compra, licencia = activar_compra(
             db,
             compra_id=compra_id,
             operador_email=str(db.info.get("auth_email") or ""),
@@ -287,10 +396,85 @@ def activar_compra_web(
         db.rollback()
         log.error("Error activando compra #%s:\n%s", compra_id, traceback.format_exc())
         raise
+
+    # Aviso al comprador (no bloqueante): la licencia ya está concedida y
+    # confirmada. Un fallo de correo no puede deshacer una activación ni
+    # devolver un error al operador, que ya hizo su parte; se anota en el
+    # mensaje para que sepa si tiene que escribir a mano.
+    aviso = _avisar_activacion_al_cliente(db, compra, licencia)
     return _redirect(
         "/admin/compras",
-        msg=f"Compra #{compra_id} activada · licencia #{licencia.id} concedida.",
+        msg=(
+            f"Compra #{compra_id} activada · licencia #{licencia.id} concedida. "
+            f"{aviso}"
+        ),
     )
+
+
+def _avisar_activacion_al_cliente(db: Session, compra, licencia) -> str:
+    """Envía al comprador el aviso de plan activo con su recibo adjunto.
+
+    Devuelve una frase corta para el mensaje del panel. Nunca lanza: el correo
+    es una cortesía sobre una activación que ya está hecha, y dejar al
+    operador con un 500 tras haber concedido la licencia sería mucho peor que
+    un aviso no entregado.
+    """
+    from ..datos_pago import METODOS_PAGO, PLANES
+    from ..services.email import (
+        EmailNotConfigured,
+        EmailSendError,
+        EmailValidationError,
+        enviar_activacion_plan_por_email,
+    )
+
+    destinatario = str(getattr(compra, "creada_por_email", "") or "").strip()
+    if not destinatario:
+        return "La compra no guardó email del comprador: avísale tú."
+
+    organizacion = licencia.organizacion or db.get(
+        Organizacion, compra.organizacion_id
+    )
+    plan_nombre = str(PLANES.get(compra.plan, {}).get("nombre") or "Tu plan")
+    metodo_nombre = str(METODOS_PAGO.get(compra.metodo_pago, {}).get("nombre") or "")
+
+    # El recibo es opcional: si no se puede generar, el aviso sale igual.
+    recibo_pdf = b""
+    recibo_nombre = "recibo.pdf"
+    try:
+        recibo_pdf = generar_recibo_licencia_pdf(licencia, organizacion).read()
+        recibo_nombre = f"recibo-{numero_recibo(licencia)}.pdf"
+    except Exception:
+        log.warning(
+            "Compra #%s activada sin recibo adjunto:\n%s",
+            compra.id,
+            traceback.format_exc(),
+        )
+
+    try:
+        enviar_activacion_plan_por_email(
+            email=destinatario,
+            organizacion_nombre=organizacion.nombre if organizacion else "",
+            plan_nombre=plan_nombre,
+            importe_texto=fmt_monto(compra.importe, compra.moneda or "USD"),
+            metodo_nombre=metodo_nombre,
+            inicio=licencia.inicio,
+            vence=licencia.vence,
+            recibo_pdf=recibo_pdf,
+            recibo_nombre=recibo_nombre,
+        )
+    except EmailNotConfigured:
+        return f"Correo no configurado: avisa tú a {destinatario}."
+    except (EmailValidationError, EmailSendError) as exc:
+        log.warning("Aviso de activación no entregado a %s (%s).", destinatario, exc)
+        return f"No se pudo avisar a {destinatario}: escríbele tú."
+    except Exception:
+        log.error(
+            "Error inesperado avisando la activación de la compra #%s:\n%s",
+            compra.id,
+            traceback.format_exc(),
+        )
+        return f"No se pudo avisar a {destinatario}: escríbele tú."
+    return f"Avisado {destinatario} con su recibo."
 
 
 @router.post("/admin/compras/{compra_id}/rechazar", include_in_schema=False)

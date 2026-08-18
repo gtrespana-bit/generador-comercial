@@ -21,17 +21,33 @@ Público: el titular operando el producto. Nada de aquí lo ejecuta un cliente.
 | Declarar operadores | `COTIZAT_OPERADORES` en Vercel (Production) + redeploy | ✅ hecho el 16/08/2026 |
 | Correo transaccional | `RESEND_API_KEY` + `COTIZAT_EMAIL_FROM` en Vercel | ✅ hecho (SMTP de Supabase también usa Resend) |
 | Migración `b7c4a9e2d31f` | Supabase → SQL Editor → `docs/staging_upgrade_b7c4a9e2d31f.sql` | ✅ aplicada el 16/08/2026 |
-| **Conceder licencia de cortesía a la propia organización del titular** | Panel → «cortesia», duración larga, nota «uso del titular» | ⬜ hacerlo **antes** de activar el corte |
-| Activar el corte | `COTIZAT_EXIGIR_LICENCIA=true` en Vercel + redeploy | ⬜ al empezar los pilotos de pago |
+| Migración `c7f1a3b9d425` | Supabase → SQL Editor → `docs/staging_upgrade_c7f1a3b9d425.sql` | ✅ aplicada el 18/08/2026 |
+| Migración `a3d9c1e75b28` (prueba gratuita) | Supabase → SQL Editor → `docs/staging_upgrade_a3d9c1e75b28.sql` | ✅ aplicada el 18/08/2026 |
+| **Conceder licencia de cortesía a la propia organización del titular** | Panel → «cortesia», duración larga, nota «uso del titular» | ✅ hecha el 18/08/2026 |
+| **Fusionar y desplegar el PR #38** | Anuncio público + concesión de la prueba de 7 días | ⬜ **antes** de activar el corte |
+| Activar el corte | `COTIZAT_EXIGIR_LICENCIA=true` en Vercel (Production) + **redeploy** | ⬜ justo después del despliegue del PR #38 |
 | Buzón `soporte@cotizat.online` | Reenvío en el proveedor del dominio | ⬜ cuando haga falta de verdad |
 
-El orden importa: si el corte se activa sin licencia propia, **el titular
-también se queda fuera** de su organización (el panel de operador sí seguirá
-accesible, porque no depende de ninguna organización).
+**El orden importa, por dos motivos distintos.** El primero es el PR #38: la
+prueba gratuita que cubre a las organizaciones nuevas viaja en él, así que
+encender el corte antes de desplegarlo dejaría **suspendida a toda organización
+recién registrada**.
 
-Tras aplicar la migración, `/readyz` debe responder
-`"alembic": "head:b7c4a9e2d31f"` con `ok: true`, y muestra además
+El segundo se ha corregido respecto a lo que decía antes esta guía: se afirmaba
+que sin licencia propia «el titular también se queda fuera». Es **falso** y
+conviene saberlo, porque induce a un miedo que no toca. El panel `/admin/*`
+cuelga de `get_operator_db`, que **no comprueba licencia**: el operador entra
+siempre y puede concederse una licencia desde dentro en cualquier momento. Lo
+que sí queda cortado sin licencia propia es el uso normal del producto
+(presupuestos, clientes, catálogo) en la organización del titular.
+
+Tras aplicar las migraciones, `/readyz` debe responder
+`"alembic": "head:a3d9c1e75b28"` con `ok: true`, y muestra además
 `"licencias": "exigida"` o `"no-exigida"` según el interruptor.
+
+**Para revertir el corte:** `COTIZAT_EXIGIR_LICENCIA=false` y redeploy. El
+interruptor solo decide si se comprueba la vigencia; no borra ni altera
+ninguna licencia concedida.
 
 ---
 
@@ -76,10 +92,22 @@ Tras aplicar la migración, `/readyz` debe responder
 - Al día siguiente del vencimiento, el corte automático deja a la organización
   en «Acceso suspendido». **Nada se borra**: presupuestos, clientes,
   catálogos y archivos siguen intactos.
-- El propio mensaje de suspensión le dice al cliente cómo reactivar
-  (escribir a soporte) y que sus datos siguen guardados.
-- Cuando paga: nueva licencia `pago` desde el panel. El acceso vuelve solo al
-  instante — el encadenado evita solapes si aún tenía días.
+- El propio mensaje de suspensión le dice al cliente que sus datos siguen
+  guardados y le ofrece dos salidas: el botón **«Renovar mi plan»** (va a
+  `/pago`) o escribir a soporte.
+- **El checkout no queda detrás del corte** (18/08/2026). Las rutas de compra
+  (`/pago/comprar`, la confirmación y el recibo) cuelgan de
+  `get_db_renovacion`, una puerta que valida sesión, membresía y organización
+  igual que la normal pero **sin** comprobar la vigencia. Si colgaran de
+  `get_db`, la suspensión sería una trampa sin salida: el cliente no podría
+  comprar justo lo que necesita para salir de ella, y toda renovación tendría
+  que pasar por soporte. Lo vigila
+  `tests/test_licencias_acceso.py::test_las_rutas_de_compra_usan_la_puerta_sin_corte`.
+- Así, un cliente suspendido puede renovar **solo**: compra con su comprobante
+  → el operador activa desde `/admin/compras` → recibe el correo de activación
+  con su recibo y el acceso vuelve al instante.
+- Cuando paga por fuera: nueva licencia `pago` desde el panel. El acceso vuelve
+  solo al instante — el encadenado evita solapes si aún tenía días.
 
 ## 4. Gestos comerciales e incidencias
 

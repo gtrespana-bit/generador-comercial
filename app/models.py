@@ -1865,6 +1865,13 @@ def migrar(engine):
             ("tiempo_manual_ayudante_horas", "FLOAT"),
             ("tiempo_manual_equipo_horas", "FLOAT"),
         ],
+        "compras_plan": [
+            # Período concedido, copiado de la licencia al activar la compra
+            # (E1-061). Permite al comprador descargar su recibo sin leer
+            # `licencias`, que el RLS reserva al operador.
+            ("licencia_inicio", "DATE"),
+            ("licencia_vence", "DATE"),
+        ],
         "descomposiciones_partida": [
             ("origen", "VARCHAR(20) DEFAULT 'manual'"),
         ],
@@ -2335,6 +2342,69 @@ class Licencia(Base):
         return max((self.vence - hoy).days, 0)
 
 
+class PruebaConcedida(Base):
+    """Registro de que una identidad ya consumió su prueba gratuita.
+
+    **No es una tabla de tenant**, igual que ``Licencia``: es un dato del
+    negocio del titular *sobre* quién ha usado ya su cortesía inicial, no un
+    dato de un cliente. Se protege con RLS de operador.
+
+    Existe como tabla propia, y no como una consulta sobre ``licencias``, por
+    dos razones que importan:
+
+    1. **La prueba se ata al correo, no a la organización.** Buscar en
+       ``licencias`` diría si *esta empresa* tuvo prueba, no si *esta persona*
+       ya gastó la suya creando otra empresa antes. Sin este registro, una
+       misma cuenta abre organizaciones en cadena y encadena pruebas.
+    2. **El registro sobrevive al borrado.** Si la organización desaparece, la
+       marca sigue: la prueba se gastó igual.
+
+    La unicidad va sobre ``email_normalizado`` (ver
+    ``app/services/identidad_registro.py``), de modo que los alias con punto y
+    con ``+`` del mismo buzón cuentan como una sola identidad. La restricción
+    vive en la base de datos y no en código: es la única forma de que dos altas
+    simultáneas no consigan dos pruebas.
+    """
+
+    __tablename__ = "pruebas_concedidas"
+    __table_args__ = (
+        UniqueConstraint("email_normalizado", name="uq_prueba_email_normalizado"),
+        Index("ix_pruebas_concedidas_creada", "created_at"),
+        Index("ix_pruebas_concedidas_ip", "ip_hash"),
+    )
+
+    id = Column(Integer, primary_key=True)
+    #: Identidad de correo reducida a su forma canónica. Es la clave real.
+    email_normalizado = Column(String(254), nullable=False)
+    #: Correo tal y como lo escribió la persona, para poder auditar y explicar
+    #: una decisión sin tener que deshacer la normalización a mano.
+    email_original = Column(String(254), nullable=False, default="")
+    #: Organización a la que se concedió. Se conserva aunque se borre (SET NULL):
+    #: lo que importa es que la prueba se gastó, no dónde.
+    organizacion_id = Column(
+        Integer,
+        ForeignKey("organizaciones.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    licencia_id = Column(
+        Integer,
+        ForeignKey("licencias.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    #: SHA-256 de la IP con sal del despliegue, nunca la IP en claro. Sirve
+    #: para *ver* patrones en el panel (varias pruebas desde el mismo sitio),
+    #: jamás para bloquear: oficinas y redes móviles comparten IP y bloquear
+    #: por ella produce falsos positivos sobre clientes reales.
+    ip_hash = Column(String(64), nullable=False, default="")
+    dias = Column(Integer, nullable=False, default=0)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    organizacion = relationship("Organizacion")
+    licencia = relationship("Licencia")
+
+
 class CompraPlan(TenantMixin, Base):
     """Compra de un plan registrada por un cliente con su comprobante.
 
@@ -2390,6 +2460,18 @@ class CompraPlan(TenantMixin, Base):
     licencia_id = Column(
         Integer, ForeignKey("licencias.id", ondelete="SET NULL"), nullable=True
     )
+    #: Período de acceso concedido, copiado de la licencia al activar.
+    #:
+    #: Es una desnormalización deliberada. ``licencias`` está protegida por
+    #: RLS de operador: la sesión del cliente no obtiene ni una fila, así que
+    #: sin estas dos fechas el comprador no podría montar su propio recibo
+    #: (tendría que pedírselo al titular). Copiarlas aquí —tabla tenant que el
+    #: cliente sí lee— le da el comprobante sin abrir ni un resquicio en el
+    #: aislamiento. Además congela lo que se compró: si la licencia se cancela
+    #: o se reajusta después, el recibo sigue describiendo el cobro real.
+    licencia_inicio = Column(Date, nullable=True)
+    #: Último día de acceso concedido, inclusive.
+    licencia_vence = Column(Date, nullable=True)
     revisado_por_email = Column(String(254), nullable=False, default="")
     revisado_at = Column(DateTime, nullable=True)
 

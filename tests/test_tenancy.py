@@ -13,6 +13,7 @@ from app.models import (
     Licencia,
     Membresia,
     Organizacion,
+    PruebaConcedida,
     Presupuesto,
     Usuario,
     TenantMixin,
@@ -58,9 +59,14 @@ def test_todo_modelo_comercial_declara_propietario():
       heredara de `TenantMixin`, el filtro automático se la mostraría al propio
       cliente. Su aislamiento lo aportan `get_operator_db` y las políticas RLS
       `cotizat_licencia_*` (revisión `f4c1d8e37a95`).
+    - `PruebaConcedida` registra qué identidad de correo ya gastó su prueba
+      gratuita. Atarla a una organización la haría inútil: la defensa consiste
+      precisamente en recordar la prueba **después** de que su organización
+      desaparezca, y en reconocer a la misma persona cuando crea otra distinta.
+      Se aísla con las políticas `cotizat_prueba_*` (revisión `a3d9c1e75b28`).
     """
     identidades_globales = {Organizacion, Usuario, Membresia}
-    no_tenant_justificados = {Licencia}
+    no_tenant_justificados = {Licencia, PruebaConcedida}
     sin_propietario = []
     for mapper in Base.registry.mappers:
         modelo = mapper.class_

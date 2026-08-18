@@ -394,6 +394,33 @@ Las herramientas existentes se conservan como fuente de migración, pero dejaron
   suspensión automática al vencer si no hay pago → reactivación al renovar
   sin perder datos.
 
+- [x] **E1-062 — Prueba gratuita de 7 días como puerta de entrada.**
+  **Decisión del titular (18/08/2026): 7 días, sin tarjeta.** Es la respuesta a
+  la fricción del cobro manual: el prospecto no puede «pagar y probar» en un
+  clic como haría con Stripe, así que se le da acceso completo primero y se
+  cobra después. Publicada en `/`, `/conocer`, `/pago` y `/acceso` con el
+  compromiso explícito de que no se pide tarjeta y no se cobra nada
+  automáticamente.
+
+  **La licencia se otorga a la organización, nunca al usuario.** Quien quiera
+  una segunda organización paga otro plan para ella. Sin esta regla, una sola
+  cuenta pagada podría dar servicio a diez organizaciones con diez personas
+  dentro, que es regalar el producto.
+
+  **Defensa anti-reciclaje** (una prueba por identidad, para siempre): el email
+  se normaliza antes de registrarlo —se ignoran los puntos en Gmail y las
+  subdirecciones `+etiqueta` en los proveedores que las admiten—, de modo que
+  los alias de una misma cuenta cuentan como una sola identidad. Los dominios
+  de correo desechable se bloquean **en el registro**, no después. La IP del
+  alta se guarda **hasheada** y solo sirve para que el operador vea patrones en
+  el panel: nunca bloquea a nadie automáticamente, porque una oficina entera
+  comparte IP y el falso positivo costaría un cliente real.
+
+  **Reversible sin desplegar código**: `COTIZAT_DIAS_PRUEBA=0` retira la oferta
+  y el anuncio desaparece de las cuatro páginas, sustituido por «Ver planes».
+  Hay un test que lo comprueba, para que la promesa pública no sobreviva a la
+  retirada de la oferta. Detalle en `docs/COBRO_Y_LICENCIAS.md` §5.
+
 ## 1.10 Criterios de salida de la Etapa 1
 
 No se marcará esta etapa como completada hasta cumplir todos los siguientes puntos:

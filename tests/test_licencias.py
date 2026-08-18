@@ -643,3 +643,187 @@ def test_panel_admin_muestra_compras_pendientes_y_activacion(entorno, monkeypatc
         from app.models import CompraPlan
         compra = db.get(CompraPlan, compra_id)
         assert compra.estado == "activa"
+
+
+# ---------------------------------------------------------------------------
+# Acciones de dos clics desde el propio listado (/admin)
+#
+# El coste operativo del panel no está en que las acciones existan, sino en
+# cuántos gestos cuesta llegar a ellas. Con muchos clientes, «buscar la
+# organización en un desplegable, rellenar cinco campos y enviar» multiplica el
+# trabajo de lo que debería ser pulsar la fila y pulsar el botón. Estas pruebas
+# fijan ese contrato: la ficha de acciones vive en la fila del cliente y las
+# rutas rápidas llevan la organización en la URL.
+# ---------------------------------------------------------------------------
+
+
+def test_cada_fila_del_panel_trae_su_ficha_de_acciones(entorno, monkeypatch):
+    """Pulsar un cliente basta para tener delante todo lo que se le puede hacer."""
+    Session, datos, estado = entorno
+    monkeypatch.setenv("COTIZAT_OPERADORES", "titular@example.com")
+    org_id = datos["organizacion_id"]
+
+    with Session() as db:
+        crear_licencia(
+            db,
+            organizacion_id=org_id,
+            origen="pago",
+            duracion="1m",
+            importe=9.99,
+            metodo_cobro="Pago móvil",
+            operador_email="titular@example.com",
+        )
+        db.commit()
+
+    with _cliente() as client:
+        r = client.get("/admin")
+
+    assert r.status_code == 200
+    # La fila es el disparador y la ficha su panel asociado (accesible).
+    assert f'data-org="{org_id}"' in r.text
+    assert f'id="acc-{org_id}"' in r.text
+    assert f'aria-controls="acc-{org_id}"' in r.text
+    # Las acciones del cliente, sin salir de su fila.
+    assert f"/admin/organizaciones/{org_id}/conceder" in r.text
+    assert f"/admin/organizaciones/{org_id}/suspender" in r.text
+
+
+def test_conceder_desde_la_fila_no_pide_elegir_organizacion(entorno, monkeypatch):
+    """Un clic concede el plan: la organización va en la URL, no en un formulario."""
+    Session, datos, estado = entorno
+    monkeypatch.setenv("COTIZAT_OPERADORES", "titular@example.com")
+    org_id = datos["organizacion_id"]
+
+    with _cliente() as client:
+        r = client.post(
+            f"/admin/organizaciones/{org_id}/conceder",
+            data={"origen": "pago", "duracion": "1a", "volver": "/admin"},
+            follow_redirects=False,
+        )
+
+    assert r.status_code == 303
+    assert r.headers["location"].startswith("/admin?")
+
+    with Session() as db:
+        licencia = licencia_vigente(db, org_id)
+        assert licencia is not None
+        assert licencia.origen == "pago"
+        # El importe no se teclea: se toma del plan publicado para esa duración.
+        assert float(licencia.importe) == 89.0
+        assert (licencia.vence - licencia.inicio).days >= 364
+
+
+def test_conceder_una_prueba_no_cobra_nada(entorno, monkeypatch):
+    Session, datos, estado = entorno
+    monkeypatch.setenv("COTIZAT_OPERADORES", "titular@example.com")
+    org_id = datos["organizacion_id"]
+
+    with _cliente() as client:
+        r = client.post(
+            f"/admin/organizaciones/{org_id}/conceder",
+            data={"origen": "prueba", "duracion": "7d"},
+            follow_redirects=False,
+        )
+
+    assert r.status_code == 303
+    with Session() as db:
+        licencia = licencia_vigente(db, org_id)
+        assert licencia.origen == "prueba"
+        assert float(licencia.importe) == 0.0
+
+
+def test_suspender_corta_la_cadena_entera_y_no_solo_la_ultima(entorno, monkeypatch):
+    """Cancelar una licencia suelta deja al cliente dentro por la renovación."""
+    Session, datos, estado = entorno
+    monkeypatch.setenv("COTIZAT_OPERADORES", "titular@example.com")
+    org_id = datos["organizacion_id"]
+
+    with Session() as db:
+        crear_licencia(
+            db,
+            organizacion_id=org_id,
+            origen="prueba",
+            duracion="7d",
+            operador_email="titular@example.com",
+        )
+        # La segunda se encadena detrás de la primera: hay dos activas.
+        crear_licencia(
+            db,
+            organizacion_id=org_id,
+            origen="cortesia",
+            duracion="1m",
+            operador_email="titular@example.com",
+        )
+        db.commit()
+        assert len([l for l in licencias_de_organizacion(db, org_id)
+                    if l.estado == "activa"]) == 2
+
+    with _cliente() as client:
+        r = client.post(
+            f"/admin/organizaciones/{org_id}/suspender",
+            data={"motivo": "Impago", "volver": "/admin"},
+            follow_redirects=False,
+        )
+
+    assert r.status_code == 303
+    with Session() as db:
+        assert licencia_vigente(db, org_id) is None
+        activas = [
+            l for l in licencias_de_organizacion(db, org_id) if l.estado == "activa"
+        ]
+        assert activas == []
+
+
+def test_suspender_a_quien_no_tiene_acceso_avisa_en_vez_de_callar(entorno, monkeypatch):
+    Session, datos, estado = entorno
+    monkeypatch.setenv("COTIZAT_OPERADORES", "titular@example.com")
+    org_id = datos["organizacion_id"]
+
+    with _cliente() as client:
+        r = client.post(
+            f"/admin/organizaciones/{org_id}/suspender",
+            follow_redirects=False,
+        )
+
+    assert r.status_code == 303
+    assert "error=" in r.headers["location"]
+
+
+def test_las_acciones_rapidas_son_solo_de_operador(entorno, monkeypatch):
+    """La ruta corta no puede ser una puerta trasera al alta de licencias."""
+    Session, datos, estado = entorno
+    monkeypatch.setenv("COTIZAT_OPERADORES", "titular@example.com")
+    estado["email"] = "cliente@example.com"
+    org_id = datos["organizacion_id"]
+
+    with _cliente() as client:
+        r = client.post(
+            f"/admin/organizaciones/{org_id}/conceder",
+            data={"origen": "cortesia", "duracion": "1a"},
+            follow_redirects=False,
+        )
+
+    assert r.status_code in (302, 303, 403)
+    with Session() as db:
+        assert licencia_vigente(db, org_id) is None
+
+
+def test_el_volver_del_panel_no_admite_destinos_de_fuera(entorno, monkeypatch):
+    """`volver` es una lista blanca: no puede convertirse en redirección abierta."""
+    Session, datos, estado = entorno
+    monkeypatch.setenv("COTIZAT_OPERADORES", "titular@example.com")
+    org_id = datos["organizacion_id"]
+
+    with _cliente() as client:
+        r = client.post(
+            f"/admin/organizaciones/{org_id}/conceder",
+            data={
+                "origen": "cortesia",
+                "duracion": "1m",
+                "volver": "https://sitio-malicioso.example/roba",
+            },
+            follow_redirects=False,
+        )
+
+    assert r.status_code == 303
+    assert r.headers["location"].startswith("/admin?")

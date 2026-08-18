@@ -39,6 +39,14 @@ def ver_configuracion(request: Request, db: Session = Depends(get_db)):
     licencia = resumen_licencia_cliente(
         db, int(db.info.get("organizacion_id") or 0)
     )
+    # Recibo descargable: solo si el plan se pagó por el checkout y la compra
+    # guardó su período. Un plan de cortesía o migrado a mano no tiene cobro
+    # que documentar, así que la tarjeta no enseña el enlace.
+    from ..services.compras import ultima_compra_con_recibo
+
+    compra_recibo = ultima_compra_con_recibo(
+        db, int(db.info.get("organizacion_id") or 0)
+    )
     # En escritorio (SQLite) no hay membresías: el usuario local es el
     # propietario por definición. En la web solo gestionan propietario/admin.
     puede_editar = DATABASE_IS_SQLITE or puede_gestionar(db)
@@ -50,6 +58,7 @@ def ver_configuracion(request: Request, db: Session = Depends(get_db)):
             "org_nombre": org.nombre if org else "",
             "puede_editar": puede_editar,
             "licencia": licencia,
+            "compra_recibo": compra_recibo,
         },
     )
 

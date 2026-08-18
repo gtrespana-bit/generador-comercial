@@ -150,6 +150,11 @@ def activar_compra(
     )
     compra.estado = "activa"
     compra.licencia_id = licencia.id
+    # El período se copia sobre la compra a propósito: `licencias` la reserva
+    # el RLS al operador, así que sin esta copia el comprador no podría emitir
+    # su propio recibo. Además congela lo cobrado aunque la licencia cambie.
+    compra.licencia_inicio = licencia.inicio
+    compra.licencia_vence = licencia.vence
     compra.revisado_por_email = str(operador_email or "")
     compra.revisado_at = datetime.utcnow()
     db.flush()
@@ -218,6 +223,27 @@ def resumen_compras(db: Session) -> list[dict]:
             }
         )
     return filas
+
+
+def ultima_compra_con_recibo(db: Session, organizacion_id: int) -> CompraPlan | None:
+    """Última compra activada de una organización, o ``None`` si no hay.
+
+    La usa la tarjeta «Tu plan» para ofrecer el recibo al cliente. Solo se
+    consulta ``compras_plan`` (tabla tenant): la sesión del comprador no puede
+    leer ``licencias``, y este es justo el motivo por el que la compra guarda
+    su propio período.
+    """
+    return (
+        db.query(CompraPlan)
+        .filter(
+            CompraPlan.organizacion_id == int(organizacion_id),
+            CompraPlan.estado == "activa",
+            CompraPlan.licencia_id.isnot(None),
+            CompraPlan.licencia_vence.isnot(None),
+        )
+        .order_by(CompraPlan.created_at.desc(), CompraPlan.id.desc())
+        .first()
+    )
 
 
 def comprobante_bytes(compra: CompraPlan) -> bytes:

@@ -16,6 +16,7 @@ Honestidad obligatoria
 from __future__ import annotations
 
 import io
+from dataclasses import dataclass
 from datetime import date
 
 from reportlab.lib import colors
@@ -42,6 +43,85 @@ _MARCA = colors.HexColor("#0b5b38")
 def numero_recibo(licencia) -> str:
     """Número estable del recibo, derivado del registro: CT-000013."""
     return f"CT-{int(licencia.id):06d}"
+
+
+@dataclass(frozen=True)
+class _LicenciaDeCompra:
+    """Vista de una licencia reconstruida desde la compra del cliente.
+
+    ``generar_recibo_licencia_pdf`` solo lee atributos de la licencia, nunca
+    la sesión. Esta pieza le entrega esos mismos atributos tomados de
+    ``compras_plan`` —tabla tenant que el comprador sí puede leer— para que el
+    cliente emita **el mismo recibo** que el operador sin tocar ``licencias``,
+    que el RLS reserva al titular.
+
+    El ``id`` es el de la licencia concedida, así que el número del documento
+    (``CT-000013``) coincide con el que descarga el operador: cliente y
+    titular hablan siempre del mismo papel.
+    """
+
+    id: int
+    origen: str
+    inicio: date
+    vence: date
+    importe: float
+    moneda: str
+    metodo_cobro: str
+    referencia: str
+    creada_por_email: str
+
+
+def licencia_de_compra(compra) -> _LicenciaDeCompra:
+    """Reconstruye los datos de licencia que el recibo necesita, desde la compra.
+
+    Lanza ``GestionLicenciaError`` si la compra no representa un cobro
+    liquidado: una compra pendiente o rechazada no ha concedido nada y no
+    tiene comprobante que emitir.
+    """
+    if compra.estado != "activa":
+        raise GestionLicenciaError(
+            "Solo las compras activadas tienen recibo; esta todavía no lo está."
+        )
+    if not compra.licencia_id:
+        raise GestionLicenciaError("La compra no tiene una licencia asociada.")
+    if compra.licencia_inicio is None or compra.licencia_vence is None:
+        raise GestionLicenciaError(
+            "La compra no registró el período concedido; pide el recibo a soporte."
+        )
+    return _LicenciaDeCompra(
+        id=int(compra.licencia_id),
+        origen="pago",
+        inicio=compra.licencia_inicio,
+        vence=compra.licencia_vence,
+        importe=float(compra.importe or 0.0),
+        moneda=str(compra.moneda or "USD"),
+        metodo_cobro=_etiqueta_metodo(compra.metodo_pago),
+        referencia=_referencia_visible(compra),
+        creada_por_email=str(compra.revisado_por_email or ""),
+    )
+
+
+def _etiqueta_metodo(metodo: str) -> str:
+    """Nombre publicado del método de pago (`app/datos_pago.py` manda)."""
+    from ..datos_pago import METODOS_PAGO
+
+    ficha = METODOS_PAGO.get(str(metodo or ""))
+    return str(ficha["nombre"]) if ficha else str(metodo or "")
+
+
+def _referencia_visible(compra) -> str:
+    """Referencia del pago tal como la declaró el propio comprador."""
+    datos = compra.datos_verificacion_dict()
+    for clave in (
+        "numero_operacion",
+        "hash_transaccion",
+        "binance_id_origen",
+        "wallet_origen",
+    ):
+        valor = str(datos.get(clave) or "").strip()
+        if valor:
+            return valor[:60]
+    return f"compra-{compra.id}"
 
 
 def _p(texto, estilo):

@@ -94,7 +94,9 @@ def descartar_plan_pendiente():
 
 
 @router.get("/pago/comprar", response_class=HTMLResponse, include_in_schema=False)
-def comprar_plan(request: Request, plan: str = "", db: Session = Depends(get_db)):
+def comprar_plan(
+    request: Request, plan: str = "", db: Session = Depends(get_db_renovacion)
+):
     """Página de compra: resumen del plan + métodos de pago + formulario."""
     ficha = _plan_o_redirect(request, plan)
     if ficha is None:
@@ -153,7 +155,7 @@ async def registrar_compra(
     request: Request,
     plan: str = Form(""),
     metodo_pago: str = Form(""),
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_db_renovacion),
 ):
     """Registra la compra: guarda comprobante, crea la compra y notifica."""
     from ..services.compras import GestionCompraError, crear_compra
@@ -275,7 +277,9 @@ async def registrar_compra(
 
 
 @router.get("/pago/confirmacion", response_class=HTMLResponse, include_in_schema=False)
-def confirmacion_compra(request: Request, id: int = 0, db: Session = Depends(get_db)):
+def confirmacion_compra(
+    request: Request, id: int = 0, db: Session = Depends(get_db_renovacion)
+):
     """Página de éxito: la compra quedó registrada y pendiente de verificación."""
     organizacion_id = int(db.info.get("organizacion_id") or 0)
     compra = db.query(CompraPlan).filter(
@@ -300,3 +304,57 @@ def confirmacion_compra(request: Request, id: int = 0, db: Session = Depends(get
             "verificacion": compra.datos_verificacion_dict(),
         },
     )
+
+
+@router.get("/pago/recibo/{compra_id}.pdf", include_in_schema=False)
+def recibo_compra_web(
+    compra_id: int, request: Request, db: Session = Depends(get_db_renovacion)
+):
+    """Recibo de una compra activada, descargable por el propio cliente.
+
+    Es el gemelo de `/admin/licencias/{id}/recibo.pdf`, con la misma
+    numeración (`CT-000013`) y el mismo PDF, pero armado desde `compras_plan`
+    en vez de `licencias`: esta última está cerrada por RLS al operador, así
+    que una ruta de cliente nunca puede leerla. El período concedido se copia
+    a la compra al activarla justo para esto.
+
+    El filtro por `organizacion_id` es lo que impide leer el recibo de otro:
+    una compra ajena simplemente no existe para esta sesión.
+    """
+    organizacion_id = int(db.info.get("organizacion_id") or 0)
+    compra = (
+        db.query(CompraPlan)
+        .filter(
+            CompraPlan.id == compra_id,
+            CompraPlan.organizacion_id == organizacion_id,
+        )
+        .first()
+    )
+    if compra is None:
+        return _redirect("/configuracion", error="Esa compra no existe.")
+
+    organizacion = db.get(Organizacion, organizacion_id)
+    if organizacion is None:
+        return _redirect("/configuracion", error="Esa compra no existe.")
+
+    try:
+        licencia = licencia_de_compra(compra)
+        buffer = generar_recibo_licencia_pdf(licencia, organizacion)
+    except GestionLicenciaError as exc:
+        return _redirect("/configuracion", error=str(exc))
+    except Exception:
+        log.error(
+            "Error generando el recibo de la compra #%s:\n%s",
+            compra_id,
+            traceback.format_exc(),
+        )
+        return _redirect(
+            "/configuracion",
+            error="No se pudo generar el recibo. Escríbenos y te lo enviamos.",
+        )
+
+    respuesta = _respuesta_pdf(
+        buffer, f"recibo-{numero_recibo(licencia)}-{organizacion.slug}.pdf"
+    )
+    respuesta.headers["Cache-Control"] = "no-store"
+    return respuesta

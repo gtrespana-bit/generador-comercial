@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{{ product_name }} — Presupuestos de construcción y remodelación para Venezuela</title>
-  <meta name="description" content="Presupuestos de obra profesionales en minutos. Más de 3.000 partidas clasificadas con precios en USD contrastados con el mercado venezolano. PDF con tu logo, versiones, aprobaciones y cobros.">
+  <meta name="description" content="{% if hay_prueba_gratuita() %}Pruébalo {{ dias_de_prueba() }} días gratis, sin tarjeta. {% endif %}Presupuestos de obra profesionales en minutos. Más de 3.000 partidas clasificadas con precios en USD contrastados con el mercado venezolano. PDF con tu logo, versiones, aprobaciones y cobros.">
   <link rel="icon" type="image/png" href="/static/icono.png">
   <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
   <link rel="stylesheet" href="{{ 'css/public.css' | asset }}">
@@ -23,7 +23,11 @@
   </a>
   <div class="nav-links">
     <a class="entrar" href="/acceso">Iniciar sesión</a>
+    {% if hay_prueba_gratuita() %}
+    <a class="btn btn-primary" href="/acceso">Probar {{ dias_de_prueba() }} días gratis</a>
+    {% else %}
     <a class="btn btn-primary" href="/pago">Ver planes</a>
+    {% endif %}
   </div>
 </nav>
 
@@ -31,12 +35,22 @@
   <div class="hero-int">
     <div class="hero-copy">
       <span class="hero-kicker">🇻🇪 Hecho para Venezuela · Construcción y remodelación</span>
+      {% if hay_prueba_gratuita() %}
+      <span class="hero-prueba">✨ {{ dias_de_prueba() }} días gratis · sin tarjeta de crédito</span>
+      {% endif %}
       <h1>Presupuestos de obra <span class="hero-hl">profesionales</span>, en minutos.</h1>
       <p class="sub">{{ product_name }} convierte tu catálogo y tus precios en presupuestos con su <strong>margen de beneficio</strong>, las <strong>horas de tu cuadrilla</strong> y un PDF con tu logo listo para enviar. Sin Excel, sin pegar y copiar.</p>
       <div class="acciones">
+        {% if hay_prueba_gratuita() %}
+        <a class="btn btn-primary" href="/acceso">Empezar mis {{ dias_de_prueba() }} días gratis</a>
+        {% else %}
         <a class="btn btn-primary" href="/pago">Ver planes</a>
+        {% endif %}
         <a class="btn btn-secondary" href="/static/pdf/presupuesto-ejemplo.pdf" target="_blank" rel="noopener">Ver un presupuesto de ejemplo (PDF)</a>
       </div>
+      {% if hay_prueba_gratuita() %}
+      <p class="hero-letra-pequena">Acceso completo durante {{ dias_de_prueba() }} días. No pedimos tarjeta y no se cobra nada automáticamente.</p>
+      {% endif %}
       <ul class="hero-points">
         <li><span class="check">✓</span> Margen y beneficio en cada partida</li>
         <li><span class="check">✓</span> Tiempo de obra y horas de tu cuadrilla</li>
@@ -696,7 +710,7 @@
 <section class="franja">
   <h2>De cero a tu primer presupuesto en menos de 20 minutos</h2>
   <ul class="pasos">
-    <li>Crea tu cuenta y tu organización: nombre de tu empresa, moneda e IVA.</li>
+    <li>Crea tu cuenta y tu organización: nombre de tu empresa, moneda e IVA.{% if hay_prueba_gratuita() %} Tus {{ dias_de_prueba() }} días gratis empiezan aquí.{% endif %}</li>
     <li>Parte de un catálogo con miles de partidas o importa el tuyo desde Excel.</li>
     <li>Crea el cliente, arma el presupuesto por capítulos y descarga el PDF con tu logo.</li>
   </ul>
@@ -706,6 +720,13 @@
 <section id="precios">
   <h2>Precio de lanzamiento</h2>
   <p class="intro">Oferta fundadora para las primeras empresas. El precio contratado se respeta durante todo el período pagado.</p>
+  {% if hay_prueba_gratuita() %}
+  <div class="prueba-destacada">
+    <h3>Empieza con {{ dias_de_prueba() }} días gratis</h3>
+    <p>Acceso completo a todas las funciones, con tus propios datos. <strong>No pedimos tarjeta de crédito</strong> y no se cobra nada al terminar: si no eliges un plan, tu cuenta simplemente deja de generar presupuestos nuevos y tus datos siguen ahí.</p>
+    <a class="btn btn-primary" href="/acceso">Crear mi cuenta gratis</a>
+  </div>
+  {% endif %}
   <div class="precios">
     <a class="plan destacado" href="/pago">
       <span class="etiqueta">PROMOCIÓN INICIAL</span>
@@ -713,6 +734,7 @@
       <div class="cifra">89 US$ <small>/ año</small></div>
       <p><span class="antes">109 US$ / año</span> — precio habitual</p>
       <ul>
+        {% if hay_prueba_gratuita() %}<li>Empieza con {{ dias_de_prueba() }} días gratis</li>{% endif %}
         <li>Todas las funciones incluidas</li>
         <li>Configuración asistida de tu empresa y catálogo</li>
         <li>Soporte directo por email</li>
@@ -725,6 +747,7 @@
       <div class="cifra">9,99 US$ <small>/ mes el primer año</small></div>
       <p><span class="antes">12,99 US$ / mes</span> — precio habitual</p>
       <ul>
+        {% if hay_prueba_gratuita() %}<li>Empieza con {{ dias_de_prueba() }} días gratis</li>{% endif %}
         <li>Todas las funciones incluidas</li>
         <li>Sin permanencia: cancela cuando quieras</li>
         <li>Soporte directo por email</li>
@@ -732,7 +755,7 @@
     </a>
   </div>
   <div class="nota-honesta">
-    <strong>Honestidad por delante:</strong> {{ product_name }} está en acceso anticipado. Los documentos que genera son documentos comerciales, no facturas fiscales. Antes de cobrarte nada podrás probar el producto con tus propios datos y sabrás exactamente qué recibes.
+    <strong>Honestidad por delante:</strong> {{ product_name }} está en acceso anticipado. Los documentos que genera son documentos comerciales, no facturas fiscales.{% if hay_prueba_gratuita() %} Pruébalo {{ dias_de_prueba() }} días con tus propios datos antes de pagar nada: sabrás exactamente qué recibes.{% endif %}
   </div>
 </section>
 
@@ -740,8 +763,13 @@
   <h2>¿Listo para dejar de presupuestar a mano?</h2>
   <p class="intro">{{ product_name }} convierte tu catálogo, tus precios y tu cuadrilla en presupuestos con tu margen de beneficio, tu tiempo de obra y tu PDF con tu logo. Sin Excel, sin pegar y copiar.</p>
   <div class="acciones mt-3">
+    {% if hay_prueba_gratuita() %}
+    <a class="btn btn-primary" href="/acceso">Empezar mis {{ dias_de_prueba() }} días gratis</a>
+    <a class="btn btn-secondary" href="/pago">Ver planes</a>
+    {% else %}
     <a class="btn btn-primary" href="/pago">Ver planes y empezar</a>
     <a class="btn btn-secondary" href="/acceso">Iniciar sesión</a>
+    {% endif %}
   </div>
 </section>
 

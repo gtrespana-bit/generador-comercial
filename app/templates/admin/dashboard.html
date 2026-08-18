@@ -85,6 +85,43 @@
     .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
     .grid-full{grid-column:1/-1}
     @media(max-width:640px){.grid-2{grid-template-columns:1fr}}
+
+    /* Ficha de acciones por cliente: se despliega en la propia fila, para
+       que conceder o suspender sea un gesto sobre el cliente que se está
+       mirando y no una búsqueda en un formulario aparte. */
+    tbody tr.fila-cliente{cursor:pointer}
+    tbody tr.fila-cliente:focus-visible{outline:2px solid #0b5b38;outline-offset:-2px}
+    .chev{display:inline-block;width:14px;color:#8aa79a;font-size:.8rem;transition:transform .15s}
+    tr.abierta .chev{transform:rotate(90deg);color:#0b5b38}
+    tr.abierta{background:#f2f8f4}
+    tr.fila-acciones.oculta{display:none}
+    tr.fila-acciones>td{background:#f7faf8;border-bottom:2px solid #e4ede8;padding:0}
+    .acc{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:16px;padding:18px}
+    .acc-bloque{background:#fff;border:1px solid #e4ede8;border-radius:12px;padding:14px 15px}
+    .acc-bloque.peligro{border-color:#f2c6c9;background:#fffafa}
+    .acc-bloque h3{margin:0 0 4px;font-size:.82rem;text-transform:uppercase;letter-spacing:.04em;color:#3c5a4c}
+    .cnt-mini{font-size:.72rem;color:#0b5b38;background:#e6f2ec;border-radius:999px;padding:2px 8px;margin-left:4px}
+    .acc-nota{margin:0 0 10px;color:#7c9186;font-size:.79rem;line-height:1.45}
+    .acc-botones{display:flex;flex-wrap:wrap;gap:8px}
+    .acc-botones form{margin:0}
+    .acc-botones button{display:flex;flex-direction:column;align-items:flex-start;gap:1px;line-height:1.2}
+    .acc-botones button small{font-weight:600;font-size:.7rem;opacity:.8}
+    button.alt{background:#fff;color:#0b5b38;border:1.5px solid #c8d6cf}
+    button.alt:hover{background:#eef5f1}
+    .acc-campos{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}
+    .acc-campos label{margin:8px 0 4px;font-size:.74rem}
+    .acc-campos input,.acc-campos select{padding:7px 8px;font-size:.83rem}
+    .acc-form button{margin-top:12px}
+    .acc-form-linea{display:flex;gap:8px;flex-wrap:wrap}
+    .acc-form-linea input{flex:1;min-width:150px;font-size:.83rem;padding:7px 9px}
+    .hist{margin:0;padding-left:0;list-style:none;max-height:220px;overflow-y:auto}
+    .hist li{font-size:.79rem;color:#5a7165;padding:6px 0;border-bottom:1px solid #f0f5f2;line-height:1.6}
+    .hist li:last-child{border-bottom:0}
+    .hist a{color:#0b5b38;font-weight:700}
+    form.inline{display:inline}
+    button.link{background:none;color:#9b2529;padding:0;margin:0;font-size:.76rem;font-weight:700;text-decoration:underline}
+    button.link:hover{background:none;color:#7d1e22}
+    @media(max-width:640px){.acc-campos{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
@@ -167,9 +204,11 @@
         </thead>
         <tbody>
           {% for fila in resumen.filas %}
-          <tr data-estado="{{ fila.estado }}">
-            <td data-sort-key="cliente" data-text="{{ fila.organizacion.nombre | lower }}">
-              <span class="org-nombre">{{ fila.organizacion.nombre }}</span>
+          {% set org = fila.organizacion %}
+          <tr class="fila-cliente" data-estado="{{ fila.estado }}" data-org="{{ org.id }}" tabindex="0" aria-expanded="false" aria-controls="acc-{{ org.id }}">
+            <td data-sort-key="cliente" data-text="{{ org.nombre | lower }}">
+              <span class="chev" aria-hidden="true">▸</span>
+              <span class="org-nombre">{{ org.nombre }}</span>
               {% for email in fila.emails[:2] %}<span class="org-mail">{{ email }}</span>{% endfor %}
             </td>
             <td data-sort-key="plan" data-text="{{ fila.plan_label | lower }}">{{ fila.plan_label }}{% if fila.metodo_cobro %}<span class="muted"> · {{ fila.metodo_cobro }}</span>{% endif %}</td>
@@ -182,6 +221,128 @@
               {% else %}<span class="pill off">{{ fila.estado_label }}</span>{% endif %}
             </td>
             <td data-sort-key="ingresos" data-num="{{ fila.ingresos }}">{{ "%.2f"|format(fila.ingresos) }}</td>
+          </tr>
+          <tr class="fila-acciones oculta" id="acc-{{ org.id }}" data-de="{{ org.id }}">
+            <td colspan="6">
+              <div class="acc">
+
+                <div class="acc-bloque">
+                  <h3>{% if fila.vigente %}Renovar{% else %}Conceder acceso{% endif %}</h3>
+                  <p class="acc-nota">{% if fila.vigente %}Se encadena al final del acceso actual ({{ fila.vence.strftime("%d/%m/%Y") if fila.vence else "—" }}): renovar nunca resta días.{% else %}Empieza hoy mismo.{% endif %}</p>
+                  <div class="acc-botones">
+                    <form method="POST" action="/admin/organizaciones/{{ org.id }}/conceder">
+                      <input type="hidden" name="volver" value="/admin">
+                      <input type="hidden" name="origen" value="pago">
+                      <input type="hidden" name="duracion" value="1a">
+                      <button type="submit">Pago · 1 año <small>89 US$</small></button>
+                    </form>
+                    <form method="POST" action="/admin/organizaciones/{{ org.id }}/conceder">
+                      <input type="hidden" name="volver" value="/admin">
+                      <input type="hidden" name="origen" value="pago">
+                      <input type="hidden" name="duracion" value="1m">
+                      <button type="submit">Pago · 1 mes <small>9,99 US$</small></button>
+                    </form>
+                    <form method="POST" action="/admin/organizaciones/{{ org.id }}/conceder">
+                      <input type="hidden" name="volver" value="/admin">
+                      <input type="hidden" name="origen" value="prueba">
+                      <input type="hidden" name="duracion" value="7d">
+                      <button class="alt" type="submit">Prueba · 7 días</button>
+                    </form>
+                    <form method="POST" action="/admin/organizaciones/{{ org.id }}/conceder">
+                      <input type="hidden" name="volver" value="/admin">
+                      <input type="hidden" name="origen" value="cortesia">
+                      <input type="hidden" name="duracion" value="1m">
+                      <button class="alt" type="submit">Cortesía · 1 mes</button>
+                    </form>
+                  </div>
+                </div>
+
+                <div class="acc-bloque">
+                  <h3>Caso especial</h3>
+                  <p class="acc-nota">Otro importe, referencia del cobro o una nota interna.</p>
+                  <form class="acc-form" method="POST" action="/admin/organizaciones/{{ org.id }}/conceder">
+                    <input type="hidden" name="volver" value="/admin">
+                    <div class="acc-campos">
+                      <div>
+                        <label for="o-{{ org.id }}">Tipo</label>
+                        <select id="o-{{ org.id }}" name="origen">
+                          <option value="pago">Pago</option>
+                          <option value="prueba">Prueba</option>
+                          <option value="cortesia">Cortesía</option>
+                          <option value="compensacion">Compensación</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label for="d-{{ org.id }}">Duración</label>
+                        <select id="d-{{ org.id }}" name="duracion">
+                          <option value="7d">7 días</option>
+                          <option value="1m">1 mes</option>
+                          <option value="3m">3 meses</option>
+                          <option value="6m">6 meses</option>
+                          <option value="1a" selected>1 año</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label for="i-{{ org.id }}">Importe (USD)</label>
+                        <input id="i-{{ org.id }}" name="importe" type="number" min="0" step="0.01" placeholder="según el plan">
+                      </div>
+                      <div>
+                        <label for="m-{{ org.id }}">Método</label>
+                        <input id="m-{{ org.id }}" name="metodo_cobro" placeholder="Zelle, Binance…">
+                      </div>
+                      <div>
+                        <label for="r-{{ org.id }}">Referencia</label>
+                        <input id="r-{{ org.id }}" name="referencia" placeholder="nº de operación">
+                      </div>
+                      <div>
+                        <label for="n-{{ org.id }}">Nota interna</label>
+                        <input id="n-{{ org.id }}" name="notas" placeholder="acuerdo, motivo…">
+                      </div>
+                    </div>
+                    <button type="submit">Registrar licencia</button>
+                  </form>
+                </div>
+
+                {% if fila.vigente %}
+                <div class="acc-bloque peligro">
+                  <h3>Suspender acceso</h3>
+                  <p class="acc-nota">Cancela <strong>todo el acceso vigente</strong> de este cliente, incluidas las renovaciones encadenadas. Los datos no se borran; puedes volver a conceder acceso cuando quieras.</p>
+                  <form class="acc-form-linea" method="POST" action="/admin/organizaciones/{{ org.id }}/suspender" data-confirmar="Se cancelará todo el acceso vigente de «{{ org.nombre }}». ¿Continuar?">
+                    <input type="hidden" name="volver" value="/admin">
+                    <input name="motivo" placeholder="Motivo (queda anotado)" aria-label="Motivo de la suspensión">
+                    <button class="risk" type="submit">Suspender</button>
+                  </form>
+                </div>
+                {% endif %}
+
+                <div class="acc-bloque">
+                  <h3>Historial <span class="cnt-mini">{{ fila.licencias | length }}</span></h3>
+                  {% if fila.licencias %}
+                  <ul class="hist">
+                    {% for licencia in fila.licencias %}
+                    <li>
+                      <span class="pill {{ 'ok' if licencia.estado == 'activa' else ('bad' if licencia.estado == 'cancelada' else 'off') }}">{{ licencia.estado }}</span>
+                      {{ licencia.inicio.strftime("%d/%m/%Y") }} → {{ licencia.vence.strftime("%d/%m/%Y") }} ·
+                      {{ licencia.origen }}{% if licencia.importe %} · {{ "%.2f"|format(licencia.importe) }} {{ licencia.moneda }}{% endif %}
+                      {% if licencia.origen == 'pago' and licencia.importe > 0 %}
+                      · <a href="/admin/licencias/{{ licencia.id }}/recibo.pdf">recibo PDF</a>
+                      {% endif %}
+                      {% if licencia.estado != 'cancelada' %}
+                      <form class="inline" method="POST" action="/admin/licencias/{{ licencia.id }}/cancelar" data-confirmar="Se cancelará esta licencia concreta. ¿Continuar?">
+                        <input type="hidden" name="volver" value="/admin">
+                        <button class="link" type="submit">cancelar</button>
+                      </form>
+                      {% endif %}
+                    </li>
+                    {% endfor %}
+                  </ul>
+                  {% else %}
+                  <p class="acc-nota">Sin licencias todavía.</p>
+                  {% endif %}
+                </div>
+
+              </div>
+            </td>
           </tr>
           {% else %}
           <tr><td colspan="6" class="vac">Aún no hay clientes registrados.</td></tr>

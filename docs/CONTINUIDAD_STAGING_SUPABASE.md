@@ -102,6 +102,15 @@ y `git diff --check`. `.env` y `presupuestos.db` no forman parte del repositorio
 > `docs/staging_upgrade_d4e2f6a8b0c1.sql` (confirmado por el titular);
 > `/readyz` vuelve a responder `"alembic": "head:d4e2f6a8b0c1"` tras el
 > despliegue.
+>
+> **Actualización 18/08/2026 (tarde):** el head exigido pasa a
+> `c7f1a3b9d425` (la compra guarda el período concedido —
+> `licencia_inicio` / `licencia_vence` — para que el propio comprador
+> pueda descargar su recibo en PDF sin tocar `licencias`, reservada al
+> operador por RLS). **Pendiente de aplicar en Supabase** con
+> `docs/staging_upgrade_c7f1a3b9d425.sql` tras el despliegue; `/readyz`
+> responderá 503 hasta entonces. El script hace backfill de las compras
+> ya activadas a partir de su licencia enlazada.
 - La raíz `/` redirige correctamente a `/acceso` (pantalla de inicio de sesión).
 - Diagnóstico y resolución de errores iniciales de Vercel:
   1. `alembic_version` estaba vacía / filtrada por RLS para roles no superusuario.
@@ -143,6 +152,8 @@ Estado verificado de Supabase:
 Alembic remoto: d4e2f6a8b0c1 (aplicado el 18/08/2026 con
   docs/staging_upgrade_d4e2f6a8b0c1.sql; el resumen del plan suma las
   licencias encadenadas: final de la cadena, no la primera licencia)
+  → PENDIENTE: c7f1a3b9d425 (período de la compra para el recibo del
+    cliente; aplicar docs/staging_upgrade_c7f1a3b9d425.sql)
   ← a1b2c3d4e5f6 (hotfix de tipos, 18/08/2026)
   ← f9d4c2a7e5b3 / f4c1d8e37a95 (16/08/2026, RLS de licencias)
 Rol runtime: cotizat_runtime (NOSUPERUSER, NOBYPASSRLS, INHERIT, miembro de cotizat_app)

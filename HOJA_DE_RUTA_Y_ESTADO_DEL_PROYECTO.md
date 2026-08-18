@@ -1680,7 +1680,127 @@ Guía de uso y protección: `docs/PANEL_DE_OPERADOR.md`.
 ## Pendiente dentro de E1-060 (no bloqueante)
 
 - Recibo en PDF (espera a la decisión de cobro **E1-059**).
-- Corte automático de acceso al vencer (decisión de negocio; espera a E1-059).
+- ~~Corte automático de acceso al vencer~~ → implementado y **listo para
+  encenderse** (18/08/2026): ver la actualización al final de este documento.
 - Avisos de vencimiento por correo (hoy el panel marca el ámbar a 15 días).
 - **Mejora de la interfaz**: por decisión del titular (16/08/2026) el panel se
   queda deliberadamente simple por ahora; se mejorará más adelante.
+
+## Actualización 18/08/2026 — compra real verificada en staging y post-venta al cliente
+
+**Ensayo del flujo de compra real en staging: SUPERADO.** El titular
+recorrió en staging el flujo de compra real con cobro manual (E1-059 sobre la
+base de E1-060): `/pago` → checkout con método de pago y comprobante adjunto →
+compra `pendiente` → **activación desde `/admin/compras`** → el cliente ve «Tu
+plan» con fecha de vencimiento y días restantes. El cobro manual queda validado
+de extremo a extremo.
+
+El ensayo dejó dos huecos de post-venta, ya resueltos en este bloque:
+
+1. **Aviso de activación por email al comprador.** `POST /admin/compras/{id}/activar`
+   envía ahora `enviar_activacion_plan_por_email(...)` (plantillas
+   `app/templates/emails/plan_activado.html` / `.txt`) con plan, importe, método
+   de cobro, **inicio y vencimiento en `dd/mm/aaaa`** (también en el asunto) y el
+   **recibo PDF adjunto**. El envío es best-effort: si Resend falla, la licencia
+   sigue activa y el operador ve el error en el panel.
+2. **Recibo PDF descargable por el cliente.** Nueva ruta
+   `GET /pago/recibo/{compra_id}.pdf` (attachment, `Cache-Control: no-store`) y
+   enlace «Descargar recibo (PDF)» en la tarjeta «Tu plan» de `/configuracion`.
+   Como `licencias` solo es legible por sesiones de operador (RLS
+   `f4c1d8e37a95`), la migración **`c7f1a3b9d425`** copia el período concedido a
+   `compras_plan` (`licencia_inicio` / `licencia_vence`, con backfill) y la ruta
+   del cliente reutiliza el mismo generador de `app/services/recibo_licencia.py`.
+
+Con esto se cierra el punto «Recibo en PDF» que E1-060 dejaba pendiente a la
+espera de E1-059. Suite: **568 passed, 6 skipped**.
+
+**Operativo:** `docs/staging_upgrade_c7f1a3b9d425.sql` **aplicado en Supabase**
+el 18/08/2026; `/readyz` vuelve a 200.
+
+
+## Actualización 18/08/2026 (tarde) — el corte por licencia, listo para encenderse
+
+Aplicada ya la migración `c7f1a3b9d425`, se abordó el último pendiente del
+bloque de cobro: activar `COTIZAT_EXIGIR_LICENCIA=true`.
+
+**El fallo que había que corregir antes.** El corte se aplica en `get_db`, la
+puerta común de todas las rutas de organización, y las rutas de compra colgaban
+de ella. Con la licencia vencida, `/pago/comprar` (GET y POST), la confirmación
+y el recibo devolvían **403 «Acceso suspendido»**: la organización suspendida
+leía en pantalla que podía renovar y, al intentarlo, chocaba con la misma
+pared. La suspensión era una trampa sin salida y toda renovación habría acabado
+en soporte, a mano — justo lo que el circuito de compra vino a evitar.
+
+**La corrección.** Nueva dependencia **`get_db_renovacion`** en
+`app/database.py`: idéntica a `get_db` (sesión, membresía, organización activa,
+RLS de tenant) pero **sin** comprobar la vigencia. La usan **solo** las cuatro
+rutas de compra de `app/routers/pagos.py`, que no exponen ningún dato de
+negocio; el resto del producto sigue cortándose igual. La pantalla «Acceso
+suspendido» gana el botón **«Renovar mi plan»**.
+
+**Cómo queda protegido.** Cuatro regresiones en `tests/test_licencias_acceso.py`:
+la organización suspendida llega al checkout y registra la compra, el resto de
+rutas siguen cortadas, y un test estructural recorre el árbol de rutas exigiendo
+que **exactamente** las rutas de compra usen la puerta sin corte — ni una de
+más ni una de menos. Se verificó que el test muerde: revirtiendo `pagos.py` a
+`get_db`, la suite falla.
+
+Suite: **573 passed, 6 skipped** *(cifra de esa tarde; el total vigente está en
+la última sección del documento)*.
+
+**Pendiente operativo (en este orden).** 1) Conceder licencia de **cortesía** a
+la organización del titular desde `/admin/licencias` — si no, al encender el
+interruptor el titular se corta a sí mismo. 2) Fijar
+`COTIZAT_EXIGIR_LICENCIA=true` en Vercel y redesplegar. 3) Comprobar
+`"licencias": "exigida"` en `/readyz`. Detalle en `docs/PANEL_DE_OPERADOR.md`
+§8 y `docs/PROCESO_PILOTOS.md` §0.
+
+> **Corrección posterior (18/08/2026, noche).** El paso 1 **no** era un
+> prerrequisito: el panel `/admin/*` cuelga de `get_operator_db`, que no
+> comprueba licencia, así que el operador entra aunque su propia organización
+> esté suspendida y puede concederse la cortesía en cualquier momento. Sin
+> riesgo de quedarse fuera. Lo verdaderamente bloqueante era la migración —y
+> ahora, además, que el **PR #38 esté desplegado** antes de encender el corte.
+
+
+## Actualización 18/08/2026 (noche) — la prueba gratuita se anuncia; PR #38 listo para fusionar
+
+Cierre del bloque de cobro y licencias. **PR #38**, 6 commits, cabeza
+`b73b56d`, sobre `main` en `00cfec0`. Suite: **642 passed, 6 skipped**.
+
+**Lo que faltaba y era puramente comercial.** La prueba de 7 días funcionaba en
+el registro desde la mañana, pero **ninguna página la mencionaba**. Nadie
+llegaba a pedirla, y encima toda la landing empujaba a `/pago`, que es el
+destino equivocado para quien viene a probar gratis. Ahora se anuncia en los
+cuatro puntos donde alguien decide —landing (`/` y `/conocer`), `/pago` y
+`/acceso`— y el CTA del hero apunta a `/acceso`, donde está el registro real.
+
+**La decisión técnica que importa.** El anuncio cuelga de dos globales de Jinja
+(`dias_de_prueba`, `hay_prueba_gratuita`) que son **funciones, no valores**:
+Jinja cachea la plantilla compilada, no su resultado, así que se evalúan en
+cada render. Apagar `COTIZAT_DIAS_PRUEBA` retira el anuncio de las cuatro
+páginas y la landing revierte a «Ver planes» **sin redesplegar**. Un test lo
+recorre con la prueba apagada, porque el día que se retire la oferta lo que no
+puede pasar es que la web siga prometiéndola. En `/pago` el bloque se omite si
+llega un aviso: quien viene rebotado ya agotó la prueba.
+
+**Un fallo de proceso que conviene recordar.** El commit anterior (`fbc3c26`)
+se subió con la suite en rojo: 42 hallazgos de la auditoría E1-021 por ejemplos
+de correo verosímiles. La causa es que **el auditor solo revisa archivos ya
+versionados**, así que no vio los ejemplos hasta que estuvieron commiteados. Se
+arregló sin vaciar la regla —nombres de fantasía y una exención estrecha sobre
+la parte local, no 42 excepciones— y la lección quedó escrita en
+`docs/DATOS_SENSIBLES.md` §4. De paso apareció una doctest que mentía:
+**`pytest` no ejecuta doctests en este proyecto**, así que los `>>>` son
+documentación que nadie verifica; queda sin decidir si añadir
+`--doctest-modules`.
+
+**Pendiente operativo, en este orden.** 1) Fusionar el PR #38 y esperar al
+despliegue. 2) Comprobar `"alembic": "head:a3d9c1e75b28"` en `/readyz`. 3)
+`COTIZAT_EXIGIR_LICENCIA=true` en Vercel (Production). 4) **Redeploy**. 5)
+Verificar `"licencias": "exigida"`. La migración y la licencia de cortesía
+**ya están hechas**. El orden importa: encender el corte antes de desplegar
+este PR dejaría suspendida a toda organización recién registrada, porque la
+prueba que las cubre viaja aquí. Para revertir, `false` y redeploy: el
+interruptor no altera ningún dato. Detalle en `docs/PUNTO_DE_CONTINUACION.md`
+(sección «EMPEZAR AQUÍ») y `docs/COBRO_Y_LICENCIAS.md` §5.5-5.6.

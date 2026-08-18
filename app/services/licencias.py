@@ -248,6 +248,47 @@ def licencia_vigente(
     return None
 
 
+def suspender_organizacion(
+    db: Session,
+    *,
+    organizacion_id: int,
+    motivo: str = "",
+    operador_email: str = "",
+    hoy: date | None = None,
+) -> list[Licencia]:
+    """Corta el acceso de una organización **ya**, en una sola operación.
+
+    Cancelar licencia por licencia no basta para cortar el acceso: al
+    encadenarse las renovaciones, una organización puede tener varias activas
+    y quedarse dentro por la siguiente de la cadena. Esta función cancela
+    todas las que cubren hoy o empiezan más adelante, que es lo que el
+    operador quiere decir cuando pulsa «suspender».
+
+    Devuelve las licencias canceladas (vacío si no había ninguna que cortar).
+    """
+    hoy = hoy or date.today()
+    _exigir_organizacion(db, organizacion_id)
+
+    afectadas = [
+        licencia
+        for licencia in licencias_de_organizacion(db, organizacion_id, hoy=hoy)
+        if licencia.estado == "activa" and licencia.vence >= hoy
+    ]
+    if not afectadas:
+        raise GestionLicenciaError(
+            "Esa organización no tiene ningún acceso vigente que suspender."
+        )
+
+    for licencia in afectadas:
+        cancelar_licencia(
+            db,
+            licencia_id=licencia.id,
+            motivo=motivo,
+            operador_email=operador_email,
+        )
+    return afectadas
+
+
 def resumen_organizaciones(
     db: Session, *, hoy: date | None = None, dias_aviso: int = 15
 ) -> list[dict]:
