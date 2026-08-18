@@ -143,6 +143,7 @@ from ..services.licencias import (
     enviar_avisos_vencimiento,
     exigencia_licencia_activada,
     resumen_organizaciones,
+    suspender_organizacion,
     totales,
 )
 from ..services.recibo_licencia import (

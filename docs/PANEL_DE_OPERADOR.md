@@ -374,3 +374,73 @@ suite.
    organización no.
 2. `COTIZAT_EXIGIR_LICENCIA=true` en Vercel (Production) + redeploy.
 3. Verificar en `/readyz` que aparece `"licencias": "exigida"`.
+
+---
+
+## 9. Gestionar un cliente en dos clics (18/08/2026)
+
+El panel ya mostraba todo lo necesario, pero **actuar** costaba demasiado. Para
+conceder o retirar acceso había que bajar hasta el formulario del final,
+localizar la organización en un desplegable, rellenar cinco campos y enviar.
+Con un cliente da igual; con cincuenta, cada gestión trivial se convierte en
+cuatro o cinco gestos y en el riesgo real de operar sobre la fila equivocada:
+el desplegable no sabe en qué cliente estabas mirando.
+
+Ahora la unidad de trabajo es **la fila del cliente**.
+
+### Cómo se usa
+
+1. **Clic en la fila** del cliente (o `Enter` si se navega con el teclado).
+   Debajo se despliega su ficha, con la fila resaltada y el chevron girado.
+2. **Clic en la acción**. Y ya está.
+
+La ficha tiene cuatro bloques:
+
+| Bloque | Para qué |
+| --- | --- |
+| **Conceder / Renovar** | Cuatro botones de un solo clic: pago 1 año, pago 1 mes, prueba 7 días, cortesía 1 mes. El importe lo pone el plan publicado; no se teclea. |
+| **Caso especial** | El formulario completo de siempre (tipo, duración, importe atípico, método, referencia, nota) para lo que se sale de lo normal. |
+| **Suspender acceso** | Corta el acceso del cliente. Solo aparece si hay algo vigente que cortar. Pide confirmación. |
+| **Historial** | Sus licencias con estado, recibo PDF de las de pago y cancelación individual. |
+
+El título del primer bloque cambia según el caso: dice **Renovar** y recuerda
+la fecha de fin cuando el cliente ya tiene acceso, porque una renovación se
+encadena al final del período vigente y no resta días.
+
+### Suspender actúa sobre la cadena, no sobre una licencia
+
+Cancelar una licencia suelta **no** corta el acceso: al encadenarse las
+renovaciones, una organización puede tener varias activas y seguir dentro por
+la siguiente. Ese es el fallo silencioso peligroso: el operador cree haber
+suspendido y el cliente sigue trabajando.
+
+Por eso `suspender_organizacion` (`app/services/licencias.py`) cancela **todas**
+las licencias activas que cubren hoy o empiezan después, y el mensaje dice
+cuántas fueron. Si no había ninguna vigente, avisa en vez de callar.
+
+Suspender **no borra datos**: se puede volver a conceder acceso en cualquier
+momento, y el propio cliente puede renovarse solo (§8).
+
+### Detalles de implementación
+
+- Rutas nuevas: `POST /admin/organizaciones/{id}/conceder` y
+  `POST /admin/organizaciones/{id}/suspender`. La organización viaja **en la
+  URL**, que es lo que elimina el desplegable y el error de fila.
+- El campo `volver` decide a qué panel se regresa, contra una **lista blanca**
+  (`_DESTINOS_PANEL` en `app/routers/admin.py`). Un `volver` externo se ignora
+  y cae a `/admin`: un parámetro de retorno sin filtrar es una redirección
+  abierta.
+- El despliegue de la ficha vive en `app/static/js/admin-panel.js`, sin
+  `innerHTML` ni estilos en línea (la CSP del proyecto usa `nonce`). Las
+  acciones son formularios POST normales: **sin JavaScript el panel sigue
+  siendo operativo**, solo que las fichas aparecen desplegadas.
+- Al ordenar o filtrar la tabla, cada ficha se mueve pegada a su fila; nunca
+  puede quedar bajo el cliente equivocado.
+
+### Pruebas
+
+En `tests/test_licencias.py`, siete pruebas nuevas: que cada fila trae su ficha
+enlazada por `aria-controls`, que conceder no exige elegir organización ni
+teclear el importe, que una prueba no cobra, que suspender corta la cadena
+entera, que suspender sin acceso vigente avisa, que las rutas rápidas son solo
+de operador y que `volver` no admite destinos externos.
