@@ -481,3 +481,85 @@ def test_el_panel_no_expone_datos_de_negocio_del_cliente(entorno, monkeypatch):
         respuesta = client.get("/admin/licencias")
 
     assert "Cliente Confidencial" not in respuesta.text
+
+
+# ---------------------------------------------------------------------------
+# Panel de administración premium (/admin)
+# ---------------------------------------------------------------------------
+
+
+def test_el_panel_admin_es_el_hub_del_operador(entorno, monkeypatch):
+    """/admin muestra clientes, planes, fechas y compras en una sola vista."""
+    Session, datos, estado = entorno
+    monkeypatch.setenv("COTIZAT_OPERADORES", "titular@example.com")
+    from datetime import date
+
+    with Session() as db:
+        db.add(Licencia(
+            organizacion_id=datos["organizacion_id"],
+            estado="activa", origen="pago",
+            inicio=date(2026, 8, 1), vence=date(2026, 9, 1),
+            importe=9.99, metodo_cobro="Pago móvil",
+        ))
+        db.commit()
+
+    with _cliente() as client:
+        r = client.get("/admin")
+
+    assert r.status_code == 200
+    assert "Panel de administración" in r.text
+    assert "Constructora Cliente" in r.text
+    assert "Caducidad" in r.text
+    assert "data-sort" in r.text          # tabla ordenable
+    assert "filtro-estado" in r.text      # filtros
+    assert "admin-panel.js" in r.text     # JS del panel
+    assert "Mensual" in r.text or "Anual" in r.text
+
+
+def test_el_panel_admin_es_solo_de_operador(entorno, monkeypatch):
+    Session, datos, estado = entorno
+    monkeypatch.setenv("COTIZAT_OPERADORES", "titular@example.com")
+    estado["email"] = "cliente@example.com"
+
+    with _cliente() as client:
+        r = client.get("/admin", follow_redirects=False)
+
+    assert r.status_code in (302, 303, 403)
+    assert "Panel de administración" not in r.text
+
+
+def test_panel_admin_muestra_compras_pendientes_y_activacion(entorno, monkeypatch):
+    Session, datos, estado = entorno
+    monkeypatch.setenv("COTIZAT_OPERADORES", "titular@example.com")
+    from app.services.compras import crear_compra
+
+    compra_id = None
+    with Session() as db:
+        db.info["organizacion_id"] = datos["organizacion_id"]
+        compra = crear_compra(
+            db,
+            organizacion_id=datos["organizacion_id"],
+            plan="anual", metodo_pago="usdt",
+            datos_verificacion={"hash_transaccion": "TX-1"},
+            comprobante_reference="storage://organizaciones/1/comprobantes/r.png",
+            comprobante_nombre="r.png", comprobante_mime="image/png",
+            creada_por_usuario_id=datos["usuario_id"],
+            creada_por_email="cliente@example.com",
+        )
+        db.commit()
+        compra_id = compra.id
+
+    with _cliente() as client:
+        r = client.get("/admin")
+        assert r.status_code == 200
+        assert "Compras por activar" in r.text
+        assert "Anual" in r.text
+        assert f"compras/{compra_id}/activar" in r.text
+
+        r2 = client.post(f"/admin/compras/{compra_id}/activar", follow_redirects=False)
+        assert r2.status_code == 303
+
+    with Session() as db:
+        from app.models import CompraPlan
+        compra = db.get(CompraPlan, compra_id)
+        assert compra.estado == "activa"

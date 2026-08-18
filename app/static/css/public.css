@@ -568,6 +568,16 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
   margin-top: 2rem;
   max-width: 800px;
 }
+.landing a.plan {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s var(--ease-out), box-shadow 0.15s var(--ease-out), transform 0.15s var(--ease-out);
+}
+.landing a.plan:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
 .landing .plan {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -2287,7 +2297,19 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
   display: flex;
   gap: 1.5rem;
   justify-content: center;
+  align-items: stretch;
   flex-wrap: wrap;
+  max-width: 860px;
+  margin: 2rem auto 0;
+}
+.pago-page .pago-planes .plan {
+  flex: 1 1 300px;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+}
+.pago-page .pago-planes .plan .btn {
+  margin-top: auto;
 }
 
 .pago-page .pago-metodos {

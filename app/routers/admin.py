@@ -57,6 +57,26 @@ def panel_licencias(request: Request, db: Session = Depends(get_operator_db)):
     return _render_licencias(request, db)
 
 
+@router.get("/admin", response_class=HTMLResponse, include_in_schema=False)
+def panel_admin(request: Request, db: Session = Depends(get_operator_db)):
+    """Panel de administración premium: clientes, planes y compras en una vista."""
+    from ..services.panel_admin import resumen_admin
+
+    resumen = resumen_admin(db)
+    return TEMPLATES.TemplateResponse(
+        request,
+        "admin/dashboard.html",
+        {
+            "resumen": resumen,
+            "operador": db.info.get("auth_email", ""),
+            "exigencia_licencias": exigencia_licencia_activada(),
+            "msg": request.query_params.get("msg", ""),
+            "error": request.query_params.get("error", ""),
+        },
+        headers={"Cache-Control": "no-store"},
+    )
+
+
 @router.get("/admin/operacion", response_class=HTMLResponse, include_in_schema=False)
 def panel_operacion(request: Request, db: Session = Depends(get_operator_db)):
     """Diagnóstico operativo del despliegue (E3-024), solo para el operador.

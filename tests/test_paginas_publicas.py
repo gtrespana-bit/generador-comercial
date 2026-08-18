@@ -222,6 +222,13 @@ def test_pagina_pago_tiene_enlace_a_soporte():
     assert "/acceso" in r.text or "Iniciar sesi" in r.text
 
 
+def test_landing_planes_clickeables_a_pagina_de_pago():
+    """Las tarjetas de precios de la home llevan a la página de planes."""
+    r = _get("/")
+    assert 'class="plan destacado" href="/pago"' in r.text
+    assert 'class="plan" href="/pago"' in r.text
+
+
 def test_landing_enlaza_a_pagina_de_pago():
     """La landing ya no pide demostración: enlaza directamente a planes."""
     r = _get("/")
