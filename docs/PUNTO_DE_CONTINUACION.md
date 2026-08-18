@@ -236,7 +236,7 @@ de lanzar?»), se identificó el bloque **100 % recomendado** y se ejecutó:
   documentado). Queda como paso del titular tras fusionar (`cp docs/ci/ci.yml
   .github/workflows/ci.yml` + commit + push).
 
-Suite: **705 passed, 7 skipped** (33 pruebas nuevas). Cabeza Alembic:
+Suite: **694 passed, 7 skipped** (23 pruebas nuevas). Cabeza Alembic:
 **`b6d9e4c2a8f1`**.
 
 ### ⚠️ Al fusionar el PR #42 (pasos del titular)
@@ -285,7 +285,7 @@ tests (D-019)** y beta.
 | PR #41 | **MERGED** en `main` (`c9a5ab1`, 19/08/2026) — bloque Etapa 4 (E4-030/021/023) + E1-022 + decisiones + docs |
 | **PR #42** | **abierto hacia `main`** desde esta rama — E4-038 + E4-032 + E4-043 (procedimiento) + CI sync |
 | Último commit de `main` | `c9a5ab1` (merge del PR #41) |
-| Suite | **705 passed, 7 skipped** (verificada localmente el 19/08/2026, con el venv y `pytest -q`) |
+| Suite | **694 passed, 7 skipped** (verificada localmente el 19/08/2026, con el venv y `pytest -q`) |
 | Cabeza Alembic | **`b6d9e4c2a8f1`** (pendiente de aplicar en Supabase — `docs/staging_upgrade_b6d9e4c2a8f1.sql`) |
 | Producción | `COTIZAT_EXIGIR_LICENCIA=true` activo; cron de recordatorios operativo; cron de mantenimiento operativo tras el despliegue del PR #41; **la migración del consentimiento aún no está aplicada** |
 

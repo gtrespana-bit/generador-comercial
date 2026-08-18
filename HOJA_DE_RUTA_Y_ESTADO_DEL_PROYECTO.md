@@ -1961,6 +1961,6 @@ bloque:
   `docs/SIMULACRO_CAIDA_Y_RECUPERACION.md`; la ejecución queda para el titular
   antes del día final de tests (D-019).
 
-Suite: **705 passed, 7 skipped** (33 pruebas nuevas en
+Suite: **694 passed, 7 skipped** (23 pruebas nuevas en
 `tests/test_consentimiento.py` y ajustes de cadena de cabezas). Cabeza
 Alembic: `b6d9e4c2a8f1`.
