@@ -1,12 +1,158 @@
 # Punto exacto de continuación
 
-Fecha de corte: **17/08/2026, cierre de catálogo 3.006 + landing comercial con PR #32 abierto** (America/Caracas).
+Fecha de corte: **18/08/2026, checkout de planes + panel admin premium + gestión de organización, con PR #33 abierto** (America/Caracas).
 
 Este documento retoma el trabajo sin depender del historial del chat. Describe
 **dónde quedó exactamente** el trabajo y **qué sigue**, en ese orden. Léelo
 junto con `basedatos_partidas/EMPEZAR_AQUI.md` (reglas y progreso del catálogo),
 `basedatos_partidas/INVENTARIO.md` (cifras y contraste de precios) y
 `PLAN_DE_COMERCIALIZACION_Y_EVOLUCION_SAAS.md` (§1.9 y §11).
+
+---
+
+## ✅ Cierre de sesión — checkout de planes + panel admin premium + gestión de organización (18/08/2026)
+
+Rama fija de la sesión: `arena/01a012cd-generador-comercial`, basada en `main`
+(`88d3859`, merge del PR #32). **PR #33 creado hacia `main`:**
+https://github.com/gtrespana-bit/generador-comercial/pull/33 (confirmar con
+`gh pr view 33`; si ya está fusionado, `main` contiene el código).
+
+El bloque cierra tres frentes comerciales/operativos: **(1)** el cobro manual
+del piloto con checkout real dentro de la app, **(2)** un panel de operador
+premium y **(3)** la gestión de la organización visible y con permisos.
+
+### 1. Checkout de planes con pago manual (E1-059, cobro manual)
+
+Se descartó el `mailto:` como vía de compra (el cliente quiere *comprar ya*,
+no enviar una solicitud). El flujo completo dentro de la app:
+
+- **`GET /pago`** — planes anual (89 US$ / año) y mensual (9,99 US$ / mes),
+  lado a lado en escritorio, con botones que llevan al checkout.
+- **`GET /pago/comprar?plan=anual|mensual`** (requiere sesión y organización):
+  elige método de pago (tarjetas), ve los **datos del titular para pagar**,
+  completa los **campos de verificación del método** y adjunta el
+  **comprobante** (imagen PNG/JPG/WEBP o PDF, máx 12 MB).
+- **`POST /pago/comprar`** — valida, guarda el comprobante en storage privado
+  (categoría `comprobantes`, añadida a `_ALLOWED_CATEGORIES` en `app/storage.py`),
+  crea la compra `pendiente` y notifica por email a soporte con el comprobante
+  adjunto (`enviar_compra_por_email` en `app/services/email.py`, plantillas
+  `emails/compra.{html,txt}`).
+- **`GET /pago/confirmacion?id=X`** — resumen y estado pendiente.
+
+Métodos y datos (fijos, públicos por diseño) viven en **`app/datos_pago.py`**:
+
+| Método | Datos para pagar |
+|---|---|
+| Pago móvil | Banco Provincial · 0412-6443099 · V-20794917 |
+| Binance | ID 1090042241 |
+| Kontigo | +58412-3215016 |
+| USDT | TRC-20 · TPFa5x7jsUk4qw8Qfm1R1XXbPPCPRj8ZXy |
+
+Los números de teléfono están declarados como excepción legítima en
+`tools/auditar_datos_sensibles.py` (son canales públicos de cobro, no datos
+privados). Los importes 89/9,99 mapean al plan en `PLAN_POR_IMPORTE`
+(`app/services/panel_admin.py`) y a la duración de licencia `1a`/`1m`
+(`app/services/licencias.py`).
+
+**Modelo `CompraPlan`** (`app/models.py`, tabla `compras_plan`): tenant
+(pertenece a la organización compradora) con `plan`, `metodo_pago`, `importe`,
+`datos_verificacion` (JSON), `comprobante_*`, `estado`
+(`pendiente|activa|rechazada`), `licencia_id` y auditoría de revisión.
+**RLS**: INSERT tenant (el cliente crea su compra), SELECT tenant **o**
+operador, UPDATE solo operador, sin DELETE (historial íntegro).
+
+**Panel `/admin/compras`** (operador): ver comprobante (`GET
+/admin/compras/{id}/comprobante`, lee del storage con la referencia guardada
+porque el operador no tiene el tenant del comprador), activar (crea la
+licencia del plan con `crear_licencia` origen `pago`) o rechazar.
+
+### 2. Panel admin premium (`/admin`)
+
+Sustituye la idea de paneles sueltos por un **hub único** (`/admin`):
+
+- **KPIs**: clientes, con plan, sin plan, por vencer (15 días), compras por
+  activar e ingresos.
+- **Tabla "Clientes y planes"** ordenable por columna (cliente, plan, compra,
+  caducidad, estado, ingresos) y filtrable por texto/email y estado
+  (`app/static/js/admin-panel.js`, solo `classList`/`addEventListener`,
+  cumple CSP; el filtro oculta filas con clase `oculta` en vez de `.style`).
+- **Compras por activar** en línea: ver comprobante → activar / rechazar.
+- **Concesión manual** de licencia (prueba/cortesía/compensación/pago) plegable.
+- Datos: `resumen_admin()` en `app/services/panel_admin.py` (une
+  organizaciones + licencias + compras + emails de membresías).
+- Los enlaces antiguos `/admin/licencias`, `/admin/compras` y
+  `/admin/operacion` siguen funcionando; el hub enlaza entre ellos.
+
+### 3. Gestión de la organización (perfil de empresa)
+
+- **Nombre de la organización** (el del menú lateral) editable en
+  `/configuracion` (tarjeta "Tu organización"); al cambiar se regenera el slug
+  con unicidad (`_slug_organizacion_unico` en `app/routers/configuracion.py`).
+- **Permisos**: solo `propietario` y `administrador` editan (`puede_gestionar`
+  de `app/permisos.py`; en SQLite/escritorio el usuario local es el propietario
+  implícito). `miembro` y `lectura` ven la página en **solo lectura**
+  (`<fieldset disabled>`) y el POST se rechaza en el servidor.
+- **Estado del plan visible para el cliente**:
+  - Tarjeta **"Tu plan"** en `/configuracion`: plan, fecha de caducidad y días
+    restantes (o enlace a `/pago` si no hay plan).
+  - Píldora en el **menú lateral** (`base.html`): "✓ Plan mensual · 14 d" o
+    "Sin plan · Ver planes". El resumen se calcula en `get_db` y se expone como
+    `request.state.licencia_resumen`.
+  - Como la sesión del cliente **no puede leer `licencias`** (RLS de operador),
+    se creó la función **SECURITY DEFINER**
+    `cotizat_security.organization_license_info(p_organization_id)` (migración
+    `f9d4c2a7e5b3`) que solo devuelve la fila de la organización del propio
+    claim de sesión (`context_organization_id`). Servicio:
+    `resumen_licencia_cliente()` en `app/services/licencias.py`.
+- Accesos añadidos: enlace **"Editar empresa"** en el menú lateral, botón
+  **"Configurar empresa"** en `/cuenta` y en `/organizaciones` para la activa.
+
+### 4. Landing (retoques de conversión)
+
+- Las tarjetas de precios de la home ahora son **clickeables → `/pago`**.
+- El **formulario de demo fue eliminado** (el titular no hace demostraciones):
+  los botones "Solicitar demostración" pasaron a "Ver planes". El endpoint
+  `POST /demo`, la función `enviar_solicitud_demo_por_email` y las plantillas
+  `emails/demo.*` quedan **inactivos pero intactos** (reutilizables).
+
+### Migraciones del bloque (2, ambas YA aplicadas en Supabase por el titular)
+
+1. **`e5f2a8d31b6c`** — tabla `compras_plan` + RLS tenant/operador.
+   Script: `docs/staging_upgrade_e5f2a8d31b6c.sql`.
+2. **`f9d4c2a7e5b3`** — función `cotizat_security.organization_license_info`.
+   Script: `docs/staging_upgrade_f9d4c2a7e5b3.sql`.
+
+Head esperado por el runtime: **`f9d4c2a7e5b3`** (`EXPECTED_ALEMBIC_HEAD` en
+`app/database.py`, comprobado por `tests/test_rls.py`).
+
+### Estado y verificación
+
+- **543 tests pasando, 6 omitidos**; 72 plantillas Jinja; `compileall`;
+  `node --check`; lock de 42 paquetes; `git diff --check` limpio; auditoría de
+  datos sensibles sin hallazgos.
+- Smoke test end-to-end: `/pago` → `/pago/comprar` (método + comprobante) →
+  confirmación, con almacenamiento local.
+- Commits del bloque (en orden): `707f715` (checkout), `3949e2d` (panel admin
+  premium), `3ad6d8a` (edición de organización), `80c11e2` (permisos + plan
+  visible) y el commit documental del traspaso.
+
+### Pendientes / candidatos siguientes
+
+1. **Fusionar el PR #33 y desplegar `main`** (Vercel). Con las migraciones ya
+   aplicadas, `/readyz` debe volver a 200 tras el despliegue.
+2. **Ensayar el flujo de compra real en staging** con una organización de
+   prueba: comprar → comprobante → email → activar desde `/admin` → el cliente
+   ve "Tu plan" con fecha y días.
+3. Decisión pendiente del titular: **recibo PDF de la compra** para el cliente
+   (existe `recibo_licencia.py` para el panel; falta el equivalente para el
+   cliente) y **corte automático** (`COTIZAT_EXIGIR_LICENCIA=true`) — ya está
+   implementado el corte, falta la licencia de cortesía al titular y el switch
+   en Vercel (ver `docs/PANEL_DE_OPERADOR.md` §6 y `docs/PROCESO_PILOTOS.md`).
+4. Catálogo: objetivo amplio de **5.000 partidas** (brecha ~1.994) y cierre de
+   los **~196 precios provisionales B2B** (requiere cotización del titular).
+5. Decisión del titular sobre **revisar los rendimientos** de mano de obra del
+   catálogo (comentó que algunos "están fatal"; no se tocaron).
+6. Opcional: video/tour grabado (Loom) cuando el titular lo grabe.
 
 ---
 
@@ -538,32 +684,41 @@ Copiar tal cual, sin añadir secretos ni tokens:
 ---
 
 Continúa el proyecto CotizaT. Antes de proponer nada, lee
-`docs/PUNTO_DE_CONTINUACION.md` (sección «Cierre de sesión — catálogo 3.006 +
-landing comercial» primero) y `basedatos_partidas/EMPEZAR_AQUI.md`. No repitas
-trabajo ya hecho y no me pidas secretos.
+`docs/PUNTO_DE_CONTINUACION.md` (sección «Cierre de sesión — checkout de
+planes + panel admin premium + gestión de organización» primero) y
+`basedatos_partidas/EMPEZAR_AQUI.md`. No repitas trabajo ya hecho y no me
+pidas secretos.
 
-**Dónde quedó todo (17/08/2026, cierre con PR del titular).**
+**Dónde quedó todo (18/08/2026, cierre con PR del titular).**
 
-- Rama `arena/01a0108b-generador-comercial`, HEAD `971069c`, basada en `main`
-  (`e58a94d`, merge del PR #31). **PR #32 creado hacia `main`:**
-  https://github.com/gtrespana-bit/generador-comercial/pull/32 (confirmar
-  estado con `gh pr view 32`; si ya está fusionado, `main` contiene el código).
-- Contenido del bloque: catálogo propio ampliado de 540 a **3.006 partidas**
-  (18 capítulos, 0 subcapítulos sin cobertura), contraste de precios rondas
-  3–5, y **landing pública premium** (home = landing, hero, showcase con
-  presupuesto real de baño, margen/beneficio y tiempo de obra, tour animado e
-  imágenes de producto). `CATALOGO_VERSION = 3`.
-- Suite: **516 passed, 6 skipped**; `git diff --check` limpio.
+- Rama `arena/01a012cd-generador-comercial`, basada en `main` (`88d3859`,
+  merge del PR #32). **PR #33 creado hacia `main`:**
+  https://github.com/gtrespana-bit/generador-comercial/pull/33 (confirmar
+  estado con `gh pr view 33`; si ya está fusionado, `main` contiene el código).
+- Contenido del bloque: **checkout de planes con pago manual** (`/pago`,
+  `/pago/comprar` con método + comprobante, `/pago/confirmacion`; Pago móvil,
+  Binance, Kontigo, USDT en `app/datos_pago.py`), **panel admin premium**
+  (`/admin` con KPIs, tabla ordenable/filtrable de clientes y planes,
+  activación de compras), **gestión de organización** (nombre editable, solo
+  propietario/admin editan, tarjeta "Tu plan" y píldora en el menú lateral con
+  fecha de caducidad y días restantes) y **landing sin demo** con tarjetas de
+  precio clickeables.
+- Migraciones **`e5f2a8d31b6c`** (compras_plan) y **`f9d4c2a7e5b3`**
+  (organization_license_info) **ya aplicadas en Supabase** por el titular.
+  Head esperado: `f9d4c2a7e5b3`.
+- Suite: **543 passed, 6 skipped**; 72 plantillas; `git diff --check` limpio.
 - Al empezar: realinea si el HEAD aparece retrocedido
-  (`git fetch origin arena/01a0108b-generador-comercial && git reset --hard
+  (`git fetch origin arena/01a012cd-generador-comercial && git reset --hard
   FETCH_HEAD`) y recrea `.venv` (`python3 -m venv .venv && .venv/bin/pip
   install -q -r requirements-dev.txt`).
-- Siguientes candidatos: objetivo amplio de **5.000 partidas**, cerrar los
-  **~196 precios provisionales B2B** (requiere cotización), **formulario de
-  demo real**, y decisión del titular sobre **revisar los rendimientos** del
-  catálogo.
-- No repetir: la landing ya muestra margen/beneficio, tiempo de obra, productos
-  e imágenes; **no inventar precios ni rendimientos** (usar los del catálogo);
-  no nombrar a CYPE en contenido visible.
+- Siguientes candidatos: fusionar/desplegar el PR #33 y ensayar el flujo de
+  compra en staging; **recibo PDF de la compra para el cliente** y activar
+  `COTIZAT_EXIGIR_LICENCIA` cuando toque; catálogo a **5.000 partidas**;
+  cerrar **~196 precios provisionales B2B** (requiere cotización); decisión
+  sobre **rendimientos** del catálogo.
+- No repetir: el checkout, el panel admin, la edición de organización y la
+  tarjeta de plan ya están hechos; **no volver a poner formulario de demo** en
+  la landing; no inventar precios ni rendimientos; no nombrar a CYPE en
+  contenido visible.
 
 ---
