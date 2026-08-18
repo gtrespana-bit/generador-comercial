@@ -1804,3 +1804,44 @@ este PR dejaría suspendida a toda organización recién registrada, porque la
 prueba que las cubre viaja aquí. Para revertir, `false` y redeploy: el
 interruptor no altera ningún dato. Detalle en `docs/PUNTO_DE_CONTINUACION.md`
 (sección «EMPEZAR AQUÍ») y `docs/COBRO_Y_LICENCIAS.md` §5.5-5.6.
+
+## Actualización 18/08/2026 (noche) — el cron de Vercel se diagnostica y se dota de verificación
+
+**PR #39 fusionado en `main`** (`455f3fc`, 18/08/2026) con los recordatorios
+automáticos, la identidad «CotizaT · Presupuestos» y el panel «Correos». El
+corte por licencia sigue activo en producción.
+
+**El problema reportado:** el cron no aparecía en el panel de Vercel (Cron
+Jobs). Se verificó a fondo que el lado del repositorio estaba correcto:
+`vercel.json` es válido para el preset FastAPI actual de Vercel (entrada
+`app/main.py`, `maxDuration: 60`, `crons` con
+`/api/cron/recordatorios-vencimiento` a `0 13 * * *`, compatible con Hobby), la
+ruta existe y responde GET (401 sin `CRON_SECRET`, 200 con él, nunca 404), y el
+barrido con RLS de operador funciona (`get_cron_db` + `set_config
+cotizat.es_operador`). Conclusión: **Vercel solo materializa los crones en
+despliegues de producción** (un Preview nunca los muestra) y el `CRON_SECRET`
+seguía pendiente de añadir en el proyecto.
+
+**Qué cambió en el repositorio (rama `arena/01a016b5-generador-comercial`,
+commit `f4e2fbe`):**
+
+- `/readyz` publica `cron_secret` (`configurado`/`no-configurado`) y `cron`
+  (ruta declarada en `vercel.json` vs. rutas registradas), sin exponer el
+  secreto. Permite distinguir «el cron no se creó» de «el cron falla».
+- Constante `CRON_RECORDATORIOS_PATH` en `app/routers/admin.py` (única fuente
+  de verdad de la ruta).
+- `tests/test_vercel_cron_config.py`: guardas CI — cada ruta de `vercel.json`
+  debe existir como GET en la app, ser alcanzable (nunca 404) y su horario ser
+  válido para Hobby.
+- Docs: `docs/DESPLIEGUE_VERCEL.md` (sección «Trabajo programado») y
+  `docs/PENDIENTES_OPERATIVOS.md` §9 (checklist «Si el cron no aparece»).
+- Suite: **662 passed, 6 skipped**.
+
+**Pendiente del titular (del lado de Vercel, sin código):** 1) Fusionar este
+PR y comprobar que el deployment *Production* es el nuevo. 2) Añadir
+`CRON_SECRET` (Production) — `openssl rand -base64 32`. 3) **Redeploy**. 4)
+Verificar `/readyz` → `"cron_secret": "configurado"` y la ruta
+`...:registrada`; 5) confirmar en Settings → Cron Jobs que aparece
+`recordatorios-vencimiento` (13:00 UTC, ±59 min en Hobby). Checklist completa
+en `docs/PENDIENTES_OPERATIVOS.md` §9 y en el «Cierre de sesión» de
+`docs/PUNTO_DE_CONTINUACION.md`.

@@ -1,7 +1,8 @@
 # Pendientes operativos (paso por paso)
 
-Fecha: **16/08/2026**. Tareas de paneles externos, sin código. Cada una es
-independiente: se pueden hacer en cualquier orden.
+Fecha: **18/08/2026**. Tareas de paneles externos, sin código (salvo el punto 9,
+que ya tiene su parte de código hecha). Cada una es independiente: se pueden
+hacer en cualquier orden.
 
 Estado al escribir esta guía:
 
@@ -15,7 +16,7 @@ Estado al escribir esta guía:
 | 6 | Panel de operador E1-060: migración `f4c1d8e37a95` + `COTIZAT_OPERADORES` | ✅ **completado** (16/08/2026): script `docs/staging_upgrade_f4c1d8e37a95.sql` aplicado en Supabase, variable en Vercel, panel verificado por el titular en `https://cotizat.online/admin/licencias` |
 | 7 | Migración `a3d9c1e75b28` (prueba gratuita) | ✅ **completado** (18/08/2026): `docs/staging_upgrade_a3d9c1e75b28.sql` aplicado en Supabase |
 | 8 | **Activar `COTIZAT_EXIGIR_LICENCIA=true`** | ✅ **completado** (18/08/2026): PR #38 fusionado y desplegado; `COTIZAT_EXIGIR_LICENCIA=true` activado y verificado en `/readyz` (`"licencias": "exigida"`) |
-| 9 | **`CRON_SECRET` + cron de recordatorios de vencimiento** | **pendiente** — añadir `CRON_SECRET` en Vercel y redesplegar para que el recordatorio automático (5 y 1 día) se dispare (ver §9) |
+| 9 | **`CRON_SECRET` + cron de recordatorios de vencimiento** | **parte de código ✅** (PR en `arena/01a016b5-generador-comercial`: `/readyz` publica `cron_secret`/`cron`, guardas CI en `tests/test_vercel_cron_config.py`). **Falta en Vercel:** fusionar el PR, añadir `CRON_SECRET` (Production) y **redesplegar** para que el recordatorio automático (5 y 1 día) se dispare (ver §9) |
 
 ---
 

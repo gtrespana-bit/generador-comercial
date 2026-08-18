@@ -24,9 +24,11 @@ Público: el titular operando el producto. Nada de aquí lo ejecuta un cliente.
 | Migración `c7f1a3b9d425` | Supabase → SQL Editor → `docs/staging_upgrade_c7f1a3b9d425.sql` | ✅ aplicada el 18/08/2026 |
 | Migración `a3d9c1e75b28` (prueba gratuita) | Supabase → SQL Editor → `docs/staging_upgrade_a3d9c1e75b28.sql` | ✅ aplicada el 18/08/2026 |
 | **Conceder licencia de cortesía a la propia organización del titular** | Panel → «cortesia», duración larga, nota «uso del titular» | ✅ hecha el 18/08/2026 |
-| **Fusionar y desplegar el PR #38** | Anuncio público + concesión de la prueba de 7 días | ⬜ **antes** de activar el corte |
-| Activar el corte | `COTIZAT_EXIGIR_LICENCIA=true` en Vercel (Production) + **redeploy** | ⬜ justo después del despliegue del PR #38 |
-| Buzón `soporte@cotizat.online` | Reenvío en el proveedor del dominio | ⬜ cuando haga falta de verdad |
+| Fusionar y desplegar el **PR #38** | Anuncio público + concesión de la prueba de 7 días | ✅ fusionado (18/08/2026); base del PR #39 |
+| **Fusionar y desplegar el PR #39** | Recordatorios automáticos + identidad + panel «Correos» | ✅ fusionado (18/08/2026, `455f3fc`) |
+| Activar el corte | `COTIZAT_EXIGIR_LICENCIA=true` en Vercel (Production) + **redeploy** | ✅ activado el 18/08/2026, verificado en `/readyz` |
+| **Cron de recordatorios** | Fusionar el PR del diagnóstico (rama `arena/01a016b5`), añadir `CRON_SECRET` en Vercel (Production) + **redeploy** | ⬜ pendiente — ver `docs/PENDIENTES_OPERATIVOS.md` §9 |
+| Buzón `soporte@cotizat.online` | Reenvío en el proveedor del dominio | ✅ creado en Zoho (18/08/2026); la app ya apunta a esa dirección |
 
 **El orden importa, por dos motivos distintos.** El primero es el PR #38: la
 prueba gratuita que cubre a las organizaciones nuevas viaja en él, así que
