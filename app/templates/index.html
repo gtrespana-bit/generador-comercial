@@ -3,6 +3,21 @@
 {% block body_class %}page-dashboard{% endblock %}
 {% block content %}
 
+{% if compra_pendiente_ficha %}
+<div class="retomar-compra" role="status">
+  <div class="retomar-compra-copy">
+    <strong>Retoma tu compra del {{ compra_pendiente_ficha.nombre }}</strong>
+    <span>{{ "%.2f"|format(compra_pendiente_ficha.importe) }} US${% if compra_pendiente == 'anual' %} / año{% else %} / mes{% endif %} · pago manual: lo revisamos y activamos tu plan.</span>
+  </div>
+  <div class="retomar-compra-acciones">
+    <a class="btn btn-primary btn-sm" href="/pago/comprar?plan={{ compra_pendiente }}">Continuar compra</a>
+    <form method="post" action="/pago/descartar">
+      <button type="submit" class="btn btn-sm">Ahora no</button>
+    </form>
+  </div>
+</div>
+{% endif %}
+
 <header class="dash-hero">
   <div class="dash-hero-copy">
     <span class="page-eyebrow">Resumen</span>

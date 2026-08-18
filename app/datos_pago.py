@@ -120,6 +120,12 @@ METODOS_PAGO: dict[str, dict] = {
 #: Estados posibles de una compra registrada.
 ESTADOS_COMPRA = ("pendiente", "activa", "rechazada")
 
+#: Cookie que recuerda el plan que la persona quería comprar antes de tener
+#: que crear su cuenta y su organización. Es la que permite retomar la compra
+#: en el panel después del alta, en vez de perder la intención en el camino
+#: (registro → confirmación de email → alta de empresa → onboarding).
+PLAN_PENDIENTE_COOKIE = "cotizat_plan_pendiente"
+
 
 def plan_info(plan: str) -> dict:
     """Devuelve la ficha de un plan o lanza KeyError si no existe."""

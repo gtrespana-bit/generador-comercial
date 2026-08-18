@@ -672,6 +672,40 @@ body.collapsed .theme-toggle-label,
 }
 .alert-warn .link { color: var(--accent); font-weight: 600; }
 
+/* Intención de compra retomable (panel de inicio) */
+.retomar-compra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 0.85rem 1rem;
+  margin-bottom: 1rem;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-light);
+  border-radius: var(--radius-sm);
+}
+.retomar-compra-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+.retomar-compra-copy strong {
+  color: var(--accent-h);
+  font-weight: 700;
+}
+.retomar-compra-copy span {
+  color: var(--text-secondary);
+  font-size: 0.84rem;
+}
+.retomar-compra-acciones {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 0 0 auto;
+}
+.retomar-compra-acciones form { margin: 0; }
 
 /* ==========================================================================
    CARDS & STATS

@@ -10,11 +10,17 @@ from datetime import date
 from pathlib import Path
 from urllib.parse import quote
 
-from fastapi import APIRouter, Form, Request, UploadFile
+from fastapi import APIRouter, Form, Request
 
 from . import common
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
-from ..datos_pago import METODOS_PAGO, PLANES, metodo_info, plan_info
+from ..datos_pago import (
+    METODOS_PAGO,
+    PLANES,
+    PLAN_PENDIENTE_COOKIE,
+    metodo_info,
+    plan_info,
+)
 
 router = APIRouter()
 
@@ -30,6 +36,61 @@ def _plan_o_redirect(request: Request, plan: str):
         return plan_info(plan)
     except KeyError:
         return None
+
+
+def _cookie_secure() -> bool:
+    """Flag `Secure` de las cookies, coherente con el resto de la app."""
+    try:
+        return SupabaseAuthSettings.from_environment().cookie_secure
+    except AuthNotConfigured:
+        return True
+
+
+def _set_plan_pendiente_cookie(response, plan: str) -> None:
+    """Recuerda el plan elegido para retomarlo tras el alta de la cuenta."""
+    response.set_cookie(
+        PLAN_PENDIENTE_COOKIE,
+        plan,
+        max_age=60 * 60 * 24 * 7,
+        httponly=True,
+        secure=_cookie_secure(),
+        samesite="lax",
+        path="/",
+    )
+
+
+def _clear_plan_pendiente_cookie(response) -> None:
+    """Elimina la intención de compra (compra completada o descartada)."""
+    response.delete_cookie(
+        PLAN_PENDIENTE_COOKIE,
+        path="/",
+        secure=_cookie_secure(),
+        httponly=True,
+        samesite="lax",
+    )
+
+
+@router.get("/pago/elegir", include_in_schema=False)
+def elegir_plan(request: Request, plan: str = ""):
+    """Recuerda el plan elegido y lleva al checkout.
+
+    El checkout exige sesión y organización; esta ruta guarda la intención en
+    una cookie ANTES de eso, de modo que sobreviva al registro, la confirmación
+    de email y el alta de empresa, y pueda retomarse desde el panel.
+    """
+    if _plan_o_redirect(request, plan) is None:
+        return RedirectResponse("/pago", status_code=303)
+    response = RedirectResponse(f"/pago/comprar?plan={quote(plan)}", status_code=303)
+    _set_plan_pendiente_cookie(response, plan)
+    return response
+
+
+@router.post("/pago/descartar", include_in_schema=False)
+def descartar_plan_pendiente():
+    """Descarta la intención de compra recordada en la cookie."""
+    response = RedirectResponse("/inicio", status_code=303)
+    _clear_plan_pendiente_cookie(response)
+    return response
 
 
 @router.get("/pago/comprar", response_class=HTMLResponse, include_in_schema=False)
@@ -92,7 +153,6 @@ async def registrar_compra(
     request: Request,
     plan: str = Form(""),
     metodo_pago: str = Form(""),
-    comprobante: UploadFile | None = None,
     db: Session = Depends(get_db),
 ):
     """Registra la compra: guarda comprobante, crea la compra y notifica."""
@@ -125,13 +185,22 @@ async def registrar_compra(
         if valor:
             verificacion[campo] = valor[:300]
 
-    # Comprobante: opcional en el servidor, obligatorio en el servicio.
+    # Comprobante. Cada método publica su propio campo de archivo con nombre
+    # único (``comprobante_<clave>``), así que se lee solo el del método
+    # elegido. Antes, los cuatro paneles compartían ``name="comprobante"`` y el
+    # navegador enviaba una parte por cada método (tres vacías); el enlace del
+    # ``UploadFile`` resultaba ambiguo y, salvo con el último método, el
+    # servidor recibía el archivo vacío y rechazaba la compra con
+    # «Adjunta el comprobante de pago para continuar» aunque se hubiera subido.
     datos_comprobante = b""
     nombre_comprobante = ""
     mime_comprobante = ""
-    if comprobante is not None and comprobante.filename:
-        nombre_comprobante = Path(comprobante.filename).name[:255]
-        datos_comprobante = await comprobante.read()
+    parte = form.get(f"comprobante_{metodo_pago}")
+    # ``request.form()`` devuelve un UploadFile cuando el campo trae archivo y
+    # una cadena vacía cuando no se seleccionó nada.
+    if parte is not None and not isinstance(parte, str):
+        nombre_comprobante = Path(parte.filename or "").name[:255]
+        datos_comprobante = await parte.read()
         mime_comprobante = _validar_comprobante(nombre_comprobante, datos_comprobante)
         if not mime_comprobante:
             return RedirectResponse(
@@ -140,11 +209,6 @@ async def registrar_compra(
                 "de hasta 12 MB.",
                 status_code=303,
             )
-    else:
-        # Formularios pueden no enviar archivo; el servicio lo exige.
-        datos_comprobante = b""
-        nombre_comprobante = ""
-        mime_comprobante = ""
 
     referencia_comprobante = ""
     if datos_comprobante:
@@ -205,9 +269,9 @@ async def registrar_compra(
     except (EmailNotConfigured, EmailValidationError, StorageError) as exc:
         log.warning("Compra #%s creada sin notificación (%s).", compra.id, exc)
 
-    return RedirectResponse(
-        f"/pago/confirmacion?id={compra.id}", status_code=303
-    )
+    respuesta = RedirectResponse(f"/pago/confirmacion?id={compra.id}", status_code=303)
+    _clear_plan_pendiente_cookie(respuesta)
+    return respuesta
 
 
 @router.get("/pago/confirmacion", response_class=HTMLResponse, include_in_schema=False)

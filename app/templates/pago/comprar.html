@@ -87,7 +87,7 @@
         {% endfor %}
         <div class="compra-campo compra-campo-full">
           <label for="comprobante-{{ clave }}">Comprobante de pago (imagen o PDF) *</label>
-          <input type="file" id="comprobante-{{ clave }}" name="comprobante"
+          <input type="file" id="comprobante-{{ clave }}" name="comprobante_{{ clave }}"
                  accept=".png,.jpg,.jpeg,.webp,.pdf,image/png,image/jpeg,image/webp,application/pdf"
                  data-metodo="{{ clave }}" data-campo>
         </div>
