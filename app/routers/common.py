@@ -1084,4 +1084,3 @@ def _sincronizar_recursos(db: Session):
 # y reciben modelos, servicios, constantes y utilidades sin repetir el bloque
 # de imports. Se incluyen también los helpers privados (prefijo ``_``).
 __all__ = [name for name in globals() if not name.startswith("__")]
-
