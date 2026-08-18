@@ -1745,7 +1745,8 @@ que **exactamente** las rutas de compra usen la puerta sin corte — ni una de
 más ni una de menos. Se verificó que el test muerde: revirtiendo `pagos.py` a
 `get_db`, la suite falla.
 
-Suite: **573 passed, 6 skipped**.
+Suite: **573 passed, 6 skipped** *(cifra de esa tarde; el total vigente está en
+la última sección del documento)*.
 
 **Pendiente operativo (en este orden).** 1) Conceder licencia de **cortesía** a
 la organización del titular desde `/admin/licencias` — si no, al encender el
@@ -1753,3 +1754,53 @@ interruptor el titular se corta a sí mismo. 2) Fijar
 `COTIZAT_EXIGIR_LICENCIA=true` en Vercel y redesplegar. 3) Comprobar
 `"licencias": "exigida"` en `/readyz`. Detalle en `docs/PANEL_DE_OPERADOR.md`
 §8 y `docs/PROCESO_PILOTOS.md` §0.
+
+> **Corrección posterior (18/08/2026, noche).** El paso 1 **no** era un
+> prerrequisito: el panel `/admin/*` cuelga de `get_operator_db`, que no
+> comprueba licencia, así que el operador entra aunque su propia organización
+> esté suspendida y puede concederse la cortesía en cualquier momento. Sin
+> riesgo de quedarse fuera. Lo verdaderamente bloqueante era la migración —y
+> ahora, además, que el **PR #38 esté desplegado** antes de encender el corte.
+
+
+## Actualización 18/08/2026 (noche) — la prueba gratuita se anuncia; PR #38 listo para fusionar
+
+Cierre del bloque de cobro y licencias. **PR #38**, 6 commits, cabeza
+`b73b56d`, sobre `main` en `00cfec0`. Suite: **642 passed, 6 skipped**.
+
+**Lo que faltaba y era puramente comercial.** La prueba de 7 días funcionaba en
+el registro desde la mañana, pero **ninguna página la mencionaba**. Nadie
+llegaba a pedirla, y encima toda la landing empujaba a `/pago`, que es el
+destino equivocado para quien viene a probar gratis. Ahora se anuncia en los
+cuatro puntos donde alguien decide —landing (`/` y `/conocer`), `/pago` y
+`/acceso`— y el CTA del hero apunta a `/acceso`, donde está el registro real.
+
+**La decisión técnica que importa.** El anuncio cuelga de dos globales de Jinja
+(`dias_de_prueba`, `hay_prueba_gratuita`) que son **funciones, no valores**:
+Jinja cachea la plantilla compilada, no su resultado, así que se evalúan en
+cada render. Apagar `COTIZAT_DIAS_PRUEBA` retira el anuncio de las cuatro
+páginas y la landing revierte a «Ver planes» **sin redesplegar**. Un test lo
+recorre con la prueba apagada, porque el día que se retire la oferta lo que no
+puede pasar es que la web siga prometiéndola. En `/pago` el bloque se omite si
+llega un aviso: quien viene rebotado ya agotó la prueba.
+
+**Un fallo de proceso que conviene recordar.** El commit anterior (`fbc3c26`)
+se subió con la suite en rojo: 42 hallazgos de la auditoría E1-021 por ejemplos
+de correo verosímiles. La causa es que **el auditor solo revisa archivos ya
+versionados**, así que no vio los ejemplos hasta que estuvieron commiteados. Se
+arregló sin vaciar la regla —nombres de fantasía y una exención estrecha sobre
+la parte local, no 42 excepciones— y la lección quedó escrita en
+`docs/DATOS_SENSIBLES.md` §4. De paso apareció una doctest que mentía:
+**`pytest` no ejecuta doctests en este proyecto**, así que los `>>>` son
+documentación que nadie verifica; queda sin decidir si añadir
+`--doctest-modules`.
+
+**Pendiente operativo, en este orden.** 1) Fusionar el PR #38 y esperar al
+despliegue. 2) Comprobar `"alembic": "head:a3d9c1e75b28"` en `/readyz`. 3)
+`COTIZAT_EXIGIR_LICENCIA=true` en Vercel (Production). 4) **Redeploy**. 5)
+Verificar `"licencias": "exigida"`. La migración y la licencia de cortesía
+**ya están hechas**. El orden importa: encender el corte antes de desplegar
+este PR dejaría suspendida a toda organización recién registrada, porque la
+prueba que las cubre viaja aquí. Para revertir, `false` y redeploy: el
+interruptor no altera ningún dato. Detalle en `docs/PUNTO_DE_CONTINUACION.md`
+(sección «EMPEZAR AQUÍ») y `docs/COBRO_Y_LICENCIAS.md` §5.5-5.6.

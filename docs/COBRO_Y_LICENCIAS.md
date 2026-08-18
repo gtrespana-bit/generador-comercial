@@ -287,15 +287,60 @@ organización, imposibilidad de crear licencias de pago, duración acotada,
 
 ### 5.5 Puesta en producción
 
-1. Aplicar `docs/staging_upgrade_a3d9c1e75b28.sql` con el rol administrativo de
-   Supabase (**no** con `cotizat_app`: el rol que lo ejecuta queda como
-   propietario de la función y es el privilegio con el que corre). El fichero
-   está generado desde la propia migración con `alembic upgrade --sql`, trae
-   guarda de versión previa y una prueba de humo al final.
-2. Comprobar que `/readyz` responde con la cabeza `a3d9c1e75b28`.
-3. Conceder la licencia de cortesía a la organización del titular.
-4. Solo entonces, `COTIZAT_EXIGIR_LICENCIA=true` en Vercel (Production) y
+1. ✅ **Hecho.** Aplicar `docs/staging_upgrade_a3d9c1e75b28.sql` con el rol
+   administrativo de Supabase (**no** con `cotizat_app`: el rol que lo ejecuta
+   queda como propietario de la función y es el privilegio con el que corre).
+   El fichero está generado desde la propia migración con
+   `alembic upgrade --sql`, trae guarda de versión previa y una prueba de humo
+   al final. *(Aplicado por el titular el 18/08/2026, sin incidencias.)*
+2. ⏳ Comprobar que `/readyz` responde con `"alembic": "head:a3d9c1e75b28"`.
+3. ✅ **Hecha.** Licencia de cortesía a la organización del titular.
+4. ⏳ Solo entonces, `COTIZAT_EXIGIR_LICENCIA=true` en Vercel (Production) y
    redeploy. Verificar `"licencias": "exigida"` en `/readyz`.
 
 El orden importa: encender el interruptor antes del paso 1 dejaría suspendida a
 toda organización nueva, que es justo lo que la prueba viene a evitar.
+
+**Matiz sobre el paso 3, para no repetir un error de razonamiento:** la
+cortesía **no** es un prerrequisito del paso 4. El panel `/admin/*` cuelga de
+`get_operator_db`, que no comprueba licencia, así que el operador entra aunque
+su propia organización esté suspendida y siempre puede concederse una licencia
+desde dentro. Lo único bloqueante de verdad era la migración.
+
+**Condición añadida tras el anuncio público (§5.6):** el paso 4 exige además
+que el **PR #38 esté fusionado y desplegado**. El anuncio y la concesión de la
+prueba viajan en ese PR; encender el corte antes dejaría suspendida a cada
+organización recién registrada, porque todavía no habría prueba que la cubra.
+
+**Cómo revertir:** `COTIZAT_EXIGIR_LICENCIA=false` y redeploy. El interruptor
+solo decide si se comprueba la vigencia; no borra ni altera ninguna licencia.
+
+### 5.6 El anuncio público de la prueba (18/08/2026)
+
+Una prueba que no se anuncia no cumple ninguna función comercial: durante unos
+días los 7 días existieron en el registro sin que ninguna página los
+mencionara, así que nadie llegaba a pedirlos.
+
+**Dónde se anuncia.** En los cuatro puntos donde alguien decide: la landing
+(`/` y `/conocer`, once condicionales distintos), la página de pago y la de
+acceso.
+El CTA principal del hero pasó a apuntar a **`/acceso`**, que es donde está el
+registro real; las tarjetas de plan siguen yendo a `/pago`.
+
+**Cómo se apaga.** Todo cuelga de dos globales de Jinja declaradas en
+`app/routers/common.py` que son **funciones, no valores**
+(`dias_de_prueba` y `hay_prueba_gratuita`). Jinja cachea la plantilla
+compilada, no su resultado, así que se evalúan en cada render: poner
+`COTIZAT_DIAS_PRUEBA=0` retira el anuncio de las cuatro páginas y la landing
+revierte a «Ver planes», **sin redesplegar ni tocar plantillas**. Lo fija
+`test_apagar_la_prueba_retira_el_anuncio`, que recorre las cuatro páginas con
+la prueba apagada; existe porque el día que se retire la oferta lo que no puede
+pasar es que la web siga prometiéndola.
+
+**Excepción deliberada.** En `/pago` el bloque se omite si llega un `msg`:
+quien viene rebotado ya agotó la prueba y volver a ofrecérsela sería una burla.
+
+**Textos que comprometen al producto** y deben seguir siendo ciertos: no se
+pide tarjeta, no hay cobro automático, y al terminar la prueba la cuenta deja
+de generar presupuestos nuevos **sin borrar nada**. Si alguna de las tres deja
+de cumplirse, hay que cambiar la web el mismo día.

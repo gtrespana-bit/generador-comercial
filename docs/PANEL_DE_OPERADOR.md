@@ -444,3 +444,27 @@ enlazada por `aria-controls`, que conceder no exige elegir organización ni
 teclear el importe, que una prueba no cobra, que suspender corta la cadena
 entera, que suspender sin acceso vigente avisa, que las rutas rápidas son solo
 de operador y que `volver` no admite destinos externos.
+
+---
+
+## 10. El operador nunca se queda fuera (nota del 18/08/2026)
+
+Vale la pena dejarlo escrito porque durante un tiempo se creyó lo contrario, y
+el error condicionaba el orden de la puesta en producción.
+
+Las rutas `/admin/*` cuelgan de **`get_operator_db`** (`app/database.py`), que
+comprueba que quien entra sea operador pero **no comprueba licencia**. Por eso:
+
+- Encender `COTIZAT_EXIGIR_LICENCIA=true` **no** deja al titular sin panel,
+  aunque su propia organización esté suspendida.
+- La licencia de cortesía a la organización propia puede concederse **antes o
+  después** de activar el corte, indistintamente: siempre se puede entrar al
+  panel y concedérsela.
+- Lo que sí queda cortado sin licencia propia es el **uso normal del producto**
+  en la organización del titular —presupuestos, clientes, catálogo—, porque eso
+  cuelga de `get_db`, que sí comprueba vigencia.
+
+En resumen: no existe forma de quedarse encerrado fuera del sistema por
+encender el interruptor. El único orden que sí es obligatorio es tener aplicada
+la migración y **desplegado el PR #38** antes de activarlo, porque la prueba
+gratuita que cubre a las organizaciones nuevas viaja en ese PR.

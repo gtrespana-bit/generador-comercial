@@ -119,6 +119,25 @@ Devuelve estado `1` si encuentra algo.
    `tools/auditar_datos_sensibles.py` con el motivo escrito. Se exceptúa la
    coincidencia concreta (ruta + regla + texto), nunca la regla entera.
 
+> **Cuándo NO usar `EXCEPCIONES`.** Si te encuentras añadiendo excepciones a
+> puñados, la lista deja de documentar rarezas y empieza a vaciar la regla.
+> Ocurrió el 18/08/2026: los ejemplos de la prueba gratuita generaron **42
+> hallazgos** de «correo-personal». La salida correcta no fue exceptuarlos uno
+> a uno, sino **arreglar los datos** (nombres de fantasía) y enseñarle al
+> auditor el concepto general —el mismo `_es_marcador` que ya aplicaba a
+> credenciales, teléfonos y RIF—, con tests que fijan las dos direcciones: lo
+> que debe seguir detectándose y lo que no debe dar ruido. Una excepción es
+> para un caso irrepetible con nombre y apellido; un patrón que se repite pide
+> una regla.
+
+### Ojo: el auditor solo ve lo que Git ya rastrea
+
+`archivos_versionados()` usa `git ls-files`, así que **un archivo nuevo no se
+audita hasta que se commitea**. La consecuencia práctica muerde: la suite puede
+estar en verde antes de commitear y romperse justo después, con el commit ya
+subido. Pasó con `fbc3c26`. **Tras commitear archivos nuevos, vuelve a correr
+la suite completa** antes de dar el trabajo por cerrado.
+
 ---
 
 ## 5. Reglas para escribir documentación y pruebas
@@ -126,6 +145,18 @@ Devuelve estado `1` si encuentra algo.
 - Correos de ejemplo: `persona@example.com`, `duena@example.com`,
   `no-responder@cotizat.test`. **Nunca** una dirección de Gmail u otro proveedor
   de consumo, ni siquiera la propia.
+  - **Única excepción, y es estrecha:** cuando el dominio real *es* el hecho
+    que se documenta. La normalización de identidad (los puntos que Gmail
+    ignora, el `+etiqueta` de Outlook) solo es cierta en esos proveedores, y un
+    ejemplo con `example.com` no demostraría nada. En ese caso —y solo en ese—
+    se admite el dominio real **con un nombre de fantasía en la parte local**:
+    `fulano`, `mengana`, `zutano`… Quien identifica a una persona es la parte
+    local, no el dominio. `fulano.detal@gmail.com` no es de nadie; en cambio
+    un nombre y un apellido corrientes sobre ese mismo dominio pueden ser una
+    persona real, y el auditor los marca.
+    La lista de nombres admitidos es cerrada (`NOMBRES_DE_FANTASIA`) y el
+    nombre debe **abrir** la parte local: si va precedido de cualquier otra
+    cosa (del estilo «no-soy-» seguido de `fulano`), se sigue marcando.
 - Teléfonos: abonado a ceros (`+58 412 000 0000`).
 - Documentos fiscales: `J-00000000-0`.
 - Proyectos y hosts: `https://tu-proyecto.supabase.co`,

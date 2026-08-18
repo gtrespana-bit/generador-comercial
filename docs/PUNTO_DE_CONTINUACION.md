@@ -1,12 +1,239 @@
 # Punto exacto de continuación
 
-Fecha de corte: **18/08/2026, prueba gratuita de 7 días implementada; falta aplicar `a3d9c1e75b28` en Supabase antes de activar `COTIZAT_EXIGIR_LICENCIA`** (America/Caracas).
+Fecha de corte: **18/08/2026, PR #38 listo para fusionar (prueba gratuita anunciada al público); el titular activa `COTIZAT_EXIGIR_LICENCIA` justo después del merge** (America/Caracas).
 
 Este documento retoma el trabajo sin depender del historial del chat. Describe
 **dónde quedó exactamente** el trabajo y **qué sigue**, en ese orden. Léelo
 junto con `basedatos_partidas/EMPEZAR_AQUI.md` (reglas y progreso del catálogo),
 `basedatos_partidas/INVENTARIO.md` (cifras y contraste de precios) y
 `PLAN_DE_COMERCIALIZACION_Y_EVOLUCION_SAAS.md` (§1.9 y §11).
+
+> **Si acabas de abrir una ventana nueva, lee solo la sección siguiente.**
+> Está escrita para eso: dice en qué estado exacto queda el repositorio, qué va
+> a hacer el titular por su cuenta, y qué trabajo toca después.
+
+---
+
+## 🟢 EMPEZAR AQUÍ — Estado al cierre del 18/08/2026
+
+### En una frase
+
+Todo el bloque de cobro, licencias, panel de operador y prueba gratuita está
+**terminado y en verde** en la rama `arena/01a015a7-generador-comercial`
+(**PR #38**, 6 commits, cabeza `b73b56d`); falta **fusionarlo** y, acto
+seguido, el titular **enciende el corte por licencia en producción**.
+
+### Estado del repositorio
+
+| Dato | Valor |
+| --- | --- |
+| Rama de trabajo | `arena/01a015a7-generador-comercial` (sincronizada con `origin`) |
+| PR | **#38**, abierto, 6 commits, 47 archivos |
+| Último commit | `b73b56d` — anuncio público de la prueba gratuita |
+| Base | `main` en `00cfec0` |
+| Suite | **642 passed, 6 skipped** (~80 s con `.venv/bin/pytest -q`) |
+| Auditoría E1-021 | Sin hallazgos, 6416 archivos (`.venv/bin/python tools/auditar_datos_sensibles.py`) |
+| Cabeza Alembic | `a3d9c1e75b28` (**ya aplicada en Supabase**) |
+
+### Qué se hizo en esta última sesión
+
+**1. La prueba gratuita ya se anuncia al público** (era el encargo). Los 7 días
+existían en el registro pero no se mencionaban en ninguna página, así que nadie
+llegaba a pedirlos: comercialmente no cumplían ninguna función. Ahora aparecen
+en los cuatro puntos donde alguien decide —landing (`/` y `/conocer`), `/pago`
+y `/acceso`— y el CTA principal del hero apunta a **`/acceso`**, que es donde
+vive el registro real; las tarjetas de plan siguen yendo a `/pago`. Detalle
+completo en la sección «Cierre de sesión» de más abajo y en
+`docs/COBRO_Y_LICENCIAS.md` §5.6.
+
+**2. Se arregló la suite, que estaba en rojo sin que se supiera.** El commit
+anterior (`fbc3c26`) se subió con 42 fallos de la auditoría de datos sensibles.
+Explicación y lección en «Errores y lecciones» al final de esta sección.
+
+### ⚠️ Lo que el titular hace por su cuenta, sin esperar a nadie
+
+En cuanto el PR #38 esté fusionado y desplegado, el titular ejecuta esto. **Ya
+están hechos** los pasos previos (migración aplicada en Supabase y licencia de
+cortesía concedida a su organización), así que solo queda el interruptor:
+
+1. **Fusionar el PR #38** y esperar a que Vercel termine el despliegue.
+2. Comprobar `/readyz`: debe verse `"alembic": "head:a3d9c1e75b28"`.
+3. Vercel → *Settings* → *Environment Variables*, scope **Production**:
+   `COTIZAT_EXIGIR_LICENCIA=true`.
+4. **Redeploy** (una variable de entorno no se aplica sola al despliegue vivo).
+5. Verificar en `/readyz` que aparece `"licencias": "exigida"`.
+
+Valores que cuentan como verdadero: `1`, `true`, `on`, `si`, `sí`.
+
+> **El orden importa y esta es la razón.** El corte deja sin acceso a toda
+> organización sin licencia vigente. Encender el interruptor **antes** de que
+> el PR esté desplegado dejaría suspendida a toda organización recién
+> registrada, porque la prueba gratuita que las cubre viaja en este PR. Con el
+> PR fuera, cada alta nueva nace con 7 días y el corte solo muerde a quien
+> ya agotó su prueba sin pagar, que es exactamente lo que se busca.
+
+**Cómo revertir si algo sale mal:** poner `COTIZAT_EXIGIR_LICENCIA=false` y
+redesplegar. El interruptor no borra ni modifica datos; solo decide si se
+comprueba la vigencia. Nada de lo concedido se pierde.
+
+**Si el titular se corta a sí mismo por error:** el panel `/admin/*` cuelga de
+`get_operator_db`, que **no** comprueba licencia. El panel sigue accesible
+aunque la organización propia esté suspendida, así que siempre se puede entrar
+a concederse una licencia. No hay forma de quedarse fuera del todo.
+
+### Lo siguiente en el producto (nada de esto está empezado)
+
+Por orden de valor, según lo hablado:
+
+1. **Ver el panel de operador con datos realistas.** Está construido y probado,
+   pero nunca se ha mirado con un volumen de clientes que se parezca al real.
+   Es donde antes aparecerá un problema de diseño de los que cuestan tiempo
+   cada día.
+2. **Vigilar el primer alta real con el corte encendido.** El circuito completo
+   —registro → prueba de 7 días → aviso de vencimiento → pago → renovación—
+   nunca se ha recorrido de punta a punta con un cliente de verdad.
+3. **Decidir qué pasa al vencer la prueba sin pagar.** Hoy la organización
+   simplemente deja de generar presupuestos nuevos y conserva sus datos, que es
+   lo que promete la web. No hay aviso por correo antes del vencimiento: quien
+   se despiste se encuentra el corte de golpe. Un recordatorio a los 5 días es
+   probablemente lo más rentable que queda por hacer en todo el circuito.
+
+### Errores y lecciones de esta sesión (importa para no repetirlos)
+
+**El auditor de datos sensibles solo mira archivos ya versionados en Git.**
+Corolario incómodo: los archivos nuevos **no se auditan hasta que se
+commitean**, así que la suite puede estar verde antes de commitear y romperse
+justo después. Eso pasó con `fbc3c26`, que se subió con 42 hallazgos de
+«correo-personal» por ejemplos de correo verosímiles sobre dominios de
+consumo (nombre y apellido reales sobre `gmail.com`). **Después de
+commitear archivos nuevos, volver a correr la suite completa.**
+
+**Cómo se arregló, y por qué no con excepciones.** La salida fácil era añadir
+42 entradas a `EXCEPCIONES` en `tools/auditar_datos_sensibles.py`, que es
+exactamente lo que convierte una regla en teatro. El razonamiento correcto:
+en estos ejemplos el **dominio** es parte del hecho técnico —los puntos que
+Gmail ignora y el `+etiqueta` de Outlook no se pueden demostrar con
+`example.com`— pero quien identifica a una persona es la **parte local**. Así
+que los ejemplos pasaron a nombres de fantasía (`fulano`, `mengana`) y el
+auditor aprendió el mismo concepto de marcador que ya aplicaba a credenciales,
+teléfonos y RIF. La exención es estrecha a propósito: lista cerrada, anclada al
+principio de la parte local, comprobada solo sobre ella, más el caso degenerado
+sin usuario (`+etiqueta@`, `.@`) que ningún proveedor admite como buzón.
+Un nombre verosímil sobre un dominio de consumo se sigue marcando aunque lleve
+subdirección, y un nombre de fantasía precedido de cualquier otra cosa —del
+estilo «no-soy-» seguido de `fulano`— tampoco cuela, porque la comprobación
+exige que el nombre **abra** la parte local. Hay tests que lo fijan en ambas
+direcciones.
+
+Pequeña anécdota que confirma que la regla muerde: el primer borrador de este
+mismo documento citaba una de esas direcciones como ejemplo, y **la auditoría
+lo rechazó**. Por eso aquí se describen en palabras en lugar de escribirlas.
+
+**Hay una doctest que mentía y la suite no lo vio.** Al renombrar quedó
+`normalizar_email("Juan.Perez+cotizat@GMail.com")` documentando el resultado
+`'fulanodetal@gmail.com'`, que es falso. Se corrigió, pero **`pytest` no
+ejecuta doctests en este proyecto**: los `>>>` de
+`app/services/identidad_registro.py` son documentación que nadie verifica.
+Se detectó a mano con `.venv/bin/python -m doctest`. Queda **pendiente y sin
+decidir** si añadir `--doctest-modules` a `pytest.ini`.
+
+**Verificar antes de afirmar.** Varias veces en esta sesión di por bloqueante o
+por pendiente algo que no lo era (el caso más claro: sostuve que la licencia de
+cortesía debía concederse *antes* de activar el interruptor, y es falso, porque
+`get_operator_db` no comprueba licencia). Comprobar el estado real con `grep`,
+`git log` o una petición HTTP antes de dar algo por hecho.
+
+---
+
+## ✅ Cierre de sesión — La prueba gratuita se anuncia al público (18/08/2026, noche)
+
+Misma rama (`arena/01a015a7-generador-comercial`) y mismo **PR #38**. Commits
+`16063ec` y `b73b56d`.
+
+### Por qué era lo siguiente
+
+Lo planteó el titular sin rodeos: la prueba existía en el registro pero **no se
+mencionaba en ninguna página pública**, así que nadie llegaba a pedirla. Una
+prueba que el público no ve no cumple ninguna función comercial. Además, toda
+la landing empujaba a `/pago`, que es el destino equivocado para quien viene a
+probar gratis.
+
+### Qué se hizo
+
+**Dos globales de Jinja** en `app/routers/common.py`, dentro de
+`TEMPLATES.env.globals.update(...)`:
+
+```python
+dias_de_prueba=dias_de_prueba,          # -> int, lee COTIZAT_DIAS_PRUEBA
+hay_prueba_gratuita=prueba_activada,    # -> bool
+```
+
+Se pasan como **funciones, no como valores**, igual que `catalogo=cifras_catalogo`.
+Esa decisión es la que hace que todo lo demás funcione: Jinja cachea la
+plantilla compilada, no su resultado, así que una global que es función se
+evalúa **en cada render**. Consecuencia práctica: apagar `COTIZAT_DIAS_PRUEBA`
+retira el anuncio de todas las páginas **sin redesplegar ni tocar plantillas**,
+y los tests solo necesitan `monkeypatch.setenv(...)` sin invalidar caché.
+
+El patrón en plantillas es siempre el mismo:
+
+```jinja
+{% if hay_prueba_gratuita() %}… {{ dias_de_prueba() }} días gratis …{% else %}Ver planes{% endif %}
+```
+
+**Dónde aparece** (4 páginas; 11 condicionales en la landing, 1 en cada una de
+las otras dos):
+
+| Archivo | Qué se añadió |
+| --- | --- |
+| `app/templates/landing.html` | meta description, barra de navegación, píldora `hero-prueba`, CTA del hero a `/acceso` + letra pequeña, bloque `prueba-destacada` en `#precios`, un `<li>` en cada tarjeta de plan, `nota-honesta` reescrita, paso 1 de «de cero a presupuesto», CTA de cierre |
+| `app/templates/pago.html` | bloque `pago-prueba` tras el hero |
+| `app/templates/auth/access.html` | línea `auth-prueba` en el formulario de registro |
+| `app/static/css/public.css` | `.hero-prueba`, `.hero-letra-pequena`, `.prueba-destacada`, `.pago-page .pago-prueba`, `.auth-split-forms .auth-prueba` |
+
+**Dos detalles con intención**, que conviene no deshacer sin pensarlo:
+
+- En `/pago` la condición es `hay_prueba_gratuita() and not msg`. Quien llega
+  con un aviso **ya agotó la prueba**; volver a ofrecérsela sería una burla.
+- El anuncio usa el **verde** del sistema (`--green-soft`, `#047857`, `#065f46`)
+  y no el azul `--accent` de las CTA de pago, para que lo gratuito se distinga
+  de un solo vistazo de lo que cuesta dinero.
+
+### Textos que comprometen al producto
+
+Están publicados y **deben seguir siendo ciertos**; si algún día dejan de
+serlo, hay que cambiar la web el mismo día:
+
+- «N días gratis · sin tarjeta de crédito»
+- «Acceso completo durante N días. No pedimos tarjeta y no se cobra nada
+  automáticamente.»
+- «si no eliges un plan, tu cuenta simplemente deja de generar presupuestos
+  nuevos y tus datos siguen ahí»
+
+### Cómo queda vigilado
+
+Seis tests nuevos en `tests/test_prueba_gratuita.py` (56 en el archivo, 642 en
+la suite), sobre un helper `_paginas_publicas` que recorre `/`, `/conocer`,
+`/pago` y `/acceso`.
+
+El importante es **`test_apagar_la_prueba_retira_el_anuncio`**: con
+`COTIZAT_DIAS_PRUEBA=0` exige que no quede rastro de «días gratis» —ni de
+`d&iacute;as gratis`, por el escapado de Jinja— en ninguna de las cuatro
+páginas. La razón de existir de ese test: el día que se retire la oferta, lo
+que no puede pasar es que la web siga prometiéndola.
+
+Se comprobó que **el test muerde**: forzando a `{% if True %}` la condición del
+hero, falla; restaurándola, vuelve a verde. Además se verificó a mano
+levantando el servidor con `COTIZAT_DIAS_PRUEBA=0`, donde las cuatro páginas
+quedan limpias y la landing revierte a «Ver planes».
+
+### Efecto secundario: la suite estaba en rojo y no se sabía
+
+Detallado en «EMPEZAR AQUÍ → Errores y lecciones». Resumen: el auditor de datos
+sensibles solo revisa archivos **ya versionados**, así que los ejemplos de
+correo añadidos con la prueba gratuita no se auditaron hasta commitearlos, y
+`fbc3c26` se subió con 42 hallazgos. Se corrigió en `16063ec` con nombres de
+fantasía y una exención estrecha en el auditor, no con 42 excepciones.
 
 ---
 
@@ -38,8 +265,19 @@ completo, incluido el asunto del `FORCE ROW LEVEL SECURITY`, está en
 `docs/COBRO_Y_LICENCIAS.md` §5.
 
 630 pruebas en verde, 50 de ellas nuevas en `tests/test_prueba_gratuita.py`.
+(Cifra de aquel momento; al cierre de la sesión siguiente son **642**.)
 
-### ⚠️ Lo que falta y en qué orden
+### ⚠️ Lo que faltaba y en qué orden — **ya resuelto, se conserva por el razonamiento**
+
+> **Estado real al 18/08/2026 por la noche:** los pasos 1 y 3 **están hechos**
+> (el titular aplicó el SQL en Supabase sin incidencias y se concedió la
+> licencia de cortesía). Quedan el 2 y el 4, que el titular ejecuta tras
+> fusionar el PR #38 — ver «EMPEZAR AQUÍ» al principio de este documento.
+>
+> Una corrección respecto a lo que decía este apartado: el paso 3 **no** era
+> un prerrequisito del 4. El panel `/admin/*` cuelga de `get_operator_db`, que
+> no comprueba licencia, así que la cortesía puede concederse en cualquier
+> momento. Lo único realmente bloqueante era la migración.
 
 **El SQL de PostgreSQL solo está validado por lectura y en SQLite: no hay
 PostgreSQL en el entorno de desarrollo.** La prueba de humo del final de
@@ -47,16 +285,17 @@ PostgreSQL en el entorno de desarrollo.** La prueba de humo del final de
 verdad; conviene correrla dentro de una transacción con `ROLLBACK`, como está
 escrita.
 
-1. Aplicar `docs/staging_upgrade_a3d9c1e75b28.sql` en Supabase con el rol
-   administrativo (**no** `cotizat_app`).
-2. Verificar la cabeza `a3d9c1e75b28` en `/readyz`.
-3. Licencia de cortesía a la organización del titular.
-4. `COTIZAT_EXIGIR_LICENCIA=true` en Vercel (Production) + redeploy, y
+1. ✅ Aplicar `docs/staging_upgrade_a3d9c1e75b28.sql` en Supabase con el rol
+   administrativo (**no** `cotizat_app`). *(Hecho por el titular, sin
+   incidencias.)*
+2. ⏳ Verificar la cabeza `a3d9c1e75b28` en `/readyz`.
+3. ✅ Licencia de cortesía a la organización del titular. *(Hecha.)*
+4. ⏳ `COTIZAT_EXIGIR_LICENCIA=true` en Vercel (Production) + redeploy, y
    comprobar `"licencias": "exigida"`.
 
 Invertir el orden dejaría suspendida a toda organización nueva.
 
-### Lo siguiente en el producto
+### Lo siguiente en el producto — **ya hecho, ver secciones posteriores**
 
 El **panel de operador «premium»**: gestionar una organización (conceder,
 renovar, retirar, ver pagos) **en dos clics desde el propio listado**, sin
@@ -140,7 +379,8 @@ test que pase por vacío.
 
 - Suite completa: **573 passed, 6 skipped** (`.venv/bin/pytest -q`), 38 de ellos
   en `tests/test_compras_plan.py` y 33 en `tests/test_licencias_acceso.py`.
-  `compileall` limpio.
+  `compileall` limpio. *(Cifra de aquel momento; el total vigente está en
+  «EMPEZAR AQUÍ», al principio del documento.)*
 
 ### Pendientes / candidatos siguientes
 
