@@ -10,6 +10,11 @@ from ..datos_pago import PLANES
 
 router = APIRouter()
 
+#: Ruta del trabajo programado de Vercel (vercel.json → `crons`). Un solo
+#: punto de verdad: `tests/test_vercel_cron_config.py` comprueba que la ruta
+#: declarada en vercel.json coincide con esta, y /readyz lo publica.
+CRON_RECORDATORIOS_PATH = "/api/cron/recordatorios-vencimiento"
+
 # ---------------------------------------------------------------------------
 # Panel de operador: licencias del producto (E1-060)
 #
@@ -454,7 +459,7 @@ def _resumen_recordatorios(resultado: dict) -> dict:
     }
 
 
-@router.get("/api/cron/recordatorios-vencimiento", include_in_schema=False)
+@router.get(CRON_RECORDATORIOS_PATH, include_in_schema=False)
 def cron_recordatorios_vencimiento(
     request: Request, db: Session = Depends(get_cron_db)
 ):

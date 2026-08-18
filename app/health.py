@@ -109,6 +109,48 @@ def _check_email_configuration() -> tuple[str, str | None]:
     return estado_configuracion_email()
 
 
+def _check_cron_configuration() -> dict[str, str]:
+    """Informativo: el trabajo programado de Vercel y su secreto.
+
+    El cron se declara en ``vercel.json`` → ``crons`` y Vercel solo lo crea
+    para despliegues de **producción**; cada invocación lleva
+    ``Authorization: Bearer $CRON_SECRET``. Este chequeo publica si el
+    despliegue actual tiene el secreto y si las rutas declaradas existen en la
+    aplicación, para distinguir de un vistazo «el cron no se creó en Vercel»
+    (no aparece en el panel) de «el cron falla al ejecutarse» (aparece pero
+    responde 401 o 500). Nunca falla el readiness: sin cron la app funciona
+    igual, y no expone el valor del secreto.
+    """
+    import json
+    import os
+    from pathlib import Path
+
+    from .routers import admin
+
+    secreto = str(os.environ.get("CRON_SECRET", "")).strip()
+    estado = {"cron_secret": "configurado" if secreto else "no-configurado"}
+
+    vercel_json = Path(__file__).resolve().parents[1] / "vercel.json"
+    try:
+        crons = json.loads(vercel_json.read_text(encoding="utf-8")).get("crons", [])
+    except Exception:
+        crons = []
+    rutas_declaradas = [
+        cron["path"] for cron in crons if isinstance(cron, dict) and cron.get("path")
+    ]
+    if not rutas_declaradas:
+        estado["cron"] = "sin-crons-en-vercel.json"
+        return estado
+    resumen = []
+    for ruta in rutas_declaradas:
+        registrada = any(
+            getattr(r, "path", None) == ruta for r in admin.router.routes
+        )
+        resumen.append(f"{ruta}:{'registrada' if registrada else 'NO-registrada'}")
+    estado["cron"] = "; ".join(resumen)
+    return estado
+
+
 def _check_postgresql(engine: Engine) -> dict[str, object]:
     """Comprueba conexión, head de Alembic y el rol runtime limitado."""
     results: dict[str, object] = {"database": "postgresql"}
@@ -225,6 +267,11 @@ def readiness(engine: Engine | None = None) -> HealthStatus:
     # enlace en pantalla, así que nunca añade errores al readiness.
     email_state, _email_error = _check_email_configuration()
     checks["email"] = email_state
+
+    # Informativo: el cron de Vercel depende de `CRON_SECRET` y de que el
+    # despliegue de producción contenga el vercel.json con `crons`. Sin cron
+    # la aplicación funciona igual, así que nunca añade errores al readiness.
+    checks.update(_check_cron_configuration())
 
     # En SQLite local (escritorio) un contador por proceso es correcto: hay un
     # único proceso. Solo se informa/exige el compartido en despliegue web.

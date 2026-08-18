@@ -320,6 +320,43 @@ destinatarios que el aviso manual). El correo enlaza a `/pago` para renovar en
 un clic y deja `Reply-To: soporte@cotizat.online`, de modo que responder llega
 directamente al buzón de Zoho.
 
+### Si el cron no aparece en Vercel (Cron Jobs vacío)
+
+El cron **no se crea desde el panel**: Vercel lo crea al desplegar, leyendo
+`vercel.json` de la raíz del repositorio, y **solo para despliegues de
+producción** (un Preview nunca muestra crones). Comprueba en este orden:
+
+1. **¿El despliegue en producción es el que contiene el `vercel.json`?**
+   Vercel → tu proyecto → **Deployments**. El que tenga la etiqueta
+   *Production* debe ser posterior a la fusión del PR #39 y mostrar el commit
+   `455f3fc`. Si solo has desplegado la rama del PR (Preview), el cron no
+   existe: fusiona a `main` (o a la rama de producción) y espera el redeploy.
+2. **¿El proyecto de Vercel tiene la Root Directory correcta?** Settings →
+   General → Root Directory debe ser `/` (o la carpeta que contenga
+   `vercel.json`). Si apunta a otra carpeta, Vercel nunca lee el `vercel.json`
+   de la raíz.
+3. **¿Está `CRON_SECRET` definida?** Settings → Environment Variables →
+   `CRON_SECRET` (Production), valor fuerte. Sin ella el cron puede aparecer
+   pero cada invocación responde 401. **Redeploy** después de guardarla.
+4. **Comprueba desde la propia app** (no requiere entrar al panel):
+   ```bash
+   curl -s https://cotizat.online/readyz | python -m json.tool
+   ```
+   En `checks` verás `cron_secret` (`configurado`/`no-configurado`) y `cron`
+   (p. ej. `...:registrada`). Si dice `no-configurado`, el problema es la
+   variable de entorno, no el código.
+5. **Prueba manual de la ruta** (debe responder 401 sin el secreto, 200 con él):
+   ```bash
+   curl -i https://cotizat.online/api/cron/recordatorios-vencimiento
+   curl -i -H "Authorization: Bearer TU_SECRETO" \
+        https://cotizat.online/api/cron/recordatorios-vencimiento
+   ```
+   Si responde 404, la ruta no está en el despliegue: es un despliegue antiguo.
+
+La suite de CI (`tests/test_vercel_cron_config.py`) verifica además que la ruta
+declarada en `vercel.json` sigue existiendo en la aplicación; un cron huérfano
+no puede llegar a producción en silencio.
+
 ---
 
 ## 10. Emails de Supabase Auth (alta y recuperación)
