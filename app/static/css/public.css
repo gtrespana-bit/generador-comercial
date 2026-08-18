@@ -1100,12 +1100,13 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
   letter-spacing: -0.01em;
 }
 .landing .dp-img {
-  width: 36px;
-  height: 36px;
+  width: 46px;
+  height: 34px;
   object-fit: cover;
   border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--surface-alt);
+  border: 1px solid var(--border-strong);
+  background: linear-gradient(135deg, #eef0f4, #e2e6ec);
+  box-shadow: var(--shadow-xs);
   flex: 0 0 auto;
 }
 .landing .dp-cant, .landing .dp-precio, .landing .dp-importe {
