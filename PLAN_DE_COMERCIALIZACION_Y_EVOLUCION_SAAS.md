@@ -72,9 +72,9 @@ Al trabajar en una tarea de este plan se debe:
 |---|---|---|---|
 | 0. Diagnóstico y límites | Conocer el estado real y fijar principios | **Completada** | Auditoría y decisión de nicho documentadas |
 | 1. Fundamentos comerciales web | Construir una base browser-first honesta, persistente y aislada | **Completada** | Base web, licencias y usabilidad verificadas |
-| 2. Validación comercial pagada | Demostrar que empresas reales pagan y continúan usándolo | **Aplazada hasta el final por decisión del titular** | Solo se abrirá cuando el producto se considere completo |
-| 3. Cierre funcional y operativo web | Terminar el ciclo comercial y la operación antes de exponerlo a clientes | **Completada; migraciones aplicadas en Supabase, queda desplegar el código de la rama** | Envío, aceptación, recuperación y operación completas |
-| 4. Endurecimiento SaaS | Completar seguridad, escalabilidad y operación pública | Pendiente | Beta de aislamiento y seguridad aprobada |
+| 2. Validación comercial pagada | Demostrar que empresas reales pagan y continúan usándolo | **Aplazada hasta el final por decisión del titular** | Solo se abrirá cuando el producto se considere completo (D-017) |
+| 3. Cierre funcional y operativo web | Terminar el ciclo comercial y la operación antes de exponerlo a clientes | **Completada (19/08/2026)** | Envío, aceptación, recuperación y operación completas y desplegadas |
+| 4. Endurecimiento SaaS | Completar seguridad, escalabilidad y operación pública | **En curso** — completados el 19/08/2026: E4-030 (escaneo de dependencias/secretos en CI), **E4-021** (respaldo automático por organización) y **E4-023** (verificación diaria con alerta); quedan pasos de panel (vigilante externo, bucket, backups Supabase Pro) y los ítems E4-020/026/027/032 | Beta de aislamiento y seguridad aprobada |
 | 5. Retención y profundidad | Convertirlo en una herramienta de uso frecuente durante la obra | Pendiente | Uso recurrente y reducción de abandono |
 | 6. Expansión controlada | Crecer por gremios y países sin perder el foco vertical | Pendiente | Mercado inicial repetible y rentable |
 
@@ -246,18 +246,26 @@ Al trabajar en una tarea de este plan se debe:
 
 ## 1.5 Catálogo de ejemplo y catálogo comercial futuro
 
-**Decisión del titular (16/08/2026):** todas las partidas incluidas actualmente
-son propias. Son datos de ejemplo destinados exclusivamente a desarrollo y
-pruebas; no se venderán como catálogo comercial y se eliminarán cuando se
-carguen las partidas reales revisadas.
+**Decisión del titular (16/08/2026, matizada el 19/08/2026):** todas las
+partidas del catálogo (3.006 en `basedatos_partidas/datos/`) son **de autoría
+propia** y son **el catálogo del producto**. No provienen de terceros: la
+auditoría **E1-022 quedó cerrada el 19/08/2026 con evidencia** (0 coincidencias
+de texto con los `.xlsx` de ejemplo, códigos CYPE ausentes, `recursos.json`
+propio — detalle en `docs/DATOS_SENSIBLES.md` §6). Los archivos `DPT020.xlsx`,
+`RBA010.xlsx` y `RBE030.xlsx` **no aportan contenido**: solo definen el
+formato de importación que usa el usuario para subir su propio banco de
+precios, y `BENEFICIO.png`/la captura de la raíz son archivos sueltos sin
+referencia alguna.
 
-Esta decisión retira el catálogo comercial del cierre de la Etapa 1. No se
-dedicará trabajo ahora a ampliar, fechar o preparar comercialmente datos que se
-van a sustituir. Las tareas siguientes se conservan reprogramadas para la carga
-final de contenido, no como trabajo activo:
+El trabajo de catálogo pendiente es de **crecimiento y precio**, no de
+sustitución: ampliar el catálogo propio hasta las ~5.000 partidas y cerrar los
+~196 precios provisionales B2B que requieren cotización. Las tareas siguientes
+se conservan reprogramadas para esa carga final de contenido, no como trabajo
+activo:
 
 - [x] **E1-022 — Aclarar la procedencia de las partidas actuales.**
-  Declaración del titular: contenido propio, de ejemplo y no comercial.
+  **CERRADO (19/08/2026):** auditoría de evidencia; catálogo 100 % de autoría
+  propia; los ejemplos de importación no aportan contenido.
 - [-] **E1-023 — Definir el esquema del catálogo maestro.** Reprogramada para el catálogo real.
 - [-] **E1-024 — Separar catálogo maestro, personalización y precio congelado.** Reprogramada para el catálogo real.
 - [-] **E1-025 — Curar un catálogo inicial de 200–500 partidas.** Retirada del alcance actual.
@@ -546,11 +554,19 @@ Considerar si, después de 15–20 entrevistas y una oferta concreta:
 
 # ETAPA 3 — Cierre funcional y operativo de la versión web
 
-**Estado:** ACTIVA
+**Estado:** COMPLETADA (19/08/2026) — código desplegado en producción
+(`cotizat.online`) y migraciones aplicadas; solo queda la validación final de
+tipo prueba, agrupada en el día final de tests (D-019).
 **Prerrequisito:** fundamentos web de Etapa 1 completados. Por D-017 no requiere validación comercial previa.
 **Objetivo:** terminar el ciclo completo del presupuesto y la operación técnica antes de entregar CotizaT a clientes: envío, enlace seguro, aceptación trazable, recuperación, exportación y soporte operativo.
 
 El desarrollo y las pruebas se realizan con datos ficticios o del titular. No se abre una beta comercial durante esta etapa. El primer bloque funcional es E3-016 a E3-019: llevar el presupuesto desde su generación hasta la entrega y aceptación por el cliente.
+
+> **Numeración:** el bloque operativo E3-020 a E3-024 (respaldo, restauración,
+> exportación, baja y monitorización) está descrito en el §11 y es la
+> numeración usada en el resto del repositorio. Los ítems E3-025 a E3-029 de
+> esta sección se renumeraron el 19/08/2026 para eliminar la colisión con ese
+> bloque.
 
 ## 3.1 Fundamentos
 
@@ -572,14 +588,32 @@ El desarrollo y las pruebas se realizan con datos ficticios o del titular. No se
 
 ## 3.2 Datos y operación
 
-- [ ] **E3-009 — Crear almacenamiento persistente y backup externo cifrado.**
-- [ ] **E3-010 — Probar restauración completa de una instancia.**
+- [~] **E3-009 — Crear almacenamiento persistente y backup externo cifrado.**
+  Persistencia en PostgreSQL (Supabase) y **backup completo verificable** por
+  organización (E3-020, manual: paquete `.zip` con manifest y SHA-256). Falta
+  la **automatización y el cifrado en reposo externo** → pendiente **E4-021**
+  (backups automáticos).
+- [x] **E3-010 — Probar restauración completa de una instancia.**
+  Restauración controlada en dos pasos ensayada (E3-021); verificación íntegra
+  antes de escribir, fusión idempotente, archivos re-escritos al almacén
+  privado. `docs/RESPALDO_Y_RESTAURACION_WEB.md`.
 - [x] **E3-011 — Separar secretos y configuración del código.**
-  Secretos en variables de entorno; repositorio e historial auditados por E1-021.
-- [ ] **E3-012 — Añadir monitorización de disponibilidad y errores.**
-- [ ] **E3-013 — Crear procedimiento de alta y baja de empresa.**
-- [ ] **E3-014 — Crear exportación completa de datos del cliente.**
+  Secretos en variables de entorno; repositorio e historial auditados por
+  E1-021 y vigilados en CI desde el 19/08/2026 por E4-030 (detect-secrets).
+- [~] **E3-012 — Añadir monitorización de disponibilidad y errores.**
+  Panel `/admin/operacion` con los chequeos de `/readyz` y registro acotado de
+  errores (E3-024). Falta la **vigilancia proactiva de disponibilidad**
+  (alertas) → pendiente **E4-023**.
+- [x] **E3-013 — Crear procedimiento de alta y baja de empresa.**
+  Alta por registro autónomo (con prueba gratuita y verificación de email);
+  baja por el propietario con borrado verificado y transaccional (E3-023).
+  `docs/EXPORTACION_Y_BAJA_ORGANIZACION.md` y `docs/PROCESO_PILOTOS.md`.
+- [x] **E3-014 — Crear exportación completa de datos del cliente.**
+  `cotizat-export` v1: CSV por tabla + archivos con nombre original + respaldo
+  verificable embebido (E3-022), solo propietario/administrador.
 - [ ] **E3-015 — Definir tiempos de retención y eliminación.**
+  Pendiente: política de retención (parcialmente cubierta en la política de
+  privacidad v1; falta la declaración formal de plazos).
 
 ## 3.3 Funciones comerciales web prioritarias
 
@@ -591,17 +625,24 @@ El desarrollo y las pruebas se realizan con datos ficticios o del titular. No se
   Completado en la rama el 16/08/2026: aceptar/rechazar una sola vez sobre la versión exacta, con nombre y email declarados, comentario opcional y fecha/hora. PostgreSQL registra la respuesta mediante una función SECURITY DEFINER limitada a cinco columnas y al hash vigente; la sesión pública no recibe UPDATE ni acceso al tenant. La interfaz declara honestamente que no es firma electrónica cualificada ni identidad certificada. Suite: 405 passed, 6 skipped.
 - [x] **E3-019 — Notificación de aceptación o rechazo.**
   Completado localmente el 16/08/2026: la respuesta actualiza el presupuesto a aprobado/rechazado solo si corresponde a la última versión enviada, deja nota interna y notifica inmediatamente por Resend a propietarios/administradores con `Reply-To` del cliente. Una respuesta sobre versión antigua nunca sobrescribe el estado actual. Los fallos del proveedor no pierden la decisión: quedan visibles y admiten reintento sin repetir destinatarios ya confirmados. Suite: 409 passed, 6 skipped.
-- [ ] **E3-020 — Registro de apertura cuando sea legal y se informe adecuadamente.**
+- [-] **E3-025 — Registro de apertura cuando sea legal y se informe adecuadamente.**
+  **Decisión D-021 (19/08/2026): NO implementar.** Requeriría tratamiento legal
+  del consentimiento y aporta poco frente al coste; la apertura no es una
+  métrica de conversión crítica en el piloto manual.
 
 ## 3.4 Operación comercial
 
-- [x] **E3-021 — Cobro recurrente o renovación manual documentada.**
-  Renovación manual documentada en `docs/PROCESO_PILOTOS.md`; cobro recurrente permanece fuera del alcance actual.
-- [x] **E3-022 — Controlar vencimiento, gracia y suspensión sin borrar datos.**
-  Corte, renovación y reactivación completados en E1-060 y verificados por el titular.
-- [x] **E3-023 — Definir SLA y horario de soporte.**
+- [x] **E3-026 — Cobro recurrente o renovación manual documentada.**
+  Renovación manual documentada en `docs/PROCESO_PILOTOS.md` y operativa
+  (panel de operador + cron de recordatorios verificado en Vercel el
+  19/08/2026); cobro recurrente (Stripe) permanece para cuando haya volumen
+  (E4-034).
+- [x] **E3-027 — Controlar vencimiento, gracia y suspensión sin borrar datos.**
+  Corte, renovación y reactivación completados en E1-060 y verificados por el
+  titular; recordatorios automáticos a 5 y 1 día operativos (cron).
+- [x] **E3-028 — Definir SLA y horario de soporte.**
   Alcance, horario y tiempos orientativos publicados en `/legal/soporte`.
-- [-] **E3-024 — Medir coste de infraestructura y soporte por cliente.**
+- [-] **E3-029 — Medir coste de infraestructura y soporte por cliente.**
   Aplazada junto con la validación comercial; no existe todavía una muestra de clientes.
 
 ## 3.5 Criterios de salida de la Etapa 3
@@ -616,20 +657,25 @@ Esta etapa se cierra con evidencia técnica, no con clientes (D-017):
 - [x] Monitorización y diagnóstico permiten detectar fallos sin exponer datos sensibles (E3-024).
 - [x] Autenticación, HTTPS, almacenamiento privado, rate limiting y licencias funcionan en producción.
 
-Todo el bloque E3-016 a E3-024 está **completado en la rama** con suite en
-verde (453 passed, 6 skipped), y **las migraciones `c2f6e8a1d934` y
-`a3d7e9c1b5f2` están aplicadas y verificadas en Supabase el 16/08/2026**
-(evidencia en `docs/PUNTO_DE_CONTINUACION.md` §0ter). El ensayo sobre la
-infraestructura real (staging) queda pendiente de desplegar el código de la
-rama: hasta entonces `/readyz` del entorno migrado responde 503 (esperado).
+Todo el bloque E3-016 a E3-024 está **completado, desplegado en producción y
+verificado** (19/08/2026). Suite vigente: **672 passed, 6 skipped**. Las
+migraciones del bloque están aplicadas en Supabase y `/readyz` responde
+`ok: true` en `cotizat.online` con el cron de recordatorios operativo.
 
-**Puerta al terminar:** pasar al endurecimiento técnico de Etapa 4 o al siguiente bloque funcional que el titular considere necesario. La validación comercial continúa aplazada.
+**Puerta al terminar:** completada — se pasó al endurecimiento técnico de la
+Etapa 4, que está en curso. La validación comercial continúa aplazada (D-017)
+y las comprobaciones de tipo prueba de esta etapa quedan agrupadas en el día
+final de tests (D-019).
 
 ---
 
 # ETAPA 4 — Endurecimiento y operación SaaS
 
-**Estado:** EN CURSO — iniciada el 16/08/2026 con autorización centralizada (E4-002/E4-009) y logs estructurados (E4-022); algunos fundamentos fueron adelantados a E1W para evitar reescrituras.
+**Estado:** EN CURSO — iniciada el 16/08/2026; a 19/08/2026 completados la
+refactorización estructural (E4-001 a E4-005), la autorización centralizada
+(E4-009), los logs estructurados (E4-022) y el escaneo de dependencias y
+secretos en CI (E4-030). Pendientes recomendados: **E4-021 (backups
+automáticos)** y **E4-023 (alertas de disponibilidad)**.
 **Prerrequisitos:** cierre funcional de la Etapa 3. Por D-017, el endurecimiento puede completarse antes de la validación comercial.
 **Estimación:** se revisará con métricas de la beta.
 **Objetivo:** endurecer y operar públicamente la plataforma multiempresa iniciada en Etapa 1.
@@ -669,14 +715,26 @@ rama: hasta entonces `/readyz` del entorno migrado responde 503 (esperado).
 
 - [x] **E4-006 — Crear modelo de Organización/Empresa.**
   Adelantada y completada como E1W-004.
-- [~] **E4-007 — Crear usuarios, membresías e invitaciones.**
-  Implementados perfiles Auth, membresías e invitaciones de un solo uso con token hasheado, caducidad, revocación y aceptación por email verificado; faltan migración/prueba real y canal transaccional de entrega.
+- [x] **E4-007 — Crear usuarios, membresías e invitaciones.**
+  Implementados y **verificados**: perfiles Auth, membresías e invitaciones de
+  un solo uso con token hasheado, caducidad, revocación y aceptación por email
+  verificado; migración aplicada y prueba E2E «invitación sin cuenta previa»
+  superada el 16/08/2026; canal transaccional operativo (Resend + panel
+  «Correos»).
 - [~] **E4-008 — Definir roles mínimos: propietario, administrador, miembro y lectura.**
-  Roles persistibles, bloqueo global de escritura para `lectura` y reglas de administración de equipo implementados; la matriz de capacidades por rol vive centralizada en `app/permisos.py` (E4-009) con pruebas; falta completar la verificación de la matriz por operación de negocio en la interfaz.
+  Roles persistibles, bloqueo global de escritura para `lectura` y reglas de
+  administración de equipo implementados; la matriz de capacidades por rol
+  vive centralizada en `app/permisos.py` (E4-009) con pruebas automáticas;
+  la verificación manual de la matriz por operación de negocio en la interfaz
+  queda para el **día final de tests (D-019)**.
 - [x] **E4-009 — Implementar autorización centralizada.**
   Completada el 16/08/2026 con `app/permisos.py`: única fuente de verdad de los conjuntos de roles y predicados (`puede_escribir`, `puede_gestionar`, `es_propietario`, `es_lectura`) y variantes que lanzan excepción; los checks inline de las rutas migraron a los predicados y una prueba estática impide que reaparezcan. La guardia de bajo nivel de SQLAlchemy (`app/models`) permanece como defensa en profundidad.
-- [~] **E4-010 — Implementar recuperación de contraseña y verificación de email.**
-  Recuperación implementada sobre Supabase y cambio de contraseña desde `/cuenta` con reautenticación previa y cierre de sesión posterior; falta prueba real y completar gestión explícita de verificación de email.
+- [x] **E4-010 — Implementar recuperación de contraseña y verificación de email.**
+  Recuperación implementada sobre Supabase, **validada end-to-end el
+  14/08/2026** (email recibido, enlace a `/restablecer-clave`, cambio de
+  contraseña e inicio de sesión) y cambio de contraseña desde `/cuenta` con
+  reautenticación previa; emails de confirmación y recuperación reestilizados
+  con la identidad de CotizaT (19/08/2026).
 - [~] **E4-031 — Panel de cuenta de la persona usuaria.**
   `/cuenta` reúne perfil (nombre), cambio de contraseña, listado de organizaciones con la activa marcada y cierre de sesión; `/salir` revoca además la sesión en GoTrue. Falta cambio de email con reverificación, gestión de sesiones activas por dispositivo y eliminación de cuenta.
 - [ ] **E4-011 — Evaluar segundo factor para administradores.**
@@ -685,12 +743,22 @@ rama: hasta entonces `/readyz` del entorno migrado responde 503 (esperado).
 
 - [x] **E4-012 — Añadir `organizacion_id` o estrategia equivalente a todos los datos empresariales.**
   Adelantada como E1W-005, incluidas entidades hijas.
-- [~] **E4-013 — Aplicar filtrado obligatorio en la capa de datos.**
-  SQLAlchemy ya lo aplica y `c93e7a4d20f1` versiona RLS por membresía/rol; falta aplicar y probar la barrera PostgreSQL real con el login limitado.
-- [~] **E4-014 — Evitar depender de que cada ruta recuerde filtrar manualmente.**
-  El criterio se aplica mediante eventos SQLAlchemy y políticas RLS sobre cada modelo tenant; falta validación de integración real.
+- [x] **E4-013 — Aplicar filtrado obligatorio en la capa de datos.**
+  SQLAlchemy lo aplica por eventos y `c93e7a4d20f1` versiona RLS por
+  membresía/rol; **barrera PostgreSQL real activa en producción**: el login
+  runtime es miembro no privilegiado de `cotizat_app` (`/readyz` lo verifica:
+  `superuser=False, bypassrls=False, inherit=True`). El cruce manual entre dos
+  organizaciones queda para el día final de tests (D-019).
+- [x] **E4-014 — Evitar depender de que cada ruta recuerde filtrar manualmente.**
+  El criterio se aplica mediante eventos SQLAlchemy y políticas RLS sobre cada
+  modelo tenant, con inventario automático de aislamiento (E4-016). La
+  validación manual de integración queda para el día final de tests (D-019).
 - [~] **E4-015 — Crear pruebas automáticas de aislamiento para cada dominio.**
-  Cobertura en `tests/test_tenancy.py`, `tests/test_storage.py` y `tests/test_rls.py`, incluidos metadatos, claves, proxy, cobertura de tablas/políticas y contexto parametrizado; faltan dominios y la integración PostgreSQL real.
+  Cobertura en `tests/test_tenancy.py`, `tests/test_storage.py` y
+  `tests/test_rls.py`, incluidos metadatos, claves, proxy, cobertura de
+  tablas/políticas y contexto parametrizado, más el inventario E4-016 sobre los
+  29 modelos tenant; los cruces con PostgreSQL real entre dos organizaciones
+  quedan para el día final de tests (D-019).
 - [x] **E4-016 — Auditar acceso directo por identificadores.**
   Completado el 17/08/2026 con `tests/test_inventario_aislamiento.py`: inventario
   auto-mantenido que construye una instancia de **cada** modelo `TenantMixin`
@@ -698,59 +766,155 @@ rama: hasta entonces `/readyz` del entorno migrado responde 503 (esperado).
   devuelve `None` para cada uno, con sanity de que en A sí resuelve. Si se
   añade un modelo nuevo sin incluirlo en el grafo, la prueba falla nombrándolo.
 - [~] **E4-017 — Auditar archivos y URLs firmadas.**
-  Objetos nuevos usan proxy privado y `/static/uploads` se bloquea en PostgreSQL. El 17/08/2026 se añadió la auditoría estática completa (`tests/test_auditoria_archivos.py`): recorre todo `app/` (Python, plantillas, JS y CSS) prohibiendo marcadores de URLs públicas/firmadas y enlaces directos al bucket, con regresión sobre `file_url` y `SupabaseStorage`. La decisión de **no** introducir URLs firmadas cortas por ahora queda documentada en `docs/ADR-002_URLS_FIRMADAS_ARCHIVOS.md` (propuesta, pendiente de confirmación del propietario). Falta únicamente la auditoría externa manual (confirmar en el navegador que la URL pública del objeto responde acceso denegado), que es operativa del titular.
+  Objetos nuevos usan proxy privado y `/static/uploads` se bloquea en
+  PostgreSQL. El 17/08/2026 se añadió la auditoría estática completa
+  (`tests/test_auditoria_archivos.py`): recorre todo `app/` (Python,
+  plantillas, JS y CSS) prohibiendo marcadores de URLs públicas/firmadas y
+  enlaces directos al bucket, con regresión sobre `file_url` y
+  `SupabaseStorage`. La decisión de **no** introducir URLs firmadas cortas por
+  ahora queda documentada en `docs/ADR-002_URLS_FIRMADAS_ARCHIVOS.md`
+  (propuesta, pendiente de confirmación del propietario). Falta únicamente la
+  auditoría externa manual (confirmar en el navegador que la URL pública del
+  objeto responde acceso denegado), agrupada en el **día final de tests
+  (D-019)**.
 
 ## 4.4 Infraestructura
 
-- [~] **E4-018 — PostgreSQL administrado.**
-  Driver, URL y esquema están preparados; falta elegir proveedor y ejecutar integración real.
-- [~] **E4-019 — Almacenamiento de objetos para imágenes, PDFs y anexos.**
-  Backend y metadatos implementados como E1W-009; falta aprovisionar y probar el bucket privado real.
+- [x] **E4-018 — PostgreSQL administrado.**
+  Elegido **Supabase** (D-016) y **en producción**: esquema migrado, RLS
+  activo y rol runtime limitado verificado por `/readyz`.
+- [x] **E4-019 — Almacenamiento de objetos para imágenes, PDFs y anexos.**
+  Backend y metadatos implementados como E1W-009; bucket privado
+  `cotizat-private` **aprovisionado y verificado** (subida/descarga por proxy
+  autorizado; la auditoría externa manual queda para el día final de tests,
+  D-019).
 - [ ] **E4-020 — Cola de trabajos para PDFs, emails e importaciones pesadas.**
-- [ ] **E4-021 — Backups automáticos y restauraciones ensayadas.**
+  Pendiente; no bloquea el piloto (los envíos actuales son síncronos y acotados).
+- [x] **E4-021 — Backups automáticos y restauraciones ensayadas.**
+  **Completado el 19/08/2026 (código)** con `app/services/mantenimiento.py` y
+  el cron `/api/cron/mantenimiento`: respaldo automático por organización
+  (mismo paquete verificable de E3-020) guardado en el bucket privado bajo
+  `organizaciones/<id>/respaldo_automatico/` con retención configurable
+  (`COTIZAT_RESPALDO_RETENCION`, 14 por omisión; `COTIZAT_RESPALDO_MAX_MB`),
+  sin registrar los zips como archivos (evita crecimiento autorreferencial) y
+  sin romper el barrido si una organización supera el límite. La restauración
+  ya estaba ensayada (E3-021). **Complemento de panel pendiente**: backups
+  automáticos de Supabase Pro (base + Storage) y `application/zip` en los MIME
+  permitidos del bucket (`docs/PENDIENTES_OPERATIVOS.md` §11). Cubre R-011.
 - [x] **E4-022 — Logs estructurados sin datos sensibles innecesarios.**
   Completado el 16/08/2026 con `app/logs.py`: modo JSON opt-in (`COTIZAT_LOG_JSON=true`, apagado por omisión), idempotente, y redacción de credenciales embebidas en URLs tanto en mensajes como en trazas de excepción.
-- [ ] **E4-023 — Monitorización, alertas y seguimiento de errores.**
-- [ ] **E4-024 — Entornos separados de desarrollo, pruebas y producción.**
-- [ ] **E4-025 — Despliegues repetibles y reversibles.**
+- [x] **E4-023 — Monitorización, alertas y seguimiento de errores.**
+  **Completado el 19/08/2026 (código)**: el cron `/api/cron/mantenimiento`
+  ejecuta la verificación diaria de `/readyz` y, si falla, envía el correo
+  interno `alerta_operador` a todos los operadores (`COTIZAT_OPERADORES`) con
+  los errores y el estado de cada chequeo (sin secretos). El seguimiento de
+  errores no capturados ya existía (E3-024). **Complemento de panel
+  pendiente**: vigilante externo de disponibilidad (p. ej. UptimeRobot sobre
+  `/healthz`, cada 5 min) — pasos en `docs/MONITORIZACION_Y_DIAGNOSTICO.md`
+  §6b y `docs/PENDIENTES_OPERATIVOS.md` §11. Cubre R-009/R-011.
+- [x] **E4-024 — Entornos separados de desarrollo, pruebas y producción.**
+  Staging (`cotizat-generador.vercel.app`) y producción (`cotizat.online`)
+  operativos, con variables por entorno en Vercel y CI como puerta.
+- [x] **E4-025 — Despliegues repetibles y reversibles.**
+  Vercel: cada `git push` genera despliegue; redeploy y rollback desde el
+  panel; CI bloquea fusiones rotas. `docs/DESPLIEGUE_VERCEL.md`.
 
 ## 4.5 Auditoría y seguridad
 
 - [ ] **E4-026 — Registro de quién cambió precios, documentos y estados.**
+  Pendiente; útil antes de la beta abierta (trazabilidad de cambios).
 - [ ] **E4-027 — Historial de sesiones y acciones sensibles.**
-- [ ] **E4-028 — Política de contraseñas y bloqueo de intentos.**
-- [~] **E4-029 — CSRF, XSS, CSP, validación de archivos y rate limiting revisados.**
-  CSRF, cabeceras, límites/MIME, rate limiting local y CSP sin `unsafe-inline` para scripts/estilos implementados; handlers, style API y sinks DOM quedan cubiertos por regresión. Faltan validación HTTPS independiente y rate limiting distribuido.
-- [ ] **E4-030 — Escaneo de dependencias y secretos en CI.**
-- [ ] **E4-031 — Auditoría externa o revisión independiente antes del lanzamiento público.**
+  Pendiente; parcialmente cubierto por el registro de errores de E3-024.
+- [~] **E4-028 — Política de contraseñas y bloqueo de intentos.**
+  Rate limiting local de intentos (10/5 min por IP) y reglas de Supabase Auth
+  activas; falta formalizar la política y evaluar 2FA (E4-011).
+- [x] **E4-029 — CSRF, XSS, CSP, validación de archivos y rate limiting revisados.**
+  CSRF (Origin/Referer + Fetch Metadata), cabeceras defensivas, límites/MIME,
+  **rate limiting distribuido activo con Upstash** (`/readyz`:
+  `distribuido:upstash`) y CSP sin `unsafe-inline` implementados y con
+  regresión. Validación HTTPS independiente → cubierta por E4-044/auditoría
+  externa del día final de tests (D-019).
+- [x] **E4-030 — Escaneo de dependencias y secretos en CI.**
+  **Completado el 19/08/2026**: `pip-audit` sobre `requirements.lock`
+  (dependencias vulnerables) y `detect-secrets` con baseline versionado
+  `.secrets.baseline` (secretos; falla ante cualquier hallazgo nuevo) como
+  pasos del flujo de CI (`docs/ci/ci.yml`, protegidos por
+  `tests/test_integracion_continua.py`). Las herramientas se fijan en
+  `requirements-dev.txt` (E1-037).
+- [ ] **E4-044 — Auditoría externa o revisión independiente antes del lanzamiento público.**
+  Pendiente (renumerado desde E4-031 el 19/08/2026 por colisión de ID con el
+  panel de cuenta). Incluye la auditoría externa del bucket privado; se
+  agrupa en el día final de tests (D-019).
 - [ ] **E4-032 — Plan de respuesta a incidentes.**
+  Pendiente; es documentación, se prepara con el día final de tests.
 
 ## 4.6 Suscripciones y administración
 
-- [ ] **E4-033 — Definir planes según valor, no por acumulación arbitraria de funciones.**
-- [ ] **E4-034 — Integrar un medio de cobro legalmente disponible para la empresa operadora.**
-- [ ] **E4-035 — Implementar prueba, alta, renovación, gracia, suspensión y cancelación.**
-- [ ] **E4-036 — No eliminar automáticamente datos al fallar un pago.**
-- [ ] **E4-037 — Crear panel interno de soporte y administración.**
-- [ ] **E4-038 — Registrar consentimiento de términos y privacidad.**
+- [x] **E4-033 — Definir planes según valor, no por acumulación arbitraria de funciones.**
+  Planes de piloto definidos y publicados (E1-057): 89 US$/año promocional
+  (habitual 109) o 9,99 US$/mes el primer año (habitual 12,99), con la prueba
+  gratuita de 7 días sin tarjeta (E1-062).
+- [~] **E4-034 — Integrar un medio de cobro legalmente disponible para la empresa operadora.**
+  **Cobro manual operativo** (transferencia, Zelle, Binance, Pago Móvil) con
+  activación desde el panel. El cobro recurrente (Stripe + autónomo en España,
+  modelo 036/RETA) está decidido como vía «en serio» y queda para cuando el
+  volumen lo justifique (`docs/COBRO_Y_LICENCIAS.md`).
+- [x] **E4-035 — Implementar prueba, alta, renovación, gracia, suspensión y cancelación.**
+  Completado en E1-060/E1-062: prueba gratuita 7 días (anti-reciclaje por
+  email normalizado + bloqueo de correos desechables), alta, renovación con
+  encadenamiento, gracia y suspensión sin borrar datos, cancelación con
+  constancia; recordatorios automáticos a 5 y 1 día operativos (cron,
+  19/08/2026).
+- [x] **E4-036 — No eliminar automáticamente datos al fallar un pago.**
+  La suspensión corta el acceso pero **no toca datos**: al renovar todo
+  vuelve. Verificado en `tests/test_licencias_acceso.py`.
+- [x] **E4-037 — Crear panel interno de soporte y administración.**
+  `/admin`: licencias (concesión, renovación, recibo PDF), compras (revisión y
+  activación), correos (envío de prueba de los 8 correos) y operación
+  (chequeos de `/readyz` + errores acotados).
+- [~] **E4-038 — Registrar consentimiento de términos y privacidad.**
+  El registro muestra «Al crear una cuenta aceptas los términos y la política
+  de privacidad» con enlaces, pero no queda **marca explícita** del
+  consentimiento por usuario. Falta el registro (a decidir: marca de
+  versión/fecha en la cuenta).
 
 ## 4.7 Migración y beta
 
 - [ ] **E4-039 — Diseñar importación desde la versión de escritorio.**
+  Pendiente; el escritorio convive en el mismo repositorio y comparte modelo,
+  así que el diseño será sencillo. Se hace con el día final de tests (D-019).
 - [ ] **E4-040 — Probar migraciones con copias anonimizadas de bases reales.**
+  Pendiente; requiere una base real de la que tomar una copia anonimizada.
 - [ ] **E4-041 — Ejecutar beta cerrada con 5–10 empresas.**
+  Pendiente; depende de que el titular declare completo el producto (D-017).
 - [ ] **E4-042 — Realizar prueba de carga realista.**
+  Pendiente; sin tráfico aún no hay objetivo medible.
 - [ ] **E4-043 — Realizar simulacro de caída y recuperación.**
+  Pendiente; se agrupa con E4-021 (backups automáticos) y el día final de tests.
 
 ## 4.8 Criterios de salida de la Etapa 4
 
 - [ ] Ninguna consulta o archivo puede cruzar organizaciones en las pruebas.
+  Cubierto automáticamente (E4-016 + `test_rls.py`); el cruce manual entre dos
+  organizaciones queda para el día final de tests (D-019).
 - [ ] Roles y permisos están cubiertos automáticamente.
-- [ ] Backups y restauración cumplen el objetivo definido.
-- [ ] Monitorización y respuesta a incidentes funcionan.
+  Cubierto por `app/permisos.py` y sus pruebas; la verificación manual por
+  operación de negocio queda para el día final de tests (D-019).
+- [~] Backups y restauración cumplen el objetivo definido.
+  Restauración ensayada (E3-021) y respaldo automático por organización
+  (E4-021) en código; falta el simulacro E4-043 y el complemento de
+  infraestructura (backups Supabase Pro — panel).
+- [~] Monitorización y respuesta a incidentes funcionan.
+  Verificación diaria con alerta (E4-023) en código; falta el vigilante
+  externo (panel) y el plan de incidentes E4-032.
 - [ ] Alta, pago, gracia, cancelación y exportación fueron probados.
+  Funcionalmente completos; la prueba end-to-end real queda para el día final
+  de tests (D-019).
 - [ ] La beta cerrada fue estable y aprobada.
+  Pendiente; depende de D-017.
 - [ ] Existe documentación legal y operativa.
+  Mayormente sí (términos, privacidad, soporte, guías); falta E4-038
+  (consentimiento registrado) y E4-032 (plan de incidentes).
 
 **Puerta al terminar:** lanzamiento comercial controlado del SaaS.
 
@@ -828,7 +992,7 @@ La expansión debe realizarse principalmente mediante catálogos, packs y lengua
 |---|---|---:|---:|---|---|
 | R-001 | Los elogios no se convierten en pagos | Alta | Alta | Pilotos pagados antes del SaaS | Abierto |
 | R-002 | El producto abruma al usuario de papel/Excel | Alta | Alta | Onboarding y pruebas observadas | Mitigado inicialmente en público de construcción; reevaluar en pilotos |
-| R-003 | Partidas sin derechos de redistribución | Media | Crítico | Auditoría de procedencia | Abierto |
+| R-003 | Partidas sin derechos de redistribución | Media | Crítico | Auditoría de procedencia | **Cerrado (19/08/2026): E1-022 — catálogo 100 % de autoría propia, con auditoría de evidencia** |
 | R-004 | Precios desactualizados causan pérdidas | Alta | Crítico | Fecha, fuente, región y aviso referencial | Abierto |
 | R-005 | Confusión entre documento de cobro y factura fiscal | Media | Crítico | Aviso no fiscal aplicado; consultar especialista | Mitigado parcialmente |
 | R-006 | Fuga de datos entre empresas | Alta en la arquitectura actual | Crítico | No publicar; aislamiento y pruebas | Abierto |
@@ -848,8 +1012,8 @@ Estas cifras no son precios definitivos; deben probarse en la Etapa 2.
 
 | Hipótesis | Valor inicial | Estado |
 |---|---:|---|
-| Piloto fundador anual | 99 USD/año | Sin validar |
-| Piloto mensual | 10–15 USD/mes | Sin validar |
+| Piloto fundador anual | **89 US$/año promocional (habitual 109)** — publicado (E1-057) | Publicado, sin validar (Etapa 2) |
+| Piloto mensual | **9,99 US$/mes el primer año (habitual 12,99)** — publicado (E1-057) | Publicado, sin validar (Etapa 2) |
 | Licencia local perpetua | 79–149 USD | Descartada como prioridad por D-014 |
 | Renovación de soporte/catálogo | 30–60 USD/año | Sin validar |
 | Futuro plan web profesional | 19–29 USD/mes | Sin validar |
@@ -879,6 +1043,10 @@ Estas cifras no son precios definitivos; deben probarse en la Etapa 2.
 | 13/08/2026 | D-015 | Adelantar organizaciones y aislamiento, pero no confundirlos con preparación para publicar | La propiedad de datos debe existir antes de ampliar funciones; autenticación, archivos y seguridad siguen pendientes | Al completar E1W-007 a E1W-011 |
 | 13/08/2026 | D-016 | Adoptar Supabase inicialmente para PostgreSQL, Auth y Storage, manteniendo abstraído el almacenamiento | Reduce integraciones en la beta; PostgreSQL real, RLS y persistencia ya se validaron, sin impedir migrar objetos a R2 | Tras medir límites/coste en pilotos |
 | 16/08/2026 | D-017 | Completar el producto antes de ejecutar validación comercial pagada | El titular no considera útil entregar a terceros un generador que aún perciba incompleto; catálogo comercial y pilotos se dejan para el final | Cuando el titular declare cerrado el producto |
+| 19/08/2026 | D-018 | La estimación de tiempos (horas, días, plazos) **nunca se imprime en el PDF del cliente** | El desglose de horas es información interna con ventaja comercial; exponerlo invita a reclamaciones («el papel dice 5 h y se hizo en 2»). Solo vive en la app; si algún día se imprime, sería una versión interna para la empresa | Si el titular decide publicar plazos comerciales |
+| 19/08/2026 | D-019 | Agrupar **toda** la validación de tipo prueba en un día final único de solo tests | Hacer las pruebas por etapas y repetirlas al cierre sería trabajo doble. Incluye: matriz de aceptación manual, cruces con dos correos y dos organizaciones, primer alta real con el corte, auditoría externa del bucket, invitación sin cuenta previa y recordatorio real | Cuando el titular lo indique |
+| 19/08/2026 | D-020 | El catálogo de partidas propio (3.006) **es el catálogo del producto**; los `.xlsx` de ejemplo no aportan contenido | E1-022 cerrado con evidencia: autoría 100 % propia; el trabajo pendiente es crecimiento (≈5.000 partidas) y precios B2B, no sustitución | En la carga final de contenido |
+| 19/08/2026 | D-021 | **No implementar** el registro de apertura de correos/enlaces (E3-025) | Requeriría tratamiento legal del consentimiento y aporta poco frente al coste en el piloto manual | Si se abre beta automatizada con métricas de conversión |
 
 ---
 
@@ -889,32 +1057,53 @@ Se completará durante la Etapa 2. No deben guardarse aquí nombres, teléfonos 
 | Fecha | Tipo | Segmento | Hallazgo | Evidencia anonimizada | Acción |
 |---|---|---|---|---|---|
 | 16/08/2026 | Prueba de usabilidad | Profesionales de construcción y personas externas | El público objetivo completó presupuestos sin ayuda; varios baños genéricos en ≈10 min; sin errores observados. Personas sin conocimientos de construcción tardaron más, fuera del nicho prioritario. | Informe verbal anonimizado del titular | Mantener el recorrido; continuar la terminación técnica y dejar la validación comercial para el final (D-017) |
+| 18/08/2026 | Lanzamiento público de la prueba gratuita | Público general (landing) | Se anuncia la prueba de 7 días sin tarjeta en `/`, `/conocer`, `/pago` y `/acceso` y se enciende el corte por licencia; el circuito de cobro completo queda operativo (registro → prueba → recordatorio → pago → renovación). | Verificado en producción vía `/readyz` | Esperar el primer alta real para la validación comercial (D-017); pruebas E2E agrupadas en el día final (D-019) |
+| 19/08/2026 | Auditoría técnica | Repositorio | E1-022 cerrado: catálogo 100 % de autoría propia (0 coincidencias con los `.xlsx` de ejemplo); E4-030 implantado (escaneo de dependencias y secretos en CI). | `docs/DATOS_SENSIBLES.md` §6; `docs/ci/ci.yml` | Reducen R-003 y añaden guardas de regresión para R-009/R-011 |
 
 ---
 
 # 11. Próximo bloque de trabajo
 
-## Etapa 3 activa — completar el producto antes de validarlo comercialmente
+## Estado actual (19/08/2026): Etapa 3 cerrada y Etapa 4 en curso
 
 La continuidad operativa exacta está en `docs/PUNTO_DE_CONTINUACION.md` y el
 estado de infraestructura en `docs/CONTINUIDAD_STAGING_SUPABASE.md`.
 
-**Decisiones del titular (16/08/2026):**
+**Decisiones del titular (16/08/2026, matizadas el 19/08/2026):**
 
 1. **Etapa 1 completada.** PR #25 fusionado, licencias funcionando, usabilidad
    superada por profesionales de construcción y presupuestos de baño en unos
    10 minutos sin errores observados.
-2. **Catálogo apartado.** Las partidas actuales son propias, de ejemplo y solo
-   para pruebas. Se eliminarán al cargar las partidas reales revisadas; no se
-   trabajará ahora en convertirlas en catálogo comercial.
+2. **Catálogo propio como producto (D-020).** El catálogo (3.006 partidas) es
+   100 % de autoría propia (E1-022 cerrado con evidencia) y es el catálogo del
+   producto; los `.xlsx` de ejemplo solo definen el formato de importación.
+   El trabajo pendiente es crecimiento (≈5.000 partidas) y precios B2B.
 3. **Validación comercial aplazada hasta el final (D-017).** No se harán
    pilotos ni se entregará a clientes una versión que el titular considere
    incompleta.
+4. **Toda la validación de tipo prueba se agrupa en un día final único**
+   **(D-019, 19/08/2026):** matriz de aceptación manual, cruces con dos
+   correos y dos organizaciones, primer alta real con el corte, auditoría
+   externa del bucket, invitación sin cuenta previa y recordatorio real.
 
-### Siguiente bloque recomendado: ciclo completo del presupuesto
+**Siguiente bloque recomendado (Etapa 4):**
 
-El generador ya crea un PDF profesional. El siguiente salto funcional es que
-CotizaT gestione también su entrega y cierre, en este orden:
+1. ✅ **E4-021 — Backups automáticos** y ✅ **E4-023 — Alertas**: completados en
+   código el 19/08/2026 (cron `/api/cron/mantenimiento`: respaldo por
+   organización + verificación diaria con correo). Quedan los **pasos de
+   panel** (`docs/PENDIENTES_OPERATIVOS.md` §11): `application/zip` en el
+   bucket, vigilante externo de disponibilidad (UptimeRobot) y backups de
+   Supabase Pro.
+2. **E4-030 — Escaneo de dependencias y secretos en CI**: completado el
+   19/08/2026 (pip-audit + detect-secrets en `docs/ci/ci.yml`).
+3. Con eso, el **día final de tests (D-019)** cuando el titular lo indique.
+
+Histórico de bloques ya completados (se conserva como registro):
+
+### Bloque completado: ciclo completo del presupuesto
+
+El generador ya crea un PDF profesional. El salto funcional fue que CotizaT
+gestionara también su entrega y cierre, en este orden (todo completado):
 
 1. ~~**E3-016 — Envío por email del presupuesto.**~~ Completado el 16/08/2026
    con PDF adjunto, versión congelada y constancia; suite en verde.
@@ -926,13 +1115,12 @@ CotizaT gestione también su entrega y cierre, en este orden:
    16/08/2026 con aviso a administradores, transición solo de la última versión
    y reintento seguro ante fallos.
 
-El ciclo completo del presupuesto E3-016 a E3-019 queda terminado. Lo siguiente
-es cerrar la operación técnica pendiente: restauración completa,
-exportación/baja por organización, monitorización y diagnóstico. Solo cuando el
-titular declare terminado el producto se retomará la Etapa 2 de validación
-comercial.
+El ciclo completo del presupuesto E3-016 a E3-019 quedó terminado, y a
+continuación se cerró la operación técnica (bloque siguiente, también
+completado). Solo cuando el titular declare terminado el producto se retomará
+la Etapa 2 de validación comercial.
 
-### Bloque siguiente: restauración completa por organización (16/08/2026)
+### Bloque completado: restauración, exportación, baja y operación (16/08/2026)
 
 1. ~~**E3-020 — Copia de seguridad web completa y verificable.**~~ Completado el
    16/08/2026: paquete `.zip` `cotizat-backup` v1 con manifest, conteos,
@@ -966,12 +1154,12 @@ comercial.
    HTTP. Detalle en `docs/MONITORIZACION_Y_DIAGNOSTICO.md`. Suite:
    **453 passed, 6 skipped**.
 
-Con E3-024 queda terminado el cierre funcional y operativo de la Etapa 3
+Con E3-024 quedó terminado el cierre funcional y operativo de la Etapa 3
 (envío, aceptación, recuperación, exportación/baja y operación), con sus
-migraciones **aplicadas y verificadas en Supabase el 16/08/2026**. Lo
-siguiente, según la puerta de salida, es **desplegar el código de la rama**
-(`/readyz` del entorno migrado dará 503 hasta entonces, por diseño) y pasar
-al **endurecimiento técnico de la Etapa 4**.
+migraciones **aplicadas y verificadas en Supabase el 16/08/2026**. El código
+**se desplegó en producción** (la Etapa 3 quedó cerrada el 19/08/2026;
+`/readyz` responde `ok: true`) y se pasó al **endurecimiento técnico de la
+Etapa 4**, que está en curso.
 
 <details><summary>Histórico: bloque previo — validación con matriz de aceptación en staging (superado el 14-16/08/2026)</summary>
 

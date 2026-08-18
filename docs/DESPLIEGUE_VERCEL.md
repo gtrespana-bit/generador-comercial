@@ -91,15 +91,25 @@ Ahora:
 
 ## Trabajo programado (cron de recordatorios)
 
-El recordatorio de vencimiento de licencia (5 y 1 día antes) lo dispara Vercel
-Cron desde `vercel.json` → `crons`:
+> **Estado (19/08/2026): operativo.** PR #40 fusionado y desplegado en
+> producción, `CRON_SECRET` en Production y job visible en Settings → Cron
+> Jobs; primera ejecución automática el 19/08 a las 13:00 UTC. Lo siguiente
+> sigue valiendo como referencia de funcionamiento y diagnóstico.
 
-- Ruta: `/api/cron/recordatorios-vencimiento` (definida en
-  `app/routers/admin.py`; `tests/test_vercel_cron_config.py` comprueba en CI
-  que la ruta declarada existe y responde GET).
-- Horario: `0 13 * * *` (una vez al día, 13:00 UTC — compatible con Hobby).
+Dos trabajos programados disparan Vercel Cron desde `vercel.json` → `crons`
+(el plan Hobby admite hasta 2 trabajos diarios; Pro hasta 40):
+
+| Trabajo | Ruta | Horario | Qué hace |
+|---|---|---|---|
+| Recordatorios de vencimiento | `/api/cron/recordatorios-vencimiento` | `0 13 * * *` (13:00 UTC) | Emails a 5 y 1 día del vencimiento de licencia |
+| Mantenimiento diario (E4-021/E4-023) | `/api/cron/mantenimiento` | `0 2 * * *` (02:00 UTC) | Respaldo automático por organización + verificación de `/readyz` con alerta por correo a los operadores |
+
+Ambas rutas viven en `app/routers/admin.py` (`tests/test_vercel_cron_config.py`
+comprueba en CI que cada ruta declarada existe y responde GET, y que su
+horario es válido para Hobby).
+
 - Autenticación: cada invocación lleva `Authorization: Bearer $CRON_SECRET`;
-  sin esa variable en el proyecto, la ruta responde 401 y no se envía nada.
+  sin esa variable en el proyecto, las rutas responden 401 y no hacen nada.
 
 **Para que el cron exista hacen falta tres cosas a la vez** (si falta una, la
 pestaña Cron Jobs de Vercel puede aparecer vacía o el cron fallar al ejecutarse):

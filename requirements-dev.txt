@@ -4,3 +4,6 @@ pytest==9.1.1
 httpx2==2.10.0
 # Usada por las pruebas que validan el flujo de integración continua.
 PyYAML==6.0.3
+# E4-030 — guardas de CI: auditoría de dependencias vulnerables y de secretos.
+pip-audit==2.10.1
+detect-secrets==1.5.0

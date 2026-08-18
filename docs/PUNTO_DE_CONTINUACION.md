@@ -1,6 +1,6 @@
 # Punto exacto de continuación
 
-Fecha de corte: **18/08/2026, PR #38 listo para fusionar (prueba gratuita anunciada al público); el titular activa `COTIZAT_EXIGIR_LICENCIA` justo después del merge** (America/Caracas).
+Fecha de corte: **19/08/2026 (noche) — PR #41 creado con el bloque de operación de la Etapa 4 (E4-030, E4-021, E4-023) + cierre E1-022 + decisiones de producto. Pendiente inmediato: fusionar el PR #41, desplegar y verificar; luego pasos de panel (UptimeRobot, backups Supabase Pro)** (America/Caracas).
 
 Este documento retoma el trabajo sin depender del historial del chat. Describe
 **dónde quedó exactamente** el trabajo y **qué sigue**, en ese orden. Léelo
@@ -15,6 +15,12 @@ junto con `basedatos_partidas/EMPEZAR_AQUI.md` (reglas y progreso del catálogo)
 ---
 
 ## ✅ Cierre de sesión — Cron en Vercel: diagnóstico, /readyz y guardas CI (18/08/2026, noche)
+
+> **Actualización 19/08/2026:** todo lo de esta sección quedó **completado y
+> verificado en producción** — PR #40 fusionado (`c24c2cc`), `CRON_SECRET`
+> configurado (Production), job visible en Settings → Cron Jobs, y además los
+> **emails de Supabase Auth** ya llevan el diseño de CotizaT. El estado vigente
+> está en la sección «EMPEZAR AQUÍ» de más abajo.
 
 Rama fija de la sesión: `arena/01a016b5-generador-comercial`, sobre `main` en
 `455f3fc` (merge del PR #39). El problema reportado: **«el cron no muestra nada
@@ -122,9 +128,11 @@ propuesta, la compra y la demo.
 
 1. Fusionar el **PR #39** (recordatorio + identidad + familia de emails +
    panel «Correos») y verificar el cron en Vercel.
-2. Decidir sobre los **emails de Supabase Auth** (confirmación de alta y
-   recuperación de contraseña): hoy los envía Supabase con su plantilla propia.
-   Ver `docs/PENDIENTES_OPERATIVOS.md` §10 para la recomendación.
+2. ✅ **Resuelto (19/08/2026): los emails de Supabase Auth se reestilizaron**
+   con la identidad de CotizaT (Confirm signup, Reset password y Password
+   changed). Referencia: `docs/SUPABASE_EMAIL_TEMPLATES.md` y
+   `docs/supabase_templates/`. La recomendación de mantenerlos en Supabase
+   sigue en pie.
 
 ---
 
@@ -181,10 +189,11 @@ nada**: el envío sigue por Resend y el buzón solo recibe. El recordatorio deja
 
 ### Pendientes / candidatos siguientes
 
-1. **El titular configura el cron en Vercel**: añadir `CRON_SECRET` (fuerte,
-   `openssl rand -base64 32`) en *Settings → Environment Variables* (Production)
-   y redesplegar. Sin `CRON_SECRET` la ruta responde 401 y Vercel no autentica
-   la llamada. Detalle en `docs/PENDIENTES_OPERATIVOS.md` §9.
+1. ✅ **Hecho (18–19/08/2026): el cron está operativo.** `CRON_SECRET` añadida
+   en Vercel (Production) + redeploy; el job aparece en Settings → Cron Jobs
+   (`/api/cron/recordatorios-vencimiento`, `0 13 * * *`) y `/readyz` lo
+   confirma (`"cron_secret": "configurado"`, `"...:registrada"`). Falta solo
+   ver la primera invocación real (19/08, 13:00 UTC, ±59 min en Hobby).
 2. Vercel **Hobby → Pro** antes del primer cobro (sigue aplazado por el titular).
 3. Vigilar el primer alta real con el corte encendido (pendiente de otra sesión).
 4. `COTIZAT_LEGAL_ENTITY` cuando exista razón social registrada (la empresa
@@ -193,71 +202,115 @@ nada**: el envío sigue por Resend y el buzón solo recibe. El recordatorio deja
 
 ---
 
-## 🟢 EMPEZAR AQUÍ — Estado al cierre del 18/08/2026
+## 🟢 EMPEZAR AQUÍ — Estado al cierre del 19/08/2026 (noche)
 
 ### En una frase
 
-El circuito de cobro completo (prueba gratuita, corte por licencia, panel de
-operador, recordatorios automáticos) está **terminado y en verde**. El PR #39
-(recordatorios + identidad + panel «Correos») **ya está fusionado en `main`** y
-el corte por licencia **está encendido en producción**. Lo único pendiente de
-código es este PR (diagnóstico del cron + guardas CI, rama
-`arena/01a016b5-generador-comercial`); lo que queda es **del lado de Vercel**:
-añadir `CRON_SECRET`, redesplegar y verificar que el cron aparece.
+El circuito de cobro completo está **terminado, en verde y operativo** y la
+**Etapa 4 de endurecimiento avanza**: en esta sesión se cerró **E1-022**
+(catálogo 100 % de autoría propia, con auditoría), se tomaron decisiones de
+producto (**tiempos nunca en el PDF del cliente**; **día final único de solo
+tests**), se completó el **bloque de operación de la Etapa 4** — **E4-030**
+(escaneo de dependencias/secretos en CI), **E4-021** (respaldo automático por
+organización) y **E4-023** (verificación diaria con alerta por correo) — y se
+dejó **todo el bloque en un PR (#41) listo para fusionar**. Lo único pendiente
+del lado del titular: **fusionar el PR #41**, verificar el despliegue (2
+crons) y los pasos de panel (UptimeRobot + backups Supabase Pro + opcional
+MIME del bucket).
 
 ### Estado del repositorio
 
 | Dato | Valor |
 | --- | --- |
-| Rama de trabajo | `arena/01a016b5-generador-comercial` (sincronizada con `origin`) |
-| PR | **abrir** — base `main` en `455f3fc` (merge del PR #39), 5 archivos |
-| Último commit | `f4e2fbe` — Cron de Vercel: diagnóstico en /readyz + guardas CI |
-| Suite | **662 passed, 6 skipped** (con el venv y `pytest -q`) |
-| Cabeza Alembic | `a3d9c1e75b28` (aplicada en Supabase) |
-| Producción | `COTIZAT_EXIGIR_LICENCIA=true` activo; `/readyz` con `"licencias": "exigida"` |
+| Rama de trabajo | `arena/01a016cd-generador-comercial` (sincronizada con `origin`) |
+| PR #40 | **MERGED** en `main` (`c24c2cc`, 18/08/2026 21:31 UTC) — diagnóstico del cron + guardas CI + plantillas de Supabase |
+| **PR #41** | **abierto hacia `main`** desde esta rama — bloque Etapa 4 (E4-030/021/023) + E1-022 + decisiones + docs |
+| Último commit de `main` | `c24c2cc` (merge del PR #40) |
+| Suite | **672 passed, 6 skipped** (verificada localmente el 19/08/2026, con el venv y `pytest -q`) |
+| Cabeza Alembic | `a3d9c1e75b28` (aplicada en Supabase; este bloque **no** añade migración) |
+| Producción | `COTIZAT_EXIGIR_LICENCIA=true` activo; cron de recordatorios operativo (`"cron_secret": "configurado"`, `"...:registrada"`); el cron de mantenimiento se instalará al fusionar y desplegar el PR #41 |
 
-### Qué se hizo en esta última sesión
+### ✅ Qué se cerró en esta última sesión (19/08/2026)
 
-**El cron de Vercel no aparecía en el panel y se diagnosticó.** Se verificó que
-`vercel.json`, la ruta y el barrido están correctos; el motivo es que Vercel
-solo crea crones en **despliegues de producción** y que `CRON_SECRET` seguía
-pendiente. Se añadió **diagnóstico en `/readyz`** (`cron_secret` y `cron`),
-una **guarda CI** (`tests/test_vercel_cron_config.py`) y la **guía de
-verificación** en `docs/PENDIENTES_OPERATIVOS.md` §9 y
-`docs/DESPLIEGUE_VERCEL.md`. Detalle completo en el «Cierre de sesión» de más
-arriba.
+**Documentación de estado puesta al día** (pendientes operativos 1–10 ✅,
+proceso de pilotos, hoja de ruta, plan de comercialización al estado real con
+renumeraciones E3-025→029 y E4-031→044 y decisiones D-018 a D-021).
 
-### ⚠️ Lo que el titular hace por su cuenta, sin esperar a nadie
+**E1-022 — auditoría del catálogo: CERRADA con evidencia.** El catálogo es
+100 % de autoría propia (3.006 partidas en `basedatos_partidas/datos/`, la app
+solo carga de ahí): 0 coincidencias exactas y parciales (ventanas de 60
+caracteres) con los textos de `DPT020/RBA010/RBE030.xlsx`, códigos `RBA`/`RBE`
+ausentes, `DPT0xx` solo como historial interno, `recursos.json` sin frases
+CYPE. Los `.xlsx` solo definen el formato de importación del usuario.
+`docs/DATOS_SENSIBLES.md` §6 y `basedatos_partidas/README.md`.
 
-1. **Fusionar este PR** y esperar a que Vercel termine el despliegue de
-   **producción** (comprobar en Deployments que el deployment *Production* es
-   el nuevo; un Preview no muestra crones).
-2. Vercel → *Settings* → *Environment Variables*, scope **Production**:
-   `CRON_SECRET` con un valor fuerte (`openssl rand -base64 32`).
-3. **Redeploy** (una variable de entorno no se aplica sola al despliegue vivo).
-4. Verificar:
+**Decisiones de producto (D-018 a D-021):** tiempos y plazos **nunca** en el
+PDF del cliente (la estimación de tiempos ya existe en la app, Fase 11; el
+«Gantt por capítulo» se descartó); **día final único de solo tests** (D-019);
+catálogo propio = catálogo del producto (D-020); no al registro de apertura de
+correos (D-021).
+
+**Bloque de operación de la Etapa 4 (código):**
+
+- **E4-030 — Escaneo de dependencias y secretos en CI.** `pip-audit -r
+  requirements.lock` y `detect-secrets` con baseline versionado
+  `.secrets.baseline` como pasos de `docs/ci/ci.yml` (protegidos por
+  `tests/test_integracion_continua.py`); herramientas fijadas en
+  `requirements-dev.txt` (E1-037) y lock regenerado (66 paquetes).
+- **E4-021 — Respaldo automático por organización.** Nuevo cron
+  `/api/cron/mantenimiento` (02:00 UTC) en `app/services/mantenimiento.py`:
+  reutiliza el paquete verificable de E3-020, lo guarda en el bucket privado
+  (`organizaciones/<id>/respaldo_automatico/…`) con retención configurable
+  (`COTIZAT_RESPALDO_RETENCION`, 14) y sin registrarlo en `ArchivoAlmacenado`
+  (evita el crecimiento autorreferencial); las organizaciones que superan
+  `COTIZAT_RESPALDO_MAX_MB` se reportan omitidas, no rompen el barrido;
+  interruptor `COTIZAT_RESPALDO_AUTOMATICO=false`. Storage gana `list()` y
+  `put(max_size=…)`; `application/zip` en buckets nuevos.
+- **E4-023 — Verificación diaria con alerta.** El mismo cron ejecuta los
+  chequeos de `/readyz` y, si fallan, envía a todos los operadores
+  (`COTIZAT_OPERADORES`) el correo interno `emails/alerta_operador.{html,txt}`
+  con errores y estado de chequeos (sin secretos).
+- **Decisiones de panel tomadas:** el bucket `cotizat-private` se deja **sin**
+  restricción MIME (la app ya valida tamaño/categorías/claves), así que no hay
+  que tocar nada en Storage para que los zips entren. `docs/PENDIENTES_OPERATIVOS.md` §11.
+
+### ⚠️ Lo que el titular hace por su cuenta (pasos en paneles)
+
+1. **Fusionar el PR #41** (este bloque) y esperar el despliegue de
+   **producción** en Vercel.
+2. Verificar en Vercel → **Cron Jobs** que aparecen los **2 trabajos**:
+   `recordatorios-vencimiento` (13:00 UTC) y `mantenimiento` (02:00 UTC). En
+   el mismo despliegue, el `/readyz` seguirá en verde.
+3. **(Recomendado) Vigilante externo de disponibilidad**: monitor HTTP(S) en
+   UptimeRobot sobre `https://cotizat.online/healthz`, cada 5 min, alerta al
+   buzón — `docs/MONITORIZACION_Y_DIAGNOSTICO.md` §6b.
+4. **(Recomendado) Backups de Supabase Pro** (base + Storage): al pasar el
+   proyecto a Pro, activar Database → Backups. La **pausa por inactividad del
+   free (7 días) no afecta** mientras el cron diario haga consultas, pero el
+   free **no tiene backups automáticos** y con el primer cobro conviene Pro.
+5. Verificación manual opcional tras el despliegue:
    ```bash
-   curl -s https://cotizat.online/readyz | python -m json.tool
-   # Debe verse: "cron_secret": "configurado" y "...:registrada"
+   curl -i -H "Authorization: Bearer TU_SECRETO" \
+        https://cotizat.online/api/cron/mantenimiento
+   # → {"ok":…, "respaldo":…, "verificacion":…}
    ```
-5. Comprobar Settings → **Cron Jobs**: debe listar `recordatorios-vencimiento`
-   (13:00 UTC; en Hobby puede dispararse hasta ±59 min más tarde).
 
-El interruptor del corte (`COTIZAT_EXIGIR_LICENCIA`) ya está encendido y no hay
-que tocarlo para esto. Si algo sale mal con el cron, nada se rompe: la ruta sin
-secreto responde 401 y el barrido es idempotente.
+### Lo siguiente en el producto
 
-### Lo siguiente en el producto (nada de esto está empezado)
-
-Por orden de valor, según lo hablado:
-
-1. **Confirmar una invocación real del cron** (logs en Cron Jobs → *View Logs*)
-   y, si procede, que llegue un recordatorio a 5 días a un buzón real.
-2. **Vercel Hobby → Pro** antes del primer cobro (sigue aplazado por el titular).
-3. **Vigilar el primer alta real con el corte encendido.** El circuito completo
-   —registro → prueba de 7 días → recordatorio → pago → renovación— nunca se ha
-   recorrido de punta a punta con un cliente de verdad.
+1. **Confirmar la primera invocación real del cron de recordatorios**
+   (19/08 a las 13:00 UTC) y la primera del cron de mantenimiento (20/08 a
+   las 02:00 UTC) en Observability → Cron Jobs → *View Logs*.
+2. **Vercel Hobby → Pro** y **Supabase Free → Pro** antes del primer cobro
+   (siguen aplazados por el titular).
+3. **Día final único de solo tests (D-019)**, cuando el titular lo indique:
+   matriz de aceptación manual, cruces con dos correos y dos organizaciones,
+   primer alta real con el corte encendido, auditoría externa del bucket,
+   invitación sin cuenta previa y recordatorio real.
 4. **`COTIZAT_LEGAL_ENTITY`** cuando exista razón social registrada.
+5. Etapa 4 restante (sin prisa): E4-020 (cola de trabajos), E4-026/027
+   (registro de auditoría/historial de sesiones), E4-032 (plan de
+   incidentes), E4-038 (consentimiento registrado), E4-039 a E4-043 (migración
+   y beta — dependen de D-017). Detalle en `PLAN_DE_COMERCIALIZACION_Y_EVOLUCION_SAAS.md`.
 
 ### Errores y lecciones de esta sesión (importa para no repetirlos)
 
@@ -1512,41 +1565,58 @@ Copiar tal cual, sin añadir secretos ni tokens:
 ---
 
 Continúa el proyecto CotizaT. Antes de proponer nada, lee
-`docs/PUNTO_DE_CONTINUACION.md` (sección «Cierre de sesión — checkout de
-planes + panel admin premium + gestión de organización» primero) y
+`docs/PUNTO_DE_CONTINUACION.md` (sección «EMPEZAR AQUÍ» primero) y
 `basedatos_partidas/EMPEZAR_AQUI.md`. No repitas trabajo ya hecho y no me
 pidas secretos.
 
-**Dónde quedó todo (18/08/2026, cierre con PR del titular).**
+**Dónde quedó todo (19/08/2026, noche — cierre con PR del titular).**
 
-- Rama `arena/01a012cd-generador-comercial`, basada en `main` (`88d3859`,
-  merge del PR #32). **PR #33 creado hacia `main`:**
-  https://github.com/gtrespana-bit/generador-comercial/pull/33 (confirmar
-  estado con `gh pr view 33`; si ya está fusionado, `main` contiene el código).
-- Contenido del bloque: **checkout de planes con pago manual** (`/pago`,
-  `/pago/comprar` con método + comprobante, `/pago/confirmacion`; Pago móvil,
-  Binance, Kontigo, USDT en `app/datos_pago.py`), **panel admin premium**
-  (`/admin` con KPIs, tabla ordenable/filtrable de clientes y planes,
-  activación de compras), **gestión de organización** (nombre editable, solo
-  propietario/admin editan, tarjeta "Tu plan" y píldora en el menú lateral con
-  fecha de caducidad y días restantes) y **landing sin demo** con tarjetas de
-  precio clickeables.
-- Migraciones **`e5f2a8d31b6c`** (compras_plan) y **`f9d4c2a7e5b3`**
-  (organization_license_info) **ya aplicadas en Supabase** por el titular.
-  Head esperado: `f9d4c2a7e5b3`.
-- Suite: **543 passed, 6 skipped**; 72 plantillas; `git diff --check` limpio.
+- Rama `arena/01a016cd-generador-comercial`, basada en `main` (`c24c2cc`,
+  merge del PR #40). **PR #41 creado hacia `main`:**
+  https://github.com/gtrespana-bit/generador-comercial/pull/41 (confirmar
+  estado con `gh pr view 41`; si ya está fusionado y desplegado, `main` y
+  producción contienen el código).
+- Contenido del bloque del PR #41: **E4-030** (pip-audit + detect-secrets en
+  CI con baseline `.secrets.baseline`), **E4-021** (respaldo automático por
+  organización: cron `/api/cron/mantenimiento` 02:00 UTC, `app/services/mantenimiento.py`,
+  retención configurable, sin registro en `ArchivoAlmacenado`), **E4-023**
+  (verificación diaria de `/readyz` con correo `alerta_operador` a
+  `COTIZAT_OPERADORES`), cierre **E1-022** (catálogo 100 % propio, con
+  auditoría), decisiones **D-018 a D-021** (tiempos nunca en el PDF del
+  cliente; día final único de tests; catálogo propio = producto; no al
+  registro de apertura) y **documentación de estado puesta al día**
+  (pendientes operativos, plan de comercialización con renumeraciones
+  E3-025→029 y E4-031→044, hoja de ruta, punto de continuación).
+- Sin migración nueva (cabeza Alembic sigue `a3d9c1e75b28`); no hay nada que
+  aplicar en Supabase por este bloque salvo, cuando toque, los paneles del §11
+  (UptimeRobot, backups Supabase Pro — opcional MIME del bucket, decidido: se
+  deja sin restricción).
+- Suite: **672 passed, 6 skipped** (10 pruebas nuevas en
+  `tests/test_mantenimiento_cron.py`; guardas CI de secretos y dependencias
+  en verde).
 - Al empezar: realinea si el HEAD aparece retrocedido
-  (`git fetch origin arena/01a012cd-generador-comercial && git reset --hard
+  (`git fetch origin arena/01a016cd-generador-comercial && git reset --hard
   FETCH_HEAD`) y recrea `.venv` (`python3 -m venv .venv && .venv/bin/pip
   install -q -r requirements-dev.txt`).
-- Siguientes candidatos: fusionar/desplegar el PR #33 y ensayar el flujo de
-  compra en staging; **recibo PDF de la compra para el cliente** y activar
-  `COTIZAT_EXIGIR_LICENCIA` cuando toque; catálogo a **5.000 partidas**;
-  cerrar **~196 precios provisionales B2B** (requiere cotización); decisión
-  sobre **rendimientos** del catálogo.
-- No repetir: el checkout, el panel admin, la edición de organización y la
-  tarjeta de plan ya están hechos; **no volver a poner formulario de demo** en
-  la landing; no inventar precios ni rendimientos; no nombrar a CYPE en
-  contenido visible.
+- Pasos del titular pendientes: **fusionar el PR #41**; **sincronizar el flujo
+  de CI** tras el merge (`cp docs/ci/ci.yml .github/workflows/ci.yml` + commit
+  + push — el token del bot no puede tocar `.github/workflows/`); verificar en
+  Vercel → Cron Jobs los **2 trabajos** (`recordatorios-vencimiento` 13:00 UTC
+  y `mantenimiento` 02:00 UTC); y los pasos de panel recomendados
+  (`docs/PENDIENTES_OPERATIVOS.md` §11): vigilante externo (UptimeRobot sobre
+  `/healthz`) y backups de Supabase Pro. **No hace falta tocar el bucket**
+  (decisión de la sesión: se deja sin restricción MIME). La primera ejecución
+  del cron de mantenimiento es la madrugada siguiente al despliegue.
+- Siguientes candidatos (sin empezar): confirmar las primeras ejecuciones
+  reales de los dos crones en Observability; Vercel Hobby → Pro y Supabase
+  Free → Pro antes del primer cobro; **día final único de solo tests (D-019)**
+  cuando el titular lo indique; `COTIZAT_LEGAL_ENTITY` cuando exista razón
+  social; resto de la Etapa 4 (E4-020/026/027/032/038 y E4-039 a E4-043).
+- No repetir: los tiempos **nunca** van al PDF del cliente (decisión D-018);
+  el «Gantt por capítulo» está descartado; E1-022 está cerrado (no volver a
+  auditar la procedencia del catálogo); el respaldo automático y la
+  verificación diaria ya existen; **no tocar** la restricción MIME del bucket
+  (decisión de esta sesión); no inventar precios ni rendimientos; no nombrar
+  a CYPE en contenido visible.
 
 ---

@@ -35,7 +35,8 @@ sin repetir antes la auditoría de la sección 3.
 | Archivos que nunca se versionan | `.env`, `*.db`, volcados, `backups/`, `app/static/uploads/`, `.vercel/` | Contienen datos de trabajo reales |
 
 Los **derechos y la procedencia del catálogo** (partidas, descompuestos CYPE y
-capturas) son **E1-022**, no E1-021, y siguen abiertos.
+capturas) son **E1-022**, no E1-021, y están **cerrados** desde el 19/08/2026
+con auditoría de evidencia (ver §6).
 
 ---
 
@@ -170,8 +171,35 @@ la suite completa** antes de dar el trabajo por cerrado.
 
 ## 6. Pendiente relacionado (no bloquea E1-021)
 
-- **E1-022** — auditar la procedencia y los derechos del catálogo de partidas
-  (`DPT020.xlsx`, `RBA010.xlsx`, `RBE030.xlsx`, `BENEFICIO.png` y la captura de
-  la raíz proceden de material de terceros y se usan hoy como ejemplos de
-  formato de importación). Es una cuestión de **derechos**, no de datos
-  personales, y se resuelve en su propia tarea.
+- **E1-022 — auditar la procedencia y los derechos del catálogo de partidas.** ✅
+  **CERRADO (19/08/2026) con auditoría de evidencia.** Resultado: el catálogo es
+  **100 % de autoría propia**; los archivos de ejemplo (`DPT020.xlsx`,
+  `RBA010.xlsx`, `RBE030.xlsx`, `BENEFICIO.png` y la captura de la raíz) **no
+  aportan contenido al producto** y no suponen riesgo de derechos.
+
+  Evidencia de la auditoría (fecha 19/08/2026, sobre `main` en `c24c2cc`):
+
+  - El catálogo en producción vive en `basedatos_partidas/datos/`:
+    **3.006 partidas descompuestas** (`descompuestos/*.json` + `partidas.csv`)
+    y el cuadro de recursos (`recursos.json`). La app carga **solo** de ahí
+    (`app/services/catalogo_propio.py`); los `.xlsx` jamás se cargan en runtime.
+  - **0 coincidencias** (exactas y parciales, ventanas de 60 caracteres) entre
+    los textos de los 3 `.xlsx` y los títulos/descripciones del catálogo, ni en
+    `partidas.csv` ni en `recursos.json`.
+  - Los códigos `RBA010`/`RBE030` de CYPE **no existen** en el catálogo. Los
+    `DPT0xx` aparecen solo como `codigo_anterior` (historial interno propio,
+    migrado el 16/08/2026 a codificación `CT-…`; `mapa_migracion.json` es
+    interno, no se publica — ver `basedatos_partidas/README.md`,
+    «Codificación propia»).
+  - `recursos.json` no contiene frases distintivas CYPE (p. ej. `UNE-EN 998`,
+    `GP CSIII`); las 2 partidas del catálogo que mencionan «mortero de cal»
+    (12.02.01.100, 12.14.03.080) son textos propios genéricos.
+  - Los `.xlsx` solo se usan como **formato de importación**: documentación
+    (`GUIA_IMPORTACION_EXCEL_CYPE.md`), parser de archivos subidos por el
+    usuario (`app/services/importer.py`) y fixtures de pruebas
+    (`tests/test_app.py`). `BENEFICIO.png` y la captura de la raíz son
+    archivos sueltos sin ninguna referencia en código ni plantillas.
+
+  Conclusión: nada de ese material de terceros llega al producto. Si en el
+  futuro se importara un banco de precios externo (p. ej. BCCA), ese contenido
+  quedaría en la organización que lo suba y nunca en el catálogo propio.

@@ -1,0 +1,62 @@
+{% extends "emails/_base.html" %}
+
+{% block title %}Alerta operativa · {{ product_name }}{% endblock %}
+
+{% block badge %}
+<div style="display:inline-block;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:6px 14px;font-size:12px;font-weight:700;color:#ffffff;">
+  {{ errores|length }} problema(s)
+</div>
+{% endblock %}
+
+{% block content %}
+
+<h1 style="margin:0 0 14px;font-size:24px;line-height:1.25;font-weight:900;color:#17211d;">
+  Hay {{ errores|length }} problema(s) en el despliegue
+</h1>
+
+<p style="margin:0 0 24px;font-size:15px;line-height:1.65;color:#475a51;">
+  La verificación diaria de <strong style="color:#17211d;">{{ product_name }}</strong>
+  ha fallado. Revisa el panel de operación
+  (<code style="background:#eef3f0;border-radius:6px;padding:2px 6px;font-size:13px;">/admin/operacion</code>)
+  y los logs del despliegue.
+</p>
+
+{% if errores %}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;">
+  <tr>
+    <td style="border-radius:12px;background:#fdeeea;border:1px solid #f3c2b5;padding:16px 20px;">
+      {% for error in errores %}
+      <p style="margin:0 0 {{ '10px' if not loop.last else '0' }};font-size:13.5px;line-height:1.55;color:#8a2f16;">
+        • {{ error }}
+      </p>
+      {% endfor %}
+    </td>
+  </tr>
+</table>
+{% endif %}
+
+{% if checks %}
+<p style="margin:0 0 8px;font-size:13px;font-weight:700;color:#17211d;text-transform:uppercase;letter-spacing:0.5px;">
+  Chequeos del readiness
+</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;border-collapse:collapse;">
+  {% for clave, valor in checks.items() %}
+  <tr>
+    <td style="padding:8px 10px;border-bottom:1px solid #e3ece7;font-size:13px;color:#475a51;">{{ clave }}</td>
+    <td style="padding:8px 10px;border-bottom:1px solid #e3ece7;font-size:13px;color:#17211d;text-align:right;">{{ valor }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endif %}
+
+<p style="margin:0 0 28px;font-size:14px;line-height:1.65;color:#475a51;">
+  Si el problema persiste, revisa <code style="background:#eef3f0;border-radius:6px;padding:2px 6px;font-size:13px;">/readyz</code>
+  desde un navegador o escríbenos a
+  <a href="mailto:{{ soporte_email }}" style="color:#0b5b38;font-weight:700;text-decoration:none;">{{ soporte_email }}</a>.
+</p>
+
+{% endblock %}
+
+{% block pie %}
+Mensaje interno de operación generado automáticamente por la verificación diaria de {{ product_name }}; no reenvíes este correo a clientes.
+{% endblock %}

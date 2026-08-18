@@ -1047,9 +1047,18 @@ obra») y migran automáticamente (lista de columnas de `configuracion`).
 
 ## Pendientes / ideas siguientes
 
-- Incluir el resumen de tiempos en el PDF del presupuesto (página opcional).
-- Plazo por capítulo con dependencias (diagrama de Gantt sencillo en la
-  página de detalle).
+- **Resumen de tiempos en el PDF — DECIDIDO (19/08/2026): NO para el cliente.**
+  La estimación de tiempos **ya existe en la app** (Fase 11: horas por
+  partida, días con cuadrillas, semanas, cobertura — creador y página
+  `/presupuestos/<id>/tiempos`). Es información interna con ventaja comercial:
+  el PDF que ve el cliente final **nunca** lleva horas ni plazos calculados
+  (evita reclamaciones tipo «el papel dice 5 h y se hizo en 2»). Si algún día
+  se quisiera imprimir, sería una **versión imprimible interna para la
+  empresa**, nunca el PDF del cliente.
+- ~~Plazo por capítulo con dependencias (diagrama de Gantt)~~ — **descartado
+  (19/08/2026)**: la estimación de tiempos existente ya cubre la planificación
+  interna (desglose por capítulo, días con cuadrillas, semanas); la idea de
+  barras encadenadas no aportaba nada nuevo.
 - Guardar una estimación «congelada» en cada versión del presupuesto.
 
 ---
@@ -1845,3 +1854,89 @@ Verificar `/readyz` → `"cron_secret": "configurado"` y la ruta
 `recordatorios-vencimiento` (13:00 UTC, ±59 min en Hobby). Checklist completa
 en `docs/PENDIENTES_OPERATIVOS.md` §9 y en el «Cierre de sesión» de
 `docs/PUNTO_DE_CONTINUACION.md`.
+
+## Actualización 19/08/2026 — cron operativo en Vercel y emails de Supabase con identidad
+
+**Cierre del ciclo del cron.** El PR #40 se fusionó en `main` (`c24c2cc`,
+18/08/2026 21:31 UTC) y se desplegó en producción. El titular añadió
+`CRON_SECRET` en Vercel (Production), hizo el redeploy y **confirmó el job en
+Settings → Cron Jobs**: `/api/cron/recordatorios-vencimiento`, `0 13 * * *`
+(13:00 UTC). `/readyz` en producción devuelve
+`"cron_secret": "configurado"` y
+`"cron": "/api/cron/recordatorios-vencimiento:registrada"`, y la ruta responde
+401 sin el secreto (nunca 404). El diagnóstico que motivó el PR #40 quedó
+confirmado: el código estaba bien; el cron solo faltaba materializar
+(despliegue de producción + `CRON_SECRET`).
+
+**Emails de Supabase Auth con el diseño de CotizaT.** Las plantillas de
+**Confirm signup**, **Reset password** y **Password changed** se prepararon en
+`docs/supabase_templates/` (con la guía `docs/SUPABASE_EMAIL_TEMPLATES.md`) y
+el titular las pegó en Supabase → Authentication → Email Templates. Los
+correos del ciclo de vida de Auth ya no usan la plantilla genérica de
+Supabase: siguen la identidad verde del resto de correos, conservando los
+placeholders (`{{ .ConfirmationURL }}`, etc.).
+
+**Pendiente de verificación:** la primera ejecución automática del cron
+(19/08, 13:00 UTC, ±59 min en Hobby) y sus logs en Observability.
+
+Suite: **662 passed, 6 skipped** (verificada el 19/08/2026).
+
+## Actualización 19/08/2026 (tarde) — E1-022 cerrado y decisiones de producto
+
+**E1-022 — auditoría de procedencia del catálogo: CERRADA con evidencia.**
+El titular confirma que **todas las partidas del catálogo son de autoría
+propia** y que los archivos de ejemplo (`DPT020/RBA010/RBE030.xlsx`,
+`BENEFICIO.png`, captura) «no sirven para nada» hoy. La auditoría lo verificó
+empíricamente: el catálogo son **3.006 partidas** en
+`basedatos_partidas/datos/` (la app carga solo de ahí), con **0 coincidencias**
+exactas y parciales (ventanas de 60 caracteres) contra los textos de los 3
+`.xlsx`; los códigos `RBA010`/`RBE030` no existen en el catálogo y los `DPT0xx`
+son solo historial interno (`codigo_anterior`, migrado a códigos propios
+`CT-…`). Los `.xlsx` se usan únicamente como formato de importación (guía,
+parser de subidas del usuario y fixtures de pruebas). Detalle completo en
+`docs/DATOS_SENSIBLES.md` §6 y nota en `basedatos_partidas/README.md`.
+
+**Decisión de producto — los tiempos nunca van al PDF del cliente.** La
+estimación de tiempos de obra **ya está implementada** (Fase 11: horas por
+partida, días con cuadrillas, semanas y cobertura, en el creador y en la
+página `/presupuestos/<id>/tiempos`). Es información interna con ventaja
+comercial: el cliente ve el presupuesto **sin** desglose de horas ni plazos
+calculados. La idea de un «Gantt por capítulo» (barras de duración
+encadenadas) quedó **descartada**: la estimación existente ya cubre la
+planificación interna. Detalle en la sección «Pendientes / ideas siguientes»
+de la Fase 11.
+
+**Decisión de proceso — día final único de solo tests.** Toda la validación
+de tipo prueba pendiente (matriz de aceptación manual, cruces con dos correos
+y dos organizaciones, primer alta real con el corte encendido, auditoría
+externa del bucket, invitación sin cuenta previa, recordatorio real) se
+agrupa en **una sola jornada final de pruebas** cuando el desarrollo esté
+cerrado. No se hacen por etapas: hacerlas ahora y repetirlas al cierre sería
+trabajo doble.
+
+## Actualización 19/08/2026 (noche) — Etapa 4: E4-030, E4-021 y E4-023 completados
+
+Bloque de operación de la Etapa 4 terminado:
+
+- **E4-030 — Escaneo de dependencias y secretos en CI.** `pip-audit` sobre
+  `requirements.lock` y `detect-secrets` con baseline versionado
+  `.secrets.baseline` como pasos de `docs/ci/ci.yml` (protegidos por
+  `tests/test_integracion_continua.py`); herramientas fijadas en
+  `requirements-dev.txt` y lock regenerado (66 paquetes).
+- **E4-021 — Respaldo automático por organización.** Nuevo cron
+  `/api/cron/mantenimiento` (02:00 UTC) en `app/services/mantenimiento.py`:
+  reutiliza el paquete verificable de E3-020, lo guarda en el bucket privado
+  (`organizaciones/<id>/respaldo_automatico/…`) con retención configurable y
+  sin registro en `ArchivoAlmacenado` (evita crecimiento autorreferencial);
+  las organizaciones que superan `COTIZAT_RESPALDO_MAX_MB` se reportan
+  omitidas, no rompen el barrido. Storage gana `list()` y `put(max_size=…)`;
+  el bucket admite `application/zip` en buckets nuevos.
+- **E4-023 — Verificación diaria con alerta.** El mismo cron ejecuta los
+  chequeos de `/readyz` y, si fallan, envía a los operadores
+  (`COTIZAT_OPERADORES`) el correo interno `alerta_operador` con errores y
+  estado de chequeos (sin secretos). El vigilante externo de disponibilidad
+  (UptimeRobot) y los backups de Supabase Pro quedan como pasos de panel en
+  `docs/PENDIENTES_OPERATIVOS.md` §11.
+
+Suite: **672 passed, 6 skipped** (10 pruebas nuevas en
+`tests/test_mantenimiento_cron.py`).

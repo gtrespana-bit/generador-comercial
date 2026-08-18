@@ -1,8 +1,8 @@
 # Pendientes operativos (paso por paso)
 
-Fecha: **18/08/2026**. Tareas de paneles externos, sin código (salvo el punto 9,
-que ya tiene su parte de código hecha). Cada una es independiente: se pueden
-hacer en cualquier orden.
+Fecha: **18/08/2026**. Actualizado: **19/08/2026** — las 10 tareas están
+**completadas**. Son tareas de paneles externos, sin código (salvo el punto 9,
+que entró con su parte de código en el PR #40). Cada una era independiente.
 
 Estado al escribir esta guía:
 
@@ -16,7 +16,9 @@ Estado al escribir esta guía:
 | 6 | Panel de operador E1-060: migración `f4c1d8e37a95` + `COTIZAT_OPERADORES` | ✅ **completado** (16/08/2026): script `docs/staging_upgrade_f4c1d8e37a95.sql` aplicado en Supabase, variable en Vercel, panel verificado por el titular en `https://cotizat.online/admin/licencias` |
 | 7 | Migración `a3d9c1e75b28` (prueba gratuita) | ✅ **completado** (18/08/2026): `docs/staging_upgrade_a3d9c1e75b28.sql` aplicado en Supabase |
 | 8 | **Activar `COTIZAT_EXIGIR_LICENCIA=true`** | ✅ **completado** (18/08/2026): PR #38 fusionado y desplegado; `COTIZAT_EXIGIR_LICENCIA=true` activado y verificado en `/readyz` (`"licencias": "exigida"`) |
-| 9 | **`CRON_SECRET` + cron de recordatorios de vencimiento** | **parte de código ✅** (PR en `arena/01a016b5-generador-comercial`: `/readyz` publica `cron_secret`/`cron`, guardas CI en `tests/test_vercel_cron_config.py`). **Falta en Vercel:** fusionar el PR, añadir `CRON_SECRET` (Production) y **redesplegar** para que el recordatorio automático (5 y 1 día) se dispare (ver §9) |
+| 9 | **`CRON_SECRET` + cron de recordatorios de vencimiento** | ✅ **completado** (18–19/08/2026): PR #40 fusionado (`c24c2cc`) y desplegado en producción; `CRON_SECRET` (Production) configurado; job verificado por el titular en Vercel (Settings → Cron Jobs: `/api/cron/recordatorios-vencimiento`, `0 13 * * *`); `/readyz` en vivo con `"cron_secret": "configurado"` y `"...:registrada"`. Primera ejecución automática: 19/08, 13:00 UTC (±59 min en Hobby). Detalle en §9 |
+| 10 | **Emails de Supabase Auth (alta y recuperación) con el diseño de CotizaT** | ✅ **completado** (18–19/08/2026): plantillas pegadas en Supabase (Authentication → Email Templates): **Confirm signup**, **Reset password** y **Password changed**. Referencia: `docs/SUPABASE_EMAIL_TEMPLATES.md` y `docs/supabase_templates/` (ver §10) |
+| 11 | **Operación automática (E4-021/E4-023) — parte de panel** | **código ✅** (19/08/2026: cron `/api/cron/mantenimiento`). **Falta en paneles:** `application/zip` en los MIME del bucket `cotizat-private`, vigilante externo de disponibilidad (p. ej. UptimeRobot sobre `/healthz`) y backups automáticos de Supabase Pro (ver §11) |
 
 ---
 
@@ -280,30 +282,41 @@ justamente lo que promete el texto público.
 
 ## 9. Activar el recordatorio automático de vencimiento (cron)
 
+> **✅ COMPLETADO (18–19/08/2026).** El PR #40 se fusionó (`c24c2cc`) y el
+> despliegue de **producción** contiene el `vercel.json` con el cron.
+> `CRON_SECRET` está añadida en Vercel (Production) y el job **aparece en el
+> panel** (Settings → Cron Jobs: `/api/cron/recordatorios-vencimiento`,
+> `0 13 * * *`). `/readyz` lo confirma en vivo: `"cron_secret": "configurado"`
+> y `"cron": "/api/cron/recordatorios-vencimiento:registrada"`. La primera
+> ejecución automática ocurre el **19/08 a las 13:00 UTC** (en Hobby, hasta
+> ±59 min más tarde) y quedará visible en Observability → Cron Jobs.
+> El resto de esta sección queda como registro de lo hecho y checklist de
+> diagnóstico si algún día vuelve a fallar.
+
 El recordatorio por email que avisa a 5 y 1 días del vencimiento **solo se
 envía si Vercel puede dispararlo**. Es un cron declarado en `vercel.json`
 (`/api/cron/recordatorios-vencimiento`, diario a las 13:00 UTC) y Vercel
 autentica cada invocación con `Authorization: Bearer $CRON_SECRET`.
 
-### Los pasos
+### Los pasos (✅ completados el 18–19/08/2026)
 
-1. Genera un secreto fuerte:
-   ```bash
-   openssl rand -base64 32
-   ```
-2. Vercel → tu proyecto → **Settings → Environment Variables** → **Add New**:
-   nombre `CRON_SECRET`, valor el secreto generado, entorno **Production**.
-3. **Redeploy** (las variables se leen al arrancar; y el cron se instala en el
-   despliegue que contiene el `vercel.json` actualizado).
-4. Verifica que el cron existe: Vercel → tu proyecto → **Cron Jobs** (en la
-   barra lateral). Debe aparecer `recordatorios-vencimiento` con su horario.
-5. Prueba manual, si quieres, con `curl` (sustituye el secreto):
+1. ✅ Se generó un secreto fuerte (`openssl rand -base64 32`).
+2. ✅ `CRON_SECRET` añadida en Vercel → **Settings → Environment Variables** →
+   **Add New**: nombre `CRON_SECRET`, valor el secreto generado, entorno
+   **Production**.
+3. ✅ **Redeploy** hecho (las variables se leen al arrancar; y el cron se
+   instala en el despliegue que contiene el `vercel.json` actualizado).
+4. ✅ **Cron Jobs** verificado por el titular: aparece
+   `recordatorios-vencimiento` (`/api/cron/recordatorios-vencimiento`,
+   `0 13 * * *`).
+5. ✅ Prueba manual opcional (sustituye el secreto):
    ```bash
    curl -H "Authorization: Bearer TU_SECRETO" \
         https://cotizat.online/api/cron/recordatorios-vencimiento
    ```
    Respuesta esperada: `{"ok": true, "resumen": {...}}`. Sin la cabecera o con
-   un secreto incorrecto responde **401**.
+   un secreto incorrecto responde **401**. La primera ejecución automática se
+   verá el 19/08 a las 13:00 UTC (±59 min en Hobby).
 
 ### Qué NO tienes que temer
 
@@ -322,6 +335,9 @@ un clic y deja `Reply-To: soporte@cotizat.online`, de modo que responder llega
 directamente al buzón de Zoho.
 
 ### Si el cron no aparece en Vercel (Cron Jobs vacío)
+
+> ✅ **Ya resuelto (19/08/2026): el cron aparece en el panel.** Este checklist
+> queda como referencia de diagnóstico por si volviera a pasar.
 
 El cron **no se crea desde el panel**: Vercel lo crea al desplegar, leyendo
 `vercel.json` de la raíz del repositorio, y **solo para despliegues de
@@ -360,7 +376,7 @@ no puede llegar a producción en silencio.
 
 ---
 
-## 10. Emails de Supabase Auth (alta y recuperación)
+## 10. Emails de Supabase Auth (alta y recuperación) — ✅ completado (19/08/2026)
 
 Además de los 8 correos transaccionales que envía CotizaT (ya unificados bajo
 el mismo diseño premium, revisables en `/admin/emails`), hay **dos correos que
@@ -379,18 +395,69 @@ recuperación.
 El remitente `noreply@` es correcto para estos dos: son correos de un solo uso
 que no deben responderse.
 
-### Qué hay del diseño
+### Qué hay del diseño — ✅ hecho (18–19/08/2026)
 
-Hoy usan la plantilla por defecto de Supabase (genérica, no sigue la identidad
-de CotizaT). Se pueden **reestilizar a mano** para que coincidan con el verde y
-el tono del resto, pegando HTML propio en:
+Las plantillas de Supabase Auth ya **no** usan la genérica por defecto: se
+pegaron en el panel las versiones con la identidad de CotizaT. Son tres:
 
-`Supabase → Authentication → Email Templates`
+| Plantilla | Cuándo se envía | Archivo de referencia |
+| --- | --- | --- |
+| **Confirm signup** | Al registrarse, para verificar el email | `docs/supabase_templates/confirm_signup.html` |
+| **Reset password** | Al pedir restablecer la contraseña | `docs/supabase_templates/reset_password.html` |
+| **Password changed** *(seguridad, opcional)* | Tras cambiar la contraseña | `docs/supabase_templates/password_changed.html` |
 
-Las plantillas que importan son **Confirm signup** y **Reset password**. Usan
-placeholders de Supabase (`{{ .ConfirmationURL }}`, `{{ .SiteURL }}`,
-`{{ .Token }}`, `{{ .Email }}`, `{{ .Data }}`), que hay que conservar tal cual.
+Dónde: `Supabase → Authentication → Email Templates`. Los placeholders de
+Supabase (`{{ .ConfirmationURL }}`, `{{ .SiteURL }}`, `{{ .Token }}`,
+`{{ .Email }}`, `{{ .Data }}`) se conservaron tal cual; **no reescribirlos** si
+alguna vez se vuelve a pegar el HTML. Guía paso a paso y mantenimiento:
+`docs/SUPABASE_EMAIL_TEMPLATES.md`.
 
-Esto es configuración de panel, **no código del repositorio**. Si se quiere,
-se preparan los dos fragmentos HTML listos para pegar (con el diseño de
-CotizaT) y se guardan en `docs/` como referencia. Decisión del titular.
+Esto es configuración de panel, **no código del repositorio**: los archivos
+`.html` de `docs/supabase_templates/` son solo la referencia para copiar y
+deben mantenerse en sintonía con `app/templates/emails/_base.html` si el
+diseño base cambia.
+
+---
+
+## 11. Mantenimiento automático (E4-021/E4-023): lo que toca en el panel
+
+El **código** está hecho (cron `/api/cron/mantenimiento`: respaldo automático
+por organización + verificación diaria de `/readyz` con alerta por correo a
+los operadores). Pasos para dejarlo operativo del todo:
+
+0. **Fusionar el PR del bloque y desplegar** (el cron se instala en el
+   despliegue de producción; `CRON_SECRET` ya está configurado).
+1. **Bucket `cotizat-private`: NO hay que tocar nada (decisión 19/08/2026).**
+   Se dejó **sin** restricción MIME; la app ya valida tamaño/categorías/claves
+   y el respaldo automático sube los `.zip` sin problema. Solo si algún día se
+   activara «Restrict MIME types», la lista debe incluir `application/zip`.
+2. **Sincronizar el flujo de CI (tras fusionar).** El PR actualiza
+   `docs/ci/ci.yml` (definición canónica) pero el token del bot no puede tocar
+   `.github/workflows/ci.yml` (permiso `workflows`). Ejecutar tras el merge:
+   ```bash
+   cp docs/ci/ci.yml .github/workflows/ci.yml
+   git add .github/workflows/ci.yml
+   git commit -m "ci: sincroniza la copia activa con docs/ci/ci.yml"
+   git push
+   ```
+   Hasta entonces el flujo activo es el anterior (sin los pasos E4-030).
+   Detalle en `docs/ci/README.md`.
+3. **Vigilante externo de disponibilidad (E4-023).** Crea un monitor HTTP(S) en
+   un servicio gratuito (p. ej. UptimeRobot) sobre
+   `https://cotizat.online/healthz`, intervalo 5 min, alertas a tu buzón. La
+   verificación diaria ve el estado una vez al día; el vigilante te entera de
+   una caída en minutos. Pasos en `docs/MONITORIZACION_Y_DIAGNOSTICO.md` §6b.
+4. **Backups de Supabase (capa de infraestructura, opcional recomendado).** El
+   plan **Pro** de Supabase incluye backups automáticos diarios del proyecto
+   (base + Storage). Al contratarlo (está pendiente junto con Vercel Hobby →
+   Pro), verifica en Supabase → Database → Backups que están activos. El
+   respaldo automático de la app (paso de código) sigue siendo útil: es
+   portátil y restaurable desde la propia aplicación.
+
+**Verificación rápida del código (sin entrar al panel):**
+
+```bash
+curl -i https://cotizat.online/api/cron/mantenimiento        # 401 sin el secreto
+curl -i -H "Authorization: Bearer TU_SECRETO" \
+     https://cotizat.online/api/cron/mantenimiento           # 200: {"ok":…, "respaldo":…, "verificacion":…}
+```

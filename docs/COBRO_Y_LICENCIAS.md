@@ -188,9 +188,11 @@ colar la puerta sin corte en una ruta que no sea de pago, rompe la suite.
 de depender de un botón manual: un cron de Vercel (`vercel.json` → `crons`,
 ruta `/api/cron/recordatorios-vencimiento` protegida con `CRON_SECRET`) envía
 un recordatorio premium a 5 y 1 día antes de vencer, una única vez por hito y
-licencia, con CTA al checkout `/pago` y `Reply-To` a soporte. Requiere que el
-titular añada `CRON_SECRET` en Vercel (`docs/PENDIENTES_OPERATIVOS.md` §9).
-Detalle en `docs/PUNTO_DE_CONTINUACION.md` (cierre de sesión del 18/08/2026).
+licencia, con CTA al checkout `/pago` y `Reply-To` a soporte. **Operativo
+desde el 19/08/2026**: PR #40 fusionado, `CRON_SECRET` configurada en
+Production, job verificado en Settings → Cron Jobs; la primera ejecución
+automática es el 19/08 a las 13:00 UTC. Detalle en
+`docs/PENDIENTES_OPERATIVOS.md` §9.
 
 ---
 

@@ -1,0 +1,18 @@
+{{ product_name }} — ALERTA OPERATIVA
+
+Hay {{ errores|length }} problema(s) en el despliegue. La verificación diaria
+ha fallado. Revisa el panel de operación (/admin/operacion) y los logs del
+despliegue.
+
+{% if errores %}Problemas detectados:
+{% for error in errores %}  • {{ error }}
+{% endfor %}
+{% endif %}{% if checks %}Estado de los chequeos (readyz):
+{% for clave, valor in checks.items() %}  {{ clave }}: {{ valor }}
+{% endfor %}
+{% endif %}
+Si el problema persiste, revisa /readyz desde un navegador o escríbenos a
+{{ soporte_email }}.
+
+Mensaje interno de operación generado automáticamente; no reenvíes este
+correo a clientes.
