@@ -612,6 +612,7 @@ def enviar_solicitud_demo_por_email(
         "telefono": telefono,
         "presupuestos_mes": presupuestos_mes,
         "mensaje": mensaje,
+        "anio": datetime.utcnow().year,
     }
     asunto = f"Nueva solicitud de demo: {nombre} ({empresa or email})"[:200]
     try:
@@ -694,6 +695,7 @@ def enviar_compra_por_email(
         "metodo_nombre": str(metodo_nombre or "").strip(),
         "verificacion": filas,
         "comprobante_nombre": str(comprobante_nombre or "comprobante"),
+        "anio": datetime.utcnow().year,
     }
     asunto = (
         f"Nueva compra: {plan_nombre} · {metodo_nombre} · "

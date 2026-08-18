@@ -1,23 +1,69 @@
-<!doctype html>
-<html lang="es">
-<head><meta charset="utf-8"><title>Nueva compra · {{ product_name }}</title></head>
-<body style="font-family:system-ui,-apple-system,sans-serif;padding:24px;max-width:600px;margin:auto;color:#1a1a2e;">
-  <h2 style="color:#0b3b5c;margin-top:0;">Nueva compra registrada</h2>
-  <table style="width:100%;border-collapse:collapse;margin:16px 0;">
-    <tr><td style="padding:8px 12px;font-weight:600;border-bottom:1px solid #e0e0e0;">Plan</td><td style="padding:8px 12px;border-bottom:1px solid #e0e0e0;">{{ plan_nombre }}</td></tr>
-    <tr><td style="padding:8px 12px;font-weight:600;border-bottom:1px solid #e0e0e0;">Importe</td><td style="padding:8px 12px;border-bottom:1px solid #e0e0e0;">{{ importe_texto }}</td></tr>
-    <tr><td style="padding:8px 12px;font-weight:600;border-bottom:1px solid #e0e0e0;">Método de pago</td><td style="padding:8px 12px;border-bottom:1px solid #e0e0e0;">{{ metodo_nombre }}</td></tr>
-    <tr><td style="padding:8px 12px;font-weight:600;border-bottom:1px solid #e0e0e0;">Organización</td><td style="padding:8px 12px;border-bottom:1px solid #e0e0e0;">{{ organizacion_nombre }}</td></tr>
-    <tr><td style="padding:8px 12px;font-weight:600;border-bottom:1px solid #e0e0e0;">Comprador</td><td style="padding:8px 12px;border-bottom:1px solid #e0e0e0;">{{ nombre }} &lt;{{ email }}&gt;</td></tr>
-  </table>
-  <h3 style="color:#0b3b5c;">Datos de verificación</h3>
-  <table style="width:100%;border-collapse:collapse;margin:8px 0 16px;">
-    {% for etiqueta, valor in verificacion %}
-    <tr><td style="padding:6px 12px;font-weight:600;border-bottom:1px solid #f0f0f0;">{{ etiqueta }}</td><td style="padding:6px 12px;border-bottom:1px solid #f0f0f0;">{{ valor }}</td></tr>
-    {% endfor %}
-  </table>
-  <p style="color:#555;">Comprobante adjunto: <strong>{{ comprobante_nombre }}</strong></p>
-  <hr style="border:none;border-top:1px solid #e0e0e0;margin:24px 0;">
-  <p style="color:#999;font-size:13px;">Revisa la compra en el panel de operador antes de activar la licencia.</p>
-</body>
-</html>
+{% extends "emails/_base.html" %}
+
+{% block title %}Nueva compra · {{ product_name }}{% endblock %}
+
+{% block badge %}
+<div style="display:inline-block;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:6px 14px;font-size:12px;font-weight:700;color:#ffffff;">
+  Nueva compra
+</div>
+{% endblock %}
+
+{% block content %}
+
+<h1 style="margin:0 0 14px;font-size:24px;line-height:1.25;font-weight:900;color:#17211d;">
+  Nueva compra registrada
+</h1>
+
+<p style="margin:0 0 22px;font-size:15px;line-height:1.65;color:#475a51;">
+  Un cliente acaba de registrar una compra. El comprobante va adjunto en este
+  correo para su revisión.
+</p>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 26px;border:1px solid #e3ece7;border-radius:12px;">
+  <tr>
+    <td style="padding:16px 20px;font-size:13px;color:#8ba096;">Plan</td>
+    <td style="padding:16px 20px;font-size:14px;font-weight:700;text-align:right;color:#17211d;">{{ plan_nombre }}</td>
+  </tr>
+  <tr>
+    <td style="padding:0 20px 16px;font-size:13px;color:#8ba096;">Importe</td>
+    <td style="padding:0 20px 16px;font-size:14px;font-weight:700;text-align:right;color:#17211d;">{{ importe_texto }}</td>
+  </tr>
+  <tr>
+    <td style="padding:0 20px 16px;font-size:13px;color:#8ba096;">Método de pago</td>
+    <td style="padding:0 20px 16px;font-size:14px;text-align:right;color:#17211d;">{{ metodo_nombre }}</td>
+  </tr>
+  <tr>
+    <td style="padding:0 20px 16px;font-size:13px;color:#8ba096;">Organización</td>
+    <td style="padding:0 20px 16px;font-size:14px;text-align:right;color:#17211d;">{{ organizacion_nombre }}</td>
+  </tr>
+  <tr>
+    <td style="padding:0 20px 16px;font-size:13px;color:#8ba096;">Comprador</td>
+    <td style="padding:0 20px 16px;font-size:14px;text-align:right;color:#17211d;">{{ nombre }} &lt;{{ email }}&gt;</td>
+  </tr>
+</table>
+
+{% if verificacion %}
+<h2 style="margin:0 0 12px;font-size:15px;font-weight:800;color:#17211d;">Datos de verificación</h2>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 26px;border:1px solid #e3ece7;border-radius:12px;">
+  {% for etiqueta, valor in verificacion %}
+  <tr>
+    <td style="padding:12px 20px;font-size:13px;color:#8ba096;">{{ etiqueta }}</td>
+    <td style="padding:12px 20px;font-size:14px;text-align:right;color:#17211d;">{{ valor }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endif %}
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 28px;">
+  <tr>
+    <td style="border-radius:12px;background:#eef7f2;border:1px solid #cfe6da;padding:16px 20px;font-size:13.5px;line-height:1.55;color:#28503f;">
+      Comprobante adjunto: <strong>{{ comprobante_nombre }}</strong>
+    </td>
+  </tr>
+</table>
+
+{% endblock %}
+
+{% block pie %}
+Revisa la compra en el panel de operador de {{ product_name }} antes de activar la licencia.
+{% endblock %}
