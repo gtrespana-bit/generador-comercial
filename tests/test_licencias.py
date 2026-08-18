@@ -41,6 +41,7 @@ from app.services.licencias import (
     crear_licencia,
     licencia_vigente,
     licencias_de_organizacion,
+    resumen_licencia_cliente,
     resumen_organizaciones,
     totales,
 )
@@ -181,6 +182,85 @@ def test_compensar_una_incidencia_encadena_sin_restar_dias():
         assert extra.vence > pagada.vence
         # La vigente hoy sigue siendo la pagada; la extra espera su turno.
         assert licencia_vigente(db, organizacion.id, hoy=date(2026, 8, 16)) is pagada
+    finally:
+        db.close()
+        engine.dispose()
+
+
+def test_el_resumen_del_cliente_suma_las_licencias_encadenadas():
+    """Si quedan 4 días y se añade 1 mes, se muestran ~34 días, no 4."""
+    engine, db = _db()
+    try:
+        organizacion = _organizacion(db)
+        # 30 días desde el 23/07 → vence el 21/08 (quedan 4 el 18/08).
+        crear_licencia(
+            db, organizacion_id=organizacion.id, origen="pago", duracion="1m",
+            importe=9.99, operador_email="t@example.com", hoy=date(2026, 7, 23),
+        )
+        # Renueva el 18/08: se encadena al día siguiente → 22/08 + 29 = 20/09.
+        crear_licencia(
+            db, organizacion_id=organizacion.id, origen="pago", duracion="1m",
+            importe=9.99, operador_email="t@example.com", hoy=date(2026, 8, 18),
+        )
+        db.commit()
+
+        resumen = resumen_licencia_cliente(db, organizacion.id, hoy=date(2026, 8, 18))
+        assert resumen["activo"] is True
+        assert resumen["plan_label"] == "Plan mensual"
+        # El vencimiento mostrado es el final de la cadena, no el de la
+        # primera licencia (21/08 con 4 días restantes).
+        assert resumen["vence"] == date(2026, 9, 20)
+        assert resumen["dias_restantes"] == 33
+    finally:
+        db.close()
+        engine.dispose()
+
+
+def test_el_resumen_del_operador_suma_el_encadenado():
+    """El panel no marca «por vencer» mientras quede tiempo acumulado."""
+    engine, db = _db()
+    try:
+        organizacion = _organizacion(db)
+        crear_licencia(
+            db, organizacion_id=organizacion.id, origen="pago", duracion="1m",
+            importe=9.99, operador_email="t@example.com", hoy=date(2026, 7, 23),
+        )
+        crear_licencia(
+            db, organizacion_id=organizacion.id, origen="pago", duracion="1m",
+            importe=9.99, operador_email="t@example.com", hoy=date(2026, 8, 18),
+        )
+        db.commit()
+
+        fila = resumen_organizaciones(db, hoy=date(2026, 8, 18))[0]
+        assert fila["vence"] == date(2026, 9, 20)
+        assert fila["dias_restantes"] == 33
+        # Con 33 días acumulados no entra en el aviso de los próximos 15.
+        assert fila["por_vencer"] is False
+    finally:
+        db.close()
+        engine.dispose()
+
+
+def test_una_laguna_entre_licencias_no_se_suma():
+    """Si hay días sin acceso entre medias, la cadena se corta ahí."""
+    engine, db = _db()
+    try:
+        organizacion = _organizacion(db)
+        crear_licencia(
+            db, organizacion_id=organizacion.id, origen="pago", duracion="1m",
+            importe=9.99, operador_email="t@example.com", hoy=date(2026, 7, 23),
+        )
+        # Empieza 4 días después de que termine la anterior: hay hueco.
+        crear_licencia(
+            db, organizacion_id=organizacion.id, origen="pago", duracion="1m",
+            importe=9.99, operador_email="t@example.com",
+            inicio=date(2026, 8, 25), hoy=date(2026, 8, 18),
+        )
+        db.commit()
+
+        resumen = resumen_licencia_cliente(db, organizacion.id, hoy=date(2026, 8, 18))
+        assert resumen["vence"] == date(2026, 8, 21)
+        assert resumen["dias_restantes"] == 3
     finally:
         db.close()
         engine.dispose()

@@ -68,6 +68,42 @@ def _normalizar_estado(licencia: Licencia, hoy: date) -> None:
         licencia.estado = "vencida"
 
 
+def vence_cadena(licencias, hoy: date) -> date | None:
+    """Último día del acceso continuo que cubre ``hoy``.
+
+    Al renovar con días por delante, la licencia nueva se encadena a
+    continuación (empieza al día siguiente del vencimiento anterior), de modo
+    que el acceso real llega hasta el final de la cadena, no hasta el
+    vencimiento de la primera licencia: si quedan 4 días y se añade 1 mes,
+    quedan ~34 días, no 4.
+
+    Fusiona intervalos contiguos o solapados (misma regla que usa
+    ``crear_licencia``: un día de hueco rompe la cadena) y devuelve el final
+    del intervalo que contiene a ``hoy``. Devuelve ``None`` si hoy no está
+    cubierto. Las licencias canceladas rompen la cadena porque no se cuentan.
+    """
+    activas = sorted(
+        (
+            lic
+            for lic in licencias
+            if lic.estado == "activa" and lic.vence >= hoy
+        ),
+        key=lambda lic: (lic.inicio, lic.vence),
+    )
+    if not activas:
+        return None
+    intervalos: list[list[date]] = []
+    for licencia in activas:
+        if not intervalos or licencia.inicio > intervalos[-1][1] + timedelta(days=1):
+            intervalos.append([licencia.inicio, licencia.vence])
+        elif licencia.vence > intervalos[-1][1]:
+            intervalos[-1][1] = licencia.vence
+    for inicio, vence in intervalos:
+        if inicio <= hoy <= vence:
+            return vence
+    return None
+
+
 def crear_licencia(
     db: Session,
     *,
@@ -240,15 +276,20 @@ def resumen_organizaciones(
             reverse=True,
         )
         vigente = next((l for l in licencias if l.vigente(hoy)), None)
+        # El vencimiento mostrado es el final de la cadena completa, no el de
+        # la primera licencia: renovar con días por delante suma el tiempo.
+        vence_total = vence_cadena(licencias, hoy) if vigente else None
+        dias_restantes = (
+            max((vence_total - hoy).days, 0) if vence_total else 0
+        )
         filas.append(
             {
                 "organizacion": organizacion,
                 "licencias": licencias,
                 "vigente": vigente,
-                "dias_restantes": vigente.dias_restantes(hoy) if vigente else 0,
-                "por_vencer": bool(
-                    vigente and vigente.dias_restantes(hoy) <= dias_aviso
-                ),
+                "vence": vence_total,
+                "dias_restantes": dias_restantes,
+                "por_vencer": bool(vence_total and dias_restantes <= dias_aviso),
                 "ingresos": sum(l.importe for l in licencias if l.es_ingreso),
             }
         )
@@ -423,11 +464,19 @@ def resumen_licencia_cliente(
             "dias_restantes": 0,
             "metodo_cobro": "",
         }
+    # La etiqueta y el método salen de la licencia que da acceso hoy; la fecha
+    # y los días, del final de la cadena (suma de las renovaciones).
+    vence_total = (
+        vence_cadena(
+            licencias_de_organizacion(db, organizacion_id, hoy=hoy), hoy
+        )
+        or licencia.vence
+    )
     return {
         "activo": True,
         "plan_label": _plan_label_cliente(licencia),
-        "vence": licencia.vence,
-        "dias_restantes": licencia.dias_restantes(hoy),
+        "vence": vence_total,
+        "dias_restantes": max((vence_total - hoy).days, 0),
         "metodo_cobro": licencia.metodo_cobro,
     }
 
@@ -548,8 +597,8 @@ def enviar_avisos_vencimiento(
                 remitente(
                     email=destinatario,
                     organizacion_nombre=nombre,
-                    vence=licencia.vence,
-                    dias_restantes=licencia.dias_restantes(hoy),
+                    vence=fila["vence"] or licencia.vence,
+                    dias_restantes=fila["dias_restantes"],
                 )
         except EmailNotConfigured:
             raise
