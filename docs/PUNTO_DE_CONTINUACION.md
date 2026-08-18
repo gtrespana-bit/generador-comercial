@@ -1,12 +1,105 @@
 # Punto exacto de continuación
 
-Fecha de corte: **18/08/2026, cierre del post-venta al cliente (aviso de activación + recibo PDF descargable)** (America/Caracas).
+Fecha de corte: **18/08/2026, corte automático por licencia listo para activarse (`COTIZAT_EXIGIR_LICENCIA`)** (America/Caracas).
 
 Este documento retoma el trabajo sin depender del historial del chat. Describe
 **dónde quedó exactamente** el trabajo y **qué sigue**, en ese orden. Léelo
 junto con `basedatos_partidas/EMPEZAR_AQUI.md` (reglas y progreso del catálogo),
 `basedatos_partidas/INVENTARIO.md` (cifras y contraste de precios) y
 `PLAN_DE_COMERCIALIZACION_Y_EVOLUCION_SAAS.md` (§1.9 y §11).
+
+---
+
+## ✅ Cierre de sesión — El corte por licencia queda listo para encenderse (18/08/2026)
+
+Rama fija de la sesión: `arena/01a015a7-generador-comercial`, basada en `main`
+(`00cfec0`). Continúa el bloque siguiente (post-venta) en la misma rama y el
+mismo **PR #38**.
+
+### 0. Punto de partida
+
+La migración `c7f1a3b9d425` **ya está aplicada en Supabase** (el titular
+ejecutó `docs/staging_upgrade_c7f1a3b9d425.sql` con éxito), así que `/readyz`
+deja de responder 503 por la guarda de `EXPECTED_ALEMBIC_HEAD`. Con eso, el
+pendiente nº 3 del bloque anterior —activar `COTIZAT_EXIGIR_LICENCIA=true`—
+pasó de «decisión de negocio» a trabajo de esta sesión.
+
+### 1. El problema que había que resolver antes de encender el interruptor
+
+Al revisar qué pasaría con el corte activo apareció un fallo de diseño serio:
+**una organización vencida no podía renovar**. El corte se aplica en `get_db`,
+la dependencia de la que cuelgan *todas* las rutas de organización — incluidas
+las de compra. Con la licencia caducada, `/pago/comprar` (GET y POST),
+`/pago/confirmacion` y `/pago/recibo/{id}.pdf` devolvían **403 «Acceso
+suspendido»**.
+
+Es decir: el cliente veía la pantalla de suspensión, que le invita a renovar, y
+al intentar pagar se topaba con la misma pared. La suspensión era una trampa
+sin salida y toda renovación habría tenido que pasar por soporte a mano,
+justo lo contrario de lo que persigue el circuito de compra automático.
+
+### 2. La corrección: una segunda puerta, `get_db_renovacion`
+
+- Nueva dependencia **`get_db_renovacion`** en `app/database.py`: idéntica a
+  `get_db` —autenticación, membresía, organización activa, RLS de tenant— pero
+  **sin la comprobación de vigencia de la licencia**.
+- La usan **solo** las cuatro rutas de `app/routers/pagos.py` necesarias para
+  renovar. Ninguna expone datos de negocio: no dan acceso a presupuestos,
+  clientes ni catálogo, solo al circuito de pago de la propia organización.
+- `app/templates/licencia_suspendida.html`: botón **«Renovar mi plan»** que
+  lleva a `/pago`, para que la salida sea visible y no haya que adivinarla.
+- El resto del producto sigue detrás de `get_db` y se corta igual que antes.
+
+### 3. Cómo queda vigilado (lo importante para el futuro)
+
+El riesgo real no es el fallo de hoy sino su reaparición: alguien añade mañana
+una ruta de compra colgada de `get_db` y la trampa vuelve, en silencio y solo
+para clientes vencidos —el peor sitio donde descubrirlo—. Por eso el arreglo
+va acompañado de cuatro regresiones en `tests/test_licencias_acceso.py`:
+
+- Una organización suspendida **llega al checkout** y **puede registrar la
+  compra** (no 403).
+- El resto de rutas de organización **siguen cortadas** (no se ha abierto un
+  agujero general).
+- Un test estructural recorre el árbol de rutas de la aplicación y exige que
+  **exactamente** las rutas de compra usen `get_db_renovacion` y ninguna otra:
+  `test_las_rutas_de_compra_usan_la_puerta_sin_corte`.
+
+Ese último test se verificó **a la inversa**: revirtiendo a mano las rutas de
+`pagos.py` a `get_db`, la suite falla; restaurándolas, vuelve a verde. No es un
+test que pase por vacío.
+
+### 4. Detalle técnico útil para quien siga
+
+- **Recorrido de rutas en tests.** FastAPI envuelve los routers incluidos, así
+  que filtrar `app.routes` por `path` devuelve vacío. Hay que recursar por
+  `getattr(ruta, "original_router", None).routes` y, en las hojas, leer
+  `route.dependant.dependencies` → `{d.call}`.
+- **Doble puerta en los tests.** Cualquier test que ejercite `/pago/*` debe
+  sobrescribir **`get_db` y `get_db_renovacion`**; con solo `get_db` la petición
+  cae a la base real y falla con `no such table`. En
+  `tests/test_compras_plan.py` se centralizó en los helpers
+  `_instalar_override(db, ids)` / `_retirar_override()`.
+
+### Estado y verificación
+
+- Suite completa: **573 passed, 6 skipped** (`.venv/bin/pytest -q`), 38 de ellos
+  en `tests/test_compras_plan.py` y 33 en `tests/test_licencias_acceso.py`.
+  `compileall` limpio.
+
+### Pendientes / candidatos siguientes
+
+1. **Conceder la licencia de cortesía a la organización del titular** desde
+   `/admin/licencias` (tipo `cortesia`, duración larga, nota «uso del titular»).
+   **Antes** de encender el interruptor: si no, el titular se corta a sí mismo.
+   El panel de operador seguiría accesible, pero su organización no.
+2. **Activar `COTIZAT_EXIGIR_LICENCIA=true`** en Vercel (Production) + redeploy.
+   Comprobar en `/readyz` que aparece `"licencias": "exigida"`.
+3. Ensayar en staging con una organización vencida de prueba: ver «Acceso
+   suspendido», pulsar «Renovar mi plan», completar la compra y confirmar que
+   el acceso vuelve al activarla desde `/admin/compras`.
+4. Sigue sin haber **renovación automática** (Stripe + alta de autónomo): la
+   renovación es compra manual + activación del operador.
 
 ---
 
@@ -94,14 +187,14 @@ el de `/admin/licencias/{id}/recibo.pdf` son idénticos.
 
 ### Pendientes / candidatos siguientes
 
-1. **Aplicar `docs/staging_upgrade_c7f1a3b9d425.sql` en Supabase** y desplegar;
-   comprobar que `/readyz` vuelve a 200 con `"alembic": "head:c7f1a3b9d425"`.
+1. ✅ **Hecho (18/08/2026):** `docs/staging_upgrade_c7f1a3b9d425.sql` aplicado
+   en Supabase; `/readyz` vuelve a 200 con `"alembic": "head:c7f1a3b9d425"`.
 2. Repetir en staging una compra completa para ver el **correo de activación**
    con su adjunto y el enlace de recibo en `/configuracion`.
-3. **Decisión de negocio pendiente:** activar `COTIZAT_EXIGIR_LICENCIA=true`
-   (corte automático de acceso al vencer). El corte ya está implementado; falta
-   la licencia de cortesía al titular y el switch en Vercel
-   (`docs/PANEL_DE_OPERADOR.md` §6).
+3. ✅ **Resuelto en el bloque de arriba (18/08/2026):** el corte
+   (`COTIZAT_EXIGIR_LICENCIA=true`) ya es seguro de encender — una organización
+   suspendida puede renovar sola. Queda solo la licencia de cortesía al titular
+   y el switch en Vercel (`docs/PANEL_DE_OPERADOR.md` §6).
 
 ---
 

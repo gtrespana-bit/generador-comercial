@@ -163,3 +163,23 @@ volver a descargarlo cuando quiera desde `/configuracion`
 (`GET /pago/recibo/{compra_id}.pdf`, migración `c7f1a3b9d425`). Detalles en
 `docs/PANEL_DE_OPERADOR.md` §7. Sigue sin haber renovación automática: eso llega
 con Stripe.
+
+**Corte automático (18/08/2026).** Con el circuito de compra ya probado, el
+interruptor `COTIZAT_EXIGIR_LICENCIA` pasa a ser accionable. Antes de tocarlo
+hubo que resolver una contradicción del diseño: el corte protegía *todas* las
+rutas de la organización, incluidas las de compra, así que una organización
+vencida recibía 403 al intentar pagar. La suspensión era una trampa sin salida y
+cada renovación habría acabado en soporte.
+
+La solución es una segunda puerta, `get_db_renovacion` (`app/database.py`), que
+hace exactamente lo mismo que `get_db` —sesión, membresía, organización activa,
+RLS de tenant— **menos** comprobar la vigencia de la licencia. La usan solo las
+cuatro rutas de `app/routers/pagos.py` que hacen falta para renovar; ninguna de
+ellas expone datos de negocio (presupuestos, clientes, catálogo). El resto del
+producto sigue detrás de `get_db`. La pantalla «Acceso suspendido» ofrece ahora
+el botón «Renovar mi plan».
+
+Que esas rutas —y solo esas— usen la puerta sin corte no se deja a la memoria:
+`tests/test_licencias_acceso.py` lo comprueba recorriendo el árbol de rutas de
+la aplicación, de modo que añadir mañana una ruta de compra bajo `get_db`, o
+colar la puerta sin corte en una ruta que no sea de pago, rompe la suite.

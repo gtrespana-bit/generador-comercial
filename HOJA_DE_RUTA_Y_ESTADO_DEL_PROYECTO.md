@@ -1680,7 +1680,8 @@ Guía de uso y protección: `docs/PANEL_DE_OPERADOR.md`.
 ## Pendiente dentro de E1-060 (no bloqueante)
 
 - Recibo en PDF (espera a la decisión de cobro **E1-059**).
-- Corte automático de acceso al vencer (decisión de negocio; espera a E1-059).
+- ~~Corte automático de acceso al vencer~~ → implementado y **listo para
+  encenderse** (18/08/2026): ver la actualización al final de este documento.
 - Avisos de vencimiento por correo (hoy el panel marca el ámbar a 15 días).
 - **Mejora de la interfaz**: por decisión del titular (16/08/2026) el panel se
   queda deliberadamente simple por ahora; se mejorará más adelante.
@@ -1713,7 +1714,42 @@ El ensayo dejó dos huecos de post-venta, ya resueltos en este bloque:
 Con esto se cierra el punto «Recibo en PDF» que E1-060 dejaba pendiente a la
 espera de E1-059. Suite: **568 passed, 6 skipped**.
 
-**Operativo pendiente:** aplicar `docs/staging_upgrade_c7f1a3b9d425.sql` en
-Supabase y desplegar (`/readyz` responde 503 hasta entonces, por diseño).
-**Decisión de negocio pendiente:** activar `COTIZAT_EXIGIR_LICENCIA=true` (corte
-automático al vencer), ya implementado pero no encendido.
+**Operativo:** `docs/staging_upgrade_c7f1a3b9d425.sql` **aplicado en Supabase**
+el 18/08/2026; `/readyz` vuelve a 200.
+
+
+## Actualización 18/08/2026 (tarde) — el corte por licencia, listo para encenderse
+
+Aplicada ya la migración `c7f1a3b9d425`, se abordó el último pendiente del
+bloque de cobro: activar `COTIZAT_EXIGIR_LICENCIA=true`.
+
+**El fallo que había que corregir antes.** El corte se aplica en `get_db`, la
+puerta común de todas las rutas de organización, y las rutas de compra colgaban
+de ella. Con la licencia vencida, `/pago/comprar` (GET y POST), la confirmación
+y el recibo devolvían **403 «Acceso suspendido»**: la organización suspendida
+leía en pantalla que podía renovar y, al intentarlo, chocaba con la misma
+pared. La suspensión era una trampa sin salida y toda renovación habría acabado
+en soporte, a mano — justo lo que el circuito de compra vino a evitar.
+
+**La corrección.** Nueva dependencia **`get_db_renovacion`** en
+`app/database.py`: idéntica a `get_db` (sesión, membresía, organización activa,
+RLS de tenant) pero **sin** comprobar la vigencia. La usan **solo** las cuatro
+rutas de compra de `app/routers/pagos.py`, que no exponen ningún dato de
+negocio; el resto del producto sigue cortándose igual. La pantalla «Acceso
+suspendido» gana el botón **«Renovar mi plan»**.
+
+**Cómo queda protegido.** Cuatro regresiones en `tests/test_licencias_acceso.py`:
+la organización suspendida llega al checkout y registra la compra, el resto de
+rutas siguen cortadas, y un test estructural recorre el árbol de rutas exigiendo
+que **exactamente** las rutas de compra usen la puerta sin corte — ni una de
+más ni una de menos. Se verificó que el test muerde: revirtiendo `pagos.py` a
+`get_db`, la suite falla.
+
+Suite: **573 passed, 6 skipped**.
+
+**Pendiente operativo (en este orden).** 1) Conceder licencia de **cortesía** a
+la organización del titular desde `/admin/licencias` — si no, al encender el
+interruptor el titular se corta a sí mismo. 2) Fijar
+`COTIZAT_EXIGIR_LICENCIA=true` en Vercel y redesplegar. 3) Comprobar
+`"licencias": "exigida"` en `/readyz`. Detalle en `docs/PANEL_DE_OPERADOR.md`
+§8 y `docs/PROCESO_PILOTOS.md` §0.

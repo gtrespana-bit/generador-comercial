@@ -55,6 +55,7 @@ from ..database import (
     establecer_contexto_organizacion,
     get_authenticated_db,
     get_db,
+    get_db_renovacion,
     get_operator_db,
     get_public_proposal_db,
     init_db,

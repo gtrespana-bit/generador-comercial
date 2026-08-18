@@ -845,3 +845,106 @@ def test_el_script_sql_de_supabase_reproduce_la_migracion():
         "f4c1d8e37a95",  # guarda de versión previa
     ):
         assert pieza in script
+
+
+# ---------------------------------------------------------------------------
+# La salida de emergencia del corte: renovar siempre tiene que ser posible
+# ---------------------------------------------------------------------------
+
+
+def test_la_renovacion_no_queda_detras_del_propio_corte(entorno_web, monkeypatch):
+    """Una organización suspendida DEBE poder llegar al checkout.
+
+    Es la trampa obvia del corte automático: si `/pago/comprar` exigiera
+    licencia vigente, la única forma de recuperar el acceso sería escribir a
+    soporte, porque comprar estaría prohibido justo a quien necesita comprar.
+    """
+    monkeypatch.setenv("COTIZAT_EXIGIR_LICENCIA", "true")
+    _Session, datos = entorno_web
+
+    # La puerta normal sí corta...
+    normal = database_module.get_db(
+        _peticion_con_organizacion(datos["organizacion_id"])
+    )
+    with pytest.raises(LicenciaSuspendidaError):
+        next(normal)
+    normal.close()
+
+    # ...y la de renovación deja pasar, con la organización ya resuelta.
+    renovacion = database_module.get_db_renovacion(
+        _peticion_con_organizacion(datos["organizacion_id"])
+    )
+    db = next(renovacion)
+    try:
+        assert db.info["organizacion_id"] == datos["organizacion_id"]
+    finally:
+        renovacion.close()
+
+
+def test_la_renovacion_sigue_exigiendo_sesion_y_membresia(entorno_web, monkeypatch):
+    """Saltarse el corte no es saltarse el aislamiento: sin membresía, no entra."""
+    monkeypatch.setenv("COTIZAT_EXIGIR_LICENCIA", "true")
+    Session, datos = entorno_web
+    with Session() as db:
+        ajena = Organizacion(nombre="Ajena", slug="ajena")
+        db.add(ajena)
+        db.commit()
+        ajena_id = ajena.id
+
+    dependency = database_module.get_db_renovacion(
+        _peticion_con_organizacion(ajena_id)
+    )
+    with pytest.raises(Exception) as excinfo:
+        next(dependency)
+    dependency.close()
+    assert not isinstance(excinfo.value, LicenciaSuspendidaError)
+    assert ajena_id != datos["organizacion_id"]
+
+
+def test_las_rutas_de_compra_usan_la_puerta_sin_corte():
+    """Contrato explícito: el checkout y su recibo cuelgan de get_db_renovacion.
+
+    Si alguien vuelve a ponerlos en `get_db`, el corte automático deja al
+    cliente sin forma de renovar por su cuenta y esta prueba lo delata.
+    """
+    from app.database import get_db, get_db_renovacion
+
+    esperadas = {
+        ("/pago/comprar", "GET"),
+        ("/pago/comprar", "POST"),
+        ("/pago/confirmacion", "GET"),
+        ("/pago/recibo/{compra_id}.pdf", "GET"),
+    }
+    def _recorrer(rutas):
+        """FastAPI envuelve los routers incluidos; hay que bajar un nivel."""
+        for ruta in rutas:
+            incluido = getattr(ruta, "original_router", None)
+            if incluido is not None:
+                yield from _recorrer(incluido.routes)
+                continue
+            yield ruta
+
+    vistas = set()
+    for route in _recorrer(app.routes):
+        path = getattr(route, "path", "")
+        if not path.startswith("/pago"):
+            continue
+        dependant = getattr(route, "dependant", None)
+        dependencias = {d.call for d in dependant.dependencies} if dependant else set()
+        for metodo in (getattr(route, "methods", set()) or set()) - {"HEAD", "OPTIONS"}:
+            if (path, metodo) in esperadas:
+                vistas.add((path, metodo))
+                assert get_db_renovacion in dependencias, (path, metodo)
+                assert get_db not in dependencias, (path, metodo)
+
+    assert vistas == esperadas, f"faltan rutas por comprobar: {esperadas - vistas}"
+
+
+def test_la_pantalla_de_suspension_ofrece_renovar(dependencia_suspendida):
+    """El cliente suspendido necesita un botón, no solo un correo de soporte."""
+    with _cliente_api() as client:
+        respuesta = client.get("/inicio")
+
+    assert respuesta.status_code == 403
+    assert 'href="/pago"' in respuesta.text
+    assert "Renovar" in respuesta.text

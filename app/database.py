@@ -308,6 +308,22 @@ def _organizacion_sqlite_desde_entorno() -> int:
         ) from exc
 
 
+def get_db_renovacion(request: Request = None):
+    """Como :func:`get_db`, pero **sin** el corte por licencia vencida.
+
+    Es la salida de emergencia del corte automático: la única forma de que una
+    organización suspendida vuelva a tener licencia es comprarla, así que el
+    checkout no puede quedar detrás de la propia suspensión (si no, el cliente
+    solo podría renovar escribiendo a soporte).
+
+    Mantiene **todo** lo demás intacto: Supabase Auth, membresía autorizada y
+    contexto de organización con RLS. Solo se salta la comprobación de
+    vigencia, y por eso se usa exclusivamente en las rutas de compra y en su
+    recibo, nunca en rutas que enseñen datos de negocio.
+    """
+    yield from _abrir_sesion_de_organizacion(request, exigir_licencia=False)
+
+
 def get_db(request: Request = None):
     """Abre una sesión con organización derivada de una membresía autorizada.
 
@@ -315,6 +331,10 @@ def get_db(request: Request = None):
     PostgreSQL nunca acepta ``COTIZAT_ORGANIZATION_ID``: valida Supabase Auth,
     comprueba la membresía y solo entonces activa el filtro ORM.
     """
+    yield from _abrir_sesion_de_organizacion(request, exigir_licencia=True)
+
+
+def _abrir_sesion_de_organizacion(request: Request, *, exigir_licencia: bool):
     db = SessionLocal()
     try:
         if DATABASE_IS_SQLITE:
@@ -398,8 +418,10 @@ def get_db(request: Request = None):
             organizacion_tiene_acceso,
         )
 
-        if exigencia_licencia_activada() and not organizacion_tiene_acceso(
-            db, membresia.organizacion_id
+        if (
+            exigir_licencia
+            and exigencia_licencia_activada()
+            and not organizacion_tiene_acceso(db, membresia.organizacion_id)
         ):
             raise LicenciaSuspendidaError(
                 f"El acceso de «{membresia.organizacion.nombre}» está "

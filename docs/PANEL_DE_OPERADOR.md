@@ -251,7 +251,7 @@ piezas que faltaban. Migración `b7c4a9e2d31f`
 | Sin licencia / vencida / cancelada | ❌ Suspendida | Ve «Acceso suspendido» en cualquier ruta de negocio |
 | Licencia encadenada que empieza mañana | ❌ Hoy | Se activa sola al llegar `inicio` |
 | Panel de operador | ✅ Siempre | No depende de ninguna organización |
-| Usuario suspendido | ✅ Solo: iniciar/cerrar sesión, `/organizaciones` (cambiar de organización), aceptar invitaciones y páginas legales | Nada de datos: ni presupuestos, clientes, catálogo, PDFs ni descargas |
+| Usuario suspendido | ✅ Solo: iniciar/cerrar sesión, `/organizaciones` (cambiar de organización), aceptar invitaciones, páginas legales **y el circuito de compra** | Nada de datos: ni presupuestos, clientes, catálogo, PDFs ni descargas |
 
 Notas de diseño del corte:
 
@@ -331,3 +331,46 @@ propia organización. En vez de abrir esa puerta, la activación **copia el
 período concedido a `compras_plan`** (`licencia_inicio` / `licencia_vence`,
 tabla tenant), y la ruta del cliente arma con esos datos el objeto que espera el
 generador de recibos. El aislamiento del registro de licencias queda intacto.
+
+---
+
+## 8. El corte no encierra al cliente (18/08/2026)
+
+Al preparar el encendido de `COTIZAT_EXIGIR_LICENCIA` se encontró un fallo que
+habría estropeado el circuito de cobro: **una organización vencida no podía
+renovar**. El corte vive en `get_db`, la puerta común de todas las rutas de
+organización, y las rutas de compra colgaban de ella; con la licencia caducada,
+`/pago/comprar`, la confirmación y el recibo devolvían 403. El cliente leía en
+la pantalla de suspensión que podía renovar y, al intentarlo, chocaba con la
+misma pared.
+
+### Cómo se resolvió
+
+- **`get_db_renovacion`** (`app/database.py`): misma autenticación, membresía,
+  organización activa y RLS de tenant que `get_db`, **sin** comprobar la
+  vigencia de la licencia.
+- La usan **solo** las cuatro rutas de compra de `app/routers/pagos.py`. No
+  abren nada más: por ahí no se llega a presupuestos, clientes ni catálogo.
+- La pantalla «Acceso suspendido» gana el botón **«Renovar mi plan»**.
+
+Resultado operativo: un cliente vencido se renueva **solo** —compra con su
+comprobante, el operador la activa desde `/admin/compras`, el acceso vuelve al
+instante y le llega el correo con su recibo—. Sin esto, cada renovación habría
+acabado en el buzón de soporte.
+
+### Por qué no se romperá otra vez
+
+`tests/test_licencias_acceso.py` recorre el árbol de rutas de la aplicación y
+exige que **exactamente** las rutas de compra usen la puerta sin corte: ni una
+de más (sería un agujero) ni una de menos (volvería la trampa). Se comprobó que
+el test muerde de verdad revirtiendo las rutas a `get_db` y viendo fallar la
+suite.
+
+### Orden para encender el interruptor
+
+1. Conceder **licencia de cortesía** a la organización del titular
+   (`/admin/licencias`, tipo `cortesia`, duración larga). Sin esto, el titular
+   se corta a sí mismo — el panel de operador seguiría accesible, su
+   organización no.
+2. `COTIZAT_EXIGIR_LICENCIA=true` en Vercel (Production) + redeploy.
+3. Verificar en `/readyz` que aparece `"licencias": "exigida"`.

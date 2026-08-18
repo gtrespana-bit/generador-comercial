@@ -232,7 +232,7 @@ def test_pagina_comprar_muestra_planes_y_metodos(entorno):
         db.info["organizacion_id"] = ids[0]
         db.info["usuario_id"] = ids[1]
         db.info["rol_membresia"] = "propietario"
-        app.dependency_overrides[get_db] = _override(db, ids)
+        _instalar_override(db, ids)
         try:
             with _cliente() as client:
                 r = client.get("/pago/comprar?plan=anual")
@@ -244,7 +244,7 @@ def test_pagina_comprar_muestra_planes_y_metodos(entorno):
             assert "USDT" in r.text
             assert "comprobante" in r.text.lower()
         finally:
-            app.dependency_overrides.pop(get_db, None)
+            _retirar_override()
 
 
 def test_pagina_comprar_plan_desconocido_redirige(entorno):
@@ -253,14 +253,14 @@ def test_pagina_comprar_plan_desconocido_redirige(entorno):
         db.info["organizacion_id"] = ids[0]
         db.info["usuario_id"] = ids[1]
         db.info["rol_membresia"] = "propietario"
-        app.dependency_overrides[get_db] = _override(db, ids)
+        _instalar_override(db, ids)
         try:
             with _cliente() as client:
                 r = client.get("/pago/comprar?plan=vitalicio", follow_redirects=False)
             assert r.status_code == 303
             assert r.headers["location"].startswith("/pago")
         finally:
-            app.dependency_overrides.pop(get_db, None)
+            _retirar_override()
 
 
 def test_registrar_compra_con_comprobante(entorno, monkeypatch, tmp_path):
@@ -274,7 +274,7 @@ def test_registrar_compra_con_comprobante(entorno, monkeypatch, tmp_path):
         db.info["organizacion_id"] = ids[0]
         db.info["usuario_id"] = ids[1]
         db.info["rol_membresia"] = "propietario"
-        app.dependency_overrides[get_db] = _override(db, ids)
+        _instalar_override(db, ids)
         try:
             with _cliente() as client:
                 r = client.post(
@@ -293,7 +293,7 @@ def test_registrar_compra_con_comprobante(entorno, monkeypatch, tmp_path):
             assert r.status_code == 303
             assert "/pago/confirmacion?id=" in r.headers["location"]
         finally:
-            app.dependency_overrides.pop(get_db, None)
+            _retirar_override()
             reset_storage_backend_cache()
 
     with Session() as db:
@@ -317,7 +317,7 @@ def test_registrar_compra_sin_comprobante_devuelve_error(entorno, monkeypatch, t
         db.info["organizacion_id"] = ids[0]
         db.info["usuario_id"] = ids[1]
         db.info["rol_membresia"] = "propietario"
-        app.dependency_overrides[get_db] = _override(db, ids)
+        _instalar_override(db, ids)
         try:
             with _cliente() as client:
                 r = client.post(
@@ -328,7 +328,7 @@ def test_registrar_compra_sin_comprobante_devuelve_error(entorno, monkeypatch, t
             assert r.status_code == 303
             assert "comprobante" in r.headers["location"]
         finally:
-            app.dependency_overrides.pop(get_db, None)
+            _retirar_override()
             reset_storage_backend_cache()
 
 
@@ -350,7 +350,7 @@ def test_registrar_compra_ignora_archivos_de_otros_metodos(entorno, monkeypatch,
         db.info["organizacion_id"] = ids[0]
         db.info["usuario_id"] = ids[1]
         db.info["rol_membresia"] = "propietario"
-        app.dependency_overrides[get_db] = _override(db, ids)
+        _instalar_override(db, ids)
         try:
             with _cliente() as client:
                 r = client.post(
@@ -374,7 +374,7 @@ def test_registrar_compra_ignora_archivos_de_otros_metodos(entorno, monkeypatch,
             assert r.status_code == 303
             assert "/pago/confirmacion?id=" in r.headers["location"]
         finally:
-            app.dependency_overrides.pop(get_db, None)
+            _retirar_override()
             reset_storage_backend_cache()
 
     with Session() as db:
@@ -482,7 +482,7 @@ def test_confirmacion_muestra_resumen(entorno, monkeypatch, tmp_path):
         db.flush()
         compra_id = compra.id
 
-        app.dependency_overrides[get_db] = _override(db, ids)
+        _instalar_override(db, ids)
         try:
             with _cliente() as client:
                 r = client.get(f"/pago/confirmacion?id={compra_id}")
@@ -491,7 +491,7 @@ def test_confirmacion_muestra_resumen(entorno, monkeypatch, tmp_path):
             assert "Plan mensual" in r.text
             assert "#" + str(compra_id) in r.text
         finally:
-            app.dependency_overrides.pop(get_db, None)
+            _retirar_override()
             reset_storage_backend_cache()
 
 
@@ -503,6 +503,27 @@ def _override(db, ids):
             pass
 
     return _get_db
+
+
+def _instalar_override(db, ids):
+    """Sustituye las dos puertas de sesión que usan las rutas de compra.
+
+    El checkout cuelga de ``get_db_renovacion`` (para que una organización
+    suspendida pueda renovar), así que overridear solo ``get_db`` dejaría las
+    rutas de pago hablando con la base real.
+    """
+    from app.database import get_db_renovacion
+
+    dependencia = _override(db, ids)
+    app.dependency_overrides[get_db] = dependencia
+    app.dependency_overrides[get_db_renovacion] = dependencia
+
+
+def _retirar_override():
+    from app.database import get_db_renovacion
+
+    app.dependency_overrides.pop(get_db, None)
+    app.dependency_overrides.pop(get_db_renovacion, None)
 
 
 # ---------------------------------------------------------------------------
@@ -800,12 +821,12 @@ def test_el_cliente_descarga_el_recibo_de_su_compra(entorno):
 
         db.info["usuario_id"] = ids[1]
         db.info["rol_membresia"] = "propietario"
-        app.dependency_overrides[get_db] = _override(db, ids)
+        _instalar_override(db, ids)
         try:
             with _cliente() as client:
                 r = client.get(f"/pago/recibo/{compra_id}.pdf")
         finally:
-            app.dependency_overrides.pop(get_db, None)
+            _retirar_override()
 
     assert r.status_code == 200
     assert r.headers["content-type"] == "application/pdf"
@@ -852,14 +873,14 @@ def test_el_recibo_de_otra_organizacion_no_se_alcanza(entorno):
         db.info["organizacion_id"] = ids[0]
         db.info["usuario_id"] = ids[1]
         db.info["rol_membresia"] = "propietario"
-        app.dependency_overrides[get_db] = _override(db, ids)
+        _instalar_override(db, ids)
         try:
             with _cliente() as client:
                 r = client.get(
                     f"/pago/recibo/{compra_id}.pdf", follow_redirects=False
                 )
         finally:
-            app.dependency_overrides.pop(get_db, None)
+            _retirar_override()
 
     assert r.status_code == 303
     assert not r.content.startswith(b"%PDF")
@@ -1090,3 +1111,30 @@ def test_el_aviso_de_activacion_sale_aunque_falte_el_recibo(monkeypatch):
 
     assert "attachments" not in capturado or not capturado["attachments"]
     assert "17/09/2026" in capturado["html"]
+
+
+def test_una_organizacion_suspendida_todavia_puede_comprar(entorno, monkeypatch):
+    """Prueba de extremo a extremo de la salida de emergencia del corte.
+
+    Con `COTIZAT_EXIGIR_LICENCIA` activa y sin licencia vigente, el cliente
+    tiene que poder abrir el checkout: si no, la suspensión sería una trampa
+    sin salida (no podría comprar justo lo que necesita para salir de ella).
+    """
+    monkeypatch.setenv("COTIZAT_EXIGIR_LICENCIA", "true")
+    Session, ids, _rol = entorno
+    with Session() as db:
+        db.info["usuario_id"] = ids[1]
+        db.info["rol_membresia"] = "propietario"
+        # Solo se sustituye la puerta del checkout: `get_db` sigue siendo la
+        # real, así que si la ruta colgara de ella, esto no daría 200.
+        from app.database import get_db_renovacion
+
+        app.dependency_overrides[get_db_renovacion] = _override(db, ids)
+        try:
+            with _cliente() as client:
+                r = client.get("/pago/comprar?plan=anual")
+        finally:
+            app.dependency_overrides.pop(get_db_renovacion, None)
+
+    assert r.status_code == 200
+    assert "Acceso suspendido" not in r.text
