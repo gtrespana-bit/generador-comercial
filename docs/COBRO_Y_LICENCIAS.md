@@ -216,7 +216,7 @@ registra el correo **normalizado** en `pruebas_concedidas`, con restricción
 única. Normalizar significa neutralizar los alias que el proveedor trata como
 la misma cuenta: se quitan los puntos en Gmail/Googlemail, se recorta
 `+etiqueta` en la decena de proveedores que la soportan, y `googlemail.com` se
-unifica con `gmail.com`. Así `j.perez+uno@gmail.com` y `jperez@gmail.com` son
+unifica con `gmail.com`. Así `fulano.detal+uno@gmail.com` y `fulanodetal@gmail.com` son
 la misma identidad y solo obtienen una prueba entre las dos.
 
 La marca **sobrevive al borrado de la organización** (la clave foránea es

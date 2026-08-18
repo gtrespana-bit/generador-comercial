@@ -186,6 +186,46 @@ _REGLAS_NUMERICAS = frozenset(
     {"telefono-venezolano", "telefono-espanol", "documento-fiscal"}
 )
 
+
+# Nombres de fantasía admitidos en la parte local de un correo de ejemplo.
+#
+# En casi toda la documentación el dominio de ejemplo debe ser example.com, y
+# esa sigue siendo la regla. Pero la normalización de identidad (los puntos que
+# Gmail ignora, el `+etiqueta` de Outlook) SOLO es cierta en esos proveedores
+# concretos: un ejemplo con example.com no demostraría nada y el código dejaría
+# de explicarse solo. Ahí el dominio es parte del hecho técnico; quien
+# identifica a una persona es la parte local.
+#
+# Por eso se admite el dominio real cuando la parte local es un nombre de
+# fantasía inequívoco. La lista es cerrada y corta a propósito: cualquier
+# nombre verosímil que no esté aquí (juan.perez, ana.gomez, un apellido real)
+# se sigue marcando como filtración.
+NOMBRES_DE_FANTASIA = (
+    "fulano", "mengano", "zutano", "perengano", "mengana", "fulana",
+)
+
+
+def _es_correo_de_fantasia(texto: str) -> bool:
+    """¿El correo es un ejemplo que no identifica a ninguna persona?
+
+    Dos casos, ambos comprobados solo sobre la parte local para no dar vía
+    libre a un dominio entero:
+
+    * Un nombre de fantasía al principio: `fulano.detal+x@gmail.com` no es de
+      nadie; `juan.perez@gmail.com` sí puede serlo. Se exige que el nombre
+      abra la parte local para que `no-soy-fulano@gmail.com` no cuele.
+    * Una dirección sin usuario: `+etiqueta@gmail.com` y `.@gmail.com` son los
+      casos degenerados que el normalizador debe rechazar. Ningún proveedor
+      admite un buzón que empiece por `+` o `.`, así que no hay persona detrás.
+    """
+    local = texto.rsplit("@", 1)[0].lower()
+    if local.startswith(("+", ".")):
+        return True
+    # Los puntos se ignoran al comparar: los ejemplos que documentan la regla
+    # de Gmail son justamente del tipo `f.u.l.a.n.o@`, y siguen sin ser nadie.
+    local = local.replace(".", "")
+    return any(local.startswith(nombre) for nombre in NOMBRES_DE_FANTASIA)
+
 # Longitud mínima de una firma JWT real. HS256 firma con 32 bytes, que en
 # base64url ocupan 43 caracteres; RS256 produce firmas mucho más largas. Una
 # firma más corta es un token de laboratorio, no una credencial que revocar.
@@ -377,6 +417,8 @@ def _hallazgos_de_contenido(ruta: str, contenido: str) -> Iterator[Hallazgo]:
                 elif regla in REGLAS_CREDENCIALES and _es_marcador(texto):
                     continue
                 elif regla.nombre in _REGLAS_NUMERICAS and _es_numero_marcador(texto):
+                    continue
+                elif regla.nombre == "correo-personal" and _es_correo_de_fantasia(texto):
                     continue
                 if EXCEPCIONES.get((ruta, regla.nombre, texto)):
                     continue

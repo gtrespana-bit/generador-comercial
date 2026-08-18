@@ -99,6 +99,10 @@ CASOS_QUE_DEBEN_DETECTARSE = (
         "DATABASE_URL=postgresql://cotizat_runtime:Tr0ub4dor&3@db.host.com:5432/cotizat",
     ),
     ("correo-personal", "Escribe a juan.perez.rodriguez@gmail.com para la prueba."),
+    # El nombre de fantasía solo exime a la parte local: un nombre verosímil
+    # sobre un dominio de consumo se sigue marcando aunque lleve subdirección.
+    ("correo-personal", "alias de pruebas: j.perez+uno@gmail.com"),
+    ("correo-personal", "contacto: no-soy-fulano@gmail.com"),
     ("telefono-venezolano", "Teléfono de contacto: +58 412 5837291"),
     ("telefono-espanol", "Llamar al +34 655 384 217"),
     ("documento-fiscal", "RIF de la empresa: J-30845217-4"),
@@ -130,6 +134,13 @@ CASOS_LEGITIMOS = (
     "RESEND_API_KEY=re_REEMPLAZAR_SOLO_EN_EL_BACKEND",
     "DATABASE_URL=postgresql://cotizat_runtime:REEMPLAZAR@localhost:5432/cotizat",
     "Escribe a persona@example.com o a soporte@cotizat.online.",
+    # Los ejemplos de normalización de identidad necesitan el dominio real
+    # (los puntos que Gmail ignora no se pueden demostrar con example.com),
+    # así que se admiten con un nombre de fantasía en la parte local.
+    "normalizar_email('Fulano.Detal+cotizat@GMail.com') == 'fulanodetal@gmail.com'",
+    "assert normalizar_email('mengana+x@proton.me') == 'mengana@proton.me'",
+    "El buzón f.u.l.a.n.o@gmail.com recibe lo enviado a fulano@gmail.com.",
+    "Casos degenerados: +etiqueta@gmail.com y .@gmail.com no dejan usuario.",
     "Teléfono de ejemplo: +58 412 000 0000",
     "RIF de ejemplo: J-00000000-0",
     "El formulario sugiere J-12345678-9 como formato.",

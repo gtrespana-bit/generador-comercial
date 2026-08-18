@@ -2,7 +2,7 @@
 
 La prueba gratuita se concede **una vez por identidad de correo**. Para que eso
 signifique algo hay que decidir cuándo dos correos son la misma persona: si
-`juan@gmail.com` y `j.u.a.n+cotizat@gmail.com` cuentan como identidades
+`fulano@gmail.com` y `f.u.l.a.n.o+cotizat@gmail.com` cuentan como identidades
 distintas, la restricción única de la base no protege de nada y el sistema es
 teatro.
 
@@ -24,10 +24,10 @@ Dos reglas deliberadamente conservadoras:
 """
 from __future__ import annotations
 
-#: Proveedores que ignoran los puntos del usuario: `j.u.a.n@` y `juan@` son el
+#: Proveedores que ignoran los puntos del usuario: `f.u.l.a.n.o@` y `fulano@` son el
 #: mismo buzón. Es una propiedad documentada del proveedor, no una suposición.
 #: Fuera de esta lista los puntos se respetan: en un dominio corporativo
-#: `juan.perez@` y `juanperez@` pueden ser dos personas distintas.
+#: `fulano.detal@` y `fulanodetal@` pueden ser dos personas distintas.
 _DOMINIOS_SIN_PUNTOS = frozenset(
     {
         "gmail.com",
@@ -161,10 +161,10 @@ def normalizar_email(email: str) -> str:
     Si el correo no se puede interpretar se devuelve tal cual en minúsculas:
     ante la duda, no se fusionan identidades.
 
-    >>> normalizar_email("Juan.Perez+cotizat@GMail.com")
-    'juanperez@gmail.com'
-    >>> normalizar_email("juan.perez@miempresa.com")
-    'juan.perez@miempresa.com'
+    >>> normalizar_email("Fulano.Detal+cotizat@GMail.com")
+    'fulanodetal@gmail.com'
+    >>> normalizar_email("fulano.detal@miempresa.com")
+    'fulano.detal@miempresa.com'
     """
     usuario, dominio = partes_correo(email)
     if not usuario:
