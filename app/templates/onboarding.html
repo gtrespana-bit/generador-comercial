@@ -72,6 +72,9 @@
   .btn-primary { background:var(--navy); border-color:var(--navy); color:#fff; }
   .btn-primary:hover { background:var(--navy-2); }
   .error { margin-bottom:18px; color:var(--danger); background:#fff1f0; border:1px solid #f3c7c3; padding:12px 14px; border-radius:10px; font-size:.82rem; }
+  /* Confirmación de la prueba gratuita recién concedida: es lo primero que
+     se ve tras crear la empresa, así que dice los días y la fecha exacta. */
+  .aviso-prueba { margin-bottom:18px; color:#14532d; background:#effaf3; border:1px solid #bfe6cd; padding:12px 14px; border-radius:10px; font-size:.85rem; }
   .pending-purchase { display:flex; align-items:center; gap:12px; margin-bottom:18px; padding:12px 14px; background:#eef4fb; border:1px solid #cfe0f2; border-radius:12px; color:#123f78; font-size:.84rem; }
   .pending-purchase strong { font-weight:800; }
   .pending-purchase .spacer { flex:1; }
@@ -113,6 +116,7 @@
 
       <form class="card" method="post" action="/bienvenida" enctype="multipart/form-data" id="onboarding-form">
         {% if error %}<div class="error" role="alert">{{ error }}</div>{% endif %}
+        {% if msg %}<div class="aviso-prueba" role="status">{{ msg }}</div>{% endif %}
 
         <section class="wizard-panel active" data-panel="0">
           <span class="panel-kicker">Paso 1 de 3</span>

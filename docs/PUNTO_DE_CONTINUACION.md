@@ -1,12 +1,67 @@
 # Punto exacto de continuación
 
-Fecha de corte: **18/08/2026, corte automático por licencia listo para activarse (`COTIZAT_EXIGIR_LICENCIA`)** (America/Caracas).
+Fecha de corte: **18/08/2026, prueba gratuita de 7 días implementada; falta aplicar `a3d9c1e75b28` en Supabase antes de activar `COTIZAT_EXIGIR_LICENCIA`** (America/Caracas).
 
 Este documento retoma el trabajo sin depender del historial del chat. Describe
 **dónde quedó exactamente** el trabajo y **qué sigue**, en ese orden. Léelo
 junto con `basedatos_partidas/EMPEZAR_AQUI.md` (reglas y progreso del catálogo),
 `basedatos_partidas/INVENTARIO.md` (cifras y contraste de precios) y
 `PLAN_DE_COMERCIALIZACION_Y_EVOLUCION_SAAS.md` (§1.9 y §11).
+
+---
+
+## ✅ Cierre de sesión — Prueba gratuita de 7 días (18/08/2026)
+
+Misma rama (`arena/01a015a7-generador-comercial`) y mismo **PR #38**.
+
+### Por qué era lo siguiente
+
+El interruptor `COTIZAT_EXIGIR_LICENCIA` no se podía encender: con el corte
+activo, **toda organización recién registrada nacía suspendida**. La prueba
+gratuita es el prerrequisito, no un extra comercial.
+
+### Qué quedó hecho
+
+Al crear la primera organización se concede sola una licencia de 7 días
+(`origen='prueba'`, importe 0). Contra el reciclaje de cuentas: una prueba por
+**identidad de correo normalizado** y para siempre (puntos y `+etiqueta`
+neutralizados; la marca sobrevive al borrado de la organización), **dominios
+desechables bloqueados en el registro**, licencia siempre **por organización**
+—una segunda organización no trae otra prueba— e **IP del alta hasheada** que
+solo señala patrones en el panel y jamás bloquea sola.
+
+La concesión ocurre dentro de PostgreSQL
+(`cotizat_security.grant_trial_license`, migración `a3d9c1e75b28`): marca e
+licencia se insertan **a la vez**, y la carrera entre dos altas del mismo correo
+la resuelve `ON CONFLICT DO NOTHING` en la base, no Python. El razonamiento
+completo, incluido el asunto del `FORCE ROW LEVEL SECURITY`, está en
+`docs/COBRO_Y_LICENCIAS.md` §5.
+
+630 pruebas en verde, 50 de ellas nuevas en `tests/test_prueba_gratuita.py`.
+
+### ⚠️ Lo que falta y en qué orden
+
+**El SQL de PostgreSQL solo está validado por lectura y en SQLite: no hay
+PostgreSQL en el entorno de desarrollo.** La prueba de humo del final de
+`docs/staging_upgrade_a3d9c1e75b28.sql` es el primer sitio donde se ejecuta de
+verdad; conviene correrla dentro de una transacción con `ROLLBACK`, como está
+escrita.
+
+1. Aplicar `docs/staging_upgrade_a3d9c1e75b28.sql` en Supabase con el rol
+   administrativo (**no** `cotizat_app`).
+2. Verificar la cabeza `a3d9c1e75b28` en `/readyz`.
+3. Licencia de cortesía a la organización del titular.
+4. `COTIZAT_EXIGIR_LICENCIA=true` en Vercel (Production) + redeploy, y
+   comprobar `"licencias": "exigida"`.
+
+Invertir el orden dejaría suspendida a toda organización nueva.
+
+### Lo siguiente en el producto
+
+El **panel de operador «premium»**: gestionar una organización (conceder,
+renovar, retirar, ver pagos) **en dos clics desde el propio listado**, sin
+recorrer la página ni buscar en desplegables. Con muchos clientes, una tarea
+sencilla mal diseñada multiplica el coste operativo por 4-5.
 
 ---
 

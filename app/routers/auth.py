@@ -137,6 +137,21 @@ async def registrar_cuenta(request: Request):
     password_confirmation = str(form.get("password_confirmation") or "")
     if password != password_confirmation:
         return _redirect("/acceso", error="Las contraseñas no coinciden.")
+    email_registro = str(form.get("email") or "")
+    if es_desechable(email_registro):
+        # Un buzón que se autodestruye en diez minutos no identifica a nadie:
+        # permite generar identidades nuevas sin coste y vaciar de sentido el
+        # «una prueba por persona». Se corta aquí, antes de crear la cuenta.
+        # A diferencia del mensaje genérico de más abajo, este sí es explícito
+        # porque no revela nada: no dice si el correo existe, solo que ese
+        # proveedor no sirve.
+        return _redirect(
+            "/acceso",
+            error=(
+                "Ese proveedor de correo temporal no está admitido. "
+                "Regístrate con un correo permanente, personal o de empresa."
+            ),
+        )
     try:
         settings = SupabaseAuthSettings.from_environment()
         result = await run_in_threadpool(
@@ -449,9 +464,38 @@ async def crear_organizacion_web(
         usuario_id=usuario.id,
     )
     establecer_contexto_organizacion(db, organizacion.id)
+
+    # Prueba gratuita: sin esto, con la exigencia de licencia activada la
+    # organización nacería suspendida en el mismo segundo del alta y el cliente
+    # tendría que pagar antes de ver nada. Se concede aquí, con el contexto de
+    # organización ya establecido, porque la función SECURITY DEFINER que
+    # escribe la licencia comprueba precisamente ese claim.
+    #
+    # `conceder_prueba` no lanza excepciones a propósito: si algo falla, la
+    # organización se crea igual y la persona aterriza en la pantalla de
+    # planes. Perder la prueba se recupera; perder el alta, no.
+    resultado_prueba = conceder_prueba(
+        db,
+        organizacion_id=organizacion.id,
+        email=str(db.info.get("auth_email") or getattr(usuario, "email", "")),
+        ip=ip_de_request(request),
+        es_sqlite=common.DATABASE_IS_SQLITE,
+    )
+
+    # La configuración se añade *después* de conceder la prueba: `conceder_prueba`
+    # trabaja dentro de un SAVEPOINT y, si la identidad ya gastó su prueba, hace
+    # rollback hasta él. Con la Configuracion pendiente en la sesión, el autoflush
+    # la metería dentro de ese punto y el rollback se la llevaría por delante,
+    # dejando la organización sin configuración.
     db.add(Configuracion(organizacion_id=organizacion.id))
     db.commit()
-    response = RedirectResponse("/bienvenida", status_code=303)
+
+    # Sin prueba, la persona va a la pantalla de planes: negarla nunca puede
+    # impedir pagar. Con prueba, entra directa a la bienvenida.
+    destino = "/bienvenida" if resultado_prueba.concedida else "/pago"
+    response = RedirectResponse(
+        f"{destino}?msg={quote(resultado_prueba.mensaje)}", status_code=303
+    )
     _set_organization_cookie(response, organizacion.id)
     return response
 
@@ -789,6 +833,9 @@ def bienvenida(request: Request, db: Session = Depends(get_db)):
         {
             "cfg": cfg,
             "error": request.query_params.get("error", ""),
+            # Confirmación de la prueba gratuita recién concedida. Se recorta
+            # porque viene de la query y acaba pintándose en la página.
+            "msg": request.query_params.get("msg", "")[:300],
             "compra_pendiente_ficha": compra_pendiente_ficha,
         },
     )

@@ -34,6 +34,68 @@ def _antecesores_permitidos() -> tuple[bytes, bytes | None]:
     return origenes.encode("ascii", "ignore"), None
 
 
+def confia_en_proxy() -> bool:
+    """¿Se puede creer la cabecera ``X-Forwarded-For``?
+
+    Solo detrás de un proxy propio que la reescriba (Vercel). Expuesto
+    directamente a internet, cualquiera la falsifica y la IP deja de valer
+    nada.
+    """
+    return (os.environ.get("COTIZAT_TRUST_PROXY", "").strip().lower()) in {
+        "1",
+        "true",
+        "on",
+        "si",
+        "sí",
+    }
+
+
+def _resolver_ip(cabecera: str, host: str, confiar: bool, defecto: str) -> str:
+    """Criterio único para decidir la IP de origen de una petición.
+
+    Es una función suelta, y no un método, porque tiene dos llamantes con
+    formas muy distintas: el middleware de rate limit trabaja sobre el `scope`
+    ASGI crudo y con una bandera de confianza inyectada, mientras que
+    `ip_de_request` recibe un `Request` ya construido y lee el entorno. Lo que
+    no puede divergir entre ambos es la decisión: si se cree o no la cabecera
+    reenviada, y qué se hace cuando trae basura.
+
+    La cabecera solo se acepta si además parsea como IP. Un `X-Forwarded-For`
+    con texto arbitrario cae al cliente directo en lugar de convertirse en una
+    clave de contador inventada por el atacante.
+    """
+    cabecera = (cabecera or "").split(",", 1)[0].strip()
+    if confiar and cabecera:
+        try:
+            return str(ipaddress.ip_address(cabecera))
+        except ValueError:
+            pass
+    return str(host or "") or defecto
+
+
+def ip_de_request(request) -> str:
+    """IP de quien hace la petición, con el mismo criterio que el rate limit.
+
+    Vive fuera del middleware porque hay más sitios que necesitan la IP —el
+    registro de pruebas gratuitas la guarda hasheada— y duplicar la lógica de
+    confianza en el proxy sería la forma segura de que un día divergieran.
+
+    Devuelve cadena vacía si no se puede determinar: quien la use debe tratar
+    la ausencia como un dato normal, no como un error.
+    """
+    try:
+        cabecera = request.headers.get("x-forwarded-for", "")
+    except Exception:
+        cabecera = ""
+    cliente = getattr(request, "client", None)
+    return _resolver_ip(
+        cabecera,
+        str(getattr(cliente, "host", "") or ""),
+        confia_en_proxy(),
+        defecto="",
+    )
+
+
 class AuthRateLimitMiddleware:
     """Límite por IP y ruta para endpoints de credenciales y recuperación.
 
@@ -81,14 +143,21 @@ class AuthRateLimitMiddleware:
             self.backend.max_buckets = self.max_buckets
 
     def _client_ip(self, scope: Scope, headers: dict[str, str]) -> str:
-        forwarded = headers.get("x-forwarded-for", "").split(",", 1)[0].strip()
-        try:
-            if self.trust_forwarded_for and forwarded:
-                return str(ipaddress.ip_address(forwarded))
-        except ValueError:
-            pass
+        """Clave de contador para esta petición.
+
+        Comparte criterio con `ip_de_request` a través de `_resolver_ip`. El
+        defecto es "unknown" y no cadena vacía porque aquí la IP se usa como
+        clave: todas las peticiones sin cliente identificable deben caer en el
+        mismo cubo y limitarse juntas, en vez de repartirse por una clave vacía
+        que se confundiría con otra ruta.
+        """
         client = scope.get("client")
-        return str(client[0]) if client else "unknown"
+        return _resolver_ip(
+            headers.get("x-forwarded-for", ""),
+            str(client[0]) if client else "",
+            self.trust_forwarded_for,
+            defecto="unknown",
+        )
 
     def _permitido(self, key: tuple[str, str], limit: int) -> tuple[bool, int]:
         path, ip = key

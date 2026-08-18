@@ -41,7 +41,7 @@ from starlette.middleware.gzip import GZipMiddleware
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
 from ..branding import LEGAL_ENTITY, PRODUCT_NAME, SUPPORT_EMAIL, VALUE_PROPOSITION
-from ..security import AuthRateLimitMiddleware, WebSecurityMiddleware
+from ..security import AuthRateLimitMiddleware, WebSecurityMiddleware, ip_de_request
 from ..database import (
     BACKUPS_DIR,
     BASE_DIR,
@@ -150,6 +150,13 @@ from ..services.recibo_licencia import (
     generar_recibo_licencia_pdf,
     licencia_de_compra,
     numero_recibo,
+)
+from ..services.identidad_registro import es_desechable, normalizar_email
+from ..services.prueba_gratuita import (
+    conceder_prueba,
+    dias_de_prueba,
+    prueba_activada,
+    prueba_ya_usada,
 )
 from ..services.propuestas import (
     DURACIONES_ENLACE,

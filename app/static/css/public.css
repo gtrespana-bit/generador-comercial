@@ -2289,6 +2289,21 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
   color: #1a1a2e;
 }
 
+/* Aviso contextual del hero de planes: explica por qué se ha llegado aquí
+   (por ejemplo, prueba gratuita ya consumida). Tono informativo, no de error:
+   la persona no ha hecho nada mal. */
+.pago-page .pago-aviso {
+  margin: 1.2rem auto 0;
+  max-width: 560px;
+  padding: 0.85rem 1.1rem;
+  border-radius: 10px;
+  background: #eef4ff;
+  border: 1px solid #cfe0ff;
+  color: #234; 
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
 .pago-page .pago-planes {
   padding: 2rem 1.5rem 3.5rem;
 }
