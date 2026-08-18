@@ -1090,10 +1090,23 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
   align-items: baseline;
 }
 .landing .dp-nombre {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-width: 0;
   font-size: 0.75rem;
   font-weight: 600;
   color: var(--text);
   letter-spacing: -0.01em;
+}
+.landing .dp-img {
+  width: 36px;
+  height: 36px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface-alt);
+  flex: 0 0 auto;
 }
 .landing .dp-cant, .landing .dp-precio, .landing .dp-importe {
   text-align: right;
