@@ -1048,9 +1048,9 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
 .landing .doc-capitulo {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
-  gap: 1rem;
-  padding: 0.45rem 0.6rem;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.45rem 0.7rem;
   margin-top: 0.55rem;
   background: var(--accent-soft);
   border-radius: 8px;
@@ -1061,6 +1061,23 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
 }
 .landing .app-doc .doc-head + .doc-capitulo { margin-top: 0; }
 .landing .doc-capitulo strong { color: var(--accent-h); font-variant-numeric: tabular-nums; }
+.landing .cap-meta { display: inline-flex; align-items: center; gap: 0.5rem; flex: 0 0 auto; }
+.landing .cap-ben {
+  font-style: normal;
+  font-size: 0.66rem;
+  font-weight: 700;
+  color: var(--green);
+  background: var(--green-soft);
+  border: 1px solid rgba(5, 150, 105, 0.18);
+  border-radius: 999px;
+  padding: 0.08rem 0.5rem;
+  white-space: nowrap;
+}
+.landing .doc-capitulo.doc-productos {
+  background: var(--gold-soft);
+  color: #8a6d1a;
+}
+.landing .doc-capitulo.doc-productos strong { color: #8a6d1a; }
 .landing .doc-partida {
   border-bottom: 1px solid var(--border);
   padding: 0.5rem 0.6rem 0.55rem;
@@ -1097,11 +1114,39 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
   justify-self: end;
 }
 .landing .dp-ben {
-  margin-top: 0.32rem;
+  margin-top: 0.34rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
   font-size: 0.67rem;
   color: var(--text-soft);
 }
+.landing .dp-ben .dp-coste { color: var(--text-soft); }
+.landing .dp-ben .dp-beneficio {
+  color: var(--green);
+  font-weight: 700;
+  background: var(--green-soft);
+  border: 1px solid rgba(5, 150, 105, 0.18);
+  border-radius: 6px;
+  padding: 0.04rem 0.5rem;
+}
 .landing .dp-ben .dp-margen { color: var(--green); font-weight: 700; }
+
+/* Productos (elección del cliente) */
+.landing .dp-prod .dp-nombre { color: var(--text-secondary); font-weight: 600; }
+.landing .dp-tag {
+  text-align: right;
+  font-size: 0.64rem;
+  font-weight: 700;
+  color: #8a6d1a;
+  background: var(--gold-soft);
+  border: 1px solid rgba(229, 174, 60, 0.3);
+  border-radius: 999px;
+  padding: 0.1rem 0.5rem;
+  white-space: nowrap;
+  justify-self: end;
+}
 
 /* Totales del presupuesto (derecha) */
 .landing .app-totales {
@@ -1122,6 +1167,7 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
 }
 .landing .tt-row span { font-weight: 600; letter-spacing: 0.03em; }
 .landing .tt-row strong { color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
+.landing .tt-row.tt-sub { border-bottom-style: solid; border-bottom-color: var(--border-strong); }
 .landing .tt-row.tt-pos strong { color: var(--green); font-weight: 700; }
 .landing .tt-row.tt-total {
   border-bottom: none;
