@@ -418,6 +418,73 @@ def enviar_aviso_licencia(
     return envio_id
 
 
+def enviar_recordatorio_vencimiento(
+    *,
+    email: str,
+    organizacion_nombre: str,
+    plan_nombre: str,
+    es_prueba: bool,
+    vence: date,
+    dias_restantes: int,
+) -> str:
+    """Recuerda a un administrador que su acceso vence en pocos días.
+
+    Lo dispara el trabajo programado de Vercel (cron) a los 5 y 1 días del
+    vencimiento, no una acción manual: es el aviso que evita que un cliente se
+    tope con el corte de golpe. A diferencia del aviso histórico, enlaza
+    directamente al checkout (``/pago``) para que la renovación sea de un solo
+    clic, y deja ``Reply-To`` en soporte para que responder al correo llegue a
+    un buzón real.
+    """
+    settings = EmailSettings.from_environment()
+    try:
+        from ..auth import public_app_url
+
+        renovar_url = public_app_url("/pago")
+    except Exception:
+        # Sin origen público configurado el botón se omite y el correo sigue
+        # siendo útil por el mailto de soporte.
+        renovar_url = ""
+    contexto = {
+        "product_name": PRODUCT_NAME,
+        "organizacion_nombre": str(organizacion_nombre or "").strip(),
+        "plan_nombre": str(plan_nombre or "tu plan").strip(),
+        "es_prueba": bool(es_prueba),
+        "vence": vence,
+        "dias_restantes": int(dias_restantes),
+        "renovar_url": renovar_url,
+        "soporte_email": _soporte_email(),
+        "anio": datetime.utcnow().year,
+    }
+    if int(dias_restantes) == 1:
+        asunto = (
+            f"Último día de tu acceso a {PRODUCT_NAME} · "
+            f"{contexto['organizacion_nombre']}"
+        )
+    else:
+        asunto = (
+            f"Tu acceso a {PRODUCT_NAME} vence en {dias_restantes} días · "
+            f"{contexto['organizacion_nombre']}"
+        )
+    asunto = asunto[:200]
+    html = _jinja.get_template("emails/recordatorio_vencimiento.html").render(**contexto)
+    texto = _jinja.get_template("emails/recordatorio_vencimiento.txt").render(**contexto)
+    try:
+        envio_id = _post_resend(
+            settings,
+            to=email,
+            subject=asunto,
+            html=html,
+            text=texto,
+            reply_to=_soporte_email(),
+        )
+    except EmailSendError as exc:
+        logger.warning("No se pudo enviar el recordatorio de vencimiento a %s (%s).", email, exc)
+        raise
+    logger.info("Recordatorio de vencimiento enviado a %s (id %s).", email, envio_id)
+    return envio_id
+
+
 def enviar_activacion_plan_por_email(
     *,
     email: str,
@@ -495,14 +562,16 @@ def enviar_solicitud_demo_por_email(
     telefono: str = "",
     presupuestos_mes: str = "",
     mensaje: str = "",
+    destino_override: str = "",
 ) -> str:
     """Notifica al equipo de soporte sobre una nueva solicitud de demo.
 
     El formulario de la landing pública es la única fuente. Se envía a
-    ``SUPPORT_EMAIL`` (configurable vía ``COTIZAT_SUPPORT_EMAIL``). Si el
-    correo no está configurado, la solicitud se pierde silenciosamente; no
-    es bloqueante porque la landing siempre puede caer en un mailto como
-    respaldo.
+    ``SUPPORT_EMAIL`` (configurable vía ``COTIZAT_SUPPORT_EMAIL``); un
+    ``destino_override`` permite redirigirla a otra dirección (lo usa la
+    página de prueba de correos del panel de operador). Si el correo no está
+    configurado, la solicitud se pierde silenciosamente; no es bloqueante
+    porque la landing siempre puede caer en un mailto como respaldo.
 
     Devuelve el id de Resend o ``""`` si no se pudo enviar.
     """
@@ -524,7 +593,7 @@ def enviar_solicitud_demo_por_email(
     if len(mensaje) > 5000:
         raise EmailValidationError("El mensaje es demasiado largo.")
 
-    destino = _env("COTIZAT_DEMO_DESTINO") or SUPPORT_EMAIL
+    destino = str(destino_override or "").strip() or _env("COTIZAT_DEMO_DESTINO") or SUPPORT_EMAIL
     if not destino:
         raise EmailNotConfigured("No hay dirección de destino para la solicitud de demo.")
 
@@ -545,6 +614,7 @@ def enviar_solicitud_demo_por_email(
         "telefono": telefono,
         "presupuestos_mes": presupuestos_mes,
         "mensaje": mensaje,
+        "anio": datetime.utcnow().year,
     }
     asunto = f"Nueva solicitud de demo: {nombre} ({empresa or email})"[:200]
     try:
@@ -588,17 +658,19 @@ def enviar_compra_por_email(
     verificacion: dict,
     comprobante_nombre: str,
     comprobante_bytes: bytes,
+    destino_override: str = "",
 ) -> str:
     """Notifica al titular una compra nueva con su comprobante adjunto.
 
     Devuelve el id de Resend o ``""`` si el correo no está configurado o el
     envío falla (la compra ya está guardada en la base; el email es el aviso,
     no la fuente de verdad). El operador verá la misma información en el
-    panel ``/admin/compras``.
+    panel ``/admin/compras``. Un ``destino_override`` permite redirigirla a
+    otra dirección (lo usa la página de prueba de correos del panel).
     """
     from ..branding import PRODUCT_NAME, SUPPORT_EMAIL
 
-    destino = _env("COTIZAT_DEMO_DESTINO") or SUPPORT_EMAIL
+    destino = str(destino_override or "").strip() or _env("COTIZAT_DEMO_DESTINO") or SUPPORT_EMAIL
     if not destino:
         raise EmailNotConfigured(
             "No hay dirección de destino para notificar la compra."
@@ -627,6 +699,7 @@ def enviar_compra_por_email(
         "metodo_nombre": str(metodo_nombre or "").strip(),
         "verificacion": filas,
         "comprobante_nombre": str(comprobante_nombre or "comprobante"),
+        "anio": datetime.utcnow().year,
     }
     asunto = (
         f"Nueva compra: {plan_nombre} · {metodo_nombre} · "

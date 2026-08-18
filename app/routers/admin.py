@@ -1,8 +1,11 @@
 """Panel de operador: licencias y diagnóstico operativo (excepción multi-tenant)."""  # E4-001 — router por dominio
 
+import hmac
+
 from fastapi import APIRouter
 
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
+from ..database import get_cron_db
 from ..datos_pago import PLANES
 
 router = APIRouter()
@@ -94,6 +97,84 @@ def panel_operacion(request: Request, db: Session = Depends(get_operator_db)):
             "operador": db.info.get("auth_email", ""),
         },
         headers={"Cache-Control": "no-store"},
+    )
+
+
+@router.get("/admin/emails", response_class=HTMLResponse, include_in_schema=False)
+def panel_emails(request: Request, db: Session = Depends(get_operator_db)):
+    """Página para enviar cualquiera de los correos a un buzón y revisarlo.
+
+    Permite al operador ver los correos transaccionales **tal cual llegan** en
+    un cliente real (Gmail, Zoho, Outlook), no como se ven en una vista previa.
+    El destino por omisión es el propio correo del operador.
+    """
+    from ..services.correos_prueba import catalogo_correos
+
+    return TEMPLATES.TemplateResponse(
+        request,
+        "admin/emails.html",
+        {
+            "correos": catalogo_correos(),
+            "operador": db.info.get("auth_email", ""),
+            "destino": request.query_params.get("destino", "") or db.info.get("auth_email", ""),
+            "msg": request.query_params.get("msg", ""),
+            "error": request.query_params.get("error", ""),
+        },
+        headers={"Cache-Control": "no-store"},
+    )
+
+
+@router.post("/admin/emails/enviar", include_in_schema=False)
+async def enviar_correo_prueba_web(
+    request: Request, db: Session = Depends(get_operator_db)
+):
+    """Envía un correo de prueba a la dirección indicada.
+
+    El destino es libre pero validado: el operador es el único que llega aquí
+    (`get_operator_db`), y enviar a una dirección arbitraria es exactamente el
+    propósito de la página (probar los correos en el buzón de cada uno). No
+    expone datos de clientes: los correos llevan datos de ejemplo.
+    """
+    from ..services.correos_prueba import enviar_correo_prueba
+    from ..services.email import (
+        EmailNotConfigured,
+        EmailSendError,
+        EmailValidationError,
+    )
+
+    form = await request.form()
+    slug = str(form.get("slug") or "").strip()
+    destino = str(form.get("destino") or "").strip()
+
+    if not destino or not email_destino_valido(destino):
+        return _redirect(
+            f"/admin/emails?destino={quote(destino)}",
+            error="Escribe un email de destino válido.",
+        )
+    try:
+        envio_id = enviar_correo_prueba(slug, destino)
+    except ValueError as exc:
+        return _redirect("/admin/emails", error=str(exc))
+    except EmailNotConfigured as exc:
+        return _redirect(
+            f"/admin/emails?destino={quote(destino)}",
+            error=f"Correo no configurado: {exc}",
+        )
+    except (EmailSendError, EmailValidationError) as exc:
+        log.warning("No se pudo enviar el correo de prueba (%s).", exc)
+        return _redirect(
+            f"/admin/emails?destino={quote(destino)}",
+            error=f"No se pudo enviar: {exc}",
+        )
+    except Exception:
+        log.error("Error enviando correo de prueba:\n%s", traceback.format_exc())
+        return _redirect(
+            f"/admin/emails?destino={quote(destino)}",
+            error="Error inesperado enviando el correo de prueba.",
+        )
+    return _redirect(
+        f"/admin/emails?destino={quote(destino)}",
+        msg=f"Correo enviado a {destino} (id {envio_id}).",
     )
 
 
@@ -340,6 +421,88 @@ def enviar_avisos_web(request: Request, db: Session = Depends(get_operator_db)):
             "/admin/licencias", error=f"No se pudo enviar ningún aviso: {detalle}"
         )
     return _redirect("/admin/licencias", msg="; ".join(partes) + ".")
+
+
+# ---------------------------------------------------------------------------
+# Trabajo programado: recordatorios de vencimiento (Vercel Cron)
+# ---------------------------------------------------------------------------
+
+
+def _verificar_cron_secret(request: Request) -> bool:
+    """Comprueba que la petición venga del programador de Vercel.
+
+    Vercel añade ``Authorization: Bearer $CRON_SECRET`` a cada invocación del
+    cron (si ``CRON_SECRET`` está definido en el proyecto). La comparación es
+    en tiempo constante para no filtrar nada por el tiempo de respuesta. Sin
+    ``CRON_SECRET`` configurado la ruta queda cerrada para todo el mundo.
+    """
+    secreto = str(os.environ.get("CRON_SECRET", "")).strip()
+    if not secreto:
+        return False
+    autorizacion = str(request.headers.get("authorization", ""))
+    return hmac.compare_digest(autorizacion, f"Bearer {secreto}")
+
+
+def _resumen_recordatorios(resultado: dict) -> dict:
+    """Resumen JSON seguro del barrido, sin emails ni datos de negocio."""
+    return {
+        "enviados": len(resultado["avisadas"]),
+        "organizaciones": [nombre for nombre, _d, _c in resultado["avisadas"]],
+        "omitidos": len(resultado["omitidas"]),
+        "sin_correo": len(resultado["sin_correo"]),
+        "fallidos": [{"organizacion": n, "error": e} for n, e in resultado["fallidas"]],
+    }
+
+
+@router.get("/api/cron/recordatorios-vencimiento", include_in_schema=False)
+def cron_recordatorios_vencimiento(
+    request: Request, db: Session = Depends(get_cron_db)
+):
+    """Envía los recordatorios de vencimiento (5 y 1 día antes).
+
+    Lo dispara ``vercel.json`` (``crons``) una vez al día. La ruta solo hace
+    este barrido: verifica el secreto, envía los correos pendientes y devuelve
+    un resumen. Cualquier otro uso no cuelga de aquí, y sin ``CRON_SECRET`` no
+    responde a nadie.
+    """
+    if not _verificar_cron_secret(request):
+        return JSONResponse(
+            {"ok": False, "error": "No autorizado."},
+            status_code=401,
+            headers={"Cache-Control": "no-store"},
+        )
+
+    from ..services.email import (
+        EmailNotConfigured,
+        enviar_recordatorio_vencimiento,
+    )
+    from ..services.licencias import enviar_recordatorios_vencimiento
+
+    try:
+        resultado = enviar_recordatorios_vencimiento(
+            db, remitente=enviar_recordatorio_vencimiento
+        )
+        db.commit()
+    except EmailNotConfigured as exc:
+        db.rollback()
+        return JSONResponse(
+            {"ok": False, "error": str(exc)},
+            status_code=503,
+            headers={"Cache-Control": "no-store"},
+        )
+    except Exception:
+        db.rollback()
+        log.error("Error en el recordatorio programado:\n%s", traceback.format_exc())
+        return JSONResponse(
+            {"ok": False, "error": "Error interno."},
+            status_code=500,
+            headers={"Cache-Control": "no-store"},
+        )
+
+    return JSONResponse(
+        {"ok": True, "resumen": _resumen_recordatorios(resultado)},
+        headers={"Cache-Control": "no-store"},
+    )
 
 
 # ---------------------------------------------------------------------------

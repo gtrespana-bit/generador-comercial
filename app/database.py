@@ -270,6 +270,32 @@ def get_operator_db(request: Request = None):
         db.close()
 
 
+def get_cron_db():
+    """Sesión para el trabajo programado (cron) del producto.
+
+    El recordatorio de vencimiento necesita leer y actualizar ``licencias``,
+    que bajo RLS solo responde a sesiones de operador. Pero el disparador es
+    el programador de Vercel, no una sesión de Supabase Auth: la puerta de
+    seguridad es el secreto compartido ``CRON_SECRET`` que la ruta del cron
+    verifica **antes** de llegar aquí. Esta dependencia solo marca la sesión
+    como operador del sistema; nada de lo que hace llega a una ruta pública
+    sin ese secreto.
+    """
+    from .auth import OrganizationAccessDenied
+
+    db = SessionLocal()
+    try:
+        if DATABASE_IS_SQLITE:
+            raise OrganizationAccessDenied(
+                "El trabajo programado solo existe en el despliegue web."
+            )
+        db.info["es_operador"] = True
+        db.info["auth_email"] = "sistema@cotizat.local"
+        yield db
+    finally:
+        db.close()
+
+
 def get_public_proposal_db(token: str):
     """Sesión sin identidad limitada por RLS al hash de un enlace público.
 

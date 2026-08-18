@@ -13,14 +13,17 @@ VALUE_PROPOSITION = (
     "editables y listos para presentar."
 )
 
-# Identidad legal publicada en términos, privacidad y landing. La razón social
-# se completa con la variable de entorno COTIZAT_LEGAL_ENTITY cuando exista la
-# empresa registrada; hasta entonces los documentos muestran el marcador para
-# que sea imposible publicarlos por accidente como si ya estuvieran completos.
+# Identidad legal publicada en términos, privacidad y landing.
+#
+# Decisión del titular (18/08/2026): la razón social real no se publica por el
+# momento. En su lugar se muestra la marca operativa «CotizaT · Presupuestos»,
+# profesional y **sin** número de identificación de empresa. Cuando exista una
+# razón social registrada, se escribe en `COTIZAT_LEGAL_ENTITY` (Vercel) y
+# sustituye a este valor en los tres sitios donde aparece.
 import os as _os
 
 LEGAL_ENTITY = _os.environ.get("COTIZAT_LEGAL_ENTITY", "").strip() or (
-    "[RAZÓN SOCIAL DEL TITULAR — pendiente de registro]"
+    "CotizaT · Presupuestos"
 )
 SUPPORT_EMAIL = _os.environ.get("COTIZAT_SUPPORT_EMAIL", "").strip() or "soporte@cotizat.online"
 

@@ -7,14 +7,15 @@ Estado al escribir esta guía:
 
 | # | Tarea | Estado |
 | --- | --- | --- |
-| 1 | Redirect URL `/acceso` + rate limit de emails en Supabase | **pendiente** |
+| 1 | Redirect URL `/acceso` + rate limit de emails en Supabase | ✅ **completado** (16/08/2026, noche) |
 | 2 | Pruebas E2E de Auth | ✅ **completado** (15/08/2026) |
-| 3 | `soporte@cotizat.online` | **pendiente** (ver aviso: GoDaddy ya no lo da gratis) |
-| 4 | Razón social → `COTIZAT_LEGAL_ENTITY` | **pendiente** (no urgente) |
-| 5 | Vercel Hobby → Pro | **aplazado por decisión del usuario** |
+| 3 | `soporte@cotizat.online` | ✅ **completado** (18/08/2026): buzón creado en **Zoho** y recibe correos. La app ya apunta a esa dirección; no requiere código |
+| 4 | Razón social → `COTIZAT_LEGAL_ENTITY` | ✅ **resuelto provisionalmente** (18/08/2026): se muestra «CotizaT · Presupuestos» (marca operativa, sin identificador). Se completará con la entidad real cuando el titular la defina (ver §4) |
+| 5 | Vercel Hobby → Pro | **aplazado por decisión del usuario** (lo indicará él) |
 | 6 | Panel de operador E1-060: migración `f4c1d8e37a95` + `COTIZAT_OPERADORES` | ✅ **completado** (16/08/2026): script `docs/staging_upgrade_f4c1d8e37a95.sql` aplicado en Supabase, variable en Vercel, panel verificado por el titular en `https://cotizat.online/admin/licencias` |
 | 7 | Migración `a3d9c1e75b28` (prueba gratuita) | ✅ **completado** (18/08/2026): `docs/staging_upgrade_a3d9c1e75b28.sql` aplicado en Supabase |
-| 8 | **Activar `COTIZAT_EXIGIR_LICENCIA=true`** | **pendiente** — es el último paso del lanzamiento; requiere que el PR #38 esté desplegado antes (ver §8) |
+| 8 | **Activar `COTIZAT_EXIGIR_LICENCIA=true`** | ✅ **completado** (18/08/2026): PR #38 fusionado y desplegado; `COTIZAT_EXIGIR_LICENCIA=true` activado y verificado en `/readyz` (`"licencias": "exigida"`) |
+| 9 | **`CRON_SECRET` + cron de recordatorios de vencimiento** | **pendiente** — añadir `CRON_SECRET` en Vercel y redesplegar para que el recordatorio automático (5 y 1 día) se dispare (ver §9) |
 
 ---
 
@@ -159,24 +160,28 @@ Se publica en tres sitios (`app/branding.py` la inyecta en las plantillas):
 
 ### Qué se ve ahora
 
-Como la variable no está definida, se muestra a propósito el marcador:
+Decisión del titular (18/08/2026): la razón social real **no se publica** por
+el momento. Como la variable no está definida, se muestra la marca operativa:
 
 ```
-[RAZÓN SOCIAL DEL TITULAR — pendiente de registro]
+CotizaT · Presupuestos
 ```
 
-Está hecho así **deliberadamente**: es preferible un hueco evidente a publicar
-un contrato que parece completo y no dice quién lo firma.
+Profesional y **sin número de identificación** de empresa. Es el valor por
+omisión en `app/branding.py`; cuando el titular decida publicar una entidad
+registrada, la escribe en `COTIZAT_LEGAL_ENTITY` y sustituye a este texto en
+los tres sitios (términos, privacidad y pies).
 
-### Qué poner
+### Qué poner (cuando se decida publicar la entidad)
 
-- **Si constituyes una empresa** → su razón social exacta y, si quieres, el
-  RIF: `Inversiones Ejemplo, C.A. (J-XXXXXXXX-X)`.
-- **Si operas como persona natural** (perfectamente válido para empezar) → tu
-  nombre completo tal como aparece en tu documento de identidad.
+- **Si usas la empresa española existente** → su denominación social exacta
+  (la razón social tal como figura en el registro), sin inventar identificador.
+- **Si operas como persona natural** → tu nombre completo tal como aparece en
+  tu documento de identidad.
 
-Lo que **no** conviene: dejar el marcador cuando cobres al primer cliente. Los
-términos son el contrato de servicio; sin titular identificado, quedan cojos.
+Lo que **no** conviene: cobrar al primer cliente sin que los términos
+identifiquen a quién se paga. Los términos son el contrato de servicio; la
+identidad mostrada debe poder sostenerse cuando empiece el cobro.
 
 ### Cómo añadirla (cuando la tengas decidida)
 
@@ -269,3 +274,85 @@ recuperación de contraseña, `/cuenta`, `/organizaciones`, las invitaciones, la
 páginas legales, `/conocer` y las propuestas públicas que ya hubiera enviado.
 Lo que se corta es generar trabajo nuevo. Sus datos siguen ahí, que es
 justamente lo que promete el texto público.
+
+---
+
+## 9. Activar el recordatorio automático de vencimiento (cron)
+
+El recordatorio por email que avisa a 5 y 1 días del vencimiento **solo se
+envía si Vercel puede dispararlo**. Es un cron declarado en `vercel.json`
+(`/api/cron/recordatorios-vencimiento`, diario a las 13:00 UTC) y Vercel
+autentica cada invocación con `Authorization: Bearer $CRON_SECRET`.
+
+### Los pasos
+
+1. Genera un secreto fuerte:
+   ```bash
+   openssl rand -base64 32
+   ```
+2. Vercel → tu proyecto → **Settings → Environment Variables** → **Add New**:
+   nombre `CRON_SECRET`, valor el secreto generado, entorno **Production**.
+3. **Redeploy** (las variables se leen al arrancar; y el cron se instala en el
+   despliegue que contiene el `vercel.json` actualizado).
+4. Verifica que el cron existe: Vercel → tu proyecto → **Cron Jobs** (en la
+   barra lateral). Debe aparecer `recordatorios-vencimiento` con su horario.
+5. Prueba manual, si quieres, con `curl` (sustituye el secreto):
+   ```bash
+   curl -H "Authorization: Bearer TU_SECRETO" \
+        https://cotizat.online/api/cron/recordatorios-vencimiento
+   ```
+   Respuesta esperada: `{"ok": true, "resumen": {...}}`. Sin la cabecera o con
+   un secreto incorrecto responde **401**.
+
+### Qué NO tienes que temer
+
+- Sin `CRON_SECRET`, la ruta queda cerrada para todo el mundo (401) y Vercel
+  no autentica la llamada: nada se envía, nada se rompe.
+- El barrido es **idempotente**: cada hito (5 y 1 día) se envía una única vez
+  por licencia, así que si Vercel repite una invocación no se duplica el correo.
+- No toca datos de negocio: solo lee el vencimiento de las licencias y escribe
+  una marca de «enviado» en la propia licencia.
+
+### A qué correos llega
+
+Al propietario y a los administradores activos de cada organización (los mismos
+destinatarios que el aviso manual). El correo enlaza a `/pago` para renovar en
+un clic y deja `Reply-To: soporte@cotizat.online`, de modo que responder llega
+directamente al buzón de Zoho.
+
+---
+
+## 10. Emails de Supabase Auth (alta y recuperación)
+
+Además de los 8 correos transaccionales que envía CotizaT (ya unificados bajo
+el mismo diseño premium, revisables en `/admin/emails`), hay **dos correos que
+los envía Supabase directamente**: la **confirmación de alta** (el enlace que
+verifica el email al registrarse) y la **recuperación de contraseña**. No son
+plantillas de CotizaT: son las plantillas propias de Supabase Auth.
+
+### Recomendación: mantenerlos en Supabase
+
+Sí, déjalos donde están. Son correos del ciclo de vida de la autenticación:
+Supabase genera el enlace firmado con el token, y recrearlos en CotizaT
+significaría reimplementar la generación de tokens y acoplar la app a algo que
+Supabase ya hace bien. No hay beneficio y sí riesgo real de romper el alta o la
+recuperación.
+
+El remitente `noreply@` es correcto para estos dos: son correos de un solo uso
+que no deben responderse.
+
+### Qué hay del diseño
+
+Hoy usan la plantilla por defecto de Supabase (genérica, no sigue la identidad
+de CotizaT). Se pueden **reestilizar a mano** para que coincidan con el verde y
+el tono del resto, pegando HTML propio en:
+
+`Supabase → Authentication → Email Templates`
+
+Las plantillas que importan son **Confirm signup** y **Reset password**. Usan
+placeholders de Supabase (`{{ .ConfirmationURL }}`, `{{ .SiteURL }}`,
+`{{ .Token }}`, `{{ .Email }}`, `{{ .Data }}`), que hay que conservar tal cual.
+
+Esto es configuración de panel, **no código del repositorio**. Si se quiere,
+se preparan los dos fragmentos HTML listos para pegar (con el diseño de
+CotizaT) y se guardan en `docs/` como referencia. Decisión del titular.

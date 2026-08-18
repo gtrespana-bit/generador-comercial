@@ -1,0 +1,99 @@
+{% extends "emails/_base.html" %}
+
+{% block title %}Tu acceso vence pronto · {{ product_name }}{% endblock %}
+
+{% block badge %}
+<div style="display:inline-block;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:6px 14px;font-size:12px;font-weight:700;color:#ffffff;">
+  {{ vence.strftime('%d/%m/%Y') }}
+</div>
+{% endblock %}
+
+{% block content %}
+
+<!-- Cuenta atrás -->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 26px;">
+  <tr>
+    <td align="center">
+      <table role="presentation" cellpadding="0" cellspacing="0">
+        <tr>
+          <td style="background:#eef7f2;border:1px solid #cfe6da;border-radius:16px;padding:18px 30px;text-align:center;">
+            <div style="font-size:44px;font-weight:900;line-height:1;color:#0b5b38;">
+              {{ dias_restantes }}
+            </div>
+            <div style="margin-top:6px;font-size:13px;font-weight:700;letter-spacing:.5px;color:#28503f;text-transform:uppercase;">
+              {{ 'día restante' if dias_restantes == 1 else 'días restantes' }}
+            </div>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+
+<h1 style="margin:0 0 14px;font-size:24px;line-height:1.25;font-weight:900;text-align:center;color:#17211d;">
+  {% if dias_restantes == 1 %}Mañana vence tu acceso{% else %}Tu acceso vence en {{ dias_restantes }} días{% endif %}
+</h1>
+
+<p style="margin:0 0 24px;font-size:15px;line-height:1.65;color:#475a51;text-align:center;">
+  {% if es_prueba %}
+    La prueba gratuita de <strong style="color:#17211d;">{{ organizacion_nombre }}</strong>
+    termina el <strong style="color:#17211d;">{{ vence.strftime('%d/%m/%Y') }}</strong>.
+    Elige un plan y sigue trabajando sin interrupciones.
+  {% else %}
+    El acceso de <strong style="color:#17211d;">{{ organizacion_nombre }}</strong>
+    a {{ product_name }} vence el
+    <strong style="color:#17211d;">{{ vence.strftime('%d/%m/%Y') }}</strong>
+    (inclusive). Pasada esa fecha, la cuenta se pausa sola hasta renovar.
+  {% endif %}
+</p>
+
+<!-- Datos del plan -->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 26px;border:1px solid #e3ece7;border-radius:12px;">
+  <tr>
+    <td style="padding:16px 20px;font-size:13px;color:#8ba096;">Organización</td>
+    <td style="padding:16px 20px;font-size:14px;font-weight:700;text-align:right;color:#17211d;">{{ organizacion_nombre }}</td>
+  </tr>
+  <tr>
+    <td style="padding:0 20px 16px;font-size:13px;color:#8ba096;">Plan</td>
+    <td style="padding:0 20px 16px;font-size:14px;font-weight:700;text-align:right;color:#17211d;">{{ plan_nombre }}</td>
+  </tr>
+  <tr>
+    <td style="padding:0 20px 16px;font-size:13px;color:#8ba096;">Válido hasta</td>
+    <td style="padding:0 20px 16px;font-size:15px;font-weight:900;text-align:right;color:#0b5b38;">{{ vence.strftime('%d/%m/%Y') }}</td>
+  </tr>
+</table>
+
+{% if renovar_url %}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 12px;">
+  <tr>
+    <td align="center">
+      <a href="{{ renovar_url }}" style="display:inline-block;background:#0b5b38;border-radius:12px;padding:15px 38px;font-size:15px;font-weight:800;color:#ffffff;text-decoration:none;">
+        {% if es_prueba %}Elegir un plan{% else %}Renovar mi plan{% endif %}
+      </a>
+    </td>
+  </tr>
+</table>
+<p style="margin:0 0 26px;font-size:12px;line-height:1.5;color:#8ba096;text-align:center;">
+  Sin permanencia · no se cobra nada automáticamente
+</p>
+{% endif %}
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 8px;">
+  <tr>
+    <td style="border-radius:12px;background:#eef7f2;border:1px solid #cfe6da;padding:16px 20px;font-size:13.5px;line-height:1.55;color:#28503f;">
+      Tus presupuestos, clientes, catálogo y archivos <strong>no se borran</strong>.
+      En cuanto renueves, todo vuelve a estar exactamente como lo dejaste.
+    </td>
+  </tr>
+</table>
+
+<p style="margin:0 0 28px;font-size:13.5px;line-height:1.6;color:#475a51;text-align:center;">
+  ¿Tienes dudas? Escríbenos a
+  <a href="mailto:{{ soporte_email }}" style="color:#0b5b38;font-weight:700;text-decoration:none;">{{ soporte_email }}</a>
+</p>
+
+{% endblock %}
+
+{% block pie %}
+Recibes este correo porque administras la organización {{ organizacion_nombre }} en {{ product_name }}. Este aviso se envía automáticamente cuando tu acceso está próximo a vencer.
+{% endblock %}
