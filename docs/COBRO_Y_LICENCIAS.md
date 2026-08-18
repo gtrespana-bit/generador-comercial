@@ -184,6 +184,14 @@ Que esas rutas —y solo esas— usen la puerta sin corte no se deja a la memori
 la aplicación, de modo que añadir mañana una ruta de compra bajo `get_db`, o
 colar la puerta sin corte en una ruta que no sea de pago, rompe la suite.
 
+**Recordatorio automático (18/08/2026, noche).** El aviso de vencimiento dejó
+de depender de un botón manual: un cron de Vercel (`vercel.json` → `crons`,
+ruta `/api/cron/recordatorios-vencimiento` protegida con `CRON_SECRET`) envía
+un recordatorio premium a 5 y 1 día antes de vencer, una única vez por hito y
+licencia, con CTA al checkout `/pago` y `Reply-To` a soporte. Requiere que el
+titular añada `CRON_SECRET` en Vercel (`docs/PENDIENTES_OPERATIVOS.md` §9).
+Detalle en `docs/PUNTO_DE_CONTINUACION.md` (cierre de sesión del 18/08/2026).
+
 ---
 
 ## 5. Prueba gratuita de 7 días (18/08/2026)

@@ -185,6 +185,13 @@ DEFINICIONES: tuple[Variable, ...] = (
         "dirección remitente verificada en Resend",
         recomendada_en=_PRODUCCION,
     ),
+    # --- Trabajo programado (Vercel Cron) --------------------------------
+    Variable(
+        "CRON_SECRET",
+        True,
+        "secreto con el que Vercel autentica las invocaciones del cron",
+        recomendada_en=_PRODUCCION,
+    ),
     # --- Contador de intentos compartido (Upstash) ------------------------
     Variable(
         "UPSTASH_REDIS_REST_URL",

@@ -80,6 +80,7 @@ def test_variables_secretas_son_las_esperadas():
         "SUPABASE_SECRET_KEY",
         "UPSTASH_REDIS_REST_TOKEN",
         "RESEND_API_KEY",
+        "CRON_SECRET",
     })
 
 
@@ -164,6 +165,7 @@ def test_validar_en_produccion_con_todo_configurado_ok(monkeypatch):
         "COTIZAT_EMAIL_FROM",
         "UPSTASH_REDIS_REST_URL",
         "UPSTASH_REDIS_REST_TOKEN",
+        "CRON_SECRET",
     ):
         monkeypatch.setenv(nombre, "valor-de-prueba")
 

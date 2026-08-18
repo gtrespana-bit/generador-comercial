@@ -5,5 +5,11 @@
     "app/main.py": {
       "maxDuration": 60
     }
-  }
+  },
+  "crons": [
+    {
+      "path": "/api/cron/recordatorios-vencimiento",
+      "schedule": "0 13 * * *"
+    }
+  ]
 }

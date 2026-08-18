@@ -418,6 +418,73 @@ def enviar_aviso_licencia(
     return envio_id
 
 
+def enviar_recordatorio_vencimiento(
+    *,
+    email: str,
+    organizacion_nombre: str,
+    plan_nombre: str,
+    es_prueba: bool,
+    vence: date,
+    dias_restantes: int,
+) -> str:
+    """Recuerda a un administrador que su acceso vence en pocos días.
+
+    Lo dispara el trabajo programado de Vercel (cron) a los 5 y 1 días del
+    vencimiento, no una acción manual: es el aviso que evita que un cliente se
+    tope con el corte de golpe. A diferencia del aviso histórico, enlaza
+    directamente al checkout (``/pago``) para que la renovación sea de un solo
+    clic, y deja ``Reply-To`` en soporte para que responder al correo llegue a
+    un buzón real.
+    """
+    settings = EmailSettings.from_environment()
+    try:
+        from ..auth import public_app_url
+
+        renovar_url = public_app_url("/pago")
+    except Exception:
+        # Sin origen público configurado el botón se omite y el correo sigue
+        # siendo útil por el mailto de soporte.
+        renovar_url = ""
+    contexto = {
+        "product_name": PRODUCT_NAME,
+        "organizacion_nombre": str(organizacion_nombre or "").strip(),
+        "plan_nombre": str(plan_nombre or "tu plan").strip(),
+        "es_prueba": bool(es_prueba),
+        "vence": vence,
+        "dias_restantes": int(dias_restantes),
+        "renovar_url": renovar_url,
+        "soporte_email": _soporte_email(),
+        "anio": datetime.utcnow().year,
+    }
+    if int(dias_restantes) == 1:
+        asunto = (
+            f"Último día de tu acceso a {PRODUCT_NAME} · "
+            f"{contexto['organizacion_nombre']}"
+        )
+    else:
+        asunto = (
+            f"Tu acceso a {PRODUCT_NAME} vence en {dias_restantes} días · "
+            f"{contexto['organizacion_nombre']}"
+        )
+    asunto = asunto[:200]
+    html = _jinja.get_template("emails/recordatorio_vencimiento.html").render(**contexto)
+    texto = _jinja.get_template("emails/recordatorio_vencimiento.txt").render(**contexto)
+    try:
+        envio_id = _post_resend(
+            settings,
+            to=email,
+            subject=asunto,
+            html=html,
+            text=texto,
+            reply_to=_soporte_email(),
+        )
+    except EmailSendError as exc:
+        logger.warning("No se pudo enviar el recordatorio de vencimiento a %s (%s).", email, exc)
+        raise
+    logger.info("Recordatorio de vencimiento enviado a %s (id %s).", email, envio_id)
+    return envio_id
+
+
 def enviar_activacion_plan_por_email(
     *,
     email: str,

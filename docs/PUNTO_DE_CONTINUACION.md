@@ -14,6 +14,71 @@ junto con `basedatos_partidas/EMPEZAR_AQUI.md` (reglas y progreso del catálogo)
 
 ---
 
+## ✅ Cierre de sesión — Recordatorio de vencimiento automático (cron) + identidad (18/08/2026, noche)
+
+Rama fija de la sesión: `arena/01a0165a-generador-comercial`, basada en `main`
+(merge del PR #38). Con el corte por licencia ya encendido en producción, este
+bloque cierra el hueco que faltaba en el circuito de cobro y ajusta la
+identidad pública.
+
+### 1. Recordatorio de vencimiento por email (automático, premium)
+
+Antes, el aviso de vencimiento solo salía cuando el **operador pulsaba un
+botón** en `/admin/licencias`. Ahora hay un **recordatorio automático** que el
+programador de Vercel dispara una vez al día, en **dos hitos exactos**: 5 días
+antes (previsión) y 1 día antes (última llamada). Cada hito se envía **una
+única vez por licencia** (renovar crea licencia nueva y el conteo vuelve a
+empezar).
+
+- **Correo premium** (`app/templates/emails/recordatorio_vencimiento.{html,txt}`):
+  cabecera de marca en verde con gradiente, cuenta atrás grande, tabla con
+  organización/plan/válido-hasta, CTA **«Renovar mi plan»** (o **«Elegir un
+  plan»** si es prueba) que enlaza al checkout `/pago` —ya no un `mailto:`—,
+  caja de tranquilidad («tus datos no se borran»), `Reply-To` a soporte y pie
+  con la identidad. Sigue la paleta de CotizaT (`#0b5b38`, `#eef7f2`,
+  `#f3f7f5`).
+- **Envío** (`app/services/email.py` → `enviar_recordatorio_vencimiento`),
+  **barrido** (`app/services/licencias.py` → `enviar_recordatorios_vencimiento`,
+  `RECORDATORIOS_DIAS=(5,1)`, marca en `licencias.notas` por hito).
+- **Cron**: `vercel.json` → `crons` (`/api/cron/recordatorios-vencimiento`,
+  diario a las 13:00 UTC). La ruta (`app/routers/admin.py`) verifica
+  `Authorization: Bearer $CRON_SECRET` en tiempo constante y usa la nueva
+  dependencia `get_cron_db` (`app/database.py`), que marca la sesión como
+  operador del sistema **sin** Supabase Auth —la puerta de seguridad es el
+  secreto, no una sesión.
+- Suite: **651 passed, 6 skipped** (9 pruebas nuevas en
+  `tests/test_recordatorios_vencimiento.py`).
+
+### 2. Identidad pública: «CotizaT · Presupuestos» sin identificador
+
+Decisión del titular: no publicar la razón social real por ahora. `app/branding.py`
+muestra **«CotizaT · Presupuestos»** (marca operativa, **sin** número de
+identificación) como `LEGAL_ENTITY` por omisión; `COTIZAT_LEGAL_ENTITY` sigue
+siendo el override para cuando exista una entidad registrada. Los pies de la
+landing, `/pago` y el checkout ahora renderizan `© 2026 {{ titular_legal }}`
+para no duplicar «CotizaT».
+
+### 3. `soporte@cotizat.online` (Zoho) — resuelto, sin código
+
+El titular creó el buzón en Zoho y **recibe correos**. La app ya apuntaba a esa
+dirección (`SUPPORT_EMAIL` en `app/branding.py`), así que **no hay que tocar
+nada**: el envío sigue por Resend y el buzón solo recibe. El recordatorio deja
+`Reply-To: soporte@cotizat.online`, así que las respuestas caen en Zoho.
+
+### Pendientes / candidatos siguientes
+
+1. **El titular configura el cron en Vercel**: añadir `CRON_SECRET` (fuerte,
+   `openssl rand -base64 32`) en *Settings → Environment Variables* (Production)
+   y redesplegar. Sin `CRON_SECRET` la ruta responde 401 y Vercel no autentica
+   la llamada. Detalle en `docs/PENDIENTES_OPERATIVOS.md` §9.
+2. Vercel **Hobby → Pro** antes del primer cobro (sigue aplazado por el titular).
+3. Vigilar el primer alta real con el corte encendido (pendiente de otra sesión).
+4. `COTIZAT_LEGAL_ENTITY` cuando exista razón social registrada (la empresa
+   española del titular está inactiva ~2 años y no se registrará una nueva por
+   ahora; se reutilizará esa cuando el proyecto lo justifique).
+
+---
+
 ## 🟢 EMPEZAR AQUÍ — Estado al cierre del 18/08/2026
 
 ### En una frase

@@ -1,0 +1,20 @@
+{{ product_name }} · Presupuestos de obra
+
+{% if dias_restantes == 1 %}Mañana vence tu acceso{% else %}Tu acceso vence en {{ dias_restantes }} días{% endif %}
+{{ '─' * 42 }}
+
+{% if es_prueba %}La prueba gratuita de {{ organizacion_nombre }} termina el {{ vence.strftime('%d/%m/%Y') }}. Elige un plan y sigue trabajando sin interrupciones.{% else %}El acceso de {{ organizacion_nombre }} a {{ product_name }} vence el {{ vence.strftime('%d/%m/%Y') }} (inclusive). Pasada esa fecha, la cuenta se pausa sola hasta renovar.{% endif %}
+
+Organización : {{ organizacion_nombre }}
+Plan         : {{ plan_nombre }}
+Válido hasta : {{ vence.strftime('%d/%m/%Y') }}
+
+{% if renovar_url %}{% if es_prueba %}Elige tu plan aquí:{% else %}Renueva tu plan aquí:{% endif %}
+{{ renovar_url }}
+{% endif %}
+Tus presupuestos, clientes, catálogo y archivos NO se borran: en cuanto renueves, todo vuelve a estar exactamente como lo dejaste.
+
+¿Tienes dudas? Escríbenos a {{ soporte_email }}.
+
+© {{ anio }} {{ product_name }} · Presupuestos
+Recibes este correo porque administras la organización {{ organizacion_nombre }} en {{ product_name }}. Este aviso se envía automáticamente cuando tu acceso está próximo a vencer.

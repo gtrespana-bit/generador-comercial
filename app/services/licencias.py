@@ -650,3 +650,112 @@ def enviar_avisos_vencimiento(
         resultado["avisadas"].append((nombre, destinatarios))
     db.flush()
     return resultado
+
+
+# ---------------------------------------------------------------------------
+# Recordatorios de vencimiento automáticos (cron)
+# ---------------------------------------------------------------------------
+#
+# El aviso anterior (`enviar_avisos_vencimiento`) lo dispara el operador a
+# mano y cubre una ventana amplia (15 días). El recordatorio, en cambio, lo
+# dispara el programador de Vercel y solo se envía en dos hitos exactos —5 y
+# 1 día antes de vencer— para no atosigar al cliente y para que cada hito
+# llegue una única vez por licencia.
+
+#: Hitos de aviso: a 5 días (previsión) y a 1 día (última llamada).
+RECORDATORIOS_DIAS = (5, 1)
+
+#: Marca estable en `licencias.notas` que evita repetir un mismo hito.
+_MARCA_RECORDATORIO = "Recordatorio de vencimiento enviado"
+
+
+def _marca_recordatorio(dias: int) -> str:
+    return f"{_MARCA_RECORDATORIO} ({dias} días)"
+
+
+def recordatorio_enviado(licencia: Licencia, dias: int) -> bool:
+    """Indica si el hito de ``dias`` días ya se envió para esta licencia.
+
+    La marca es por hito y por licencia (no por día): renovar crea una
+    licencia nueva sin marca, de modo que el conteo regresivo vuelve a empezar
+    correctamente en lugar de heredar el aviso de la licencia anterior.
+    """
+    return _marca_recordatorio(dias) in (licencia.notas or "")
+
+
+def registrar_recordatorio_enviado(
+    licencia: Licencia, destinatarios: list[str], *, dias: int, hoy: date
+) -> None:
+    """Anota el hito enviado en la propia licencia (el registro se audita a sí mismo)."""
+    nota = (
+        f"[{hoy.strftime('%Y-%m-%d')}] {_marca_recordatorio(dias)} a "
+        + ", ".join(destinatarios)
+    )
+    licencia.notas = f"{licencia.notas or ''}\n{nota}".strip()
+
+
+def enviar_recordatorios_vencimiento(
+    db: Session,
+    *,
+    remitente,
+    hoy: date | None = None,
+) -> dict:
+    """Envía los recordatorios automáticos de vencimiento en sus hitos exactos.
+
+    ``remitente`` es la función de envío
+    (``app.services.email.enviar_recordatorio_vencimiento``); se inyecta para
+    probar el flujo sin red. Solo avisa a organizaciones cuyo acceso vigente
+    vence exactamente a 5 o a 1 días, y una única vez por hito y licencia.
+
+    Devuelve un resumen equivalente al de `enviar_avisos_vencimiento` para que
+    el cron pueda devolver qué pasó sin esconder fallos del proveedor.
+    """
+    hoy = hoy or date.today()
+    resultado = {
+        "avisadas": [],       # (organización, dias, [correos]) con envío confirmado
+        "omitidas": [],       # organizaciones ya avisadas en ese hito
+        "sin_correo": [],     # organizaciones sin administrador alcanzable
+        "fallidas": [],       # (organización, error) del proveedor de correo
+    }
+    for fila in resumen_organizaciones(
+        db, hoy=hoy, dias_aviso=max(RECORDATORIOS_DIAS)
+    ):
+        licencia = fila["vigente"]
+        if not fila["por_vencer"] or licencia is None:
+            continue
+        dias = fila["dias_restantes"]
+        if dias not in RECORDATORIOS_DIAS:
+            continue
+        nombre = fila["organizacion"].nombre
+        if recordatorio_enviado(licencia, dias):
+            resultado["omitidas"].append(nombre)
+            continue
+        destinatarios = correos_administradores(db, fila["organizacion"].id)
+        if not destinatarios:
+            resultado["sin_correo"].append(nombre)
+            continue
+        es_prueba = licencia.origen == "prueba"
+        plan_nombre = (
+            "Prueba gratuita" if es_prueba else _plan_label_cliente(licencia)
+        )
+        from .email import EmailNotConfigured
+
+        try:
+            for destinatario in destinatarios:
+                remitente(
+                    email=destinatario,
+                    organizacion_nombre=nombre,
+                    plan_nombre=plan_nombre,
+                    es_prueba=es_prueba,
+                    vence=fila["vence"] or licencia.vence,
+                    dias_restantes=dias,
+                )
+        except EmailNotConfigured:
+            raise
+        except Exception as exc:  # el proveedor decide qué lanza
+            resultado["fallidas"].append((nombre, str(exc)))
+            continue
+        registrar_recordatorio_enviado(licencia, destinatarios, dias=dias, hoy=hoy)
+        resultado["avisadas"].append((nombre, dias, destinatarios))
+    db.flush()
+    return resultado

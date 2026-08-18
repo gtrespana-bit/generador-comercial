@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Tu acceso vence pronto · {{ product_name }}</title>
+</head>
+<body style="margin:0;padding:0;background:#eef3f0;font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#17211d;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#eef3f0;padding:28px 12px;">
+  <tr>
+    <td align="center">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#ffffff;border-radius:18px;overflow:hidden;box-shadow:0 12px 40px rgba(10,48,34,.10);">
+
+        <!-- Cabecera de marca -->
+        <tr>
+          <td style="background:#0b5b38;background-image:linear-gradient(135deg,#0b5b38 0%,#0a6b40 60%,#0f7a4a 100%);padding:26px 36px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+              <tr>
+                <td>
+                  <div style="font-size:24px;font-weight:900;letter-spacing:-0.5px;color:#ffffff;line-height:1;">
+                    {{ product_name }}
+                  </div>
+                  <div style="margin-top:6px;font-size:12px;font-weight:600;letter-spacing:1.5px;color:#bfe6d2;text-transform:uppercase;">
+                    Presupuestos de obra
+                  </div>
+                </td>
+                <td align="right" valign="top">
+                  <div style="display:inline-block;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:6px 14px;font-size:12px;font-weight:700;color:#ffffff;">
+                    {{ vence.strftime('%d/%m/%Y') }}
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding:34px 36px 8px;">
+
+            <!-- Cuenta atrás -->
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 26px;">
+              <tr>
+                <td align="center">
+                  <table role="presentation" cellpadding="0" cellspacing="0">
+                    <tr>
+                      <td style="background:#eef7f2;border:1px solid #cfe6da;border-radius:16px;padding:18px 30px;text-align:center;">
+                        <div style="font-size:44px;font-weight:900;line-height:1;color:#0b5b38;">
+                          {{ dias_restantes }}
+                        </div>
+                        <div style="margin-top:6px;font-size:13px;font-weight:700;letter-spacing:.5px;color:#28503f;text-transform:uppercase;">
+                          {{ 'día restante' if dias_restantes == 1 else 'días restantes' }}
+                        </div>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+
+            <h1 style="margin:0 0 14px;font-size:24px;line-height:1.25;font-weight:900;text-align:center;color:#17211d;">
+              {% if dias_restantes == 1 %}
+                Mañana vence tu acceso
+              {% else %}
+                Tu acceso vence en {{ dias_restantes }} días
+              {% endif %}
+            </h1>
+
+            <p style="margin:0 0 24px;font-size:15px;line-height:1.65;color:#475a51;text-align:center;">
+              {% if es_prueba %}
+                La prueba gratuita de
+                <strong style="color:#17211d;">{{ organizacion_nombre }}</strong>
+                termina el
+                <strong style="color:#17211d;">{{ vence.strftime('%d/%m/%Y') }}</strong>.
+                Elige un plan y sigue trabajando sin interrupciones.
+              {% else %}
+                El acceso de
+                <strong style="color:#17211d;">{{ organizacion_nombre }}</strong>
+                a {{ product_name }} vence el
+                <strong style="color:#17211d;">{{ vence.strftime('%d/%m/%Y') }}</strong>
+                (inclusive). Pasada esa fecha, la cuenta se pausa sola hasta renovar.
+              {% endif %}
+            </p>
+
+            <!-- Datos del plan -->
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 26px;border:1px solid #e3ece7;border-radius:12px;">
+              <tr>
+                <td style="padding:16px 20px;font-size:13px;color:#8ba096;">Organización</td>
+                <td style="padding:16px 20px;font-size:14px;font-weight:700;text-align:right;color:#17211d;">{{ organizacion_nombre }}</td>
+              </tr>
+              <tr>
+                <td style="padding:0 20px 16px;font-size:13px;color:#8ba096;">Plan</td>
+                <td style="padding:0 20px 16px;font-size:14px;font-weight:700;text-align:right;color:#17211d;">{{ plan_nombre }}</td>
+              </tr>
+              <tr>
+                <td style="padding:0 20px 16px;font-size:13px;color:#8ba096;">Válido hasta</td>
+                <td style="padding:0 20px 16px;font-size:15px;font-weight:900;text-align:right;color:#0b5b38;">{{ vence.strftime('%d/%m/%Y') }}</td>
+              </tr>
+            </table>
+
+            <!-- Llamada a la acción -->
+            {% if renovar_url %}
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 12px;">
+              <tr>
+                <td align="center">
+                  <a href="{{ renovar_url }}" style="display:inline-block;background:#0b5b38;border-radius:12px;padding:15px 38px;font-size:15px;font-weight:800;color:#ffffff;text-decoration:none;">
+                    {% if es_prueba %}Elegir un plan{% else %}Renovar mi plan{% endif %}
+                  </a>
+                </td>
+              </tr>
+            </table>
+            <p style="margin:0 0 26px;font-size:12px;line-height:1.5;color:#8ba096;text-align:center;">
+              Sin permanencia · no se cobra nada automáticamente
+            </p>
+            {% endif %}
+
+            <!-- Tranquilidad -->
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 8px;">
+              <tr>
+                <td style="border-radius:12px;background:#f2f8f5;border:1px solid #d7e9df;padding:16px 20px;font-size:13.5px;line-height:1.55;color:#28503f;">
+                  Tus presupuestos, clientes, catálogo y archivos
+                  <strong>no se borran</strong>. En cuanto renueves, todo vuelve
+                  a estar exactamente como lo dejaste.
+                </td>
+              </tr>
+            </table>
+
+            <p style="margin:0 0 28px;font-size:13.5px;line-height:1.6;color:#475a51;text-align:center;">
+              ¿Tienes dudas? Escríbenos a
+              <a href="mailto:{{ soporte_email }}" style="color:#0b5b38;font-weight:700;text-decoration:none;">{{ soporte_email }}</a>
+            </p>
+
+          </td>
+        </tr>
+
+        <!-- Pie -->
+        <tr>
+          <td style="background:#f7faf8;border-top:1px solid #e3ece7;padding:20px 36px;">
+            <p style="margin:0 0 6px;font-size:12px;line-height:1.6;color:#8ba096;text-align:center;">
+              © {{ anio }} {{ product_name }} · Presupuestos
+            </p>
+            <p style="margin:0;font-size:11px;line-height:1.6;color:#a9b8b1;text-align:center;">
+              Recibes este correo porque administras la organización
+              {{ organizacion_nombre }} en {{ product_name }}. Este aviso se envía
+              automáticamente cuando tu acceso está próximo a vencer.
+            </p>
+          </td>
+        </tr>
+
+      </table>
+    </td>
+  </tr>
+</table>
+</body>
+</html>

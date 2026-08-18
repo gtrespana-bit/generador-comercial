@@ -95,11 +95,12 @@ def test_paginas_publicas_cumplen_csp():
 
 
 def test_identidad_legal_configurable_por_entorno(monkeypatch):
-    """Sin COTIZAT_LEGAL_ENTITY los documentos muestran el marcador visible,
-    imposible de confundir con una razón social real."""
+    """La identidad publicada es la del branding (marca por omisión, o la
+    entidad real si COTIZAT_LEGAL_ENTITY está definida en el entorno)."""
     r = _get("/legal/terminos")
-    # El valor por defecto del branding es el marcador o la entidad real si el
-    # entorno la define; en la suite no está definida.
+    # Sin COTIZAT_LEGAL_ENTITY, el branding muestra «CotizaT · Presupuestos»
+    # (decisión del titular); si el entorno define la entidad, esa es la que
+    # aparece. En la suite no está definida.
     import app.branding as branding
     assert branding.LEGAL_ENTITY in r.text
     assert branding.SUPPORT_EMAIL in r.text
