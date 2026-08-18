@@ -29,27 +29,63 @@
 
 <header class="hero">
   <div class="hero-int">
-    <span class="hero-kicker">🇻🇪 Hecho para Venezuela · Construcción y remodelación</span>
-    <h1>Presupuestos de obra que se ven profesionales, se hacen en minutos.</h1>
-    <p class="sub">{{ product_name }} convierte tu catálogo y tus precios en presupuestos claros, editables y listos para presentar: capítulos, mediciones, alternativas de producto, versiones y aprobaciones. Sin Excel, sin pegar y copiar.</p>
-    <div class="acciones">
-      <a class="btn btn-primary" href="#demo">Solicitar una demostración</a>
-      <a class="btn btn-secondary" href="/static/pdf/presupuesto-ejemplo.pdf" target="_blank" rel="noopener">Ver un presupuesto de ejemplo (PDF)</a>
+    <div class="hero-copy">
+      <span class="hero-kicker">🇻🇪 Hecho para Venezuela · Construcción y remodelación</span>
+      <h1>Presupuestos de obra <span class="hero-hl">profesionales</span>, en minutos.</h1>
+      <p class="sub">{{ product_name }} convierte tu catálogo y tus precios en presupuestos con su <strong>margen de beneficio</strong>, las <strong>horas de tu cuadrilla</strong> y un PDF con tu logo listo para enviar. Sin Excel, sin pegar y copiar.</p>
+      <div class="acciones">
+        <a class="btn btn-primary" href="#demo">Solicitar una demostración</a>
+        <a class="btn btn-secondary" href="/static/pdf/presupuesto-ejemplo.pdf" target="_blank" rel="noopener">Ver un presupuesto de ejemplo (PDF)</a>
+      </div>
+      <ul class="hero-points">
+        <li><span class="check">✓</span> Margen y beneficio en cada partida</li>
+        <li><span class="check">✓</span> Tiempo de obra y horas de tu cuadrilla</li>
+        <li><span class="check">✓</span> {{ catalogo().partidas_txt }} partidas con precios reales en USD</li>
+      </ul>
     </div>
 
-    <div class="hero-stats" role="list">
-      <div class="stat" role="listitem">
-        <strong>{{ catalogo().partidas_txt }}</strong>
-        <span>partidas listas para usar</span>
+    <div class="hero-visual" aria-hidden="true">
+      <div class="hero-doc">
+        <div class="hd-head">
+          <span class="hd-mark">A</span>
+          <span class="hd-org"><strong>Construcciones Alfa</strong><small>Presupuesto de obra · PR-2026-014</small></span>
+        </div>
+        <div class="hd-title">Remodelación de baño</div>
+        <div class="hd-meta">Res. Los Naranjos · Valencia</div>
+        <div class="hd-chaps">
+          <div class="hd-row"><span>Demoliciones y desmontajes</span><strong>$ 174,98</strong></div>
+          <div class="hd-row"><span>Instalaciones (plomería)</span><strong>$ 387,30</strong></div>
+          <div class="hd-row"><span>Aislamientos e impermeabilización</span><strong>$ 211,04</strong></div>
+          <div class="hd-row"><span>Revestimientos y acabados</span><strong>$ 666,20</strong></div>
+          <div class="hd-row"><span>Productos a elección del cliente</span><strong>$ 1.073,00</strong></div>
+        </div>
+        <div class="hd-total"><span>PRESUPUESTO TOTAL</span><strong>$ 2.914,52</strong></div>
+        <div class="hd-sig">
+          <div class="hd-sig-col"><span class="hd-sig-line"></span><span class="hd-sig-label">Contratista</span></div>
+          <div class="hd-sig-col"><span class="hd-sig-line"></span><span class="hd-sig-label">Cliente</span></div>
+        </div>
       </div>
-      <div class="stat" role="listitem">
-        <strong>{{ catalogo().capitulos }}</strong>
-        <span>capítulos de obra</span>
-      </div>
-      <div class="stat" role="listitem">
-        <strong>USD</strong>
-        <span>precios contrastados</span>
-      </div>
+      <div class="hero-badge badge-margen">💰 <strong>+35 %</strong>&nbsp;margen</div>
+      <div class="hero-badge badge-tiempo">⏱️ <strong>98 h</strong>&nbsp;· ≈ 6 días</div>
+    </div>
+  </div>
+
+  <div class="hero-stats" role="list">
+    <div class="stat" role="listitem">
+      <strong>{{ catalogo().partidas_txt }}</strong>
+      <span>partidas listas para usar</span>
+    </div>
+    <div class="stat" role="listitem">
+      <strong>{{ catalogo().capitulos }}</strong>
+      <span>capítulos de obra</span>
+    </div>
+    <div class="stat" role="listitem">
+      <strong>USD</strong>
+      <span>precios contrastados</span>
+    </div>
+    <div class="stat" role="listitem">
+      <strong>+35 %</strong>
+      <span>tu margen, a la vista</span>
     </div>
   </div>
 </header>
