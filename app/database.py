@@ -392,12 +392,25 @@ def get_db(request: Request = None):
 
 
 def _resumen_licencia_para_request(db, organizacion_id: int) -> dict:
-    """Resumen del plan para la sesión actual (sin romper si no hay tabla)."""
+    """Resumen del plan para la sesión actual (sin romper si no hay tabla).
+
+    Si la consulta falla —por permisos, RLS o cualquier otro motivo— se hace
+    ``db.rollback()`` antes de devolver el resumen vacío. Sin el rollback, la
+    sesión queda con la transacción abortada y la siguiente consulta del
+    handler (p. ej. ``_config(db)`` en ``/inicio``) falla con
+    ``psycopg.errors.InFailedSqlTransaction`` aunque sea trivialmente válida.
+    """
     from .services.licencias import resumen_licencia_cliente
 
     try:
         return resumen_licencia_cliente(db, organizacion_id)
     except Exception:
+        try:
+            db.rollback()
+        except Exception:
+            # Si la propia rollback falla (p. ej. conexión cerrada) la
+            # siguiente consulta abrirá una transacción nueva igualmente.
+            pass
         # Un fallo al leer la licencia no debe tumbar la aplicación entera.
         return {
             "activo": False,
