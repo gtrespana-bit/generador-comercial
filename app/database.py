@@ -91,7 +91,7 @@ DATABASE_URL = DATABASE.url
 DATABASE_BACKEND = DATABASE.backend
 DATABASE_IS_SQLITE = DATABASE.is_sqlite
 DB_PATH = DATABASE.sqlite_path
-EXPECTED_ALEMBIC_HEAD = "e5f2a8d31b6c"
+EXPECTED_ALEMBIC_HEAD = "f9d4c2a7e5b3"
 
 # Copias de seguridad automáticas y manuales (solo corresponden al modo
 # SQLite local; PostgreSQL tendrá backups administrados fuera del proceso).
@@ -319,6 +319,10 @@ def get_db(request: Request = None):
     try:
         if DATABASE_IS_SQLITE:
             db.info["organizacion_id"] = _organizacion_sqlite_desde_entorno()
+            if request is not None:
+                request.state.licencia_resumen = _resumen_licencia_para_request(
+                    db, int(db.info.get("organizacion_id") or 0)
+                )
             yield db
             return
 
@@ -379,9 +383,29 @@ def get_db(request: Request = None):
                 "datos siguen guardados; al renovar la licencia todo vuelve "
                 "a estar disponible."
             )
+        request.state.licencia_resumen = _resumen_licencia_para_request(
+            db, membresia.organizacion_id
+        )
         yield db
     finally:
         db.close()
+
+
+def _resumen_licencia_para_request(db, organizacion_id: int) -> dict:
+    """Resumen del plan para la sesión actual (sin romper si no hay tabla)."""
+    from .services.licencias import resumen_licencia_cliente
+
+    try:
+        return resumen_licencia_cliente(db, organizacion_id)
+    except Exception:
+        # Un fallo al leer la licencia no debe tumbar la aplicación entera.
+        return {
+            "activo": False,
+            "plan_label": "",
+            "vence": None,
+            "dias_restantes": 0,
+            "metodo_cobro": "",
+        }
 
 
 def _es_esquema_anterior_al_onboarding() -> bool:

@@ -34,19 +34,32 @@ def _slug_organizacion_unico(db: Session, nombre: str, organizacion_id: int) -> 
 @router.get("/configuracion", response_class=HTMLResponse)
 def ver_configuracion(request: Request, db: Session = Depends(get_db)):
     org = db.get(Organizacion, int(db.info.get("organizacion_id") or 0))
+    from ..services.licencias import resumen_licencia_cliente
+
+    licencia = resumen_licencia_cliente(
+        db, int(db.info.get("organizacion_id") or 0)
+    )
+    # En escritorio (SQLite) no hay membresías: el usuario local es el
+    # propietario por definición. En la web solo gestionan propietario/admin.
+    puede_editar = DATABASE_IS_SQLITE or puede_gestionar(db)
     return TEMPLATES.TemplateResponse(
         request,
         "settings.html",
-        {"cfg": _config(db), "org_nombre": org.nombre if org else ""},
+        {
+            "cfg": _config(db),
+            "org_nombre": org.nombre if org else "",
+            "puede_editar": puede_editar,
+            "licencia": licencia,
+        },
     )
 
 
 @router.post("/configuracion")
 async def guardar_configuracion(request: Request, db: Session = Depends(get_db)):
-    if es_lectura(db):
+    if not DATABASE_IS_SQLITE and not puede_gestionar(db):
         return _redirect(
             "/configuracion",
-            error="Tu rol es de solo lectura y no permite modificar la configuración.",
+            error="Solo propietarios y administradores pueden modificar la configuración de la organización.",
         )
     form = await request.form()
     cfg = _config(db)

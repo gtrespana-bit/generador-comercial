@@ -482,3 +482,67 @@ def _operador_override(db, email, es_operador_flag):
             pass
 
     return _db_operador
+
+
+# ---------------------------------------------------------------------------
+# Configuración por rol y estado del plan del cliente
+# ---------------------------------------------------------------------------
+
+
+def test_solo_propietario_y_admin_editan_configuracion(entorno, monkeypatch):
+    """Un miembro no puede modificar la configuración de la organización."""
+    from urllib.parse import unquote
+    from app.routers import configuracion as config_router
+
+    Session, ids, rol = entorno
+    monkeypatch.setattr(config_router, "DATABASE_IS_SQLITE", False)
+    rol["valor"] = "miembro"
+
+    with _cliente() as client:
+        r = client.post(
+            "/configuracion",
+            data={"organizacion_nombre": "Hackeado", "empresa_nombre": "Hackeado"},
+            follow_redirects=False,
+        )
+    assert r.status_code == 303
+    assert "Solo propietarios" in unquote(r.headers.get("location", ""))
+
+    with Session() as db:
+        org = db.get(Organizacion, ids[0])
+        assert org.nombre != "Hackeado"
+
+
+def test_miembro_ve_configuracion_solo_lectura(entorno, monkeypatch):
+    """El formulario sale deshabilitado (fieldset disabled) para no gestores."""
+    from app.routers import configuracion as config_router
+
+    Session, ids, rol = entorno
+    monkeypatch.setattr(config_router, "DATABASE_IS_SQLITE", False)
+    rol["valor"] = "miembro"
+
+    with _cliente() as client:
+        r = client.get("/configuracion")
+    assert r.status_code == 200
+    assert "Solo propietarios y administradores" in r.text
+    assert "<fieldset disabled" in r.text
+
+
+def test_configuracion_muestra_el_plan_del_cliente(entorno):
+    """La tarjeta 'Tu plan' refleja licencia vigente con fecha y días."""
+    Session, ids, _rol = entorno
+    with Session() as db:
+        db.add(Licencia(
+            organizacion_id=ids[0],
+            estado="activa", origen="pago",
+            inicio=date(2026, 8, 1), vence=date(2026, 9, 1),
+            importe=9.99, metodo_cobro="Pago móvil",
+        ))
+        db.commit()
+
+    with _cliente() as client:
+        r = client.get("/configuracion")
+    assert r.status_code == 200
+    assert "Tu plan" in r.text
+    assert "Plan mensual" in r.text
+    assert "Vence el 01/09/2026" in r.text
+    assert "día" in r.text  # días restantes

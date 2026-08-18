@@ -153,6 +153,11 @@
     <div class="sidebar-session">
       {% if request.state.organizacion is defined %}
       <a href="/organizaciones" title="Cambiar organización"><strong>{{ request.state.organizacion.nombre }}</strong></a>
+      {% if request.state.licencia_resumen is defined and request.state.licencia_resumen.activo %}
+      <span class="sidebar-plan ok" title="Plan activo. Vence el {{ request.state.licencia_resumen.vence.strftime('%d/%m/%Y') if request.state.licencia_resumen.vence }}">✓ {{ request.state.licencia_resumen.plan_label }} · {{ request.state.licencia_resumen.dias_restantes }} d</span>
+      {% elif request.state.licencia_resumen is defined %}
+      <a class="sidebar-plan sin" href="/pago" title="Contratar un plan">Sin plan · Ver planes</a>
+      {% endif %}
       <a href="/configuracion" class="sidebar-session-editar" title="Editar datos de la empresa">Editar empresa</a>
       {% endif %}
       <a class="sidebar-session-user" href="/cuenta" title="Mi cuenta">
