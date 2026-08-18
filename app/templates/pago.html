@@ -33,6 +33,12 @@
     <h1>Elige el plan que mejor se ajuste a tu empresa</h1>
     <p class="sub">Pago manual, sin suscripci&oacute;n autom&aacute;tica. Pagas y usas. As&iacute; de simple.</p>
     {% if msg %}<p class="pago-aviso" role="status">{{ msg }}</p>{% endif %}
+    {# La prueba solo se ofrece a quien puede tomarla. Quien aterriza aqui con
+       un `msg` viene de agotarla o de no tener derecho a ella: repetirle
+       "prueba gratis" seria una burla. #}
+    {% if hay_prueba_gratuita() and not msg %}
+    <p class="pago-prueba">&iquest;A&uacute;n no la has probado? <a href="/acceso">Empieza con {{ dias_de_prueba() }} d&iacute;as gratis</a>, sin tarjeta de cr&eacute;dito.</p>
+    {% endif %}
   </div>
 </header>
 

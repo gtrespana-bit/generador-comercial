@@ -62,12 +62,12 @@ def _org(db, nombre="Empresa", slug=None):
 @pytest.mark.parametrize(
     "alias",
     [
-        "juan.perez@gmail.com",
-        "juanperez@gmail.com",
-        "JuanPerez@Gmail.com",
-        "juan.perez+cotizat@gmail.com",
-        "j.u.a.n.p.e.r.e.z+otra@googlemail.com",
-        "  JuanPerez@GMAIL.COM  ",
+        "fulano.detal@gmail.com",
+        "fulanodetal@gmail.com",
+        "FulanoDetal@Gmail.com",
+        "fulano.detal+cotizat@gmail.com",
+        "f.u.l.a.n.o.d.e.t.a.l+otra@googlemail.com",
+        "  FulanoDetal@GMAIL.COM  ",
     ],
 )
 def test_alias_del_mismo_buzon_son_la_misma_identidad(alias):
@@ -76,23 +76,23 @@ def test_alias_del_mismo_buzon_son_la_misma_identidad(alias):
     Este es el ataque barato: sin normalizar, cada punto de más es una cuenta
     nueva y una prueba nueva, indefinidamente.
     """
-    assert normalizar_email(alias) == "juanperez@gmail.com"
+    assert normalizar_email(alias) == "fulanodetal@gmail.com"
 
 
 def test_los_puntos_solo_se_borran_donde_el_proveedor_los_ignora():
     """En un dominio corporativo los puntos separan personas distintas.
 
-    Fundir `juan.perez@` con `juanperez@` en una empresa dejaría a un empleado
+    Fundir `fulano.detal@` con `fulanodetal@` en una empresa dejaría a un empleado
     real sin su prueba por culpa de un compañero.
     """
-    assert normalizar_email("juan.perez@miempresa.com") == "juan.perez@miempresa.com"
-    assert normalizar_email("juanperez@miempresa.com") == "juanperez@miempresa.com"
-    assert normalizar_email("ana.b@outlook.com") != normalizar_email("anab@outlook.com")
+    assert normalizar_email("fulano.detal@miempresa.com") == "fulano.detal@miempresa.com"
+    assert normalizar_email("fulanodetal@miempresa.com") == "fulanodetal@miempresa.com"
+    assert normalizar_email("mengana.b@outlook.com") != normalizar_email("menganab@outlook.com")
 
 
 def test_la_subdireccion_se_recorta_en_proveedores_que_la_soportan():
-    assert normalizar_email("ana+lo-que-sea@outlook.com") == "ana@outlook.com"
-    assert normalizar_email("ana+x@proton.me") == "ana@proton.me"
+    assert normalizar_email("mengana+lo-que-sea@outlook.com") == "mengana@outlook.com"
+    assert normalizar_email("mengana+x@proton.me") == "mengana@proton.me"
 
 
 def test_email_ilegible_no_se_fusiona_con_nadie():
@@ -117,7 +117,7 @@ def test_desechables_reconocidos(correo):
 
 
 @pytest.mark.parametrize(
-    "correo", ["ana@gmail.com", "ana@miempresa.com", "ana@universidad.edu"]
+    "correo", ["mengana@gmail.com", "ana@miempresa.com", "ana@universidad.edu"]
 )
 def test_correos_normales_no_son_desechables(correo):
     assert not es_desechable(correo)
@@ -205,13 +205,13 @@ def test_los_alias_del_mismo_buzon_no_consiguen_una_segunda_prueba(db):
     conceder_prueba(
         db,
         organizacion_id=primera.id,
-        email="juan.perez@gmail.com",
+        email="fulano.detal@gmail.com",
         es_sqlite=True,
     )
     reintento = conceder_prueba(
         db,
         organizacion_id=segunda.id,
-        email="JuanPerez+cotizat2@googlemail.com",
+        email="FulanoDetal+cotizat2@googlemail.com",
         es_sqlite=True,
     )
 
@@ -570,3 +570,87 @@ def test_la_migracion_encadena_con_la_cabeza_anterior():
 
     assert migracion.revision == EXPECTED_ALEMBIC_HEAD
     assert migracion.down_revision == "c7f1a3b9d425"
+
+
+# --------------------------------------------------------------------------
+# Anuncio público de la prueba
+#
+# Una prueba gratuita que el visitante no ve no sirve de nada. Y al revés:
+# anunciarla cuando está apagada es prometer algo que el registro no dará.
+# Ambos lados importan, así que se comprueban los dos.
+# --------------------------------------------------------------------------
+
+
+# Jinja cachea las plantillas compiladas, no su resultado, y las globales son
+# funciones evaluadas en cada render: para cambiar lo que se anuncia basta con
+# mover la variable de entorno, sin tocar la caché.
+
+
+def _paginas_publicas(cliente):
+    return {
+        "/": cliente.get("/").text,
+        "/conocer": cliente.get("/conocer").text,
+        "/pago": cliente.get("/pago").text,
+        "/acceso": cliente.get("/acceso").text,
+    }
+
+
+def test_la_prueba_se_anuncia_en_las_paginas_publicas(cliente_web, monkeypatch):
+    monkeypatch.setenv("COTIZAT_DIAS_PRUEBA", "7")
+    for ruta, html in _paginas_publicas(cliente_web).items():
+        assert "7 días gratis" in html or "7 d&iacute;as gratis" in html, (
+            f"{ruta} no anuncia la prueba"
+        )
+
+
+def test_el_anuncio_usa_la_duracion_configurada(cliente_web, monkeypatch):
+    """Si mañana son 14 días, la landing no puede seguir diciendo 7."""
+    monkeypatch.setenv("COTIZAT_DIAS_PRUEBA", "14")
+    html = cliente_web.get("/").text
+    assert "14 días gratis" in html
+    assert "7 días gratis" not in html
+
+
+def test_apagar_la_prueba_retira_el_anuncio(cliente_web, monkeypatch):
+    """El caso que de verdad importa: no prometer lo que no se va a dar.
+
+    Con la prueba apagada, ninguna página pública puede seguir ofreciéndola;
+    sería publicidad falsa y el registro la desmentiría acto seguido.
+    """
+    monkeypatch.setenv("COTIZAT_DIAS_PRUEBA", "0")
+    for ruta, html in _paginas_publicas(cliente_web).items():
+        assert "días gratis" not in html, f"{ruta} sigue anunciando la prueba"
+        assert "d&iacute;as gratis" not in html, f"{ruta} sigue anunciándola"
+        assert "gratis" not in html.lower() or ruta == "/pago", (
+            f"{ruta} menciona 'gratis' con la prueba apagada"
+        )
+
+
+def test_sin_prueba_la_landing_sigue_llevando_a_los_planes(cliente_web, monkeypatch):
+    """Retirar el anuncio no puede dejar la página sin llamada a la acción."""
+    monkeypatch.setenv("COTIZAT_DIAS_PRUEBA", "0")
+    html = cliente_web.get("/").text
+    assert "Ver planes" in html
+    assert 'href="/pago"' in html
+
+
+def test_el_anuncio_promete_lo_mismo_que_hace_el_registro(cliente_web, monkeypatch):
+    """La landing dice «sin tarjeta»; el registro no debe pedir ninguna."""
+    monkeypatch.setenv("COTIZAT_DIAS_PRUEBA", "7")
+    html = cliente_web.get("/acceso").text
+    assert "No pedimos tarjeta" in html
+    for campo in ("tarjeta", "card", "cvv", "iban"):
+        assert f'name="{campo}"' not in html.lower()
+
+
+def test_no_se_ofrece_la_prueba_a_quien_ya_la_agoto(cliente_web, monkeypatch):
+    """`/pago` con un aviso es el destino de quien no tiene derecho a prueba.
+
+    Repetirle allí la oferta sería una burla, así que el bloque se calla.
+    """
+    monkeypatch.setenv("COTIZAT_DIAS_PRUEBA", "7")
+    html = cliente_web.get(
+        "/pago", params={"msg": "Ya disfrutaste tu prueba gratuita con este correo."}
+    ).text
+    assert "Ya disfrutaste tu prueba" in html
+    assert "Empieza con 7" not in html

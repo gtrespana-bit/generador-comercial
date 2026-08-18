@@ -335,6 +335,12 @@ TEMPLATES.env.globals.update(
     titular_legal=LEGAL_ENTITY,
     email_soporte=SUPPORT_EMAIL,
     catalogo=cifras_catalogo,
+    # Funciones, no valores: la prueba se puede apagar cambiando
+    # COTIZAT_DIAS_PRUEBA sin volver a desplegar, y la página pública tiene que
+    # enterarse en el mismo instante. Anunciar «7 días gratis» cuando la prueba
+    # ya no se concede sería publicidad falsa servida por nuestra propia caché.
+    dias_de_prueba=dias_de_prueba,
+    hay_prueba_gratuita=prueba_activada,
 )
 
 

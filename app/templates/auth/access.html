@@ -56,6 +56,9 @@
 
       <form method="post" action="/registro">
         <h2>Crear cuenta</h2>
+        {% if hay_prueba_gratuita() %}
+        <p class="auth-prueba">✨ Incluye <strong>{{ dias_de_prueba() }} días gratis</strong> con acceso completo. No pedimos tarjeta.</p>
+        {% endif %}
         <input type="hidden" name="next" value="{{ next or '/organizaciones/nueva' }}">
         <div class="field">
           <label for="signup-name">Nombre</label>
