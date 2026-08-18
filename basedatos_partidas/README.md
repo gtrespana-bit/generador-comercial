@@ -461,6 +461,13 @@ distintas.
 Se migró a codificación propia el 16/08/2026. El contenido — descripciones,
 rendimientos y precios — no se tocó: era original desde el principio.
 
+> **Verificación de autoría E1-022 (19/08/2026).** Auditoría cerrada con
+> evidencia: 0 coincidencias (exactas y parciales) entre los textos de los
+> ejemplos `DPT020/RBA010/RBE030.xlsx` y el catálogo (3.006 partidas +
+> `recursos.json`); los códigos `RBA010`/`RBE030` no existen en el catálogo y
+> los `DPT0xx` son solo historial interno (`codigo_anterior`). Detalle en
+> `docs/DATOS_SENSIBLES.md` §6.
+
 `datos/mapa_migracion.json` guarda la equivalencia código antiguo → nuevo para
 trazabilidad interna. **No se publica ni se distribuye.**
 

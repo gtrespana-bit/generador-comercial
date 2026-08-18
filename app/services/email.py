@@ -485,6 +485,44 @@ def enviar_recordatorio_vencimiento(
     return envio_id
 
 
+def enviar_alerta_operador(*, email: str, errores: list[str], checks: dict) -> str:
+    """Alerta interna al operador cuando la verificación diaria falla (E4-023).
+
+    Es un correo **interno** (solo va a `COTIZAT_OPERADORES`), no un correo de
+    producto: por eso no aparece en el panel «Correos» de `/admin/emails`.
+    Lista los errores del readiness y los chequeos con su estado, sin exponer
+    secretos (el readiness ya los sanea).
+    """
+    settings = EmailSettings.from_environment()
+    contexto = {
+        "product_name": PRODUCT_NAME,
+        "errores": [str(e) for e in (errores or [])],
+        "checks": dict(checks or {}),
+        "soporte_email": _soporte_email(),
+        "anio": datetime.utcnow().year,
+    }
+    total = len(contexto["errores"])
+    asunto = (
+        f"Alerta operativa {PRODUCT_NAME}: {total} problema(s) en el despliegue"
+    )[:200]
+    html = _jinja.get_template("emails/alerta_operador.html").render(**contexto)
+    texto = _jinja.get_template("emails/alerta_operador.txt").render(**contexto)
+    try:
+        envio_id = _post_resend(
+            settings,
+            to=email,
+            subject=asunto,
+            html=html,
+            text=texto,
+            reply_to=_soporte_email(),
+        )
+    except EmailSendError as exc:
+        logger.warning("No se pudo enviar la alerta operativa a %s (%s).", email, exc)
+        raise
+    logger.info("Alerta operativa enviada a %s (id %s).", email, envio_id)
+    return envio_id
+
+
 def enviar_activacion_plan_por_email(
     *,
     email: str,

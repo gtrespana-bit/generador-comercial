@@ -58,6 +58,44 @@ jobs:
         # lo que dejaría a Vercel y CI instalando versiones distintas.
         run: python tools/verificar_lock.py
 
+      - name: Escanear dependencias vulnerables (E4-030)
+        # pip-audit consulta las bases de datos de vulnerabilidades (PyPA/OSV)
+        # sobre el cierre completo fijado y falla si encuentra alguna.
+        run: pip-audit -r requirements.lock
+
+      - name: Escanear secretos en el repositorio (E4-030)
+        # detect-secrets fusiona en el baseline los hallazgos nuevos (guardados
+        # como hash, nunca en claro) y renueva generated_at. La guarda compara
+        # el conjunto de secretos con el baseline versionado: cualquier hallazgo
+        # nuevo rompe CI. El baseline admite los fixtures deliberados (URLs de
+        # ejemplo, claves falsas de tests, hashes de revisiones de migraciones).
+        run: |
+          cp .secrets.baseline /tmp/secretos-baseline-original.json
+          detect-secrets scan --baseline .secrets.baseline >/dev/null
+          python3 - <<'PY'
+          import json
+          import sys
+
+          def claves(ruta):
+              with open(ruta, encoding="utf-8") as fh:
+                  datos = json.load(fh)
+              return {
+                  (archivo, h["hashed_secret"], h["type"])
+                  for archivo, hallazgos in datos["results"].items()
+                  for h in hallazgos
+              }
+
+          original = claves("/tmp/secretos-baseline-original.json")
+          actual = claves(".secrets.baseline")
+          nuevas = actual - original
+          if nuevas:
+              print("::error::Secretos nuevos detectados (E4-030)")
+              for archivo, hash_, tipo in sorted(nuevas):
+                  print(f"  {archivo}  [{tipo}]")
+              sys.exit(1)
+          print("Sin secretos nuevos: baseline estable.")
+          PY
+
       - name: Compilar todo el código Python
         run: python -m compileall -q app tools run.py desktop.py
 

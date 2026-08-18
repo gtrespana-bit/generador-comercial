@@ -71,7 +71,44 @@ queda fuera de este bloque a propósito.
   Vercel read-only correcta. `/healthz` y `/readyz` sin cambios de
   comportamiento.
 
-## 6. Estado del cierre de Etapa 3
+## 6. Alertas y vigilancia proactiva (E4-023, 19/08/2026)
+
+Hasta ahora la detección de caídas era **reactiva** (alguien entra y ve que
+falla). Con E4-023 hay dos capas:
+
+### 6a. Verificación diaria con correo (código, ya operativo)
+
+El mismo cron `/api/cron/mantenimiento` (02:00 UTC) ejecuta los chequeos de
+`/readyz` (`app/services/mantenimiento.py` → `ejecutar_verificacion_diaria`).
+Si algo falla, envía a **todos los operadores** (`COTIZAT_OPERADORES`) el
+correo interno `emails/alerta_operador.{html,txt}` con los errores y el estado
+de cada chequeo (sin exponer secretos: el readiness ya los sanea). Es un
+correo **interno**: no aparece en el panel «Correos» (`/admin/emails`).
+
+- Si está en verde no escribe a nadie y el resumen del cron lo refleja.
+- Sin operadores configurados, no hay a quién escribir (y el resumen lo dice).
+- Pruebas en `tests/test_mantenimiento_cron.py`.
+
+### 6b. Vigilante externo de disponibilidad (panel del titular, pendiente)
+
+La verificación diaria solo ve el estado **una vez al día**. Para enterarte de
+una caída en minutos, el vigilante externo pide `GET https://cotizat.online/healthz`
+(liveness, sin dependencias) cada 1–5 minutos y alerta por email/WhatsApp si
+no responde `200`:
+
+1. Crea una cuenta en un monitor de disponibilidad (p. ej. UptimeRobot,
+   plan gratuito: 50 monitores a 5 min).
+2. Añade un monitor HTTP(S) con URL `https://cotizat.online/healthz`,
+   intervalo 5 min, alertas a tu buzón (y a `soporte@cotizat.online` si
+   quieres un segundo canal).
+3. Marca como **esperado** el 503 de `/readyz` solo si quieres vigilarlo
+   también (el 503 es correcto cuando el despliegue no debe recibir tráfico);
+   para disponibilidad pura, vigila `/healthz` (siempre 200 si el proceso
+   vive).
+4. Guarda las credenciales del monitor fuera del repositorio; no añadas el
+   monitor como secreto de la app.
+
+## 7. Estado del cierre de Etapa 3
 
 Código completo en la rama (E3-016 a E3-024) y **migraciones `c2f6e8a1d934` y
 `a3d7e9c1b5f2` aplicadas y verificadas en Supabase el 16/08/2026** (ver

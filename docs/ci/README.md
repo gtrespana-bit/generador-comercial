@@ -54,4 +54,22 @@ A partir de ese momento cada pull request ejecuta el flujo automáticamente.
 Al cambiar el flujo, edita `docs/ci/ci.yml` y copia el resultado sobre
 `.github/workflows/ci.yml`. La prueba
 `test_el_flujo_activo_coincide_con_la_definicion_versionada`
-(`tests/test_integracion_continua.py`) falla si ambas copias se separan.
+(`tests/test_integracion_continua.py`) vigila que ambas copias no se separen.
+
+**Desfase esperado en PRs del bot:** como el token no puede tocar
+`.github/workflows/ci.yml`, un PR que actualice `docs/ci/ci.yml` deja la copia
+activa desfasada a propósito. La prueba lo detecta y, si el PR no tocó la copia
+activa (idéntica a `origin/main`), lo reporta con `skip` (no rompe CI) con el
+comando exacto para sincronizar. **Tras fusionar un PR que toque `docs/ci/ci.yml`,
+el titular debe ejecutar:**
+
+```bash
+cp docs/ci/ci.yml .github/workflows/ci.yml
+git add .github/workflows/ci.yml
+git commit -m "ci: sincroniza la copia activa con docs/ci/ci.yml"
+git push
+```
+
+o editar el archivo desde la interfaz web de GitHub y hacer commit. Hasta que
+se sincronice, el flujo activo es el anterior (los pasos nuevos de
+`docs/ci/ci.yml` no se ejecutan todavía).

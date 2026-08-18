@@ -101,7 +101,38 @@ transacción la compromete la ruta; ante error, `rollback`.
   plantillas, `compileall`, JavaScript, lock (42 paquetes) y
   `git diff --check` en verde; simulación de Vercel read-only correcta.
 
-## 6. Pendientes deliberados del bloque (no son olvidos)
+## 6. Respaldo automático por organización (E4-021, 19/08/2026)
+
+Además del respaldo manual descrito arriba, un **cron diario de Vercel**
+(`/api/cron/mantenimiento`, 02:00 UTC, declarado en `vercel.json` →
+`crons`) genera el mismo paquete verificable para **todas** las
+organizaciones y lo guarda en el almacenamiento privado bajo
+`organizaciones/<id>/respaldo_automatico/cotizat-respaldo-<fecha>.zip`.
+
+- **Qué es y qué no es.** Es una capa de *conveniencia*: copias portátiles,
+  restaurables desde la propia app (sección «Respaldo»), con retención de las
+  últimas N (14 por omisión). La capa de *infraestructura* —copias del
+  proyecto completo (base + Storage) fuera de él— la aporta Supabase con sus
+  backups automáticos del plan Pro; ambas conviven y no compiten.
+- **Los zips no se registran** como `ArchivoAlmacenado`: se escriben con el
+  backend directamente, para que cada respaldo no acabe incluyendo las copias
+  anteriores (evita el crecimiento autorreferencial).
+- **Límite por organización.** `COTIZAT_RESPALDO_MAX_MB` (12 MB por omisión,
+  el tope de objeto del bucket): las organizaciones cuyo paquete lo supere se
+  reportan como *omitidas* en el resumen del cron y deben seguir usando el
+  respaldo manual (que admite hasta 300 MB de paquete). Para subir el tope
+  automático: aumentar el `file_size_limit` del bucket y ajustar la variable.
+- **Condiciones del bucket.** El bucket debe aceptar `application/zip` en sus
+  tipos MIME permitidos (el código ya lo incluye al crear buckets nuevos; en
+  el bucket existente se añade en Supabase → Storage → `cotizat-private` →
+  editar → tipos MIME).
+- **Interruptores** (`app/config.py`): `COTIZAT_RESPALDO_AUTOMATICO=false`
+  apaga el barrido; `COTIZAT_RESPALDO_RETENCION` fija las copias conservadas.
+- **Pruebas**: `tests/test_mantenimiento_cron.py` — un zip por organización,
+  retención (solo quedan las N más nuevas), omisión por tamaño sin romper el
+  barrido, apagado por interruptor, y la ruta del cron (401 sin secreto).
+
+## 7. Pendientes deliberados del bloque (no son olvidos)
 
 - **Exportación y baja por organización** (E3-022 / E3-023): **completadas el
   16/08/2026** sobre este mismo paquete — ver

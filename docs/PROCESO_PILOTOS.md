@@ -27,7 +27,8 @@ Público: el titular operando el producto. Nada de aquí lo ejecuta un cliente.
 | Fusionar y desplegar el **PR #38** | Anuncio público + concesión de la prueba de 7 días | ✅ fusionado (18/08/2026); base del PR #39 |
 | **Fusionar y desplegar el PR #39** | Recordatorios automáticos + identidad + panel «Correos» | ✅ fusionado (18/08/2026, `455f3fc`) |
 | Activar el corte | `COTIZAT_EXIGIR_LICENCIA=true` en Vercel (Production) + **redeploy** | ✅ activado el 18/08/2026, verificado en `/readyz` |
-| **Cron de recordatorios** | Fusionar el PR del diagnóstico (rama `arena/01a016b5`), añadir `CRON_SECRET` en Vercel (Production) + **redeploy** | ⬜ pendiente — ver `docs/PENDIENTES_OPERATIVOS.md` §9 |
+| **Cron de recordatorios** | PR #40 fusionado (`c24c2cc`), `CRON_SECRET` en Production + redeploy | ✅ hecho el 18–19/08/2026: job verificado en Vercel (`/api/cron/recordatorios-vencimiento`, `0 13 * * *`); primera ejecución el 19/08, 13:00 UTC |
+| **Emails de Supabase Auth** | Pegar las plantillas con el diseño de CotizaT en Supabase → Authentication → Email Templates | ✅ hechos el 18–19/08/2026: **Confirm signup**, **Reset password** y **Password changed** — ver `docs/SUPABASE_EMAIL_TEMPLATES.md` |
 | Buzón `soporte@cotizat.online` | Reenvío en el proveedor del dominio | ✅ creado en Zoho (18/08/2026); la app ya apunta a esa dirección |
 
 **El orden importa, por dos motivos distintos.** El primero es el PR #38: la

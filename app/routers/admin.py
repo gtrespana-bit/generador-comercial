@@ -15,6 +15,11 @@ router = APIRouter()
 #: declarada en vercel.json coincide con esta, y /readyz lo publica.
 CRON_RECORDATORIOS_PATH = "/api/cron/recordatorios-vencimiento"
 
+#: Ruta del mantenimiento diario (respaldo automático E4-021 + verificación
+#: con alerta E4-023). También declarada en vercel.json → `crons`; el plan
+#: Hobby admite hasta 2 trabajos diarios, Pro hasta 40.
+CRON_MANTENIMIENTO_PATH = "/api/cron/mantenimiento"
+
 # ---------------------------------------------------------------------------
 # Panel de operador: licencias del producto (E1-060)
 #
@@ -506,6 +511,50 @@ def cron_recordatorios_vencimiento(
 
     return JSONResponse(
         {"ok": True, "resumen": _resumen_recordatorios(resultado)},
+        headers={"Cache-Control": "no-store"},
+    )
+
+
+@router.get(CRON_MANTENIMIENTO_PATH, include_in_schema=False)
+def cron_mantenimiento(request: Request, db: Session = Depends(get_cron_db)):
+    """Respaldo automático + verificación diaria con alerta (E4-021/E4-023).
+
+    Un único disparo diario (``vercel.json`` → ``crons``) ejecuta las dos
+    tareas de mantenimiento que no dependen de una sesión humana. Misma puerta
+    de seguridad que el cron de recordatorios: ``Authorization:
+    Bearer $CRON_SECRET``. Devuelve siempre 200 si el trabajo se ejecutó; los
+    fallos reales van en el resumen (y en el correo de alerta si la
+    verificación no está en verde).
+    """
+    if not _verificar_cron_secret(request):
+        return JSONResponse(
+            {"ok": False, "error": "No autorizado."},
+            status_code=401,
+            headers={"Cache-Control": "no-store"},
+        )
+
+    from ..services.mantenimiento import (
+        ejecutar_respaldo_automatico,
+        ejecutar_verificacion_diaria,
+    )
+
+    try:
+        respaldo = ejecutar_respaldo_automatico(db)
+        db.commit()
+    except Exception:
+        db.rollback()
+        log.error("Error en el respaldo automático del cron:\n%s", traceback.format_exc())
+        respaldo = {"ok": False, "error": "Error interno en el respaldo automático."}
+
+    try:
+        verificacion = ejecutar_verificacion_diaria()
+    except Exception:
+        log.error("Error en la verificación diaria del cron:\n%s", traceback.format_exc())
+        verificacion = {"ok": False, "error": "Error interno en la verificación."}
+
+    return JSONResponse(
+        {"ok": respaldo.get("ok", True) and verificacion.get("ok", True),
+         "respaldo": respaldo, "verificacion": verificacion},
         headers={"Cache-Control": "no-store"},
     )
 

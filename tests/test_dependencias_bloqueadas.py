@@ -26,6 +26,11 @@ LOCK = REPO / "requirements.lock"
 LINEA = re.compile(r"^(?P<nombre>[A-Za-z0-9._-]+)\s*(?:\[[^\]]*\])?\s*(?P<resto>.*)$")
 
 
+def _normalizar(nombre: str) -> str:
+    """Normaliza el nombre según PEP 503 (igual que tools/verificar_lock.py)."""
+    return re.sub(r"[-_.]+", "-", nombre).lower()
+
+
 def _dependencias(ruta: Path) -> list[tuple[str, str]]:
     entradas = []
     for cruda in ruta.read_text(encoding="utf-8").splitlines():
@@ -34,7 +39,9 @@ def _dependencias(ruta: Path) -> list[tuple[str, str]]:
             continue
         casado = LINEA.match(linea)
         assert casado, f"No se pudo interpretar la línea: {cruda!r}"
-        entradas.append((casado.group("nombre").lower(), casado.group("resto").strip()))
+        entradas.append(
+            (_normalizar(casado.group("nombre")), casado.group("resto").strip())
+        )
     return entradas
 
 

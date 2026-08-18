@@ -187,6 +187,15 @@ class StorageBackend(ABC):
     def copy(self, source_key: str, destination_key: str, content_type: str) -> None:
         self.put(destination_key, self.read(source_key), content_type)
 
+    def list(self, prefix: str = "") -> list[str]:
+        """Claves de objetos bajo un prefijo (usado por el respaldo automático).
+
+        No es abstracto a propósito: los backends que no lo soporten fallan al
+        **usarlo**, no al instanciarse. Implementado en LocalStorage y
+        SupabaseStorage (E4-021).
+        """
+        raise NotImplementedError("Este backend de almacenamiento no permite listar objetos.")
+
     def local_path(self, object_key: str) -> Path | None:
         return None
 
@@ -210,9 +219,16 @@ class LocalStorage(StorageBackend):
             raise InvalidStorageKey("La clave sale del almacenamiento permitido.")
         return path
 
-    def put(self, object_key: str, data: bytes, content_type: str) -> None:  # noqa: ARG002
-        if not data or len(data) > MAX_OBJECT_SIZE:
-            raise StorageError("El objeto está vacío o supera 12 MB.")
+    def put(
+        self,
+        object_key: str,
+        data: bytes,
+        content_type: str,
+        max_size: int | None = None,  # noqa: ARG002
+    ) -> None:
+        limite = max_size or MAX_OBJECT_SIZE
+        if not data or len(data) > limite:
+            raise StorageError(f"El objeto está vacío o supera {limite // (1024 * 1024)} MB.")
         path = self._path(object_key)
         path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
         current = path.parent
@@ -244,6 +260,21 @@ class LocalStorage(StorageBackend):
 
     def delete(self, object_key: str) -> None:
         self._path(object_key).unlink(missing_ok=True)
+
+    def list(self, prefix: str = "") -> list[str]:
+        """Claves existentes bajo ``prefix`` (ordenadas, relativas a la raíz)."""
+        base = ""
+        if prefix:
+            base = validate_object_key(prefix.rstrip("/")) + "/"
+        raiz = self.root
+        claves = []
+        for ruta in raiz.rglob("*"):
+            if not ruta.is_file():
+                continue
+            clave = ruta.relative_to(raiz).as_posix()
+            if clave.startswith(base):
+                claves.append(clave)
+        return sorted(claves)
 
     def local_path(self, object_key: str) -> Path | None:
         path = self._path(object_key)
@@ -290,9 +321,16 @@ class SupabaseStorage(StorageBackend):
         except (URLError, TimeoutError, OSError) as exc:
             raise StorageError("No se pudo contactar con Supabase Storage.") from exc
 
-    def put(self, object_key: str, data: bytes, content_type: str) -> None:
-        if not data or len(data) > MAX_OBJECT_SIZE:
-            raise StorageError("El objeto está vacío o supera 12 MB.")
+    def put(
+        self,
+        object_key: str,
+        data: bytes,
+        content_type: str,
+        max_size: int | None = None,
+    ) -> None:
+        limite = max_size or MAX_OBJECT_SIZE
+        if not data or len(data) > limite:
+            raise StorageError(f"El objeto está vacío o supera {limite // (1024 * 1024)} MB.")
         key = quote(validate_object_key(object_key), safe="/")
         bucket = quote(self.bucket, safe="")
         self._request(
@@ -317,6 +355,38 @@ class SupabaseStorage(StorageBackend):
             "DELETE", f"/storage/v1/object/{bucket}",
             data=json.dumps({"prefixes": [key]}).encode("utf-8"), expected={200},
         )
+
+    def list(self, prefix: str = "") -> list[str]:
+        """Claves de objetos bajo ``prefix`` vía el endpoint de listado.
+
+        El listado de Supabase Storage devuelve carpetas (``id: null``) y
+        objetos; solo se conservan los objetos, con su clave completa.
+        """
+        prefijo = validate_object_key(prefix.rstrip("/")) if prefix else ""
+        bucket = quote(self.bucket, safe="")
+        raw = self._request(
+            "POST", f"/storage/v1/object/list/{bucket}",
+            data=json.dumps({
+                "prefix": prefijo + "/" if prefijo else "",
+                "limit": 1000,
+                "offset": 0,
+            }).encode("utf-8"),
+            expected={200},
+        )
+        try:
+            items = json.loads(raw.decode("utf-8"))
+        except (UnicodeDecodeError, ValueError) as exc:
+            raise StorageError("Supabase Storage devolvió un listado no válido.") from exc
+        if not isinstance(items, list):
+            raise StorageError("Supabase Storage devolvió un listado no válido.")
+        claves = []
+        for item in items:
+            if not isinstance(item, dict) or item.get("id") is None:
+                continue  # carpeta
+            nombre = str(item.get("name") or "")
+            if nombre:
+                claves.append(prefijo + nombre)
+        return sorted(claves)
 
     def bucket_status(self) -> dict[str, Any] | None:
         bucket = quote(self.bucket, safe="")
@@ -344,6 +414,8 @@ class SupabaseStorage(StorageBackend):
                 "application/pdf",
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 "application/json",
+                # E4-021: los respaldos automáticos se guardan como .zip.
+                "application/zip",
             ],
         }
         self._request(

@@ -192,6 +192,21 @@ DEFINICIONES: tuple[Variable, ...] = (
         "secreto con el que Vercel autentica las invocaciones del cron",
         recomendada_en=_PRODUCCION,
     ),
+    Variable(
+        "COTIZAT_RESPALDO_AUTOMATICO",
+        False,
+        "interruptor del respaldo automático diario (E4-021); false lo apaga",
+    ),
+    Variable(
+        "COTIZAT_RESPALDO_RETENCION",
+        False,
+        "copias diarias que se conservan por organización (E4-021, 14 por omisión)",
+    ),
+    Variable(
+        "COTIZAT_RESPALDO_MAX_MB",
+        False,
+        "tope por organización del paquete automático en MB (E4-021, 12 por omisión)",
+    ),
     # --- Contador de intentos compartido (Upstash) ------------------------
     Variable(
         "UPSTASH_REDIS_REST_URL",
