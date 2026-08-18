@@ -114,4 +114,24 @@
     </div>
   </form>
 </div>
+
+<div class="card">
+  <h2>Términos y privacidad</h2>
+  <p class="subtitle">Tu aceptación queda registrada con la versión vigente del documento, como prometen los propios términos (E4-038).</p>
+  {% if consentimiento_version %}
+  <p>
+    Aceptaste la versión <strong>{{ consentimiento_version }}</strong> de los
+    <a href="/legal/terminos" target="_blank" rel="noopener">términos del servicio</a>
+    y la <a href="/legal/privacidad" target="_blank" rel="noopener">política de privacidad</a>
+    el {{ consentimiento_at.strftime("%d/%m/%Y a las %H:%M UTC") if consentimiento_at else "día de tu alta" }}.
+  </p>
+  {% else %}
+  <p class="hint">Todavía no consta tu aceptación: tu cuenta se creó antes de que empezáramos a registrarla.</p>
+  <form method="post" action="/cuenta/consentimiento">
+    <div class="form-actions">
+      <button class="btn btn-primary" type="submit">Aceptar los términos y la política de privacidad</button>
+    </div>
+  </form>
+  {% endif %}
+</div>
 {% endblock %}

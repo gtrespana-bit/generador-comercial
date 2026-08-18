@@ -137,6 +137,17 @@ async def registrar_cuenta(request: Request):
     password_confirmation = str(form.get("password_confirmation") or "")
     if password != password_confirmation:
         return _redirect("/acceso", error="Las contraseñas no coinciden.")
+    # E4-038: sin la aceptación explícita no hay cuenta. El checkbox es
+    # obligatorio en el formulario; aquí se vuelve a exigir porque el HTML
+    # «required» solo protege al navegador, no a quien llame la ruta a mano.
+    if not str(form.get("acepto_terminos") or "").strip():
+        return _redirect(
+            "/acceso",
+            error=(
+                "Debes aceptar los términos del servicio y la política de "
+                "privacidad para crear tu cuenta."
+            ),
+        )
     email_registro = str(form.get("email") or "")
     if es_desechable(email_registro):
         # Un buzón que se autodestruye en diez minutos no identifica a nadie:
@@ -163,6 +174,11 @@ async def registrar_cuenta(request: Request):
         )
     except AuthError as exc:
         return _redirect("/acceso", error=str(exc))
+    _registrar_consentimiento_de_registro(
+        request,
+        email=str(form.get("email") or ""),
+        nombre=str(form.get("nombre") or ""),
+    )
     if result.tokens is None:
         # Mensaje único tanto para el alta nueva como para el email ya
         # registrado: GoTrue oculta a propósito cuál de los dos casos es, y
@@ -178,6 +194,33 @@ async def registrar_cuenta(request: Request):
     response = RedirectResponse(destino, status_code=303)
     set_auth_cookies(response, result.tokens, settings.cookie_secure)
     return response
+
+
+def _registrar_consentimiento_de_registro(request: Request, *, email: str, nombre: str):
+    """Registra la aceptación de términos del alta (E4-038), sin romperla.
+
+    Se abre una sesión anónima a propósito: en el momento del registro no hay
+    tokens (el correo se confirma después), y el registro de consentimiento no
+    puede depender de la autenticación. Es best-effort: si la base no
+    responde, la cuenta se crea igualmente y la marca se rellena en /cuenta.
+    """
+    try:
+        from ..database import SessionLocal
+        from ..legal import TERMINOS_VERSION
+        from ..services.consentimiento import registrar_consentimiento
+        from ..services.prueba_gratuita import hash_ip
+
+        ip = request.client.host if request.client else ""
+        with SessionLocal() as db:
+            registrar_consentimiento(
+                db,
+                email=email,
+                nombre=nombre,
+                version=TERMINOS_VERSION,
+                ip_hash=hash_ip(ip),
+            )
+    except Exception:
+        log.exception("No se pudo registrar el consentimiento del alta.")
 
 
 @router.post("/salir")
@@ -243,6 +286,8 @@ def _render_cuenta(
             "membresias": membresias,
             "organizacion_activa_id": seleccionada,
             "email_verificado": bool(usuario.email_verificado_at),
+            "consentimiento_version": usuario.acepto_terminos_version or "",
+            "consentimiento_at": usuario.acepto_terminos_at,
             "msg": msg,
             "error": error,
         },
@@ -260,6 +305,42 @@ def ver_cuenta(request: Request, db: Session = Depends(get_authenticated_db)):
         msg=request.query_params.get("msg", ""),
         error=request.query_params.get("error", ""),
     )
+
+
+@router.post("/cuenta/consentimiento")
+def aceptar_terminos_cuenta(
+    request: Request,
+    db: Session = Depends(get_authenticated_db),
+):
+    """Registra la aceptación de términos desde el panel de cuenta (E4-038).
+
+    Es el camino para las cuentas creadas antes de existir el registro (la
+    marca no quedó anotada en su alta) y la vía natural si algún día cambia la
+    versión de los términos: aceptar la nueva versión asienta una fila nueva
+    sin tocar las anteriores.
+    """
+    if common.DATABASE_IS_SQLITE:
+        return _redirect("/configuracion")
+    from ..legal import TERMINOS_VERSION
+    from ..services.consentimiento import (
+        aplicar_consentimiento_a_usuario,
+        registrar_consentimiento,
+    )
+
+    usuario = db.get(Usuario, db.info["usuario_id"])
+    ip = request.client.host if request.client else ""
+    from ..services.prueba_gratuita import hash_ip
+
+    registrar_consentimiento(
+        db,
+        email=usuario.email,
+        nombre=usuario.nombre,
+        version=TERMINOS_VERSION,
+        ip_hash=hash_ip(ip),
+    )
+    aplicar_consentimiento_a_usuario(db, usuario)
+    db.commit()
+    return _redirect("/cuenta", msg="Gracias. Quedó registrada tu aceptación de los términos y la política de privacidad.")
 
 
 @router.post("/cuenta/perfil")

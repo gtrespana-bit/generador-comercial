@@ -128,7 +128,16 @@ def pagina_legal(pagina: str, request: Request):
     plantilla = _PAGINAS_LEGALES.get(pagina)
     if plantilla is None:
         return Response("Página no encontrada.", status_code=404)
-    return TEMPLATES.TemplateResponse(request, plantilla, {})
+    from ..legal import TERMINOS_VERSION, TERMINOS_VERSION_FECHA
+
+    return TEMPLATES.TemplateResponse(
+        request,
+        plantilla,
+        {
+            "terminos_version": TERMINOS_VERSION,
+            "terminos_version_fecha": TERMINOS_VERSION_FECHA,
+        },
+    )
 
 
 # ---------------------------------------------------------------------------

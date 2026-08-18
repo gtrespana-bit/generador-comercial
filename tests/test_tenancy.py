@@ -9,6 +9,7 @@ from app.models import (
     Capitulo,
     Cliente,
     Configuracion,
+    Consentimiento,
     ContextoOrganizacionError,
     Licencia,
     Membresia,
@@ -64,9 +65,15 @@ def test_todo_modelo_comercial_declara_propietario():
       precisamente en recordar la prueba **después** de que su organización
       desaparezca, y en reconocer a la misma persona cuando crea otra distinta.
       Se aísla con las políticas `cotizat_prueba_*` (revisión `a3d9c1e75b28`).
+    - `Consentimiento` registra la aceptación de términos y privacidad de una
+      persona (E4-038). Es un dato del **titular sobre sus clientes** —como
+      `Licencia` o `PruebaConcedida`—, no un dato *de* la organización: la
+      aceptación se produce en el registro, antes de existir organización, y
+      debe sobrevivir a su borrado. Se aísla con las políticas
+      `cotizat_consentimiento_*` (revisión `b6d9e4c2a8f1`).
     """
     identidades_globales = {Organizacion, Usuario, Membresia}
-    no_tenant_justificados = {Licencia, PruebaConcedida}
+    no_tenant_justificados = {Licencia, PruebaConcedida, Consentimiento}
     sin_propietario = []
     for mapper in Base.registry.mappers:
         modelo = mapper.class_

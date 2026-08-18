@@ -76,11 +76,17 @@
           <label for="signup-confirmation">Repite la contraseña</label>
           <input id="signup-confirmation" name="password_confirmation" type="password" minlength="8" autocomplete="new-password" required {% if not auth_configured %}disabled{% endif %}>
         </div>
+        <div class="field">
+          <label class="check">
+            <input type="checkbox" name="acepto_terminos" value="1" required {% if not auth_configured %}disabled{% endif %}>
+            He leído y acepto los <a href="/legal/terminos" target="_blank" rel="noopener">términos del servicio</a> y la <a href="/legal/privacidad" target="_blank" rel="noopener">política de privacidad</a>.
+          </label>
+          <p class="hint">La aceptación queda registrada con la versión de los términos vigente el día del alta (E4-038).</p>
+        </div>
         <button class="btn btn-secondary btn-block" type="submit" {% if not auth_configured %}disabled{% endif %}>Crear mi espacio</button>
       </form>
 
       <p class="small text-muted mt-3">Las contraseñas se envían directamente a Supabase Auth y no se almacenan en la base de {{ product_name }}.</p>
-      <p class="small text-muted">Al crear una cuenta aceptas los <a href="/legal/terminos">términos del servicio</a> y la <a href="/legal/privacidad">política de privacidad</a>.</p>
     </section>
   </main>
 </div>

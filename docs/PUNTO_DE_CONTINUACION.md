@@ -1,6 +1,6 @@
 # Punto exacto de continuación
 
-Fecha de corte: **19/08/2026 (noche) — PR #41 creado con el bloque de operación de la Etapa 4 (E4-030, E4-021, E4-023) + cierre E1-022 + decisiones de producto. Pendiente inmediato: fusionar el PR #41, desplegar y verificar; luego pasos de panel (UptimeRobot, backups Supabase Pro)** (America/Caracas).
+Fecha de corte: **19/08/2026 (noche) — PR #42 creado con el bloque 100 % recomendado (E4-038 consentimiento registrado, E4-032 plan de incidentes, E4-043 procedimiento de simulacro). Pendiente inmediato: fusionar el PR #42, aplicar la migración b6d9e4c2a8f1 en Supabase, sincronizar el flujo de CI y ejecutar el simulacro E4-043; luego día final de tests (D-019)** (America/Caracas).
 
 Este documento retoma el trabajo sin depender del historial del chat. Describe
 **dónde quedó exactamente** el trabajo y **qué sigue**, en ese orden. Léelo
@@ -202,39 +202,94 @@ nada**: el envío sigue por Resend y el buzón solo recibe. El recordatorio deja
 
 ---
 
+## ✅ Cierre de sesión — El bloque 100 % recomendado antes de lanzar (19/08/2026, noche)
+
+> **PR #42 abierto hacia `main`** desde `arena/01a01736-generador-comercial`:
+> E4-038 (consentimiento registrado) + E4-032 (plan de incidentes) + E4-043
+> (procedimiento de simulacro) + sincronización de CI. Al fusionar, el titular
+> aplica la migración `b6d9e4c2a8f1` en Supabase (paso 1 de abajo).
+
+### Qué se hizo
+
+Tras el triaje de lo que quedaba de la Etapa 4 («¿es realmente necesario antes
+de lanzar?»), se identificó el bloque **100 % recomendado** y se ejecutó:
+
+- **E4-038 — Consentimiento de términos registrado.** El registro ya no solo
+  dice «aceptas»: lo **registra**. Checkbox obligatorio en el alta, tabla
+  `consentimientos` (email normalizado, versión, nombre, IP con hash, fecha;
+  unicidad email+versión; RLS de operador como `licencias`), funciones
+  SECURITY DEFINER `record_consent`/`obtener_consentimiento` (mismo patrón
+  blindado que la prueba gratuita), y marca `usuarios.acepto_terminos_*`
+  visible en `/cuenta` con aceptación explícita para cuentas previas. La
+  versión aceptada (1.1) vive en `app/legal.py` y se muestra en la propia
+  página de términos: documento y registro no pueden divergir. Migración
+  `b6d9e4c2a8f1` + `docs/staging_upgrade_b6d9e4c2a8f1.sql`.
+- **E4-032 — Plan de respuesta a incidentes.** `docs/PLAN_DE_RESPUESTA_A_INCIDENTES.md`:
+  severidades S1–S4, canales de detección, runbooks, contactos y «qué no
+  hacer» (con las lecciones ya pagadas del 18/08).
+- **E4-043 — Simulacro de caída y recuperación (procedimiento).**
+  `docs/SIMULACRO_CAIDA_Y_RECUPERACION.md`: escenario, pasos (~90 min),
+  criterios de éxito y acta. La ejecución la hace el titular antes del día
+  final de tests (D-019).
+- **Sincronización del flujo de CI** intentada desde la rama: GitHub rechazó
+  el push por el permiso `workflows` del token del bot (comportamiento
+  documentado). Queda como paso del titular tras fusionar (`cp docs/ci/ci.yml
+  .github/workflows/ci.yml` + commit + push).
+
+Suite: **705 passed, 7 skipped** (33 pruebas nuevas). Cabeza Alembic:
+**`b6d9e4c2a8f1`**.
+
+### ⚠️ Al fusionar el PR #42 (pasos del titular)
+
+1. **Aplicar la migración en Supabase** (antes o junto al despliegue; sin
+   ella, la app no arranca en PostgreSQL): SQL Editor → pegar
+   `docs/staging_upgrade_b6d9e4c2a8f1.sql` → ejecutar (guarda incluida:
+   comprueba que la base está en `a3d9c1e75b28`).
+2. **Sincronizar el flujo de CI** (paso manual por el permiso `workflows`):
+   ```bash
+   cp docs/ci/ci.yml .github/workflows/ci.yml
+   git add .github/workflows/ci.yml
+   git commit -m "ci: sincroniza la copia activa con docs/ci/ci.yml"
+   git push
+   ```
+3. Verificar `/readyz` en verde (cabeza `b6d9e4c2a8f1`) y que el registro
+   desde `/acceso` exige el checkbox y lo registra (`/cuenta` muestra la
+   versión aceptada).
+4. (Pendiente del bloque anterior, sin cambio) 2 crons en Vercel,
+   UptimeRobot, backups Supabase Pro.
+
+---
+
 ## 🟢 EMPEZAR AQUÍ — Estado al cierre del 19/08/2026 (noche)
 
 ### En una frase
 
 El circuito de cobro completo está **terminado, en verde y operativo** y la
-**Etapa 4 de endurecimiento avanza**: en esta sesión se cerró **E1-022**
-(catálogo 100 % de autoría propia, con auditoría), se tomaron decisiones de
-producto (**tiempos nunca en el PDF del cliente**; **día final único de solo
-tests**), se completó el **bloque de operación de la Etapa 4** — **E4-030**
-(escaneo de dependencias/secretos en CI), **E4-021** (respaldo automático por
-organización) y **E4-023** (verificación diaria con alerta por correo) — y se
-dejó **todo el bloque en un PR (#41) listo para fusionar**. Lo único pendiente
-del lado del titular: **fusionar el PR #41**, verificar el despliegue (2
-crons) y los pasos de panel (UptimeRobot + backups Supabase Pro + opcional
-MIME del bucket).
+**Etapa 4 de endurecimiento avanza**: en las sesiones de hoy se cerró
+**E1-022** (catálogo 100 % de autoría propia, con auditoría), el **bloque de
+operación** — **E4-030** (escaneo de dependencias/secretos en CI),
+**E4-021** (respaldo automático por organización) y **E4-023** (verificación
+diaria con alerta) — y el **bloque 100 % recomendado antes de lanzar** —
+**E4-038** (consentimiento de términos registrado), **E4-032** (plan de
+respuesta a incidentes) y **E4-043** (procedimiento de simulacro). Queda del
+lado del titular: **fusionar el PR #42**, aplicar su migración en Supabase,
+sincronizar el flujo de CI, ejecutar el simulacro E4-043 y los pasos de panel
+(UptimeRobot + backups Supabase Pro). Después: **día final único de solo
+tests (D-019)** y beta.
 
 ### Estado del repositorio
 
 | Dato | Valor |
 | --- | --- |
-| Rama de trabajo | `arena/01a016cd-generador-comercial` (sincronizada con `origin`) |
-| PR #40 | **MERGED** en `main` (`c24c2cc`, 18/08/2026 21:31 UTC) — diagnóstico del cron + guardas CI + plantillas de Supabase |
-| **PR #41** | **abierto hacia `main`** desde esta rama — bloque Etapa 4 (E4-030/021/023) + E1-022 + decisiones + docs |
-| Último commit de `main` | `c24c2cc` (merge del PR #40) |
-| Suite | **672 passed, 6 skipped** (verificada localmente el 19/08/2026, con el venv y `pytest -q`) |
-| Cabeza Alembic | `a3d9c1e75b28` (aplicada en Supabase; este bloque **no** añade migración) |
-| Producción | `COTIZAT_EXIGIR_LICENCIA=true` activo; cron de recordatorios operativo (`"cron_secret": "configurado"`, `"...:registrada"`); el cron de mantenimiento se instalará al fusionar y desplegar el PR #41 |
+| Rama de trabajo | `arena/01a01736-generador-comercial` (sincronizada con `origin`) |
+| PR #41 | **MERGED** en `main` (`c9a5ab1`, 19/08/2026) — bloque Etapa 4 (E4-030/021/023) + E1-022 + decisiones + docs |
+| **PR #42** | **abierto hacia `main`** desde esta rama — E4-038 + E4-032 + E4-043 (procedimiento) + CI sync |
+| Último commit de `main` | `c9a5ab1` (merge del PR #41) |
+| Suite | **705 passed, 7 skipped** (verificada localmente el 19/08/2026, con el venv y `pytest -q`) |
+| Cabeza Alembic | **`b6d9e4c2a8f1`** (pendiente de aplicar en Supabase — `docs/staging_upgrade_b6d9e4c2a8f1.sql`) |
+| Producción | `COTIZAT_EXIGIR_LICENCIA=true` activo; cron de recordatorios operativo; cron de mantenimiento operativo tras el despliegue del PR #41; **la migración del consentimiento aún no está aplicada** |
 
-### ✅ Qué se cerró en esta última sesión (19/08/2026)
-
-**Documentación de estado puesta al día** (pendientes operativos 1–10 ✅,
-proceso de pilotos, hoja de ruta, plan de comercialización al estado real con
-renumeraciones E3-025→029 y E4-031→044 y decisiones D-018 a D-021).
+### ✅ Qué se cerró en las últimas sesiones (18–19/08/2026)
 
 **E1-022 — auditoría del catálogo: CERRADA con evidencia.** El catálogo es
 100 % de autoría propia (3.006 partidas en `basedatos_partidas/datos/`, la app
@@ -250,13 +305,15 @@ PDF del cliente (la estimación de tiempos ya existe en la app, Fase 11; el
 catálogo propio = catálogo del producto (D-020); no al registro de apertura de
 correos (D-021).
 
-**Bloque de operación de la Etapa 4 (código):**
+**Bloque de operación de la Etapa 4 (PR #41, fusionado):**
 
 - **E4-030 — Escaneo de dependencias y secretos en CI.** `pip-audit -r
   requirements.lock` y `detect-secrets` con baseline versionado
   `.secrets.baseline` como pasos de `docs/ci/ci.yml` (protegidos por
   `tests/test_integracion_continua.py`); herramientas fijadas en
-  `requirements-dev.txt` (E1-037) y lock regenerado (66 paquetes).
+  `requirements-dev.txt` (E1-037) y lock regenerado (66 paquetes). **La copia
+  activa `.github/workflows/ci.yml` sigue sin sincronizar** (paso del titular
+  al fusionar el PR #42).
 - **E4-021 — Respaldo automático por organización.** Nuevo cron
   `/api/cron/mantenimiento` (02:00 UTC) en `app/services/mantenimiento.py`:
   reutiliza el paquete verificable de E3-020, lo guarda en el bucket privado
@@ -274,43 +331,57 @@ correos (D-021).
   restricción MIME (la app ya valida tamaño/categorías/claves), así que no hay
   que tocar nada en Storage para que los zips entren. `docs/PENDIENTES_OPERATIVOS.md` §11.
 
+**Bloque 100 % recomendado (PR #42, pendiente de fusionar):**
+
+- **E4-038 — Consentimiento de términos registrado.** Checkbox obligatorio en
+  el registro; tabla `consentimientos` (RLS de operador, unicidad
+  email+versión) con funciones SECURITY DEFINER `record_consent` y
+  `obtener_consentimiento`; marca `usuarios.acepto_terminos_*` visible en
+  `/cuenta` con aceptación explícita para cuentas previas; versión única en
+  `app/legal.py` mostrada en la página de términos. Migración `b6d9e4c2a8f1`
+  (+ SQL de staging).
+- **E4-032 — Plan de respuesta a incidentes.** `docs/PLAN_DE_RESPUESTA_A_INCIDENTES.md`.
+- **E4-043 — Procedimiento de simulacro de caída y recuperación.**
+  `docs/SIMULACRO_CAIDA_Y_RECUPERACION.md`; la ejecución queda para el titular.
+
 ### ⚠️ Lo que el titular hace por su cuenta (pasos en paneles)
 
-1. **Fusionar el PR #41** (este bloque) y esperar el despliegue de
-   **producción** en Vercel.
-2. Verificar en Vercel → **Cron Jobs** que aparecen los **2 trabajos**:
-   `recordatorios-vencimiento` (13:00 UTC) y `mantenimiento` (02:00 UTC). En
-   el mismo despliegue, el `/readyz` seguirá en verde.
-3. **(Recomendado) Vigilante externo de disponibilidad**: monitor HTTP(S) en
+1. **Fusionar el PR #42** y esperar el despliegue de **producción** en Vercel.
+2. **Aplicar la migración `b6d9e4c2a8f1` en Supabase** (SQL Editor, pegar
+   `docs/staging_upgrade_b6d9e4c2a8f1.sql`). Sin ella, `/readyz` dará 503
+   (el runtime exige la cabeza exacta).
+3. **Sincronizar el flujo de CI** (permiso `workflows`): `cp docs/ci/ci.yml
+   .github/workflows/ci.yml` + commit + push (comando exacto en
+   `docs/ci/README.md` y en la sección de cierre de arriba).
+4. Verificar en Vercel → **Cron Jobs** los **2 trabajos**:
+   `recordatorios-vencimiento` (13:00 UTC) y `mantenimiento` (02:00 UTC).
+5. **(Recomendado) Vigilante externo de disponibilidad**: monitor HTTP(S) en
    UptimeRobot sobre `https://cotizat.online/healthz`, cada 5 min, alerta al
    buzón — `docs/MONITORIZACION_Y_DIAGNOSTICO.md` §6b.
-4. **(Recomendado) Backups de Supabase Pro** (base + Storage): al pasar el
+6. **(Recomendado) Backups de Supabase Pro** (base + Storage): al pasar el
    proyecto a Pro, activar Database → Backups. La **pausa por inactividad del
    free (7 días) no afecta** mientras el cron diario haga consultas, pero el
    free **no tiene backups automáticos** y con el primer cobro conviene Pro.
-5. Verificación manual opcional tras el despliegue:
-   ```bash
-   curl -i -H "Authorization: Bearer TU_SECRETO" \
-        https://cotizat.online/api/cron/mantenimiento
-   # → {"ok":…, "respaldo":…, "verificacion":…}
-   ```
+7. **Ejecutar el simulacro E4-043** (procedimiento en
+   `docs/SIMULACRO_CAIDA_Y_RECUPERACION.md`, ~90 min la primera vez) antes del
+   día final de tests.
 
 ### Lo siguiente en el producto
 
-1. **Confirmar la primera invocación real del cron de recordatorios**
-   (19/08 a las 13:00 UTC) y la primera del cron de mantenimiento (20/08 a
-   las 02:00 UTC) en Observability → Cron Jobs → *View Logs*.
+1. **Confirmar la primera invocación real de los crons** (recordatorios 13:00
+   UTC y mantenimiento 02:00 UTC) en Observability → Cron Jobs → *View Logs*.
 2. **Vercel Hobby → Pro** y **Supabase Free → Pro** antes del primer cobro
    (siguen aplazados por el titular).
 3. **Día final único de solo tests (D-019)**, cuando el titular lo indique:
    matriz de aceptación manual, cruces con dos correos y dos organizaciones,
    primer alta real con el corte encendido, auditoría externa del bucket,
-   invitación sin cuenta previa y recordatorio real.
+   invitación sin cuenta previa y recordatorio real. Incluye la verificación
+   manual del consentimiento (registro con checkbox, marca en /cuenta).
 4. **`COTIZAT_LEGAL_ENTITY`** cuando exista razón social registrada.
 5. Etapa 4 restante (sin prisa): E4-020 (cola de trabajos), E4-026/027
-   (registro de auditoría/historial de sesiones), E4-032 (plan de
-   incidentes), E4-038 (consentimiento registrado), E4-039 a E4-043 (migración
-   y beta — dependen de D-017). Detalle en `PLAN_DE_COMERCIALIZACION_Y_EVOLUCION_SAAS.md`.
+   (registro de auditoría/historial de sesiones), E4-039 a E4-044 (migración,
+   beta, carga y auditoría externa — dependen de D-017). Detalle en
+   `PLAN_DE_COMERCIALIZACION_Y_EVOLUCION_SAAS.md`.
 
 ### Errores y lecciones de esta sesión (importa para no repetirlos)
 

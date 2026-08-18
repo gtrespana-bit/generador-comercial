@@ -74,7 +74,7 @@ Al trabajar en una tarea de este plan se debe:
 | 1. Fundamentos comerciales web | Construir una base browser-first honesta, persistente y aislada | **Completada** | Base web, licencias y usabilidad verificadas |
 | 2. Validación comercial pagada | Demostrar que empresas reales pagan y continúan usándolo | **Aplazada hasta el final por decisión del titular** | Solo se abrirá cuando el producto se considere completo (D-017) |
 | 3. Cierre funcional y operativo web | Terminar el ciclo comercial y la operación antes de exponerlo a clientes | **Completada (19/08/2026)** | Envío, aceptación, recuperación y operación completas y desplegadas |
-| 4. Endurecimiento SaaS | Completar seguridad, escalabilidad y operación pública | **En curso** — completados el 19/08/2026: E4-030 (escaneo de dependencias/secretos en CI), **E4-021** (respaldo automático por organización) y **E4-023** (verificación diaria con alerta); quedan pasos de panel (vigilante externo, bucket, backups Supabase Pro) y los ítems E4-020/026/027/032 | Beta de aislamiento y seguridad aprobada |
+| 4. Endurecimiento SaaS | Completar seguridad, escalabilidad y operación pública | **En curso** — completados el 19/08/2026: E4-030 (escaneo de dependencias/secretos en CI), **E4-021** (respaldo automático por organización), **E4-023** (verificación diaria con alerta), **E4-038** (consentimiento registrado) y **E4-032** (plan de incidentes); queda la aplicación de la migración del consentimiento en Supabase, el simulacro E4-043 por ejecutar, pasos de panel (vigilante externo, backups Supabase Pro) y los ítems E4-020/026/027 | Beta de aislamiento y seguridad aprobada |
 | 5. Retención y profundidad | Convertirlo en una herramienta de uso frecuente durante la obra | Pendiente | Uso recurrente y reducción de abandono |
 | 6. Expansión controlada | Crecer por gremios y países sin perder el foco vertical | Pendiente | Mercado inicial repetible y rentable |
 
@@ -845,8 +845,12 @@ automáticos)** y **E4-023 (alertas de disponibilidad)**.
   Pendiente (renumerado desde E4-031 el 19/08/2026 por colisión de ID con el
   panel de cuenta). Incluye la auditoría externa del bucket privado; se
   agrupa en el día final de tests (D-019).
-- [ ] **E4-032 — Plan de respuesta a incidentes.**
-  Pendiente; es documentación, se prepara con el día final de tests.
+- [x] **E4-032 — Plan de respuesta a incidentes.**
+  **Completado el 19/08/2026** (documentación): `docs/PLAN_DE_RESPUESTA_A_INCIDENTES.md`
+  con severidades S1–S4, canales de detección, runbooks por severidad,
+  contactos y «qué no hacer». Se revisa en el simulacro E4-043 y tras cada
+  incidente S1/S2; la primera revisión práctica queda agrupada en el día
+  final de tests (D-019).
 
 ## 4.6 Suscripciones y administración
 
@@ -872,11 +876,18 @@ automáticos)** y **E4-023 (alertas de disponibilidad)**.
   `/admin`: licencias (concesión, renovación, recibo PDF), compras (revisión y
   activación), correos (envío de prueba de los 8 correos) y operación
   (chequeos de `/readyz` + errores acotados).
-- [~] **E4-038 — Registrar consentimiento de términos y privacidad.**
-  El registro muestra «Al crear una cuenta aceptas los términos y la política
-  de privacidad» con enlaces, pero no queda **marca explícita** del
-  consentimiento por usuario. Falta el registro (a decidir: marca de
-  versión/fecha en la cuenta).
+- [x] **E4-038 — Registrar consentimiento de términos y privacidad.**
+  **Completado el 19/08/2026 (código)**: checkbox obligatorio en el registro,
+  tabla `consentimientos` (email normalizado, versión, nombre, IP con hash,
+  fecha; unicidad email+versión; RLS de operador como `licencias`) con las
+  funciones SECURITY DEFINER `cotizat_security.record_consent` y
+  `cotizat_security.obtener_consentimiento`, y marca `usuarios.acepto_terminos_*`
+  visible en `/cuenta` (con aceptación explícita para cuentas anteriores a la
+  función). La versión aceptada es la declarada en `app/legal.py` (1.1) y
+  mostrada en la propia página de términos, para que registro y documento no
+  puedan divergir. **Pendiente de titular**: aplicar
+  `docs/staging_upgrade_b6d9e4c2a8f1.sql` en Supabase (paso en
+  `docs/PENDIENTES_OPERATIVOS.md` §12).
 
 ## 4.7 Migración y beta
 
@@ -889,8 +900,12 @@ automáticos)** y **E4-023 (alertas de disponibilidad)**.
   Pendiente; depende de que el titular declare completo el producto (D-017).
 - [ ] **E4-042 — Realizar prueba de carga realista.**
   Pendiente; sin tráfico aún no hay objetivo medible.
-- [ ] **E4-043 — Realizar simulacro de caída y recuperación.**
-  Pendiente; se agrupa con E4-021 (backups automáticos) y el día final de tests.
+- [~] **E4-043 — Realizar simulacro de caída y recuperación.**
+  Procedimiento definido el 19/08/2026 en
+  `docs/SIMULACRO_CAIDA_Y_RECUPERACION.md` (escenario, pasos, criterios de
+  éxito y acta). Falta la **ejecución** por el titular: primera pasada
+  recomendada antes del día final de tests (D-019), con datos de la
+  organización de pruebas real.
 
 ## 4.8 Criterios de salida de la Etapa 4
 

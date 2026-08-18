@@ -461,3 +461,29 @@ curl -i https://cotizat.online/api/cron/mantenimiento        # 401 sin el secret
 curl -i -H "Authorization: Bearer TU_SECRETO" \
      https://cotizat.online/api/cron/mantenimiento           # 200: {"ok":…, "respaldo":…, "verificacion":…}
 ```
+
+---
+
+## 12. Consentimiento de términos registrado (E4-038): aplicar la migración
+
+El **código** está hecho (checkbox obligatorio en el registro, tabla
+`consentimientos` con RLS de operador, funciones SECURITY DEFINER, marca
+`usuarios.acepto_terminos_*` visible en `/cuenta`). Falta **aplicar la
+migración a Supabase**, un paso de una vez:
+
+1. Abrir `Supabase → SQL Editor → New query`.
+2. Pegar el contenido de `docs/staging_upgrade_b6d9e4c2a8f1.sql` (generado con
+   `alembic upgrade --sql`: incluye la guarda que comprueba que la base está
+   en `a3d9c1e75b28` antes de aplicar, y actualiza `alembic_version`).
+3. Ejecutar. Verificar tras el despliegue que `/readyz` sigue en verde
+   (comprueba `EXPECTED_ALEMBIC_HEAD = b6d9e4c2a8f1`).
+
+**Sin la migración aplicada, la app no arranca en PostgreSQL** (el runtime
+exige la cabeza exacta). El orden seguro: primero este SQL, luego el despliegue
+del PR que contiene el código.
+
+**Simulacro de caída y recuperación (E4-043) y plan de incidentes (E4-032):**
+documentos listos en `docs/SIMULACRO_CAIDA_Y_RECUPERACION.md` y
+`docs/PLAN_DE_RESPUESTA_A_INCIDENTES.md`. Primera ejecución del simulacro
+recomendada antes del día final de tests (D-019); el plan de incidentes se
+revisa en ese simulacro.
