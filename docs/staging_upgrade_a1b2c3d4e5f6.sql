@@ -1,6 +1,8 @@
--- CotizaT — actualización de e5f2a8d31b6c a f9d4c2a7e5b3
--- Información de licencia visible para el propio cliente.
--- Ejecutar una sola vez con el rol administrativo de Supabase/PostgreSQL.
+-- CotizaT — hotfix a1b2c3d4e5f6: corrige organization_license_info
+-- Desajuste de tipos varchar(80) vs text que provocaba
+--   psycopg.errors.DatatypeMismatch: Returned type varchar does not match text
+-- y tumbaba /configuracion y la barra lateral (Sin plan).
+-- Ejecutar una sola vez con rol administrativo si la base ya está en f9d4c2a7e5b3.
 
 BEGIN;
 
@@ -9,9 +11,9 @@ DECLARE
   v_version text;
 BEGIN
   SELECT version_num INTO v_version FROM public.alembic_version LIMIT 1;
-  IF v_version IS DISTINCT FROM 'e5f2a8d31b6c' THEN
+  IF v_version IS DISTINCT FROM 'f9d4c2a7e5b3' THEN
     RAISE EXCEPTION
-      'Se esperaba alembic_version e5f2a8d31b6c antes de f9d4c2a7e5b3; se encontró %',
+      'Se esperaba alembic_version f9d4c2a7e5b3 antes de a1b2c3d4e5f6; se encontró %',
       COALESCE(v_version, '<vacío>');
   END IF;
 END
@@ -63,16 +65,12 @@ REVOKE ALL ON FUNCTION cotizat_security.organization_license_info(integer) FROM 
 GRANT EXECUTE ON FUNCTION cotizat_security.organization_license_info(integer) TO cotizat_app;
 
 UPDATE public.alembic_version
-SET version_num = 'f9d4c2a7e5b3'
-WHERE version_num = 'e5f2a8d31b6c';
+SET version_num = 'a1b2c3d4e5f6'
+WHERE version_num = 'f9d4c2a7e5b3';
 
 COMMIT;
 
 -- Verificación:
--- SELECT version_num FROM public.alembic_version;
--- SELECT proname, prosecdef FROM pg_proc
--- WHERE proname = 'organization_license_info' AND pronamespace = 'cotizat_security'::regnamespace;
---   → organization_license_info | t
--- BEGIN; SELECT set_config('cotizat.organization_id', '<tu_org_id>', true);
--- SELECT * FROM cotizat_security.organization_license_info(<tu_org_id>); ROLLBACK;
---   → fila con plan_label, vence y dias_restantes si hay licencia vigente; 0 filas si no.
+-- SELECT version_num FROM public.alembic_version; -- → a1b2c3d4e5f6
+-- BEGIN; SELECT set_config('cotizat.organization_id','6',true);
+-- SELECT * FROM cotizat_security.organization_license_info(6); ROLLBACK;

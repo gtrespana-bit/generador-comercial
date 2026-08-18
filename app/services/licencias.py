@@ -303,11 +303,18 @@ def organizacion_tiene_acceso(
     hay RLS y la tabla está al alcance del proceso.
     """
     if db.get_bind().dialect.name == "postgresql":
-        resultado = db.execute(
-            text("SELECT cotizat_security.organization_has_license(:org)"),
-            {"org": int(organizacion_id)},
-        ).scalar()
-        return bool(resultado)
+        try:
+            resultado = db.execute(
+                text("SELECT cotizat_security.organization_has_license(:org)"),
+                {"org": int(organizacion_id)},
+            ).scalar()
+            return bool(resultado)
+        except Exception:
+            try:
+                db.rollback()
+            except Exception:
+                pass
+            return False
     return licencia_vigente(db, organizacion_id, hoy=hoy) is not None
 
 
@@ -333,14 +340,65 @@ def resumen_licencia_cliente(
     """
     hoy = hoy or date.today()
     if db.get_bind().dialect.name == "postgresql":
-        fila = db.execute(
-            text(
-                "SELECT activo, plan_label, vence, dias_restantes, metodo_cobro "
-                "FROM cotizat_security.organization_license_info(:org)"
-            ),
-            {"org": int(organizacion_id)},
-        ).first()
+        fila = None
+        try:
+            fila = db.execute(
+                text(
+                    "SELECT activo, plan_label, vence, dias_restantes, metodo_cobro "
+                    "FROM cotizat_security.organization_license_info(:org)"
+                ),
+                {"org": int(organizacion_id)},
+            ).first()
+        except Exception as exc:
+            # La función puede faltar si la BD no está migrada o el RLS la
+            # oculta por un owner incorrecto; se hace rollback para no
+            # envenenar la transacción y se intenta un fallback.
+            try:
+                db.rollback()
+            except Exception:
+                pass
+            # Fallback: si organization_has_license indica acceso, mostramos
+            # un plan activo genérico en lugar de "Sin plan" para no confundir
+            # al usuario que sí puede usar la app.
+            try:
+                if organizacion_tiene_acceso(db, organizacion_id, hoy=hoy):
+                    return {
+                        "activo": True,
+                        "plan_label": "Plan activo",
+                        "vence": None,
+                        "dias_restantes": 0,
+                        "metodo_cobro": "",
+                    }
+            except Exception:
+                try:
+                    db.rollback()
+                except Exception:
+                    pass
+            return {
+                "activo": False,
+                "plan_label": "",
+                "vence": None,
+                "dias_restantes": 0,
+                "metodo_cobro": "",
+            }
         if fila is None:
+            # Sin fila pero quizá el corte aún da acceso (p. ej. función
+            # desactualizada que no devuelve fila por un bug de RLS). Si hay
+            # acceso, preferimos mostrar activo genérico antes que "Sin plan".
+            try:
+                if organizacion_tiene_acceso(db, organizacion_id, hoy=hoy):
+                    return {
+                        "activo": True,
+                        "plan_label": "Plan activo",
+                        "vence": None,
+                        "dias_restantes": 0,
+                        "metodo_cobro": "",
+                    }
+            except Exception:
+                try:
+                    db.rollback()
+                except Exception:
+                    pass
             return {
                 "activo": False,
                 "plan_label": "",

@@ -1,23 +1,25 @@
-"""Información de licencia visible para el propio cliente (f9d4c2a7e5b3).
+"""Corrige desajuste de tipos en organization_license_info (hotfix 18/08/2026).
 
-La sesión de un cliente no puede leer ``licencias`` (RLS de operador), pero
-la aplicación necesita mostrarle si su organización tiene un plan activo, la
-fecha de caducidad y los días restantes (p. ej. en Configuración y en el menú
-lateral).
+El despliegue f9d4c2a7e5b3 fallaba con
+  psycopg.errors.DatatypeMismatch: Returned type character varying(80)
+  does not match expected type text in column 5.
 
-Esta revisión crea ``cotizat_security.organization_license_info``, una función
-SECURITY DEFINER que solo devuelve la fila de la organización del propio claim
-de sesión (``context_organization_id``). Un cliente que intente consultar otra
-organización no obtiene filas; el operador no la necesita (lee la tabla
-directamente en el panel).
+`licencias.metodo_cobro` es varchar(80) y `licencias.origen` varchar(20);
+la función declaraba RETURNS TABLE(..., text) pero devolvía varchar sin
+cast explícito, lo que PostgreSQL considera incompatible en RETURN QUERY.
+El mismo problema afectaba al CASE de plan_label y al GREATEST.
+Este hotfix recrea la función con casts explícitos ::text / ::integer /
+::boolean, idéntica a la versión corregida de f9d4c2a7e5b3, de forma que
+las bases ya migradas queden reparadas y el próximo `alembic upgrade head`
+no necesite intervención manual.
 """
+
 from typing import Sequence, Union
 
 from alembic import op
 
-
-revision: str = "f9d4c2a7e5b3"
-down_revision: Union[str, Sequence[str], None] = "e5f2a8d31b6c"
+revision: str = "a1b2c3d4e5f6"
+down_revision: Union[str, Sequence[str], None] = "f9d4c2a7e5b3"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
@@ -84,6 +86,8 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
+    # Downgrade deja la versión corregida; no restaura el bug.
     if not _postgres():
         return
-    op.execute(f"DROP FUNCTION IF EXISTS cotizat_security.{FUNCION}(integer)")
+    # No-op: mantener la función corregida también en downgrade.
+    pass
