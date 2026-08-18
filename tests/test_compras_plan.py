@@ -703,3 +703,390 @@ def test_configuracion_muestra_el_total_de_planes_encadenados(entorno):
     assert "Plan mensual" in r.text
     assert f"Vence el {vence_total}" in r.text
     assert "34 días restantes" in r.text
+
+
+# ---------------------------------------------------------------------------
+# Recibo del cliente y aviso de activación (E1-059 · cierre del flujo)
+# ---------------------------------------------------------------------------
+
+
+def _compra_activada(db, ids, *, plan="anual", metodo="binance"):
+    """Compra ya verificada por el operador, con su licencia concedida."""
+    db.info["organizacion_id"] = ids[0]
+    compra = crear_compra(
+        db,
+        organizacion_id=ids[0],
+        plan=plan,
+        metodo_pago=metodo,
+        datos_verificacion={"numero_operacion": "OP-4321"},
+        comprobante_reference="storage://organizaciones/1/comprobantes/r.png",
+        comprobante_nombre="r.png",
+        comprobante_mime="image/png",
+        creada_por_usuario_id=ids[1],
+        creada_por_email="duena@example.com",
+    )
+    db.flush()
+    compra, licencia = activar_compra(
+        db, compra_id=compra.id, operador_email="titular@example.com"
+    )
+    db.commit()
+    return compra, licencia
+
+
+def test_activar_compra_copia_el_periodo_concedido(entorno):
+    """La compra guarda inicio y vencimiento de la licencia que concedió.
+
+    Es la pieza que permite al comprador emitir su recibo sin leer
+    `licencias`, que el RLS reserva al operador.
+    """
+    Session, ids, _rol = entorno
+    with Session() as db:
+        compra, licencia = _compra_activada(db, ids)
+        assert compra.licencia_inicio == licencia.inicio
+        assert compra.licencia_vence == licencia.vence
+
+
+def test_recibo_de_una_compra_pendiente_no_existe(entorno):
+    """Sin activación no hay cobro liquidado que documentar."""
+    from app.services.licencias import GestionLicenciaError
+    from app.services.recibo_licencia import licencia_de_compra
+
+    Session, ids, _rol = entorno
+    with Session() as db:
+        db.info["organizacion_id"] = ids[0]
+        compra = crear_compra(
+            db,
+            organizacion_id=ids[0],
+            plan="mensual",
+            metodo_pago="kontigo",
+            datos_verificacion={"numero_operacion": "K-1"},
+            comprobante_reference="storage://organizaciones/1/comprobantes/r.png",
+            comprobante_nombre="r.png",
+            comprobante_mime="image/png",
+            creada_por_usuario_id=ids[1],
+            creada_por_email="duena@example.com",
+        )
+        db.flush()
+        with pytest.raises(GestionLicenciaError):
+            licencia_de_compra(compra)
+
+
+def test_recibo_del_cliente_es_el_mismo_documento_que_el_del_operador(entorno):
+    """El cliente descarga el recibo con la numeración de su licencia."""
+    from app.services.recibo_licencia import (
+        generar_recibo_licencia_pdf,
+        licencia_de_compra,
+        numero_recibo,
+    )
+
+    Session, ids, _rol = entorno
+    with Session() as db:
+        compra, licencia = _compra_activada(db, ids)
+        vista = licencia_de_compra(compra)
+        assert numero_recibo(vista) == numero_recibo(licencia)
+        assert vista.importe == licencia.importe
+        assert vista.metodo_cobro == licencia.metodo_cobro
+        pdf = generar_recibo_licencia_pdf(
+            vista, db.get(Organizacion, ids[0])
+        ).getvalue()
+        assert pdf.startswith(b"%PDF")
+
+
+def test_el_cliente_descarga_el_recibo_de_su_compra(entorno):
+    Session, ids, _rol = entorno
+    with Session() as db:
+        compra, licencia = _compra_activada(db, ids)
+        compra_id, licencia_id = compra.id, licencia.id
+
+        db.info["usuario_id"] = ids[1]
+        db.info["rol_membresia"] = "propietario"
+        app.dependency_overrides[get_db] = _override(db, ids)
+        try:
+            with _cliente() as client:
+                r = client.get(f"/pago/recibo/{compra_id}.pdf")
+        finally:
+            app.dependency_overrides.pop(get_db, None)
+
+    assert r.status_code == 200
+    assert r.headers["content-type"] == "application/pdf"
+    assert f"recibo-CT-{licencia_id:06d}-restauracion.pdf" in r.headers[
+        "content-disposition"
+    ]
+    assert r.headers["cache-control"] == "no-store"
+    assert r.content.startswith(b"%PDF")
+
+
+def test_el_recibo_de_otra_organizacion_no_se_alcanza(entorno):
+    """El filtro por organización es lo que aísla el recibo, no el id."""
+    Session, ids, _rol = entorno
+    with Session() as db:
+        otra = Organizacion(nombre="Ajena C.A.", slug="ajena")
+        db.add(otra)
+        db.flush()
+        licencia_ajena = Licencia(
+            organizacion_id=otra.id,
+            estado="activa", origen="pago",
+            inicio=date(2026, 8, 1), vence=date(2027, 7, 31),
+            importe=89.0, metodo_cobro="Binance",
+        )
+        db.add(licencia_ajena)
+        db.flush()
+        compra = CompraPlan(
+            organizacion_id=otra.id,
+            plan="anual",
+            metodo_pago="binance",
+            importe=89.0,
+            moneda="USD",
+            datos_verificacion="{}",
+            comprobante_reference="storage://x/r.png",
+            estado="activa",
+            licencia_id=licencia_ajena.id,
+            licencia_inicio=date(2026, 8, 1),
+            licencia_vence=date(2027, 7, 31),
+            creada_por_email="ajena@example.com",
+        )
+        db.add(compra)
+        db.commit()
+        compra_id = compra.id
+
+        db.info["organizacion_id"] = ids[0]
+        db.info["usuario_id"] = ids[1]
+        db.info["rol_membresia"] = "propietario"
+        app.dependency_overrides[get_db] = _override(db, ids)
+        try:
+            with _cliente() as client:
+                r = client.get(
+                    f"/pago/recibo/{compra_id}.pdf", follow_redirects=False
+                )
+        finally:
+            app.dependency_overrides.pop(get_db, None)
+
+    assert r.status_code == 303
+    assert not r.content.startswith(b"%PDF")
+
+
+def test_la_tarjeta_del_plan_ofrece_el_recibo_tras_pagar(entorno):
+    Session, ids, _rol = entorno
+    with Session() as db:
+        compra, _licencia = _compra_activada(db, ids)
+        compra_id = compra.id
+
+    with _cliente() as client:
+        r = client.get("/configuracion")
+
+    assert r.status_code == 200
+    assert f"/pago/recibo/{compra_id}.pdf" in r.text
+    assert "Descargar recibo" in r.text
+
+
+def test_la_tarjeta_del_plan_sin_compra_no_ofrece_recibo(entorno):
+    """Una licencia de cortesía no tiene cobro que documentar."""
+    Session, ids, _rol = entorno
+    with Session() as db:
+        db.add(Licencia(
+            organizacion_id=ids[0],
+            estado="activa", origen="cortesia",
+            inicio=date(2026, 8, 1), vence=date(2026, 9, 1),
+        ))
+        db.commit()
+
+    with _cliente() as client:
+        r = client.get("/configuracion")
+
+    assert r.status_code == 200
+    assert "/pago/recibo/" not in r.text
+
+
+def test_activar_desde_el_panel_avisa_al_comprador_con_su_recibo(
+    entorno, monkeypatch
+):
+    """El comprador se entera de que su plan quedó activo, y hasta cuándo."""
+    Session, ids, _rol = entorno
+    monkeypatch.setenv("COTIZAT_OPERADORES", "titular@example.com")
+    from app.database import get_operator_db
+
+    enviados = []
+    monkeypatch.setattr(
+        "app.services.email.enviar_activacion_plan_por_email",
+        lambda **kw: enviados.append(kw) or "email-1",
+    )
+
+    with Session() as db:
+        db.info["organizacion_id"] = ids[0]
+        compra = crear_compra(
+            db,
+            organizacion_id=ids[0],
+            plan="anual",
+            metodo_pago="pago_movil",
+            datos_verificacion={"numero_operacion": "OP-55"},
+            comprobante_reference="storage://organizaciones/1/comprobantes/r.png",
+            comprobante_nombre="r.png",
+            comprobante_mime="image/png",
+            creada_por_usuario_id=ids[1],
+            creada_por_email="duena@example.com",
+        )
+        db.flush()
+        compra_id = compra.id
+
+        app.dependency_overrides[get_operator_db] = _operador_override(
+            db, "titular@example.com", True
+        )
+        try:
+            with _cliente() as client:
+                r = client.post(
+                    f"/admin/compras/{compra_id}/activar", follow_redirects=False
+                )
+            assert r.status_code == 303
+        finally:
+            app.dependency_overrides.pop(get_operator_db, None)
+
+    assert len(enviados) == 1
+    aviso = enviados[0]
+    assert aviso["email"] == "duena@example.com"
+    assert aviso["plan_nombre"] == "Plan anual"
+    assert aviso["metodo_nombre"] == "Pago móvil"
+    assert aviso["organizacion_nombre"] == "Constructora Restaurada"
+    assert aviso["vence"] > aviso["inicio"]
+    assert aviso["recibo_pdf"].startswith(b"%PDF")
+    assert aviso["recibo_nombre"].startswith("recibo-CT-")
+
+
+def test_un_fallo_de_correo_no_deshace_la_activacion(entorno, monkeypatch):
+    """La licencia ya está concedida: el aviso es cortesía, no condición."""
+    Session, ids, _rol = entorno
+    monkeypatch.setenv("COTIZAT_OPERADORES", "titular@example.com")
+    from app.database import get_operator_db
+    from app.services.email import EmailSendError
+
+    def _explota(**_kw):
+        raise EmailSendError("Resend caído")
+
+    monkeypatch.setattr(
+        "app.services.email.enviar_activacion_plan_por_email", _explota
+    )
+
+    with Session() as db:
+        db.info["organizacion_id"] = ids[0]
+        compra = crear_compra(
+            db,
+            organizacion_id=ids[0],
+            plan="mensual",
+            metodo_pago="usdt",
+            datos_verificacion={"hash_transaccion": "TX-7"},
+            comprobante_reference="storage://organizaciones/1/comprobantes/r.png",
+            comprobante_nombre="r.png",
+            comprobante_mime="image/png",
+            creada_por_usuario_id=ids[1],
+            creada_por_email="duena@example.com",
+        )
+        db.flush()
+        compra_id = compra.id
+
+        app.dependency_overrides[get_operator_db] = _operador_override(
+            db, "titular@example.com", True
+        )
+        try:
+            with _cliente() as client:
+                r = client.post(
+                    f"/admin/compras/{compra_id}/activar", follow_redirects=False
+                )
+            assert r.status_code == 303
+        finally:
+            app.dependency_overrides.pop(get_operator_db, None)
+
+    with Session() as db:
+        compra = db.get(CompraPlan, compra_id)
+        assert compra.estado == "activa"
+        assert compra.licencia_id is not None
+        assert compra.licencia_vence is not None
+
+
+def test_el_correo_de_activacion_lleva_la_fecha_y_el_recibo(monkeypatch):
+    """Contenido del aviso: hasta cuándo llega el plan y el PDF adjunto."""
+    import base64
+    import json
+
+    from app.services import email as email_module
+
+    capturado = {}
+
+    class _Respuesta:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_a):
+            return False
+
+        def read(self, _size=-1):
+            return b'{"id":"activacion-1"}'
+
+    def fake_urlopen(request, timeout):  # noqa: ARG001
+        capturado.update(json.loads(request.data.decode("utf-8")))
+        return _Respuesta()
+
+    monkeypatch.setenv("RESEND_API_KEY", "re_prueba")
+    monkeypatch.setenv("COTIZAT_EMAIL_FROM", "CotizaT <no-responder@cotizat.test>")
+    monkeypatch.setattr(email_module, "urlopen", fake_urlopen)
+
+    envio_id = email_module.enviar_activacion_plan_por_email(
+        email="duena@example.com",
+        organizacion_nombre="Constructora Restaurada",
+        plan_nombre="Plan anual",
+        importe_texto="89,00 $",
+        metodo_nombre="Pago móvil",
+        inicio=date(2026, 8, 18),
+        vence=date(2027, 8, 17),
+        recibo_pdf=b"%PDF-1.4\nrecibo",
+        recibo_nombre="recibo-CT-000013.pdf",
+    )
+
+    assert envio_id == "activacion-1"
+    assert capturado["to"] == ["duena@example.com"]
+    assert "17/08/2027" in capturado["subject"]
+    assert "17/08/2027" in capturado["html"]
+    assert "17/08/2027" in capturado["text"]
+    assert "Constructora Restaurada" in capturado["html"]
+    assert "89,00 $" in capturado["text"]
+    adjunto = capturado["attachments"][0]
+    assert adjunto["filename"] == "recibo-CT-000013.pdf"
+    assert base64.b64decode(adjunto["content"]) == b"%PDF-1.4\nrecibo"
+
+
+def test_el_aviso_de_activacion_sale_aunque_falte_el_recibo(monkeypatch):
+    """El plan activo es la noticia; el PDF, un extra que puede faltar."""
+    import json
+
+    from app.services import email as email_module
+
+    capturado = {}
+
+    class _Respuesta:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_a):
+            return False
+
+        def read(self, _size=-1):
+            return b'{"id":"activacion-2"}'
+
+    def fake_urlopen(request, timeout):  # noqa: ARG001
+        capturado.update(json.loads(request.data.decode("utf-8")))
+        return _Respuesta()
+
+    monkeypatch.setenv("RESEND_API_KEY", "re_prueba")
+    monkeypatch.setenv("COTIZAT_EMAIL_FROM", "CotizaT <no-responder@cotizat.test>")
+    monkeypatch.setattr(email_module, "urlopen", fake_urlopen)
+
+    email_module.enviar_activacion_plan_por_email(
+        email="duena@example.com",
+        organizacion_nombre="Constructora Restaurada",
+        plan_nombre="Plan mensual",
+        importe_texto="9,99 $",
+        metodo_nombre="USDT",
+        inicio=date(2026, 8, 18),
+        vence=date(2026, 9, 17),
+    )
+
+    assert "attachments" not in capturado or not capturado["attachments"]
+    assert "17/09/2026" in capturado["html"]

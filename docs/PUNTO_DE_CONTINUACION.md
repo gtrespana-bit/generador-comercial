@@ -1,12 +1,107 @@
 # Punto exacto de continuación
 
-Fecha de corte: **18/08/2026, cierre del flujo de compra (retoma tras el alta + fix del comprobante)** (America/Caracas).
+Fecha de corte: **18/08/2026, cierre del post-venta al cliente (aviso de activación + recibo PDF descargable)** (America/Caracas).
 
 Este documento retoma el trabajo sin depender del historial del chat. Describe
 **dónde quedó exactamente** el trabajo y **qué sigue**, en ese orden. Léelo
 junto con `basedatos_partidas/EMPEZAR_AQUI.md` (reglas y progreso del catálogo),
 `basedatos_partidas/INVENTARIO.md` (cifras y contraste de precios) y
 `PLAN_DE_COMERCIALIZACION_Y_EVOLUCION_SAAS.md` (§1.9 y §11).
+
+---
+
+## ✅ Cierre de sesión — Post-venta al cliente: aviso de activación + recibo PDF (18/08/2026)
+
+Rama fija de la sesión: `arena/01a015a7-generador-comercial`, basada en `main`
+(`00cfec0`).
+
+### 0. Ensayo del flujo de compra real en staging: **SUPERADO**
+
+(Es el «punto 1» del bloque anterior de esta serie de notas —pendiente nº 3 de
+su lista—, no el punto 1 de `docs/MATRIZ_PASOS_MANUALES.md`, que es el
+registro.)
+
+El titular ejecutó en staging el **flujo de compra real con cobro manual**
+(E1-059 / E1-060) de principio a fin y lo dio por bueno:
+
+`/pago` → «Contratar» → checkout con método de pago y **comprobante adjunto**
+→ compra en estado `pendiente` → aviso al operador → **activación desde
+`/admin/compras`** → el cliente ve «Tu plan» con fecha de vencimiento y días
+restantes.
+
+Queda por tanto **cerrado** ese ensayo pendiente. Los
+dos huecos que dejó (el comprador no recibía ningún aviso al
+activarse su plan y no tenía forma de obtener un justificante) son justo lo que
+resuelve este bloque.
+
+### 1. Aviso de activación por email al comprador
+
+- Nueva función `enviar_activacion_plan_por_email(...)` en
+  `app/services/email.py`, con plantillas `app/templates/emails/plan_activado.html`
+  y `.txt`: saludo, plan contratado, importe, método de cobro, **fecha de inicio
+  y de vencimiento en `dd/mm/aaaa`** (también en el asunto) y, si existe, el
+  **recibo en PDF como adjunto** (base64).
+- `POST /admin/compras/{id}/activar` (`app/routers/admin.py`) llama al helper
+  `_avisar_activacion_al_cliente(...)` justo después de activar. El envío es
+  **best-effort**: si Resend falla, la activación no se revierte; el operador
+  ve el aviso de error en el panel y la licencia sigue activa.
+- Destinatario: el email que registró la compra (`creada_por_email`).
+
+### 2. Recibo PDF descargable por el propio cliente
+
+- Nueva ruta **`GET /pago/recibo/{compra_id}.pdf`** (`app/routers/pagos.py`):
+  descarga como `attachment`, `Cache-Control: no-store`, nombre
+  `recibo-CT-{id:06d}.pdf`. Solo sirve compras **de la organización activa** y
+  en estado `activa` con importe > 0; en caso contrario, 404 / redirección con
+  aviso.
+- En `/configuracion`, la tarjeta **«Tu plan»** (`app/templates/settings.html`,
+  estilos `.plan-recibo` en `style.css`) muestra el enlace **«Descargar recibo
+  (PDF)»** de la última compra activada con importe, resuelta por
+  `ultima_compra_con_recibo(...)` en `app/services/compras.py`.
+
+**Restricción técnica que condiciona el diseño:** `licencias` tiene RLS que
+solo responde a sesiones de **operador** (`cotizat.es_operador`, migración
+`f4c1d8e37a95`), así que una ruta de cliente **no puede** leer la licencia. Por
+eso el período concedido se **copia a `compras_plan`** (tabla tenant) al
+activar, y la ruta del cliente construye un objeto `_LicenciaDeCompra`
+(duck-typing) que reutiliza el mismo generador
+`app/services/recibo_licencia.py` que usa el operador. El recibo del cliente y
+el de `/admin/licencias/{id}/recibo.pdf` son idénticos.
+
+### 3. Migración `c7f1a3b9d425` (⚠️ PENDIENTE de aplicar en Supabase)
+
+- `migrations/versions/c7f1a3b9d425_compra_periodo_licencia.py`
+  (`down_revision = d4e2f6a8b0c1`) añade `compras_plan.licencia_inicio` y
+  `compras_plan.licencia_vence`, con **backfill** dual PostgreSQL/SQLite desde
+  la licencia enlazada para que las compras ya activadas conserven su período.
+- `app/database.py` → `EXPECTED_ALEMBIC_HEAD = "c7f1a3b9d425"`. Mientras no se
+  aplique en Supabase, `/readyz` responderá **503** a propósito.
+- Script para el titular: **`docs/staging_upgrade_c7f1a3b9d425.sql`** (verifica
+  que el head previo sea `d4e2f6a8b0c1`, añade columnas, hace backfill y
+  actualiza `alembic_version`, todo en una transacción).
+- Verificado localmente: `alembic upgrade head` desde cero sobre SQLite llega a
+  `c7f1a3b9d425` y crea ambas columnas; `downgrade -1` + `upgrade` también.
+
+### Estado y verificación
+
+- **568 tests pasando, 6 omitidos** (`.venv/bin/pytest -q`), de los cuales 37 en
+  `tests/test_compras_plan.py`: el período copiado al activar, la ruta del
+  recibo del cliente, el aislamiento entre organizaciones (una organización no
+  alcanza el recibo de otra), la tarjeta del plan en `/configuracion`, el envío
+  del aviso, el caso «Resend falla y la activación se mantiene» y dos
+  comprobaciones del payload real de Resend (fechas, importe y adjunto base64
+  decodificable).
+
+### Pendientes / candidatos siguientes
+
+1. **Aplicar `docs/staging_upgrade_c7f1a3b9d425.sql` en Supabase** y desplegar;
+   comprobar que `/readyz` vuelve a 200 con `"alembic": "head:c7f1a3b9d425"`.
+2. Repetir en staging una compra completa para ver el **correo de activación**
+   con su adjunto y el enlace de recibo en `/configuracion`.
+3. **Decisión de negocio pendiente:** activar `COTIZAT_EXIGIR_LICENCIA=true`
+   (corte automático de acceso al vencer). El corte ya está implementado; falta
+   la licencia de cortesía al titular y el switch en Vercel
+   (`docs/PANEL_DE_OPERADOR.md` §6).
 
 ---
 

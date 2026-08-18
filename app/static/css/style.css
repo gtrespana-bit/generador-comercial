@@ -5568,6 +5568,8 @@ body {
   font-weight: 800;
   flex-shrink: 0;
 }
+.plan-recibo { margin: 6px 0 0; font-size: .85rem; }
+.plan-recibo a { color: var(--accent); font-weight: 600; }
 .plan-sin .subtitle { margin: 0 0 12px; }
 .rol-notice {
   background: var(--accent-soft, rgba(18, 63, 120, .08));

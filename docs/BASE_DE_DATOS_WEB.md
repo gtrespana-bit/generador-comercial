@@ -55,7 +55,9 @@ La revisión `9bca2ad1f6e4`, que añade el vínculo con Supabase Auth, también 
 
 **Actualización 16/08/2026:** el head actual de producción es `f4c1d8e37a95` (E1-060, tabla `licencias` de operador con RLS propia; aplicada con `docs/staging_upgrade_f4c1d8e37a95.sql`). `/readyz` real responde `"alembic": "head:f4c1d8e37a95"` con `ok: true`. Ver `docs/PANEL_DE_OPERADOR.md`.
 
-**Actualización 18/08/2026:** el head actual de producción es `d4e2f6a8b0c1` (el resumen del plan suma las licencias encadenadas; aplicada con `docs/staging_upgrade_d4e2f6a8b0c1.sql`). `/readyz` responde `"alembic": "head:d4e2f6a8b0c1"` con `ok: true` tras el despliegue.
+**Actualización 18/08/2026:** el head de producción pasó a `d4e2f6a8b0c1` (el resumen del plan suma las licencias encadenadas; aplicada con `docs/staging_upgrade_d4e2f6a8b0c1.sql`). `/readyz` respondió `"alembic": "head:d4e2f6a8b0c1"` con `ok: true` tras ese despliegue.
+
+**Actualización 18/08/2026 (tarde):** el head exigido por el runtime pasa a `c7f1a3b9d425` (`compras_plan.licencia_inicio` y `compras_plan.licencia_vence`, para que el comprador descargue su recibo sin leer `licencias`, tabla reservada al operador por RLS). **Pendiente de aplicar en Supabase** con `docs/staging_upgrade_c7f1a3b9d425.sql`; hasta entonces `/readyz` responderá 503 (la guarda de head funciona así a propósito). La migración incluye backfill: las compras ya activadas recuperan su período desde la licencia enlazada.
 
 ## Rol de runtime y migraciones
 

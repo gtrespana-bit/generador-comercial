@@ -1865,6 +1865,13 @@ def migrar(engine):
             ("tiempo_manual_ayudante_horas", "FLOAT"),
             ("tiempo_manual_equipo_horas", "FLOAT"),
         ],
+        "compras_plan": [
+            # Período concedido, copiado de la licencia al activar la compra
+            # (E1-061). Permite al comprador descargar su recibo sin leer
+            # `licencias`, que el RLS reserva al operador.
+            ("licencia_inicio", "DATE"),
+            ("licencia_vence", "DATE"),
+        ],
         "descomposiciones_partida": [
             ("origen", "VARCHAR(20) DEFAULT 'manual'"),
         ],
@@ -2390,6 +2397,18 @@ class CompraPlan(TenantMixin, Base):
     licencia_id = Column(
         Integer, ForeignKey("licencias.id", ondelete="SET NULL"), nullable=True
     )
+    #: Período de acceso concedido, copiado de la licencia al activar.
+    #:
+    #: Es una desnormalización deliberada. ``licencias`` está protegida por
+    #: RLS de operador: la sesión del cliente no obtiene ni una fila, así que
+    #: sin estas dos fechas el comprador no podría montar su propio recibo
+    #: (tendría que pedírselo al titular). Copiarlas aquí —tabla tenant que el
+    #: cliente sí lee— le da el comprobante sin abrir ni un resquicio en el
+    #: aislamiento. Además congela lo que se compró: si la licencia se cancela
+    #: o se reajusta después, el recibo sigue describiendo el cobro real.
+    licencia_inicio = Column(Date, nullable=True)
+    #: Último día de acceso concedido, inclusive.
+    licencia_vence = Column(Date, nullable=True)
     revisado_por_email = Column(String(254), nullable=False, default="")
     revisado_at = Column(DateTime, nullable=True)
 

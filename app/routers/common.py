@@ -144,7 +144,11 @@ from ..services.licencias import (
     resumen_organizaciones,
     totales,
 )
-from ..services.recibo_licencia import generar_recibo_licencia_pdf, numero_recibo
+from ..services.recibo_licencia import (
+    generar_recibo_licencia_pdf,
+    licencia_de_compra,
+    numero_recibo,
+)
 from ..services.propuestas import (
     DURACIONES_ENLACE,
     GestionEnlacePropuestaError,

@@ -274,7 +274,7 @@ def activar_compra_web(
     from ..services.compras import GestionCompraError, activar_compra
 
     try:
-        _compra, licencia = activar_compra(
+        compra, licencia = activar_compra(
             db,
             compra_id=compra_id,
             operador_email=str(db.info.get("auth_email") or ""),
@@ -287,10 +287,85 @@ def activar_compra_web(
         db.rollback()
         log.error("Error activando compra #%s:\n%s", compra_id, traceback.format_exc())
         raise
+
+    # Aviso al comprador (no bloqueante): la licencia ya está concedida y
+    # confirmada. Un fallo de correo no puede deshacer una activación ni
+    # devolver un error al operador, que ya hizo su parte; se anota en el
+    # mensaje para que sepa si tiene que escribir a mano.
+    aviso = _avisar_activacion_al_cliente(db, compra, licencia)
     return _redirect(
         "/admin/compras",
-        msg=f"Compra #{compra_id} activada · licencia #{licencia.id} concedida.",
+        msg=(
+            f"Compra #{compra_id} activada · licencia #{licencia.id} concedida. "
+            f"{aviso}"
+        ),
     )
+
+
+def _avisar_activacion_al_cliente(db: Session, compra, licencia) -> str:
+    """Envía al comprador el aviso de plan activo con su recibo adjunto.
+
+    Devuelve una frase corta para el mensaje del panel. Nunca lanza: el correo
+    es una cortesía sobre una activación que ya está hecha, y dejar al
+    operador con un 500 tras haber concedido la licencia sería mucho peor que
+    un aviso no entregado.
+    """
+    from ..datos_pago import METODOS_PAGO, PLANES
+    from ..services.email import (
+        EmailNotConfigured,
+        EmailSendError,
+        EmailValidationError,
+        enviar_activacion_plan_por_email,
+    )
+
+    destinatario = str(getattr(compra, "creada_por_email", "") or "").strip()
+    if not destinatario:
+        return "La compra no guardó email del comprador: avísale tú."
+
+    organizacion = licencia.organizacion or db.get(
+        Organizacion, compra.organizacion_id
+    )
+    plan_nombre = str(PLANES.get(compra.plan, {}).get("nombre") or "Tu plan")
+    metodo_nombre = str(METODOS_PAGO.get(compra.metodo_pago, {}).get("nombre") or "")
+
+    # El recibo es opcional: si no se puede generar, el aviso sale igual.
+    recibo_pdf = b""
+    recibo_nombre = "recibo.pdf"
+    try:
+        recibo_pdf = generar_recibo_licencia_pdf(licencia, organizacion).read()
+        recibo_nombre = f"recibo-{numero_recibo(licencia)}.pdf"
+    except Exception:
+        log.warning(
+            "Compra #%s activada sin recibo adjunto:\n%s",
+            compra.id,
+            traceback.format_exc(),
+        )
+
+    try:
+        enviar_activacion_plan_por_email(
+            email=destinatario,
+            organizacion_nombre=organizacion.nombre if organizacion else "",
+            plan_nombre=plan_nombre,
+            importe_texto=fmt_monto(compra.importe, compra.moneda or "USD"),
+            metodo_nombre=metodo_nombre,
+            inicio=licencia.inicio,
+            vence=licencia.vence,
+            recibo_pdf=recibo_pdf,
+            recibo_nombre=recibo_nombre,
+        )
+    except EmailNotConfigured:
+        return f"Correo no configurado: avisa tú a {destinatario}."
+    except (EmailValidationError, EmailSendError) as exc:
+        log.warning("Aviso de activación no entregado a %s (%s).", destinatario, exc)
+        return f"No se pudo avisar a {destinatario}: escríbele tú."
+    except Exception:
+        log.error(
+            "Error inesperado avisando la activación de la compra #%s:\n%s",
+            compra.id,
+            traceback.format_exc(),
+        )
+        return f"No se pudo avisar a {destinatario}: escríbele tú."
+    return f"Avisado {destinatario} con su recibo."
 
 
 @router.post("/admin/compras/{compra_id}/rechazar", include_in_schema=False)

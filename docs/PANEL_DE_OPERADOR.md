@@ -294,3 +294,40 @@ nombres para administrar licencias; los datos de negocio siguen aislados.
 el camino real de `get_db`, pantalla de suspensión, recibo –válido, numerado
 y solo de pago–, avisos –destinatarios, constancia, deduplicación, fallos– y
 guardas de las funciones SQL). Suite completa: **391 passed, 5 skipped**.
+
+---
+
+## 7. Post-venta al cliente (18/08/2026): aviso de activación y recibo propio
+
+Tras verificar en staging el flujo de compra con cobro manual, se cerró lo que
+faltaba **del lado del comprador**. Migración: **`c7f1a3b9d425`**
+(`docs/staging_upgrade_c7f1a3b9d425.sql`).
+
+### Al activar una compra, el cliente recibe un correo
+
+`POST /admin/compras/{id}/activar` envía ahora un aviso a la dirección que
+registró la compra: plan, importe, método de cobro, **fecha de inicio y de
+vencimiento** (`dd/mm/aaaa`, también en el asunto) y el **recibo PDF adjunto**.
+Plantillas `app/templates/emails/plan_activado.html` / `.txt`.
+
+El envío es **best-effort y nunca revierte la activación**: si Resend falla o no
+hay credenciales, la licencia queda activa igualmente y el panel muestra el
+motivo, para que el operador pueda avisar por otra vía.
+
+### El cliente puede descargar su recibo
+
+- Ruta del cliente: **`GET /pago/recibo/{compra_id}.pdf`** (attachment,
+  `Cache-Control: no-store`). Solo sirve compras **de su propia organización**,
+  en estado `activa` y con importe > 0.
+- Enlace «Descargar recibo (PDF)» en la tarjeta **«Tu plan»** de
+  `/configuracion`, para la última compra activada con importe.
+- Es **el mismo documento** que genera el enlace del operador
+  (`/admin/licencias/{id}/recibo.pdf`): mismo número `CT-000NNN`, mismo período
+  y el mismo pie de «documento comercial sin validez fiscal».
+
+**Por qué hizo falta una migración.** `licencias` está protegida por RLS de
+operador (`f4c1d8e37a95`): una sesión de cliente no puede leerla ni para su
+propia organización. En vez de abrir esa puerta, la activación **copia el
+período concedido a `compras_plan`** (`licencia_inicio` / `licencia_vence`,
+tabla tenant), y la ruta del cliente arma con esos datos el objeto que espera el
+generador de recibos. El aislamiento del registro de licencias queda intacto.

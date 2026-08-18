@@ -1,0 +1,17 @@
+{{ product_name }} — Tu {{ plan_nombre | lower }} ya está activo
+
+Verificamos tu pago y activamos el acceso de {{ organizacion_nombre }}. Ya puedes entrar y usar {{ product_name }} con todas las funciones.
+
+Plan: {{ plan_nombre }}
+Importe: {{ importe_texto }}
+{% if metodo_nombre %}Método de pago: {{ metodo_nombre }}
+{% endif %}Acceso desde: {{ inicio.strftime('%d/%m/%Y') }}
+Válido hasta: {{ vence.strftime('%d/%m/%Y') }}
+
+El {{ vence.strftime('%d/%m/%Y') }} es el último día incluido. Te avisaremos antes de que termine para que decidas si renuevas.
+
+Adjuntamos el recibo en PDF de este pago. También puedes descargarlo cuando quieras desde Configuración, en la tarjeta «Tu plan».
+
+¿Algo no cuadra? Escríbenos a {{ soporte_email }}.
+
+Recibes este correo porque compraste un plan de {{ product_name }} para {{ organizacion_nombre }}. El recibo adjunto es un comprobante comercial entre las partes y no sustituye una factura fiscal.

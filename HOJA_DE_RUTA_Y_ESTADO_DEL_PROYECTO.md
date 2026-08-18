@@ -1684,3 +1684,36 @@ Guía de uso y protección: `docs/PANEL_DE_OPERADOR.md`.
 - Avisos de vencimiento por correo (hoy el panel marca el ámbar a 15 días).
 - **Mejora de la interfaz**: por decisión del titular (16/08/2026) el panel se
   queda deliberadamente simple por ahora; se mejorará más adelante.
+
+## Actualización 18/08/2026 — compra real verificada en staging y post-venta al cliente
+
+**Ensayo del flujo de compra real en staging: SUPERADO.** El titular
+recorrió en staging el flujo de compra real con cobro manual (E1-059 sobre la
+base de E1-060): `/pago` → checkout con método de pago y comprobante adjunto →
+compra `pendiente` → **activación desde `/admin/compras`** → el cliente ve «Tu
+plan» con fecha de vencimiento y días restantes. El cobro manual queda validado
+de extremo a extremo.
+
+El ensayo dejó dos huecos de post-venta, ya resueltos en este bloque:
+
+1. **Aviso de activación por email al comprador.** `POST /admin/compras/{id}/activar`
+   envía ahora `enviar_activacion_plan_por_email(...)` (plantillas
+   `app/templates/emails/plan_activado.html` / `.txt`) con plan, importe, método
+   de cobro, **inicio y vencimiento en `dd/mm/aaaa`** (también en el asunto) y el
+   **recibo PDF adjunto**. El envío es best-effort: si Resend falla, la licencia
+   sigue activa y el operador ve el error en el panel.
+2. **Recibo PDF descargable por el cliente.** Nueva ruta
+   `GET /pago/recibo/{compra_id}.pdf` (attachment, `Cache-Control: no-store`) y
+   enlace «Descargar recibo (PDF)» en la tarjeta «Tu plan» de `/configuracion`.
+   Como `licencias` solo es legible por sesiones de operador (RLS
+   `f4c1d8e37a95`), la migración **`c7f1a3b9d425`** copia el período concedido a
+   `compras_plan` (`licencia_inicio` / `licencia_vence`, con backfill) y la ruta
+   del cliente reutiliza el mismo generador de `app/services/recibo_licencia.py`.
+
+Con esto se cierra el punto «Recibo en PDF» que E1-060 dejaba pendiente a la
+espera de E1-059. Suite: **568 passed, 6 skipped**.
+
+**Operativo pendiente:** aplicar `docs/staging_upgrade_c7f1a3b9d425.sql` en
+Supabase y desplegar (`/readyz` responde 503 hasta entonces, por diseño).
+**Decisión de negocio pendiente:** activar `COTIZAT_EXIGIR_LICENCIA=true` (corte
+automático al vencer), ya implementado pero no encendido.

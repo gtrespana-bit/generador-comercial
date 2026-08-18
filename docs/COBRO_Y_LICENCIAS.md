@@ -153,3 +153,13 @@ Por eso conviene abordarlo **como su propio bloque**, no de pasada.
 El registro interno hacía falta se cobrase como se cobrase; con la decisión de
 cobro manual tomada, las tres piezas que esperaban (recibo, corte y avisos)
 quedaron construidas en la misma sesión.
+
+**Actualización 18/08/2026.** El titular ensayó el circuito completo en staging
+(compra con comprobante → activación desde `/admin/compras` → plan visible) y lo
+dio por bueno. Se cerró después el lado del comprador, que era lo único
+realmente «manual» que quedaba: al activar la compra el cliente **recibe un
+correo** con la fecha de vencimiento y el **recibo PDF adjunto**, y puede
+volver a descargarlo cuando quiera desde `/configuracion`
+(`GET /pago/recibo/{compra_id}.pdf`, migración `c7f1a3b9d425`). Detalles en
+`docs/PANEL_DE_OPERADOR.md` §7. Sigue sin haber renovación automática: eso llega
+con Stripe.
