@@ -15,7 +15,7 @@ from sqlalchemy.pool import StaticPool
 
 from app.database import Base, get_db
 from app.main import app
-from app.models import CompraPlan, Licencia, Membresia, Organizacion, Usuario
+from app.models import CompraPlan, Configuracion, Licencia, Membresia, Organizacion, Usuario
 from app.services.compras import (
     GestionCompraError,
     activar_compra,
@@ -287,7 +287,7 @@ def test_registrar_compra_con_comprobante(entorno, monkeypatch, tmp_path):
                         "fecha_pago": "2026-08-18",
                         "nombre_titular": "Dueña",
                     },
-                    files={"comprobante": ("recibo.png", _png_minimo(), "image/png")},
+                    files={"comprobante_pago_movil": ("recibo.png", _png_minimo(), "image/png")},
                     follow_redirects=False,
                 )
             assert r.status_code == 303
@@ -330,6 +330,129 @@ def test_registrar_compra_sin_comprobante_devuelve_error(entorno, monkeypatch, t
         finally:
             app.dependency_overrides.pop(get_db, None)
             reset_storage_backend_cache()
+
+
+def test_registrar_compra_ignora_archivos_de_otros_metodos(entorno, monkeypatch, tmp_path):
+    """Cada método publica su propio campo de archivo; el servidor lee solo el
+    del método elegido.
+
+    Regresión del bug en que los cuatro paneles compartían ``name="comprobante"``:
+    el navegador enviaba una parte vacía por método y el archivo elegido podía
+    perderse, rechazando la compra con «Adjunta el comprobante...».
+    """
+    Session, ids, _rol = entorno
+    monkeypatch.setenv("COTIZAT_STORAGE_BACKEND", "local")
+    monkeypatch.setenv("COTIZAT_STORAGE_DIR", str(tmp_path / "storage"))
+    from app.storage import reset_storage_backend_cache
+
+    reset_storage_backend_cache()
+    with Session() as db:
+        db.info["organizacion_id"] = ids[0]
+        db.info["usuario_id"] = ids[1]
+        db.info["rol_membresia"] = "propietario"
+        app.dependency_overrides[get_db] = _override(db, ids)
+        try:
+            with _cliente() as client:
+                r = client.post(
+                    "/pago/comprar",
+                    data={
+                        "plan": "anual",
+                        "metodo_pago": "usdt",
+                        "wallet_origen": "TX-wallet",
+                        "hash_transaccion": "TX-1",
+                    },
+                    files={
+                        # Los paneles no elegidos llegan vacíos (como haría un
+                        # navegador si no estuvieran deshabilitados).
+                        "comprobante_pago_movil": ("", b"", "application/octet-stream"),
+                        "comprobante_binance": ("", b"", "application/octet-stream"),
+                        "comprobante_kontigo": ("", b"", "application/octet-stream"),
+                        "comprobante_usdt": ("recibo.png", _png_minimo(), "image/png"),
+                    },
+                    follow_redirects=False,
+                )
+            assert r.status_code == 303
+            assert "/pago/confirmacion?id=" in r.headers["location"]
+        finally:
+            app.dependency_overrides.pop(get_db, None)
+            reset_storage_backend_cache()
+
+    with Session() as db:
+        compra = db.query(CompraPlan).order_by(CompraPlan.id.desc()).first()
+        assert compra is not None
+        assert compra.estado == "pendiente"
+        assert compra.metodo_pago == "usdt"
+        assert compra.comprobante_reference
+        assert compra.comprobante_nombre == "recibo.png"
+
+
+def test_elegir_plan_guarda_cookie_y_redirige():
+    """«Contratar plan» recuerda la intención antes de exigir sesión/empresa."""
+    with _cliente() as client:
+        r = client.get("/pago/elegir?plan=anual", follow_redirects=False)
+    assert r.status_code == 303
+    assert r.headers["location"] == "/pago/comprar?plan=anual"
+    assert client.cookies.get("cotizat_plan_pendiente") == "anual"
+
+
+def test_elegir_plan_desconocido_redirige_a_pago():
+    with _cliente() as client:
+        r = client.get("/pago/elegir?plan=vitalicio", follow_redirects=False)
+    assert r.status_code == 303
+    assert r.headers["location"] == "/pago"
+
+
+def test_descartar_plan_limpia_cookie():
+    with _cliente() as client:
+        # Igual que el usuario real: elige el plan (guarda la cookie) y luego
+        # descarta desde el panel.
+        client.get("/pago/elegir?plan=anual", follow_redirects=False)
+        assert client.cookies.get("cotizat_plan_pendiente") == "anual"
+        r = client.post("/pago/descartar", follow_redirects=False)
+    assert r.status_code == 303
+    assert r.headers["location"] == "/inicio"
+    assert client.cookies.get("cotizat_plan_pendiente") is None
+
+
+def test_inicio_muestra_retomar_compra_con_cookie(entorno):
+    """Tras crear cuenta y empresa, el panel ofrece retomar la compra elegida."""
+    Session, ids, _rol = entorno
+    with Session() as db:
+        cfg = db.query(Configuracion).first()
+        cfg.onboarding_completado = True
+        db.commit()
+    with _cliente() as client:
+        client.cookies.set("cotizat_plan_pendiente", "anual")
+        r = client.get("/inicio")
+    assert r.status_code == 200
+    assert "Retoma tu compra" in r.text
+    assert "Plan anual" in r.text
+    assert "Continuar compra" in r.text
+    assert "/pago/comprar?plan=anual" in r.text
+
+
+def test_bienvenida_muestra_compra_pendiente(entorno):
+    """Nada más crear la organización, la bienvenida avisa de la compra pendiente."""
+    Session, ids, _rol = entorno
+    # El fixture deja el onboarding sin completar, así que /bienvenida renderiza.
+    with _cliente() as client:
+        client.cookies.set("cotizat_plan_pendiente", "mensual")
+        r = client.get("/bienvenida")
+    assert r.status_code == 200
+    assert "compra pendiente" in r.text
+    assert "Plan mensual" in r.text
+
+
+def test_inicio_sin_cookie_no_muestra_retomar_compra(entorno):
+    Session, ids, _rol = entorno
+    with Session() as db:
+        cfg = db.query(Configuracion).first()
+        cfg.onboarding_completado = True
+        db.commit()
+    with _cliente() as client:
+        r = client.get("/inicio")
+    assert r.status_code == 200
+    assert "Retoma tu compra" not in r.text
 
 
 def test_confirmacion_muestra_resumen(entorno, monkeypatch, tmp_path):

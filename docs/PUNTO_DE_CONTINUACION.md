@@ -1,12 +1,101 @@
 # Punto exacto de continuación
 
-Fecha de corte: **18/08/2026, hotfix de `/inicio` 500 + cierre del bloque checkout/admin/organización (PR #33 abierto)** (America/Caracas).
+Fecha de corte: **18/08/2026, cierre del flujo de compra (retoma tras el alta + fix del comprobante)** (America/Caracas).
 
 Este documento retoma el trabajo sin depender del historial del chat. Describe
 **dónde quedó exactamente** el trabajo y **qué sigue**, en ese orden. Léelo
 junto con `basedatos_partidas/EMPEZAR_AQUI.md` (reglas y progreso del catálogo),
 `basedatos_partidas/INVENTARIO.md` (cifras y contraste de precios) y
 `PLAN_DE_COMERCIALIZACION_Y_EVOLUCION_SAAS.md` (§1.9 y §11).
+
+---
+
+## ✅ Cierre de sesión — Flujo de compra: retoma tras el alta + fix del comprobante (18/08/2026)
+
+Rama fija de la sesión: `arena/01a01580-generador-comercial`, basada en `main`
+(`19231e3`, merge del PR #36). **PR #37 creado hacia `main`** (confirmar con
+`gh pr view 37`; si ya está fusionado, `main` contiene el código).
+
+El bloque resuelve los dos problemas observados al ensayar el **punto 1** de la
+matriz (flujo de compra real en staging, E1-059 cobro manual):
+
+### 1. Bug: la compra siempre fallaba con «Adjunta el comprobante de pago para continuar»
+
+**Causa raíz.** El checkout (`/pago/comprar`) renderiza un panel por método de
+pago (Pago móvil, Binance, Kontigo, USDT) y los **cuatro campos de archivo
+compartían `name="comprobante"`**. El navegador enviaba una parte por cada
+método (tres vacías y una con el archivo real); el enlace del `UploadFile`
+resultaba ambiguo y, salvo con el último método, el servidor recibía la parte
+vacía y rechazaba la compra aunque se hubiera adjuntado el recibo. Lo mismo
+afectaba a los campos de verificación con nombre repetido (`fecha_pago`,
+`nombre_titular`, `hash_transaccion`, `numero_operacion`…).
+
+**Corrección.**
+- Cada método publica su archivo con nombre único (`comprobante_<clave>`) y
+  `registrar_compra` lee solo el campo `comprobante_{metodo_pago}` del método
+  elegido (via `request.form()`), no un parámetro `UploadFile` ambiguo.
+- `app/static/js/pago-metodo.js` ahora **deshabilita** (`disabled`) los paneles
+  no elegidos además de ocultarlos: un input `disabled` no se envía, así que el
+  formulario manda únicamente los campos y el archivo del método activo.
+
+### 2. Flujo: la intención de compra se perdía tras el registro
+
+**Problema.** «Contratar plan» sin cuenta llevaba al login/registro; la
+confirmación de email y el alta de la organización **perdían la intención de
+compra**, y al entrar por primera vez no había forma clara de retomarla.
+
+**Corrección (retoma de compra, cookie + avisos).**
+- Nuevo enlace `Contratar → GET /pago/elegir?plan=…` (en `pago.html`) que
+  guarda el plan elegido en la cookie **`cotizat_plan_pendiente`** (HttpOnly,
+  7 días) **antes** de exigir sesión, de modo que sobrevive a registro +
+  confirmación de email + alta de empresa.
+- `GET /pago/comprar` y la confirmación siguen funcionando igual; al registrar
+  la compra se limpia la cookie.
+- **Panel `/inicio`**: si hay cookie de intención y la organización **no tiene
+  licencia activa**, aparece el aviso «Retoma tu compra del Plan …» con botón
+  **Continuar compra** (`/pago/comprar?plan=…`) y **Ahora no**
+  (`POST /pago/descartar`, limpia la cookie). Render en `index.html` + estilos
+  `.retomar-compra` en `style.css`.
+- **`/bienvenida` (onboarding)**: aviso equivalente «Tienes una compra
+  pendiente…» nada más crear la organización, para que la compra no quede
+  olvidada durante la configuración inicial.
+
+### Cambios
+
+- `app/datos_pago.py`: constante `PLAN_PENDIENTE_COOKIE`.
+- `app/routers/pagos.py`: `GET /pago/elegir`, `POST /pago/descartar`, lectura
+  del comprobante por método y limpieza de la cookie al confirmar.
+- `app/routers/inicio.py` y `app/routers/auth.py`: exponen la intención al
+  dashboard y a la bienvenida.
+- `app/templates/`: `pago.html`, `pago/comprar.html`, `index.html`,
+  `onboarding.html`.
+- `app/static/`: `pago-metodo.js` (deshabilitar paneles inactivos),
+  `css/style.css` (`.retomar-compra`).
+- `tests/test_compras_plan.py`: 7 regresiones nuevas (comprobante del método
+  correcto aunque lleguen los demás vacíos, `/pago/elegir` guarda cookie,
+  `/pago/descartar` la limpia, y los avisos en `/inicio` y `/bienvenida`).
+
+### Estado y verificación
+
+- Suite completa: **557 passed, 6 skipped**. `compileall`, `node --check`,
+  72 plantillas Jinja, `verificar_lock`, auditoría de datos sensibles y
+  `git diff --check` en verde. Sin migraciones nuevas (ningún cambio de esquema).
+
+### Pendientes / candidatos siguientes
+
+1. **Ensayar en staging el flujo completo** con una organización de prueba:
+   elegir plan (sin sesión) → registrarse → confirmar email → crear empresa →
+   ver el aviso de retoma → comprar con comprobante → activar desde `/admin` →
+   el cliente ve «Tu plan» con fecha y días.
+2. Decisión del titular: **recibo PDF de la compra para el cliente** (existe
+   `recibo_licencia.py` para el operador; falta el equivalente de cliente) y
+   **corte automático** (`COTIZAT_EXIGIR_LICENCIA=true`), pendientes de la
+   sección anterior.
+3. Si se quiere acortar el «largo y tedioso» del alta (registro → confirmación
+   → organización completa) antes de pagar: es una decisión de producto mayor
+   (capturar menos datos y completar la empresa después). No se tocó.
+4. Catálogo a **5.000 partidas** y cierre de los **~196 precios provisionales
+   B2B** (requieren cotización del titular).
 
 ---
 

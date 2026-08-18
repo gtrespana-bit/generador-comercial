@@ -773,10 +773,24 @@ def bienvenida(request: Request, db: Session = Depends(get_db)):
     cfg = _config(db)
     if cfg.onboarding_completado:
         return _redirect("/inicio")
+    # Si la persona venía a comprar un plan antes de crear su cuenta/empresa,
+    # se le recuerda que retomará la compra al terminar esta configuración.
+    compra_pendiente_ficha = None
+    from ..datos_pago import PLANES, PLAN_PENDIENTE_COOKIE, plan_info
+
+    plan_recordado = request.cookies.get(PLAN_PENDIENTE_COOKIE, "").strip()
+    if plan_recordado in PLANES:
+        resumen = getattr(request.state, "licencia_resumen", None) or {}
+        if not resumen.get("activo"):
+            compra_pendiente_ficha = plan_info(plan_recordado)
     return TEMPLATES.TemplateResponse(
         request,
         "onboarding.html",
-        {"cfg": cfg, "error": request.query_params.get("error", "")},
+        {
+            "cfg": cfg,
+            "error": request.query_params.get("error", ""),
+            "compra_pendiente_ficha": compra_pendiente_ficha,
+        },
     )
 
 

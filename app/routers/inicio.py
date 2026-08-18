@@ -68,6 +68,21 @@ def inicio(request: Request, db: Session = Depends(get_db)):
         if cfg.onboarding_modo in {"demo", "limpio"}
         else None
     )
+
+    # Intención de compra retomable: si la persona eligió un plan antes de
+    # crear su cuenta/organización y todavía no tiene licencia activa, se le
+    # ofrece retomar el checkout desde el panel en vez de perder la compra.
+    compra_pendiente = ""
+    compra_pendiente_ficha = None
+    from ..datos_pago import PLANES, PLAN_PENDIENTE_COOKIE, plan_info
+
+    plan_recordado = request.cookies.get(PLAN_PENDIENTE_COOKIE, "").strip()
+    if plan_recordado in PLANES:
+        resumen = getattr(request.state, "licencia_resumen", None) or {}
+        if not resumen.get("activo"):
+            compra_pendiente = plan_recordado
+            compra_pendiente_ficha = plan_info(plan_recordado)
+
     return TEMPLATES.TemplateResponse(
         request,
         "index.html",
@@ -87,6 +102,8 @@ def inicio(request: Request, db: Session = Depends(get_db)):
             "proyectos_activos": proyectos_activos,
             "analisis_precios": analisis_precios,
             "recorrido_inicial": recorrido_inicial,
+            "compra_pendiente": compra_pendiente,
+            "compra_pendiente_ficha": compra_pendiente_ficha,
         },
     )
 
