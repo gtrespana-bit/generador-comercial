@@ -196,7 +196,8 @@ Head esperado por el runtime: **`f9d4c2a7e5b3`** (`EXPECTED_ALEMBIC_HEAD` en
   de licencias: renovar con días por delante suma el tiempo (4 días + 1 mes →
   ~34 días, no 4). `organization_license_info` calcula el encadenado con una
   CTE recursiva; `app/services/licencias.py` y `panel_admin.py` hacen lo mismo
-  en SQLite. Script: `docs/staging_upgrade_d4e2f6a8b0c1.sql`.
+  en SQLite. **Aplicada en Supabase el 18/08/2026** con
+  `docs/staging_upgrade_d4e2f6a8b0c1.sql` (confirmado por el titular).
   Head esperado por el runtime: **`d4e2f6a8b0c1`**.
 
 ### Estado y verificación

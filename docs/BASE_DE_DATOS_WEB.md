@@ -55,6 +55,8 @@ La revisión `9bca2ad1f6e4`, que añade el vínculo con Supabase Auth, también 
 
 **Actualización 16/08/2026:** el head actual de producción es `f4c1d8e37a95` (E1-060, tabla `licencias` de operador con RLS propia; aplicada con `docs/staging_upgrade_f4c1d8e37a95.sql`). `/readyz` real responde `"alembic": "head:f4c1d8e37a95"` con `ok: true`. Ver `docs/PANEL_DE_OPERADOR.md`.
 
+**Actualización 18/08/2026:** el head actual de producción es `d4e2f6a8b0c1` (el resumen del plan suma las licencias encadenadas; aplicada con `docs/staging_upgrade_d4e2f6a8b0c1.sql`). `/readyz` responde `"alembic": "head:d4e2f6a8b0c1"` con `ok: true` tras el despliegue.
+
 ## Rol de runtime y migraciones
 
 `c93e7a4d20f1` crea `cotizat_app` como rol grupal `NOLOGIN`, `NOSUPERUSER` y `NOBYPASSRLS`; deliberadamente no contiene contraseña. El login de runtime debe crearse fuera de Git, con una contraseña generada en el gestor de secretos del proveedor, y recibir únicamente:
