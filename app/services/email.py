@@ -562,14 +562,16 @@ def enviar_solicitud_demo_por_email(
     telefono: str = "",
     presupuestos_mes: str = "",
     mensaje: str = "",
+    destino_override: str = "",
 ) -> str:
     """Notifica al equipo de soporte sobre una nueva solicitud de demo.
 
     El formulario de la landing pública es la única fuente. Se envía a
-    ``SUPPORT_EMAIL`` (configurable vía ``COTIZAT_SUPPORT_EMAIL``). Si el
-    correo no está configurado, la solicitud se pierde silenciosamente; no
-    es bloqueante porque la landing siempre puede caer en un mailto como
-    respaldo.
+    ``SUPPORT_EMAIL`` (configurable vía ``COTIZAT_SUPPORT_EMAIL``); un
+    ``destino_override`` permite redirigirla a otra dirección (lo usa la
+    página de prueba de correos del panel de operador). Si el correo no está
+    configurado, la solicitud se pierde silenciosamente; no es bloqueante
+    porque la landing siempre puede caer en un mailto como respaldo.
 
     Devuelve el id de Resend o ``""`` si no se pudo enviar.
     """
@@ -591,7 +593,7 @@ def enviar_solicitud_demo_por_email(
     if len(mensaje) > 5000:
         raise EmailValidationError("El mensaje es demasiado largo.")
 
-    destino = _env("COTIZAT_DEMO_DESTINO") or SUPPORT_EMAIL
+    destino = str(destino_override or "").strip() or _env("COTIZAT_DEMO_DESTINO") or SUPPORT_EMAIL
     if not destino:
         raise EmailNotConfigured("No hay dirección de destino para la solicitud de demo.")
 
@@ -656,17 +658,19 @@ def enviar_compra_por_email(
     verificacion: dict,
     comprobante_nombre: str,
     comprobante_bytes: bytes,
+    destino_override: str = "",
 ) -> str:
     """Notifica al titular una compra nueva con su comprobante adjunto.
 
     Devuelve el id de Resend o ``""`` si el correo no está configurado o el
     envío falla (la compra ya está guardada en la base; el email es el aviso,
     no la fuente de verdad). El operador verá la misma información en el
-    panel ``/admin/compras``.
+    panel ``/admin/compras``. Un ``destino_override`` permite redirigirla a
+    otra dirección (lo usa la página de prueba de correos del panel).
     """
     from ..branding import PRODUCT_NAME, SUPPORT_EMAIL
 
-    destino = _env("COTIZAT_DEMO_DESTINO") or SUPPORT_EMAIL
+    destino = str(destino_override or "").strip() or _env("COTIZAT_DEMO_DESTINO") or SUPPORT_EMAIL
     if not destino:
         raise EmailNotConfigured(
             "No hay dirección de destino para notificar la compra."

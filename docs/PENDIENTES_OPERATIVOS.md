@@ -319,3 +319,40 @@ Al propietario y a los administradores activos de cada organización (los mismos
 destinatarios que el aviso manual). El correo enlaza a `/pago` para renovar en
 un clic y deja `Reply-To: soporte@cotizat.online`, de modo que responder llega
 directamente al buzón de Zoho.
+
+---
+
+## 10. Emails de Supabase Auth (alta y recuperación)
+
+Además de los 8 correos transaccionales que envía CotizaT (ya unificados bajo
+el mismo diseño premium, revisables en `/admin/emails`), hay **dos correos que
+los envía Supabase directamente**: la **confirmación de alta** (el enlace que
+verifica el email al registrarse) y la **recuperación de contraseña**. No son
+plantillas de CotizaT: son las plantillas propias de Supabase Auth.
+
+### Recomendación: mantenerlos en Supabase
+
+Sí, déjalos donde están. Son correos del ciclo de vida de la autenticación:
+Supabase genera el enlace firmado con el token, y recrearlos en CotizaT
+significaría reimplementar la generación de tokens y acoplar la app a algo que
+Supabase ya hace bien. No hay beneficio y sí riesgo real de romper el alta o la
+recuperación.
+
+El remitente `noreply@` es correcto para estos dos: son correos de un solo uso
+que no deben responderse.
+
+### Qué hay del diseño
+
+Hoy usan la plantilla por defecto de Supabase (genérica, no sigue la identidad
+de CotizaT). Se pueden **reestilizar a mano** para que coincidan con el verde y
+el tono del resto, pegando HTML propio en:
+
+`Supabase → Authentication → Email Templates`
+
+Las plantillas que importan son **Confirm signup** y **Reset password**. Usan
+placeholders de Supabase (`{{ .ConfirmationURL }}`, `{{ .SiteURL }}`,
+`{{ .Token }}`, `{{ .Email }}`, `{{ .Data }}`), que hay que conservar tal cual.
+
+Esto es configuración de panel, **no código del repositorio**. Si se quiere,
+se preparan los dos fragmentos HTML listos para pegar (con el diseño de
+CotizaT) y se guardan en `docs/` como referencia. Decisión del titular.

@@ -14,6 +14,48 @@ junto con `basedatos_partidas/EMPEZAR_AQUI.md` (reglas y progreso del catálogo)
 
 ---
 
+## ✅ Cierre de sesión — Panel «Correos» + familia de emails unificada (18/08/2026, noche)
+
+Rama fija de la sesión: `arena/01a0165a-generador-comercial` (PR #39, sin
+fusionar). Dos cosas:
+
+### 1. Página «Correos» en el panel (`/admin/emails`)
+
+El operador ya no necesita un script de terminal para revisar los correos:
+desde el panel puede **enviar cualquiera de los 8 correos** a un buzón (el suyo
+por omisión) y verlo tal cual llega en un cliente real. Cuelga de
+`get_operator_db` (misma puerta que el resto del panel), valida el destino y
+reporta fallos de Resend como mensaje, no como 500.
+
+- **Fuente de verdad compartida**: `app/services/correos_prueba.py` describe
+  cada correo (slug, título, descripción, grupo cliente/interno, datos de
+  ejemplo y función de envío). La usan **el panel** y **el CLI**
+  (`tools/enviar_prueba_emails.py`), así que no pueden divergir.
+- Los correos internos (`compra`, `demo`) que en producción van fijos a
+  soporte aceptan ahora un `destino_override` para poder probarlos a cualquier
+  dirección.
+- Suite: **658 passed, 6 skipped** (7 pruebas nuevas en
+  `tests/test_panel_emails.py`).
+
+### 2. Los 8 correos ya comparten el mismo diseño premium
+
+Se creó `app/templates/emails/_base.html` (cabecera verde con gradiente,
+wordmark, píldora y pie) y los 8 correos heredan de él: mismo «parecido de
+familia» garantizado por construcción, no por copiar-pegar. Incluye el
+recordatorio, el aviso de vencimiento, el plan activado, la invitación, el
+presupuesto (white-label con el nombre de la empresa), la respuesta de
+propuesta, la compra y la demo.
+
+### Lo siguiente en el producto
+
+1. Fusionar el **PR #39** (recordatorio + identidad + familia de emails +
+   panel «Correos») y verificar el cron en Vercel.
+2. Decidir sobre los **emails de Supabase Auth** (confirmación de alta y
+   recuperación de contraseña): hoy los envía Supabase con su plantilla propia.
+   Ver `docs/PENDIENTES_OPERATIVOS.md` §10 para la recomendación.
+
+---
+
 ## ✅ Cierre de sesión — Recordatorio de vencimiento automático (cron) + identidad (18/08/2026, noche)
 
 Rama fija de la sesión: `arena/01a0165a-generador-comercial`, basada en `main`
