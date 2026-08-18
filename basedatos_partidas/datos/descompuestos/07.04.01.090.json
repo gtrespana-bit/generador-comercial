@@ -1,0 +1,48 @@
+{
+  "codigo": "07.04.01.090",
+  "ambito": "reforma",
+  "capitulo": "07",
+  "subcapitulo": "04",
+  "unidad": "m2",
+  "titulo": "Cerrajera de protección para ventana.",
+  "descripcion": "Suministro y colocación de cerrajera de protección para ventana, con anclaje a muro. Incluye la fabricación, el montaje y el anclaje. Medido por metro cuadrado instalado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-TUBO-ACERO",
+      "rendimiento": 12.0
+    },
+    {
+      "ref": "MT-ELECTRODO",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MT-PINT-ANTICORR",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MT-PERNO-ANCLA",
+      "rendimiento": 6.0
+    },
+    {
+      "ref": "MQ-SOLDADORA",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.28
+    },
+    {
+      "ref": "MO-OF1-SOLD",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.6
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

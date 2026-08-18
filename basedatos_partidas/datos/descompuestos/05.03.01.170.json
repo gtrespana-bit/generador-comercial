@@ -1,0 +1,36 @@
+{
+  "codigo": "05.03.01.170",
+  "ambito": "reforma",
+  "capitulo": "05",
+  "subcapitulo": "03",
+  "unidad": "m3",
+  "titulo": "Concreto con aditivo plastificante.",
+  "descripcion": "Concreto estructural con aditivo plastificante. Incluye el vaciado con el aditivo. Medido por metro cúbico ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONC-250",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-ADITIVO",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MQ-VIBRADOR",
+      "rendimiento": 0.22
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.85
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.6
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

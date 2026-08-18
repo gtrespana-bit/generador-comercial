@@ -384,13 +384,17 @@
       "unidad": "ud",
       "descripcion": "Llave de paso de PPR de 20 mm, de esfera, para empotrar.",
       "precio": 4.5,
-      "estado": "provisional"
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: llave de paso esférica 1/2 3-7,50; Donsen 20mm polifusión 5,40-6,01; Griven esfera 1/2 7,50-8,64. Conversión: Mediana del rango 3-7,50 ≈ 5 USD; 4,5 USD queda en la banda baja-media. Rango observado: Llave de paso esfera 1/2 para agua 3-7,50 USD (Donsen 5,40-6,01; Griven 7,50; Aksi 3; básicas 2-5).",
+      "nota": "Confirmado: 4,5 USD es razonable para una llave de paso de agua de marca media."
     },
     "MT-PLO-ABASTO": {
       "unidad": "ud",
       "descripcion": "Tubo de abasto flexible con sus racores y accesorios de conexión a aparato.",
       "precio": 3.2,
-      "estado": "provisional"
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: canilla manguera flexible metálica monomando 1/2x3/8 5; abasto flexible 2-4. Conversión: Canilla/manguera flexible metálica monomando 1/2x3/8 = 5 USD; abasto flexible sencillo 2-4 USD. Rango observado: Abasto flexible y canillas flexibles 2-5 USD.",
+      "nota": "Confirmado: 3,2 USD es correcto para un tubo de abasto flexible con racores."
     },
     "MT-PLO-DESAG": {
       "unidad": "ud",
@@ -533,7 +537,9 @@
       "unidad": "ud",
       "descripcion": "Tablero eléctrico provisional de obra con interruptor diferencial y protecciones, amortizado por uso.",
       "precio": 45.0,
-      "estado": "provisional"
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE y EPA: tablero 8 circuitos 25-66; diferencial 2P 25-40A 30mA 16-30. Conversión: Tablero 8 circuitos (40) + diferencial 2P 30mA (28) ≈ 68 USD; el provisional suele ser 4-6 circuitos sin puerta: 45 USD es razonable. Rango observado: Tablero de 8 circuitos 25-66 USD + diferencial 16-30 USD (composición de un tablero provisional con diferencial).",
+      "nota": "Confirmado: el precio cubre caja de obra + diferencial de protección."
     },
     "MT-LAMP-OBRA": {
       "unidad": "ud",
@@ -638,7 +644,9 @@
       "unidad": "kg",
       "descripcion": "Alambre recocido para amarre de acero de refuerzo.",
       "precio": 1.9,
-      "estado": "provisional"
+      "estado": "verificado-mercado",
+      "fuente": "Referencias de alambre recocido C-17 de amarre en ferretería (1,4-1,9 USD/kg). Conversión: Rollo 25 kg ~1,4-1,6 USD/kg; por kilo 1,88 USD. Rango observado: Alambre recocido negro de amarre: 1,4 - 1,9 USD/kg.",
+      "nota": "Confirmado: 1,90 USD/kg es correcto para alambre recocido de amarre de acero."
     },
     "MT-MALLA-ELEC": {
       "unidad": "m2",
@@ -733,14 +741,18 @@
     "MT-ELECTRODO": {
       "unidad": "kg",
       "descripcion": "Electrodo revestido para soldadura estructural por arco eléctrico.",
-      "precio": 4.8,
-      "estado": "provisional"
+      "precio": 5.0,
+      "estado": "verificado-mercado",
+      "fuente": "EPA Venezuela: electrodo 6013 3/32 1kg Lincoln 9,14; MercadoLibre VE: 6013 Metco 4,50/kg, Hoffman 5,00, Weld 6,65-9,00. Conversión: Mediana: Metco 4,50; Hoffman 5,00; Weld 6,65-9,00; EPA Lincoln 9,14. Rango observado: Electrodo 6013: 4,50 - 9,14 USD/kg.",
+      "nota": "4,80 USD/kg quedaba en la banda baja; se adopta 5,00 USD/kg como mediana."
     },
     "MT-PINT-ANTICORR": {
       "unidad": "l",
       "descripcion": "Imprimación anticorrosiva de fondo para estructura metálica.",
-      "precio": 7.2,
-      "estado": "provisional"
+      "precio": 8.0,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: fondo cromato de zinc galón 35-52 (Aya, VP, Colvents); esmalte 3 en 1 anticorrosivo galón Tepuy 30,67-33,71. Conversión: 35 USD/galón ÷ 3,785 l = 9,2 USD/l; 1/4 galón 16-18 USD = 17-19 USD/l. Mediana ~8-9 USD/l. Rango observado: Fondo/imprimación anticorrosiva galón (3,785 l): 30 - 52 USD.",
+      "nota": "7,20 USD/l era algo bajo; se adopta 8,00 USD/l para imprimación anticorrosiva de fondo."
     },
     "MT-MADERA-EST": {
       "unidad": "m3",
@@ -1185,7 +1197,9 @@
       "unidad": "m3",
       "descripcion": "Gravilla lavada de protección para cubiertas impermeabilizadas.",
       "precio": 24.0,
-      "estado": "provisional"
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: piedra picada 3/4 por m3 17-29; piedra picada 3/4 puesto en sitio 25-26. Conversión: Mediana del rango por m3 (17, 23, 25, 26, 28,93, 29). Rango observado: Piedra picada 3/4 por m3 puesto en obra: 17 - 29 USD.",
+      "nota": "Confirmado: 24 USD/m3 es correcto para gravilla/piedra picada lavada."
     },
     "MT-AISL-TERM": {
       "unidad": "m2",
@@ -1306,27 +1320,33 @@
       "unidad": "ud",
       "descripcion": "Válvula de flotante y accesorios de control de nivel para tanque de agua.",
       "precio": 9.5,
-      "estado": "provisional"
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: válvula 1/2 con flotador Exceline 7,04-12,30; 3/4 7,99-10,81; EPA Venezuela: flotante 1/2 14,95. Conversión: Mediana del rango 1/2 y 3/4: 7,99-10,99. Rango observado: Válvula de flotante para tanque: 4 - 12 USD (Exceline 1/2 7,04-12,30; EPA 14,95).",
+      "nota": "Confirmado: 9,50 USD es correcto para válvula de flotante con accesorios de control de nivel."
     },
     "MT-TABLERO-DIST": {
       "unidad": "ud",
       "descripcion": "Tablero de distribución empotrable con barraje, para el número de circuitos de proyecto.",
       "precio": 48.0,
       "estado": "verificado-mercado",
-      "fuente": "Tablero de distribucion empotrable con barraje."
+      "fuente": "EPA Venezuela: tablero 8 circuitos con tapa-puerta 66 USD; electronica.com.ve 36,40; MercadoLibre VE: tablero 8 circuitos 25-55 (Lumistar, Taelinca, Security, Classic Lux). Conversión: Mediana: EPA 66; electronica.com.ve 36,40; MercadoLibre 28-55. Rango observado: 28 - 66 USD el tablero/centro de carga de 8 circuitos.",
+      "nota": "Confirmado: 48 USD queda en la parte media-alta del rango de un tablero de distribución de 8 circuitos."
     },
     "MT-BREAKER": {
       "unidad": "ud",
       "descripcion": "Interruptor termomagnético monopolar o bipolar para protección de circuito.",
       "precio": 7.5,
       "estado": "verificado-mercado",
-      "fuente": "Interruptor termomagnetico monopolar."
+      "fuente": "MercadoLibre VE: breaker 1x20A Andeli 3,10-4,16; 1x16A Chint 3,82; 2x20A Andeli/Chint 6-9,44; 2x25A 7,43; 3x20A 9,37. Conversión: Mediana de un termomagnético residencial (entre monopolar y bipolar): 1P Andeli/Chint 3,10-4,16; 2P Andeli/Chint 6-9. Rango observado: 1P 16-32 A: 3,10-4,16 USD; 2P 20-25 A: 6-9 USD; 3P 20-63 A: 9-15 USD.",
+      "nota": "Confirmado: 7,50 USD es una mediana correcta para un termomagnético monopolar/bipolar de marca media."
     },
     "MT-DIFERENCIAL": {
       "unidad": "ud",
       "descripcion": "Interruptor diferencial de alta sensibilidad para protección de personas.",
-      "precio": 32.0,
-      "estado": "provisional"
+      "precio": 28.0,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: interruptor/disyuntor diferencial 2P 25A y 40A 30mA Steck 29,99-48,99; DYD-25A 16,66; RCCB 2P 63A 16-36,01; Tosun Lux 34,09-37,20. Conversión: Mediana del rango: DYD 25A 16,66; RCCB 2P 63A 16-26,82; Steck SDR22530 29,99; Steck SDR24030 41,64; RCCB 4P 63A 39-47. Rango observado: 16,66 - 48,99 USD el diferencial 2 polos 25-40 A 30 mA (marcas Steck, Tosun, DYD, RCCB genérico).",
+      "nota": "El precio anterior (32 USD) quedaba por encima de la mediana de un diferencial residencial 30 mA. Se adopta 28 USD como mediana representativa de un 2P 25-40 A de marca media."
     },
     "MT-CINTA-LED": {
       "unidad": "m",
@@ -1345,7 +1365,9 @@
       "unidad": "ud",
       "descripcion": "Electrodo de puesta a tierra de cobre con su conector y caja de inspección.",
       "precio": 18.0,
-      "estado": "provisional"
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: barra de tierra copperweld 5/8 1,5m con conector 20 USD. Conversión: Barra copperweld 5/8 1,5 m con conector 20 USD; el recurso incluye caja de registro, por lo que 18 USD queda ligeramente holgado. Rango observado: 20 USD la barra copperweld 5/8 de 1,5 m con conector (MercadoLibre VE).",
+      "nota": "Confirmado: 18 USD es correcto para electrodo + conector (sin incluir la caja completa)."
     },
     "MT-CABLE-DATOS": {
       "unidad": "m",
@@ -1371,8 +1393,10 @@
     "MT-TUB-FRIGO": {
       "unidad": "m",
       "descripcion": "Par de tuberías frigoríficas de cobre aisladas, con cable de interconexión.",
-      "precio": 9.8,
-      "estado": "provisional"
+      "precio": 11.0,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: tubería de cobre flexible 1/4 por metro 4,33; 3/8 por metro 6,33-6,99; rollo 15m 1/4 54,99; rollo 15m 3/8 79,99. Conversión: Par (1/4 + 3/8) aislado con cable = 4,33 + 6,33 + aislamiento y cable ≈ 11 USD/m. Rango observado: Tubería de cobre flexible por metro: 1/4 = 4,33 USD/m; 3/8 = 6,33-6,99 USD/m.",
+      "nota": "El precio anterior (9,80 USD/m) quedaba por debajo de la suma de las dos líneas de cobre; se adopta 11 USD/m para el par aislado con cable de interconexión."
     },
     "MT-SOPORTE-AC": {
       "unidad": "ud",
@@ -1392,13 +1416,17 @@
       "unidad": "m",
       "descripcion": "Tubería de cobre o acero para instalación de gas doméstico, con sus accesorios.",
       "precio": 6.4,
-      "estado": "provisional"
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: tubo de cobre flexible 1/2 por metro 4-16,15; rollo 15m 1/2 111-144,30; tubo HG ASTM A-53 3/4 65,45 por 5,8m. Conversión: El recurso admite cobre o acero: la mezcla justifica 6,4 USD/m (el cobre suelto mediana ~7,7; el acero/galvanizado baja la media). Rango observado: Cobre flexible 1/2 para gas por metro 4-16,15 USD/m; rollo 15 m 111-144 USD (7,4-9,6 USD/m).",
+      "nota": "Confirmado: 6,4 USD/m es coherente para tubería de gas (cobre/acero) con sus accesorios."
     },
     "MT-REGUL-GAS": {
       "unidad": "ud",
       "descripcion": "Regulador de presión, llave de corte y accesorios para instalación de gas.",
       "precio": 24.0,
-      "estado": "provisional"
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: regulador gas doméstico 4-15; llave de paso para gas 1/2 FP 100% bronce 15-25,50. Conversión: Regulador (8) + llave de corte de gas (16) + accesorios (4) ≈ 28 USD. Rango observado: Regulador doméstico 4-15 USD; llave de corte de gas 1/2 en bronce (Fundición Pacífico) 15-25,50 USD; accesorios 3-5 USD.",
+      "nota": "Confirmado: 24 USD cubre regulador + llave de corte de gas (que es de bronce certificado, más cara que una llave de agua) + accesorios."
     },
     "MT-EXTINTOR": {
       "unidad": "ud",
@@ -1424,7 +1452,9 @@
       "unidad": "kg",
       "descripcion": "Gas refrigerante para carga de equipos de climatización.",
       "precio": 18.0,
-      "estado": "provisional"
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: gas R22 1 kilo 16,94; cilindro R22 13,6 kg 90-195; R410a cilindro 11,3 kg 240; R410a lata 800g 26. Conversión: Mediana entre R22 (16,94/kg) y R410a (21,2/kg) ≈ 18 USD/kg. Rango observado: R22: 16,94 USD/kg suelto; cilindro 13,6 kg 90-195 USD (6,6-14,3 USD/kg). R410a: cilindro 11,3 kg 240 USD (21,2 USD/kg); lata 800 g 26 USD (32,5 USD/kg).",
+      "nota": "Confirmado: 18 USD/kg es una mediana correcta para gas refrigerante."
     },
     "MT-MARCO-PUERTA": {
       "unidad": "m",
@@ -1617,7 +1647,9 @@
       "unidad": "ud",
       "descripcion": "Arnés de cuerpo completo con eslinga y absorbedor, para trabajo en altura.",
       "precio": 55.0,
-      "estado": "provisional"
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: arnés de seguridad 4 anillos Paloma 50,73; corporal 3 anillos 33; Truper 65; Tolsen 48,60-54. Conversión: Mediana del rango (Paloma 50,73; Truper 65; Tolsen 48,60-54; Ingco 3 anillos 61,77). Rango observado: Arnés de cuerpo completo certificado: 33 - 65 USD.",
+      "nota": "Confirmado: 55 USD es correcto para arnés de cuerpo completo con eslinga y absorbedor."
     },
     "MT-BOTIQUIN": {
       "unidad": "ud",
@@ -1770,7 +1802,9 @@
       "unidad": "l",
       "descripcion": "Pintura de tráfico para demarcación de pisos y estacionamientos.",
       "precio": 9.2,
-      "estado": "provisional"
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: pintura de alto tráfico galón 35; demarcación VP vial amarillo mate galón 36,57-47,99; base solvente 45-54. Conversión: 35 USD/galón ÷ 3,785 l = 9,2 USD/l. Rango observado: Pintura de tráfico amarilla/blanca galón: 35 USD (base solvente 45-54; reflectiva 40-65).",
+      "nota": "Confirmado: 9,20 USD/l es correcto para pintura de tráfico estándar."
     },
     "MT-PERFIL-CORTINERO": {
       "unidad": "m",
@@ -1801,6 +1835,490 @@
       "unidad": "m",
       "descripcion": "Viga y listón de madera tratada para pérgola exterior.",
       "precio": 6.8,
+      "estado": "provisional"
+    },
+    "MT-PARARRAYOS-PDA": {
+      "unidad": "ud",
+      "descripcion": "Pararrayos con dispositivo de cebado (PDA), con su cabeza captadora, mástil de acero galvanizado y piezas de fijación y conexión. El precio no incluye el mástil de gran altura ni la estructura de soporte sobre cubierta.",
+      "precio": 380.0,
+      "estado": "provisional"
+    },
+    "MT-PARARRAYOS-PUNTA": {
+      "unidad": "ud",
+      "descripcion": "Pararrayos tipo Franklin de punta simple, con su soporte corto y piezas de conexión a la bajante.",
+      "precio": 65.0,
+      "estado": "provisional"
+    },
+    "MT-CABLE-COBRE-DESN": {
+      "unidad": "m",
+      "descripcion": "Cable de cobre desnudo de 35 mm2 para captación y bajante de protección contra rayos, con sus grapas de fijación.",
+      "precio": 4.5,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: cable desnudo #2/#4 y 2/0 para puesta a tierra (Bs 500-37.028 por tramo); cotización de cobre electrolítico 9-10 USD/kg. Conversión: 35 mm2 ≈ 0,31 kg/m de cobre → ~3 USD/m solo de cobre + margen de distribución; 4,5 USD/m es coherente. Rango observado: Cobre desnudo calibre 2-2/0 (33-67 mm2): 2.800-37.000 Bs por tramo; cobre ~9-10 USD/kg.",
+      "nota": "Confirmado por valor del cobre: 4,5 USD/m para desnudo 35 mm2 es correcto."
+    },
+    "MT-CONT-DESCARGAS": {
+      "unidad": "ud",
+      "descripcion": "Contador de descargas con su mando de comprobación, intercalado en la bajante del sistema de protección.",
+      "precio": 45.0,
+      "estado": "provisional"
+    },
+    "MT-DPS-1": {
+      "unidad": "ud",
+      "descripcion": "Protector contra sobretensiones transitorias tipo 1 (clase I), para montaje en el tablero principal o la acometida.",
+      "precio": 85.0,
+      "estado": "provisional"
+    },
+    "MT-DPS-2": {
+      "unidad": "ud",
+      "descripcion": "Protector contra sobretensiones transitorias tipo 2 (clase II), para montaje en tablero secundario de distribución.",
+      "precio": 45.0,
+      "estado": "provisional"
+    },
+    "MT-DPS-3": {
+      "unidad": "ud",
+      "descripcion": "Protector contra sobretensiones tipo 3 (clase III), supresor para equipos electrónicos sensibles.",
+      "precio": 25.0,
+      "estado": "provisional"
+    },
+    "MT-DPS-DATOS": {
+      "unidad": "ud",
+      "descripcion": "Protector contra sobretensiones para línea de datos y telecomunicaciones, con su conexión a tierra.",
+      "precio": 30.0,
+      "estado": "provisional"
+    },
+    "MT-DOM-CENTRAL": {
+      "unidad": "ud",
+      "descripcion": "Central domótica o controlador principal, con su fuente de alimentación y el software de configuración. El precio no incluye los módulos de actuación ni los sensores periféricos.",
+      "precio": 180.0,
+      "estado": "provisional"
+    },
+    "MT-DOM-PASARELA": {
+      "unidad": "ud",
+      "descripcion": "Pasarela de comunicación que integra protocolos de distintos fabricantes (Zigbee, Z-Wave, WiFi, bus cableado) con la central domótica.",
+      "precio": 90.0,
+      "estado": "provisional"
+    },
+    "MT-DOM-REPETIDOR": {
+      "unidad": "ud",
+      "descripcion": "Repetidor o extensor de señal inalámbrica para ampliar la cobertura de la red domótica.",
+      "precio": 45.0,
+      "estado": "provisional"
+    },
+    "MT-DOM-SENSOR-MOV": {
+      "unidad": "ud",
+      "descripcion": "Sensor de movimiento o presencia para iluminación y alarmas, con su soporte de montaje.",
+      "precio": 25.0,
+      "estado": "provisional"
+    },
+    "MT-DOM-SENSOR-PUERTA": {
+      "unidad": "ud",
+      "descripcion": "Sensor magnético de apertura para puertas y ventanas, con su emisor y su soporte de montaje.",
+      "precio": 18.0,
+      "estado": "provisional"
+    },
+    "MT-DOM-SENSOR-TEMP": {
+      "unidad": "ud",
+      "descripcion": "Sensor de temperatura y humedad ambiente con comunicación a la central domótica.",
+      "precio": 22.0,
+      "estado": "provisional"
+    },
+    "MT-DOM-SENSOR-INUND": {
+      "unidad": "ud",
+      "descripcion": "Detector de inundación o fuga de agua por contacto, con aviso a la central domótica.",
+      "precio": 20.0,
+      "estado": "provisional"
+    },
+    "MT-DOM-SENSOR-GAS": {
+      "unidad": "ud",
+      "descripcion": "Detector de gas doméstico con alarma local y comunicación a la central domótica.",
+      "precio": 30.0,
+      "estado": "provisional"
+    },
+    "MT-DOM-SENSOR-LUZ": {
+      "unidad": "ud",
+      "descripcion": "Sensor de nivel de luz para automatización de iluminación y persianas.",
+      "precio": 22.0,
+      "estado": "provisional"
+    },
+    "MT-DOM-ACTUADOR": {
+      "unidad": "ud",
+      "descripcion": "Módulo de actuación on/off (relé) para control de circuitos de iluminación y cargas, montaje en carril o empotrado.",
+      "precio": 40.0,
+      "estado": "provisional"
+    },
+    "MT-DOM-DIMMER": {
+      "unidad": "ud",
+      "descripcion": "Módulo regulador (dimmer) para atenuación de iluminación, compatible con la central domótica.",
+      "precio": 45.0,
+      "estado": "provisional"
+    },
+    "MT-DOM-PERSIANA": {
+      "unidad": "ud",
+      "descripcion": "Módulo de control de persiana, cortina o toldo motorizado, con detección de final de carrera.",
+      "precio": 48.0,
+      "estado": "provisional"
+    },
+    "MT-DOM-ENCHUFE": {
+      "unidad": "ud",
+      "descripcion": "Módulo de enchufe inteligente para medición y control on/off de cargas enchufables.",
+      "precio": 28.0,
+      "estado": "provisional"
+    },
+    "MT-DOM-TERMOSTATO": {
+      "unidad": "ud",
+      "descripcion": "Termostato inteligente para control de climatización, con programación horaria y comunicación a la central domótica.",
+      "precio": 55.0,
+      "estado": "provisional"
+    },
+    "MT-DOM-PANEL": {
+      "unidad": "ud",
+      "descripcion": "Panel táctil de pared para control y visualización del sistema domótico, con su caja de empotrar.",
+      "precio": 90.0,
+      "estado": "provisional"
+    },
+    "MT-DOM-TECLADO": {
+      "unidad": "ud",
+      "descripcion": "Teclado o pulsador de escenas para activación directa de ambientes preconfigurados.",
+      "precio": 35.0,
+      "estado": "provisional"
+    },
+    "MT-PYL-PLACA-HD": {
+      "unidad": "m2",
+      "descripcion": "Placa de yeso laminado de alta dureza, de 12,5 mm, para paramentos interiores sometidos a impacto y zonas de tránsito.",
+      "precio": 9.8,
+      "estado": "provisional"
+    },
+    "MT-PYL-PLACA-IG": {
+      "unidad": "m2",
+      "descripcion": "Placa de yeso laminado resistente al fuego (tipo F), de 15 mm, para protección de instalaciones y estructura.",
+      "precio": 10.5,
+      "estado": "provisional"
+    },
+    "MT-PYL-PASTA-AGARRE": {
+      "unidad": "kg",
+      "descripcion": "Pasta de agarre de base yeso para fijación de placa de yeso laminado directamente al paramento en trasdosado directo.",
+      "precio": 0.4,
+      "estado": "provisional"
+    },
+    "MT-PIN-ANTIMOHO": {
+      "unidad": "l",
+      "descripcion": "Pintura acrílica antihongos y antimoho para interiores de cocinas, baños y locales con condensación.",
+      "precio": 5.5,
+      "estado": "provisional"
+    },
+    "MT-PIN-TIZA": {
+      "unidad": "l",
+      "descripcion": "Pintura de pizarra efecto tiza, lavable, para paredes de uso escolar, infantil o de oficina.",
+      "precio": 9.0,
+      "estado": "provisional"
+    },
+    "MT-PIN-MAGNETICA": {
+      "unidad": "l",
+      "descripcion": "Pintura magnética de base para paredes sobre las que se quiere fijar imanes.",
+      "precio": 14.0,
+      "estado": "provisional"
+    },
+    "MT-PIN-CAL": {
+      "unidad": "kg",
+      "descripcion": "Cal hidratada para pintura mineral interior de sótanos, depósitos y paramentos transpirables.",
+      "precio": 1.8,
+      "estado": "provisional"
+    },
+    "MT-PIN-SEMIBRILLO": {
+      "unidad": "l",
+      "descripcion": "Pintura de caucho semibrillo lavable para interiores de alto tránsito y escuelas.",
+      "precio": 4.6,
+      "estado": "provisional"
+    },
+    "MT-LACA-MADERA": {
+      "unidad": "l",
+      "descripcion": "Laca nitrocelulósica o al agua para acabado de carpintería interior de madera.",
+      "precio": 8.0,
+      "estado": "provisional"
+    },
+    "MT-BARNIZ-MARINO": {
+      "unidad": "l",
+      "descripcion": "Barniz marino o de exterior de alta resistencia para madera expuesta a la intemperie.",
+      "precio": 11.0,
+      "estado": "provisional"
+    },
+    "MT-ESMALTE-AGUA": {
+      "unidad": "l",
+      "descripcion": "Esmalte al agua satinado para carpintería interior de madera y metal.",
+      "precio": 6.5,
+      "estado": "provisional"
+    },
+    "MT-POLIURETANO-PISO": {
+      "unidad": "kg",
+      "descripcion": "Recubrimiento de poliuretano bicomponente para piso, con resistencia a la abrasión.",
+      "precio": 12.0,
+      "estado": "provisional"
+    },
+    "MT-LASUR": {
+      "unidad": "l",
+      "descripcion": "Lasur o protector decorativo para madera exterior que deja ver la veta.",
+      "precio": 9.5,
+      "estado": "provisional"
+    },
+    "MT-MOSAICO": {
+      "unidad": "m2",
+      "descripcion": "Mosaico vítreo o cerámico en malla para revestimiento de paredes y superficies curvas.",
+      "precio": 18.0,
+      "estado": "provisional"
+    },
+    "MT-VIDRIO-DECOR": {
+      "unidad": "m2",
+      "descripcion": "Vidrio decorativo lacado, grabado o de color para revestimiento de pared.",
+      "precio": 45.0,
+      "estado": "provisional"
+    },
+    "MT-FIBRA-NAT": {
+      "unidad": "m2",
+      "descripcion": "Revestimiento de fibra natural tejida (sisal, yute, bambú) para paredes decorativas.",
+      "precio": 22.0,
+      "estado": "provisional"
+    },
+    "MT-PIN-IGNFUGA": {
+      "unidad": "l",
+      "descripcion": "Pintura intumescente ignífuga para protección de estructura metálica y madera.",
+      "precio": 12.0,
+      "estado": "provisional"
+    },
+    "MT-ANTI-GRAFFITI": {
+      "unidad": "l",
+      "descripcion": "Protector anti-graffiti para superficies pintadas, que facilita la limpieza de pintadas.",
+      "precio": 14.0,
+      "estado": "provisional"
+    },
+    "MT-SILOXANO": {
+      "unidad": "l",
+      "descripcion": "Hidrofugante a base de siloxano para fachadas, permeable al vapor de agua.",
+      "precio": 13.0,
+      "estado": "provisional"
+    },
+    "MT-TINTE-MAD": {
+      "unidad": "l",
+      "descripcion": "Tinte o colorante para madera, de base al agua o al disolvente.",
+      "precio": 7.5,
+      "estado": "provisional"
+    },
+    "MT-POLIUREA": {
+      "unidad": "kg",
+      "descripcion": "Membrana de poliurea de aplicación en caliente para impermeabilización y recubrimiento de alta resistencia.",
+      "precio": 14.0,
+      "estado": "provisional"
+    },
+    "MT-CUARZO-COLOR": {
+      "unidad": "kg",
+      "descripcion": "Árido de cuarzo coloreado para recubrimientos decorativos antideslizantes.",
+      "precio": 1.2,
+      "estado": "provisional"
+    },
+    "MT-RESINA-ACRIL": {
+      "unidad": "kg",
+      "descripcion": "Resina acrílica decorativa para recubrimientos continuos de paredes y pisos.",
+      "precio": 9.0,
+      "estado": "provisional"
+    },
+    "MT-PERSIANA-ALU": {
+      "unidad": "m2",
+      "descripcion": "Persiana enrollable de aluminio con su cajón y cinta o motor, para protección solar y oscurecimiento.",
+      "precio": 55.0,
+      "estado": "provisional"
+    },
+    "MT-TOLDO": {
+      "unidad": "m2",
+      "descripcion": "Toldo extensible de lona con brazos y soportes, para protección solar en fachadas.",
+      "precio": 48.0,
+      "estado": "provisional"
+    },
+    "MT-VIDRIO-LAM": {
+      "unidad": "m2",
+      "descripcion": "Vidrio laminado de seguridad con butiral, para acristalamiento de protección.",
+      "precio": 42.0,
+      "estado": "provisional"
+    },
+    "MT-VIDRIO-DOBLE": {
+      "unidad": "m2",
+      "descripcion": "Doble acristalamiento con cámara de aire, para aislamiento térmico y acústico.",
+      "precio": 55.0,
+      "estado": "provisional"
+    },
+    "MT-VIDRIO-ARENA": {
+      "unidad": "m2",
+      "descripcion": "Vidrio arenado o esmerilado para privacidad en mamparas y divisiones.",
+      "precio": 28.0,
+      "estado": "provisional"
+    },
+    "MT-AUTOM-PORTON": {
+      "unidad": "ud",
+      "descripcion": "Motor y automatismo para portón corredizo o batiente, con mandos y finales de carrera.",
+      "precio": 180.0,
+      "estado": "provisional"
+    },
+    "MT-CIERRA-PUERTA": {
+      "unidad": "ud",
+      "descripcion": "Cierra-puertas hidráulico para puertas de tránsito, con brazo y regulación.",
+      "precio": 35.0,
+      "estado": "provisional"
+    },
+    "MT-CERRADURA-MULTI": {
+      "unidad": "ud",
+      "descripcion": "Cerradura multipunto de seguridad con cilindro y cerraderos, para puerta de acceso.",
+      "precio": 45.0,
+      "estado": "verificado-mercado",
+      "fuente": "MercadoLibre VE: cerradura tipo multiloc 27,99-28; kit multilock 60mm 24,99-39,99; Securemme multilock 60mm 95. Conversión: Multilock básica 24,99-28; kit 60mm 24,99-39,99; Securemme bancaria 60mm 95. Mediana de un multipunto de seguridad con cilindro ~40-45. Rango observado: Cerradura multipunto/multilock: 24,99 - 95 USD.",
+      "nota": "55 USD quedaba alto; se adopta 45 USD para un multipunto de seguridad con cilindro."
+    },
+    "MT-HERRAJE-CORRED": {
+      "unidad": "ud",
+      "descripcion": "Herrajes de puerta corredera de madera o vidrio, con carros, guías y topes.",
+      "precio": 18.0,
+      "estado": "provisional"
+    },
+    "MT-POLIESTIRENO-EXT": {
+      "unidad": "m2",
+      "descripcion": "Panel de poliestireno extruido (XPS) para aislamiento térmico de cubiertas, muros y pisos.",
+      "precio": 7.5,
+      "estado": "provisional"
+    },
+    "MT-LANA-ROCA": {
+      "unidad": "m2",
+      "descripcion": "Panel de lana de roca para aislamiento térmico y acústico y protección contra incendios.",
+      "precio": 5.5,
+      "estado": "provisional"
+    },
+    "MT-MEMBRANA-PVC": {
+      "unidad": "m2",
+      "descripcion": "Membrana impermeabilizante de PVC armado con poliéster, para cubiertas y terrazas.",
+      "precio": 12.0,
+      "estado": "provisional"
+    },
+    "MT-BENTONITA": {
+      "unidad": "m2",
+      "descripcion": "Geocompuesto de bentonita sódica para impermeabilización de muros enterrados y fundaciones.",
+      "precio": 9.0,
+      "estado": "provisional"
+    },
+    "MT-LAMINA-DREN": {
+      "unidad": "m2",
+      "descripcion": "Lámina drenante nodular de polietileno para protección y drenaje de muros enterrados.",
+      "precio": 6.5,
+      "estado": "provisional"
+    },
+    "MT-BARRERA-ANTICAP": {
+      "unidad": "m",
+      "descripcion": "Barrera anticapilaridad de lámina bituminosa o de polietileno para muros.",
+      "precio": 3.2,
+      "estado": "provisional"
+    },
+    "MT-RESINA-INYEC": {
+      "unidad": "l",
+      "descripcion": "Resina de inyección para sellado de fisuras y filtraciones en muros y estructuras.",
+      "precio": 18.0,
+      "estado": "provisional"
+    },
+    "MT-SELLA-BENTONITA": {
+      "unidad": "m",
+      "descripcion": "Cordón de bentonita expansiva para sellado de juntas de hormigonado y pasos.",
+      "precio": 4.0,
+      "estado": "provisional"
+    },
+    "MT-MALLA-DREN": {
+      "unidad": "m2",
+      "descripcion": "Geocompuesto drenante con malla y núcleo para drenaje de cubiertas y muros.",
+      "precio": 2.2,
+      "estado": "provisional"
+    },
+    "MT-PLACA-FACHADA": {
+      "unidad": "m2",
+      "descripcion": "Panel de fachada ventilada (composite de aluminio, fibrocemento o cerámico extruido), con sus fijaciones ocultas.",
+      "precio": 42.0,
+      "estado": "provisional"
+    },
+    "MT-MALLA-FACH": {
+      "unidad": "m2",
+      "descripcion": "Malla de fibra de vidrio antiálcalis para refuerzo de revestimiento continuo de fachada (SATE).",
+      "precio": 1.8,
+      "estado": "provisional"
+    },
+    "MT-SUBESTRUCTURA": {
+      "unidad": "m2",
+      "descripcion": "Subestructura de fachada ventilada en perfiles de aluminio, con anclajes y remates.",
+      "precio": 18.0,
+      "estado": "provisional"
+    },
+    "MT-LADRILLO-VISTO": {
+      "unidad": "ud",
+      "descripcion": "Ladrillo caravista de arcilla para fachadas de ladrillo visto, con junta fina.",
+      "precio": 0.3,
+      "estado": "provisional"
+    },
+    "MT-PIEDRA-FACHADA": {
+      "unidad": "m2",
+      "descripcion": "Aplacado de piedra natural ligera para fachada ventilada, con fijación mecánica.",
+      "precio": 38.0,
+      "estado": "provisional"
+    },
+    "MT-MASTIC-CORTAFUEGO": {
+      "unidad": "kg",
+      "descripcion": "Masilla o mortero intumescente para sellado cortafuego de pasos de instalaciones en muros y losas.",
+      "precio": 6.5,
+      "estado": "provisional"
+    },
+    "MT-BOMBA-AGUA": {
+      "unidad": "ud",
+      "descripcion": "Bomba centrífuga de agua para suministro doméstico, con su control y accesorios de conexión.",
+      "precio": 160.0,
+      "estado": "provisional"
+    },
+    "MT-HIDRONEUMATICO": {
+      "unidad": "ud",
+      "descripcion": "Sistema hidroneumático con tanque de presión, bomba y control, para presión constante de agua.",
+      "precio": 240.0,
+      "estado": "provisional"
+    },
+    "MT-PLANTA-ELEC": {
+      "unidad": "ud",
+      "descripcion": "Planta eléctrica de respaldo con motor diésel o gasolina y tablero de arranque, para suministro de emergencia.",
+      "precio": 1200.0,
+      "estado": "provisional"
+    },
+    "MT-BATERIA": {
+      "unidad": "ud",
+      "descripcion": "Batería de ciclo profundo para sistema de respaldo eléctrico, de plomo-ácido o litio.",
+      "precio": 220.0,
+      "estado": "provisional"
+    },
+    "MT-INVERSOR": {
+      "unidad": "ud",
+      "descripcion": "Inversor de corriente para sistema de respaldo, con su control de carga.",
+      "precio": 280.0,
+      "estado": "provisional"
+    },
+    "MT-PANEL-SOLAR": {
+      "unidad": "ud",
+      "descripcion": "Panel fotovoltaico para generación de energía, con su estructura de fijación.",
+      "precio": 180.0,
+      "estado": "provisional"
+    },
+    "MT-CAMARA-CCTV": {
+      "unidad": "ud",
+      "descripcion": "Cámara de video vigilancia CCTV, con su soporte y cable de conexión.",
+      "precio": 85.0,
+      "estado": "provisional"
+    },
+    "MT-ALARMA": {
+      "unidad": "ud",
+      "descripcion": "Central de alarma con teclado, sensores y sirena, para protección perimetral e interior.",
+      "precio": 150.0,
+      "estado": "provisional"
+    },
+    "MT-SOPORTE-ANTIVIB": {
+      "unidad": "ud",
+      "descripcion": "Soporte antivibratorio de neopreno (silent block) para aislar equipos de bombas, compresores y maquinaria, con su tornillería.",
+      "precio": 5.0,
       "estado": "provisional"
     }
   },
@@ -2061,6 +2579,12 @@
       "unidad": "h",
       "descripcion": "Dobladora y abocardadora de tubería de cobre para climatización y gas.",
       "precio": 2.6,
+      "estado": "provisional"
+    },
+    "MQ-TELUROMETRO": {
+      "unidad": "h",
+      "descripcion": "Medidor de resistencia de puesta a tierra (telurómetro) con sus picas y cables de prueba.",
+      "precio": 12.0,
       "estado": "provisional"
     }
   }

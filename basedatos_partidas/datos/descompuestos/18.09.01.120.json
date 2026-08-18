@@ -1,0 +1,40 @@
+{
+  "codigo": "18.09.01.120",
+  "ambito": "reforma",
+  "capitulo": "18",
+  "subcapitulo": "09",
+  "unidad": "m²",
+  "titulo": "Estructura de paneles solares sobre techo inclinado.",
+  "descripcion": "Ejecución de estructura de soporte de paneles solares sobre techo inclinado, con fijación a la cubierta y sellado de los pasos.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PERFIL-ACERO",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MT-TORN-TECHO",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MT-SILICONA-EST",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-SOLD",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.4
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

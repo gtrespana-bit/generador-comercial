@@ -1,0 +1,46 @@
+{
+  "codigo": "09.14.01.180",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "14",
+  "unidad": "ud",
+  "titulo": "Instalación de tanque séptico.",
+  "descripcion": "Instalación de tanque séptico., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-FLOTANTE",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-VALV-CHECK",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-PLO-SOP",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-OF1-PLO",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 1.0
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01",
+  "producto_cliente": {
+    "tipo": "Tanque séptico, del modelo elegido por el cliente",
+    "unidad": "ud",
+    "consumo": 1.0,
+    "nota": "La partida cubre solo la instalación. El equipo se toma del catálogo de productos y su precio no está incluido."
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "codigo": "06.06.01.170",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "06",
+  "unidad": "m",
+  "titulo": "Refuerzo de vano con perfil de acero.",
+  "descripcion": "Refuerzo de vano con perfil de acero en esquinas. Incluye la fabricación y el montaje del refuerzo. Medido por metro lineal ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PERFIL-ACERO",
+      "rendimiento": 3.0
+    },
+    {
+      "ref": "MT-ELECTRODO",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MT-PINT-ANTICORR",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MQ-SOLDADORA",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MO-OF1-SOLD",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.25
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

@@ -1,0 +1,36 @@
+{
+  "codigo": "11.03.01.140",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "03",
+  "unidad": "m",
+  "titulo": "Canalón oculto bajo alero de teja.",
+  "descripcion": "Ejecución de canalón oculto bajo el alero de cubierta de teja, para recogida de aguas lluvias, con su soporte y conexión a bajante. Incluye la fijación y los remates.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CANAL-PVC",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-PLO-SOP",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.04
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.16
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

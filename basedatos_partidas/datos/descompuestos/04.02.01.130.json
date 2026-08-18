@@ -1,0 +1,40 @@
+{
+  "codigo": "04.02.01.130",
+  "ambito": "reforma",
+  "capitulo": "04",
+  "subcapitulo": "02",
+  "unidad": "kg",
+  "titulo": "Acero de refuerzo en zapata.",
+  "descripcion": "Suministro y colocación de acero de refuerzo en zapata. Incluye el corte, el doblado y la colocación. Medido por kilogramo colocado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ACERO-CAB",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-ALAMBRE",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MT-SEPARADOR",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MQ-CIZALLA",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MO-OF1-CAB",
+      "rendimiento": 0.03
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.015
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

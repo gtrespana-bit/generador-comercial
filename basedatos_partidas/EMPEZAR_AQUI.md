@@ -20,22 +20,11 @@ presupuestos.
 
 | | |
 |---|---:|
-| Partidas | **540** |
-| Capítulos · subcapítulos · apartados con partidas | **18 · 172 · 147** |
-| Recursos en el cuadro de precios | 311 |
-| Coste directo del catálogo | 15.733,15 USD |
-| **Peso económico con precio cerrado** | **79,6 %** |
+| Partidas | **3.006** |
+| Capítulos · subcapítulos · apartados con partidas | **18 · 172 · 256** |
+| Recursos en el cuadro de precios | 392 |
 | Validación con el importador real | **0 errores · 0 advertencias** |
-| Tests del proyecto | **483 pasando · 6 omitidos** |
-
-Desglose del cuadro de precios:
-
-| Estado | Recursos | Peso | % |
-|---|---:|---:|---:|
-| `confirmado` (mano de obra, dato del cliente) | 17 | 3.180,69 | 20,2 % |
-| `verificado-mercado` (contrastado con VE) | 113 | 9.214,75 | 58,6 % |
-| `derivado` (morteros, salen del cemento) | 4 | 127,36 | 0,8 % |
-| `provisional` | 177 | 3.210,35 | 20,4 % |
+| Tests del proyecto | **515 pasando · 6 omitidos** |
 
 ---
 
@@ -144,6 +133,29 @@ demanda, búsqueda híbrida y paginación ya están implantadas y probadas con
 incrementales también están implantadas. La matriz de 3.000/5.000 partidas y
 el diccionario de sinónimos de 146 grupos ya cubren los 18 capítulos. El siguiente paso es
 producir familias completas, comenzando por `09 Instalaciones`.
+
+> **Progreso 17/08/2026:**
+> - **Capítulo 12 Revestimientos y acabados** completo hasta el mínimo (401/400).
+> - **Capítulo 07 Carpintería, herrería, vidrios y protección solar** completo
+>   hasta el mínimo (180/180).
+> - **Capítulo 10 Aislamientos e impermeabilizaciones** completo hasta el
+>   mínimo (150/150).
+> - **Capítulo 02 Demoliciones y desmontajes** completo hasta el mínimo (265/260).
+> - **Capítulo 06 Fachadas y particiones** completo hasta el mínimo (180/180).
+> - **Capítulo 01 Actuaciones previas** completo hasta el mínimo (100/100).
+> - **Capítulo 03 Acondicionamiento del terreno** completo hasta el mínimo (80/80).
+> - **Capítulo 04 Fundaciones** completo hasta el mínimo (100/100).
+> - **Capítulo 05 Estructuras** completo hasta el mínimo (170/170).
+> - **Capítulo 08 Remates y ayudas** completo hasta el mínimo (120/120).
+> - **Capítulo 09 Instalaciones** completo hasta el mínimo (540/540).
+> - **Capítulo 11 Techos y cubiertas** completo hasta el mínimo (130/130).
+> - **Capítulo 13 Equipamiento, mobiliario y señalización** completo (140/140).
+> - **Capítulo 14 Obras exteriores y urbanismo** completo hasta el mínimo (160/160).
+> - **Capítulo 15 Gestión de residuos y limpieza** completo (50/50).
+> - **Capítulo 16 Control de calidad y ensayos** completo (80/80).
+> - **Capítulo 17 Seguridad y salud en obra** completo (60/60).
+> - **Capítulo 18 Rehabilitación energética** completo (100/100).
+> **Objetivo mínimo de 3.000 partidas alcanzado** (3.006, 0 errores, 0 advertencias).
 
 La producción cerrará familias completas en este orden: `09 Instalaciones`,
 `12 Revestimientos y acabados`, `07 Carpintería, herrería y vidrios`, `10/11

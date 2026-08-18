@@ -1,0 +1,32 @@
+{
+  "codigo": "01.01.02.020",
+  "ambito": "reforma",
+  "capitulo": "01",
+  "subcapitulo": "01",
+  "unidad": "ud",
+  "titulo": "Cierre y drenaje de instalación de agua.",
+  "descripcion": "Cierre y drenaje de la instalación de agua de la zona de obra. Incluye el cierre de llaves y el vaciado de las tuberías. Medido por servicio cerrado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MQ-BOMBA-ACHI",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-OF1-PLO",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.25
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

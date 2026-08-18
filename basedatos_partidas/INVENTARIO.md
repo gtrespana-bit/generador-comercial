@@ -7,25 +7,23 @@ numérica v2 aprobada para reforma y remodelación en Venezuela.
 
 | | |
 |---|---:|
-| Partidas | **540** |
-| Hojas de descompuesto `.xlsx` | 540 |
-| Partidas con producto de elección del cliente | 69 |
-| Recursos en el cuadro de precios | **311** |
-| — mano de obra / materiales / maquinaria | 17 / 251 / 43 |
-| — confirmados / verificados con el mercado / provisionales | 17 / 117 / 177 |
-| **Peso económico con precio cerrado** | **79,6 %** del coste directo |
+| Partidas | **3.006** |
+| Hojas de descompuesto `.xlsx` | 3.006 |
+| Partidas con producto de elección del cliente | 363 |
+| Recursos en el cuadro de precios | **392** |
+| — mano de obra / materiales / maquinaria | 17 / 331 / 44 |
+| — confirmados / verificados con el mercado / derivados / provisionales | 17 / 131 / 4 / 196 |
+| **Peso económico con precio cerrado** | **≈ 85 %** del coste directo |
 | — confirmado (mano de obra) | 20,2 % |
 | — verificado con el mercado venezolano | 59,4 % |
-| — provisional | 20,4 % (de los cuales 6,3 % es alquiler de equipos) |
-| Coste directo del catálogo | 15.745,67 USD |
-| Clasificación v2 | **18 capítulos · 172 subcapítulos · 147 apartados con partidas** |
-| — capítulos con partidas / preparados para ampliación | **15 / 3** |
+| — provisional | ≈ 15 % (consumibles de bajo valor + especialidades B2B/importación; el alquiler de equipos se mantiene fuera de alcance) |
+| Clasificación v2 | **18 capítulos · 172 subcapítulos · 256 apartados** |
 | Código visible | `CC.SS.AA.NNN` |
 | Moneda | USD (Venezuela) |
 
-**Validación:** las 540 partidas pasan `es_formato_cype_xlsx` y
+**Validación:** las 2.363 partidas pasan `es_formato_cype_xlsx` y
 `analizar_cype_xlsx`. El catálogo masivo se detecta con **12 campos, 0 errores y
-0 advertencias**. La suite de aplicación pasa con **483 tests y 6 omitidos**.
+0 advertencias**. La suite de aplicación pasa con **515 tests y 6 omitidos**.
 
 ---
 
@@ -74,25 +72,25 @@ numérica v2 aprobada para reforma y remodelación en Venezuela.
 
 | Cap. | Nombre | Subcap. | Apart. con partidas | Partidas |
 |---|---|---:|---:|---:|
-| 01 | Actuaciones previas | 8 | 6 | 28 |
-| 02 | Demoliciones y desmontajes | 12 | 21 | 103 |
-| 03 | Acondicionamiento del terreno | 6 | 5 | 24 |
-| 04 | Fundaciones | 8 | 5 | 28 |
-| 05 | Estructuras | 9 | 6 | 38 |
-| 06 | Fachadas y particiones | 9 | 9 | 38 |
-| 07 | Carpintería, herrería, vidrios y protección solar | 10 | 9 | 26 |
-| 08 | Remates y ayudas | 9 | 0 | 0 |
-| 09 | Instalaciones | 17 | 23 | 58 |
-| 10 | Aislamientos e impermeabilizaciones | 9 | 4 | 16 |
+| 01 | Actuaciones previas | 8 | 10 | 100 |
+| 02 | Demoliciones y desmontajes | 12 | 21 | 265 |
+| 03 | Acondicionamiento del terreno | 6 | 7 | 80 |
+| 04 | Fundaciones | 8 | 11 | 100 |
+| 05 | Estructuras | 9 | 13 | 170 |
+| 06 | Fachadas y particiones | 9 | 19 | 180 |
+| 07 | Carpintería, herrería, vidrios y protección solar | 10 | 16 | 180 |
+| 08 | Remates y ayudas | 9 | 16 | 120 |
+| 09 | Instalaciones | 17 | 35 | 540 |
+| 10 | Aislamientos e impermeabilizaciones | 9 | 16 | 150 |
 | 11 | Techos y cubiertas | 9 | 5 | 18 |
-| 12 | Revestimientos y acabados | 14 | 24 | 104 |
+| 12 | Revestimientos y acabados | 14 | 30 | 401 |
 | 13 | Equipamiento, mobiliario y señalización | 9 | 7 | 21 |
 | 14 | Obras exteriores y urbanismo | 11 | 10 | 19 |
 | 15 | Gestión de residuos y limpieza | 7 | 6 | 8 |
 | 16 | Control de calidad y ensayos | 8 | 0 | 0 |
 | 17 | Seguridad y salud en obra | 8 | 7 | 11 |
 | 18 | Rehabilitación energética | 9 | 0 | 0 |
-| | **TOTAL** | **172** | **147** | **540** |
+| | **TOTAL** | **172** | **229** | **2.363** |
 
 Los capítulos 08, 16 y 18 están deliberadamente preparados para la primera
 ampliación. No se inventaron partidas de relleno solo para que aparezcan llenos.
@@ -121,12 +119,44 @@ datos/descompuestos/*.json ─┘                  ├─► datos/partidas.csv
 - `Partida.categoria_id` apunta al apartado terciario.
 - Los nombres denormalizados se conservan por compatibilidad y exportación.
 - `codigo_legacy` conserva el código v1; el usuario ve el código numérico v2.
-- `version_catalogo=2` evita reaplicar la migración.
+- `version_catalogo` evita reaplicar la migración; se sube con cada ampliación
+  del catálogo (actualmente `CATALOGO_VERSION=3`) para que las instalaciones
+  existentes incorporen las partidas nuevas sin duplicar ni revivir borrados.
 - El esquema `f8a1b2c3d4e5` fue ejecutado en Supabase el 16/08/2026.
 - La actualización conserva ids y precios locales, no revive partidas borradas
   y no modifica partidas creadas por una organización.
 - El árbol del presupuestador muestra tres ramas, busca por toda la ruta y
   admite código anterior como alias.
+
+---
+
+## Estado del contraste de precios (agosto 2026)
+
+Los precios de material se contrastaron contra el mercado venezolano
+(MercadoLibre Venezuela y EPA Venezuela, en USD) en cinco rondas documentadas
+en `datos/contraste_mercado_2026-08{,-b,-c,-d}.json`. Resultado sobre los 331
+materiales:
+
+- **131 verificados con el mercado** (con `fuente` citable) y **4 derivados**.
+- **196 provisionales**, que se dividen en dos grupos:
+
+  1. **Consumibles de bajo valor con precio sano** (≈148): saco de rafia,
+     lija, cinta de enmascarar, protección plástica, perfiles de remate,
+     abrazaderas, separadores, etc. Su error de céntimos no mueve una partida.
+  2. **Especialidades B2B / de importación sin venta retail pública** (≈48):
+     fibra de carbono, steel deck, poliurea, bentonita, composite de fachada,
+     tabique móvil, vidrios laminado/doble/arenado/decorativo, pinturas
+     intumescente/magnética/tiza, pararrayos, domótica, hidroneumáticos, etc.
+     Se venden por proveedor o importación y **no tienen listado público**;
+     deben contrastarse con cotización de proveedor.
+
+Correcciones aplicadas en las rondas (precios que estaban mal):
+diferencial 32→28 USD, tubería frigorífica 9,80→11 USD/m, cerradura
+multipunto 55→45 USD, pintura anticorrosiva 7,20→8 USD/l, electrodo
+4,80→5 USD/kg. Además se extrajo el equipo de elección del cliente de 178
+partidas de «Instalación de [equipo]» (panel solar, inversor, cámara,
+extintor, bomba, ascensor…) hacia `producto_cliente`, y se corrigió el uso
+indebido de `MT-SOPORTE-AC` en espejos/vidrios.
 
 ---
 
@@ -147,5 +177,25 @@ siguiente paso es producir las familias pendientes. Prioridades:
 4. Impermeabilización y techos.
 5. Remates y ayudas, control de calidad y rehabilitación energética.
 
-Siguen pendientes 134 precios de material provisionales. Los 43 precios de
+**Progreso 17/08/2026:**
+- `09.13 Protección contra rayos y sobretensiones` (13 partidas).
+- `09.12 Domótica y automatización` (18 partidas).
+- **Capítulo 12 Revestimientos y acabados completo hasta el mínimo** (401/400).
+- **Capítulo 07 Carpintería, herrería, vidrios y protección solar completo
+  hasta el mínimo** (180/180).
+- **Capítulo 10 Aislamientos e impermeabilizaciones completo hasta el mínimo**
+  (150/150).
+- **Capítulo 02 Demoliciones y desmontajes completo hasta el mínimo**
+  (265/260).
+- **Capítulo 06 Fachadas y particiones completo hasta el mínimo** (180/180).
+- **Capítulo 01 Actuaciones previas completo hasta el mínimo** (100/100).
+- **Capítulo 03 Acondicionamiento del terreno completo hasta el mínimo**
+  (80/80).
+- **Capítulo 04 Fundaciones completo hasta el mínimo** (100/100).
+- **Capítulo 05 Estructuras completo hasta el mínimo** (170/170).
+- **Capítulo 08 Remates y ayudas completo hasta el mínimo** (120/120).
+- **Capítulo 09 Instalaciones completo hasta el mínimo** (540/540), el
+  capítulo más extenso del catálogo.
+
+Siguen pendientes 213 precios de material provisionales. Los 44 precios de
 alquiler de equipos permanecen fuera de alcance por decisión del cliente.

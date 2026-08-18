@@ -1,0 +1,32 @@
+{
+  "codigo": "12.14.01.030",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "14",
+  "unidad": "m2",
+  "titulo": "Decapado de pintura en paramento.",
+  "descripcion": "Decapado químico de capas de pintura existentes en paramento o carpintería, previo a un nuevo acabado. Incluye la aplicación del decapante, el retiro de la pintura reblandecida y la limpieza de la superficie. Medido por metro cuadrado decapado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-DECAP",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.15
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

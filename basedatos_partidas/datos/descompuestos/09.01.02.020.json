@@ -1,0 +1,40 @@
+{
+  "codigo": "09.01.02.020",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "01",
+  "unidad": "ud",
+  "titulo": "Punto de agua para lavadora.",
+  "descripcion": "Punto de agua para lavadora, con llave y toma. Incluye la conexión y la llave. Medido por punto ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PLO-PPR20",
+      "rendimiento": 3.0
+    },
+    {
+      "ref": "MT-PLO-ACC20",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MT-PLO-LLAVE",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MQ-TERMOF",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-PLO",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.3
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

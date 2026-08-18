@@ -1,0 +1,44 @@
+{
+  "codigo": "02.02.01.150",
+  "ambito": "reforma",
+  "capitulo": "02",
+  "subcapitulo": "02",
+  "unidad": "m2",
+  "titulo": "Corte de losa para escalera o montacargas.",
+  "descripcion": "Corte de losa de concreto para apertura de hueco de escalera o montacargas. Incluye el apuntalamiento, el corte perimetral y la demolición del paño. Medido por metro cuadrado de hueco.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.8
+    },
+    {
+      "ref": "MT-OXI-CONS",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MQ-CORT-AGUA",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MQ-MART-ELEC",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.7
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 1.1
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

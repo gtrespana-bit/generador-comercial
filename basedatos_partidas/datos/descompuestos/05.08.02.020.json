@@ -1,0 +1,32 @@
+{
+  "codigo": "05.08.02.020",
+  "ambito": "reforma",
+  "capitulo": "05",
+  "subcapitulo": "08",
+  "unidad": "m",
+  "titulo": "Junta de construcción.",
+  "descripcion": "Ejecución de junta de construcción en elemento de concreto. Incluye la formación de la junta. Medido por metro lineal ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-JUNTA-DILAT",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-SELLA-BENTONITA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.12
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

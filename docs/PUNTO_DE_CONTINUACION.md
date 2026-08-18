@@ -1,11 +1,73 @@
 # Punto exacto de continuación
 
-Fecha de corte: **16/08/2026, cierre de catálogo extenso con PR #31 abierto** (America/Caracas).
+Fecha de corte: **17/08/2026, cierre de catálogo 3.006 + landing comercial con PR #32 abierto** (America/Caracas).
 
 Este documento retoma el trabajo sin depender del historial del chat. Describe
 **dónde quedó exactamente** el trabajo y **qué sigue**, en ese orden. Léelo
-junto con `docs/CONTINUIDAD_STAGING_SUPABASE.md` (estado de staging/matriz) y
+junto con `basedatos_partidas/EMPEZAR_AQUI.md` (reglas y progreso del catálogo),
+`basedatos_partidas/INVENTARIO.md` (cifras y contraste de precios) y
 `PLAN_DE_COMERCIALIZACION_Y_EVOLUCION_SAAS.md` (§1.9 y §11).
+
+---
+
+## ✅ Cierre de sesión — catálogo 3.006 + landing comercial (17/08/2026)
+
+Rama fija de la sesión: `arena/01a0108b-generador-comercial`, basada en `main`
+(`e58a94d`, merge del PR #31). El bloque cierra dos frentes: **(1)** ampliar el
+catálogo propio hasta superar el mínimo de 3.000 partidas y **(2)** convertir
+la página de inicio en una landing comercial pública y premium.
+
+### 1. Catálogo propio: 540 → 3.006 partidas
+
+- **3.006 partidas**, 18 capítulos, 172 subcapítulos y 256 apartados con
+  partidas. **0 subcapítulos sin cobertura** (`planificar_cobertura.py`).
+- Ampliación por capítulos con generadores reproducibles en `tools/`:
+  capítulos 01–10 y 12 hasta el mínimo; luego 11/13/14 y 15/16/17/18.
+- Contraste de precios contra el mercado venezolano (rondas 3, 4 y 5:
+  eléctrico, plomería/gas/climatización, soldadura/pinturas/seguridad/agregados).
+  Corrección de doble conteo (equipo fuera de `recursos`, queda en
+  `producto_cliente`) y de terminología (losa, friso, rodapié…).
+- ~196 precios provisionales restantes documentados en
+  `basedatos_partidas/INVENTARIO.md` (~148 consumibles de bajo valor +
+  ~48 especialidades B2B que requieren cotización de proveedor).
+- Refactor previo del bloque: E4-001 (routers por dominio), E4-003 (config por
+  entorno), E4-016/E4-017 (inventario de aislamiento y auditoría de archivos);
+  árbol de partidas con carga bajo demanda (`/partidas`).
+- `CATALOGO_VERSION = 3` en `app/services/catalogo_propio.py` (incorpora las
+  partidas nuevas a instalaciones existentes).
+
+### 2. Landing pública (la home ya no es el login)
+
+- `/` es la landing pública; `/inicio` es el panel. Login/registro/onboarding
+  redirigen a `/inicio`. Alias `/conocer`.
+- Landing premium: **hero dividido** (mensaje + maqueta de presupuesto PDF con
+  badges de margen/tiempo); **«Así se ve»** con un *presupuesto real de
+  remodelación de baño* (partidas, precios y rendimientos reales del catálogo,
+  beneficio por partida/capítulo/total, horas por rol y productos con imagen);
+  **«El plus que marca la diferencia»** (margen +35 % y tiempo de obra);
+  **tour animado** de 4 pantallas (`app/static/js/landing-tour.js`, solo
+  `classList` + `addEventListener`); imágenes de producto en `app/static/img/`.
+- Sin mención a CYPE en contenido visible. Cifras del catálogo dinámicas
+  (`cifras_catalogo()` en `app/routers/common.py`, global Jinja `catalogo`).
+- CSP estricta cumplida: sin `innerHTML`, sin estilos inline, sin handlers
+  inline.
+
+### Estado y qué sigue
+
+- Suite: **516 passed, 6 skipped**. `git diff --check` limpio.
+- PR **#32** desde `arena/01a0108b-generador-comercial` hacia `main`
+  (confirmar con `gh pr view 32`).
+
+Pendientes (sin orden de prioridad):
+
+1. Objetivo amplio de **5.000 partidas** (brecha ~1.994; seguir produciendo
+   familias reales por capítulo).
+2. Cerrar los **~196 precios provisionales** B2B (requiere cotización del
+   titular; no se puede cerrar por web).
+3. **Formulario de demo real** en la landing (capturar lead) en vez de `mailto:`.
+4. Decisión del titular sobre **revisar los rendimientos** de mano de obra del
+   catálogo (comentó que algunos «están fatal»; no se tocaron en este bloque).
+5. Opcional: añadir el video/tour grabado (Loom) cuando el titular lo grabe.
 
 ---
 
@@ -476,40 +538,32 @@ Copiar tal cual, sin añadir secretos ni tokens:
 ---
 
 Continúa el proyecto CotizaT. Antes de proponer nada, lee
-`docs/PUNTO_DE_CONTINUACION.md` (secciones 0bis, 0ter y 0quater primero) y
-luego `docs/CONTINUIDAD_STAGING_SUPABASE.md`. No repitas trabajo ya hecho y
-no me pidas secretos.
+`docs/PUNTO_DE_CONTINUACION.md` (sección «Cierre de sesión — catálogo 3.006 +
+landing comercial» primero) y `basedatos_partidas/EMPEZAR_AQUI.md`. No repitas
+trabajo ya hecho y no me pidas secretos.
 
-**Dónde quedó todo (16/08/2026, cierre de bloque con PR del titular).**
+**Dónde quedó todo (17/08/2026, cierre con PR del titular).**
 
-- La rama `arena/01a00b99-generador-comercial` termina el bloque en el commit
-  `2a0d56d` y el **PR #27 quedó creado y abierto** con todo ese trabajo:
-  https://github.com/gtrespana-bit/generador-comercial/pull/27 (confirmar
-  estado con `gh pr view 27`; si ya está fusionado, `main` contiene este
-  código). El árbol de decisión «justo después del PR» está en
-  `docs/PUNTO_DE_CONTINUACION.md` §0quater: si el PR sigue abierto, primera
-  prioridad es dejarlo en verde; si está fusionado, desplegar, verificar
-  `/readyz` en 200 y ensayar el flujo real en staging.
-- Commits del bloque: `9fd5afa` (recuperación E3-016 a E3-019), `bd684e1`
-  (E3-020/21 respaldo y restauración), `a0d2711` (E3-022/23 exportación y
-  baja), `7ddb7de` (E3-024 monitorización), `2bf6d19` (migraciones aplicadas
-  documentadas), `d3eb2a7` (Etapa 4: autorización centralizada + logs
-  estructurados) y `2de721a` (traspaso de sesión para el PR).
-- Migraciones `c2f6e8a1d934` y `a3d7e9c1b5f2` **aplicadas y verificadas en
-  Supabase** (§0ter). Hasta desplegar el código de la rama, el `/readyz` del
-  entorno migrado responde 503 (esperado); tras el despliegue vuelve a 200.
-- Suite de la rama: **465 passed, 6 skipped**; puertas en verde (63
-  plantillas, compileall, JavaScript, lock de 42 paquetes, `git diff --check`,
-  simulación Vercel read-only).
-- **Siguiente trabajo: Etapa 4 — E4-001 (dividir `app/main.py` en routers por
-  dominio)**, la tarea estructural pendiente más grande; el resto de tareas
-  abiertas de la etapa están en el plan §4.1 a §4.8.
+- Rama `arena/01a0108b-generador-comercial`, HEAD `971069c`, basada en `main`
+  (`e58a94d`, merge del PR #31). **PR #32 creado hacia `main`:**
+  https://github.com/gtrespana-bit/generador-comercial/pull/32 (confirmar
+  estado con `gh pr view 32`; si ya está fusionado, `main` contiene el código).
+- Contenido del bloque: catálogo propio ampliado de 540 a **3.006 partidas**
+  (18 capítulos, 0 subcapítulos sin cobertura), contraste de precios rondas
+  3–5, y **landing pública premium** (home = landing, hero, showcase con
+  presupuesto real de baño, margen/beneficio y tiempo de obra, tour animado e
+  imágenes de producto). `CATALOGO_VERSION = 3`.
+- Suite: **516 passed, 6 skipped**; `git diff --check` limpio.
 - Al empezar: realinea si el HEAD aparece retrocedido
-  (`git fetch origin arena/01a00b99-generador-comercial && git reset --mixed
-  FETCH_HEAD`) y recrea `.venv` (`python -m venv .venv && .venv/bin/pip
-  install -r requirements.lock`).
-- No repetir: catálogo comercial y pilotos siguen aplazados (D-017) hasta
-  nueva decisión expresa del titular; no pedir secretos ni URLs
-  administrativas.
+  (`git fetch origin arena/01a0108b-generador-comercial && git reset --hard
+  FETCH_HEAD`) y recrea `.venv` (`python3 -m venv .venv && .venv/bin/pip
+  install -q -r requirements-dev.txt`).
+- Siguientes candidatos: objetivo amplio de **5.000 partidas**, cerrar los
+  **~196 precios provisionales B2B** (requiere cotización), **formulario de
+  demo real**, y decisión del titular sobre **revisar los rendimientos** del
+  catálogo.
+- No repetir: la landing ya muestra margen/beneficio, tiempo de obra, productos
+  e imágenes; **no inventar precios ni rendimientos** (usar los del catálogo);
+  no nombrar a CYPE en contenido visible.
 
 ---

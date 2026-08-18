@@ -1,0 +1,36 @@
+{
+  "codigo": "12.04.01.240",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "04",
+  "unidad": "m2",
+  "titulo": "Revestimiento de metal expandido decorativo.",
+  "descripcion": "Revestimiento de paramento con panel de metal expandido o malla decorativa, con fijación mecánica. Incluye la preparación del soporte, la fijación del panel y el remate. Medido por metro cuadrado revestido.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PERFIL-ACERO",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MT-PERFIL-REMATE",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MQ-ATORN",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

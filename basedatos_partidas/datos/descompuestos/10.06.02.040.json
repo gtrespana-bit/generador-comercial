@@ -1,0 +1,40 @@
+{
+  "codigo": "10.06.02.040",
+  "ambito": "reforma",
+  "capitulo": "10",
+  "subcapitulo": "06",
+  "unidad": "m2",
+  "titulo": "Impermeabilización de piscina con doble membrana.",
+  "descripcion": "Impermeabilización del vaso de piscina con doble membrana líquida. Incluye la preparación y la aplicación de las dos capas. Medido por metro cuadrado impermeabilizado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-POLIUR-LIQ",
+      "rendimiento": 2.8
+    },
+    {
+      "ref": "MT-PUENTE-ADH",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MT-MALLA-JUNTA",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.65
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.28
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

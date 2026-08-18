@@ -1,0 +1,40 @@
+{
+  "codigo": "09.03.01.030",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "03",
+  "unidad": "ud",
+  "titulo": "Acometida eléctrica subterránea.",
+  "descripcion": "Acometida eléctrica subterránea. Incluye el tendido y la conexión. Medido por acometida ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CABLE-8",
+      "rendimiento": 20.0
+    },
+    {
+      "ref": "MT-ELE-TUB20",
+      "rendimiento": 14.0
+    },
+    {
+      "ref": "MT-BREAKER",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MQ-ROZAD",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 2.0
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

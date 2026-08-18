@@ -1,0 +1,40 @@
+{
+  "codigo": "12.10.01.130",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "10",
+  "unidad": "m",
+  "titulo": "Pintura de franja inferior o rodapié pintado.",
+  "descripcion": "Pintura de franja inferior o rodapié pintado sobre paramento interior, con dos manos de pintura lavable. Incluye el enmascarado de la línea superior y las dos manos de acabado. Medido por metro lineal de franja pintada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PIN-SEMIBRILLO",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MT-CINTA-ENM",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MT-PIN-LIJA",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.14
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.09
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

@@ -21,6 +21,7 @@ from starlette.testclient import TestClient
 import app.database as database_module
 from app import auth as auth_module
 from app import main as main_module
+from app.routers import common
 from app.auth import (
     ACCESS_COOKIE,
     REFRESH_COOKIE,
@@ -310,7 +311,7 @@ def dependencia_suspendida():
 
 def test_la_suspension_explica_que_los_datos_siguen_guardados(dependencia_suspendida):
     with _cliente_api() as client:
-        respuesta = client.get("/")
+        respuesta = client.get("/inicio")
 
     assert respuesta.status_code == 403
     assert "Acceso suspendido" in respuesta.text
@@ -322,7 +323,7 @@ def test_la_suspension_explica_que_los_datos_siguen_guardados(dependencia_suspen
 
 def test_la_suspension_responde_json_a_quien_pide_json(dependencia_suspendida):
     with _cliente_api() as client:
-        respuesta = client.get("/", headers={"accept": "application/json"})
+        respuesta = client.get("/inicio", headers={"accept": "application/json"})
 
     assert respuesta.status_code == 403
     cuerpo = respuesta.json()
@@ -614,7 +615,7 @@ def entorno_panel(monkeypatch):
         seed.commit()
         datos = {"usuario_id": usuario.id, "organizacion_id": organizacion.id}
 
-    monkeypatch.setattr(main_module, "DATABASE_IS_SQLITE", False)
+    monkeypatch.setattr(common, "DATABASE_IS_SQLITE", False)
     monkeypatch.setattr(
         SupabaseAuthSettings, "from_environment", classmethod(lambda _cls: SETTINGS)
     )

@@ -1,0 +1,46 @@
+{
+  "codigo": "13.02.01.050",
+  "ambito": "reforma",
+  "capitulo": "13",
+  "subcapitulo": "02",
+  "unidad": "m",
+  "titulo": "Mesón de granito pulido.",
+  "descripcion": "Suministro y colocación de mesón de granito, cuarzo o piedra natural, con corte, cantos y perforaciones para fregadero. Incluye plantillas, corte y sellado. La piedra la elige el cliente.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ADH-PIEDRA",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MT-SIL-SAN",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MQ-CORT-AGUA",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MQ-PULIDORA",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 1.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.7
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01",
+  "producto_cliente": {
+    "tipo": "Mesón de piedra natural (granito, cuarzo) elegido por el cliente",
+    "unidad": "m",
+    "consumo": 1.0,
+    "nota": "La partida cubre la colocación. La piedra se toma del catálogo de productos."
+  }
+}

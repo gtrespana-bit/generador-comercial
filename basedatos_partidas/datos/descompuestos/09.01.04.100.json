@@ -1,0 +1,36 @@
+{
+  "codigo": "09.01.04.100",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "01",
+  "unidad": "ud",
+  "titulo": "Instalación de inodoro de tanque.",
+  "descripcion": "Instalación de inodoro de tanque. Incluye la conexión de agua y desagüe. Medido por unidad instalada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-SAN-FIJA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-PLO-ABASTO",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-PLO-DESAG",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-OF1-PLO",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.5
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "04"
+}

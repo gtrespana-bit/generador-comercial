@@ -1,0 +1,36 @@
+{
+  "codigo": "11.07.01.070",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "07",
+  "unidad": "ud",
+  "titulo": "Gancho o anclaje de seguridad en cubierta.",
+  "descripcion": "Colocación de gancho o anclaje de seguridad en cubierta para amarre de línea de vida, con fijación a la estructura. Incluye el taladrado y la fijación.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PERNO-ANCLA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-EPOXI-ANCLA",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

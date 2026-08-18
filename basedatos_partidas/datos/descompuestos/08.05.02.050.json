@@ -1,0 +1,36 @@
+{
+  "codigo": "08.05.02.050",
+  "ambito": "reforma",
+  "capitulo": "08",
+  "subcapitulo": "05",
+  "unidad": "m",
+  "titulo": "Coronación de muro con chapa.",
+  "descripcion": "Colocación de coronación de muro con chapa metálica. Incluye la fijación y el sellado. Medido por metro lineal ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-LAMINA-ZINC",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MT-SILICONA-EST",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.28
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.12
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

@@ -1,0 +1,44 @@
+{
+  "codigo": "10.01.01.130",
+  "ambito": "reforma",
+  "capitulo": "10",
+  "subcapitulo": "01",
+  "unidad": "m2",
+  "titulo": "Aislamiento térmico de muro por el interior.",
+  "descripcion": "Suministro y colocación de aislamiento térmico de muro por el interior, con panel y placa de yeso. Incluye la estructura, el panel y la placa. Medido por metro cuadrado aislado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-POLIESTIRENO-EXT",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-PYL-MONT",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MT-PYL-PLACA125",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-PYL-PASTA",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MQ-ATORN",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

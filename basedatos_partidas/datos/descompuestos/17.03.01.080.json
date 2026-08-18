@@ -1,0 +1,28 @@
+{
+  "codigo": "17.03.01.080",
+  "ambito": "reforma",
+  "capitulo": "17",
+  "subcapitulo": "03",
+  "unidad": "ud",
+  "titulo": "Iluminación de emergencia en obra.",
+  "descripcion": "Colocación de iluminación de emergencia en las zonas de paso y evacuación de la obra.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-LAMP-OBRA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.1
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

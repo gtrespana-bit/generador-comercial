@@ -1,0 +1,36 @@
+{
+  "codigo": "05.01.03.010",
+  "ambito": "reforma",
+  "capitulo": "05",
+  "subcapitulo": "01",
+  "unidad": "m2",
+  "titulo": "Cimbra y apuntalamiento de losa.",
+  "descripcion": "Cimbra y apuntalamiento de losa durante el vaciado. Incluye la colocación de puntales. Medido por metro cuadrado apuntalado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-APEO",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MT-VIGA-APEO",
+      "rendimiento": 0.8
+    },
+    {
+      "ref": "MQ-NIVEL-LASER",
+      "rendimiento": 0.03
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.25
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "03"
+}

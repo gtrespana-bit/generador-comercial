@@ -12,6 +12,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
 from app import main as main_module
+from app.routers import common
 from app.database import Base, get_db
 from app.main import app
 from app.models import (
@@ -241,7 +242,7 @@ def test_envio_exitoso_congela_version_pdf_y_constancia(
         capturado.update(kwargs)
         return "resend-ok-016"
 
-    monkeypatch.setattr(main_module, "enviar_presupuesto_por_email", fake_enviar)
+    monkeypatch.setattr(common, "enviar_presupuesto_por_email", fake_enviar)
     monkeypatch.setattr(
         main_module.pdf_service,
         "generar_pdf",
@@ -286,7 +287,7 @@ def test_fallo_del_proveedor_no_cambia_estado_ni_crea_version(
 ):
     Session, presupuesto_id, _rol = presupuesto_web
     monkeypatch.setattr(
-        main_module,
+        common,
         "enviar_presupuesto_por_email",
         lambda **_kwargs: (_ for _ in ()).throw(email_module.EmailSendError("Resend no respondió.")),
     )
@@ -325,7 +326,7 @@ def test_rol_lectura_no_contacta_proveedor(presupuesto_web, monkeypatch):
         llamado["valor"] = True
         return "no-debe-ocurrir"
 
-    monkeypatch.setattr(main_module, "enviar_presupuesto_por_email", fake_enviar)
+    monkeypatch.setattr(common, "enviar_presupuesto_por_email", fake_enviar)
     with _cliente() as client:
         respuesta = client.post(
             f"/presupuestos/{presupuesto_id}/enviar-email",

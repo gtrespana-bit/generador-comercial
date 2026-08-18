@@ -1,0 +1,28 @@
+{
+  "codigo": "15.02.01.020",
+  "ambito": "reforma",
+  "capitulo": "15",
+  "subcapitulo": "02",
+  "unidad": "m³",
+  "titulo": "Bajada de escombro por escombrera o ducto.",
+  "descripcion": "Bajada de escombro desde plantas altas mediante escombrera o ducto vertical, con tolva de recepción y riego para control de polvo.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-SAC-ESC",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MT-AGUA-OBRA",
+      "rendimiento": 0.01
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.5
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

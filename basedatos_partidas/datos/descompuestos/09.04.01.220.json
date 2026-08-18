@@ -1,0 +1,36 @@
+{
+  "codigo": "09.04.01.220",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "04",
+  "unidad": "ud",
+  "titulo": "Instalación de luminaria decorativa.",
+  "descripcion": "Instalación de luminaria decorativa., con conexión y fijación. Incluye la conexión eléctrica y la fijación. Medido por unidad instalada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ELE-CABLE",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MT-ELE-CAJA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.3
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

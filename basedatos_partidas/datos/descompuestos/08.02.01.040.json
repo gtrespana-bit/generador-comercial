@@ -1,0 +1,36 @@
+{
+  "codigo": "08.02.01.040",
+  "ambito": "reforma",
+  "capitulo": "08",
+  "subcapitulo": "02",
+  "unidad": "m",
+  "titulo": "Roza en techo.",
+  "descripcion": "Apertura de roza en techo para instalación. Incluye la ejecución de la roza. Medido por metro lineal ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MQ-ROZAD",
+      "rendimiento": 0.22
+    },
+    {
+      "ref": "MQ-ASPIR",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.22
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.18
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

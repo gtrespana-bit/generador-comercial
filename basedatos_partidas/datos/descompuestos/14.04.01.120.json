@@ -1,0 +1,36 @@
+{
+  "codigo": "14.04.01.120",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "04",
+  "unidad": "m²",
+  "titulo": "Pintura de cerramiento metálico.",
+  "descripcion": "Aplicación de pintura anticorrosiva sobre cerramiento metálico, con limpieza previa. Incluye la preparación y la aplicación.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PINT-ANTICORR",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MT-PIN-LIJA",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.16
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

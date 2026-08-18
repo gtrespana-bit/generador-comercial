@@ -1,0 +1,40 @@
+{
+  "codigo": "12.03.02.080",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "03",
+  "unidad": "m2",
+  "titulo": "Enchapado de piedra con anclaje mecánico en fachada.",
+  "descripcion": "Enchapado de fachada con pieza de piedra natural fijada con anclaje mecánico puntual. Incluye la fijación de los anclajes, la colocación de la pieza y el sellado de juntas. Medido por metro cuadrado enchapado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ANCLA-PIEDRA",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MT-ADH-PIEDRA",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MT-SILICONA-EST",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MO-OF1-ALI",
+      "rendimiento": 1.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.5
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

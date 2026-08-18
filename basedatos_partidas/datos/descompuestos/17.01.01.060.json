@@ -1,0 +1,32 @@
+{
+  "codigo": "17.01.01.060",
+  "ambito": "reforma",
+  "capitulo": "17",
+  "subcapitulo": "01",
+  "unidad": "m²",
+  "titulo": "Marquesina de protección de acceso.",
+  "descripcion": "Colocación de marquesina de protección sobre el acceso a la obra, para evitar caída de objetos.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MALLA-OBRA",
+      "rendimiento": 1.1
+    },
+    {
+      "ref": "MT-PERFIL-ACERO",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.24
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

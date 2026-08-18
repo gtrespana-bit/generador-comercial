@@ -1,0 +1,44 @@
+{
+  "codigo": "14.04.01.040",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "04",
+  "unidad": "m",
+  "titulo": "Cerca de malla ciclónica sobre postes.",
+  "descripcion": "Ejecución de cerca de malla ciclónica sobre postes metálicos, con tensores y alambre de amarre. Incluye la colocación de postes y malla.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MALLA-OBRA",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MT-PERFIL-ACERO",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MT-ALAMBRE",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MT-CONC-210",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.4
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

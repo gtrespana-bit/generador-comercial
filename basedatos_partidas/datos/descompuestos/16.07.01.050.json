@@ -1,0 +1,28 @@
+{
+  "codigo": "16.07.01.050",
+  "ambito": "reforma",
+  "capitulo": "16",
+  "subcapitulo": "07",
+  "unidad": "m²",
+  "titulo": "Medición de humedad de piso.",
+  "descripcion": "Medición del contenido de humedad del piso, para verificar la idoneidad antes de colocar revestimientos.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MQ-DETECTOR",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.04
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.02
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

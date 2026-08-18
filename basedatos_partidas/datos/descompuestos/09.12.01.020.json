@@ -1,0 +1,38 @@
+{
+  "codigo": "09.12.01.020",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "12",
+  "unidad": "ud",
+  "titulo": "Pasarela de comunicación entre protocolos.",
+  "descripcion": "Suministro e instalación de pasarela de comunicación que integra protocolos de distintos fabricantes con la central domótica. Incluye la elección de la pasarela según los dispositivos a integrar, su montaje junto a la central, la conexión de alimentación y datos, y el emparejamiento y verificación de los dispositivos a través de la pasarela. Medido por pasarela instalada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CABLE-DATOS",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.6
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01",
+  "producto_cliente": {
+    "tipo": "Pasarela de comunicación entre protocolos, del modelo elegido por el cliente",
+    "unidad": "ud",
+    "consumo": 1.0,
+    "nota": "La partida cubre solo la instalación. El equipo se toma del catálogo de productos y su precio no está incluido."
+  }
+}

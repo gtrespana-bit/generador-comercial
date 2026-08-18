@@ -1,0 +1,36 @@
+{
+  "codigo": "02.07.02.030",
+  "ambito": "reforma",
+  "capitulo": "02",
+  "subcapitulo": "07",
+  "unidad": "m",
+  "titulo": "Desmontaje de bandeja portacables.",
+  "descripcion": "Desmontaje de bandeja portacables eléctrica. Incluye la retirada de la bandeja y sus soportes. Medido por metro lineal desmontado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MT-SAC-ESC",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

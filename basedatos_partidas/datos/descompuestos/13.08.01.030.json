@@ -1,0 +1,44 @@
+{
+  "codigo": "13.08.01.030",
+  "ambito": "reforma",
+  "capitulo": "13",
+  "subcapitulo": "08",
+  "unidad": "m",
+  "titulo": "Estantería fija de pared.",
+  "descripcion": "Fabricación y colocación de repisa o estantería fija, en melamina o madera, con fijación a la pared. Incluye el corte y la fijación.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MELAMINA",
+      "rendimiento": 0.8
+    },
+    {
+      "ref": "MT-HERRAJE-CLOSET",
+      "rendimiento": 3.0
+    },
+    {
+      "ref": "MT-TORN",
+      "rendimiento": 12.0
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.5
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

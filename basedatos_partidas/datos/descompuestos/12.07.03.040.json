@@ -1,0 +1,40 @@
+{
+  "codigo": "12.07.03.040",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "07",
+  "unidad": "ud",
+  "titulo": "Reparación puntual de trasdosado de placa de yeso.",
+  "descripcion": "Reparación puntual de un trasdosado o forro de placa de yeso laminado dañado por golpe o humedad localizada. Incluye el corte del tramo afectado, la sustitución de la placa en la zona, el tratamiento de juntas del parche y el lijado para dejar la superficie lista para pintar. Medido por reparación ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PYL-PLACA125",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MT-PYL-PASTA",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MT-TORN",
+      "rendimiento": 8.0
+    },
+    {
+      "ref": "MQ-LIJAD",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "03"
+}

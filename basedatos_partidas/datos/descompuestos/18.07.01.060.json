@@ -1,0 +1,42 @@
+{
+  "codigo": "18.07.01.060",
+  "ambito": "reforma",
+  "capitulo": "18",
+  "subcapitulo": "07",
+  "unidad": "ud",
+  "titulo": "Recuperador de calor.",
+  "descripcion": "Instalación de recuperador de calor en el sistema de ventilación. El equipo lo elige el cliente.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-DUCTO-VENT",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MT-REJILLA-VENT",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-OF1-AC",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.5
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01",
+  "producto_cliente": {
+    "tipo": "Recuperador de calor elegido por el cliente",
+    "unidad": "ud",
+    "consumo": 1.0,
+    "nota": "La partida cubre solo la instalación. El equipo se toma del catálogo de productos."
+  }
+}

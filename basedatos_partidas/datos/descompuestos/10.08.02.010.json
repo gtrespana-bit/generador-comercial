@@ -1,0 +1,36 @@
+{
+  "codigo": "10.08.02.010",
+  "ambito": "reforma",
+  "capitulo": "10",
+  "subcapitulo": "08",
+  "unidad": "m",
+  "titulo": "Sellado de junta de dilatación en piso.",
+  "descripcion": "Sellado de junta de dilatación en piso con perfil y sellador elástico. Incluye la limpieza de la junta, la colocación del perfil y el sellado. Medido por metro lineal sellado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-JUNTA-DILAT",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-SELLA-ELAST",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MQ-AMOLA",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.08
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

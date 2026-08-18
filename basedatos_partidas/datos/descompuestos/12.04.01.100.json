@@ -1,0 +1,36 @@
+{
+  "codigo": "12.04.01.100",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "04",
+  "unidad": "m2",
+  "titulo": "Panel 3D decorativo en pared.",
+  "descripcion": "Revestimiento de paramento con paneles 3D decorativos, con su adhesivo y remates. Incluye la preparación del soporte, la colocación y el remate. Medido por metro cuadrado revestido.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ADH-C2TE",
+      "rendimiento": 3.0
+    },
+    {
+      "ref": "MT-PERFIL-REMATE",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

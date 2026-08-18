@@ -1,0 +1,36 @@
+{
+  "codigo": "05.07.01.160",
+  "ambito": "reforma",
+  "capitulo": "05",
+  "subcapitulo": "07",
+  "unidad": "m2",
+  "titulo": "Rampa de concreto con bordillo.",
+  "descripcion": "Ejecución de rampa de concreto con bordillo. Incluye el vaciado y el bordillo. Medido por metro cuadrado ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONC-250",
+      "rendimiento": 0.13
+    },
+    {
+      "ref": "MT-MALLA-ELEC",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MQ-VIBRADOR",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.72
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.5
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

@@ -1,0 +1,28 @@
+{
+  "codigo": "15.06.01.030",
+  "ambito": "reforma",
+  "capitulo": "15",
+  "subcapitulo": "06",
+  "unidad": "m²",
+  "titulo": "Limpieza semanal de la obra.",
+  "descripcion": "Limpieza semanal general de la obra, con barrido, retirada de escombros menores y organización de materiales.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-LIMP",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MT-SAC-ESC",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.1
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

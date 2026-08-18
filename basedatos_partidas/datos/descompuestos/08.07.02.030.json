@@ -1,0 +1,36 @@
+{
+  "codigo": "08.07.02.030",
+  "ambito": "reforma",
+  "capitulo": "08",
+  "subcapitulo": "07",
+  "unidad": "m",
+  "titulo": "Tapajuntas de MDF.",
+  "descripcion": "Colocación de tapajuntas de MDF. Incluye la fijación. Medido por metro lineal colocado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MELAMINA",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MT-PLO-SOP",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.1
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

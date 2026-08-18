@@ -1,0 +1,36 @@
+{
+  "codigo": "09.01.04.160",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "01",
+  "unidad": "ud",
+  "titulo": "Instalación de grifería de ducha exterior.",
+  "descripcion": "Instalación de grifería de ducha exterior. Incluye la conexión. Medido por unidad instalada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PLO-ABASTO",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MT-SAN-FIJA",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-PLO",
+      "rendimiento": 0.7
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.35
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "04"
+}

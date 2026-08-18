@@ -1,0 +1,36 @@
+{
+  "codigo": "10.02.02.050",
+  "ambito": "reforma",
+  "capitulo": "10",
+  "subcapitulo": "02",
+  "unidad": "m2",
+  "titulo": "Suelo flotante con doble manta acústica.",
+  "descripcion": "Suministro y colocación de doble manta acústica bajo piso, para mayor aislamiento de impacto. Incluye la extensión de las dos mantas y el remate. Medido por metro cuadrado colocado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MANTA-ACUS",
+      "rendimiento": 2.2
+    },
+    {
+      "ref": "MT-CINTA-ENM",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MO-OF1-PISO",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.08
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

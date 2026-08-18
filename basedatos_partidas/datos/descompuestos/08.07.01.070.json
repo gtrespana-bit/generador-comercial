@@ -1,0 +1,44 @@
+{
+  "codigo": "08.07.01.070",
+  "ambito": "reforma",
+  "capitulo": "08",
+  "subcapitulo": "07",
+  "unidad": "m",
+  "titulo": "Forrado de montante de instalación.",
+  "descripcion": "Forrado de montante de instalaciones con placa. Incluye la estructura y la placa. Medido por metro lineal forrado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PYL-MONT",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MT-PYL-PLACA125",
+      "rendimiento": 0.7
+    },
+    {
+      "ref": "MT-PYL-PASTA",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MT-TORN",
+      "rendimiento": 8.0
+    },
+    {
+      "ref": "MQ-ATORN",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.42
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.18
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

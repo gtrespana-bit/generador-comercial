@@ -1,0 +1,48 @@
+{
+  "codigo": "07.07.01.020",
+  "ambito": "reforma",
+  "capitulo": "07",
+  "subcapitulo": "07",
+  "unidad": "m2",
+  "titulo": "Mampara de baño fija de vidrio templado.",
+  "descripcion": "Suministro y colocación de mampara de baño fija de vidrio templado, con perfil y sellado. Incluye la toma de medidas, el montaje del perfil y el acristalamiento. Medido por metro cuadrado instalado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-VIDRIO-TEMP",
+      "rendimiento": 1.02
+    },
+    {
+      "ref": "MT-PERFIL-ALUM",
+      "rendimiento": 1.8
+    },
+    {
+      "ref": "MT-SILICONA-EST",
+      "rendimiento": 0.22
+    },
+    {
+      "ref": "MT-SIL-SAN",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MT-PERNO-ANCLA",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.26
+    },
+    {
+      "ref": "MO-OF1-VIDR",
+      "rendimiento": 1.25
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.62
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

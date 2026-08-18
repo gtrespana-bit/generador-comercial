@@ -1,0 +1,36 @@
+{
+  "codigo": "11.03.01.060",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "03",
+  "unidad": "m²",
+  "titulo": "Cubierta de teja asfáltica en shingle.",
+  "descripcion": "Cubierta de teja asfáltica en shingle sobre base continua, clavada y con los solapes de fábrica. Incluye el fieltro base, la colocación y los remates de cumbrera.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-TEJA-ASF",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-CLAVOS",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.03
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.32
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.26
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

@@ -1,0 +1,40 @@
+{
+  "codigo": "02.12.01.140",
+  "ambito": "reforma",
+  "capitulo": "02",
+  "subcapitulo": "12",
+  "unidad": "m",
+  "titulo": "Demolición de muro de cerca.",
+  "descripcion": "Demolición de muro de cerca perimetral. Incluye la demolición y la retirada. Medido por metro lineal demolido.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MT-SAC-ESC",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MQ-MART-NEUM",
+      "rendimiento": 0.7
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.7
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

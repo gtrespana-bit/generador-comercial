@@ -1,0 +1,32 @@
+{
+  "codigo": "08.02.02.020",
+  "ambito": "reforma",
+  "capitulo": "08",
+  "subcapitulo": "02",
+  "unidad": "ud",
+  "titulo": "Perforación de paso en losa.",
+  "descripcion": "Perforación de paso en losa para instalación. Incluye la perforación. Medido por unidad ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.25
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

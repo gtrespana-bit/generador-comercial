@@ -1,0 +1,32 @@
+{
+  "codigo": "09.13.01.040",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "13",
+  "unidad": "m",
+  "titulo": "Conductor captador de cumbrera y perímetro de cubierta.",
+  "descripcion": "Suministro y tendido de conductor captador de cobre desnudo sobre cumbrera y perímetro de cubierta, con sus soportes de fijación. Incluye el replanteo del recorrido, la fijación de los soportes, el tendido del conductor y las uniones a las bajantes. Medido por metro lineal de conductor instalado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CABLE-COBRE-DESN",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-PLO-SOP",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.05
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

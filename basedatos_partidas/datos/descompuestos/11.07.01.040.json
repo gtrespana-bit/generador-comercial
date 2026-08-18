@@ -1,0 +1,44 @@
+{
+  "codigo": "11.07.01.040",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "07",
+  "unidad": "m",
+  "titulo": "Zócalo de claraboya de concreto.",
+  "descripcion": "Ejecución de zócalo de concreto perimetral para apoyo de claraboya o lucernario, con encofrado y curado. Incluye el armado y el vaciado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONC-210",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MT-ACERO-CAB",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-FORM-MADERA",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MT-DESMOLD",
+      "rendimiento": 0.008
+    },
+    {
+      "ref": "MQ-VIBRADOR",
+      "rendimiento": 0.015
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.32
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

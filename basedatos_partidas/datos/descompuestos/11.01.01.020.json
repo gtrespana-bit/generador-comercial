@@ -1,0 +1,40 @@
+{
+  "codigo": "11.01.01.020",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "01",
+  "unidad": "m²",
+  "titulo": "Pendientado de cubierta con concreto ligero.",
+  "descripcion": "Formación de pendientes con concreto ligero de baja resistencia sobre cubierta plana, para crear la caída hacia tragantes o canales. Incluye el encofrado perimetral, el extendido y reglado con maestras y el curado de la superficie.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONC-180",
+      "rendimiento": 0.04
+    },
+    {
+      "ref": "MT-ANIME-ALIV",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MQ-MEZCL",
+      "rendimiento": 0.03
+    },
+    {
+      "ref": "MQ-VIBRADOR",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.32
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

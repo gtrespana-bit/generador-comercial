@@ -1,0 +1,38 @@
+{
+  "codigo": "14.06.01.070",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "06",
+  "unidad": "m²",
+  "titulo": "Siembra de plantas ornamentales.",
+  "descripcion": "Siembra de plantas ornamentales en área verde, con preparación del suelo y riego. Incluye la siembra. Las plantas las elige el cliente.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-TIERRA-ABON",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MT-AGUA-OBRA",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MO-OF1-JARD",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.28
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01",
+  "producto_cliente": {
+    "tipo": "Plantas ornamentales elegidas por el cliente",
+    "unidad": "m²",
+    "consumo": 6.0,
+    "nota": "La partida cubre la siembra. Las plantas se toman del catálogo de productos."
+  }
+}

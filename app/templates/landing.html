@@ -3,15 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{{ product_name }} — Presupuestos de obra claros, editables y listos para presentar</title>
-  <meta name="description" content="Convierte tu catálogo y tus precios en presupuestos de construcción y remodelación profesionales en PDF. Para empresas que hoy trabajan con papel o Excel.">
+  <title>{{ product_name }} — Presupuestos de construcción y remodelación para Venezuela</title>
+  <meta name="description" content="Presupuestos de obra profesionales en minutos. Más de 3.000 partidas clasificadas con precios en USD contrastados con el mercado venezolano. PDF con tu logo, versiones, aprobaciones y cobros.">
   <link rel="icon" type="image/png" href="/static/icono.png">
-      <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+  <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
   <link rel="stylesheet" href="{{ 'css/public.css' | asset }}">
 </head>
 <body class="landing">
 <nav class="nav">
-  <a class="brand" href="/conocer">
+  <a class="brand" href="/">
     <span class="mark">
       <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <path d="M7 3.5h6.5L18 8v11a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 19V5a1.5 1.5 0 0 1 1-1.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
@@ -23,22 +23,595 @@
   </a>
   <div class="nav-links">
     <a class="entrar" href="/acceso">Iniciar sesión</a>
-    <a class="btn btn-primary" href="mailto:{{ email_soporte }}?subject=Quiero%20una%20demostraci%C3%B3n%20de%20{{ product_name }}">Solicitar demostración</a>
+    <a class="btn btn-primary" href="#demo">Solicitar demostración</a>
   </div>
 </nav>
 
 <header class="hero">
   <div class="hero-int">
-    <span class="hero-kicker">Presupuestos de obra · Construcción y remodelación</span>
-    <h1>Deja el Excel: presupuestos claros, editables y listos para presentar.</h1>
-    <p class="sub">{{ product_name }} convierte tu catálogo y tus precios en presupuestos profesionales en PDF —con capítulos, mediciones, alternativas de producto y control de aprobaciones— para empresas de construcción y remodelación.</p>
-    <div class="acciones">
-      <a class="btn btn-primary" href="mailto:{{ email_soporte }}?subject=Quiero%20una%20demostraci%C3%B3n%20de%20{{ product_name }}">Solicitar una demostración</a>
-      <a class="btn btn-secondary" href="/static/pdf/presupuesto-ejemplo.pdf" target="_blank" rel="noopener">Ver un presupuesto de ejemplo (PDF)</a>
-      <a class="btn" href="/acceso">Ya tengo cuenta</a>
+    <div class="hero-copy">
+      <span class="hero-kicker">🇻🇪 Hecho para Venezuela · Construcción y remodelación</span>
+      <h1>Presupuestos de obra <span class="hero-hl">profesionales</span>, en minutos.</h1>
+      <p class="sub">{{ product_name }} convierte tu catálogo y tus precios en presupuestos con su <strong>margen de beneficio</strong>, las <strong>horas de tu cuadrilla</strong> y un PDF con tu logo listo para enviar. Sin Excel, sin pegar y copiar.</p>
+      <div class="acciones">
+        <a class="btn btn-primary" href="#demo">Solicitar una demostración</a>
+        <a class="btn btn-secondary" href="/static/pdf/presupuesto-ejemplo.pdf" target="_blank" rel="noopener">Ver un presupuesto de ejemplo (PDF)</a>
+      </div>
+      <ul class="hero-points">
+        <li><span class="check">✓</span> Margen y beneficio en cada partida</li>
+        <li><span class="check">✓</span> Tiempo de obra y horas de tu cuadrilla</li>
+        <li><span class="check">✓</span> {{ catalogo().partidas_txt }} partidas con precios reales en USD</li>
+      </ul>
+    </div>
+
+    <div class="hero-visual" aria-hidden="true">
+      <div class="hero-doc">
+        <div class="hd-head">
+          <span class="hd-mark">A</span>
+          <span class="hd-org"><strong>Construcciones Alfa</strong><small>Presupuesto de obra · PR-2026-014</small></span>
+        </div>
+        <div class="hd-title">Remodelación de baño</div>
+        <div class="hd-meta">Res. Los Naranjos · Valencia</div>
+        <div class="hd-chaps">
+          <div class="hd-row"><span>Demoliciones y desmontajes</span><strong>$ 174,98</strong></div>
+          <div class="hd-row"><span>Instalaciones (plomería)</span><strong>$ 387,30</strong></div>
+          <div class="hd-row"><span>Aislamientos e impermeabilización</span><strong>$ 211,04</strong></div>
+          <div class="hd-row"><span>Revestimientos y acabados</span><strong>$ 666,20</strong></div>
+          <div class="hd-row"><span>Productos a elección del cliente</span><strong>$ 1.073,00</strong></div>
+        </div>
+        <div class="hd-total"><span>PRESUPUESTO TOTAL</span><strong>$ 2.914,52</strong></div>
+        <div class="hd-sig">
+          <div class="hd-sig-col"><span class="hd-sig-line"></span><span class="hd-sig-label">Contratista</span></div>
+          <div class="hd-sig-col"><span class="hd-sig-line"></span><span class="hd-sig-label">Cliente</span></div>
+        </div>
+      </div>
+      <div class="hero-badge badge-margen">💰 <strong>+35 %</strong>&nbsp;margen</div>
+      <div class="hero-badge badge-tiempo">⏱️ <strong>98 h</strong>&nbsp;· ≈ 6 días</div>
+    </div>
+  </div>
+
+  <div class="hero-stats" role="list">
+    <div class="stat" role="listitem">
+      <strong>{{ catalogo().partidas_txt }}</strong>
+      <span>partidas listas para usar</span>
+    </div>
+    <div class="stat" role="listitem">
+      <strong>{{ catalogo().capitulos }}</strong>
+      <span>capítulos de obra</span>
+    </div>
+    <div class="stat" role="listitem">
+      <strong>USD</strong>
+      <span>precios contrastados</span>
+    </div>
+    <div class="stat" role="listitem">
+      <strong>+35 %</strong>
+      <span>tu margen, a la vista</span>
     </div>
   </div>
 </header>
+
+<section class="showcase" id="producto">
+  <div class="showcase-intro">
+    <span class="section-kicker">Así se ve</span>
+    <h2>Así se ve un presupuesto real, partida por partida.</h2>
+    <p class="intro">Este es un presupuesto de remodelación de baño armado con las partidas y los precios reales del catálogo: demolición, plomería completa, impermeabilización, friso y enchapado de gran formato. Cada línea muestra su coste, su beneficio y las horas de tu cuadrilla.</p>
+  </div>
+
+  <div class="showcase-stage">
+    <div class="showcase-glow" aria-hidden="true"></div>
+
+    <div class="window" role="img" aria-label="Presupuesto real en Cotizat, mostrando por cada partida el coste, el beneficio y las horas, y el margen total al cierre">
+      <div class="window-bar">
+        <span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="window-url">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="2"/><path d="M5 7V5a3 3 0 016 0v2"/></svg>
+          cotizat&nbsp;&nbsp;/&nbsp;&nbsp;presupuestos&nbsp;&nbsp;/&nbsp;&nbsp;PR-2026-014
+        </span>
+        <span class="window-ghost" aria-hidden="true"></span>
+      </div>
+
+      <div class="app">
+        <aside class="app-side">
+          <div class="app-brand">
+            <span class="mark">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M7 3.5h6.5L18 8v11a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 19V5a1.5 1.5 0 0 1 1-1.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                <path d="M13.5 3.5V8H18" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                <path d="M9 14.5l2 2 4-4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            {{ product_name }}
+          </div>
+          <nav class="app-nav" aria-hidden="true">
+            <span class="app-nav-item">
+              <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="1.5" y="1.5" width="6" height="6" rx="1.5"/><rect x="10.5" y="1.5" width="6" height="6" rx="1.5"/><rect x="1.5" y="10.5" width="6" height="6" rx="1.5"/><rect x="10.5" y="10.5" width="6" height="6" rx="1.5"/></svg>
+              Dashboard
+            </span>
+            <span class="app-nav-item active">
+              <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 2.5h8.5L15 6v9.5a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-12a1 1 0 0 1 1-1z"/><path d="M11 2.5V6h3.5"/><path d="M5 10h6M5 13h4"/></svg>
+              Presupuestos
+            </span>
+            <span class="app-nav-item">
+              <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M2 4h14M2 9h14M2 14h10"/></svg>
+              Partidas
+            </span>
+            <span class="app-nav-item">
+              <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="9" cy="9" r="7"/><path d="M9 5v4l3 2"/></svg>
+              Recursos
+            </span>
+            <span class="app-nav-item">
+              <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="7" cy="6" r="3"/><path d="M1 16c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg>
+              Clientes
+            </span>
+          </nav>
+          <div class="app-user" aria-hidden="true">
+            <span class="app-avatar">A</span>
+            <span class="app-user-meta"><strong>Construcciones Alfa</strong><small>Ana Martínez</small></span>
+          </div>
+        </aside>
+
+        <div class="app-main">
+          <header class="app-bar">
+            <div class="app-bar-id">
+              <span class="app-eyebrow">Presupuesto PR-2026-014</span>
+              <strong class="app-title">Remodelación de baño · Res. Los Naranjos</strong>
+              <span class="app-status"><i aria-hidden="true"></i>Borrador</span>
+            </div>
+            <div class="app-bar-actions">
+              <span class="app-total"><small>Total</small><strong>$ 2.914,52</strong></span>
+              <span class="app-ghostbtn" aria-hidden="true">Editar</span>
+              <span class="app-save">PDF</span>
+            </div>
+          </header>
+
+          <div class="app-summary" role="img" aria-label="Resumen: beneficio del 35 por ciento, 98 horas-hombre y unos 6 días de duración">
+            <div class="sum">
+              <span class="sum-k">Margen de beneficio</span>
+              <strong class="sum-v pos">+35 % <small>$ 651,47</small></strong>
+              <span class="sum-h">beneficio total del presupuesto</span>
+            </div>
+            <div class="sum">
+              <span class="sum-k">Mano de obra</span>
+              <strong class="sum-v">98 h-hombre</strong>
+              <span class="sum-h">👷 49 h oficial · 🧑 49 h ayudante</span>
+            </div>
+            <div class="sum">
+              <span class="sum-k">Duración estimada</span>
+              <strong class="sum-v">≈ 6 días</strong>
+              <span class="sum-h">cuadrilla de 2 · 1 oficial + 1 ayudante</span>
+            </div>
+          </div>
+
+          <div class="app-doc">
+            <div class="doc-head">Capítulos y partidas</div>
+
+            <div class="doc-capitulo"><span>01 · Demoliciones y desmontajes</span><span class="cap-meta"><strong>$ 174,98</strong><em class="cap-ben">+ $ 45,38</em></span></div>
+            <div class="doc-partida">
+              <div class="dp-main">
+                <span class="dp-nombre">Picado de enchapado cerámico en pared y su capa de pega</span>
+                <span class="dp-cant">20 m²</span>
+                <span class="dp-precio">6,52 $/m²</span>
+                <span class="dp-importe">$ 130,40</span>
+                <span class="dp-tiempo">14 h · 0+14</span>
+              </div>
+              <div class="dp-ben"><span class="dp-coste">Coste: $ 96,58</span><span class="dp-beneficio">Beneficio: $ 33,82</span><span class="dp-margen">+35 %</span></div>
+            </div>
+            <div class="doc-partida">
+              <div class="dp-main">
+                <span class="dp-nombre">Demolición de piso cerámico y su capa de pega</span>
+                <span class="dp-cant">6 m²</span>
+                <span class="dp-precio">5,06 $/m²</span>
+                <span class="dp-importe">$ 30,36</span>
+                <span class="dp-tiempo">3,2 h · 0+3,2</span>
+              </div>
+              <div class="dp-ben"><span class="dp-coste">Coste: $ 22,49</span><span class="dp-beneficio">Beneficio: $ 7,87</span><span class="dp-margen">+35 %</span></div>
+            </div>
+            <div class="doc-partida">
+              <div class="dp-main">
+                <span class="dp-nombre">Desmontaje de aparato sanitario y su grifería</span>
+                <span class="dp-cant">3 ud</span>
+                <span class="dp-precio">4,74 $/ud</span>
+                <span class="dp-importe">$ 14,22</span>
+                <span class="dp-tiempo">2 h · 1+1</span>
+              </div>
+              <div class="dp-ben"><span class="dp-coste">Coste: $ 10,53</span><span class="dp-beneficio">Beneficio: $ 3,69</span><span class="dp-margen">+35 %</span></div>
+            </div>
+
+            <div class="doc-capitulo"><span>02 · Instalaciones (plomería del baño)</span><span class="cap-meta"><strong>$ 387,30</strong><em class="cap-ben">+ $ 100,41</em></span></div>
+            <div class="doc-partida">
+              <div class="dp-main">
+                <span class="dp-nombre">Tubería de agua de PPR de 20 mm, empotrada, incluso roza y resane</span>
+                <span class="dp-cant">12 m</span>
+                <span class="dp-precio">8,09 $/m</span>
+                <span class="dp-importe">$ 97,08</span>
+                <span class="dp-tiempo">5,5 h · 3,1+2,4</span>
+              </div>
+              <div class="dp-ben"><span class="dp-coste">Coste: $ 71,94</span><span class="dp-beneficio">Beneficio: $ 25,14</span><span class="dp-margen">+35 %</span></div>
+            </div>
+            <div class="doc-partida">
+              <div class="dp-main">
+                <span class="dp-nombre">Punto de agua fría y caliente para aparato sanitario</span>
+                <span class="dp-cant">3 ud</span>
+                <span class="dp-precio">39,56 $/ud</span>
+                <span class="dp-importe">$ 118,68</span>
+                <span class="dp-tiempo">5,7 h · 3,3+2,4</span>
+              </div>
+              <div class="dp-ben"><span class="dp-coste">Coste: $ 87,90</span><span class="dp-beneficio">Beneficio: $ 30,78</span><span class="dp-margen">+35 %</span></div>
+            </div>
+            <div class="doc-partida">
+              <div class="dp-main">
+                <span class="dp-nombre">Llave de escuadra para aparato</span>
+                <span class="dp-cant">4 ud</span>
+                <span class="dp-precio">14,70 $/ud</span>
+                <span class="dp-importe">$ 58,80</span>
+                <span class="dp-tiempo">2,4 h · 1,6+0,8</span>
+              </div>
+              <div class="dp-ben"><span class="dp-coste">Coste: $ 43,55</span><span class="dp-beneficio">Beneficio: $ 15,25</span><span class="dp-margen">+35 %</span></div>
+            </div>
+            <div class="doc-partida">
+              <div class="dp-main">
+                <span class="dp-nombre">Punto de desagüe para inodoro</span>
+                <span class="dp-cant">1 ud</span>
+                <span class="dp-precio">18,62 $/ud</span>
+                <span class="dp-importe">$ 18,62</span>
+                <span class="dp-tiempo">0,7 h · 0,5+0,2</span>
+              </div>
+              <div class="dp-ben"><span class="dp-coste">Coste: $ 13,79</span><span class="dp-beneficio">Beneficio: $ 4,83</span><span class="dp-margen">+35 %</span></div>
+            </div>
+            <div class="doc-partida">
+              <div class="dp-main">
+                <span class="dp-nombre">Instalación de inodoro con su conexión de agua y desagüe</span>
+                <span class="dp-cant">1 ud</span>
+                <span class="dp-precio">29,32 $/ud</span>
+                <span class="dp-importe">$ 29,32</span>
+                <span class="dp-tiempo">1,8 h · 1,2+0,6</span>
+              </div>
+              <div class="dp-ben"><span class="dp-coste">Coste: $ 21,71</span><span class="dp-beneficio">Beneficio: $ 7,61</span><span class="dp-margen">+35 %</span></div>
+            </div>
+            <div class="doc-partida">
+              <div class="dp-main">
+                <span class="dp-nombre">Instalación de lavamanos con su grifería y desagüe</span>
+                <span class="dp-cant">1 ud</span>
+                <span class="dp-precio">42,20 $/ud</span>
+                <span class="dp-importe">$ 42,20</span>
+                <span class="dp-tiempo">2,1 h · 1,4+0,7</span>
+              </div>
+              <div class="dp-ben"><span class="dp-coste">Coste: $ 31,26</span><span class="dp-beneficio">Beneficio: $ 10,94</span><span class="dp-margen">+35 %</span></div>
+            </div>
+            <div class="doc-partida">
+              <div class="dp-main">
+                <span class="dp-nombre">Instalación de ducha o regadera con su grifería</span>
+                <span class="dp-cant">1 ud</span>
+                <span class="dp-precio">22,60 $/ud</span>
+                <span class="dp-importe">$ 22,60</span>
+                <span class="dp-tiempo">1,7 h · 1,1+0,6</span>
+              </div>
+              <div class="dp-ben"><span class="dp-coste">Coste: $ 16,74</span><span class="dp-beneficio">Beneficio: $ 5,86</span><span class="dp-margen">+35 %</span></div>
+            </div>
+
+            <div class="doc-capitulo"><span>03 · Aislamientos e impermeabilizaciones</span><span class="cap-meta"><strong>$ 211,04</strong><em class="cap-ben">+ $ 54,69</em></span></div>
+            <div class="doc-partida">
+              <div class="dp-main">
+                <span class="dp-nombre">Impermeabilización de piso de baño o ducha bajo enchapado</span>
+                <span class="dp-cant">6 m²</span>
+                <span class="dp-precio">19,32 $/m²</span>
+                <span class="dp-importe">$ 115,92</span>
+                <span class="dp-tiempo">4,1 h · 2,5+1,6</span>
+              </div>
+              <div class="dp-ben"><span class="dp-coste">Coste: $ 85,88</span><span class="dp-beneficio">Beneficio: $ 30,04</span><span class="dp-margen">+35 %</span></div>
+            </div>
+            <div class="doc-partida">
+              <div class="dp-main">
+                <span class="dp-nombre">Mortero impermeabilizante en área húmeda, base para enchapado</span>
+                <span class="dp-cant">8 m²</span>
+                <span class="dp-precio">11,89 $/m²</span>
+                <span class="dp-importe">$ 95,12</span>
+                <span class="dp-tiempo">4,4 h · 2,6+1,8</span>
+              </div>
+              <div class="dp-ben"><span class="dp-coste">Coste: $ 70,47</span><span class="dp-beneficio">Beneficio: $ 24,65</span><span class="dp-margen">+35 %</span></div>
+            </div>
+
+            <div class="doc-capitulo"><span>04 · Revestimientos y acabados</span><span class="cap-meta"><strong>$ 666,20</strong><em class="cap-ben">+ $ 172,80</em></span></div>
+            <div class="doc-partida">
+              <div class="dp-main">
+                <span class="dp-nombre">Friso de mortero maestreado sobre paramento interior, 1,5 cm</span>
+                <span class="dp-cant">22 m²</span>
+                <span class="dp-precio">8,71 $/m²</span>
+                <span class="dp-importe">$ 191,62</span>
+                <span class="dp-tiempo">16,5 h · 9,9+6,6</span>
+              </div>
+              <div class="dp-ben"><span class="dp-coste">Coste: $ 141,87</span><span class="dp-beneficio">Beneficio: $ 49,75</span><span class="dp-margen">+35 %</span></div>
+            </div>
+            <div class="doc-partida">
+              <div class="dp-main">
+                <span class="dp-nombre">Enchapado de porcelanato de gran formato en pared</span>
+                <span class="dp-cant">18 m²</span>
+                <span class="dp-precio">13,28 $/m²</span>
+                <span class="dp-importe">$ 239,04</span>
+                <span class="dp-tiempo">18,9 h · 11,2+7,7</span>
+              </div>
+              <div class="dp-ben"><span class="dp-coste">Coste: $ 177,07</span><span class="dp-beneficio">Beneficio: $ 61,97</span><span class="dp-margen">+35 %</span></div>
+            </div>
+            <div class="doc-partida">
+              <div class="dp-main">
+                <span class="dp-nombre">Enchapado de zona de ducha sobre impermeabilización</span>
+                <span class="dp-cant">4 m²</span>
+                <span class="dp-precio">17,14 $/m²</span>
+                <span class="dp-importe">$ 68,56</span>
+                <span class="dp-tiempo">4,1 h · 2,7+1,4</span>
+              </div>
+              <div class="dp-ben"><span class="dp-coste">Coste: $ 50,78</span><span class="dp-beneficio">Beneficio: $ 17,78</span><span class="dp-margen">+35 %</span></div>
+            </div>
+            <div class="doc-partida">
+              <div class="dp-main">
+                <span class="dp-nombre">Colocación de piso de porcelanato de gran formato, en capa fina</span>
+                <span class="dp-cant">6 m²</span>
+                <span class="dp-precio">11,43 $/m²</span>
+                <span class="dp-importe">$ 68,58</span>
+                <span class="dp-tiempo">5,4 h · 2,7+2,7</span>
+              </div>
+              <div class="dp-ben"><span class="dp-coste">Coste: $ 50,80</span><span class="dp-beneficio">Beneficio: $ 17,78</span><span class="dp-margen">+35 %</span></div>
+            </div>
+            <div class="doc-partida">
+              <div class="dp-main">
+                <span class="dp-nombre">Piso cerámico en área húmeda con pendiente a desagüe</span>
+                <span class="dp-cant">6 m²</span>
+                <span class="dp-precio">16,40 $/m²</span>
+                <span class="dp-importe">$ 98,40</span>
+                <span class="dp-tiempo">5,6 h · 3,7+1,9</span>
+              </div>
+              <div class="dp-ben"><span class="dp-coste">Coste: $ 72,88</span><span class="dp-beneficio">Beneficio: $ 25,52</span><span class="dp-margen">+35 %</span></div>
+            </div>
+
+            <div class="doc-capitulo doc-productos"><span>Productos a elección del cliente</span><strong>$ 1.073,00</strong></div>
+            <div class="doc-partida dp-prod">
+              <div class="dp-main">
+                <span class="dp-nombre"><img class="dp-img" src="{{ 'img/prod-porcelanato-pared.jpg' | asset }}" alt="">Porcelanato de gran formato 60×120 cm (pared)</span>
+                <span class="dp-cant">18 m²</span>
+                <span class="dp-precio">24,00 $/m²</span>
+                <span class="dp-importe">$ 432,00</span>
+                <span class="dp-tag">📦 producto</span>
+              </div>
+            </div>
+            <div class="doc-partida dp-prod">
+              <div class="dp-main">
+                <span class="dp-nombre"><img class="dp-img" src="{{ 'img/prod-porcelanato-piso.jpg' | asset }}" alt="">Porcelanato 60×60 cm (piso)</span>
+                <span class="dp-cant">12 m²</span>
+                <span class="dp-precio">18,00 $/m²</span>
+                <span class="dp-importe">$ 216,00</span>
+                <span class="dp-tag">📦 producto</span>
+              </div>
+            </div>
+            <div class="doc-partida dp-prod">
+              <div class="dp-main">
+                <span class="dp-nombre"><img class="dp-img" src="{{ 'img/prod-columna-ducha.jpg' | asset }}" alt="">Columna de ducha termostática</span>
+                <span class="dp-cant">1 ud</span>
+                <span class="dp-precio">180,00 $/ud</span>
+                <span class="dp-importe">$ 180,00</span>
+                <span class="dp-tag">📦 producto</span>
+              </div>
+            </div>
+            <div class="doc-partida dp-prod">
+              <div class="dp-main">
+                <span class="dp-nombre"><img class="dp-img" src="{{ 'img/prod-mueble-bano.jpg' | asset }}" alt="">Mueble de baño con lavamanos, 60 cm</span>
+                <span class="dp-cant">1 ud</span>
+                <span class="dp-precio">150,00 $/ud</span>
+                <span class="dp-importe">$ 150,00</span>
+                <span class="dp-tag">📦 producto</span>
+              </div>
+            </div>
+            <div class="doc-partida dp-prod">
+              <div class="dp-main">
+                <span class="dp-nombre"><img class="dp-img" src="{{ 'img/prod-inodoro.jpg' | asset }}" alt="">Inodoro de tanque, una pieza</span>
+                <span class="dp-cant">1 ud</span>
+                <span class="dp-precio">95,00 $/ud</span>
+                <span class="dp-importe">$ 95,00</span>
+                <span class="dp-tag">📦 producto</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="app-totales">
+            <div class="tt-row"><span>TOTAL OBRA / PARTIDAS</span><strong>$ 1.439,52</strong></div>
+            <div class="tt-row"><span>TOTAL PRODUCTOS</span><strong>$ 1.073,00</strong></div>
+            <div class="tt-row tt-sub"><span>SUBTOTAL INCLUIDO</span><strong>$ 2.512,52</strong></div>
+            <div class="tt-row"><span>COSTE INTERNO</span><strong>$ 1.861,05</strong></div>
+            <div class="tt-row tt-pos"><span>BENEFICIO TOTAL ESTIMADO</span><strong>$ 651,47</strong></div>
+            <div class="tt-row tt-pos"><span>MARGEN</span><strong>+35 % s/coste</strong></div>
+            <div class="tt-row"><span>I.V.A. (16 %)</span><strong>$ 402,00</strong></div>
+            <div class="tt-row tt-total"><span>PRESUPUESTO TOTAL</span><strong>$ 2.914,52</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="float-chip chip-a" aria-hidden="true">
+      <span class="chip-dot"></span>
+      <span><strong>{{ catalogo().partidas_txt }}</strong> partidas listas</span>
+    </div>
+    <div class="float-chip chip-b" aria-hidden="true">
+      <span class="chip-ico">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8.5l3.5 3.5 7.5-8"/></svg>
+      </span>
+      <span>Autoguardado: nada se pierde</span>
+    </div>
+    <div class="float-chip chip-c" aria-hidden="true">
+      <span class="chip-ico">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 1.5h5L13 5.5V12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V3.5a2 2 0 0 1 2-2z"/><path d="M9 1.5V6h4"/><path d="M5 9.5h6M5 12h4"/></svg>
+      </span>
+      <span>PDF con tu logo, versiones y firmas</span>
+    </div>
+  </div>
+</section>
+
+<section class="ventajas">
+  <div class="ventajas-intro">
+    <span class="section-kicker">El plus que marca la diferencia</span>
+    <h2>No solo presupuestas: sabes cuánto ganas y cuánto tardas.</h2>
+    <p class="intro">La mayoría de las herramientas suma cantidades y se detiene ahí. {{ product_name }} baja hasta el costo real de cada partida y hasta las horas de tu cuadrilla, para que cada presupuesto sea una decisión de negocio y no un cálculo a ciegas.</p>
+  </div>
+  <div class="ventajas-grid">
+    <article class="ventaja">
+      <div class="ventaja-icon" aria-hidden="true">💰</div>
+      <h3>Margen de beneficio y ganancia real</h3>
+      <p>Cada partida guarda su costo interno: materiales, mano de obra, equipo y complementarios. {{ product_name }} compara ese costo con tu precio de venta y te dice, en vivo, cuánto ganas de verdad.</p>
+      <ul class="ventaja-lista">
+        <li><span class="check">✓</span> Beneficio de la obra y de los productos, calculados por separado.</li>
+        <li><span class="check">✓</span> Margen total en % y en dólares, por partida, por capítulo y del presupuesto entero.</li>
+        <li><span class="check">✓</span> Alertas cuando una partida tiene margen bajo o precio sin revisar.</li>
+        <li><span class="check">✓</span> Ajusta un costo y mira el beneficio recalcarse al instante.</li>
+      </ul>
+    </article>
+    <article class="ventaja">
+      <div class="ventaja-icon" aria-hidden="true">⏱️</div>
+      <h3>Tiempo de obra calculado solo, con tu cuadrilla</h3>
+      <p>A partir de los rendimientos de mano de obra de cada partida, {{ product_name }} estima las horas de tu gente y la duración real del trabajo, para que prometas plazos que sí puedes cumplir.</p>
+      <ul class="ventaja-lista">
+        <li><span class="check">✓</span> Horas desglosadas por rol: oficial, ayudante, capataz y equipos.</li>
+        <li><span class="check">✓</span> Duración crítica: cuántos días reales, no horas sueltas sin sentido.</li>
+        <li><span class="check">✓</span> Conversión automática a días y semanas laborables.</li>
+        <li><span class="check">✓</span> Asigna horas a mano en cualquier partida cuando haga falta.</li>
+      </ul>
+    </article>
+  </div>
+</section>
+
+<section class="tour" id="recorrido">
+  <div class="tour-intro">
+    <span class="section-kicker">Así funciona</span>
+    <h2>Un recorrido por el producto, paso a paso.</h2>
+    <p class="intro">De tu catálogo a un presupuesto profesional con su beneficio, sus tiempos y su PDF listo para enviar. Cuatro pantallas, una idea completa.</p>
+  </div>
+
+  <div class="tour-stage" id="tour-stage">
+    <div class="tour-slides">
+      <div class="tour-slide">
+        <div class="tour-visual">
+          <div class="t-window">
+            <div class="t-bar"><i></i><i></i><i></i></div>
+            <div class="t-body">
+              <div class="t-head"><div><span class="t-eyebrow">Resumen</span><strong>Hola, Ana</strong></div><span class="t-pill t-pill-primary">+ Nuevo presupuesto</span></div>
+              <div class="t-kpis">
+                <div class="t-kpi"><span>Volumen aprobado</span><strong>$ 42.500</strong><small>12 proyectos</small></div>
+                <div class="t-kpi"><span>Aprobación</span><strong>68 %</strong><small>enviados → aprobados</small></div>
+                <div class="t-kpi"><span>Proyectos activos</span><strong>7</strong><small>3 cobros pendientes</small></div>
+              </div>
+              <div class="t-list-head">Actividad reciente</div>
+              <div class="t-row"><span>PR-2026-014 · Res. Los Naranjos</span><span class="t-badge">Borrador</span></div>
+              <div class="t-row"><span>PR-2026-013 · Local comercial</span><span class="t-badge t-badge-ok">Aprobado</span></div>
+              <div class="t-row"><span>PR-2026-012 · Apartamento</span><span class="t-badge t-badge-ok">Aprobado</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="tour-caption">
+          <span class="tour-step">Paso 1</span>
+          <h3>Tu día a día, en una pantalla</h3>
+          <p>Ventas, aprobaciones y proyectos de un vistazo. Un clic para crear el siguiente presupuesto.</p>
+        </div>
+      </div>
+
+      <div class="tour-slide">
+        <div class="tour-visual">
+          <div class="t-window">
+            <div class="t-bar"><i></i><i></i><i></i></div>
+            <div class="t-body">
+              <div class="t-head"><div><span class="t-eyebrow">Presupuesto · Nuevo</span><strong>Remodelación de baño</strong></div><span class="t-pill t-pill-primary">Guardar</span></div>
+              <div class="t-chap"><span>04 · Revestimientos y acabados</span><strong>$ 666,20</strong></div>
+              <div class="t-line"><span>Enchapado de porcelanato gran formato</span><strong>$ 239,04</strong></div>
+              <div class="t-line"><span>Friso de mortero maestreado, 1,5 cm</span><strong>$ 191,62</strong></div>
+              <div class="t-line"><span>Piso de porcelanato gran formato</span><strong>$ 68,58</strong></div>
+              <div class="t-line"><span>Piso cerámico con pendiente a desagüe</span><strong>$ 98,40</strong></div>
+              <div class="t-total"><span>TOTAL</span><strong>$ 2.914,52</strong></div>
+            </div>
+          </div>
+        </div>
+        <div class="tour-caption">
+          <span class="tour-step">Paso 2</span>
+          <h3>Arma el presupuesto en minutos</h3>
+          <p>Capítulos y partidas de tu catálogo, con totales en vivo. En minutos, no en días.</p>
+        </div>
+      </div>
+
+      <div class="tour-slide">
+        <div class="tour-visual">
+          <div class="t-window">
+            <div class="t-bar"><i></i><i></i><i></i></div>
+            <div class="t-body">
+              <div class="t-summary">
+                <div class="t-sum"><span>Margen de beneficio</span><strong class="pos">+35 % · $ 651,47</strong></div>
+                <div class="t-sum"><span>Mano de obra</span><strong>98 h-hombre</strong></div>
+                <div class="t-sum"><span>Duración</span><strong>≈ 6 días</strong></div>
+              </div>
+              <div class="t-list-head">Beneficio por partida</div>
+              <div class="t-ben"><span>Coste: $ 177,07</span><strong class="pos">Beneficio: $ 61,97 · +35 %</strong></div>
+              <div class="t-ben"><span>Coste: $ 141,87</span><strong class="pos">Beneficio: $ 49,75 · +35 %</strong></div>
+              <div class="t-ben"><span>Coste: $ 72,88</span><strong class="pos">Beneficio: $ 25,52 · +35 %</strong></div>
+              <div class="t-time">⏱️ 18,9 h de oficial + 7,7 h de ayudante</div>
+            </div>
+          </div>
+        </div>
+        <div class="tour-caption">
+          <span class="tour-step">Paso 3</span>
+          <h3>Sabes cuánto ganas y cuánto tardas</h3>
+          <p>Margen de beneficio por partida, capítulo y total, más las horas de tu cuadrilla.</p>
+        </div>
+      </div>
+
+      <div class="tour-slide">
+        <div class="tour-visual">
+          <div class="t-window">
+            <div class="t-bar"><i></i><i></i><i></i></div>
+            <div class="t-body t-body-center">
+              <div class="t-doc">
+                <div class="t-doc-head"><span class="t-mark">A</span><strong>Presupuesto · PR-2026-014</strong></div>
+                <div class="t-doc-title">Remodelación de baño</div>
+                <div class="t-doc-total"><span>PRESUPUESTO TOTAL</span><strong>$ 2.914,52</strong></div>
+                <div class="t-doc-sig"><span></span><span></span></div>
+              </div>
+              <div class="t-actions"><span class="t-pill t-pill-primary">Enviar por email</span><span class="t-pill">Convertir en proyecto</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="tour-caption">
+          <span class="tour-step">Paso 4</span>
+          <h3>Entrega y cobra</h3>
+          <p>PDF con tu logo y firma. Conviértelo en proyecto y controla pagos y saldos.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tour-nav">
+      <button type="button" class="tour-btn" id="tour-prev" aria-label="Paso anterior">‹</button>
+      <div class="tour-dots" role="tablist" aria-label="Pasos del recorrido">
+        <button type="button" class="tour-dot" role="tab" aria-label="Paso 1"></button>
+        <button type="button" class="tour-dot" role="tab" aria-label="Paso 2"></button>
+        <button type="button" class="tour-dot" role="tab" aria-label="Paso 3"></button>
+        <button type="button" class="tour-dot" role="tab" aria-label="Paso 4"></button>
+      </div>
+      <button type="button" class="tour-btn" id="tour-next" aria-label="Paso siguiente">›</button>
+    </div>
+  </div>
+</section>
+
+<section class="banner-catalogo">
+  <div class="banner-int">
+    <div class="banner-texto">
+      <h2>El catálogo más completo para presupuestar en Venezuela.</h2>
+      <p>{{ catalogo().partidas_txt }} partidas organizadas en {{ catalogo().capitulos }} capítulos y {{ catalogo().subcapitulos }} subcapítulos, con precios en USD contrastados con el mercado venezolano y en revisión continua. No empiezas de cero: llegas con una base de precios real y propia.</p>
+      <ul class="banner-lista">
+        <li><span class="check">✓</span> Terminología venezolana: concreto, friso, cielo raso, rodapié, plomero.</li>
+        <li><span class="check">✓</span> Precios en dólares, los que usa el sector construcción en Venezuela.</li>
+        <li><span class="check">✓</span> Descomposición técnica de cada partida: materiales, mano de obra y equipo.</li>
+        <li><span class="check">✓</span> Se actualiza periódicamente para seguir el mercado.</li>
+      </ul>
+    </div>
+    <div class="banner-cifras">
+      <div class="cifra"><strong>{{ catalogo().partidas_txt }}</strong><span>partidas</span></div>
+      <div class="cifra"><strong>{{ catalogo().capitulos }}</strong><span>capítulos</span></div>
+      <div class="cifra"><strong>{{ catalogo().subcapitulos }}</strong><span>subcapítulos</span></div>
+    </div>
+  </div>
+</section>
 
 <section>
   <h2>¿Te suena?</h2>
@@ -47,12 +620,12 @@
     <div class="tarjeta">
       <div class="icon">📚</div>
       <h3>Tu catálogo, de una vez</h3>
-      <p>Partidas con precios, costes y descomposición técnica. Importa desde Excel —incluidos descompuestos de CYPE— o desde tu instalación local anterior. Cárgalo una vez, úsalo siempre.</p>
+      <p>Partidas con precios, costes y descomposición técnica. Importa desde Excel o desde tu instalación local anterior. Cárgalo una vez, úsalo siempre.</p>
     </div>
     <div class="tarjeta">
       <div class="icon">⚡</div>
       <h3>Presupuestos en minutos</h3>
-      <p>Capítulos, mediciones por tramos, packs de estancia y alternativas de producto para que el cliente elija. Duplica un presupuesto parecido y ajústalo en lugar de empezar de cero.</p>
+      <p>Capítulos, mediciones por tramos y totales en vivo. Duplica un presupuesto parecido y ajústalo en lugar de empezar de cero.</p>
     </div>
     <div class="tarjeta">
       <div class="icon">📄</div>
@@ -75,6 +648,48 @@
       <h3>Tus datos son tuyos</h3>
       <p>Exporta a Excel y PDF cuando quieras. Sin permanencia: si te vas, te llevas tus datos. Así de simple.</p>
     </div>
+    <div class="tarjeta">
+      <div class="icon">🧱</div>
+      <h3>Alternativas y packs de estancia</h3>
+      <p>Ofrece al cliente opciones de producto (incluida, opcional, alternativa) y arma una estancia completa con un clic: el pack inserta el capítulo entero, escalado a los m².</p>
+    </div>
+    <div class="tarjeta">
+      <div class="icon">🖋️</div>
+      <h3>Propuesta para firmar</h3>
+      <p>Comparte un enlace secreto con tu cliente para que revise, acepte o rechace y firme. Tú controlas la caducidad y puedes revocarlo cuando quieras.</p>
+    </div>
+    <div class="tarjeta">
+      <div class="icon">📊</div>
+      <h3>Reportes exportables</h3>
+      <p>Ventas, presupuestos por estado, proyectos y cobros con saldo pendiente, listos para exportar a CSV y cruzar con tu contabilidad.</p>
+    </div>
+    <div class="tarjeta">
+      <div class="icon">🇻🇪</div>
+      <h3>Fiscal a tu medida</h3>
+      <p>IVA, retención, operación exenta, número de control y cláusula de ajuste cambiario. Moneda en USD o Bs, con tasa de cambio de referencia.</p>
+    </div>
+  </div>
+</section>
+
+<section class="franja venezuela">
+  <h2>Pensado para Venezuela, no adaptado después.</h2>
+  <p class="intro">No es una herramienta genérica traducida. {{ product_name }} nace con la forma de trabajar de las constructoras y remodeladores venezolanos.</p>
+  <div class="grid3">
+    <div class="tarjeta">
+      <div class="icon">💵</div>
+      <h3>Precios en dólares</h3>
+      <p>Cotiza en USD, la moneda con la que el sector construcción presupuesta en Venezuela. Sin conversiones ni tipos de cambio improvisados.</p>
+    </div>
+    <div class="tarjeta">
+      <div class="icon">🧱</div>
+      <h3>Vocabulario de aquí</h3>
+      <p>Concreto, friso, cielo raso, rodapié, plomero, granito vaciado en sitio. Los nombres que usa tu cliente y tu cuadrilla, no los de otro país.</p>
+    </div>
+    <div class="tarjeta">
+      <div class="icon">📈</div>
+      <h3>Precios que se actualizan</h3>
+      <p>La base de precios se contrasta con el mercado venezolano y se revisa periódicamente, para que no cotices con cifras de hace un año.</p>
+    </div>
   </div>
 </section>
 
@@ -82,13 +697,13 @@
   <h2>De cero a tu primer presupuesto en menos de 20 minutos</h2>
   <ul class="pasos">
     <li>Crea tu cuenta y tu organización: nombre de tu empresa, moneda e IVA.</li>
-    <li>Carga tu catálogo: impórtalo desde Excel o crea tus primeras partidas.</li>
+    <li>Parte de un catálogo con miles de partidas o importa el tuyo desde Excel.</li>
     <li>Crea el cliente, arma el presupuesto por capítulos y descarga el PDF con tu logo.</li>
   </ul>
   <p class="intro">¿Vienes de la versión de escritorio? Importa toda tu instalación —catálogo, clientes, presupuestos y proyectos— con el asistente integrado, con resumen previo y confirmación explícita.</p>
 </section>
 
-<section>
+<section id="precios">
   <h2>Precio de lanzamiento</h2>
   <p class="intro">Oferta fundadora para las primeras empresas. El precio contratado se respeta durante todo el período pagado.</p>
   <div class="precios">
@@ -121,11 +736,12 @@
   </div>
 </section>
 
-<section class="franja">
-  <h2>¿Para quién es?</h2>
-  <p class="intro">Para constructoras pequeñas y medianas, remodeladores, contratistas e instaladores de Latinoamérica que hoy presupuestan con papel, Word o Excel y quieren presentar mejor, responder más rápido y no perder el control de versiones, aprobaciones y cobros. Si haces entre 2 y 50 presupuestos al mes, esto es para ti.</p>
+<section class="franja cta-final" id="demo">
+  <h2>¿Listo para dejar de presupuestar a mano?</h2>
+  <p class="intro">Cuéntanos de tu empresa y te mostramos cómo se vería tu primer presupuesto con tus propios datos. Sin compromiso.</p>
   <div class="acciones mt-3">
     <a class="btn btn-primary" href="mailto:{{ email_soporte }}?subject=Quiero%20una%20demostraci%C3%B3n%20de%20{{ product_name }}&body=Hola%2C%20me%20interesa%20una%20demostraci%C3%B3n.%0A%0AMi%20empresa%3A%20%0AA%20qu%C3%A9%20nos%20dedicamos%3A%20%0APresupuestos%20al%20mes%20(aprox)%3A%20">Solicitar una demostración gratuita</a>
+    <a class="btn btn-secondary" href="/acceso">Empezar ahora</a>
   </div>
 </section>
 
@@ -142,5 +758,6 @@
     </div>
   </div>
 </footer>
+<script nonce="{{ request.state.csp_nonce }}" src="{{ 'js/landing-tour.js' | asset }}"></script>
 </body>
 </html>

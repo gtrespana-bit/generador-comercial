@@ -1,0 +1,40 @@
+{
+  "codigo": "11.05.01.100",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "05",
+  "unidad": "m²",
+  "titulo": "Cubierta ligera de panel de policarbonato con junta de estanqueidad.",
+  "descripcion": "Cubierta ligera de policarbonato alveolar con perfiles de unión estancos, para galerías expuestas a lluvia. Incluye la colocación y el sellado de juntas.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-POLICARB",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-PERFIL-REMATE",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MT-SILICONA-EST",
+      "rendimiento": 0.03
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.32
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

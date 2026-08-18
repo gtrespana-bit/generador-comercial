@@ -1,0 +1,36 @@
+{
+  "codigo": "02.09.01.210",
+  "ambito": "reforma",
+  "capitulo": "02",
+  "subcapitulo": "09",
+  "unidad": "m",
+  "titulo": "Desmontaje de bajante de aguas lluvias con soportes.",
+  "descripcion": "Desmontaje de bajante de aguas lluvias. Incluye la retirada de la bajante y sus soportes. Medido por metro lineal desmontado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MT-SAC-ESC",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

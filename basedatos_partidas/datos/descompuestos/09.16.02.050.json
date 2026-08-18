@@ -1,0 +1,34 @@
+{
+  "codigo": "09.16.02.050",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "16",
+  "unidad": "ud",
+  "titulo": "Instalación de silla salvaescaleras.",
+  "descripcion": "Instalación de silla salvaescaleras. Incluye el montaje del riel y la silla. Medido por unidad instalada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 1.2
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 9.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 4.5
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02",
+  "producto_cliente": {
+    "tipo": "Silla salvaescaleras, del modelo elegido por el cliente",
+    "unidad": "ud",
+    "consumo": 1.0,
+    "nota": "La partida cubre solo la instalación. El equipo se toma del catálogo de productos y su precio no está incluido."
+  }
+}

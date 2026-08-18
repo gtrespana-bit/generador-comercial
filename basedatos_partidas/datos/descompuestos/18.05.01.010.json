@@ -1,0 +1,42 @@
+{
+  "codigo": "18.05.01.010",
+  "ambito": "reforma",
+  "capitulo": "18",
+  "subcapitulo": "05",
+  "unidad": "m²",
+  "titulo": "Sustitución de ventana por doble acristalamiento.",
+  "descripcion": "Sustitución de ventana por doble acristalamiento con cámara de aire, para reducir las pérdidas térmicas. El vidrio lo elige el cliente.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-VIDRIO-DOBLE",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-SILICONA-EST",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-VIDR",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.3
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01",
+  "producto_cliente": {
+    "tipo": "Doble acristalamiento elegido por el cliente",
+    "unidad": "m²",
+    "consumo": 1.0,
+    "nota": "La partida cubre la colocación. El vidrio se toma del catálogo de productos."
+  }
+}

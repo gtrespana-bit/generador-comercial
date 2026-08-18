@@ -1,0 +1,36 @@
+{
+  "codigo": "18.09.01.060",
+  "ambito": "reforma",
+  "capitulo": "18",
+  "subcapitulo": "09",
+  "unidad": "glb",
+  "titulo": "Conexión de sistema fotovoltaico a red.",
+  "descripcion": "Conexión del sistema fotovoltaico a la red, con protecciones y puesta en marcha.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ELE-CABLE",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MT-BREAKER",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.5
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

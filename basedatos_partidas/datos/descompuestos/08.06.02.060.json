@@ -1,0 +1,40 @@
+{
+  "codigo": "08.06.02.060",
+  "ambito": "reforma",
+  "capitulo": "08",
+  "subcapitulo": "06",
+  "unidad": "ud",
+  "titulo": "Base para hidroneumático.",
+  "descripcion": "Ejecución de base para sistema hidroneumático. Incluye el vaciado y los anclajes. Medido por unidad ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONC-210",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MT-PERNO-ANCLA",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MT-FORM-MADERA",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MQ-VIBRADOR",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.55
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.35
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

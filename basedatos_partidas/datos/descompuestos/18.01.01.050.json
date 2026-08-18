@@ -1,0 +1,24 @@
+{
+  "codigo": "18.01.01.050",
+  "ambito": "reforma",
+  "capitulo": "18",
+  "subcapitulo": "01",
+  "unidad": "glb",
+  "titulo": "Informe de certificación energética.",
+  "descripcion": "Emisión del informe de certificación energética de la vivienda, con la calificación obtenida.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.75
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

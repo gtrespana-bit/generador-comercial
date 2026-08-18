@@ -1,0 +1,36 @@
+{
+  "codigo": "05.01.02.020",
+  "ambito": "reforma",
+  "capitulo": "05",
+  "subcapitulo": "01",
+  "unidad": "m2",
+  "titulo": "Encofrado metálico de muro.",
+  "descripcion": "Encofrado metálico modular de muro. Incluye el montaje y el desencofrado. Medido por metro cuadrado encofrado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PERFIL-ACERO",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MT-DESMOLD",
+      "rendimiento": 0.04
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-CARP",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.3
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

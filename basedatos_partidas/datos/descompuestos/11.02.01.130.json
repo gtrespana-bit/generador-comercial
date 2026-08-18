@@ -1,0 +1,36 @@
+{
+  "codigo": "11.02.01.130",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "02",
+  "unidad": "m²",
+  "titulo": "Protección de membrana con plancha de cemento.",
+  "descripcion": "Colocación de plancha de cemento o loseta de protección sobre membrana impermeabilizante de cubierta transitable, recibida sobre soportes. Incluye el replanteo y la colocación.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PLACA-CEM",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-MOR-PEGA",
+      "rendimiento": 0.01
+    },
+    {
+      "ref": "MQ-CORT-AGUA",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.32
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

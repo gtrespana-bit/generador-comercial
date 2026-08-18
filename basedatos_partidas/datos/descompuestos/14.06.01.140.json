@@ -1,0 +1,32 @@
+{
+  "codigo": "14.06.01.140",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "06",
+  "unidad": "m²",
+  "titulo": "Reposición de grama dañada.",
+  "descripcion": "Reposición de grama dañada con sustitución de panes y riego. Incluye la sustitución y el riego.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-GRAMA",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MT-AGUA-OBRA",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MO-OF1-JARD",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.16
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

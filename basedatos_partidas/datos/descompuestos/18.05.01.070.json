@@ -1,0 +1,28 @@
+{
+  "codigo": "18.05.01.070",
+  "ambito": "reforma",
+  "capitulo": "18",
+  "subcapitulo": "05",
+  "unidad": "m",
+  "titulo": "Calafateado de carpintería exterior.",
+  "descripcion": "Calafateado y sellado de la carpintería exterior, para eliminar infiltraciones de aire y agua.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-SELLA-ELAST",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.1
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

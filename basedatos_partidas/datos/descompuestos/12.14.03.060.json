@@ -1,0 +1,36 @@
+{
+  "codigo": "12.14.03.060",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "14",
+  "unidad": "m2",
+  "titulo": "Restauración de piso de madera.",
+  "descripcion": "Restauración de piso de madera con lijado, resane de juntas y barnizado. Incluye el lijado, el resane y las dos manos de barniz. Medido por metro cuadrado restaurado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PIN-MASILLA",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MT-BARNIZ-PISO",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MQ-LIJAD-PISO",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.18
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "03"
+}

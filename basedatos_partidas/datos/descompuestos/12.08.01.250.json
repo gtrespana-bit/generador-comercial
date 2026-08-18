@@ -1,0 +1,48 @@
+{
+  "codigo": "12.08.01.250",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "08",
+  "unidad": "m2",
+  "titulo": "Cielo raso continuo con tapa de registro.",
+  "descripcion": "Cielo raso continuo de placa de yeso con tapa de registro practicable para inspección. Incluye la estructura, la placa, el registro y el tratamiento de juntas. Medido por metro cuadrado ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PYL-PERF-CR",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-PYL-PLACA125",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-REGISTRO",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MT-PYL-PASTA",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MT-TORN-TECHO",
+      "rendimiento": 12.0
+    },
+    {
+      "ref": "MQ-ATORN",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

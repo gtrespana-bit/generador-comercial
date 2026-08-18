@@ -1,0 +1,36 @@
+{
+  "codigo": "02.11.01.130",
+  "ambito": "reforma",
+  "capitulo": "02",
+  "subcapitulo": "11",
+  "unidad": "ud",
+  "titulo": "Desmontaje de tablero o mesón de oficina.",
+  "descripcion": "Desmontaje de tablero o mesón de oficina. Incluye la retirada del tablero y sus soportes. Medido por unidad desmontada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MT-SAC-ESC",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.4
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

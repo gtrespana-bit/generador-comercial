@@ -1,0 +1,40 @@
+{
+  "codigo": "13.02.01.100",
+  "ambito": "reforma",
+  "capitulo": "13",
+  "subcapitulo": "02",
+  "unidad": "m",
+  "titulo": "Mesón de granito vaciado en sitio.",
+  "descripcion": "Ejecución de mesón de granito vaciado en sitio, con encofrado, mezcla de grano y acabado pulido. Incluye el armado, el vaciado y el pulido.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONC-250",
+      "rendimiento": 0.025
+    },
+    {
+      "ref": "MT-GRANO-MARMOL",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-FORM-MADERA",
+      "rendimiento": 0.8
+    },
+    {
+      "ref": "MQ-PULIDORA",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 1.0
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

@@ -1,0 +1,42 @@
+{
+  "codigo": "18.08.01.030",
+  "ambito": "reforma",
+  "capitulo": "18",
+  "subcapitulo": "08",
+  "unidad": "m",
+  "titulo": "Tira LED de iluminación eficiente.",
+  "descripcion": "Colocación de tira LED de iluminación eficiente, con fuente y perfil. La tira la elige el cliente.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CINTA-LED",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-ELE-CABLE",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.18
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01",
+  "producto_cliente": {
+    "tipo": "Tira LED elegida por el cliente",
+    "unidad": "m",
+    "consumo": 1.0,
+    "nota": "La partida cubre solo la instalación. La tira LED se toma del catálogo de productos."
+  }
+}

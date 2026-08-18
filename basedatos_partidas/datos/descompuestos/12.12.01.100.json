@@ -1,0 +1,40 @@
+{
+  "codigo": "12.12.01.100",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "12",
+  "unidad": "m2",
+  "titulo": "Pintura de closet con esmalte.",
+  "descripcion": "Aplicación de esmalte sobre closet o mueble de madera, con fondo y dos manos. Incluye la preparación y las dos manos de esmalte. Medido por metro cuadrado pintado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PIN-ESMALTE",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MT-PIN-FONDO",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MT-PIN-LIJA",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.14
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.09
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

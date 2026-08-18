@@ -12,7 +12,7 @@
 <script nonce="{{ request.state.csp_nonce }}" src="{{ 'js/csp_styles.js' | asset }}"></script>
 <script src="{{ 'js/csp_events.js' | asset }}"></script>
 </head>
-<body spellcheck="true" class="{% block body_class %}{% endblock %}"{% if request.url.path in ['/', '/presupuestos'] %} data-refresh-expired="1"{% endif %}>
+<body spellcheck="true" class="{% block body_class %}{% endblock %}"{% if request.url.path in ['/inicio', '/presupuestos'] %} data-refresh-expired="1"{% endif %}>
 <script nonce="{{ request.state.csp_nonce }}">
   window.cotizatArchivoUrl = function (referencia) {
     var localSQLite = {{ 'true' if database_is_sqlite else 'false' }};
@@ -78,7 +78,7 @@
 
   <nav class="sidebar-nav" aria-label="Principal">
     <div class="nav-section">Principal</div>
-    <a href="/" class="{{ 'active' if request.url.path == '/' else '' }}">
+    <a href="/inicio" class="{{ 'active' if request.url.path == '/inicio' else '' }}">
       <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.5" y="1.5" width="6" height="6" rx="1.5"/><rect x="10.5" y="1.5" width="6" height="6" rx="1.5"/><rect x="1.5" y="10.5" width="6" height="6" rx="1.5"/><rect x="10.5" y="10.5" width="6" height="6" rx="1.5"/></svg>
       <span>Dashboard</span>
     </a>
@@ -177,7 +177,7 @@
 </main>
 
 <nav class="bottom-nav" aria-label="Acceso rápido">
-  <a href="/" class="{{ 'active' if request.url.path == '/' else '' }}">
+  <a href="/inicio" class="{{ 'active' if request.url.path == '/inicio' else '' }}">
     <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.5" y="1.5" width="6" height="6" rx="1.5"/><rect x="10.5" y="1.5" width="6" height="6" rx="1.5"/><rect x="1.5" y="10.5" width="6" height="6" rx="1.5"/><rect x="10.5" y="10.5" width="6" height="6" rx="1.5"/></svg>
     <span>Inicio</span>
   </a>

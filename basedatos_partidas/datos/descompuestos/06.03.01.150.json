@@ -1,0 +1,40 @@
+{
+  "codigo": "06.03.01.150",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "03",
+  "unidad": "m2",
+  "titulo": "Tabique de bloque de concreto con junta de dilatación.",
+  "descripcion": "Ejecución de tabique de bloque de concreto con junta de dilatación. Incluye la mampostería y la formación de la junta. Medido por metro cuadrado ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-BLQ-10",
+      "rendimiento": 12.8
+    },
+    {
+      "ref": "MT-MOR-PEGA",
+      "rendimiento": 0.0095
+    },
+    {
+      "ref": "MT-JUNTA-DILAT",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MQ-MEZCL",
+      "rendimiento": 0.07
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.62
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.58
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

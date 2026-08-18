@@ -1,0 +1,32 @@
+{
+  "codigo": "07.10.01.070",
+  "ambito": "reforma",
+  "capitulo": "07",
+  "subcapitulo": "10",
+  "unidad": "ud",
+  "titulo": "Reparación de persiana enrollable.",
+  "descripcion": "Reparación de persiana enrollable, con sustitución de cinta o ajuste del mecanismo. Incluye la comprobación y la reparación del mecanismo. Medido por unidad reparada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CAJON-PERS",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.8
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.3
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

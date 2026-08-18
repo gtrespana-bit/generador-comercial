@@ -1,0 +1,36 @@
+{
+  "codigo": "01.05.01.100",
+  "ambito": "reforma",
+  "capitulo": "01",
+  "subcapitulo": "05",
+  "unidad": "m2",
+  "titulo": "Andamio de fachada con red de seguridad.",
+  "descripcion": "Montaje de andamio de fachada con red de seguridad. Incluye el andamio y la red. Medido por metro cuadrado montado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-APEO",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-RED-SEG",
+      "rendimiento": 1.1
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.32
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.3
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

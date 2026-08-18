@@ -1,0 +1,44 @@
+{
+  "codigo": "13.02.01.060",
+  "ambito": "reforma",
+  "capitulo": "13",
+  "subcapitulo": "02",
+  "unidad": "m",
+  "titulo": "Mesón de concreto con acabado pulido.",
+  "descripcion": "Ejecución de mesón de concreto armado revestido, con encofrado y acabado. Incluye el armado, el vaciado y el acabado de la superficie.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONC-210",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MT-MALLA-ELEC",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MT-FORM-MADERA",
+      "rendimiento": 0.8
+    },
+    {
+      "ref": "MT-DESMOLD",
+      "rendimiento": 0.01
+    },
+    {
+      "ref": "MQ-VIBRADOR",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.75
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

@@ -1,0 +1,32 @@
+{
+  "codigo": "14.06.01.130",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "06",
+  "unidad": "m²",
+  "titulo": "Siembra de grama en talud o pendiente.",
+  "descripcion": "Siembra de grama en talud o pendiente con fijación, para evitar erosión. Incluye la preparación y la siembra.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-GRAMA",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-TIERRA-ABON",
+      "rendimiento": 0.01
+    },
+    {
+      "ref": "MO-OF1-JARD",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.24
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

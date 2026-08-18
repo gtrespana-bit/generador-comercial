@@ -1,0 +1,36 @@
+{
+  "codigo": "05.09.01.100",
+  "ambito": "reforma",
+  "capitulo": "05",
+  "subcapitulo": "09",
+  "unidad": "m",
+  "titulo": "Inyección de fisuras con resina.",
+  "descripcion": "Inyección de fisuras en concreto con resina epóxica. Incluye la inyección. Medido por metro lineal inyectado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-RESINA-INYEC",
+      "rendimiento": 0.8
+    },
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-INYECTORA",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

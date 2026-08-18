@@ -1,0 +1,28 @@
+{
+  "codigo": "16.01.01.080",
+  "ambito": "reforma",
+  "capitulo": "16",
+  "subcapitulo": "01",
+  "unidad": "m²",
+  "titulo": "Control de recubrimiento de armadura.",
+  "descripcion": "Verificación del recubrimiento de la armadura con detector magnético, para garantizar la protección del acero.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MQ-DETECTOR",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.05
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

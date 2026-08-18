@@ -107,7 +107,40 @@
       <div class="hecho completo"><span>Operadores configurados (COTIZAT_OPERADORES)</span>
         <b>{% if diagnostico.hechos.operadores %}{{ diagnostico.hechos.operadores|join(', ') }}{% else %}ninguno — el panel queda cerrado{% endif %}</b>
       </div>
+      <div class="hecho completo"><span>Entorno detectado (E4-003)</span>
+        <b>{{ diagnostico.hechos.configuracion.entorno_etiqueta }} · <code>{{ diagnostico.hechos.configuracion.entorno }}</code></b>
+      </div>
     </div>
+  </div>
+
+  <div class="card">
+    <h2>Configuración por entorno</h2>
+    <table>
+      <tr><th>Secreto</th><th>Estado</th></tr>
+      {% for nombre, definido in diagnostico.hechos.configuracion.secretos.items() %}
+      <tr>
+        <td><code>{{ nombre }}</code></td>
+        <td>
+          {% if definido %}<span class="pill ok">definido</span>
+          {% else %}<span class="pill off">sin definir</span>{% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+    {% if diagnostico.hechos.configuracion.problemas %}
+    <h2 class="mt">Validación por entorno</h2>
+    <ul class="errores">
+      {% for problema in diagnostico.hechos.configuracion.problemas %}
+      <li>
+        {% if problema.gravedad == 'error' %}<span class="pill bad">error</span>
+        {% else %}<span class="pill warn">aviso</span>{% endif %}
+        {{ problema.mensaje }}
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="nota">Sin problemas de configuración para el entorno actual.</p>
+    {% endif %}
   </div>
 
   <div class="card">

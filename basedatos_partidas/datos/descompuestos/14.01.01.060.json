@@ -1,0 +1,44 @@
+{
+  "codigo": "14.01.01.060",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "01",
+  "unidad": "m²",
+  "titulo": "Piso de concreto exterior alisado.",
+  "descripcion": "Pavimento exterior de concreto con acabado escobillado antideslizante, sobre base compactada, con juntas de retracción. Incluye el vaciado, el acabado y las juntas.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONC-210",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MT-MALLA-ELEC",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-CURADOR",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-VIBRADOR",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MQ-ALISADORA",
+      "rendimiento": 0.04
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.4
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

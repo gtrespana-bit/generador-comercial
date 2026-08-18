@@ -1,0 +1,28 @@
+{
+  "codigo": "18.04.01.080",
+  "ambito": "reforma",
+  "capitulo": "18",
+  "subcapitulo": "04",
+  "unidad": "m²",
+  "titulo": "Aislamiento de piso con panel rígido de lana.",
+  "descripcion": "Colocación de panel rígido de lana mineral bajo el piso, para aislamiento térmico y acústico.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PYL-LANA",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.1
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

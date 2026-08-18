@@ -1,0 +1,40 @@
+{
+  "codigo": "05.05.01.150",
+  "ambito": "reforma",
+  "capitulo": "05",
+  "subcapitulo": "05",
+  "unidad": "m2",
+  "titulo": "Entrepiso de madera con tablero OSB.",
+  "descripcion": "Ejecución de entrepiso de madera con tablero OSB. Incluye la estructura y el tablero. Medido por metro cuadrado ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MADERA-EST",
+      "rendimiento": 0.04
+    },
+    {
+      "ref": "MT-LAMINA-OSB",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-CLAVOS",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 1.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.6
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

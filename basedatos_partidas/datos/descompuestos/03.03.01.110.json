@@ -1,0 +1,32 @@
+{
+  "codigo": "03.03.01.110",
+  "ambito": "reforma",
+  "capitulo": "03",
+  "subcapitulo": "03",
+  "unidad": "m",
+  "titulo": "Zanja para cable de datos.",
+  "descripcion": "Excavación de zanja para cable de datos o telecomunicaciones. Incluye la excavación. Medido por metro lineal excavado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MQ-RETRO",
+      "rendimiento": 0.04
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.1
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

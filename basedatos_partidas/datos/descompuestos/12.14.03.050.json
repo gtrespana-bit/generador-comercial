@@ -1,0 +1,32 @@
+{
+  "codigo": "12.14.03.050",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "14",
+  "unidad": "m2",
+  "titulo": "Abrillantado de piso de mármol.",
+  "descripcion": "Abrillantado de piso de mármol con pulido mecánico y cristalizado. Incluye el pulido, el cristalizado y el abrillantado final. Medido por metro cuadrado abrillantado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-PULIDO",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MQ-PULIDORA",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-OF1-ALI",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.1
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "03"
+}

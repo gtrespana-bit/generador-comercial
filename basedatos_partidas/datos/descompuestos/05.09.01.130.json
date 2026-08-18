@@ -1,0 +1,36 @@
+{
+  "codigo": "05.09.01.130",
+  "ambito": "reforma",
+  "capitulo": "05",
+  "subcapitulo": "09",
+  "unidad": "m2",
+  "titulo": "Refuerzo de losa con perfil metálico.",
+  "descripcion": "Refuerzo de losa o viga con perfil metálico. Incluye el montaje del refuerzo. Medido por metro cuadrado reforzado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PERFIL-ACERO",
+      "rendimiento": 14.0
+    },
+    {
+      "ref": "MT-ELECTRODO",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MQ-SOLDADORA",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-OF1-SOLD",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.55
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

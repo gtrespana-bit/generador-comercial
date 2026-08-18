@@ -1,0 +1,32 @@
+{
+  "codigo": "01.06.01.070",
+  "ambito": "reforma",
+  "capitulo": "01",
+  "subcapitulo": "06",
+  "unidad": "m2",
+  "titulo": "Apuntalamiento de muro con madera.",
+  "descripcion": "Apuntalamiento de muro con madera y puntales. Incluye la colocación del apuntalamiento. Medido por metro cuadrado apuntalado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MADERA-ENTIB",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-APEO",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.3
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

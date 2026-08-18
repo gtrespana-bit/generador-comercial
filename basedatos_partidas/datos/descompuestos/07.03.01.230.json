@@ -1,0 +1,44 @@
+{
+  "codigo": "07.03.01.230",
+  "ambito": "reforma",
+  "capitulo": "07",
+  "subcapitulo": "03",
+  "unidad": "m2",
+  "titulo": "Ventana de PVC corrediza.",
+  "descripcion": "Suministro y colocación de ventana de PVC corrediza con vidrio. Incluye el montaje del marco, el acristalamiento y el sellado. Medido por metro cuadrado instalado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PERFIL-ALUM",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MT-VIDRIO-6",
+      "rendimiento": 1.02
+    },
+    {
+      "ref": "MT-SILICONA-EST",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MT-PERNO-ANCLA",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MO-OF1-VIDR",
+      "rendimiento": 0.9
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.4
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

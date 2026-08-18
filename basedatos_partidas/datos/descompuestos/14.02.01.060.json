@@ -1,0 +1,40 @@
+{
+  "codigo": "14.02.01.060",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "02",
+  "unidad": "m²",
+  "titulo": "Rampa peatonal exterior.",
+  "descripcion": "Ejecución de rampa peatonal exterior de concreto con pendiente de accesibilidad y acabado antideslizante. Incluye el encofrado y el vaciado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONC-210",
+      "rendimiento": 0.09
+    },
+    {
+      "ref": "MT-MALLA-ELEC",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-FORM-MADERA",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MQ-VIBRADOR",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.48
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

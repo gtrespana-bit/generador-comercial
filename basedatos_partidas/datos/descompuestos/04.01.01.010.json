@@ -1,0 +1,36 @@
+{
+  "codigo": "04.01.01.010",
+  "ambito": "reforma",
+  "capitulo": "04",
+  "subcapitulo": "01",
+  "unidad": "m3",
+  "titulo": "Sustitución de terreno con material granular.",
+  "descripcion": "Sustitución de terreno blando con material granular. Incluye la excavación y el relleno compactado. Medido por metro cúbico sustituido.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PIEDRA-PIC",
+      "rendimiento": 1.2
+    },
+    {
+      "ref": "MQ-RETRO",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MQ-PLANCHA-COMP",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

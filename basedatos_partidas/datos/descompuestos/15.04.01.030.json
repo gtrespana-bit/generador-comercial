@@ -1,0 +1,24 @@
+{
+  "codigo": "15.04.01.030",
+  "ambito": "reforma",
+  "capitulo": "15",
+  "subcapitulo": "04",
+  "unidad": "m³",
+  "titulo": "Canon de vertido de escombro mezclado.",
+  "descripcion": "Canon de vertido en vertedero autorizado de escombro mezclado no recuperable.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CANON",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.05
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

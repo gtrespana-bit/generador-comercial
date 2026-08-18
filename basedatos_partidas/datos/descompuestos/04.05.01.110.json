@@ -1,0 +1,36 @@
+{
+  "codigo": "04.05.01.110",
+  "ambito": "reforma",
+  "capitulo": "04",
+  "subcapitulo": "05",
+  "unidad": "m2",
+  "titulo": "Muro de contención con acabado visto.",
+  "descripcion": "Ejecución de muro de contención con acabado visto. Incluye el vaciado y el acabado. Medido por metro cuadrado ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONC-250",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MT-FORM-MADERA",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MQ-VIBRADOR",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.7
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.5
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

@@ -1,0 +1,36 @@
+{
+  "codigo": "12.12.02.050",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "12",
+  "unidad": "m2",
+  "titulo": "Barnizado de barandas y pasamanos de madera.",
+  "descripcion": "Barnizado de barandas y pasamanos de madera, con lijado y dos manos de barniz. Incluye la preparación de la superficie y las dos manos de barniz. Medido por metro cuadrado barnizado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-BARNIZ-PISO",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MT-PIN-LIJA",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.36
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.12
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

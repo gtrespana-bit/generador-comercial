@@ -1,0 +1,44 @@
+{
+  "codigo": "13.08.01.110",
+  "ambito": "reforma",
+  "capitulo": "13",
+  "subcapitulo": "08",
+  "unidad": "m",
+  "titulo": "Mueble de vitrina expositora.",
+  "descripcion": "Fabricación e instalación de mueble de vitrina expositora con vidrio y puertas. Incluye el despiece y el armado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MELAMINA",
+      "rendimiento": 2.2
+    },
+    {
+      "ref": "MT-VIDRIO-TEMP",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MT-HERRAJE-CLOSET",
+      "rendimiento": 8.0
+    },
+    {
+      "ref": "MT-TORN",
+      "rendimiento": 40.0
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.34
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 2.3
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 1.15
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

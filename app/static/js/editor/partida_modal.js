@@ -227,7 +227,7 @@
     var cype = !!datos.tiene_descomposicion_cype;
     var note = $("editor-partida-cype-note");
     CotizatStyles.set(note, "display", cype ? "" : "none");
-    note.textContent = cype ? "📐 Esta partida conserva su matriz CYPE original. Los recursos que edites aquí se actualizarán sin eliminar su trazabilidad técnica." : "";
+    note.textContent = cype ? "📐 Esta partida conserva su matriz original. Los recursos que edites aquí se actualizarán sin eliminar su trazabilidad técnica." : "";
     $("titulo-editor-partida").textContent = datos.nombre ? "Editar · " + datos.nombre : "Nueva partida";
     actualizarSelectorCatalogo(fichaCatalogoActual);
     mostrarError("");
@@ -269,7 +269,7 @@
   }
 
   function fusionarCype(originales, editadas) {
-    // Fusiona los recursos editados en el modal dentro de la matriz CYPE
+    // Fusiona los recursos editados en el modal dentro de la matriz de descompuesto
     // original, conservando intactas las filas no editables (encabezado,
     // grupos, subtotales y total). Reglas:
     //   · Un recurso original se sustituye por su versión editada si coincide

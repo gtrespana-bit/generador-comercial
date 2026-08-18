@@ -1,0 +1,36 @@
+{
+  "codigo": "02.08.01.100",
+  "ambito": "reforma",
+  "capitulo": "02",
+  "subcapitulo": "08",
+  "unidad": "m2",
+  "titulo": "Retiro de barrera de vapor.",
+  "descripcion": "Retiro de barrera de vapor o lámina de polietileno. Incluye la retirada de la lámina. Medido por metro cuadrado retirado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MT-SAC-ESC",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

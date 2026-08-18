@@ -1,0 +1,36 @@
+{
+  "codigo": "09.03.04.030",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "03",
+  "unidad": "m",
+  "titulo": "Canalización eléctrica empotrada.",
+  "descripcion": "Canalización eléctrica empotrada con conduit. Incluye el tendido del conduit. Medido por metro lineal instalado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ELE-TUB20",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-ELE-CABLE",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MQ-ROZAD",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.08
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "04"
+}

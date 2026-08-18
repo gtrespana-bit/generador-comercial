@@ -1,0 +1,24 @@
+{
+  "codigo": "16.02.01.050",
+  "ambito": "reforma",
+  "capitulo": "16",
+  "subcapitulo": "02",
+  "unidad": "ud",
+  "titulo": "Ensayo radiográfico de soldadura.",
+  "descripcion": "Ensayo radiográfico de soldaduras de alta exigencia, para verificación de calidad interna, con informe.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MO-OF1-SOLD",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.25
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

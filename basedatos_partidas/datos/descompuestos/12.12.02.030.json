@@ -1,0 +1,40 @@
+{
+  "codigo": "12.12.02.030",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "12",
+  "unidad": "m2",
+  "titulo": "Laca para carpintería interior de madera.",
+  "descripcion": "Aplicación de laca sobre carpintería interior de madera, con fondo y dos manos. Incluye el lijado, el fondo y las dos manos de laca. Medido por metro cuadrado lacado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-LACA-MADERA",
+      "rendimiento": 0.22
+    },
+    {
+      "ref": "MT-PIN-FONDO",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MT-PIN-LIJA",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.34
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.1
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

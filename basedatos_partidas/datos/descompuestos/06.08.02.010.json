@@ -1,0 +1,36 @@
+{
+  "codigo": "06.08.02.010",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "08",
+  "unidad": "m2",
+  "titulo": "Malla de protección de fachada.",
+  "descripcion": "Colocación de malla de protección o defensa de fachada. Incluye la fijación de la malla. Medido por metro cuadrado instalado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MALLA-ELEC",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-PERNO-ANCLA",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.15
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

@@ -1,0 +1,36 @@
+{
+  "codigo": "06.06.01.080",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "06",
+  "unidad": "m",
+  "titulo": "Formación de jambas y mochetas de vano con mortero.",
+  "descripcion": "Formación de jambas y mochetas de vano con mortero. Incluye el replanteo y la ejecución de las mochetas. Medido por metro lineal ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MOR-FRISO",
+      "rendimiento": 0.01
+    },
+    {
+      "ref": "MT-MALLA-ESQ",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MQ-MEZCL",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.4
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

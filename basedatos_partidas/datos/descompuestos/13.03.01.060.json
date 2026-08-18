@@ -1,0 +1,36 @@
+{
+  "codigo": "13.03.01.060",
+  "ambito": "reforma",
+  "capitulo": "13",
+  "subcapitulo": "03",
+  "unidad": "m",
+  "titulo": "Mesón de baño con lavamanos integrado.",
+  "descripcion": "Colocación de mesón de baño sobre mueble o estructura, con perforación para lavamanos y sellado. Incluye la colocación y el sellado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ADH-PIEDRA",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MT-SIL-SAN",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MQ-CORT-AGUA",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.5
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

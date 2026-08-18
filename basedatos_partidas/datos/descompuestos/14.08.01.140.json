@@ -1,0 +1,36 @@
+{
+  "codigo": "14.08.01.140",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "08",
+  "unidad": "ud",
+  "titulo": "Punto de drenaje de condensados exterior.",
+  "descripcion": "Ejecución de punto de drenaje de condensados exterior, con tubería y sifón. Incluye la colocación y la conexión.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PLO-PVC4",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MT-PLO-DESAG",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-PLO",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.4
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

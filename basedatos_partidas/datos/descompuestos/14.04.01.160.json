@@ -1,0 +1,38 @@
+{
+  "codigo": "14.04.01.160",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "04",
+  "unidad": "m",
+  "titulo": "Cerca viva o seto perimetral.",
+  "descripcion": "Siembra de cerca viva o seto perimetral con plantas, sobre terreno preparado. Incluye la preparación y la siembra. Las plantas las elige el cliente.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-TIERRA-ABON",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MT-AGUA-OBRA",
+      "rendimiento": 0.01
+    },
+    {
+      "ref": "MO-OF1-JARD",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.24
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01",
+  "producto_cliente": {
+    "tipo": "Plantas de cerca viva elegidas por el cliente",
+    "unidad": "m",
+    "consumo": 3.0,
+    "nota": "La partida cubre la preparación y siembra. Las plantas se toman del catálogo de productos."
+  }
+}

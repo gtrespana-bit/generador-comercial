@@ -1,0 +1,32 @@
+{
+  "codigo": "12.02.02.060",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "02",
+  "unidad": "m2",
+  "titulo": "Friso de yeso proyectado.",
+  "descripcion": "Aplicación de friso de yeso proyectado sobre paramento interior, con maestras y afinado. Incluye la preparación del soporte y la aplicación mecánica de la pasta de yeso. Medido por metro cuadrado frisado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PASTA-YESO",
+      "rendimiento": 14.0
+    },
+    {
+      "ref": "MQ-PROYECT-MORT",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.15
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

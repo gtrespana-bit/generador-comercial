@@ -1,0 +1,68 @@
+{% set coste = (p.coste_materiales or 0) + (p.coste_mano_obra or 0) + (p.coste_complementarios or 0) + (p.coste_otros or 0) %}
+{% set margen = (p.precio_unitario or 0) - coste %}
+{% set recursos = catalogo_descompuestos.get(p.id, []) %}
+<tr {% if vista != 'ocultas' %}draggable="true"{% endif %} class="partida-tr" data-id="{{ p.id }}" data-categoria="{{ p.categoria }}" data-subcategoria="{{ p.subcategoria }}" data-apartado="{{ p.apartado }}" data-nombre="{{ (p.nombre ~ ' ' ~ p.descripcion ~ ' ' ~ p.categoria ~ ' ' ~ p.subcategoria ~ ' ' ~ p.apartado ~ ' ' ~ p.codigo_interno ~ ' ' ~ p.codigo_legacy ~ ' ' ~ p.codigo_externo ~ ' ' ~ p.proveedor) | lower }}" data-precio="{{ p.precio_unitario }}" data-coste="{{ coste }}" data-usos="{{ p.usos or 0 }}">
+  <td class="col-check"><input type="checkbox" class="row-check" data-id="{{ p.id }}" data-cotizat-change="partidas-row-check"></td>
+  <td class="col-code">
+    {% if p.codigo_interno or p.codigo_externo %}
+      <code class="code-badge" title="{{ p.codigo_interno or p.codigo_externo }}">{{ (p.codigo_interno or p.codigo_externo)[:12] }}</code>
+    {% else %}
+      <span class="code-empty">—</span>
+    {% endif %}
+  </td>
+  <td class="col-nombre">
+    <div class="partida-main">
+      <span class="partida-nombre" title="{{ p.nombre }}">{{ p.nombre }}</span>
+      {% if p.usos and p.usos > 0 %}<span class="usos-mini" title="Usada {{ p.usos }} veces">🔥{{ p.usos }}</span>{% endif %}
+    </div>
+    <div class="partida-sub">
+      {% if p.apartado %}<span class="apartado-mini" title="Ruta del catálogo">{{ p.apartado }}</span>{% endif %}
+      {% if p.descripcion %}
+        <span class="desc" title="{{ p.descripcion }}">{{ p.descripcion }}</span>
+      {% else %}
+        <span class="desc empty">Sin descripción</span>
+      {% endif %}
+      {% if p.proveedor %}<span class="prov" title="Proveedor">· {{ p.proveedor }}</span>{% endif %}
+      {% if p.imagen %}<span class="has-img" title="Con imagen">🖼️</span>{% endif %}
+    </div>
+  </td>
+  <td class="col-und"><span class="und-badge">{{ p.unidad }}</span></td>
+  <td class="col-coste right" data-coste="{{ coste }}" title="Materiales {{ (p.coste_materiales or 0)|money }} · Mano {{ (p.coste_mano_obra or 0)|money }} · Compl. {{ (p.coste_complementarios or 0)|money }} · Otros {{ (p.coste_otros or 0)|money }}">
+    <span class="coste-val">{{ coste | money if coste>0 else "—" }}</span>
+  </td>
+  <td class="col-precio right" data-precio="{{ p.precio_unitario }}"><strong class="precio-val">{{ p.precio_unitario | money }}</strong></td>
+  <td class="col-margen right">
+    {% if coste>0 %}
+      {% set markup = ((p.precio_unitario - coste) / coste * 100) if coste else 0 %}
+      {% set margen_pct = ((p.precio_unitario - coste) / p.precio_unitario * 100) if p.precio_unitario else 0 %}
+      {% if margen>=0 %}<span class="margen-pos" title="Beneficio {{ margen|money }} · {{ markup|round(1) }}% s/coste, {{ margen_pct|round(1) }}% margen">+{{ margen|money }} · {{ markup|round(1) }}%</span>{% else %}<span class="margen-neg" title="{{ markup|round(1) }}% s/coste">{{ margen|money }} · {{ markup|round(1) }}%</span>{% endif %}
+    {% else %}
+      <span class="margen-na">—</span>
+    {% endif %}
+  </td>
+  <td class="col-usos right" data-usos="{{ p.usos or 0}}">{{ p.usos or 0 }}</td>
+  <td class="col-actions right">
+    <div class="row-actions">
+      {% if vista == 'ocultas' %}
+      <form method="post" action="/partidas/{{ p.id }}/restaurar">
+        <button type="submit" class="btn btn-sm btn-primary" title="Restaurar en el catálogo">↩ Restaurar</button>
+      </form>
+      {% else %}
+      <a href="/partidas/{{ p.id }}/editar" class="btn btn-sm btn-ghost" title="Editar">✏️</a>
+      <form method="post" action="/partidas/{{ p.id }}/eliminar" class="csp-s-a91548c594" data-confirm="{% if p.es_oficial %}¿Ocultar «{{ p.nombre }}» para esta organización? Podrás restaurarla después.{% else %}¿Eliminar definitivamente «{{ p.nombre }}»?{% endif %}">
+        <button type="submit" class="btn btn-sm btn-ghost csp-s-be52c7a071" title="{{ 'Ocultar' if p.es_oficial else 'Eliminar' }}">{{ '◉' if p.es_oficial else '✕' }}</button>
+      </form>
+      {% endif %}
+    </div>
+  </td>
+</tr>
+{% if recursos %}
+<tr class="descomp-row" data-parent="{{ p.id }}">
+  <td colspan="9" class="csp-s-1305fa8339">
+    <details class="descomp-details" data-descomp="{{ p.id }}">
+      <summary><span class="descomp-summary-label">▾ Descomposición ({{ recursos|selectattr('tipo','equalto','recurso')|list|length }} recursos)</span> <span class="hint csp-s-a7d39f24f0">Clic para ver</span></summary>
+      <div class="table-wrap descomp-holder csp-s-abe228aee0"></div>
+    </details>
+  </td>
+</tr>
+{% endif %}

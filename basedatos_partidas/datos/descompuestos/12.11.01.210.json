@@ -1,0 +1,36 @@
+{
+  "codigo": "12.11.01.210",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "11",
+  "unidad": "m2",
+  "titulo": "Protector anti-graffiti sobre fachada.",
+  "descripcion": "Aplicación de protector anti-graffiti sobre fachada pintada, que facilita la limpieza de pintadas. Incluye la limpieza previa y la aplicación del protector. Medido por metro cuadrado tratado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ANTI-GRAFFITI",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.14
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.08
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

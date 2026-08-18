@@ -1,0 +1,28 @@
+{
+  "codigo": "09.17.01.040",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "17",
+  "unidad": "ud",
+  "titulo": "Puesta en marcha de sistema de climatización.",
+  "descripcion": "Puesta en marcha de sistema de climatización. Incluye la verificación y el ajuste. Medido por sistema puesto en marcha.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MQ-RECUP-GAS",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-OF1-AC",
+      "rendimiento": 2.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 1.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

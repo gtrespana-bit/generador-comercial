@@ -1,0 +1,40 @@
+{
+  "codigo": "06.06.01.120",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "06",
+  "unidad": "m",
+  "titulo": "Dintel metálico para vano.",
+  "descripcion": "Suministro y colocación de dintel metálico para vano. Incluye la fabricación y el montaje del dintel. Medido por metro lineal ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PERFIL-ACERO",
+      "rendimiento": 6.0
+    },
+    {
+      "ref": "MT-ELECTRODO",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MT-PINT-ANTICORR",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-SOLDADORA",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-OF1-SOLD",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.3
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

@@ -1,0 +1,40 @@
+{
+  "codigo": "01.04.02.020",
+  "ambito": "reforma",
+  "capitulo": "01",
+  "subcapitulo": "04",
+  "unidad": "m2",
+  "titulo": "Control de acceso a zona de obra.",
+  "descripcion": "Instalación de control de acceso a zona de obra. Incluye la señalización y la delimitación del acceso. Medido por acceso habilitado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-SENAL-OBRA",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MT-CINTA-ENM",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MT-MADERA-LISTON",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

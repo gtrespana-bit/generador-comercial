@@ -1,0 +1,36 @@
+{
+  "codigo": "02.05.01.190",
+  "ambito": "reforma",
+  "capitulo": "02",
+  "subcapitulo": "05",
+  "unidad": "m2",
+  "titulo": "Retiro de vidrio de fachada.",
+  "descripcion": "Retiro de vidrio de fachada, con desmontaje cuidadoso. Incluye la retirada del vidrio y la limpieza del marco. Medido por metro cuadrado retirado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MT-SAC-ESC",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MQ-CORT-AGUA",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-VIDR",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.4
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

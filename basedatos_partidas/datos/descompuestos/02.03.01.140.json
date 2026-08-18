@@ -1,0 +1,44 @@
+{
+  "codigo": "02.03.01.140",
+  "ambito": "reforma",
+  "capitulo": "02",
+  "subcapitulo": "03",
+  "unidad": "m2",
+  "titulo": "Picado de aplacado cerámico de fachada.",
+  "descripcion": "Picado de aplacado cerámico o porcelánico de fachada, con retirada de la capa de pega. Incluye el picado de las piezas y la limpieza del soporte. Medido por metro cuadrado picado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MT-SAC-ESC",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MQ-MART-ELEC",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.5
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

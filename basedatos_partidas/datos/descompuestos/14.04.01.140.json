@@ -1,0 +1,44 @@
+{
+  "codigo": "14.04.01.140",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "04",
+  "unidad": "m",
+  "titulo": "Columna de cerramiento de concreto.",
+  "descripcion": "Ejecución de columna de concreto armado para cerramiento, con encofrado y curado. Incluye el armado y el vaciado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONC-210",
+      "rendimiento": 0.03
+    },
+    {
+      "ref": "MT-ACERO-CAB",
+      "rendimiento": 3.0
+    },
+    {
+      "ref": "MT-FORM-MADERA",
+      "rendimiento": 0.8
+    },
+    {
+      "ref": "MT-DESMOLD",
+      "rendimiento": 0.01
+    },
+    {
+      "ref": "MQ-VIBRADOR",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.48
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

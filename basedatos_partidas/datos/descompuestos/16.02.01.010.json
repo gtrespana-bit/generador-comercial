@@ -1,0 +1,24 @@
+{
+  "codigo": "16.02.01.010",
+  "ambito": "reforma",
+  "capitulo": "16",
+  "subcapitulo": "02",
+  "unidad": "m",
+  "titulo": "Inspección visual de soldadura.",
+  "descripcion": "Inspección visual de cordones de soldadura, verificando continuidad, penetración y ausencia de defectos superficiales.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MO-OF1-SOLD",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.08
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

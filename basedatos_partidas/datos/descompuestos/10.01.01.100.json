@@ -1,0 +1,36 @@
+{
+  "codigo": "10.01.01.100",
+  "ambito": "reforma",
+  "capitulo": "10",
+  "subcapitulo": "01",
+  "unidad": "m2",
+  "titulo": "Aislamiento térmico de tubería.",
+  "descripcion": "Suministro y colocación de coquilla aislante en tuberías de agua caliente o climatización. Incluye la colocación de la coquilla y el sellado de juntas. Medido por metro lineal aislado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-AISL-TERM",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MT-CINTA-ENM",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.05
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

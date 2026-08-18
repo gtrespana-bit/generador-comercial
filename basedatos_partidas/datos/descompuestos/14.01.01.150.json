@@ -1,0 +1,36 @@
+{
+  "codigo": "14.01.01.150",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "01",
+  "unidad": "m²",
+  "titulo": "Base compactada para pavimento exterior.",
+  "descripcion": "Ejecución de base de material granular compactado para pavimento exterior, con nivelación y compactación. Incluye el extendido y la compactación.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-GRAVILLA",
+      "rendimiento": 0.04
+    },
+    {
+      "ref": "MT-ARENA",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MQ-COMPACT-SALTO",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.25
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

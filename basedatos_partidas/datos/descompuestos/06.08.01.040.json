@@ -1,0 +1,40 @@
+{
+  "codigo": "06.08.01.040",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "08",
+  "unidad": "m2",
+  "titulo": "Cerramiento de lamas orientables.",
+  "descripcion": "Suministro y colocación de cerramiento de lamas orientables de aluminio. Incluye la subestructura y la colocación de las lamas. Medido por metro cuadrado instalado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CELOSIA",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-PERFIL-ALUM",
+      "rendimiento": 2.5
+    },
+    {
+      "ref": "MT-PLO-SOP",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.65
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.22
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

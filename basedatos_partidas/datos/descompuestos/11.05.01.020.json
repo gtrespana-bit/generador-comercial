@@ -1,0 +1,36 @@
+{
+  "codigo": "11.05.01.020",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "05",
+  "unidad": "m²",
+  "titulo": "Cubierta ligera de panel de fibra de vidrio.",
+  "descripcion": "Cubierta ligera translúcida de panel de fibra de vidrio ondulado sobre correas, para zonas de trabajo o lavado. Incluye la colocación y la fijación.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-POLICARB",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-TORN-TECHO",
+      "rendimiento": 5.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.28
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.22
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

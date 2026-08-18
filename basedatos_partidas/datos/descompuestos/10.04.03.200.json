@@ -1,0 +1,36 @@
+{
+  "codigo": "10.04.03.200",
+  "ambito": "reforma",
+  "capitulo": "10",
+  "subcapitulo": "04",
+  "unidad": "m2",
+  "titulo": "Impermeabilización de techo de madera.",
+  "descripcion": "Impermeabilización de techo de madera con membrana líquida, previo al acabado. Incluye la preparación del soporte y la aplicación. Medido por metro cuadrado impermeabilizado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ACRIL-IMPER",
+      "rendimiento": 1.45
+    },
+    {
+      "ref": "MT-MALLA-JUNTA",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.24
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "03"
+}

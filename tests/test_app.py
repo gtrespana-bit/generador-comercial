@@ -744,8 +744,12 @@ def test_editor_envia_indice_ligero_y_carga_ficha_bajo_demanda():
         assert "buscable" in catalogo[0]
         assert "descripcion" not in catalogo[0]
         assert "descomposicion" not in catalogo[0]
-        # La demostración completa (540 partidas) antes superaba 3,3 MB.
-        assert len(resp.content) < 1_000_000
+        # El índice ligero no embebe la ficha completa (descripción +
+        # descomposición), que superaría varios MB. El catálogo ha crecido de
+        # 540 a más de 1.000 partidas, así que el presupuesto se ajusta al
+        # tamaño real del índice ligero (unos 1,1 MB) con margen; la
+        # demostración completa con fichas superaría los 7 MB.
+        assert len(resp.content) < 3_000_000
 
         ficha = client.get(f"/partidas/{catalogo[0]['id']}/ficha")
         assert ficha.status_code == 200
@@ -777,10 +781,14 @@ def test_busqueda_remota_cubre_descripcion_y_catalogo_se_pagina():
         assert metrica.status_code == 200
         assert metrica.json()["ok"]
 
+        # La navegación monta el árbol completo contraído y carga las filas de
+        # cada subcapítulo bajo demanda: la primera respuesta no trae filas,
+        # sino el árbol (18 capítulos, 172 subcapítulos) con sus totales.
         listado = client.get("/partidas")
         assert listado.status_code == 200
-        assert listado.text.count('class="partida-tr"') <= 100
-        assert "Página <strong>1</strong>" in listado.text
+        assert listado.text.count('class="partida-tr"') == 0
+        assert listado.text.count('data-lazy="1"') == 172
+        assert "18 Rehabilitación energética" in listado.text
 
 
 def test_partida_oculta_desaparece_del_editor_y_aparece_en_su_vista():
@@ -799,7 +807,16 @@ def test_partida_oculta_desaparece_del_editor_y_aparece_en_su_vista():
                 "/partidas/api/buscar", params={"q": "Levantamiento de medidas"}
             ).json()["resultados"]
             assert all(p["id"] != partida_id for p in resultados)
-            ocultas = client.get("/partidas", params={"vista": "ocultas"})
+            # La partida oculta reaparece en su subcapítulo al pedir las filas
+            # con vista=ocultas (la navegación las carga bajo demanda).
+            ocultas = client.get(
+                "/partidas/api/filas",
+                params={
+                    "categoria": encontrada["categoria"],
+                    "subcategoria": encontrada["subcategoria"],
+                    "vista": "ocultas",
+                },
+            )
             assert ocultas.status_code == 200
             assert nombre in ocultas.text
             editor = client.get("/presupuestos/nuevo")

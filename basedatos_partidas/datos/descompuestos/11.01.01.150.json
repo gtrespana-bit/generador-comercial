@@ -1,0 +1,36 @@
+{
+  "codigo": "11.01.01.150",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "01",
+  "unidad": "ud",
+  "titulo": "Cazuela de recogida para desagüe de cubierta.",
+  "descripcion": "Ejecución de cazuela o sumidero de desagüe en el punto bajo de la pendiente de cubierta, con conexión a la bajante y sellado de la impermeabilización. Incluye la apertura del hueco y la fijación.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-TRAGANTE",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-MOR-FRISO",
+      "rendimiento": 0.005
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.3
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

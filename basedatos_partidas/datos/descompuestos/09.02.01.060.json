@@ -1,0 +1,36 @@
+{
+  "codigo": "09.02.01.060",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "02",
+  "unidad": "m",
+  "titulo": "Montante de desagüe.",
+  "descripcion": "Suministro e instalación de montante de desagüe. Incluye el montaje. Medido por metro lineal instalado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PLO-PVC4",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-PLO-SOP",
+      "rendimiento": 2.5
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.07
+    },
+    {
+      "ref": "MO-OF1-PLO",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.1
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

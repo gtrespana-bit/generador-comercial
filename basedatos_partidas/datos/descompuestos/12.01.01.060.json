@@ -1,0 +1,32 @@
+{
+  "codigo": "12.01.01.060",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "01",
+  "unidad": "m2",
+  "titulo": "Imprimación selladora de paramento poroso.",
+  "descripcion": "Aplicación de imprimación selladora o fondo fijador sobre paramento poroso previo a la pintura. Incluye la limpieza y la aplicación del sellador. Medido por metro cuadrado imprimado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PIN-FONDO",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.04
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

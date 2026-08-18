@@ -1,0 +1,36 @@
+{
+  "codigo": "11.09.01.050",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "09",
+  "unidad": "m",
+  "titulo": "Sustitución de cumbrera de cubierta.",
+  "descripcion": "Sustitución de cumbrera o remate superior de cubierta dañado, con desmontaje y colocación de la nueva pieza. Incluye el recibido y el sellado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CUMBRERA",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-MOR-PEGA",
+      "rendimiento": 0.005
+    },
+    {
+      "ref": "MQ-MONTAC",
+      "rendimiento": 0.04
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.28
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

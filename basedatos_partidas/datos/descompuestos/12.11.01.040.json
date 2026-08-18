@@ -1,0 +1,44 @@
+{
+  "codigo": "12.11.01.040",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "11",
+  "unidad": "m2",
+  "titulo": "Pintura de caucho exterior sobre friso nuevo, tres manos.",
+  "descripcion": "Aplicación de pintura de caucho exterior sobre friso nuevo, con fondo sellador y tres manos. Incluye la aplicación del fondo, las tres manos de pintura y la protección de ventanas y pisos. Medido por metro cuadrado pintado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PIN-CAUCHO",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MT-PIN-FONDO",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MT-PIN-LIJA",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.14
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.24
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.14
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.23
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

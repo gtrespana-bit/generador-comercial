@@ -1,0 +1,40 @@
+{
+  "codigo": "12.13.01.110",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "13",
+  "unidad": "m2",
+  "titulo": "Recubrimiento de cuarzo coloreado antideslizante.",
+  "descripcion": "Aplicación de recubrimiento de resina con árido de cuarzo coloreado antideslizante sobre piso. Incluye la preparación, la resina y el espolvoreo del cuarzo. Medido por metro cuadrado recubierto.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-EPOXI-PISO",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MT-CUARZO-COLOR",
+      "rendimiento": 2.5
+    },
+    {
+      "ref": "MT-PUENTE-ADH",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-LIJAD",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.18
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

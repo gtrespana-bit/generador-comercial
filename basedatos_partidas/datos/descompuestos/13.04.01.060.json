@@ -1,0 +1,44 @@
+{
+  "codigo": "13.04.01.060",
+  "ambito": "reforma",
+  "capitulo": "13",
+  "subcapitulo": "04",
+  "unidad": "m",
+  "titulo": "Organizadores interiores de closet.",
+  "descripcion": "Colocación de entrepaños y organizadores interiores de closet, con soportes regulables. Incluye el corte y la fijación.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MELAMINA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-HERRAJE-CLOSET",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MT-TORN",
+      "rendimiento": 16.0
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MQ-ATORN",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 1.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.6
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

@@ -1,0 +1,48 @@
+{
+  "codigo": "12.07.02.070",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "07",
+  "unidad": "m2",
+  "titulo": "Forro de placa de yeso sobre estructura para medianería.",
+  "descripcion": "Forro de placa de yeso laminado sobre estructura metálica para medianería, sin contacto directo con el muro vecino. Incluye la estructura, la placa y el tratamiento de juntas. Medido por metro cuadrado de forro terminado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PYL-MONT",
+      "rendimiento": 2.2
+    },
+    {
+      "ref": "MT-PYL-CANAL",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MT-PYL-PLACA125",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-PYL-PASTA",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MT-TORN",
+      "rendimiento": 12.0
+    },
+    {
+      "ref": "MQ-ATORN",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.38
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.15
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

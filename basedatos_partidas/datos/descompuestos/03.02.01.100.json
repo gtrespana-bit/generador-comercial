@@ -1,0 +1,32 @@
+{
+  "codigo": "03.02.01.100",
+  "ambito": "reforma",
+  "capitulo": "03",
+  "subcapitulo": "02",
+  "unidad": "m2",
+  "titulo": "Perfilado y limpieza de fondo de excavación.",
+  "descripcion": "Perfilado y limpieza manual del fondo de excavación. Incluye la limpieza y el perfilado. Medido por metro cuadrado perfilado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-COMPACT-SALTO",
+      "rendimiento": 0.03
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.1
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

@@ -1,0 +1,24 @@
+{
+  "codigo": "17.05.01.030",
+  "ambito": "reforma",
+  "capitulo": "17",
+  "subcapitulo": "05",
+  "unidad": "glb",
+  "titulo": "Ventilación de espacio confinado.",
+  "descripcion": "Ventilación forzada de espacio confinado antes y durante el trabajo, para asegurar la calidad del aire.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MQ-ASPIR",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.3
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

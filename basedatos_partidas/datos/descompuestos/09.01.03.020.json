@@ -1,0 +1,36 @@
+{
+  "codigo": "09.01.03.020",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "01",
+  "unidad": "ud",
+  "titulo": "Llave de escuadra para aparato.",
+  "descripcion": "Instalación de llave de escuadra para aparato sanitario. Incluye la conexión. Medido por unidad instalada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PLO-LLAVE",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-PLO-ABASTO",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MQ-TERMOF",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-PLO",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "03"
+}

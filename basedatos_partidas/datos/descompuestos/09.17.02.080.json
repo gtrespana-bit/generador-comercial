@@ -1,0 +1,32 @@
+{
+  "codigo": "09.17.02.080",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "17",
+  "unidad": "ud",
+  "titulo": "Reparación de sistema de seguridad.",
+  "descripcion": "Reparación de sistema de seguridad o alarma. Incluye el diagnóstico y la reparación. Medido por reparación ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CABLE-ALARMA",
+      "rendimiento": 5.0
+    },
+    {
+      "ref": "MQ-DETECTOR",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 1.0
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

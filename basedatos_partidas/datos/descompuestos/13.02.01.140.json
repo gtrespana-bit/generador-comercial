@@ -1,0 +1,36 @@
+{
+  "codigo": "13.02.01.140",
+  "ambito": "reforma",
+  "capitulo": "13",
+  "subcapitulo": "02",
+  "unidad": "m",
+  "titulo": "Reparación de mesón de piedra.",
+  "descripcion": "Reparación de mesón de piedra con resane de fisuras, pulido y sellado. Incluye la reparación y el acabado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-RESINA-ACRIL",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MT-CONS-PULIDO",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MQ-PULIDORA",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.9
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.45
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

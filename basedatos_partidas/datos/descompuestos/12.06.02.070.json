@@ -1,0 +1,36 @@
+{
+  "codigo": "12.06.02.070",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "06",
+  "unidad": "m",
+  "titulo": "Revestimiento de peldaño con vinílico.",
+  "descripcion": "Revestimiento de peldaño de escalera con lámina o pieza vinílica, con perfil antideslizante. Incluye la preparación del soporte y la colocación del revestimiento. Medido por metro lineal de peldaño.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ADH-VINIL",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MT-CINTA-ANTIDES",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-PISO",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.12
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

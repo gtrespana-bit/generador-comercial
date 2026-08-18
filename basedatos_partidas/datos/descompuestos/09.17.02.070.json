@@ -1,0 +1,36 @@
+{
+  "codigo": "09.17.02.070",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "17",
+  "unidad": "ud",
+  "titulo": "Reparación de tablero eléctrico.",
+  "descripcion": "Reparación de tablero eléctrico. Incluye la sustitución de protecciones. Medido por reparación ejecutada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-BREAKER",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-DIFERENCIAL",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MQ-DETECTOR",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.8
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

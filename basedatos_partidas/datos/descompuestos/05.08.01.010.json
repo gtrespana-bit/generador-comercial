@@ -1,0 +1,40 @@
+{
+  "codigo": "05.08.01.010",
+  "ambito": "reforma",
+  "capitulo": "05",
+  "subcapitulo": "08",
+  "unidad": "ud",
+  "titulo": "Anclaje químico de barra en concreto.",
+  "descripcion": "Ejecución de anclaje químico de barra de acero en concreto. Incluye la perforación y la inyección. Medido por anclaje ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-EPOXI-ANCLA",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MT-ACERO-CAB",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MQ-INYECTORA",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

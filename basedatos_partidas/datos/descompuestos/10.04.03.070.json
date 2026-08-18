@@ -1,0 +1,40 @@
+{
+  "codigo": "10.04.03.070",
+  "ambito": "reforma",
+  "capitulo": "10",
+  "subcapitulo": "04",
+  "unidad": "m2",
+  "titulo": "Impermeabilización de balcón con acrílico elastomérico.",
+  "descripcion": "Impermeabilización de balcón con acrílico elastomérico y malla. Incluye la preparación del soporte y la aplicación del acrílico. Medido por metro cuadrado impermeabilizado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ACRIL-IMPER",
+      "rendimiento": 1.45
+    },
+    {
+      "ref": "MT-MALLA-JUNTA",
+      "rendimiento": 1.1
+    },
+    {
+      "ref": "MT-PUENTE-ADH",
+      "rendimiento": 0.09
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.36
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.24
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "03"
+}

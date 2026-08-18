@@ -1,0 +1,32 @@
+{
+  "codigo": "03.03.01.100",
+  "ambito": "reforma",
+  "capitulo": "03",
+  "subcapitulo": "03",
+  "unidad": "m3",
+  "titulo": "Excavación localizada a mano en interior.",
+  "descripcion": "Excavación localizada a mano en interior. Incluye la excavación y la retirada. Medido por metro cúbico excavado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MT-SAC-ESC",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.4
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

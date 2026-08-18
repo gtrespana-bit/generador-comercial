@@ -1,0 +1,36 @@
+{
+  "codigo": "12.05.07.090",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "05",
+  "unidad": "m2",
+  "titulo": "Piso de concreto coloreado.",
+  "descripcion": "Ejecución de piso de concreto coloreado con pigmento integral y acabado alisado. Incluye el vaciado, el coloreado y el alisado. Medido por metro cuadrado ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONC-210",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MT-DESMOLD-COLOR",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MQ-ALISADORA",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "07"
+}

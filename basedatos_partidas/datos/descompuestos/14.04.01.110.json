@@ -1,0 +1,40 @@
+{
+  "codigo": "14.04.01.110",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "04",
+  "unidad": "m",
+  "titulo": "Reparación de cerca perimetral.",
+  "descripcion": "Reparación de cerca perimetral con sustitución de tramos de malla o postes dañados. Incluye la sustitución.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MALLA-OBRA",
+      "rendimiento": 0.8
+    },
+    {
+      "ref": "MT-ALAMBRE",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MT-CONC-210",
+      "rendimiento": 0.01
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.32
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

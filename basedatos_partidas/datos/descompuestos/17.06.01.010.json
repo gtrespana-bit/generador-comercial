@@ -1,0 +1,28 @@
+{
+  "codigo": "17.06.01.010",
+  "ambito": "reforma",
+  "capitulo": "17",
+  "subcapitulo": "06",
+  "unidad": "ud",
+  "titulo": "Extintor portátil de obra.",
+  "descripcion": "Suministro y colocación de extintor portátil en la obra, con su señalización.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-EXTINTOR",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-SENAL-OBRA",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.1
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

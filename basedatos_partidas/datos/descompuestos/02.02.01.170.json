@@ -1,0 +1,36 @@
+{
+  "codigo": "02.02.01.170",
+  "ambito": "reforma",
+  "capitulo": "02",
+  "subcapitulo": "02",
+  "unidad": "m",
+  "titulo": "Desmontaje de celosía o cercha metálica.",
+  "descripcion": "Desmontaje de celosía o cercha metálica, con corte de uniones y bajada controlada. Incluye el desmontaje y la bajada con grúa o pluma. Medido por metro lineal desmontado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-OXI-CONS",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MQ-OXICORTE",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MQ-GRUA",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-SOLD",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.5
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

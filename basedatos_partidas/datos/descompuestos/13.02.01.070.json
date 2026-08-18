@@ -1,0 +1,36 @@
+{
+  "codigo": "13.02.01.070",
+  "ambito": "reforma",
+  "capitulo": "13",
+  "subcapitulo": "02",
+  "unidad": "m",
+  "titulo": "Salpicadero de mesón en piedra.",
+  "descripcion": "Colocación de salpicadero de mesón en el mismo material del mesón o revestimiento, con sellado de juntas. Incluye la fijación y el sellado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ADH-PIEDRA",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MT-SIL-SAN",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MQ-CORT-AGUA",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.9
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.45
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

@@ -1,0 +1,32 @@
+{
+  "codigo": "18.02.01.060",
+  "ambito": "reforma",
+  "capitulo": "18",
+  "subcapitulo": "02",
+  "unidad": "m²",
+  "titulo": "Aislamiento de fachada con lana mineral proyectada.",
+  "descripcion": "Proyección de lana mineral aislante sobre fachada, para relleno de cámaras y mejora térmica.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-LANA-ROCA",
+      "rendimiento": 1.1
+    },
+    {
+      "ref": "MQ-PROYECT-MORT",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.32
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

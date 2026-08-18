@@ -1,0 +1,40 @@
+{
+  "codigo": "10.03.02.020",
+  "ambito": "reforma",
+  "capitulo": "10",
+  "subcapitulo": "03",
+  "unidad": "m2",
+  "titulo": "Impermeabilización de muro enterrado con membrana líquida.",
+  "descripcion": "Impermeabilización de muro enterrado con membrana líquida de poliuretano. Incluye la preparación del soporte y la aplicación de la membrana. Medido por metro cuadrado impermeabilizado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-POLIUR-LIQ",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MT-PUENTE-ADH",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MT-MALLA-JUNTA",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

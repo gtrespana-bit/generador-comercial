@@ -1,0 +1,38 @@
+{
+  "codigo": "09.10.01.310",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "10",
+  "unidad": "ud",
+  "titulo": "Instalación de extintor de polvo.",
+  "descripcion": "Instalación de extintor de polvo., con fijación y señalización. Incluye la fijación. Medido por unidad instalada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-SENAL-OBRA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.25
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01",
+  "producto_cliente": {
+    "tipo": "Extintor de polvo, del modelo elegido por el cliente",
+    "unidad": "ud",
+    "consumo": 1.0,
+    "nota": "La partida cubre solo la instalación. El equipo se toma del catálogo de productos y su precio no está incluido."
+  }
+}

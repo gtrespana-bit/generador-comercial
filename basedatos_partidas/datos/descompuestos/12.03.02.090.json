@@ -1,0 +1,32 @@
+{
+  "codigo": "12.03.02.090",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "03",
+  "unidad": "m2",
+  "titulo": "Pulido de enchapado de mármol en pared.",
+  "descripcion": "Pulido y abrillantado de enchapado de mármol en pared, para recuperar el brillo. Incluye el pulido mecánico y el abrillantado final. Medido por metro cuadrado pulido.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-PULIDO",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MQ-PULIDORA",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-OF1-ALI",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.1
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

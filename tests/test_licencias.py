@@ -24,6 +24,7 @@ from starlette.requests import Request
 from starlette.testclient import TestClient
 
 from app import main as main_module
+from app.routers import common
 from app.auth import (
     ACCESS_COOKIE,
     REFRESH_COOKIE,
@@ -340,7 +341,7 @@ def entorno(monkeypatch):
         seed.commit()
         datos = {"usuario_id": usuario.id, "organizacion_id": organizacion.id}
 
-    monkeypatch.setattr(main_module, "DATABASE_IS_SQLITE", False)
+    monkeypatch.setattr(common, "DATABASE_IS_SQLITE", False)
     monkeypatch.setattr(
         SupabaseAuthSettings, "from_environment", classmethod(lambda _cls: SETTINGS)
     )

@@ -1,0 +1,28 @@
+{
+  "codigo": "15.07.01.060",
+  "ambito": "reforma",
+  "capitulo": "15",
+  "subcapitulo": "07",
+  "unidad": "m²",
+  "titulo": "Limpieza de pisos con pulidora.",
+  "descripcion": "Limpieza de pisos al final de la obra con máquina pulidora, para dejar el acabado listo para la entrega.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-LIMP",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MQ-PULIDORA",
+      "rendimiento": 0.03
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.08
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

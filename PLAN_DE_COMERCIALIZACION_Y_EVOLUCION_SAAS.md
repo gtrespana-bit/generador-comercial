@@ -609,13 +609,30 @@ rama: hasta entonces `/readyz` del entorno migrado responde 503 (esperado).
 
 ## 4.1 Refactorización estructural
 
-- [ ] **E4-001 — Dividir `app/main.py` en routers por dominio.**
+- [x] **E4-001 — Dividir `app/main.py` en routers por dominio.**
+  Completado el 17/08/2026: `app/main.py` (antes ~8.200 líneas) queda como
+  esqueleto de montaje (middlewares, manejadores de excepción, estáticos y
+  rutas de sistema) y las rutas de negocio viven en `app/routers/`, un módulo
+  por dominio (`auth`, `publico`, `admin`, `inicio`, `clientes`,
+  `presupuestos`, `configuracion`, `partidas`, `productos`, `recursos`,
+  `plantillas`, `recetas`). Los helpers, el entorno Jinja y las constantes
+  compartidas están en `app/routers/common.py`; cada router los importa con
+  `from .common import *` y los nombres mutables que los tests parchean se
+  leen por referencia (`common.NOMBRE`). Suite completa en verde.
 - [x] **E4-002 — Extraer servicios de aplicación y reglas de autorización.**
   Los servicios viven en `app/services/` (licencias, propuestas, respaldo,
   restauración, exportación, baja, operación…) y las reglas de autorización
   quedaron centralizadas en `app/permisos.py` el 16/08/2026.
-- [~] **E4-003 — Crear configuración separada por entorno.**
-  `DATABASE_URL` ya separa persistencia web; faltan secretos, almacenamiento y políticas completas por entorno.
+- [x] **E4-003 — Crear configuración separada por entorno.**
+  Completado el 17/08/2026 con `app/config.py`: detecta el entorno
+  (`COTIZAT_ENV` → `VERCEL_ENV` → pytest → desarrollo), mantiene el catálogo
+  único de variables (incluida la marca de cuáles son secretas) y valida por
+  entorno sin revelar valores (`validar()` / `resumen_configuracion()`). El
+  entorno aparece en `/readyz` y el resumen completo en el panel del operador
+  (`/admin/operacion`). Los resolvers finos existentes (`SupabaseAuthSettings`,
+  `StorageSettings`, `EmailSettings`, `DatabaseSettings`) siguen siendo la capa
+  de validación de formato; `app/config.py` es la fuente de verdad del
+  entorno y de la superficie de configuración.
 - [x] **E4-004 — Introducir migraciones versionadas con Alembic.**
   Adelantada y completada como E1W-003.
 - [-] **E4-005 — Mantener SQLite para escritorio y PostgreSQL para SaaS, si continúa el producto híbrido.**
@@ -647,10 +664,14 @@ rama: hasta entonces `/readyz` del entorno migrado responde 503 (esperado).
   El criterio se aplica mediante eventos SQLAlchemy y políticas RLS sobre cada modelo tenant; falta validación de integración real.
 - [~] **E4-015 — Crear pruebas automáticas de aislamiento para cada dominio.**
   Cobertura en `tests/test_tenancy.py`, `tests/test_storage.py` y `tests/test_rls.py`, incluidos metadatos, claves, proxy, cobertura de tablas/políticas y contexto parametrizado; faltan dominios y la integración PostgreSQL real.
-- [~] **E4-016 — Auditar acceso directo por identificadores.**
-  La prueba inicial cubre cliente y capítulo; falta inventario completo de rutas.
+- [x] **E4-016 — Auditar acceso directo por identificadores.**
+  Completado el 17/08/2026 con `tests/test_inventario_aislamiento.py`: inventario
+  auto-mantenido que construye una instancia de **cada** modelo `TenantMixin`
+  (los 29) en la organización A y comprueba desde B que `db.get(Modelo, id)`
+  devuelve `None` para cada uno, con sanity de que en A sí resuelve. Si se
+  añade un modelo nuevo sin incluirlo en el grafo, la prueba falla nombrándolo.
 - [~] **E4-017 — Auditar archivos y URLs firmadas.**
-  Objetos nuevos usan proxy privado y `/static/uploads` se bloquea en PostgreSQL; falta auditoría externa y decidir URLs firmadas cortas para descargas grandes.
+  Objetos nuevos usan proxy privado y `/static/uploads` se bloquea en PostgreSQL. El 17/08/2026 se añadió la auditoría estática completa (`tests/test_auditoria_archivos.py`): recorre todo `app/` (Python, plantillas, JS y CSS) prohibiendo marcadores de URLs públicas/firmadas y enlaces directos al bucket, con regresión sobre `file_url` y `SupabaseStorage`. La decisión de **no** introducir URLs firmadas cortas por ahora queda documentada en `docs/ADR-002_URLS_FIRMADAS_ARCHIVOS.md` (propuesta, pendiente de confirmación del propietario). Falta únicamente la auditoría externa manual (confirmar en el navegador que la URL pública del objeto responde acceso denegado), que es operativa del titular.
 
 ## 4.4 Infraestructura
 

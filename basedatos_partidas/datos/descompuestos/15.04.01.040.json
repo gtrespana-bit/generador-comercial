@@ -1,0 +1,24 @@
+{
+  "codigo": "15.04.01.040",
+  "ambito": "reforma",
+  "capitulo": "15",
+  "subcapitulo": "04",
+  "unidad": "kg",
+  "titulo": "Retirada de chatarra metálica a gestor.",
+  "descripcion": "Retirada y entrega de chatarra metálica a gestor autorizado, con carga y transporte.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MQ-VOLQ",
+      "rendimiento": 0.01
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.05
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

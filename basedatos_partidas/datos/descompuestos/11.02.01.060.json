@@ -1,0 +1,32 @@
+{
+  "codigo": "11.02.01.060",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "02",
+  "unidad": "m²",
+  "titulo": "Cubierta plana con acabado de gravilla.",
+  "descripcion": "Cubierta plana no transitable con acabado de gravilla lavada de protección sobre membrana impermeabilizante. Incluye el extendido de la gravilla en capa uniforme sobre la membrana.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-GRAVILLA",
+      "rendimiento": 0.045
+    },
+    {
+      "ref": "MT-PROT-OBRA",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.1
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

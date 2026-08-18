@@ -1,0 +1,36 @@
+{
+  "codigo": "12.09.04.050",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "09",
+  "unidad": "m",
+  "titulo": "Perfil de remate perimetral entre cielo y muro.",
+  "descripcion": "Colocación de perfil de remate perimetral entre cielo raso y muro, como terminación. Incluye la fijación del perfil y el remate de las uniones. Medido por metro lineal de remate.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PERFIL-REMATE",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-PLO-SOP",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.04
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.05
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "04"
+}

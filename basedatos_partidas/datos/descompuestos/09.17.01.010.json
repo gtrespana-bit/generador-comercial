@@ -1,0 +1,32 @@
+{
+  "codigo": "09.17.01.010",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "17",
+  "unidad": "ud",
+  "titulo": "Prueba hidráulica de instalación de agua.",
+  "descripcion": "Prueba hidráulica de instalación de agua. Incluye la presurización y la verificación. Medido por instalación probada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MQ-BOMBA-ACHI",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-OF1-PLO",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.8
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

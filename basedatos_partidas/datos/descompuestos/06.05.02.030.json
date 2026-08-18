@@ -1,0 +1,40 @@
+{
+  "codigo": "06.05.02.030",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "05",
+  "unidad": "m2",
+  "titulo": "Mampara divisoria de oficina con puerta.",
+  "descripcion": "Ejecución de mampara divisoria de oficina con puerta. Incluye la estructura, los paneles y la puerta. Medido por metro cuadrado ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MAMPARA-OFI",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-HERRAJE-PUERTA",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MT-PERFIL-ALUM",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

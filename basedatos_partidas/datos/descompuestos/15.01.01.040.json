@@ -1,0 +1,32 @@
+{
+  "codigo": "15.01.01.040",
+  "ambito": "reforma",
+  "capitulo": "15",
+  "subcapitulo": "01",
+  "unidad": "m²",
+  "titulo": "Zona de acopio de chatarra metálica.",
+  "descripcion": "Habilitación de zona de acopio de chatarra metálica, delimitada y señalizada, para su venta o entrega a gestor autorizado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MALLA-OBRA",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MT-SENAL-OBRA",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MT-PROT-OBRA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.15
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

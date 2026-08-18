@@ -1,0 +1,24 @@
+{
+  "codigo": "16.03.01.010",
+  "ambito": "reforma",
+  "capitulo": "16",
+  "subcapitulo": "03",
+  "unidad": "m²",
+  "titulo": "Prueba de estanqueidad de cubierta por inundación.",
+  "descripcion": "Prueba de estanqueidad de cubierta plana por inundación controlada, con registro del nivel y revisión de puntos singulares.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.05
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

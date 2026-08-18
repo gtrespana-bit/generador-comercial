@@ -1,0 +1,28 @@
+{
+  "codigo": "17.06.01.060",
+  "ambito": "reforma",
+  "capitulo": "17",
+  "subcapitulo": "06",
+  "unidad": "glb",
+  "titulo": "Corte de oxicorte con pantalla de protección.",
+  "descripcion": "Protección contra incendios en trabajos de oxicorte y soldadura, con pantalla y extintor próximo.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-EXTINTOR",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MT-SENAL-OBRA",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

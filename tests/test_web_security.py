@@ -10,6 +10,7 @@ from starlette.routing import Route
 from starlette.testclient import TestClient
 
 from app import main as main_module
+from app.routers import common
 from app.database import get_authenticated_db, get_db, get_operator_db
 from app.main import app as cotizat_app
 from app.security import AuthRateLimitMiddleware, WebSecurityMiddleware
@@ -127,7 +128,7 @@ def test_plantillas_no_contienen_handlers_y_inline_usa_nonce():
 
 def test_respuesta_real_publica_nonce_para_hoja_dinamica_sin_estilos_inline():
     with TestClient(cotizat_app) as client:
-        response = client.get("/")
+        response = client.get("/inicio")
     nonce = response.headers["content-security-policy"].split("'nonce-", 1)[1].split("'", 1)[0]
     assert re.search(
         rf'<script nonce="{nonce}" src="/static/js/csp_styles\.js(\?v=[^"]*)?"></script>',
@@ -234,6 +235,8 @@ def test_toda_ruta_comercial_exige_sesion_salvo_fronteras_publicas_o_locales():
         ("GET", "/healthz"),
         ("GET", "/readyz"),
         # Landing y páginas legales: contenido estático sin datos de tenant.
+        # La raíz («/») es ahora la landing pública; el panel vive en /inicio.
+        ("GET", "/"),
         ("GET", "/conocer"),
         ("GET", "/legal/{pagina}"),
     }
@@ -264,7 +267,7 @@ def test_sincronizacion_de_vencidos_respeta_rol_lectura(monkeypatch):
         info = {"rol_membresia": "lectura"}
 
     monkeypatch.setattr(
-        main_module,
+        common,
         "marcar_vencidos",
         lambda _db: (_ for _ in ()).throw(AssertionError("no debe escribir")),
     )
@@ -276,7 +279,7 @@ def test_sincronizacion_de_vencidos_respeta_rol_lectura(monkeypatch):
     class WriteDB:
         info = {"rol_membresia": "miembro"}
 
-    monkeypatch.setattr(main_module, "marcar_vencidos", lambda _db: 3)
+    monkeypatch.setattr(common, "marcar_vencidos", lambda _db: 3)
     assert main_module.actualizar_presupuestos_vencidos(WriteDB()) == {
         "ok": True,
         "actualizados": 3,

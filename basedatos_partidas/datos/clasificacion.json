@@ -12,7 +12,10 @@
       "subcapitulos": {
         "01": {
           "nombre": "Desconexión y aislamiento de servicios existentes",
-          "apartados": {}
+          "apartados": {
+            "01": "Desconexión de instalaciones",
+            "02": "Aislamiento y cierre de servicios"
+          }
         },
         "02": {
           "nombre": "Inspecciones, levantamientos, catas y diagnóstico",
@@ -28,7 +31,10 @@
         },
         "04": {
           "nombre": "Cerramientos, barreras de polvo y control de accesos",
-          "apartados": {}
+          "apartados": {
+            "01": "Cerramientos y barreras de polvo",
+            "02": "Control de accesos y señalización de obra"
+          }
         },
         "05": {
           "nombre": "Andamios y medios de elevación",
@@ -171,7 +177,10 @@
         },
         "05": {
           "nombre": "Drenaje provisional, achique y estabilización",
-          "apartados": {}
+          "apartados": {
+            "01": "Achique y drenaje provisional",
+            "02": "Estabilización de taludes y fondos"
+          }
         },
         "06": {
           "nombre": "Carga y transporte de tierras",
@@ -186,7 +195,10 @@
       "subcapitulos": {
         "01": {
           "nombre": "Preparación y mejoramiento del terreno",
-          "apartados": {}
+          "apartados": {
+            "01": "Mejoramiento y sustitución de terreno",
+            "02": "Compactación y nivelación de fundación"
+          }
         },
         "02": {
           "nombre": "Bases y zapatas",
@@ -220,11 +232,17 @@
         },
         "07": {
           "nombre": "Drenaje y protección de fundaciones",
-          "apartados": {}
+          "apartados": {
+            "01": "Drenaje de fundaciones",
+            "02": "Protección e impermeabilización de fundaciones"
+          }
         },
         "08": {
           "nombre": "Reparación y refuerzo de fundaciones",
-          "apartados": {}
+          "apartados": {
+            "01": "Reparación de fundaciones",
+            "02": "Refuerzo de fundaciones"
+          }
         }
       }
     },
@@ -233,11 +251,18 @@
       "subcapitulos": {
         "01": {
           "nombre": "Encofrados, cimbras y apeos de ejecución",
-          "apartados": {}
+          "apartados": {
+            "01": "Encofrados de madera",
+            "02": "Encofrados metálicos y sistemas",
+            "03": "Cimbras y apeos de ejecución"
+          }
         },
         "02": {
           "nombre": "Acero de refuerzo",
-          "apartados": {}
+          "apartados": {
+            "01": "Acero de refuerzo en elementos",
+            "02": "Malla y separadores"
+          }
         },
         "03": {
           "nombre": "Concreto estructural vaciado en sitio",
@@ -271,7 +296,10 @@
         },
         "08": {
           "nombre": "Anclajes, juntas y conexiones",
-          "apartados": {}
+          "apartados": {
+            "01": "Anclajes y conexiones",
+            "02": "Juntas estructurales"
+          }
         },
         "09": {
           "nombre": "Reparación y refuerzo estructural",
@@ -286,11 +314,19 @@
       "subcapitulos": {
         "01": {
           "nombre": "Fachadas de bloque o ladrillo",
-          "apartados": {}
+          "apartados": {
+            "01": "Fachadas de bloque de concreto",
+            "02": "Fachadas de ladrillo y bloque de arcilla",
+            "03": "Fachadas de ladrillo visto"
+          }
         },
         "02": {
           "nombre": "Fachadas ligeras y revestidas",
-          "apartados": {}
+          "apartados": {
+            "01": "Fachadas de placa de cemento",
+            "02": "Fachadas de panel sándwich y chapa",
+            "03": "Fachadas revestidas ligeras"
+          }
         },
         "03": {
           "nombre": "Particiones de bloque o ladrillo",
@@ -322,11 +358,17 @@
         },
         "07": {
           "nombre": "Fachadas ventiladas y sistemas de aislamiento exterior",
-          "apartados": {}
+          "apartados": {
+            "01": "Fachadas ventiladas de panel",
+            "02": "Sistemas de aislamiento térmico exterior (SATE)"
+          }
         },
         "08": {
           "nombre": "Celosías, defensas y cerramientos especiales",
-          "apartados": {}
+          "apartados": {
+            "01": "Celosías y cerramientos de fachada",
+            "02": "Defensas y protecciones de fachada"
+          }
         },
         "09": {
           "nombre": "Limpieza, restauración y tratamiento de fachadas",
@@ -385,15 +427,25 @@
         },
         "08": {
           "nombre": "Persianas, celosías, mosquiteros y protección solar",
-          "apartados": {}
+          "apartados": {
+            "01": "Persianas, cortinas y toldos",
+            "02": "Celosías y romanillas",
+            "03": "Mosquiteros"
+          }
         },
         "09": {
           "nombre": "Herrajes, cerraduras y automatismos",
-          "apartados": {}
+          "apartados": {
+            "01": "Cerraduras y herrajes",
+            "02": "Automatismos de puertas y portones"
+          }
         },
         "10": {
           "nombre": "Ajustes, reparación y restauración",
-          "apartados": {}
+          "apartados": {
+            "01": "Ajuste y reparación de carpintería",
+            "02": "Restauración de madera y vidrio"
+          }
         }
       }
     },
@@ -402,39 +454,64 @@
       "subcapitulos": {
         "01": {
           "nombre": "Ayudas de albañilería para instalaciones",
-          "apartados": {}
+          "apartados": {
+            "01": "Ayudas de albañilería para instalaciones"
+          }
         },
         "02": {
           "nombre": "Rozas, perforaciones y pasos",
-          "apartados": {}
+          "apartados": {
+            "01": "Rozas y regatas",
+            "02": "Perforaciones y pasos"
+          }
         },
         "03": {
           "nombre": "Recibido de marcos, equipos y pequeños elementos",
-          "apartados": {}
+          "apartados": {
+            "01": "Recibido de marcos y premarcos",
+            "02": "Recibido de equipos y elementos"
+          }
         },
         "04": {
           "nombre": "Sellados, juntas y encuentros",
-          "apartados": {}
+          "apartados": {
+            "01": "Sellados y juntas",
+            "02": "Encuentros y remates de estanqueidad"
+          }
         },
         "05": {
           "nombre": "Alféizares, vierteaguas, pasamanos y coronaciones",
-          "apartados": {}
+          "apartados": {
+            "01": "Alféizares y vierteaguas",
+            "02": "Coronaciones y remates de cubierta"
+          }
         },
         "06": {
           "nombre": "Bancadas, soportes y bases de equipos",
-          "apartados": {}
+          "apartados": {
+            "01": "Bancadas y soportes",
+            "02": "Bases de equipos"
+          }
         },
         "07": {
           "nombre": "Forrados, cajones y tapajuntas",
-          "apartados": {}
+          "apartados": {
+            "01": "Forrados y cajones",
+            "02": "Tapajuntas y remates de carpintería"
+          }
         },
         "08": {
           "nombre": "Perfiles decorativos, molduras y remates especiales",
-          "apartados": {}
+          "apartados": {
+            "01": "Molduras y perfiles decorativos",
+            "02": "Remates especiales"
+          }
         },
         "09": {
           "nombre": "Sellado cortafuego de pasos de instalaciones",
-          "apartados": {}
+          "apartados": {
+            "01": "Sellado cortafuego de pasos"
+          }
         }
       }
     },
@@ -519,11 +596,21 @@
         },
         "12": {
           "nombre": "Domótica y automatización",
-          "apartados": {}
+          "apartados": {
+            "01": "Central de control y pasarelas",
+            "02": "Sensores y detectores",
+            "03": "Actuadores y módulos de control",
+            "04": "Puntos de control y paneles",
+            "05": "Programación y puesta en marcha"
+          }
         },
         "13": {
           "nombre": "Protección contra rayos y sobretensiones",
-          "apartados": {}
+          "apartados": {
+            "01": "Captación y pararrayos",
+            "02": "Bajantes y puesta a tierra de protección",
+            "03": "Protectores contra sobretensiones"
+          }
         },
         "14": {
           "nombre": "Tanques, bombas e hidroneumáticos",
@@ -539,11 +626,17 @@
         },
         "16": {
           "nombre": "Transporte vertical y accesibilidad mecánica",
-          "apartados": {}
+          "apartados": {
+            "01": "Ascensores y plataformas",
+            "02": "Salvaescaleras y elevadores de accesibilidad"
+          }
         },
         "17": {
           "nombre": "Reparación, pruebas y puesta en marcha",
-          "apartados": {}
+          "apartados": {
+            "01": "Pruebas y puesta en marcha",
+            "02": "Reparación de instalaciones"
+          }
         }
       }
     },
@@ -558,11 +651,17 @@
         },
         "02": {
           "nombre": "Aislamiento acústico y control de vibraciones",
-          "apartados": {}
+          "apartados": {
+            "01": "Aislamiento acústico",
+            "02": "Suelos flotantes y control de vibraciones"
+          }
         },
         "03": {
           "nombre": "Impermeabilización de fundaciones y muros enterrados",
-          "apartados": {}
+          "apartados": {
+            "01": "Impermeabilización de fundaciones",
+            "02": "Impermeabilización de muros enterrados"
+          }
         },
         "04": {
           "nombre": "Impermeabilización de techos y terrazas",
@@ -579,19 +678,31 @@
         },
         "06": {
           "nombre": "Impermeabilización de tanques, piscinas y jardineras",
-          "apartados": {}
+          "apartados": {
+            "01": "Impermeabilización de piscinas",
+            "02": "Impermeabilización de tanques y jardineras"
+          }
         },
         "07": {
           "nombre": "Drenajes, geotextiles y capas separadoras",
-          "apartados": {}
+          "apartados": {
+            "01": "Drenajes y geotextiles",
+            "02": "Capas separadoras y de protección"
+          }
         },
         "08": {
           "nombre": "Sellado de juntas y estanqueidad",
-          "apartados": {}
+          "apartados": {
+            "01": "Sellado de juntas de construcción",
+            "02": "Sellado de juntas de dilatación"
+          }
         },
         "09": {
           "nombre": "Tratamiento de filtraciones, humedad y capilaridad",
-          "apartados": {}
+          "apartados": {
+            "01": "Tratamiento de filtraciones",
+            "02": "Tratamiento de humedad y capilaridad"
+          }
         }
       }
     },
@@ -600,7 +711,9 @@
       "subcapitulos": {
         "01": {
           "nombre": "Formación de pendientes y bases",
-          "apartados": {}
+          "apartados": {
+            "01": "Formación de pendientes y bases"
+          }
         },
         "02": {
           "nombre": "Cubiertas planas transitables y no transitables",
@@ -622,7 +735,9 @@
         },
         "05": {
           "nombre": "Cubiertas ligeras y traslúcidas",
-          "apartados": {}
+          "apartados": {
+            "01": "Cubiertas ligeras y traslúcidas"
+          }
         },
         "06": {
           "nombre": "Estructuras y soportes de techo",
@@ -632,7 +747,9 @@
         },
         "07": {
           "nombre": "Claraboyas, lucernarios y accesos",
-          "apartados": {}
+          "apartados": {
+            "01": "Claraboyas, lucernarios y accesos"
+          }
         },
         "08": {
           "nombre": "Canales, bajantes, limahoyas y remates",
@@ -642,7 +759,9 @@
         },
         "09": {
           "nombre": "Reparación y mantenimiento de cubiertas",
-          "apartados": {}
+          "apartados": {
+            "01": "Reparación y mantenimiento de cubiertas"
+          }
         }
       }
     },
@@ -695,7 +814,11 @@
         },
         "07": {
           "nombre": "Trasdosados y forros interiores",
-          "apartados": {}
+          "apartados": {
+            "01": "Trasdosados autoportantes de placa de yeso laminado",
+            "02": "Trasdosados directos y forros adheridos",
+            "03": "Forros de placa de cemento y protección"
+          }
         },
         "08": {
           "nombre": "Cielos rasos continuos",
@@ -739,7 +862,11 @@
         },
         "14": {
           "nombre": "Tratamientos de protección y restauración de acabados",
-          "apartados": {}
+          "apartados": {
+            "01": "Limpieza y restauración de paramentos",
+            "02": "Hidrofugación y protección de superficies",
+            "03": "Restauración de madera y elementos decorativos"
+          }
         }
       }
     },
@@ -772,7 +899,9 @@
         },
         "05": {
           "nombre": "Electrodomésticos y equipos integrados",
-          "apartados": {}
+          "apartados": {
+            "01": "Electrodomésticos y equipos integrados"
+          }
         },
         "06": {
           "nombre": "Equipamiento accesible y ayudas técnicas",
@@ -794,7 +923,9 @@
         },
         "09": {
           "nombre": "Equipamiento deportivo, recreativo y especial",
-          "apartados": {}
+          "apartados": {
+            "01": "Equipamiento deportivo, recreativo y especial"
+          }
         }
       }
     },
@@ -857,7 +988,9 @@
         },
         "10": {
           "nombre": "Piscinas y áreas recreativas",
-          "apartados": {}
+          "apartados": {
+            "01": "Piscinas y áreas recreativas"
+          }
         },
         "11": {
           "nombre": "Pérgolas, jardineras y mobiliario exterior",
@@ -896,7 +1029,9 @@
         },
         "05": {
           "nombre": "Residuos especiales o peligrosos",
-          "apartados": {}
+          "apartados": {
+            "01": "Residuos especiales o peligrosos"
+          }
         },
         "06": {
           "nombre": "Limpieza durante la obra",
@@ -917,35 +1052,51 @@
       "subcapitulos": {
         "01": {
           "nombre": "Ensayos de concreto, acero y mampostería",
-          "apartados": {}
+          "apartados": {
+            "01": "Ensayos de concreto, acero y mampostería"
+          }
         },
         "02": {
           "nombre": "Inspección de soldaduras, anclajes y estructura",
-          "apartados": {}
+          "apartados": {
+            "01": "Inspección de soldaduras, anclajes y estructura"
+          }
         },
         "03": {
           "nombre": "Pruebas de impermeabilización y estanqueidad",
-          "apartados": {}
+          "apartados": {
+            "01": "Pruebas de impermeabilización y estanqueidad"
+          }
         },
         "04": {
           "nombre": "Pruebas de instalaciones sanitarias",
-          "apartados": {}
+          "apartados": {
+            "01": "Pruebas de instalaciones sanitarias"
+          }
         },
         "05": {
           "nombre": "Pruebas eléctricas y de puesta a tierra",
-          "apartados": {}
+          "apartados": {
+            "01": "Pruebas eléctricas y de puesta a tierra"
+          }
         },
         "06": {
           "nombre": "Pruebas de climatización, ventilación y balanceo",
-          "apartados": {}
+          "apartados": {
+            "01": "Pruebas de climatización, ventilación y balanceo"
+          }
         },
         "07": {
           "nombre": "Termografía, humedad y diagnóstico no destructivo",
-          "apartados": {}
+          "apartados": {
+            "01": "Termografía, humedad y diagnóstico no destructivo"
+          }
         },
         "08": {
           "nombre": "Puesta en marcha, protocolos y documentación final",
-          "apartados": {}
+          "apartados": {
+            "01": "Puesta en marcha, protocolos y documentación final"
+          }
         }
       }
     },
@@ -979,11 +1130,15 @@
         },
         "05": {
           "nombre": "Seguridad en excavaciones y espacios confinados",
-          "apartados": {}
+          "apartados": {
+            "01": "Seguridad en excavaciones y espacios confinados"
+          }
         },
         "06": {
           "nombre": "Protección contra incendios durante la obra",
-          "apartados": {}
+          "apartados": {
+            "01": "Protección contra incendios durante la obra"
+          }
         },
         "07": {
           "nombre": "Instalaciones de higiene y bienestar",
@@ -1004,39 +1159,57 @@
       "subcapitulos": {
         "01": {
           "nombre": "Diagnóstico y evaluación energética",
-          "apartados": {}
+          "apartados": {
+            "01": "Diagnóstico y evaluación energética"
+          }
         },
         "02": {
           "nombre": "Mejora térmica de fachadas",
-          "apartados": {}
+          "apartados": {
+            "01": "Mejora térmica de fachadas"
+          }
         },
         "03": {
           "nombre": "Mejora térmica de techos y cubiertas",
-          "apartados": {}
+          "apartados": {
+            "01": "Mejora térmica de techos y cubiertas"
+          }
         },
         "04": {
           "nombre": "Mejora térmica de pisos y entrepisos",
-          "apartados": {}
+          "apartados": {
+            "01": "Mejora térmica de pisos y entrepisos"
+          }
         },
         "05": {
           "nombre": "Sustitución y mejora de ventanas y vidrios",
-          "apartados": {}
+          "apartados": {
+            "01": "Sustitución y mejora de ventanas y vidrios"
+          }
         },
         "06": {
           "nombre": "Protección solar y control de ganancias térmicas",
-          "apartados": {}
+          "apartados": {
+            "01": "Protección solar y control de ganancias térmicas"
+          }
         },
         "07": {
           "nombre": "Mejora de climatización y ventilación",
-          "apartados": {}
+          "apartados": {
+            "01": "Mejora de climatización y ventilación"
+          }
         },
         "08": {
           "nombre": "Iluminación eficiente y control",
-          "apartados": {}
+          "apartados": {
+            "01": "Iluminación eficiente y control"
+          }
         },
         "09": {
           "nombre": "Incorporación de energías renovables",
-          "apartados": {}
+          "apartados": {
+            "01": "Incorporación de energías renovables"
+          }
         }
       }
     }

@@ -1,0 +1,24 @@
+{
+  "codigo": "15.07.01.050",
+  "ambito": "reforma",
+  "capitulo": "15",
+  "subcapitulo": "07",
+  "unidad": "ud",
+  "titulo": "Limpieza de aparatos sanitarios y grifería.",
+  "descripcion": "Limpieza de aparatos sanitarios y grifería al final de la obra, con desincrustante y pulido.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-LIMP",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.15
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

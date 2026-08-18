@@ -1,0 +1,32 @@
+{
+  "codigo": "11.08.01.140",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "08",
+  "unidad": "m",
+  "titulo": "Limpieza de canalones y bajantes.",
+  "descripcion": "Limpieza de canalones y bajantes con retirada de sedimentos y comprobación de la evacuación. Incluye la limpieza y el informe.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-LIMP",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MQ-HIDROLAV",
+      "rendimiento": 0.01
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.05
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

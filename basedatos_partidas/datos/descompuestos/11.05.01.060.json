@@ -1,0 +1,40 @@
+{
+  "codigo": "11.05.01.060",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "05",
+  "unidad": "m²",
+  "titulo": "Cubierta ligera de lámina de policarbonato curvo.",
+  "descripcion": "Cubierta ligera de policarbonato curvo para claraboyas y lucernarios de pasillo. Incluye la perfilería de apoyo y la colocación.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-POLICARB",
+      "rendimiento": 1.08
+    },
+    {
+      "ref": "MT-PERFIL-REMATE",
+      "rendimiento": 1.2
+    },
+    {
+      "ref": "MT-TORN-TECHO",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.42
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.34
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

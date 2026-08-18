@@ -1,0 +1,32 @@
+{
+  "codigo": "03.01.01.130",
+  "ambito": "reforma",
+  "capitulo": "03",
+  "subcapitulo": "01",
+  "unidad": "m2",
+  "titulo": "Limpieza de terreno con maleza alta.",
+  "descripcion": "Limpieza de terreno con maleza alta y vegetación densa. Incluye la limpieza mecanizada. Medido por metro cuadrado limpiado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MQ-DESBROZ",
+      "rendimiento": 0.04
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.08
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

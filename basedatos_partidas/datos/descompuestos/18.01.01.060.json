@@ -1,0 +1,24 @@
+{
+  "codigo": "18.01.01.060",
+  "ambito": "reforma",
+  "capitulo": "18",
+  "subcapitulo": "01",
+  "unidad": "glb",
+  "titulo": "Estudio de viabilidad de energías renovables.",
+  "descripcion": "Estudio de viabilidad de incorporación de energías renovables, con análisis de radiación y consumos.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.75
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

@@ -1,0 +1,40 @@
+{
+  "codigo": "02.09.01.140",
+  "ambito": "reforma",
+  "capitulo": "02",
+  "subcapitulo": "09",
+  "unidad": "m",
+  "titulo": "Desmontaje de claraboya o domo.",
+  "descripcion": "Desmontaje de claraboya o domo de cubierta. Incluye la retirada del domo y sus fijaciones. Medido por unidad desmontada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MT-SAC-ESC",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.4
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

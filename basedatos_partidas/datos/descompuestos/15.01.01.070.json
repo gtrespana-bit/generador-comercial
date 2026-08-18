@@ -1,0 +1,24 @@
+{
+  "codigo": "15.01.01.070",
+  "ambito": "reforma",
+  "capitulo": "15",
+  "subcapitulo": "01",
+  "unidad": "m³",
+  "titulo": "Separación selectiva de residuos en origen.",
+  "descripcion": "Clasificación en origen de los residuos de demolición y desmontaje, separando los recuperables de los de vertedero, para abaratar el bote.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-SAC-ESC",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.35
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

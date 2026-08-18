@@ -1,0 +1,36 @@
+{
+  "codigo": "06.06.01.150",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "06",
+  "unidad": "m",
+  "titulo": "Dintel de madera para vano.",
+  "descripcion": "Suministro y colocación de dintel de madera para vano. Incluye la colocación del dintel y su fijación. Medido por metro lineal ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MADERA-LISTON",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MT-PRESERV-MAD",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.25
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

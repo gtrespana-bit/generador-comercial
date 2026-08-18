@@ -1,0 +1,36 @@
+{
+  "codigo": "06.09.01.140",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "09",
+  "unidad": "m2",
+  "titulo": "Aplicación de hidrofugante en fachada.",
+  "descripcion": "Aplicación de hidrofugante incoloro en fachada. Incluye la limpieza previa y la aplicación. Medido por metro cuadrado tratado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-HIDROFUG-FACH",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.15
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

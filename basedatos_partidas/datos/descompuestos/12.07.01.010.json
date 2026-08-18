@@ -1,0 +1,52 @@
+{
+  "codigo": "12.07.01.010",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "07",
+  "unidad": "m2",
+  "titulo": "Trasdosado autoportante de placa de yeso laminado estándar.",
+  "descripcion": "Suministro y montaje de trasdosado autoportante de placa de yeso laminado estándar de 12,5 mm, sobre estructura de acero galvanizado separada del muro, sin aislamiento. Incluye el replanteo de la estructura con montantes cada 60 cm, la fijación de canales de arranque al piso y al techo con banda perimetral de estanqueidad, el atornillado de la placa, el tratamiento de juntas con pasta y cinta, y el remate de encuentros con muros y techo. Medido por metro cuadrado de trasdosado terminado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PYL-MONT",
+      "rendimiento": 2.2
+    },
+    {
+      "ref": "MT-PYL-CANAL",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MT-PYL-BANDA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-PYL-PLACA125",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-PYL-PASTA",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MT-TORN",
+      "rendimiento": 12.0
+    },
+    {
+      "ref": "MQ-ATORN",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.32
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.14
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

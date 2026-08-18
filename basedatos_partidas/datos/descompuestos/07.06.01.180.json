@@ -1,0 +1,44 @@
+{
+  "codigo": "07.06.01.180",
+  "ambito": "reforma",
+  "capitulo": "07",
+  "subcapitulo": "06",
+  "unidad": "m2",
+  "titulo": "Cerramiento de vidrio en pasillo.",
+  "descripcion": "Suministro y colocación de cerramiento de vidrio templado en pasillo o galería, con perfil de fijación. Incluye el montaje del perfil y el acristalamiento. Medido por metro cuadrado instalado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-VIDRIO-TEMP",
+      "rendimiento": 1.02
+    },
+    {
+      "ref": "MT-PERFIL-ALUM",
+      "rendimiento": 3.5
+    },
+    {
+      "ref": "MT-SILICONA-EST",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MT-PERNO-ANCLA",
+      "rendimiento": 3.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MO-OF1-VIDR",
+      "rendimiento": 0.9
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.4
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

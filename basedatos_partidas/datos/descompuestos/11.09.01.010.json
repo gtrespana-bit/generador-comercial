@@ -1,0 +1,36 @@
+{
+  "codigo": "11.09.01.010",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "09",
+  "unidad": "m²",
+  "titulo": "Reparación de faldón de cubierta de lámina.",
+  "descripcion": "Reparación de faldón de cubierta de lámina metálica con sustitución de tramos y sellado de solapes. Incluye el desmontaje y la reposición.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-LAMINA-ZINC",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MT-TORN-TECHO",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.42
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.34
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

@@ -1,0 +1,36 @@
+{
+  "codigo": "12.01.01.210",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "01",
+  "unidad": "m2",
+  "titulo": "Preparación de soporte para microcemento.",
+  "descripcion": "Preparación de soporte para la aplicación de microcemento, con regularización, imprimación y malla en juntas. Incluye la nivelación y la preparación de la superficie. Medido por metro cuadrado preparado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-AUT-NIV",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MT-MALLA-JUNTA",
+      "rendimiento": 0.8
+    },
+    {
+      "ref": "MT-PUENTE-ADH",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.12
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

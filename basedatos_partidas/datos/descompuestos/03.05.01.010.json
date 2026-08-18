@@ -1,0 +1,28 @@
+{
+  "codigo": "03.05.01.010",
+  "ambito": "reforma",
+  "capitulo": "03",
+  "subcapitulo": "05",
+  "unidad": "m3",
+  "titulo": "Achique de agua en excavación.",
+  "descripcion": "Achique de agua en excavación con bomba sumergible. Incluye la colocación de la bomba y el achique. Medido por metro cúbico achicado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MQ-BOMBA-ACHI",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.15
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

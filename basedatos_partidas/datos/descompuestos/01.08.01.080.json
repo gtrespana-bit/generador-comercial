@@ -1,0 +1,32 @@
+{
+  "codigo": "01.08.01.080",
+  "ambito": "reforma",
+  "capitulo": "01",
+  "subcapitulo": "08",
+  "unidad": "ud",
+  "titulo": "Iluminación provisional con reflectores.",
+  "descripcion": "Iluminación provisional de obra, con reflectores. Incluye la colocación de los reflectores. Medido por punto ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-LAMP-OBRA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-ELE-PROV",
+      "rendimiento": 10.0
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.5
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

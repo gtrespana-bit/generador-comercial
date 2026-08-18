@@ -1,0 +1,36 @@
+{
+  "codigo": "01.08.01.070",
+  "ambito": "reforma",
+  "capitulo": "01",
+  "subcapitulo": "08",
+  "unidad": "ud",
+  "titulo": "Punto de agua provisional con llave y manguera.",
+  "descripcion": "Punto de agua provisional de obra, con llave y manguera. Incluye la conexión y la llave. Medido por punto ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PLO-PPR20",
+      "rendimiento": 5.0
+    },
+    {
+      "ref": "MT-LLAVE-PROV",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-MANGUERA",
+      "rendimiento": 5.0
+    },
+    {
+      "ref": "MO-OF1-PLO",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.5
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

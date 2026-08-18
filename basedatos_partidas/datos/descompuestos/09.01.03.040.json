@@ -1,0 +1,36 @@
+{
+  "codigo": "09.01.03.040",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "01",
+  "unidad": "ud",
+  "titulo": "Llave general de agua.",
+  "descripcion": "Instalación de llave general de agua. Incluye la conexión. Medido por unidad instalada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PLO-LLAVE",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-PLO-ACC20",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MQ-TERMOF",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MO-OF1-PLO",
+      "rendimiento": 0.45
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.22
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "03"
+}

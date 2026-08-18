@@ -1,0 +1,42 @@
+{
+  "codigo": "14.11.01.060",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "11",
+  "unidad": "ud",
+  "titulo": "Jardinera prefabricada exterior.",
+  "descripcion": "Colocación de jardinera prefabricada exterior, con fijación y drenaje. Incluye la colocación. La jardinera la elige el cliente.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MOR-PEGA",
+      "rendimiento": 0.01
+    },
+    {
+      "ref": "MT-TUBO-DREN",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.4
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01",
+  "producto_cliente": {
+    "tipo": "Jardinera prefabricada del modelo elegido por el cliente",
+    "unidad": "ud",
+    "consumo": 1.0,
+    "nota": "La partida cubre la colocación. La jardinera se toma del catálogo de productos."
+  }
+}

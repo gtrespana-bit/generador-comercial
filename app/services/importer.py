@@ -32,7 +32,11 @@ import unicodedata
 from decimal import Decimal, ROUND_HALF_UP
 from typing import Any
 
-MAX_FILAS = 1000
+# El catálogo general de CotizaT apunta a 3.000–5.000 partidas base (ver
+# `docs/ESTRATEGIA_CATALOGO_EXTENSO.md`), de modo que la importación masiva
+# debe admitir ese volumen. Se alinea con MAX_FILAS_CYPE (5.000); el límite
+# de 8 MB sigue protegiendo el tamaño de los archivos subidos.
+MAX_FILAS = 5000
 MAX_COLUMNAS = 30
 MAX_BYTES = 8 * 1024 * 1024
 # El formato CYPE contiene celdas vacías intencionadas y, en ocasiones, una
@@ -521,7 +525,7 @@ def analizar_cype_xlsx(contenido: bytes) -> dict:
             cabecera = _buscar_cabecera_partida(filas, fila_encabezados)
             if cabecera is None:
                 raise ErrorImportacion(
-                    f"Se detectó la tabla CYPE en «{hoja_formula.title}», pero no su cabecera de partida (código, unidad y descripción)."
+                    f"Se detectó la tabla de descompuesto en «{hoja_formula.title}», pero no su cabecera de partida (código, unidad y descripción)."
                 )
             filas, costes, coste_directo = _clasificar_filas_cype(filas, fila_encabezados, posiciones)
             descripcion_larga = ""
@@ -558,7 +562,7 @@ def analizar_cype_xlsx(contenido: bytes) -> dict:
         libro_valores.close()
 
     if not partidas:
-        raise ErrorImportacion("No se encontró una hoja con el formato de descompuesto CYPE (Código, Unidad, Descripción, Rendimiento, Precio unitario e Importe).")
+        raise ErrorImportacion("No se encontró una hoja con el formato de descompuesto (Código, Unidad, Descripción, Rendimiento, Precio unitario e Importe).")
     return {
         "formato": "cype_descompuesto",
         "partidas": partidas,

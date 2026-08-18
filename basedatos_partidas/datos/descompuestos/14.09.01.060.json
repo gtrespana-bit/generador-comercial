@@ -1,0 +1,42 @@
+{
+  "codigo": "14.09.01.060",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "09",
+  "unidad": "m",
+  "titulo": "Tira LED exterior decorativa.",
+  "descripcion": "Colocación de tira LED exterior decorativa, con fuente de alimentación y perfil. Incluye la conexión. La tira la elige el cliente.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CINTA-LED",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-ELE-CABLE",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01",
+  "producto_cliente": {
+    "tipo": "Tira LED exterior del modelo elegido por el cliente",
+    "unidad": "m",
+    "consumo": 1.0,
+    "nota": "La partida cubre solo la instalación. La tira LED se toma del catálogo de productos."
+  }
+}

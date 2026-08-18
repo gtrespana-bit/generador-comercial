@@ -1,0 +1,36 @@
+{
+  "codigo": "12.02.01.110",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "02",
+  "unidad": "m2",
+  "titulo": "Repello de paramento exterior con acabado liso.",
+  "descripcion": "Repello de paramento exterior con mortero y acabado liso, listo para pintar. Incluye las maestras, la aplicación del mortero y el afinado. Medido por metro cuadrado repellado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MOR-FRISO",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MT-HIDROFUGO",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.42
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

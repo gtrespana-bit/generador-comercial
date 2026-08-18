@@ -54,7 +54,7 @@ def test_organizacion_por_entorno_vacia_equivale_a_no_configurada(monkeypatch):
 
     monkeypatch.setenv("COTIZAT_ORGANIZATION_ID", "")
     with TestClient(app) as client:
-        respuesta = client.get("/", follow_redirects=False)
+        respuesta = client.get("/inicio", follow_redirects=False)
         assert respuesta.status_code in (200, 303), (
             f"Código inesperado con COTIZAT_ORGANIZATION_ID vacía: "
             f"{respuesta.status_code}"
@@ -71,7 +71,7 @@ def test_organizacion_por_entorno_no_numerica_falla_con_mensaje_claro(monkeypatc
     monkeypatch.setenv("COTIZAT_ORGANIZATION_ID", "no-soy-un-numero")
     with TestClient(app) as client:
         with pytest.raises(ValueError, match="COTIZAT_ORGANIZATION_ID"):
-            client.get("/")
+            client.get("/inicio")
 
 
 def test_favicon_redirige_al_icono_estatico():

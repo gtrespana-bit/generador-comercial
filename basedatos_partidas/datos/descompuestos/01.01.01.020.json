@@ -1,0 +1,32 @@
+{
+  "codigo": "01.01.01.020",
+  "ambito": "reforma",
+  "capitulo": "01",
+  "subcapitulo": "01",
+  "unidad": "ud",
+  "titulo": "Desconexión de instalación de agua.",
+  "descripcion": "Desconexión de la instalación de agua existente previa a la obra, con cierre de llaves. Incluye el cierre y la verificación de estanqueidad. Medido por instalación desconectada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MT-PLO-LLAVE",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-OF1-PLO",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.3
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

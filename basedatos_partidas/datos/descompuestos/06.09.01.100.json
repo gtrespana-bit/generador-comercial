@@ -1,0 +1,36 @@
+{
+  "codigo": "06.09.01.100",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "09",
+  "unidad": "m2",
+  "titulo": "Eliminación de eflorescencias en fachada.",
+  "descripcion": "Eliminación de eflorescencias salinas en fachada. Incluye la limpieza y el tratamiento. Medido por metro cuadrado tratado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-LIMP-QUIM",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MQ-HIDROLAV",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.25
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

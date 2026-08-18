@@ -1,0 +1,36 @@
+{
+  "codigo": "02.05.01.170",
+  "ambito": "reforma",
+  "capitulo": "02",
+  "subcapitulo": "05",
+  "unidad": "ud",
+  "titulo": "Desmontaje de baranda metálica.",
+  "descripcion": "Desmontaje de baranda metálica de balcón o escalera. Incluye el corte de las fijaciones y la retirada. Medido por metro lineal desmontado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-OXI-CONS",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MQ-OXICORTE",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MO-OF1-SOLD",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.5
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

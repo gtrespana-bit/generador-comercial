@@ -1,0 +1,36 @@
+{
+  "codigo": "04.03.01.100",
+  "ambito": "reforma",
+  "capitulo": "04",
+  "subcapitulo": "03",
+  "unidad": "m",
+  "titulo": "Viga de fundación sobre suelo mejorado.",
+  "descripcion": "Ejecución de viga de fundación sobre suelo mejorado. Incluye el vaciado y el vibrado. Medido por metro lineal ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONC-210",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MT-ACERO-CAB",
+      "rendimiento": 3.0
+    },
+    {
+      "ref": "MQ-VIBRADOR",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.35
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

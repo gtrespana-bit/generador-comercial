@@ -1,0 +1,40 @@
+{
+  "codigo": "12.10.01.120",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "10",
+  "unidad": "m",
+  "titulo": "Pintura de mocheta y remate de vanos.",
+  "descripcion": "Pintura de mocheta, arista y remate interior de vanos de puertas y ventanas, con dos manos de esmalte o caucho. Incluye la protección de las superficies adyacentes y las dos manos de acabado. Medido por metro lineal de mocheta pintada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PIN-CAUCHO",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MT-CINTA-ENM",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MT-PIN-LIJA",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.14
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.09
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

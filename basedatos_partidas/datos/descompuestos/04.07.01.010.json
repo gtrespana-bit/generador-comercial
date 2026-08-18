@@ -1,0 +1,40 @@
+{
+  "codigo": "04.07.01.010",
+  "ambito": "reforma",
+  "capitulo": "04",
+  "subcapitulo": "07",
+  "unidad": "m",
+  "titulo": "Drenaje perimetral de fundación.",
+  "descripcion": "Ejecución de drenaje perimetral de fundación con tubería perforada. Incluye la tubería y el relleno de grava. Medido por metro lineal ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-TUBO-DREN",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-GEOTEXTIL",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MT-GRAVILLA",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MQ-RETRO",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.3
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

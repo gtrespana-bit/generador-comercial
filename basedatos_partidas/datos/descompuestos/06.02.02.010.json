@@ -1,0 +1,36 @@
+{
+  "codigo": "06.02.02.010",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "02",
+  "unidad": "m2",
+  "titulo": "Fachada de panel sándwich.",
+  "descripcion": "Ejecución de fachada de panel sándwich aislado, con fijación a estructura. Incluye la colocación de los paneles y el remate de juntas. Medido por metro cuadrado ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PANEL-SAND",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-TORN-TECHO",
+      "rendimiento": 6.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.42
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.15
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

@@ -1,0 +1,40 @@
+{
+  "codigo": "14.10.01.020",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "10",
+  "unidad": "m²",
+  "titulo": "Impermeabilización de piscina.",
+  "descripcion": "Impermeabilización de piscina con membrana líquida o cementosa, previa al revestimiento. Incluye la imprimación y la aplicación.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-POLIUR-LIQ",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MT-MALLA-JUNTA",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MT-IMP-PRIM",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.32
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

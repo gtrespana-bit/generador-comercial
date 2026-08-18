@@ -1,0 +1,48 @@
+{
+  "codigo": "06.04.01.240",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "04",
+  "unidad": "m2",
+  "titulo": "Tabique de yeso laminado con placa de alta dureza doble.",
+  "descripcion": "Ejecución de tabique de yeso laminado con doble placa de alta dureza. Incluye la estructura, la doble placa y el tratamiento de juntas. Medido por metro cuadrado ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PYL-MONT",
+      "rendimiento": 3.2
+    },
+    {
+      "ref": "MT-PYL-CANAL",
+      "rendimiento": 0.85
+    },
+    {
+      "ref": "MT-PYL-PLACA-HD",
+      "rendimiento": 4.2
+    },
+    {
+      "ref": "MT-PYL-PASTA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-TORN",
+      "rendimiento": 32.0
+    },
+    {
+      "ref": "MQ-ATORN",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.35
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

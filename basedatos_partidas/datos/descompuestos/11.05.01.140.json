@@ -1,0 +1,40 @@
+{
+  "codigo": "11.05.01.140",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "05",
+  "unidad": "m²",
+  "titulo": "Cubierta ligera de lámina de acrílico.",
+  "descripcion": "Cubierta ligera de lámina acrílica translúcida sobre perfiles, para lucernarios y marquesinas. Incluye la perfilería y la colocación.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-POLICARB",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-PERFIL-REMATE",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-TORN-TECHO",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.32
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.26
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

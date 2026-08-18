@@ -1,0 +1,28 @@
+{
+  "codigo": "18.08.01.100",
+  "ambito": "reforma",
+  "capitulo": "18",
+  "subcapitulo": "08",
+  "unidad": "glb",
+  "titulo": "Verificación de eficiencia de iluminación.",
+  "descripcion": "Verificación de la eficiencia del sistema de iluminación, con medición de consumos.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MQ-DETECTOR",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

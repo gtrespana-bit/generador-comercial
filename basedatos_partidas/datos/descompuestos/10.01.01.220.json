@@ -1,0 +1,36 @@
+{
+  "codigo": "10.01.01.220",
+  "ambito": "reforma",
+  "capitulo": "10",
+  "subcapitulo": "01",
+  "unidad": "m2",
+  "titulo": "Aislamiento térmico de tabique con doble panel.",
+  "descripcion": "Suministro y colocación de doble panel de aislamiento térmico en tabique. Incluye la colocación de los paneles y el remate. Medido por metro cuadrado aislado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-POLIESTIRENO-EXT",
+      "rendimiento": 2.1
+    },
+    {
+      "ref": "MT-ADH-C2TE",
+      "rendimiento": 2.5
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.12
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

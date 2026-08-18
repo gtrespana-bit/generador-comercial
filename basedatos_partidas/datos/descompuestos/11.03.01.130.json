@@ -1,0 +1,36 @@
+{
+  "codigo": "11.03.01.130",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "03",
+  "unidad": "m²",
+  "titulo": "Cubierta de teja de zinc acanalada vista.",
+  "descripcion": "Cubierta de teja metálica acanalada imitación teja sobre correas, atornillada con solapes laterales y de cabecera. Incluye el replanteo y la fijación.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-LAMINA-ZINC",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-TORN-TECHO",
+      "rendimiento": 6.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.24
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

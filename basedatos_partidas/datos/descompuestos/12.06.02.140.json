@@ -1,0 +1,36 @@
+{
+  "codigo": "12.06.02.140",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "06",
+  "unidad": "m",
+  "titulo": "Revestimiento de peldaño con piedra recuperada.",
+  "descripcion": "Revestimiento de peldaño con pieza de piedra natural recuperada o laja, en capa fina. Incluye la preparación del soporte, la colocación y el rejuntado. Medido por metro lineal de peldaño.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ADH-PIEDRA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-JUN-CG2",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-CORT-AGUA",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-PISO",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.16
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

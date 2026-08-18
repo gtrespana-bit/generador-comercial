@@ -28,6 +28,14 @@ from app.services.catalogo_propio import (
 )
 
 
+# La ampliación del catálogo extenso (lotes de producción) hace crecer estas
+# cifras. Se centralizan aquí para actualizarlas en un solo punto en cada lote.
+N_PARTIDAS = 3006       # total de partidas oficiales del catálogo
+N_LEGACY = 540         # partidas migradas de la v1 con código CT- (no crece)
+N_APARTADOS = 256      # apartados de tercer nivel con partidas
+N_CATEGORIAS = 18 + 172 + N_APARTADOS
+
+
 def _session():
     engine = create_engine("sqlite://")
     Base.metadata.create_all(bind=engine)
@@ -41,13 +49,16 @@ def test_catalogo_propio_disponible_y_completo():
     assert disponible()
     datos = construir_catalogo()
     assert datos["ok"]
-    assert datos["n_partidas"] == 540
+    assert datos["n_partidas"] == N_PARTIDAS
     assert datos["n_recursos"] >= 300
     assert len([c for c in datos["categorias"] if c["nivel"] == 1]) == 18
     assert len([c for c in datos["categorias"] if c["nivel"] == 2]) == 172
-    assert len([c for c in datos["categorias"] if c["nivel"] == 3]) == 147
+    assert len([c for c in datos["categorias"] if c["nivel"] == 3]) == N_APARTADOS
 
-    primera = datos["partidas"][0]
+    # Se valida una partida migrada de la v1 (con codigo_legacy CT-...). Las
+    # partidas nuevas de la ampliación van primero en orden de código y no
+    # llevan codigo_legacy.
+    primera = next(p for p in datos["partidas"] if p["codigo_legacy"].startswith("CT-"))
     assert re.fullmatch(r"\d{2}\.\d{2}\.\d{2}\.\d{3}", primera["codigo"])
     assert primera["codigo_legacy"].startswith("CT-")
     assert primera["categoria"].startswith("01 ")
@@ -69,8 +80,8 @@ def test_catalogo_masivo_conserva_codigo_y_tres_niveles():
     resultado = importer.validar_filas(analisis["filas"], mapeo)
     assert not resultado["errores"]
     assert not resultado["advertencias"]
-    assert len(resultado["filas"]) == 540
-    primera = resultado["filas"][0]
+    assert len(resultado["filas"]) == N_PARTIDAS
+    primera = next(f for f in resultado["filas"] if f["codigo_legacy"].startswith("CT-"))
     assert re.fullmatch(r"\d{2}\.\d{2}\.\d{2}\.\d{3}", primera["codigo"])
     assert primera["codigo_legacy"].startswith("CT-")
     assert primera["categoria"].startswith("01 ")
@@ -99,18 +110,18 @@ def test_sembrar_catalogo_carga_arbol_numerico_completo():
 
         sembrar_catalogo(db)
 
-        assert db.query(Partida).count() == 540
+        assert db.query(Partida).count() == N_PARTIDAS
         assert db.query(Partida).filter(
             Partida.version_catalogo == CATALOGO_VERSION
-        ).count() == 540
-        assert db.query(Partida).filter(Partida.codigo_legacy.like("CT-%")).count() == 540
-        assert db.query(Partida).filter(Partida.es_oficial.is_(True)).count() == 540
-        assert db.query(Partida).filter(Partida.catalogo_uid.isnot(None)).count() == 540
+        ).count() == N_PARTIDAS
+        assert db.query(Partida).filter(Partida.codigo_legacy.like("CT-%")).count() == N_LEGACY
+        assert db.query(Partida).filter(Partida.es_oficial.is_(True)).count() == N_PARTIDAS
+        assert db.query(Partida).filter(Partida.catalogo_uid.isnot(None)).count() == N_PARTIDAS
         assert db.query(Partida).filter(Partida.oculta.is_(True)).count() == 0
         assert db.query(Recurso).count() >= 300
         assert db.query(CategoriaPartida).filter_by(nivel=1, oficial=True).count() == 18
         assert db.query(CategoriaPartida).filter_by(nivel=2, oficial=True).count() == 172
-        assert db.query(CategoriaPartida).filter_by(nivel=3, oficial=True).count() == 147
+        assert db.query(CategoriaPartida).filter_by(nivel=3, oficial=True).count() == N_APARTADOS
         assert db.query(Partida).filter(Partida.categoria_id.is_(None)).count() == 0
         cfg = db.query(Configuracion).first()
         assert cfg.semilla_catalogo_aplicada is True
@@ -119,8 +130,8 @@ def test_sembrar_catalogo_carga_arbol_numerico_completo():
         # Idempotente al reintentar la carga directa.
         r = sembrar_catalogo_propio(db)
         assert r["partidas"] == 0
-        assert db.query(Partida).count() == 540
-        assert db.query(CategoriaPartida).count() == 337
+        assert db.query(Partida).count() == N_PARTIDAS
+        assert db.query(CategoriaPartida).count() == N_CATEGORIAS
     finally:
         db.close()
         engine.dispose()
@@ -129,7 +140,9 @@ def test_sembrar_catalogo_carga_arbol_numerico_completo():
 def test_actualizar_v1_conserva_id_precio_borrados_y_partidas_del_usuario():
     engine, db = _session()
     try:
-        fuente = construir_catalogo()["partidas"][0]
+        fuente = next(
+            p for p in construir_catalogo()["partidas"] if p["codigo_legacy"]
+        )
         oficial = Partida(
             nombre=fuente["nombre"],
             precio_unitario=987.65,  # ajuste local que no debe sobrescribirse
@@ -184,7 +197,12 @@ def test_actualizar_v1_conserva_id_precio_borrados_y_partidas_del_usuario():
 def test_asegurar_actualiza_catalogo_v1_grande_una_sola_vez():
     engine, db = _session()
     try:
-        fuentes = construir_catalogo()["partidas"][:100]
+        # Solo las partidas migradas de la v1 llevan ``codigo_legacy`` (CT-...).
+        # Las partidas nuevas de la ampliación del catálogo no lo tienen y no
+        # entran en la migración v1→v2.
+        fuentes = [
+            p for p in construir_catalogo()["partidas"] if p["codigo_legacy"]
+        ][:100]
         for item in fuentes:
             db.add(Partida(
                 nombre=item["nombre"],
@@ -225,32 +243,32 @@ def test_actualizacion_incremental_incorpora_nuevas_y_respeta_ocultas(monkeypatc
         base = construir_catalogo()
         nueva = dict(base["partidas"][0])
         nueva.update({
-            "catalogo_uid": "COTIZAT-V3-PRUEBA-001",
+            "catalogo_uid": "COTIZAT-V4-PRUEBA-001",
             "codigo": "01.02.01.990",
             "codigo_legacy": "",
-            "nombre": "Partida oficial incorporada en versión 3",
-            "version_alta_catalogo": 3,
+            "nombre": "Partida oficial incorporada en versión 4",
+            "version_alta_catalogo": 4,
         })
         fake = {**base, "partidas": [*base["partidas"], nueva], "n_partidas": 541}
-        monkeypatch.setattr(servicio, "CATALOGO_VERSION", 3)
+        monkeypatch.setattr(servicio, "CATALOGO_VERSION", 4)
         monkeypatch.setattr(servicio, "construir_catalogo", lambda: fake)
 
         resultado = servicio.actualizar_taxonomia_catalogo_propio(db)
         assert resultado["incorporadas"] == 1
         creada = db.query(Partida).filter_by(
-            catalogo_uid="COTIZAT-V3-PRUEBA-001"
+            catalogo_uid="COTIZAT-V4-PRUEBA-001"
         ).one()
         assert creada.es_oficial is True
         assert creada.oculta is False
-        assert creada.version_alta_catalogo == 3
+        assert creada.version_alta_catalogo == 4
         assert db.get(Partida, oculta.id).oculta is True
-        assert db.query(Configuracion).one().version_catalogo == 3
+        assert db.query(Configuracion).one().version_catalogo == 4
 
         # Reintentar la misma versión no duplica ni reactiva nada.
         segundo = servicio.actualizar_taxonomia_catalogo_propio(db)
         assert segundo["incorporadas"] == 0
         assert db.query(Partida).filter_by(
-            catalogo_uid="COTIZAT-V3-PRUEBA-001"
+            catalogo_uid="COTIZAT-V4-PRUEBA-001"
         ).count() == 1
         assert db.get(Partida, oculta.id).oculta is True
     finally:
@@ -284,7 +302,7 @@ def test_migrar_catalogo_prueba_elimina_antiguas_y_carga_propias():
         ).count() == 0
         assert db.query(Partida).filter(
             Partida.version_catalogo == CATALOGO_VERSION
-        ).count() == 540
+        ).count() == N_PARTIDAS
         assert db.query(Recurso).filter(Recurso.codigo == "MT-CEMENTO").count() == 1
 
         # Ya migrado: asegurar no vuelve a hacer trabajo.
@@ -315,7 +333,7 @@ def test_modo_demo_carga_catalogo_propio():
             "moneda_default": "USD",
             "iva_default": 16,
         }, "demo")
-        assert db.query(Partida).count() == 540
+        assert db.query(Partida).count() == N_PARTIDAS
         assert db.query(Partida).filter(
             Partida.codigo_legacy == "CT-01-01-010"
         ).count() == 1

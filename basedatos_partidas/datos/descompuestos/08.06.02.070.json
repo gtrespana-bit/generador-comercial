@@ -1,0 +1,36 @@
+{
+  "codigo": "08.06.02.070",
+  "ambito": "reforma",
+  "capitulo": "08",
+  "subcapitulo": "06",
+  "unidad": "ud",
+  "titulo": "Soporte de panel solar.",
+  "descripcion": "Suministro y colocación de estructura de soporte de panel solar. Incluye el anclaje de la estructura. Medido por unidad colocado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PERFIL-ACERO",
+      "rendimiento": 6.0
+    },
+    {
+      "ref": "MT-PERNO-ANCLA",
+      "rendimiento": 6.0
+    },
+    {
+      "ref": "MQ-SOLDADORA",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MO-OF1-SOLD",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.35
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

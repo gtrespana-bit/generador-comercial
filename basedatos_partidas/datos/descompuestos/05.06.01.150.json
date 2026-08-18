@@ -1,0 +1,40 @@
+{
+  "codigo": "05.06.01.150",
+  "ambito": "reforma",
+  "capitulo": "05",
+  "subcapitulo": "06",
+  "unidad": "m2",
+  "titulo": "Losa aligerada con anime.",
+  "descripcion": "Ejecución de losa aligerada con anime de poliestireno. Incluye el aligeramiento y el vaciado. Medido por metro cuadrado ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ANIME-ALIV",
+      "rendimiento": 6.0
+    },
+    {
+      "ref": "MT-CONC-210",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MT-ACERO-CAB",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MQ-VIBRADOR",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.7
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.5
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

@@ -22,6 +22,7 @@ from starlette.testclient import TestClient
 import app.database as database_module
 import app.services.operacion as operacion_module
 from app import main as main_module
+from app.routers import common
 from app.auth import ACCESS_COOKIE, REFRESH_COOKIE, SupabaseAuthSettings, SupabaseIdentity
 from app.database import Base, EXPECTED_ALEMBIC_HEAD, get_operator_db
 from app.main import app
@@ -189,7 +190,7 @@ def entorno_operador(monkeypatch):
         seed.commit()
         datos = {"usuario_id": usuario.id, "organizacion_id": organizacion.id}
 
-    monkeypatch.setattr(main_module, "DATABASE_IS_SQLITE", False)
+    monkeypatch.setattr(common, "DATABASE_IS_SQLITE", False)
     monkeypatch.setattr(
         SupabaseAuthSettings, "from_environment", classmethod(lambda _cls: SETTINGS)
     )

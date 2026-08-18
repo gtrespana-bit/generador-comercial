@@ -1,0 +1,24 @@
+{
+  "codigo": "17.08.01.070",
+  "ambito": "reforma",
+  "capitulo": "17",
+  "subcapitulo": "08",
+  "unidad": "glb",
+  "titulo": "Documentación preventiva y registros.",
+  "descripcion": "Elaboración de la documentación preventiva y registros de seguridad de la obra.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.75
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

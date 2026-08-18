@@ -1,0 +1,24 @@
+{
+  "codigo": "16.05.01.050",
+  "ambito": "reforma",
+  "capitulo": "16",
+  "subcapitulo": "05",
+  "unidad": "ud",
+  "titulo": "Prueba de disparo de termomagnéticos.",
+  "descripcion": "Verificación del disparo de los interruptores termomagnéticos, para comprobar su calibración.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.08
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

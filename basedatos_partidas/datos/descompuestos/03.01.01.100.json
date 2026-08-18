@@ -1,0 +1,36 @@
+{
+  "codigo": "03.01.01.100",
+  "ambito": "reforma",
+  "capitulo": "03",
+  "subcapitulo": "01",
+  "unidad": "m2",
+  "titulo": "Descapote de terreno con topografía.",
+  "descripcion": "Descapote y retiro de capa vegetal con control topográfico. Incluye el descapote y el nivelado. Medido por metro cuadrado descapotado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MQ-RETRO",
+      "rendimiento": 0.04
+    },
+    {
+      "ref": "MQ-NIVEL-LASER",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.08
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

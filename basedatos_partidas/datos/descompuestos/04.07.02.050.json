@@ -1,0 +1,36 @@
+{
+  "codigo": "04.07.02.050",
+  "ambito": "reforma",
+  "capitulo": "04",
+  "subcapitulo": "07",
+  "unidad": "m2",
+  "titulo": "Protección de fundación contra raíces.",
+  "descripcion": "Protección de fundación contra raíces con barrera. Incluye la colocación de la barrera. Medido por metro cuadrado colocado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-GEOTEXTIL",
+      "rendimiento": 1.2
+    },
+    {
+      "ref": "MT-POLIET",
+      "rendimiento": 1.1
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.1
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

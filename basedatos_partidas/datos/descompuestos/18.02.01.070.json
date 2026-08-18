@@ -1,0 +1,32 @@
+{
+  "codigo": "18.02.01.070",
+  "ambito": "reforma",
+  "capitulo": "18",
+  "subcapitulo": "02",
+  "unidad": "m²",
+  "titulo": "Inyección de aislamiento en cámara de fachada.",
+  "descripcion": "Inyección de aislamiento en la cámara de aire de la fachada, para mejorar la resistencia térmica.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-LANA-ROCA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MQ-INYECTORA",
+      "rendimiento": 0.04
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.28
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

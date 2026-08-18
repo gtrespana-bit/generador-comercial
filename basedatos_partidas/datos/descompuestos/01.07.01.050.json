@@ -1,0 +1,28 @@
+{
+  "codigo": "01.07.01.050",
+  "ambito": "reforma",
+  "capitulo": "01",
+  "subcapitulo": "07",
+  "unidad": "ud",
+  "titulo": "Replanteo de instalaciones.",
+  "descripcion": "Replanteo de instalaciones (eléctrica, sanitaria) con trazado de recorridos. Incluye el marcado. Medido por instalación replanteada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MQ-NIVEL-LASER",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 0.8
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.4
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

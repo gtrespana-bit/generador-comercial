@@ -1,0 +1,32 @@
+{
+  "codigo": "12.01.01.250",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "01",
+  "unidad": "m",
+  "titulo": "Reparación de junta de dilatación en paramento.",
+  "descripcion": "Reparación de junta de dilatación en paramento, con retirada del sellado deteriorado y aplicación de sellador elástico. Incluye la limpieza de la junta y el nuevo sellado. Medido por metro lineal reparado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-SELLA-ELAST",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.08
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

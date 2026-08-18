@@ -1,0 +1,40 @@
+{
+  "codigo": "05.02.02.010",
+  "ambito": "reforma",
+  "capitulo": "05",
+  "subcapitulo": "02",
+  "unidad": "m2",
+  "titulo": "Malla electrosoldada para losa.",
+  "descripcion": "Colocación de malla electrosoldada de refuerzo en losa. Incluye la colocación y el solape. Medido por metro cuadrado colocado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MALLA-ELEC",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-ALAMBRE",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MT-SEPARADOR",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MQ-CIZALLA",
+      "rendimiento": 0.03
+    },
+    {
+      "ref": "MO-OF1-CAB",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.05
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

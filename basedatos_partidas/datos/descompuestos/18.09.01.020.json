@@ -1,0 +1,38 @@
+{
+  "codigo": "18.09.01.020",
+  "ambito": "reforma",
+  "capitulo": "18",
+  "subcapitulo": "09",
+  "unidad": "ud",
+  "titulo": "Instalación de inversor fotovoltaico.",
+  "descripcion": "Instalación de inversor para sistema fotovoltaico, con conexión eléctrica. El inversor lo elige el cliente.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-ELE-CABLE",
+      "rendimiento": 3.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.5
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01",
+  "producto_cliente": {
+    "tipo": "Inversor elegido por el cliente",
+    "unidad": "ud",
+    "consumo": 1.0,
+    "nota": "La partida cubre solo la instalación. El inversor se toma del catálogo de productos."
+  }
+}

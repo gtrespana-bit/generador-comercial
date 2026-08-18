@@ -1,0 +1,40 @@
+{
+  "codigo": "11.06.01.040",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "06",
+  "unidad": "m²",
+  "titulo": "Estructura de madera de techo a dos aguas.",
+  "descripcion": "Estructura de madera para cubierta con pares, tirantes y correas, con herrajes de unión y tratamiento preservante. Incluye el armado y el montaje.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MADERA-EST",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MT-HERRAJE-MAD",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MT-PRESERV-MAD",
+      "rendimiento": 0.04
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 0.7
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.56
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

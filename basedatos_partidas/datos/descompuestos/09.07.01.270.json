@@ -1,0 +1,36 @@
+{
+  "codigo": "09.07.01.270",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "07",
+  "unidad": "ud",
+  "titulo": "Instalación de equipo para estudio.",
+  "descripcion": "Instalación de equipo para estudio., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-TUB-FRIGO",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MT-SOPORTE-AC",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MO-OF1-AC",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 1.0
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

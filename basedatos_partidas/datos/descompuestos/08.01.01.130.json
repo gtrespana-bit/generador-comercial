@@ -1,0 +1,36 @@
+{
+  "codigo": "08.01.01.130",
+  "ambito": "reforma",
+  "capitulo": "08",
+  "subcapitulo": "01",
+  "unidad": "m2",
+  "titulo": "Resane de rozas y pasos.",
+  "descripcion": "Resane de rozas y pasos de instalaciones. Incluye el tapado y el acabado. Medido por metro cuadrado resanado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-YESO-REP",
+      "rendimiento": 2.5
+    },
+    {
+      "ref": "MT-MALLA-JUNTA",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MQ-LIJAD",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.32
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.22
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

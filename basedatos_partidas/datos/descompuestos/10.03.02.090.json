@@ -1,0 +1,32 @@
+{
+  "codigo": "10.03.02.090",
+  "ambito": "reforma",
+  "capitulo": "10",
+  "subcapitulo": "03",
+  "unidad": "m2",
+  "titulo": "Sellado de juntas de hormigonado con bentonita.",
+  "descripcion": "Sellado de juntas de hormigonado en muro enterrado con cordón de bentonita. Incluye la colocación del cordón y el remate. Medido por metro lineal sellado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-SELLA-BENTONITA",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.04
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

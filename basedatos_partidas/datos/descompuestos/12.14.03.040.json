@@ -1,0 +1,36 @@
+{
+  "codigo": "12.14.03.040",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "14",
+  "unidad": "m2",
+  "titulo": "Restauración de carpintería de madera con masilla.",
+  "descripcion": "Restauración de carpintería de madera con relleno de masilla, lijado y acabado. Incluye el resane de golpes, el lijado y el acabado. Medido por metro cuadrado restaurado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PIN-MASILLA",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MT-BARNIZ-PISO",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MQ-LIJAD",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.12
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "03"
+}

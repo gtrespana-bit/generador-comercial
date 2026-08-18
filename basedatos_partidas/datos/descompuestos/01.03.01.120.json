@@ -1,0 +1,32 @@
+{
+  "codigo": "01.03.01.120",
+  "ambito": "reforma",
+  "capitulo": "01",
+  "subcapitulo": "03",
+  "unidad": "m2",
+  "titulo": "Protección de puerta existente.",
+  "descripcion": "Protección de puerta existente durante la obra. Incluye el forrado con cartón o lámina. Medido por metro cuadrado protegido.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PROT-CARTON",
+      "rendimiento": 1.1
+    },
+    {
+      "ref": "MT-CINTA-ENM",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.15
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

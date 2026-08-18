@@ -1,0 +1,36 @@
+{
+  "codigo": "09.02.01.080",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "02",
+  "unidad": "m",
+  "titulo": "Canalón de aguas lluvias.",
+  "descripcion": "Suministro e instalación de canalón de aguas lluvias. Incluye el montaje. Medido por metro lineal instalado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CANAL-PVC",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-PLO-SOP",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.07
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.1
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

@@ -1,0 +1,36 @@
+{
+  "codigo": "02.05.01.160",
+  "ambito": "reforma",
+  "capitulo": "02",
+  "subcapitulo": "05",
+  "unidad": "ud",
+  "titulo": "Desmontaje de reja de protección.",
+  "descripcion": "Desmontaje de reja de protección de ventana o puerta. Incluye la retirada de la reja y sus anclajes. Medido por unidad desmontada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-OXI-CONS",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MQ-OXICORTE",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-SOLD",
+      "rendimiento": 0.7
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.6
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

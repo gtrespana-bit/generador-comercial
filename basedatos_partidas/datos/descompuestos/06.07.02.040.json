@@ -1,0 +1,44 @@
+{
+  "codigo": "06.07.02.040",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "07",
+  "unidad": "m2",
+  "titulo": "SATE en fachada con remates.",
+  "descripcion": "Ejecución de SATE en fachada con remates de esquinas y vanos. Incluye el panel, la malla, el mortero y los remates. Medido por metro cuadrado ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-POLIESTIRENO-EXT",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-MALLA-FACH",
+      "rendimiento": 1.2
+    },
+    {
+      "ref": "MT-MOR-FRISO",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MT-MALLA-ESQ",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.7
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.25
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

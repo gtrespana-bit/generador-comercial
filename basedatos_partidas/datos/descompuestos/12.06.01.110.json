@@ -1,0 +1,40 @@
+{
+  "codigo": "12.06.01.110",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "06",
+  "unidad": "m",
+  "titulo": "Rodapié de madera lacada.",
+  "descripcion": "Colocación de rodapié de madera lacada, con fijación mecánica o adhesiva. Incluye la preparación del soporte y la fijación del rodapié. Medido por metro lineal colocado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MADERA-LISTON",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-LACA-MADERA",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MT-PLO-SOP",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.05
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

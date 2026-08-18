@@ -1,0 +1,36 @@
+{
+  "codigo": "12.10.01.140",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "10",
+  "unidad": "m2",
+  "titulo": "Pintura mineral a base de cal para interiores.",
+  "descripcion": "Aplicación de pintura mineral a base de cal en paramentos interiores de sótanos, depósitos y espacios ventilados, con dos manos. Incluye la preparación del soporte y las dos manos de pintura a la cal. Medido por metro cuadrado pintado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PIN-CAL",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MT-PIN-LIJA",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.14
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.09
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

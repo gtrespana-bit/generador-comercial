@@ -1,0 +1,40 @@
+{
+  "codigo": "14.10.01.130",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "10",
+  "unidad": "m",
+  "titulo": "Cerramiento perimetral de piscina.",
+  "descripcion": "Ejecución de cerramiento perimetral de seguridad de piscina, con reja o malla. Incluye la colocación.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MALLA-OBRA",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MT-PERFIL-ACERO",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MT-CONC-210",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.4
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

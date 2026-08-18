@@ -1,0 +1,32 @@
+{
+  "codigo": "09.02.02.030",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "02",
+  "unidad": "ud",
+  "titulo": "Punto de desagüe para calentador.",
+  "descripcion": "Punto de desagüe para calentador. Incluye la conexión. Medido por punto ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PLO-PVC4",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-PLO-ACC4",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-OF1-PLO",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

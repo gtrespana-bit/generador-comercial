@@ -1,0 +1,36 @@
+{
+  "codigo": "12.04.01.070",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "04",
+  "unidad": "m2",
+  "titulo": "Revestimiento textil de pared.",
+  "descripcion": "Revestimiento de paramento con tela o textil tensado o adherido, con sus remates. Incluye la preparación del soporte, la colocación del textil y el remate de bordes. Medido por metro cuadrado revestido.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PEGA-MURAL",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MT-PERFIL-REMATE",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MT-PIN-FONDO",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

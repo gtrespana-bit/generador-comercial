@@ -1,0 +1,32 @@
+{
+  "codigo": "05.03.01.160",
+  "ambito": "reforma",
+  "capitulo": "05",
+  "subcapitulo": "03",
+  "unidad": "m2",
+  "titulo": "Curado de concreto estructural.",
+  "descripcion": "Curado de concreto estructural con membrana de curado. Incluye la aplicación del curador. Medido por metro cuadrado curado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CURADOR",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.08
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

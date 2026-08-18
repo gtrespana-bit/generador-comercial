@@ -1,0 +1,36 @@
+{
+  "codigo": "06.05.01.080",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "05",
+  "unidad": "m2",
+  "titulo": "División de bloques de vidrio.",
+  "descripcion": "Ejecución de división de bloques de vidrio, con junta de mortero. Incluye la colocación de los bloques y el rejuntado. Medido por metro cuadrado ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-BLQ-VIDRIO",
+      "rendimiento": 24.0
+    },
+    {
+      "ref": "MT-MOR-PEGA",
+      "rendimiento": 0.01
+    },
+    {
+      "ref": "MQ-MEZCL",
+      "rendimiento": 0.07
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.9
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.7
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

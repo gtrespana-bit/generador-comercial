@@ -1,0 +1,28 @@
+{
+  "codigo": "01.07.01.020",
+  "ambito": "reforma",
+  "capitulo": "01",
+  "subcapitulo": "07",
+  "unidad": "m",
+  "titulo": "Replanteo de ejes de muros.",
+  "descripcion": "Replanteo de ejes de muros con nivel láser. Incluye el trazado de los ejes. Medido por metro lineal replanteado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MQ-NIVEL-LASER",
+      "rendimiento": 0.06
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.06
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

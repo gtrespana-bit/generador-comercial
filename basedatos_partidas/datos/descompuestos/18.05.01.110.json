@@ -1,0 +1,42 @@
+{
+  "codigo": "18.05.01.110",
+  "ambito": "reforma",
+  "capitulo": "18",
+  "subcapitulo": "05",
+  "unidad": "m²",
+  "titulo": "Ventana de doble acristalamiento con gas argón.",
+  "descripcion": "Sustitución por ventana de doble acristalamiento con gas argón y marco aislante, de altas prestaciones. El sistema lo elige el cliente.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-VIDRIO-DOBLE",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-PERFIL-ALUM",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MO-OF1-VIDR",
+      "rendimiento": 0.7
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.35
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01",
+  "producto_cliente": {
+    "tipo": "Ventana de altas prestaciones elegida por el cliente",
+    "unidad": "m²",
+    "consumo": 1.0,
+    "nota": "La partida cubre la colocación. La ventana se toma del catálogo de productos."
+  }
+}

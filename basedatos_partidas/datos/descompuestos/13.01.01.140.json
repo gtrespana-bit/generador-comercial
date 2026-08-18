@@ -1,0 +1,44 @@
+{
+  "codigo": "13.01.01.140",
+  "ambito": "reforma",
+  "capitulo": "13",
+  "subcapitulo": "01",
+  "unidad": "ud",
+  "titulo": "Mueble de esquinero de cocina.",
+  "descripcion": "Fabricación e instalación de mueble de esquinero de cocina en melamina, con sistema de acceso al fondo. Incluye el despiece y el armado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MELAMINA",
+      "rendimiento": 3.0
+    },
+    {
+      "ref": "MT-HERRAJE-CLOSET",
+      "rendimiento": 12.0
+    },
+    {
+      "ref": "MT-TORN",
+      "rendimiento": 50.0
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MQ-ATORN",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 2.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 1.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

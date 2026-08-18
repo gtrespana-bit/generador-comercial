@@ -1,0 +1,36 @@
+{
+  "codigo": "02.08.01.130",
+  "ambito": "reforma",
+  "capitulo": "02",
+  "subcapitulo": "08",
+  "unidad": "m2",
+  "titulo": "Retiro de sellado de juntas.",
+  "descripcion": "Retiro de sellado de juntas existente. Incluye la retirada del sellador. Medido por metro lineal retirado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MT-SAC-ESC",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-AMOLA",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.15
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

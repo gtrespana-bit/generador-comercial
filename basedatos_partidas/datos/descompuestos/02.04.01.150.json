@@ -1,0 +1,40 @@
+{
+  "codigo": "02.04.01.150",
+  "ambito": "reforma",
+  "capitulo": "02",
+  "subcapitulo": "04",
+  "unidad": "m2",
+  "titulo": "Demolición de tabique de doble placa de yeso.",
+  "descripcion": "Demolición de tabique de doble placa de yeso laminado con aislamiento. Incluye la demolición de las placas, la lana y la estructura. Medido por metro cuadrado demolido.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MT-SAC-ESC",
+      "rendimiento": 0.45
+    },
+    {
+      "ref": "MQ-MART-ELEC",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MQ-ASPIR",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.4
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

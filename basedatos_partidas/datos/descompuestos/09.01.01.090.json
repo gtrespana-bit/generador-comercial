@@ -1,0 +1,36 @@
+{
+  "codigo": "09.01.01.090",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "01",
+  "unidad": "m",
+  "titulo": "Tubería de agua de PPR de 40 mm.",
+  "descripcion": "Suministro e instalación de tubería de agua de PPR de 40 mm. Incluye el montaje y la fijación. Medido por metro lineal instalado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-TUB-PPR25",
+      "rendimiento": 1.2
+    },
+    {
+      "ref": "MT-PLO-SOP",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MQ-TERMOF",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-PLO",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.1
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

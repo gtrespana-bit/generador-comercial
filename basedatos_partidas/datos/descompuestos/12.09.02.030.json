@@ -1,0 +1,40 @@
+{
+  "codigo": "12.09.02.030",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "09",
+  "unidad": "m2",
+  "titulo": "Cielo raso de PVC para baño o cocina.",
+  "descripcion": "Cielo raso de láminas de PVC para baño, cocina o local húmedo, con su perfilería. Incluye la estructura de fijación, la colocación de las láminas y el remate. Medido por metro cuadrado ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CIELO-PVC",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-MADERA-LISTON",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MT-PERFIL-REMATE",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.16
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

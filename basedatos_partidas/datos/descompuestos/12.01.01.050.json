@@ -1,0 +1,32 @@
+{
+  "codigo": "12.01.01.050",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "01",
+  "unidad": "m2",
+  "titulo": "Picado y limpieza de paramento deteriorado.",
+  "descripcion": "Picado y limpieza de paramento deteriorado con eliminación del revestimiento suelto previo a la reparación. Incluye la retirada del material suelto y la limpieza de la superficie. Medido por metro cuadrado picado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MQ-MART-ELEC",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.15
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

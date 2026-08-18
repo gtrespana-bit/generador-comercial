@@ -1,0 +1,32 @@
+{
+  "codigo": "12.01.01.230",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "01",
+  "unidad": "m2",
+  "titulo": "Regularización de techo previo a cielo raso.",
+  "descripcion": "Regularización de techo de concreto previo a la instalación de cielo raso o pintura, con mortero o pasta de nivelación. Incluye la corrección de desniveles y el afinado. Medido por metro cuadrado regularizado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MORT-REP-EST",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.15
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

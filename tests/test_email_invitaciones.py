@@ -21,6 +21,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
 from app import main as main_module
+from app.routers import common
 import app.services.email as email_module
 from app.database import Base, get_db
 from app.health import readiness
@@ -72,7 +73,7 @@ def organizacion_con_propietario(monkeypatch):
         seed.commit()
         ids = organizacion.id, propietario.id
 
-    monkeypatch.setattr(main_module, "DATABASE_IS_SQLITE", False)
+    monkeypatch.setattr(common, "DATABASE_IS_SQLITE", False)
     monkeypatch.setenv("COTIZAT_PUBLIC_URL", "https://cotizat.test")
     activa = {"organizacion_id": ids[0], "usuario_id": ids[1]}
 

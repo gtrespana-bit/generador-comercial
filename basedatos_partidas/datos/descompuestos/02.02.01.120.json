@@ -1,0 +1,36 @@
+{
+  "codigo": "02.02.01.120",
+  "ambito": "reforma",
+  "capitulo": "02",
+  "subcapitulo": "02",
+  "unidad": "m",
+  "titulo": "Desmontaje de correa o viga metálica.",
+  "descripcion": "Desmontaje de correa o viga metálica de estructura, con corte de uniones. Incluye el desmontaje con corte y la bajada controlada. Medido por metro lineal desmontado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-OXI-CONS",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MQ-OXICORTE",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MQ-MONTAC",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-SOLD",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.4
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

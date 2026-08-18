@@ -1,0 +1,36 @@
+{
+  "codigo": "05.05.01.160",
+  "ambito": "reforma",
+  "capitulo": "05",
+  "subcapitulo": "05",
+  "unidad": "m",
+  "titulo": "Viga de madera laminada.",
+  "descripcion": "Suministro y colocación de viga de madera laminada. Incluye la colocación y la fijación. Medido por metro lineal colocado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MADERA-EST",
+      "rendimiento": 0.035
+    },
+    {
+      "ref": "MT-HERRAJE-MAD",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 0.9
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.45
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

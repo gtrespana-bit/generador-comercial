@@ -1,0 +1,38 @@
+{
+  "codigo": "09.16.01.200",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "16",
+  "unidad": "ud",
+  "titulo": "Instalación de ascensor de alta velocidad.",
+  "descripcion": "Instalación de ascensor de alta velocidad., con montaje y puesta en marcha. Incluye el montaje. Medido por unidad instalada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MQ-GRUA",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 18.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 9.0
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01",
+  "producto_cliente": {
+    "tipo": "Ascensor de alta velocidad, del modelo elegido por el cliente",
+    "unidad": "ud",
+    "consumo": 1.0,
+    "nota": "La partida cubre solo la instalación. El equipo se toma del catálogo de productos y su precio no está incluido."
+  }
+}

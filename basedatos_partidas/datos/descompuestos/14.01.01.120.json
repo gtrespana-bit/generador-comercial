@@ -1,0 +1,40 @@
+{
+  "codigo": "14.01.01.120",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "01",
+  "unidad": "m²",
+  "titulo": "Pavimento de concreto alisado con allanadora.",
+  "descripcion": "Pavimento exterior de concreto alisado con allanadora mecánica, para tránsito peatonal y vehicular. Incluye el vaciado y el alisado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONC-210",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MT-CURADOR",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-ALISADORA",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MQ-VIBRADOR",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.45
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.35
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

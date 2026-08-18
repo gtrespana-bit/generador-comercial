@@ -1,0 +1,32 @@
+{
+  "codigo": "12.06.02.160",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "06",
+  "unidad": "m",
+  "titulo": "Junta de dilatación en escalera.",
+  "descripcion": "Ejecución de junta de dilatación en escalera, con perfil y sellado elástico. Incluye la colocación del perfil y el sellado de la junta. Medido por metro lineal de junta.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-JUNTA-DILAT",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-SELLA-ELAST",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-OF1-PISO",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.08
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

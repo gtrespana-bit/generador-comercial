@@ -1,0 +1,32 @@
+{
+  "codigo": "07.09.01.030",
+  "ambito": "reforma",
+  "capitulo": "07",
+  "subcapitulo": "09",
+  "unidad": "ud",
+  "titulo": "Sustitución de cerradura de puerta.",
+  "descripcion": "Sustitución de la cerradura de una puerta, con desmontaje de la anterior y montaje de la nueva. Incluye la retirada y el montaje. Medido por unidad sustituida.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CERRADURA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.4
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

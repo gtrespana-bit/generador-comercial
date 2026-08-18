@@ -1,0 +1,36 @@
+{
+  "codigo": "09.16.01.050",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "16",
+  "unidad": "ud",
+  "titulo": "Adecuación de hueco de ascensor.",
+  "descripcion": "Adecuación de hueco para ascensor. Incluye la preparación del hueco. Medido por unidad adecuada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.8
+    },
+    {
+      "ref": "MQ-MART-ELEC",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 10.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 6.0
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

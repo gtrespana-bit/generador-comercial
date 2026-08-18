@@ -1,0 +1,36 @@
+{
+  "codigo": "10.09.02.020",
+  "ambito": "reforma",
+  "capitulo": "10",
+  "subcapitulo": "09",
+  "unidad": "m2",
+  "titulo": "Tratamiento antihumedad de muro interior.",
+  "descripcion": "Tratamiento antihumedad de muro interior, con saneado y barrera. Incluye el saneado, la aplicación de la barrera y el remate. Medido por metro cuadrado tratado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MORT-IMPER",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MT-HIDROFUGO",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-BATID",
+      "rendimiento": 0.07
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.22
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

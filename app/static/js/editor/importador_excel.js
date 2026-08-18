@@ -205,7 +205,7 @@
     if (esCype()) {
       $("excel-inline-mapping").classList.add("import-hidden");
       $("excel-inline-cype-chapter").classList.remove("import-hidden");
-      $("excel-inline-result-title").textContent = estado.partidasCype.length + " partida(s) CYPE detectada(s)";
+      $("excel-inline-result-title").textContent = estado.partidasCype.length + " partida(s) de descompuesto detectada(s)";
       var totalFilas = estado.partidasCype.reduce(function (n, p) { return n + (p.filas || []).length; }, 0);
       $("excel-inline-result-meta").textContent = totalFilas + " filas técnicas y fórmulas se conservarán.";
       renderPreviewCype();

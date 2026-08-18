@@ -1,0 +1,32 @@
+{
+  "codigo": "12.01.01.200",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "01",
+  "unidad": "m2",
+  "titulo": "Saneado de paramento con eflorescencias.",
+  "descripcion": "Saneado de paramento con eflorescencias salinas, con cepillado, lavado y aplicación de tratamiento neutralizante. Incluye la limpieza de las sales y el tratamiento previo al acabado. Medido por metro cuadrado saneado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-LIMP-QUIM",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MQ-HIDROLAV",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.08
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

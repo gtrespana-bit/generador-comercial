@@ -1,0 +1,32 @@
+{
+  "codigo": "18.03.01.100",
+  "ambito": "reforma",
+  "capitulo": "18",
+  "subcapitulo": "03",
+  "unidad": "m²",
+  "titulo": "Cubierta fría con aislamiento y ventilación.",
+  "descripcion": "Ejecución de cubierta fría con aislamiento y cámara ventilada, para reducir la ganancia de calor.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-LANA-ROCA",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-REJILLA-VENT",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.35
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.28
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

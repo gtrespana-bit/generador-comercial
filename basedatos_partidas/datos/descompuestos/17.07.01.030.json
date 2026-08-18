@@ -1,0 +1,24 @@
+{
+  "codigo": "17.07.01.030",
+  "ambito": "reforma",
+  "capitulo": "17",
+  "subcapitulo": "07",
+  "unidad": "glb",
+  "titulo": "Adecuación de zona de vestuario y comedor.",
+  "descripcion": "Adecuación de zona de vestuario y comedor de obra, con mobiliario y servicios básicos.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CASETA-BIEN",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.5
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

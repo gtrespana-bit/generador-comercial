@@ -1,0 +1,36 @@
+{
+  "codigo": "12.02.01.120",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "02",
+  "unidad": "m2",
+  "titulo": "Friso con malla de refuerzo en fachada.",
+  "descripcion": "Aplicación de friso en fachada con malla de refuerzo embebida para prevenir fisuración. Incluye la colocación de la malla y la aplicación del mortero. Medido por metro cuadrado frisado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MOR-FRISO",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MT-MALLA-JUNTA",
+      "rendimiento": 1.1
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

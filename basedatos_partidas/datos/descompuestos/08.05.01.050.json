@@ -1,0 +1,36 @@
+{
+  "codigo": "08.05.01.050",
+  "ambito": "reforma",
+  "capitulo": "08",
+  "subcapitulo": "05",
+  "unidad": "m",
+  "titulo": "Vierteaguas prefabricado.",
+  "descripcion": "Colocación de vierteaguas prefabricado de concreto. Incluye la colocación. Medido por metro lineal ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-DINTEL-PREF",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-MOR-PEGA",
+      "rendimiento": 0.004
+    },
+    {
+      "ref": "MQ-MEZCL",
+      "rendimiento": 0.04
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.3
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

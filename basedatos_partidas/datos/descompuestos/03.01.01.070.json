@@ -1,0 +1,36 @@
+{
+  "codigo": "03.01.01.070",
+  "ambito": "reforma",
+  "capitulo": "03",
+  "subcapitulo": "01",
+  "unidad": "m2",
+  "titulo": "Retiro de obstáculos y escombros superficiales.",
+  "descripcion": "Retiro de obstáculos, escombros y basura superficial del terreno. Incluye la limpieza y el acopio. Medido por metro cuadrado limpiado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MQ-RETRO",
+      "rendimiento": 0.03
+    },
+    {
+      "ref": "MQ-VOLQ",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.1
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

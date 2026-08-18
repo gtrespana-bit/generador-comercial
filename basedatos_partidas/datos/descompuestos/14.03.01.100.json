@@ -1,0 +1,32 @@
+{
+  "codigo": "14.03.01.100",
+  "ambito": "reforma",
+  "capitulo": "14",
+  "subcapitulo": "03",
+  "unidad": "m",
+  "titulo": "Limpieza y mantenimiento de drenaje exterior.",
+  "descripcion": "Limpieza de canal de drenaje exterior con retirada de sedimentos y comprobación del flujo. Incluye la limpieza.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-LIMP",
+      "rendimiento": 0.03
+    },
+    {
+      "ref": "MQ-HIDROLAV",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.06
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

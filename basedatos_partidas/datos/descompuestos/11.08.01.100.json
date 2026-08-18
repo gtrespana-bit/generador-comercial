@@ -1,0 +1,36 @@
+{
+  "codigo": "11.08.01.100",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "08",
+  "unidad": "m",
+  "titulo": "Remate de borde de cubierta con goterón.",
+  "descripcion": "Ejecución de alero y remate de borde de cubierta, con perfil de remate y sellado. Incluye la fijación y el sellado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PERFIL-REMATE",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-SELLA-ELAST",
+      "rendimiento": 0.03
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.03
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.14
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

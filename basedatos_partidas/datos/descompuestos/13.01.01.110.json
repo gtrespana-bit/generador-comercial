@@ -1,0 +1,46 @@
+{
+  "codigo": "13.01.01.110",
+  "ambito": "reforma",
+  "capitulo": "13",
+  "subcapitulo": "01",
+  "unidad": "ud",
+  "titulo": "Instalación de electrodoméstico con conexiones.",
+  "descripcion": "Instalación de electrodoméstico empotrado (horno, lavaplatos, etc.) con conexión de agua, desagüe y electricidad según el equipo. Incluye la nivelación y la conexión.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PLO-ABASTO",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-PLO-DESAG",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MT-ELE-CAJA",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MO-OF1-PLO",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.5
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01",
+  "producto_cliente": {
+    "tipo": "Electrodoméstico empotrado, del modelo elegido por el cliente",
+    "unidad": "ud",
+    "consumo": 1.0,
+    "nota": "La partida cubre solo la instalación. El equipo se toma del catálogo de productos."
+  }
+}

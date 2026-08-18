@@ -1,0 +1,36 @@
+{
+  "codigo": "06.09.01.070",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "09",
+  "unidad": "m2",
+  "titulo": "Limpieza de fachada con hidrolavado a presión.",
+  "descripcion": "Limpieza de fachada con hidrolavado a presión. Incluye la limpieza por franjas y la protección de carpintería. Medido por metro cuadrado limpiado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-LIMP",
+      "rendimiento": 0.3
+    },
+    {
+      "ref": "MQ-HIDROLAV",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

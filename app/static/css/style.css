@@ -985,6 +985,11 @@ body.collapsed .theme-toggle-label,
 .cat-group { margin-bottom: 2px; }
 .subcat-list { display: none; margin: 3px 0 6px 18px; padding-left: 10px; border-left: 1.5px solid var(--border); flex-direction: column; gap: 1px; }
 .cat-group.expanded .subcat-list { display: flex; }
+/* Árbol del catálogo como <details>: contraído por defecto, se abre bajo demanda. */
+.cat-group > summary { list-style: none; }
+.cat-group > summary::-webkit-details-marker { display: none; }
+.cat-group[open] .subcat-list { display: flex; }
+.cat-group[open] .cat-arrow { transform: rotate(90deg); }
 .subcat-btn {
   display: flex; align-items: center; justify-content: space-between; gap: .4rem; width: 100%;
   padding: 5px 8px; border-radius: 7px; border: 1px solid transparent; background: transparent;
@@ -1047,6 +1052,7 @@ body.collapsed .theme-toggle-label,
 .subcat-toggle { font-size: .60rem; color: var(--text-muted); width: 16px; text-align: center; transition: transform .15s; flex-shrink: 0; }
 .subcat-section.collapsed .subcat-toggle { transform: rotate(-90deg); }
 .subcat-section.collapsed .subcat-body { display: none; }
+.subcat-placeholder { padding: 1rem 1.2rem; color: var(--text-muted); font-size: .8rem; }
 .subcat-label { font-size: .78rem; font-weight: 700; color: var(--text-secondary); letter-spacing: .02em; text-transform: uppercase; }
 .subcat-count-badge { font-size: .70rem; background: var(--surface); border: 1px solid var(--border); padding: 1px 7px; border-radius: 999px; color: var(--text-soft); font-weight: 700; }
 .subcat-hint { font-size: .73rem; color: var(--text-muted); margin-left: .3rem; }
@@ -2255,7 +2261,7 @@ body.modal-open { overflow: hidden; }
 
 
 /* ==========================================================================
-   CYPE DESCOMPUESTOS
+   Descompuestos (importación de matriz)
    ========================================================================== */
 .cype-partida-summary {
   display: flex;

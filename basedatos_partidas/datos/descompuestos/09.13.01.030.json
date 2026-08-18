@@ -1,0 +1,36 @@
+{
+  "codigo": "09.13.01.030",
+  "ambito": "reforma",
+  "capitulo": "09",
+  "subcapitulo": "13",
+  "unidad": "m2",
+  "titulo": "Malla captadora de cubierta para protección contra rayos.",
+  "descripcion": "Ejecución de malla captadora sobre cubierta (jaula de Faraday), con conductor de cobre desnudo formando retícula y sus soportes de fijación. Incluye el replanteo de la retícula según la clase de protección requerida, la fijación de los soportes sin perforar la impermeabilización, el tendido del conductor con las uniones soldadas o amordazadas y la conexión a las bajantes en los puntos previstos. Medido por metro cuadrado de cubierta protegida.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CABLE-COBRE-DESN",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MT-PLO-SOP",
+      "rendimiento": 0.8
+    },
+    {
+      "ref": "MQ-ANDAMIO",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-ELE",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.08
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

@@ -1,0 +1,24 @@
+{
+  "codigo": "17.06.01.020",
+  "ambito": "reforma",
+  "capitulo": "17",
+  "subcapitulo": "06",
+  "unidad": "ud",
+  "titulo": "Extintor de CO2 para cuadro eléctrico.",
+  "descripcion": "Suministro y colocación de extintor de CO2 junto al cuadro eléctrico de obra.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-EXTINTOR",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.1
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

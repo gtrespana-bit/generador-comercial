@@ -1,0 +1,36 @@
+{
+  "codigo": "10.09.02.050",
+  "ambito": "reforma",
+  "capitulo": "10",
+  "subcapitulo": "09",
+  "unidad": "m2",
+  "titulo": "Tratamiento de humedad por condensación.",
+  "descripcion": "Tratamiento de humedad por condensación, con saneado y revestimiento antihumedad. Incluye la limpieza y la aplicación del tratamiento. Medido por metro cuadrado tratado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-HIDROFUGO",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MT-FUNGICIDA",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.08
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "02"
+}

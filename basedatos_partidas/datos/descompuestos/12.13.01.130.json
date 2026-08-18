@@ -1,0 +1,32 @@
+{
+  "codigo": "12.13.01.130",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "13",
+  "unidad": "m2",
+  "titulo": "Sellado de piso de concreto.",
+  "descripcion": "Sellado de piso de concreto con sellador acrílico o de poliuretano, para protección y realce. Incluye la limpieza y la aplicación del sellador. Medido por metro cuadrado sellado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-SELLA-CONC",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.05
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

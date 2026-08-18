@@ -1,0 +1,36 @@
+{
+  "codigo": "02.08.01.080",
+  "ambito": "reforma",
+  "capitulo": "02",
+  "subcapitulo": "08",
+  "unidad": "m2",
+  "titulo": "Retiro de aislamiento de tubería.",
+  "descripcion": "Retiro de coquilla aislante de tubería. Incluye la retirada de la coquilla. Medido por metro lineal retirado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONS-DEM",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MT-SAC-ESC",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.2
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

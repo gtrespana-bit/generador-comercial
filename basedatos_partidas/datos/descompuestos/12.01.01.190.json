@@ -1,0 +1,32 @@
+{
+  "codigo": "12.01.01.190",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "01",
+  "unidad": "m",
+  "titulo": "Reparación de esquina con cantonera.",
+  "descripcion": "Reparación de esquina o arista de paramento con colocación de cantonera metálica y acabado con mortero o pasta. Incluye la fijación de la cantonera y el remate. Medido por metro lineal de esquina reparada.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MALLA-ESQ",
+      "rendimiento": 1.05
+    },
+    {
+      "ref": "MT-MORT-REP-EST",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.08
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

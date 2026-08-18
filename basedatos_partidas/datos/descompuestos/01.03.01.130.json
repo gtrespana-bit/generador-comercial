@@ -1,0 +1,32 @@
+{
+  "codigo": "01.03.01.130",
+  "ambito": "reforma",
+  "capitulo": "01",
+  "subcapitulo": "03",
+  "unidad": "m",
+  "titulo": "Protección de baranda o pasamanos existente.",
+  "descripcion": "Protección de baranda o pasamanos existente. Incluye el forrado con lámina. Medido por metro lineal protegido.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PROT-PLAST",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MT-CINTA-ENM",
+      "rendimiento": 0.15
+    },
+    {
+      "ref": "MO-AYU-ESP",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.1
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

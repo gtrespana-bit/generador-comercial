@@ -1,0 +1,36 @@
+{
+  "codigo": "10.05.01.180",
+  "ambito": "reforma",
+  "capitulo": "10",
+  "subcapitulo": "05",
+  "unidad": "m2",
+  "titulo": "Impermeabilización de área de piscina de spa.",
+  "descripcion": "Impermeabilización de área de piscina o spa, previa al enchapado. Incluye la preparación y la aplicación de la membrana. Medido por metro cuadrado impermeabilizado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MORT-IMPER",
+      "rendimiento": 4.0
+    },
+    {
+      "ref": "MT-MALLA-JUNTA",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MQ-BATID",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.28
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

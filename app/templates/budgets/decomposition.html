@@ -5,7 +5,7 @@
   <div>
     <p class="crumb">📄 <a href="/presupuestos">Presupuestos</a> › <a href="/presupuestos/{{ p.id }}">{{ p.numero }}</a> › Descompuesto</p>
     <h1>{% if d.codigo %}{{ d.codigo }} · {% endif %}{{ part.nombre }}</h1>
-    <p class="subtitle">{% if d.origen == 'manual' %}Descomposición de costes de la partida, fila a fila.{% else %}Matriz CYPE conservada fila a fila y columna a columna.{% endif %}</p>
+    <p class="subtitle">{% if d.origen == 'manual' %}Descomposición de costes de la partida, fila a fila.{% else %}Matriz de descompuesto conservada fila a fila y columna a columna.{% endif %}</p>
   </div>
   <div class="actions">
     {% if d.archivo_origen %}<a class="btn btn-primary" href="{{ d.archivo_origen | archivo_url(true) }}" download>⬇ Descargar Excel original</a>{% endif %}
@@ -16,7 +16,7 @@
 <div class="card">
   <div class="form-grid">
     <div><h2>Datos de la partida</h2><p><strong>Código:</strong> {{ d.codigo or '—' }}</p><p><strong>Unidad:</strong> {{ d.unidad or part.unidad }}</p>{% if d.nombre_hoja %}<p><strong>Hoja:</strong> {{ d.nombre_hoja }}</p>{% endif %}</div>
-    <div><h2>{% if d.origen == 'manual' %}Coste directo{% else %}Coste directo CYPE{% endif %}</h2><p class="csp-s-66804cc396" id="cype-coste-directo">{{ d.coste_directo_unitario | money(p.moneda) }} / {{ d.unidad or part.unidad }}</p><div class="cype-costs"><span>Materiales: <strong id="cype-costo-materiales">{{ part.coste_materiales | money(p.moneda) }}</strong></span><span>Mano de obra: <strong id="cype-costo-mano-obra">{{ part.coste_mano_obra | money(p.moneda) }}</strong></span><span>Directos complementarios: <strong id="cype-costo-complementarios">{{ part.coste_complementarios | money(p.moneda) }}</strong></span><span>Otros: <strong id="cype-costo-otros">{{ part.coste_otros | money(p.moneda) }}</strong></span></div><p class="hint">Este valor es el coste interno unitario usado en los cálculos de la partida.</p></div>
+    <div><h2>{% if d.origen == 'manual' %}Coste directo{% else %}Coste directo del descompuesto{% endif %}</h2><p class="csp-s-66804cc396" id="cype-coste-directo">{{ d.coste_directo_unitario | money(p.moneda) }} / {{ d.unidad or part.unidad }}</p><div class="cype-costs"><span>Materiales: <strong id="cype-costo-materiales">{{ part.coste_materiales | money(p.moneda) }}</strong></span><span>Mano de obra: <strong id="cype-costo-mano-obra">{{ part.coste_mano_obra | money(p.moneda) }}</strong></span><span>Directos complementarios: <strong id="cype-costo-complementarios">{{ part.coste_complementarios | money(p.moneda) }}</strong></span><span>Otros: <strong id="cype-costo-otros">{{ part.coste_otros | money(p.moneda) }}</strong></span></div><p class="hint">Este valor es el coste interno unitario usado en los cálculos de la partida.</p></div>
     <div><h2>{% if d.origen == 'manual' %}Detalle{% else %}Conservación de origen{% endif %}</h2>{% if d.rango_original %}<p><strong>Rango:</strong> {{ d.rango_original }}</p>{% endif %}<p><strong>{{ d.filas | length }}</strong> filas físicas{% if d.columnas %} · <strong>{{ d.columnas | length }}</strong> columnas{% endif %}</p><p class="hint">{% if d.origen == 'manual' %}Descomposición creada o editada dentro del generador de presupuestos.{% else %}Se guardan los valores mostrados, fórmulas, rangos combinados y el .xlsx original.{% endif %}</p></div>
     <div>
       <h2>⏱ Tiempo por unidad</h2>

@@ -1,0 +1,36 @@
+{
+  "codigo": "12.10.01.070",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "10",
+  "unidad": "m2",
+  "titulo": "Pintura semibrillo lavable de alto tránsito.",
+  "descripcion": "Aplicación de pintura de caucho semibrillo lavable en paramentos de alto tránsito, pasillos y áreas de servicio, con dos manos. Incluye la preparación del soporte y las dos manos de acabado semibrillo. Medido por metro cuadrado pintado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PIN-SEMIBRILLO",
+      "rendimiento": 0.26
+    },
+    {
+      "ref": "MT-PIN-LIJA",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.14
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.09
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

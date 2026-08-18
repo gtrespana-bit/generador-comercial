@@ -1,0 +1,40 @@
+{
+  "codigo": "06.06.01.090",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "06",
+  "unidad": "m",
+  "titulo": "Brocal o antepecho de ventana de concreto.",
+  "descripcion": "Ejecución de brocal o antepecho de ventana de concreto. Incluye el encofrado y el vaciado. Medido por metro lineal ejecutado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-CONC-210",
+      "rendimiento": 0.015
+    },
+    {
+      "ref": "MT-ACERO-CAB",
+      "rendimiento": 1.0
+    },
+    {
+      "ref": "MT-FORM-MADERA",
+      "rendimiento": 0.25
+    },
+    {
+      "ref": "MQ-MEZCL",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.6
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.4
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

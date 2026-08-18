@@ -1,0 +1,36 @@
+{
+  "codigo": "11.04.01.060",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "04",
+  "unidad": "m²",
+  "titulo": "Cubierta de lámina metálica prepintada.",
+  "descripcion": "Cubierta de lámina metálica acanalada prepintada sobre correas, atornillada con solapes y remates laterales. Incluye el replanteo y la fijación.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-LAMINA-ZINC",
+      "rendimiento": 1.08
+    },
+    {
+      "ref": "MT-TORN-TECHO",
+      "rendimiento": 5.0
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-MON",
+      "rendimiento": 0.28
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.22
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

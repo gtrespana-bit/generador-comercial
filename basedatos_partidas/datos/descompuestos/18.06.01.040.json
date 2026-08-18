@@ -1,0 +1,40 @@
+{
+  "codigo": "18.06.01.040",
+  "ambito": "reforma",
+  "capitulo": "18",
+  "subcapitulo": "06",
+  "unidad": "m²",
+  "titulo": "Pérgola de sombreado exterior.",
+  "descripcion": "Ejecución de pérgola de sombreado exterior, para proteger del sol las zonas acristaladas.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MADERA-PERGOLA",
+      "rendimiento": 2.0
+    },
+    {
+      "ref": "MT-PRESERV-MAD",
+      "rendimiento": 0.04
+    },
+    {
+      "ref": "MT-PERNO-ANCLA",
+      "rendimiento": 1.5
+    },
+    {
+      "ref": "MQ-TALADRO",
+      "rendimiento": 0.12
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 0.8
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.64
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

@@ -1,0 +1,32 @@
+{
+  "codigo": "11.01.01.130",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "01",
+  "unidad": "m²",
+  "titulo": "Capa de mortero de protección de aislamiento.",
+  "descripcion": "Capa de mortero de protección sobre el aislamiento térmico de cubierta, previa a la impermeabilización, para dar soporte y continuidad. Incluye el extendido y fratasado.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MOR-FRISO",
+      "rendimiento": 0.03
+    },
+    {
+      "ref": "MQ-MEZCL",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.28
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.22
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

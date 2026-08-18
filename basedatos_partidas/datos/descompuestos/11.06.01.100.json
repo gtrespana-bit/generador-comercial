@@ -1,0 +1,36 @@
+{
+  "codigo": "11.06.01.100",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "06",
+  "unidad": "m²",
+  "titulo": "Pintura de protección de estructura de techo.",
+  "descripcion": "Aplicación de pintura anticorrosiva sobre estructura metálica de techo, con limpieza previa y dos manos. Incluye la preparación de la superficie.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PINT-ANTICORR",
+      "rendimiento": 0.18
+    },
+    {
+      "ref": "MT-PIN-LIJA",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-RODILLO",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.16
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

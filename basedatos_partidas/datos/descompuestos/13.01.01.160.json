@@ -1,0 +1,40 @@
+{
+  "codigo": "13.01.01.160",
+  "ambito": "reforma",
+  "capitulo": "13",
+  "subcapitulo": "01",
+  "unidad": "m",
+  "titulo": "Tapa de mesón de cocina a medida.",
+  "descripcion": "Fabricación y colocación de tapa de mesón de cocina en madera o melamina, con cantos aplicados. Incluye el despiece y la fijación.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-MELAMINA",
+      "rendimiento": 1.2
+    },
+    {
+      "ref": "MT-TORN",
+      "rendimiento": 10.0
+    },
+    {
+      "ref": "MQ-SIERRA",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MQ-ATORN",
+      "rendimiento": 0.2
+    },
+    {
+      "ref": "MO-OF1-CARPM",
+      "rendimiento": 1.2
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.6
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

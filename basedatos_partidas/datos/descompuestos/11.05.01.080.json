@@ -1,0 +1,36 @@
+{
+  "codigo": "11.05.01.080",
+  "ambito": "reforma",
+  "capitulo": "11",
+  "subcapitulo": "05",
+  "unidad": "m²",
+  "titulo": "Estructura ligera de apoyo para cubierta translúcida.",
+  "descripcion": "Estructura metálica ligera de perfiles para apoyo de cubierta translúcida, con pintura anticorrosiva y fijaciones. Incluye el armado y el montaje.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-PERFIL-ACERO",
+      "rendimiento": 2.5
+    },
+    {
+      "ref": "MT-PINT-ANTICORR",
+      "rendimiento": 0.05
+    },
+    {
+      "ref": "MQ-SOLDADORA",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-SOLD",
+      "rendimiento": 0.5
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.4
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}

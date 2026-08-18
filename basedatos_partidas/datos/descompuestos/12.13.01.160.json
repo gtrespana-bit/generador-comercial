@@ -1,0 +1,36 @@
+{
+  "codigo": "12.13.01.160",
+  "ambito": "reforma",
+  "capitulo": "12",
+  "subcapitulo": "13",
+  "unidad": "m2",
+  "titulo": "Recubrimiento de poliuretano cementoso.",
+  "descripcion": "Aplicación de recubrimiento de poliuretano cementoso sobre piso, resistente a la abrasión. Incluye la preparación y la aplicación del recubrimiento. Medido por metro cuadrado recubierto.",
+  "margen": 0.3,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-POLIURETANO-PISO",
+      "rendimiento": 0.8
+    },
+    {
+      "ref": "MT-PUENTE-ADH",
+      "rendimiento": 0.1
+    },
+    {
+      "ref": "MQ-LIJAD",
+      "rendimiento": 0.08
+    },
+    {
+      "ref": "MO-OF1-PIN",
+      "rendimiento": 0.4
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.18
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "",
+  "apartado": "01"
+}
