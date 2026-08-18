@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Comprar {{ plan_ficha.nombre }} · {{ product_name }}</title>
+  <link rel="icon" type="image/png" href="/static/icono.png">
+  <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}">
+</head>
+<body class="landing compra-page">
+<nav class="nav">
+  <a class="brand" href="/">
+    <span class="mark">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M7 3.5h6.5L18 8v11a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 19V5a1.5 1.5 0 0 1 1-1.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+        <path d="M13.5 3.5V8H18" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+        <path d="M9 14.5l2 2 4-4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </span>
+    {{ product_name }}
+  </a>
+  <div class="nav-links">
+    <a class="entrar" href="/inicio">Mi panel</a>
+  </div>
+</nav>
+
+<main class="compra-main">
+  <header class="compra-head">
+    <span class="section-kicker">Checkout</span>
+    <h1>Comprar {{ plan_ficha.nombre }}</h1>
+  </header>
+
+  {% if error %}<div class="demo-error" role="alert"><strong>{{ error }}</strong></div>{% endif %}
+
+  <form method="POST" action="/pago/comprar" enctype="multipart/form-data" class="compra-form">
+    <input type="hidden" name="plan" value="{{ plan }}">
+
+    <section class="compra-resumen">
+      <div class="compra-plan">
+        <span class="etiqueta">{{ plan_ficha.etiqueta }}</span>
+        <h2>{{ plan_ficha.nombre }}</h2>
+        <div class="cifra">{{ "%.2f"|format(plan_ficha.importe) }} US$ <small>{% if plan == 'anual' %}/ año{% else %}/ mes{% endif %}</small></div>
+        <ul>
+          {% for ventaja in plan_ficha.ventajas %}
+          <li><span class="check">✓</span> {{ ventaja }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      <p class="compra-nota">Pago manual: elige el método, paga y sube tu comprobante. Lo revisamos y activamos tu plan.</p>
+    </section>
+
+    <section class="compra-metodos">
+      <h2>1. Elige cómo vas a pagar</h2>
+      <div class="metodo-opciones">
+        {% for clave, metodo in metodos.items() %}
+        <label class="metodo-radio">
+          <input type="radio" name="metodo_pago" value="{{ clave }}" {% if loop.first %}checked{% endif %}>
+          <span class="metodo-card">
+            <span class="metodo-icon" aria-hidden="true">{{ metodo.icono }}</span>
+            <span class="metodo-nombre">{{ metodo.nombre }}</span>
+          </span>
+        </label>
+        {% endfor %}
+      </div>
+    </section>
+
+    {% for clave, metodo in metodos.items() %}
+    <section class="metodo-panel" data-metodo="{{ clave }}" aria-hidden="true">
+      <h2>2. Paga con {{ metodo.nombre }}</h2>
+      <p class="intro">{{ metodo.descripcion }}</p>
+
+      <div class="metodo-datos">
+        {% for etiqueta, valor in metodo.datos %}
+        <div class="dato-pago"><span>{{ etiqueta }}</span><strong>{{ valor }}</strong></div>
+        {% endfor %}
+      </div>
+
+      <h3>Confirma tu pago</h3>
+      <div class="compra-campos">
+        {% for campo, etiqueta, tipo, placeholder in metodo.verificacion %}
+        <div class="compra-campo">
+          <label for="campo-{{ campo }}">{{ etiqueta }}</label>
+          <input type="{{ tipo }}" id="campo-{{ campo }}" name="{{ campo }}"
+                 placeholder="{{ placeholder }}" maxlength="300" data-metodo="{{ clave }}" data-campo>
+        </div>
+        {% endfor %}
+        <div class="compra-campo compra-campo-full">
+          <label for="comprobante-{{ clave }}">Comprobante de pago (imagen o PDF) *</label>
+          <input type="file" id="comprobante-{{ clave }}" name="comprobante"
+                 accept=".png,.jpg,.jpeg,.webp,.pdf,image/png,image/jpeg,image/webp,application/pdf"
+                 data-metodo="{{ clave }}" data-campo>
+        </div>
+      </div>
+    </section>
+    {% endfor %}
+
+    <div class="compra-acciones">
+      <button type="submit" class="btn btn-primary">Registrar mi compra</button>
+      <a class="btn btn-secondary" href="/pago">Volver a planes</a>
+    </div>
+  </form>
+</main>
+
+<footer>
+  <div class="footer-int">
+    <div>© 2026 {{ product_name }} · {{ titular_legal }}</div>
+    <div>
+      <a href="/legal/terminos">Términos</a>
+      <a href="/legal/privacidad">Privacidad</a>
+      <a href="mailto:{{ email_soporte }}">{{ email_soporte }}</a>
+    </div>
+  </div>
+</footer>
+<script nonce="{{ request.state.csp_nonce }}" src="{{ 'js/pago-metodo.js' | asset }}"></script>
+</body>
+</html>

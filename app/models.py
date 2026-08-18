@@ -10,6 +10,7 @@ Estructura de un presupuesto (fiel al formato de referencia):
             └── producto    (opcional) "Producto presupuestado" con imagen
 """
 from datetime import date, datetime, timedelta
+import json
 
 from sqlalchemy import (
     CheckConstraint,
@@ -2332,6 +2333,83 @@ class Licencia(Base):
         """Días que quedan de acceso (0 si ya venció)."""
         hoy = hoy or date.today()
         return max((self.vence - hoy).days, 0)
+
+
+class CompraPlan(TenantMixin, Base):
+    """Compra de un plan registrada por un cliente con su comprobante.
+
+    Es una tabla **tenant**: la compra pertenece a la organización que la
+    pagó (el cliente la ve en su confirmación). El operador del producto la
+    lee a través de una política RLS propia marcada por ``es_operador``, que
+    es la única vía por la que una sesión sin esa organización accede a la
+    fila (ver la migración ``<rev_compras>``).
+
+    El comprobante vive en el almacenamiento privado; aquí solo se guarda la
+    referencia, el nombre original y el MIME para poder reenviarlo por email
+    y mostrarlo en el panel del operador.
+    """
+
+    __tablename__ = "compras_plan"
+    __table_args__ = (
+        CheckConstraint(
+            "plan IN ('anual', 'mensual')",
+            name="ck_compra_plan_valido",
+        ),
+        CheckConstraint(
+            "metodo_pago IN ('pago_movil', 'binance', 'kontigo', 'usdt')",
+            name="ck_compra_metodo_valido",
+        ),
+        CheckConstraint(
+            "estado IN ('pendiente', 'activa', 'rechazada')",
+            name="ck_compra_estado_valido",
+        ),
+        CheckConstraint("importe >= 0", name="ck_compra_importe_no_negativo"),
+        Index("ix_compras_plan_estado", "organizacion_id", "estado", "created_at"),
+    )
+
+    id = Column(Integer, primary_key=True)
+    #: Plan comprado: ``anual`` o ``mensual`` (ver ``app/datos_pago.py``).
+    plan = Column(String(20), nullable=False)
+    metodo_pago = Column(String(30), nullable=False)
+    importe = Column(Float, nullable=False, default=0.0)
+    moneda = Column(String(10), nullable=False, default="USD")
+    #: Datos de verificación según el método (banco, operación, hash, …),
+    #: serializados como JSON. Los devuelve el propio comprador.
+    datos_verificacion = Column(Text, nullable=False, default="{}")
+    #: Referencia del comprobante en el almacenamiento privado.
+    comprobante_reference = Column(String(500), nullable=False, default="")
+    comprobante_nombre = Column(String(255), nullable=False, default="")
+    comprobante_mime = Column(String(150), nullable=False, default="")
+    estado = Column(String(20), nullable=False, default="pendiente")
+    creada_por_usuario_id = Column(
+        Integer, ForeignKey("usuarios.id", ondelete="SET NULL"), nullable=True
+    )
+    creada_por_email = Column(String(254), nullable=False, default="")
+    created_at = Column(DateTime, default=datetime.utcnow)
+    #: Licencia concedida al activar la compra (si se activó).
+    licencia_id = Column(
+        Integer, ForeignKey("licencias.id", ondelete="SET NULL"), nullable=True
+    )
+    revisado_por_email = Column(String(254), nullable=False, default="")
+    revisado_at = Column(DateTime, nullable=True)
+
+    organizacion = relationship("Organizacion")
+    licencia = relationship("Licencia")
+
+    @property
+    def etiqueta_estado(self) -> str:
+        return {
+            "pendiente": "Pendiente",
+            "activa": "Activada",
+            "rechazada": "Rechazada",
+        }.get(self.estado, self.estado)
+
+    def datos_verificacion_dict(self) -> dict:
+        try:
+            datos = json.loads(self.datos_verificacion or "{}")
+        except (TypeError, ValueError):
+            return {}
+        return datos if isinstance(datos, dict) else {}
 
 
 class ContextoOrganizacionError(RuntimeError):

@@ -12,10 +12,11 @@ from migrations.versions import (
     b7c4a9e2d31f_license_cutoff_and_operator_visibility as licenses_access_migration,
     c2f6e8a1d934_public_proposal_links as proposal_links_migration,
     d7f2a9c41e63_fix_invitation_select_policy_on_acceptance as invitation_migration,
+    d6e2f9c4b8a1_catalog_visibility as catalog_visibility_migration,
     e1a4b7c9d2f0_harden_alembic_version_visibility as alembic_migration,
+    e5f2a8d31b6c_add_plan_purchases as head_migration,
     f4c1d8e37a95_add_operator_licenses as licenses_migration,
     f8a1b2c3d4e5_catalog_taxonomy_v2 as taxonomy_migration,
-    d6e2f9c4b8a1_catalog_visibility as head_migration,
 )
 
 
@@ -145,7 +146,8 @@ def test_head_exigido_por_runtime_coincide_con_alembic():
     esquema que la base no tiene todavía (o al revés).
     """
     assert database_module.EXPECTED_ALEMBIC_HEAD == head_migration.revision
-    assert head_migration.down_revision == taxonomy_migration.revision
+    assert head_migration.down_revision == catalog_visibility_migration.revision
+    assert catalog_visibility_migration.down_revision == taxonomy_migration.revision
     assert taxonomy_migration.down_revision == baja_migration.revision
     assert baja_migration.down_revision == proposal_links_migration.revision
     assert proposal_links_migration.down_revision == licenses_access_migration.revision
@@ -164,6 +166,7 @@ def test_migracion_rls_cubre_cada_modelo_tenant():
     assert modelos_tenant == set(migration.TENANT_TABLES) | {
         migration.INVITATION_TABLE,
         proposal_links_migration.TABLE,
+        head_migration.TABLE,
     }
 
 

@@ -1,6 +1,6 @@
 """Rutas públicas: landing, legales, propuestas compartidas y descarga de archivos."""  # E4-001 — router por dominio
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Form, Request
 
 from . import common
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
@@ -129,3 +129,84 @@ def pagina_legal(pagina: str, request: Request):
     if plantilla is None:
         return Response("Página no encontrada.", status_code=404)
     return TEMPLATES.TemplateResponse(request, plantilla, {})
+
+
+# ---------------------------------------------------------------------------
+# Página de planes y métodos de pago
+# ---------------------------------------------------------------------------
+
+@router.get("/pago", response_class=HTMLResponse, include_in_schema=False)
+def pagina_pago(request: Request):
+    """Página pública de planes y métodos de pago."""
+    return TEMPLATES.TemplateResponse(request, "pago.html", {})
+
+
+# ---------------------------------------------------------------------------
+# Solicitud de demostración (formulario público)
+# ---------------------------------------------------------------------------
+
+@router.post("/demo", response_class=RedirectResponse, include_in_schema=False)
+async def solicitar_demo(
+    request: Request,
+    nombre: str = Form(""),
+    email: str = Form(""),
+    empresa: str = Form(""),
+    telefono: str = Form(""),
+    presupuestos_mes: str = Form(""),
+    mensaje: str = Form(""),
+):
+    """Recibe la solicitud de demo desde la landing y notifica al equipo.
+
+    Sin autenticación: es un formulario público. Se envía un correo a
+    soporte vía Resend con los datos. Si el correo no está configurado,
+    la solicitud se pierde silenciosamente (el mailto: sigue como respaldo
+    en la plantilla).
+    """
+    from ..services.email import (
+        EmailNotConfigured,
+        EmailValidationError,
+        enviar_solicitud_demo_por_email,
+    )
+
+    nombre = str(nombre or "").strip()
+    email = str(email or "").strip().lower()
+    empresa = str(empresa or "").strip()
+    telefono = str(telefono or "").strip()
+    presupuestos_mes = str(presupuestos_mes or "").strip()
+    mensaje = str(mensaje or "").strip()
+
+    error = ""
+    if not nombre:
+        error = "Escribe tu nombre."
+    elif not email:
+        error = "Escribe tu correo electrónico."
+    elif not empresa:
+        error = "Escribe el nombre de tu empresa."
+
+    if not error:
+        try:
+            enviar_solicitud_demo_por_email(
+                nombre=nombre,
+                email=email,
+                empresa=empresa,
+                telefono=telefono,
+                presupuestos_mes=presupuestos_mes,
+                mensaje=mensaje,
+            )
+        except (EmailNotConfigured, EmailValidationError) as exc:
+            error = str(exc)
+        except Exception:
+            logger = logging.getLogger("cotizat.publico")
+            logger.exception("Error al enviar solicitud de demo.")
+            error = "Ocurrió un error al enviar tu solicitud. Intenta de nuevo o escríbenos directamente."
+
+    if error:
+        return RedirectResponse(
+            f"/?demo_error={quote(error)}#demo",
+            status_code=303,
+        )
+
+    return RedirectResponse(
+        f"/?demo_enviado={quote(nombre)}#demo",
+        status_code=303,
+    )

@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><title>Nueva compra · {{ product_name }}</title></head>
+<body style="font-family:system-ui,-apple-system,sans-serif;padding:24px;max-width:600px;margin:auto;color:#1a1a2e;">
+  <h2 style="color:#0b3b5c;margin-top:0;">Nueva compra registrada</h2>
+  <table style="width:100%;border-collapse:collapse;margin:16px 0;">
+    <tr><td style="padding:8px 12px;font-weight:600;border-bottom:1px solid #e0e0e0;">Plan</td><td style="padding:8px 12px;border-bottom:1px solid #e0e0e0;">{{ plan_nombre }}</td></tr>
+    <tr><td style="padding:8px 12px;font-weight:600;border-bottom:1px solid #e0e0e0;">Importe</td><td style="padding:8px 12px;border-bottom:1px solid #e0e0e0;">{{ importe_texto }}</td></tr>
+    <tr><td style="padding:8px 12px;font-weight:600;border-bottom:1px solid #e0e0e0;">Método de pago</td><td style="padding:8px 12px;border-bottom:1px solid #e0e0e0;">{{ metodo_nombre }}</td></tr>
+    <tr><td style="padding:8px 12px;font-weight:600;border-bottom:1px solid #e0e0e0;">Organización</td><td style="padding:8px 12px;border-bottom:1px solid #e0e0e0;">{{ organizacion_nombre }}</td></tr>
+    <tr><td style="padding:8px 12px;font-weight:600;border-bottom:1px solid #e0e0e0;">Comprador</td><td style="padding:8px 12px;border-bottom:1px solid #e0e0e0;">{{ nombre }} &lt;{{ email }}&gt;</td></tr>
+  </table>
+  <h3 style="color:#0b3b5c;">Datos de verificación</h3>
+  <table style="width:100%;border-collapse:collapse;margin:8px 0 16px;">
+    {% for etiqueta, valor in verificacion %}
+    <tr><td style="padding:6px 12px;font-weight:600;border-bottom:1px solid #f0f0f0;">{{ etiqueta }}</td><td style="padding:6px 12px;border-bottom:1px solid #f0f0f0;">{{ valor }}</td></tr>
+    {% endfor %}
+  </table>
+  <p style="color:#555;">Comprobante adjunto: <strong>{{ comprobante_nombre }}</strong></p>
+  <hr style="border:none;border-top:1px solid #e0e0e0;margin:24px 0;">
+  <p style="color:#999;font-size:13px;">Revisa la compra en el panel de operador antes de activar la licencia.</p>
+</body>
+</html>

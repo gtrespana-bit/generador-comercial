@@ -211,3 +211,120 @@ def enviar_avisos_web(request: Request, db: Session = Depends(get_operator_db)):
             "/admin/licencias", error=f"No se pudo enviar ningún aviso: {detalle}"
         )
     return _redirect("/admin/licencias", msg="; ".join(partes) + ".")
+
+
+# ---------------------------------------------------------------------------
+# Compras de plan: revisión y activación manual (E1-059)
+# ---------------------------------------------------------------------------
+
+def _render_compras(
+    request: Request,
+    db: Session,
+    *,
+    msg: str = "",
+    error: str = "",
+    status_code: int = 200,
+):
+    from ..services.compras import resumen_compras
+
+    return TEMPLATES.TemplateResponse(
+        request,
+        "admin/compras.html",
+        {
+            "filas": resumen_compras(db),
+            "operador": db.info.get("auth_email", ""),
+            "msg": msg or request.query_params.get("msg", ""),
+            "error": error or request.query_params.get("error", ""),
+        },
+        status_code=status_code,
+        headers={"Cache-Control": "no-store"},
+    )
+
+
+@router.get("/admin/compras", response_class=HTMLResponse, include_in_schema=False)
+def panel_compras(request: Request, db: Session = Depends(get_operator_db)):
+    return _render_compras(request, db)
+
+
+@router.post("/admin/compras/{compra_id}/activar", include_in_schema=False)
+def activar_compra_web(
+    compra_id: int, request: Request, db: Session = Depends(get_operator_db)
+):
+    """Verifica el comprobante y concede la licencia del plan comprado."""
+    from ..services.compras import GestionCompraError, activar_compra
+
+    try:
+        _compra, licencia = activar_compra(
+            db,
+            compra_id=compra_id,
+            operador_email=str(db.info.get("auth_email") or ""),
+        )
+        db.commit()
+    except (GestionCompraError, ValueError) as exc:
+        db.rollback()
+        return _redirect("/admin/compras", error=str(exc))
+    except Exception:
+        db.rollback()
+        log.error("Error activando compra #%s:\n%s", compra_id, traceback.format_exc())
+        raise
+    return _redirect(
+        "/admin/compras",
+        msg=f"Compra #{compra_id} activada · licencia #{licencia.id} concedida.",
+    )
+
+
+@router.post("/admin/compras/{compra_id}/rechazar", include_in_schema=False)
+def rechazar_compra_web(
+    compra_id: int, request: Request, db: Session = Depends(get_operator_db)
+):
+    from ..services.compras import GestionCompraError, rechazar_compra
+
+    try:
+        rechazar_compra(
+            db,
+            compra_id=compra_id,
+            operador_email=str(db.info.get("auth_email") or ""),
+        )
+        db.commit()
+    except (GestionCompraError, ValueError) as exc:
+        db.rollback()
+        return _redirect("/admin/compras", error=str(exc))
+    except Exception:
+        db.rollback()
+        log.error("Error rechazando compra #%s:\n%s", compra_id, traceback.format_exc())
+        raise
+    return _redirect("/admin/compras", msg=f"Compra #{compra_id} rechazada.")
+
+
+@router.get("/admin/compras/{compra_id}/comprobante", include_in_schema=False)
+def comprobante_compra(
+    compra_id: int, request: Request, db: Session = Depends(get_operator_db)
+):
+    """Devuelve el comprobante adjunto de una compra para revisarlo.
+
+    El operador no tiene la organización del comprador activa, así que no
+    puede usar el proxy de tenant ``/archivos/...``; esta ruta lee el objeto
+    directamente del almacenamiento privado con la referencia guardada.
+    """
+    from ..services.compras import (
+        GestionCompraError,
+        _exigir_compra,
+        comprobante_bytes,
+    )
+    from ..storage import StorageError
+
+    try:
+        compra = _exigir_compra(db, compra_id)
+        contenido = comprobante_bytes(compra)
+    except (GestionCompraError, StorageError):
+        return Response("Comprobante no disponible.", status_code=404)
+    nombre = Path(compra.comprobante_nombre or "comprobante").name.replace('"', "")
+    return Response(
+        contenido,
+        media_type=compra.comprobante_mime or "application/octet-stream",
+        headers={
+            "Cache-Control": "private, no-store",
+            "Content-Disposition": f'inline; filename="{quote(nombre)}"',
+            "X-Content-Type-Options": "nosniff",
+        },
+    )

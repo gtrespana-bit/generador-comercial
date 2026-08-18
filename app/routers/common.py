@@ -84,6 +84,7 @@ from ..models import (
     ArchivoAlmacenado,
     Capitulo,
     Cliente,
+    CompraPlan,
     Configuracion,
     Factura,
     FacturaCapitulo,
