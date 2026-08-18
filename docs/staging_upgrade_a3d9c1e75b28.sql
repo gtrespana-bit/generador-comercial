@@ -33,17 +33,17 @@ $guarda$;
 -- Running upgrade c7f1a3b9d425 -> a3d9c1e75b28
 
 CREATE TABLE pruebas_concedidas (
-    id SERIAL NOT NULL, 
-    email_normalizado VARCHAR(254) NOT NULL, 
-    email_original VARCHAR(254) DEFAULT '' NOT NULL, 
-    organizacion_id INTEGER, 
-    licencia_id INTEGER, 
-    ip_hash VARCHAR(64) DEFAULT '' NOT NULL, 
-    dias INTEGER DEFAULT '0' NOT NULL, 
-    created_at TIMESTAMP WITHOUT TIME ZONE, 
-    PRIMARY KEY (id), 
-    FOREIGN KEY(organizacion_id) REFERENCES organizaciones (id) ON DELETE SET NULL, 
-    FOREIGN KEY(licencia_id) REFERENCES licencias (id) ON DELETE SET NULL, 
+    id SERIAL NOT NULL,
+    email_normalizado VARCHAR(254) NOT NULL,
+    email_original VARCHAR(254) DEFAULT '' NOT NULL,
+    organizacion_id INTEGER,
+    licencia_id INTEGER,
+    ip_hash VARCHAR(64) DEFAULT '' NOT NULL,
+    dias INTEGER DEFAULT '0' NOT NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE,
+    PRIMARY KEY (id),
+    FOREIGN KEY(organizacion_id) REFERENCES organizaciones (id) ON DELETE SET NULL,
+    FOREIGN KEY(licencia_id) REFERENCES licencias (id) ON DELETE SET NULL,
     CONSTRAINT uq_prueba_email_normalizado UNIQUE (email_normalizado)
 );
 

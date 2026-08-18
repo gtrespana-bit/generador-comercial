@@ -2375,7 +2375,7 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
   border-radius: 10px;
   background: #eef4ff;
   border: 1px solid #cfe0ff;
-  color: #234; 
+  color: #234;
   font-size: 0.92rem;
   line-height: 1.5;
 }
