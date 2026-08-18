@@ -8,7 +8,43 @@
   </div>
 </div>
 
+{% if licencia is defined %}
+<div class="card">
+  <h2>Tu plan</h2>
+  {% if licencia.activo %}
+  <div class="plan-activo">
+    <div class="plan-activo-badge">✓</div>
+    <div>
+      <strong>{{ licencia.plan_label }}</strong> activo
+      <span class="subtitle">
+        Vence el {{ licencia.vence.strftime("%d/%m/%Y") }} · {{ licencia.dias_restantes }} día{{ "s" if licencia.dias_restantes != 1 }} restante{{ "s" if licencia.dias_restantes != 1 }}
+        {% if licencia.metodo_cobro %} · pagado por {{ licencia.metodo_cobro }}{% endif %}
+      </span>
+    </div>
+  </div>
+  {% else %}
+  <div class="plan-sin">
+    <p class="subtitle">No tienes un plan activo.</p>
+    <a class="btn" href="/pago">Ver planes y contratar</a>
+  </div>
+  {% endif %}
+</div>
+{% endif %}
+
 <form method="post" action="/configuracion" enctype="multipart/form-data">
+  {% if not puede_editar %}<div class="notice rol-notice">Solo propietarios y administradores pueden editar la configuración.</div>{% endif %}
+  <fieldset {% if not puede_editar %}disabled{% endif %}>
+  <div class="card">
+    <h2>Tu organización</h2>
+    <p class="subtitle">El nombre de la organización es el que ves en el menú lateral.</p>
+    <div class="form-grid">
+      <div class="field field-full">
+        <label>Nombre de la organización *</label>
+        <input type="text" name="organizacion_nombre" value="{{ org_nombre }}" required maxlength="200" placeholder="p. ej. Reformas Caracas C.A.">
+      </div>
+    </div>
+  </div>
+
   <div class="card">
     <h2>Datos de la empresa</h2>
     <p class="subtitle csp-s-bdf32b3fef">Aparecen en la caja del encabezado del PDF.</p>
@@ -163,6 +199,7 @@
   <div class="form-actions">
     <button class="btn btn-primary" type="submit">💾 Guardar configuración</button>
   </div>
+  </fieldset>
 </form>
 
 <div class="card csp-s-a3c9c5afaa">

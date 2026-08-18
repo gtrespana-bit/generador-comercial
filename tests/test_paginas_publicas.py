@@ -21,9 +21,10 @@ def test_home_es_la_landing_publica():
     """La raíz («/») es la puerta de entrada pública, no el panel de trabajo."""
     r = _get("/")
     assert r.status_code == 200
-    assert "demostración" in r.text
+    assert "presupuesto" in r.text.lower()
     assert "construcción" in r.text.lower()
     assert "/acceso" in r.text  # enlace a iniciar sesión
+    assert "/pago" in r.text  # enlace a la página de planes
 
 
 def test_landing_publica_sin_sesion():
@@ -32,9 +33,9 @@ def test_landing_publica_sin_sesion():
     # Elementos exigidos por E1-056: problema, resultado, público objetivo y
     # llamada a solicitar demostración.
     assert "presupuesto" in r.text.lower()
-    assert "demostración" in r.text
     assert "construcción" in r.text.lower()
     assert "mailto:" in r.text
+    assert "/pago" in r.text
     # Enlaces al paquete legal.
     for enlace in ("/legal/terminos", "/legal/privacidad", "/legal/soporte", "/legal/licencias"):
         assert enlace in r.text, enlace
@@ -173,6 +174,8 @@ def test_condiciones_de_soporte_delimitan_incluido_y_excluido():
         assert incluido in texto, incluido
 
 
+
+
 def test_procedimiento_de_reporte_pide_evidencia_sin_datos_de_clientes():
     """E1-055: reportar con evidencia, pero sin exponer datos de terceros."""
     r = _get("/legal/soporte")
@@ -180,3 +183,55 @@ def test_procedimiento_de_reporte_pide_evidencia_sin_datos_de_clientes():
     assert "reportar un error" in texto
     assert "reproducirlo" in texto
     assert "sin datos personales" in texto
+
+
+# ---------------------------------------------------------------------------
+# Página de planes y métodos de pago
+# ---------------------------------------------------------------------------
+
+
+def test_pagina_pago_responde():
+    """La página /pago carga correctamente sin sesión."""
+    r = _get("/pago")
+    assert r.status_code == 200
+    assert "Pago" in r.text
+    assert "plan" in r.text.lower()
+    # Métodos de pago (la plantilla usa entidades HTML para las tildes)
+    assert "Pago m" in r.text
+    assert "Binance" in r.text
+    assert "Kontigo" in r.text
+    assert "USDT" in r.text
+    # Planes
+    assert "89" in r.text and "109" in r.text
+    assert "9,99" in r.text and "12,99" in r.text
+
+
+def test_pagina_pago_cumple_csp():
+    """La página de pago cumple CSP como el resto."""
+    import re
+    r = _get("/pago")
+    assert "content-security-policy" in r.headers
+    event_attr = re.compile(r"\son(?:click|change|input|submit)\s*=", re.IGNORECASE)
+    assert not event_attr.search(r.text)
+
+
+def test_pagina_pago_tiene_enlace_a_soporte():
+    r = _get("/pago")
+    assert "mailto:" in r.text
+    assert "/legal" in r.text
+    assert "/acceso" in r.text or "Iniciar sesi" in r.text
+
+
+def test_landing_planes_clickeables_a_pagina_de_pago():
+    """Las tarjetas de precios de la home llevan a la página de planes."""
+    r = _get("/")
+    assert 'class="plan destacado" href="/pago"' in r.text
+    assert 'class="plan" href="/pago"' in r.text
+
+
+def test_landing_enlaza_a_pagina_de_pago():
+    """La landing ya no pide demostración: enlaza directamente a planes."""
+    r = _get("/")
+    assert "/pago" in r.text
+    assert "Ver planes" in r.text
+    assert "demostración" not in r.text.lower()

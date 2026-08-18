@@ -55,6 +55,7 @@ from .routers import (  # noqa: E402
     clientes,
     configuracion,
     inicio,
+    pagos,
     partidas,
     plantillas,
     presupuestos,
@@ -419,6 +420,7 @@ def readyz() -> JSONResponse:
 # ---------------------------------------------------------------------------
 app.include_router(auth.router)
 app.include_router(publico.router)
+app.include_router(pagos.router)
 app.include_router(admin.router)
 app.include_router(inicio.router)
 app.include_router(clientes.router)

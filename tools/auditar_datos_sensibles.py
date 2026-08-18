@@ -299,6 +299,28 @@ EXCEPCIONES: dict[tuple[str, str, str], str] = {
         "tucorreo+b@gmail.com",
     ): "Instrucción genérica sobre el truco de subdirecciones de Gmail; "
        "'tucorreo' es un marcador, no una cuenta.",
+    (
+        "app/datos_pago.py",
+        "telefono-venezolano",
+        "0412-6443099",
+    ): "Canal de Pago móvil del titular, publicado deliberadamente en la "
+       "página de pago (E1-059 cobro manual).",
+    (
+        "app/datos_pago.py",
+        "telefono-venezolano",
+        "+58412-3215016",
+    ): "Canal de Kontigo del titular, publicado deliberadamente en la página "
+       "de pago (E1-059 cobro manual).",
+    (
+        "docs/PUNTO_DE_CONTINUACION.md",
+        "telefono-venezolano",
+        "0412-6443099",
+    ): "Documentación del canal de Pago móvil ya publicado en app/datos_pago.py.",
+    (
+        "docs/PUNTO_DE_CONTINUACION.md",
+        "telefono-venezolano",
+        "+58412-3215016",
+    ): "Documentación del canal de Kontigo ya publicado en app/datos_pago.py.",
 }
 
 

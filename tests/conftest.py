@@ -53,6 +53,11 @@ from sqlalchemy import create_engine, event
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
+# Bypass rate limit for /demo in tests (3 → 999)
+from app.security import AuthRateLimitMiddleware
+original_demo_limit = AuthRateLimitMiddleware.DEFAULT_LIMITS.get("/demo", 3)
+AuthRateLimitMiddleware.DEFAULT_LIMITS["/demo"] = 999
+
 from app.database import Base, get_db
 from app.main import app
 from app.models import (

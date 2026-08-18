@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><title>Nueva solicitud de demo · {{ product_name }}</title></head>
+<body style="font-family:system-ui,-apple-system,sans-serif;padding:24px;max-width:600px;margin:auto;color:#1a1a2e;">
+  <h2 style="color:#0b3b5c;margin-top:0;">Nueva solicitud de demostración</h2>
+  <p style="color:#555;">Alguien ha solicitado una demo desde la landing de {{ product_name }}.</p>
+  <table style="width:100%;border-collapse:collapse;margin:16px 0;">
+    <tr><td style="padding:8px 12px;font-weight:600;border-bottom:1px solid #e0e0e0;">Nombre</td><td style="padding:8px 12px;border-bottom:1px solid #e0e0e0;">{{ nombre }}</td></tr>
+    <tr><td style="padding:8px 12px;font-weight:600;border-bottom:1px solid #e0e0e0;">Email</td><td style="padding:8px 12px;border-bottom:1px solid #e0e0e0;"><a href="mailto:{{ email }}">{{ email }}</a></td></tr>
+    <tr><td style="padding:8px 12px;font-weight:600;border-bottom:1px solid #e0e0e0;">Empresa</td><td style="padding:8px 12px;border-bottom:1px solid #e0e0e0;">{{ empresa }}</td></tr>
+    <tr><td style="padding:8px 12px;font-weight:600;border-bottom:1px solid #e0e0e0;">Teléfono</td><td style="padding:8px 12px;border-bottom:1px solid #e0e0e0;">{{ telefono }}</td></tr>
+    <tr><td style="padding:8px 12px;font-weight:600;border-bottom:1px solid #e0e0e0;">Presupuestos al mes</td><td style="padding:8px 12px;border-bottom:1px solid #e0e0e0;">{{ presupuestos_mes }}</td></tr>
+    <tr><td style="padding:8px 12px;font-weight:600;border-bottom:1px solid #e0e0e0;">Mensaje</td><td style="padding:8px 12px;border-bottom:1px solid #e0e0e0;"><pre style="margin:0;white-space:pre-wrap;font-family:inherit;">{{ mensaje }}</pre></td></tr>
+  </table>
+  <hr style="border:none;border-top:1px solid #e0e0e0;margin:24px 0;">
+  <p style="color:#999;font-size:13px;">Este correo se envió automáticamente desde {{ product_name }}.</p>
+</body>
+</html>

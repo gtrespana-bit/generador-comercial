@@ -27,6 +27,7 @@ from app.models import (
     Capitulo,
     CategoriaPartida,
     Cliente,
+    CompraPlan,
     Configuracion,
     DescomposicionFila,
     DescomposicionPartida,
@@ -167,6 +168,17 @@ def _construir_grafo(db, organizacion_id: int) -> dict:
     proyecto.cambios.append(cambio)
     proyecto.pagos.append(Pago(importe=100))
     db.add(proyecto)
+
+    # --- Compra de plan (pago manual) -------------------------------------
+    db.add(CompraPlan(
+        plan="mensual",
+        metodo_pago="usdt",
+        importe=9.99,
+        estado="pendiente",
+        comprobante_reference="storage://x/comprobante.png",
+        comprobante_nombre="comprobante.png",
+        comprobante_mime="image/png",
+    ))
 
     db.commit()
 

@@ -55,6 +55,9 @@ class AuthRateLimitMiddleware:
         # Verifica la contraseña actual: sin límite, una sesión robada podría
         # usarse para adivinarla por fuerza bruta desde el propio panel.
         "/cuenta/clave": 10,
+        # Formulario público de demo: evita que un bot inunde el buzón de
+        # soporte con solicitudes falsas.
+        "/demo": 3,
     }
 
     def __init__(

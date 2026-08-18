@@ -311,6 +311,74 @@ def organizacion_tiene_acceso(
     return licencia_vigente(db, organizacion_id, hoy=hoy) is not None
 
 
+def resumen_licencia_cliente(
+    db: Session, organizacion_id: int, *, hoy: date | None = None
+) -> dict:
+    """Estado del plan visible para la **propia** organización.
+
+    La sesión del cliente no puede leer ``licencias`` (RLS de operador), así
+    que en PostgreSQL se consulta una función SECURITY DEFINER que solo
+    devuelve la fila de la organización del propio claim de sesión. En SQLite
+    (escritorio/pruebas) basta la consulta directa.
+
+    Devuelve ``{activo, plan_label, vence, dias_restantes, metodo_cobro}``.
+    """
+    hoy = hoy or date.today()
+    if db.get_bind().dialect.name == "postgresql":
+        fila = db.execute(
+            text(
+                "SELECT activo, plan_label, vence, dias_restantes, metodo_cobro "
+                "FROM cotizat_security.organization_license_info(:org)"
+            ),
+            {"org": int(organizacion_id)},
+        ).first()
+        if fila is None:
+            return {
+                "activo": False,
+                "plan_label": "",
+                "vence": None,
+                "dias_restantes": 0,
+                "metodo_cobro": "",
+            }
+        return {
+            "activo": bool(fila[0]),
+            "plan_label": str(fila[1] or ""),
+            "vence": fila[2],
+            "dias_restantes": int(fila[3] or 0),
+            "metodo_cobro": str(fila[4] or ""),
+        }
+
+    licencia = licencia_vigente(db, organizacion_id, hoy=hoy)
+    if licencia is None:
+        return {
+            "activo": False,
+            "plan_label": "",
+            "vence": None,
+            "dias_restantes": 0,
+            "metodo_cobro": "",
+        }
+    return {
+        "activo": True,
+        "plan_label": _plan_label_cliente(licencia),
+        "vence": licencia.vence,
+        "dias_restantes": licencia.dias_restantes(hoy),
+        "metodo_cobro": licencia.metodo_cobro,
+    }
+
+
+def _plan_label_cliente(licencia: Licencia) -> str:
+    if licencia.origen == "pago":
+        return {
+            89.0: "Plan anual",
+            9.99: "Plan mensual",
+        }.get(round(licencia.importe, 2), "Plan de pago")
+    return {
+        "prueba": "Prueba",
+        "cortesia": "Cortesía",
+        "compensacion": "Compensación",
+    }.get(licencia.origen, licencia.origen)
+
+
 # ---------------------------------------------------------------------------
 # Avisos de vencimiento por correo (E1-060, segunda parte)
 # ---------------------------------------------------------------------------

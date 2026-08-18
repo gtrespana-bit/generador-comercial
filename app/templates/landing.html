@@ -23,7 +23,7 @@
   </a>
   <div class="nav-links">
     <a class="entrar" href="/acceso">Iniciar sesión</a>
-    <a class="btn btn-primary" href="#demo">Solicitar demostración</a>
+    <a class="btn btn-primary" href="/pago">Ver planes</a>
   </div>
 </nav>
 
@@ -34,7 +34,7 @@
       <h1>Presupuestos de obra <span class="hero-hl">profesionales</span>, en minutos.</h1>
       <p class="sub">{{ product_name }} convierte tu catálogo y tus precios en presupuestos con su <strong>margen de beneficio</strong>, las <strong>horas de tu cuadrilla</strong> y un PDF con tu logo listo para enviar. Sin Excel, sin pegar y copiar.</p>
       <div class="acciones">
-        <a class="btn btn-primary" href="#demo">Solicitar una demostración</a>
+        <a class="btn btn-primary" href="/pago">Ver planes</a>
         <a class="btn btn-secondary" href="/static/pdf/presupuesto-ejemplo.pdf" target="_blank" rel="noopener">Ver un presupuesto de ejemplo (PDF)</a>
       </div>
       <ul class="hero-points">
@@ -707,7 +707,7 @@
   <h2>Precio de lanzamiento</h2>
   <p class="intro">Oferta fundadora para las primeras empresas. El precio contratado se respeta durante todo el período pagado.</p>
   <div class="precios">
-    <div class="plan destacado">
+    <a class="plan destacado" href="/pago">
       <span class="etiqueta">PROMOCIÓN INICIAL</span>
       <h3>Plan anual</h3>
       <div class="cifra">89 US$ <small>/ año</small></div>
@@ -718,8 +718,8 @@
         <li>Soporte directo por email</li>
         <li>Actualizaciones incluidas</li>
       </ul>
-    </div>
-    <div class="plan">
+    </a>
+    <a class="plan" href="/pago">
       <span class="etiqueta">PROMOCIÓN INICIAL</span>
       <h3>Plan mensual</h3>
       <div class="cifra">9,99 US$ <small>/ mes el primer año</small></div>
@@ -729,21 +729,22 @@
         <li>Sin permanencia: cancela cuando quieras</li>
         <li>Soporte directo por email</li>
       </ul>
-    </div>
+    </a>
   </div>
   <div class="nota-honesta">
-    <strong>Honestidad por delante:</strong> {{ product_name }} está en acceso anticipado. Los documentos que genera son documentos comerciales, no facturas fiscales. Antes de cobrarte nada tendrás una demostración con tus propios datos y sabrás exactamente qué recibes.
+    <strong>Honestidad por delante:</strong> {{ product_name }} está en acceso anticipado. Los documentos que genera son documentos comerciales, no facturas fiscales. Antes de cobrarte nada podrás probar el producto con tus propios datos y sabrás exactamente qué recibes.
   </div>
 </section>
 
-<section class="franja cta-final" id="demo">
+<section class="franja cta-final" id="pago">
   <h2>¿Listo para dejar de presupuestar a mano?</h2>
-  <p class="intro">Cuéntanos de tu empresa y te mostramos cómo se vería tu primer presupuesto con tus propios datos. Sin compromiso.</p>
+  <p class="intro">{{ product_name }} convierte tu catálogo, tus precios y tu cuadrilla en presupuestos con tu margen de beneficio, tu tiempo de obra y tu PDF con tu logo. Sin Excel, sin pegar y copiar.</p>
   <div class="acciones mt-3">
-    <a class="btn btn-primary" href="mailto:{{ email_soporte }}?subject=Quiero%20una%20demostraci%C3%B3n%20de%20{{ product_name }}&body=Hola%2C%20me%20interesa%20una%20demostraci%C3%B3n.%0A%0AMi%20empresa%3A%20%0AA%20qu%C3%A9%20nos%20dedicamos%3A%20%0APresupuestos%20al%20mes%20(aprox)%3A%20">Solicitar una demostración gratuita</a>
-    <a class="btn btn-secondary" href="/acceso">Empezar ahora</a>
+    <a class="btn btn-primary" href="/pago">Ver planes y empezar</a>
+    <a class="btn btn-secondary" href="/acceso">Iniciar sesión</a>
   </div>
 </section>
+
 
 <footer>
   <div class="footer-int">

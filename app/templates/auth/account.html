@@ -84,7 +84,9 @@
         </td>
         <td><span class="badge">{{ membresia.rol }}</span></td>
         <td class="right">
-          {% if organizacion_activa_id != membresia.organizacion_id %}
+          {% if organizacion_activa_id == membresia.organizacion_id %}
+          <a class="btn btn-sm" href="/configuracion">Configurar empresa</a>
+          {% else %}
           <form method="post" action="/organizaciones/{{ membresia.organizacion_id }}/seleccionar" class="inline">
             <button class="btn btn-sm" type="submit">Entrar</button>
           </form>

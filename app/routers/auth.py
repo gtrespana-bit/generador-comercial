@@ -334,12 +334,20 @@ def listar_organizaciones_web(
         return _redirect("/inicio")
     usuario = db.get(Usuario, db.info["usuario_id"])
     membresias = membresias_activas(db, usuario.id)
+    cookie = request.cookies.get(ORGANIZATION_COOKIE, "").strip()
+    try:
+        seleccionada = int(cookie) if cookie else None
+    except ValueError:
+        seleccionada = None
+    if seleccionada not in {m.organizacion_id for m in membresias}:
+        seleccionada = membresias[0].organizacion_id if len(membresias) == 1 else None
     return TEMPLATES.TemplateResponse(
         request,
         "auth/organizations.html",
         {
             "usuario": usuario,
             "membresias": membresias,
+            "organizacion_activa_id": seleccionada,
             # Sin esto, quien se registra desde una invitación no encuentra
             # ninguna forma de aceptarla dentro de la aplicación.
             "invitaciones": invitaciones_pendientes_para(db, usuario=usuario),

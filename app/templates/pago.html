@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Planes y m&eacute;todos de pago &middot; {{ product_name }}</title>
+  <meta name="description" content="Planes anuales y mensuales de {{ product_name }}. Aceptamos Pago m&oacute;vil, Binance, Kontigo y USDT. Pago manual, sin suscripci&oacute;n autom&aacute;tica.">
+  <link rel="icon" type="image/png" href="/static/icono.png">
+  <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}">
+</head>
+<body class="landing pago-page">
+<nav class="nav">
+  <a class="brand" href="/">
+    <span class="mark">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M7 3.5h6.5L18 8v11a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 19V5a1.5 1.5 0 0 1 1-1.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+        <path d="M13.5 3.5V8H18" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+        <path d="M9 14.5l2 2 4-4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </span>
+    {{ product_name }}
+  </a>
+  <div class="nav-links">
+    <a class="entrar" href="/acceso">Iniciar sesi&oacute;n</a>
+    <a class="btn btn-primary" href="/acceso">Crear cuenta</a>
+  </div>
+</nav>
+
+<header class="pago-hero">
+  <div class="pago-hero-int">
+    <span class="section-kicker">Planes</span>
+    <h1>Elige el plan que mejor se ajuste a tu empresa</h1>
+    <p class="sub">Pago manual, sin suscripci&oacute;n autom&aacute;tica. Pagas y usas. As&iacute; de simple.</p>
+  </div>
+</header>
+
+<section class="pago-planes">
+  <div class="precios">
+    <div class="plan destacado">
+      <span class="etiqueta">M&Aacute;S AHORRO</span>
+      <h3>Plan anual</h3>
+      <div class="cifra">89 US$ <small>/ a&ntilde;o</small></div>
+      <p><span class="antes">109 US$ / a&ntilde;o</span> &mdash; precio habitual</p>
+      <ul>
+        <li>Todas las funciones incluidas</li>
+        <li>Configuraci&oacute;n asistida de tu empresa y cat&aacute;logo</li>
+        <li>Soporte directo por email</li>
+        <li>Actualizaciones incluidas</li>
+      </ul>
+      <a class="btn btn-primary" href="/pago/comprar?plan=anual">Contratar plan anual</a>
+    </div>
+    <div class="plan">
+      <span class="etiqueta">SIN PERMANENCIA</span>
+      <h3>Plan mensual</h3>
+      <div class="cifra">9,99 US$ <small>/ mes el primer a&ntilde;o</small></div>
+      <p><span class="antes">12,99 US$ / mes</span> &mdash; precio habitual</p>
+      <ul>
+        <li>Todas las funciones incluidas</li>
+        <li>Sin permanencia: cancela cuando quieras</li>
+        <li>Soporte directo por email</li>
+      </ul>
+      <a class="btn btn-primary" href="/pago/comprar?plan=mensual">Contratar plan mensual</a>
+    </div>
+  </div>
+</section>
+
+<section class="pago-metodos">
+  <h2>M&eacute;todos de pago aceptados</h2>
+  <p class="intro">Elige el que te sea m&aacute;s c&oacute;modo. Todos son procesados manualmente: despu&eacute;s de contactarnos recibir&aacute;s las instrucciones para pagar.</p>
+  <div class="metodos-grid">
+    <article class="metodo">
+      <div class="metodo-icon" aria-hidden="true">📱</div>
+      <h3>Pago m&oacute;vil</h3>
+      <p>Transferencia desde cualquier banco venezolano usando solo el n&uacute;mero de tel&eacute;fono. R&aacute;pido y sin comisiones.</p>
+    </article>
+    <article class="metodo">
+      <div class="metodo-icon" aria-hidden="true">₿</div>
+      <h3>Binance</h3>
+      <p>Transferencia de criptomonedas v&iacute;a ID de Binance. Aceptamos USDT (BEP-20 / TRC-20).</p>
+    </article>
+    <article class="metodo">
+      <div class="metodo-icon" aria-hidden="true">💳</div>
+      <h3>Kontigo</h3>
+      <p>Billetera digital venezolana. Recarga y paga desde la aplicaci&oacute;n Kontigo al instante.</p>
+    </article>
+    <article class="metodo">
+      <div class="metodo-icon" aria-hidden="true">🪙</div>
+      <h3>USDT (BEP-20 / TRC-20)</h3>
+      <p>Transferencia directa de USDT a nuestra wallet, en las redes BEP-20 de Binance Smart Chain o TRC-20 de Tron.</p>
+    </article>
+  </div>
+</section>
+
+<section class="pago-como-funciona">
+  <h2>C&oacute;mo funciona</h2>
+  <ol class="pasos">
+    <li>
+      <strong>Elige tu plan</strong>
+      <span>Anual o mensual, el que mejor se ajuste a tu flujo de trabajo.</span>
+    </li>
+    <li>
+      <strong>Haz clic en el plan</strong>
+      <span>Entra al checkout, elige el m&eacute;todo y paga con los datos que ver&aacute;s en pantalla.</span>
+    </li>
+    <li>
+      <strong>Sube tu comprobante</strong>
+      <span>Adjunta la imagen o PDF del pago. Queda registrado junto con tu compra.</span>
+    </li>
+    <li>
+      <strong>Activamos tu licencia</strong>
+      <span>Verificamos tu pago y activamos tu plan en m&aacute;ximo 48 horas h&aacute;biles.</span>
+    </li>
+  </ol>
+</section>
+
+<section class="pago-dudas">
+  <h2>&iquest;Tienes dudas?</h2>
+  <p class="intro">Escr&iacute;benos a <a href="mailto:{{ email_soporte }}">{{ email_soporte }}</a> y te ayudamos a elegir lo mejor para tu empresa.</p>
+  <div class="acciones mt-3">
+    <a class="btn btn-primary" href="mailto:{{ email_soporte }}">Escribir a soporte</a>
+    <a class="btn btn-secondary" href="/">Volver a la p&aacute;gina principal</a>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-int">
+    <div>&copy; 2026 {{ product_name }} &middot; {{ titular_legal }}</div>
+    <div>
+      <a href="/legal/preguntas">Preguntas frecuentes</a>
+      <a href="/legal/terminos">T&eacute;rminos</a>
+      <a href="/legal/privacidad">Privacidad</a>
+      <a href="/legal/licencias">Licencias</a>
+      <a href="mailto:{{ email_soporte }}">{{ email_soporte }}</a>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

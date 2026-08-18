@@ -47,7 +47,13 @@
         <strong>{{ membresia.organizacion.nombre }}</strong>
         <div><span class="role-badge">{{ membresia.rol }}</span></div>
       </div>
-      <form action="/organizaciones/{{ membresia.organizacion_id }}/seleccionar" method="post"><button class="btn btn-primary" type="submit">Entrar</button></form>
+      <div class="org-actions">
+        {% if organizacion_activa_id == membresia.organizacion_id %}
+        <a class="btn" href="/configuracion">Configurar empresa</a>
+        {% else %}
+        <form action="/organizaciones/{{ membresia.organizacion_id }}/seleccionar" method="post"><button class="btn btn-primary" type="submit">Entrar</button></form>
+        {% endif %}
+      </div>
     </div>
     {% else %}
       {% if not invitaciones %}<div class="empty"><p>Aún no perteneces a ninguna organización.</p></div>{% endif %}

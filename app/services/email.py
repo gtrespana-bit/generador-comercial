@@ -418,6 +418,193 @@ def enviar_aviso_licencia(
     return envio_id
 
 
+def enviar_solicitud_demo_por_email(
+    *,
+    nombre: str,
+    email: str,
+    empresa: str,
+    telefono: str = "",
+    presupuestos_mes: str = "",
+    mensaje: str = "",
+) -> str:
+    """Notifica al equipo de soporte sobre una nueva solicitud de demo.
+
+    El formulario de la landing pública es la única fuente. Se envía a
+    ``SUPPORT_EMAIL`` (configurable vía ``COTIZAT_SUPPORT_EMAIL``). Si el
+    correo no está configurado, la solicitud se pierde silenciosamente; no
+    es bloqueante porque la landing siempre puede caer en un mailto como
+    respaldo.
+
+    Devuelve el id de Resend o ``""`` si no se pudo enviar.
+    """
+    from ..branding import PRODUCT_NAME, SUPPORT_EMAIL
+
+    nombre = str(nombre or "").strip()
+    email = str(email or "").strip().lower()
+    empresa = str(empresa or "").strip()
+    telefono = str(telefono or "").strip()
+    presupuestos_mes = str(presupuestos_mes or "").strip()
+    mensaje = str(mensaje or "").strip()
+
+    if not nombre or not email or not email_destino_valido(email):
+        raise EmailValidationError("Nombre y email válido son obligatorios.")
+    if len(nombre) > 200:
+        raise EmailValidationError("El nombre es demasiado largo.")
+    if len(empresa) > 200:
+        raise EmailValidationError("El nombre de la empresa es demasiado largo.")
+    if len(mensaje) > 5000:
+        raise EmailValidationError("El mensaje es demasiado largo.")
+
+    destino = _env("COTIZAT_DEMO_DESTINO") or SUPPORT_EMAIL
+    if not destino:
+        raise EmailNotConfigured("No hay dirección de destino para la solicitud de demo.")
+
+    try:
+        settings = EmailSettings.from_environment()
+    except EmailNotConfigured:
+        logger.warning(
+            "Solicitud de demo ignorada: correo no configurado "
+            "(RESEND_API_KEY / COTIZAT_EMAIL_FROM)."
+        )
+        return ""
+
+    contexto = {
+        "product_name": PRODUCT_NAME,
+        "nombre": nombre,
+        "email": email,
+        "empresa": empresa,
+        "telefono": telefono,
+        "presupuestos_mes": presupuestos_mes,
+        "mensaje": mensaje,
+    }
+    asunto = f"Nueva solicitud de demo: {nombre} ({empresa or email})"[:200]
+    try:
+        html = _jinja.get_template("emails/demo.html").render(**contexto)
+    except Exception:
+        html = (
+            "<h2>Nueva solicitud de demo</h2>"
+            f"<p><strong>Nombre:</strong> {nombre}</p>"
+            f"<p><strong>Email:</strong> {email}</p>"
+            f"<p><strong>Empresa:</strong> {empresa}</p>"
+        )
+    try:
+        texto = _jinja.get_template("emails/demo.txt").render(**contexto)
+    except Exception:
+        texto = f"Nueva solicitud de demo: {nombre} ({empresa or email})"
+
+    try:
+        envio_id = _post_resend(
+            settings,
+            to=destino,
+            subject=asunto,
+            html=html,
+            text=texto,
+            reply_to=email,
+        )
+    except EmailSendError as exc:
+        logger.warning("No se pudo enviar la solicitud de demo (%s).", exc)
+        return ""
+    logger.info("Solicitud de demo de %s enviada (id %s).", email, envio_id)
+    return envio_id
+
+
+def enviar_compra_por_email(
+    *,
+    nombre: str,
+    email: str,
+    organizacion_nombre: str,
+    plan_nombre: str,
+    importe_texto: str,
+    metodo_nombre: str,
+    verificacion: dict,
+    comprobante_nombre: str,
+    comprobante_bytes: bytes,
+) -> str:
+    """Notifica al titular una compra nueva con su comprobante adjunto.
+
+    Devuelve el id de Resend o ``""`` si el correo no está configurado o el
+    envío falla (la compra ya está guardada en la base; el email es el aviso,
+    no la fuente de verdad). El operador verá la misma información en el
+    panel ``/admin/compras``.
+    """
+    from ..branding import PRODUCT_NAME, SUPPORT_EMAIL
+
+    destino = _env("COTIZAT_DEMO_DESTINO") or SUPPORT_EMAIL
+    if not destino:
+        raise EmailNotConfigured(
+            "No hay dirección de destino para notificar la compra."
+        )
+    try:
+        settings = EmailSettings.from_environment()
+    except EmailNotConfigured:
+        logger.warning(
+            "Compra sin notificar: correo no configurado "
+            "(RESEND_API_KEY / COTIZAT_EMAIL_FROM)."
+        )
+        return ""
+
+    filas = []
+    for clave, etiqueta in _CAMPOS_VERIFICACION_ETIQUETA.items():
+        valor = str(verificacion.get(clave) or "").strip()
+        if valor:
+            filas.append((etiqueta, valor))
+    contexto = {
+        "product_name": PRODUCT_NAME,
+        "nombre": str(nombre or "").strip(),
+        "email": str(email or "").strip(),
+        "organizacion_nombre": str(organizacion_nombre or "").strip(),
+        "plan_nombre": str(plan_nombre or "").strip(),
+        "importe_texto": str(importe_texto or "").strip(),
+        "metodo_nombre": str(metodo_nombre or "").strip(),
+        "verificacion": filas,
+        "comprobante_nombre": str(comprobante_nombre or "comprobante"),
+    }
+    asunto = (
+        f"Nueva compra: {plan_nombre} · {metodo_nombre} · "
+        f"{organizacion_nombre or email}"
+    )[:200]
+    try:
+        html = _jinja.get_template("emails/compra.html").render(**contexto)
+        texto = _jinja.get_template("emails/compra.txt").render(**contexto)
+    except Exception:
+        html = (
+            "<h2>Nueva compra registrada</h2>"
+            f"<p><strong>Plan:</strong> {plan_nombre}</p>"
+            f"<p><strong>Método:</strong> {metodo_nombre}</p>"
+            f"<p><strong>Organización:</strong> {organizacion_nombre}</p>"
+        )
+        texto = f"Nueva compra: {plan_nombre} ({metodo_nombre})."
+
+    adjunto = EmailAttachment(filename=comprobante_nombre, content=comprobante_bytes)
+    try:
+        envio_id = _post_resend(
+            settings,
+            to=destino,
+            subject=asunto,
+            html=html,
+            text=texto,
+            reply_to=email,
+            attachments=(adjunto,),
+        )
+    except EmailSendError as exc:
+        logger.warning("No se pudo notificar la compra (%s).", exc)
+        return ""
+    logger.info("Compra de %s notificada (id %s).", email, envio_id)
+    return envio_id
+
+
+_CAMPOS_VERIFICACION_ETIQUETA = {
+    "banco_origen": "Banco de origen",
+    "numero_operacion": "Número de operación",
+    "fecha_pago": "Fecha del pago",
+    "nombre_titular": "Titular",
+    "binance_id_origen": "ID de Binance de origen",
+    "hash_transaccion": "Hash / TXID",
+    "telefono_origen": "Teléfono / ID de Kontigo",
+    "wallet_origen": "Wallet de origen",
+}
+
+
 def _soporte_email() -> str:
     from ..branding import SUPPORT_EMAIL
 

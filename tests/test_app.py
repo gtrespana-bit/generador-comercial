@@ -1430,3 +1430,50 @@ def test_pdf_interactivo_con_fotos_de_producto_no_rompe():
     finally:
         if foto.exists():
             foto.unlink()
+
+
+def test_configuracion_muestra_y_guarda_nombre_de_organizacion():
+    """/configuracion permite editar el nombre de la organización (menú lateral)."""
+    from app.models import Organizacion, Configuracion
+    from app.database import SessionLocal
+
+    with TestClient(app) as client:
+        r = client.get("/configuracion")
+        assert r.status_code == 200
+        assert "Nombre de la organización" in r.text
+        assert 'name="organizacion_nombre"' in r.text
+
+        r2 = client.post(
+            "/configuracion",
+            data={
+                "organizacion_nombre": "Reformas Nueva C.A.",
+                "empresa_nombre": "Reformas Nueva C.A.",
+                "empresa_legal": "",
+                "empresa_rif": "",
+                "empresa_pais": "Venezuela",
+                "empresa_ciudad": "",
+                "empresa_direccion": "",
+                "empresa_telefono": "",
+                "empresa_email": "",
+                "empresa_web": "",
+                "iva_default": "16",
+                "moneda_default": "USD",
+                "validez_default": "30",
+                "notas_default": "",
+                "condiciones_default": "",
+                "pdf_color": "#04265D",
+                "logo_ancho_pdf": "360",
+                "horas_jornada": "8",
+                "tarifa_hora_media": "8",
+            },
+            follow_redirects=False,
+        )
+        assert r2.status_code == 303
+
+    with SessionLocal() as db:
+        org = db.query(Organizacion).first()
+        assert org is not None
+        assert org.nombre == "Reformas Nueva C.A."
+        assert org.slug  # el slug se regenera con el nuevo nombre
+        cfg = db.query(Configuracion).first()
+        assert cfg.empresa_nombre == "Reformas Nueva C.A."

@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Compra registrada · {{ product_name }}</title>
+  <link rel="icon" type="image/png" href="/static/icono.png">
+  <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}">
+</head>
+<body class="landing compra-confirmacion">
+<nav class="nav">
+  <a class="brand" href="/">
+    <span class="mark">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M7 3.5h6.5L18 8v11a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 19V5a1.5 1.5 0 0 1 1-1.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+        <path d="M13.5 3.5V8H18" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+        <path d="M9 14.5l2 2 4-4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </span>
+    {{ product_name }}
+  </a>
+  <div class="nav-links">
+    <a class="entrar" href="/inicio">Mi panel</a>
+  </div>
+</nav>
+
+<main class="compra-confirmacion-main">
+  <div class="confirmacion-caja">
+    <div class="confirmacion-icono" aria-hidden="true">✓</div>
+    <h1>¡Compra registrada!</h1>
+    <p class="intro">Tu compra del <strong>{{ plan_nombre }}</strong> ({{ importe_texto }}) por <strong>{{ metodo_nombre }}</strong> quedó registrada. Estamos revisando tu comprobante.</p>
+
+    <div class="confirmacion-datos">
+      <div class="kv"><span>Compra</span><strong>#{{ compra.id }}</strong></div>
+      <div class="kv"><span>Plan</span><strong>{{ plan_nombre }}</strong></div>
+      <div class="kv"><span>Método</span><strong>{{ metodo_nombre }}</strong></div>
+      <div class="kv"><span>Estado</span><strong>{{ compra.etiqueta_estado }}</strong></div>
+      {% if verificacion %}
+      <div class="kv"><span>Verificación</span><strong>{{ verificacion.values() | join(' · ') }}</strong></div>
+      {% endif %}
+    </div>
+
+    <div class="confirmacion-nota" role="alert">
+      <strong>¿Qué sigue?</strong> Verificaremos tu pago y activaremos tu plan en un plazo de 48 horas hábiles. Si hay algún problema, te escribiremos al correo de tu cuenta.
+    </div>
+
+    <div class="acciones mt-3">
+      <a class="btn btn-primary" href="/inicio">Ir a mi panel</a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-int">
+    <div>© 2026 {{ product_name }} · {{ titular_legal }}</div>
+    <div>
+      <a href="/legal/terminos">Términos</a>
+      <a href="/legal/privacidad">Privacidad</a>
+      <a href="mailto:{{ email_soporte }}">{{ email_soporte }}</a>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

@@ -14,7 +14,7 @@ alcance, y genera documentos PDF profesionales.
 > externo. Supabase Auth, Storage privado, RLS/CSP y el entorno de staging ya
 > están implantados. Antes de un despliegue público debe seguirse el control
 > operativo y de pilotos de `docs/PUNTO_DE_CONTINUACION.md`; el head de esquema
-> vigente es `d6e2f9c4b8a1`.
+> vigente es `f9d4c2a7e5b3`.
 >
 > Sus sugerencias se basan en coincidencias deterministas sobre el catálogo del
 > usuario; no se presentan como inteligencia artificial.
@@ -325,8 +325,17 @@ python run.py                     # modo clásico (navegador)
 - [x] Firma del cliente digitalizada
 - [x] Empaquetado como aplicación de escritorio (.exe) — `EMPAQUETAR.bat`
 - [x] Instalador de Windows con ventana propia — `CREAR_INSTALADOR.bat` + `instalador.iss`
-- [ ] Envío por email (SMTP) desde la aplicación
-- [ ] Multi-empresa / usuarios
+- [x] Envío por email (Resend): invitaciones, presupuestos PDF, respuestas
+  de propuesta, avisos de vencimiento y notificación de compras
+- [x] Multi-empresa / usuarios con roles (propietario, administrador, miembro,
+  lectura) y aislamiento por organización
+- [x] Checkout de planes con pago manual (Pago móvil, Binance, Kontigo, USDT):
+  elige plan y método, adjunta comprobante, la compra queda pendiente y el
+  operador la activa desde `/admin`
+- [x] Panel de administración premium (`/admin`): clientes y planes ordenables,
+  compras por activar, concesión manual de licencias
+- [x] Estado del plan visible para el cliente (fecha de caducidad y días
+  restantes) en Configuración y en el menú lateral
 
 ## Notas
 

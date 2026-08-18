@@ -1,0 +1,16 @@
+NUEVA COMPRA REGISTRADA · {{ product_name }}
+
+Plan: {{ plan_nombre }}
+Importe: {{ importe_texto }}
+Método de pago: {{ metodo_nombre }}
+Organización: {{ organizacion_nombre }}
+Comprador: {{ nombre }} <{{ email }}>
+
+Datos de verificación:
+{% for etiqueta, valor in verificacion %}
+- {{ etiqueta }}: {{ valor }}
+{% endfor %}
+
+Comprobante adjunto: {{ comprobante_nombre }}
+---
+Este correo se envió automáticamente desde {{ product_name }}. Revisa la compra en el panel de operador.

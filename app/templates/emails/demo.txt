@@ -1,0 +1,12 @@
+NUEVA SOLICITUD DE DEMOSTRACIÓN · {{ product_name }}
+
+Nombre: {{ nombre }}
+Email: {{ email }}
+Empresa: {{ empresa }}
+Teléfono: {{ telefono }}
+Presupuestos al mes: {{ presupuestos_mes }}
+
+Mensaje:
+{{ mensaje }}
+---
+Este correo se envió automáticamente desde {{ product_name }}.
