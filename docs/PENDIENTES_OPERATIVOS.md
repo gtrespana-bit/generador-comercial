@@ -1,7 +1,8 @@
 # Pendientes operativos (paso por paso)
 
-Fecha: **16/08/2026**. Tareas de paneles externos, sin código. Cada una es
-independiente: se pueden hacer en cualquier orden.
+Fecha: **18/08/2026**. Tareas de paneles externos, sin código (salvo el punto 9,
+que ya tiene su parte de código hecha). Cada una es independiente: se pueden
+hacer en cualquier orden.
 
 Estado al escribir esta guía:
 
@@ -15,7 +16,7 @@ Estado al escribir esta guía:
 | 6 | Panel de operador E1-060: migración `f4c1d8e37a95` + `COTIZAT_OPERADORES` | ✅ **completado** (16/08/2026): script `docs/staging_upgrade_f4c1d8e37a95.sql` aplicado en Supabase, variable en Vercel, panel verificado por el titular en `https://cotizat.online/admin/licencias` |
 | 7 | Migración `a3d9c1e75b28` (prueba gratuita) | ✅ **completado** (18/08/2026): `docs/staging_upgrade_a3d9c1e75b28.sql` aplicado en Supabase |
 | 8 | **Activar `COTIZAT_EXIGIR_LICENCIA=true`** | ✅ **completado** (18/08/2026): PR #38 fusionado y desplegado; `COTIZAT_EXIGIR_LICENCIA=true` activado y verificado en `/readyz` (`"licencias": "exigida"`) |
-| 9 | **`CRON_SECRET` + cron de recordatorios de vencimiento** | **pendiente** — añadir `CRON_SECRET` en Vercel y redesplegar para que el recordatorio automático (5 y 1 día) se dispare (ver §9) |
+| 9 | **`CRON_SECRET` + cron de recordatorios de vencimiento** | **parte de código ✅** (PR en `arena/01a016b5-generador-comercial`: `/readyz` publica `cron_secret`/`cron`, guardas CI en `tests/test_vercel_cron_config.py`). **Falta en Vercel:** fusionar el PR, añadir `CRON_SECRET` (Production) y **redesplegar** para que el recordatorio automático (5 y 1 día) se dispare (ver §9) |
 
 ---
 
@@ -319,6 +320,43 @@ Al propietario y a los administradores activos de cada organización (los mismos
 destinatarios que el aviso manual). El correo enlaza a `/pago` para renovar en
 un clic y deja `Reply-To: soporte@cotizat.online`, de modo que responder llega
 directamente al buzón de Zoho.
+
+### Si el cron no aparece en Vercel (Cron Jobs vacío)
+
+El cron **no se crea desde el panel**: Vercel lo crea al desplegar, leyendo
+`vercel.json` de la raíz del repositorio, y **solo para despliegues de
+producción** (un Preview nunca muestra crones). Comprueba en este orden:
+
+1. **¿El despliegue en producción es el que contiene el `vercel.json`?**
+   Vercel → tu proyecto → **Deployments**. El que tenga la etiqueta
+   *Production* debe ser posterior a la fusión del PR #39 y mostrar el commit
+   `455f3fc`. Si solo has desplegado la rama del PR (Preview), el cron no
+   existe: fusiona a `main` (o a la rama de producción) y espera el redeploy.
+2. **¿El proyecto de Vercel tiene la Root Directory correcta?** Settings →
+   General → Root Directory debe ser `/` (o la carpeta que contenga
+   `vercel.json`). Si apunta a otra carpeta, Vercel nunca lee el `vercel.json`
+   de la raíz.
+3. **¿Está `CRON_SECRET` definida?** Settings → Environment Variables →
+   `CRON_SECRET` (Production), valor fuerte. Sin ella el cron puede aparecer
+   pero cada invocación responde 401. **Redeploy** después de guardarla.
+4. **Comprueba desde la propia app** (no requiere entrar al panel):
+   ```bash
+   curl -s https://cotizat.online/readyz | python -m json.tool
+   ```
+   En `checks` verás `cron_secret` (`configurado`/`no-configurado`) y `cron`
+   (p. ej. `...:registrada`). Si dice `no-configurado`, el problema es la
+   variable de entorno, no el código.
+5. **Prueba manual de la ruta** (debe responder 401 sin el secreto, 200 con él):
+   ```bash
+   curl -i https://cotizat.online/api/cron/recordatorios-vencimiento
+   curl -i -H "Authorization: Bearer TU_SECRETO" \
+        https://cotizat.online/api/cron/recordatorios-vencimiento
+   ```
+   Si responde 404, la ruta no está en el despliegue: es un despliegue antiguo.
+
+La suite de CI (`tests/test_vercel_cron_config.py`) verifica además que la ruta
+declarada en `vercel.json` sigue existiendo en la aplicación; un cron huérfano
+no puede llegar a producción en silencio.
 
 ---
 

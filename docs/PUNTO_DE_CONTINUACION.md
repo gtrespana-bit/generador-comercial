@@ -14,6 +14,78 @@ junto con `basedatos_partidas/EMPEZAR_AQUI.md` (reglas y progreso del catálogo)
 
 ---
 
+## ✅ Cierre de sesión — Cron en Vercel: diagnóstico, /readyz y guardas CI (18/08/2026, noche)
+
+Rama fija de la sesión: `arena/01a016b5-generador-comercial`, sobre `main` en
+`455f3fc` (merge del PR #39). El problema reportado: **«el cron no muestra nada
+en Vercel»** pese a que el panel admin y los emails verificados funcionan.
+
+### 1. Diagnóstico: el código estaba bien; el cron no existía en producción
+
+Se verificó contra la documentación actual de Vercel que `vercel.json` es
+válido (preset `fastapi`, entrada `app/main.py`, `maxDuration: 60`, bloque
+`crons` con `/api/cron/recordatorios-vencimiento` a `0 13 * * *`, compatible
+con el plan Hobby: una vez al día). La ruta existe en la aplicación y responde
+GET (en web sin `CRON_SECRET` da 401; con el secreto, 200; nunca 404). La
+conclusión operativa:
+
+- **Vercel no crea el cron desde el panel**: lo crea en el despliegue leyendo
+  `vercel.json`, y **solo para despliegues de producción**. Un Preview (p. ej.
+  la rama de un PR sin fusionar) nunca muestra crones, aunque la app funcione.
+- El **`CRON_SECRET`** seguía pendiente de añadir en Vercel (item 9 de
+  `docs/PENDIENTES_OPERATIVOS.md`), así que el cron no podía autenticarse
+  aunque existiera.
+
+### 2. Qué se cambió en el repositorio (commit `f4e2fbe`)
+
+- **`/readyz` ahora publica el estado del cron** (`app/health.py`): `cron_secret`
+  (`configurado`/`no-configurado`) y `cron` (p. ej.
+  `/api/cron/recordatorios-vencimiento:registrada`). Permite distinguir «el
+  cron no se creó» de «el cron falla al ejecutarse» sin entrar al panel, y no
+  expone el valor del secreto.
+- **Constante `CRON_RECORDATORIOS_PATH`** en `app/routers/admin.py`: única
+  fuente de verdad para la ruta del cron.
+- **Guardas CI** (`tests/test_vercel_cron_config.py`): cada ruta de
+  `vercel.json` debe existir como GET en la app, ser alcanzable (nunca 404) y
+  su horario debe ser válido para Hobby. Un cron huérfano ya no llega a
+  producción en silencio.
+- **Docs**: `docs/DESPLIEGUE_VERCEL.md` (sección «Trabajo programado») y
+  `docs/PENDIENTES_OPERATIVOS.md` §9 (checklist «Si el cron no aparece»).
+- Suite: **662 passed, 6 skipped** (4 pruebas nuevas).
+
+### 3. Lo que el titular hace por su cuenta (pasos en Vercel)
+
+1. **Comprobar que el despliegue Production es el correcto**: Vercel → tu
+   proyecto → **Deployments**. El que tenga la etiqueta *Production* debe ser
+   posterior a la fusión del PR #39 (commit `455f3fc`). Si solo hay despliegues
+   de ramas (Preview), el cron no existe por diseño.
+2. **Root Directory**: Settings → General → Root Directory = `/` (debe
+   contener `vercel.json`).
+3. **Añadir `CRON_SECRET`**: Settings → Environment Variables → Production,
+   valor fuerte (`openssl rand -base64 32`). **Redeploy** después.
+4. **Verificar**:
+   ```bash
+   curl -s https://cotizat.online/readyz | python -m json.tool
+   # Debe verse: "cron_secret": "configurado" y "...:registrada"
+
+   curl -i -H "Authorization: Bearer TU_SECRETO" \
+        https://cotizat.online/api/cron/recordatorios-vencimiento
+   # Esperado: {"ok": true, "resumen": {...}}
+   ```
+   Con eso, Settings → **Cron Jobs** debe listar
+   `recordatorios-vencimiento` (13:00 UTC; en Hobby puede dispararse hasta
+   ±59 min más tarde).
+
+### Lo siguiente en el producto
+
+1. Confirmar en el panel **Cron Jobs** que el cron aparece y ver sus logs tras
+   una invocación real (pestaña *View Logs*).
+2. Vercel **Hobby → Pro** antes del primer cobro (sigue aplazado por el titular).
+3. Vigilar el primer alta real con el corte encendido (pendiente de otra sesión).
+4. `COTIZAT_LEGAL_ENTITY` cuando exista razón social registrada.
+
+---
+
 ## ✅ Cierre de sesión — Panel «Correos» + familia de emails unificada (18/08/2026, noche)
 
 Rama fija de la sesión: `arena/01a0165a-generador-comercial` (PR #39, sin
@@ -125,87 +197,86 @@ nada**: el envío sigue por Resend y el buzón solo recibe. El recordatorio deja
 
 ### En una frase
 
-Todo el bloque de cobro, licencias, panel de operador y prueba gratuita está
-**terminado y en verde** en la rama `arena/01a015a7-generador-comercial`
-(**PR #38**, 6 commits, cabeza `b73b56d`); falta **fusionarlo** y, acto
-seguido, el titular **enciende el corte por licencia en producción**.
+El circuito de cobro completo (prueba gratuita, corte por licencia, panel de
+operador, recordatorios automáticos) está **terminado y en verde**. El PR #39
+(recordatorios + identidad + panel «Correos») **ya está fusionado en `main`** y
+el corte por licencia **está encendido en producción**. Lo único pendiente de
+código es este PR (diagnóstico del cron + guardas CI, rama
+`arena/01a016b5-generador-comercial`); lo que queda es **del lado de Vercel**:
+añadir `CRON_SECRET`, redesplegar y verificar que el cron aparece.
 
 ### Estado del repositorio
 
 | Dato | Valor |
 | --- | --- |
-| Rama de trabajo | `arena/01a015a7-generador-comercial` (sincronizada con `origin`) |
-| PR | **#38**, abierto, 6 commits, 47 archivos |
-| Último commit | `b73b56d` — anuncio público de la prueba gratuita |
-| Base | `main` en `00cfec0` |
-| Suite | **642 passed, 6 skipped** (~80 s con `.venv/bin/pytest -q`) |
-| Auditoría E1-021 | Sin hallazgos, 6416 archivos (`.venv/bin/python tools/auditar_datos_sensibles.py`) |
-| Cabeza Alembic | `a3d9c1e75b28` (**ya aplicada en Supabase**) |
+| Rama de trabajo | `arena/01a016b5-generador-comercial` (sincronizada con `origin`) |
+| PR | **abrir** — base `main` en `455f3fc` (merge del PR #39), 5 archivos |
+| Último commit | `f4e2fbe` — Cron de Vercel: diagnóstico en /readyz + guardas CI |
+| Suite | **662 passed, 6 skipped** (con el venv y `pytest -q`) |
+| Cabeza Alembic | `a3d9c1e75b28` (aplicada en Supabase) |
+| Producción | `COTIZAT_EXIGIR_LICENCIA=true` activo; `/readyz` con `"licencias": "exigida"` |
 
 ### Qué se hizo en esta última sesión
 
-**1. La prueba gratuita ya se anuncia al público** (era el encargo). Los 7 días
-existían en el registro pero no se mencionaban en ninguna página, así que nadie
-llegaba a pedirlos: comercialmente no cumplían ninguna función. Ahora aparecen
-en los cuatro puntos donde alguien decide —landing (`/` y `/conocer`), `/pago`
-y `/acceso`— y el CTA principal del hero apunta a **`/acceso`**, que es donde
-vive el registro real; las tarjetas de plan siguen yendo a `/pago`. Detalle
-completo en la sección «Cierre de sesión» de más abajo y en
-`docs/COBRO_Y_LICENCIAS.md` §5.6.
-
-**2. Se arregló la suite, que estaba en rojo sin que se supiera.** El commit
-anterior (`fbc3c26`) se subió con 42 fallos de la auditoría de datos sensibles.
-Explicación y lección en «Errores y lecciones» al final de esta sección.
+**El cron de Vercel no aparecía en el panel y se diagnosticó.** Se verificó que
+`vercel.json`, la ruta y el barrido están correctos; el motivo es que Vercel
+solo crea crones en **despliegues de producción** y que `CRON_SECRET` seguía
+pendiente. Se añadió **diagnóstico en `/readyz`** (`cron_secret` y `cron`),
+una **guarda CI** (`tests/test_vercel_cron_config.py`) y la **guía de
+verificación** en `docs/PENDIENTES_OPERATIVOS.md` §9 y
+`docs/DESPLIEGUE_VERCEL.md`. Detalle completo en el «Cierre de sesión» de más
+arriba.
 
 ### ⚠️ Lo que el titular hace por su cuenta, sin esperar a nadie
 
-En cuanto el PR #38 esté fusionado y desplegado, el titular ejecuta esto. **Ya
-están hechos** los pasos previos (migración aplicada en Supabase y licencia de
-cortesía concedida a su organización), así que solo queda el interruptor:
+1. **Fusionar este PR** y esperar a que Vercel termine el despliegue de
+   **producción** (comprobar en Deployments que el deployment *Production* es
+   el nuevo; un Preview no muestra crones).
+2. Vercel → *Settings* → *Environment Variables*, scope **Production**:
+   `CRON_SECRET` con un valor fuerte (`openssl rand -base64 32`).
+3. **Redeploy** (una variable de entorno no se aplica sola al despliegue vivo).
+4. Verificar:
+   ```bash
+   curl -s https://cotizat.online/readyz | python -m json.tool
+   # Debe verse: "cron_secret": "configurado" y "...:registrada"
+   ```
+5. Comprobar Settings → **Cron Jobs**: debe listar `recordatorios-vencimiento`
+   (13:00 UTC; en Hobby puede dispararse hasta ±59 min más tarde).
 
-1. **Fusionar el PR #38** y esperar a que Vercel termine el despliegue.
-2. Comprobar `/readyz`: debe verse `"alembic": "head:a3d9c1e75b28"`.
-3. Vercel → *Settings* → *Environment Variables*, scope **Production**:
-   `COTIZAT_EXIGIR_LICENCIA=true`.
-4. **Redeploy** (una variable de entorno no se aplica sola al despliegue vivo).
-5. Verificar en `/readyz` que aparece `"licencias": "exigida"`.
-
-Valores que cuentan como verdadero: `1`, `true`, `on`, `si`, `sí`.
-
-> **El orden importa y esta es la razón.** El corte deja sin acceso a toda
-> organización sin licencia vigente. Encender el interruptor **antes** de que
-> el PR esté desplegado dejaría suspendida a toda organización recién
-> registrada, porque la prueba gratuita que las cubre viaja en este PR. Con el
-> PR fuera, cada alta nueva nace con 7 días y el corte solo muerde a quien
-> ya agotó su prueba sin pagar, que es exactamente lo que se busca.
-
-**Cómo revertir si algo sale mal:** poner `COTIZAT_EXIGIR_LICENCIA=false` y
-redesplegar. El interruptor no borra ni modifica datos; solo decide si se
-comprueba la vigencia. Nada de lo concedido se pierde.
-
-**Si el titular se corta a sí mismo por error:** el panel `/admin/*` cuelga de
-`get_operator_db`, que **no** comprueba licencia. El panel sigue accesible
-aunque la organización propia esté suspendida, así que siempre se puede entrar
-a concederse una licencia. No hay forma de quedarse fuera del todo.
+El interruptor del corte (`COTIZAT_EXIGIR_LICENCIA`) ya está encendido y no hay
+que tocarlo para esto. Si algo sale mal con el cron, nada se rompe: la ruta sin
+secreto responde 401 y el barrido es idempotente.
 
 ### Lo siguiente en el producto (nada de esto está empezado)
 
 Por orden de valor, según lo hablado:
 
-1. **Ver el panel de operador con datos realistas.** Está construido y probado,
-   pero nunca se ha mirado con un volumen de clientes que se parezca al real.
-   Es donde antes aparecerá un problema de diseño de los que cuestan tiempo
-   cada día.
-2. **Vigilar el primer alta real con el corte encendido.** El circuito completo
-   —registro → prueba de 7 días → aviso de vencimiento → pago → renovación—
-   nunca se ha recorrido de punta a punta con un cliente de verdad.
-3. **Decidir qué pasa al vencer la prueba sin pagar.** Hoy la organización
-   simplemente deja de generar presupuestos nuevos y conserva sus datos, que es
-   lo que promete la web. No hay aviso por correo antes del vencimiento: quien
-   se despiste se encuentra el corte de golpe. Un recordatorio a los 5 días es
-   probablemente lo más rentable que queda por hacer en todo el circuito.
+1. **Confirmar una invocación real del cron** (logs en Cron Jobs → *View Logs*)
+   y, si procede, que llegue un recordatorio a 5 días a un buzón real.
+2. **Vercel Hobby → Pro** antes del primer cobro (sigue aplazado por el titular).
+3. **Vigilar el primer alta real con el corte encendido.** El circuito completo
+   —registro → prueba de 7 días → recordatorio → pago → renovación— nunca se ha
+   recorrido de punta a punta con un cliente de verdad.
+4. **`COTIZAT_LEGAL_ENTITY`** cuando exista razón social registrada.
 
 ### Errores y lecciones de esta sesión (importa para no repetirlos)
+
+**FastAPI 0.141 incluye los routers de forma perezosa.** `app.routes` ya no
+contiene las rutas de `include_router` aplanadas: aparecen como
+`_IncludedRouter` (sin `.path`). Al escribir `tests/test_vercel_cron_config.py`
+se intentó validar «la ruta del cron existe» mirando `app.routes` y dio un falso
+negativo. La tabla fiable es `router.routes` del **APIRouter que declara la
+ruta** (`admin.router.routes`), y para confirmar que la app completa sirve la
+ruta, la petición HTTP real (nunca 404). No volver a asumir que `app.routes`
+está plano.
+
+**Vercel no crea los crones en Previews.** Un despliegue de rama (Preview)
+puede funcionar perfectamente —panel, emails— y no mostrar crones en el panel,
+porque `vercel.json` → `crons` solo se materializa en despliegues de
+**producción**. Cuando «todo está bien pero el cron no aparece», lo primero es
+comprobar cuál es el deployment *Production* (etiqueta, commit y fecha), no el
+código. Esta sesión se perdió un ciclo en comprobar el código que ya estaba
+bien antes de llegar a la conclusión correcta.
 
 **El auditor de datos sensibles solo mira archivos ya versionados en Git.**
 Corolario incómodo: los archivos nuevos **no se auditan hasta que se

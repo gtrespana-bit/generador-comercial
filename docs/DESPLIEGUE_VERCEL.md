@@ -89,6 +89,37 @@ Ahora:
   Sirve solo para previsualizar el despliegue; producción siempre con
   PostgreSQL.
 
+## Trabajo programado (cron de recordatorios)
+
+El recordatorio de vencimiento de licencia (5 y 1 día antes) lo dispara Vercel
+Cron desde `vercel.json` → `crons`:
+
+- Ruta: `/api/cron/recordatorios-vencimiento` (definida en
+  `app/routers/admin.py`; `tests/test_vercel_cron_config.py` comprueba en CI
+  que la ruta declarada existe y responde GET).
+- Horario: `0 13 * * *` (una vez al día, 13:00 UTC — compatible con Hobby).
+- Autenticación: cada invocación lleva `Authorization: Bearer $CRON_SECRET`;
+  sin esa variable en el proyecto, la ruta responde 401 y no se envía nada.
+
+**Para que el cron exista hacen falta tres cosas a la vez** (si falta una, la
+pestaña Cron Jobs de Vercel puede aparecer vacía o el cron fallar al ejecutarse):
+
+1. El despliegue de **producción** (no un Preview) debe contener el
+   `vercel.json` con `crons`: se crea en el despliegue, no en el panel.
+2. `CRON_SECRET` añadida en **Settings → Environment Variables** (Production)
+   con un valor fuerte (`openssl rand -base64 32`).
+3. **Redeploy** después de añadir la variable (se lee al arrancar).
+
+Verificación rápida desde el despliegue (no hace falta entrar al panel):
+
+```bash
+curl -s https://tu-proyecto.vercel.app/readyz | python -m json.tool
+```
+
+En `checks` aparecen `cron_secret` (`configurado`/`no-configurado`) y `cron`
+(p. ej. `/api/cron/recordatorios-vencimiento:registrada`). Si `cron_secret` es
+`no-configurado`, el cron nunca podrá autenticarse aunque aparezca en el panel.
+
 ## Subir una versión nueva
 
 Conecta el repositorio a Vercel (o usa `vercel deploy`). Cada `git push`
