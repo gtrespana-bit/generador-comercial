@@ -1296,6 +1296,91 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
   .landing .app-title { max-width: 140px; }
 }
 
+/* ──────────────── Landing · ventajas destacadas (margen + tiempo) ────────── */
+.landing .ventajas {
+  max-width: 1080px;
+  padding-top: 0.5rem;
+  padding-bottom: 4.2rem;
+}
+.landing .ventajas-intro {
+  text-align: center;
+  max-width: 780px;
+  margin: 0 auto 2.6rem;
+}
+.landing .ventajas-intro h2 { margin-bottom: 0.8rem; }
+.landing .ventajas-intro .intro { margin: 0 auto; }
+
+.landing .ventajas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.1rem;
+}
+.landing .ventaja {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 2rem 2rem 1.9rem;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: border-color 0.15s var(--ease-out), box-shadow 0.15s var(--ease-out), transform 0.15s var(--ease-out);
+}
+.landing .ventaja:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+.landing .ventaja::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--accent), var(--gold));
+}
+.landing .ventaja-icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--accent-soft), var(--accent-soft-strong));
+  font-size: 1.55rem;
+  margin-bottom: 1.1rem;
+}
+.landing .ventaja h3 {
+  margin: 0 0 0.6rem;
+  font-size: 1.25rem;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+}
+.landing .ventaja > p {
+  color: var(--text-soft);
+  line-height: 1.6;
+  margin: 0 0 1.2rem;
+  font-size: 0.95rem;
+}
+.landing .ventaja-lista {
+  list-style: none;
+  margin: 0;
+  padding: 1.1rem 0 0;
+  border-top: 1px solid var(--border);
+  display: grid;
+  gap: 0.6rem;
+}
+.landing .ventaja-lista li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+.landing .ventaja-lista .check {
+  color: var(--green);
+  font-weight: 800;
+  flex: 0 0 auto;
+}
+
 /* ────────────────────────────── Legal ────────────────────────────── */
 .legal-body { padding: 1.6rem 1rem 4rem; }
 .legal-header {
