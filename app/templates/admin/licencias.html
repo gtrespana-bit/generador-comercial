@@ -174,7 +174,7 @@
             <span class="pill off">Sin licencia</span>
           {% endif %}
         </td>
-        <td>{{ fila.vigente.vence if fila.vigente else '—' }}</td>
+        <td>{{ fila.vence if fila.vence else '—' }}</td>
         <td>{{ fila.vigente.origen if fila.vigente else '—' }}</td>
         <td>{{ '%.2f'|format(fila.ingresos) }}</td>
         <td>

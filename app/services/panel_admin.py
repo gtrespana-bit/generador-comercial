@@ -12,6 +12,7 @@ from collections import defaultdict
 from datetime import date
 
 from ..models import CompraPlan, Licencia, Membresia, Organizacion, Usuario
+from .licencias import vence_cadena
 
 #: Los planes publicados se reconocen por su importe (ver app/datos_pago.py).
 PLAN_POR_IMPORTE = {89.0: "Anual", 9.99: "Mensual"}
@@ -37,10 +38,24 @@ def _plan_label(licencia: Licencia | None) -> str:
     return ETIQUETA_ORIGEN.get(licencia.origen, licencia.origen)
 
 
-def _estado_licencia(licencia: Licencia | None, hay_historial: bool, hoy: date, dias_aviso: int) -> str:
+def _estado_licencia(
+    licencia: Licencia | None,
+    hay_historial: bool,
+    hoy: date,
+    dias_aviso: int,
+    dias_restantes: int | None = None,
+) -> str:
     if licencia is None:
         return "vencida" if hay_historial else "sin_licencia"
-    if licencia.dias_restantes(hoy) <= dias_aviso:
+    # Por omisión usa los días de la licencia vigente; el panel le pasa los
+    # días totales del encadenado (la suma de las renovaciones) para que el
+    # aviso de «por vencer» no salte mientras queda tiempo acumulado.
+    restantes = (
+        dias_restantes
+        if dias_restantes is not None
+        else licencia.dias_restantes(hoy)
+    )
+    if restantes <= dias_aviso:
         return "por_vencer"
     return "activa"
 
@@ -92,6 +107,12 @@ def resumen_admin(
             reverse=True,
         )
         vigente = next((l for l in licencias_org if l.vigente(hoy)), None)
+        # El vencimiento que ve el titular es el final de la cadena completa,
+        # no el de la primera licencia: renovar suma el tiempo restante.
+        vence_total = vence_cadena(licencias_org, hoy) if vigente else None
+        dias_restantes = (
+            max((vence_total - hoy).days, 0) if vence_total else 0
+        )
         compras_org = sorted(
             compras_por_org.get(organizacion.id, []),
             key=lambda c: (c.created_at or c.id, c.id),
@@ -114,13 +135,17 @@ def resumen_admin(
                 "vigente": vigente,
                 "plan_label": _plan_label(vigente),
                 "inicio": vigente.inicio if vigente else None,
-                "vence": vigente.vence if vigente else None,
-                "dias_restantes": vigente.dias_restantes(hoy) if vigente else 0,
+                "vence": vence_total or (vigente.vence if vigente else None),
+                "dias_restantes": dias_restantes,
                 "estado": _estado_licencia(
-                    vigente, bool(licencias_org), hoy, dias_aviso
+                    vigente, bool(licencias_org), hoy, dias_aviso,
+                    dias_restantes=dias_restantes,
                 ),
                 "estado_label": ETIQUETA_ESTADO[
-                    _estado_licencia(vigente, bool(licencias_org), hoy, dias_aviso)
+                    _estado_licencia(
+                        vigente, bool(licencias_org), hoy, dias_aviso,
+                        dias_restantes=dias_restantes,
+                    )
                 ],
                 "ingresos": sum(
                     licencia.importe

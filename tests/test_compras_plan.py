@@ -4,7 +4,7 @@ Cubre el flujo E1-059: el cliente elige plan y método, sube su comprobante,
 la compra queda pendiente y el operador la activa desde el panel concediendo
 la licencia del plan.
 """
-from datetime import date
+from datetime import date, timedelta
 import io
 
 import pytest
@@ -546,3 +546,37 @@ def test_configuracion_muestra_el_plan_del_cliente(entorno):
     assert "Plan mensual" in r.text
     assert "Vence el 01/09/2026" in r.text
     assert "día" in r.text  # días restantes
+
+
+def test_configuracion_muestra_el_total_de_planes_encadenados(entorno):
+    """Renovar con días por delante suma: 4 días + 1 mes → ~34 días.
+
+    La tarjeta «Tu plan» debe mostrar el final de la cadena completa, no el
+    vencimiento de la primera licencia.
+    """
+    Session, ids, _rol = entorno
+    hoy = date.today()
+    with Session() as db:
+        db.add(Licencia(
+            organizacion_id=ids[0],
+            estado="activa", origen="pago",
+            inicio=hoy - timedelta(days=2), vence=hoy + timedelta(days=4),
+            importe=9.99, metodo_cobro="Pago móvil",
+        ))
+        # Renovación encadenada: empieza al día siguiente de la anterior.
+        db.add(Licencia(
+            organizacion_id=ids[0],
+            estado="activa", origen="pago",
+            inicio=hoy + timedelta(days=5), vence=hoy + timedelta(days=34),
+            importe=9.99, metodo_cobro="Pago móvil",
+        ))
+        db.commit()
+
+    vence_total = (hoy + timedelta(days=34)).strftime("%d/%m/%Y")
+    with _cliente() as client:
+        r = client.get("/configuracion")
+    assert r.status_code == 200
+    assert "Tu plan" in r.text
+    assert "Plan mensual" in r.text
+    assert f"Vence el {vence_total}" in r.text
+    assert "34 días restantes" in r.text

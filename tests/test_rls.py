@@ -17,6 +17,7 @@ from migrations.versions import (
     e5f2a8d31b6c_add_plan_purchases as plan_purchases_migration,
     f9d4c2a7e5b3_organization_license_info as head_migration,
     a1b2c3d4e5f6_fix_license_info_type_mismatch as hotfix_migration,
+    d4e2f6a8b0c1_license_info_chained_access as chained_migration,
     f4c1d8e37a95_add_operator_licenses as licenses_migration,
     f8a1b2c3d4e5_catalog_taxonomy_v2 as taxonomy_migration,
 )
@@ -147,7 +148,8 @@ def test_head_exigido_por_runtime_coincide_con_alembic():
     Si divergen, `/readyz` responde 503 en producción: el código espera un
     esquema que la base no tiene todavía (o al revés).
     """
-    assert database_module.EXPECTED_ALEMBIC_HEAD == hotfix_migration.revision
+    assert database_module.EXPECTED_ALEMBIC_HEAD == chained_migration.revision
+    assert chained_migration.down_revision == hotfix_migration.revision
     assert hotfix_migration.down_revision == head_migration.revision
     assert head_migration.down_revision == plan_purchases_migration.revision
     assert plan_purchases_migration.down_revision == catalog_visibility_migration.revision
@@ -159,6 +161,37 @@ def test_head_exigido_por_runtime_coincide_con_alembic():
     assert licenses_migration.down_revision == alembic_migration.revision
     assert alembic_migration.down_revision == invitation_migration.revision
     assert invitation_migration.down_revision == migration.revision
+
+
+def test_migracion_licencia_suma_el_acceso_encadenado(monkeypatch):
+    """El resumen del cliente debe llegar al final de la cadena, no a la
+    primera licencia: 4 días + 1 mes → ~34 días, no 4."""
+    statements = []
+    monkeypatch.setattr(chained_migration.op, "get_bind", lambda: _FakeBind())
+    monkeypatch.setattr(
+        chained_migration.op, "execute", lambda s: statements.append(str(s))
+    )
+    chained_migration.upgrade()
+    sql = "\n".join(statements)
+
+    # Parte de la licencia que cubre hoy y avanza por las contiguas.
+    assert "WITH RECURSIVE" in sql
+    assert "l.inicio <= c.fin + 1" in sql
+    assert "l.vence > c.fin" in sql
+    assert "SELECT MAX(fin)" in sql
+    # Sigue exigiendo la guardia del claim de sesión y el mínimo privilegio.
+    assert "context_organization_id()" in sql
+    assert "REVOKE ALL ON FUNCTION cotizat_security.organization_license_info" in sql
+    assert "GRANT EXECUTE ON FUNCTION cotizat_security.organization_license_info" in sql
+    assert "TO cotizat_app" in sql
+
+    # El downgrade no restaura el resumen corto: es un no-op documentado.
+    downgrade_statements = []
+    monkeypatch.setattr(
+        chained_migration.op, "execute", lambda s: downgrade_statements.append(str(s))
+    )
+    chained_migration.downgrade()
+    assert downgrade_statements == []
 
 
 def test_migracion_rls_cubre_cada_modelo_tenant():
