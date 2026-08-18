@@ -3469,6 +3469,8 @@ body.beneficio-on .partida-row {
   overflow: hidden;
 }
 .sidebar-session a { color: var(--text); text-decoration: none; overflow: hidden; text-overflow: ellipsis; }
+.sidebar-session .sidebar-session-editar { color: var(--accent); font-weight: 700; font-size: .72rem; padding: 2px 6px; border-radius: 6px; }
+.sidebar-session .sidebar-session-editar:hover { background: var(--accent-soft); }
 .sidebar-session span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sidebar-session form { margin: 0; }
 .sidebar-session button { border: 0; padding: 0; background: transparent; color: var(--accent); font: inherit; font-weight: 700; cursor: pointer; }

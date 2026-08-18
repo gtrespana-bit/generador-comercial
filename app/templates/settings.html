@@ -10,6 +10,17 @@
 
 <form method="post" action="/configuracion" enctype="multipart/form-data">
   <div class="card">
+    <h2>Tu organización</h2>
+    <p class="subtitle">El nombre de la organización es el que ves en el menú lateral.</p>
+    <div class="form-grid">
+      <div class="field field-full">
+        <label>Nombre de la organización *</label>
+        <input type="text" name="organizacion_nombre" value="{{ org_nombre }}" required maxlength="200" placeholder="p. ej. Reformas Caracas C.A.">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
     <h2>Datos de la empresa</h2>
     <p class="subtitle csp-s-bdf32b3fef">Aparecen en la caja del encabezado del PDF.</p>
     <div class="form-grid">

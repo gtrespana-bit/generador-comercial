@@ -10,15 +10,52 @@ router = APIRouter()
 # Configuración
 # ---------------------------------------------------------------------------
 
+
+def _slug_organizacion_unico(db: Session, nombre: str, organizacion_id: int) -> str:
+    """Slug legible desde el nombre, único entre organizaciones.
+
+    El slug se usa en nombres de archivo (p. ej. el recibo de licencia), así
+    que no puede colisionar con otra organización aunque el nombre se repita.
+    """
+    base = _slug_organizacion(nombre)[:100] or "organizacion"
+    candidato = base
+    existentes = {
+        slug
+        for (slug,) in db.query(Organizacion.slug)
+        .filter(Organizacion.slug != "")
+        .all()
+    }
+    contador = 1
+    while candidato in existentes and contador < 100:
+        candidato = f"{base}-{contador}"
+        contador += 1
+    return candidato
+
 @router.get("/configuracion", response_class=HTMLResponse)
 def ver_configuracion(request: Request, db: Session = Depends(get_db)):
-    return TEMPLATES.TemplateResponse(request, "settings.html", {"cfg": _config(db)})
+    org = db.get(Organizacion, int(db.info.get("organizacion_id") or 0))
+    return TEMPLATES.TemplateResponse(
+        request,
+        "settings.html",
+        {"cfg": _config(db), "org_nombre": org.nombre if org else ""},
+    )
 
 
 @router.post("/configuracion")
 async def guardar_configuracion(request: Request, db: Session = Depends(get_db)):
+    if es_lectura(db):
+        return _redirect(
+            "/configuracion",
+            error="Tu rol es de solo lectura y no permite modificar la configuración.",
+        )
     form = await request.form()
     cfg = _config(db)
+    # Nombre de la organización: el que se muestra en el menú lateral.
+    org = db.get(Organizacion, int(db.info.get("organizacion_id") or 0))
+    org_nombre = str(form.get("organizacion_nombre", "")).strip()
+    if org and org_nombre and org_nombre != org.nombre:
+        org.nombre = org_nombre[:200]
+        org.slug = _slug_organizacion_unico(db, org_nombre, org.id)
     cfg.empresa_nombre = str(form.get("empresa_nombre", "")).strip() or "Mi Empresa"
     cfg.empresa_legal = str(form.get("empresa_legal", "")).strip()
     cfg.empresa_rif = str(form.get("empresa_rif", "")).strip()
