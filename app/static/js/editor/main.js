@@ -67,9 +67,7 @@
     if (el) {
       try { mapa = JSON.parse(el.textContent || "{}"); } catch (_) {}
     }
-    var s = mapa[cod] || mapa[cod.toUpperCase()];
-    if (s) return s;
-    return cod === "Bs" || cod === "VES" ? "Bs" : "$";
+    return cod.toUpperCase();
   }
   editor.simbolo = simbolo;
 

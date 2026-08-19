@@ -941,6 +941,7 @@
   // Beneficio por partida: siempre visible según petición del usuario (fila Benef. y totales)
   document.body.classList.add('beneficio-on');
 </script>
+<script nonce="{{ request.state.csp_nonce }}">window.COTIZAT_MONEDA_ACTIVA = {{ (presupuesto.moneda if presupuesto else cfg.moneda_default or 'USD') | tojson }};</script>
 <!-- Módulos del editor (cargados en orden de dependencia) -->
 <script src="/static/js/utils/formato.js"></script>
 <script src="/static/js/utils/catalogo.js"></script>
