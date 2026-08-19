@@ -13,7 +13,8 @@ from pathlib import Path
 import sys
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from app.database import SessionLocal
+from app.database import SessionLocal, init_db
+init_db()
 from app.services.importador_precios_mercado import importar_matriz_csv
 
 ROOT = Path(__file__).resolve().parents[1]
