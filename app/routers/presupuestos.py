@@ -933,6 +933,30 @@ async def confirmar_importacion_presupuesto(request: Request, db: Session = Depe
 
 
 @router.get("/presupuestos/nuevo", response_class=HTMLResponse)
+def _recursos_editor_mercado(db, recursos, cfg, moneda, tasa):
+    from ..services.traduccion import codigo_desde_pais
+    from ..services.precios_mercado import resolver_precio_para_presupuesto
+    pais = codigo_desde_pais(getattr(cfg, "empresa_pais", "") or "") or "VE"
+    org_id = int(db.info.get("organizacion_id") or 0)
+    salida = []
+    for r in recursos:
+        item = {"id": r.id, "codigo": r.codigo, "descripcion": r.descripcion, "unidad": r.unidad, "categoria": r.categoria, "grupo": r.grupo, "precio": r.precio, "moneda": getattr(r, "moneda", None) or "USD", "proveedor": r.proveedor, "usos": r.usos}
+        try:
+            efectivo = resolver_precio_para_presupuesto(db, r.id, pais, org_id, moneda, tasa_mercado_a_usd=None, tasa_usd_presupuesto=tasa)
+            if efectivo.get("precio") is not None and not efectivo.get("requiere_tasa"):
+                item["precio"] = efectivo["precio"]
+                item["moneda"] = efectivo["moneda"]
+            item["origen_precio"] = efectivo.get("origen", "base")
+            item["confianza_precio"] = efectivo.get("confianza", "")
+            item["aviso_precio"] = efectivo.get("aviso", "")
+        except Exception:
+            item["origen_precio"] = "base"
+            item["confianza_precio"] = "respaldo"
+            item["aviso_precio"] = "Verifica el precio con tu proveedor"
+        salida.append(item)
+    return salida
+
+
 def nuevo_presupuesto_form(request: Request, db: Session = Depends(get_db)):
     from ..services.catalogo_propio import asegurar_catalogo_propio
     asegurar_catalogo_propio(db)
@@ -940,7 +964,8 @@ def nuevo_presupuesto_form(request: Request, db: Session = Depends(get_db)):
     clientes = db.query(Cliente).order_by(Cliente.nombre).all()
     partidas_catalogo = _indice_catalogo_para_editor(db, cfg.moneda_default, cfg.tasa_cambio)
     productos_catalogo = db.query(Producto).order_by(Producto.ultimo_uso.desc(), Producto.usos.desc(), Producto.nombre).all()
-    recursos_catalogo = db.query(Recurso).order_by(Recurso.ultimo_uso.desc(), Recurso.usos.desc(), Recurso.descripcion).all()
+    recursos_base = db.query(Recurso).order_by(Recurso.ultimo_uso.desc(), Recurso.usos.desc(), Recurso.descripcion).all()
+    recursos_catalogo = _recursos_editor_mercado(db, recursos_base, cfg, cfg.moneda_default, cfg.tasa_cambio)
     plantillas = db.query(Plantilla).order_by(Plantilla.nombre).all()
     return TEMPLATES.TemplateResponse(
         request,
@@ -2936,7 +2961,9 @@ def editar_presupuesto_form(presupuesto_id: int, request: Request, db: Session =
     clientes = db.query(Cliente).order_by(Cliente.nombre).all()
     partidas_catalogo = _indice_catalogo_para_editor(db, presupuesto.moneda, presupuesto.tipo_cambio)
     productos_catalogo = db.query(Producto).order_by(Producto.ultimo_uso.desc(), Producto.usos.desc(), Producto.nombre).all()
-    recursos_catalogo = db.query(Recurso).order_by(Recurso.ultimo_uso.desc(), Recurso.usos.desc(), Recurso.descripcion).all()
+    cfg = _config(db)
+    recursos_base = db.query(Recurso).order_by(Recurso.ultimo_uso.desc(), Recurso.usos.desc(), Recurso.descripcion).all()
+    recursos_catalogo = _recursos_editor_mercado(db, recursos_base, cfg, presupuesto.moneda, presupuesto.tipo_cambio)
     plantillas = db.query(Plantilla).order_by(Plantilla.nombre).all()
     # Borrador del autoguardado: solo se ofrece si es más reciente que el
     # último guardado del presupuesto (updated_at).
