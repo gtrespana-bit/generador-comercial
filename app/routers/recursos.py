@@ -341,7 +341,6 @@ async def bulk_delete_recursos(request: Request, db: Session = Depends(get_db)):
 @router.get("/recursos/mercado", response_class=HTMLResponse)
 def panel_precios_mercado(request: Request, pais: str = "", categoria: str = "", db: Session = Depends(get_db)):
     """Panel de referencias nacionales y precios de organización."""
-    from ..services.precios_mercado import PrecioRecursoMercado
     query = db.query(PrecioRecursoMercado, Recurso).join(Recurso, Recurso.id == PrecioRecursoMercado.recurso_id)
     if pais.strip(): query = query.filter(PrecioRecursoMercado.pais_codigo == pais.strip().upper())
     if categoria in CATEGORIAS_RECURSO: query = query.filter(Recurso.categoria == categoria)
