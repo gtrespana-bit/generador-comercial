@@ -11,19 +11,19 @@
 
 <div class="card">
   {% if facturas %}
-  <table class="table">
+  <table class="table table-mobile-cards">
     <thead>
       <tr><th>N.º</th><th>Fecha</th><th>Cliente</th><th>Estado</th><th class="right">Total</th><th class="right">Acciones</th></tr>
     </thead>
     <tbody>
       {% for f in facturas %}
       <tr>
-        <td><a class="link" href="/facturas/{{ f.id }}">{{ f.numero }}</a></td>
-        <td>{{ f.fecha | fecha }}</td>
-        <td>{{ f.cliente.nombre }}</td>
-        <td><span class="badge badge-{{ f.estado }}">{{ f.estado | capitalize }}</span></td>
-        <td class="right"><strong>{{ f.total | money_iso(f.moneda) }}</strong></td>
-        <td class="right">
+        <td data-label="N.º"><a class="link" href="/facturas/{{ f.id }}">{{ f.numero }}</a></td>
+        <td data-label="Fecha">{{ f.fecha | fecha }}</td>
+        <td data-label="Cliente">{{ f.cliente.nombre }}</td>
+        <td data-label="Estado"><span class="badge badge-{{ f.estado }}">{{ f.estado | capitalize }}</span></td>
+        <td class="right" data-label="Total"><strong>{{ f.total | money_iso(f.moneda) }}</strong></td>
+        <td class="actions-cell" data-label="Acciones">
           <div class="csp-s-814a5492b5">
             <a class="btn btn-sm" href="/facturas/{{ f.id }}">Ver</a>
             <a class="btn btn-sm" href="/facturas/{{ f.id }}/pdf" download="documento_cobro_{{ f.numero }}.pdf" data-cotizat-click="download-pdf">PDF</a>

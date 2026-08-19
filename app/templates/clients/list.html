@@ -17,19 +17,19 @@
 
 <div class="card">
   {% if clientes %}
-  <table class="table">
+  <table class="table table-mobile-cards">
     <thead>
       <tr><th>Nombre</th><th>{{ cfg.etiqueta_id_fiscal or "ID fiscal" }}</th><th>Teléfono</th><th>Email</th><th class="right">Presupuestos</th><th class="right">Acciones</th></tr>
     </thead>
     <tbody>
       {% for c in clientes %}
       <tr>
-        <td><a class="link" href="/clientes/{{ c.id }}/editar">{{ c.nombre }}</a>{% if c.es_demo %} <span class="badge">Demo</span>{% endif %}</td>
-        <td>{{ c.rif }}</td>
-        <td>{{ c.telefono }}</td>
-        <td>{{ c.email }}</td>
-        <td class="right">{{ c.presupuestos | length }}</td>
-        <td class="right">
+        <td data-label="Nombre"><a class="link" href="/clientes/{{ c.id }}/editar">{{ c.nombre }}</a>{% if c.es_demo %} <span class="badge">Demo</span>{% endif %}</td>
+        <td data-label="ID fiscal">{{ c.rif }}</td>
+        <td data-label="Teléfono">{{ c.telefono }}</td>
+        <td data-label="Email">{{ c.email }}</td>
+        <td class="right" data-label="Presupuestos">{{ c.presupuestos | length }}</td>
+        <td class="actions-cell" data-label="Acciones">
           <a class="btn btn-sm" href="/clientes/{{ c.id }}/editar">Editar</a>
           <form method="post" action="/clientes/{{ c.id }}/eliminar" class="inline" data-confirm="¿Eliminar este cliente?">
             <button class="btn btn-sm btn-danger" type="submit">✕</button>

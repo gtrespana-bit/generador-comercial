@@ -5599,3 +5599,376 @@ body {
 .tasa-row { display:flex; gap:6px; align-items:center; }
 .tasa-input-flex { flex:1; }
 .tasa-label { font-weight:600; }
+
+
+/* ==========================================================================
+   MÓVIL PREMIUM — capa unificada 2026
+   --------------------------------------------------------------------------
+   Objetivos:
+   1. Nada de zoom automático de iOS/Android: los campos usan 16 px reales.
+   2. Las tablas de listado se vuelven TARJETAS legibles (table-mobile-cards);
+      las que no, desplazan con la primera columna fija.
+   3. El catálogo (partidas/recursos) navega por chips horizontales y la
+      tabla desplaza dentro de su sección, no del documento.
+   4. Targets táctiles ≥40 px, barras con safe-area (notch) y bulk-bar como
+      bandeja inferior sobre la navegación.
+   5. Modales a pantalla completa en teléfonos.
+   El diseño de escritorio no se toca: todo vive en media queries.
+   ========================================================================== */
+
+/* --- Base táctil ------------------------------------------------------- */
+body { -webkit-tap-highlight-color: transparent; }
+
+@media (max-width: 768px) {
+  html { -webkit-text-size-adjust: 100%; }
+  html, body { overflow-x: hidden; overflow-x: clip; }
+
+  /* iOS acerca la página cuando un campo mide <16px: fuente real 16px en
+     todo control de formulario (el !important pisa reglas específicas). */
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="button"]):not([type="submit"]),
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+
+  /* Objetivos táctiles cómodos */
+  .btn { min-height: 42px; }
+  .btn-sm { min-height: 38px; }
+  .link { padding: 0.25rem 0; display: inline-block; }
+
+  .page-head { gap: 0.65rem; margin-bottom: 1.1rem; }
+  .page-head h1 { font-size: 1.3rem; }
+  .page-head .actions { width: 100%; }
+  .page-head .actions .btn { flex: 1 1 auto; justify-content: center; }
+
+  .content { padding: 1.6rem 0.9rem 5.5rem; }
+
+  /* Momentum suave en todos los desplazamientos internos */
+  .table-wrap,
+  .cat-section-body,
+  .cat-sidebar-body,
+  .import-preview-wrap,
+  .partida-editor-tabs { -webkit-overflow-scrolling: touch; }
+}
+
+@media (max-width: 480px) {
+  .content { padding: 1.4rem 0.75rem 5.5rem; }
+  .page-head h1 { font-size: 1.18rem; }
+  .subtitle { font-size: 0.8rem; }
+}
+
+/* --- Tablas -> tarjetas (listas principales) --------------------------- */
+@media (max-width: 700px) {
+  table.table-mobile-cards,
+  table.table-mobile-cards tbody,
+  table.table-mobile-cards tr,
+  table.table-mobile-cards td { display: block; width: 100%; }
+
+  table.table-mobile-cards thead { display: none; }
+
+  table.table-mobile-cards tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    padding: 0.15rem 0 0.1rem;
+  }
+
+  table.table-mobile-cards tr {
+    display: flex;
+    flex-direction: column;
+    gap: 0.42rem;
+    padding: 0.9rem 0.95rem 0.8rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: var(--shadow-xs);
+  }
+  table.table-mobile-cards tbody tr:hover { background: var(--surface); }
+
+  table.table-mobile-cards td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.9rem;
+    padding: 0;
+    border: 0;
+    text-align: right;
+    font-size: 0.92rem;
+    min-width: 0;
+  }
+  table.table-mobile-cards td[data-label]::before {
+    content: attr(data-label);
+    flex: 0 0 auto;
+    max-width: 46%;
+    text-align: left;
+    font-size: 0.66rem;
+    font-weight: 750;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  /* Primera celda: identidad de la tarjeta */
+  table.table-mobile-cards td:first-child {
+    justify-content: flex-start;
+    gap: 0.4rem;
+    padding-bottom: 0.45rem;
+    border-bottom: 1px dashed var(--border-subtle);
+    font-size: 1rem;
+    font-weight: 750;
+    text-align: left;
+  }
+  table.table-mobile-cards td:first-child::before { display: none; }
+  table.table-mobile-cards td:first-child .badge { margin-left: auto; }
+
+  /* Celda de acciones: botones en cuadrícula, a ancho completo */
+  table.table-mobile-cards td.actions-cell {
+    display: block;
+    margin-top: 0.15rem;
+    padding-top: 0.6rem;
+    border-top: 1px solid var(--border);
+  }
+  table.table-mobile-cards td.actions-cell::before { display: none; }
+  table.table-mobile-cards td.actions-cell > div,
+  table.table-mobile-cards td.actions-cell .row-actions {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
+    gap: 0.45rem;
+    opacity: 1;
+  }
+  table.table-mobile-cards td.actions-cell form {
+    display: block;
+    margin: 0;
+  }
+  table.table-mobile-cards td.actions-cell .btn {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+    padding-left: 0.4rem;
+    padding-right: 0.4rem;
+    white-space: nowrap;
+  }
+}
+
+/* --- Tablas anchas que conservan columnas (reportes, mercado, import) -- */
+@media (max-width: 768px) {
+  .card:has(> table.table:not(.table-mobile-cards)) { overflow-x: auto; }
+  .card > table.table:not(.table-mobile-cards) { min-width: 620px; }
+  .table-wrap table.table:not(.table-mobile-cards) { min-width: 620px; }
+
+  /* Primera columna fija mientras la tabla desplaza */
+  .card > table.table:not(.table-mobile-cards) th:first-child,
+  .card > table.table:not(.table-mobile-cards) td:first-child,
+  .table-wrap table.table:not(.table-mobile-cards) th:first-child,
+  .table-wrap table.table:not(.table-mobile-cards) td:first-child {
+    position: sticky;
+    left: 0;
+    background: var(--surface);
+    box-shadow: 6px 0 8px -6px rgba(15, 23, 42, 0.18);
+  }
+  .card > table.table:not(.table-mobile-cards) th:first-child { background: var(--surface-alt); z-index: 2; }
+  .table-wrap table.table:not(.table-mobile-cards) th:first-child { background: var(--surface-alt); z-index: 2; }
+}
+
+/* --- Catálogo (partidas / recursos) en teléfono ----------------------- */
+@media (max-width: 900px) {
+  /* El árbol de familias pasa a ser un riel de chips horizontales pegajoso */
+  .catalog-layout { gap: 0.6rem; }
+  .cat-sidebar {
+    position: sticky;
+    top: 0;
+    z-index: 45;
+    width: 100%;
+    padding: 0.45rem 0.55rem 0.55rem;
+    border: 0;
+    border-bottom: 1px solid var(--border);
+    border-radius: 0;
+    box-shadow: var(--shadow-xs);
+    max-height: none;
+  }
+  .cat-sidebar-head { display: none; }
+  .cat-sidebar-body {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    padding: 0.1rem 0.05rem 0.2rem;
+  }
+  /* Capítulos como chips; los subcapítulos del capítulo abierto se
+     despliegan en su propia fila inferior (details → display:contents). */
+  .cat-sidebar-body .category-btn,
+  .cat-sidebar-body .cat-group {
+    flex: 0 0 auto;
+  }
+  .cat-sidebar-body .cat-group { display: contents; }
+  .cat-sidebar-body .category-btn {
+    width: auto;
+    padding: 0.42rem 0.85rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface);
+    font-size: 0.8rem;
+    white-space: nowrap;
+    align-items: center;
+    list-style: none;
+  }
+  .cat-sidebar-body .category-btn::-webkit-details-marker { display: none; }
+  .cat-sidebar-body .category-btn .cat-arrow { display: none; }
+  .cat-sidebar-body .category-btn .cat-name { white-space: nowrap; }
+  .cat-sidebar-body .category-btn .cat-count { margin-left: 0.1rem; }
+  .cat-sidebar-body .subcat-list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    order: 90;
+    width: 100%;
+    margin: 0;
+    padding: 0.1rem 0 0.15rem;
+    border: 0;
+    border-top: 1px dashed var(--border);
+    gap: 0.35rem;
+  }
+  .cat-sidebar-body .subcat-btn {
+    padding: 0.32rem 0.7rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface-alt);
+    font-size: 0.74rem;
+    white-space: nowrap;
+  }
+  /* «Crear categoría»: fila propia al final del riel, colapsado por defecto */
+  .cat-sidebar-body .quick-category-create {
+    order: 100;
+    width: 100%;
+    border: 0;
+    padding: 0;
+    font-size: 0.74rem;
+  }
+  .cat-sidebar-body .quick-category-create summary {
+    color: var(--accent);
+    font-weight: 700;
+    padding: 0.3rem 0;
+  }
+  .cat-sidebar-body .quick-category-form {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.4rem;
+    padding: 0.4rem 0;
+  }
+  .cat-sidebar-body .sidebar-help { display: none; }
+  #catSidebarExpand { display: none !important; }
+
+  /* La tabla del catálogo desplaza dentro de su sección */
+  .cat-section-body { overflow-x: auto; }
+  .subcat-body { min-width: 0; }
+  .partidas-table { min-width: 680px; }
+  .partidas-table th:first-child,
+  .partidas-table td:first-child {
+    position: sticky;
+    left: 0;
+    background: var(--surface);
+    z-index: 1;
+  }
+  .partidas-table tbody tr:hover th:first-child,
+  .partidas-table tbody tr:hover td:first-child { background: var(--surface); }
+  .catalog-layout .partidas-table tbody tr:hover td:first-child { background: var(--accent-soft); }
+
+  /* Cabecera de sección compacta */
+  .cat-section-head { flex-wrap: wrap; padding: 0.6rem 0.75rem; }
+  .cat-title-wrap { min-width: 0; flex: 1 1 100%; }
+  .cat-meta { font-size: 0.7rem; }
+  .cat-actions { margin-left: auto; }
+}
+
+/* --- Barras de herramientas y acciones en lote ------------------------ */
+@media (max-width: 768px) {
+  .partidas-toolbar { padding: 0.6rem 0.7rem; }
+  .toolbar-search { width: 100%; min-width: 0; }
+  .toolbar-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.45rem;
+  }
+  .toolbar-actions form { display: flex; }
+  .toolbar-actions .btn,
+  .toolbar-actions a.btn { width: 100%; justify-content: center; text-align: center; }
+  .toolbar-actions input[type="number"] { width: 100%; min-width: 0; }
+  .toolbar-divider { display: none; }
+
+  /* Bandeja inferior flotante: siempre al alcance del pulgar, sin empujar
+     el contenido (se apoya sobre la barra de navegación). */
+  .bulk-bar {
+    position: fixed;
+    left: 0.55rem;
+    right: 0.55rem;
+    bottom: calc(70px + env(safe-area-inset-bottom, 0px));
+    z-index: 92;
+    margin: 0;
+    padding: 0.7rem 0.8rem;
+    border-radius: 16px;
+    box-shadow: var(--shadow-xl);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+  .bulk-left { width: 100%; }
+  .bulk-move {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.4rem;
+    width: 100%;
+  }
+  .bulk-move .btn { width: 100%; justify-content: center; }
+  .bulk-move > span { display: none; }
+  .bulk-right { justify-content: space-between; width: 100%; margin-top: 0.45rem; }
+}
+
+/* --- Modales: hoja completa en teléfono ------------------------------- */
+@media (max-width: 640px) {
+  .modal-overlay { padding: 0; }
+  .modal {
+    max-width: 100%;
+    width: 100%;
+    max-height: 100vh;
+    max-height: 100dvh;
+    min-height: 92vh;
+    min-height: 92dvh;
+    border-radius: 0;
+    border: 0;
+    padding: 1rem 1rem calc(1.1rem + env(safe-area-inset-bottom, 0px));
+  }
+  .modal-lg { max-width: 100%; }
+}
+
+/* --- Panel (dashboard) -------------------------------------------------- */
+@media (max-width: 640px) {
+  .dash-kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.6rem;
+  }
+  .dash-kpi-value { font-size: 1.12rem; }
+  .dash-kpi-value.dash-kpi-money { font-size: 1.02rem; }
+  .dash-kpi-hint { font-size: 0.68rem; }
+  .dash-kpi-label { font-size: 0.68rem; }
+}
+@media (max-width: 400px) {
+  .dash-kpi-value { font-size: 1rem; }
+}
+
+/* --- Formularios -------------------------------------------------------- */
+@media (max-width: 640px) {
+  .form-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+  .form-actions > * { width: 100%; justify-content: center; text-align: center; }
+  .form-actions .btn-primary { grid-column: 1 / -1; order: -1; }
+  .field input, .field select { width: 100%; }
+}
+
+/* --- Navegación inferior: pulido y safe-area --------------------------- */
+@media (max-width: 768px) {
+  .bottom-nav { box-shadow: 0 -6px 24px rgba(15, 23, 42, 0.10); }
+  .bottom-nav a { font-size: 0.64rem; }
+  .bottom-nav a:active { color: var(--accent); }
+}
