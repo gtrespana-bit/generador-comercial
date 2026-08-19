@@ -133,9 +133,17 @@
           </select>
         </div>
         <div class="field">
-          <label>Tasa de cambio USD → moneda contractual <span class="hint">(referencia, opcional)</span></label>
-          <input type="number" name="tipo_cambio" step="any" min="0" placeholder="{{ ('p. ej. ' ~ tasas_sugeridas[cfg.moneda_default]) if tasas_sugeridas.get(cfg.moneda_default) else 'Tasa oficial del día' }}"
+          <label>Tasa de cambio USD → moneda contractual <span class="hint">(1 USD = X)</span></label>
+          <input type="number" name="tipo_cambio" step="any" min="0" placeholder="{{ ('p. ej. ' ~ tasas_sugeridas[cfg.moneda_default]) if tasas_sugeridas.get(cfg.moneda_default) else 'Tasa confirmada' }}"
                  value="{{ presupuesto.tipo_cambio if presupuesto and presupuesto.tipo_cambio else (cfg.tasa_cambio if cfg.tasa_cambio and not presupuesto else '') }}">
+        </div>
+        <div class="field">
+          <label>Fecha de la tasa</label>
+          <input type="date" name="fecha_tipo_cambio" value="{{ presupuesto.fecha_tipo_cambio.isoformat() if presupuesto and presupuesto.fecha_tipo_cambio else (cfg.fecha_tasa.isoformat() if cfg.fecha_tasa and not presupuesto else '') }}">
+        </div>
+        <div class="field">
+          <label>Fuente de la tasa</label>
+          <input type="text" name="fuente_tipo_cambio" maxlength="120" placeholder="Manual, TRM, SUNAT, API…" value="{{ presupuesto.fuente_tipo_cambio if presupuesto else (cfg.fuente_tipo_cambio or '') }}">
         </div>
         <div class="field">
           <label>IVA (%)</label>
@@ -158,7 +166,7 @@
         <div class="field field-full"><label>Motivo de la nueva versión</label><input name="motivo_version" maxlength="500" placeholder="Describe brevemente el cambio realizado"><p class="hint">Al guardar, se conservará una nueva instantánea del documento.</p></div>
         {% endif %}
 
-        {% if cfg.activar_funciones_venezuela %}<div class="field field-full csp-s-d66c3f479a"><label class="csp-s-6b2a94ea3b">🇻🇪 Datos regionales (opcionales)</label><div class="form-grid">{% if cfg.mostrar_numero_control %}<div class="field"><label>Número de control</label><input name="numero_control" value="{{ presupuesto.numero_control if presupuesto else '' }}"></div>{% endif %}{% if cfg.mostrar_tasa_cambio %}<div class="field"><label>Fecha de tasa</label><input type="date" name="fecha_tipo_cambio" value="{{ presupuesto.fecha_tipo_cambio.isoformat() if presupuesto and presupuesto.fecha_tipo_cambio else '' }}"></div>{% endif %}{% if cfg.mostrar_retenciones %}<div class="field"><label>Retención (%)</label><input type="number" step="any" min="0" name="retencion_pct" value="{{ presupuesto.retencion_pct if presupuesto else 0 }}"></div><label><input type="checkbox" name="operacion_exenta" {{ 'checked' if presupuesto and presupuesto.operacion_exenta else '' }}> Operación exenta</label>{% endif %}{% if cfg.mostrar_clausula_cambiaria %}<div class="field field-full"><label>Cláusula de ajuste cambiario</label><textarea name="clausula_cambiaria">{{ presupuesto.clausula_cambiaria if presupuesto else '' }}</textarea></div>{% endif %}</div></div>{% endif %}
+        {% if cfg.activar_funciones_venezuela %}<div class="field field-full csp-s-d66c3f479a"><label class="csp-s-6b2a94ea3b">🇻🇪 Datos regionales (opcionales)</label><div class="form-grid">{% if cfg.mostrar_numero_control %}<div class="field"><label>Número de control</label><input name="numero_control" value="{{ presupuesto.numero_control if presupuesto else '' }}"></div>{% endif %}{% if cfg.mostrar_retenciones %}<div class="field"><label>Retención (%)</label><input type="number" step="any" min="0" name="retencion_pct" value="{{ presupuesto.retencion_pct if presupuesto else 0 }}"></div><label><input type="checkbox" name="operacion_exenta" {{ 'checked' if presupuesto and presupuesto.operacion_exenta else '' }}> Operación exenta</label>{% endif %}{% if cfg.mostrar_clausula_cambiaria %}<div class="field field-full"><label>Cláusula de ajuste cambiario</label><textarea name="clausula_cambiaria">{{ presupuesto.clausula_cambiaria if presupuesto else '' }}</textarea></div>{% endif %}</div></div>{% endif %}
         {% if cfg.activar_funciones_avanzadas or (presupuesto and presupuesto.usar_funciones_avanzadas) %}
         <div class="field field-full advanced-budget-options csp-s-acdc88ecde">
           <label class="csp-s-5898011ec9">
