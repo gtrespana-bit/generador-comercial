@@ -20,7 +20,7 @@ def test_monedas_latam_validas_y_ves_no_visible():
 
 
 def test_formato_usa_codigo_iso_y_decimales_de_moneda():
-    assert formato_iso(32000, "COP") == "32.000,00 COP"
+    assert formato_iso(32000, "COP") == "32.000 COP"
     assert formato_iso(1250, "USD") == "1.250,00 USD"
     assert formato_iso(1250, "CLP") == "1.250 CLP"
 

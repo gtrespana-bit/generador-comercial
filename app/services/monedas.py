@@ -23,7 +23,7 @@ class DefinicionMoneda:
 # texto como moneda válida.
 MONEDAS: dict[str, DefinicionMoneda] = {
     "USD": DefinicionMoneda("USD", "Dólar estadounidense", 2, "$"),
-    "COP": DefinicionMoneda("COP", "Peso colombiano", 2, "$"),
+    "COP": DefinicionMoneda("COP", "Peso colombiano", 0, "$"),
     "MXN": DefinicionMoneda("MXN", "Peso mexicano", 2, "$"),
     "PEN": DefinicionMoneda("PEN", "Sol peruano", 2, "S/"),
     "CLP": DefinicionMoneda("CLP", "Peso chileno", 0, "$"),

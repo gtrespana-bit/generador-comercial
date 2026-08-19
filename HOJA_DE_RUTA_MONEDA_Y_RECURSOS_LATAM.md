@@ -464,6 +464,17 @@ Precio Venezuela: 9,50 USD
 |---|---|
 | 2026-08-19 | Creación de la hoja de ruta y definición inicial de bloques |
 
+### 2026-08-19 — Política de decimales confirmada
+
+Se adopta la recomendación inicial:
+
+- USD: 2 decimales.
+- COP: 0 decimales visibles en documentos; precisión interna cuando sea necesaria.
+- MXN: 2 decimales.
+- PEN: 2 decimales.
+- CLP: 0 decimales.
+- PYG: 0 decimales.
+
 ### 2026-08-19 — Confirmación de decisiones A-E
 
 - A confirmado: catálogo base/referencia y precios independientes por país; Colombia y Perú pueden tener precios distintos para el mismo recurso.
