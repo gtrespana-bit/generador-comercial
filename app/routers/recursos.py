@@ -123,6 +123,13 @@ def crear_recurso(
     precio: str = Form("0"),
     precio_mercado: str = Form(""),
     proveedor: str = Form(""),
+    subtipo: str = Form(""),
+    capacidad: str = Form(""),
+    modalidad_tarifa: str = Form("hora"),
+    incluye_operador: str = Form(""),
+    incluye_combustible: str = Form(""),
+    incluye_flete: str = Form(""),
+    rendimiento_jornada: str = Form(""),
     db: Session = Depends(get_db),
 ):
     if not descripcion.strip():
@@ -143,6 +150,9 @@ def crear_recurso(
         grupo=grupo.strip(),
         precio=max(0.0, _f(precio)),
         proveedor=proveedor.strip(),
+        subtipo=subtipo.strip(), capacidad=capacidad.strip(), modalidad_tarifa=modalidad_tarifa.strip() or "hora",
+        incluye_operador=bool(incluye_operador), incluye_combustible=bool(incluye_combustible), incluye_flete=bool(incluye_flete),
+        rendimiento_jornada=_f(rendimiento_jornada, None),
     )
     db.add(recurso)
     db.flush()
@@ -178,6 +188,13 @@ def actualizar_recurso(
     precio: str = Form("0"),
     precio_mercado: str = Form(""),
     proveedor: str = Form(""),
+    subtipo: str = Form(""),
+    capacidad: str = Form(""),
+    modalidad_tarifa: str = Form("hora"),
+    incluye_operador: str = Form(""),
+    incluye_combustible: str = Form(""),
+    incluye_flete: str = Form(""),
+    rendimiento_jornada: str = Form(""),
     db: Session = Depends(get_db),
 ):
     recurso = db.get(Recurso, recurso_id)
@@ -202,6 +219,9 @@ def actualizar_recurso(
     recurso.grupo = grupo.strip()
     recurso.precio = nuevo_precio
     recurso.proveedor = proveedor.strip()
+    recurso.subtipo = subtipo.strip(); recurso.capacidad = capacidad.strip(); recurso.modalidad_tarifa = modalidad_tarifa.strip() or "hora"
+    recurso.incluye_operador = bool(incluye_operador); recurso.incluye_combustible = bool(incluye_combustible); recurso.incluye_flete = bool(incluye_flete)
+    recurso.rendimiento_jornada = _f(rendimiento_jornada, None)
     recurso.fecha_actualizacion_precio = datetime.utcnow()
     if str(precio_mercado or "").strip():
         from ..services.traduccion import codigo_desde_pais
