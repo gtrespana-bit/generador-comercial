@@ -56,6 +56,39 @@ def _descomposicion_catalogo(form):
     return filas, resultado["costes"]
 
 
+def _descomposicion_en_moneda(partida: Partida, factor: float):
+    """Devuelve `descomposicion_json` con los precios de sus filas en moneda local.
+
+    El catálogo se guarda en la moneda base (USD) pero el formulario de edición
+    se muestra en la moneda de la organización. Sin convertir aquí los precios
+    unitarios de cada recurso, el «Análisis de precio unitario» mostraba dólares
+    junto a un precio de venta en moneda local (p. ej. COP) y el coste directo /
+    beneficio mezclaba monedas. Devuelve None si no hay descomposición que
+    convertir o el JSON no es válido.
+    """
+    if not factor or factor == 1.0:
+        return None
+    try:
+        valor = json.loads(partida.descomposicion_json or "[]")
+    except (TypeError, ValueError):
+        return None
+    if isinstance(valor, list):
+        valor = {"origen": "manual", "filas": valor}
+    if not isinstance(valor, dict):
+        return None
+    filas = [
+        dict(fila) if isinstance(fila, dict) else fila
+        for fila in valor.get("filas", [])
+    ]
+    for fila in filas:
+        if not isinstance(fila, dict):
+            continue
+        for campo in ("precio", "precio_unitario", "importe", "coste_unitario"):
+            if isinstance(fila.get(campo), (int, float)):
+                fila[campo] = tasa_convertir_precio(fila[campo], factor)
+    return json.dumps(dict(valor, filas=filas), ensure_ascii=False)
+
+
 def _datos_partida_catalogo(form):
     """Datos opcionales de una partida, concentrados fuera del constructor."""
     horas_txt = str(form.get("tiempo_estimado_horas", "")).strip()
@@ -790,6 +823,13 @@ def editar_partida_form(partida_id: int, request: Request, db: Session = Depends
             partida.coste_mano_obra = tasa_convertir_precio(partida.coste_mano_obra or 0, _factor_e)
             partida.coste_complementarios = tasa_convertir_precio(partida.coste_complementarios or 0, _factor_e)
             partida.coste_otros = tasa_convertir_precio(partida.coste_otros or 0, _factor_e)
+            # El análisis de precios unitarios se edita en la misma moneda que
+            # el precio de venta: sin convertir los precios de las filas, la
+            # tabla mostraba dólares junto a un precio en moneda local y el
+            # «Coste directo»/beneficio mezclaba monedas.
+            _descomp_e = _descomposicion_en_moneda(partida, _factor_e)
+            if _descomp_e is not None:
+                partida.descomposicion_json = _descomp_e
     except Exception:
         pass
     try:
