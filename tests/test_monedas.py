@@ -38,6 +38,17 @@ def test_conversion_no_aplica_doble_conversion_y_exige_tasa():
         raise AssertionError("debe exigir tasa")
 
 
+def test_validar_tasa_rechaza_tasa_no_positiva():
+    from app.services.monedas import validar_tasa
+    validar_tasa("USD", "USD", None)
+    try:
+        validar_tasa("USD", "COP", 0)
+    except ValueError as exc:
+        assert "tasa positiva" in str(exc)
+    else:
+        raise AssertionError("debe rechazar tasa cero")
+
+
 def test_contexto_es_serializable_y_expone_base_y_contrato():
     assert contexto("COP", base="USD", tasa=3200, fuente="manual") == {
         "moneda_base": "USD",

@@ -13,6 +13,7 @@ import json
 import urllib.request
 import urllib.error
 from datetime import date
+from decimal import Decimal, ROUND_HALF_UP
 
 # Tasas sugeridas para pre-rellenar el formulario de configuración.
 #
@@ -80,13 +81,17 @@ def obtener_tasa_api(moneda_local: str, timeout: int = 6) -> tuple[float | None,
 
 
 def tasa_convertir_precio(precio_usd: float, tasa: float | None) -> float:
-    """Convierte precio USD -> local con tasa. Si tasa es None/0/1, devuelve USD."""
+    """Convierte USD -> local con precisión decimal y redondeo comercial.
+
+    Se conserva la firma histórica para no romper importadores ni el editor;
+    la identidad de moneda y la exigencia de tasa viven en ``monedas.py``.
+    """
     try:
-        p = float(precio_usd or 0)
-        t = float(tasa) if tasa else 1.0
+        p = Decimal(str(precio_usd or 0))
+        t = Decimal(str(tasa)) if tasa else Decimal("1")
         if t <= 0:
-            t = 1.0
-        return round(p * t, 2)
+            t = Decimal("1")
+        return float((p * t).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP))
     except Exception:
         return float(precio_usd or 0)
 

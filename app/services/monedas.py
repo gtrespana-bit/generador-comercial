@@ -110,6 +110,17 @@ def convertir(valor, origen: str, destino: str, tasa_usd_destino=None,
     return cuantizar(en_usd * Decimal(str(tasa_usd_destino)), d)
 
 
+def validar_tasa(origen: str, destino: str, tasa=None) -> None:
+    """Valida una tasa antes de convertir o congelar un documento."""
+    if codigo_iso(origen) == codigo_iso(destino):
+        return
+    try:
+        if tasa is None or Decimal(str(tasa)) <= 0:
+            raise ValueError
+    except (TypeError, ValueError, ArithmeticError) as exc:
+        raise ValueError(f"Se necesita una tasa positiva para {codigo_iso(origen)}->{codigo_iso(destino)}") from exc
+
+
 def contexto(moneda: str | None, *, base: str = MONEDA_BASE_CATALOGO,
              tasa=None, fecha=None, fuente: str | None = None) -> dict:
     """Contexto serializable para backend, plantillas y editor."""
