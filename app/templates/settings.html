@@ -138,28 +138,28 @@
   </div>
 
   <div class="card">
-    <h2>Valores por defecto para presupuestos nuevos</h2>
+    <h2 id="moneda">Valores por defecto para presupuestos nuevos</h2>
     <div class="form-grid">
       <div class="field">
         <label>Moneda por defecto</label>
         <select name="moneda_default" id="select-moneda">
-          <option value="USD" {{ 'selected' if cfg.moneda_default in ['USD',''] else '' }}>USD ($) — dólar</option>
-          <option value="COP" {{ 'selected' if cfg.moneda_default == 'COP' else '' }}>COP ($) — peso colombiano</option>
-          <option value="MXN" {{ 'selected' if cfg.moneda_default == 'MXN' else '' }}>MXN ($) — peso mexicano</option>
-          <option value="PEN" {{ 'selected' if cfg.moneda_default == 'PEN' else '' }}>PEN (S/) — sol peruano</option>
-          <option value="CLP" {{ 'selected' if cfg.moneda_default == 'CLP' else '' }}>CLP ($) — peso chileno</option>
-          <option value="ARS" {{ 'selected' if cfg.moneda_default == 'ARS' else '' }}>ARS ($) — peso argentino</option>
-          <option value="UYU" {{ 'selected' if cfg.moneda_default == 'UYU' else '' }}>UYU ($U) — peso uruguayo</option>
-          <option value="PYG" {{ 'selected' if cfg.moneda_default == 'PYG' else '' }}>PYG (₲) — guaraní paraguayo</option>
-          <option value="BOB" {{ 'selected' if cfg.moneda_default == 'BOB' else '' }}>BOB (Bs) — boliviano</option>
-          <option value="DOP" {{ 'selected' if cfg.moneda_default == 'DOP' else '' }}>DOP (RD$) — peso dominicano</option>
-          <option value="PAB" {{ 'selected' if cfg.moneda_default == 'PAB' else '' }}>PAB (B/.) — balboa panameño</option>
-          <option value="CRC" {{ 'selected' if cfg.moneda_default == 'CRC' else '' }}>CRC (₡) — colón costarricense</option>
-          <option value="GTQ" {{ 'selected' if cfg.moneda_default == 'GTQ' else '' }}>GTQ (Q) — quetzal guatemalteco</option>
-          <option value="HNL" {{ 'selected' if cfg.moneda_default == 'HNL' else '' }}>HNL (L) — lempira hondureño</option>
-          <option value="NIO" {{ 'selected' if cfg.moneda_default == 'NIO' else '' }}>NIO (C$) — córdoba nicaragüense</option>
-          <option value="BRL" {{ 'selected' if cfg.moneda_default == 'BRL' else '' }}>BRL (R$) — real brasileño</option>
-          <option value="EUR" {{ 'selected' if cfg.moneda_default == 'EUR' else '' }}>EUR (€) — euro</option>
+          <option value="USD" {{ 'selected' if cfg.moneda_default in ['USD',''] else '' }}>USD — dólar estadounidense</option>
+          <option value="COP" {{ 'selected' if cfg.moneda_default == 'COP' else '' }}>COP — peso colombiano</option>
+          <option value="MXN" {{ 'selected' if cfg.moneda_default == 'MXN' else '' }}>MXN — peso mexicano</option>
+          <option value="PEN" {{ 'selected' if cfg.moneda_default == 'PEN' else '' }}>PEN — sol peruano</option>
+          <option value="CLP" {{ 'selected' if cfg.moneda_default == 'CLP' else '' }}>CLP — peso chileno</option>
+          <option value="ARS" {{ 'selected' if cfg.moneda_default == 'ARS' else '' }}>ARS — peso argentino</option>
+          <option value="UYU" {{ 'selected' if cfg.moneda_default == 'UYU' else '' }}>UYU — peso uruguayo</option>
+          <option value="PYG" {{ 'selected' if cfg.moneda_default == 'PYG' else '' }}>PYG — guaraní paraguayo</option>
+          <option value="BOB" {{ 'selected' if cfg.moneda_default == 'BOB' else '' }}>BOB — boliviano</option>
+          <option value="DOP" {{ 'selected' if cfg.moneda_default == 'DOP' else '' }}>DOP — peso dominicano</option>
+          <option value="PAB" {{ 'selected' if cfg.moneda_default == 'PAB' else '' }}>PAB — balboa panameño</option>
+          <option value="CRC" {{ 'selected' if cfg.moneda_default == 'CRC' else '' }}>CRC — colón costarricense</option>
+          <option value="GTQ" {{ 'selected' if cfg.moneda_default == 'GTQ' else '' }}>GTQ — quetzal guatemalteco</option>
+          <option value="HNL" {{ 'selected' if cfg.moneda_default == 'HNL' else '' }}>HNL — lempira hondureño</option>
+          <option value="NIO" {{ 'selected' if cfg.moneda_default == 'NIO' else '' }}>NIO — córdoba nicaragüense</option>
+          <option value="BRL" {{ 'selected' if cfg.moneda_default == 'BRL' else '' }}>BRL — real brasileño</option>
+          <option value="EUR" {{ 'selected' if cfg.moneda_default == 'EUR' else '' }}>EUR — euro</option>
         </select>
         <p class="hint">El catálogo guarda USD; si eliges COP/MXN/PEN se muestra convertido con tu tasa.</p>
       </div>
