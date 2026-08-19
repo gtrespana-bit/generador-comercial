@@ -300,6 +300,7 @@ def _anexar_filas_importadas(presupuesto: Presupuesto, filas: list[dict]) -> lis
             unidad=fila.get("unidad", "ud") or "ud",
             cantidad=fila.get("cantidad", 1.0),
             precio_unitario=fila.get("precio", 0.0),
+            moneda=presupuesto.moneda or "USD",
             orden=ordenes_partidas[clave_orden],
             tipo_partida=tipo,
             # Incluidas, provisionales y sujetas a medición forman parte del
@@ -353,6 +354,7 @@ def _anexar_partidas_cype(
             # venta. Se usa inicialmente como precio para que el presupuesto
             # sea consistente; se puede definir el margen comercial después.
             precio_unitario=coste_directo,
+            moneda=presupuesto.moneda or "USD",
             orden=orden,
             coste_materiales=coste_materiales,
             coste_mano_obra=coste_mano_obra,
@@ -1376,8 +1378,9 @@ def _montar_presupuesto(presupuesto, capitulos, partidas, imagenes_guardadas, im
             partida_catalogo_id=pd.get("catalogo_id"),
             descripcion=pd["descripcion"],
             unidad=pd["unidad"],
-            precio_unitario=pd["precio"],
-            cantidad=pd["cantidad"],
+                precio_unitario=pd["precio"],
+                moneda=presupuesto.moneda or "USD",
+                cantidad=pd["cantidad"],
             orden=orden_p[pd["cap"]],
             producto_nombre=pd["prod_nombre"],
             producto_precio=pd["prod_precio"],
@@ -3190,6 +3193,7 @@ def duplicar_presupuesto(presupuesto_id: int, db: Session = Depends(get_db)):
                 unidad=part_o.unidad,
                 cantidad=part_o.cantidad,
                 precio_unitario=part_o.precio_unitario,
+                moneda=part_o.moneda or copia.moneda or "USD",
                 orden=part_o.orden,
                 producto_nombre=part_o.producto_nombre,
                 producto_precio=part_o.producto_precio,
