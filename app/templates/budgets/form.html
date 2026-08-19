@@ -134,7 +134,7 @@
         </div>
         <div class="field">
           <label>Tasa de cambio Bs/USD <span class="hint">(referencia, opcional)</span></label>
-          <input type="number" name="tipo_cambio" step="any" min="0" placeholder="p. ej. 4200"
+          <input type="number" name="tipo_cambio" step="any" min="0" placeholder="{{ ('p. ej. ' ~ tasas_sugeridas[cfg.moneda_default]) if tasas_sugeridas.get(cfg.moneda_default) else 'Tasa oficial del día' }}"
                  value="{{ presupuesto.tipo_cambio if presupuesto and presupuesto.tipo_cambio else (cfg.tasa_cambio if cfg.tasa_cambio and not presupuesto else '') }}">
         </div>
         <div class="field">

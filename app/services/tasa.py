@@ -14,28 +14,31 @@ import urllib.request
 import urllib.error
 from datetime import date
 
-# Tasa sugerida inicial si la API falla y no hay tasa guardada (aprox 2026-08)
-# No es vinculante: el usuario la ve y la confirma antes de guardar.
-TASAS_SUGERIDAS: dict[str, float] = {
-    "VES": 36.50,  # BCV aprox
-    "COP": 4200.0,
-    "MXN": 17.20,
-    "PEN": 3.75,
-    "CLP": 950.0,
-    "ARS": 950.0,  # volátil, solo referencia
-    "UYU": 40.0,
-    "PYG": 7500.0,
-    "BOB": 6.90,
-    "DOP": 59.0,
-    "PAB": 1.0,  # USD
-    "CRC": 510.0,
-    "GTQ": 7.80,
-    "HNL": 24.80,
-    "NIO": 36.70,
-    "BRL": 5.60,
-    "EUR": 0.92,
+# Tasas sugeridas para pre-rellenar el formulario de configuración.
+#
+# IMPORTANTE: solo se listan monedas cuya tasa fue verificada el día de la
+# actualización (TASAS_ACTUALIZADAS). Las demás devuelven None y la interfaz
+# ofrece el botón «Tasa de hoy» (open.er-api.com) o la entrada manual: nunca
+# se pre-rellena un número no verificado.
+#
+# No son vinculantes: el usuario ve la tasa y la confirma antes de guardar.
+# Cada presupuesto congela su tasa al crearse.
+TASAS_ACTUALIZADAS = "2026-08-19"
+TASAS_SUGERIDAS: dict[str, float | None] = {
     "USD": 1.0,
+    "PAB": 1.0,  # balboa, paridad con USD
+    # BCV oficial 18/08/2026 (773,31 Bs/USD)
+    "VES": 773.31,
+    # TRM oficial Superintendencia Financiera de Colombia, 19/08/2026
+    "COP": 3128.65,
+    # Mercado (cierre 18/08/2026, ~17,06)
+    "MXN": 17.06,
+    # SUNAT (12/08/2026: 3,364 compra / 3,372 venta; ~3,37)
+    "PEN": 3.37,
 }
+# El resto de monedas del selector (CLP, ARS, UYU, PYG, BOB, DOP, CRC, GTQ,
+# HNL, NIO, BRL, EUR…) no se pre-rellenan: sin tasa verificada a la fecha de
+# TASAS_ACTUALIZADAS. El usuario consulta «Tasa de hoy» o escribe la oficial.
 
 
 def obtener_tasa_api(moneda_local: str, timeout: int = 6) -> tuple[float | None, str | None]:
@@ -88,8 +91,14 @@ def tasa_convertir_precio(precio_usd: float, tasa: float | None) -> float:
         return float(precio_usd or 0)
 
 
-def tasa_sugerida(moneda: str) -> float:
+def tasa_sugerida(moneda: str) -> float | None:
+    """Tasa verificada para pre-rellenar, o None si no hay una verificada.
+
+    None significa «sin sugerencia»: la interfaz invita a consultar la tasa
+    del día (botón «Tasa de hoy») o a escribir la oficial. Nunca se devuelve
+    un valor inventado.
+    """
     moneda = str(moneda or "USD").strip().upper()
     if moneda == "BS":
         moneda = "VES"
-    return TASAS_SUGERIDAS.get(moneda, 1.0)
+    return TASAS_SUGERIDAS.get(moneda)

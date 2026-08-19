@@ -58,6 +58,33 @@ def test_obtener_pais_normaliza_minusculas():
     assert paises.obtener_pais(None) is None
 
 
+def test_ejemplos_de_formulario_por_pais():
+    """Cada país trae sus propios placeholders: ID fiscal, teléfono,
+    forma legal y ciudad. Nada de ejemplos venezolanos fuera de VE."""
+    d = paises.defaults_para_pais("CO")
+    assert d["id_fiscal_placeholder"] == "900.123.456-7"
+    assert d["telefono_ejemplo"] == "+57 300 000 0000"
+    assert d["razon_social_ejemplo"] == "S.A.S."
+    assert d["ciudad_ejemplo"] == "Bogotá"
+
+    mx = paises.defaults_para_pais("MX")
+    assert mx["id_fiscal_placeholder"] == "AAA010101AAA"
+    assert mx["telefono_ejemplo"].startswith("+52")
+
+    pe = paises.defaults_para_pais("PE")
+    assert pe["razon_social_ejemplo"] == "S.A.C."
+    assert pe["telefono_ejemplo"].startswith("+51")
+
+    ve = paises.defaults_para_pais("VE")
+    assert ve["id_fiscal_placeholder"] == "J-12345678-9"
+
+
+def test_ejemplos_generico_sin_pais():
+    d = paises.defaults_para_pais(None)
+    assert d["id_fiscal"] == "ID fiscal"
+    assert not d["ciudad_ejemplo"]
+
+
 # ---------------------------------------------------------------------------
 # app/utils.py — monedas libres (20 ISOs)
 # ---------------------------------------------------------------------------
@@ -140,10 +167,23 @@ def test_tasa_convertir_precio():
     assert tasa_convertir_precio(100, 0) == 100.0
 
 
-def test_tasa_sugerida():
-    assert tasa_sugerida("COP") == 4200.0
+def test_tasa_sugerida_solo_valores_verificados():
+    # Tasas verificadas el día de la actualización (TASAS_ACTUALIZADAS)
+    assert tasa_sugerida("COP") == pytest.approx(3128.65)  # TRM oficial 19/08/2026
+    assert tasa_sugerida("VES") == pytest.approx(773.31)   # BCV oficial 18/08/2026
+    assert tasa_sugerida("MXN") == pytest.approx(17.06)    # mercado 18/08/2026
+    assert tasa_sugerida("PEN") == pytest.approx(3.37)     # SUNAT 12/08/2026
     assert tasa_sugerida("USD") == 1.0
+    assert tasa_sugerida("PAB") == 1.0
     assert tasa_sugerida("Bs") == tasa_sugerida("VES")
+
+
+def test_tasa_sugerida_sin_verificacion_devuelve_none():
+    """Nunca se pre-rellena una tasa no verificada: el usuario consulta
+    «Tasa de hoy» o escribe la oficial."""
+    assert tasa_sugerida("CLP") is None
+    assert tasa_sugerida("ARS") is None
+    assert tasa_sugerida("XXX") is None
 
 
 def test_obtener_tasa_api_usd_no_requiere_red():
@@ -230,6 +270,72 @@ def test_configuracion_rechaza_moneda_desconocida(entorno, cliente_web):
     with Session() as db:
         cfg = db.query(Configuracion).first()
         assert cfg.moneda_default == "USD"
+
+
+# ---------------------------------------------------------------------------
+# Formularios adaptados al país: onboarding y configuración
+# ---------------------------------------------------------------------------
+
+def test_bienvenida_colombia_habla_colombiano(entorno, cliente_web):
+    """El wizard de alta de empresa adapta etiqueta, teléfono, forma legal
+    y tasa al país configurado — sin ejemplos venezolanos."""
+    Session, _ids, _rol = entorno
+    with Session() as db:
+        cfg = db.query(Configuracion).first()
+        cfg.empresa_pais = "Colombia"
+        cfg.etiqueta_id_fiscal = "NIT"
+        cfg.moneda_default = "COP"
+        cfg.iva_default = 19
+        cfg.onboarding_completado = False
+        db.commit()
+    resp = cliente_web.get("/bienvenida")
+    assert resp.status_code == 200
+    # Etiqueta del ID fiscal colombiano y su formato de ejemplo
+    assert "NIT" in resp.text
+    assert "900.123.456-7" in resp.text
+    # Ejemplos locales: teléfono +57, forma legal S.A.S., ciudad Bogotá
+    assert "+57 300 000 0000" in resp.text
+    assert "S.A.S." in resp.text
+    assert "Bogotá" in resp.text
+    # Tasa verificada del servidor (TRM oficial), no la antigua de 4200
+    assert "3128.65" in resp.text
+    # Ningún placeholder venezolano renderizado (el JSON del selector sí
+    # incluye los datos de VE para poder volver a elegirlo)
+    assert 'placeholder="+58 412 000 0000"' not in resp.text
+    assert 'placeholder="J-12345678-9"' not in resp.text
+
+
+def test_bienvenida_venezuela_conserva_sus_ejemplos(entorno, cliente_web):
+    Session, _ids, _rol = entorno
+    with Session() as db:
+        cfg = db.query(Configuracion).first()
+        cfg.empresa_pais = "Venezuela"
+        cfg.etiqueta_id_fiscal = "RIF"
+        cfg.moneda_default = "USD"
+        cfg.onboarding_completado = False
+        db.commit()
+    resp = cliente_web.get("/bienvenida")
+    assert resp.status_code == 200
+    assert "RIF" in resp.text
+    assert "+58 412 000 0000" in resp.text
+
+
+def test_configuracion_colombia_adapta_los_campos(entorno, cliente_web):
+    Session, _ids, _rol = entorno
+    with Session() as db:
+        cfg = db.query(Configuracion).first()
+        cfg.empresa_pais = "Colombia"
+        cfg.etiqueta_id_fiscal = "NIT"
+        cfg.moneda_default = "COP"
+        db.commit()
+    resp = cliente_web.get("/configuracion")
+    assert resp.status_code == 200
+    assert "900.123.456-7" in resp.text          # placeholder del NIT
+    assert "+57 300 000 0000" in resp.text       # teléfono colombiano
+    assert "S.A.S." in resp.text                 # forma legal colombiana
+    assert "3128.65" in resp.text                # TRM verificada en el JSON
+    assert 'placeholder="+58' not in resp.text   # sin teléfono venezolano renderizado
+    assert 'placeholder="J-XXXXXXXX-X"' not in resp.text
 
 
 # ---------------------------------------------------------------------------

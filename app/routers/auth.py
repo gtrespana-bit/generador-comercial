@@ -1002,6 +1002,9 @@ def bienvenida(request: Request, db: Session = Depends(get_db)):
         resumen = getattr(request.state, "licencia_resumen", None) or {}
         if not resumen.get("activo"):
             compra_pendiente_ficha = plan_info(plan_recordado)
+    from ..paises import PAIS_GENERICO, lista_paises
+    from ..services.tasa import TASAS_SUGERIDAS
+
     return TEMPLATES.TemplateResponse(
         request,
         "onboarding.html",
@@ -1012,6 +1015,11 @@ def bienvenida(request: Request, db: Session = Depends(get_db)):
             # porque viene de la query y acaba pintándose en la página.
             "msg": request.query_params.get("msg", "")[:300],
             "compra_pendiente_ficha": compra_pendiente_ficha,
+            # Una sola fuente de verdad para el auto-config por país: los JS
+            # del wizard leen estos datos, no valores duplicados a mano.
+            "paises": lista_paises(),
+            "pais_generico": PAIS_GENERICO,
+            "tasas": TASAS_SUGERIDAS,
         },
     )
 

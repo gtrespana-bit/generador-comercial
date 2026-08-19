@@ -1177,7 +1177,7 @@ class Configuracion(TenantMixin, Base):
     # Semana 2 — Bloque A: etiqueta fiscal genérica por país (RIF, NIT, RUT, CUIT, RUC, RFC…)
     etiqueta_id_fiscal = Column(String(20), default="RIF")
     # Tasa de referencia para conversión USD -> moneda local (bloque moneda/tasa auto)
-    # Ej: 4200 COP por 1 USD. NULL = 1 (cuando moneda_default es USD).
+    # Ej: 3128.65 COP por 1 USD. NULL = 1 (cuando moneda_default es USD).
     tasa_cambio = Column(Float, nullable=True)
     fecha_tasa = Column(Date, nullable=True)
 

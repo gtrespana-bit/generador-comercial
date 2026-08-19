@@ -51,6 +51,9 @@ def ver_configuracion(request: Request, db: Session = Depends(get_db)):
     # En escritorio (SQLite) no hay membresías: el usuario local es el
     # propietario por definición. En la web solo gestionan propietario/admin.
     puede_editar = DATABASE_IS_SQLITE or puede_gestionar(db)
+    from ..paises import PAIS_GENERICO, lista_paises
+    from ..services.tasa import TASAS_SUGERIDAS
+
     return TEMPLATES.TemplateResponse(
         request,
         "settings.html",
@@ -60,6 +63,10 @@ def ver_configuracion(request: Request, db: Session = Depends(get_db)):
             "puede_editar": puede_editar,
             "licencia": licencia,
             "compra_recibo": compra_recibo,
+            # Una sola fuente de verdad para el auto-config por país
+            "paises": lista_paises(),
+            "pais_generico": PAIS_GENERICO,
+            "tasas": TASAS_SUGERIDAS,
         },
     )
 

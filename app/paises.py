@@ -29,6 +29,10 @@ PAISES: dict[str, dict] = {
         "iva": 16,
         "id_fiscal": "RIF",
         "vocab": "concreto, friso, cielo raso, rodapié, plomero",
+        "id_fiscal_placeholder": "J-12345678-9",
+        "telefono_ejemplo": "+58 412 000 0000",
+        "razon_social_ejemplo": "C.A.",
+        "ciudad_ejemplo": "Caracas",
         "mercado": "venezolano",
     },
     "CO": {
@@ -42,6 +46,10 @@ PAISES: dict[str, dict] = {
         "iva": 19,
         "id_fiscal": "NIT",
         "vocab": "concreto, pañete, cielo raso, guardaescoba, plomero",
+        "id_fiscal_placeholder": "900.123.456-7",
+        "telefono_ejemplo": "+57 300 000 0000",
+        "razon_social_ejemplo": "S.A.S.",
+        "ciudad_ejemplo": "Bogotá",
         "mercado": "colombiano",
     },
     "MX": {
@@ -55,6 +63,10 @@ PAISES: dict[str, dict] = {
         "iva": 16,
         "id_fiscal": "RFC",
         "vocab": "concreto, aplanado, plafón, zoclo, plomero",
+        "id_fiscal_placeholder": "AAA010101AAA",
+        "telefono_ejemplo": "+52 55 0000 0000",
+        "razon_social_ejemplo": "S.A. de C.V.",
+        "ciudad_ejemplo": "Ciudad de México",
         "mercado": "mexicano",
     },
     "PE": {
@@ -68,6 +80,10 @@ PAISES: dict[str, dict] = {
         "iva": 18,
         "id_fiscal": "RUC",
         "vocab": "concreto, tarrajeo, cielo raso, zócalo, gasfitero",
+        "id_fiscal_placeholder": "20123456789",
+        "telefono_ejemplo": "+51 900 000 000",
+        "razon_social_ejemplo": "S.A.C.",
+        "ciudad_ejemplo": "Lima",
         "mercado": "peruano",
     },
     "CL": {
@@ -81,6 +97,10 @@ PAISES: dict[str, dict] = {
         "iva": 19,
         "id_fiscal": "RUT",
         "vocab": "hormigón, estuco, cielo falso, guardapolvo, gasfíter",
+        "id_fiscal_placeholder": "76.123.456-K",
+        "telefono_ejemplo": "+56 9 0000 0000",
+        "razon_social_ejemplo": "SpA",
+        "ciudad_ejemplo": "Santiago",
         "mercado": "chileno",
     },
     "AR": {
@@ -94,6 +114,10 @@ PAISES: dict[str, dict] = {
         "iva": 21,
         "id_fiscal": "CUIT",
         "vocab": "hormigón, revoque, cielorraso, zócalo, plomero",
+        "id_fiscal_placeholder": "20-12345678-9",
+        "telefono_ejemplo": "+54 11 0000 0000",
+        "razon_social_ejemplo": "S.R.L.",
+        "ciudad_ejemplo": "Buenos Aires",
         "mercado": "argentino",
     },
     "EC": {
@@ -107,6 +131,10 @@ PAISES: dict[str, dict] = {
         "iva": 15,
         "id_fiscal": "RUC",
         "vocab": "hormigón, enlucido, tumbado, barredera, gasfitero",
+        "id_fiscal_placeholder": "0991234567001",
+        "telefono_ejemplo": "+593 99 000 0000",
+        "razon_social_ejemplo": "S.A.",
+        "ciudad_ejemplo": "Quito",
         "mercado": "ecuatoriano",
     },
     "DO": {
@@ -120,6 +148,10 @@ PAISES: dict[str, dict] = {
         "iva": 18,
         "id_fiscal": "RNC",
         "vocab": "hormigón, pañete, plafón, zócalo, plomero",
+        "id_fiscal_placeholder": "130-12345-6",
+        "telefono_ejemplo": "+1 809 000 0000",
+        "razon_social_ejemplo": "S.R.L.",
+        "ciudad_ejemplo": "Santo Domingo",
         "mercado": "dominicano",
     },
     "UY": {
@@ -133,6 +165,10 @@ PAISES: dict[str, dict] = {
         "iva": 22,
         "id_fiscal": "RUT",
         "vocab": "hormigón, revoque, cielorraso, zócalo, sanitario",
+        "id_fiscal_placeholder": "211234567812",
+        "telefono_ejemplo": "+598 99 000 000",
+        "razon_social_ejemplo": "S.A.",
+        "ciudad_ejemplo": "Montevideo",
         "mercado": "uruguayo",
     },
     "PY": {
@@ -146,6 +182,10 @@ PAISES: dict[str, dict] = {
         "iva": 10,
         "id_fiscal": "RUC",
         "vocab": "hormigón, revoque, cielorraso, zócalo, plomero",
+        "id_fiscal_placeholder": "80012345-6",
+        "telefono_ejemplo": "+595 21 000 000",
+        "razon_social_ejemplo": "S.A.",
+        "ciudad_ejemplo": "Asunción",
         "mercado": "paraguayo",
     },
     "BO": {
@@ -159,6 +199,10 @@ PAISES: dict[str, dict] = {
         "iva": 13,
         "id_fiscal": "NIT",
         "vocab": "hormigón, revoque, cielo falso, zócalo, plomero",
+        "id_fiscal_placeholder": "1020304050",
+        "telefono_ejemplo": "+591 2 000 0000",
+        "razon_social_ejemplo": "S.R.L.",
+        "ciudad_ejemplo": "La Paz",
         "mercado": "boliviano",
     },
     "PA": {
@@ -172,6 +216,10 @@ PAISES: dict[str, dict] = {
         "iva": 7,
         "id_fiscal": "RUC",
         "vocab": "concreto, repello, cielo raso, zócalo, plomero",
+        "id_fiscal_placeholder": "1234567-1-123456",
+        "telefono_ejemplo": "+507 6000 0000",
+        "razon_social_ejemplo": "S.A.",
+        "ciudad_ejemplo": "Ciudad de Panamá",
         "mercado": "panameño",
     },
     "CR": {
@@ -185,6 +233,10 @@ PAISES: dict[str, dict] = {
         "iva": 13,
         "id_fiscal": "NITE",
         "vocab": "concreto, repello, cielo raso, rodapié, fontanero",
+        "id_fiscal_placeholder": "3-101-123456",
+        "telefono_ejemplo": "+506 8888 0000",
+        "razon_social_ejemplo": "S.A.",
+        "ciudad_ejemplo": "San José",
         "mercado": "costarricense",
     },
     "GT": {
@@ -198,6 +250,10 @@ PAISES: dict[str, dict] = {
         "iva": 12,
         "id_fiscal": "NIT",
         "vocab": "concreto, repello, cielo falso, zócalo, fontanero",
+        "id_fiscal_placeholder": "1234567-8",
+        "telefono_ejemplo": "+502 5555 0000",
+        "razon_social_ejemplo": "S.A.",
+        "ciudad_ejemplo": "Ciudad de Guatemala",
         "mercado": "guatemalteco",
     },
     "HN": {
@@ -211,6 +267,10 @@ PAISES: dict[str, dict] = {
         "iva": 15,
         "id_fiscal": "RTN",
         "vocab": "concreto, repello, cielo falso, zócalo, fontanero",
+        "id_fiscal_placeholder": "08011999123456",
+        "telefono_ejemplo": "+504 9999 0000",
+        "razon_social_ejemplo": "S.A.",
+        "ciudad_ejemplo": "Tegucigalpa",
         "mercado": "hondureño",
     },
     "SV": {
@@ -224,6 +284,10 @@ PAISES: dict[str, dict] = {
         "iva": 13,
         "id_fiscal": "NIT",
         "vocab": "concreto, repello, cielo falso, zócalo, fontanero",
+        "id_fiscal_placeholder": "0614-123456-789-0",
+        "telefono_ejemplo": "+503 7000 0000",
+        "razon_social_ejemplo": "S.A. de C.V.",
+        "ciudad_ejemplo": "San Salvador",
         "mercado": "salvadoreño",
     },
     "NI": {
@@ -237,6 +301,10 @@ PAISES: dict[str, dict] = {
         "iva": 15,
         "id_fiscal": "RUC",
         "vocab": "concreto, repello, cielo raso, zócalo, fontanero",
+        "id_fiscal_placeholder": "J0310000001234",
+        "telefono_ejemplo": "+505 8888 0000",
+        "razon_social_ejemplo": "S.A.",
+        "ciudad_ejemplo": "Managua",
         "mercado": "nicaragüense",
     },
 }
@@ -261,6 +329,10 @@ PAIS_GENERICO: dict = {
     "id_fiscal": "ID fiscal",
     "vocab": "concreto, friso, cielo raso, rodapié, plomero",
     "mercado": "latinoamericano",
+    "id_fiscal_placeholder": "RIF, NIT, RUC, RFC…",
+    "telefono_ejemplo": "+00 000 000 0000",
+    "razon_social_ejemplo": "",
+    "ciudad_ejemplo": "",
 }
 
 
@@ -284,7 +356,11 @@ def es_codigo_valido(codigo: str | None) -> bool:
 # ---- Helpers para Semana 2 — Bloque B/C (auto-config) -----------------------
 
 def defaults_para_pais(codigo: str | None) -> dict:
-    """Devuelve {moneda, iva, id_fiscal, nombre, vocab} para un país.
+    """Devuelve los defaults de un país (moneda, IVA, ID fiscal, ejemplos).
+
+    Incluye los ejemplos de formulario por país (placeholder del ID fiscal,
+    teléfono, forma legal y ciudad) para que onboarding y /configuracion
+    hablen el idioma local sin lógica duplicada.
 
     Si el código es inválido o vacío, devuelve el genérico LatAm.
     Es la única fuente de defaults de país para onboarding y /configuracion.
@@ -300,6 +376,10 @@ def defaults_para_pais(codigo: str | None) -> dict:
         "vocab": base["vocab"],
         "bandera": base["bandera"],
         "mercado": base["mercado"],
+        "id_fiscal_placeholder": base.get("id_fiscal_placeholder", ""),
+        "telefono_ejemplo": base.get("telefono_ejemplo", ""),
+        "razon_social_ejemplo": base.get("razon_social_ejemplo", ""),
+        "ciudad_ejemplo": base.get("ciudad_ejemplo", ""),
     }
 
 

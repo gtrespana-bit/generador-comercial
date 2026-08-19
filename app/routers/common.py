@@ -375,6 +375,33 @@ TEMPLATES.env.filters["simbolo"] = _simbolo_moneda
 # Mapa de símbolos disponible para JS del editor (moneda libre LatAm)
 TEMPLATES.env.globals["simbolos"] = SIMBOLOS
 
+
+def _pais_de_nombre(nombre: str | None) -> dict:
+    """Defaults del país a partir de su nombre ('Colombia' -> NIT/COP/+57…).
+
+    Devuelve el genérico LatAm si el nombre no corresponde a un país conocido.
+    Única fuente de placeholders locales para los formularios.
+    """
+    try:
+        from ..paises import defaults_para_pais
+        from ..services.traduccion import codigo_desde_pais
+
+        return defaults_para_pais(codigo_desde_pais(nombre or "") or None)
+    except Exception:
+        return {}
+
+
+TEMPLATES.env.globals["pais_de_nombre"] = _pais_de_nombre
+
+# Tasas verificadas disponibles para placeholders de plantillas
+# (app/services/tasa.py); None/ausente = sin sugerencia verificada.
+try:
+    from ..services.tasa import TASAS_SUGERIDAS as _TASAS_SUGERIDAS
+
+    TEMPLATES.env.globals["tasas_sugeridas"] = _TASAS_SUGERIDAS
+except Exception:  # pragma: no cover
+    TEMPLATES.env.globals["tasas_sugeridas"] = {}
+
 UPLOADS = UPLOADS_DIR
 # Los Excel originales se guardan bajo uploads (consultables/descargables); el
 # JSON intermedio del asistente queda fuera de estáticos hasta confirmarse.

@@ -7,6 +7,7 @@
 
 <form method="post" action="{{ '/clientes/' ~ cliente.id ~ '/editar' if cliente else '/clientes/nuevo' }}">
   <div class="card">
+    {% set _pais_form = pais_de_nombre(cliente.pais if cliente and cliente.pais else (cfg.empresa_pais or '')) %}
     <div class="form-grid">
       <div class="field">
         <label>Nombre *</label>
@@ -14,15 +15,15 @@
       </div>
       <div class="field">
         <label>{{ cfg.etiqueta_id_fiscal or "ID fiscal" }}</label>
-        <input type="text" name="rif" value="{{ cliente.rif if cliente else '' }}" placeholder="{{ cfg.etiqueta_id_fiscal or 'ID' }} — p. ej. {{ 'J-12345678-9' if (cfg.etiqueta_id_fiscal or 'RIF')=='RIF' else '900123456-7' }}">
+        <input type="text" name="rif" value="{{ cliente.rif if cliente else '' }}" placeholder="p. ej. {{ _pais_form.id_fiscal_placeholder or '900123456-7' }}">
       </div>
       <div class="field">
         <label>País</label>
-        <input type="text" name="pais" value="{{ cliente.pais if cliente else (cfg.empresa_pais or '') }}" placeholder="p. ej. Colombia">
+        <input type="text" name="pais" value="{{ cliente.pais if cliente else (cfg.empresa_pais or '') }}" placeholder="p. ej. {{ _pais_form.nombre or 'Colombia' }}">
       </div>
       <div class="field">
         <label>Teléfono</label>
-        <input type="text" name="telefono" value="{{ cliente.telefono if cliente else '' }}" placeholder="+58 412 000 0000">
+        <input type="text" name="telefono" value="{{ cliente.telefono if cliente else '' }}" placeholder="{{ _pais_form.telefono_ejemplo or '+00 000 000 0000' }}">
       </div>
       <div class="field">
         <label>Email</label>
