@@ -769,6 +769,7 @@ class PresupuestoItem(TenantMixin, Base):
     unidad = Column(String(20), default="ud")
     cantidad = Column(Float, default=0.0)          # usada si no hay mediciones
     precio_unitario = Column(Float, default=0.0)
+    moneda = Column(String(10), default="USD")
     orden = Column(Integer, default=0)
     # Partida maestra del catálogo desde la que se insertó. Permite distinguir
     # un cambio «solo en este presupuesto» de una actualización del catálogo
@@ -1407,6 +1408,7 @@ class Producto(TenantMixin, Base):
     nombre = Column(String(250), nullable=False)
     descripcion = Column(Text, default="")
     precio_unitario = Column(Float, default=0.0)
+    moneda = Column(String(10), default="USD")
     unidad = Column(String(30), default="ud")
     categoria = Column(String(80), default="General")
     imagen = Column(String(300), default="")           # referencia lógica o ruta local histórica
@@ -1472,6 +1474,7 @@ class Recurso(TenantMixin, Base):
     categoria = Column(String(30), default="otros")  # materiales, mano_obra, complementarios, otros
     grupo = Column(String(250), default="")
     precio = Column(Float, default=0.0)
+    moneda = Column(String(10), default="USD")
     proveedor = Column(String(150), default="")
     # Metadatos
     usos = Column(Integer, default=0)
