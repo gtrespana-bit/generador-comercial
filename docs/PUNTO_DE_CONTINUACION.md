@@ -1,6 +1,6 @@
 # Punto exacto de continuación
 
-Fecha de corte: **19/08/2026 (noche) — PR #42 creado con el bloque 100 % recomendado (E4-038 consentimiento registrado, E4-032 plan de incidentes, E4-043 procedimiento de simulacro). Pendiente inmediato: fusionar el PR #42, aplicar la migración b6d9e4c2a8f1 en Supabase, sincronizar el flujo de CI y ejecutar el simulacro E4-043; luego día final de tests (D-019)** (America/Caracas).
+Fecha de corte: **19/08/2026 — PR #42 FUSIONADO y verificado en producción: migración b6d9e4c2a8f1 aplicada en Supabase (`/readyz` en verde), flujo de CI sincronizado y los 2 crons visibles en Vercel. El simulacro E4-043 y el día final de tests (D-019) quedan para el cierre, por decisión del titular. Ver «ESTADO VERIFICADO» más abajo** (America/Caracas).
 
 Este documento retoma el trabajo sin depender del historial del chat. Describe
 **dónde quedó exactamente** el trabajo y **qué sigue**, en ese orden. Léelo
@@ -262,7 +262,35 @@ Suite: **694 passed, 7 skipped** (23 pruebas nuevas). Cabeza Alembic:
 
 ## 🟢 EMPEZAR AQUÍ — Estado al cierre del 19/08/2026 (noche)
 
+> ### ✅ ESTADO VERIFICADO tras fusionar el PR #42 (sesión posterior, 19/08/2026)
+>
+> Todo lo que este documento daba como «pendiente inmediato» del PR #42 quedó
+> **hecho y verificado**:
+>
+> - **PR #42 fusionado**; `main` en `8b02641` (incluye la sincronización del
+>   flujo de CI: `.github/workflows/ci.yml` idéntico a `docs/ci/ci.yml`,
+>   verificado con `diff`).
+> - **Migración `b6d9e4c2a8f1` aplicada en Supabase** por el titular;
+>   `/readyz` responde 200 con `ok: true` y sin errores.
+> - **Los 2 crons aparecen en Vercel**: `/api/cron/mantenimiento` (`0 2 * * *`)
+>   y `/api/cron/recordatorios-vencimiento` (`0 13 * * *`).
+> - **Suite verificada sobre el merge: 695 passed, 6 skipped** (`pytest -q`
+>   con venv recreado desde `requirements-dev.txt`).
+>
+> Decisiones del titular registradas en esa sesión:
+>
+> - **UptimeRobot**: lo hará cuando lo crea conveniente; los pasos exactos ya
+>   se le entregaron (`docs/MONITORIZACION_Y_DIAGNOSTICO.md` §6b). **No volver
+>   a recordárselo.**
+> - **Simulacro E4-043**: se ejecuta **al final**, antes del día de tests, no
+>   ahora.
+> - **Día final único de solo tests (D-019)**: al final, cuando él lo indique.
+>
+> Con esto, no queda ningún paso operativo bloqueante: lo siguiente es
+> trabajo de producto (ver «Lo siguiente en el producto»).
+
 ### En una frase
+
 
 El circuito de cobro completo está **terminado, en verde y operativo** y la
 **Etapa 4 de endurecimiento avanza**: en las sesiones de hoy se cerró
