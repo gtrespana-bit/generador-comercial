@@ -10,6 +10,8 @@
 - Ecuador — USD
 - Venezuela — USD, ya existente y fuera de esta primera ronda de investigación
 
+> Venezuela no se cuenta como uno de los cuatro mercados nuevos: su catálogo USD ya existe.
+
 ## Alcance técnico
 
 El catálogo contiene aproximadamente 3.006 partidas, pero no se investigará un precio independiente para cada partida. Las partidas se calculan a partir de un cuadro de recursos compartidos. La primera ronda investigará y normalizará todos los recursos materiales, mano de obra y maquinaria existentes en `basedatos_partidas/datos/recursos.json`, que es la fuente actual del catálogo.
