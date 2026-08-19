@@ -1450,6 +1450,31 @@ class Producto(TenantMixin, Base):
         return limpias
 
 
+class PrecioRecursoMercado(Base):
+    """Precio de un recurso por mercado, con referencia nacional y override.
+
+    ``organizacion_id`` nulo = referencia nacional gestionada por Cotizat;
+    con valor = precio personalizado de una empresa.
+    """
+    __tablename__ = "precios_recursos_mercado"
+    __table_args__ = (
+        UniqueConstraint("recurso_id", "pais_codigo", "organizacion_id", name="uq_precio_recurso_mercado_org"),
+    )
+    id = Column(Integer, primary_key=True)
+    recurso_id = Column(Integer, ForeignKey("recursos.id", ondelete="CASCADE"), nullable=False, index=True)
+    pais_codigo = Column(String(2), nullable=False, index=True)
+    organizacion_id = Column(Integer, ForeignKey("organizaciones.id", ondelete="CASCADE"), nullable=True, index=True)
+    precio = Column(Float, nullable=False, default=0.0)
+    moneda = Column(String(10), nullable=False, default="USD")
+    fuente = Column(String(200), default="")
+    proveedor = Column(String(150), default="")
+    confianza = Column(String(20), default="referencia")
+    fecha_vigencia = Column(Date, nullable=True)
+    fecha_actualizacion = Column(DateTime, default=datetime.utcnow)
+    activo = Column(Boolean, nullable=False, default=True)
+    recurso = relationship("Recurso", back_populates="precios_mercado")
+
+
 class Recurso(TenantMixin, Base):
     """Catálogo central de precios unitarios (recursos).
 
@@ -1482,6 +1507,7 @@ class Recurso(TenantMixin, Base):
     ultimo_uso = Column(DateTime, nullable=True)
     fecha_actualizacion_precio = Column(DateTime, default=datetime.utcnow)
     created_at = Column(DateTime, default=datetime.utcnow)
+    precios_mercado = relationship("PrecioRecursoMercado", back_populates="recurso", cascade="all, delete-orphan")
 
     @property
     def clave(self) -> str:

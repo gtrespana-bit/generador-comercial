@@ -37,7 +37,7 @@
 | 4. Interfaz y configuración | ✅ Completado | 2026-08-19 | Configuración ISO, acceso rápido, selector contextual, confirmación y protección de históricos implementados |
 | 5. Editor y cálculos | ✅ Completado | 2026-08-19 | Editor, guardado, costes, beneficios, márgenes y moneda activa integrados |
 | 6. Plantillas y exportaciones | ✅ Completado | 2026-08-19 | Vistas, PDF, contrato, Excel, correos, propuestas públicas y PDF interactivo normalizados a ISO |
-| 7. Recursos por país | ⬜ Pendiente | — | — |
+| 7. Recursos por país | 🟡 En curso | 2026-08-19 | Modelo híbrido nacional + override por organización implementado; falta interfaz y carga de datos |
 | 8. Mano de obra y rendimientos | ⬜ Pendiente | — | — |
 | 9. Históricos y congelación | ⬜ Pendiente | — | — |
 | 10. Integración con etapa 6 | ⬜ Pendiente | — | — |
