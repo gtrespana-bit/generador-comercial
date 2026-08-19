@@ -91,13 +91,28 @@ def fmt_monto(valor, moneda="USD") -> str:
     return f"{fmt_num(valor)} {SIMBOLOS.get(clave, moneda)}"
 
 
+def fmt_monto_iso(valor, moneda="USD") -> str:
+    """Importe profesional con código ISO, no símbolo ambiguo."""
+    try:
+        from .services.monedas import formato_iso
+        return formato_iso(valor, moneda)
+    except Exception:
+        return f"{fmt_num(valor)} {str(moneda or 'USD').upper()}"
+
+
 def fmt_monto_raw(valor, moneda="USD") -> str:
-    """Alias para tests que pasan 'Bs' literal y esperan 'Bs'."""
+    """Alias histórico para compatibilidad con documentos antiguos."""
     return fmt_monto(valor, moneda)
 
 
+def fmt_precio_u_iso(valor, moneda="USD", unidad="") -> str:
+    """Precio unitario profesional: 32,50 COP/m2."""
+    base = fmt_monto_iso(valor, moneda)
+    return f"{base}/{unidad}" if unidad else base
+
+
 def fmt_precio_u(valor, moneda="USD", unidad="") -> str:
-    """Precio unitario: 32,50 $/m2"""
+    """Precio unitario histórico con símbolo: 32,50 $/m2"""
     base = f"{fmt_num(valor)} {SIMBOLOS.get(moneda, moneda)}"
     if unidad:
         base += f"/{unidad}"

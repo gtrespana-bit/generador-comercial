@@ -33,7 +33,7 @@ _SUBTITLE_FONT = Font(bold=True, size=11, color="64748B")
 _TOTAL_FILL = PatternFill("solid", fgColor="F0FDFA")
 _TOTAL_FONT = Font(bold=True, size=11, color="0D9488")
 _ODD_FILL = PatternFill("solid", fgColor="F8FAFC")
-_CURRENCY_FMT = '#,##0.00 "USD"'
+_CURRENCY_FMT = '#,##0.00'  # La moneda se escribe en la columna Moneda; nunca fijar USD
 _PCT_FMT = '0.00"%"'
 
 

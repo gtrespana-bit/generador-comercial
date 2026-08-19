@@ -27,7 +27,7 @@ from reportlab.platypus import (
 )
 from reportlab.lib import colors
 
-from ..utils import fmt_fecha, fmt_monto
+from ..utils import fmt_fecha, fmt_monto_iso as fmt_monto
 
 
 def _p(texto, estilo):
