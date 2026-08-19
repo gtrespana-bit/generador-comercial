@@ -1,8 +1,8 @@
 ﻿codigo_recurso;descripcion;categoria;unidad_fuente;pais_codigo;moneda;precio_referencia;precio_min;precio_max;fuente;fecha_consulta;confianza;incluye_iva;incluye_transporte;origen;observaciones
-MO-OF1;Oficial de 1ª.;mano_obra;h;CO;COP;13750.0;;;docs/INVESTIGACION_PRECIOS_RONDA_1.md;2026-08-19;referencia;por_verificar;no_confirmado;nacional;"Referencia central; validar presentación y proveedor."
-MO-OF1;Oficial de 1ª.;mano_obra;h;PE;PEN;8.71875;;;docs/INVESTIGACION_PRECIOS_RONDA_1.md;2026-08-19;referencia;por_verificar;no_confirmado;nacional;"Referencia central; validar presentación y proveedor."
-MO-OF1;Oficial de 1ª.;mano_obra;h;MX;MXN;93.75;;;docs/INVESTIGACION_PRECIOS_RONDA_1.md;2026-08-19;referencia;por_verificar;no_confirmado;nacional;"Referencia central; validar presentación y proveedor."
-MO-OF1;Oficial de 1ª.;mano_obra;h;EC;USD;2.70875;;;docs/INVESTIGACION_PRECIOS_RONDA_1.md;2026-08-19;referencia;por_verificar;no_confirmado;nacional;"Referencia central; validar presentación y proveedor."
+MO-OF1;Oficial de 1ª.;mano_obra;h;CO;COP;13750.0;;;docs/INVESTIGACION_PRECIOS_RONDA_5_MANO_OBRA.md;2026-08-19;referencia;por_verificar;no_confirmado;nacional;"Referencia central; validar presentación y proveedor."
+MO-OF1;Oficial de 1ª.;mano_obra;h;PE;PEN;8.71875;;;docs/INVESTIGACION_PRECIOS_RONDA_5_MANO_OBRA.md;2026-08-19;referencia;por_verificar;no_confirmado;nacional;"Referencia central; validar presentación y proveedor."
+MO-OF1;Oficial de 1ª.;mano_obra;h;MX;MXN;93.75;;;docs/INVESTIGACION_PRECIOS_RONDA_5_MANO_OBRA.md;2026-08-19;referencia;por_verificar;no_confirmado;nacional;"Referencia central; validar presentación y proveedor."
+MO-OF1;Oficial de 1ª.;mano_obra;h;EC;USD;2.70875;;;docs/INVESTIGACION_PRECIOS_RONDA_5_MANO_OBRA.md;2026-08-19;referencia;por_verificar;no_confirmado;nacional;"Referencia central; validar presentación y proveedor."
 MO-OF1-PISO;Oficial de 1ª colocador de pisos.;mano_obra;h;CO;COP;;;;;;pendiente;por_verificar;no_confirmado;pendiente;Pendiente de investigación específica.
 MO-OF1-PISO;Oficial de 1ª colocador de pisos.;mano_obra;h;PE;PEN;;;;;;pendiente;por_verificar;no_confirmado;pendiente;Pendiente de investigación específica.
 MO-OF1-PISO;Oficial de 1ª colocador de pisos.;mano_obra;h;MX;MXN;;;;;;pendiente;por_verificar;no_confirmado;pendiente;Pendiente de investigación específica.
@@ -23,10 +23,10 @@ MO-AYU-ESP;Ayudante especializado.;mano_obra;h;CO;COP;;;;;;pendiente;por_verific
 MO-AYU-ESP;Ayudante especializado.;mano_obra;h;PE;PEN;;;;;;pendiente;por_verificar;no_confirmado;pendiente;Pendiente de investigación específica.
 MO-AYU-ESP;Ayudante especializado.;mano_obra;h;MX;MXN;;;;;;pendiente;por_verificar;no_confirmado;pendiente;Pendiente de investigación específica.
 MO-AYU-ESP;Ayudante especializado.;mano_obra;h;EC;USD;;;;;;pendiente;por_verificar;no_confirmado;pendiente;Pendiente de investigación específica.
-MO-AYU;Ayudante.;mano_obra;h;CO;COP;9000.0;;;docs/INVESTIGACION_PRECIOS_RONDA_1.md;2026-08-19;referencia;por_verificar;no_confirmado;nacional;"Referencia central; validar presentación y proveedor."
-MO-AYU;Ayudante.;mano_obra;h;PE;PEN;7.85;;;docs/INVESTIGACION_PRECIOS_RONDA_1.md;2026-08-19;referencia;por_verificar;no_confirmado;nacional;"Referencia central; validar presentación y proveedor."
-MO-AYU;Ayudante.;mano_obra;h;MX;MXN;50.0;;;docs/INVESTIGACION_PRECIOS_RONDA_1.md;2026-08-19;referencia;por_verificar;no_confirmado;nacional;"Referencia central; validar presentación y proveedor."
-MO-AYU;Ayudante.;mano_obra;h;EC;USD;2.5;;;docs/INVESTIGACION_PRECIOS_RONDA_1.md;2026-08-19;referencia;por_verificar;no_confirmado;nacional;"Referencia central; validar presentación y proveedor."
+MO-AYU;Ayudante.;mano_obra;h;CO;COP;9000.0;;;docs/INVESTIGACION_PRECIOS_RONDA_5_MANO_OBRA.md;2026-08-19;referencia;por_verificar;no_confirmado;nacional;"Referencia central; validar presentación y proveedor."
+MO-AYU;Ayudante.;mano_obra;h;PE;PEN;7.85;;;docs/INVESTIGACION_PRECIOS_RONDA_5_MANO_OBRA.md;2026-08-19;referencia;por_verificar;no_confirmado;nacional;"Referencia central; validar presentación y proveedor."
+MO-AYU;Ayudante.;mano_obra;h;MX;MXN;50.0;;;docs/INVESTIGACION_PRECIOS_RONDA_5_MANO_OBRA.md;2026-08-19;referencia;por_verificar;no_confirmado;nacional;"Referencia central; validar presentación y proveedor."
+MO-AYU;Ayudante.;mano_obra;h;EC;USD;2.5;;;docs/INVESTIGACION_PRECIOS_RONDA_5_MANO_OBRA.md;2026-08-19;referencia;por_verificar;no_confirmado;nacional;"Referencia central; validar presentación y proveedor."
 MO-OF1-PIN;Oficial de 1ª pintor.;mano_obra;h;CO;COP;;;;;;pendiente;por_verificar;no_confirmado;pendiente;Pendiente de investigación específica.
 MO-OF1-PIN;Oficial de 1ª pintor.;mano_obra;h;PE;PEN;;;;;;pendiente;por_verificar;no_confirmado;pendiente;Pendiente de investigación específica.
 MO-OF1-PIN;Oficial de 1ª pintor.;mano_obra;h;MX;MXN;;;;;;pendiente;por_verificar;no_confirmado;pendiente;Pendiente de investigación específica.
@@ -359,10 +359,10 @@ MT-CONC-250;Concreto premezclado de resistencia 250 kg/cm2, puesto en obra.;mate
 MT-CONC-250;Concreto premezclado de resistencia 250 kg/cm2, puesto en obra.;materiales;m3;PE;PEN;;;;;;pendiente;por_verificar;no_confirmado;pendiente;Pendiente de investigación específica.
 MT-CONC-250;Concreto premezclado de resistencia 250 kg/cm2, puesto en obra.;materiales;m3;MX;MXN;;;;;;pendiente;por_verificar;no_confirmado;pendiente;Pendiente de investigación específica.
 MT-CONC-250;Concreto premezclado de resistencia 250 kg/cm2, puesto en obra.;materiales;m3;EC;USD;;;;;;pendiente;por_verificar;no_confirmado;pendiente;Pendiente de investigación específica.
-MT-CEMENTO;Cemento Portland gris tipo I, en saco.;materiales;kg;CO;COP;28000;;;docs/INVESTIGACION_PRECIOS_RONDA_1.md;2026-08-19;referencia;por_verificar;no_confirmado;nacional;"Referencia central; validar presentación y proveedor."
-MT-CEMENTO;Cemento Portland gris tipo I, en saco.;materiales;kg;PE;PEN;31.0;;;docs/INVESTIGACION_PRECIOS_RONDA_1.md;2026-08-19;referencia;por_verificar;no_confirmado;nacional;"Referencia central; validar presentación y proveedor."
-MT-CEMENTO;Cemento Portland gris tipo I, en saco.;materiales;kg;MX;MXN;240;;;docs/INVESTIGACION_PRECIOS_RONDA_1.md;2026-08-19;referencia;por_verificar;no_confirmado;nacional;"Referencia central; validar presentación y proveedor."
-MT-CEMENTO;Cemento Portland gris tipo I, en saco.;materiales;kg;EC;USD;8.5;;;docs/INVESTIGACION_PRECIOS_RONDA_1.md;2026-08-19;referencia;por_verificar;no_confirmado;nacional;"Referencia central; validar presentación y proveedor."
+MT-CEMENTO;Cemento Portland gris tipo I, en saco.;materiales;kg;CO;COP;560;;;docs/INVESTIGACION_PRECIOS_RONDA_1.md;2026-08-19;referencia;por_verificar;no_confirmado;nacional;"Referencia central; validar presentación y proveedor."
+MT-CEMENTO;Cemento Portland gris tipo I, en saco.;materiales;kg;PE;PEN;0.7294117647058823;;;docs/INVESTIGACION_PRECIOS_RONDA_1.md;2026-08-19;referencia;por_verificar;no_confirmado;nacional;"Referencia central; validar presentación y proveedor."
+MT-CEMENTO;Cemento Portland gris tipo I, en saco.;materiales;kg;MX;MXN;4.8;;;docs/INVESTIGACION_PRECIOS_RONDA_1.md;2026-08-19;referencia;por_verificar;no_confirmado;nacional;"Referencia central; validar presentación y proveedor."
+MT-CEMENTO;Cemento Portland gris tipo I, en saco.;materiales;kg;EC;USD;0.17;;;docs/INVESTIGACION_PRECIOS_RONDA_1.md;2026-08-19;referencia;por_verificar;no_confirmado;nacional;"Referencia central; validar presentación y proveedor."
 MT-ACERO-CAB;Acero de refuerzo en cabillas corrugadas, límite elástico 4.200 kg/cm2, cortado y doblado.;materiales;kg;CO;COP;4000;;;docs/INVESTIGACION_PRECIOS_RONDA_1.md;2026-08-19;referencia;por_verificar;no_confirmado;nacional;"Referencia central; validar presentación y proveedor."
 MT-ACERO-CAB;Acero de refuerzo en cabillas corrugadas, límite elástico 4.200 kg/cm2, cortado y doblado.;materiales;kg;PE;PEN;0.95;;;docs/INVESTIGACION_PRECIOS_RONDA_1.md;2026-08-19;referencia;por_verificar;no_confirmado;nacional;"Referencia central; validar presentación y proveedor."
 MT-ACERO-CAB;Acero de refuerzo en cabillas corrugadas, límite elástico 4.200 kg/cm2, cortado y doblado.;materiales;kg;MX;MXN;22;;;docs/INVESTIGACION_PRECIOS_RONDA_1.md;2026-08-19;referencia;por_verificar;no_confirmado;nacional;"Referencia central; validar presentación y proveedor."

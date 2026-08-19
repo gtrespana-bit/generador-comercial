@@ -14,7 +14,7 @@ PAISES = [("CO", "COP"), ("PE", "PEN"), ("MX", "MXN"), ("EC", "USD")]
 
 # Referencias centrales conservadoras, basadas en las rondas documentadas.
 REFERENCIAS = {
-    "MT-CEMENTO": {"CO": 28000, "PE": 31.0, "MX": 240, "EC": 8.5, "unidad": "kg"},
+    "MT-CEMENTO": {"CO": 560, "PE": 31.0/42.5, "MX": 240.0/50, "EC": 8.5/50, "unidad": "kg"},
     "MT-ARENA": {"CO": 100000, "PE": 85, "MX": 600, "EC": 20, "unidad": "m3"},
     "MT-PIEDRA-PIC": {"CO": 115000, "PE": 100, "MX": 500, "EC": 20, "unidad": "m3"},
     "MT-ACERO-CAB": {"CO": 4000, "PE": 0.95, "MX": 22, "EC": 0.98, "unidad": "kg"},
@@ -50,7 +50,7 @@ def main():
                 "precio_referencia": precio,
                 "precio_min": "",
                 "precio_max": "",
-                "fuente": "docs/INVESTIGACION_PRECIOS_RONDA_1.md" if precio != "" else "",
+                "fuente": "docs/INVESTIGACION_PRECIOS_RONDA_5_MANO_OBRA.md" if categoria == "mano_obra" and precio != "" else ("docs/INVESTIGACION_PRECIOS_RONDA_1.md" if precio != "" else ""),
                 "fecha_consulta": "2026-08-19" if precio != "" else "",
                 "confianza": "referencia" if precio != "" else "pendiente",
                 "incluye_iva": "por_verificar",
