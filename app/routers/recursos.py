@@ -52,13 +52,22 @@ def listar_recursos(request: Request, q: str = "", categoria: str = "", db: Sess
     if categoria and categoria in CATEGORIAS_RECURSO:
         query = query.filter(Recurso.categoria == categoria)
     recursos = query.order_by(Recurso.categoria, Recurso.descripcion).all()
-    # Agrupar por categoria para la vista
+    from ..services.traduccion import codigo_desde_pais
+    from ..services.precios_mercado import resolver_precio
+    cfg = _config(db)
+    pais = codigo_desde_pais(cfg.empresa_pais or "") or "VE"
+    org_id = int(db.info.get("organizacion_id") or 0)
+    precios_efectivos = {r.id: resolver_precio(db, r.id, pais, org_id) for r in recursos}
+    # Agrupar por categoria
     return TEMPLATES.TemplateResponse(request, "recursos/list.html", {
         "recursos": recursos,
         "q": q,
         "categoria": categoria,
         "categorias": CATEGORIAS_RECURSO,
         "etiquetas": ETIQUETAS_RECURSO,
+        "precios_efectivos": precios_efectivos,
+        "mercado_codigo": pais,
+        "mercado_moneda": cfg.moneda_default or "USD",
     })
 
 @router.get("/recursos/exportar")
