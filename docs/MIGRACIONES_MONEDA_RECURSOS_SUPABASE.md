@@ -22,6 +22,7 @@ La cadena debe avanzar así:
 | 6 | `docs/staging_upgrade_f2a3b4c5d6e7.sql` | `e1f2a3b4c5d6` | `f2a3b4c5d6e7` |
 | 7 | `docs/staging_upgrade_a3b4c5d6e7f8.sql` | `f2a3b4c5d6e7` | `a3b4c5d6e7f8` |
 | 8 | `docs/staging_upgrade_b4c5d6e7f8a9.sql` | `a3b4c5d6e7f8` | `b4c5d6e7f8a9` |
+| 9 | `docs/staging_upgrade_c5d6e7f8a9b0.sql` | `b4c5d6e7f8a9` | `c5d6e7f8a9b0` |
 
 Cada script tiene una guarda y aborta si la revisión previa no coincide.
 

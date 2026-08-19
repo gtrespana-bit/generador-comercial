@@ -936,7 +936,6 @@ async def confirmar_importacion_presupuesto(request: Request, db: Session = Depe
     }
 
 
-@router.get("/presupuestos/nuevo", response_class=HTMLResponse)
 def _recursos_editor_mercado(db, recursos, cfg, moneda, tasa):
     from ..services.traduccion import codigo_desde_pais
     from ..services.precios_mercado import resolver_precio_para_presupuesto
@@ -961,6 +960,7 @@ def _recursos_editor_mercado(db, recursos, cfg, moneda, tasa):
     return salida
 
 
+@router.get("/presupuestos/nuevo", response_class=HTMLResponse)
 def nuevo_presupuesto_form(request: Request, db: Session = Depends(get_db)):
     from ..services.catalogo_propio import asegurar_catalogo_propio
     asegurar_catalogo_propio(db)
@@ -3060,6 +3060,7 @@ async def actualizar_presupuesto(presupuesto_id: int, request: Request, db: Sess
     presupuesto.direccion_obra = str(form.get("direccion_obra", "")).strip()
     presupuesto.codigo_postal = str(form.get("codigo_postal", "")).strip()
     presupuesto.validez_dias = int(_f(form.get("validez_dias"), 30))
+    cfg = _config(db)
     presupuesto.moneda = "USD" if str(cfg.empresa_pais or "").strip().lower() == "venezuela" and normalizar_moneda(form.get("moneda"), "USD") == "VES" else normalizar_moneda(form.get("moneda"), "USD")
     presupuesto.tipo_cambio = _f(form.get("tipo_cambio"), None) if str(form.get("tipo_cambio", "")).strip() else None
     presupuesto.fuente_tipo_cambio = str(form.get("fuente_tipo_cambio", "") or "").strip()[:120]

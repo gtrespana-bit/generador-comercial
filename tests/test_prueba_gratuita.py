@@ -577,7 +577,8 @@ def test_la_migracion_encadena_con_la_cabeza_anterior():
         d9e2f3a4b5c6_add_tasa_cambio_latam as tasa_migracion,
     )
 
-    assert tasa_migracion.revision == EXPECTED_ALEMBIC_HEAD
+    from migrations.versions import c5d6e7f8a9b0_merge_currency_heads as merge_migracion
+    assert merge_migracion.revision == EXPECTED_ALEMBIC_HEAD
     assert tasa_migracion.down_revision == etiqueta_migracion.revision
     assert etiqueta_migracion.down_revision == auditoria_migracion.revision
     assert auditoria_migracion.down_revision == consentimiento_migracion.revision
