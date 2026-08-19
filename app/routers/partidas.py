@@ -641,6 +641,20 @@ async def guardar_partida_desde_presupuesto(request: Request, db: Session = Depe
 
     datos = _datos_partida_catalogo(form)
     filas_catalogo, costes_calculados = _descomposicion_catalogo(form)
+    # Si la edición muestra precios en moneda local, convierte de vuelta a USD.
+    try:
+        _cfg_u = _config(db)
+        _mon_u = str(getattr(_cfg_u, "moneda_default", "USD") or "USD").strip().upper()
+        _tasa_u = getattr(_cfg_u, "tasa_cambio", None)
+        _factor_u = factor_conversion_local(_mon_u, _tasa_u)
+        if _factor_u != 1.0:
+            datos["precio_unitario"] = max(0.0, datos.get("precio_unitario", 0) / _factor_u)
+            for k in ("coste_materiales", "coste_mano_obra", "coste_complementarios", "coste_otros"):
+                datos[k] = max(0.0, datos.get(k, 0) / _factor_u)
+            for fila in filas_catalogo:
+                fila["precio"] = max(0.0, fila.get("precio", 0) / _factor_u)
+    except Exception:
+        pass
     if filas_catalogo:
         datos.update({f"coste_{k}": v for k, v in costes_calculados.items()})
     datos["descomposicion_json"] = json.dumps({
@@ -701,6 +715,20 @@ async def crear_partida(request: Request, db: Session = Depends(get_db)):
         return _redirect("/partidas/nueva", error="Ya existe una partida con ese nombre.")
     datos = _datos_partida_catalogo(form)
     filas_catalogo, costes_calculados = _descomposicion_catalogo(form)
+    # Si la edición muestra precios en moneda local, convierte de vuelta a USD.
+    try:
+        _cfg_u = _config(db)
+        _mon_u = str(getattr(_cfg_u, "moneda_default", "USD") or "USD").strip().upper()
+        _tasa_u = getattr(_cfg_u, "tasa_cambio", None)
+        _factor_u = factor_conversion_local(_mon_u, _tasa_u)
+        if _factor_u != 1.0:
+            datos["precio_unitario"] = max(0.0, datos.get("precio_unitario", 0) / _factor_u)
+            for k in ("coste_materiales", "coste_mano_obra", "coste_complementarios", "coste_otros"):
+                datos[k] = max(0.0, datos.get(k, 0) / _factor_u)
+            for fila in filas_catalogo:
+                fila["precio"] = max(0.0, fila.get("precio", 0) / _factor_u)
+    except Exception:
+        pass
     if filas_catalogo:
         datos.update({f"coste_{k}": v for k, v in costes_calculados.items()})
     datos["descomposicion_json"] = json.dumps({"origen": "manual", "codigo": str(form.get("codigo_externo", "")), "unidad": datos["unidad"], "filas": filas_catalogo}, ensure_ascii=False)
@@ -721,9 +749,30 @@ def editar_partida_form(partida_id: int, request: Request, db: Session = Depends
     partida = db.get(Partida, partida_id)
     if partida is None:
         return _redirect("/partidas", error="Partida no encontrada.")
+    # Conversión USD->local para la edición, igual que en la visualización.
+    try:
+        _cfg_e = _config(db)
+        _mon_e = str(getattr(_cfg_e, "moneda_default", "USD") or "USD").strip().upper()
+        _tasa_e = getattr(_cfg_e, "tasa_cambio", None)
+        _factor_e = factor_conversion_local(_mon_e, _tasa_e)
+        if _factor_e != 1.0:
+            partida.precio_unitario = tasa_convertir_precio(partida.precio_unitario or 0, _factor_e)
+            partida.coste_materiales = tasa_convertir_precio(partida.coste_materiales or 0, _factor_e)
+            partida.coste_mano_obra = tasa_convertir_precio(partida.coste_mano_obra or 0, _factor_e)
+            partida.coste_complementarios = tasa_convertir_precio(partida.coste_complementarios or 0, _factor_e)
+            partida.coste_otros = tasa_convertir_precio(partida.coste_otros or 0, _factor_e)
+    except Exception:
+        pass
+    try:
+        from ..services.monedas import definicion
+        _simbolo_local = definicion(_mon_e).simbolo_auxiliar if '_mon_e' in locals() else "$"
+    except Exception:
+        _simbolo_local = ""
     return TEMPLATES.TemplateResponse(request, "partidas/form.html", {
         "partida": partida,
         "categorias": _categorias(db),
+        "moneda_local": getattr(_cfg_e, "moneda_default", "USD") if '_cfg_e' in locals() else "USD",
+        "simbolo_local": _simbolo_local,
     })
 
 
@@ -740,6 +789,20 @@ async def actualizar_partida(partida_id: int, request: Request, db: Session = De
         return _redirect(f"/partidas/{partida_id}/editar", error="Ya existe otra partida con ese nombre.")
     datos = _datos_partida_catalogo(form)
     filas_catalogo, costes_calculados = _descomposicion_catalogo(form)
+    # Si la edición muestra precios en moneda local, convierte de vuelta a USD.
+    try:
+        _cfg_u = _config(db)
+        _mon_u = str(getattr(_cfg_u, "moneda_default", "USD") or "USD").strip().upper()
+        _tasa_u = getattr(_cfg_u, "tasa_cambio", None)
+        _factor_u = factor_conversion_local(_mon_u, _tasa_u)
+        if _factor_u != 1.0:
+            datos["precio_unitario"] = max(0.0, datos.get("precio_unitario", 0) / _factor_u)
+            for k in ("coste_materiales", "coste_mano_obra", "coste_complementarios", "coste_otros"):
+                datos[k] = max(0.0, datos.get(k, 0) / _factor_u)
+            for fila in filas_catalogo:
+                fila["precio"] = max(0.0, fila.get("precio", 0) / _factor_u)
+    except Exception:
+        pass
     if filas_catalogo:
         datos.update({f"coste_{k}": v for k, v in costes_calculados.items()})
     datos["descomposicion_json"] = json.dumps({"origen": "manual", "codigo": str(form.get("codigo_externo", "")), "unidad": datos["unidad"], "filas": filas_catalogo}, ensure_ascii=False)
