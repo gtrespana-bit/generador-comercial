@@ -53,6 +53,7 @@ def guardar_precio(db: Session, recurso_id: int, pais_codigo: str, precio: float
     if row is None:
         row = PrecioRecursoMercado(recurso_id=recurso_id, pais_codigo=codigo, organizacion_id=organizacion_id)
         db.add(row)
+    anterior = row.precio if row.id is not None else None
     row.precio = max(0.0, float(precio))
     row.moneda = str(moneda or "USD").strip().upper()
     row.fuente = str(fuente or "").strip()[:200]
@@ -60,6 +61,9 @@ def guardar_precio(db: Session, recurso_id: int, pais_codigo: str, precio: float
     row.confianza = str(confianza or "referencia").strip()[:20]
     row.fecha_vigencia = fecha_vigencia
     row.fecha_actualizacion = date.today()
+    if anterior is not None and abs(float(anterior) - row.precio) > 1e-9:
+        from ..models import HistorialPrecioRecurso
+        db.add(HistorialPrecioRecurso(precio_mercado=row, precio_anterior=anterior, precio_nuevo=row.precio, moneda=row.moneda, motivo="Actualización de referencia", fuente=row.fuente))
     return row
 
 def resolver_precio_para_presupuesto(db: Session, recurso_id: int, pais_codigo: str,

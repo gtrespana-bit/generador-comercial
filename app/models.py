@@ -1060,6 +1060,10 @@ class DescomposicionFila(TenantMixin, Base):
     rendimiento = Column(Float, nullable=True)
     precio_unitario = Column(Float, nullable=True)
     importe = Column(Float, nullable=True)
+    moneda = Column(String(10), default="USD")
+    origen_precio = Column(String(20), default="base")
+    confianza_precio = Column(String(20), default="provisional")
+    fuente_precio = Column(String(200), default="")
     celdas_json = Column(Text, default="[]")
     formulas_json = Column(Text, default="{}")
 
@@ -1473,6 +1477,18 @@ class PrecioRecursoMercado(Base):
     fecha_actualizacion = Column(DateTime, default=datetime.utcnow)
     activo = Column(Boolean, nullable=False, default=True)
     recurso = relationship("Recurso", back_populates="precios_mercado")
+
+
+class HistorialPrecioRecurso(Base):
+    __tablename__ = "historial_precios_recursos"
+    id = Column(Integer, primary_key=True)
+    precio_mercado_id = Column(Integer, ForeignKey("precios_recursos_mercado.id", ondelete="CASCADE"), nullable=False, index=True)
+    precio_anterior = Column(Float, nullable=True)
+    precio_nuevo = Column(Float, nullable=False)
+    moneda = Column(String(10), nullable=False, default="USD")
+    fecha = Column(DateTime, default=datetime.utcnow)
+    motivo = Column(String(250), default="")
+    fuente = Column(String(200), default="")
 
 
 class Recurso(TenantMixin, Base):

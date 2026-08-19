@@ -393,6 +393,10 @@ def _anexar_partidas_cype(
                 rendimiento=numero_local(fila.get("rendimiento")),
                 precio_unitario=numero_local(fila.get("precio_unitario")),
                 importe=numero_local(fila.get("importe")),
+                moneda=str(fila.get("moneda") or getattr(presupuesto, "moneda", "USD")),
+                origen_precio=str(fila.get("origen_precio") or "base")[:20],
+                confianza_precio=str(fila.get("confianza_precio") or "provisional")[:20],
+                fuente_precio=str(fila.get("fuente_precio") or "")[:200],
                 celdas_json=json.dumps(fila.get("celdas", []), ensure_ascii=False),
                 formulas_json=json.dumps(fila.get("formulas", {}), ensure_ascii=False),
             ))
