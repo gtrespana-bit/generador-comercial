@@ -932,6 +932,7 @@
     var selMoneda = document.querySelector('select[name="moneda"]');
     if (selMoneda) {
       selMoneda.addEventListener("change", function () {
+        window.COTIZAT_MONEDA_ACTIVA = selMoneda.value || "USD";
         renumerar();
         recalcular();
       });
