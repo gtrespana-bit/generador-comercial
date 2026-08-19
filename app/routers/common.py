@@ -450,6 +450,42 @@ def _config(db: Session) -> Configuracion:
     return cfg
 
 
+def _importe_en_moneda_vista(valor, presupuesto, moneda_vista: str, factor_vista: float):
+    """Expresa un importe de un presupuesto en la moneda de la vista.
+
+    Cada presupuesto congela su moneda contractual; el panel y los reportes
+    agregan presupuestos de la organización y deben hacerlo en UNA sola
+    moneda. El puente es USD usando la tasa congelada del propio presupuesto
+    (``tipo_cambio``: unidades de la moneda contractual por USD) y la tasa de
+    la organización para llegar a la moneda de la vista.
+
+    Devuelve ``None`` cuando no hay tasa para el puente: nunca se inventa la
+    conversión (el llamador excluye ese importe del agregado).
+    """
+    if valor is None:
+        return None
+    from ..utils import normalizar_moneda
+
+    moneda_p = normalizar_moneda(presupuesto.moneda or "USD", "USD")
+    vista = normalizar_moneda(moneda_vista or "USD", "USD")
+    importe = float(valor)
+    if moneda_p == vista:
+        return importe
+    if moneda_p == "USD":
+        usd = importe
+    else:
+        try:
+            tasa_p = float(presupuesto.tipo_cambio or 0)
+        except (TypeError, ValueError):
+            tasa_p = 0.0
+        if tasa_p <= 0:
+            return None
+        usd = importe / tasa_p
+    from ..services.tasa import tasa_convertir_precio
+
+    return tasa_convertir_precio(usd, factor_vista)
+
+
 def _opciones_partidas_presupuesto():
     """Opciones de carga temprana del grafo económico de presupuestos.
 
@@ -1234,7 +1270,17 @@ def _contexto_moneda(db: Session, moneda=None, tasa=None) -> tuple[str, float]:
             tasa = None
         if not tasa and codigo == moneda_cfg:
             tasa = tasa_cfg
-    return codigo or "USD", factor_conversion_local(codigo or "USD", tasa)
+    from ..utils import normalizar_moneda
+
+    vista = normalizar_moneda(codigo or "USD", "USD")
+    factor = factor_conversion_local(vista, tasa)
+    if factor == 1.0 and vista not in ("USD", "PAB"):
+        # Sin tasa válida no se inventa la conversión y tampoco se etiqueta
+        # con una divisa que los importes no tienen: se muestra la base
+        # (USD). Antes una organización con moneda local sin tasa veía
+        # «MXN» sobre cifras guardadas en dólares.
+        return "USD", 1.0
+    return vista, factor
 
 
 def _convertir(valor, factor: float):

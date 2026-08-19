@@ -32,6 +32,17 @@ def inicio(request: Request, db: Session = Depends(get_db)):
     estados_enviados = ("enviado", "reenviado", *estados_aprobados)
     todos = db.query(Presupuesto).options(*common._opciones_partidas_presupuesto()).all()
 
+    # Moneda única del panel: cada presupuesto congela su propia moneda, así
+    # que todo importe agregado se convierte a la moneda de la organización
+    # (por USD, con la tasa congelada del presupuesto). Los que no tienen tasa
+    # para el puente quedan fuera del agregado en vez de sumar peras con
+    # manzanas. Antes se sumaban totales de monedas distintas etiquetando el
+    # resultado con la moneda de la organización.
+    moneda_panel, factor_panel = common._contexto_moneda(db)
+
+    def _importe_panel(p, valor):
+        return common._importe_en_moneda_vista(valor, p, moneda_panel, factor_panel)
+
     total_presupuestos = len(todos)
     por_estado = {e: 0 for e in ESTADOS}
     importe_aprobado = 0.0
@@ -41,22 +52,30 @@ def inicio(request: Request, db: Session = Depends(get_db)):
     total_aprobados = 0
     por_vencer = 0
     presupuestos_mes = []
+    importes_mes = []
     enviados_mes = 0
     aprobados_mes = []
     for p in todos:
         por_estado[p.estado] = por_estado.get(p.estado, 0) + 1
-        if p.estado == "aprobado":
-            importe_aprobado += p.total or 0
-        descuentos_concedidos += p.descuento_monto or 0
+        total_p = _importe_panel(p, p.total)
+        if p.estado == "aprobado" and total_p is not None:
+            importe_aprobado += total_p
+        descuento_p = _importe_panel(p, p.descuento_monto)
+        if descuento_p is not None:
+            descuentos_concedidos += descuento_p
         if p.estado in estados_enviados:
             total_enviados += 1
         if p.estado in estados_aprobados:
             total_aprobados += 1
-            margen_estimado += p.margen or 0
+            margen_p = _importe_panel(p, p.margen)
+            if margen_p is not None:
+                margen_estimado += margen_p
         if p.estado == "enviado" and p.validez_dias and hoy <= p.fecha + timedelta(days=p.validez_dias) <= fin_semana:
             por_vencer += 1
         if p.fecha and p.fecha >= mes_inicio:
             presupuestos_mes.append(p)
+            if total_p is not None:
+                importes_mes.append(total_p)
             if p.estado in ("enviado", "reenviado"):
                 enviados_mes += 1
             if p.estado in ("aprobado", "aprobado_parcialmente"):
@@ -104,7 +123,7 @@ def inicio(request: Request, db: Session = Depends(get_db)):
             "total_facturas": total_facturas,
             "presupuestos_mes": len(presupuestos_mes), "enviados_mes": enviados_mes,
             "aprobados_mes": len(aprobados_mes), "tasa_aprobacion": round(total_aprobados * 100 / total_enviados, 1) if total_enviados else 0,
-            "importe_promedio": sum(p.total for p in presupuestos_mes) / len(presupuestos_mes) if presupuestos_mes else 0,
+            "importe_promedio": sum(importes_mes) / len(importes_mes) if importes_mes else 0,
             "descuentos_concedidos": descuentos_concedidos, "margen_estimado": margen_estimado,
             "proyectos_activos": proyectos_activos,
             "analisis_precios": analisis_precios,
@@ -158,10 +177,27 @@ def reportes(request: Request, desde: str = "", hasta: str = "", db: Session = D
         .filter(Presupuesto.fecha >= inicio, Presupuesto.fecha <= fin)
         .all()
     )
+    # Reportes en UNA moneda: la de la organización. Cada total se convierte
+    # por USD con la tasa congelada del propio presupuesto; sin tasa no se
+    # suma (antes se mezclaban monedas distintas bajo una sola etiqueta).
+    moneda_vista, factor_vista = common._contexto_moneda(db)
+    importe_de = {
+        p.id: common._importe_en_moneda_vista(p.total, p, moneda_vista, factor_vista)
+        for p in presupuestos
+    }
     por_estado = {e: [p for p in presupuestos if p.estado == e] for e in ESTADOS}
+    importes_estado = {
+        e: sum(importe_de[p.id] or 0 for p in items if importe_de[p.id] is not None)
+        for e, items in por_estado.items()
+    }
+    importe_total = sum(v for v in importe_de.values() if v is not None)
     clientes = {}
-    for p in presupuestos: clientes[p.cliente.nombre] = clientes.get(p.cliente.nombre, 0) + p.total
-    return TEMPLATES.TemplateResponse(request, "reports.html", {"desde": inicio.isoformat(), "hasta": fin.isoformat(), "presupuestos": presupuestos, "por_estado": por_estado, "clientes": sorted(clientes.items(), key=lambda x:x[1], reverse=True), "proyectos": db.query(Proyecto).all(), "moneda_vista": common._contexto_moneda(db)[0]})
+    for p in presupuestos:
+        convertido = importe_de.get(p.id)
+        if convertido is None:
+            continue
+        clientes[p.cliente.nombre] = clientes.get(p.cliente.nombre, 0) + convertido
+    return TEMPLATES.TemplateResponse(request, "reports.html", {"desde": inicio.isoformat(), "hasta": fin.isoformat(), "presupuestos": presupuestos, "por_estado": por_estado, "importes_estado": importes_estado, "importe_total": importe_total, "clientes": sorted(clientes.items(), key=lambda x:x[1], reverse=True), "proyectos": db.query(Proyecto).all(), "moneda_vista": moneda_vista})
 
 @router.get("/reportes/exportar")
 def exportar_reporte(tipo: str = "ventas", desde: str = "", hasta: str = "", db: Session = Depends(get_db)):
@@ -175,7 +211,12 @@ def exportar_reporte(tipo: str = "ventas", desde: str = "", hasta: str = "", db:
         .filter(Presupuesto.fecha >= inicio, Presupuesto.fecha <= fin)
         .all()
     )
-    if tipo == "estados": filas=[["Estado","Cantidad","Total"]]+[[e, len([p for p in ps if p.estado==e]), sum(p.total for p in ps if p.estado==e)] for e in ESTADOS]
+    if tipo == "estados":
+        _moneda_e, _factor_e = common._contexto_moneda(db)
+        def _total_e(p):
+            v = common._importe_en_moneda_vista(p.total, p, _moneda_e, _factor_e)
+            return v if v is not None else 0
+        filas=[["Estado","Cantidad","Total","Moneda"]]+[[e, len([p for p in ps if p.estado==e]), round(sum(_total_e(p) for p in ps if p.estado==e), 2), _moneda_e] for e in ESTADOS]
     elif tipo == "proyectos": filas=[["Proyecto","Cliente","Estado","Contratado","Cambios","Pagado","Saldo"]]+[[p.nombre,p.presupuesto.cliente.nombre,p.estado,p.total_contratado,p.total_cambios_aprobados,p.total_pagado,p.saldo_pendiente] for p in db.query(Proyecto).all()]
     else: filas=[["Número","Fecha","Cliente","Estado","Moneda","Total"]]+[[p.numero,p.fecha.isoformat(),p.cliente.nombre,p.estado,p.moneda,p.total] for p in ps]
     return _csv_response(filas, f"reporte_{tipo}.csv")

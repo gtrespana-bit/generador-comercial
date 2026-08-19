@@ -708,12 +708,16 @@ def exportar_catalogo_productos_excel(productos):
 # Exportar catálogo de recursos (precios unitarios) a Excel
 # ---------------------------------------------------------------------------
 
-def exportar_catalogo_recursos_excel(recursos, etiquetas=None):
+def exportar_catalogo_recursos_excel(recursos, etiquetas=None, moneda="USD", factor=1.0):
     """Exporta el catálogo central de recursos a Excel profesional.
 
     ``etiquetas`` mapea la categoría interna (mano_obra, materiales…) a su
     etiqueta legible; si no se pasa, se usa el valor interno.
+    ``moneda``/``factor`` expresan el precio en la moneda de la organización
+    (el catálogo interno se guarda en USD), con una columna que la explicita.
     """
+    from ..services.tasa import tasa_convertir_precio
+
     etiquetas = etiquetas or {}
     wb = Workbook()
     ws = wb.active
@@ -726,7 +730,7 @@ def exportar_catalogo_recursos_excel(recursos, etiquetas=None):
     ws["A2"].font = _SUBTITLE_FONT
 
     headers = ["Código", "Descripción", "Unidad", "Categoría", "Grupo",
-               "Precio", "Usos", "Proveedor", "Última actualización"]
+               f"Precio ({moneda})", "Usos", "Proveedor", "Última actualización"]
 
     row = 4
     for col, h in enumerate(headers, 1):
@@ -741,7 +745,7 @@ def exportar_catalogo_recursos_excel(recursos, etiquetas=None):
         ws.cell(row=row, column=3, value=r.unidad or "")
         ws.cell(row=row, column=4, value=etiquetas.get(r.categoria, r.categoria) or "")
         ws.cell(row=row, column=5, value=r.grupo or "")
-        ws.cell(row=row, column=6, value=_money(r.precio))
+        ws.cell(row=row, column=6, value=_money(tasa_convertir_precio(r.precio or 0, factor)))
         ws.cell(row=row, column=6).number_format = _CURRENCY_FMT
         ws.cell(row=row, column=7, value=r.usos or 0)
         ws.cell(row=row, column=8, value=r.proveedor or "")

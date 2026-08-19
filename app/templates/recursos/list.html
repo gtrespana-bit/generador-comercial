@@ -4,7 +4,7 @@
 <div class="page-head csp-s-5d6e5a9c91">
   <div>
     <h1 class="csp-s-93f4d4c3fe">Precios Unitarios <span class="csp-s-20db78cd99">{{ recursos|length }}</span> <span class="csp-s-2ebe03a855">· Recursos</span></h1>
-    <p class="subtitle">Mano de obra, materiales y equipos organizados por familia. <strong>Cambia un precio aquí y se aplica automáticamente a todas las partidas que usan ese recurso</strong> (catálogo y presupuestos), recalculando costes directos.</p>
+    <p class="subtitle">Mano de obra, materiales y equipos organizados por familia. <strong>Cambia un precio aquí y se aplica automáticamente a todas las partidas que usan ese recurso</strong> (catálogo y presupuestos), recalculando costes directos. Importes en <strong>{{ moneda_vista }}</strong>.</p>
   </div>
   <div class="csp-s-33ff8b3e89">
     <form method="post" action="/recursos/sincronizar" class="csp-s-a91548c594">
@@ -43,7 +43,7 @@
         <input type="number" id="bulk-pct" placeholder="± %" step="any" class="csp-s-9e447cb85e">
         <button type="button" class="btn btn-sm" data-cotizat-click="recursos-bulk-percent">% Ajustar</button>
         <span class="csp-s-ec2d1ea1e8">o</span>
-        <input type="number" id="bulk-precio" placeholder="Nuevo precio" step="any" class="csp-s-0dfe35f39a">
+        <input type="number" id="bulk-precio" placeholder="Nuevo precio ({{ moneda_vista }})" step="any" class="csp-s-0dfe35f39a">
         <button type="button" class="btn btn-sm btn-primary" data-cotizat-click="recursos-bulk-fixed">💰 Fijar</button>
       </div>
     </div>
@@ -108,7 +108,7 @@
                 <span class="cat-dot cat-dot-{{ cat if cat in ['mano_obra', 'materiales', 'complementarios'] else 'otros' }}"></span>
                 {{ etiquetas[cat] }}
               </h2>
-              <span class="cat-meta">{{ cat_recursos|length }} recursos · {{ cat_recursos|map(attribute='precio')|sum|round(2) }} total</span>
+              <span class="cat-meta">{{ cat_recursos|length }} recursos · {{ (totales_categoria.get(cat, 0) if totales_categoria else 0) | money_iso(moneda_vista) }} total</span>
             </div>
             <div class="cat-actions" data-cotizat-click="stop-propagation">
               <label class="cat-check" title="Seleccionar toda la familia">
@@ -150,10 +150,11 @@
                       </div>
                     </td>
                     <td class="col-und"><span class="und-badge">{{ r.unidad }}</span></td>
-                    <td class="col-precio right" data-precio="{{ r.precio }}">
-                      <strong class="precio-val">{{ r.precio | money_iso(r.moneda or 'USD') }}</strong>
-                      {% set pe = precios_efectivos.get(r.id) if precios_efectivos else none %}
-                      {% if pe and pe.precio is not none %}<div class="hint">Mercado {{ mercado_codigo }}: {{ pe.precio | money_iso(pe.moneda) }} · {{ pe.origen }}</div>{% if pe.aviso %}<div class="hint">⚠ {{ pe.aviso }}</div>{% endif %}{% endif %}
+                    {% set pv = precios_vista.get(r.id) if precios_vista else none %}
+                    <td class="col-precio right" data-precio="{{ pv.base if pv else r.precio }}">
+                      <strong class="precio-val">{{ (pv.base if pv else r.precio) | money_iso(moneda_vista) }}</strong>
+                      {% if pv and pv.mercado is not none and pv.origen != 'base' %}<div class="hint">Mercado {{ mercado_codigo }}: {{ pv.mercado | money_iso(moneda_vista) }} · {{ pv.origen }}</div>{% endif %}
+                      {% if pv and pv.requiere_tasa %}<div class="hint">⚠ {{ pv.aviso or 'Falta tasa para convertir el precio de mercado' }}</div>{% elif pv and pv.aviso %}<div class="hint">⚠ {{ pv.aviso }}</div>{% endif %}
                       {% if r.fecha_actualizacion_precio %}<div class="hint csp-s-aa47175cbd">{{ r.fecha_actualizacion_precio | fecha }}</div>{% endif %}
                     </td>
                     <td class="col-usos right" data-usos="{{ r.usos or 0 }}">{{ r.usos or 0 }}</td>

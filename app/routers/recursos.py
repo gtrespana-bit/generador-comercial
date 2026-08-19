@@ -4,6 +4,7 @@ from fastapi import APIRouter
 
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
 from ..services import auditoria
+from ..services.tasa import tasa_convertir_precio
 
 router = APIRouter()
 
@@ -54,12 +55,38 @@ def listar_recursos(request: Request, q: str = "", categoria: str = "", db: Sess
         query = query.filter(Recurso.categoria == categoria)
     recursos = query.order_by(Recurso.categoria, Recurso.descripcion).all()
     from ..services.traduccion import codigo_desde_pais
-    from ..services.precios_mercado import resolver_precios_lote
+    from ..services.precios_mercado import resolver_precios_para_presupuesto_lote
     cfg = _config(db)
     pais = codigo_desde_pais(cfg.empresa_pais or "") or "VE"
     org_id = int(db.info.get("organizacion_id") or 0)
     # UNA consulta para todos los recursos (antes: dos SELECT por recurso).
-    precios_efectivos = resolver_precios_lote(db, recursos, pais, org_id or None)
+    # Moneda única de la vista: el catálogo se guarda en USD y TODO lo que ve
+    # el usuario (precio base y precio de mercado) se muestra en la moneda de
+    # la organización, convertido con la misma tasa. Sin esto la lista
+    # mezclaba dólares (base) con la moneda del mercado en la misma tabla.
+    moneda_vista, factor_vista = _contexto_moneda(db)
+    efectivos = resolver_precios_para_presupuesto_lote(
+        db, recursos, pais, org_id or None, moneda_vista,
+        tasa_usd_presupuesto=factor_vista,
+    )
+    precios_vista: dict[int, dict] = {}
+    totales_categoria: dict[str, float] = {}
+    for r in recursos:
+        base_vista = tasa_convertir_precio(r.precio or 0, factor_vista)
+        efectivo = efectivos.get(r.id) or {}
+        mercado_vista = None
+        if efectivo.get("precio") is not None and not efectivo.get("requiere_tasa"):
+            mercado_vista = float(efectivo["precio"])
+        precios_vista[r.id] = {
+            "base": base_vista,
+            "mercado": mercado_vista,
+            "origen": efectivo.get("origen", "base"),
+            "aviso": efectivo.get("aviso", ""),
+            "requiere_tasa": bool(efectivo.get("requiere_tasa")),
+        }
+        totales_categoria[r.categoria] = (
+            totales_categoria.get(r.categoria, 0.0) + base_vista
+        )
     # Agrupar por categoria
     return TEMPLATES.TemplateResponse(request, "recursos/list.html", {
         "recursos": recursos,
@@ -67,7 +94,9 @@ def listar_recursos(request: Request, q: str = "", categoria: str = "", db: Sess
         "categoria": categoria,
         "categorias": CATEGORIAS_RECURSO,
         "etiquetas": ETIQUETAS_RECURSO,
-        "precios_efectivos": precios_efectivos,
+        "precios_vista": precios_vista,
+        "totales_categoria": totales_categoria,
+        "moneda_vista": moneda_vista,
         "mercado_codigo": pais,
         "mercado_moneda": cfg.moneda_default or "USD",
     })
@@ -79,14 +108,20 @@ def exportar_recursos(formato: str = "csv", db: Session = Depends(get_db)):
 
     if formato.lower() == "excel" or formato.lower() == "xlsx":
         from ..services.excel_export import exportar_catalogo_recursos_excel
-        buf = exportar_catalogo_recursos_excel(recursos, ETIQUETAS_RECURSO)
+        _moneda_xl, _factor_xl = _contexto_moneda(db)
+        buf = exportar_catalogo_recursos_excel(
+            recursos, ETIQUETAS_RECURSO, moneda=_moneda_xl, factor=_factor_xl
+        )
         return Response(
             content=buf.getvalue(),
             media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             headers={"Content-Disposition": "attachment; filename=recursos.xlsx"},
         )
 
-    filas = [["Código", "Descripción", "Unidad", "Categoría", "Grupo", "Precio", "Usos", "Proveedor", "Última actualización"]]
+    # La exportación habla la misma moneda que la página: la de la
+    # organización (el catálogo interno sigue en USD).
+    _moneda_x, _factor_x = _contexto_moneda(db)
+    filas = [["Código", "Descripción", "Unidad", "Categoría", "Grupo", "Precio", "Moneda", "Usos", "Proveedor", "Última actualización"]]
     for r in recursos:
         filas.append([
             r.codigo or "",
@@ -94,7 +129,8 @@ def exportar_recursos(formato: str = "csv", db: Session = Depends(get_db)):
             r.unidad or "",
             ETIQUETAS_RECURSO.get(r.categoria, r.categoria),
             r.grupo or "",
-            f"{r.precio:.2f}".replace(".", ","),
+            f"{tasa_convertir_precio(r.precio or 0, _factor_x):.2f}".replace(".", ","),
+            _moneda_x,
             r.usos or 0,
             r.proveedor or "",
             r.fecha_actualizacion_precio.isoformat() if r.fecha_actualizacion_precio else "",
@@ -113,7 +149,21 @@ def nuevo_recurso_form(request: Request, _db: Session = Depends(get_db)):
     from ..services.traduccion import codigo_desde_pais
     cfg = _config(_db)
     pais = codigo_desde_pais(cfg.empresa_pais or "") or "VE"
-    return TEMPLATES.TemplateResponse(request, "recursos/form.html", {"recurso": None, "categorias": CATEGORIAS_RECURSO, "etiquetas": ETIQUETAS_RECURSO, "mercado_codigo": pais, "mercado_moneda": cfg.moneda_default or "USD", "precio_mercado": None})
+    # El formulario edita en la moneda de la organización (igual que la lista
+    # y que el editor de partidas); el catálogo sigue guardando USD y el POST
+    # deshace la conversión antes de persistir.
+    moneda_vista, _factor = _contexto_moneda(_db)
+    return TEMPLATES.TemplateResponse(request, "recursos/form.html", {
+        "recurso": None,
+        "categorias": CATEGORIAS_RECURSO,
+        "etiquetas": ETIQUETAS_RECURSO,
+        "mercado_codigo": pais,
+        "mercado_moneda": cfg.moneda_default or "USD",
+        "moneda_vista": moneda_vista,
+        "precio_vista": 0,
+        "precio_mercado": None,
+        "precio_mercado_vista": None,
+    })
 
 @router.post("/recursos/nuevo")
 def crear_recurso(
@@ -138,6 +188,11 @@ def crear_recurso(
         return _redirect("/recursos/nuevo", error="La descripción es obligatoria.")
     if categoria not in CATEGORIAS_RECURSO:
         categoria = "otros"
+    # El formulario edita en la moneda de la organización; el catálogo guarda
+    # la base USD. Sin revertir la conversión, «650 COP» quedaba guardado
+    # como 650 USD y el precio se multiplicaba por la tasa en cada re-lectura.
+    _moneda_c, _factor_c = _contexto_moneda(db)
+    precio_base = _a_moneda_base(max(0.0, _f(precio)), _factor_c)
     # Evitar duplicados por clave
     from ..services.recursos import clave_recurso
     clave = clave_recurso(codigo, descripcion, unidad, categoria)
@@ -150,7 +205,7 @@ def crear_recurso(
         unidad=unidad.strip() or "ud",
         categoria=categoria,
         grupo=grupo.strip(),
-        precio=max(0.0, _f(precio)),
+        precio=precio_base,
         proveedor=proveedor.strip(),
         subtipo=subtipo.strip(), capacidad=capacidad.strip(), modalidad_tarifa=modalidad_tarifa.strip() or "hora",
         incluye_operador=bool(incluye_operador), incluye_combustible=bool(incluye_combustible), incluye_flete=bool(incluye_flete),
@@ -177,7 +232,33 @@ def editar_recurso_form(recurso_id: int, request: Request, db: Session = Depends
     cfg = _config(db)
     pais = codigo_desde_pais(cfg.empresa_pais or "") or "VE"
     precio_mercado = resolver_precio(db, recurso.id, pais, int(db.info.get("organizacion_id") or 0))
-    return TEMPLATES.TemplateResponse(request, "recursos/form.html", {"recurso": recurso, "categorias": CATEGORIAS_RECURSO, "etiquetas": ETIQUETAS_RECURSO, "mercado_codigo": pais, "mercado_moneda": cfg.moneda_default or "USD", "precio_mercado": precio_mercado if precio_mercado.origen == "organizacion" else None})
+    # Todo el formulario se edita en la moneda de la organización: el precio
+    # base llega convertido y el override de mercado también (cuando su
+    # moneda de origen permite el puente). El POST revierte la conversión.
+    moneda_vista, factor_vista = _contexto_moneda(db)
+    from ..utils import normalizar_moneda
+    moneda_org = normalizar_moneda(moneda_vista, "USD")
+    precio_vista = tasa_convertir_precio(recurso.precio or 0, factor_vista)
+    precio_mercado_vista = None
+    if precio_mercado is not None and precio_mercado.precio is not None:
+        moneda_mercado = normalizar_moneda(precio_mercado.moneda or "USD", "USD")
+        if moneda_mercado == moneda_org:
+            precio_mercado_vista = float(precio_mercado.precio)
+        elif moneda_mercado == "USD":
+            precio_mercado_vista = tasa_convertir_precio(precio_mercado.precio, factor_vista)
+    return TEMPLATES.TemplateResponse(request, "recursos/form.html", {
+        "recurso": recurso,
+        "categorias": CATEGORIAS_RECURSO,
+        "etiquetas": ETIQUETAS_RECURSO,
+        "mercado_codigo": pais,
+        "mercado_moneda": cfg.moneda_default or "USD",
+        "moneda_vista": moneda_vista,
+        "precio_vista": precio_vista,
+        # Solo se prellena el override propio de la organización; la
+        # referencia nacional se consulta, no se edita desde aquí.
+        "precio_mercado": precio_mercado if precio_mercado.origen == "organizacion" else None,
+        "precio_mercado_vista": precio_mercado_vista if precio_mercado.origen == "organizacion" else None,
+    })
 
 @router.post("/recursos/{recurso_id}/editar")
 def actualizar_recurso(
@@ -206,8 +287,11 @@ def actualizar_recurso(
         return _redirect(f"/recursos/{recurso_id}/editar", error="La descripción es obligatoria.")
     if categoria not in CATEGORIAS_RECURSO:
         categoria = "otros"
+    # El formulario edita en la moneda de la organización; el catálogo y la
+    # propagación a partidas/presupuestos trabajan en USD base.
+    _moneda_u, _factor_u = _contexto_moneda(db)
     precio_anterior = float(recurso.precio or 0)
-    nuevo_precio = max(0.0, _f(precio))
+    nuevo_precio = _a_moneda_base(max(0.0, _f(precio)), _factor_u)
     # Verificar duplicado si cambia clave
     from ..services.recursos import clave_recurso
     nueva_clave = clave_recurso(codigo, descripcion, unidad, categoria)
@@ -245,7 +329,8 @@ def actualizar_recurso(
                 entidad_id=recurso.id,
                 detalle={"de": precio_anterior, "a": nuevo_precio},
             )
-            msg = f"Recurso actualizado a {fmt_monto(nuevo_precio, 'USD')}. Afectadas {res['partidas_afectadas']} partidas y {res['filas_presupuesto']} filas de presupuestos."
+            msg = (f"Recurso actualizado a {fmt_monto(tasa_convertir_precio(nuevo_precio, _factor_u), _moneda_u)}. "
+                   f"Afectadas {res['partidas_afectadas']} partidas y {res['filas_presupuesto']} filas de presupuestos.")
             return _redirect("/recursos", msg=msg)
         except Exception as e:
             db.commit()
@@ -309,11 +394,14 @@ async def bulk_ajustar_recursos_seleccion(request: Request, db: Session = Depend
         return _redirect("/recursos", error="No se encontraron recursos seleccionados.")
     total_partidas = 0
     total_filas = 0
+    # El «nuevo precio» se escribe en la moneda que muestra la página (la de
+    # la organización): se revierte a la base USD antes de aplicarlo.
+    _moneda_b, _factor_b = _contexto_moneda(db)
     for recurso in recursos:
         anterior = float(recurso.precio or 0)
         if precio_fijo != "":
             try:
-                nuevo = max(0.0, float(str(precio_fijo).replace(",", ".")))
+                nuevo = _a_moneda_base(max(0.0, float(str(precio_fijo).replace(",", "."))), _factor_b)
             except ValueError:
                 continue
         else:
