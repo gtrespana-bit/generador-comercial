@@ -29,6 +29,28 @@ SIMBOLOS = {
     "EUR": "€",
 }
 
+# Símbolo inequívoco por moneda. Doce países de la región usan «$» para
+# monedas distintas: un importe con «$» a secas no dice si son pesos mexicanos,
+# colombianos o dólares. Se antepone el prefijo nacional, como hacen los bancos
+# locales. `SIMBOLOS` se conserva como catálogo ISO 4217 puro.
+SIMBOLOS_DISTINTIVOS = {
+    "USD": "US$",
+    "MXN": "MX$",
+    "COP": "COL$",
+    "CLP": "CLP$",
+    "ARS": "AR$",
+}
+
+
+def simbolo_moneda(moneda: str | None, defecto: str = "USD") -> str:
+    """Símbolo que no se puede confundir con el de otro país."""
+    clave = str(moneda or defecto).strip()
+    if clave == "Bs":
+        clave = "VES"
+    clave = clave.upper()
+    return SIMBOLOS_DISTINTIVOS.get(clave) or SIMBOLOS.get(clave, clave or "$")
+
+
 # Lista blanca de monedas aceptadas en formularios (ISO + alias histórico)
 MONEDAS_SOPORTADAS: tuple[str, ...] = tuple(sorted(set(SIMBOLOS.keys()) | {"USD", "VES", "Bs"}))
 # Normalización: VES/Bs son la misma moneda a efectos de validación
@@ -79,8 +101,18 @@ def es_moneda_soportada(moneda: str | None) -> bool:
     return str(moneda).strip().upper() in MONEDAS_SOPORTADAS or str(moneda).strip().upper() == "BS"
 
 
+def decimales_moneda(moneda: str | None) -> int:
+    """Decimales visibles de una moneda (COP/CLP/PYG: 0; el resto: 2)."""
+    try:
+        from .services.monedas import decimales
+
+        return decimales(moneda)
+    except Exception:  # pragma: no cover - degradación defensiva
+        return 2
+
+
 def fmt_monto(valor, moneda="USD") -> str:
-    """Importe con símbolo de moneda como sufijo: 35.755,89 $ / 35.755,89 Bs"""
+    """Importe con símbolo inequívoco: 35.755,89 MX$ / 4.200.000 COL$"""
     # Normaliza Bs→VES para que el símbolo sea consistente
     clave = str(moneda or "USD").strip()
     # Respeta Bs si viene literal (presupuestos antiguos)
@@ -88,7 +120,7 @@ def fmt_monto(valor, moneda="USD") -> str:
         clave = "VES"
     else:
         clave = clave.upper() if clave else "USD"
-    return f"{fmt_num(valor)} {SIMBOLOS.get(clave, moneda)}"
+    return f"{fmt_num(valor, decimales_moneda(clave))} {simbolo_moneda(clave)}"
 
 
 def fmt_monto_iso(valor, moneda="USD") -> str:
@@ -113,7 +145,7 @@ def fmt_precio_u_iso(valor, moneda="USD", unidad="") -> str:
 
 def fmt_precio_u(valor, moneda="USD", unidad="") -> str:
     """Precio unitario histórico con símbolo: 32,50 $/m2"""
-    base = f"{fmt_num(valor)} {SIMBOLOS.get(moneda, moneda)}"
+    base = f"{fmt_num(valor, decimales_moneda(moneda))} {simbolo_moneda(moneda)}"
     if unidad:
         base += f"/{unidad}"
     return base

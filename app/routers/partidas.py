@@ -239,10 +239,8 @@ def listar_partidas(
     # costes) con el MISMO factor: el margen/beneficio de las filas se
     # calcula en _fila.html como precio - coste y nunca debe mezclar
     # moneda local con USD.
+    _mon_cfg, _factor = _contexto_moneda(db)
     try:
-        _mon_cfg = str(getattr(_cfg, "moneda_default", "USD") or "USD").strip().upper()
-        _tasa_cfg = getattr(_cfg, "tasa_cambio", None)
-        _factor = factor_conversion_local(_mon_cfg, _tasa_cfg)
         if _factor != 1.0:
             for _p in partidas:
                 _p.precio_unitario = tasa_convertir_precio(_p.precio_unitario or 0, _factor)
@@ -254,6 +252,9 @@ def listar_partidas(
         pass
     return TEMPLATES.TemplateResponse(request, "partidas/list.html", {
         "partidas": partidas,
+        # Los importes de la lista ya están convertidos: la vista los etiqueta
+        # con este código ISO en lugar de un «$» que no dice de qué país es.
+        "moneda_vista": _mon_cfg,
         "q": q,
         "catalogo_descompuestos": catalogo_descompuestos,
         "arbol_categorias": arbol_categorias,
@@ -349,6 +350,8 @@ def filas_subcategoria_catalogo(
 def buscar_partidas_catalogo_api(
     q: str = "",
     limite: int = 60,
+    moneda: str = "",
+    tasa: str = "",
     db: Session = Depends(get_db),
 ):
     """Búsqueda técnica bajo demanda sin descargar fichas/descompuestos."""
@@ -371,12 +374,9 @@ def buscar_partidas_catalogo_api(
     except Exception:
         _codigo_b = ""
     resultados = []
-    try:
-        _mon_b = str(getattr(_cfg_b, "moneda_default", "USD") or "USD").strip().upper()
-        _tasa_b = getattr(_cfg_b, "tasa_cambio", None)
-        _factor_b = factor_conversion_local(_mon_b, _tasa_b)
-    except Exception:
-        _factor_b = 1.0
+    # El editor pasa la moneda y la tasa del presupuesto; la lista de Partidas
+    # no las envía y usa las de la organización.
+    _mon_b, _factor_b = _contexto_moneda(db, moneda, tasa)
     for _pp in partidas:
         _idx = _partida_catalogo_indice(_pp)
         if _codigo_b:
@@ -384,6 +384,7 @@ def buscar_partidas_catalogo_api(
             _idx["categoria"] = traducir(_idx.get("categoria", ""), _codigo_b)
             _idx["subcategoria"] = traducir(_idx.get("subcategoria", ""), _codigo_b)
             _idx["apartado"] = traducir(_idx.get("apartado", ""), _codigo_b)
+        _idx["moneda"] = _mon_b
         if _factor_b != 1.0:
             # Precio y costes en la misma moneda que el resto de la vista
             _idx["precio"] = tasa_convertir_precio(_idx.get("precio", 0), _factor_b)
@@ -393,6 +394,7 @@ def buscar_partidas_catalogo_api(
     return {
         "ok": True,
         "q": consulta,
+        "moneda": _mon_b,
         "resultados": resultados,
     }
 
@@ -421,8 +423,19 @@ async def registrar_busqueda_catalogo_sin_resultados(
 
 
 @router.get("/partidas/{partida_id}/ficha")
-def ficha_partida_catalogo(partida_id: int, db: Session = Depends(get_db)):
-    """Ficha completa bajo demanda para preview, edición o inserción."""
+def ficha_partida_catalogo(
+    partida_id: int,
+    moneda: str = "",
+    tasa: str = "",
+    db: Session = Depends(get_db),
+):
+    """Ficha completa bajo demanda para preview, edición o inserción.
+
+    ``moneda``/``tasa`` son el contexto del presupuesto que la pide. El
+    catálogo vive en USD, así que sin ellos el editor abría la ficha con el
+    precio unitario y la descomposición en dólares mientras el total de la
+    partida ya estaba en la moneda del presupuesto.
+    """
     partida = db.get(Partida, partida_id)
     if partida is None:
         return JSONResponse(
@@ -441,11 +454,18 @@ def ficha_partida_catalogo(partida_id: int, db: Session = Depends(get_db)):
         _j["categoria"] = traducir(_j.get("categoria",""), _codigo_f)
         _j["subcategoria"] = traducir(_j.get("subcategoria",""), _codigo_f)
         _j["apartado"] = traducir(_j.get("apartado",""), _codigo_f)
-    return {"ok": True, "partida": _j}
+    _moneda_f, _factor_f = _contexto_moneda(db, moneda, tasa)
+    _j = _ficha_en_moneda(_j, _moneda_f, _factor_f)
+    return {"ok": True, "partida": _j, "moneda": _moneda_f}
 
 
 @router.get("/partidas/{partida_id}/descomposicion")
-def descomposicion_partida(partida_id: int, db: Session = Depends(get_db)):
+def descomposicion_partida(
+    partida_id: int,
+    moneda: str = "",
+    tasa: str = "",
+    db: Session = Depends(get_db),
+):
     """Filas de recursos de una partida del catálogo (carga bajo demanda).
 
     La página de Partidas ya no emite las ~540 tablas de descomposición en el
@@ -461,23 +481,17 @@ def descomposicion_partida(partida_id: int, db: Session = Depends(get_db)):
         valor = []
     filas = valor.get("filas", []) if isinstance(valor, dict) else valor
     filas = [f for f in filas if isinstance(f, dict) and f.get("tipo") == "recurso"]
-    # La tabla de descomposición se muestra junto a las filas de la página
-    # (que ya están en moneda local): sus precios se convierten con el mismo
-    # factor para que las sumas cuadren visualmente.
-    try:
-        _cfg_d = _config(db)
-        _mon_d = str(getattr(_cfg_d, "moneda_default", "USD") or "USD").strip().upper()
-        _tasa_d = getattr(_cfg_d, "tasa_cambio", None)
-        _factor_d = factor_conversion_local(_mon_d, _tasa_d)
-    except Exception:
-        _factor_d = 1.0
+    # La tabla de descomposición se muestra junto a las filas de la página (o
+    # dentro de un presupuesto): sus precios se convierten al mismo contexto
+    # monetario para que las sumas cuadren visualmente.
+    _mon_d, _factor_d = _contexto_moneda(db, moneda, tasa)
     if _factor_d != 1.0:
         for _f in filas:
             if isinstance(_f.get("precio"), (int, float)):
                 _f["precio"] = tasa_convertir_precio(_f["precio"], _factor_d)
             if isinstance(_f.get("importe"), (int, float)):
                 _f["importe"] = tasa_convertir_precio(_f["importe"], _factor_d)
-    return {"ok": True, "filas": filas}
+    return {"ok": True, "filas": filas, "moneda": _mon_d}
 
 
 @router.get("/partidas/exportar")
@@ -599,6 +613,12 @@ async def actualizar_precio_partida_desde_presupuesto(partida_id: int, request: 
     nuevo_precio = _f(payload.get("precio"), 0)
     if nuevo_precio < 0:
         return {"ok": False, "error": "El precio no puede ser negativo."}
+    # El editor muestra (y envía) el precio en la moneda del presupuesto; el
+    # catálogo se guarda en la moneda base. Sin este paso, «actualizar el
+    # catálogo» desde un presupuesto en MXN escribía el importe en pesos como
+    # si fueran dólares y multiplicaba el precio por la tasa.
+    _moneda_p, _factor_p = _contexto_moneda(db, payload.get("moneda"), payload.get("tasa"))
+    nuevo_precio = _a_moneda_base(nuevo_precio, _factor_p)
     if abs((partida.precio_unitario or 0.0) - nuevo_precio) > 1e-9:
         precio_anterior = partida.precio_unitario or 0.0
         partida.precio_unitario = nuevo_precio
@@ -612,7 +632,13 @@ async def actualizar_precio_partida_desde_presupuesto(partida_id: int, request: 
             entidad_id=partida.id,
             detalle={"de": precio_anterior, "a": nuevo_precio},
         )
-    return {"ok": True, "partida": _partida_catalogo_json(partida)}
+    # La respuesta vuelve al editor: se devuelve en su misma moneda para que
+    # la línea no se repinte con el importe en dólares.
+    return {
+        "ok": True,
+        "partida": _ficha_en_moneda(_partida_catalogo_json(partida), _moneda_p, _factor_p),
+        "moneda": _moneda_p,
+    }
 
 
 @router.post("/partidas/guardar-desde-presupuesto")
@@ -641,20 +667,19 @@ async def guardar_partida_desde_presupuesto(request: Request, db: Session = Depe
 
     datos = _datos_partida_catalogo(form)
     filas_catalogo, costes_calculados = _descomposicion_catalogo(form)
-    # Si la edición muestra precios en moneda local, convierte de vuelta a USD.
-    try:
-        _cfg_u = _config(db)
-        _mon_u = str(getattr(_cfg_u, "moneda_default", "USD") or "USD").strip().upper()
-        _tasa_u = getattr(_cfg_u, "tasa_cambio", None)
-        _factor_u = factor_conversion_local(_mon_u, _tasa_u)
-        if _factor_u != 1.0:
-            datos["precio_unitario"] = max(0.0, datos.get("precio_unitario", 0) / _factor_u)
-            for k in ("coste_materiales", "coste_mano_obra", "coste_complementarios", "coste_otros"):
-                datos[k] = max(0.0, datos.get(k, 0) / _factor_u)
-            for fila in filas_catalogo:
-                fila["precio"] = max(0.0, fila.get("precio", 0) / _factor_u)
-    except Exception:
-        pass
+    # La ficha se edita en la moneda del presupuesto (o la de la organización
+    # si el formulario no la envía) y el catálogo se guarda en la base: hay
+    # que deshacer la conversión antes de persistir.
+    _mon_u, _factor_u = _contexto_moneda(db, form.get("moneda"), form.get("tasa"))
+    if _factor_u != 1.0:
+        datos["precio_unitario"] = _a_moneda_base(datos.get("precio_unitario", 0), _factor_u)
+        for k in ("coste_materiales", "coste_mano_obra", "coste_complementarios", "coste_otros"):
+            datos[k] = _a_moneda_base(datos.get(k, 0), _factor_u)
+        for fila in filas_catalogo:
+            fila["precio"] = _a_moneda_base(fila.get("precio", 0), _factor_u)
+        costes_calculados = {
+            k: _a_moneda_base(v, _factor_u) for k, v in costes_calculados.items()
+        }
     if filas_catalogo:
         datos.update({f"coste_{k}": v for k, v in costes_calculados.items()})
     datos["descomposicion_json"] = json.dumps({
@@ -694,7 +719,11 @@ async def guardar_partida_desde_presupuesto(request: Request, db: Session = Depe
     db.commit()
     db.refresh(partida)
     _sincronizar_recursos(db)
-    return {"ok": True, "partida": _partida_catalogo_json(partida)}
+    return {
+        "ok": True,
+        "partida": _ficha_en_moneda(_partida_catalogo_json(partida), _mon_u, _factor_u),
+        "moneda": _mon_u,
+    }
 
 
 @router.get("/partidas/nueva", response_class=HTMLResponse)
@@ -715,20 +744,20 @@ async def crear_partida(request: Request, db: Session = Depends(get_db)):
         return _redirect("/partidas/nueva", error="Ya existe una partida con ese nombre.")
     datos = _datos_partida_catalogo(form)
     filas_catalogo, costes_calculados = _descomposicion_catalogo(form)
-    # Si la edición muestra precios en moneda local, convierte de vuelta a USD.
-    try:
-        _cfg_u = _config(db)
-        _mon_u = str(getattr(_cfg_u, "moneda_default", "USD") or "USD").strip().upper()
-        _tasa_u = getattr(_cfg_u, "tasa_cambio", None)
-        _factor_u = factor_conversion_local(_mon_u, _tasa_u)
-        if _factor_u != 1.0:
-            datos["precio_unitario"] = max(0.0, datos.get("precio_unitario", 0) / _factor_u)
-            for k in ("coste_materiales", "coste_mano_obra", "coste_complementarios", "coste_otros"):
-                datos[k] = max(0.0, datos.get(k, 0) / _factor_u)
-            for fila in filas_catalogo:
-                fila["precio"] = max(0.0, fila.get("precio", 0) / _factor_u)
-    except Exception:
-        pass
+    # El formulario se edita en la moneda de la organización y el catálogo se
+    # guarda en la base: se deshace la conversión antes de persistir. Los
+    # costes recalculados desde las filas también, o el precio quedaría en
+    # dólares y sus costes en moneda local.
+    _mon_u, _factor_u = _contexto_moneda(db)
+    if _factor_u != 1.0:
+        datos["precio_unitario"] = _a_moneda_base(datos.get("precio_unitario", 0), _factor_u)
+        for k in ("coste_materiales", "coste_mano_obra", "coste_complementarios", "coste_otros"):
+            datos[k] = _a_moneda_base(datos.get(k, 0), _factor_u)
+        for fila in filas_catalogo:
+            fila["precio"] = _a_moneda_base(fila.get("precio", 0), _factor_u)
+        costes_calculados = {
+            k: _a_moneda_base(v, _factor_u) for k, v in costes_calculados.items()
+        }
     if filas_catalogo:
         datos.update({f"coste_{k}": v for k, v in costes_calculados.items()})
     datos["descomposicion_json"] = json.dumps({"origen": "manual", "codigo": str(form.get("codigo_externo", "")), "unidad": datos["unidad"], "filas": filas_catalogo}, ensure_ascii=False)
@@ -764,8 +793,8 @@ def editar_partida_form(partida_id: int, request: Request, db: Session = Depends
     except Exception:
         pass
     try:
-        from ..services.monedas import definicion
-        _simbolo_local = definicion(_mon_e).simbolo_auxiliar if '_mon_e' in locals() else "$"
+        from ..services.monedas import simbolo as _simbolo_iso
+        _simbolo_local = _simbolo_iso(_mon_e) if '_mon_e' in locals() else ""
     except Exception:
         _simbolo_local = ""
     return TEMPLATES.TemplateResponse(request, "partidas/form.html", {
@@ -789,20 +818,20 @@ async def actualizar_partida(partida_id: int, request: Request, db: Session = De
         return _redirect(f"/partidas/{partida_id}/editar", error="Ya existe otra partida con ese nombre.")
     datos = _datos_partida_catalogo(form)
     filas_catalogo, costes_calculados = _descomposicion_catalogo(form)
-    # Si la edición muestra precios en moneda local, convierte de vuelta a USD.
-    try:
-        _cfg_u = _config(db)
-        _mon_u = str(getattr(_cfg_u, "moneda_default", "USD") or "USD").strip().upper()
-        _tasa_u = getattr(_cfg_u, "tasa_cambio", None)
-        _factor_u = factor_conversion_local(_mon_u, _tasa_u)
-        if _factor_u != 1.0:
-            datos["precio_unitario"] = max(0.0, datos.get("precio_unitario", 0) / _factor_u)
-            for k in ("coste_materiales", "coste_mano_obra", "coste_complementarios", "coste_otros"):
-                datos[k] = max(0.0, datos.get(k, 0) / _factor_u)
-            for fila in filas_catalogo:
-                fila["precio"] = max(0.0, fila.get("precio", 0) / _factor_u)
-    except Exception:
-        pass
+    # El formulario se edita en la moneda de la organización y el catálogo se
+    # guarda en la base: se deshace la conversión antes de persistir. Los
+    # costes recalculados desde las filas también, o el precio quedaría en
+    # dólares y sus costes en moneda local.
+    _mon_u, _factor_u = _contexto_moneda(db)
+    if _factor_u != 1.0:
+        datos["precio_unitario"] = _a_moneda_base(datos.get("precio_unitario", 0), _factor_u)
+        for k in ("coste_materiales", "coste_mano_obra", "coste_complementarios", "coste_otros"):
+            datos[k] = _a_moneda_base(datos.get(k, 0), _factor_u)
+        for fila in filas_catalogo:
+            fila["precio"] = _a_moneda_base(fila.get("precio", 0), _factor_u)
+        costes_calculados = {
+            k: _a_moneda_base(v, _factor_u) for k, v in costes_calculados.items()
+        }
     if filas_catalogo:
         datos.update({f"coste_{k}": v for k, v in costes_calculados.items()})
     datos["descomposicion_json"] = json.dumps({"origen": "manual", "codigo": str(form.get("codigo_externo", "")), "unidad": datos["unidad"], "filas": filas_catalogo}, ensure_ascii=False)

@@ -12,17 +12,24 @@
     return String(moneda || window.COTIZAT_MONEDA_ACTIVA || "USD").toUpperCase() || "USD";
   }
 
+  // Símbolos inequívocos: doce países de la región usan «$» para monedas
+  // distintas, así que se antepone el prefijo nacional (MX$, COL$, US$…) igual
+  // que hace el catálogo del servidor (app/services/monedas.py).
   function simbolo(moneda) {
-    var mapa = {USD: "$", COP: "$", MXN: "$", PEN: "S/", CLP: "$", ARS: "$", UYU: "$U", PYG: "₲", BOB: "Bs", DOP: "RD$", PAB: "B/.", CRC: "₡", GTQ: "Q", HNL: "L", NIO: "C$", BRL: "R$", EUR: "€"};
+    var mapa = {USD: "US$", COP: "COL$", MXN: "MX$", PEN: "S/", CLP: "CLP$", ARS: "AR$", UYU: "$U", PYG: "₲", BOB: "Bs", DOP: "RD$", PAB: "B/.", CRC: "₡", GTQ: "Q", HNL: "L", NIO: "C$", BRL: "R$", EUR: "€", VES: "Bs"};
     return mapa[codigo(moneda)] || codigo(moneda);
   }
 
   window.FMT.simbolo = simbolo;
   window.FMT.codigo = codigo;
 
+  // Misma política de decimales que el servidor (services/monedas.py):
+  // COP, CLP y PYG sin decimales visibles; el resto con dos.
   function decimales(moneda) {
-    return ["CLP", "PYG"].indexOf(codigo(moneda)) !== -1 || codigo(moneda) === "COP" ? 0 : 2;
+    return ["COP", "CLP", "PYG"].indexOf(codigo(moneda)) !== -1 ? 0 : 2;
   }
+
+  window.FMT.decimales = decimales;
 
   function fmt(valor, moneda) {
     var cod = codigo(moneda);

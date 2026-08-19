@@ -150,9 +150,35 @@ def restaurar_recetas_demo(db: Session = Depends(get_db)):
     return _redirect("/recetas", msg="✅ Presets de reforma de lujo verificados y restaurados.")
 
 
+
+
+# ---------------------------------------------------------------------------
+# Moneda de los packs
+#
+# Un pack se guarda desde el editor, que trabaja en la moneda del presupuesto,
+# y se inserta después en otro presupuesto que puede estar en otra moneda. Los
+# importes se normalizan a la moneda base al guardar y se convierten a la del
+# solicitante al leer: sin esto, un pack creado en un presupuesto mexicano
+# multiplicaba por 17 al insertarlo en uno en dólares.
+# ---------------------------------------------------------------------------
+
+def _items_en_moneda(items, factor):
+    """Pasa los precios de los ítems de un pack a la moneda pedida."""
+    salida = []
+    for item in items:
+        if not isinstance(item, dict):
+            salida.append(item)
+            continue
+        copia = dict(item)
+        if isinstance(copia.get("precio"), (int, float)):
+            copia["precio"] = _convertir(copia["precio"], factor)
+        salida.append(copia)
+    return salida
+
 @router.get("/recetas/api/list")
-def api_listar_recetas(db: Session = Depends(get_db)):
+def api_listar_recetas(moneda: str = "", tasa: str = "", db: Session = Depends(get_db)):
     recetas = db.query(RecetaEstancia).order_by(RecetaEstancia.categoria, RecetaEstancia.nombre).all()
+    _mon, _factor = _contexto_moneda(db, moneda, tasa)
     res = []
     for r in recetas:
         try:
@@ -166,13 +192,14 @@ def api_listar_recetas(db: Session = Depends(get_db)):
             "categoria": r.categoria or "Otros",
             "unidad_base": r.unidad_base or "m²",
             "cantidad_base_default": r.cantidad_base_default or 10.0,
-            "items": items,
+            "items": _items_en_moneda(items, _factor),
+            "moneda": _mon,
         })
-    return {"ok": True, "recetas": res}
+    return {"ok": True, "recetas": res, "moneda": _mon}
 
 
 @router.get("/recetas/api/{receta_id}")
-def api_detalle_receta(receta_id: int, db: Session = Depends(get_db)):
+def api_detalle_receta(receta_id: int, moneda: str = "", tasa: str = "", db: Session = Depends(get_db)):
     r = db.get(RecetaEstancia, receta_id)
     if not r:
         return {"ok": False, "error": "No encontrado"}
@@ -180,6 +207,7 @@ def api_detalle_receta(receta_id: int, db: Session = Depends(get_db)):
         items = json.loads(r.datos or "[]")
     except Exception:
         items = []
+    _mon, _factor = _contexto_moneda(db, moneda, tasa)
     return {
         "ok": True,
         "receta": {
@@ -189,7 +217,8 @@ def api_detalle_receta(receta_id: int, db: Session = Depends(get_db)):
             "categoria": r.categoria or "Otros",
             "unidad_base": r.unidad_base or "m²",
             "cantidad_base_default": r.cantidad_base_default or 10.0,
-            "items": items,
+            "items": _items_en_moneda(items, _factor),
+            "moneda": _mon,
         }
     }
 
@@ -212,6 +241,9 @@ async def api_guardar_receta_capitulo(request: Request, db: Session = Depends(ge
     items_in = payload.get("items", [])
     if not items_in:
         return {"ok": False, "error": "El capítulo no tiene partidas."}
+    # El capítulo llega en la moneda del presupuesto: se normaliza a la moneda
+    # base antes de guardar el pack, que es reutilizable en cualquier moneda.
+    _mon_g, _factor_g = _contexto_moneda(db, payload.get("moneda"), payload.get("tasa"))
     items_out = []
     for it in items_in:
         try:
@@ -224,7 +256,7 @@ async def api_guardar_receta_capitulo(request: Request, db: Session = Depends(ge
             "nombre": str(it.get("nombre", "")).strip(),
             "descripcion": str(it.get("descripcion", "")).strip(),
             "unidad": str(it.get("unidad", "")).strip() or "und",
-            "precio": float(it.get("precio", 0) or 0),
+            "precio": _a_moneda_base(float(it.get("precio", 0) or 0), _factor_g),
             "categoria": str(it.get("categoria", "")).strip() or "Albañilería y Revestimientos",
             "tipo_calculo": tipo_calc,
             "coeficiente": coef,

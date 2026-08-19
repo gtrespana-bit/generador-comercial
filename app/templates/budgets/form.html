@@ -855,6 +855,9 @@
   ]
 }{% else %}{ "capitulos": [{ "nombre": "", "partidas": [] }]}{% endif %}
 </script>
+{# El índice del catálogo no repite la moneda en cada partida (son más de mil):
+   ya viene convertido a `window.COTIZAT_MONEDA_ACTIVA`, que es lo que usa el
+   formateador del editor. #}
 <script nonce="{{ request.state.csp_nonce }}" id="datos-catalogo" type="application/json">
 [
   {% for p in partidas_catalogo %}{
@@ -888,6 +891,7 @@
     "descripcion": {{ p.descripcion | tojson }},
     "precio": {{ p.precio_unitario | tojson }},
     "coste": {{ (p.precio_compra if p.precio_compra is not none else '') | tojson }},
+    "moneda": {{ p.moneda | tojson }},
     "unidad": {{ p.unidad | tojson }},
     "categoria": {{ p.categoria | tojson }},
     "marca": {{ p.marca | tojson }},
@@ -913,6 +917,10 @@
     "categoria": {{ r.categoria | tojson }},
     "grupo": {{ r.grupo | tojson }},
     "precio": {{ r.precio | tojson }},
+    "moneda": {{ r.moneda | tojson }},
+    "origen_precio": {{ r.origen_precio | default('base') | tojson }},
+    "confianza_precio": {{ r.confianza_precio | default('') | tojson }},
+    "aviso_precio": {{ r.aviso_precio | default('') | tojson }},
     "proveedor": {{ r.proveedor | tojson }},
     "usos": {{ r.usos | tojson }}
   }{{ "," if not loop.last }}{% endfor %}
@@ -933,7 +941,7 @@
   // Parámetros de la estimación de tiempos de obra (ver editor/tiempos.js)
   window.TIEMPOS_CFG = {
     jornada: {{ cfg.horas_jornada or 8 }},
-    tarifa: {{ cfg.tarifa_hora_media or 8 }},
+    tarifa: {{ tarifa_hora_editor or cfg.tarifa_hora_media or 8 }},
     por_coste: {{ 'true' if cfg.estimar_tiempo_por_coste else 'false' }}
   };
 </script>
@@ -941,7 +949,15 @@
   // Beneficio por partida: siempre visible según petición del usuario (fila Benef. y totales)
   document.body.classList.add('beneficio-on');
 </script>
-<script nonce="{{ request.state.csp_nonce }}">window.COTIZAT_MONEDA_ACTIVA = {{ (presupuesto.moneda if presupuesto else cfg.moneda_default or 'USD') | tojson }};</script>
+<script nonce="{{ request.state.csp_nonce }}">
+  // Contexto monetario del editor. La moneda del presupuesto manda sobre la
+  // preferencia de la organización, y la tasa viaja con ella para que el
+  // catálogo (guardado en la moneda base) se convierta en la misma dirección
+  // al leerlo y al escribirlo.
+  window.COTIZAT_MONEDA_ACTIVA = {{ (presupuesto.moneda if presupuesto else cfg.moneda_default or 'USD') | tojson }};
+  window.COTIZAT_TASA_ACTIVA = {{ (presupuesto.tipo_cambio if presupuesto else cfg.tasa_cambio) | tojson }};
+  window.COTIZAT_SIMBOLO_ACTIVO = {{ ((presupuesto.moneda if presupuesto else cfg.moneda_default or 'USD') | simbolo) | tojson }};
+</script>
 <!-- Módulos del editor (cargados en orden de dependencia) -->
 <script src="/static/js/utils/formato.js"></script>
 <script src="/static/js/utils/catalogo.js"></script>

@@ -62,8 +62,8 @@
       <tr>
         <td><strong>{{ a.nombre }}</strong></td>
         <td>{{ a.categoria }}</td>
-        <td class="right">{{ a.precio_unitario | money }}</td>
-        <td class="right">{{ a.coste_unitario | money }}</td>
+        <td class="right">{{ a.precio_unitario | money_iso(moneda_vista) }}</td>
+        <td class="right">{{ a.coste_unitario | money_iso(moneda_vista) }}</td>
         <td class="right {{ 'text-rose' if a.margen_pct < analisis.margen_minimo else 'text-default' }}"><strong>{{ a.margen_pct }}%</strong></td>
         <td class="csp-s-f25d241cb3">{{ a.motivos | join(' · ') }}</td>
         <td class="right"><a class="btn btn-sm" href="/partidas/{{ a.id }}/editar" target="_blank">Ajustar precio</a></td>

@@ -45,7 +45,7 @@
   </a>
   <div class="dash-kpi">
     <span class="dash-kpi-label">Volumen aprobado</span>
-    <strong class="dash-kpi-value dash-kpi-money">{{ importe_aprobado | money }}</strong>
+    <strong class="dash-kpi-value dash-kpi-money">{{ importe_aprobado | money_iso(moneda_vista) }}</strong>
     <span class="dash-kpi-hint">{{ por_estado['aprobado'] }} proyecto{{ 's' if por_estado['aprobado'] != 1 else '' }} aprobado{{ 's' if por_estado['aprobado'] != 1 else '' }}</span>
   </div>
   <div class="dash-kpi">
@@ -122,7 +122,7 @@
             <td class="muted">{{ p.fecha | fecha }}</td>
             <td>{{ p.cliente.nombre }}</td>
             <td><span class="badge badge-{{ p.estado }}">{{ p.estado | capitalize }}</span></td>
-            <td class="right"><strong>{{ p.total | money(p.moneda) }}</strong></td>
+            <td class="right"><strong>{{ p.total | money_iso(p.moneda) }}</strong></td>
             <td class="right">
               <a class="btn btn-sm btn-ghost" href="/presupuestos/{{ p.id }}/pdf" download="presupuesto_{{ p.numero }}.pdf" data-cotizat-click="download-pdf">PDF</a>
             </td>

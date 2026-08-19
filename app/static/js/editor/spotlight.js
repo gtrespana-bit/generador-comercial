@@ -248,8 +248,11 @@
       btn.appendChild(principal);
 
       var metadatos = crearElemento("span", { className: "spotlight-item-meta" });
-      metadatos.appendChild(crearElemento("strong", null, (Number(p.precio) || 0).toFixed(2)));
-      metadatos.appendChild(crearElemento("small", null, "/$" + (p.unidad || "ud")));
+      var importe = window.FMT && window.FMT.fmt
+        ? window.FMT.fmt(Number(p.precio) || 0)
+        : (Number(p.precio) || 0).toFixed(2);
+      metadatos.appendChild(crearElemento("strong", null, importe));
+      metadatos.appendChild(crearElemento("small", null, "/" + (p.unidad || "ud")));
       btn.appendChild(metadatos);
 
       btn.addEventListener("mouseenter", function () {

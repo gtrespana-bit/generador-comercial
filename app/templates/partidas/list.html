@@ -663,6 +663,11 @@ document.addEventListener('DOMContentLoaded', () => {
   aplicarDisclosure(false);
 });
 </script>
+<script nonce="{{ request.state.csp_nonce }}">
+  // Moneda en la que el servidor ya convirtió los importes de esta lista.
+  window.COTIZAT_MONEDA_VISTA = {{ (moneda_vista or 'USD') | tojson }};
+</script>
+<script src="/static/js/utils/formato.js"></script>
 <script src="/static/js/partidas_rows.js"></script>
 <script src="/static/js/partidas_descomp.js"></script>
 {% endblock %}

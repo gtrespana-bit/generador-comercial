@@ -984,6 +984,42 @@ def _recursos_editor_mercado(db, recursos, cfg, moneda, tasa):
     return salida
 
 
+def _productos_editor(db, cfg, moneda, tasa):
+    """Productos del catálogo en la moneda del presupuesto.
+
+    El catálogo guarda los productos en la moneda base; el editor calcula el
+    precio de la partida con ellos. Si no se convirtieran, añadir un producto
+    a un presupuesto mexicano sumaría dólares a un total en pesos.
+    """
+    _moneda, factor = _contexto_moneda(db, moneda, tasa)
+    productos = db.query(Producto).order_by(Producto.ultimo_uso.desc(), Producto.usos.desc(), Producto.nombre).all()
+    salida = []
+    for p in productos:
+        salida.append({
+            "id": p.id,
+            "nombre": p.nombre,
+            "descripcion": p.descripcion,
+            "precio_unitario": _convertir(p.precio_unitario or 0.0, factor),
+            "precio_compra": (
+                _convertir(p.precio_compra, factor) if p.precio_compra is not None else None
+            ),
+            "moneda": _moneda,
+            "unidad": p.unidad,
+            "categoria": p.categoria,
+            "marca": p.marca,
+            "modelo": p.modelo,
+            "sku": p.sku,
+            "proveedor": p.proveedor,
+            "color": p.color,
+            "acabado": p.acabado,
+            "formato": p.formato,
+            "imagen": p.imagen,
+            "fecha_actualizacion_precio": p.fecha_actualizacion_precio,
+            "usos": p.usos,
+        })
+    return salida
+
+
 @router.get("/presupuestos/nuevo", response_class=HTMLResponse)
 def nuevo_presupuesto_form(request: Request, db: Session = Depends(get_db)):
     from ..services.catalogo_propio import asegurar_catalogo_propio
@@ -991,7 +1027,7 @@ def nuevo_presupuesto_form(request: Request, db: Session = Depends(get_db)):
     cfg = _config(db)
     clientes = db.query(Cliente).order_by(Cliente.nombre).all()
     partidas_catalogo = _indice_catalogo_para_editor(db, cfg.moneda_default, cfg.tasa_cambio)
-    productos_catalogo = db.query(Producto).order_by(Producto.ultimo_uso.desc(), Producto.usos.desc(), Producto.nombre).all()
+    productos_catalogo = _productos_editor(db, cfg, cfg.moneda_default, cfg.tasa_cambio)
     recursos_base = db.query(Recurso).order_by(Recurso.ultimo_uso.desc(), Recurso.usos.desc(), Recurso.descripcion).all()
     recursos_catalogo = _recursos_editor_mercado(db, recursos_base, cfg, cfg.moneda_default, cfg.tasa_cambio)
     plantillas = db.query(Plantilla).order_by(Plantilla.nombre).all()
@@ -1011,6 +1047,9 @@ def nuevo_presupuesto_form(request: Request, db: Session = Depends(get_db)):
             "estados": ESTADOS,
             "campos_importables": ETIQUETAS_CAMPOS,
             "tiempos_catalogo": {},
+            # La tarifa media estima horas a partir del coste de mano de obra:
+            # tiene que estar en la misma moneda que ese coste.
+            "tarifa_hora_editor": _tarifa_hora_en_moneda(db, cfg, cfg.moneda_default, cfg.tasa_cambio),
         },
     )
 
@@ -2378,7 +2417,7 @@ def ver_presupuesto(presupuesto_id: int, request: Request, db: Session = Depends
         presupuesto,
         db=db,
         horas_jornada=cfg.horas_jornada or 8.0,
-        tarifa_hora_media=cfg.tarifa_hora_media or 8.0,
+        tarifa_hora_media=_tarifa_hora_en_moneda(db, cfg, presupuesto.moneda, presupuesto.tipo_cambio),
         usar_estimacion_coste=bool(cfg.estimar_tiempo_por_coste),
     )
     tiempos_por_partida = {
@@ -2413,7 +2452,7 @@ def ver_tiempos_presupuesto(presupuesto_id: int, request: Request, db: Session =
         presupuesto,
         db=db,
         horas_jornada=cfg.horas_jornada or 8.0,
-        tarifa_hora_media=cfg.tarifa_hora_media or 8.0,
+        tarifa_hora_media=_tarifa_hora_en_moneda(db, cfg, presupuesto.moneda, presupuesto.tipo_cambio),
         usar_estimacion_coste=bool(cfg.estimar_tiempo_por_coste),
     )
     return TEMPLATES.TemplateResponse(
@@ -2530,7 +2569,7 @@ async def guardar_tiempo_manual(presupuesto_id: int, request: Request, db: Sessi
     db.commit()
     # Devolver estimación recalculada para feedback instantáneo
     cfg = _config(db)
-    t = calcular_tiempos_presupuesto(presupuesto, db=db, horas_jornada=cfg.horas_jornada or 8.0, tarifa_hora_media=cfg.tarifa_hora_media or 8.0, usar_estimacion_coste=bool(cfg.estimar_tiempo_por_coste))
+    t = calcular_tiempos_presupuesto(presupuesto, db=db, horas_jornada=cfg.horas_jornada or 8.0, tarifa_hora_media=_tarifa_hora_en_moneda(db, cfg, presupuesto.moneda, presupuesto.tipo_cambio), usar_estimacion_coste=bool(cfg.estimar_tiempo_por_coste))
     partida_t = next((x for x in t["partidas"] if x["partida_id"] == partida_id), None)
     return {"ok": True, "tiempos": t, "partida": partida_t}
 
@@ -2584,7 +2623,7 @@ async def guardar_tiempos_bulk(presupuesto_id: int, request: Request, db: Sessio
         updated += 1
     db.commit()
     cfg = _config(db)
-    t = calcular_tiempos_presupuesto(presupuesto, db=db, horas_jornada=cfg.horas_jornada or 8.0, tarifa_hora_media=cfg.tarifa_hora_media or 8.0, usar_estimacion_coste=bool(cfg.estimar_tiempo_por_coste))
+    t = calcular_tiempos_presupuesto(presupuesto, db=db, horas_jornada=cfg.horas_jornada or 8.0, tarifa_hora_media=_tarifa_hora_en_moneda(db, cfg, presupuesto.moneda, presupuesto.tipo_cambio), usar_estimacion_coste=bool(cfg.estimar_tiempo_por_coste))
     return {"ok": True, "actualizadas": updated, "tiempos": t}
 
 
@@ -2624,7 +2663,9 @@ def ver_descomposicion_partida(presupuesto_id: int, partida_id: int, request: Re
         "grupos_categoria": grupos_categoria,
         "tiempos_descompuesto": tiempos,
         "horas_jornada": cfg.horas_jornada or 8.0,
-        "simbolo_moneda": SIMBOLOS.get(presupuesto.moneda, presupuesto.moneda),
+        # Símbolo inequívoco (MX$, COL$, US$…): la matriz de descomposición se
+        # lee junto al total del presupuesto y no puede sugerir otra moneda.
+        "simbolo_moneda": _simbolo_moneda(presupuesto.moneda),
     })
 
 
@@ -2989,8 +3030,8 @@ def editar_presupuesto_form(presupuesto_id: int, request: Request, db: Session =
     asegurar_catalogo_propio(db)
     clientes = db.query(Cliente).order_by(Cliente.nombre).all()
     partidas_catalogo = _indice_catalogo_para_editor(db, presupuesto.moneda, presupuesto.tipo_cambio)
-    productos_catalogo = db.query(Producto).order_by(Producto.ultimo_uso.desc(), Producto.usos.desc(), Producto.nombre).all()
     cfg = _config(db)
+    productos_catalogo = _productos_editor(db, cfg, presupuesto.moneda, presupuesto.tipo_cambio)
     recursos_base = db.query(Recurso).order_by(Recurso.ultimo_uso.desc(), Recurso.usos.desc(), Recurso.descripcion).all()
     recursos_catalogo = _recursos_editor_mercado(db, recursos_base, cfg, presupuesto.moneda, presupuesto.tipo_cambio)
     plantillas = db.query(Plantilla).order_by(Plantilla.nombre).all()
@@ -3030,6 +3071,7 @@ def editar_presupuesto_form(presupuesto_id: int, request: Request, db: Session =
             "campos_importables": ETIQUETAS_CAMPOS,
             "borrador_servidor": borrador_servidor,
             "tiempos_catalogo": _tiempos_catalogo(db, presupuesto),
+            "tarifa_hora_editor": _tarifa_hora_en_moneda(db, cfg, presupuesto.moneda, presupuesto.tipo_cambio),
         },
     )
 

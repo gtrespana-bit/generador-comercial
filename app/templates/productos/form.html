@@ -41,12 +41,12 @@
         </select>
       </div>
       <div class="field">
-        <label>Precio de coste unitario (USD)</label>
+        <label>Precio de coste unitario ({{ moneda_vista | default('USD') }})</label>
         <input type="number" name="precio_compra" step="0.01" min="0" value="{{ producto.precio_compra if producto and producto.precio_compra is not none else '' }}" placeholder="0,00">
         <p class="hint">Coste de compra usado para calcular el beneficio cuando lo asocies a una partida.</p>
       </div>
       <div class="field">
-        <label>Precio de venta unitario (USD) *</label>
+        <label>Precio de venta unitario ({{ moneda_vista | default('USD') }}) *</label>
         <input type="number" name="precio_unitario" step="0.01" min="0" value="{{ producto.precio_unitario if producto else 0 }}" required>
         <p class="hint" id="producto-margen-hint">Introduce coste y venta para ver el margen.</p>
         {% if producto and producto.fecha_actualizacion_precio %}<p class="hint">Precio actualizado: {{ producto.fecha_actualizacion_precio | fecha }}</p>{% endif %}

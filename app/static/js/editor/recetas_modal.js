@@ -20,6 +20,12 @@
     return isNaN(n) ? "0,00" : n.toFixed(2);
   }
 
+  // Importe con código ISO de la moneda activa: «$» no distingue MXN de USD.
+  function importe(valor) {
+    if (FMT && typeof FMT.fmt === "function") return FMT.fmt(parseFloat(valor) || 0);
+    return money(valor);
+  }
+
   function abrirModalRecetaEstancia() {
     var modal = document.getElementById("modal-recetas-estancia");
     if (!modal) return;
@@ -42,7 +48,7 @@
 
     mostrarEstadoSelect(select, "Cargando packs disponibles...");
 
-    fetch("/recetas/api/list")
+    fetch(window.CotizatContextoMoneda ? window.CotizatContextoMoneda.url("/recetas/api/list") : "/recetas/api/list")
       .then(function (res) { return res.json(); })
       .then(function (data) {
         if (!data.ok || !data.recetas) {
@@ -142,7 +148,7 @@
       emptyCell.textContent = "El pack no tiene partidas asociadas.";
       emptyRow.appendChild(emptyCell);
       tbody.appendChild(emptyRow);
-      badgeTotal.textContent = "Total estimado: $" + money(0);
+      badgeTotal.textContent = "Total estimado: " + importe(0);
       return;
     }
 
@@ -181,12 +187,12 @@
       typeCell.appendChild(badge);
       cell(String(cant), "receta-preview-center receta-preview-strong");
       cell(item.unidad || "m²", "receta-preview-center");
-      cell("$" + money(prec), "receta-preview-right");
-      cell("$" + money(imp), "receta-preview-right receta-preview-strong");
+      cell(importe(prec), "receta-preview-right");
+      cell(importe(imp), "receta-preview-right receta-preview-strong");
       tbody.appendChild(tr);
     });
 
-    badgeTotal.textContent = "Total estimado: $" + money(totalEst);
+    badgeTotal.textContent = "Total estimado: " + importe(totalEst);
   }
 
   function insertarPackSeleccionado() {
@@ -332,7 +338,12 @@
         unidad_base: unidadBase,
         cantidad_base_default: cantidadBase,
         calcular_coeficientes: calCoef,
-        items: items
+        items: items,
+        // El capítulo está en la moneda del presupuesto; el pack se guarda en
+        // la moneda base para poder reutilizarlo en cualquier otra.
+        moneda: window.COTIZAT_MONEDA_ACTIVA || "",
+        tasa: window.COTIZAT_TASA_ACTIVA || "",
+        items_moneda: window.COTIZAT_MONEDA_ACTIVA || ""
       })
     })
     .then(function (res) { return res.json(); })

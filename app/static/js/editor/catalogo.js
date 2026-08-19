@@ -29,6 +29,33 @@
     return editor.CATALOGO[indice];
   }
 
+  // Contexto monetario del editor: el catálogo se guarda en la moneda base y
+  // el presupuesto puede estar en otra. Se envía en cada petición para que el
+  // servidor convierta en la dirección correcta (al leer y al guardar).
+  function contextoMoneda() {
+    var params = [];
+    if (window.COTIZAT_MONEDA_ACTIVA) {
+      params.push("moneda=" + encodeURIComponent(window.COTIZAT_MONEDA_ACTIVA));
+    }
+    if (window.COTIZAT_TASA_ACTIVA) {
+      params.push("tasa=" + encodeURIComponent(window.COTIZAT_TASA_ACTIVA));
+    }
+    return params.join("&");
+  }
+
+  function conContexto(url) {
+    var extra = contextoMoneda();
+    if (!extra) return url;
+    return url + (url.indexOf("?") === -1 ? "?" : "&") + extra;
+  }
+
+  window.CotizatContextoMoneda = {
+    query: contextoMoneda,
+    url: conContexto,
+    moneda: function () { return window.COTIZAT_MONEDA_ACTIVA || "USD"; },
+    tasa: function () { return window.COTIZAT_TASA_ACTIVA || ""; }
+  };
+
   function obtenerFicha(indiceOItem) {
     var item = typeof indiceOItem === "number"
       ? (editor.CATALOGO || [])[indiceOItem]
@@ -42,7 +69,7 @@
     }
     if (fichasCache[id]) return Promise.resolve(fichasCache[id]);
     if (peticionesFicha[id]) return peticionesFicha[id];
-    peticionesFicha[id] = fetch("/partidas/" + encodeURIComponent(id) + "/ficha", {
+    peticionesFicha[id] = fetch(conContexto("/partidas/" + encodeURIComponent(id) + "/ficha"), {
       headers: { "Accept": "application/json" }
     })
       .then(function (respuesta) {
@@ -69,8 +96,10 @@
     var clave = consulta.toLowerCase() + "|" + String(limite || 60);
     if (peticionesBusqueda[clave]) return peticionesBusqueda[clave];
     peticionesBusqueda[clave] = fetch(
-      "/partidas/api/buscar?q=" + encodeURIComponent(consulta) +
-      "&limite=" + encodeURIComponent(limite || 60),
+      conContexto(
+        "/partidas/api/buscar?q=" + encodeURIComponent(consulta) +
+        "&limite=" + encodeURIComponent(limite || 60)
+      ),
       { headers: { "Accept": "application/json" } }
     )
       .then(function (respuesta) {
@@ -258,7 +287,10 @@
       div.appendChild(main);
 
       var precio = document.createElement("span");
-      precio.textContent = (item.precio || 0).toFixed(2) + " $";
+      // Código ISO: el catálogo se muestra en la moneda del presupuesto.
+      precio.textContent = window.FMT && window.FMT.fmt
+        ? window.FMT.fmt(item.precio || 0, item.moneda)
+        : (item.precio || 0).toFixed(2);
       CotizatStyles.setCssText(precio, "font-weight:600; color:var(--accent); font-size:0.85rem; white-space:nowrap;");
 
       var badgeUso = document.createElement("span");
@@ -484,7 +516,13 @@
       fetch("/partidas/" + match.id + "/actualizar-precio", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ precio: Math.max(0, precioNuevo - precioProducto(wrap)) })
+        body: JSON.stringify({
+          precio: Math.max(0, precioNuevo - precioProducto(wrap)),
+          // El importe va en la moneda del presupuesto: el servidor lo
+          // devuelve a la moneda base antes de tocar el catálogo.
+          moneda: window.COTIZAT_MONEDA_ACTIVA || "",
+          tasa: window.COTIZAT_TASA_ACTIVA || ""
+        })
       }).then(function (r) { return r.json(); }).then(function (data) {
         if (!data.ok) throw new Error(data.error || "No se pudo actualizar el catálogo.");
         actualizarPrecioCatalogoLocal(data.partida);

@@ -89,6 +89,9 @@ def inicio(request: Request, db: Session = Depends(get_db)):
         {
             "total_presupuestos": total_presupuestos,
             "total_clientes": total_clientes,
+            # Los importes del panel se etiquetan con el ISO de la moneda de la
+            # organización: «$» no distingue MXN de USD ni de COP.
+            "moneda_vista": common._contexto_moneda(db)[0],
             "por_estado": por_estado,
             "importe_aprobado": importe_aprobado,
             "recientes": recientes,
@@ -121,7 +124,19 @@ def optimizar_precios(request: Request, db: Session = Depends(get_db)):
     revisar en el catálogo de partidas. Reemplaza al antiguo botón que sólo
     mostraba un mensaje fijo sin hacer ningún cálculo."""
     analisis = analizar_catalogo_partidas(db)
-    return TEMPLATES.TemplateResponse(request, "budgets/optimizar.html", {"analisis": analisis})
+    # El análisis lee el catálogo (moneda base): se muestra en la moneda de la
+    # organización para no comparar dólares con pesos en la misma tabla.
+    _mon_o, _factor_o = common._contexto_moneda(db)
+    if _factor_o != 1.0:
+        for alerta in analisis.get("alertas", []):
+            for campo in ("precio_unitario", "coste_unitario"):
+                if isinstance(alerta.get(campo), (int, float)):
+                    alerta[campo] = common.tasa_convertir_precio(alerta[campo], _factor_o)
+    return TEMPLATES.TemplateResponse(
+        request,
+        "budgets/optimizar.html",
+        {"analisis": analisis, "moneda_vista": _mon_o},
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -137,7 +152,7 @@ def reportes(request: Request, desde: str = "", hasta: str = "", db: Session = D
     por_estado = {e: [p for p in presupuestos if p.estado == e] for e in ESTADOS}
     clientes = {}
     for p in presupuestos: clientes[p.cliente.nombre] = clientes.get(p.cliente.nombre, 0) + p.total
-    return TEMPLATES.TemplateResponse(request, "reports.html", {"desde": inicio.isoformat(), "hasta": fin.isoformat(), "presupuestos": presupuestos, "por_estado": por_estado, "clientes": sorted(clientes.items(), key=lambda x:x[1], reverse=True), "proyectos": db.query(Proyecto).all()})
+    return TEMPLATES.TemplateResponse(request, "reports.html", {"desde": inicio.isoformat(), "hasta": fin.isoformat(), "presupuestos": presupuestos, "por_estado": por_estado, "clientes": sorted(clientes.items(), key=lambda x:x[1], reverse=True), "proyectos": db.query(Proyecto).all(), "moneda_vista": common._contexto_moneda(db)[0]})
 
 @router.get("/reportes/exportar")
 def exportar_reporte(tipo: str = "ventas", desde: str = "", hasta: str = "", db: Session = Depends(get_db)):
@@ -200,6 +215,14 @@ def busqueda_global(request: Request, q: str = "", db: Session = Depends(get_db)
             NotaSeguimiento.texto.ilike(like), Presupuesto.numero.ilike(like), Presupuesto.titulo.ilike(like),
         )).order_by(NotaSeguimiento.created_at.desc()).limit(12).all()
     total = sum(len(grupo) for grupo in resultados.values())
+    # Partidas y productos vienen del catálogo (moneda base): se convierten a
+    # la moneda de la organización para que el buscador no muestre dólares
+    # sueltos entre importes locales.
+    _mon_s, _factor_s = common._contexto_moneda(db)
+    if _factor_s != 1.0:
+        for _item in list(resultados.get("partidas", [])) + list(resultados.get("productos", [])):
+            _item.precio_unitario = common.tasa_convertir_precio(_item.precio_unitario or 0, _factor_s)
     return TEMPLATES.TemplateResponse(request, "search.html", {
         "q": q, "consulta": consulta, "resultados": resultados, "total": total,
+        "moneda_vista": _mon_s,
     })

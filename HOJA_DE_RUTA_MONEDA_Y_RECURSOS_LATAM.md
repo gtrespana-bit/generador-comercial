@@ -35,14 +35,20 @@
 | 2. Modelo monetario | ✅ Completado | 2026-08-19 | Catálogo ISO, contexto base/contractual y campos persistentes implementados |
 | 3. Conversión y tasas | ✅ Completado | 2026-08-19 | Conversión central, Decimal, validación, origen y congelación de tasa preparados |
 | 4. Interfaz y configuración | ✅ Completado | 2026-08-19 | Configuración ISO, acceso rápido, selector contextual, confirmación y protección de históricos implementados |
-| 5. Editor y cálculos | ✅ Completado | 2026-08-19 | Editor, guardado, costes, beneficios, márgenes y moneda activa integrados |
-| 6. Plantillas y exportaciones | ✅ Completado | 2026-08-19 | Vistas, PDF, contrato, Excel, correos, propuestas públicas y PDF interactivo normalizados a ISO |
-| 7. Recursos por país | ✅ Completado | 2026-08-19 | Modelo híbrido, investigación inicial, matriz completa, panel, historial, procedencia y metadatos operativos implementados |
-| 8. Mano de obra y rendimientos | ✅ Completado | 2026-08-19 | Recursos operativos, cuadrillas, rendimientos, equipos y transporte por modalidad implementados |
+| 5. Editor y cálculos | ✅ Completado | 2026-08-19 (rev. tarde) | Cerrado en la auditoría de la tarde: la ficha, la descomposición, los productos y los packs cruzaban la frontera catálogo↔presupuesto sin convertir. Ver «Auditoría de cierre» |
+| 6. Plantillas y exportaciones | ✅ Completado | 2026-08-19 (rev. tarde) | Quedaban 27 usos de `\| money` con «$» ambiguo y símbolos fijos en el JS. Todo a ISO + símbolo distintivo (MX$, COL$, US$) |
+| 7. Recursos por país | ✅ Completado | 2026-08-19 (rev. tarde) | Las tablas nuevas se crearon sin GRANT ni RLS (rompía «Nuevo presupuesto» en producción); corregido en la revisión `e7b3c1d5a204` |
+| 8. Mano de obra y rendimientos | ✅ Completado | 2026-08-19 (rev. tarde) | `tarifa_hora_media` ya se expresa en la moneda del presupuesto al estimar horas desde el coste |
 | 9. Históricos y congelación | ✅ Completado | 2026-08-19 | Versiones, proyectos, cambios, pagos, facturas y procedencia de recursos protegidos |
 | 10. Integración con etapa 6 | ✅ Completado | 2026-08-19 | Proyectos, cambios, pagos, facturas y saldos con moneda contractual congelada |
-| 11. Pruebas y aceptación | ✅ Completado | 2026-08-19 | Suite completa: 766 passed, 6 skipped |
-| 12. Documentación y cierre | ✅ Completado | 2026-08-19 | Guías operativas, cierre, migraciones y continuidad documentados |
+| 11. Pruebas y aceptación | ✅ Completado | 2026-08-19 (rev. tarde) | Suite completa: 785 passed, 7 skipped. Incluye `tests/test_moneda_editor.py` (frontera catálogo↔presupuesto) y RLS real contra PostgreSQL |
+| 12. Documentación y cierre | ✅ Completado | 2026-08-19 (rev. tarde) | Guías, migraciones (incluido el paso 10 de Supabase) y esta hoja actualizados |
+
+> **Cómo leer esta hoja.** La tabla de arriba es el estado real. Las casillas
+> `[ ]` de cada bloque se escribieron al planificar y **no se han ido marcando**
+> durante la ejecución: no son un indicador fiable de lo que falta. Lo
+> verificado, lo corregido y lo que sigue pendiente está en «Auditoría de
+> cierre — 2026-08-19 (sesión de tarde)», al final del documento.
 
 Estados permitidos:
 
@@ -444,6 +450,69 @@ Precio Venezuela: 9,50 USD
 
 ---
 
+## Auditoría de cierre — 2026-08-19 (sesión de tarde)
+
+Revisión completa del trabajo del día a partir de dos síntomas reportados: el
+total de una partida se veía en pesos mexicanos mientras sus precios unitarios
+seguían en dólares al pulsar «editar», y el símbolo mostrado era «$» en lugar
+del de cada país.
+
+### Causa común
+
+El catálogo (partidas, productos, recursos y packs) se guarda en la **moneda
+base** (USD) y el presupuesto tiene su **moneda contractual**. Los caminos que
+cruzan esa frontera se habían convertido solo en algunas vistas, y siempre con
+la moneda de la *organización*, no con la del *presupuesto*.
+
+### Defectos encontrados y corregidos
+
+| # | Defecto | Efecto para el usuario |
+|---|---|---|
+| 1 | `GET /partidas/{id}/ficha` no convertía | Al editar una partida, precio unitario, costes y descomposición aparecían en USD junto a un total en MXN |
+| 2 | `POST /partidas/{id}/actualizar-precio` no deshacía la conversión | «Actualizar el catálogo» desde un presupuesto en MXN guardaba los pesos como dólares: el precio se multiplicaba por la tasa en cada edición |
+| 3 | `guardar-desde-presupuesto` usaba la moneda de la organización y no convertía los costes recalculados | Precio en la moneda base con costes en moneda local en la misma partida |
+| 4 | `crear`/`actualizar` partida sobrescribían los costes convertidos con los locales | Mismo desfase en la pestaña Partidas |
+| 5 | Productos del editor sin convertir | Añadir un producto sumaba dólares a un total en pesos |
+| 6 | Packs (recetas) guardados y releídos sin moneda | Un pack creado en MXN multiplicaba por 17 al insertarlo en un presupuesto en USD |
+| 7 | `/partidas/api/buscar` y `/partidas/{id}/descomposicion` usaban la moneda de la organización | Desfase cuando el presupuesto tenía otra moneda |
+| 8 | 27 usos de `\| money` y varios «$» fijos en JavaScript | Importes mexicanos, colombianos y dólares con el mismo símbolo |
+| 9 | `tarifa_hora_media` no seguía la moneda del presupuesto | Estimación de horas multiplicada por la tasa |
+| 10 | Precios por mercado sin `GRANT` ni RLS | 500 al abrir «Nuevo presupuesto» (corregido en la revisión `e7b3c1d5a204`) |
+
+### Reglas que quedan fijadas
+
+- Contrato único de contexto monetario: los endpoints del catálogo aceptan
+  `moneda` y `tasa`; el editor los envía siempre (`window.COTIZAT_MONEDA_ACTIVA`
+  y `window.COTIZAT_TASA_ACTIVA`).
+- Al **leer** se convierte base → moneda del documento; al **escribir** se
+  deshace la conversión antes de tocar el catálogo.
+- Nunca se inventa una tasa: sin tasa válida, el importe se queda en la moneda
+  base en lugar de mostrar una conversión falsa.
+- Los importes se muestran con código ISO (`1.234,56 MXN`) y, cuando hace falta
+  un símbolo, con el distintivo del país (`MX$`, `COL$`, `US$`, `S/`, `Bs`).
+- Decimales: COP, CLP y PYG sin decimales; el resto con dos, tanto en Python
+  como en el JavaScript del editor.
+
+### Cobertura de pruebas añadida
+
+- `tests/test_moneda_editor.py`: ficha, descomposición, actualización de precio,
+  guardado hacia el catálogo, productos, recursos, packs y símbolos.
+- `tests/test_rls_postgres.py`: precios por mercado bajo RLS real.
+- `tests/test_rls.py`: toda tabla del modelo debe tener `GRANT`; head único.
+
+### Limitaciones conocidas (no son defectos nuevos)
+
+- El panel y los reportes suman totales de presupuestos que pueden estar en
+  monedas distintas; se etiquetan con la moneda de la organización. Convertir o
+  segmentar esa suma es trabajo pendiente de un bloque futuro.
+- Los packs creados **antes** de este cambio se interpretan como moneda base
+  (era el comportamiento anterior, con el catálogo en USD).
+- La conversión del editor usa la tasa USD → moneda local. Una conversión
+  directa entre dos monedas locales (COP → MXN) exige las dos tasas y hoy no se
+  ofrece en la interfaz.
+
+---
+
 ## Registro de sesiones
 
 ### 2026-08-19 — Sesión inicial
@@ -463,6 +532,7 @@ Precio Venezuela: 9,50 USD
 | Fecha | Cambio |
 |---|---|
 | 2026-08-19 | Creación de la hoja de ruta y definición inicial de bloques |
+| 2026-08-19 (tarde) | Auditoría de cierre: 10 defectos de moneda corregidos, reglas de contexto monetario fijadas y limitaciones conocidas documentadas |
 
 ### 2026-08-19 — Política de decimales confirmada
 

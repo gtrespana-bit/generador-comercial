@@ -555,10 +555,13 @@ def test_listado_partidas_busqueda_muestra_margen_coherente_y_categorias_traduci
     resp = cliente_web.get("/partidas?q=friso")
     assert resp.status_code == 200
     texto = resp.text
-    # Precio 12 USD -> 37.543,80 COP; coste 10 USD -> 31.286,50; margen 6.257,30 (+20%)
-    assert "37.543,80" in texto
-    assert "31.286,50" in texto
-    assert "6.257,30" in texto
+    # Precio 12 USD -> 37.543,80 COP; coste 10 USD -> 31.286,50; margen 6.257,30.
+    # La lista los muestra con código ISO y la política de decimales del peso
+    # colombiano (0 decimales visibles), nunca con un «$» que no dice el país.
+    assert "37.544 COP" in texto
+    assert "31.287 COP" in texto
+    assert "6.257 COP" in texto
+    assert "37.543,80 $" not in texto
     assert "20.0%" in texto
     # Nunca el absurdo de COP - USD (~37.512,30 con markup del 119.800%)
     assert "119" not in texto

@@ -78,7 +78,10 @@
     details.setAttribute("data-descomp-cargado", "1");
     esqueleto(holder);
 
-    fetch("/partidas/" + encodeURIComponent(id) + "/descomposicion", {
+    var contexto = window.CotizatContextoMoneda && window.CotizatContextoMoneda.query
+      ? window.CotizatContextoMoneda.query()
+      : "";
+    fetch("/partidas/" + encodeURIComponent(id) + "/descomposicion" + (contexto ? "?" + contexto : ""), {
       headers: { Accept: "application/json" },
     })
       .then(function (respuesta) {
