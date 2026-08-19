@@ -11,7 +11,7 @@ from ..models import Recurso
 from .precios_mercado import guardar_precio
 
 
-def importar_matriz_csv(db: Session, ruta: str | Path, *, aplicar: bool = False) -> dict:
+def importar_matriz_csv(db: Session, ruta: str | Path, *, aplicar: bool = False, incluir_respaldo: bool = False) -> dict:
     ruta = Path(ruta)
     resultado = {"filas": 0, "aplicables": 0, "creadas_o_actualizadas": 0, "pendientes": 0, "no_encontrados": 0, "errores": []}
     recursos = {r.codigo.strip(): r for r in db.query(Recurso).all() if r.codigo}
@@ -20,7 +20,7 @@ def importar_matriz_csv(db: Session, ruta: str | Path, *, aplicar: bool = False)
         for row in reader:
             resultado["filas"] += 1
             precio_raw = str(row.get("precio_referencia") or "").strip()
-            if not precio_raw:
+            if not precio_raw or (row.get("origen") == "base" and not incluir_respaldo):
                 resultado["pendientes"] += 1
                 continue
             recurso = recursos.get(str(row.get("codigo_recurso") or "").strip())

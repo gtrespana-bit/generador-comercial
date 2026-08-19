@@ -33,7 +33,7 @@ def resolver_precio(db: Session, recurso_id: int, pais_codigo: str,
             float(elegido.precio), elegido.moneda,
             "organizacion" if propio else "nacional",
             elegido.confianza or "referencia",
-            "" if propio or (elegido.confianza == "confirmado") else "Usando precio nacional de referencia",
+            "" if propio or (elegido.confianza == "confirmado") else ("Precio provisional de respaldo; verifica con tu proveedor" if elegido.confianza == "provisional" or "respaldo" in (elegido.fuente or "").lower() else "Usando precio nacional de referencia"),
         )
     recurso = db.get(Recurso, recurso_id)
     if recurso and recurso.moneda == "USD":
