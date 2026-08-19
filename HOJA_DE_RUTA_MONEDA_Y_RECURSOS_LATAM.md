@@ -32,14 +32,14 @@
 |---|---|---:|---|
 | 0. Decisiones de producto | ✅ Completado | 2026-08-19 | Decisiones acordadas y documentadas |
 | 1. Auditoría técnica | ✅ Completado | 2026-08-19 | Auditoría documentada; decisiones A-E pendientes antes del diseño |
-| 2. Modelo monetario | 🟡 En curso | 2026-08-19 | Catálogo ISO, contexto base/contractual y campos persistentes iniciales implementados |
+| 2. Modelo monetario | ✅ Completado | 2026-08-19 | Catálogo ISO, contexto base/contractual y campos persistentes implementados |
 | 3. Conversión y tasas | ✅ Completado | 2026-08-19 | Conversión central, Decimal, validación, origen y congelación de tasa preparados |
 | 4. Interfaz y configuración | ✅ Completado | 2026-08-19 | Configuración ISO, acceso rápido, selector contextual, confirmación y protección de históricos implementados |
 | 5. Editor y cálculos | ✅ Completado | 2026-08-19 | Editor, guardado, costes, beneficios, márgenes y moneda activa integrados |
 | 6. Plantillas y exportaciones | ✅ Completado | 2026-08-19 | Vistas, PDF, contrato, Excel, correos, propuestas públicas y PDF interactivo normalizados a ISO |
 | 7. Recursos por país | ✅ Completado | 2026-08-19 | Modelo híbrido, investigación inicial, matriz completa, panel, historial, procedencia y metadatos operativos implementados |
 | 8. Mano de obra y rendimientos | ✅ Completado | 2026-08-19 | Recursos operativos, cuadrillas, rendimientos, equipos y transporte por modalidad implementados |
-| 9. Históricos y congelación | ⬜ Pendiente | — | — |
+| 9. Históricos y congelación | ✅ Completado | 2026-08-19 | Versiones, proyectos, cambios, pagos, facturas y procedencia de recursos protegidos |
 | 10. Integración con etapa 6 | ⬜ Pendiente | — | — |
 | 11. Pruebas y aceptación | ⬜ Pendiente | — | — |
 | 12. Documentación y cierre | ⬜ Pendiente | — | — |
