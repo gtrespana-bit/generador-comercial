@@ -1,0 +1,3214 @@
+diff --git a/app/models.py b/app/models.py
+index f20c47a..65fb15d 100644
+--- a/app/models.py
++++ b/app/models.py
+@@ -1174,6 +1174,25 @@ class Configuracion(TenantMixin, Base):
+     mostrar_retenciones = Column(Boolean, default=False)
+     mostrar_clausula_cambiaria = Column(Boolean, default=False)
+     datos_bancarios = Column(Text, default="")
++    # Semana 2 — Bloque A: etiqueta fiscal genérica por país (RIF, NIT, RUT, CUIT, RUC, RFC…)
++    etiqueta_id_fiscal = Column(String(20), default="RIF")
++    # Tasa de referencia para conversión USD -> moneda local (bloque moneda/tasa auto)
++    # Ej: 4200 COP por 1 USD. NULL = 1 (cuando moneda_default es USD).
++    tasa_cambio = Column(Float, nullable=True)
++    fecha_tasa = Column(Date, nullable=True)
++
++    # Alias LatAm para el flag regional (Semana 2). El nombre histórico
++    # `activar_funciones_venezuela` se mantiene en la base; el nuevo
++    # `activar_funciones_regionales` mapea a la misma columna para no
++    # exigir una migración de rename en este bloque. El próximo bloque
++    # migrará el nombre físico cuando toque.
++    @property
++    def activar_funciones_regionales(self) -> bool:
++        return bool(getattr(self, "activar_funciones_venezuela", False))
++
++    @activar_funciones_regionales.setter
++    def activar_funciones_regionales(self, valor: bool) -> None:
++        self.activar_funciones_venezuela = bool(valor)
+     # Estimación de tiempos de obra
+     horas_jornada = Column(Float, default=8.0)          # horas por jornada laboral
+     tarifa_hora_media = Column(Float, default=8.0)      # moneda/h para estimar horas desde el coste
+@@ -1856,6 +1875,9 @@ def migrar(engine):
+             ("mostrar_tasa_cambio", "BOOLEAN DEFAULT 0"), ("mostrar_total_bs", "BOOLEAN DEFAULT 0"),
+             ("mostrar_retenciones", "BOOLEAN DEFAULT 0"), ("mostrar_clausula_cambiaria", "BOOLEAN DEFAULT 0"),
+             ("datos_bancarios", "TEXT DEFAULT ''"),
++            ("etiqueta_id_fiscal", "VARCHAR(20) DEFAULT 'RIF'"),
++            ("tasa_cambio", "FLOAT"),
++            ("fecha_tasa", "DATE"),
+             ("horas_jornada", "FLOAT DEFAULT 8"),
+             ("tarifa_hora_media", "FLOAT DEFAULT 8"),
+             ("estimar_tiempo_por_coste", "BOOLEAN DEFAULT 1"),
+diff --git a/app/paises.py b/app/paises.py
+new file mode 100644
+index 0000000..f35d43f
+--- /dev/null
++++ b/app/paises.py
+@@ -0,0 +1,314 @@
++"""Datos de países para la landing adaptativa (Semana 1 — LatAm).
++
++Un solo lugar con la verdad sobre cada mercado hispano: bandera, moneda,
++IVA de referencia, etiqueta del ID fiscal y vocabulario local de obra.
++
++No es fiscalidad normativa: el IVA que se muestra es la alícuota general
++de referencia (no un asesoramiento tributario) y solo sirve para que la
++landing hable el idioma del visitante. La configuración real del IVA sigue
++siendo libre en /configuracion.
++
++DO NOTA: El catálogo mantiene sus precios en USD como referencia regional;
++la moneda_local aquí es solo informativa para el selector.
++"""
++
++from __future__ import annotations
++
++# Cada entrada es lo que la landing necesita para personalizarse.
++# `vocab` es la línea corta que aparece en el banner del catálogo:
++# 5 términos que cambian por país (concreto/hormigón, friso/revoque, etc.).
++PAISES: dict[str, dict] = {
++    "VE": {
++        "codigo": "VE",
++        "nombre": "Venezuela",
++        "gentilicio": "venezolano",
++        "bandera": "🇻🇪",
++        "moneda": "USD",
++        "moneda_local": "VES",
++        "simbolo_local": "Bs",
++        "iva": 16,
++        "id_fiscal": "RIF",
++        "vocab": "concreto, friso, cielo raso, rodapié, plomero",
++        "mercado": "venezolano",
++    },
++    "CO": {
++        "codigo": "CO",
++        "nombre": "Colombia",
++        "gentilicio": "colombiano",
++        "bandera": "🇨🇴",
++        "moneda": "COP",
++        "moneda_local": "COP",
++        "simbolo_local": "$",
++        "iva": 19,
++        "id_fiscal": "NIT",
++        "vocab": "concreto, pañete, cielo raso, guardaescoba, plomero",
++        "mercado": "colombiano",
++    },
++    "MX": {
++        "codigo": "MX",
++        "nombre": "México",
++        "gentilicio": "mexicano",
++        "bandera": "🇲🇽",
++        "moneda": "MXN",
++        "moneda_local": "MXN",
++        "simbolo_local": "$",
++        "iva": 16,
++        "id_fiscal": "RFC",
++        "vocab": "concreto, aplanado, plafón, zoclo, plomero",
++        "mercado": "mexicano",
++    },
++    "PE": {
++        "codigo": "PE",
++        "nombre": "Perú",
++        "gentilicio": "peruano",
++        "bandera": "🇵🇪",
++        "moneda": "PEN",
++        "moneda_local": "PEN",
++        "simbolo_local": "S/",
++        "iva": 18,
++        "id_fiscal": "RUC",
++        "vocab": "concreto, tarrajeo, cielo raso, zócalo, gasfitero",
++        "mercado": "peruano",
++    },
++    "CL": {
++        "codigo": "CL",
++        "nombre": "Chile",
++        "gentilicio": "chileno",
++        "bandera": "🇨🇱",
++        "moneda": "CLP",
++        "moneda_local": "CLP",
++        "simbolo_local": "$",
++        "iva": 19,
++        "id_fiscal": "RUT",
++        "vocab": "hormigón, estuco, cielo falso, guardapolvo, gasfíter",
++        "mercado": "chileno",
++    },
++    "AR": {
++        "codigo": "AR",
++        "nombre": "Argentina",
++        "gentilicio": "argentino",
++        "bandera": "🇦🇷",
++        "moneda": "ARS",
++        "moneda_local": "ARS",
++        "simbolo_local": "$",
++        "iva": 21,
++        "id_fiscal": "CUIT",
++        "vocab": "hormigón, revoque, cielorraso, zócalo, plomero",
++        "mercado": "argentino",
++    },
++    "EC": {
++        "codigo": "EC",
++        "nombre": "Ecuador",
++        "gentilicio": "ecuatoriano",
++        "bandera": "🇪🇨",
++        "moneda": "USD",
++        "moneda_local": "USD",
++        "simbolo_local": "$",
++        "iva": 15,
++        "id_fiscal": "RUC",
++        "vocab": "hormigón, enlucido, tumbado, barredera, gasfitero",
++        "mercado": "ecuatoriano",
++    },
++    "DO": {
++        "codigo": "DO",
++        "nombre": "República Dominicana",
++        "gentilicio": "dominicano",
++        "bandera": "🇩🇴",
++        "moneda": "DOP",
++        "moneda_local": "DOP",
++        "simbolo_local": "RD$",
++        "iva": 18,
++        "id_fiscal": "RNC",
++        "vocab": "hormigón, pañete, plafón, zócalo, plomero",
++        "mercado": "dominicano",
++    },
++    "UY": {
++        "codigo": "UY",
++        "nombre": "Uruguay",
++        "gentilicio": "uruguayo",
++        "bandera": "🇺🇾",
++        "moneda": "UYU",
++        "moneda_local": "UYU",
++        "simbolo_local": "$U",
++        "iva": 22,
++        "id_fiscal": "RUT",
++        "vocab": "hormigón, revoque, cielorraso, zócalo, sanitario",
++        "mercado": "uruguayo",
++    },
++    "PY": {
++        "codigo": "PY",
++        "nombre": "Paraguay",
++        "gentilicio": "paraguayo",
++        "bandera": "🇵🇾",
++        "moneda": "PYG",
++        "moneda_local": "PYG",
++        "simbolo_local": "₲",
++        "iva": 10,
++        "id_fiscal": "RUC",
++        "vocab": "hormigón, revoque, cielorraso, zócalo, plomero",
++        "mercado": "paraguayo",
++    },
++    "BO": {
++        "codigo": "BO",
++        "nombre": "Bolivia",
++        "gentilicio": "boliviano",
++        "bandera": "🇧🇴",
++        "moneda": "BOB",
++        "moneda_local": "BOB",
++        "simbolo_local": "Bs",
++        "iva": 13,
++        "id_fiscal": "NIT",
++        "vocab": "hormigón, revoque, cielo falso, zócalo, plomero",
++        "mercado": "boliviano",
++    },
++    "PA": {
++        "codigo": "PA",
++        "nombre": "Panamá",
++        "gentilicio": "panameño",
++        "bandera": "🇵🇦",
++        "moneda": "USD",
++        "moneda_local": "PAB",
++        "simbolo_local": "B/.",
++        "iva": 7,
++        "id_fiscal": "RUC",
++        "vocab": "concreto, repello, cielo raso, zócalo, plomero",
++        "mercado": "panameño",
++    },
++    "CR": {
++        "codigo": "CR",
++        "nombre": "Costa Rica",
++        "gentilicio": "costarricense",
++        "bandera": "🇨🇷",
++        "moneda": "CRC",
++        "moneda_local": "CRC",
++        "simbolo_local": "₡",
++        "iva": 13,
++        "id_fiscal": "NITE",
++        "vocab": "concreto, repello, cielo raso, rodapié, fontanero",
++        "mercado": "costarricense",
++    },
++    "GT": {
++        "codigo": "GT",
++        "nombre": "Guatemala",
++        "gentilicio": "guatemalteco",
++        "bandera": "🇬🇹",
++        "moneda": "GTQ",
++        "moneda_local": "GTQ",
++        "simbolo_local": "Q",
++        "iva": 12,
++        "id_fiscal": "NIT",
++        "vocab": "concreto, repello, cielo falso, zócalo, fontanero",
++        "mercado": "guatemalteco",
++    },
++    "HN": {
++        "codigo": "HN",
++        "nombre": "Honduras",
++        "gentilicio": "hondureño",
++        "bandera": "🇭🇳",
++        "moneda": "HNL",
++        "moneda_local": "HNL",
++        "simbolo_local": "L",
++        "iva": 15,
++        "id_fiscal": "RTN",
++        "vocab": "concreto, repello, cielo falso, zócalo, fontanero",
++        "mercado": "hondureño",
++    },
++    "SV": {
++        "codigo": "SV",
++        "nombre": "El Salvador",
++        "gentilicio": "salvadoreño",
++        "bandera": "🇸🇻",
++        "moneda": "USD",
++        "moneda_local": "USD",
++        "simbolo_local": "$",
++        "iva": 13,
++        "id_fiscal": "NIT",
++        "vocab": "concreto, repello, cielo falso, zócalo, fontanero",
++        "mercado": "salvadoreño",
++    },
++    "NI": {
++        "codigo": "NI",
++        "nombre": "Nicaragua",
++        "gentilicio": "nicaragüense",
++        "bandera": "🇳🇮",
++        "moneda": "NIO",
++        "moneda_local": "NIO",
++        "simbolo_local": "C$",
++        "iva": 15,
++        "id_fiscal": "RUC",
++        "vocab": "concreto, repello, cielo raso, zócalo, fontanero",
++        "mercado": "nicaragüense",
++    },
++}
++
++# Orden en que aparecen en el selector (Semana 2 — foco 5 países)
++# VE histórico + 4 nuevos (CO + MX + EC + PE). Los otros 12 quedan en PAISES
++# pero ocultos hasta la ola 2 para no dispersar validación.
++ORDEN_SELECTOR = [
++    "VE", "CO", "MX", "EC", "PE",
++]
++
++# Genérico para cuando no hay país seleccionado (SEO, primera visita)
++PAIS_GENERICO: dict = {
++    "codigo": "",
++    "nombre": "Latinoamérica",
++    "gentilicio": "latinoamericano",
++    "bandera": "🌎",
++    "moneda": "USD",
++    "moneda_local": "USD",
++    "simbolo_local": "$",
++    "iva": 16,
++    "id_fiscal": "ID fiscal",
++    "vocab": "concreto, friso, cielo raso, rodapié, plomero",
++    "mercado": "latinoamericano",
++}
++
++
++def obtener_pais(codigo: str | None) -> dict | None:
++    if not codigo:
++        return None
++    c = str(codigo).strip().upper()
++    return PAISES.get(c)
++
++
++def lista_paises() -> list[dict]:
++    return [PAISES[c] for c in ORDEN_SELECTOR if c in PAISES]
++
++
++def es_codigo_valido(codigo: str | None) -> bool:
++    if not codigo:
++        return False
++    return str(codigo).strip().upper() in PAISES
++
++
++# ---- Helpers para Semana 2 — Bloque B/C (auto-config) -----------------------
++
++def defaults_para_pais(codigo: str | None) -> dict:
++    """Devuelve {moneda, iva, id_fiscal, nombre, vocab} para un país.
++
++    Si el código es inválido o vacío, devuelve el genérico LatAm.
++    Es la única fuente de defaults de país para onboarding y /configuracion.
++    """
++    pais = obtener_pais(codigo) if codigo else None
++    base = pais or PAIS_GENERICO
++    return {
++        "codigo": base["codigo"],
++        "nombre": base["nombre"],
++        "moneda": base["moneda"],
++        "iva": base["iva"],
++        "id_fiscal": base["id_fiscal"],
++        "vocab": base["vocab"],
++        "bandera": base["bandera"],
++        "mercado": base["mercado"],
++    }
++
++
++# Re-exporta la lista blanca de monedas para validar formularios sin importar utils
++try:
++    from .utils import MONEDAS_SOPORTADAS as _MONEDAS_UTILS  # type: ignore
++    MONEDAS_SOPORTADAS = _MONEDAS_UTILS
++except Exception:
++    # Fallback si utils aún no se importó (evita ciclo en tests)
++    MONEDAS_SOPORTADAS: tuple[str, ...] = tuple(
++        sorted({p["moneda"] for p in PAISES.values()} | {"USD", "VES", "BRL", "EUR", "Bs"})
++    )
+diff --git a/app/routers/auth.py b/app/routers/auth.py
+index 32506a9..74cd9ee 100644
+--- a/app/routers/auth.py
++++ b/app/routers/auth.py
+@@ -185,11 +185,28 @@ async def registrar_cuenta(request: Request):
+         email=str(form.get("email") or ""),
+         nombre=str(form.get("nombre") or ""),
+     )
++    # País elegido en el registro: fija cookie para que la creación de la
++    # organización nazca ya configurada (moneda/IVA/ID fiscal/tasa).
++    pais_reg = str(form.get("pais") or "").strip().upper()
++    from ..paises import PAISES
++    if pais_reg not in PAISES:
++        # fallback a cookie previa o VE
++        pais_reg = str(request.cookies.get("cotizat_pais", "") or "").strip().upper()
++        if pais_reg not in PAISES:
++            pais_reg = "VE"
++    # Helper para fijar cookie de país en cualquier redirect de registro
++    def _resp_con_pais(resp):
++        try:
++            resp.set_cookie("cotizat_pais", pais_reg, max_age=365*24*3600, path="/", samesite="lax", httponly=False)
++        except Exception:
++            pass
++        return resp
++
+     if result.tokens is None:
+         # Mensaje único tanto para el alta nueva como para el email ya
+         # registrado: GoTrue oculta a propósito cuál de los dos casos es, y
+         # diferenciarlos aquí permitiría enumerar qué emails tienen cuenta.
+-        return _redirect(
++        resp = _redirect(
+             "/acceso",
+             msg=(
+                 "Revisa tu email y abre el enlace de confirmación para activar la "
+@@ -197,9 +214,10 @@ async def registrar_cuenta(request: Request):
+                 "tu contraseña o usa «Olvidé mi contraseña»."
+             ),
+         )
++        return _resp_con_pais(resp)
+     response = RedirectResponse(destino, status_code=303)
+     set_auth_cookies(response, result.tokens, settings.cookie_secure)
+-    return response
++    return _resp_con_pais(response)
+ 
+ 
+ def _registrar_consentimiento_de_registro(request: Request, *, email: str, nombre: str):
+@@ -588,7 +606,25 @@ async def crear_organizacion_web(
+     # rollback hasta él. Con la Configuracion pendiente en la sesión, el autoflush
+     # la metería dentro de ese punto y el rollback se la llevaría por delante,
+     # dejando la organización sin configuración.
+-    db.add(Configuracion(organizacion_id=organizacion.id))
++    # País -> defaults (moneda/IVA/ID fiscal/tasa) para que nazca configurada
++    pais_org = str(form.get("pais") or "").strip().upper()
++    from ..paises import PAISES, PAIS_GENERICO
++    from ..services.tasa import tasa_sugerida
++    if pais_org not in PAISES:
++        pais_org = str(request.cookies.get("cotizat_pais", "") or "").strip().upper()
++        if pais_org not in PAISES:
++            pais_org = "VE"
++    _pais_data = PAISES.get(pais_org, PAIS_GENERICO)
++    _cfg_init = Configuracion(
++        organizacion_id=organizacion.id,
++        empresa_pais=_pais_data["nombre"],
++        moneda_default=_pais_data["moneda"],
++        iva_default=float(_pais_data["iva"]),
++        etiqueta_id_fiscal=_pais_data["id_fiscal"],
++        tasa_cambio=tasa_sugerida(_pais_data["moneda"]) if _pais_data["moneda"] not in ("USD", "PAB") else 1.0,
++        fecha_tasa=date.today() if _pais_data["moneda"] not in ("USD", "PAB") else None,
++    )
++    db.add(_cfg_init)
+     db.commit()
+ 
+     # Sin prueba, la persona va a la pantalla de planes: negarla nunca puede
+@@ -1000,6 +1036,9 @@ async def finalizar_bienvenida(request: Request, db: Session = Depends(get_db)):
+         "empresa_email": form.get("empresa_email", ""),
+         "moneda_default": form.get("moneda_default", "USD"),
+         "iva_default": _f(form.get("iva_default"), 16.0),
++        "etiqueta_id_fiscal": form.get("etiqueta_id_fiscal", "RIF"),
++        "tasa_cambio": form.get("tasa_cambio", ""),
++        "fecha_tasa": form.get("fecha_tasa", ""),
+     }
+     try:
+         cfg = completar_onboarding(db, datos, str(form.get("modo_inicio", "")))
+diff --git a/app/routers/clientes.py b/app/routers/clientes.py
+index 9edff2c..2bc3d26 100644
+--- a/app/routers/clientes.py
++++ b/app/routers/clientes.py
+@@ -12,17 +12,19 @@ router = APIRouter()
+ 
+ @router.get("/clientes", response_class=HTMLResponse)
+ def listar_clientes(request: Request, q: str = "", db: Session = Depends(get_db)):
++    cfg = _config(db)
+     query = db.query(Cliente)
+     if q.strip():
+         like = f"%{q.strip()}%"
+         query = query.filter(or_(Cliente.nombre.ilike(like), Cliente.rif.ilike(like), Cliente.email.ilike(like)))
+     clientes = query.order_by(Cliente.nombre).all()
+-    return TEMPLATES.TemplateResponse(request, "clients/list.html", {"clientes": clientes, "q": q})
++    return TEMPLATES.TemplateResponse(request, "clients/list.html", {"clientes": clientes, "q": q, "cfg": cfg})
+ 
+ 
+ @router.get("/clientes/nuevo", response_class=HTMLResponse)
+-def nuevo_cliente_form(request: Request, _db: Session = Depends(get_db)):
+-    return TEMPLATES.TemplateResponse(request, "clients/form.html", {"cliente": None})
++def nuevo_cliente_form(request: Request, db: Session = Depends(get_db)):
++    cfg = _config(db)
++    return TEMPLATES.TemplateResponse(request, "clients/form.html", {"cliente": None, "cfg": cfg})
+ 
+ 
+ @router.post("/clientes/nuevo")
+@@ -49,7 +51,8 @@ def editar_cliente_form(cliente_id: int, request: Request, db: Session = Depends
+     cliente = db.get(Cliente, cliente_id)
+     if cliente is None:
+         return _redirect("/clientes", error="Cliente no encontrado.")
+-    return TEMPLATES.TemplateResponse(request, "clients/form.html", {"cliente": cliente})
++    cfg = _config(db)
++    return TEMPLATES.TemplateResponse(request, "clients/form.html", {"cliente": cliente, "cfg": cfg})
+ 
+ 
+ @router.post("/clientes/{cliente_id}/editar")
+diff --git a/app/routers/common.py b/app/routers/common.py
+index e7e3601..c0fb723 100644
+--- a/app/routers/common.py
++++ b/app/routers/common.py
+@@ -354,6 +354,14 @@ def whatsapp_url(telefono, texto) -> str:
+ 
+ TEMPLATES.env.filters["whatsapp"] = whatsapp_url
+ 
++# Filtro de traducción de terminología por país (VE base -> CO/MX/EC/PE)
++try:
++    from ..services.traduccion import traducir as _traducir_termino, codigo_desde_pais as _codigo_pais
++    TEMPLATES.env.filters["traducir"] = _traducir_termino
++    TEMPLATES.env.globals["codigo_pais"] = _codigo_pais
++except Exception:
++    pass
++
+ UPLOADS = UPLOADS_DIR
+ # Los Excel originales se guardan bajo uploads (consultables/descargables); el
+ # JSON intermedio del asistente queda fuera de estáticos hasta confirmarse.
+@@ -970,6 +978,49 @@ def _indice_catalogo_para_editor(db: Session) -> list[dict]:
+         )
+         .all()
+     )
++    # Traducción al vuelo para el editor (CO/MX/EC/PE)
++    try:
++        from ..services.traduccion import codigo_desde_pais as _codigo, traducir as _trad
++        _cfg = _config(db)
++        _cod = _codigo(getattr(_cfg, "empresa_pais", ""))
++        if _cod:
++            out = []
++            for _pp in partidas:
++                _d = _partida_catalogo_indice(_pp)
++                # Traduce nombre/descripción visibles; mantiene buscable con ambos idiomas
++                _d["nombre"] = _trad(_d.get("nombre",""), _cod)
++                _d["descripcion"] = _trad(_d.get("descripcion",""), _cod)
++                # Conversión USD->local si la org trabaja en moneda local con tasa
++                try:
++                    _mon = str(getattr(_cfg, "moneda_default", "USD") or "USD").strip().upper()
++                    if _mon == "BS":
++                        _mon = "VES"
++                    _tasa = getattr(_cfg, "tasa_cambio", None)
++                    if _mon not in ("USD", "", "PAB") and _tasa and float(_tasa) > 0:
++                        from ..services.tasa import tasa_convertir_precio
++                        _d["precio"] = tasa_convertir_precio(_d.get("precio", 0), float(_tasa))
++                except Exception:
++                    pass
++                # Añade términos traducidos al índice buscable para que "pañete" encuentre "friso"
++                try:
++                    _busc = _d.get("buscable","")
++                    _trad_bus = _trad(_pp.nombre + " " + (_pp.descripcion or ""), _cod)
++                    # Normaliza y añade palabras nuevas del traducido que no estaban
++                    import unicodedata, re
++                    def _norma(s):
++                        s=unicodedata.normalize("NFD", s.lower())
++                        return "".join(c for c in s if unicodedata.category(c) != "Mn")
++                    _orig_norm = set(re.findall(r"[a-z0-9]+", _norma(_d.get("buscable",""))))
++                    for _w in re.findall(r"[a-z0-9]+", _norma(_trad_bus)):
++                        if len(_w)>=3 and _w not in _orig_norm:
++                            _d["buscable"] = (_d["buscable"] + " " + _w)[:380]
++                            _orig_norm.add(_w)
++                except Exception:
++                    pass
++                out.append(_d)
++            return out
++    except Exception:
++        pass
+     return [_partida_catalogo_indice(partida) for partida in partidas]
+ 
+ 
+diff --git a/app/routers/configuracion.py b/app/routers/configuracion.py
+index 3ec2f26..09aaa9d 100644
+--- a/app/routers/configuracion.py
++++ b/app/routers/configuracion.py
+@@ -64,6 +64,22 @@ def ver_configuracion(request: Request, db: Session = Depends(get_db)):
+     )
+ 
+ 
++@router.get("/configuracion/tasa-auto")
++def tasa_auto(moneda: str = "COP", db: Session = Depends(get_db)):
++    """Devuelve la tasa del día 1 USD -> moneda (JSON). No guarda nada."""
++    if not DATABASE_IS_SQLITE and not puede_gestionar(db):
++        return JSONResponse({"ok": False, "error": "Solo propietarios y administradores pueden consultar la tasa."}, status_code=403)
++    from ..services.tasa import obtener_tasa_api
++    moneda = str(moneda or "COP").strip().upper()
++    if moneda == "BS":
++        moneda = "VES"
++    tasa, error = obtener_tasa_api(moneda)
++    if tasa is not None:
++        from datetime import date as _date
++        return {"ok": True, "moneda": moneda, "tasa": round(float(tasa), 4), "fecha": _date.today().isoformat(), "fuente": "open.er-api.com"}
++    return {"ok": False, "error": error or "No se pudo obtener la tasa."}
++
++
+ @router.post("/configuracion")
+ async def guardar_configuracion(request: Request, db: Session = Depends(get_db)):
+     if not DATABASE_IS_SQLITE and not puede_gestionar(db):
+@@ -90,9 +106,39 @@ async def guardar_configuracion(request: Request, db: Session = Depends(get_db))
+     cfg.empresa_telefono = str(form.get("empresa_telefono", "")).strip()
+     cfg.empresa_email = str(form.get("empresa_email", "")).strip()
+     cfg.empresa_web = str(form.get("empresa_web", "")).strip()
++    # Etiqueta ID fiscal por país (RIF/NIT/RUT/CUIT/RUC/RFC)
++    cfg.etiqueta_id_fiscal = str(form.get("etiqueta_id_fiscal", "") or "RIF").strip()[:20] or "RIF"
+     cfg.iva_default = max(0.0, min(_f(form.get("iva_default"), 16.0), 100.0))
+-    moneda = form.get("moneda_default", "USD")
+-    cfg.moneda_default = moneda if moneda in ("USD", "Bs") else "USD"
++    # Moneda: 20 ISOs (validación contra lista blanca, alias Bs->VES)
++    from ..utils import MONEDAS_SOPORTADAS
++    from ..services.tasa import tasa_sugerida
++    moneda_raw = str(form.get("moneda_default", "USD") or "USD").strip().upper()
++    if moneda_raw == "BS":
++        moneda_raw = "VES"
++    cfg.moneda_default = moneda_raw if moneda_raw in MONEDAS_SOPORTADAS else "USD"
++    # Tasa de referencia USD->local (opcional)
++    tasa_txt = str(form.get("tasa_cambio", "") or "").strip()
++    if tasa_txt:
++        try:
++            _t = float(tasa_txt.replace(",", "."))
++            cfg.tasa_cambio = max(0.0, _t) if _t > 0 else None
++        except Exception:
++            cfg.tasa_cambio = None
++    else:
++        cfg.tasa_cambio = None
++    fecha_tasa_raw = str(form.get("fecha_tasa", "") or "").strip()
++    if fecha_tasa_raw:
++        try:
++            from datetime import date as _date
++            cfg.fecha_tasa = _date.fromisoformat(fecha_tasa_raw)
++        except Exception:
++            cfg.fecha_tasa = None
++    else:
++        cfg.fecha_tasa = None
++    # Si no hay tasa pero la moneda no es USD, sugiere una por defecto sin obligar
++    if cfg.tasa_cambio is None and cfg.moneda_default not in ("USD", "PAB"):
++        # No autocompleta en cada guardado para no pisar edición manual vacía intencional
++        pass
+     cfg.validez_default = max(1, min(int(_f(form.get("validez_default"), 30)), 3650))
+     cfg.notas_default = str(form.get("notas_default", "")).strip()
+     cfg.condiciones_default = str(form.get("condiciones_default", "")).strip()
+diff --git a/app/routers/partidas.py b/app/routers/partidas.py
+index e18f491..8165728 100644
+--- a/app/routers/partidas.py
++++ b/app/routers/partidas.py
+@@ -5,6 +5,7 @@ from sqlalchemy import func
+ 
+ from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
+ from ..services import auditoria
++from ..services.traduccion import codigo_desde_pais, traducir
+ 
+ router = APIRouter()
+ 
+@@ -209,6 +210,29 @@ def listar_partidas(
+                 for sub in subcapitulos
+             ],
+         })
++    # Traducción al vuelo VE->país para la vista de lista (CO/MX/EC/PE)
++    try:
++        _cfg = _config(db)
++        _codigo_trad = codigo_desde_pais(getattr(_cfg, "empresa_pais", ""))
++    except Exception:
++        _codigo_trad = ""
++    if _codigo_trad:
++        for _p in partidas:
++            _p.nombre = traducir(_p.nombre, _codigo_trad)
++            _p.descripcion = traducir(_p.descripcion or "", _codigo_trad)
++    # Conversión de precio USD->local para la vista lista (si org en moneda local con tasa)
++    try:
++        if _codigo_trad:
++            from ..services.tasa import tasa_convertir_precio
++            _mon_cfg = str(getattr(_cfg, "moneda_default", "USD") or "USD").strip().upper()
++            if _mon_cfg == "BS":
++                _mon_cfg = "VES"
++            _tasa_cfg = getattr(_cfg, "tasa_cambio", None)
++            if _mon_cfg not in ("USD", "", "PAB") and _tasa_cfg and float(_tasa_cfg) > 0:
++                for _p in partidas:
++                    _p.precio_unitario = tasa_convertir_precio(_p.precio_unitario or 0, float(_tasa_cfg))
++    except Exception:
++        pass
+     return TEMPLATES.TemplateResponse(request, "partidas/list.html", {
+         "partidas": partidas,
+         "q": q,
+@@ -252,6 +276,11 @@ def filas_subcategoria_catalogo(
+         .all()
+     )
+     partidas = []
++    try:
++        _cfg_api = _config(db)
++        _codigo_api = codigo_desde_pais(getattr(_cfg_api, "empresa_pais", ""))
++    except Exception:
++        _codigo_api = ""
+     for p in filas:
+         try:
+             valor = json.loads(p.descomposicion_json or "[]")
+@@ -262,12 +291,24 @@ def filas_subcategoria_catalogo(
+             1 for f in descomp
+             if isinstance(f, dict) and f.get("tipo") == "recurso"
+         )
++        # Precio convertido a moneda local si aplica
++        _precio_api = p.precio_unitario or 0.0
++        try:
++            _mon_api = str(getattr(_cfg_api, "moneda_default", "USD") or "USD").strip().upper()
++            if _mon_api == "BS":
++                _mon_api = "VES"
++            _tasa_api = getattr(_cfg_api, "tasa_cambio", None)
++            if _mon_api not in ("USD", "", "PAB") and _tasa_api and float(_tasa_api) > 0:
++                from ..services.tasa import tasa_convertir_precio
++                _precio_api = tasa_convertir_precio(_precio_api, float(_tasa_api))
++        except Exception:
++            pass
+         partidas.append({
+             "id": p.id,
+-            "nombre": p.nombre or "",
+-            "descripcion": p.descripcion or "",
++            "nombre": traducir(p.nombre or "", _codigo_api) if _codigo_api else (p.nombre or ""),
++            "descripcion": traducir(p.descripcion or "", _codigo_api) if _codigo_api else (p.descripcion or ""),
+             "unidad": p.unidad or "ud",
+-            "precio": p.precio_unitario or 0.0,
++            "precio": _precio_api,
+             "categoria": p.categoria or "",
+             "subcategoria": p.subcategoria or "",
+             "apartado": p.apartado or "",
+@@ -305,10 +346,24 @@ def buscar_partidas_catalogo_api(
+         candidatas,
+         key=lambda p: (-_puntuar_busqueda_catalogo(p, consulta, grupos), p.nombre),
+     )[:limite]
++    try:
++        _cfg_b = _config(db)
++        _codigo_b = codigo_desde_pais(getattr(_cfg_b, "empresa_pais", ""))
++    except Exception:
++        _codigo_b = ""
++    resultados = []
++    for _pp in partidas:
++        _idx = _partida_catalogo_indice(_pp)
++        if _codigo_b:
++            _idx["nombre"] = traducir(_idx.get("nombre",""), _codigo_b)
++            _idx["descripcion"] = traducir(_idx.get("descripcion",""), _codigo_b)
++            _idx["categoria"] = traducir(_idx.get("categoria",""), _codigo_b)
++            _idx["subcategoria"] = traducir(_idx.get("subcategoria",""), _codigo_b)
++        resultados.append(_idx)
+     return {
+         "ok": True,
+         "q": consulta,
+-        "resultados": [_partida_catalogo_indice(p) for p in partidas],
++        "resultados": resultados,
+     }
+ 
+ 
+@@ -344,7 +399,19 @@ def ficha_partida_catalogo(partida_id: int, db: Session = Depends(get_db)):
+             status_code=404,
+             content={"ok": False, "error": "Partida no encontrada."},
+         )
+-    return {"ok": True, "partida": _partida_catalogo_json(partida)}
++    try:
++        _cfg_f = _config(db)
++        _codigo_f = codigo_desde_pais(getattr(_cfg_f, "empresa_pais", ""))
++    except Exception:
++        _codigo_f = ""
++    _j = _partida_catalogo_json(partida)
++    if _codigo_f:
++        _j["nombre"] = traducir(_j.get("nombre",""), _codigo_f)
++        _j["descripcion"] = traducir(_j.get("descripcion",""), _codigo_f)
++        _j["categoria"] = traducir(_j.get("categoria",""), _codigo_f)
++        _j["subcategoria"] = traducir(_j.get("subcategoria",""), _codigo_f)
++        _j["apartado"] = traducir(_j.get("apartado",""), _codigo_f)
++    return {"ok": True, "partida": _j}
+ 
+ 
+ @router.get("/partidas/{partida_id}/descomposicion")
+diff --git a/app/routers/presupuestos.py b/app/routers/presupuestos.py
+index 0d4c062..5dfa0db 100644
+--- a/app/routers/presupuestos.py
++++ b/app/routers/presupuestos.py
+@@ -5,6 +5,7 @@ from fastapi import APIRouter
+ from . import common
+ from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
+ from ..services import auditoria
++from ..utils import normalizar_moneda
+ 
+ router = APIRouter()
+ 
+@@ -1497,6 +1498,17 @@ async def crear_presupuesto(request: Request, db: Session = Depends(get_db)):
+         fecha_tipo_cambio = date.fromisoformat(form.get("fecha_tipo_cambio")) if form.get("fecha_tipo_cambio") else None
+     except ValueError:
+         fecha_tipo_cambio = None
++    # Si no viene fecha pero sí usamos tasa de cfg, usa fecha_tasa de cfg
++    try:
++        cfg_fecha = getattr(_config(db), "fecha_tasa", None) if 'cfg' not in locals() else getattr(cfg, "fecha_tasa", None)
++    except Exception:
++        cfg_fecha = None
++    if fecha_tipo_cambio is None and cfg_fecha:
++        # Si el form no trae fecha pero el presupuesto usará tasa de cfg, hereda su fecha
++        _tipo_form_vacio = not str(form.get("tipo_cambio", "")).strip()
++        _fecha_form_vacia = not str(form.get("fecha_tipo_cambio", "")).strip()
++        if _tipo_form_vacio and _fecha_form_vacia:
++            fecha_tipo_cambio = cfg_fecha
+ 
+     con_portada = bool(form.get("con_portada"))
+     mostrar_firmas = bool(form.get("mostrar_firmas"))
+@@ -1508,6 +1520,7 @@ async def crear_presupuesto(request: Request, db: Session = Depends(get_db)):
+     if isinstance(foto_file, UploadFileStarlette) and foto_file.filename:
+         foto_proyecto = await _guardar_imagen(foto_file, f"projects/p_new_{date.today().isoformat()}", db)
+ 
++    cfg = _config(db)
+     presupuesto = Presupuesto(
+         numero=proximo_numero(db, f.year),
+         year=f.year,
+@@ -1516,8 +1529,8 @@ async def crear_presupuesto(request: Request, db: Session = Depends(get_db)):
+         direccion_obra=str(form.get("direccion_obra", "")).strip(),
+         codigo_postal=str(form.get("codigo_postal", "")).strip(),
+         validez_dias=int(_f(form.get("validez_dias"), 30)),
+-        moneda=form.get("moneda") if form.get("moneda") in ("USD", "Bs") else "USD",
+-        tipo_cambio=_f(form.get("tipo_cambio"), None) if str(form.get("tipo_cambio", "")).strip() else None,
++        moneda=normalizar_moneda(form.get("moneda"), "USD"),
++        tipo_cambio=(_f(form.get("tipo_cambio"), None) if str(form.get("tipo_cambio", "")).strip() else None) or (cfg.tasa_cambio if getattr(cfg, "tasa_cambio", None) and str(form.get("tipo_cambio", "")).strip() == "" and getattr(cfg, "moneda_default", "USD") not in ("USD", "PAB") else None),
+         impuesto_pct=_f(form.get("impuesto_pct"), 16.0),
+         descuento_pct=_f(form.get("descuento_pct"), 0.0),
+         estado=estado if _estado_valido(estado) else "borrador",
+@@ -2972,7 +2985,7 @@ async def actualizar_presupuesto(presupuesto_id: int, request: Request, db: Sess
+     presupuesto.direccion_obra = str(form.get("direccion_obra", "")).strip()
+     presupuesto.codigo_postal = str(form.get("codigo_postal", "")).strip()
+     presupuesto.validez_dias = int(_f(form.get("validez_dias"), 30))
+-    presupuesto.moneda = form.get("moneda") if form.get("moneda") in ("USD", "Bs") else "USD"
++    presupuesto.moneda = normalizar_moneda(form.get("moneda"), "USD")
+     presupuesto.tipo_cambio = _f(form.get("tipo_cambio"), None) if str(form.get("tipo_cambio", "")).strip() else None
+     presupuesto.impuesto_pct = _f(form.get("impuesto_pct"), 16.0)
+     presupuesto.descuento_pct = _f(form.get("descuento_pct"), 0.0)
+diff --git a/app/routers/publico.py b/app/routers/publico.py
+index 6270385..e97d60f 100644
+--- a/app/routers/publico.py
++++ b/app/routers/publico.py
+@@ -98,20 +98,202 @@ def descargar_archivo_legado_privado(
+ # la identidad del producto. Por eso no dependen de get_db y están declaradas
+ # como fronteras públicas en la auditoría de protección de rutas.
+ 
++def _resolver_pais_landing(request: Request) -> tuple[dict | None, str]:
++    """Resuelve el país de la landing desde ?pais= o la cookie.
++
++    Prioridad: query param > cookie. Un código inválido se ignora y devuelve
++    (None, "") para que la landing quede en modo genérico LatAm (SEO).
++    """
++    from ..paises import PAISES
++
++    raw_q = str(request.query_params.get("pais", "") or "").strip().upper()
++    if raw_q and raw_q in PAISES:
++        return PAISES[raw_q], raw_q
++    raw_c = str(request.cookies.get("cotizat_pais", "") or "").strip().upper()
++    if raw_c and raw_c in PAISES:
++        return PAISES[raw_c], raw_c
++    return None, ""
++
++
++def _contexto_landing(request: Request, pais_forzado: str | None = None) -> dict:
++    """Contexto de la landing. Si pais_forzado viene por subdirectorio (/co/), manda sobre query/cookie."""
++    from ..paises import PAIS_GENERICO, PAISES, lista_paises
++
++    # Subdirectorio tiene prioridad
++    if pais_forzado:
++        codigo = str(pais_forzado).strip().upper()
++        if codigo in PAISES:
++            return {
++                "pais_actual": PAISES[codigo],
++                "pais_codigo": codigo,
++                "pais_generico": PAIS_GENERICO,
++                "paises": lista_paises(),
++            }
++    pais_actual, pais_codigo = _resolver_pais_landing(request)
++    return {
++        "pais_actual": pais_actual,
++        "pais_codigo": pais_codigo,
++        "pais_generico": PAIS_GENERICO,
++        "paises": lista_paises(),
++    }
++
++
++def _landing_con_pais(request: Request, codigo: str):
++    """Renderiza la landing para un subdirectorio /co/, /mx/ ... y fija cookie."""
++    from ..paises import PAISES
++
++    codigo = str(codigo).strip().upper()
++    if codigo not in PAISES:
++        return Response("Página no encontrada.", status_code=404)
++    ctx = _contexto_landing(request, pais_forzado=codigo)
++    # hreflang + canonical se inyectan en el template via ctx
++    resp = TEMPLATES.TemplateResponse(request, "landing.html", ctx)
++    resp.set_cookie(
++        "cotizat_pais",
++        codigo,
++        max_age=365 * 24 * 3600,
++        path="/",
++        samesite="lax",
++        httponly=False,
++    )
++    return resp
++
++
+ @router.get("/", response_class=HTMLResponse, include_in_schema=False)
+ def home_publica(request: Request):
+     """Página de inicio pública: la landing comercial es la puerta de entrada.
+ 
+     Quien llega sin sesión ve qué ofrece el producto, por qué elegirlo y cómo
+     empezar. El panel de trabajo vive en ``/inicio``, ya con sesión iniciada.
++
++    Si llega con ?pais=XX válido, se redirige 301 al subdirectorio /xx/ (SEO)
++    y fija la cookie. Así ?pais= queda como legacy pero el canónico es /co/.
+     """
+-    return TEMPLATES.TemplateResponse(request, "landing.html", {})
++    raw_q = str(request.query_params.get("pais", "") or "").strip().upper()
++    from ..paises import PAISES
++
++    if raw_q and raw_q in PAISES:
++        # 301 al subdirectorio canónico para SEO (mantiene query demo_* si viene)
++        qs = str(request.url.query or "")
++        # limpia pais de la query para no duplicar
++        try:
++            from urllib.parse import parse_qs, urlencode
++
++            qdict = parse_qs(qs, keep_blank_values=True)
++            qdict.pop("pais", None)
++            resto = urlencode(qdict, doseq=True)
++            dest = f"/{raw_q.lower()}/" + (f"?{resto}" if resto else "")
++        except Exception:
++            dest = f"/{raw_q.lower()}/"
++        resp = RedirectResponse(dest, status_code=301)
++        resp.set_cookie(
++            "cotizat_pais",
++            raw_q,
++            max_age=365 * 24 * 3600,
++            path="/",
++            samesite="lax",
++            httponly=False,
++        )
++        return resp
++    ctx = _contexto_landing(request)
++    return TEMPLATES.TemplateResponse(request, "landing.html", ctx)
+ 
+ 
+ @router.get("/conocer", response_class=HTMLResponse, include_in_schema=False)
+ def landing_publica(request: Request):
+     """Alias histórico de la landing, conservado para no romper enlaces."""
+-    return TEMPLATES.TemplateResponse(request, "landing.html", {})
++    raw_q = str(request.query_params.get("pais", "") or "").strip().upper()
++    from ..paises import PAISES
++
++    if raw_q and raw_q in PAISES:
++        return RedirectResponse(f"/{raw_q.lower()}/", status_code=301)
++    ctx = _contexto_landing(request)
++    return TEMPLATES.TemplateResponse(request, "landing.html", ctx)
++
++
++# --- Subdirectorios por país (SEO) — 1 Vercel, 1 Supabase, 5 URLs canónicas ---
++@router.get("/ve", response_class=HTMLResponse, include_in_schema=False)
++def landing_ve(request: Request):
++    return _landing_con_pais(request, "VE")
++
++
++@router.get("/ve/", response_class=HTMLResponse, include_in_schema=False)
++def landing_ve_slash(request: Request):
++    return _landing_con_pais(request, "VE")
++
++
++@router.get("/co", response_class=HTMLResponse, include_in_schema=False)
++def landing_co(request: Request):
++    return _landing_con_pais(request, "CO")
++
++
++@router.get("/co/", response_class=HTMLResponse, include_in_schema=False)
++def landing_co_slash(request: Request):
++    return _landing_con_pais(request, "CO")
++
++
++@router.get("/mx", response_class=HTMLResponse, include_in_schema=False)
++def landing_mx(request: Request):
++    return _landing_con_pais(request, "MX")
++
++
++@router.get("/mx/", response_class=HTMLResponse, include_in_schema=False)
++def landing_mx_slash(request: Request):
++    return _landing_con_pais(request, "MX")
++
++
++@router.get("/ec", response_class=HTMLResponse, include_in_schema=False)
++def landing_ec(request: Request):
++    return _landing_con_pais(request, "EC")
++
++
++@router.get("/ec/", response_class=HTMLResponse, include_in_schema=False)
++def landing_ec_slash(request: Request):
++    return _landing_con_pais(request, "EC")
++
++
++@router.get("/pe", response_class=HTMLResponse, include_in_schema=False)
++def landing_pe(request: Request):
++    return _landing_con_pais(request, "PE")
++
++
++@router.get("/pe/", response_class=HTMLResponse, include_in_schema=False)
++def landing_pe_slash(request: Request):
++    return _landing_con_pais(request, "PE")
++
++
++@router.get("/sitemap.xml", include_in_schema=False)
++def sitemap(request: Request):
++    """Sitemap mínimo con las 5 landings canónicas + legales."""
++    base = str(request.base_url).rstrip("/")
++    # Usa COTIZAT_PUBLIC_URL si está definido para el canónico de prod
++    try:
++        from ..config import entorno_actual
++
++        # En prod el base_url ya es cotizat.com; en preview es la URL de Vercel — ambas válidas
++        pass
++    except Exception:
++        pass
++    urls = [
++        f"{base}/",
++        f"{base}/ve/",
++        f"{base}/co/",
++        f"{base}/mx/",
++        f"{base}/ec/",
++        f"{base}/pe/",
++        f"{base}/conocer",
++        f"{base}/pago",
++        f"{base}/legal/terminos",
++        f"{base}/legal/privacidad",
++        f"{base}/legal/soporte",
++        f"{base}/legal/licencias",
++        f"{base}/legal/preguntas",
++    ]
++    xml = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
++    for u in urls:
++        xml.append(f"  <url><loc>{u}</loc></url>")
++    xml.append("</urlset>")
++    return Response("\n".join(xml), media_type="application/xml")
+ 
+ 
+ _PAGINAS_LEGALES = {
+diff --git a/app/services/onboarding.py b/app/services/onboarding.py
+index 6d81dc9..8049787 100644
+--- a/app/services/onboarding.py
++++ b/app/services/onboarding.py
+@@ -58,8 +58,11 @@ def completar_onboarding(db: Session, datos: dict, modo: str) -> Configuracion:
+     if not empresa_nombre or empresa_nombre.lower() == "mi empresa":
+         raise ErrorOnboarding("Escribe el nombre comercial de tu empresa.")
+ 
+-    moneda = str(datos.get("moneda_default") or "USD").strip()
+-    if moneda not in {"USD", "Bs"}:
++    # Moneda: 20 ISOs (validación contra lista blanca, alias Bs->VES)
++    from ..utils import MONEDAS_SOPORTADAS, normalizar_moneda
++    moneda_raw = str(datos.get("moneda_default") or "USD").strip()
++    moneda = normalizar_moneda(moneda_raw, "USD")
++    if moneda not in MONEDAS_SOPORTADAS and moneda != "VES":
+         moneda = "USD"
+     try:
+         iva = float(datos.get("iva_default", 16.0))
+@@ -67,6 +70,24 @@ def completar_onboarding(db: Session, datos: dict, modo: str) -> Configuracion:
+         iva = 16.0
+     if not 0 <= iva <= 100:
+         raise ErrorOnboarding("El IVA debe estar entre 0 y 100 %.")
++    # Etiqueta ID fiscal y tasa (LatAm)
++    etiqueta = str(datos.get("etiqueta_id_fiscal") or "RIF").strip()[:20] or "RIF"
++    tasa_raw = datos.get("tasa_cambio")
++    try:
++        tasa = float(str(tasa_raw).replace(",", ".")) if str(tasa_raw or "").strip() else None
++        if tasa is not None and tasa <= 0:
++            tasa = None
++    except Exception:
++        tasa = None
++    fecha_tasa = datos.get("fecha_tasa")
++    try:
++        from datetime import date as _date
++        if isinstance(fecha_tasa, str) and fecha_tasa.strip():
++            fecha_tasa = _date.fromisoformat(fecha_tasa.strip())
++        elif not isinstance(fecha_tasa, _date):
++            fecha_tasa = None
++    except Exception:
++        fecha_tasa = None
+ 
+     cfg.empresa_nombre = empresa_nombre[:200]
+     cfg.empresa_legal = str(datos.get("empresa_legal") or "").strip()[:250]
+@@ -78,6 +99,9 @@ def completar_onboarding(db: Session, datos: dict, modo: str) -> Configuracion:
+     cfg.empresa_email = str(datos.get("empresa_email") or "").strip()[:200]
+     cfg.moneda_default = moneda
+     cfg.iva_default = iva
++    cfg.etiqueta_id_fiscal = etiqueta
++    cfg.tasa_cambio = tasa
++    cfg.fecha_tasa = fecha_tasa
+     cfg.onboarding_modo = modo
+     db.commit()
+ 
+diff --git a/app/services/pdf.py b/app/services/pdf.py
+index 09d5e8a..233082f 100644
+--- a/app/services/pdf.py
++++ b/app/services/pdf.py
+@@ -51,9 +51,13 @@ from ..utils import (
+     fmt_precio_u,
+     saneado,
+ )
++from .traduccion import codigo_desde_pais, traducir
+ from . import pdf_anexos
+ from .pdf_interactivo import ContextoInteractivo
+ 
++# Código de país activo para traducir terminología al vuelo (VE base -> CO/MX/EC/PE)
++_CODIGO_PAIS_ACTUAL = ""
++
+ 
+ def _money(valor: float) -> float:
+     """Redondeo monetario único del PDF (ROUND_HALF_UP a 2 decimales),
+@@ -203,7 +207,8 @@ def _cabecera(presupuesto, config, st, azul_color, titulo_doc="PRESUPUESTO",
+     # Etiquetas cortas: la caja de empresa ahora es estrecha
+     filas_empresa = [Paragraph(_esc(config.empresa_nombre), st["empresa"])]
+     if config.empresa_rif:
+-        filas_empresa.append(Paragraph(f"<b>RIF:</b> {_esc(config.empresa_rif)}", st["empresa_linea"]))
++        _etiq = getattr(config, "etiqueta_id_fiscal", "") or "RIF"
++        filas_empresa.append(Paragraph(f"<b>{_esc(_etiq)}:</b> {_esc(config.empresa_rif)}", st["empresa_linea"]))
+     if config.empresa_email:
+         filas_empresa.append(Paragraph(f"<b>Email:</b> {_esc(config.empresa_email)}", st["empresa_linea"]))
+     if config.empresa_telefono:
+@@ -264,7 +269,8 @@ def _cabecera(presupuesto, config, st, azul_color, titulo_doc="PRESUPUESTO",
+     der = encabezado("Cliente")
+     nombre_linea = f"<b>Nombre:</b> {_esc(c.nombre)}"
+     if c.rif:
+-        nombre_linea += f"&nbsp;&nbsp;&nbsp;<b>RIF:</b> {_esc(c.rif)}"
++        _etiq_cli = getattr(config, "etiqueta_id_fiscal", "") or "RIF"
++        nombre_linea += f"&nbsp;&nbsp;&nbsp;<b>{_esc(_etiq_cli)}:</b> {_esc(c.rif)}"
+     der.append(Paragraph(nombre_linea, st["campo"]))
+     if c.pais:
+         der.append(Paragraph(f"<b>País:</b> {_esc(c.pais)}", st["campo"]))
+@@ -325,8 +331,9 @@ def _fila_capitulo(cap, st, moneda, azul_color, ctx=None):
+         )
+     else:
+         celda_subtotal = Paragraph(fmt_monto(cap.subtotal, moneda), st["cap_d"])
++    cap_nombre_trad = traducir(cap.nombre, _CODIGO_PAIS_ACTUAL) if _CODIGO_PAIS_ACTUAL else cap.nombre
+     t = Table(
+-        [[Paragraph(_esc(cap.nombre.upper()), st["cap"]), "", "", celda_subtotal]],
++        [[Paragraph(_esc(cap_nombre_trad.upper()), st["cap"]), "", "", celda_subtotal]],
+         colWidths=COLS,
+     )
+     t.setStyle(TableStyle([
+@@ -641,12 +648,15 @@ def _tabla_partida(partida, st, moneda, ultima: bool, azul_color, num=None, ctx=
+         "measurement": "SUJETA A MEDICIÓN",
+     }
+     etiqueta = etiquetas.get(tipo, "")
+-    nombre_pdf = f"{_esc(num)}&nbsp;&nbsp;{_esc(partida.nombre)}" if num else _esc(partida.nombre)
++    # Traducción VE->país para nombre/descripción (catálogo guarda VE)
++    nombre_trad = traducir(partida.nombre, _CODIGO_PAIS_ACTUAL) if _CODIGO_PAIS_ACTUAL else partida.nombre
++    desc_trad = traducir(partida.descripcion, _CODIGO_PAIS_ACTUAL) if (_CODIGO_PAIS_ACTUAL and partida.descripcion) else partida.descripcion
++    nombre_pdf = f"{_esc(num)}&nbsp;&nbsp;{_esc(nombre_trad)}" if num else _esc(nombre_trad)
+     if etiqueta:
+         nombre_pdf += f"&nbsp;&nbsp;<font color='#CC0066'><b>[{etiqueta}]</b></font>"
+     celda_texto = [Paragraph(nombre_pdf, st["p_nombre"])]
+-    if partida.descripcion:
+-        desc = _esc(partida.descripcion).replace("\n", "<br/>")
++    if desc_trad:
++        desc = _esc(desc_trad).replace("\n", "<br/>")
+         celda_texto.append(Paragraph(desc, st["p_desc"]))
+ 
+     if interactiva:
+@@ -1308,6 +1318,11 @@ def _documento_presupuesto(presupuesto, config, texto_anexos="", paginas_extra=0
+     moneda = presupuesto.moneda
+     palette = {"tecnica": "#334155", "minimalista": "#475569", "corporativa": "#0F4C81", "compacta": "#374151", "editorial": "#7C2D12"}
+     azul_color = colors.HexColor(palette.get(getattr(presupuesto, "estilo_pdf", "elegante"), config.pdf_color or "#04265D"))
++    global _CODIGO_PAIS_ACTUAL
++    try:
++        _CODIGO_PAIS_ACTUAL = codigo_desde_pais(getattr(config, "empresa_pais", "") or "")
++    except Exception:
++        _CODIGO_PAIS_ACTUAL = ""
+ 
+     # Capa interactiva. `preparar()` decide si hay algo que hacer: sin
+     # partidas de varios productos devuelve False y el PDF sale exactamente
+@@ -1359,8 +1374,32 @@ def _documento_presupuesto(presupuesto, config, texto_anexos="", paginas_extra=0
+     # Datos venezolanos, siempre guardados en el documento para preservar su histórico.
+     regional = []
+     if getattr(config, "mostrar_numero_control", False) and getattr(presupuesto, "numero_control", ""): regional.append(f"Número de control: {presupuesto.numero_control}")
+-    if getattr(config, "mostrar_tasa_cambio", False) and presupuesto.tipo_cambio: regional.append(f"Tasa: 1 USD = {fmt_num(presupuesto.tipo_cambio)} Bs." + (f" ({fmt_fecha(presupuesto.fecha_tipo_cambio)})" if getattr(presupuesto, "fecha_tipo_cambio", None) else ""))
+-    if getattr(config, "mostrar_total_bs", False) and presupuesto.moneda == "USD" and presupuesto.tipo_cambio: regional.append(f"Equivalente referencial: {fmt_monto(presupuesto.total * presupuesto.tipo_cambio, 'Bs')}")
++    if getattr(config, "mostrar_tasa_cambio", False) and presupuesto.tipo_cambio:
++        # Tasa genérica LatAm: 1 USD = X en la otra moneda (no solo Bs)
++        _mon_tasa = getattr(config, "moneda_default", "") or "USD"
++        if _mon_tasa == "BS":
++            _mon_tasa = "VES"
++        _mon_destino_tasa = presupuesto.moneda if presupuesto.moneda not in ("USD", "", "PAB") else _mon_tasa
++        if _mon_destino_tasa in ("USD", "", "PAB"):
++            _mon_destino_tasa = "VES"
++        regional.append(f"Tasa de referencia: 1 USD = {fmt_num(presupuesto.tipo_cambio)} {_mon_destino_tasa}" + (f" ({fmt_fecha(presupuesto.fecha_tipo_cambio)})" if getattr(presupuesto, "fecha_tipo_cambio", None) else ""))
++    if getattr(config, "mostrar_total_bs", False) and presupuesto.tipo_cambio:
++        # Equivalente genérico: si presupuesto es USD -> muestra en moneda local, si es local -> muestra en USD
++        try:
++            _mon_cfg = getattr(config, "moneda_default", "") or "USD"
++            if _mon_cfg == "BS":
++                _mon_cfg = "VES"
++            if presupuesto.moneda == "USD" and _mon_cfg not in ("USD", "", "PAB"):
++                regional.append(f"Equivalente referencial: {fmt_monto(presupuesto.total * presupuesto.tipo_cambio, _mon_cfg)}")
++            elif presupuesto.moneda not in ("USD", "", "PAB") and presupuesto.moneda != _mon_cfg:
++                # Presupuesto en local, muestra equivalente en USD
++                if presupuesto.tipo_cambio and presupuesto.tipo_cambio != 0:
++                    regional.append(f"Equivalente referencial: {fmt_monto(presupuesto.total / presupuesto.tipo_cambio, 'USD')}")
++            elif presupuesto.moneda == "USD":
++                # Fallback genérico si no hay moneda local configurada
++                regional.append(f"Equivalente referencial: {fmt_monto(presupuesto.total * presupuesto.tipo_cambio, 'VES')}")
++        except Exception:
++            pass
+     if getattr(config, "mostrar_retenciones", False) and (getattr(presupuesto, "retencion_pct", 0) or getattr(presupuesto, "operacion_exenta", False)): regional.append("Operación exenta" if presupuesto.operacion_exenta else f"Retención aplicable: {fmt_num(presupuesto.retencion_pct)} %")
+     if getattr(config, "datos_bancarios", ""): regional.append("Datos de pago:\n" + config.datos_bancarios)
+     if regional: story.append(Spacer(1, 16)); story.append(_seccion("Datos fiscales y pago", "\n".join(regional), st, azul_color))
+diff --git a/app/services/tasa.py b/app/services/tasa.py
+new file mode 100644
+index 0000000..7a102a0
+--- /dev/null
++++ b/app/services/tasa.py
+@@ -0,0 +1,95 @@
++"""Servicio de tasa de referencia USD -> moneda local (LatAm).
++
++Usa https://open.er-api.com/v6/latest/USD (gratis, sin clave, 1.500 req/mes
++suficiente para tasa diaria por org). Fallback a manual si no hay red.
++
++No se usa como fuente contable: es referencia para convertir el catálogo USD
++a COP/MXN/PEN al mostrar/insertar. Cada presupuesto congela su tasa.
++"""
++
++from __future__ import annotations
++
++import json
++import urllib.request
++import urllib.error
++from datetime import date
++
++# Tasa sugerida inicial si la API falla y no hay tasa guardada (aprox 2026-08)
++# No es vinculante: el usuario la ve y la confirma antes de guardar.
++TASAS_SUGERIDAS: dict[str, float] = {
++    "VES": 36.50,  # BCV aprox
++    "COP": 4200.0,
++    "MXN": 17.20,
++    "PEN": 3.75,
++    "CLP": 950.0,
++    "ARS": 950.0,  # volátil, solo referencia
++    "UYU": 40.0,
++    "PYG": 7500.0,
++    "BOB": 6.90,
++    "DOP": 59.0,
++    "PAB": 1.0,  # USD
++    "CRC": 510.0,
++    "GTQ": 7.80,
++    "HNL": 24.80,
++    "NIO": 36.70,
++    "BRL": 5.60,
++    "EUR": 0.92,
++    "USD": 1.0,
++}
++
++
++def obtener_tasa_api(moneda_local: str, timeout: int = 6) -> tuple[float | None, str | None]:
++    """Intenta traer 1 USD -> moneda_local desde open.er-api.com.
++
++    Devuelve (tasa, error). tasa es float o None si falla.
++    """
++    moneda = str(moneda_local or "").strip().upper()
++    if not moneda or moneda in ("USD", "PAB"):
++        return 1.0, None
++    # Normaliza Bs -> VES
++    if moneda == "BS":
++        moneda = "VES"
++    url = "https://open.er-api.com/v6/latest/USD"
++    try:
++        req = urllib.request.Request(url, headers={"User-Agent": "CotizaT/1.0"})
++        with urllib.request.urlopen(req, timeout=timeout) as resp:
++            if resp.status != 200:
++                return None, f"HTTP {resp.status}"
++            data = json.loads(resp.read().decode("utf-8"))
++            rates = data.get("rates") or {}
++            tasa = rates.get(moneda)
++            if tasa is None:
++                # VES suele no estar; prueba VEF obsoleto
++                tasa = rates.get("VES") or rates.get("VEF")
++            if tasa is None:
++                return None, f"Moneda {moneda} no disponible en la API"
++            try:
++                tasa_f = float(tasa)
++                if tasa_f <= 0 or not (0.01 < tasa_f < 1_000_000):
++                    return None, "Tasa fuera de rango"
++                return tasa_f, None
++            except (TypeError, ValueError):
++                return None, "Tasa no numérica"
++    except urllib.error.URLError as e:
++        return None, f"Sin conexión: {e.reason if hasattr(e, 'reason') else str(e)}"
++    except Exception as e:
++        return None, str(e)
++
++
++def tasa_convertir_precio(precio_usd: float, tasa: float | None) -> float:
++    """Convierte precio USD -> local con tasa. Si tasa es None/0/1, devuelve USD."""
++    try:
++        p = float(precio_usd or 0)
++        t = float(tasa) if tasa else 1.0
++        if t <= 0:
++            t = 1.0
++        return round(p * t, 2)
++    except Exception:
++        return float(precio_usd or 0)
++
++
++def tasa_sugerida(moneda: str) -> float:
++    moneda = str(moneda or "USD").strip().upper()
++    if moneda == "BS":
++        moneda = "VES"
++    return TASAS_SUGERIDAS.get(moneda, 1.0)
+diff --git a/app/services/traduccion.py b/app/services/traduccion.py
+new file mode 100644
+index 0000000..e851132
+--- /dev/null
++++ b/app/services/traduccion.py
+@@ -0,0 +1,133 @@
++"""Traducción de terminología de obra por país (LatAm) — runtime.
++
++El catálogo base se guarda en venezolano (friso, rodapié, losa, encofrado...).
++Los glosarios `basedatos_partidas/glosarios/{CO,MX,EC,PE}.json` contienen
++mapeos VE→CO/MX/EC/PE con 70-120 entradas cada uno.
++
++Esta capa NO reescribe archivos: traduce al vuelo al mostrar catálogo,
++presupuestos y PDF, respetando mayúscula inicial y plural en -s/-es,
++igual que `basedatos_partidas/terminologia.py:sustituir`.
++
++Uso:
++    from app.services.traduccion import traducir, traducir_partida
++
++    traducir("Friso de mortero", "CO") -> "Pañete de mortero"
++    traducir_partida(partida, "MX") -> partida con nombre/descripcion traducidos (copia)
++"""
++
++from __future__ import annotations
++
++import json
++import re
++from functools import lru_cache
++from pathlib import Path
++
++# Raíz del repo: app/services -> ../../basedatos_partidas
++BASE_GLOSARIOS = Path(__file__).resolve().parents[2] / "basedatos_partidas" / "glosarios"
++
++# Mapeo nombre de país (cfg.empresa_pais) -> código ISO
++_NOMBRE_A_CODIGO = {
++    "venezuela": "VE",
++    "colombia": "CO",
++    "méxico": "MX", "mexico": "MX",
++    "ecuador": "EC",
++    "perú": "PE", "peru": "PE",
++    "chile": "CL", "argentina": "AR", "uruguay": "UY",
++    "paraguay": "PY", "bolivia": "BO", "república dominicana": "DO",
++    "dominicana": "DO", "panamá": "PA", "panama": "PA",
++    "costa rica": "CR", "guatemala": "GT", "honduras": "HN",
++    "el salvador": "SV", "nicaragua": "NI",
++    "latinoamérica": "", "latinoamerica": "",
++}
++
++
++def codigo_desde_pais(nombre_pais: str | None) -> str:
++    if not nombre_pais:
++        return ""
++    clave = str(nombre_pais).strip().lower()
++    # limpia acentos simples para el mapa
++    clave = clave.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
++    return _NOMBRE_A_CODIGO.get(clave, "")
++
++
++@lru_cache(maxsize=8)
++def _cargar_glosario(codigo: str) -> list[dict]:
++    if not codigo or codigo == "VE":
++        return []
++    ruta = BASE_GLOSARIOS / f"{codigo}.json"
++    if not ruta.is_file():
++        return []
++    try:
++        data = json.loads(ruta.read_text(encoding="utf-8"))
++    except Exception:
++        return []
++    cambios = data.get("cambios") or []
++    # Normaliza a lista de {de,a}
++    out = []
++    for c in cambios:
++        de = str(c.get("de") or "").strip()
++        a = str(c.get("a") or "").strip()
++        if de and a and de.lower() != a.lower():
++            out.append({"de": de, "a": a})
++    return out
++
++
++def _mismo_caso(origen: str, destino: str) -> str:
++    if origen[:1].isupper():
++        return destino[:1].upper() + destino[1:]
++    return destino
++
++
++def traducir(texto: str | None, pais_codigo: str | None) -> str:
++    """Traduce un texto del catálogo base (VE) al país indicado.
++
++    *Respeta mayúscula inicial y plural en -s/-es.*
++    Si el código es vacío/VE o sin glosario, devuelve el texto tal cual.
++    """
++    if not texto:
++        return texto or ""
++    codigo = str(pais_codigo or "").strip().upper()
++    if not codigo or codigo == "VE":
++        return texto
++    cambios = _cargar_glosario(codigo)
++    if not cambios:
++        return texto
++    out = texto
++    for c in cambios:
++        de, a = c["de"], c["a"]
++        # Compila por cada término; cachear el regex sería micro-optimización
++        # innecesaria para 100 términos y textos de <500 chars.
++        patron = re.compile(rf"\b({re.escape(de)})(es|s)?\b", re.IGNORECASE)
++
++        def _rep(m: re.Match, _a=a) -> str:
++            plural = m.group(2) or ""
++            nuevo = _mismo_caso(m.group(1), _a)
++            if not plural:
++                return nuevo
++            return nuevo + ("es" if nuevo[-1:] not in "aeiou" else "s")
++
++        out = patron.sub(_rep, out)
++    return out
++
++
++def traducir_partida(partida, pais_codigo: str | None):
++    """Devuelve una copia ligera de una Partida/PresupuestoItem con nombre/descripcion traducidos.
++
++    No muta el objeto ORM. Solo traduce campos que ve el cliente.
++    """
++    if not pais_codigo or str(pais_codigo).upper() in ("", "VE"):
++        return partida
++    # Copia superficial para no tocar la sesión
++    from copy import copy
++    copia = copy(partida)
++    if hasattr(partida, "nombre"):
++        copia.nombre = traducir(getattr(partida, "nombre", ""), pais_codigo)
++    if hasattr(partida, "descripcion"):
++        copia.descripcion = traducir(getattr(partida, "descripcion", ""), pais_codigo)
++    # Campos de categoría visibles
++    for campo in ("categoria", "subcategoria", "apartado"):
++        if hasattr(partida, campo):
++            val = getattr(partida, campo, "")
++            if val:
++                setattr(copia, campo, traducir(val, pais_codigo))
++    return copia
+diff --git a/app/static/css/public.css b/app/static/css/public.css
+index 0bc1d82..293ab4d 100644
+--- a/app/static/css/public.css
++++ b/app/static/css/public.css
+@@ -2805,3 +2805,57 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
+   color: #92400e;
+   text-align: left;
+ }
++
++/* ───────────────────── País selector (landing adaptativa Semana 1) ───────────────────── */
++.pais-bar {
++  background: linear-gradient(90deg, #0e3261 0%, #123f78 55%, #1a4a8c 100%);
++  color: #fff;
++  border-bottom: 1px solid rgba(255,255,255,0.12);
++  font-size: 0.88rem;
++}
++.pais-bar-int {
++  max-width: 1080px;
++  margin: 0 auto;
++  padding: 0.55rem 1.5rem;
++  display: flex;
++  align-items: center;
++  gap: 0.9rem;
++  flex-wrap: wrap;
++}
++.pais-bar-label {
++  font-weight: 800;
++  letter-spacing: 0.02em;
++  white-space: nowrap;
++}
++.pais-bar select {
++  appearance: none;
++  -webkit-appearance: none;
++  background: #fff;
++  color: var(--text);
++  border: 1px solid rgba(255,255,255,0.0);
++  border-radius: 999px;
++  padding: 0.32rem 2rem 0.32rem 0.75rem;
++  font: inherit;
++  font-size: 0.86rem;
++  font-weight: 600;
++  cursor: pointer;
++  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23123f78' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
++  background-repeat: no-repeat;
++  background-position: right 0.6rem center;
++  min-width: 220px;
++}
++.pais-bar select:focus {
++  outline: 2px solid #fff;
++  outline-offset: 2px;
++}
++.pais-bar-hint {
++  color: rgba(255,255,255,0.84);
++  font-size: 0.82rem;
++  font-weight: 500;
++  white-space: nowrap;
++}
++@media (max-width: 640px) {
++  .pais-bar-int { padding: 0.6rem 1.2rem; gap: 0.6rem; }
++  .pais-bar select { min-width: 180px; }
++  .pais-bar-hint { display: none; }
++}
+diff --git a/app/static/css/style.css b/app/static/css/style.css
+index f140206..3dab917 100644
+--- a/app/static/css/style.css
++++ b/app/static/css/style.css
+@@ -5580,3 +5580,22 @@ body {
+   margin-bottom: 16px;
+   font-size: .88rem;
+ }
++
++/* Tasa de referencia LatAm (Semana 2) */
++.tasa-box { background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:14px; }
++.tasa-label-bold { font-weight:700; }
++.tasa-flex { display:flex; gap:10px; align-items:end; flex-wrap:wrap; }
++.tasa-flex-1 { flex:1; min-width:180px; }
++.tasa-label-sm { font-size:0.82rem; }
++.tasa-input-row { display:flex; gap:6px; align-items:center; }
++.tasa-input { flex:1; }
++.tasa-simbolo { font-weight:600; color:#475569; }
++.tasa-fecha-col { min-width:160px; }
++.csp-tasa-hint-inline { font-weight:400; }
++.tasa-btn-nowrap { white-space:nowrap; }
++.tasa-hint-mt { margin-top:8px; }
++
++/* Onboarding tasa LatAm */
++.tasa-row { display:flex; gap:6px; align-items:center; }
++.tasa-input-flex { flex:1; }
++.tasa-label { font-weight:600; }
+diff --git a/app/static/js/pais_selector.js b/app/static/js/pais_selector.js
+new file mode 100644
+index 0000000..ce50ce9
+--- /dev/null
++++ b/app/static/js/pais_selector.js
+@@ -0,0 +1,171 @@
++/* Selector de país para la landing adaptativa (Semana 1 — LatAm).
++ *
++ * Sin inyección HTML ni estilos inline: solo textContent, class y
++ * atributos. El servidor ya renderiza el país correcto si viene por
++ * ?pais= o por cookie; este script solo hace el cambio instantáneo en
++ * cliente, persiste la elección (cookie + localStorage) y mantiene la
++ * URL sincronizada sin recargar.
++ */
++(function () {
++  var select = document.getElementById("pais-select");
++  var hint = document.getElementById("pais-bar-hint");
++  var dataEl = document.getElementById("paises-data");
++  var actualEl = document.getElementById("pais-actual-data");
++  var genericoEl = document.getElementById("pais-generico-data");
++
++  if (!select || !dataEl) return;
++
++  var paises = [];
++  var generico = null;
++  try { paises = JSON.parse(dataEl.textContent || "[]"); } catch (_) { paises = []; }
++  try { generico = JSON.parse(genericoEl ? genericoEl.textContent : "null"); } catch (_) { generico = null; }
++  if (!generico) generico = { codigo: "", nombre: "Latinoamérica", bandera: "🌎", moneda: "USD", simbolo_local: "$", iva: 16, id_fiscal: "ID fiscal", vocab: "concreto, friso, cielo raso, rodapié, plomero", mercado: "latinoamericano", gentilicio: "latinoamericano" };
++
++  var mapa = {};
++  for (var i = 0; i < paises.length; i++) mapa[paises[i].codigo] = paises[i];
++
++  function aplicarPais(codigo, opts) {
++    var persist = !(opts && opts.persist === false);
++    var p = codigo ? mapa[codigo] : null;
++
++    // Textos dinámicos por id
++    var kicker = document.getElementById("hero-kicker");
++    var bannerH2 = document.getElementById("banner-h2");
++    var bannerP = document.getElementById("banner-p");
++    var bannerVocab = document.getElementById("banner-vocab");
++    var bannerMoneda = document.getElementById("banner-moneda");
++    var fiscalH3 = document.getElementById("fiscal-h3");
++    var fiscalP = document.getElementById("fiscal-p");
++    var franjaH2 = document.getElementById("franja-h2");
++    var franjaIntro = document.getElementById("franja-intro");
++    var franjaPrecioP = document.getElementById("franja-precio-p");
++    var franjaVocabP = document.getElementById("franja-vocab-p");
++
++    if (p) {
++      if (kicker) kicker.textContent = p.bandera + " Hecho para " + p.nombre + " · Construcción y remodelación";
++      if (bannerH2) bannerH2.textContent = "El catálogo más completo para presupuestar en " + p.nombre + ".";
++      if (bannerP) bannerP.textContent = document.querySelector("#banner-p") ? bannerP.textContent : "";
++      // Reconstruir bannerP con cifras dinámicas si existen
++      if (bannerP) {
++        var cifrasEl = document.querySelector(".banner-cifras");
++        // Mantener el formato pero actualizar mercado
++        // El número de partidas viene renderizado; solo cambiamos mercado
++        var txt = bannerP.textContent || "";
++        // Si el texto aún es genérico, lo reescribimos completo con mercado
++        if (txt.indexOf("Latinoamérica") !== -1 || txt.indexOf(p.mercado) === -1) {
++          var partidasTxt = "";
++          var capitulosTxt = "";
++          try {
++            var c1 = document.querySelector(".banner-cifras .cifra strong");
++            if (c1) partidasTxt = c1.textContent.trim();
++          } catch (_) {}
++          // Fallback: extraer del DOM original o usar genérico
++          bannerP.textContent = (partidasTxt ? partidasTxt : "3.000") + " partidas organizadas con precios en USD de referencia contrastados con el mercado " + p.mercado + " y en revisión continua. No empiezas de cero: llegas con una base de precios real y propia.";
++          // Ajuste fino: si no pudimos leer, mantén el texto anterior pero reemplaza mercado
++          if (!partidasTxt && txt) {
++            bannerP.textContent = txt.replace("Latinoamérica", p.nombre).replace("latinoamericano", p.mercado).replace("venezolano", p.mercado).replace("mercado latinoamericano", "mercado " + p.mercado);
++            if (bannerP.textContent.indexOf(p.mercado) === -1) {
++              bannerP.textContent = "Más de 3.000 partidas organizadas con precios en USD de referencia contrastados con el mercado " + p.mercado + " y en revisión continua. No empiezas de cero: llegas con una base de precios real y propia.";
++            }
++          }
++        }
++      }
++      if (bannerVocab) bannerVocab.textContent = "✓ Terminología de " + p.nombre + ": " + p.vocab + ".";
++      // bannerMoneda contiene un span check, preservarlo
++      if (bannerMoneda) {
++        var monedaTxt = "✓ Precios en USD de referencia";
++        if (p.moneda !== "USD") monedaTxt += " · convierte a " + p.moneda + " (" + p.simbolo_local + ") en tu presupuesto";
++        else monedaTxt += ".";
++        bannerMoneda.textContent = monedaTxt;
++      }
++      // Fiscal
++      var fiscalIcon = document.querySelector("#fiscal-card .icon");
++      if (fiscalIcon) fiscalIcon.textContent = p.bandera;
++      if (fiscalH3) fiscalH3.textContent = "Fiscal a tu medida · " + p.nombre;
++      if (fiscalP) fiscalP.textContent = "IVA " + p.iva + "%, " + p.id_fiscal + ", retención, operación exenta, número de control y cláusula cambiaria. Moneda " + p.moneda + (p.moneda !== "USD" ? " (" + p.simbolo_local + ")" : "") + " o USD, con tasa de referencia.";
++      // Franja
++      if (franjaH2) franjaH2.textContent = "Pensado para " + p.nombre + ", no adaptado después.";
++      if (franjaIntro) franjaIntro.textContent = "No es una herramienta genérica traducida. CotizaT habla el idioma de la obra en " + p.nombre + ": precios, vocabulario y fiscalidad de aquí.";
++      if (franjaPrecioP) franjaPrecioP.textContent = "Cotiza en " + p.moneda + (p.moneda !== "USD" ? " (" + p.simbolo_local + ")" : "") + " o en USD como referencia regional. Sin conversiones improvisadas: tu tasa queda guardada en cada presupuesto.";
++      if (franjaVocabP) franjaVocabP.textContent = p.vocab + ", y todos los nombres que usa tu cliente y tu cuadrilla en " + p.nombre + ", no los de otro país.";
++      if (hint) hint.textContent = p.bandera + " Mostrando contenido para " + p.nombre + " · " + p.id_fiscal + " · IVA " + p.iva + "%";
++      // Título y meta description (opcional, sin recargar)
++      try { document.title = "CotizaT — Presupuestos de construcción y remodelación para " + p.nombre; } catch (_) {}
++      var meta = document.querySelector('meta[name="description"]');
++      if (meta) meta.setAttribute("content", "Presupuestos de obra profesionales en minutos. Más de 3.000 partidas clasificadas con precios en USD contrastados con el mercado " + p.mercado + ". PDF con tu logo, versiones, aprobaciones y cobros.");
++    } else {
++      if (kicker) kicker.textContent = "🌎 Hecho para Latinoamérica · Construcción y remodelación";
++      if (bannerH2) bannerH2.textContent = "El catálogo más completo para presupuestar en Latinoamérica.";
++      if (bannerP) bannerP.textContent = "Más de 3.000 partidas organizadas con precios en USD de referencia para Latinoamérica y en revisión continua. No empiezas de cero: llegas con una base de precios real y propia.";
++      if (bannerVocab) bannerVocab.textContent = "✓ Terminología hispana neutra con variantes locales: elige tu país y adapta los nombres.";
++      if (bannerMoneda) bannerMoneda.textContent = "✓ Precios en USD de referencia · convierte a tu moneda local en cada presupuesto.";
++      var fi = document.querySelector("#fiscal-card .icon");
++      if (fi) fi.textContent = "🌎";
++      if (fiscalH3) fiscalH3.textContent = "Fiscal a tu medida · Latinoamérica";
++      if (fiscalP) fiscalP.textContent = "IVA configurable por país, tu ID fiscal (RIF, NIT, RUT, CUIT, RUC, RFC…), retención, operación exenta y cláusula cambiaria. Moneda en tu divisa local o USD, con tasa de referencia.";
++      if (franjaH2) franjaH2.textContent = "Pensado para Latinoamérica, no adaptado después.";
++      if (franjaIntro) franjaIntro.textContent = "No es una herramienta genérica. CotizaT nace para construir en Latinoamérica: precios en USD de referencia, vocabulario hispano y fiscalidad configurable por país.";
++      if (franjaPrecioP) franjaPrecioP.textContent = "Cotiza en USD como referencia regional o en tu moneda local (COP, MXN, PEN, CLP, ARS…). Tu tasa de referencia queda guardada en cada presupuesto.";
++      if (franjaVocabP) franjaVocabP.textContent = "Concreto/hormigón, friso/revoque, cielo raso/cielorraso, rodapié/zócalo, plomero/gasfíter… Elige tu país y la landing habla tu obra.";
++      if (hint) hint.textContent = "Mostrando contenido genérico para toda Latinoamérica";
++      try { document.title = "CotizaT — Presupuestos de construcción y remodelación para Latinoamérica"; } catch (_) {}
++      var m2 = document.querySelector('meta[name="description"]');
++      if (m2) m2.setAttribute("content", "Presupuestos de obra profesionales en minutos. Más de 3.000 partidas clasificadas con precios en USD de referencia para Latinoamérica. PDF con tu logo, versiones, aprobaciones y cobros.");
++    }
++
++    // Normalizar select
++    if (select && select.value !== (codigo || "")) select.value = codigo || "";
++
++    if (!persist) return;
++
++    // Persistir cookie + localStorage + navegar al subdirectorio canónico (/co/, /mx/...)
++    try {
++      document.cookie = "cotizat_pais=" + encodeURIComponent(codigo || "") + "; path=/; max-age=" + (codigo ? 365 * 24 * 3600 : 0) + "; samesite=lax";
++      if (codigo) localStorage.setItem("cotizat_pais", codigo);
++      else localStorage.removeItem("cotizat_pais");
++    } catch (_) {}
++
++    // Navega al subdirectorio SEO (/co/, /mx/ ...) — 1 Vercel, 1 Supabase, URL canónica
++    try {
++      var dest = codigo ? "/" + codigo.toLowerCase() + "/" : "/";
++      if (window.location.pathname !== dest) {
++        window.location.href = dest;
++        return;
++      }
++    } catch (_) {}
++    // Fallback legacy ?pais= si no hay subdirectorio
++    try {
++      var url = new URL(window.location.href);
++      if (codigo) url.searchParams.set("pais", codigo);
++      else url.searchParams.delete("pais");
++      history.replaceState(null, "", url.pathname + url.search + url.hash);
++    } catch (_) {}
++  }
++
++  // Inicial: si hay cookie/localStorage y no hay ?pais, no forzar; el servidor ya renderizó.
++  // Solo sincronizar URL si el usuario nunca eligió y no hay cookie.
++  var initial = select.value || "";
++  // Si el select genérico pero hay pais en URL, el servidor ya lo aplicó; no reaplicar.
++
++  select.addEventListener("change", function () {
++    var v = select.value || "";
++    if (v && !mapa[v]) v = "";
++    aplicarPais(v, { persist: true });
++  });
++
++  // Soporte navegación atrás/adelante con subdirectorio o ?pais=
++  window.addEventListener("popstate", function () {
++    try {
++      var path = window.location.pathname || "";
++      var m = path.match(/^\/(ve|co|mx|ec|pe)(\/|$)/i);
++      if (m) {
++        var c = m[1].toUpperCase();
++        if (mapa[c]) { aplicarPais(c, { persist: false }); return; }
++      }
++      var u = new URL(window.location.href);
++      var q = (u.searchParams.get("pais") || "").toUpperCase();
++      if (q && !mapa[q]) q = "";
++      aplicarPais(q, { persist: false });
++    } catch (_) {}
++  });
++})();
+diff --git a/app/templates/auth/access.html b/app/templates/auth/access.html
+index 941493d..4ec53c1 100644
+--- a/app/templates/auth/access.html
++++ b/app/templates/auth/access.html
+@@ -64,6 +64,17 @@
+           <label for="signup-name">Nombre</label>
+           <input id="signup-name" name="nombre" autocomplete="name" maxlength="200" required {% if not auth_configured %}disabled{% endif %}>
+         </div>
++        <div class="field">
++          <label for="signup-pais">País <span class="hint">(configura moneda, IVA e ID fiscal)</span></label>
++          <select id="signup-pais" name="pais" required {% if not auth_configured %}disabled{% endif %}>
++            <option value="VE">🇻🇪 Venezuela — RIF 16% USD</option>
++            <option value="CO">🇨🇴 Colombia — NIT 19% COP</option>
++            <option value="MX">🇲🇽 México — RFC 16% MXN</option>
++            <option value="EC">🇪🇨 Ecuador — RUC 15% USD</option>
++            <option value="PE">🇵🇪 Perú — RUC 18% PEN</option>
++          </select>
++          <p class="hint">Elige tu país para que tu espacio nazca ya configurado. Podrás cambiarlo después en Configuración.</p>
++        </div>
+         <div class="field">
+           <label for="signup-email">Email</label>
+           <input id="signup-email" name="email" type="email" autocomplete="email" required {% if not auth_configured %}disabled{% endif %}>
+@@ -90,5 +101,20 @@
+     </section>
+   </main>
+ </div>
++<script nonce="{{ request.state.csp_nonce }}">
++(function(){
++  var sel=document.getElementById('signup-pais');
++  if(!sel) return;
++  try{
++    var m=document.cookie.match(/(?:^|; )cotizat_pais=([^;]*)/);
++    var code=m?decodeURIComponent(m[1]).toUpperCase():'';
++    if(code && sel.querySelector('option[value="'+code+'"]')) sel.value=code;
++    else {
++      // fallback a VE si no hay cookie (histórico)
++      if(!sel.value) sel.value='VE';
++    }
++  }catch(e){}
++})();
++</script>
+ </body>
+ </html>
+diff --git a/app/templates/auth/organization_new.html b/app/templates/auth/organization_new.html
+index e8db0f9..f3d0f39 100644
+--- a/app/templates/auth/organization_new.html
++++ b/app/templates/auth/organization_new.html
+@@ -28,6 +28,17 @@
+     {% if error %}<div class="alert error">{{ error }}</div>{% endif %}
+ 
+     <form action="/organizaciones/nueva" method="post">
++      <div class="field">
++        <label for="pais">País de la organización</label>
++        <select id="pais" name="pais" required>
++          <option value="VE">🇻🇪 Venezuela — RIF 16% USD</option>
++          <option value="CO">🇨🇴 Colombia — NIT 19% COP</option>
++          <option value="MX">🇲🇽 México — RFC 16% MXN</option>
++          <option value="EC">🇪🇨 Ecuador — RUC 15% USD</option>
++          <option value="PE">🇵🇪 Perú — RUC 18% PEN</option>
++        </select>
++        <p class="hint">Define moneda, IVA e ID fiscal por defecto. Podrás ajustarlo en Configuración y por presupuesto.</p>
++      </div>
+       <div class="field">
+         <label for="nombre">Nombre comercial o razón social</label>
+         <input id="nombre" name="nombre" maxlength="200" autocomplete="organization" required autofocus>
+@@ -39,5 +50,19 @@
+     </form>
+   </main>
+ </div>
++<script nonce="{{ request.state.csp_nonce }}">
++(function(){
++  var sel=document.getElementById('pais');
++  if(!sel) return;
++  try{
++    var m=document.cookie.match(/(?:^|; )cotizat_pais=([^;]*)/);
++    var code=m?decodeURIComponent(m[1]).toUpperCase():'';
++    if(code && sel.querySelector('option[value="'+code+'"]')) sel.value=code;
++    // Si viene ?pais= en la URL (desde registro), úsalo
++    var q=new URLSearchParams(window.location.search).get('pais');
++    if(q){ q=q.toUpperCase(); if(sel.querySelector('option[value="'+q+'"]')) sel.value=q; }
++  }catch(e){}
++})();
++</script>
+ </body>
+ </html>
+diff --git a/app/templates/budgets/form.html b/app/templates/budgets/form.html
+index 66699a2..f2860b3 100644
+--- a/app/templates/budgets/form.html
++++ b/app/templates/budgets/form.html
+@@ -112,14 +112,30 @@
+         <div class="field">
+           <label>Moneda</label>
+           <select name="moneda" id="moneda-select">
+-            <option value="USD" {{ 'selected' if not presupuesto or presupuesto.moneda == 'USD' else '' }}>USD (dólar)</option>
+-            <option value="Bs" {{ 'selected' if presupuesto and presupuesto.moneda == 'Bs' else '' }}>Bs (bolívar)</option>
++            <option value="USD" {{ 'selected' if (presupuesto and presupuesto.moneda in ['USD','']) or (not presupuesto and (cfg.moneda_default or 'USD') in ['USD','']) else '' }}>USD ($) — dólar</option>
++            <option value="COP" {{ 'selected' if (presupuesto and presupuesto.moneda == 'COP') or (not presupuesto and cfg.moneda_default == 'COP') else '' }}>COP ($) — peso colombiano</option>
++            <option value="MXN" {{ 'selected' if (presupuesto and presupuesto.moneda == 'MXN') or (not presupuesto and cfg.moneda_default == 'MXN') else '' }}>MXN ($) — peso mexicano</option>
++            <option value="PEN" {{ 'selected' if (presupuesto and presupuesto.moneda == 'PEN') or (not presupuesto and cfg.moneda_default == 'PEN') else '' }}>PEN (S/) — sol peruano</option>
++            <option value="VES" {{ 'selected' if (presupuesto and presupuesto.moneda in ['VES','Bs']) or (not presupuesto and cfg.moneda_default in ['VES','Bs']) else '' }}>VES (Bs) — bolívar</option>
++            <option value="CLP" {{ 'selected' if (presupuesto and presupuesto.moneda == 'CLP') or (not presupuesto and cfg.moneda_default == 'CLP') else '' }}>CLP ($) — peso chileno</option>
++            <option value="ARS" {{ 'selected' if (presupuesto and presupuesto.moneda == 'ARS') or (not presupuesto and cfg.moneda_default == 'ARS') else '' }}>ARS ($) — peso argentino</option>
++            <option value="UYU" {{ 'selected' if (presupuesto and presupuesto.moneda == 'UYU') or (not presupuesto and cfg.moneda_default == 'UYU') else '' }}>UYU ($U) — peso uruguayo</option>
++            <option value="PYG" {{ 'selected' if (presupuesto and presupuesto.moneda == 'PYG') or (not presupuesto and cfg.moneda_default == 'PYG') else '' }}>PYG (₲) — guaraní</option>
++            <option value="BOB" {{ 'selected' if (presupuesto and presupuesto.moneda == 'BOB') or (not presupuesto and cfg.moneda_default == 'BOB') else '' }}>BOB (Bs) — boliviano</option>
++            <option value="DOP" {{ 'selected' if (presupuesto and presupuesto.moneda == 'DOP') or (not presupuesto and cfg.moneda_default == 'DOP') else '' }}>DOP (RD$) — peso dominicano</option>
++            <option value="PAB" {{ 'selected' if (presupuesto and presupuesto.moneda == 'PAB') or (not presupuesto and cfg.moneda_default == 'PAB') else '' }}>PAB (B/.) — balboa</option>
++            <option value="CRC" {{ 'selected' if (presupuesto and presupuesto.moneda == 'CRC') or (not presupuesto and cfg.moneda_default == 'CRC') else '' }}>CRC (₡) — colón</option>
++            <option value="GTQ" {{ 'selected' if (presupuesto and presupuesto.moneda == 'GTQ') or (not presupuesto and cfg.moneda_default == 'GTQ') else '' }}>GTQ (Q) — quetzal</option>
++            <option value="HNL" {{ 'selected' if (presupuesto and presupuesto.moneda == 'HNL') or (not presupuesto and cfg.moneda_default == 'HNL') else '' }}>HNL (L) — lempira</option>
++            <option value="NIO" {{ 'selected' if (presupuesto and presupuesto.moneda == 'NIO') or (not presupuesto and cfg.moneda_default == 'NIO') else '' }}>NIO (C$) — córdoba</option>
++            <option value="BRL" {{ 'selected' if (presupuesto and presupuesto.moneda == 'BRL') or (not presupuesto and cfg.moneda_default == 'BRL') else '' }}>BRL (R$) — real</option>
++            <option value="EUR" {{ 'selected' if (presupuesto and presupuesto.moneda == 'EUR') or (not presupuesto and cfg.moneda_default == 'EUR') else '' }}>EUR (€) — euro</option>
+           </select>
+         </div>
+         <div class="field">
+           <label>Tasa de cambio Bs/USD <span class="hint">(referencia, opcional)</span></label>
+-          <input type="number" name="tipo_cambio" step="any" min="0" placeholder="p. ej. 155,00"
+-                 value="{{ presupuesto.tipo_cambio if presupuesto and presupuesto.tipo_cambio else '' }}">
++          <input type="number" name="tipo_cambio" step="any" min="0" placeholder="p. ej. 4200"
++                 value="{{ presupuesto.tipo_cambio if presupuesto and presupuesto.tipo_cambio else (cfg.tasa_cambio if cfg.tasa_cambio and not presupuesto else '') }}">
+         </div>
+         <div class="field">
+           <label>IVA (%)</label>
+diff --git a/app/templates/clients/form.html b/app/templates/clients/form.html
+index 03628fe..111906c 100644
+--- a/app/templates/clients/form.html
++++ b/app/templates/clients/form.html
+@@ -13,8 +13,8 @@
+         <input type="text" name="nombre" value="{{ cliente.nombre if cliente else '' }}" required placeholder="Nombre o razón social">
+       </div>
+       <div class="field">
+-        <label>RIF / C.I.</label>
+-        <input type="text" name="rif" value="{{ cliente.rif if cliente else '' }}" placeholder="p. ej. J-12345678-9">
++        <label>{{ cfg.etiqueta_id_fiscal or "ID fiscal" }}</label>
++        <input type="text" name="rif" value="{{ cliente.rif if cliente else '' }}" placeholder="{{ cfg.etiqueta_id_fiscal or 'ID' }} — p. ej. {{ 'J-12345678-9' if (cfg.etiqueta_id_fiscal or 'RIF')=='RIF' else '900123456-7' }}">
+       </div>
+       <div class="field">
+         <label>País</label>
+diff --git a/app/templates/clients/list.html b/app/templates/clients/list.html
+index 6cc3b11..7dc494b 100644
+--- a/app/templates/clients/list.html
++++ b/app/templates/clients/list.html
+@@ -10,7 +10,7 @@
+ </div>
+ 
+ <form class="filters" method="get" action="/clientes">
+-  <input type="text" name="q" value="{{ q }}" placeholder="🔍 Buscar por nombre, RIF o email">
++  <input type="text" name="q" value="{{ q }}" placeholder="🔍 Buscar por nombre, {{ cfg.etiqueta_id_fiscal or 'ID' }} o email">
+   <button class="btn" type="submit">Buscar</button>
+   {% if q %}<a class="btn btn-sm" href="/clientes">Limpiar</a>{% endif %}
+ </form>
+@@ -19,7 +19,7 @@
+   {% if clientes %}
+   <table class="table">
+     <thead>
+-      <tr><th>Nombre</th><th>RIF / C.I.</th><th>Teléfono</th><th>Email</th><th class="right">Presupuestos</th><th class="right">Acciones</th></tr>
++      <tr><th>Nombre</th><th>{{ cfg.etiqueta_id_fiscal or "ID fiscal" }}</th><th>Teléfono</th><th>Email</th><th class="right">Presupuestos</th><th class="right">Acciones</th></tr>
+     </thead>
+     <tbody>
+       {% for c in clientes %}
+diff --git a/app/templates/landing.html b/app/templates/landing.html
+index 34c443a..5cb7102 100644
+--- a/app/templates/landing.html
++++ b/app/templates/landing.html
+@@ -3,13 +3,39 @@
+ <head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+-  <title>{{ product_name }} — Presupuestos de construcción y remodelación para Venezuela</title>
+-  <meta name="description" content="{% if hay_prueba_gratuita() %}Pruébalo {{ dias_de_prueba() }} días gratis, sin tarjeta. {% endif %}Presupuestos de obra profesionales en minutos. Más de 3.000 partidas clasificadas con precios en USD contrastados con el mercado venezolano. PDF con tu logo, versiones, aprobaciones y cobros.">
++  {% if pais_actual %}
++  <title>{{ product_name }} — Presupuestos de construcción y remodelación para {{ pais_actual.nombre }}</title>
++  <meta name="description" content="{% if hay_prueba_gratuita() %}Pruébalo {{ dias_de_prueba() }} días gratis, sin tarjeta. {% endif %}Presupuestos de obra profesionales en minutos. Más de 3.000 partidas clasificadas con precios en USD contrastados con el mercado {{ pais_actual.mercado }}. PDF con tu logo, versiones, aprobaciones y cobros.">
++  {% else %}
++  <title>{{ product_name }} — Presupuestos de construcción y remodelación para Latinoamérica</title>
++  <meta name="description" content="{% if hay_prueba_gratuita() %}Pruébalo {{ dias_de_prueba() }} días gratis, sin tarjeta. {% endif %}Presupuestos de obra profesionales en minutos. Más de 3.000 partidas clasificadas con precios en USD de referencia para Latinoamérica. PDF con tu logo, versiones, aprobaciones y cobros.">
++  {% endif %}
+   <link rel="icon" type="image/png" href="/static/icono.png">
+   <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+   <link rel="stylesheet" href="{{ 'css/public.css' | asset }}">
++  {# SEO LatAm: canónica + hreflang por país (subdirectorios /co/, /mx/ ... 1 Vercel, 1 Supabase) #}
++  {% set _base = request.base_url|string|trim('/') %}
++  <link rel="canonical" href="{{ _base }}{% if pais_codigo %}/{{ pais_codigo|lower }}/{% else %}/{% endif %}">
++  <link rel="alternate" hreflang="x-default" href="{{ _base }}/">
++  <link rel="alternate" hreflang="es" href="{{ _base }}/">
++  {% for _p in paises %}
++  <link rel="alternate" hreflang="es-{{ _p.codigo }}" href="{{ _base }}/{{ _p.codigo|lower }}/">
++  {% endfor %}
+ </head>
+ <body class="landing">
++{# Barra de país — Semana 1: genérica por defecto, se adapta al elegir #}
++<div class="pais-bar" id="pais-bar">
++  <div class="pais-bar-int">
++    <span class="pais-bar-label">🌎 Elige tu país</span>
++    <select id="pais-select" aria-label="Elige tu país">
++      <option value="" {% if not pais_codigo %}selected{% endif %}>Latinoamérica (genérico)</option>
++      {% for p in paises %}
++      <option value="{{ p.codigo }}" {% if p.codigo == pais_codigo %}selected{% endif %}>{{ p.bandera }} {{ p.nombre }}</option>
++      {% endfor %}
++    </select>
++    <span class="pais-bar-hint" id="pais-bar-hint">{% if pais_actual %}{{ pais_actual.bandera }} Mostrando contenido para {{ pais_actual.nombre }} · {{ pais_actual.id_fiscal }} · IVA {{ pais_actual.iva }}%{% else %}Mostrando contenido genérico para toda Latinoamérica{% endif %}</span>
++  </div>
++</div>
+ <nav class="nav">
+   <a class="brand" href="/">
+     <span class="mark">
+@@ -34,7 +60,11 @@
+ <header class="hero">
+   <div class="hero-int">
+     <div class="hero-copy">
+-      <span class="hero-kicker">🇻🇪 Hecho para Venezuela · Construcción y remodelación</span>
++      {% if pais_actual %}
++      <span class="hero-kicker" id="hero-kicker">{{ pais_actual.bandera }} Hecho para {{ pais_actual.nombre }} · Construcción y remodelación</span>
++      {% else %}
++      <span class="hero-kicker" id="hero-kicker">🌎 Hecho para Latinoamérica · Construcción y remodelación</span>
++      {% endif %}
+       {% if hay_prueba_gratuita() %}
+       <span class="hero-prueba">✨ {{ dias_de_prueba() }} días gratis · sin tarjeta de crédito</span>
+       {% endif %}
+@@ -610,14 +640,25 @@
+ <section class="banner-catalogo">
+   <div class="banner-int">
+     <div class="banner-texto">
+-      <h2>El catálogo más completo para presupuestar en Venezuela.</h2>
+-      <p>{{ catalogo().partidas_txt }} partidas organizadas en {{ catalogo().capitulos }} capítulos y {{ catalogo().subcapitulos }} subcapítulos, con precios en USD contrastados con el mercado venezolano y en revisión continua. No empiezas de cero: llegas con una base de precios real y propia.</p>
++      {% if pais_actual %}
++      <h2 id="banner-h2">El catálogo más completo para presupuestar en {{ pais_actual.nombre }}.</h2>
++      <p id="banner-p">{{ catalogo().partidas_txt }} partidas organizadas en {{ catalogo().capitulos }} capítulos y {{ catalogo().subcapitulos }} subcapítulos, con precios en USD de referencia contrastados con el mercado {{ pais_actual.mercado }} y en revisión continua. No empiezas de cero: llegas con una base de precios real y propia.</p>
++      <ul class="banner-lista">
++        <li id="banner-vocab"><span class="check">✓</span> Terminología de {{ pais_actual.nombre }}: {{ pais_actual.vocab }}.</li>
++        <li id="banner-moneda"><span class="check">✓</span> Precios en USD de referencia{% if pais_actual.moneda != 'USD' %} · convierte a {{ pais_actual.moneda }} ({{ pais_actual.simbolo_local }}) en tu presupuesto{% endif %}.</li>
++        <li><span class="check">✓</span> Descomposición técnica de cada partida: materiales, mano de obra y equipo.</li>
++        <li><span class="check">✓</span> Se actualiza periódicamente para seguir el mercado.</li>
++      </ul>
++      {% else %}
++      <h2 id="banner-h2">El catálogo más completo para presupuestar en Latinoamérica.</h2>
++      <p id="banner-p">{{ catalogo().partidas_txt }} partidas organizadas en {{ catalogo().capitulos }} capítulos y {{ catalogo().subcapitulos }} subcapítulos, con precios en USD de referencia para Latinoamérica y en revisión continua. No empiezas de cero: llegas con una base de precios real y propia.</p>
+       <ul class="banner-lista">
+-        <li><span class="check">✓</span> Terminología venezolana: concreto, friso, cielo raso, rodapié, plomero.</li>
+-        <li><span class="check">✓</span> Precios en dólares, los que usa el sector construcción en Venezuela.</li>
++        <li id="banner-vocab"><span class="check">✓</span> Terminología hispana neutra con variantes locales: elige tu país y adapta los nombres.</li>
++        <li id="banner-moneda"><span class="check">✓</span> Precios en USD de referencia · convierte a tu moneda local en cada presupuesto.</li>
+         <li><span class="check">✓</span> Descomposición técnica de cada partida: materiales, mano de obra y equipo.</li>
+         <li><span class="check">✓</span> Se actualiza periódicamente para seguir el mercado.</li>
+       </ul>
++      {% endif %}
+     </div>
+     <div class="banner-cifras">
+       <div class="cifra"><strong>{{ catalogo().partidas_txt }}</strong><span>partidas</span></div>
+@@ -677,34 +718,62 @@
+       <h3>Reportes exportables</h3>
+       <p>Ventas, presupuestos por estado, proyectos y cobros con saldo pendiente, listos para exportar a CSV y cruzar con tu contabilidad.</p>
+     </div>
+-    <div class="tarjeta">
+-      <div class="icon">🇻🇪</div>
+-      <h3>Fiscal a tu medida</h3>
+-      <p>IVA, retención, operación exenta, número de control y cláusula de ajuste cambiario. Moneda en USD o Bs, con tasa de cambio de referencia.</p>
++    <div class="tarjeta" id="fiscal-card">
++      {% if pais_actual %}
++      <div class="icon">{{ pais_actual.bandera }}</div>
++      <h3 id="fiscal-h3">Fiscal a tu medida · {{ pais_actual.nombre }}</h3>
++      <p id="fiscal-p">IVA {{ pais_actual.iva }}%, {{ pais_actual.id_fiscal }}, retención, operación exenta, número de control y cláusula cambiaria. Moneda {{ pais_actual.moneda }} {% if pais_actual.moneda != 'USD' %}({{ pais_actual.simbolo_local }}){% endif %} o USD, con tasa de referencia.</p>
++      {% else %}
++      <div class="icon">🌎</div>
++      <h3 id="fiscal-h3">Fiscal a tu medida · Latinoamérica</h3>
++      <p id="fiscal-p">IVA configurable por país, tu ID fiscal (RIF, NIT, RUT, CUIT, RUC, RFC…), retención, operación exenta y cláusula cambiaria. Moneda en tu divisa local o USD, con tasa de referencia.</p>
++      {% endif %}
+     </div>
+   </div>
+ </section>
+ 
+-<section class="franja venezuela">
+-  <h2>Pensado para Venezuela, no adaptado después.</h2>
+-  <p class="intro">No es una herramienta genérica traducida. {{ product_name }} nace con la forma de trabajar de las constructoras y remodeladores venezolanos.</p>
++<section class="franja venezuela" id="franja-pais">
++  {% if pais_actual %}
++  <h2 id="franja-h2">Pensado para {{ pais_actual.nombre }}, no adaptado después.</h2>
++  <p class="intro" id="franja-intro">No es una herramienta genérica traducida. {{ product_name }} habla el idioma de la obra en {{ pais_actual.nombre }}: precios, vocabulario y fiscalidad de aquí.</p>
+   <div class="grid3">
+     <div class="tarjeta">
+       <div class="icon">💵</div>
+-      <h3>Precios en dólares</h3>
+-      <p>Cotiza en USD, la moneda con la que el sector construcción presupuesta en Venezuela. Sin conversiones ni tipos de cambio improvisados.</p>
++      <h3>Precios en {{ pais_actual.moneda }}</h3>
++      <p id="franja-precio-p">Cotiza en {{ pais_actual.moneda }} {% if pais_actual.moneda != 'USD' %}({{ pais_actual.simbolo_local }}){% endif %} o en USD como referencia regional. Sin conversiones improvisadas: tu tasa queda guardada en cada presupuesto.</p>
+     </div>
+     <div class="tarjeta">
+       <div class="icon">🧱</div>
+       <h3>Vocabulario de aquí</h3>
+-      <p>Concreto, friso, cielo raso, rodapié, plomero, granito vaciado en sitio. Los nombres que usa tu cliente y tu cuadrilla, no los de otro país.</p>
++      <p id="franja-vocab-p">{{ pais_actual.vocab }}, y todos los nombres que usa tu cliente y tu cuadrilla en {{ pais_actual.nombre }}, no los de otro país.</p>
+     </div>
+     <div class="tarjeta">
+       <div class="icon">📈</div>
+       <h3>Precios que se actualizan</h3>
+-      <p>La base de precios se contrasta con el mercado venezolano y se revisa periódicamente, para que no cotices con cifras de hace un año.</p>
++      <p>La base en USD se contrasta con el mercado {{ pais_actual.mercado }} y se revisa periódicamente, para que no cotices con cifras de hace un año.</p>
+     </div>
+   </div>
++  {% else %}
++  <h2 id="franja-h2">Pensado para Latinoamérica, no adaptado después.</h2>
++  <p class="intro" id="franja-intro">No es una herramienta genérica. {{ product_name }} nace para construir en Latinoamérica: precios en USD de referencia, vocabulario hispano y fiscalidad configurable por país.</p>
++  <div class="grid3">
++    <div class="tarjeta">
++      <div class="icon">💵</div>
++      <h3>Precios en tu moneda</h3>
++      <p id="franja-precio-p">Cotiza en USD como referencia regional o en tu moneda local (COP, MXN, PEN, CLP, ARS…). Tu tasa de referencia queda guardada en cada presupuesto.</p>
++    </div>
++    <div class="tarjeta">
++      <div class="icon">🧱</div>
++      <h3>Vocabulario hispano</h3>
++      <p id="franja-vocab-p">Concreto/hormigón, friso/revoque, cielo raso/cielorraso, rodapié/zócalo, plomero/gasfíter… Elige tu país y la landing habla tu obra.</p>
++    </div>
++    <div class="tarjeta">
++      <div class="icon">📈</div>
++      <h3>Precios que se actualizan</h3>
++      <p>La base en USD se contrasta con mercados de la región y se revisa periódicamente, para que no cotices con cifras de hace un año.</p>
++    </div>
++  </div>
++  {% endif %}
+ </section>
+ 
+ <section class="franja">
+@@ -787,6 +856,10 @@
+     </div>
+   </div>
+ </footer>
++<script id="paises-data" type="application/json" nonce="{{ request.state.csp_nonce }}">{{ paises | tojson }}</script>
++<script id="pais-actual-data" type="application/json" nonce="{{ request.state.csp_nonce }}">{{ (pais_actual or {}) | tojson }}</script>
++<script id="pais-generico-data" type="application/json" nonce="{{ request.state.csp_nonce }}">{{ pais_generico | tojson }}</script>
++<script nonce="{{ request.state.csp_nonce }}" src="{{ 'js/pais_selector.js' | asset }}"></script>
+ <script nonce="{{ request.state.csp_nonce }}" src="{{ 'js/landing-tour.js' | asset }}"></script>
+ </body>
+ </html>
+diff --git a/app/templates/onboarding.html b/app/templates/onboarding.html
+index 6564a3f..95678c9 100644
+--- a/app/templates/onboarding.html
++++ b/app/templates/onboarding.html
+@@ -145,7 +145,13 @@
+             </div>
+             <div class="field">
+               <label for="empresa_pais">País</label>
+-              <input id="empresa_pais" name="empresa_pais" maxlength="80" value="{{ cfg.empresa_pais or 'Venezuela' }}" autocomplete="country-name">
++              <select id="empresa_pais" name="empresa_pais">
++                <option value="Venezuela" {{ 'selected' if (cfg.empresa_pais or 'Venezuela') == 'Venezuela' else '' }}>🇻🇪 Venezuela</option>
++                <option value="Colombia" {{ 'selected' if cfg.empresa_pais == 'Colombia' else '' }}>🇨🇴 Colombia</option>
++                <option value="México" {{ 'selected' if cfg.empresa_pais == 'México' else '' }}>🇲🇽 México</option>
++                <option value="Ecuador" {{ 'selected' if cfg.empresa_pais == 'Ecuador' else '' }}>🇪🇨 Ecuador</option>
++                <option value="Perú" {{ 'selected' if cfg.empresa_pais == 'Perú' else '' }}>🇵🇪 Perú</option>
++              </select>
+             </div>
+             <div class="field">
+               <label for="empresa_ciudad">Ciudad</label>
+@@ -155,14 +161,38 @@
+               <label for="empresa_direccion">Dirección</label>
+               <input id="empresa_direccion" name="empresa_direccion" autocomplete="street-address" placeholder="Oficina o showroom">
+             </div>
++            <div class="field">
++              <label for="etiqueta_id_fiscal">Etiqueta ID fiscal</label>
++              <input id="etiqueta_id_fiscal" name="etiqueta_id_fiscal" maxlength="20" value="{{ cfg.etiqueta_id_fiscal or 'RIF' }}" placeholder="RIF, NIT, RFC, RUC...">
++              <span class="hint">Se muestra en clientes y PDF.</span>
++            </div>
+             <div class="field">
+               <label for="moneda_default">Moneda principal</label>
+-              <select id="moneda_default" name="moneda_default"><option value="USD">USD (dólar)</option><option value="Bs">Bs (bolívar)</option></select>
++              <select id="moneda_default" name="moneda_default">
++                <option value="USD" {{ 'selected' if (cfg.moneda_default or 'USD') in ['USD',''] else '' }}>USD ($) — dólar</option>
++                <option value="COP" {{ 'selected' if cfg.moneda_default == 'COP' else '' }}>COP ($) — peso colombiano</option>
++                <option value="MXN" {{ 'selected' if cfg.moneda_default == 'MXN' else '' }}>MXN ($) — peso mexicano</option>
++                <option value="PEN" {{ 'selected' if cfg.moneda_default == 'PEN' else '' }}>PEN (S/) — sol peruano</option>
++                <option value="VES" {{ 'selected' if cfg.moneda_default in ['VES','Bs'] else '' }}>VES (Bs) — bolívar</option>
++                <option value="USD" {{ 'selected' if cfg.moneda_default == 'USD' and cfg.empresa_pais=='Ecuador' else '' }}>USD ($) — dólar (EC)</option>
++              </select>
+             </div>
+             <div class="field">
+               <label for="iva_default">IVA por defecto (%)</label>
+-              <input id="iva_default" name="iva_default" type="number" min="0" max="100" step="0.01" value="16">
+-              <span class="hint">Puedes usar 0 si no corresponde. Esto no convierte el documento en factura fiscal.</span>
++              <input id="iva_default" name="iva_default" type="number" min="0" max="100" step="0.01" value="{{ cfg.iva_default or 16 }}">
++              <span class="hint">Sugerido según país. Puedes usar 0 si no aplica.</span>
++            </div>
++            <div class="field">
++              <label for="tasa_cambio">Tasa: 1 USD =</label>
++              <div class="tasa-row">
++                <input id="tasa_cambio" name="tasa_cambio" type="number" step="any" min="0" value="{{ cfg.tasa_cambio if cfg.tasa_cambio else '' }}" placeholder="Ej: 4200" class="tasa-input-flex">
++                <span id="label-tasa-moneda-onb" class="tasa-label">{{ cfg.moneda_default or 'COP' }}</span>
++              </div>
++              <span class="hint" id="hint-tasa-onb"></span>
++            </div>
++            <div class="field">
++              <label for="fecha_tasa">Fecha de tasa</label>
++              <input id="fecha_tasa" name="fecha_tasa" type="date" value="{{ cfg.fecha_tasa.isoformat() if cfg.fecha_tasa else '' }}">
+             </div>
+             <div class="field full">
+               <label for="logo">Logotipo <span class="hint">(opcional)</span></label>
+@@ -246,6 +276,32 @@
+     return true;
+   }
+ 
++  // Auto-config por país (VE/CO/MX/EC/PE) — rellena etiqueta/iva/moneda/tasa
++  (function(){
++    var paisSel=document.getElementById('empresa_pais');
++    var etiquetaInput=document.getElementById('etiqueta_id_fiscal');
++    var monedaSel=document.getElementById('moneda_default');
++    var ivaInput=document.getElementById('iva_default');
++    var tasaInput=document.getElementById('tasa_cambio');
++    var fechaInput=document.getElementById('fecha_tasa');
++    var labelTasa=document.getElementById('label-tasa-moneda-onb');
++    var hintTasa=document.getElementById('hint-tasa-onb');
++    if(!paisSel) return;
++    var MAPA={ 'Venezuela':{etiqueta:'RIF',iva:16,moneda:'VES',tasa:36.5}, 'Colombia':{etiqueta:'NIT',iva:19,moneda:'COP',tasa:4200}, 'México':{etiqueta:'RFC',iva:16,moneda:'MXN',tasa:17.2}, 'Ecuador':{etiqueta:'RUC',iva:15,moneda:'USD',tasa:1}, 'Perú':{etiqueta:'RUC',iva:18,moneda:'PEN',tasa:3.75} };
++    function aplicarPais(autoTasa){
++      var p=paisSel.value||'Venezuela';
++      var cfg=MAPA[p]||MAPA['Venezuela'];
++      if(etiquetaInput && !etiquetaInput.dataset.tocado) etiquetaInput.value=cfg.etiqueta;
++      if(ivaInput && !ivaInput.dataset.tocado) ivaInput.value=cfg.iva;
++      if(monedaSel && !monedaSel.dataset.tocado) monedaSel.value=cfg.moneda;
++      if(labelTasa) labelTasa.textContent=cfg.moneda;
++      if(hintTasa) hintTasa.textContent = cfg.moneda==='USD' ? 'Moneda USD — tasa 1.' : 'Sugerido: 1 USD = '+cfg.tasa+' '+cfg.moneda;
++      if(autoTasa && tasaInput && !tasaInput.value) { tasaInput.value=cfg.tasa; if(fechaInput && !fechaInput.value) fechaInput.value=new Date().toISOString().slice(0,10); }
++    }
++    [etiquetaInput,ivaInput,monedaSel,tasaInput].forEach(function(el){ if(el) el.addEventListener('input', function(){ el.dataset.tocado='1'; }); });
++    paisSel.addEventListener('change', function(){ if(etiquetaInput) delete etiquetaInput.dataset.tocado; if(ivaInput) delete ivaInput.dataset.tocado; if(monedaSel) delete monedaSel.dataset.tocado; aplicarPais(true); });
++    aplicarPais(false);
++  })();
+   function value(id) { var el = document.getElementById(id); return el ? el.value.trim() : ''; }
+   function updateSummary() {
+     var mode = form.querySelector('input[name="modo_inicio"]:checked');
+diff --git a/app/templates/settings.html b/app/templates/settings.html
+index 41a02db..5200e1e 100644
+--- a/app/templates/settings.html
++++ b/app/templates/settings.html
+@@ -63,12 +63,24 @@
+         <input type="text" name="empresa_legal" value="{{ cfg.empresa_legal }}" placeholder="p. ej. Grupo Constructor Caracas C.A.">
+       </div>
+       <div class="field">
+-        <label>RIF</label>
+-        <input type="text" name="empresa_rif" value="{{ cfg.empresa_rif }}" placeholder="J-XXXXXXXX-X">
++        <label><span id="label-rif">{{ cfg.etiqueta_id_fiscal or 'RIF' }}</span> <span class="hint csp-tasa-hint-inline">(ID fiscal)</span></label>
++        <input type="text" name="empresa_rif" value="{{ cfg.empresa_rif }}" placeholder="J-XXXXXXXX-X" id="input-rif">
++      </div>
++      <div class="field">
++        <label>Etiqueta ID fiscal</label>
++        <input type="text" name="etiqueta_id_fiscal" value="{{ cfg.etiqueta_id_fiscal or 'RIF' }}" placeholder="RIF, NIT, RUT, CUIT, RUC, RFC..." maxlength="20" id="input-etiqueta">
++        <p class="hint">Cómo se llama tu ID fiscal en tu país. Se muestra en clientes, presupuestos y PDF.</p>
+       </div>
+       <div class="field">
+         <label>País</label>
+-        <input type="text" name="empresa_pais" value="{{ cfg.empresa_pais or 'Venezuela' }}" placeholder="Venezuela">
++        <select name="empresa_pais" id="select-pais">
++          <option value="Venezuela" {{ 'selected' if (cfg.empresa_pais or 'Venezuela') == 'Venezuela' else '' }}>🇻🇪 Venezuela</option>
++          <option value="Colombia" {{ 'selected' if cfg.empresa_pais == 'Colombia' else '' }}>🇨🇴 Colombia</option>
++          <option value="México" {{ 'selected' if cfg.empresa_pais == 'México' else '' }}>🇲🇽 México</option>
++          <option value="Ecuador" {{ 'selected' if cfg.empresa_pais == 'Ecuador' else '' }}>🇪🇨 Ecuador</option>
++          <option value="Perú" {{ 'selected' if cfg.empresa_pais == 'Perú' else '' }}>🇵🇪 Perú</option>
++          <option value="" {{ 'selected' if cfg.empresa_pais in ['', 'Latinoamérica'] else '' }}>🌎 Otro / Latinoamérica</option>
++        </select>
+       </div>
+       <div class="field">
+         <label>Ciudad</label>
+@@ -128,16 +140,52 @@
+     <h2>Valores por defecto para presupuestos nuevos</h2>
+     <div class="form-grid">
+       <div class="field">
+-        <label>Moneda</label>
+-        <select name="moneda_default">
+-          <option value="USD" {{ 'selected' if cfg.moneda_default == 'USD' else '' }}>USD (dólar)</option>
+-          <option value="Bs" {{ 'selected' if cfg.moneda_default == 'Bs' else '' }}>Bs (bolívar)</option>
++        <label>Moneda por defecto</label>
++        <select name="moneda_default" id="select-moneda">
++          <option value="USD" {{ 'selected' if cfg.moneda_default in ['USD',''] else '' }}>USD ($) — dólar</option>
++          <option value="COP" {{ 'selected' if cfg.moneda_default == 'COP' else '' }}>COP ($) — peso colombiano</option>
++          <option value="MXN" {{ 'selected' if cfg.moneda_default == 'MXN' else '' }}>MXN ($) — peso mexicano</option>
++          <option value="PEN" {{ 'selected' if cfg.moneda_default == 'PEN' else '' }}>PEN (S/) — sol peruano</option>
++          <option value="VES" {{ 'selected' if cfg.moneda_default in ['VES','Bs'] else '' }}>VES (Bs) — bolívar venezolano</option>
++          <option value="CLP" {{ 'selected' if cfg.moneda_default == 'CLP' else '' }}>CLP ($) — peso chileno</option>
++          <option value="ARS" {{ 'selected' if cfg.moneda_default == 'ARS' else '' }}>ARS ($) — peso argentino</option>
++          <option value="UYU" {{ 'selected' if cfg.moneda_default == 'UYU' else '' }}>UYU ($U) — peso uruguayo</option>
++          <option value="PYG" {{ 'selected' if cfg.moneda_default == 'PYG' else '' }}>PYG (₲) — guaraní paraguayo</option>
++          <option value="BOB" {{ 'selected' if cfg.moneda_default == 'BOB' else '' }}>BOB (Bs) — boliviano</option>
++          <option value="DOP" {{ 'selected' if cfg.moneda_default == 'DOP' else '' }}>DOP (RD$) — peso dominicano</option>
++          <option value="PAB" {{ 'selected' if cfg.moneda_default == 'PAB' else '' }}>PAB (B/.) — balboa panameño</option>
++          <option value="CRC" {{ 'selected' if cfg.moneda_default == 'CRC' else '' }}>CRC (₡) — colón costarricense</option>
++          <option value="GTQ" {{ 'selected' if cfg.moneda_default == 'GTQ' else '' }}>GTQ (Q) — quetzal guatemalteco</option>
++          <option value="HNL" {{ 'selected' if cfg.moneda_default == 'HNL' else '' }}>HNL (L) — lempira hondureño</option>
++          <option value="NIO" {{ 'selected' if cfg.moneda_default == 'NIO' else '' }}>NIO (C$) — córdoba nicaragüense</option>
++          <option value="BRL" {{ 'selected' if cfg.moneda_default == 'BRL' else '' }}>BRL (R$) — real brasileño</option>
++          <option value="EUR" {{ 'selected' if cfg.moneda_default == 'EUR' else '' }}>EUR (€) — euro</option>
+         </select>
++        <p class="hint">El catálogo guarda USD; si eliges COP/MXN/PEN se muestra convertido con tu tasa.</p>
+       </div>
+       <div class="field">
+-        <label>IVA (%)</label>
+-        <input type="number" name="iva_default" step="any" min="0" value="{{ cfg.iva_default }}">
+-        <p class="hint">Alícuota general de Venezuela: 16% (déjala en 0 si no aplicas IVA).</p>
++        <label>IVA por defecto (%)</label>
++        <input type="number" name="iva_default" step="any" min="0" max="100" value="{{ cfg.iva_default }}" id="input-iva">
++        <p class="hint">Sugerido: VE 16% · CO 19% · MX 16% · PE 18% · EC 15% — déjalo en 0 si no aplica.</p>
++      </div>
++      <div class="field field-full tasa-box">
++        <label class="tasa-label-bold">Tasa de referencia USD → <span id="label-tasa-moneda">{{ cfg.moneda_default or 'COP' }}</span></label>
++        <p class="hint">Para convertir el catálogo USD a tu moneda local. 1 USD = X en tu moneda. Si tu moneda es USD, deja 1.</p>
++        <div class="tasa-flex">
++          <div class="tasa-flex-1">
++            <label class="tasa-label-sm">Tasa: 1 USD =</label>
++            <div class="tasa-input-row">
++              <input type="number" name="tasa_cambio" id="input-tasa" step="any" min="0" value="{{ cfg.tasa_cambio if cfg.tasa_cambio else '' }}" placeholder="Ej: 4200" class="tasa-input">
++              <span id="label-tasa-simbolo" class="tasa-simbolo">{{ cfg.moneda_default or 'COP' }}</span>
++            </div>
++          </div>
++          <div class="tasa-fecha-col">
++            <label class="tasa-label-sm">Fecha de tasa</label>
++            <input type="date" name="fecha_tasa" id="input-fecha-tasa" value="{{ cfg.fecha_tasa.isoformat() if cfg.fecha_tasa else '' }}">
++          </div>
++          <button type="button" class="btn" id="btn-tasa-auto" class="tasa-btn-nowrap">↻ Tasa de hoy (auto)</button>
++        </div>
++        <p class="hint" id="hint-tasa" class="tasa-hint-mt"></p>
+       </div>
+       <div class="field">
+         <label>Validez por defecto (días)</label>
+@@ -189,7 +237,7 @@
+           <label class="csp-s-bf283309bc"><input type="checkbox" name="estimar_tiempo_por_coste" value="1" {{ 'checked' if cfg.estimar_tiempo_por_coste else '' }}> Estimar horas desde el coste de mano de obra cuando la partida no tiene rendimientos de tiempo</label>
+         </div>
+       </div>
+-      <div class="field field-full csp-s-30e51cbec9"><label class="csp-s-6b2a94ea3b">Funciones regionales de Venezuela</label><p class="hint">Se mantienen ocultas en el creador hasta que actives esta capacidad.</p><label class="csp-s-d6241da47c"><input type="checkbox" name="activar_funciones_venezuela" {{ 'checked' if cfg.activar_funciones_venezuela else '' }}> Activar opciones venezolanas</label><div class="csp-s-9ba0b3ba7c"><label><input type="checkbox" name="mostrar_numero_control" {{ 'checked' if cfg.mostrar_numero_control else '' }}> Número de control</label><label><input type="checkbox" name="mostrar_tasa_cambio" {{ 'checked' if cfg.mostrar_tasa_cambio else '' }}> Tasa y fecha</label><label><input type="checkbox" name="mostrar_total_bs" {{ 'checked' if cfg.mostrar_total_bs else '' }}> Equivalente en Bs.</label><label><input type="checkbox" name="mostrar_retenciones" {{ 'checked' if cfg.mostrar_retenciones else '' }}> Retenciones / exento</label><label><input type="checkbox" name="mostrar_clausula_cambiaria" {{ 'checked' if cfg.mostrar_clausula_cambiaria else '' }}> Cláusula cambiaria</label></div><label class="csp-s-726e8b317f">Datos bancarios y métodos de pago</label><textarea name="datos_bancarios" rows="3" placeholder="Banco, cuenta, pago móvil, Zelle, USDT…">{{ cfg.datos_bancarios }}</textarea></div>
++      <div class="field field-full csp-s-30e51cbec9"><label class="csp-s-6b2a94ea3b">🌎 Funciones regionales (opcionales)</label><p class="hint">Se mantienen ocultas en el creador hasta que actives esta capacidad. Se adaptan a tu país (número de control, tasa, equivalente, retenciones).</p><label class="csp-s-d6241da47c"><input type="checkbox" name="activar_funciones_venezuela" {{ 'checked' if cfg.activar_funciones_venezuela else '' }}> Activar opciones venezolanas</label><div class="csp-s-9ba0b3ba7c"><label><input type="checkbox" name="mostrar_numero_control" {{ 'checked' if cfg.mostrar_numero_control else '' }}> Número de control</label><label><input type="checkbox" name="mostrar_tasa_cambio" {{ 'checked' if cfg.mostrar_tasa_cambio else '' }}> Tasa y fecha</label><label><input type="checkbox" name="mostrar_total_bs" {{ 'checked' if cfg.mostrar_total_bs else '' }}> Equivalente en Bs.</label><label><input type="checkbox" name="mostrar_retenciones" {{ 'checked' if cfg.mostrar_retenciones else '' }}> Retenciones / exento</label><label><input type="checkbox" name="mostrar_clausula_cambiaria" {{ 'checked' if cfg.mostrar_clausula_cambiaria else '' }}> Cláusula cambiaria</label></div><label class="csp-s-726e8b317f">Datos bancarios y métodos de pago</label><textarea name="datos_bancarios" rows="3" placeholder="Banco, cuenta, pago móvil, Zelle, USDT…">{{ cfg.datos_bancarios }}</textarea></div>
+       <div class="field field-full">
+         <label>Información adicional por defecto</label>
+         <textarea name="notas_default" rows="3" placeholder="Texto que se rellena automáticamente en cada presupuesto nuevo">{{ cfg.notas_default }}</textarea>
+@@ -206,6 +254,95 @@
+   </div>
+   </fieldset>
+ </form>
++<script nonce="{{ request.state.csp_nonce }}">
++(function(){
++  var paisSel = document.getElementById('select-pais');
++  var etiquetaInput = document.getElementById('input-etiqueta');
++  var labelRif = document.getElementById('label-rif');
++  var monedaSel = document.getElementById('select-moneda');
++  var ivaInput = document.getElementById('input-iva');
++  var tasaInput = document.getElementById('input-tasa');
++  var fechaInput = document.getElementById('input-fecha-tasa');
++  var labelTasaMoneda = document.getElementById('label-tasa-moneda');
++  var labelTasaSimbolo = document.getElementById('label-tasa-simbolo');
++  var hintTasa = document.getElementById('hint-tasa');
++  var btnAuto = document.getElementById('btn-tasa-auto');
++  if(!paisSel) return;
++  var MAPA = {
++    'Venezuela': {etiqueta:'RIF', iva:16, moneda:'VES', tasa:36.5},
++    'Colombia': {etiqueta:'NIT', iva:19, moneda:'COP', tasa:4200},
++    'México': {etiqueta:'RFC', iva:16, moneda:'MXN', tasa:17.2},
++    'Ecuador': {etiqueta:'RUC', iva:15, moneda:'USD', tasa:1},
++    'Perú': {etiqueta:'RUC', iva:18, moneda:'PEN', tasa:3.75},
++    '': {etiqueta:'ID fiscal', iva:16, moneda:'USD', tasa:1}
++  };
++  function actualizarPorPais(autoTasa){
++    var pais = paisSel.value || '';
++    var cfg = MAPA[pais] || MAPA[''];
++    if(etiquetaInput && !etiquetaInput.dataset.tocado) { etiquetaInput.value = cfg.etiqueta; if(labelRif) labelRif.textContent = cfg.etiqueta; }
++    if(ivaInput && !ivaInput.dataset.tocado) ivaInput.value = cfg.iva;
++    if(monedaSel && !monedaSel.dataset.tocado) monedaSel.value = cfg.moneda;
++    if(labelTasaMoneda) labelTasaMoneda.textContent = cfg.moneda;
++    if(labelTasaSimbolo) labelTasaSimbolo.textContent = cfg.moneda;
++    if(hintTasa){
++      if(cfg.moneda === 'USD') hintTasa.textContent = 'Tu moneda es USD — no necesitas tasa. Deja 1.';
++      else hintTasa.textContent = 'Sugerido para '+pais+': 1 USD = '+cfg.tasa+' '+cfg.moneda+' — puedes ajustarlo o pulsar «Tasa de hoy».';
++    }
++    if(autoTasa && tasaInput && !tasaInput.value){
++      tasaInput.value = cfg.tasa;
++      if(fechaInput && !fechaInput.value) fechaInput.value = new Date().toISOString().slice(0,10);
++    }
++  }
++  // marca tocado si el usuario edita manual
++  [etiquetaInput, ivaInput, monedaSel].forEach(function(el){
++    if(!el) return;
++    el.addEventListener('change', function(){ el.dataset.tocado='1'; });
++    el.addEventListener('input', function(){ el.dataset.tocado='1'; });
++  });
++  paisSel.addEventListener('change', function(){ 
++    // al cambiar país, resetea tocado para sugerir de nuevo
++    if(etiquetaInput) delete etiquetaInput.dataset.tocado;
++    if(ivaInput) delete ivaInput.dataset.tocado;
++    if(monedaSel) delete monedaSel.dataset.tocado;
++    actualizarPorPais(true);
++  });
++  // moneda cambia -> actualiza label tasa
++  if(monedaSel){
++    monedaSel.addEventListener('change', function(){
++      if(labelTasaMoneda) labelTasaMoneda.textContent = monedaSel.value;
++      if(labelTasaSimbolo) labelTasaSimbolo.textContent = monedaSel.value;
++    });
++  }
++  if(btnAuto){
++    btnAuto.addEventListener('click', function(){
++      var moneda = monedaSel ? monedaSel.value : 'COP';
++      if(moneda === 'VES' || moneda === 'Bs') moneda='VES';
++      btnAuto.textContent='⏳ Consultando...';
++      btnAuto.disabled=true;
++      fetch('/configuracion/tasa-auto?moneda='+encodeURIComponent(moneda), {headers:{'Accept':'application/json'}})
++        .then(function(r){ return r.json(); })
++        .then(function(j){
++          if(j.ok && j.tasa){
++            tasaInput.value = j.tasa;
++            if(fechaInput) fechaInput.value = j.fecha || new Date().toISOString().slice(0,10);
++            hintTasa.textContent = 'Tasa de hoy: 1 USD = '+j.tasa+' '+moneda+' (fuente: open.er-api.com)';
++          } else {
++            hintTasa.textContent = 'No se pudo traer la tasa: '+(j.error||'sin conexión')+'. Revisa manual.';
++          }
++        })
++        .catch(function(e){
++          hintTasa.textContent = 'Sin conexión — pon la tasa manual.';
++        })
++        .finally(function(){
++          btnAuto.textContent='↻ Tasa de hoy (auto)';
++          btnAuto.disabled=false;
++        });
++    });
++  }
++  // inicial
++  actualizarPorPais(false);
++})();
++</script>
+ 
+ {% if puede_editar %}
+ <div class="card csp-s-a3c9c5afaa">
+diff --git a/app/utils.py b/app/utils.py
+index 9ac3899..268424b 100644
+--- a/app/utils.py
++++ b/app/utils.py
+@@ -5,7 +5,34 @@ con coma (1.234.567,89). Cantidades con punto decimal (12.50 m2),
+ igual que en los presupuestos de referencia.
+ """
+ 
+-SIMBOLOS = {"USD": "$", "Bs": "Bs"}
++# Semana 2 — Bloque B: catálogo de símbolos por ISO 4217 (20 monedas LatAm + extras)
++# Bs se mantiene como alias histórico de VES para no romper presupuestos antiguos.
++SIMBOLOS = {
++    "USD": "$",
++    "VES": "Bs",
++    "Bs": "Bs",
++    "COP": "$",
++    "MXN": "$",
++    "PEN": "S/",
++    "CLP": "$",
++    "ARS": "$",
++    "UYU": "$U",
++    "PYG": "₲",
++    "BOB": "Bs",
++    "DOP": "RD$",
++    "PAB": "B/.",
++    "CRC": "₡",
++    "GTQ": "Q",
++    "HNL": "L",
++    "NIO": "C$",
++    "BRL": "R$",
++    "EUR": "€",
++}
++
++# Lista blanca de monedas aceptadas en formularios (ISO + alias histórico)
++MONEDAS_SOPORTADAS: tuple[str, ...] = tuple(sorted(set(SIMBOLOS.keys()) | {"USD", "VES", "Bs"}))
++# Normalización: VES/Bs son la misma moneda a efectos de validación
++_ALIAS_MONEDA = {"VES": "VES", "Bs": "VES"}
+ 
+ # Sustituciones para glifos que no siempre están en las fuentes del PDF
+ _SANEADO = {
+@@ -32,9 +59,41 @@ def fmt_num(valor, decimales=2) -> str:
+     return s.replace(",", "X").replace(".", ",").replace("X", ".")
+ 
+ 
++def normalizar_moneda(moneda: str | None, defecto: str = "USD") -> str:
++    """Normaliza un código de moneda: mayúsculas, alias Bs→VES, fallback."""
++    if not moneda:
++        return defecto
++    m = str(moneda).strip().upper()
++    # Alias histórico: Bs es VES
++    if m == "BS":
++        return "VES"
++    if m in SIMBOLOS or m in MONEDAS_SOPORTADAS:
++        # Si es alias, devuelve canónico VES
++        return _ALIAS_MONEDA.get(m, m)
++    return defecto
++
++
++def es_moneda_soportada(moneda: str | None) -> bool:
++    if not moneda:
++        return False
++    return str(moneda).strip().upper() in MONEDAS_SOPORTADAS or str(moneda).strip().upper() == "BS"
++
++
+ def fmt_monto(valor, moneda="USD") -> str:
+     """Importe con símbolo de moneda como sufijo: 35.755,89 $ / 35.755,89 Bs"""
+-    return f"{fmt_num(valor)} {SIMBOLOS.get(moneda, moneda)}"
++    # Normaliza Bs→VES para que el símbolo sea consistente
++    clave = str(moneda or "USD").strip()
++    # Respeta Bs si viene literal (presupuestos antiguos)
++    if clave == "Bs":
++        clave = "VES"
++    else:
++        clave = clave.upper() if clave else "USD"
++    return f"{fmt_num(valor)} {SIMBOLOS.get(clave, moneda)}"
++
++
++def fmt_monto_raw(valor, moneda="USD") -> str:
++    """Alias para tests que pasan 'Bs' literal y esperan 'Bs'."""
++    return fmt_monto(valor, moneda)
+ 
+ 
+ def fmt_precio_u(valor, moneda="USD", unidad="") -> str:
+diff --git a/basedatos_partidas/glosarios/CO.json b/basedatos_partidas/glosarios/CO.json
+new file mode 100644
+index 0000000..2a33e25
+--- /dev/null
++++ b/basedatos_partidas/glosarios/CO.json
+@@ -0,0 +1,139 @@
++{
++  "_origen": "VE",
++  "_destino": "CO",
++  "_version": 1,
++  "_nota": "Glosario VE→CO para CotizaT. Cada entrada 'de' es término venezolano tal como aparece en el catálogo (concreto, friso, rodapié, etc.) y 'a' es la forma preferida en Colombia según NTC/Homecenter/Argos/Construdata. Aplica con terminologia.py: sustituye respetando mayúscula inicial y plural simple. Solo se listan términos que cambian; los iguales se omiten.",
++  "_fuentes": [
++    "COVENIN 2004-98 vs NTC 4595",
++    "Argos Colombia - diferencia revoque/pañete (2025)",
++    "Homecenter / Sodimac Colombia - guardaescoba, placa, formaleta",
++    "Presupuesto Presucosto APU 2026 CO - formaleta metálica",
++    "Construdata / Camacol"
++  ],
++  "cambios": [
++    {"de": "friso", "a": "pañete", "motivo": "VE friso = mortero de nivelación interior. CO pañete (y revoque como genérico)."},
++    {"de": "rodapié", "a": "guardaescoba", "motivo": "VE rodapié = moldura inferior. CO guardaescoba."},
++    {"de": "cielo raso", "a": "cielo raso", "motivo": "Igual en CO (también drywall como sistema). Se deja sin cambio pero se documenta."},
++    {"de": "losa", "a": "placa", "motivo": "VE losa de entrepiso/piso. CO placa de entrepiso y placa de contrapiso."},
++    {"de": "forjado", "a": "placa", "motivo": "Peninsular forjado ya mapeado a losa en VE; en CO es placa."},
++    {"de": "encofrado", "a": "formaleta", "motivo": "VE encofrado. CO formaleta (metálica/madera)."},
++    {"de": "vaciado", "a": "fundida", "motivo": "VE vaciado de concreto. CO fundida / vaciado ambos, pero fundida es más común en APU."},
++    {"de": "capa de pega", "a": "capa de pegante", "motivo": "VE capa de pega (mortero adhesivo). CO pegante cerámico."},
++    {"de": "porcelanato", "a": "porcelanato", "motivo": "Igual; se deja."},
++    {"de": "cerámica", "a": "cerámica", "motivo": "Igual."},
++    {"de": "baldosín", "a": "cerámica", "motivo": "Peninsular baldosín ya es cerámica en VE/CO."},
++    {"de": "enchapado", "a": "enchape", "motivo": "VE enchapado (sustantivo). CO enchape."},
++    {"de": "enfoscado", "a": "pañete", "motivo": "Peninsular -> VE friso -> CO pañete."},
++    {"de": "guarnecido", "a": "pañete", "motivo": "Peninsular guarnecido -> CO pañete."},
++    {"de": "azulejo", "a": "cerámica de pared", "motivo": "Peninsular azulejo -> VE/CO cerámica de pared."},
++    {"de": "hormigón", "a": "concreto", "motivo": "Peninsular hormigón -> VE/CO concreto (mismo en ambos)."},
++    {"de": "solado", "a": "piso", "motivo": "Peninsular solado -> VE/CO piso."},
++    {"de": "tabique", "a": "tabique", "motivo": "VE tabique = partición. CO tabique/muro liviano en drywall; se mantiene tabique."},
++    {"de": "tabique de fábrica", "a": "muro en bloque", "motivo": "Peninsular tabique de fábrica -> VE pared de bloque -> CO muro en bloque."},
++    {"de": "pared de bloque", "a": "muro en bloque", "motivo": "VE pared de bloque -> CO muro en bloque (bloque #4/#5)."},
++    {"de": "bloque", "a": "bloque", "motivo": "Igual (en CO bloque de arcilla #4, #5, bloque de concreto)."},
++    {"de": "cabilla", "a": "varilla", "motivo": "VE cabilla (acero corrugado). CO varilla corrugada / acero figurado."},
++    {"de": "acero corrugado", "a": "acero figurado", "motivo": "Sinónimo en CO."},
++    {"de": "malla electrosoldada", "a": "malla electrosoldada", "motivo": "Igual."},
++    {"de": "fragüe", "a": "boquilla", "motivo": "VE fragüe (junta). CO boquilla / emboquillado / fragua como sinónimo."},
++    {"de": "junta de fragüe", "a": "junta de boquilla", "motivo": "Derivado."},
++    {"de": "juntas de dilatación", "a": "juntas de dilatación", "motivo": "Igual."},
++    {"de": "granito vaciado en sitio", "a": "granito pulido fundido en sitio", "motivo": "VE granito vaciado. CO granito pulido / terrazo."},
++    {"de": "mesón", "a": "mesón", "motivo": "VE mesón de cocina. CO mesón (también encimera pero mesón es dominante)."},
++    {"de": "encimera", "a": "mesón", "motivo": "Ya mapeado."},
++    {"de": "grifo", "a": "grifería", "motivo": "Peninsular grifo. VE llave. CO grifería / llave."},
++    {"de": "llave", "a": "llave", "motivo": "VE/CO llave (para grifería). Se mantiene; CO también usa grifería como genérico."},
++    {"de": "plomero", "a": "plomero", "motivo": "VE plomero = CO plomero. CO no usa fontanero/gasfíter."},
++    {"de": "fontanero", "a": "plomero", "motivo": "Peninsular -> CO plomero."},
++    {"de": "falso techo", "a": "cielo raso", "motivo": "Ya mapeado a cielo raso en VE/CO."},
++    {"de": "escayola", "a": "yeso", "motivo": "Peninsular -> VE/CO yeso/drywall."},
++    {"de": "yeso", "a": "estuco", "motivo": "VE yeso para acabado. CO estuco plástico / estuco veneciano para pañete fino."},
++    {"de": "estuco", "a": "estuco", "motivo": "Igual en CO como acabado fino."},
++    {"de": "impermeabilización", "a": "impermeabilización", "motivo": "Igual."},
++    {"de": "manto asfáltico", "a": "manto asfáltico", "motivo": "Igual (CO también lámina asfáltica)."},
++    {"de": "teja asfáltica", "a": "teja asfáltica", "motivo": "Igual."},
++    {"de": "pintura de caucho", "a": "pintura vinilo", "motivo": "VE pintura de caucho. CO pintura vinilo tipo 1/2/3."},
++    {"de": "pintura satinada", "a": "pintura vinilo satinada", "motivo": "Derivado."},
++    {"de": "pintura acrílica", "a": "pintura acrílica", "motivo": "Igual."},
++    {"de": "esmalte", "a": "esmalte", "motivo": "Igual."},
++    {"de": "barniz", "a": "barniz", "motivo": "Igual."},
++    {"de": "laca", "a": "laca", "motivo": "Igual."},
++    {"de": "revoque", "a": "pañete", "motivo": "Sinónimo en CO, pañete es más usado para interior."},
++    {"de": "repello", "a": "pañete", "motivo": "VE no usa repello; en CO repello es sinónimo de pañete informal."},
++    {"de": "pañete pulido", "a": "estuco", "motivo": "CO pañete liso fino = estuco."},
++    {"de": "salpicado", "a": "salpicado", "motivo": "Igual."},
++    {"de": "carpintería de madera", "a": "carpintería de madera", "motivo": "Igual."},
++    {"de": "carpintería metálica", "a": "carpintería metálica", "motivo": "Igual."},
++    {"de": "herrería", "a": "cerrajería", "motivo": "VE herrería (ornamentación). CO cerrajería / ornamentación."},
++    {"de": "cerrajería", "a": "cerrajería", "motivo": "Genérico CO."},
++    {"de": "reja", "a": "reja", "motivo": "Igual."},
++    {"de": "portón", "a": "portón", "motivo": "Igual."},
++    {"de": "ventana de aluminio", "a": "ventana en aluminio", "motivo": "CO ventana en aluminio."},
++    {"de": "vidrio", "a": "vidrio", "motivo": "Igual."},
++    {"de": "vidrio templado", "a": "vidrio templado", "motivo": "Igual."},
++    {"de": "puerta entamborada", "a": "puerta en madera entamborada", "motivo": "CO puerta entamborada / puerta en triplex."},
++    {"de": "marco de puerta", "a": "marco de puerta", "motivo": "Igual."},
++    {"de": "tubería de aguas blancas", "a": "tubería de agua potable", "motivo": "VE aguas blancas. CO agua potable / acueducto."},
++    {"de": "aguas blancas", "a": "agua potable", "motivo": "VE aguas blancas -> CO agua potable."},
++    {"de": "aguas negras", "a": "aguas residuales", "motivo": "VE aguas negras. CO aguas residuales / aguas negras ambos, pero residuales es NTC."},
++    {"de": "aguas servidas", "a": "aguas residuales", "motivo": "Sinónimo."},
++    {"de": "tubería de PVC", "a": "tubería PVC", "motivo": "Igual."},
++    {"de": "tubería de cobre", "a": "tubería de cobre", "motivo": "Igual."},
++    {"de": "tubería PPR", "a": "tubería en polipropileno", "motivo": "CO tubería PP-R."},
++    {"de": "colector", "a": "colector", "motivo": "VE albañal->colector. CO colector."},
++    {"de": "boca de visita", "a": "caja de inspección", "motivo": "VE arqueta->boca de visita. CO caja de inspección."},
++    {"de": "tanquilla", "a": "caja de inspección", "motivo": "VE tanquilla -> CO caja de inspección."},
++    {"de": "sifón", "a": "sifón", "motivo": "Igual."},
++    {"de": "rejilla de piso", "a": "rejilla de piso", "motivo": "VE rejilla. CO rejilla / sosco."},
++    {"de": "trampa de grasa", "a": "trampa de grasas", "motivo": "CO trampa de grasas (plural)."},
++    {"de": "bajante", "a": "bajante", "motivo": "Igual."},
++    {"de": "desagüe", "a": "desagüe", "motivo": "Igual."},
++    {"de": "sifón de piso", "a": "sifón de piso", "motivo": "Igual."},
++    {"de": "punto de agua", "a": "punto hidráulico", "motivo": "VE punto de agua. CO punto hidráulico."},
++    {"de": "punto de desagüe", "a": "punto sanitario", "motivo": "VE punto de desagüe. CO punto sanitario."},
++    {"de": "sanitario", "a": "sanitario", "motivo": "VE aparato sanitario. CO sanitario / inodoro."},
++    {"de": "inodoro", "a": "sanitario", "motivo": "Sinónimo en CO."},
++    {"de": "lavamanos", "a": "lavamanos", "motivo": "VE lavamanos. CO lavamanos / lavabo."},
++    {"de": "ducha", "a": "ducha", "motivo": "Igual."},
++    {"de": "regadera", "a": "ducha", "motivo": "VE regadera = CO ducha."},
++    {"de": "tina", "a": "tina", "motivo": "Igual (CO poco uso)."},
++    {"de": "poceta", "a": "sanitario", "motivo": "VE poceta -> CO sanitario."},
++    {"de": "batea", "a": "lavadero", "motivo": "VE batea -> CO lavadero / poza."},
++    {"de": "fregadero", "a": "lavaplatos", "motivo": "VE fregadero -> CO lavaplatos."},
++    {"de": "mesa de trabajo", "a": "mesón", "motivo": "CO mesón."},
++    {"de": "tomacorriente", "a": "tomacorriente", "motivo": "VE tomacorriente. CO tomacorriente / toma."},
++    {"de": "tomacorriente doble", "a": "tomacorriente doble", "motivo": "Igual."},
++    {"de": "interruptor", "a": "interruptor", "motivo": "Igual."},
++    {"de": "breker", "a": "taco", "motivo": "VE breker/breaker. CO taco / automático."},
++    {"de": "breaker", "a": "taco", "motivo": "Sinónimo."},
++    {"de": "tablero eléctrico", "a": "tablero eléctrico", "motivo": "VE tablero. CO tablero / caja de tacos."},
++    {"de": "caja de breakers", "a": "caja de tacos", "motivo": "CO caja de tacos."},
++    {"de": "cable THHN", "a": "cable THHN", "motivo": "Igual (CO también)." },
++    {"de": "tubería Conduit", "a": "tubería conduit", "motivo": "Igual."},
++    {"de": "tubería EMT", "a": "tubería EMT", "motivo": "Igual."},
++    {"de": "lámpara", "a": "luminaria", "motivo": "VE lámpara. CO luminaria (técnico)."},
++    {"de": "bombillo", "a": "bombillo", "motivo": "VE bombillo. CO bombillo / bombilla ambos."},
++    {"de": "impermeabilizante acrílico", "a": "impermeabilizante acrílico", "motivo": "Igual."},
++    {"de": "cielo raso de drywall", "a": "cielo raso en drywall", "motivo": "CO cielo raso en drywall."},
++    {"de": "cielo raso suspendido", "a": "cielo raso suspendido", "motivo": "Igual."},
++    {"de": "drywall", "a": "drywall", "motivo": "Igual (sistema liviano)."},
++    {"de": "superboard", "a": "superboard", "motivo": "Igual."},
++    {"de": "fibrocemento", "a": "fibrocemento", "motivo": "Igual."},
++    {"de": "teja criolla", "a": "teja de arcilla", "motivo": "VE teja criolla. CO teja de barro / teja española."},
++    {"de": "teja asfáltica", "a": "teja asfáltica", "motivo": "Igual."},
++    {"de": "impermeabilización de techo", "a": "impermeabilización de cubierta", "motivo": "CO cubierta."},
++    {"de": "techo", "a": "cubierta", "motivo": "VE techo = CO cubierta (techo es genérico informal)."},
++    {"de": "viga de corona", "a": "viga de amarre", "motivo": "VE viga corona. CO viga de amarre / viga cinta."},
++    {"de": "columna", "a": "columna", "motivo": "Igual."},
++    {"de": "zapata", "a": "zapata", "motivo": "Igual."},
++    {"de": "fundación", "a": "cimentación", "motivo": "VE fundación. CO cimentación."},
++    {"de": "pilotaje", "a": "pilotaje", "motivo": "Igual."},
++    {"de": "relleno compactado", "a": "relleno compactado", "motivo": "Igual."},
++    {"de": "sub-base", "a": "subbase", "motivo": "CO subbase granular."},
++    {"de": "base de pavimento", "a": "base granular", "motivo": "CO base granular."},
++    {"de": "asfalto", "a": "asfalto", "motivo": "Igual."},
++    {"de": "brochal", "a": "brocha", "motivo": "VE brochal. CO brocha."},
++    {"de": "rodillo", "a": "rodillo", "motivo": "Igual."},
++    {"de": "andamio", "a": "andamio", "motivo": "Igual."}
++  ]
++}
+diff --git a/basedatos_partidas/glosarios/EC.json b/basedatos_partidas/glosarios/EC.json
+new file mode 100644
+index 0000000..235570e
+--- /dev/null
++++ b/basedatos_partidas/glosarios/EC.json
+@@ -0,0 +1,86 @@
++{
++  "_origen": "VE",
++  "_destino": "EC",
++  "_version": 1,
++  "_nota": "Glosario VE→EC para CotizaT. Ecuador dolarizado, norma NEC. 'de' es venezolano, 'a' es ecuatoriano.",
++  "_fuentes": [
++    "NEC-SE, NEC-HS",
++    "Holcim Ecuador / UNACEM",
++    "Kywi / Ferrisariato EC - tumbado, barredera, formaleta",
++    "APU Ecuador 2025"
++  ],
++  "cambios": [
++    {"de": "friso", "a": "enlucido", "motivo": "VE friso -> EC enlucido / empaste."},
++    {"de": "rodapié", "a": "barredera", "motivo": "VE rodapié -> EC barredera (también zócalo)."},
++    {"de": "cielo raso", "a": "tumbado", "motivo": "VE cielo raso -> EC tumbado (gypsum)."},
++    {"de": "falso techo", "a": "tumbado", "motivo": "Peninsular -> EC tumbado."},
++    {"de": "losa", "a": "losa", "motivo": "Igual (EC losa)."},
++    {"de": "forjado", "a": "losa", "motivo": "Ya."},
++    {"de": "encofrado", "a": "encofrado", "motivo": "EC encofrado / formaleta ambos, pero encofrado es más usado."},
++    {"de": "vaciado", "a": "fundida", "motivo": "VE vaciado -> EC fundida / colado."},
++    {"de": "capa de pega", "a": "capa de mortero adhesivo", "motivo": "EC pegamento cerámico."},
++    {"de": "hormigón", "a": "hormigón", "motivo": "En EC hormigón es oficial (no concreto). Se mantiene hormigón."},
++    {"de": "concreto", "a": "hormigón", "motivo": "VE concreto -> EC hormigón (NEC)."},
++    {"de": "bloque", "a": "bloque", "motivo": "Igual (bloque de hormigón)."},
++    {"de": "cabilla", "a": "varilla", "motivo": "VE cabilla -> EC varilla corrugada."},
++    {"de": "malla electrosoldada", "a": "malla electrosoldada", "motivo": "Igual."},
++    {"de": "fragüe", "a": "porcelana", "motivo": "VE fragüe -> EC porcelana / emporado."},
++    {"de": "granito vaciado en sitio", "a": "terrazo fundido en sitio", "motivo": "EC terrazo."},
++    {"de": "mesón", "a": "mesón", "motivo": "VE mesón -> EC mesón (igual)."},
++    {"de": "grifo", "a": "llave", "motivo": "Peninsular -> EC llave."},
++    {"de": "plomero", "a": "plomero", "motivo": "VE plomero = EC plomero / gasfitero ambos."},
++    {"de": "fontanero", "a": "gasfitero", "motivo": "EC gasfitero."},
++    {"de": "yeso", "a": "estuco", "motivo": "VE yeso -> EC estuco / empaste."},
++    {"de": "tabique", "a": "tabique", "motivo": "VE tabique -> EC tabique / pared liviana."},
++    {"de": "pared de bloque", "a": "pared de bloque", "motivo": "Igual."},
++    {"de": "enchapado", "a": "revestimiento", "motivo": "VE enchapado -> EC revestimiento / enchape."},
++    {"de": "porcelanato", "a": "porcelanato", "motivo": "Igual."},
++    {"de": "cerámica", "a": "cerámica", "motivo": "Igual."},
++    {"de": "revoque", "a": "enlucido", "motivo": "Sinónimo EC."},
++    {"de": "pañete", "a": "enlucido", "motivo": "CO pañete -> EC enlucido."},
++    {"de": "impermeabilización", "a": "impermeabilización", "motivo": "Igual."},
++    {"de": "pintura de caucho", "a": "pintura de caucho", "motivo": "EC pintura de caucho / vinil acrílico."},
++    {"de": "pintura vinilo", "a": "pintura vinil", "motivo": "EC vinil."},
++    {"de": "carpintería de madera", "a": "carpintería", "motivo": "Igual."},
++    {"de": "herrería", "a": "cerrajería", "motivo": "VE herrería -> EC cerrajería."},
++    {"de": "ventana de aluminio", "a": "ventana de aluminio", "motivo": "Igual."},
++    {"de": "puerta entamborada", "a": "puerta tamborada", "motivo": "EC puerta tamborada."},
++    {"de": "tubería de aguas blancas", "a": "tubería de agua potable", "motivo": "VE aguas blancas -> EC agua potable."},
++    {"de": "aguas blancas", "a": "agua potable", "motivo": "Igual."},
++    {"de": "aguas negras", "a": "aguas servidas", "motivo": "EC aguas servidas."},
++    {"de": "tubería de PVC", "a": "tubería de PVC", "motivo": "Igual."},
++    {"de": "colector", "a": "colector", "motivo": "Igual."},
++    {"de": "boca de visita", "a": "caja de revisión", "motivo": "EC caja de revisión."},
++    {"de": "tanquilla", "a": "caja de revisión", "motivo": "VE tanquilla -> EC caja de revisión."},
++    {"de": "sifón", "a": "sifón", "motivo": "Igual."},
++    {"de": "rejilla de piso", "a": "rejilla de piso", "motivo": "Igual."},
++    {"de": "bajante", "a": "bajante", "motivo": "Igual."},
++    {"de": "desagüe", "a": "desagüe", "motivo": "Igual."},
++    {"de": "punto de agua", "a": "punto de agua", "motivo": "EC punto de agua."},
++    {"de": "punto de desagüe", "a": "punto de desagüe", "motivo": "Igual."},
++    {"de": "sanitario", "a": "inodoro", "motivo": "EC inodoro."},
++    {"de": "inodoro", "a": "inodoro", "motivo": "Igual EC."},
++    {"de": "poceta", "a": "inodoro", "motivo": "VE poceta -> EC inodoro."},
++    {"de": "lavamanos", "a": "lavamanos", "motivo": "Igual EC."},
++    {"de": "ducha", "a": "ducha", "motivo": "Igual."},
++    {"de": "batea", "a": "lavandería", "motivo": "VE batea -> EC lavandería / poza."},
++    {"de": "fregadero", "a": "fregadero", "motivo": "VE fregadero -> EC fregadero / lavaplatos."},
++    {"de": "tomacorriente", "a": "tomacorriente", "motivo": "EC tomacorriente."},
++    {"de": "interruptor", "a": "interruptor", "motivo": "Igual."},
++    {"de": "breker", "a": "breaker", "motivo": "EC breaker."},
++    {"de": "tablero eléctrico", "a": "tablero de distribución", "motivo": "EC tablero."},
++    {"de": "tubería Conduit", "a": "tubería conduit", "motivo": "Igual."},
++    {"de": "lámpara", "a": "luminaria", "motivo": "EC luminaria."},
++    {"de": "bombillo", "a": "foco", "motivo": "EC foco / bombillo."},
++    {"de": "cielo raso de drywall", "a": "tumbado de gypsum", "motivo": "EC gypsum."},
++    {"de": "drywall", "a": "gypsum", "motivo": "EC gypsum."},
++    {"de": "teja criolla", "a": "teja de arcilla", "motivo": "EC teja."},
++    {"de": "techo", "a": "cubierta", "motivo": "VE techo -> EC cubierta / losa."},
++    {"de": "viga de corona", "a": "viga de amarre", "motivo": "EC viga de amarre."},
++    {"de": "columna", "a": "columna", "motivo": "Igual."},
++    {"de": "zapata", "a": "zapata", "motivo": "Igual."},
++    {"de": "fundación", "a": "cimentación", "motivo": "EC cimentación."},
++    {"de": "relleno compactado", "a": "relleno compactado", "motivo": "Igual."},
++    {"de": "andamio", "a": "andamio", "motivo": "Igual."}
++  ]
++}
+diff --git a/basedatos_partidas/glosarios/MX.json b/basedatos_partidas/glosarios/MX.json
+new file mode 100644
+index 0000000..6602169
+--- /dev/null
++++ b/basedatos_partidas/glosarios/MX.json
+@@ -0,0 +1,107 @@
++{
++  "_origen": "VE",
++  "_destino": "MX",
++  "_version": 1,
++  "_nota": "Glosario VE→MX para CotizaT. 'de' es término venezolano del catálogo, 'a' es forma preferida en México según NMX, Cemex/Holcim MX, Construrama y APU MX. Aplica con terminologia.py respetando mayúscula/plural.",
++  "_fuentes": [
++    "NMX-C-061, NMX-C-122",
++    "Cemex México / Holcim México - aplanado, plafón, zoclo, cimbra",
++    "Construrama / Home Depot MX",
++    "APU México 2025-2026"
++  ],
++  "cambios": [
++    {"de": "friso", "a": "aplanado", "motivo": "VE friso = mortero de nivelación. MX aplanado (y repellado/enjarre como sinónimos)."},
++    {"de": "rodapié", "a": "zoclo", "motivo": "VE rodapié -> MX zoclo."},
++    {"de": "cielo raso", "a": "plafón", "motivo": "VE cielo raso -> MX plafón (también cielo falso/plafón corrido)."},
++    {"de": "falso techo", "a": "plafón", "motivo": "Peninsular -> MX plafón."},
++    {"de": "losa", "a": "losa", "motivo": "Igual en MX (losa de entrepiso, losa de azotea)."},
++    {"de": "forjado", "a": "losa", "motivo": "Peninsular -> MX losa."},
++    {"de": "encofrado", "a": "cimbra", "motivo": "VE encofrado -> MX cimbra (madera/metálica)."},
++    {"de": "vaciado", "a": "colado", "motivo": "VE vaciado de concreto -> MX colado."},
++    {"de": "capa de pega", "a": "capa de adhesivo", "motivo": "VE capa de pega -> MX adhesivo / pegazulejo."},
++    {"de": "concreto", "a": "concreto", "motivo": "Igual."},
++    {"de": "hormigón", "a": "concreto", "motivo": "Ya mapeado."},
++    {"de": "bloque", "a": "block", "motivo": "VE bloque arcilla/concreto -> MX block (block de concreto, tabique)."},
++    {"de": "cabilla", "a": "varilla", "motivo": "VE cabilla -> MX varilla corrugada."},
++    {"de": "acero corrugado", "a": "acero de refuerzo", "motivo": "MX acero de refuerzo."},
++    {"de": "malla electrosoldada", "a": "malla electrosoldada", "motivo": "Igual."},
++    {"de": "fragüe", "a": "boquilla", "motivo": "VE fragüe -> MX boquilla / junteo."},
++    {"de": "granito vaciado en sitio", "a": "terrazo colado en sitio", "motivo": "MX terrazo."},
++    {"de": "mesón", "a": "barra", "motivo": "VE mesón cocina -> MX barra / cubierta."},
++    {"de": "encimera", "a": "cubierta", "motivo": "Peninsular -> MX cubierta."},
++    {"de": "grifo", "a": "llave", "motivo": "Peninsular -> MX llave."},
++    {"de": "llave", "a": "llave", "motivo": "VE/ MX llave (grifería)."},
++    {"de": "plomero", "a": "plomero", "motivo": "VE plomero = MX plomero (también fontanero poco usado)."},
++    {"de": "yeso", "a": "yeso", "motivo": "VE yeso -> MX yeso / pasta / tablaroca."},
++    {"de": "tabique", "a": "muro", "motivo": "VE tabique -> MX muro (muro de tablaroca/divisorio)."},
++    {"de": "pared de bloque", "a": "muro de block", "motivo": "VE pared de bloque -> MX muro de block."},
++    {"de": "enchapado", "a": "recubrimiento", "motivo": "VE enchapado -> MX recubrimiento / colocación."},
++    {"de": "enchape", "a": "recubrimiento", "motivo": "CO enchape -> MX recubrimiento."},
++    {"de": "porcelanato", "a": "porcelanato", "motivo": "Igual (MX también porcelanato)."},
++    {"de": "cerámica", "a": "azulejo", "motivo": "VE cerámica -> MX azulejo (cerámica es genérico)."},
++    {"de": "baldosín", "a": "azulejo", "motivo": "Ya."},
++    {"de": "azulejo", "a": "azulejo", "motivo": "Igual en MX."},
++    {"de": "revoque", "a": "aplanado", "motivo": "Sinónimo MX."},
++    {"de": "pañete", "a": "aplanado", "motivo": "CO pañete -> MX aplanado."},
++    {"de": "repello", "a": "aplanado", "motivo": "Sinónimo."},
++    {"de": "impermeabilización", "a": "impermeabilización", "motivo": "Igual."},
++    {"de": "manto asfáltico", "a": "impermeabilizante prefabricado", "motivo": "MX manto prefabricado / membrana."},
++    {"de": "pintura de caucho", "a": "pintura vinílica", "motivo": "VE caucho -> MX vinílica."},
++    {"de": "pintura vinilo", "a": "pintura vinílica", "motivo": "CO -> MX."},
++    {"de": "esmalte", "a": "esmalte", "motivo": "Igual."},
++    {"de": "barniz", "a": "barniz", "motivo": "Igual."},
++    {"de": "carpintería de madera", "a": "carpintería", "motivo": "Igual."},
++    {"de": "herrería", "a": "herrería", "motivo": "VE herrería = MX herrería (también cerrajería)."},
++    {"de": "reja", "a": "reja", "motivo": "Igual."},
++    {"de": "ventana de aluminio", "a": "ventana de aluminio", "motivo": "Igual."},
++    {"de": "vidrio templado", "a": "vidrio templado", "motivo": "Igual."},
++    {"de": "puerta entamborada", "a": "puerta de tambor", "motivo": "MX puerta de tambor."},
++    {"de": "tubería de aguas blancas", "a": "tubería de agua potable", "motivo": "VE aguas blancas -> MX agua potable."},
++    {"de": "aguas blancas", "a": "agua potable", "motivo": "Igual."},
++    {"de": "aguas negras", "a": "aguas negras", "motivo": "MX aguas negras (también drenaje)."},
++    {"de": "tubería de PVC", "a": "tubería de PVC", "motivo": "Igual."},
++    {"de": "tubería PPR", "a": "tubería de polipropileno", "motivo": "MX tuboplus."},
++    {"de": "colector", "a": "colector", "motivo": "Igual."},
++    {"de": "boca de visita", "a": "registro", "motivo": "VE boca de visita -> MX registro."},
++    {"de": "tanquilla", "a": "registro", "motivo": "VE tanquilla -> MX registro."},
++    {"de": "sifón", "a": "cespol", "motivo": "VE sifón -> MX cespol."},
++    {"de": "rejilla de piso", "a": "coladera", "motivo": "VE rejilla -> MX coladera."},
++    {"de": "bajante", "a": "bajada", "motivo": "VE bajante -> MX bajada pluvial."},
++    {"de": "desagüe", "a": "desagüe", "motivo": "Igual."},
++    {"de": "punto de agua", "a": "salida hidráulica", "motivo": "MX salida hidráulica."},
++    {"de": "punto de desagüe", "a": "salida sanitaria", "motivo": "MX salida sanitaria."},
++    {"de": "sanitario", "a": "WC", "motivo": "VE sanitario -> MX WC / taza."},
++    {"de": "inodoro", "a": "WC", "motivo": "Sinónimo MX."},
++    {"de": "poceta", "a": "WC", "motivo": "VE poceta -> MX WC."},
++    {"de": "lavamanos", "a": "lavabo", "motivo": "VE lavamanos -> MX lavabo."},
++    {"de": "ducha", "a": "regadera", "motivo": "VE ducha -> MX regadera."},
++    {"de": "regadera", "a": "regadera", "motivo": "Igual MX."},
++    {"de": "tina", "a": "tina", "motivo": "Igual."},
++    {"de": "batea", "a": "lavadero", "motivo": "VE batea -> MX lavadero."},
++    {"de": "fregadero", "a": "tarja", "motivo": "VE fregadero -> MX tarja / fregadero."},
++    {"de": "tomacorriente", "a": "contacto", "motivo": "VE tomacorriente -> MX contacto."},
++    {"de": "tomacorriente doble", "a": "contacto dúplex", "motivo": "MX contacto dúplex."},
++    {"de": "interruptor", "a": "apagador", "motivo": "VE interruptor -> MX apagador."},
++    {"de": "breker", "a": "pastilla", "motivo": "VE breaker -> MX pastilla / interruptor termomagnético."},
++    {"de": "breaker", "a": "pastilla", "motivo": "Igual."},
++    {"de": "tablero eléctrico", "a": "centro de carga", "motivo": "MX centro de carga."},
++    {"de": "caja de breakers", "a": "centro de carga", "motivo": "MX."},
++    {"de": "tubería Conduit", "a": "tubería conduit", "motivo": "Igual."},
++    {"de": "lámpara", "a": "luminaria", "motivo": "VE lámpara -> MX luminaria."},
++    {"de": "bombillo", "a": "foco", "motivo": "VE bombillo -> MX foco."},
++    {"de": "cielo raso de drywall", "a": "plafón de tablaroca", "motivo": "MX tablaroca."},
++    {"de": "drywall", "a": "tablaroca", "motivo": "VE drywall -> MX tablaroca."},
++    {"de": "superboard", "a": "durock", "motivo": "MX durock."},
++    {"de": "teja criolla", "a": "teja de barro", "motivo": "MX teja de barro."},
++    {"de": "teja asfáltica", "a": "teja asfáltica", "motivo": "Igual."},
++    {"de": "techo", "a": "azotea", "motivo": "VE techo -> MX azotea / losa."},
++    {"de": "impermeabilización de techo", "a": "impermeabilización de azotea", "motivo": "MX azotea."},
++    {"de": "viga de corona", "a": "cadena de cerramiento", "motivo": "MX cadena / dala."},
++    {"de": "columna", "a": "castillo", "motivo": "VE columna -> MX castillo (elemento vertical)."},
++    {"de": "zapata", "a": "zapata", "motivo": "Igual."},
++    {"de": "fundación", "a": "cimentación", "motivo": "VE fundación -> MX cimentación."},
++    {"de": "relleno compactado", "a": "relleno compactado", "motivo": "Igual."},
++    {"de": "brochal", "a": "brocha", "motivo": "VE brochal -> MX brocha."},
++    {"de": "andamio", "a": "andamio", "motivo": "Igual."}
++  ]
++}
+diff --git a/basedatos_partidas/glosarios/PE.json b/basedatos_partidas/glosarios/PE.json
+new file mode 100644
+index 0000000..65979b0
+--- /dev/null
++++ b/basedatos_partidas/glosarios/PE.json
+@@ -0,0 +1,91 @@
++{
++  "_origen": "VE",
++  "_destino": "PE",
++  "_version": 1,
++  "_nota": "Glosario VE→PE para CotizaT. Norma G.050, S10 Perú. 'de' venezolano, 'a' peruano.",
++  "_fuentes": [
++    "RNE G.050 / NTP",
++    "Sodimac / Promart PE - tarrajeo, zócalo, cielo raso, formaleta",
++    "CAPECO - Costos y Presupuestos PE 2025",
++    "APU Perú - encofrado, varilla, boquilla"
++  ],
++  "cambios": [
++    {"de": "friso", "a": "tarrajeo", "motivo": "VE friso -> PE tarrajeo (frotachado)."},
++    {"de": "rodapié", "a": "zócalo", "motivo": "VE rodapié -> PE zócalo / contrazócalo."},
++    {"de": "cielo raso", "a": "cielo raso", "motivo": "PE cielo raso (igual, también cielorraso)."},
++    {"de": "falso techo", "a": "cielo raso", "motivo": "Ya."},
++    {"de": "losa", "a": "losa", "motivo": "PE losa aligerada / losa maciza."},
++    {"de": "forjado", "a": "losa", "motivo": "Ya."},
++    {"de": "encofrado", "a": "encofrado", "motivo": "PE encofrado (también formaleta como sinónimo)."},
++    {"de": "vaciado", "a": "vaciado", "motivo": "PE vaciado de concreto."},
++    {"de": "capa de pega", "a": "capa de mortero adhesivo", "motivo": "PE pegamento extrafuerte."},
++    {"de": "hormigón", "a": "concreto", "motivo": "Peninsular -> PE concreto."},
++    {"de": "concreto", "a": "concreto", "motivo": "Igual."},
++    {"de": "bloque", "a": "ladrillo", "motivo": "VE bloque -> PE ladrillo King Kong / pandereta."},
++    {"de": "cabilla", "a": "varilla", "motivo": "VE cabilla -> PE varilla / fierro corrugado."},
++    {"de": "acero corrugado", "a": "fierro corrugado", "motivo": "PE fierro corrugado."},
++    {"de": "malla electrosoldada", "a": "malla electrosoldada", "motivo": "Igual."},
++    {"de": "fragüe", "a": "fragua", "motivo": "VE fragüe -> PE fragua / boquilla."},
++    {"de": "granito vaciado en sitio", "a": "terrazo pulido vaciado en sitio", "motivo": "PE terrazo."},
++    {"de": "mesón", "a": "tablero", "motivo": "VE mesón -> PE tablero / encimera de granito."},
++    {"de": "encimera", "a": "tablero", "motivo": "Peninsular -> PE tablero."},
++    {"de": "grifo", "a": "caño", "motivo": "Peninsular -> PE caño / grifería."},
++    {"de": "llave", "a": "llave", "motivo": "VE llave -> PE llave / grifería."},
++    {"de": "plomero", "a": "gasfitero", "motivo": "VE plomero -> PE gasfitero."},
++    {"de": "fontanero", "a": "gasfitero", "motivo": "Ya."},
++    {"de": "yeso", "a": "yeso", "motivo": "VE yeso -> PE yeso / pasta mural."},
++    {"de": "tabique", "a": "tabique", "motivo": "PE tabique / tabiquería drywall."},
++    {"de": "pared de bloque", "a": "muro de ladrillo", "motivo": "VE pared de bloque -> PE muro de ladrillo."},
++    {"de": "enchapado", "a": "enchapado", "motivo": "PE enchapado (igual)."},
++    {"de": "porcelanato", "a": "porcelanato", "motivo": "Igual."},
++    {"de": "cerámica", "a": "cerámica", "motivo": "PE cerámica / mayólica."},
++    {"de": "revoque", "a": "tarrajeo", "motivo": "Sinónimo PE."},
++    {"de": "pañete", "a": "tarrajeo", "motivo": "CO pañete -> PE tarrajeo."},
++    {"de": "impermeabilización", "a": "impermeabilización", "motivo": "Igual."},
++    {"de": "pintura de caucho", "a": "pintura látex", "motivo": "VE caucho -> PE látex / temple."},
++    {"de": "pintura vinilo", "a": "pintura látex", "motivo": "CO -> PE."},
++    {"de": "carpintería de madera", "a": "carpintería de madera", "motivo": "Igual."},
++    {"de": "herrería", "a": "cerrajería", "motivo": "VE herrería -> PE cerrajería."},
++    {"de": "ventana de aluminio", "a": "ventana de aluminio", "motivo": "Igual."},
++    {"de": "puerta entamborada", "a": "puerta contraplacada", "motivo": "PE puerta contraplacada."},
++    {"de": "tubería de aguas blancas", "a": "tubería de agua potable", "motivo": "VE aguas blancas -> PE agua potable."},
++    {"de": "aguas blancas", "a": "agua potable", "motivo": "Igual."},
++    {"de": "aguas negras", "a": "desagüe", "motivo": "PE desagüe."},
++    {"de": "tubería de PVC", "a": "tubería de PVC", "motivo": "Igual."},
++    {"de": "tubería PPR", "a": "tubería de polipropileno", "motivo": "PE termofusión."},
++    {"de": "colector", "a": "colector", "motivo": "Igual."},
++    {"de": "boca de visita", "a": "caja de registro", "motivo": "PE caja de registro."},
++    {"de": "tanquilla", "a": "caja de registro", "motivo": "VE tanquilla -> PE caja de registro."},
++    {"de": "sifón", "a": "trampa", "motivo": "PE trampa P / trampa S."},
++    {"de": "rejilla de piso", "a": "sumidero", "motivo": "PE sumidero."},
++    {"de": "bajante", "a": "montante", "motivo": "PE montante."},
++    {"de": "desagüe", "a": "desagüe", "motivo": "Igual."},
++    {"de": "punto de agua", "a": "punto de agua", "motivo": "PE punto de agua fría/caliente."},
++    {"de": "punto de desagüe", "a": "punto de desagüe", "motivo": "Igual."},
++    {"de": "sanitario", "a": "inodoro", "motivo": "PE inodoro / water."},
++    {"de": "inodoro", "a": "inodoro", "motivo": "Igual PE."},
++    {"de": "poceta", "a": "inodoro", "motivo": "VE poceta -> PE inodoro."},
++    {"de": "lavamanos", "a": "lavatorio", "motivo": "VE lavamanos -> PE lavatorio."},
++    {"de": "ducha", "a": "ducha", "motivo": "Igual PE."},
++    {"de": "batea", "a": "lavadero", "motivo": "VE batea -> PE lavadero."},
++    {"de": "fregadero", "a": "lavadero de cocina", "motivo": "VE fregadero -> PE poza / lavadero."},
++    {"de": "tomacorriente", "a": "tomacorriente", "motivo": "PE tomacorriente."},
++    {"de": "interruptor", "a": "interruptor", "motivo": "PE interruptor / dado."},
++    {"de": "breker", "a": "llave térmica", "motivo": "VE breaker -> PE llave térmica / termomagnética."},
++    {"de": "breaker", "a": "llave térmica", "motivo": "Igual."},
++    {"de": "tablero eléctrico", "a": "tablero eléctrico", "motivo": "PE tablero general/distribución."},
++    {"de": "tubería Conduit", "a": "tubería conduit", "motivo": "Igual."},
++    {"de": "lámpara", "a": "luminaria", "motivo": "PE luminaria."},
++    {"de": "bombillo", "a": "foco", "motivo": "PE foco."},
++    {"de": "cielo raso de drywall", "a": "cielo raso de drywall", "motivo": "PE drywall."},
++    {"de": "drywall", "a": "drywall", "motivo": "Igual PE."},
++    {"de": "teja criolla", "a": "teja andina", "motivo": "PE teja andina / teja de arcilla."},
++    {"de": "techo", "a": "techo", "motivo": "PE techo / cobertura."},
++    {"de": "viga de corona", "a": "viga solera", "motivo": "PE viga solera / viga collar."},
++    {"de": "columna", "a": "columna", "motivo": "Igual."},
++    {"de": "zapata", "a": "zapata", "motivo": "Igual."},
++    {"de": "fundación", "a": "cimentación", "motivo": "PE cimentación."},
++    {"de": "relleno compactado", "a": "relleno compactado", "motivo": "Igual."},
++    {"de": "andamio", "a": "andamio", "motivo": "Igual."}
++  ]
++}
+diff --git a/docs/ANALISIS_LATAM_Y_COMPETENCIA_2026-08-19.md b/docs/ANALISIS_LATAM_Y_COMPETENCIA_2026-08-19.md
+new file mode 100644
+index 0000000..e3f2369
+--- /dev/null
++++ b/docs/ANALISIS_LATAM_Y_COMPETENCIA_2026-08-19.md
+@@ -0,0 +1,287 @@
++# Análisis: de Venezuela a Latinoamérica — Ventajas competitivas y qué cambiar
++
++> **Fecha:** 19/08/2026 · **Titular decide pasar de “solo Venezuela” a “todo el mundo hispano”.**
++> Análisis a fondo del repositorio completo (694 tests, ~33k líneas, 3.006 partidas, 17 productos, PDFs verificados, producción en `cotizat.online` con Supabase/Vercel) antes de proponer ningún cambio de código.
++> Complementa a `ANALISIS_PRODUCTO_Y_VIABILIDAD.md` (13/08) y a `PLAN_DE_COMERCIALIZACION_Y_EVOLUCION_SAAS.md` (16/08).
++
++---
++
++## 0. Resumen ejecutivo (léelo en 2 minutos)
++
++**La decisión es acertada y llega en el momento óptimo.** No solo no debes limitarte a Venezuela: limitarte sería renunciar a tu mayor palanca comercial.
++
++1.  **El 95% del código ya es regionalizable.** El núcleo (capítulos, partidas con mediciones, descompuestos editables recurso a recurso, costes/margen/beneficio, tiempos por cuadrilla, versiones inmutables, enlace de propuesta con aceptación trazable, PDF profesional con Lato, dashboard/reportes, importador CYPE/Excel y backup verificable) **no menciona Venezuela en ningún sitio**. Funciona mañana en Bogotá, Lima, Santiago o Ciudad de México sin tocarlo.
++2.  **El 5% que sí ata es cosmético pero bloqueante para la venta:** título, hero y descripción de la landing (“Hecho para Venezuela”), defaults de país/moneda/IVA, solo dos monedas (`USD`/`Bs`), etiqueta `RIF`, bloque `🇻🇪 Funciones regionales de Venezuela`, texto `Tasa (ref. BCV)` y `Bs` hardcodeados en `pdf.py`, `form.html` y `detail.html`, e hilo horario `hora de Venezuela`.
++3.  **Conviertes una debilidad en foso.** Los grandes (Presto 100€/mes, Arquímedes 70€/mes) ignoran Latinoamérica. Los latinos (OneEstimate 49-99 USD/mes + IA, OPUS 150 USD/mes en México, S10 80 USD/mes en Perú) cobran 6-20× más que tu piloto (`89 USD/año = 7,4 USD/mes`) y venden como diferencial justo lo que ellos no resuelven bien: **precios actualizados, foso local y soporte cercano**. Tú ya tienes el catálogo (3.006 partidas), el precio en USD (moneda común del sector en todo LatAm inflacionario) y la operación browser-first con aislamiento real. Cambiar 12 pantallas y 4 tablas te abre 500M de hispanohablantes con el mismo binario.
++4.  **No necesitas reescribir ni “hacer versión LatAm”.** Hace falta un MVP de **2-3 semanas** (configuración por país + moneda libre + IVA configurable + etiqueta fiscal genérica + landing neutra). Después, crecimiento por *catálogo* y por *métodos de cobro locales*, no por código por país.
++
++**Veredicto:** mantén el foco vertical (construcción/remodelación), abre el mercado en horizontal (todos los países hispanos). No diluyas el producto en “generador universal”.
++
++---
++
++## 1. Qué es CotizaT hoy — diagnóstico honesto
++
++### 1.1 Lo que ya es world-class (y por qué importa contra la competencia)
++
++Esto es lo que el análisis profundo del 13/08 calificó 8/10 como *software*:
++
++| Área | Evidencia | Por qué es ventaja comercial |
++|---|---|---|
++| **Motor económico único con `Decimal` + `ROUND_HALF_UP`** | `app/services/calculations.py` es la única fuente de verdad (web, CSV, PDF comparten totales). Nunca se confía en subtotales del navegador. | Un presupuesto que descuadra 1 céntimo pierde la confianza para siempre. La mayoría de SaaS baratos calculan en JS y redondean con `float`. Tú no. |
++| **PDF que vende** | ReportLab + Lato embebida, banda navy de capítulo con subtotal, partidas 1.1/1.2 con descripción técnica CYPE, mediciones desglosadas, producto presupuestado con imagen, totales base/IVA/total, anexos fusionados como páginas reales, marca de agua por estado, garantías por familia. Verificado visualmente en 4-15 páginas. | El cliente final no distingue tu PDF de uno de 60€/mes. Es tu closer. Un reformista gana obras por cómo se ve el documento. |
++| **Descompuestos editables recurso a recurso** | `DescomposicionPartida`/`DescomposicionFila` con `origen=cype|manual`, `categoria` explícita, edición de rendimiento × precio unitario, subtotales, % complementarios y coste directo sincronizado con la matriz `.xlsx` original sin perder celdas/fórmulas. | CYPE/Presto lo tienen; ningún SaaS de 10-15€/mes lo tiene. Para un técnico, poder tocar “si sube el cemento de 0,23 a 0,28” y que recalcule todo es oro. En LatAm eso se traduce a APU. |
++| **Tiempos de obra** | `app/services/tiempos.py`: horas por descompuesto (h/día/jornada), por catálogo o por `coste_mano_obra / tarifa_media`; totales, días con N cuadrillas y cobertura, separando h-hombre y h-equipo. | Ningún competidor barato lo muestra en obra. Permite prometer plazo sin inventar y calcular margen real vs. mano de obra. |
++| **Versiones inmutables + propuesta con enlace seguro** | `PresupuestoVersion` snapshot + `EnlacePropuesta` (solo SHA-256, expirable, revocable, RLS por hash). Aceptación/rechazo con trazabilidad (función SECURITY DEFINER), notificación a admin y estado que solo avanza si es última versión. | Convierte el presupuesto en cierre de venta (“firma aquí desde el móvil”). ReformAI/OneEstimate lo venden como premium; tú ya lo tienes a 89$/año. |
++| **Catálogo de 3.006 partidas clasificadas** | `basedatos_partidas/datos/descompuestos/*.json` → `partidas.csv` → 18 capítulos CYPE, con desglose materiales/mano de obra/complementarios, desperdicio y terminología auditada. | La competencia presume 3.650 (Motor de Presupuestos) o 10.700 APUs (OneEstimate). Tú ya compites en volumen y superas a todos los españoles baratos. El catálogo **es el producto** el día 1. |
++| **Browser-first real** | PostgreSQL + RLS por `cotizat_app` (rol sin BYPASSRLS verificado por `/readyz`), 29 modelos tenant auditados, storage privado por proxy (no URLs públicas), rate limit distribuido Upstash, CSP sin `unsafe-inline`, backups/restore verificados con SHA-256, auditoría inmutable. | Puedes operar 500 empresas sin fuga de datos. Es lo que separa “licencia de escritorio” de “SaaS cobrable”. |
++| **Precio de piloto fundador** | `89 USD/año` (habitual 109) o `9,99 USD/mes` + 7 días gratis sin tarjeta, con anti-reciclaje por email normalizado. | Ver §3: 6-13× más barato que la competencia directa. |
++
++### 1.2 Lo que todavía no es SaaS vendible en cualquier país
++
++| Hueco | Estado |
++|---|---|
++| Dependencia de marca/landing venezolana | Bloquea marketing fuera |
++| Solo 2 monedas, IVA 16% venezolano como default, RIF, BCV | Bloquea presupuestos en MXN/COP/PEN/CLP/ARS |
++| Catálogo con precios en USD pero validados contra mercado venezolano | Requiere disclaimer “referencial” o set regional |
++| País default `Venezuela` en 5 sitios | Fricción en onboarding fuera |
++| Fiscalidad Venezuela detrás de un flag único (`activar_funciones_venezuela`) | Necesita generalización a “funciones regionales por país” |
++
++Ninguno de estos exige re-arquitectura. Todos son *configuración por tenant*.
++
++---
++
++## 2. Ventajas reales frente a la competencia directa (2026)
++
++### 2.1 Quién es la competencia si abres a LatAm
++
++| Segmento | Producto | Precio público | Foco | Lo que presume |
++|---|---|---|---|---|
++| **LatAm con IA/APU** | **OneEstimate** | Gratis 4/mes · **49 USD/mes** Pro · 99 Business | CO/MX/PE/CL/AR + ES | 10.700 APUs por país, IA sobre planos, BIM/IFC, AIU colombiano nativo |
++| | **OPUS (Ecosoft)** | **~150 USD/mes** | México (obra pública) | Precios unitarios, generador APU, integración Neodata |
++| | **Neodata** | **~90-120 USD/mes** | México | Presupuestos + control obra pública |
++| | **S10 ERP** | **~80 USD/mes** | Perú/Bolivia | Clásico local, controla obra y costos |
++| **LatAm pymes** | **ConstruCloud** | **~60 USD/mes** | Pymes hispanas | Gestión pymes construcción |
++| | **Foco en Obra** | **~50 USD/mes** | Chile/Argentina | Presupuestos + seguimiento |
++| **España/Europa** | **Presto (RIB)** | **~58-100€/mes** (480€/año) | España, licitación | Estándar sector, BC3/FIEBDC |
++| | **Arquímedes (CYPE)** | **~70€/mes** (475€) | Técnico / Open BIM | Muy técnico |
++| | **BrickControl** | **99€/mes** | España, integral | ERP completo |
++| | **MedicionPro** | **29€/mes** | Cloud BC3 | Mediciones, certificaciones |
++| **Low-cost global** | **ReformAI** | **14,99€/mes** (gratis 3/mes) | Reformas, móvil | App foto+texto, sin APU serio |
++| | **Motor de Presupuestos** | **39€/mes** | Autónomos ES | 4.244 partidas, IA+voz |
++| | **Excel / Word / plantillas** | **0** | Universal | 70-80% del mercado real todavía |
++| **TÚ** | **CotizaT** | **7,4 USD/mes (89/año)** | **LatAm hispano, remodelación** | PDF, APU editables, tiempos, versiones, propuesta firmable, 3.006 partidas |
++
++Fuentes: tabla del análisis del 13/08 + búsqueda 19/08 (OneEstimate/OPUS/S10/ConstruCloud) [1](https://hubservice.io/en/blog/mejor-software-ia-presupuestos-apu-construccion-latam-2026) [3](https://oneestimate.ai/es/blog/mejores-software-presupuestos-construccion).
++
++### 2.2 Tus 8 ventajas diferenciales (con prueba, no con eslogan)
++
++**1) Precio que no se puede discutir.** 89 USD/año es 1/6 de OneEstimate Pro (588 USD/año), 1/13 de OPUS (1.800 USD/año), 1/8 de Presto. Para una empresa de 3-15 personas en LatAm, pagar 49-150 USD/mes *todos los meses* es el bloqueador Nº1. Tú resuelves ese dolor con un anual que equivale a **una sola hora de oficial facturada**.
++
++**2) PDF de nivel Presto por 15% del precio.** Ningún low-cost entrega: banda de capítulo con subtotal, mediciones por zona (“Cocina 4,00×2,50”), producto con foto, anexo de garantías y anexos fusionados como páginas reales con índice paginado. OneEstimate y OPUS sacan buen PDF, pero a 7-20× tu precio.
++
++**3) APU/descompuestos editables de verdad.** OneEstimate/S10/OPUS viven de su base de APUs; ReformAI/MedicionPro a 15-29€/mes no dejan tocar rendimiento ni precio por recurso. Tú sí: `Rendimiento × Precio unitario = Importe`, con fila `%` y sincronización CYPE. Un jefe de obra en Lima entiende “cambio el rendimiento del ayudante de 0,5 a 0,7 h/m²” sin curso.
++
++**4) Margen y beneficio a la vista, por partida y por capítulo.** El header del presupuesto muestra `+35% · $651 margen`, y cada capítulo/partida arrastra `Coste $96,58 · Beneficio $33,82`. En obra, el margen no es un informe mensual: es saber si ese baño te da 25% o 12% antes de enviar. Ningún barato lo calcula; los caros lo esconden en un módulo “costos”.
++
++**5) Catálogo que permite presupuestar el día 1.** 3.006 partidas en 18 capítulos, con costes desglosados y terminología venezolana auditada (`hormigón→concreto`, `solado→piso`, `fontanero→plomero`, etc.). Un cliente nuevo de fuera no necesita 2 semanas cargando datos: busca “impermeabilización” y tiene 5 variantes. Ampliar a ~5.000 (objetivo documentado) es añadir JSONs, no reescribir producto.
++
++**6) Propuesta que cierra la venta sin visita.** Enlace público expirable + aceptación con nombre/email/hora + notificación al administrador + cambio de estado. En LatAm, el cuello de botella es “el cliente no responde el WhatsApp”. Un link que ve en el móvil y firma en 30s es tasa de cierre, no feature.
++
++**7) Funciona sin internet donde importa.** Browser-first pero sin dependencia de Google Fonts ni servicios externos para generar el PDF; valida imágenes con Pillow y permite trabajo en obra con conectividad intermitente. Los competidores cloud puros se caen donde tu cliente presupuesta (la obra).
++
++**8) Honestidad que no erosiona confianza.** No vendes “IA mágica” ni “factura fiscal” donde no la hay. En un mercado latam saturado de “IA para todo”, decir “sugerencias deterministas desde tu catálogo, sin inventar precios” es diferenciación. OneEstimate basa su marketing en IA; cuando la IA falla un APU, pierde credibilidad. Tú nunca inventas un precio.
++
++### 2.3 Dónde *no* ganas hoy (y no necesitas ganar para cobrar)
++
++*   **Medición automática sobre planos / BIM IFC / IA que lee PDFs.** OneEstimate es líder ahí. No lo persigas: exige equipo de ML y no lo valora tu público (remodelación de vivienda, no licitación). Tu ventaja es APU manual fino + tiempos, no magia.
++*   **AIU colombiano nativo / FIEBDC (BC3) español / normativa por país.** Son formalismas que pesan en licitación pública, no en remodelación privada (tu nicho). Documenta que “no es factura fiscal” y deja el formalismo fiscal para más tarde, por país.
++*   **App nativa de campo.** Tu responsive + PWA pendiente es suficiente para fase 1. Procore/Buildertrend juegan otra liga (enterprise).
++
++---
++
++## 3. Qué te ata hoy a Venezuela — inventario completo
++
++Revisión exhaustiva del código del 19/08 (grep sobre 105 archivos versionados):
++
++| Nº | Atadura | Archivo(s) | Severidad para LatAm |
++|---|---|---|---|
++| V-01 | **Título/meta/hero 100% Venezuela.** `Presupuestos… para Venezuela`, `🇻🇪 Hecho para Venezuela`, `El catálogo más completo para presupuestar en Venezuela`, precios “los que usa el sector… en Venezuela”, sección completa `Pensado para Venezuela` | `app/templates/landing.html:6,37,613,617,689` | **Crítica:** quien entra desde México/Colombia se va. |
++| V-02 | **Meta description Venezuela + USD BCV** | `landing.html:7` | Crítica SEO |
++| V-03 | **Solo 2 monedas: USD y Bs** (enum hardcodeado). Símbolo `Bs` directo, `Otros → Bs` asumido, atajo `Ctrl+M` solo USD↔Bs | `app/models.py` `Configuracion.moneda_default`, `Presupuesto.moneda`, `app/routers/configuracion.py:95`, `presupuestos.py:1519,2975`, `utils.py SIMBOLOS`, `form.html:116,120`, `detail.html:84,126`, `pdf.py:630`, `js/editor/main.js:63` | **Bloqueante funcional** |
++| V-04 | **IVA 16% por defecto** (alícuota VE) + hint “Alícuota general de Venezuela: 16%” | `models.py:1155` `iva_default=16.0`, `settings.html:140` | Media-alta (en CO/CL 19%, AR 21%, PE 18%…) |
++| V-05 | **Flag único `activar_funciones_venezuela`** con 5 subflags (`numero_control`, `tasa_cambio`, `total_bs`, `retenciones`, `clausula_cambiaria`) | `models.py:1170-1176`, `routers/configuracion.py:109`, `presupuestos.py:1538,2994`, `settings.html:192`, `budgets/form.html:145` | Media: arquitectura correcta pero nombre no escala |
++| V-06 | **Textos BCV/Bs en PDF y detalle:** `Tasa (ref. BCV): 1 USD = … Bs`, `Equivalente referencial: … Bs` | `app/services/pdf.py:274,1362-1364`, `budgets/detail.html:84` | Media-alta (confunde fuera) |
++| V-07 | **Etiqueta fiscal `RIF`** hardcodeada en 20 sitios (empresa y cliente, contrato, PDF, seed, presupuesto_muestra) | `models.py` `empresa_rif`, `Cliente.rif`, `services/contrato.py:74-75`, `pdf.py:206,267`, `templates/*`, `seeds.py` | Media (en CO NIT, CL RUT, AR CUIT, PE RUC, MX RFC, EC RUC, DO RUC/RNC…) |
++| V-08 | **País default `Venezuela`** en 5 defaults (cliente, configuración, presupuesto muestra) | `models.py:447` `Cliente.pais`, `1139` `empresa_pais`, `seeds.py:57`, `routers/clientes.py:32,40`, `services/onboarding.py:74` | Baja pero ruido constante |
++| V-09 | **Horario soporte `hora de Venezuela (UTC-4)`** | `legal/soporte.html:32` | Baja |
++| V-10 | **Catálogo y precios “contrastados con mercado venezolano”** | `landing.html` + `basedatos_partidas/` (precios en USD validados VE) | Baja si se comunica como “USD referencial LatAm” |
++| V-11 | **Formato numérico único `1.234.567,89`** (Venezuela/España: punto miles, coma decimal). México usa `1,234,567.89`; Chile/Argentina mezclan. | `app/utils.py` `fmt_num`, `fmt_monto` | Baja-median (no bloquea, pero nota local) |
++| V-12 | **Métodos de cobro del piloto muy VE** (Pago Móvil) aunque con Zelle/USDT/Binance que sí son regionales | `docs/COBRO_Y_LICENCIAS.md`, `services/datos_pago.py` | Baja (ampliar a Nequi, MercadoPago, Yape, etc. es solo texto) |
++
++**Conclusión:** 12 ataduras, 2 críticas (V-01/V-02), 1 bloqueante funcional (V-03), 3 medias (V-04/V-06/V-07). Ninguna toca el motor de cálculo, descompuestos, tiempos ni aislamiento.
++
++---
++
++## 4. Qué hay que cambiar para ser “apto para todo LatAm”
++
++### 4.1 Principio: no por país, por configuración del tenant
++
++Ya tienes el patrón: `Configuracion` por organización, `Presupuesto` congela el valor. La fiscalidad no debe ser “si Venezuela entonces X”, sino:
++
++```
++Configuracion.pais_default              → "Venezuela" | "Colombia" | …
++Configuracion.moneda_default            → ISO 4217 libre (USD, MXN, COP, PEN, CLP, ARS, UYU, BOB, DOP, GTQ, BRL, EUR …)
++Configuracion.iva_default               → 0-100 configurable (sin hint país)
++Configuracion.etiqueta_id_fiscal        → "RIF" | "NIT" | "RUT" | "CUIT" | "RUC" | "RFC" | "ID Fiscal" (texto libre 20c)
++Configuracion.activar_funciones_regionales → bool (renombra activar_funciones_venezuela, manteniendo compatibilidad)
++Configuracion.* regionales ya existen   → mostrar_numero_control, mostrar_tasa_cambio, etc. se mantienen como flags genéricos
++Presupuesto.etiqueta_id_fiscal_snapshot → opcional, para que el PDF histórico no cambie si luego cambias etiqueta
++Presupuesto.moneda                      → ya existe, ampliar CHECK
++```
++
++**No crees tabla `paises` ni máquina fiscal por país.** Un mercado por país con reglas distintas es Etapa 6 (ver §7 del PLAN). Para LatAm-aptitud basta moneda libre + IVA configurable + etiqueta fiscal genérica + textos neutros.
++
++### 4.2 Cambios técnicos concretos (archivo por archivo)
++
++#### Capa 1 — Des-venezolanizar la cara (landing + onboarding) — 1 día
++
++| Archivo | Cambio |
++|---|---|
++| `app/templates/landing.html` | Título: `…para Venezuela` → `…para Latinoamérica` o `…para construcción y remodelación` (neutro). Hero: `🇻🇪 Hecho para Venezuela` → `Hecho para Latinoamérica · Construcción y remodelación` (mantén la bandera como ícono secundario, no como identidad). Retirar o neutralizar secciones `Pensado para Venezuela` y `catálogo más completo para presupuestar en Venezuela` → `Más de 3.000 partidas clasificadas con precios de referencia en USD` + subtítulo `Ajusta moneda, IVA y tu ID fiscal en segundos`. Meta description: quitar “venezolano”. |
++| `app/templates/onboarding.html` | Placeholder `Venezuela` → selector de país con lista LatAm + “Otro”. No obligues: `value="{{ cfg.empresa_pais or '' }}" placeholder="p. ej. Colombia"`. Si eligen país, precarga etiqueta fiscal e IVA sugerido (ver Capa 2). |
++| `app/templates/legal/soporte.html` | `hora de Venezuela (UTC−4)` → `hora de Caracas (UTC−4) / Bogotá–Lima (UTC−5) · responde en horario laboral del huso del cliente` o genérico. |
++| `app/branding.py` | Si `LEGAL_ENTITY` menciona Venezuela, neutralizar. |
++
++#### Capa 2 — Moneda libre + IVA configurable + ID fiscal genérico — 2–3 días
++
++| Archivo | Cambio |
++|---|---|
++| `app/models.py` | `Configuracion`: añadir `etiqueta_id_fiscal = Column(String(20), default="RIF")` y renombrar `activar_funciones_venezuela` a `activar_funciones_regionales` **manteniendo property alias** para no migrar datos: <br>`@property def activar_funciones_venezuela(self): return self.activar_funciones_regionales` + setter (compat). <br>`moneda_default` pasa de CHECK `IN ('USD','Bs')` a `String(10)` libre validado contra lista ISO (ver `app/utils.py`). <br>Añadir `SIMBOLOS` ampliado (USD $, MXN $, COP $, ARS $, CLP $, PEN S/, UYU $, BOB Bs, PYG ₲, GTQ Q, DOP RD$, CRC ₡, NIO C$, HNL L, PAB B/., BRL R$, EUR €). <br>`Cliente.rif` → mantener columna, exponer como `id_fiscal` en formularios (alias). |
++| `app/utils.py` | Ampliar `SIMBOLOS` y `fmt_monto` para fallback `f"{valor} {moneda}"`. Mantener `fmt_num` con punto miles / coma decimal como default (mayoría LatAm) pero dejar puerta a `fmt_num_locale` futuro. |
++| `app/config.py` / `app/routers/configuracion.py` | `moneda_default` valida contra `MONEDAS_SOPORTADAS` (lista de 20 ISOs). `iva_default` sin hint de país. `etiqueta_id_fiscal` texto libre 2-20c. Mapeo `PAIS → {iva_sugerido, etiqueta_default, moneda_sugerida}` solo como *sugerencia* en onboarding/config (no bloqueante): <br>VE 16% RIF Bs/USD · CO 19% NIT COP · MX 16% RFC MXN · PE 18% RUC PEN · CL 19% RUT CLP · AR 21% CUIT ARS · EC 15% RUC USD · DO 18% RNC DOP (ITBIS) · UY 22% RUT UYU · BO 13% NIT BOB · GT 12% NIT GTQ · etc. |
++| `app/routers/clientes.py` + `app/templates/clients/form.html` | Label `RIF/C.I.` → `{{ cfg.etiqueta_id_fiscal or 'ID fiscal' }}` (dinámico por organización). Placeholder por país. |
++| `app/routers/presupuestos.py` + `app/templates/budgets/form.html` + `budgets/detail.html` | Select de moneda: de 2 opciones a ~20 (USD, MXN, COP, PEN, CLP, ARS, UYU, BOB, PYG, DOP, GTQ, HNL, NIO, CRC, PAB, BRL, EUR, Bs). Buscar `in ("USD","Bs")` en 3 sitios y sustituir por lista. Etiqueta `Tasa de cambio Bs/USD` → `Tasa de cambio (referencia)` genérica con dos campos `moneda_origen → moneda_destino` o mantener `tipo_cambio` como factor genérico (si moneda=USD y hay tasa, es “USD→local”). Atajo `Ctrl+M` → cicla por monedas configuradas o deja de asumir Bs. |
++| `app/services/pdf.py` | `Tasa (ref. BCV): 1 USD = … Bs` → `Tasa de referencia: 1 USD = … Bs` (o `1 {moneda_base} = … {moneda_local}`) parametrizado por `config.mostrar_tasa_cambio`. `Equivalente referencial: … Bs` → `Equivalente: … {moneda}` con símbolo dinámico. `RIF:` → `{{ etiqueta_id_fiscal }}:` dinámico (empresa y cliente). Símbolo moneda en `_totales`, `_tabla_partida` ya usa `moneda` param → ampliar diccionario. |
++| `app/services/contrato.py` + `presupuesto_muestra.py` | `RIF/C.I.:` → etiqueta dinámica. Muestra usa `EMPRESA_PAIS = "Colombia"` o neutro si el catálogo se declara regional. |
++| `migrations/` | Alembic: `add_etiqueta_id_fiscal + renombrar flag` con default `RIF` y backfill `activar_funciones_regionales = activar_funciones_venezuela`. |
++| `app/templates/settings.html` | Bloque `🇻🇪 Funciones regionales de Venezuela` → `🌎 Funciones regionales (opcionales)` + 5 checkboxes genéricos. Añadir campo `Etiqueta ID fiscal` (texto) y `Moneda por defecto` (select 20). Hint IVA: “Déjalo en 0 si no aplicas IVA” sin mencionar Venezuela. |
++
++**Migración y compatibilidad:** ninguna organización venezolana pierde nada. Su `etiqueta_id_fiscal` queda `RIF`, su moneda `USD` o `Bs`, su IVA 16% y su `activar_funciones_regionales=True`. El alias mantiene viejo flag leído.
++
++#### Capa 3 — Catálogo y precios — 0 días de código, 1 decisión comercial
++
++*   **No re-precieas el catálogo por país.** Mantén los 3.006 precios en **USD** como “referencia LatAm” y declara honestamente en landing/PDF: “Precios de referencia en USD, revisa y ajusta a tu mercado”. Es lo que ya hace `fmt_monto` con tasa de referencia: el presupuesto puede emitirse en COP/MXN/PEN y mostrar equivalente USD si el cliente lo pide, sin inventar precios por país.
++*   **A medio plazo** (Etapa 6), evalúa *sets regionales* de coste de mano de obra (un oficial cuesta distinto en Santiago vs. Lima) como “coeficiente por país” aplicado al desglose `coste_mano_obra`. No lo hagas en el MVP.
++
++#### Capa 4 — Cobro y operación LatAm — 1 día
++
++*   **Mantén el cobro manual del piloto.** Transferencia, Zelle, Binance y USDT ya funcionan en todo LatAm. Añade a `datos_pago.py`/`settings.html` placeholders de métodos locales como `Nequi (CO), Yape/Plin (PE), MercadoPago (AR/MX), Pix (BR), Pago Móvil (VE)` — solo texto informativo, no integración.
++*   **Stripe** (cuando haya volumen) ya es regional: MX, BR, etc. No cambia código.
++
++### 4.3 Qué *no* tocar en el MVP
++
++*   `app/services/calculations.py`, `tiempos.py`, `descompuestos` → intactos.
++*   `basedatos_partidas/terminologia.py` → ya es agnóstico (tu “concreto/piso/friso” es neutro LatAm; evita peninsularismos). Solo documenta que el glosario es LATAM, no VE.
++*   `app/services/pdf_anexos.py`, `audit`, `storage`, `ratelimit` → intactos.
++
++---
++
++## 5. Diseño de “país” sin sobrediseñar
++
++```
++Usuario crea organización
++  → Onboarding: “¿En qué país operas?” (lista + Otro) → sugiere IVA/etiqueta/moneda
++  → Guarda en Configuracion.empresa_pais + etiqueta_id_fiscal + moneda_default + iva_default
++  → El presupuesto hereda moneda/etiqueta pero permite cambiar por documento
++  → El PDF renderiza con etiqueta y símbolo del documento, no del país
++```
++
++No necesitas modelo `Pais`. Un `JSON` de sugerencias (`app/paises_latam.json` o dict en `app/utils.py`) con 18 entradas es suficiente por 12 meses.
++
++---
++
++## 6. Precio para LatAm — por qué no lo toques (todavía)
++
++| Plan | CotizaT | OneEstimate Pro | OPUS | S10 | Presto | BrickControl |
++|---|---|---|---|---|---|---|
++| Mensual equivalente | **7,4 USD** (89/año) | 49 USD | 150 USD | 80 USD | 58€ (~63 USD) | 99€ (~107 USD) |
++| Anual | **89 USD** | 588 USD | 1.800 USD | 960 USD | ~480€ | 1.188€ |
++
++**No bajes precio para “ser más barato en LatAm”. Ya eres el más barato con margen.** Y no subas hasta validar. El experimento válido es: ¿pagan 89 USD/año en Colombia/México/Perú? Si 5 de 15 entrevistados pagan, el precio es correcto para la región. Si nadie paga, no es precio: es onboarding/catálogo/pago.
++
++Ajuste futuro (si hace falta): **PPP suave** — 89 USD/año en MX/CO/CL/PE, 69 USD/año en BO/EC/PY (ticket menor) — pero solo tras 20 intentos de cobro, no antes.
++
++---
++
++## 7. Roadmap LatAm-ready — 3 semanas, sin parar la operación
++
++| Semana | Entregable | Criterio de hecho |
++|---|---|---|
++| **S1 — Cara neutra** | Landing + onboarding + soporte con textos LatAm, meta SEO regional, país como selector opcional | Un visitante de Bogotá no ve “Venezuela” en ningún hero/meta; el onboarding sugiere NIT 19% COP. Tests: `test_paginas_publicas` + visual. |
++| **S2 — Moneda/IVA/ID fiscal** | Configuración con 20 monedas + IVA libre + etiqueta fiscal + PDF genérico (tasa ref. + RIF→dinámico) | Crear 3 presupuestos: uno en MXN 16% RFC, uno en COP 19% NIT, uno en PEN 18% RUC; los 3 PDFs muestran símbolo y etiqueta correctos y el cálculo no cambia. Migración Alembic + `test_configuracion` + `test_pdf_anexos`. |
++| **S3 — Catálogo honesto + cobro** | Landing aclara “Precios de referencia en USD, ajusta a tu mercado”; datos_pago con métodos locales informativos; guía `docs/COBRO_Y_LICENCIAS.md` con nota LatAm | Un usuario chileno entiende que el precio en USD no es su precio final y sabe cómo pagar por Nequi/MercadoPago manual. Suite 694+ en verde. |
++
++Después de S3 → **Etapa 2 real**: 30 prospectos (10 VE, 10 CO, 10 MX/PE), guion de entrevista del PLAN §2.2, 5 pilotos pagados (al menos 2 fuera de VE). Métrica de éxito: primer PDF <20 min en los 3 países.
++
++---
++
++## 8. Qué cambia en cada artefacto público (checklist de QA)
++
++*   **/** (landing): título, meta description, hero kicker, 3 bullets, sección catálogo, sección “Pensado para…” → todo sin Venezuela. Añade franja `🌎 Disponible en todo LatAm hispano — configura tu moneda, IVA y tu ID fiscal en segundos`.
++*   **/conocer**, **/legal/***: revisar menciones a VE.
++*   **/bienvenida** y **/configuracion**: país como selector, moneda como select 20, etiqueta fiscal como input, bloque `🌎 Funciones regionales`.
++*   **/presupuestos/nuevo** y **/presupuestos/:id/editar**: moneda libre, tasa genérica, RIF dinámico.
++*   **/presupuestos/:id** (detalle) y **PDF**: símbolo correcto, tasa genérica, RIF→etiqueta.
++*   **Email transaccional** (Resend): asunto/cuerpo no menciona VE.
++*   **Catálogo**: mantiene 3.006 partidas; `landing.html: catalogo().partidas_txt` ya es dinámico.
++
++---
++
++## 9. Riesgos si lo haces y si no lo haces
++
++| Riesgo si abres a LatAm | Mitigación |
++|---|---|
++| Precios en USD desalineados con mano de obra local (ej. oficial en AR cuesta distinto) | Disclaimer “referencial” + ajuste masivo por % ya existente (`/partidas/ajustar`); a futuro coeficiente país |
++| Soporte en distintos husos/ pagos locales dispersos | Mantén cobro manual + soporte async por email; documenta métodos por país solo como texto |
++| “RIF” mal entendido fuera | Etiqueta dinámica resuelve; fallback `ID fiscal` |
++| Competencia con IA/APU por país (OneEstimate) te supera en automatización | No compitas en IA: compite en precio + APU editable + PDF + cierre. Es otro segmento (remodelación vs. licitación) |
++
++| Riesgo si *no* abres | Coste |
++|---|---|
++| Mercado venezolano pequeño y con fricción de cobro (Stripe no opera en VE, solo manual) | Techo de 50-100 clientes |
++| OneEstimate/OPUS siguen subiendo y ocupan el relato “para LatAm” | Pierdes ventana de ser “el barato serio” |
++
++---
++
++## 10. Por qué esta apertura no te convierte en “generador genérico”
++
++Reafirma la decisión D-001 del PLAN:
++
++*   Sigues en **construcción y remodelación** (no abres a dentistas/eventos).
++*   Creces por **gremios** (electricista, plomero/gasfiter, A/C, carpintero) con el mismo motor y distinto seed de catálogo — 80 partidas gremiales, no producto nuevo.
++*   Creces por **país** con el mismo código y distinta configuración (moneda/IVA/etiqueta).
++*   No persigues “presupuestos para todo”.
++
++La regla del análisis del 13/08 sigue vigente: *acepta al cliente de otro sector si te paga, no construyas para él.*
++
++---
++
++## 11. Próximo paso recomendado
++
++1.  **Decide etiqueta y mensaje LatAm** (¿“Hecho para Latinoamérica” o neutro “Presupuestos de obra profesionales, en minutos” sin país?). Reserva que `cotizat.app`/`cotizat.co` siguen libres (D-010).
++2.  **Ejecuta S1-S3** en la rama `arena/01a017c7-generador-comercial` en 3 PRs pequeños (uno por capa), cada uno con su migración y sus 2-3 tests de regresión.
++3.  **Valida con 15 entrevistas** (5 VE + 5 CO + 5 MX/PE) usando el guion del PLAN §2.2 antes de tocar catálogo por país. Si 3 pagan 89 USD/año, tienes señal LatAm.
++
++> **Coste de no hacerlo:** seguir siendo “software venezolano” ante un cliente colombiano que habría pagado lo mismo por el mismo binario.
++> **Coste de hacerlo:** ~2 semanas de desarrollo + 1 semana de pulido, sin deuda arquitectónica.
++
++---
++
++### Anexos
++
++*   **Archivos Venezuela-dependientes (búsqueda 19/08):** `landing.html` (5), `onboarding.html`, `settings.html`, `budgets/form.html`, `budgets/detail.html`, `pdf.py`, `contrato.py`, `models.py`, `routers/configuracion.py`, `routers/clientes.py`, `routers/presupuestos.py`, `seeds.py`, `legal/soporte.html`, `utils.py`.
++*   **Monedas sugeridas (20 ISOs):** USD, MXN, COP, PEN, CLP, ARS, UYU, BOB, PYG, GTQ, HNL, NIO, CRC, PAB, DOP, BRL, EUR, VES (por compatibilidad histórica; muestra como Bs), CAD, GBP — con `USD` como default neutro hasta que el usuario elija.
++*   **IVA sugerido por país (solo sugerencia en onboarding):** VE 16, CO 19, MX 16, PE 18, CL 19, AR 21, EC 15, DO 18, UY 22, BO 13, GT 12, HN 15, NI 15, CR 13, PA 7, PY 10, SV 13, BR 17 (ICMS medio; Brasil no es prioridad hispana).
++*   **ID fiscal por país:** VE RIF, CO NIT, CL RUT, AR CUIT, PE RUC, MX RFC, EC RUC, DO RNC, UY RUT, BO NIT, GT NIT, HN RTN, NI RUC, CR NIF, PA RUC, PY RUC.
++
++*Análisis realizado sobre `86d99a6` (merge PR #43) en `arena/01a017c7-generador-comercial`, con búsqueda web de competencia LatAm 19/08/2026 y grep exhaustivo sobre 105 archivos versionados.*
+diff --git a/migrations/versions/c8f1a2b3d4e5_add_etiqueta_fiscal_latam.py b/migrations/versions/c8f1a2b3d4e5_add_etiqueta_fiscal_latam.py
+new file mode 100644
+index 0000000..4e1efa9
+--- /dev/null
++++ b/migrations/versions/c8f1a2b3d4e5_add_etiqueta_fiscal_latam.py
+@@ -0,0 +1,38 @@
++"""Etiqueta fiscal por país para LatAm (Semana 2 — Bloque A).
++
++Añade `configuracion.etiqueta_id_fiscal` (RIF, NIT, RUT, CUIT, RUC, RFC…)
++para que cada organización pueda mostrar su ID fiscal local en clientes,
++presupuestos y PDFs. Default RIF preserva instalaciones venezolanas.
++
++No toca `activar_funciones_venezuela`: el alias
++`activar_funciones_regionales` mapea a la misma columna en Python
++(ver app/models.py), así que no hace falta renombrar la columna física
++en este bloque. El _sincronizar_columnas_modelos ya añade la columna en
++SQLite; esta migración cubre PostgreSQL.
++"""
++
++from typing import Sequence, Union
++
++from alembic import op
++import sqlalchemy as sa
++
++
++revision: str = "c8f1a2b3d4e5"
++down_revision: Union[str, Sequence[str], None] = "d2a7c9e4f1b3"
++branch_labels: Union[str, Sequence[str], None] = None
++depends_on: Union[str, Sequence[str], None] = None
++
++
++def upgrade() -> None:
++    op.add_column(
++        "configuracion",
++        sa.Column("etiqueta_id_fiscal", sa.String(length=20), nullable=True, server_default="RIF"),
++    )
++    # Rellenar filas existentes que quedaron con NULL (server_default no cubre filas ya insertadas en algunos PG setups)
++    op.execute("UPDATE configuracion SET etiqueta_id_fiscal = 'RIF' WHERE etiqueta_id_fiscal IS NULL")
++    # Hacerla NOT NULL en el futuro es opcional; la dejamos nullable por compat SQLite
++    # pero con default Python "RIF" en el modelo.
++
++
++def downgrade() -> None:
++    op.drop_column("configuracion", "etiqueta_id_fiscal")
+diff --git a/migrations/versions/d9e2f3a4b5c6_add_tasa_cambio_latam.py b/migrations/versions/d9e2f3a4b5c6_add_tasa_cambio_latam.py
+new file mode 100644
+index 0000000..83c0c46
+--- /dev/null
++++ b/migrations/versions/d9e2f3a4b5c6_add_tasa_cambio_latam.py
+@@ -0,0 +1,27 @@
++"""Tasa de referencia por organización para conversión USD->local (LatAm).
++
++Añade `configuracion.tasa_cambio` (unidades de moneda_default por 1 USD) y
++`configuracion.fecha_tasa` para que el catálogo en USD pueda mostrarse
++y cotizarse en moneda local sin reescribir precios. NULL = 1 (USD).
++"""
++
++from typing import Sequence, Union
++
++from alembic import op
++import sqlalchemy as sa
++
++
++revision: str = "d9e2f3a4b5c6"
++down_revision: Union[str, Sequence[str], None] = "c8f1a2b3d4e5"
++branch_labels: Union[str, Sequence[str], None] = None
++depends_on: Union[str, Sequence[str], None] = None
++
++
++def upgrade() -> None:
++    op.add_column("configuracion", sa.Column("tasa_cambio", sa.Float(), nullable=True))
++    op.add_column("configuracion", sa.Column("fecha_tasa", sa.Date(), nullable=True))
++
++
++def downgrade() -> None:
++    op.drop_column("configuracion", "fecha_tasa")
++    op.drop_column("configuracion", "tasa_cambio")
