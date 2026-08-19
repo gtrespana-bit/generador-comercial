@@ -36,7 +36,7 @@
 | 3. Conversión y tasas | ✅ Completado | 2026-08-19 | Conversión central, Decimal, validación, origen y congelación de tasa preparados |
 | 4. Interfaz y configuración | ✅ Completado | 2026-08-19 | Configuración ISO, acceso rápido, selector contextual, confirmación y protección de históricos implementados |
 | 5. Editor y cálculos | ✅ Completado | 2026-08-19 | Editor, guardado, costes, beneficios, márgenes y moneda activa integrados |
-| 6. Plantillas y exportaciones | 🟡 En curso | 2026-08-19 | PDF, contratos y formatos Excel corregidos; quedan correos, enlaces y revisión integral |
+| 6. Plantillas y exportaciones | ✅ Completado | 2026-08-19 | Vistas, PDF, contrato, Excel, correos, propuestas públicas y PDF interactivo normalizados a ISO |
 | 7. Recursos por país | ⬜ Pendiente | — | — |
 | 8. Mano de obra y rendimientos | ⬜ Pendiente | — | — |
 | 9. Históricos y congelación | ⬜ Pendiente | — | — |
