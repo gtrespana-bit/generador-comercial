@@ -14,6 +14,7 @@ from fastapi import APIRouter, Form, Request
 
 from . import common
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
+from ..services import auditoria
 from ..datos_pago import (
     METODOS_PAGO,
     PLANES,
@@ -254,6 +255,13 @@ async def registrar_compra(
             f"/pago/comprar?plan={quote(plan)}&error={quote(str(exc))}",
             status_code=303,
         )
+    auditoria.registrar_evento(
+        db,
+        "plan.compra_registrada",
+        entidad="compra",
+        entidad_id=compra.id,
+        detalle={"plan": plan, "metodo": metodo_pago},
+    )
 
     # Notificación por email (no bloqueante): la compra ya está registrada.
     try:

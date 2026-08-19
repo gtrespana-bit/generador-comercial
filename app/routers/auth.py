@@ -4,6 +4,7 @@ from fastapi import APIRouter
 
 from . import common
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
+from ..services import auditoria
 
 router = APIRouter()
 
@@ -126,6 +127,11 @@ async def iniciar_sesion(request: Request):
         )
     response = RedirectResponse(destino, status_code=303)
     set_auth_cookies(response, tokens, settings.cookie_secure)
+    # E4-027: constancia del inicio de sesión (best-effort, jamás lo impide).
+    email_sesion = getattr(getattr(tokens, "identity", None), "email", "") or str(
+        form.get("email") or ""
+    )
+    auditoria.anotar_sesion("sesion.login", email=email_sesion, request=request)
     return response
 
 
@@ -234,6 +240,15 @@ async def cerrar_sesion(request: Request):
     """
     response = RedirectResponse("/acceso", status_code=303)
     secure = True
+    # Identidad ANTES de revocar (después el token ya no vale). Best-effort:
+    # sin identidad, el cierre se anota sin correo o no se anota.
+    email_sesion = ""
+    try:
+        from ..auth import identity_for_request
+
+        email_sesion = identity_for_request(request).email or ""
+    except Exception:
+        pass
     try:
         settings = SupabaseAuthSettings.from_environment()
         secure = settings.cookie_secure
@@ -247,6 +262,8 @@ async def cerrar_sesion(request: Request):
     except AuthError:
         log.info("No se pudo revocar la sesión en Supabase; se cierra localmente.")
     clear_auth_cookies(response, secure, request)
+    if email_sesion:
+        auditoria.anotar_sesion("sesion.logout", email=email_sesion, request=request)
     return response
 
 
@@ -413,6 +430,9 @@ async def cambiar_clave_cuenta(
         return _render_cuenta(request, db, error=str(exc), status_code=503)
     # Cambiar la contraseña invalida las sesiones anteriores: se fuerza un
     # inicio de sesión nuevo en lugar de conservar cookies ya obsoletas.
+    auditoria.anotar_sesion(
+        "cuenta.clave_cambiada", email=usuario.email, request=request
+    )
     response = RedirectResponse(
         "/acceso?msg=" + quote("Contraseña actualizada. Inicia sesión de nuevo."),
         status_code=303,
@@ -682,6 +702,13 @@ async def crear_invitacion_web(request: Request, db: Session = Depends(get_db)):
     except (GestionEquipoError, AuthNotConfigured) as exc:
         db.rollback()
         return _redirect("/equipo", error=str(exc))
+    auditoria.registrar_evento(
+        db,
+        "equipo.invitacion_enviada",
+        entidad="invitacion",
+        entidad_id=invitacion.id,
+        detalle={"email": invitacion.email, "rol": invitacion.rol},
+    )
 
     # La invitación ya está guardada: el correo es un canal de entrega, no la
     # fuente de verdad. Si no hay correo configurado o el proveedor falla, se
@@ -755,6 +782,13 @@ def revocar_invitacion_web(
     except GestionEquipoError as exc:
         db.rollback()
         return _redirect("/equipo", error=str(exc))
+    auditoria.registrar_evento(
+        db,
+        "equipo.invitacion_revocada",
+        entidad="invitacion",
+        entidad_id=invitacion.id,
+        detalle={"email": invitacion.email},
+    )
     return _redirect("/equipo", msg="Invitación revocada.")
 
 
@@ -778,6 +812,8 @@ async def actualizar_membresia_web(
     if membresia is None:
         return _redirect("/equipo", error="La membresía no existe.")
     form = await request.form()
+    rol_anterior = str(membresia.rol or "")
+    activa_anterior = bool(membresia.activa)
     try:
         actualizar_membresia(
             db,
@@ -791,6 +827,28 @@ async def actualizar_membresia_web(
     except GestionEquipoError as exc:
         db.rollback()
         return _redirect("/equipo", error=str(exc))
+    # E4-027: rastro de la gestión del equipo (después del commit).
+    email_miembro = str(getattr(membresia.usuario, "email", "") or "")
+    if str(membresia.rol or "") != rol_anterior:
+        auditoria.registrar_evento(
+            db,
+            "equipo.rol_cambiado",
+            entidad="membresia",
+            entidad_id=membresia.id,
+            detalle={
+                "email": email_miembro,
+                "de": rol_anterior,
+                "a": str(membresia.rol or ""),
+            },
+        )
+    if activa_anterior and not bool(membresia.activa):
+        auditoria.registrar_evento(
+            db,
+            "equipo.miembro_desactivado",
+            entidad="membresia",
+            entidad_id=membresia.id,
+            detalle={"email": email_miembro},
+        )
     return _redirect("/equipo", msg="Membresía actualizada.")
 
 

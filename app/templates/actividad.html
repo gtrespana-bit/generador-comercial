@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Actividad{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Registro de actividad</h1>
+    <p class="subtitle">Quién hizo qué en esta organización: precios, estados, documentos, equipo y datos. El registro es inmutable: se anota, no se edita.</p>
+  </div>
+</div>
+
+<div class="card">
+  {% if eventos %}
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Fecha</th>
+        <th>Quién</th>
+        <th>Acción</th>
+        <th>Detalle</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for e in eventos %}
+      <tr>
+        <td>{{ e.created_at.strftime('%d/%m/%Y %H:%M') if e.created_at else '' }}</td>
+        <td>{{ e.actor_email or '—' }}{% if e.actor_rol %} <span class="muted">({{ e.actor_rol }})</span>{% endif %}</td>
+        <td>{{ acciones_legibles.get(e.accion, e.accion) }}{% if e.entidad_id %} <span class="muted">#{{ e.entidad_id }}</span>{% endif %}</td>
+        <td>
+          {% set d = e.detalle_dict() %}
+          {% if d.get('de') is not none and d.get('a') is not none %}
+            {{ d.get('de') }} → {{ d.get('a') }}
+            {% if d.get('email') %} · {{ d.get('email') }}{% endif %}
+          {% elif d %}
+            {% for clave, valor in d.items() %}{{ clave }}: {{ valor }}{% if not loop.last %} · {% endif %}{% endfor %}
+          {% else %}
+            —
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% if paginas > 1 %}
+  <p class="muted">
+    Página {{ pagina }} de {{ paginas }} · {{ total }} evento(s)
+    {% if pagina > 1 %} · <a href="/configuracion/actividad?pagina={{ pagina - 1 }}">← Más recientes</a>{% endif %}
+    {% if pagina < paginas %} · <a href="/configuracion/actividad?pagina={{ pagina + 1 }}">Anteriores →</a>{% endif %}
+  </p>
+  {% endif %}
+  {% else %}
+  <p class="subtitle">Todavía no hay actividad registrada. A partir de ahora, los cambios de precios, estados, documentos, equipo y datos quedarán anotados aquí.</p>
+  {% endif %}
+</div>
+{% endblock %}

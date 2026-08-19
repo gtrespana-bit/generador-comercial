@@ -3,6 +3,7 @@
 from fastapi import APIRouter
 
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
+from ..services import auditoria
 
 router = APIRouter()
 
@@ -183,10 +184,24 @@ def actualizar_recurso(
             res = propagar_precio_recurso(db, recurso, precio_anterior)
             db.commit()
             _actualizar_usos_recursos(db)
+            auditoria.registrar_evento(
+                db,
+                "catalogo.precio_recurso",
+                entidad="recurso",
+                entidad_id=recurso.id,
+                detalle={"de": precio_anterior, "a": nuevo_precio},
+            )
             msg = f"Recurso actualizado a {fmt_monto(nuevo_precio, 'USD')}. Afectadas {res['partidas_afectadas']} partidas y {res['filas_presupuesto']} filas de presupuestos."
             return _redirect("/recursos", msg=msg)
         except Exception as e:
             db.commit()
+            auditoria.registrar_evento(
+                db,
+                "catalogo.precio_recurso",
+                entidad="recurso",
+                entidad_id=recurso.id,
+                detalle={"de": precio_anterior, "a": nuevo_precio},
+            )
             return _redirect("/recursos", msg=f"Recurso actualizado (propagación parcial: {e}).")
     db.commit()
     _actualizar_usos_recursos(db)

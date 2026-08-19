@@ -565,14 +565,17 @@ def test_la_tabla_de_pruebas_esta_cerrada_a_los_clientes():
 
 
 def test_la_migracion_encadena_con_la_cabeza_anterior():
-    """La prueba gratuita ya no es la cabeza: el consentimiento (E4-038) la sigue."""
+    """La prueba gratuita ya no es la cabeza: el consentimiento (E4-038) y el
+    registro de auditoría (E4-026/027) la siguen, en ese orden."""
     from app.database import EXPECTED_ALEMBIC_HEAD
     from migrations.versions import (
         a3d9c1e75b28_prueba_gratuita_registro as migracion,
         b6d9e4c2a8f1_consentimiento_terminos as consentimiento_migracion,
+        d2a7c9e4f1b3_audit_log_and_complete_baja as auditoria_migracion,
     )
 
-    assert consentimiento_migracion.revision == EXPECTED_ALEMBIC_HEAD
+    assert auditoria_migracion.revision == EXPECTED_ALEMBIC_HEAD
+    assert auditoria_migracion.down_revision == consentimiento_migracion.revision
     assert consentimiento_migracion.down_revision == migracion.revision
     assert migracion.down_revision == "c7f1a3b9d425"
 

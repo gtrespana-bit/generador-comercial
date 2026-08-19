@@ -4,6 +4,7 @@ from fastapi import APIRouter
 
 from . import common
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
+from ..services import auditoria
 
 router = APIRouter()
 
@@ -75,7 +76,9 @@ async def guardar_configuracion(request: Request, db: Session = Depends(get_db))
     # Nombre de la organización: el que se muestra en el menú lateral.
     org = db.get(Organizacion, int(db.info.get("organizacion_id") or 0))
     org_nombre = str(form.get("organizacion_nombre", "")).strip()
+    org_nombre_anterior = ""
     if org and org_nombre and org_nombre != org.nombre:
+        org_nombre_anterior = str(org.nombre or "")
         org.nombre = org_nombre[:200]
         org.slug = _slug_organizacion_unico(db, org_nombre, org.id)
     cfg.empresa_nombre = str(form.get("empresa_nombre", "")).strip() or "Mi Empresa"
@@ -143,6 +146,16 @@ async def guardar_configuracion(request: Request, db: Session = Depends(get_db))
         )
 
     db.commit()
+    # E4-026: rastro del cambio (después del commit, best-effort).
+    auditoria.registrar_evento(db, "configuracion.actualizada", entidad="configuracion")
+    if org_nombre_anterior:
+        auditoria.registrar_evento(
+            db,
+            "organizacion.renombrada",
+            entidad="organizacion",
+            entidad_id=org.id if org else None,
+            detalle={"de": org_nombre_anterior, "a": org_nombre[:200]},
+        )
     if cambios:
         plural = "s" if cambios != 1 else ""
         return _redirect(
@@ -446,6 +459,7 @@ def descargar_respaldo_web(db: Session = Depends(get_db)):
     except ErrorRespaldo as exc:
         return _redirect("/configuracion/respaldo", error=str(exc))
     nombre = f"cotizat_respaldo_{datetime.now().strftime('%Y%m%d_%H%M')}.zip"
+    auditoria.registrar_evento(db, "datos.respaldo_descargado", entidad="respaldo")
     return Response(
         content=contenido,
         media_type="application/zip",
@@ -514,6 +528,9 @@ async def confirmar_respaldo_subido(request: Request, db: Session = Depends(get_
     finally:
         if ruta_temporal is not None:
             ruta_temporal.unlink(missing_ok=True)
+    auditoria.registrar_evento(
+        db, "datos.restauracion_ejecutada", entidad="respaldo"
+    )
     _sincronizar_recursos(db)
     return TEMPLATES.TemplateResponse(
         request,
@@ -540,12 +557,46 @@ def descargar_exportacion_organizacion(db: Session = Depends(get_db)):
     except ErrorRespaldo as exc:
         return _redirect("/configuracion/respaldo", error=str(exc))
     nombre = f"cotizat_exportacion_{datetime.now().strftime('%Y%m%d_%H%M')}.zip"
+    auditoria.registrar_evento(
+        db, "datos.exportacion_descargada", entidad="exportacion"
+    )
     return Response(
         content=contenido,
         media_type="application/zip",
         headers={
             "Content-Disposition": f'attachment; filename="{nombre}"',
             "Cache-Control": "no-store",
+        },
+    )
+
+
+@router.get("/configuracion/actividad", response_class=HTMLResponse)
+def ver_actividad(request: Request, pagina: int = 1, db: Session = Depends(get_db)):
+    """Registro de actividad de la organización (E4-026 / E4-027).
+
+    Solo propietario/administrador: es la trazabilidad de quién cambió
+    precios, documentos, estados y equipo. El registro es inmutable (la
+    aplicación solo inserta) y se muestra paginado, lo más reciente primero.
+    """
+    if not DATABASE_IS_SQLITE and not puede_gestionar(db):
+        return _redirect(
+            "/configuracion",
+            error="Solo propietarios y administradores pueden ver el registro de actividad.",
+        )
+    por_pagina = 50
+    eventos, total = auditoria.eventos_de_organizacion(
+        db, pagina=pagina, por_pagina=por_pagina
+    )
+    paginas = max(1, (total + por_pagina - 1) // por_pagina)
+    return TEMPLATES.TemplateResponse(
+        request,
+        "actividad.html",
+        {
+            "eventos": eventos,
+            "total": total,
+            "pagina": max(1, int(pagina or 1)),
+            "paginas": paginas,
+            "acciones_legibles": auditoria.ACCIONES_LEGIBLES,
         },
     )
 
@@ -590,6 +641,13 @@ async def confirmar_baja_organizacion(request: Request, db: Session = Depends(ge
     except (BajaError, PermisoOrganizacionError) as exc:
         db.rollback()
         return _redirect("/configuracion/baja", error=str(exc))
+    # Constancia de la baja como evento global (los eventos tenant de la
+    # organización acaban de borrarse con ella; este queda para el operador).
+    auditoria.anotar_sesion(
+        "organizacion.baja",
+        email=str(db.info.get("auth_email") or ""),
+        request=request,
+    )
     response = TEMPLATES.TemplateResponse(
         request,
         "baja_completada.html",
