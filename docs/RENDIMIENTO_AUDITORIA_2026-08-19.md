@@ -70,12 +70,21 @@ TLS contra PostgreSQL remoto, son varios segundos por sí solo y explica los
 
 ## Despliegue
 
-1. Desplegar el código.
-2. **Ejecutar `alembic upgrade head`** contra PostgreSQL (crea los índices;
-   con tablas pequeñas es instantáneo). Sin este paso `/readyz` responderá
-   503 porque el head esperado cambia.
-3. Nada más: las migraciones perezosas del catálogo se autorreparan en la
-   primera visita de cada organización.
+1. Fusionar el PR → Vercel despliega el código solo. **Todas las correcciones
+   de código (consultas, cachés, N+1, keep-alive) funcionan desde ese
+   momento sin tocar la base de datos.** Las instalaciones de escritorio
+   (SQLite) tampoco requieren nada: crean sus índices solas al arrancar.
+2. **Paso manual único para la base web (Supabase)**: aplicar la migración de
+   índices `b9f4d8a2c6e1`. Copia y pega
+   `docs/staging_upgrade_b9f4d8a2c6e1.sql` en el SQL Editor de Supabase y
+   ejecútalo (trae guarda de versión previa y es idempotente). Alternativa
+   por terminal:
+   `MIGRATION_DATABASE_URL=postgresql://administrador:…@host:5432/cotizat alembic upgrade head`.
+3. Verificar `GET /readyz → {"ok": true, "alembic": "head:b9f4d8a2c6e1"}`.
+
+Si el paso 2 se retrasa, la aplicación sigue funcionando y ya es mucho más
+rápida por el código, pero `/readyz` responde 503 (la guarda de head funciona
+así a propósito) y la base continúa sin índices.
 
 ## Pruebas
 
