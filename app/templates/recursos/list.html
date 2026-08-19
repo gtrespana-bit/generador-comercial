@@ -151,7 +151,9 @@
                     </td>
                     <td class="col-und"><span class="und-badge">{{ r.unidad }}</span></td>
                     <td class="col-precio right" data-precio="{{ r.precio }}">
-                      <strong class="precio-val">{{ r.precio | money }}</strong>
+                      <strong class="precio-val">{{ r.precio | money_iso(r.moneda or 'USD') }}</strong>
+                      {% set pe = precios_efectivos.get(r.id) if precios_efectivos else none %}
+                      {% if pe and pe.precio is not none %}<div class="hint">Mercado {{ mercado_codigo }}: {{ pe.precio | money_iso(pe.moneda) }} · {{ pe.origen }}</div>{% if pe.aviso %}<div class="hint">⚠ {{ pe.aviso }}</div>{% endif %}{% endif %}
                       {% if r.fecha_actualizacion_precio %}<div class="hint csp-s-aa47175cbd">{{ r.fecha_actualizacion_precio | fecha }}</div>{% endif %}
                     </td>
                     <td class="col-usos right" data-usos="{{ r.usos or 0 }}">{{ r.usos or 0 }}</td>

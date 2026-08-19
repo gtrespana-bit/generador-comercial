@@ -21,7 +21,7 @@
       <h2>Documento</h2>
       <p><strong>{{ p.numero }}</strong>{% if p.titulo %} · {{ p.titulo }}{% endif %}</p>
       <p class="muted">Cliente: {{ p.cliente.nombre }}</p>
-      <p class="muted">Total: {{ p.total | money(p.moneda) }}</p>
+      <p class="muted">Total: {{ p.total | money_iso(p.moneda) }}</p>
       <p class="muted">Estado actual: <span class="badge badge-{{ p.estado }}">{{ p.estado | replace('_', ' ') | capitalize }}</span></p>
     </div>
     <div>

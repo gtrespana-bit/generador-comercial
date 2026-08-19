@@ -384,7 +384,7 @@ class ContextoInteractivo:
                  etiqueta_total="PRESUPUESTO TOTAL"):
         self.presupuesto = presupuesto
         self.moneda = moneda
-        self.simbolo = {"USD": "$", "Bs": "Bs"}.get(moneda, moneda)
+        self.simbolo = str(moneda or "USD").upper()
         self.color_texto = color_texto
         self.color_acento = color_acento
         self.etiqueta_total = etiqueta_total

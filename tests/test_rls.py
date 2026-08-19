@@ -154,7 +154,9 @@ def test_head_exigido_por_runtime_coincide_con_alembic():
     Si divergen, `/readyz` responde 503 en producción: el código espera un
     esquema que la base no tiene todavía (o al revés).
     """
-    assert database_module.EXPECTED_ALEMBIC_HEAD == tasa_migration.revision
+    from migrations.versions import c5d6e7f8a9b0_merge_currency_heads as merge_migration
+    assert database_module.EXPECTED_ALEMBIC_HEAD == merge_migration.revision
+    assert tasa_migration.revision == "d9e2f3a4b5c6"
     assert tasa_migration.down_revision == etiqueta_migration.revision
     assert etiqueta_migration.down_revision == auditoria_migration.revision
     assert auditoria_migration.down_revision == consentimiento_migration.revision

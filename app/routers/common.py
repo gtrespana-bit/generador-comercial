@@ -224,7 +224,7 @@ from ..services.operacion import (
     diagnostico_operacion,
 )
 from ..permisos import es_lectura, es_propietario, puede_gestionar
-from ..utils import SIMBOLOS, fmt_fecha, fmt_monto, fmt_num, fmt_cantidad
+from ..utils import SIMBOLOS, fmt_fecha, fmt_monto, fmt_monto_iso, fmt_num, fmt_cantidad
 from ..storage import (
     StorageError,
     copy_object,
@@ -240,6 +240,11 @@ from ..storage import (
 
 TEMPLATES = Jinja2Templates(directory=str(BASE_DIR / "app" / "templates"))
 TEMPLATES.env.filters["money"] = fmt_monto
+try:
+    from ..services.monedas import formato_iso as _formato_iso
+    TEMPLATES.env.filters["money_iso"] = _formato_iso
+except Exception:  # pragma: no cover
+    TEMPLATES.env.filters["money_iso"] = fmt_monto_iso
 TEMPLATES.env.filters["num"] = fmt_num
 TEMPLATES.env.filters["cant"] = fmt_cantidad
 TEMPLATES.env.filters["fecha"] = fmt_fecha
@@ -993,6 +998,7 @@ def _partida_catalogo_indice(partida: Partida) -> dict:
         "id": partida.id,
         "nombre": partida.nombre or "",
         "precio": partida.precio_unitario or 0.0,
+        "moneda": getattr(partida, "moneda", None) or "USD",
         "unidad": partida.unidad or "ud",
         "categoria": partida.categoria or "99 Partidas personalizadas",
         "subcategoria": partida.subcategoria or "",

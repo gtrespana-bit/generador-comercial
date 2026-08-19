@@ -4,9 +4,10 @@
 {% block body_class %}editor-focus{% endblock %}
 
 {% block content %}
-<form method="post" id="form-presupuesto" class="budget-builder" enctype="multipart/form-data"
+<form method="post" id="form-presupuesto" class="budget-builder" enctype="multipart/form-data" data-moneda-original="{{ presupuesto.moneda if presupuesto else cfg.moneda_default or 'USD' }}"
       action="{{ '/presupuestos/' ~ presupuesto.id ~ '/editar' if presupuesto else '/presupuestos/nuevo' }}">
   <input type="hidden" name="estructura_json" id="estructura-json" value="">
+  <input type="hidden" name="confirmar_cambio_moneda" id="confirmar-cambio-moneda" value="0">
 
   <!-- Command bar única: identidad + total + acciones principales + guardar -->
   <header class="editor-command-bar" id="editor-command-bar" role="banner">
@@ -112,30 +113,38 @@
         <div class="field">
           <label>Moneda</label>
           <select name="moneda" id="moneda-select">
-            <option value="USD" {{ 'selected' if (presupuesto and presupuesto.moneda in ['USD','']) or (not presupuesto and (cfg.moneda_default or 'USD') in ['USD','']) else '' }}>USD ($) — dólar</option>
-            <option value="COP" {{ 'selected' if (presupuesto and presupuesto.moneda == 'COP') or (not presupuesto and cfg.moneda_default == 'COP') else '' }}>COP ($) — peso colombiano</option>
-            <option value="MXN" {{ 'selected' if (presupuesto and presupuesto.moneda == 'MXN') or (not presupuesto and cfg.moneda_default == 'MXN') else '' }}>MXN ($) — peso mexicano</option>
-            <option value="PEN" {{ 'selected' if (presupuesto and presupuesto.moneda == 'PEN') or (not presupuesto and cfg.moneda_default == 'PEN') else '' }}>PEN (S/) — sol peruano</option>
-            <option value="VES" {{ 'selected' if (presupuesto and presupuesto.moneda in ['VES','Bs']) or (not presupuesto and cfg.moneda_default in ['VES','Bs']) else '' }}>VES (Bs) — bolívar</option>
-            <option value="CLP" {{ 'selected' if (presupuesto and presupuesto.moneda == 'CLP') or (not presupuesto and cfg.moneda_default == 'CLP') else '' }}>CLP ($) — peso chileno</option>
-            <option value="ARS" {{ 'selected' if (presupuesto and presupuesto.moneda == 'ARS') or (not presupuesto and cfg.moneda_default == 'ARS') else '' }}>ARS ($) — peso argentino</option>
-            <option value="UYU" {{ 'selected' if (presupuesto and presupuesto.moneda == 'UYU') or (not presupuesto and cfg.moneda_default == 'UYU') else '' }}>UYU ($U) — peso uruguayo</option>
-            <option value="PYG" {{ 'selected' if (presupuesto and presupuesto.moneda == 'PYG') or (not presupuesto and cfg.moneda_default == 'PYG') else '' }}>PYG (₲) — guaraní</option>
-            <option value="BOB" {{ 'selected' if (presupuesto and presupuesto.moneda == 'BOB') or (not presupuesto and cfg.moneda_default == 'BOB') else '' }}>BOB (Bs) — boliviano</option>
-            <option value="DOP" {{ 'selected' if (presupuesto and presupuesto.moneda == 'DOP') or (not presupuesto and cfg.moneda_default == 'DOP') else '' }}>DOP (RD$) — peso dominicano</option>
-            <option value="PAB" {{ 'selected' if (presupuesto and presupuesto.moneda == 'PAB') or (not presupuesto and cfg.moneda_default == 'PAB') else '' }}>PAB (B/.) — balboa</option>
-            <option value="CRC" {{ 'selected' if (presupuesto and presupuesto.moneda == 'CRC') or (not presupuesto and cfg.moneda_default == 'CRC') else '' }}>CRC (₡) — colón</option>
-            <option value="GTQ" {{ 'selected' if (presupuesto and presupuesto.moneda == 'GTQ') or (not presupuesto and cfg.moneda_default == 'GTQ') else '' }}>GTQ (Q) — quetzal</option>
-            <option value="HNL" {{ 'selected' if (presupuesto and presupuesto.moneda == 'HNL') or (not presupuesto and cfg.moneda_default == 'HNL') else '' }}>HNL (L) — lempira</option>
-            <option value="NIO" {{ 'selected' if (presupuesto and presupuesto.moneda == 'NIO') or (not presupuesto and cfg.moneda_default == 'NIO') else '' }}>NIO (C$) — córdoba</option>
-            <option value="BRL" {{ 'selected' if (presupuesto and presupuesto.moneda == 'BRL') or (not presupuesto and cfg.moneda_default == 'BRL') else '' }}>BRL (R$) — real</option>
-            <option value="EUR" {{ 'selected' if (presupuesto and presupuesto.moneda == 'EUR') or (not presupuesto and cfg.moneda_default == 'EUR') else '' }}>EUR (€) — euro</option>
+            <option value="USD" {{ 'selected' if (presupuesto and presupuesto.moneda in ['USD','']) or (not presupuesto and (cfg.moneda_default or 'USD') in ['USD','']) else '' }}>USD — dólar estadounidense</option>
+            <option value="COP" {{ 'selected' if (presupuesto and presupuesto.moneda == 'COP') or (not presupuesto and cfg.moneda_default == 'COP') else '' }}>COP — peso colombiano</option>
+            <option value="MXN" {{ 'selected' if (presupuesto and presupuesto.moneda == 'MXN') or (not presupuesto and cfg.moneda_default == 'MXN') else '' }}>MXN — peso mexicano</option>
+            <option value="PEN" {{ 'selected' if (presupuesto and presupuesto.moneda == 'PEN') or (not presupuesto and cfg.moneda_default == 'PEN') else '' }}>PEN — sol peruano</option>
+            <option value="CLP" {{ 'selected' if (presupuesto and presupuesto.moneda == 'CLP') or (not presupuesto and cfg.moneda_default == 'CLP') else '' }}>CLP — peso chileno</option>
+            <option value="ARS" {{ 'selected' if (presupuesto and presupuesto.moneda == 'ARS') or (not presupuesto and cfg.moneda_default == 'ARS') else '' }}>ARS — peso argentino</option>
+            <option value="UYU" {{ 'selected' if (presupuesto and presupuesto.moneda == 'UYU') or (not presupuesto and cfg.moneda_default == 'UYU') else '' }}>UYU — peso uruguayo</option>
+            <option value="PYG" {{ 'selected' if (presupuesto and presupuesto.moneda == 'PYG') or (not presupuesto and cfg.moneda_default == 'PYG') else '' }}>PYG — guaraní</option>
+            <option value="BOB" {{ 'selected' if (presupuesto and presupuesto.moneda == 'BOB') or (not presupuesto and cfg.moneda_default == 'BOB') else '' }}>BOB — boliviano</option>
+            <option value="DOP" {{ 'selected' if (presupuesto and presupuesto.moneda == 'DOP') or (not presupuesto and cfg.moneda_default == 'DOP') else '' }}>DOP — peso dominicano</option>
+            <option value="PAB" {{ 'selected' if (presupuesto and presupuesto.moneda == 'PAB') or (not presupuesto and cfg.moneda_default == 'PAB') else '' }}>PAB — balboa</option>
+            <option value="CRC" {{ 'selected' if (presupuesto and presupuesto.moneda == 'CRC') or (not presupuesto and cfg.moneda_default == 'CRC') else '' }}>CRC — colón</option>
+            <option value="GTQ" {{ 'selected' if (presupuesto and presupuesto.moneda == 'GTQ') or (not presupuesto and cfg.moneda_default == 'GTQ') else '' }}>GTQ — quetzal</option>
+            <option value="HNL" {{ 'selected' if (presupuesto and presupuesto.moneda == 'HNL') or (not presupuesto and cfg.moneda_default == 'HNL') else '' }}>HNL — lempira</option>
+            <option value="NIO" {{ 'selected' if (presupuesto and presupuesto.moneda == 'NIO') or (not presupuesto and cfg.moneda_default == 'NIO') else '' }}>NIO — córdoba</option>
+            <option value="BRL" {{ 'selected' if (presupuesto and presupuesto.moneda == 'BRL') or (not presupuesto and cfg.moneda_default == 'BRL') else '' }}>BRL — real</option>
+            <option value="EUR" {{ 'selected' if (presupuesto and presupuesto.moneda == 'EUR') or (not presupuesto and cfg.moneda_default == 'EUR') else '' }}>EUR — euro</option>
           </select>
+          <p class="hint" id="moneda-contexto-resumen">Moneda contractual del presupuesto.</p>
         </div>
         <div class="field">
-          <label>Tasa de cambio Bs/USD <span class="hint">(referencia, opcional)</span></label>
-          <input type="number" name="tipo_cambio" step="any" min="0" placeholder="{{ ('p. ej. ' ~ tasas_sugeridas[cfg.moneda_default]) if tasas_sugeridas.get(cfg.moneda_default) else 'Tasa oficial del día' }}"
+          <label>Tasa de cambio USD → moneda contractual <span class="hint">(1 USD = X)</span></label>
+          <input type="number" name="tipo_cambio" step="any" min="0" placeholder="{{ ('p. ej. ' ~ tasas_sugeridas[cfg.moneda_default]) if tasas_sugeridas.get(cfg.moneda_default) else 'Tasa confirmada' }}"
                  value="{{ presupuesto.tipo_cambio if presupuesto and presupuesto.tipo_cambio else (cfg.tasa_cambio if cfg.tasa_cambio and not presupuesto else '') }}">
+        </div>
+        <div class="field">
+          <label>Fecha de la tasa</label>
+          <input type="date" name="fecha_tipo_cambio" value="{{ presupuesto.fecha_tipo_cambio.isoformat() if presupuesto and presupuesto.fecha_tipo_cambio else (cfg.fecha_tasa.isoformat() if cfg.fecha_tasa and not presupuesto else '') }}">
+        </div>
+        <div class="field">
+          <label>Fuente de la tasa</label>
+          <input type="text" name="fuente_tipo_cambio" maxlength="120" placeholder="Manual, TRM, SUNAT, API…" value="{{ presupuesto.fuente_tipo_cambio if presupuesto else (cfg.fuente_tipo_cambio or '') }}">
         </div>
         <div class="field">
           <label>IVA (%)</label>
@@ -158,7 +167,7 @@
         <div class="field field-full"><label>Motivo de la nueva versión</label><input name="motivo_version" maxlength="500" placeholder="Describe brevemente el cambio realizado"><p class="hint">Al guardar, se conservará una nueva instantánea del documento.</p></div>
         {% endif %}
 
-        {% if cfg.activar_funciones_venezuela %}<div class="field field-full csp-s-d66c3f479a"><label class="csp-s-6b2a94ea3b">🇻🇪 Datos regionales (opcionales)</label><div class="form-grid">{% if cfg.mostrar_numero_control %}<div class="field"><label>Número de control</label><input name="numero_control" value="{{ presupuesto.numero_control if presupuesto else '' }}"></div>{% endif %}{% if cfg.mostrar_tasa_cambio %}<div class="field"><label>Fecha de tasa</label><input type="date" name="fecha_tipo_cambio" value="{{ presupuesto.fecha_tipo_cambio.isoformat() if presupuesto and presupuesto.fecha_tipo_cambio else '' }}"></div>{% endif %}{% if cfg.mostrar_retenciones %}<div class="field"><label>Retención (%)</label><input type="number" step="any" min="0" name="retencion_pct" value="{{ presupuesto.retencion_pct if presupuesto else 0 }}"></div><label><input type="checkbox" name="operacion_exenta" {{ 'checked' if presupuesto and presupuesto.operacion_exenta else '' }}> Operación exenta</label>{% endif %}{% if cfg.mostrar_clausula_cambiaria %}<div class="field field-full"><label>Cláusula de ajuste cambiario</label><textarea name="clausula_cambiaria">{{ presupuesto.clausula_cambiaria if presupuesto else '' }}</textarea></div>{% endif %}</div></div>{% endif %}
+        {% if cfg.activar_funciones_venezuela %}<div class="field field-full csp-s-d66c3f479a"><label class="csp-s-6b2a94ea3b">🇻🇪 Datos regionales (opcionales)</label><div class="form-grid">{% if cfg.mostrar_numero_control %}<div class="field"><label>Número de control</label><input name="numero_control" value="{{ presupuesto.numero_control if presupuesto else '' }}"></div>{% endif %}{% if cfg.mostrar_retenciones %}<div class="field"><label>Retención (%)</label><input type="number" step="any" min="0" name="retencion_pct" value="{{ presupuesto.retencion_pct if presupuesto else 0 }}"></div><label><input type="checkbox" name="operacion_exenta" {{ 'checked' if presupuesto and presupuesto.operacion_exenta else '' }}> Operación exenta</label>{% endif %}{% if cfg.mostrar_clausula_cambiaria %}<div class="field field-full"><label>Cláusula de ajuste cambiario</label><textarea name="clausula_cambiaria">{{ presupuesto.clausula_cambiaria if presupuesto else '' }}</textarea></div>{% endif %}</div></div>{% endif %}
         {% if cfg.activar_funciones_avanzadas or (presupuesto and presupuesto.usar_funciones_avanzadas) %}
         <div class="field field-full advanced-budget-options csp-s-acdc88ecde">
           <label class="csp-s-5898011ec9">
@@ -738,7 +747,7 @@
       <div><kbd>Alt</kbd>+<kbd>P</kbd> Añadir partida</div>
       <div><kbd>Alt</kbd>+<kbd>C</kbd> Añadir capítulo</div>
       <div><kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>K</kbd> o <kbd>/</kbd> Spotlight del catálogo</div>
-      <div><kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>M</kbd> Cambiar moneda (USD ↔ Bs)</div>
+      <div><kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>M</kbd> Cambiar moneda del presupuesto (ISO)</div>
       <div><kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>Z</kbd> Deshacer cambios estructurales</div>
       <div><kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>Enter</kbd> Guardar presupuesto</div>
       <div><kbd>?</kbd> Mostrar esta ayuda</div>
@@ -932,6 +941,7 @@
   // Beneficio por partida: siempre visible según petición del usuario (fila Benef. y totales)
   document.body.classList.add('beneficio-on');
 </script>
+<script nonce="{{ request.state.csp_nonce }}">window.COTIZAT_MONEDA_ACTIVA = {{ (presupuesto.moneda if presupuesto else cfg.moneda_default or 'USD') | tojson }};</script>
 <!-- Módulos del editor (cargados en orden de dependencia) -->
 <script src="/static/js/utils/formato.js"></script>
 <script src="/static/js/utils/catalogo.js"></script>
@@ -945,6 +955,7 @@
 <script src="/static/js/editor/totales.js"></script>
 <script src="/static/js/editor/tiempos.js"></script>
 <script nonce="{{ request.state.csp_nonce }}" id="simbolos-moneda" type="application/json">{{ simbolos | tojson }}</script>
+<script nonce="{{ request.state.csp_nonce }}" id="contexto-monetario" type="application/json">{{ {"moneda": (presupuesto.moneda if presupuesto else cfg.moneda_default or "USD"), "tasa": (presupuesto.tipo_cambio if presupuesto else cfg.tasa_cambio), "fecha": ((presupuesto.fecha_tipo_cambio.isoformat() if presupuesto and presupuesto.fecha_tipo_cambio else (cfg.fecha_tasa.isoformat() if cfg.fecha_tasa and not presupuesto else ""))), "fuente": (presupuesto.fuente_tipo_cambio if presupuesto else (cfg.fuente_tipo_cambio or ""))} | tojson }}</script>
 <script src="/static/js/editor/main.js"></script>
 <script src="/static/js/editor/partida_modal.js"></script>
 <script src="/static/js/editor/importador_excel.js"></script>
@@ -1064,6 +1075,30 @@
     document.getElementById('btn-limpiar-firma').addEventListener('click', function () {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       input.value = '';
+    });
+  })();
+
+  (function () {
+    var form = document.getElementById('form-presupuesto');
+    var select = document.getElementById('moneda-select');
+    var confirmInput = document.getElementById('confirmar-cambio-moneda');
+    if (!form || !select || !confirmInput) return;
+    function actualizarContexto() {
+      var resumen = document.getElementById('moneda-contexto-resumen');
+      if (resumen) resumen.textContent = 'Moneda contractual del presupuesto: ' + select.value + '. Los importes se guardarán en esta moneda.';
+    }
+    select.addEventListener('change', actualizarContexto);
+    actualizarContexto();
+    form.addEventListener('submit', function (event) {
+      var original = form.getAttribute('data-moneda-original') || select.value;
+      if (original !== select.value && original) {
+        var mensaje = 'Vas a cambiar la moneda de ' + original + ' a ' + select.value + '. Se convertirán los importes del borrador usando la tasa indicada. ¿Deseas continuar?';
+        if (!window.confirm(mensaje)) {
+          event.preventDefault();
+          return;
+        }
+        confirmInput.value = '1';
+      }
     });
   })();
 

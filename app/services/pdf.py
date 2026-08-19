@@ -45,10 +45,10 @@ from reportlab.platypus import (
 from ..utils import (
     fmt_cantidad,
     fmt_fecha,
-    fmt_monto,
+    fmt_monto_iso as fmt_monto,
     fmt_num,
     fmt_pct,
-    fmt_precio_u,
+    fmt_precio_u_iso as fmt_precio_u,
     saneado,
 )
 from .traduccion import codigo_desde_pais, traducir
@@ -276,8 +276,9 @@ def _cabecera(presupuesto, config, st, azul_color, titulo_doc="PRESUPUESTO",
         der.append(Paragraph(f"<b>País:</b> {_esc(c.pais)}", st["campo"]))
     if presupuesto.validez_dias:
         der.append(Paragraph(f"<b>Validez de la oferta:</b> {presupuesto.validez_dias} días", st["campo"]))
-    if presupuesto.tipo_cambio and presupuesto.moneda == "USD":
-        der.append(Paragraph(f"<b>Tasa (ref. BCV):</b> 1 USD = {fmt_num(presupuesto.tipo_cambio)} Bs", st["campo"]))
+    if presupuesto.tipo_cambio and presupuesto.moneda != "USD":
+        _fuente = getattr(presupuesto, "fuente_tipo_cambio", "") or "referencia"
+        der.append(Paragraph(f"<b>Tasa ({_esc(_fuente)}):</b> 1 USD = {fmt_num(presupuesto.tipo_cambio)} {_esc(presupuesto.moneda)}", st["campo"]))
     der.append(Paragraph(f"{etiqueta_num} <font color='#CC0066'>{_esc(presupuesto.numero)}</font>", st["ref"]))
 
     bloque = Table([[izq, der]], colWidths=[_ANCHO / 2, _ANCHO / 2])
@@ -634,7 +635,7 @@ def _tabla_partida(partida, st, moneda, ultima: bool, azul_color, num=None, ctx=
     productos a elegir, el precio unitario y los importes se emiten como
     campos de formulario recalculables y cada producto lleva su casilla.
     """
-    mon_simb = {"USD": "$", "Bs": "Bs"}.get(moneda, moneda)
+    mon_simb = moneda or "USD"
     filas = []
     interactiva = ctx is not None and ctx.es_interactiva(partida)
     pid = ctx.id_partida(partida) if interactiva else ""

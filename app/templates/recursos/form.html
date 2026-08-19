@@ -15,9 +15,15 @@
         {% endfor %}
       </select>
     </div>
-    <div class="field"><label>Precio unitario (USD) *</label><input type="number" name="precio" step="0.0001" min="0" required value="{{ recurso.precio if recurso else 0 }}"></div>
+    <div class="field"><label>Precio base (USD) *</label><input type="number" name="precio" step="0.0001" min="0" required value="{{ recurso.precio if recurso else 0 }}"></div>
+    <div class="field"><label>Precio efectivo de tu mercado ({{ mercado_moneda }})</label><input type="number" name="precio_mercado" step="0.0001" min="0" value="{{ precio_mercado.precio if precio_mercado else '' }}"><span class="hint">Override de tu empresa; no modifica el precio nacional ni otros países.</span></div>
     <div class="field"><label>Grupo (opcional)</label><input name="grupo" value="{{ recurso.grupo if recurso else '' }}" placeholder="Mano de obra, Materiales..."></div>
     <div class="field"><label>Proveedor (opcional)</label><input name="proveedor" value="{{ recurso.proveedor if recurso else '' }}"></div>
+    <div class="field"><label>Subtipo</label><input name="subtipo" value="{{ recurso.subtipo if recurso else '' }}" placeholder="oficial, equipo, transporte"></div>
+    <div class="field"><label>Capacidad / especificación</label><input name="capacidad" value="{{ recurso.capacidad if recurso else '' }}" placeholder="10 t, 70 HP, 8 m3"></div>
+    <div class="field"><label>Modalidad de tarifa</label><select name="modalidad_tarifa"><option value="hora">Hora</option><option value="jornada">Jornada</option><option value="viaje">Viaje</option><option value="km">Kilómetro</option><option value="m2">m²</option></select></div>
+    <div class="field"><label>Rendimiento por jornada</label><input name="rendimiento_jornada" type="number" step="any" value="{{ recurso.rendimiento_jornada if recurso and recurso.rendimiento_jornada is not none else '' }}"></div>
+    <div class="field field-full"><label>Incluye</label><label><input type="checkbox" name="incluye_operador" {% if recurso and recurso.incluye_operador %}checked{% endif %}> operador</label><label><input type="checkbox" name="incluye_combustible" {% if recurso and recurso.incluye_combustible %}checked{% endif %}> combustible</label><label><input type="checkbox" name="incluye_flete" {% if recurso and recurso.incluye_flete %}checked{% endif %}> flete</label></div>
   </div>
   <div class="card csp-s-e219c669dc">
     <strong class="csp-s-1014e6cef4">ℹ️ Propagación automática</strong>

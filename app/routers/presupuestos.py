@@ -6,6 +6,7 @@ from . import common
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
 from ..services import auditoria
 from ..utils import normalizar_moneda
+from ..services.monedas import convertir as convertir_moneda
 
 router = APIRouter()
 
@@ -300,6 +301,7 @@ def _anexar_filas_importadas(presupuesto: Presupuesto, filas: list[dict]) -> lis
             unidad=fila.get("unidad", "ud") or "ud",
             cantidad=fila.get("cantidad", 1.0),
             precio_unitario=fila.get("precio", 0.0),
+            moneda=presupuesto.moneda or "USD",
             orden=ordenes_partidas[clave_orden],
             tipo_partida=tipo,
             # Incluidas, provisionales y sujetas a medición forman parte del
@@ -353,6 +355,7 @@ def _anexar_partidas_cype(
             # venta. Se usa inicialmente como precio para que el presupuesto
             # sea consistente; se puede definir el margen comercial después.
             precio_unitario=coste_directo,
+            moneda=presupuesto.moneda or "USD",
             orden=orden,
             coste_materiales=coste_materiales,
             coste_mano_obra=coste_mano_obra,
@@ -390,6 +393,10 @@ def _anexar_partidas_cype(
                 rendimiento=numero_local(fila.get("rendimiento")),
                 precio_unitario=numero_local(fila.get("precio_unitario")),
                 importe=numero_local(fila.get("importe")),
+                moneda=str(fila.get("moneda") or getattr(presupuesto, "moneda", "USD")),
+                origen_precio=str(fila.get("origen_precio") or "base")[:20],
+                confianza_precio=str(fila.get("confianza_precio") or "provisional")[:20],
+                fuente_precio=str(fila.get("fuente_precio") or "")[:200],
                 celdas_json=json.dumps(fila.get("celdas", []), ensure_ascii=False),
                 formulas_json=json.dumps(fila.get("formulas", {}), ensure_ascii=False),
             ))
@@ -853,7 +860,7 @@ async def confirmar_importacion_presupuesto(request: Request, db: Session = Depe
         destino = Presupuesto(
             numero=proximo_numero(db, hoy.year), year=hoy.year, fecha=hoy,
             titulo=str(payload.get("titulo", "")).strip(), validez_dias=cfg.validez_default,
-            moneda=cfg.moneda_default, impuesto_pct=cfg.iva_default, descuento_pct=0.0,
+            moneda=cfg.moneda_default, moneda_base=getattr(cfg, "moneda_base_catalogo", None) or "USD", tipo_cambio=cfg.tasa_cambio, fecha_tipo_cambio=cfg.fecha_tasa, fuente_tipo_cambio=getattr(cfg, "fuente_tipo_cambio", "") or "", impuesto_pct=cfg.iva_default, descuento_pct=0.0,
             estado="borrador", notas=cfg.notas_default, condiciones=cfg.condiciones_default,
             con_portada=cfg.con_portada_default,
             mostrar_firmas=cfg.mostrar_firmas_default,
@@ -929,6 +936,30 @@ async def confirmar_importacion_presupuesto(request: Request, db: Session = Depe
     }
 
 
+def _recursos_editor_mercado(db, recursos, cfg, moneda, tasa):
+    from ..services.traduccion import codigo_desde_pais
+    from ..services.precios_mercado import resolver_precio_para_presupuesto
+    pais = codigo_desde_pais(getattr(cfg, "empresa_pais", "") or "") or "VE"
+    org_id = int(db.info.get("organizacion_id") or 0)
+    salida = []
+    for r in recursos:
+        item = {"id": r.id, "codigo": r.codigo, "descripcion": r.descripcion, "unidad": r.unidad, "categoria": r.categoria, "grupo": r.grupo, "precio": r.precio, "moneda": getattr(r, "moneda", None) or "USD", "proveedor": r.proveedor, "usos": r.usos}
+        try:
+            efectivo = resolver_precio_para_presupuesto(db, r.id, pais, org_id, moneda, tasa_mercado_a_usd=None, tasa_usd_presupuesto=tasa)
+            if efectivo.get("precio") is not None and not efectivo.get("requiere_tasa"):
+                item["precio"] = efectivo["precio"]
+                item["moneda"] = efectivo["moneda"]
+            item["origen_precio"] = efectivo.get("origen", "base")
+            item["confianza_precio"] = efectivo.get("confianza", "")
+            item["aviso_precio"] = efectivo.get("aviso", "")
+        except Exception:
+            item["origen_precio"] = "base"
+            item["confianza_precio"] = "respaldo"
+            item["aviso_precio"] = "Verifica el precio con tu proveedor"
+        salida.append(item)
+    return salida
+
+
 @router.get("/presupuestos/nuevo", response_class=HTMLResponse)
 def nuevo_presupuesto_form(request: Request, db: Session = Depends(get_db)):
     from ..services.catalogo_propio import asegurar_catalogo_propio
@@ -937,7 +968,8 @@ def nuevo_presupuesto_form(request: Request, db: Session = Depends(get_db)):
     clientes = db.query(Cliente).order_by(Cliente.nombre).all()
     partidas_catalogo = _indice_catalogo_para_editor(db, cfg.moneda_default, cfg.tasa_cambio)
     productos_catalogo = db.query(Producto).order_by(Producto.ultimo_uso.desc(), Producto.usos.desc(), Producto.nombre).all()
-    recursos_catalogo = db.query(Recurso).order_by(Recurso.ultimo_uso.desc(), Recurso.usos.desc(), Recurso.descripcion).all()
+    recursos_base = db.query(Recurso).order_by(Recurso.ultimo_uso.desc(), Recurso.usos.desc(), Recurso.descripcion).all()
+    recursos_catalogo = _recursos_editor_mercado(db, recursos_base, cfg, cfg.moneda_default, cfg.tasa_cambio)
     plantillas = db.query(Plantilla).order_by(Plantilla.nombre).all()
     return TEMPLATES.TemplateResponse(
         request,
@@ -1376,8 +1408,9 @@ def _montar_presupuesto(presupuesto, capitulos, partidas, imagenes_guardadas, im
             partida_catalogo_id=pd.get("catalogo_id"),
             descripcion=pd["descripcion"],
             unidad=pd["unidad"],
-            precio_unitario=pd["precio"],
-            cantidad=pd["cantidad"],
+                precio_unitario=pd["precio"],
+                moneda=presupuesto.moneda or "USD",
+                cantidad=pd["cantidad"],
             orden=orden_p[pd["cap"]],
             producto_nombre=pd["prod_nombre"],
             producto_precio=pd["prod_precio"],
@@ -1529,8 +1562,9 @@ async def crear_presupuesto(request: Request, db: Session = Depends(get_db)):
         direccion_obra=str(form.get("direccion_obra", "")).strip(),
         codigo_postal=str(form.get("codigo_postal", "")).strip(),
         validez_dias=int(_f(form.get("validez_dias"), 30)),
-        moneda=normalizar_moneda(form.get("moneda"), "USD"),
+        moneda=("USD" if str(cfg.empresa_pais or "").strip().lower() == "venezuela" and normalizar_moneda(form.get("moneda"), "USD") == "VES" else normalizar_moneda(form.get("moneda"), "USD")),
         tipo_cambio=(_f(form.get("tipo_cambio"), None) if str(form.get("tipo_cambio", "")).strip() else None) or (cfg.tasa_cambio if getattr(cfg, "tasa_cambio", None) and str(form.get("tipo_cambio", "")).strip() == "" and getattr(cfg, "moneda_default", "USD") not in ("USD", "PAB") else None),
+        fuente_tipo_cambio=str(form.get("fuente_tipo_cambio", "") or getattr(cfg, "fuente_tipo_cambio", "") or "").strip()[:120],
         impuesto_pct=_f(form.get("impuesto_pct"), 16.0),
         descuento_pct=_f(form.get("descuento_pct"), 0.0),
         estado=estado if _estado_valido(estado) else "borrador",
@@ -1609,7 +1643,17 @@ def convertir_proyecto(presupuesto_id: int, db: Session = Depends(get_db)):
     version = db.query(PresupuestoVersion).filter_by(presupuesto_id=p.id, estado=p.estado).order_by(PresupuestoVersion.numero_version.desc()).first()
     if not version:
         version = crear_version(db, p, "Versión aprobada al convertir en proyecto"); db.flush()
-    proyecto = Proyecto(presupuesto_id=p.id, presupuesto_version_id=version.id, nombre=p.titulo or f"Proyecto {p.numero}", fecha_inicio=date.today())
+    proyecto = Proyecto(
+        presupuesto_id=p.id,
+        presupuesto_version_id=version.id,
+        nombre=p.titulo or f"Proyecto {p.numero}",
+        fecha_inicio=date.today(),
+        moneda_contractual=p.moneda or "USD",
+        moneda_base=getattr(p, "moneda_base", None) or "USD",
+        tipo_cambio=p.tipo_cambio,
+        fecha_tipo_cambio=p.fecha_tipo_cambio,
+        fuente_tipo_cambio=getattr(p, "fuente_tipo_cambio", "") or "",
+    )
     db.add(proyecto); p.estado = "en_ejecucion"; db.commit()
     return _redirect(f"/proyectos/{proyecto.id}", msg="Proyecto creado desde el presupuesto aprobado.")
 
@@ -1634,7 +1678,12 @@ def crear_cambio(proyecto_id: int, descripcion: str = Form(""), db: Session = De
     p = db.get(Proyecto, proyecto_id)
     if not p or not descripcion.strip(): return _redirect(f"/proyectos/{proyecto_id}", error="Describe el cambio de alcance.")
     numero = max((c.numero for c in p.cambios), default=0) + 1
-    cambio = CambioAlcance(proyecto_id=p.id, numero=numero, descripcion=descripcion.strip())
+    cambio = CambioAlcance(
+        proyecto_id=p.id,
+        numero=numero,
+        descripcion=descripcion.strip(),
+        moneda=p.moneda or "USD",
+    )
     db.add(cambio); db.commit(); return _redirect(f"/proyectos/{p.id}/cambios/{cambio.id}", msg=f"Cambio Nº {numero:03d} creado.")
 
 @router.get("/proyectos/{proyecto_id}/cambios/{cambio_id}", response_class=HTMLResponse)
@@ -1652,7 +1701,7 @@ async def guardar_cambio(proyecto_id: int, cambio_id: int, request: Request, db:
     total=0.0
     for tipo,nombre,cantidad,precio in zip(f.getlist("tipo"), f.getlist("nombre"), f.getlist("cantidad"), f.getlist("precio")):
         if not str(nombre).strip(): continue
-        q, pu = _f(cantidad), _f(precio); item=CambioAlcanceItem(tipo=tipo if tipo in ("agregado","eliminado") else "agregado", nombre=str(nombre).strip(), cantidad=q, precio_unitario=pu); c.items.append(item); total += item.importe * (-1 if item.tipo == "eliminado" else 1)
+        q, pu = _f(cantidad), _f(precio); item=CambioAlcanceItem(tipo=tipo if tipo in ("agregado","eliminado") else "agregado", nombre=str(nombre).strip(), cantidad=q, precio_unitario=pu, moneda=c.moneda or p.presupuesto.moneda or "USD"); c.items.append(item); total += item.importe * (-1 if item.tipo == "eliminado" else 1)
     c.diferencia_total=round(total,2); db.commit(); return _redirect(f"/proyectos/{proyecto_id}", msg="Cambio de alcance guardado.")
 
 @router.post("/proyectos/{proyecto_id}/pagos")
@@ -1661,7 +1710,8 @@ def registrar_pago(proyecto_id: int, importe: float = Form(0), fecha: str = Form
     if not p or importe <= 0: return _redirect(f"/proyectos/{proyecto_id}", error="Indica un importe de pago válido.")
     try: fecha_pago=date.fromisoformat(fecha) if fecha else date.today()
     except ValueError: fecha_pago=date.today()
-    db.add(Pago(proyecto_id=p.id, presupuesto_id=p.presupuesto_id, fecha=fecha_pago, importe=importe, moneda=p.presupuesto.moneda, metodo=metodo, referencia=referencia.strip(), estado=estado if estado in ("pendiente","confirmado","anulado") else "confirmado", notas=notas.strip()))
+    moneda_proyecto = p.moneda_contractual or p.presupuesto.moneda or "USD"
+    db.add(Pago(proyecto_id=p.id, presupuesto_id=p.presupuesto_id, fecha=fecha_pago, importe=importe, moneda=moneda_proyecto, metodo=metodo, referencia=referencia.strip(), estado=estado if estado in ("pendiente","confirmado","anulado") else "confirmado", notas=notas.strip()))
     db.commit(); return _redirect(f"/proyectos/{p.id}", msg="Pago registrado.")
 
 
@@ -1797,7 +1847,7 @@ def enviar_presupuesto_email_web(
             cliente_nombre=presupuesto.cliente.nombre,
             presupuesto_numero=presupuesto.numero,
             presupuesto_titulo=presupuesto.titulo,
-            total_texto=fmt_monto(presupuesto.total, presupuesto.moneda),
+            total_texto=fmt_monto_iso(presupuesto.total, presupuesto.moneda),
             pdf=pdf_bytes,
             nombre_pdf=nombre_pdf,
             responder_a=cfg.empresa_email,
@@ -2752,6 +2802,10 @@ def crear_factura(presupuesto_id: int, db: Session = Depends(get_db)):
         direccion_obra=presupuesto.direccion_obra,
         codigo_postal=presupuesto.codigo_postal,
         moneda=presupuesto.moneda,
+        moneda_base=getattr(presupuesto, "moneda_base", None) or "USD",
+        tipo_cambio=presupuesto.tipo_cambio,
+        fecha_tipo_cambio=presupuesto.fecha_tipo_cambio,
+        fuente_tipo_cambio=getattr(presupuesto, "fuente_tipo_cambio", "") or "",
         impuesto_pct=presupuesto.impuesto_pct,
         descuento_pct=presupuesto.descuento_pct,
         notas=presupuesto.notas,
@@ -2912,7 +2966,9 @@ def editar_presupuesto_form(presupuesto_id: int, request: Request, db: Session =
     clientes = db.query(Cliente).order_by(Cliente.nombre).all()
     partidas_catalogo = _indice_catalogo_para_editor(db, presupuesto.moneda, presupuesto.tipo_cambio)
     productos_catalogo = db.query(Producto).order_by(Producto.ultimo_uso.desc(), Producto.usos.desc(), Producto.nombre).all()
-    recursos_catalogo = db.query(Recurso).order_by(Recurso.ultimo_uso.desc(), Recurso.usos.desc(), Recurso.descripcion).all()
+    cfg = _config(db)
+    recursos_base = db.query(Recurso).order_by(Recurso.ultimo_uso.desc(), Recurso.usos.desc(), Recurso.descripcion).all()
+    recursos_catalogo = _recursos_editor_mercado(db, recursos_base, cfg, presupuesto.moneda, presupuesto.tipo_cambio)
     plantillas = db.query(Plantilla).order_by(Plantilla.nombre).all()
     # Borrador del autoguardado: solo se ofrece si es más reciente que el
     # último guardado del presupuesto (updated_at).
@@ -2958,11 +3014,30 @@ async def actualizar_presupuesto(presupuesto_id: int, request: Request, db: Sess
         return _redirect("/presupuestos", error="Presupuesto no encontrado.")
     form = await request.form()
     estaba_congelado = presupuesto.estado in ESTADOS_CONGELABLES
+    moneda_nueva = normalizar_moneda(form.get("moneda"), "USD")
+    moneda_anterior = normalizar_moneda(presupuesto.moneda, "USD")
+    cambio_moneda = moneda_nueva != moneda_anterior
+    confirmado_moneda = str(form.get("confirmar_cambio_moneda", "0")) == "1"
+    if cambio_moneda and estaba_congelado:
+        return _redirect(f"/presupuestos/{presupuesto_id}/editar", error="Un presupuesto enviado o aprobado no puede cambiar de moneda; crea una nueva versión.")
+    if cambio_moneda and not confirmado_moneda:
+        return _redirect(f"/presupuestos/{presupuesto_id}/editar", error="Confirma expresamente el cambio de moneda para convertir los importes.")
 
     cliente = db.get(Cliente, int(_f(form.get("client_id"))))
     if cliente is None:
         return _redirect(f"/presupuestos/{presupuesto_id}/editar", error="Selecciona un cliente válido.")
     capitulos, partidas = _leer_formulario_presupuesto(form, db)
+    if cambio_moneda:
+        tasa_origen = presupuesto.tipo_cambio if moneda_anterior != "USD" else 1
+        tasa_destino = _f(form.get("tipo_cambio"), None) if str(form.get("tipo_cambio", "")).strip() else None
+        if moneda_nueva != "USD" and (tasa_destino is None or tasa_destino <= 0):
+            return _redirect(f"/presupuestos/{presupuesto_id}/editar", error=f"Indica una tasa positiva para convertir {moneda_anterior} a {moneda_nueva}.")
+        if moneda_anterior != "USD" and (tasa_origen is None or tasa_origen <= 0):
+            return _redirect(f"/presupuestos/{presupuesto_id}/editar", error=f"El presupuesto no tiene una tasa válida de origen ({moneda_anterior}); no se puede convertir automáticamente.")
+        for partida in partidas:
+            for clave in ("precio", "coste_materiales", "coste_mano_obra", "coste_complementarios", "coste_otros", "prod_precio", "prod_coste"):
+                if partida.get(clave) is not None:
+                    partida[clave] = float(convertir_moneda(partida[clave], moneda_anterior, moneda_nueva, tasa_destino, tasa_origen))
     capitulos = [c for c in capitulos if c["nombre"]]
     if not capitulos:
         return _redirect(f"/presupuestos/{presupuesto_id}/editar", error="Agrega al menos un capítulo con nombre.")
@@ -2985,8 +3060,10 @@ async def actualizar_presupuesto(presupuesto_id: int, request: Request, db: Sess
     presupuesto.direccion_obra = str(form.get("direccion_obra", "")).strip()
     presupuesto.codigo_postal = str(form.get("codigo_postal", "")).strip()
     presupuesto.validez_dias = int(_f(form.get("validez_dias"), 30))
-    presupuesto.moneda = normalizar_moneda(form.get("moneda"), "USD")
+    cfg = _config(db)
+    presupuesto.moneda = "USD" if str(cfg.empresa_pais or "").strip().lower() == "venezuela" and normalizar_moneda(form.get("moneda"), "USD") == "VES" else normalizar_moneda(form.get("moneda"), "USD")
     presupuesto.tipo_cambio = _f(form.get("tipo_cambio"), None) if str(form.get("tipo_cambio", "")).strip() else None
+    presupuesto.fuente_tipo_cambio = str(form.get("fuente_tipo_cambio", "") or "").strip()[:120]
     presupuesto.impuesto_pct = _f(form.get("impuesto_pct"), 16.0)
     presupuesto.descuento_pct = _f(form.get("descuento_pct"), 0.0)
     presupuesto.estado = estado if _estado_valido(estado) else presupuesto.estado
@@ -3176,6 +3253,7 @@ def duplicar_presupuesto(presupuesto_id: int, db: Session = Depends(get_db)):
                 unidad=part_o.unidad,
                 cantidad=part_o.cantidad,
                 precio_unitario=part_o.precio_unitario,
+                moneda=part_o.moneda or copia.moneda or "USD",
                 orden=part_o.orden,
                 producto_nombre=part_o.producto_nombre,
                 producto_precio=part_o.producto_precio,

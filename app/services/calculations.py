@@ -108,10 +108,16 @@ def coste_obra_partida(partida) -> Decimal:
     if descompuesto is not None and getattr(descompuesto, "coste_directo_unitario", None) is not None:
         if getattr(descompuesto, "origen", "") != "manual":
             return money(cantidad * D(descompuesto.coste_directo_unitario))
+        from .apu import calcular_apu
+        if getattr(descompuesto, "filas", None):
+            apu = calcular_apu(descompuesto.filas)
+            directo = apu.coste_directo
+        else:
+            directo = D(descompuesto.coste_directo_unitario)
         desperdicio = pct(getattr(partida, "desperdicio_pct", 0))
         return money(
             cantidad
-            * D(descompuesto.coste_directo_unitario)
+            * directo
             * (Decimal("1") + desperdicio / Decimal("100"))
         )
     materiales = D(getattr(partida, "coste_materiales", 0))

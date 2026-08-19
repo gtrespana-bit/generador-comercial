@@ -52,13 +52,22 @@ def listar_recursos(request: Request, q: str = "", categoria: str = "", db: Sess
     if categoria and categoria in CATEGORIAS_RECURSO:
         query = query.filter(Recurso.categoria == categoria)
     recursos = query.order_by(Recurso.categoria, Recurso.descripcion).all()
-    # Agrupar por categoria para la vista
+    from ..services.traduccion import codigo_desde_pais
+    from ..services.precios_mercado import resolver_precio
+    cfg = _config(db)
+    pais = codigo_desde_pais(cfg.empresa_pais or "") or "VE"
+    org_id = int(db.info.get("organizacion_id") or 0)
+    precios_efectivos = {r.id: resolver_precio(db, r.id, pais, org_id) for r in recursos}
+    # Agrupar por categoria
     return TEMPLATES.TemplateResponse(request, "recursos/list.html", {
         "recursos": recursos,
         "q": q,
         "categoria": categoria,
         "categorias": CATEGORIAS_RECURSO,
         "etiquetas": ETIQUETAS_RECURSO,
+        "precios_efectivos": precios_efectivos,
+        "mercado_codigo": pais,
+        "mercado_moneda": cfg.moneda_default or "USD",
     })
 
 @router.get("/recursos/exportar")
@@ -99,7 +108,10 @@ def sincronizar_recursos(db: Session = Depends(get_db)):
 
 @router.get("/recursos/nuevo", response_class=HTMLResponse)
 def nuevo_recurso_form(request: Request, _db: Session = Depends(get_db)):
-    return TEMPLATES.TemplateResponse(request, "recursos/form.html", {"recurso": None, "categorias": CATEGORIAS_RECURSO, "etiquetas": ETIQUETAS_RECURSO})
+    from ..services.traduccion import codigo_desde_pais
+    cfg = _config(_db)
+    pais = codigo_desde_pais(cfg.empresa_pais or "") or "VE"
+    return TEMPLATES.TemplateResponse(request, "recursos/form.html", {"recurso": None, "categorias": CATEGORIAS_RECURSO, "etiquetas": ETIQUETAS_RECURSO, "mercado_codigo": pais, "mercado_moneda": cfg.moneda_default or "USD", "precio_mercado": None})
 
 @router.post("/recursos/nuevo")
 def crear_recurso(
@@ -109,7 +121,15 @@ def crear_recurso(
     categoria: str = Form("otros"),
     grupo: str = Form(""),
     precio: str = Form("0"),
+    precio_mercado: str = Form(""),
     proveedor: str = Form(""),
+    subtipo: str = Form(""),
+    capacidad: str = Form(""),
+    modalidad_tarifa: str = Form("hora"),
+    incluye_operador: str = Form(""),
+    incluye_combustible: str = Form(""),
+    incluye_flete: str = Form(""),
+    rendimiento_jornada: str = Form(""),
     db: Session = Depends(get_db),
 ):
     if not descripcion.strip():
@@ -130,8 +150,18 @@ def crear_recurso(
         grupo=grupo.strip(),
         precio=max(0.0, _f(precio)),
         proveedor=proveedor.strip(),
+        subtipo=subtipo.strip(), capacidad=capacidad.strip(), modalidad_tarifa=modalidad_tarifa.strip() or "hora",
+        incluye_operador=bool(incluye_operador), incluye_combustible=bool(incluye_combustible), incluye_flete=bool(incluye_flete),
+        rendimiento_jornada=_f(rendimiento_jornada, None),
     )
     db.add(recurso)
+    db.flush()
+    if str(precio_mercado or "").strip():
+        from ..services.traduccion import codigo_desde_pais
+        from ..services.precios_mercado import guardar_precio
+        cfg = _config(db)
+        pais = codigo_desde_pais(cfg.empresa_pais or "") or "VE"
+        guardar_precio(db, recurso.id, pais, _f(precio_mercado), cfg.moneda_default or "USD", organizacion_id=int(db.info.get("organizacion_id") or 0), fuente="Empresa")
     db.commit()
     return _redirect("/recursos", msg="Recurso creado correctamente.")
 
@@ -140,7 +170,12 @@ def editar_recurso_form(recurso_id: int, request: Request, db: Session = Depends
     recurso = db.get(Recurso, recurso_id)
     if recurso is None:
         return _redirect("/recursos", error="Recurso no encontrado.")
-    return TEMPLATES.TemplateResponse(request, "recursos/form.html", {"recurso": recurso, "categorias": CATEGORIAS_RECURSO, "etiquetas": ETIQUETAS_RECURSO})
+    from ..services.traduccion import codigo_desde_pais
+    from ..services.precios_mercado import resolver_precio
+    cfg = _config(db)
+    pais = codigo_desde_pais(cfg.empresa_pais or "") or "VE"
+    precio_mercado = resolver_precio(db, recurso.id, pais, int(db.info.get("organizacion_id") or 0))
+    return TEMPLATES.TemplateResponse(request, "recursos/form.html", {"recurso": recurso, "categorias": CATEGORIAS_RECURSO, "etiquetas": ETIQUETAS_RECURSO, "mercado_codigo": pais, "mercado_moneda": cfg.moneda_default or "USD", "precio_mercado": precio_mercado if precio_mercado.origen == "organizacion" else None})
 
 @router.post("/recursos/{recurso_id}/editar")
 def actualizar_recurso(
@@ -151,7 +186,15 @@ def actualizar_recurso(
     categoria: str = Form("otros"),
     grupo: str = Form(""),
     precio: str = Form("0"),
+    precio_mercado: str = Form(""),
     proveedor: str = Form(""),
+    subtipo: str = Form(""),
+    capacidad: str = Form(""),
+    modalidad_tarifa: str = Form("hora"),
+    incluye_operador: str = Form(""),
+    incluye_combustible: str = Form(""),
+    incluye_flete: str = Form(""),
+    rendimiento_jornada: str = Form(""),
     db: Session = Depends(get_db),
 ):
     recurso = db.get(Recurso, recurso_id)
@@ -176,7 +219,16 @@ def actualizar_recurso(
     recurso.grupo = grupo.strip()
     recurso.precio = nuevo_precio
     recurso.proveedor = proveedor.strip()
+    recurso.subtipo = subtipo.strip(); recurso.capacidad = capacidad.strip(); recurso.modalidad_tarifa = modalidad_tarifa.strip() or "hora"
+    recurso.incluye_operador = bool(incluye_operador); recurso.incluye_combustible = bool(incluye_combustible); recurso.incluye_flete = bool(incluye_flete)
+    recurso.rendimiento_jornada = _f(rendimiento_jornada, None)
     recurso.fecha_actualizacion_precio = datetime.utcnow()
+    if str(precio_mercado or "").strip():
+        from ..services.traduccion import codigo_desde_pais
+        from ..services.precios_mercado import guardar_precio
+        cfg = _config(db)
+        pais = codigo_desde_pais(cfg.empresa_pais or "") or "VE"
+        guardar_precio(db, recurso.id, pais, _f(precio_mercado), cfg.moneda_default or "USD", organizacion_id=int(db.info.get("organizacion_id") or 0), fuente="Empresa")
     # Propagar si cambió precio
     if abs(nuevo_precio - precio_anterior) > 1e-9:
         try:
@@ -305,3 +357,23 @@ async def bulk_delete_recursos(request: Request, db: Session = Depends(get_db)):
             count += 1
     db.commit()
     return _redirect("/recursos", msg=f"Se eliminaron {count} recursos.")
+
+@router.get("/recursos/mercado", response_class=HTMLResponse)
+def panel_precios_mercado(request: Request, pais: str = "", categoria: str = "", db: Session = Depends(get_db)):
+    """Panel de referencias nacionales y precios de organización."""
+    query = db.query(PrecioRecursoMercado, Recurso).join(Recurso, Recurso.id == PrecioRecursoMercado.recurso_id)
+    if pais.strip(): query = query.filter(PrecioRecursoMercado.pais_codigo == pais.strip().upper())
+    if categoria in CATEGORIAS_RECURSO: query = query.filter(Recurso.categoria == categoria)
+    filas = query.order_by(PrecioRecursoMercado.pais_codigo, Recurso.categoria, Recurso.descripcion).all()
+    return TEMPLATES.TemplateResponse(request, "recursos/mercado.html", {"filas": filas, "pais": pais, "categoria": categoria, "categorias": CATEGORIAS_RECURSO})
+
+@router.post("/recursos/mercado")
+def guardar_precio_mercado(
+    recurso_id: int = Form(...), pais_codigo: str = Form(...), precio: str = Form(...), moneda: str = Form(...),
+    organizacion: str = Form("0"), fuente: str = Form(""), confianza: str = Form("referencia"), db: Session = Depends(get_db)
+):
+    from ..services.precios_mercado import guardar_precio
+    org_id = int(db.info.get("organizacion_id") or 0) if organizacion == "1" else None
+    guardar_precio(db, recurso_id, pais_codigo, _f(precio), moneda, organizacion_id=org_id, fuente=fuente, confianza=confianza)
+    db.commit()
+    return _redirect("/recursos/mercado", msg="Precio de mercado guardado.")

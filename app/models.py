@@ -471,7 +471,9 @@ class Presupuesto(TenantMixin, Base):
     # Condiciones comerciales
     validez_dias = Column(Integer, default=30)
     moneda = Column(String(10), default="USD")
-    tipo_cambio = Column(Float, nullable=True)  # Bs por USD (solo referencia)
+    moneda_base = Column(String(10), default="USD")
+    tipo_cambio = Column(Float, nullable=True)  # unidades de moneda contractual por 1 USD
+    fuente_tipo_cambio = Column(String(120), default="")
     impuesto_pct = Column(Float, default=16.0)
     descuento_pct = Column(Float, default=0.0)
     estado = Column(String(20), default="borrador")
@@ -634,6 +636,11 @@ class PresupuestoVersion(TenantMixin, Base):
     motivo = Column(String(500), default="")
     estado = Column(String(30), default="borrador")
     total = Column(Float, default=0.0)
+    moneda = Column(String(10), default="USD")
+    moneda_base = Column(String(10), default="USD")
+    tipo_cambio = Column(Float, nullable=True)
+    fecha_tipo_cambio = Column(Date, nullable=True)
+    fuente_tipo_cambio = Column(String(120), default="")
     datos_snapshot = Column(Text, nullable=False, default="{}")
     pdf_snapshot = Column(String(300), default="")
 
@@ -762,6 +769,7 @@ class PresupuestoItem(TenantMixin, Base):
     unidad = Column(String(20), default="ud")
     cantidad = Column(Float, default=0.0)          # usada si no hay mediciones
     precio_unitario = Column(Float, default=0.0)
+    moneda = Column(String(10), default="USD")
     orden = Column(Integer, default=0)
     # Partida maestra del catálogo desde la que se insertó. Permite distinguir
     # un cambio «solo en este presupuesto» de una actualización del catálogo
@@ -1052,6 +1060,10 @@ class DescomposicionFila(TenantMixin, Base):
     rendimiento = Column(Float, nullable=True)
     precio_unitario = Column(Float, nullable=True)
     importe = Column(Float, nullable=True)
+    moneda = Column(String(10), default="USD")
+    origen_precio = Column(String(20), default="base")
+    confianza_precio = Column(String(20), default="provisional")
+    fuente_precio = Column(String(200), default="")
     celdas_json = Column(Text, default="[]")
     formulas_json = Column(Text, default="{}")
 
@@ -1154,6 +1166,7 @@ class Configuracion(TenantMixin, Base):
     # Valores por defecto para presupuestos nuevos
     iva_default = Column(Float, default=16.0)
     moneda_default = Column(String(10), default="USD")
+    moneda_base_catalogo = Column(String(10), default="USD")
     validez_default = Column(Integer, default=30)
     notas_default = Column(Text, default="")
     condiciones_default = Column(Text, default="")
@@ -1179,6 +1192,7 @@ class Configuracion(TenantMixin, Base):
     # Tasa de referencia para conversión USD -> moneda local (bloque moneda/tasa auto)
     # Ej: 3128.65 COP por 1 USD. NULL = 1 (cuando moneda_default es USD).
     tasa_cambio = Column(Float, nullable=True)
+    fuente_tipo_cambio = Column(String(120), default="")
     fecha_tasa = Column(Date, nullable=True)
 
     # Alias LatAm para el flag regional (Semana 2). El nombre histórico
@@ -1399,6 +1413,7 @@ class Producto(TenantMixin, Base):
     nombre = Column(String(250), nullable=False)
     descripcion = Column(Text, default="")
     precio_unitario = Column(Float, default=0.0)
+    moneda = Column(String(10), default="USD")
     unidad = Column(String(30), default="ud")
     categoria = Column(String(80), default="General")
     imagen = Column(String(300), default="")           # referencia lógica o ruta local histórica
@@ -1439,6 +1454,43 @@ class Producto(TenantMixin, Base):
         return limpias
 
 
+class PrecioRecursoMercado(Base):
+    """Precio de un recurso por mercado, con referencia nacional y override.
+
+    ``organizacion_id`` nulo = referencia nacional gestionada por Cotizat;
+    con valor = precio personalizado de una empresa.
+    """
+    __tablename__ = "precios_recursos_mercado"
+    __table_args__ = (
+        UniqueConstraint("recurso_id", "pais_codigo", "organizacion_id", name="uq_precio_recurso_mercado_org"),
+    )
+    id = Column(Integer, primary_key=True)
+    recurso_id = Column(Integer, ForeignKey("recursos.id", ondelete="CASCADE"), nullable=False, index=True)
+    pais_codigo = Column(String(2), nullable=False, index=True)
+    organizacion_id = Column(Integer, ForeignKey("organizaciones.id", ondelete="CASCADE"), nullable=True, index=True)
+    precio = Column(Float, nullable=False, default=0.0)
+    moneda = Column(String(10), nullable=False, default="USD")
+    fuente = Column(String(200), default="")
+    proveedor = Column(String(150), default="")
+    confianza = Column(String(20), default="referencia")
+    fecha_vigencia = Column(Date, nullable=True)
+    fecha_actualizacion = Column(DateTime, default=datetime.utcnow)
+    activo = Column(Boolean, nullable=False, default=True)
+    recurso = relationship("Recurso", back_populates="precios_mercado")
+
+
+class HistorialPrecioRecurso(Base):
+    __tablename__ = "historial_precios_recursos"
+    id = Column(Integer, primary_key=True)
+    precio_mercado_id = Column(Integer, ForeignKey("precios_recursos_mercado.id", ondelete="CASCADE"), nullable=False, index=True)
+    precio_anterior = Column(Float, nullable=True)
+    precio_nuevo = Column(Float, nullable=False)
+    moneda = Column(String(10), nullable=False, default="USD")
+    fecha = Column(DateTime, default=datetime.utcnow)
+    motivo = Column(String(250), default="")
+    fuente = Column(String(200), default="")
+
+
 class Recurso(TenantMixin, Base):
     """Catálogo central de precios unitarios (recursos).
 
@@ -1464,12 +1516,22 @@ class Recurso(TenantMixin, Base):
     categoria = Column(String(30), default="otros")  # materiales, mano_obra, complementarios, otros
     grupo = Column(String(250), default="")
     precio = Column(Float, default=0.0)
+    moneda = Column(String(10), default="USD")
     proveedor = Column(String(150), default="")
+    subtipo = Column(String(40), default="")
+    capacidad = Column(String(80), default="")
+    modalidad_tarifa = Column(String(30), default="hora")
+    incluye_operador = Column(Boolean, default=False)
+    incluye_combustible = Column(Boolean, default=False)
+    incluye_flete = Column(Boolean, default=False)
+    rendimiento_jornada = Column(Float, nullable=True)
+    horas_jornada_recurso = Column(Float, default=8.0)
     # Metadatos
     usos = Column(Integer, default=0)
     ultimo_uso = Column(DateTime, nullable=True)
     fecha_actualizacion_precio = Column(DateTime, default=datetime.utcnow)
     created_at = Column(DateTime, default=datetime.utcnow)
+    precios_mercado = relationship("PrecioRecursoMercado", back_populates="recurso", cascade="all, delete-orphan")
 
     @property
     def clave(self) -> str:
@@ -1523,6 +1585,10 @@ class Factura(TenantMixin, Base):
     direccion_obra = Column(String(300), default="")
     codigo_postal = Column(String(20), default="")
     moneda = Column(String(10), default="USD")
+    moneda_base = Column(String(10), default="USD")
+    tipo_cambio = Column(Float, nullable=True)
+    fecha_tipo_cambio = Column(Date, nullable=True)
+    fuente_tipo_cambio = Column(String(120), default="")
     impuesto_pct = Column(Float, default=16.0)
     descuento_pct = Column(Float, default=0.0)
     estado = Column(String(20), default="emitida")     # emitida / anulada
@@ -1546,7 +1612,6 @@ class Factura(TenantMixin, Base):
     # Campos que el motor del PDF espera en un presupuesto y que una
     # factura no utiliza (la cabecera los omite si son falsy).
     validez_dias = None
-    tipo_cambio = None
     con_portada = False
     foto_proyecto = ""
     mostrar_firmas = False
@@ -2289,6 +2354,11 @@ class Proyecto(TenantMixin, Base):
     id = Column(Integer, primary_key=True)
     presupuesto_id = Column(Integer, ForeignKey("presupuestos.id"), nullable=False, unique=True)
     presupuesto_version_id = Column(Integer, ForeignKey("presupuesto_versiones.id"), nullable=True)
+    moneda_contractual = Column(String(10), default="USD")
+    moneda_base = Column(String(10), default="USD")
+    tipo_cambio = Column(Float, nullable=True)
+    fecha_tipo_cambio = Column(Date, nullable=True)
+    fuente_tipo_cambio = Column(String(120), default="")
     nombre = Column(String(250), default="")
     estado = Column(String(30), default="en_ejecucion")
     fecha_inicio = Column(Date, nullable=True)
@@ -2310,7 +2380,9 @@ class Proyecto(TenantMixin, Base):
     @property
     def total_actual(self): return round(self.total_contratado + self.total_cambios_aprobados, 2)
     @property
-    def total_pagado(self): return round(sum(p.importe for p in self.pagos if p.estado == "confirmado"), 2)
+    def total_pagado(self):
+        moneda = self.moneda_contractual or getattr(self.presupuesto, "moneda", "USD")
+        return round(sum(p.importe for p in self.pagos if p.estado == "confirmado" and (p.moneda or moneda) == moneda), 2)
     @property
     def saldo_pendiente(self): return round(self.total_actual - self.total_pagado, 2)
 
@@ -2320,6 +2392,7 @@ class CambioAlcance(TenantMixin, Base):
     proyecto_id = Column(Integer, ForeignKey("proyectos.id"), nullable=False)
     numero = Column(Integer, nullable=False)
     descripcion = Column(Text, default="")
+    moneda = Column(String(10), default="USD")
     estado = Column(String(20), default="borrador")
     fecha = Column(Date, default=date.today)
     diferencia_total = Column(Float, default=0.0)
@@ -2335,6 +2408,7 @@ class CambioAlcanceItem(TenantMixin, Base):
     nombre = Column(String(250), default="")
     cantidad = Column(Float, default=0.0)
     precio_unitario = Column(Float, default=0.0)
+    moneda = Column(String(10), default="USD")
     cambio = relationship("CambioAlcance", back_populates="items")
     @property
     def importe(self): return round((self.cantidad or 0) * (self.precio_unitario or 0), 2)

@@ -8,19 +8,31 @@
   // Exportar al scope global para que otros módulos puedan usarla
   window.FMT = window.FMT || {};
 
+  function codigo(moneda) {
+    return String(moneda || window.COTIZAT_MONEDA_ACTIVA || "USD").toUpperCase() || "USD";
+  }
+
   function simbolo(moneda) {
-    return (moneda || "").toUpperCase() === "BS" ? "Bs" : "$";
+    var mapa = {USD: "$", COP: "$", MXN: "$", PEN: "S/", CLP: "$", ARS: "$", UYU: "$U", PYG: "₲", BOB: "Bs", DOP: "RD$", PAB: "B/.", CRC: "₡", GTQ: "Q", HNL: "L", NIO: "C$", BRL: "R$", EUR: "€"};
+    return mapa[codigo(moneda)] || codigo(moneda);
   }
 
   window.FMT.simbolo = simbolo;
+  window.FMT.codigo = codigo;
+
+  function decimales(moneda) {
+    return ["CLP", "PYG"].indexOf(codigo(moneda)) !== -1 || codigo(moneda) === "COP" ? 0 : 2;
+  }
 
   function fmt(valor, moneda) {
-    if (valor == null || isNaN(valor)) return "0,00 " + simbolo(moneda);
-    var s = Math.abs(Number(valor)).toFixed(2);
+    var cod = codigo(moneda);
+    var places = decimales(cod);
+    if (valor == null || isNaN(valor)) return (0).toFixed(places).replace(".", ",") + " " + cod;
+    var s = Math.abs(Number(valor)).toFixed(places);
     var partes = s.split(".");
     partes[0] = partes[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     var signo = valor < 0 ? "-" : "";
-    return signo + partes.join(",") + " " + simbolo(moneda);
+    return signo + partes.join(",") + " " + cod;
   }
 
   window.FMT.fmt = fmt;

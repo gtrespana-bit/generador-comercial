@@ -116,23 +116,30 @@ async def guardar_configuracion(request: Request, db: Session = Depends(get_db))
     # Etiqueta ID fiscal por país (RIF/NIT/RUT/CUIT/RUC/RFC)
     cfg.etiqueta_id_fiscal = str(form.get("etiqueta_id_fiscal", "") or "RIF").strip()[:20] or "RIF"
     cfg.iva_default = max(0.0, min(_f(form.get("iva_default"), 16.0), 100.0))
-    # Moneda: 20 ISOs (validación contra lista blanca, alias Bs->VES)
-    from ..utils import MONEDAS_SOPORTADAS
+    # Moneda contractual visible: solo códigos ISO admitidos. VES/Bs se
+    # conserva para compatibilidad histórica, pero no se ofrece como moneda
+    # visible de los presupuestos venezolanos.
+    from ..services.monedas import moneda_valida, codigo_iso
     from ..services.tasa import tasa_sugerida
     moneda_raw = str(form.get("moneda_default", "USD") or "USD").strip().upper()
     if moneda_raw == "BS":
         moneda_raw = "VES"
-    cfg.moneda_default = moneda_raw if moneda_raw in MONEDAS_SOPORTADAS else "USD"
+    cfg.moneda_default = codigo_iso(moneda_raw) if moneda_valida(moneda_raw) else "USD"
+    if cfg.empresa_pais.strip().lower() == "venezuela" and cfg.moneda_default == "VES":
+        cfg.moneda_default = "USD"
     # Tasa de referencia USD->local (opcional)
     tasa_txt = str(form.get("tasa_cambio", "") or "").strip()
     if tasa_txt:
         try:
             _t = float(tasa_txt.replace(",", "."))
             cfg.tasa_cambio = max(0.0, _t) if _t > 0 else None
+            cfg.fuente_tipo_cambio = "manual" if cfg.tasa_cambio else ""
         except Exception:
             cfg.tasa_cambio = None
+            cfg.fuente_tipo_cambio = ""
     else:
         cfg.tasa_cambio = None
+        cfg.fuente_tipo_cambio = ""
     fecha_tasa_raw = str(form.get("fecha_tasa", "") or "").strip()
     if fecha_tasa_raw:
         try:

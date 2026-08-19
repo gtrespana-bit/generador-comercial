@@ -9,7 +9,7 @@
     {% if p.es_demo %}<p class="hint">Este documento es ficticio. Puedes explorarlo, editarlo o eliminarlo; no cuenta como tu primer presupuesto real.</p>{% endif %}
   </div>
   <div class="actions">
-    {% set wa = p.cliente.telefono | whatsapp('Hola ' ~ p.cliente.nombre ~ ', te comparto el presupuesto ' ~ p.numero ~ ' (' ~ (p.titulo or '') ~ ') por un total de ' ~ (p.total | money(p.moneda)) ~ '. Validez de la oferta: ' ~ p.validez_dias ~ ' días.') %}
+    {% set wa = p.cliente.telefono | whatsapp('Hola ' ~ p.cliente.nombre ~ ', te comparto el presupuesto ' ~ p.numero ~ ' (' ~ (p.titulo or '') ~ ') por un total de ' ~ (p.total | money_iso(p.moneda)) ~ '. Validez de la oferta: ' ~ p.validez_dias ~ ' días.') %}
     {% if wa %}<a class="btn btn-whatsapp" href="{{ wa }}" target="_blank">💬 Enviar por WhatsApp</a>{% endif %}
     <a class="btn" href="/presupuestos/{{ p.id }}/enviar-email">✉️ Enviar por email</a>
     <a class="btn" href="/presupuestos/{{ p.id }}/enlace-publico">🔗 Enlace público</a>
@@ -43,9 +43,9 @@
           {% if con_costos %}
           Margen de beneficio (según los costos internos cargados en {{ con_costos | length }} de {{ p.todas_partidas | length }} partida(s)):
           {% if p.total_productos %}
-          obra <strong class="csp-s-6464799a08">{{ p.margen_obra_pct }}%</strong> ({{ p.margen_obra | money(p.moneda) }}) · productos <strong class="csp-s-6464799a08">{{ p.margen_productos_pct }}%</strong> ({{ p.margen_productos | money(p.moneda) }}) · total <strong class="csp-s-6464799a08">{{ p.margen_pct }}%</strong> ({{ p.margen | money(p.moneda) }}). El total de productos asciende a <strong class="csp-s-6464799a08">{{ p.total_productos | money(p.moneda) }}</strong>.
+          obra <strong class="csp-s-6464799a08">{{ p.margen_obra_pct }}%</strong> ({{ p.margen_obra | money_iso(p.moneda) }}) · productos <strong class="csp-s-6464799a08">{{ p.margen_productos_pct }}%</strong> ({{ p.margen_productos | money_iso(p.moneda) }}) · total <strong class="csp-s-6464799a08">{{ p.margen_pct }}%</strong> ({{ p.margen | money_iso(p.moneda) }}). El total de productos asciende a <strong class="csp-s-6464799a08">{{ p.total_productos | money_iso(p.moneda) }}</strong>.
           {% else %}
-          <strong class="csp-s-6464799a08">{{ p.margen_pct }}%</strong> ({{ p.margen | money(p.moneda) }} sobre un costo interno de {{ p.coste_interno | money(p.moneda) }}).
+          <strong class="csp-s-6464799a08">{{ p.margen_pct }}%</strong> ({{ p.margen | money_iso(p.moneda) }} sobre un costo interno de {{ p.coste_interno | money_iso(p.moneda) }}).
           {% endif %}
           {% else %}
           Sin margen calculable: ninguna partida de este presupuesto tiene costos internos (materiales/mano de obra) cargados todavía.
@@ -109,7 +109,7 @@
   <div class="doc-capitulo-banda"></div>
   <div class="doc-capitulo">
     <span>{{ cap.nombre }}</span>
-    <span>{{ cap.subtotal | money(p.moneda) }}</span>
+    <span>{{ cap.subtotal | money_iso(p.moneda) }}</span>
   </div>
   {% for part in cap.partidas %}
   <div class="doc-partida">
@@ -127,8 +127,8 @@
           {% endif %}
         </td>
         <td class="right csp-s-463c663c8c">{{ part.cantidad_total | cant(part.unidad) }}</td>
-        <td class="right csp-s-0dfe35f39a">{{ part.precio_unitario | num }} {{ p.moneda | simbolo }}/{{ part.unidad }}</td>
-        <td class="right csp-s-6ef849732a">{{ part.importe | money(p.moneda) }}</td>
+        <td class="right csp-s-0dfe35f39a">{{ part.precio_unitario | money_iso(p.moneda) }}/{{ part.unidad }}</td>
+        <td class="right csp-s-6ef849732a">{{ part.importe | money_iso(p.moneda) }}</td>
         <td class="right csp-s-0231bd7a8a">
           {% set tp = tiempos_por_partida.get(part.id) if tiempos_por_partida else none %}
           {% if tp %}
@@ -153,7 +153,7 @@
         <td class="csp-s-9908383064">{{ m.concepto or '–' }}</td>
         <td class="right csp-s-71f9841409">{{ m.cantidad | cant(part.unidad) }}</td>
         <td class="right csp-s-0dfe35f39a">—</td>
-        <td class="right csp-s-0dfe35f39a">{{ (m.cantidad * part.precio_unitario) | money(p.moneda) }}</td>
+        <td class="right csp-s-0dfe35f39a">{{ (m.cantidad * part.precio_unitario) | money_iso(p.moneda) }}</td>
       </tr>
       {% endfor %}
     </table>
@@ -175,7 +175,7 @@
             {% set op_precio = op.precio if op.precio is defined and op.precio is not none else op.producto_precio %}
             {% set op_unidad = op.unidad if op.unidad is defined and op.unidad else (op.producto_unidad or part.unidad) %}
             {% if op_precio is not none %}
-            <strong class="csp-s-d5d7f32738">{{ op_precio | num }} {{ p.moneda | replace('USD','$') }} / {{ op_unidad }}</strong>
+            <strong class="csp-s-d5d7f32738">{{ op_precio | money_iso(p.moneda) }} / {{ op_unidad }}</strong>
             {% endif %}
           </div>
           {% set op_nombre = op.nombre if op.nombre is defined and op.nombre else op.producto_nombre %}
@@ -199,7 +199,7 @@
     {% else %}
     <div class="doc-prod">
       <strong>Producto presupuestado:</strong>
-      {% if part.producto_precio is not none %}<strong>{{ part.producto_precio | num }} {{ p.moneda | replace('USD','$') }} / {{ part.producto_unidad or part.unidad }}</strong>&nbsp;&nbsp;{% endif %}
+      {% if part.producto_precio is not none %}<strong>{{ part.producto_precio | money_iso(p.moneda) }} / {{ part.producto_unidad or part.unidad }}</strong>&nbsp;&nbsp;{% endif %}
       <em class="muted">{{ part.producto_nombre }}</em>
       {% if part.producto_imagen %}<br><img src="{{ part.producto_imagen | archivo_url }}" alt="Producto" loading="lazy" decoding="async">{% endif %}
     </div>
@@ -207,7 +207,7 @@
     {% endif %}
     {% if part.tiene_costes %}
     <div class="hint csp-s-d703051526">
-      Coste: {{ part.coste | money(p.moneda) }} · Beneficio: {{ part.beneficio | money(p.moneda) }} ({{ "%.1f"|format((part.beneficio/part.coste*100) if part.coste else 0) }}% s/coste, {{ part.margen_beneficio_pct | num }}% margen)
+      Coste: {{ part.coste | money_iso(p.moneda) }} · Beneficio: {{ part.beneficio | money_iso(p.moneda) }} ({{ "%.1f"|format((part.beneficio/part.coste*100) if part.coste else 0) }}% s/coste, {{ part.margen_beneficio_pct | num }}% margen)
     </div>
     {% endif %}
   </div>
@@ -216,27 +216,27 @@
   {% endfor %}
 
   <table class="table doc-totales csp-s-9ccc4ca9d6">
-    <tr><td class="right csp-s-9eae69365e">SUBTOTAL INCLUIDO</td><td class="right">{{ p.subtotal | money(p.moneda) }}</td></tr>
-    {% if p.usar_funciones_avanzadas and p.subtotal_opcional %}<tr><td class="right">OPCIONALES DISPONIBLES</td><td class="right">{{ p.subtotal_opcional | money(p.moneda) }}</td></tr>{% endif %}
-    {% if p.usar_funciones_avanzadas and p.subtotal_alternativas %}<tr><td class="right">ALTERNATIVAS DISPONIBLES</td><td class="right">{{ p.subtotal_alternativas | money(p.moneda) }}</td></tr>{% endif %}
-    {% if p.usar_funciones_avanzadas and p.costes_adicionales %}<tr><td class="right">COSTES ADICIONALES</td><td class="right">{{ p.costes_adicionales | money(p.moneda) }}</td></tr>{% endif %}
-    {% if p.total_productos %}<tr><td class="right">TOTAL OBRA / PARTIDAS</td><td class="right">{{ p.subtotal_obra | money(p.moneda) }}</td></tr><tr><td class="right">TOTAL PRODUCTOS</td><td class="right">{{ p.total_productos | money(p.moneda) }}</td></tr>{% endif %}
+    <tr><td class="right csp-s-9eae69365e">SUBTOTAL INCLUIDO</td><td class="right">{{ p.subtotal | money_iso(p.moneda) }}</td></tr>
+    {% if p.usar_funciones_avanzadas and p.subtotal_opcional %}<tr><td class="right">OPCIONALES DISPONIBLES</td><td class="right">{{ p.subtotal_opcional | money_iso(p.moneda) }}</td></tr>{% endif %}
+    {% if p.usar_funciones_avanzadas and p.subtotal_alternativas %}<tr><td class="right">ALTERNATIVAS DISPONIBLES</td><td class="right">{{ p.subtotal_alternativas | money_iso(p.moneda) }}</td></tr>{% endif %}
+    {% if p.usar_funciones_avanzadas and p.costes_adicionales %}<tr><td class="right">COSTES ADICIONALES</td><td class="right">{{ p.costes_adicionales | money_iso(p.moneda) }}</td></tr>{% endif %}
+    {% if p.total_productos %}<tr><td class="right">TOTAL OBRA / PARTIDAS</td><td class="right">{{ p.subtotal_obra | money_iso(p.moneda) }}</td></tr><tr><td class="right">TOTAL PRODUCTOS</td><td class="right">{{ p.total_productos | money_iso(p.moneda) }}</td></tr>{% endif %}
     {% set mostrar_margenes = cfg.mostrar_costes_internos or con_costos %}
     {% if mostrar_margenes %}
-      <tr><td class="right">COSTE INTERNO (uso interno)</td><td class="right">{{ p.coste_interno | money(p.moneda) }}</td></tr>
+      <tr><td class="right">COSTE INTERNO (uso interno)</td><td class="right">{{ p.coste_interno | money_iso(p.moneda) }}</td></tr>
       {% if p.total_productos %}
-      <tr><td class="right">BENEFICIO OBRA</td><td class="right csp-s-3f12fa5639">{{ p.margen_obra | money(p.moneda) }} ({{ p.margen_obra_pct | num }} %)</td></tr>
-      <tr><td class="right">BENEFICIO PRODUCTOS</td><td class="right csp-s-3f12fa5639">{{ p.margen_productos | money(p.moneda) }} ({{ p.margen_productos_pct | num }} %)</td></tr>
+      <tr><td class="right">BENEFICIO OBRA</td><td class="right csp-s-3f12fa5639">{{ p.margen_obra | money_iso(p.moneda) }} ({{ p.margen_obra_pct | num }} %)</td></tr>
+      <tr><td class="right">BENEFICIO PRODUCTOS</td><td class="right csp-s-3f12fa5639">{{ p.margen_productos | money_iso(p.moneda) }} ({{ p.margen_productos_pct | num }} %)</td></tr>
       {% endif %}
-      <tr><td class="right">BENEFICIO TOTAL ESTIMADO</td><td class="right csp-s-3f12fa5639">{{ p.margen | money(p.moneda) }}</td></tr>
+      <tr><td class="right">BENEFICIO TOTAL ESTIMADO</td><td class="right csp-s-3f12fa5639">{{ p.margen | money_iso(p.moneda) }}</td></tr>
       <tr><td class="right">MARGEN TOTAL</td><td class="right csp-s-3f12fa5639">{{ p.margen_pct | num }} %</td></tr>
     {% endif %}
-    <tr><td class="right csp-s-9eae69365e">BASE IMPONIBLE</td><td class="right">{{ p.base | money(p.moneda) }}</td></tr>
+    <tr><td class="right csp-s-9eae69365e">BASE IMPONIBLE</td><td class="right">{{ p.base | money_iso(p.moneda) }}</td></tr>
     {% if p.descuento_pct %}
-    <tr><td class="right">DESCUENTO ({{ p.descuento_pct | round(2) }} %)</td><td class="right">- {{ p.descuento_monto | money(p.moneda) }}</td></tr>
+    <tr><td class="right">DESCUENTO ({{ p.descuento_pct | round(2) }} %)</td><td class="right">- {{ p.descuento_monto | money_iso(p.moneda) }}</td></tr>
     {% endif %}
-    <tr><td class="right">I.V.A. ({{ p.impuesto_pct | round(2) }} %)</td><td class="right">{{ p.impuesto_monto | money(p.moneda) }}</td></tr>
-    <tr class="row-total"><td class="right"><strong>PRESUPUESTO TOTAL</strong></td><td class="right"><strong>{{ p.total | money(p.moneda) }}</strong></td></tr>
+    <tr><td class="right">I.V.A. ({{ p.impuesto_pct | round(2) }} %)</td><td class="right">{{ p.impuesto_monto | money_iso(p.moneda) }}</td></tr>
+    <tr class="row-total"><td class="right"><strong>PRESUPUESTO TOTAL</strong></td><td class="right"><strong>{{ p.total | money_iso(p.moneda) }}</strong></td></tr>
   </table>
 </div>
 
@@ -246,7 +246,7 @@
     <div class="field csp-s-6253876a64"><label>Motivo (opcional)</label><input name="motivo" maxlength="500" placeholder="p. ej. Propuesta comercial enviada al cliente"></div><button class="btn" type="submit">❄️ Congelar versión</button>
   </form>
   {% if versiones %}
-  <table class="table"><thead><tr><th>Versión</th><th>Fecha</th><th>Estado</th><th>Motivo</th><th class="right">Total</th><th></th></tr></thead><tbody>{% for v in versiones %}<tr><td><strong>V{{ v.numero_version }}</strong></td><td>{{ v.fecha.strftime('%d/%m/%Y %H:%M') if v.fecha else '' }}</td><td>{{ v.estado | replace('_',' ') | capitalize }}</td><td>{{ v.motivo or '—' }}</td><td class="right">{{ v.total | money(p.moneda) }}</td><td><a class="link" href="/presupuestos/{{ p.id }}/versiones/{{ v.id }}">Ver</a>{% if v.pdf_snapshot %} · <a class="link" href="{{ v.pdf_snapshot | archivo_url(true) }}" target="_blank">PDF enviado</a>{% endif %}</td></tr>{% endfor %}</tbody></table>
+  <table class="table"><thead><tr><th>Versión</th><th>Fecha</th><th>Estado</th><th>Motivo</th><th class="right">Total</th><th></th></tr></thead><tbody>{% for v in versiones %}<tr><td><strong>V{{ v.numero_version }}</strong></td><td>{{ v.fecha.strftime('%d/%m/%Y %H:%M') if v.fecha else '' }}</td><td>{{ v.estado | replace('_',' ') | capitalize }}</td><td>{{ v.motivo or '—' }}</td><td class="right">{{ v.total | money_iso(p.moneda) }}</td><td><a class="link" href="/presupuestos/{{ p.id }}/versiones/{{ v.id }}">Ver</a>{% if v.pdf_snapshot %} · <a class="link" href="{{ v.pdf_snapshot | archivo_url(true) }}" target="_blank">PDF enviado</a>{% endif %}</td></tr>{% endfor %}</tbody></table>
   {% if versiones|length > 1 %}<form method="get" action="/presupuestos/{{ p.id }}/versiones/comparar" class="inline csp-s-726e8b317f"><label>Comparar</label><select name="a">{% for v in versiones %}<option value="{{ v.id }}">V{{ v.numero_version }}</option>{% endfor %}</select><span>con</span><select name="b">{% for v in versiones %}<option value="{{ v.id }}" {{ 'selected' if loop.index == 2 else '' }}>V{{ v.numero_version }}</option>{% endfor %}</select><button class="btn btn-sm" type="submit">Comparar</button></form>{% endif %}
   {% else %}<p class="empty">Aún no hay versiones. Se crea una automáticamente al enviar o aprobar el presupuesto.</p>{% endif %}
 </div>
