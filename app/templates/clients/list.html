@@ -10,7 +10,7 @@
 </div>
 
 <form class="filters" method="get" action="/clientes">
-  <input type="text" name="q" value="{{ q }}" placeholder="🔍 Buscar por nombre, RIF o email">
+  <input type="text" name="q" value="{{ q }}" placeholder="🔍 Buscar por nombre, {{ cfg.etiqueta_id_fiscal or 'ID' }} o email">
   <button class="btn" type="submit">Buscar</button>
   {% if q %}<a class="btn btn-sm" href="/clientes">Limpiar</a>{% endif %}
 </form>
@@ -19,7 +19,7 @@
   {% if clientes %}
   <table class="table">
     <thead>
-      <tr><th>Nombre</th><th>RIF / C.I.</th><th>Teléfono</th><th>Email</th><th class="right">Presupuestos</th><th class="right">Acciones</th></tr>
+      <tr><th>Nombre</th><th>{{ cfg.etiqueta_id_fiscal or "ID fiscal" }}</th><th>Teléfono</th><th>Email</th><th class="right">Presupuestos</th><th class="right">Acciones</th></tr>
     </thead>
     <tbody>
       {% for c in clientes %}

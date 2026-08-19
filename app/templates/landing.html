@@ -3,13 +3,39 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{{ product_name }} — Presupuestos de construcción y remodelación para Venezuela</title>
-  <meta name="description" content="{% if hay_prueba_gratuita() %}Pruébalo {{ dias_de_prueba() }} días gratis, sin tarjeta. {% endif %}Presupuestos de obra profesionales en minutos. Más de 3.000 partidas clasificadas con precios en USD contrastados con el mercado venezolano. PDF con tu logo, versiones, aprobaciones y cobros.">
+  {% if pais_actual %}
+  <title>{{ product_name }} — Presupuestos de construcción y remodelación para {{ pais_actual.nombre }}</title>
+  <meta name="description" content="{% if hay_prueba_gratuita() %}Pruébalo {{ dias_de_prueba() }} días gratis, sin tarjeta. {% endif %}Presupuestos de obra profesionales en minutos. Más de 3.000 partidas clasificadas con precios en USD contrastados con el mercado {{ pais_actual.mercado }}. PDF con tu logo, versiones, aprobaciones y cobros.">
+  {% else %}
+  <title>{{ product_name }} — Presupuestos de construcción y remodelación para Latinoamérica</title>
+  <meta name="description" content="{% if hay_prueba_gratuita() %}Pruébalo {{ dias_de_prueba() }} días gratis, sin tarjeta. {% endif %}Presupuestos de obra profesionales en minutos. Más de 3.000 partidas clasificadas con precios en USD de referencia para Latinoamérica. PDF con tu logo, versiones, aprobaciones y cobros.">
+  {% endif %}
   <link rel="icon" type="image/png" href="/static/icono.png">
   <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
   <link rel="stylesheet" href="{{ 'css/public.css' | asset }}">
+  {# SEO LatAm: canónica + hreflang por país (subdirectorios /co/, /mx/ ... 1 Vercel, 1 Supabase) #}
+  {% set _base = request.base_url|string|trim('/') %}
+  <link rel="canonical" href="{{ _base }}{% if pais_codigo %}/{{ pais_codigo|lower }}/{% else %}/{% endif %}">
+  <link rel="alternate" hreflang="x-default" href="{{ _base }}/">
+  <link rel="alternate" hreflang="es" href="{{ _base }}/">
+  {% for _p in paises %}
+  <link rel="alternate" hreflang="es-{{ _p.codigo }}" href="{{ _base }}/{{ _p.codigo|lower }}/">
+  {% endfor %}
 </head>
 <body class="landing">
+{# Barra de país — Semana 1: genérica por defecto, se adapta al elegir #}
+<div class="pais-bar" id="pais-bar">
+  <div class="pais-bar-int">
+    <span class="pais-bar-label">🌎 Elige tu país</span>
+    <select id="pais-select" aria-label="Elige tu país">
+      <option value="" {% if not pais_codigo %}selected{% endif %}>Latinoamérica (genérico)</option>
+      {% for p in paises %}
+      <option value="{{ p.codigo }}" {% if p.codigo == pais_codigo %}selected{% endif %}>{{ p.bandera }} {{ p.nombre }}</option>
+      {% endfor %}
+    </select>
+    <span class="pais-bar-hint" id="pais-bar-hint">{% if pais_actual %}{{ pais_actual.bandera }} Mostrando contenido para {{ pais_actual.nombre }} · {{ pais_actual.id_fiscal }} · IVA {{ pais_actual.iva }}%{% else %}Mostrando contenido genérico para toda Latinoamérica{% endif %}</span>
+  </div>
+</div>
 <nav class="nav">
   <a class="brand" href="/">
     <span class="mark">
@@ -34,7 +60,11 @@
 <header class="hero">
   <div class="hero-int">
     <div class="hero-copy">
-      <span class="hero-kicker">🇻🇪 Hecho para Venezuela · Construcción y remodelación</span>
+      {% if pais_actual %}
+      <span class="hero-kicker" id="hero-kicker">{{ pais_actual.bandera }} Hecho para {{ pais_actual.nombre }} · Construcción y remodelación</span>
+      {% else %}
+      <span class="hero-kicker" id="hero-kicker">🌎 Hecho para Latinoamérica · Construcción y remodelación</span>
+      {% endif %}
       {% if hay_prueba_gratuita() %}
       <span class="hero-prueba">✨ {{ dias_de_prueba() }} días gratis · sin tarjeta de crédito</span>
       {% endif %}
@@ -610,14 +640,25 @@
 <section class="banner-catalogo">
   <div class="banner-int">
     <div class="banner-texto">
-      <h2>El catálogo más completo para presupuestar en Venezuela.</h2>
-      <p>{{ catalogo().partidas_txt }} partidas organizadas en {{ catalogo().capitulos }} capítulos y {{ catalogo().subcapitulos }} subcapítulos, con precios en USD contrastados con el mercado venezolano y en revisión continua. No empiezas de cero: llegas con una base de precios real y propia.</p>
+      {% if pais_actual %}
+      <h2 id="banner-h2">El catálogo más completo para presupuestar en {{ pais_actual.nombre }}.</h2>
+      <p id="banner-p">{{ catalogo().partidas_txt }} partidas organizadas en {{ catalogo().capitulos }} capítulos y {{ catalogo().subcapitulos }} subcapítulos, con precios en USD de referencia contrastados con el mercado {{ pais_actual.mercado }} y en revisión continua. No empiezas de cero: llegas con una base de precios real y propia.</p>
       <ul class="banner-lista">
-        <li><span class="check">✓</span> Terminología venezolana: concreto, friso, cielo raso, rodapié, plomero.</li>
-        <li><span class="check">✓</span> Precios en dólares, los que usa el sector construcción en Venezuela.</li>
+        <li id="banner-vocab"><span class="check">✓</span> Terminología de {{ pais_actual.nombre }}: {{ pais_actual.vocab }}.</li>
+        <li id="banner-moneda"><span class="check">✓</span> Precios en USD de referencia{% if pais_actual.moneda != 'USD' %} · convierte a {{ pais_actual.moneda }} ({{ pais_actual.simbolo_local }}) en tu presupuesto{% endif %}.</li>
         <li><span class="check">✓</span> Descomposición técnica de cada partida: materiales, mano de obra y equipo.</li>
         <li><span class="check">✓</span> Se actualiza periódicamente para seguir el mercado.</li>
       </ul>
+      {% else %}
+      <h2 id="banner-h2">El catálogo más completo para presupuestar en Latinoamérica.</h2>
+      <p id="banner-p">{{ catalogo().partidas_txt }} partidas organizadas en {{ catalogo().capitulos }} capítulos y {{ catalogo().subcapitulos }} subcapítulos, con precios en USD de referencia para Latinoamérica y en revisión continua. No empiezas de cero: llegas con una base de precios real y propia.</p>
+      <ul class="banner-lista">
+        <li id="banner-vocab"><span class="check">✓</span> Terminología hispana neutra con variantes locales: elige tu país y adapta los nombres.</li>
+        <li id="banner-moneda"><span class="check">✓</span> Precios en USD de referencia · convierte a tu moneda local en cada presupuesto.</li>
+        <li><span class="check">✓</span> Descomposición técnica de cada partida: materiales, mano de obra y equipo.</li>
+        <li><span class="check">✓</span> Se actualiza periódicamente para seguir el mercado.</li>
+      </ul>
+      {% endif %}
     </div>
     <div class="banner-cifras">
       <div class="cifra"><strong>{{ catalogo().partidas_txt }}</strong><span>partidas</span></div>
@@ -677,34 +718,62 @@
       <h3>Reportes exportables</h3>
       <p>Ventas, presupuestos por estado, proyectos y cobros con saldo pendiente, listos para exportar a CSV y cruzar con tu contabilidad.</p>
     </div>
-    <div class="tarjeta">
-      <div class="icon">🇻🇪</div>
-      <h3>Fiscal a tu medida</h3>
-      <p>IVA, retención, operación exenta, número de control y cláusula de ajuste cambiario. Moneda en USD o Bs, con tasa de cambio de referencia.</p>
+    <div class="tarjeta" id="fiscal-card">
+      {% if pais_actual %}
+      <div class="icon">{{ pais_actual.bandera }}</div>
+      <h3 id="fiscal-h3">Fiscal a tu medida · {{ pais_actual.nombre }}</h3>
+      <p id="fiscal-p">IVA {{ pais_actual.iva }}%, {{ pais_actual.id_fiscal }}, retención, operación exenta, número de control y cláusula cambiaria. Moneda {{ pais_actual.moneda }} {% if pais_actual.moneda != 'USD' %}({{ pais_actual.simbolo_local }}){% endif %} o USD, con tasa de referencia.</p>
+      {% else %}
+      <div class="icon">🌎</div>
+      <h3 id="fiscal-h3">Fiscal a tu medida · Latinoamérica</h3>
+      <p id="fiscal-p">IVA configurable por país, tu ID fiscal (RIF, NIT, RUT, CUIT, RUC, RFC…), retención, operación exenta y cláusula cambiaria. Moneda en tu divisa local o USD, con tasa de referencia.</p>
+      {% endif %}
     </div>
   </div>
 </section>
 
-<section class="franja venezuela">
-  <h2>Pensado para Venezuela, no adaptado después.</h2>
-  <p class="intro">No es una herramienta genérica traducida. {{ product_name }} nace con la forma de trabajar de las constructoras y remodeladores venezolanos.</p>
+<section class="franja venezuela" id="franja-pais">
+  {% if pais_actual %}
+  <h2 id="franja-h2">Pensado para {{ pais_actual.nombre }}, no adaptado después.</h2>
+  <p class="intro" id="franja-intro">No es una herramienta genérica traducida. {{ product_name }} habla el idioma de la obra en {{ pais_actual.nombre }}: precios, vocabulario y fiscalidad de aquí.</p>
   <div class="grid3">
     <div class="tarjeta">
       <div class="icon">💵</div>
-      <h3>Precios en dólares</h3>
-      <p>Cotiza en USD, la moneda con la que el sector construcción presupuesta en Venezuela. Sin conversiones ni tipos de cambio improvisados.</p>
+      <h3>Precios en {{ pais_actual.moneda }}</h3>
+      <p id="franja-precio-p">Cotiza en {{ pais_actual.moneda }} {% if pais_actual.moneda != 'USD' %}({{ pais_actual.simbolo_local }}){% endif %} o en USD como referencia regional. Sin conversiones improvisadas: tu tasa queda guardada en cada presupuesto.</p>
     </div>
     <div class="tarjeta">
       <div class="icon">🧱</div>
       <h3>Vocabulario de aquí</h3>
-      <p>Concreto, friso, cielo raso, rodapié, plomero, granito vaciado en sitio. Los nombres que usa tu cliente y tu cuadrilla, no los de otro país.</p>
+      <p id="franja-vocab-p">{{ pais_actual.vocab }}, y todos los nombres que usa tu cliente y tu cuadrilla en {{ pais_actual.nombre }}, no los de otro país.</p>
     </div>
     <div class="tarjeta">
       <div class="icon">📈</div>
       <h3>Precios que se actualizan</h3>
-      <p>La base de precios se contrasta con el mercado venezolano y se revisa periódicamente, para que no cotices con cifras de hace un año.</p>
+      <p>La base en USD se contrasta con el mercado {{ pais_actual.mercado }} y se revisa periódicamente, para que no cotices con cifras de hace un año.</p>
     </div>
   </div>
+  {% else %}
+  <h2 id="franja-h2">Pensado para Latinoamérica, no adaptado después.</h2>
+  <p class="intro" id="franja-intro">No es una herramienta genérica. {{ product_name }} nace para construir en Latinoamérica: precios en USD de referencia, vocabulario hispano y fiscalidad configurable por país.</p>
+  <div class="grid3">
+    <div class="tarjeta">
+      <div class="icon">💵</div>
+      <h3>Precios en tu moneda</h3>
+      <p id="franja-precio-p">Cotiza en USD como referencia regional o en tu moneda local (COP, MXN, PEN, CLP, ARS…). Tu tasa de referencia queda guardada en cada presupuesto.</p>
+    </div>
+    <div class="tarjeta">
+      <div class="icon">🧱</div>
+      <h3>Vocabulario hispano</h3>
+      <p id="franja-vocab-p">Concreto/hormigón, friso/revoque, cielo raso/cielorraso, rodapié/zócalo, plomero/gasfíter… Elige tu país y la landing habla tu obra.</p>
+    </div>
+    <div class="tarjeta">
+      <div class="icon">📈</div>
+      <h3>Precios que se actualizan</h3>
+      <p>La base en USD se contrasta con mercados de la región y se revisa periódicamente, para que no cotices con cifras de hace un año.</p>
+    </div>
+  </div>
+  {% endif %}
 </section>
 
 <section class="franja">
@@ -787,6 +856,10 @@
     </div>
   </div>
 </footer>
+<script id="paises-data" type="application/json" nonce="{{ request.state.csp_nonce }}">{{ paises | tojson }}</script>
+<script id="pais-actual-data" type="application/json" nonce="{{ request.state.csp_nonce }}">{{ (pais_actual or {}) | tojson }}</script>
+<script id="pais-generico-data" type="application/json" nonce="{{ request.state.csp_nonce }}">{{ pais_generico | tojson }}</script>
+<script nonce="{{ request.state.csp_nonce }}" src="{{ 'js/pais_selector.js' | asset }}"></script>
 <script nonce="{{ request.state.csp_nonce }}" src="{{ 'js/landing-tour.js' | asset }}"></script>
 </body>
 </html>

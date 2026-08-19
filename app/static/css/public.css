@@ -2805,3 +2805,57 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
   color: #92400e;
   text-align: left;
 }
+
+/* ───────────────────── País selector (landing adaptativa Semana 1) ───────────────────── */
+.pais-bar {
+  background: linear-gradient(90deg, #0e3261 0%, #123f78 55%, #1a4a8c 100%);
+  color: #fff;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+  font-size: 0.88rem;
+}
+.pais-bar-int {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0.55rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+}
+.pais-bar-label {
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.pais-bar select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: #fff;
+  color: var(--text);
+  border: 1px solid rgba(255,255,255,0.0);
+  border-radius: 999px;
+  padding: 0.32rem 2rem 0.32rem 0.75rem;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 600;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23123f78' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.6rem center;
+  min-width: 220px;
+}
+.pais-bar select:focus {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+.pais-bar-hint {
+  color: rgba(255,255,255,0.84);
+  font-size: 0.82rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+@media (max-width: 640px) {
+  .pais-bar-int { padding: 0.6rem 1.2rem; gap: 0.6rem; }
+  .pais-bar select { min-width: 180px; }
+  .pais-bar-hint { display: none; }
+}

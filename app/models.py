@@ -444,7 +444,7 @@ class Cliente(TenantMixin, Base):
     id = Column(Integer, primary_key=True)
     nombre = Column(String(200), nullable=False)
     rif = Column(String(50), default="")
-    pais = Column(String(80), default="Venezuela")
+    pais = Column(String(80), default="")  # vacío: hereda el país de la organización (LatAm)
     telefono = Column(String(50), default="")
     email = Column(String(200), default="")
     direccion = Column(Text, default="")
@@ -1174,6 +1174,25 @@ class Configuracion(TenantMixin, Base):
     mostrar_retenciones = Column(Boolean, default=False)
     mostrar_clausula_cambiaria = Column(Boolean, default=False)
     datos_bancarios = Column(Text, default="")
+    # Semana 2 — Bloque A: etiqueta fiscal genérica por país (RIF, NIT, RUT, CUIT, RUC, RFC…)
+    etiqueta_id_fiscal = Column(String(20), default="RIF")
+    # Tasa de referencia para conversión USD -> moneda local (bloque moneda/tasa auto)
+    # Ej: 4200 COP por 1 USD. NULL = 1 (cuando moneda_default es USD).
+    tasa_cambio = Column(Float, nullable=True)
+    fecha_tasa = Column(Date, nullable=True)
+
+    # Alias LatAm para el flag regional (Semana 2). El nombre histórico
+    # `activar_funciones_venezuela` se mantiene en la base; el nuevo
+    # `activar_funciones_regionales` mapea a la misma columna para no
+    # exigir una migración de rename en este bloque. El próximo bloque
+    # migrará el nombre físico cuando toque.
+    @property
+    def activar_funciones_regionales(self) -> bool:
+        return bool(getattr(self, "activar_funciones_venezuela", False))
+
+    @activar_funciones_regionales.setter
+    def activar_funciones_regionales(self, valor: bool) -> None:
+        self.activar_funciones_venezuela = bool(valor)
     # Estimación de tiempos de obra
     horas_jornada = Column(Float, default=8.0)          # horas por jornada laboral
     tarifa_hora_media = Column(Float, default=8.0)      # moneda/h para estimar horas desde el coste
@@ -1856,6 +1875,9 @@ def migrar(engine):
             ("mostrar_tasa_cambio", "BOOLEAN DEFAULT 0"), ("mostrar_total_bs", "BOOLEAN DEFAULT 0"),
             ("mostrar_retenciones", "BOOLEAN DEFAULT 0"), ("mostrar_clausula_cambiaria", "BOOLEAN DEFAULT 0"),
             ("datos_bancarios", "TEXT DEFAULT ''"),
+            ("etiqueta_id_fiscal", "VARCHAR(20) DEFAULT 'RIF'"),
+            ("tasa_cambio", "FLOAT"),
+            ("fecha_tasa", "DATE"),
             ("horas_jornada", "FLOAT DEFAULT 8"),
             ("tarifa_hora_media", "FLOAT DEFAULT 8"),
             ("estimar_tiempo_por_coste", "BOOLEAN DEFAULT 1"),

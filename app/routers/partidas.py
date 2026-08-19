@@ -5,6 +5,7 @@ from sqlalchemy import func
 
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
 from ..services import auditoria
+from ..services.traduccion import codigo_desde_pais, traducir
 
 router = APIRouter()
 
@@ -209,6 +210,29 @@ def listar_partidas(
                 for sub in subcapitulos
             ],
         })
+    # Traducción al vuelo VE->país para la vista de lista (CO/MX/EC/PE)
+    try:
+        _cfg = _config(db)
+        _codigo_trad = codigo_desde_pais(getattr(_cfg, "empresa_pais", ""))
+    except Exception:
+        _codigo_trad = ""
+    if _codigo_trad:
+        for _p in partidas:
+            _p.nombre = traducir(_p.nombre, _codigo_trad)
+            _p.descripcion = traducir(_p.descripcion or "", _codigo_trad)
+    # Conversión de precio USD->local para la vista lista (si org en moneda local con tasa)
+    try:
+        if _codigo_trad:
+            from ..services.tasa import tasa_convertir_precio
+            _mon_cfg = str(getattr(_cfg, "moneda_default", "USD") or "USD").strip().upper()
+            if _mon_cfg == "BS":
+                _mon_cfg = "VES"
+            _tasa_cfg = getattr(_cfg, "tasa_cambio", None)
+            if _mon_cfg not in ("USD", "", "PAB") and _tasa_cfg and float(_tasa_cfg) > 0:
+                for _p in partidas:
+                    _p.precio_unitario = tasa_convertir_precio(_p.precio_unitario or 0, float(_tasa_cfg))
+    except Exception:
+        pass
     return TEMPLATES.TemplateResponse(request, "partidas/list.html", {
         "partidas": partidas,
         "q": q,
@@ -252,6 +276,11 @@ def filas_subcategoria_catalogo(
         .all()
     )
     partidas = []
+    try:
+        _cfg_api = _config(db)
+        _codigo_api = codigo_desde_pais(getattr(_cfg_api, "empresa_pais", ""))
+    except Exception:
+        _codigo_api = ""
     for p in filas:
         try:
             valor = json.loads(p.descomposicion_json or "[]")
@@ -262,12 +291,24 @@ def filas_subcategoria_catalogo(
             1 for f in descomp
             if isinstance(f, dict) and f.get("tipo") == "recurso"
         )
+        # Precio convertido a moneda local si aplica
+        _precio_api = p.precio_unitario or 0.0
+        try:
+            _mon_api = str(getattr(_cfg_api, "moneda_default", "USD") or "USD").strip().upper()
+            if _mon_api == "BS":
+                _mon_api = "VES"
+            _tasa_api = getattr(_cfg_api, "tasa_cambio", None)
+            if _mon_api not in ("USD", "", "PAB") and _tasa_api and float(_tasa_api) > 0:
+                from ..services.tasa import tasa_convertir_precio
+                _precio_api = tasa_convertir_precio(_precio_api, float(_tasa_api))
+        except Exception:
+            pass
         partidas.append({
             "id": p.id,
-            "nombre": p.nombre or "",
-            "descripcion": p.descripcion or "",
+            "nombre": traducir(p.nombre or "", _codigo_api) if _codigo_api else (p.nombre or ""),
+            "descripcion": traducir(p.descripcion or "", _codigo_api) if _codigo_api else (p.descripcion or ""),
             "unidad": p.unidad or "ud",
-            "precio": p.precio_unitario or 0.0,
+            "precio": _precio_api,
             "categoria": p.categoria or "",
             "subcategoria": p.subcategoria or "",
             "apartado": p.apartado or "",
@@ -305,10 +346,24 @@ def buscar_partidas_catalogo_api(
         candidatas,
         key=lambda p: (-_puntuar_busqueda_catalogo(p, consulta, grupos), p.nombre),
     )[:limite]
+    try:
+        _cfg_b = _config(db)
+        _codigo_b = codigo_desde_pais(getattr(_cfg_b, "empresa_pais", ""))
+    except Exception:
+        _codigo_b = ""
+    resultados = []
+    for _pp in partidas:
+        _idx = _partida_catalogo_indice(_pp)
+        if _codigo_b:
+            _idx["nombre"] = traducir(_idx.get("nombre",""), _codigo_b)
+            _idx["descripcion"] = traducir(_idx.get("descripcion",""), _codigo_b)
+            _idx["categoria"] = traducir(_idx.get("categoria",""), _codigo_b)
+            _idx["subcategoria"] = traducir(_idx.get("subcategoria",""), _codigo_b)
+        resultados.append(_idx)
     return {
         "ok": True,
         "q": consulta,
-        "resultados": [_partida_catalogo_indice(p) for p in partidas],
+        "resultados": resultados,
     }
 
 
@@ -344,7 +399,19 @@ def ficha_partida_catalogo(partida_id: int, db: Session = Depends(get_db)):
             status_code=404,
             content={"ok": False, "error": "Partida no encontrada."},
         )
-    return {"ok": True, "partida": _partida_catalogo_json(partida)}
+    try:
+        _cfg_f = _config(db)
+        _codigo_f = codigo_desde_pais(getattr(_cfg_f, "empresa_pais", ""))
+    except Exception:
+        _codigo_f = ""
+    _j = _partida_catalogo_json(partida)
+    if _codigo_f:
+        _j["nombre"] = traducir(_j.get("nombre",""), _codigo_f)
+        _j["descripcion"] = traducir(_j.get("descripcion",""), _codigo_f)
+        _j["categoria"] = traducir(_j.get("categoria",""), _codigo_f)
+        _j["subcategoria"] = traducir(_j.get("subcategoria",""), _codigo_f)
+        _j["apartado"] = traducir(_j.get("apartado",""), _codigo_f)
+    return {"ok": True, "partida": _j}
 
 
 @router.get("/partidas/{partida_id}/descomposicion")

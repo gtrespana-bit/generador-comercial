@@ -354,6 +354,27 @@ def whatsapp_url(telefono, texto) -> str:
 
 TEMPLATES.env.filters["whatsapp"] = whatsapp_url
 
+# Filtro de traducción de terminología por país (VE base -> CO/MX/EC/PE)
+try:
+    from ..services.traduccion import traducir as _traducir_termino, codigo_desde_pais as _codigo_pais
+    TEMPLATES.env.filters["traducir"] = _traducir_termino
+    TEMPLATES.env.globals["codigo_pais"] = _codigo_pais
+except Exception:
+    pass
+
+
+def _simbolo_moneda(moneda: str) -> str:
+    """Símbolo de una moneda ISO para plantillas (VES/Bs -> Bs, COP -> $, …)."""
+    clave = str(moneda or "USD").strip()
+    if clave == "Bs":
+        clave = "VES"
+    return SIMBOLOS.get(clave.upper(), clave or "$")
+
+
+TEMPLATES.env.filters["simbolo"] = _simbolo_moneda
+# Mapa de símbolos disponible para JS del editor (moneda libre LatAm)
+TEMPLATES.env.globals["simbolos"] = SIMBOLOS
+
 UPLOADS = UPLOADS_DIR
 # Los Excel originales se guardan bajo uploads (consultables/descargables); el
 # JSON intermedio del asistente queda fuera de estáticos hasta confirmarse.
@@ -970,6 +991,49 @@ def _indice_catalogo_para_editor(db: Session) -> list[dict]:
         )
         .all()
     )
+    # Traducción al vuelo para el editor (CO/MX/EC/PE)
+    try:
+        from ..services.traduccion import codigo_desde_pais as _codigo, traducir as _trad
+        _cfg = _config(db)
+        _cod = _codigo(getattr(_cfg, "empresa_pais", ""))
+        if _cod:
+            out = []
+            for _pp in partidas:
+                _d = _partida_catalogo_indice(_pp)
+                # Traduce nombre/descripción visibles; mantiene buscable con ambos idiomas
+                _d["nombre"] = _trad(_d.get("nombre",""), _cod)
+                _d["descripcion"] = _trad(_d.get("descripcion",""), _cod)
+                # Conversión USD->local si la org trabaja en moneda local con tasa
+                try:
+                    _mon = str(getattr(_cfg, "moneda_default", "USD") or "USD").strip().upper()
+                    if _mon == "BS":
+                        _mon = "VES"
+                    _tasa = getattr(_cfg, "tasa_cambio", None)
+                    if _mon not in ("USD", "", "PAB") and _tasa and float(_tasa) > 0:
+                        from ..services.tasa import tasa_convertir_precio
+                        _d["precio"] = tasa_convertir_precio(_d.get("precio", 0), float(_tasa))
+                except Exception:
+                    pass
+                # Añade términos traducidos al índice buscable para que "pañete" encuentre "friso"
+                try:
+                    _busc = _d.get("buscable","")
+                    _trad_bus = _trad(_pp.nombre + " " + (_pp.descripcion or ""), _cod)
+                    # Normaliza y añade palabras nuevas del traducido que no estaban
+                    import unicodedata, re
+                    def _norma(s):
+                        s=unicodedata.normalize("NFD", s.lower())
+                        return "".join(c for c in s if unicodedata.category(c) != "Mn")
+                    _orig_norm = set(re.findall(r"[a-z0-9]+", _norma(_d.get("buscable",""))))
+                    for _w in re.findall(r"[a-z0-9]+", _norma(_trad_bus)):
+                        if len(_w)>=3 and _w not in _orig_norm:
+                            _d["buscable"] = (_d["buscable"] + " " + _w)[:380]
+                            _orig_norm.add(_w)
+                except Exception:
+                    pass
+                out.append(_d)
+            return out
+    except Exception:
+        pass
     return [_partida_catalogo_indice(partida) for partida in partidas]
 
 

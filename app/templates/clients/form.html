@@ -13,12 +13,12 @@
         <input type="text" name="nombre" value="{{ cliente.nombre if cliente else '' }}" required placeholder="Nombre o razón social">
       </div>
       <div class="field">
-        <label>RIF / C.I.</label>
-        <input type="text" name="rif" value="{{ cliente.rif if cliente else '' }}" placeholder="p. ej. J-12345678-9">
+        <label>{{ cfg.etiqueta_id_fiscal or "ID fiscal" }}</label>
+        <input type="text" name="rif" value="{{ cliente.rif if cliente else '' }}" placeholder="{{ cfg.etiqueta_id_fiscal or 'ID' }} — p. ej. {{ 'J-12345678-9' if (cfg.etiqueta_id_fiscal or 'RIF')=='RIF' else '900123456-7' }}">
       </div>
       <div class="field">
         <label>País</label>
-        <input type="text" name="pais" value="{{ cliente.pais if cliente else 'Venezuela' }}" placeholder="Venezuela">
+        <input type="text" name="pais" value="{{ cliente.pais if cliente else (cfg.empresa_pais or '') }}" placeholder="p. ej. Colombia">
       </div>
       <div class="field">
         <label>Teléfono</label>

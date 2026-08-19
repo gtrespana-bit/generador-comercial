@@ -54,7 +54,7 @@ def sembrar_demo(db: Session):
     cliente = Cliente(
         nombre="Cliente de demostración",
         rif="",
-        pais="Venezuela",
+        pais="",
         telefono="",
         email="",
         direccion="Valencia, Carabobo",

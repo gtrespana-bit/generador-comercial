@@ -64,6 +64,22 @@ def ver_configuracion(request: Request, db: Session = Depends(get_db)):
     )
 
 
+@router.get("/configuracion/tasa-auto")
+def tasa_auto(moneda: str = "COP", db: Session = Depends(get_db)):
+    """Devuelve la tasa del día 1 USD -> moneda (JSON). No guarda nada."""
+    if not DATABASE_IS_SQLITE and not puede_gestionar(db):
+        return JSONResponse({"ok": False, "error": "Solo propietarios y administradores pueden consultar la tasa."}, status_code=403)
+    from ..services.tasa import obtener_tasa_api
+    moneda = str(moneda or "COP").strip().upper()
+    if moneda == "BS":
+        moneda = "VES"
+    tasa, error = obtener_tasa_api(moneda)
+    if tasa is not None:
+        from datetime import date as _date
+        return {"ok": True, "moneda": moneda, "tasa": round(float(tasa), 4), "fecha": _date.today().isoformat(), "fuente": "open.er-api.com"}
+    return {"ok": False, "error": error or "No se pudo obtener la tasa."}
+
+
 @router.post("/configuracion")
 async def guardar_configuracion(request: Request, db: Session = Depends(get_db)):
     if not DATABASE_IS_SQLITE and not puede_gestionar(db):
@@ -90,9 +106,39 @@ async def guardar_configuracion(request: Request, db: Session = Depends(get_db))
     cfg.empresa_telefono = str(form.get("empresa_telefono", "")).strip()
     cfg.empresa_email = str(form.get("empresa_email", "")).strip()
     cfg.empresa_web = str(form.get("empresa_web", "")).strip()
+    # Etiqueta ID fiscal por país (RIF/NIT/RUT/CUIT/RUC/RFC)
+    cfg.etiqueta_id_fiscal = str(form.get("etiqueta_id_fiscal", "") or "RIF").strip()[:20] or "RIF"
     cfg.iva_default = max(0.0, min(_f(form.get("iva_default"), 16.0), 100.0))
-    moneda = form.get("moneda_default", "USD")
-    cfg.moneda_default = moneda if moneda in ("USD", "Bs") else "USD"
+    # Moneda: 20 ISOs (validación contra lista blanca, alias Bs->VES)
+    from ..utils import MONEDAS_SOPORTADAS
+    from ..services.tasa import tasa_sugerida
+    moneda_raw = str(form.get("moneda_default", "USD") or "USD").strip().upper()
+    if moneda_raw == "BS":
+        moneda_raw = "VES"
+    cfg.moneda_default = moneda_raw if moneda_raw in MONEDAS_SOPORTADAS else "USD"
+    # Tasa de referencia USD->local (opcional)
+    tasa_txt = str(form.get("tasa_cambio", "") or "").strip()
+    if tasa_txt:
+        try:
+            _t = float(tasa_txt.replace(",", "."))
+            cfg.tasa_cambio = max(0.0, _t) if _t > 0 else None
+        except Exception:
+            cfg.tasa_cambio = None
+    else:
+        cfg.tasa_cambio = None
+    fecha_tasa_raw = str(form.get("fecha_tasa", "") or "").strip()
+    if fecha_tasa_raw:
+        try:
+            from datetime import date as _date
+            cfg.fecha_tasa = _date.fromisoformat(fecha_tasa_raw)
+        except Exception:
+            cfg.fecha_tasa = None
+    else:
+        cfg.fecha_tasa = None
+    # Si no hay tasa pero la moneda no es USD, sugiere una por defecto sin obligar
+    if cfg.tasa_cambio is None and cfg.moneda_default not in ("USD", "PAB"):
+        # No autocompleta en cada guardado para no pisar edición manual vacía intencional
+        pass
     cfg.validez_default = max(1, min(int(_f(form.get("validez_default"), 30)), 3650))
     cfg.notas_default = str(form.get("notas_default", "")).strip()
     cfg.condiciones_default = str(form.get("condiciones_default", "")).strip()

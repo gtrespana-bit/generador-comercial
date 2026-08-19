@@ -71,7 +71,7 @@
     <div>
       <h2>Cliente</h2>
       <p><strong>{{ p.cliente.nombre }}</strong></p>
-      {% if p.cliente.rif %}<p class="muted">RIF/C.I.: {{ p.cliente.rif }}</p>{% endif %}
+      {% if p.cliente.rif %}<p class="muted">{{ cfg.etiqueta_id_fiscal or 'RIF' }}: {{ p.cliente.rif }}</p>{% endif %}
       {% if p.cliente.pais %}<p class="muted">País: {{ p.cliente.pais }}</p>{% endif %}
       {% if p.cliente.telefono %}<p class="muted">📞 {{ p.cliente.telefono }}</p>{% endif %}
       {% if p.cliente.email %}<p class="muted">✉️ {{ p.cliente.email }}</p>{% endif %}
@@ -81,7 +81,11 @@
       <p class="muted">Fecha: <strong>{{ p.fecha | fecha }}</strong></p>
       {% if p.direccion_obra %}<p class="muted">Obra: <strong>{{ p.direccion_obra }}</strong>{% if p.codigo_postal %} (CP {{ p.codigo_postal }}){% endif %}</p>{% endif %}
       <p class="muted">Validez: <strong>{{ p.validez_dias }} días</strong></p>
-      <p class="muted">Moneda: <strong>{{ p.moneda }}</strong>{% if p.tipo_cambio and p.moneda == 'USD' %} <span class="hint">(1 USD = {{ p.tipo_cambio | num }} Bs)</span>{% endif %}</p>
+      <p class="muted">Moneda: <strong>{{ p.moneda }}</strong>{% if p.tipo_cambio and p.moneda == 'USD' %}
+        {% set _mon_tasa = (cfg.moneda_default or '') | string | upper %}
+        {% if _mon_tasa == 'BS' %}{% set _mon_tasa = 'VES' %}{% endif %}
+        {% if _mon_tasa in ('', 'USD', 'PAB') %}{% set _mon_tasa = 'VES' %}{% endif %}
+        <span class="hint">(1 USD = {{ p.tipo_cambio | num }} {{ _mon_tasa }})</span>{% endif %}</p>
       <p class="muted">IVA: <strong>{{ p.impuesto_pct | round(2) }}%</strong> · Descuento: <strong>{{ p.descuento_pct | round(2) }}%</strong></p>
       <p><span class="badge badge-{{ p.estado }}">{{ p.estado | capitalize }}</span></p>
     </div>
@@ -123,7 +127,7 @@
           {% endif %}
         </td>
         <td class="right csp-s-463c663c8c">{{ part.cantidad_total | cant(part.unidad) }}</td>
-        <td class="right csp-s-0dfe35f39a">{{ part.precio_unitario | num }} {{ p.moneda | replace('USD','$') | replace('Bs','Bs') }}/{{ part.unidad }}</td>
+        <td class="right csp-s-0dfe35f39a">{{ part.precio_unitario | num }} {{ p.moneda | simbolo }}/{{ part.unidad }}</td>
         <td class="right csp-s-6ef849732a">{{ part.importe | money(p.moneda) }}</td>
         <td class="right csp-s-0231bd7a8a">
           {% set tp = tiempos_por_partida.get(part.id) if tiempos_por_partida else none %}

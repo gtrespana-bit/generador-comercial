@@ -98,20 +98,202 @@ def descargar_archivo_legado_privado(
 # la identidad del producto. Por eso no dependen de get_db y están declaradas
 # como fronteras públicas en la auditoría de protección de rutas.
 
+def _resolver_pais_landing(request: Request) -> tuple[dict | None, str]:
+    """Resuelve el país de la landing desde ?pais= o la cookie.
+
+    Prioridad: query param > cookie. Un código inválido se ignora y devuelve
+    (None, "") para que la landing quede en modo genérico LatAm (SEO).
+    """
+    from ..paises import PAISES
+
+    raw_q = str(request.query_params.get("pais", "") or "").strip().upper()
+    if raw_q and raw_q in PAISES:
+        return PAISES[raw_q], raw_q
+    raw_c = str(request.cookies.get("cotizat_pais", "") or "").strip().upper()
+    if raw_c and raw_c in PAISES:
+        return PAISES[raw_c], raw_c
+    return None, ""
+
+
+def _contexto_landing(request: Request, pais_forzado: str | None = None) -> dict:
+    """Contexto de la landing. Si pais_forzado viene por subdirectorio (/co/), manda sobre query/cookie."""
+    from ..paises import PAIS_GENERICO, PAISES, lista_paises
+
+    # Subdirectorio tiene prioridad
+    if pais_forzado:
+        codigo = str(pais_forzado).strip().upper()
+        if codigo in PAISES:
+            return {
+                "pais_actual": PAISES[codigo],
+                "pais_codigo": codigo,
+                "pais_generico": PAIS_GENERICO,
+                "paises": lista_paises(),
+            }
+    pais_actual, pais_codigo = _resolver_pais_landing(request)
+    return {
+        "pais_actual": pais_actual,
+        "pais_codigo": pais_codigo,
+        "pais_generico": PAIS_GENERICO,
+        "paises": lista_paises(),
+    }
+
+
+def _landing_con_pais(request: Request, codigo: str):
+    """Renderiza la landing para un subdirectorio /co/, /mx/ ... y fija cookie."""
+    from ..paises import PAISES
+
+    codigo = str(codigo).strip().upper()
+    if codigo not in PAISES:
+        return Response("Página no encontrada.", status_code=404)
+    ctx = _contexto_landing(request, pais_forzado=codigo)
+    # hreflang + canonical se inyectan en el template via ctx
+    resp = TEMPLATES.TemplateResponse(request, "landing.html", ctx)
+    resp.set_cookie(
+        "cotizat_pais",
+        codigo,
+        max_age=365 * 24 * 3600,
+        path="/",
+        samesite="lax",
+        httponly=False,
+    )
+    return resp
+
+
 @router.get("/", response_class=HTMLResponse, include_in_schema=False)
 def home_publica(request: Request):
     """Página de inicio pública: la landing comercial es la puerta de entrada.
 
     Quien llega sin sesión ve qué ofrece el producto, por qué elegirlo y cómo
     empezar. El panel de trabajo vive en ``/inicio``, ya con sesión iniciada.
+
+    Si llega con ?pais=XX válido, se redirige 301 al subdirectorio /xx/ (SEO)
+    y fija la cookie. Así ?pais= queda como legacy pero el canónico es /co/.
     """
-    return TEMPLATES.TemplateResponse(request, "landing.html", {})
+    raw_q = str(request.query_params.get("pais", "") or "").strip().upper()
+    from ..paises import PAISES
+
+    if raw_q and raw_q in PAISES:
+        # 301 al subdirectorio canónico para SEO (mantiene query demo_* si viene)
+        qs = str(request.url.query or "")
+        # limpia pais de la query para no duplicar
+        try:
+            from urllib.parse import parse_qs, urlencode
+
+            qdict = parse_qs(qs, keep_blank_values=True)
+            qdict.pop("pais", None)
+            resto = urlencode(qdict, doseq=True)
+            dest = f"/{raw_q.lower()}/" + (f"?{resto}" if resto else "")
+        except Exception:
+            dest = f"/{raw_q.lower()}/"
+        resp = RedirectResponse(dest, status_code=301)
+        resp.set_cookie(
+            "cotizat_pais",
+            raw_q,
+            max_age=365 * 24 * 3600,
+            path="/",
+            samesite="lax",
+            httponly=False,
+        )
+        return resp
+    ctx = _contexto_landing(request)
+    return TEMPLATES.TemplateResponse(request, "landing.html", ctx)
 
 
 @router.get("/conocer", response_class=HTMLResponse, include_in_schema=False)
 def landing_publica(request: Request):
     """Alias histórico de la landing, conservado para no romper enlaces."""
-    return TEMPLATES.TemplateResponse(request, "landing.html", {})
+    raw_q = str(request.query_params.get("pais", "") or "").strip().upper()
+    from ..paises import PAISES
+
+    if raw_q and raw_q in PAISES:
+        return RedirectResponse(f"/{raw_q.lower()}/", status_code=301)
+    ctx = _contexto_landing(request)
+    return TEMPLATES.TemplateResponse(request, "landing.html", ctx)
+
+
+# --- Subdirectorios por país (SEO) — 1 Vercel, 1 Supabase, 5 URLs canónicas ---
+@router.get("/ve", response_class=HTMLResponse, include_in_schema=False)
+def landing_ve(request: Request):
+    return _landing_con_pais(request, "VE")
+
+
+@router.get("/ve/", response_class=HTMLResponse, include_in_schema=False)
+def landing_ve_slash(request: Request):
+    return _landing_con_pais(request, "VE")
+
+
+@router.get("/co", response_class=HTMLResponse, include_in_schema=False)
+def landing_co(request: Request):
+    return _landing_con_pais(request, "CO")
+
+
+@router.get("/co/", response_class=HTMLResponse, include_in_schema=False)
+def landing_co_slash(request: Request):
+    return _landing_con_pais(request, "CO")
+
+
+@router.get("/mx", response_class=HTMLResponse, include_in_schema=False)
+def landing_mx(request: Request):
+    return _landing_con_pais(request, "MX")
+
+
+@router.get("/mx/", response_class=HTMLResponse, include_in_schema=False)
+def landing_mx_slash(request: Request):
+    return _landing_con_pais(request, "MX")
+
+
+@router.get("/ec", response_class=HTMLResponse, include_in_schema=False)
+def landing_ec(request: Request):
+    return _landing_con_pais(request, "EC")
+
+
+@router.get("/ec/", response_class=HTMLResponse, include_in_schema=False)
+def landing_ec_slash(request: Request):
+    return _landing_con_pais(request, "EC")
+
+
+@router.get("/pe", response_class=HTMLResponse, include_in_schema=False)
+def landing_pe(request: Request):
+    return _landing_con_pais(request, "PE")
+
+
+@router.get("/pe/", response_class=HTMLResponse, include_in_schema=False)
+def landing_pe_slash(request: Request):
+    return _landing_con_pais(request, "PE")
+
+
+@router.get("/sitemap.xml", include_in_schema=False)
+def sitemap(request: Request):
+    """Sitemap mínimo con las 5 landings canónicas + legales."""
+    base = str(request.base_url).rstrip("/")
+    # Usa COTIZAT_PUBLIC_URL si está definido para el canónico de prod
+    try:
+        from ..config import entorno_actual
+
+        # En prod el base_url ya es cotizat.com; en preview es la URL de Vercel — ambas válidas
+        pass
+    except Exception:
+        pass
+    urls = [
+        f"{base}/",
+        f"{base}/ve/",
+        f"{base}/co/",
+        f"{base}/mx/",
+        f"{base}/ec/",
+        f"{base}/pe/",
+        f"{base}/conocer",
+        f"{base}/pago",
+        f"{base}/legal/terminos",
+        f"{base}/legal/privacidad",
+        f"{base}/legal/soporte",
+        f"{base}/legal/licencias",
+        f"{base}/legal/preguntas",
+    ]
+    xml = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+    for u in urls:
+        xml.append(f"  <url><loc>{u}</loc></url>")
+    xml.append("</urlset>")
+    return Response("\n".join(xml), media_type="application/xml")
 
 
 _PAGINAS_LEGALES = {

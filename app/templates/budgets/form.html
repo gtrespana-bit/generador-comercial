@@ -112,14 +112,30 @@
         <div class="field">
           <label>Moneda</label>
           <select name="moneda" id="moneda-select">
-            <option value="USD" {{ 'selected' if not presupuesto or presupuesto.moneda == 'USD' else '' }}>USD (dólar)</option>
-            <option value="Bs" {{ 'selected' if presupuesto and presupuesto.moneda == 'Bs' else '' }}>Bs (bolívar)</option>
+            <option value="USD" {{ 'selected' if (presupuesto and presupuesto.moneda in ['USD','']) or (not presupuesto and (cfg.moneda_default or 'USD') in ['USD','']) else '' }}>USD ($) — dólar</option>
+            <option value="COP" {{ 'selected' if (presupuesto and presupuesto.moneda == 'COP') or (not presupuesto and cfg.moneda_default == 'COP') else '' }}>COP ($) — peso colombiano</option>
+            <option value="MXN" {{ 'selected' if (presupuesto and presupuesto.moneda == 'MXN') or (not presupuesto and cfg.moneda_default == 'MXN') else '' }}>MXN ($) — peso mexicano</option>
+            <option value="PEN" {{ 'selected' if (presupuesto and presupuesto.moneda == 'PEN') or (not presupuesto and cfg.moneda_default == 'PEN') else '' }}>PEN (S/) — sol peruano</option>
+            <option value="VES" {{ 'selected' if (presupuesto and presupuesto.moneda in ['VES','Bs']) or (not presupuesto and cfg.moneda_default in ['VES','Bs']) else '' }}>VES (Bs) — bolívar</option>
+            <option value="CLP" {{ 'selected' if (presupuesto and presupuesto.moneda == 'CLP') or (not presupuesto and cfg.moneda_default == 'CLP') else '' }}>CLP ($) — peso chileno</option>
+            <option value="ARS" {{ 'selected' if (presupuesto and presupuesto.moneda == 'ARS') or (not presupuesto and cfg.moneda_default == 'ARS') else '' }}>ARS ($) — peso argentino</option>
+            <option value="UYU" {{ 'selected' if (presupuesto and presupuesto.moneda == 'UYU') or (not presupuesto and cfg.moneda_default == 'UYU') else '' }}>UYU ($U) — peso uruguayo</option>
+            <option value="PYG" {{ 'selected' if (presupuesto and presupuesto.moneda == 'PYG') or (not presupuesto and cfg.moneda_default == 'PYG') else '' }}>PYG (₲) — guaraní</option>
+            <option value="BOB" {{ 'selected' if (presupuesto and presupuesto.moneda == 'BOB') or (not presupuesto and cfg.moneda_default == 'BOB') else '' }}>BOB (Bs) — boliviano</option>
+            <option value="DOP" {{ 'selected' if (presupuesto and presupuesto.moneda == 'DOP') or (not presupuesto and cfg.moneda_default == 'DOP') else '' }}>DOP (RD$) — peso dominicano</option>
+            <option value="PAB" {{ 'selected' if (presupuesto and presupuesto.moneda == 'PAB') or (not presupuesto and cfg.moneda_default == 'PAB') else '' }}>PAB (B/.) — balboa</option>
+            <option value="CRC" {{ 'selected' if (presupuesto and presupuesto.moneda == 'CRC') or (not presupuesto and cfg.moneda_default == 'CRC') else '' }}>CRC (₡) — colón</option>
+            <option value="GTQ" {{ 'selected' if (presupuesto and presupuesto.moneda == 'GTQ') or (not presupuesto and cfg.moneda_default == 'GTQ') else '' }}>GTQ (Q) — quetzal</option>
+            <option value="HNL" {{ 'selected' if (presupuesto and presupuesto.moneda == 'HNL') or (not presupuesto and cfg.moneda_default == 'HNL') else '' }}>HNL (L) — lempira</option>
+            <option value="NIO" {{ 'selected' if (presupuesto and presupuesto.moneda == 'NIO') or (not presupuesto and cfg.moneda_default == 'NIO') else '' }}>NIO (C$) — córdoba</option>
+            <option value="BRL" {{ 'selected' if (presupuesto and presupuesto.moneda == 'BRL') or (not presupuesto and cfg.moneda_default == 'BRL') else '' }}>BRL (R$) — real</option>
+            <option value="EUR" {{ 'selected' if (presupuesto and presupuesto.moneda == 'EUR') or (not presupuesto and cfg.moneda_default == 'EUR') else '' }}>EUR (€) — euro</option>
           </select>
         </div>
         <div class="field">
           <label>Tasa de cambio Bs/USD <span class="hint">(referencia, opcional)</span></label>
-          <input type="number" name="tipo_cambio" step="any" min="0" placeholder="p. ej. 155,00"
-                 value="{{ presupuesto.tipo_cambio if presupuesto and presupuesto.tipo_cambio else '' }}">
+          <input type="number" name="tipo_cambio" step="any" min="0" placeholder="p. ej. 4200"
+                 value="{{ presupuesto.tipo_cambio if presupuesto and presupuesto.tipo_cambio else (cfg.tasa_cambio if cfg.tasa_cambio and not presupuesto else '') }}">
         </div>
         <div class="field">
           <label>IVA (%)</label>
@@ -924,6 +940,7 @@
 <script src="/static/js/editor/catalogo.js"></script>
 <script src="/static/js/editor/totales.js"></script>
 <script src="/static/js/editor/tiempos.js"></script>
+<script nonce="{{ request.state.csp_nonce }}" id="simbolos-moneda" type="application/json">{{ simbolos | tojson }}</script>
 <script src="/static/js/editor/main.js"></script>
 <script src="/static/js/editor/partida_modal.js"></script>
 <script src="/static/js/editor/importador_excel.js"></script>

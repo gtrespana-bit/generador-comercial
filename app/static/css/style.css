@@ -5580,3 +5580,22 @@ body {
   margin-bottom: 16px;
   font-size: .88rem;
 }
+
+/* Tasa de referencia LatAm (Semana 2) */
+.tasa-box { background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:14px; }
+.tasa-label-bold { font-weight:700; }
+.tasa-flex { display:flex; gap:10px; align-items:end; flex-wrap:wrap; }
+.tasa-flex-1 { flex:1; min-width:180px; }
+.tasa-label-sm { font-size:0.82rem; }
+.tasa-input-row { display:flex; gap:6px; align-items:center; }
+.tasa-input { flex:1; }
+.tasa-simbolo { font-weight:600; color:#475569; }
+.tasa-fecha-col { min-width:160px; }
+.csp-tasa-hint-inline { font-weight:400; }
+.tasa-btn-nowrap { white-space:nowrap; }
+.tasa-hint-mt { margin-top:8px; }
+
+/* Onboarding tasa LatAm */
+.tasa-row { display:flex; gap:6px; align-items:center; }
+.tasa-input-flex { flex:1; }
+.tasa-label { font-weight:600; }

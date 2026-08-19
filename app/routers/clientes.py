@@ -10,26 +10,40 @@ router = APIRouter()
 # Clientes
 # ---------------------------------------------------------------------------
 
+def _pais_cliente(db: Session, pais: str) -> str:
+    """País del cliente: el que escriba el usuario o, si lo deja vacío,
+    el país configurado de la organización (ya no asume Venezuela)."""
+    p = (pais or "").strip()
+    if p:
+        return p
+    try:
+        return (getattr(_config(db), "empresa_pais", "") or "").strip()
+    except Exception:
+        return ""
+
+
 @router.get("/clientes", response_class=HTMLResponse)
 def listar_clientes(request: Request, q: str = "", db: Session = Depends(get_db)):
+    cfg = _config(db)
     query = db.query(Cliente)
     if q.strip():
         like = f"%{q.strip()}%"
         query = query.filter(or_(Cliente.nombre.ilike(like), Cliente.rif.ilike(like), Cliente.email.ilike(like)))
     clientes = query.order_by(Cliente.nombre).all()
-    return TEMPLATES.TemplateResponse(request, "clients/list.html", {"clientes": clientes, "q": q})
+    return TEMPLATES.TemplateResponse(request, "clients/list.html", {"clientes": clientes, "q": q, "cfg": cfg})
 
 
 @router.get("/clientes/nuevo", response_class=HTMLResponse)
-def nuevo_cliente_form(request: Request, _db: Session = Depends(get_db)):
-    return TEMPLATES.TemplateResponse(request, "clients/form.html", {"cliente": None})
+def nuevo_cliente_form(request: Request, db: Session = Depends(get_db)):
+    cfg = _config(db)
+    return TEMPLATES.TemplateResponse(request, "clients/form.html", {"cliente": None, "cfg": cfg})
 
 
 @router.post("/clientes/nuevo")
 def crear_cliente(
     nombre: str = Form(...),
     rif: str = Form(""),
-    pais: str = Form("Venezuela"),
+    pais: str = Form(""),
     telefono: str = Form(""),
     email: str = Form(""),
     direccion: str = Form(""),
@@ -37,7 +51,7 @@ def crear_cliente(
 ):
     if not nombre.strip():
         return _redirect("/clientes/nuevo", error="El nombre del cliente es obligatorio.")
-    cliente = Cliente(nombre=nombre.strip(), rif=rif.strip(), pais=pais.strip() or "Venezuela",
+    cliente = Cliente(nombre=nombre.strip(), rif=rif.strip(), pais=_pais_cliente(db, pais),
                       telefono=telefono.strip(), email=email.strip(), direccion=direccion.strip())
     db.add(cliente)
     db.commit()
@@ -49,7 +63,8 @@ def editar_cliente_form(cliente_id: int, request: Request, db: Session = Depends
     cliente = db.get(Cliente, cliente_id)
     if cliente is None:
         return _redirect("/clientes", error="Cliente no encontrado.")
-    return TEMPLATES.TemplateResponse(request, "clients/form.html", {"cliente": cliente})
+    cfg = _config(db)
+    return TEMPLATES.TemplateResponse(request, "clients/form.html", {"cliente": cliente, "cfg": cfg})
 
 
 @router.post("/clientes/{cliente_id}/editar")
@@ -57,7 +72,7 @@ def actualizar_cliente(
     cliente_id: int,
     nombre: str = Form(...),
     rif: str = Form(""),
-    pais: str = Form("Venezuela"),
+    pais: str = Form(""),
     telefono: str = Form(""),
     email: str = Form(""),
     direccion: str = Form(""),
@@ -70,7 +85,7 @@ def actualizar_cliente(
         return _redirect(f"/clientes/{cliente_id}/editar", error="El nombre del cliente es obligatorio.")
     cliente.nombre = nombre.strip()
     cliente.rif = rif.strip()
-    cliente.pais = pais.strip() or "Venezuela"
+    cliente.pais = _pais_cliente(db, pais)
     cliente.telefono = telefono.strip()
     cliente.email = email.strip()
     cliente.direccion = direccion.strip()

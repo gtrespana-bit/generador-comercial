@@ -145,7 +145,13 @@
             </div>
             <div class="field">
               <label for="empresa_pais">País</label>
-              <input id="empresa_pais" name="empresa_pais" maxlength="80" value="{{ cfg.empresa_pais or 'Venezuela' }}" autocomplete="country-name">
+              <select id="empresa_pais" name="empresa_pais">
+                <option value="Venezuela" {{ 'selected' if (cfg.empresa_pais or 'Venezuela') == 'Venezuela' else '' }}>🇻🇪 Venezuela</option>
+                <option value="Colombia" {{ 'selected' if cfg.empresa_pais == 'Colombia' else '' }}>🇨🇴 Colombia</option>
+                <option value="México" {{ 'selected' if cfg.empresa_pais == 'México' else '' }}>🇲🇽 México</option>
+                <option value="Ecuador" {{ 'selected' if cfg.empresa_pais == 'Ecuador' else '' }}>🇪🇨 Ecuador</option>
+                <option value="Perú" {{ 'selected' if cfg.empresa_pais == 'Perú' else '' }}>🇵🇪 Perú</option>
+              </select>
             </div>
             <div class="field">
               <label for="empresa_ciudad">Ciudad</label>
@@ -156,13 +162,36 @@
               <input id="empresa_direccion" name="empresa_direccion" autocomplete="street-address" placeholder="Oficina o showroom">
             </div>
             <div class="field">
+              <label for="etiqueta_id_fiscal">Etiqueta ID fiscal</label>
+              <input id="etiqueta_id_fiscal" name="etiqueta_id_fiscal" maxlength="20" value="{{ cfg.etiqueta_id_fiscal or 'RIF' }}" placeholder="RIF, NIT, RFC, RUC...">
+              <span class="hint">Se muestra en clientes y PDF.</span>
+            </div>
+            <div class="field">
               <label for="moneda_default">Moneda principal</label>
-              <select id="moneda_default" name="moneda_default"><option value="USD">USD (dólar)</option><option value="Bs">Bs (bolívar)</option></select>
+              <select id="moneda_default" name="moneda_default">
+                <option value="USD" {{ 'selected' if (cfg.moneda_default or 'USD') in ['USD', ''] else '' }}>USD ($) — dólar</option>
+                <option value="COP" {{ 'selected' if cfg.moneda_default == 'COP' else '' }}>COP ($) — peso colombiano</option>
+                <option value="MXN" {{ 'selected' if cfg.moneda_default == 'MXN' else '' }}>MXN ($) — peso mexicano</option>
+                <option value="PEN" {{ 'selected' if cfg.moneda_default == 'PEN' else '' }}>PEN (S/) — sol peruano</option>
+                <option value="VES" {{ 'selected' if cfg.moneda_default in ['VES', 'Bs'] else '' }}>VES (Bs) — bolívar</option>
+              </select>
             </div>
             <div class="field">
               <label for="iva_default">IVA por defecto (%)</label>
-              <input id="iva_default" name="iva_default" type="number" min="0" max="100" step="0.01" value="16">
-              <span class="hint">Puedes usar 0 si no corresponde. Esto no convierte el documento en factura fiscal.</span>
+              <input id="iva_default" name="iva_default" type="number" min="0" max="100" step="0.01" value="{{ cfg.iva_default or 16 }}">
+              <span class="hint">Sugerido según país. Puedes usar 0 si no aplica.</span>
+            </div>
+            <div class="field">
+              <label for="tasa_cambio">Tasa: 1 USD =</label>
+              <div class="tasa-row">
+                <input id="tasa_cambio" name="tasa_cambio" type="number" step="any" min="0" value="{{ cfg.tasa_cambio if cfg.tasa_cambio else '' }}" placeholder="Ej: 4200" class="tasa-input-flex">
+                <span id="label-tasa-moneda-onb" class="tasa-label">{{ cfg.moneda_default or 'COP' }}</span>
+              </div>
+              <span class="hint" id="hint-tasa-onb"></span>
+            </div>
+            <div class="field">
+              <label for="fecha_tasa">Fecha de tasa</label>
+              <input id="fecha_tasa" name="fecha_tasa" type="date" value="{{ cfg.fecha_tasa.isoformat() if cfg.fecha_tasa else '' }}">
             </div>
             <div class="field full">
               <label for="logo">Logotipo <span class="hint">(opcional)</span></label>
@@ -246,6 +275,32 @@
     return true;
   }
 
+  // Auto-config por país (VE/CO/MX/EC/PE) — rellena etiqueta/iva/moneda/tasa
+  (function(){
+    var paisSel=document.getElementById('empresa_pais');
+    var etiquetaInput=document.getElementById('etiqueta_id_fiscal');
+    var monedaSel=document.getElementById('moneda_default');
+    var ivaInput=document.getElementById('iva_default');
+    var tasaInput=document.getElementById('tasa_cambio');
+    var fechaInput=document.getElementById('fecha_tasa');
+    var labelTasa=document.getElementById('label-tasa-moneda-onb');
+    var hintTasa=document.getElementById('hint-tasa-onb');
+    if(!paisSel) return;
+    var MAPA={ 'Venezuela':{etiqueta:'RIF',iva:16,moneda:'VES',tasa:36.5}, 'Colombia':{etiqueta:'NIT',iva:19,moneda:'COP',tasa:4200}, 'México':{etiqueta:'RFC',iva:16,moneda:'MXN',tasa:17.2}, 'Ecuador':{etiqueta:'RUC',iva:15,moneda:'USD',tasa:1}, 'Perú':{etiqueta:'RUC',iva:18,moneda:'PEN',tasa:3.75} };
+    function aplicarPais(autoTasa){
+      var p=paisSel.value||'Venezuela';
+      var cfg=MAPA[p]||MAPA['Venezuela'];
+      if(etiquetaInput && !etiquetaInput.dataset.tocado) etiquetaInput.value=cfg.etiqueta;
+      if(ivaInput && !ivaInput.dataset.tocado) ivaInput.value=cfg.iva;
+      if(monedaSel && !monedaSel.dataset.tocado) monedaSel.value=cfg.moneda;
+      if(labelTasa) labelTasa.textContent=cfg.moneda;
+      if(hintTasa) hintTasa.textContent = cfg.moneda==='USD' ? 'Moneda USD — tasa 1.' : 'Sugerido: 1 USD = '+cfg.tasa+' '+cfg.moneda;
+      if(autoTasa && tasaInput && !tasaInput.value) { tasaInput.value=cfg.tasa; if(fechaInput && !fechaInput.value) fechaInput.value=new Date().toISOString().slice(0,10); }
+    }
+    [etiquetaInput,ivaInput,monedaSel,tasaInput].forEach(function(el){ if(el) el.addEventListener('input', function(){ el.dataset.tocado='1'; }); });
+    paisSel.addEventListener('change', function(){ if(etiquetaInput) delete etiquetaInput.dataset.tocado; if(ivaInput) delete ivaInput.dataset.tocado; if(monedaSel) delete monedaSel.dataset.tocado; aplicarPais(true); });
+    aplicarPais(false);
+  })();
   function value(id) { var el = document.getElementById(id); return el ? el.value.trim() : ''; }
   function updateSummary() {
     var mode = form.querySelector('input[name="modo_inicio"]:checked');

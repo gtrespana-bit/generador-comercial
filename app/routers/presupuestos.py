@@ -5,6 +5,7 @@ from fastapi import APIRouter
 from . import common
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
 from ..services import auditoria
+from ..utils import normalizar_moneda
 
 router = APIRouter()
 
@@ -1497,6 +1498,17 @@ async def crear_presupuesto(request: Request, db: Session = Depends(get_db)):
         fecha_tipo_cambio = date.fromisoformat(form.get("fecha_tipo_cambio")) if form.get("fecha_tipo_cambio") else None
     except ValueError:
         fecha_tipo_cambio = None
+    # Si no viene fecha pero sí usamos tasa de cfg, usa fecha_tasa de cfg
+    try:
+        cfg_fecha = getattr(_config(db), "fecha_tasa", None) if 'cfg' not in locals() else getattr(cfg, "fecha_tasa", None)
+    except Exception:
+        cfg_fecha = None
+    if fecha_tipo_cambio is None and cfg_fecha:
+        # Si el form no trae fecha pero el presupuesto usará tasa de cfg, hereda su fecha
+        _tipo_form_vacio = not str(form.get("tipo_cambio", "")).strip()
+        _fecha_form_vacia = not str(form.get("fecha_tipo_cambio", "")).strip()
+        if _tipo_form_vacio and _fecha_form_vacia:
+            fecha_tipo_cambio = cfg_fecha
 
     con_portada = bool(form.get("con_portada"))
     mostrar_firmas = bool(form.get("mostrar_firmas"))
@@ -1508,6 +1520,7 @@ async def crear_presupuesto(request: Request, db: Session = Depends(get_db)):
     if isinstance(foto_file, UploadFileStarlette) and foto_file.filename:
         foto_proyecto = await _guardar_imagen(foto_file, f"projects/p_new_{date.today().isoformat()}", db)
 
+    cfg = _config(db)
     presupuesto = Presupuesto(
         numero=proximo_numero(db, f.year),
         year=f.year,
@@ -1516,8 +1529,8 @@ async def crear_presupuesto(request: Request, db: Session = Depends(get_db)):
         direccion_obra=str(form.get("direccion_obra", "")).strip(),
         codigo_postal=str(form.get("codigo_postal", "")).strip(),
         validez_dias=int(_f(form.get("validez_dias"), 30)),
-        moneda=form.get("moneda") if form.get("moneda") in ("USD", "Bs") else "USD",
-        tipo_cambio=_f(form.get("tipo_cambio"), None) if str(form.get("tipo_cambio", "")).strip() else None,
+        moneda=normalizar_moneda(form.get("moneda"), "USD"),
+        tipo_cambio=(_f(form.get("tipo_cambio"), None) if str(form.get("tipo_cambio", "")).strip() else None) or (cfg.tasa_cambio if getattr(cfg, "tasa_cambio", None) and str(form.get("tipo_cambio", "")).strip() == "" and getattr(cfg, "moneda_default", "USD") not in ("USD", "PAB") else None),
         impuesto_pct=_f(form.get("impuesto_pct"), 16.0),
         descuento_pct=_f(form.get("descuento_pct"), 0.0),
         estado=estado if _estado_valido(estado) else "borrador",
@@ -2972,7 +2985,7 @@ async def actualizar_presupuesto(presupuesto_id: int, request: Request, db: Sess
     presupuesto.direccion_obra = str(form.get("direccion_obra", "")).strip()
     presupuesto.codigo_postal = str(form.get("codigo_postal", "")).strip()
     presupuesto.validez_dias = int(_f(form.get("validez_dias"), 30))
-    presupuesto.moneda = form.get("moneda") if form.get("moneda") in ("USD", "Bs") else "USD"
+    presupuesto.moneda = normalizar_moneda(form.get("moneda"), "USD")
     presupuesto.tipo_cambio = _f(form.get("tipo_cambio"), None) if str(form.get("tipo_cambio", "")).strip() else None
     presupuesto.impuesto_pct = _f(form.get("impuesto_pct"), 16.0)
     presupuesto.descuento_pct = _f(form.get("descuento_pct"), 0.0)
