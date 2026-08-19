@@ -323,6 +323,21 @@ organización (visible solo para el operador).
   archivos), lección del 18/08 aplicada.
 - 78 plantillas Jinja correctas, `compileall` limpio, `git diff --check` ok.
 
+### Lecciones de CI de este bloque (para no repetirlas)
+
+1. **`alembic upgrade --sql` genera SQL con espacios finales** (tras las comas
+   del `CREATE TABLE`) y el paso «Detectar conflictos y espacios en blanco»
+   los rechaza. Al generar un `docs/staging_upgrade_*.sql` nuevo, pasar
+   `sed -i 's/[ \t]*$//'` y quitar la línea en blanco final **antes** de
+   commitear. `git diff --check` local sin argumentos no lo detecta: hay que
+   comparar contra la base del PR (`git diff --check <base> -- . ':(exclude)*.md'`).
+2. **Los ids hex de revisiones Alembic disparan detect-secrets** («Hex High
+   Entropy String»). Cada migración nueva añade hallazgos que no están en
+   `.secrets.baseline` y el paso E4-030 rompe. Tras crear una migración:
+   `detect-secrets scan --baseline .secrets.baseline`, revisar uno a uno que
+   los hallazgos nuevos son los ids/fixtures esperados y commitear el
+   baseline actualizado. Nunca aceptar a ciegas.
+
 ### ⚠️ Al fusionar el PR de este bloque (pasos del titular)
 
 1. ✅ **Hecho (19/08/2026): `docs/staging_upgrade_d2a7c9e4f1b3.sql` aplicado
