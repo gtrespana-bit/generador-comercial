@@ -487,3 +487,26 @@ documentos listos en `docs/SIMULACRO_CAIDA_Y_RECUPERACION.md` y
 `docs/PLAN_DE_RESPUESTA_A_INCIDENTES.md`. Primera ejecución del simulacro
 recomendada antes del día final de tests (D-019); el plan de incidentes se
 revisa en ese simulacro.
+
+## 13. Registro de auditoría (E4-026/E4-027): aplicar la migración
+
+**Estado (19/08/2026):** ✅ código completo en la rama del bloque; ⚠️ la
+migración `d2a7c9e4f1b3` queda **pendiente de aplicar en Supabase** al
+fusionar su PR.
+
+1. Supabase → SQL Editor → New query.
+2. Pegar el contenido de `docs/staging_upgrade_d2a7c9e4f1b3.sql` (generado con
+   `alembic upgrade --sql`: incluye la guarda que comprueba que la base está
+   en `b6d9e4c2a8f1` antes de aplicar, y actualiza `alembic_version`).
+3. Ejecutar con el rol administrativo (las funciones SECURITY DEFINER deben
+   quedar con propietario administrativo, nunca `cotizat_app`).
+4. Verificar tras el despliegue que `/readyz` está en verde
+   (`EXPECTED_ALEMBIC_HEAD = d2a7c9e4f1b3`) y que
+   `/configuracion/actividad` registra eventos al cambiar un estado.
+
+Qué trae: la tabla inmutable `eventos_auditoria` (quién cambió precios,
+estados, documentos, equipo y datos; sin GRANT de UPDATE/DELETE), la función
+`registrar_evento_global` (eventos de sesión, lista cerrada) y la función de
+baja **corregida**: ahora borra también `compras_plan` (sin esto, una
+organización con compras registradas no puede darse de baja) y
+`eventos_auditoria`.

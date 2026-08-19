@@ -1,6 +1,6 @@
 # Punto exacto de continuación
 
-Fecha de corte: **19/08/2026 — PR #42 FUSIONADO y verificado en producción: migración b6d9e4c2a8f1 aplicada en Supabase (`/readyz` en verde), flujo de CI sincronizado y los 2 crons visibles en Vercel. El simulacro E4-043 y el día final de tests (D-019) quedan para el cierre, por decisión del titular. Ver «ESTADO VERIFICADO» más abajo** (America/Caracas).
+Fecha de corte: **19/08/2026 — Bloque E4-026/E4-027 terminado en la rama de la sesión: registro de auditoría inmutable (`eventos_auditoria`, migración `d2a7c9e4f1b3`) + fix de la baja con compras. Pendiente inmediato del titular: fusionar el PR del bloque y aplicar `docs/staging_upgrade_d2a7c9e4f1b3.sql` en Supabase. Simulacro E4-043 y día final de tests (D-019): al final, por decisión del titular** (America/Caracas).
 
 Este documento retoma el trabajo sin depender del historial del chat. Describe
 **dónde quedó exactamente** el trabajo y **qué sigue**, en ese orden. Léelo
@@ -257,6 +257,88 @@ Suite: **694 passed, 7 skipped** (23 pruebas nuevas). Cabeza Alembic:
    versión aceptada).
 4. (Pendiente del bloque anterior, sin cambio) 2 crons en Vercel,
    UptimeRobot, backups Supabase Pro.
+
+---
+
+## ✅ Cierre de sesión — Registro de auditoría E4-026/E4-027 + fix de baja (19/08/2026)
+
+Rama fija de la sesión: `arena/01a0175c-generador-comercial`, basada en `main`
+(`8b02641`, merge del PR #42 + CI sincronizado). El titular eligió atacar la
+**Etapa 4 restante**; E4-026 y E4-027 comparten solución técnica y se
+implementaron juntos. E4-020 quedó como recomendación de aplazamiento
+(pendiente de su decisión).
+
+### 1. Registro de auditoría inmutable (`eventos_auditoria`)
+
+- **Tabla** (`app/models.py` → `EventoAuditoria`): actor (email/rol), acción
+  `dominio.verbo`, entidad + id, detalle JSON pequeño sin datos sensibles,
+  ip_hash y fecha. **No es TenantMixin a propósito**: `organizacion_id` es
+  nullable porque los eventos de sesión (login/logout/clave) ocurren sin
+  organización — consecuencia: toda consulta filtra la organización
+  explícitamente (la vista y la baja lo hacen).
+- **Inmutabilidad por construcción** (migración `d2a7c9e4f1b3`): el rol
+  runtime recibe GRANT de SELECT e INSERT, **nunca** UPDATE ni DELETE, y no
+  existen políticas para esos verbos. Políticas: INSERT tenant con escritura
+  (solo filas con organización), SELECT tenant u operador.
+- **Eventos globales** (login, logout, cambio de clave, constancia de baja):
+  entran por `cotizat_security.registrar_evento_global` (SECURITY DEFINER)
+  con **lista cerrada de acciones** validada también en la base; un test
+  exige que la lista SQL y la del servicio (`ACCIONES_GLOBALES`) coincidan
+  exactamente. Solo el operador ve las filas sin organización.
+- **Servicio best-effort** (`app/services/auditoria.py`): se anota **después**
+  del commit del cambio principal y jamás lanza (rollback interno + warning);
+  regla documentada en el módulo. Detalle > 2000 caracteres se descarta a
+  `{}` (señal de payload entero).
+- **Anclajes**: estado de presupuesto y factura (de → a), envío por email
+  (destinatario y versión), enlace público creado/revocado, precio de
+  partida/producto/recurso y ajuste masivo, configuración guardada,
+  organización renombrada, invitación enviada/revocada, rol cambiado, miembro
+  desactivado, respaldo descargado, exportación descargada, restauración
+  ejecutada, compra registrada, login/logout/clave y baja.
+- **Vista «Actividad»** (`/configuracion/actividad`, plantilla
+  `actividad.html`): solo gestión (propietario/administrador), paginada a 50,
+  acciones legibles desde `ACCIONES_LEGIBLES` (fuente única), tarjeta de
+  acceso en `/configuracion`.
+
+### 2. Bug latente corregido: la baja fallaba con compras registradas
+
+`compras_plan` (PR #33, FK RESTRICT a `organizaciones`) **nunca se añadió** a
+la función `cotizat_security.baja_organizacion` ni al camino ORM de
+`app/services/baja.py`: cualquier organización con una compra no podía darse
+de baja (violación de FK en el DELETE final). La migración `d2a7c9e4f1b3`
+redefine la función con `compras_plan` y `eventos_auditoria`, y el camino
+SQLite hace lo mismo. Regresión verificada en ambas direcciones (el test
+falla sin el fix). La constancia de la baja queda como evento global sin
+organización (visible solo para el operador).
+
+### 3. Estado y verificación
+
+- Suite: **715 passed, 6 skipped** (20 pruebas nuevas en
+  `tests/test_auditoria.py`; guardas de cadena/tenencia actualizadas en
+  `test_rls.py`, `test_tenancy.py`, `test_consentimiento.py`,
+  `test_prueba_gratuita.py`).
+- Cabeza Alembic: **`d2a7c9e4f1b3`** (`EXPECTED_ALEMBIC_HEAD` actualizado;
+  `alembic upgrade head` y `downgrade -1`/`upgrade` verificados en SQLite).
+- Auditoría de datos sensibles: sin hallazgos **después de commitear** (6446
+  archivos), lección del 18/08 aplicada.
+- 78 plantillas Jinja correctas, `compileall` limpio, `git diff --check` ok.
+
+### ⚠️ Al fusionar el PR de este bloque (pasos del titular)
+
+1. **Aplicar `docs/staging_upgrade_d2a7c9e4f1b3.sql` en Supabase** (SQL
+   Editor, rol administrativo; guarda incluida: exige `b6d9e4c2a8f1`). Sin
+   ella, `/readyz` responderá 503 tras el despliegue.
+2. Verificar `/readyz` en verde (`head:d2a7c9e4f1b3`) y que
+   `/configuracion/actividad` muestra eventos al cambiar un estado.
+3. (Sin cambios) UptimeRobot y backups Supabase Pro siguen como pasos de
+   panel recomendados; simulacro E4-043 y D-019 al final.
+
+### Decisión pendiente del titular
+
+**E4-020 (cola de trabajos):** recomendación de **aplazar** documentada en el
+plan §4.4 — en Vercel serverless una cola real exige infraestructura externa;
+hoy nada la necesita (envíos síncronos acotados + cron de mantenimiento). Se
+reabre si un PDF/importación supera el timeout o hay envíos masivos.
 
 ---
 
