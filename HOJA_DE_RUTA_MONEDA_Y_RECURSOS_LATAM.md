@@ -38,7 +38,7 @@
 | 5. Editor y cálculos | ✅ Completado | 2026-08-19 | Editor, guardado, costes, beneficios, márgenes y moneda activa integrados |
 | 6. Plantillas y exportaciones | ✅ Completado | 2026-08-19 | Vistas, PDF, contrato, Excel, correos, propuestas públicas y PDF interactivo normalizados a ISO |
 | 7. Recursos por país | ✅ Completado | 2026-08-19 | Modelo híbrido, investigación inicial, matriz completa, panel, historial, procedencia y metadatos operativos implementados |
-| 8. Mano de obra y rendimientos | 🟡 En curso | 2026-08-19 | Metadatos operativos y motor inicial de cuadrillas/rendimientos implementados; falta integración en partidas y pantalla |
+| 8. Mano de obra y rendimientos | ✅ Completado | 2026-08-19 | Recursos operativos, cuadrillas, rendimientos, equipos y transporte por modalidad implementados |
 | 9. Históricos y congelación | ⬜ Pendiente | — | — |
 | 10. Integración con etapa 6 | ⬜ Pendiente | — | — |
 | 11. Pruebas y aceptación | ⬜ Pendiente | — | — |
