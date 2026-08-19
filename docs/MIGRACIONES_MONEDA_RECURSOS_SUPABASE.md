@@ -20,6 +20,8 @@ La cadena debe avanzar así:
 | 4 | `docs/staging_upgrade_d0e1f2a3b4c5.sql` | `c9d0e1f2a3b4` | `d0e1f2a3b4c5` |
 | 5 | `docs/staging_upgrade_e1f2a3b4c5d6.sql` | `d0e1f2a3b4c5` | `e1f2a3b4c5d6` |
 | 6 | `docs/staging_upgrade_f2a3b4c5d6e7.sql` | `e1f2a3b4c5d6` | `f2a3b4c5d6e7` |
+| 7 | `docs/staging_upgrade_a3b4c5d6e7f8.sql` | `f2a3b4c5d6e7` | `a3b4c5d6e7f8` |
+| 8 | `docs/staging_upgrade_b4c5d6e7f8a9.sql` | `a3b4c5d6e7f8` | `b4c5d6e7f8a9` |
 
 Cada script tiene una guarda y aborta si la revisión previa no coincide.
 
@@ -52,7 +54,7 @@ SELECT to_regclass('public.precios_recursos_mercado');
 La revisión final esperada es:
 
 ```text
-f2a3b4c5d6e7
+b4c5d6e7f8a9
 ```
 
 ## Alternativa Alembic
