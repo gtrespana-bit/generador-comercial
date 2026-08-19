@@ -24,13 +24,14 @@ def _linea(item):
             "columnas": descompuesto.columnas,
             "rangos_combinados": descompuesto.rangos_combinados,
             "filas": filas_cype,
+            "filas_actuales": [{"codigo": f.codigo, "descripcion": f.descripcion, "unidad": f.unidad, "rendimiento": f.rendimiento, "precio_unitario": f.precio_unitario, "importe": f.importe, "moneda": getattr(f, "moneda", "USD"), "origen_precio": getattr(f, "origen_precio", "base"), "confianza_precio": getattr(f, "confianza_precio", "provisional"), "fuente_precio": getattr(f, "fuente_precio", "")} for f in getattr(descompuesto, "filas", [])],
             "coste_directo_unitario": descompuesto.coste_directo_unitario,
         }
     return {
         "codigo_externo": getattr(item, "codigo_externo", ""),
         "nombre": item.nombre, "descripcion": item.descripcion, "unidad": item.unidad,
         "cantidad": item.cantidad, "cantidad_total": item.cantidad_total,
-        "precio_unitario": item.precio_unitario, "importe": item.importe,
+        "precio_unitario": item.precio_unitario, "importe": item.importe, "moneda": getattr(item, "moneda", "USD"),
         "producto_nombre": item.producto_nombre, "producto_precio": item.producto_precio,
         "producto_coste": item.producto_coste,
         "producto_unidad": item.producto_unidad, "tipo_partida": item.tipo_partida,
