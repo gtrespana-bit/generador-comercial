@@ -127,7 +127,7 @@
           {% endif %}
         </td>
         <td class="right csp-s-463c663c8c">{{ part.cantidad_total | cant(part.unidad) }}</td>
-        <td class="right csp-s-0dfe35f39a">{{ part.precio_unitario | num }} {{ p.moneda | simbolo }}/{{ part.unidad }}</td>
+        <td class="right csp-s-0dfe35f39a">{{ part.precio_unitario | money_iso(p.moneda) }}/{{ part.unidad }}</td>
         <td class="right csp-s-6ef849732a">{{ part.importe | money(p.moneda) }}</td>
         <td class="right csp-s-0231bd7a8a">
           {% set tp = tiempos_por_partida.get(part.id) if tiempos_por_partida else none %}
@@ -175,7 +175,7 @@
             {% set op_precio = op.precio if op.precio is defined and op.precio is not none else op.producto_precio %}
             {% set op_unidad = op.unidad if op.unidad is defined and op.unidad else (op.producto_unidad or part.unidad) %}
             {% if op_precio is not none %}
-            <strong class="csp-s-d5d7f32738">{{ op_precio | num }} {{ p.moneda | replace('USD','$') }} / {{ op_unidad }}</strong>
+            <strong class="csp-s-d5d7f32738">{{ op_precio | money_iso(p.moneda) }} / {{ op_unidad }}</strong>
             {% endif %}
           </div>
           {% set op_nombre = op.nombre if op.nombre is defined and op.nombre else op.producto_nombre %}
@@ -199,7 +199,7 @@
     {% else %}
     <div class="doc-prod">
       <strong>Producto presupuestado:</strong>
-      {% if part.producto_precio is not none %}<strong>{{ part.producto_precio | num }} {{ p.moneda | replace('USD','$') }} / {{ part.producto_unidad or part.unidad }}</strong>&nbsp;&nbsp;{% endif %}
+      {% if part.producto_precio is not none %}<strong>{{ part.producto_precio | money_iso(p.moneda) }} / {{ part.producto_unidad or part.unidad }}</strong>&nbsp;&nbsp;{% endif %}
       <em class="muted">{{ part.producto_nombre }}</em>
       {% if part.producto_imagen %}<br><img src="{{ part.producto_imagen | archivo_url }}" alt="Producto" loading="lazy" decoding="async">{% endif %}
     </div>
