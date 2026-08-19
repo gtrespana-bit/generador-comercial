@@ -1940,3 +1940,27 @@ Bloque de operación de la Etapa 4 terminado:
 
 Suite: **672 passed, 6 skipped** (10 pruebas nuevas en
 `tests/test_mantenimiento_cron.py`).
+
+## Actualización 19/08/2026 (noche, 2ª) — Bloque 100 % recomendado: E4-038, E4-032, E4-043 (procedimiento)
+
+Triaje de lo que quedaba de la Etapa 4: se separó lo **100 % recomendado
+antes de lanzar** de lo que puede esperar a la beta, y se ejecutó el primer
+bloque:
+
+- **E4-038 — Consentimiento de términos registrado.** Checkbox obligatorio en
+  el registro; tabla `consentimientos` con RLS de operador y unicidad
+  (email, versión); funciones SECURITY DEFINER `record_consent` y
+  `obtener_consentimiento` (mismo patrón blindado que la prueba gratuita);
+  marca `usuarios.acepto_terminos_*` visible en `/cuenta`, con aceptación
+  explícita para cuentas anteriores; versión única en `app/legal.py` (1.1)
+  mostrada en la página de términos. Migración `b6d9e4c2a8f1` +
+  `docs/staging_upgrade_b6d9e4c2a8f1.sql` (a aplicar en Supabase al fusionar).
+- **E4-032 — Plan de respuesta a incidentes.** `docs/PLAN_DE_RESPUESTA_A_INCIDENTES.md`
+  (severidades S1–S4, runbooks, contactos, «qué no hacer»).
+- **E4-043 — Simulacro de caída y recuperación (procedimiento).**
+  `docs/SIMULACRO_CAIDA_Y_RECUPERACION.md`; la ejecución queda para el titular
+  antes del día final de tests (D-019).
+
+Suite: **694 passed, 7 skipped** (23 pruebas nuevas en
+`tests/test_consentimiento.py` y ajustes de cadena de cabezas). Cabeza
+Alembic: `b6d9e4c2a8f1`.

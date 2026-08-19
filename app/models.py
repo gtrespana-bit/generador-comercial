@@ -11,6 +11,7 @@ Estructura de un presupuesto (fiel al formato de referencia):
 """
 from datetime import date, datetime, timedelta
 import json
+from types import SimpleNamespace
 
 from sqlalchemy import (
     CheckConstraint,
@@ -105,10 +106,51 @@ class Usuario(Base):
     activo = Column(Boolean, nullable=False, default=True)
     email_verificado_at = Column(DateTime, nullable=True)
     ultimo_acceso_at = Column(DateTime, nullable=True)
+    # Marca visible «en la cuenta» de la aceptación de términos (E4-038). El
+    # registro completo (versión, nombre, IP con hash, fecha) vive en
+    # `consentimientos`; estas columnas son el resumen de lectura rápida que
+    # se muestra en /cuenta y queda rellenado por `sincronizar_usuario_auth`
+    # o por la aceptación explícita desde el panel de cuenta.
+    acepto_terminos_version = Column(String(20), nullable=False, default="", server_default="")
+    acepto_terminos_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     membresias = relationship("Membresia", back_populates="usuario", cascade="all, delete-orphan")
+
+
+class Consentimiento(Base):
+    """Registro de la aceptación de términos y privacidad (E4-038).
+
+    **No es una tabla de tenant**: es información del titular sobre sus
+    clientes (como ``licencias`` o ``pruebas_concedidas``), así que lleva RLS
+    de operador: FORCE ROW LEVEL SECURITY y políticas que exigen la marca
+    ``cotizat.es_operador``. Ninguna sesión de cliente la lee ni la escribe
+    directamente; las escrituras del registro entran por la función
+    ``cotizat_security.record_consent`` y las lecturas del perfil por
+    ``cotizat_security.obtener_consentimiento`` (ambas SECURITY DEFINER).
+
+    La unicidad (``email``, ``version``) hace idempotente el registro: una
+    misma persona aceptando la misma versión dos veces no duplica filas. El
+    ``aceptado_en`` es el momento de la aceptación, no el del alta en Auth.
+    """
+
+    __tablename__ = "consentimientos"
+    __table_args__ = (
+        UniqueConstraint("email", "version", name="uq_consentimiento_email_version"),
+    )
+
+    id = Column(Integer, primary_key=True)
+    email = Column(String(254), nullable=False, index=True)
+    nombre = Column(String(200), nullable=False, default="", server_default="")
+    version = Column(String(20), nullable=False)
+    ip_hash = Column(String(64), nullable=False, default="", server_default="")
+    aceptado_en = Column(
+        DateTime,
+        nullable=False,
+        default=datetime.utcnow,
+        server_default=text("CURRENT_TIMESTAMP"),
+    )
 
 
 class Membresia(Base):
@@ -180,8 +222,46 @@ def sincronizar_usuario_auth(
         raise VinculoIdentidadError("La cuenta de CotizaT está desactivada.")
     if email_verificado and usuario.email_verificado_at is None:
         usuario.email_verificado_at = datetime.utcnow()
+    # E4-038: si el perfil todavía no tiene la marca de aceptación, se rellena
+    # desde el registro de consentimientos (la persona pudo aceptar en el
+    # formulario de registro, antes de que esta fila existiera). Es idempotente
+    # y nunca pisa una marca ya asentada.
+    if not usuario.acepto_terminos_version:
+        consentimiento = _consentimiento_mas_reciente(db, email)
+        if consentimiento is not None:
+            usuario.acepto_terminos_version = consentimiento.version
+            usuario.acepto_terminos_at = consentimiento.aceptado_en
     db.flush()
     return usuario
+
+
+def _consentimiento_mas_reciente(db, email: str):
+    """Última aceptación registrada para un correo, o ``None``.
+
+    En PostgreSQL la lectura pasa por ``cotizat_security.obtener_consentimiento``
+    (SECURITY DEFINER): la tabla tiene RLS de operador y una sesión de cliente
+    no puede leerla directamente. En SQLite (escritorio y pruebas) no hay RLS
+    y se consulta la tabla como cualquier otra.
+    """
+    if db.bind is not None and db.bind.dialect.name == "postgresql":
+        from sqlalchemy import text as _text
+
+        fila = db.execute(
+            _text(
+                "SELECT version, aceptado_en "
+                "FROM cotizat_security.obtener_consentimiento(:email)"
+            ),
+            {"email": email},
+        ).first()
+        if fila is None:
+            return None
+        return SimpleNamespace(version=fila.version, aceptado_en=fila.aceptado_en)
+    return (
+        db.query(Consentimiento)
+        .filter(Consentimiento.email == email)
+        .order_by(Consentimiento.aceptado_en.desc(), Consentimiento.id.desc())
+        .first()
+    )
 
 
 def reservar_id_organizacion(db) -> int | None:
