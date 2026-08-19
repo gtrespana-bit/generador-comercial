@@ -44,13 +44,13 @@
         <td>{{ p.fecha | fecha }}</td>
         <td>{{ p.cliente.nombre }}</td>
         <td><span class="badge badge-{{ p.estado }}">{{ p.estado | capitalize }}</span></td>
-        <td class="right"><strong>{{ p.total | money(p.moneda) }}</strong></td>
+        <td class="right"><strong>{{ p.total | money_iso(p.moneda) }}</strong></td>
         <td class="right">
           <div class="row-actions list-row-actions">
             <a class="btn btn-sm btn-ghost" href="/presupuestos/{{ p.id }}">Ver</a>
             <a class="btn btn-sm" href="/presupuestos/{{ p.id }}/editar">Editar</a>
             <a class="btn btn-sm btn-ghost" href="/presupuestos/{{ p.id }}/tiempos" title="Tiempo estimado de obra">Tiempos</a>
-            {% set wa = p.cliente.telefono | whatsapp('Hola ' ~ p.cliente.nombre ~ ', te comparto el presupuesto ' ~ p.numero ~ ' por un total de ' ~ (p.total | money(p.moneda)) ~ '.') %}
+            {% set wa = p.cliente.telefono | whatsapp('Hola ' ~ p.cliente.nombre ~ ', te comparto el presupuesto ' ~ p.numero ~ ' por un total de ' ~ (p.total | money_iso(p.moneda)) ~ '.') %}
             {% if wa %}<a class="btn btn-sm btn-whatsapp" href="{{ wa }}" target="_blank" title="Enviar por WhatsApp">WhatsApp</a>{% endif %}
             <form method="post" action="/presupuestos/{{ p.id }}/duplicar" class="csp-s-a91548c594">
               <button class="btn btn-sm btn-ghost" type="submit" title="Duplicar">Duplicar</button>
