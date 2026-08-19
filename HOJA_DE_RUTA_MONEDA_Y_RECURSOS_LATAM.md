@@ -42,7 +42,7 @@
 | 9. Históricos y congelación | ✅ Completado | 2026-08-19 | Versiones, proyectos, cambios, pagos, facturas y procedencia de recursos protegidos |
 | 10. Integración con etapa 6 | ✅ Completado | 2026-08-19 | Proyectos, cambios, pagos, facturas y saldos con moneda contractual congelada |
 | 11. Pruebas y aceptación | ✅ Completado | 2026-08-19 | Suite completa: 766 passed, 6 skipped |
-| 12. Documentación y cierre | ⬜ Pendiente | — | — |
+| 12. Documentación y cierre | ✅ Completado | 2026-08-19 | Guías operativas, cierre, migraciones y continuidad documentados |
 
 Estados permitidos:
 
