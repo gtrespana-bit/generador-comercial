@@ -337,3 +337,24 @@ async def bulk_delete_recursos(request: Request, db: Session = Depends(get_db)):
             count += 1
     db.commit()
     return _redirect("/recursos", msg=f"Se eliminaron {count} recursos.")
+
+@router.get("/recursos/mercado", response_class=HTMLResponse)
+def panel_precios_mercado(request: Request, pais: str = "", categoria: str = "", db: Session = Depends(get_db)):
+    """Panel de referencias nacionales y precios de organización."""
+    from ..services.precios_mercado import PrecioRecursoMercado
+    query = db.query(PrecioRecursoMercado, Recurso).join(Recurso, Recurso.id == PrecioRecursoMercado.recurso_id)
+    if pais.strip(): query = query.filter(PrecioRecursoMercado.pais_codigo == pais.strip().upper())
+    if categoria in CATEGORIAS_RECURSO: query = query.filter(Recurso.categoria == categoria)
+    filas = query.order_by(PrecioRecursoMercado.pais_codigo, Recurso.categoria, Recurso.descripcion).all()
+    return TEMPLATES.TemplateResponse(request, "recursos/mercado.html", {"filas": filas, "pais": pais, "categoria": categoria, "categorias": CATEGORIAS_RECURSO})
+
+@router.post("/recursos/mercado")
+def guardar_precio_mercado(
+    recurso_id: int = Form(...), pais_codigo: str = Form(...), precio: str = Form(...), moneda: str = Form(...),
+    organizacion: str = Form("0"), fuente: str = Form(""), confianza: str = Form("referencia"), db: Session = Depends(get_db)
+):
+    from ..services.precios_mercado import guardar_precio
+    org_id = int(db.info.get("organizacion_id") or 0) if organizacion == "1" else None
+    guardar_precio(db, recurso_id, pais_codigo, _f(precio), moneda, organizacion_id=org_id, fuente=fuente, confianza=confianza)
+    db.commit()
+    return _redirect("/recursos/mercado", msg="Precio de mercado guardado.")
