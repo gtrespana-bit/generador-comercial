@@ -19,7 +19,7 @@
   <section class="catalog-price-sale">
     <div class="sale-copy"><span class="section-kicker">Precio comercial</span><strong>Precio de venta unitario</strong><p class="hint">Define el precio sobre el coste directo. Puedes fijar el beneficio % y el precio se calculará solo.</p></div>
     <div class="price-benefit-grid csp-s-96f594106b">
-      <div class="field"><label>Precio de venta (USD) *</label><div class="money-input"><span>$</span><input type="number" name="precio_unitario" id="catalog-precio-venta" step="0.01" min="0" required value="{{ partida.precio_unitario if partida else 0 }}"></div></div>
+      <div class="field"><label>Precio de venta ({{ moneda_local | default('USD') }}) *</label><div class="money-input"><span>{{ simbolo_local | default('$') }}</span><input type="number" name="precio_unitario" id="catalog-precio-venta" step="0.01" min="0" required value="{{ partida.precio_unitario if partida else 0 }}"></div></div>
       <div class="field"><label>Beneficio (%) sobre coste</label><div class="money-input csp-s-972019b530"><span class="csp-s-2cd1543b50">%</span><input type="number" id="catalog-beneficio-pct" name="beneficio_pct" step="any" placeholder="40" title="Ej: 40 = Coste ×1.40" class="csp-s-7e16e24c5c"></div><small class="hint csp-s-0a0562f897" id="catalog-beneficio-hint">—</small></div>
     </div>
   </section>
