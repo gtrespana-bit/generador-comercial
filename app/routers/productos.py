@@ -3,6 +3,7 @@
 from fastapi import APIRouter
 
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
+from ..services import auditoria
 
 router = APIRouter()
 
@@ -198,6 +199,14 @@ async def actualizar_producto(producto_id: int, request: Request, db: Session = 
     for ruta in set(galeria_inicial) - set(galeria):
         _borrar_imagen(ruta, db)
     db.commit()
+    if precio_anterior != producto.precio_unitario:
+        auditoria.registrar_evento(
+            db,
+            "catalogo.precio_producto",
+            entidad="producto",
+            entidad_id=producto.id,
+            detalle={"de": precio_anterior, "a": producto.precio_unitario or 0},
+        )
     return _redirect("/productos", msg="Producto actualizado.")
 
 

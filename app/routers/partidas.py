@@ -4,6 +4,7 @@ from fastapi import APIRouter
 from sqlalchemy import func
 
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
+from ..services import auditoria
 
 router = APIRouter()
 
@@ -445,6 +446,12 @@ def ajustar_precios(porcentaje: str = Form("0"), db: Session = Depends(get_db)):
         partida.precio_unitario = round((partida.precio_unitario or 0) * (1 + pct / 100), 2)
         partida.fecha_actualizacion_precio = ahora
     db.commit()
+    auditoria.registrar_evento(
+        db,
+        "catalogo.precios_ajustados",
+        entidad="partida",
+        detalle={"porcentaje": pct, "partidas": len(partidas)},
+    )
     return _redirect("/partidas", msg=f"Precios ajustados un {fmt_num(pct)} % en {len(partidas)} partidas.")
 
 
@@ -480,10 +487,18 @@ async def actualizar_precio_partida_desde_presupuesto(partida_id: int, request: 
     if nuevo_precio < 0:
         return {"ok": False, "error": "El precio no puede ser negativo."}
     if abs((partida.precio_unitario or 0.0) - nuevo_precio) > 1e-9:
+        precio_anterior = partida.precio_unitario or 0.0
         partida.precio_unitario = nuevo_precio
         partida.fecha_actualizacion_precio = datetime.utcnow()
         db.commit()
         db.refresh(partida)
+        auditoria.registrar_evento(
+            db,
+            "catalogo.precio_partida",
+            entidad="partida",
+            entidad_id=partida.id,
+            detalle={"de": precio_anterior, "a": nuevo_precio},
+        )
     return {"ok": True, "partida": _partida_catalogo_json(partida)}
 
 
@@ -637,6 +652,14 @@ async def actualizar_partida(partida_id: int, request: Request, db: Session = De
                 _borrar_imagen(vieja, db)
     db.commit()
     _sincronizar_recursos(db)
+    if precio_anterior != partida.precio_unitario:
+        auditoria.registrar_evento(
+            db,
+            "catalogo.precio_partida",
+            entidad="partida",
+            entidad_id=partida.id,
+            detalle={"de": precio_anterior, "a": partida.precio_unitario or 0},
+        )
     return _redirect("/partidas", msg="Partida actualizada.")
 
 

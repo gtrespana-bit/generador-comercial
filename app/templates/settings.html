@@ -207,6 +207,19 @@
   </fieldset>
 </form>
 
+{% if puede_editar %}
+<div class="card csp-s-a3c9c5afaa">
+  <h2>Registro de actividad</h2>
+  <div class="form-grid">
+    <div class="field">
+      <label>Quién hizo qué en esta organización</label>
+      <a class="btn btn-primary csp-s-a85c615773" href="/configuracion/actividad">📋 Ver registro de actividad</a>
+      <p class="hint">Trazabilidad de cambios de precios, estados de presupuestos y documentos, gestión del equipo, respaldos y exportaciones. El registro es inmutable: se anota, no se edita.</p>
+    </div>
+  </div>
+</div>
+{% endif %}
+
 <div class="card csp-s-a3c9c5afaa">
   <h2>Copia de seguridad y restauración</h2>
   <div class="form-grid">

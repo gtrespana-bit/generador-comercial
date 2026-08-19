@@ -4,6 +4,7 @@ from fastapi import APIRouter
 
 from . import common
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
+from ..services import auditoria
 
 router = APIRouter()
 
@@ -1832,6 +1833,16 @@ def enviar_presupuesto_email_web(
         ),
     ))
     db.commit()
+    auditoria.registrar_evento(
+        db,
+        "presupuesto.enviado",
+        entidad="presupuesto",
+        entidad_id=presupuesto.id,
+        detalle={
+            "destinatario": datos["destinatario"],
+            "version": version.numero_version,
+        },
+    )
     return _redirect(
         f"/presupuestos/{presupuesto_id}#versiones",
         msg=(
@@ -2045,6 +2056,13 @@ def crear_enlace_publico_web(
         return _pagina_enlaces_propuesta(
             request, presupuesto, db, error=str(exc), status_code=500,
         )
+    auditoria.registrar_evento(
+        db,
+        "propuesta.enlace_creado",
+        entidad="presupuesto",
+        entidad_id=presupuesto.id,
+        detalle={"enlace_id": enlace.id, "caduca": str(enlace.expires_at or "")},
+    )
     return _pagina_enlaces_propuesta(
         request,
         presupuesto,
@@ -2076,6 +2094,13 @@ def revocar_enlace_publico_web(
         texto=f"Enlace público {enlace.token_prefix}… revocado.",
     ))
     db.commit()
+    auditoria.registrar_evento(
+        db,
+        "propuesta.enlace_revocado",
+        entidad="presupuesto",
+        entidad_id=presupuesto_id,
+        detalle={"enlace_id": enlace.id},
+    )
     return _redirect(
         f"/presupuestos/{presupuesto_id}/enlace-publico",
         msg="Enlace revocado. Ya no permite consultar la propuesta.",
@@ -2784,8 +2809,16 @@ def cambiar_estado_factura(factura_id: int, estado: str = Form(...), db: Session
     if factura is None:
         return _redirect("/facturas", error="Documento de cobro no encontrado.")
     if estado in ("emitida", "anulada"):
+        estado_anterior = str(factura.estado or "")
         factura.estado = estado
         db.commit()
+        auditoria.registrar_evento(
+            db,
+            "factura.estado",
+            entidad="factura",
+            entidad_id=factura_id,
+            detalle={"de": estado_anterior, "a": estado},
+        )
         return _redirect(f"/facturas/{factura_id}", msg=f"Documento de cobro marcado como «{estado}».")
     return _redirect(f"/facturas/{factura_id}", error="Estado inválido.")
 
@@ -3060,10 +3093,18 @@ def cambiar_estado(presupuesto_id: int, estado: str = Form(...), db: Session = D
     if presupuesto is None:
         return _redirect("/presupuestos", error="Presupuesto no encontrado.")
     if _estado_valido(estado):
+        estado_anterior = str(presupuesto.estado or "")
         presupuesto.estado = estado
         if estado in ESTADOS_CONGELABLES:
             crear_version(db, presupuesto, f"Documento marcado como {estado.replace('_', ' ')}")
         db.commit()
+        auditoria.registrar_evento(
+            db,
+            "presupuesto.estado",
+            entidad="presupuesto",
+            entidad_id=presupuesto_id,
+            detalle={"de": estado_anterior, "a": estado},
+        )
         return _redirect(f"/presupuestos/{presupuesto_id}", msg=f"Estado cambiado a «{estado}».")
     return _redirect(f"/presupuestos/{presupuesto_id}", error="Estado inválido.")
 

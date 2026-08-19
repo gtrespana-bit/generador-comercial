@@ -1,6 +1,6 @@
 # Punto exacto de continuación
 
-Fecha de corte: **19/08/2026 (noche) — PR #42 creado con el bloque 100 % recomendado (E4-038 consentimiento registrado, E4-032 plan de incidentes, E4-043 procedimiento de simulacro). Pendiente inmediato: fusionar el PR #42, aplicar la migración b6d9e4c2a8f1 en Supabase, sincronizar el flujo de CI y ejecutar el simulacro E4-043; luego día final de tests (D-019)** (America/Caracas).
+Fecha de corte: **19/08/2026 — Bloque E4-026/E4-027 terminado en la rama de la sesión: registro de auditoría inmutable (`eventos_auditoria`, migración `d2a7c9e4f1b3`) + fix de la baja con compras. Pendiente inmediato del titular: fusionar el PR del bloque y aplicar `docs/staging_upgrade_d2a7c9e4f1b3.sql` en Supabase. Simulacro E4-043 y día final de tests (D-019): al final, por decisión del titular** (America/Caracas).
 
 Este documento retoma el trabajo sin depender del historial del chat. Describe
 **dónde quedó exactamente** el trabajo y **qué sigue**, en ese orden. Léelo
@@ -260,9 +260,135 @@ Suite: **694 passed, 7 skipped** (23 pruebas nuevas). Cabeza Alembic:
 
 ---
 
+## ✅ Cierre de sesión — Registro de auditoría E4-026/E4-027 + fix de baja (19/08/2026)
+
+Rama fija de la sesión: `arena/01a0175c-generador-comercial`, basada en `main`
+(`8b02641`, merge del PR #42 + CI sincronizado). El titular eligió atacar la
+**Etapa 4 restante**; E4-026 y E4-027 comparten solución técnica y se
+implementaron juntos. E4-020 quedó como recomendación de aplazamiento
+(pendiente de su decisión).
+
+### 1. Registro de auditoría inmutable (`eventos_auditoria`)
+
+- **Tabla** (`app/models.py` → `EventoAuditoria`): actor (email/rol), acción
+  `dominio.verbo`, entidad + id, detalle JSON pequeño sin datos sensibles,
+  ip_hash y fecha. **No es TenantMixin a propósito**: `organizacion_id` es
+  nullable porque los eventos de sesión (login/logout/clave) ocurren sin
+  organización — consecuencia: toda consulta filtra la organización
+  explícitamente (la vista y la baja lo hacen).
+- **Inmutabilidad por construcción** (migración `d2a7c9e4f1b3`): el rol
+  runtime recibe GRANT de SELECT e INSERT, **nunca** UPDATE ni DELETE, y no
+  existen políticas para esos verbos. Políticas: INSERT tenant con escritura
+  (solo filas con organización), SELECT tenant u operador.
+- **Eventos globales** (login, logout, cambio de clave, constancia de baja):
+  entran por `cotizat_security.registrar_evento_global` (SECURITY DEFINER)
+  con **lista cerrada de acciones** validada también en la base; un test
+  exige que la lista SQL y la del servicio (`ACCIONES_GLOBALES`) coincidan
+  exactamente. Solo el operador ve las filas sin organización.
+- **Servicio best-effort** (`app/services/auditoria.py`): se anota **después**
+  del commit del cambio principal y jamás lanza (rollback interno + warning);
+  regla documentada en el módulo. Detalle > 2000 caracteres se descarta a
+  `{}` (señal de payload entero).
+- **Anclajes**: estado de presupuesto y factura (de → a), envío por email
+  (destinatario y versión), enlace público creado/revocado, precio de
+  partida/producto/recurso y ajuste masivo, configuración guardada,
+  organización renombrada, invitación enviada/revocada, rol cambiado, miembro
+  desactivado, respaldo descargado, exportación descargada, restauración
+  ejecutada, compra registrada, login/logout/clave y baja.
+- **Vista «Actividad»** (`/configuracion/actividad`, plantilla
+  `actividad.html`): solo gestión (propietario/administrador), paginada a 50,
+  acciones legibles desde `ACCIONES_LEGIBLES` (fuente única), tarjeta de
+  acceso en `/configuracion`.
+
+### 2. Bug latente corregido: la baja fallaba con compras registradas
+
+`compras_plan` (PR #33, FK RESTRICT a `organizaciones`) **nunca se añadió** a
+la función `cotizat_security.baja_organizacion` ni al camino ORM de
+`app/services/baja.py`: cualquier organización con una compra no podía darse
+de baja (violación de FK en el DELETE final). La migración `d2a7c9e4f1b3`
+redefine la función con `compras_plan` y `eventos_auditoria`, y el camino
+SQLite hace lo mismo. Regresión verificada en ambas direcciones (el test
+falla sin el fix). La constancia de la baja queda como evento global sin
+organización (visible solo para el operador).
+
+### 3. Estado y verificación
+
+- Suite: **715 passed, 6 skipped** (20 pruebas nuevas en
+  `tests/test_auditoria.py`; guardas de cadena/tenencia actualizadas en
+  `test_rls.py`, `test_tenancy.py`, `test_consentimiento.py`,
+  `test_prueba_gratuita.py`).
+- Cabeza Alembic: **`d2a7c9e4f1b3`** (`EXPECTED_ALEMBIC_HEAD` actualizado;
+  `alembic upgrade head` y `downgrade -1`/`upgrade` verificados en SQLite).
+- Auditoría de datos sensibles: sin hallazgos **después de commitear** (6446
+  archivos), lección del 18/08 aplicada.
+- 78 plantillas Jinja correctas, `compileall` limpio, `git diff --check` ok.
+
+### Lecciones de CI de este bloque (para no repetirlas)
+
+1. **`alembic upgrade --sql` genera SQL con espacios finales** (tras las comas
+   del `CREATE TABLE`) y el paso «Detectar conflictos y espacios en blanco»
+   los rechaza. Al generar un `docs/staging_upgrade_*.sql` nuevo, pasar
+   `sed -i 's/[ \t]*$//'` y quitar la línea en blanco final **antes** de
+   commitear. `git diff --check` local sin argumentos no lo detecta: hay que
+   comparar contra la base del PR (`git diff --check <base> -- . ':(exclude)*.md'`).
+2. **Los ids hex de revisiones Alembic disparan detect-secrets** («Hex High
+   Entropy String»). Cada migración nueva añade hallazgos que no están en
+   `.secrets.baseline` y el paso E4-030 rompe. Tras crear una migración:
+   `detect-secrets scan --baseline .secrets.baseline`, revisar uno a uno que
+   los hallazgos nuevos son los ids/fixtures esperados y commitear el
+   baseline actualizado. Nunca aceptar a ciegas.
+
+### ⚠️ Al fusionar el PR de este bloque (pasos del titular)
+
+1. ✅ **Hecho (19/08/2026): `docs/staging_upgrade_d2a7c9e4f1b3.sql` aplicado
+   en Supabase** por el titular. Consecuencia esperada hasta el despliegue:
+   la base va por delante del código y `/readyz` en producción responde
+   **503 a propósito** (la guarda de cabeza funcionando como está diseñada).
+   Fusionar y desplegar lo devuelve a 200.
+2. Verificar `/readyz` en verde (`head:d2a7c9e4f1b3`) tras el despliegue y que
+   `/configuracion/actividad` muestra eventos al cambiar un estado.
+3. (Sin cambios) Backups Supabase Pro siguen como paso de panel recomendado;
+   simulacro E4-043 y D-019 al final.
+
+### Decisión tomada por el titular (19/08/2026)
+
+**E4-020 (cola de trabajos): APLAZADO totalmente (D-022).** Documentado en el
+plan §4.4 con los disparadores que lo reabrirían (PDF/importación que supere
+el timeout, envíos masivos). No bloquea el lanzamiento.
+
+---
+
 ## 🟢 EMPEZAR AQUÍ — Estado al cierre del 19/08/2026 (noche)
 
+> ### ✅ ESTADO VERIFICADO tras fusionar el PR #42 (sesión posterior, 19/08/2026)
+>
+> Todo lo que este documento daba como «pendiente inmediato» del PR #42 quedó
+> **hecho y verificado**:
+>
+> - **PR #42 fusionado**; `main` en `8b02641` (incluye la sincronización del
+>   flujo de CI: `.github/workflows/ci.yml` idéntico a `docs/ci/ci.yml`,
+>   verificado con `diff`).
+> - **Migración `b6d9e4c2a8f1` aplicada en Supabase** por el titular;
+>   `/readyz` responde 200 con `ok: true` y sin errores.
+> - **Los 2 crons aparecen en Vercel**: `/api/cron/mantenimiento` (`0 2 * * *`)
+>   y `/api/cron/recordatorios-vencimiento` (`0 13 * * *`).
+> - **Suite verificada sobre el merge: 695 passed, 6 skipped** (`pytest -q`
+>   con venv recreado desde `requirements-dev.txt`).
+>
+> Decisiones del titular registradas en esa sesión:
+>
+> - **UptimeRobot**: lo hará cuando lo crea conveniente; los pasos exactos ya
+>   se le entregaron (`docs/MONITORIZACION_Y_DIAGNOSTICO.md` §6b). **No volver
+>   a recordárselo.**
+> - **Simulacro E4-043**: se ejecuta **al final**, antes del día de tests, no
+>   ahora.
+> - **Día final único de solo tests (D-019)**: al final, cuando él lo indique.
+>
+> Con esto, no queda ningún paso operativo bloqueante: lo siguiente es
+> trabajo de producto (ver «Lo siguiente en el producto»).
+
 ### En una frase
+
 
 El circuito de cobro completo está **terminado, en verde y operativo** y la
 **Etapa 4 de endurecimiento avanza**: en las sesiones de hoy se cerró

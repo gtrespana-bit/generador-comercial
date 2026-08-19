@@ -49,10 +49,12 @@ from ..models import (
     Capitulo,
     CategoriaPartida,
     Cliente,
+    CompraPlan,
     Configuracion,
     DescomposicionFila,
     DescomposicionPartida,
     EnlacePropuesta,
+    EventoAuditoria,
     Factura,
     FacturaCapitulo,
     FacturaItem,
@@ -116,6 +118,9 @@ _ORDEN_BORRADO: tuple[Any, ...] = (
     ArchivoAlmacenado,
     InvitacionOrganizacion,
     Configuracion,
+    #: Añadida el 19/08/2026: faltaba desde su creación (e5f2a8d31b6c) y su
+    #: FK RESTRICT impedía la baja de cualquier organización con compras.
+    CompraPlan,
 )
 
 
@@ -150,6 +155,9 @@ def _borrar_organizacion_sqlite(db: Session, organizacion_id: int) -> None:
     for modelo in _ORDEN_BORRADO:
         db.query(modelo).delete(synchronize_session=False)
     # Sin TenantMixin: filtros explícitos para no tocar otras organizaciones.
+    db.query(EventoAuditoria).filter(
+        EventoAuditoria.organizacion_id == organizacion_id
+    ).delete(synchronize_session=False)
     db.query(Licencia).filter(Licencia.organizacion_id == organizacion_id).delete(
         synchronize_session=False
     )

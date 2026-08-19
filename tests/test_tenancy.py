@@ -11,6 +11,7 @@ from app.models import (
     Configuracion,
     Consentimiento,
     ContextoOrganizacionError,
+    EventoAuditoria,
     Licencia,
     Membresia,
     Organizacion,
@@ -71,9 +72,21 @@ def test_todo_modelo_comercial_declara_propietario():
       aceptación se produce en el registro, antes de existir organización, y
       debe sobrevivir a su borrado. Se aísla con las políticas
       `cotizat_consentimiento_*` (revisión `b6d9e4c2a8f1`).
+    - `EventoAuditoria` (E4-026/027) tiene `organizacion_id` **nullable a
+      propósito**: los eventos de sesión (login/logout/cambio de clave) y la
+      constancia de una baja ocurren sin organización, así que no puede
+      heredar de `TenantMixin` (que lo exige NOT NULL). Toda consulta filtra
+      la organización explícitamente y en PostgreSQL lo aíslan las políticas
+      `cotizat_evento_*` (revisión `d2a7c9e4f1b3`); las filas sin organización
+      solo las ve el operador.
     """
     identidades_globales = {Organizacion, Usuario, Membresia}
-    no_tenant_justificados = {Licencia, PruebaConcedida, Consentimiento}
+    no_tenant_justificados = {
+        Licencia,
+        PruebaConcedida,
+        Consentimiento,
+        EventoAuditoria,
+    }
     sin_propietario = []
     for mapper in Base.registry.mappers:
         modelo = mapper.class_

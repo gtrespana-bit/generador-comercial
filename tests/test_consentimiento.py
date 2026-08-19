@@ -485,8 +485,14 @@ def test_las_funciones_son_de_propiedad_administrativa_y_solo_para_la_app(migrac
 
 def test_la_migracion_encadena_con_la_cabeza_anterior(migracion):
     from app.database import EXPECTED_ALEMBIC_HEAD
+    from migrations.versions import (
+        d2a7c9e4f1b3_audit_log_and_complete_baja as auditoria_migracion,
+    )
 
-    assert migracion.revision == EXPECTED_ALEMBIC_HEAD
+    # El consentimiento ya no es la cabeza: el registro de auditoría
+    # (E4-026/027) la sigue y es lo que el runtime exige.
+    assert auditoria_migracion.revision == EXPECTED_ALEMBIC_HEAD
+    assert auditoria_migracion.down_revision == migracion.revision
     assert migracion.down_revision == "a3d9c1e75b28"
 
 

@@ -2574,6 +2574,74 @@ class CompraPlan(TenantMixin, Base):
         return datos if isinstance(datos, dict) else {}
 
 
+class EventoAuditoria(Base):
+    """Registro inmutable de quién hizo qué (E4-026 / E4-027).
+
+    **No usa TenantMixin a propósito**: ``organizacion_id`` es *nullable*
+    porque los eventos de sesión (inicio, cierre, cambio de clave) ocurren
+    antes o fuera del contexto de una organización. Consecuencias directas:
+
+    - El filtro automático de tenant no se aplica: toda consulta debe filtrar
+      ``organizacion_id`` explícitamente (la vista «Actividad» lo hace; la
+      baja también).
+    - La asignación automática de tenencia tampoco: el servicio
+      ``app.services.auditoria`` fija la organización de forma explícita.
+
+    Inmutabilidad: la aplicación solo inserta y lee. En PostgreSQL el rol
+    runtime ni siquiera recibe GRANT de UPDATE/DELETE sobre la tabla (la
+    migración lo garantiza); los eventos sin organización entran por la
+    función SECURITY DEFINER ``cotizat_security.registrar_evento_global``,
+    que valida la acción contra una lista cerrada. El detalle se guarda como
+    JSON pequeño y **sin datos sensibles** (nunca contraseñas, tokens ni
+    números completos).
+    """
+
+    __tablename__ = "eventos_auditoria"
+    __table_args__ = (
+        Index("ix_eventos_auditoria_org_fecha", "organizacion_id", "created_at"),
+    )
+
+    id = Column(Integer, primary_key=True)
+    #: Organización a la que pertenece el evento; NULL en eventos de sesión
+    #: globales (solo visibles para el operador).
+    organizacion_id = Column(
+        Integer,
+        ForeignKey("organizaciones.id", ondelete="RESTRICT"),
+        nullable=True,
+        index=True,
+    )
+    #: Correo de quien ejecutó la acción (el de la sesión autenticada).
+    actor_email = Column(String(254), nullable=False, default="")
+    #: Rol de membresía en el momento de la acción ('' si no aplica).
+    actor_rol = Column(String(20), nullable=False, default="")
+    #: Acción en formato ``dominio.verbo`` (p. ej. ``presupuesto.estado``).
+    accion = Column(String(60), nullable=False, index=True)
+    #: Tipo de entidad afectada ('' si no aplica), p. ej. ``presupuesto``.
+    entidad = Column(String(40), nullable=False, default="")
+    #: Identificador de la entidad afectada (si aplica).
+    entidad_id = Column(Integer, nullable=True)
+    #: Contexto del cambio como JSON pequeño y sin datos sensibles
+    #: (p. ej. ``{"de": "borrador", "a": "enviado"}``).
+    detalle = Column(Text, nullable=False, default="{}")
+    #: Hash de la IP de origen (mismo criterio que ``consentimientos``).
+    ip_hash = Column(String(64), nullable=False, default="")
+    created_at = Column(
+        DateTime,
+        nullable=False,
+        default=datetime.utcnow,
+        server_default=text("CURRENT_TIMESTAMP"),
+    )
+
+    organizacion = relationship("Organizacion")
+
+    def detalle_dict(self) -> dict:
+        try:
+            datos = json.loads(self.detalle or "{}")
+        except (TypeError, ValueError):
+            return {}
+        return datos if isinstance(datos, dict) else {}
+
+
 class ContextoOrganizacionError(RuntimeError):
     """Una lectura o escritura intentó cruzar el límite de organización."""
 

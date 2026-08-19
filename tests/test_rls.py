@@ -20,6 +20,7 @@ from migrations.versions import (
     a3d9c1e75b28_prueba_gratuita_registro as prueba_migration,
     b6d9e4c2a8f1_consentimiento_terminos as consentimiento_migration,
     c7f1a3b9d425_compra_periodo_licencia as compra_periodo_migration,
+    d2a7c9e4f1b3_audit_log_and_complete_baja as auditoria_migration,
     d4e2f6a8b0c1_license_info_chained_access as chained_migration,
     f4c1d8e37a95_add_operator_licenses as licenses_migration,
     f8a1b2c3d4e5_catalog_taxonomy_v2 as taxonomy_migration,
@@ -151,7 +152,8 @@ def test_head_exigido_por_runtime_coincide_con_alembic():
     Si divergen, `/readyz` responde 503 en producción: el código espera un
     esquema que la base no tiene todavía (o al revés).
     """
-    assert database_module.EXPECTED_ALEMBIC_HEAD == consentimiento_migration.revision
+    assert database_module.EXPECTED_ALEMBIC_HEAD == auditoria_migration.revision
+    assert auditoria_migration.down_revision == consentimiento_migration.revision
     assert consentimiento_migration.down_revision == prueba_migration.revision
     assert prueba_migration.down_revision == compra_periodo_migration.revision
     assert compra_periodo_migration.down_revision == chained_migration.revision
