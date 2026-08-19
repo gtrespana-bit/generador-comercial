@@ -148,7 +148,7 @@ def _write_resumen_sheet(ws, presupuesto, cfg):
     ]
 
     if presupuesto.tipo_cambio:
-        datos.append(("Tasa de cambio (Bs/USD)", f"{presupuesto.tipo_cambio:.2f}"))
+        datos.append(("Tasa de cambio (USD → moneda contractual)", f"{presupuesto.tipo_cambio:.2f} {presupuesto.moneda or 'USD'}"))
     if presupuesto.fecha_tipo_cambio:
         datos.append(("Fecha tasa", presupuesto.fecha_tipo_cambio.isoformat()))
 
