@@ -33,13 +33,13 @@ $guarda$;
 -- Running upgrade a3d9c1e75b28 -> b6d9e4c2a8f1
 
 CREATE TABLE consentimientos (
-    id SERIAL NOT NULL, 
-    email VARCHAR(254) NOT NULL, 
-    nombre VARCHAR(200) DEFAULT '' NOT NULL, 
-    version VARCHAR(20) NOT NULL, 
-    ip_hash VARCHAR(64) DEFAULT '' NOT NULL, 
-    aceptado_en TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL, 
-    PRIMARY KEY (id), 
+    id SERIAL NOT NULL,
+    email VARCHAR(254) NOT NULL,
+    nombre VARCHAR(200) DEFAULT '' NOT NULL,
+    version VARCHAR(20) NOT NULL,
+    ip_hash VARCHAR(64) DEFAULT '' NOT NULL,
+    aceptado_en TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    PRIMARY KEY (id),
     CONSTRAINT uq_consentimiento_email_version UNIQUE (email, version)
 );
 
@@ -175,4 +175,3 @@ GRANT EXECUTE ON FUNCTION cotizat_security.obtener_consentimiento(varchar) TO co
 UPDATE alembic_version SET version_num='b6d9e4c2a8f1' WHERE alembic_version.version_num = 'a3d9c1e75b28';
 
 COMMIT;
-
