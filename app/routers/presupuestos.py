@@ -1701,7 +1701,7 @@ async def guardar_cambio(proyecto_id: int, cambio_id: int, request: Request, db:
     total=0.0
     for tipo,nombre,cantidad,precio in zip(f.getlist("tipo"), f.getlist("nombre"), f.getlist("cantidad"), f.getlist("precio")):
         if not str(nombre).strip(): continue
-        q, pu = _f(cantidad), _f(precio); item=CambioAlcanceItem(tipo=tipo if tipo in ("agregado","eliminado") else "agregado", nombre=str(nombre).strip(), cantidad=q, precio_unitario=pu); c.items.append(item); total += item.importe * (-1 if item.tipo == "eliminado" else 1)
+        q, pu = _f(cantidad), _f(precio); item=CambioAlcanceItem(tipo=tipo if tipo in ("agregado","eliminado") else "agregado", nombre=str(nombre).strip(), cantidad=q, precio_unitario=pu, moneda=c.moneda or p.presupuesto.moneda or "USD"); c.items.append(item); total += item.importe * (-1 if item.tipo == "eliminado" else 1)
     c.diferencia_total=round(total,2); db.commit(); return _redirect(f"/proyectos/{proyecto_id}", msg="Cambio de alcance guardado.")
 
 @router.post("/proyectos/{proyecto_id}/pagos")
@@ -1710,7 +1710,8 @@ def registrar_pago(proyecto_id: int, importe: float = Form(0), fecha: str = Form
     if not p or importe <= 0: return _redirect(f"/proyectos/{proyecto_id}", error="Indica un importe de pago válido.")
     try: fecha_pago=date.fromisoformat(fecha) if fecha else date.today()
     except ValueError: fecha_pago=date.today()
-    db.add(Pago(proyecto_id=p.id, presupuesto_id=p.presupuesto_id, fecha=fecha_pago, importe=importe, moneda=p.presupuesto.moneda, metodo=metodo, referencia=referencia.strip(), estado=estado if estado in ("pendiente","confirmado","anulado") else "confirmado", notas=notas.strip()))
+    moneda_proyecto = p.moneda_contractual or p.presupuesto.moneda or "USD"
+    db.add(Pago(proyecto_id=p.id, presupuesto_id=p.presupuesto_id, fecha=fecha_pago, importe=importe, moneda=moneda_proyecto, metodo=metodo, referencia=referencia.strip(), estado=estado if estado in ("pendiente","confirmado","anulado") else "confirmado", notas=notas.strip()))
     db.commit(); return _redirect(f"/proyectos/{p.id}", msg="Pago registrado.")
 
 

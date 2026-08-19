@@ -2380,7 +2380,9 @@ class Proyecto(TenantMixin, Base):
     @property
     def total_actual(self): return round(self.total_contratado + self.total_cambios_aprobados, 2)
     @property
-    def total_pagado(self): return round(sum(p.importe for p in self.pagos if p.estado == "confirmado"), 2)
+    def total_pagado(self):
+        moneda = self.moneda_contractual or getattr(self.presupuesto, "moneda", "USD")
+        return round(sum(p.importe for p in self.pagos if p.estado == "confirmado" and (p.moneda or moneda) == moneda), 2)
     @property
     def saldo_pendiente(self): return round(self.total_actual - self.total_pagado, 2)
 
