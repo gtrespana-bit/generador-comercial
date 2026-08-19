@@ -4,9 +4,10 @@
 {% block body_class %}editor-focus{% endblock %}
 
 {% block content %}
-<form method="post" id="form-presupuesto" class="budget-builder" enctype="multipart/form-data"
+<form method="post" id="form-presupuesto" class="budget-builder" enctype="multipart/form-data" data-moneda-original="{{ presupuesto.moneda if presupuesto else cfg.moneda_default or 'USD' }}"
       action="{{ '/presupuestos/' ~ presupuesto.id ~ '/editar' if presupuesto else '/presupuestos/nuevo' }}">
   <input type="hidden" name="estructura_json" id="estructura-json" value="">
+  <input type="hidden" name="confirmar_cambio_moneda" id="confirmar-cambio-moneda" value="0">
 
   <!-- Command bar única: identidad + total + acciones principales + guardar -->
   <header class="editor-command-bar" id="editor-command-bar" role="banner">
@@ -112,11 +113,10 @@
         <div class="field">
           <label>Moneda</label>
           <select name="moneda" id="moneda-select">
-            <option value="USD" {{ 'selected' if (presupuesto and presupuesto.moneda in ['USD','']) or (not presupuesto and (cfg.moneda_default or 'USD') in ['USD','']) else '' }}>USD ($) — dólar</option>
-            <option value="COP" {{ 'selected' if (presupuesto and presupuesto.moneda == 'COP') or (not presupuesto and cfg.moneda_default == 'COP') else '' }}>COP ($) — peso colombiano</option>
-            <option value="MXN" {{ 'selected' if (presupuesto and presupuesto.moneda == 'MXN') or (not presupuesto and cfg.moneda_default == 'MXN') else '' }}>MXN ($) — peso mexicano</option>
-            <option value="PEN" {{ 'selected' if (presupuesto and presupuesto.moneda == 'PEN') or (not presupuesto and cfg.moneda_default == 'PEN') else '' }}>PEN (S/) — sol peruano</option>
-            <option value="VES" {{ 'selected' if (presupuesto and presupuesto.moneda in ['VES','Bs']) or (not presupuesto and cfg.moneda_default in ['VES','Bs']) else '' }}>VES (Bs) — bolívar</option>
+            <option value="USD" {{ 'selected' if (presupuesto and presupuesto.moneda in ['USD','']) or (not presupuesto and (cfg.moneda_default or 'USD') in ['USD','']) else '' }}>USD — dólar estadounidense</option>
+            <option value="COP" {{ 'selected' if (presupuesto and presupuesto.moneda == 'COP') or (not presupuesto and cfg.moneda_default == 'COP') else '' }}>COP — peso colombiano</option>
+            <option value="MXN" {{ 'selected' if (presupuesto and presupuesto.moneda == 'MXN') or (not presupuesto and cfg.moneda_default == 'MXN') else '' }}>MXN — peso mexicano</option>
+            <option value="PEN" {{ 'selected' if (presupuesto and presupuesto.moneda == 'PEN') or (not presupuesto and cfg.moneda_default == 'PEN') else '' }}>PEN — sol peruano</option>
             <option value="CLP" {{ 'selected' if (presupuesto and presupuesto.moneda == 'CLP') or (not presupuesto and cfg.moneda_default == 'CLP') else '' }}>CLP ($) — peso chileno</option>
             <option value="ARS" {{ 'selected' if (presupuesto and presupuesto.moneda == 'ARS') or (not presupuesto and cfg.moneda_default == 'ARS') else '' }}>ARS ($) — peso argentino</option>
             <option value="UYU" {{ 'selected' if (presupuesto and presupuesto.moneda == 'UYU') or (not presupuesto and cfg.moneda_default == 'UYU') else '' }}>UYU ($U) — peso uruguayo</option>
@@ -133,7 +133,7 @@
           </select>
         </div>
         <div class="field">
-          <label>Tasa de cambio Bs/USD <span class="hint">(referencia, opcional)</span></label>
+          <label>Tasa de cambio USD → moneda contractual <span class="hint">(referencia, opcional)</span></label>
           <input type="number" name="tipo_cambio" step="any" min="0" placeholder="{{ ('p. ej. ' ~ tasas_sugeridas[cfg.moneda_default]) if tasas_sugeridas.get(cfg.moneda_default) else 'Tasa oficial del día' }}"
                  value="{{ presupuesto.tipo_cambio if presupuesto and presupuesto.tipo_cambio else (cfg.tasa_cambio if cfg.tasa_cambio and not presupuesto else '') }}">
         </div>
@@ -1064,6 +1064,24 @@
     document.getElementById('btn-limpiar-firma').addEventListener('click', function () {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       input.value = '';
+    });
+  })();
+
+  (function () {
+    var form = document.getElementById('form-presupuesto');
+    var select = document.getElementById('moneda-select');
+    var confirmInput = document.getElementById('confirmar-cambio-moneda');
+    if (!form || !select || !confirmInput) return;
+    form.addEventListener('submit', function (event) {
+      var original = form.getAttribute('data-moneda-original') || select.value;
+      if (original !== select.value && original) {
+        var mensaje = 'Vas a cambiar la moneda de ' + original + ' a ' + select.value + '. Se convertirán los importes del borrador usando la tasa indicada. ¿Deseas continuar?';
+        if (!window.confirm(mensaje)) {
+          event.preventDefault();
+          return;
+        }
+        confirmInput.value = '1';
+      }
     });
   })();
 

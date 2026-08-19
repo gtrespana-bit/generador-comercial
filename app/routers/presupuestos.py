@@ -6,6 +6,7 @@ from . import common
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
 from ..services import auditoria
 from ..utils import normalizar_moneda
+from ..services.monedas import convertir as convertir_moneda
 
 router = APIRouter()
 
@@ -2980,11 +2981,30 @@ async def actualizar_presupuesto(presupuesto_id: int, request: Request, db: Sess
         return _redirect("/presupuestos", error="Presupuesto no encontrado.")
     form = await request.form()
     estaba_congelado = presupuesto.estado in ESTADOS_CONGELABLES
+    moneda_nueva = normalizar_moneda(form.get("moneda"), "USD")
+    moneda_anterior = normalizar_moneda(presupuesto.moneda, "USD")
+    cambio_moneda = moneda_nueva != moneda_anterior
+    confirmado_moneda = str(form.get("confirmar_cambio_moneda", "0")) == "1"
+    if cambio_moneda and estaba_congelado:
+        return _redirect(f"/presupuestos/{presupuesto_id}/editar", error="Un presupuesto enviado o aprobado no puede cambiar de moneda; crea una nueva versión.")
+    if cambio_moneda and not confirmado_moneda:
+        return _redirect(f"/presupuestos/{presupuesto_id}/editar", error="Confirma expresamente el cambio de moneda para convertir los importes.")
 
     cliente = db.get(Cliente, int(_f(form.get("client_id"))))
     if cliente is None:
         return _redirect(f"/presupuestos/{presupuesto_id}/editar", error="Selecciona un cliente válido.")
     capitulos, partidas = _leer_formulario_presupuesto(form, db)
+    if cambio_moneda:
+        tasa_origen = presupuesto.tipo_cambio if moneda_anterior != "USD" else 1
+        tasa_destino = _f(form.get("tipo_cambio"), None) if str(form.get("tipo_cambio", "")).strip() else None
+        if moneda_nueva != "USD" and (tasa_destino is None or tasa_destino <= 0):
+            return _redirect(f"/presupuestos/{presupuesto_id}/editar", error=f"Indica una tasa positiva para convertir {moneda_anterior} a {moneda_nueva}.")
+        if moneda_anterior != "USD" and (tasa_origen is None or tasa_origen <= 0):
+            return _redirect(f"/presupuestos/{presupuesto_id}/editar", error=f"El presupuesto no tiene una tasa válida de origen ({moneda_anterior}); no se puede convertir automáticamente.")
+        for partida in partidas:
+            for clave in ("precio", "coste_materiales", "coste_mano_obra", "coste_complementarios", "coste_otros", "prod_precio", "prod_coste"):
+                if partida.get(clave) is not None:
+                    partida[clave] = float(convertir_moneda(partida[clave], moneda_anterior, moneda_nueva, tasa_destino, tasa_origen))
     capitulos = [c for c in capitulos if c["nombre"]]
     if not capitulos:
         return _redirect(f"/presupuestos/{presupuesto_id}/editar", error="Agrega al menos un capítulo con nombre.")
