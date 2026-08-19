@@ -471,7 +471,9 @@ class Presupuesto(TenantMixin, Base):
     # Condiciones comerciales
     validez_dias = Column(Integer, default=30)
     moneda = Column(String(10), default="USD")
-    tipo_cambio = Column(Float, nullable=True)  # Bs por USD (solo referencia)
+    moneda_base = Column(String(10), default="USD")
+    tipo_cambio = Column(Float, nullable=True)  # unidades de moneda contractual por 1 USD
+    fuente_tipo_cambio = Column(String(120), default="")
     impuesto_pct = Column(Float, default=16.0)
     descuento_pct = Column(Float, default=0.0)
     estado = Column(String(20), default="borrador")
@@ -1154,6 +1156,7 @@ class Configuracion(TenantMixin, Base):
     # Valores por defecto para presupuestos nuevos
     iva_default = Column(Float, default=16.0)
     moneda_default = Column(String(10), default="USD")
+    moneda_base_catalogo = Column(String(10), default="USD")
     validez_default = Column(Integer, default=30)
     notas_default = Column(Text, default="")
     condiciones_default = Column(Text, default="")
@@ -2289,6 +2292,11 @@ class Proyecto(TenantMixin, Base):
     id = Column(Integer, primary_key=True)
     presupuesto_id = Column(Integer, ForeignKey("presupuestos.id"), nullable=False, unique=True)
     presupuesto_version_id = Column(Integer, ForeignKey("presupuesto_versiones.id"), nullable=True)
+    moneda_contractual = Column(String(10), default="USD")
+    moneda_base = Column(String(10), default="USD")
+    tipo_cambio = Column(Float, nullable=True)
+    fecha_tipo_cambio = Column(Date, nullable=True)
+    fuente_tipo_cambio = Column(String(120), default="")
     nombre = Column(String(250), default="")
     estado = Column(String(30), default="en_ejecucion")
     fecha_inicio = Column(Date, nullable=True)

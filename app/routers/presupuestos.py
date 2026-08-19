@@ -1609,7 +1609,17 @@ def convertir_proyecto(presupuesto_id: int, db: Session = Depends(get_db)):
     version = db.query(PresupuestoVersion).filter_by(presupuesto_id=p.id, estado=p.estado).order_by(PresupuestoVersion.numero_version.desc()).first()
     if not version:
         version = crear_version(db, p, "Versión aprobada al convertir en proyecto"); db.flush()
-    proyecto = Proyecto(presupuesto_id=p.id, presupuesto_version_id=version.id, nombre=p.titulo or f"Proyecto {p.numero}", fecha_inicio=date.today())
+    proyecto = Proyecto(
+        presupuesto_id=p.id,
+        presupuesto_version_id=version.id,
+        nombre=p.titulo or f"Proyecto {p.numero}",
+        fecha_inicio=date.today(),
+        moneda_contractual=p.moneda or "USD",
+        moneda_base=getattr(p, "moneda_base", None) or "USD",
+        tipo_cambio=p.tipo_cambio,
+        fecha_tipo_cambio=p.fecha_tipo_cambio,
+        fuente_tipo_cambio=getattr(p, "fuente_tipo_cambio", "") or "",
+    )
     db.add(proyecto); p.estado = "en_ejecucion"; db.commit()
     return _redirect(f"/proyectos/{proyecto.id}", msg="Proyecto creado desde el presupuesto aprobado.")
 
