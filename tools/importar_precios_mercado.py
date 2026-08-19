@@ -10,6 +10,9 @@ Aplicación explícita a la base configurada:
 from __future__ import annotations
 import argparse
 from pathlib import Path
+import sys
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
 from app.database import SessionLocal
 from app.services.importador_precios_mercado import importar_matriz_csv
 
