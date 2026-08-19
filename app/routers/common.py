@@ -36,7 +36,7 @@ from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, Resp
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import or_
-from sqlalchemy.orm import Session, load_only
+from sqlalchemy.orm import Session, joinedload, load_only, selectinload
 from starlette.middleware.gzip import GZipMiddleware
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
@@ -448,6 +448,26 @@ def _config(db: Session) -> Configuracion:
         asegurar_config(db)
         cfg = db.query(Configuracion).first()
     return cfg
+
+
+def _opciones_partidas_presupuesto():
+    """Opciones de carga temprana del grafo económico de presupuestos.
+
+    ``p.total``, ``p.subtotal``… recorren capítulos → partidas → mediciones,
+    y la plantilla añade ``p.cliente``. Sin estas opciones cada acceso
+    dispara consultas perezosas individuales (N+1): una lista de 25
+    presupuestos multiplicaba las vueltas a la base por 4-5 por fila. Con
+    ``selectinload`` el grafo completo se trae en ~5 consultas fijas.
+    """
+    return (
+        joinedload(Presupuesto.cliente),
+        selectinload(Presupuesto.capitulos)
+        .selectinload(Capitulo.partidas)
+        .selectinload(PresupuestoItem.mediciones),
+        selectinload(Presupuesto.capitulos)
+        .selectinload(Capitulo.partidas)
+        .selectinload(PresupuestoItem.descomposicion_cype),
+    )
 
 
 def _tiempos_catalogo(db: Session, presupuesto: Presupuesto | None) -> dict:
@@ -1357,7 +1377,17 @@ def _actualizar_usos_recursos(db: Session):
         pass
 
 
-def _sincronizar_recursos(db: Session):
+#: Control del intervalo mínimo entre sincronizaciones de recursos por
+#: organización (ver :func:`_sincronizar_recursos`). ``time`` y ``threading``
+#: se importan aquí para no ensanchar el bloque superior.
+import threading as _threading
+import time as _time
+
+_SYNC_RECURSOS_ULTIMA: dict = {}
+_SYNC_RECURSOS_BLOQUEO = _threading.Lock()
+
+
+def _sincronizar_recursos(db: Session, forzar: bool = True):
     """Crea los Recursos (precios unitarios) que falten desde las
     descomposiciones de partidas y presupuestos, y actualiza sus usos.
 
@@ -1365,7 +1395,25 @@ def _sincronizar_recursos(db: Session):
     abrir /recursos y tras cada guardado que pueda crear recursos nuevos.
     Así los tabs de mano de obra / materiales / etc. reflejan siempre los
     recursos que se escriben al crear o editar partidas.
+
+    ``forzar=False`` (usado al abrir la vista) respeta un intervalo mínimo
+    por organización: la sincronización recorre todos los descompuestos del
+    catálogo y, con la base remota del despliegue web, ejecutarla en cada
+    visita hacía la página lentísima. Los guardados la fuerzan siempre para
+    que un recurso recién escrito aparezca de inmediato.
     """
+    if not forzar:
+        try:
+            ttl_sync = float(os.environ.get("COTIZAT_SYNC_RECURSOS_TTL", "600"))
+        except (TypeError, ValueError):
+            ttl_sync = 600.0
+        if ttl_sync > 0:
+            clave_sync = (db.info.get("organizacion_id") or 0, id(db.get_bind()))
+            ahora_sync = _time.monotonic()
+            with _SYNC_RECURSOS_BLOQUEO:
+                if ahora_sync - _SYNC_RECURSOS_ULTIMA.get(clave_sync, 0.0) < ttl_sync:
+                    return
+                _SYNC_RECURSOS_ULTIMA[clave_sync] = ahora_sync
     try:
         from ..services.recursos import sincronizar_recursos_desde_catalogo
         sincronizar_recursos_desde_catalogo(db)

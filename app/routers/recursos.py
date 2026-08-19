@@ -34,12 +34,13 @@ def listar_recursos(request: Request, q: str = "", categoria: str = "", db: Sess
     # Si aún está el catálogo de prueba, se migra al propio (con recursos).
     from ..services.catalogo_propio import asegurar_catalogo_propio
     asegurar_catalogo_propio(db)
-    # Sincronización automática en cada vista: crea los recursos que falten
-    # desde las descomposiciones (partidas y presupuestos) y actualiza usos.
-    # Es idempotente y barato; así los tabs de mano de obra / materiales /
-    # complementarios / otros reflejan siempre los recursos que se escriben
-    # al crear o editar partidas, sin depender del botón manual.
-    _sincronizar_recursos(db)
+    # Sincronización automática: crea los recursos que falten desde las
+    # descomposiciones (partidas y presupuestos) y actualiza usos. Es
+    # idempotente; en la vista se ejecuta con un intervalo mínimo por
+    # organización porque recorre todos los descompuestos y, en el despliegue
+    # web con base remota, era la mayor parte del tiempo de carga de la
+    # página. Los guardados siguen forzándola para reflejar cambios al instante.
+    _sincronizar_recursos(db, forzar=False)
     query = db.query(Recurso)
     if q.strip():
         like = f"%{q.strip()}%"
@@ -53,11 +54,12 @@ def listar_recursos(request: Request, q: str = "", categoria: str = "", db: Sess
         query = query.filter(Recurso.categoria == categoria)
     recursos = query.order_by(Recurso.categoria, Recurso.descripcion).all()
     from ..services.traduccion import codigo_desde_pais
-    from ..services.precios_mercado import resolver_precio
+    from ..services.precios_mercado import resolver_precios_lote
     cfg = _config(db)
     pais = codigo_desde_pais(cfg.empresa_pais or "") or "VE"
     org_id = int(db.info.get("organizacion_id") or 0)
-    precios_efectivos = {r.id: resolver_precio(db, r.id, pais, org_id) for r in recursos}
+    # UNA consulta para todos los recursos (antes: dos SELECT por recurso).
+    precios_efectivos = resolver_precios_lote(db, recursos, pais, org_id or None)
     # Agrupar por categoria
     return TEMPLATES.TemplateResponse(request, "recursos/list.html", {
         "recursos": recursos,

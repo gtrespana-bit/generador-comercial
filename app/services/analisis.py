@@ -30,14 +30,31 @@ def analizar_catalogo_partidas(
     Una partida sólo se evalúa si tiene datos de costo interno cargados
     (materiales/mano de obra/complementarios/otros); si no los tiene, no se
     puede saber su margen y se cuenta aparte como "sin datos de costo".
+    Rendimiento: solo se leen las columnas que intervienen en el cálculo
+    (identidad, precios, costes y fechas). Cargar las entidades completas
+    —incluidos los descompuestos JSON— hacía este análisis la parte más
+    lenta del panel de inicio.
     """
-    partidas = db.query(Partida).order_by(Partida.categoria, Partida.nombre).all()
+    filas = db.query(
+        Partida.id,
+        Partida.nombre,
+        Partida.categoria,
+        Partida.precio_unitario,
+        Partida.coste_materiales,
+        Partida.coste_mano_obra,
+        Partida.coste_complementarios,
+        Partida.coste_otros,
+        Partida.desperdicio_recomendado_pct,
+        Partida.fecha_actualizacion_precio,
+        Partida.created_at,
+    ).all()
+    total_partidas = len(filas)
     ahora = datetime.utcnow()
 
     alertas = []
     margenes = []
 
-    for p in partidas:
+    for p in filas:
         coste_unit = (
             (p.coste_materiales or 0)
             + (p.coste_mano_obra or 0)
@@ -81,9 +98,9 @@ def analizar_catalogo_partidas(
     categoria_mas_afectada = max(por_categoria, key=por_categoria.get) if por_categoria else None
 
     return {
-        "total_partidas": len(partidas),
+        "total_partidas": total_partidas,
         "evaluadas": len(margenes),
-        "sin_datos_costo": len(partidas) - len(margenes),
+        "sin_datos_costo": total_partidas - len(margenes),
         "alertas": alertas,
         "margen_promedio": round(sum(margenes) / len(margenes), 1) if margenes else None,
         "margen_minimo": margen_minimo,

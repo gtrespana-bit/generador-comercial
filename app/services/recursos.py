@@ -9,6 +9,7 @@ import re
 import unicodedata
 from datetime import datetime
 
+from sqlalchemy import update
 from sqlalchemy.orm import Session
 
 from ..models import DescomposicionFila, DescomposicionPartida, Partida, Recurso
@@ -239,17 +240,21 @@ def sincronizar_recursos_desde_catalogo(db: Session) -> int:
     """Crea Recursos faltantes a partir de descomposiciones existentes (catálogo + presupuestos).
 
     Retorna número de recursos creados.
+
+    Rendimiento: de partidas solo se lee ``(id, descomposicion_json)`` —sin
+    hidratar entidades ORM completas— y de las filas de presupuesto solo las
+    cuatro columnas de identidad. El resto de columnas viajaba en vano con
+    cada visita a /recursos.
     """
     existentes_claves = set()
-    for r in db.query(Recurso).all():
-        existentes_claves.add(r.clave)
+    for r in db.query(Recurso.codigo, Recurso.descripcion, Recurso.unidad, Recurso.categoria).all():
+        existentes_claves.add(clave_recurso(r.codigo, r.descripcion, r.unidad, r.categoria))
 
     nuevos = 0
-    # De catálogo Partida
-    for partida in db.query(Partida).all():
-        raw = partida.descomposicion_json or "[]"
+    # De catálogo Partida (solo el JSON de descomposición, sin la entidad)
+    for _pid, raw in db.query(Partida.id, Partida.descomposicion_json).all():
         try:
-            data = json.loads(raw)
+            data = json.loads(raw or "[]")
         except Exception:
             continue
         filas = data.get("filas", []) if isinstance(data, dict) else data if isinstance(data, list) else []
@@ -293,8 +298,15 @@ def sincronizar_recursos_desde_catalogo(db: Session) -> int:
             existentes_claves.add(clave)
             nuevos += 1
 
-    # De presupuestos DescomposicionFila
-    for fila in db.query(DescomposicionFila).filter(DescomposicionFila.tipo == "recurso").all():
+    # De presupuestos DescomposicionFila (solo columnas de identidad)
+    for fila in db.query(
+        DescomposicionFila.codigo,
+        DescomposicionFila.descripcion,
+        DescomposicionFila.unidad,
+        DescomposicionFila.categoria,
+        DescomposicionFila.grupo,
+        DescomposicionFila.precio_unitario,
+    ).filter(DescomposicionFila.tipo == "recurso").all():
         codigo = str(fila.codigo or "").strip()
         desc = str(fila.descripcion or "").strip()
         if not desc:
@@ -326,11 +338,10 @@ def actualizar_usos_recursos(db: Session):
     """Recalcula usos (cuántas partidas/presupuestos usan cada recurso)."""
     # Mapear clave -> count
     clave_to_count: dict[str, int] = {}
-    # Catálogo
-    for partida in db.query(Partida).all():
-        raw = partida.descomposicion_json or "[]"
+    # Catálogo: solo el JSON de descomposición, sin hidratar entidades.
+    for _pid, raw in db.query(Partida.id, Partida.descomposicion_json).all():
         try:
-            data = json.loads(raw)
+            data = json.loads(raw or "[]")
             filas = data.get("filas", []) if isinstance(data, dict) else data if isinstance(data, list) else []
         except Exception:
             continue
@@ -342,10 +353,28 @@ def actualizar_usos_recursos(db: Session):
             clave = clave_recurso(str(fila.get("codigo", "")), str(fila.get("descripcion", "")), str(fila.get("unidad", "")), str(fila.get("categoria", "")))
             clave_to_count[clave] = clave_to_count.get(clave, 0) + 1
     # Presupuestos
-    for fila in db.query(DescomposicionFila).filter(DescomposicionFila.tipo == "recurso").all():
+    for fila in db.query(
+        DescomposicionFila.codigo,
+        DescomposicionFila.descripcion,
+        DescomposicionFila.unidad,
+        DescomposicionFila.categoria,
+    ).filter(DescomposicionFila.tipo == "recurso").all():
         clave = clave_recurso(str(fila.codigo or ""), str(fila.descripcion or ""), str(fila.unidad or ""), str(fila.categoria or ""))
         clave_to_count[clave] = clave_to_count.get(clave, 0) + 1
 
-    for recurso in db.query(Recurso).all():
-        recurso.usos = clave_to_count.get(recurso.clave, 0)
+    usos_cambios: list[dict] = []
+    for rid, codigo, descripcion, unidad, categoria, usos_actual in db.query(
+        Recurso.id, Recurso.codigo, Recurso.descripcion, Recurso.unidad,
+        Recurso.categoria, Recurso.usos,
+    ).all():
+        nuevos_usos = clave_to_count.get(
+            clave_recurso(codigo, descripcion, unidad, categoria), 0
+        )
+        if (usos_actual or 0) != nuevos_usos:
+            usos_cambios.append({"id": rid, "usos": nuevos_usos})
+    if usos_cambios:
+        # Un solo UPDATE ejecutado en lote (executemany) en vez de una
+        # sentencia por recurso.
+        for inicio in range(0, len(usos_cambios), 400):
+            db.execute(update(Recurso), usos_cambios[inicio:inicio + 400])
     db.commit()

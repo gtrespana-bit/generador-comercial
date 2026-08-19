@@ -24,9 +24,13 @@ def inicio(request: Request, db: Session = Depends(get_db)):
     # pasada completa sobre ``presupuestos`` (hasta ~10 consultas a la tabla
     # entera). Con catálogos y presupuestos creciendo, esto se traduce en un
     # dashboard visiblemente más rápido en instalaciones grandes.
+    # Además se carga de forma temprana el grafo de cada presupuesto
+    # (cliente, capítulos, partidas, mediciones): los totales del panel
+    # (``p.total``, ``p.descuento_monto``) los recorren y, sin ello, cada
+    # presupuesto disparaba sus propias consultas perezosas (N+1 masivo).
     estados_aprobados = ("aprobado", "aprobado_parcialmente", "en_ejecucion", "finalizado")
     estados_enviados = ("enviado", "reenviado", *estados_aprobados)
-    todos = db.query(Presupuesto).all()
+    todos = db.query(Presupuesto).options(*common._opciones_partidas_presupuesto()).all()
 
     total_presupuestos = len(todos)
     por_estado = {e: 0 for e in ESTADOS}
@@ -148,7 +152,12 @@ def reportes(request: Request, desde: str = "", hasta: str = "", db: Session = D
     except ValueError: inicio = date.today().replace(day=1)
     try: fin = date.fromisoformat(hasta) if hasta else date.today()
     except ValueError: fin = date.today()
-    presupuestos = db.query(Presupuesto).filter(Presupuesto.fecha >= inicio, Presupuesto.fecha <= fin).all()
+    presupuestos = (
+        db.query(Presupuesto)
+        .options(*common._opciones_partidas_presupuesto())
+        .filter(Presupuesto.fecha >= inicio, Presupuesto.fecha <= fin)
+        .all()
+    )
     por_estado = {e: [p for p in presupuestos if p.estado == e] for e in ESTADOS}
     clientes = {}
     for p in presupuestos: clientes[p.cliente.nombre] = clientes.get(p.cliente.nombre, 0) + p.total
@@ -160,7 +169,12 @@ def exportar_reporte(tipo: str = "ventas", desde: str = "", hasta: str = "", db:
     except ValueError: inicio=date.min
     try: fin=date.fromisoformat(hasta) if hasta else date.max
     except ValueError: fin=date.max
-    ps=db.query(Presupuesto).filter(Presupuesto.fecha >= inicio, Presupuesto.fecha <= fin).all()
+    ps=(
+        db.query(Presupuesto)
+        .options(*common._opciones_partidas_presupuesto())
+        .filter(Presupuesto.fecha >= inicio, Presupuesto.fecha <= fin)
+        .all()
+    )
     if tipo == "estados": filas=[["Estado","Cantidad","Total"]]+[[e, len([p for p in ps if p.estado==e]), sum(p.total for p in ps if p.estado==e)] for e in ESTADOS]
     elif tipo == "proyectos": filas=[["Proyecto","Cliente","Estado","Contratado","Cambios","Pagado","Saldo"]]+[[p.nombre,p.presupuesto.cliente.nombre,p.estado,p.total_contratado,p.total_cambios_aprobados,p.total_pagado,p.saldo_pendiente] for p in db.query(Proyecto).all()]
     else: filas=[["Número","Fecha","Cliente","Estado","Moneda","Total"]]+[[p.numero,p.fecha.isoformat(),p.cliente.nombre,p.estado,p.moneda,p.total] for p in ps]

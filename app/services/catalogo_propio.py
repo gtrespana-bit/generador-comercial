@@ -16,7 +16,7 @@ import sys
 from functools import lru_cache
 from pathlib import Path
 
-from sqlalchemy import or_
+from sqlalchemy import func, or_, update
 from sqlalchemy.orm import Session
 
 from ..models import CategoriaPartida, Configuracion, Partida, Recurso
@@ -463,6 +463,11 @@ def actualizar_taxonomia_catalogo_propio(db: Session) -> dict:
     por eso las líneas de presupuestos siguen vinculadas. Solo cambian ruta,
     código visible y metadatos de versión. Conserva la visibilidad elegida por
     la organización e incorpora únicamente altas de versiones posteriores.
+
+    Rendimiento: la lectura inicial trae solo las columnas de identidad (sin
+    ``descomposicion_json``), los descompuestos de las filas afectadas se
+    leen a demanda por bloques de ids y la escritura se hace con un UPDATE
+    ejecutado en lote (executemany) en lugar de una sentencia por partida.
     """
     datos = construir_catalogo()
     if not datos.get("ok"):
@@ -471,31 +476,46 @@ def actualizar_taxonomia_catalogo_propio(db: Session) -> dict:
     cfg = db.query(Configuracion).first()
     version_previa = int(getattr(cfg, "version_catalogo", 0) or 0)
 
-    existentes = db.query(Partida).all()
-    por_codigo: dict[str, Partida] = {}
-    por_uid: dict[str, Partida] = {}
-    nombres = {p.nombre for p in existentes}
-    for partida in existentes:
-        if partida.catalogo_uid:
-            por_uid.setdefault(str(partida.catalogo_uid), partida)
-        for codigo in (
-            partida.codigo_legacy,
-            partida.codigo_interno,
-            partida.codigo_externo,
-        ):
+    # Escaneo ligero: columnas de identidad únicamente (sin JSON pesados).
+    filas_ligeras = db.query(
+        Partida.id,
+        Partida.nombre,
+        Partida.catalogo_uid,
+        Partida.codigo_legacy,
+        Partida.codigo_interno,
+        Partida.codigo_externo,
+    ).all()
+    ids_por_uid: dict[str, int] = {}
+    ids_por_codigo: dict[str, int] = {}
+    nombres = set()
+    for fila in filas_ligeras:
+        nombres.add(fila.nombre)
+        if fila.catalogo_uid:
+            ids_por_uid.setdefault(str(fila.catalogo_uid), fila.id)
+        for codigo in (fila.codigo_legacy, fila.codigo_interno, fila.codigo_externo):
             codigo = str(codigo or "").strip()
             if codigo:
-                por_codigo.setdefault(codigo, partida)
+                ids_por_codigo.setdefault(codigo, fila.id)
 
-    actualizadas = 0
+    def _json_por_ids(ids: list[int]) -> dict[int, str]:
+        resultado: dict[int, str] = {}
+        for inicio in range(0, len(ids), 400):
+            bloque = ids[inicio:inicio + 400]
+            for pid, bruto in db.query(
+                Partida.id, Partida.descomposicion_json
+            ).filter(Partida.id.in_(bloque)).all():
+                resultado[pid] = bruto or "[]"
+        return resultado
+
+    actualizaciones: list[dict] = []
     incorporadas = 0
     for item in datos["partidas"]:
         uid = str(item.get("catalogo_uid") or "")
         legacy = str(item.get("codigo_legacy") or "")
         nuevo = str(item.get("codigo") or "")
         version_alta = int(item.get("version_alta_catalogo") or CATALOGO_VERSION)
-        partida = por_uid.get(uid) or por_codigo.get(legacy) or por_codigo.get(nuevo)
-        if partida is None:
+        partida_id = ids_por_uid.get(uid) or ids_por_codigo.get(legacy) or ids_por_codigo.get(nuevo)
+        if partida_id is None:
             # En v2 se respetan los borrados físicos anteriores. A partir de
             # ahí, solo se incorporan conceptos cuya versión de alta sea
             # posterior a la versión ya aplicada a la organización.
@@ -504,51 +524,77 @@ def actualizar_taxonomia_catalogo_propio(db: Session) -> dict:
                 and version_alta > version_previa
                 and str(item.get("nombre") or "") not in nombres
             ):
-                nueva = _crear_partida_oficial(item, nodos)
-                db.add(nueva)
-                nombres.add(nueva.nombre)
-                por_uid[uid] = nueva
+                db.add(_crear_partida_oficial(item, nodos))
+                nombres.add(str(item.get("nombre") or ""))
                 incorporadas += 1
             continue
-        partida.categoria = item["categoria"][:80]
-        partida.subcategoria = item["subcategoria"][:80]
-        partida.apartado = item["apartado"][:120]
-        partida.nodo_categoria = nodos.get(item["codigo_clasificacion"])
-        partida.codigo_clasificacion = item["codigo_clasificacion"][:20]
-        partida.codigo_legacy = legacy[:80]
-        partida.codigo_interno = nuevo[:80]
-        partida.codigo_externo = nuevo[:100]
-        partida.version_catalogo = CATALOGO_VERSION
-        partida.catalogo_uid = uid[:100] or None
-        partida.es_oficial = True
-        # Nunca se fuerza ``oculta=False``: es una preferencia de la organización.
-        partida.version_alta_catalogo = version_alta
-        # El descompuesto puede haber sido ajustado por la organización. Solo
-        # actualizamos sus metadatos de identidad, nunca recursos ni precios.
-        try:
-            descomp = json.loads(partida.descomposicion_json or "[]")
-        except (TypeError, ValueError):
-            descomp = []
-        if isinstance(descomp, dict):
-            descomp["codigo"] = nuevo
-            descomp["codigo_legacy"] = legacy
-            descomp["version_catalogo"] = CATALOGO_VERSION
-            partida.descomposicion_json = json.dumps(descomp, ensure_ascii=False)
-        actualizadas += 1
+        nodo = nodos.get(item.get("codigo_clasificacion"))
+        actualizaciones.append({
+            "id": partida_id,
+            "categoria": item["categoria"][:80],
+            "subcategoria": item["subcategoria"][:80],
+            "apartado": item["apartado"][:120],
+            "categoria_id": nodo.id if nodo is not None else None,
+            "codigo_clasificacion": item["codigo_clasificacion"][:20],
+            "codigo_legacy": legacy[:80],
+            "codigo_interno": nuevo[:80],
+            "codigo_externo": nuevo[:100],
+            "version_catalogo": CATALOGO_VERSION,
+            "catalogo_uid": uid[:100] or None,
+            "es_oficial": True,
+            # Nunca se fuerza ``oculta``: es una preferencia de la organización.
+            "version_alta_catalogo": version_alta,
+        })
+        ids_por_uid[uid] = partida_id
+
+    # El descompuesto puede haber sido ajustado por la organización. Solo se
+    # actualizan sus metadatos de identidad, nunca recursos ni precios: se
+    # leen los JSON de las filas afectadas por bloques y se parchean en lote.
+    if actualizaciones:
+        json_por_id = _json_por_ids([a["id"] for a in actualizaciones])
+        for datos_fila in actualizaciones:
+            try:
+                descomp = json.loads(json_por_id.get(datos_fila["id"], "[]"))
+            except (TypeError, ValueError):
+                descomp = []
+            if isinstance(descomp, dict):
+                descomp["codigo"] = datos_fila["codigo_interno"]
+                descomp["codigo_legacy"] = datos_fila["codigo_legacy"]
+                descomp["version_catalogo"] = CATALOGO_VERSION
+                datos_fila["descomposicion_json"] = json.dumps(
+                    descomp, ensure_ascii=False
+                )
+        for inicio in range(0, len(actualizaciones), 400):
+            db.execute(
+                update(Partida),
+                actualizaciones[inicio:inicio + 400],
+            )
+        db.flush()
 
     if cfg is not None:
         cfg.version_catalogo = CATALOGO_VERSION
+    else:
+        # Organización sin fila de configuración: se crea YA con la versión
+        # aplicada para que esta migración no se repita en la visita
+        # siguiente (la columna tiene server_default 0 en la base).
+        try:
+            db.add(Configuracion(
+                organizacion_id=int(db.info.get("organizacion_id") or 1) or 1,
+                version_catalogo=CATALOGO_VERSION,
+            ))
+        except Exception:
+            log.warning("No se pudo crear la configuración al migrar el catálogo.")
     db.commit()
     log.info(
         "Catálogo v%s aplicado: %s actualizadas, %s nuevas.",
         CATALOGO_VERSION,
-        actualizadas,
+        len(actualizaciones),
         incorporadas,
     )
     return {
         "ok": True,
         "version": CATALOGO_VERSION,
-        "actualizadas": actualizadas,
+        "actualizadas": len(actualizaciones),
         "incorporadas": incorporadas,
         "total_fuente": datos["n_partidas"],
     }
@@ -620,23 +666,69 @@ NOMBRES_CATALOGO_PRUEBA = frozenset({
 
 
 def _cantidad_partidas_oficiales(db: Session) -> int:
-    """Cuenta solo códigos que pertenecen realmente a nuestra fuente."""
-    ids = {
-        p.id for p in db.query(Partida).filter(or_(
+    """Cuenta solo códigos que pertenecen realmente a nuestra fuente.
+
+    Versión de recuento: un ``SELECT count(*)`` en vez de cargar las filas
+    completas (con ``descomposicion_json`` de varios KiB cada una). Con un
+    catálogo de ~3.000 partidas la versión anterior transfería megabytes y
+    hidrataba miles de objetos ORM **en cada carga de /partidas**.
+    """
+    propias = int(
+        db.query(func.count(Partida.id))
+        .filter(or_(
             Partida.codigo_legacy.like("CT-%"),
             Partida.version_catalogo >= CATALOGO_VERSION,
-        )).all()
-    }
+        ))
+        .scalar()
+        or 0
+    )
+    if propias:
+        return propias
+    # Instalaciones v1 previas a ``codigo_legacy``: solo distinguibles por
+    # ``codigo_interno`` CT- presente en la fuente. Dos counts baratos lo
+    # cubren sin cargar filas; el set de códigos fuente está cacheado.
+    internas_ct = int(
+        db.query(func.count(Partida.id))
+        .filter(Partida.codigo_interno.like("CT-%"))
+        .scalar()
+        or 0
+    )
+    if not internas_ct:
+        return 0
     codigos_v1 = {
         str(p.get("codigo_legacy") or "")
         for p in construir_catalogo().get("partidas", [])
     }
-    for partida in db.query(Partida).filter(
-        Partida.codigo_interno.like("CT-%")
-    ).all():
-        if partida.codigo_interno in codigos_v1:
-            ids.add(partida.id)
-    return len(ids)
+    codigos_v1.discard("")
+    if not codigos_v1:
+        return 0
+    return int(
+        db.query(func.count(Partida.id))
+        .filter(Partida.codigo_interno.in_(codigos_v1))
+        .scalar()
+        or 0
+    )
+
+
+def _identidades_partidas_oficiales(db: Session) -> list:
+    """Solo las columnas de identidad de las partidas con código CT-.
+
+    Sirve para detectar filas antiguas o sin identidad sin leer sus
+    descompuestos: viajan unas pocas cadenas cortas por fila.
+    """
+    return (
+        db.query(
+            Partida.codigo_interno,
+            Partida.codigo_legacy,
+            Partida.es_oficial,
+            Partida.catalogo_uid,
+        )
+        .filter(or_(
+            Partida.codigo_interno.like("CT-%"),
+            Partida.codigo_legacy.like("CT-%"),
+        ))
+        .all()
+    )
 
 
 def _parece_catalogo_prueba(db: Session) -> bool:
@@ -709,35 +801,30 @@ def asegurar_catalogo_propio(db: Session) -> dict | None:
     Una organización que ya tiene el catálogo oficial se reclasifica una sola
     vez conservando ids, precios y borrados. Una instalación limpia o con un
     catálogo exclusivamente particular nunca recibe 540 partidas por sorpresa.
+
+    Rendimiento: el caso normal (catálogo ya migrado) se resuelve con dos
+    consultas de metadatos (fila de configuración + recuento). Antes esta
+    función cargaba el catálogo completo —incluidos los descompuestos JSON de
+    ~3.000 partidas— hasta tres veces por visita a /partidas, /recursos o el
+    editor de presupuestos.
     """
     if not disponible():
         return None
     try:
-        propias = _cantidad_partidas_oficiales(db)
         cfg = db.query(Configuracion).first()
+        propias = _cantidad_partidas_oficiales(db)
         version = int(getattr(cfg, "version_catalogo", 0) or 0)
     except Exception:
         return None
 
     try:
         if propias > 0:
-            codigos_v1 = {
-                str(p.get("codigo_legacy") or "")
-                for p in construir_catalogo().get("partidas", [])
-            }
-            candidatas = db.query(Partida).filter(or_(
-                Partida.codigo_interno.like("CT-%"),
-                Partida.codigo_legacy.like("CT-%"),
-            )).all()
-            antiguas = any(p.codigo_interno in codigos_v1 for p in candidatas)
-            sin_identidad = any(
-                (p.codigo_legacy in codigos_v1 or p.codigo_interno in codigos_v1)
-                and (not p.es_oficial or not p.catalogo_uid)
-                for p in candidatas
-            )
-            if version < CATALOGO_VERSION or antiguas or sin_identidad:
-                return actualizar_taxonomia_catalogo_propio(db)
-            return None
+            # La marca ``version_catalogo`` la escribe la propia migración al
+            # confirmar; con la versión vigente aplicada no hay nada que
+            # auditar y no se construye el catálogo fuente (coste CPU alto).
+            if version >= CATALOGO_VERSION:
+                return None
+            return actualizar_taxonomia_catalogo_propio(db)
 
         total = db.query(Partida).count()
         # Limpio o con partidas solo del usuario: no inyectar el catálogo.
