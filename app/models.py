@@ -1188,6 +1188,7 @@ class Configuracion(TenantMixin, Base):
     # Tasa de referencia para conversión USD -> moneda local (bloque moneda/tasa auto)
     # Ej: 3128.65 COP por 1 USD. NULL = 1 (cuando moneda_default es USD).
     tasa_cambio = Column(Float, nullable=True)
+    fuente_tipo_cambio = Column(String(120), default="")
     fecha_tasa = Column(Date, nullable=True)
 
     # Alias LatAm para el flag regional (Semana 2). El nombre histórico

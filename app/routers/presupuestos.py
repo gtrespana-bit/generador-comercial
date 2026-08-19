@@ -855,7 +855,7 @@ async def confirmar_importacion_presupuesto(request: Request, db: Session = Depe
         destino = Presupuesto(
             numero=proximo_numero(db, hoy.year), year=hoy.year, fecha=hoy,
             titulo=str(payload.get("titulo", "")).strip(), validez_dias=cfg.validez_default,
-            moneda=cfg.moneda_default, moneda_base=getattr(cfg, "moneda_base_catalogo", None) or "USD", impuesto_pct=cfg.iva_default, descuento_pct=0.0,
+            moneda=cfg.moneda_default, moneda_base=getattr(cfg, "moneda_base_catalogo", None) or "USD", tipo_cambio=cfg.tasa_cambio, fecha_tipo_cambio=cfg.fecha_tasa, fuente_tipo_cambio=getattr(cfg, "fuente_tipo_cambio", "") or "", impuesto_pct=cfg.iva_default, descuento_pct=0.0,
             estado="borrador", notas=cfg.notas_default, condiciones=cfg.condiciones_default,
             con_portada=cfg.con_portada_default,
             mostrar_firmas=cfg.mostrar_firmas_default,

@@ -133,10 +133,13 @@ async def guardar_configuracion(request: Request, db: Session = Depends(get_db))
         try:
             _t = float(tasa_txt.replace(",", "."))
             cfg.tasa_cambio = max(0.0, _t) if _t > 0 else None
+            cfg.fuente_tipo_cambio = "manual" if cfg.tasa_cambio else ""
         except Exception:
             cfg.tasa_cambio = None
+            cfg.fuente_tipo_cambio = ""
     else:
         cfg.tasa_cambio = None
+        cfg.fuente_tipo_cambio = ""
     fecha_tasa_raw = str(form.get("fecha_tasa", "") or "").strip()
     if fecha_tasa_raw:
         try:
