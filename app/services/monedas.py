@@ -84,6 +84,32 @@ def formato_iso(valor, moneda: str | None = "USD") -> str:
     return f"{d:,.{decimales(moneda)}f}".replace(",", "X").replace(".", ",").replace("X", ".") + f" {codigo_iso(moneda)}"
 
 
+def convertir(valor, origen: str, destino: str, tasa_usd_destino=None,
+              tasa_usd_origen=None):
+    """Convierte usando tasas expresadas como ``1 USD = X moneda``.
+
+    No adivina una tasa: si las monedas difieren y falta una tasa válida,
+    lanza ValueError. Esto evita mostrar un valor sin convertir con una
+    moneda distinta o aplicar una conversión dos veces.
+    """
+    o = codigo_iso(origen)
+    d = codigo_iso(destino)
+    if o == d:
+        return cuantizar(valor, d)
+    if o == "USD":
+        if not tasa_usd_destino or float(tasa_usd_destino) <= 0:
+            raise ValueError(f"Falta tasa USD->{d}")
+        return cuantizar(Decimal(str(valor or 0)) * Decimal(str(tasa_usd_destino)), d)
+    if d == "USD":
+        if not tasa_usd_origen or float(tasa_usd_origen) <= 0:
+            raise ValueError(f"Falta tasa USD->{o}")
+        return cuantizar(Decimal(str(valor or 0)) / Decimal(str(tasa_usd_origen)), d)
+    if not tasa_usd_origen or not tasa_usd_destino:
+        raise ValueError(f"Faltan tasas para {o}->{d}")
+    en_usd = Decimal(str(valor or 0)) / Decimal(str(tasa_usd_origen))
+    return cuantizar(en_usd * Decimal(str(tasa_usd_destino)), d)
+
+
 def contexto(moneda: str | None, *, base: str = MONEDA_BASE_CATALOGO,
              tasa=None, fecha=None, fuente: str | None = None) -> dict:
     """Contexto serializable para backend, plantillas y editor."""

@@ -25,6 +25,19 @@ def test_formato_usa_codigo_iso_y_decimales_de_moneda():
     assert formato_iso(1250, "CLP") == "1.250 CLP"
 
 
+def test_conversion_no_aplica_doble_conversion_y_exige_tasa():
+    from decimal import Decimal
+    from app.services.monedas import convertir
+    assert convertir(10, "USD", "COP", 3200) == Decimal("32000")
+    assert convertir(32000, "COP", "USD", tasa_usd_origen=3200) == Decimal("32000.00")
+    try:
+        convertir(10, "USD", "COP")
+    except ValueError as exc:
+        assert "Falta tasa" in str(exc)
+    else:
+        raise AssertionError("debe exigir tasa")
+
+
 def test_contexto_es_serializable_y_expone_base_y_contrato():
     assert contexto("COP", base="USD", tasa=3200, fuente="manual") == {
         "moneda_base": "USD",

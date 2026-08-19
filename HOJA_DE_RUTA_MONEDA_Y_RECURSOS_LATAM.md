@@ -33,7 +33,7 @@
 | 0. Decisiones de producto | ✅ Completado | 2026-08-19 | Decisiones acordadas y documentadas |
 | 1. Auditoría técnica | ✅ Completado | 2026-08-19 | Auditoría documentada; decisiones A-E pendientes antes del diseño |
 | 2. Modelo monetario | 🟡 En curso | 2026-08-19 | Catálogo ISO, contexto base/contractual y campos persistentes iniciales implementados |
-| 3. Conversión y tasas | ⬜ Pendiente | — | — |
+| 3. Conversión y tasas | 🟡 En curso | 2026-08-19 | Servicio central de conversión iniciado con Decimal y validación de tasas |
 | 4. Interfaz y configuración | ⬜ Pendiente | — | — |
 | 5. Editor y cálculos | ⬜ Pendiente | — | — |
 | 6. Plantillas y exportaciones | ⬜ Pendiente | — | — |
