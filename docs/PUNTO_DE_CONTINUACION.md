@@ -325,20 +325,21 @@ organización (visible solo para el operador).
 
 ### ⚠️ Al fusionar el PR de este bloque (pasos del titular)
 
-1. **Aplicar `docs/staging_upgrade_d2a7c9e4f1b3.sql` en Supabase** (SQL
-   Editor, rol administrativo; guarda incluida: exige `b6d9e4c2a8f1`). Sin
-   ella, `/readyz` responderá 503 tras el despliegue.
-2. Verificar `/readyz` en verde (`head:d2a7c9e4f1b3`) y que
+1. ✅ **Hecho (19/08/2026): `docs/staging_upgrade_d2a7c9e4f1b3.sql` aplicado
+   en Supabase** por el titular. Consecuencia esperada hasta el despliegue:
+   la base va por delante del código y `/readyz` en producción responde
+   **503 a propósito** (la guarda de cabeza funcionando como está diseñada).
+   Fusionar y desplegar lo devuelve a 200.
+2. Verificar `/readyz` en verde (`head:d2a7c9e4f1b3`) tras el despliegue y que
    `/configuracion/actividad` muestra eventos al cambiar un estado.
-3. (Sin cambios) UptimeRobot y backups Supabase Pro siguen como pasos de
-   panel recomendados; simulacro E4-043 y D-019 al final.
+3. (Sin cambios) Backups Supabase Pro siguen como paso de panel recomendado;
+   simulacro E4-043 y D-019 al final.
 
-### Decisión pendiente del titular
+### Decisión tomada por el titular (19/08/2026)
 
-**E4-020 (cola de trabajos):** recomendación de **aplazar** documentada en el
-plan §4.4 — en Vercel serverless una cola real exige infraestructura externa;
-hoy nada la necesita (envíos síncronos acotados + cron de mantenimiento). Se
-reabre si un PDF/importación supera el timeout o hay envíos masivos.
+**E4-020 (cola de trabajos): APLAZADO totalmente (D-022).** Documentado en el
+plan §4.4 con los disparadores que lo reabrirían (PDF/importación que supere
+el timeout, envíos masivos). No bloquea el lanzamiento.
 
 ---
 

@@ -74,7 +74,7 @@ Al trabajar en una tarea de este plan se debe:
 | 1. Fundamentos comerciales web | Construir una base browser-first honesta, persistente y aislada | **Completada** | Base web, licencias y usabilidad verificadas |
 | 2. Validación comercial pagada | Demostrar que empresas reales pagan y continúan usándolo | **Aplazada hasta el final por decisión del titular** | Solo se abrirá cuando el producto se considere completo (D-017) |
 | 3. Cierre funcional y operativo web | Terminar el ciclo comercial y la operación antes de exponerlo a clientes | **Completada (19/08/2026)** | Envío, aceptación, recuperación y operación completas y desplegadas |
-| 4. Endurecimiento SaaS | Completar seguridad, escalabilidad y operación pública | **En curso** — completados el 19/08/2026: E4-030 (escaneo de dependencias/secretos en CI), **E4-021** (respaldo automático por organización), **E4-023** (verificación diaria con alerta), **E4-038** (consentimiento registrado), **E4-032** (plan de incidentes), **E4-026/E4-027** (registro de auditoría inmutable + historial de sesiones, migración `d2a7c9e4f1b3` pendiente de aplicar en Supabase); queda el simulacro E4-043 por ejecutar, pasos de panel (vigilante externo, backups Supabase Pro), la decisión sobre E4-020 (recomendado aplazar) y los ítems E4-039 a E4-044 | Beta de aislamiento y seguridad aprobada |
+| 4. Endurecimiento SaaS | Completar seguridad, escalabilidad y operación pública | **En curso** — completados el 19/08/2026: E4-030 (escaneo de dependencias/secretos en CI), **E4-021** (respaldo automático por organización), **E4-023** (verificación diaria con alerta), **E4-038** (consentimiento registrado), **E4-032** (plan de incidentes) y **E4-026/E4-027** (registro de auditoría inmutable + historial de sesiones; migración `d2a7c9e4f1b3` **ya aplicada en Supabase**); **E4-020 aplazado por decisión del titular (D-022)**; queda el simulacro E4-043 por ejecutar, pasos de panel (vigilante externo, backups Supabase Pro) y los ítems E4-039 a E4-044 (dependen de D-017) | Beta de aislamiento y seguridad aprobada |
 | 5. Retención y profundidad | Convertirlo en una herramienta de uso frecuente durante la obra | Pendiente | Uso recurrente y reducción de abandono |
 | 6. Expansión controlada | Crecer por gremios y países sin perder el foco vertical | Pendiente | Mercado inicial repetible y rentable |
 
@@ -789,14 +789,13 @@ automáticos)** y **E4-023 (alertas de disponibilidad)**.
   autorizado; la auditoría externa manual queda para el día final de tests,
   D-019).
 - [ ] **E4-020 — Cola de trabajos para PDFs, emails e importaciones pesadas.**
-  Pendiente; no bloquea el piloto (los envíos actuales son síncronos y acotados).
-  **Recomendación (19/08/2026, pendiente de decisión del titular):** aplazar
-  hasta que exista una necesidad medida. En Vercel serverless no hay workers
-  persistentes: una cola real exige infraestructura externa (p. ej. QStash o
-  un worker aparte). Hoy todos los envíos son síncronos y caben en el
-  `maxDuration` de 60 s, y el trabajo pesado periódico ya corre por el cron de
-  mantenimiento. Disparadores que reabrirían el ítem: PDFs que superen el
-  timeout, importaciones de Excel que fallen por tiempo, o envíos masivos.
+  **APLAZADO por decisión del titular (19/08/2026, D-022).** En Vercel
+  serverless no hay workers persistentes: una cola real exige infraestructura
+  externa (p. ej. QStash o un worker aparte). Hoy todos los envíos son
+  síncronos y caben en el `maxDuration` de 60 s, y el trabajo pesado
+  periódico ya corre por el cron de mantenimiento. Disparadores que
+  reabrirían el ítem: PDFs que superen el timeout, importaciones de Excel que
+  fallen por tiempo, o envíos masivos. No bloquea el lanzamiento.
 - [x] **E4-021 — Backups automáticos y restauraciones ensayadas.**
   **Completado el 19/08/2026 (código)** con `app/services/mantenimiento.py` y
   el cron `/api/cron/mantenimiento`: respaldo automático por organización
