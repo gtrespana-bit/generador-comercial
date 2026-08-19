@@ -360,12 +360,23 @@ async def bulk_delete_recursos(request: Request, db: Session = Depends(get_db)):
 
 @router.get("/recursos/mercado", response_class=HTMLResponse)
 def panel_precios_mercado(request: Request, pais: str = "", categoria: str = "", db: Session = Depends(get_db)):
-    """Panel de referencias nacionales y precios de organización."""
+    """Panel de referencias nacionales y precios de la propia organización.
+
+    ``PrecioRecursoMercado`` no es una tabla ``TenantMixin`` (la referencia
+    nacional tiene ``organizacion_id`` nulo), así que el filtro automático de
+    organización no la cubre: hay que acotarla explícitamente para no enseñar
+    los precios negociados por otras empresas.
+    """
+    org_id = int(db.info.get("organizacion_id") or 0)
     query = db.query(PrecioRecursoMercado, Recurso).join(Recurso, Recurso.id == PrecioRecursoMercado.recurso_id)
+    query = query.filter(or_(
+        PrecioRecursoMercado.organizacion_id.is_(None),
+        PrecioRecursoMercado.organizacion_id == org_id,
+    ))
     if pais.strip(): query = query.filter(PrecioRecursoMercado.pais_codigo == pais.strip().upper())
     if categoria in CATEGORIAS_RECURSO: query = query.filter(Recurso.categoria == categoria)
     filas = query.order_by(PrecioRecursoMercado.pais_codigo, Recurso.categoria, Recurso.descripcion).all()
-    return TEMPLATES.TemplateResponse(request, "recursos/mercado.html", {"filas": filas, "pais": pais, "categoria": categoria, "categorias": CATEGORIAS_RECURSO})
+    return TEMPLATES.TemplateResponse(request, "recursos/mercado.html", {"filas": filas, "pais": pais, "categoria": categoria, "categorias": CATEGORIAS_RECURSO, "es_operador": bool(db.info.get("es_operador"))})
 
 @router.post("/recursos/mercado")
 def guardar_precio_mercado(
@@ -373,7 +384,16 @@ def guardar_precio_mercado(
     organizacion: str = Form("0"), fuente: str = Form(""), confianza: str = Form("referencia"), db: Session = Depends(get_db)
 ):
     from ..services.precios_mercado import guardar_precio
-    org_id = int(db.info.get("organizacion_id") or 0) if organizacion == "1" else None
+    if organizacion == "1":
+        org_id = int(db.info.get("organizacion_id") or 0)
+        if org_id <= 0:
+            return _redirect("/recursos/mercado", error="No hay una organización activa para guardar el precio.")
+    else:
+        # ``organizacion_id`` nulo es la referencia nacional: la comparten todas
+        # las empresas del país, así que solo la edita el equipo del producto.
+        if not db.info.get("es_operador"):
+            return _redirect("/recursos/mercado", error="Solo el equipo de Cotizat puede editar las referencias nacionales.")
+        org_id = None
     guardar_precio(db, recurso_id, pais_codigo, _f(precio), moneda, organizacion_id=org_id, fuente=fuente, confianza=confianza)
     db.commit()
     return _redirect("/recursos/mercado", msg="Precio de mercado guardado.")

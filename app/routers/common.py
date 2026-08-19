@@ -99,6 +99,8 @@ from ..models import (
     Organizacion,
     Partida,
     Plantilla,
+    PrecioRecursoMercado,
+    HistorialPrecioRecurso,
     RecetaEstancia,
     Presupuesto,
     Recurso,
@@ -369,16 +371,34 @@ except Exception:
 
 
 def _simbolo_moneda(moneda: str) -> str:
-    """Símbolo de una moneda ISO para plantillas (VES/Bs -> Bs, COP -> $, …)."""
-    clave = str(moneda or "USD").strip()
-    if clave == "Bs":
-        clave = "VES"
-    return SIMBOLOS.get(clave.upper(), clave or "$")
+    """Símbolo inequívoco de una moneda ISO para plantillas.
+
+    Doce países de la región usan «$»: se devuelve el prefijo nacional
+    (MX$, COL$, US$…) para que un importe nunca parezca de otro país.
+    """
+    try:
+        from ..services.monedas import simbolo as _simbolo_iso
+
+        return _simbolo_iso(moneda)
+    except Exception:  # pragma: no cover - degradación defensiva
+        clave = str(moneda or "USD").strip()
+        if clave == "Bs":
+            clave = "VES"
+        return SIMBOLOS.get(clave.upper(), clave or "$")
 
 
 TEMPLATES.env.filters["simbolo"] = _simbolo_moneda
-# Mapa de símbolos disponible para JS del editor (moneda libre LatAm)
-TEMPLATES.env.globals["simbolos"] = SIMBOLOS
+# Mapa de símbolos disponible para JS del editor (moneda libre LatAm). Se
+# publican los distintivos (MX$, COL$…) para que el editor no muestre «$» a
+# secas en un presupuesto mexicano o colombiano.
+try:  # pragma: no cover - import defensivo, igual que el filtro
+    from ..services.monedas import MONEDAS as _MONEDAS_ISO, simbolo as _simbolo_iso_mapa
+
+    TEMPLATES.env.globals["simbolos"] = {
+        codigo: _simbolo_iso_mapa(codigo) for codigo in _MONEDAS_ISO
+    }
+except Exception:  # pragma: no cover
+    TEMPLATES.env.globals["simbolos"] = SIMBOLOS
 
 
 def _pais_de_nombre(nombre: str | None) -> dict:
@@ -1064,6 +1084,9 @@ def _indice_catalogo_para_editor(db: Session, moneda: str | None = None, tasa: f
                 _d["categoria"] = _trad(_d.get("categoria", ""), _cod)
                 _d["subcategoria"] = _trad(_d.get("subcategoria", ""), _cod)
                 _d["apartado"] = _trad(_d.get("apartado", ""), _cod)
+            # La moneda del registro es la de la vista: el editor la usa para
+            # etiquetar el importe y no puede decir «USD» sobre pesos.
+            _d["moneda"] = str(moneda or "USD").strip().upper() or "USD"
             if _factor != 1.0:
                 # Precio y costes en la MISMA moneda local: sin mezclar USD/COP
                 _d["precio"] = tasa_convertir_precio(_d.get("precio", 0), _factor)
@@ -1151,6 +1174,128 @@ def _puntuar_busqueda_catalogo(partida: Partida, consulta: str, grupos: list[lis
                 mejor = max(mejor, 5)
         puntuacion += mejor
     return puntuacion
+
+
+# ---------------------------------------------------------------------------
+# Contexto monetario del editor
+#
+# El catálogo (partidas, productos y recursos) se guarda en la moneda base
+# (USD). Lo que el usuario ve dentro de un presupuesto está en la moneda
+# contractual de ese presupuesto. Todo lo que cruza esa frontera —fichas,
+# descomposiciones, guardados hacia el catálogo— tiene que convertirse con el
+# MISMO factor y en el sentido correcto, o el editor acaba mezclando pesos con
+# dólares (total en MXN, precios unitarios en USD).
+# ---------------------------------------------------------------------------
+
+def _contexto_moneda(db: Session, moneda=None, tasa=None) -> tuple[str, float]:
+    """Devuelve (moneda_visible, factor USD→moneda) para una petición.
+
+    La moneda del presupuesto manda sobre la preferencia de la organización.
+    Nunca se inventa una tasa: si se pide una moneda distinta a la de la
+    organización sin tasa, el factor es 1.0 y los importes se quedan en la
+    moneda base en lugar de mostrar una conversión falsa.
+    """
+    from ..services.tasa import factor_conversion_local
+
+    try:
+        cfg = _config(db)
+    except Exception:  # pragma: no cover - sin configuración aún
+        cfg = None
+    moneda_cfg = str(getattr(cfg, "moneda_default", "") or "USD").strip().upper()
+    tasa_cfg = getattr(cfg, "tasa_cambio", None)
+
+    codigo = str(moneda or "").strip().upper()
+    if not codigo:
+        codigo, tasa = moneda_cfg, tasa_cfg
+    else:
+        try:
+            tasa = float(tasa) if tasa not in (None, "") else None
+        except (TypeError, ValueError):
+            tasa = None
+        if not tasa and codigo == moneda_cfg:
+            tasa = tasa_cfg
+    return codigo or "USD", factor_conversion_local(codigo or "USD", tasa)
+
+
+def _convertir(valor, factor: float):
+    """Convierte un importe si es numérico; deja intacto lo que no lo sea."""
+    from ..services.tasa import tasa_convertir_precio
+
+    if isinstance(valor, bool) or not isinstance(valor, (int, float)):
+        return valor
+    return tasa_convertir_precio(valor, factor)
+
+
+#: Campos monetarios de la ficha de una partida del catálogo.
+CAMPOS_MONETARIOS_PARTIDA = (
+    "precio",
+    "precio_unitario",
+    "coste_materiales",
+    "coste_mano_obra",
+    "coste_complementarios",
+    "coste_otros",
+)
+
+
+def _ficha_en_moneda(ficha: dict, moneda: str, factor: float) -> dict:
+    """Pasa una ficha del catálogo (USD) a la moneda visible del editor.
+
+    Convierte precio, costes y **las filas de la descomposición**: son los
+    precios unitarios con los que el editor recalcula la partida, y dejarlos
+    en USD hacía que el total y su desglose hablaran monedas distintas.
+    """
+    ficha = dict(ficha or {})
+    ficha["moneda"] = str(moneda or "USD").upper()
+    if factor and factor != 1.0:
+        for campo in CAMPOS_MONETARIOS_PARTIDA:
+            if campo in ficha:
+                ficha[campo] = _convertir(ficha[campo], factor)
+        descomposicion = ficha.get("descomposicion")
+        if isinstance(descomposicion, dict):
+            filas = [
+                dict(fila) if isinstance(fila, dict) else fila
+                for fila in descomposicion.get("filas", [])
+            ]
+            for fila in filas:
+                if not isinstance(fila, dict):
+                    continue
+                for campo in ("precio", "importe", "coste_unitario"):
+                    if campo in fila:
+                        fila[campo] = _convertir(fila[campo], factor)
+            ficha["descomposicion"] = dict(descomposicion, filas=filas)
+    return ficha
+
+
+def _tarifa_hora_en_moneda(db: Session, cfg, moneda=None, tasa=None) -> float:
+    """Tarifa media de mano de obra en la moneda de un presupuesto.
+
+    La tarifa se configura en la moneda de la organización y sirve para estimar
+    horas a partir del coste de mano de obra. Si el presupuesto usa otra moneda
+    —USD dentro de una empresa mexicana, por ejemplo— habría que dividir pesos
+    entre dólares y la estimación de horas saldría multiplicada por la tasa.
+    """
+    tarifa = float(getattr(cfg, "tarifa_hora_media", 0) or 8.0)
+    _mon_cfg, factor_cfg = _contexto_moneda(db)
+    _mon_doc, factor_doc = _contexto_moneda(db, moneda, tasa)
+    if factor_cfg == factor_doc or not factor_cfg:
+        return tarifa
+    return max(0.0, tarifa / factor_cfg * factor_doc)
+
+
+def _a_moneda_base(valor, factor: float):
+    """Camino inverso: de la moneda visible del editor a la base del catálogo.
+
+    Sin esto, guardar «3.675 MXN» desde el editor escribía 3.675 **USD** en el
+    catálogo y multiplicaba el precio por la tasa en cada edición.
+    """
+    if isinstance(valor, bool) or not isinstance(valor, (int, float)):
+        return valor
+    if not factor or factor == 1.0:
+        return valor
+    try:
+        return max(0.0, float(valor) / float(factor))
+    except (TypeError, ValueError, ZeroDivisionError):  # pragma: no cover
+        return valor
 
 
 def _partida_catalogo_json(partida: Partida) -> dict:

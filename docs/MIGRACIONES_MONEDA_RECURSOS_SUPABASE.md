@@ -23,6 +23,7 @@ La cadena debe avanzar así:
 | 7 | `docs/staging_upgrade_a3b4c5d6e7f8.sql` | `f2a3b4c5d6e7` | `a3b4c5d6e7f8` |
 | 8 | `docs/staging_upgrade_b4c5d6e7f8a9.sql` | `a3b4c5d6e7f8` | `b4c5d6e7f8a9` |
 | 9 | `docs/staging_upgrade_c5d6e7f8a9b0.sql` | `b4c5d6e7f8a9` | `c5d6e7f8a9b0` |
+| 10 | `docs/staging_upgrade_e7b3c1d5a204.sql` | `c5d6e7f8a9b0` | `e7b3c1d5a204` |
 
 Cada script tiene una guarda y aborta si la revisión previa no coincide.
 
@@ -37,7 +38,13 @@ En Supabase:
 5. Consultar de nuevo `public.alembic_version`.
 6. Continuar con el siguiente archivo.
 
-No ejecutar los seis archivos juntos si la base no está exactamente en `f9d4c2a7e5b3`; la guarda existe para impedir errores de orden.
+El paso 10 es **obligatorio**: sin él, `precios_recursos_mercado` e
+`historial_precios_recursos` quedan sin `GRANT` ni políticas para el rol
+`cotizat_app` y la aplicación responde 500 al abrir «Nuevo presupuesto»
+(`permission denied for table precios_recursos_mercado` → la transacción queda
+abortada y la consulta siguiente falla con `InFailedSqlTransaction`).
+
+No ejecutar los archivos juntos si la base no está exactamente en `f9d4c2a7e5b3`; la guarda existe para impedir errores de orden.
 
 ## Verificación final
 
@@ -52,10 +59,21 @@ WHERE table_schema = 'public'
 SELECT to_regclass('public.precios_recursos_mercado');
 ```
 
+Comprobación de que el paso 10 se aplicó (deben salir 6 políticas y los
+permisos en `true`):
+
+```sql
+SELECT policyname FROM pg_policies
+WHERE tablename IN ('precios_recursos_mercado','historial_precios_recursos');
+
+SELECT has_table_privilege('cotizat_app','public.precios_recursos_mercado','SELECT') AS lee_precios,
+       has_table_privilege('cotizat_app','public.historial_precios_recursos','SELECT') AS lee_historial;
+```
+
 La revisión final esperada es:
 
 ```text
-b4c5d6e7f8a9
+e7b3c1d5a204
 ```
 
 ## Alternativa Alembic

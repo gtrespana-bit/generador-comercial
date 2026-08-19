@@ -121,6 +121,17 @@ def validar_tasa(origen: str, destino: str, tasa=None) -> None:
         raise ValueError(f"Se necesita una tasa positiva para {codigo_iso(origen)}->{codigo_iso(destino)}") from exc
 
 
+def simbolo(moneda: str | None, defecto: str = "USD") -> str:
+    """Símbolo que no se puede confundir con el de otro país.
+
+    Para las monedas con símbolo propio (S/, ₲, ₡, Q, €…) devuelve el suyo;
+    para las que comparten «$» devuelve el prefijo nacional (MX$, COL$, US$…).
+    """
+    from ..utils import simbolo_moneda
+
+    return simbolo_moneda(codigo_iso(moneda, defecto), defecto)
+
+
 def contexto(moneda: str | None, *, base: str = MONEDA_BASE_CATALOGO,
              tasa=None, fecha=None, fuente: str | None = None) -> dict:
     """Contexto serializable para backend, plantillas y editor."""

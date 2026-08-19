@@ -32,7 +32,11 @@
   }
 
   function monto(valor) {
-    return fmtNum(valor) + " $";
+    // Código ISO de la moneda de la vista (la de la organización): «$» no
+    // distingue pesos mexicanos, colombianos ni dólares.
+    var moneda = window.COTIZAT_MONEDA_VISTA || window.COTIZAT_MONEDA_ACTIVA || "USD";
+    if (window.FMT && window.FMT.fmt) return window.FMT.fmt(valor, moneda);
+    return fmtNum(valor) + " " + moneda;
   }
 
   function cell(tag, clase) {

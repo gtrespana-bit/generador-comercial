@@ -276,6 +276,15 @@ def _cabecera(presupuesto, config, st, azul_color, titulo_doc="PRESUPUESTO",
         der.append(Paragraph(f"<b>País:</b> {_esc(c.pais)}", st["campo"]))
     if presupuesto.validez_dias:
         der.append(Paragraph(f"<b>Validez de la oferta:</b> {presupuesto.validez_dias} días", st["campo"]))
+    # Moneda del documento, siempre visible y con su código ISO: los símbolos
+    # «$» de la región no distinguen pesos mexicanos, colombianos ni dólares.
+    from ..services.monedas import codigo_iso as _iso_doc, simbolo as _simbolo_doc
+
+    _iso_presupuesto = _iso_doc(presupuesto.moneda)
+    der.append(Paragraph(
+        f"<b>Moneda:</b> {_esc(_iso_presupuesto)} ({_esc(_simbolo_doc(_iso_presupuesto))})",
+        st["campo"],
+    ))
     if presupuesto.tipo_cambio and presupuesto.moneda != "USD":
         _fuente = getattr(presupuesto, "fuente_tipo_cambio", "") or "referencia"
         der.append(Paragraph(f"<b>Tasa ({_esc(_fuente)}):</b> 1 USD = {fmt_num(presupuesto.tipo_cambio)} {_esc(presupuesto.moneda)}", st["campo"]))

@@ -22,7 +22,7 @@
         <td>{{ f.fecha | fecha }}</td>
         <td>{{ f.cliente.nombre }}</td>
         <td><span class="badge badge-{{ f.estado }}">{{ f.estado | capitalize }}</span></td>
-        <td class="right"><strong>{{ f.total | money(f.moneda) }}</strong></td>
+        <td class="right"><strong>{{ f.total | money_iso(f.moneda) }}</strong></td>
         <td class="right">
           <div class="csp-s-814a5492b5">
             <a class="btn btn-sm" href="/facturas/{{ f.id }}">Ver</a>

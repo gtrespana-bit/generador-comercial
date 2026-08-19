@@ -92,7 +92,11 @@
     var img = vista.querySelector("img");
     var icono = vista.querySelector(".editor-producto-icono");
     if (titulo) titulo.textContent = nombre;
-    if (detalle) detalle.textContent = (precio !== "" ? "Venta $" + num(precio).toFixed(2) : "Venta sin definir") + (coste !== "" ? " · Coste $" + num(coste).toFixed(2) : "") + (unidad ? " / " + unidad : "");
+    // Importes con código ISO: «$» a secas no distingue MXN de USD ni de COP.
+    var money = function (v) {
+      return window.FMT && window.FMT.fmt ? window.FMT.fmt(num(v)) : num(v).toFixed(2);
+    };
+    if (detalle) detalle.textContent = (precio !== "" ? "Venta " + money(precio) : "Venta sin definir") + (coste !== "" ? " · Coste " + money(coste) : "") + (unidad ? " / " + unidad : "");
     if (img) {
       var src = imagen ? (window.cotizatArchivoUrl(imagen)) : "";
       CotizatStyles.set(img, "display", src ? "" : "none");
@@ -344,7 +348,13 @@
         guardarCatalogo = true;
       }
       if (guardarCatalogo) {
-        var response = await fetch("/partidas/guardar-desde-presupuesto", { method: "POST", body: new FormData(form) });
+        var cuerpo = new FormData(form);
+        // El formulario está en la moneda del presupuesto; el catálogo se
+        // guarda en la moneda base. El servidor necesita el contexto para
+        // deshacer la conversión (y devolver la ficha ya convertida).
+        cuerpo.set("moneda", window.COTIZAT_MONEDA_ACTIVA || "");
+        cuerpo.set("tasa", window.COTIZAT_TASA_ACTIVA || "");
+        var response = await fetch("/partidas/guardar-desde-presupuesto", { method: "POST", body: cuerpo });
         var data = await response.json();
         if (!data.ok) throw new Error(data.error || "No se pudo guardar la partida en el catálogo.");
         fichaGuardada = data.partida;

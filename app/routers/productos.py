@@ -3,6 +3,7 @@
 from fastapi import APIRouter
 
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
+from ..services.tasa import tasa_convertir_precio
 from ..services import auditoria
 
 router = APIRouter()
@@ -40,6 +41,18 @@ async def _guardar_imagenes_galeria(form, prefijo: str, db: Session) -> list[str
 # Productos (Catálogo de materiales)
 # ---------------------------------------------------------------------------
 
+def _datos_producto_base(db, datos: dict) -> dict:
+    """Devuelve los importes del formulario a la moneda base del catálogo."""
+    _mon, factor = _contexto_moneda(db)
+    if factor == 1.0:
+        return datos
+    convertidos = dict(datos)
+    for campo in ("precio_unitario", "precio_compra"):
+        if convertidos.get(campo) is not None:
+            convertidos[campo] = _a_moneda_base(convertidos[campo], factor)
+    return convertidos
+
+
 @router.get("/productos", response_class=HTMLResponse)
 def listar_productos(request: Request, q: str = "", db: Session = Depends(get_db)):
     query = db.query(Producto)
@@ -51,7 +64,19 @@ def listar_productos(request: Request, q: str = "", db: Session = Depends(get_db
             Producto.proveedor.ilike(like), Producto.color.ilike(like), Producto.acabado.ilike(like),
         ))
     productos = query.order_by(Producto.categoria, Producto.ultimo_uso.desc(), Producto.nombre).all()
-    return TEMPLATES.TemplateResponse(request, "productos/list.html", {"productos": productos, "q": q})
+    # El catálogo se guarda en la moneda base; la lista se muestra en la moneda
+    # de la organización, igual que la de partidas.
+    _mon_p, _factor_p = _contexto_moneda(db)
+    if _factor_p != 1.0:
+        for _prod in productos:
+            _prod.precio_unitario = tasa_convertir_precio(_prod.precio_unitario or 0, _factor_p)
+            if _prod.precio_compra is not None:
+                _prod.precio_compra = tasa_convertir_precio(_prod.precio_compra, _factor_p)
+    return TEMPLATES.TemplateResponse(
+        request,
+        "productos/list.html",
+        {"productos": productos, "q": q, "moneda_vista": _mon_p},
+    )
 
 
 @router.get("/productos/exportar")
@@ -104,8 +129,14 @@ def ajustar_precios_productos(porcentaje: str = Form("0"), db: Session = Depends
 
 
 @router.get("/productos/nuevo", response_class=HTMLResponse)
-def nuevo_producto_form(request: Request, _db: Session = Depends(get_db)):
-    return TEMPLATES.TemplateResponse(request, "productos/form.html", {"producto": None})
+def nuevo_producto_form(request: Request, db: Session = Depends(get_db)):
+    # El formulario trabaja en la moneda de la organización, igual que la lista
+    # y que el editor de partidas.
+    return TEMPLATES.TemplateResponse(
+        request,
+        "productos/form.html",
+        {"producto": None, "moneda_vista": _contexto_moneda(db)[0]},
+    )
 
 
 @router.post("/productos/nuevo")
@@ -125,9 +156,11 @@ async def crear_producto(request: Request, db: Session = Depends(get_db)):
     archivo_ficha = form.get("ficha_tecnica")
     if isinstance(archivo_ficha, UploadFileStarlette) and archivo_ficha.filename:
         ficha = await _guardar_ficha_tecnica(archivo_ficha, "ficha", db)
+    # El precio se escribe en la moneda de la organización; el catálogo lo
+    # guarda en la moneda base.
     producto = Producto(
         nombre=nombre, imagen=principal, imagenes=json.dumps(galeria), ficha_tecnica=ficha,
-        **_datos_producto_catalogo(form),
+        **_datos_producto_base(db, _datos_producto_catalogo(form)),
     )
     db.add(producto)
     db.commit()
@@ -139,7 +172,18 @@ def editar_producto_form(producto_id: int, request: Request, db: Session = Depen
     producto = db.get(Producto, producto_id)
     if producto is None:
         return _redirect("/productos", error="Producto no encontrado.")
-    return TEMPLATES.TemplateResponse(request, "productos/form.html", {"producto": producto})
+    # Se muestra en la moneda de la organización (la misma en que se listó) y
+    # el guardado deshace la conversión.
+    _mon_e, _factor_e = _contexto_moneda(db)
+    if _factor_e != 1.0:
+        producto.precio_unitario = tasa_convertir_precio(producto.precio_unitario or 0, _factor_e)
+        if producto.precio_compra is not None:
+            producto.precio_compra = tasa_convertir_precio(producto.precio_compra, _factor_e)
+    return TEMPLATES.TemplateResponse(
+        request,
+        "productos/form.html",
+        {"producto": producto, "moneda_vista": _mon_e},
+    )
 
 
 @router.post("/productos/{producto_id}/editar")
@@ -154,7 +198,7 @@ async def actualizar_producto(producto_id: int, request: Request, db: Session = 
     if db.query(Producto).filter(Producto.nombre == nombre, Producto.id != producto_id).first():
         return _redirect(f"/productos/{producto_id}/editar", error="Ya existe otro producto con ese nombre.")
 
-    datos = _datos_producto_catalogo(form)
+    datos = _datos_producto_base(db, _datos_producto_catalogo(form))
     precio_anterior = producto.precio_unitario or 0
     producto.nombre = nombre
     for campo, valor in datos.items():

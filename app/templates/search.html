@@ -24,22 +24,22 @@
 
   {% if resultados.presupuestos %}
   <section class="card search-group"><div class="search-group-head"><h2>📄 Presupuestos</h2><span class="badge">{{ resultados.presupuestos | length }}</span></div>
-    {% for p in resultados.presupuestos %}<a class="search-result" href="/presupuestos/{{ p.id }}"><strong>{{ p.numero }}{% if p.titulo %} · {{ p.titulo }}{% endif %}</strong><small>{{ p.cliente.nombre }} · {{ p.estado | capitalize }} · {{ p.total | money(p.moneda) }}</small></a>{% endfor %}
+    {% for p in resultados.presupuestos %}<a class="search-result" href="/presupuestos/{{ p.id }}"><strong>{{ p.numero }}{% if p.titulo %} · {{ p.titulo }}{% endif %}</strong><small>{{ p.cliente.nombre }} · {{ p.estado | capitalize }} · {{ p.total | money_iso(p.moneda) }}</small></a>{% endfor %}
   </section>{% endif %}
 
   {% if resultados.facturas %}
   <section class="card search-group"><div class="search-group-head"><h2>🧾 Documentos de cobro</h2><span class="badge">{{ resultados.facturas | length }}</span></div>
-    {% for factura in resultados.facturas %}<a class="search-result" href="/facturas/{{ factura.id }}"><strong>{{ factura.numero }}{% if factura.titulo %} · {{ factura.titulo }}{% endif %}</strong><small>{{ factura.cliente.nombre }} · {{ factura.estado | capitalize }} · {{ factura.total | money(factura.moneda) }}</small></a>{% endfor %}
+    {% for factura in resultados.facturas %}<a class="search-result" href="/facturas/{{ factura.id }}"><strong>{{ factura.numero }}{% if factura.titulo %} · {{ factura.titulo }}{% endif %}</strong><small>{{ factura.cliente.nombre }} · {{ factura.estado | capitalize }} · {{ factura.total | money_iso(factura.moneda) }}</small></a>{% endfor %}
   </section>{% endif %}
 
   {% if resultados.partidas %}
   <section class="card search-group"><div class="search-group-head"><h2>📋 Partidas</h2><span class="badge">{{ resultados.partidas | length }}</span></div>
-    {% for partida in resultados.partidas %}<a class="search-result" href="/partidas/{{ partida.id }}/editar"><strong>{{ partida.nombre }}</strong><small>{% if partida.codigo_interno %}{{ partida.codigo_interno }} · {% endif %}{{ partida.categoria }}{% if partida.subcategoria %} › {{ partida.subcategoria }}{% endif %}{% if partida.apartado %} › {{ partida.apartado }}{% endif %} · {{ partida.precio_unitario | money }}</small></a>{% endfor %}
+    {% for partida in resultados.partidas %}<a class="search-result" href="/partidas/{{ partida.id }}/editar"><strong>{{ partida.nombre }}</strong><small>{% if partida.codigo_interno %}{{ partida.codigo_interno }} · {% endif %}{{ partida.categoria }}{% if partida.subcategoria %} › {{ partida.subcategoria }}{% endif %}{% if partida.apartado %} › {{ partida.apartado }}{% endif %} · {{ partida.precio_unitario | money_iso(moneda_vista) }}</small></a>{% endfor %}
   </section>{% endif %}
 
   {% if resultados.productos %}
   <section class="card search-group"><div class="search-group-head"><h2>🛍️ Productos</h2><span class="badge">{{ resultados.productos | length }}</span></div>
-    {% for producto in resultados.productos %}<a class="search-result" href="/productos/{{ producto.id }}/editar"><strong>{{ producto.nombre }}</strong><small>{% if producto.marca %}{{ producto.marca }}{% if producto.modelo %} · {{ producto.modelo }}{% endif %} · {% endif %}{% if producto.sku %}{{ producto.sku }} · {% endif %}{{ producto.precio_unitario | money }}</small></a>{% endfor %}
+    {% for producto in resultados.productos %}<a class="search-result" href="/productos/{{ producto.id }}/editar"><strong>{{ producto.nombre }}</strong><small>{% if producto.marca %}{{ producto.marca }}{% if producto.modelo %} · {{ producto.modelo }}{% endif %} · {% endif %}{% if producto.sku %}{{ producto.sku }} · {% endif %}{{ producto.precio_unitario | money_iso(moneda_vista) }}</small></a>{% endfor %}
   </section>{% endif %}
 
   {% if resultados.plantillas %}

@@ -100,8 +100,8 @@
               {% if p.descripcion %}<p class="hint csp-s-425a6e76cc">{{ p.descripcion }}</p>{% endif %}
             </td>
             <td><code class="csp-s-ee607fcc95">{{ p.unidad }}</code></td>
-            <td class="right">{{ p.precio_compra | money if p.precio_compra is not none else '—' }}</td>
-            <td class="right" data-precio="{{ p.precio_unitario }}"><strong>{{ p.precio_unitario | money }}</strong></td>
+            <td class="right">{{ p.precio_compra | money_iso(moneda_vista) if p.precio_compra is not none else '—' }}</td>
+            <td class="right" data-precio="{{ p.precio_unitario }}"><strong>{{ p.precio_unitario | money_iso(moneda_vista) }}</strong></td>
             <td class="right">{% if p.precio_compra is not none and p.precio_unitario %}<span class="{{ 'text-danger' if p.precio_unitario < p.precio_compra else '' }}">{{ (((p.precio_unitario - p.precio_compra) / p.precio_unitario) * 100) | num }}%</span>{% else %}—{% endif %}</td>
             <td class="right" data-usos="{{ p.usos or 0 }}">{{ p.usos or 0 }}</td>
             <td class="right">

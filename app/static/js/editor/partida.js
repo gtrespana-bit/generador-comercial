@@ -1083,8 +1083,25 @@
             CotizatStyles.setCssText(meta, "font-size:.72rem; color:var(--text-muted); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;");
             main.appendChild(meta);
             sug.appendChild(main);
-            var right = editor.FMT.h("div", "", (parseFloat(item.precio||0).toFixed(2) + " $"));
+            // Importe con el código ISO de la moneda del presupuesto: «$» no
+            // distingue pesos mexicanos de dólares, y estos precios unitarios
+            // son los que calculan el total de la partida.
+            var textoPrecio = editor.FMT && editor.FMT.fmt
+              ? editor.FMT.fmt(parseFloat(item.precio || 0), item.moneda)
+              : (parseFloat(item.precio || 0).toFixed(2) + " " + (item.moneda || ""));
+            var right = editor.FMT.h("div", "", textoPrecio);
             CotizatStyles.setCssText(right, "font-weight:600; color:var(--accent); font-size:0.82rem; white-space:nowrap; margin-left:auto;");
+            // Procedencia del precio: sin referencia nacional confirmada se
+            // avisa en vez de presentarlo como precio local del mercado.
+            if (item.aviso_precio) {
+              right.textContent = "⚠ " + textoPrecio;
+              right.title = item.aviso_precio;
+              sug.title = item.aviso_precio;
+            } else if (item.origen_precio === "nacional" || item.origen_precio === "organizacion") {
+              right.title = item.origen_precio === "organizacion"
+                ? "Precio propio de tu empresa para este mercado"
+                : "Precio nacional de referencia";
+            }
             sug.appendChild(right);
             sug.addEventListener("mousedown", function(e){ e.preventDefault(); });
             sug.addEventListener("click", function(e){
@@ -1612,7 +1629,9 @@
           }
           sug.appendChild(main);
           
-          var right = editorInst.FMT.h("div", "", (item.precio || 0).toFixed(2) + " $");
+          var right = editorInst.FMT.h("div", "", editorInst.FMT && editorInst.FMT.fmt
+            ? editorInst.FMT.fmt(item.precio || 0, item.moneda)
+            : (item.precio || 0).toFixed(2));
           CotizatStyles.setCssText(right, "font-weight:600; color:var(--accent); font-size:0.85rem; white-space:nowrap; margin-left:auto;");
           sug.appendChild(right);
 

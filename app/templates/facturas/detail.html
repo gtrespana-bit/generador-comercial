@@ -56,7 +56,7 @@
   <div class="doc-capitulo-banda"></div>
   <div class="doc-capitulo">
     <span>{{ cap.nombre }}</span>
-    <span>{{ cap.subtotal | money(f.moneda) }}</span>
+    <span>{{ cap.subtotal | money_iso(f.moneda) }}</span>
   </div>
   {% for part in cap.partidas %}
   <div class="doc-partida">
@@ -68,7 +68,7 @@
         </td>
         <td class="right csp-s-463c663c8c">{{ part.cantidad | cant(part.unidad) }}</td>
         <td class="right csp-s-0dfe35f39a">{{ part.precio_unitario | num }} {{ f.moneda | replace('USD','$') | replace('Bs','Bs') }}/{{ part.unidad }}</td>
-        <td class="right csp-s-6ef849732a">{{ part.importe | money(f.moneda) }}</td>
+        <td class="right csp-s-6ef849732a">{{ part.importe | money_iso(f.moneda) }}</td>
       </tr>
     </table>
   </div>
@@ -77,12 +77,12 @@
   {% endfor %}
 
   <table class="table doc-totales csp-s-9ccc4ca9d6">
-    <tr><td class="right csp-s-9eae69365e">BASE IMPONIBLE</td><td class="right">{{ f.base | money(f.moneda) }}</td></tr>
+    <tr><td class="right csp-s-9eae69365e">BASE IMPONIBLE</td><td class="right">{{ f.base | money_iso(f.moneda) }}</td></tr>
     {% if f.descuento_pct %}
-    <tr><td class="right">DESCUENTO ({{ f.descuento_pct | round(2) }} %)</td><td class="right">- {{ f.descuento_monto | money(f.moneda) }}</td></tr>
+    <tr><td class="right">DESCUENTO ({{ f.descuento_pct | round(2) }} %)</td><td class="right">- {{ f.descuento_monto | money_iso(f.moneda) }}</td></tr>
     {% endif %}
-    <tr><td class="right">I.V.A. ({{ f.impuesto_pct | round(2) }} %)</td><td class="right">{{ f.impuesto_monto | money(f.moneda) }}</td></tr>
-    <tr class="row-total"><td class="right"><strong>TOTAL A PAGAR</strong></td><td class="right"><strong>{{ f.total | money(f.moneda) }}</strong></td></tr>
+    <tr><td class="right">I.V.A. ({{ f.impuesto_pct | round(2) }} %)</td><td class="right">{{ f.impuesto_monto | money_iso(f.moneda) }}</td></tr>
+    <tr class="row-total"><td class="right"><strong>TOTAL A PAGAR</strong></td><td class="right"><strong>{{ f.total | money_iso(f.moneda) }}</strong></td></tr>
   </table>
 </div>
 

@@ -565,3 +565,109 @@ def test_el_rol_de_runtime_no_puede_saltarse_rls(entorno_postgres):
     assert fila.rolsuper is False
     assert fila.rolbypassrls is False
     motor.dispose()
+
+
+def test_precios_por_mercado_son_legibles_por_el_runtime_y_aislados(entorno_postgres):
+    """Regresión del 500 de «Nuevo presupuesto» (transacción abortada).
+
+    Las tablas ``precios_recursos_mercado`` e ``historial_precios_recursos`` se
+    crearon sin ``GRANT`` ni políticas para ``cotizat_app``. Con el rol real de
+    runtime, la consulta de precios respondía ``permission denied``, la
+    transacción quedaba abortada y la consulta siguiente de la página moría con
+    ``InFailedSqlTransaction: current transaction is aborted``.
+
+    Esta prueba recorre el camino completo con el rol limitado: leer precios,
+    guardar el override propio, no ver el de otra empresa y no poder tocar la
+    referencia nacional.
+    """
+    import app.database as database_module
+    from app.models import Plantilla, Recurso, crear_organizacion_con_propietario
+    from app.services.precios_mercado import guardar_precio, resolver_precio
+
+    admin = create_engine(entorno_postgres["admin_url"], isolation_level="AUTOCOMMIT")
+    motor = create_engine(entorno_postgres["runtime_url"])
+    Sesion = sessionmaker(bind=motor)
+    usuario_id = entorno_postgres["usuario_id"]
+
+    with Sesion() as db:
+        db.info.update({"auth_user_id": AUTH_ID, "auth_email": EMAIL})
+        db.execute(text("SELECT 1"))
+        organizacion = crear_organizacion_con_propietario(
+            db,
+            nombre="Precios RLS",
+            slug=f"precios-rls-{uuid.uuid4().hex[:8]}",
+            usuario_id=usuario_id,
+        )
+        database_module.establecer_contexto_organizacion(db, organizacion.id)
+        db.commit()
+        organizacion_id = organizacion.id
+
+    with Sesion() as db:
+        db.info.update({"auth_user_id": AUTH_ID, "auth_email": EMAIL})
+        db.execute(text("SELECT 1"))
+        database_module.establecer_contexto_organizacion(db, organizacion_id)
+        recurso = Recurso(
+            organizacion_id=organizacion_id, codigo="MAT-001",
+            descripcion="Cemento", unidad="saco", categoria="materiales", precio=5.0,
+        )
+        db.add(recurso)
+        db.flush()
+        recurso_id = recurso.id
+        # El override propio se guarda y se relee sin salirse del tenant.
+        guardar_precio(db, recurso_id, "CO", 41000, "COP", organizacion_id=organizacion_id)
+        db.commit()
+
+        assert resolver_precio(db, recurso_id, "CO", organizacion_id).precio == 41000
+        # La consulta que reventaba después del error silencioso: si la
+        # transacción siguiera abortada, esto lanzaría InFailedSqlTransaction.
+        assert db.query(Plantilla).all() == []
+
+    # Referencia nacional y override de otra empresa, insertados por el admin.
+    with admin.connect() as conexion:
+        conexion.execute(
+            text("""
+                INSERT INTO precios_recursos_mercado
+                  (recurso_id, pais_codigo, organizacion_id, precio, moneda, activo)
+                VALUES (:recurso, 'CO', NULL, 32000, 'COP', TRUE)
+            """),
+            {"recurso": recurso_id},
+        )
+        conexion.execute(text("""
+            INSERT INTO organizaciones (nombre, slug, activa, created_at, updated_at)
+            VALUES ('Rival', :slug, TRUE, now(), now())
+        """), {"slug": f"rival-{uuid.uuid4().hex[:8]}"})
+        rival_id = conexion.execute(
+            text("SELECT id FROM organizaciones ORDER BY id DESC LIMIT 1")
+        ).scalar_one()
+        conexion.execute(
+            text("""
+                INSERT INTO precios_recursos_mercado
+                  (recurso_id, pais_codigo, organizacion_id, precio, moneda, activo)
+                VALUES (:recurso, 'PE', :rival, 99999, 'PEN', TRUE)
+            """),
+            {"recurso": recurso_id, "rival": rival_id},
+        )
+    admin.dispose()
+
+    with Sesion() as db:
+        db.info.update({"auth_user_id": AUTH_ID, "auth_email": EMAIL})
+        db.execute(text("SELECT 1"))
+        database_module.establecer_contexto_organizacion(db, organizacion_id)
+
+        visibles = db.execute(text(
+            "SELECT precio, organizacion_id FROM precios_recursos_mercado ORDER BY precio"
+        )).all()
+        # Solo la referencia nacional y el precio propio; el rival no existe.
+        assert [float(p) for p, _ in visibles] == [32000.0, 41000.0]
+        assert 99999.0 not in [float(p) for p, _ in visibles]
+
+        # La referencia nacional es de solo lectura para el cliente.
+        with pytest.raises(sqlalchemy.exc.ProgrammingError):
+            db.execute(text("""
+                INSERT INTO precios_recursos_mercado
+                  (recurso_id, pais_codigo, organizacion_id, precio, moneda, activo)
+                VALUES (:recurso, 'EC', NULL, 1, 'USD', TRUE)
+            """), {"recurso": recurso_id})
+        db.rollback()
+
+    motor.dispose()

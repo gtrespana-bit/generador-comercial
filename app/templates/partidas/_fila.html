@@ -27,15 +27,15 @@
     </div>
   </td>
   <td class="col-und"><span class="und-badge">{{ p.unidad }}</span></td>
-  <td class="col-coste right" data-coste="{{ coste }}" title="Materiales {{ (p.coste_materiales or 0)|money }} · Mano {{ (p.coste_mano_obra or 0)|money }} · Compl. {{ (p.coste_complementarios or 0)|money }} · Otros {{ (p.coste_otros or 0)|money }}">
-    <span class="coste-val">{{ coste | money if coste>0 else "—" }}</span>
+  <td class="col-coste right" data-coste="{{ coste }}" title="Materiales {{ (p.coste_materiales or 0)|money_iso(moneda_vista) }} · Mano {{ (p.coste_mano_obra or 0)|money_iso(moneda_vista) }} · Compl. {{ (p.coste_complementarios or 0)|money_iso(moneda_vista) }} · Otros {{ (p.coste_otros or 0)|money_iso(moneda_vista) }}">
+    <span class="coste-val">{{ coste | money_iso(moneda_vista) if coste>0 else "—" }}</span>
   </td>
-  <td class="col-precio right" data-precio="{{ p.precio_unitario }}"><strong class="precio-val">{{ p.precio_unitario | money }}</strong></td>
+  <td class="col-precio right" data-precio="{{ p.precio_unitario }}"><strong class="precio-val">{{ p.precio_unitario | money_iso(moneda_vista) }}</strong></td>
   <td class="col-margen right">
     {% if coste>0 %}
       {% set markup = ((p.precio_unitario - coste) / coste * 100) if coste else 0 %}
       {% set margen_pct = ((p.precio_unitario - coste) / p.precio_unitario * 100) if p.precio_unitario else 0 %}
-      {% if margen>=0 %}<span class="margen-pos" title="Beneficio {{ margen|money }} · {{ markup|round(1) }}% s/coste, {{ margen_pct|round(1) }}% margen">+{{ margen|money }} · {{ markup|round(1) }}%</span>{% else %}<span class="margen-neg" title="{{ markup|round(1) }}% s/coste">{{ margen|money }} · {{ markup|round(1) }}%</span>{% endif %}
+      {% if margen>=0 %}<span class="margen-pos" title="Beneficio {{ margen|money_iso(moneda_vista) }} · {{ markup|round(1) }}% s/coste, {{ margen_pct|round(1) }}% margen">+{{ margen|money_iso(moneda_vista) }} · {{ markup|round(1) }}%</span>{% else %}<span class="margen-neg" title="{{ markup|round(1) }}% s/coste">{{ margen|money_iso(moneda_vista) }} · {{ markup|round(1) }}%</span>{% endif %}
     {% else %}
       <span class="margen-na">—</span>
     {% endif %}
