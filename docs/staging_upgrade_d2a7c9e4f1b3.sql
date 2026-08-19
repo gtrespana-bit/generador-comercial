@@ -37,17 +37,17 @@ $guarda$;
 -- Running upgrade b6d9e4c2a8f1 -> d2a7c9e4f1b3
 
 CREATE TABLE eventos_auditoria (
-    id SERIAL NOT NULL, 
-    organizacion_id INTEGER, 
-    actor_email VARCHAR(254) DEFAULT '' NOT NULL, 
-    actor_rol VARCHAR(20) DEFAULT '' NOT NULL, 
-    accion VARCHAR(60) NOT NULL, 
-    entidad VARCHAR(40) DEFAULT '' NOT NULL, 
-    entidad_id INTEGER, 
-    detalle TEXT DEFAULT '{}' NOT NULL, 
-    ip_hash VARCHAR(64) DEFAULT '' NOT NULL, 
-    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL, 
-    PRIMARY KEY (id), 
+    id SERIAL NOT NULL,
+    organizacion_id INTEGER,
+    actor_email VARCHAR(254) DEFAULT '' NOT NULL,
+    actor_rol VARCHAR(20) DEFAULT '' NOT NULL,
+    accion VARCHAR(60) NOT NULL,
+    entidad VARCHAR(40) DEFAULT '' NOT NULL,
+    entidad_id INTEGER,
+    detalle TEXT DEFAULT '{}' NOT NULL,
+    ip_hash VARCHAR(64) DEFAULT '' NOT NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    PRIMARY KEY (id),
     FOREIGN KEY(organizacion_id) REFERENCES organizaciones (id) ON DELETE RESTRICT
 );
 
@@ -227,4 +227,3 @@ GRANT EXECUTE ON FUNCTION cotizat_security.baja_organizacion(integer) TO cotizat
 UPDATE alembic_version SET version_num='d2a7c9e4f1b3' WHERE alembic_version.version_num = 'b6d9e4c2a8f1';
 
 COMMIT;
-
