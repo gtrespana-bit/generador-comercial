@@ -131,6 +131,7 @@
             <option value="BRL" {{ 'selected' if (presupuesto and presupuesto.moneda == 'BRL') or (not presupuesto and cfg.moneda_default == 'BRL') else '' }}>BRL (R$) — real</option>
             <option value="EUR" {{ 'selected' if (presupuesto and presupuesto.moneda == 'EUR') or (not presupuesto and cfg.moneda_default == 'EUR') else '' }}>EUR (€) — euro</option>
           </select>
+          <p class="hint" id="moneda-contexto-resumen">Moneda contractual del presupuesto.</p>
         </div>
         <div class="field">
           <label>Tasa de cambio USD → moneda contractual <span class="hint">(1 USD = X)</span></label>
@@ -746,7 +747,7 @@
       <div><kbd>Alt</kbd>+<kbd>P</kbd> Añadir partida</div>
       <div><kbd>Alt</kbd>+<kbd>C</kbd> Añadir capítulo</div>
       <div><kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>K</kbd> o <kbd>/</kbd> Spotlight del catálogo</div>
-      <div><kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>M</kbd> Cambiar moneda (USD ↔ Bs)</div>
+      <div><kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>M</kbd> Cambiar moneda del presupuesto (ISO)</div>
       <div><kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>Z</kbd> Deshacer cambios estructurales</div>
       <div><kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>Enter</kbd> Guardar presupuesto</div>
       <div><kbd>?</kbd> Mostrar esta ayuda</div>
@@ -953,6 +954,7 @@
 <script src="/static/js/editor/totales.js"></script>
 <script src="/static/js/editor/tiempos.js"></script>
 <script nonce="{{ request.state.csp_nonce }}" id="simbolos-moneda" type="application/json">{{ simbolos | tojson }}</script>
+<script nonce="{{ request.state.csp_nonce }}" id="contexto-monetario" type="application/json">{{ {"moneda": (presupuesto.moneda if presupuesto else cfg.moneda_default or "USD"), "tasa": (presupuesto.tipo_cambio if presupuesto else cfg.tasa_cambio), "fecha": ((presupuesto.fecha_tipo_cambio.isoformat() if presupuesto and presupuesto.fecha_tipo_cambio else (cfg.fecha_tasa.isoformat() if cfg.fecha_tasa and not presupuesto else ""))), "fuente": (presupuesto.fuente_tipo_cambio if presupuesto else (cfg.fuente_tipo_cambio or ""))} | tojson }}</script>
 <script src="/static/js/editor/main.js"></script>
 <script src="/static/js/editor/partida_modal.js"></script>
 <script src="/static/js/editor/importador_excel.js"></script>
@@ -1080,6 +1082,12 @@
     var select = document.getElementById('moneda-select');
     var confirmInput = document.getElementById('confirmar-cambio-moneda');
     if (!form || !select || !confirmInput) return;
+    function actualizarContexto() {
+      var resumen = document.getElementById('moneda-contexto-resumen');
+      if (resumen) resumen.textContent = 'Moneda contractual del presupuesto: ' + select.value + '. Los importes se guardarán en esta moneda.';
+    }
+    select.addEventListener('change', actualizarContexto);
+    actualizarContexto();
     form.addEventListener('submit', function (event) {
       var original = form.getAttribute('data-moneda-original') || select.value;
       if (original !== select.value && original) {
