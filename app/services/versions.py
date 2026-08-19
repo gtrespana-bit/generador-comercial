@@ -76,6 +76,11 @@ def crear_version(db, presupuesto, motivo=""):
         presupuesto_id=presupuesto.id, numero_version=(ultima.numero_version + 1 if ultima else 1),
         fecha=datetime.utcnow(), motivo=(motivo or "Instantánea del presupuesto").strip(),
         estado=presupuesto.estado, total=presupuesto.total,
+        moneda=presupuesto.moneda or "USD",
+        moneda_base=getattr(presupuesto, "moneda_base", None) or "USD",
+        tipo_cambio=presupuesto.tipo_cambio,
+        fecha_tipo_cambio=presupuesto.fecha_tipo_cambio,
+        fuente_tipo_cambio=getattr(presupuesto, "fuente_tipo_cambio", "") or "",
         datos_snapshot=json.dumps(serializar_presupuesto(presupuesto), ensure_ascii=False),
     )
     db.add(version)

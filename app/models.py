@@ -636,6 +636,11 @@ class PresupuestoVersion(TenantMixin, Base):
     motivo = Column(String(500), default="")
     estado = Column(String(30), default="borrador")
     total = Column(Float, default=0.0)
+    moneda = Column(String(10), default="USD")
+    moneda_base = Column(String(10), default="USD")
+    tipo_cambio = Column(Float, nullable=True)
+    fecha_tipo_cambio = Column(Date, nullable=True)
+    fuente_tipo_cambio = Column(String(120), default="")
     datos_snapshot = Column(Text, nullable=False, default="{}")
     pdf_snapshot = Column(String(300), default="")
 
@@ -1526,6 +1531,10 @@ class Factura(TenantMixin, Base):
     direccion_obra = Column(String(300), default="")
     codigo_postal = Column(String(20), default="")
     moneda = Column(String(10), default="USD")
+    moneda_base = Column(String(10), default="USD")
+    tipo_cambio = Column(Float, nullable=True)
+    fecha_tipo_cambio = Column(Date, nullable=True)
+    fuente_tipo_cambio = Column(String(120), default="")
     impuesto_pct = Column(Float, default=16.0)
     descuento_pct = Column(Float, default=0.0)
     estado = Column(String(20), default="emitida")     # emitida / anulada
@@ -1549,7 +1558,6 @@ class Factura(TenantMixin, Base):
     # Campos que el motor del PDF espera en un presupuesto y que una
     # factura no utiliza (la cabecera los omite si son falsy).
     validez_dias = None
-    tipo_cambio = None
     con_portada = False
     foto_proyecto = ""
     mostrar_firmas = False
