@@ -31,7 +31,7 @@
 | Bloque | Estado | Fecha | Responsable / notas |
 |---|---|---:|---|
 | 0. Decisiones de producto | ✅ Completado | 2026-08-19 | Decisiones acordadas y documentadas |
-| 1. Auditoría técnica | 🟡 En curso | 2026-08-19 | Existe soporte parcial; falta cerrar alcance |
+| 1. Auditoría técnica | ✅ Completado | 2026-08-19 | Auditoría documentada; decisiones A-E pendientes antes del diseño |
 | 2. Modelo monetario | ⬜ Pendiente | — | — |
 | 3. Conversión y tasas | ⬜ Pendiente | — | — |
 | 4. Interfaz y configuración | ⬜ Pendiente | — | — |
@@ -463,3 +463,11 @@ Precio Venezuela: 9,50 USD
 | Fecha | Cambio |
 |---|---|
 | 2026-08-19 | Creación de la hoja de ruta y definición inicial de bloques |
+
+### 2026-08-19 — Confirmación de decisiones A-E
+
+- A confirmado: catálogo base/referencia y precios independientes por país; Colombia y Perú pueden tener precios distintos para el mismo recurso.
+- B confirmado: cambiar moneda en borrador requiere confirmación y solo se convierte si el cliente lo decide.
+- C confirmado: la tasa automática es una sugerencia revisable; se guarda la tasa confirmada y se congela al enviar/aprobar.
+- D confirmado: precios nacionales inicialmente; cada empresa puede ajustar manualmente sus datos; se deja preparada la futura granularidad regional.
+- E confirmado: los pagos se mantienen en la moneda contractual del proyecto; la forma interna de cobro queda fuera del alcance inicial.
