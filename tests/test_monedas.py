@@ -29,7 +29,7 @@ def test_conversion_no_aplica_doble_conversion_y_exige_tasa():
     from decimal import Decimal
     from app.services.monedas import convertir
     assert convertir(10, "USD", "COP", 3200) == Decimal("32000")
-    assert convertir(32000, "COP", "USD", tasa_usd_origen=3200) == Decimal("32000.00")
+    assert convertir(32000, "COP", "USD", tasa_usd_origen=3200) == Decimal("10.00")
     try:
         convertir(10, "USD", "COP")
     except ValueError as exc:
@@ -53,7 +53,7 @@ def test_contexto_es_serializable_y_expone_base_y_contrato():
     assert contexto("COP", base="USD", tasa=3200, fuente="manual") == {
         "moneda_base": "USD",
         "moneda_contractual": "COP",
-        "decimales": 2,
+        "decimales": 0,
         "simbolo_auxiliar": "$",
         "tipo_cambio": 3200,
         "fecha_tipo_cambio": None,
