@@ -354,6 +354,54 @@ def whatsapp_url(telefono, texto) -> str:
 
 TEMPLATES.env.filters["whatsapp"] = whatsapp_url
 
+# Filtro de traducción de terminología por país (VE base -> CO/MX/EC/PE)
+try:
+    from ..services.traduccion import traducir as _traducir_termino, codigo_desde_pais as _codigo_pais
+    TEMPLATES.env.filters["traducir"] = _traducir_termino
+    TEMPLATES.env.globals["codigo_pais"] = _codigo_pais
+except Exception:
+    pass
+
+
+def _simbolo_moneda(moneda: str) -> str:
+    """Símbolo de una moneda ISO para plantillas (VES/Bs -> Bs, COP -> $, …)."""
+    clave = str(moneda or "USD").strip()
+    if clave == "Bs":
+        clave = "VES"
+    return SIMBOLOS.get(clave.upper(), clave or "$")
+
+
+TEMPLATES.env.filters["simbolo"] = _simbolo_moneda
+# Mapa de símbolos disponible para JS del editor (moneda libre LatAm)
+TEMPLATES.env.globals["simbolos"] = SIMBOLOS
+
+
+def _pais_de_nombre(nombre: str | None) -> dict:
+    """Defaults del país a partir de su nombre ('Colombia' -> NIT/COP/+57…).
+
+    Devuelve el genérico LatAm si el nombre no corresponde a un país conocido.
+    Única fuente de placeholders locales para los formularios.
+    """
+    try:
+        from ..paises import defaults_para_pais
+        from ..services.traduccion import codigo_desde_pais
+
+        return defaults_para_pais(codigo_desde_pais(nombre or "") or None)
+    except Exception:
+        return {}
+
+
+TEMPLATES.env.globals["pais_de_nombre"] = _pais_de_nombre
+
+# Tasas verificadas disponibles para placeholders de plantillas
+# (app/services/tasa.py); None/ausente = sin sugerencia verificada.
+try:
+    from ..services.tasa import TASAS_SUGERIDAS as _TASAS_SUGERIDAS
+
+    TEMPLATES.env.globals["tasas_sugeridas"] = _TASAS_SUGERIDAS
+except Exception:  # pragma: no cover
+    TEMPLATES.env.globals["tasas_sugeridas"] = {}
+
 UPLOADS = UPLOADS_DIR
 # Los Excel originales se guardan bajo uploads (consultables/descargables); el
 # JSON intermedio del asistente queda fuera de estáticos hasta confirmarse.
@@ -889,6 +937,10 @@ _CAMPOS_INDICE_CATALOGO = (
     Partida.codigo_externo,
     Partida.usos,
     Partida.ultimo_uso,
+    Partida.coste_materiales,
+    Partida.coste_mano_obra,
+    Partida.coste_complementarios,
+    Partida.coste_otros,
 )
 
 _PALABRAS_VACIAS_INDICE = frozenset({
@@ -953,10 +1005,26 @@ def _partida_catalogo_indice(partida: Partida) -> dict:
         "usos": partida.usos or 0,
         "ultimo_uso": partida.ultimo_uso.isoformat() if partida.ultimo_uso else "",
         "buscable": _texto_indice_catalogo(partida),
+        # Costes para que el editor calcule el beneficio en la MISMA moneda
+        # que el precio (ambos convertidos con el mismo factor).
+        "coste_materiales": partida.coste_materiales or 0.0,
+        "coste_mano_obra": partida.coste_mano_obra or 0.0,
+        "coste_complementarios": partida.coste_complementarios or 0.0,
+        "coste_otros": partida.coste_otros or 0.0,
     }
 
 
-def _indice_catalogo_para_editor(db: Session) -> list[dict]:
+def _indice_catalogo_para_editor(db: Session, moneda: str | None = None, tasa: float | None = None) -> list[dict]:
+    """Índice ligero del catálogo para el editor de presupuestos.
+
+    Traduce terminología (nombre, categoría, subcategoría, apartado) al país
+    de la organización y convierte TODOS los importes (precio y costes) a la
+    moneda objetivo con el MISMO factor, para que el beneficio se calcule
+    entre cifras comparables y nunca entre USD y moneda local mezclados.
+
+    `moneda`/`tasa` son la moneda y la tasa del presupuesto en edición; si no
+    se indican se usan los defaults de la organización.
+    """
     partidas = (
         db.query(Partida)
         .filter(Partida.oculta.is_(False))
@@ -970,6 +1038,60 @@ def _indice_catalogo_para_editor(db: Session) -> list[dict]:
         )
         .all()
     )
+    try:
+        from ..services.tasa import factor_conversion_local, tasa_convertir_precio
+        from ..services.traduccion import codigo_desde_pais as _codigo, traducir as _trad
+
+        _cfg = _config(db)
+        _cod = _codigo(getattr(_cfg, "empresa_pais", ""))
+        if moneda is None:
+            moneda = getattr(_cfg, "moneda_default", "USD")
+        if tasa is None:
+            tasa = getattr(_cfg, "tasa_cambio", None)
+        _factor = factor_conversion_local(moneda, tasa)
+        out = []
+        for _pp in partidas:
+            _d = _partida_catalogo_indice(_pp)
+            if _cod:
+                # Traducción VE->país de todo lo visible (nombre y categorías)
+                _d["nombre"] = _trad(_d.get("nombre", ""), _cod)
+                _d["categoria"] = _trad(_d.get("categoria", ""), _cod)
+                _d["subcategoria"] = _trad(_d.get("subcategoria", ""), _cod)
+                _d["apartado"] = _trad(_d.get("apartado", ""), _cod)
+            if _factor != 1.0:
+                # Precio y costes en la MISMA moneda local: sin mezclar USD/COP
+                _d["precio"] = tasa_convertir_precio(_d.get("precio", 0), _factor)
+                for _k in ("coste_materiales", "coste_mano_obra", "coste_complementarios", "coste_otros"):
+                    _d[_k] = tasa_convertir_precio(_d.get(_k, 0), _factor)
+            if _cod:
+                # Añade términos traducidos al índice buscable para que
+                # «pañete» encuentre «friso» y «cimentaciones» encuentre
+                # «fundaciones» (búsqueda por el idioma local)
+                try:
+                    import re as _re
+                    import unicodedata as _ucd
+
+                    _trad_bus = _trad(
+                        _pp.nombre + " " + (_pp.descripcion or "") + " "
+                        + (_pp.categoria or "") + " " + (_pp.subcategoria or ""),
+                        _cod,
+                    )
+
+                    def _norma(s):
+                        s = _ucd.normalize("NFD", s.lower())
+                        return "".join(c for c in s if _ucd.category(c) != "Mn")
+
+                    _orig_norm = set(_re.findall(r"[a-z0-9]+", _norma(_d.get("buscable", ""))))
+                    for _w in _re.findall(r"[a-z0-9]+", _norma(_trad_bus)):
+                        if len(_w) >= 3 and _w not in _orig_norm:
+                            _d["buscable"] = (_d["buscable"] + " " + _w)[:380]
+                            _orig_norm.add(_w)
+                except Exception:
+                    pass
+            out.append(_d)
+        return out
+    except Exception:
+        pass
     return [_partida_catalogo_indice(partida) for partida in partidas]
 
 

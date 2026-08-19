@@ -5,6 +5,8 @@ from sqlalchemy import func
 
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
 from ..services import auditoria
+from ..services.tasa import factor_conversion_local, tasa_convertir_precio
+from ..services.traduccion import codigo_desde_pais, traducir
 
 router = APIRouter()
 
@@ -209,6 +211,47 @@ def listar_partidas(
                 for sub in subcapitulos
             ],
         })
+    # Traducción al vuelo VE->país para la vista de lista (CO/MX/EC/PE)
+    try:
+        _cfg = _config(db)
+        _codigo_trad = codigo_desde_pais(getattr(_cfg, "empresa_pais", ""))
+    except Exception:
+        _codigo_trad = ""
+    if _codigo_trad:
+        # Las ETIQUETAS del árbol se traducen; las claves crudas
+        # (data-cat, enlaces, filtros) se mantienen intactas.
+        for _cap in arbol_categorias:
+            _cap["categoria_display"] = traducir(_cap["categoria"], _codigo_trad)
+            for _sub in _cap["subcapitulos"]:
+                _sub["subcategoria_display"] = traducir(_sub["subcategoria"], _codigo_trad)
+        for _p in partidas:
+            _p.nombre = traducir(_p.nombre, _codigo_trad)
+            _p.descripcion = traducir(_p.descripcion or "", _codigo_trad)
+            _p.categoria = traducir(_p.categoria or "", _codigo_trad)
+            _p.subcategoria = traducir(_p.subcategoria or "", _codigo_trad)
+            _p.apartado = traducir(_p.apartado or "", _codigo_trad)
+    else:
+        for _cap in arbol_categorias:
+            _cap["categoria_display"] = _cap["categoria"]
+            for _sub in _cap["subcapitulos"]:
+                _sub["subcategoria_display"] = _sub["subcategoria"]
+    # Conversión USD->local de TODOS los importes de la vista (precio y
+    # costes) con el MISMO factor: el margen/beneficio de las filas se
+    # calcula en _fila.html como precio - coste y nunca debe mezclar
+    # moneda local con USD.
+    try:
+        _mon_cfg = str(getattr(_cfg, "moneda_default", "USD") or "USD").strip().upper()
+        _tasa_cfg = getattr(_cfg, "tasa_cambio", None)
+        _factor = factor_conversion_local(_mon_cfg, _tasa_cfg)
+        if _factor != 1.0:
+            for _p in partidas:
+                _p.precio_unitario = tasa_convertir_precio(_p.precio_unitario or 0, _factor)
+                _p.coste_materiales = tasa_convertir_precio(_p.coste_materiales or 0, _factor)
+                _p.coste_mano_obra = tasa_convertir_precio(_p.coste_mano_obra or 0, _factor)
+                _p.coste_complementarios = tasa_convertir_precio(_p.coste_complementarios or 0, _factor)
+                _p.coste_otros = tasa_convertir_precio(_p.coste_otros or 0, _factor)
+    except Exception:
+        pass
     return TEMPLATES.TemplateResponse(request, "partidas/list.html", {
         "partidas": partidas,
         "q": q,
@@ -252,6 +295,11 @@ def filas_subcategoria_catalogo(
         .all()
     )
     partidas = []
+    try:
+        _cfg_api = _config(db)
+        _codigo_api = codigo_desde_pais(getattr(_cfg_api, "empresa_pais", ""))
+    except Exception:
+        _codigo_api = ""
     for p in filas:
         try:
             valor = json.loads(p.descomposicion_json or "[]")
@@ -262,24 +310,36 @@ def filas_subcategoria_catalogo(
             1 for f in descomp
             if isinstance(f, dict) and f.get("tipo") == "recurso"
         )
+        # Precio Y costes convertidos a moneda local con el MISMO factor:
+        # las filas del navegador calculan margen = precio - coste y no
+        # deben mezclar monedas.
+        _precio_api = p.precio_unitario or 0.0
+        try:
+            _mon_api = str(getattr(_cfg_api, "moneda_default", "USD") or "USD").strip().upper()
+            _tasa_api = getattr(_cfg_api, "tasa_cambio", None)
+            _factor_api = factor_conversion_local(_mon_api, _tasa_api)
+        except Exception:
+            _factor_api = 1.0
+        if _factor_api != 1.0:
+            _precio_api = tasa_convertir_precio(_precio_api, _factor_api)
         partidas.append({
             "id": p.id,
-            "nombre": p.nombre or "",
-            "descripcion": p.descripcion or "",
+            "nombre": traducir(p.nombre or "", _codigo_api) if _codigo_api else (p.nombre or ""),
+            "descripcion": traducir(p.descripcion or "", _codigo_api) if _codigo_api else (p.descripcion or ""),
             "unidad": p.unidad or "ud",
-            "precio": p.precio_unitario or 0.0,
-            "categoria": p.categoria or "",
-            "subcategoria": p.subcategoria or "",
-            "apartado": p.apartado or "",
+            "precio": _precio_api,
+            "categoria": traducir(p.categoria or "", _codigo_api) if _codigo_api else (p.categoria or ""),
+            "subcategoria": traducir(p.subcategoria or "", _codigo_api) if _codigo_api else (p.subcategoria or ""),
+            "apartado": traducir(p.apartado or "", _codigo_api) if _codigo_api else (p.apartado or ""),
             "codigo": p.codigo_interno or p.codigo_externo or "",
             "proveedor": p.proveedor or "",
             "usos": p.usos or 0,
             "imagen": bool(p.imagen),
             "es_oficial": bool(p.es_oficial),
-            "coste_materiales": p.coste_materiales or 0.0,
-            "coste_mano_obra": p.coste_mano_obra or 0.0,
-            "coste_complementarios": p.coste_complementarios or 0.0,
-            "coste_otros": p.coste_otros or 0.0,
+            "coste_materiales": tasa_convertir_precio(p.coste_materiales or 0.0, _factor_api),
+            "coste_mano_obra": tasa_convertir_precio(p.coste_mano_obra or 0.0, _factor_api),
+            "coste_complementarios": tasa_convertir_precio(p.coste_complementarios or 0.0, _factor_api),
+            "coste_otros": tasa_convertir_precio(p.coste_otros or 0.0, _factor_api),
             "recursos": n_recursos,
         })
     return {"ok": True, "partidas": partidas}
@@ -305,10 +365,35 @@ def buscar_partidas_catalogo_api(
         candidatas,
         key=lambda p: (-_puntuar_busqueda_catalogo(p, consulta, grupos), p.nombre),
     )[:limite]
+    try:
+        _cfg_b = _config(db)
+        _codigo_b = codigo_desde_pais(getattr(_cfg_b, "empresa_pais", ""))
+    except Exception:
+        _codigo_b = ""
+    resultados = []
+    try:
+        _mon_b = str(getattr(_cfg_b, "moneda_default", "USD") or "USD").strip().upper()
+        _tasa_b = getattr(_cfg_b, "tasa_cambio", None)
+        _factor_b = factor_conversion_local(_mon_b, _tasa_b)
+    except Exception:
+        _factor_b = 1.0
+    for _pp in partidas:
+        _idx = _partida_catalogo_indice(_pp)
+        if _codigo_b:
+            _idx["nombre"] = traducir(_idx.get("nombre", ""), _codigo_b)
+            _idx["categoria"] = traducir(_idx.get("categoria", ""), _codigo_b)
+            _idx["subcategoria"] = traducir(_idx.get("subcategoria", ""), _codigo_b)
+            _idx["apartado"] = traducir(_idx.get("apartado", ""), _codigo_b)
+        if _factor_b != 1.0:
+            # Precio y costes en la misma moneda que el resto de la vista
+            _idx["precio"] = tasa_convertir_precio(_idx.get("precio", 0), _factor_b)
+            for _k in ("coste_materiales", "coste_mano_obra", "coste_complementarios", "coste_otros"):
+                _idx[_k] = tasa_convertir_precio(_idx.get(_k, 0), _factor_b)
+        resultados.append(_idx)
     return {
         "ok": True,
         "q": consulta,
-        "resultados": [_partida_catalogo_indice(p) for p in partidas],
+        "resultados": resultados,
     }
 
 
@@ -344,7 +429,19 @@ def ficha_partida_catalogo(partida_id: int, db: Session = Depends(get_db)):
             status_code=404,
             content={"ok": False, "error": "Partida no encontrada."},
         )
-    return {"ok": True, "partida": _partida_catalogo_json(partida)}
+    try:
+        _cfg_f = _config(db)
+        _codigo_f = codigo_desde_pais(getattr(_cfg_f, "empresa_pais", ""))
+    except Exception:
+        _codigo_f = ""
+    _j = _partida_catalogo_json(partida)
+    if _codigo_f:
+        _j["nombre"] = traducir(_j.get("nombre",""), _codigo_f)
+        _j["descripcion"] = traducir(_j.get("descripcion",""), _codigo_f)
+        _j["categoria"] = traducir(_j.get("categoria",""), _codigo_f)
+        _j["subcategoria"] = traducir(_j.get("subcategoria",""), _codigo_f)
+        _j["apartado"] = traducir(_j.get("apartado",""), _codigo_f)
+    return {"ok": True, "partida": _j}
 
 
 @router.get("/partidas/{partida_id}/descomposicion")
@@ -364,6 +461,22 @@ def descomposicion_partida(partida_id: int, db: Session = Depends(get_db)):
         valor = []
     filas = valor.get("filas", []) if isinstance(valor, dict) else valor
     filas = [f for f in filas if isinstance(f, dict) and f.get("tipo") == "recurso"]
+    # La tabla de descomposición se muestra junto a las filas de la página
+    # (que ya están en moneda local): sus precios se convierten con el mismo
+    # factor para que las sumas cuadren visualmente.
+    try:
+        _cfg_d = _config(db)
+        _mon_d = str(getattr(_cfg_d, "moneda_default", "USD") or "USD").strip().upper()
+        _tasa_d = getattr(_cfg_d, "tasa_cambio", None)
+        _factor_d = factor_conversion_local(_mon_d, _tasa_d)
+    except Exception:
+        _factor_d = 1.0
+    if _factor_d != 1.0:
+        for _f in filas:
+            if isinstance(_f.get("precio"), (int, float)):
+                _f["precio"] = tasa_convertir_precio(_f["precio"], _factor_d)
+            if isinstance(_f.get("importe"), (int, float)):
+                _f["importe"] = tasa_convertir_precio(_f["importe"], _factor_d)
     return {"ok": True, "filas": filas}
 
 

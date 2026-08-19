@@ -51,8 +51,12 @@ from ..utils import (
     fmt_precio_u,
     saneado,
 )
+from .traduccion import codigo_desde_pais, traducir
 from . import pdf_anexos
 from .pdf_interactivo import ContextoInteractivo
+
+# Código de país activo para traducir terminología al vuelo (VE base -> CO/MX/EC/PE)
+_CODIGO_PAIS_ACTUAL = ""
 
 
 def _money(valor: float) -> float:
@@ -203,7 +207,8 @@ def _cabecera(presupuesto, config, st, azul_color, titulo_doc="PRESUPUESTO",
     # Etiquetas cortas: la caja de empresa ahora es estrecha
     filas_empresa = [Paragraph(_esc(config.empresa_nombre), st["empresa"])]
     if config.empresa_rif:
-        filas_empresa.append(Paragraph(f"<b>RIF:</b> {_esc(config.empresa_rif)}", st["empresa_linea"]))
+        _etiq = getattr(config, "etiqueta_id_fiscal", "") or "RIF"
+        filas_empresa.append(Paragraph(f"<b>{_esc(_etiq)}:</b> {_esc(config.empresa_rif)}", st["empresa_linea"]))
     if config.empresa_email:
         filas_empresa.append(Paragraph(f"<b>Email:</b> {_esc(config.empresa_email)}", st["empresa_linea"]))
     if config.empresa_telefono:
@@ -264,7 +269,8 @@ def _cabecera(presupuesto, config, st, azul_color, titulo_doc="PRESUPUESTO",
     der = encabezado("Cliente")
     nombre_linea = f"<b>Nombre:</b> {_esc(c.nombre)}"
     if c.rif:
-        nombre_linea += f"&nbsp;&nbsp;&nbsp;<b>RIF:</b> {_esc(c.rif)}"
+        _etiq_cli = getattr(config, "etiqueta_id_fiscal", "") or "RIF"
+        nombre_linea += f"&nbsp;&nbsp;&nbsp;<b>{_esc(_etiq_cli)}:</b> {_esc(c.rif)}"
     der.append(Paragraph(nombre_linea, st["campo"]))
     if c.pais:
         der.append(Paragraph(f"<b>País:</b> {_esc(c.pais)}", st["campo"]))
@@ -325,8 +331,9 @@ def _fila_capitulo(cap, st, moneda, azul_color, ctx=None):
         )
     else:
         celda_subtotal = Paragraph(fmt_monto(cap.subtotal, moneda), st["cap_d"])
+    cap_nombre_trad = traducir(cap.nombre, _CODIGO_PAIS_ACTUAL) if _CODIGO_PAIS_ACTUAL else cap.nombre
     t = Table(
-        [[Paragraph(_esc(cap.nombre.upper()), st["cap"]), "", "", celda_subtotal]],
+        [[Paragraph(_esc(cap_nombre_trad.upper()), st["cap"]), "", "", celda_subtotal]],
         colWidths=COLS,
     )
     t.setStyle(TableStyle([
@@ -641,12 +648,15 @@ def _tabla_partida(partida, st, moneda, ultima: bool, azul_color, num=None, ctx=
         "measurement": "SUJETA A MEDICIÓN",
     }
     etiqueta = etiquetas.get(tipo, "")
-    nombre_pdf = f"{_esc(num)}&nbsp;&nbsp;{_esc(partida.nombre)}" if num else _esc(partida.nombre)
+    # Traducción VE->país para nombre/descripción (catálogo guarda VE)
+    nombre_trad = traducir(partida.nombre, _CODIGO_PAIS_ACTUAL) if _CODIGO_PAIS_ACTUAL else partida.nombre
+    desc_trad = traducir(partida.descripcion, _CODIGO_PAIS_ACTUAL) if (_CODIGO_PAIS_ACTUAL and partida.descripcion) else partida.descripcion
+    nombre_pdf = f"{_esc(num)}&nbsp;&nbsp;{_esc(nombre_trad)}" if num else _esc(nombre_trad)
     if etiqueta:
         nombre_pdf += f"&nbsp;&nbsp;<font color='#CC0066'><b>[{etiqueta}]</b></font>"
     celda_texto = [Paragraph(nombre_pdf, st["p_nombre"])]
-    if partida.descripcion:
-        desc = _esc(partida.descripcion).replace("\n", "<br/>")
+    if desc_trad:
+        desc = _esc(desc_trad).replace("\n", "<br/>")
         celda_texto.append(Paragraph(desc, st["p_desc"]))
 
     if interactiva:
@@ -1308,6 +1318,11 @@ def _documento_presupuesto(presupuesto, config, texto_anexos="", paginas_extra=0
     moneda = presupuesto.moneda
     palette = {"tecnica": "#334155", "minimalista": "#475569", "corporativa": "#0F4C81", "compacta": "#374151", "editorial": "#7C2D12"}
     azul_color = colors.HexColor(palette.get(getattr(presupuesto, "estilo_pdf", "elegante"), config.pdf_color or "#04265D"))
+    global _CODIGO_PAIS_ACTUAL
+    try:
+        _CODIGO_PAIS_ACTUAL = codigo_desde_pais(getattr(config, "empresa_pais", "") or "")
+    except Exception:
+        _CODIGO_PAIS_ACTUAL = ""
 
     # Capa interactiva. `preparar()` decide si hay algo que hacer: sin
     # partidas de varios productos devuelve False y el PDF sale exactamente
@@ -1359,8 +1374,32 @@ def _documento_presupuesto(presupuesto, config, texto_anexos="", paginas_extra=0
     # Datos venezolanos, siempre guardados en el documento para preservar su histórico.
     regional = []
     if getattr(config, "mostrar_numero_control", False) and getattr(presupuesto, "numero_control", ""): regional.append(f"Número de control: {presupuesto.numero_control}")
-    if getattr(config, "mostrar_tasa_cambio", False) and presupuesto.tipo_cambio: regional.append(f"Tasa: 1 USD = {fmt_num(presupuesto.tipo_cambio)} Bs." + (f" ({fmt_fecha(presupuesto.fecha_tipo_cambio)})" if getattr(presupuesto, "fecha_tipo_cambio", None) else ""))
-    if getattr(config, "mostrar_total_bs", False) and presupuesto.moneda == "USD" and presupuesto.tipo_cambio: regional.append(f"Equivalente referencial: {fmt_monto(presupuesto.total * presupuesto.tipo_cambio, 'Bs')}")
+    if getattr(config, "mostrar_tasa_cambio", False) and presupuesto.tipo_cambio:
+        # Tasa genérica LatAm: 1 USD = X en la otra moneda (no solo Bs)
+        _mon_tasa = getattr(config, "moneda_default", "") or "USD"
+        if _mon_tasa == "BS":
+            _mon_tasa = "VES"
+        _mon_destino_tasa = presupuesto.moneda if presupuesto.moneda not in ("USD", "", "PAB") else _mon_tasa
+        if _mon_destino_tasa in ("USD", "", "PAB"):
+            _mon_destino_tasa = "VES"
+        regional.append(f"Tasa de referencia: 1 USD = {fmt_num(presupuesto.tipo_cambio)} {_mon_destino_tasa}" + (f" ({fmt_fecha(presupuesto.fecha_tipo_cambio)})" if getattr(presupuesto, "fecha_tipo_cambio", None) else ""))
+    if getattr(config, "mostrar_total_bs", False) and presupuesto.tipo_cambio:
+        # Equivalente genérico: si presupuesto es USD -> muestra en moneda local, si es local -> muestra en USD
+        try:
+            _mon_cfg = getattr(config, "moneda_default", "") or "USD"
+            if _mon_cfg == "BS":
+                _mon_cfg = "VES"
+            if presupuesto.moneda == "USD" and _mon_cfg not in ("USD", "", "PAB"):
+                regional.append(f"Equivalente referencial: {fmt_monto(presupuesto.total * presupuesto.tipo_cambio, _mon_cfg)}")
+            elif presupuesto.moneda not in ("USD", "", "PAB") and presupuesto.moneda != _mon_cfg:
+                # Presupuesto en local, muestra equivalente en USD
+                if presupuesto.tipo_cambio and presupuesto.tipo_cambio != 0:
+                    regional.append(f"Equivalente referencial: {fmt_monto(presupuesto.total / presupuesto.tipo_cambio, 'USD')}")
+            elif presupuesto.moneda == "USD":
+                # Fallback genérico si no hay moneda local configurada
+                regional.append(f"Equivalente referencial: {fmt_monto(presupuesto.total * presupuesto.tipo_cambio, 'VES')}")
+        except Exception:
+            pass
     if getattr(config, "mostrar_retenciones", False) and (getattr(presupuesto, "retencion_pct", 0) or getattr(presupuesto, "operacion_exenta", False)): regional.append("Operación exenta" if presupuesto.operacion_exenta else f"Retención aplicable: {fmt_num(presupuesto.retencion_pct)} %")
     if getattr(config, "datos_bancarios", ""): regional.append("Datos de pago:\n" + config.datos_bancarios)
     if regional: story.append(Spacer(1, 16)); story.append(_seccion("Datos fiscales y pago", "\n".join(regional), st, azul_color))

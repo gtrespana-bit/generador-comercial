@@ -58,8 +58,11 @@ def completar_onboarding(db: Session, datos: dict, modo: str) -> Configuracion:
     if not empresa_nombre or empresa_nombre.lower() == "mi empresa":
         raise ErrorOnboarding("Escribe el nombre comercial de tu empresa.")
 
-    moneda = str(datos.get("moneda_default") or "USD").strip()
-    if moneda not in {"USD", "Bs"}:
+    # Moneda: 20 ISOs (validación contra lista blanca, alias Bs->VES)
+    from ..utils import MONEDAS_SOPORTADAS, normalizar_moneda
+    moneda_raw = str(datos.get("moneda_default") or "USD").strip()
+    moneda = normalizar_moneda(moneda_raw, "USD")
+    if moneda not in MONEDAS_SOPORTADAS and moneda != "VES":
         moneda = "USD"
     try:
         iva = float(datos.get("iva_default", 16.0))
@@ -67,6 +70,24 @@ def completar_onboarding(db: Session, datos: dict, modo: str) -> Configuracion:
         iva = 16.0
     if not 0 <= iva <= 100:
         raise ErrorOnboarding("El IVA debe estar entre 0 y 100 %.")
+    # Etiqueta ID fiscal y tasa (LatAm)
+    etiqueta = str(datos.get("etiqueta_id_fiscal") or "RIF").strip()[:20] or "RIF"
+    tasa_raw = datos.get("tasa_cambio")
+    try:
+        tasa = float(str(tasa_raw).replace(",", ".")) if str(tasa_raw or "").strip() else None
+        if tasa is not None and tasa <= 0:
+            tasa = None
+    except Exception:
+        tasa = None
+    fecha_tasa = datos.get("fecha_tasa")
+    try:
+        from datetime import date as _date
+        if isinstance(fecha_tasa, str) and fecha_tasa.strip():
+            fecha_tasa = _date.fromisoformat(fecha_tasa.strip())
+        elif not isinstance(fecha_tasa, _date):
+            fecha_tasa = None
+    except Exception:
+        fecha_tasa = None
 
     cfg.empresa_nombre = empresa_nombre[:200]
     cfg.empresa_legal = str(datos.get("empresa_legal") or "").strip()[:250]
@@ -78,6 +99,9 @@ def completar_onboarding(db: Session, datos: dict, modo: str) -> Configuracion:
     cfg.empresa_email = str(datos.get("empresa_email") or "").strip()[:200]
     cfg.moneda_default = moneda
     cfg.iva_default = iva
+    cfg.etiqueta_id_fiscal = etiqueta
+    cfg.tasa_cambio = tasa
+    cfg.fecha_tasa = fecha_tasa
     cfg.onboarding_modo = modo
     db.commit()
 

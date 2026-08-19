@@ -60,7 +60,16 @@
 
   function simbolo() {
     var sel = document.querySelector('select[name="moneda"]');
-    return sel && sel.value === "Bs" ? "Bs" : "$";
+    var cod = sel && sel.value ? String(sel.value).trim() : "USD";
+    if (cod === "Bs") cod = "VES";
+    var mapa = {};
+    var el = document.getElementById("simbolos-moneda");
+    if (el) {
+      try { mapa = JSON.parse(el.textContent || "{}"); } catch (_) {}
+    }
+    var s = mapa[cod] || mapa[cod.toUpperCase()];
+    if (s) return s;
+    return cod === "Bs" || cod === "VES" ? "Bs" : "$";
   }
   editor.simbolo = simbolo;
 

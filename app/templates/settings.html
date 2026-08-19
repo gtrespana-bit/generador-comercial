@@ -42,10 +42,11 @@
   <div class="card">
     <h2>Tu organización</h2>
     <p class="subtitle">El nombre de la organización es el que ves en el menú lateral.</p>
+    {% set _pais_form = pais_de_nombre(cfg.empresa_pais or '') %}
     <div class="form-grid">
       <div class="field field-full">
         <label>Nombre de la organización *</label>
-        <input type="text" name="organizacion_nombre" value="{{ org_nombre }}" required maxlength="200" placeholder="p. ej. Reformas Caracas C.A.">
+        <input type="text" name="organizacion_nombre" value="{{ org_nombre }}" required maxlength="200" placeholder="p. ej. Reformas {{ _pais_form.ciudad_ejemplo or 'Tu Ciudad' }}{{ (' ' ~ _pais_form.razon_social_ejemplo) if _pais_form.razon_social_ejemplo else '' }}" id="input-org-nombre">
       </div>
     </div>
   </div>
@@ -56,27 +57,39 @@
     <div class="form-grid">
       <div class="field">
         <label>Nombre de la empresa *</label>
-        <input type="text" name="empresa_nombre" value="{{ cfg.empresa_nombre }}" required placeholder="p. ej. Reformas Caracas C.A.">
+        <input type="text" name="empresa_nombre" value="{{ cfg.empresa_nombre }}" required placeholder="p. ej. Reformas {{ _pais_form.ciudad_ejemplo or 'Tu Ciudad' }}{{ (' ' ~ _pais_form.razon_social_ejemplo) if _pais_form.razon_social_ejemplo else '' }}" id="input-empresa-nombre">
       </div>
       <div class="field">
         <label>Razón social</label>
-        <input type="text" name="empresa_legal" value="{{ cfg.empresa_legal }}" placeholder="p. ej. Grupo Constructor Caracas C.A.">
+        <input type="text" name="empresa_legal" value="{{ cfg.empresa_legal }}" placeholder="p. ej. Grupo Constructor {{ _pais_form.ciudad_ejemplo or 'Tu Ciudad' }}{{ (' ' ~ _pais_form.razon_social_ejemplo) if _pais_form.razon_social_ejemplo else '' }}" id="input-legal">
       </div>
       <div class="field">
-        <label>RIF</label>
-        <input type="text" name="empresa_rif" value="{{ cfg.empresa_rif }}" placeholder="J-XXXXXXXX-X">
+        <label><span id="label-rif">{{ cfg.etiqueta_id_fiscal or 'ID fiscal' }}</span> <span class="hint csp-tasa-hint-inline">(ID fiscal)</span></label>
+        <input type="text" name="empresa_rif" value="{{ cfg.empresa_rif }}" placeholder="{{ _pais_form.id_fiscal_placeholder or 'RIF, NIT, RUC, RFC…' }}" id="input-rif">
+      </div>
+      <div class="field">
+        <label>Etiqueta ID fiscal</label>
+        <input type="text" name="etiqueta_id_fiscal" value="{{ cfg.etiqueta_id_fiscal or 'RIF' }}" placeholder="RIF, NIT, RUT, CUIT, RUC, RFC..." maxlength="20" id="input-etiqueta">
+        <p class="hint">Cómo se llama tu ID fiscal en tu país. Se muestra en clientes, presupuestos y PDF.</p>
       </div>
       <div class="field">
         <label>País</label>
-        <input type="text" name="empresa_pais" value="{{ cfg.empresa_pais or 'Venezuela' }}" placeholder="Venezuela">
+        <select name="empresa_pais" id="select-pais">
+          <option value="Venezuela" {{ 'selected' if (cfg.empresa_pais or 'Venezuela') == 'Venezuela' else '' }}>🇻🇪 Venezuela</option>
+          <option value="Colombia" {{ 'selected' if cfg.empresa_pais == 'Colombia' else '' }}>🇨🇴 Colombia</option>
+          <option value="México" {{ 'selected' if cfg.empresa_pais == 'México' else '' }}>🇲🇽 México</option>
+          <option value="Ecuador" {{ 'selected' if cfg.empresa_pais == 'Ecuador' else '' }}>🇪🇨 Ecuador</option>
+          <option value="Perú" {{ 'selected' if cfg.empresa_pais == 'Perú' else '' }}>🇵🇪 Perú</option>
+          <option value="" {{ 'selected' if cfg.empresa_pais in ['', 'Latinoamérica'] else '' }}>🌎 Otro / Latinoamérica</option>
+        </select>
       </div>
       <div class="field">
         <label>Ciudad</label>
-        <input type="text" name="empresa_ciudad" value="{{ cfg.empresa_ciudad }}" placeholder="p. ej. Valencia">
+        <input type="text" name="empresa_ciudad" value="{{ cfg.empresa_ciudad }}" placeholder="p. ej. {{ _pais_form.ciudad_ejemplo or 'Tu Ciudad' }}" id="input-ciudad">
       </div>
       <div class="field">
         <label>Teléfono</label>
-        <input type="text" name="empresa_telefono" value="{{ cfg.empresa_telefono }}" placeholder="+58 212 000 0000">
+        <input type="text" name="empresa_telefono" value="{{ cfg.empresa_telefono }}" placeholder="{{ _pais_form.telefono_ejemplo or '+00 000 000 0000' }}" id="input-telefono">
       </div>
       <div class="field">
         <label>Email</label>
@@ -128,16 +141,52 @@
     <h2>Valores por defecto para presupuestos nuevos</h2>
     <div class="form-grid">
       <div class="field">
-        <label>Moneda</label>
-        <select name="moneda_default">
-          <option value="USD" {{ 'selected' if cfg.moneda_default == 'USD' else '' }}>USD (dólar)</option>
-          <option value="Bs" {{ 'selected' if cfg.moneda_default == 'Bs' else '' }}>Bs (bolívar)</option>
+        <label>Moneda por defecto</label>
+        <select name="moneda_default" id="select-moneda">
+          <option value="USD" {{ 'selected' if cfg.moneda_default in ['USD',''] else '' }}>USD ($) — dólar</option>
+          <option value="COP" {{ 'selected' if cfg.moneda_default == 'COP' else '' }}>COP ($) — peso colombiano</option>
+          <option value="MXN" {{ 'selected' if cfg.moneda_default == 'MXN' else '' }}>MXN ($) — peso mexicano</option>
+          <option value="PEN" {{ 'selected' if cfg.moneda_default == 'PEN' else '' }}>PEN (S/) — sol peruano</option>
+          <option value="VES" {{ 'selected' if cfg.moneda_default in ['VES','Bs'] else '' }}>VES (Bs) — bolívar venezolano</option>
+          <option value="CLP" {{ 'selected' if cfg.moneda_default == 'CLP' else '' }}>CLP ($) — peso chileno</option>
+          <option value="ARS" {{ 'selected' if cfg.moneda_default == 'ARS' else '' }}>ARS ($) — peso argentino</option>
+          <option value="UYU" {{ 'selected' if cfg.moneda_default == 'UYU' else '' }}>UYU ($U) — peso uruguayo</option>
+          <option value="PYG" {{ 'selected' if cfg.moneda_default == 'PYG' else '' }}>PYG (₲) — guaraní paraguayo</option>
+          <option value="BOB" {{ 'selected' if cfg.moneda_default == 'BOB' else '' }}>BOB (Bs) — boliviano</option>
+          <option value="DOP" {{ 'selected' if cfg.moneda_default == 'DOP' else '' }}>DOP (RD$) — peso dominicano</option>
+          <option value="PAB" {{ 'selected' if cfg.moneda_default == 'PAB' else '' }}>PAB (B/.) — balboa panameño</option>
+          <option value="CRC" {{ 'selected' if cfg.moneda_default == 'CRC' else '' }}>CRC (₡) — colón costarricense</option>
+          <option value="GTQ" {{ 'selected' if cfg.moneda_default == 'GTQ' else '' }}>GTQ (Q) — quetzal guatemalteco</option>
+          <option value="HNL" {{ 'selected' if cfg.moneda_default == 'HNL' else '' }}>HNL (L) — lempira hondureño</option>
+          <option value="NIO" {{ 'selected' if cfg.moneda_default == 'NIO' else '' }}>NIO (C$) — córdoba nicaragüense</option>
+          <option value="BRL" {{ 'selected' if cfg.moneda_default == 'BRL' else '' }}>BRL (R$) — real brasileño</option>
+          <option value="EUR" {{ 'selected' if cfg.moneda_default == 'EUR' else '' }}>EUR (€) — euro</option>
         </select>
+        <p class="hint">El catálogo guarda USD; si eliges COP/MXN/PEN se muestra convertido con tu tasa.</p>
       </div>
       <div class="field">
-        <label>IVA (%)</label>
-        <input type="number" name="iva_default" step="any" min="0" value="{{ cfg.iva_default }}">
-        <p class="hint">Alícuota general de Venezuela: 16% (déjala en 0 si no aplicas IVA).</p>
+        <label>IVA por defecto (%)</label>
+        <input type="number" name="iva_default" step="any" min="0" max="100" value="{{ cfg.iva_default }}" id="input-iva">
+        <p class="hint">Sugerido: VE 16% · CO 19% · MX 16% · PE 18% · EC 15% — déjalo en 0 si no aplica.</p>
+      </div>
+      <div class="field field-full tasa-box">
+        <label class="tasa-label-bold">Tasa de referencia USD → <span id="label-tasa-moneda">{{ cfg.moneda_default or 'COP' }}</span></label>
+        <p class="hint">Para convertir el catálogo USD a tu moneda local. 1 USD = X en tu moneda. Si tu moneda es USD, deja 1.</p>
+        <div class="tasa-flex">
+          <div class="tasa-flex-1">
+            <label class="tasa-label-sm">Tasa: 1 USD =</label>
+            <div class="tasa-input-row">
+              <input type="number" name="tasa_cambio" id="input-tasa" step="any" min="0" value="{{ cfg.tasa_cambio if cfg.tasa_cambio else '' }}" placeholder="{{ ('p. ej. ' ~ tasas[cfg.moneda_default]) if tasas.get(cfg.moneda_default) else 'Escribe la tasa oficial del día' }}" class="tasa-input">
+              <span id="label-tasa-simbolo" class="tasa-simbolo">{{ cfg.moneda_default or 'COP' }}</span>
+            </div>
+          </div>
+          <div class="tasa-fecha-col">
+            <label class="tasa-label-sm">Fecha de tasa</label>
+            <input type="date" name="fecha_tasa" id="input-fecha-tasa" value="{{ cfg.fecha_tasa.isoformat() if cfg.fecha_tasa else '' }}">
+          </div>
+          <button type="button" class="btn" id="btn-tasa-auto" class="tasa-btn-nowrap">↻ Tasa de hoy (auto)</button>
+        </div>
+        <p class="hint" id="hint-tasa" class="tasa-hint-mt"></p>
       </div>
       <div class="field">
         <label>Validez por defecto (días)</label>
@@ -189,7 +238,7 @@
           <label class="csp-s-bf283309bc"><input type="checkbox" name="estimar_tiempo_por_coste" value="1" {{ 'checked' if cfg.estimar_tiempo_por_coste else '' }}> Estimar horas desde el coste de mano de obra cuando la partida no tiene rendimientos de tiempo</label>
         </div>
       </div>
-      <div class="field field-full csp-s-30e51cbec9"><label class="csp-s-6b2a94ea3b">Funciones regionales de Venezuela</label><p class="hint">Se mantienen ocultas en el creador hasta que actives esta capacidad.</p><label class="csp-s-d6241da47c"><input type="checkbox" name="activar_funciones_venezuela" {{ 'checked' if cfg.activar_funciones_venezuela else '' }}> Activar opciones venezolanas</label><div class="csp-s-9ba0b3ba7c"><label><input type="checkbox" name="mostrar_numero_control" {{ 'checked' if cfg.mostrar_numero_control else '' }}> Número de control</label><label><input type="checkbox" name="mostrar_tasa_cambio" {{ 'checked' if cfg.mostrar_tasa_cambio else '' }}> Tasa y fecha</label><label><input type="checkbox" name="mostrar_total_bs" {{ 'checked' if cfg.mostrar_total_bs else '' }}> Equivalente en Bs.</label><label><input type="checkbox" name="mostrar_retenciones" {{ 'checked' if cfg.mostrar_retenciones else '' }}> Retenciones / exento</label><label><input type="checkbox" name="mostrar_clausula_cambiaria" {{ 'checked' if cfg.mostrar_clausula_cambiaria else '' }}> Cláusula cambiaria</label></div><label class="csp-s-726e8b317f">Datos bancarios y métodos de pago</label><textarea name="datos_bancarios" rows="3" placeholder="Banco, cuenta, pago móvil, Zelle, USDT…">{{ cfg.datos_bancarios }}</textarea></div>
+      <div class="field field-full csp-s-30e51cbec9"><label class="csp-s-6b2a94ea3b">🌎 Funciones regionales (opcionales)</label><p class="hint">Se mantienen ocultas en el creador hasta que actives esta capacidad. Se adaptan a tu país (número de control, tasa, equivalente, retenciones).</p><label class="csp-s-d6241da47c"><input type="checkbox" name="activar_funciones_venezuela" {{ 'checked' if cfg.activar_funciones_venezuela else '' }}> Activar opciones venezolanas</label><div class="csp-s-9ba0b3ba7c"><label><input type="checkbox" name="mostrar_numero_control" {{ 'checked' if cfg.mostrar_numero_control else '' }}> Número de control</label><label><input type="checkbox" name="mostrar_tasa_cambio" {{ 'checked' if cfg.mostrar_tasa_cambio else '' }}> Tasa y fecha</label><label><input type="checkbox" name="mostrar_total_bs" {{ 'checked' if cfg.mostrar_total_bs else '' }}> Equivalente en Bs.</label><label><input type="checkbox" name="mostrar_retenciones" {{ 'checked' if cfg.mostrar_retenciones else '' }}> Retenciones / exento</label><label><input type="checkbox" name="mostrar_clausula_cambiaria" {{ 'checked' if cfg.mostrar_clausula_cambiaria else '' }}> Cláusula cambiaria</label></div><label class="csp-s-726e8b317f">Datos bancarios y métodos de pago</label><textarea name="datos_bancarios" rows="3" placeholder="Banco, cuenta, pago móvil, Zelle, USDT…">{{ cfg.datos_bancarios }}</textarea></div>
       <div class="field field-full">
         <label>Información adicional por defecto</label>
         <textarea name="notas_default" rows="3" placeholder="Texto que se rellena automáticamente en cada presupuesto nuevo">{{ cfg.notas_default }}</textarea>
@@ -206,6 +255,118 @@
   </div>
   </fieldset>
 </form>
+<script id="paises-data" type="application/json" nonce="{{ request.state.csp_nonce }}">{{ paises | tojson }}</script>
+<script id="pais-generico-data" type="application/json" nonce="{{ request.state.csp_nonce }}">{{ pais_generico | tojson }}</script>
+<script id="tasas-data" type="application/json" nonce="{{ request.state.csp_nonce }}">{{ tasas | tojson }}</script>
+<script nonce="{{ request.state.csp_nonce }}">
+(function(){
+  var paisSel = document.getElementById('select-pais');
+  var etiquetaInput = document.getElementById('input-etiqueta');
+  var labelRif = document.getElementById('label-rif');
+  var monedaSel = document.getElementById('select-moneda');
+  var ivaInput = document.getElementById('input-iva');
+  var tasaInput = document.getElementById('input-tasa');
+  var fechaInput = document.getElementById('input-fecha-tasa');
+  var labelTasaMoneda = document.getElementById('label-tasa-moneda');
+  var labelTasaSimbolo = document.getElementById('label-tasa-simbolo');
+  var hintTasa = document.getElementById('hint-tasa');
+  var btnAuto = document.getElementById('btn-tasa-auto');
+  if(!paisSel) return;
+  // Datos inyectados por el servidor (app/paises.py + app/services/tasa.py):
+  // una sola fuente de verdad, sin tasas ni etiquetas duplicadas a mano.
+  var datos = { paises: [], generico: null, tasas: {} };
+  try { datos.paises = JSON.parse(document.getElementById('paises-data').textContent || '[]'); } catch(_){}
+  try { datos.generico = JSON.parse(document.getElementById('pais-generico-data').textContent || 'null'); } catch(_){}
+  try { datos.tasas = JSON.parse(document.getElementById('tasas-data').textContent || '{}'); } catch(_){}
+  if (!datos.generico) datos.generico = { nombre:'Latinoamérica', id_fiscal:'ID fiscal', iva:16, moneda:'USD' };
+  var porNombre = {};
+  datos.paises.forEach(function(p){ porNombre[p.nombre] = p; });
+  function cfgPais(nombre){ return porNombre[nombre || ''] || datos.generico; }
+
+  var rifInput = document.getElementById('input-rif');
+  var orgNombreInput = document.getElementById('input-org-nombre');
+  var empresaNombreInput = document.getElementById('input-empresa-nombre');
+  var legalInput = document.getElementById('input-legal');
+  var ciudadInput = document.getElementById('input-ciudad');
+  var telInput = document.getElementById('input-telefono');
+
+  function hintParaMoneda(moneda){
+    if(moneda === 'USD' || moneda === 'PAB') return 'Tu moneda es ' + moneda + ' — no necesitas tasa.';
+    var tasa = datos.tasas[moneda];
+    if(tasa) return 'Sugerido: 1 USD = ' + tasa + ' ' + moneda + '. Confírmalo o ajusta a tu fuente oficial.';
+    return 'Sin tasa verificada para ' + moneda + ' — pulsa «Tasa de hoy» o escribe la oficial.';
+  }
+
+  function actualizarPorPais(autoTasa){
+    var p = cfgPais(paisSel.value);
+    if(etiquetaInput && !etiquetaInput.dataset.tocado) { etiquetaInput.value = p.id_fiscal || 'ID fiscal'; if(labelRif) labelRif.textContent = p.id_fiscal || 'ID fiscal'; }
+    if(rifInput && p.id_fiscal_placeholder) rifInput.placeholder = p.id_fiscal_placeholder;
+    if(orgNombreInput && p.ciudad_ejemplo) orgNombreInput.placeholder = 'p. ej. Reformas ' + p.ciudad_ejemplo + (p.razon_social_ejemplo ? ' ' + p.razon_social_ejemplo : '');
+    if(empresaNombreInput && p.ciudad_ejemplo) empresaNombreInput.placeholder = 'p. ej. Reformas ' + p.ciudad_ejemplo + (p.razon_social_ejemplo ? ' ' + p.razon_social_ejemplo : '');
+    if(legalInput && p.ciudad_ejemplo) legalInput.placeholder = 'p. ej. Grupo Constructor ' + p.ciudad_ejemplo + (p.razon_social_ejemplo ? ' ' + p.razon_social_ejemplo : '');
+    if(ciudadInput && p.ciudad_ejemplo) ciudadInput.placeholder = 'p. ej. ' + p.ciudad_ejemplo;
+    if(telInput && p.telefono_ejemplo) telInput.placeholder = p.telefono_ejemplo;
+    if(ivaInput && !ivaInput.dataset.tocado) ivaInput.value = p.iva;
+    if(monedaSel && !monedaSel.dataset.tocado) monedaSel.value = p.moneda;
+    if(labelTasaMoneda) labelTasaMoneda.textContent = p.moneda;
+    if(labelTasaSimbolo) labelTasaSimbolo.textContent = p.moneda;
+    if(hintTasa) hintTasa.textContent = hintParaMoneda(p.moneda);
+    if(autoTasa && tasaInput && !tasaInput.value && datos.tasas[p.moneda]){
+      tasaInput.value = datos.tasas[p.moneda];
+      if(fechaInput && !fechaInput.value) fechaInput.value = new Date().toISOString().slice(0,10);
+    }
+  }
+  // marca tocado si el usuario edita manual
+  [etiquetaInput, ivaInput, monedaSel].forEach(function(el){
+    if(!el) return;
+    el.addEventListener('change', function(){ el.dataset.tocado='1'; });
+    el.addEventListener('input', function(){ el.dataset.tocado='1'; });
+  });
+  paisSel.addEventListener('change', function(){
+    // al cambiar país, resetea tocado para sugerir de nuevo
+    if(etiquetaInput) delete etiquetaInput.dataset.tocado;
+    if(ivaInput) delete ivaInput.dataset.tocado;
+    if(monedaSel) delete monedaSel.dataset.tocado;
+    actualizarPorPais(true);
+  });
+  // moneda cambia -> actualiza label tasa y la sugerencia
+  if(monedaSel){
+    monedaSel.addEventListener('change', function(){
+      if(labelTasaMoneda) labelTasaMoneda.textContent = monedaSel.value;
+      if(labelTasaSimbolo) labelTasaSimbolo.textContent = monedaSel.value;
+      if(hintTasa) hintTasa.textContent = hintParaMoneda(monedaSel.value);
+    });
+  }
+  if(btnAuto){
+    btnAuto.addEventListener('click', function(){
+      var moneda = monedaSel ? monedaSel.value : 'COP';
+      if(moneda === 'VES' || moneda === 'Bs') moneda='VES';
+      btnAuto.textContent='⏳ Consultando...';
+      btnAuto.disabled=true;
+      fetch('/configuracion/tasa-auto?moneda='+encodeURIComponent(moneda), {headers:{'Accept':'application/json'}})
+        .then(function(r){ return r.json(); })
+        .then(function(j){
+          if(j.ok && j.tasa){
+            tasaInput.value = j.tasa;
+            if(fechaInput) fechaInput.value = j.fecha || new Date().toISOString().slice(0,10);
+            hintTasa.textContent = 'Tasa de hoy: 1 USD = '+j.tasa+' '+moneda+' (fuente: open.er-api.com)';
+          } else {
+            hintTasa.textContent = 'No se pudo traer la tasa: '+(j.error||'sin conexión')+'. Revisa manual.';
+          }
+        })
+        .catch(function(e){
+          hintTasa.textContent = 'Sin conexión — pon la tasa manual.';
+        })
+        .finally(function(){
+          btnAuto.textContent='↻ Tasa de hoy (auto)';
+          btnAuto.disabled=false;
+        });
+    });
+  }
+  // inicial
+  actualizarPorPais(false);
+})();
+</script>
 
 {% if puede_editar %}
 <div class="card csp-s-a3c9c5afaa">

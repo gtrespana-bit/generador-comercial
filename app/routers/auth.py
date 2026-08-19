@@ -185,11 +185,28 @@ async def registrar_cuenta(request: Request):
         email=str(form.get("email") or ""),
         nombre=str(form.get("nombre") or ""),
     )
+    # País elegido en el registro: fija cookie para que la creación de la
+    # organización nazca ya configurada (moneda/IVA/ID fiscal/tasa).
+    pais_reg = str(form.get("pais") or "").strip().upper()
+    from ..paises import PAISES
+    if pais_reg not in PAISES:
+        # fallback a cookie previa o VE
+        pais_reg = str(request.cookies.get("cotizat_pais", "") or "").strip().upper()
+        if pais_reg not in PAISES:
+            pais_reg = "VE"
+    # Helper para fijar cookie de país en cualquier redirect de registro
+    def _resp_con_pais(resp):
+        try:
+            resp.set_cookie("cotizat_pais", pais_reg, max_age=365*24*3600, path="/", samesite="lax", httponly=False)
+        except Exception:
+            pass
+        return resp
+
     if result.tokens is None:
         # Mensaje único tanto para el alta nueva como para el email ya
         # registrado: GoTrue oculta a propósito cuál de los dos casos es, y
         # diferenciarlos aquí permitiría enumerar qué emails tienen cuenta.
-        return _redirect(
+        resp = _redirect(
             "/acceso",
             msg=(
                 "Revisa tu email y abre el enlace de confirmación para activar la "
@@ -197,9 +214,10 @@ async def registrar_cuenta(request: Request):
                 "tu contraseña o usa «Olvidé mi contraseña»."
             ),
         )
+        return _resp_con_pais(resp)
     response = RedirectResponse(destino, status_code=303)
     set_auth_cookies(response, result.tokens, settings.cookie_secure)
-    return response
+    return _resp_con_pais(response)
 
 
 def _registrar_consentimiento_de_registro(request: Request, *, email: str, nombre: str):
@@ -588,7 +606,25 @@ async def crear_organizacion_web(
     # rollback hasta él. Con la Configuracion pendiente en la sesión, el autoflush
     # la metería dentro de ese punto y el rollback se la llevaría por delante,
     # dejando la organización sin configuración.
-    db.add(Configuracion(organizacion_id=organizacion.id))
+    # País -> defaults (moneda/IVA/ID fiscal/tasa) para que nazca configurada
+    pais_org = str(form.get("pais") or "").strip().upper()
+    from ..paises import PAISES, PAIS_GENERICO
+    from ..services.tasa import tasa_sugerida
+    if pais_org not in PAISES:
+        pais_org = str(request.cookies.get("cotizat_pais", "") or "").strip().upper()
+        if pais_org not in PAISES:
+            pais_org = "VE"
+    _pais_data = PAISES.get(pais_org, PAIS_GENERICO)
+    _cfg_init = Configuracion(
+        organizacion_id=organizacion.id,
+        empresa_pais=_pais_data["nombre"],
+        moneda_default=_pais_data["moneda"],
+        iva_default=float(_pais_data["iva"]),
+        etiqueta_id_fiscal=_pais_data["id_fiscal"],
+        tasa_cambio=tasa_sugerida(_pais_data["moneda"]) if _pais_data["moneda"] not in ("USD", "PAB") else 1.0,
+        fecha_tasa=date.today() if _pais_data["moneda"] not in ("USD", "PAB") else None,
+    )
+    db.add(_cfg_init)
     db.commit()
 
     # Sin prueba, la persona va a la pantalla de planes: negarla nunca puede
@@ -966,6 +1002,9 @@ def bienvenida(request: Request, db: Session = Depends(get_db)):
         resumen = getattr(request.state, "licencia_resumen", None) or {}
         if not resumen.get("activo"):
             compra_pendiente_ficha = plan_info(plan_recordado)
+    from ..paises import PAIS_GENERICO, lista_paises
+    from ..services.tasa import TASAS_SUGERIDAS
+
     return TEMPLATES.TemplateResponse(
         request,
         "onboarding.html",
@@ -976,6 +1015,11 @@ def bienvenida(request: Request, db: Session = Depends(get_db)):
             # porque viene de la query y acaba pintándose en la página.
             "msg": request.query_params.get("msg", "")[:300],
             "compra_pendiente_ficha": compra_pendiente_ficha,
+            # Una sola fuente de verdad para el auto-config por país: los JS
+            # del wizard leen estos datos, no valores duplicados a mano.
+            "paises": lista_paises(),
+            "pais_generico": PAIS_GENERICO,
+            "tasas": TASAS_SUGERIDAS,
         },
     )
 
@@ -1000,6 +1044,9 @@ async def finalizar_bienvenida(request: Request, db: Session = Depends(get_db)):
         "empresa_email": form.get("empresa_email", ""),
         "moneda_default": form.get("moneda_default", "USD"),
         "iva_default": _f(form.get("iva_default"), 16.0),
+        "etiqueta_id_fiscal": form.get("etiqueta_id_fiscal", "RIF"),
+        "tasa_cambio": form.get("tasa_cambio", ""),
+        "fecha_tasa": form.get("fecha_tasa", ""),
     }
     try:
         cfg = completar_onboarding(db, datos, str(form.get("modo_inicio", "")))

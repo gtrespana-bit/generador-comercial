@@ -65,6 +65,17 @@
           <input id="signup-name" name="nombre" autocomplete="name" maxlength="200" required {% if not auth_configured %}disabled{% endif %}>
         </div>
         <div class="field">
+          <label for="signup-pais">País <span class="hint">(configura moneda, IVA e ID fiscal)</span></label>
+          <select id="signup-pais" name="pais" required {% if not auth_configured %}disabled{% endif %}>
+            <option value="VE">🇻🇪 Venezuela — RIF 16% USD</option>
+            <option value="CO">🇨🇴 Colombia — NIT 19% COP</option>
+            <option value="MX">🇲🇽 México — RFC 16% MXN</option>
+            <option value="EC">🇪🇨 Ecuador — RUC 15% USD</option>
+            <option value="PE">🇵🇪 Perú — RUC 18% PEN</option>
+          </select>
+          <p class="hint">Elige tu país para que tu espacio nazca ya configurado. Podrás cambiarlo después en Configuración.</p>
+        </div>
+        <div class="field">
           <label for="signup-email">Email</label>
           <input id="signup-email" name="email" type="email" autocomplete="email" required {% if not auth_configured %}disabled{% endif %}>
         </div>
@@ -90,5 +101,20 @@
     </section>
   </main>
 </div>
+<script nonce="{{ request.state.csp_nonce }}">
+(function(){
+  var sel=document.getElementById('signup-pais');
+  if(!sel) return;
+  try{
+    var m=document.cookie.match(/(?:^|; )cotizat_pais=([^;]*)/);
+    var code=m?decodeURIComponent(m[1]).toUpperCase():'';
+    if(code && sel.querySelector('option[value="'+code+'"]')) sel.value=code;
+    else {
+      // fallback a VE si no hay cookie (histórico)
+      if(!sel.value) sel.value='VE';
+    }
+  }catch(e){}
+})();
+</script>
 </body>
 </html>

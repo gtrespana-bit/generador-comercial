@@ -68,11 +68,12 @@ def generar_contrato_pdf(presupuesto, config) -> io.BytesIO:
     empresa_dir = getattr(config, "empresa_direccion", "") or "—"
 
     cliente = presupuesto.cliente
+    etiqueta_fiscal = getattr(config, "etiqueta_id_fiscal", "") or "RIF"
     filas_partes = [
         [_p("EL CONTRATISTA", etiqueta), _p("EL CLIENTE", etiqueta)],
         [
-            _p(f"<b>{empresa_legal}</b><br/>RIF/C.I.: {empresa_rif}<br/>Dirección: {empresa_dir}", normal),
-            _p(f"<b>{cliente.nombre}</b><br/>RIF/C.I.: {cliente.rif or '—'}<br/>Dirección: {cliente.direccion or '—'}", normal),
+            _p(f"<b>{empresa_legal}</b><br/>{etiqueta_fiscal}: {empresa_rif}<br/>Dirección: {empresa_dir}", normal),
+            _p(f"<b>{cliente.nombre}</b><br/>{etiqueta_fiscal}: {cliente.rif or '—'}<br/>Dirección: {cliente.direccion or '—'}", normal),
         ],
     ]
     tabla_partes = Table(filas_partes, colWidths=[8.2 * cm, 8.2 * cm])

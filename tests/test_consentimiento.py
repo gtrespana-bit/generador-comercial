@@ -486,12 +486,17 @@ def test_las_funciones_son_de_propiedad_administrativa_y_solo_para_la_app(migrac
 def test_la_migracion_encadena_con_la_cabeza_anterior(migracion):
     from app.database import EXPECTED_ALEMBIC_HEAD
     from migrations.versions import (
+        c8f1a2b3d4e5_add_etiqueta_fiscal_latam as etiqueta_migracion,
         d2a7c9e4f1b3_audit_log_and_complete_baja as auditoria_migracion,
+        d9e2f3a4b5c6_add_tasa_cambio_latam as tasa_migracion,
     )
 
-    # El consentimiento ya no es la cabeza: el registro de auditoría
-    # (E4-026/027) la sigue y es lo que el runtime exige.
-    assert auditoria_migracion.revision == EXPECTED_ALEMBIC_HEAD
+    # El consentimiento ya no es la cabeza: tras el registro de auditoría
+    # (E4-026/027) vienen las migraciones LatAm (S2) de etiqueta fiscal y
+    # tasa de referencia; la última es lo que el runtime exige.
+    assert tasa_migracion.revision == EXPECTED_ALEMBIC_HEAD
+    assert tasa_migracion.down_revision == etiqueta_migracion.revision
+    assert etiqueta_migracion.down_revision == auditoria_migracion.revision
     assert auditoria_migracion.down_revision == migracion.revision
     assert migracion.down_revision == "a3d9c1e75b28"
 

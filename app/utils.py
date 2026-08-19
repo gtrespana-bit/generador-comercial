@@ -5,7 +5,34 @@ con coma (1.234.567,89). Cantidades con punto decimal (12.50 m2),
 igual que en los presupuestos de referencia.
 """
 
-SIMBOLOS = {"USD": "$", "Bs": "Bs"}
+# Semana 2 — Bloque B: catálogo de símbolos por ISO 4217 (20 monedas LatAm + extras)
+# Bs se mantiene como alias histórico de VES para no romper presupuestos antiguos.
+SIMBOLOS = {
+    "USD": "$",
+    "VES": "Bs",
+    "Bs": "Bs",
+    "COP": "$",
+    "MXN": "$",
+    "PEN": "S/",
+    "CLP": "$",
+    "ARS": "$",
+    "UYU": "$U",
+    "PYG": "₲",
+    "BOB": "Bs",
+    "DOP": "RD$",
+    "PAB": "B/.",
+    "CRC": "₡",
+    "GTQ": "Q",
+    "HNL": "L",
+    "NIO": "C$",
+    "BRL": "R$",
+    "EUR": "€",
+}
+
+# Lista blanca de monedas aceptadas en formularios (ISO + alias histórico)
+MONEDAS_SOPORTADAS: tuple[str, ...] = tuple(sorted(set(SIMBOLOS.keys()) | {"USD", "VES", "Bs"}))
+# Normalización: VES/Bs son la misma moneda a efectos de validación
+_ALIAS_MONEDA = {"VES": "VES", "Bs": "VES"}
 
 # Sustituciones para glifos que no siempre están en las fuentes del PDF
 _SANEADO = {
@@ -32,9 +59,41 @@ def fmt_num(valor, decimales=2) -> str:
     return s.replace(",", "X").replace(".", ",").replace("X", ".")
 
 
+def normalizar_moneda(moneda: str | None, defecto: str = "USD") -> str:
+    """Normaliza un código de moneda: mayúsculas, alias Bs→VES, fallback."""
+    if not moneda:
+        return defecto
+    m = str(moneda).strip().upper()
+    # Alias histórico: Bs es VES
+    if m == "BS":
+        return "VES"
+    if m in SIMBOLOS or m in MONEDAS_SOPORTADAS:
+        # Si es alias, devuelve canónico VES
+        return _ALIAS_MONEDA.get(m, m)
+    return defecto
+
+
+def es_moneda_soportada(moneda: str | None) -> bool:
+    if not moneda:
+        return False
+    return str(moneda).strip().upper() in MONEDAS_SOPORTADAS or str(moneda).strip().upper() == "BS"
+
+
 def fmt_monto(valor, moneda="USD") -> str:
     """Importe con símbolo de moneda como sufijo: 35.755,89 $ / 35.755,89 Bs"""
-    return f"{fmt_num(valor)} {SIMBOLOS.get(moneda, moneda)}"
+    # Normaliza Bs→VES para que el símbolo sea consistente
+    clave = str(moneda or "USD").strip()
+    # Respeta Bs si viene literal (presupuestos antiguos)
+    if clave == "Bs":
+        clave = "VES"
+    else:
+        clave = clave.upper() if clave else "USD"
+    return f"{fmt_num(valor)} {SIMBOLOS.get(clave, moneda)}"
+
+
+def fmt_monto_raw(valor, moneda="USD") -> str:
+    """Alias para tests que pasan 'Bs' literal y esperan 'Bs'."""
+    return fmt_monto(valor, moneda)
 
 
 def fmt_precio_u(valor, moneda="USD", unidad="") -> str:

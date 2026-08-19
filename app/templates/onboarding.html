@@ -122,22 +122,23 @@
           <span class="panel-kicker">Paso 1 de 3</span>
           <h2>Identifica tu empresa</h2>
           <p class="lead">Estos datos aparecerán en tus documentos. Solo el nombre comercial es obligatorio para comenzar.</p>
+          {% set _pais_form = pais_de_nombre(cfg.empresa_pais or '') %}
           <div class="grid">
             <div class="field">
               <label for="empresa_nombre">Nombre comercial *</label>
-              <input id="empresa_nombre" name="empresa_nombre" required maxlength="200" autocomplete="organization" placeholder="p. ej. Constructora Valencia">
+              <input id="empresa_nombre" name="empresa_nombre" required maxlength="200" autocomplete="organization" placeholder="p. ej. Constructora {{ _pais_form.ciudad_ejemplo or 'Los Andes' }}">
             </div>
             <div class="field">
               <label for="empresa_legal">Razón social</label>
-              <input id="empresa_legal" name="empresa_legal" maxlength="250" placeholder="p. ej. Constructora Valencia C.A.">
+              <input id="empresa_legal" name="empresa_legal" maxlength="250" placeholder="p. ej. Constructora {{ _pais_form.ciudad_ejemplo or 'Los Andes' }}{{ (' ' ~ _pais_form.razon_social_ejemplo) if _pais_form.razon_social_ejemplo else '' }}">
             </div>
             <div class="field">
-              <label for="empresa_rif">RIF</label>
-              <input id="empresa_rif" name="empresa_rif" maxlength="50" placeholder="J-XXXXXXXX-X">
+              <label for="empresa_rif"><span id="rif-label">{{ cfg.etiqueta_id_fiscal or 'ID fiscal' }}</span></label>
+              <input id="empresa_rif" name="empresa_rif" maxlength="50" placeholder="{{ _pais_form.id_fiscal_placeholder or 'RIF, NIT, RUC, RFC…' }}">
             </div>
             <div class="field">
               <label for="empresa_telefono">Teléfono</label>
-              <input id="empresa_telefono" name="empresa_telefono" maxlength="50" autocomplete="tel" placeholder="+58 412 000 0000">
+              <input id="empresa_telefono" name="empresa_telefono" maxlength="50" autocomplete="tel" placeholder="{{ _pais_form.telefono_ejemplo or '+00 000 000 0000' }}">
             </div>
             <div class="field">
               <label for="empresa_email">Email</label>
@@ -145,24 +146,53 @@
             </div>
             <div class="field">
               <label for="empresa_pais">País</label>
-              <input id="empresa_pais" name="empresa_pais" maxlength="80" value="{{ cfg.empresa_pais or 'Venezuela' }}" autocomplete="country-name">
+              <select id="empresa_pais" name="empresa_pais">
+                <option value="Venezuela" {{ 'selected' if (cfg.empresa_pais or 'Venezuela') == 'Venezuela' else '' }}>🇻🇪 Venezuela</option>
+                <option value="Colombia" {{ 'selected' if cfg.empresa_pais == 'Colombia' else '' }}>🇨🇴 Colombia</option>
+                <option value="México" {{ 'selected' if cfg.empresa_pais == 'México' else '' }}>🇲🇽 México</option>
+                <option value="Ecuador" {{ 'selected' if cfg.empresa_pais == 'Ecuador' else '' }}>🇪🇨 Ecuador</option>
+                <option value="Perú" {{ 'selected' if cfg.empresa_pais == 'Perú' else '' }}>🇵🇪 Perú</option>
+              </select>
             </div>
             <div class="field">
               <label for="empresa_ciudad">Ciudad</label>
-              <input id="empresa_ciudad" name="empresa_ciudad" maxlength="120" autocomplete="address-level2" placeholder="p. ej. Valencia">
+              <input id="empresa_ciudad" name="empresa_ciudad" maxlength="120" autocomplete="address-level2" placeholder="p. ej. {{ _pais_form.ciudad_ejemplo or 'Tu ciudad' }}">
             </div>
             <div class="field">
               <label for="empresa_direccion">Dirección</label>
               <input id="empresa_direccion" name="empresa_direccion" autocomplete="street-address" placeholder="Oficina o showroom">
             </div>
             <div class="field">
+              <label for="etiqueta_id_fiscal">Etiqueta ID fiscal</label>
+              <input id="etiqueta_id_fiscal" name="etiqueta_id_fiscal" maxlength="20" value="{{ cfg.etiqueta_id_fiscal or 'RIF' }}" placeholder="RIF, NIT, RFC, RUC...">
+              <span class="hint">Se muestra en clientes y PDF.</span>
+            </div>
+            <div class="field">
               <label for="moneda_default">Moneda principal</label>
-              <select id="moneda_default" name="moneda_default"><option value="USD">USD (dólar)</option><option value="Bs">Bs (bolívar)</option></select>
+              <select id="moneda_default" name="moneda_default">
+                <option value="USD" {{ 'selected' if (cfg.moneda_default or 'USD') in ['USD', ''] else '' }}>USD ($) — dólar</option>
+                <option value="COP" {{ 'selected' if cfg.moneda_default == 'COP' else '' }}>COP ($) — peso colombiano</option>
+                <option value="MXN" {{ 'selected' if cfg.moneda_default == 'MXN' else '' }}>MXN ($) — peso mexicano</option>
+                <option value="PEN" {{ 'selected' if cfg.moneda_default == 'PEN' else '' }}>PEN (S/) — sol peruano</option>
+                <option value="VES" {{ 'selected' if cfg.moneda_default in ['VES', 'Bs'] else '' }}>VES (Bs) — bolívar</option>
+              </select>
             </div>
             <div class="field">
               <label for="iva_default">IVA por defecto (%)</label>
-              <input id="iva_default" name="iva_default" type="number" min="0" max="100" step="0.01" value="16">
-              <span class="hint">Puedes usar 0 si no corresponde. Esto no convierte el documento en factura fiscal.</span>
+              <input id="iva_default" name="iva_default" type="number" min="0" max="100" step="0.01" value="{{ cfg.iva_default or 16 }}">
+              <span class="hint">Sugerido según país. Puedes usar 0 si no aplica.</span>
+            </div>
+            <div class="field">
+              <label for="tasa_cambio">Tasa: 1 USD =</label>
+              <div class="tasa-row">
+                <input id="tasa_cambio" name="tasa_cambio" type="number" step="any" min="0" value="{{ cfg.tasa_cambio if cfg.tasa_cambio else '' }}" placeholder="{{ ('p. ej. ' ~ tasas[cfg.moneda_default]) if tasas.get(cfg.moneda_default) else 'Escribe la tasa oficial del día' }}" class="tasa-input-flex">
+                <span id="label-tasa-moneda-onb" class="tasa-label">{{ cfg.moneda_default or 'COP' }}</span>
+              </div>
+              <span class="hint" id="hint-tasa-onb"></span>
+            </div>
+            <div class="field">
+              <label for="fecha_tasa">Fecha de tasa</label>
+              <input id="fecha_tasa" name="fecha_tasa" type="date" value="{{ cfg.fecha_tasa.isoformat() if cfg.fecha_tasa else '' }}">
             </div>
             <div class="field full">
               <label for="logo">Logotipo <span class="hint">(opcional)</span></label>
@@ -216,6 +246,9 @@
     </div>
   </main>
 </div>
+<script id="paises-data" type="application/json" nonce="{{ request.state.csp_nonce }}">{{ paises | tojson }}</script>
+<script id="pais-generico-data" type="application/json" nonce="{{ request.state.csp_nonce }}">{{ pais_generico | tojson }}</script>
+<script id="tasas-data" type="application/json" nonce="{{ request.state.csp_nonce }}">{{ tasas | tojson }}</script>
 <script nonce="{{ request.state.csp_nonce }}">
 (function () {
   var panels = Array.prototype.slice.call(document.querySelectorAll('.wizard-panel'));
@@ -246,6 +279,71 @@
     return true;
   }
 
+  // Auto-config por país — lee los datos inyectados por el servidor
+  // (app/paises.py + app/services/tasa.py): una sola fuente de verdad.
+  (function(){
+    var paisSel=document.getElementById('empresa_pais');
+    if(!paisSel) return;
+    var datos = { paises: [], generico: null, tasas: {} };
+    try { datos.paises = JSON.parse(document.getElementById('paises-data').textContent || '[]'); } catch(_){}
+    try { datos.generico = JSON.parse(document.getElementById('pais-generico-data').textContent || 'null'); } catch(_){}
+    try { datos.tasas = JSON.parse(document.getElementById('tasas-data').textContent || '{}'); } catch(_){}
+    if (!datos.generico) datos.generico = { nombre:'Latinoamérica', id_fiscal:'ID fiscal', iva:16, moneda:'USD' };
+    var porNombre = {};
+    datos.paises.forEach(function(p){ porNombre[p.nombre] = p; });
+    function cfgPais(nombre){ return porNombre[nombre || ''] || datos.generico; }
+
+    var etiquetaInput=document.getElementById('etiqueta_id_fiscal');
+    var rifLabel=document.getElementById('rif-label');
+    var rifInput=document.getElementById('empresa_rif');
+    var nombreInput=document.getElementById('empresa_nombre');
+    var legalInput=document.getElementById('empresa_legal');
+    var telInput=document.getElementById('empresa_telefono');
+    var ciudadInput=document.getElementById('empresa_ciudad');
+    var monedaSel=document.getElementById('moneda_default');
+    var ivaInput=document.getElementById('iva_default');
+    var tasaInput=document.getElementById('tasa_cambio');
+    var fechaInput=document.getElementById('fecha_tasa');
+    var labelTasa=document.getElementById('label-tasa-moneda-onb');
+    var hintTasa=document.getElementById('hint-tasa-onb');
+
+    function aplicarPais(autoTasa){
+      var p = cfgPais(paisSel.value);
+      // Etiqueta del ID fiscal (RIF/NIT/RFC/RUC…) y su ejemplo de formato
+      if(etiquetaInput && !etiquetaInput.dataset.tocado) etiquetaInput.value = p.id_fiscal || 'ID fiscal';
+      if(rifLabel) rifLabel.textContent = p.id_fiscal || 'ID fiscal';
+      if(rifInput && p.id_fiscal_placeholder) rifInput.placeholder = p.id_fiscal_placeholder;
+      // Ejemplos locales: teléfono, razón social y ciudad
+      if(telInput && p.telefono_ejemplo) telInput.placeholder = p.telefono_ejemplo;
+      if(ciudadInput && p.ciudad_ejemplo) ciudadInput.placeholder = 'p. ej. ' + p.ciudad_ejemplo;
+      if(nombreInput && p.ciudad_ejemplo) nombreInput.placeholder = 'p. ej. Constructora ' + p.ciudad_ejemplo;
+      if(legalInput && p.ciudad_ejemplo) legalInput.placeholder = 'p. ej. Constructora ' + p.ciudad_ejemplo + (p.razon_social_ejemplo ? ' ' + p.razon_social_ejemplo : '');
+      // Moneda e IVA sugeridos
+      if(ivaInput && !ivaInput.dataset.tocado) ivaInput.value = p.iva;
+      if(monedaSel && !monedaSel.dataset.tocado) monedaSel.value = p.moneda;
+      if(labelTasa) labelTasa.textContent = p.moneda;
+      // Tasa: solo valores verificados por el servidor; si no hay, avisa
+      var tasa = datos.tasas[p.moneda];
+      if(tasaInput) tasaInput.placeholder = (tasa !== null && tasa !== undefined) ? ('p. ej. ' + tasa) : 'Escribe la tasa oficial del día';
+      if(hintTasa){
+        if(p.moneda === 'USD' || p.moneda === 'PAB') hintTasa.textContent = 'Tu moneda es ' + p.moneda + ' — no necesitas tasa.';
+        else if(tasa) hintTasa.textContent = 'Sugerido para ' + p.nombre + ': 1 USD = ' + tasa + ' ' + p.moneda + '. Confírmalo o ajústalo a tu fuente oficial.';
+        else hintTasa.textContent = 'Sin tasa verificada para ' + p.moneda + ' — escribe la tasa oficial del día.';
+      }
+      if(autoTasa && tasaInput && !tasaInput.value && tasa){
+        tasaInput.value = tasa;
+        if(fechaInput && !fechaInput.value) fechaInput.value = new Date().toISOString().slice(0,10);
+      }
+    }
+    [etiquetaInput,ivaInput,monedaSel,tasaInput].forEach(function(el){ if(el) el.addEventListener('input', function(){ el.dataset.tocado='1'; }); });
+    paisSel.addEventListener('change', function(){
+      if(etiquetaInput) delete etiquetaInput.dataset.tocado;
+      if(ivaInput) delete ivaInput.dataset.tocado;
+      if(monedaSel) delete monedaSel.dataset.tocado;
+      aplicarPais(true);
+    });
+    aplicarPais(false);
+  })();
   function value(id) { var el = document.getElementById(id); return el ? el.value.trim() : ''; }
   function updateSummary() {
     var mode = form.querySelector('input[name="modo_inicio"]:checked');
