@@ -74,6 +74,8 @@ Orden completo desde la última base verificada (`d4e2f6a8b0c1`, 18/08) hasta el
 
 Para saber cuántos faltan: `SELECT version_num FROM public.alembic_version;` en Supabase SQL Editor y ejecutar solo los que estén **después** del valor devuelto. Alternativa sin ambigüedad: `MIGRATION_DATABASE_URL=postgresql://administrador:…@host:5432/cotizat alembic upgrade head` aplica todo lo pendiente en orden. Hasta completar la cadena, `/readyz` responde 503 (la guarda de head funciona así a propósito).
 
+**Actualización 19/08/2026 (verificado por el titular):** Supabase responde `alembic_version = d9e2f3a4b5c6` y la comprobación estructural confirma el esquema completo: `columnas_latam = 3` (`etiqueta_id_fiscal`, `tasa_cambio`, `fecha_tasa` en `configuracion`), `tablas_previas = 3` (`pruebas_concedidas`, `consentimientos`, `eventos_auditoria`) y `columnas_compra = 2` (`licencia_inicio`, `licencia_vence` en `compras_plan`). **Base de datos lista; falta solo el despliegue del código** (PR hacia `main` → Vercel) para que el runtime deje de esperar `d2a7c9e4f1b3` y exija `d9e2f3a4b5c6`. Tras el deploy, verificar `GET /readyz → {"ok": true, "alembic": "head:d9e2f3a4b5c6"}`.
+
 ## Rol de runtime y migraciones
 
 `c93e7a4d20f1` crea `cotizat_app` como rol grupal `NOLOGIN`, `NOSUPERUSER` y `NOBYPASSRLS`; deliberadamente no contiene contraseña. El login de runtime debe crearse fuera de Git, con una contraseña generada en el gestor de secretos del proveedor, y recibir únicamente:
