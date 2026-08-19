@@ -40,7 +40,7 @@
 | 7. Recursos por país | ✅ Completado | 2026-08-19 | Modelo híbrido, investigación inicial, matriz completa, panel, historial, procedencia y metadatos operativos implementados |
 | 8. Mano de obra y rendimientos | ✅ Completado | 2026-08-19 | Recursos operativos, cuadrillas, rendimientos, equipos y transporte por modalidad implementados |
 | 9. Históricos y congelación | ✅ Completado | 2026-08-19 | Versiones, proyectos, cambios, pagos, facturas y procedencia de recursos protegidos |
-| 10. Integración con etapa 6 | ⬜ Pendiente | — | — |
+| 10. Integración con etapa 6 | ✅ Completado | 2026-08-19 | Proyectos, cambios, pagos, facturas y saldos con moneda contractual congelada |
 | 11. Pruebas y aceptación | ⬜ Pendiente | — | — |
 | 12. Documentación y cierre | ⬜ Pendiente | — | — |
 
