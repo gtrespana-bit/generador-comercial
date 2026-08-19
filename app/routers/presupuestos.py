@@ -1533,7 +1533,7 @@ async def crear_presupuesto(request: Request, db: Session = Depends(get_db)):
         direccion_obra=str(form.get("direccion_obra", "")).strip(),
         codigo_postal=str(form.get("codigo_postal", "")).strip(),
         validez_dias=int(_f(form.get("validez_dias"), 30)),
-        moneda=normalizar_moneda(form.get("moneda"), "USD"),
+        moneda=("USD" if str(cfg.empresa_pais or "").strip().lower() == "venezuela" and normalizar_moneda(form.get("moneda"), "USD") == "VES" else normalizar_moneda(form.get("moneda"), "USD")),
         tipo_cambio=(_f(form.get("tipo_cambio"), None) if str(form.get("tipo_cambio", "")).strip() else None) or (cfg.tasa_cambio if getattr(cfg, "tasa_cambio", None) and str(form.get("tipo_cambio", "")).strip() == "" and getattr(cfg, "moneda_default", "USD") not in ("USD", "PAB") else None),
         fuente_tipo_cambio=str(form.get("fuente_tipo_cambio", "") or getattr(cfg, "fuente_tipo_cambio", "") or "").strip()[:120],
         impuesto_pct=_f(form.get("impuesto_pct"), 16.0),
@@ -3028,7 +3028,7 @@ async def actualizar_presupuesto(presupuesto_id: int, request: Request, db: Sess
     presupuesto.direccion_obra = str(form.get("direccion_obra", "")).strip()
     presupuesto.codigo_postal = str(form.get("codigo_postal", "")).strip()
     presupuesto.validez_dias = int(_f(form.get("validez_dias"), 30))
-    presupuesto.moneda = normalizar_moneda(form.get("moneda"), "USD")
+    presupuesto.moneda = "USD" if str(cfg.empresa_pais or "").strip().lower() == "venezuela" and normalizar_moneda(form.get("moneda"), "USD") == "VES" else normalizar_moneda(form.get("moneda"), "USD")
     presupuesto.tipo_cambio = _f(form.get("tipo_cambio"), None) if str(form.get("tipo_cambio", "")).strip() else None
     presupuesto.fuente_tipo_cambio = str(form.get("fuente_tipo_cambio", "") or "").strip()[:120]
     presupuesto.impuesto_pct = _f(form.get("impuesto_pct"), 16.0)
