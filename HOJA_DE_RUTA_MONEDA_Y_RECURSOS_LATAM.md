@@ -35,7 +35,7 @@
 | 2. Modelo monetario | 🟡 En curso | 2026-08-19 | Catálogo ISO, contexto base/contractual y campos persistentes iniciales implementados |
 | 3. Conversión y tasas | ✅ Completado | 2026-08-19 | Conversión central, Decimal, validación, origen y congelación de tasa preparados |
 | 4. Interfaz y configuración | ✅ Completado | 2026-08-19 | Configuración ISO, acceso rápido, selector contextual, confirmación y protección de históricos implementados |
-| 5. Editor y cálculos | 🟡 En curso | 2026-08-19 | Editor usa contexto ISO y decimales por moneda; revisión de todos los cálculos continúa |
+| 5. Editor y cálculos | ✅ Completado | 2026-08-19 | Editor, guardado, costes, beneficios, márgenes y moneda activa integrados |
 | 6. Plantillas y exportaciones | ⬜ Pendiente | — | — |
 | 7. Recursos por país | ⬜ Pendiente | — | — |
 | 8. Mano de obra y rendimientos | ⬜ Pendiente | — | — |

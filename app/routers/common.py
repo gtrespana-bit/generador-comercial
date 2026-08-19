@@ -998,6 +998,7 @@ def _partida_catalogo_indice(partida: Partida) -> dict:
         "id": partida.id,
         "nombre": partida.nombre or "",
         "precio": partida.precio_unitario or 0.0,
+        "moneda": getattr(partida, "moneda", None) or "USD",
         "unidad": partida.unidad or "ud",
         "categoria": partida.categoria or "99 Partidas personalizadas",
         "subcategoria": partida.subcategoria or "",
