@@ -12,9 +12,11 @@ from app.models import (
     Consentimiento,
     ContextoOrganizacionError,
     EventoAuditoria,
+    HistorialPrecioRecurso,
     Licencia,
     Membresia,
     Organizacion,
+    PrecioRecursoMercado,
     PruebaConcedida,
     Presupuesto,
     Usuario,
@@ -79,6 +81,14 @@ def test_todo_modelo_comercial_declara_propietario():
       la organización explícitamente y en PostgreSQL lo aíslan las políticas
       `cotizat_evento_*` (revisión `d2a7c9e4f1b3`); las filas sin organización
       solo las ve el operador.
+    - `PrecioRecursoMercado` e `HistorialPrecioRecurso` (precios por mercado
+      nacional) tienen `organizacion_id` **nullable a propósito**: NULL es la
+      referencia nacional que comparten todas las empresas del país y solo
+      escribe el operador; con valor es el precio negociado por una empresa.
+      `TenantMixin` lo exige NOT NULL, así que las consultas filtran la
+      organización explícitamente (`resolver_precio`, panel `/recursos/mercado`)
+      y en PostgreSQL lo aíslan las políticas `cotizat_precio_mercado_*` y
+      `cotizat_historial_precio_*` (revisión `e7b3c1d5a204`).
     """
     identidades_globales = {Organizacion, Usuario, Membresia}
     no_tenant_justificados = {
@@ -86,6 +96,8 @@ def test_todo_modelo_comercial_declara_propietario():
         PruebaConcedida,
         Consentimiento,
         EventoAuditoria,
+        PrecioRecursoMercado,
+        HistorialPrecioRecurso,
     }
     sin_propietario = []
     for mapper in Base.registry.mappers:

@@ -937,22 +937,46 @@ async def confirmar_importacion_presupuesto(request: Request, db: Session = Depe
 
 
 def _recursos_editor_mercado(db, recursos, cfg, moneda, tasa):
+    """Precio efectivo de cada recurso para el editor, sin poder romper la vista.
+
+    Cada consulta de precio de mercado va dentro de un SAVEPOINT. Si la tabla
+    de precios falla (permisos, esquema desfasado, datos corruptos) se deshace
+    solo ese punto y la sesión sigue utilizable: sin el SAVEPOINT, PostgreSQL
+    dejaba la transacción abortada y la siguiente consulta de la página
+    (plantillas, categorías…) moría con ``InFailedSqlTransaction``, dejando la
+    pantalla «Nuevo presupuesto» completamente inaccesible.
+    """
+    from sqlalchemy.exc import SQLAlchemyError
+
     from ..services.traduccion import codigo_desde_pais
     from ..services.precios_mercado import resolver_precio_para_presupuesto
     pais = codigo_desde_pais(getattr(cfg, "empresa_pais", "") or "") or "VE"
     org_id = int(db.info.get("organizacion_id") or 0)
     salida = []
+    # Si la tabla de precios de mercado no está disponible, no tiene sentido
+    # reintentarla recurso a recurso: se usa el precio base del catálogo.
+    mercado_disponible = True
     for r in recursos:
         item = {"id": r.id, "codigo": r.codigo, "descripcion": r.descripcion, "unidad": r.unidad, "categoria": r.categoria, "grupo": r.grupo, "precio": r.precio, "moneda": getattr(r, "moneda", None) or "USD", "proveedor": r.proveedor, "usos": r.usos}
-        try:
-            efectivo = resolver_precio_para_presupuesto(db, r.id, pais, org_id, moneda, tasa_mercado_a_usd=None, tasa_usd_presupuesto=tasa)
+        efectivo = None
+        if mercado_disponible:
+            try:
+                with db.begin_nested():
+                    efectivo = resolver_precio_para_presupuesto(db, r.id, pais, org_id, moneda, tasa_mercado_a_usd=None, tasa_usd_presupuesto=tasa)
+            except SQLAlchemyError:
+                log.exception("No se pudo resolver el precio de mercado del recurso %s", r.id)
+                mercado_disponible = False
+                efectivo = None
+            except Exception:
+                efectivo = None
+        if efectivo is not None:
             if efectivo.get("precio") is not None and not efectivo.get("requiere_tasa"):
                 item["precio"] = efectivo["precio"]
                 item["moneda"] = efectivo["moneda"]
             item["origen_precio"] = efectivo.get("origen", "base")
             item["confianza_precio"] = efectivo.get("confianza", "")
             item["aviso_precio"] = efectivo.get("aviso", "")
-        except Exception:
+        else:
             item["origen_precio"] = "base"
             item["confianza_precio"] = "respaldo"
             item["aviso_precio"] = "Verifica el precio con tu proveedor"
@@ -2974,16 +2998,19 @@ def editar_presupuesto_form(presupuesto_id: int, request: Request, db: Session =
     # último guardado del presupuesto (updated_at).
     borrador_servidor = None
     try:
-        borrador = db.query(BorradorPresupuesto).filter(BorradorPresupuesto.presupuesto_id == presupuesto_id).first()
-        if borrador is not None:
-            datos = json.loads(borrador.datos or "{}")
-            if isinstance(datos, dict) and isinstance(datos.get("capitulos"), list):
-                # Date.now() del navegador viene en milisegundos; se compara
-                # en UTC con el momento del último guardado del presupuesto.
-                ts_borrador = datetime.utcfromtimestamp(float(datos.get("ts") or 0) / 1000.0)
-                ts_guardado = (presupuesto.updated_at or presupuesto.created_at or datetime.utcnow())
-                if ts_borrador > ts_guardado:
-                    borrador_servidor = datos
+        # SAVEPOINT: si la tabla de borradores falla, la sesión sigue viva y la
+        # página se abre igualmente (sin oferta de borrador).
+        with db.begin_nested():
+            borrador = db.query(BorradorPresupuesto).filter(BorradorPresupuesto.presupuesto_id == presupuesto_id).first()
+            if borrador is not None:
+                datos = json.loads(borrador.datos or "{}")
+                if isinstance(datos, dict) and isinstance(datos.get("capitulos"), list):
+                    # Date.now() del navegador viene en milisegundos; se compara
+                    # en UTC con el momento del último guardado del presupuesto.
+                    ts_borrador = datetime.utcfromtimestamp(float(datos.get("ts") or 0) / 1000.0)
+                    ts_guardado = (presupuesto.updated_at or presupuesto.created_at or datetime.utcnow())
+                    if ts_borrador > ts_guardado:
+                        borrador_servidor = datos
     except Exception:
         borrador_servidor = None
     return TEMPLATES.TemplateResponse(

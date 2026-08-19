@@ -1477,6 +1477,14 @@ class PrecioRecursoMercado(Base):
     fecha_actualizacion = Column(DateTime, default=datetime.utcnow)
     activo = Column(Boolean, nullable=False, default=True)
     recurso = relationship("Recurso", back_populates="precios_mercado")
+    #: Bitácora de cambios del precio. La relación (y no solo la clave foránea)
+    #: permite registrar el histórico en la misma unidad de trabajo en que se
+    #: crea el precio, antes de que exista su `id`.
+    historial = relationship(
+        "HistorialPrecioRecurso",
+        back_populates="precio_mercado",
+        cascade="all, delete-orphan",
+    )
 
 
 class HistorialPrecioRecurso(Base):
@@ -1489,6 +1497,7 @@ class HistorialPrecioRecurso(Base):
     fecha = Column(DateTime, default=datetime.utcnow)
     motivo = Column(String(250), default="")
     fuente = Column(String(200), default="")
+    precio_mercado = relationship("PrecioRecursoMercado", back_populates="historial")
 
 
 class Recurso(TenantMixin, Base):
@@ -2071,10 +2080,16 @@ def migrar(engine):
             nombre = tabla.name
             if "organizacion_id" not in (_columnas(engine, nombre) or set()):
                 continue
-            conn.execute(text(
-                f"UPDATE {nombre} SET organizacion_id = 1 "
-                "WHERE organizacion_id IS NULL"
-            ))
+            # Las tablas con `organizacion_id` nullable a propósito (precios de
+            # mercado, eventos de auditoría…) usan NULL como valor con
+            # significado —«referencia nacional», «evento sin organización»—:
+            # rellenarlo con 1 convertiría datos compartidos en datos de una
+            # empresa concreta.
+            if not tabla.columns["organizacion_id"].nullable:
+                conn.execute(text(
+                    f"UPDATE {nombre} SET organizacion_id = 1 "
+                    "WHERE organizacion_id IS NULL"
+                ))
             conn.execute(text(
                 f"CREATE INDEX IF NOT EXISTS ix_{nombre}_organizacion_id "
                 f"ON {nombre} (organizacion_id)"

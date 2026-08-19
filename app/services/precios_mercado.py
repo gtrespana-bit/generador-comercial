@@ -45,7 +45,16 @@ def guardar_precio(db: Session, recurso_id: int, pais_codigo: str, precio: float
                    moneda: str, *, organizacion_id: int | None = None,
                    fuente: str = "", proveedor: str = "", confianza: str = "referencia",
                    fecha_vigencia=None) -> PrecioRecursoMercado:
-    """Crea o actualiza precio nacional u override de organización."""
+    """Crea o actualiza precio nacional u override de organización.
+
+    ``organizacion_id`` nulo = referencia nacional. Un identificador no válido
+    (0, negativo) no puede tratarse como «nacional» por descuido: escribiría un
+    precio visible para todas las empresas.
+    """
+    if organizacion_id is not None and int(organizacion_id) <= 0:
+        raise ValueError(
+            "organizacion_id debe ser una organización real o None (precio nacional)."
+        )
     codigo = str(pais_codigo or "").strip().upper()
     row = db.query(PrecioRecursoMercado).filter_by(
         recurso_id=recurso_id, pais_codigo=codigo, organizacion_id=organizacion_id

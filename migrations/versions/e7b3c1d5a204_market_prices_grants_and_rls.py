@@ -1,0 +1,155 @@
+"""Permisos y RLS de los precios por mercado (hotfix del editor de presupuestos).
+
+Las revisiones ``f2a3b4c5d6e7`` (``precios_recursos_mercado``) y
+``a3b4c5d6e7f8`` (``historial_precios_recursos``) crearon dos tablas nuevas
+**sin** los permisos ni las políticas que el resto del esquema aplica desde
+``c93e7a4d20f1``. En PostgreSQL la aplicación se conecta con un rol miembro de
+``cotizat_app`` que no es dueño de las tablas, así que cualquier consulta a esas
+dos tablas respondía ``permission denied for table ...``.
+
+Ese error abortaba la transacción de la petición. Como el editor resuelve el
+precio de mercado dentro de un ``try/except``, el fallo quedaba oculto y la
+siguiente consulta —``SELECT ... FROM plantillas``— reventaba con
+``InFailedSqlTransaction: current transaction is aborted``: por eso no se podía
+abrir «Nuevo presupuesto».
+
+Modelo de acceso que se fija aquí:
+
+- ``organizacion_id IS NULL`` = referencia nacional de Cotizat. La leen todas
+  las organizaciones; solo la escribe una sesión marcada como operador.
+- ``organizacion_id`` con valor = precio propio de esa empresa. Solo lo ve y lo
+  escribe esa organización (y con rol distinto de ``lectura``).
+- ``historial_precios_recursos`` hereda la visibilidad de su precio y es
+  inmutable: se concede ``SELECT`` e ``INSERT``, nunca ``UPDATE``/``DELETE``.
+"""
+from typing import Sequence, Union
+
+from alembic import op
+
+
+revision: str = "e7b3c1d5a204"
+down_revision: Union[str, Sequence[str], None] = "c5d6e7f8a9b0"
+branch_labels: Union[str, Sequence[str], None] = None
+depends_on: Union[str, Sequence[str], None] = None
+
+APP_ROLE = "cotizat_app"
+TABLA_PRECIOS = "precios_recursos_mercado"
+TABLA_HISTORIAL = "historial_precios_recursos"
+
+IS_OPERATOR = (
+    "COALESCE("
+    "pg_catalog.current_setting('cotizat.es_operador', true) = 'on', FALSE)"
+)
+LECTURA_PRECIO = (
+    "organizacion_id IS NULL "
+    "OR cotizat_security.tenant_access(organizacion_id, FALSE) "
+    f"OR {IS_OPERATOR}"
+)
+ESCRITURA_PRECIO = (
+    "(organizacion_id IS NOT NULL "
+    "AND cotizat_security.tenant_access(organizacion_id, TRUE)) "
+    f"OR (organizacion_id IS NULL AND {IS_OPERATOR})"
+)
+LECTURA_HISTORIAL = (
+    "EXISTS (SELECT 1 FROM public.precios_recursos_mercado AS p "
+    "WHERE p.id = precio_mercado_id AND (p.organizacion_id IS NULL "
+    "OR cotizat_security.tenant_access(p.organizacion_id, FALSE) "
+    f"OR {IS_OPERATOR}))"
+)
+ESCRITURA_HISTORIAL = (
+    "EXISTS (SELECT 1 FROM public.precios_recursos_mercado AS p "
+    "WHERE p.id = precio_mercado_id AND ((p.organizacion_id IS NOT NULL "
+    "AND cotizat_security.tenant_access(p.organizacion_id, TRUE)) "
+    f"OR (p.organizacion_id IS NULL AND {IS_OPERATOR})))"
+)
+
+POLITICAS = (
+    (TABLA_PRECIOS, "cotizat_precio_mercado_select", "SELECT", f"USING ({LECTURA_PRECIO})"),
+    (
+        TABLA_PRECIOS,
+        "cotizat_precio_mercado_insert",
+        "INSERT",
+        f"WITH CHECK ({ESCRITURA_PRECIO})",
+    ),
+    (
+        TABLA_PRECIOS,
+        "cotizat_precio_mercado_update",
+        "UPDATE",
+        f"USING ({ESCRITURA_PRECIO}) WITH CHECK ({ESCRITURA_PRECIO})",
+    ),
+    (
+        TABLA_PRECIOS,
+        "cotizat_precio_mercado_delete",
+        "DELETE",
+        f"USING ({ESCRITURA_PRECIO})",
+    ),
+    (
+        TABLA_HISTORIAL,
+        "cotizat_historial_precio_select",
+        "SELECT",
+        f"USING ({LECTURA_HISTORIAL})",
+    ),
+    (
+        TABLA_HISTORIAL,
+        "cotizat_historial_precio_insert",
+        "INSERT",
+        f"WITH CHECK ({ESCRITURA_HISTORIAL})",
+    ),
+)
+
+
+def _postgres() -> bool:
+    return op.get_bind().dialect.name == "postgresql"
+
+
+def _conceder_secuencia(tabla: str) -> str:
+    """GRANT sobre la secuencia del id, exista como `serial` o como identidad."""
+    return (
+        "DO $$ DECLARE secuencia text; BEGIN "
+        f"secuencia := pg_get_serial_sequence('public.{tabla}', 'id'); "
+        "IF secuencia IS NOT NULL THEN "
+        "EXECUTE format('GRANT USAGE, SELECT ON SEQUENCE %s TO "
+        f"{APP_ROLE}', secuencia); "
+        "END IF; END $$"
+    )
+
+
+def upgrade() -> None:
+    if not _postgres():
+        # SQLite (escritorio y pruebas) no tiene RLS: el aislamiento lo aporta
+        # la aplicación con la organización activa de la sesión.
+        return
+
+    for tabla in (TABLA_PRECIOS, TABLA_HISTORIAL):
+        op.execute(f"REVOKE ALL ON TABLE public.{tabla} FROM PUBLIC")
+        op.execute(f"ALTER TABLE public.{tabla} ENABLE ROW LEVEL SECURITY")
+        op.execute(f"ALTER TABLE public.{tabla} FORCE ROW LEVEL SECURITY")
+
+    op.execute(f"GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE public.{TABLA_PRECIOS} TO {APP_ROLE}")
+    # El historial es una bitácora: se escribe una vez y no se corrige.
+    op.execute(f"GRANT SELECT, INSERT ON TABLE public.{TABLA_HISTORIAL} TO {APP_ROLE}")
+
+    # La secuencia del id se resuelve con `pg_get_serial_sequence`: según cómo
+    # se creara la tabla (Alembic con `serial` o el script SQL de Supabase con
+    # `GENERATED BY DEFAULT AS IDENTITY`) el objeto existe o lo gestiona el
+    # sistema. Nombrarla a mano rompería la migración en el segundo caso.
+    for tabla in (TABLA_PRECIOS, TABLA_HISTORIAL):
+        op.execute(_conceder_secuencia(tabla))
+
+    for tabla, nombre, accion, clausula in POLITICAS:
+        op.execute(f"DROP POLICY IF EXISTS {nombre} ON public.{tabla}")
+        op.execute(
+            f"CREATE POLICY {nombre} ON public.{tabla} "
+            f"FOR {accion} TO {APP_ROLE} {clausula}"
+        )
+
+
+def downgrade() -> None:
+    if not _postgres():
+        return
+    for tabla, nombre, _accion, _clausula in POLITICAS:
+        op.execute(f"DROP POLICY IF EXISTS {nombre} ON public.{tabla}")
+    for tabla in (TABLA_PRECIOS, TABLA_HISTORIAL):
+        op.execute(f"ALTER TABLE public.{tabla} NO FORCE ROW LEVEL SECURITY")
+        op.execute(f"ALTER TABLE public.{tabla} DISABLE ROW LEVEL SECURITY")
+        op.execute(f"REVOKE ALL ON TABLE public.{tabla} FROM {APP_ROLE}")

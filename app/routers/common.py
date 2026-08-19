@@ -99,6 +99,8 @@ from ..models import (
     Organizacion,
     Partida,
     Plantilla,
+    PrecioRecursoMercado,
+    HistorialPrecioRecurso,
     RecetaEstancia,
     Presupuesto,
     Recurso,
