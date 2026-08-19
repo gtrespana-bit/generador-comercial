@@ -59,6 +59,8 @@ La revisión `9bca2ad1f6e4`, que añade el vínculo con Supabase Auth, también 
 
 **Actualización 18/08/2026 (tarde):** el head exigido por el runtime pasa a `c7f1a3b9d425` (`compras_plan.licencia_inicio` y `compras_plan.licencia_vence`, para que el comprador descargue su recibo sin leer `licencias`, tabla reservada al operador por RLS). **Pendiente de aplicar en Supabase** con `docs/staging_upgrade_c7f1a3b9d425.sql`; hasta entonces `/readyz` responderá 503 (la guarda de head funciona así a propósito). La migración incluye backfill: las compras ya activadas recuperan su período desde la licencia enlazada.
 
+**Actualización 19/08/2026:** el head exigido por el runtime pasa a `d9e2f3a4b5c6` (apertura LatAm S2: `configuracion.etiqueta_id_fiscal` con default `RIF`, y `configuracion.tasa_cambio` + `configuracion.fecha_tasa` para convertir el catálogo USD a moneda local). **Pendiente de aplicar en Supabase** con dos scripts, en este orden: `docs/staging_upgrade_c8f1a2b3d4e5.sql` y luego `docs/staging_upgrade_d9e2f3a4b5c6.sql`. Precondición: la base debe estar en `d2a7c9e4f1b3` (registro de auditoría; los scripts la comprueban y abortan si no). Hasta aplicarlos, `/readyz` responderá 503 (la guarda de head funciona así a propósito). Las instalaciones SQLite locales no requieren nada: el sincronizador de columnas del modelo las añade solo.
+
 ## Rol de runtime y migraciones
 
 `c93e7a4d20f1` crea `cotizat_app` como rol grupal `NOLOGIN`, `NOSUPERUSER` y `NOBYPASSRLS`; deliberadamente no contiene contraseña. El login de runtime debe crearse fuera de Git, con una contraseña generada en el gestor de secretos del proveedor, y recibir únicamente:
