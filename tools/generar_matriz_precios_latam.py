@@ -22,6 +22,21 @@ REFERENCIAS = {
     "MT-LADRILLO": {"CO": 1000, "PE": 1.5, "MX": 6.4, "EC": 0.3, "unidad": "ud"},
     "MO-OF1": {"CO": 110000 / 8, "PE": 69.75 / 8, "MX": 750 / 8, "EC": 21.67 / 8, "unidad": "h"},
     "MO-AYU": {"CO": 72000 / 8, "PE": 62.80 / 8, "MX": 400 / 8, "EC": 20 / 8, "unidad": "h"},
+    "MT-PYL-PLACA125": {"CO": 48900/2.9768, "PE": 28.3/2.9768, "MX": 210/2.9768, "EC": 10.67/2.9768, "unidad": "m2"},
+    "MT-PYL-PLACA-RH": {"CO": 91700/2.9768, "PE": 49.9/2.9768, "MX": 289/2.9768, "EC": 17.11/2.9768, "unidad": "m2"},
+    "MT-ADH-C2TE": {"CO": 3454/25, "PE": 36.9/25, "MX": 401/25, "EC": 13.43/20, "unidad": "kg"},
+    "MT-ADH-C1": {"CO": 1276/25, "PE": 16.9/25, "MX": 300/25, "EC": 10/20, "unidad": "kg"},
+    "MT-PIN-CAUCHO": {"CO": 60700/3.785, "PE": 55, "MX": 180, "EC": 17, "unidad": "l"},
+    "MT-PLO-PVC4": {"CO": 21750, "PE": 4.1, "MX": 4.1, "EC": 4.8, "unidad": "m"},
+    "MT-ELE-CABLE": {"CO": 3975, "PE": 2.86, "MX": 0.95, "EC": 0.90, "unidad": "m"},
+    "MT-PIN-FONDO": {"CO": 32500/3.785, "PE": 18, "MX": 140, "EC": 16, "unidad": "l"},
+    "MT-PIN-MASILLA": {"CO": 46500/14, "PE": 2.5, "MX": 12, "EC": 1.5, "unidad": "kg"},
+    "MT-MANTO-ASF": {"CO": 5.6, "PE": 22, "MX": 180, "EC": 8.5, "unidad": "m2"},
+    "MT-ACRIL-IMPER": {"CO": 70000/19, "PE": 12, "MX": 799/19, "EC": 4.4, "unidad": "l"},
+    "MT-MALLA-ELEC": {"CO": 150000/30, "PE": 220/30, "MX": 800/30, "EC": 5.5, "unidad": "m2"},
+    "MT-ELE-TUB20": {"CO": 2500, "PE": 1.2, "MX": 18, "EC": 1.2, "unidad": "m"},
+    "MT-ELE-MECA": {"CO": 12000, "PE": 18, "MX": 90, "EC": 6, "unidad": "ud"},
+    "MT-PYL-CANAL": {"CO": 5200, "PE": 2.2, "MX": 90, "EC": 2.0, "unidad": "m"},
 }
 
 def iter_recursos(data):
