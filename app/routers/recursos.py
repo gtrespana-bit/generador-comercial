@@ -99,7 +99,10 @@ def sincronizar_recursos(db: Session = Depends(get_db)):
 
 @router.get("/recursos/nuevo", response_class=HTMLResponse)
 def nuevo_recurso_form(request: Request, _db: Session = Depends(get_db)):
-    return TEMPLATES.TemplateResponse(request, "recursos/form.html", {"recurso": None, "categorias": CATEGORIAS_RECURSO, "etiquetas": ETIQUETAS_RECURSO})
+    from ..services.traduccion import codigo_desde_pais
+    cfg = _config(_db)
+    pais = codigo_desde_pais(cfg.empresa_pais or "") or "VE"
+    return TEMPLATES.TemplateResponse(request, "recursos/form.html", {"recurso": None, "categorias": CATEGORIAS_RECURSO, "etiquetas": ETIQUETAS_RECURSO, "mercado_codigo": pais, "mercado_moneda": cfg.moneda_default or "USD", "precio_mercado": None})
 
 @router.post("/recursos/nuevo")
 def crear_recurso(
@@ -109,6 +112,7 @@ def crear_recurso(
     categoria: str = Form("otros"),
     grupo: str = Form(""),
     precio: str = Form("0"),
+    precio_mercado: str = Form(""),
     proveedor: str = Form(""),
     db: Session = Depends(get_db),
 ):
@@ -132,6 +136,13 @@ def crear_recurso(
         proveedor=proveedor.strip(),
     )
     db.add(recurso)
+    db.flush()
+    if str(precio_mercado or "").strip():
+        from ..services.traduccion import codigo_desde_pais
+        from ..services.precios_mercado import guardar_precio
+        cfg = _config(db)
+        pais = codigo_desde_pais(cfg.empresa_pais or "") or "VE"
+        guardar_precio(db, recurso.id, pais, _f(precio_mercado), cfg.moneda_default or "USD", organizacion_id=int(db.info.get("organizacion_id") or 0), fuente="Empresa")
     db.commit()
     return _redirect("/recursos", msg="Recurso creado correctamente.")
 
@@ -140,7 +151,12 @@ def editar_recurso_form(recurso_id: int, request: Request, db: Session = Depends
     recurso = db.get(Recurso, recurso_id)
     if recurso is None:
         return _redirect("/recursos", error="Recurso no encontrado.")
-    return TEMPLATES.TemplateResponse(request, "recursos/form.html", {"recurso": recurso, "categorias": CATEGORIAS_RECURSO, "etiquetas": ETIQUETAS_RECURSO})
+    from ..services.traduccion import codigo_desde_pais
+    from ..services.precios_mercado import resolver_precio
+    cfg = _config(db)
+    pais = codigo_desde_pais(cfg.empresa_pais or "") or "VE"
+    precio_mercado = resolver_precio(db, recurso.id, pais, int(db.info.get("organizacion_id") or 0))
+    return TEMPLATES.TemplateResponse(request, "recursos/form.html", {"recurso": recurso, "categorias": CATEGORIAS_RECURSO, "etiquetas": ETIQUETAS_RECURSO, "mercado_codigo": pais, "mercado_moneda": cfg.moneda_default or "USD", "precio_mercado": precio_mercado if precio_mercado.origen == "organizacion" else None})
 
 @router.post("/recursos/{recurso_id}/editar")
 def actualizar_recurso(
@@ -151,6 +167,7 @@ def actualizar_recurso(
     categoria: str = Form("otros"),
     grupo: str = Form(""),
     precio: str = Form("0"),
+    precio_mercado: str = Form(""),
     proveedor: str = Form(""),
     db: Session = Depends(get_db),
 ):
@@ -177,6 +194,12 @@ def actualizar_recurso(
     recurso.precio = nuevo_precio
     recurso.proveedor = proveedor.strip()
     recurso.fecha_actualizacion_precio = datetime.utcnow()
+    if str(precio_mercado or "").strip():
+        from ..services.traduccion import codigo_desde_pais
+        from ..services.precios_mercado import guardar_precio
+        cfg = _config(db)
+        pais = codigo_desde_pais(cfg.empresa_pais or "") or "VE"
+        guardar_precio(db, recurso.id, pais, _f(precio_mercado), cfg.moneda_default or "USD", organizacion_id=int(db.info.get("organizacion_id") or 0), fuente="Empresa")
     # Propagar si cambió precio
     if abs(nuevo_precio - precio_anterior) > 1e-9:
         try:
