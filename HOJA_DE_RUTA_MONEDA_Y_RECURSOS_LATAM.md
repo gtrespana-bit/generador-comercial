@@ -34,7 +34,7 @@
 | 1. Auditoría técnica | ✅ Completado | 2026-08-19 | Auditoría documentada; decisiones A-E pendientes antes del diseño |
 | 2. Modelo monetario | 🟡 En curso | 2026-08-19 | Catálogo ISO, contexto base/contractual y campos persistentes iniciales implementados |
 | 3. Conversión y tasas | ✅ Completado | 2026-08-19 | Conversión central, Decimal, validación, origen y congelación de tasa preparados |
-| 4. Interfaz y configuración | ⬜ Pendiente | — | — |
+| 4. Interfaz y configuración | 🟡 En curso | 2026-08-19 | Configuración ISO y acceso rápido añadidos; falta selector contextual por presupuesto |
 | 5. Editor y cálculos | ⬜ Pendiente | — | — |
 | 6. Plantillas y exportaciones | ⬜ Pendiente | — | — |
 | 7. Recursos por país | ⬜ Pendiente | — | — |
