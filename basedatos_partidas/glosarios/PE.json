@@ -3,12 +3,7 @@
   "_destino": "PE",
   "_version": 1,
   "_nota": "Glosario VE→PE para CotizaT. Norma G.050, S10 Perú. 'de' venezolano, 'a' peruano.",
-  "_fuentes": [
-    "RNE G.050 / NTP",
-    "Sodimac / Promart PE - tarrajeo, zócalo, cielo raso, formaleta",
-    "CAPECO - Costos y Presupuestos PE 2025",
-    "APU Perú - encofrado, varilla, boquilla"
-  ],
+  "_fuentes": ["RNE G.050 / NTP", "Sodimac / Promart PE - tarrajeo, zócalo, cielo raso, formaleta", "CAPECO - Costos y Presupuestos PE 2025", "APU Perú - encofrado, varilla, boquilla"],
   "cambios": [
     {"de": "friso", "a": "tarrajeo", "motivo": "VE friso -> PE tarrajeo (frotachado)."},
     {"de": "rodapié", "a": "zócalo", "motivo": "VE rodapié -> PE zócalo / contrazócalo."},
@@ -21,7 +16,7 @@
     {"de": "capa de pega", "a": "capa de mortero adhesivo", "motivo": "PE pegamento extrafuerte."},
     {"de": "hormigón", "a": "concreto", "motivo": "Peninsular -> PE concreto."},
     {"de": "concreto", "a": "concreto", "motivo": "Igual."},
-    {"de": "bloque", "a": "ladrillo", "motivo": "VE bloque -> PE ladrillo King Kong / pandereta."},
+    {"de": "bloque", "a": "bloque", "motivo": "Se deja: en PE también se usa «bloque» (de concreto). Evita «Fachadas de ladrillo o ladrillo» en la categoría 06.01."},
     {"de": "cabilla", "a": "varilla", "motivo": "VE cabilla -> PE varilla / fierro corrugado."},
     {"de": "acero corrugado", "a": "fierro corrugado", "motivo": "PE fierro corrugado."},
     {"de": "malla electrosoldada", "a": "malla electrosoldada", "motivo": "Igual."},
@@ -86,6 +81,13 @@
     {"de": "zapata", "a": "zapata", "motivo": "Igual."},
     {"de": "fundación", "a": "cimentación", "motivo": "PE cimentación."},
     {"de": "relleno compactado", "a": "relleno compactado", "motivo": "Igual."},
-    {"de": "andamio", "a": "andamio", "motivo": "Igual."}
+    {"de": "andamio", "a": "andamio", "motivo": "Igual."},
+    {"de": "fundacion", "a": "cimentacion", "motivo": "Categorías 04 «Fundaciones» (sin tilde en el catálogo): PE usa cimentación."},
+    {"de": "yeso laminado", "a": "drywall", "motivo": "Categoría 06.04: en PE el yeso laminado se llama drywall."},
+    {"de": "acera", "a": "vereda", "motivo": "Categoría 14.02: acera en PE es vereda."},
+    {"de": "brocal", "a": "sardinel", "motivo": "Categoría 14.02: brocal en PE es sardinel."},
+    {"de": "Desagüe sanitario", "a": "Desagüe sanitario", "motivo": "Categoría 09.02 (protectora): evita que «sanitario»->«inodoro» la convierta en «Desagüe inodoro»."},
+    {"de": "closets", "a": "clósets", "motivo": "Plural exacto de la categoría 13.04 (antes que «closet» para no generar «clósetes»)."},
+    {"de": "closet", "a": "clóset", "motivo": "Categoría 13.04: clósets."}
   ]
 }

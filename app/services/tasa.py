@@ -102,3 +102,26 @@ def tasa_sugerida(moneda: str) -> float | None:
     if moneda == "BS":
         moneda = "VES"
     return TASAS_SUGERIDAS.get(moneda)
+
+
+def factor_conversion_local(moneda: str | None, tasa: float | None) -> float:
+    """Factor para convertir precios/costes USD a la moneda local.
+
+    Devuelve 1.0 (sin conversión) cuando la moneda es USD/PAB, está vacía o
+    no hay tasa válida. Con moneda local (COP/MXN/PEN/…) y tasa > 0 devuelve
+    la propia tasa: precio_local = precio_usd × factor.
+
+    Es la única forma de mantener coherencia entre precio, costes y beneficio:
+    todos los importes de una vista se convierten con el MISMO factor o
+    ninguno.
+    """
+    m = str(moneda or "USD").strip().upper()
+    if m == "BS":
+        m = "VES"
+    if m in ("", "USD", "PAB") or not tasa:
+        return 1.0
+    try:
+        t = float(tasa)
+    except (TypeError, ValueError):
+        return 1.0
+    return t if t > 0 else 1.0

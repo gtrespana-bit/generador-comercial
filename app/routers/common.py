@@ -937,6 +937,10 @@ _CAMPOS_INDICE_CATALOGO = (
     Partida.codigo_externo,
     Partida.usos,
     Partida.ultimo_uso,
+    Partida.coste_materiales,
+    Partida.coste_mano_obra,
+    Partida.coste_complementarios,
+    Partida.coste_otros,
 )
 
 _PALABRAS_VACIAS_INDICE = frozenset({
@@ -1001,10 +1005,26 @@ def _partida_catalogo_indice(partida: Partida) -> dict:
         "usos": partida.usos or 0,
         "ultimo_uso": partida.ultimo_uso.isoformat() if partida.ultimo_uso else "",
         "buscable": _texto_indice_catalogo(partida),
+        # Costes para que el editor calcule el beneficio en la MISMA moneda
+        # que el precio (ambos convertidos con el mismo factor).
+        "coste_materiales": partida.coste_materiales or 0.0,
+        "coste_mano_obra": partida.coste_mano_obra or 0.0,
+        "coste_complementarios": partida.coste_complementarios or 0.0,
+        "coste_otros": partida.coste_otros or 0.0,
     }
 
 
-def _indice_catalogo_para_editor(db: Session) -> list[dict]:
+def _indice_catalogo_para_editor(db: Session, moneda: str | None = None, tasa: float | None = None) -> list[dict]:
+    """Índice ligero del catálogo para el editor de presupuestos.
+
+    Traduce terminología (nombre, categoría, subcategoría, apartado) al país
+    de la organización y convierte TODOS los importes (precio y costes) a la
+    moneda objetivo con el MISMO factor, para que el beneficio se calcule
+    entre cifras comparables y nunca entre USD y moneda local mezclados.
+
+    `moneda`/`tasa` son la moneda y la tasa del presupuesto en edición; si no
+    se indican se usan los defaults de la organización.
+    """
     partidas = (
         db.query(Partida)
         .filter(Partida.oculta.is_(False))
@@ -1018,47 +1038,58 @@ def _indice_catalogo_para_editor(db: Session) -> list[dict]:
         )
         .all()
     )
-    # Traducción al vuelo para el editor (CO/MX/EC/PE)
     try:
+        from ..services.tasa import factor_conversion_local, tasa_convertir_precio
         from ..services.traduccion import codigo_desde_pais as _codigo, traducir as _trad
+
         _cfg = _config(db)
         _cod = _codigo(getattr(_cfg, "empresa_pais", ""))
-        if _cod:
-            out = []
-            for _pp in partidas:
-                _d = _partida_catalogo_indice(_pp)
-                # Traduce nombre/descripción visibles; mantiene buscable con ambos idiomas
-                _d["nombre"] = _trad(_d.get("nombre",""), _cod)
-                _d["descripcion"] = _trad(_d.get("descripcion",""), _cod)
-                # Conversión USD->local si la org trabaja en moneda local con tasa
+        if moneda is None:
+            moneda = getattr(_cfg, "moneda_default", "USD")
+        if tasa is None:
+            tasa = getattr(_cfg, "tasa_cambio", None)
+        _factor = factor_conversion_local(moneda, tasa)
+        out = []
+        for _pp in partidas:
+            _d = _partida_catalogo_indice(_pp)
+            if _cod:
+                # Traducción VE->país de todo lo visible (nombre y categorías)
+                _d["nombre"] = _trad(_d.get("nombre", ""), _cod)
+                _d["categoria"] = _trad(_d.get("categoria", ""), _cod)
+                _d["subcategoria"] = _trad(_d.get("subcategoria", ""), _cod)
+                _d["apartado"] = _trad(_d.get("apartado", ""), _cod)
+            if _factor != 1.0:
+                # Precio y costes en la MISMA moneda local: sin mezclar USD/COP
+                _d["precio"] = tasa_convertir_precio(_d.get("precio", 0), _factor)
+                for _k in ("coste_materiales", "coste_mano_obra", "coste_complementarios", "coste_otros"):
+                    _d[_k] = tasa_convertir_precio(_d.get(_k, 0), _factor)
+            if _cod:
+                # Añade términos traducidos al índice buscable para que
+                # «pañete» encuentre «friso» y «cimentaciones» encuentre
+                # «fundaciones» (búsqueda por el idioma local)
                 try:
-                    _mon = str(getattr(_cfg, "moneda_default", "USD") or "USD").strip().upper()
-                    if _mon == "BS":
-                        _mon = "VES"
-                    _tasa = getattr(_cfg, "tasa_cambio", None)
-                    if _mon not in ("USD", "", "PAB") and _tasa and float(_tasa) > 0:
-                        from ..services.tasa import tasa_convertir_precio
-                        _d["precio"] = tasa_convertir_precio(_d.get("precio", 0), float(_tasa))
-                except Exception:
-                    pass
-                # Añade términos traducidos al índice buscable para que "pañete" encuentre "friso"
-                try:
-                    _busc = _d.get("buscable","")
-                    _trad_bus = _trad(_pp.nombre + " " + (_pp.descripcion or ""), _cod)
-                    # Normaliza y añade palabras nuevas del traducido que no estaban
-                    import unicodedata, re
+                    import re as _re
+                    import unicodedata as _ucd
+
+                    _trad_bus = _trad(
+                        _pp.nombre + " " + (_pp.descripcion or "") + " "
+                        + (_pp.categoria or "") + " " + (_pp.subcategoria or ""),
+                        _cod,
+                    )
+
                     def _norma(s):
-                        s=unicodedata.normalize("NFD", s.lower())
-                        return "".join(c for c in s if unicodedata.category(c) != "Mn")
-                    _orig_norm = set(re.findall(r"[a-z0-9]+", _norma(_d.get("buscable",""))))
-                    for _w in re.findall(r"[a-z0-9]+", _norma(_trad_bus)):
-                        if len(_w)>=3 and _w not in _orig_norm:
+                        s = _ucd.normalize("NFD", s.lower())
+                        return "".join(c for c in s if _ucd.category(c) != "Mn")
+
+                    _orig_norm = set(_re.findall(r"[a-z0-9]+", _norma(_d.get("buscable", ""))))
+                    for _w in _re.findall(r"[a-z0-9]+", _norma(_trad_bus)):
+                        if len(_w) >= 3 and _w not in _orig_norm:
                             _d["buscable"] = (_d["buscable"] + " " + _w)[:380]
                             _orig_norm.add(_w)
                 except Exception:
                     pass
-                out.append(_d)
-            return out
+            out.append(_d)
+        return out
     except Exception:
         pass
     return [_partida_catalogo_indice(partida) for partida in partidas]

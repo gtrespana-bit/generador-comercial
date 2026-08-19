@@ -3,12 +3,7 @@
   "_destino": "EC",
   "_version": 1,
   "_nota": "Glosario VE→EC para CotizaT. Ecuador dolarizado, norma NEC. 'de' es venezolano, 'a' es ecuatoriano.",
-  "_fuentes": [
-    "NEC-SE, NEC-HS",
-    "Holcim Ecuador / UNACEM",
-    "Kywi / Ferrisariato EC - tumbado, barredera, formaleta",
-    "APU Ecuador 2025"
-  ],
+  "_fuentes": ["NEC-SE, NEC-HS", "Holcim Ecuador / UNACEM", "Kywi / Ferrisariato EC - tumbado, barredera, formaleta", "APU Ecuador 2025"],
   "cambios": [
     {"de": "friso", "a": "enlucido", "motivo": "VE friso -> EC enlucido / empaste."},
     {"de": "rodapié", "a": "barredera", "motivo": "VE rodapié -> EC barredera (también zócalo)."},
@@ -81,6 +76,16 @@
     {"de": "zapata", "a": "zapata", "motivo": "Igual."},
     {"de": "fundación", "a": "cimentación", "motivo": "EC cimentación."},
     {"de": "relleno compactado", "a": "relleno compactado", "motivo": "Igual."},
-    {"de": "andamio", "a": "andamio", "motivo": "Igual."}
+    {"de": "andamio", "a": "andamio", "motivo": "Igual."},
+    {"de": "fundacion", "a": "cimentacion", "motivo": "Categorías 04 «Fundaciones» (sin tilde en el catálogo): EC usa cimentación."},
+    {"de": "yeso laminado", "a": "gypsum", "motivo": "Categoría 06.04: en EC el sistema de yeso laminado se llama gypsum."},
+    {"de": "brocal", "a": "bordillo", "motivo": "Categoría 14.02: brocal en EC es bordillo."},
+    {"de": "vaciado en sitio", "a": "fundido en sitio", "motivo": "Concordancia: «hormigón … vaciado en sitio» -> «fundido en sitio» (masculino)."},
+    {"de": "Frisos, enlucidos y revestimientos de mortero", "a": "Enlucidos y revestimientos de mortero", "motivo": "Categoría 12.02: evita «Enlucidos, enlucidos» (friso->enlucido)."},
+    {"de": "Techos y cubiertas", "a": "Cubiertas", "motivo": "Categoría 11: evita «Cubiertas y cubiertas» (techo->cubierta)."},
+    {"de": "aguas pluviales", "a": "aguas lluvias", "motivo": "Categoría 09.02: en EC se dice aguas lluvias."},
+    {"de": "Desagüe sanitario", "a": "Desagüe sanitario", "motivo": "Categoría 09.02 (protectora): evita que «sanitario»->«inodoro» la convierta en «Desagüe inodoro»."},
+    {"de": "closets", "a": "clósets", "motivo": "Plural exacto de la categoría 13.04 (antes que «closet» para no generar «clósetes»)."},
+    {"de": "closet", "a": "clóset", "motivo": "Categoría 13.04: clósets."}
   ]
 }

@@ -2,11 +2,20 @@
 
 El catálogo base se guarda en venezolano (friso, rodapié, losa, encofrado...).
 Los glosarios `basedatos_partidas/glosarios/{CO,MX,EC,PE}.json` contienen
-mapeos VE→CO/MX/EC/PE con 70-120 entradas cada uno.
+mapeos VE→CO/MX/EC/PE con 70-130 entradas cada uno.
 
 Esta capa NO reescribe archivos: traduce al vuelo al mostrar catálogo,
 presupuestos y PDF, respetando mayúscula inicial y plural en -s/-es,
 igual que `basedatos_partidas/terminologia.py:sustituir`.
+
+Reglas de aplicación (importantes para categorías):
+1. Primero se aplican las FRASES (entradas con espacios), de más larga a
+   más corta, y el texto sustituido queda PROTEGIDO: los mapeos de palabra
+   no lo vuelven a tocar. Así «Techos y cubiertas» -> «Cubiertas» no acaba
+   en «Cubiertas y cubiertas» por culpa de techo->cubierta.
+2. Después se aplican las palabras sueltas.
+3. El plural se resuelve sobre la última palabra del destino, con la regla
+   española de acentos: andén+es -> andenes, guarnición+es -> guarniciones.
 
 Uso:
     from app.services.traduccion import traducir, traducir_partida
@@ -40,6 +49,8 @@ _NOMBRE_A_CODIGO = {
     "latinoamérica": "", "latinoamerica": "",
 }
 
+_SIN_ACENTO = str.maketrans("áéíóú", "aeiou")
+
 
 def codigo_desde_pais(nombre_pais: str | None) -> str:
     if not nombre_pais:
@@ -62,12 +73,14 @@ def _cargar_glosario(codigo: str) -> list[dict]:
     except Exception:
         return []
     cambios = data.get("cambios") or []
-    # Normaliza a lista de {de,a}
+    # Normaliza a lista de {de,a}. Las frases (con espacio) se conservan
+    # aunque de==a: funcionan como PROTECTORAS (evitan que los mapeos de
+    # palabra toquen una expresión que ya es correcta).
     out = []
     for c in cambios:
         de = str(c.get("de") or "").strip()
         a = str(c.get("a") or "").strip()
-        if de and a and de.lower() != a.lower():
+        if de and a and (" " in de or de.lower() != a.lower()):
             out.append({"de": de, "a": a})
     return out
 
@@ -76,6 +89,26 @@ def _mismo_caso(origen: str, destino: str) -> str:
     if origen[:1].isupper():
         return destino[:1].upper() + destino[1:]
     return destino
+
+
+def _pluralizar(nuevo: str, sufijo: str | None) -> str:
+    """Aplica el plural español a una palabra del destino.
+
+    Reglas de acentos:
+      andén -> andenes, guarnición -> guarniciones, plafón -> plafones
+      (la tilde cae en plural porque la sílaba tónica cambia)
+      menú -> menús, bebé -> bebés (vocal tónica final: se conserva)
+    """
+    if not sufijo:
+        return nuevo
+    s = nuevo
+    if len(s) >= 2 and s[-1] in "ns" and s[-2] in "áéíóú":
+        # andén -> andenes, francés -> franceses (cae la tilde, se conserva la consonante)
+        return s[:-2] + s[-2].translate(_SIN_ACENTO) + s[-1] + "es"
+    if s[-1:] in "áéíóú":
+        # menú -> menús (mantiene la tilde)
+        return s + "s"
+    return s + ("es" if s[-1:] not in "aeiou" else "s")
 
 
 def traducir(texto: str | None, pais_codigo: str | None) -> str:
@@ -93,20 +126,59 @@ def traducir(texto: str | None, pais_codigo: str | None) -> str:
     if not cambios:
         return texto
     out = texto
+
+    # ---- 1) Frases (con espacios): más largas primero y protegidas ----
+    # El texto sustituido se marca con un token sin caracteres de palabra para
+    # que los mapeos de palabra posteriores no lo vuelvan a tocar.
+    # El plural español de una frase puede aparecer en el sustantivo
+    # («paredes de bloque»), en el último término («cielos rasos») o en
+    # ambos, así que cada palabra admite un sufijo -es/-s opcional.
+    frases = sorted(
+        (c for c in cambios if " " in c["de"]),
+        key=lambda c: -len(c["de"]),
+    )
+    reemplazos: list[tuple[str, str]] = []
+    n = 0
+    for c in frases:
+        de, a = c["de"], c["a"]
+        grupos = "".join(rf"({re.escape(w)})(es|s)? " for w in de.split(" "))
+        patron = re.compile(r"\b" + grupos.rstrip() + r"\b", re.IGNORECASE)
+
+        def _rep_frase(m: re.Match, _a: str = a) -> str:
+            nonlocal n
+            sufijo_primera = m.group(2)
+            sufijo_ultima = m.group(len(m.groups()))
+            if " " in _a:
+                partes_a = _a.split(" ")
+                partes_a[0] = _pluralizar(partes_a[0], sufijo_primera)
+                partes_a[-1] = _pluralizar(partes_a[-1], sufijo_ultima)
+                nuevo = " ".join(partes_a)
+            else:
+                nuevo = _pluralizar(_a, sufijo_ultima or sufijo_primera)
+            nuevo = _mismo_caso(m.group(1) or de, nuevo)
+            token = "\x01" * (n + 1)
+            reemplazos.append((token, nuevo))
+            n += 1
+            return token
+
+        out = patron.sub(_rep_frase, out)
+
+    # ---- 2) Palabras sueltas ----
     for c in cambios:
         de, a = c["de"], c["a"]
-        # Compila por cada término; cachear el regex sería micro-optimización
-        # innecesaria para 100 términos y textos de <500 chars.
+        if " " in de:
+            continue
         patron = re.compile(rf"\b({re.escape(de)})(es|s)?\b", re.IGNORECASE)
 
-        def _rep(m: re.Match, _a=a) -> str:
-            plural = m.group(2) or ""
-            nuevo = _mismo_caso(m.group(1), _a)
-            if not plural:
-                return nuevo
-            return nuevo + ("es" if nuevo[-1:] not in "aeiou" else "s")
+        def _rep_palabra(m: re.Match, _a: str = a) -> str:
+            return _pluralizar(_mismo_caso(m.group(1), _a), m.group(2))
 
-        out = patron.sub(_rep, out)
+        out = patron.sub(_rep_palabra, out)
+
+    # ---- 3) Restaurar las frases protegidas (tokens más largos primero,
+    #          para que "\x01" no pise a "\x01\x01") ----
+    for token, valor in reversed(reemplazos):
+        out = out.replace(token, valor)
     return out
 
 

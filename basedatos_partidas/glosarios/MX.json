@@ -3,12 +3,7 @@
   "_destino": "MX",
   "_version": 1,
   "_nota": "Glosario VE→MX para CotizaT. 'de' es término venezolano del catálogo, 'a' es forma preferida en México según NMX, Cemex/Holcim MX, Construrama y APU MX. Aplica con terminologia.py respetando mayúscula/plural.",
-  "_fuentes": [
-    "NMX-C-061, NMX-C-122",
-    "Cemex México / Holcim México - aplanado, plafón, zoclo, cimbra",
-    "Construrama / Home Depot MX",
-    "APU México 2025-2026"
-  ],
+  "_fuentes": ["NMX-C-061, NMX-C-122", "Cemex México / Holcim México - aplanado, plafón, zoclo, cimbra", "Construrama / Home Depot MX", "APU México 2025-2026"],
   "cambios": [
     {"de": "friso", "a": "aplanado", "motivo": "VE friso = mortero de nivelación. MX aplanado (y repellado/enjarre como sinónimos)."},
     {"de": "rodapié", "a": "zoclo", "motivo": "VE rodapié -> MX zoclo."},
@@ -67,7 +62,7 @@
     {"de": "sifón", "a": "cespol", "motivo": "VE sifón -> MX cespol."},
     {"de": "rejilla de piso", "a": "coladera", "motivo": "VE rejilla -> MX coladera."},
     {"de": "bajante", "a": "bajada", "motivo": "VE bajante -> MX bajada pluvial."},
-    {"de": "desagüe", "a": "desagüe", "motivo": "Igual."},
+    {"de": "desagüe", "a": "drenaje", "motivo": "Categoría 09.02: en MX el desagüe sanitario es drenaje sanitario."},
     {"de": "punto de agua", "a": "salida hidráulica", "motivo": "MX salida hidráulica."},
     {"de": "punto de desagüe", "a": "salida sanitaria", "motivo": "MX salida sanitaria."},
     {"de": "sanitario", "a": "WC", "motivo": "VE sanitario -> MX WC / taza."},
@@ -94,7 +89,7 @@
     {"de": "superboard", "a": "durock", "motivo": "MX durock."},
     {"de": "teja criolla", "a": "teja de barro", "motivo": "MX teja de barro."},
     {"de": "teja asfáltica", "a": "teja asfáltica", "motivo": "Igual."},
-    {"de": "techo", "a": "azotea", "motivo": "VE techo -> MX azotea / losa."},
+    {"de": "techo", "a": "techo", "motivo": "Se deja: en MX «techo» cubre techos y cubiertas; «azotea» solo terrazas planas (el reemplazo era demasiado amplio)."},
     {"de": "impermeabilización de techo", "a": "impermeabilización de azotea", "motivo": "MX azotea."},
     {"de": "viga de corona", "a": "cadena de cerramiento", "motivo": "MX cadena / dala."},
     {"de": "columna", "a": "castillo", "motivo": "VE columna -> MX castillo (elemento vertical)."},
@@ -102,6 +97,16 @@
     {"de": "fundación", "a": "cimentación", "motivo": "VE fundación -> MX cimentación."},
     {"de": "relleno compactado", "a": "relleno compactado", "motivo": "Igual."},
     {"de": "brochal", "a": "brocha", "motivo": "VE brochal -> MX brocha."},
-    {"de": "andamio", "a": "andamio", "motivo": "Igual."}
+    {"de": "andamio", "a": "andamio", "motivo": "Igual."},
+    {"de": "fundacion", "a": "cimentacion", "motivo": "Categorías 04 «Fundaciones» (sin tilde en el catálogo): MX usa cimentación."},
+    {"de": "yeso laminado", "a": "tablaroca", "motivo": "Categoría 06.04: en MX el yeso laminado se llama tablaroca."},
+    {"de": "acera", "a": "banqueta", "motivo": "Categoría 14.02: acera en MX es banqueta."},
+    {"de": "brocal", "a": "guarnición", "motivo": "Categoría 14.02: brocal en MX es guarnición."},
+    {"de": "baranda", "a": "barandal", "motivo": "Categoría 07.05: baranda en MX es barandal."},
+    {"de": "mampara", "a": "cancel", "motivo": "Categoría 07.07: mampara de baño en MX es cancel de baño."},
+    {"de": "Encofrados, cimbras", "a": "Cimbras", "motivo": "Categoría 05.01: evita «Cimbras, cimbras» (encofrado->cimbra)."},
+    {"de": "Desagüe sanitario", "a": "Drenaje sanitario", "motivo": "Categoría 09.02 (protectora): evita que «sanitario»->«WC» la convierta en «Drenaje WC»."},
+    {"de": "closets", "a": "clósets", "motivo": "Plural exacto de la categoría 13.04 (antes que «closet» para no generar «clósetes»)."},
+    {"de": "closet", "a": "clóset", "motivo": "Categoría 13.04: clósets."}
   ]
 }

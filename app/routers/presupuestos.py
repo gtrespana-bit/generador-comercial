@@ -935,7 +935,7 @@ def nuevo_presupuesto_form(request: Request, db: Session = Depends(get_db)):
     asegurar_catalogo_propio(db)
     cfg = _config(db)
     clientes = db.query(Cliente).order_by(Cliente.nombre).all()
-    partidas_catalogo = _indice_catalogo_para_editor(db)
+    partidas_catalogo = _indice_catalogo_para_editor(db, cfg.moneda_default, cfg.tasa_cambio)
     productos_catalogo = db.query(Producto).order_by(Producto.ultimo_uso.desc(), Producto.usos.desc(), Producto.nombre).all()
     recursos_catalogo = db.query(Recurso).order_by(Recurso.ultimo_uso.desc(), Recurso.usos.desc(), Recurso.descripcion).all()
     plantillas = db.query(Plantilla).order_by(Plantilla.nombre).all()
@@ -2910,7 +2910,7 @@ def editar_presupuesto_form(presupuesto_id: int, request: Request, db: Session =
     from ..services.catalogo_propio import asegurar_catalogo_propio
     asegurar_catalogo_propio(db)
     clientes = db.query(Cliente).order_by(Cliente.nombre).all()
-    partidas_catalogo = _indice_catalogo_para_editor(db)
+    partidas_catalogo = _indice_catalogo_para_editor(db, presupuesto.moneda, presupuesto.tipo_cambio)
     productos_catalogo = db.query(Producto).order_by(Producto.ultimo_uso.desc(), Producto.usos.desc(), Producto.nombre).all()
     recursos_catalogo = db.query(Recurso).order_by(Recurso.ultimo_uso.desc(), Recurso.usos.desc(), Recurso.descripcion).all()
     plantillas = db.query(Plantilla).order_by(Plantilla.nombre).all()

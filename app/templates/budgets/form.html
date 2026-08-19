@@ -863,7 +863,11 @@
     "codigo_externo": {{ p.codigo_externo | tojson }},
     "usos": {{ p.usos | tojson }},
     "ultimo_uso": {{ p.ultimo_uso | tojson }},
-    "buscable": {{ p.buscable | tojson }}
+    "buscable": {{ p.buscable | tojson }},
+    "coste_materiales": {{ p.coste_materiales | tojson }},
+    "coste_mano_obra": {{ p.coste_mano_obra | tojson }},
+    "coste_complementarios": {{ p.coste_complementarios | tojson }},
+    "coste_otros": {{ p.coste_otros | tojson }}
   }{{ "," if not loop.last }}{% endfor %}
 ]
 </script>

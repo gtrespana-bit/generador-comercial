@@ -97,21 +97,21 @@
 
       {% for cap in arbol_categorias %}
       <details class="cat-group has-subs" data-cat="{{ cap.categoria }}" {% if categoria_actual == cap.categoria %}open{% endif %}>
-        <summary class="category-btn drop-category" data-cat="{{ cap.categoria }}" title="{{ cap.categoria }}">
+        <summary class="category-btn drop-category" data-cat="{{ cap.categoria }}" title="{{ cap.categoria_display }}">
           <span class="cat-btn-left">
             <span class="cat-arrow">▸</span>
             <span>🏷️</span>
-            <span class="cat-name">{{ cap.categoria }}</span>
+            <span class="cat-name">{{ cap.categoria_display }}</span>
           </span>
           <span class="cat-count">{{ cap.total }}</span>
         </summary>
         <div class="subcat-list">
-          <a class="subcat-btn {% if categoria_actual == cap.categoria and not subcategoria_actual %}active{% endif %}" href="/partidas?categoria={{ cap.categoria|urlencode }}{% if vista == 'ocultas' %}&vista=ocultas{% endif %}" title="Ver todas las partidas de {{ cap.categoria }}">
+          <a class="subcat-btn {% if categoria_actual == cap.categoria and not subcategoria_actual %}active{% endif %}" href="/partidas?categoria={{ cap.categoria|urlencode }}{% if vista == 'ocultas' %}&vista=ocultas{% endif %}" title="Ver todas las partidas de {{ cap.categoria_display }}">
             <span class="subcat-name">Todas ({{ cap.total }})</span>
           </a>
           {% for sub in cap.subcapitulos %}
-          <a class="subcat-btn drop-subcategory {% if subcategoria_actual == sub.subcategoria %}active{% endif %}" href="/partidas?categoria={{ cap.categoria|urlencode }}&subcategoria={{ sub.subcategoria|urlencode }}{% if vista == 'ocultas' %}&vista=ocultas{% endif %}" title="{{ sub.subcategoria }} · {{ sub.total }} partidas">
-            <span class="subcat-name">{{ sub.subcategoria }}</span>
+          <a class="subcat-btn drop-subcategory {% if subcategoria_actual == sub.subcategoria %}active{% endif %}" href="/partidas?categoria={{ cap.categoria|urlencode }}&subcategoria={{ sub.subcategoria|urlencode }}{% if vista == 'ocultas' %}&vista=ocultas{% endif %}" title="{{ sub.subcategoria_display }} · {{ sub.total }} partidas">
+            <span class="subcat-name">{{ sub.subcategoria_display }}</span>
             <span class="subcat-count">{{ sub.total }}</span>
           </a>
           {% endfor %}
@@ -185,7 +185,7 @@
       <header class="cat-section-head drop-category" data-cotizat-click="partidas-toggle-section">
         <button class="cat-toggle" aria-label="Contraer">{{ '▼' if categoria_actual == cap.categoria else '▶' }}</button>
         <div class="cat-title-wrap">
-          <h2 class="cat-title"><span class="cat-dot"></span> {{ cap.categoria }}</h2>
+          <h2 class="cat-title"><span class="cat-dot"></span> {{ cap.categoria_display }}</h2>
           <span class="cat-meta">{{ cap.total }} partidas · {{ cap.subcapitulos|length }} subcategorías</span>
         </div>
         <span class="cat-badge">{{ cap.total }}</span>
@@ -195,7 +195,7 @@
         <div class="subcat-section collapsed" data-categoria="{{ cap.categoria }}" data-subcategoria="{{ sub.subcategoria }}">
           <header class="subcat-head drop-subcategory" data-cotizat-click="partidas-toggle-subcategory">
             <span class="subcat-toggle">▼</span>
-            <span class="subcat-label">{{ sub.subcategoria }}</span>
+            <span class="subcat-label">{{ sub.subcategoria_display }}</span>
             <span class="subcat-count-badge">{{ sub.total }}</span>
             <span class="subcat-hint">{{ sub.total }} partidas</span>
           </header>

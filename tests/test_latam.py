@@ -7,6 +7,8 @@ landing adaptativa con subdirectorios SEO y PDF con textos genéricos.
 """
 from __future__ import annotations
 
+import json
+import re
 from datetime import date
 
 import pytest
@@ -16,8 +18,21 @@ from sqlalchemy.pool import StaticPool
 
 from app import paises
 from app.database import Base
-from app.models import Capitulo, Cliente, Configuracion, Presupuesto, PresupuestoItem
-from app.services.tasa import obtener_tasa_api, tasa_convertir_precio, tasa_sugerida
+from app.models import (
+    Capitulo,
+    CategoriaPartida,
+    Cliente,
+    Configuracion,
+    Partida,
+    Presupuesto,
+    PresupuestoItem,
+)
+from app.services.tasa import (
+    factor_conversion_local,
+    obtener_tasa_api,
+    tasa_convertir_precio,
+    tasa_sugerida,
+)
 from app.services.traduccion import codigo_desde_pais, traducir, traducir_partida
 from app.utils import (
     MONEDAS_SOPORTADAS,
@@ -127,6 +142,32 @@ def test_traduccion_friso_a_panete_colombia():
     assert traducir("Friso de mortero", "CO") == "Pañete de mortero"
 
 
+def test_traduccion_categorias_y_subcategorias():
+    """Las categorías del catálogo también se traducen, con plurales y
+    concordancias correctas por país."""
+    # Capítulos y categorías
+    assert traducir("Fundaciones", "CO") == "Cimentaciones"
+    assert traducir("Fundaciones", "PE") == "Cimentaciones"
+    assert traducir("Techos y cubiertas", "CO") == "Cubiertas"
+    assert traducir("Techos y cubiertas", "EC") == "Cubiertas"
+    assert traducir("Techos y cubiertas", "MX") == "Techos y cubiertas"
+    # Subcategorías con terminología local
+    assert traducir("Frisos, enlucidos y revestimientos de mortero", "CO") == "Pañetes, enlucidos y revestimientos de mortero"
+    assert traducir("Frisos, enlucidos y revestimientos de mortero", "EC") == "Enlucidos y revestimientos de mortero"
+    assert traducir("Aceras, brocales, rampas y escaleras exteriores", "CO") == "Andenes, sardineles, rampas y escaleras exteriores"
+    assert traducir("Aceras, brocales, rampas y escaleras exteriores", "MX") == "Banquetas, guarniciones, rampas y escaleras exteriores"
+    assert traducir("Aceras, brocales, rampas y escaleras exteriores", "PE") == "Veredas, sardineles, rampas y escaleras exteriores"
+    assert traducir("Desagüe sanitario y aguas pluviales", "MX") == "Drenaje sanitario y aguas pluviales"
+    assert traducir("Desagüe sanitario y aguas pluviales", "EC") == "Desagüe sanitario y aguas lluvias"
+    # Plurales con acentos y concordancias
+    assert traducir("Concreto estructural vaciado en sitio", "CO") == "Concreto estructural fundido en sitio"
+    assert traducir("Concreto estructural vaciado en sitio", "EC") == "Hormigón estructural fundido en sitio"
+    assert traducir("Paredes de bloque de arcilla", "CO") == "Muros en bloque de arcilla"
+    assert traducir("Closets, alacenas y almacenamiento fijo", "CO") == "Clósets, alacenas y almacenamiento fijo"
+    assert traducir("Cielos rasos continuos", "MX") == "Plafones continuos"
+    assert traducir("Particiones de yeso laminado y sistemas secos", "MX") == "Particiones de tablaroca y sistemas secos"
+
+
 def test_traduccion_respeta_mayuscula_inicial():
     assert traducir("friso", "CO") == "pañete"
 
@@ -190,6 +231,16 @@ def test_obtener_tasa_api_usd_no_requiere_red():
     tasa, error = obtener_tasa_api("USD")
     assert tasa == 1.0
     assert error is None
+
+
+def test_factor_conversion_local():
+    assert factor_conversion_local("COP", 3128.65) == pytest.approx(3128.65)
+    assert factor_conversion_local("Bs", 773.31) == pytest.approx(773.31)
+    assert factor_conversion_local("USD", 4200) == 1.0
+    assert factor_conversion_local("PAB", 3.0) == 1.0
+    assert factor_conversion_local("", 3.0) == 1.0
+    assert factor_conversion_local("COP", None) == 1.0
+    assert factor_conversion_local("COP", 0) == 1.0
 
 
 # ---------------------------------------------------------------------------
@@ -433,3 +484,168 @@ def test_pdf_latam_usa_etiqueta_tasa_y_terminologia_del_pais():
     finally:
         db.close()
         engine.dispose()
+
+
+# ---------------------------------------------------------------------------
+# Catálogo: categorías traducidas y beneficio SIEMPRE en la misma moneda
+# ---------------------------------------------------------------------------
+
+TASA_COP = 3128.65
+
+
+def _poner_org_colombia_y_partida(Session, *, precio=12.0, costes=(8.0, 2.0, 0.0, 0.0)):
+    """Configura la organización del fixture en COP/Colombia y deja la
+    partida de prueba con categoría venezolana y costes conocidos (USD)."""
+    from app.models import Partida as _Partida
+
+    with Session() as db:
+        cfg = db.query(Configuracion).first()
+        cfg.empresa_pais = "Colombia"
+        cfg.etiqueta_id_fiscal = "NIT"
+        cfg.moneda_default = "COP"
+        cfg.iva_default = 19
+        cfg.tasa_cambio = TASA_COP
+        p = db.query(_Partida).first()
+        p.nombre = "Friso de mortero"
+        p.descripcion = "Friso fino sobre muro"
+        p.categoria = "04 Fundaciones"
+        p.subcategoria = "04.04 Losas de fundación"
+        p.apartado = "Obra"
+        p.precio_unitario = precio
+        p.coste_materiales, p.coste_mano_obra, p.coste_complementarios, p.coste_otros = costes
+        db.commit()
+        return p.id
+
+
+def test_filas_api_convierte_precio_y_costes_con_el_mismo_factor(entorno, cliente_web):
+    """El JSON de las filas no puede traer precio en COP y costes en USD:
+    el margen se calcularía mezclando monedas."""
+    Session, _ids, _rol = entorno
+    partida_id = _poner_org_colombia_y_partida(Session)
+    resp = cliente_web.get(
+        "/partidas/api/filas",
+        params={"categoria": "04 Fundaciones", "subcategoria": "04.04 Losas de fundación"},
+    )
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["ok"] and data["partidas"]
+    fila = next((p for p in data["partidas"] if p["id"] == partida_id), None)
+    assert fila is not None
+    # Todo convertido con el MISMO factor 3128.65
+    assert fila["precio"] == pytest.approx(12.0 * TASA_COP, rel=1e-6)
+    assert fila["coste_materiales"] == pytest.approx(8.0 * TASA_COP, rel=1e-6)
+    assert fila["coste_mano_obra"] == pytest.approx(2.0 * TASA_COP, rel=1e-6)
+    # Margen coherente: (12-10)*3128.65 = 6.257,30 COP -> +20% s/coste
+    coste_total = fila["coste_materiales"] + fila["coste_mano_obra"]
+    margen = fila["precio"] - coste_total
+    assert margen == pytest.approx(2.0 * TASA_COP, rel=1e-6)
+    assert margen / coste_total == pytest.approx(0.20, rel=1e-6)
+    # Categorías traducidas
+    assert fila["nombre"] == "Pañete de mortero"
+    assert fila["categoria"] == "04 Cimentaciones"
+    assert fila["subcategoria"] == "04.04 Placas de cimentación"
+
+
+def test_listado_partidas_busqueda_muestra_margen_coherente_y_categorias_traducidas(entorno, cliente_web):
+    """La búsqueda renderiza las filas en el servidor: precio y costes deben
+    estar en COP (margen 50% -> +6.257,30, no cientos de miles), y los
+    encabezados de grupo traducidos (Cimentaciones, no Fundaciones)."""
+    Session, _ids, _rol = entorno
+    _poner_org_colombia_y_partida(Session)
+    resp = cliente_web.get("/partidas?q=friso")
+    assert resp.status_code == 200
+    texto = resp.text
+    # Precio 12 USD -> 37.543,80 COP; coste 10 USD -> 31.286,50; margen 6.257,30 (+20%)
+    assert "37.543,80" in texto
+    assert "31.286,50" in texto
+    assert "6.257,30" in texto
+    assert "20.0%" in texto
+    # Nunca el absurdo de COP - USD (~37.512,30 con markup del 119.800%)
+    assert "119" not in texto
+    # Encabezado de grupo traducido
+    assert "Cimentaciones" in texto
+    assert "Pañete de mortero" in texto
+
+
+def test_arbol_categorias_traduce_etiquetas_sin_romper_claves(entorno, cliente_web):
+    """El árbol lateral muestra la etiqueta traducida pero conserva la clave
+    cruda en data-cat/enlaces para que los filtros sigan funcionando."""
+    Session, _ids, _rol = entorno
+    with Session() as db:
+        cfg = db.query(Configuracion).first()
+        cfg.empresa_pais = "Colombia"
+        db.add(CategoriaPartida(
+            categoria="11 Techos y cubiertas", subcategoria="", nivel=1,
+            oficial=True, activa=True, codigo_completo="11",
+        ))
+        db.flush()
+        padre_id = db.query(CategoriaPartida).filter(
+            CategoriaPartida.categoria == "11 Techos y cubiertas",
+            CategoriaPartida.nivel == 1,
+        ).first().id
+        db.add(CategoriaPartida(
+            categoria="11 Techos y cubiertas",
+            subcategoria="11.02 Cubiertas planas transitables y no transitables",
+            nivel=2, parent_id=padre_id, oficial=True, activa=True,
+            codigo_completo="11.02",
+        ))
+        db.commit()
+    resp = cliente_web.get("/partidas")
+    assert resp.status_code == 200
+    texto = resp.text
+    # Etiqueta visible traducida (techo->cubierta hace «Cubiertas», no duplicado)
+    assert "Cubiertas" in texto
+    # La clave cruda se conserva para los filtros/enlaces
+    assert 'data-cat="11 Techos y cubiertas"' in texto
+    assert "/partidas?categoria=11%20Techos%20y%20cubiertas" in texto
+
+
+def test_editor_indice_en_moneda_y_terminologia_del_presupuesto(entorno, cliente_web):
+    """El catálogo embebido del editor de presupuestos llega en la moneda del
+    presupuesto (COP) con costes convertidos y categorías traducidas, para
+    que el beneficio por partida sea coherente."""
+    Session, _ids, _rol = entorno
+    partida_id = _poner_org_colombia_y_partida(Session)
+    resp = cliente_web.get("/presupuestos/nuevo")
+    assert resp.status_code == 200
+    m = re.search(
+        r'<script nonce="[^"]*" id="datos-catalogo" type="application/json">(.*?)</script>',
+        resp.text,
+        re.DOTALL,
+    )
+    assert m is not None
+    catalogo = json.loads(m.group(1))
+    item = next((p for p in catalogo if p["id"] == partida_id), None)
+    assert item is not None
+    assert item["precio"] == pytest.approx(12.0 * TASA_COP, rel=1e-6)
+    assert item["coste_materiales"] == pytest.approx(8.0 * TASA_COP, rel=1e-6)
+    assert item["coste_mano_obra"] == pytest.approx(2.0 * TASA_COP, rel=1e-6)
+    assert item["categoria"] == "04 Cimentaciones"
+    assert item["nombre"] == "Pañete de mortero"
+
+
+def test_editor_indice_presupuesto_usd_no_convierte(entorno, cliente_web):
+    """Un presupuesto en USD recibe el catálogo en USD aunque la org tenga
+    COP configurado por defecto."""
+    Session, ids, _rol = entorno
+    partida_id = _poner_org_colombia_y_partida(Session)
+    with Session() as db:
+        presupuesto = db.get(Presupuesto, ids[2])
+        presupuesto.moneda = "USD"
+        presupuesto.tipo_cambio = None
+        db.commit()
+    resp = cliente_web.get(f"/presupuestos/{ids[2]}/editar")
+    assert resp.status_code == 200
+    m = re.search(
+        r'<script nonce="[^"]*" id="datos-catalogo" type="application/json">(.*?)</script>',
+        resp.text,
+        re.DOTALL,
+    )
+    assert m is not None
+    catalogo = json.loads(m.group(1))
+    item = next((p for p in catalogo if p["id"] == partida_id), None)
+    assert item is not None
+    assert item["precio"] == pytest.approx(12.0, rel=1e-6)
+    assert item["coste_materiales"] == pytest.approx(8.0, rel=1e-6)
+    # La terminología sí se traduce (país de la organización)
+    assert item["nombre"] == "Pañete de mortero"

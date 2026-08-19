@@ -3,13 +3,7 @@
   "_destino": "CO",
   "_version": 1,
   "_nota": "Glosario VE→CO para CotizaT. Cada entrada 'de' es término venezolano tal como aparece en el catálogo (concreto, friso, rodapié, etc.) y 'a' es la forma preferida en Colombia según NTC/Homecenter/Argos/Construdata. Aplica con terminologia.py: sustituye respetando mayúscula inicial y plural simple. Solo se listan términos que cambian; los iguales se omiten.",
-  "_fuentes": [
-    "COVENIN 2004-98 vs NTC 4595",
-    "Argos Colombia - diferencia revoque/pañete (2025)",
-    "Homecenter / Sodimac Colombia - guardaescoba, placa, formaleta",
-    "Presupuesto Presucosto APU 2026 CO - formaleta metálica",
-    "Construdata / Camacol"
-  ],
+  "_fuentes": ["COVENIN 2004-98 vs NTC 4595", "Argos Colombia - diferencia revoque/pañete (2025)", "Homecenter / Sodimac Colombia - guardaescoba, placa, formaleta", "Presupuesto Presucosto APU 2026 CO - formaleta metálica", "Construdata / Camacol"],
   "cambios": [
     {"de": "friso", "a": "pañete", "motivo": "VE friso = mortero de nivelación interior. CO pañete (y revoque como genérico)."},
     {"de": "rodapié", "a": "guardaescoba", "motivo": "VE rodapié = moldura inferior. CO guardaescoba."},
@@ -108,7 +102,7 @@
     {"de": "breaker", "a": "taco", "motivo": "Sinónimo."},
     {"de": "tablero eléctrico", "a": "tablero eléctrico", "motivo": "VE tablero. CO tablero / caja de tacos."},
     {"de": "caja de breakers", "a": "caja de tacos", "motivo": "CO caja de tacos."},
-    {"de": "cable THHN", "a": "cable THHN", "motivo": "Igual (CO también)." },
+    {"de": "cable THHN", "a": "cable THHN", "motivo": "Igual (CO también)."},
     {"de": "tubería Conduit", "a": "tubería conduit", "motivo": "Igual."},
     {"de": "tubería EMT", "a": "tubería EMT", "motivo": "Igual."},
     {"de": "lámpara", "a": "luminaria", "motivo": "VE lámpara. CO luminaria (técnico)."},
@@ -134,6 +128,15 @@
     {"de": "asfalto", "a": "asfalto", "motivo": "Igual."},
     {"de": "brochal", "a": "brocha", "motivo": "VE brochal. CO brocha."},
     {"de": "rodillo", "a": "rodillo", "motivo": "Igual."},
-    {"de": "andamio", "a": "andamio", "motivo": "Igual."}
+    {"de": "andamio", "a": "andamio", "motivo": "Igual."},
+    {"de": "fundacion", "a": "cimentacion", "motivo": "Categorías 04 «Fundaciones» (sin tilde en el catálogo): CO usa cimentación."},
+    {"de": "yeso laminado", "a": "drywall", "motivo": "Categoría 06.04: en CO el sistema de yeso laminado se llama drywall."},
+    {"de": "acera", "a": "andén", "motivo": "Categoría 14.02: acera en CO es andén."},
+    {"de": "brocal", "a": "sardinel", "motivo": "Categoría 14.02: brocal en CO es sardinel."},
+    {"de": "vaciado en sitio", "a": "fundido en sitio", "motivo": "Concordancia: «concreto … vaciado en sitio» -> «fundido en sitio» (masculino)."},
+    {"de": "Techos y cubiertas", "a": "Cubiertas", "motivo": "Categoría 11: evita «Cubiertas y cubiertas» (techo->cubierta)."},
+    {"de": "aguas pluviales", "a": "aguas lluvias", "motivo": "Categoría 09.02: en CO se dice aguas lluvias."},
+    {"de": "closets", "a": "clósets", "motivo": "Plural exacto de la categoría 13.04 (antes que «closet» para no generar «clósetes»)."},
+    {"de": "closet", "a": "clóset", "motivo": "Categoría 13.04: clósets."}
   ]
 }
