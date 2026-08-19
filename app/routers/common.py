@@ -240,6 +240,11 @@ from ..storage import (
 
 TEMPLATES = Jinja2Templates(directory=str(BASE_DIR / "app" / "templates"))
 TEMPLATES.env.filters["money"] = fmt_monto
+try:
+    from ..services.monedas import formato_iso as _formato_iso
+    TEMPLATES.env.filters["money_iso"] = _formato_iso
+except Exception:  # pragma: no cover
+    TEMPLATES.env.filters["money_iso"] = fmt_monto
 TEMPLATES.env.filters["num"] = fmt_num
 TEMPLATES.env.filters["cant"] = fmt_cantidad
 TEMPLATES.env.filters["fecha"] = fmt_fecha
