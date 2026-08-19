@@ -224,7 +224,7 @@ from ..services.operacion import (
     diagnostico_operacion,
 )
 from ..permisos import es_lectura, es_propietario, puede_gestionar
-from ..utils import SIMBOLOS, fmt_fecha, fmt_monto, fmt_num, fmt_cantidad
+from ..utils import SIMBOLOS, fmt_fecha, fmt_monto, fmt_monto_iso, fmt_num, fmt_cantidad
 from ..storage import (
     StorageError,
     copy_object,
@@ -244,7 +244,7 @@ try:
     from ..services.monedas import formato_iso as _formato_iso
     TEMPLATES.env.filters["money_iso"] = _formato_iso
 except Exception:  # pragma: no cover
-    TEMPLATES.env.filters["money_iso"] = fmt_monto
+    TEMPLATES.env.filters["money_iso"] = fmt_monto_iso
 TEMPLATES.env.filters["num"] = fmt_num
 TEMPLATES.env.filters["cant"] = fmt_cantidad
 TEMPLATES.env.filters["fecha"] = fmt_fecha

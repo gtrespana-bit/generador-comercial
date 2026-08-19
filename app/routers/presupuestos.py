@@ -1817,7 +1817,7 @@ def enviar_presupuesto_email_web(
             cliente_nombre=presupuesto.cliente.nombre,
             presupuesto_numero=presupuesto.numero,
             presupuesto_titulo=presupuesto.titulo,
-            total_texto=fmt_monto(presupuesto.total, presupuesto.moneda),
+            total_texto=fmt_monto_iso(presupuesto.total, presupuesto.moneda),
             pdf=pdf_bytes,
             nombre_pdf=nombre_pdf,
             responder_a=cfg.empresa_email,

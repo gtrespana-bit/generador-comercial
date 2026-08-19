@@ -36,7 +36,7 @@
       <div class="prop-dato"><span>Preparado para</span><strong>{{ propuesta.cliente_nombre or 'Cliente' }}</strong></div>
       <div class="prop-dato"><span>Fecha</span><strong>{{ propuesta.fecha_presupuesto.strftime('%d/%m/%Y') }}</strong></div>
       <div class="prop-dato"><span>Válido hasta</span><strong>{{ propuesta.valido_hasta.strftime('%d/%m/%Y') }}</strong></div>
-      <div class="prop-dato prop-total"><span>Total</span><strong>{{ propuesta.total | money(propuesta.moneda) }}</strong></div>
+      <div class="prop-dato prop-total"><span>Total</span><strong>{{ propuesta.total | money_iso(propuesta.moneda) }}</strong></div>
     </div>
 
     <div class="prop-acciones">

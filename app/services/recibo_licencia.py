@@ -34,7 +34,7 @@ from reportlab.platypus import (
 )
 
 from ..branding import LEGAL_ENTITY, PRODUCT_DESCRIPTOR, PRODUCT_NAME, SUPPORT_EMAIL
-from ..utils import fmt_fecha, fmt_monto
+from ..utils import fmt_fecha, fmt_monto_iso as fmt_monto
 from .licencias import GestionLicenciaError
 
 _MARCA = colors.HexColor("#0b5b38")
