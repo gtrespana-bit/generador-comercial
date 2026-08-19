@@ -2339,6 +2339,7 @@ class CambioAlcance(TenantMixin, Base):
     proyecto_id = Column(Integer, ForeignKey("proyectos.id"), nullable=False)
     numero = Column(Integer, nullable=False)
     descripcion = Column(Text, default="")
+    moneda = Column(String(10), default="USD")
     estado = Column(String(20), default="borrador")
     fecha = Column(Date, default=date.today)
     diferencia_total = Column(Float, default=0.0)
@@ -2354,6 +2355,7 @@ class CambioAlcanceItem(TenantMixin, Base):
     nombre = Column(String(250), default="")
     cantidad = Column(Float, default=0.0)
     precio_unitario = Column(Float, default=0.0)
+    moneda = Column(String(10), default="USD")
     cambio = relationship("CambioAlcance", back_populates="items")
     @property
     def importe(self): return round((self.cantidad or 0) * (self.precio_unitario or 0), 2)

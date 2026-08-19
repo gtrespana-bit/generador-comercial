@@ -1647,7 +1647,12 @@ def crear_cambio(proyecto_id: int, descripcion: str = Form(""), db: Session = De
     p = db.get(Proyecto, proyecto_id)
     if not p or not descripcion.strip(): return _redirect(f"/proyectos/{proyecto_id}", error="Describe el cambio de alcance.")
     numero = max((c.numero for c in p.cambios), default=0) + 1
-    cambio = CambioAlcance(proyecto_id=p.id, numero=numero, descripcion=descripcion.strip())
+    cambio = CambioAlcance(
+        proyecto_id=p.id,
+        numero=numero,
+        descripcion=descripcion.strip(),
+        moneda=p.moneda or "USD",
+    )
     db.add(cambio); db.commit(); return _redirect(f"/proyectos/{p.id}/cambios/{cambio.id}", msg=f"Cambio Nº {numero:03d} creado.")
 
 @router.get("/proyectos/{proyecto_id}/cambios/{cambio_id}", response_class=HTMLResponse)
