@@ -340,6 +340,20 @@
 
   <div id="capitulos"></div>
 
+  <div id="builder-empty-state" class="builder-empty-state" hidden>
+    <div>
+      <span class="empty-icon">🧱</span>
+      <strong>Empieza tu presupuesto</strong>
+      <p>Elige la forma más rápida: añade una partida, busca en el catálogo, inserta un pack o pega desde Excel.</p>
+    </div>
+    <div class="empty-actions">
+      <button type="button" class="btn btn-primary btn-sm" data-cotizat-click="add-first-partida">+ Añadir partida</button>
+      <button type="button" class="btn btn-sm" data-cotizat-click="open-spotlight">Buscar catálogo</button>
+      <button type="button" class="btn btn-sm" data-cotizat-click="open-pack-modal">Insertar pack</button>
+      <button type="button" class="btn btn-sm btn-ghost" data-cotizat-click="paste-excel-empty">Pegar Excel</button>
+    </div>
+  </div>
+
   <button type="button" class="btn-add-capitulo" id="btn-agregar-capitulo"><span>+</span> Agregar capítulo</button>
   </section>
   </div>

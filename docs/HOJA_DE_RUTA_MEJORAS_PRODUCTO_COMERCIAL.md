@@ -341,109 +341,127 @@ No crear un flujo nuevo complejo. Solo agrupar las tres acciones más útiles.
 
 ---
 
-# Fase 3 — CotizaT protege durante la obra
+# Fase 3 — Pulido del editor y velocidad de uso
 
 ## Objetivo
 
-Evitar pérdidas por cambios de alcance, pagos olvidados o acuerdos no documentados.
+Hacer que crear y modificar presupuestos sea más rápido, más limpio y con menos posibilidad de error. No se añaden módulos grandes: se ordena mejor lo que ya existe.
 
 Mensaje de producto:
 
-> “Cuando el cliente pide cambios, CotizaT los calcula, los documenta y los deja firmados.”
+> “CotizaT mantiene toda la potencia, pero el editor debe sentirse rápido y sencillo.”
 
 ---
 
-## 3.1 Cambios de alcance firmables
+## 3.1 Vista simple por defecto y detalles plegados
 
 ### Estado
 
-- [ ] Pendiente
+- [x] Realizado
 
 ### Descripción
 
-Convertir los cambios de proyecto en mini-propuestas aprobables por el cliente.
+El editor ya trabaja con fila compacta y ficha expandible. Se refuerza este enfoque para que la fila principal sea la vista de trabajo diaria y los detalles queden bajo edición/ficha.
 
-### Flujo recomendado
+### Incluido
 
-- [ ] Crear cambio de alcance desde proyecto.
-- [ ] Añadir partidas nuevas, modificadas o eliminadas.
-- [ ] Calcular diferencia económica.
-- [ ] Calcular diferencia de plazo.
-- [ ] Mostrar impacto en margen interno.
-- [ ] Generar propuesta de cambio.
-- [ ] Enviar enlace al cliente.
-- [ ] Cliente acepta/firma el cambio.
-- [ ] El proyecto actualiza total contratado y saldo.
-
-### Criterios de aceptación
-
-- [ ] El cambio de alcance no altera el presupuesto original aprobado.
-- [ ] Cada cambio tiene versión, fecha y estado.
-- [ ] El cliente puede firmar desde móvil.
-- [ ] El contratista ve impacto en dinero y tiempo.
+- [x] Fila compacta con nombre, cantidad, unidad, precio, importe, beneficio y menú.
+- [x] Ficha completa accesible desde editar/expandir.
+- [x] Acciones secundarias dentro del menú de la partida.
+- [x] Mantener costes, producto, descompuesto y mediciones sin mostrarlos todos a la vez.
 
 ---
 
-## 3.2 Plan de pagos desde el presupuesto
+## 3.2 Avisos suaves dentro del editor
 
 ### Estado
 
-- [ ] Pendiente
+- [x] Realizado
 
 ### Descripción
 
-Permitir definir un plan de cobro antes o después de aprobar el presupuesto.
+Añadir chips discretos por partida para detectar problemas sin mostrar alertas grandes.
 
-Ejemplo:
+### Avisos incluidos
 
-| Hito | % | Importe |
-|---|---:|---:|
-| Anticipo | 50% | 2.500 US$ |
-| Avance de obra | 30% | 1.500 US$ |
-| Entrega | 20% | 1.000 US$ |
-
-### Funciones
-
-- [ ] Plantillas de plan de pagos.
-- [ ] Cálculo automático por porcentaje.
-- [ ] Edición manual de importes.
-- [ ] Generar documento de cobro desde un hito.
-- [ ] Marcar hito cobrado/parcial/pendiente.
+- [x] Partida sin nombre.
+- [x] Cantidad cero.
+- [x] Precio cero.
+- [x] Sin coste interno.
+- [x] Pérdida: coste mayor que precio.
+- [x] Margen bajo.
 
 ### Criterios de aceptación
 
-- [ ] El usuario entiende cuánto cobrar y cuándo.
-- [ ] Los cobros se conectan con proyecto y saldo.
-- [ ] No se presenta como factura fiscal.
+- [x] Los avisos son visuales y pequeños.
+- [x] No bloquean la edición.
+- [x] Se recalculan mientras se trabaja.
 
 ---
 
-## 3.3 Estado financiero del proyecto
+## 3.3 Estado vacío útil del editor
 
 ### Estado
 
-- [ ] Pendiente
+- [x] Realizado
 
 ### Descripción
 
-Crear un resumen claro del dinero del proyecto.
+Cuando aún no hay partidas, mostrar un punto de partida claro.
 
-Ejemplo:
+### Acciones disponibles
 
-```txt
-Contrato aprobado: 5.200 US$
-Cambios aprobados: +430 US$
-Total contratado: 5.630 US$
-Cobrado: 3.000 US$
-Pendiente: 2.630 US$
-Margen estimado: 31%
-```
+- [x] Añadir partida.
+- [x] Buscar catálogo.
+- [x] Insertar pack.
+- [x] Pegar Excel.
 
 ### Criterios de aceptación
 
-- [ ] El usuario ve saldo pendiente en segundos.
-- [ ] Los cambios de alcance impactan el total contratado.
-- [ ] Los documentos de cobro impactan el cobrado/pendiente.
+- [x] El usuario no ve un lienzo vacío sin saber qué hacer.
+- [x] Las acciones llevan a flujos existentes, sin añadir complejidad nueva.
+
+---
+
+## 3.4 Guardado y autoguardado más claro
+
+### Estado
+
+- [x] Validado con lo existente
+
+### Descripción
+
+Se mantiene el sistema actual de estado de guardado/autoguardado porque ya cubre la necesidad sin añadir ruido.
+
+### Existente
+
+- [x] Indicador de autoguardado.
+- [x] Guardado de borrador.
+- [x] Botón de guardar principal.
+- [x] Recuperación de borrador local/servidor.
+
+---
+
+## 3.5 Acciones rápidas sin saturar
+
+### Estado
+
+- [x] Validado con lo existente
+
+### Descripción
+
+Se mantiene la lógica actual: acciones frecuentes visibles en cabecera y acciones de partida dentro del menú.
+
+### Existente
+
+- [x] Añadir partida.
+- [x] Duplicar partida.
+- [x] Eliminar partida.
+- [x] Duplicar capítulo.
+- [x] Insertar pack.
+- [x] Pegar desde Excel.
+- [x] Vista previa PDF.
+- [x] Buscador de catálogo.
 
 ---
 
@@ -763,14 +781,17 @@ Si se implementan en el futuro, deben entrar como módulos opcionales y no conta
 
 ## Sprint 3
 
-- [ ] Revisar si realmente hace falta mejorar el PDF comercial después de validar Sprint 2.
-- [ ] Mantener en pausa opciones Básico/Estándar/Premium y flujos online complejos.
+- [x] Reforzar vista simple por defecto en el editor.
+- [x] Añadir avisos suaves por partida.
+- [x] Añadir estado vacío útil en el editor.
+- [x] Validar guardado/autoguardado existente.
+- [x] Validar acciones rápidas sin saturar.
 
 ## Sprint 4
 
-- [ ] Cambios de alcance firmables.
-- [ ] Estado financiero del proyecto.
-- [ ] Plan de pagos desde presupuesto/proyecto.
+- [ ] Salud del catálogo.
+- [ ] Actualización guiada de precios.
+- [ ] Impacto de recursos vinculados.
 
 ## Sprint 5
 

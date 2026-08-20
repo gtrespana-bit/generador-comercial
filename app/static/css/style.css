@@ -6261,3 +6261,59 @@ body { -webkit-tap-highlight-color: transparent; }
 }
 .editor-shared-notice strong { color: var(--amber); }
 .editor-shared-notice span { color: #713f12; }
+
+/* ───────────────────── Editor · fase 3 rapidez y limpieza ───────────────────── */
+.builder-empty-state {
+  margin: 1rem 0;
+  padding: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--surface-alt);
+}
+.builder-empty-state[hidden] { display: none; }
+.builder-empty-state .empty-icon {
+  width: 42px;
+  height: 42px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--accent-soft);
+  margin-right: .65rem;
+}
+.builder-empty-state strong { display: inline-block; font-size: 1rem; color: var(--text); }
+.builder-empty-state p { margin: .35rem 0 0; color: var(--text-soft); font-size: .88rem; }
+.builder-empty-state .empty-actions { display: flex; gap: .5rem; flex-wrap: wrap; justify-content: flex-end; }
+.partida-alerts {
+  display: flex;
+  gap: .35rem;
+  flex-wrap: wrap;
+  padding: .35rem .8rem .45rem calc(2.7rem + 22px);
+  background: color-mix(in srgb, var(--surface-alt) 55%, transparent);
+  border-bottom: 1px solid var(--border);
+}
+.partida-alerts[hidden] { display: none; }
+.partida-alert-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: .25rem;
+  border-radius: 999px;
+  padding: .16rem .52rem;
+  font-size: .68rem;
+  font-weight: 800;
+  border: 1px solid transparent;
+  background: var(--amber-soft);
+  color: var(--amber);
+}
+.partida-alert-chip.danger { background: var(--rose-soft); color: var(--rose); border-color: rgba(225,29,72,.18); }
+.partida-alert-chip.warn { background: var(--amber-soft); color: var(--amber); border-color: rgba(180,83,9,.18); }
+.partida-alert-chip.muted { background: var(--surface-hover); color: var(--text-muted); border-color: var(--border); }
+.partida-alert-chip.ok { background: var(--green-soft); color: var(--green); border-color: rgba(5,150,105,.18); }
+@media (max-width: 780px) {
+  .builder-empty-state { align-items: flex-start; flex-direction: column; }
+  .builder-empty-state .empty-actions { justify-content: flex-start; }
+  .partida-alerts { padding-left: .8rem; }
+}
