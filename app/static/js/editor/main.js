@@ -176,8 +176,30 @@
     });
     var contador = document.getElementById("builder-item-count");
     if (contador) contador.textContent = totalPartidas;
+    actualizarEstadoVacioEditor(totalPartidas);
   }
   editor.renumerar = renumerar;
+
+  function actualizarEstadoVacioEditor(totalPartidas) {
+    var empty = document.getElementById("builder-empty-state");
+    if (empty) empty.hidden = totalPartidas > 0;
+  }
+  editor.actualizarEstadoVacioEditor = actualizarEstadoVacioEditor;
+
+  function pintarAvisosPartida(wrap, avisos) {
+    var cont = wrap && wrap.querySelector(".partida-alerts");
+    if (!cont) return;
+    cont.textContent = "";
+    avisos = avisos || [];
+    cont.hidden = !avisos.length;
+    avisos.slice(0, 4).forEach(function (aviso) {
+      var chip = document.createElement("span");
+      chip.className = "partida-alert-chip " + (aviso.tipo || "warn");
+      chip.textContent = aviso.texto;
+      if (aviso.titulo) chip.title = aviso.titulo;
+      cont.appendChild(chip);
+    });
+  }
 
   // -------------------------------------------------------------------------
   // Cálculo de totales (versión simplificada que delega al servidor)
@@ -251,6 +273,11 @@
             esCype = metaDes && (metaDes.origen === "cype" || metaDes.archivo_origen);
           } catch (e) { esCype = false; }
         }
+        var cypeFlag = wrap && wrap.querySelector('[data-f="p_tiene_descomposicion_cype"]');
+        if (!esCype && cypeFlag && cypeFlag.value === "1") {
+          var origenDes = (wrap && wrap.dataset && wrap.dataset.origenDescomposicion) || "";
+          esCype = origenDes !== "manual";
+        }
         var sumCostes = costeMat + costeMO + costeComp + costeOtros;
         var costeUnidadObra = esCype
           ? sumCostes
@@ -265,6 +292,15 @@
         var beneficio = FMT.redondear2(importe - coste);
         var markupFila = hayCostesPartida && coste > 0 ? (beneficio / coste * 100) : 0;
         var margenFilaPct = hayCostesPartida && importe > 0 ? (beneficio / importe * 100) : 0;
+        var avisosPartida = [];
+        var nombrePartida = String((wrap && wrap.querySelector('[data-f="p_nombre"]') || {}).value || "").trim();
+        if (!nombrePartida) avisosPartida.push({ tipo: "danger", texto: "Sin nombre", titulo: "Añade un nombre a la partida" });
+        if (cant <= 0) avisosPartida.push({ tipo: "danger", texto: "Cantidad 0", titulo: "Esta partida no suma porque la cantidad es 0" });
+        if (precio <= 0) avisosPartida.push({ tipo: "danger", texto: "Precio 0", titulo: "Indica precio unitario antes de enviar" });
+        if (!hayCostesPartida) avisosPartida.push({ tipo: "muted", texto: "Sin coste", titulo: "Sin coste interno no se calcula margen real" });
+        else if (beneficio < 0) avisosPartida.push({ tipo: "danger", texto: "Pérdida", titulo: "El coste supera el precio de venta" });
+        else if (margenFilaPct > 0 && margenFilaPct < 20) avisosPartida.push({ tipo: "warn", texto: "Margen bajo", titulo: "Margen por debajo del 20%" });
+        pintarAvisosPartida(wrap, avisosPartida);
         var margenReal = wrap.querySelector('[data-f="margen_real"]');
         if (margenReal) {
           if (hayCostesPartida) {
@@ -586,6 +622,29 @@
   }
   editor.initPegarExcel = initPegarExcel;
 
+  function initEmptyStateActions() {
+    var empty = document.getElementById("builder-empty-state");
+    if (!empty) return;
+    var add = document.getElementById("empty-add-first-partida");
+    var pack = document.getElementById("empty-open-pack-modal");
+    var paste = document.getElementById("empty-paste-excel");
+    if (add) add.addEventListener("click", function () {
+      var cap = editor.contCapitulos.querySelector(".capitulo") || Capitulo.crear({ nombre: "CAPÍTULO GENERAL" }, editor);
+      nuevaPartidaEnCapitulo(cap);
+      editor.renumerar();
+      editor.recalcular();
+    });
+    if (pack) pack.addEventListener("click", function () {
+      var b = document.getElementById("btn-modal-receta-seccion") || document.getElementById("btn-modal-receta");
+      if (b) b.click();
+    });
+    if (paste) paste.addEventListener("click", function () {
+      var b = document.getElementById("btn-pegar-excel");
+      if (b) b.click();
+    });
+  }
+  editor.initEmptyStateActions = initEmptyStateActions;
+
   // -------------------------------------------------------------------------
   // Serialización del formulario
   // -------------------------------------------------------------------------
@@ -810,6 +869,7 @@
     else if (typeof totales === "function") totales();
 
     initPegarExcel();
+    initEmptyStateActions();
     initSerializacionFormulario();
     initNavegacionCreador();
 

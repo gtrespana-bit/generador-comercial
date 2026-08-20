@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Previsualizar ajuste de precios{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <p class="crumb">📚 <a href="/partidas">Catálogo</a> › Ajuste de precios</p>
+    <h1>Previsualizar ajuste de precios</h1>
+    <p class="subtitle">Revisa el impacto antes de tocar el catálogo. No se modifica nada hasta confirmar.</p>
+  </div>
+  <div class="actions"><a class="btn" href="/partidas">← Volver al catálogo</a></div>
+</div>
+
+<div class="card ajuste-preview">
+  <div class="ajuste-resumen-grid">
+    <div><span>Ajuste</span><strong>{{ porcentaje | num }}%</strong></div>
+    <div><span>Partidas afectadas</span><strong>{{ total }}</strong></div>
+    <div><span>Promedio actual</span><strong>{{ promedio_actual | money_iso(moneda_vista) }}</strong></div>
+    <div><span>Promedio nuevo</span><strong>{{ promedio_nuevo | money_iso(moneda_vista) }}</strong></div>
+  </div>
+  <p class="hint">El ajuste aplica solo a precios del catálogo para presupuestos futuros. No cambia presupuestos ya emitidos.</p>
+  <form method="post" action="/partidas/ajustar" data-confirm="¿Aplicar este ajuste al catálogo?" class="form-actions">
+    <input type="hidden" name="porcentaje" value="{{ porcentaje }}">
+    <button class="btn btn-primary" type="submit">Confirmar ajuste</button>
+    <a class="btn" href="/partidas">Cancelar</a>
+  </form>
+</div>
+
+{% if muestras %}
+<div class="card">
+  <h2>Ejemplos de partidas afectadas</h2>
+  <div class="table-wrap">
+    <table class="table">
+      <thead><tr><th>Partida</th><th class="right">Antes</th><th class="right">Después</th></tr></thead>
+      <tbody>
+        {% for m in muestras %}
+        <tr><td>{{ m.nombre }}</td><td class="right">{{ m.antes | money_iso(moneda_vista) }}</td><td class="right"><strong>{{ m.despues | money_iso(moneda_vista) }}</strong></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

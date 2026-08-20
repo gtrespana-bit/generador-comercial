@@ -1524,6 +1524,8 @@
 
       var wrap = editor.FMT.h("div", "partida-wrap");
       wrap.draggable = true;
+      var origenDescomposicion = (datos.descomposicion && datos.descomposicion.origen) || (datos.descomposicion_meta && datos.descomposicion_meta.origen) || "";
+      if (origenDescomposicion) wrap.dataset.origenDescomposicion = origenDescomposicion;
 
       // Campos ocultos de identidad técnica
       wrap.appendChild(editor.FMT.crearInput("hidden", datos.partida_id || "", null, "p_id"));
@@ -1567,12 +1569,15 @@
       nombreInput.className = "partida-nombre-input";
       nombreInput.addEventListener("input", function () {
         var catId = wrap.querySelector('[data-f="p_catalogo_id"]');
-        if (!catId || !catId.value) return;
-        var num = Number(catId.value || 0);
-        var maestra = (editorInst.CATALOGO || []).find(function (p) { return Number(p.id) === num; });
-        if (maestra && String(maestra.nombre || "").trim().toLowerCase() !== String(nombreInput.value || "").trim().toLowerCase()) {
-          catId.value = "";
+        if (catId && catId.value) {
+          var num = Number(catId.value || 0);
+          var maestra = (editorInst.CATALOGO || []).find(function (p) { return Number(p.id) === num; });
+          if (maestra && String(maestra.nombre || "").trim().toLowerCase() !== String(nombreInput.value || "").trim().toLowerCase()) {
+            catId.value = "";
+          }
         }
+        editorInst.recalcular();
+        editorInst.marcarCambio();
       });
       nombreInput.addEventListener("blur", function () {
         var catId = wrap.querySelector('[data-f="p_catalogo_id"]');
@@ -1851,6 +1856,9 @@
       row.appendChild(delCell);
 
       wrap.appendChild(row);
+      var avisos = editor.FMT.h("div", "partida-alerts");
+      avisos.hidden = true;
+      wrap.appendChild(avisos);
 
       // Crea primero el almacén de datos (oculto) para que el resumen pueda
       // escuchar sus cambios, y se inserta visualmente justo bajo la fila.
@@ -2274,6 +2282,11 @@
               var metaDes = JSON.parse(metaEl.value);
               esCype = metaDes && (metaDes.origen === "cype" || metaDes.archivo_origen);
             } catch (e) { esCype = false; }
+          }
+          var cypeFlag = partidaWrap.querySelector('[data-f="p_tiene_descomposicion_cype"]');
+          if (!esCype && cypeFlag && cypeFlag.value === "1") {
+            var origenDes = (partidaWrap.dataset && partidaWrap.dataset.origenDescomposicion) || "";
+            esCype = origenDes !== "manual";
           }
           return esCype ? (sum + costeProducto) : (sum * (1 + desp/100) + costeProducto);
         }

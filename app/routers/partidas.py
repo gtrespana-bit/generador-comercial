@@ -7,6 +7,7 @@ from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utili
 from ..services import auditoria
 from ..services.tasa import factor_conversion_local, tasa_convertir_precio
 from ..services.traduccion import codigo_desde_pais, traducir
+from ..services.salud_catalogo import analizar_salud_catalogo, MARGEN_MINIMO_CATALOGO, DIAS_SIN_REVISION
 
 router = APIRouter()
 
@@ -143,6 +144,7 @@ def listar_partidas(
     vista: str = "activas",
     categoria: str = "",
     subcategoria: str = "",
+    salud: str = "",
     db: Session = Depends(get_db),
 ):
     # La tabla de gestión ya no se pagina en la vista de navegación: el árbol
@@ -157,9 +159,14 @@ def listar_partidas(
     if subcategoria and not categoria:
         categoria = ""
     q = str(q or "").strip()
+    salud = str(salud or "").strip().lower()
+    filtros_salud = {"sin_precio", "sin_coste", "margen_bajo", "sin_tiempo", "desactualizadas"}
+    if salud not in filtros_salud:
+        salud = ""
     total_ocultas = db.query(Partida).filter(Partida.oculta.is_(True)).count()
+    salud_catalogo = analizar_salud_catalogo(db)
 
-    modo_directo = bool(q) or bool(subcategoria)
+    modo_directo = bool(q) or bool(subcategoria) or bool(salud)
     por_pagina = 100
     if modo_directo:
         query = db.query(Partida).filter(Partida.oculta.is_(vista == "ocultas"))
@@ -169,6 +176,32 @@ def listar_partidas(
                 query = query.filter(Partida.subcategoria == subcategoria)
         if q:
             query, _ = _aplicar_busqueda_catalogo(query, q[:120])
+        coste_expr = (
+            func.coalesce(Partida.coste_materiales, 0)
+            + func.coalesce(Partida.coste_mano_obra, 0)
+            + func.coalesce(Partida.coste_complementarios, 0)
+            + func.coalesce(Partida.coste_otros, 0)
+        )
+        if salud == "sin_precio":
+            query = query.filter(func.coalesce(Partida.precio_unitario, 0) <= 0)
+        elif salud == "sin_coste":
+            query = query.filter(coste_expr <= 0)
+        elif salud == "margen_bajo":
+            query = query.filter(
+                Partida.precio_unitario > 0,
+                coste_expr > 0,
+                ((Partida.precio_unitario - coste_expr) / Partida.precio_unitario * 100) < MARGEN_MINIMO_CATALOGO,
+            )
+        elif salud == "sin_tiempo":
+            query = query.filter(
+                func.coalesce(Partida.tiempo_estimado_horas, 0) <= 0,
+                func.coalesce(Partida.tiempo_oficial_horas, 0) <= 0,
+                func.coalesce(Partida.tiempo_ayudante_horas, 0) <= 0,
+                func.coalesce(Partida.tiempo_equipo_horas, 0) <= 0,
+            )
+        elif salud == "desactualizadas":
+            limite = datetime.utcnow() - timedelta(days=DIAS_SIN_REVISION)
+            query = query.filter(Partida.fecha_actualizacion_precio < limite)
         total_partidas = query.count()
         total_paginas = max(1, math.ceil(total_partidas / por_pagina))
         pagina = max(1, min(int(pagina or 1), total_paginas))
@@ -299,6 +332,8 @@ def listar_partidas(
         "por_pagina": por_pagina,
         "vista": vista,
         "total_ocultas": total_ocultas,
+        "salud": salud,
+        "salud_catalogo": salud_catalogo,
     })
 
 
@@ -590,6 +625,31 @@ async def crear_categoria_partida(request: Request, db: Session = Depends(get_db
         db.commit()
     etiqueta = f"«{categoria} · {subcategoria}»" if subcategoria else f"«{categoria}»"
     return _redirect("/partidas", msg=f"Creada {etiqueta}. Ya puedes arrastrar partidas a ella.")
+
+
+@router.get("/partidas/ajustar/previsualizar", response_class=HTMLResponse)
+def previsualizar_ajuste_precios(request: Request, porcentaje: str = "0", db: Session = Depends(get_db)):
+    pct = _f(porcentaje)
+    if pct < -100:
+        return _redirect("/partidas", error="El porcentaje no puede ser menor que -100.")
+    partidas = db.query(Partida).filter(Partida.oculta.is_(False)).order_by(Partida.categoria, Partida.nombre).all()
+    _moneda, _factor = _contexto_moneda(db)
+    total = len(partidas)
+    suma_actual = sum(float(p.precio_unitario or 0) for p in partidas)
+    suma_nueva = sum(round(float(p.precio_unitario or 0) * (1 + pct / 100), 2) for p in partidas)
+    muestras = []
+    for p in partidas[:12]:
+        antes = tasa_convertir_precio(p.precio_unitario or 0, _factor)
+        despues = tasa_convertir_precio(round(float(p.precio_unitario or 0) * (1 + pct / 100), 2), _factor)
+        muestras.append({"nombre": p.nombre, "antes": antes, "despues": despues})
+    return TEMPLATES.TemplateResponse(request, "partidas/ajustar_preview.html", {
+        "porcentaje": pct,
+        "total": total,
+        "promedio_actual": tasa_convertir_precio((suma_actual / total) if total else 0, _factor),
+        "promedio_nuevo": tasa_convertir_precio((suma_nueva / total) if total else 0, _factor),
+        "muestras": muestras,
+        "moneda_vista": _moneda,
+    })
 
 
 @router.post("/partidas/ajustar")

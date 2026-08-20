@@ -67,6 +67,13 @@
     <button type="button" data-scroll-builder="builder-resumen"><span>3</span><strong>Revisión</strong><small>Totales y condiciones</small></button>
   </nav>
 
+  {% if presupuesto and presupuesto_compartido %}
+  <div class="editor-shared-notice" role="status">
+    <strong>Este presupuesto ya fue enviado o tiene versiones guardadas.</strong>
+    <span>Modifícalo con normalidad; al volver al detalle podrás copiar un resumen simple de cambios para reenviar el PDF actualizado.</span>
+  </div>
+  {% endif %}
+
   <!-- DATOS GENERALES -->
   <div class="card collapsible-card builder-general-card" id="card-datos-generales">
     <div class="card-header-toggle csp-s-4c4a58cb34" data-cotizat-click="budget-toggle-general">
@@ -332,6 +339,20 @@
   </div>
 
   <div id="capitulos"></div>
+
+  <div id="builder-empty-state" class="builder-empty-state" hidden>
+    <div>
+      <span class="empty-icon">🧱</span>
+      <strong>Empieza tu presupuesto</strong>
+      <p>Elige la forma más rápida: añade una partida, busca en el catálogo, inserta un pack o pega desde Excel.</p>
+    </div>
+    <div class="empty-actions">
+      <button type="button" class="btn btn-primary btn-sm" id="empty-add-first-partida">+ Añadir partida</button>
+      <button type="button" class="btn btn-sm" data-cotizat-click="open-spotlight">Buscar catálogo</button>
+      <button type="button" class="btn btn-sm" id="empty-open-pack-modal">Insertar pack</button>
+      <button type="button" class="btn btn-sm btn-ghost" id="empty-paste-excel">Pegar Excel</button>
+    </div>
+  </div>
 
   <button type="button" class="btn-add-capitulo" id="btn-agregar-capitulo"><span>+</span> Agregar capítulo</button>
   </section>
@@ -787,6 +808,13 @@
           "codigo_externo": {{ p.codigo_externo | tojson }},
           "tiene_descomposicion_cype": {{ (p.descomposicion_cype is not none) | tojson }},
           "nombre_descomposicion_cype": {{ (p.descomposicion_cype.nombre_archivo_origen if p.descomposicion_cype else '') | tojson }},
+          "descomposicion_meta": {% if p.descomposicion_cype %}{
+            "origen": {{ (p.descomposicion_cype.origen or '') | tojson }},
+            "archivo_origen": {{ (p.descomposicion_cype.archivo_origen or '') | tojson }},
+            "codigo": {{ (p.descomposicion_cype.codigo or '') | tojson }},
+            "unidad": {{ (p.descomposicion_cype.unidad or '') | tojson }},
+            "nombre_archivo_origen": {{ (p.descomposicion_cype.nombre_archivo_origen or '') | tojson }}
+          }{% else %}{}{% endif %},
           "nombre": {{ p.nombre | tojson }},
           "descripcion": {{ p.descripcion | tojson }},
           "unidad": {{ p.unidad | tojson }},

@@ -1150,6 +1150,77 @@ def _tabla_garantias(presupuesto, st, azul_color):
     return flujo
 
 
+def _resumen_comercial(presupuesto, st, moneda, azul_color, ctx=None):
+    """Resumen comercial corto y visible para el cliente.
+
+    No muestra costes internos, beneficio ni tiempos. Solo lo que el cliente
+    necesita identificar rápido al abrir el PDF: total, validez, fecha y moneda.
+    """
+    title_style = ParagraphStyle(
+        "resumen_comercial_titulo",
+        fontName="Lato-Bold",
+        fontSize=11.2,
+        leading=13.5,
+        textColor=TEXTO,
+    )
+    label_style = ParagraphStyle(
+        "resumen_comercial_label",
+        fontName="Lato-Bold",
+        fontSize=7.5,
+        leading=9,
+        textColor=GRIS,
+        alignment=TA_CENTER,
+    )
+    value_style = ParagraphStyle(
+        "resumen_comercial_valor",
+        fontName="Lato-Bold",
+        fontSize=11,
+        leading=13,
+        textColor=TEXTO,
+        alignment=TA_CENTER,
+    )
+    total_style = ParagraphStyle(
+        "resumen_comercial_total",
+        fontName="Lato-Bold",
+        fontSize=13.5,
+        leading=16,
+        textColor=azul_color,
+        alignment=TA_CENTER,
+    )
+
+    def total_cell():
+        if ctx is None:
+            return Paragraph(fmt_monto(presupuesto.total, moneda), total_style)
+        return ctx.campo(
+            "resumen_total", ctx.txt_total("total"), ctx.js_total("total"),
+            126, alto=18, alineacion="center", tam=12.5,
+        )
+
+    validez = f"{presupuesto.validez_dias} días" if presupuesto.validez_dias else "—"
+    filas = [
+        [Paragraph("TOTAL", label_style), Paragraph("VALIDEZ", label_style), Paragraph("FECHA", label_style), Paragraph("MONEDA", label_style)],
+        [total_cell(), Paragraph(validez, value_style), Paragraph(fmt_fecha(presupuesto.fecha), value_style), Paragraph(_esc(moneda), value_style)],
+    ]
+    tabla = Table(filas, colWidths=[_ANCHO * 0.34, _ANCHO * 0.22, _ANCHO * 0.22, _ANCHO * 0.22])
+    tabla.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor("#F8FAFC")),
+        ("BOX", (0, 0), (-1, -1), 0.8, colors.HexColor("#DDE3EC")),
+        ("LINEBELOW", (0, 0), (-1, 0), 0.5, colors.HexColor("#DDE3EC")),
+        ("LINEBEFORE", (1, 0), (-1, -1), 0.5, colors.HexColor("#E5EAF1")),
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+        ("TOPPADDING", (0, 0), (-1, -1), 7),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 7),
+        ("LEFTPADDING", (0, 0), (-1, -1), 5),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 5),
+    ]))
+    return KeepTogether([
+        Paragraph("RESUMEN DE LA PROPUESTA", title_style),
+        _hr(azul_color, 1.2, spaceBefore=4, spaceAfter=8),
+        tabla,
+        Spacer(1, 16),
+    ])
+
+
 def _resumen_ejecutivo(presupuesto, st, moneda, azul_color, ctx=None):
     """Genera una elegante tabla con el resumen de subtotales por capítulo.
 
@@ -1361,6 +1432,7 @@ def _documento_presupuesto(presupuesto, config, texto_anexos="", paginas_extra=0
         story += _portada_presentacion(presupuesto, config, st, azul_color)
         
     story += _cabecera(presupuesto, config, st, azul_color)
+    story.append(_resumen_comercial(presupuesto, st, moneda, azul_color, ctx=ctx))
     
     # Resumen Ejecutivo de Capítulos (Opcional)
     if presupuesto.mostrar_resumen_capitulos:
@@ -1377,10 +1449,10 @@ def _documento_presupuesto(presupuesto, config, texto_anexos="", paginas_extra=0
 
     if presupuesto.notas:
         story.append(Spacer(1, 19))
-        story.append(_seccion("Información adicional", presupuesto.notas, st, azul_color))
+        story.append(_seccion("Alcance e información adicional", presupuesto.notas, st, azul_color))
     if presupuesto.condiciones:
         story.append(Spacer(1, 19))
-        story.append(_seccion("Condiciones del presupuesto", presupuesto.condiciones, st, azul_color))
+        story.append(_seccion("Condiciones comerciales", presupuesto.condiciones, st, azul_color))
     # Datos venezolanos, siempre guardados en el documento para preservar su histórico.
     regional = []
     if getattr(config, "mostrar_numero_control", False) and getattr(presupuesto, "numero_control", ""): regional.append(f"Número de control: {presupuesto.numero_control}")

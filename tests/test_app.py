@@ -1477,3 +1477,46 @@ def test_configuracion_muestra_y_guarda_nombre_de_organizacion():
         assert org.slug  # el slug se regenera con el nuevo nombre
         cfg = db.query(Configuracion).first()
         assert cfg.empresa_nombre == "Reformas Nueva C.A."
+
+
+def test_pdf_incluye_resumen_comercial_y_titulos_claros():
+    import io
+    from pypdf import PdfReader
+    from app.models import Configuracion
+    from app.services import pdf as pdf_service
+
+    engine = create_engine(
+        "sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool,
+    )
+    Base.metadata.create_all(engine)
+    db = sessionmaker(bind=engine)()
+    try:
+        cfg = Configuracion(empresa_nombre="Constructora Clara")
+        cliente = Cliente(nombre="Cliente PDF")
+        db.add_all([cfg, cliente])
+        db.flush()
+        presu = Presupuesto(
+            numero="P-PDF-1", year=2026, fecha=date.today(), client_id=cliente.id,
+            impuesto_pct=16, moneda="USD", validez_dias=30,
+            notas="Incluye suministro e instalación descritos en las partidas.",
+            condiciones="Forma de pago: 50% anticipo y 50% contra entrega.",
+        )
+        cap = Capitulo(nombre="BAÑO", orden=1)
+        cap.partidas.append(PresupuestoItem(
+            nombre="Demolición", unidad="m2", cantidad=10, precio_unitario=20, orden=1,
+        ))
+        presu.capitulos.append(cap)
+        db.add(presu)
+        db.commit()
+        db.refresh(presu)
+
+        data = pdf_service.generar_pdf(presu, cfg).getvalue()
+        texto = "\n".join((p.extract_text() or "") for p in PdfReader(io.BytesIO(data)).pages)
+        assert "RESUMEN DE LA PROPUESTA" in texto
+        assert "TOTAL" in texto
+        assert "VALIDEZ" in texto
+        assert "Alcance e información adicional" in texto
+        assert "Condiciones comerciales" in texto
+    finally:
+        db.close()
+        engine.dispose()

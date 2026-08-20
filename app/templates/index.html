@@ -96,6 +96,32 @@
 </section>
 {% endif %}
 
+
+{% if salud_catalogo and salud_catalogo.requiere_atencion %}
+<section class="card dashboard-catalog-health" aria-labelledby="catalog-health-title">
+  <div class="catalog-health-main">
+    <div class="catalog-health-score"><strong>{{ salud_catalogo.score }}%</strong><span>catálogo</span></div>
+    <div>
+      <h2 id="catalog-health-title">Catálogo: {{ salud_catalogo.titulo|lower }}</h2>
+      <p class="hint">
+        {% for problema in salud_catalogo.problemas_visibles[:3] %}
+          {{ problema.count }} {{ problema.label|lower }}{{ ' · ' if not loop.last }}
+        {% endfor %}
+      </p>
+    </div>
+  </div>
+  <a class="btn btn-sm" href="/partidas">Revisar catálogo</a>
+</section>
+{% endif %}
+
+<section class="card quick-guide-strip">
+  <div>
+    <strong>¿Primera vez?</strong>
+    <span class="hint">Sigue el flujo recomendado: catálogo → presupuesto → revisión → PDF → cambios.</span>
+  </div>
+  <a class="btn btn-sm" href="/guia-rapida">Ver guía rápida</a>
+</section>
+
 <div class="dash-grid">
   <section class="card dash-panel">
     <div class="card-head">

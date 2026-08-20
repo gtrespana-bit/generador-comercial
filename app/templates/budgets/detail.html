@@ -8,30 +8,35 @@
     <p class="subtitle">{% if p.titulo %}{{ p.titulo }} · {% endif %}Creado el {{ p.created_at.strftime('%d/%m/%Y %H:%M') if p.created_at else '' }}</p>
     {% if p.es_demo %}<p class="hint">Este documento es ficticio. Puedes explorarlo, editarlo o eliminarlo; no cuenta como tu primer presupuesto real.</p>{% endif %}
   </div>
-  <div class="actions">
+  <div class="actions budget-actions-main">
     {% set wa = p.cliente.telefono | whatsapp('Hola ' ~ p.cliente.nombre ~ ', te comparto el presupuesto ' ~ p.numero ~ ' (' ~ (p.titulo or '') ~ ') por un total de ' ~ (p.total | money_iso(p.moneda)) ~ '. Validez de la oferta: ' ~ p.validez_dias ~ ' días.') %}
-    {% if wa %}<a class="btn btn-whatsapp" href="{{ wa }}" target="_blank">💬 Enviar por WhatsApp</a>{% endif %}
-    <a class="btn" href="/presupuestos/{{ p.id }}/enviar-email">✉️ Enviar por email</a>
-    <a class="btn" href="/presupuestos/{{ p.id }}/enlace-publico">🔗 Enlace público</a>
-    <a class="btn" href="/presupuestos/{{ p.id }}/exportar" title="Descargar CSV con el detalle tabular">📥 CSV</a>
-    <button class="btn" type="button" data-cotizat-click="print-pdf" data-url="/presupuestos/{{ p.id }}/pdf?inline=1" title="Imprimir presupuesto en formato PDF">🖨️ Imprimir</button>
-    <a class="btn btn-primary" href="/presupuestos/{{ p.id }}/pdf" download="presupuesto_{{ p.numero }}.pdf" data-cotizat-click="download-pdf">⬇ Descargar PDF</a>
-    <a class="btn" href="/presupuestos/{{ p.id }}/pdf?inline=1" target="_blank">👁 Ver PDF</a>
-    <a class="btn" href="/presupuestos/{{ p.id }}/tiempos" title="Estimación de horas y días laborables según los rendimientos de las partidas">⏱ Tiempo de obra</a>
-    <a class="btn" href="/presupuestos/{{ p.id }}/editar">✏️ Editar</a>
-    <a class="btn" href="/presupuestos/nuevo" title="Crear otro presupuesto">+ Nuevo</a>
-    {% if p.estado == 'aprobado' %}
-    <form method="post" action="/presupuestos/{{ p.id }}/proyecto" class="inline"><button class="btn" type="submit" title="Crear obra y control financiero">🏗️ Convertir en proyecto</button></form>
-    <form method="post" action="/presupuestos/{{ p.id }}/factura" class="inline">
-      <button class="btn" type="submit" title="Crear un documento de cobro no fiscal desde este presupuesto aprobado">🧾 Crear documento de cobro</button>
-    </form>
+    {% if revision_envio and revision_envio.puede_enviar %}
+    <a class="btn btn-primary" href="/presupuestos/{{ p.id }}/enlace-publico">🚀 Enviar propuesta</a>
+    {% else %}
+    <a class="btn btn-primary" href="{{ (revision_envio.url_principal if revision_envio else ('/presupuestos/' ~ p.id ~ '/editar')) }}">⚠ Revisar antes de enviar</a>
     {% endif %}
-    <form method="post" action="/presupuestos/{{ p.id }}/duplicar" class="inline">
-      <button class="btn" type="submit">📋 Duplicar</button>
-    </form>
-    <form method="post" action="/presupuestos/{{ p.id }}/eliminar" class="inline" data-confirm="¿Eliminar este presupuesto?">
-      <button class="btn btn-danger" type="submit">🗑 Eliminar</button>
-    </form>
+    {% if cambios_reenvio and cambios_reenvio.hay_cambios %}<a class="btn btn-secondary" href="#cambios-reenvio">🔁 Reenviar actualización</a>{% endif %}
+    <a class="btn" href="/presupuestos/{{ p.id }}/pdf" download="presupuesto_{{ p.numero }}.pdf" data-cotizat-click="download-pdf">⬇ PDF</a>
+    <a class="btn" href="/presupuestos/{{ p.id }}/editar">✏️ Editar</a>
+    <a class="btn" href="/presupuestos/{{ p.id }}/tiempos" title="Planificación de horas, cuadrillas y duración de obra">⏱ Planificación</a>
+    <details class="actions-more">
+      <summary class="btn">Más opciones</summary>
+      <div class="actions-more-menu">
+        {% if wa %}<a class="btn btn-whatsapp" href="{{ wa }}" target="_blank">💬 WhatsApp</a>{% endif %}
+        <a class="btn" href="/presupuestos/{{ p.id }}/enviar-email">✉️ Email</a>
+        <a class="btn" href="/presupuestos/{{ p.id }}/enlace-publico">🔗 Enlace público</a>
+        <a class="btn" href="/presupuestos/{{ p.id }}/pdf?inline=1" target="_blank">👁 Ver PDF</a>
+        <button class="btn" type="button" data-cotizat-click="print-pdf" data-url="/presupuestos/{{ p.id }}/pdf?inline=1" title="Imprimir presupuesto en formato PDF">🖨️ Imprimir</button>
+        <a class="btn" href="/presupuestos/{{ p.id }}/exportar" title="Descargar CSV con el detalle tabular">📥 CSV</a>
+        <a class="btn" href="/presupuestos/nuevo" title="Crear otro presupuesto">+ Nuevo</a>
+        {% if p.estado == 'aprobado' %}
+        <form method="post" action="/presupuestos/{{ p.id }}/proyecto"><button class="btn" type="submit" title="Crear obra y control financiero">🏗️ Convertir en proyecto</button></form>
+        <form method="post" action="/presupuestos/{{ p.id }}/factura"><button class="btn" type="submit" title="Crear un documento de cobro no fiscal desde este presupuesto aprobado">🧾 Crear documento de cobro</button></form>
+        {% endif %}
+        <form method="post" action="/presupuestos/{{ p.id }}/duplicar"><button class="btn" type="submit">📋 Duplicar</button></form>
+        <form method="post" action="/presupuestos/{{ p.id }}/eliminar" data-confirm="¿Eliminar este presupuesto?"><button class="btn btn-danger" type="submit">🗑 Eliminar</button></form>
+      </div>
+    </details>
   </div>
 </div>
 <div class="card csp-s-8cce60a093">
@@ -65,6 +70,102 @@
       </div>
   </div>
 </div>
+
+{% if revision_envio %}
+<div class="card revision-envio revision-{{ revision_envio.estado }}" id="revision-envio">
+  <div class="revision-head">
+    <div class="revision-score" aria-label="Salud del presupuesto {{ revision_envio.score }}%">
+      <strong>{{ revision_envio.score }}%</strong>
+      <span>salud</span>
+    </div>
+    <div class="revision-copy">
+      <span class="section-kicker">Revisión antes de enviar</span>
+      <h2>{{ revision_envio.titulo }}</h2>
+      <p class="hint">{{ revision_envio.resumen }}</p>
+    </div>
+    <div class="revision-actions">
+      {% if revision_envio.puede_enviar %}
+      <a class="btn btn-primary" href="/presupuestos/{{ p.id }}/enlace-publico">Enviar propuesta</a>
+      {% else %}
+      <a class="btn btn-primary" href="{{ revision_envio.url_principal }}">Corregir lo crítico</a>
+      <a class="btn" href="/presupuestos/{{ p.id }}/enlace-publico">Enviar de todos modos</a>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if revision_envio.criticos %}
+  <div class="revision-group revision-group-danger">
+    <h3>Crítico antes de enviar</h3>
+    <div class="revision-list">
+      {% for item in revision_envio.criticos %}
+      <div class="revision-item {{ item.estado }}">
+        <span class="revision-icon">!</span>
+        <div><strong>{{ item.titulo }}</strong>{% if item.detalle %}<small>{{ item.detalle }}</small>{% endif %}</div>
+        {% if item.url %}<a class="link" href="{{ item.url }}">{{ item.accion or 'Revisar' }}</a>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  {% if revision_envio.recomendaciones %}
+  <details class="revision-details" open>
+    <summary>Recomendaciones útiles ({{ revision_envio.recomendaciones | length }})</summary>
+    <div class="revision-list">
+      {% for item in revision_envio.recomendaciones[:6] %}
+      <div class="revision-item {{ item.estado }}">
+        <span class="revision-icon">⚠</span>
+        <div><strong>{{ item.titulo }}</strong>{% if item.detalle %}<small>{{ item.detalle }}</small>{% endif %}</div>
+        {% if item.url %}<a class="link" href="{{ item.url }}">{{ item.accion or 'Revisar' }}</a>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </details>
+  {% endif %}
+
+  <details class="revision-details revision-ok-list">
+    <summary>Checks correctos ({{ revision_envio.correctos | length }})</summary>
+    <div class="revision-ok-grid">
+      {% for item in revision_envio.correctos %}
+      <span>✓ {{ item.titulo }}</span>
+      {% endfor %}
+    </div>
+  </details>
+</div>
+{% endif %}
+
+{% if cambios_reenvio and cambios_reenvio.hay_cambios %}
+<div class="card cambios-reenvio" id="cambios-reenvio">
+  <div class="card-head">
+    <div>
+      <h2>🔁 Reenviar versión actualizada</h2>
+      <p class="hint">Cambios detectados frente a V{{ cambios_reenvio.version_numero }}. Descarga el PDF actualizado y copia un resumen breve para WhatsApp/email.</p>
+    </div>
+    <div class="actions">
+      <a class="btn" href="/presupuestos/{{ p.id }}/pdf" download="presupuesto_{{ p.numero }}_actualizado.pdf">⬇ PDF actualizado</a>
+      <button class="btn btn-primary" type="button" id="btn-copiar-resumen-cambios">Copiar resumen</button>
+    </div>
+  </div>
+  <div class="cambios-resumen-grid">
+    <div><span>Total anterior</span><strong>{{ cambios_reenvio.total_anterior | money_iso(cambios_reenvio.moneda) }}</strong></div>
+    <div><span>Nuevo total</span><strong>{{ cambios_reenvio.total_actual | money_iso(cambios_reenvio.moneda) }}</strong></div>
+    <div><span>Diferencia</span><strong class="{{ 'margen-pos' if cambios_reenvio.diferencia >= 0 else 'margen-neg' }}">{{ cambios_reenvio.diferencia | money_iso(cambios_reenvio.moneda) }}</strong></div>
+  </div>
+  <details class="cambios-details" open>
+    <summary>Ver cambios principales</summary>
+    <ul class="cambios-lista">
+      {% for c in cambios_reenvio.cambios_principales %}<li>{{ c }}</li>{% endfor %}
+      {% if cambios_reenvio.capitulos_añadidos %}<li>Capítulos añadidos: {{ cambios_reenvio.capitulos_añadidos | join(', ') }}</li>{% endif %}
+      {% if cambios_reenvio.capitulos_eliminados %}<li>Capítulos eliminados: {{ cambios_reenvio.capitulos_eliminados | join(', ') }}</li>{% endif %}
+    </ul>
+  </details>
+  <details class="cambios-details">
+    <summary>Texto para WhatsApp/email</summary>
+    <textarea id="texto-resumen-cambios" class="cambios-textarea" rows="10">{{ cambios_reenvio.texto }}</textarea>
+    <p class="hint">Puedes editar este texto antes de copiarlo. No incluye costes internos ni margen.</p>
+  </details>
+</div>
+{% endif %}
 
 <div class="card">
   <div class="form-grid">
@@ -321,4 +422,23 @@
   </div>
   {% endif %}
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script nonce="{{ request.state.csp_nonce }}">
+(function(){
+  var btn = document.getElementById('btn-copiar-resumen-cambios');
+  var txt = document.getElementById('texto-resumen-cambios');
+  if(!btn || !txt) return;
+  btn.addEventListener('click', function(){
+    var valor = txt.value || '';
+    function ok(){ btn.textContent = 'Copiado'; setTimeout(function(){ btn.textContent = 'Copiar resumen'; }, 1800); }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(valor).then(ok).catch(function(){ txt.select(); document.execCommand('copy'); ok(); });
+    } else {
+      txt.select(); document.execCommand('copy'); ok();
+    }
+  });
+})();
+</script>
 {% endblock %}

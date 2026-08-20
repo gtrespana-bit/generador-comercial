@@ -7,6 +7,8 @@ from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utili
 from ..services import auditoria
 from ..utils import normalizar_moneda
 from ..services.monedas import convertir as convertir_moneda
+from ..services.revision_presupuesto import revisar_presupuesto_antes_de_enviar
+from ..services.cambios_presupuesto import comparar_version_con_presupuesto
 
 router = APIRouter()
 
@@ -2078,6 +2080,15 @@ def _pagina_enlaces_propuesta(
         .order_by(EnlacePropuesta.created_at.desc())
         .all()
     )
+    cfg = _config(db)
+    tiempos = calcular_tiempos_presupuesto(
+        presupuesto,
+        db=db,
+        horas_jornada=cfg.horas_jornada or 8.0,
+        tarifa_hora_media=_tarifa_hora_en_moneda(db, cfg, presupuesto.moneda, presupuesto.tipo_cambio),
+        usar_estimacion_coste=bool(cfg.estimar_tiempo_por_coste),
+    )
+    revision_envio = revisar_presupuesto_antes_de_enviar(presupuesto, cfg=cfg, tiempos=tiempos)
     return TEMPLATES.TemplateResponse(
         request,
         "budgets/public_link.html",
@@ -2089,6 +2100,7 @@ def _pagina_enlaces_propuesta(
             "error_enlace": error or request.query_params.get("error", ""),
             "mensaje_enlace": request.query_params.get("msg", ""),
             "ahora": datetime.utcnow(),
+            "revision_envio": revision_envio,
         },
         status_code=status_code,
     )
@@ -2445,6 +2457,13 @@ def ver_presupuesto(presupuesto_id: int, request: Request, db: Session = Depends
         for t in tiempos["partidas"]
         if t["partida_id"] is not None and t["fuente"] != "sin_datos"
     }
+    revision_envio = revisar_presupuesto_antes_de_enviar(
+        presupuesto,
+        cfg=cfg,
+        tiempos=tiempos,
+    )
+    ultima_version = (presupuesto.versiones or [None])[0]
+    cambios_reenvio = comparar_version_con_presupuesto(ultima_version, presupuesto) if ultima_version is not None else None
     return TEMPLATES.TemplateResponse(
         request,
         "budgets/detail.html",
@@ -2457,6 +2476,8 @@ def ver_presupuesto(presupuesto_id: int, request: Request, db: Session = Depends
             "dias_restantes": (fecha_vencimiento - hoy).days,
             "tiempos": tiempos,
             "tiempos_por_partida": tiempos_por_partida,
+            "revision_envio": revision_envio,
+            "cambios_reenvio": cambios_reenvio,
         },
     )
 
@@ -3055,6 +3076,11 @@ def editar_presupuesto_form(presupuesto_id: int, request: Request, db: Session =
     recursos_base = db.query(Recurso).order_by(Recurso.ultimo_uso.desc(), Recurso.usos.desc(), Recurso.descripcion).all()
     recursos_catalogo = _recursos_editor_mercado(db, recursos_base, cfg, presupuesto.moneda, presupuesto.tipo_cambio)
     plantillas = db.query(Plantilla).order_by(Plantilla.nombre).all()
+    presupuesto_compartido = bool(
+        (presupuesto.versiones or [])
+        or presupuesto.estado not in {"borrador"}
+        or (getattr(presupuesto, "enlaces_publicos", None) and len(presupuesto.enlaces_publicos) > 0)
+    )
     # Borrador del autoguardado: solo se ofrece si es más reciente que el
     # último guardado del presupuesto (updated_at).
     borrador_servidor = None
@@ -3090,6 +3116,7 @@ def editar_presupuesto_form(presupuesto_id: int, request: Request, db: Session =
             "estados": ESTADOS,
             "campos_importables": ETIQUETAS_CAMPOS,
             "borrador_servidor": borrador_servidor,
+            "presupuesto_compartido": presupuesto_compartido,
             "tiempos_catalogo": _tiempos_catalogo(db, presupuesto),
             "tarifa_hora_editor": _tarifa_hora_en_moneda(db, cfg, presupuesto.moneda, presupuesto.tipo_cambio),
         },

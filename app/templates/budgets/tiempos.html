@@ -25,9 +25,9 @@
   <!-- Plazo es lo que ve el cliente; esfuerzo es el coste en personal -->
   <div class="tiempo-card tiempo-card-principal csp-s-c203c4f4e6">
     <div class="tiempo-card-label">⏱ Plazo crítico — duración real <span class="hint" title="Suma de duraciones por partida con trabajo en paralelo (max oficial/ayudante). Es el plazo mínimo con 1 cuadrilla secuencial.">ⓘ</span></div>
-    <div class="tiempo-card-valor csp-s-f4cd63326c">{{ "%.1f"|format(tiempos.total_duracion_h) }} <small>h</small> <span class="hint csp-s-8d7681f06b">· {{ "%.1f"|format(tiempos.total_dias_duracion) }} días</span></div>
+    <div class="tiempo-card-valor csp-s-f4cd63326c"><span id="kpi-plazo-horas">{{ "%.1f"|format(tiempos.total_duracion_h) }}</span> <small>h</small> <span class="hint csp-s-8d7681f06b">· <span id="kpi-plazo-dias-top">{{ "%.1f"|format(tiempos.total_dias_duracion) }}</span> días</span></div>
     <div class="tiempo-card-detalle">
-      <span class="hint">Con 1 cuadrilla (1 of. + 1 ay.) y jornada {{ "%.0f"|format(tiempos.horas_jornada) }} h. Con <span id="kpi-dias-cuadrilla-top">{{ "%.1f"|format(tiempos.total_dias_duracion) }}</span> días críticos.</span>
+      <span class="hint">Con <span id="kpi-cuadrilla-label-top">1 cuadrilla (1 oficial + 1 ayudante)</span> y jornada <span id="kpi-jornada-top">{{ "%.0f"|format(tiempos.horas_jornada) }}</span> h: <span id="kpi-dias-cuadrilla-top">{{ "%.1f"|format(tiempos.total_dias_duracion) }}</span> días críticos.</span>
     </div>
     <div class="tiempo-card-nota csp-s-a0688da494">
       Esfuerzo total: <strong>{{ "%.1f"|format(tiempos.total_mano_obra_h) }} h-hombre</strong>
@@ -45,7 +45,7 @@
     <div class="tiempo-card-valor">{{ "%.1f"|format(tiempos.total_mano_obra_h) }} <small>h-h</small></div>
     <div class="tiempo-card-detalle">
       <span class="hint">{{ "%.1f"|format(tiempos.total_oficial_h) }} of. + {{ "%.1f"|format(tiempos.total_ayudante_h) }} ay.{% if tiempos.total_equipos_h %} + {{ "%.1f"|format(tiempos.total_equipos_h) }} eq. = {{ "%.1f"|format(tiempos.total_horas) }} h (hombre+equipo){% endif %}</span>
-      <br><span class="hint">={{ "%.1f"|format(tiempos.total_dias) }} días-hombre / {{ "%.0f"|format(tiempos.horas_jornada) }}h</span>
+      <br><span class="hint">=<span id="kpi-esfuerzo-dias-hombre">{{ "%.1f"|format(tiempos.total_dias) }}</span> días-hombre / <span id="kpi-esfuerzo-jornada">{{ "%.0f"|format(tiempos.horas_jornada) }}</span>h</span>
     </div>
     <div class="tiempo-cobertura-track" title="Proporción plazo vs esfuerzo — cuanto más paralelizas, más baja"><div class="tiempo-cobertura-fill coverage-accent" data-cotizat-width="{{ (tiempos.total_duracion_h / tiempos.total_mano_obra_h * 100) if tiempos.total_mano_obra_h else 0 }}"></div></div>
     <small class="hint">Eficiencia de paralelización: {{ "%.0f"|format((tiempos.total_duracion_h / tiempos.total_mano_obra_h * 100) if tiempos.total_mano_obra_h else 0) }}% (100% = sin paralelismo)</small>
@@ -93,7 +93,7 @@
         <input type="range" id="input-cuadrillas" min="1" max="6" step="1" value="1">
         <input type="number" id="input-cuadrillas-num" value="1" min="1" max="6" step="1" class="csp-s-3e5bb81768">
       </div>
-      <small class="hint">Si duplicas cuadrillas, el plazo crítico se divide.</small>
+      <small class="hint">Si duplicas cuadrillas, el plazo crítico se divide. Cada cuadrilla usa la composición elegida.</small>
     </div>
     <div class="field">
       <label>Composición por cuadrilla</label>
@@ -105,12 +105,25 @@
         <option value="1of">Solo oficial</option>
         <option value="1ay">Solo ayudante</option>
       </select>
-      <small class="hint">Informativo — el cálculo de horas por oficio no cambia, solo la lectura.</small>
+      <small class="hint">Afecta al plazo: cada partida se recalcula según cuántos oficiales y ayudantes trabajan en paralelo.</small>
     </div>
     <div class="field">
       <label>Fecha de inicio (para fechar fin estimado)</label>
       <input type="date" id="input-fecha-inicio" value="{{ p.fecha.isoformat() if p.fecha else '' }}">
       <small class="hint" id="hint-fecha-fin">Fin estimado: —</small>
+    </div>
+    <div class="field">
+      <label>Calendario sencillo</label>
+      <label class="check-line"><input type="checkbox" id="input-trabajar-sabado"> Trabajar sábados</label>
+      <small class="hint">Por defecto calcula Lun–Vie. No incluye festivos.</small>
+    </div>
+    <div class="field">
+      <label>Colchón recomendado</label>
+      <div class="plan-control plan-control-short">
+        <input type="number" id="input-buffer-dias" value="2" min="0" max="30" step="1" class="csp-s-3e5bb81768">
+        <span class="hint">días laborables</span>
+      </div>
+      <small class="hint">Se suma solo a la fecha prometida, no al cálculo técnico.</small>
     </div>
   </div>
 
@@ -131,6 +144,56 @@
       <small>(solo días laborables Lun–Vie, sin festivos)</small>
     </div>
   </div>
+</div>
+
+<!-- ================= ASISTENTE DE DECISIÓN ================= -->
+<div class="card tiempos-asistente" id="asistente-planificacion">
+  <div class="card-head">
+    <div>
+      <h2>🧭 Asistente de planificación</h2>
+      <p class="hint">Resumen simple para decidir la cuadrilla sin saturarte: compara escenarios, detecta el cuello de botella y arma un cronograma interno por capítulos.</p>
+    </div>
+    <button class="btn btn-sm" type="button" data-cotizat-click="window-print">Exportar plan interno</button>
+  </div>
+
+  <div class="asistente-grid">
+    <section class="asistente-panel asistente-destacado" aria-labelledby="asistente-recomendacion-titulo">
+      <span class="asistente-kicker">Recomendación</span>
+      <h3 id="asistente-recomendacion-titulo">Qué conviene hacer</h3>
+      <p id="asistente-recomendacion">Calculando recomendación…</p>
+      <div class="asistente-metricas">
+        <span><strong id="asistente-plazo">—</strong><small>plazo técnico</small></span>
+        <span><strong id="asistente-fecha">—</strong><small>fecha prometida</small></span>
+      </div>
+    </section>
+
+    <section class="asistente-panel" aria-labelledby="asistente-cuello-titulo">
+      <span class="asistente-kicker">Cuello de botella</span>
+      <h3 id="asistente-cuello-titulo">Dónde se atasca la obra</h3>
+      <p id="asistente-cuello">Calculando cuello de botella…</p>
+      <div class="cuello-barras" aria-hidden="true">
+        <div><span>Oficial</span><strong id="cuello-oficial-label">—</strong><i><b id="cuello-oficial-bar"></b></i></div>
+        <div><span>Ayudante</span><strong id="cuello-ayudante-label">—</strong><i><b id="cuello-ayudante-bar"></b></i></div>
+        <div><span>Equipos</span><strong id="cuello-equipos-label">—</strong><i><b id="cuello-equipos-bar"></b></i></div>
+      </div>
+    </section>
+  </div>
+
+  <details class="asistente-details" open>
+    <summary>Comparar escenarios de cuadrilla</summary>
+    <div class="table-wrap">
+      <table class="table tabla-escenarios">
+        <thead><tr><th>Escenario</th><th>Cuadrilla</th><th class="right">Plazo</th><th class="right">Mejora</th><th class="right">Coste MO</th><th>Lectura rápida</th></tr></thead>
+        <tbody id="tabla-escenarios-body"></tbody>
+      </table>
+    </div>
+  </details>
+
+  <details class="asistente-details">
+    <summary>Cronograma interno por capítulos</summary>
+    <p class="hint">Vista interna y sencilla. Respeta el orden de los capítulos y reparte el plazo según la composición actual; úsala para compras, coordinación y seguimiento.</p>
+    <div class="cronograma" id="cronograma-capitulos"></div>
+  </details>
 </div>
 
 {% if sin_datos %}
@@ -338,7 +401,7 @@
     <li><strong>Catálogo (medido):</strong> si la partida viene del catálogo y no tiene descompuesto con horas, se usa su tiempo estimado. Si el catálogo tiene desglose por oficio, se respeta; si no, se reparte 60% oficial / 40% ayudante.</li>
     <li><strong>Por coste (estimado):</strong> si no hay nada de lo anterior, horas ≈ coste de mano de obra ÷ tarifa media de {{ "%.2f"|format(tiempos.tarifa_hora_media) }} $/h (configurable en Ajustes).</li>
     <li><strong>Duración crítica:</strong> por partida es el máximo entre oficial, ayudante, capataz y equipo (trabajo en paralelo dentro de la misma partida). La duración total es la suma de duraciones — es el plazo mínimo con una cuadrilla completa sin solapes entre partidas.</li>
-    <li><strong>Cuadrillas:</strong> con <em>n</em> cuadrillas idénticas en paralelo el plazo crítico se divide entre <em>n</em>. Usa el simulador arriba para proyecciones.</li>
+    <li><strong>Cuadrillas y composición:</strong> cada partida se recalcula según la composición elegida. Con 2 oficiales se reparte el trabajo de oficial; con 2 ayudantes se reparte el de ayudante; con <em>n</em> cuadrillas idénticas el plazo resultante se divide entre <em>n</em>. Usa el simulador arriba para proyecciones.</li>
     <li><strong>¿Por qué añadir ayudante sube de 36h a 50h?</strong> Porque <strong>horas-hombre</strong> es esfuerzo (suma: 30h oficial + 20h ayudante = 50h), mientras que <strong>plazo</strong> es duración (max: 30h). Con ayudante el esfuerzo sube un poco pero el plazo baja de 36h a 30h. El campo <em>h/ud es consumo (horas por unidad)</em>: <code>0,5 h/m²</code> = 30 min por m². Mayor número = más lento. No es productividad (m²/h).</li>
   </ul>
   <div class="alert csp-s-749f8ab21b">
@@ -360,6 +423,8 @@
   let totalHorasH = {{ tiempos.total_horas | tojson }};
   let totalOficialH = {{ tiempos.total_oficial_h | tojson }};
   let totalAyudanteH = {{ tiempos.total_ayudante_h | tojson }};
+  let totalCapatazH = {{ tiempos.total_capataz_h | tojson }};
+  let totalEquiposH = {{ tiempos.total_equipos_h | tojson }};
 
   const toast = document.getElementById('tiempos-toast');
   function showToast(msg, ok=true){
@@ -375,6 +440,8 @@
   const inpC = document.getElementById('input-cuadrillas');
   const inpCNum = document.getElementById('input-cuadrillas-num');
   const inpFecha = document.getElementById('input-fecha-inicio');
+  const inpSabado = document.getElementById('input-trabajar-sabado');
+  const inpBuffer = document.getElementById('input-buffer-dias');
   const selComp = document.getElementById('select-composicion');
 
   function syncJornada(v){
@@ -393,30 +460,252 @@
   if(inpC) inpC.addEventListener('input', e=> syncCuadrillas(e.target.value));
   if(inpCNum) inpCNum.addEventListener('input', e=> syncCuadrillas(e.target.value));
   if(inpFecha) inpFecha.addEventListener('change', actualizarPlanificacion);
+  if(inpSabado) inpSabado.addEventListener('change', actualizarPlanificacion);
+  if(inpBuffer) inpBuffer.addEventListener('input', actualizarPlanificacion);
   if(selComp) selComp.addEventListener('change', actualizarPlanificacion);
 
-  function diasLaborablesEntre(inicio, dias){
+  function diasLaborablesEntre(inicio, dias, trabajarSabado=false){
     let d = new Date(inicio);
     let count=0;
     let cur = new Date(d);
     while(count < dias){
       cur.setDate(cur.getDate()+1);
       const day = cur.getDay();
-      if(day!==0 && day!==6) count++;
+      const laborable = trabajarSabado ? day !== 0 : (day !== 0 && day !== 6);
+      if(laborable) count++;
     }
     return cur;
+  }
+
+  function formatoDias(v){
+    return v.toLocaleString('es-VE',{maximumFractionDigits:1});
+  }
+
+  function textoFecha(fecha){
+    return fecha.toLocaleDateString('es-VE',{day:'2-digit', month:'short', year:'numeric'});
+  }
+
+  function composicionActual(){
+    const value = (selComp && selComp.value) || '1of1ay';
+    const mapa = {
+      '1of1ay': {oficiales: 1, ayudantes: 1, label: '1 oficial + 1 ayudante'},
+      '2of1ay': {oficiales: 2, ayudantes: 1, label: '2 oficiales + 1 ayudante'},
+      '1of2ay': {oficiales: 1, ayudantes: 2, label: '1 oficial + 2 ayudantes'},
+      '2of2ay': {oficiales: 2, ayudantes: 2, label: '2 oficiales + 2 ayudantes'},
+      '1of': {oficiales: 1, ayudantes: 0, label: 'solo oficial'},
+      '1ay': {oficiales: 0, ayudantes: 1, label: 'solo ayudante'}
+    };
+    return mapa[value] || mapa['1of1ay'];
+  }
+
+  function numero(v){
+    const n = Number(v || 0);
+    return Number.isFinite(n) ? n : 0;
+  }
+
+  function duracionPartidaConComposicion(t, comp){
+    const of = numero(t.oficial_h);
+    const ay = numero(t.ayudante_h) + numero(t.otros_mo_h);
+    const cap = numero(t.capataz_h);
+    const eq = numero(t.equipos_h);
+    const oficiales = Math.max(0, Number(comp.oficiales || 0));
+    const ayudantes = Math.max(0, Number(comp.ayudantes || 0));
+    let durMO = 0;
+
+    // Con oficial y ayudante, cada rol se reparte entre sus integrantes.
+    // Si falta uno de los roles, el simulador permite ver un caso aproximado:
+    // el personal disponible absorbe toda la mano de obra, por eso el plazo sube.
+    if(oficiales > 0 && ayudantes > 0){
+      durMO = Math.max(
+        oficiales ? (of + cap) / oficiales : 0,
+        ayudantes ? ay / ayudantes : 0
+      );
+    } else if(oficiales > 0){
+      durMO = (of + ay + cap) / oficiales;
+    } else if(ayudantes > 0){
+      durMO = (of + ay + cap) / ayudantes;
+    } else {
+      durMO = of + ay + cap;
+    }
+    // La maquinaria/equipo puede ir en paralelo con la mano de obra, pero si tarda más, manda.
+    return Math.max(durMO, eq);
+  }
+
+  function duracionTotalConComposicion(comp){
+    const partidas = Array.isArray(tiemposBase && tiemposBase.partidas) ? tiemposBase.partidas : [];
+    let total = 0;
+    partidas.forEach(t => {
+      if(!t || t.activa === false || t.fuente === 'sin_datos') return;
+      total += duracionPartidaConComposicion(t, comp);
+    });
+    return total > 0 ? total : totalDuracionH;
+  }
+
+  function diasEscenario(composicionValue, cuadrillas, jornada){
+    const anterior = selComp ? selComp.value : '1of1ay';
+    let comp;
+    if(selComp) selComp.value = composicionValue;
+    comp = composicionActual();
+    if(selComp) selComp.value = anterior;
+    return (duracionTotalConComposicion(comp) / jornada) / Math.max(1, cuadrillas || 1);
+  }
+
+  function analizarCuello(comp, n, j){
+    const capacidadOf = n * comp.oficiales;
+    const capacidadAy = n * comp.ayudantes;
+    const diasOf = capacidadOf > 0 ? (totalOficialH + totalCapatazH) / (j * capacidadOf) : 0;
+    const diasAy = capacidadAy > 0 ? totalAyudanteH / (j * capacidadAy) : 0;
+    const diasEq = totalEquiposH ? totalEquiposH / (j * n) : 0;
+    const max = Math.max(diasOf, diasAy, diasEq, 0.01);
+    const tipo = max === diasOf ? 'oficiales' : max === diasAy ? 'ayudantes' : 'equipos';
+    return {diasOf, diasAy, diasEq, max, tipo};
+  }
+
+  function escapeHtml(txt){
+    return String(txt == null ? '' : txt).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  }
+
+  function setBar(id, pct){
+    const el = document.getElementById(id);
+    if(el) CotizatStyles.set(el, 'width', Math.max(2, Math.min(100, pct)) + '%');
+  }
+
+  function actualizarCuelloVisual(cuello){
+    const fo = document.getElementById('cuello-oficial-label');
+    const fa = document.getElementById('cuello-ayudante-label');
+    const fe = document.getElementById('cuello-equipos-label');
+    if(fo) fo.textContent = formatoDias(cuello.diasOf) + ' d';
+    if(fa) fa.textContent = formatoDias(cuello.diasAy) + ' d';
+    if(fe) fe.textContent = formatoDias(cuello.diasEq) + ' d';
+    setBar('cuello-oficial-bar', cuello.diasOf / cuello.max * 100);
+    setBar('cuello-ayudante-bar', cuello.diasAy / cuello.max * 100);
+    setBar('cuello-equipos-bar', cuello.diasEq / cuello.max * 100);
+    const txt = document.getElementById('asistente-cuello');
+    if(txt){
+      if(cuello.tipo === 'oficiales') txt.textContent = 'El plazo depende sobre todo de oficiales. Si quieres acelerar, prueba 2 oficiales o una segunda cuadrilla.';
+      else if(cuello.tipo === 'ayudantes') txt.textContent = 'El cuello de botella está en ayudantes/peones. Añadir ayudante puede reducir días sin tocar todas las partidas.';
+      else txt.textContent = 'La maquinaria/equipos condicionan el plazo. Revisa disponibilidad, alquileres o solapes.';
+    }
+  }
+
+  function actualizarEscenarios(j, diasActuales, compActual, nActual){
+    const tbody = document.getElementById('tabla-escenarios-body');
+    if(!tbody) return;
+    const base = diasEscenario('1of1ay', 1, j) || diasActuales;
+    const opciones = [
+      {nombre:'Normal', comp:'1of1ay', cuad:1, lectura:'Base sencilla para presupuestar sin refuerzos.'},
+      {nombre:'Más oficiales', comp:'2of1ay', cuad:1, lectura:'Útil si el cuello de botella es oficial.'},
+      {nombre:'Más ayudantes', comp:'1of2ay', cuad:1, lectura:'Útil si hay mucha carga de peón/ayudante.'},
+      {nombre:'Cuadrilla reforzada', comp:'2of2ay', cuad:1, lectura:'Reduce plazo manteniendo una sola frente de trabajo.'},
+      {nombre:'Dos frentes', comp: selComp ? selComp.value : '1of1ay', cuad:2, lectura:'Acelera fuerte, pero exige coordinación y espacio.'},
+    ];
+    tbody.textContent = '';
+    let mejor = null;
+    opciones.forEach(o => {
+      const dias = diasEscenario(o.comp, o.cuad, j);
+      if(!mejor || dias < mejor.dias) mejor = {dias, nombre:o.nombre};
+      const tr = document.createElement('tr');
+      const mejora = base > 0 ? Math.max(0, (1 - dias / base) * 100) : 0;
+      const compLabel = (function(){ const prev = selComp ? selComp.value : ''; if(selComp) selComp.value = o.comp; const lbl = composicionActual().label; if(selComp) selComp.value = prev; return lbl; })();
+      const costeMo = totalManoObraH * numero(tiemposBase && tiemposBase.tarifa_hora_media);
+      const costeTxt = costeMo ? costeMo.toLocaleString('es-VE',{maximumFractionDigits:0}) + ' ' + ({{ p.moneda | tojson }} || '') : '—';
+      function td(text, cls, strong){
+        const cell = document.createElement('td');
+        if(cls) cell.className = cls;
+        if(strong){ const st = document.createElement('strong'); st.textContent = text; cell.appendChild(st); }
+        else cell.textContent = text;
+        return cell;
+      }
+      tr.appendChild(td(o.nombre, '', true));
+      tr.appendChild(td(o.cuad + ' cuadrilla(s) · ' + compLabel));
+      tr.appendChild(td(formatoDias(dias) + ' d', 'right', true));
+      tr.appendChild(td(mejora ? '−' + mejora.toFixed(0) + '%' : '—', 'right'));
+      tr.appendChild(td(costeTxt, 'right'));
+      tr.appendChild(td(o.lectura));
+      if(o.comp === (selComp ? selComp.value : '1of1ay') && o.cuad === nActual) tr.classList.add('escenario-actual');
+      tbody.appendChild(tr);
+    });
+    const rec = document.getElementById('asistente-recomendacion');
+    if(rec && mejor){
+      const cuello = analizarCuello(compActual, nActual, j);
+      let accion = cuello.tipo === 'oficiales' ? 'reforzar oficiales' : cuello.tipo === 'ayudantes' ? 'reforzar ayudantes' : 'revisar equipos/maquinaria';
+      rec.textContent = `Tu escenario actual da ${formatoDias(diasActuales)} días. Para acelerar sin complicarlo, lo primero sería ${accion}. El escenario más corto de la tabla es “${mejor.nombre}” con ${formatoDias(mejor.dias)} días.`;
+    }
+  }
+
+  function actualizarCronograma(comp, n, j){
+    const cont = document.getElementById('cronograma-capitulos');
+    if(!cont) return;
+    const partidas = Array.isArray(tiemposBase && tiemposBase.partidas) ? tiemposBase.partidas : [];
+    const orden = [];
+    const porCap = {};
+    partidas.forEach(t => {
+      if(!t || t.activa === false || t.fuente === 'sin_datos') return;
+      const cap = t.capitulo || 'CAPÍTULO GENERAL';
+      if(!porCap[cap]) { porCap[cap] = 0; orden.push(cap); }
+      porCap[cap] += duracionPartidaConComposicion(t, comp) / j / Math.max(1, n);
+    });
+    const total = orden.reduce((acc, cap) => acc + porCap[cap], 0) || 1;
+    cont.textContent = '';
+    let acumulado = 0;
+    orden.forEach((cap, idx) => {
+      const dias = porCap[cap];
+      const fila = document.createElement('div');
+      fila.className = 'cronograma-row';
+      const offset = acumulado / total * 100;
+      const width = dias / total * 100;
+      const capEl = document.createElement('span');
+      capEl.className = 'cronograma-cap';
+      capEl.textContent = (idx + 1) + '. ' + cap;
+      const track = document.createElement('div');
+      track.className = 'cronograma-track';
+      const bar = document.createElement('i');
+      track.appendChild(bar);
+      const dur = document.createElement('strong');
+      dur.textContent = formatoDias(dias) + ' d';
+      fila.appendChild(capEl);
+      fila.appendChild(track);
+      fila.appendChild(dur);
+      CotizatStyles.set(bar, 'left', offset + '%');
+      CotizatStyles.set(bar, 'width', Math.max(3, width) + '%');
+      cont.appendChild(fila);
+      acumulado += dias;
+    });
+  }
+
+  function actualizarAsistente(ctx){
+    const plazo = document.getElementById('asistente-plazo');
+    const fecha = document.getElementById('asistente-fecha');
+    if(plazo) plazo.textContent = formatoDias(ctx.diasCriticos) + ' días';
+    if(fecha) fecha.textContent = ctx.finPrometido ? textoFecha(ctx.finPrometido) : '—';
+    const cuello = analizarCuello(ctx.comp, ctx.n, ctx.j);
+    actualizarCuelloVisual(cuello);
+    actualizarEscenarios(ctx.j, ctx.diasCriticos, ctx.comp, ctx.n);
+    actualizarCronograma(ctx.comp, ctx.n, ctx.j);
   }
 
   function actualizarPlanificacion(){
     const n = Math.max(1, parseInt((inpCNum && inpCNum.value) || 1,10));
     const j = Math.max(1, parseFloat((inpJNum && inpJNum.value) || 8));
+    const comp = composicionActual();
+    const duracionComposicionH = duracionTotalConComposicion(comp);
     const diasHombre = (totalManoObraH / j);
-    const diasCriticos = (totalDuracionH / j) / n;
+    const diasCriticosUnaCuadrilla = duracionComposicionH / j;
+    const diasCriticos = diasCriticosUnaCuadrilla / n;
     const semanasCrit = diasCriticos / 5;
-    const diasOf = totalOficialH / j;
-    const diasAy = totalAyudanteH / j;
+    const diasOfCarga = totalOficialH / j;
+    const diasAyCarga = totalAyudanteH / j;
+    const capacidadOficiales = n * comp.oficiales;
+    const capacidadAyudantes = n * comp.ayudantes;
+    const diasOfCalendario = capacidadOficiales > 0 ? ((totalOficialH + totalCapatazH) / (j * capacidadOficiales)) : null;
+    const diasAyCalendario = capacidadAyudantes > 0 ? (totalAyudanteH / (j * capacidadAyudantes)) : null;
+    const cuello = Math.max(diasOfCalendario || 0, diasAyCalendario || 0, totalEquiposH ? totalEquiposH / j / n : 0);
 
     const elDiasCrit = document.getElementById('plan-dias-criticos');
+    const elPlazoHoras = document.getElementById('kpi-plazo-horas');
+    const elPlazoDiasTop = document.getElementById('kpi-plazo-dias-top');
+    const elEsfuerzoDiasHombre = document.getElementById('kpi-esfuerzo-dias-hombre');
+    const elEsfuerzoJornada = document.getElementById('kpi-esfuerzo-jornada');
     const elDetalle = document.getElementById('plan-detalle-dias');
     const elOf = document.getElementById('plan-oficial-dias');
     const elAy = document.getElementById('plan-ayudante-dias');
@@ -424,33 +713,53 @@
     const elDiasDur = document.getElementById('kpi-dias-duracion');
     const elDiasH = document.getElementById('kpi-dias-hombre');
     const elCuadLabel = document.getElementById('kpi-cuadrilla-label');
+    const elCuadLabelTop = document.getElementById('kpi-cuadrilla-label-top');
+    const elJornadaTop = document.getElementById('kpi-jornada-top');
     const elDiasCuad = document.getElementById('kpi-dias-cuadrilla');
+    const elDiasCuadTop = document.getElementById('kpi-dias-cuadrilla-top');
     const elFechaFin = document.getElementById('plan-fecha-fin');
     const elHintFin = document.getElementById('hint-fecha-fin');
 
-    if(elDiasCrit) elDiasCrit.textContent = diasCriticos.toLocaleString('es-VE',{maximumFractionDigits:1}) + ' días críticos';
-    if(elDetalle) elDetalle.textContent = `Horas-hombre ${diasHombre.toLocaleString('es-VE',{maximumFractionDigits:1})} días · Duración crítica ${ (totalDuracionH/j).toLocaleString('es-VE',{maximumFractionDigits:1}) } días (1 cuadrilla) → con ${n} cuadrilla(s) = ${diasCriticos.toLocaleString('es-VE',{maximumFractionDigits:1})} días`;
-    if(elOf) elOf.textContent = diasOf.toLocaleString('es-VE',{maximumFractionDigits:1}) + ' días-oficial';
-    if(elAy) elAy.textContent = `${diasAy.toLocaleString('es-VE',{maximumFractionDigits:1})} días-ayudante · ${totalAyudanteH.toLocaleString('es-VE',{maximumFractionDigits:1})} h`;
-    if(elSem) elSem.textContent = semanasCrit.toLocaleString('es-VE',{maximumFractionDigits:1});
-    if(elDiasDur) elDiasDur.textContent = diasCriticos.toLocaleString('es-VE',{maximumFractionDigits:1});
-    if(elDiasH) elDiasH.textContent = diasHombre.toLocaleString('es-VE',{maximumFractionDigits:1});
-    if(elCuadLabel) elCuadLabel.textContent = n + ' cuadrilla(s) (' + (selComp ? selComp.options[selComp.selectedIndex].text : '1 of. + 1 ay.') + ')';
-    if(elDiasCuad) elDiasCuad.textContent = diasCriticos.toLocaleString('es-VE',{maximumFractionDigits:1});
+    const fmt = v => v.toLocaleString('es-VE',{maximumFractionDigits:1});
+    if(elDiasCrit) elDiasCrit.textContent = fmt(diasCriticos) + ' días críticos';
+    if(elPlazoHoras) elPlazoHoras.textContent = fmt(duracionComposicionH / n);
+    if(elPlazoDiasTop) elPlazoDiasTop.textContent = fmt(diasCriticos);
+    if(elEsfuerzoDiasHombre) elEsfuerzoDiasHombre.textContent = fmt(diasHombre);
+    if(elEsfuerzoJornada) elEsfuerzoJornada.textContent = fmt(j);
+    if(elDetalle) elDetalle.textContent = `Horas-hombre ${fmt(diasHombre)} días · con ${comp.label}: ${fmt(diasCriticosUnaCuadrilla)} días (1 cuadrilla) → con ${n} cuadrilla(s) = ${fmt(diasCriticos)} días`;
+    if(elOf) elOf.textContent = fmt(diasOfCarga) + ' jornadas-oficial';
+    if(elAy){
+      const capTxt = `capacidad: ${capacidadOficiales || 0} of. + ${capacidadAyudantes || 0} ay.`;
+      elAy.textContent = `${fmt(diasAyCarga)} jornadas-ayudante · ${capTxt} · cuello: ${fmt(cuello)} días`;
+    }
+    if(elSem) elSem.textContent = fmt(semanasCrit);
+    if(elDiasDur) elDiasDur.textContent = fmt(diasCriticos);
+    if(elDiasH) elDiasH.textContent = fmt(diasHombre);
+    if(elCuadLabel) elCuadLabel.textContent = n + ' cuadrilla(s) (' + comp.label + ')';
+    if(elCuadLabelTop) elCuadLabelTop.textContent = n + ' cuadrilla(s) (' + comp.label + ')';
+    if(elJornadaTop) elJornadaTop.textContent = fmt(j);
+    if(elDiasCuad) elDiasCuad.textContent = fmt(diasCriticos);
+    if(elDiasCuadTop) elDiasCuadTop.textContent = fmt(diasCriticos);
 
     // Fecha fin
     let finTxt = '—';
     let hintTxt = 'Fin estimado: —';
+    let finTecnico = null;
+    let finPrometido = null;
+    const trabajarSabado = !!(inpSabado && inpSabado.checked);
+    const bufferDias = Math.max(0, parseInt((inpBuffer && inpBuffer.value) || 0, 10) || 0);
     if(inpFecha && inpFecha.value){
       try{
         const inicio = new Date(inpFecha.value + 'T12:00:00');
-        const fin = diasLaborablesEntre(inicio, Math.ceil(diasCriticos));
-        finTxt = fin.toLocaleDateString('es-VE',{weekday:'long', day:'2-digit', month:'long', year:'numeric'});
-        hintTxt = 'Fin estimado: ' + fin.toLocaleDateString('es-VE');
+        finTecnico = diasLaborablesEntre(inicio, Math.ceil(diasCriticos), trabajarSabado);
+        finPrometido = diasLaborablesEntre(inicio, Math.ceil(diasCriticos) + bufferDias, trabajarSabado);
+        finTxt = finPrometido.toLocaleDateString('es-VE',{weekday:'long', day:'2-digit', month:'long', year:'numeric'});
+        hintTxt = 'Fin técnico: ' + finTecnico.toLocaleDateString('es-VE') + (bufferDias ? ' · prometida con colchón: ' + finPrometido.toLocaleDateString('es-VE') : '');
       }catch(e){}
     }
     if(elFechaFin) elFechaFin.textContent = finTxt;
     if(elHintFin) elHintFin.textContent = hintTxt;
+    actualizarAsistente({diasCriticos, comp, n, j, finTecnico, finPrometido, trabajarSabado, bufferDias});
   }
   actualizarPlanificacion();
 
@@ -473,7 +782,8 @@
 
   // ---------- Guardar manual por partida ----------
   async function guardarTiempo(partidaId, payload){
-    const statusEl = document.querySelector(`.tiempo-edit[data-partida="${partidaId}"] .tiempo-edit-status`);
+    const editEl = document.querySelector(`.tiempo-edit[data-partida="${partidaId}"]`);
+    const statusEl = editEl && editEl.parentElement ? editEl.parentElement.querySelector('.tiempo-edit-status') : null;
     if(statusEl) statusEl.textContent = 'Guardando…';
     try{
       const res = await fetch(`/presupuestos/${presupuestoId}/tiempos/manual`, {
@@ -491,6 +801,9 @@
         totalHorasH = data.tiempos.total_horas;
         totalOficialH = data.tiempos.total_oficial_h;
         totalAyudanteH = data.tiempos.total_ayudante_h;
+        totalCapatazH = data.tiempos.total_capataz_h;
+        totalEquiposH = data.tiempos.total_equipos_h;
+        if(data.tiempos.partidas) tiemposBase.partidas = data.tiempos.partidas;
         actualizarPlanificacion();
       }
       // Mostrar toast y opción de recargar para ver tabla actualizada completa

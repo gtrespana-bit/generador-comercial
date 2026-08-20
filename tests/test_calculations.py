@@ -92,3 +92,75 @@ def test_descuento_se_reparte_entre_obra_y_productos():
     assert totales.margen_obra == D("10")  # 100 - 80 - 10
     assert totales.margen_productos == D("0")  # 100 - 90 - 10
     assert totales.margen == D("10")
+
+
+def test_cype_usa_campos_de_coste_visibles_sin_desperdicio():
+    descomp = SimpleNamespace(origen="cype", archivo_origen="origen.xlsx", coste_directo_unitario=999)
+    presupuesto = _presupuesto([
+        _partida(
+            cantidad_total=2,
+            precio_unitario=180,
+            coste_materiales=40,
+            coste_mano_obra=30,
+            coste_complementarios=10,
+            coste_otros=5,
+            desperdicio_pct=25,
+            descomposicion_cype=descomp,
+        ),
+    ])
+
+    totales = calcular_totales(presupuesto)
+
+    # El editor muestra 40+30+10+5 = 85/ud y no aplica desperdicio a CYPE.
+    # El detalle debe usar la misma fuente visible, no el coste_directo antiguo.
+    assert totales.coste_obra == D("170")
+    assert totales.margen == D("190")
+
+
+def test_cype_antiguo_sin_campos_usa_coste_directo_como_respaldo():
+    descomp = SimpleNamespace(origen="cype", archivo_origen="origen.xlsx", coste_directo_unitario=85)
+    presupuesto = _presupuesto([
+        _partida(cantidad_total=2, precio_unitario=180, descomposicion_cype=descomp),
+    ])
+
+    totales = calcular_totales(presupuesto)
+
+    assert totales.coste_obra == D("170")
+    assert totales.margen == D("190")
+
+
+def _fila_descomp(**kwargs):
+    datos = {
+        "tipo": "recurso",
+        "grupo": "MATERIALES",
+        "codigo": "mt001",
+        "unidad": "ud",
+        "categoria": "materiales",
+        "rendimiento": 1,
+        "precio_unitario": 0,
+    }
+    datos.update(kwargs)
+    return SimpleNamespace(**datos)
+
+
+def test_descomposicion_con_filas_manda_sobre_campos_cache_stale():
+    descomp = SimpleNamespace(
+        origen="cype",
+        archivo_origen="origen.xlsx",
+        coste_directo_unitario=999,
+        filas=[_fila_descomp(precio_unitario=85)],
+    )
+    presupuesto = _presupuesto([
+        _partida(
+            cantidad_total=2,
+            precio_unitario=180,
+            # Caché vieja: debe ignorarse porque las filas recalculan 85/ud.
+            coste_materiales=999,
+            descomposicion_cype=descomp,
+        ),
+    ])
+
+    totales = calcular_totales(presupuesto)
+
+    assert totales.coste_obra == D("170")
+    assert totales.margen == D("190")

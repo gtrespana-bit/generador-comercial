@@ -4,12 +4,18 @@ from fastapi import APIRouter
 
 from . import common
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
+from ..services.salud_catalogo import analizar_salud_catalogo
 
 router = APIRouter()
 
 # ---------------------------------------------------------------------------
 # Inicio
 # ---------------------------------------------------------------------------
+
+@router.get("/guia-rapida", response_class=HTMLResponse)
+def guia_rapida(request: Request):
+    return TEMPLATES.TemplateResponse(request, "guia_rapida.html", {})
+
 
 @router.get("/inicio", response_class=HTMLResponse)
 def inicio(request: Request, db: Session = Depends(get_db)):
@@ -86,6 +92,7 @@ def inicio(request: Request, db: Session = Depends(get_db)):
     total_facturas = db.query(Factura).count()
     proyectos_activos = db.query(Proyecto).filter(Proyecto.estado.in_(["en_ejecucion", "pausado"])).count()
     analisis_precios = analizar_catalogo_partidas(db)
+    salud_catalogo = analizar_salud_catalogo(db)
     recorrido_inicial = (
         estado_recorrido_inicial(db, cfg)
         if cfg.onboarding_modo in {"demo", "limpio"}
@@ -127,6 +134,7 @@ def inicio(request: Request, db: Session = Depends(get_db)):
             "descuentos_concedidos": descuentos_concedidos, "margen_estimado": margen_estimado,
             "proyectos_activos": proyectos_activos,
             "analisis_precios": analisis_precios,
+            "salud_catalogo": salud_catalogo,
             "recorrido_inicial": recorrido_inicial,
             "compra_pendiente": compra_pendiente,
             "compra_pendiente_ficha": compra_pendiente_ficha,
