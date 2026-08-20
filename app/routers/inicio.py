@@ -12,6 +12,11 @@ router = APIRouter()
 # Inicio
 # ---------------------------------------------------------------------------
 
+@router.get("/guia-rapida", response_class=HTMLResponse)
+def guia_rapida(request: Request):
+    return TEMPLATES.TemplateResponse(request, "guia_rapida.html", {})
+
+
 @router.get("/inicio", response_class=HTMLResponse)
 def inicio(request: Request, db: Session = Depends(get_db)):
     cfg = _config(db)

@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Guía rápida{% endblock %}
+{% block content %}
+<div class="page-head guide-head">
+  <div>
+    <p class="crumb">🏁 Inicio › Guía rápida</p>
+    <h1>Guía rápida: usa {{ product_name }} en 15 minutos</h1>
+    <p class="subtitle">Un flujo práctico para trabajar como en obra real: preparar presupuesto, revisar margen, enviar PDF y reenviar cambios si el cliente los pide.</p>
+  </div>
+  <div class="actions">
+    <a class="btn" href="/inicio">← Volver al dashboard</a>
+    <a class="btn btn-primary" href="/presupuestos/nuevo">Crear presupuesto</a>
+  </div>
+</div>
+
+<section class="card guide-flow-card">
+  <div class="guide-flow-head">
+    <span class="section-kicker">Flujo recomendado</span>
+    <h2>Lo esencial, sin complicarlo</h2>
+    <p class="hint">CotizaT no pretende reemplazar tu relación con el cliente. Te ayuda a preparar un PDF claro, proteger tu margen y responder rápido cuando pidan cambios.</p>
+  </div>
+  <div class="guide-steps">
+    <article><span>1</span><h3>Configura tu empresa</h3><p>Logo, datos fiscales, moneda, IVA, condiciones y textos que aparecerán en el PDF.</p><a class="btn btn-sm" href="/configuracion">Ir a configuración</a></article>
+    <article><span>2</span><h3>Revisa el catálogo</h3><p>Mira la salud del catálogo: precios, costes, tiempos y márgenes bajos antes de cotizar.</p><a class="btn btn-sm" href="/partidas">Ver catálogo</a></article>
+    <article><span>3</span><h3>Crea cliente y presupuesto</h3><p>Arma capítulos y partidas desde catálogo, pack, Excel o manualmente.</p><a class="btn btn-sm" href="/clientes/nuevo">Nuevo cliente</a></article>
+    <article><span>4</span><h3>Revisa antes de enviar</h3><p>Usa la salud del presupuesto para detectar precio 0, cantidad 0, falta de coste o margen bajo.</p><a class="btn btn-sm" href="/presupuestos">Ver presupuestos</a></article>
+    <article><span>5</span><h3>Descarga y envía PDF</h3><p>Envía el PDF por WhatsApp o email como trabajas normalmente. El cliente revisa y te contacta.</p><a class="btn btn-sm" href="/presupuestos">Abrir presupuestos</a></article>
+    <article><span>6</span><h3>Si pide cambios, modifica y reenvía</h3><p>Cuando cambies un presupuesto versionado, CotizaT muestra qué cambió y genera un resumen para copiar.</p><a class="btn btn-sm" href="/presupuestos">Reenviar cambios</a></article>
+  </div>
+</section>
+
+<div class="guide-grid">
+  <section class="card guide-checklist">
+    <h2>Checklist antes del primer presupuesto real</h2>
+    <ul>
+      <li><span>✓</span> Empresa y logo configurados.</li>
+      <li><span>✓</span> Moneda, IVA y tasa revisados.</li>
+      <li><span>✓</span> Catálogo sin alertas críticas.</li>
+      <li><span>✓</span> Cliente con teléfono o email.</li>
+      <li><span>✓</span> Presupuesto con cantidades y precios completos.</li>
+      <li><span>✓</span> Margen revisado antes de enviar.</li>
+      <li><span>✓</span> PDF abierto una vez antes de compartirlo.</li>
+    </ul>
+  </section>
+
+  <section class="card guide-do-dont">
+    <h2>Qué mirar y qué no complicar</h2>
+    <div class="guide-two-cols">
+      <div>
+        <h3>Úsalo para</h3>
+        <ul>
+          <li>Presupuestar rápido.</li>
+          <li>Saber si ganas dinero.</li>
+          <li>Preparar PDF profesional.</li>
+          <li>Reenviar cambios claros.</li>
+          <li>Mantener precios y costes sanos.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>No hace falta</h3>
+        <ul>
+          <li>Meter al cliente en un sistema complejo.</li>
+          <li>Mostrarle costes o margen.</li>
+          <li>Convertir cada llamada en un trámite online.</li>
+          <li>Usar todas las funciones el primer día.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</div>
+
+<section class="card guide-actions-card">
+  <h2>Accesos rápidos</h2>
+  <div class="guide-actions">
+    <a href="/configuracion">Configuración</a>
+    <a href="/partidas">Salud del catálogo</a>
+    <a href="/recursos">Recursos y precios</a>
+    <a href="/clientes/nuevo">Nuevo cliente</a>
+    <a href="/presupuestos/nuevo">Nuevo presupuesto</a>
+    <a href="/presupuestos">Historial de presupuestos</a>
+  </div>
+</section>
+{% endblock %}

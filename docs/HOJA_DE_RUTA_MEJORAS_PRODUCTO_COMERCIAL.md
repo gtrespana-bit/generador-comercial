@@ -923,3 +923,28 @@ Mejorar la claridad comercial del PDF, que es el documento que normalmente revis
 ## Principio aplicado
 
 No se añadieron gráficos, información interna ni bloques largos. La mejora se limita a que el cliente entienda más rápido el documento.
+
+---
+
+# Fase 7 — Guía rápida y preparación para piloto
+
+## Objetivo
+
+Que un contratista pueda entrar a CotizaT y entender el flujo recomendado sin depender de soporte.
+
+## Estado
+
+- [x] Realizado
+
+## Implementado
+
+- [x] Página `/guia-rapida` con flujo recomendado en 15 minutos.
+- [x] Checklist antes del primer presupuesto real.
+- [x] Explicación de qué usar y qué no complicar.
+- [x] Accesos rápidos a configuración, catálogo, recursos, clientes y presupuestos.
+- [x] Enlace discreto en el dashboard.
+- [x] Enlace en la barra lateral.
+
+## Principio aplicado
+
+La guía refuerza el flujo real del contratista: preparar PDF, enviarlo por canales normales y reenviar cambios si el cliente los pide. No obliga al cliente a usar una plataforma online compleja.
