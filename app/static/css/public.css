@@ -981,7 +981,7 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
 }
 .landing .banner-cifras {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 0.9rem;
 }
 .landing .banner-cifras .cifra {
@@ -1028,7 +1028,7 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
 /* Responsive de la landing */
 @media (max-width: 820px) {
   .landing .banner-catalogo .banner-int { grid-template-columns: 1fr; gap: 2rem; }
-  .landing .banner-cifras { grid-template-columns: repeat(3, 1fr); }
+  .landing .banner-cifras { grid-template-columns: repeat(2, 1fr); }
   .landing .hero-int { grid-template-columns: 1fr; gap: 2.5rem; text-align: center; }
   .landing .hero p.sub { margin-left: auto; margin-right: auto; }
   .landing .hero .acciones { justify-content: center; }
@@ -1497,14 +1497,306 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
 .landing .chip-a { top: 26px; left: -26px; }
 .landing .chip-b { top: 40%; left: -36px; }
 .landing .chip-c { bottom: -20px; left: 7%; }
+.landing .chip-moneda {
+  top: 14%;
+  right: -30px;
+  border-color: color-mix(in srgb, var(--gold) 45%, var(--border));
+  background: linear-gradient(135deg, #fff, var(--gold-soft));
+}
+.landing .chip-moneda .chip-ico { background: var(--gold-soft); color: var(--amber); font-size: 0.85rem; }
+
+/* ──────────────── Landing · APU (análisis de precios unitarios) ──────────── */
+.landing .apu-seccion {
+  max-width: 1080px;
+  padding-top: 0.5rem;
+  padding-bottom: 4.2rem;
+}
+.landing .apu-intro {
+  text-align: center;
+  max-width: 780px;
+  margin: 0 auto 2.6rem;
+}
+.landing .apu-intro h2 { margin-bottom: 0.8rem; }
+.landing .apu-intro .intro { margin: 0 auto; }
+.landing .apu-stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(240px, 1fr);
+  gap: 1.2rem;
+  align-items: start;
+}
+.landing .apu-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.landing .apu-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.2rem;
+  padding: 1.4rem 1.6rem;
+  border-bottom: 1px solid var(--border);
+  background:
+    radial-gradient(500px 200px at 0% 0%, var(--accent-soft), transparent 60%),
+    var(--surface-alt);
+}
+.landing .apu-eyebrow {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.landing .apu-titulo {
+  display: block;
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0.15rem 0 0.1rem;
+}
+.landing .apu-unidad {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.landing .apu-resultado {
+  flex: 0 0 auto;
+  text-align: right;
+  background: var(--gold-soft);
+  border: 1px solid color-mix(in srgb, var(--gold) 40%, transparent);
+  border-radius: 14px;
+  padding: 0.7rem 1rem;
+}
+.landing .apu-resultado span {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--amber);
+}
+.landing .apu-resultado strong {
+  display: block;
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.landing .apu-resultado em {
+  display: block;
+  font-style: normal;
+  font-size: 0.72rem;
+  color: var(--text-soft);
+  font-weight: 600;
+  margin-top: 0.15rem;
+}
+.landing .apu-tabla { display: grid; }
+.landing .apu-fila {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto auto;
+  gap: 1.2rem;
+  align-items: center;
+  padding: 0.55rem 1.6rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.88rem;
+}
+.landing .apu-fila:last-child { border-bottom: none; }
+.landing .apu-fila > span { font-variant-numeric: tabular-nums; }
+.landing .apu-fila.apu-cab {
+  background: var(--surface-alt);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+.landing .apu-rec {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: var(--text);
+  font-weight: 600;
+  min-width: 0;
+}
+.landing .apu-grupo {
+  flex: 0 0 auto;
+  width: 9px;
+  height: 9px;
+  border-radius: 3px;
+  background: var(--accent);
+}
+.landing .apu-g-mano_de_obra { background: var(--amber); }
+.landing .apu-g-equipo { background: var(--green); }
+.landing .apu-rend,
+.landing .apu-precio { color: var(--text-soft); white-space: nowrap; }
+.landing .apu-importe {
+  color: var(--text);
+  font-weight: 700;
+  text-align: right;
+  white-space: nowrap;
+}
+.landing .apu-fila.apu-sub {
+  background: var(--surface-alt);
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 0.84rem;
+}
+.landing .apu-fila.apu-sub > span:last-child { font-weight: 700; color: var(--text); text-align: right; }
+.landing .apu-fila.apu-total {
+  background: var(--surface-alt);
+  font-weight: 800;
+  font-size: 0.9rem;
+  letter-spacing: 0.02em;
+}
+.landing .apu-fila.apu-total > span:last-child { text-align: right; color: var(--text); }
+.landing .apu-fila.apu-venta {
+  background: linear-gradient(90deg, var(--accent), var(--accent-h));
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+.landing .apu-fila.apu-venta > span:last-child { text-align: right; color: #fff; }
+.landing .apu-nota {
+  margin: 0;
+  padding: 0.9rem 1.6rem 1rem;
+  color: var(--text-soft);
+  font-size: 0.82rem;
+  border-top: 1px dashed var(--border-strong);
+  background: var(--surface-alt);
+}
+.landing .apu-laterales { display: grid; gap: 1.1rem; }
+.landing .apu-lateral {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 1.5rem 1.5rem 1.4rem;
+  transition: border-color 0.15s var(--ease-out), box-shadow 0.15s var(--ease-out), transform 0.15s var(--ease-out);
+}
+.landing .apu-lateral:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+.landing .apu-lateral h3 {
+  margin: 0.9rem 0 0.5rem;
+  font-size: 1.02rem;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+}
+.landing .apu-lateral p {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+.landing .apu-lateral p strong { color: var(--text); }
+
+/* ──────────────── Landing · comparativa con otras herramientas ──────────── */
+.landing .comparativa {
+  max-width: 1080px;
+  padding-top: 0.5rem;
+  padding-bottom: 4.2rem;
+}
+.landing .comparativa-intro {
+  text-align: center;
+  max-width: 780px;
+  margin: 0 auto 2.6rem;
+}
+.landing .comparativa-intro h2 { margin-bottom: 0.8rem; }
+.landing .comparativa-intro .intro { margin: 0 auto; }
+.landing .comp-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  overflow-x: auto;
+}
+.landing .comp-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 720px;
+  font-size: 0.9rem;
+}
+.landing .comp-tabla thead th {
+  text-align: left;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 1rem 1.1rem;
+  border-bottom: 1px solid var(--border-strong);
+  background: var(--surface-alt);
+}
+.landing .comp-tabla thead th.comp-cta-col {
+  color: #fff;
+  background: linear-gradient(135deg, var(--accent), var(--accent-h));
+  border-bottom-color: var(--accent-h);
+}
+.landing .comp-tabla tbody th {
+  text-align: left;
+  font-weight: 650;
+  color: var(--text);
+  padding: 0.85rem 1.1rem;
+  border-bottom: 1px solid var(--border);
+  line-height: 1.45;
+}
+.landing .comp-tabla tbody td {
+  padding: 0.85rem 1.1rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-soft);
+  vertical-align: top;
+  line-height: 1.45;
+  min-width: 150px;
+}
+.landing .comp-tabla tbody tr:last-child th,
+.landing .comp-tabla tbody tr:last-child td { border-bottom: none; }
+.landing .comp-tabla tbody tr:nth-child(even) { background: color-mix(in srgb, var(--surface-alt) 55%, transparent); }
+.landing .comp-tabla tbody td:last-child {
+  background: var(--accent-soft);
+  color: var(--text);
+  font-weight: 600;
+}
+.landing .comp-si {
+  display: inline-block;
+  color: var(--green);
+  font-weight: 800;
+  margin-right: 0.35rem;
+}
+.landing .comp-no {
+  display: inline-block;
+  color: var(--rose);
+  font-weight: 800;
+  margin-right: 0.35rem;
+}
+.landing .comp-mitad {
+  display: inline-block;
+  color: var(--amber);
+  font-weight: 800;
+  margin-right: 0.35rem;
+}
 
 /* Responsive del showcase */
 @media (max-width: 900px) {
   .landing .chip-a { left: -8px; }
   .landing .chip-b { display: none; }
   .landing .chip-c { bottom: -18px; }
-  .landing .dp-main { grid-template-columns: 1fr 50px 78px 84px; }
-  .landing .dp-precio { display: none; }
+  .landing .chip-moneda { right: -6px; }
+  .landing .apu-stage { grid-template-columns: 1fr; }
+  .landing .apu-head { flex-direction: column; align-items: flex-start; gap: 0.9rem; }
+  .landing .apu-resultado { text-align: left; }
+  .landing .apu-fila { grid-template-columns: minmax(0, 1fr) auto auto; padding: 0.55rem 1rem; }
+  .landing .apu-precio { display: none; }
+  .landing .apu-head { padding: 1.2rem 1rem; }
+  .landing .apu-nota { padding: 0.8rem 1rem; }
 }
 @media (max-width: 680px) {
   .landing .showcase { padding-top: 0.5rem; }
@@ -1515,6 +1807,8 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
   .landing .dp-cant, .landing .dp-precio { display: none; }
   .landing .app-bar-actions .app-ghostbtn { display: none; }
   .landing .app-title { max-width: 140px; }
+  .landing .apu-fila { grid-template-columns: minmax(0, 1fr) auto; }
+  .landing .apu-rend { display: none; }
 }
 
 /* ──────────────── Landing · ventajas destacadas (margen + tiempo) ────────── */

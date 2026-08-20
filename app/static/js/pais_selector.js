@@ -1,116 +1,145 @@
-/* Selector de país para la landing adaptativa (Semana 1 — LatAm).
+/* Selector de país para la landing adaptativa (LatAm).
  *
  * Sin inyección HTML ni estilos inline: solo textContent, class y
  * atributos. El servidor ya renderiza el país correcto si viene por
- * ?pais= o por cookie; este script solo hace el cambio instantáneo en
- * cliente, persiste la elección (cookie + localStorage) y mantiene la
- * URL sincronizada sin recargar.
+ * subdirectorio, ?pais= o cookie —incluidos los importes del ejemplo en
+ * la moneda del país—; este script hace el cambio instantáneo en cliente
+ * para los textos simples, persiste la elección (cookie + localStorage)
+ * y navega al subdirectorio canónico (/co/, /mx/ ...), donde el servidor
+ * re-renderiza importes, IVA y terminología del ejemplo.
  */
 (function () {
   var select = document.getElementById("pais-select");
   var hint = document.getElementById("pais-bar-hint");
   var dataEl = document.getElementById("paises-data");
-  var actualEl = document.getElementById("pais-actual-data");
   var genericoEl = document.getElementById("pais-generico-data");
+  var monedasEl = document.getElementById("ejemplo-monedas");
 
   if (!select || !dataEl) return;
 
   var paises = [];
   var generico = null;
+  var monedas = null;
   try { paises = JSON.parse(dataEl.textContent || "[]"); } catch (_) { paises = []; }
   try { generico = JSON.parse(genericoEl ? genericoEl.textContent : "null"); } catch (_) { generico = null; }
+  try { monedas = JSON.parse(monedasEl ? monedasEl.textContent : "null"); } catch (_) { monedas = null; }
   if (!generico) generico = { codigo: "", nombre: "Latinoamérica", bandera: "🌎", moneda: "USD", simbolo_local: "$", iva: 16, id_fiscal: "ID fiscal", vocab: "concreto, friso, cielo raso, rodapié, plomero", mercado: "latinoamericano", gentilicio: "latinoamericano" };
 
   var mapa = {};
   for (var i = 0; i < paises.length; i++) mapa[paises[i].codigo] = paises[i];
+
+  function texto(id, valor) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = valor;
+  }
+
+  function actualizarMoneda(p) {
+    // Bloque de moneda del hero-stats: coherente con el render del servidor.
+    // Al navegar al subdirectorio el servidor re-renderiza; esto cubre el
+    // cambio instantáneo previo a la navegación y el fallback sin recarga.
+    var stat = document.getElementById("stat-moneda");
+    if (!stat) return;
+    var moneda = p && p.moneda && p.moneda !== "USD" ? p.moneda : "US$";
+    var fuerte = stat.querySelector("strong");
+    var nota = document.getElementById("stat-moneda-nota");
+    if (fuerte) fuerte.textContent = moneda;
+    if (nota) {
+      if (p && p.moneda && p.moneda !== "USD") {
+        var tasa = monedas && monedas.tasa_txt ? monedas.tasa_txt : "";
+        nota.textContent = tasa
+          ? "tasa de referencia " + tasa + " " + p.moneda + "/US$"
+          : "moneda de " + p.nombre + ", o USD si prefieres";
+      } else if (p && p.moneda_local && p.moneda_local !== "USD") {
+        nota.textContent = "o " + p.simbolo_local + " (" + p.moneda_local + ") con tasa de referencia";
+      } else if (p) {
+        nota.textContent = "moneda de " + p.nombre + " · IVA " + p.iva + "%";
+      } else {
+        nota.textContent = "USD de referencia · convierte a tu moneda local";
+      }
+    }
+  }
 
   function aplicarPais(codigo, opts) {
     var persist = !(opts && opts.persist === false);
     var p = codigo ? mapa[codigo] : null;
 
     // Textos dinámicos por id
-    var kicker = document.getElementById("hero-kicker");
-    var bannerH2 = document.getElementById("banner-h2");
-    var bannerP = document.getElementById("banner-p");
-    var bannerVocab = document.getElementById("banner-vocab");
-    var bannerMoneda = document.getElementById("banner-moneda");
-    var fiscalH3 = document.getElementById("fiscal-h3");
-    var fiscalP = document.getElementById("fiscal-p");
-    var franjaH2 = document.getElementById("franja-h2");
-    var franjaIntro = document.getElementById("franja-intro");
-    var franjaPrecioP = document.getElementById("franja-precio-p");
-    var franjaVocabP = document.getElementById("franja-vocab-p");
+    texto("hero-kicker", p
+      ? p.bandera + " Hecho para " + p.nombre + " · Construcción y remodelación"
+      : "🌎 Hecho para Latinoamérica · Construcción y remodelación");
+    texto("banner-h2", p
+      ? "El catálogo más completo para presupuestar en " + p.nombre + "."
+      : "El catálogo más completo para presupuestar en Latinoamérica.");
 
-    if (p) {
-      if (kicker) kicker.textContent = p.bandera + " Hecho para " + p.nombre + " · Construcción y remodelación";
-      if (bannerH2) bannerH2.textContent = "El catálogo más completo para presupuestar en " + p.nombre + ".";
-      if (bannerP) bannerP.textContent = document.querySelector("#banner-p") ? bannerP.textContent : "";
-      // Reconstruir bannerP con cifras dinámicas si existen
-      if (bannerP) {
-        var cifrasEl = document.querySelector(".banner-cifras");
-        // Mantener el formato pero actualizar mercado
-        // El número de partidas viene renderizado; solo cambiamos mercado
-        var txt = bannerP.textContent || "";
-        // Si el texto aún es genérico, lo reescribimos completo con mercado
-        if (txt.indexOf("Latinoamérica") !== -1 || txt.indexOf(p.mercado) === -1) {
-          var partidasTxt = "";
-          var capitulosTxt = "";
-          try {
-            var c1 = document.querySelector(".banner-cifras .cifra strong");
-            if (c1) partidasTxt = c1.textContent.trim();
-          } catch (_) {}
-          // Fallback: extraer del DOM original o usar genérico
-          bannerP.textContent = (partidasTxt ? partidasTxt : "3.000") + " partidas organizadas con precios en USD de referencia contrastados con el mercado " + p.mercado + " y en revisión continua. No empiezas de cero: llegas con una base de precios real y propia.";
-          // Ajuste fino: si no pudimos leer, mantén el texto anterior pero reemplaza mercado
-          if (!partidasTxt && txt) {
-            bannerP.textContent = txt.replace("Latinoamérica", p.nombre).replace("latinoamericano", p.mercado).replace("venezolano", p.mercado).replace("mercado latinoamericano", "mercado " + p.mercado);
-            if (bannerP.textContent.indexOf(p.mercado) === -1) {
-              bannerP.textContent = "Más de 3.000 partidas organizadas con precios en USD de referencia contrastados con el mercado " + p.mercado + " y en revisión continua. No empiezas de cero: llegas con una base de precios real y propia.";
-            }
-          }
+    var bannerP = document.getElementById("banner-p");
+    if (bannerP) {
+      var txt = bannerP.textContent || "";
+      // Reemplazos quirúrgicos: mercado y país, conservando las cifras
+      // reales que el servidor ya renderizó.
+      txt = txt.replace(/mercado [a-záéíóúñ]+/i, "mercado " + (p ? p.mercado : "latinoamericano"));
+      if (!p) {
+        txt = txt.replace(/para [A-ZÁÉÍÓÚÑ][\wáéíóúñ ,()]+/, "para Latinoamérica.");
+      }
+      bannerP.textContent = txt;
+    }
+
+    texto("banner-vocab", p
+      ? "✓ Terminología de " + p.nombre + ": " + p.vocab + "."
+      : "✓ Terminología hispana neutra con variantes locales: elige tu país y adapta los nombres.");
+
+    var bannerMoneda = document.getElementById("banner-moneda");
+    if (bannerMoneda) {
+      if (p) {
+        var m = "✓ ";
+        if (p.moneda !== "USD") {
+          m += "Precios convertidos a " + p.moneda + " con la tasa de referencia · o en US$ si prefieres. Cada presupuesto congela su tasa.";
+        } else {
+          m += "Precios en " + (p.moneda_local && p.moneda_local !== "USD" ? "USD o " + p.moneda_local : p.moneda) + " de referencia. Cada presupuesto congela su tasa si cambias de moneda.";
         }
+        bannerMoneda.textContent = m;
+      } else {
+        bannerMoneda.textContent = "✓ Precios en USD de referencia · convierte a tu moneda local (COP, MXN, PEN, CLP, ARS…) en cada presupuesto.";
       }
-      if (bannerVocab) bannerVocab.textContent = "✓ Terminología de " + p.nombre + ": " + p.vocab + ".";
-      // bannerMoneda contiene un span check, preservarlo
-      if (bannerMoneda) {
-        var monedaTxt = "✓ Precios en USD de referencia";
-        if (p.moneda !== "USD") monedaTxt += " · convierte a " + p.moneda + " (" + p.simbolo_local + ") en tu presupuesto";
-        else monedaTxt += ".";
-        bannerMoneda.textContent = monedaTxt;
-      }
-      // Fiscal
-      var fiscalIcon = document.querySelector("#fiscal-card .icon");
-      if (fiscalIcon) fiscalIcon.textContent = p.bandera;
-      if (fiscalH3) fiscalH3.textContent = "Fiscal a tu medida · " + p.nombre;
-      if (fiscalP) fiscalP.textContent = "IVA " + p.iva + "%, " + p.id_fiscal + ", retención, operación exenta, número de control y cláusula cambiaria. Moneda " + p.moneda + (p.moneda !== "USD" ? " (" + p.simbolo_local + ")" : "") + " o USD, con tasa de referencia.";
-      // Franja
-      if (franjaH2) franjaH2.textContent = "Pensado para " + p.nombre + ", no adaptado después.";
-      if (franjaIntro) franjaIntro.textContent = "No es una herramienta genérica traducida. CotizaT habla el idioma de la obra en " + p.nombre + ": precios, vocabulario y fiscalidad de aquí.";
-      if (franjaPrecioP) franjaPrecioP.textContent = "Cotiza en " + p.moneda + (p.moneda !== "USD" ? " (" + p.simbolo_local + ")" : "") + " o en USD como referencia regional. Sin conversiones improvisadas: tu tasa queda guardada en cada presupuesto.";
-      if (franjaVocabP) franjaVocabP.textContent = p.vocab + ", y todos los nombres que usa tu cliente y tu cuadrilla en " + p.nombre + ", no los de otro país.";
-      if (hint) hint.textContent = p.bandera + " Mostrando contenido para " + p.nombre + " · " + p.id_fiscal + " · IVA " + p.iva + "%";
-      // Título y meta description (opcional, sin recargar)
-      try { document.title = "CotizaT — Presupuestos de construcción y remodelación para " + p.nombre; } catch (_) {}
-      var meta = document.querySelector('meta[name="description"]');
-      if (meta) meta.setAttribute("content", "Presupuestos de obra profesionales en minutos. Más de 3.000 partidas clasificadas con precios en USD contrastados con el mercado " + p.mercado + ". PDF con tu logo, versiones, aprobaciones y cobros.");
-    } else {
-      if (kicker) kicker.textContent = "🌎 Hecho para Latinoamérica · Construcción y remodelación";
-      if (bannerH2) bannerH2.textContent = "El catálogo más completo para presupuestar en Latinoamérica.";
-      if (bannerP) bannerP.textContent = "Más de 3.000 partidas organizadas con precios en USD de referencia para Latinoamérica y en revisión continua. No empiezas de cero: llegas con una base de precios real y propia.";
-      if (bannerVocab) bannerVocab.textContent = "✓ Terminología hispana neutra con variantes locales: elige tu país y adapta los nombres.";
-      if (bannerMoneda) bannerMoneda.textContent = "✓ Precios en USD de referencia · convierte a tu moneda local en cada presupuesto.";
-      var fi = document.querySelector("#fiscal-card .icon");
-      if (fi) fi.textContent = "🌎";
-      if (fiscalH3) fiscalH3.textContent = "Fiscal a tu medida · Latinoamérica";
-      if (fiscalP) fiscalP.textContent = "IVA configurable por país, tu ID fiscal (RIF, NIT, RUT, CUIT, RUC, RFC…), retención, operación exenta y cláusula cambiaria. Moneda en tu divisa local o USD, con tasa de referencia.";
-      if (franjaH2) franjaH2.textContent = "Pensado para Latinoamérica, no adaptado después.";
-      if (franjaIntro) franjaIntro.textContent = "No es una herramienta genérica. CotizaT nace para construir en Latinoamérica: precios en USD de referencia, vocabulario hispano y fiscalidad configurable por país.";
-      if (franjaPrecioP) franjaPrecioP.textContent = "Cotiza en USD como referencia regional o en tu moneda local (COP, MXN, PEN, CLP, ARS…). Tu tasa de referencia queda guardada en cada presupuesto.";
-      if (franjaVocabP) franjaVocabP.textContent = "Concreto/hormigón, friso/revoque, cielo raso/cielorraso, rodapié/zócalo, plomero/gasfíter… Elige tu país y la landing habla tu obra.";
-      if (hint) hint.textContent = "Mostrando contenido genérico para toda Latinoamérica";
-      try { document.title = "CotizaT — Presupuestos de construcción y remodelación para Latinoamérica"; } catch (_) {}
-      var m2 = document.querySelector('meta[name="description"]');
-      if (m2) m2.setAttribute("content", "Presupuestos de obra profesionales en minutos. Más de 3.000 partidas clasificadas con precios en USD de referencia para Latinoamérica. PDF con tu logo, versiones, aprobaciones y cobros.");
+    }
+
+    // Fiscal
+    var fiscalIcon = document.querySelector("#fiscal-card .icon");
+    if (fiscalIcon) fiscalIcon.textContent = p ? p.bandera : "🌎";
+    texto("fiscal-h3", p ? "Fiscal a tu medida · " + p.nombre : "Fiscal a tu medida · Latinoamérica");
+    texto("fiscal-p", p
+      ? "IVA " + p.iva + "%, " + p.id_fiscal + ", retención, operación exenta, número de control y cláusula cambiaria. Moneda " + p.moneda + (p.moneda !== "USD" ? " (" + p.simbolo_local + ")" : "") + " o USD, con tasa de referencia."
+      : "IVA configurable por país, tu ID fiscal (RIF, NIT, RUT, CUIT, RUC, RFC…), retención, operación exenta y cláusula cambiaria. Moneda en tu divisa local o USD, con tasa de referencia.");
+
+    // Franja país
+    texto("franja-h2", p ? "Pensado para " + p.nombre + ", no adaptado después." : "Pensado para Latinoamérica, no adaptado después.");
+    texto("franja-intro", p
+      ? "No es una herramienta genérica traducida. CotizaT habla el idioma de la obra en " + p.nombre + ": precios, vocabulario y fiscalidad de aquí."
+      : "No es una herramienta genérica. CotizaT nace para construir en Latinoamérica: precios en USD de referencia, vocabulario hispano y fiscalidad configurable por país.");
+    texto("franja-precio-p", p
+      ? "Cotiza en " + p.moneda + (p.moneda !== "USD" ? " (" + p.simbolo_local + ")" : "") + " o en USD como referencia regional. Sin conversiones improvisadas: tu tasa queda guardada en cada presupuesto."
+      : "Cotiza en USD como referencia regional o en tu moneda local (COP, MXN, PEN, CLP, ARS…). Tu tasa de referencia queda guardada en cada presupuesto.");
+    texto("franja-vocab-p", p
+      ? p.vocab + ", y todos los nombres que usa tu cliente y tu cuadrilla en " + p.nombre + ", no los de otro país."
+      : "Concreto/hormigón, friso/revoque, cielo raso/cielorraso, rodapié/zócalo, plomero/gasfíter… Elige tu país y la landing habla tu obra.");
+
+    // Bloque de moneda (stat del hero)
+    actualizarMoneda(p);
+
+    if (hint) hint.textContent = p
+      ? p.bandera + " Mostrando contenido para " + p.nombre + " · " + p.id_fiscal + " · IVA " + p.iva + "%"
+      : "Mostrando contenido genérico para toda Latinoamérica";
+
+    // Título y meta description (opcional, sin recargar)
+    try {
+      document.title = p
+        ? "CotizaT — Presupuestos de construcción y remodelación para " + p.nombre
+        : "CotizaT — Presupuestos de construcción y remodelación para Latinoamérica";
+    } catch (_) {}
+    var meta = document.querySelector('meta[name="description"]');
+    if (meta) {
+      meta.setAttribute("content", p
+        ? "Presupuestos de obra profesionales en minutos. Partidas descompuestas y precios de recursos" + (p.moneda !== "USD" ? " convertidos a " + p.moneda + " con tasa de referencia" : " en USD de referencia") + " contrastados con el mercado " + p.mercado + ". PDF con tu logo, versiones, firma del cliente y cobros."
+        : "Presupuestos de obra profesionales en minutos. Líneas de precio en USD de referencia convertibles a tu moneda. PDF con tu logo, versiones, firma del cliente y cobros.");
     }
 
     // Normalizar select
@@ -118,7 +147,7 @@
 
     if (!persist) return;
 
-    // Persistir cookie + localStorage + navegar al subdirectorio canónico (/co/, /mx/...)
+    // Persistir cookie + localStorage + navegar al subdirectorio canónico (/co/, /mx/ ...)
     try {
       document.cookie = "cotizat_pais=" + encodeURIComponent(codigo || "") + "; path=/; max-age=" + (codigo ? 365 * 24 * 3600 : 0) + "; samesite=lax";
       if (codigo) localStorage.setItem("cotizat_pais", codigo);
@@ -141,11 +170,6 @@
       history.replaceState(null, "", url.pathname + url.search + url.hash);
     } catch (_) {}
   }
-
-  // Inicial: si hay cookie/localStorage y no hay ?pais, no forzar; el servidor ya renderizó.
-  // Solo sincronizar URL si el usuario nunca eligió y no hay cookie.
-  var initial = select.value || "";
-  // Si el select genérico pero hay pais en URL, el servidor ya lo aplicó; no reaplicar.
 
   select.addEventListener("change", function () {
     var v = select.value || "";

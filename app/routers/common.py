@@ -289,14 +289,42 @@ def _asset_url(path: str) -> str:
 def cifras_catalogo() -> dict:
     """Cifras del catálogo propio para la landing y el marketing.
 
-    Se leen de ``basedatos_partidas`` (clasificación y descompuestos) sin
-    tocar la base de datos ni la sesión, y se cachean: son estáticas entre
-    regeneraciones del catálogo.
+    Se leen de ``basedatos_partidas`` (clasificación, descompuestos y cuadro
+    de recursos) sin tocar la base de datos ni la sesión, y se cachean: son
+    estáticas entre regeneraciones del catálogo.
+
+    El catálogo no son solo partidas: cada partida llega descompuesta en
+    recursos con precio (materiales, mano de obra y equipo), así que el
+    número de líneas de precio listas para usar es ``partidas + recursos``
+    y el de líneas de análisis (rendimiento × recurso) es la suma de las
+    líneas de todos los descompuestos. La landing vende el conjunto.
     """
     from functools import lru_cache
 
     @lru_cache(maxsize=1)
     def _leer() -> dict:
+        def _fallback() -> dict:
+            # Nunca romper la aplicación por un recuento de marketing.
+            return {
+                "partidas": 3000,
+                "partidas_txt": "3.000",
+                "capitulos": 18,
+                "subcapitulos": 172,
+                "subcapitulos_txt": "172",
+                "apartados": 0,
+                "recursos": 392,
+                "recursos_txt": "392",
+                "materiales": 331,
+                "mano_obra": 17,
+                "equipo": 44,
+                "lineas_descomp": 16127,
+                "lineas_descomp_txt": "16.127",
+                "lineas_precio": 3392,
+                "lineas_precio_txt": "3.392",
+                "packs": 0,
+                "packs_partidas": 0,
+            }
+
         try:
             base = Path(__file__).resolve().parents[2] / "basedatos_partidas"
             descompuestos = base / "datos" / "descompuestos"
@@ -310,25 +338,73 @@ def cifras_catalogo() -> dict:
                 for c in capitulos.values()
                 for s in c.get("subcapitulos", {}).values()
             )
-            n_partidas = len(list(descompuestos.glob("*.json"))) if descompuestos.is_dir() else 0
+            n_partidas = 0
+            lineas = 0
+            if descompuestos.is_dir():
+                for archivo in descompuestos.glob("*.json"):
+                    try:
+                        n_partidas += 1
+                        lineas += len(
+                            json.loads(archivo.read_text(encoding="utf-8")).get(
+                                "recursos", []
+                            )
+                        )
+                    except Exception:
+                        continue
+            else:
+                return _fallback()
+            grupos = {"materiales": 0, "mano_obra": 0, "maquinaria": 0}
+            try:
+                cuadro = json.loads(
+                    (base / "datos" / "recursos.json").read_text(encoding="utf-8")
+                )
+                for clave, n in (
+                    (k, len(cuadro.get(k) or {})) for k in grupos
+                ):
+                    grupos[clave] = n
+            except Exception:
+                if not n_partidas:
+                    return _fallback()
+                grupos = {"materiales": 0, "mano_obra": 0, "maquinaria": 0}
+            n_recursos = sum(grupos.values())
+            # Packs de estancia de serie (presets del modo demostración).
+            packs = packs_partidas = 0
+            try:
+                from .. import seeds as _seeds
+
+                recetas = list(getattr(_seeds, "RECETAS_DEMO", []) or [])
+                packs = len(recetas)
+                packs_partidas = sum(
+                    len(json.loads(r.get("datos") or "[]")) for r in recetas
+                )
+            except Exception:
+                pass
+            lineas_precio = n_partidas + n_recursos
+
+            def _txt(n: int) -> str:
+                return f"{n:,}".replace(",", ".")
+
             return {
                 "partidas": n_partidas,
-                "partidas_txt": f"{n_partidas:,}".replace(",", "."),
+                "partidas_txt": _txt(n_partidas),
                 "capitulos": len(capitulos),
                 "subcapitulos": subcapitulos,
-                "subcapitulos_txt": f"{subcapitulos:,}".replace(",", "."),
+                "subcapitulos_txt": _txt(subcapitulos),
                 "apartados": apartados,
+                "recursos": n_recursos,
+                "recursos_txt": _txt(n_recursos),
+                "materiales": grupos["materiales"],
+                "mano_obra": grupos["mano_obra"],
+                "equipo": grupos["maquinaria"],
+                "lineas_descomp": lineas,
+                "lineas_descomp_txt": _txt(lineas),
+                "lineas_precio": lineas_precio,
+                "lineas_precio_txt": _txt(lineas_precio),
+                "packs": packs,
+                "packs_partidas": packs_partidas,
             }
         except Exception:
-            # Nunca romper la aplicación por un recuento de marketing.
-            return {
-                "partidas": 3000,
-                "partidas_txt": "3.000",
-                "capitulos": 18,
-                "subcapitulos": 172,
-                "subcapitulos_txt": "172",
-                "apartados": 0,
-            }
+            return _fallback()
 
     return _leer()
 

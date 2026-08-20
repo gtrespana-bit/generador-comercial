@@ -283,6 +283,54 @@ def test_sitemap_incluye_subdirectorios_de_pais(cliente_web):
 
 
 # ---------------------------------------------------------------------------
+# Landing adaptativa: el ejemplo se muestra en la moneda del país
+# ---------------------------------------------------------------------------
+
+def test_landing_colombia_muestra_ejemplo_en_cop(cliente_web):
+    """Abrir /co/ no puede enseñar un ejemplo en dólares: COP, IVA 19 y Bogotá."""
+    resp = cliente_web.get("/co/")
+    assert resp.status_code == 200
+    t = resp.text
+    assert "COL$" in t
+    assert "I.V.A. (19 %)" in t
+    assert "Bogotá" in t
+    # Tasa de referencia visible (TRM) y bloques nuevos de venta
+    assert "3.128,65 COP/US$" in t
+    assert "líneas de precio" in t
+    assert "Muro de cerramiento" in t  # APU real del catálogo
+
+
+def test_landing_mexico_muestra_ejemplo_en_mxn(cliente_web):
+    resp = cliente_web.get("/mx/")
+    assert resp.status_code == 200
+    t = resp.text
+    assert "MX$" in t
+    assert "I.V.A. (16 %)" in t
+    assert "Ciudad de México" in t
+    # La terminología del ejemplo se traduce (aplanado, no friso)
+    assert "Aplanado" in t
+
+
+def test_landing_peru_muestra_ejemplo_en_soles(cliente_web):
+    resp = cliente_web.get("/pe/")
+    assert resp.status_code == 200
+    t = resp.text
+    assert "S/" in t
+    assert "I.V.A. (18 %)" in t
+    assert "Lima" in t
+
+
+def test_landing_ve_y_generica_mantienen_usd_con_iva_local(cliente_web):
+    resp_ve = cliente_web.get("/ve/")
+    assert "I.V.A. (16 %)" in resp_ve.text
+    resp = cliente_web.get("/")
+    assert "US$" in resp.text
+    # Las cifras del catálogo cuentan partidas + recursos, no solo partidas
+    assert "3.398" in resp.text  # 3.006 partidas + 392 recursos
+    assert "392" in resp.text
+
+
+# ---------------------------------------------------------------------------
 # Configuración por tenant: moneda, IVA, etiqueta fiscal y tasa
 # ---------------------------------------------------------------------------
 
