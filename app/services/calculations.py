@@ -131,21 +131,28 @@ def coste_obra_partida(partida) -> Decimal:
             getattr(descompuesto, "coste_directo_unitario", None) is not None
             or getattr(descompuesto, "archivo_origen", "")
         )
+
+        # Si hay filas, son la fuente autoritativa. Los campos de coste de la
+        # partida son una caché para el editor/listados y pueden quedar viejos
+        # en presupuestos creados antes de la última mejora. Recalcular aquí
+        # evita que el detalle/PDF diga una rentabilidad distinta a la que se
+        # ve en el editor al reconstruir la misma descomposición.
+        filas = getattr(descompuesto, "filas", None)
+        if filas:
+            from .importer import recalcular_descompuesto_cype
+            resultado = recalcular_descompuesto_cype(filas)
+            directo = D(resultado.get("coste_directo", 0))
+            if es_cype:
+                return money(cantidad * directo)
+            return money(cantidad * directo * (Decimal("1") + desperdicio / Decimal("100")))
+
         if es_cype:
             if subtotal_campos > 0:
                 return money(cantidad * subtotal_campos)
             if getattr(descompuesto, "coste_directo_unitario", None) is not None:
                 return money(cantidad * D(descompuesto.coste_directo_unitario))
         else:
-            # Manual/APU: recalcular desde filas si existen; si no, usar campos.
-            if getattr(descompuesto, "filas", None):
-                from .apu import calcular_apu
-                apu = calcular_apu(descompuesto.filas)
-                directo = apu.coste_directo
-            elif getattr(descompuesto, "coste_directo_unitario", None) is not None:
-                directo = D(descompuesto.coste_directo_unitario)
-            else:
-                directo = subtotal_campos
+            directo = D(descompuesto.coste_directo_unitario) if getattr(descompuesto, "coste_directo_unitario", None) is not None else subtotal_campos
             return money(cantidad * directo * (Decimal("1") + desperdicio / Decimal("100")))
 
     return money(cantidad * subtotal_campos * (Decimal("1") + desperdicio / Decimal("100")))

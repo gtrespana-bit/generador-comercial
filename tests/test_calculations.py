@@ -127,3 +127,40 @@ def test_cype_antiguo_sin_campos_usa_coste_directo_como_respaldo():
 
     assert totales.coste_obra == D("170")
     assert totales.margen == D("190")
+
+
+def _fila_descomp(**kwargs):
+    datos = {
+        "tipo": "recurso",
+        "grupo": "MATERIALES",
+        "codigo": "mt001",
+        "unidad": "ud",
+        "categoria": "materiales",
+        "rendimiento": 1,
+        "precio_unitario": 0,
+    }
+    datos.update(kwargs)
+    return SimpleNamespace(**datos)
+
+
+def test_descomposicion_con_filas_manda_sobre_campos_cache_stale():
+    descomp = SimpleNamespace(
+        origen="cype",
+        archivo_origen="origen.xlsx",
+        coste_directo_unitario=999,
+        filas=[_fila_descomp(precio_unitario=85)],
+    )
+    presupuesto = _presupuesto([
+        _partida(
+            cantidad_total=2,
+            precio_unitario=180,
+            # Caché vieja: debe ignorarse porque las filas recalculan 85/ud.
+            coste_materiales=999,
+            descomposicion_cype=descomp,
+        ),
+    ])
+
+    totales = calcular_totales(presupuesto)
+
+    assert totales.coste_obra == D("170")
+    assert totales.margen == D("190")
