@@ -21,22 +21,33 @@ class PrecioResuelto:
 
 def resolver_precio(db: Session, recurso_id: int, pais_codigo: str,
                     organizacion_id: int | None = None) -> PrecioResuelto:
+    recurso = db.get(Recurso, recurso_id)
+    pais = str(pais_codigo or "").upper()
     q = db.query(PrecioRecursoMercado).filter(
-        PrecioRecursoMercado.recurso_id == recurso_id,
-        PrecioRecursoMercado.pais_codigo == str(pais_codigo or "").upper(),
+        PrecioRecursoMercado.pais_codigo == pais,
         PrecioRecursoMercado.activo.is_(True),
     )
-    propio = q.filter(PrecioRecursoMercado.organizacion_id == organizacion_id).first() if organizacion_id else None
-    nacional = q.filter(PrecioRecursoMercado.organizacion_id.is_(None)).first()
+    propio = q.filter(
+        PrecioRecursoMercado.recurso_id == recurso_id,
+        PrecioRecursoMercado.organizacion_id == organizacion_id,
+    ).first() if organizacion_id else None
+    filtro_nacional = [PrecioRecursoMercado.recurso_id == recurso_id]
+    if recurso is not None and (recurso.codigo or "").strip():
+        filtro_nacional.append(
+            PrecioRecursoMercado.codigo_recurso == recurso.codigo.strip()
+        )
+    nacional = q.filter(
+        PrecioRecursoMercado.organizacion_id.is_(None),
+        or_(*filtro_nacional),
+    ).first()
     elegido = propio or nacional
     if elegido:
         return PrecioResuelto(
             float(elegido.precio), elegido.moneda,
             "organizacion" if propio else "nacional",
             elegido.confianza or "referencia",
-            "" if propio or (elegido.confianza == "confirmado") else ("Precio provisional de respaldo; verifica con tu proveedor" if elegido.confianza == "provisional" or "respaldo" in (elegido.fuente or "").lower() else "Usando precio nacional de referencia"),
+            _aviso_precio(propio is not None, elegido),
         )
-    recurso = db.get(Recurso, recurso_id)
     if recurso and recurso.moneda == "USD":
         return PrecioResuelto(float(recurso.precio or 0), "USD", "base", "respaldo", "No existe precio nacional confirmado para este recurso")
     return PrecioResuelto(None, None, "sin_precio", "faltante", "Falta precio local para este recurso y país")
@@ -46,8 +57,10 @@ def _aviso_precio(propio: bool, elegido) -> str:
     if propio or (elegido.confianza == "confirmado"):
         return ""
     if elegido.confianza == "provisional" or "respaldo" in (elegido.fuente or "").lower():
-        return "Precio provisional de respaldo; verifica con tu proveedor"
-    return "Usando precio nacional de referencia"
+        return "Precio provisional de respaldo; puede variar según mercado y proveedor"
+    if elegido.confianza == "derivado":
+        return "Precio referencial nacional derivado de la canasta de mercado"
+    return "Precio referencial nacional; puede variar según mercado y proveedor"
 
 
 def resolver_precios_lote(db: Session, recursos, pais_codigo: str,
@@ -67,10 +80,15 @@ def resolver_precios_lote(db: Session, recursos, pais_codigo: str,
     filtro_org = [PrecioRecursoMercado.organizacion_id.is_(None)]
     if organizacion_id:
         filtro_org.append(PrecioRecursoMercado.organizacion_id == organizacion_id)
+    ids = [r.id for r in recursos]
+    codigos = [str(r.codigo).strip() for r in recursos if (r.codigo or "").strip()]
+    filtro_identidad = [PrecioRecursoMercado.recurso_id.in_(ids)]
+    if codigos:
+        filtro_identidad.append(PrecioRecursoMercado.codigo_recurso.in_(codigos))
     filas = (
         db.query(PrecioRecursoMercado)
         .filter(
-            PrecioRecursoMercado.recurso_id.in_([r.id for r in recursos]),
+            or_(*filtro_identidad),
             PrecioRecursoMercado.pais_codigo == pais,
             PrecioRecursoMercado.activo.is_(True),
             or_(*filtro_org),
@@ -78,17 +96,24 @@ def resolver_precios_lote(db: Session, recursos, pais_codigo: str,
         .all()
     )
     propios: dict[int, PrecioRecursoMercado] = {}
-    nacionales: dict[int, PrecioRecursoMercado] = {}
+    nacionales_id: dict[int, PrecioRecursoMercado] = {}
+    nacionales_codigo: dict[str, PrecioRecursoMercado] = {}
     for fila in filas:
-        destino = propios if fila.organizacion_id is not None else nacionales
-        # Igual que ``.first()`` de la versión individual: se conserva la
-        # primera fila encontrada por recurso y ámbito.
-        destino.setdefault(fila.recurso_id, fila)
+        if fila.organizacion_id is not None:
+            propios.setdefault(fila.recurso_id, fila)
+        else:
+            nacionales_id.setdefault(fila.recurso_id, fila)
+            codigo = str(fila.codigo_recurso or "").strip()
+            if codigo:
+                nacionales_codigo.setdefault(codigo, fila)
 
     salida: dict[int, PrecioResuelto] = {}
     for recurso in recursos:
         propio = propios.get(recurso.id)
-        nacional = nacionales.get(recurso.id)
+        nacional = (
+            nacionales_id.get(recurso.id)
+            or nacionales_codigo.get(str(recurso.codigo or "").strip())
+        )
         elegido = propio or nacional
         if elegido:
             salida[recurso.id] = PrecioResuelto(
@@ -113,7 +138,11 @@ def resolver_precios_lote(db: Session, recursos, pais_codigo: str,
 def guardar_precio(db: Session, recurso_id: int, pais_codigo: str, precio: float,
                    moneda: str, *, organizacion_id: int | None = None,
                    fuente: str = "", proveedor: str = "", confianza: str = "referencia",
-                   fecha_vigencia=None) -> PrecioRecursoMercado:
+                   fecha_vigencia=None, precio_min: float | None = None,
+                   precio_max: float | None = None, unidad_referencia: str | None = None,
+                   fecha_consulta=None, incluye_iva: str | None = None,
+                   incluye_transporte: str | None = None,
+                   observaciones: str | None = None) -> PrecioRecursoMercado:
     """Crea o actualiza precio nacional u override de organización.
 
     ``organizacion_id`` nulo = referencia nacional. Un identificador no válido
@@ -125,19 +154,65 @@ def guardar_precio(db: Session, recurso_id: int, pais_codigo: str, precio: float
             "organizacion_id debe ser una organización real o None (precio nacional)."
         )
     codigo = str(pais_codigo or "").strip().upper()
-    row = db.query(PrecioRecursoMercado).filter_by(
-        recurso_id=recurso_id, pais_codigo=codigo, organizacion_id=organizacion_id
-    ).first()
+    recurso = db.get(Recurso, recurso_id)
+    codigo_recurso = str(getattr(recurso, "codigo", "") or "").strip()
+    query = db.query(PrecioRecursoMercado).filter(
+        PrecioRecursoMercado.pais_codigo == codigo,
+        PrecioRecursoMercado.organizacion_id == organizacion_id,
+    )
+    if organizacion_id is None and codigo_recurso:
+        # Una sola referencia nacional por código estable, aunque cada tenant
+        # tenga su propia copia/ID del recurso.
+        row = query.filter(or_(
+            PrecioRecursoMercado.codigo_recurso == codigo_recurso,
+            PrecioRecursoMercado.recurso_id == recurso_id,
+        )).first()
+    else:
+        row = query.filter(PrecioRecursoMercado.recurso_id == recurso_id).first()
     if row is None:
-        row = PrecioRecursoMercado(recurso_id=recurso_id, pais_codigo=codigo, organizacion_id=organizacion_id)
+        row = PrecioRecursoMercado(
+            recurso_id=recurso_id,
+            codigo_recurso=codigo_recurso,
+            pais_codigo=codigo,
+            organizacion_id=organizacion_id,
+        )
         db.add(row)
+    elif codigo_recurso and not row.codigo_recurso:
+        row.codigo_recurso = codigo_recurso
     anterior = row.precio if row.id is not None else None
-    row.precio = max(0.0, float(precio))
+    valor = float(precio)
+    if valor <= 0:
+        raise ValueError("El precio debe ser mayor que cero.")
+    minimo = float(precio_min) if precio_min is not None else None
+    maximo = float(precio_max) if precio_max is not None else None
+    if minimo is not None and minimo <= 0:
+        raise ValueError("El precio mínimo debe ser mayor que cero.")
+    if maximo is not None and (maximo <= 0 or (minimo is not None and maximo < minimo)):
+        raise ValueError("El rango de precios no es válido.")
+    if minimo is not None and valor < minimo or maximo is not None and valor > maximo:
+        raise ValueError("El precio de referencia debe estar dentro de su rango.")
+
+    row.precio = valor
     row.moneda = str(moneda or "USD").strip().upper()
+    if minimo is not None:
+        row.precio_min = minimo
+    if maximo is not None:
+        row.precio_max = maximo
+    if unidad_referencia is not None:
+        row.unidad_referencia = str(unidad_referencia).strip()[:30]
     row.fuente = str(fuente or "").strip()[:200]
     row.proveedor = str(proveedor or "").strip()[:150]
     row.confianza = str(confianza or "referencia").strip()[:20]
-    row.fecha_vigencia = fecha_vigencia
+    if fecha_consulta is not None:
+        row.fecha_consulta = fecha_consulta
+    if fecha_vigencia is not None:
+        row.fecha_vigencia = fecha_vigencia
+    if incluye_iva is not None:
+        row.incluye_iva = str(incluye_iva).strip()[:20]
+    if incluye_transporte is not None:
+        row.incluye_transporte = str(incluye_transporte).strip()[:20]
+    if observaciones is not None:
+        row.observaciones = str(observaciones).strip()
     row.fecha_actualizacion = date.today()
     if anterior is not None and abs(float(anterior) - row.precio) > 1e-9:
         from ..models import HistorialPrecioRecurso

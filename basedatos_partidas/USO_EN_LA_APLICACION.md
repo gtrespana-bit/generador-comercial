@@ -4,7 +4,7 @@ Este documento cubre las dos preguntas prácticas:
 
 1. **Volatilidad**: cambio el precio del cemento y quiero que se actualicen
    todas las partidas.
-2. **Uso diario**: cómo se meten estas 540 partidas en un presupuesto sin
+2. **Uso diario**: cómo se meten estas 3.006 partidas en un presupuesto sin
    volverse loco.
 
 ---
@@ -19,7 +19,7 @@ momentos distintos.
 | Dónde | `basedatos_partidas/datos/recursos.json` | Pestaña **Recursos** de CotizaT |
 | Quién lo toca | Tú, con `precio.py` | Tú, desde el navegador |
 | Cuándo | Revisión de fondo, morteros, nuevas partidas | Día a día, en caliente |
-| Alcance | Regenera las 540 hojas y el catálogo | Recalcula lo que ya está cargado |
+| Alcance | Regenera las 3.006 hojas y el catálogo | Recalcula lo que ya está cargado |
 | Ventaja | Recursos compuestos, simulación previa | Inmediato, sin regenerar ni reimportar |
 
 **En el día a día se usa el nivel B.** El nivel A es la fuente de verdad y se
@@ -27,7 +27,7 @@ usa cuando hay que rehacer o ampliar el catálogo.
 
 ---
 
-# 2. Cargar las 540 partidas en la aplicación
+# 2. Cargar las 3.006 partidas en la aplicación
 
 La aplicación acepta **varios `.xlsx` de descompuesto a la vez** (el importador
 lo permite expresamente cuando todos son de ese formato).
@@ -138,7 +138,7 @@ Lo que ya funciona en el editor de presupuestos:
 # 6. La barra lateral en árbol (construida)
 
 En el editor de presupuestos, a la izquierda, hay un panel fijo con **toda la
-base de datos**: 18 capítulos → 172 subcapítulos → 147 apartados → 540 partidas.
+base de datos**: 18 capítulos → 172 subcapítulos → 256 apartados → 3.006 partidas.
 
 - **Se recorre plegando y desplegando ramas.** Cada rama lleva su contador.
 - **Buscador propio**: filtra y abre solo las ramas con resultados, así que
@@ -182,6 +182,6 @@ importan exactamente igual que antes.
 
 ## Comprobado
 
-- 540 partidas oficiales → **18 capítulos, 172 subcapítulos y 147 apartados**.
-- El código anterior se conserva como alias de búsqueda y trazabilidad.
-- Los **474 tests** del proyecto pasan; 6 pruebas PostgreSQL quedan omitidas sin servidor.
+- 3.006 partidas oficiales → **18 capítulos, 172 subcapítulos y 256 apartados**.
+- Las 540 partidas históricas conservan su código anterior como alias de búsqueda y trazabilidad.
+- La auditoría de lanzamiento revisa las 3.006 partidas y sus 6.062 líneas de mano de obra.

@@ -196,6 +196,9 @@ def construir_catalogo() -> dict:
         filas: list[dict] = []
         costes = {"materiales": 0.0, "mano_obra": 0.0, "complementarios": 0.0, "otros": 0.0}
         horas_mo = 0.0
+        horas_oficial = 0.0
+        horas_ayudante = 0.0
+        horas_equipo = 0.0
         for recurso in recursos:
             grupo = str(recurso.get("grupo") or "otros")
             categoria = _categoria_coste(grupo)
@@ -205,7 +208,20 @@ def construir_catalogo() -> dict:
             costes[categoria] = _redondear2(costes[categoria] + importe)
             if categoria == "mano_obra":
                 horas_mo += rendimiento
-            filas.append({
+                nivel = str(recurso.get("nivel_profesional") or "")
+                if nivel == "oficial":
+                    horas_oficial += rendimiento
+                else:
+                    # Ayudante y ayudante especializado son mano de obra de
+                    # apoyo; ambos se conservan como líneas separadas en el
+                    # APU, pero se agregan en el campo de planificación que
+                    # entiende el modelo actual.
+                    horas_ayudante += rendimiento
+            elif grupo in ("maquinaria", "equipos") and _unidad(
+                recurso.get("unidad") or "ud"
+            ) == "hora":
+                horas_equipo += rendimiento
+            fila = {
                 "tipo": "recurso",
                 "grupo": _ETIQUETA_GRUPO.get(grupo, grupo.replace("_", " ").title()),
                 "categoria": categoria,
@@ -219,7 +235,17 @@ def construir_catalogo() -> dict:
                 "numero": len(filas) + 1,
                 "celdas": [],
                 "formulas": {},
-            })
+            }
+            # Datos explícitos de ejecución: oficio, nivel y jornada viajan
+            # dentro del descompuesto para que «quién lo realiza» no dependa
+            # de interpretar texto libre.
+            for campo in (
+                "oficio", "nivel_profesional", "jornada_horas",
+                "tipo_tarifa", "mercado_base",
+            ):
+                if recurso.get(campo) not in (None, ""):
+                    fila[campo] = recurso[campo]
+            filas.append(fila)
 
         # Costes directos complementarios (% sobre la suma de los demás),
         # igual que en la hoja de descompuesto.
@@ -275,6 +301,14 @@ def construir_catalogo() -> dict:
             partida.get("version_alta_catalogo")
             or (2 if codigo_legacy else CATALOGO_VERSION)
         )
+        desglose_rendimiento = []
+        if horas_oficial:
+            desglose_rendimiento.append(f"Oficial {horas_oficial:.3f} h/{unidad}")
+        if horas_ayudante:
+            desglose_rendimiento.append(f"Ayudante {horas_ayudante:.3f} h/{unidad}")
+        if horas_equipo:
+            desglose_rendimiento.append(f"Equipo {horas_equipo:.3f} h/{unidad}")
+
         partidas_out.append({
             "codigo": codigo,
             "codigo_legacy": codigo_legacy,
@@ -292,8 +326,14 @@ def construir_catalogo() -> dict:
             "coste_mano_obra": costes["mano_obra"],
             "coste_complementarios": costes["complementarios"],
             "coste_otros": costes["otros"],
+            # El total sigue expresando horas-persona por unidad; el desglose
+            # permite al planificador calcular duración por composición real
+            # de cuadrilla en vez de inventar un reparto 60/40.
             "tiempo_estimado_horas": round(horas_mo, 4) if horas_mo else None,
-            "rendimiento": f"{horas_mo:.3f} h/{unidad}" if horas_mo else "",
+            "tiempo_oficial_horas": round(horas_oficial, 4),
+            "tiempo_ayudante_horas": round(horas_ayudante, 4),
+            "tiempo_equipo_horas": round(horas_equipo, 4),
+            "rendimiento": " · ".join(desglose_rendimiento),
             "notas_tecnicas": notas,
             "descomposicion_json": json.dumps({
                 "origen": "catalogo_propio",
@@ -402,6 +442,9 @@ def _crear_partida_oficial(
         coste_complementarios=float(item.get("coste_complementarios") or 0),
         coste_otros=float(item.get("coste_otros") or 0),
         tiempo_estimado_horas=item.get("tiempo_estimado_horas"),
+        tiempo_oficial_horas=item.get("tiempo_oficial_horas"),
+        tiempo_ayudante_horas=item.get("tiempo_ayudante_horas"),
+        tiempo_equipo_horas=item.get("tiempo_equipo_horas"),
         rendimiento=(item.get("rendimiento") or "")[:120],
         notas_tecnicas=item.get("notas_tecnicas") or "",
         descomposicion_json=item.get("descomposicion_json") or "[]",

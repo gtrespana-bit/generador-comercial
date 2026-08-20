@@ -70,7 +70,7 @@ basedatos_partidas/
 │   ├── glosario.json            vocabulario venezolano
 │   ├── contraste_mercado_2026-08.json   evidencia de precios con fuente
 │   ├── mapa_migracion_v2.json   540 equivalencias de código v1 → v2
-│   └── descompuestos/*.json     540 partidas, una por archivo
+│   └── descompuestos/*.json     3.006 partidas, una por archivo
 ├── salida/                      540 .xlsx + catálogo + árbol (se regenera)
 ├── descompuestos.py construir.py    motor
 ├── precio.py                    cambiar UN precio (uso diario)
@@ -163,40 +163,37 @@ Impermeabilizaciones y techos`, y finalmente `08/16/18 Remates, control y
 rehabilitación energética`. Los precios y recursos nuevos deben contrastarse
 al mismo tiempo; no se añaden partidas con descompuestos de relleno.
 
-## 6.1 Trabajo paralelo: cerrar los 134 precios de material provisionales
+## 6.1 Auditoría y cobertura referencial de lanzamiento
 
-Son 2.213 USD, el 14,1 % del coste directo. Ya no son los de más peso: la
-segunda ronda cerró los grandes. Lo que queda son piezas de proveedor
-especializado, cada una con poco peso individual.
+La auditoría integral del 20/08/2026 sustituyó las cifras anteriores, que se
+habían quedado obsoletas con la ampliación a 3.006 partidas:
 
-Los diez de más impacto:
+- las 3.006 partidas tienen mano de obra, oficio y rendimiento explícitos;
+- CO/PE/MX/EC tienen 388/388 referencias nacionales cada uno;
+- 73 precios proceden de observaciones directas y 1.479 son referencias
+  derivadas de las canastas investigadas, siempre identificadas como tales;
+- Venezuela conserva sus 388 precios base USD con nivel de confianza visible;
+- 218 grupos (875 partidas) comparten APU y quedan identificados para revisión
+  técnica progresiva; una coincidencia no es automáticamente un error.
 
-| Recurso | Ud | Hoy | Peso |
-|---|---|---:|---:|
-| `MT-TABIQUE-MOVIL` | m² | 135,00 | 139,05 |
-| `MT-CASETA-BIEN` | ud | 120,00 | 120,00 |
-| `MT-ACC-BOMBA` | ud | 28,00 | 84,00 |
-| `MT-TRAMPA-GRASA` | ud | 78,00 | 78,00 |
-| `MT-REGUL-GAS` | ud | 24,00 | 72,00 |
-| `MT-CONTENEDOR` | ud | 65,00 | 65,00 |
-| `MT-HERRAJE-MAD` | ud | 5,50 | 58,02 |
-| `MT-BANDA-REF` | m | 2,80 | 55,44 |
-| `MT-ARNES` | ud | 55,00 | 55,00 |
-| `MT-BARRA-TIERRA` | ud | 18,00 | 54,00 |
+La referencia es nacional, no por ciudad, y no pretende adivinar el precio
+exacto de una tienda. Conserva rango, fecha, fuente y confianza según
+`docs/METODOLOGIA_PRECIOS_REFERENCIA_LATAM.md`.
 
-**Cómo hacerlo.** Crear `datos/contraste_mercado_2026-XX.json` con el mismo
-formato que el de agosto (precio adoptado, rango observado, conversión,
-fuente) y volcarlo con `python3 basedatos_partidas/contraste.py aplicar`.
-Fuentes que funcionaron: **EPA en línea** (`ve.epaenlinea.com`, precios en USD,
-se rastrea con `fetch_page`) y **MercadoLibre Venezuela** (los listados por
-familia dan 30-40 precios de una búsqueda).
+Informe y detalle exhaustivo:
 
-> Ojo: desde bash **no hay salida a Internet**. Solo funcionan las herramientas
-> `fetch_page` y `web_search`.
+- `docs/AUDITORIA_CATALOGO_PRELANZAMIENTO_2026-08-20.md`;
+- `salida/auditoria_partidas.csv` (una fila por cada partida).
 
-**El que más falta hace:** `MT-PERFIL-ALUM` (aluminio, hoy 9,50 USD/kg). Es el
-de mayor dispersión de todo el cuadro: al detal sale entre 12 y 17 USD/kg. Se
-cierra con una lista de precios de un extrusor o un taller de aluminio.
+Antes de publicar debe pasar:
+
+```bash
+python3 basedatos_partidas/auditar_lanzamiento.py --strict
+```
+
+Las nuevas rondas de investigación actualizan las anclas y regeneran las
+referencias derivadas. Nunca se oculta su origen ni se presentan como una
+cotización exacta.
 
 ## 6.2 Prioridad 2: mirar la barra lateral con el ojo puesto
 

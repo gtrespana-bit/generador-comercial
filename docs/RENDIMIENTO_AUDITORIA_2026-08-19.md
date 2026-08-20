@@ -1,5 +1,7 @@
 # Auditoría y corrección de rendimiento (2026-08-19)
 
+> **Nota 20/08/2026:** `b9f4d8a2c6e1` sigue siendo la revisión de índices descrita aquí, pero ya no es el head del runtime. El head actual es `a4c8e2f7b1d6` (evidencia de precios por mercado).
+
 ## Síntoma reportado
 
 - Click en **Partidas**: 30–40 s hasta cargar.
@@ -66,7 +68,7 @@ TLS contra PostgreSQL remoto, son varios segundos por sí solo y explica los
 | 7 | `app/routers/recursos.py` + `app/services/recursos.py` + `app/routers/common.py` | Precios en lote; la sincronización al **abrir** la página respeta un intervalo mínimo por organización (`COTIZAT_SYNC_RECURSOS_TTL`, 600 s; los guardados siempre fuerzan) y sus barridos leen solo las columnas que usan. |
 | 8 | `app/models.py` + `migrations/versions/b9f4d8a2c6e1_rendimiento_indices_calientes.py` | 22 índices: partidas (organización+oculta / capítulo+subcapítulo / versión), presupuestos (organización+estado, cliente) y todas las FK calientes del grafo (capítulos, items, mediciones, productos, versiones, anexos, notas, facturas, cambios, pagos). Los crea Alembic en PostgreSQL, `create_all` en instalaciones nuevas y `models.migrar` en SQLite existente. |
 
-`app/database.py` exige ahora el head `b9f4d8a2c6e1`.
+Esta auditoría introdujo el head `b9f4d8a2c6e1`; desde el 20/08/2026 el runtime exige `a4c8e2f7b1d6`, que cuelga de él.
 
 ## Despliegue
 
@@ -80,7 +82,7 @@ TLS contra PostgreSQL remoto, son varios segundos por sí solo y explica los
    ejecútalo (trae guarda de versión previa y es idempotente). Alternativa
    por terminal:
    `MIGRATION_DATABASE_URL=postgresql://administrador:…@host:5432/cotizat alembic upgrade head`.
-3. Verificar `GET /readyz → {"ok": true, "alembic": "head:b9f4d8a2c6e1"}`.
+3. Aplicar después `docs/staging_upgrade_a4c8e2f7b1d6.sql` y verificar `GET /readyz → {"ok": true, "alembic": "head:a4c8e2f7b1d6"}`.
 
 Si el paso 2 se retrasa, la aplicación sigue funcionando y ya es mucho más
 rápida por el código, pero `/readyz` responde 503 (la guarda de head funciona

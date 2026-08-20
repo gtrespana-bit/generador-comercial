@@ -4,6 +4,7 @@ from __future__ import annotations
 import json
 import re
 
+import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -67,6 +68,41 @@ def test_catalogo_propio_disponible_y_completo():
     filas = json.loads(primera["descomposicion_json"])["filas"]
     assert filas and filas[0]["tipo"] == "recurso"
     assert any(r["codigo"] == "MT-CEMENTO" for r in datos["recursos"])
+
+
+def test_todas_las_partidas_oficiales_llevan_oficio_y_desglose_de_tiempos():
+    """Las 3.006 partidas declaran quién trabaja y sus horas por unidad.
+
+    Antes solo se guardaba el total de horas-persona y el planificador inventaba
+    un reparto 60/40 entre oficial y ayudante, aunque el APU sí tuviera roles.
+    """
+    datos = construir_catalogo()
+    assert len(datos["partidas"]) == N_PARTIDAS
+    for partida in datos["partidas"]:
+        filas = json.loads(partida["descomposicion_json"])["filas"]
+        mano_obra = [f for f in filas if f["categoria"] == "mano_obra"]
+        assert mano_obra, partida["codigo"]
+        assert all(
+            f.get("oficio") and f.get("nivel_profesional") and f.get("jornada_horas") == 8
+            for f in mano_obra
+        ), partida["codigo"]
+        oficial = sum(
+            f["rendimiento"] for f in mano_obra
+            if f["nivel_profesional"] == "oficial"
+        )
+        ayudante = sum(
+            f["rendimiento"] for f in mano_obra
+            if f["nivel_profesional"] != "oficial"
+        )
+        equipos = sum(
+            f["rendimiento"] for f in filas
+            if f["grupo"] == "Equipo y maquinaria" and f["unidad"] == "hora"
+        )
+        assert partida["tiempo_oficial_horas"] == pytest.approx(oficial)
+        assert partida["tiempo_ayudante_horas"] == pytest.approx(ayudante)
+        assert partida["tiempo_equipo_horas"] == pytest.approx(equipos)
+        assert partida["tiempo_estimado_horas"] == pytest.approx(oficial + ayudante)
+        assert "h/" in partida["rendimiento"]
 
 
 def test_catalogo_masivo_conserva_codigo_y_tres_niveles():

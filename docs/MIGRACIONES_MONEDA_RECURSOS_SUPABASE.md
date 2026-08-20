@@ -24,6 +24,8 @@ La cadena debe avanzar así:
 | 8 | `docs/staging_upgrade_b4c5d6e7f8a9.sql` | `a3b4c5d6e7f8` | `b4c5d6e7f8a9` |
 | 9 | `docs/staging_upgrade_c5d6e7f8a9b0.sql` | `b4c5d6e7f8a9` | `c5d6e7f8a9b0` |
 | 10 | `docs/staging_upgrade_e7b3c1d5a204.sql` | `c5d6e7f8a9b0` | `e7b3c1d5a204` |
+| 11 | `docs/staging_upgrade_b9f4d8a2c6e1.sql` | `e7b3c1d5a204` | `b9f4d8a2c6e1` |
+| 12 | `docs/staging_upgrade_a4c8e2f7b1d6.sql` | `b9f4d8a2c6e1` | `a4c8e2f7b1d6` |
 
 Cada script tiene una guarda y aborta si la revisión previa no coincide.
 
@@ -73,7 +75,7 @@ SELECT has_table_privilege('cotizat_app','public.precios_recursos_mercado','SELE
 La revisión final esperada es:
 
 ```text
-e7b3c1d5a204
+a4c8e2f7b1d6
 ```
 
 ## Alternativa Alembic
