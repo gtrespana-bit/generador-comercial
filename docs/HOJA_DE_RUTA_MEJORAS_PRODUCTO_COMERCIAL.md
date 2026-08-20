@@ -37,6 +37,9 @@ Regla general: **más funciones no significa mejor producto**. La prioridad es q
 - [x] Añadir calendario simple con sábados y colchón recomendado.
 - [x] Añadir exportación/impresión del plan interno.
 - [x] Añadir pruebas para la lógica de composición de cuadrilla.
+- [x] Añadir asistente de revisión antes de enviar presupuestos.
+- [x] Añadir salud del presupuesto con score visual.
+- [x] Reordenar acciones del detalle con botón principal y menú de opciones.
 
 Commits relacionados:
 
@@ -61,7 +64,7 @@ Mensaje de producto:
 
 ### Estado
 
-- [ ] Pendiente
+- [x] Realizado
 
 ### Descripción
 
@@ -82,31 +85,31 @@ Tu presupuesto está listo al 86%
 
 ### Checks recomendados
 
-- [ ] Cliente asignado.
-- [ ] Cliente con email o teléfono.
-- [ ] Presupuesto con al menos un capítulo y una partida activa.
-- [ ] Todas las partidas activas tienen precio.
-- [ ] Todas las partidas activas tienen cantidad mayor que cero.
-- [ ] Margen total calculable.
-- [ ] Margen total por encima del mínimo recomendado.
-- [ ] Partidas con margen bajo identificadas.
-- [ ] Partidas sin coste interno identificadas.
-- [ ] Partidas sin tiempo estimado identificadas.
-- [ ] PDF con logo o aviso si no hay logo.
-- [ ] Validez configurada.
-- [ ] Moneda y tasa coherentes.
-- [ ] IVA configurado.
+- [x] Cliente asignado.
+- [x] Cliente con email o teléfono.
+- [x] Presupuesto con al menos un capítulo y una partida activa.
+- [x] Todas las partidas activas tienen precio.
+- [x] Todas las partidas activas tienen cantidad mayor que cero.
+- [x] Margen total calculable.
+- [x] Margen total por encima del mínimo recomendado.
+- [x] Partidas con margen bajo identificadas.
+- [x] Partidas sin coste interno identificadas.
+- [x] Partidas sin tiempo estimado identificadas.
+- [x] PDF con logo o aviso si no hay logo.
+- [x] Validez configurada.
+- [x] Moneda y tasa coherentes.
+- [x] IVA configurado.
 - [ ] Productos opcionales/alternativos revisados.
-- [ ] Versión creada o actualizada antes de enviar.
+- [x] Versión creada o actualizada antes de enviar.
 
 ### Acciones desde el asistente
 
-- [ ] Revisar partidas sin coste.
-- [ ] Revisar margen bajo.
-- [ ] Revisar tiempos.
-- [ ] Completar datos del cliente.
+- [x] Revisar partidas sin coste.
+- [x] Revisar margen bajo.
+- [x] Revisar tiempos.
+- [x] Completar datos del cliente.
 - [ ] Ver PDF.
-- [ ] Enviar de todos modos.
+- [x] Enviar de todos modos.
 
 ### Criterios de aceptación
 
@@ -121,7 +124,7 @@ Tu presupuesto está listo al 86%
 
 ### Estado
 
-- [ ] Pendiente
+- [x] Realizado
 
 ### Descripción
 
@@ -139,10 +142,10 @@ Salud del presupuesto: 78% · Revisar antes de enviar
 
 ### Componentes
 
-- [ ] Porcentaje de preparación.
-- [ ] Nivel visual: verde, ámbar, rojo.
-- [ ] Lista breve de principales problemas.
-- [ ] Enlaces directos para corregir.
+- [x] Porcentaje de preparación.
+- [x] Nivel visual: verde, ámbar, rojo.
+- [x] Lista breve de principales problemas.
+- [x] Enlaces directos para corregir.
 
 ### Criterios de aceptación
 
@@ -156,7 +159,7 @@ Salud del presupuesto: 78% · Revisar antes de enviar
 
 ### Estado
 
-- [ ] Pendiente
+- [x] Realizado
 
 ### Descripción
 
@@ -166,21 +169,21 @@ En lugar de mostrar muchas acciones con la misma importancia, estructurar así:
 
 Acción principal:
 
-- [ ] Enviar propuesta.
+- [x] Enviar propuesta.
 
 Acciones secundarias:
 
-- [ ] Editar.
-- [ ] Descargar PDF.
-- [ ] Planificación de obra.
+- [x] Editar.
+- [x] Descargar PDF.
+- [x] Planificación de obra.
 
 Menú “Más”:
 
-- [ ] Versiones.
-- [ ] Duplicar.
-- [ ] Crear proyecto.
-- [ ] Anexos.
-- [ ] Eliminar.
+- [x] Versiones.
+- [x] Duplicar.
+- [x] Crear proyecto.
+- [x] Anexos.
+- [x] Eliminar.
 
 ### Criterios de aceptación
 
@@ -722,9 +725,9 @@ Si se implementan en el futuro, deben entrar como módulos opcionales y no conta
 
 ## Sprint 1
 
-- [ ] Asistente “Revisar antes de enviar”.
-- [ ] Salud del presupuesto.
-- [ ] Reordenar acciones principales en detalle del presupuesto.
+- [x] Asistente “Revisar antes de enviar”.
+- [x] Salud del presupuesto.
+- [x] Reordenar acciones principales en detalle del presupuesto.
 
 ## Sprint 2
 

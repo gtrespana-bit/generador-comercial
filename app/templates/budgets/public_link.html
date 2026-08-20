@@ -12,6 +12,19 @@
 
 {% if error_enlace %}<div class="alert alert-error" role="alert">{{ error_enlace }}</div>{% endif %}
 {% if mensaje_enlace %}<div class="alert alert-ok" role="status">{{ mensaje_enlace }}</div>{% endif %}
+{% if revision_envio and (revision_envio.criticos or revision_envio.recomendaciones) %}
+<div class="card revision-envio revision-{{ revision_envio.estado }}">
+  <div class="revision-head">
+    <div class="revision-score"><strong>{{ revision_envio.score }}%</strong><span>salud</span></div>
+    <div class="revision-copy">
+      <span class="section-kicker">Revisión antes de crear enlace</span>
+      <h2>{{ revision_envio.titulo }}</h2>
+      <p class="hint">{{ revision_envio.resumen }} Puedes crear el enlace de todos modos, pero conviene revisar estos puntos.</p>
+    </div>
+    <div class="revision-actions"><a class="btn" href="/presupuestos/{{ p.id }}#revision-envio">Ver revisión completa</a></div>
+  </div>
+</div>
+{% endif %}
 {% if enlace_creado %}
 <div class="alert alert-ok" role="status">
   <strong>Enlace creado. Cópialo ahora: el secreto no se guarda y no volverá a mostrarse.</strong>

@@ -7,6 +7,7 @@ from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utili
 from ..services import auditoria
 from ..utils import normalizar_moneda
 from ..services.monedas import convertir as convertir_moneda
+from ..services.revision_presupuesto import revisar_presupuesto_antes_de_enviar
 
 router = APIRouter()
 
@@ -2078,6 +2079,15 @@ def _pagina_enlaces_propuesta(
         .order_by(EnlacePropuesta.created_at.desc())
         .all()
     )
+    cfg = _config(db)
+    tiempos = calcular_tiempos_presupuesto(
+        presupuesto,
+        db=db,
+        horas_jornada=cfg.horas_jornada or 8.0,
+        tarifa_hora_media=_tarifa_hora_en_moneda(db, cfg, presupuesto.moneda, presupuesto.tipo_cambio),
+        usar_estimacion_coste=bool(cfg.estimar_tiempo_por_coste),
+    )
+    revision_envio = revisar_presupuesto_antes_de_enviar(presupuesto, cfg=cfg, tiempos=tiempos)
     return TEMPLATES.TemplateResponse(
         request,
         "budgets/public_link.html",
@@ -2089,6 +2099,7 @@ def _pagina_enlaces_propuesta(
             "error_enlace": error or request.query_params.get("error", ""),
             "mensaje_enlace": request.query_params.get("msg", ""),
             "ahora": datetime.utcnow(),
+            "revision_envio": revision_envio,
         },
         status_code=status_code,
     )
@@ -2445,6 +2456,11 @@ def ver_presupuesto(presupuesto_id: int, request: Request, db: Session = Depends
         for t in tiempos["partidas"]
         if t["partida_id"] is not None and t["fuente"] != "sin_datos"
     }
+    revision_envio = revisar_presupuesto_antes_de_enviar(
+        presupuesto,
+        cfg=cfg,
+        tiempos=tiempos,
+    )
     return TEMPLATES.TemplateResponse(
         request,
         "budgets/detail.html",
@@ -2457,6 +2473,7 @@ def ver_presupuesto(presupuesto_id: int, request: Request, db: Session = Depends
             "dias_restantes": (fecha_vencimiento - hoy).days,
             "tiempos": tiempos,
             "tiempos_por_partida": tiempos_por_partida,
+            "revision_envio": revision_envio,
         },
     )
 
