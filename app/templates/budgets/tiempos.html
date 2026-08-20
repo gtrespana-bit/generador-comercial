@@ -599,7 +599,7 @@
       {nombre:'Cuadrilla reforzada', comp:'2of2ay', cuad:1, lectura:'Reduce plazo manteniendo una sola frente de trabajo.'},
       {nombre:'Dos frentes', comp: selComp ? selComp.value : '1of1ay', cuad:2, lectura:'Acelera fuerte, pero exige coordinación y espacio.'},
     ];
-    tbody.innerHTML = '';
+    tbody.textContent = '';
     let mejor = null;
     opciones.forEach(o => {
       const dias = diasEscenario(o.comp, o.cuad, j);
@@ -609,7 +609,19 @@
       const compLabel = (function(){ const prev = selComp ? selComp.value : ''; if(selComp) selComp.value = o.comp; const lbl = composicionActual().label; if(selComp) selComp.value = prev; return lbl; })();
       const costeMo = totalManoObraH * numero(tiemposBase && tiemposBase.tarifa_hora_media);
       const costeTxt = costeMo ? costeMo.toLocaleString('es-VE',{maximumFractionDigits:0}) + ' ' + ({{ p.moneda | tojson }} || '') : '—';
-      tr.innerHTML = `<td><strong>${escapeHtml(o.nombre)}</strong></td><td>${o.cuad} cuadrilla(s) · ${escapeHtml(compLabel)}</td><td class="right"><strong>${formatoDias(dias)} d</strong></td><td class="right">${mejora ? '−' + mejora.toFixed(0) + '%' : '—'}</td><td class="right">${escapeHtml(costeTxt)}</td><td>${escapeHtml(o.lectura)}</td>`;
+      function td(text, cls, strong){
+        const cell = document.createElement('td');
+        if(cls) cell.className = cls;
+        if(strong){ const st = document.createElement('strong'); st.textContent = text; cell.appendChild(st); }
+        else cell.textContent = text;
+        return cell;
+      }
+      tr.appendChild(td(o.nombre, '', true));
+      tr.appendChild(td(o.cuad + ' cuadrilla(s) · ' + compLabel));
+      tr.appendChild(td(formatoDias(dias) + ' d', 'right', true));
+      tr.appendChild(td(mejora ? '−' + mejora.toFixed(0) + '%' : '—', 'right'));
+      tr.appendChild(td(costeTxt, 'right'));
+      tr.appendChild(td(o.lectura));
       if(o.comp === (selComp ? selComp.value : '1of1ay') && o.cuad === nActual) tr.classList.add('escenario-actual');
       tbody.appendChild(tr);
     });
@@ -634,7 +646,7 @@
       porCap[cap] += duracionPartidaConComposicion(t, comp) / j / Math.max(1, n);
     });
     const total = orden.reduce((acc, cap) => acc + porCap[cap], 0) || 1;
-    cont.innerHTML = '';
+    cont.textContent = '';
     let acumulado = 0;
     orden.forEach((cap, idx) => {
       const dias = porCap[cap];
@@ -642,9 +654,20 @@
       fila.className = 'cronograma-row';
       const offset = acumulado / total * 100;
       const width = dias / total * 100;
-      fila.innerHTML = `<span class="cronograma-cap">${idx + 1}. ${escapeHtml(cap)}</span><div class="cronograma-track"><i></i></div><strong>${formatoDias(dias)} d</strong>`;
-      const bar = fila.querySelector('i');
-      if(bar){ CotizatStyles.set(bar, 'left', offset + '%'); CotizatStyles.set(bar, 'width', Math.max(3, width) + '%'); }
+      const capEl = document.createElement('span');
+      capEl.className = 'cronograma-cap';
+      capEl.textContent = (idx + 1) + '. ' + cap;
+      const track = document.createElement('div');
+      track.className = 'cronograma-track';
+      const bar = document.createElement('i');
+      track.appendChild(bar);
+      const dur = document.createElement('strong');
+      dur.textContent = formatoDias(dias) + ' d';
+      fila.appendChild(capEl);
+      fila.appendChild(track);
+      fila.appendChild(dur);
+      CotizatStyles.set(bar, 'left', offset + '%');
+      CotizatStyles.set(bar, 'width', Math.max(3, width) + '%');
       cont.appendChild(fila);
       acumulado += dias;
     });

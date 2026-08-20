@@ -625,9 +625,9 @@
   function initEmptyStateActions() {
     var empty = document.getElementById("builder-empty-state");
     if (!empty) return;
-    var add = empty.querySelector('[data-cotizat-click="add-first-partida"]');
-    var pack = empty.querySelector('[data-cotizat-click="open-pack-modal"]');
-    var paste = empty.querySelector('[data-cotizat-click="paste-excel-empty"]');
+    var add = document.getElementById("empty-add-first-partida");
+    var pack = document.getElementById("empty-open-pack-modal");
+    var paste = document.getElementById("empty-paste-excel");
     if (add) add.addEventListener("click", function () {
       var cap = editor.contCapitulos.querySelector(".capitulo") || Capitulo.crear({ nombre: "CAPÍTULO GENERAL" }, editor);
       nuevaPartidaEnCapitulo(cap);

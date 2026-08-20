@@ -844,3 +844,48 @@ Primer entregable mínimo:
 - [ ] Estado general: Listo / Revisar / Riesgo.
 - [ ] Botones para corregir.
 - [ ] Integración con flujo de envío.
+
+---
+
+# Fase 5 — Revisión integral, limpieza visual y estabilidad
+
+## Objetivo
+
+Verificar que las mejoras recientes no rompen flujos principales ni añaden ruido innecesario.
+
+## Estado
+
+- [x] Realizado
+
+## Validaciones ejecutadas
+
+- [x] Suite completa de tests.
+- [x] Revisión de seguridad frontend: sin `innerHTML` ni acciones declarativas sin handler.
+- [x] Revisión HTTP de páginas principales.
+- [x] Corrección de acciones del estado vacío del editor para no depender de handlers inexistentes.
+- [x] Corrección del asistente de tiempos para construir filas con DOM seguro.
+
+## Rutas revisadas
+
+- [x] `/`
+- [x] `/inicio`
+- [x] `/presupuestos`
+- [x] `/presupuestos/1`
+- [x] `/presupuestos/1/editar`
+- [x] `/presupuestos/1/tiempos`
+- [x] `/presupuestos/1/enlace-publico`
+- [x] `/partidas`
+- [x] `/partidas?salud=sin_coste`
+- [x] `/partidas/ajustar/previsualizar?porcentaje=5`
+- [x] `/recursos`
+- [x] `/recursos/1/impacto`
+- [x] `/clientes`
+- [x] `/productos`
+- [x] `/recetas`
+- [x] `/configuracion`
+
+## Resultado
+
+- [x] `835 passed, 7 skipped`.
+- [x] Rutas principales responden `200`.
+- [x] Sin cambios funcionales nuevos; solo correcciones de estabilidad y seguridad detectadas por QA.
