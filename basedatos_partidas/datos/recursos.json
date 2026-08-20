@@ -9,103 +9,188 @@
       "unidad": "h",
       "descripcion": "Oficial de 1ª.",
       "precio": 5.5,
-      "estado": "confirmado"
+      "estado": "confirmado",
+      "oficio": "general",
+      "nivel_profesional": "oficial",
+      "jornada_horas": 8,
+      "tipo_tarifa": "tarifa_interna",
+      "mercado_base": "VE"
     },
     "MO-OF1-PISO": {
       "unidad": "h",
       "descripcion": "Oficial de 1ª colocador de pisos.",
       "precio": 5.5,
-      "estado": "confirmado"
+      "estado": "confirmado",
+      "oficio": "colocación de pisos",
+      "nivel_profesional": "oficial",
+      "jornada_horas": 8,
+      "tipo_tarifa": "tarifa_interna",
+      "mercado_base": "VE"
     },
     "MO-OF1-ALI": {
       "unidad": "h",
       "descripcion": "Oficial de 1ª alicatador.",
       "precio": 5.5,
-      "estado": "confirmado"
+      "estado": "confirmado",
+      "oficio": "colocación de revestimientos cerámicos",
+      "nivel_profesional": "oficial",
+      "jornada_horas": 8,
+      "tipo_tarifa": "tarifa_interna",
+      "mercado_base": "VE"
     },
     "MO-OF1-ALB": {
       "unidad": "h",
       "descripcion": "Oficial de 1ª albañil.",
       "precio": 5.5,
-      "estado": "confirmado"
+      "estado": "confirmado",
+      "oficio": "albañilería",
+      "nivel_profesional": "oficial",
+      "jornada_horas": 8,
+      "tipo_tarifa": "tarifa_interna",
+      "mercado_base": "VE"
     },
     "MO-OF1-MON": {
       "unidad": "h",
       "descripcion": "Oficial de 1ª montador de prefabricados interiores.",
       "precio": 5.5,
-      "estado": "confirmado"
+      "estado": "confirmado",
+      "oficio": "montaje de prefabricados e instalaciones",
+      "nivel_profesional": "oficial",
+      "jornada_horas": 8,
+      "tipo_tarifa": "tarifa_interna",
+      "mercado_base": "VE"
     },
     "MO-AYU-ESP": {
       "unidad": "h",
       "descripcion": "Ayudante especializado.",
       "precio": 4.0,
-      "estado": "confirmado"
+      "estado": "confirmado",
+      "oficio": "apoyo especializado de obra",
+      "nivel_profesional": "ayudante_especializado",
+      "jornada_horas": 8,
+      "tipo_tarifa": "tarifa_interna",
+      "mercado_base": "VE"
     },
     "MO-AYU": {
       "unidad": "h",
       "descripcion": "Ayudante.",
       "precio": 3.5,
-      "estado": "confirmado"
+      "estado": "confirmado",
+      "oficio": "apoyo general de obra",
+      "nivel_profesional": "ayudante",
+      "jornada_horas": 8,
+      "tipo_tarifa": "tarifa_interna",
+      "mercado_base": "VE"
     },
     "MO-OF1-PIN": {
       "unidad": "h",
       "descripcion": "Oficial de 1ª pintor.",
       "precio": 5.5,
-      "estado": "confirmado"
+      "estado": "confirmado",
+      "oficio": "pintura",
+      "nivel_profesional": "oficial",
+      "jornada_horas": 8,
+      "tipo_tarifa": "tarifa_interna",
+      "mercado_base": "VE"
     },
     "MO-OF1-PLO": {
       "unidad": "h",
       "descripcion": "Oficial de 1ª plomero.",
       "precio": 5.5,
-      "estado": "confirmado"
+      "estado": "confirmado",
+      "oficio": "plomería",
+      "nivel_profesional": "oficial",
+      "jornada_horas": 8,
+      "tipo_tarifa": "tarifa_interna",
+      "mercado_base": "VE"
     },
     "MO-OF1-ELE": {
       "unidad": "h",
       "descripcion": "Oficial de 1ª electricista.",
       "precio": 5.5,
-      "estado": "confirmado"
+      "estado": "confirmado",
+      "oficio": "electricidad",
+      "nivel_profesional": "oficial",
+      "jornada_horas": 8,
+      "tipo_tarifa": "tarifa_interna",
+      "mercado_base": "VE"
     },
     "MO-OF1-CAB": {
       "unidad": "h",
       "descripcion": "Oficial de 1ª cabillero (armador de acero de refuerzo).",
       "precio": 5.5,
-      "estado": "confirmado"
+      "estado": "confirmado",
+      "oficio": "armado de acero de refuerzo",
+      "nivel_profesional": "oficial",
+      "jornada_horas": 8,
+      "tipo_tarifa": "tarifa_interna",
+      "mercado_base": "VE"
     },
     "MO-OF1-CARP": {
       "unidad": "h",
       "descripcion": "Oficial de 1ª carpintero de obra (encofrador).",
       "precio": 5.5,
-      "estado": "confirmado"
+      "estado": "confirmado",
+      "oficio": "encofrado y carpintería de obra",
+      "nivel_profesional": "oficial",
+      "jornada_horas": 8,
+      "tipo_tarifa": "tarifa_interna",
+      "mercado_base": "VE"
     },
     "MO-OF1-SOLD": {
       "unidad": "h",
       "descripcion": "Oficial de 1ª soldador.",
       "precio": 5.5,
-      "estado": "confirmado"
+      "estado": "confirmado",
+      "oficio": "soldadura",
+      "nivel_profesional": "oficial",
+      "jornada_horas": 8,
+      "tipo_tarifa": "tarifa_interna",
+      "mercado_base": "VE"
     },
     "MO-OF1-CARPM": {
       "unidad": "h",
       "descripcion": "Oficial de 1ª carpintero de madera estructural.",
       "precio": 5.5,
-      "estado": "confirmado"
+      "estado": "confirmado",
+      "oficio": "carpintería de madera",
+      "nivel_profesional": "oficial",
+      "jornada_horas": 8,
+      "tipo_tarifa": "tarifa_interna",
+      "mercado_base": "VE"
     },
     "MO-OF1-VIDR": {
       "unidad": "h",
       "descripcion": "Oficial de 1ª vidriero.",
       "precio": 5.5,
-      "estado": "confirmado"
+      "estado": "confirmado",
+      "oficio": "vidriería",
+      "nivel_profesional": "oficial",
+      "jornada_horas": 8,
+      "tipo_tarifa": "tarifa_interna",
+      "mercado_base": "VE"
     },
     "MO-OF1-AC": {
       "unidad": "h",
       "descripcion": "Oficial de 1ª técnico en refrigeración y climatización.",
       "precio": 5.5,
-      "estado": "confirmado"
+      "estado": "confirmado",
+      "oficio": "refrigeración y climatización",
+      "nivel_profesional": "oficial",
+      "jornada_horas": 8,
+      "tipo_tarifa": "tarifa_interna",
+      "mercado_base": "VE"
     },
     "MO-OF1-JARD": {
       "unidad": "h",
       "descripcion": "Oficial de 1ª jardinero.",
       "precio": 5.5,
-      "estado": "confirmado"
+      "estado": "confirmado",
+      "oficio": "jardinería y paisajismo",
+      "nivel_profesional": "oficial",
+      "jornada_horas": 8,
+      "tipo_tarifa": "tarifa_interna",
+      "mercado_base": "VE"
     }
   },
   "materiales": {

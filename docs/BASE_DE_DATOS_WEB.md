@@ -76,7 +76,14 @@ Para saber cuántos faltan: `SELECT version_num FROM public.alembic_version;` en
 
 **Actualización 19/08/2026 (verificado por el titular):** Supabase responde `alembic_version = d9e2f3a4b5c6` y la comprobación estructural confirma el esquema completo: `columnas_latam = 3` (`etiqueta_id_fiscal`, `tasa_cambio`, `fecha_tasa` en `configuracion`), `tablas_previas = 3` (`pruebas_concedidas`, `consentimientos`, `eventos_auditoria`) y `columnas_compra = 2` (`licencia_inicio`, `licencia_vence` en `compras_plan`). **Base de datos lista; falta solo el despliegue del código** (PR hacia `main` → Vercel) para que el runtime deje de esperar `d2a7c9e4f1b3` y exija `d9e2f3a4b5c6`. Tras el deploy, verificar `GET /readyz → {"ok": true, "alembic": "head:d9e2f3a4b5c6"}`.
 
-**Actualización 19/08/2026 (auditoría de rendimiento):** el head exigido por el runtime pasa a `b9f4d8a2c6e1` (22 índices de las consultas calientes: catálogo, presupuestos y todas las FK del grafo; PostgreSQL no crea índices automáticos en FK). Aplicar con `docs/staging_upgrade_b9f4d8a2c6e1.sql` (guarda de versión previa `e7b3c1d5a204`, idempotente). Sin aplicarla, la app funciona y ya es mucho más rápida por el código de la misma revisión, pero `/readyz` responde 503. Detalles y mediciones antes/después en [`RENDIMIENTO_AUDITORIA_2026-08-19.md`](RENDIMIENTO_AUDITORIA_2026-08-19.md).
+**Actualización 19/08/2026 (auditoría de rendimiento):** el head exigido por el runtime pasó a `b9f4d8a2c6e1` (22 índices de las consultas calientes: catálogo, presupuestos y todas las FK del grafo; PostgreSQL no crea índices automáticos en FK). Aplicar con `docs/staging_upgrade_b9f4d8a2c6e1.sql` (guarda de versión previa `e7b3c1d5a204`, idempotente). Detalles y mediciones antes/después en [`RENDIMIENTO_AUDITORIA_2026-08-19.md`](RENDIMIENTO_AUDITORIA_2026-08-19.md).
+
+**Actualización 20/08/2026 (evidencia de precios):** el head actual es
+`a4c8e2f7b1d6`. Después de `b9f4d8a2c6e1`, aplicar
+`docs/staging_upgrade_a4c8e2f7b1d6.sql`; añade código estable, rango, unidad,
+fecha, IVA, transporte y observaciones a los precios nacionales. Mientras no
+se aplique, `/readyz` responde 503 para impedir ejecutar código nuevo sobre un
+esquema que perdería esa evidencia.
 
 ## Rol de runtime y migraciones
 

@@ -15,6 +15,31 @@ def test_precio_organizacion_sobrescribe_nacional(entorno):
     assert resolver_precio(db, recurso.id, "CO", org_id).origen == "organizacion"
 
 
+def test_precio_nacional_se_resuelve_por_codigo_estable_no_por_id_tenant(entorno):
+    """Cada organización tiene su copia de Recurso y, por tanto, otro ID.
+
+    La referencia nacional debe seguir al código del recurso; ligarla solo al
+    ID hacía que funcionase únicamente para la organización usada al importar.
+    """
+    Session, ids, _ = entorno
+    db = Session(); db.info["organizacion_id"] = ids[0]
+    original = Recurso(
+        organizacion_id=ids[0], codigo="MT-COMUN", descripcion="Cemento A",
+        unidad="kg", precio=1, moneda="USD",
+    )
+    copia = Recurso(
+        organizacion_id=ids[0], codigo="MT-COMUN", descripcion="Cemento B",
+        unidad="kg", precio=2, moneda="USD",
+    )
+    db.add_all([original, copia]); db.flush()
+    guardar_precio(db, original.id, "CO", 2500, "COP")
+    db.flush()
+
+    resuelto = resolver_precio(db, copia.id, "CO", ids[0])
+    assert resuelto.origen == "nacional"
+    assert resuelto.precio == 2500
+
+
 def test_precio_nacional_no_afecta_otro_pais(entorno):
     Session, ids, _ = entorno
     db = Session(); db.info["organizacion_id"] = ids[0]
@@ -137,3 +162,93 @@ def test_actualizar_un_precio_registra_su_historico(entorno):
     assert historial[0].precio_nuevo == 2900
     assert historial[0].precio_mercado_id is not None
     assert resolver_precio(db, recurso.id, "CO", ids[0]).precio == 2900
+
+
+def _matriz_csv(filas):
+    import csv
+    import io
+
+    campos = [
+        "codigo_recurso", "descripcion", "categoria", "unidad_fuente",
+        "pais_codigo", "moneda", "precio_referencia", "precio_min",
+        "precio_max", "fuente", "fecha_consulta", "confianza",
+        "incluye_iva", "incluye_transporte", "origen", "observaciones",
+    ]
+    salida = io.StringIO(newline="")
+    writer = csv.DictWriter(salida, fieldnames=campos, delimiter=";", lineterminator="\n")
+    writer.writeheader()
+    writer.writerows(filas)
+    return salida.getvalue()
+
+
+def test_importador_conserva_toda_la_evidencia_del_precio(entorno, tmp_path):
+    from datetime import date
+    from app.models import PrecioRecursoMercado
+    from app.services.importador_precios_mercado import importar_matriz_csv
+
+    Session, ids, _ = entorno
+    with Session() as db:
+        db.info["organizacion_id"] = ids[0]
+        recurso = Recurso(
+            organizacion_id=ids[0], codigo="MT-AUDIT", descripcion="Material auditado",
+            unidad="kg", categoria="materiales", precio=1, moneda="USD",
+        )
+        db.add(recurso)
+        db.commit()
+        ruta = tmp_path / "matriz.csv"
+        ruta.write_text(_matriz_csv([{
+            "codigo_recurso": "MT-AUDIT", "descripcion": "Material auditado",
+            "categoria": "materiales", "unidad_fuente": "kg", "pais_codigo": "CO",
+            "moneda": "COP", "precio_referencia": "2500", "precio_min": "2200",
+            "precio_max": "2900", "fuente": "Proveedor nacional", "fecha_consulta": "2026-08-20",
+            "confianza": "referencia", "incluye_iva": "si",
+            "incluye_transporte": "no", "origen": "nacional",
+            "observaciones": "Bogotá, venta minorista",
+        }]), encoding="utf-8")
+
+        resultado = importar_matriz_csv(db, ruta, aplicar=True)
+        assert resultado["errores"] == []
+        assert resultado["creadas_o_actualizadas"] == 1
+        precio = db.query(PrecioRecursoMercado).filter_by(
+            recurso_id=recurso.id, pais_codigo="CO", organizacion_id=None
+        ).one()
+        assert precio.precio == 2500
+        assert precio.codigo_recurso == "MT-AUDIT"
+        assert precio.precio_min == 2200
+        assert precio.precio_max == 2900
+        assert precio.unidad_referencia == "kg"
+        assert precio.fecha_consulta == date(2026, 8, 20)
+        assert precio.incluye_iva == "si"
+        assert precio.incluye_transporte == "no"
+        assert precio.observaciones == "Bogotá, venta minorista"
+
+
+def test_importador_no_escribe_parcialmente_si_un_rango_es_invalido(entorno, tmp_path):
+    from app.models import PrecioRecursoMercado
+    from app.services.importador_precios_mercado import importar_matriz_csv
+
+    Session, ids, _ = entorno
+    with Session() as db:
+        db.info["organizacion_id"] = ids[0]
+        recurso = Recurso(
+            organizacion_id=ids[0], codigo="MT-ATOMIC", descripcion="Material",
+            unidad="kg", categoria="materiales", precio=1, moneda="USD",
+        )
+        db.add(recurso)
+        db.commit()
+        base = {
+            "codigo_recurso": "MT-ATOMIC", "descripcion": "Material",
+            "categoria": "materiales", "unidad_fuente": "kg", "pais_codigo": "CO",
+            "moneda": "COP", "precio_referencia": "2500", "precio_min": "2200",
+            "precio_max": "2900", "fuente": "Proveedor", "fecha_consulta": "2026-08-20",
+            "confianza": "referencia", "incluye_iva": "si",
+            "incluye_transporte": "no", "origen": "nacional", "observaciones": "",
+        }
+        invalida = {**base, "pais_codigo": "MX", "moneda": "MXN", "precio_min": "3000"}
+        ruta = tmp_path / "matriz_invalida.csv"
+        ruta.write_text(_matriz_csv([base, invalida]), encoding="utf-8")
+
+        resultado = importar_matriz_csv(db, ruta, aplicar=True)
+        assert resultado["errores"]
+        assert resultado["creadas_o_actualizadas"] == 0
+        assert db.query(PrecioRecursoMercado).filter_by(recurso_id=recurso.id).count() == 0

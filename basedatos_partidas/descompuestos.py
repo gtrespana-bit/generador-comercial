@@ -220,14 +220,25 @@ def resolver_recursos(partida: dict, catalogo: dict) -> list[dict]:
                     _desglosar(ref, float(linea["rendimiento"]), catalogo)
                 )
                 continue
-            resueltos.append({
+            resuelto = {
                 "grupo": ficha["grupo"],
                 "codigo": ref,
                 "unidad": linea.get("unidad") or ficha["unidad"],
                 "descripcion": linea.get("descripcion") or ficha["descripcion"],
                 "rendimiento": float(linea["rendimiento"]),
                 "precio": float(linea.get("precio", ficha["precio"])),
-            })
+            }
+            # La mano de obra conserva quién ejecuta el trabajo, no solo una
+            # descripción y una tarifa. Estos metadatos viajan al APU y
+            # permiten separar horas de oficial/ayudante sin el reparto
+            # ficticio 60/40 que usa la aplicación cuando faltan datos.
+            for campo in (
+                "oficio", "nivel_profesional", "jornada_horas",
+                "tipo_tarifa", "mercado_base",
+            ):
+                if ficha.get(campo) not in (None, ""):
+                    resuelto[campo] = ficha[campo]
+            resueltos.append(resuelto)
         else:
             resueltos.append({**linea, "rendimiento": float(linea["rendimiento"]),
                               "precio": float(linea["precio"])})

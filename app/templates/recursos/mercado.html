@@ -1,5 +1,16 @@
 {% extends "base.html" %}{% block title %}Precios por mercado{% endblock %}{% block content %}
-<div class="page-head"><div><h1>Precios por mercado</h1><p class="subtitle">Referencias nacionales y precios personalizados. Verifica siempre con tu proveedor.</p></div><a class="btn" href="/recursos">Recursos</a></div>
+<div class="page-head"><div><h1>Precios por mercado</h1><p class="subtitle">Referencias nacionales y precios personalizados. El valor puede variar por proveedor, marca, disponibilidad, IVA y volumen.</p></div><a class="btn" href="/recursos">Recursos</a></div>
 <div class="card"><form method="get" class="form-grid"><div class="field"><label>País ISO</label><input name="pais" value="{{ pais }}" placeholder="CO, PE, MX, EC"></div><div class="field"><label>Categoría</label><select name="categoria"><option value="">Todas</option>{% for c in categorias %}<option value="{{ c }}" {% if categoria==c %}selected{% endif %}>{{ c }}</option>{% endfor %}</select></div><button class="btn">Filtrar</button></form></div>
-<div class="card"><table class="table"><thead><tr><th>Recurso</th><th>País</th><th>Precio</th><th>Moneda</th><th>Empresa</th><th>Confianza</th><th>Fuente</th></tr></thead><tbody>{% for precio, recurso in filas %}<tr><td>{{ recurso.codigo }} · {{ recurso.descripcion }}</td><td>{{ precio.pais_codigo }}</td><td>{{ precio.precio }}</td><td>{{ precio.moneda }}</td><td>{{ 'Sí' if precio.organizacion_id else 'Nacional' }}</td><td>{{ precio.confianza }}</td><td>{{ precio.fuente or '—' }}</td></tr>{% else %}<tr><td colspan="7">No hay precios para este filtro.</td></tr>{% endfor %}</tbody></table></div>
+<div class="card table-wrap"><table class="table"><thead><tr><th>Recurso</th><th>País</th><th>Referencia</th><th>Rango observado</th><th>Empresa</th><th>Confianza</th><th>Fecha</th><th>IVA</th><th>Transporte</th><th>Fuente y notas</th></tr></thead><tbody>{% for precio, recurso in filas %}<tr>
+<td>{{ recurso.codigo }} · {{ recurso.descripcion }}<br><small>{{ precio.unidad_referencia or recurso.unidad }}</small></td>
+<td>{{ precio.pais_codigo }}</td>
+<td>{{ precio.precio }} {{ precio.moneda }}</td>
+<td>{% if precio.precio_min is not none and precio.precio_max is not none %}{{ precio.precio_min }}–{{ precio.precio_max }} {{ precio.moneda }}{% else %}—{% endif %}</td>
+<td>{{ 'Sí' if precio.organizacion_id else 'Nacional' }}</td>
+<td>{{ precio.confianza }}</td>
+<td>{{ precio.fecha_consulta or precio.fecha_vigencia or '—' }}</td>
+<td>{{ precio.incluye_iva or 'por verificar' }}</td>
+<td>{{ precio.incluye_transporte or 'por verificar' }}</td>
+<td>{{ precio.fuente or '—' }}{% if precio.observaciones %}<br><small>{{ precio.observaciones }}</small>{% endif %}</td>
+</tr>{% else %}<tr><td colspan="10">No hay precios para este filtro.</td></tr>{% endfor %}</tbody></table></div>
 {% endblock %}

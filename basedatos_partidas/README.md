@@ -17,7 +17,7 @@ listados en [`USO_EN_LA_APLICACION.md`](USO_EN_LA_APLICACION.md).
 basedatos_partidas/
 ├── datos/recursos.json             ← FUENTE ÚNICA DE PRECIOS
 ├── datos/clasificacion.json        ← árbol numérico de tres niveles
-├── datos/descompuestos/            ← 540 partidas, una por archivo
+├── datos/descompuestos/            ← 3.006 partidas, una por archivo
 ├── datos/objetivos_cobertura.json  ← metas 3.000/5.000 por capítulo
 ├── datos/sinonimos_busqueda.json   ← diccionario de sinónimos
 ├── descompuestos.py                ← genera hojas, maestro y árbol
@@ -189,8 +189,8 @@ valida los tres nodos y exige que el código `CC.SS.AA.NNN` empiece por esa ruta
 El antiguo código `CT-CC-SS-NNN` queda en `codigo_legacy` y en
 `mapa_migracion_v2.json` para trazabilidad.
 
-Hay **18 capítulos y 172 subcapítulos** preparados. Los apartados se crean con
-contenido real; actualmente hay 147 con las 540 partidas migradas.
+Hay **18 capítulos, 172 subcapítulos y 256 apartados** con contenido real. El
+catálogo contiene 3.006 partidas; 540 conservan alias histórico de la v1.
 
 ## Salida para el front
 
@@ -231,7 +231,7 @@ de qué NO está incluido.
 
 En Venezuela el cemento puede amanecer en 10 y anochecer en 20. Esta es la
 herramienta del día a día. **Nunca se edita el precio dentro de una partida**:
-se cambia en el cuadro de recursos y las 540 partidas se recalculan solas.
+se cambia en el cuadro de recursos y las 3.006 partidas se recalculan solas.
 
 ```bash
 # ¿cómo se llama el recurso?
@@ -243,7 +243,7 @@ python3 basedatos_partidas/precio.py ver MT-CEMENTO
 # el saco de 42,5 kg amaneció en 20 USD -> SIMULACIÓN, no escribe nada
 python3 basedatos_partidas/precio.py fijar MT-CEMENTO 20 --por-saco 42.5
 
-# convencido: escribe, hace copia de seguridad y regenera las 540 partidas
+# convencido: escribe, hace copia de seguridad y regenera las 3.006 partidas
 python3 basedatos_partidas/precio.py fijar MT-CEMENTO 20 --por-saco 42.5 --aplicar
 ```
 
@@ -335,7 +335,7 @@ python3 basedatos_partidas/terminologia.py aplicar   # lo escribe y regenera
 ```
 
 La sustitución respeta la mayúscula inicial y los plurales, alcanza a los tres
-sitios donde vive el texto (recursos, clasificación y las 540 partidas), y
+sitios donde vive el texto (recursos, clasificación y las 3.006 partidas), y
 puede renombrar además el código del recurso.
 
 ## Tres niveles de palabra

@@ -1486,14 +1486,27 @@ class PrecioRecursoMercado(Base):
     )
     id = Column(Integer, primary_key=True)
     recurso_id = Column(Integer, ForeignKey("recursos.id", ondelete="CASCADE"), nullable=False, index=True)
+    # Código estable para que una referencia nacional sobreviva a las copias
+    # tenant del mismo recurso (cada organización tiene un ``recurso_id``
+    # distinto). ``recurso_id`` sigue identificando los overrides privados.
+    codigo_recurso = Column(String(80), default="", index=True)
     pais_codigo = Column(String(2), nullable=False, index=True)
     organizacion_id = Column(Integer, ForeignKey("organizaciones.id", ondelete="CASCADE"), nullable=True, index=True)
     precio = Column(Float, nullable=False, default=0.0)
     moneda = Column(String(10), nullable=False, default="USD")
+    # La referencia no es solo un número: conserva rango, unidad y condiciones
+    # de observación para no presentar como exacto un precio nacional variable.
+    precio_min = Column(Float, nullable=True)
+    precio_max = Column(Float, nullable=True)
+    unidad_referencia = Column(String(30), default="")
     fuente = Column(String(200), default="")
     proveedor = Column(String(150), default="")
     confianza = Column(String(20), default="referencia")
+    fecha_consulta = Column(Date, nullable=True)
     fecha_vigencia = Column(Date, nullable=True)
+    incluye_iva = Column(String(20), default="por_verificar")
+    incluye_transporte = Column(String(20), default="no_confirmado")
+    observaciones = Column(Text, default="")
     fecha_actualizacion = Column(DateTime, default=datetime.utcnow)
     activo = Column(Boolean, nullable=False, default=True)
     recurso = relationship("Recurso", back_populates="precios_mercado")

@@ -539,6 +539,13 @@ def guardar_precio_mercado(
         if not db.info.get("es_operador"):
             return _redirect("/recursos/mercado", error="Solo el equipo de Cotizat puede editar las referencias nacionales.")
         org_id = None
-    guardar_precio(db, recurso_id, pais_codigo, _f(precio), moneda, organizacion_id=org_id, fuente=fuente, confianza=confianza)
-    db.commit()
+    try:
+        guardar_precio(
+            db, recurso_id, pais_codigo, _f(precio), moneda,
+            organizacion_id=org_id, fuente=fuente, confianza=confianza,
+        )
+        db.commit()
+    except ValueError as exc:
+        db.rollback()
+        return _redirect("/recursos/mercado", error=str(exc))
     return _redirect("/recursos/mercado", msg="Precio de mercado guardado.")
