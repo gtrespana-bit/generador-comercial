@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   {% if pais_actual %}
   <title>{{ product_name }} — Presupuestos de construcción y remodelación para {{ pais_actual.nombre }}</title>
-  <meta name="description" content="{% if hay_prueba_gratuita() %}Pruébalo {{ dias_de_prueba() }} días gratis, sin tarjeta. {% endif %}Presupuestos de obra profesionales en minutos. Más de 3.000 partidas clasificadas con precios en USD contrastados con el mercado {{ pais_actual.mercado }}. PDF con tu logo, versiones, aprobaciones y cobros.">
+  <meta name="description" content="{% if hay_prueba_gratuita() %}Pruébalo {{ dias_de_prueba() }} días gratis, sin tarjeta. {% endif %}Presupuestos de obra profesionales en minutos. {{ catalogo().partidas_txt }} partidas descompuestas y {{ catalogo().recursos_txt }} precios de recursos{% if ej.convierte %}, convertidos a {{ ej.moneda }} con tasa de referencia{% else %} en USD de referencia{% endif %} contrastados con el mercado {{ pais_actual.mercado }}. Margen de beneficio, horas de tu cuadrilla y PDF con tu logo, versiones, firma del cliente y cobros.">
   {% else %}
   <title>{{ product_name }} — Presupuestos de construcción y remodelación para Latinoamérica</title>
-  <meta name="description" content="{% if hay_prueba_gratuita() %}Pruébalo {{ dias_de_prueba() }} días gratis, sin tarjeta. {% endif %}Presupuestos de obra profesionales en minutos. Más de 3.000 partidas clasificadas con precios en USD de referencia para Latinoamérica. PDF con tu logo, versiones, aprobaciones y cobros.">
+  <meta name="description" content="{% if hay_prueba_gratuita() %}Pruébalo {{ dias_de_prueba() }} días gratis, sin tarjeta. {% endif %}Presupuestos de obra profesionales en minutos. {{ catalogo().lineas_precio_txt }} líneas de precio: {{ catalogo().partidas_txt }} partidas descompuestas + {{ catalogo().recursos_txt }} precios de recursos, en USD de referencia convertibles a tu moneda. Margen de beneficio, horas de tu cuadrilla y PDF con tu logo, versiones, firma del cliente y cobros.">
   {% endif %}
   <link rel="icon" type="image/png" href="/static/icono.png">
   <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
@@ -23,7 +23,7 @@
   {% endfor %}
 </head>
 <body class="landing">
-{# Barra de país — Semana 1: genérica por defecto, se adapta al elegir #}
+{# Barra de país — genérica por defecto, se adapta al elegir #}
 <div class="pais-bar" id="pais-bar">
   <div class="pais-bar-int">
     <span class="pais-bar-label">🌎 Elige tu país</span>
@@ -82,9 +82,9 @@
       <p class="hero-letra-pequena">Acceso completo durante {{ dias_de_prueba() }} días. No pedimos tarjeta y no se cobra nada automáticamente.</p>
       {% endif %}
       <ul class="hero-points">
-        <li><span class="check">✓</span> Margen y beneficio en cada partida</li>
-        <li><span class="check">✓</span> Tiempo de obra y horas de tu cuadrilla</li>
-        <li><span class="check">✓</span> {{ catalogo().partidas_txt }} partidas con precios reales en USD</li>
+        <li><span class="check">✓</span> Margen y beneficio en cada partida, capítulo y total</li>
+        <li><span class="check">✓</span> Tiempo de obra y horas de tu cuadrilla, calculados solos</li>
+        <li><span class="check">✓</span> {{ catalogo().lineas_precio_txt }} líneas de precio: {{ catalogo().partidas_txt }} partidas + {{ catalogo().recursos_txt }} recursos{% if ej.convierte %} · en {{ ej.moneda }}{% endif %}</li>
       </ul>
     </div>
 
@@ -92,44 +92,53 @@
       <div class="hero-doc">
         <div class="hd-head">
           <span class="hd-mark">A</span>
-          <span class="hd-org"><strong>Construcciones Alfa</strong><small>Presupuesto de obra · PR-2026-014</small></span>
+          <span class="hd-org"><strong>{{ ej.empresa }}</strong><small>Presupuesto de obra · PR-2026-014</small></span>
         </div>
-        <div class="hd-title">Remodelación de baño</div>
-        <div class="hd-meta">Res. Los Naranjos · Valencia</div>
+        <div class="hd-title">{{ ej.obra }}</div>
+        <div class="hd-meta">{{ ej.residencia }}</div>
         <div class="hd-chaps">
-          <div class="hd-row"><span>Demoliciones y desmontajes</span><strong>$ 174,98</strong></div>
-          <div class="hd-row"><span>Instalaciones (plomería)</span><strong>$ 387,30</strong></div>
-          <div class="hd-row"><span>Aislamientos e impermeabilización</span><strong>$ 211,04</strong></div>
-          <div class="hd-row"><span>Revestimientos y acabados</span><strong>$ 666,20</strong></div>
-          <div class="hd-row"><span>Productos a elección del cliente</span><strong>$ 1.073,00</strong></div>
+          {% for c in ej.hero.caps %}
+          <div class="hd-row"><span>{{ c.nombre }}</span><strong>{{ c.importe }}</strong></div>
+          {% endfor %}
         </div>
-        <div class="hd-total"><span>PRESUPUESTO TOTAL</span><strong>$ 2.914,52</strong></div>
+        <div class="hd-total"><span>PRESUPUESTO TOTAL</span><strong>{{ ej.hero.total }}</strong></div>
         <div class="hd-sig">
           <div class="hd-sig-col"><span class="hd-sig-line"></span><span class="hd-sig-label">Contratista</span></div>
           <div class="hd-sig-col"><span class="hd-sig-line"></span><span class="hd-sig-label">Cliente</span></div>
         </div>
       </div>
-      <div class="hero-badge badge-margen">💰 <strong>+35 %</strong>&nbsp;margen</div>
+      <div class="hero-badge badge-margen">💰 <strong>{{ ej.margen_txt }}</strong>&nbsp;margen</div>
       <div class="hero-badge badge-tiempo">⏱️ <strong>98 h</strong>&nbsp;· ≈ 6 días</div>
     </div>
   </div>
 
   <div class="hero-stats" role="list">
     <div class="stat" role="listitem">
+      <strong>{{ catalogo().lineas_precio_txt }}</strong>
+      <span>líneas de precio listas (partidas + recursos)</span>
+    </div>
+    <div class="stat" role="listitem">
       <strong>{{ catalogo().partidas_txt }}</strong>
-      <span>partidas listas para usar</span>
+      <span>partidas con descomposición técnica</span>
     </div>
     <div class="stat" role="listitem">
-      <strong>{{ catalogo().capitulos }}</strong>
-      <span>capítulos de obra</span>
+      <strong>{{ catalogo().recursos_txt }}</strong>
+      <span>precios de recursos: material, mano de obra y equipo</span>
     </div>
-    <div class="stat" role="listitem">
-      <strong>USD</strong>
-      <span>precios contrastados</span>
-    </div>
-    <div class="stat" role="listitem">
-      <strong>+35 %</strong>
-      <span>tu margen, a la vista</span>
+    <div class="stat" role="listitem" id="stat-moneda">
+      {% if ej.convierte %}
+      <strong>{{ ej.moneda }}</strong>
+      <span id="stat-moneda-nota">tasa de referencia {{ ej.tasa_txt }} {{ ej.moneda }}/US$</span>
+      {% elif pais_actual and pais_actual.moneda_local != 'USD' %}
+      <strong>US$</strong>
+      <span id="stat-moneda-nota">o {{ pais_actual.simbolo_local }} ({{ pais_actual.moneda_local }}) con tasa de referencia</span>
+      {% elif pais_actual %}
+      <strong>US$</strong>
+      <span id="stat-moneda-nota">moneda de {{ pais_actual.nombre }} · IVA {{ pais_actual.iva }}%</span>
+      {% else %}
+      <strong>US$</strong>
+      <span id="stat-moneda-nota">USD de referencia · convierte a tu moneda local</span>
+      {% endif %}
     </div>
   </div>
 </header>
@@ -138,13 +147,13 @@
   <div class="showcase-intro">
     <span class="section-kicker">Así se ve</span>
     <h2>Así se ve un presupuesto real, partida por partida.</h2>
-    <p class="intro">Este es un presupuesto de remodelación de baño armado con las partidas y los precios reales del catálogo: demolición, plomería completa, impermeabilización, friso y enchapado de gran formato. Cada línea muestra su coste, su beneficio y las horas de tu cuadrilla.</p>
+    <p class="intro">Este es un presupuesto de remodelación de baño armado con las partidas y los precios reales del catálogo: demolición, plomería completa, impermeabilización, {{ ej.term_pared|lower }} y {{ ej.term_enchapado }} de gran formato. Cada línea muestra su coste, su beneficio y las horas de tu cuadrilla{% if ej.convierte %}, ya convertidos a {{ ej.moneda }} con la tasa de referencia{% endif %}.</p>
   </div>
 
   <div class="showcase-stage">
     <div class="showcase-glow" aria-hidden="true"></div>
 
-    <div class="window" role="img" aria-label="Presupuesto real en Cotizat, mostrando por cada partida el coste, el beneficio y las horas, y el margen total al cierre">
+    <div class="window" role="img" aria-label="Presupuesto real en {{ product_name }}, mostrando por cada partida el coste, el beneficio y las horas, y el margen total al cierre">
       <div class="window-bar">
         <span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span>
         <span class="window-url">
@@ -190,7 +199,7 @@
           </nav>
           <div class="app-user" aria-hidden="true">
             <span class="app-avatar">A</span>
-            <span class="app-user-meta"><strong>Construcciones Alfa</strong><small>Ana Martínez</small></span>
+            <span class="app-user-meta"><strong>{{ ej.empresa }}</strong><small>Ana Martínez</small></span>
           </div>
         </aside>
 
@@ -198,272 +207,76 @@
           <header class="app-bar">
             <div class="app-bar-id">
               <span class="app-eyebrow">Presupuesto PR-2026-014</span>
-              <strong class="app-title">Remodelación de baño · Res. Los Naranjos</strong>
+              <strong class="app-title">{{ ej.obra }} · {{ ej.residencia }}</strong>
               <span class="app-status"><i aria-hidden="true"></i>Borrador</span>
             </div>
             <div class="app-bar-actions">
-              <span class="app-total"><small>Total</small><strong>$ 2.914,52</strong></span>
+              <span class="app-total"><small>Total</small><strong>{{ ej.tot.total }}</strong></span>
               <span class="app-ghostbtn" aria-hidden="true">Editar</span>
               <span class="app-save">PDF</span>
             </div>
           </header>
 
-          <div class="app-summary" role="img" aria-label="Resumen: beneficio del 35 por ciento, 98 horas-hombre y unos 6 días de duración">
+          <div class="app-summary" role="img" aria-label="Resumen: beneficio {{ ej.margen_txt }}, 98 horas-hombre y unos 6 días de duración">
             <div class="sum">
               <span class="sum-k">Margen de beneficio</span>
-              <strong class="sum-v pos">+35 % <small>$ 651,47</small></strong>
+              <strong class="sum-v pos">{{ ej.resumen.margen }} <small>{{ ej.resumen.beneficio }}</small></strong>
               <span class="sum-h">beneficio total del presupuesto</span>
             </div>
             <div class="sum">
               <span class="sum-k">Mano de obra</span>
-              <strong class="sum-v">98 h-hombre</strong>
-              <span class="sum-h">👷 49 h oficial · 🧑 49 h ayudante</span>
+              <strong class="sum-v">{{ ej.resumen.horas }}</strong>
+              <span class="sum-h">{{ ej.resumen.horas_split }}</span>
             </div>
             <div class="sum">
               <span class="sum-k">Duración estimada</span>
-              <strong class="sum-v">≈ 6 días</strong>
-              <span class="sum-h">cuadrilla de 2 · 1 oficial + 1 ayudante</span>
+              <strong class="sum-v">{{ ej.resumen.duracion }}</strong>
+              <span class="sum-h">{{ ej.resumen.cuadrilla }}</span>
             </div>
           </div>
 
           <div class="app-doc">
             <div class="doc-head">Capítulos y partidas</div>
 
-            <div class="doc-capitulo"><span>01 · Demoliciones y desmontajes</span><span class="cap-meta"><strong>$ 174,98</strong><em class="cap-ben">+ $ 45,38</em></span></div>
+            {% for c in ej.caps %}
+            <div class="doc-capitulo"><span>{{ c.titulo }}</span><span class="cap-meta"><strong>{{ c.importe }}</strong><em class="cap-ben">{{ c.beneficio }}</em></span></div>
+              {% for p in c.partidas %}
             <div class="doc-partida">
               <div class="dp-main">
-                <span class="dp-nombre">Picado de enchapado cerámico en pared y su capa de pega</span>
-                <span class="dp-cant">20 m²</span>
-                <span class="dp-precio">6,52 $/m²</span>
-                <span class="dp-importe">$ 130,40</span>
-                <span class="dp-tiempo">14 h · 0+14</span>
+                <span class="dp-nombre">{{ p.nombre }}</span>
+                <span class="dp-cant">{{ p.cant }}</span>
+                <span class="dp-precio">{{ p.precio }}</span>
+                <span class="dp-importe">{{ p.importe }}</span>
+                <span class="dp-tiempo">{{ p.tiempo }}</span>
               </div>
-              <div class="dp-ben"><span class="dp-coste">Coste: $ 96,58</span><span class="dp-beneficio">Beneficio: $ 33,82</span><span class="dp-margen">+35 %</span></div>
+              <div class="dp-ben"><span class="dp-coste">Coste: {{ p.coste }}</span><span class="dp-beneficio">Beneficio: {{ p.beneficio }}</span><span class="dp-margen">{{ p.margen }}</span></div>
             </div>
-            <div class="doc-partida">
-              <div class="dp-main">
-                <span class="dp-nombre">Demolición de piso cerámico y su capa de pega</span>
-                <span class="dp-cant">6 m²</span>
-                <span class="dp-precio">5,06 $/m²</span>
-                <span class="dp-importe">$ 30,36</span>
-                <span class="dp-tiempo">3,2 h · 0+3,2</span>
-              </div>
-              <div class="dp-ben"><span class="dp-coste">Coste: $ 22,49</span><span class="dp-beneficio">Beneficio: $ 7,87</span><span class="dp-margen">+35 %</span></div>
-            </div>
-            <div class="doc-partida">
-              <div class="dp-main">
-                <span class="dp-nombre">Desmontaje de aparato sanitario y su grifería</span>
-                <span class="dp-cant">3 ud</span>
-                <span class="dp-precio">4,74 $/ud</span>
-                <span class="dp-importe">$ 14,22</span>
-                <span class="dp-tiempo">2 h · 1+1</span>
-              </div>
-              <div class="dp-ben"><span class="dp-coste">Coste: $ 10,53</span><span class="dp-beneficio">Beneficio: $ 3,69</span><span class="dp-margen">+35 %</span></div>
-            </div>
+              {% endfor %}
+            {% endfor %}
 
-            <div class="doc-capitulo"><span>02 · Instalaciones (plomería del baño)</span><span class="cap-meta"><strong>$ 387,30</strong><em class="cap-ben">+ $ 100,41</em></span></div>
-            <div class="doc-partida">
-              <div class="dp-main">
-                <span class="dp-nombre">Tubería de agua de PPR de 20 mm, empotrada, incluso roza y resane</span>
-                <span class="dp-cant">12 m</span>
-                <span class="dp-precio">8,09 $/m</span>
-                <span class="dp-importe">$ 97,08</span>
-                <span class="dp-tiempo">5,5 h · 3,1+2,4</span>
-              </div>
-              <div class="dp-ben"><span class="dp-coste">Coste: $ 71,94</span><span class="dp-beneficio">Beneficio: $ 25,14</span><span class="dp-margen">+35 %</span></div>
-            </div>
-            <div class="doc-partida">
-              <div class="dp-main">
-                <span class="dp-nombre">Punto de agua fría y caliente para aparato sanitario</span>
-                <span class="dp-cant">3 ud</span>
-                <span class="dp-precio">39,56 $/ud</span>
-                <span class="dp-importe">$ 118,68</span>
-                <span class="dp-tiempo">5,7 h · 3,3+2,4</span>
-              </div>
-              <div class="dp-ben"><span class="dp-coste">Coste: $ 87,90</span><span class="dp-beneficio">Beneficio: $ 30,78</span><span class="dp-margen">+35 %</span></div>
-            </div>
-            <div class="doc-partida">
-              <div class="dp-main">
-                <span class="dp-nombre">Llave de escuadra para aparato</span>
-                <span class="dp-cant">4 ud</span>
-                <span class="dp-precio">14,70 $/ud</span>
-                <span class="dp-importe">$ 58,80</span>
-                <span class="dp-tiempo">2,4 h · 1,6+0,8</span>
-              </div>
-              <div class="dp-ben"><span class="dp-coste">Coste: $ 43,55</span><span class="dp-beneficio">Beneficio: $ 15,25</span><span class="dp-margen">+35 %</span></div>
-            </div>
-            <div class="doc-partida">
-              <div class="dp-main">
-                <span class="dp-nombre">Punto de desagüe para inodoro</span>
-                <span class="dp-cant">1 ud</span>
-                <span class="dp-precio">18,62 $/ud</span>
-                <span class="dp-importe">$ 18,62</span>
-                <span class="dp-tiempo">0,7 h · 0,5+0,2</span>
-              </div>
-              <div class="dp-ben"><span class="dp-coste">Coste: $ 13,79</span><span class="dp-beneficio">Beneficio: $ 4,83</span><span class="dp-margen">+35 %</span></div>
-            </div>
-            <div class="doc-partida">
-              <div class="dp-main">
-                <span class="dp-nombre">Instalación de inodoro con su conexión de agua y desagüe</span>
-                <span class="dp-cant">1 ud</span>
-                <span class="dp-precio">29,32 $/ud</span>
-                <span class="dp-importe">$ 29,32</span>
-                <span class="dp-tiempo">1,8 h · 1,2+0,6</span>
-              </div>
-              <div class="dp-ben"><span class="dp-coste">Coste: $ 21,71</span><span class="dp-beneficio">Beneficio: $ 7,61</span><span class="dp-margen">+35 %</span></div>
-            </div>
-            <div class="doc-partida">
-              <div class="dp-main">
-                <span class="dp-nombre">Instalación de lavamanos con su grifería y desagüe</span>
-                <span class="dp-cant">1 ud</span>
-                <span class="dp-precio">42,20 $/ud</span>
-                <span class="dp-importe">$ 42,20</span>
-                <span class="dp-tiempo">2,1 h · 1,4+0,7</span>
-              </div>
-              <div class="dp-ben"><span class="dp-coste">Coste: $ 31,26</span><span class="dp-beneficio">Beneficio: $ 10,94</span><span class="dp-margen">+35 %</span></div>
-            </div>
-            <div class="doc-partida">
-              <div class="dp-main">
-                <span class="dp-nombre">Instalación de ducha o regadera con su grifería</span>
-                <span class="dp-cant">1 ud</span>
-                <span class="dp-precio">22,60 $/ud</span>
-                <span class="dp-importe">$ 22,60</span>
-                <span class="dp-tiempo">1,7 h · 1,1+0,6</span>
-              </div>
-              <div class="dp-ben"><span class="dp-coste">Coste: $ 16,74</span><span class="dp-beneficio">Beneficio: $ 5,86</span><span class="dp-margen">+35 %</span></div>
-            </div>
-
-            <div class="doc-capitulo"><span>03 · Aislamientos e impermeabilizaciones</span><span class="cap-meta"><strong>$ 211,04</strong><em class="cap-ben">+ $ 54,69</em></span></div>
-            <div class="doc-partida">
-              <div class="dp-main">
-                <span class="dp-nombre">Impermeabilización de piso de baño o ducha bajo enchapado</span>
-                <span class="dp-cant">6 m²</span>
-                <span class="dp-precio">19,32 $/m²</span>
-                <span class="dp-importe">$ 115,92</span>
-                <span class="dp-tiempo">4,1 h · 2,5+1,6</span>
-              </div>
-              <div class="dp-ben"><span class="dp-coste">Coste: $ 85,88</span><span class="dp-beneficio">Beneficio: $ 30,04</span><span class="dp-margen">+35 %</span></div>
-            </div>
-            <div class="doc-partida">
-              <div class="dp-main">
-                <span class="dp-nombre">Mortero impermeabilizante en área húmeda, base para enchapado</span>
-                <span class="dp-cant">8 m²</span>
-                <span class="dp-precio">11,89 $/m²</span>
-                <span class="dp-importe">$ 95,12</span>
-                <span class="dp-tiempo">4,4 h · 2,6+1,8</span>
-              </div>
-              <div class="dp-ben"><span class="dp-coste">Coste: $ 70,47</span><span class="dp-beneficio">Beneficio: $ 24,65</span><span class="dp-margen">+35 %</span></div>
-            </div>
-
-            <div class="doc-capitulo"><span>04 · Revestimientos y acabados</span><span class="cap-meta"><strong>$ 666,20</strong><em class="cap-ben">+ $ 172,80</em></span></div>
-            <div class="doc-partida">
-              <div class="dp-main">
-                <span class="dp-nombre">Friso de mortero maestreado sobre paramento interior, 1,5 cm</span>
-                <span class="dp-cant">22 m²</span>
-                <span class="dp-precio">8,71 $/m²</span>
-                <span class="dp-importe">$ 191,62</span>
-                <span class="dp-tiempo">16,5 h · 9,9+6,6</span>
-              </div>
-              <div class="dp-ben"><span class="dp-coste">Coste: $ 141,87</span><span class="dp-beneficio">Beneficio: $ 49,75</span><span class="dp-margen">+35 %</span></div>
-            </div>
-            <div class="doc-partida">
-              <div class="dp-main">
-                <span class="dp-nombre">Enchapado de porcelanato de gran formato en pared</span>
-                <span class="dp-cant">18 m²</span>
-                <span class="dp-precio">13,28 $/m²</span>
-                <span class="dp-importe">$ 239,04</span>
-                <span class="dp-tiempo">18,9 h · 11,2+7,7</span>
-              </div>
-              <div class="dp-ben"><span class="dp-coste">Coste: $ 177,07</span><span class="dp-beneficio">Beneficio: $ 61,97</span><span class="dp-margen">+35 %</span></div>
-            </div>
-            <div class="doc-partida">
-              <div class="dp-main">
-                <span class="dp-nombre">Enchapado de zona de ducha sobre impermeabilización</span>
-                <span class="dp-cant">4 m²</span>
-                <span class="dp-precio">17,14 $/m²</span>
-                <span class="dp-importe">$ 68,56</span>
-                <span class="dp-tiempo">4,1 h · 2,7+1,4</span>
-              </div>
-              <div class="dp-ben"><span class="dp-coste">Coste: $ 50,78</span><span class="dp-beneficio">Beneficio: $ 17,78</span><span class="dp-margen">+35 %</span></div>
-            </div>
-            <div class="doc-partida">
-              <div class="dp-main">
-                <span class="dp-nombre">Colocación de piso de porcelanato de gran formato, en capa fina</span>
-                <span class="dp-cant">6 m²</span>
-                <span class="dp-precio">11,43 $/m²</span>
-                <span class="dp-importe">$ 68,58</span>
-                <span class="dp-tiempo">5,4 h · 2,7+2,7</span>
-              </div>
-              <div class="dp-ben"><span class="dp-coste">Coste: $ 50,80</span><span class="dp-beneficio">Beneficio: $ 17,78</span><span class="dp-margen">+35 %</span></div>
-            </div>
-            <div class="doc-partida">
-              <div class="dp-main">
-                <span class="dp-nombre">Piso cerámico en área húmeda con pendiente a desagüe</span>
-                <span class="dp-cant">6 m²</span>
-                <span class="dp-precio">16,40 $/m²</span>
-                <span class="dp-importe">$ 98,40</span>
-                <span class="dp-tiempo">5,6 h · 3,7+1,9</span>
-              </div>
-              <div class="dp-ben"><span class="dp-coste">Coste: $ 72,88</span><span class="dp-beneficio">Beneficio: $ 25,52</span><span class="dp-margen">+35 %</span></div>
-            </div>
-
-            <div class="doc-capitulo doc-productos"><span>Productos a elección del cliente</span><strong>$ 1.073,00</strong></div>
+            <div class="doc-capitulo doc-productos"><span>Productos a elección del cliente</span><strong>{{ ej.tot.productos }}</strong></div>
+            {% for pr in ej.productos %}
             <div class="doc-partida dp-prod">
               <div class="dp-main">
-                <span class="dp-nombre"><img class="dp-img" src="{{ 'img/prod-porcelanato-pared.jpg' | asset }}" alt="">Porcelanato de gran formato 60×120 cm (pared)</span>
-                <span class="dp-cant">18 m²</span>
-                <span class="dp-precio">24,00 $/m²</span>
-                <span class="dp-importe">$ 432,00</span>
+                <span class="dp-nombre"><img class="dp-img" src="{{ pr.img | asset }}" alt="">{{ pr.nombre }}</span>
+                <span class="dp-cant">{{ pr.cant }}</span>
+                <span class="dp-precio">{{ pr.precio }}</span>
+                <span class="dp-importe">{{ pr.importe }}</span>
                 <span class="dp-tag">📦 producto</span>
               </div>
             </div>
-            <div class="doc-partida dp-prod">
-              <div class="dp-main">
-                <span class="dp-nombre"><img class="dp-img" src="{{ 'img/prod-porcelanato-piso.jpg' | asset }}" alt="">Porcelanato 60×60 cm (piso)</span>
-                <span class="dp-cant">12 m²</span>
-                <span class="dp-precio">18,00 $/m²</span>
-                <span class="dp-importe">$ 216,00</span>
-                <span class="dp-tag">📦 producto</span>
-              </div>
-            </div>
-            <div class="doc-partida dp-prod">
-              <div class="dp-main">
-                <span class="dp-nombre"><img class="dp-img" src="{{ 'img/prod-columna-ducha.jpg' | asset }}" alt="">Columna de ducha termostática</span>
-                <span class="dp-cant">1 ud</span>
-                <span class="dp-precio">180,00 $/ud</span>
-                <span class="dp-importe">$ 180,00</span>
-                <span class="dp-tag">📦 producto</span>
-              </div>
-            </div>
-            <div class="doc-partida dp-prod">
-              <div class="dp-main">
-                <span class="dp-nombre"><img class="dp-img" src="{{ 'img/prod-mueble-bano.jpg' | asset }}" alt="">Mueble de baño con lavamanos, 60 cm</span>
-                <span class="dp-cant">1 ud</span>
-                <span class="dp-precio">150,00 $/ud</span>
-                <span class="dp-importe">$ 150,00</span>
-                <span class="dp-tag">📦 producto</span>
-              </div>
-            </div>
-            <div class="doc-partida dp-prod">
-              <div class="dp-main">
-                <span class="dp-nombre"><img class="dp-img" src="{{ 'img/prod-inodoro.jpg' | asset }}" alt="">Inodoro de tanque, una pieza</span>
-                <span class="dp-cant">1 ud</span>
-                <span class="dp-precio">95,00 $/ud</span>
-                <span class="dp-importe">$ 95,00</span>
-                <span class="dp-tag">📦 producto</span>
-              </div>
-            </div>
+            {% endfor %}
           </div>
 
           <div class="app-totales">
-            <div class="tt-row"><span>TOTAL OBRA / PARTIDAS</span><strong>$ 1.439,52</strong></div>
-            <div class="tt-row"><span>TOTAL PRODUCTOS</span><strong>$ 1.073,00</strong></div>
-            <div class="tt-row tt-sub"><span>SUBTOTAL INCLUIDO</span><strong>$ 2.512,52</strong></div>
-            <div class="tt-row"><span>COSTE INTERNO</span><strong>$ 1.861,05</strong></div>
-            <div class="tt-row tt-pos"><span>BENEFICIO TOTAL ESTIMADO</span><strong>$ 651,47</strong></div>
-            <div class="tt-row tt-pos"><span>MARGEN</span><strong>+35 % s/coste</strong></div>
-            <div class="tt-row"><span>I.V.A. (16 %)</span><strong>$ 402,00</strong></div>
-            <div class="tt-row tt-total"><span>PRESUPUESTO TOTAL</span><strong>$ 2.914,52</strong></div>
+            <div class="tt-row"><span>TOTAL OBRA / PARTIDAS</span><strong>{{ ej.tot.obra }}</strong></div>
+            <div class="tt-row"><span>TOTAL PRODUCTOS</span><strong>{{ ej.tot.productos }}</strong></div>
+            <div class="tt-row tt-sub"><span>SUBTOTAL INCLUIDO</span><strong>{{ ej.tot.subtotal }}</strong></div>
+            <div class="tt-row"><span>COSTE INTERNO</span><strong>{{ ej.tot.coste }}</strong></div>
+            <div class="tt-row tt-pos"><span>BENEFICIO TOTAL ESTIMADO</span><strong>{{ ej.tot.beneficio }}</strong></div>
+            <div class="tt-row tt-pos"><span>MARGEN</span><strong>{{ ej.tot.margen }}</strong></div>
+            <div class="tt-row"><span>{{ ej.iva_txt }}</span><strong>{{ ej.tot.iva }}</strong></div>
+            <div class="tt-row tt-total"><span>PRESUPUESTO TOTAL</span><strong>{{ ej.tot.total }}</strong></div>
           </div>
         </div>
       </div>
@@ -471,7 +284,7 @@
 
     <div class="float-chip chip-a" aria-hidden="true">
       <span class="chip-dot"></span>
-      <span><strong>{{ catalogo().partidas_txt }}</strong> partidas listas</span>
+      <span><strong>{{ catalogo().lineas_precio_txt }}</strong> líneas de precio listas</span>
     </div>
     <div class="float-chip chip-b" aria-hidden="true">
       <span class="chip-ico">
@@ -485,14 +298,88 @@
       </span>
       <span>PDF con tu logo, versiones y firmas</span>
     </div>
+    {% if ej.convierte %}
+    <div class="float-chip chip-moneda" id="chip-moneda">
+      <span class="chip-ico" aria-hidden="true">💱</span>
+      <span>Ejemplo en {{ ej.moneda }} · tasa de referencia {{ ej.tasa_txt }} {{ ej.moneda }}/US$ ({{ ej.tasa_fecha }})</span>
+    </div>
+    {% endif %}
   </div>
 </section>
+
+{% if ej.apu.disponible %}
+<section class="apu-seccion" id="apu">
+  <div class="apu-intro">
+    <span class="section-kicker">La base de precios, a sangre</span>
+    <h2>Bajo cada partida hay un análisis de precios unitarios de verdad.</h2>
+    <p class="intro">No es una lista de precios plana. Cada partida del catálogo llega descompuesta en recursos con rendimiento y precio — como en las bases de precios profesionales— y tú puedes editar cada línea. Esta es la partida <strong>{{ ej.apu.codigo }}</strong> del catálogo, tal cual:</p>
+  </div>
+
+  <div class="apu-stage">
+    <div class="apu-card">
+      <header class="apu-head">
+        <div>
+          <span class="apu-eyebrow">Partida {{ ej.apu.codigo }} · catálogo propio</span>
+          <strong class="apu-titulo">{{ ej.apu.titulo }}</strong>
+          <span class="apu-unidad">unidad: {{ ej.apu.unidad }}</span>
+        </div>
+        <div class="apu-resultado">
+          <span>Precio de venta</span>
+          <strong>{{ ej.apu.precio }}</strong>
+          <em>beneficio {{ ej.apu.margen }} s/coste · {{ ej.apu.horas_mo }}</em>
+        </div>
+      </header>
+      <div class="apu-tabla" role="table" aria-label="Descomposición de la partida en recursos">
+        <div class="apu-fila apu-cab" role="row">
+          <span role="columnheader">Recurso</span>
+          <span role="columnheader">Rendimiento</span>
+          <span role="columnheader">Precio</span>
+          <span role="columnheader">Importe</span>
+        </div>
+        {% for f in ej.apu.filas %}
+        <div class="apu-fila" role="row">
+          <span class="apu-rec" role="cell"><i class="apu-grupo apu-g-{{ f.grupo | lower | replace(' ', '_') }}"></i>{{ f.nombre }}</span>
+          <span class="apu-rend" role="cell">{{ f.rend }}</span>
+          <span class="apu-precio" role="cell">{{ f.precio }}</span>
+          <span class="apu-importe" role="cell">{{ f.importe }}</span>
+        </div>
+        {% endfor %}
+        <div class="apu-fila apu-sub" role="row"><span>Materiales</span><span></span><span></span><span>{{ ej.apu.materiales }}</span></div>
+        <div class="apu-fila apu-sub" role="row"><span>Mano de obra</span><span></span><span></span><span>{{ ej.apu.mano_obra }}</span></div>
+        <div class="apu-fila apu-sub" role="row"><span>Equipo y maquinaria</span><span></span><span></span><span>{{ ej.apu.equipo }}</span></div>
+        <div class="apu-fila apu-sub" role="row"><span>Costes directos complementarios</span><span>{{ ej.apu.comp_pct }} %</span><span></span><span>{{ ej.apu.comp }}</span></div>
+        <div class="apu-fila apu-total" role="row"><span>COSTE DIRECTO</span><span></span><span></span><span>{{ ej.apu.coste }}</span></div>
+        <div class="apu-fila apu-venta" role="row"><span>BENEFICIO Y PRECIO DE VENTA</span><span>{{ ej.apu.margen }}</span><span></span><span>{{ ej.apu.precio }}</span></div>
+      </div>
+      <p class="apu-nota">Cambia el rendimiento, el precio de un recurso o el margen y todo se recalcula al instante: la partida, los capítulos y el presupuesto entero.</p>
+    </div>
+
+    <div class="apu-laterales">
+      <article class="apu-lateral">
+        <div class="ventaja-icon" aria-hidden="true">🔗</div>
+        <h3>Precios conectados en cascada</h3>
+        <p>Sube el cemento o la hora del oficial una sola vez en el cuadro de recursos y <strong>todas las partidas que lo usan</strong> se recalculan solas. Ningún Excel hace esto sin romperse.</p>
+      </article>
+      <article class="apu-lateral">
+        <div class="ventaja-icon" aria-hidden="true">📥</div>
+        <h3>Importa tus descompuestos CYPE</h3>
+        <p>¿Trabajas con CYPE? Importa el Excel de descompuestos (.xlsx) y se clasifica solo: materiales, mano de obra y costes directos, sin perder ninguna fila.</p>
+      </article>
+      <article class="apu-lateral">
+        <div class="ventaja-icon" aria-hidden="true">🧮</div>
+        <h3>Tus costes, tus reglas</h3>
+        <p>Costes directos complementarios en %, beneficio por partida o global, y alertas de margen bajo. Tú decides cuánto ganar en cada partida.</p>
+      </article>
+    </div>
+  </div>
+</section>
+{% endif %}
 
 <section class="ventajas">
   <div class="ventajas-intro">
     <span class="section-kicker">El plus que marca la diferencia</span>
-    <h2>No solo presupuestas: sabes cuánto ganas y cuánto tardas.</h2>
-    <p class="intro">La mayoría de las herramientas suma cantidades y se detiene ahí. {{ product_name }} baja hasta el costo real de cada partida y hasta las horas de tu cuadrilla, para que cada presupuesto sea una decisión de negocio y no un cálculo a ciegas.</p>
+    <h2>No solo presupuestas: sabes cuánto ganas, cuánto tardas y qué eligió tu cliente.</h2>
+    <p class="intro">La mayoría de las herramientas suma cantidades y se detiene ahí. {{ product_name }} baja hasta el costo real de cada partida, hasta las horas de tu cuadrilla y hasta la firma del cliente, para que cada presupuesto sea una decisión de negocio y no un cálculo a ciegas.</p>
   </div>
   <div class="ventajas-grid">
     <article class="ventaja">
@@ -501,9 +388,9 @@
       <p>Cada partida guarda su costo interno: materiales, mano de obra, equipo y complementarios. {{ product_name }} compara ese costo con tu precio de venta y te dice, en vivo, cuánto ganas de verdad.</p>
       <ul class="ventaja-lista">
         <li><span class="check">✓</span> Beneficio de la obra y de los productos, calculados por separado.</li>
-        <li><span class="check">✓</span> Margen total en % y en dólares, por partida, por capítulo y del presupuesto entero.</li>
+        <li><span class="check">✓</span> Margen total en % y en {{ ej.moneda }}, por partida, por capítulo y del presupuesto entero.</li>
         <li><span class="check">✓</span> Alertas cuando una partida tiene margen bajo o precio sin revisar.</li>
-        <li><span class="check">✓</span> Ajusta un costo y mira el beneficio recalcarse al instante.</li>
+        <li><span class="check">✓</span> Ajusta un costo y mira el beneficio recalcularse al instante.</li>
       </ul>
     </article>
     <article class="ventaja">
@@ -517,6 +404,134 @@
         <li><span class="check">✓</span> Asigna horas a mano en cualquier partida cuando haga falta.</li>
       </ul>
     </article>
+    <article class="ventaja">
+      <div class="ventaja-icon" aria-hidden="true">🧱</div>
+      <h3>Vende con opciones y packs de estancia</h3>
+      <p>El cliente elige, no renuncia. Ofrece productos incluidos, opcionales y alternativos con foto, y arma una estancia entera con un clic: el pack inserta el capítulo completo escalado a los m² reales.</p>
+      <ul class="ventaja-lista">
+        <li><span class="check">✓</span> Productos a elección: incluido, opcional o alternativa, con imagen y precio.</li>
+        <li><span class="check">✓</span> Packs de estancia: baño, cocina, dormitorio… capítulo entero en un clic.</li>
+        <li><span class="check">✓</span> El presupuesto marca qué se aprobó con y sin opcionales.</li>
+        <li><span class="check">✓</span> {{ catalogo().packs }} packs de serie para empezar hoy mismo.</li>
+      </ul>
+    </article>
+    <article class="ventaja">
+      <div class="ventaja-icon" aria-hidden="true">🖋️</div>
+      <h3>Propuesta online que se firma</h3>
+      <p>Comparte un enlace secreto con tu cliente: revisa, acepta o rechaza y <strong>firma en pantalla</strong>, desde el móvil. Tú controlas la caducidad y puedes revocarlo cuando quieras.</p>
+      <ul class="ventaja-lista">
+        <li><span class="check">✓</span> Firma dibujada con ratón o dedo, incrustada en el PDF final.</li>
+        <li><span class="check">✓</span> Versiones inmutables: siempre sabrás qué se envió y qué se aprobó.</li>
+        <li><span class="check">✓</span> Marca de agua según estado: borrador, rechazado, vencido.</li>
+        <li><span class="check">✓</span> Envío por email o WhatsApp con el resumen ya redactado.</li>
+      </ul>
+    </article>
+  </div>
+</section>
+
+<section class="comparativa" id="comparativa">
+  <div class="comparativa-intro">
+    <span class="section-kicker">Por qué {{ product_name }}</span>
+    <h2>Lo que casi ningún generador de presupuestos te da.</h2>
+    <p class="intro">Existen plantillas y generadores que suman líneas. Ninguno baja hasta el recurso, hasta la hora de tu cuadrilla o hasta la firma del cliente. Esta es la diferencia, sin letra pequeña:</p>
+  </div>
+  <div class="comp-wrap">
+    <table class="comp-tabla">
+      <thead>
+        <tr>
+          <th scope="col">Capacidad</th>
+          <th scope="col">Excel / plantillas</th>
+          <th scope="col">Generadores típicos</th>
+          <th scope="col" class="comp-cta-col">{{ product_name }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">Base de precios del país incluida y editable</th>
+          <td><span class="comp-no">✗</span> Empiezas de cero</td>
+          <td><span class="comp-mitad">◦</span> Decenas de partidas</td>
+          <td><span class="comp-si">✓</span> {{ catalogo().lineas_precio_txt }} líneas: {{ catalogo().partidas_txt }} partidas + {{ catalogo().recursos_txt }} recursos</td>
+        </tr>
+        <tr>
+          <th scope="row">Análisis de precios unitarios (recursos y rendimientos)</th>
+          <td><span class="comp-mitad">◦</span> A mano, hoja por hoja</td>
+          <td><span class="comp-no">✗</span> Solo texto y precio</td>
+          <td><span class="comp-si">✓</span> {{ catalogo().lineas_descomp_txt }} líneas de descomposición editables</td>
+        </tr>
+        <tr>
+          <th scope="row">Cambia un precio de recurso y se recalcula todo</th>
+          <td><span class="comp-no">✗</span> Buscar y reemplazar</td>
+          <td><span class="comp-no">✗</span> Recalcular a mano</td>
+          <td><span class="comp-si">✓</span> En cascada: recurso → partidas → presupuesto</td>
+        </tr>
+        <tr>
+          <th scope="row">Horas-hombre por rol y duración de la obra</th>
+          <td><span class="comp-no">✗</span></td>
+          <td><span class="comp-no">✗</span></td>
+          <td><span class="comp-si">✓</span> Por partida y total, con tu cuadrilla</td>
+        </tr>
+        <tr>
+          <th scope="row">Beneficio y margen en vivo por partida, capítulo y total</th>
+          <td><span class="comp-mitad">◦</span> Fórmulas frágiles</td>
+          <td><span class="comp-mitad">◦</span> Solo el total</td>
+          <td><span class="comp-si">✓</span> Con alertas de margen bajo</td>
+        </tr>
+        <tr>
+          <th scope="row">Importar descompuestos de CYPE (.xlsx)</th>
+          <td><span class="comp-no">✗</span></td>
+          <td><span class="comp-no">✗</span></td>
+          <td><span class="comp-si">✓</span> Sin perder filas ni fórmulas</td>
+        </tr>
+        <tr>
+          <th scope="row">Packs de estancia (capítulo entero escalado a m²)</th>
+          <td><span class="comp-no">✗</span> Copiar y pegar</td>
+          <td><span class="comp-no">✗</span></td>
+          <td><span class="comp-si">✓</span> {{ catalogo().packs }} packs de serie + los tuyos</td>
+        </tr>
+        <tr>
+          <th scope="row">Productos a elección del cliente con foto</th>
+          <td><span class="comp-mitad">◦</span> Adjuntos sueltos</td>
+          <td><span class="comp-no">✗</span></td>
+          <td><span class="comp-si">✓</span> Incluido / opcional / alternativa</td>
+        </tr>
+        <tr>
+          <th scope="row">Propuesta online con firma del cliente</th>
+          <td><span class="comp-no">✗</span></td>
+          <td><span class="comp-mitad">◦</span> Apps de firma aparte</td>
+          <td><span class="comp-si">✓</span> Enlace secreto, caducidad y revocación</td>
+        </tr>
+        <tr>
+          <th scope="row">Versiones inmutables del PDF enviado</th>
+          <td><span class="comp-mitad">◦</span> Carpeta de emails</td>
+          <td><span class="comp-no">✗</span></td>
+          <td><span class="comp-si">✓</span> Cada envío queda sellado</td>
+        </tr>
+        <tr>
+          <th scope="row">Moneda local + USD con tasa congelada por presupuesto</th>
+          <td><span class="comp-no">✗</span></td>
+          <td><span class="comp-mitad">◦</span> Una sola moneda</td>
+          <td><span class="comp-si">✓</span> 20 monedas, IVA y fiscalidad por país</td>
+        </tr>
+        <tr>
+          <th scope="row">Del presupuesto al cobro (pagos y saldos)</th>
+          <td><span class="comp-no">✗</span></td>
+          <td><span class="comp-no">✗</span></td>
+          <td><span class="comp-si">✓</span> Documentos DC y control de saldos</td>
+        </tr>
+        <tr>
+          <th scope="row">Subir todos los precios de golpe por % (inflación)</th>
+          <td><span class="comp-mitad">◦</span> Riesgoso</td>
+          <td><span class="comp-no">✗</span></td>
+          <td><span class="comp-si">✓</span> Todo el catálogo o por capítulo</td>
+        </tr>
+        <tr>
+          <th scope="row">Tus datos sin rehenes</th>
+          <td><span class="comp-si">✓</span> El archivo es tuyo</td>
+          <td><span class="comp-no">✗</span> Exportación limitada</td>
+          <td><span class="comp-si">✓</span> Excel, PDF y copia de seguridad completa</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </section>
 
@@ -536,7 +551,7 @@
             <div class="t-body">
               <div class="t-head"><div><span class="t-eyebrow">Resumen</span><strong>Hola, Ana</strong></div><span class="t-pill t-pill-primary">+ Nuevo presupuesto</span></div>
               <div class="t-kpis">
-                <div class="t-kpi"><span>Volumen aprobado</span><strong>$ 42.500</strong><small>12 proyectos</small></div>
+                <div class="t-kpi"><span>Volumen aprobado</span><strong>{{ ej.tour.volumen }}</strong><small>12 proyectos</small></div>
                 <div class="t-kpi"><span>Aprobación</span><strong>68 %</strong><small>enviados → aprobados</small></div>
                 <div class="t-kpi"><span>Proyectos activos</span><strong>7</strong><small>3 cobros pendientes</small></div>
               </div>
@@ -559,20 +574,19 @@
           <div class="t-window">
             <div class="t-bar"><i></i><i></i><i></i></div>
             <div class="t-body">
-              <div class="t-head"><div><span class="t-eyebrow">Presupuesto · Nuevo</span><strong>Remodelación de baño</strong></div><span class="t-pill t-pill-primary">Guardar</span></div>
-              <div class="t-chap"><span>04 · Revestimientos y acabados</span><strong>$ 666,20</strong></div>
-              <div class="t-line"><span>Enchapado de porcelanato gran formato</span><strong>$ 239,04</strong></div>
-              <div class="t-line"><span>Friso de mortero maestreado, 1,5 cm</span><strong>$ 191,62</strong></div>
-              <div class="t-line"><span>Piso de porcelanato gran formato</span><strong>$ 68,58</strong></div>
-              <div class="t-line"><span>Piso cerámico con pendiente a desagüe</span><strong>$ 98,40</strong></div>
-              <div class="t-total"><span>TOTAL</span><strong>$ 2.914,52</strong></div>
+              <div class="t-head"><div><span class="t-eyebrow">Presupuesto · Nuevo</span><strong>{{ ej.obra }}</strong></div><span class="t-pill t-pill-primary">Guardar</span></div>
+              <div class="t-chap"><span>{{ ej.tour.cap4_titulo }}</span><strong>{{ ej.caps[3].importe }}</strong></div>
+              {% for p in ej.tour.cap4 %}
+              <div class="t-line"><span>{{ p.nombre }}</span><strong>{{ p.importe }}</strong></div>
+              {% endfor %}
+              <div class="t-total"><span>TOTAL</span><strong>{{ ej.tour.total }}</strong></div>
             </div>
           </div>
         </div>
         <div class="tour-caption">
           <span class="tour-step">Paso 2</span>
           <h3>Arma el presupuesto en minutos</h3>
-          <p>Capítulos y partidas de tu catálogo, con totales en vivo. En minutos, no en días.</p>
+          <p>Capítulos y partidas de tu catálogo, con totales en vivo. Pega desde Excel, duplica, reordena. En minutos, no en días.</p>
         </div>
       </div>
 
@@ -582,14 +596,14 @@
             <div class="t-bar"><i></i><i></i><i></i></div>
             <div class="t-body">
               <div class="t-summary">
-                <div class="t-sum"><span>Margen de beneficio</span><strong class="pos">+35 % · $ 651,47</strong></div>
-                <div class="t-sum"><span>Mano de obra</span><strong>98 h-hombre</strong></div>
-                <div class="t-sum"><span>Duración</span><strong>≈ 6 días</strong></div>
+                <div class="t-sum"><span>Margen de beneficio</span><strong class="pos">{{ ej.margen_txt }} · {{ ej.resumen.beneficio }}</strong></div>
+                <div class="t-sum"><span>Mano de obra</span><strong>{{ ej.resumen.horas }}</strong></div>
+                <div class="t-sum"><span>Duración</span><strong>{{ ej.resumen.duracion }}</strong></div>
               </div>
               <div class="t-list-head">Beneficio por partida</div>
-              <div class="t-ben"><span>Coste: $ 177,07</span><strong class="pos">Beneficio: $ 61,97 · +35 %</strong></div>
-              <div class="t-ben"><span>Coste: $ 141,87</span><strong class="pos">Beneficio: $ 49,75 · +35 %</strong></div>
-              <div class="t-ben"><span>Coste: $ 72,88</span><strong class="pos">Beneficio: $ 25,52 · +35 %</strong></div>
+              {% for p in ej.tour.cap4[:3] %}
+              <div class="t-ben"><span>Coste: {{ p.coste }}</span><strong class="pos">Beneficio: {{ p.beneficio }} · {{ p.margen }}</strong></div>
+              {% endfor %}
               <div class="t-time">⏱️ 18,9 h de oficial + 7,7 h de ayudante</div>
             </div>
           </div>
@@ -608,8 +622,8 @@
             <div class="t-body t-body-center">
               <div class="t-doc">
                 <div class="t-doc-head"><span class="t-mark">A</span><strong>Presupuesto · PR-2026-014</strong></div>
-                <div class="t-doc-title">Remodelación de baño</div>
-                <div class="t-doc-total"><span>PRESUPUESTO TOTAL</span><strong>$ 2.914,52</strong></div>
+                <div class="t-doc-title">{{ ej.obra }}</div>
+                <div class="t-doc-total"><span>PRESUPUESTO TOTAL</span><strong>{{ ej.tour.total }}</strong></div>
                 <div class="t-doc-sig"><span></span><span></span></div>
               </div>
               <div class="t-actions"><span class="t-pill t-pill-primary">Enviar por email</span><span class="t-pill">Convertir en proyecto</span></div>
@@ -618,8 +632,8 @@
         </div>
         <div class="tour-caption">
           <span class="tour-step">Paso 4</span>
-          <h3>Entrega y cobra</h3>
-          <p>PDF con tu logo y firma. Conviértelo en proyecto y controla pagos y saldos.</p>
+          <h3>Entrega, firma y cobra</h3>
+          <p>PDF con tu logo y firma del cliente. Conviértelo en proyecto y controla pagos y saldos.</p>
         </div>
       </div>
     </div>
@@ -642,28 +656,33 @@
     <div class="banner-texto">
       {% if pais_actual %}
       <h2 id="banner-h2">El catálogo más completo para presupuestar en {{ pais_actual.nombre }}.</h2>
-      <p id="banner-p">{{ catalogo().partidas_txt }} partidas organizadas en {{ catalogo().capitulos }} capítulos y {{ catalogo().subcapitulos }} subcapítulos, con precios en USD de referencia contrastados con el mercado {{ pais_actual.mercado }} y en revisión continua. No empiezas de cero: llegas con una base de precios real y propia.</p>
+      <p id="banner-p">{{ catalogo().partidas_txt }} partidas descompuestas y {{ catalogo().recursos_txt }} precios de recursos ({{ catalogo().materiales }} materiales, {{ catalogo().mano_obra }} de mano de obra, {{ catalogo().equipo }} de equipo), organizadas en {{ catalogo().capitulos }} capítulos y {{ catalogo().subcapitulos }} subcapítulos. {{ catalogo().lineas_descomp_txt }} líneas de recursos y rendimientos listas para usar, contrastadas con el mercado {{ pais_actual.mercado }} y en revisión continua. No empiezas de cero: llegas con una base de precios real y propia.</p>
       <ul class="banner-lista">
         <li id="banner-vocab"><span class="check">✓</span> Terminología de {{ pais_actual.nombre }}: {{ pais_actual.vocab }}.</li>
-        <li id="banner-moneda"><span class="check">✓</span> Precios en USD de referencia{% if pais_actual.moneda != 'USD' %} · convierte a {{ pais_actual.moneda }} ({{ pais_actual.simbolo_local }}) en tu presupuesto{% endif %}.</li>
+        <li id="banner-moneda"><span class="check">✓</span> {% if ej.convierte %}Precios convertidos a {{ ej.moneda }} ({{ ej.simbolo }}) con la tasa de referencia {{ ej.tasa_txt }} {{ ej.moneda }}/US$ · o en US$ si prefieres. Cada presupuesto congela su tasa.{% else %}Precios en {{ ej.moneda }} de referencia. Cada presupuesto congela su tasa si cambias de moneda.{% endif %}</li>
         <li><span class="check">✓</span> Descomposición técnica de cada partida: materiales, mano de obra y equipo.</li>
+        <li><span class="check">✓</span> Cambia un precio de recurso y se recalculan todas las partidas que lo usan.</li>
         <li><span class="check">✓</span> Se actualiza periódicamente para seguir el mercado.</li>
       </ul>
       {% else %}
       <h2 id="banner-h2">El catálogo más completo para presupuestar en Latinoamérica.</h2>
-      <p id="banner-p">{{ catalogo().partidas_txt }} partidas organizadas en {{ catalogo().capitulos }} capítulos y {{ catalogo().subcapitulos }} subcapítulos, con precios en USD de referencia para Latinoamérica y en revisión continua. No empiezas de cero: llegas con una base de precios real y propia.</p>
+      <p id="banner-p">{{ catalogo().partidas_txt }} partidas descompuestas y {{ catalogo().recursos_txt }} precios de recursos ({{ catalogo().materiales }} materiales, {{ catalogo().mano_obra }} de mano de obra, {{ catalogo().equipo }} de equipo), organizadas en {{ catalogo().capitulos }} capítulos y {{ catalogo().subcapitulos }} subcapítulos. {{ catalogo().lineas_descomp_txt }} líneas de recursos y rendimientos listas para usar, en USD de referencia convertibles a tu moneda y en revisión continua. No empiezas de cero: llegas con una base de precios real y propia.</p>
       <ul class="banner-lista">
         <li id="banner-vocab"><span class="check">✓</span> Terminología hispana neutra con variantes locales: elige tu país y adapta los nombres.</li>
-        <li id="banner-moneda"><span class="check">✓</span> Precios en USD de referencia · convierte a tu moneda local en cada presupuesto.</li>
+        <li id="banner-moneda"><span class="check">✓</span> Precios en USD de referencia · convierte a tu moneda local (COP, MXN, PEN, CLP, ARS…) en cada presupuesto.</li>
         <li><span class="check">✓</span> Descomposición técnica de cada partida: materiales, mano de obra y equipo.</li>
+        <li><span class="check">✓</span> Cambia un precio de recurso y se recalculan todas las partidas que lo usan.</li>
         <li><span class="check">✓</span> Se actualiza periódicamente para seguir el mercado.</li>
       </ul>
       {% endif %}
     </div>
     <div class="banner-cifras">
       <div class="cifra"><strong>{{ catalogo().partidas_txt }}</strong><span>partidas</span></div>
-      <div class="cifra"><strong>{{ catalogo().capitulos }}</strong><span>capítulos</span></div>
-      <div class="cifra"><strong>{{ catalogo().subcapitulos }}</strong><span>subcapítulos</span></div>
+      <div class="cifra"><strong>{{ catalogo().recursos_txt }}</strong><span>precios de recursos</span></div>
+      <div class="cifra"><strong>{{ catalogo().lineas_descomp_txt }}</strong><span>líneas de descomposición</span></div>
+      {% if catalogo().packs %}
+      <div class="cifra"><strong>{{ catalogo().packs }}</strong><span>packs de estancia</span></div>
+      {% endif %}
     </div>
   </div>
 </section>
@@ -675,12 +694,12 @@
     <div class="tarjeta">
       <div class="icon">📚</div>
       <h3>Tu catálogo, de una vez</h3>
-      <p>Partidas con precios, costes y descomposición técnica. Importa desde Excel o desde tu instalación local anterior. Cárgalo una vez, úsalo siempre.</p>
+      <p>Partidas con precios, costes y descomposición técnica. Importa desde Excel o desde tu instalación local anterior, o parte del catálogo incluido. Cárgalo una vez, úsalo siempre.</p>
     </div>
     <div class="tarjeta">
       <div class="icon">⚡</div>
       <h3>Presupuestos en minutos</h3>
-      <p>Capítulos, mediciones por tramos y totales en vivo. Duplica un presupuesto parecido y ajústalo en lugar de empezar de cero.</p>
+      <p>Capítulos, mediciones por zonas y totales en vivo. Pega partidas desde Excel (TSV), duplica, arrastra para reordenar, deshaz con Ctrl+Z y escribe sin ratón con los atajos «hands-free». Autosave local: nada se pierde.</p>
     </div>
     <div class="tarjeta">
       <div class="icon">📄</div>
@@ -701,7 +720,7 @@
     <div class="tarjeta">
       <div class="icon">🔓</div>
       <h3>Tus datos son tuyos</h3>
-      <p>Exporta a Excel y PDF cuando quieras. Sin permanencia: si te vas, te llevas tus datos. Así de simple.</p>
+      <p>Exporta a Excel y PDF cuando quieras, con copia de seguridad completa descargable. Sin permanencia: si te vas, te llevas tus datos. Así de simple.</p>
     </div>
     <div class="tarjeta">
       <div class="icon">🧱</div>
@@ -709,9 +728,9 @@
       <p>Ofrece al cliente opciones de producto (incluida, opcional, alternativa) y arma una estancia completa con un clic: el pack inserta el capítulo entero, escalado a los m².</p>
     </div>
     <div class="tarjeta">
-      <div class="icon">🖋️</div>
-      <h3>Propuesta para firmar</h3>
-      <p>Comparte un enlace secreto con tu cliente para que revise, acepte o rechace y firme. Tú controlas la caducidad y puedes revocarlo cuando quieras.</p>
+      <div class="icon">💬</div>
+      <h3>WhatsApp y email, integrados</h3>
+      <p>Envía el presupuesto por email con un clic o abre WhatsApp con el mensaje ya redactado: cliente, número, total y validez. Y la propuesta online con firma cierra la venta.</p>
     </div>
     <div class="tarjeta">
       <div class="icon">📊</div>
@@ -722,7 +741,7 @@
       {% if pais_actual %}
       <div class="icon">{{ pais_actual.bandera }}</div>
       <h3 id="fiscal-h3">Fiscal a tu medida · {{ pais_actual.nombre }}</h3>
-      <p id="fiscal-p">IVA {{ pais_actual.iva }}%, {{ pais_actual.id_fiscal }}, retención, operación exenta, número de control y cláusula cambiaria. Moneda {{ pais_actual.moneda }} {% if pais_actual.moneda != 'USD' %}({{ pais_actual.simbolo_local }}){% endif %} o USD, con tasa de referencia.</p>
+      <p id="fiscal-p">IVA {{ pais_actual.iva }}%, {{ pais_actual.id_fiscal }}, retención, operación exenta, número de control y cláusula cambiaria. Moneda {{ pais_actual.moneda }}{% if pais_actual.moneda != 'USD' %} ({{ pais_actual.simbolo_local }}){% endif %} o USD, con tasa de referencia.</p>
       {% else %}
       <div class="icon">🌎</div>
       <h3 id="fiscal-h3">Fiscal a tu medida · Latinoamérica</h3>
@@ -735,17 +754,17 @@
 <section class="franja venezuela" id="franja-pais">
   {% if pais_actual %}
   <h2 id="franja-h2">Pensado para {{ pais_actual.nombre }}, no adaptado después.</h2>
-  <p class="intro" id="franja-intro">No es una herramienta genérica traducida. {{ product_name }} habla el idioma de la obra en {{ pais_actual.nombre }}: precios, vocabulario y fiscalidad de aquí.</p>
+  <p class="intro" id="franja-intro">No es una herramienta genérica traducida. {{ product_name }} habla el idioma de la obra en {{ pais_actual.nombre }}: precios, vocabulario y fiscalidad de aquí. Hasta el ejemplo de esta página está en {{ ej.moneda }}.</p>
   <div class="grid3">
     <div class="tarjeta">
       <div class="icon">💵</div>
       <h3>Precios en {{ pais_actual.moneda }}</h3>
-      <p id="franja-precio-p">Cotiza en {{ pais_actual.moneda }} {% if pais_actual.moneda != 'USD' %}({{ pais_actual.simbolo_local }}){% endif %} o en USD como referencia regional. Sin conversiones improvisadas: tu tasa queda guardada en cada presupuesto.</p>
+      <p id="franja-precio-p">Cotiza en {{ pais_actual.moneda }}{% if pais_actual.moneda != 'USD' %} ({{ pais_actual.simbolo_local }}){% endif %} o en USD como referencia regional. Sin conversiones improvisadas: tu tasa queda guardada en cada presupuesto.</p>
     </div>
     <div class="tarjeta">
       <div class="icon">🧱</div>
       <h3>Vocabulario de aquí</h3>
-      <p id="franja-vocab-p">{{ pais_actual.vocab }}, y todos los nombres que usa tu cliente y tu cuadrilla en {{ pais_actual.nombre }}, no los de otro país.</p>
+      <p id="franja-vocab-p">{{ pais_actual.vocab }}, y todos los nombres que usa tu cliente y tu cuadrilla en {{ pais_actual.nombre }}, no los de otro país. La traducción se aplica al mostrar, sin duplicar el catálogo.</p>
     </div>
     <div class="tarjeta">
       <div class="icon">📈</div>
@@ -779,9 +798,9 @@
 <section class="franja">
   <h2>De cero a tu primer presupuesto en menos de 20 minutos</h2>
   <ul class="pasos">
-    <li>Crea tu cuenta y tu organización: nombre de tu empresa, moneda e IVA.{% if hay_prueba_gratuita() %} Tus {{ dias_de_prueba() }} días gratis empiezan aquí.{% endif %}</li>
-    <li>Parte de un catálogo con miles de partidas o importa el tuyo desde Excel.</li>
-    <li>Crea el cliente, arma el presupuesto por capítulos y descarga el PDF con tu logo.</li>
+    <li>Crea tu cuenta y tu organización: nombre de tu empresa, moneda e IVA — preconfigurados para tu país.{% if hay_prueba_gratuita() %} Tus {{ dias_de_prueba() }} días gratis empiezan aquí.{% endif %}</li>
+    <li>Parte de un catálogo con {{ catalogo().lineas_precio_txt }} líneas de precio ({{ catalogo().partidas_txt }} partidas + {{ catalogo().recursos_txt }} recursos) o importa el tuyo desde Excel.</li>
+    <li>Crea el cliente, arma el presupuesto por capítulos —o inserta un pack de estancia— y descarga el PDF con tu logo.</li>
   </ul>
   <p class="intro">¿Vienes de la versión de escritorio? Importa toda tu instalación —catálogo, clientes, presupuestos y proyectos— con el asistente integrado, con resumen previo y confirmación explícita.</p>
 </section>
@@ -804,7 +823,7 @@
       <p><span class="antes">109 US$ / año</span> — precio habitual</p>
       <ul>
         {% if hay_prueba_gratuita() %}<li>Empieza con {{ dias_de_prueba() }} días gratis</li>{% endif %}
-        <li>Todas las funciones incluidas</li>
+        <li>Todas las funciones incluidas: catálogo, APU, packs, firma y cobros</li>
         <li>Configuración asistida de tu empresa y catálogo</li>
         <li>Soporte directo por email</li>
         <li>Actualizaciones incluidas</li>
@@ -830,7 +849,7 @@
 
 <section class="franja cta-final" id="pago">
   <h2>¿Listo para dejar de presupuestar a mano?</h2>
-  <p class="intro">{{ product_name }} convierte tu catálogo, tus precios y tu cuadrilla en presupuestos con tu margen de beneficio, tu tiempo de obra y tu PDF con tu logo. Sin Excel, sin pegar y copiar.</p>
+  <p class="intro">{{ product_name }} convierte tu catálogo, tus precios y tu cuadrilla en presupuestos con tu margen de beneficio, tu tiempo de obra, la firma de tu cliente y tu PDF con tu logo. Sin Excel, sin pegar y copiar.</p>
   <div class="acciones mt-3">
     {% if hay_prueba_gratuita() %}
     <a class="btn btn-primary" href="/acceso">Empezar mis {{ dias_de_prueba() }} días gratis</a>
@@ -859,6 +878,14 @@
 <script id="paises-data" type="application/json" nonce="{{ request.state.csp_nonce }}">{{ paises | tojson }}</script>
 <script id="pais-actual-data" type="application/json" nonce="{{ request.state.csp_nonce }}">{{ (pais_actual or {}) | tojson }}</script>
 <script id="pais-generico-data" type="application/json" nonce="{{ request.state.csp_nonce }}">{{ pais_generico | tojson }}</script>
+<script id="ejemplo-monedas" type="application/json" nonce="{{ request.state.csp_nonce }}">{
+  "moneda": {{ ej.moneda | tojson }},
+  "simbolo": {{ ej.simbolo | tojson }},
+  "convierte": {{ ej.convierte | tojson }},
+  "tasa_txt": {{ ej.tasa_txt | tojson }},
+  "tasa_fecha": {{ ej.tasa_fecha | tojson }},
+  "iva": {{ ej.iva | tojson }}
+}</script>
 <script nonce="{{ request.state.csp_nonce }}" src="{{ 'js/pais_selector.js' | asset }}"></script>
 <script nonce="{{ request.state.csp_nonce }}" src="{{ 'js/landing-tour.js' | asset }}"></script>
 </body>

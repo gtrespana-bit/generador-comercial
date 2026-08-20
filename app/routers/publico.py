@@ -118,6 +118,7 @@ def _resolver_pais_landing(request: Request) -> tuple[dict | None, str]:
 def _contexto_landing(request: Request, pais_forzado: str | None = None) -> dict:
     """Contexto de la landing. Si pais_forzado viene por subdirectorio (/co/), manda sobre query/cookie."""
     from ..paises import PAIS_GENERICO, PAISES, lista_paises
+    from ..services.landing_ejemplo import contexto_ejemplo
 
     # Subdirectorio tiene prioridad
     if pais_forzado:
@@ -128,6 +129,7 @@ def _contexto_landing(request: Request, pais_forzado: str | None = None) -> dict
                 "pais_codigo": codigo,
                 "pais_generico": PAIS_GENERICO,
                 "paises": lista_paises(),
+                "ej": contexto_ejemplo(codigo),
             }
     pais_actual, pais_codigo = _resolver_pais_landing(request)
     return {
@@ -135,6 +137,7 @@ def _contexto_landing(request: Request, pais_forzado: str | None = None) -> dict
         "pais_codigo": pais_codigo,
         "pais_generico": PAIS_GENERICO,
         "paises": lista_paises(),
+        "ej": contexto_ejemplo(pais_codigo),
     }
 
 
