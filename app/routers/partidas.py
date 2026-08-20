@@ -761,9 +761,19 @@ async def guardar_partida_desde_presupuesto(request: Request, db: Session = Depe
 
 @router.get("/partidas/nueva", response_class=HTMLResponse)
 def nueva_partida_form(request: Request, db: Session = Depends(get_db)):
+    # El editor de partida trabaja en la moneda de la organización (igual que
+    # la lista y el POST, que revierte la conversión al guardar).
+    try:
+        from ..services.monedas import simbolo as _simbolo_iso
+        _moneda_n, _factor_n = _contexto_moneda(db)
+        _simbolo_n = _simbolo_iso(_moneda_n)
+    except Exception:
+        _moneda_n, _simbolo_n = "USD", "$"
     return TEMPLATES.TemplateResponse(request, "partidas/form.html", {
         "partida": None,
         "categorias": _categorias(db),
+        "moneda_local": _moneda_n,
+        "simbolo_local": _simbolo_n,
     })
 
 

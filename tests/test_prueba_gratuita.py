@@ -581,9 +581,14 @@ def test_la_migracion_encadena_con_la_cabeza_anterior():
         c5d6e7f8a9b0_merge_currency_heads as merge_migracion,
         e7b3c1d5a204_market_prices_grants_and_rls as precios_migracion,
     )
-    # La cabeza actual es el hotfix de permisos/RLS de los precios por mercado,
-    # colgado de la fusión de las ramas de moneda.
-    assert precios_migracion.revision == EXPECTED_ALEMBIC_HEAD
+    # La cabeza actual son los índices de rendimiento, colgados del hotfix
+    # de permisos/RLS de los precios por mercado, que a su vez cuelga de la
+    # fusión de las ramas de moneda.
+    from migrations.versions import (
+        b9f4d8a2c6e1_rendimiento_indices_calientes as indices_migracion,
+    )
+    assert indices_migracion.revision == EXPECTED_ALEMBIC_HEAD
+    assert indices_migracion.down_revision == precios_migracion.revision
     assert precios_migracion.down_revision == merge_migracion.revision
     assert tasa_migracion.down_revision == etiqueta_migracion.revision
     assert etiqueta_migracion.down_revision == auditoria_migracion.revision

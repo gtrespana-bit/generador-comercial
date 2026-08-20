@@ -8,13 +8,15 @@ membresía que CotizaT guarda en PostgreSQL.
 from __future__ import annotations
 
 from dataclasses import dataclass
+import hashlib
+import http.client
 import json
 import logging
 import os
+import threading
+import time
 from typing import Any
-from urllib.error import HTTPError, URLError
 from urllib.parse import quote, urlparse
-from urllib.request import Request as UrlRequest, urlopen
 from uuid import UUID
 
 log = logging.getLogger("cotizat")
@@ -26,6 +28,71 @@ from starlette.responses import Response
 ACCESS_COOKIE = "cotizat_access_token"
 REFRESH_COOKIE = "cotizat_refresh_token"
 ORGANIZATION_COOKIE = "cotizat_organization_id"
+
+#: Segundos que se reutiliza una identidad ya validada por red con el mismo
+#: access token. Evita un viaje completo a GoTrue (DNS+TCP+TLS+petición) en
+#: CADA página; 0 desactiva la caché. La expiración propia del JWT manda:
+#: nunca se cachea más allá del 90 % de su vida útil restante.
+AUTH_CACHE_TTL = float(os.environ.get("COTIZAT_AUTH_CACHE_TTL", "180"))
+_AUTH_CACHE: dict[str, tuple[float, "SupabaseIdentity"]] = {}
+_AUTH_CACHE_MAX = 512
+_AUTH_CACHE_BLOQUEO = threading.Lock()
+
+
+def _reset_cache_identidades() -> None:
+    """Vacía la caché de identidades (pruebas y cambios de configuración)."""
+    with _AUTH_CACHE_BLOQUEO:
+        _AUTH_CACHE.clear()
+
+
+def _exp_jwt(token: str) -> float | None:
+    """Lee ``exp`` del payload del JWT sin verificar la firma (solo caché)."""
+    try:
+        segmento = token.split(".")[1]
+        segmento += "=" * (-len(segmento) % 4)
+        from base64 import urlsafe_b64decode
+
+        payload = json.loads(urlsafe_b64decode(segmento.encode("ascii")))
+        exp = payload.get("exp")
+        return float(exp) if isinstance(exp, (int, float)) else None
+    except Exception:
+        return None
+
+
+def _identidad_en_cache(token: str) -> "SupabaseIdentity | None":
+    if AUTH_CACHE_TTL <= 0 or not token:
+        return None
+    clave = hashlib.sha256(token.encode("utf-8")).hexdigest()
+    ahora = time.monotonic()
+    with _AUTH_CACHE_BLOQUEO:
+        entrada = _AUTH_CACHE.get(clave)
+        if entrada is None:
+            return None
+        vence_cache, identidad = entrada
+        if ahora >= vence_cache:
+            _AUTH_CACHE.pop(clave, None)
+            return None
+        return identidad
+
+
+def _guardar_identidad_en_cache(token: str, identidad: "SupabaseIdentity") -> None:
+    if AUTH_CACHE_TTL <= 0 or not token:
+        return
+    ttl = AUTH_CACHE_TTL
+    exp = _exp_jwt(token)
+    if exp is not None:
+        vida_restante = exp - time.time()
+        if vida_restante <= 30:
+            return  # caduca en breve: no merece caché
+        ttl = min(ttl, vida_restante * 0.9)
+    clave = hashlib.sha256(token.encode("utf-8")).hexdigest()
+    with _AUTH_CACHE_BLOQUEO:
+        if len(_AUTH_CACHE) >= _AUTH_CACHE_MAX:
+            ahora = time.monotonic()
+            vencidas = [k for k, (v, _i) in _AUTH_CACHE.items() if v <= ahora]
+            for k in vencidas or list(_AUTH_CACHE)[: max(1, _AUTH_CACHE_MAX // 4)]:
+                _AUTH_CACHE.pop(k, None)
+        _AUTH_CACHE[clave] = (time.monotonic() + ttl, identidad)
 
 
 def _parece_jwt(value: str) -> bool:
@@ -205,8 +272,42 @@ def _tokens_from_payload(payload: dict[str, Any]) -> AuthTokens:
 class SupabaseAuthClient:
     """Cliente pequeño para GoTrue sin incorporar el SDK completo al runtime."""
 
+    #: Conexión HTTP reutilizable por hilo. ``urlopen`` abre una conexión
+    #: nueva (DNS + TCP + TLS) por petición; con keep-alive, las llamadas
+    #: repetidas a GoTrue dentro del mismo proceso viajan por la misma
+    #: conexión y tardan milisegundos en vez de centenas de ellos.
+    _conexiones = threading.local()
+
     def __init__(self, settings: SupabaseAuthSettings | None = None):
         self.settings = settings or SupabaseAuthSettings.from_environment()
+
+    def _conexion(self) -> http.client.HTTPSConnection:
+        destino = urlparse(self.settings.url)
+        conexion = getattr(self._conexiones, "actual", None)
+        marca = (destino.scheme, destino.hostname, destino.port)
+        if conexion is not None and getattr(conexion, "marca", None) == marca:
+            return conexion
+        if conexion is not None:
+            try:
+                conexion.close()
+            except Exception:
+                pass
+        if destino.scheme == "http":
+            nueva = http.client.HTTPConnection(destino.hostname, destino.port or 80, timeout=12)
+        else:
+            nueva = http.client.HTTPSConnection(destino.hostname, destino.port or 443, timeout=12)
+        nueva.marca = marca  # type: ignore[attr-defined]
+        self._conexiones.actual = nueva
+        return nueva
+
+    def _cerrar_conexion(self) -> None:
+        conexion = getattr(self._conexiones, "actual", None)
+        self._conexiones.actual = None
+        if conexion is not None:
+            try:
+                conexion.close()
+            except Exception:
+                pass
 
     def _request_json(
         self,
@@ -220,42 +321,47 @@ class SupabaseAuthClient:
             "apikey": self.settings.publishable_key,
             "Accept": "application/json",
             "User-Agent": "CotizaT/1.0",
+            "Connection": "keep-alive",
         }
         if body is not None:
             headers["Content-Type"] = "application/json"
         if access_token:
             headers["Authorization"] = f"Bearer {access_token}"
-        request = UrlRequest(
-            f"{self.settings.url}{path}",
-            data=body,
-            headers=headers,
-            method=method,
-        )
-        try:
-            with urlopen(request, timeout=12) as response:  # noqa: S310 (URL validada)
-                raw = response.read(1024 * 1024)
-        except HTTPError as exc:
+
+        for intento in (0, 1):
+            conexion = self._conexion()
+            try:
+                conexion.request(method, path, body=body, headers=headers)
+                respuesta = conexion.getresponse()
+                estado = respuesta.status
+                raw = respuesta.read(1024 * 1024)
+                break
+            except (http.client.HTTPException, OSError):
+                # La conexión keep-alive puede estar muerta (timeout del
+                # servidor o reciclaje del proceso): se descarta y se reintenta
+                # UNA vez con conexión nueva antes de declarar el fallo.
+                self._cerrar_conexion()
+                if intento:
+                    raise AuthError("No se pudo contactar con Supabase Auth.") from None
+        else:  # pragma: no cover - el bucle siempre termina en break o raise
+            raise AuthError("No se pudo contactar con Supabase Auth.")
+
+        if not (200 <= estado < 300):
             # El detalle de GoTrue no contiene la contraseña ni el token en
             # claro, pero revela la causa real (otp_expired, email no
             # confirmado, credenciales inválidas…). Se registra en el log del
             # servidor para poder diagnosticar, y al usuario se le sigue
             # mostrando un mensaje propio que no filtra nada.
-            try:
-                cuerpo = (exc.read(512) or b"").decode("utf-8", "replace")
-            except Exception:  # noqa: BLE001 - el cuerpo es solo informativo
-                cuerpo = ""
             log.warning(
                 "Supabase Auth %s %s -> HTTP %s: %s",
                 method,
                 path,
-                exc.code,
-                (cuerpo or "(sin cuerpo)")[:300],
+                estado,
+                (raw[:300].decode("utf-8", "replace") or "(sin cuerpo)"),
             )
-            if exc.code in {400, 401, 403, 422}:
-                raise InvalidCredentials("Email, contraseña o sesión no válidos.") from exc
-            raise AuthError("Supabase Auth no pudo completar la solicitud.") from exc
-        except (URLError, TimeoutError, OSError) as exc:
-            raise AuthError("No se pudo contactar con Supabase Auth.") from exc
+            if estado in {400, 401, 403, 422}:
+                raise InvalidCredentials("Email, contraseña o sesión no válidos.")
+            raise AuthError("Supabase Auth no pudo completar la solicitud.")
         if not raw.strip():
             # ``/auth/v1/logout`` responde 204 sin cuerpo: no es un error.
             return {}
@@ -465,12 +571,21 @@ def clear_auth_cookies(
 
 
 def identity_for_request(request: Request) -> SupabaseIdentity:
-    """Valida la sesión y la renueva una vez cuando el access token caducó."""
+    """Valida la sesión y la renueva una vez cuando el access token caducó.
+
+    La identidad verificada por red se reutiliza durante un tiempo corto
+    (:data:`AUTH_CACHE_TTL`) mientras el token no esté a punto de caducar:
+    sin esta caché, cada página paginaba un viaje completo a GoTrue.
+    """
     cached = getattr(request.state, "supabase_identity", None)
     if isinstance(cached, SupabaseIdentity):
         return cached
     client = SupabaseAuthClient()
     access_token = request.cookies.get(ACCESS_COOKIE, "")
+    identidad_cacheada = _identidad_en_cache(access_token)
+    if identidad_cacheada is not None:
+        request.state.supabase_identity = identidad_cacheada
+        return identidad_cacheada
     try:
         identity = client.get_user(access_token)
     except (InvalidCredentials, AuthenticationRequired):
@@ -483,7 +598,12 @@ def identity_for_request(request: Request) -> SupabaseIdentity:
             raise AuthenticationRequired("Tu sesión terminó. Vuelve a iniciar sesión.") from exc
         request.state.cotizat_refreshed_tokens = tokens
         identity = tokens.identity
+        # La renovación entrega un access token nuevo (ya en la cookie que
+        # escribirá el middleware): cachearlo evita otra validación por red
+        # en la siguiente petición.
+        _guardar_identidad_en_cache(tokens.access_token, tokens.identity)
     request.state.supabase_identity = identity
+    _guardar_identidad_en_cache(access_token, identity)
     return identity
 
 

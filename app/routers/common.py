@@ -36,7 +36,7 @@ from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, Resp
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import or_
-from sqlalchemy.orm import Session, load_only
+from sqlalchemy.orm import Session, joinedload, load_only, selectinload
 from starlette.middleware.gzip import GZipMiddleware
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
@@ -448,6 +448,62 @@ def _config(db: Session) -> Configuracion:
         asegurar_config(db)
         cfg = db.query(Configuracion).first()
     return cfg
+
+
+def _importe_en_moneda_vista(valor, presupuesto, moneda_vista: str, factor_vista: float):
+    """Expresa un importe de un presupuesto en la moneda de la vista.
+
+    Cada presupuesto congela su moneda contractual; el panel y los reportes
+    agregan presupuestos de la organización y deben hacerlo en UNA sola
+    moneda. El puente es USD usando la tasa congelada del propio presupuesto
+    (``tipo_cambio``: unidades de la moneda contractual por USD) y la tasa de
+    la organización para llegar a la moneda de la vista.
+
+    Devuelve ``None`` cuando no hay tasa para el puente: nunca se inventa la
+    conversión (el llamador excluye ese importe del agregado).
+    """
+    if valor is None:
+        return None
+    from ..utils import normalizar_moneda
+
+    moneda_p = normalizar_moneda(presupuesto.moneda or "USD", "USD")
+    vista = normalizar_moneda(moneda_vista or "USD", "USD")
+    importe = float(valor)
+    if moneda_p == vista:
+        return importe
+    if moneda_p == "USD":
+        usd = importe
+    else:
+        try:
+            tasa_p = float(presupuesto.tipo_cambio or 0)
+        except (TypeError, ValueError):
+            tasa_p = 0.0
+        if tasa_p <= 0:
+            return None
+        usd = importe / tasa_p
+    from ..services.tasa import tasa_convertir_precio
+
+    return tasa_convertir_precio(usd, factor_vista)
+
+
+def _opciones_partidas_presupuesto():
+    """Opciones de carga temprana del grafo económico de presupuestos.
+
+    ``p.total``, ``p.subtotal``… recorren capítulos → partidas → mediciones,
+    y la plantilla añade ``p.cliente``. Sin estas opciones cada acceso
+    dispara consultas perezosas individuales (N+1): una lista de 25
+    presupuestos multiplicaba las vueltas a la base por 4-5 por fila. Con
+    ``selectinload`` el grafo completo se trae en ~5 consultas fijas.
+    """
+    return (
+        joinedload(Presupuesto.cliente),
+        selectinload(Presupuesto.capitulos)
+        .selectinload(Capitulo.partidas)
+        .selectinload(PresupuestoItem.mediciones),
+        selectinload(Presupuesto.capitulos)
+        .selectinload(Capitulo.partidas)
+        .selectinload(PresupuestoItem.descomposicion_cype),
+    )
 
 
 def _tiempos_catalogo(db: Session, presupuesto: Presupuesto | None) -> dict:
@@ -1214,7 +1270,17 @@ def _contexto_moneda(db: Session, moneda=None, tasa=None) -> tuple[str, float]:
             tasa = None
         if not tasa and codigo == moneda_cfg:
             tasa = tasa_cfg
-    return codigo or "USD", factor_conversion_local(codigo or "USD", tasa)
+    from ..utils import normalizar_moneda
+
+    vista = normalizar_moneda(codigo or "USD", "USD")
+    factor = factor_conversion_local(vista, tasa)
+    if factor == 1.0 and vista not in ("USD", "PAB"):
+        # Sin tasa válida no se inventa la conversión y tampoco se etiqueta
+        # con una divisa que los importes no tienen: se muestra la base
+        # (USD). Antes una organización con moneda local sin tasa veía
+        # «MXN» sobre cifras guardadas en dólares.
+        return "USD", 1.0
+    return vista, factor
 
 
 def _convertir(valor, factor: float):
@@ -1357,7 +1423,17 @@ def _actualizar_usos_recursos(db: Session):
         pass
 
 
-def _sincronizar_recursos(db: Session):
+#: Control del intervalo mínimo entre sincronizaciones de recursos por
+#: organización (ver :func:`_sincronizar_recursos`). ``time`` y ``threading``
+#: se importan aquí para no ensanchar el bloque superior.
+import threading as _threading
+import time as _time
+
+_SYNC_RECURSOS_ULTIMA: dict = {}
+_SYNC_RECURSOS_BLOQUEO = _threading.Lock()
+
+
+def _sincronizar_recursos(db: Session, forzar: bool = True):
     """Crea los Recursos (precios unitarios) que falten desde las
     descomposiciones de partidas y presupuestos, y actualiza sus usos.
 
@@ -1365,7 +1441,25 @@ def _sincronizar_recursos(db: Session):
     abrir /recursos y tras cada guardado que pueda crear recursos nuevos.
     Así los tabs de mano de obra / materiales / etc. reflejan siempre los
     recursos que se escriben al crear o editar partidas.
+
+    ``forzar=False`` (usado al abrir la vista) respeta un intervalo mínimo
+    por organización: la sincronización recorre todos los descompuestos del
+    catálogo y, con la base remota del despliegue web, ejecutarla en cada
+    visita hacía la página lentísima. Los guardados la fuerzan siempre para
+    que un recurso recién escrito aparezca de inmediato.
     """
+    if not forzar:
+        try:
+            ttl_sync = float(os.environ.get("COTIZAT_SYNC_RECURSOS_TTL", "600"))
+        except (TypeError, ValueError):
+            ttl_sync = 600.0
+        if ttl_sync > 0:
+            clave_sync = (db.info.get("organizacion_id") or 0, id(db.get_bind()))
+            ahora_sync = _time.monotonic()
+            with _SYNC_RECURSOS_BLOQUEO:
+                if ahora_sync - _SYNC_RECURSOS_ULTIMA.get(clave_sync, 0.0) < ttl_sync:
+                    return
+                _SYNC_RECURSOS_ULTIMA[clave_sync] = ahora_sync
     try:
         from ..services.recursos import sincronizar_recursos_desde_catalogo
         sincronizar_recursos_desde_catalogo(db)

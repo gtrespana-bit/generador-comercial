@@ -194,7 +194,12 @@ def sincronizar_usuario_auth(
         raise VinculoIdentidadError("La identidad autenticada no es válida.")
 
     usuario = db.query(Usuario).filter(Usuario.auth_user_id == auth_user_id).first()
-    por_email = db.query(Usuario).filter(Usuario.email == email).first()
+    # El segundo SELECT solo es necesario cuando no hay perfil vinculado o el
+    # email cambió: en el caso normal (mismo usuario, mismo email) ahorra una
+    # consulta por petición en el despliegue web.
+    por_email = None
+    if usuario is None or usuario.email != email:
+        por_email = db.query(Usuario).filter(Usuario.email == email).first()
     if usuario is not None and por_email is not None and usuario.id != por_email.id:
         raise VinculoIdentidadError("La identidad y el email pertenecen a perfiles distintos.")
     if usuario is None:
@@ -458,6 +463,9 @@ class Presupuesto(TenantMixin, Base):
     __tablename__ = "presupuestos"
     __table_args__ = (
         UniqueConstraint("organizacion_id", "numero", name="uq_presupuesto_organizacion_numero"),
+        # Filtros habituales del listado y del panel (estado por
+        # organización) y join con clientes para la búsqueda.
+        Index("ix_presupuestos_org_estado", "organizacion_id", "estado"),
     )
 
     id = Column(Integer, primary_key=True)
@@ -501,7 +509,7 @@ class Presupuesto(TenantMixin, Base):
     retencion_pct = Column(Float, default=0.0)
     operacion_exenta = Column(Boolean, default=False)
     clausula_cambiaria = Column(Text, default="")
-    client_id = Column(Integer, ForeignKey("clientes.id"), nullable=False)
+    client_id = Column(Integer, ForeignKey("clientes.id"), nullable=False, index=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -630,7 +638,7 @@ class PresupuestoVersion(TenantMixin, Base):
     __tablename__ = "presupuesto_versiones"
 
     id = Column(Integer, primary_key=True)
-    presupuesto_id = Column(Integer, ForeignKey("presupuestos.id"), nullable=False)
+    presupuesto_id = Column(Integer, ForeignKey("presupuestos.id"), nullable=False, index=True)
     numero_version = Column(Integer, nullable=False)
     fecha = Column(DateTime, default=datetime.utcnow)
     motivo = Column(String(500), default="")
@@ -726,7 +734,7 @@ class Capitulo(TenantMixin, Base):
     __tablename__ = "capitulos"
 
     id = Column(Integer, primary_key=True)
-    presupuesto_id = Column(Integer, ForeignKey("presupuestos.id"), nullable=False)
+    presupuesto_id = Column(Integer, ForeignKey("presupuestos.id"), nullable=False, index=True)
     nombre = Column(String(200), nullable=False)
     orden = Column(Integer, default=0)
 
@@ -763,7 +771,7 @@ class PresupuestoItem(TenantMixin, Base):
     __tablename__ = "presupuesto_items"
 
     id = Column(Integer, primary_key=True)
-    capitulo_id = Column(Integer, ForeignKey("capitulos.id"), nullable=True)
+    capitulo_id = Column(Integer, ForeignKey("capitulos.id"), nullable=True, index=True)
     nombre = Column(String(250), default="")
     descripcion = Column(Text, default="")
     unidad = Column(String(20), default="ud")
@@ -774,7 +782,7 @@ class PresupuestoItem(TenantMixin, Base):
     # Partida maestra del catálogo desde la que se insertó. Permite distinguir
     # un cambio «solo en este presupuesto» de una actualización del catálogo
     # sin afectar a presupuestos ya creados (sus precios están copiados aquí).
-    partida_catalogo_id = Column(Integer, ForeignKey("partidas.id"), nullable=True)
+    partida_catalogo_id = Column(Integer, ForeignKey("partidas.id"), nullable=True, index=True)
     # Producto presupuestado (opcional)
     producto_nombre = Column(String(250), default="")
     producto_precio = Column(Float, nullable=True)
@@ -1090,7 +1098,7 @@ class Medicion(TenantMixin, Base):
     __tablename__ = "mediciones"
 
     id = Column(Integer, primary_key=True)
-    partida_id = Column(Integer, ForeignKey("presupuesto_items.id"), nullable=False)
+    partida_id = Column(Integer, ForeignKey("presupuesto_items.id"), nullable=False, index=True)
     concepto = Column(String(250), default="")
     cantidad = Column(Float, default=0.0)
     orden = Column(Integer, default=0)
@@ -1120,7 +1128,7 @@ class PresupuestoItemProducto(TenantMixin, Base):
     __tablename__ = "presupuesto_item_productos"
 
     id = Column(Integer, primary_key=True)
-    partida_id = Column(Integer, ForeignKey("presupuesto_items.id"), nullable=False)
+    partida_id = Column(Integer, ForeignKey("presupuesto_items.id"), nullable=False, index=True)
     nombre = Column(String(250), default="")
     descripcion = Column(Text, default="")
     precio = Column(Float, default=0.0)
@@ -1321,6 +1329,11 @@ class Partida(TenantMixin, Base):
             "organizacion_id", "catalogo_uid",
             name="uq_partida_organizacion_catalogo_uid",
         ),
+        # Consultas del catálogo: filtro de visibilidad, árbol lateral por
+        # capítulo/subcapítulo y recuentos de la auditoría de versiones.
+        Index("ix_partidas_org_oculta", "organizacion_id", "oculta"),
+        Index("ix_partidas_org_clasificacion", "organizacion_id", "categoria", "subcategoria"),
+        Index("ix_partidas_org_version", "organizacion_id", "version_catalogo"),
     )
 
     id = Column(Integer, primary_key=True)
@@ -1566,7 +1579,7 @@ class NotaSeguimiento(TenantMixin, Base):
     __tablename__ = "notas_seguimiento"
 
     id = Column(Integer, primary_key=True)
-    presupuesto_id = Column(Integer, ForeignKey("presupuestos.id"), nullable=False)
+    presupuesto_id = Column(Integer, ForeignKey("presupuestos.id"), nullable=False, index=True)
     texto = Column(Text, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 
@@ -1603,9 +1616,9 @@ class Factura(TenantMixin, Base):
     estado = Column(String(20), default="emitida")     # emitida / anulada
     notas = Column(Text, default="")
     condiciones = Column(Text, default="")
-    presupuesto_id = Column(Integer, ForeignKey("presupuestos.id"), nullable=True)
+    presupuesto_id = Column(Integer, ForeignKey("presupuestos.id"), nullable=True, index=True)
     presupuesto_version_id = Column(Integer, ForeignKey("presupuesto_versiones.id"), nullable=True)
-    client_id = Column(Integer, ForeignKey("clientes.id"), nullable=False)
+    client_id = Column(Integer, ForeignKey("clientes.id"), nullable=False, index=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     cliente = relationship("Cliente")
@@ -1665,7 +1678,7 @@ class FacturaCapitulo(TenantMixin, Base):
     __tablename__ = "factura_capitulos"
 
     id = Column(Integer, primary_key=True)
-    factura_id = Column(Integer, ForeignKey("facturas.id"), nullable=False)
+    factura_id = Column(Integer, ForeignKey("facturas.id"), nullable=False, index=True)
     nombre = Column(String(200), nullable=False)
     orden = Column(Integer, default=0)
 
@@ -1687,7 +1700,7 @@ class FacturaItem(TenantMixin, Base):
     __tablename__ = "factura_items"
 
     id = Column(Integer, primary_key=True)
-    capitulo_id = Column(Integer, ForeignKey("factura_capitulos.id"), nullable=False)
+    capitulo_id = Column(Integer, ForeignKey("factura_capitulos.id"), nullable=False, index=True)
     nombre = Column(String(250), default="")
     descripcion = Column(Text, default="")
     unidad = Column(String(20), default="ud")
@@ -1827,6 +1840,39 @@ def _columnas(engine, tabla):
     if not insp.has_table(tabla):
         return None
     return {c["name"] for c in insp.get_columns(tabla)}
+
+
+def _tablas(engine):
+    """Nombres de las tablas presentes (para crear índices solo si aplica)."""
+    return set(inspect(engine).get_table_names())
+
+
+#: Índices de rendimiento para instalaciones SQLite existentes. Mismos
+#: nombres que ``app/models.py`` y que la migración Alembic b9f4d8a2c6e1.
+_INDICES_RENDIMIENTO = (
+    ("partidas", "ix_partidas_org_oculta", ("organizacion_id", "oculta")),
+    ("partidas", "ix_partidas_org_clasificacion", ("organizacion_id", "categoria", "subcategoria")),
+    ("partidas", "ix_partidas_org_version", ("organizacion_id", "version_catalogo")),
+    ("presupuestos", "ix_presupuestos_org_estado", ("organizacion_id", "estado")),
+    ("presupuestos", "ix_presupuestos_client_id", ("client_id",)),
+    ("presupuesto_versiones", "ix_presupuesto_versiones_presupuesto_id", ("presupuesto_id",)),
+    ("capitulos", "ix_capitulos_presupuesto_id", ("presupuesto_id",)),
+    ("presupuesto_items", "ix_presupuesto_items_capitulo_id", ("capitulo_id",)),
+    ("presupuesto_items", "ix_presupuesto_items_partida_catalogo_id", ("partida_catalogo_id",)),
+    ("mediciones", "ix_mediciones_partida_id", ("partida_id",)),
+    ("presupuesto_item_productos", "ix_presupuesto_item_productos_partida_id", ("partida_id",)),
+    ("notas_seguimiento", "ix_notas_seguimiento_presupuesto_id", ("presupuesto_id",)),
+    ("presupuesto_anexos", "ix_presupuesto_anexos_presupuesto_id", ("presupuesto_id",)),
+    ("facturas", "ix_facturas_presupuesto_id", ("presupuesto_id",)),
+    ("facturas", "ix_facturas_client_id", ("client_id",)),
+    ("factura_capitulos", "ix_factura_capitulos_factura_id", ("factura_id",)),
+    ("factura_items", "ix_factura_items_capitulo_id", ("capitulo_id",)),
+    ("cambios_alcance", "ix_cambios_alcance_proyecto_id", ("proyecto_id",)),
+    ("cambio_alcance_items", "ix_cambio_alcance_items_cambio_id", ("cambio_id",)),
+    ("pagos", "ix_pagos_proyecto_id", ("proyecto_id",)),
+    ("pagos", "ix_pagos_presupuesto_id", ("presupuesto_id",)),
+    ("pagos", "ix_pagos_factura_id", ("factura_id",)),
+)
 
 
 def _sql_defecto(columna):
@@ -2336,10 +2382,25 @@ def migrar(engine):
                 },
             )
 
+        # Índices de rendimiento (mismos nombres que app/models.py y que la
+        # migración Alembic b9f4d8a2c6e1). ``create_all`` solo crea tablas
+        # nuevas: una instalación SQLite existente debe añadirlos aquí.
+        # CREATE INDEX IF NOT EXISTS es idempotente y barato.
+        for tabla, nombre, columnas_idx in _INDICES_RENDIMIENTO:
+            if tabla not in (_tablas(engine) or set()):
+                continue
+            try:
+                conn.execute(text(
+                    f"CREATE INDEX IF NOT EXISTS {nombre} ON {tabla} "
+                    f"({', '.join(columnas_idx)})"
+                ))
+            except Exception:
+                pass  # una base muy antigua sin la columna: no bloquear arranque
+
 class AnexoPresupuesto(TenantMixin, Base):
     __tablename__ = "presupuesto_anexos"
     id = Column(Integer, primary_key=True)
-    presupuesto_id = Column(Integer, ForeignKey("presupuestos.id"), nullable=False)
+    presupuesto_id = Column(Integer, ForeignKey("presupuestos.id"), nullable=False, index=True)
     nombre = Column(String(250), nullable=False)
     archivo = Column(String(300), nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
@@ -2404,7 +2465,7 @@ class Proyecto(TenantMixin, Base):
 class CambioAlcance(TenantMixin, Base):
     __tablename__ = "cambios_alcance"
     id = Column(Integer, primary_key=True)
-    proyecto_id = Column(Integer, ForeignKey("proyectos.id"), nullable=False)
+    proyecto_id = Column(Integer, ForeignKey("proyectos.id"), nullable=False, index=True)
     numero = Column(Integer, nullable=False)
     descripcion = Column(Text, default="")
     moneda = Column(String(10), default="USD")
@@ -2418,7 +2479,7 @@ class CambioAlcance(TenantMixin, Base):
 class CambioAlcanceItem(TenantMixin, Base):
     __tablename__ = "cambio_alcance_items"
     id = Column(Integer, primary_key=True)
-    cambio_id = Column(Integer, ForeignKey("cambios_alcance.id"), nullable=False)
+    cambio_id = Column(Integer, ForeignKey("cambios_alcance.id"), nullable=False, index=True)
     tipo = Column(String(15), default="agregado")
     nombre = Column(String(250), default="")
     cantidad = Column(Float, default=0.0)
@@ -2431,9 +2492,9 @@ class CambioAlcanceItem(TenantMixin, Base):
 class Pago(TenantMixin, Base):
     __tablename__ = "pagos"
     id = Column(Integer, primary_key=True)
-    proyecto_id = Column(Integer, ForeignKey("proyectos.id"), nullable=True)
-    presupuesto_id = Column(Integer, ForeignKey("presupuestos.id"), nullable=True)
-    factura_id = Column(Integer, ForeignKey("facturas.id"), nullable=True)
+    proyecto_id = Column(Integer, ForeignKey("proyectos.id"), nullable=True, index=True)
+    presupuesto_id = Column(Integer, ForeignKey("presupuestos.id"), nullable=True, index=True)
+    factura_id = Column(Integer, ForeignKey("facturas.id"), nullable=True, index=True)
     fecha = Column(Date, default=date.today)
     importe = Column(Float, default=0.0)
     moneda = Column(String(10), default="USD")

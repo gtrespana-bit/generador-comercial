@@ -33,19 +33,19 @@
 
 <div class="card">
   {% if presupuestos %}
-  <table class="table">
+  <table class="table table-mobile-cards">
     <thead>
       <tr><th>N.º</th><th>Fecha</th><th>Cliente</th><th>Estado</th><th class="right">Total</th><th class="right">Acciones</th></tr>
     </thead>
     <tbody>
       {% for p in presupuestos %}
       <tr>
-        <td><a class="link" href="/presupuestos/{{ p.id }}">{{ p.numero }}</a>{% if p.es_demo %} <span class="badge">Demo</span>{% endif %}</td>
-        <td>{{ p.fecha | fecha }}</td>
-        <td>{{ p.cliente.nombre }}</td>
-        <td><span class="badge badge-{{ p.estado }}">{{ p.estado | capitalize }}</span></td>
-        <td class="right"><strong>{{ p.total | money_iso(p.moneda) }}</strong></td>
-        <td class="right">
+        <td data-label="N.º"><a class="link" href="/presupuestos/{{ p.id }}">{{ p.numero }}</a>{% if p.es_demo %} <span class="badge">Demo</span>{% endif %}</td>
+        <td data-label="Fecha">{{ p.fecha | fecha }}</td>
+        <td data-label="Cliente">{{ p.cliente.nombre }}</td>
+        <td data-label="Estado"><span class="badge badge-{{ p.estado }}">{{ p.estado | capitalize }}</span></td>
+        <td class="right" data-label="Total"><strong>{{ p.total | money_iso(p.moneda) }}</strong></td>
+        <td class="actions-cell" data-label="Acciones">
           <div class="row-actions list-row-actions">
             <a class="btn btn-sm btn-ghost" href="/presupuestos/{{ p.id }}">Ver</a>
             <a class="btn btn-sm" href="/presupuestos/{{ p.id }}/editar">Editar</a>

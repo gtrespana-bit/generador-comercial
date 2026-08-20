@@ -44,8 +44,12 @@ def listar_presupuestos(
     por_pagina = 25
     paginas = max(1, (total + por_pagina - 1) // por_pagina)
     pagina = max(1, min(pagina, paginas))
+    # Carga temprana de cliente y del grafo de partidas: la plantilla pinta
+    # ``p.cliente.nombre`` y ``p.total`` en cada fila y, sin ella, cada fila
+    # lanzaba sus propias consultas perezosas (N+1).
     presupuestos = (
-        query.order_by(Presupuesto.id.desc())
+        query.options(*_opciones_partidas_presupuesto())
+        .order_by(Presupuesto.id.desc())
         .offset((pagina - 1) * por_pagina)
         .limit(por_pagina)
         .all()
@@ -939,36 +943,39 @@ async def confirmar_importacion_presupuesto(request: Request, db: Session = Depe
 def _recursos_editor_mercado(db, recursos, cfg, moneda, tasa):
     """Precio efectivo de cada recurso para el editor, sin poder romper la vista.
 
-    Cada consulta de precio de mercado va dentro de un SAVEPOINT. Si la tabla
+    La consulta de precios de mercado va dentro de un SAVEPOINT. Si la tabla
     de precios falla (permisos, esquema desfasado, datos corruptos) se deshace
     solo ese punto y la sesión sigue utilizable: sin el SAVEPOINT, PostgreSQL
     dejaba la transacción abortada y la siguiente consulta de la página
     (plantillas, categorías…) moría con ``InFailedSqlTransaction``, dejando la
     pantalla «Nuevo presupuesto» completamente inaccesible.
+
+    Rendimiento: TODOS los recursos se resuelven con una única consulta en
+    lote. Antes cada recurso abría su propio SAVEPOINT y ejecutaba dos
+    SELECT, unos 1.200 viajes a la base con el catálogo completo.
     """
     from sqlalchemy.exc import SQLAlchemyError
 
     from ..services.traduccion import codigo_desde_pais
-    from ..services.precios_mercado import resolver_precio_para_presupuesto
+    from ..services.precios_mercado import resolver_precios_para_presupuesto_lote
     pais = codigo_desde_pais(getattr(cfg, "empresa_pais", "") or "") or "VE"
     org_id = int(db.info.get("organizacion_id") or 0)
+    efectivos: dict[int, dict] = {}
+    try:
+        with db.begin_nested():
+            efectivos = resolver_precios_para_presupuesto_lote(
+                db, recursos, pais, org_id or None, moneda,
+                tasa_usd_presupuesto=tasa,
+            )
+    except SQLAlchemyError:
+        log.exception("No se pudo resolver el precio de mercado de los recursos.")
+        efectivos = {}
+    except Exception:
+        efectivos = {}
     salida = []
-    # Si la tabla de precios de mercado no está disponible, no tiene sentido
-    # reintentarla recurso a recurso: se usa el precio base del catálogo.
-    mercado_disponible = True
     for r in recursos:
         item = {"id": r.id, "codigo": r.codigo, "descripcion": r.descripcion, "unidad": r.unidad, "categoria": r.categoria, "grupo": r.grupo, "precio": r.precio, "moneda": getattr(r, "moneda", None) or "USD", "proveedor": r.proveedor, "usos": r.usos}
-        efectivo = None
-        if mercado_disponible:
-            try:
-                with db.begin_nested():
-                    efectivo = resolver_precio_para_presupuesto(db, r.id, pais, org_id, moneda, tasa_mercado_a_usd=None, tasa_usd_presupuesto=tasa)
-            except SQLAlchemyError:
-                log.exception("No se pudo resolver el precio de mercado del recurso %s", r.id)
-                mercado_disponible = False
-                efectivo = None
-            except Exception:
-                efectivo = None
+        efectivo = efectivos.get(r.id)
         if efectivo is not None:
             if efectivo.get("precio") is not None and not efectivo.get("requiere_tasa"):
                 item["precio"] = efectivo["precio"]
@@ -2407,7 +2414,20 @@ def ver_pdf_propuesta_publica(
 
 @router.get("/presupuestos/{presupuesto_id}", response_class=HTMLResponse)
 def ver_presupuesto(presupuesto_id: int, request: Request, db: Session = Depends(get_db)):
-    presupuesto = db.get(Presupuesto, presupuesto_id)
+    # Grafo cargado de una vez: la ficha recorre capítulos, partidas,
+    # mediciones, versiones y anexos; sin opciones cada relación era una
+    # consulta aparte contra la base remota.
+    presupuesto = (
+        db.query(Presupuesto)
+        .options(
+            *_opciones_partidas_presupuesto(),
+            selectinload(Presupuesto.anexos),
+            selectinload(Presupuesto.versiones),
+            selectinload(Presupuesto.notas_seguimiento),
+        )
+        .filter(Presupuesto.id == presupuesto_id)
+        .first()
+    )
     if presupuesto is None:
         return _redirect("/presupuestos", error="Presupuesto no encontrado.")
     hoy = date.today()

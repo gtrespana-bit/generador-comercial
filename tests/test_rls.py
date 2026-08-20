@@ -158,8 +158,10 @@ def test_head_exigido_por_runtime_coincide_con_alembic():
     Si divergen, `/readyz` responde 503 en producción: el código espera un
     esquema que la base no tiene todavía (o al revés).
     """
+    from migrations.versions import b9f4d8a2c6e1_rendimiento_indices_calientes as indices_migration
     from migrations.versions import c5d6e7f8a9b0_merge_currency_heads as merge_migration
-    assert database_module.EXPECTED_ALEMBIC_HEAD == market_prices_migration.revision
+    assert database_module.EXPECTED_ALEMBIC_HEAD == indices_migration.revision
+    assert indices_migration.down_revision == market_prices_migration.revision
     assert market_prices_migration.down_revision == merge_migration.revision
     assert tasa_migration.revision == "d9e2f3a4b5c6"
     assert tasa_migration.down_revision == etiqueta_migration.revision
