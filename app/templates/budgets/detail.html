@@ -133,6 +133,39 @@
 </div>
 {% endif %}
 
+{% if cambios_reenvio and cambios_reenvio.hay_cambios %}
+<div class="card cambios-reenvio" id="cambios-reenvio">
+  <div class="card-head">
+    <div>
+      <h2>🔁 Cambios desde la última versión</h2>
+      <p class="hint">Comparado con V{{ cambios_reenvio.version_numero }}. Úsalo solo si vas a reenviar el PDF actualizado al cliente.</p>
+    </div>
+    <div class="actions">
+      <a class="btn" href="/presupuestos/{{ p.id }}/pdf" download="presupuesto_{{ p.numero }}_actualizado.pdf">⬇ PDF actualizado</a>
+      <button class="btn btn-primary" type="button" id="btn-copiar-resumen-cambios">Copiar resumen</button>
+    </div>
+  </div>
+  <div class="cambios-resumen-grid">
+    <div><span>Total anterior</span><strong>{{ cambios_reenvio.total_anterior | money_iso(cambios_reenvio.moneda) }}</strong></div>
+    <div><span>Nuevo total</span><strong>{{ cambios_reenvio.total_actual | money_iso(cambios_reenvio.moneda) }}</strong></div>
+    <div><span>Diferencia</span><strong class="{{ 'margen-pos' if cambios_reenvio.diferencia >= 0 else 'margen-neg' }}">{{ cambios_reenvio.diferencia | money_iso(cambios_reenvio.moneda) }}</strong></div>
+  </div>
+  <details class="cambios-details" open>
+    <summary>Ver cambios principales</summary>
+    <ul class="cambios-lista">
+      {% for c in cambios_reenvio.cambios_principales %}<li>{{ c }}</li>{% endfor %}
+      {% if cambios_reenvio.capitulos_añadidos %}<li>Capítulos añadidos: {{ cambios_reenvio.capitulos_añadidos | join(', ') }}</li>{% endif %}
+      {% if cambios_reenvio.capitulos_eliminados %}<li>Capítulos eliminados: {{ cambios_reenvio.capitulos_eliminados | join(', ') }}</li>{% endif %}
+    </ul>
+  </details>
+  <details class="cambios-details">
+    <summary>Texto para WhatsApp/email</summary>
+    <textarea id="texto-resumen-cambios" class="cambios-textarea" rows="10">{{ cambios_reenvio.texto }}</textarea>
+    <p class="hint">Puedes editar este texto antes de copiarlo. No incluye costes internos ni margen.</p>
+  </details>
+</div>
+{% endif %}
+
 <div class="card">
   <div class="form-grid">
     <div>
@@ -388,4 +421,23 @@
   </div>
   {% endif %}
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script nonce="{{ request.state.csp_nonce }}">
+(function(){
+  var btn = document.getElementById('btn-copiar-resumen-cambios');
+  var txt = document.getElementById('texto-resumen-cambios');
+  if(!btn || !txt) return;
+  btn.addEventListener('click', function(){
+    var valor = txt.value || '';
+    function ok(){ btn.textContent = 'Copiado'; setTimeout(function(){ btn.textContent = 'Copiar resumen'; }, 1800); }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(valor).then(ok).catch(function(){ txt.select(); document.execCommand('copy'); ok(); });
+    } else {
+      txt.select(); document.execCommand('copy'); ok();
+    }
+  });
+})();
+</script>
 {% endblock %}

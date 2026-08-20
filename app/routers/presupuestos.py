@@ -8,6 +8,7 @@ from ..services import auditoria
 from ..utils import normalizar_moneda
 from ..services.monedas import convertir as convertir_moneda
 from ..services.revision_presupuesto import revisar_presupuesto_antes_de_enviar
+from ..services.cambios_presupuesto import comparar_version_con_presupuesto
 
 router = APIRouter()
 
@@ -2461,6 +2462,8 @@ def ver_presupuesto(presupuesto_id: int, request: Request, db: Session = Depends
         cfg=cfg,
         tiempos=tiempos,
     )
+    ultima_version = (presupuesto.versiones or [None])[0]
+    cambios_reenvio = comparar_version_con_presupuesto(ultima_version, presupuesto) if ultima_version is not None else None
     return TEMPLATES.TemplateResponse(
         request,
         "budgets/detail.html",
@@ -2474,6 +2477,7 @@ def ver_presupuesto(presupuesto_id: int, request: Request, db: Session = Depends
             "tiempos": tiempos,
             "tiempos_por_partida": tiempos_por_partida,
             "revision_envio": revision_envio,
+            "cambios_reenvio": cambios_reenvio,
         },
     )
 

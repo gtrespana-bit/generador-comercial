@@ -224,7 +224,7 @@ Principio: **si una función no ahorra tiempo claro al contratista, no entra**.
 
 ### Estado
 
-- [ ] Pendiente
+- [x] Realizado
 
 ### Descripción
 
@@ -234,12 +234,12 @@ No busca “explicarle al contratista su negocio”; solo evitar confusiones al 
 
 ### Debe detectar
 
-- [ ] Total anterior vs total nuevo.
-- [ ] Partidas añadidas.
-- [ ] Partidas eliminadas.
-- [ ] Partidas con cantidad modificada.
-- [ ] Partidas con precio modificado.
-- [ ] Capítulos añadidos o eliminados.
+- [x] Total anterior vs total nuevo.
+- [x] Partidas añadidas.
+- [x] Partidas eliminadas.
+- [x] Partidas con cantidad modificada.
+- [x] Partidas con precio modificado.
+- [x] Capítulos añadidos o eliminados.
 
 ### No debe mostrar por defecto
 
@@ -261,7 +261,7 @@ No busca “explicarle al contratista su negocio”; solo evitar confusiones al 
 
 ### Estado
 
-- [ ] Pendiente
+- [x] Realizado
 
 ### Descripción
 
@@ -286,10 +286,10 @@ Adjunto el PDF actualizado.
 
 ### Criterios de aceptación
 
-- [ ] El texto es breve y natural.
-- [ ] Se puede copiar con un botón.
-- [ ] Se puede editar antes de copiar/enviar.
-- [ ] No incluye costes internos, margen ni información sensible.
+- [x] El texto es breve y natural.
+- [x] Se puede copiar con un botón.
+- [x] Se puede editar antes de copiar/enviar.
+- [x] No incluye costes internos, margen ni información sensible.
 - [ ] Si no hay cambios detectables, no muestra nada innecesario.
 
 ---
@@ -756,8 +756,8 @@ Si se implementan en el futuro, deben entrar como módulos opcionales y no conta
 
 ## Sprint 2
 
-- [ ] Detección simple de cambios frente a la última versión enviada.
-- [ ] Resumen de cambios para copiar y reenviar por WhatsApp/email.
+- [x] Detección simple de cambios frente a la última versión enviada.
+- [x] Resumen de cambios para copiar y reenviar por WhatsApp/email.
 - [ ] Aviso discreto al editar un presupuesto ya enviado.
 - [ ] Botón “Reenviar versión actualizada”.
 
