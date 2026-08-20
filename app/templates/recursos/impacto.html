@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Impacto del recurso{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <p class="crumb">🧱 <a href="/recursos">Recursos</a> › Impacto</p>
+    <h1>{{ recurso.descripcion }}</h1>
+    <p class="subtitle">{{ recurso.codigo or 'Sin código' }} · {{ recurso.unidad }} · {{ precio_vista | money_iso(moneda_vista) }}</p>
+  </div>
+  <div class="actions"><a class="btn" href="/recursos">← Volver a recursos</a><a class="btn btn-primary" href="/recursos/{{ recurso.id }}/editar">Editar precio</a></div>
+</div>
+
+<div class="card recurso-impacto">
+  <h2>Partidas que usan este recurso</h2>
+  <p class="hint">Antes de cambiar el precio, revisa dónde aparece. Al guardar el recurso se recalculan las partidas vinculadas.</p>
+  <div class="ajuste-resumen-grid">
+    <div><span>Partidas afectadas</span><strong>{{ partidas_afectadas|length }}</strong></div>
+    <div><span>Filas encontradas</span><strong>{{ total_filas }}</strong></div>
+  </div>
+</div>
+
+{% if partidas_afectadas %}
+<div class="card">
+  <div class="table-wrap">
+    <table class="table">
+      <thead><tr><th>Partida</th><th>Ruta</th><th class="right">Filas</th><th></th></tr></thead>
+      <tbody>
+        {% for p in partidas_afectadas %}
+        <tr>
+          <td><strong>{{ p.nombre }}</strong></td>
+          <td class="muted">{{ p.ruta }}</td>
+          <td class="right">{{ p.filas }}</td>
+          <td class="right"><a class="link" href="/partidas/{{ p.id }}/editar">Editar partida</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% else %}
+<div class="card empty">
+  <p>Este recurso todavía no aparece en descomposiciones del catálogo.</p>
+</div>
+{% endif %}
+{% endblock %}

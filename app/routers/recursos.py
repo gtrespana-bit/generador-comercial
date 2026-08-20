@@ -20,6 +20,44 @@ ETIQUETAS_RECURSO = {
     "otros": "Equipos y otros",
 }
 
+def _norm_recurso(v: str) -> str:
+    t = unicodedata.normalize("NFD", str(v or "").strip().lower())
+    t = "".join(c for c in t if unicodedata.category(c) != "Mn")
+    return re.sub(r"[^a-z0-9]+", "", t)
+
+
+def _fila_coincide_recurso(fila: dict, recurso: Recurso) -> bool:
+    if not isinstance(fila, dict):
+        return False
+    cod_recurso = _norm_recurso(recurso.codigo)
+    cod_fila = _norm_recurso(fila.get("codigo"))
+    if cod_recurso and cod_fila:
+        return cod_recurso == cod_fila
+    return (
+        _norm_recurso(fila.get("descripcion")) == _norm_recurso(recurso.descripcion)
+        and _norm_recurso(fila.get("unidad")) == _norm_recurso(recurso.unidad)
+    )
+
+
+def _partidas_afectadas_por_recurso(db: Session, recurso: Recurso) -> list[dict]:
+    afectadas = []
+    for partida in db.query(Partida).filter(Partida.oculta.is_(False)).all():
+        try:
+            raw = json.loads(partida.descomposicion_json or "[]")
+            filas = raw.get("filas", []) if isinstance(raw, dict) else raw
+        except (TypeError, ValueError):
+            filas = []
+        total = sum(1 for fila in filas if _fila_coincide_recurso(fila, recurso))
+        if total:
+            afectadas.append({
+                "id": partida.id,
+                "nombre": partida.nombre,
+                "ruta": partida.ruta_catalogo,
+                "filas": total,
+            })
+    return afectadas
+
+
 def _datos_recurso(form):
     return {
         "codigo": str(form.get("codigo", "")).strip(),
@@ -221,6 +259,23 @@ def crear_recurso(
         guardar_precio(db, recurso.id, pais, _f(precio_mercado), cfg.moneda_default or "USD", organizacion_id=int(db.info.get("organizacion_id") or 0), fuente="Empresa")
     db.commit()
     return _redirect("/recursos", msg="Recurso creado correctamente.")
+
+
+@router.get("/recursos/{recurso_id}/impacto", response_class=HTMLResponse)
+def impacto_recurso(recurso_id: int, request: Request, db: Session = Depends(get_db)):
+    recurso = db.get(Recurso, recurso_id)
+    if recurso is None:
+        return _redirect("/recursos", error="Recurso no encontrado.")
+    partidas = _partidas_afectadas_por_recurso(db, recurso)
+    _moneda, _factor = _contexto_moneda(db)
+    return TEMPLATES.TemplateResponse(request, "recursos/impacto.html", {
+        "recurso": recurso,
+        "precio_vista": tasa_convertir_precio(recurso.precio or 0, _factor),
+        "partidas_afectadas": partidas,
+        "total_filas": sum(p["filas"] for p in partidas),
+        "moneda_vista": _moneda,
+    })
+
 
 @router.get("/recursos/{recurso_id}/editar", response_class=HTMLResponse)
 def editar_recurso_form(recurso_id: int, request: Request, db: Session = Depends(get_db)):

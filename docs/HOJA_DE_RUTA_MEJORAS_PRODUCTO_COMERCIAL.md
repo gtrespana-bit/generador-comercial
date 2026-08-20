@@ -481,7 +481,7 @@ Mensaje de producto:
 
 ### Estado
 
-- [ ] Pendiente
+- [x] Realizado
 
 ### Descripción
 
@@ -501,10 +501,10 @@ Salud del catálogo: 74%
 
 ### Acciones
 
-- [ ] Revisar margen bajo.
-- [ ] Revisar sin coste.
-- [ ] Revisar sin tiempo.
-- [ ] Actualizar precios.
+- [x] Revisar margen bajo.
+- [x] Revisar sin coste.
+- [x] Revisar sin tiempo.
+- [x] Actualizar precios.
 - [ ] Sincronizar recursos.
 
 ### Criterios de aceptación
@@ -519,7 +519,7 @@ Salud del catálogo: 74%
 
 ### Estado
 
-- [ ] Pendiente
+- [x] Realizado
 
 ### Descripción
 
@@ -527,17 +527,17 @@ Mejorar los ajustes por porcentaje para que sean más seguros.
 
 ### Funciones
 
-- [ ] Simular antes de aplicar.
+- [x] Simular antes de aplicar.
 - [ ] Ajustar por capítulo.
 - [ ] Ajustar por tipo de recurso: material, mano de obra, equipo.
-- [ ] Ver impacto promedio.
+- [x] Ver impacto promedio.
 - [ ] Guardar histórico de ajustes.
 - [ ] Permitir deshacer último ajuste.
 
 ### Criterios de aceptación
 
-- [ ] El usuario sabe qué cambiará antes de confirmar.
-- [ ] El ajuste no se siente peligroso.
+- [x] El usuario sabe qué cambiará antes de confirmar.
+- [x] El ajuste no se siente peligroso.
 - [ ] Queda registro de cuándo y por qué se cambió.
 
 ---
@@ -546,7 +546,7 @@ Mejorar los ajustes por porcentaje para que sean más seguros.
 
 ### Estado
 
-- [ ] Pendiente
+- [x] Realizado
 
 ### Descripción
 
@@ -561,9 +561,9 @@ Si sube de 8 a 10 US$, estas partidas cambiarán así…
 
 ### Criterios de aceptación
 
-- [ ] El usuario entiende el efecto en cascada.
-- [ ] Puede actualizar un recurso con confianza.
-- [ ] Ve partidas afectadas antes de confirmar.
+- [x] El usuario entiende el efecto en cascada.
+- [x] Puede actualizar un recurso con confianza.
+- [x] Ve partidas afectadas antes de confirmar.
 
 ---
 
@@ -789,9 +789,9 @@ Si se implementan en el futuro, deben entrar como módulos opcionales y no conta
 
 ## Sprint 4
 
-- [ ] Salud del catálogo.
-- [ ] Actualización guiada de precios.
-- [ ] Impacto de recursos vinculados.
+- [x] Salud del catálogo.
+- [x] Actualización guiada de precios.
+- [x] Impacto de recursos vinculados.
 
 ## Sprint 5
 

@@ -17,11 +17,38 @@
   </div>
 </div>
 
+{% if vista != 'ocultas' and salud_catalogo %}
+<div class="card salud-catalogo salud-{{ salud_catalogo.estado }}">
+  <div class="salud-main">
+    <div class="salud-score"><strong>{{ salud_catalogo.score }}%</strong><span>salud</span></div>
+    <div class="salud-copy">
+      <h2>{{ salud_catalogo.titulo }}</h2>
+      <p class="hint">{{ salud_catalogo.total }} partidas activas · {{ salud_catalogo.con_precio }} con precio · {{ salud_catalogo.con_coste }} con coste · {{ salud_catalogo.con_tiempo }} con tiempo.</p>
+    </div>
+    <div class="salud-actions">
+      <a class="btn btn-sm {{ 'btn-primary' if salud == 'margen_bajo' else '' }}" href="/partidas?salud=margen_bajo">Margen bajo <span class="badge">{{ salud_catalogo.margen_bajo }}</span></a>
+      <a class="btn btn-sm {{ 'btn-primary' if salud == 'sin_coste' else '' }}" href="/partidas?salud=sin_coste">Sin coste <span class="badge">{{ salud_catalogo.sin_coste }}</span></a>
+      <a class="btn btn-sm {{ 'btn-primary' if salud == 'sin_tiempo' else '' }}" href="/partidas?salud=sin_tiempo">Sin tiempo <span class="badge">{{ salud_catalogo.sin_tiempo }}</span></a>
+      <a class="btn btn-sm {{ 'btn-primary' if salud == 'sin_precio' else '' }}" href="/partidas?salud=sin_precio">Sin precio <span class="badge">{{ salud_catalogo.sin_precio }}</span></a>
+      {% if salud %}<a class="btn btn-sm btn-ghost" href="/partidas">Limpiar filtro</a>{% endif %}
+    </div>
+  </div>
+  {% if salud_catalogo.problemas_visibles %}
+  <div class="salud-problemas">
+    {% for p in salud_catalogo.problemas_visibles[:4] %}
+    <a href="{{ p.url }}" class="salud-chip {{ 'active' if salud == p.clave else '' }}">⚠ {{ p.label }}: <strong>{{ p.count }}</strong></a>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+{% endif %}
+
 <!-- TOOLBAR SUPERIOR COMPACTA -->
 <div class="partidas-toolbar card csp-s-0d510e3476">
   <div class="toolbar-row">
     <form class="toolbar-search" method="get" action="/partidas">
       {% if vista == 'ocultas' %}<input type="hidden" name="vista" value="ocultas">{% endif %}
+      {% if salud %}<input type="hidden" name="salud" value="{{ salud }}">{% endif %}
       <span class="search-icon" aria-hidden="true">⌕</span>
       <input type="text" id="buscador" name="q" value="{{ q }}" placeholder="Buscar en todo el catálogo…" autocomplete="off">
       <button type="submit" class="btn btn-sm btn-ghost" title="Buscar en las {{ total_partidas }} partidas">Buscar</button>
@@ -33,9 +60,9 @@
       <button class="btn btn-sm" data-cotizat-click="partidas-expand-all" title="Expandir categorías y subcategorías">Expandir</button>
       <button class="btn btn-sm" data-cotizat-click="partidas-collapse-all" title="Contraer categorías y subcategorías">Contraer</button>
       {% if vista != 'ocultas' %}
-      <form method="post" action="/partidas/ajustar" data-confirm="¿Ajustar TODAS las partidas visibles con este %?" class="csp-s-014fb690a1">
+      <form method="get" action="/partidas/ajustar/previsualizar" class="csp-s-014fb690a1">
         <input type="number" name="porcentaje" step="any" placeholder="± %" required class="csp-s-d3156a880b">
-        <button class="btn btn-sm" type="submit" title="Ajustar precios del catálogo">% Precios</button>
+        <button class="btn btn-sm" type="submit" title="Previsualizar antes de aplicar">Previsualizar %</button>
       </form>
       <a class="btn btn-sm" href="/partidas/exportar" title="Exportar catálogo activo">CSV</a>
       {% endif %}
