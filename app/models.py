@@ -957,10 +957,14 @@ class PresupuestoItem(TenantMixin, Base):
     @property
     def tiene_costes(self):
         """¿La partida dispone de datos de coste interno (materiales, mano de obra…)?"""
-        return bool(
+        campos = (
             (self.coste_materiales or 0) + (self.coste_mano_obra or 0)
             + (self.coste_complementarios or 0) + (self.coste_otros or 0)
         )
+        if campos:
+            return True
+        d = getattr(self, "descomposicion_cype", None)
+        return bool(d is not None and (getattr(d, "coste_directo_unitario", 0) or 0) > 0)
 
     @property
     def coste(self):

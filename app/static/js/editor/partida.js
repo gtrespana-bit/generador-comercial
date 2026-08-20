@@ -1524,6 +1524,8 @@
 
       var wrap = editor.FMT.h("div", "partida-wrap");
       wrap.draggable = true;
+      var origenDescomposicion = (datos.descomposicion && datos.descomposicion.origen) || (datos.descomposicion_meta && datos.descomposicion_meta.origen) || "";
+      if (origenDescomposicion) wrap.dataset.origenDescomposicion = origenDescomposicion;
 
       // Campos ocultos de identidad técnica
       wrap.appendChild(editor.FMT.crearInput("hidden", datos.partida_id || "", null, "p_id"));
@@ -2274,6 +2276,11 @@
               var metaDes = JSON.parse(metaEl.value);
               esCype = metaDes && (metaDes.origen === "cype" || metaDes.archivo_origen);
             } catch (e) { esCype = false; }
+          }
+          var cypeFlag = partidaWrap.querySelector('[data-f="p_tiene_descomposicion_cype"]');
+          if (!esCype && cypeFlag && cypeFlag.value === "1") {
+            var origenDes = (partidaWrap.dataset && partidaWrap.dataset.origenDescomposicion) || "";
+            esCype = origenDes !== "manual";
           }
           return esCype ? (sum + costeProducto) : (sum * (1 + desp/100) + costeProducto);
         }

@@ -101,32 +101,54 @@ def coste_producto_partida(partida) -> Decimal:
     return money(cantidad * coste_unit)
 
 
-def coste_obra_partida(partida) -> Decimal:
-    """Coste interno de obra/materiales, sin contar el producto comercial."""
-    cantidad = D(getattr(partida, "cantidad_total", 0))
-    descompuesto = getattr(partida, "descomposicion_cype", None)
-    if descompuesto is not None and getattr(descompuesto, "coste_directo_unitario", None) is not None:
-        if getattr(descompuesto, "origen", "") != "manual":
-            return money(cantidad * D(descompuesto.coste_directo_unitario))
-        from .apu import calcular_apu
-        if getattr(descompuesto, "filas", None):
-            apu = calcular_apu(descompuesto.filas)
-            directo = apu.coste_directo
-        else:
-            directo = D(descompuesto.coste_directo_unitario)
-        desperdicio = pct(getattr(partida, "desperdicio_pct", 0))
-        return money(
-            cantidad
-            * directo
-            * (Decimal("1") + desperdicio / Decimal("100"))
-        )
+def _costes_unitarios_campos(partida) -> Decimal:
     materiales = D(getattr(partida, "coste_materiales", 0))
     mano_obra = D(getattr(partida, "coste_mano_obra", 0))
     complementarios = D(getattr(partida, "coste_complementarios", 0))
     otros = D(getattr(partida, "coste_otros", 0))
+    return materiales + mano_obra + complementarios + otros
+
+
+def coste_obra_partida(partida) -> Decimal:
+    """Coste interno de obra/materiales, sin contar el producto comercial.
+
+    Regla de consistencia con el editor: los campos ``coste_materiales``,
+    ``coste_mano_obra``, ``coste_complementarios`` y ``coste_otros`` son la
+    fuente visible de coste unitario de la partida. En partidas CYPE se usan
+    sin desperdicio porque el coste directo ya viene cerrado por la matriz; en
+    partidas manuales/simples sí se aplica el desperdicio. Si una partida CYPE
+    antigua no tiene esos campos cargados, se usa como respaldo el
+    ``coste_directo_unitario`` de la descomposición.
+    """
+    cantidad = D(getattr(partida, "cantidad_total", 0))
+    descompuesto = getattr(partida, "descomposicion_cype", None)
+    subtotal_campos = _costes_unitarios_campos(partida)
     desperdicio = pct(getattr(partida, "desperdicio_pct", 0))
-    subtotal = materiales + mano_obra + complementarios + otros
-    return money(cantidad * subtotal * (Decimal("1") + desperdicio / Decimal("100")))
+
+    if descompuesto is not None:
+        origen = getattr(descompuesto, "origen", "") or ""
+        es_cype = origen != "manual" and (
+            getattr(descompuesto, "coste_directo_unitario", None) is not None
+            or getattr(descompuesto, "archivo_origen", "")
+        )
+        if es_cype:
+            if subtotal_campos > 0:
+                return money(cantidad * subtotal_campos)
+            if getattr(descompuesto, "coste_directo_unitario", None) is not None:
+                return money(cantidad * D(descompuesto.coste_directo_unitario))
+        else:
+            # Manual/APU: recalcular desde filas si existen; si no, usar campos.
+            if getattr(descompuesto, "filas", None):
+                from .apu import calcular_apu
+                apu = calcular_apu(descompuesto.filas)
+                directo = apu.coste_directo
+            elif getattr(descompuesto, "coste_directo_unitario", None) is not None:
+                directo = D(descompuesto.coste_directo_unitario)
+            else:
+                directo = subtotal_campos
+            return money(cantidad * directo * (Decimal("1") + desperdicio / Decimal("100")))
+
+    return money(cantidad * subtotal_campos * (Decimal("1") + desperdicio / Decimal("100")))
 
 
 def coste_partida(partida) -> Decimal:

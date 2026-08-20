@@ -787,6 +787,13 @@
           "codigo_externo": {{ p.codigo_externo | tojson }},
           "tiene_descomposicion_cype": {{ (p.descomposicion_cype is not none) | tojson }},
           "nombre_descomposicion_cype": {{ (p.descomposicion_cype.nombre_archivo_origen if p.descomposicion_cype else '') | tojson }},
+          "descomposicion_meta": {% if p.descomposicion_cype %}{
+            "origen": {{ (p.descomposicion_cype.origen or '') | tojson }},
+            "archivo_origen": {{ (p.descomposicion_cype.archivo_origen or '') | tojson }},
+            "codigo": {{ (p.descomposicion_cype.codigo or '') | tojson }},
+            "unidad": {{ (p.descomposicion_cype.unidad or '') | tojson }},
+            "nombre_archivo_origen": {{ (p.descomposicion_cype.nombre_archivo_origen or '') | tojson }}
+          }{% else %}{}{% endif %},
           "nombre": {{ p.nombre | tojson }},
           "descripcion": {{ p.descripcion | tojson }},
           "unidad": {{ p.unidad | tojson }},

@@ -251,6 +251,11 @@
             esCype = metaDes && (metaDes.origen === "cype" || metaDes.archivo_origen);
           } catch (e) { esCype = false; }
         }
+        var cypeFlag = wrap && wrap.querySelector('[data-f="p_tiene_descomposicion_cype"]');
+        if (!esCype && cypeFlag && cypeFlag.value === "1") {
+          var origenDes = (wrap && wrap.dataset && wrap.dataset.origenDescomposicion) || "";
+          esCype = origenDes !== "manual";
+        }
         var sumCostes = costeMat + costeMO + costeComp + costeOtros;
         var costeUnidadObra = esCype
           ? sumCostes
