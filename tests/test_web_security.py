@@ -238,6 +238,7 @@ def test_toda_ruta_comercial_exige_sesion_salvo_fronteras_publicas_o_locales():
         # La raíz («/») es ahora la landing pública; el panel vive en /inicio.
         ("GET", "/"),
         ("GET", "/conocer"),
+        ("GET", "/como-funciona"),
         ("GET", "/legal/{pagina}"),
     }
     # El panel de operador usa su propia dependencia, que además de exigir

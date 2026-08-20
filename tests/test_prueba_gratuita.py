@@ -615,6 +615,7 @@ def _paginas_publicas(cliente):
     return {
         "/": cliente.get("/").text,
         "/conocer": cliente.get("/conocer").text,
+        "/como-funciona": cliente.get("/como-funciona").text,
         "/pago": cliente.get("/pago").text,
         "/acceso": cliente.get("/acceso").text,
     }

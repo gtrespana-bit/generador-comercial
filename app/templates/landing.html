@@ -36,26 +36,7 @@
     <span class="pais-bar-hint" id="pais-bar-hint">{% if pais_actual %}{{ pais_actual.bandera }} Mostrando contenido para {{ pais_actual.nombre }} · {{ pais_actual.id_fiscal }} · IVA {{ pais_actual.iva }}%{% else %}Mostrando contenido genérico para toda Latinoamérica{% endif %}</span>
   </div>
 </div>
-<nav class="nav">
-  <a class="brand" href="/">
-    <span class="mark">
-      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <path d="M7 3.5h6.5L18 8v11a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 19V5a1.5 1.5 0 0 1 1-1.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-        <path d="M13.5 3.5V8H18" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-        <path d="M9 14.5l2 2 4-4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </span>
-    {{ product_name }}
-  </a>
-  <div class="nav-links">
-    <a class="entrar" href="/acceso">Iniciar sesión</a>
-    {% if hay_prueba_gratuita() %}
-    <a class="btn btn-primary" href="/acceso">Probar {{ dias_de_prueba() }} días gratis</a>
-    {% else %}
-    <a class="btn btn-primary" href="/pago">Ver planes</a>
-    {% endif %}
-  </div>
-</nav>
+{% include "public/_nav.html" %}
 
 <header class="hero">
   <div class="hero-int">
@@ -575,7 +556,7 @@
   <div class="tour-intro">
     <span class="section-kicker">Así funciona</span>
     <h2>Un recorrido por el producto, paso a paso.</h2>
-    <p class="intro">De tu catálogo a un presupuesto profesional con beneficio, tiempos internos y PDF listo para enviar por tus canales habituales.</p>
+    <p class="intro">De tu catálogo a un presupuesto profesional con beneficio, tiempos internos y PDF listo para enviar por tus canales habituales. La guía completa, función por función, está en <a href="/como-funciona">Cómo funciona</a>.</p>
   </div>
 
   <div class="tour-stage" id="tour-stage">
@@ -902,6 +883,7 @@
   <div class="footer-int">
     <div>© 2026 {{ titular_legal }}</div>
     <div>
+      <a href="/como-funciona">Cómo funciona</a>
       <a href="/legal/preguntas">Preguntas frecuentes</a>
       <a href="/legal/terminos">Términos</a>
       <a href="/legal/privacidad">Privacidad</a>
