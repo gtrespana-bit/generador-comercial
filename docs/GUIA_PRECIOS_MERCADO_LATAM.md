@@ -65,6 +65,19 @@ python tools/importar_precios_mercado.py --sync-source --apply
 `--include-fallback` se mantiene por compatibilidad con matrices antiguas; no
 es necesario para la matriz actual.
 
+### Carga desde Supabase SQL Editor
+
+Si no se dispone de `DATABASE_URL` en una terminal administrativa, ejecutar
+después de la migración de esquema:
+
+```text
+docs/cargar_precios_referencia_latam_2026-08-20.sql
+```
+
+El script es idempotente, verifica el head `a4c8e2f7b1d6`, exige 388 códigos de
+recurso y carga 1.552 referencias. Sustituye solo las referencias nacionales
+CO/PE/MX/EC; no toca overrides de empresa ni precios VE.
+
 ## Históricos
 
 Actualizar una referencia nacional no modifica presupuestos aprobados,
