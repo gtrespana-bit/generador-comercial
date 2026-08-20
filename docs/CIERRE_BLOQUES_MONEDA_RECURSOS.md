@@ -55,7 +55,8 @@ mano de obra y rendimientos son válidos.
 1. Aplicar migraciones en orden y comprobar el head final
    `a4c8e2f7b1d6`.
 2. Verificar `/readyz`.
-3. Importar `precios_recursos_latam.csv`.
+3. Importar `precios_recursos_latam.csv` o ejecutar en SQL Editor
+   `docs/cargar_precios_referencia_latam_2026-08-20.sql`.
 4. Ejecutar `python3 basedatos_partidas/auditar_lanzamiento.py --strict` y
    exigir código de salida 0.
 5. Crear un presupuesto ficticio en VE, CO, PE, MX y EC.

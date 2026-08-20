@@ -29,6 +29,10 @@ La cadena debe avanzar así:
 
 Cada script tiene una guarda y aborta si la revisión previa no coincide.
 
+Después de alcanzar `a4c8e2f7b1d6`, cargar las referencias nacionales con
+`docs/cargar_precios_referencia_latam_2026-08-20.sql`. Es una carga de datos,
+no una revisión Alembic: el head permanece en `a4c8e2f7b1d6`.
+
 ## Aplicación
 
 En Supabase:

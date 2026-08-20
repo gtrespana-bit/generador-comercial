@@ -1,5 +1,6 @@
 """Regresiones de la auditoría exhaustiva del catálogo y sus mercados."""
 import csv
+from pathlib import Path
 
 from basedatos_partidas.auditar_lanzamiento import auditar_matriz, auditar_partidas
 
@@ -52,3 +53,19 @@ def test_matriz_distingue_observacion_directa_de_referencia_derivada():
     codigos = {f["codigo_recurso"] for f in filas}
     assert "MT-MOR-PEGA" not in codigos
     assert "MT-MOR-FRISO" not in codigos
+
+
+def test_sql_de_carga_supabase_es_completo_idempotente_y_acotado():
+    from tools.generar_sql_precios_latam import SALIDA, generar
+
+    filas, codigos = generar()
+    sql = Path(SALIDA).read_text(encoding="utf-8")
+    assert (filas, codigos) == (1552, 388)
+    assert "public.alembic_version = a4c8e2f7b1d6" in sql
+    assert "v_filas <> 1552 OR v_codigos <> 388" in sql
+    assert "p.organizacion_id IS NULL" in sql
+    assert "p.pais_codigo = s.pais_codigo" in sql
+    assert "pais_codigo IN ('CO', 'PE', 'MX', 'EC')" in sql
+    assert "DELETE FROM public.precios_recursos_mercado" in sql
+    assert "INSERT INTO public.precios_recursos_mercado" in sql
+    assert "COMMIT;" in sql
