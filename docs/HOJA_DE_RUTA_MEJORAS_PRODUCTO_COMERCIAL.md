@@ -193,19 +193,34 @@ Menú “Más”:
 
 ---
 
-# Fase 2 — CotizaT ayuda a vender más
+# Fase 2 — Reenvíos y cambios simples sin saturar
 
 ## Objetivo
 
-Ayudar al contratista a aumentar el ticket medio y cerrar más propuestas.
+Mantener el flujo real del contratista: envía PDF, el cliente llama o escribe,
+pide cambios y el contratista reenvía una versión corregida. CotizaT solo debe
+ayudar a que ese reenvío sea claro, rápido y profesional.
 
 Mensaje de producto:
 
-> “No mandes una sola opción: presenta alternativas claras para que el cliente elija y compre mejor.”
+> “Cuando modificas un presupuesto ya enviado, CotizaT te ayuda a explicar qué cambió y reenviar el PDF sin confusión.”
+
+## Alcance deliberadamente reducido
+
+No se implementarán por ahora:
+
+- [ ] Flujo complejo de selección online para el cliente.
+- [ ] Opciones Básico / Estándar / Premium como módulo completo.
+- [ ] CRM avanzado de seguimiento.
+- [ ] Automatizaciones de recordatorios.
+- [ ] Gantt o planificación compleja orientada al cliente.
+- [ ] Plantillas generales de mensajes que añadan ruido.
+
+Principio: **si una función no ahorra tiempo claro al contratista, no entra**.
 
 ---
 
-## 2.1 Opciones Básico / Estándar / Premium
+## 2.1 Detección simple de modificaciones en presupuestos reenviados
 
 ### Estado
 
@@ -213,34 +228,73 @@ Mensaje de producto:
 
 ### Descripción
 
-Permitir presentar variantes comerciales del mismo presupuesto.
+Cuando un presupuesto ya fue enviado, publicado o tiene versión congelada, y el usuario lo edita, CotizaT debe facilitar ver qué cambió respecto a la versión anterior.
+
+No busca “explicarle al contratista su negocio”; solo evitar confusiones al reenviar.
+
+### Debe detectar
+
+- [ ] Total anterior vs total nuevo.
+- [ ] Partidas añadidas.
+- [ ] Partidas eliminadas.
+- [ ] Partidas con cantidad modificada.
+- [ ] Partidas con precio modificado.
+- [ ] Capítulos añadidos o eliminados.
+
+### No debe mostrar por defecto
+
+- [ ] Análisis complejo de margen.
+- [ ] Impactos excesivamente detallados.
+- [ ] Gráficas.
+- [ ] Flujo online para el cliente.
+
+### Criterios de aceptación
+
+- [ ] En menos de 10 segundos el usuario entiende qué cambió.
+- [ ] La comparación aparece solo cuando tiene sentido: presupuesto ya enviado/versionado.
+- [ ] La vista es compacta y plegable.
+- [ ] No interrumpe el guardado ni el envío.
+
+---
+
+## 2.2 Resumen de cambios para copiar y reenviar
+
+### Estado
+
+- [ ] Pendiente
+
+### Descripción
+
+Generar un texto corto listo para copiar en WhatsApp/email cuando el contratista reenvía una versión modificada.
 
 Ejemplo:
 
-| Opción | Total | Descripción |
-|---|---:|---|
-| Básico | 4.200 US$ | Acabado estándar |
-| Estándar | 5.100 US$ | Mejor porcelanato + grifería |
-| Premium | 6.300 US$ | Alta gama + extras |
+```txt
+Hola, Juan. Te envío el presupuesto actualizado P-2026-009.
 
-### Enfoque recomendado
+Total anterior: 3.248,00 USD
+Nuevo total: 2.980,00 USD
+Diferencia: -268,00 USD
 
-No crear un editor complejo desde el inicio. Empezar con una versión simple:
+Cambios principales:
+- Se eliminó mampara de ducha.
+- Se cambió porcelanato premium por estándar.
+- Se añadió pintura de techo.
 
-- [ ] Duplicar presupuesto como opción.
-- [ ] Etiquetar opción: Básico, Estándar, Premium o personalizada.
-- [ ] Comparar total, margen y diferencia.
-- [ ] Mostrar en propuesta pública de forma clara.
+Adjunto el PDF actualizado.
+```
 
 ### Criterios de aceptación
 
-- [ ] El usuario puede crear tres opciones sin rehacer todo desde cero.
-- [ ] El cliente final ve las opciones sin ver costes internos ni margen.
-- [ ] CotizaT muestra diferencia de precio y qué incluye cada opción.
+- [ ] El texto es breve y natural.
+- [ ] Se puede copiar con un botón.
+- [ ] Se puede editar antes de copiar/enviar.
+- [ ] No incluye costes internos, margen ni información sensible.
+- [ ] Si no hay cambios detectables, no muestra nada innecesario.
 
 ---
 
-## 2.2 Propuesta pública más vendedora
+## 2.3 Aviso discreto al editar presupuesto ya enviado
 
 ### Estado
 
@@ -248,37 +302,22 @@ No crear un editor complejo desde el inicio. Empezar con una versión simple:
 
 ### Descripción
 
-Mejorar la página pública que ve el cliente para que ayude a cerrar la venta.
+Si el usuario entra a editar un presupuesto que ya fue enviado, aprobado, publicado con enlace o tiene versiones, mostrar un aviso pequeño:
 
-### Elementos recomendados
-
-- [ ] Resumen superior claro: obra, total, validez y empresa.
-- [ ] Bloque “Qué incluye”.
-- [ ] Bloque de productos opcionales/alternativos si existen.
-- [ ] Botón principal: Aceptar propuesta.
-- [ ] Acción secundaria: Solicitar cambios.
-- [ ] Acción secundaria: Rechazar.
-- [ ] Firma en pantalla.
-- [ ] PDF descargable.
-- [ ] Mensaje de confianza: versión, fecha, validez.
-
-### Información que NO debe mostrarse
-
-- [ ] Coste interno.
-- [ ] Margen.
-- [ ] Beneficio.
-- [ ] Cuello de botella.
-- [ ] Horas internas por oficio.
+```txt
+Este presupuesto ya fue enviado o tiene versiones guardadas.
+Si lo modificas, podrás ver un resumen de cambios para reenviarlo con claridad.
+```
 
 ### Criterios de aceptación
 
-- [ ] El cliente entiende qué acepta.
-- [ ] La firma es fácil desde móvil.
-- [ ] Si hay opciones, puede elegir sin confusión.
+- [ ] No bloquea la edición.
+- [ ] No asusta al usuario.
+- [ ] Ayuda a recordar que el presupuesto ya fue compartido.
 
 ---
 
-## 2.3 Plantillas de mensajes WhatsApp/email
+## 2.4 Botón “Reenviar versión actualizada”
 
 ### Estado
 
@@ -286,33 +325,19 @@ Mejorar la página pública que ve el cliente para que ayude a cerrar la venta.
 
 ### Descripción
 
-Crear plantillas reutilizables para comunicación comercial.
+En el detalle del presupuesto, si hay diferencias frente a la última versión enviada, mostrar una acción simple:
 
-### Plantillas iniciales
+- [ ] Ver cambios.
+- [ ] Descargar PDF actualizado.
+- [ ] Copiar resumen para WhatsApp/email.
 
-- [ ] Enviar presupuesto.
-- [ ] Recordatorio amable.
-- [ ] Presupuesto por vencer.
-- [ ] Propuesta aceptada.
-- [ ] Solicitud de datos faltantes.
-- [ ] Envío de documento de cobro.
-- [ ] Confirmación de inicio de obra.
-
-### Variables útiles
-
-- [ ] Nombre del cliente.
-- [ ] Número de presupuesto.
-- [ ] Título de obra.
-- [ ] Total.
-- [ ] Fecha de validez.
-- [ ] Enlace público.
-- [ ] Empresa.
+No crear un flujo nuevo complejo. Solo agrupar las tres acciones más útiles.
 
 ### Criterios de aceptación
 
-- [ ] El usuario puede enviar un mensaje profesional sin redactar desde cero.
-- [ ] Las plantillas son editables.
-- [ ] El mensaje generado es breve y natural.
+- [ ] El usuario puede reenviar una versión modificada en menos de un minuto.
+- [ ] La acción no aparece si no hay versiones/cambios.
+- [ ] No obliga a usar propuesta online.
 
 ---
 
@@ -731,15 +756,15 @@ Si se implementan en el futuro, deben entrar como módulos opcionales y no conta
 
 ## Sprint 2
 
-- [ ] Plantillas de mensajes WhatsApp/email.
-- [ ] Propuesta pública más vendedora.
-- [ ] Seguimiento de propuesta vista/aceptada/rechazada.
+- [ ] Detección simple de cambios frente a la última versión enviada.
+- [ ] Resumen de cambios para copiar y reenviar por WhatsApp/email.
+- [ ] Aviso discreto al editar un presupuesto ya enviado.
+- [ ] Botón “Reenviar versión actualizada”.
 
 ## Sprint 3
 
-- [ ] Opciones Básico / Estándar / Premium.
-- [ ] Comparativa visible para el cliente.
-- [ ] Selección de opcionales/alternativas en propuesta pública.
+- [ ] Revisar si realmente hace falta mejorar el PDF comercial después de validar Sprint 2.
+- [ ] Mantener en pausa opciones Básico/Estándar/Premium y flujos online complejos.
 
 ## Sprint 4
 
