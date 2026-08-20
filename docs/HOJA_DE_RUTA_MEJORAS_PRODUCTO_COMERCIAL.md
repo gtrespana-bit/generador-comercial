@@ -298,7 +298,7 @@ Adjunto el PDF actualizado.
 
 ### Estado
 
-- [ ] Pendiente
+- [x] Realizado
 
 ### Descripción
 
@@ -321,15 +321,15 @@ Si lo modificas, podrás ver un resumen de cambios para reenviarlo con claridad.
 
 ### Estado
 
-- [ ] Pendiente
+- [x] Realizado
 
 ### Descripción
 
 En el detalle del presupuesto, si hay diferencias frente a la última versión enviada, mostrar una acción simple:
 
-- [ ] Ver cambios.
-- [ ] Descargar PDF actualizado.
-- [ ] Copiar resumen para WhatsApp/email.
+- [x] Ver cambios.
+- [x] Descargar PDF actualizado.
+- [x] Copiar resumen para WhatsApp/email.
 
 No crear un flujo nuevo complejo. Solo agrupar las tres acciones más útiles.
 
@@ -758,8 +758,8 @@ Si se implementan en el futuro, deben entrar como módulos opcionales y no conta
 
 - [x] Detección simple de cambios frente a la última versión enviada.
 - [x] Resumen de cambios para copiar y reenviar por WhatsApp/email.
-- [ ] Aviso discreto al editar un presupuesto ya enviado.
-- [ ] Botón “Reenviar versión actualizada”.
+- [x] Aviso discreto al editar un presupuesto ya enviado.
+- [x] Botón “Reenviar versión actualizada”.
 
 ## Sprint 3
 

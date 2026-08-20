@@ -6243,3 +6243,21 @@ body { -webkit-tap-highlight-color: transparent; }
   line-height: 1.5;
 }
 .cambios-details > .hint { margin: 0 .85rem .85rem; }
+
+/* ───────────────────── Editor · aviso presupuesto ya compartido ───────────────────── */
+.editor-shared-notice {
+  max-width: 1180px;
+  margin: .75rem auto 0;
+  padding: .7rem .9rem;
+  display: flex;
+  gap: .55rem;
+  align-items: center;
+  flex-wrap: wrap;
+  border: 1px solid rgba(180,83,9,.22);
+  border-radius: var(--radius-sm);
+  background: var(--amber-soft);
+  color: #713f12;
+  font-size: .86rem;
+}
+.editor-shared-notice strong { color: var(--amber); }
+.editor-shared-notice span { color: #713f12; }

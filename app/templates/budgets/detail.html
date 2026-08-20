@@ -15,6 +15,7 @@
     {% else %}
     <a class="btn btn-primary" href="{{ (revision_envio.url_principal if revision_envio else ('/presupuestos/' ~ p.id ~ '/editar')) }}">⚠ Revisar antes de enviar</a>
     {% endif %}
+    {% if cambios_reenvio and cambios_reenvio.hay_cambios %}<a class="btn btn-secondary" href="#cambios-reenvio">🔁 Reenviar actualización</a>{% endif %}
     <a class="btn" href="/presupuestos/{{ p.id }}/pdf" download="presupuesto_{{ p.numero }}.pdf" data-cotizat-click="download-pdf">⬇ PDF</a>
     <a class="btn" href="/presupuestos/{{ p.id }}/editar">✏️ Editar</a>
     <a class="btn" href="/presupuestos/{{ p.id }}/tiempos" title="Planificación de horas, cuadrillas y duración de obra">⏱ Planificación</a>
@@ -137,8 +138,8 @@
 <div class="card cambios-reenvio" id="cambios-reenvio">
   <div class="card-head">
     <div>
-      <h2>🔁 Cambios desde la última versión</h2>
-      <p class="hint">Comparado con V{{ cambios_reenvio.version_numero }}. Úsalo solo si vas a reenviar el PDF actualizado al cliente.</p>
+      <h2>🔁 Reenviar versión actualizada</h2>
+      <p class="hint">Cambios detectados frente a V{{ cambios_reenvio.version_numero }}. Descarga el PDF actualizado y copia un resumen breve para WhatsApp/email.</p>
     </div>
     <div class="actions">
       <a class="btn" href="/presupuestos/{{ p.id }}/pdf" download="presupuesto_{{ p.numero }}_actualizado.pdf">⬇ PDF actualizado</a>

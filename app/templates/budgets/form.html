@@ -67,6 +67,13 @@
     <button type="button" data-scroll-builder="builder-resumen"><span>3</span><strong>Revisión</strong><small>Totales y condiciones</small></button>
   </nav>
 
+  {% if presupuesto and presupuesto_compartido %}
+  <div class="editor-shared-notice" role="status">
+    <strong>Este presupuesto ya fue enviado o tiene versiones guardadas.</strong>
+    <span>Modifícalo con normalidad; al volver al detalle podrás copiar un resumen simple de cambios para reenviar el PDF actualizado.</span>
+  </div>
+  {% endif %}
+
   <!-- DATOS GENERALES -->
   <div class="card collapsible-card builder-general-card" id="card-datos-generales">
     <div class="card-header-toggle csp-s-4c4a58cb34" data-cotizat-click="budget-toggle-general">

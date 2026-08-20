@@ -3076,6 +3076,11 @@ def editar_presupuesto_form(presupuesto_id: int, request: Request, db: Session =
     recursos_base = db.query(Recurso).order_by(Recurso.ultimo_uso.desc(), Recurso.usos.desc(), Recurso.descripcion).all()
     recursos_catalogo = _recursos_editor_mercado(db, recursos_base, cfg, presupuesto.moneda, presupuesto.tipo_cambio)
     plantillas = db.query(Plantilla).order_by(Plantilla.nombre).all()
+    presupuesto_compartido = bool(
+        (presupuesto.versiones or [])
+        or presupuesto.estado not in {"borrador"}
+        or (getattr(presupuesto, "enlaces_publicos", None) and len(presupuesto.enlaces_publicos) > 0)
+    )
     # Borrador del autoguardado: solo se ofrece si es más reciente que el
     # último guardado del presupuesto (updated_at).
     borrador_servidor = None
@@ -3111,6 +3116,7 @@ def editar_presupuesto_form(presupuesto_id: int, request: Request, db: Session =
             "estados": ESTADOS,
             "campos_importables": ETIQUETAS_CAMPOS,
             "borrador_servidor": borrador_servidor,
+            "presupuesto_compartido": presupuesto_compartido,
             "tiempos_catalogo": _tiempos_catalogo(db, presupuesto),
             "tarifa_hora_editor": _tarifa_hora_en_moneda(db, cfg, presupuesto.moneda, presupuesto.tipo_cambio),
         },
