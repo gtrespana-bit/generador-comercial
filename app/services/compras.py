@@ -27,7 +27,12 @@ from ..datos_pago import (
     plan_info,
 )
 from ..models import CompraPlan, Licencia, Organizacion
-from .licencias import GestionLicenciaError, crear_licencia
+from .licencias import (
+    GestionLicenciaError,
+    crear_licencia,
+    crear_licencia_hasta,
+    extender_licencia_hasta,
+)
 
 log = logging.getLogger("cotizat.compras")
 
@@ -94,6 +99,177 @@ def crear_compra(
         creada_por_email=str(creada_por_email or ""),
     )
     db.add(compra)
+    db.flush()
+    return compra
+
+
+def crear_compra_stripe(
+    db: Session,
+    *,
+    organizacion_id: int,
+    plan: str,
+    stripe_session_id: str,
+    pais_codigo: str = "",
+    creada_por_usuario_id: int | None = None,
+    creada_por_email: str = "",
+) -> CompraPlan:
+    """Registra una compra pendiente iniciada en Stripe Checkout.
+
+    A diferencia de ``crear_compra``, no exige comprobante: el pago aún no ha
+    ocurrido (se confirma por webhook). La compra nace ``pendiente`` y queda
+    localizable por ``stripe_session_id`` para que el webhook la active.
+    """
+    plan = str(plan or "").strip().lower()
+    if not _plan_valido(plan):
+        raise GestionCompraError("El plan indicado no existe.")
+    if not str(stripe_session_id or "").strip():
+        raise GestionCompraError("Falta la sesión de pago de Stripe.")
+
+    ficha = plan_info(plan)
+    compra = CompraPlan(
+        organizacion_id=int(organizacion_id),
+        plan=plan,
+        metodo_pago="stripe",
+        importe=float(ficha["importe"]),
+        moneda="USD",
+        datos_verificacion="{}",
+        comprobante_reference="",
+        comprobante_nombre="",
+        comprobante_mime="",
+        estado="pendiente",
+        creada_por_usuario_id=creada_por_usuario_id,
+        creada_por_email=str(creada_por_email or ""),
+        stripe_session_id=str(stripe_session_id).strip()[:200],
+        pais_codigo=(str(pais_codigo or "").strip().upper()[:2] or None),
+    )
+    db.add(compra)
+    db.flush()
+    return compra
+
+
+def compra_por_sesion_stripe(db: Session, session_id: str) -> CompraPlan | None:
+    """Localiza la compra pendiente de una sesión de Stripe, o ``None``."""
+    return (
+        db.query(CompraPlan)
+        .filter(CompraPlan.stripe_session_id == str(session_id or "").strip())
+        .first()
+    )
+
+
+def compra_por_suscripcion_stripe(db: Session, subscription_id: str) -> CompraPlan | None:
+    """Localiza la compra de una suscripción de Stripe, o ``None``."""
+    return (
+        db.query(CompraPlan)
+        .filter(CompraPlan.stripe_subscription_id == str(subscription_id or "").strip())
+        .first()
+    )
+
+
+def registrar_sesion_stripe(
+    db: Session,
+    *,
+    session_id: str,
+    subscription_id: str,
+    customer_id: str = "",
+    payment_intent: str = "",
+) -> CompraPlan:
+    """Completa los datos de Stripe de la compra pendiente tras el checkout.
+
+    ``checkout.session.completed`` es el momento en que se conoce la
+    suscripción y el cliente creados por Stripe; desde aquí en adelante las
+    renovaciones se localizan por ``stripe_subscription_id``.
+    """
+    compra = compra_por_sesion_stripe(db, session_id)
+    if compra is None:
+        raise GestionCompraError("No hay compra pendiente para esa sesión de pago.")
+    compra.stripe_subscription_id = str(subscription_id or "")[:200]
+    compra.stripe_customer_id = str(customer_id or "")[:200]
+    if payment_intent:
+        compra.stripe_payment_intent = str(payment_intent)[:200]
+    db.flush()
+    return compra
+
+
+def activar_compra_stripe(
+    db: Session,
+    *,
+    subscription_id: str,
+    vence,
+    operador_email: str,
+    hoy=None,
+) -> tuple[CompraPlan, Licencia]:
+    """Concede o extiende la licencia de una suscripción de Stripe.
+
+    ``vence`` es el ``current_period_end`` de la suscripción en Stripe: la
+    aplicación no calcula duraciones propias, solo refleja el período pagado.
+    Es idempotente: si la licencia ya cubre ``vence`` (reintento del webhook,
+    o ``checkout.session.completed`` seguido de ``invoice.paid``), no cambia
+    nada. La primera vez crea la licencia; después extiende la misma.
+    """
+    from datetime import date as _date
+
+    hoy = hoy or _date.today()
+    compra = compra_por_suscripcion_stripe(db, subscription_id)
+    if compra is None:
+        raise GestionCompraError("No hay compra para esa suscripción de Stripe.")
+    if compra.metodo_pago != "stripe":
+        raise GestionCompraError("La compra no corresponde a un pago con Stripe.")
+    if compra.estado == "cancelada":
+        # Una suscripción cancelada no se reactiva por un invoice residual.
+        return compra, compra.licencia
+
+    # Se lee por id y no por la relación ``compra.licencia``: la relación puede
+    # quedar en caché como ``None`` tras el primer flush, y en una renovación
+    # (mismo compra, segunda llamada) eso llevaría a crear una segunda licencia.
+    licencia = db.get(Licencia, compra.licencia_id) if compra.licencia_id else None
+    if licencia is None:
+        licencia = crear_licencia_hasta(
+            db,
+            organizacion_id=compra.organizacion_id,
+            vence=vence,
+            importe=compra.importe,
+            moneda=compra.moneda or "USD",
+            metodo_cobro=_etiqueta_metodo("stripe"),
+            referencia=str(subscription_id)[:60],
+            notas=f"Suscripción de Stripe ({subscription_id}).",
+            operador_email=operador_email,
+            hoy=hoy,
+        )
+        compra.licencia_id = licencia.id
+        compra.licencia_inicio = licencia.inicio
+        compra.licencia_vence = licencia.vence
+    else:
+        extender_licencia_hasta(licencia, vence, hoy=hoy)
+        compra.licencia_vence = licencia.vence
+
+    if compra.estado == "pendiente":
+        compra.estado = "activa"
+        compra.licencia_inicio = licencia.inicio
+        compra.revisado_por_email = str(operador_email or "")
+        compra.revisado_at = datetime.utcnow()
+    db.flush()
+    return compra, licencia
+
+
+def cancelar_compra_stripe(
+    db: Session,
+    *,
+    subscription_id: str,
+    operador_email: str,
+) -> CompraPlan | None:
+    """Marca como cancelada la compra de una suscripción dada de baja.
+
+    No toca la licencia: el acceso sigue hasta el día ya pagado (igual que
+    Stripe deja el servicio activo hasta el final del período en curso).
+    """
+    compra = compra_por_suscripcion_stripe(db, subscription_id)
+    if compra is None:
+        return None
+    if compra.estado == "cancelada":
+        return compra
+    compra.estado = "cancelada"
+    compra.revisado_por_email = str(operador_email or "")
+    compra.revisado_at = datetime.utcnow()
     db.flush()
     return compra
 

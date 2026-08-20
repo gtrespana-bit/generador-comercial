@@ -13,6 +13,12 @@ from .ratelimit import MemoryRateLimit, RateLimitBackend, build_rate_limiter
 
 _UNSAFE_METHODS = {"POST", "PUT", "PATCH", "DELETE"}
 
+#: Rutas que reciben escrituras de un tercero autenticado por su propio
+#: mecanismo y no por la sesión del navegador. El webhook de Stripe firma
+#: cada petición con ``STRIPE_WEBHOOK_SECRET`` (verificado en la ruta); exigirle
+#: CSRF de origen lo rechazaría siempre, porque Stripe no envía ``Origin``.
+_RUTAS_SIN_CSRF = frozenset({"/api/stripe/webhook"})
+
 
 def _antecesores_permitidos() -> tuple[bytes, bytes | None]:
     """Quién puede embeber la aplicación en un iframe.
@@ -245,7 +251,14 @@ class WebSecurityMiddleware:
         nonce = secrets.token_urlsafe(18)
         scope.setdefault("state", {})["csp_nonce"] = nonce
         method = str(scope.get("method", "GET")).upper()
-        if self.enforce_csrf and method in _UNSAFE_METHODS and not self._csrf_valido(scope, headers):
+        path = str(scope.get("path", "") or "")
+        exento_csrf = path in _RUTAS_SIN_CSRF
+        if (
+            self.enforce_csrf
+            and not exento_csrf
+            and method in _UNSAFE_METHODS
+            and not self._csrf_valido(scope, headers)
+        ):
             accept = headers.get("accept", "")
             if "application/json" in accept or headers.get("content-type", "").startswith("application/json"):
                 response = JSONResponse(

@@ -28,6 +28,7 @@ from migrations.versions import (
     f4c1d8e37a95_add_operator_licenses as licenses_migration,
     e7b3c1d5a204_market_prices_grants_and_rls as market_prices_migration,
     f8a1b2c3d4e5_catalog_taxonomy_v2 as taxonomy_migration,
+    ab12cd34ef56_add_stripe_compra as stripe_migration,
 )
 
 RAIZ_REPO = Path(__file__).resolve().parent.parent
@@ -160,7 +161,8 @@ def test_head_exigido_por_runtime_coincide_con_alembic():
     """
     from migrations.versions import b9f4d8a2c6e1_rendimiento_indices_calientes as indices_migration
     from migrations.versions import c5d6e7f8a9b0_merge_currency_heads as merge_migration
-    assert database_module.EXPECTED_ALEMBIC_HEAD == indices_migration.revision
+    assert database_module.EXPECTED_ALEMBIC_HEAD == stripe_migration.revision
+    assert stripe_migration.down_revision == indices_migration.revision
     assert indices_migration.down_revision == market_prices_migration.revision
     assert market_prices_migration.down_revision == merge_migration.revision
     assert tasa_migration.revision == "d9e2f3a4b5c6"

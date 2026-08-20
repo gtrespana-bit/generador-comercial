@@ -16,10 +16,11 @@ from . import common
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
 from ..services import auditoria
 from ..datos_pago import (
-    METODOS_PAGO,
     PLANES,
     PLAN_PENDIENTE_COOKIE,
+    es_metodo_online,
     metodo_info,
+    metodos_para_pais,
     plan_info,
 )
 
@@ -37,6 +38,26 @@ def _plan_o_redirect(request: Request, plan: str):
         return plan_info(plan)
     except KeyError:
         return None
+
+
+def codigo_pais_compra(db, request: Request) -> str:
+    """Resuelve el país del comprador para elegir los métodos de pago.
+
+    Prioridad: el país configurado en la organización (``empresa_pais``), que
+    es lo que de verdad describe al cliente con sesión iniciada; si no hay,
+    la cookie ``cotizat_pais`` que dejó la landing. Devuelve ``""`` cuando no
+    se puede resolver, y entonces el checkout cae en el genérico.
+    """
+    from ..paises import PAISES
+    from ..services.traduccion import codigo_desde_pais
+
+    cfg = db.query(Configuracion).first()
+    if cfg is not None:
+        codigo = codigo_desde_pais(getattr(cfg, "empresa_pais", "") or "")
+        if codigo in PAISES:
+            return codigo
+    cookie = str(request.cookies.get("cotizat_pais", "") or "").strip().upper()
+    return cookie if cookie in PAISES else ""
 
 
 def _cookie_secure() -> bool:
@@ -105,14 +126,30 @@ def comprar_plan(
 
     organizacion = db.get(Organizacion, int(db.info.get("organizacion_id") or 0))
     usuario = db.get(Usuario, int(db.info.get("usuario_id") or 0))
+    codigo = codigo_pais_compra(db, request)
+    metodos = metodos_para_pais(codigo or None)
+    from ..services.stripe_pagos import stripe_configurado
+
+    stripe_disponible = stripe_configurado() and "stripe" in metodos
+    if not stripe_disponible:
+        # Sin claves de Stripe no se ofrece la tarjeta: el checkout degrada a
+        # los canales manuales (o al respaldo cripto) en vez de un botón roto.
+        metodos = {
+            clave: ficha
+            for clave, ficha in metodos.items()
+            if not ficha.get("online")
+        }
+
     return TEMPLATES.TemplateResponse(
         request,
         "pago/comprar.html",
         {
             "plan": plan,
             "plan_ficha": ficha,
-            "metodos": METODOS_PAGO,
-            "metodos_json": json.dumps(METODOS_PAGO, ensure_ascii=False),
+            "metodos": metodos,
+            "metodos_json": json.dumps(metodos, ensure_ascii=False),
+            "pais_codigo": codigo,
+            "stripe_disponible": stripe_disponible,
             "organizacion_nombre": organizacion.nombre if organizacion else "",
             "usuario_email": usuario.email if usuario else "",
             "hoy": date.today().isoformat(),
@@ -178,6 +215,15 @@ async def registrar_compra(
     if ficha_metodo is None:
         return RedirectResponse(
             f"/pago/comprar?plan={quote(plan)}&error=Selecciona un método de pago.",
+            status_code=303,
+        )
+    if es_metodo_online(metodo_pago):
+        # Los métodos en línea (Stripe) no pasan por este formulario de
+        # comprobante: su cobro se inicia en /pago/stripe/crear-sesion y se
+        # confirma por webhook.
+        return RedirectResponse(
+            f"/pago/comprar?plan={quote(plan)}&error="
+            "Ese método se paga con tarjeta. Usa el botón «Pagar con tarjeta».",
             status_code=303,
         )
 

@@ -2100,6 +2100,13 @@ def migrar(engine):
             # `licencias`, que el RLS reserva al operador.
             ("licencia_inicio", "DATE"),
             ("licencia_vence", "DATE"),
+            # Cobro con tarjeta vía Stripe Checkout: la sesión, el pago y la
+            # suscripción recurrente que la originaron, más el país de cobro.
+            ("stripe_session_id", "VARCHAR(200)"),
+            ("stripe_payment_intent", "VARCHAR(200)"),
+            ("stripe_subscription_id", "VARCHAR(200)"),
+            ("stripe_customer_id", "VARCHAR(200)"),
+            ("pais_codigo", "VARCHAR(2)"),
         ],
         "descomposiciones_partida": [
             ("origen", "VARCHAR(20) DEFAULT 'manual'"),
@@ -2685,15 +2692,19 @@ class CompraPlan(TenantMixin, Base):
             name="ck_compra_plan_valido",
         ),
         CheckConstraint(
-            "metodo_pago IN ('pago_movil', 'binance', 'kontigo', 'usdt')",
+            "metodo_pago IN ('pago_movil', 'binance', 'kontigo', 'usdt', 'stripe')",
             name="ck_compra_metodo_valido",
         ),
         CheckConstraint(
-            "estado IN ('pendiente', 'activa', 'rechazada')",
+            "estado IN ('pendiente', 'activa', 'rechazada', 'cancelada')",
             name="ck_compra_estado_valido",
         ),
         CheckConstraint("importe >= 0", name="ck_compra_importe_no_negativo"),
         Index("ix_compras_plan_estado", "organizacion_id", "estado", "created_at"),
+        # Búsquedas del webhook de Stripe: localizar la compra por sesión o por
+        # suscripción sin seq-scan en cada pago/renovación.
+        Index("ix_compras_plan_stripe_session", "stripe_session_id"),
+        Index("ix_compras_plan_stripe_subscription", "stripe_subscription_id"),
     )
 
     id = Column(Integer, primary_key=True)
@@ -2731,6 +2742,19 @@ class CompraPlan(TenantMixin, Base):
     licencia_inicio = Column(Date, nullable=True)
     #: Último día de acceso concedido, inclusive.
     licencia_vence = Column(Date, nullable=True)
+    #: Sesión de Stripe Checkout que originó la compra (solo método ``stripe``).
+    #: Es la clave con la que el webhook de Stripe localiza la compra para
+    #: activarla; nunca es una clave de la API, así que puede guardarse.
+    stripe_session_id = Column(String(200), nullable=True)
+    #: Payment Intent confirmado por Stripe al cobrar (solo método ``stripe``).
+    stripe_payment_intent = Column(String(200), nullable=True)
+    #: Suscripción recurrente de Stripe creada en el checkout. Las renovaciones
+    #: llegan por ``invoice.paid`` y se localizan por esta clave.
+    stripe_subscription_id = Column(String(200), nullable=True)
+    #: Cliente de Stripe (para el portal de gestión de la suscripción).
+    stripe_customer_id = Column(String(200), nullable=True)
+    #: País desde el que se cobró, para el panel y la auditoría (p. ej. ``CO``).
+    pais_codigo = Column(String(2), nullable=True)
     revisado_por_email = Column(String(254), nullable=False, default="")
     revisado_at = Column(DateTime, nullable=True)
 
@@ -2743,6 +2767,7 @@ class CompraPlan(TenantMixin, Base):
             "pendiente": "Pendiente",
             "activa": "Activada",
             "rechazada": "Rechazada",
+            "cancelada": "Cancelada",
         }.get(self.estado, self.estado)
 
     def datos_verificacion_dict(self) -> dict:

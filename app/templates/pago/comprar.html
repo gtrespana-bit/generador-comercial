@@ -34,7 +34,7 @@
           {% endfor %}
         </ul>
       </div>
-      <p class="compra-nota">Pago manual: elige el método, paga y sube tu comprobante. Lo revisamos y activamos tu plan.</p>
+      <p class="compra-nota">{% if stripe_disponible %}Con tarjeta se activa automáticamente; los demás métodos se revisan y activamos tu plan a mano.{% else %}Pago manual: elige el método, paga y sube tu comprobante. Lo revisamos y activamos tu plan.{% endif %}</p>
     </section>
 
     <section class="compra-metodos">
@@ -53,6 +53,19 @@
     </section>
 
     {% for clave, metodo in metodos.items() %}
+    {% if metodo.get("online") %}
+    <section class="metodo-panel" data-metodo="{{ clave }}" data-online="1" aria-hidden="true">
+      <h2>2. Paga con {{ metodo.nombre }}</h2>
+      <p class="intro">{{ metodo.descripcion }}</p>
+      <div class="stripe-aviso">
+        Te llevamos a la página segura de <strong>Stripe</strong> para completar el pago
+        con tu tarjeta. Tu plan se activa automáticamente al confirmar.
+      </div>
+      <div class="compra-acciones">
+        <button type="submit" class="btn btn-primary" formaction="/pago/stripe/crear-sesion">Pagar con tarjeta</button>
+      </div>
+    </section>
+    {% else %}
     <section class="metodo-panel" data-metodo="{{ clave }}" aria-hidden="true">
       <h2>2. Paga con {{ metodo.nombre }}</h2>
       <p class="intro">{{ metodo.descripcion }}</p>
@@ -80,10 +93,11 @@
         </div>
       </div>
     </section>
+    {% endif %}
     {% endfor %}
 
     <div class="compra-acciones">
-      <button type="submit" class="btn btn-primary">Registrar mi compra</button>
+      <button type="submit" id="btn-registrar" class="btn btn-primary">Registrar mi compra</button>
       <a class="btn btn-secondary" href="/pago">Volver a planes</a>
     </div>
   </form>

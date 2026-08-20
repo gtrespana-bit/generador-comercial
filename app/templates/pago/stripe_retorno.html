@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pago con tarjeta · {{ product_name }}</title>
+  <link rel="icon" type="image/png" href="/static/icono.png">
+  <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}">
+</head>
+<body class="landing compra-page">
+{% set nav_modo = "cuenta" %}
+{% include "_nav.html" %}
+
+<main class="compra-main compra-confirmacion-main">
+  <header class="compra-head">
+    <span class="section-kicker">Checkout</span>
+    <h1>{% if activada %}¡Tu plan quedó activo!{% else %}Pago en proceso{% endif %}</h1>
+  </header>
+
+  {% if activada %}
+  <section class="compra-resumen">
+    <div class="compra-plan">
+      <h2>Pago con tarjeta confirmado</h2>
+      <p>Stripe confirmó tu pago y tu plan quedó activado automáticamente. Ya puedes usar todas las funciones.</p>
+    </div>
+  </section>
+  {% else %}
+  <section class="compra-resumen">
+    <div class="compra-plan">
+      <h2>Confirmando tu pago…</h2>
+      <p>Estamos esperando la confirmación de Stripe. Suele tardar unos segundos; si acabas de pagar, refresca en un momento. Tu plan se activará solo.</p>
+      <p class="compra-nota">Si el pago no se refleja en unos minutos, escríbenos a <a href="mailto:{{ email_soporte }}">{{ email_soporte }}</a> indicando tu correo.</p>
+    </div>
+  </section>
+  {% endif %}
+
+  <div class="compra-acciones">
+    <a class="btn btn-primary" href="/inicio">Ir a mi panel</a>
+    <a class="btn btn-secondary" href="/pago">Ver planes</a>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-int">
+    <div>© 2026 {{ titular_legal }}</div>
+    <div>
+      <a href="/legal/terminos">Términos</a>
+      <a href="/legal/privacidad">Privacidad</a>
+      <a href="mailto:{{ email_soporte }}">{{ email_soporte }}</a>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

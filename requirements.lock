@@ -61,6 +61,7 @@ rich==15.0.0
 sortedcontainers==2.4.0
 SQLAlchemy==2.0.52
 starlette==1.6.0
+stripe==15.5.1
 tinycss2==1.5.1
 tomli==2.4.1
 tomli_w==1.2.0

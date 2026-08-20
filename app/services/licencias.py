@@ -194,6 +194,99 @@ def crear_licencia(
     return licencia
 
 
+def crear_licencia_hasta(
+    db: Session,
+    *,
+    organizacion_id: int,
+    vence: date,
+    importe: float = 0.0,
+    moneda: str = "USD",
+    metodo_cobro: str = "",
+    referencia: str = "",
+    notas: str = "",
+    operador_email: str = "",
+    hoy: date | None = None,
+) -> Licencia:
+    """Concede una licencia nueva con fecha de vencimiento explícita.
+
+    Igual que :func:`crear_licencia`, pero para fechas que no salen de una
+    duración fija (p. ej. el ``current_period_end`` de una suscripción de
+    Stripe). Se encadena tras la licencia activa más lejana, como las demás.
+    """
+    hoy = hoy or date.today()
+    _exigir_organizacion(db, organizacion_id)
+
+    vence = vence or date.today()
+    if vence < hoy:
+        raise GestionLicenciaError("La fecha de vencimiento ya pasó.")
+    if (vence - hoy).days > MAXIMO_DIAS:
+        raise GestionLicenciaError(
+            f"Una licencia no puede superar {MAXIMO_DIAS} días."
+        )
+
+    try:
+        importe = float(importe or 0)
+    except (TypeError, ValueError):
+        raise GestionLicenciaError("El importe no es válido.") from None
+    if importe < 0:
+        raise GestionLicenciaError("El importe no puede ser negativo.")
+    if importe <= 0:
+        raise GestionLicenciaError("Una licencia de pago necesita un importe.")
+
+    # Encadena tras la licencia activa más lejana, si la hay.
+    vigente_hasta = max(
+        (
+            lic.vence
+            for lic in licencias_de_organizacion(db, organizacion_id, hoy=hoy)
+            if lic.estado == "activa" and lic.vence >= hoy
+        ),
+        default=None,
+    )
+    inicio = vigente_hasta + timedelta(days=1) if vigente_hasta else hoy
+    if vence < inicio:
+        raise GestionLicenciaError(
+            "La fecha de vencimiento no llega a cubrir un día nuevo de acceso."
+        )
+
+    licencia = Licencia(
+        organizacion_id=organizacion_id,
+        estado="activa",
+        origen="pago",
+        inicio=inicio,
+        vence=vence,
+        importe=importe,
+        moneda=str(moneda or "USD").strip()[:10] or "USD",
+        metodo_cobro=str(metodo_cobro or "").strip()[:80],
+        referencia=str(referencia or "").strip()[:150],
+        notas=str(notas or "").strip(),
+        creada_por_email=str(operador_email or "").strip().lower()[:254],
+    )
+    db.add(licencia)
+    db.flush()
+    return licencia
+
+
+def extender_licencia_hasta(
+    licencia: Licencia, vence: date, hoy: date | None = None
+) -> bool:
+    """Extiende una licencia existente hasta ``vence``, si es más lejana.
+
+    Devuelve ``True`` si cambió algo y ``False`` si ya cubría esa fecha (lo que
+    hace idempotente la renovación). Si estaba vencida y la nueva fecha la
+    vuelve a cubrir, la reactiva.
+    """
+    hoy = hoy or date.today()
+    if licencia.estado == "cancelada":
+        raise GestionLicenciaError("La licencia está cancelada y no se renueva.")
+    vence = vence or date.today()
+    if licencia.vence >= vence:
+        return False
+    licencia.vence = vence
+    if licencia.estado == "vencida" and vence >= hoy:
+        licencia.estado = "activa"
+    return True
+
+
 def cancelar_licencia(
     db: Session,
     *,

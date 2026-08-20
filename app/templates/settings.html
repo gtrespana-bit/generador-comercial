@@ -23,6 +23,11 @@
       {% if compra_recibo %}
       <p class="plan-recibo">
         <a href="/pago/recibo/{{ compra_recibo.id }}.pdf">Descargar recibo (PDF)</a>
+        {% if compra_recibo.stripe_customer_id %}
+        <form method="POST" action="/pago/stripe/portal" class="portal-sub">
+          <button type="submit" class="btn btn-secondary btn-sm">Gestionar suscripción (tarjeta / cancelar)</button>
+        </form>
+        {% endif %}
       </p>
       {% endif %}
     </div>

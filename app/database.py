@@ -91,7 +91,7 @@ DATABASE_URL = DATABASE.url
 DATABASE_BACKEND = DATABASE.backend
 DATABASE_IS_SQLITE = DATABASE.is_sqlite
 DB_PATH = DATABASE.sqlite_path
-EXPECTED_ALEMBIC_HEAD = "b9f4d8a2c6e1"
+EXPECTED_ALEMBIC_HEAD = "ab12cd34ef56"
 
 # Copias de seguridad automáticas y manuales (solo corresponden al modo
 # SQLite local; PostgreSQL tendrá backups administrados fuera del proceso).
@@ -291,6 +291,30 @@ def get_cron_db():
             )
         db.info["es_operador"] = True
         db.info["auth_email"] = "sistema@cotizat.local"
+        yield db
+    finally:
+        db.close()
+
+
+def get_stripe_webhook_db():
+    """Sesión de operador para el webhook de Stripe (``/api/stripe/webhook``).
+
+    Igual que :func:`get_cron_db`: el webhook no tiene sesión de Supabase Auth,
+    así que su puerta de seguridad es la firma de Stripe, que la ruta verifica
+    **antes** de tocar la base. Esta dependencia solo marca la sesión como
+    operador del sistema, que es lo que habilita el UPDATE de ``compras_plan``
+    bajo RLS. Nada de lo que hace llega a una ruta pública sin una firma válida.
+    """
+    from .auth import OrganizationAccessDenied
+
+    db = SessionLocal()
+    try:
+        if DATABASE_IS_SQLITE:
+            raise OrganizationAccessDenied(
+                "El webhook de Stripe solo existe en el despliegue web."
+            )
+        db.info["es_operador"] = True
+        db.info["auth_email"] = "stripe@cotizat.local"
         yield db
     finally:
         db.close()

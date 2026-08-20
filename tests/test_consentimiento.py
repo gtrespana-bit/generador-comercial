@@ -503,8 +503,10 @@ def test_la_migracion_encadena_con_la_cabeza_anterior(migracion):
     # fusión de las ramas de moneda.
     from migrations.versions import (
         b9f4d8a2c6e1_rendimiento_indices_calientes as indices_migracion,
+        ab12cd34ef56_add_stripe_compra as stripe_migracion,
     )
-    assert indices_migracion.revision == EXPECTED_ALEMBIC_HEAD
+    assert stripe_migracion.revision == EXPECTED_ALEMBIC_HEAD
+    assert stripe_migracion.down_revision == indices_migracion.revision
     assert indices_migracion.down_revision == precios_migracion.revision
     assert precios_migracion.down_revision == merge_migracion.revision
     assert tasa_migracion.down_revision == etiqueta_migracion.revision

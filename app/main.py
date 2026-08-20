@@ -63,6 +63,7 @@ from .routers import (  # noqa: E402
     publico,
     recetas,
     recursos,
+    stripe,
 )
 from .routers.common import IMPORTS_DIR, TEMPLATES, UPLOADS  # noqa: E402
 
@@ -431,6 +432,7 @@ app.include_router(productos.router)
 app.include_router(recursos.router)
 app.include_router(plantillas.router)
 app.include_router(recetas.router)
+app.include_router(stripe.router)
 
 
 # ---------------------------------------------------------------------------

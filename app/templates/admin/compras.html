@@ -49,7 +49,7 @@
 </header>
 
 <h1>Compras de plan</h1>
-<p class="muted">Compras registradas por clientes con su comprobante. Revisa el comprobante antes de activar.</p>
+<p class="muted">Compras registradas por clientes. Las de tarjeta (Stripe) se activan solas por webhook; las manuales hay que revisarlas antes de activar.</p>
 
 {% if error %}<div class="alert">{{ error }}</div>{% endif %}
 {% if msg %}<div class="notice">{{ msg }}</div>{% endif %}
@@ -98,6 +98,15 @@
       {% if c.licencia_id %}
       <div class="kv"><b>Licencia concedida:</b> #{{ c.licencia_id }}</div>
       {% endif %}
+      {% if c.stripe_subscription_id %}
+      <div class="kv"><b>Suscripción Stripe:</b> {{ c.stripe_subscription_id }}</div>
+      {% endif %}
+      {% if c.stripe_customer_id %}
+      <div class="kv"><b>Cliente Stripe:</b> {{ c.stripe_customer_id }}</div>
+      {% endif %}
+      {% if c.pais_codigo %}
+      <div class="kv"><b>País de cobro:</b> {{ c.pais_codigo }}</div>
+      {% endif %}
       {% if c.revisado_por_email %}
       <div class="kv"><b>Revisada por:</b> {{ c.revisado_por_email }} · {{ c.revisado_at.strftime("%d/%m/%Y %H:%M") if c.revisado_at }}</div>
       {% endif %}
@@ -106,13 +115,16 @@
 
   {% if c.estado == 'pendiente' %}
   <div class="acciones-compra">
+    {% if c.metodo_pago != 'stripe' %}
     <form class="inline" method="POST" action="/admin/compras/{{ c.id }}/activar">
       <button type="submit">✓ Verificar y activar</button>
     </form>
-    <form class="inline" method="POST" action="/admin/compras/{{ c.id }}/rechazar"
->
+    <form class="inline" method="POST" action="/admin/compras/{{ c.id }}/rechazar">
       <button type="submit" class="risk">✕ Rechazar</button>
     </form>
+    {% else %}
+    <span class="muted">Pago con tarjeta: se activa automáticamente cuando Stripe confirma el cobro.</span>
+    {% endif %}
   </div>
   {% endif %}
 </div>

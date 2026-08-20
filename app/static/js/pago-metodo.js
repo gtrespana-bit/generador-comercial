@@ -8,12 +8,21 @@
   var radios = document.querySelectorAll("input[name='metodo_pago']");
   var paneles = document.querySelectorAll(".metodo-panel");
   var campos = document.querySelectorAll("[data-campo]");
+  var btnRegistrar = document.getElementById("btn-registrar");
 
   if (!radios.length || !paneles.length) {
     return;
   }
 
+  function esOnline(metodo) {
+    var panel = document.querySelector(
+      ".metodo-panel[data-metodo='" + metodo + "']"
+    );
+    return panel ? panel.getAttribute("data-online") === "1" : false;
+  }
+
   function mostrar(metodo) {
+    var online = esOnline(metodo);
     for (var i = 0; i < paneles.length; i++) {
       var activo = paneles[i].getAttribute("data-metodo") === metodo;
       paneles[i].classList.toggle("activo", activo);
@@ -42,6 +51,11 @@
       } else {
         campos[k].removeAttribute("required");
       }
+    }
+    // El botón «Registrar mi compra» (con comprobante) solo aplica a métodos
+    // manuales; para la tarjeta, el propio panel tiene su botón de pago.
+    if (btnRegistrar) {
+      btnRegistrar.hidden = online;
     }
   }
 

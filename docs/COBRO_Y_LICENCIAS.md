@@ -354,3 +354,65 @@ quien viene rebotado ya agotó la prueba y volver a ofrecérsela sería una burl
 pide tarjeta, no hay cobro automático, y al terminar la prueba la cuenta deja
 de generar presupuestos nuevos **sin borrar nada**. Si alguna de las tres deja
 de cumplirse, hay que cambiar la web el mismo día.
+
+---
+
+## 6. Stripe Checkout (suscripciones) para clientes fuera de Venezuela (20/08/2026)
+
+> Actualización del 20/08/2026: el titular completó el alta de Stripe y se
+> implantó el cobro con tarjeta **Stripe Checkout en modo suscripción**, en
+> **USD**, para los 5 países del selector (`VE`, `CO`, `MX`, `EC`, `PE`). Sigue
+> vigente la decisión de E1-059 (cobro manual para el piloto): Stripe es un
+> método **añadido**, no un reemplazo de los canales manuales.
+
+**Cómo funciona**
+
+1. El checkout (`/pago/comprar`) elige los métodos según el país del comprador
+   (`app/datos_pago.py` → `METODOS_POR_PAIS`). Venezuela conserva Pago móvil,
+   Binance, Kontigo y USDT **y añade la tarjeta al final**; el resto abre con
+   Stripe y deja USDT/Binance como respaldo manual.
+2. `POST /pago/stripe/crear-sesion` crea una sesión de Checkout en
+   `mode="subscription"` con el precio recurrente del plan
+   (`STRIPE_PRICE_ANUAL` / `STRIPE_PRICE_MENSUAL`), registra una compra
+   `pendiente` en `compras_plan` (sin comprobante) y redirige a Stripe.
+3. Stripe crea la suscripción y cobra. Por webhook (`/api/stripe/webhook`,
+   firma **siempre verificada**):
+   - `checkout.session.completed` → vincula `stripe_subscription_id` y
+     `stripe_customer_id`; si el cobro ya está confirmado (status
+     active/trialing), concede la licencia.
+   - `invoice.paid` → concede (primera vez) o **renueva** la licencia hasta el
+     `current_period_end` de la suscripción (`activar_compra_stripe`,
+     idempotente: no duplica ni acorta el acceso).
+   - `invoice.payment_failed` → se registra; no se revoca (el acceso dura hasta
+     el día pagado, igual que Stripe).
+   - `customer.subscription.deleted` → marca la compra `cancelada`.
+   - `checkout.session.expired` → rechaza la compra abandonada.
+4. El cliente puede **gestionar su suscripción** (ver facturas, cambiar la
+   tarjeta, cancelar o reactivar) desde Configuración → «Gestionar
+   suscripción», que abre el Customer Portal de Stripe
+   (`POST /pago/stripe/portal`).
+
+**Configuración** (`.env.example`): `STRIPE_SECRET_KEY`,
+`STRIPE_WEBHOOK_SECRET` (secretas, solo backend) y los precios
+`STRIPE_PRICE_ANUAL` / `STRIPE_PRICE_MENSUAL`. Sin ellas el checkout **oculta**
+la tarjeta y degrada a los canales manuales; nada se rompe.
+
+**Pendiente operativo (titular):**
+
+1. Crear los precios recurrentes con
+   `STRIPE_SECRET_KEY=sk_test_... python tools/crear_precios_stripe.py` (imprime
+   los dos `price_...`) o desde Dashboard → Catálogo de productos.
+2. Fijar en el panel del despliegue: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`,
+   `STRIPE_PRICE_ANUAL`, `STRIPE_PRICE_MENSUAL`.
+3. Registrar el webhook `https://<dominio>/api/stripe/webhook` con los eventos
+   `checkout.session.completed`, `checkout.session.expired`, `invoice.paid`,
+   `invoice.payment_failed` y `customer.subscription.deleted`; copiar el
+   `whsec_...` a `STRIPE_WEBHOOK_SECRET`.
+4. Probar con `stripe listen --forward-to localhost:8000/api/stripe/webhook` y
+   la tarjeta de prueba `4242 4242 4242 4242`.
+5. Configurar en Stripe Billing los reintentos (dunning) y los correos de
+   cobro, y la **recuperación de clientes** si se desea evitar bajas.
+
+Los métodos locales de Stripe (OXXO, PSE, Yape) exigen cobrar en moneda local:
+quedan para una fase 2 si se decide publicar precios en MXN/COP/PEN. En USD la
+tarjeta funciona en todo el mundo.

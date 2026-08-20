@@ -5570,6 +5570,8 @@ body {
 }
 .plan-recibo { margin: 6px 0 0; font-size: .85rem; }
 .plan-recibo a { color: var(--accent); font-weight: 600; }
+.plan-recibo .portal-sub { display: inline; margin-left: 8px; }
+.plan-recibo .portal-sub button { vertical-align: middle; }
 .plan-sin .subtitle { margin: 0 0 12px; }
 .rol-notice {
   background: var(--accent-soft, rgba(18, 63, 120, .08));

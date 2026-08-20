@@ -185,6 +185,36 @@ DEFINICIONES: tuple[Variable, ...] = (
         "dirección remitente verificada en Resend",
         recomendada_en=_PRODUCCION,
     ),
+    # --- Cobro con tarjeta (Stripe Checkout) ------------------------------
+    Variable(
+        "STRIPE_SECRET_KEY",
+        True,
+        "clave secreta de Stripe para crear sesiones de Checkout (solo servidor)",
+        recomendada_en=_PRODUCCION,
+    ),
+    Variable(
+        "STRIPE_WEBHOOK_SECRET",
+        True,
+        "secreto de firma del webhook de Stripe (solo servidor)",
+        recomendada_en=_PRODUCCION,
+    ),
+    Variable(
+        "STRIPE_PUBLISHABLE_KEY",
+        False,
+        "clave publicable de Stripe (solo si se usa Elements; Checkout no la necesita)",
+    ),
+    Variable(
+        "STRIPE_PRICE_ANUAL",
+        False,
+        "ID del precio recurrente anual en Stripe (price_...)",
+        recomendada_en=_PRODUCCION,
+    ),
+    Variable(
+        "STRIPE_PRICE_MENSUAL",
+        False,
+        "ID del precio recurrente mensual en Stripe (price_...)",
+        recomendada_en=_PRODUCCION,
+    ),
     # --- Trabajo programado (Vercel Cron) --------------------------------
     Variable(
         "CRON_SECRET",
