@@ -3,8 +3,10 @@ from types import SimpleNamespace
 
 from app.services.tiempos import (
     calcular_tiempos_presupuesto,
+    duracion_partida_con_cuadrilla,
     factor_unidad_tiempo,
     horas_por_unidad_descompuesto,
+    simular_planificacion_cuadrilla,
     tiempos_partida,
 )
 
@@ -188,3 +190,43 @@ def test_desglose_por_capitulo_y_fuentes():
     assert res["resumen_fuentes"]["coste"] == 1
     assert res["resumen_fuentes"]["sin_datos"] == 1
     assert res["sin_datos"] == ["C"]  # catálogo sin tiempo cargado
+
+
+# ---------------------------------------------------------------------------
+# Simulación de composición de cuadrilla
+# ---------------------------------------------------------------------------
+
+def test_duracion_partida_cambia_con_composicion_de_cuadrilla():
+    partida = {
+        "oficial_h": 16,
+        "ayudante_h": 8,
+        "capataz_h": 0,
+        "otros_mo_h": 0,
+        "equipos_h": 0,
+    }
+    assert duracion_partida_con_cuadrilla(partida, oficiales=1, ayudantes=1) == 16
+    assert duracion_partida_con_cuadrilla(partida, oficiales=2, ayudantes=1) == 8
+    # Añadir ayudante no mejora esta partida porque el cuello de botella es oficial.
+    assert duracion_partida_con_cuadrilla(partida, oficiales=1, ayudantes=2) == 16
+
+
+def test_simulador_planificacion_respeta_composicion_y_cuadrillas():
+    tiempos = {
+        "horas_jornada": 8,
+        "total_mano_obra_h": 48,
+        "partidas": [
+            {"activa": True, "fuente": "manual", "oficial_h": 16, "ayudante_h": 8, "capataz_h": 0, "otros_mo_h": 0, "equipos_h": 0},
+            {"activa": True, "fuente": "manual", "oficial_h": 8, "ayudante_h": 16, "capataz_h": 0, "otros_mo_h": 0, "equipos_h": 0},
+        ],
+    }
+    estandar = simular_planificacion_cuadrilla(tiempos, composicion="1of1ay")
+    dos_oficiales = simular_planificacion_cuadrilla(tiempos, composicion="2of1ay")
+    dos_ayudantes = simular_planificacion_cuadrilla(tiempos, composicion="1of2ay")
+    dos_cuadrillas = simular_planificacion_cuadrilla(tiempos, composicion="1of1ay", cuadrillas=2)
+
+    assert estandar["dias"] == 4.0  # (16 + 16) / 8
+    assert dos_oficiales["dias"] == 3.0  # (8 + 16) / 8
+    assert dos_ayudantes["dias"] == 3.0  # (16 + 8) / 8
+    assert dos_cuadrillas["dias"] == 2.0
+    # La composición cambia plazo, no el esfuerzo de horas-hombre.
+    assert estandar["horas_hombre"] == dos_oficiales["horas_hombre"] == 48

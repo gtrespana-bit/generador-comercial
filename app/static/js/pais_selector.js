@@ -65,8 +65,8 @@
 
     // Textos dinámicos por id
     texto("hero-kicker", p
-      ? p.bandera + " Hecho para " + p.nombre + " · Construcción y remodelación"
-      : "🌎 Hecho para Latinoamérica · Construcción y remodelación");
+      ? p.bandera + " Sistema comercial para " + p.nombre + " · Construcción y remodelación"
+      : "🌎 Sistema comercial para Latinoamérica · Construcción y remodelación");
     texto("banner-h2", p
       ? "El catálogo más completo para presupuestar en " + p.nombre + "."
       : "El catálogo más completo para presupuestar en Latinoamérica.");
@@ -138,8 +138,8 @@
     var meta = document.querySelector('meta[name="description"]');
     if (meta) {
       meta.setAttribute("content", p
-        ? "Presupuestos de obra profesionales en minutos. Partidas descompuestas y precios de recursos" + (p.moneda !== "USD" ? " convertidos a " + p.moneda + " con tasa de referencia" : " en USD de referencia") + " contrastados con el mercado " + p.mercado + ". PDF con tu logo, versiones, firma del cliente y cobros."
-        : "Presupuestos de obra profesionales en minutos. Líneas de precio en USD de referencia convertibles a tu moneda. PDF con tu logo, versiones, firma del cliente y cobros.");
+        ? "No es solo un generador de presupuestos: sistema comercial para construcción y remodelación. Calcula costes, margen de beneficio, horas de cuadrilla, duración estimada, PDF profesional, versiones, firma del cliente y cobros" + (p.moneda !== "USD" ? " en " + p.moneda + " y USD." : " en USD de referencia.")
+        : "No es solo un generador de presupuestos: sistema comercial para construcción y remodelación. Calcula costes, margen de beneficio, horas de cuadrilla, duración estimada, PDF profesional, versiones, firma del cliente y cobros. Líneas de precio en USD de referencia convertibles a tu moneda.");
     }
 
     // Normalizar select

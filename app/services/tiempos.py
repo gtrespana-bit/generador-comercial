@@ -596,3 +596,85 @@ def calcular_tiempos_presupuesto(
         "partidas": partidas,
         "etiquetas_fuente": ETIQUETAS_FUENTE,
     }
+
+
+COMPOSICIONES_CUADRILLA: dict[str, dict] = {
+    "1of1ay": {"oficiales": 1, "ayudantes": 1, "label": "1 oficial + 1 ayudante"},
+    "2of1ay": {"oficiales": 2, "ayudantes": 1, "label": "2 oficiales + 1 ayudante"},
+    "1of2ay": {"oficiales": 1, "ayudantes": 2, "label": "1 oficial + 2 ayudantes"},
+    "2of2ay": {"oficiales": 2, "ayudantes": 2, "label": "2 oficiales + 2 ayudantes"},
+    "1of": {"oficiales": 1, "ayudantes": 0, "label": "solo oficial"},
+    "1ay": {"oficiales": 0, "ayudantes": 1, "label": "solo ayudante"},
+}
+
+
+def duracion_partida_con_cuadrilla(t: dict, oficiales: int = 1, ayudantes: int = 1) -> float:
+    """Duración crítica de una partida para una composición concreta.
+
+    La estimación base guarda horas por rol. Con una cuadrilla 1 oficial + 1
+    ayudante, la duración de una partida es ``max(oficial, ayudante)``. Si la
+    cuadrilla cambia, cada rol se reparte entre los integrantes de ese rol:
+    2 oficiales reducen el cuello de botella de oficial, 2 ayudantes reducen el
+    de ayudante. Si falta un rol, el personal disponible absorbe toda la mano
+    de obra como aproximación conservadora, de modo que el plazo sube.
+    """
+    oficiales = max(0, int(oficiales or 0))
+    ayudantes = max(0, int(ayudantes or 0))
+    of = float(t.get("oficial_h") or 0)
+    ay = float(t.get("ayudante_h") or 0) + float(t.get("otros_mo_h") or 0)
+    cap = float(t.get("capataz_h") or 0)
+    eq = float(t.get("equipos_h") or 0)
+
+    if oficiales > 0 and ayudantes > 0:
+        dur_mo = max((of + cap) / oficiales, ay / ayudantes)
+    elif oficiales > 0:
+        dur_mo = (of + ay + cap) / oficiales
+    elif ayudantes > 0:
+        dur_mo = (of + ay + cap) / ayudantes
+    else:
+        dur_mo = of + ay + cap
+    return round(max(dur_mo, eq), 4)
+
+
+def simular_planificacion_cuadrilla(
+    tiempos: dict,
+    *,
+    horas_jornada: float | None = None,
+    cuadrillas: int = 1,
+    composicion: str = "1of1ay",
+) -> dict:
+    """Simula plazo de obra con jornada, nº de cuadrillas y composición.
+
+    No altera las horas-hombre: solo recalcula la duración/plazo según la
+    capacidad de la cuadrilla elegida. Es la misma regla que usa la pantalla de
+    planificación rápida.
+    """
+    comp = COMPOSICIONES_CUADRILLA.get(composicion) or COMPOSICIONES_CUADRILLA["1of1ay"]
+    jornada = max(0.1, float(horas_jornada or tiempos.get("horas_jornada") or 8.0))
+    n_cuadrillas = max(1, int(cuadrillas or 1))
+    total_duracion_h = 0.0
+    for t in tiempos.get("partidas") or []:
+        if not t or t.get("activa") is False or t.get("fuente") == "sin_datos":
+            continue
+        total_duracion_h += duracion_partida_con_cuadrilla(
+            t,
+            oficiales=comp["oficiales"],
+            ayudantes=comp["ayudantes"],
+        )
+    if total_duracion_h <= 0:
+        total_duracion_h = float(tiempos.get("total_duracion_h") or 0)
+    dias_una_cuadrilla = total_duracion_h / jornada
+    dias = dias_una_cuadrilla / n_cuadrillas
+    return {
+        "composicion": composicion,
+        "label": comp["label"],
+        "oficiales": comp["oficiales"],
+        "ayudantes": comp["ayudantes"],
+        "cuadrillas": n_cuadrillas,
+        "horas_jornada": jornada,
+        "duracion_h_una_cuadrilla": round(total_duracion_h, 2),
+        "dias_una_cuadrilla": round(dias_una_cuadrilla, 2),
+        "dias": round(dias, 2),
+        "semanas": round(dias / 5.0, 2),
+        "horas_hombre": float(tiempos.get("total_mano_obra_h") or 0),
+    }

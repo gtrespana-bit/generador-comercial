@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   {% if pais_actual %}
   <title>{{ product_name }} — Presupuestos de construcción y remodelación para {{ pais_actual.nombre }}</title>
-  <meta name="description" content="{% if hay_prueba_gratuita() %}Pruébalo {{ dias_de_prueba() }} días gratis, sin tarjeta. {% endif %}Presupuestos de obra profesionales en minutos. {{ catalogo().partidas_txt }} partidas descompuestas y {{ catalogo().recursos_txt }} precios de recursos{% if ej.convierte %}, convertidos a {{ ej.moneda }} con tasa de referencia{% else %} en USD de referencia{% endif %} contrastados con el mercado {{ pais_actual.mercado }}. Margen de beneficio, horas de tu cuadrilla y PDF con tu logo, versiones, firma del cliente y cobros.">
+  <meta name="description" content="{% if hay_prueba_gratuita() %}Pruébalo {{ dias_de_prueba() }} días gratis, sin tarjeta. {% endif %}No es solo un generador de presupuestos: es un sistema comercial para construcción y remodelación. Calcula costes, margen de beneficio, horas de cuadrilla, duración estimada, PDF profesional, versiones, firma del cliente y cobros. {{ catalogo().partidas_txt }} partidas descompuestas y {{ catalogo().recursos_txt }} recursos{% if ej.convierte %}, en {{ ej.moneda }}{% else %}, en USD de referencia{% endif %}.">
   {% else %}
   <title>{{ product_name }} — Presupuestos de construcción y remodelación para Latinoamérica</title>
-  <meta name="description" content="{% if hay_prueba_gratuita() %}Pruébalo {{ dias_de_prueba() }} días gratis, sin tarjeta. {% endif %}Presupuestos de obra profesionales en minutos. {{ catalogo().lineas_precio_txt }} líneas de precio: {{ catalogo().partidas_txt }} partidas descompuestas + {{ catalogo().recursos_txt }} precios de recursos, en USD de referencia convertibles a tu moneda. Margen de beneficio, horas de tu cuadrilla y PDF con tu logo, versiones, firma del cliente y cobros.">
+  <meta name="description" content="{% if hay_prueba_gratuita() %}Pruébalo {{ dias_de_prueba() }} días gratis, sin tarjeta. {% endif %}No es solo un generador de presupuestos: es un sistema comercial para construcción y remodelación. Calcula costes, margen de beneficio, horas de cuadrilla, duración estimada, PDF profesional, versiones, firma del cliente y cobros. {{ catalogo().lineas_precio_txt }} líneas de precio en USD de referencia convertibles a tu moneda.">
   {% endif %}
   <link rel="icon" type="image/png" href="/static/icono.png">
   <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
@@ -61,15 +61,15 @@
   <div class="hero-int">
     <div class="hero-copy">
       {% if pais_actual %}
-      <span class="hero-kicker" id="hero-kicker">{{ pais_actual.bandera }} Hecho para {{ pais_actual.nombre }} · Construcción y remodelación</span>
+      <span class="hero-kicker" id="hero-kicker">{{ pais_actual.bandera }} Sistema comercial para {{ pais_actual.nombre }} · Construcción y remodelación</span>
       {% else %}
-      <span class="hero-kicker" id="hero-kicker">🌎 Hecho para Latinoamérica · Construcción y remodelación</span>
+      <span class="hero-kicker" id="hero-kicker">🌎 Sistema comercial para Latinoamérica · Construcción y remodelación</span>
       {% endif %}
       {% if hay_prueba_gratuita() %}
       <span class="hero-prueba">✨ {{ dias_de_prueba() }} días gratis · sin tarjeta de crédito</span>
       {% endif %}
-      <h1>Presupuestos de obra <span class="hero-hl">profesionales</span>, en minutos.</h1>
-      <p class="sub">{{ product_name }} convierte tu catálogo y tus precios en presupuestos con su <strong>margen de beneficio</strong>, las <strong>horas de tu cuadrilla</strong> y un PDF con tu logo listo para enviar. Sin Excel, sin pegar y copiar.</p>
+      <h1>No solo generes presupuestos: <span class="hero-hl">controla margen, tiempos y cierre</span> de cada obra.</h1>
+      <p class="sub">{{ product_name }} es un generador de presupuestos para construcción y remodelación, sí; pero también es tu <strong>motor de costes, beneficios, rendimientos, plazos, propuestas firmables y cobros</strong>. Desde la primera pantalla sabes cuánto vas a vender, cuánto te cuesta, cuánto ganas y cuánto tardas.</p>
       <div class="acciones">
         {% if hay_prueba_gratuita() %}
         <a class="btn btn-primary" href="/acceso">Empezar mis {{ dias_de_prueba() }} días gratis</a>
@@ -81,64 +81,71 @@
       {% if hay_prueba_gratuita() %}
       <p class="hero-letra-pequena">Acceso completo durante {{ dias_de_prueba() }} días. No pedimos tarjeta y no se cobra nada automáticamente.</p>
       {% endif %}
+      <div class="hero-outcomes" aria-label="Ventajas principales de {{ product_name }}">
+        <div class="hero-outcome"><span>💰</span><strong>Beneficio real</strong><small>coste vs. venta por partida</small></div>
+        <div class="hero-outcome"><span>⏱️</span><strong>Tiempo de obra</strong><small>horas y días de cuadrilla</small></div>
+        <div class="hero-outcome"><span>🧮</span><strong>Costes vivos</strong><small>recursos y rendimientos en cascada</small></div>
+        <div class="hero-outcome"><span>🖋️</span><strong>Cierre comercial</strong><small>PDF, versiones, firma y cobros</small></div>
+      </div>
       <ul class="hero-points">
-        <li><span class="check">✓</span> Margen y beneficio en cada partida, capítulo y total</li>
-        <li><span class="check">✓</span> Tiempo de obra y horas de tu cuadrilla, calculados solos</li>
-        <li><span class="check">✓</span> {{ catalogo().lineas_precio_txt }} líneas de precio: {{ catalogo().partidas_txt }} partidas + {{ catalogo().recursos_txt }} recursos{% if ej.convierte %} · en {{ ej.moneda }}{% endif %}</li>
+        <li><span class="check">✓</span> Presupuesta obra y productos, pero también calcula coste interno, margen y beneficio.</li>
+        <li><span class="check">✓</span> Planifica con horas-hombre, duración estimada y rendimientos de cada partida.</li>
+        <li><span class="check">✓</span> {{ catalogo().lineas_precio_txt }} líneas de precio: {{ catalogo().partidas_txt }} partidas + {{ catalogo().recursos_txt }} recursos{% if ej.convierte %} · en {{ ej.moneda }}{% endif %}, editables y conectados.</li>
       </ul>
     </div>
 
     <div class="hero-visual" aria-hidden="true">
-      <div class="hero-doc">
-        <div class="hd-head">
-          <span class="hd-mark">A</span>
-          <span class="hd-org"><strong>{{ ej.empresa }}</strong><small>Presupuesto de obra · PR-2026-014</small></span>
+      <div class="hero-command">
+        <div class="hc-head">
+          <div>
+            <span class="hc-eyebrow">Panel de control comercial</span>
+            <strong>{{ ej.obra }}</strong>
+            <small>{{ ej.residencia }} · PR-2026-014</small>
+          </div>
+          <span class="hc-status">listo para enviar</span>
         </div>
-        <div class="hd-title">{{ ej.obra }}</div>
-        <div class="hd-meta">{{ ej.residencia }}</div>
-        <div class="hd-chaps">
+        <div class="hc-total">
+          <span>Presupuesto total</span>
+          <strong>{{ ej.hero.total }}</strong>
+          <em>con coste, margen y plazo calculados</em>
+        </div>
+        <div class="hc-grid">
+          <div class="hc-metric hc-profit"><span>Beneficio</span><strong>{{ ej.resumen.beneficio }}</strong><small>{{ ej.resumen.margen }}</small></div>
+          <div class="hc-metric"><span>Mano de obra</span><strong>{{ ej.resumen.horas }}</strong><small>{{ ej.resumen.horas_split }}</small></div>
+          <div class="hc-metric"><span>Duración</span><strong>{{ ej.resumen.duracion }}</strong><small>{{ ej.resumen.cuadrilla }}</small></div>
+          <div class="hc-metric"><span>Catálogo</span><strong>{{ catalogo().partidas_txt }}</strong><small>partidas + {{ catalogo().recursos_txt }} recursos</small></div>
+        </div>
+        <div class="hc-flow">
+          <span>Catálogo</span><i></i><span>Costes</span><i></i><span>Margen</span><i></i><span>Tiempo</span><i></i><span>Firma y cobro</span>
+        </div>
+        <div class="hc-lines">
           {% for c in ej.hero.caps %}
-          <div class="hd-row"><span>{{ c.nombre }}</span><strong>{{ c.importe }}</strong></div>
+          <div class="hc-line"><span>{{ c.nombre }}</span><strong>{{ c.importe }}</strong></div>
           {% endfor %}
         </div>
-        <div class="hd-total"><span>PRESUPUESTO TOTAL</span><strong>{{ ej.hero.total }}</strong></div>
-        <div class="hd-sig">
-          <div class="hd-sig-col"><span class="hd-sig-line"></span><span class="hd-sig-label">Contratista</span></div>
-          <div class="hd-sig-col"><span class="hd-sig-line"></span><span class="hd-sig-label">Cliente</span></div>
-        </div>
       </div>
-      <div class="hero-badge badge-margen">💰 <strong>{{ ej.margen_txt }}</strong>&nbsp;margen</div>
-      <div class="hero-badge badge-tiempo">⏱️ <strong>98 h</strong>&nbsp;· ≈ 6 días</div>
+      <div class="hero-badge badge-margen">💰 <strong>{{ ej.margen_txt }}</strong>&nbsp;margen automático</div>
+      <div class="hero-badge badge-tiempo">⏱️ <strong>98 h</strong>&nbsp;de cuadrilla · ≈ 6 días</div>
+      <div class="hero-badge badge-cierre">🖋️ PDF + firma + cobros</div>
     </div>
   </div>
 
-  <div class="hero-stats" role="list">
-    <div class="stat" role="listitem">
-      <strong>{{ catalogo().lineas_precio_txt }}</strong>
-      <span>líneas de precio listas (partidas + recursos)</span>
+  <div class="hero-stats" role="list" aria-label="Qué resuelve {{ product_name }} desde el primer presupuesto">
+    <div class="stat stat-text" role="listitem">
+      <strong>Costes</strong>
+      <span>materiales, mano de obra, equipo, complementarios y recursos conectados</span>
     </div>
-    <div class="stat" role="listitem">
-      <strong>{{ catalogo().partidas_txt }}</strong>
-      <span>partidas con descomposición técnica</span>
+    <div class="stat stat-text" role="listitem">
+      <strong>Beneficio</strong>
+      <span>margen por partida, capítulo, productos y total de obra</span>
     </div>
-    <div class="stat" role="listitem">
-      <strong>{{ catalogo().recursos_txt }}</strong>
-      <span>precios de recursos: material, mano de obra y equipo</span>
+    <div class="stat stat-text" role="listitem">
+      <strong>Plazo</strong>
+      <span>horas-hombre, cuadrilla y duración estimada antes de prometer fechas</span>
     </div>
-    <div class="stat" role="listitem" id="stat-moneda">
-      {% if ej.convierte %}
-      <strong>{{ ej.moneda }}</strong>
-      <span id="stat-moneda-nota">tasa de referencia {{ ej.tasa_txt }} {{ ej.moneda }}/US$</span>
-      {% elif pais_actual and pais_actual.moneda_local != 'USD' %}
-      <strong>US$</strong>
-      <span id="stat-moneda-nota">o {{ pais_actual.simbolo_local }} ({{ pais_actual.moneda_local }}) con tasa de referencia</span>
-      {% elif pais_actual %}
-      <strong>US$</strong>
-      <span id="stat-moneda-nota">moneda de {{ pais_actual.nombre }} · IVA {{ pais_actual.iva }}%</span>
-      {% else %}
-      <strong>US$</strong>
-      <span id="stat-moneda-nota">USD de referencia · convierte a tu moneda local</span>
-      {% endif %}
+    <div class="stat stat-text" role="listitem">
+      <strong>Cierre</strong>
+      <span>PDF con logo, versiones, enlace firmable, WhatsApp, email y cobros</span>
     </div>
   </div>
 </header>
