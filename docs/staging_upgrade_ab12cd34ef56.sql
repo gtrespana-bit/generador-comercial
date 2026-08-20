@@ -7,7 +7,8 @@
 -- Es idempotente (ADD COLUMN IF NOT EXISTS / CREATE INDEX IF NOT EXISTS):
 -- puede re-ejecutarse sin daño.
 -- Ejecutar una sola vez con el rol administrativo de Supabase si la base ya
--- está en b9f4d8a2c6e1 (SQL Editor → New query → pegar → Run).
+-- está en a4c8e2f7b1d6 (SQL Editor → New query → pegar → Run). Aplica después
+-- de docs/staging_upgrade_a4c8e2f7b1d6.sql.
 
 BEGIN;
 
@@ -16,9 +17,9 @@ DECLARE
   v_version text;
 BEGIN
   SELECT version_num INTO v_version FROM public.alembic_version LIMIT 1;
-  IF v_version IS DISTINCT FROM 'b9f4d8a2c6e1' THEN
+  IF v_version IS DISTINCT FROM 'a4c8e2f7b1d6' THEN
     RAISE EXCEPTION
-      'Se esperaba alembic_version b9f4d8a2c6e1 antes de ab12cd34ef56; se encontró %',
+      'Se esperaba alembic_version a4c8e2f7b1d6 antes de ab12cd34ef56; se encontró %',
       COALESCE(v_version, '<vacío>');
   END IF;
 END
@@ -51,7 +52,7 @@ CREATE INDEX IF NOT EXISTS ix_compras_plan_stripe_subscription
 
 UPDATE public.alembic_version
 SET version_num = 'ab12cd34ef56'
-WHERE version_num = 'b9f4d8a2c6e1';
+WHERE version_num = 'a4c8e2f7b1d6';
 
 COMMIT;
 

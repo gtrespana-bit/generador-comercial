@@ -14,6 +14,9 @@ suscripción recurrente:
 
 Además amplía los CHECK de ``metodo_pago`` (admite ``'stripe'``) y de
 ``estado`` (admite ``'cancelada'`` para suscripciones dadas de baja).
+
+Cuelga de ``a4c8e2f7b1d6`` (evidencia de precios de mercado, head anterior),
+no de ``b9f4d8a2c6e1``: así la cadena conserva un único head.
 """
 from typing import Sequence, Union
 
@@ -22,7 +25,7 @@ import sqlalchemy as sa
 
 
 revision: str = "ab12cd34ef56"
-down_revision: Union[str, Sequence[str], None] = "b9f4d8a2c6e1"
+down_revision: Union[str, Sequence[str], None] = "a4c8e2f7b1d6"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

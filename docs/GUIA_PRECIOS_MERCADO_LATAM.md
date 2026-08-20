@@ -20,19 +20,33 @@ Cotizat resuelve cada recurso en este orden:
 Los precios son orientativos. La empresa debe verificar proveedor, ciudad,
 marca, calidad, volumen, IVA, transporte y fecha.
 
+## Estado auditado (20/08/2026)
+
+Cada mercado contiene referencias para los 388 recursos físicos: **1.552 filas
+nacionales, sin huecos**. Hay 73 observaciones directas y 1.479 referencias
+derivadas de las canastas nacionales investigadas.
+
+`Derivado` no significa «precio exacto de tienda»: identifica una referencia
+calculada con el nivel de mercado observado para el país y la familia. La
+metodología, factores y límites están en
+`docs/METODOLOGIA_PRECIOS_REFERENCIA_LATAM.md`.
+
 ## Matriz
 
-La matriz inicial se encuentra en:
+La matriz trazable se encuentra en:
 
 ```text
 basedatos_partidas/salida/precios_recursos_latam.csv
 ```
 
-La matriz completa, incluyendo respaldos provisionales, se encuentra en:
+La salida completa se conserva por compatibilidad en:
 
 ```text
 basedatos_partidas/salida/precios_recursos_latam_completa.csv
 ```
+
+Con la cobertura actual ambas contienen precio para las 1.552 filas; la
+principal distingue `referencia` y `derivado`.
 
 ## Importación
 
@@ -42,19 +56,27 @@ Dry-run seguro:
 python tools/importar_precios_mercado.py --sync-source
 ```
 
-Aplicar solo referencias investigadas:
+Aplicar referencias directas y derivadas:
 
 ```bash
 python tools/importar_precios_mercado.py --sync-source --apply
 ```
 
-Aplicar también respaldos provisionales, únicamente si se acepta mostrar esos
-valores como estimaciones:
+`--include-fallback` se mantiene por compatibilidad con matrices antiguas; no
+es necesario para la matriz actual.
 
-```bash
-python tools/importar_precios_mercado.py --sync-source --include-fallback \
-  --csv basedatos_partidas/salida/precios_recursos_latam_completa.csv --apply
+### Carga desde Supabase SQL Editor
+
+Si no se dispone de `DATABASE_URL` en una terminal administrativa, ejecutar
+después de la migración de esquema:
+
+```text
+docs/cargar_precios_referencia_latam_2026-08-20.sql
 ```
+
+El script es idempotente, verifica el head `a4c8e2f7b1d6`, exige 388 códigos de
+recurso y carga 1.552 referencias. Sustituye solo las referencias nacionales
+CO/PE/MX/EC; no toca overrides de empresa ni precios VE.
 
 ## Históricos
 

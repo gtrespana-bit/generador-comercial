@@ -1,76 +1,80 @@
-# Inventario del trabajo — base de datos de partidas
+# Inventario del catálogo de partidas
 
-Estado a 16/08/2026. El catálogo está integrado en CotizaT y usa la taxonomía
-numérica v2 aprobada para reforma y remodelación en Venezuela.
+**Estado auditado: 20/08/2026.** Catálogo integrado en CotizaT, taxonomía
+numérica v2 para reforma y remodelación. La integridad técnica y la cobertura
+referencial nacional pasan; ver
+[`../docs/AUDITORIA_CATALOGO_PRELANZAMIENTO_2026-08-20.md`](../docs/AUDITORIA_CATALOGO_PRELANZAMIENTO_2026-08-20.md).
 
-## Cifras
+## Cifras verificadas
 
-| | |
+| Concepto | Cantidad |
 |---|---:|
-| Partidas | **3.006** |
+| Partidas JSON | **3.006** |
 | Hojas de descompuesto `.xlsx` | 3.006 |
 | Partidas con producto de elección del cliente | 363 |
-| Recursos en el cuadro de precios | **392** |
+| Partidas con mano de obra explícita | **3.006 / 3.006** |
+| Líneas de mano de obra | **6.062** |
+| Recursos declarados | **392** |
+| Recursos físicos que carga la aplicación | **388** |
 | — mano de obra / materiales / maquinaria | 17 / 331 / 44 |
-| — confirmados / verificados con el mercado / derivados / provisionales | 17 / 131 / 4 / 196 |
-| **Peso económico con precio cerrado** | **≈ 85 %** del coste directo |
-| — confirmado (mano de obra) | 20,2 % |
-| — verificado con el mercado venezolano | 59,4 % |
-| — provisional | ≈ 15 % (consumibles de bajo valor + especialidades B2B/importación; el alquiler de equipos se mantiene fuera de alcance) |
+| — tarifa interna confirmada / mercado VE verificado / derivados / provisionales | 17 / 131 / 4 / 240 |
+| Peso económico VE verificado o confirmado | **79,6 %** del coste directo acumulado |
+| Peso económico VE provisional | **20,4 %** |
 | Clasificación v2 | **18 capítulos · 172 subcapítulos · 256 apartados** |
 | Código visible | `CC.SS.AA.NNN` |
-| Moneda | USD (Venezuela) |
+| Moneda base Venezuela | USD |
 
-**Validación:** las 2.363 partidas pasan `es_formato_cype_xlsx` y
-`analizar_cype_xlsx`. El catálogo masivo se detecta con **12 campos, 0 errores y
-0 advertencias**. La suite de aplicación pasa con **515 tests y 6 omitidos**.
+Los cuatro recursos `derivado` son mezclas que se abren en sus componentes al
+calcular; por eso 392 declaraciones producen 388 filas físicas en la
+aplicación y en cada mercado nacional.
 
----
+## Resultado de calidad
+
+- 3.006 partidas calculables, con código, clasificación, recursos, unidad,
+  rendimiento y precio de recurso válidos.
+- 3.006 partidas con oficio y horas por unidad; el modelo recibe desglose de
+  oficial, ayudante y equipo.
+- 0 errores estructurales en la auditoría de lanzamiento.
+- **218 grupos / 875 partidas** comparten exactamente APU con otra partida;
+  quedan identificados para revisión técnica progresiva (la coincidencia no es
+  por sí sola un error).
+- Los 388 recursos VE tienen precio referencial; 240 están marcados
+  `provisional` por menor evidencia pública o mayor volatilidad.
+- CO/PE/MX/EC tienen **388/388 referencias nacionales cada uno**: 73
+  observaciones directas y 1.479 derivaciones transparentes en el conjunto.
 
 ## Fuentes de verdad
 
-| Archivo | Qué es |
+| Archivo | Qué contiene |
 |---|---|
-| `datos/recursos.json` | **Cuadro de precios.** Fuente única de precios y composiciones. |
-| `datos/clasificacion.json` | **Taxonomía v2.** Capítulos, subcapítulos y apartados. |
-| `datos/descompuestos/*.json` | **Una partida por archivo**, con ruta v2, código anterior, descripción y recursos. |
-| `datos/mapa_migracion_v2.json` | Equivalencia de las 540 partidas `CT-CC-SS-NNN` → `CC.SS.AA.NNN`. |
-| `datos/objetivos_cobertura.json` | Metas 3.000/5.000, operaciones y variaciones por capítulo. |
-| `datos/sinonimos_busqueda.json` | Diccionario de sinónimos: 146 grupos y 661 términos. |
+| `datos/recursos.json` | Cuadro base de precios, roles y composiciones. |
+| `datos/clasificacion.json` | Taxonomía v2. |
+| `datos/descompuestos/*.json` | Una partida por archivo, con APU y rendimientos. |
+| `datos/mapa_migracion_v2.json` | Equivalencia de las 540 partidas históricas v1 → v2. |
+| `salida/precios_recursos_latam.csv` | Matriz trazable CO/PE/MX/EC; huecos pendientes. |
+| `salida/precios_recursos_latam_completa.csv` | Respaldo convertido, siempre provisional. |
+| `salida/auditoria_partidas.csv` | Revisión partida por partida (3.006 filas). |
+| `datos/objetivos_cobertura.json` | Metas 3.000/5.000 por capítulo. |
+| `datos/sinonimos_busqueda.json` | Diccionario de búsqueda. |
 
-`datos/partidas.csv` no se edita: lo regenera `descompuestos.py`.
+`datos/partidas.csv` y todo `salida/` son generados; no se editan a mano.
 
-## Programas
+## Programas de control
 
-| Programa | Qué hace |
+| Programa | Función |
 |---|---|
-| `descompuestos.py` | Valida los tres niveles, resuelve recursos, calcula costes y genera hojas, maestro y árbol. |
-| `construir.py` | Genera el catálogo masivo (`.csv`, `.xlsx`, `.json`) y lo valida con el importador real. |
-| `tools/migrar_taxonomia_v2.py` | Documentación ejecutable de la migración única de v1 a v2. |
-| `precios.py` | Revisión y actualización de precios en bloque. |
-| `contraste.py` | Aplica rondas de contraste de mercado documentadas. |
-| `precio.py` | Cambia un recurso y simula su impacto antes de escribir. |
-| `terminologia.py` | Aplica y audita vocabulario venezolano en recursos, árbol y partidas. |
-| `cobertura.py` | Informe por capítulo, subcapítulo y apartado. |
-| `planificar_cobertura.py` | Genera matriz JSON/CSV y prioridades desde los objetivos. |
-| `equidad.py` | Reparto del precio de venta y simulación de tarifas. |
+| `auditar_lanzamiento.py` | Revisa las 3.006 partidas, recursos y mercados; genera informe y CSV exhaustivo. |
+| `descompuestos.py` | Resuelve recursos, calcula costes y genera hojas/maestro/árbol. |
+| `construir.py` | Genera catálogo masivo y lo valida con el importador real. |
+| `precios.py` / `precio.py` | Revisión en bloque / cambio controlado de un precio. |
+| `contraste.py` | Aplica rondas documentadas de contraste. |
+| `terminologia.py` | Audita vocabulario venezolano. |
+| `cobertura.py` | Informa cobertura por capítulo y apartado. |
+| `equidad.py` | Informa tarifas y reparto de mano de obra. |
 
-## Salidas
+## Capítulos
 
-| Archivo | Destino |
-|---|---|
-| `salida/descompuestos/*.xlsx` | Descompuestos individuales con clasificación v2. |
-| `salida/catalogo_partidas.xlsx` | Carga masiva del catálogo. |
-| `salida/arbol_catalogo.json` | Árbol capítulo → subcapítulo → apartado → partida. |
-| `salida/precios_para_revisar.csv` | Plantilla de revisión de precios. |
-| `salida/matriz_cobertura.{json,csv}` | 172 familias con estado, metas y brechas. |
-| `salida/RESUMEN_COBERTURA.md` | Tablero de avance y primeras prioridades. |
-
----
-
-## Los 18 capítulos de la taxonomía v2
-
-| Cap. | Nombre | Subcap. | Apart. con partidas | Partidas |
+| Cap. | Nombre | Subcap. | Apart. | Partidas |
 |---|---|---:|---:|---:|
 | 01 | Actuaciones previas | 8 | 10 | 100 |
 | 02 | Demoliciones y desmontajes | 12 | 21 | 265 |
@@ -82,120 +86,27 @@ numérica v2 aprobada para reforma y remodelación en Venezuela.
 | 08 | Remates y ayudas | 9 | 16 | 120 |
 | 09 | Instalaciones | 17 | 35 | 540 |
 | 10 | Aislamientos e impermeabilizaciones | 9 | 16 | 150 |
-| 11 | Techos y cubiertas | 9 | 5 | 18 |
+| 11 | Techos y cubiertas | 9 | 9 | 130 |
 | 12 | Revestimientos y acabados | 14 | 30 | 401 |
-| 13 | Equipamiento, mobiliario y señalización | 9 | 7 | 21 |
-| 14 | Obras exteriores y urbanismo | 11 | 10 | 19 |
-| 15 | Gestión de residuos y limpieza | 7 | 6 | 8 |
-| 16 | Control de calidad y ensayos | 8 | 0 | 0 |
-| 17 | Seguridad y salud en obra | 8 | 7 | 11 |
-| 18 | Rehabilitación energética | 9 | 0 | 0 |
-| | **TOTAL** | **172** | **229** | **2.363** |
+| 13 | Equipamiento, mobiliario y señalización | 9 | 9 | 140 |
+| 14 | Obras exteriores y urbanismo | 11 | 11 | 160 |
+| 15 | Gestión de residuos y limpieza | 7 | 7 | 50 |
+| 16 | Control de calidad y ensayos | 8 | 8 | 80 |
+| 17 | Seguridad y salud en obra | 8 | 9 | 60 |
+| 18 | Rehabilitación energética | 9 | 9 | 100 |
+|  | **TOTAL** | **172** | **256** | **3.006** |
 
-Los capítulos 08, 16 y 18 están deliberadamente preparados para la primera
-ampliación. No se inventaron partidas de relleno solo para que aparezcan llenos.
-
-## Cadena de generación
-
-```text
-datos/recursos.json ─┐
-datos/clasificacion.json ─┼─► descompuestos.py ─► salida/descompuestos/*.xlsx
-datos/descompuestos/*.json ─┘                  ├─► datos/partidas.csv
-                                               └─► salida/arbol_catalogo.json
-                                                        │
-                              datos/partidas.csv ──► construir.py ─► salida/catalogo_partidas.*
-```
+## Reproducción
 
 ```bash
+.venv/bin/python tools/generar_matriz_precios_latam.py
+.venv/bin/python tools/completar_matriz_referencias.py
+.venv/bin/python basedatos_partidas/auditar_lanzamiento.py
 .venv/bin/python basedatos_partidas/descompuestos.py
 .venv/bin/python basedatos_partidas/construir.py
 ```
 
----
-
-## Integración en la aplicación
-
-- `CategoriaPartida` es un árbol normalizado con `parent_id`, código, nivel y orden.
-- `Partida.categoria_id` apunta al apartado terciario.
-- Los nombres denormalizados se conservan por compatibilidad y exportación.
-- `codigo_legacy` conserva el código v1; el usuario ve el código numérico v2.
-- `version_catalogo` evita reaplicar la migración; se sube con cada ampliación
-  del catálogo (actualmente `CATALOGO_VERSION=3`) para que las instalaciones
-  existentes incorporen las partidas nuevas sin duplicar ni revivir borrados.
-- El esquema `f8a1b2c3d4e5` fue ejecutado en Supabase el 16/08/2026.
-- La actualización conserva ids y precios locales, no revive partidas borradas
-  y no modifica partidas creadas por una organización.
-- El árbol del presupuestador muestra tres ramas, busca por toda la ruta y
-  admite código anterior como alias.
-
----
-
-## Estado del contraste de precios (agosto 2026)
-
-Los precios de material se contrastaron contra el mercado venezolano
-(MercadoLibre Venezuela y EPA Venezuela, en USD) en cinco rondas documentadas
-en `datos/contraste_mercado_2026-08{,-b,-c,-d}.json`. Resultado sobre los 331
-materiales:
-
-- **131 verificados con el mercado** (con `fuente` citable) y **4 derivados**.
-- **196 provisionales**, que se dividen en dos grupos:
-
-  1. **Consumibles de bajo valor con precio sano** (≈148): saco de rafia,
-     lija, cinta de enmascarar, protección plástica, perfiles de remate,
-     abrazaderas, separadores, etc. Su error de céntimos no mueve una partida.
-  2. **Especialidades B2B / de importación sin venta retail pública** (≈48):
-     fibra de carbono, steel deck, poliurea, bentonita, composite de fachada,
-     tabique móvil, vidrios laminado/doble/arenado/decorativo, pinturas
-     intumescente/magnética/tiza, pararrayos, domótica, hidroneumáticos, etc.
-     Se venden por proveedor o importación y **no tienen listado público**;
-     deben contrastarse con cotización de proveedor.
-
-Correcciones aplicadas en las rondas (precios que estaban mal):
-diferencial 32→28 USD, tubería frigorífica 9,80→11 USD/m, cerradura
-multipunto 55→45 USD, pintura anticorrosiva 7,20→8 USD/l, electrodo
-4,80→5 USD/kg. Además se extrajo el equipo de elección del cliente de 178
-partidas de «Instalación de [equipo]» (panel solar, inversor, cámara,
-extintor, bomba, ascensor…) hacia `producto_cliente`, y se corrigió el uso
-indebido de `MT-SOPORTE-AC` en espejos/vidrios.
-
----
-
-## Siguiente ampliación
-
-Los hitos de 800 y 1.500 son internos. El catálogo general tendrá un mínimo
-aproximado de **3.000 partidas base** y un objetivo amplio de **4.000–5.000**.
-La aplicación ya superó una prueba sintética con 5.000 partidas mediante índice
-ligero, fichas bajo demanda, árbol progresivo y gestión paginada. La
-ocultación/restauración y actualización incremental ya están implantadas. La
-matriz 3.000/5.000 y el diccionario de sinónimos de 146 grupos cubren los 18 capítulos. El
-siguiente paso es producir las familias pendientes. Prioridades:
-
-1. Instalaciones sanitarias, eléctricas, climatización, ventilación, datos,
-   seguridad y protección contra incendios.
-2. Revestimientos, cielos rasos, pinturas y preparaciones de soporte.
-3. Carpintería, herrería, vidrios y protección solar.
-4. Impermeabilización y techos.
-5. Remates y ayudas, control de calidad y rehabilitación energética.
-
-**Progreso 17/08/2026:**
-- `09.13 Protección contra rayos y sobretensiones` (13 partidas).
-- `09.12 Domótica y automatización` (18 partidas).
-- **Capítulo 12 Revestimientos y acabados completo hasta el mínimo** (401/400).
-- **Capítulo 07 Carpintería, herrería, vidrios y protección solar completo
-  hasta el mínimo** (180/180).
-- **Capítulo 10 Aislamientos e impermeabilizaciones completo hasta el mínimo**
-  (150/150).
-- **Capítulo 02 Demoliciones y desmontajes completo hasta el mínimo**
-  (265/260).
-- **Capítulo 06 Fachadas y particiones completo hasta el mínimo** (180/180).
-- **Capítulo 01 Actuaciones previas completo hasta el mínimo** (100/100).
-- **Capítulo 03 Acondicionamiento del terreno completo hasta el mínimo**
-  (80/80).
-- **Capítulo 04 Fundaciones completo hasta el mínimo** (100/100).
-- **Capítulo 05 Estructuras completo hasta el mínimo** (170/170).
-- **Capítulo 08 Remates y ayudas completo hasta el mínimo** (120/120).
-- **Capítulo 09 Instalaciones completo hasta el mínimo** (540/540), el
-  capítulo más extenso del catálogo.
-
-Siguen pendientes 213 precios de material provisionales. Los 44 precios de
-alquiler de equipos permanecen fuera de alcance por decisión del cliente.
+La opción `auditar_lanzamiento.py --strict` debe terminar en cero antes de
+publicar: comprueba integridad, mano de obra y cobertura referencial completa.
+Los niveles de confianza y APUs coincidentes permanecen visibles para el ciclo
+de mantenimiento, sin convertir una referencia en una promesa de precio exacto.
