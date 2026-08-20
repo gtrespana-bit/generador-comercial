@@ -5972,3 +5972,102 @@ body { -webkit-tap-highlight-color: transparent; }
   .bottom-nav a { font-size: 0.64rem; }
   .bottom-nav a:active { color: var(--accent); }
 }
+
+/* ───────────────────── Tiempos · asistente ligero de decisión ───────────────────── */
+.tiempos-asistente {
+  border-color: color-mix(in srgb, var(--accent) 24%, var(--border));
+}
+.asistente-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(280px, .85fr);
+  gap: 1rem;
+  margin-top: .6rem;
+}
+.asistente-panel {
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 1rem 1.05rem;
+}
+.asistente-destacado {
+  background:
+    radial-gradient(420px 180px at 100% 0%, rgba(229,174,60,.10), transparent 60%),
+    var(--surface);
+  border-color: color-mix(in srgb, var(--accent) 28%, var(--border));
+}
+.asistente-kicker {
+  display: inline-flex;
+  padding: .16rem .48rem;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: .66rem;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  margin-bottom: .45rem;
+}
+.asistente-panel h3 { margin: 0 0 .35rem; font-size: 1rem; }
+.asistente-panel p { margin: 0; color: var(--text-soft); font-size: .88rem; line-height: 1.55; }
+.asistente-metricas {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .7rem;
+  margin-top: .85rem;
+}
+.asistente-metricas span {
+  display: flex;
+  flex-direction: column;
+  gap: .12rem;
+  padding: .65rem .75rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-alt);
+}
+.asistente-metricas strong { font-size: 1.05rem; color: var(--text); }
+.asistente-metricas small { color: var(--text-muted); font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
+.cuello-barras { display: grid; gap: .55rem; margin-top: .85rem; }
+.cuello-barras > div { display: grid; grid-template-columns: 72px 44px 1fr; align-items: center; gap: .5rem; font-size: .72rem; color: var(--text-soft); }
+.cuello-barras strong { color: var(--text); font-size: .72rem; text-align: right; }
+.cuello-barras i { position: relative; display: block; height: 8px; border-radius: 999px; background: var(--border); overflow: hidden; }
+.cuello-barras b { position: absolute; inset: 0 auto 0 0; width: 2%; border-radius: inherit; background: linear-gradient(90deg, var(--accent), var(--gold)); transition: width .25s ease; }
+.asistente-details {
+  margin-top: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  overflow: hidden;
+}
+.asistente-details summary {
+  cursor: pointer;
+  padding: .75rem .9rem;
+  font-weight: 750;
+  color: var(--text);
+  background: var(--surface-alt);
+  border-bottom: 1px solid transparent;
+}
+.asistente-details[open] summary { border-bottom-color: var(--border); }
+.asistente-details .table-wrap,
+.asistente-details > .hint,
+.asistente-details .cronograma { margin: .9rem; }
+.tabla-escenarios tbody tr.escenario-actual { background: var(--accent-soft); }
+.tabla-escenarios td { vertical-align: top; }
+.cronograma { display: grid; gap: .55rem; }
+.cronograma-row {
+  display: grid;
+  grid-template-columns: minmax(150px, .7fr) minmax(220px, 1fr) 64px;
+  gap: .75rem;
+  align-items: center;
+  font-size: .78rem;
+}
+.cronograma-cap { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-secondary); font-weight: 650; }
+.cronograma-track { position: relative; height: 18px; border-radius: 999px; background: var(--surface-alt); border: 1px solid var(--border); overflow: hidden; }
+.cronograma-track i { position: absolute; top: 3px; bottom: 3px; left: 0; width: 5%; border-radius: 999px; background: linear-gradient(90deg, var(--accent), var(--gold)); }
+.cronograma-row strong { text-align: right; color: var(--text); font-size: .78rem; }
+.plan-control-short { justify-content: flex-start; }
+.plan-control-short input[type="number"] { width: 88px; }
+@media (max-width: 900px){
+  .asistente-grid { grid-template-columns: 1fr; }
+  .cronograma-row { grid-template-columns: 1fr; gap: .35rem; }
+  .cronograma-row strong { text-align: left; }
+}

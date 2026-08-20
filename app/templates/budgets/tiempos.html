@@ -112,6 +112,19 @@
       <input type="date" id="input-fecha-inicio" value="{{ p.fecha.isoformat() if p.fecha else '' }}">
       <small class="hint" id="hint-fecha-fin">Fin estimado: —</small>
     </div>
+    <div class="field">
+      <label>Calendario sencillo</label>
+      <label class="check-line"><input type="checkbox" id="input-trabajar-sabado"> Trabajar sábados</label>
+      <small class="hint">Por defecto calcula Lun–Vie. No incluye festivos.</small>
+    </div>
+    <div class="field">
+      <label>Colchón recomendado</label>
+      <div class="plan-control plan-control-short">
+        <input type="number" id="input-buffer-dias" value="2" min="0" max="30" step="1" class="csp-s-3e5bb81768">
+        <span class="hint">días laborables</span>
+      </div>
+      <small class="hint">Se suma solo a la fecha prometida, no al cálculo técnico.</small>
+    </div>
   </div>
 
   <div class="planificacion-resumen" id="plan-resumen">
@@ -131,6 +144,56 @@
       <small>(solo días laborables Lun–Vie, sin festivos)</small>
     </div>
   </div>
+</div>
+
+<!-- ================= ASISTENTE DE DECISIÓN ================= -->
+<div class="card tiempos-asistente" id="asistente-planificacion">
+  <div class="card-head">
+    <div>
+      <h2>🧭 Asistente de planificación</h2>
+      <p class="hint">Resumen simple para decidir la cuadrilla sin saturarte: compara escenarios, detecta el cuello de botella y arma un cronograma interno por capítulos.</p>
+    </div>
+    <button class="btn btn-sm" type="button" data-cotizat-click="window-print">Exportar plan interno</button>
+  </div>
+
+  <div class="asistente-grid">
+    <section class="asistente-panel asistente-destacado" aria-labelledby="asistente-recomendacion-titulo">
+      <span class="asistente-kicker">Recomendación</span>
+      <h3 id="asistente-recomendacion-titulo">Qué conviene hacer</h3>
+      <p id="asistente-recomendacion">Calculando recomendación…</p>
+      <div class="asistente-metricas">
+        <span><strong id="asistente-plazo">—</strong><small>plazo técnico</small></span>
+        <span><strong id="asistente-fecha">—</strong><small>fecha prometida</small></span>
+      </div>
+    </section>
+
+    <section class="asistente-panel" aria-labelledby="asistente-cuello-titulo">
+      <span class="asistente-kicker">Cuello de botella</span>
+      <h3 id="asistente-cuello-titulo">Dónde se atasca la obra</h3>
+      <p id="asistente-cuello">Calculando cuello de botella…</p>
+      <div class="cuello-barras" aria-hidden="true">
+        <div><span>Oficial</span><strong id="cuello-oficial-label">—</strong><i><b id="cuello-oficial-bar"></b></i></div>
+        <div><span>Ayudante</span><strong id="cuello-ayudante-label">—</strong><i><b id="cuello-ayudante-bar"></b></i></div>
+        <div><span>Equipos</span><strong id="cuello-equipos-label">—</strong><i><b id="cuello-equipos-bar"></b></i></div>
+      </div>
+    </section>
+  </div>
+
+  <details class="asistente-details" open>
+    <summary>Comparar escenarios de cuadrilla</summary>
+    <div class="table-wrap">
+      <table class="table tabla-escenarios">
+        <thead><tr><th>Escenario</th><th>Cuadrilla</th><th class="right">Plazo</th><th class="right">Mejora</th><th class="right">Coste MO</th><th>Lectura rápida</th></tr></thead>
+        <tbody id="tabla-escenarios-body"></tbody>
+      </table>
+    </div>
+  </details>
+
+  <details class="asistente-details">
+    <summary>Cronograma interno por capítulos</summary>
+    <p class="hint">Vista interna y sencilla. Respeta el orden de los capítulos y reparte el plazo según la composición actual; úsala para compras, coordinación y seguimiento.</p>
+    <div class="cronograma" id="cronograma-capitulos"></div>
+  </details>
 </div>
 
 {% if sin_datos %}
@@ -377,6 +440,8 @@
   const inpC = document.getElementById('input-cuadrillas');
   const inpCNum = document.getElementById('input-cuadrillas-num');
   const inpFecha = document.getElementById('input-fecha-inicio');
+  const inpSabado = document.getElementById('input-trabajar-sabado');
+  const inpBuffer = document.getElementById('input-buffer-dias');
   const selComp = document.getElementById('select-composicion');
 
   function syncJornada(v){
@@ -395,18 +460,29 @@
   if(inpC) inpC.addEventListener('input', e=> syncCuadrillas(e.target.value));
   if(inpCNum) inpCNum.addEventListener('input', e=> syncCuadrillas(e.target.value));
   if(inpFecha) inpFecha.addEventListener('change', actualizarPlanificacion);
+  if(inpSabado) inpSabado.addEventListener('change', actualizarPlanificacion);
+  if(inpBuffer) inpBuffer.addEventListener('input', actualizarPlanificacion);
   if(selComp) selComp.addEventListener('change', actualizarPlanificacion);
 
-  function diasLaborablesEntre(inicio, dias){
+  function diasLaborablesEntre(inicio, dias, trabajarSabado=false){
     let d = new Date(inicio);
     let count=0;
     let cur = new Date(d);
     while(count < dias){
       cur.setDate(cur.getDate()+1);
       const day = cur.getDay();
-      if(day!==0 && day!==6) count++;
+      const laborable = trabajarSabado ? day !== 0 : (day !== 0 && day !== 6);
+      if(laborable) count++;
     }
     return cur;
+  }
+
+  function formatoDias(v){
+    return v.toLocaleString('es-VE',{maximumFractionDigits:1});
+  }
+
+  function textoFecha(fecha){
+    return fecha.toLocaleDateString('es-VE',{day:'2-digit', month:'short', year:'numeric'});
   }
 
   function composicionActual(){
@@ -463,6 +539,126 @@
       total += duracionPartidaConComposicion(t, comp);
     });
     return total > 0 ? total : totalDuracionH;
+  }
+
+  function diasEscenario(composicionValue, cuadrillas, jornada){
+    const anterior = selComp ? selComp.value : '1of1ay';
+    let comp;
+    if(selComp) selComp.value = composicionValue;
+    comp = composicionActual();
+    if(selComp) selComp.value = anterior;
+    return (duracionTotalConComposicion(comp) / jornada) / Math.max(1, cuadrillas || 1);
+  }
+
+  function analizarCuello(comp, n, j){
+    const capacidadOf = n * comp.oficiales;
+    const capacidadAy = n * comp.ayudantes;
+    const diasOf = capacidadOf > 0 ? (totalOficialH + totalCapatazH) / (j * capacidadOf) : 0;
+    const diasAy = capacidadAy > 0 ? totalAyudanteH / (j * capacidadAy) : 0;
+    const diasEq = totalEquiposH ? totalEquiposH / (j * n) : 0;
+    const max = Math.max(diasOf, diasAy, diasEq, 0.01);
+    const tipo = max === diasOf ? 'oficiales' : max === diasAy ? 'ayudantes' : 'equipos';
+    return {diasOf, diasAy, diasEq, max, tipo};
+  }
+
+  function escapeHtml(txt){
+    return String(txt == null ? '' : txt).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  }
+
+  function setBar(id, pct){
+    const el = document.getElementById(id);
+    if(el) CotizatStyles.set(el, 'width', Math.max(2, Math.min(100, pct)) + '%');
+  }
+
+  function actualizarCuelloVisual(cuello){
+    const fo = document.getElementById('cuello-oficial-label');
+    const fa = document.getElementById('cuello-ayudante-label');
+    const fe = document.getElementById('cuello-equipos-label');
+    if(fo) fo.textContent = formatoDias(cuello.diasOf) + ' d';
+    if(fa) fa.textContent = formatoDias(cuello.diasAy) + ' d';
+    if(fe) fe.textContent = formatoDias(cuello.diasEq) + ' d';
+    setBar('cuello-oficial-bar', cuello.diasOf / cuello.max * 100);
+    setBar('cuello-ayudante-bar', cuello.diasAy / cuello.max * 100);
+    setBar('cuello-equipos-bar', cuello.diasEq / cuello.max * 100);
+    const txt = document.getElementById('asistente-cuello');
+    if(txt){
+      if(cuello.tipo === 'oficiales') txt.textContent = 'El plazo depende sobre todo de oficiales. Si quieres acelerar, prueba 2 oficiales o una segunda cuadrilla.';
+      else if(cuello.tipo === 'ayudantes') txt.textContent = 'El cuello de botella está en ayudantes/peones. Añadir ayudante puede reducir días sin tocar todas las partidas.';
+      else txt.textContent = 'La maquinaria/equipos condicionan el plazo. Revisa disponibilidad, alquileres o solapes.';
+    }
+  }
+
+  function actualizarEscenarios(j, diasActuales, compActual, nActual){
+    const tbody = document.getElementById('tabla-escenarios-body');
+    if(!tbody) return;
+    const base = diasEscenario('1of1ay', 1, j) || diasActuales;
+    const opciones = [
+      {nombre:'Normal', comp:'1of1ay', cuad:1, lectura:'Base sencilla para presupuestar sin refuerzos.'},
+      {nombre:'Más oficiales', comp:'2of1ay', cuad:1, lectura:'Útil si el cuello de botella es oficial.'},
+      {nombre:'Más ayudantes', comp:'1of2ay', cuad:1, lectura:'Útil si hay mucha carga de peón/ayudante.'},
+      {nombre:'Cuadrilla reforzada', comp:'2of2ay', cuad:1, lectura:'Reduce plazo manteniendo una sola frente de trabajo.'},
+      {nombre:'Dos frentes', comp: selComp ? selComp.value : '1of1ay', cuad:2, lectura:'Acelera fuerte, pero exige coordinación y espacio.'},
+    ];
+    tbody.innerHTML = '';
+    let mejor = null;
+    opciones.forEach(o => {
+      const dias = diasEscenario(o.comp, o.cuad, j);
+      if(!mejor || dias < mejor.dias) mejor = {dias, nombre:o.nombre};
+      const tr = document.createElement('tr');
+      const mejora = base > 0 ? Math.max(0, (1 - dias / base) * 100) : 0;
+      const compLabel = (function(){ const prev = selComp ? selComp.value : ''; if(selComp) selComp.value = o.comp; const lbl = composicionActual().label; if(selComp) selComp.value = prev; return lbl; })();
+      const costeMo = totalManoObraH * numero(tiemposBase && tiemposBase.tarifa_hora_media);
+      const costeTxt = costeMo ? costeMo.toLocaleString('es-VE',{maximumFractionDigits:0}) + ' ' + ({{ p.moneda | tojson }} || '') : '—';
+      tr.innerHTML = `<td><strong>${escapeHtml(o.nombre)}</strong></td><td>${o.cuad} cuadrilla(s) · ${escapeHtml(compLabel)}</td><td class="right"><strong>${formatoDias(dias)} d</strong></td><td class="right">${mejora ? '−' + mejora.toFixed(0) + '%' : '—'}</td><td class="right">${escapeHtml(costeTxt)}</td><td>${escapeHtml(o.lectura)}</td>`;
+      if(o.comp === (selComp ? selComp.value : '1of1ay') && o.cuad === nActual) tr.classList.add('escenario-actual');
+      tbody.appendChild(tr);
+    });
+    const rec = document.getElementById('asistente-recomendacion');
+    if(rec && mejor){
+      const cuello = analizarCuello(compActual, nActual, j);
+      let accion = cuello.tipo === 'oficiales' ? 'reforzar oficiales' : cuello.tipo === 'ayudantes' ? 'reforzar ayudantes' : 'revisar equipos/maquinaria';
+      rec.textContent = `Tu escenario actual da ${formatoDias(diasActuales)} días. Para acelerar sin complicarlo, lo primero sería ${accion}. El escenario más corto de la tabla es “${mejor.nombre}” con ${formatoDias(mejor.dias)} días.`;
+    }
+  }
+
+  function actualizarCronograma(comp, n, j){
+    const cont = document.getElementById('cronograma-capitulos');
+    if(!cont) return;
+    const partidas = Array.isArray(tiemposBase && tiemposBase.partidas) ? tiemposBase.partidas : [];
+    const orden = [];
+    const porCap = {};
+    partidas.forEach(t => {
+      if(!t || t.activa === false || t.fuente === 'sin_datos') return;
+      const cap = t.capitulo || 'CAPÍTULO GENERAL';
+      if(!porCap[cap]) { porCap[cap] = 0; orden.push(cap); }
+      porCap[cap] += duracionPartidaConComposicion(t, comp) / j / Math.max(1, n);
+    });
+    const total = orden.reduce((acc, cap) => acc + porCap[cap], 0) || 1;
+    cont.innerHTML = '';
+    let acumulado = 0;
+    orden.forEach((cap, idx) => {
+      const dias = porCap[cap];
+      const fila = document.createElement('div');
+      fila.className = 'cronograma-row';
+      const offset = acumulado / total * 100;
+      const width = dias / total * 100;
+      fila.innerHTML = `<span class="cronograma-cap">${idx + 1}. ${escapeHtml(cap)}</span><div class="cronograma-track"><i></i></div><strong>${formatoDias(dias)} d</strong>`;
+      const bar = fila.querySelector('i');
+      if(bar){ CotizatStyles.set(bar, 'left', offset + '%'); CotizatStyles.set(bar, 'width', Math.max(3, width) + '%'); }
+      cont.appendChild(fila);
+      acumulado += dias;
+    });
+  }
+
+  function actualizarAsistente(ctx){
+    const plazo = document.getElementById('asistente-plazo');
+    const fecha = document.getElementById('asistente-fecha');
+    if(plazo) plazo.textContent = formatoDias(ctx.diasCriticos) + ' días';
+    if(fecha) fecha.textContent = ctx.finPrometido ? textoFecha(ctx.finPrometido) : '—';
+    const cuello = analizarCuello(ctx.comp, ctx.n, ctx.j);
+    actualizarCuelloVisual(cuello);
+    actualizarEscenarios(ctx.j, ctx.diasCriticos, ctx.comp, ctx.n);
+    actualizarCronograma(ctx.comp, ctx.n, ctx.j);
   }
 
   function actualizarPlanificacion(){
@@ -525,16 +721,22 @@
     // Fecha fin
     let finTxt = '—';
     let hintTxt = 'Fin estimado: —';
+    let finTecnico = null;
+    let finPrometido = null;
+    const trabajarSabado = !!(inpSabado && inpSabado.checked);
+    const bufferDias = Math.max(0, parseInt((inpBuffer && inpBuffer.value) || 0, 10) || 0);
     if(inpFecha && inpFecha.value){
       try{
         const inicio = new Date(inpFecha.value + 'T12:00:00');
-        const fin = diasLaborablesEntre(inicio, Math.ceil(diasCriticos));
-        finTxt = fin.toLocaleDateString('es-VE',{weekday:'long', day:'2-digit', month:'long', year:'numeric'});
-        hintTxt = 'Fin estimado: ' + fin.toLocaleDateString('es-VE');
+        finTecnico = diasLaborablesEntre(inicio, Math.ceil(diasCriticos), trabajarSabado);
+        finPrometido = diasLaborablesEntre(inicio, Math.ceil(diasCriticos) + bufferDias, trabajarSabado);
+        finTxt = finPrometido.toLocaleDateString('es-VE',{weekday:'long', day:'2-digit', month:'long', year:'numeric'});
+        hintTxt = 'Fin técnico: ' + finTecnico.toLocaleDateString('es-VE') + (bufferDias ? ' · prometida con colchón: ' + finPrometido.toLocaleDateString('es-VE') : '');
       }catch(e){}
     }
     if(elFechaFin) elFechaFin.textContent = finTxt;
     if(elHintFin) elHintFin.textContent = hintTxt;
+    actualizarAsistente({diasCriticos, comp, n, j, finTecnico, finPrometido, trabajarSabado, bufferDias});
   }
   actualizarPlanificacion();
 
