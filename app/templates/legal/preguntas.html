@@ -2,73 +2,139 @@
 {% block titulo %}Preguntas frecuentes{% endblock %}
 {% block contenido %}
 <h1>Preguntas frecuentes</h1>
-<p class="meta">Versión 1.0 · Actualizado el 16 de agosto de 2026</p>
+<p class="meta">Versión 1.1 · Actualizado el 20 de agosto de 2026</p>
 
-<p>Respuestas directas a lo que más se pregunta antes de contratar. Si falta la
-tuya, escríbenos a
+<p>Respuestas al producto tal como está hoy: prueba gratuita, catálogo con
+análisis de precios, presupuestos, PDF, cobros y planes. Si falta la tuya,
+escríbenos a
 <a href="mailto:{{ email_soporte }}">{{ email_soporte }}</a>.</p>
 
-<h2>Sobre el producto</h2>
+<nav class="faq-indice" aria-label="Temas">
+  <a href="#producto">Producto</a>
+  <a href="#catalogo">Catálogo</a>
+  <a href="#presupuesto">Presupuestos</a>
+  <a href="#datos">Datos y equipo</a>
+  <a href="#fiscal">Fiscal</a>
+  <a href="#precio">Precio</a>
+  <a href="#soporte">Soporte</a>
+</nav>
+
+<h2 id="producto">Sobre el producto</h2>
 
 <h3>¿Qué es exactamente {{ product_name }}?</h3>
-<p>Una aplicación web para preparar presupuestos de obra: guardas tu catálogo de
-partidas y precios una vez, y a partir de ahí compones presupuestos con
-capítulos, mediciones y alternativas de producto, y los entregas en PDF. Incluye
-además seguimiento de aprobaciones, proyectos, documentos de cobro y control de
-pagos.</p>
+<p>Una aplicación web para presupuestos de construcción y remodelación.
+Guardas (o usas) un catálogo de partidas con costes y descomposición, armas
+presupuestos por capítulos, ves margen y tiempos internamente, y entregas un
+PDF profesional por WhatsApp o email. Después del sí, convierte el presupuesto
+en proyecto, registra cambios de alcance y controla cobros. No es un
+generador de documentos sueltos: es el flujo comercial de la obra.</p>
+<p>La guía completa está en <a href="/como-funciona">Cómo funciona</a>.</p>
 
 <h3>¿Necesito instalar algo?</h3>
-<p>No. Funciona en el navegador y tus datos quedan en el servidor. Existe además
-una versión de escritorio para quien prefiera trabajar en su propio equipo, y
-puedes importar esa instalación local a la web cuando quieras.</p>
+<p>No. Funciona en el navegador y tus datos quedan en el servidor, aislados
+por organización. Existe una versión de escritorio solo como compatibilidad
+para quien ya la tenía: puedes importar esa instalación local a la web desde
+<code>Configuración → Importar instalación</code>. Los pilotos nuevos van por
+la web.</p>
 
 <h3>¿Sirve para mi tipo de trabajo?</h3>
-<p>Está pensado para construcción y remodelación: constructoras pequeñas y
-medianas, remodeladores, contratistas e instaladores. Si haces entre 2 y 50
-presupuestos al mes y hoy los preparas en Word o Excel, encaja bien.</p>
+<p>Está pensado para constructoras pequeñas y medianas, remodeladores,
+contratistas e instaladores en Latinoamérica. Si haces entre 2 y 50
+presupuestos al mes y hoy los preparas en Word o Excel, encaja. Trae
+terminología e IVA de Venezuela, Colombia, México, Ecuador y Perú, y moneda
+local o USD.</p>
 
 <h3>¿Puedo probarlo antes de pagar?</h3>
-<p>Sí. Pide una demostración por correo y la hacemos con tus propios datos. No
-se cobra nada antes de que veas el producto funcionando.</p>
+<p>{% if hay_prueba_gratuita() %}Sí. Al crear tu cuenta y tu organización
+tienes <strong>{{ dias_de_prueba() }} días de acceso completo</strong>, con tus
+propios datos. <strong>No pedimos tarjeta</strong> y no se cobra nada al
+terminar: si no eliges un plan, dejas de generar presupuestos nuevos y tus
+datos siguen ahí para exportarlos.{% else %}Los precios vigentes están en
+<a href="/pago">Planes</a>. El cobro es manual: pagas, subes el comprobante y
+activamos la licencia.{% endif %} Una prueba por correo, para siempre.</p>
 
 <h3>¿Puedo ver un presupuesto de ejemplo?</h3>
-<p>Sí, hay uno completo en PDF enlazado desde
-<a href="/">la página del producto</a>. Todos sus datos son ficticios.</p>
+<p>Sí. Hay uno completo en PDF desde
+<a href="/">la página del producto</a>. Todos sus datos son ficticios. La
+propia landing muestra un presupuesto de remodelación de baño con coste,
+beneficio y horas, convertido a la moneda de tu país.</p>
 
-<h3>¿Calcula el margen de beneficio y la ganancia?</h3>
-<p>Sí. Si cargas el costo interno de cada partida (materiales, mano de obra,
-equipo y complementarios), {{ product_name }} compara ese costo con tu precio de
-venta y muestra el beneficio y el margen en % y en dinero: por partida, por
-capítulo y del presupuesto completo, con el beneficio de la obra y el de los
-productos por separado. También avisa cuando una partida tiene margen bajo o un
-precio sin revisar hace mucho. Si no cargas costos, ese cálculo queda en blanco
-hasta que los introduzcas.</p>
+<h3>¿El cliente tiene que registrarse?</h3>
+<p>No. Tú envías el PDF por WhatsApp o email como ya haces. El cliente revisa
+el documento y te responde. Hay un enlace privado opcional si quieres que
+firme en pantalla, pero no es obligatorio ni sustituye tu relación con él.</p>
 
-<h3>¿Calcula el tiempo de obra automáticamente?</h3>
-<p>Sí. Con los rendimientos de mano de obra de cada partida estima las
-horas-hombre por rol (oficial, ayudante, capataz y equipos), la duración
-crítica del trabajo y la convierte en días y semanas laborables. Donde falte
-dato puedes asignar horas a mano por partida, y el total se recalcula solo.</p>
+<h2 id="catalogo">Catálogo, costes y recursos</h2>
 
-<h2>Datos, importación y control</h2>
+<h3>¿Qué catálogo incluye?</h3>
+<p>{{ catalogo().partidas_txt }} partidas descompuestas y
+{{ catalogo().recursos_txt }} precios de recursos, organizados en
+{{ catalogo().capitulos }} capítulos. {{ catalogo().lineas_descomp_txt }}
+líneas de análisis de precios unitarios (materiales, mano de obra, equipo y
+complementarios). Son de autoría propia, editables, y se actualizan para
+seguir el mercado. No es una lista de precios plana.</p>
 
-<h3>¿Puedo traer mi catálogo desde Excel?</h3>
-<p>Sí. Hay importación desde Excel, incluidos descompuestos de partidas con su
-matriz de recursos y fórmulas. También puedes importar una instalación local
-anterior de {{ product_name }} desde <code>Configuración → Importar instalación</code>.</p>
+<h3>¿Puedo traer mi catálogo desde Excel o CYPE?</h3>
+<p>Sí. Importación desde Excel (incluidos descompuestos con matriz de
+recursos y fórmulas) y desde CYPE (.xlsx) sin perder filas. También puedes
+pegar TSV copiado de una hoja, o importar una instalación local anterior de
+{{ product_name }}.</p>
+
+<h3>¿Si cambio el precio del cemento se actualizan las partidas?</h3>
+<p>Sí. Los recursos están conectados en cascada: recurso → partidas que lo
+usan → presupuestos en edición. Los documentos ya enviados no se reescriben:
+cada versión queda congelada.</p>
+
+<h3>¿Qué es un pack de estancia?</h3>
+<p>Un capítulo completo (baño, cocina, suelos…) que se inserta con
+<code>Alt+R</code> y se escala a los m² reales. {{ catalogo().packs or 6 }}
+packs de serie, y puedes guardar los tuyos desde cualquier capítulo armado.</p>
+
+<h2 id="presupuesto">Presupuestos, margen y entrega</h2>
+
+<h3>¿Calcula el margen de beneficio?</h3>
+<p>Sí, si cargas el coste interno de cada partida. Compara coste con precio
+de venta y muestra beneficio y margen en % y en dinero: por partida, por
+capítulo, de la obra y de los productos por separado. Avisa cuando una
+partida tiene margen bajo o un precio sin revisar. El cliente <strong>no
+ve</strong> esos números en el PDF.</p>
+
+<h3>¿Calcula el tiempo de obra?</h3>
+<p>Sí, internamente. Con los rendimientos de mano de obra estima
+horas-hombre por rol y la duración en días laborables. Puedes asignar horas
+a mano. Esa información <strong>nunca va al PDF del cliente</strong>: es
+para que tú prometas plazos que sí puedes cumplir, no para que te reclamen
+horas impresas.</p>
+
+<h3>¿Qué lleva el PDF?</h3>
+<p>Tu logo, capítulos, partidas, mediciones, productos con foto, condiciones,
+garantías, totales e IVA, y opcionalmente portada, firmas y anexos fusionados
+como páginas reales. Estilos configurables. No lleva costes internos, margen
+ni horas de cuadrilla.</p>
+
+<h3>¿Puedo enviar por WhatsApp?</h3>
+<p>Sí. El botón abre WhatsApp con el mensaje ya redactado (cliente, número,
+total, validez). También puedes enviarlo por email desde la app, con el PDF
+adjunto.</p>
+
+<h3>¿Qué pasa si el cliente pide cambios?</h3>
+<p>Editas el presupuesto. Se crea una versión nueva (la anterior queda
+sellada) y CotizaT te arma un resumen para copiar: total anterior, total
+nuevo y cambios principales. Lo reenvías por el mismo canal.</p>
+
+<h2 id="datos">Datos, importación y control</h2>
 
 <h3>¿Puedo exportar mis datos y marcharme?</h3>
-<p>Sí, y sin pedir permiso. Los datos que introduces son tuyos. Si terminas el
-servicio dispones de una ventana de al menos 30 días para exportarlos, según los
-<a href="/legal/terminos">términos del servicio</a>.</p>
+<p>Sí, y sin pedir permiso. Los datos que introduces son tuyos. Exportas a
+Excel y PDF cuando quieras, con copia de seguridad completa. Si terminas el
+servicio dispones de una ventana de al menos 30 días para exportarlos, según
+los <a href="/legal/terminos">términos del servicio</a>.</p>
 
 <h3>¿Otras empresas pueden ver mis precios?</h3>
-<p>No. Cada organización está aislada: el aislamiento se aplica en la propia
-base de datos, no solo en la pantalla. Las imágenes y anexos se sirven a través
-de la aplicación previa comprobación de permisos, nunca desde una dirección
-pública. Si tu empresa crea expresamente un enlace de propuesta, quien reciba
-ese secreto puede ver únicamente la versión y el PDF compartidos hasta que el
-enlace caduque o sea revocado; nunca obtiene acceso al resto de tu organización.</p>
+<p>No. Cada organización está aislada en la propia base de datos, no solo en
+la pantalla. Las imágenes y anexos se sirven previa comprobación de
+permisos, nunca desde una dirección pública. Un enlace de propuesta, si lo
+creas, muestra únicamente esa versión hasta que caduque o lo revoques.</p>
 
 <h3>¿Quién puede entrar a mi organización?</h3>
 <p>Solo quien invites, con el rol que le asignes: <strong>lectura</strong>
@@ -77,54 +143,74 @@ enlace caduque o sea revocado; nunca obtiene acceso al resto de tu organización
 caducan y solo pueden usarse una vez, y quien la acepta debe tener el mismo
 correo confirmado.</p>
 
-<h2>Facturación y alcance fiscal</h2>
+<h3>¿En qué países y monedas funciona?</h3>
+<p>Pensado para Latinoamérica. Al registrarte eliges Venezuela, Colombia,
+México, Ecuador o Perú (IVA, ID fiscal y vocabulario). Cotizas en USD o en
+tu moneda local; cada presupuesto congela su tasa. Hay 20 monedas ISO
+soportadas. Sin tasa verificada no se inventa una conversión.</p>
+
+<h2 id="fiscal">Facturación y alcance fiscal</h2>
 
 <h3>¿{{ product_name }} emite facturas fiscales?</h3>
-<p><strong>No.</strong> Los documentos que genera —presupuestos y documentos de
-cobro— son documentos comerciales. No sustituyen a una factura fiscal emitida
-conforme a la normativa que te aplique, y así lo advierten los propios
-documentos. Para la facturación fiscal usa el medio que exija tu país y
-consulta a tu asesor.</p>
+<p><strong>No.</strong> Los documentos que genera —presupuestos y documentos
+de cobro— son documentos comerciales. No sustituyen a una factura fiscal
+emitida conforme a la normativa que te aplique, y así lo advierten los
+propios documentos. Para la facturación fiscal usa el medio que exija tu
+país y consulta a tu asesor.</p>
 
 <h3>¿Calcula impuestos automáticamente?</h3>
-<p>Puedes configurar los impuestos que apliques y {{ product_name }} los calcula
-en el documento, pero la responsabilidad de qué tipo corresponde a cada
-concepto es tuya o de tu asesor: no damos asesoramiento fiscal.</p>
+<p>Puedes configurar los impuestos que apliques (IVA, retención, operación
+exenta) y {{ product_name }} los calcula en el documento, pero la
+responsabilidad de qué tipo corresponde a cada concepto es tuya o de tu
+asesor: no damos asesoramiento fiscal.</p>
 
-<h2>Precio y contratación</h2>
+<h2 id="precio">Precio y contratación</h2>
 
 <h3>¿Cuánto cuesta?</h3>
-<p>Los precios vigentes están en <a href="/">la página del producto</a>.
-Durante el acceso anticipado hay precios promocionales de fundador; el precio
-que contrates se respeta durante todo el período pagado.</p>
+<p>Los precios vigentes están en <a href="/pago">Planes</a>. Durante el
+acceso anticipado: <strong>89 US$ al año</strong> (habitual 109 US$) o
+<strong>9,99 US$ al mes el primer año</strong> (habitual 12,99 US$). El
+precio que contrates se respeta durante todo el período pagado. Todas las
+funciones están incluidas: no hay un plan «pro» aparte.</p>
+
+<h3>¿Cómo se paga?</h3>
+<p>Pago manual, sin cargo automático a una tarjeta. Eliges plan y método
+(Pago móvil, Binance, Kontigo, USDT, o billeteras locales como Nequi, Yape o
+Mercado Pago), pagas con los datos en pantalla y subes el comprobante.
+Verificamos y activamos la licencia en un máximo de 48 horas hábiles.</p>
 
 <h3>¿Hay permanencia?</h3>
-<p>No. Puedes cancelar cuando quieras y conservas el acceso hasta el final del
-período que ya pagaste.</p>
+<p>No. Puedes cancelar cuando quieras y conservas el acceso hasta el final
+del período que ya pagaste.</p>
 
 <h3>¿Qué pasa si dejo de pagar?</h3>
-<p>El acceso termina al acabar el período pagado. Antes de que ocurra te
-avisamos, y mantienes la ventana de exportación descrita en los términos: no se
-borra nada por sorpresa.</p>
+<p>El acceso termina al acabar el período pagado. Antes te avisamos por
+email. Mantienes la ventana de exportación descrita en los términos: no se
+borra nada por sorpresa. Con la licencia vencida puedes entrar al checkout
+para renovar.</p>
 
-<h2>Soporte</h2>
+<h3>¿La prueba se puede repetir con otro correo?</h3>
+<p>Una prueba por identidad de correo, para siempre. Crear otra cuenta con
+el mismo correo no concede otra. Si ya la usaste, eliges un plan.</p>
+
+<h2 id="soporte">Soporte</h2>
 
 <h3>¿Qué incluye el soporte y qué no?</h3>
 <p>Está detallado en <a href="/legal/soporte">condiciones de soporte</a>. En
-resumen: incluye configuración, dudas de uso, errores del producto y problemas
-de acceso; no incluye asesoramiento fiscal o legal, cargar tu catálogo entero
-por ti, ni desarrollos a medida sin acuerdo aparte.</p>
+resumen: incluye configuración, dudas de uso, errores del producto y
+problemas de acceso; no incluye asesoramiento fiscal o legal, cargar tu
+catálogo entero por ti, ni desarrollos a medida sin acuerdo aparte.</p>
 
 <h3>¿Cómo reporto un error?</h3>
 <p>Por correo a <a href="mailto:{{ email_soporte }}">{{ email_soporte }}</a>,
-siguiendo el <a href="/legal/soporte">guion de reporte</a> (qué esperabas, qué
-pasó, cómo reproducirlo y una captura sin datos de tus clientes). Con eso se
-resuelve mucho más rápido.</p>
+siguiendo el <a href="/legal/soporte">guion de reporte</a> (qué esperabas,
+qué pasó, cómo reproducirlo y una captura sin datos de tus clientes). Con
+eso se resuelve mucho más rápido.</p>
 
 <h3>¿En qué estado está el producto?</h3>
-<p>En <strong>acceso anticipado</strong>: se usa para trabajo real, pero sigue
-evolucionando y hay funciones en camino. Lo decimos por delante para que decidas
-con la información correcta, no después de cobrarte.</p>
+<p>En <strong>acceso anticipado</strong>: se usa para trabajo real, pero
+sigue evolucionando y hay funciones en camino. Lo decimos por delante para
+que decidas con la información correcta, no después de cobrarte.</p>
 
 <div class="aviso aviso-final">
   Esta página resume información contractual, pero no sustituye a los

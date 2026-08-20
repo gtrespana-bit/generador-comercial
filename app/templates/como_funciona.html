@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cómo funciona {{ product_name }} — de tu catálogo al cobro</title>
+  <meta name="description" content="Guía detallada de {{ product_name }}: catálogo con análisis de precios, presupuestos, margen, tiempos internos, PDF, WhatsApp, versiones, proyectos y cobros.">
+  <link rel="icon" type="image/png" href="/static/icono.png">
+  <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}">
+</head>
+<body class="landing funciona-page">
+{% include "public/_nav.html" %}
+
+<header class="funciona-hero">
+  <div class="funciona-hero-int">
+    <span class="section-kicker">Guía del producto</span>
+    <h1>Cómo funciona {{ product_name }}, función por función.</h1>
+    <p class="sub">No es un generador de PDFs. Es el flujo comercial de una obra: catálogo con costes reales, presupuesto con margen y tiempos, documento profesional y control de cambios hasta el cobro. Esta página explica cada pieza, sin letra pequeña.</p>
+    <div class="acciones">
+      {% if hay_prueba_gratuita() %}
+      <a class="btn btn-primary" href="/acceso">Probar {{ dias_de_prueba() }} días gratis</a>
+      {% else %}
+      <a class="btn btn-primary" href="/pago">Ver planes</a>
+      {% endif %}
+      <a class="btn btn-secondary" href="/legal/preguntas">Preguntas frecuentes</a>
+    </div>
+  </div>
+</header>
+
+<nav class="funciona-indice" aria-label="Índice de funciones">
+  <a href="#flujo">El flujo</a>
+  <a href="#catalogo">Catálogo y APU</a>
+  <a href="#editor">Editor</a>
+  <a href="#packs">Packs</a>
+  <a href="#margen">Margen y tiempos</a>
+  <a href="#entrega">PDF y envío</a>
+  <a href="#cierre">Proyectos y cobros</a>
+  <a href="#equipo">Equipo y datos</a>
+</nav>
+
+<section id="flujo" class="funciona-flujo">
+  <span class="section-kicker">De punta a punta</span>
+  <h2>El recorrido real, no el de un tutorial.</h2>
+  <p class="intro">{{ product_name }} no obliga a tu cliente a registrarse ni a aprender una plataforma. Tú preparas, revisas y envías. El cliente responde como siempre: WhatsApp, llamada o email.</p>
+  <ol class="funciona-pasos">
+    <li>
+      <strong>Configura tu empresa</strong>
+      <span>Logo, datos fiscales, moneda, IVA, condiciones y textos del PDF. Al registrarte eliges país y el espacio nace ya configurado.</span>
+    </li>
+    <li>
+      <strong>Revisa el catálogo</strong>
+      <span>{{ catalogo().partidas_txt }} partidas descompuestas y {{ catalogo().recursos_txt }} recursos, listos para editar. Importa el tuyo desde Excel o CYPE si ya lo tienes.</span>
+    </li>
+    <li>
+      <strong>Arma el presupuesto</strong>
+      <span>Capítulos, partidas, mediciones, packs de estancia o productos con foto. Totales, margen y horas se recalculan en vivo.</span>
+    </li>
+    <li>
+      <strong>Revisa antes de enviar</strong>
+      <span>La salud del presupuesto avisa si falta precio, cantidad, coste, logo o datos del cliente. No te bloquea: te avisa.</span>
+    </li>
+    <li>
+      <strong>Envía el PDF</strong>
+      <span>Descárgalo, ábrelo en WhatsApp con el mensaje redactado o mándalo por email. El cliente no entra a CotizaT.</span>
+    </li>
+    <li>
+      <strong>Si pide cambios, reenvía claro</strong>
+      <span>Editas, se crea una versión nueva y copias un resumen: total anterior, total nuevo y qué cambió.</span>
+    </li>
+  </ol>
+</section>
+
+<section id="catalogo">
+  <span class="section-kicker">La base de precios</span>
+  <h2>Catálogo con análisis de precios unitarios, no una lista plana.</h2>
+  <p class="intro">Cada partida llega descompuesta en materiales, mano de obra y equipo, con rendimiento y precio. Eso es lo que permite saber cuánto ganas y cuánto tarda tu cuadrilla.</p>
+  <div class="funciona-grid">
+    <article>
+      <h3>Catálogo propio incluido</h3>
+      <p>{{ catalogo().partidas_txt }} partidas en {{ catalogo().capitulos }} capítulos y {{ catalogo().subcapitulos }} subcapítulos, más {{ catalogo().recursos_txt }} precios de recursos ({{ catalogo().materiales }} materiales, {{ catalogo().mano_obra }} de mano de obra, {{ catalogo().equipo }} de equipo). {{ catalogo().lineas_descomp_txt }} líneas de descomposición editables. No empiezas de cero.</p>
+    </article>
+    <article>
+      <h3>Precios en cascada</h3>
+      <p>Subes el cemento o la hora del oficial una sola vez en Recursos. Todas las partidas que lo usan se recalculan solas: la partida, el capítulo y el presupuesto. Ningún Excel hace esto sin romperse.</p>
+    </article>
+    <article>
+      <h3>Importación Excel y CYPE</h3>
+      <p>Pega TSV desde Excel o sube un .xlsx de descompuestos CYPE. Se clasifican materiales, mano de obra y complementarios, y se conserva la matriz original. También puedes importar una instalación local anterior.</p>
+    </article>
+    <article>
+      <h3>Salud del catálogo</h3>
+      <p>Antes de cotizar, la app señala partidas sin precio, sin coste, sin tiempo o con margen bajo. Así no presupuestas con una base desactualizada sin darte cuenta.</p>
+    </article>
+    <article>
+      <h3>Ajuste por inflación</h3>
+      <p>Sube o baja todos los precios de golpe por porcentaje, el catálogo entero o por capítulo. Los presupuestos ya enviados no se tocan: cada documento congela sus cifras.</p>
+    </article>
+    <article>
+      <h3>Terminología de tu país</h3>
+      <p>Friso o pañete, concreto u hormigón, cielo raso o plafón. Eliges Venezuela, Colombia, México, Ecuador o Perú y los nombres se adaptan al mostrar, sin duplicar el catálogo.</p>
+    </article>
+  </div>
+</section>
+
+<section id="editor" class="franja">
+  <span class="section-kicker">El constructor</span>
+  <h2>Presupuestos por capítulos, con atajos de quien cotiza todos los días.</h2>
+  <p class="intro">La experiencia principal sigue siendo simple: cliente, capítulos, partidas, cantidades, PDF. Lo avanzado aparece cuando lo necesitas.</p>
+  <div class="funciona-grid">
+    <article>
+      <h3>Capítulos y partidas</h3>
+      <p>Capítulos ilimitados, partidas con descripción técnica, mediciones por zonas y numeración automática (1.1, 1.2…). Las filas se pliegan al terminar de editarlas para no perderte en un documento largo.</p>
+    </article>
+    <article>
+      <h3>Escritura sin ratón</h3>
+      <p><code>Enter</code> avanza nombre → cantidad → precio. <code>Alt+P</code> añade partida, <code>Alt+C</code> capítulo, <code>Ctrl+K</code> busca en el catálogo, <code>Ctrl+Z</code> deshace y <code>Ctrl+Enter</code> guarda. Autoguardado local: si se cierra el navegador, el borrador sigue ahí.</p>
+    </article>
+    <article>
+      <h3>Arrastrar, duplicar, pegar</h3>
+      <p>Reordena partidas arrastrándolas. Duplica una partida o un capítulo entero. Pega filas copiadas de Excel. Lo que escribes a mano se guarda solo en el catálogo para reutilizarlo.</p>
+    </article>
+    <article>
+      <h3>Productos a elección del cliente</h3>
+      <p>Incluido, opcional o alternativa, con foto, marca y precio. El presupuesto marca qué se aprobó con y sin opcionales. El cliente elige; tú no reescribes el documento desde cero.</p>
+    </article>
+    <article>
+      <h3>Plantillas</h3>
+      <p>Guarda un presupuesto como plantilla y reutilízalo. Útil para reformas que se repiten: baño tipo, cocina tipo, local comercial.</p>
+    </article>
+    <article>
+      <h3>Moneda e IVA del documento</h3>
+      <p>Cada presupuesto congela su moneda, su tasa y su IVA. Puedes cotizar en USD o en la moneda local. Un PDF antiguo no cambia si mañana se mueve el tipo de cambio.</p>
+    </article>
+  </div>
+</section>
+
+<section id="packs">
+  <span class="section-kicker">Velocidad en obra</span>
+  <h2>Packs de estancia: un capítulo entero en un clic.</h2>
+  <p class="intro">Cotizar un baño o una cocina no debería llevar 40 minutos de buscar partidas. Un pack inserta el capítulo completo, escalado a los m² reales.</p>
+  <div class="funciona-grid">
+    <article>
+      <h3>{{ catalogo().packs or 6 }} packs de serie</h3>
+      <p>Baño principal, cocina con isla, suelos, dormitorio suite, sala-comedor e instalación eléctrica. Cada uno trae las partidas críticas (impermeabilización, pases, juntas) para no olvidar nada.</p>
+    </article>
+    <article>
+      <h3>Escalado a medida</h3>
+      <p>Indicas 12 m² y las cantidades proporcionales se calculan en vivo. Las piezas fijas (inodoro, mueble) no se multiplican. Vista previa antes de insertar.</p>
+    </article>
+    <article>
+      <h3>Los tuyos, también</h3>
+      <p>Cualquier capítulo armado se guarda como pack con <em>Guardar pack</em>. La próxima vez, <code>Alt+R</code> y listo. Tú construyes tu propia librería de reformas.</p>
+    </article>
+  </div>
+</section>
+
+<section id="margen" class="franja">
+  <span class="section-kicker">La diferencia</span>
+  <h2>Sabes cuánto ganas y cuánto tarda tu cuadrilla. El cliente, no.</h2>
+  <p class="intro">El margen y las horas son información interna. El PDF del cliente lleva partidas, cantidades, precios y totales. Nunca horas ni plazos calculados: evita reclamaciones del tipo «el papel decía 5 horas».</p>
+  <div class="funciona-grid">
+    <article>
+      <h3>Beneficio real</h3>
+      <p>Cada partida compara coste interno (materiales, mano de obra, equipo, complementarios) con el precio de venta. Ves beneficio y margen en % y en dinero: por partida, por capítulo, de la obra y de los productos, por separado.</p>
+    </article>
+    <article>
+      <h3>Alertas de margen bajo</h3>
+      <p>Si una partida está por debajo de tu umbral o lleva meses sin revisar el precio, CotizaT te lo dice antes de enviarla. Ajustas el coste y el beneficio se recalcula al instante.</p>
+    </article>
+    <article>
+      <h3>Horas-hombre por rol</h3>
+      <p>A partir de los rendimientos de mano de obra estima horas de oficial, ayudante, capataz y equipos. Donde falte dato puedes asignar horas a mano. La duración se convierte a días y semanas laborables con tu jornada.</p>
+    </article>
+    <article>
+      <h3>Página de tiempos</h3>
+      <p>En <code>/presupuestos/…/tiempos</code> ves cobertura de datos, desglose por capítulo y la fuente de cada estimación (descompuesto, catálogo o por coste). Es para planificar internamente, no para imprimir al cliente.</p>
+    </article>
+  </div>
+</section>
+
+<section id="entrega">
+  <span class="section-kicker">Cierre comercial</span>
+  <h2>PDF profesional, WhatsApp, email y cambios claros.</h2>
+  <div class="funciona-grid">
+    <article>
+      <h3>PDF con tu marca</h3>
+      <p>Logo, portada opcional, resumen por capítulos, condiciones, garantías, firmas y anexos fusionados como páginas reales. Estilos: elegante, técnica, minimalista, corporativa, compacta o editorial. Marca de agua si está en borrador, rechazado o vencido.</p>
+    </article>
+    <article>
+      <h3>WhatsApp y email</h3>
+      <p>Un clic abre WhatsApp con el mensaje ya redactado: cliente, número, total y validez. O envías el PDF por email desde la propia app. Trabajas como ya trabajas.</p>
+    </article>
+    <article>
+      <h3>Versiones inmutables</h3>
+      <p>Cada envío, reenvío o aprobación sella una versión. Siempre sabes qué se mandó. Puedes comparar dos versiones. Editar un documento ya enviado crea una versión nueva, no reescribe la historia.</p>
+    </article>
+    <article>
+      <h3>Resumen de cambios</h3>
+      <p>Cuando el cliente llama y pide «quita el porcelanato y pon cerámica», modificas, descargas el PDF nuevo y copias un resumen: total anterior, total nuevo y cambios principales. Se acaba el «¿cuál era el último?»</p>
+    </article>
+    <article>
+      <h3>Enlace privado opcional</h3>
+      <p>Si lo necesitas, un enlace secreto con caducidad y revocación. El destinatario ve solo esa versión y puede firmar en pantalla. No navega por tu organización. No es firma electrónica cualificada: lo decimos en los términos.</p>
+    </article>
+    <article>
+      <h3>Revisión antes de enviar</h3>
+      <p>Cliente, contacto, logo, precios a cero, cantidades a cero, costes faltantes, validez. Si algo crítico falta, te avisa. Tú decides si envías igual.</p>
+    </article>
+  </div>
+</section>
+
+<section id="cierre" class="franja">
+  <span class="section-kicker">Después de aprobar</span>
+  <h2>Del presupuesto al cobro, sin otro Excel.</h2>
+  <div class="funciona-grid">
+    <article>
+      <h3>Proyectos</h3>
+      <p>Un presupuesto aprobado se convierte en proyecto. Queda vinculado a la versión contratada. Ficha con fechas, estado, contratado, cambios, pagado y saldo.</p>
+    </article>
+    <article>
+      <h3>Cambios de alcance</h3>
+      <p>Cambios numerados con partidas añadidas o quitadas, diferencia de precio y estado (borrador, enviado, aprobado, aplicado). El total del proyecto se actualiza con lo aprobado, no con lo que alguien apuntó en un chat.</p>
+    </article>
+    <article>
+      <h3>Documentos de cobro</h3>
+      <p>Desde un presupuesto aprobado generas un documento comercial (<code>DC-2026-001</code>) con su PDF. <strong>No es una factura fiscal</strong> y el propio documento lo dice. Sirve para anticipos, pagos y saldos.</p>
+    </article>
+    <article>
+      <h3>Reportes</h3>
+      <p>Ventas, presupuestos por estado, proyectos y cobros con saldo pendiente. Exportables a CSV para cruzar con tu contabilidad. El dashboard muestra volumen, tasa de aprobación y proyectos activos.</p>
+    </article>
+  </div>
+</section>
+
+<section id="equipo">
+  <span class="section-kicker">Empresa y datos</span>
+  <h2>Tu equipo, tu país, tus datos. Sin rehenes.</h2>
+  <div class="funciona-grid">
+    <article>
+      <h3>Roles</h3>
+      <p>Invitas por email. <strong>Lectura</strong> consulta y descarga. <strong>Miembro</strong> crea y edita. <strong>Administrador</strong> gestiona el equipo. Las invitaciones caducan y son de un solo uso. Cada organización está aislada en la base de datos, no solo en la pantalla.</p>
+    </article>
+    <article>
+      <h3>Fiscal a tu medida</h3>
+      <p>IVA, ID fiscal (RIF, NIT, RUT, CUIT, RUC, RFC…), retención, operación exenta y cláusula cambiaria. Moneda local o USD, con tasa congelada por presupuesto. {{ product_name }} calcula lo que configures; no da asesoramiento fiscal.</p>
+    </article>
+    <article>
+      <h3>Exportar y marcharte</h3>
+      <p>Excel, PDF y copia de seguridad completa. Si cancelas, hay una ventana de al menos 30 días para llevarte los datos. Sin permanencia: el acceso dura hasta el final del período pagado.</p>
+    </article>
+    <article>
+      <h3>Prueba y planes</h3>
+      <p>{% if hay_prueba_gratuita() %}{{ dias_de_prueba() }} días de acceso completo sin tarjeta. {% endif %}Plan anual 89 US$ (habitual 109) o mensual 9,99 US$ el primer año (habitual 12,99). Pago manual: Pago móvil, Binance, Kontigo, USDT o billeteras locales. Activamos la licencia al verificar el comprobante.</p>
+    </article>
+  </div>
+</section>
+
+<section class="franja cta-final">
+  <h2>¿Listo para verlo con tus datos?</h2>
+  <p class="intro">{% if hay_prueba_gratuita() %}Empieza con {{ dias_de_prueba() }} días gratis, sin tarjeta. {% endif %}Si algo no queda claro, la <a href="/legal/preguntas">página de preguntas</a> cubre precio, datos, impuestos y soporte.</p>
+  <div class="acciones mt-3">
+    {% if hay_prueba_gratuita() %}
+    <a class="btn btn-primary" href="/acceso">Empezar mis {{ dias_de_prueba() }} días gratis</a>
+    <a class="btn btn-secondary" href="/pago">Ver planes</a>
+    {% else %}
+    <a class="btn btn-primary" href="/pago">Ver planes y empezar</a>
+    <a class="btn btn-secondary" href="/acceso">Iniciar sesión</a>
+    {% endif %}
+  </div>
+</section>
+
+<footer>
+  <div class="footer-int">
+    <div>© 2026 {{ titular_legal }}</div>
+    <div>
+      <a href="/como-funciona">Cómo funciona</a>
+      <a href="/legal/preguntas">Preguntas frecuentes</a>
+      <a href="/legal/terminos">Términos</a>
+      <a href="/legal/privacidad">Privacidad</a>
+      <a href="/legal/soporte">Soporte</a>
+      <a href="mailto:{{ email_soporte }}">{{ email_soporte }}</a>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

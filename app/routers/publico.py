@@ -214,6 +214,12 @@ def landing_publica(request: Request):
     return TEMPLATES.TemplateResponse(request, "landing.html", ctx)
 
 
+@router.get("/como-funciona", response_class=HTMLResponse, include_in_schema=False)
+def como_funciona(request: Request):
+    """Guía pública de funciones: catálogo, editor, margen, PDF y cobro."""
+    return TEMPLATES.TemplateResponse(request, "como_funciona.html")
+
+
 # --- Subdirectorios por país (SEO) — 1 Vercel, 1 Supabase, 5 URLs canónicas ---
 @router.get("/ve", response_class=HTMLResponse, include_in_schema=False)
 def landing_ve(request: Request):
@@ -285,6 +291,7 @@ def sitemap(request: Request):
         f"{base}/ec/",
         f"{base}/pe/",
         f"{base}/conocer",
+        f"{base}/como-funciona",
         f"{base}/pago",
         f"{base}/legal/terminos",
         f"{base}/legal/privacidad",

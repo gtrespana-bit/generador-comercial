@@ -9,21 +9,8 @@
   <link rel="stylesheet" href="{{ 'css/public.css' | asset }}">
 </head>
 <body class="landing compra-page">
-<nav class="nav">
-  <a class="brand" href="/">
-    <span class="mark">
-      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <path d="M7 3.5h6.5L18 8v11a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 19V5a1.5 1.5 0 0 1 1-1.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-        <path d="M13.5 3.5V8H18" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-        <path d="M9 14.5l2 2 4-4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </span>
-    {{ product_name }}
-  </a>
-  <div class="nav-links">
-    <a class="entrar" href="/inicio">Mi panel</a>
-  </div>
-</nav>
+{% set nav_modo = "cuenta" %}
+{% include "public/_nav.html" %}
 
 <main class="compra-main">
   <header class="compra-head">

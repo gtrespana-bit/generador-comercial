@@ -84,7 +84,7 @@ def test_paginas_publicas_cumplen_csp():
         re.IGNORECASE,
     )
     style_attr = re.compile(r"\sstyle\s*=", re.IGNORECASE)
-    for ruta in ("/conocer", "/legal/terminos", "/legal/privacidad", "/legal/soporte", "/legal/licencias"):
+    for ruta in ("/conocer", "/como-funciona", "/legal/terminos", "/legal/privacidad", "/legal/soporte", "/legal/licencias", "/legal/preguntas"):
         r = _get(ruta)
         assert "content-security-policy" in r.headers, ruta
         nonce = r.headers["content-security-policy"].split("'nonce-", 1)[1].split("'", 1)[0]
@@ -157,6 +157,41 @@ def test_la_faq_esta_enlazada_desde_la_landing_y_el_pie_legal():
     """Una FAQ que no se encuentra no resuelve ninguna duda."""
     assert "/legal/preguntas" in _get("/conocer").text
     assert "/legal/preguntas" in _get("/legal/terminos").text
+
+
+def test_cabecera_publica_enlaza_funciones_faq_y_planes():
+    """La cabecera de las páginas públicas no puede quedar solo con login."""
+    for ruta in ("/", "/conocer", "/pago", "/como-funciona", "/legal/preguntas"):
+        texto = _get(ruta).text
+        assert "/como-funciona" in texto, ruta
+        assert "/legal/preguntas" in texto, ruta
+        assert "/pago" in texto, ruta
+
+
+def test_como_funciona_explica_el_producto_sin_sesion():
+    r = _get("/como-funciona")
+    assert r.status_code == 200
+    texto = r.text.lower()
+    for tema in (
+        "catálogo",
+        "análisis de precios",
+        "margen",
+        "whatsapp",
+        "packs",
+        "documento comercial",
+    ):
+        assert tema in texto, tema
+    assert "demostración" not in texto
+    assert "factura fiscal" in texto
+
+
+def test_preguntas_frecuentes_ya_no_promete_una_demo_por_correo():
+    """La FAQ antigua pedía una demostración; el producto ahora ofrece prueba."""
+    texto = _get("/legal/preguntas").text.lower()
+    assert "demostración" not in texto
+    assert "whatsapp" in texto
+    assert "pack" in texto
+    assert "89" in texto
 
 
 def test_condiciones_de_soporte_delimitan_incluido_y_excluido():
