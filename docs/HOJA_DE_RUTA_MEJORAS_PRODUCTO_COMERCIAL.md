@@ -889,3 +889,37 @@ Verificar que las mejoras recientes no rompen flujos principales ni añaden ruid
 - [x] `835 passed, 7 skipped`.
 - [x] Rutas principales responden `200`.
 - [x] Sin cambios funcionales nuevos; solo correcciones de estabilidad y seguridad detectadas por QA.
+
+---
+
+# Fase 6 — PDF comercial y salida profesional
+
+## Objetivo
+
+Mejorar la claridad comercial del PDF, que es el documento que normalmente revisa el cliente por WhatsApp, email o llamada con el contratista.
+
+## Estado
+
+- [x] Realizado
+
+## Mejoras aplicadas
+
+- [x] Añadir resumen comercial visible al inicio del PDF.
+- [x] Mostrar total, validez, fecha y moneda en una tabla limpia.
+- [x] Mantener fuera del PDF costes internos, beneficio, margen y tiempos internos.
+- [x] Renombrar secciones finales para mayor claridad:
+  - “Información adicional” → “Alcance e información adicional”.
+  - “Condiciones del presupuesto” → “Condiciones comerciales”.
+- [x] Mantener el resumen por capítulos como opción, sin hacerlo obligatorio.
+- [x] Validar PDFs interactivos y no interactivos.
+
+## Validación
+
+- [x] Generación PDF correcta.
+- [x] Extracción de texto confirma “RESUMEN DE LA PROPUESTA”, “TOTAL”, “VALIDEZ” y “MONEDA”.
+- [x] Tests específicos de PDF pasan.
+- [x] Ruta `/presupuestos/1/pdf` responde `200 application/pdf`.
+
+## Principio aplicado
+
+No se añadieron gráficos, información interna ni bloques largos. La mejora se limita a que el cliente entienda más rápido el documento.
