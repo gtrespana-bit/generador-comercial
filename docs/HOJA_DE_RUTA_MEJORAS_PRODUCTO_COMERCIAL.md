@@ -948,3 +948,27 @@ Que un contratista pueda entrar a CotizaT y entender el flujo recomendado sin de
 ## Principio aplicado
 
 La guía refuerza el flujo real del contratista: preparar PDF, enviarlo por canales normales y reenviar cambios si el cliente los pide. No obliga al cliente a usar una plataforma online compleja.
+
+---
+
+# Fase 8 — Alineación final de landing con flujo real
+
+## Objetivo
+
+Alinear la landing con la forma real de trabajo del contratista: PDF, WhatsApp/email, llamada del cliente y reenvío de cambios.
+
+## Estado
+
+- [x] Realizado
+
+## Implementado
+
+- [x] Añadida sección “Trabaja como ya trabajas: PDF, WhatsApp, llamada y cambios claros”.
+- [x] Rebajado el peso comercial de la propuesta online/firma como función central.
+- [x] Reposicionada la firma/enlace como opción, no como obligación.
+- [x] Añadidas ventajas visibles de revisión antes de enviar, salud del catálogo y cambios claros.
+- [x] Ajustados textos de tour, comparación y CTA para hablar de PDF y reenvío de cambios.
+
+## Principio aplicado
+
+La landing debe vender que CotizaT facilita el trabajo existente del contratista, no que obliga al cliente a usar una plataforma nueva.
