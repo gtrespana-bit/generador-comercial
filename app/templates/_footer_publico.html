@@ -1,0 +1,29 @@
+<footer>
+  <div class="footer-int">
+    <div>© 2026 {{ titular_legal }}</div>
+    <div>
+      <a href="/como-funciona">Cómo funciona</a>
+      <a href="/guia/presupuesto-de-obra">Presupuesto de obra</a>
+      <a href="/guia/analisis-precios-unitarios">Qué es un APU</a>
+      <a href="/guia/presupuesto-remodelacion">Remodelación</a>
+      <a href="/software-presupuestos">Software</a>
+      <a href="/apu">APU</a>
+      <a href="/legal/preguntas">Preguntas</a>
+      <a href="/mapa-del-sitio">Mapa del sitio</a>
+      <a href="/pago">Planes</a>
+      <a href="/legal/terminos">Términos</a>
+      <a href="/legal/privacidad">Privacidad</a>
+      <a href="/legal/soporte">Soporte</a>
+      <a href="/legal/licencias">Licencias</a>
+      <a href="mailto:{{ email_soporte }}">{{ email_soporte }}</a>
+    </div>
+  </div>
+  {% if paises is defined %}
+  <nav class="footer-paises" aria-label="CotizaT por país">
+    <a href="/">LatAm</a>
+    {% for p in paises %}
+    <a href="/{{ p.codigo | lower }}/">{{ p.bandera }} {{ p.nombre }}</a>
+    {% endfor %}
+  </nav>
+  {% endif %}
+</footer>

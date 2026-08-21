@@ -214,24 +214,37 @@ def landing_publica(request: Request):
     return RedirectResponse("/", status_code=301)
 
 
+@router.get("/mapa-del-sitio", response_class=HTMLResponse, include_in_schema=False)
+def mapa_del_sitio(request: Request):
+    from ..paises import lista_paises
+    from ..seo import TEMAS, contexto_pagina_estatica
+    from ..seo_contenido import lista_guias
+
+    ctx = contexto_pagina_estatica(request, "mapa-del-sitio")
+    ctx["paises"] = lista_paises()
+    ctx["guias"] = lista_guias()
+    ctx["temas_seo"] = TEMAS
+    return TEMPLATES.TemplateResponse(request, "mapa_sitio.html", ctx)
+
+
+@router.get("/guia/{slug}", response_class=HTMLResponse, include_in_schema=False)
+def guia_publica(slug: str, request: Request):
+    from ..seo import contexto_guia
+
+    ctx = contexto_guia(request, slug)
+    if ctx is None:
+        return Response("Página no encontrada.", status_code=404)
+    return TEMPLATES.TemplateResponse(request, "seo_guia.html", ctx)
+
+
 @router.get("/como-funciona", response_class=HTMLResponse, include_in_schema=False)
 def como_funciona(request: Request):
     """Guía pública de funciones: catálogo, editor, margen, PDF y cobro."""
-    from ..seo import contexto_seo
+    from ..paises import lista_paises
+    from ..seo import contexto_pagina_estatica
 
-    ctx = contexto_seo(request)
-    ctx["seo"] = {
-        **ctx["seo"],
-        "title": f"{PRODUCT_NAME}: cómo funciona el software de presupuestos de obra",
-        "description": (
-            f"Guía de {PRODUCT_NAME}: catálogo con análisis de precios, "
-            "presupuestos, margen, tiempos internos, PDF, WhatsApp, versiones, "
-            "proyectos y cobros."
-        ),
-        "canonical_path": "/como-funciona",
-    }
-    ctx["canonical_url"] = ctx["origen_seo"] + "/como-funciona"
-    ctx["hreflang_links"] = []
+    ctx = contexto_pagina_estatica(request, "como-funciona")
+    ctx["paises"] = lista_paises()
     return TEMPLATES.TemplateResponse(request, "como_funciona.html", ctx)
 
 
@@ -293,6 +306,7 @@ def landing_pe_slash(request: Request):
 def _pagina_intencion(request: Request, codigo: str, tema: str):
     from ..paises import ORDEN_SELECTOR, PAIS_GENERICO, PAISES, lista_paises
     from ..seo import TEMAS, contexto_seo, ficha_tema
+    from ..seo_contenido import lista_guias
     from ..services.landing_ejemplo import contexto_ejemplo
 
     codigo = str(codigo or "").strip().upper()
@@ -313,6 +327,7 @@ def _pagina_intencion(request: Request, codigo: str, tema: str):
             "paises": lista_paises(),
             "ej": contexto_ejemplo(codigo),
             "ficha": ficha,
+            "guias": lista_guias(),
         }
     )
     resp = TEMPLATES.TemplateResponse(request, "seo_hub.html", ctx)
@@ -407,15 +422,18 @@ def pagina_legal(pagina: str, request: Request):
     if plantilla is None:
         return Response("Página no encontrada.", status_code=404)
     from ..legal import TERMINOS_VERSION, TERMINOS_VERSION_FECHA
+    from ..paises import lista_paises
+    from ..seo import contexto_pagina_estatica
 
-    return TEMPLATES.TemplateResponse(
-        request,
-        plantilla,
+    ctx = contexto_pagina_estatica(request, pagina)
+    ctx.update(
         {
             "terminos_version": TERMINOS_VERSION,
             "terminos_version_fecha": TERMINOS_VERSION_FECHA,
-        },
+            "paises": lista_paises(),
+        }
     )
+    return TEMPLATES.TemplateResponse(request, plantilla, ctx)
 
 
 # ---------------------------------------------------------------------------
@@ -448,17 +466,19 @@ def pagina_pago(request: Request):
     precios sin contexto.
     """
     from ..paises import PAISES, lista_paises
+    from ..seo import contexto_pagina_estatica
 
     codigo_pais = _pais_pago_publico(request)
-    return TEMPLATES.TemplateResponse(
-        request,
-        "pago.html",
+    ctx = contexto_pagina_estatica(request, "pago")
+    ctx.update(
         {
             "msg": request.query_params.get("msg", "")[:300],
             "pais_pago": PAISES[codigo_pais],
             "paises_pago": lista_paises(),
-        },
+            "paises": lista_paises(),
+        }
     )
+    return TEMPLATES.TemplateResponse(request, "pago.html", ctx)
 
 
 # ---------------------------------------------------------------------------

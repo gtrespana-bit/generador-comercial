@@ -116,6 +116,76 @@ def test_fichas_por_pais_no_se_copian_entre_si():
     assert robots_txt().startswith("User-agent:")
 
 
+def test_guias_y_mapa_estan_indexables_y_en_sitemap():
+    with _cliente() as client:
+        mapa = client.get("/mapa-del-sitio")
+        guia = client.get("/guia/analisis-precios-unitarios")
+        sm = client.get("/sitemap.xml").text
+    assert mapa.status_code == 200
+    assert "/guia/presupuesto-de-obra" in mapa.text
+    assert guia.status_code == 200
+    assert "rendimiento" in guia.text.lower()
+    assert "HowTo" in guia.text
+    assert "/guia/analisis-precios-unitarios" in sm
+    assert "/mapa-del-sitio" in sm
+    assert client_get_404()
+
+
+def client_get_404():
+    with _cliente() as client:
+        return client.get("/guia/no-existe").status_code == 404
+
+
+def test_landing_pais_tiene_cuerpo_propio_y_faq_visible():
+    with _cliente() as client:
+        co = client.get("/co/").text
+        mx = client.get("/mx/").text
+    assert "Software de APU para constructoras en Colombia" in co
+    assert "pañete" in co.lower()
+    assert "Programa para cotizar obra y remodelación en México" in mx
+    assert "aplanado" in mx.lower()
+    assert "Lo que preguntan las empresas de Colombia" in co
+    assert "FAQPage" in co
+
+
+def test_paginas_estaticas_no_heredan_faq_de_la_home():
+    """Cómo funciona, planes y mapa no deben publicar el FAQPage de ``/``."""
+    pregunta_home = "¿CotizaT sirve para presupuestos de construcción en Latinoamérica?"
+    with _cliente() as client:
+        home = client.get("/").text
+        mapa = client.get("/mapa-del-sitio").text
+        pago = client.get("/pago").text
+        funciona = client.get("/como-funciona").text
+        terminos = client.get("/legal/terminos").text
+    assert "FAQPage" in home
+    assert pregunta_home in home
+    assert pregunta_home not in mapa
+    assert pregunta_home not in pago
+    assert pregunta_home not in funciona
+    assert pregunta_home not in terminos
+    assert "<title>CotizaT: mapa del sitio" in mapa
+    assert "<title>CotizaT: planes del software" in pago
+    assert "<title>CotizaT: términos del servicio" in terminos
+    assert 'rel="canonical" href="https://cotizat.test/pago"' in pago
+    assert 'rel="canonical" href="https://cotizat.test/legal/terminos"' in terminos
+
+
+def test_guia_howto_lleva_texto_en_los_pasos():
+    with _cliente() as client:
+        html = client.get("/guia/presupuesto-de-obra").text
+    assert "HowToStep" in html
+    assert "visor BIM" in html
+    assert "Article" in html
+    assert 'og:type" content="article"' in html
+
+
+def test_cuerpos_de_pais_no_son_un_find_and_replace():
+    from app.seo_contenido import cuerpo_pais
+
+    titulos = {cuerpo_pais(c)[0][0] for c in ("", "VE", "CO", "MX", "PE", "EC")}
+    assert len(titulos) == 6
+
+
 def test_titulo_empieza_por_marca_y_describe_el_oficio():
     """En Google no puede aparecer solo «CotizaT»: hay que leer qué es."""
     from app.paises import ORDEN_SELECTOR

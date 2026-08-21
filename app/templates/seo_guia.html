@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% include "_seo_head.html" %}
+  <link rel="icon" type="image/png" href="/static/icono.png">
+  <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}">
+</head>
+<body class="landing hub-page">
+{% include "_nav.html" %}
+<article class="hub-hero-int guia-articulo">
+  <nav class="hub-crumbs" aria-label="Migas de pan">
+    <a href="/">Inicio</a>
+    <span aria-hidden="true">/</span>
+    <a href="/mapa-del-sitio">Guías</a>
+    <span aria-hidden="true">/</span>
+    <span>{{ guia.h1 }}</span>
+  </nav>
+  <span class="section-kicker">{{ guia.kicker }}</span>
+  <h1>{{ guia.h1 }}</h1>
+  <p class="sub">{{ guia.lead }}</p>
+  {% for titulo, pars in guia.secciones %}
+  <section class="hub-bloque">
+    <h2>{{ titulo }}</h2>
+    {% for p in pars %}
+    <p>{{ p }}</p>
+    {% endfor %}
+  </section>
+  {% endfor %}
+  {% if guia.faq %}
+  <section class="seo-faq" id="preguntas">
+    <h2>Preguntas frecuentes</h2>
+    {% for item in guia.faq %}
+    <details>
+      <summary>{{ item.q }}</summary>
+      <p>{{ item.a }}</p>
+    </details>
+    {% endfor %}
+  </section>
+  {% endif %}
+  <section class="hub-relacionadas">
+    <h2>Seguir</h2>
+    <ul>
+      {% for g in guias %}
+      {% if g.slug != guia.slug %}
+      <li><a href="/guia/{{ g.slug }}">{{ g.h1 }}</a></li>
+      {% endif %}
+      {% endfor %}
+      <li><a href="/como-funciona">Cómo funciona {{ product_name }}</a></li>
+      <li><a href="/software-presupuestos">Software de presupuestos por país</a></li>
+    </ul>
+  </section>
+</article>
+<section class="franja cta-final">
+  <h2>¿Quieres hacerlo con tu catálogo?</h2>
+  <p class="intro">{% if hay_prueba_gratuita() %}{{ dias_de_prueba() }} días gratis, sin tarjeta.{% else %}Mira los planes.{% endif %}</p>
+  <div class="acciones mt-3">
+    {% if hay_prueba_gratuita() %}
+    <a class="btn btn-primary" href="/acceso">Empezar la prueba</a>
+    {% endif %}
+    <a class="btn btn-secondary" href="/pago">Ver planes</a>
+  </div>
+</section>
+{% include "_footer_publico.html" %}
+</body>
+</html>

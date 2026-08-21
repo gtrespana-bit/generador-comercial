@@ -293,6 +293,8 @@ def test_toda_ruta_comercial_exige_sesion_salvo_fronteras_publicas_o_locales():
         ("GET", "/{cc}/software-presupuestos"),
         ("GET", "/{cc}/apu"),
         ("GET", "/{cc}/remodelacion"),
+        ("GET", "/mapa-del-sitio"),
+        ("GET", "/guia/{slug}"),
         ("POST", "/demo"),
         # Webhook de Stripe: autenticado por Stripe-Signature, no por sesión.
         ("POST", "/pago/stripe/webhook"),

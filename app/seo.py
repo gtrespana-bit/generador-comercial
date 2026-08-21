@@ -37,6 +37,10 @@ _INDEXABLES_EXACTAS = frozenset(
         "/software-presupuestos",
         "/apu",
         "/remodelacion",
+        "/mapa-del-sitio",
+        "/guia/presupuesto-de-obra",
+        "/guia/analisis-precios-unitarios",
+        "/guia/presupuesto-remodelacion",
     }
 )
 
@@ -75,6 +79,8 @@ def es_indexable(path: str) -> bool:
     if p in _INDEXABLES_EXACTAS:
         return True
     if p.startswith("/legal/") and p.count("/") == 2:
+        return True
+    if p.startswith("/guia/") and p.count("/") == 2:
         return True
     if p.startswith("/static/"):
         return True
@@ -422,6 +428,8 @@ _LANDING: dict[str, dict] = {
 
 def ficha_landing(codigo: str = "") -> dict:
     """Copy SEO de la landing (genérica o de un país del selector)."""
+    from .seo_contenido import cuerpo_pais, lista_guias
+
     codigo = str(codigo or "").strip().upper()
     base = _LANDING.get(codigo) or _LANDING[""]
     pais = PAISES.get(codigo) or PAIS_GENERICO
@@ -432,6 +440,8 @@ def ficha_landing(codigo: str = "") -> dict:
         "nombre_pais": pais.get("nombre") or "Latinoamérica",
         "tema": "",
         "canonical_path": ruta_pais(codigo),
+        "cuerpo": cuerpo_pais(codigo),
+        "guias": lista_guias(),
     }
 
 
@@ -633,6 +643,40 @@ def ficha_tema(codigo: str, tema: str) -> dict | None:
     return _bloques_tema(codigo, tema)
 
 
+def jsonld_organizacion(request: Request | None = None) -> dict:
+    origen = origen_canonico(request)
+    return {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": PRODUCT_NAME,
+        "legalName": PRODUCT_NAME + " · Presupuestos",
+        "url": origen + "/",
+        "logo": origen + "/static/icono.png",
+        "email": "soporte@cotizat.online",
+        "description": VALUE_PROPOSITION,
+        "areaServed": [{"@type": "Country", "name": PAISES[c]["nombre"]} for c in ORDEN_SELECTOR],
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "email": "soporte@cotizat.online",
+            "contactType": "customer support",
+            "availableLanguage": ["es"],
+        },
+    }
+
+
+def jsonld_website(request: Request | None = None) -> dict:
+    origen = origen_canonico(request)
+    return {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": PRODUCT_NAME,
+        "url": origen + "/",
+        "inLanguage": ["es", "es-VE", "es-CO", "es-MX", "es-PE", "es-EC"],
+        "publisher": {"@type": "Organization", "name": PRODUCT_NAME},
+        "description": VALUE_PROPOSITION,
+    }
+
+
 def jsonld_software(request: Request | None = None, codigo: str = "") -> dict:
     origen = origen_canonico(request)
     pais = PAISES.get(str(codigo or "").upper())
@@ -659,6 +703,11 @@ def jsonld_software(request: Request | None = None, codigo: str = "") -> dict:
         "areaServed": area,
         "inLanguage": hreflang_pais(codigo) if codigo else "es",
         "brand": {"@type": "Brand", "name": PRODUCT_NAME},
+        "featureList": [
+            "Presupuestos de construcción y remodelación",
+            "Análisis de precios unitarios (APU)",
+            "PDF profesional para WhatsApp",
+        ],
     }
 
 
@@ -694,6 +743,89 @@ def jsonld_breadcrumb(request: Request | None, items: list[tuple[str, str]]) -> 
     }
 
 
+def jsonld_howto(guia: dict, request: Request | None = None) -> dict:
+    origen = origen_canonico(request)
+    pasos = []
+    for i, (titulo, pars) in enumerate(guia.get("secciones") or [], start=1):
+        texto = " ".join(str(p) for p in (pars or []) if p).strip()
+        paso: dict = {"@type": "HowToStep", "position": i, "name": titulo}
+        if texto:
+            paso["text"] = texto
+        pasos.append(paso)
+    return {
+        "@context": "https://schema.org",
+        "@type": "HowTo",
+        "name": guia["h1"],
+        "description": guia["description"],
+        "url": origen + "/guia/" + guia["slug"],
+        "inLanguage": "es",
+        "step": pasos,
+    }
+
+
+def jsonld_articulo(guia: dict, request: Request | None = None) -> dict:
+    origen = origen_canonico(request)
+    path = "/guia/" + guia["slug"]
+    return {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": guia["h1"],
+        "description": guia["description"],
+        "inLanguage": "es",
+        "url": origen + path,
+        "mainEntityOfPage": origen + path,
+        "dateModified": SITEMAP_LASTMOD,
+        "author": {"@type": "Organization", "name": PRODUCT_NAME},
+        "publisher": {
+            "@type": "Organization",
+            "name": PRODUCT_NAME,
+            "logo": {"@type": "ImageObject", "url": origen + "/static/icono.png"},
+        },
+        "image": origen + OG_IMAGE,
+    }
+
+
+def contexto_guia(request: Request, slug: str) -> dict | None:
+    from .paises import lista_paises
+    from .seo_contenido import ficha_guia, lista_guias
+
+    guia = ficha_guia(slug)
+    if not guia:
+        return None
+    origen = origen_canonico(request)
+    path = "/guia/" + guia["slug"]
+    seo = {
+        "title": guia["title"],
+        "description": guia["description"],
+        "lang": "es",
+        "h1": guia["h1"],
+        "canonical_path": path,
+        "faq": guia.get("faq") or [],
+    }
+    bloques = [
+        jsonld_organizacion(request),
+        jsonld_website(request),
+        jsonld_articulo(guia, request),
+        jsonld_howto(guia, request),
+        jsonld_breadcrumb(request, [("Inicio", "/"), ("Guías", "/mapa-del-sitio"), (guia["h1"], path)]),
+    ]
+    if seo["faq"]:
+        bloques.append(jsonld_faq(seo["faq"]))
+    return {
+        "seo": seo,
+        "guia": guia,
+        "guias": lista_guias(),
+        "paises": lista_paises(),
+        "origen_seo": origen,
+        "canonical_url": origen + path,
+        "hreflang_links": [],
+        "og_image": origen + OG_IMAGE,
+        "jsonld_bloques": bloques,
+        "seo_temas": TEMAS,
+        "og_type": "article",
+    }
+
+
 def contexto_seo(
     request: Request,
     *,
@@ -709,7 +841,11 @@ def contexto_seo(
     origen = origen_canonico(request)
     canonical = origen + ficha["canonical_path"]
     og_image = origen + OG_IMAGE
-    bloques_ld = [jsonld_software(request, codigo)]
+    bloques_ld = [
+        jsonld_organizacion(request),
+        jsonld_website(request),
+        jsonld_software(request, codigo),
+    ]
     if ficha.get("faq"):
         bloques_ld.append(jsonld_faq(ficha["faq"]))
     crumbs = [("Inicio", "/")]
@@ -725,6 +861,130 @@ def contexto_seo(
         "hreflang_links": enlaces_hreflang(request, tema),
         "og_image": og_image,
         "jsonld_bloques": bloques_ld,
+        "seo_temas": TEMAS,
+    }
+
+
+# Páginas públicas que no son landing de país: copy y schema propios.
+# No reutilizar ``contexto_seo()`` o heredan el FAQ JSON-LD de la home.
+_PAGINAS_ESTATICAS: dict[str, dict] = {
+    "como-funciona": {
+        "path": "/como-funciona",
+        "title": "CotizaT: cómo funciona el software de presupuestos de obra",
+        "description": (
+            "Guía de CotizaT: catálogo con análisis de precios, presupuestos, "
+            "margen, tiempos internos, PDF, WhatsApp, versiones, proyectos y cobros."
+        ),
+        "h1": "Cómo funciona CotizaT, función por función",
+        "software": True,
+    },
+    "pago": {
+        "path": "/pago",
+        "title": "CotizaT: planes del software de presupuestos de construcción",
+        "description": (
+            "Planes anuales y mensuales de CotizaT, software de presupuestos de "
+            "construcción. 89 US$/año de lanzamiento. 7 días gratis, sin tarjeta."
+        ),
+        "h1": "Planes del software de presupuestos de construcción",
+        "software": True,
+    },
+    "mapa-del-sitio": {
+        "path": "/mapa-del-sitio",
+        "title": "CotizaT: mapa del sitio — software de presupuestos de construcción",
+        "description": (
+            "Índice de páginas públicas de CotizaT: países, software de "
+            "presupuestos, APU, remodelación y guías."
+        ),
+        "h1": "Mapa del sitio",
+        "software": False,
+    },
+    "terminos": {
+        "path": "/legal/terminos",
+        "title": "CotizaT: términos del servicio del software de presupuestos",
+        "description": (
+            "Términos del servicio de CotizaT. Licencia, datos, documentos "
+            "comerciales (no factura fiscal) y cancelación sin permanencia."
+        ),
+        "h1": "Términos del servicio y licencia de uso",
+        "software": False,
+    },
+    "privacidad": {
+        "path": "/legal/privacidad",
+        "title": "CotizaT: política de privacidad del software de presupuestos",
+        "description": (
+            "Política de privacidad de CotizaT: qué datos guarda el software de "
+            "presupuestos, con quién se procesan y cómo exportarlos o borrarlos."
+        ),
+        "h1": "Política de privacidad",
+        "software": False,
+    },
+    "soporte": {
+        "path": "/legal/soporte",
+        "title": "CotizaT: condiciones de soporte del software de presupuestos",
+        "description": (
+            "Qué incluye el soporte de CotizaT, qué no incluye (asesoría fiscal, "
+            "desarrollos a medida) y cómo reportar un error."
+        ),
+        "h1": "Condiciones de soporte",
+        "software": False,
+    },
+    "licencias": {
+        "path": "/legal/licencias",
+        "title": "CotizaT: licencias de terceros",
+        "description": (
+            "Software y tipografías de terceros usadas por CotizaT, con sus "
+            "licencias (SIL OFL, FastAPI y demás)."
+        ),
+        "h1": "Licencias de terceros",
+        "software": False,
+    },
+    "preguntas": {
+        "path": "/legal/preguntas",
+        "title": "CotizaT: preguntas frecuentes del software de presupuestos",
+        "description": (
+            "Preguntas sobre CotizaT: prueba gratis, catálogo y APU, PDF, "
+            "WhatsApp, precio, factura fiscal y soporte."
+        ),
+        "h1": "Preguntas frecuentes",
+        "software": False,
+    },
+}
+
+
+def contexto_pagina_estatica(request: Request, clave: str) -> dict:
+    """Canónica, OG y JSON-LD de una página pública que no es landing.
+
+    Sin FAQ heredada de ``/``. El schema de SoftwareApplication solo va
+    donde el copy vende el producto (cómo funciona, planes).
+    """
+    ficha = _PAGINAS_ESTATICAS[clave]
+    origen = origen_canonico(request)
+    path = ficha["path"]
+    seo = {
+        "title": ficha["title"],
+        "description": ficha["description"],
+        "lang": "es",
+        "h1": ficha["h1"],
+        "canonical_path": path,
+        "faq": [],
+        "nombre_pais": "Latinoamérica",
+    }
+    bloques = [
+        jsonld_organizacion(request),
+        jsonld_website(request),
+    ]
+    if ficha.get("software"):
+        bloques.append(jsonld_software(request, ""))
+    bloques.append(
+        jsonld_breadcrumb(request, [("Inicio", "/"), (ficha["h1"], path)])
+    )
+    return {
+        "seo": seo,
+        "origen_seo": origen,
+        "canonical_url": origen + path,
+        "hreflang_links": [],
+        "og_image": origen + OG_IMAGE,
+        "jsonld_bloques": bloques,
         "seo_temas": TEMAS,
     }
 
@@ -764,6 +1024,13 @@ def urls_sitemap(request: Request | None = None) -> list[dict]:
             add(ruta_pais(codigo, tema), "0.8", "monthly", tema)
     add("/como-funciona", "0.7", "monthly")
     add("/pago", "0.6", "monthly")
+    add("/mapa-del-sitio", "0.4", "monthly")
+    for slug in (
+        "presupuesto-de-obra",
+        "analisis-precios-unitarios",
+        "presupuesto-remodelacion",
+    ):
+        add(f"/guia/{slug}", "0.7", "monthly")
     for legal in ("preguntas", "terminos", "privacidad", "soporte", "licencias"):
         add(f"/legal/{legal}", "0.3", "yearly")
     return out

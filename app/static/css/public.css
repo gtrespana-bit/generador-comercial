@@ -3952,3 +3952,14 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
 }
 .hub-page .seo-faq { max-width: 760px; margin: 0 auto; padding: 1.6rem 1.5rem 2rem; }
+.landing .seo-cuerpo {
+  max-width: 760px;
+}
+.landing .seo-cuerpo h2 { margin-top: 1.8rem; }
+.landing .seo-cuerpo p {
+  color: var(--text-secondary);
+  line-height: 1.65;
+  font-size: 1.02rem;
+}
+.guia-articulo { padding: 2.4rem 1.5rem 1rem; max-width: 760px; margin: 0 auto; }
+.guia-articulo .hub-bloque p { margin: 0 0 0.85rem; }

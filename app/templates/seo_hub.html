@@ -50,6 +50,11 @@
     <li><a href="{{ ruta }}">{{ nombre }}{% if pais_codigo %} en {{ ficha.nombre_pais }}{% endif %}</a></li>
     {% endfor %}
     <li><a href="/como-funciona">Cómo funciona {{ product_name }}, función por función</a></li>
+    {% if guias is defined %}
+    {% for g in guias %}
+    <li><a href="/guia/{{ g.slug }}">{{ g.h1 }}</a></li>
+    {% endfor %}
+    {% endif %}
   </ul>
 </section>
 {% endif %}
@@ -90,17 +95,6 @@
   </div>
 </section>
 
-<footer>
-  <div class="footer-int">
-    <div>© 2026 {{ titular_legal }}</div>
-    <div>
-      <a href="/como-funciona">Cómo funciona</a>
-      <a href="/legal/preguntas">Preguntas frecuentes</a>
-      <a href="/legal/terminos">Términos</a>
-      <a href="/legal/privacidad">Privacidad</a>
-      <a href="mailto:{{ email_soporte }}">{{ email_soporte }}</a>
-    </div>
-  </div>
-</footer>
+{% include "_footer_publico.html" %}
 </body>
 </html>

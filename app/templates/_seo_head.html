@@ -1,25 +1,37 @@
-{# Meta SEO compartido: canónica, hreflang, Open Graph y JSON-LD.
-   Requiere contexto_seo() en la vista. #}
+{# Meta SEO compartido: canónica, hreflang, Open Graph y JSON-LD. #}
 {% if seo is defined %}
   <title>{{ seo.title }}</title>
   <meta name="description" content="{{ seo.description }}">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <meta name="author" content="{{ product_name }}">
   <link rel="canonical" href="{{ canonical_url }}">
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml">
   {% for alt in hreflang_links %}
   <link rel="alternate" hreflang="{{ alt.hreflang }}" href="{{ alt.href }}">
   {% endfor %}
-  <meta property="og:type" content="website">
+  <link rel="preload" href="/static/fonts/Inter-Regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/static/fonts/Inter-Bold.woff2" as="font" type="font/woff2" crossorigin>
+  <meta property="og:type" content="{{ og_type | default('website') }}">
   <meta property="og:site_name" content="{{ product_name }}">
   <meta property="og:locale" content="{{ (seo.lang or 'es') | replace('-', '_') }}">
+  {% if hreflang_links %}
+  {% for alt in hreflang_links if alt.hreflang != 'x-default' %}
+  <meta property="og:locale:alternate" content="{{ alt.hreflang | replace('-', '_') }}">
+  {% endfor %}
+  {% endif %}
   <meta property="og:title" content="{{ seo.title }}">
   <meta property="og:description" content="{{ seo.description }}">
   <meta property="og:url" content="{{ canonical_url }}">
   <meta property="og:image" content="{{ og_image }}">
+  <meta property="og:image:alt" content="{{ product_name }} — software de presupuestos de construcción para Latinoamérica">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="{{ seo.title }}">
   <meta name="twitter:description" content="{{ seo.description }}">
   <meta name="twitter:image" content="{{ og_image }}">
+  <meta name="twitter:image:alt" content="{{ product_name }} — software de presupuestos de construcción para Latinoamérica">
+  <meta name="theme-color" content="#123f78">
   {% for bloque in jsonld_bloques %}
   <script type="application/ld+json" nonce="{{ request.state.csp_nonce }}">{{ bloque | tojson }}</script>
   {% endfor %}

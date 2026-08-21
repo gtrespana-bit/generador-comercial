@@ -246,7 +246,7 @@
             {% for pr in ej.productos %}
             <div class="doc-partida dp-prod">
               <div class="dp-main">
-                <span class="dp-nombre"><img class="dp-img" src="{{ pr.img | asset }}" alt="">{{ pr.nombre }}</span>
+                <span class="dp-nombre"><img class="dp-img" src="{{ pr.img | asset }}" alt="{{ pr.nombre }}" width="46" height="34">{{ pr.nombre }}</span>
                 <span class="dp-cant">{{ pr.cant }}</span>
                 <span class="dp-precio">{{ pr.precio }}</span>
                 <span class="dp-importe">{{ pr.importe }}</span>
@@ -808,6 +808,39 @@
   <p class="intro">¿Vienes de la versión de escritorio? Importa toda tu instalación —catálogo, clientes, presupuestos y proyectos— con el asistente integrado, con resumen previo y confirmación explícita.</p>
 </section>
 
+{% if seo.cuerpo %}
+<section class="seo-cuerpo" id="para-tu-pais">
+  {% for titulo, pars in seo.cuerpo %}
+  <h2>{{ titulo }}</h2>
+  {% for parrafo in pars %}
+  <p>{{ parrafo }}</p>
+  {% endfor %}
+  {% endfor %}
+  <p class="intro">
+    <a href="/guia/presupuesto-de-obra">Cómo hacer un presupuesto de obra</a>
+    · <a href="/guia/analisis-precios-unitarios">Qué es un APU</a>
+    · <a href="/guia/presupuesto-remodelacion">Presupuestar una remodelación</a>
+    {% if pais_codigo %}
+    · <a href="/{{ pais_codigo | lower }}/software-presupuestos">Software en {{ seo.nombre_pais }}</a>
+    · <a href="/{{ pais_codigo | lower }}/apu">APU en {{ seo.nombre_pais }}</a>
+    {% endif %}
+  </p>
+</section>
+{% endif %}
+
+{% if seo.faq %}
+<section class="seo-faq" id="preguntas-seo">
+  <span class="section-kicker">Preguntas frecuentes</span>
+  <h2>Lo que preguntan las empresas de {{ seo.nombre_pais }}.</h2>
+  {% for item in seo.faq %}
+  <details>
+    <summary>{{ item.q }}</summary>
+    <p>{{ item.a }}</p>
+  </details>
+  {% endfor %}
+</section>
+{% endif %}
+
 <section id="precios">
   <h2>Precio de lanzamiento</h2>
   <p class="intro">Oferta fundadora para las primeras empresas. El precio contratado se respeta durante todo el período pagado.</p>
@@ -865,45 +898,12 @@
 </section>
 
 
-<footer>
-  <div class="footer-int">
-    <div>© 2026 {{ titular_legal }}</div>
-    <div>
-      <a href="/como-funciona">Cómo funciona</a>
-      <a href="/software-presupuestos">Software de presupuestos</a>
-      <a href="/apu">APU</a>
-      <a href="/remodelacion">Remodelación</a>
-      <a href="/legal/preguntas">Preguntas frecuentes</a>
-      <a href="/legal/terminos">Términos</a>
-      <a href="/legal/privacidad">Privacidad</a>
-      <a href="/legal/soporte">Soporte</a>
-      <a href="/legal/licencias">Licencias</a>
-      <a href="mailto:{{ email_soporte }}">{{ email_soporte }}</a>
-    </div>
-  </div>
-  <nav class="footer-paises" aria-label="CotizaT por país">
-    <a href="/">LatAm</a>
-    {% for p in paises %}
-    <a href="/{{ p.codigo | lower }}/">{{ p.bandera }} {{ p.nombre }}</a>
-    {% endfor %}
-  </nav>
-</footer>
+{% include "_footer_publico.html" %}
 <script id="paises-data" type="application/json" nonce="{{ request.state.csp_nonce }}">{{ paises | tojson }}</script>
 <script id="pais-actual-data" type="application/json" nonce="{{ request.state.csp_nonce }}">{{ (pais_actual or {}) | tojson }}</script>
 <script id="pais-generico-data" type="application/json" nonce="{{ request.state.csp_nonce }}">{{ pais_generico | tojson }}</script>
 <script id="ejemplo-monedas" type="application/json" nonce="{{ request.state.csp_nonce }}">{
   "moneda": {{ ej.moneda | tojson }},
-  "simbolo": {{ ej.simbolo | tojson }},
-  "convierte": {{ ej.convierte | tojson }},
-  "tasa_txt": {{ ej.tasa_txt | tojson }},
-  "tasa_fecha": {{ ej.tasa_fecha | tojson }},
-  "iva": {{ ej.iva | tojson }}
-}</script>
-<script nonce="{{ request.state.csp_nonce }}" src="{{ 'js/pais_selector.js' | asset }}"></script>
-<script nonce="{{ request.state.csp_nonce }}" src="{{ 'js/landing-tour.js' | asset }}"></script>
-</body>
-</html>
-ej.moneda | tojson }},
   "simbolo": {{ ej.simbolo | tojson }},
   "convierte": {{ ej.convierte | tojson }},
   "tasa_txt": {{ ej.tasa_txt | tojson }},

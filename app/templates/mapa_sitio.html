@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% include "_seo_head.html" %}
+  <link rel="icon" type="image/png" href="/static/icono.png">
+  <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}">
+</head>
+<body class="landing hub-page">
+{% include "_nav.html" %}
+<main class="hub-hero-int">
+  <h1>Mapa del sitio</h1>
+  <p class="sub">Índice de páginas públicas de {{ product_name }}, software de presupuestos de construcción para Latinoamérica.</p>
+  <section class="hub-bloque">
+    <h2>Producto</h2>
+    <ul>
+      <li><a href="/">Inicio (Latinoamérica)</a></li>
+      <li><a href="/como-funciona">Cómo funciona</a></li>
+      <li><a href="/pago">Planes y precios</a></li>
+      <li><a href="/legal/preguntas">Preguntas frecuentes</a></li>
+    </ul>
+  </section>
+  <section class="hub-bloque">
+    <h2>Por país</h2>
+    <ul>
+      {% for p in paises %}
+      <li>
+        <a href="/{{ p.codigo | lower }}/">{{ p.bandera }} {{ p.nombre }}</a>
+        — <a href="/{{ p.codigo | lower }}/software-presupuestos">software</a>,
+        <a href="/{{ p.codigo | lower }}/apu">APU</a>,
+        <a href="/{{ p.codigo | lower }}/remodelacion">remodelación</a>
+      </li>
+      {% endfor %}
+    </ul>
+  </section>
+  <section class="hub-bloque">
+    <h2>Intención (LatAm)</h2>
+    <ul>
+      <li><a href="/software-presupuestos">Software de presupuestos de construcción</a></li>
+      <li><a href="/apu">Análisis de precios unitarios (APU)</a></li>
+      <li><a href="/remodelacion">Presupuestos de remodelación</a></li>
+    </ul>
+  </section>
+  <section class="hub-bloque">
+    <h2>Guías</h2>
+    <ul>
+      {% for g in guias %}
+      <li><a href="/guia/{{ g.slug }}">{{ g.h1 }}</a></li>
+      {% endfor %}
+    </ul>
+  </section>
+  <section class="hub-bloque">
+    <h2>Legal</h2>
+    <ul>
+      <li><a href="/legal/terminos">Términos</a></li>
+      <li><a href="/legal/privacidad">Privacidad</a></li>
+      <li><a href="/legal/soporte">Soporte</a></li>
+      <li><a href="/legal/licencias">Licencias</a></li>
+    </ul>
+  </section>
+</main>
+{% include "_footer_publico.html" %}
+</body>
+</html>

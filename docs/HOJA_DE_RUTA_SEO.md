@@ -124,8 +124,12 @@ Código en `app/seo.py`, `app/routers/publico.py`, plantillas públicas y `tests
 | `/software-presupuestos`, `/apu`, `/remodelacion` | Hubs de intención, genéricos |
 | `/ve/software-presupuestos`, `/co/apu`, `/mx/remodelacion`… (15 URLs) | Intención × país, texto distinto |
 | `/como-funciona`, `/pago`, `/legal/*` | Decisión y confianza |
+| `/guia/presupuesto-de-obra`, `/guia/analisis-precios-unitarios`, `/guia/presupuesto-remodelacion` | Guías pilar (método, no el panel) |
+| `/mapa-del-sitio` | Índice interno para rastreo y humanos |
 
-Son **24 URLs de marketing** + legales. Suficiente para lanzar. No son 200 artículos delgados.
+Son **24 URLs de marketing** + 3 guías + mapa + legales. Suficiente para lanzar. No son 200 artículos delgados.
+
+Sitemap XML a enviar en Search Console: `https://cotizat.online/sitemap.xml`.
 
 ### 3.3 Cómo se añade un país o un tema después
 
