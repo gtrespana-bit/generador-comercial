@@ -106,7 +106,7 @@
     {"capitulos": ["12"], "principal": "enlucido", "alias": ["acabado fino", "alisado", "lucido", "estuco base"]},
     {"capitulos": ["12"], "principal": "enchapado", "alias": ["alicatado", "revestimiento de pared", "chapado", "enchape"]},
     {"capitulos": ["12"], "principal": "ceramica", "alias": ["baldosa ceramica", "azulejo", "loseta", "porcelanato"]},
-    {"capitulos": ["12"], "principal": "piso", "alias": ["suelo", "pavimento", "solado", "revestimiento de piso"]},
+    {"capitulos": ["12"], "principal": "piso", "alias": ["suelo", "pavimento", "solado", "revestimiento de piso", "alfombra", "moqueta"]},
     {"capitulos": ["12"], "principal": "afirmado", "alias": ["contrapiso", "recrecido", "base de piso", "carpeta de nivelacion"]},
     {"capitulos": ["12"], "principal": "piso laminado", "alias": ["suelo laminado", "laminado flotante", "tarima laminada"]},
     {"capitulos": ["12"], "principal": "piso vinilico", "alias": ["vinilo", "pvc de piso", "loseta vinilica", "spc"]},

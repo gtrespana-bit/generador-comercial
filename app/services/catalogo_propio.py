@@ -901,6 +901,7 @@ def asegurar_catalogo_propio(db: Session) -> dict | None:
 # - Zócalo cerámico/piedra en pared -> Rodapié (VE) / Guardaescoba (CO)
 # - Colocación de piso... -> Piso... (sin verbo redundante)
 # - Revestimiento de frente/columna -> Enchapado de...
+# - Salpicadero / Alfombra genéricos -> Enchapado/Piso con prefijo
 # ---------------------------------------------------------------------------
 _RENOMBRADOS_PATRON = {
     "Alicatado de paramento interior con pieza cerámica o porcelanato, en capa fina.": "Enchapado de paramento interior con pieza cerámica o porcelanato, en capa fina.",
@@ -910,6 +911,8 @@ _RENOMBRADOS_PATRON = {
     "Zócalo de piedra natural.": "Rodapié de piedra natural.",
     "Colocación de piso cerámico o porcelanato de formato estándar, en capa fina.": "Piso cerámico o porcelanato de formato estándar, en capa fina.",
     "Colocación de piso de porcelanato de gran formato, en capa fina.": "Piso de porcelanato de gran formato, en capa fina.",
+    "Salpicadero de cocina entre muebles.": "Enchapado de salpicadero de cocina entre muebles, en capa fina.",
+    "Alfombra o moqueta.": "Piso de alfombra o moqueta, encolado o tensado.",
 }
 
 _RECURSOS_RENOMBRADOS = {
