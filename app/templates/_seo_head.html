@@ -1,0 +1,26 @@
+{# Meta SEO compartido: canónica, hreflang, Open Graph y JSON-LD.
+   Requiere contexto_seo() en la vista. #}
+{% if seo is defined %}
+  <title>{{ seo.title }}</title>
+  <meta name="description" content="{{ seo.description }}">
+  <link rel="canonical" href="{{ canonical_url }}">
+  {% for alt in hreflang_links %}
+  <link rel="alternate" hreflang="{{ alt.hreflang }}" href="{{ alt.href }}">
+  {% endfor %}
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="{{ product_name }}">
+  <meta property="og:locale" content="{{ (seo.lang or 'es') | replace('-', '_') }}">
+  <meta property="og:title" content="{{ seo.title }}">
+  <meta property="og:description" content="{{ seo.description }}">
+  <meta property="og:url" content="{{ canonical_url }}">
+  <meta property="og:image" content="{{ og_image }}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ seo.title }}">
+  <meta name="twitter:description" content="{{ seo.description }}">
+  <meta name="twitter:image" content="{{ og_image }}">
+  {% for bloque in jsonld_bloques %}
+  <script type="application/ld+json" nonce="{{ request.state.csp_nonce }}">{{ bloque | tojson }}</script>
+  {% endfor %}
+{% endif %}

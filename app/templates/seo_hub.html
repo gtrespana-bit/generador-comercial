@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="{{ seo.lang or 'es' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% include "_seo_head.html" %}
+  <link rel="icon" type="image/png" href="/static/icono.png">
+  <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}">
+</head>
+<body class="landing hub-page">
+{% include "_nav.html" %}
+
+<header class="hub-hero">
+  <div class="hub-hero-int">
+    <nav class="hub-crumbs" aria-label="Migas de pan">
+      <a href="/">Inicio</a>
+      {% if pais_codigo %}
+      <span aria-hidden="true">/</span>
+      <a href="/{{ pais_codigo | lower }}/">{{ ficha.nombre_pais }}</a>
+      {% endif %}
+      <span aria-hidden="true">/</span>
+      <span>{{ ficha.h1 }}</span>
+    </nav>
+    <h1>{{ ficha.h1 }}</h1>
+    <p class="sub">{{ ficha.lead }}</p>
+    <div class="acciones">
+      {% if hay_prueba_gratuita() %}
+      <a class="btn btn-primary" href="/acceso">Probar {{ dias_de_prueba() }} días gratis</a>
+      {% else %}
+      <a class="btn btn-primary" href="/pago">Ver planes</a>
+      {% endif %}
+      <a class="btn btn-secondary" href="{% if pais_codigo %}/{{ pais_codigo | lower }}/{% else %}/{% endif %}">Ver el producto</a>
+    </div>
+  </div>
+</header>
+
+{% for bloque in ficha.body %}
+<section class="hub-bloque">
+  <h2>{{ bloque[0] }}</h2>
+  <p>{{ bloque[1] }}</p>
+</section>
+{% endfor %}
+
+{% if ficha.related %}
+<section class="hub-relacionadas">
+  <h2>Sigue leyendo</h2>
+  <ul>
+    {% for nombre, ruta in ficha.related %}
+    <li><a href="{{ ruta }}">{{ nombre }}{% if pais_codigo %} en {{ ficha.nombre_pais }}{% endif %}</a></li>
+    {% endfor %}
+    <li><a href="/como-funciona">Cómo funciona {{ product_name }}, función por función</a></li>
+  </ul>
+</section>
+{% endif %}
+
+<section class="hub-paises" aria-label="Versiones por país">
+  <h2>{{ product_name }} por país</h2>
+  <p class="intro">Misma herramienta, vocabulario, IVA y moneda de cada mercado.</p>
+  <ul class="hub-paises-lista">
+    <li><a href="/{{ ficha.tema }}">Latinoamérica</a></li>
+    {% for p in paises %}
+    <li><a href="/{{ p.codigo | lower }}/{{ ficha.tema }}">{{ p.bandera }} {{ p.nombre }}</a></li>
+    {% endfor %}
+  </ul>
+</section>
+
+{% if ficha.faq %}
+<section class="seo-faq" id="preguntas">
+  <h2>Preguntas frecuentes</h2>
+  {% for item in ficha.faq %}
+  <details>
+    <summary>{{ item.q }}</summary>
+    <p>{{ item.a }}</p>
+  </details>
+  {% endfor %}
+</section>
+{% endif %}
+
+<section class="franja cta-final">
+  <h2>¿Listo para presupuestar con tus datos?</h2>
+  <p class="intro">{% if hay_prueba_gratuita() %}Empieza con {{ dias_de_prueba() }} días gratis, sin tarjeta.{% else %}Mira los planes y empieza cuando quieras.{% endif %}</p>
+  <div class="acciones mt-3">
+    {% if hay_prueba_gratuita() %}
+    <a class="btn btn-primary" href="/acceso">Empezar mis {{ dias_de_prueba() }} días gratis</a>
+    <a class="btn btn-secondary" href="/pago">Ver planes</a>
+    {% else %}
+    <a class="btn btn-primary" href="/pago">Ver planes</a>
+    {% endif %}
+  </div>
+</section>
+
+<footer>
+  <div class="footer-int">
+    <div>© 2026 {{ titular_legal }}</div>
+    <div>
+      <a href="/como-funciona">Cómo funciona</a>
+      <a href="/legal/preguntas">Preguntas frecuentes</a>
+      <a href="/legal/terminos">Términos</a>
+      <a href="/legal/privacidad">Privacidad</a>
+      <a href="mailto:{{ email_soporte }}">{{ email_soporte }}</a>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

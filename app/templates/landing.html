@@ -1,26 +1,12 @@
 <!doctype html>
-<html lang="es">
+<html lang="{{ seo.lang if seo is defined else 'es' }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  {% if pais_actual %}
-  <title>{{ product_name }} — Presupuestos de construcción y remodelación para {{ pais_actual.nombre }}</title>
-  <meta name="description" content="{% if hay_prueba_gratuita() %}Pruébalo {{ dias_de_prueba() }} días gratis, sin tarjeta. {% endif %}No es solo un generador de presupuestos: es un sistema comercial para construcción y remodelación. Calcula costes, margen de beneficio, horas de cuadrilla, duración estimada, PDF profesional, versiones, firma del cliente y cobros. {{ catalogo().partidas_txt }} partidas descompuestas y {{ catalogo().recursos_txt }} recursos{% if ej.convierte %}, en {{ ej.moneda }}{% else %}, en USD de referencia{% endif %}.">
-  {% else %}
-  <title>{{ product_name }} — Presupuestos de construcción y remodelación para Latinoamérica</title>
-  <meta name="description" content="{% if hay_prueba_gratuita() %}Pruébalo {{ dias_de_prueba() }} días gratis, sin tarjeta. {% endif %}No es solo un generador de presupuestos: es un sistema comercial para construcción y remodelación. Calcula costes, margen de beneficio, horas de cuadrilla, duración estimada, PDF profesional, versiones, firma del cliente y cobros. {{ catalogo().lineas_precio_txt }} líneas de precio en USD de referencia convertibles a tu moneda.">
-  {% endif %}
+  {% include "_seo_head.html" %}
   <link rel="icon" type="image/png" href="/static/icono.png">
   <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
   <link rel="stylesheet" href="{{ 'css/public.css' | asset }}">
-  {# SEO LatAm: canónica + hreflang por país (subdirectorios /co/, /mx/ ... 1 Vercel, 1 Supabase) #}
-  {% set _base = request.base_url|string|trim('/') %}
-  <link rel="canonical" href="{{ _base }}{% if pais_codigo %}/{{ pais_codigo|lower }}/{% else %}/{% endif %}">
-  <link rel="alternate" hreflang="x-default" href="{{ _base }}/">
-  <link rel="alternate" hreflang="es" href="{{ _base }}/">
-  {% for _p in paises %}
-  <link rel="alternate" hreflang="es-{{ _p.codigo }}" href="{{ _base }}/{{ _p.codigo|lower }}/">
-  {% endfor %}
 </head>
 <body class="landing">
 {# Barra de país — genérica por defecto, se adapta al elegir #}
@@ -49,8 +35,8 @@
       {% if hay_prueba_gratuita() %}
       <span class="hero-prueba">✨ {{ dias_de_prueba() }} días gratis · sin tarjeta de crédito</span>
       {% endif %}
-      <h1>No solo generes presupuestos: <span class="hero-hl">controla margen, tiempos y cierre</span> de cada obra.</h1>
-      <p class="sub">{{ product_name }} es un generador de presupuestos para construcción y remodelación, sí; pero también es tu <strong>motor de costes, beneficios, rendimientos, plazos, PDFs profesionales y cambios claros</strong>. Desde la primera pantalla sabes cuánto vas a vender, cuánto te cuesta, cuánto ganas y cuánto tardas.</p>
+      <h1>{{ seo.h1 }}: <span class="hero-hl">{{ seo.h1_resalte }}</span>.</h1>
+      <p class="sub">{{ seo.sub }}</p>
       <div class="acciones">
         {% if hay_prueba_gratuita() %}
         <a class="btn btn-primary" href="/acceso">Empezar mis {{ dias_de_prueba() }} días gratis</a>
@@ -884,6 +870,9 @@
     <div>© 2026 {{ titular_legal }}</div>
     <div>
       <a href="/como-funciona">Cómo funciona</a>
+      <a href="/software-presupuestos">Software de presupuestos</a>
+      <a href="/apu">APU</a>
+      <a href="/remodelacion">Remodelación</a>
       <a href="/legal/preguntas">Preguntas frecuentes</a>
       <a href="/legal/terminos">Términos</a>
       <a href="/legal/privacidad">Privacidad</a>
@@ -892,12 +881,29 @@
       <a href="mailto:{{ email_soporte }}">{{ email_soporte }}</a>
     </div>
   </div>
+  <nav class="footer-paises" aria-label="CotizaT por país">
+    <a href="/">LatAm</a>
+    {% for p in paises %}
+    <a href="/{{ p.codigo | lower }}/">{{ p.bandera }} {{ p.nombre }}</a>
+    {% endfor %}
+  </nav>
 </footer>
 <script id="paises-data" type="application/json" nonce="{{ request.state.csp_nonce }}">{{ paises | tojson }}</script>
 <script id="pais-actual-data" type="application/json" nonce="{{ request.state.csp_nonce }}">{{ (pais_actual or {}) | tojson }}</script>
 <script id="pais-generico-data" type="application/json" nonce="{{ request.state.csp_nonce }}">{{ pais_generico | tojson }}</script>
 <script id="ejemplo-monedas" type="application/json" nonce="{{ request.state.csp_nonce }}">{
   "moneda": {{ ej.moneda | tojson }},
+  "simbolo": {{ ej.simbolo | tojson }},
+  "convierte": {{ ej.convierte | tojson }},
+  "tasa_txt": {{ ej.tasa_txt | tojson }},
+  "tasa_fecha": {{ ej.tasa_fecha | tojson }},
+  "iva": {{ ej.iva | tojson }}
+}</script>
+<script nonce="{{ request.state.csp_nonce }}" src="{{ 'js/pais_selector.js' | asset }}"></script>
+<script nonce="{{ request.state.csp_nonce }}" src="{{ 'js/landing-tour.js' | asset }}"></script>
+</body>
+</html>
+ej.moneda | tojson }},
   "simbolo": {{ ej.simbolo | tojson }},
   "convierte": {{ ej.convierte | tojson }},
   "tasa_txt": {{ ej.tasa_txt | tojson }},
