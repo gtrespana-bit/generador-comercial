@@ -355,6 +355,14 @@ class WebSecurityMiddleware:
                     additions[b"x-frame-options"] = x_frame
                 if scheme == "https":
                     additions[b"strict-transport-security"] = b"max-age=31536000; includeSubDomains"
+                path = str(scope.get("path") or "")
+                try:
+                    from .seo import es_indexable
+
+                    if not es_indexable(path):
+                        additions[b"x-robots-tag"] = b"noindex, nofollow, noarchive"
+                except Exception:
+                    pass
                 raw = list(message.get("headers", []))
                 raw.extend((key, value) for key, value in additions.items() if key not in existing)
                 message["headers"] = raw

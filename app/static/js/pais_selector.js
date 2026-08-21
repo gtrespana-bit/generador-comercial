@@ -132,14 +132,14 @@
     // Título y meta description (opcional, sin recargar)
     try {
       document.title = p
-        ? "CotizaT — Presupuestos de construcción y remodelación para " + p.nombre
-        : "CotizaT — Presupuestos de construcción y remodelación para Latinoamérica";
+        ? "CotizaT: software de presupuestos de obra en " + p.nombre
+        : "CotizaT: software de presupuestos de construcción";
     } catch (_) {}
     var meta = document.querySelector('meta[name="description"]');
     if (meta) {
       meta.setAttribute("content", p
-        ? "No es solo un generador de presupuestos: sistema comercial para construcción y remodelación. Calcula costes, margen de beneficio, horas de cuadrilla, duración estimada, PDF profesional, versiones, firma del cliente y cobros" + (p.moneda !== "USD" ? " en " + p.moneda + " y USD." : " en USD de referencia.")
-        : "No es solo un generador de presupuestos: sistema comercial para construcción y remodelación. Calcula costes, margen de beneficio, horas de cuadrilla, duración estimada, PDF profesional, versiones, firma del cliente y cobros. Líneas de precio en USD de referencia convertibles a tu moneda.");
+        ? "Software para presupuestos de obra y remodelación en " + p.nombre + ". Catálogo con APU, PDF profesional. 7 días gratis, sin tarjeta."
+        : "Software de presupuestos de construcción y remodelación para Latinoamérica. Catálogo con APU, margen, tiempos de cuadrilla y PDF profesional. 7 días gratis, sin tarjeta.");
     }
 
     // Normalizar select

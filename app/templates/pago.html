@@ -3,8 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Planes y m&eacute;todos de pago &middot; {{ product_name }}</title>
-  <meta name="description" content="Planes anuales y mensuales de {{ product_name }}. Métodos disponibles para {{ pais_pago.nombre }}: tarjeta y USDT{% if pais_pago.codigo == 'VE' %}, Pago móvil, Binance y Kontigo{% endif %}.">
+  {% include "_seo_head.html" %}
   <link rel="icon" type="image/png" href="/static/icono.png">
   <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
   <link rel="stylesheet" href="{{ 'css/public.css' | asset }}">
@@ -136,19 +135,7 @@
   </div>
 </section>
 
-<footer>
-  <div class="footer-int">
-    <div>&copy; 2026 {{ titular_legal }}</div>
-    <div>
-      <a href="/como-funciona">C&oacute;mo funciona</a>
-      <a href="/legal/preguntas">Preguntas frecuentes</a>
-      <a href="/legal/terminos">T&eacute;rminos</a>
-      <a href="/legal/privacidad">Privacidad</a>
-      <a href="/legal/licencias">Licencias</a>
-      <a href="mailto:{{ email_soporte }}">{{ email_soporte }}</a>
-    </div>
-  </div>
-</footer>
+{% include "_footer_publico.html" %}
 <script nonce="{{ request.state.csp_nonce }}" src="{{ 'js/pago-metodo.js' | asset }}"></script>
 </body>
 </html>

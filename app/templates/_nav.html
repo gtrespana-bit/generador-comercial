@@ -16,6 +16,7 @@
   </label>
   <div class="nav-links">
     <a class="nav-item{% if request.url.path == '/como-funciona' %} is-active{% endif %}" href="/como-funciona">Cómo funciona</a>
+    <a class="nav-item{% if request.url.path.startswith('/guia/') %} is-active{% endif %}" href="/guia/presupuesto-de-obra">Guías</a>
     <a class="nav-item{% if request.url.path == '/legal/preguntas' %} is-active{% endif %}" href="/legal/preguntas">Preguntas frecuentes</a>
     <a class="nav-item{% if request.url.path == '/pago' %} is-active{% endif %}" href="/pago">Planes</a>
     {% if nav_modo == 'cuenta' %}

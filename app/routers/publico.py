@@ -99,46 +99,47 @@ def descargar_archivo_legado_privado(
 # como fronteras públicas en la auditoría de protección de rutas.
 
 def _resolver_pais_landing(request: Request) -> tuple[dict | None, str]:
-    """Resuelve el país de la landing desde ?pais= o la cookie.
+    """Resuelve el país SOLO desde ``?pais=``.
 
-    Prioridad: query param > cookie. Un código inválido se ignora y devuelve
-    (None, "") para que la landing quede en modo genérico LatAm (SEO).
+    La cookie no cambia el HTML de ``/``: una URL, un contenido (SEO).
+    El país de la cookie sigue sirviendo para el registro y para ``/pago``.
     """
     from ..paises import PAISES
 
     raw_q = str(request.query_params.get("pais", "") or "").strip().upper()
     if raw_q and raw_q in PAISES:
         return PAISES[raw_q], raw_q
-    raw_c = str(request.cookies.get("cotizat_pais", "") or "").strip().upper()
-    if raw_c and raw_c in PAISES:
-        return PAISES[raw_c], raw_c
     return None, ""
 
 
 def _contexto_landing(request: Request, pais_forzado: str | None = None) -> dict:
-    """Contexto de la landing. Si pais_forzado viene por subdirectorio (/co/), manda sobre query/cookie."""
+    """Contexto de la landing. El subdirectorio (/co/) manda sobre la query."""
     from ..paises import PAIS_GENERICO, PAISES, lista_paises
+    from ..seo import contexto_seo
     from ..services.landing_ejemplo import contexto_ejemplo
 
-    # Subdirectorio tiene prioridad
     if pais_forzado:
         codigo = str(pais_forzado).strip().upper()
         if codigo in PAISES:
-            return {
+            ctx = {
                 "pais_actual": PAISES[codigo],
                 "pais_codigo": codigo,
                 "pais_generico": PAIS_GENERICO,
                 "paises": lista_paises(),
                 "ej": contexto_ejemplo(codigo),
             }
+            ctx.update(contexto_seo(request, codigo=codigo))
+            return ctx
     pais_actual, pais_codigo = _resolver_pais_landing(request)
-    return {
+    ctx = {
         "pais_actual": pais_actual,
         "pais_codigo": pais_codigo,
         "pais_generico": PAIS_GENERICO,
         "paises": lista_paises(),
         "ej": contexto_ejemplo(pais_codigo),
     }
+    ctx.update(contexto_seo(request, codigo=pais_codigo))
+    return ctx
 
 
 def _landing_con_pais(request: Request, codigo: str):
@@ -202,28 +203,61 @@ def home_publica(request: Request):
     return TEMPLATES.TemplateResponse(request, "landing.html", ctx)
 
 
-@router.get("/conocer", response_class=HTMLResponse, include_in_schema=False)
+@router.get("/conocer", include_in_schema=False)
 def landing_publica(request: Request):
-    """Alias histórico de la landing, conservado para no romper enlaces."""
+    """Alias histórico: 301 a la canónica para no duplicar la home."""
     raw_q = str(request.query_params.get("pais", "") or "").strip().upper()
     from ..paises import PAISES
 
     if raw_q and raw_q in PAISES:
         return RedirectResponse(f"/{raw_q.lower()}/", status_code=301)
-    ctx = _contexto_landing(request)
-    return TEMPLATES.TemplateResponse(request, "landing.html", ctx)
+    return RedirectResponse("/", status_code=301)
+
+
+@router.get("/mapa-del-sitio", response_class=HTMLResponse, include_in_schema=False)
+def mapa_del_sitio(request: Request):
+    from ..paises import lista_paises
+    from ..seo import TEMAS, contexto_pagina_estatica
+    from ..seo_articulos import lista_articulos
+    from ..seo_contenido import lista_guias
+
+    ctx = contexto_pagina_estatica(request, "mapa-del-sitio")
+    ctx["paises"] = lista_paises()
+    ctx["guias"] = lista_guias()
+    ctx["articulos"] = lista_articulos()
+    ctx["temas_seo"] = TEMAS
+    return TEMPLATES.TemplateResponse(request, "mapa_sitio.html", ctx)
+
+
+@router.get("/guia/{slug}", response_class=HTMLResponse, include_in_schema=False)
+def guia_publica(slug: str, request: Request):
+    from ..seo import contexto_guia
+
+    ctx = contexto_guia(request, slug)
+    if ctx is None:
+        return Response("Página no encontrada.", status_code=404)
+    return TEMPLATES.TemplateResponse(request, "seo_guia.html", ctx)
 
 
 @router.get("/como-funciona", response_class=HTMLResponse, include_in_schema=False)
 def como_funciona(request: Request):
     """Guía pública de funciones: catálogo, editor, margen, PDF y cobro."""
-    return TEMPLATES.TemplateResponse(request, "como_funciona.html")
+    from ..paises import lista_paises
+    from ..seo import contexto_pagina_estatica
+
+    ctx = contexto_pagina_estatica(request, "como-funciona")
+    ctx["paises"] = lista_paises()
+    return TEMPLATES.TemplateResponse(request, "como_funciona.html", ctx)
 
 
-# --- Subdirectorios por país (SEO) — 1 Vercel, 1 Supabase, 5 URLs canónicas ---
-@router.get("/ve", response_class=HTMLResponse, include_in_schema=False)
+def _redirige_a_slash(codigo: str):
+    return RedirectResponse(f"/{codigo.lower()}/", status_code=301)
+
+
+# --- Subdirectorios por país: la canónica lleva barra final ---
+@router.get("/ve", include_in_schema=False)
 def landing_ve(request: Request):
-    return _landing_con_pais(request, "VE")
+    return _redirige_a_slash("VE")
 
 
 @router.get("/ve/", response_class=HTMLResponse, include_in_schema=False)
@@ -231,9 +265,9 @@ def landing_ve_slash(request: Request):
     return _landing_con_pais(request, "VE")
 
 
-@router.get("/co", response_class=HTMLResponse, include_in_schema=False)
+@router.get("/co", include_in_schema=False)
 def landing_co(request: Request):
-    return _landing_con_pais(request, "CO")
+    return _redirige_a_slash("CO")
 
 
 @router.get("/co/", response_class=HTMLResponse, include_in_schema=False)
@@ -241,9 +275,9 @@ def landing_co_slash(request: Request):
     return _landing_con_pais(request, "CO")
 
 
-@router.get("/mx", response_class=HTMLResponse, include_in_schema=False)
+@router.get("/mx", include_in_schema=False)
 def landing_mx(request: Request):
-    return _landing_con_pais(request, "MX")
+    return _redirige_a_slash("MX")
 
 
 @router.get("/mx/", response_class=HTMLResponse, include_in_schema=False)
@@ -251,9 +285,9 @@ def landing_mx_slash(request: Request):
     return _landing_con_pais(request, "MX")
 
 
-@router.get("/ec", response_class=HTMLResponse, include_in_schema=False)
+@router.get("/ec", include_in_schema=False)
 def landing_ec(request: Request):
-    return _landing_con_pais(request, "EC")
+    return _redirige_a_slash("EC")
 
 
 @router.get("/ec/", response_class=HTMLResponse, include_in_schema=False)
@@ -261,9 +295,9 @@ def landing_ec_slash(request: Request):
     return _landing_con_pais(request, "EC")
 
 
-@router.get("/pe", response_class=HTMLResponse, include_in_schema=False)
+@router.get("/pe", include_in_schema=False)
 def landing_pe(request: Request):
-    return _landing_con_pais(request, "PE")
+    return _redirige_a_slash("PE")
 
 
 @router.get("/pe/", response_class=HTMLResponse, include_in_schema=False)
@@ -271,39 +305,108 @@ def landing_pe_slash(request: Request):
     return _landing_con_pais(request, "PE")
 
 
+def _pagina_intencion(request: Request, codigo: str, tema: str):
+    from ..paises import ORDEN_SELECTOR, PAIS_GENERICO, PAISES, lista_paises
+    from ..seo import TEMAS, contexto_seo, ficha_tema
+    from ..seo_contenido import lista_guias
+    from ..services.landing_ejemplo import contexto_ejemplo
+
+    codigo = str(codigo or "").strip().upper()
+    tema = str(tema or "").strip().lower()
+    if tema not in TEMAS:
+        return Response("Página no encontrada.", status_code=404)
+    if codigo and codigo not in ORDEN_SELECTOR:
+        return Response("Página no encontrada.", status_code=404)
+    ficha = ficha_tema(codigo, tema)
+    if ficha is None:
+        return Response("Página no encontrada.", status_code=404)
+    ctx = contexto_seo(request, codigo=codigo, tema=tema)
+    ctx.update(
+        {
+            "pais_actual": PAISES.get(codigo),
+            "pais_codigo": codigo,
+            "pais_generico": PAIS_GENERICO,
+            "paises": lista_paises(),
+            "ej": contexto_ejemplo(codigo),
+            "ficha": ficha,
+            "guias": lista_guias(),
+        }
+    )
+    resp = TEMPLATES.TemplateResponse(request, "seo_hub.html", ctx)
+    if codigo:
+        resp.set_cookie(
+            "cotizat_pais",
+            codigo,
+            max_age=365 * 24 * 3600,
+            path="/",
+            samesite="lax",
+            httponly=False,
+        )
+    return resp
+
+
+@router.get("/software-presupuestos", response_class=HTMLResponse, include_in_schema=False)
+def hub_software(request: Request):
+    return _pagina_intencion(request, "", "software-presupuestos")
+
+
+@router.get("/apu", response_class=HTMLResponse, include_in_schema=False)
+def hub_apu(request: Request):
+    return _pagina_intencion(request, "", "apu")
+
+
+@router.get("/remodelacion", response_class=HTMLResponse, include_in_schema=False)
+def hub_remodelacion(request: Request):
+    return _pagina_intencion(request, "", "remodelacion")
+
+
+@router.get("/{cc}/software-presupuestos", response_class=HTMLResponse, include_in_schema=False)
+def hub_software_pais(cc: str, request: Request):
+    return _pagina_intencion(request, cc, "software-presupuestos")
+
+
+@router.get("/{cc}/apu", response_class=HTMLResponse, include_in_schema=False)
+def hub_apu_pais(cc: str, request: Request):
+    return _pagina_intencion(request, cc, "apu")
+
+
+@router.get("/{cc}/remodelacion", response_class=HTMLResponse, include_in_schema=False)
+def hub_remodelacion_pais(cc: str, request: Request):
+    return _pagina_intencion(request, cc, "remodelacion")
+
+
+@router.get("/robots.txt", include_in_schema=False)
+def robots(request: Request):
+    from ..seo import robots_txt
+
+    return Response(robots_txt(request), media_type="text/plain; charset=utf-8")
+
+
 @router.get("/sitemap.xml", include_in_schema=False)
 def sitemap(request: Request):
-    """Sitemap mínimo con las 5 landings canónicas + legales."""
-    base = str(request.base_url).rstrip("/")
-    # Usa COTIZAT_PUBLIC_URL si está definido para el canónico de prod
-    try:
-        from ..config import entorno_actual
+    """Sitemap con landings de país, páginas de intención, hreflang y lastmod."""
+    from ..seo import urls_sitemap
 
-        # En prod el base_url ya es cotizat.com; en preview es la URL de Vercel — ambas válidas
-        pass
-    except Exception:
-        pass
-    urls = [
-        f"{base}/",
-        f"{base}/ve/",
-        f"{base}/co/",
-        f"{base}/mx/",
-        f"{base}/ec/",
-        f"{base}/pe/",
-        f"{base}/conocer",
-        f"{base}/como-funciona",
-        f"{base}/pago",
-        f"{base}/legal/terminos",
-        f"{base}/legal/privacidad",
-        f"{base}/legal/soporte",
-        f"{base}/legal/licencias",
-        f"{base}/legal/preguntas",
+    entradas = urls_sitemap(request)
+    xml = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"',
+        '        xmlns:xhtml="http://www.w3.org/1999/xhtml">',
     ]
-    xml = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
-    for u in urls:
-        xml.append(f"  <url><loc>{u}</loc></url>")
+    for item in entradas:
+        xml.append("  <url>")
+        xml.append(f"    <loc>{item['loc']}</loc>")
+        xml.append(f"    <lastmod>{item['lastmod']}</lastmod>")
+        xml.append(f"    <changefreq>{item['changefreq']}</changefreq>")
+        xml.append(f"    <priority>{item['priority']}</priority>")
+        for alt in item.get("alternates") or []:
+            xml.append(
+                f'    <xhtml:link rel="alternate" hreflang="{alt["hreflang"]}" '
+                f'href="{alt["href"]}"/>'
+            )
+        xml.append("  </url>")
     xml.append("</urlset>")
-    return Response("\n".join(xml), media_type="application/xml")
+    return Response("\n".join(xml) + "\n", media_type="application/xml")
 
 
 _PAGINAS_LEGALES = {
@@ -321,15 +424,18 @@ def pagina_legal(pagina: str, request: Request):
     if plantilla is None:
         return Response("Página no encontrada.", status_code=404)
     from ..legal import TERMINOS_VERSION, TERMINOS_VERSION_FECHA
+    from ..paises import lista_paises
+    from ..seo import contexto_pagina_estatica
 
-    return TEMPLATES.TemplateResponse(
-        request,
-        plantilla,
+    ctx = contexto_pagina_estatica(request, pagina)
+    ctx.update(
         {
             "terminos_version": TERMINOS_VERSION,
             "terminos_version_fecha": TERMINOS_VERSION_FECHA,
-        },
+            "paises": lista_paises(),
+        }
     )
+    return TEMPLATES.TemplateResponse(request, plantilla, ctx)
 
 
 # ---------------------------------------------------------------------------
@@ -362,17 +468,19 @@ def pagina_pago(request: Request):
     precios sin contexto.
     """
     from ..paises import PAISES, lista_paises
+    from ..seo import contexto_pagina_estatica
 
     codigo_pais = _pais_pago_publico(request)
-    return TEMPLATES.TemplateResponse(
-        request,
-        "pago.html",
+    ctx = contexto_pagina_estatica(request, "pago")
+    ctx.update(
         {
             "msg": request.query_params.get("msg", "")[:300],
             "pais_pago": PAISES[codigo_pais],
             "paises_pago": lista_paises(),
-        },
+            "paises": lista_paises(),
+        }
     )
+    return TEMPLATES.TemplateResponse(request, "pago.html", ctx)
 
 
 # ---------------------------------------------------------------------------

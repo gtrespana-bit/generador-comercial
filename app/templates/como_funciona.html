@@ -3,8 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Cómo funciona {{ product_name }} — de tu catálogo al cobro</title>
-  <meta name="description" content="Guía detallada de {{ product_name }}: catálogo con análisis de precios, presupuestos, margen, tiempos internos, PDF, WhatsApp, versiones, proyectos y cobros.">
+  {% include "_seo_head.html" %}
   <link rel="icon" type="image/png" href="/static/icono.png">
   <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
   <link rel="stylesheet" href="{{ 'css/public.css' | asset }}">
@@ -16,7 +15,7 @@
   <div class="funciona-hero-int">
     <span class="section-kicker">Guía del producto</span>
     <h1>Cómo funciona {{ product_name }}, función por función.</h1>
-    <p class="sub">No es un generador de PDFs. Es el flujo comercial de una obra: catálogo con costes reales, presupuesto con margen y tiempos, documento profesional y control de cambios hasta el cobro. Esta página explica cada pieza, sin letra pequeña.</p>
+    <p class="sub">No es un generador de PDFs. Es el flujo comercial de una obra: catálogo con costes reales, presupuesto con margen y tiempos, documento profesional y control de cambios hasta el cobro. Esta página explica cada pieza, sin letra pequeña. Si buscas el método (capítulos, APU, reforma), empieza por las <a href="/guia/presupuesto-de-obra">guías de presupuesto de obra</a>, <a href="/guia/analisis-precios-unitarios">análisis de precios unitarios</a> y <a href="/guia/presupuesto-remodelacion">remodelación</a>.</p>
     <div class="acciones">
       {% if hay_prueba_gratuita() %}
       <a class="btn btn-primary" href="/acceso">Probar {{ dias_de_prueba() }} días gratis</a>
@@ -270,18 +269,6 @@
   </div>
 </section>
 
-<footer>
-  <div class="footer-int">
-    <div>© 2026 {{ titular_legal }}</div>
-    <div>
-      <a href="/como-funciona">Cómo funciona</a>
-      <a href="/legal/preguntas">Preguntas frecuentes</a>
-      <a href="/legal/terminos">Términos</a>
-      <a href="/legal/privacidad">Privacidad</a>
-      <a href="/legal/soporte">Soporte</a>
-      <a href="mailto:{{ email_soporte }}">{{ email_soporte }}</a>
-    </div>
-  </div>
-</footer>
+{% include "_footer_publico.html" %}
 </body>
 </html>

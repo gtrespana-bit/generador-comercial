@@ -27,8 +27,19 @@ def test_home_es_la_landing_publica():
     assert "/pago" in r.text  # enlace a la página de planes
 
 
+def test_conocer_redirige_a_la_home():
+    """``/conocer`` duplicaba la landing: 301 a la canónica."""
+    from fastapi.testclient import TestClient
+    from app.main import app
+
+    with TestClient(app) as client:
+        r = client.get("/conocer", follow_redirects=False)
+    assert r.status_code == 301
+    assert r.headers["location"] in ("/", "http://testserver/")
+
+
 def test_landing_publica_sin_sesion():
-    r = _get("/conocer")
+    r = _get("/")
     assert r.status_code == 200
     # Elementos exigidos por E1-056: problema, resultado, público objetivo y
     # llamada a solicitar demostración.
@@ -84,7 +95,7 @@ def test_paginas_publicas_cumplen_csp():
         re.IGNORECASE,
     )
     style_attr = re.compile(r"\sstyle\s*=", re.IGNORECASE)
-    for ruta in ("/conocer", "/como-funciona", "/legal/terminos", "/legal/privacidad", "/legal/soporte", "/legal/licencias", "/legal/preguntas"):
+    for ruta in ("/", "/como-funciona", "/legal/terminos", "/legal/privacidad", "/legal/soporte", "/legal/licencias", "/legal/preguntas"):
         r = _get(ruta)
         assert "content-security-policy" in r.headers, ruta
         nonce = r.headers["content-security-policy"].split("'nonce-", 1)[1].split("'", 1)[0]
@@ -155,7 +166,7 @@ def test_preguntas_frecuentes_remite_a_los_documentos_vinculantes():
 
 def test_la_faq_esta_enlazada_desde_la_landing_y_el_pie_legal():
     """Una FAQ que no se encuentra no resuelve ninguna duda."""
-    assert "/legal/preguntas" in _get("/conocer").text
+    assert "/legal/preguntas" in _get("/").text
     assert "/legal/preguntas" in _get("/legal/terminos").text
 
 

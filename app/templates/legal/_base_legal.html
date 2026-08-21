@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block titulo %}Información legal{% endblock %} · {{ product_name }}</title>
+  {% include "_seo_head.html" %}
   <link rel="icon" type="image/png" href="/static/icono.png">
-      <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+  <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
   <link rel="stylesheet" href="{{ 'css/public.css' | asset }}">
 </head>
 <body class="legal-body landing">
@@ -13,13 +13,6 @@
 <main class="legal-main">
 {% block contenido %}{% endblock %}
 </main>
-<footer class="legal-footer">
-  <a href="/como-funciona">Cómo funciona</a>
-  <a href="/legal/terminos">Términos del servicio</a>
-  <a href="/legal/privacidad">Privacidad</a>
-  <a href="/legal/preguntas">Preguntas frecuentes</a>
-  <a href="/legal/soporte">Soporte</a>
-  <a href="/legal/licencias">Licencias de terceros</a>
-</footer>
+{% include "_footer_publico.html" %}
 </body>
 </html>
