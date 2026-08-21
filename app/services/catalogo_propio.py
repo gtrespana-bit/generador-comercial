@@ -853,6 +853,17 @@ def asegurar_catalogo_propio(db: Session) -> dict | None:
     """
     if not disponible():
         return None
+    # Normalización de patrón de nombres (ej. Alicatado -> Enchapado) para
+    # instalaciones que ya tenían el catálogo sembrado antes del fix. Es
+    # idempotente y barata (una consulta por los nombres viejos).
+    try:
+        _normalizar_nombres_patron(db)
+    except Exception:
+        log.exception("No se pudo normalizar nombres de patrón.")
+        try:
+            db.rollback()
+        except Exception:
+            pass
     try:
         cfg = db.query(Configuracion).first()
         propias = _cantidad_partidas_oficiales(db)
@@ -881,3 +892,68 @@ def asegurar_catalogo_propio(db: Session) -> dict | None:
         except Exception:
             pass
         return None
+
+
+# ---------------------------------------------------------------------------
+# Normalización de patrón de nombres (fix 2026-08-21)
+# Unifica sinónimos que rompían el buscador y la coherencia visual:
+# - Alicatado (peninsular) -> Enchapado (VE) / Enchape (CO vía glosario)
+# - Zócalo cerámico/piedra en pared -> Rodapié (VE) / Guardaescoba (CO)
+# - Colocación de piso... -> Piso... (sin verbo redundante)
+# - Revestimiento de frente/columna -> Enchapado de...
+# - Salpicadero / Alfombra genéricos -> Enchapado/Piso con prefijo
+# ---------------------------------------------------------------------------
+_RENOMBRADOS_PATRON = {
+    "Alicatado de paramento interior con pieza cerámica o porcelanato, en capa fina.": "Enchapado de paramento interior con pieza cerámica o porcelanato, en capa fina.",
+    "Revestimiento de frente de bañera con enchapado.": "Enchapado de frente de bañera con pieza cerámica, en capa fina.",
+    "Revestimiento de columna con pieza cerámica.": "Enchapado de columna con pieza cerámica, en capa fina.",
+    "Zócalo cerámico de pared.": "Rodapié cerámico de pared.",
+    "Zócalo de piedra natural.": "Rodapié de piedra natural.",
+    "Colocación de piso cerámico o porcelanato de formato estándar, en capa fina.": "Piso cerámico o porcelanato de formato estándar, en capa fina.",
+    "Colocación de piso de porcelanato de gran formato, en capa fina.": "Piso de porcelanato de gran formato, en capa fina.",
+    "Salpicadero de cocina entre muebles.": "Enchapado de salpicadero de cocina entre muebles, en capa fina.",
+    "Alfombra o moqueta.": "Piso de alfombra o moqueta, encolado o tensado.",
+}
+
+_RECURSOS_RENOMBRADOS = {
+    "Oficial de 1ª alicatador.": "Oficial de 1ª enchapador.",
+}
+
+
+def _normalizar_nombres_patron(db: Session) -> int:
+    """Corrige en BD los títulos/descripciones que aún usan el nombre viejo.
+
+    Es seguro llamarlo en cada visita: solo toca filas cuyo nombre coincide
+    exactamente con una clave de _RENOMBRADOS_PATRON y hace commit solo si
+    hay algo que cambiar. No toca precios ni descomposiciones.
+    """
+    total = 0
+    # Partidas
+    for viejo, nuevo in _RENOMBRADOS_PATRON.items():
+        filas = db.query(Partida).filter(Partida.nombre == viejo).all()
+        for p in filas:
+            p.nombre = nuevo
+            # También corrige la descripción si empieza igual (Alicatado -> Enchapado)
+            if p.descripcion and viejo.split(" con ")[0].lower() in p.descripcion.lower()[:80]:
+                # Reemplazo simple preservando el resto
+                if "Alicatado de paramento" in p.descripcion:
+                    p.descripcion = p.descripcion.replace("Alicatado de paramento", "Enchapado de paramento").replace("alicatado", "enchapado")
+                elif "Revestimiento del frente" in p.descripcion:
+                    p.descripcion = p.descripcion.replace("Revestimiento del frente", "Enchapado del frente")
+                elif "Revestimiento de columna" in p.descripcion:
+                    p.descripcion = p.descripcion.replace("Revestimiento de columna", "Enchapado de columna")
+                elif "zócalo cerámico" in p.descripcion.lower():
+                    p.descripcion = p.descripcion.replace("zócalo cerámico", "rodapié cerámico").replace("Zócalo cerámico", "Rodapié cerámico")
+                elif "zócalo de piedra" in p.descripcion.lower():
+                    p.descripcion = p.descripcion.replace("zócalo de piedra", "rodapié de piedra").replace("Zócalo de piedra", "Rodapié de piedra")
+            total += 1
+    # Recursos
+    for viejo, nuevo in _RECURSOS_RENOMBRADOS.items():
+        filas = db.query(Recurso).filter(Recurso.descripcion == viejo).all()
+        for r in filas:
+            r.descripcion = nuevo
+            total += 1
+    if total:
+        db.commit()
+        log.info("Normalizados %s nombres de patrón (Alicatado->Enchapado, Zócalo->Rodapié...).", total)
+    return total

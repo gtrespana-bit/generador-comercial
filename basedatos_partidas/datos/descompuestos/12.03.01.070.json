@@ -4,12 +4,12 @@
   "capitulo": "12",
   "subcapitulo": "03",
   "unidad": "m",
-  "titulo": "Zócalo cerámico de pared.",
-  "descripcion": "Colocación de zócalo cerámico corrido en la base del paramento, en áreas de servicio, pasillos y zonas de tránsito, para proteger el friso de golpes y de la humedad de la limpieza. Incluye el replanteo de la altura, el corte de las piezas, el encolado, la nivelación, el rejuntado y el sellado de la junta inferior con el piso. La pieza la elige el cliente y se presupuesta aparte. Medido en longitud realmente colocada.",
+  "titulo": "Rodapié cerámico de pared.",
+  "descripcion": "Colocación de rodapié cerámico corrido en la base del paramento, en áreas de servicio, pasillos y zonas de tránsito, para proteger el friso de golpes y de la humedad de la limpieza. Incluye el replanteo de la altura, el corte de las piezas, el encolado, la nivelación, el rejuntado y el sellado de la junta inferior con el piso. La pieza la elige el cliente y se presupuesta aparte. Medido en longitud realmente colocada.",
   "margen": 0.3,
   "complementarios_pct": 1,
   "producto_cliente": {
-    "tipo": "Pieza cerámica para zócalo de pared",
+    "tipo": "Pieza cerámica para rodapié de pared",
     "unidad": "m",
     "consumo": 1.07,
     "nota": "Consumo con 7 % de desperdicio por cortes."
