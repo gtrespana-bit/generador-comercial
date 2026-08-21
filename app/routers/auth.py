@@ -1069,3 +1069,19 @@ def marcar_catalogo_revisado(db: Session = Depends(get_db)):
         cfg.onboarding_catalogo_revisado = True
         db.commit()
     return _redirect("/partidas")
+
+
+@router.post("/recorrido/omitir")
+def omitir_guia_inicio(db: Session = Depends(get_db)):
+    """Oculta la «Guía de inicio» del panel sin dar el recorrido por completo.
+
+    Pensado para quien ya conoce la app o crea otra organización y no
+    necesita que le recuerden los cinco pasos. La decisión se guarda por
+    organización (la columna vive en ``Configuracion``), de modo que cada
+    espacio de trabajo conserva su propia preferencia.
+    """
+    cfg = _config(db)
+    if not cfg.recorrido_inicial_oculto:
+        cfg.recorrido_inicial_oculto = True
+        db.commit()
+    return _redirect("/inicio")

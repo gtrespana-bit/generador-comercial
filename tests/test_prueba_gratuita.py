@@ -587,8 +587,10 @@ def test_la_migracion_encadena_con_la_cabeza_anterior():
         a4c8e2f7b1d6_market_price_evidence as evidencia_migracion,
         b9f4d8a2c6e1_rendimiento_indices_calientes as indices_migracion,
         c3e9a1b7d4f2_stripe_checkout as stripe_migracion,
+        b1c2d3e4f5a6_ocultar_guia_inicio as ocultar_migracion,
     )
-    assert stripe_migracion.revision == EXPECTED_ALEMBIC_HEAD
+    assert ocultar_migracion.revision == EXPECTED_ALEMBIC_HEAD
+    assert ocultar_migracion.down_revision == stripe_migracion.revision
     assert stripe_migracion.down_revision == evidencia_migracion.revision
     assert evidencia_migracion.down_revision == indices_migracion.revision
     assert indices_migracion.down_revision == precios_migracion.revision

@@ -5259,6 +5259,23 @@ a.dash-kpi:hover {
   place-content: center;
   text-align: center;
 }
+/* Progreso + acción de omitir, apilados a la derecha de la cabecera */
+.first-run-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.6rem;
+  flex: none;
+}
+.first-run-dismiss {
+  margin: 0;
+}
+.first-run-dismiss .btn {
+  color: var(--text-muted);
+}
+.first-run-dismiss .btn:hover {
+  color: var(--text);
+}
 .first-run-progress strong {
   color: var(--accent);
   font-size: 0.95rem;
@@ -5349,6 +5366,7 @@ a.dash-kpi:hover {
   .dash-hero-actions { width: 100%; }
   .dash-hero-actions .btn { flex: 1; justify-content: center; }
   .first-run-head { flex-direction: column; align-items: flex-start; }
+  .first-run-side { align-items: flex-start; }
   .first-run-step { grid-template-columns: 28px minmax(0, 1fr); }
   .first-run-step .btn { grid-column: 2; justify-self: start; }
   .demo-shortcut { flex-direction: column; align-items: flex-start; }

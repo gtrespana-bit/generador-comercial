@@ -1177,6 +1177,10 @@ class Configuracion(TenantMixin, Base):
     onboarding_completado_at = Column(DateTime, nullable=True)
     onboarding_catalogo_revisado = Column(Boolean, default=False)
     onboarding_pdf_descargado = Column(Boolean, default=False)
+    # El usuario pidió ocultar la «Guía de inicio» del panel. No marca el
+    # recorrido como completo (sigue sin PDF real): solo deja de mostrarse
+    # la tarjeta, para quienes ya conocen la app o crean otra organización.
+    recorrido_inicial_oculto = Column(Boolean, default=False)
     primer_pdf_at = Column(DateTime, nullable=True)
     # Valores por defecto para presupuestos nuevos
     iva_default = Column(Float, default=16.0)
@@ -1999,6 +2003,7 @@ def migrar(engine):
             ("onboarding_completado_at", "DATETIME"),
             ("onboarding_catalogo_revisado", "BOOLEAN DEFAULT 0"),
             ("onboarding_pdf_descargado", "BOOLEAN DEFAULT 0"),
+            ("recorrido_inicial_oculto", "BOOLEAN DEFAULT 0"),
             ("primer_pdf_at", "DATETIME"),
             ("condiciones_default", "TEXT DEFAULT ''"),
             ("pdf_color", "VARCHAR(10) DEFAULT '#04265D'"),
