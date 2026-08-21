@@ -78,6 +78,40 @@ def test_cabeceras_defensivas_y_hsts_en_https():
     assert response.headers["strict-transport-security"].startswith("max-age=31536000")
 
 
+def test_form_action_es_self_sin_stripe_ni_origen_publico(monkeypatch):
+    monkeypatch.delenv("STRIPE_SECRET_KEY", raising=False)
+    monkeypatch.delenv("COTIZAT_PUBLIC_URL", raising=False)
+    with cliente_seguro() as client:
+        response = client.get("/leer")
+    csp = response.headers["content-security-policy"]
+    assert "form-action 'self';" in csp
+    assert "checkout.stripe.com" not in csp
+
+
+def test_form_action_permite_stripe_y_origen_canonico(monkeypatch):
+    # Chrome aplica form-action a las redirecciones del envío: el 303 hacia
+    # Checkout y el salto del alias del dominio al canónico deben pasar.
+    monkeypatch.setenv("STRIPE_SECRET_KEY", "sk_test_prueba")
+    monkeypatch.setenv("COTIZAT_PUBLIC_URL", "https://www.cotizat.test/")
+    with cliente_seguro() as client:
+        response = client.get("/leer")
+    csp = response.headers["content-security-policy"]
+    directiva = csp.split("form-action ", 1)[1].split(";", 1)[0]
+    assert "'self'" in directiva
+    assert "https://www.cotizat.test" in directiva
+    assert "https://checkout.stripe.com" in directiva
+
+
+def test_form_action_ignora_origen_publico_invalido(monkeypatch):
+    monkeypatch.delenv("STRIPE_SECRET_KEY", raising=False)
+    monkeypatch.setenv("COTIZAT_PUBLIC_URL", "http://inseguro.test")
+    with cliente_seguro() as client:
+        response = client.get("/leer")
+    csp = response.headers["content-security-policy"]
+    assert "form-action 'self';" in csp
+    assert "inseguro.test" not in csp
+
+
 def test_csp_usa_nonce_unico_y_bloquea_handlers_inline():
     async def html_con_nonce(request):
         nonce = request.state.csp_nonce

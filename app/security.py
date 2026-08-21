@@ -38,6 +38,42 @@ def _antecesores_permitidos() -> tuple[bytes, bytes | None]:
     return origenes.encode("ascii", "ignore"), None
 
 
+def _destinos_formulario() -> bytes:
+    """A dónde pueden enviarse los formularios (directiva ``form-action``).
+
+    La base es ``'self'``, pero Chrome aplica ``form-action`` también a cada
+    redirección de la cadena de envío, no solo al destino inicial. Eso obliga
+    a dos excepciones:
+
+    - ``checkout.stripe.com``: el POST de "Pagar con tarjeta" responde 303
+      hacia la página de Checkout de Stripe. Sin este origen, Chrome bloquea
+      el pago con "violates form-action 'self'". Solo se añade con Stripe
+      configurado; sin clave no existe esa redirección.
+    - El origen canónico (``COTIZAT_PUBLIC_URL``): si el usuario navega por un
+      alias del dominio (p. ej. sin ``www``) y el hosting redirige el POST al
+      dominio canónico, esa redirección cruza de origen y caería en el mismo
+      bloqueo.
+    """
+    destinos = ["'self'"]
+    publico = (os.environ.get("COTIZAT_PUBLIC_URL") or "").strip().rstrip("/")
+    if publico:
+        try:
+            parsed = urlsplit(publico)
+        except ValueError:
+            parsed = None
+        if (
+            parsed
+            and parsed.scheme == "https"
+            and parsed.netloc
+            and not parsed.username
+            and not parsed.password
+        ):
+            destinos.append(f"https://{parsed.netloc}")
+    if (os.environ.get("STRIPE_SECRET_KEY") or "").strip():
+        destinos.append("https://checkout.stripe.com")
+    return " ".join(destinos).encode("ascii", "ignore")
+
+
 def confia_en_proxy() -> bool:
     """¿Se puede creer la cabecera ``X-Forwarded-For``?
 
@@ -297,7 +333,8 @@ class WebSecurityMiddleware:
                     b"permissions-policy": b"camera=(), microphone=(), geolocation=()",
                     b"content-security-policy": (
                         b"default-src 'self'; base-uri 'self'; object-src 'none'; "
-                        + b"frame-ancestors " + antecesores + b"; form-action 'self'; "
+                        + b"frame-ancestors " + antecesores + b"; "
+                        + b"form-action " + _destinos_formulario() + b"; "
                         + f"script-src 'self' 'nonce-{nonce}'; ".encode("ascii")
                         + b"script-src-attr 'none'; "
                         + f"style-src 'self' 'nonce-{nonce}'; ".encode("ascii")
