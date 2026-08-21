@@ -125,9 +125,14 @@ Código en `app/seo.py`, `app/routers/publico.py`, plantillas públicas y `tests
 | `/ve/software-presupuestos`, `/co/apu`, `/mx/remodelacion`… (15 URLs) | Intención × país, texto distinto |
 | `/como-funciona`, `/pago`, `/legal/*` | Decisión y confianza |
 | `/guia/presupuesto-de-obra`, `/guia/analisis-precios-unitarios`, `/guia/presupuesto-remodelacion` | Guías pilar (método, no el panel) |
+| `/guia/apu-panete-colombia` | APU de pañete en Colombia, sin Excel ni AIU |
+| `/guia/cotizar-remodelacion-mexico` | De la visita a la cotización en MXN |
+| `/guia/metrados-peru` | Metrados y APU en soles |
+| `/guia/presupuesto-usd-bs-venezuela` | USD/Bs con tasa congelada |
+| `/guia/apu-dolares-ecuador` | APU en dólares, con RUC |
 | `/mapa-del-sitio` | Índice interno para rastreo y humanos |
 
-Son **24 URLs de marketing** + 3 guías + mapa + legales. Suficiente para lanzar. No son 200 artículos delgados.
+No hay `/blog`. Cinco artículos de país + tres guías de método. Las metas de prueba leen `COTIZAT_DIAS_PRUEBA` (si está en 0, no se anuncia «gratis»).
 
 Sitemap XML a enviar en Search Console: `https://cotizat.online/sitemap.xml`.
 
@@ -191,17 +196,17 @@ Lista de **enlaces que un constructor sí haría clic**, todos gratis:
 
 Criterio de hecho: 8–12 enlaces de dominio distintos, ninguno pagado, ninguno recíproco masivo.
 
-### Semanas 6–10 — un artículo realmente útil por país (no un blog)
+### Semanas 6–10 — un artículo realmente útil por país (hecho)
 
-Cinco URLs nuevas, **una por país**, de 1.200–1.800 palabras, con datos del producto (cifras reales del catálogo, APU de ejemplo, moneda). Temas que nadie más cubre bien a este precio:
+Publicados en `/guia/…` (no se abrió un blog). Copy en `app/seo_articulos.py`.
 
-| País | Artículo (slug tentativo) | Por qué convierte |
+| País | URL publicada | Por qué convierte |
 | --- | --- | --- |
-| CO | `/co/apu-vs-excel` — «Cómo armar un APU de pañete en Colombia sin Excel» | Intención alta, vocabulario local |
-| MX | `/mx/cotizar-remodelacion` — «De la visita a la cotización en MXN» | «Cotización» es la palabra de México |
-| PE | `/pe/metrados` — «Metrados y APU en soles, congelando el IGV» | Palabra que solo se busca en Perú |
-| VE | `/ve/presupuesto-usd-bs` — «Presupuesto en USD con equivalente en Bs, tasa congelada» | Dolor único venezolano |
-| EC | `/ec/apu-en-dolares` — «APU en Ecuador, en USD, con RUC» | Mercado dolarizado, poco contenido |
+| CO | `/guia/apu-panete-colombia` | APU de pañete, sin AIU de obra pública |
+| MX | `/guia/cotizar-remodelacion-mexico` | «Cotización» es la palabra de México |
+| PE | `/guia/metrados-peru` | Metrados + APU en soles |
+| VE | `/guia/presupuesto-usd-bs-venezuela` | USD/Bs, tasa congelada |
+| EC | `/guia/apu-dolares-ecuador` | Mercado dolarizado, RUC |
 
 Reglas del artículo:
 
@@ -262,7 +267,7 @@ Cuando exista E5-012 (telemetría voluntaria), añadir `utm_source=google` en lo
 - **No se generan 200 páginas de ciudad** (`/co/bogota`, `/co/medellin`…) hasta tener testimonios locales. Son doorway pages.
 - **No se llama «IA» al matching del catálogo.** Ya es decisión D-005 y además es SEO negativo: la query «IA presupuestos» la ganan otros y el anuncio sería falso.
 - **No se promete factura DIAN / CFDI / SUNAT / SRI.** El snippet que mienta se denuncia y se pierde la cuenta.
-- **No se abre el blog** hasta los cinco artículos de la sección 4.
+- **No se abre un blog.** Los cinco artículos de país ya existen como `/guia/…`. No se añaden más URLs hasta ver GSC.
 - **No se traduce a portugués ni a inglés** en este ciclo.
 
 ---
@@ -271,8 +276,8 @@ Cuando exista E5-012 (telemetría voluntaria), añadir `utm_source=google` en lo
 
 | Quién | Qué |
 | --- | --- |
-| Código (esta rama) | Base técnica y URLs de intención. Hecho. |
-| Titular | GSC, Bing, vídeo E1-051, fichas Capterra, gremios, los cinco artículos. |
+| Código (esta rama) | Base técnica, hubs únicos y cinco artículos de país. Hecho. |
+| Titular | Enviar sitemap en GSC, pedir indexación, Bing, vídeo E1-051. |
 | Nadie más | Enlaces pagados, agencias «garantizamos el nº 1». |
 
 El siguiente commit de producto **no** debería ser más SEO. Debería ser el vídeo y el alta en Search Console. El código ya no es el cuello de botella.
@@ -287,6 +292,12 @@ El siguiente commit de producto **no** debería ser más SEO. Debería ser el v�
 - `app/static/og-cotizat.png`.
 - `tests/test_seo.py`.
 - `docs/DOMINIO_COTIZAT_ONLINE.md` — DNS y canónico apex.
+- `docs/ANALISIS_LATAM_Y_COMPETENCIA_2026-08-19.md` — por qué el precio y el APU son el mensaje.
+
+---
+
+*Auditoría y primera implantación: 21/08/2026, rama `arena/01a0257a-generador-comercial`.*
+ canónico apex.
 - `docs/ANALISIS_LATAM_Y_COMPETENCIA_2026-08-19.md` — por qué el precio y el APU son el mensaje.
 
 ---

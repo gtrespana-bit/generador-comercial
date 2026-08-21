@@ -10,6 +10,7 @@ HTML. Google indexa una URL, un contenido.
 """
 from __future__ import annotations
 
+import re
 from urllib.parse import urlparse
 
 from fastapi import Request
@@ -126,6 +127,58 @@ def enlaces_hreflang(request: Request | None = None, tema: str = "") -> list[dic
             }
         )
     return out
+
+
+def _dias_prueba_publicos() -> int | None:
+    """Días de prueba vigentes, o None si está apagada.
+
+    Las metas y el FAQ no pueden clavar «7 días»: si el titular pone 14 o 0,
+    un anuncio fijo sería publicidad falsa (lo comprueba test_prueba_gratuita).
+    """
+    try:
+        from .services.prueba_gratuita import dias_de_prueba, prueba_activada
+
+        if not prueba_activada():
+            return None
+        return int(dias_de_prueba())
+    except Exception:
+        return None
+
+
+_RE_PRUEBA = re.compile(
+    r"(?:\s*[,.]?\s*)?(?:\d+\s+días(?:\s+de\s+prueba)?(?:\s+gratis)?(?:\s*,?\s*sin tarjeta)?\.?)",
+    re.IGNORECASE,
+)
+
+
+def _aplicar_prueba(ficha: dict) -> dict:
+    """Ajusta description y FAQ al estado real de la prueba."""
+    n = _dias_prueba_publicos()
+    desc = _RE_PRUEBA.sub("", str(ficha.get("description") or "")).strip()
+    desc = re.sub(r"\s{2,}", " ", desc).rstrip(" .")
+    if n:
+        desc = f"{desc}. {n} días gratis, sin tarjeta."
+    else:
+        desc = desc + "."
+    ficha["description"] = desc[:170]
+
+    faqs = []
+    for item in ficha.get("faq") or []:
+        q = str(item.get("q") or "")
+        a = str(item.get("a") or "")
+        habla_prueba = (
+            "probarlo" in q.lower()
+            or "gratis" in a.lower()
+            or "días de prueba" in a.lower()
+            or "días de acceso" in a.lower()
+        )
+        if n is None and habla_prueba:
+            continue
+        if n:
+            a = re.sub(r"\d+\s+días", f"{n} días", a)
+        faqs.append({**item, "q": q, "a": a})
+    ficha["faq"] = faqs
+    return ficha
 
 
 def titulo_publico(oficio: str, donde: str = "") -> str:
@@ -434,17 +487,19 @@ def ficha_landing(codigo: str = "") -> dict:
     codigo = str(codigo or "").strip().upper()
     base = _LANDING.get(codigo) or _LANDING[""]
     pais = PAISES.get(codigo) or PAIS_GENERICO
-    return {
-        **base,
-        "codigo": codigo,
-        "lang": hreflang_pais(codigo) if codigo else "es",
-        "nombre_pais": pais.get("nombre") or "Latinoamérica",
-        "tema": "",
-        "canonical_path": ruta_pais(codigo),
-        "cuerpo": cuerpo_pais(codigo),
-        "guias": lista_guias(),
-        "articulo": articulo_de_pais(codigo),
-    }
+    return _aplicar_prueba(
+        {
+            **base,
+            "codigo": codigo,
+            "lang": hreflang_pais(codigo) if codigo else "es",
+            "nombre_pais": pais.get("nombre") or "Latinoamérica",
+            "tema": "",
+            "canonical_path": ruta_pais(codigo),
+            "cuerpo": cuerpo_pais(codigo),
+            "guias": lista_guias(),
+            "articulo": articulo_de_pais(codigo),
+        }
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -625,7 +680,7 @@ def _bloques_tema(codigo: str, tema: str) -> dict:
     ]
     if faq_local:
         faq = faq_local + faq
-    return {
+    return _aplicar_prueba({
         "title": title,
         "description": description[:170],
         "h1": h1,
@@ -642,7 +697,7 @@ def _bloques_tema(codigo: str, tema: str) -> dict:
         "moneda": moneda,
         "iva": iva,
         "id_fiscal": fiscal,
-    }
+    })
 
 
 def ficha_tema(codigo: str, tema: str) -> dict | None:
@@ -807,14 +862,16 @@ def contexto_guia(request: Request, slug: str) -> dict | None:
         return None
     origen = origen_canonico(request)
     path = "/guia/" + guia["slug"]
-    seo = {
-        "title": guia["title"],
-        "description": guia["description"],
-        "lang": "es",
-        "h1": guia["h1"],
-        "canonical_path": path,
-        "faq": guia.get("faq") or [],
-    }
+    seo = _aplicar_prueba(
+        {
+            "title": guia["title"],
+            "description": guia["description"],
+            "lang": "es",
+            "h1": guia["h1"],
+            "canonical_path": path,
+            "faq": list(guia.get("faq") or []),
+        }
+    )
     bloques = [
         jsonld_organizacion(request),
         jsonld_website(request),
@@ -976,24 +1033,25 @@ def contexto_pagina_estatica(request: Request, clave: str) -> dict:
     ficha = _PAGINAS_ESTATICAS[clave]
     origen = origen_canonico(request)
     path = ficha["path"]
-    faq = FAQ_LEGAL if clave == "preguntas" else []
-    seo = {
-        "title": ficha["title"],
-        "description": ficha["description"],
-        "lang": "es",
-        "h1": ficha["h1"],
-        "canonical_path": path,
-        "faq": faq,
-        "nombre_pais": "Latinoamérica",
-    }
+    seo = _aplicar_prueba(
+        {
+            "title": ficha["title"],
+            "description": ficha["description"],
+            "lang": "es",
+            "h1": ficha["h1"],
+            "canonical_path": path,
+            "faq": FAQ_LEGAL if clave == "preguntas" else [],
+            "nombre_pais": "Latinoamérica",
+        }
+    )
     bloques = [
         jsonld_organizacion(request),
         jsonld_website(request),
     ]
     if ficha.get("software"):
         bloques.append(jsonld_software(request, ""))
-    if faq:
-        bloques.append(jsonld_faq(faq))
+    if seo.get("faq"):
+        bloques.append(jsonld_faq(seo["faq"]))
     bloques.append(
         jsonld_breadcrumb(request, [("Inicio", "/"), (ficha["h1"], path)])
     )
