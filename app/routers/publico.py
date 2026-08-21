@@ -127,6 +127,8 @@ def _contexto_landing(request: Request, pais_forzado: str | None = None) -> dict
                 "pais_generico": PAIS_GENERICO,
                 "paises": lista_paises(),
                 "ej": contexto_ejemplo(codigo),
+                # La landing solo pinta Inter-800: no precargar 400/700.
+                "seo_skip_fonts": True,
             }
             ctx.update(contexto_seo(request, codigo=codigo))
             return ctx
@@ -137,6 +139,8 @@ def _contexto_landing(request: Request, pais_forzado: str | None = None) -> dict
         "pais_generico": PAIS_GENERICO,
         "paises": lista_paises(),
         "ej": contexto_ejemplo(pais_codigo),
+        # La landing solo pinta Inter-800: no precargar 400/700.
+        "seo_skip_fonts": True,
     }
     ctx.update(contexto_seo(request, codigo=pais_codigo))
     return ctx
