@@ -3200,26 +3200,141 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
 }
 
 .compra-stripe {
-  background: #fff;
-  border: 1.5px solid var(--accent);
-  border-radius: 14px;
-  padding: 1.6rem;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #fff 0%, #f8fbff 100%);
+  border: 1px solid color-mix(in srgb, var(--accent) 24%, var(--border));
+  border-radius: var(--radius);
+  padding: 1.5rem;
   margin-bottom: 1.4rem;
-  text-align: center;
-  box-shadow: 0 0 0 3px var(--accent-soft);
+  box-shadow: var(--shadow);
 }
+
+.compra-stripe::before {
+  content: "";
+  position: absolute;
+  width: 13rem;
+  height: 13rem;
+  right: -6rem;
+  top: -8rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--accent-soft-strong), transparent 68%);
+  pointer-events: none;
+}
+
+.compra-stripe-head {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+}
+
+.compra-stripe-icon {
+  display: inline-grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 2.65rem;
+  height: 2.65rem;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border: 1px solid color-mix(in srgb, var(--accent) 16%, transparent);
+  border-radius: 12px;
+}
+.compra-stripe-icon svg { width: 1.35rem; height: 1.35rem; }
+
+.compra-stripe-eyebrow {
+  display: block;
+  margin-bottom: 0.15rem;
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .compra-stripe h2 {
-  margin: 0 0 0.5rem;
-  font-size: 1.15rem;
-  color: #1a1a2e;
+  margin: 0;
+  font-size: 1.12rem;
+  color: var(--text);
 }
-.compra-stripe p {
-  margin: 0 0 1.1rem;
-  color: #555;
-  font-size: 0.92rem;
+.compra-stripe-head p {
+  max-width: 30rem;
+  margin: 0.25rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.87rem;
   line-height: 1.5;
 }
-.compra-stripe .btn { min-width: 16rem; }
+
+.compra-stripe-marcas {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.38rem;
+  margin: 1.15rem 0;
+}
+.compra-stripe-marcas span {
+  padding: 0.22rem 0.48rem;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.75);
+  color: var(--text-soft);
+  font-size: 0.67rem;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+}
+
+.compra-stripe-button {
+  position: relative;
+  width: 100%;
+  min-height: 3.25rem;
+  padding: 0.72rem 1rem;
+  border-color: color-mix(in srgb, var(--accent) 84%, #000);
+  background: linear-gradient(135deg, #174c91, #0e3261);
+  font-size: 0.94rem;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2) inset, 0 8px 18px var(--accent-glow);
+}
+.compra-stripe-button:hover {
+  background: linear-gradient(135deg, #1b559f, #0a294f);
+}
+.compra-stripe-button-text { flex: 1; }
+.compra-stripe-lock { width: 1.05rem; height: 1.05rem; flex: 0 0 auto; }
+.compra-stripe-arrow { width: 1rem; height: 1rem; flex: 0 0 auto; opacity: 0.8; }
+
+.compra-stripe-security,
+.compra-stripe-terms {
+  position: relative;
+  text-align: center;
+  line-height: 1.45;
+}
+.compra-stripe-security {
+  margin: 0.85rem 0 0;
+  color: var(--green);
+  font-size: 0.77rem;
+  font-weight: 600;
+}
+.compra-stripe-security span { margin-right: 0.2rem; font-weight: 800; }
+.compra-stripe-terms {
+  margin: 0.45rem auto 0;
+  max-width: 37rem;
+  color: var(--text-soft);
+  font-size: 0.76rem;
+}
+
+.compra-stripe-button.is-loading { pointer-events: none; }
+.compra-stripe-button.is-loading .compra-stripe-arrow,
+.compra-stripe-button.is-loading .compra-stripe-lock { display: none; }
+.compra-stripe-button.is-loading::before {
+  content: "";
+  width: 0.9rem;
+  height: 0.9rem;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: compra-spin 0.7s linear infinite;
+}
+@keyframes compra-spin { to { transform: rotate(360deg); } }
+
 .compra-o {
   text-align: center;
   color: var(--text-muted);

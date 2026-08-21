@@ -57,3 +57,19 @@
     }
   }
 })();
+
+/* Evita envíos duplicados mientras se abre el checkout alojado de Stripe. */
+(function () {
+  var checkout = document.querySelector("[data-stripe-checkout]");
+  if (!checkout) return;
+
+  checkout.addEventListener("submit", function () {
+    var boton = checkout.querySelector("button[type='submit']");
+    var texto = checkout.querySelector(".compra-stripe-button-text");
+    if (!boton || boton.disabled) return;
+
+    boton.disabled = true;
+    boton.classList.add("is-loading");
+    if (texto) texto.textContent = "Abriendo pago seguro…";
+  });
+})();

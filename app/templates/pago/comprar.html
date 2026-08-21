@@ -39,11 +39,30 @@
     </section>
 
   {% if stripe_disponible %}
-  <form method="POST" action="/pago/stripe/checkout" class="compra-stripe">
+  <form method="POST" action="/pago/stripe/checkout" class="compra-stripe" data-stripe-checkout>
     <input type="hidden" name="plan" value="{{ plan }}">
-    <h2>Pagar con tarjeta</h2>
-    <p>Visa, Mastercard, American Express, Apple Pay y Google Pay. La licencia se activa al confirmar el cobro. El plan se renueva solo; puedes cancelar cuando quieras y conservas el período ya pagado.</p>
-    <button type="submit" class="btn btn-primary">Pagar {{ "%.2f"|format(plan_ficha.importe) }} US$ con tarjeta</button>
+    <div class="compra-stripe-head">
+      <span class="compra-stripe-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 10h18"></path><path d="M7 15h3"></path></svg>
+      </span>
+      <div>
+        <span class="compra-stripe-eyebrow">Pago inmediato</span>
+        <h2>Paga de forma segura con tarjeta</h2>
+        <p>Serás redirigido al checkout seguro de Stripe para completar el pago.</p>
+      </div>
+    </div>
+
+    <div class="compra-stripe-marcas" aria-label="Métodos aceptados">
+      <span>Visa</span><span>Mastercard</span><span>American Express</span><span>Apple Pay</span><span>Google Pay</span>
+    </div>
+
+    <button type="submit" class="btn compra-stripe-button">
+      <svg class="compra-stripe-lock" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>
+      <span class="compra-stripe-button-text">Pagar {{ "%.2f"|format(plan_ficha.importe) }} US$ con tarjeta</span>
+      <svg class="compra-stripe-arrow" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg>
+    </button>
+    <p class="compra-stripe-security"><span aria-hidden="true">✓</span> Cobro protegido y procesado por Stripe. Tu tarjeta no pasa por nuestros servidores.</p>
+    <p class="compra-stripe-terms">La licencia se activa al confirmar el cobro. El plan se renueva solo; puedes cancelarlo cuando quieras y conservarás el período ya pagado.</p>
   </form>
   <p class="compra-o">o paga por transferencia / cripto</p>
   {% endif %}
