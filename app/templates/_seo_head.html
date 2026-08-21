@@ -9,8 +9,8 @@
   {% for alt in hreflang_links %}
   <link rel="alternate" hreflang="{{ alt.hreflang }}" href="{{ alt.href }}">
   {% endfor %}
-  <link rel="preload" href="/static/fonts/Inter-Regular.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="/static/fonts/Inter-Bold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="{{ 'fonts/Inter-Regular.woff2' | asset }}" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="{{ 'fonts/Inter-Bold.woff2' | asset }}" as="font" type="font/woff2" crossorigin>
   <meta property="og:type" content="{{ og_type | default('website') }}">
   <meta property="og:site_name" content="{{ product_name }}">
   <meta property="og:locale" content="{{ (seo.lang or 'es') | replace('-', '_') }}">

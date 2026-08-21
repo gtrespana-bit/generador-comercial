@@ -4,9 +4,27 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   {% include "_seo_head.html" %}
+  {# El <h1> del hero pinta en Inter ExtraBold (800) y es el LCP: se precarga
+     junto a los pesos del hero para que el primer pintado use la fuente final. #}
+  <link rel="preload" href="{{ 'fonts/Inter-ExtraBold.woff2' | asset }}" as="font" type="font/woff2" crossorigin fetchpriority="high">
+  <link rel="preload" href="{{ 'fonts/Inter-SemiBold.woff2' | asset }}" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="{{ 'fonts/Inter-Medium.woff2' | asset }}" as="font" type="font/woff2" crossorigin>
   <link rel="icon" type="image/png" href="/static/icono.png">
-  <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+  {# @font-face inline (antes venía de fonts.css): se elimina una petición
+     bloqueante del camino crítico y las fuentes se descubren antes. #}
+  <style nonce="{{ request.state.csp_nonce }}">
+@font-face{font-family:"Inter";font-style:normal;font-weight:400;font-display:swap;src:url("{{ 'fonts/Inter-Regular.woff2' | asset }}") format("woff2")}
+@font-face{font-family:"Inter";font-style:normal;font-weight:500;font-display:swap;src:url("{{ 'fonts/Inter-Medium.woff2' | asset }}") format("woff2")}
+@font-face{font-family:"Inter";font-style:normal;font-weight:600;font-display:swap;src:url("{{ 'fonts/Inter-SemiBold.woff2' | asset }}") format("woff2")}
+@font-face{font-family:"Inter";font-style:normal;font-weight:700;font-display:swap;src:url("{{ 'fonts/Inter-Bold.woff2' | asset }}") format("woff2")}
+@font-face{font-family:"Inter";font-style:normal;font-weight:800;font-display:swap;src:url("{{ 'fonts/Inter-ExtraBold.woff2' | asset }}") format("woff2")}
+@font-face{font-family:"Inter";font-style:italic;font-weight:400;font-display:swap;src:url("{{ 'fonts/Inter-Italic.woff2' | asset }}") format("woff2")}
+  </style>
   <link rel="stylesheet" href="{{ 'css/public.css' | asset }}">
+  {# JS con defer: se descubre desde el <head> (en paralelo con CSS y fuentes)
+     y se ejecuta cuando el documento está parseado, igual que antes. #}
+  <script nonce="{{ request.state.csp_nonce }}" defer src="{{ 'js/pais_selector.js' | asset }}"></script>
+  <script nonce="{{ request.state.csp_nonce }}" defer src="{{ 'js/landing-tour.js' | asset }}"></script>
 </head>
 <body class="landing">
 {# Barra de país — genérica por defecto, se adapta al elegir #}
@@ -24,6 +42,7 @@
 </div>
 {% include "_nav.html" %}
 
+<main>
 <header class="hero">
   <div class="hero-int">
     <div class="hero-copy">
@@ -332,12 +351,12 @@
           <span class="apu-importe" role="cell">{{ f.importe }}</span>
         </div>
         {% endfor %}
-        <div class="apu-fila apu-sub" role="row"><span>Materiales</span><span></span><span></span><span>{{ ej.apu.materiales }}</span></div>
-        <div class="apu-fila apu-sub" role="row"><span>Mano de obra</span><span></span><span></span><span>{{ ej.apu.mano_obra }}</span></div>
-        <div class="apu-fila apu-sub" role="row"><span>Equipo y maquinaria</span><span></span><span></span><span>{{ ej.apu.equipo }}</span></div>
-        <div class="apu-fila apu-sub" role="row"><span>Costes directos complementarios</span><span>{{ ej.apu.comp_pct }} %</span><span></span><span>{{ ej.apu.comp }}</span></div>
-        <div class="apu-fila apu-total" role="row"><span>COSTE DIRECTO</span><span></span><span></span><span>{{ ej.apu.coste }}</span></div>
-        <div class="apu-fila apu-venta" role="row"><span>BENEFICIO Y PRECIO DE VENTA</span><span>{{ ej.apu.margen }}</span><span></span><span>{{ ej.apu.precio }}</span></div>
+      <div class="apu-fila apu-sub" role="row"><span role="cell">Materiales</span><span role="cell"></span><span role="cell"></span><span role="cell">{{ ej.apu.materiales }}</span></div>
+      <div class="apu-fila apu-sub" role="row"><span role="cell">Mano de obra</span><span role="cell"></span><span role="cell"></span><span role="cell">{{ ej.apu.mano_obra }}</span></div>
+      <div class="apu-fila apu-sub" role="row"><span role="cell">Equipo y maquinaria</span><span role="cell"></span><span role="cell"></span><span role="cell">{{ ej.apu.equipo }}</span></div>
+      <div class="apu-fila apu-sub" role="row"><span role="cell">Costes directos complementarios</span><span role="cell">{{ ej.apu.comp_pct }} %</span><span role="cell"></span><span role="cell">{{ ej.apu.comp }}</span></div>
+      <div class="apu-fila apu-total" role="row"><span role="cell">COSTE DIRECTO</span><span role="cell"></span><span role="cell"></span><span role="cell">{{ ej.apu.coste }}</span></div>
+      <div class="apu-fila apu-venta" role="row"><span role="cell">BENEFICIO Y PRECIO DE VENTA</span><span role="cell">{{ ej.apu.margen }}</span><span role="cell"></span><span role="cell">{{ ej.apu.precio }}</span></div>
       </div>
       <p class="apu-nota">Cambia el rendimiento, el precio de un recurso o el margen y todo se recalcula al instante: la partida, los capítulos y el presupuesto entero.</p>
     </div>
@@ -899,7 +918,7 @@
     {% endif %}
   </div>
 </section>
-
+</main>
 
 {% include "_footer_publico.html" %}
 <script id="paises-data" type="application/json" nonce="{{ request.state.csp_nonce }}">{{ paises | tojson }}</script>
@@ -913,7 +932,5 @@
   "tasa_fecha": {{ ej.tasa_fecha | tojson }},
   "iva": {{ ej.iva | tojson }}
 }</script>
-<script nonce="{{ request.state.csp_nonce }}" src="{{ 'js/pais_selector.js' | asset }}"></script>
-<script nonce="{{ request.state.csp_nonce }}" src="{{ 'js/landing-tour.js' | asset }}"></script>
 </body>
 </html>

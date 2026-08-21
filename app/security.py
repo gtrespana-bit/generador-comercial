@@ -354,7 +354,9 @@ class WebSecurityMiddleware:
                 if x_frame:
                     additions[b"x-frame-options"] = x_frame
                 if scheme == "https":
-                    additions[b"strict-transport-security"] = b"max-age=31536000; includeSubDomains"
+                    additions[b"strict-transport-security"] = (
+                        b"max-age=31536000; includeSubDomains; preload"
+                    )
                 path = str(scope.get("path") or "")
                 try:
                     from .seo import es_indexable
