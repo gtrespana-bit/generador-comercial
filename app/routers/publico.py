@@ -336,8 +336,34 @@ def pagina_legal(pagina: str, request: Request):
 # Página de planes y métodos de pago
 # ---------------------------------------------------------------------------
 
+def _pais_pago_publico(request: Request, db: Session) -> str:
+    """País para mostrar cobros: selector, organización o preferencia pública."""
+    from ..paises import PAISES
+
+    elegido = str(request.query_params.get("pais") or "").strip().upper()
+    if elegido in PAISES:
+        return elegido
+
+    organizacion_id = int(db.info.get("organizacion_id") or 0)
+    if organizacion_id:
+        configuracion = (
+            db.query(Configuracion)
+            .filter(Configuracion.organizacion_id == organizacion_id)
+            .first()
+        )
+        nombre = str(configuracion.empresa_pais if configuracion else "").strip()
+        if nombre.upper() in PAISES:
+            return nombre.upper()
+        for codigo, datos in PAISES.items():
+            if datos["nombre"].casefold() == nombre.casefold():
+                return codigo
+
+    preferido = str(request.cookies.get("cotizat_pais") or "").strip().upper()
+    return preferido if preferido in PAISES else "VE"
+
+
 @router.get("/pago", response_class=HTMLResponse, include_in_schema=False)
-def pagina_pago(request: Request):
+def pagina_pago(request: Request, db: Session = Depends(get_db)):
     """Página pública de planes y métodos de pago.
 
     Acepta un `msg` en la query para poder explicar cómo se ha llegado aquí:
@@ -345,10 +371,17 @@ def pagina_pago(request: Request):
     esta pantalla y merece saber por qué, en vez de encontrarse una lista de
     precios sin contexto.
     """
+    from ..paises import PAISES, lista_paises
+
+    codigo_pais = _pais_pago_publico(request, db)
     return TEMPLATES.TemplateResponse(
         request,
         "pago.html",
-        {"msg": request.query_params.get("msg", "")[:300]},
+        {
+            "msg": request.query_params.get("msg", "")[:300],
+            "pais_pago": PAISES[codigo_pais],
+            "paises_pago": lista_paises(),
+        },
     )
 
 

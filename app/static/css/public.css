@@ -2985,6 +2985,35 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
   color: #1a1a2e;
 }
 
+.pago-page .pago-pais {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.45rem 0.7rem;
+  max-width: 37rem;
+  margin: 1.25rem auto 0;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid rgba(18, 63, 120, 0.14);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: var(--shadow-xs);
+}
+.pago-page .pago-pais label { color: var(--text); font-size: 0.82rem; font-weight: 700; }
+.pago-page .pago-pais-control { display: flex; align-items: center; gap: 0.45rem; }
+.pago-page .pago-pais select {
+  min-width: 12.5rem;
+  padding: 0.45rem 1.85rem 0.45rem 0.65rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-xs);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.82rem;
+}
+.pago-page .pago-pais .btn { padding: 0.45rem 0.7rem; font-size: 0.78rem; }
+.pago-page .pago-pais p { width: 100%; margin: 0; color: var(--text-soft); font-size: 0.75rem; }
+
 /* Aviso contextual del hero de planes: explica por qué se ha llegado aquí
    (por ejemplo, prueba gratuita ya consumida). Tono informativo, no de error:
    la persona no ha hecho nada mal. */
@@ -3133,6 +3162,8 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
   .pago-page .pago-hero h1 {
     font-size: 1.6rem;
   }
+  .pago-page .pago-pais-control { width: 100%; }
+  .pago-page .pago-pais select { flex: 1; min-width: 0; }
   .pago-page .metodos-grid {
     grid-template-columns: 1fr;
   }

@@ -112,7 +112,7 @@ def _clear_plan_pendiente_cookie(response) -> None:
 
 
 @router.get("/pago/elegir", include_in_schema=False)
-def elegir_plan(request: Request, plan: str = ""):
+def elegir_plan(request: Request, plan: str = "", pais: str = ""):
     """Recuerda el plan elegido y lleva al checkout.
 
     El checkout exige sesión y organización; esta ruta guarda la intención en
@@ -121,7 +121,11 @@ def elegir_plan(request: Request, plan: str = ""):
     """
     if _plan_o_redirect(request, plan) is None:
         return RedirectResponse("/pago", status_code=303)
-    response = RedirectResponse(f"/pago/comprar?plan={quote(plan)}", status_code=303)
+    from ..paises import PAISES
+
+    pais_url = str(pais or "").strip().upper()
+    sufijo_pais = f"&pais={quote(pais_url)}" if pais_url in PAISES else ""
+    response = RedirectResponse(f"/pago/comprar?plan={quote(plan)}{sufijo_pais}", status_code=303)
     _set_plan_pendiente_cookie(response, plan)
     return response
 
