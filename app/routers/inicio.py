@@ -95,7 +95,7 @@ def inicio(request: Request, db: Session = Depends(get_db)):
     salud_catalogo = analizar_salud_catalogo(db)
     recorrido_inicial = (
         estado_recorrido_inicial(db, cfg)
-        if cfg.onboarding_modo in {"demo", "limpio"} and not cfg.recorrido_inicial_oculto
+        if cfg.onboarding_modo in {"demo", "limpio"} and not getattr(cfg, "recorrido_inicial_oculto", False)
         else None
     )
 

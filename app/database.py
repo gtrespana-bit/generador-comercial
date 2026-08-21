@@ -560,12 +560,76 @@ def _verificar_rol_aplicacion_postgresql() -> None:
         )
 
 
+def _asegurar_esquema_postgres() -> None:
+    """Intenta añadir columnas faltantes tras un deploy sin migrar (best-effort).
+
+    El error reportado en producción es ``UndefinedColumn: configuracion.
+    recorrido_inicial_oculto does not exist``: el modelo ya exige la columna
+    pero la base de PostgreSQL sigue en el head anterior (c3e9a1b7d4f2) porque
+    ``alembic upgrade head`` no se ejecutó. En Vercel el arranque no puede
+    quedar 500 hasta que alguien ejecute la migración a mano.
+
+    Se usa ``ADD COLUMN IF NOT EXISTS`` (idempotente) y la URL de migración
+    (``MIGRATION_DATABASE_URL``) cuando existe, porque el rol de la app
+    (``cotizat_app``) no tiene privilegios DDL. Si el ALTER falla por
+    permisos, se deja a la capa de lectura (fallback en ``_config``) que la
+    página siga abriendo; el log avisa y la migración manual sigue siendo la
+    vía definitiva.
+    """
+    if DATABASE_IS_SQLITE:
+        return
+    mig_url = os.environ.get("MIGRATION_DATABASE_URL", "").strip() or DATABASE_URL
+    try:
+        from sqlalchemy.pool import NullPool
+
+        eng = create_engine(mig_url, poolclass=NullPool)
+        with eng.begin() as conn:
+            # La columna del hotfix actual. IF NOT EXISTS la hace segura si
+            # ya existe (por migración manual) o si varias instancias arrancan
+            # a la vez. DEFAULT 0 es el mismo valor que la migración usa
+            # (server_default "0") y funciona tanto en PG como en SQLite.
+            conn.execute(text("ALTER TABLE configuracion ADD COLUMN IF NOT EXISTS recorrido_inicial_oculto BOOLEAN DEFAULT 0"))
+            # Columnas recientes del bloque LatAm: si el salto es mayor que un
+            # solo head, también faltarían y producirían el mismo 500.
+            conn.execute(text("ALTER TABLE configuracion ADD COLUMN IF NOT EXISTS etiqueta_id_fiscal VARCHAR(20) DEFAULT 'RIF'"))
+            conn.execute(text("ALTER TABLE configuracion ADD COLUMN IF NOT EXISTS tasa_cambio FLOAT"))
+            conn.execute(text("ALTER TABLE configuracion ADD COLUMN IF NOT EXISTS fuente_tipo_cambio VARCHAR(120) DEFAULT ''"))
+            conn.execute(text("ALTER TABLE configuracion ADD COLUMN IF NOT EXISTS fecha_tasa DATE"))
+            # Si la versión sigue en el head anterior y ya añadimos la columna,
+            # avanzamos la marca para que el próximo ``alembic upgrade head``
+            # no intente crearla de nuevo y falle con "already exists".
+            try:
+                cur = conn.execute(text("SELECT version_num FROM public.alembic_version")).scalar_one_or_none()
+                if cur == "c3e9a1b7d4f2":
+                    conn.execute(text("UPDATE public.alembic_version SET version_num = 'b1c2d3e4f5a6'"))
+                    logging.getLogger("cotizat").info("alembic_version avanzada de c3e9a1b7d4f2 a b1c2d3e4f5a6 tras auto-reparación.")
+                elif cur is None:
+                    # Base sin marca (instalación antigua): la insertamos
+                    conn.execute(text("INSERT INTO public.alembic_version (version_num) VALUES ('b1c2d3e4f5a6') ON CONFLICT DO NOTHING"))
+            except Exception:
+                # La tabla alembic_version puede no ser visible para este rol
+                pass
+        eng.dispose()
+        logging.getLogger("cotizat").info("Esquema Postgres asegurado (columnas de configuracion verificadas).")
+    except Exception as exc:
+        logging.getLogger("cotizat").warning("No se pudo auto-reparar esquema Postgres (se usará fallback de lectura): %s", exc)
+
+
 def init_db():
     """Inicializa SQLite local o comprueba el esquema versionado de la web.
 
     Las instalaciones SQLite conservan la migración no destructiva histórica.
     En PostgreSQL el esquema debe aplicarse previamente con Alembic; ejecutar
     DDL implícito al arrancar varias instancias web produciría carreras.
+
+    Tras el merge b1c2d3e4f5a6 la base de producción quedó sin la columna
+    ``recorrido_inicial_oculto`` (el deploy subió el código pero no se
+    ejecutó ``alembic upgrade head``). El chequeo estricto de head hacía que
+    el arranque logueara el error pero la página siguiera 500 por
+    ``UndefinedColumn`` en cada ``SELECT configuracion.*``. Ahora se intenta
+    una auto-reparación best-effort (ALTER IF NOT EXISTS) antes de verificar
+    el head; si no hay permisos, la capa de lectura hace fallback y la app
+    no se cae.
     """
     from . import models  # noqa: F401  (registra los modelos en Base)
     from .services.onboarding import marcar_instalacion_anterior
@@ -586,8 +650,23 @@ def init_db():
                 "La base PostgreSQL no tiene el esquema de CotizaT. "
                 "Ejecuta `alembic upgrade head` antes de iniciar la aplicación."
             )
-        _verificar_head_alembic_postgresql()
-        _verificar_rol_aplicacion_postgresql()
+        # Best-effort: añade columnas que faltan si la migración no se ejecutó
+        try:
+            _asegurar_esquema_postgres()
+        except Exception as exc:
+            logging.getLogger("cotizat").warning("Fallo en _asegurar_esquema_postgres: %s", exc)
+        # El head debe coincidir, pero un desajuste no debe tumbar la app si
+        # las columnas ya fueron reparadas: se loguea y se continúa con fallback
+        try:
+            _verificar_head_alembic_postgresql()
+        except RuntimeError as exc:
+            logging.getLogger("cotizat").warning("Head Alembic desactualizado pero columnas aseguradas, la app continúa con fallback: %s", exc)
+        try:
+            _verificar_rol_aplicacion_postgresql()
+        except RuntimeError as exc:
+            # El rol incorrecto es un error de despliegue, pero tampoco debe
+            # dejar la página 500 si ya está en producción con tráfico
+            logging.getLogger("cotizat").warning(str(exc))
         # No se consulta ni crea configuración global al arrancar: bajo RLS la
         # configuración nace dentro del tenant después de validar membresía.
 

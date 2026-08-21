@@ -17,7 +17,23 @@ class ErrorOnboarding(ValueError):
 
 def _configuracion(db: Session) -> Configuracion:
     asegurar_config(db)
-    return db.query(Configuracion).first()
+    try:
+        return db.query(Configuracion).first()
+    except Exception as exc:
+        # Fallback si la columna del último merge aún no existe (deploy sin migrate)
+        msg = str(exc).lower()
+        if "recorrido_inicial_oculto" not in msg and "undefinedcolumn" not in msg:
+            raise
+        try:
+            db.rollback()
+        except Exception:
+            pass
+        from sqlalchemy.orm import defer
+
+        cfg = db.query(Configuracion).options(defer(Configuracion.recorrido_inicial_oculto)).first()
+        if cfg is not None and "recorrido_inicial_oculto" not in cfg.__dict__:
+            cfg.__dict__["recorrido_inicial_oculto"] = False
+        return cfg
 
 
 def marcar_instalacion_anterior(db: Session) -> Configuracion:

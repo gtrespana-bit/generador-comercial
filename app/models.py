@@ -1242,6 +1242,9 @@ class Configuracion(TenantMixin, Base):
     semilla_recetas_aplicada = Column(Boolean, default=False)
 
 
+
+
+
 class Plantilla(TenantMixin, Base):
     """Plantilla de presupuesto reutilizable.
 
@@ -1788,20 +1791,130 @@ def asegurar_organizacion_local(db) -> Organizacion:
 
 
 def asegurar_config(db):
-    """Crea configuración neutra dentro de la organización activa."""
+    """Crea configuración neutra dentro de la organización activa.
+
+    Hotfix b1c2d3e4f5a6: si la columna ``recorrido_inicial_oculto`` aún no
+    existe (deploy sin ``alembic upgrade head``), el ``SELECT *`` explotaba
+    con ``UndefinedColumn`` (PG) o ``no such column`` (SQLite) y dejaba la
+    página 500. Se usa ``defer`` como fallback para no pedir esa columna
+    cuando falta, y un ``ALTER ... IF NOT EXISTS`` best-effort.
+    """
     organizacion_id = db.info.get("organizacion_id")
     if organizacion_id is None:
         organizacion_id = asegurar_organizacion_local(db).id
         usar_organizacion(db, organizacion_id)
-    cfg = db.query(Configuracion).first()
+    from sqlalchemy.exc import DBAPIError, OperationalError, ProgrammingError
+
+    try:
+        cfg = db.query(Configuracion).first()
+    except (ProgrammingError, OperationalError, DBAPIError, Exception) as exc:
+        msg = str(exc).lower()
+        is_missing = (
+            "recorrido_inicial_oculto" in msg
+            or "undefinedcolumn" in msg
+            or "no such column" in msg
+            or "no column" in msg
+        )
+        if not is_missing:
+            raise
+        try:
+            db.rollback()
+        except Exception:
+            pass
+        try:
+            from sqlalchemy import text as _text
+
+            db.execute(_text("ALTER TABLE configuracion ADD COLUMN IF NOT EXISTS recorrido_inicial_oculto BOOLEAN DEFAULT 0"))
+            db.commit()
+            cfg = db.query(Configuracion).first()
+        except Exception:
+            try:
+                db.rollback()
+            except Exception:
+                pass
+            from sqlalchemy.orm import defer
+
+            try:
+                cfg = db.query(Configuracion).options(defer(Configuracion.recorrido_inicial_oculto)).first()
+            except Exception:
+                try:
+                    db.rollback()
+                except Exception:
+                    pass
+                raise exc
+            if cfg is not None and "recorrido_inicial_oculto" not in cfg.__dict__:
+                cfg.__dict__["recorrido_inicial_oculto"] = False
+            # crea fila mínima si no existe, sin tocar la columna nueva
+            if cfg is None:
+                from sqlalchemy import text as _text2
+
+                try:
+                    db.execute(_text2("INSERT INTO configuracion (organizacion_id, empresa_nombre, empresa_pais) VALUES (:oid, 'Mi Empresa', 'Venezuela') ON CONFLICT DO NOTHING"), {"oid": int(organizacion_id)})
+                    db.commit()
+                except Exception:
+                    try:
+                        db.rollback()
+                    except Exception:
+                        pass
+                cfg = db.query(Configuracion).options(defer(Configuracion.recorrido_inicial_oculto)).first()
+                if cfg is not None and "recorrido_inicial_oculto" not in cfg.__dict__:
+                    cfg.__dict__["recorrido_inicial_oculto"] = False
+                # si aún no existe (RLS), lo dejará crear el llamador vía _config
+                if cfg is None:
+                    db.add(Configuracion(organizacion_id=organizacion_id, **DATOS_EMPRESA_DEFECTO))
+                    try:
+                        db.commit()
+                    except (ProgrammingError, OperationalError, DBAPIError, Exception) as exc2:
+                        msg2 = str(exc2).lower()
+                        if "recorrido_inicial_oculto" not in msg2 and "undefinedcolumn" not in msg2 and "no such column" not in msg2:
+                            raise
+                        try:
+                            db.rollback()
+                        except Exception:
+                            pass
+                        # último fallback: inserción directa sin la columna nueva
+                        db.execute(_text2("INSERT INTO configuracion (organizacion_id, empresa_nombre, empresa_pais) VALUES (:oid, 'Mi Empresa', 'Venezuela') ON CONFLICT DO NOTHING"), {"oid": int(organizacion_id)})
+                        db.commit()
+                        cfg = db.query(Configuracion).options(defer(Configuracion.recorrido_inicial_oculto)).first()
+                        if cfg is not None and "recorrido_inicial_oculto" not in cfg.__dict__:
+                            cfg.__dict__["recorrido_inicial_oculto"] = False
+                        return
+                return
+            return
     if cfg is None:
         db.add(Configuracion(
             organizacion_id=organizacion_id,
             **DATOS_EMPRESA_DEFECTO,
         ))
+    try:
+        db.commit()
+    except (ProgrammingError, OperationalError, DBAPIError, Exception) as exc:
+        msg = str(exc).lower()
+        is_missing = (
+            "recorrido_inicial_oculto" in msg
+            or "undefinedcolumn" in msg
+            or "no such column" in msg
+        )
+        if not is_missing:
+            raise
+        try:
+            db.rollback()
+        except Exception:
+            pass
+        # fallback: inserción directa sin la columna
+        from sqlalchemy import text as _text3
+
+        try:
+            db.execute(_text3("INSERT INTO configuracion (organizacion_id, empresa_nombre, empresa_pais) VALUES (:oid, 'Mi Empresa', 'Venezuela') ON CONFLICT DO NOTHING"), {"oid": int(organizacion_id)})
+            db.commit()
+        except Exception:
+            try:
+                db.rollback()
+            except Exception:
+                pass
+            raise
     # También persiste la organización recién creada cuando la configuración
     # ya existía en una base local anterior.
-    db.commit()
 
 
 def proximo_numero(db, year):
