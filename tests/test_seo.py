@@ -186,6 +186,28 @@ def test_cuerpos_de_pais_no_son_un_find_and_replace():
     assert len(titulos) == 6
 
 
+def test_hubs_de_intencion_no_son_la_misma_pagina_con_otro_pais():
+    with _cliente() as client:
+        co = client.get("/co/apu").text
+        mx = client.get("/mx/apu").text
+        ve = client.get("/ve/software-presupuestos").text
+        pe = client.get("/pe/software-presupuestos").text
+    assert "AIU" in co
+    assert "pañete" in co.lower()
+    assert "PAC" in mx or "CFDI" in mx
+    assert "bolívares" in ve.lower() or "bolivares" in ve.lower()
+    assert "metrado" in pe.lower()
+    assert "AIU" not in mx
+    assert "friso" not in mx.lower()
+
+
+def test_faq_legal_publica_schema_propio():
+    with _cliente() as client:
+        html = client.get("/legal/preguntas").text
+    assert "FAQPage" in html
+    assert "CotizaT: preguntas frecuentes del software" in html
+
+
 def test_titulo_empieza_por_marca_y_describe_el_oficio():
     """En Google no puede aparecer solo «CotizaT»: hay que leer qué es."""
     from app.paises import ORDEN_SELECTOR

@@ -596,6 +596,10 @@ def _bloques_tema(codigo: str, tema: str) -> dict:
             ("Análisis de precios unitarios", ruta_pais(codigo, "apu")),
         ]
 
+    from .seo_contenido import extra_hub, faq_hub
+
+    body = list(body) + extra_hub(codigo, tema)
+    faq_local = faq_hub(codigo, tema)
     faq = [
         {
             "q": f"¿CotizaT sirve para {nombre}?",
@@ -613,6 +617,8 @@ def _bloques_tema(codigo: str, tema: str) -> dict:
             "a": "89 US$ al año de lanzamiento o 9,99 US$ al mes el primer año. Sin permanencia.",
         },
     ]
+    if faq_local:
+        faq = faq_local + faq
     return {
         "title": title,
         "description": description[:170],
@@ -957,16 +963,19 @@ def contexto_pagina_estatica(request: Request, clave: str) -> dict:
     Sin FAQ heredada de ``/``. El schema de SoftwareApplication solo va
     donde el copy vende el producto (cómo funciona, planes).
     """
+    from .seo_contenido import FAQ_LEGAL
+
     ficha = _PAGINAS_ESTATICAS[clave]
     origen = origen_canonico(request)
     path = ficha["path"]
+    faq = FAQ_LEGAL if clave == "preguntas" else []
     seo = {
         "title": ficha["title"],
         "description": ficha["description"],
         "lang": "es",
         "h1": ficha["h1"],
         "canonical_path": path,
-        "faq": [],
+        "faq": faq,
         "nombre_pais": "Latinoamérica",
     }
     bloques = [
@@ -975,6 +984,8 @@ def contexto_pagina_estatica(request: Request, clave: str) -> dict:
     ]
     if ficha.get("software"):
         bloques.append(jsonld_software(request, ""))
+    if faq:
+        bloques.append(jsonld_faq(faq))
     bloques.append(
         jsonld_breadcrumb(request, [("Inicio", "/"), (ficha["h1"], path)])
     )

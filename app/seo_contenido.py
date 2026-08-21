@@ -330,3 +330,198 @@ def ficha_guia(slug: str) -> dict | None:
 
 def lista_guias() -> list[dict]:
     return [GUIAS[k] for k in ("presupuesto-de-obra", "analisis-precios-unitarios", "presupuesto-remodelacion")]
+
+
+# Bloques extra de las URLs /co/apu, /mx/remodelacion… Texto propio, no
+# «Colombia» sustituido por «México». Sin esto Google las ve como duplicados.
+HUB_EXTRA: dict[tuple[str, str], list[tuple[str, str]]] = {
+    ("VE", "software-presupuestos"): [
+        (
+            "Presupuestar en Venezuela sin que el PDF se mueva con el dólar",
+            "El oficio venezolano discute en dólares y a veces cobra en bolívares. CotizaT congela moneda y tasa en cada presupuesto: un PDF de marzo no cambia en abril. El RIF y el IVA 16 % salen en el documento; no es factura SENIAT.",
+        ),
+        (
+            "Vocabulario de la cuadrilla, no de un software español",
+            "Concreto, friso, cielo raso, rodapié, plomero. Sirve a remodeladores en Caracas, Valencia o Maracaibo que hoy arman el presupuesto en Excel y lo mandan por WhatsApp.",
+        ),
+    ],
+    ("VE", "apu"): [
+        (
+            "APU cuando el cemento sube cada mes",
+            "En Venezuela el APU sirve para no cotizar de memoria cuando el material se movió. Cambias el recurso una vez y se recalculan las partidas en edición. Los presupuestos ya enviados quedan congelados, con su tasa.",
+        ),
+        (
+            "Horas de cuadrilla, sin imprimirlas al cliente",
+            "Las filas de mano de obra alimentan horas internas. El PDF del cliente no las lleva: evitas el «el papel decía 5 horas» en una obra de friso o cielo raso.",
+        ),
+    ],
+    ("VE", "remodelacion"): [
+        (
+            "Remodelar un baño en Caracas, con cambios por WhatsApp",
+            "Pack de baño o cocina, cantidades a los m², productos con foto. Si el cliente pide quitar el porcelanato, reenvías una versión con total anterior y total nuevo. El flujo es PDF, no otra plataforma.",
+        ),
+    ],
+    ("CO", "software-presupuestos"): [
+        (
+            "Software de presupuestos para una SAS de remodelación",
+            "Pensado para empresas de 2 a 15 personas en Colombia que cotizan obra privada en COP, con NIT e IVA 19 %. No es un software de pliego ni de interventoría. El cliente recibe un PDF por WhatsApp.",
+        ),
+        (
+            "Pañete, andén y sardinel, no friso ni acera",
+            "El catálogo se muestra con terminología colombiana. Sirve en Bogotá, Medellín o el interior si presupuestas por partidas, no si licitás obra pública.",
+        ),
+    ],
+    ("CO", "apu"): [
+        (
+            "APU de pañete en COP, no AIU de contrato estatal",
+            "El análisis de precios unitarios de CotizaT es rendimiento × precio de materiales, mano de obra y equipo, editable en COP. No calcula AIU de obra pública. Si armas un APU de pañete o concreto para un particular o una SAS, este es el flujo.",
+        ),
+        (
+            "De Excel al descompuesto, sin perder el rendimiento",
+            "Importas CYPE o pegas TSV. El oficial y el cemento se editan en Recursos y caen a las partidas. El presupuesto enviado no se reescribe.",
+        ),
+    ],
+    ("CO", "remodelacion"): [
+        (
+            "Remodelación en Bogotá o Medellín, sin registrar al cliente",
+            "Packs de estancia, opciones de producto y PDF. La factura electrónica DIAN la emites aparte. CotizaT cierra alcance y precio de la reforma, no el CF-DIAN.",
+        ),
+    ],
+    ("MX", "software-presupuestos"): [
+        (
+            "Programa para cotizar obra en pesos mexicanos",
+            "En México se pide una cotización tanto como un presupuesto. CotizaT arma capítulos y partidas en MXN, con RFC e IVA 16 %. No es Neodata ni un visor BIM. Es la visita, la cotización y el PDF.",
+        ),
+        (
+            "Aplanado, plafón y zoclo",
+            "El catálogo no muestra friso ni cielo raso venezolano. Sirve a contratistas que cotizan vivienda o local comercial y reenvían cambios por WhatsApp o correo.",
+        ),
+    ],
+    ("MX", "apu"): [
+        (
+            "Análisis de precios unitarios en MXN, editable",
+            "Cada partida llega descompuesta. Cambias el cemento o la hora del oficial y se recalcula en pesos. Los documentos enviados congelan su tasa si también cotizas en USD.",
+        ),
+        (
+            "No sustituye un PAC ni un CFDI",
+            "El APU explica tu coste interno. El CFDI lo emites con tu PAC. Mezclar las dos cosas en el mismo PDF es el error que CotizaT evita a propósito.",
+        ),
+    ],
+    ("MX", "remodelacion"): [
+        (
+            "De la visita a la cotización de un baño",
+            "Pack de estancia, aplanado, plafón, zoclo y sanitarios con foto. El cliente elige alternativa; tú no reescribes la cotización desde cero. El PDF se reenvía con el resumen de cambios.",
+        ),
+    ],
+    ("PE", "software-presupuestos"): [
+        (
+            "Presupuestos y metrados en soles",
+            "En Perú el presupuesto arranca en el metrado. CotizaT suma cantidades por zona, aplica precio o APU, y cierra en soles o USD, con RUC e IGV 18 %. No es un expediente S10.",
+        ),
+        (
+            "Tarrajeo, zócalo y gasfitero",
+            "Terminología de Lima y del resto del país al mostrar. El PDF va por WhatsApp; el cliente no entra a una plataforma.",
+        ),
+    ],
+    ("PE", "apu"): [
+        (
+            "APU y metrados juntos, no una lista plana",
+            "Mides por zona, el APU pone rendimiento y precio, el importe es cantidad × precio unitario. Editas el recurso una vez. El IGV 18 % lo configuras tú; no es asesoramiento tributario.",
+        ),
+        (
+            "Comprobante SUNAT aparte",
+            "El presupuesto es comercial. El comprobante de pago lo emites con tu sistema autorizado.",
+        ),
+    ],
+    ("PE", "remodelacion"): [
+        (
+            "Remodelar en Lima: tarrajeo, cielo raso y gasfitería",
+            "Packs de baño y cocina escalados a m². Piezas fijas sin multiplicar. Cambios documentados cuando el cliente pide otra cerámica.",
+        ),
+    ],
+    ("EC", "software-presupuestos"): [
+        (
+            "Software de presupuestos en dólares para Ecuador",
+            "Ecuador ya cotiza en USD. El espacio nace en dólares, con RUC e IVA 15 %, no en otra moneda «para convertir después». Hormigón, enlucido, tumbado, barredera, gasfitero.",
+        ),
+    ],
+    ("EC", "apu"): [
+        (
+            "APU en USD, con RUC",
+            "Descompuestos editables en dólares. El IVA 15 % del documento lo pones tú. No emite factura del SRI.",
+        ),
+    ],
+    ("EC", "remodelacion"): [
+        (
+            "Reforma en Quito o Guayaquil, PDF por WhatsApp",
+            "Pack de estancia, tumbado y enlucido, productos con foto. Si hay cambios, reenvías total anterior y total nuevo. El cliente no se registra.",
+        ),
+    ],
+}
+
+
+FAQ_HUB: dict[tuple[str, str], list[dict]] = {
+    ("VE", "software-presupuestos"): [
+        {
+            "q": "¿Puedo presupuestar en USD y cobrar en bolívares?",
+            "a": "Sí. Cada presupuesto congela su moneda y su tasa. El PDF no se reescribe si mañana se mueve el tipo de cambio.",
+        },
+    ],
+    ("CO", "apu"): [
+        {
+            "q": "¿Este APU sirve para un contrato estatal con AIU?",
+            "a": "No. CotizaT no calcula AIU ni arma pliegos. El APU es para obra privada y remodelación, en COP, con NIT e IVA 19 %.",
+        },
+    ],
+    ("MX", "remodelacion"): [
+        {
+            "q": "¿Es un programa para cotizar remodelación en México o solo un generador de PDF?",
+            "a": "Arma la cotización con partidas, APU, opciones de producto y un PDF. No es un visor BIM ni emite CFDI.",
+        },
+    ],
+    ("PE", "software-presupuestos"): [
+        {
+            "q": "¿Incluye metrados?",
+            "a": "Sí: cantidades por partida y por zona. El APU es aparte, editable. El cierre puede ir en soles con IGV 18 %.",
+        },
+    ],
+    ("EC", "software-presupuestos"): [
+        {
+            "q": "¿Nace en dólares o convierte desde otra moneda?",
+            "a": "Nace en USD. Ecuador cotiza en dólares; no hay una conversión improvisada al registrarte.",
+        },
+    ],
+}
+
+
+# Preguntas de /legal/preguntas para JSON-LD (mismas respuestas que el HTML).
+FAQ_LEGAL: list[dict] = [
+    {
+        "q": "¿Qué es exactamente CotizaT?",
+        "a": "Una aplicación web para presupuestos de construcción y remodelación: catálogo con costes y APU, presupuestos por capítulos, margen interno y PDF por WhatsApp o email. No es un generador de documentos sueltos.",
+    },
+    {
+        "q": "¿CotizaT emite facturas fiscales?",
+        "a": "No. Los presupuestos y documentos de cobro son comerciales. No sustituyen una factura fiscal (DIAN, CFDI, SUNAT, SRI u otra).",
+    },
+    {
+        "q": "¿Puedo probarlo antes de pagar?",
+        "a": "Sí. 7 días de acceso completo, sin tarjeta. Una prueba por correo.",
+    },
+    {
+        "q": "¿El cliente tiene que registrarse?",
+        "a": "No. Envías el PDF por WhatsApp o email. El enlace privado es opcional.",
+    },
+    {
+        "q": "¿Cuánto cuesta?",
+        "a": "89 US$ al año de lanzamiento (habitual 109) o 9,99 US$ al mes el primer año. Sin permanencia.",
+    },
+]
+
+
+def extra_hub(codigo: str, tema: str) -> list[tuple[str, str]]:
+    return list(HUB_EXTRA.get((str(codigo or "").strip().upper(), str(tema or "").strip().lower()), ()))
+
+
+def faq_hub(codigo: str, tema: str) -> list[dict]:
+    return list(FAQ_HUB.get((str(codigo or "").strip().upper(), str(tema or "").strip().lower()), ()))
