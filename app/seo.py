@@ -428,6 +428,7 @@ _LANDING: dict[str, dict] = {
 
 def ficha_landing(codigo: str = "") -> dict:
     """Copy SEO de la landing (genérica o de un país del selector)."""
+    from .seo_articulos import articulo_de_pais
     from .seo_contenido import cuerpo_pais, lista_guias
 
     codigo = str(codigo or "").strip().upper()
@@ -442,6 +443,7 @@ def ficha_landing(codigo: str = "") -> dict:
         "canonical_path": ruta_pais(codigo),
         "cuerpo": cuerpo_pais(codigo),
         "guias": lista_guias(),
+        "articulo": articulo_de_pais(codigo),
     }
 
 
@@ -596,9 +598,13 @@ def _bloques_tema(codigo: str, tema: str) -> dict:
             ("Análisis de precios unitarios", ruta_pais(codigo, "apu")),
         ]
 
+    from .seo_articulos import articulo_de_pais
     from .seo_contenido import extra_hub, faq_hub
 
     body = list(body) + extra_hub(codigo, tema)
+    art = articulo_de_pais(codigo)
+    if art:
+        related = list(related) + [(art["h1"], "/guia/" + art["slug"])]
     faq_local = faq_hub(codigo, tema)
     faq = [
         {
@@ -793,6 +799,7 @@ def jsonld_articulo(guia: dict, request: Request | None = None) -> dict:
 
 def contexto_guia(request: Request, slug: str) -> dict | None:
     from .paises import lista_paises
+    from .seo_articulos import lista_articulos
     from .seo_contenido import ficha_guia, lista_guias
 
     guia = ficha_guia(slug)
@@ -821,6 +828,7 @@ def contexto_guia(request: Request, slug: str) -> dict | None:
         "seo": seo,
         "guia": guia,
         "guias": lista_guias(),
+        "articulos": lista_articulos(),
         "paises": lista_paises(),
         "origen_seo": origen,
         "canonical_url": origen + path,
@@ -1036,12 +1044,10 @@ def urls_sitemap(request: Request | None = None) -> list[dict]:
     add("/como-funciona", "0.7", "monthly")
     add("/pago", "0.6", "monthly")
     add("/mapa-del-sitio", "0.4", "monthly")
-    for slug in (
-        "presupuesto-de-obra",
-        "analisis-precios-unitarios",
-        "presupuesto-remodelacion",
-    ):
-        add(f"/guia/{slug}", "0.7", "monthly")
+    from .seo_contenido import lista_todas_guias
+
+    for guia in lista_todas_guias():
+        add(f"/guia/{guia['slug']}", "0.7", "monthly")
     for legal in ("preguntas", "terminos", "privacidad", "soporte", "licencias"):
         add(f"/legal/{legal}", "0.3", "yearly")
     return out

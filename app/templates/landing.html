@@ -823,6 +823,9 @@
     {% if pais_codigo %}
     · <a href="/{{ pais_codigo | lower }}/software-presupuestos">Software en {{ seo.nombre_pais }}</a>
     · <a href="/{{ pais_codigo | lower }}/apu">APU en {{ seo.nombre_pais }}</a>
+    {% if seo.articulo %}
+    · <a href="/guia/{{ seo.articulo.slug }}">{{ seo.articulo.h1 }}</a>
+    {% endif %}
     {% endif %}
   </p>
 </section>

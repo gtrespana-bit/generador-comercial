@@ -44,13 +44,23 @@
     </ul>
   </section>
   <section class="hub-bloque">
-    <h2>Guías</h2>
+    <h2>Guías (método)</h2>
     <ul>
       {% for g in guias %}
       <li><a href="/guia/{{ g.slug }}">{{ g.h1 }}</a></li>
       {% endfor %}
     </ul>
   </section>
+  {% if articulos is defined and articulos %}
+  <section class="hub-bloque">
+    <h2>Por oficio y país</h2>
+    <ul>
+      {% for g in articulos %}
+      <li><a href="/guia/{{ g.slug }}">{{ g.h1 }}</a></li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% endif %}
   <section class="hub-bloque">
     <h2>Legal</h2>
     <ul>

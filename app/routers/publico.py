@@ -218,11 +218,13 @@ def landing_publica(request: Request):
 def mapa_del_sitio(request: Request):
     from ..paises import lista_paises
     from ..seo import TEMAS, contexto_pagina_estatica
+    from ..seo_articulos import lista_articulos
     from ..seo_contenido import lista_guias
 
     ctx = contexto_pagina_estatica(request, "mapa-del-sitio")
     ctx["paises"] = lista_paises()
     ctx["guias"] = lista_guias()
+    ctx["articulos"] = lista_articulos()
     ctx["temas_seo"] = TEMAS
     return TEMPLATES.TemplateResponse(request, "mapa_sitio.html", ctx)
 

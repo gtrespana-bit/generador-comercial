@@ -208,6 +208,33 @@ def test_faq_legal_publica_schema_propio():
     assert "CotizaT: preguntas frecuentes del software" in html
 
 
+def test_articulos_de_pais_son_unicos_y_estan_en_sitemap():
+    from app.seo_articulos import ORDEN_ARTICULOS, lista_articulos
+
+    assert len(lista_articulos()) == 5
+    with _cliente() as client:
+        sm = client.get("/sitemap.xml").text
+        co = client.get("/guia/apu-panete-colombia")
+        mx = client.get("/guia/cotizar-remodelacion-mexico")
+        ve = client.get("/guia/presupuesto-usd-bs-venezuela")
+        pe = client.get("/guia/metrados-peru")
+        ec = client.get("/guia/apu-dolares-ecuador")
+        home_co = client.get("/co/").text
+    assert co.status_code == mx.status_code == ve.status_code == pe.status_code == ec.status_code == 200
+    assert "pañete" in co.text.lower()
+    assert "AIU" in co.text
+    assert "CFDI" in mx.text
+    assert "aplanado" in mx.text.lower()
+    assert "tasa" in ve.text.lower()
+    assert "metrado" in pe.text.lower()
+    assert "SRI" in ec.text
+    assert "hormigón" in ec.text.lower() or "hormigon" in ec.text.lower()
+    for slug in ORDEN_ARTICULOS:
+        assert f"/guia/{slug}" in sm
+    assert "/guia/apu-panete-colombia" in home_co
+    assert "<title>CotizaT:" in co.text
+
+
 def test_titulo_empieza_por_marca_y_describe_el_oficio():
     """En Google no puede aparecer solo «CotizaT»: hay que leer qué es."""
     from app.paises import ORDEN_SELECTOR

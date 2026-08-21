@@ -325,11 +325,22 @@ def cuerpo_pais(codigo: str) -> list[tuple[str, list[str]]]:
 
 
 def ficha_guia(slug: str) -> dict | None:
-    return GUIAS.get(str(slug or "").strip())
+    slug = str(slug or "").strip()
+    if slug in GUIAS:
+        return GUIAS[slug]
+    from .seo_articulos import ficha_articulo
+
+    return ficha_articulo(slug)
 
 
 def lista_guias() -> list[dict]:
     return [GUIAS[k] for k in ("presupuesto-de-obra", "analisis-precios-unitarios", "presupuesto-remodelacion")]
+
+
+def lista_todas_guias() -> list[dict]:
+    from .seo_articulos import lista_articulos
+
+    return lista_guias() + lista_articulos()
 
 
 # Bloques extra de las URLs /co/apu, /mx/remodelacion… Texto propio, no

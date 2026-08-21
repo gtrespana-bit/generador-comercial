@@ -43,13 +43,21 @@
   <section class="hub-relacionadas">
     <h2>Seguir</h2>
     <ul>
+      {% if guia.pais_path is defined %}
+      <li><a href="{{ guia.pais_path }}">{{ product_name }} en {{ guia.pais_nombre }}</a></li>
+      {% endif %}
+      {% if guia.related is defined %}
+      {% for nombre, ruta in guia.related %}
+      <li><a href="{{ ruta }}">{{ nombre }}</a></li>
+      {% endfor %}
+      {% endif %}
       {% for g in guias %}
       {% if g.slug != guia.slug %}
       <li><a href="/guia/{{ g.slug }}">{{ g.h1 }}</a></li>
       {% endif %}
       {% endfor %}
       <li><a href="/como-funciona">Cómo funciona {{ product_name }}</a></li>
-      <li><a href="/software-presupuestos">Software de presupuestos por país</a></li>
+      <li><a href="/mapa-del-sitio">Mapa del sitio</a></li>
     </ul>
   </section>
 </article>
