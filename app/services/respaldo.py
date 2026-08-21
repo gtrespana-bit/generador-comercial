@@ -102,7 +102,7 @@ CONFIG_IDENTIDAD = frozenset({
 CONFIG_PROCESO = frozenset({
     "onboarding_completado", "onboarding_modo", "onboarding_iniciado_at",
     "onboarding_completado_at", "onboarding_catalogo_revisado",
-    "onboarding_pdf_descargado", "primer_pdf_at",
+    "onboarding_pdf_descargado", "recorrido_inicial_oculto", "primer_pdf_at",
     "semilla_catalogo_aplicada", "version_catalogo",
     "semilla_productos_aplicada", "semilla_recetas_aplicada",
 })

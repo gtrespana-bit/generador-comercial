@@ -349,6 +349,54 @@ with TestClient(app) as client:
     assert resultado.returncode == 0, resultado.stderr
 
 
+def test_omitir_guia_inicio_la_oculta_del_panel(tmp_path):
+    """El botón «Omitir guía» quita la tarjeta del panel sin completar el recorrido.
+
+    Pensado para quien ya conoce la app o crea otra organización: la marca se
+    guarda por organización y no marca pasos como completados ni descarga un PDF.
+    """
+    db_path = tmp_path / "omitir.db"
+    script = """
+from fastapi.testclient import TestClient
+from app.main import app
+from app.database import SessionLocal
+from app.models import Configuracion
+with TestClient(app) as client:
+    fin = client.post('/bienvenida', data={
+        'empresa_nombre': 'Empresa Omitir',
+        'empresa_pais': 'Venezuela',
+        'moneda_default': 'USD',
+        'iva_default': '16',
+        'modo_inicio': 'demo',
+    }, follow_redirects=False)
+    assert fin.status_code == 303
+    panel = client.get('/inicio')
+    assert panel.status_code == 200
+    assert 'Llega a tu primer PDF en cinco pasos' in panel.text
+    assert 'action="/recorrido/omitir"' in panel.text
+    omitir = client.post('/recorrido/omitir', follow_redirects=False)
+    assert omitir.status_code == 303 and omitir.headers['location'] == '/inicio'
+    with SessionLocal() as db:
+        cfg = db.query(Configuracion).one()
+        assert cfg.recorrido_inicial_oculto is True
+        # Omitir no es «completar»: el PDF sigue sin descargarse.
+        assert cfg.onboarding_pdf_descargado is False
+    panel = client.get('/inicio')
+    assert 'Llega a tu primer PDF en cinco pasos' not in panel.text
+"""
+    env = os.environ.copy()
+    env["COTIZAT_DB"] = str(db_path)
+    env["PYTHONPATH"] = str(Path(__file__).resolve().parents[1])
+    resultado = subprocess.run(
+        [sys.executable, "-c", script],
+        cwd=Path(__file__).resolve().parents[1],
+        env=env,
+        text=True,
+        capture_output=True,
+    )
+    assert resultado.returncode == 0, resultado.stderr
+
+
 def test_plantilla_de_bienvenida_explica_ambos_modos():
     contenido = Path("app/templates/onboarding.html").read_text(encoding="utf-8")
     assert "Empezar con un ejemplo" in contenido

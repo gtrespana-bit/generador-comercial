@@ -69,8 +69,13 @@
       <h2 id="first-run-title">Llega a tu primer PDF en cinco pasos</h2>
       <p>Avanza con datos reales. El contenido de demostración no completa cliente, presupuesto ni PDF.</p>
     </div>
-    <div class="first-run-progress" aria-label="{{ recorrido_inicial.porcentaje }}% completado">
-      <strong>{{ recorrido_inicial.porcentaje }}%</strong><span>listo</span>
+    <div class="first-run-side">
+      <div class="first-run-progress" aria-label="{{ recorrido_inicial.porcentaje }}% completado">
+        <strong>{{ recorrido_inicial.porcentaje }}%</strong><span>listo</span>
+      </div>
+      <form method="post" action="/recorrido/omitir" class="first-run-dismiss">
+        <button type="submit" class="btn btn-sm btn-ghost" title="Ocultar la guía de inicio de este panel">Omitir guía</button>
+      </form>
     </div>
   </div>
   <div class="first-run-bar"><span data-cotizat-width="{{ recorrido_inicial.porcentaje }}"></span></div>
