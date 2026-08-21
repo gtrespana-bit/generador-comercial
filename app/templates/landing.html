@@ -4,25 +4,22 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   {% include "_seo_head.html" %}
-  {# El <h1> del hero pinta en Inter ExtraBold (800) y es el LCP: se precarga
-     junto a los pesos del hero para que el primer pintado use la fuente final. #}
+  {# El H1 es el LCP. Solo se descarga su peso 800; el resto del primer
+     viewport usa la fuente del sistema para no competir con el CSS crítico. #}
   <link rel="preload" href="{{ 'fonts/Inter-ExtraBold.woff2' | asset }}" as="font" type="font/woff2" crossorigin fetchpriority="high">
-  <link rel="preload" href="{{ 'fonts/Inter-SemiBold.woff2' | asset }}" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="{{ 'fonts/Inter-Medium.woff2' | asset }}" as="font" type="font/woff2" crossorigin>
   <link rel="icon" type="image/png" href="/static/icono.png">
   {# @font-face inline (antes venía de fonts.css): se elimina una petición
      bloqueante del camino crítico y las fuentes se descubren antes. #}
   <style nonce="{{ request.state.csp_nonce }}">
-@font-face{font-family:"Inter";font-style:normal;font-weight:400;font-display:swap;src:url("{{ 'fonts/Inter-Regular.woff2' | asset }}") format("woff2")}
-@font-face{font-family:"Inter";font-style:normal;font-weight:500;font-display:swap;src:url("{{ 'fonts/Inter-Medium.woff2' | asset }}") format("woff2")}
-@font-face{font-family:"Inter";font-style:normal;font-weight:600;font-display:swap;src:url("{{ 'fonts/Inter-SemiBold.woff2' | asset }}") format("woff2")}
-@font-face{font-family:"Inter";font-style:normal;font-weight:700;font-display:swap;src:url("{{ 'fonts/Inter-Bold.woff2' | asset }}") format("woff2")}
 @font-face{font-family:"Inter";font-style:normal;font-weight:800;font-display:swap;src:url("{{ 'fonts/Inter-ExtraBold.woff2' | asset }}") format("woff2")}
-@font-face{font-family:"Inter";font-style:italic;font-weight:400;font-display:swap;src:url("{{ 'fonts/Inter-Italic.woff2' | asset }}") format("woff2")}
   </style>
-  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}">
-  {# JS con defer: se descubre desde el <head> (en paralelo con CSS y fuentes)
-     y se ejecuta cuando el documento está parseado, igual que antes. #}
+  {% include "_landing_critical.html" %}
+  {# La hoja completa es mayoritariamente para contenido bajo el pliegue.
+     El CSS crítico anterior permite el primer pintado sin esperar esta descarga. #}
+  <link id="landing-full-css" rel="preload" href="{{ 'css/public.css' | asset }}" as="style">
+  <noscript><link rel="stylesheet" href="{{ 'css/public.css' | asset }}"></noscript>
+  {# JS externos con defer: no bloquean HTML ni el primer pintado. #}
+  <script nonce="{{ request.state.csp_nonce }}" defer src="{{ 'js/landing-css.js' | asset }}"></script>
   <script nonce="{{ request.state.csp_nonce }}" defer src="{{ 'js/pais_selector.js' | asset }}"></script>
   <script nonce="{{ request.state.csp_nonce }}" defer src="{{ 'js/landing-tour.js' | asset }}"></script>
 </head>
