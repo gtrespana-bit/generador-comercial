@@ -3,24 +3,27 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  {# El Speed Index de ~7 s no era la red: el filmstrip estaba en blanco
+     hasta que public.css (107 KB) se parseaba y se maquetaban ~1.200 nodos
+     (Style & Layout ~1,9 s). Diferir TODA la hoja, sin CSS del primer
+     viewport, provocaba un repintado global tardío peor todavía.
+     Aquí el hero (H1 = LCP) se pinta con CSS crítico inline; public.css
+     llega en paralelo sin bloquear y no redibuja el above-the-fold. #}
+  <style nonce="{{ request.state.csp_nonce }}">{% include "_landing_critical.css" %}</style>
+  <link rel="preload" href="{{ 'css/public.css' | asset }}" as="style">
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}" media="print" id="css-publico">
+  <script nonce="{{ request.state.csp_nonce }}">
+  (function () {
+    var el = document.getElementById("css-publico");
+    if (!el) return;
+    var activar = function () { el.media = "all"; };
+    el.addEventListener("load", activar);
+    if (el.sheet) activar();
+  })();
+  </script>
+  <noscript><link rel="stylesheet" href="{{ 'css/public.css' | asset }}"></noscript>
   {% include "_seo_head.html" %}
-  {# El H1 es el LCP: solo se descarga su peso 800; el resto del primer
-     viewport usa la fuente del sistema declarada en public.css. #}
-  <link rel="preload" href="{{ 'fonts/Inter-ExtraBold.woff2' | asset }}" as="font" type="font/woff2" crossorigin fetchpriority="high">
   <link rel="icon" type="image/png" href="/static/icono.png">
-  {# @font-face inline solo para el peso 800 (el H1). La landing no carga
-     fonts.css: pintar el texto con la fuente del sistema evita descargar
-     pesos que no se usan. #}
-  <style nonce="{{ request.state.csp_nonce }}">
-@font-face{font-family:"Inter";font-style:normal;font-weight:800;font-display:swap;src:url("{{ 'fonts/Inter-ExtraBold.woff2' | asset }}") format("woff2")}
-  </style>
-  {# Hoja única y bloqueante, igual que el resto de páginas públicas.
-     La carga diferida anterior (preload + JS que la activaba después de
-     cargar) provocaba un repintado global tardío de toda la página y un
-     Speed Index pésimo. Con un solo layout definitivo el contenido se pinta
-     de una vez, sin parpadeos ni reflow posterior. #}
-  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}">
-  {# JS externos con defer: no bloquean HTML ni el primer pintado. #}
   <script nonce="{{ request.state.csp_nonce }}" defer src="{{ 'js/pais_selector.js' | asset }}"></script>
   <script nonce="{{ request.state.csp_nonce }}" defer src="{{ 'js/landing-tour.js' | asset }}"></script>
 </head>
@@ -263,7 +266,7 @@
             {% for pr in ej.productos %}
             <div class="doc-partida dp-prod">
               <div class="dp-main">
-                <span class="dp-nombre"><img class="dp-img" src="{{ pr.img | asset }}" alt="{{ pr.nombre }}" width="46" height="34">{{ pr.nombre }}</span>
+                <span class="dp-nombre"><img class="dp-img" src="{{ pr.img | asset }}" alt="{{ pr.nombre }}" width="46" height="34" loading="lazy" decoding="async">{{ pr.nombre }}</span>
                 <span class="dp-cant">{{ pr.cant }}</span>
                 <span class="dp-precio">{{ pr.precio }}</span>
                 <span class="dp-importe">{{ pr.importe }}</span>
@@ -564,7 +567,7 @@
 
   <div class="tour-stage" id="tour-stage">
     <div class="tour-slides">
-      <div class="tour-slide">
+      <div class="tour-slide active">
         <div class="tour-visual">
           <div class="t-window">
             <div class="t-bar"><i></i><i></i><i></i></div>
@@ -661,7 +664,7 @@
     <div class="tour-nav">
       <button type="button" class="tour-btn" id="tour-prev" aria-label="Paso anterior">‹</button>
       <div class="tour-dots" role="tablist" aria-label="Pasos del recorrido">
-        <button type="button" class="tour-dot" role="tab" aria-label="Paso 1"></button>
+        <button type="button" class="tour-dot active" role="tab" aria-selected="true" aria-label="Paso 1"></button>
         <button type="button" class="tour-dot" role="tab" aria-label="Paso 2"></button>
         <button type="button" class="tour-dot" role="tab" aria-label="Paso 3"></button>
         <button type="button" class="tour-dot" role="tab" aria-label="Paso 4"></button>
@@ -930,5 +933,10 @@
   "tasa_fecha": {{ ej.tasa_fecha | tojson }},
   "iva": {{ ej.iva | tojson }}
 }</script>
+{% if seo is defined %}
+{% for bloque in jsonld_bloques %}
+<script type="application/ld+json" nonce="{{ request.state.csp_nonce }}">{{ bloque | tojson }}</script>
+{% endfor %}
+{% endif %}
 </body>
 </html>

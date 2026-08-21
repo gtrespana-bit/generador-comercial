@@ -10,8 +10,8 @@
   <link rel="alternate" hreflang="{{ alt.hreflang }}" href="{{ alt.href }}">
   {% endfor %}
   {# Las páginas que cargan fonts.css precargan los pesos 400/700. La landing
-     usa solo Inter-800 (declarado en su propio @font-face) y pide omitirlas
-     para no descargar ~48 KB que nunca pinta. #}
+     pinta con la fuente del sistema y pide omitirlas: un preload de Inter
+     compite con el CSS en el primer viewport y no llega a usarse. #}
   {% if not seo_skip_fonts %}
   <link rel="preload" href="{{ 'fonts/Inter-Regular.woff2' | asset }}" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="{{ 'fonts/Inter-Bold.woff2' | asset }}" as="font" type="font/woff2" crossorigin>
@@ -37,7 +37,12 @@
   <meta name="twitter:image" content="{{ og_image }}">
   <meta name="twitter:image:alt" content="{{ product_name }} — software de presupuestos de construcción para Latinoamérica">
   <meta name="theme-color" content="#123f78">
+  {# La landing aplaza el JSON-LD al final del body: en el <head> retrasaba
+     el descubrimiento de la hoja de estilos (el parser recorre varios KB
+     de schema antes de ver el <link>). #}
+  {% if not seo_defer_jsonld %}
   {% for bloque in jsonld_bloques %}
   <script type="application/ld+json" nonce="{{ request.state.csp_nonce }}">{{ bloque | tojson }}</script>
   {% endfor %}
+  {% endif %}
 {% endif %}
