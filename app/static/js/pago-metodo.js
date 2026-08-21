@@ -57,3 +57,28 @@
     }
   }
 })();
+
+/* Evita envíos duplicados mientras se abre el checkout alojado de Stripe. */
+(function () {
+  var checkout = document.querySelector("[data-stripe-checkout]");
+  if (!checkout) return;
+
+  checkout.addEventListener("submit", function () {
+    var boton = checkout.querySelector("button[type='submit']");
+    var texto = checkout.querySelector(".compra-stripe-button-text");
+    if (!boton || boton.disabled) return;
+
+    boton.disabled = true;
+    boton.classList.add("is-loading");
+    if (texto) texto.textContent = "Abriendo pago seguro…";
+  });
+})();
+
+/* El selector permite usar los canales del país desde el que se hará el pago. */
+(function () {
+  var selector = document.querySelector("[data-pais-pago-selector]");
+  if (!selector || !selector.form) return;
+  selector.addEventListener("change", function () {
+    selector.form.submit();
+  });
+})();

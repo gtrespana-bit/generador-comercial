@@ -20,6 +20,20 @@
 
   {% if error %}<div class="demo-error" role="alert"><strong>{{ error }}</strong></div>{% endif %}
 
+  <form method="GET" action="/pago/comprar" class="compra-pais" data-pais-pago>
+    <input type="hidden" name="plan" value="{{ plan }}">
+    <label for="pais-pago">País desde el que pagarás</label>
+    <div class="compra-pais-control">
+      <select id="pais-pago" name="pais" data-pais-pago-selector>
+        {% for pais in paises_pago %}
+        <option value="{{ pais.codigo }}" {% if pais.codigo == pais_pago.codigo %}selected{% endif %}>{{ pais.bandera }} {{ pais.nombre }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit" class="btn btn-secondary">Actualizar</button>
+    </div>
+    <p>Mostramos los medios disponibles para {{ pais_pago.nombre }}. Se ha seleccionado el país de tu organización; puedes cambiarlo si pagarás desde otro país.</p>
+  </form>
+
     <section class="compra-resumen">
       <div class="compra-plan">
         <span class="etiqueta">{{ plan_ficha.etiqueta }}</span>
@@ -39,17 +53,37 @@
     </section>
 
   {% if stripe_disponible %}
-  <form method="POST" action="/pago/stripe/checkout" class="compra-stripe">
+  <form method="POST" action="/pago/stripe/checkout" class="compra-stripe" data-stripe-checkout>
     <input type="hidden" name="plan" value="{{ plan }}">
-    <h2>Pagar con tarjeta</h2>
-    <p>Visa, Mastercard, American Express, Apple Pay y Google Pay. La licencia se activa al confirmar el cobro. El plan se renueva solo; puedes cancelar cuando quieras y conservas el período ya pagado.</p>
-    <button type="submit" class="btn btn-primary">Pagar {{ "%.2f"|format(plan_ficha.importe) }} US$ con tarjeta</button>
+    <div class="compra-stripe-head">
+      <span class="compra-stripe-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 10h18"></path><path d="M7 15h3"></path></svg>
+      </span>
+      <div>
+        <span class="compra-stripe-eyebrow">Pago inmediato</span>
+        <h2>Paga de forma segura con tarjeta</h2>
+        <p>Serás redirigido al checkout seguro de Stripe para completar el pago.</p>
+      </div>
+    </div>
+
+    <div class="compra-stripe-marcas" aria-label="Métodos aceptados">
+      <span>Visa</span><span>Mastercard</span><span>American Express</span><span>Apple Pay</span><span>Google Pay</span>
+    </div>
+
+    <button type="submit" class="btn compra-stripe-button">
+      <svg class="compra-stripe-lock" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>
+      <span class="compra-stripe-button-text">Pagar {{ "%.2f"|format(plan_ficha.importe) }} US$ con tarjeta</span>
+      <svg class="compra-stripe-arrow" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg>
+    </button>
+    <p class="compra-stripe-security"><span aria-hidden="true">✓</span> Cobro protegido y procesado por Stripe. Tu tarjeta no pasa por nuestros servidores.</p>
+    <p class="compra-stripe-terms">La licencia se activa al confirmar el cobro. El plan se renueva solo; puedes cancelarlo cuando quieras y conservarás el período ya pagado.</p>
   </form>
   <p class="compra-o">o paga por transferencia / cripto</p>
   {% endif %}
 
   <form method="POST" action="/pago/comprar" enctype="multipart/form-data" class="compra-form">
     <input type="hidden" name="plan" value="{{ plan }}">
+    <input type="hidden" name="pais_pago" value="{{ pais_pago.codigo }}">
 
     <section class="compra-metodos">
       <h2>1. Elige cómo vas a pagar</h2>

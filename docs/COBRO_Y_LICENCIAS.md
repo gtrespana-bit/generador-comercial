@@ -179,10 +179,19 @@ cada renovación habría acabado en soporte.
 La solución es una segunda puerta, `get_db_renovacion` (`app/database.py`), que
 hace exactamente lo mismo que `get_db` —sesión, membresía, organización activa,
 RLS de tenant— **menos** comprobar la vigencia de la licencia. La usan solo las
-cuatro rutas de `app/routers/pagos.py` que hacen falta para renovar; ninguna de
-ellas expone datos de negocio (presupuestos, clientes, catálogo). El resto del
-producto sigue detrás de `get_db`. La pantalla «Acceso suspendido» ofrece ahora
-el botón «Renovar mi plan».
+seis rutas privadas de `app/routers/pagos.py` que hacen falta para renovar;
+ninguna de ellas expone datos de negocio (presupuestos, clientes, catálogo). El
+resto del producto sigue detrás de `get_db`. La pantalla «Acceso suspendido»
+ofrece ahora el botón «Renovar mi plan». La página pública `/pago` tampoco abre
+contexto de organización, de modo que permanece disponible aun con el corte
+activado.
+
+**Actualización 21/08/2026.** Los métodos visibles se filtran por el país desde
+el que se realizará el pago: Venezuela mantiene Pago móvil, Binance, Kontigo y
+USDT; México, Colombia y el resto de mercados soportados muestran tarjeta
+Stripe y USDT. Ambas pantallas de compra disponen de selector de país y el
+servidor rechaza métodos manuales no habilitados. La especificación operativa
+está en [`PAGOS_POR_PAIS.md`](PAGOS_POR_PAIS.md).
 
 Que esas rutas —y solo esas— usen la puerta sin corte no se deja a la memoria:
 `tests/test_licencias_acceso.py` lo comprueba recorriendo el árbol de rutas de

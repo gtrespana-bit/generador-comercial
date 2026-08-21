@@ -336,6 +336,22 @@ def pagina_legal(pagina: str, request: Request):
 # Página de planes y métodos de pago
 # ---------------------------------------------------------------------------
 
+def _pais_pago_publico(request: Request) -> str:
+    """País para la página pública de cobro: selector o preferencia guardada.
+
+    Esta ruta no debe abrir una sesión de organización: tiene que seguir
+    disponible para renovar aun cuando la licencia esté suspendida.
+    """
+    from ..paises import PAISES
+
+    elegido = str(request.query_params.get("pais") or "").strip().upper()
+    if elegido in PAISES:
+        return elegido
+
+    preferido = str(request.cookies.get("cotizat_pais") or "").strip().upper()
+    return preferido if preferido in PAISES else "VE"
+
+
 @router.get("/pago", response_class=HTMLResponse, include_in_schema=False)
 def pagina_pago(request: Request):
     """Página pública de planes y métodos de pago.
@@ -345,10 +361,17 @@ def pagina_pago(request: Request):
     esta pantalla y merece saber por qué, en vez de encontrarse una lista de
     precios sin contexto.
     """
+    from ..paises import PAISES, lista_paises
+
+    codigo_pais = _pais_pago_publico(request)
     return TEMPLATES.TemplateResponse(
         request,
         "pago.html",
-        {"msg": request.query_params.get("msg", "")[:300]},
+        {
+            "msg": request.query_params.get("msg", "")[:300],
+            "pais_pago": PAISES[codigo_pais],
+            "paises_pago": lista_paises(),
+        },
     )
 
 

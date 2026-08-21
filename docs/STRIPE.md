@@ -49,6 +49,18 @@ pagado.
 Sin estas variables el botón de tarjeta no aparece: el cobro manual sigue
 funcionando.
 
+## Países y presentación del checkout
+
+La tarjeta Stripe se ofrece internacionalmente cuando la clave está configurada.
+Los métodos manuales sí se filtran por país: Venezuela ve Pago móvil, Binance,
+Kontigo y USDT; el resto de países soportados ve solamente USDT. Las pantallas
+`/pago` y `/pago/comprar` incluyen un selector de país y el servidor vuelve a
+validar la disponibilidad del método manual antes de registrar la compra.
+
+La matriz, la prioridad de selección de país, el diseño del bloque de Stripe y
+el recorrido de renovación se documentan en
+[`PAGOS_POR_PAIS.md`](PAGOS_POR_PAIS.md).
+
 ## Pruebas
 
 Tarjetas de test de Stripe: `4242 4242 4242 4242`, cualquier fecha futura,
