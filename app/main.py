@@ -7,7 +7,6 @@ monta la aplicación, los middlewares, los manejadores de excepción, los
 estáticos y las rutas de sistema (salud y favicon).
 """
 import logging
-import os
 import zipfile
 from contextlib import asynccontextmanager
 from datetime import datetime
@@ -44,7 +43,7 @@ from .database import (  # noqa: E402
     init_db,
 )
 from .models import LicenciaSuspendidaError, PermisoOrganizacionError  # noqa: E402
-from .security import AuthRateLimitMiddleware, WebSecurityMiddleware  # noqa: E402
+from .security import AuthRateLimitMiddleware, WebSecurityMiddleware, confia_en_proxy  # noqa: E402
 from .services.invitations import GestionEquipoError  # noqa: E402
 from .services.operacion import RegistroErroresMiddleware  # noqa: E402
 from .storage import StorageError  # noqa: E402
@@ -176,8 +175,9 @@ app.add_middleware(FormulariosUTF8Middleware)
 app.add_middleware(RefreshedAuthCookieMiddleware)
 app.add_middleware(
     AuthRateLimitMiddleware,
-    trust_forwarded_for=os.environ.get("COTIZAT_TRUST_PROXY", "").strip().lower()
-    in {"1", "true", "yes", "on"},
+    # Misma interpretación de COTIZAT_TRUST_PROXY que confia_en_proxy():
+    # una única fuente de verdad para la IP del rate-limit y la de auditoría.
+    trust_forwarded_for=confia_en_proxy(),
 )
 app.add_middleware(WebSecurityMiddleware, enforce_csrf=not DATABASE_IS_SQLITE)
 # Añadido el último para quedar en la capa exterior: así ve cualquier
