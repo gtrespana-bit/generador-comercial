@@ -13,6 +13,12 @@ from .ratelimit import MemoryRateLimit, RateLimitBackend, build_rate_limiter
 
 _UNSAFE_METHODS = {"POST", "PUT", "PATCH", "DELETE"}
 
+#: Valores que se interpretan como «confiar en el proxy» para
+#: ``COTIZAT_TRUST_PROXY``. Es la ÚNICA fuente de verdad: tanto
+#: ``confia_en_proxy()`` (auditoría/IP del registro) como el middleware de
+#: rate-limit resuelven aquí, para que ambas decisiones nunca divergan.
+_VALORES_VERDADEROS_PROXY = frozenset({"1", "true", "yes", "on", "si", "sí"})
+
 #: Escrituras que no vienen del navegador. El webhook de Stripe firma el
 #: cuerpo con ``Stripe-Signature``; exigirle Origin same-origin lo rompería.
 _CSRF_EXENTAS = frozenset({"/pago/stripe/webhook"})
@@ -80,14 +86,15 @@ def confia_en_proxy() -> bool:
     Solo detrás de un proxy propio que la reescriba (Vercel). Expuesto
     directamente a internet, cualquiera la falsifica y la IP deja de valer
     nada.
+
+    Usa la misma lista de valores que el middleware de rate-limit
+    (``_VALORES_VERDADEROS_PROXY``), de modo que la IP de auditoría y la de
+    limitación nunca diverjan por interpretar distinto el mismo flag.
     """
-    return (os.environ.get("COTIZAT_TRUST_PROXY", "").strip().lower()) in {
-        "1",
-        "true",
-        "on",
-        "si",
-        "sí",
-    }
+    return (
+        os.environ.get("COTIZAT_TRUST_PROXY", "").strip().lower()
+        in _VALORES_VERDADEROS_PROXY
+    )
 
 
 def _resolver_ip(cabecera: str, host: str, confiar: bool, defecto: str) -> str:

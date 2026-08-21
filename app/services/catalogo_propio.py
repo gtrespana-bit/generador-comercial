@@ -908,7 +908,10 @@ _RENOMBRADOS_PATRON = {
     "Revestimiento de frente de bañera con enchapado.": "Enchapado de frente de bañera con pieza cerámica, en capa fina.",
     "Revestimiento de columna con pieza cerámica.": "Enchapado de columna con pieza cerámica, en capa fina.",
     "Zócalo cerámico de pared.": "Rodapié cerámico de pared.",
-    "Zócalo de piedra natural.": "Rodapié de piedra natural.",
+    # Nótese que 12.03.02.040 se titula "Zócalo de piedra natural." en el
+    # catálogo (sección Enchapados de pared) y 12.06.01.080 "Rodapié de
+    # piedra natural." (sección Rodapiés). Son dos partidas distintas y con
+    # títulos únicos; NO se normalizan entre sí para no colisionarlas.
     "Colocación de piso cerámico o porcelanato de formato estándar, en capa fina.": "Piso cerámico o porcelanato de formato estándar, en capa fina.",
     "Colocación de piso de porcelanato de gran formato, en capa fina.": "Piso de porcelanato de gran formato, en capa fina.",
     "Salpicadero de cocina entre muebles.": "Enchapado de salpicadero de cocina entre muebles, en capa fina.",
@@ -944,8 +947,6 @@ def _normalizar_nombres_patron(db: Session) -> int:
                     p.descripcion = p.descripcion.replace("Revestimiento de columna", "Enchapado de columna")
                 elif "zócalo cerámico" in p.descripcion.lower():
                     p.descripcion = p.descripcion.replace("zócalo cerámico", "rodapié cerámico").replace("Zócalo cerámico", "Rodapié cerámico")
-                elif "zócalo de piedra" in p.descripcion.lower():
-                    p.descripcion = p.descripcion.replace("zócalo de piedra", "rodapié de piedra").replace("Zócalo de piedra", "Rodapié de piedra")
             total += 1
     # Recursos
     for viejo, nuevo in _RECURSOS_RENOMBRADOS.items():
