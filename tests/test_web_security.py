@@ -240,6 +240,8 @@ def test_toda_ruta_comercial_exige_sesion_salvo_fronteras_publicas_o_locales():
         ("GET", "/conocer"),
         ("GET", "/como-funciona"),
         ("GET", "/legal/{pagina}"),
+        # Webhook de Stripe: autenticado por Stripe-Signature, no por sesión.
+        ("POST", "/pago/stripe/webhook"),
     }
     # El panel de operador usa su propia dependencia, que además de exigir
     # sesión comprueba COTIZAT_OPERADORES. Se declara aquí para que la

@@ -21,8 +21,8 @@ from sqlalchemy.orm import Session
 
 from ..datos_pago import (
     ESTADOS_COMPRA,
-    METODOS_PAGO,
     PLANES,
+    metodo_conocido,
     metodo_info,
     plan_info,
 )
@@ -41,7 +41,7 @@ def _plan_valido(plan: str) -> bool:
 
 
 def _metodo_valido(metodo: str) -> bool:
-    return metodo in METODOS_PAGO
+    return metodo_conocido(metodo)
 
 
 def crear_compra(
@@ -56,12 +56,15 @@ def crear_compra(
     comprobante_mime: str,
     creada_por_usuario_id: int | None,
     creada_por_email: str,
+    exigir_comprobante: bool = True,
+    stripe_checkout_session_id: str | None = None,
 ) -> CompraPlan:
     """Registra una compra pendiente con su comprobante.
 
     No valida el comprobante (eso lo hace la ruta antes de guardarlo en el
     almacenamiento); aquí solo se exige que la referencia exista y que los
-    campos de plan/método sean válidos.
+    campos de plan/método sean válidos. Stripe no pide comprobante: el
+    webhook es la prueba del cobro (``exigir_comprobante=False``).
     """
     plan = str(plan or "").strip().lower()
     metodo_pago = str(metodo_pago or "").strip().lower()
@@ -69,7 +72,7 @@ def crear_compra(
         raise GestionCompraError("El plan indicado no existe.")
     if not _metodo_valido(metodo_pago):
         raise GestionCompraError("El método de pago indicado no existe.")
-    if not comprobante_reference:
+    if exigir_comprobante and not comprobante_reference:
         raise GestionCompraError(
             "Adjunta el comprobante de pago para continuar."
         )
@@ -93,6 +96,10 @@ def crear_compra(
         creada_por_usuario_id=creada_por_usuario_id,
         creada_por_email=str(creada_por_email or ""),
     )
+    if stripe_checkout_session_id:
+        # Se fija en el INSERT: RLS no deja al cliente hacer UPDATE de
+        # ``compras_plan`` (solo el operador activa/rechaza).
+        compra.stripe_checkout_session_id = str(stripe_checkout_session_id)[:255]
     db.add(compra)
     db.flush()
     return compra
@@ -111,12 +118,15 @@ def activar_compra(
     compra_id: int,
     operador_email: str,
     hoy=None,
+    exigir_comprobante: bool = True,
 ) -> tuple[CompraPlan, Licencia]:
     """Verifica una compra pendiente y concede la licencia del plan.
 
     Valida que la compra esté pendiente (no se puede activar dos veces),
     llama a ``crear_licencia`` con el importe real del plan y enlaza la
     licencia resultante a la compra. Devuelve ``(compra, licencia)``.
+    Stripe no trae comprobante: el webhook llama con
+    ``exigir_comprobante=False``.
     """
     from datetime import date
 
@@ -126,7 +136,7 @@ def activar_compra(
         raise GestionCompraError(
             f"La compra ya está {compra.etiqueta_estado.lower()}."
         )
-    if not compra.comprobante_reference:
+    if exigir_comprobante and not compra.comprobante_reference:
         raise GestionCompraError(
             "La compra no tiene comprobante adjunto; no se puede activar."
         )

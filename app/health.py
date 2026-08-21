@@ -268,6 +268,12 @@ def readiness(engine: Engine | None = None) -> HealthStatus:
     email_state, _email_error = _check_email_configuration()
     checks["email"] = email_state
 
+    # Informativo: sin Stripe el cobro manual sigue funcionando.
+    from .services.stripe import estado_configuracion_stripe
+
+    stripe_state, _stripe_error = estado_configuracion_stripe()
+    checks["stripe"] = stripe_state
+
     # Informativo: el cron de Vercel depende de `CRON_SECRET` y de que el
     # despliegue de producción contenga el vercel.json con `crons`. Sin cron
     # la aplicación funciona igual, así que nunca añade errores al readiness.

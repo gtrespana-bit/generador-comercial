@@ -20,9 +20,6 @@
 
   {% if error %}<div class="demo-error" role="alert"><strong>{{ error }}</strong></div>{% endif %}
 
-  <form method="POST" action="/pago/comprar" enctype="multipart/form-data" class="compra-form">
-    <input type="hidden" name="plan" value="{{ plan }}">
-
     <section class="compra-resumen">
       <div class="compra-plan">
         <span class="etiqueta">{{ plan_ficha.etiqueta }}</span>
@@ -34,8 +31,25 @@
           {% endfor %}
         </ul>
       </div>
+      {% if stripe_disponible %}
+      <p class="compra-nota">Paga con tarjeta y el plan se activa al instante. Si prefieres Pago móvil, Binance, Kontigo o USDT, usa el formulario de abajo.</p>
+      {% else %}
       <p class="compra-nota">Pago manual: elige el método, paga y sube tu comprobante. Lo revisamos y activamos tu plan.</p>
+      {% endif %}
     </section>
+
+  {% if stripe_disponible %}
+  <form method="POST" action="/pago/stripe/checkout" class="compra-stripe">
+    <input type="hidden" name="plan" value="{{ plan }}">
+    <h2>Pagar con tarjeta</h2>
+    <p>Visa, Mastercard, American Express, Apple Pay y Google Pay. La licencia se activa al confirmar el cobro. El plan se renueva solo; puedes cancelar cuando quieras y conservas el período ya pagado.</p>
+    <button type="submit" class="btn btn-primary">Pagar {{ "%.2f"|format(plan_ficha.importe) }} US$ con tarjeta</button>
+  </form>
+  <p class="compra-o">o paga por transferencia / cripto</p>
+  {% endif %}
+
+  <form method="POST" action="/pago/comprar" enctype="multipart/form-data" class="compra-form">
+    <input type="hidden" name="plan" value="{{ plan }}">
 
     <section class="compra-metodos">
       <h2>1. Elige cómo vas a pagar</h2>

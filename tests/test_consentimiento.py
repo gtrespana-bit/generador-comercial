@@ -503,8 +503,10 @@ def test_la_migracion_encadena_con_la_cabeza_anterior(migracion):
     from migrations.versions import (
         a4c8e2f7b1d6_market_price_evidence as evidencia_migracion,
         b9f4d8a2c6e1_rendimiento_indices_calientes as indices_migracion,
+        c3e9a1b7d4f2_stripe_checkout as stripe_migracion,
     )
-    assert evidencia_migracion.revision == EXPECTED_ALEMBIC_HEAD
+    assert stripe_migracion.revision == EXPECTED_ALEMBIC_HEAD
+    assert stripe_migracion.down_revision == evidencia_migracion.revision
     assert evidencia_migracion.down_revision == indices_migracion.revision
     assert indices_migracion.down_revision == precios_migracion.revision
     assert precios_migracion.down_revision == merge_migracion.revision

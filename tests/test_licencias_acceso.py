@@ -914,6 +914,8 @@ def test_las_rutas_de_compra_usan_la_puerta_sin_corte():
         ("/pago/comprar", "POST"),
         ("/pago/confirmacion", "GET"),
         ("/pago/recibo/{compra_id}.pdf", "GET"),
+        ("/pago/stripe/checkout", "POST"),
+        ("/pago/stripe/exito", "GET"),
     }
     def _recorrer(rutas):
         """FastAPI envuelve los routers incluidos; hay que bajar un nivel."""

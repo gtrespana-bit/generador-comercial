@@ -8,6 +8,11 @@ Fecha: **16/08/2026**. Documento de decisión: recoge la investigación.
 > recibo PDF, corte automático con `COTIZAT_EXIGIR_LICENCIA` y avisos de
 > vencimiento por correo (ver `docs/PANEL_DE_OPERADOR.md` §6 y
 > `docs/PROCESO_PILOTOS.md`).
+>
+> **Actualización 20/08/2026.** Stripe Checkout está integrado (tarjeta, Apple
+> Pay, Google Pay) junto al cobro manual. No sustituye Pago móvil ni cripto:
+> Stripe no opera métodos locales en Venezuela, Colombia o Perú. Pasos de
+> panel en `docs/STRIPE.md`.
 
 > Aviso: esto no es asesoramiento fiscal ni legal. Antes de cobrar al primer
 > cliente conviene una consulta con un asesor en España (y, si se factura desde

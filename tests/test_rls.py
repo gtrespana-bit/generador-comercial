@@ -160,8 +160,10 @@ def test_head_exigido_por_runtime_coincide_con_alembic():
     """
     from migrations.versions import a4c8e2f7b1d6_market_price_evidence as evidence_migration
     from migrations.versions import b9f4d8a2c6e1_rendimiento_indices_calientes as indices_migration
+    from migrations.versions import c3e9a1b7d4f2_stripe_checkout as stripe_migration
     from migrations.versions import c5d6e7f8a9b0_merge_currency_heads as merge_migration
-    assert database_module.EXPECTED_ALEMBIC_HEAD == evidence_migration.revision
+    assert database_module.EXPECTED_ALEMBIC_HEAD == stripe_migration.revision
+    assert stripe_migration.down_revision == evidence_migration.revision
     assert evidence_migration.down_revision == indices_migration.revision
     assert indices_migration.down_revision == market_prices_migration.revision
     assert market_prices_migration.down_revision == merge_migration.revision

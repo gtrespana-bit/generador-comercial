@@ -600,10 +600,15 @@ def activar_compra_web(
     from ..services.compras import GestionCompraError, activar_compra
 
     try:
+        compra_previa = db.get(CompraPlan, compra_id)
         compra, licencia = activar_compra(
             db,
             compra_id=compra_id,
             operador_email=str(db.info.get("auth_email") or ""),
+            exigir_comprobante=(
+                compra_previa is None
+                or compra_previa.metodo_pago != "stripe"
+            ),
         )
         db.commit()
     except (GestionCompraError, ValueError) as exc:
@@ -636,7 +641,7 @@ def _avisar_activacion_al_cliente(db: Session, compra, licencia) -> str:
     operador con un 500 tras haber concedido la licencia sería mucho peor que
     un aviso no entregado.
     """
-    from ..datos_pago import METODOS_PAGO, PLANES
+    from ..datos_pago import PLANES, metodo_info
     from ..services.email import (
         EmailNotConfigured,
         EmailSendError,
@@ -652,7 +657,10 @@ def _avisar_activacion_al_cliente(db: Session, compra, licencia) -> str:
         Organizacion, compra.organizacion_id
     )
     plan_nombre = str(PLANES.get(compra.plan, {}).get("nombre") or "Tu plan")
-    metodo_nombre = str(METODOS_PAGO.get(compra.metodo_pago, {}).get("nombre") or "")
+    try:
+        metodo_nombre = str(metodo_info(compra.metodo_pago)["nombre"])
+    except KeyError:
+        metodo_nombre = ""
 
     # El recibo es opcional: si no se puede generar, el aviso sale igual.
     recibo_pdf = b""

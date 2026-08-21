@@ -91,7 +91,7 @@ DATABASE_URL = DATABASE.url
 DATABASE_BACKEND = DATABASE.backend
 DATABASE_IS_SQLITE = DATABASE.is_sqlite
 DB_PATH = DATABASE.sqlite_path
-EXPECTED_ALEMBIC_HEAD = "a4c8e2f7b1d6"
+EXPECTED_ALEMBIC_HEAD = "c3e9a1b7d4f2"
 
 # Copias de seguridad automáticas y manuales (solo corresponden al modo
 # SQLite local; PostgreSQL tendrá backups administrados fuera del proceso).
@@ -265,6 +265,24 @@ def get_operator_db(request: Request = None):
             # Mismo mensaje que cualquier otro acceso denegado: no confirma la
             # existencia del panel a quien no debe usarlo.
             raise OrganizationAccessDenied("No tienes acceso a esta sección.")
+        yield db
+    finally:
+        db.close()
+
+
+def get_stripe_webhook_db():
+    """Sesión para el webhook de Stripe.
+
+    Stripe no es una sesión de usuario: la puerta de seguridad es la firma
+    ``Stripe-Signature`` que la ruta verifica **antes** de escribir. La
+    sesión se marca como operador porque ``compras_plan`` solo admite UPDATE
+    de operador (RLS) y ``licencias`` solo se inserta con esa marca. Funciona
+    también en SQLite para que la suite pueda ejercitar el cumplimiento.
+    """
+    db = SessionLocal()
+    try:
+        db.info["es_operador"] = True
+        db.info["auth_email"] = "stripe@cotizat.local"
         yield db
     finally:
         db.close()
