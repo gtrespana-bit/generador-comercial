@@ -3,6 +3,11 @@
   "_como_funciona": "«de» es lo que se busca y «a» lo que se escribe. La sustitución respeta mayúscula inicial y plurales simples. «codigos» renombra además el código del recurso, y el cambio se arrastra a todas las partidas que lo usan.",
   "cambios": [
     {
+      "de": "alicatado",
+      "a": "enchapado",
+      "motivo": "Peninsular alicatado = VE enchapado. Unifica patrón 12.03.01 y permite buscar 'enchape' (CO) vía sinonimos."
+    },
+    {
       "de": "zzz-no-tocar-texto-zzz",
       "a": "zzz-no-tocar-texto-zzz",
       "motivo": "Reparación: solo renombra el código del soldador, que un replace literal había roto al casar con el prefijo del solador.",
@@ -31,7 +36,8 @@
     "baldosín": "cerámica",
     "arqueta": "boca de visita",
     "albañal": "colector",
-    "bajante de fecales": "bajante de aguas negras"
+    "bajante de fecales": "bajante de aguas negras",
+    "alicatado": "enchapado"
   },
   "_matizados": {
     "_comentario": "Palabras correctas en un contexto e incorrectas en otro. La auditoría las cuenta y avisa, pero no las marca como error.",

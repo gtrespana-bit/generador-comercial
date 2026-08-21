@@ -104,7 +104,7 @@
     {"capitulos": ["11"], "principal": "claraboya", "alias": ["lucernario", "tragaluz", "skylight"]},
     {"capitulos": ["12"], "principal": "friso", "alias": ["revoque", "repello", "pañete", "enfoscado"]},
     {"capitulos": ["12"], "principal": "enlucido", "alias": ["acabado fino", "alisado", "lucido", "estuco base"]},
-    {"capitulos": ["12"], "principal": "enchapado", "alias": ["alicatado", "revestimiento de pared", "chapado"]},
+    {"capitulos": ["12"], "principal": "enchapado", "alias": ["alicatado", "revestimiento de pared", "chapado", "enchape"]},
     {"capitulos": ["12"], "principal": "ceramica", "alias": ["baldosa ceramica", "azulejo", "loseta", "porcelanato"]},
     {"capitulos": ["12"], "principal": "piso", "alias": ["suelo", "pavimento", "solado", "revestimiento de piso"]},
     {"capitulos": ["12"], "principal": "afirmado", "alias": ["contrapiso", "recrecido", "base de piso", "carpeta de nivelacion"]},
