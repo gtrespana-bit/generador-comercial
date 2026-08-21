@@ -137,16 +137,30 @@
             <span class="subcat-name">Todas ({{ cap.total }})</span>
           </a>
           {% for sub in cap.subcapitulos %}
-          <a class="subcat-btn drop-subcategory {% if subcategoria_actual == sub.subcategoria %}active{% endif %}" href="/partidas?categoria={{ cap.categoria|urlencode }}&subcategoria={{ sub.subcategoria|urlencode }}{% if vista == 'ocultas' %}&vista=ocultas{% endif %}" title="{{ sub.subcategoria_display }} · {{ sub.total }} partidas">
-            <span class="subcat-name">{{ sub.subcategoria_display }}</span>
-            <span class="subcat-count">{{ sub.total }}</span>
-          </a>
+          <div class="subcat-with-apartados">
+            <a class="subcat-btn drop-subcategory {% if subcategoria_actual == sub.subcategoria and not apartado_actual %}active{% endif %}" href="/partidas?categoria={{ cap.categoria|urlencode }}&subcategoria={{ sub.subcategoria|urlencode }}{% if vista == 'ocultas' %}&vista=ocultas{% endif %}" title="{{ sub.subcategoria_display }} · {{ sub.total }} partidas">
+              <span class="subcat-name">{{ sub.subcategoria_display }}</span>
+              <span class="subcat-count">{{ sub.total }}</span>
+            </a>
+            {% if sub.apartados %}
+            <div class="apartado-list">
+              {% for ap in sub.apartados %}
+              {% if ap.total > 0 or apartado_actual == ap.apartado %}
+              <a class="apartado-btn {% if apartado_actual == ap.apartado %}active{% endif %}" href="/partidas?categoria={{ cap.categoria|urlencode }}&subcategoria={{ sub.subcategoria|urlencode }}&apartado={{ ap.apartado|urlencode }}{% if vista == 'ocultas' %}&vista=ocultas{% endif %}" title="{{ ap.apartado_display }} · {{ ap.total }} partidas">
+                <span class="apartado-name">{{ ap.nombre_display or ap.apartado_display }}</span>
+                <span class="apartado-count">{{ ap.total }}</span>
+              </a>
+              {% endif %}
+              {% endfor %}
+            </div>
+            {% endif %}
+          </div>
           {% endfor %}
         </div>
       </details>
       {% endfor %}
       <div class="sidebar-help">
-        <span class="hint">💡 Clic en un capítulo para ver sus subcapítulos. Clic en un subcapítulo para filtrar. Combina con el buscador.</span>
+        <span class="hint">💡 Navega capítulo → subcapítulo → apartado. El subcapítulo “Pisos, pavimentos y sus bases” ahora desglosa por apartados (01 Bases, 03 Pisos cerámicos…) en lugar de un único bloque. Clic en cualquiera para filtrar.</span>
       </div>
     </div>
   </aside>
@@ -158,8 +172,8 @@
 
   <!-- CONTENIDO PRINCIPAL -->
   <div class="catalog-main" id="catalogMain">
-    {% if q or subcategoria_actual %}
-    {# Vista directa: resultados de búsqueda o una subcategoría concreta. #}
+    {% if q or subcategoria_actual or apartado_actual %}
+    {# Vista directa: búsqueda o filtro por subcapítulo/apartado. Agrupa por capítulo → subcapítulo → apartado. #}
     {% for cat, cat_partidas in partidas | groupby('categoria') %}
     {% set sub_groups = cat_partidas|groupby('subcategoria') %}
     <section class="cat-section" data-categoria="{{ cat }}" id="group-{{ cat|replace(' ', '_') }}">
@@ -167,7 +181,7 @@
         <button class="cat-toggle" aria-label="Contraer">▼</button>
         <div class="cat-title-wrap">
           <h2 class="cat-title"><span class="cat-dot"></span> {{ cat }}</h2>
-          <span class="cat-meta">{{ cat_partidas|length }} partidas{% if sub_groups|length > 1 %} · {{ sub_groups|length }} subcategorías{% endif %}</span>
+          <span class="cat-meta">{{ cat_partidas|length }} partidas{% if sub_groups|length > 1 %} · {{ sub_groups|length }} subcapítulos{% endif %}</span>
         </div>
         <span class="cat-badge">{{ cat_partidas|length }}</span>
       </header>
@@ -176,19 +190,32 @@
         <div class="subcat-section" data-categoria="{{ cat }}" data-subcategoria="{{ subcat }}">
           <header class="subcat-head drop-subcategory" data-cotizat-click="partidas-toggle-subcategory">
             <span class="subcat-toggle">▼</span>
-            <span class="subcat-label">{{ subcat if (subcat|string).strip() != "" else "Sin subcategoría" }}</span>
+            <span class="subcat-label">{{ subcat if (subcat|string).strip() != "" else "Sin subcapítulo" }}</span>
             <span class="subcat-count-badge">{{ sub_partidas|length }}</span>
             <span class="subcat-hint">{{ sub_partidas|length }} partidas</span>
           </header>
           <div class="subcat-body">
-            <table class="partidas-table">
-              {% include 'partidas/_thead.html' %}
-              <tbody>
-                {% for p in sub_partidas|sort(attribute='nombre') %}
-                {% include 'partidas/_fila.html' %}
-                {% endfor %}
-              </tbody>
-            </table>
+            {% set apartado_groups = sub_partidas|groupby('apartado') %}
+            {% for apartado_val, apartado_partidas in apartado_groups|sort(attribute='grouper') %}
+            <div class="apartado-section" data-apartado="{{ apartado_val }}">
+              <header class="apartado-head" data-cotizat-click="partidas-toggle-apartado">
+                <span class="apartado-toggle">▼</span>
+                <span class="apartado-label">{{ apartado_val if apartado_val and apartado_val.strip() != "" else "Sin apartado" }}</span>
+                <span class="apartado-count-badge">{{ apartado_partidas|length }}</span>
+                <span class="apartado-hint">{{ apartado_partidas|length }} partidas</span>
+              </header>
+              <div class="apartado-body">
+                <table class="partidas-table">
+                  {% include 'partidas/_thead.html' %}
+                  <tbody>
+                    {% for p in apartado_partidas|sort(attribute='nombre') %}
+                    {% include 'partidas/_fila.html' %}
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            {% endfor %}
           </div>
         </div>
         {% endfor %}
@@ -198,7 +225,7 @@
     <div class="card empty csp-s-d6e98c0fe2">
       <div class="csp-s-c7d3ba0dcc">📋</div>
       <h3 class="csp-s-261f301f5a">No hay resultados</h3>
-      <p class="hint csp-s-ff35838023">No encontramos «{{ q }}» en esta vista. Prueba otro término o código.</p>
+      <p class="hint csp-s-ff35838023">No encontramos «{{ q or apartado_actual or subcategoria_actual }}» en esta vista. Prueba otro término o código.</p>
       <div class="csp-s-eb1a6b0356">
         <a href="/partidas{% if vista == 'ocultas' %}?vista=ocultas{% endif %}" class="btn btn-primary">Volver al catálogo</a>
       </div>
@@ -241,6 +268,7 @@
     {% set qs_filtro = '' %}
     {% if categoria_actual %}{% set qs_filtro = qs_filtro ~ '&categoria=' ~ categoria_actual|urlencode %}{% endif %}
     {% if subcategoria_actual %}{% set qs_filtro = qs_filtro ~ '&subcategoria=' ~ subcategoria_actual|urlencode %}{% endif %}
+    {% if apartado_actual %}{% set qs_filtro = qs_filtro ~ '&apartado=' ~ apartado_actual|urlencode %}{% endif %}
     {% if q %}{% set qs_filtro = qs_filtro ~ '&q=' ~ q|urlencode %}{% endif %}
     <nav class="catalog-pagination" aria-label="Páginas del catálogo">
       {% if pagina > 1 %}<a class="btn btn-sm" href="/partidas?pagina={{ pagina - 1 }}{% if vista == 'ocultas' %}&vista=ocultas{% endif %}{{ qs_filtro }}">← Anterior</a>{% endif %}
@@ -319,6 +347,18 @@ function toggleAllCats(expand) {
       if (tg) tg.textContent='▶';
     }
   });
+  // El botón de la toolbar promete expandir también subcapítulos: al expandir todo
+  // cargamos los subcapítulos bajo demanda y desplegamos sus apartados.
+  if (expand) {
+    document.querySelectorAll('.subcat-section.collapsed').forEach(s=>{
+      s.classList.remove('collapsed');
+      cargarFilas(s);
+    });
+    document.querySelectorAll('.apartado-section.collapsed').forEach(a=>a.classList.remove('collapsed'));
+  } else {
+    document.querySelectorAll('.subcat-section').forEach(s=>s.classList.add('collapsed'));
+    document.querySelectorAll('.apartado-section').forEach(a=>a.classList.add('collapsed'));
+  }
 }
 function toggleSubcat(header) {
   const sub = header.closest('.subcat-section');
@@ -335,6 +375,17 @@ function toggleAllSubcats(expand) {
   document.querySelectorAll('.subcat-section').forEach(s=>{
     if (expand) { s.classList.remove('collapsed'); cargarFilas(s); }
     else s.classList.add('collapsed');
+  });
+}
+function toggleApartado(header) {
+  const sec = header.closest('.apartado-section');
+  if (!sec) return;
+  sec.classList.toggle('collapsed');
+}
+function toggleAllApartados(expand) {
+  document.querySelectorAll('.apartado-section').forEach(a=>{
+    if (expand) a.classList.remove('collapsed');
+    else a.classList.add('collapsed');
   });
 }
 
@@ -669,6 +720,7 @@ window.CotizatActions.register('partidas-delete-visible', () => deleteAllVisible
 window.CotizatActions.register('partidas-toggle-sidebar', () => toggleCatSidebar());
 window.CotizatActions.register('partidas-toggle-section', element => toggleCatSection(element));
 window.CotizatActions.register('partidas-toggle-subcategory', element => toggleSubcat(element));
+window.CotizatActions.register('partidas-toggle-apartado', element => toggleApartado(element));
 window.CotizatActions.register('partidas-select-subcategory', element => {
   const section = element.closest('.subcat-section');
   toggleSelectSubcat(section?.dataset.categoria || '', section?.dataset.subcategoria || '', element.checked);

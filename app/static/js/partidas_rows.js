@@ -4,6 +4,13 @@
  * las filas de cada subcapítulo bajo demanda a /partidas/api/filas (JSON).
  * Aquí se construye la tabla con createElement/textContent, de acuerdo con la
  * CSP estricta del proyecto (no se usan sinks de inyección de HTML).
+ *
+ * Para respetar la clasificación a 3 niveles (capítulo → subcapítulo →
+ * apartado), las filas se agrupan por `partida.apartado`. Cada apartado
+ * genera su propio encabezado colapsable y su tabla, igual que en la vista
+ * filtrada del servidor. Así “Pisos, pavimentos y sus bases” deja de mostrar
+ * todas las partidas en un único bloque y pasa a desglosar
+ * 01 Bases, 03 Pisos cerámicos, 04 Piedra, etc.
  */
 (function () {
   "use strict";
@@ -253,18 +260,81 @@
     return theadEl;
   }
 
-  function render(contenedor, partidas, vista) {
+  function crearTablaApartado(partidasGrupo, vista) {
     var tabla = crear("table", "partidas-table");
     tabla.appendChild(thead());
     var tbody = crear("tbody");
-    (partidas || []).forEach(function (p) {
+    (partidasGrupo || []).forEach(function (p) {
       tbody.appendChild(fila(p, vista));
       if (p.recursos > 0) tbody.appendChild(filaDescomp(p));
     });
     tabla.appendChild(tbody);
-    contenedor.replaceChildren();
-    contenedor.appendChild(tabla);
+    return tabla;
   }
 
-  window.CotizatRows = { render: render };
+  function agruparPorApartado(partidas) {
+    // Mantiene el orden numérico del código (12.05.01, 12.05.03…) y deja
+    // “Sin apartado” al final para las partidas personalizadas sin clasificar.
+    var mapa = {};
+    var orden = [];
+    (partidas || []).forEach(function (p) {
+      var clave = (p.apartado || "").trim() || "Sin apartado";
+      if (!Object.prototype.hasOwnProperty.call(mapa, clave)) {
+        mapa[clave] = [];
+        orden.push(clave);
+      }
+      mapa[clave].push(p);
+    });
+    orden.sort(function (a, b) {
+      if (a === "Sin apartado") return 1;
+      if (b === "Sin apartado") return -1;
+      return a.localeCompare(b, "es", { numeric: true });
+    });
+    return orden.map(function (clave) {
+      return { apartado: clave, partidas: mapa[clave] };
+    });
+  }
+
+  function crearSeccionApartado(grupo, vista) {
+    var sec = crear("div", "apartado-section");
+    sec.dataset.apartado = grupo.apartado;
+    var head = crear("header", "apartado-head");
+    head.setAttribute("data-cotizat-click", "partidas-toggle-apartado");
+    var toggle = crear("span", "apartado-toggle", "▼");
+    var label = crear("span", "apartado-label", grupo.apartado);
+    var badge = crear("span", "apartado-count-badge", String(grupo.partidas.length));
+    var hint = crear("span", "apartado-hint", grupo.partidas.length + " partidas");
+    head.appendChild(toggle);
+    head.appendChild(label);
+    head.appendChild(badge);
+    head.appendChild(hint);
+    sec.appendChild(head);
+    var body = crear("div", "apartado-body");
+    body.appendChild(crearTablaApartado(grupo.partidas, vista));
+    sec.appendChild(body);
+    return sec;
+  }
+
+  function render(contenedor, partidas, vista) {
+    var grupos = agruparPorApartado(partidas || []);
+    // Si solo hay un apartado y es “Sin apartado”, renderiza una única tabla
+    // sin encabezado redundante (compatibilidad con partidas libres).
+    var soloSinApartado = grupos.length === 1 && grupos[0].apartado === "Sin apartado";
+    contenedor.replaceChildren();
+    if (!grupos.length) {
+      var empty = crear("div", "subcat-placeholder");
+      empty.textContent = "No hay partidas en este subcapítulo.";
+      contenedor.appendChild(empty);
+      return;
+    }
+    if (soloSinApartado) {
+      contenedor.appendChild(crearTablaApartado(grupos[0].partidas, vista));
+      return;
+    }
+    grupos.forEach(function (g) {
+      contenedor.appendChild(crearSeccionApartado(g, vista));
+    });
+  }
+
+  window.CotizatRows = { render: render, agruparPorApartado: agruparPorApartado };
 })();

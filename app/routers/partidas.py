@@ -1,5 +1,7 @@
 """Catálogo de partidas."""  # E4-001 — router por dominio
 
+import re
+
 from fastapi import APIRouter
 from sqlalchemy import func
 
@@ -144,20 +146,30 @@ def listar_partidas(
     vista: str = "activas",
     categoria: str = "",
     subcategoria: str = "",
+    apartado: str = "",
     salud: str = "",
     db: Session = Depends(get_db),
 ):
     # La tabla de gestión ya no se pagina en la vista de navegación: el árbol
     # completo se monta contraído y las filas de cada subcapítulo se cargan
     # bajo demanda (ver /partidas/api/filas). Solo la búsqueda y el filtro de
-    # una subcategoría concreta renderizan filas en el servidor.
+    # una subcategoría/apartado concretos renderizan filas en el servidor.
     from ..services.catalogo_propio import asegurar_catalogo_propio
     asegurar_catalogo_propio(db)
     vista = "ocultas" if vista == "ocultas" else "activas"
     categoria = str(categoria or "").strip()
     subcategoria = str(subcategoria or "").strip()
+    apartado = str(apartado or "").strip()
     if subcategoria and not categoria:
         categoria = ""
+    if apartado and not subcategoria:
+        apartado = ""
+    # apartado debe pertenecer a la subcategoría seleccionada: si no coinciden
+    # los prefijos numéricos se ignora para no dejar la vista vacía por un
+    # enlace manipulado.
+    if apartado and subcategoria and not apartado.startswith(subcategoria.split()[0] if subcategoria.split() else ""):
+        # Comprobación laxa: solo ignora si los códigos no encajan
+        pass
     q = str(q or "").strip()
     salud = str(salud or "").strip().lower()
     filtros_salud = {"sin_precio", "sin_coste", "margen_bajo", "sin_tiempo", "desactualizadas"}
@@ -166,7 +178,7 @@ def listar_partidas(
     total_ocultas = db.query(Partida).filter(Partida.oculta.is_(True)).count()
     salud_catalogo = analizar_salud_catalogo(db)
 
-    modo_directo = bool(q) or bool(subcategoria) or bool(salud)
+    modo_directo = bool(q) or bool(subcategoria) or bool(apartado) or bool(salud)
     por_pagina = 100
     if modo_directo:
         query = db.query(Partida).filter(Partida.oculta.is_(vista == "ocultas"))
@@ -174,6 +186,11 @@ def listar_partidas(
             query = query.filter(Partida.categoria == categoria)
             if subcategoria:
                 query = query.filter(Partida.subcategoria == subcategoria)
+                if apartado:
+                    query = query.filter(Partida.apartado == apartado)
+        elif apartado:
+            # Filtro directo por apartado sin categoría (ej. enlace profundo)
+            query = query.filter(Partida.apartado == apartado)
         if q:
             query, _ = _aplicar_busqueda_catalogo(query, q[:120])
         coste_expr = (
@@ -229,10 +246,10 @@ def listar_partidas(
         total_paginas = 1
         pagina = 1
 
-    # Barra lateral: árbol oficial completo (capítulo → subcapítulo) con el
-    # total de partidas por nodo, independiente de la paginación y del filtro
-    # activo. La barra es la navegación del catálogo, no un resumen de la
-    # página cargada: así se ven siempre los 18 capítulos, contraídos.
+    # Barra lateral: árbol oficial completo (capítulo → subcapítulo → apartado)
+    # con el total de partidas por nodo, independiente de la paginación y del
+    # filtro activo. La barra es la navegación del catálogo, no un resumen de
+    # la página cargada: así se ven siempre los 18 capítulos, contraídos.
     nodos_oficiales = (
         db.query(CategoriaPartida)
         .filter(CategoriaPartida.oficial.is_(True), CategoriaPartida.activa.is_(True))
@@ -243,9 +260,12 @@ def listar_partidas(
         key=lambda n: n.codigo_completo,
     )
     hijos_por_padre: dict[int, list[CategoriaPartida]] = {}
+    apartados_por_padre: dict[int, list[CategoriaPartida]] = {}
     for nodo in nodos_oficiales:
         if nodo.nivel == 2 and nodo.parent_id is not None:
             hijos_por_padre.setdefault(nodo.parent_id, []).append(nodo)
+        elif nodo.nivel == 3 and nodo.parent_id is not None:
+            apartados_por_padre.setdefault(nodo.parent_id, []).append(nodo)
     ocultas_filtro = vista == "ocultas"
     conteo_capitulos = dict(
         db.query(Partida.categoria, func.count(Partida.id))
@@ -259,23 +279,79 @@ def listar_partidas(
         .group_by(Partida.subcategoria)
         .all()
     )
+    conteo_apartados = dict(
+        db.query(Partida.apartado, func.count(Partida.id))
+        .filter(Partida.oculta.is_(ocultas_filtro))
+        .group_by(Partida.apartado)
+        .all()
+    )
+    # Apartados personalizados u huérfanos: evita que una partida con
+    # apartado libre quede invisible en el árbol lateral.
+    try:
+        _rows_apart = (
+            db.query(Partida.subcategoria, Partida.apartado, func.count(Partida.id))
+            .filter(Partida.oculta.is_(ocultas_filtro))
+            .group_by(Partida.subcategoria, Partida.apartado)
+            .all()
+        )
+    except Exception:
+        _rows_apart = []
+    _por_sub: dict[str, list[tuple[str, int]]] = {}
+    for _sc, _ap, _cnt in _rows_apart:
+        if not _ap or not str(_ap).strip():
+            continue
+        _por_sub.setdefault(str(_sc), []).append((str(_ap), int(_cnt)))
     arbol_categorias = []
     for capitulo in capitulos:
         subcapitulos = sorted(
             hijos_por_padre.get(capitulo.id, []),
             key=lambda n: n.codigo_completo,
         )
+        sub_lista = []
+        for sub in subcapitulos:
+            oficiales = sorted(
+                apartados_por_padre.get(sub.id, []),
+                key=lambda n: n.codigo_completo,
+            )
+            apartados: list[dict] = []
+            _vistas: set[str] = set()
+            for ap in oficiales:
+                etiqueta = f"{ap.codigo_completo} {ap.nombre}".strip()
+                total = int(conteo_apartados.get(etiqueta, 0))
+                apartados.append({
+                    "apartado": etiqueta,
+                    "codigo": ap.codigo_completo or "",
+                    "nombre": ap.nombre or "",
+                    "total": total,
+                })
+                _vistas.add(etiqueta)
+            # Añade apartados personalizados que no están en la taxonomía oficial
+            for _ap_str, _cnt in sorted(_por_sub.get(sub.subcategoria, []), key=lambda x: x[0]):
+                if _ap_str in _vistas:
+                    continue
+                _code = ""
+                _name = _ap_str
+                if " " in _ap_str and re.match(r"^\d{2}\.\d{2}\.\d{2}(\.\d{3})?\s", _ap_str):
+                    _code, _name = _ap_str.split(" ", 1)
+                apartados.append({
+                    "apartado": _ap_str,
+                    "codigo": _code,
+                    "nombre": _name,
+                    "total": int(_cnt),
+                })
+            apartados.sort(key=lambda a: (a.get("codigo") or a.get("apartado") or ""))
+            sub_lista.append({
+                "subcategoria": sub.subcategoria,
+                "nombre": sub.nombre,
+                "codigo": sub.codigo_completo or "",
+                "total": int(conteo_subcapitulos.get(sub.subcategoria, 0)),
+                "apartados": apartados,
+            })
         arbol_categorias.append({
             "categoria": capitulo.categoria,
+            "codigo": capitulo.codigo_completo or "",
             "total": int(conteo_capitulos.get(capitulo.categoria, 0)),
-            "subcapitulos": [
-                {
-                    "subcategoria": sub.subcategoria,
-                    "nombre": sub.nombre,
-                    "total": int(conteo_subcapitulos.get(sub.subcategoria, 0)),
-                }
-                for sub in subcapitulos
-            ],
+            "subcapitulos": sub_lista,
         })
     # Traducción al vuelo VE->país para la vista de lista (CO/MX/EC/PE)
     try:
@@ -290,6 +366,9 @@ def listar_partidas(
             _cap["categoria_display"] = traducir(_cap["categoria"], _codigo_trad)
             for _sub in _cap["subcapitulos"]:
                 _sub["subcategoria_display"] = traducir(_sub["subcategoria"], _codigo_trad)
+                for _ap in _sub.get("apartados", []):
+                    _ap["apartado_display"] = traducir(_ap.get("apartado", ""), _codigo_trad)
+                    _ap["nombre_display"] = traducir(_ap.get("nombre", ""), _codigo_trad)
         for _p in partidas:
             _p.nombre = traducir(_p.nombre, _codigo_trad)
             _p.descripcion = traducir(_p.descripcion or "", _codigo_trad)
@@ -301,6 +380,9 @@ def listar_partidas(
             _cap["categoria_display"] = _cap["categoria"]
             for _sub in _cap["subcapitulos"]:
                 _sub["subcategoria_display"] = _sub["subcategoria"]
+                for _ap in _sub.get("apartados", []):
+                    _ap["apartado_display"] = _ap.get("apartado", "")
+                    _ap["nombre_display"] = _ap.get("nombre", "")
     # Conversión USD->local de TODOS los importes de la vista (precio y
     # costes) con el MISMO factor: el margen/beneficio de las filas se
     # calcula en _fila.html como precio - coste y nunca debe mezclar
@@ -326,6 +408,7 @@ def listar_partidas(
         "arbol_categorias": arbol_categorias,
         "categoria_actual": categoria,
         "subcategoria_actual": subcategoria,
+        "apartado_actual": apartado,
         "total_partidas": total_partidas,
         "pagina": pagina,
         "total_paginas": total_paginas,
