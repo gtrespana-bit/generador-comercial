@@ -193,6 +193,18 @@ DEFINICIONES: tuple[Variable, ...] = (
         recomendada_en=_PRODUCCION,
     ),
     Variable(
+        "STRIPE_SECRET_KEY",
+        True,
+        "clave secreta de Stripe (sk_test_ / sk_live_, solo servidor)",
+        recomendada_en=_PRODUCCION,
+    ),
+    Variable(
+        "STRIPE_WEBHOOK_SECRET",
+        True,
+        "secreto de firma de webhooks de Stripe (whsec_)",
+        recomendada_en=_PRODUCCION,
+    ),
+    Variable(
         "COTIZAT_RESPALDO_AUTOMATICO",
         False,
         "interruptor del respaldo automático diario (E4-021); false lo apaga",

@@ -40,6 +40,22 @@ PLANES: dict[str, dict] = {
     },
 }
 
+#: Clave del cobro automático con Stripe Checkout (tarjeta / Apple Pay /
+#: Google Pay). No vive en ``METODOS_PAGO`` porque no pide comprobante ni
+#: datos de verificación: Stripe confirma el pago por webhook.
+METODO_STRIPE = "stripe"
+
+STRIPE_FICHA: dict = {
+    "nombre": "Tarjeta (Stripe)",
+    "icono": "💳",
+    "descripcion": (
+        "Pago inmediato con tarjeta Visa, Mastercard, American Express, "
+        "Apple Pay o Google Pay. La licencia se activa al confirmar el cobro."
+    ),
+    "datos": (),
+    "verificacion": (),
+}
+
 #: Métodos de pago: qué se muestra al cliente y qué debe declarar al comprar.
 #: ``datos`` son los datos públicos del titular para pagarle; ``verificacion``
 #: son los campos que el comprador debe completar para rastrear su pago.
@@ -134,4 +150,11 @@ def plan_info(plan: str) -> dict:
 
 def metodo_info(metodo: str) -> dict:
     """Devuelve la ficha de un método o lanza KeyError si no existe."""
+    if metodo == METODO_STRIPE:
+        return STRIPE_FICHA
     return METODOS_PAGO[metodo]
+
+
+def metodo_conocido(metodo: str) -> bool:
+    """True si el método es un cobro manual publicado o Stripe."""
+    return metodo == METODO_STRIPE or metodo in METODOS_PAGO

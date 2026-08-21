@@ -3199,6 +3199,37 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
   color: #34527a;
 }
 
+.compra-stripe {
+  background: #fff;
+  border: 1.5px solid var(--accent);
+  border-radius: 14px;
+  padding: 1.6rem;
+  margin-bottom: 1.4rem;
+  text-align: center;
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.compra-stripe h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.15rem;
+  color: #1a1a2e;
+}
+.compra-stripe p {
+  margin: 0 0 1.1rem;
+  color: #555;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+.compra-stripe .btn { min-width: 16rem; }
+.compra-o {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin: 0 0 1.4rem;
+}
+
 .compra-metodos h2,
 .metodo-panel h2 {
   font-size: 1.15rem;

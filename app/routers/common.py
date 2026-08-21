@@ -425,6 +425,12 @@ TEMPLATES.env.globals.update(
     dias_de_prueba=dias_de_prueba,
     hay_prueba_gratuita=prueba_activada,
 )
+try:
+    from ..services.stripe import stripe_configurado as _stripe_configurado
+
+    TEMPLATES.env.globals["stripe_disponible"] = _stripe_configurado
+except Exception:  # pragma: no cover
+    TEMPLATES.env.globals["stripe_disponible"] = lambda: False
 
 
 def whatsapp_url(telefono, texto) -> str:

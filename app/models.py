@@ -2698,7 +2698,7 @@ class CompraPlan(TenantMixin, Base):
             name="ck_compra_plan_valido",
         ),
         CheckConstraint(
-            "metodo_pago IN ('pago_movil', 'binance', 'kontigo', 'usdt')",
+            "metodo_pago IN ('pago_movil', 'binance', 'kontigo', 'usdt', 'stripe')",
             name="ck_compra_metodo_valido",
         ),
         CheckConstraint(
@@ -2707,6 +2707,14 @@ class CompraPlan(TenantMixin, Base):
         ),
         CheckConstraint("importe >= 0", name="ck_compra_importe_no_negativo"),
         Index("ix_compras_plan_estado", "organizacion_id", "estado", "created_at"),
+        UniqueConstraint(
+            "stripe_checkout_session_id",
+            name="uq_compras_plan_stripe_session",
+        ),
+        UniqueConstraint(
+            "stripe_invoice_id",
+            name="uq_compras_plan_stripe_invoice",
+        ),
     )
 
     id = Column(Integer, primary_key=True)
@@ -2746,6 +2754,13 @@ class CompraPlan(TenantMixin, Base):
     licencia_vence = Column(Date, nullable=True)
     revisado_por_email = Column(String(254), nullable=False, default="")
     revisado_at = Column(DateTime, nullable=True)
+    #: Ids de Stripe. Nulos en las compras manuales. Las restricciones
+    #: únicas permiten varios NULL (un cobro manual no choca con otro).
+    stripe_checkout_session_id = Column(String(255), nullable=True)
+    stripe_subscription_id = Column(String(255), nullable=True, index=True)
+    stripe_customer_id = Column(String(255), nullable=True)
+    stripe_payment_intent_id = Column(String(255), nullable=True)
+    stripe_invoice_id = Column(String(255), nullable=True)
 
     organizacion = relationship("Organizacion")
     licencia = relationship("Licencia")

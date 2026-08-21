@@ -16,7 +16,7 @@
   <div class="pago-hero-int">
     <span class="section-kicker">Planes</span>
     <h1>Elige el plan que mejor se ajuste a tu empresa</h1>
-    <p class="sub">Pago manual, sin suscripci&oacute;n autom&aacute;tica. Pagas y usas. As&iacute; de simple.</p>
+    <p class="sub">Paga con tarjeta (activaci&oacute;n inmediata) o por transferencia / cripto. As&iacute; de simple.</p>
     {% if msg %}<p class="pago-aviso" role="status">{{ msg }}</p>{% endif %}
     {# La prueba solo se ofrece a quien puede tomarla. Quien aterriza aqui con
        un `msg` viene de agotarla o de no tener derecho a ella: repetirle
@@ -59,8 +59,15 @@
 
 <section class="pago-metodos">
   <h2>M&eacute;todos de pago aceptados</h2>
-  <p class="intro">Elige el que te sea m&aacute;s c&oacute;modo. Todos son procesados manualmente: despu&eacute;s de contactarnos recibir&aacute;s las instrucciones para pagar.</p>
+  <p class="intro">La tarjeta activa el plan al instante. Los m&eacute;todos manuales se revisan en un m&aacute;ximo de 48 horas h&aacute;biles.</p>
   <div class="metodos-grid">
+    {% if stripe_disponible() %}
+    <article class="metodo">
+      <div class="metodo-icon" aria-hidden="true">💳</div>
+      <h3>Tarjeta · Apple Pay · Google Pay</h3>
+      <p>Visa, Mastercard y American Express. Pago inmediato en USD. El plan se renueva solo; cancelas cuando quieras y conservas el per&iacute;odo ya pagado.</p>
+    </article>
+    {% endif %}
     <article class="metodo">
       <div class="metodo-icon" aria-hidden="true">📱</div>
       <h3>Pago m&oacute;vil</h3>
@@ -101,12 +108,12 @@
       <span>Entra al checkout, elige el m&eacute;todo y paga con los datos que ver&aacute;s en pantalla.</span>
     </li>
     <li>
-      <strong>Sube tu comprobante</strong>
-      <span>Adjunta la imagen o PDF del pago. Queda registrado junto con tu compra.</span>
+      <strong>Paga</strong>
+      <span>Con tarjeta, el plan se activa al confirmar. Si usas transferencia o cripto, adjunta el comprobante.</span>
     </li>
     <li>
       <strong>Activamos tu licencia</strong>
-      <span>Verificamos tu pago y activamos tu plan en m&aacute;ximo 48 horas h&aacute;biles.</span>
+      <span>La tarjeta es inmediata. Los m&eacute;todos manuales se verifican en un m&aacute;ximo de 48 horas h&aacute;biles.</span>
     </li>
   </ol>
 </section>

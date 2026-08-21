@@ -14,8 +14,10 @@ from fastapi import APIRouter, Form, Request
 
 from . import common
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
+from ..database import get_stripe_webhook_db
 from ..services import auditoria
 from ..datos_pago import (
+    METODO_STRIPE,
     METODOS_PAGO,
     PLANES,
     PLAN_PENDIENTE_COOKIE,
@@ -105,6 +107,8 @@ def comprar_plan(
 
     organizacion = db.get(Organizacion, int(db.info.get("organizacion_id") or 0))
     usuario = db.get(Usuario, int(db.info.get("usuario_id") or 0))
+    from ..services.stripe import stripe_configurado
+
     return TEMPLATES.TemplateResponse(
         request,
         "pago/comprar.html",
@@ -117,6 +121,7 @@ def comprar_plan(
             "usuario_email": usuario.email if usuario else "",
             "hoy": date.today().isoformat(),
             "error": request.query_params.get("error", ""),
+            "stripe_disponible": stripe_configurado(),
         },
     )
 
@@ -175,7 +180,7 @@ async def registrar_compra(
         ficha_metodo = metodo_info(metodo_pago)
     except KeyError:
         ficha_metodo = None
-    if ficha_metodo is None:
+    if ficha_metodo is None or metodo_pago == METODO_STRIPE:
         return RedirectResponse(
             f"/pago/comprar?plan={quote(plan)}&error=Selecciona un método de pago.",
             status_code=303,
@@ -366,3 +371,245 @@ def recibo_compra_web(
     )
     respuesta.headers["Cache-Control"] = "no-store"
     return respuesta
+
+
+def _compra_por_sesion_local(db: Session, organizacion_id: int, session_id: str):
+    return (
+        db.query(CompraPlan)
+        .filter(
+            CompraPlan.organizacion_id == int(organizacion_id),
+            CompraPlan.stripe_checkout_session_id == str(session_id or ""),
+        )
+        .first()
+    )
+
+
+def _origen_publico(request: Request) -> str:
+    """Origen HTTPS para success/cancel de Stripe, nunca desde Host libre."""
+    try:
+        return public_app_url("/").rstrip("/")
+    except AuthNotConfigured:
+        return str(request.base_url).rstrip("/")
+
+
+def _avisar_activacion_stripe(db: Session, compra, licencia) -> None:
+    """Avisa al comprador; nunca lanza (el cobro ya está cumplido)."""
+    from ..services.email import (
+        EmailNotConfigured,
+        EmailSendError,
+        EmailValidationError,
+        enviar_activacion_plan_por_email,
+    )
+
+    destinatario = str(getattr(compra, "creada_por_email", "") or "").strip()
+    if not destinatario:
+        return
+    organizacion = db.get(Organizacion, compra.organizacion_id)
+    recibo_pdf = b""
+    recibo_nombre = "recibo.pdf"
+    try:
+        recibo_pdf = generar_recibo_licencia_pdf(licencia, organizacion).read()
+        recibo_nombre = f"recibo-{numero_recibo(licencia)}.pdf"
+    except Exception:
+        log.warning(
+            "Compra Stripe #%s activada sin recibo adjunto:\n%s",
+            compra.id,
+            traceback.format_exc(),
+        )
+    try:
+        enviar_activacion_plan_por_email(
+            email=destinatario,
+            organizacion_nombre=organizacion.nombre if organizacion else "",
+            plan_nombre=plan_info(compra.plan)["nombre"],
+            importe_texto=fmt_monto(compra.importe, compra.moneda or "USD"),
+            metodo_nombre=metodo_info(METODO_STRIPE)["nombre"],
+            inicio=licencia.inicio,
+            vence=licencia.vence,
+            recibo_pdf=recibo_pdf,
+            recibo_nombre=recibo_nombre,
+        )
+    except (EmailNotConfigured, EmailValidationError, EmailSendError) as exc:
+        log.warning("Aviso Stripe no entregado a %s (%s).", destinatario, exc)
+    except Exception:
+        log.error(
+            "Error avisando la activación Stripe de la compra #%s:\n%s",
+            compra.id,
+            traceback.format_exc(),
+        )
+
+
+@router.post("/pago/stripe/checkout", include_in_schema=False)
+def stripe_checkout(
+    request: Request,
+    plan: str = Form(""),
+    db: Session = Depends(get_db_renovacion),
+):
+    """Crea la Checkout Session y redirige a Stripe.
+
+    La compra queda pendiente hasta que Stripe confirme el cobro por
+    webhook. Sin STRIPE_SECRET_KEY se vuelve al checkout manual.
+    """
+    from ..services.compras import GestionCompraError, crear_compra
+    from ..services.stripe import (
+        StripeError,
+        StripeNotConfigured,
+        crear_sesion_checkout,
+        stripe_configurado,
+    )
+
+    ficha = _plan_o_redirect(request, plan)
+    if ficha is None:
+        return RedirectResponse("/pago", status_code=303)
+    if not stripe_configurado():
+        return RedirectResponse(
+            f"/pago/comprar?plan={quote(plan)}&error="
+            "El pago con tarjeta no está disponible ahora. Usa un método manual.",
+            status_code=303,
+        )
+
+    organizacion_id = int(db.info.get("organizacion_id") or 0)
+    usuario = db.get(Usuario, int(db.info.get("usuario_id") or 0))
+    try:
+        # La sesión de Stripe se crea ANTES de insertar la compra: RLS no
+        # deja al cliente hacer UPDATE de ``compras_plan``, así que el id
+        # de Checkout tiene que nacer en el INSERT.
+        origen = _origen_publico(request)
+        sesion = crear_sesion_checkout(
+            plan=plan,
+            organizacion_id=organizacion_id,
+            compra_id=0,
+            email=usuario.email if usuario else "",
+            success_url=(
+                origen
+                + "/pago/stripe/exito?session_id={CHECKOUT_SESSION_ID}"
+            ),
+            cancel_url=origen + f"/pago/comprar?plan={quote(plan)}",
+        )
+        compra = crear_compra(
+            db,
+            organizacion_id=organizacion_id,
+            plan=plan,
+            metodo_pago=METODO_STRIPE,
+            datos_verificacion={},
+            comprobante_reference="",
+            comprobante_nombre="",
+            comprobante_mime="",
+            creada_por_usuario_id=usuario.id if usuario else None,
+            creada_por_email=usuario.email if usuario else "",
+            exigir_comprobante=False,
+            stripe_checkout_session_id=str(sesion["id"]),
+        )
+        db.commit()
+    except (GestionCompraError, StripeNotConfigured, StripeError) as exc:
+        db.rollback()
+        return RedirectResponse(
+            f"/pago/comprar?plan={quote(plan)}&error={quote(str(exc))}",
+            status_code=303,
+        )
+    except Exception:
+        db.rollback()
+        log.error("Error creando la sesión de Stripe:\n%s", traceback.format_exc())
+        return RedirectResponse(
+            f"/pago/comprar?plan={quote(plan)}&error="
+            "No se pudo abrir el pago con tarjeta. Inténtalo de nuevo.",
+            status_code=303,
+        )
+    auditoria.registrar_evento(
+        db,
+        "plan.compra_registrada",
+        entidad="compra",
+        entidad_id=compra.id,
+        detalle={"plan": plan, "metodo": METODO_STRIPE},
+    )
+    respuesta = RedirectResponse(str(sesion["url"]), status_code=303)
+    _clear_plan_pendiente_cookie(respuesta)
+    return respuesta
+
+
+@router.get("/pago/stripe/exito", response_class=HTMLResponse, include_in_schema=False)
+def stripe_exito(
+    request: Request,
+    session_id: str = "",
+    db: Session = Depends(get_db_renovacion),
+):
+    """Página de retorno de Stripe. Solo lee: el webhook es quien activa.
+
+    RLS reserva UPDATE de compras_plan e INSERT de licencias al operador.
+    La sesión del cliente no puede cumplir el cobro; si el webhook aún no
+    llegó, se muestra «confirmando» y basta recargar.
+    """
+    organizacion_id = int(db.info.get("organizacion_id") or 0)
+    compra = _compra_por_sesion_local(db, organizacion_id, session_id)
+    if compra is None or compra.organizacion_id != organizacion_id:
+        return RedirectResponse("/pago", status_code=303)
+
+    try:
+        plan_ficha = plan_info(compra.plan)
+        metodo_ficha = metodo_info(compra.metodo_pago)
+    except KeyError:
+        return RedirectResponse("/pago", status_code=303)
+
+    return TEMPLATES.TemplateResponse(
+        request,
+        "pago/exito_stripe.html",
+        {
+            "compra": compra,
+            "plan_nombre": plan_ficha["nombre"],
+            "metodo_nombre": metodo_ficha["nombre"],
+            "importe_texto": fmt_monto(compra.importe),
+            "activada": compra.estado == "activa",
+        },
+    )
+
+
+@router.post("/pago/stripe/webhook", include_in_schema=False)
+async def stripe_webhook(
+    request: Request, db: Session = Depends(get_stripe_webhook_db)
+):
+    """Recibe eventos de Stripe. Autenticado por firma, no por sesión."""
+    from ..services.stripe import (
+        StripeNotConfigured,
+        StripeWebhookError,
+        procesar_evento_webhook,
+        verificar_firma_webhook,
+    )
+
+    cuerpo = await request.body()
+    firma = request.headers.get("stripe-signature", "")
+    try:
+        evento = verificar_firma_webhook(cuerpo, firma)
+        compra = procesar_evento_webhook(db, evento)
+        if compra is not None:
+            db.commit()
+            if (
+                getattr(compra, "_stripe_recien_activada", False)
+                and compra.licencia_id
+            ):
+                licencia = db.get(Licencia, compra.licencia_id)
+                if licencia is not None:
+                    _avisar_activacion_stripe(db, compra, licencia)
+        else:
+            db.rollback()
+    except StripeNotConfigured as exc:
+        db.rollback()
+        return JSONResponse(
+            {"ok": False, "error": str(exc)},
+            status_code=503,
+            headers={"Cache-Control": "no-store"},
+        )
+    except StripeWebhookError as exc:
+        db.rollback()
+        return JSONResponse(
+            {"ok": False, "error": str(exc)},
+            status_code=400,
+            headers={"Cache-Control": "no-store"},
+        )
+    except Exception:
+        db.rollback()
+        log.error("Error en el webhook de Stripe:\n%s", traceback.format_exc())
+        return JSONResponse(
+            {"ok": False, "error": "Error interno."},
+            status_code=500,
+            headers={"Cache-Control": "no-store"},
+        )
+    return JSONResponse({"ok": True}, headers={"Cache-Control": "no-store"})
