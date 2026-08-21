@@ -411,7 +411,13 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
 }
 
 /* ────────────────────────────── Landing ────────────────────────────── */
-.landing { background: var(--bg); overflow-x: clip; }
+.landing {
+  background: var(--bg);
+  overflow-x: clip;
+  /* La landing reserva Inter 800 para el H1/LCP. El texto normal usa la
+     pila del sistema: evita descargar cuatro pesos antes del primer paint. */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+}
 .landing .nav {
   max-width: none;
   width: 100%;
