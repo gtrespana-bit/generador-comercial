@@ -3157,6 +3157,43 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
   color: #1a1a2e;
 }
 
+.compra-pais {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.45rem 0.8rem;
+  margin: 0 auto 1.25rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-alt);
+  box-shadow: var(--shadow-xs);
+}
+.compra-pais label {
+  color: var(--text);
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+.compra-pais-control { display: flex; align-items: center; gap: 0.45rem; }
+.compra-pais select {
+  min-width: 12.5rem;
+  padding: 0.46rem 2rem 0.46rem 0.65rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-xs);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.84rem;
+}
+.compra-pais .btn { padding: 0.46rem 0.7rem; font-size: 0.8rem; }
+.compra-pais p {
+  width: 100%;
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 0.77rem;
+  line-height: 1.4;
+}
+
 .compra-resumen {
   background: #fff;
   border: 1.5px solid #e2e8f0;
@@ -3484,6 +3521,8 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
 }
 
 @media (max-width: 540px) {
+  .compra-pais-control { width: 100%; }
+  .compra-pais select { flex: 1; min-width: 0; }
   .compra-campos {
     grid-template-columns: 1fr;
   }

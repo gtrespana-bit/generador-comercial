@@ -20,6 +20,20 @@
 
   {% if error %}<div class="demo-error" role="alert"><strong>{{ error }}</strong></div>{% endif %}
 
+  <form method="GET" action="/pago/comprar" class="compra-pais" data-pais-pago>
+    <input type="hidden" name="plan" value="{{ plan }}">
+    <label for="pais-pago">País desde el que pagarás</label>
+    <div class="compra-pais-control">
+      <select id="pais-pago" name="pais" data-pais-pago-selector>
+        {% for pais in paises_pago %}
+        <option value="{{ pais.codigo }}" {% if pais.codigo == pais_pago.codigo %}selected{% endif %}>{{ pais.bandera }} {{ pais.nombre }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit" class="btn btn-secondary">Actualizar</button>
+    </div>
+    <p>Mostramos los medios disponibles para {{ pais_pago.nombre }}. Se ha seleccionado el país de tu organización; puedes cambiarlo si pagarás desde otro país.</p>
+  </form>
+
     <section class="compra-resumen">
       <div class="compra-plan">
         <span class="etiqueta">{{ plan_ficha.etiqueta }}</span>
@@ -69,6 +83,7 @@
 
   <form method="POST" action="/pago/comprar" enctype="multipart/form-data" class="compra-form">
     <input type="hidden" name="plan" value="{{ plan }}">
+    <input type="hidden" name="pais_pago" value="{{ pais_pago.codigo }}">
 
     <section class="compra-metodos">
       <h2>1. Elige cómo vas a pagar</h2>

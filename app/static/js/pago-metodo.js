@@ -73,3 +73,12 @@
     if (texto) texto.textContent = "Abriendo pago seguro…";
   });
 })();
+
+/* El selector permite usar los canales del país desde el que se hará el pago. */
+(function () {
+  var selector = document.querySelector("[data-pais-pago-selector]");
+  if (!selector || !selector.form) return;
+  selector.addEventListener("change", function () {
+    selector.form.submit();
+  });
+})();

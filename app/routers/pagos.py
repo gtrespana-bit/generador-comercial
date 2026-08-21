@@ -62,6 +62,44 @@ def _set_plan_pendiente_cookie(response, plan: str) -> None:
     )
 
 
+def _metodos_para_pais(codigo_pais: str) -> dict[str, dict]:
+    """Devuelve los métodos manuales disponibles en el país de cobro.
+
+    Pago móvil y Kontigo son canales venezolanos. Mientras se habilitan
+    cuentas locales en otros mercados, fuera de Venezuela solo se publica
+    USDT, que sí puede recibirse internacionalmente. Stripe se procesa aparte.
+    """
+    if codigo_pais == "VE":
+        return METODOS_PAGO
+    return {"usdt": METODOS_PAGO["usdt"]}
+
+
+def _pais_pago(request: Request, db: Session, organizacion) -> str:
+    """Resuelve el país de cobro: selector explícito, luego país de la empresa."""
+    from ..paises import PAISES
+
+    elegido = str(request.query_params.get("pais") or "").strip().upper()
+    if elegido in PAISES:
+        return elegido
+
+    if organizacion is not None:
+        configuracion = (
+            db.query(Configuracion)
+            .filter(Configuracion.organizacion_id == organizacion.id)
+            .first()
+        )
+        nombre_original = str(configuracion.empresa_pais if configuracion else "").strip()
+        if nombre_original.upper() in PAISES:
+            return nombre_original.upper()
+        nombre = nombre_original.casefold()
+        for codigo, datos in PAISES.items():
+            if datos["nombre"].casefold() == nombre:
+                return codigo
+
+    # Compatibilidad con organizaciones creadas antes del selector de país.
+    return "VE"
+
+
 def _clear_plan_pendiente_cookie(response) -> None:
     """Elimina la intención de compra (compra completada o descartada)."""
     response.delete_cookie(
@@ -108,6 +146,9 @@ def comprar_plan(
     organizacion = db.get(Organizacion, int(db.info.get("organizacion_id") or 0))
     usuario = db.get(Usuario, int(db.info.get("usuario_id") or 0))
     from ..services.stripe import stripe_configurado
+    from ..paises import PAISES, lista_paises
+
+    pais_pago = _pais_pago(request, db, organizacion)
 
     return TEMPLATES.TemplateResponse(
         request,
@@ -115,8 +156,10 @@ def comprar_plan(
         {
             "plan": plan,
             "plan_ficha": ficha,
-            "metodos": METODOS_PAGO,
-            "metodos_json": json.dumps(METODOS_PAGO, ensure_ascii=False),
+            "metodos": _metodos_para_pais(pais_pago),
+            "metodos_json": json.dumps(_metodos_para_pais(pais_pago), ensure_ascii=False),
+            "pais_pago": PAISES[pais_pago],
+            "paises_pago": lista_paises(),
             "organizacion_nombre": organizacion.nombre if organizacion else "",
             "usuario_email": usuario.email if usuario else "",
             "hoy": date.today().isoformat(),
@@ -176,11 +219,24 @@ async def registrar_compra(
     ficha = _plan_o_redirect(request, plan)
     if ficha is None:
         return RedirectResponse("/pago", status_code=303)
+
+    organizacion_id = int(db.info.get("organizacion_id") or 0)
+    organizacion = db.get(Organizacion, organizacion_id)
+    from ..paises import PAISES
+
+    pais_elegido = str(form.get("pais_pago") or "").strip().upper()
+    pais_pago = pais_elegido if pais_elegido in PAISES else _pais_pago(request, db, organizacion)
+    metodos_disponibles = _metodos_para_pais(pais_pago)
+
     try:
         ficha_metodo = metodo_info(metodo_pago)
     except KeyError:
         ficha_metodo = None
-    if ficha_metodo is None or metodo_pago == METODO_STRIPE:
+    if (
+        ficha_metodo is None
+        or metodo_pago == METODO_STRIPE
+        or metodo_pago not in metodos_disponibles
+    ):
         return RedirectResponse(
             f"/pago/comprar?plan={quote(plan)}&error=Selecciona un método de pago.",
             status_code=303,
