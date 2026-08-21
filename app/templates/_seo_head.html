@@ -9,8 +9,13 @@
   {% for alt in hreflang_links %}
   <link rel="alternate" hreflang="{{ alt.hreflang }}" href="{{ alt.href }}">
   {% endfor %}
+  {# Las páginas que cargan fonts.css precargan los pesos 400/700. La landing
+     usa solo Inter-800 (declarado en su propio @font-face) y pide omitirlas
+     para no descargar ~48 KB que nunca pinta. #}
+  {% if not seo_skip_fonts %}
   <link rel="preload" href="{{ 'fonts/Inter-Regular.woff2' | asset }}" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="{{ 'fonts/Inter-Bold.woff2' | asset }}" as="font" type="font/woff2" crossorigin>
+  {% endif %}
   <meta property="og:type" content="{{ og_type | default('website') }}">
   <meta property="og:site_name" content="{{ product_name }}">
   <meta property="og:locale" content="{{ (seo.lang or 'es') | replace('-', '_') }}">

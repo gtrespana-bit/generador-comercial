@@ -4,22 +4,23 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   {% include "_seo_head.html" %}
-  {# El H1 es el LCP. Solo se descarga su peso 800; el resto del primer
-     viewport usa la fuente del sistema para no competir con el CSS crítico. #}
+  {# El H1 es el LCP: solo se descarga su peso 800; el resto del primer
+     viewport usa la fuente del sistema declarada en public.css. #}
   <link rel="preload" href="{{ 'fonts/Inter-ExtraBold.woff2' | asset }}" as="font" type="font/woff2" crossorigin fetchpriority="high">
   <link rel="icon" type="image/png" href="/static/icono.png">
-  {# @font-face inline (antes venía de fonts.css): se elimina una petición
-     bloqueante del camino crítico y las fuentes se descubren antes. #}
+  {# @font-face inline solo para el peso 800 (el H1). La landing no carga
+     fonts.css: pintar el texto con la fuente del sistema evita descargar
+     pesos que no se usan. #}
   <style nonce="{{ request.state.csp_nonce }}">
 @font-face{font-family:"Inter";font-style:normal;font-weight:800;font-display:swap;src:url("{{ 'fonts/Inter-ExtraBold.woff2' | asset }}") format("woff2")}
   </style>
-  {% include "_landing_critical.html" %}
-  {# La hoja completa es mayoritariamente para contenido bajo el pliegue.
-     El CSS crítico anterior permite el primer pintado sin esperar esta descarga. #}
-  <link id="landing-full-css" rel="preload" href="{{ 'css/public.css' | asset }}" as="style">
-  <noscript><link rel="stylesheet" href="{{ 'css/public.css' | asset }}"></noscript>
+  {# Hoja única y bloqueante, igual que el resto de páginas públicas.
+     La carga diferida anterior (preload + JS que la activaba después de
+     cargar) provocaba un repintado global tardío de toda la página y un
+     Speed Index pésimo. Con un solo layout definitivo el contenido se pinta
+     de una vez, sin parpadeos ni reflow posterior. #}
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}">
   {# JS externos con defer: no bloquean HTML ni el primer pintado. #}
-  <script nonce="{{ request.state.csp_nonce }}" defer src="{{ 'js/landing-css.js' | asset }}"></script>
   <script nonce="{{ request.state.csp_nonce }}" defer src="{{ 'js/pais_selector.js' | asset }}"></script>
   <script nonce="{{ request.state.csp_nonce }}" defer src="{{ 'js/landing-tour.js' | asset }}"></script>
 </head>
