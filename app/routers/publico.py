@@ -222,7 +222,7 @@ def como_funciona(request: Request):
     ctx = contexto_seo(request)
     ctx["seo"] = {
         **ctx["seo"],
-        "title": f"Cómo funciona {PRODUCT_NAME} — de tu catálogo al cobro",
+        "title": f"{PRODUCT_NAME}: cómo funciona el software de presupuestos de obra",
         "description": (
             f"Guía de {PRODUCT_NAME}: catálogo con análisis de precios, "
             "presupuestos, margen, tiempos internos, PDF, WhatsApp, versiones, "

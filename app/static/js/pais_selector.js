@@ -132,8 +132,8 @@
     // Título y meta description (opcional, sin recargar)
     try {
       document.title = p
-        ? "CotizaT — Presupuestos de construcción y remodelación para " + p.nombre
-        : "CotizaT — Presupuestos de construcción y remodelación para Latinoamérica";
+        ? "CotizaT: software de presupuestos de obra en " + p.nombre
+        : "CotizaT: software de presupuestos de construcción";
     } catch (_) {}
     var meta = document.querySelector('meta[name="description"]');
     if (meta) {

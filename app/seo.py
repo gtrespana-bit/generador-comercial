@@ -122,13 +122,26 @@ def enlaces_hreflang(request: Request | None = None, tema: str = "") -> list[dic
     return out
 
 
+def titulo_publico(oficio: str, donde: str = "") -> str:
+    """Título de Google: marca primero, oficio después.
+
+    Quien busca «CotizaT» o ve el snippet tiene que leer de un vistazo qué es
+    (software de presupuestos de construcción/obra), no un nombre suelto.
+    """
+    oficio = str(oficio or "").strip().rstrip(".")
+    donde = str(donde or "").strip()
+    if donde:
+        return f"{PRODUCT_NAME}: {oficio} en {donde}"
+    return f"{PRODUCT_NAME}: {oficio}"
+
+
 # ---------------------------------------------------------------------------
-# Copy de la landing por país (title ≤ 60, description ≈ 155, H1 único)
+# Copy de la landing por país (title descriptivo, description ≈ 155, H1 único)
 # ---------------------------------------------------------------------------
 
 _LANDING: dict[str, dict] = {
     "": {
-        "title": "CotizaT | Software de presupuestos de construcción LatAm",
+        "title": "CotizaT: software de presupuestos de construcción",
         "description": (
             "Software de presupuestos de construcción y remodelación para "
             "Latinoamérica. Catálogo con APU, margen, tiempos de cuadrilla y "
@@ -176,7 +189,7 @@ _LANDING: dict[str, dict] = {
         ],
     },
     "VE": {
-        "title": "CotizaT | Presupuestos de construcción en Venezuela",
+        "title": "CotizaT: software de presupuestos de obra en Venezuela",
         "description": (
             "Software para presupuestos de obra y remodelación en Venezuela. "
             "Catálogo en USD o Bs, RIF, IVA 16 % y PDF profesional. Prueba 7 "
@@ -222,7 +235,7 @@ _LANDING: dict[str, dict] = {
         ],
     },
     "CO": {
-        "title": "CotizaT | Software de presupuestos y APU en Colombia",
+        "title": "CotizaT: software de presupuestos y APU en Colombia",
         "description": (
             "Software de presupuestos de construcción y APU para Colombia. "
             "NIT, IVA 19 %, COP o USD, pañete y concreto. PDF profesional. "
@@ -268,7 +281,7 @@ _LANDING: dict[str, dict] = {
         ],
     },
     "MX": {
-        "title": "CotizaT | Software para presupuestos de obra en México",
+        "title": "CotizaT: software de presupuestos de obra en México",
         "description": (
             "Programa para presupuestos de construcción y remodelación en México. "
             "RFC, IVA 16 %, MXN, aplanado y plafón. Catálogo con APU. "
@@ -314,7 +327,7 @@ _LANDING: dict[str, dict] = {
         ],
     },
     "PE": {
-        "title": "CotizaT | Presupuestos de obra y metrados en Perú",
+        "title": "CotizaT: software de presupuestos y metrados en Perú",
         "description": (
             "Software de presupuestos de construcción para Perú. RUC, IGV 18 %, "
             "soles, tarrajeo y metrados con APU. PDF profesional. 7 días gratis, "
@@ -360,7 +373,7 @@ _LANDING: dict[str, dict] = {
         ],
     },
     "EC": {
-        "title": "CotizaT | Software de presupuestos y APU en Ecuador",
+        "title": "CotizaT: software de presupuestos y APU en Ecuador",
         "description": (
             "Software de presupuestos de construcción para Ecuador. RUC, IVA 15 %, "
             "USD, enlucido y tumbado. Catálogo con APU. 7 días gratis, sin tarjeta."
@@ -436,9 +449,10 @@ def _bloques_tema(codigo: str, tema: str) -> dict:
     ciudad = pais.get("ciudad_ejemplo") or ""
 
     if tema == "software-presupuestos":
-        title = f"Software de presupuestos de construcción en {nombre} | CotizaT"
-        if not codigo:
-            title = "Software de presupuestos de construcción LatAm | CotizaT"
+        title = titulo_publico(
+            "software de presupuestos de construcción",
+            nombre if codigo else "",
+        )
         h1 = f"Software de presupuestos de construcción en {nombre}"
         lead = (
             f"CotizaT es el software de presupuestos de construcción y remodelación "
@@ -482,9 +496,10 @@ def _bloques_tema(codigo: str, tema: str) -> dict:
             ("Presupuestos de remodelación", ruta_pais(codigo, "remodelacion")),
         ]
     elif tema == "apu":
-        title = f"Software de APU y análisis de precios unitarios en {nombre} | CotizaT"
-        if not codigo:
-            title = "Software de APU y análisis de precios unitarios | CotizaT"
+        title = titulo_publico(
+            "software de APU y análisis de precios unitarios",
+            nombre if codigo else "",
+        )
         h1 = f"Análisis de precios unitarios (APU) para {nombre}"
         lead = (
             f"CotizaT no es una lista de precios plana. Cada partida llega con APU: "
@@ -527,9 +542,10 @@ def _bloques_tema(codigo: str, tema: str) -> dict:
             ("Presupuestos de remodelación", ruta_pais(codigo, "remodelacion")),
         ]
     else:  # remodelacion
-        title = f"Software de presupuestos de remodelación en {nombre} | CotizaT"
-        if not codigo:
-            title = "Software de presupuestos de remodelación | CotizaT"
+        title = titulo_publico(
+            "software de presupuestos de remodelación",
+            nombre if codigo else "",
+        )
         h1 = f"Presupuestos de remodelación para {nombre}"
         lead = (
             f"Arma el presupuesto de un baño, una cocina o una vivienda completa en "
@@ -588,7 +604,7 @@ def _bloques_tema(codigo: str, tema: str) -> dict:
         },
     ]
     return {
-        "title": title[:70],
+        "title": title,
         "description": description[:170],
         "h1": h1,
         "lead": lead,

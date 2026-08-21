@@ -114,3 +114,20 @@ def test_fichas_por_pais_no_se_copian_entre_si():
     apu_mx = ficha_tema("MX", "apu")
     assert apu_co["h1"] != apu_mx["h1"]
     assert robots_txt().startswith("User-agent:")
+
+
+def test_titulo_empieza_por_marca_y_describe_el_oficio():
+    """En Google no puede aparecer solo «CotizaT»: hay que leer qué es."""
+    from app.paises import ORDEN_SELECTOR
+    from app.seo import TEMAS, ficha_landing, ficha_tema, titulo_publico
+
+    assert titulo_publico("software de presupuestos de construcción").startswith("CotizaT:")
+    for codigo in [""] + list(ORDEN_SELECTOR):
+        ficha = ficha_landing(codigo)
+        assert ficha["title"].startswith("CotizaT:")
+        assert "software" in ficha["title"].lower()
+        assert "presupuesto" in ficha["title"].lower()
+        for tema in TEMAS:
+            hub = ficha_tema(codigo, tema)
+            assert hub["title"].startswith("CotizaT:")
+            assert "software" in hub["title"].lower()
