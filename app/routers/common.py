@@ -525,11 +525,118 @@ def _respuesta_auth_json(request: Request) -> bool:
     )
 
 def _config(db: Session) -> Configuracion:
-    cfg = db.query(Configuracion).first()
-    if cfg is None:
-        asegurar_config(db)
+    """Configuración del tenant con fallback si la columna del último merge falta.
+
+    En producción la columna ``recorrido_inicial_oculto`` (migración
+    b1c2d3e4f5a6) no existía y cualquier ``SELECT configuracion.*`` explotaba
+    con ``UndefinedColumn`` (PostgreSQL, ProgrammingError) o
+    ``no such column`` (SQLite, OperationalError). Este helper hace la lectura
+    resiliente:
+
+    1. Intenta la query normal.
+    2. Si falla por columna faltante, hace rollback, intenta un ``ALTER ...
+       IF NOT EXISTS`` best-effort y reintenta.
+    3. Si el ALTER no tiene permisos, hace un fallback con ``defer`` para que
+       la página no quede 500: la guía seguirá visible pero la app abre.
+    """
+    from sqlalchemy.exc import DBAPIError, OperationalError, ProgrammingError
+
+    try:
         cfg = db.query(Configuracion).first()
-    return cfg
+        if cfg is None:
+            asegurar_config(db)
+            cfg = db.query(Configuracion).first()
+        return cfg
+    except (ProgrammingError, OperationalError, DBAPIError, Exception) as exc:
+        msg = str(exc).lower()
+        is_missing = (
+            "recorrido_inicial_oculto" in msg
+            or "undefinedcolumn" in msg
+            or "no such column" in msg
+            or "no column" in msg
+        )
+        # No es nuestro caso: propaga tal cual (pero solo si no menciona la columna)
+        if not is_missing:
+            # Re-lanza solo si es un DBAPIError que no es por columna faltante
+            if isinstance(exc, (ProgrammingError, OperationalError, DBAPIError)):
+                raise
+            # Para otras excepciones, también propaga
+            raise
+        try:
+            db.rollback()
+        except Exception:
+            pass
+        # Intento de auto-reparación DDL en la misma sesión (puede fallar por RLS/permisos o sintaxis)
+        try:
+            from sqlalchemy import text as _text
+
+            db.execute(_text("ALTER TABLE configuracion ADD COLUMN IF NOT EXISTS recorrido_inicial_oculto BOOLEAN DEFAULT 0"))
+            db.commit()
+            cfg = db.query(Configuracion).first()
+            if cfg is None:
+                asegurar_config(db)
+                cfg = db.query(Configuracion).first()
+            return cfg
+        except Exception:
+            try:
+                db.rollback()
+            except Exception:
+                pass
+        # Fallback sin la columna: defer para que el SELECT no la pida
+        try:
+            from sqlalchemy.orm import defer
+            from sqlalchemy.exc import ProgrammingError as _PE2, OperationalError as _OE2
+
+            cfg = db.query(Configuracion).options(defer(Configuracion.recorrido_inicial_oculto)).first()
+            if cfg is None:
+                # asegurar_config también haría SELECT con la columna; lo evitamos con SQL directo
+                try:
+                    asegurar_config(db)
+                except (ProgrammingError, OperationalError, _PE2, _OE2, Exception) as e2:
+                    msg2 = str(e2).lower()
+                    if "recorrido_inicial_oculto" not in msg2 and "undefinedcolumn" not in msg2 and "no such column" not in msg2:
+                        raise
+                    try:
+                        db.rollback()
+                    except Exception:
+                        pass
+                    # Inserta fila mínima si no existe, sin tocar la columna nueva
+                    from sqlalchemy import text as _text2
+
+                    org_id = db.info.get("organizacion_id")
+                    if org_id is None:
+                        # fallback al espacio local 1 si no hay contexto (raro en web con RLS)
+                        org_id = 1
+                    # Evita duplicar si ya existe (otra transacción la creó)
+                    existing = None
+                    try:
+                        existing = db.query(Configuracion).options(defer(Configuracion.recorrido_inicial_oculto)).first()
+                    except Exception:
+                        try:
+                            db.rollback()
+                        except Exception:
+                            pass
+                    if existing is None:
+                        try:
+                            db.execute(_text2("INSERT INTO configuracion (organizacion_id, empresa_nombre, empresa_pais) VALUES (:oid, 'Mi Empresa', 'Venezuela') ON CONFLICT DO NOTHING"), {"oid": int(org_id)})
+                            db.commit()
+                        except Exception:
+                            try:
+                                db.rollback()
+                            except Exception:
+                                pass
+                cfg = db.query(Configuracion).options(defer(Configuracion.recorrido_inicial_oculto)).first()
+            if cfg is not None:
+                # Evita que el acceso posterior dispare un SELECT diferido que también fallaría
+                if "recorrido_inicial_oculto" not in cfg.__dict__:
+                    cfg.__dict__["recorrido_inicial_oculto"] = False
+                elif cfg.__dict__.get("recorrido_inicial_oculto") is None:
+                    cfg.__dict__["recorrido_inicial_oculto"] = False
+                return cfg
+        except Exception as fallback_exc:
+            log.error("Fallback _config también falló: %s", fallback_exc)
+            raise exc from fallback_exc
+        raise
 
 
 def _importe_en_moneda_vista(valor, presupuesto, moneda_vista: str, factor_vista: float):

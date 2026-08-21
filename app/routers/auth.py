@@ -1079,9 +1079,41 @@ def omitir_guia_inicio(db: Session = Depends(get_db)):
     necesita que le recuerden los cinco pasos. La decisión se guarda por
     organización (la columna vive en ``Configuracion``), de modo que cada
     espacio de trabajo conserva su propia preferencia.
+
+    Hotfix b1c2d3e4f5a6: si la columna aún no existe en Postgres (deploy sin
+    ``alembic upgrade head``) no se deja la página 500. Se intenta un
+    ``ALTER ... IF NOT EXISTS`` best-effort y, si no hay permisos,
+    simplemente se ignora (la guía seguirá visible pero la app abre).
     """
     cfg = _config(db)
-    if not cfg.recorrido_inicial_oculto:
-        cfg.recorrido_inicial_oculto = True
-        db.commit()
+    if not getattr(cfg, "recorrido_inicial_oculto", False):
+        try:
+            cfg.recorrido_inicial_oculto = True
+            db.commit()
+        except Exception as exc:
+            try:
+                db.rollback()
+            except Exception:
+                pass
+            # best-effort DDL por si la columna falta
+            try:
+                from sqlalchemy import text as _text
+
+                db.execute(_text("ALTER TABLE configuracion ADD COLUMN IF NOT EXISTS recorrido_inicial_oculto BOOLEAN DEFAULT 0"))
+                db.commit()
+                # reintenta el set
+                cfg.recorrido_inicial_oculto = True
+                db.commit()
+            except Exception:
+                try:
+                    db.rollback()
+                except Exception:
+                    pass
+                log.warning("omitir_guia_inicio: no se pudo persistir preferencia (columna faltante sin permisos DDL): %s", exc)
+                # No se propaga: la acción es ocultar una tarjeta, no crítica
+                # Se deja el flag en memoria para que la tarjeta desaparezca al menos en esta request
+                try:
+                    cfg.__dict__["recorrido_inicial_oculto"] = True
+                except Exception:
+                    pass
     return _redirect("/inicio")

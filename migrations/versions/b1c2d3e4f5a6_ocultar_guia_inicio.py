@@ -20,15 +20,27 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    op.add_column(
-        "configuracion",
-        sa.Column(
-            "recorrido_inicial_oculto",
-            sa.Boolean(),
-            nullable=True,
-            server_default=sa.text("0"),
-        ),
-    )
+    # Idempotente: el hotfix de producción puede haber creado ya la columna
+    # vía ``ALTER TABLE ... IF NOT EXISTS`` antes de que ``alembic upgrade``
+    # se ejecute. Sin el chequeo, el upgrade fallaría con "already exists"
+    # y dejaría la base a medio migrar.
+    bind = op.get_bind()
+    try:
+        from sqlalchemy import inspect as _inspect
+
+        cols = {c["name"] for c in _inspect(bind).get_columns("configuracion")}
+    except Exception:
+        cols = set()
+    if "recorrido_inicial_oculto" not in cols:
+        op.add_column(
+            "configuracion",
+            sa.Column(
+                "recorrido_inicial_oculto",
+                sa.Boolean(),
+                nullable=True,
+                server_default=sa.text("0"),
+            ),
+        )
 
 
 def downgrade() -> None:
