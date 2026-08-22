@@ -70,27 +70,63 @@ def alias_para_texto(texto: str, capitulo: str = "") -> list[str]:
     return salida
 
 
+def _variantes_ortograficas(token: str) -> tuple[str, ...]:
+    """Añade grafías frecuentes cuando el usuario omite tildes.
+
+    SQLite no dispone de ``unaccent`` y su ``LIKE`` no considera equivalentes
+    ``demolicion`` y ``demolición``. Buena parte de las búsquedas se escriben
+    desde el móvil sin tildes, así que resolvemos aquí las terminaciones más
+    productivas y algunos términos técnicos habituales. PostgreSQL recibe las
+    mismas variantes y mantiene exactamente el mismo comportamiento.
+    """
+    token = str(token or "").strip().lower()
+    if not token:
+        return ()
+    salida = [token]
+    if token.endswith("cion") and len(token) > 5:
+        salida.append(token[:-3] + "ión")
+    equivalencias = {
+        "ceramica": "cerámica",
+        "ceramico": "cerámico",
+        "ceramicas": "cerámicas",
+        "ceramicos": "cerámicos",
+        "electrica": "eléctrica",
+        "electrico": "eléctrico",
+        "mecanica": "mecánica",
+        "mecanico": "mecánico",
+        "lamina": "lámina",
+        "laminas": "láminas",
+    }
+    con_tilde = equivalencias.get(token)
+    if con_tilde:
+        salida.append(con_tilde)
+    return tuple(dict.fromkeys(salida))
+
+
 def variantes_consulta(consulta: str) -> list[list[str]]:
     """Grupos AND de variantes OR para una búsqueda SQL.
 
     ``hormigón pulido`` se convierte, de forma simplificada, en:
     ``[(hormigon, concreto, ...), (pulido,)]``. Cada grupo debe cumplirse, pero
-    dentro del grupo basta una variante.
+    dentro del grupo basta una variante. También conserva y reconstruye tildes
+    frecuentes para que ``demolicion`` encuentre ``Demolición`` en SQLite.
     """
     originales = re.findall(r"[\w.-]+", str(consulta or "").lower(), flags=re.UNICODE)[:6]
     tokens = normalizar(consulta).split()[:6]
     resultado: list[list[str]] = []
     for indice, token in enumerate(tokens):
         original = originales[indice] if indice < len(originales) else token
-        variantes = [original]
-        if token != original:
-            variantes.append(token)
+        variantes = list(_variantes_ortograficas(original))
+        for variante in _variantes_ortograficas(token):
+            if variante not in variantes:
+                variantes.append(variante)
         for grupo in grupos_sinonimos():
             if any(token in termino.split() for termino in grupo["terminos"]):
                 for termino in grupo["terminos"]:
-                    if termino not in variantes:
-                        variantes.append(termino)
-        resultado.append(variantes[:16])
+                    for variante in _variantes_ortograficas(termino):
+                        if variante not in variantes:
+                            variantes.append(variante)
+        resultado.append(variantes[:20])
     return resultado
 
 

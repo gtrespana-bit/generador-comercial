@@ -328,13 +328,14 @@
   // Agregar partida desde catálogo
   // -------------------------------------------------------------------------
 
-  function insertarFichaEnCapitulo(d, cap) {
+  function insertarFichaEnCapitulo(d, cap, opciones) {
+    opciones = opciones || {};
     if (!cap) {
       var caps = editor.contCapitulos.querySelectorAll(".capitulo");
       cap = caps.length ? caps[caps.length - 1] : editor.Capitulo.crear({ nombre: "CAPÍTULO GENERAL" }, editor);
     }
     cap.classList.remove("collapsed");
-    editor.pushUndo();
+    if (!opciones.sinUndo) editor.pushUndo();
 
     var partida = editor.Partida.crearPartida(cap, {
       catalogo_id: d.id || "",
@@ -369,9 +370,11 @@
       var row = partida.querySelector(".partida-row");
       row.classList.add("flash");
       setTimeout(function () { row.classList.remove("flash"); }, 1200);
-      partida.scrollIntoView({ behavior: "smooth", block: "center" });
-      var ni = partida.querySelector(".partida-nombre-input");
-      if (ni) setTimeout(function () { ni.focus(); }, 200);
+      if (!opciones.sinScroll) {
+        partida.scrollIntoView({ behavior: "smooth", block: "center" });
+        var ni = partida.querySelector(".partida-nombre-input");
+        if (ni) setTimeout(function () { ni.focus(); }, 200);
+      }
     }
     editor.marcarCambio();
     return partida;
@@ -386,6 +389,47 @@
         alert("No se pudo cargar la ficha de la partida. Inténtalo de nuevo.");
         return null;
       });
+  }
+
+  function insertarPorId(partidaId) {
+    var item = (editor.CATALOGO || []).find(function (partida) {
+      return Number(partida.id) === Number(partidaId);
+    });
+    // El índice ligero puede seguir cargándose de forma diferida. La API de
+    // ficha solo necesita el id y fusionará el resultado al recibirlo.
+    if (!item) item = { id: Number(partidaId) };
+    return obtenerFicha(item)
+      .then(function (ficha) { return insertarFichaEnCapitulo(ficha, null); });
+  }
+
+  function obtenerFichasPorIds(ids) {
+    var unicos = [];
+    (ids || []).forEach(function (id) {
+      id = Number(id);
+      if (id > 0 && unicos.indexOf(id) === -1) unicos.push(id);
+    });
+    return Promise.all(unicos.map(function (id) {
+      var item = (editor.CATALOGO || []).find(function (partida) {
+        return Number(partida.id) === id;
+      }) || { id: id };
+      return obtenerFicha(item);
+    }));
+  }
+
+  function insertarLote(fichas, capitulo) {
+    var validas = (fichas || []).filter(Boolean);
+    if (!validas.length) return [];
+    editor.pushUndo();
+    var insertadas = validas.map(function (ficha, indice) {
+      return insertarFichaEnCapitulo(ficha, capitulo, {
+        sinUndo: true,
+        sinScroll: indice < validas.length - 1
+      });
+    }).filter(Boolean);
+    if (editor.renumerar) editor.renumerar();
+    if (editor.recalcular) editor.recalcular();
+    editor.marcarCambio();
+    return insertadas;
   }
 
   function agregarDesdeCatalogo(idx) {
@@ -612,7 +656,10 @@
     obtenerFicha: obtenerFicha,
     buscarRemoto: buscarRemoto,
     registrarSinResultados: registrarSinResultados,
-    fusionarEnIndice: fusionarEnIndice
+    fusionarEnIndice: fusionarEnIndice,
+    insertarPorId: insertarPorId,
+    obtenerFichasPorIds: obtenerFichasPorIds,
+    insertarLote: insertarLote
   };
 
   // Exponer para las acciones declarativas del catálogo compartido.
