@@ -10,6 +10,7 @@ from alembic import context
 from sqlalchemy import engine_from_config, pool
 
 from app.database import Base, DATABASE_URL
+from app.db_config import _normalizar_url
 from app import models  # noqa: F401  (registra todas las tablas en metadata)
 
 config = context.config
@@ -19,7 +20,8 @@ if config.config_file_name is not None:
 # La aplicación debe conectarse con un rol RLS no privilegiado; Alembic usa
 # una URL administrativa separada cuando necesita crear roles/políticas.
 # ConfigParser interpreta '%' como interpolación, por eso se escapa.
-migration_url = os.environ.get("MIGRATION_DATABASE_URL", "").strip() or DATABASE_URL
+raw_migration_url = os.environ.get("MIGRATION_DATABASE_URL", "").strip()
+migration_url = _normalizar_url(raw_migration_url) if raw_migration_url else DATABASE_URL
 config.set_main_option("sqlalchemy.url", migration_url.replace("%", "%%"))
 target_metadata = Base.metadata
 

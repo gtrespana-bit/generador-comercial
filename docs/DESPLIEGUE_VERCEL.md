@@ -14,7 +14,7 @@ necesita la configuración PostgreSQL + Supabase descrita en
 
 | Variable | Valor |
 | --- | --- |
-| `DATABASE_URL` | `postgresql://cotizat_runtime:…@host:5432/cotizat` (login sin privilegios, miembro de `cotizat_app`, sin `BYPASSRLS`) |
+| `DATABASE_URL` | `postgresql://cotizat_runtime.<ref>:…@aws-0-<region>.pooler.supabase.com:6543/postgres?sslmode=require` (Supabase pooler en modo **Transaction**, puerto 6543, login sin privilegios miembro de `cotizat_app`, sin `BYPASSRLS`) |
 | `SUPABASE_URL` | `https://tu-proyecto.supabase.co` |
 | `SUPABASE_PUBLISHABLE_KEY` | clave `sb_publishable_…` |
 | `SUPABASE_SECRET_KEY` | clave `sb_secret_…` (solo backend, nunca en el navegador) |

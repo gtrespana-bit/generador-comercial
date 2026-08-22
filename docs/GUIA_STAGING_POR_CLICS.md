@@ -109,9 +109,9 @@ En Supabase:
    - Esta es `SUPABASE_SECRET_KEY`.
 4. **Cadena de conexión para la app**: menú **Project Settings** → **Database**
    → **Connection string**. Usa la opción **URI** y:
-   - Escoge el modo **Transaction** o **Session pooler** (puerto 6543/5432
-     según te muestre; ambos valen, pero para Vercel serverless suele
-     recomendarse el pooler **Transaction**).
+   - Escoge el modo **Transaction pooler** (puerto 6543 obligatorio para
+     entornos serverless como Vercel; el modo Session en puerto 5432 está
+     limitado a 15 conexiones y provocará `FATAL: (EMAXCONNSESSION)`).
    - El usuario que trae por defecto es `postgres.<ref>`; **cámbialo** por
      `cotizat_runtime.<ref>` (en el pooler de Supabase el formato es
      `rol.ref-del-proyecto`; si tu cadena es
