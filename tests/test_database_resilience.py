@@ -80,6 +80,70 @@ def test_resumen_licencia_hace_rollback_si_la_consulta_falla(monkeypatch):
         db.close()
 
 
+def test_asegurar_catalogo_hace_rollback_si_falla_la_lectura_inicial(monkeypatch):
+    """/partidas y /recursos no pueden dejar la sesión abortada.
+
+    Las dos páginas llaman a ``asegurar_catalogo_propio`` antes de cualquier
+    ``count()``. Si la lectura de ``configuracion`` (o del recuento de
+    partidas oficiales) falla y el ``except`` no hace ``rollback``, psycopg
+    responde ``InFailedSqlTransaction`` en la consulta siguiente — exactamente
+    el 500 reportado al listar partidas.
+    """
+    from sqlalchemy.exc import ProgrammingError
+
+    from app.services import catalogo_propio
+
+    class SesionFalsa:
+        def __init__(self):
+            self.rollbacks = 0
+            self.info = {}
+
+        def query(self, *_a, **_k):
+            raise ProgrammingError(
+                "SELECT configuracion.version_catalogo",
+                {},
+                Exception('column "recorrido_inicial_oculto" does not exist'),
+            )
+
+        def rollback(self):
+            self.rollbacks += 1
+
+    monkeypatch.setattr(catalogo_propio, "disponible", lambda: True)
+    db = SesionFalsa()
+    assert catalogo_propio.asegurar_catalogo_propio(db) is None
+    assert db.rollbacks == 1, (
+        "asegurar_catalogo_propio se tragó el error sin liberar la "
+        "transacción: /partidas y /recursos devolverían 500."
+    )
+
+
+def test_sincronizar_recursos_hace_rollback_si_falla(monkeypatch):
+    """La sincronización perezosa de /recursos no puede envenenar la sesión."""
+    from app.routers import common
+
+    class SesionFalsa:
+        def __init__(self):
+            self.rollbacks = 0
+            self.info = {"organizacion_id": 9}
+
+        def get_bind(self):
+            return object()
+
+        def rollback(self):
+            self.rollbacks += 1
+
+    def _explota(*_a, **_k):
+        raise RuntimeError("fallo simulado al sincronizar recursos")
+
+    monkeypatch.setattr(
+        "app.services.recursos.sincronizar_recursos_desde_catalogo",
+        _explota,
+    )
+    db = SesionFalsa()
+    common._sincronizar_recursos(db, forzar=True)
+    assert db.rollbacks == 1
+
+
 def test_resumen_licencia_rollback_fallido_no_empeora_la_situacion(monkeypatch):
     """Si la propia ``rollback`` falla, devolvemos el resumen vacío igual.
 

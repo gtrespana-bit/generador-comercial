@@ -1116,6 +1116,10 @@ def _indice_nombres_catalogo(db: Session) -> dict[str, int]:
     try:
         codigo = codigo_desde_pais(getattr(_config(db), "empresa_pais", ""))
     except Exception:  # pragma: no cover - sin configuración utilizable
+        try:
+            db.rollback()
+        except Exception:
+            pass
         codigo = ""
     indice: dict[str, int] = {}
     for pid, nombre in db.query(Partida.id, Partida.nombre).all():
@@ -1518,6 +1522,10 @@ def _contexto_moneda(db: Session, moneda=None, tasa=None) -> tuple[str, float]:
     try:
         cfg = _config(db)
     except Exception:  # pragma: no cover - sin configuración aún
+        try:
+            db.rollback()
+        except Exception:
+            pass
         cfg = None
     moneda_cfg = str(getattr(cfg, "moneda_default", "") or "USD").strip().upper()
     tasa_cfg = getattr(cfg, "tasa_cambio", None)
@@ -1682,7 +1690,10 @@ def _actualizar_usos_recursos(db: Session):
         from ..services.recursos import actualizar_usos_recursos as _upd
         _upd(db)
     except Exception:
-        pass
+        try:
+            db.rollback()
+        except Exception:
+            pass
 
 
 #: Control del intervalo mínimo entre sincronizaciones de recursos por
@@ -1727,7 +1738,14 @@ def _sincronizar_recursos(db: Session, forzar: bool = True):
         sincronizar_recursos_desde_catalogo(db)
         _actualizar_usos_recursos(db)
     except Exception:
-        pass
+        # Sin rollback, psycopg deja la transacción abortada y el
+        # ``SELECT`` de /recursos revienta con InFailedSqlTransaction.
+        log.exception("No se pudieron sincronizar los recursos del catálogo.")
+        try:
+            db.rollback()
+        except Exception:
+            pass
+
 
 # Re-exportación completa (E4-001): los routers hacen ``from .common import *``
 # y reciben modelos, servicios, constantes y utilidades sin repetir el bloque

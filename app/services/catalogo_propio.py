@@ -854,10 +854,21 @@ def asegurar_catalogo_propio(db: Session) -> dict | None:
     if not disponible():
         return None
     try:
-        cfg = db.query(Configuracion).first()
-        version = int(getattr(cfg, "version_catalogo", 0) or 0)
+        # Solo la marca de versión: un ``SELECT configuracion.*`` pide también
+        # columnas recientes (p. ej. ``recorrido_inicial_oculto``) y, si la
+        # base de producción no las tiene, aborta la transacción de psycopg.
+        # El ``except`` de abajo debe hacer rollback; si no, /partidas y
+        # /recursos mueren después con ``InFailedSqlTransaction`` en un
+        # ``count()`` inocente.
+        fila = db.query(Configuracion.version_catalogo).first()
+        version = int((fila[0] if fila else 0) or 0)
         propias = _cantidad_partidas_oficiales(db)
     except Exception:
+        log.exception("No se pudo leer el estado del catálogo propio.")
+        try:
+            db.rollback()
+        except Exception:
+            pass
         return None
     # La normalización Alicatado→Enchapado es un arreglo de una sola vez.
     # Con la versión vigente ya aplicada no hay nada que renombrar: las
