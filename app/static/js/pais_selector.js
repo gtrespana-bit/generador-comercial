@@ -1,4 +1,4 @@
-/* Selector de país para la landing adaptativa (LatAm).
+/* Selector de país para la landing adaptativa (LatAm + España).
  *
  * Sin inyección HTML ni estilos inline: solo textContent, class y
  * atributos. El servidor ya renderiza el país correcto si viene por
@@ -181,7 +181,7 @@
   window.addEventListener("popstate", function () {
     try {
       var path = window.location.pathname || "";
-      var m = path.match(/^\/(ve|co|mx|ec|pe)(\/|$)/i);
+      var m = path.match(/^\/(ve|co|mx|ec|pe|es)(\/|$)/i);
       if (m) {
         var c = m[1].toUpperCase();
         if (mapa[c]) { aplicarPais(c, { persist: false }); return; }

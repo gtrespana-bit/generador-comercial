@@ -43,6 +43,7 @@
 | 10. Integración con etapa 6 | ✅ Completado | 2026-08-19 | Proyectos, cambios, pagos, facturas y saldos con moneda contractual congelada |
 | 11. Pruebas y aceptación | ✅ Completado | 2026-08-19 (rev. tarde) | Suite completa: 785 passed, 7 skipped. Incluye `tests/test_moneda_editor.py` (frontera catálogo↔presupuesto) y RLS real contra PostgreSQL |
 | 12. Documentación y cierre | ✅ Completado | 2026-08-19 (rev. tarde) | Guías, migraciones (incluido el paso 10 de Supabase) y esta hoja actualizados |
+| 13. Apertura España (EUR) | ✅ Completado | 2026-08-22 | País en selector/alta, glosario VE→ES, matriz nacional EUR (388 recursos), tasa EUR verificada, landing/SEO `/es/` y SQL de carga. Falta pegar el SQL en Supabase (paso operativo). Detalle en `docs/APERTURA_MERCADO_ESPANA.md` |
 
 > **Cómo leer esta hoja.** La tabla de arriba es el estado real. Las casillas
 > `[ ]` de cada bloque se escribieron al planificar y **no se han ido marcando**

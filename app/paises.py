@@ -1,4 +1,4 @@
-"""Datos de países para la landing adaptativa (Semana 1 — LatAm).
+"""Datos de países para la landing adaptativa (LatAm + España).
 
 Un solo lugar con la verdad sobre cada mercado hispano: bandera, moneda,
 IVA de referencia, etiqueta del ID fiscal y vocabulario local de obra.
@@ -9,7 +9,9 @@ landing hable el idioma del visitante. La configuración real del IVA sigue
 siendo libre en /configuracion.
 
 NOTA: El catálogo mantiene sus precios en USD como referencia regional;
-la moneda_local aquí es solo informativa para el selector.
+la moneda_local aquí es solo informativa para el selector. España es la
+excepción con mercado propio en EUR: sus recursos tienen referencias
+nacionales en esa moneda (ver ``tools/generar_matriz_precios_espana.py``).
 """
 
 from __future__ import annotations
@@ -307,13 +309,35 @@ PAISES: dict[str, dict] = {
         "ciudad_ejemplo": "Managua",
         "mercado": "nicaragüense",
     },
+    # Primer mercado fuera de LatAm: moneda EUR, IVA 21 % y NIF. El catálogo
+    # base sigue en USD como referencia; los recursos tienen referencias
+    # nacionales en EUR (matriz precios_recursos_espana.csv) y la
+    # terminología se adapta al mostrar con el glosario VE→ES.
+    "ES": {
+        "codigo": "ES",
+        "nombre": "España",
+        "gentilicio": "español",
+        "bandera": "🇪🇸",
+        "moneda": "EUR",
+        "moneda_local": "EUR",
+        "simbolo_local": "€",
+        "iva": 21,
+        "id_fiscal": "NIF",
+        "vocab": "hormigón, pladur, falso techo, alicatado, fontanero",
+        "id_fiscal_placeholder": "B12345678",
+        "telefono_ejemplo": "+34 600 000 000",
+        "razon_social_ejemplo": "S.L.",
+        "ciudad_ejemplo": "Madrid",
+        "mercado": "español",
+    },
 }
 
-# Orden en que aparecen en el selector (Semana 2 — foco 5 países)
-# VE histórico + 4 nuevos (CO + MX + EC + PE). Los otros 12 quedan en PAISES
-# pero ocultos hasta la ola 2 para no dispersar validación.
+# Orden en que aparecen en el selector. VE histórico + 4 LatAm
+# (CO + MX + EC + PE) + España (EUR), el primer mercado fuera de LatAm.
+# Los demás países quedan en PAISES pero ocultos hasta su ola de apertura
+# para no dispersar validación.
 ORDEN_SELECTOR = [
-    "VE", "CO", "MX", "EC", "PE",
+    "VE", "CO", "MX", "EC", "PE", "ES",
 ]
 
 # Genérico para cuando no hay país seleccionado (SEO, primera visita)

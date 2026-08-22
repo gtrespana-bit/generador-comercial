@@ -24,10 +24,10 @@ CUERPO_PAIS: dict[str, list[tuple[str, list[str]]]] = {
             ],
         ),
         (
-            "Cinco países, un catálogo, nombres al mostrar",
+            "Latinoamérica y España, un catálogo, nombres al mostrar",
             [
-                "El catálogo es uno. Al elegir Venezuela, Colombia, México, Ecuador o Perú cambian el vocabulario en pantalla, el IVA, el ID fiscal y la moneda de ejemplo. No clonamos cinco bases de precios: evitamos que un mexicano vea «friso» o un colombiano «zoclo».",
-                "Si tu mercado aún no está en el selector (Chile, Argentina, España), puedes usar la versión genérica en USD. Abrir un país nuevo exige copy y fiscalidad propios, no un find-and-replace.",
+                "El catálogo es uno. Al elegir Venezuela, Colombia, México, Ecuador, Perú o España cambian el vocabulario en pantalla, el IVA, el ID fiscal y la moneda de ejemplo. No clonamos seis bases de precios: evitamos que un mexicano vea «friso», un colombiano «zoclo» o un español «concreto».",
+                "Si tu mercado aún no está en el selector (Chile, Argentina, Uruguay…), puedes usar la versión genérica en USD. Abrir un país nuevo exige copy y fiscalidad propios, no un find-and-replace.",
             ],
         ),
     ],
@@ -130,6 +130,34 @@ CUERPO_PAIS: dict[str, list[tuple[str, list[str]]]] = {
             "Dólar nativo, no una conversión improvisada",
             [
                 "Ecuador ya cotiza en USD. El espacio no nace en otra moneda para luego «convertir». El RUC y el IVA 15 % se configuran al registrarte. Si mañana cambia la alícuota, la pones tú: CotizaT no decide impuestos.",
+            ],
+        ),
+    ],
+    "ES": [
+        (
+            "Software de presupuestos para reformas y obra en España",
+            [
+                "En España el presupuesto de una reforma se discute en euros, con IVA y NIF en el documento. CotizaT arma capítulos, partidas y análisis de precios unitarios en EUR, con IVA 21 % configurable. El catálogo muestra hormigón, pladur, falso techo, alicatado y fontanería; no «concreto» ni «friso».",
+                "Está pensado para reformistas, contratistas y pequeñas constructoras de 2 a 15 personas que hoy cotizan en Excel o Word. No es un Presto ni un Arquímedes de licitación pública: es el flujo comercial de una reforma —medir, presupuestar, enviar y reenviar cambios.",
+            ],
+        ),
+        (
+            "Del visado a la obra, sin BC3 ni visor BIM",
+            [
+                "El cliente no entra a ninguna plataforma. Tú mides, armas el presupuesto por capítulos, revisas margen y horas de cuadrilla, y mandas el PDF por WhatsApp o email. Si el cliente cambia el solado, editas, se crea una versión y reenvías con el resumen de qué cambió.",
+                "CotizaT no exporta BC3 (FIEBDC-3) ni lee planos. Si trabajas licitación pública que exige BC3, este no es tu software; si haces reforma residencial y comercial, el flujo es el que ya usas.",
+            ],
+        ),
+        (
+            "IVA y NIF en el documento, factura aparte",
+            [
+                "Configuras el IVA (21 % general, o el reducido que apliques) y el presupuesto lo calcula. No es asesoramiento fiscal. El NIF o CIF sale en el PDF. La factura la emites con tu sistema o tu gestor; CotizaT genera el presupuesto comercial que presentas al cliente.",
+            ],
+        ),
+        (
+            "Euros nativos, no una conversión del catálogo",
+            [
+                "Los recursos del catálogo tienen referencias de mercado en euros para España, y el presupuesto puede nacer directamente en EUR. Si prefieres trabajar en USD como referencia, cada documento congela su tasa: un PDF de marzo no cambia en abril aunque se mueva el tipo de cambio.",
             ],
         ),
     ],
@@ -468,6 +496,24 @@ HUB_EXTRA: dict[tuple[str, str], list[tuple[str, str]]] = {
             "Pack de estancia, tumbado y enlucido, productos con foto. Si hay cambios, reenvías total anterior y total nuevo. El cliente no se registra.",
         ),
     ],
+    ("ES", "software-presupuestos"): [
+        (
+            "Presupuestar reformas en euros, con NIF e IVA",
+            "El oficio español presupuesta en euros. CotizaT nace con EUR, IVA 21 % y NIF, y congela la tasa en cada documento si también trabajas en USD. Hormigón, pladur, falso techo, alicatado, fontanero.",
+        ),
+    ],
+    ("ES", "apu"): [
+        (
+            "APU en euros, con precios de mercado españoles",
+            "Descompuestos editables en EUR: materiales, mano de obra y equipo con referencias de mercado en euros. El IVA del documento lo configuras tú; no es asesoramiento fiscal.",
+        ),
+    ],
+    ("ES", "remodelacion"): [
+        (
+            "Reforma de piso en Madrid o Valencia, PDF por WhatsApp",
+            "Pack de baño o cocina, cantidades a los m², productos con foto. Si el cliente cambia el solado, reenvías total anterior y total nuevo. El cliente no se registra.",
+        ),
+    ],
 }
 
 
@@ -500,6 +546,24 @@ FAQ_HUB: dict[tuple[str, str], list[dict]] = {
         {
             "q": "¿Nace en dólares o convierte desde otra moneda?",
             "a": "Nace en USD. Ecuador cotiza en dólares; no hay una conversión improvisada al registrarte.",
+        },
+    ],
+    ("ES", "software-presupuestos"): [
+        {
+            "q": "¿Emite factura con SII o TicketBAI?",
+            "a": "No. Genera presupuestos comerciales con NIF e IVA; la factura la emites con tu sistema o tu gestor.",
+        },
+    ],
+    ("ES", "apu"): [
+        {
+            "q": "¿Los precios del APU son de mercado español?",
+            "a": "Sí: los recursos traen referencias nacionales en EUR (con rango, fuente y fecha), editables. No son una cotización exacta de tienda.",
+        },
+    ],
+    ("ES", "remodelacion"): [
+        {
+            "q": "¿Sirve para una reforma de piso o solo para obra nueva?",
+            "a": "Está pensado para reformas y obra privada: packs de estancia, alicatado, falso techo y fontanería, con PDF por WhatsApp.",
         },
     ],
 }

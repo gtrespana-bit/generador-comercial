@@ -19,7 +19,7 @@ from .branding import PRODUCT_NAME, VALUE_PROPOSITION
 from .paises import ORDEN_SELECTOR, PAISES, PAIS_GENERICO, lista_paises
 
 OG_IMAGE = "/static/og-cotizat.png"
-SITEMAP_LASTMOD = "2026-08-21"
+SITEMAP_LASTMOD = "2026-08-22"
 
 # Temas con URL propia. Cada uno apunta a una intención de búsqueda distinta.
 TEMAS = ("software-presupuestos", "apu", "remodelacion")
@@ -211,16 +211,16 @@ _LANDING: dict[str, dict] = {
         "sub": (
             "CotizaT convierte tu catálogo y tus precios en presupuestos de obra "
             "claros, con coste interno, beneficio y horas de cuadrilla. PDF con "
-            "tu logo, listo para WhatsApp. Venezuela, Colombia, México, Ecuador y Perú."
+            "tu logo, listo para WhatsApp. Venezuela, Colombia, México, Ecuador, Perú y España."
         ),
-        "kicker": "Sistema comercial para Latinoamérica · Construcción y remodelación",
+        "kicker": "Sistema comercial para Latinoamérica y España · Construcción y remodelación",
         "faq": [
             {
-                "q": "¿CotizaT sirve para presupuestos de construcción en Latinoamérica?",
+                "q": "¿CotizaT sirve para presupuestos de construcción en Latinoamérica y España?",
                 "a": (
                     "Sí. Está hecho para constructoras pequeñas, remodeladores y "
-                    "contratistas de Venezuela, Colombia, México, Ecuador y Perú. "
-                    "Configuras moneda, IVA e ID fiscal (RIF, NIT, RFC, RUC) al registrarte."
+                    "contratistas de Venezuela, Colombia, México, Ecuador, Perú y España. "
+                    "Configuras moneda, IVA e ID fiscal (RIF, NIT, RFC, RUC, NIF) al registrarte."
                 ),
             },
             {
@@ -472,6 +472,54 @@ _LANDING: dict[str, dict] = {
                 "a": (
                     "No. Los documentos son comerciales y no sustituyen la factura "
                     "electrónica que te exija el SRI."
+                ),
+            },
+        ],
+    },
+    "ES": {
+        "title": "CotizaT: software de presupuestos de obra en España",
+        "description": (
+            "Software de presupuestos de construcción y reformas en España. "
+            "NIF, IVA 21 %, euros, hormigón y pladur. Catálogo con APU. "
+            "7 días gratis, sin tarjeta."
+        ),
+        "h1": "Software de presupuestos de obra y reformas para España",
+        "h1_resalte": "euros, NIF e IVA 21 %",
+        "sub": (
+            "Presupuesta reformas y obra en euros, con NIF e IVA 21 %. Catálogo "
+            "con análisis de precios unitarios, hormigón, pladur, falso techo, "
+            "alicatado y fontanería. PDF profesional para WhatsApp."
+        ),
+        "kicker": "🇪🇸 Sistema comercial para España · Construcción y reformas",
+        "faq": [
+            {
+                "q": "¿Está pensado para reformas y obra en España?",
+                "a": (
+                    "Sí. El espacio nace en euros, IVA 21 % y NIF. Terminología "
+                    "de obra española: hormigón, pladur, falso techo, alicatado, "
+                    "fontanero."
+                ),
+            },
+            {
+                "q": "¿Incluye análisis de precios unitarios (APU)?",
+                "a": (
+                    "Cada partida llega descompuesta en materiales, mano de obra y "
+                    "equipo, con rendimiento y precio en euros. Editas un recurso y "
+                    "se recalcula el presupuesto."
+                ),
+            },
+            {
+                "q": "¿El cliente tiene que registrarse?",
+                "a": (
+                    "No. Envías el PDF por WhatsApp o email. El enlace privado con "
+                    "firma es opcional."
+                ),
+            },
+            {
+                "q": "¿Emite factura con SII / AEAT?",
+                "a": (
+                    "No. Los documentos son comerciales y no sustituyen la factura "
+                    "que te exija la Agencia Tributaria."
                 ),
             },
         ],
@@ -738,7 +786,7 @@ def jsonld_website(request: Request | None = None) -> dict:
         "@type": "WebSite",
         "name": PRODUCT_NAME,
         "url": origen + "/",
-        "inLanguage": ["es", "es-VE", "es-CO", "es-MX", "es-PE", "es-EC"],
+        "inLanguage": ["es", "es-VE", "es-CO", "es-MX", "es-PE", "es-EC", "es-ES"],
         "publisher": {"@type": "Organization", "name": PRODUCT_NAME},
         "description": VALUE_PROPOSITION,
     }

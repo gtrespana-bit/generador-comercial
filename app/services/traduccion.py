@@ -1,8 +1,9 @@
-"""Traducción de terminología de obra por país (LatAm) — runtime.
+"""Traducción de terminología de obra por país — runtime.
 
 El catálogo base se guarda en venezolano (friso, rodapié, losa, encofrado...).
-Los glosarios `basedatos_partidas/glosarios/{CO,MX,EC,PE}.json` contienen
-mapeos VE→CO/MX/EC/PE con 70-130 entradas cada uno.
+Los glosarios `basedatos_partidas/glosarios/{CO,MX,EC,PE,ES}.json` contienen
+mapeos VE→CO/MX/EC/PE/ES con 70-150 entradas cada uno (ES: castellano
+peninsular — hormigón, pladur, falso techo, alicatado, fontanero...).
 
 Esta capa NO reescribe archivos: traduce al vuelo al mostrar catálogo,
 presupuestos y PDF, respetando mayúscula inicial y plural en -s/-es,
@@ -41,6 +42,7 @@ _NOMBRE_A_CODIGO = {
     "méxico": "MX", "mexico": "MX",
     "ecuador": "EC",
     "perú": "PE", "peru": "PE",
+    "españa": "ES", "espana": "ES",
     "chile": "CL", "argentina": "AR", "uruguay": "UY",
     "paraguay": "PY", "bolivia": "BO", "república dominicana": "DO",
     "dominicana": "DO", "panamá": "PA", "panama": "PA",
