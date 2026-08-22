@@ -313,7 +313,7 @@ DEFINICIONES: tuple[Variable, ...] = (
     Variable(
         "COTIZAT_IA_MODEL",
         False,
-        "modelo del asistente de IA (por omisión llama-3.3-70b-versatile)",
+        "modelo del asistente de IA (por omisión openai/gpt-oss-120b)",
     ),
 )
 

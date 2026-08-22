@@ -22,7 +22,7 @@ def test_estado_asistente_sin_clave(monkeypatch):
     assert estado["ok"] is True
     assert estado["configurado"] is False
     assert "Groq" in estado["proveedor"]
-    assert "llama-3.3-70b-versatile" in estado["modelo"]
+    assert estado["modelo"] == "openai/gpt-oss-120b"
 
 
 def test_estado_asistente_con_clave(monkeypatch):
@@ -32,6 +32,14 @@ def test_estado_asistente_con_clave(monkeypatch):
     estado = asistente_ia.estado_asistente()
     assert estado["configurado"] is True
     assert estado["mensaje_activacion"] == ""
+
+
+def test_modelo_groq_deprecado_se_migra(monkeypatch):
+    monkeypatch.setenv("COTIZAT_IA_MODEL", "llama-3.3-70b-versatile")
+    assert asistente_ia.obtener_modelo_ia() == "openai/gpt-oss-120b"
+
+    monkeypatch.setenv("COTIZAT_IA_MODEL", "llama-3.1-8b-instant")
+    assert asistente_ia.obtener_modelo_ia() == "openai/gpt-oss-20b"
 
 
 def test_respuestas_locales_fallback():
