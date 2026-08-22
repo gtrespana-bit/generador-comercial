@@ -107,6 +107,16 @@ TOTAL** sobre fondo azul-grisáceo con faja azul y numeración de páginas
   - **Exportar a CSV/Excel**: historial (respetando filtros), detalle de
     un presupuesto, y catálogos de partidas y productos.
   - Vista previa del PDF en el navegador (👁 Ver PDF).
+- **Asistente CotizaT con herramientas reales**:
+  - Busca partidas, clientes, presupuestos, productos y recursos dentro de la organización activa.
+  - Revisa tanto presupuestos guardados como el borrador visible del editor: precios, cantidades, duplicados, unidades, mediciones y márgenes negativos.
+  - Calcula mediciones de piso, paredes, perímetro, huecos y desperdicio en el servidor, y permite aplicarlas a una partida tras elegir destino y confirmar.
+  - Prepara lotes de partidas reales del catálogo, permite desmarcar conceptos y elegir capítulo antes de insertarlos.
+  - Detecta posibles faltantes de alcance (protecciones, residuos, soporte, impermeabilización, imprimación…) sin añadirlos automáticamente.
+  - Desde el editor también permite añadir una partida individual o abrir un Pack de estancia, siempre con confirmación del usuario.
+  - Usa la pantalla y el presupuesto abiertos como contexto verificado, sin cruzar datos entre organizaciones.
+  - Las búsquedas, revisiones y acciones son locales y no consumen tokens; Groq es opcional para conversación y redacción generativa y está sujeto a los límites de su plan.
+  - Arquitectura, seguridad, consultas y límites: [`docs/ASISTENTE_COPILOTO_FUNCIONAL.md`](docs/ASISTENTE_COPILOTO_FUNCIONAL.md).
 - **Documentos de cobro no fiscales**: desde un presupuesto **aprobado** se
   genera un documento comercial (`DC-2026-001`) con su propio PDF e historial.
   La interfaz y el PDF aclaran que no sustituye una factura fiscal.

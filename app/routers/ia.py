@@ -4,7 +4,7 @@ import json
 from typing import Any, List, Optional
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import JSONResponse, StreamingResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from . import common
@@ -25,9 +25,18 @@ class MensajeChat(BaseModel):
     content: str
 
 
+class ContextoChat(BaseModel):
+    pagina: str = Field(default="", max_length=240)
+    presupuesto_id: Optional[int] = Field(default=None, gt=0)
+    # Solo se envía para revisión, alcance o preparación de lotes desde el
+    # editor. El servicio vuelve a limitar capítulos y partidas antes de leerlo.
+    borrador: Optional[List[dict[str, Any]]] = Field(default=None, max_length=100)
+
+
 class SolicitudChat(BaseModel):
     messages: List[MensajeChat]
     stream: Optional[bool] = True
+    contexto: Optional[ContextoChat] = None
 
 
 class SolicitudRedaccion(BaseModel):
@@ -49,6 +58,7 @@ async def api_chat_ia(
 ):
     """Endpoint principal de conversación con el asistente de IA."""
     mensajes = [{"role": m.role, "content": m.content} for m in solicitud.messages]
+    contexto = solicitud.contexto.model_dump() if solicitud.contexto else None
 
     if not mensajes:
         return JSONResponse(
@@ -58,7 +68,7 @@ async def api_chat_ia(
 
     if solicitud.stream:
         return StreamingResponse(
-            consultar_asistente_stream(db, mensajes),
+            consultar_asistente_stream(db, mensajes, contexto),
             media_type="text/event-stream",
             headers={
                 "Cache-Control": "no-cache",
@@ -67,7 +77,7 @@ async def api_chat_ia(
             },
         )
 
-    respuesta = consultar_asistente_sync(db, mensajes)
+    respuesta = consultar_asistente_sync(db, mensajes, contexto)
     return JSONResponse({"ok": True, "respuesta": respuesta})
 
 

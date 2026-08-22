@@ -26,7 +26,12 @@
     return money(valor);
   }
 
-  function abrirModalRecetaEstancia() {
+  function abrirModalRecetaEstancia(recetaId) {
+    // Los listeners de click pasan el evento como primer argumento; solo los
+    // ids numéricos procedentes del asistente deben preseleccionar un Pack.
+    var recetaSolicitada = (typeof recetaId === "number" || typeof recetaId === "string")
+      ? String(recetaId)
+      : "";
     var modal = document.getElementById("modal-recetas-estancia");
     if (!modal) return;
 
@@ -34,6 +39,16 @@
     document.body.classList.add("modal-open");
 
     cargarRecetasEnModal(function () {
+      if (recetaSolicitada) {
+        var select = document.getElementById("select-receta-pack");
+        var existe = (listaRecetasCache || []).some(function (receta) {
+          return strId(receta.id) === recetaSolicitada;
+        });
+        if (select && existe) {
+          select.value = recetaSolicitada;
+          seleccionarRecetaPorId(recetaSolicitada);
+        }
+      }
       var inpMedida = document.getElementById("input-medida-pack");
       if (inpMedida) {
         inpMedida.focus();
