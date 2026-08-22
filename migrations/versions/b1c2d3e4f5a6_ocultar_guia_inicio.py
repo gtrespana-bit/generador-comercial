@@ -38,7 +38,16 @@ def upgrade() -> None:
                 "recorrido_inicial_oculto",
                 sa.Boolean(),
                 nullable=True,
-                server_default=sa.text("0"),
+                # ``sa.false()`` y NO ``sa.text("0")``: PostgreSQL es estricto
+                # con los tipos y rechaza ``BOOLEAN DEFAULT 0`` con
+                # ``DatatypeMismatch: column ... is of type boolean but default
+                # expression is of type integer``. Con el literal entero esta
+                # migración abortaba, ``alembic upgrade head`` nunca terminaba y
+                # la base se quedaba en el head anterior sin la columna: de ahí
+                # el ``UndefinedColumn`` que acababa en 500 en /inicio.
+                # ``sa.false()`` compila a ``false`` en PostgreSQL y a ``0`` en
+                # SQLite, así que sirve para los dos backends.
+                server_default=sa.false(),
             ),
         )
 

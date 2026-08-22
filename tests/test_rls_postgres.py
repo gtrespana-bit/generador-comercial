@@ -671,3 +671,119 @@ def test_precios_por_mercado_son_legibles_por_el_runtime_y_aislados(entorno_post
         db.rollback()
 
     motor.dispose()
+
+
+def test_alembic_upgrade_head_completa_en_postgres(entorno_postgres):
+    """La migración de la guía no puede abortar el ``upgrade`` en PostgreSQL.
+
+    Regresión del 500 del 22/08/2026: ``b1c2d3e4f5a6`` declaraba
+    ``server_default=sa.text("0")`` sobre una columna booleana. PostgreSQL lo
+    rechaza con ``DatatypeMismatch: column ... is of type boolean but default
+    expression is of type integer``, así que ``alembic upgrade head`` moría, la
+    columna ``recorrido_inicial_oculto`` nunca se creaba y la base se quedaba
+    clavada en el head anterior. A partir de ahí cada ``SELECT
+    configuracion.*`` fallaba y /inicio devolvía 500.
+
+    El fixture ya aplicó ``alembic upgrade head``: si la migración volviera a
+    romperse, este módulo entero fallaría al montarse. Aquí se comprueba el
+    resultado que importa: head correcto y columna booleana existente.
+    """
+    import app.database as database_module
+
+    motor = create_engine(entorno_postgres["admin_url"])
+    with motor.connect() as conexion:
+        version = conexion.execute(
+            text("SELECT version_num FROM public.alembic_version")
+        ).scalar_one()
+        columna = conexion.execute(text("""
+            SELECT data_type, column_default
+            FROM information_schema.columns
+            WHERE table_name = 'configuracion'
+              AND column_name = 'recorrido_inicial_oculto'
+        """)).one_or_none()
+    motor.dispose()
+
+    assert version == database_module.EXPECTED_ALEMBIC_HEAD
+    assert columna is not None, (
+        "La migración b1c2d3e4f5a6 no creó recorrido_inicial_oculto: "
+        "revisa que el server_default no sea un entero (usa sa.false())."
+    )
+    assert columna.data_type == "boolean"
+    # El defecto tiene que ser un booleano de verdad, no el entero que rompía.
+    assert (columna.column_default or "").lower().startswith("false")
+
+
+def test_inicio_sobrevive_a_una_base_sin_la_columna_de_la_guia(entorno_postgres):
+    """/inicio debe abrir aunque a la base le falte una columna del modelo.
+
+    Reproduce la secuencia exacta del traceback de producción sobre PostgreSQL
+    real: se elimina ``recorrido_inicial_oculto`` (como estaba la base sin
+    migrar) y se recorre el orden del handler::
+
+        _config(db) → analizar_salud_catalogo(db) → estado_recorrido_inicial(db, cfg)
+
+    ``analizar_salud_catalogo`` consulta la configuración a través de
+    ``precios_anomalos`` y se traga el ``UndefinedColumn``. Sin el rollback de
+    ese ``except``, la transacción queda abortada y el recuento de clientes de
+    ``onboarding.py`` muere con ``InFailedSqlTransaction`` — el 500 del
+    usuario. Con el arreglo, la página se pinta.
+    """
+    import app.database as database_module
+    from app.models import Cliente, Configuracion, crear_organizacion_con_propietario
+    from app.routers.common import _config
+    from app.services.onboarding import estado_recorrido_inicial
+    from app.services.salud_catalogo import analizar_salud_catalogo
+
+    admin = create_engine(entorno_postgres["admin_url"], isolation_level="AUTOCOMMIT")
+    motor = create_engine(entorno_postgres["runtime_url"])
+    Sesion = sessionmaker(bind=motor)
+
+    with Sesion() as db:
+        db.info.update({"auth_user_id": AUTH_ID, "auth_email": EMAIL})
+        db.execute(text("SELECT 1"))
+        organizacion = crear_organizacion_con_propietario(
+            db,
+            nombre="Guía faltante",
+            slug=f"guia-{uuid.uuid4().hex[:8]}",
+            usuario_id=entorno_postgres["usuario_id"],
+        )
+        database_module.establecer_contexto_organizacion(db, organizacion.id)
+        organizacion_id = organizacion.id
+        db.add(Configuracion(
+            organizacion_id=organizacion_id, empresa_nombre="Guía faltante",
+            empresa_pais="Venezuela", onboarding_completado=True,
+            onboarding_modo="demo",
+        ))
+        db.add(Cliente(organizacion_id=organizacion_id, nombre="Cliente real", es_demo=False))
+        db.commit()
+
+    # La base se queda como producción: sin la columna que el modelo exige.
+    with admin.connect() as conexion:
+        conexion.execute(text(
+            "ALTER TABLE configuracion DROP COLUMN IF EXISTS recorrido_inicial_oculto"
+        ))
+
+    try:
+        with Sesion() as db:
+            db.info.update({"auth_user_id": AUTH_ID, "auth_email": EMAIL})
+            db.execute(text("SELECT 1"))
+            database_module.establecer_contexto_organizacion(db, organizacion_id)
+
+            cfg = _config(db)                     # tolera la columna ausente
+            analizar_salud_catalogo(db)           # se traga el UndefinedColumn
+            recorrido = estado_recorrido_inicial(db, cfg)  # antes: 500
+
+            assert recorrido["total"] == 5
+            # El cliente real se contó: la consulta que fallaba ahora responde.
+            assert any(
+                paso["clave"] == "cliente" and paso["completo"]
+                for paso in recorrido["pasos"]
+            )
+    finally:
+        with admin.connect() as conexion:
+            conexion.execute(text(
+                "ALTER TABLE configuracion "
+                "ADD COLUMN IF NOT EXISTS recorrido_inicial_oculto BOOLEAN DEFAULT false"
+            ))
+        admin.dispose()
+        motor.dispose()
