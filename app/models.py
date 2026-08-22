@@ -1824,7 +1824,7 @@ def asegurar_config(db):
         try:
             from sqlalchemy import text as _text
 
-            db.execute(_text("ALTER TABLE configuracion ADD COLUMN IF NOT EXISTS recorrido_inicial_oculto BOOLEAN DEFAULT 0"))
+            db.execute(_text("ALTER TABLE configuracion ADD COLUMN IF NOT EXISTS recorrido_inicial_oculto BOOLEAN DEFAULT false"))
             db.commit()
             cfg = db.query(Configuracion).first()
         except Exception:

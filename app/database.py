@@ -583,24 +583,55 @@ def _asegurar_esquema_postgres() -> None:
         from sqlalchemy.pool import NullPool
 
         eng = create_engine(mig_url, poolclass=NullPool)
-        with eng.begin() as conn:
-            # La columna del hotfix actual. IF NOT EXISTS la hace segura si
-            # ya existe (por migración manual) o si varias instancias arrancan
-            # a la vez. DEFAULT 0 es el mismo valor que la migración usa
-            # (server_default "0") y funciona tanto en PG como en SQLite.
-            conn.execute(text("ALTER TABLE configuracion ADD COLUMN IF NOT EXISTS recorrido_inicial_oculto BOOLEAN DEFAULT 0"))
+        # Cada ALTER va en su PROPIA transacción. Antes compartían un único
+        # ``begin()``: bastaba con que la primera sentencia fallara para que
+        # PostgreSQL abortara el bloque entero y se perdieran también las
+        # columnas siguientes, que eran válidas. Aislarlas hace que un fallo
+        # puntual (permisos, tipo) no arrastre a las demás.
+        sentencias = (
+            # ``DEFAULT false`` y NO ``DEFAULT 0``: PostgreSQL rechaza el
+            # literal entero sobre una columna boolean con
+            # ``DatatypeMismatch``. Ese error era el origen del 500: el ALTER
+            # moría, la columna nunca se creaba y cada ``SELECT
+            # configuracion.*`` seguía fallando con ``UndefinedColumn``.
+            "ALTER TABLE configuracion ADD COLUMN IF NOT EXISTS recorrido_inicial_oculto BOOLEAN DEFAULT false",
             # Columnas recientes del bloque LatAm: si el salto es mayor que un
             # solo head, también faltarían y producirían el mismo 500.
-            conn.execute(text("ALTER TABLE configuracion ADD COLUMN IF NOT EXISTS etiqueta_id_fiscal VARCHAR(20) DEFAULT 'RIF'"))
-            conn.execute(text("ALTER TABLE configuracion ADD COLUMN IF NOT EXISTS tasa_cambio FLOAT"))
-            conn.execute(text("ALTER TABLE configuracion ADD COLUMN IF NOT EXISTS fuente_tipo_cambio VARCHAR(120) DEFAULT ''"))
-            conn.execute(text("ALTER TABLE configuracion ADD COLUMN IF NOT EXISTS fecha_tasa DATE"))
+            "ALTER TABLE configuracion ADD COLUMN IF NOT EXISTS etiqueta_id_fiscal VARCHAR(20) DEFAULT 'RIF'",
+            "ALTER TABLE configuracion ADD COLUMN IF NOT EXISTS tasa_cambio FLOAT",
+            "ALTER TABLE configuracion ADD COLUMN IF NOT EXISTS fuente_tipo_cambio VARCHAR(120) DEFAULT ''",
+            "ALTER TABLE configuracion ADD COLUMN IF NOT EXISTS fecha_tasa DATE",
+        )
+        for sentencia in sentencias:
+            try:
+                with eng.begin() as conn:
+                    conn.execute(text(sentencia))
+            except Exception as exc:  # noqa: PERF203 - cada DDL es independiente
+                logging.getLogger("cotizat").warning(
+                    "No se pudo aplicar «%s»: %s", sentencia, exc
+                )
+        with eng.begin() as conn:
             # Si la versión sigue en el head anterior y ya añadimos la columna,
             # avanzamos la marca para que el próximo ``alembic upgrade head``
             # no intente crearla de nuevo y falle con "already exists".
+            #
+            # Solo se avanza si la columna existe DE VERDAD: marcar la revisión
+            # como aplicada sin haberla creado (p. ej. si el ALTER falló por
+            # permisos) haría que ``alembic upgrade head`` la diera por hecha y
+            # la columna no se crearía jamás, dejando el 500 permanente.
             try:
+                columna_creada = conn.execute(text("""
+                    SELECT 1 FROM information_schema.columns
+                    WHERE table_name = 'configuracion'
+                      AND column_name = 'recorrido_inicial_oculto'
+                """)).first() is not None
                 cur = conn.execute(text("SELECT version_num FROM public.alembic_version")).scalar_one_or_none()
-                if cur == "c3e9a1b7d4f2":
+                if not columna_creada:
+                    logging.getLogger("cotizat").warning(
+                        "La columna recorrido_inicial_oculto sigue sin existir: "
+                        "no se avanza alembic_version (ejecuta `alembic upgrade head`)."
+                    )
+                elif cur == "c3e9a1b7d4f2":
                     conn.execute(text("UPDATE public.alembic_version SET version_num = 'b1c2d3e4f5a6'"))
                     logging.getLogger("cotizat").info("alembic_version avanzada de c3e9a1b7d4f2 a b1c2d3e4f5a6 tras auto-reparación.")
                 elif cur is None:

@@ -76,6 +76,25 @@ class Anomalia:
         }
 
 
+def _liberar_transaccion(db: Session) -> None:
+    """Devuelve la sesión a un estado usable tras tragarse un error de SQL.
+
+    En PostgreSQL una sentencia fallida deja la transacción en estado
+    ``aborted``: psycopg rechaza cualquier comando posterior con
+    ``InFailedSqlTransaction`` hasta que llegue un ``ROLLBACK``. Sin esto, un
+    ``except`` defensivo de aquí (pensado para no tumbar la vista) hacía
+    estallar la **siguiente** consulta del handler —perfectamente válida— y
+    /inicio devolvía 500 con un error que señalaba al lugar equivocado.
+
+    SQLite no lo necesita (abre una transacción implícita por sentencia), pero
+    el rollback es inocuo ahí, así que no se distingue por backend.
+    """
+    try:
+        db.rollback()
+    except Exception:  # pragma: no cover - conexión ya perdida
+        pass
+
+
 def _tasas_candidatas(db: Session) -> list[float]:
     """Factores con los que se pudo haber inflado un precio.
 
@@ -96,17 +115,20 @@ def _tasas_candidatas(db: Session) -> list[float]:
             candidatas.append(tasa)
 
     try:
-        cfg = db.query(Configuracion).first()
-        _añadir(getattr(cfg, "tasa_cambio", None))
+        # Se pide SOLO la columna que hace falta, no la entidad entera. Un
+        # ``db.query(Configuracion)`` emite ``SELECT configuracion.*`` y basta
+        # con que a la base le falte una columna del modelo (deploy sin
+        # migrar) para que falle, envenene la transacción y tumbe el panel.
+        _añadir(db.query(Configuracion.tasa_cambio).scalar())
     except Exception:  # pragma: no cover - configuración ilegible
-        pass
+        _liberar_transaccion(db)
     try:
         from ..models import Presupuesto
 
         for (tipo_cambio,) in db.query(Presupuesto.tipo_cambio).distinct().all():
             _añadir(tipo_cambio)
     except Exception:  # pragma: no cover - esquema antiguo
-        pass
+        _liberar_transaccion(db)
     for tasa in TASAS_SUGERIDAS.values():
         _añadir(tasa)
     return candidatas
@@ -148,8 +170,13 @@ def _indice_precios_oficiales(db: Session) -> dict[str, float]:
     from .traduccion import codigo_desde_pais, traducir
 
     try:
-        codigo = codigo_desde_pais(getattr(db.query(Configuracion).first(), "empresa_pais", ""))
+        # Igual que arriba: solo la columna necesaria. Leer la entidad completa
+        # hacía que una columna ausente en la base rompiera esta consulta, y el
+        # ``except`` dejaba la transacción abortada para todo lo que viniera
+        # después (el 500 de /inicio apuntaba a la víctima, no a la causa).
+        codigo = codigo_desde_pais(db.query(Configuracion.empresa_pais).scalar() or "")
     except Exception:  # pragma: no cover - configuración ilegible
+        _liberar_transaccion(db)
         codigo = ""
     indice: dict[str, float] = {}
     consulta = db.query(Partida.nombre, Partida.precio_unitario, Partida.es_oficial)
@@ -406,6 +433,11 @@ def ids_partidas_anomalas(db: Session) -> list[int]:
     try:
         return [a["id"] for a in detectar_precios_anomalos(db, incluir_productos=False)]
     except Exception:  # pragma: no cover - nunca debe tumbar la vista
+        # Última red: si algo falló aquí dentro, la sesión puede quedar con la
+        # transacción abortada y quien llame después (el panel sigue haciendo
+        # consultas) recibiría un 500 por un fallo que ya habíamos decidido
+        # ignorar.
+        _liberar_transaccion(db)
         return []
 
 
