@@ -94,6 +94,12 @@ def test_el_editor_de_presupuestos_sobrevive_a_un_fallo_de_precios(entorno, clie
     # precios y son justo lo que fallaba.
     assert "Nuevo presupuesto" in respuesta.text or "presupuesto" in respuesta.text.lower()
 
+    # Los precios de mercado ahora se resuelven en la API diferida, no en el
+    # HTML: un fallo ahí tampoco puede tumbar el editor.
+    datos = cliente_web.get("/presupuestos/editor/datos")
+    assert datos.status_code == 200
+    assert datos.json()["ok"] is True
+
 
 def test_el_panel_de_mercado_no_muestra_precios_de_otras_empresas(entorno, cliente_web):
     """`PrecioRecursoMercado` no es TenantMixin: el filtro debe ser explícito."""

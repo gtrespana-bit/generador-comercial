@@ -147,11 +147,16 @@ def _compilar_glosario(codigo: str) -> tuple[list, list]:
     return frases, palabras
 
 
+@lru_cache(maxsize=32768)
 def traducir(texto: str | None, pais_codigo: str | None) -> str:
     """Traduce un texto del catálogo base (VE) al país indicado.
 
     *Respeta mayúscula inicial y plural en -s/-es.*
     Si el código es vacío/VE o sin glosario, devuelve el texto tal cual.
+
+    El resultado se cachea: el editor traduce las mismas categorías y
+    apartados miles de veces al armar el índice, y rehacer el glosario en
+    cada llamada era el grueso del tiempo de ``/presupuestos/nuevo``.
     """
     if not texto:
         return texto or ""

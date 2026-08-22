@@ -575,9 +575,24 @@
   // Arranque
   // ---------------------------------------------------------------------
 
-  function init() {
+  function reconstruir() {
+    if (!cuerpo) return;
+    if (!(editor.CATALOGO || []).length && window.CATALOGO_DATOS_URL) {
+      cuerpo.replaceChildren();
+      var msg = document.createElement("p");
+      msg.className = "hint";
+      msg.textContent = "Cargando catálogo…";
+      cuerpo.appendChild(msg);
+      if (contador) contador.textContent = "Cargando…";
+      return;
+    }
     pintar(construirArbol());
     filtrar("");
+  }
+  editor.reconstruirArbolCatalogo = reconstruir;
+
+  function init() {
+    reconstruir();
 
     cuerpo.addEventListener("click", function (event) {
       var rama = event.target.closest && event.target.closest(".arbol-rama");

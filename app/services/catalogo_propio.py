@@ -853,23 +853,25 @@ def asegurar_catalogo_propio(db: Session) -> dict | None:
     """
     if not disponible():
         return None
-    # Normalización de patrón de nombres (ej. Alicatado -> Enchapado) para
-    # instalaciones que ya tenían el catálogo sembrado antes del fix. Es
-    # idempotente y barata (una consulta por los nombres viejos).
-    try:
-        _normalizar_nombres_patron(db)
-    except Exception:
-        log.exception("No se pudo normalizar nombres de patrón.")
-        try:
-            db.rollback()
-        except Exception:
-            pass
     try:
         cfg = db.query(Configuracion).first()
-        propias = _cantidad_partidas_oficiales(db)
         version = int(getattr(cfg, "version_catalogo", 0) or 0)
+        propias = _cantidad_partidas_oficiales(db)
     except Exception:
         return None
+    # La normalización Alicatado→Enchapado es un arreglo de una sola vez.
+    # Con la versión vigente ya aplicada no hay nada que renombrar: las
+    # 10 consultas por nombre (que hidrataban Partida completa) se saltan
+    # en el camino caliente de /presupuestos/nuevo y /partidas.
+    if version < CATALOGO_VERSION:
+        try:
+            _normalizar_nombres_patron(db)
+        except Exception:
+            log.exception("No se pudo normalizar nombres de patrón.")
+            try:
+                db.rollback()
+            except Exception:
+                pass
 
     try:
         if propias > 0:
