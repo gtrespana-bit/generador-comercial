@@ -111,6 +111,42 @@ def _pluralizar(nuevo: str, sufijo: str | None) -> str:
     return s + ("es" if s[-1:] not in "aeiou" else "s")
 
 
+@lru_cache(maxsize=8)
+def _compilar_glosario(codigo: str) -> tuple[list, list]:
+    """Pre-compila los patrones de un glosario (frases y palabras sueltas).
+
+    ``traducir`` se llama miles de veces por carga del catálogo (una vez por
+    partida, y más de una por partida según la pantalla). Cada llamada
+    recompilaba todos los patrones del glosario desde cero: con un glosario
+    de ~130 entradas y un catálogo de ~3.000 partidas, eso era el grueso del
+    tiempo de carga del editor de presupuestos, de /partidas y de /recursos
+    en países con traducción (CO/MX/EC/PE...).
+
+    Devuelve ``(frases, palabras)``: cada elemento es ``(patron_compilado,
+    de, a)``. Los patrones son inmutables y seguros de compartir entre
+    llamadas; el estado por llamada (contador de tokens y lista de
+    reemplazos) se crea dentro de :func:`traducir`.
+    """
+    cambios = _cargar_glosario(codigo)
+    frases = []
+    for c in sorted(
+        (c for c in cambios if " " in c["de"]),
+        key=lambda c: -len(c["de"]),
+    ):
+        de, a = c["de"], c["a"]
+        grupos = "".join(rf"({re.escape(w)})(es|s)? " for w in de.split(" "))
+        patron = re.compile(r"\b" + grupos.rstrip() + r"\b", re.IGNORECASE)
+        frases.append((patron, de, a))
+    palabras = []
+    for c in cambios:
+        de, a = c["de"], c["a"]
+        if " " in de:
+            continue
+        patron = re.compile(rf"\b({re.escape(de)})(es|s)?\b", re.IGNORECASE)
+        palabras.append((patron, de, a))
+    return frases, palabras
+
+
 def traducir(texto: str | None, pais_codigo: str | None) -> str:
     """Traduce un texto del catálogo base (VE) al país indicado.
 
@@ -122,8 +158,8 @@ def traducir(texto: str | None, pais_codigo: str | None) -> str:
     codigo = str(pais_codigo or "").strip().upper()
     if not codigo or codigo == "VE":
         return texto
-    cambios = _cargar_glosario(codigo)
-    if not cambios:
+    frases, palabras = _compilar_glosario(codigo)
+    if not frases and not palabras:
         return texto
     out = texto
 
@@ -133,17 +169,9 @@ def traducir(texto: str | None, pais_codigo: str | None) -> str:
     # El plural español de una frase puede aparecer en el sustantivo
     # («paredes de bloque»), en el último término («cielos rasos») o en
     # ambos, así que cada palabra admite un sufijo -es/-s opcional.
-    frases = sorted(
-        (c for c in cambios if " " in c["de"]),
-        key=lambda c: -len(c["de"]),
-    )
     reemplazos: list[tuple[str, str]] = []
     n = 0
-    for c in frases:
-        de, a = c["de"], c["a"]
-        grupos = "".join(rf"({re.escape(w)})(es|s)? " for w in de.split(" "))
-        patron = re.compile(r"\b" + grupos.rstrip() + r"\b", re.IGNORECASE)
-
+    for patron, de, a in frases:
         def _rep_frase(m: re.Match, _a: str = a) -> str:
             nonlocal n
             sufijo_primera = m.group(2)
@@ -164,12 +192,7 @@ def traducir(texto: str | None, pais_codigo: str | None) -> str:
         out = patron.sub(_rep_frase, out)
 
     # ---- 2) Palabras sueltas ----
-    for c in cambios:
-        de, a = c["de"], c["a"]
-        if " " in de:
-            continue
-        patron = re.compile(rf"\b({re.escape(de)})(es|s)?\b", re.IGNORECASE)
-
+    for patron, de, a in palabras:
         def _rep_palabra(m: re.Match, _a: str = a) -> str:
             return _pluralizar(_mismo_caso(m.group(1), _a), m.group(2))
 

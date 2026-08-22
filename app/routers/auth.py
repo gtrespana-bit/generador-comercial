@@ -1072,13 +1072,19 @@ def marcar_catalogo_revisado(db: Session = Depends(get_db)):
 
 
 @router.post("/recorrido/omitir")
-def omitir_guia_inicio(db: Session = Depends(get_db)):
+def omitir_guia_inicio(request: Request, db: Session = Depends(get_db)):
     """Oculta la «Guía de inicio» del panel sin dar el recorrido por completo.
 
     Pensado para quien ya conoce la app o crea otra organización y no
     necesita que le recuerden los cinco pasos. La decisión se guarda por
     organización (la columna vive en ``Configuracion``), de modo que cada
     espacio de trabajo conserva su propia preferencia.
+
+    Cuando el cliente pide JSON (el botón del panel la envía por AJAX) se
+    responde un ``{ok: true}`` ligero sin recargar el panel: la página de
+    inicio es la más pesada de la app y no debe renderizarse por completo
+    para una acción que solo oculta una tarjeta. El resto de clientes sigue
+    recibiendo el redireccionado clásico a ``/inicio``.
 
     Hotfix b1c2d3e4f5a6: si la columna aún no existe en Postgres (deploy sin
     ``alembic upgrade head``) no se deja la página 500. Se intenta un
@@ -1116,4 +1122,6 @@ def omitir_guia_inicio(db: Session = Depends(get_db)):
                     cfg.__dict__["recorrido_inicial_oculto"] = True
                 except Exception:
                     pass
+    if _respuesta_auth_json(request):
+        return JSONResponse({"ok": True})
     return _redirect("/inicio")

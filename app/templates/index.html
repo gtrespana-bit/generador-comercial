@@ -203,3 +203,28 @@
   </aside>
 </div>
 {% endblock %}
+{% block scripts %}
+<script nonce="{{ request.state.csp_nonce }}">
+  // «Omitir guía»: oculta la tarjeta al instante sin depender de que el
+  // redireccionado a /inicio termine (la pantalla de inicio es la más pesada
+  // de la app). Si el POST o el fetch fallan, se mantiene el envío clásico
+  // del formulario para no romper el comportamiento con JavaScript off.
+  (function () {
+    var form = document.querySelector('.first-run-dismiss');
+    if (!form) return;
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+      var card = document.querySelector('.first-run-card');
+      var accion = form.getAttribute('action') || '/recorrido/omitir';
+      fetch(accion, { method: 'POST', headers: { 'Accept': 'application/json' } })
+        .then(function () {
+          if (card) card.remove();
+        })
+        .catch(function () {
+          // Fallback al flujo clásico (navegación completa).
+          event.target.submit();
+        });
+    });
+  })();
+</script>
+{% endblock %}
