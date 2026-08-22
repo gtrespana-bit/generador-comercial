@@ -83,6 +83,7 @@ def test_variables_secretas_son_las_esperadas():
         "CRON_SECRET",
         "STRIPE_SECRET_KEY",
         "STRIPE_WEBHOOK_SECRET",
+        "GROQ_API_KEY",
     })
 
 

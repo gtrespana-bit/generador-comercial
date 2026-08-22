@@ -304,6 +304,17 @@ DEFINICIONES: tuple[Variable, ...] = (
         False,
         "entorno explícito: development, test o production",
     ),
+    # --- Inteligencia Artificial y Asistente ------------------------------
+    Variable(
+        "GROQ_API_KEY",
+        True,
+        "clave de API gratuita de Groq para el asistente de IA (solo servidor)",
+    ),
+    Variable(
+        "COTIZAT_IA_MODEL",
+        False,
+        "modelo del asistente de IA (por omisión llama-3.3-70b-versatile)",
+    ),
 )
 
 

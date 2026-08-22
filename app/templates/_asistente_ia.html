@@ -1,0 +1,46 @@
+<!-- Asistente Inteligente CotizaT (Copilot) -->
+<button type="button" id="cotizat-ia-launcher" class="ia-floating-launcher" data-cotizat-click="toggle-ia-chat" aria-label="Abrir Asistente CotizaT" title="Asistente de Presupuestos e IA">
+  <span class="ia-launcher-sparkle" aria-hidden="true">✨</span>
+  <span>Asistente CotizaT</span>
+  <span class="ia-launcher-dot" aria-hidden="true"></span>
+</button>
+
+<div id="cotizat-ia-panel" class="ia-chat-panel" role="dialog" aria-labelledby="ia-header-heading" aria-modal="false">
+  <div class="ia-chat-header">
+    <div class="ia-header-info">
+      <div class="ia-header-avatar" aria-hidden="true">✨</div>
+      <div class="ia-header-title">
+        <strong id="ia-header-heading">Asistente CotizaT</strong>
+        <span>● En línea · Llama 3.3 70B</span>
+      </div>
+    </div>
+    <div class="ia-header-actions">
+      <button type="button" class="ia-header-btn" data-cotizat-click="clear-ia-chat" title="Limpiar conversación" aria-label="Limpiar conversación">
+        <svg width="15" height="15" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M2.5 4.5h13M6.5 4.5V3a1.5 1.5 0 0 1 1.5-1.5h2a1.5 1.5 0 0 1 1.5 1.5v1.5M4 4.5l1 11a1.5 1.5 0 0 0 1.5 1.5h5a1.5 1.5 0 0 0 1.5-1.5l1-11"/>
+        </svg>
+      </button>
+      <button type="button" class="ia-header-btn" data-cotizat-click="toggle-ia-chat" title="Cerrar asistente" aria-label="Cerrar asistente">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 3l10 10M13 3L3 13"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div id="cotizat-ia-messages" class="ia-chat-messages" role="log" aria-live="polite">
+    <!-- Los mensajes se renderizan dinámicamente -->
+  </div>
+
+  <div class="ia-chat-footer">
+    <div class="ia-input-container">
+      <textarea id="cotizat-ia-input" class="ia-textarea" rows="1" placeholder="Pregunta sobre el software, partidas, obras..." aria-label="Escribe tu mensaje para el asistente"></textarea>
+      <button type="button" id="cotizat-ia-send" class="ia-send-btn" data-cotizat-click="send-ia-chat" title="Enviar mensaje" aria-label="Enviar mensaje">
+        <svg width="15" height="15" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M2 9l14-7-7 14-2-5-5-2z"/>
+        </svg>
+      </button>
+    </div>
+    <p class="ia-footer-hint">Groq Cloud · Llama 3.3 70B · Enter para enviar</p>
+  </div>
+</div>
