@@ -160,6 +160,9 @@ def test_panel_agrega_presupuestos_de_monedas_distintas_en_una_sola(entorno, cli
                 numero=numero, year=2026, moneda=moneda,
                 tipo_cambio=tipo_cambio, estado=estado, client_id=cliente.id,
                 fecha=_date.today(), impuesto_pct=0.0,
+                # Esta prueba inserta por ORM y se salta el guardado HTTP, que
+                # es quien persiste el total cacheado usado por el panel.
+                total_calculado=cantidad * precio,
             )
             cap = Capitulo(nombre="OBRA", orden=1)
             cap.partidas.append(PresupuestoItem(
