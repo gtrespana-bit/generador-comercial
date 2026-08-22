@@ -40,6 +40,19 @@
     {% endfor %}
   </div>
   {% endif %}
+  {% if salud_catalogo.precio_absurdo %}
+  {# Precios que solo se explican por una conversión de moneda aplicada dos
+     veces (el fallo del guardado automático en organizaciones con moneda
+     local). Se pueden devolver a su moneda base con un clic. #}
+  <div class="salud-problemas">
+    <a href="/partidas?salud=precio_absurdo" class="salud-chip {{ 'active' if salud == 'precio_absurdo' else '' }}">
+      ⚠ Precios imposibles: <strong>{{ salud_catalogo.precio_absurdo }}</strong>
+    </a>
+    <form method="post" action="/partidas/precios/reparar" class="csp-s-inline-form">
+      <button type="submit" class="btn btn-sm btn-primary">Corregir precios inflados por la tasa</button>
+    </form>
+  </div>
+  {% endif %}
 </div>
 {% endif %}
 

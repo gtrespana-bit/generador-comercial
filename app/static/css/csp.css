@@ -23,6 +23,8 @@
 
 /* Utilidades para reemplazar atributos style; generado de forma determinista. */
 .cotizat-hidden { display: none !important; }
+/* Botón de reparación de precios dentro de la tira de problemas del catálogo. */
+.csp-s-inline-form { display: inline-flex; margin: 0; }
 .csp-s-005b668f1c:not(#cotizat-csp-never) { display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:1.5rem;margin-top:1rem; }
 .csp-s-014fb690a1:not(#cotizat-csp-never) { display:flex;gap:4px;align-items:center; }
 .csp-s-017ade935b:not(#cotizat-csp-never) { display:flex;gap:4px;align-items:center;flex-wrap:wrap; }

@@ -1599,20 +1599,9 @@
           partidaDropdown = null;
         }
       }
-      function mostrarPartidasRelacionadas() {
-        var query = nombreInput.value.trim();
-        if (!query) {
-          cerrarPartidaAutocomplete();
-          return;
-        }
-        var matches = window.CATALOGO_UTILS.buscarEnCatalogo(
-          editorInst.CATALOGO,
-          query,
-          ["nombre", "descripcion", "categoria", "codigo", "proveedor"],
-          ""
-        );
+      function mostrarPartidasRelacionadas(matches) {
         cerrarPartidaAutocomplete();
-        if (!matches.length) return;
+        if (!matches || !matches.length) return;
 
         partidaDropdown = editorInst.FMT.h("div", "autocomplete-suggestions");
         CotizatStyles.setCssText(partidaDropdown, "position:absolute; top:100%; left:0; right:0; background:var(--surface); border:1px solid var(--border-strong); border-radius:var(--radius-sm); max-height:240px; overflow-y:auto; z-index:1000; box-shadow:var(--shadow-lg); margin-top:4px;");
@@ -1643,6 +1632,21 @@
           sug.addEventListener("mousedown", function(e) { e.preventDefault(); });
           sug.addEventListener("click", function (e) {
             e.stopPropagation();
+            var catalogoApi = (editorInst && editorInst.Catalogo) || (window.EDITOR && window.EDITOR.Catalogo);
+            // El resultado de búsqueda es un índice ligero: la ficha completa
+            // (descomposición, tiempos, notas) se pide al vuelo para que la
+            // partida entre con su APU y no solo con nombre y precio.
+            if (catalogoApi && catalogoApi.obtenerFicha && item.id && !item._detalle_cargado) {
+              cerrarPartidaAutocomplete();
+              catalogoApi.obtenerFicha(item)
+                .then(function (ficha) { aplicarFichaCatalogo(ficha || item); })
+                .catch(function () { aplicarFichaCatalogo(item); });
+              return;
+            }
+            aplicarFichaCatalogo(item);
+          });
+
+          function aplicarFichaCatalogo(item) {
             // Cargar la ficha completa del catálogo, no solo nombre/precio.
             var actuales = leerPartida(wrap);
             var descomposicion = item.descomposicion;
@@ -1682,7 +1686,7 @@
               var edit = nueva.querySelector(".partida-edit-btn");
               if (edit) edit.focus();
             }
-          });
+          }
           
           sug.addEventListener("mouseenter", function () { CotizatStyles.set(sug, "background", "var(--surface-hover)"); });
           sug.addEventListener("mouseleave", function () { CotizatStyles.set(sug, "background", "transparent"); });
@@ -1693,9 +1697,55 @@
         nombreWrap.appendChild(partidaDropdown);
       }
 
-      nombreInput.addEventListener("input", mostrarPartidasRelacionadas);
-      nombreInput.addEventListener("focus", mostrarPartidasRelacionadas);
+      // Autocompletado de la fila: índice local + catálogo completo del
+      // servidor. El índice del editor se descarga de forma diferida y con
+      // miles de partidas tarda; sin la consulta remota, durante ese rato
+      // escribir el nombre de una partida no sugería absolutamente nada.
+      var temporizadorSugerencias = null;
+      var secuenciaSugerencias = 0;
+
+      function buscarSugerenciasPartida() {
+        var query = String(nombreInput.value || "").trim();
+        if (query.length < 2) {
+          cerrarPartidaAutocomplete();
+          return;
+        }
+        var mio = ++secuenciaSugerencias;
+        var locales = [];
+        if (window.CATALOGO_UTILS && window.CATALOGO_UTILS.buscarEnCatalogo) {
+          locales = window.CATALOGO_UTILS.buscarEnCatalogo(
+            editorInst.CATALOGO || [],
+            query,
+            ["nombre", "descripcion", "categoria", "codigo", "proveedor"],
+            ""
+          );
+        }
+        if (locales.length) mostrarPartidasRelacionadas(locales.slice(0, 25));
+
+        var catalogo = (editorInst && editorInst.Catalogo) || (window.EDITOR && window.EDITOR.Catalogo);
+        if (!catalogo || !catalogo.buscarRemoto) return;
+        catalogo.buscarRemoto(query, 25).then(function (remotos) {
+          // Solo pinta la respuesta de la última pulsación y si el campo sigue
+          // enfocado: si no, el desplegable reaparecería tras cerrarlo.
+          if (mio !== secuenciaSugerencias) return;
+          if (document.activeElement !== nombreInput) return;
+          var combinados = catalogo.combinarResultados
+            ? catalogo.combinarResultados(remotos, locales, 25)
+            : (remotos.length ? remotos : locales);
+          mostrarPartidasRelacionadas(combinados);
+        });
+      }
+
+      function programarSugerenciasPartida() {
+        if (temporizadorSugerencias) clearTimeout(temporizadorSugerencias);
+        temporizadorSugerencias = setTimeout(buscarSugerenciasPartida, 140);
+      }
+
+      nombreInput.addEventListener("input", programarSugerenciasPartida);
+      nombreInput.addEventListener("focus", programarSugerenciasPartida);
       nombreInput.addEventListener("blur", function () {
+        secuenciaSugerencias++;
+        if (temporizadorSugerencias) clearTimeout(temporizadorSugerencias);
         setTimeout(cerrarPartidaAutocomplete, 150);
       });
 

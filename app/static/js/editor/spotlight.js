@@ -235,6 +235,7 @@
         role: "option",
         "data-i": String(i),
         "data-idx": String(item.idx),
+        "data-id": String(p.id || ""),
       });
 
       var principal = crearElemento("span", { className: "spotlight-item-main" });
@@ -259,7 +260,7 @@
         seleccionar(Number(btn.dataset.i) || 0);
       });
       btn.addEventListener("click", function () {
-        insertar(Number(btn.dataset.idx));
+        insertar(Number(btn.dataset.idx), btn.dataset.id);
       });
 
       fragmento.appendChild(btn);
@@ -280,13 +281,19 @@
     }
   }
 
-  function insertar(idxCatalogo) {
+  function insertar(idxCatalogo, partidaId) {
     if (!editor.Catalogo || typeof editor.Catalogo.insertarEnCapitulo !== "function") return;
     var caps = editor.contCapitulos.querySelectorAll(".capitulo");
     var cap = caps.length
       ? caps[caps.length - 1]
       : editor.Capitulo.crear({ nombre: "CAPÍTULO GENERAL" }, editor);
-    editor.Catalogo.insertarEnCapitulo(idxCatalogo, cap);
+    // Por id siempre que se conozca: el índice del catálogo puede recargarse
+    // entre que se pinta el resultado y se pulsa, y la posición ya no valdría.
+    if (partidaId && editor.Catalogo.insertarIdEnCapitulo) {
+      editor.Catalogo.insertarIdEnCapitulo(partidaId, cap);
+    } else {
+      editor.Catalogo.insertarEnCapitulo(idxCatalogo, cap);
+    }
     cerrar();
   }
 
@@ -308,7 +315,7 @@
     }
     if (e.key === "Enter") {
       e.preventDefault();
-      if (activos[seleccionado]) insertar(activos[seleccionado].idx);
+      if (activos[seleccionado]) insertar(activos[seleccionado].idx, (activos[seleccionado].p || {}).id);
     }
   }
 
