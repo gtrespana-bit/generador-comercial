@@ -348,6 +348,39 @@ def test_migrar_catalogo_prueba_elimina_antiguas_y_carga_propias():
         engine.dispose()
 
 
+def test_asegurar_no_tumba_la_sesion_si_falla_la_configuracion():
+    """Regresión: SELECT configuracion.* abortaba /partidas y /recursos.
+
+    Reproduce el orden del handler (asegurar → count de ocultas). Si el
+    helper se traga el error sin rollback, el recuento siguiente revienta.
+    """
+    from sqlalchemy.exc import ProgrammingError
+
+    engine, db = _session()
+    try:
+        llamadas_reales = db.query
+
+        def _config_rota(modelo, *args, **kwargs):
+            # Solo envenena la lectura de configuración; el recuento de
+            # partidas debe poder ejecutarse después del rollback.
+            if modelo is Configuracion or modelo is Configuracion.version_catalogo:
+                raise ProgrammingError(
+                    "SELECT configuracion.version_catalogo",
+                    {},
+                    Exception('column "recorrido_inicial_oculto" does not exist'),
+                )
+            return llamadas_reales(modelo, *args, **kwargs)
+
+        db.query = _config_rota
+        assert asegurar_catalogo_propio(db) is None
+        db.query = llamadas_reales
+        # Esta es la consulta que el traceback señalaba como víctima.
+        assert db.query(Partida).filter(Partida.oculta.is_(True)).count() == 0
+    finally:
+        db.close()
+        engine.dispose()
+
+
 def test_asegurar_no_toca_instalacion_limpia():
     engine, db = _session()
     try:
