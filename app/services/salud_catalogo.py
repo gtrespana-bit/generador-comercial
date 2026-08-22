@@ -33,11 +33,36 @@ def _tiene_tiempo(p: Partida) -> bool:
     )
 
 
-def analizar_salud_catalogo(db: Session) -> dict:
-    from .precios_anomalos import contar_precios_anomalos
+def analizar_salud_catalogo(db: Session, incluir_anomalias: bool = True) -> dict:
+    from sqlalchemy.orm import load_only
 
-    partidas = db.query(Partida).filter(Partida.oculta.is_(False)).all()
-    precios_absurdos = contar_precios_anomalos(db)
+    consulta = db.query(Partida)
+    if hasattr(consulta, "options"):
+        try:
+            consulta = consulta.options(load_only(
+                Partida.precio_unitario,
+                Partida.coste_materiales,
+                Partida.coste_mano_obra,
+                Partida.coste_complementarios,
+                Partida.coste_otros,
+                Partida.tiempo_estimado_horas,
+                Partida.tiempo_oficial_horas,
+                Partida.tiempo_ayudante_horas,
+                Partida.tiempo_equipo_horas,
+                Partida.fecha_actualizacion_precio,
+                Partida.created_at,
+                Partida.oculta,
+            ))
+        except Exception:
+            pass
+    if hasattr(consulta, "filter"):
+        consulta = consulta.filter(Partida.oculta.is_(False))
+    partidas = consulta.all()
+    if incluir_anomalias:
+        from .precios_anomalos import contar_precios_anomalos
+        precios_absurdos = contar_precios_anomalos(db)
+    else:
+        precios_absurdos = 0
     total = len(partidas)
     limite_fecha = datetime.utcnow() - timedelta(days=DIAS_SIN_REVISION)
 

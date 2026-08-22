@@ -218,6 +218,16 @@
     var prefetchados = {};
     function prefetch(url) {
       if (!url || url.charAt(0) !== "/" || prefetchados[url]) return;
+      // No adelantar el editor ni el catálogo: son las páginas más pesadas
+      // y un hover en el menú las disparaba en frío (Vercel + 3.000 partidas).
+      if (
+        url.indexOf("/presupuestos/nuevo") === 0 ||
+        (url.indexOf("/presupuestos/") === 0 && url.indexOf("/editar") !== -1) ||
+        url === "/partidas" ||
+        url.indexOf("/partidas/") === 0 ||
+        url === "/recursos" ||
+        url === "/reportes"
+      ) return;
       prefetchados[url] = true;
       var link = document.createElement("link");
       link.rel = "prefetch";

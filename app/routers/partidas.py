@@ -176,7 +176,9 @@ def listar_partidas(
     if salud not in filtros_salud:
         salud = ""
     total_ocultas = db.query(Partida).filter(Partida.oculta.is_(True)).count()
-    salud_catalogo = analizar_salud_catalogo(db)
+    # El escaneo de precios absurdos recorre todo el catálogo: solo se lanza
+    # cuando el usuario pide ese filtro, no en cada visita a /partidas.
+    salud_catalogo = analizar_salud_catalogo(db, incluir_anomalias=(salud == "precio_absurdo"))
 
     modo_directo = bool(q) or bool(subcategoria) or bool(apartado) or bool(salud)
     por_pagina = 100

@@ -36,48 +36,83 @@
     RECURSOS = elRec ? JSON.parse(elRec.textContent || "[]") : [];
   } catch (e) { RECURSOS = []; }
 
-  var BUDGET_ID = window.BUDGET_ID || null;
+  var BUDGET_ID = (function (valor) {
+    var n = Number(valor);
+    return Number.isInteger(n) && n > 0 ? n : null;
+  })(window.BUDGET_ID);
+  window.BUDGET_ID = BUDGET_ID;
   var contCapitulos = document.getElementById("capitulos");
+
+  function fusionarIndiceCatalogo(nuevas) {
+    var previas = editor.CATALOGO || [];
+    var indice = nuevas || [];
+    var ids = Object.create(null);
+    indice.forEach(function (p) { ids[String(p.id)] = true; });
+    previas.forEach(function (p) {
+      if (p && p.id && !ids[String(p.id)]) indice.push(p);
+    });
+    editor.CATALOGO = indice;
+    if (typeof editor.reconstruirArbolCatalogo === "function") {
+      editor.reconstruirArbolCatalogo();
+    }
+  }
+
+  function urlDatosConFase(url, fase) {
+    if (!fase) return url;
+    return url + (url.indexOf("?") === -1 ? "?" : "&") + "fase=" + encodeURIComponent(fase);
+  }
 
   function cargarCatalogoDiferido() {
     var url = window.CATALOGO_DATOS_URL;
     if (!url) return;
     var contador = document.getElementById("arbol-contador");
-    fetch(url, { headers: { Accept: "application/json" }, credentials: "same-origin" })
+
+    function fallarCarga() {
+      if (contador) contador.textContent = "No se pudo cargar el catálogo";
+      var cuerpo = document.querySelector("#arbol-catalogo .arbol-body");
+      if (cuerpo && !(editor.CATALOGO || []).length) {
+        cuerpo.replaceChildren();
+        var p = document.createElement("p");
+        p.className = "hint";
+        p.textContent = "No se pudo cargar el catálogo. Recarga la página.";
+        cuerpo.appendChild(p);
+      }
+    }
+
+    // Primero solo partidas: la barra lateral no necesita productos ni
+    // precios de mercado (eso era lo que dejaba el árbol en «Cargando…»).
+    fetch(urlDatosConFase(url, "indice"), {
+      headers: { Accept: "application/json" },
+      credentials: "same-origin"
+    })
       .then(function (r) {
         if (!r.ok) throw new Error("HTTP " + r.status);
         return r.json();
       })
       .then(function (datos) {
         if (!datos || !datos.ok) throw new Error("catalogo");
-        // Conserva lo que la búsqueda remota ya trajo mientras el índice
-        // bajaba: si se reemplazase el array a secas, una partida recién
-        // buscada dejaría de existir para el resto del editor.
-        var previas = editor.CATALOGO || [];
-        var indice = datos.partidas || [];
-        var ids = Object.create(null);
-        indice.forEach(function (p) { ids[String(p.id)] = true; });
-        previas.forEach(function (p) {
-          if (p && p.id && !ids[String(p.id)]) indice.push(p);
+        if (datos.arbol && datos.arbol.capitulos) {
+          editor.ARBOL_CATALOGO = datos.arbol;
+          if (typeof editor.reconstruirArbolCatalogo === "function") {
+            editor.reconstruirArbolCatalogo();
+          }
+        }
+        if ((datos.partidas || []).length) fusionarIndiceCatalogo(datos.partidas);
+        return fetch(urlDatosConFase(url, "resto"), {
+          headers: { Accept: "application/json" },
+          credentials: "same-origin"
         });
-        editor.CATALOGO = indice;
-        editor.PRODUCTOS = datos.productos || [];
-        editor.RECURSOS = datos.recursos || [];
-        if (typeof editor.reconstruirArbolCatalogo === "function") {
-          editor.reconstruirArbolCatalogo();
-        }
       })
-      .catch(function () {
-        if (contador) contador.textContent = "No se pudo cargar el catálogo";
-        var cuerpo = document.querySelector("#arbol-catalogo .arbol-body");
-        if (cuerpo && !(editor.CATALOGO || []).length) {
-          cuerpo.replaceChildren();
-          var p = document.createElement("p");
-          p.className = "hint";
-          p.textContent = "No se pudo cargar el catálogo. Recarga la página.";
-          cuerpo.appendChild(p);
-        }
-      });
+      .then(function (r) {
+        if (!r || !r.ok) return null;
+        return r.json();
+      })
+      .then(function (datos) {
+        if (!datos || !datos.ok) return;
+        editor.PRODUCTOS = datos.productos || editor.PRODUCTOS || [];
+        editor.RECURSOS = datos.recursos || editor.RECURSOS || [];
+      })
+      .catch(fallarCarga);
   }
 
   // Pila de deshacer (usada por pushUndo/deshacer)

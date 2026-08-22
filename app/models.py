@@ -509,9 +509,18 @@ class Presupuesto(TenantMixin, Base):
     retencion_pct = Column(Float, default=0.0)
     operacion_exenta = Column(Boolean, default=False)
     clausula_cambiaria = Column(Text, default="")
+    # Total comercial congelado al guardar (misma cifra que el PDF). El panel
+    # y el listado lo leen sin hidratar capítulos/partidas.
+    total_calculado = Column(Float, nullable=True)
     client_id = Column(Integer, ForeignKey("clientes.id"), nullable=False, index=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    @property
+    def total_listado(self):
+        if self.total_calculado is not None:
+            return float(self.total_calculado)
+        return float(self.total)
 
     cliente = relationship("Cliente", back_populates="presupuestos")
     capitulos = relationship(
@@ -2101,6 +2110,7 @@ def migrar(engine):
             ("estilo_pdf", "VARCHAR(30) DEFAULT 'elegante'"),
             ("mostrar_ahorro", "BOOLEAN DEFAULT 0"),
             ("incluir_anexos", "BOOLEAN DEFAULT 0"),
+            ("total_calculado", "FLOAT"),
             ("numero_control", "VARCHAR(80) DEFAULT ''"), ("fecha_tipo_cambio", "DATE"),
             ("retencion_pct", "FLOAT DEFAULT 0"), ("operacion_exenta", "BOOLEAN DEFAULT 0"), ("clausula_cambiaria", "TEXT DEFAULT ''"),
         ],

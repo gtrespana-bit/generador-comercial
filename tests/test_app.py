@@ -753,6 +753,29 @@ def test_editor_envia_indice_ligero_y_carga_ficha_bajo_demanda():
         assert "descripcion" not in catalogo[0]
         assert "descomposicion" not in catalogo[0]
 
+        indice = client.get("/presupuestos/editor/datos", params={"fase": "indice"})
+        assert indice.status_code == 200
+        payload_indice = indice.json()
+        assert payload_indice["ok"]
+        assert payload_indice["partidas"] == []
+        assert payload_indice["arbol"]["capitulos"]
+        assert payload_indice["arbol"]["total"] >= 1
+        assert payload_indice["productos"] == []
+        assert payload_indice["recursos"] == []
+
+        arbol = client.get("/presupuestos/editor/arbol")
+        assert arbol.status_code == 200
+        primer = arbol.json()["capitulos"][0]
+        sub = primer["subs"][0]
+        apt = sub["apartados"][0]
+        hojas = client.get("/presupuestos/editor/hojas", params={
+            "categoria": primer["clave"],
+            "subcategoria": sub["clave"],
+            "apartado": apt["clave"],
+        })
+        assert hojas.status_code == 200
+        assert hojas.json()["partidas"]
+
         ficha = client.get(f"/partidas/{catalogo[0]['id']}/ficha")
         assert ficha.status_code == 200
         payload = ficha.json()

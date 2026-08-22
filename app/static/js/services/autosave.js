@@ -111,7 +111,8 @@
 
     function enviarServidor(usarBeacon) {
       if (state.saveInProgress) return false;
-      if (!editor.BUDGET_ID) {
+      var budgetId = Number(editor.BUDGET_ID);
+      if (!Number.isInteger(budgetId) || budgetId <= 0) {
         // Nuevo presupuesto: no hay ID todavía, solo localStorage
         guardarBorradorLocal();
         return false;
@@ -121,7 +122,7 @@
       if (!data) return false;
 
       var payload = JSON.stringify({ capitulos: data.capitulos, ts: data.ts });
-      var url = "/presupuestos/" + editor.BUDGET_ID + "/borrador";
+      var url = "/presupuestos/" + budgetId + "/borrador";
 
       // Camino rápido antes de cerrar la pestaña: sendBeacon es «fire and
       // forget» y el servidor lo procesa aunque el cliente desaparezca.
