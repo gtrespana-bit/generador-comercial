@@ -18,6 +18,8 @@ from app.models import Configuracion, Partida
 RAIZ = Path(__file__).resolve().parents[1]
 CATALOGO_JS = (RAIZ / "app/static/js/editor/catalogo.js").read_text(encoding="utf-8")
 PARTIDA_JS = (RAIZ / "app/static/js/editor/partida.js").read_text(encoding="utf-8")
+ARBOL_JS = (RAIZ / "app/static/js/editor/arbol_catalogo.js").read_text(encoding="utf-8")
+MAIN_JS = (RAIZ / "app/static/js/editor/main.js").read_text(encoding="utf-8")
 
 
 def test_la_busqueda_del_catalogo_responde_sin_el_indice_diferido(entorno, cliente_web):

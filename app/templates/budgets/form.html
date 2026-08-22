@@ -4,15 +4,16 @@
 {% block body_class %}editor-focus{% endblock %}
 
 {% block content %}
+{% set budget_id = presupuesto.id if presupuesto and presupuesto.id else none %}
 <form method="post" id="form-presupuesto" class="budget-builder" enctype="multipart/form-data" data-moneda-original="{{ presupuesto.moneda if presupuesto else cfg.moneda_default or 'USD' }}"
-      action="{{ '/presupuestos/' ~ presupuesto.id ~ '/editar' if presupuesto else '/presupuestos/nuevo' }}">
+      action="{% if budget_id %}/presupuestos/{{ budget_id }}/editar{% else %}/presupuestos/nuevo{% endif %}">
   <input type="hidden" name="estructura_json" id="estructura-json" value="">
   <input type="hidden" name="confirmar_cambio_moneda" id="confirmar-cambio-moneda" value="0">
 
   <!-- Command bar única: identidad + total + acciones principales + guardar -->
   <header class="editor-command-bar" id="editor-command-bar" role="banner">
     <div class="ecb-identity">
-      <a class="ecb-back" href="{{ '/presupuestos/' ~ presupuesto.id if presupuesto else '/presupuestos' }}" title="Volver">
+      <a class="ecb-back" href="{% if budget_id %}/presupuestos/{{ budget_id }}{% else %}/presupuestos{% endif %}" title="Volver">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg>
       </a>
       <div class="ecb-title-wrap">
@@ -405,7 +406,7 @@
     <div class="save-dock-copy"><strong>Revisión final</strong><span>Se guardarán el presupuesto y las partidas nuevas del catálogo.</span></div>
     <button class="btn btn-primary" type="submit">Guardar presupuesto</button>
     <button type="button" class="btn btn-ghost" id="btn-guardar-plantilla">Guardar como plantilla</button>
-    <a class="btn btn-ghost" href="{{ '/presupuestos/' ~ presupuesto.id if presupuesto else '/presupuestos' }}">Cancelar</a>
+    <a class="btn btn-ghost" href="{% if budget_id %}/presupuestos/{{ budget_id }}{% else %}/presupuestos{% endif %}">Cancelar</a>
   </div>
 </form>
 
@@ -958,7 +959,7 @@
   {% for c in categorias %}<option value="{{ c }}"></option>{% endfor %}
 </datalist>
 <script nonce="{{ request.state.csp_nonce }}">
-  window.BUDGET_ID = {{ presupuesto.id if presupuesto else 'null' }};
+  window.BUDGET_ID = {{ budget_id if budget_id else 'null' }};
   // Borrador del autoguardado persistido en el servidor (solo si es más
   // reciente que el último guardado del presupuesto).
   window.BORRADOR_SERVIDOR = {{ borrador_servidor | tojson if borrador_servidor else 'null' }};
@@ -1255,3 +1256,4 @@
   });
 </script>
 {% endblock %}
+

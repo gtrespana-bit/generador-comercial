@@ -121,6 +121,11 @@ else:
     _engine_options["connect_args"] = {"prepare_threshold": None}
     _engine_options["pool_recycle"] = int(os.environ.get("COTIZAT_DB_POOL_RECYCLE", "300"))
     pool_class_cfg = os.environ.get("COTIZAT_DB_POOL_CLASS", "").strip().lower()
+    # En Vercel cada invocación es un proceso corto: un pool persistente
+    # deja conexiones colgadas en PgBouncer y alarga el arranque. NullPool
+    # abre y cierra por petición (el pooler de Supabase ya multiplexa).
+    if not pool_class_cfg and os.environ.get("VERCEL"):
+        pool_class_cfg = "nullpool"
     if pool_class_cfg == "nullpool":
         from sqlalchemy.pool import NullPool
         _engine_options["poolclass"] = NullPool
@@ -629,8 +634,12 @@ def _asegurar_esquema_postgres() -> None:
             "ALTER TABLE configuracion ADD COLUMN IF NOT EXISTS tasa_cambio FLOAT",
             "ALTER TABLE configuracion ADD COLUMN IF NOT EXISTS fuente_tipo_cambio VARCHAR(120) DEFAULT ''",
             "ALTER TABLE configuracion ADD COLUMN IF NOT EXISTS fecha_tasa DATE",
+            "ALTER TABLE presupuestos ADD COLUMN IF NOT EXISTS total_calculado FLOAT",
         )
+        sin_permiso_ddl = False
         for sentencia in sentencias:
+            if sin_permiso_ddl:
+                break
             try:
                 with eng.begin() as conn:
                     conn.execute(text(sentencia))
@@ -638,6 +647,14 @@ def _asegurar_esquema_postgres() -> None:
                 logging.getLogger("cotizat").warning(
                     "No se pudo aplicar «%s»: %s", sentencia, exc
                 )
+                # El rol de la app no es dueño de la tabla: los ALTER
+                # siguientes fallarán igual y solo alargan el arranque en frío.
+                if "InsufficientPrivilege" in type(exc).__name__ or "must be owner" in str(exc):
+                    sin_permiso_ddl = True
+                    logging.getLogger("cotizat").warning(
+                        "Sin permisos DDL en configuracion: se omite el resto de "
+                        "ALTER. Ejecuta `alembic upgrade head` con MIGRATION_DATABASE_URL."
+                    )
         with eng.begin() as conn:
             # Si la versión sigue en el head anterior y ya añadimos la columna,
             # avanzamos la marca para que el próximo ``alembic upgrade head``

@@ -64,7 +64,43 @@
   // Construcción del árbol a partir del catálogo plano
   // ---------------------------------------------------------------------
 
+  function construirArbolDesdeEsqueleto(arbol) {
+    var capitulos = [];
+    (arbol.capitulos || []).forEach(function (cap) {
+      var nodo = {
+        nombre: cap.nombre,
+        clave: cap.clave || "",
+        total: cap.total || 0,
+        subs: [],
+        perezoso: true
+      };
+      (cap.subs || []).forEach(function (sub) {
+        var sn = {
+          nombre: sub.nombre,
+          clave: sub.clave || "",
+          total: sub.total || 0,
+          apartados: []
+        };
+        (sub.apartados || []).forEach(function (apt) {
+          sn.apartados.push({
+            nombre: apt.nombre,
+            clave: apt.clave || "",
+            total: apt.total || 0,
+            hojas: [],
+            perezoso: true
+          });
+        });
+        nodo.subs.push(sn);
+      });
+      capitulos.push(nodo);
+    });
+    return capitulos;
+  }
+
   function construirArbol() {
+    if (editor.ARBOL_CATALOGO && (editor.ARBOL_CATALOGO.capitulos || []).length) {
+      return construirArbolDesdeEsqueleto(editor.ARBOL_CATALOGO);
+    }
     var catalogo = editor.CATALOGO || [];
     var capitulos = [];
     var indiceCap = Object.create(null);
@@ -256,6 +292,7 @@
     li.setAttribute("tabindex", "0");
     li.setAttribute("role", "button");
     li.dataset.idx = String(hoja.idx);
+    if (d.id) li.dataset.partidaId = String(d.id);
     li.dataset.buscable = hoja.buscable;
     li.title = (d.codigo_externo || d.codigo_interno || "")
       ? (d.codigo_externo || d.codigo_interno) + " · " + d.nombre
@@ -345,7 +382,7 @@
           bloqueApartado.className = "arbol-apartado";
           var cabApartado = crearRama(
             apartado.nombre,
-            apartado.hojas.length,
+            apartado.total != null ? apartado.total : apartado.hojas.length,
             "arbol-apartado-head"
           );
           var cuerpoApartado = document.createElement("div");
@@ -353,6 +390,8 @@
           cuerpoApartado.hidden = true;
           // Las hojas se crean al abrir o buscar. Con 5.000 partidas esto
           // evita miles de nodos DOM y cientos de fichas innecesarias.
+          apartado._capClave = cap.clave;
+          apartado._subClave = sub.clave;
           bloqueApartado._catalogoApartado = apartado;
           bloqueApartado._claveRender = "";
           bloqueApartado.appendChild(cabApartado);
@@ -383,10 +422,59 @@
     });
   }
 
+  function urlHojas(apartado) {
+    var params = [];
+    var cap = apartado && apartado._capClave;
+    var sub = apartado && apartado._subClave;
+    if (apartado) {
+      params.push("categoria=" + encodeURIComponent(apartado._capClave || ""));
+      params.push("subcategoria=" + encodeURIComponent(apartado._subClave || ""));
+      params.push("apartado=" + encodeURIComponent(apartado.clave || ""));
+    }
+    if (window.COTIZAT_MONEDA_ACTIVA) params.push("moneda=" + encodeURIComponent(window.COTIZAT_MONEDA_ACTIVA));
+    if (window.COTIZAT_TASA_ACTIVA) params.push("tasa=" + encodeURIComponent(window.COTIZAT_TASA_ACTIVA));
+    return "/presupuestos/editor/hojas?" + params.join("&");
+  }
+
+  function fusionarHojas(items) {
+    var catalogo = editor.CATALOGO || [];
+    var ids = Object.create(null);
+    catalogo.forEach(function (p) { ids[String(p.id)] = true; });
+    (items || []).forEach(function (p) {
+      if (p && p.id && !ids[String(p.id)]) {
+        catalogo.push(p);
+        ids[String(p.id)] = true;
+      }
+    });
+    editor.CATALOGO = catalogo;
+  }
+
+  function cargarHojasApartado(bloqueApartado, apartado) {
+    if (!apartado || apartado._cargando || (apartado.hojas && apartado.hojas.length)) return;
+    apartado._cargando = true;
+    fetch(urlHojas(apartado), { headers: { Accept: "application/json" }, credentials: "same-origin" })
+      .then(function (r) { return r.json(); })
+      .then(function (datos) {
+        apartado._cargando = false;
+        var items = (datos && datos.partidas) || [];
+        fusionarHojas(items);
+        apartado.hojas = items.map(function (p) {
+          return { idx: -1, dato: p, buscable: textoBusqueda(p) };
+        });
+        apartado.perezoso = false;
+        poblarApartado(bloqueApartado, true);
+      })
+      .catch(function () { apartado._cargando = false; });
+  }
+
   function poblarApartado(bloqueApartado, forzar) {
     if (!bloqueApartado) return;
     var cuerpoApartado = bloqueApartado.querySelector(".arbol-apartado-body");
     if (!cuerpoApartado) return;
+    var apartado = bloqueApartado._catalogoApartado;
+    if (apartado && apartado.perezoso && !(apartado.hojas || []).length) {
+      cargarHojasApartado(bloqueApartado, apartado);
+    }
     var clave = consultaActual
       ? "q:" + consultaActual + ":" + (idsBusquedaRemota ? Object.keys(idsBusquedaRemota).length : 0)
       : "todo";
@@ -475,7 +563,7 @@
     if (contador) {
       contador.textContent = consultaActual
         ? visibles + (visibles === 1 ? " partida" : " partidas")
-        : (editor.CATALOGO || []).length + " partidas";
+        : ((editor.ARBOL_CATALOGO && editor.ARBOL_CATALOGO.total) || (editor.CATALOGO || []).length) + " partidas";
     }
     return visibles;
   }
@@ -489,9 +577,19 @@
     temporizadorBusqueda = setTimeout(function () {
       editor.Catalogo.buscarRemoto(consulta, 100).then(function (items) {
         if (secuencia !== secuenciaBusqueda || consulta !== String(inputBuscar.value || "").trim()) return;
+        // La búsqueda remota mete partidas en CATALOGO. Si el árbol todavía
+        // estaba vacío (índice diferido) hay que pintarlo; si no, las ids
+        // nuevas no existen como hojas y el panel sigue en blanco.
+        if ((items || []).length && cuerpo.querySelectorAll(".arbol-capitulo").length === 0) {
+          pintar(construirArbol());
+        }
         var ids = Object.create(null);
         items.forEach(function (item) { ids[String(item.id)] = true; });
         var visibles = filtrar(consulta, ids);
+        if (!visibles && (items || []).length) {
+          pintar(construirArbol());
+          visibles = filtrar(consulta, ids);
+        }
         if (!visibles && editor.Catalogo.registrarSinResultados) {
           editor.Catalogo.registrarSinResultados(consulta);
         }
@@ -509,9 +607,13 @@
     return editor.Capitulo.crear({ nombre: "CAPÍTULO GENERAL" }, editor);
   }
 
-  function insertar(idx, capDestino) {
-    if (!editor.Catalogo || typeof editor.Catalogo.insertarEnCapitulo !== "function") return;
+  function insertar(idx, capDestino, partidaId) {
     var cap = capDestino || capituloDestinoPorDefecto();
+    if (partidaId && editor.Catalogo && editor.Catalogo.insertarIdEnCapitulo) {
+      editor.Catalogo.insertarIdEnCapitulo(partidaId, cap);
+      return;
+    }
+    if (!editor.Catalogo || typeof editor.Catalogo.insertarEnCapitulo !== "function") return;
     editor.Catalogo.insertarEnCapitulo(idx, cap);
   }
 
@@ -533,12 +635,12 @@
     cuerpo.addEventListener("dragstart", function (event) {
       var hoja = event.target.closest && event.target.closest(".arbol-hoja");
       if (!hoja) return;
-      arrastrando = hoja.dataset.idx;
+      arrastrando = { idx: hoja.dataset.idx, id: hoja.dataset.partidaId || "" };
       hoja.classList.add("arrastrando");
       if (event.dataTransfer) {
         event.dataTransfer.effectAllowed = "copy";
         // Algunos navegadores cancelan el arrastre si no se fija nada.
-        try { event.dataTransfer.setData("text/plain", String(arrastrando)); } catch (e) {}
+        try { event.dataTransfer.setData("text/plain", String(arrastrando.id || arrastrando.idx)); } catch (e) {}
       }
     });
 
@@ -563,11 +665,11 @@
       event.preventDefault();
       event.stopPropagation();
       var cap = capituloBajoElCursor(event);
-      var idx = arrastrando;
+      var payload = arrastrando;
       arrastrando = null;
       limpiarResaltado();
       if (cap) cap.classList.remove("collapsed");
-      insertar(idx, cap);
+      insertar(payload && payload.idx, cap, payload && payload.id);
     });
   }
 
@@ -577,7 +679,8 @@
 
   function reconstruir() {
     if (!cuerpo) return;
-    if (!(editor.CATALOGO || []).length && window.CATALOGO_DATOS_URL) {
+    if (!(editor.ARBOL_CATALOGO && (editor.ARBOL_CATALOGO.capitulos || []).length) &&
+        !(editor.CATALOGO || []).length && window.CATALOGO_DATOS_URL) {
       cuerpo.replaceChildren();
       var msg = document.createElement("p");
       msg.className = "hint";

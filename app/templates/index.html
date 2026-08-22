@@ -153,7 +153,7 @@
             <td data-label="Fecha" class="muted">{{ p.fecha | fecha }}</td>
             <td data-label="Cliente">{{ p.cliente.nombre }}</td>
             <td data-label="Estado"><span class="badge badge-{{ p.estado }}">{{ p.estado | capitalize }}</span></td>
-            <td class="right" data-label="Total"><strong>{{ p.total | money_iso(p.moneda) }}</strong></td>
+            <td class="right" data-label="Total"><strong>{{ p.total_listado | money_iso(p.moneda) }}</strong></td>
             <td class="actions-cell">
               <a class="btn btn-sm btn-ghost" href="/presupuestos/{{ p.id }}/pdf" download="presupuesto_{{ p.numero }}.pdf" data-cotizat-click="download-pdf">PDF</a>
             </td>

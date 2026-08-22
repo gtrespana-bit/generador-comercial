@@ -675,7 +675,7 @@ def _importe_en_moneda_vista(valor, presupuesto, moneda_vista: str, factor_vista
     return tasa_convertir_precio(usd, factor_vista)
 
 
-def _opciones_partidas_presupuesto():
+def _opciones_partidas_presupuesto(incluir_descompuesto: bool = True):
     """Opciones de carga temprana del grafo económico de presupuestos.
 
     ``p.total``, ``p.subtotal``… recorren capítulos → partidas → mediciones,
@@ -683,16 +683,23 @@ def _opciones_partidas_presupuesto():
     dispara consultas perezosas individuales (N+1): una lista de 25
     presupuestos multiplicaba las vueltas a la base por 4-5 por fila. Con
     ``selectinload`` el grafo completo se trae en ~5 consultas fijas.
+
+    El descompuesto CYPE solo hace falta en ficha/PDF. El panel y los
+    listados pueden omitirlo: son decenas de miles de filas extra.
     """
-    return (
+    opciones = [
         joinedload(Presupuesto.cliente),
         selectinload(Presupuesto.capitulos)
         .selectinload(Capitulo.partidas)
         .selectinload(PresupuestoItem.mediciones),
-        selectinload(Presupuesto.capitulos)
-        .selectinload(Capitulo.partidas)
-        .selectinload(PresupuestoItem.descomposicion_cype),
-    )
+    ]
+    if incluir_descompuesto:
+        opciones.append(
+            selectinload(Presupuesto.capitulos)
+            .selectinload(Capitulo.partidas)
+            .selectinload(PresupuestoItem.descomposicion_cype),
+        )
+    return tuple(opciones)
 
 
 def _tiempos_catalogo(db: Session, presupuesto: Presupuesto | None) -> dict:
@@ -1360,6 +1367,156 @@ def _partida_catalogo_indice(partida: Partida) -> dict:
         "coste_complementarios": partida.coste_complementarios or 0.0,
         "coste_otros": partida.coste_otros or 0.0,
     }
+
+
+def _etiquetas_catalogo_traducidas(db: Session, textos: list[str]) -> list[str]:
+    """Traduce etiquetas del árbol al país de la organización."""
+    try:
+        from ..services.traduccion import codigo_desde_pais as _codigo, traducir as _trad
+
+        codigo = _codigo(getattr(_config(db), "empresa_pais", ""))
+        if not codigo:
+            return textos
+        return [_trad(t or "", codigo) if t else t for t in textos]
+    except Exception:
+        return textos
+
+
+def _arbol_catalogo_editor(db: Session) -> dict:
+    """Esqueleto capítulo → subcapítulo → apartado con recuentos, sin hojas."""
+    from sqlalchemy import func as _func
+
+    filas = (
+        db.query(
+            Partida.categoria,
+            Partida.subcategoria,
+            Partida.apartado,
+            _func.count(Partida.id),
+        )
+        .filter(Partida.oculta.is_(False))
+        .group_by(Partida.categoria, Partida.subcategoria, Partida.apartado)
+        .all()
+    )
+    etiquetas = []
+    for cat, sub, apt, _n in filas:
+        etiquetas.extend([cat or "", sub or "", apt or ""])
+    trad = _etiquetas_catalogo_traducidas(db, etiquetas)
+    caps: dict[str, dict] = {}
+    i = 0
+    total = 0
+    for cat, sub, apt, n in filas:
+        n = int(n or 0)
+        total += n
+        cat_t, sub_t, apt_t = trad[i], trad[i + 1], trad[i + 2]
+        i += 3
+        clave_c = cat or ""
+        clave_s = sub or ""
+        clave_a = apt or ""
+        cap = caps.get(clave_c)
+        if cap is None:
+            cap = {
+                "clave": clave_c,
+                "nombre": cat_t or "99 Partidas personalizadas",
+                "total": 0,
+                "subs": {},
+            }
+            caps[clave_c] = cap
+        cap["total"] += n
+        subn = cap["subs"].get(clave_s)
+        if subn is None:
+            subn = {
+                "clave": clave_s,
+                "nombre": sub_t or "99.01 General",
+                "total": 0,
+                "apartados": [],
+            }
+            cap["subs"][clave_s] = subn
+        subn["total"] += n
+        subn["apartados"].append({
+            "clave": clave_a,
+            "nombre": apt_t or "99.01.01 Trabajos diversos",
+            "total": n,
+        })
+    capitulos = []
+    for cap in sorted(caps.values(), key=lambda c: c["nombre"] or ""):
+        subs = []
+        for sub in sorted(cap["subs"].values(), key=lambda s: s["nombre"] or ""):
+            sub["apartados"] = sorted(sub["apartados"], key=lambda a: a["nombre"] or "")
+            subs.append(sub)
+        capitulos.append({
+            "clave": cap["clave"],
+            "nombre": cap["nombre"],
+            "total": cap["total"],
+            "subs": subs,
+        })
+    return {"capitulos": capitulos, "total": total}
+
+
+def _hojas_catalogo_editor(
+    db: Session,
+    categoria: str = "",
+    subcategoria: str = "",
+    apartado: str = "",
+    moneda: str | None = None,
+    tasa: float | None = None,
+) -> list[dict]:
+    """Hojas de un apartado del árbol, ya convertidas a la moneda del editor."""
+    q = (
+        db.query(Partida)
+        .filter(Partida.oculta.is_(False))
+        .options(load_only(*_CAMPOS_INDICE_CATALOGO))
+    )
+    if categoria:
+        q = q.filter(Partida.categoria == categoria)
+    else:
+        q = q.filter(or_(Partida.categoria.is_(None), Partida.categoria == ""))
+    if subcategoria:
+        q = q.filter(Partida.subcategoria == subcategoria)
+    else:
+        q = q.filter(or_(Partida.subcategoria.is_(None), Partida.subcategoria == ""))
+    if apartado:
+        q = q.filter(Partida.apartado == apartado)
+    else:
+        q = q.filter(or_(Partida.apartado.is_(None), Partida.apartado == ""))
+    partidas = q.order_by(Partida.codigo_interno, Partida.nombre).all()
+    try:
+        from ..services.tasa import factor_conversion_local, tasa_convertir_precio
+        from ..services.traduccion import codigo_desde_pais as _codigo, traducir as _trad
+
+        _cfg = _config(db)
+        _cod = _codigo(getattr(_cfg, "empresa_pais", ""))
+        if moneda is None:
+            moneda = getattr(_cfg, "moneda_default", "USD")
+        if tasa is None:
+            tasa = getattr(_cfg, "tasa_cambio", None)
+        _factor = factor_conversion_local(moneda, tasa)
+        out = []
+        for _pp in partidas:
+            _d = _partida_catalogo_indice(_pp)
+            if _cod:
+                _d["nombre"] = _trad(_d.get("nombre", ""), _cod)
+                _d["categoria"] = _trad(_d.get("categoria", ""), _cod)
+                _d["subcategoria"] = _trad(_d.get("subcategoria", ""), _cod)
+                _d["apartado"] = _trad(_d.get("apartado", ""), _cod)
+            _d["moneda"] = str(moneda or "USD").strip().upper() or "USD"
+            if _factor != 1.0:
+                _d["precio"] = tasa_convertir_precio(_d.get("precio", 0), _factor)
+                for _k in ("coste_materiales", "coste_mano_obra", "coste_complementarios", "coste_otros"):
+                    _d[_k] = tasa_convertir_precio(_d.get(_k, 0), _factor)
+            out.append(_d)
+        return out
+    except Exception:
+        return [_partida_catalogo_indice(p) for p in partidas]
+
+
+def _persistir_total_calculado(presupuesto) -> None:
+    """Congela el total comercial en la fila del presupuesto."""
+    from ..services.calculations import calcular_totales
+
+    try:
+        presupuesto.total_calculado = float(calcular_totales(presupuesto).total)
+    except Exception:
+        pass
 
 
 def _indice_catalogo_para_editor(db: Session, moneda: str | None = None, tasa: float | None = None) -> list[dict]:

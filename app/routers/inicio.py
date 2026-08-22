@@ -26,73 +26,87 @@ def inicio(request: Request, db: Session = Depends(get_db)):
     fin_semana = hoy + timedelta(days=7)
     mes_inicio = hoy.replace(day=1)
 
-    # Una sola lectura del histórico: antes cada indicador hacía su propia
-    # pasada completa sobre ``presupuestos`` (hasta ~10 consultas a la tabla
-    # entera). Con catálogos y presupuestos creciendo, esto se traduce en un
-    # dashboard visiblemente más rápido en instalaciones grandes.
-    # Además se carga de forma temprana el grafo de cada presupuesto
-    # (cliente, capítulos, partidas, mediciones): los totales del panel
-    # (``p.total``, ``p.descuento_monto``) los recorren y, sin ello, cada
-    # presupuesto disparaba sus propias consultas perezosas (N+1 masivo).
+    # El panel NO hidrata el histórico completo ni los descompuestos CYPE.
+    # Eso era lo que hacía /inicio la página más lenta de la app (cada
+    # presupuesto arrastraba capítulos, partidas, mediciones y APU).
+    from sqlalchemy import func as _func
+
     estados_aprobados = ("aprobado", "aprobado_parcialmente", "en_ejecucion", "finalizado")
     estados_enviados = ("enviado", "reenviado", *estados_aprobados)
-    todos = db.query(Presupuesto).options(*common._opciones_partidas_presupuesto()).all()
-
-    # Moneda única del panel: cada presupuesto congela su propia moneda, así
-    # que todo importe agregado se convierte a la moneda de la organización
-    # (por USD, con la tasa congelada del presupuesto). Los que no tienen tasa
-    # para el puente quedan fuera del agregado en vez de sumar peras con
-    # manzanas. Antes se sumaban totales de monedas distintas etiquetando el
-    # resultado con la moneda de la organización.
     moneda_panel, factor_panel = common._contexto_moneda(db)
 
     def _importe_panel(p, valor):
         return common._importe_en_moneda_vista(valor, p, moneda_panel, factor_panel)
 
-    total_presupuestos = len(todos)
     por_estado = {e: 0 for e in ESTADOS}
+    for estado, n in db.query(Presupuesto.estado, _func.count(Presupuesto.id)).group_by(Presupuesto.estado):
+        por_estado[estado] = int(n or 0)
+    total_presupuestos = sum(por_estado.values())
+    total_enviados = sum(por_estado.get(e, 0) for e in estados_enviados)
+    total_aprobados = sum(por_estado.get(e, 0) for e in estados_aprobados)
+
+    # Cabeceras ligeras para vencimientos y recuentos del mes (sin partidas).
+    cabeceras = db.query(
+        Presupuesto.id,
+        Presupuesto.estado,
+        Presupuesto.fecha,
+        Presupuesto.validez_dias,
+        Presupuesto.moneda,
+        Presupuesto.tipo_cambio,
+    ).all()
+    por_vencer = 0
+    presupuestos_mes = 0
+    enviados_mes = 0
+    aprobados_mes = 0
+    for fila in cabeceras:
+        if fila.estado == "enviado" and fila.validez_dias and fila.fecha and hoy <= fila.fecha + timedelta(days=fila.validez_dias) <= fin_semana:
+            por_vencer += 1
+        if fila.fecha and fila.fecha >= mes_inicio:
+            presupuestos_mes += 1
+            if fila.estado in ("enviado", "reenviado"):
+                enviados_mes += 1
+            if fila.estado in ("aprobado", "aprobado_parcialmente"):
+                aprobados_mes += 1
+
+    # Totales monetarios: columna cacheada; no se hidrata el grafo.
+    para_dinero = (
+        db.query(Presupuesto)
+        .options(load_only(
+            Presupuesto.id, Presupuesto.estado, Presupuesto.fecha,
+            Presupuesto.moneda, Presupuesto.tipo_cambio, Presupuesto.total_calculado,
+        ))
+        .filter(Presupuesto.estado.in_(("aprobado", *estados_aprobados)))
+        .all()
+    )
     importe_aprobado = 0.0
     descuentos_concedidos = 0.0
     margen_estimado = 0.0
-    total_enviados = 0
-    total_aprobados = 0
-    por_vencer = 0
-    presupuestos_mes = []
     importes_mes = []
-    enviados_mes = 0
-    aprobados_mes = []
-    for p in todos:
-        por_estado[p.estado] = por_estado.get(p.estado, 0) + 1
-        total_p = _importe_panel(p, p.total)
+    for p in para_dinero:
+        cached = p.total_calculado
+        if cached is None:
+            continue
+        total_p = _importe_panel(p, cached)
         if p.estado == "aprobado" and total_p is not None:
             importe_aprobado += total_p
-        descuento_p = _importe_panel(p, p.descuento_monto)
-        if descuento_p is not None:
-            descuentos_concedidos += descuento_p
-        if p.estado in estados_enviados:
-            total_enviados += 1
-        if p.estado in estados_aprobados:
-            total_aprobados += 1
-            margen_p = _importe_panel(p, p.margen)
-            if margen_p is not None:
-                margen_estimado += margen_p
-        if p.estado == "enviado" and p.validez_dias and hoy <= p.fecha + timedelta(days=p.validez_dias) <= fin_semana:
-            por_vencer += 1
-        if p.fecha and p.fecha >= mes_inicio:
-            presupuestos_mes.append(p)
-            if total_p is not None:
-                importes_mes.append(total_p)
-            if p.estado in ("enviado", "reenviado"):
-                enviados_mes += 1
-            if p.estado in ("aprobado", "aprobado_parcialmente"):
-                aprobados_mes.append(p)
+        if p.fecha and p.fecha >= mes_inicio and total_p is not None:
+            importes_mes.append(total_p)
 
-    recientes = sorted(todos, key=lambda p: p.id, reverse=True)[:6]
+    recientes = (
+        db.query(Presupuesto)
+        .options(joinedload(Presupuesto.cliente))
+        .order_by(Presupuesto.id.desc())
+        .limit(6)
+        .all()
+    )
     total_clientes = db.query(Cliente).count()
     total_facturas = db.query(Factura).count()
     proyectos_activos = db.query(Proyecto).filter(Proyecto.estado.in_(["en_ejecucion", "pausado"])).count()
     analisis_precios = analizar_catalogo_partidas(db)
-    salud_catalogo = analizar_salud_catalogo(db)
+    analisis_precios["alertas"] = (analisis_precios.get("alertas") or [])[:8]
+    # El recuento de precios absurdos recorre otra vez las 3.000 partidas:
+    # en el panel basta el diagnóstico de columnas (precio/coste/tiempo).
+    salud_catalogo = analizar_salud_catalogo(db, incluir_anomalias=False)
     recorrido_inicial = (
         estado_recorrido_inicial(db, cfg)
         if cfg.onboarding_modo in {"demo", "limpio"} and not getattr(cfg, "recorrido_inicial_oculto", False)

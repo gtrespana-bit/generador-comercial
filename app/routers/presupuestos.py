@@ -50,7 +50,7 @@ def listar_presupuestos(
     # ``p.cliente.nombre`` y ``p.total`` en cada fila y, sin ella, cada fila
     # lanzaba sus propias consultas perezosas (N+1).
     presupuestos = (
-        query.options(*_opciones_partidas_presupuesto())
+        query.options(joinedload(Presupuesto.cliente))
         .order_by(Presupuesto.id.desc())
         .offset((pagina - 1) * por_pagina)
         .limit(por_pagina)
@@ -1114,6 +1114,7 @@ def nuevo_presupuesto_form(request: Request, db: Session = Depends(get_db)):
 def datos_editor_catalogo(
     moneda: str = "",
     tasa: str = "",
+    fase: str = "",
     db: Session = Depends(get_db),
 ):
     """Índice ligero del catálogo para el constructor, fuera del HTML.
@@ -1121,6 +1122,10 @@ def datos_editor_catalogo(
     Se pide después de pintar ``/presupuestos/nuevo`` y ``/editar``. Así la
     pantalla abre en un par de segundos y el trabajo pesado (traducir,
     convertir y serializar ~3.000 partidas) ya no tumba la función de Vercel.
+
+    ``fase=indice`` devuelve el esqueleto del árbol (sin las ~3.000 hojas).
+    ``fase=resto`` productos y recursos. Sin fase se devuelve el índice
+    completo de partidas (compatibilidad con clientes/pruebas antiguas).
     """
     from ..services.catalogo_propio import asegurar_catalogo_propio
     asegurar_catalogo_propio(db)
@@ -1130,21 +1135,61 @@ def datos_editor_catalogo(
         tasa_doc = float(tasa) if str(tasa or "").strip() else cfg.tasa_cambio
     except (TypeError, ValueError):
         tasa_doc = cfg.tasa_cambio
-    partidas = _indice_catalogo_para_editor(db, moneda_doc, tasa_doc)
-    productos = _productos_editor(db, cfg, moneda_doc, tasa_doc)
-    recursos_base = (
-        db.query(Recurso)
-        .order_by(Recurso.ultimo_uso.desc(), Recurso.usos.desc(), Recurso.descripcion)
-        .all()
-    )
-    recursos = _recursos_editor_mercado(db, recursos_base, cfg, moneda_doc, tasa_doc)
+    fase_norm = str(fase or "").strip().lower()
+    arbol = {}
+    if fase_norm == "resto":
+        partidas = []
+    elif fase_norm == "indice":
+        arbol = _arbol_catalogo_editor(db)
+        partidas = []
+    else:
+        partidas = _indice_catalogo_para_editor(db, moneda_doc, tasa_doc)
+    productos: list = []
+    recursos: list = []
+    if fase_norm != "indice":
+        productos = _productos_editor(db, cfg, moneda_doc, tasa_doc)
+        recursos_base = (
+            db.query(Recurso)
+            .order_by(Recurso.ultimo_uso.desc(), Recurso.usos.desc(), Recurso.descripcion)
+            .all()
+        )
+        recursos = _recursos_editor_mercado(db, recursos_base, cfg, moneda_doc, tasa_doc)
     return {
         "ok": True,
         "partidas": partidas,
+        "arbol": arbol,
         "productos": productos,
         "recursos": recursos,
         "moneda": moneda_doc,
+        "fase": fase_norm or "completo",
     }
+
+
+@router.get("/presupuestos/editor/arbol")
+def arbol_editor_catalogo(db: Session = Depends(get_db)):
+    from ..services.catalogo_propio import asegurar_catalogo_propio
+    asegurar_catalogo_propio(db)
+    arbol = _arbol_catalogo_editor(db)
+    return {"ok": True, **arbol}
+
+
+@router.get("/presupuestos/editor/hojas")
+def hojas_editor_catalogo(
+    categoria: str = "",
+    subcategoria: str = "",
+    apartado: str = "",
+    moneda: str = "",
+    tasa: str = "",
+    db: Session = Depends(get_db),
+):
+    cfg = _config(db)
+    moneda_doc = moneda or cfg.moneda_default
+    try:
+        tasa_doc = float(tasa) if str(tasa or "").strip() else cfg.tasa_cambio
+    except (TypeError, ValueError):
+        tasa_doc = cfg.tasa_cambio
+    hojas = _hojas_catalogo_editor(db, categoria, subcategoria, apartado, moneda_doc, tasa_doc)
+    return {"ok": True, "partidas": hojas}
 
 
 def _leer_formulario_presupuesto(form, db: Session | None = None):
@@ -3334,6 +3379,7 @@ async def actualizar_presupuesto(presupuesto_id: int, request: Request, db: Sess
     productos_previos = {p.producto_nombre for cap in presupuesto.capitulos for p in cap.partidas}
 
     _montar_presupuesto(presupuesto, capitulos, partidas, imagenes, imagenes_opciones)
+    _persistir_total_calculado(presupuesto)
     db.flush()
     nuevas = {p.producto_imagen for cap in presupuesto.capitulos for p in cap.partidas}
     nuevas_opciones = {
@@ -3496,6 +3542,7 @@ def duplicar_presupuesto(presupuesto_id: int, db: Session = Depends(get_db)):
                     orden=opc_o.orden,
                 ))
 
+    _persistir_total_calculado(copia)
     db.add(copia)
     db.commit()
     return _redirect(f"/presupuestos/{copia.id}/editar", msg=f"Presupuesto duplicado correctamente como {copia.numero}.")

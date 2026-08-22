@@ -19,6 +19,7 @@ from .logs import configurar_logs  # noqa: E402  (tras crear el logger)
 configurar_logs()
 
 from fastapi import FastAPI, Request  # noqa: E402
+from fastapi.exceptions import RequestValidationError  # noqa: E402
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, Response  # noqa: E402
 from fastapi.staticfiles import StaticFiles  # noqa: E402
 from starlette.middleware.gzip import GZipMiddleware  # noqa: E402
@@ -118,10 +119,25 @@ async def lifespan(_app: FastAPI):
     try:
         IMPORTS_DIR.mkdir(parents=True, exist_ok=True)
     except OSError:
-        log.warning(
-            "No se pudo crear %s: sistema de archivos de solo lectura.",
-            IMPORTS_DIR,
-        )
+        # En Vercel solo /tmp es escribible. Las importaciones CYPE intermedias
+        # pueden vivir ahí el tiempo de la petición.
+        from pathlib import Path as _Path
+        import os as _os
+        from .routers import common as _common
+
+        tmp_imports = _Path(_os.environ.get("TMPDIR") or "/tmp") / "cotizat_imports_cype"
+        try:
+            tmp_imports.mkdir(parents=True, exist_ok=True)
+            _common.IMPORTS_DIR = tmp_imports
+            log.warning(
+                "imports_cype redirigido a %s (sistema de archivos de solo lectura).",
+                tmp_imports,
+            )
+        except OSError:
+            log.warning(
+                "No se pudo crear %s: sistema de archivos de solo lectura.",
+                IMPORTS_DIR,
+            )
     _backup_automatico()
     yield
 
@@ -389,6 +405,23 @@ _NO_CACHE = {
     "Cache-Control": "no-store, max-age=0",
     "Pragma": "no-cache",
 }
+
+
+@app.exception_handler(RequestValidationError)
+async def _validacion_peticion(request: Request, exc: RequestValidationError):
+    """Un POST HTML con id inválido no debe devolver JSON crudo al navegador."""
+    if _respuesta_auth_json(request):
+        return JSONResponse({"detail": exc.errors()}, status_code=422)
+    destino = request.headers.get("referer") or "/presupuestos"
+    if "presupuesto_id" in str(exc.errors()):
+        return RedirectResponse(
+            destino.split("?")[0] + "?error=" + quote("No se pudo guardar: el presupuesto no tiene un identificador válido. Usa «Nuevo presupuesto»."),
+            status_code=303,
+        )
+    return RedirectResponse(
+        destino.split("?")[0] + "?error=" + quote("Los datos enviados no son válidos."),
+        status_code=303,
+    )
 
 
 @app.get("/healthz", include_in_schema=False)
