@@ -30,6 +30,9 @@
       <a class="btn btn-sm {{ 'btn-primary' if salud == 'sin_coste' else '' }}" href="/partidas?salud=sin_coste">Sin coste <span class="badge">{{ salud_catalogo.sin_coste }}</span></a>
       <a class="btn btn-sm {{ 'btn-primary' if salud == 'sin_tiempo' else '' }}" href="/partidas?salud=sin_tiempo">Sin tiempo <span class="badge">{{ salud_catalogo.sin_tiempo }}</span></a>
       <a class="btn btn-sm {{ 'btn-primary' if salud == 'sin_precio' else '' }}" href="/partidas?salud=sin_precio">Sin precio <span class="badge">{{ salud_catalogo.sin_precio }}</span></a>
+      {# El diagnóstico costoso se ejecuta solo al pulsar este filtro. El
+         acceso permanece visible sin recorrer todo el catálogo al abrir. #}
+      <a class="btn btn-sm {{ 'btn-primary' if salud == 'precio_absurdo' else '' }}" href="/partidas?salud=precio_absurdo">Precios imposibles{% if salud_catalogo.precio_absurdo %} <span class="badge">{{ salud_catalogo.precio_absurdo }}</span>{% endif %}</a>
       {% if salud %}<a class="btn btn-sm btn-ghost" href="/partidas">Limpiar filtro</a>{% endif %}
     </div>
   </div>

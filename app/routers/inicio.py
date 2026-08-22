@@ -142,8 +142,12 @@ def inicio(request: Request, db: Session = Depends(get_db)):
             "estados": ESTADOS,
             "por_vencer": por_vencer,
             "total_facturas": total_facturas,
-            "presupuestos_mes": len(presupuestos_mes), "enviados_mes": enviados_mes,
-            "aprobados_mes": len(aprobados_mes), "tasa_aprobacion": round(total_aprobados * 100 / total_enviados, 1) if total_enviados else 0,
+            # Estos tres valores ya son contadores enteros. No aplicar len():
+            # el panel debe abrir también cuando el mes no tiene presupuestos.
+            "presupuestos_mes": presupuestos_mes,
+            "enviados_mes": enviados_mes,
+            "aprobados_mes": aprobados_mes,
+            "tasa_aprobacion": round(total_aprobados * 100 / total_enviados, 1) if total_enviados else 0,
             "importe_promedio": sum(importes_mes) / len(importes_mes) if importes_mes else 0,
             "descuentos_concedidos": descuentos_concedidos, "margen_estimado": margen_estimado,
             "proyectos_activos": proyectos_activos,
