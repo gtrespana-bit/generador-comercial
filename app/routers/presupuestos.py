@@ -1008,6 +1008,11 @@ def _productos_editor(db, cfg, moneda, tasa):
             "id": p.id,
             "nombre": p.nombre,
             "descripcion": p.descripcion,
+            # Mismas claves que el JSON embebido histórico del editor.
+            "precio": _convertir(p.precio_unitario or 0.0, factor),
+            "coste": (
+                _convertir(p.precio_compra, factor) if p.precio_compra is not None else None
+            ),
             "precio_unitario": _convertir(p.precio_unitario or 0.0, factor),
             "precio_compra": (
                 _convertir(p.precio_compra, factor) if p.precio_compra is not None else None
@@ -1023,44 +1028,101 @@ def _productos_editor(db, cfg, moneda, tasa):
             "acabado": p.acabado,
             "formato": p.formato,
             "imagen": p.imagen,
-            "fecha_actualizacion_precio": p.fecha_actualizacion_precio,
+            "fecha_precio": (
+                p.fecha_actualizacion_precio.isoformat()
+                if p.fecha_actualizacion_precio else ""
+            ),
             "usos": p.usos,
         })
     return salida
 
 
+def _url_datos_editor(moneda, tasa) -> str:
+    """URL del índice del editor (catálogo, productos, recursos)."""
+    from urllib.parse import urlencode
+
+    params = {}
+    if moneda:
+        params["moneda"] = str(moneda)
+    if tasa not in (None, ""):
+        params["tasa"] = str(tasa)
+    return "/presupuestos/editor/datos" + (("?" + urlencode(params)) if params else "")
+
+
+def _contexto_cascaron_editor(db: Session, cfg, moneda, tasa) -> dict:
+    """Datos baratos del formulario: el catálogo viaja en otra petición.
+
+    Embeber ~3.000 partidas + recursos + precios de mercado en el HTML de
+    ``/presupuestos/nuevo`` superaba los 60 s de Vercel (504). El cascarón
+    pinta clientes, plantillas y el constructor; el índice llega después
+    por ``GET /presupuestos/editor/datos``.
+    """
+    return {
+        "clientes": db.query(Cliente).order_by(Cliente.nombre).all(),
+        "cfg": cfg,
+        "hoy": date.today(),
+        "partidas_catalogo": [],
+        "productos_catalogo": [],
+        "recursos_catalogo": [],
+        "categorias": _categorias(db),
+        "plantillas": db.query(Plantilla).order_by(Plantilla.nombre).all(),
+        "estados": ESTADOS,
+        "campos_importables": ETIQUETAS_CAMPOS,
+        "catalogo_diferido": True,
+        "url_datos_editor": _url_datos_editor(moneda, tasa),
+        "tarifa_hora_editor": _tarifa_hora_en_moneda(db, cfg, moneda, tasa),
+    }
+
+
 @router.get("/presupuestos/nuevo", response_class=HTMLResponse)
 def nuevo_presupuesto_form(request: Request, db: Session = Depends(get_db)):
-    from ..services.catalogo_propio import asegurar_catalogo_propio
-    asegurar_catalogo_propio(db)
     cfg = _config(db)
-    clientes = db.query(Cliente).order_by(Cliente.nombre).all()
-    partidas_catalogo = _indice_catalogo_para_editor(db, cfg.moneda_default, cfg.tasa_cambio)
-    productos_catalogo = _productos_editor(db, cfg, cfg.moneda_default, cfg.tasa_cambio)
-    recursos_base = db.query(Recurso).order_by(Recurso.ultimo_uso.desc(), Recurso.usos.desc(), Recurso.descripcion).all()
-    recursos_catalogo = _recursos_editor_mercado(db, recursos_base, cfg, cfg.moneda_default, cfg.tasa_cambio)
-    plantillas = db.query(Plantilla).order_by(Plantilla.nombre).all()
     return TEMPLATES.TemplateResponse(
         request,
         "budgets/form.html",
         {
+            **_contexto_cascaron_editor(db, cfg, cfg.moneda_default, cfg.tasa_cambio),
             "presupuesto": None,
-            "clientes": clientes,
-            "cfg": cfg,
-            "hoy": date.today(),
-            "partidas_catalogo": partidas_catalogo,
-            "productos_catalogo": productos_catalogo,
-            "recursos_catalogo": recursos_catalogo,
-            "categorias": _categorias(db),
-            "plantillas": plantillas,
-            "estados": ESTADOS,
-            "campos_importables": ETIQUETAS_CAMPOS,
             "tiempos_catalogo": {},
-            # La tarifa media estima horas a partir del coste de mano de obra:
-            # tiene que estar en la misma moneda que ese coste.
-            "tarifa_hora_editor": _tarifa_hora_en_moneda(db, cfg, cfg.moneda_default, cfg.tasa_cambio),
         },
     )
+
+
+@router.get("/presupuestos/editor/datos")
+def datos_editor_catalogo(
+    moneda: str = "",
+    tasa: str = "",
+    db: Session = Depends(get_db),
+):
+    """Índice ligero del catálogo para el constructor, fuera del HTML.
+
+    Se pide después de pintar ``/presupuestos/nuevo`` y ``/editar``. Así la
+    pantalla abre en un par de segundos y el trabajo pesado (traducir,
+    convertir y serializar ~3.000 partidas) ya no tumba la función de Vercel.
+    """
+    from ..services.catalogo_propio import asegurar_catalogo_propio
+    asegurar_catalogo_propio(db)
+    cfg = _config(db)
+    moneda_doc = moneda or cfg.moneda_default
+    try:
+        tasa_doc = float(tasa) if str(tasa or "").strip() else cfg.tasa_cambio
+    except (TypeError, ValueError):
+        tasa_doc = cfg.tasa_cambio
+    partidas = _indice_catalogo_para_editor(db, moneda_doc, tasa_doc)
+    productos = _productos_editor(db, cfg, moneda_doc, tasa_doc)
+    recursos_base = (
+        db.query(Recurso)
+        .order_by(Recurso.ultimo_uso.desc(), Recurso.usos.desc(), Recurso.descripcion)
+        .all()
+    )
+    recursos = _recursos_editor_mercado(db, recursos_base, cfg, moneda_doc, tasa_doc)
+    return {
+        "ok": True,
+        "partidas": partidas,
+        "productos": productos,
+        "recursos": recursos,
+        "moneda": moneda_doc,
+    }
 
 
 def _leer_formulario_presupuesto(form, db: Session | None = None):
@@ -3067,15 +3129,7 @@ def editar_presupuesto_form(presupuesto_id: int, request: Request, db: Session =
     presupuesto = db.get(Presupuesto, presupuesto_id)
     if presupuesto is None:
         return _redirect("/presupuestos", error="Presupuesto no encontrado.")
-    from ..services.catalogo_propio import asegurar_catalogo_propio
-    asegurar_catalogo_propio(db)
-    clientes = db.query(Cliente).order_by(Cliente.nombre).all()
-    partidas_catalogo = _indice_catalogo_para_editor(db, presupuesto.moneda, presupuesto.tipo_cambio)
     cfg = _config(db)
-    productos_catalogo = _productos_editor(db, cfg, presupuesto.moneda, presupuesto.tipo_cambio)
-    recursos_base = db.query(Recurso).order_by(Recurso.ultimo_uso.desc(), Recurso.usos.desc(), Recurso.descripcion).all()
-    recursos_catalogo = _recursos_editor_mercado(db, recursos_base, cfg, presupuesto.moneda, presupuesto.tipo_cambio)
-    plantillas = db.query(Plantilla).order_by(Plantilla.nombre).all()
     presupuesto_compartido = bool(
         (presupuesto.versiones or [])
         or presupuesto.estado not in {"borrador"}
@@ -3104,21 +3158,11 @@ def editar_presupuesto_form(presupuesto_id: int, request: Request, db: Session =
         request,
         "budgets/form.html",
         {
+            **_contexto_cascaron_editor(db, cfg, presupuesto.moneda, presupuesto.tipo_cambio),
             "presupuesto": presupuesto,
-            "clientes": clientes,
-            "cfg": _config(db),
-            "hoy": date.today(),
-            "partidas_catalogo": partidas_catalogo,
-            "productos_catalogo": productos_catalogo,
-            "recursos_catalogo": recursos_catalogo,
-            "categorias": _categorias(db),
-            "plantillas": plantillas,
-            "estados": ESTADOS,
-            "campos_importables": ETIQUETAS_CAMPOS,
             "borrador_servidor": borrador_servidor,
             "presupuesto_compartido": presupuesto_compartido,
             "tiempos_catalogo": _tiempos_catalogo(db, presupuesto),
-            "tarifa_hora_editor": _tarifa_hora_en_moneda(db, cfg, presupuesto.moneda, presupuesto.tipo_cambio),
         },
     )
 

@@ -170,34 +170,30 @@ def test_guardar_la_ficha_desde_el_presupuesto_persiste_en_moneda_base(entorno, 
 
 
 def test_el_editor_recibe_productos_y_recursos_en_la_moneda_del_presupuesto(entorno, cliente_web):
-    """El catálogo embebido del editor no puede traer dólares sueltos."""
-    import re
+    """El catálogo diferido del editor no puede traer dólares sueltos."""
 
     Session, _ids, _rol = entorno
     _mexico(Session)
 
     html = cliente_web.get("/presupuestos/nuevo").text
+    assert 'window.COTIZAT_MONEDA_ACTIVA = "MXN"' in html
+    assert "window.COTIZAT_TASA_ACTIVA = 17.5" in html
+    assert "/presupuestos/editor/datos" in html
 
-    productos = json.loads(
-        re.search(r'id="datos-productos" type="application/json">(.*?)</script>', html, re.S).group(1)
-    )
+    datos = cliente_web.get(
+        "/presupuestos/editor/datos", params={"moneda": "MXN", "tasa": TASA_MXN}
+    ).json()
+    productos = datos["productos"]
     assert productos[0]["precio"] == pytest.approx(45.0 * TASA_MXN)
     assert productos[0]["coste"] == pytest.approx(30.0 * TASA_MXN)
     assert productos[0]["moneda"] == "MXN"
 
-    recursos = json.loads(
-        re.search(r'id="datos-recursos" type="application/json">(.*?)</script>', html, re.S).group(1)
-    )
+    recursos = datos["recursos"]
     assert recursos[0]["moneda"] == "MXN"
     # Procedencia del precio: el editor la necesita para avisar de que un
     # recurso no tiene precio local confirmado.
     assert recursos[0]["origen_precio"] in {"base", "nacional", "organizacion"}
     assert "aviso_precio" in recursos[0]
-
-    # El contexto monetario viaja al navegador para que las llamadas al
-    # catálogo conviertan en la dirección correcta.
-    assert 'window.COTIZAT_MONEDA_ACTIVA = "MXN"' in html
-    assert "window.COTIZAT_TASA_ACTIVA = 17.5" in html
 
 
 def test_los_packs_se_guardan_en_moneda_base_y_se_leen_convertidos(entorno, cliente_web):

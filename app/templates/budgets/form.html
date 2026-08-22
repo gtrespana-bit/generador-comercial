@@ -317,7 +317,7 @@
       <div class="catalog-search-wrap">
         <input type="text" id="buscar-partida" placeholder="Buscar…  Ctrl+K" autocomplete="off" aria-label="Buscar en catálogo" readonly data-cotizat-click="open-spotlight" title="Abrir buscador del catálogo (Ctrl+K)">
         <div id="catalogo-partidas">
-          {% if not partidas_catalogo %}
+          {% if not partidas_catalogo and not catalogo_diferido %}
           <div class="csp-s-5ee28be5f0">No hay partidas en el catálogo. <a class="link" href="/partidas/nueva" target="_blank">Crea la primera</a>.</div>
           {% endif %}
         </div>
@@ -985,6 +985,7 @@
   window.COTIZAT_MONEDA_ACTIVA = {{ (presupuesto.moneda if presupuesto else cfg.moneda_default or 'USD') | tojson }};
   window.COTIZAT_TASA_ACTIVA = {{ (presupuesto.tipo_cambio if presupuesto else cfg.tasa_cambio) | tojson }};
   window.COTIZAT_SIMBOLO_ACTIVO = {{ ((presupuesto.moneda if presupuesto else cfg.moneda_default or 'USD') | simbolo) | tojson }};
+  window.CATALOGO_DATOS_URL = {{ (url_datos_editor or '/presupuestos/editor/datos') | tojson }};
 </script>
 <!-- Módulos del editor (cargados en orden de dependencia) -->
 <script src="/static/js/utils/formato.js"></script>

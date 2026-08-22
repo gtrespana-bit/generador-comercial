@@ -733,23 +733,25 @@ def test_editor_envia_indice_ligero_y_carga_ficha_bajo_demanda():
     with TestClient(app) as client:
         resp = client.get("/presupuestos/nuevo")
         assert resp.status_code == 200
+        # El HTML ya no embebe las ~3.000 partidas: eso era el 504 de Vercel.
         match = re.search(
             r'id="datos-catalogo"[^>]*>\s*(.*?)\s*</script>',
             resp.text,
             re.DOTALL,
         )
         assert match
-        catalogo = json.loads(match.group(1))
+        assert json.loads(match.group(1)) == []
+        assert "CATALOGO_DATOS_URL" in resp.text
+        assert "/presupuestos/editor/datos" in resp.text
+        assert len(resp.content) < 500_000
+
+        datos = client.get("/presupuestos/editor/datos")
+        assert datos.status_code == 200
+        catalogo = datos.json()["partidas"]
         assert catalogo
         assert "buscable" in catalogo[0]
         assert "descripcion" not in catalogo[0]
         assert "descomposicion" not in catalogo[0]
-        # El índice ligero no embebe la ficha completa (descripción +
-        # descomposición), que superaría varios MB. El catálogo ha crecido de
-        # 540 a más de 1.000 partidas, así que el presupuesto se ajusta al
-        # tamaño real del índice ligero (unos 1,1 MB) con margen; la
-        # demostración completa con fichas superaría los 7 MB.
-        assert len(resp.content) < 3_000_000
 
         ficha = client.get(f"/partidas/{catalogo[0]['id']}/ficha")
         assert ficha.status_code == 200
@@ -819,13 +821,8 @@ def test_partida_oculta_desaparece_del_editor_y_aparece_en_su_vista():
             )
             assert ocultas.status_code == 200
             assert nombre in ocultas.text
-            editor = client.get("/presupuestos/nuevo")
-            match = re.search(
-                r'id="datos-catalogo"[^>]*>\s*(.*?)\s*</script>',
-                editor.text,
-                re.DOTALL,
-            )
-            assert all(p["id"] != partida_id for p in json.loads(match.group(1)))
+            indice = client.get("/presupuestos/editor/datos").json()["partidas"]
+            assert all(p["id"] != partida_id for p in indice)
         finally:
             client.post(f"/partidas/{partida_id}/restaurar")
 

@@ -39,6 +39,37 @@
   var BUDGET_ID = window.BUDGET_ID || null;
   var contCapitulos = document.getElementById("capitulos");
 
+  function cargarCatalogoDiferido() {
+    var url = window.CATALOGO_DATOS_URL;
+    if (!url) return;
+    var contador = document.getElementById("arbol-contador");
+    fetch(url, { headers: { Accept: "application/json" }, credentials: "same-origin" })
+      .then(function (r) {
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        return r.json();
+      })
+      .then(function (datos) {
+        if (!datos || !datos.ok) throw new Error("catalogo");
+        editor.CATALOGO = datos.partidas || [];
+        editor.PRODUCTOS = datos.productos || [];
+        editor.RECURSOS = datos.recursos || [];
+        if (typeof editor.reconstruirArbolCatalogo === "function") {
+          editor.reconstruirArbolCatalogo();
+        }
+      })
+      .catch(function () {
+        if (contador) contador.textContent = "No se pudo cargar el catálogo";
+        var cuerpo = document.querySelector("#arbol-catalogo .arbol-body");
+        if (cuerpo && !(editor.CATALOGO || []).length) {
+          cuerpo.replaceChildren();
+          var p = document.createElement("p");
+          p.className = "hint";
+          p.textContent = "No se pudo cargar el catálogo. Recarga la página.";
+          cuerpo.appendChild(p);
+        }
+      });
+  }
+
   // Pila de deshacer (usada por pushUndo/deshacer)
   editor.undoStack = [];
 
@@ -997,6 +1028,8 @@
         recalcular();
       });
     }
+
+    cargarCatalogoDiferido();
 
     // Botón "Guardar ahora" del autosave: fuerza un envío inmediato al
     // servidor sin necesidad de pulsar el botón principal del formulario.

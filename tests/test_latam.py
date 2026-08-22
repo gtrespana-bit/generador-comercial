@@ -659,13 +659,8 @@ def test_editor_indice_en_moneda_y_terminologia_del_presupuesto(entorno, cliente
     partida_id = _poner_org_colombia_y_partida(Session)
     resp = cliente_web.get("/presupuestos/nuevo")
     assert resp.status_code == 200
-    m = re.search(
-        r'<script nonce="[^"]*" id="datos-catalogo" type="application/json">(.*?)</script>',
-        resp.text,
-        re.DOTALL,
-    )
-    assert m is not None
-    catalogo = json.loads(m.group(1))
+    assert "/presupuestos/editor/datos" in resp.text
+    catalogo = cliente_web.get("/presupuestos/editor/datos").json()["partidas"]
     item = next((p for p in catalogo if p["id"] == partida_id), None)
     assert item is not None
     assert item["precio"] == pytest.approx(12.0 * TASA_COP, rel=1e-6)
@@ -687,13 +682,9 @@ def test_editor_indice_presupuesto_usd_no_convierte(entorno, cliente_web):
         db.commit()
     resp = cliente_web.get(f"/presupuestos/{ids[2]}/editar")
     assert resp.status_code == 200
-    m = re.search(
-        r'<script nonce="[^"]*" id="datos-catalogo" type="application/json">(.*?)</script>',
-        resp.text,
-        re.DOTALL,
-    )
-    assert m is not None
-    catalogo = json.loads(m.group(1))
+    catalogo = cliente_web.get(
+        "/presupuestos/editor/datos", params={"moneda": "USD"}
+    ).json()["partidas"]
     item = next((p for p in catalogo if p["id"] == partida_id), None)
     assert item is not None
     assert item["precio"] == pytest.approx(12.0, rel=1e-6)
