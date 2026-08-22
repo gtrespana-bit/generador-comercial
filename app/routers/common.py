@@ -1038,13 +1038,32 @@ def _csv_response(filas: list, nombre_archivo: str) -> Response:
 
 
 def _registrar_usos(db: Session, partidas: list, nombres_previos: set | None = None):
-    """Registra uso sin inflar el contador al volver a guardar un presupuesto."""
+    """Registra uso sin inflar el contador al volver a guardar un presupuesto.
+
+    El nombre de la línea puede venir traducido al país de la organización, así
+    que la maestra se localiza por el índice que reconoce ambas formas (y por
+    el id de catálogo cuando la línea lo trae).
+    """
+    from ..services.busqueda_catalogo import normalizar
+
     previos = set(nombres_previos or [])
+    indice: dict[str, int] | None = None
     for pd in partidas:
         nombre = str(pd.get("nombre", "")).strip()
         if not nombre or nombre in previos:
             continue
-        part = db.query(Partida).filter(Partida.nombre == nombre).first()
+        part = None
+        catalogo_id = pd.get("catalogo_id") or pd.get("partida_id")
+        if catalogo_id:
+            try:
+                part = db.get(Partida, int(catalogo_id))
+            except (TypeError, ValueError):
+                part = None
+        if part is None:
+            if indice is None:
+                indice = _indice_nombres_catalogo(db)
+            maestra_id = indice.get(normalizar(nombre))
+            part = db.get(Partida, maestra_id) if maestra_id else None
         if part:
             part.usos = (part.usos or 0) + 1
             part.ultimo_uso = datetime.utcnow()
@@ -1081,77 +1100,131 @@ def _categorias(db: Session) -> list[str]:
     return sorted(cats)
 
 
+def _indice_nombres_catalogo(db: Session) -> dict[str, int]:
+    """Mapa «nombre normalizado → id» del catálogo, incluida su traducción.
+
+    El catálogo se guarda en terminología venezolana y la interfaz lo muestra
+    traducido al país de la organización (friso→pañete, capa de pega→capa de
+    pegante…). El presupuesto viaja con el nombre TRADUCIDO, así que buscar la
+    partida maestra por igualdad exacta de nombre fallaba siempre fuera de
+    Venezuela: cada presupuesto duplicaba en el catálogo la partida que
+    acababa de usar. Este índice reconoce las dos formas del nombre.
+    """
+    from ..services.busqueda_catalogo import normalizar
+    from ..services.traduccion import codigo_desde_pais, traducir
+
+    try:
+        codigo = codigo_desde_pais(getattr(_config(db), "empresa_pais", ""))
+    except Exception:  # pragma: no cover - sin configuración utilizable
+        codigo = ""
+    indice: dict[str, int] = {}
+    for pid, nombre in db.query(Partida.id, Partida.nombre).all():
+        clave = normalizar(nombre or "")
+        if clave:
+            indice.setdefault(clave, pid)
+        if codigo:
+            clave_traducida = normalizar(traducir(nombre or "", codigo))
+            if clave_traducida:
+                indice.setdefault(clave_traducida, pid)
+    return indice
+
+
 def _vincular_partidas_catalogo(db: Session, presupuesto: Presupuesto):
     """Completa el vínculo con la partida maestra tras guardar el catálogo.
 
     Las líneas creadas a mano en un presupuesto se convierten en partidas del
     catálogo durante el guardado, pero en ese momento todavía no tenían id de
-    catálogo. Esta pasada lo asigna por nombre (único en el catálogo) sin
-    modificar el precio propio de la línea.
+    catálogo. Esta pasada lo asigna por nombre (el del catálogo o el traducido
+    al país de la organización) sin modificar el precio propio de la línea.
     """
-    nombres = {p.nombre for cap in presupuesto.capitulos for p in cap.partidas if not p.partida_catalogo_id}
-    if not nombres:
+    from ..services.busqueda_catalogo import normalizar
+
+    pendientes = [
+        p for cap in presupuesto.capitulos for p in cap.partidas
+        if not p.partida_catalogo_id and str(p.nombre or "").strip()
+    ]
+    if not pendientes:
         return
-    maestras = {p.nombre: p for p in db.query(Partida).filter(Partida.nombre.in_(nombres)).all()}
-    for cap in presupuesto.capitulos:
-        for item in cap.partidas:
-            if item.partida_catalogo_id:
-                continue
-            maestra = maestras.get(item.nombre)
-            if maestra:
-                item.partida_catalogo_id = maestra.id
+    indice = _indice_nombres_catalogo(db)
+    for item in pendientes:
+        maestra_id = indice.get(normalizar(item.nombre or ""))
+        if maestra_id:
+            item.partida_catalogo_id = maestra_id
 
 
-def _guardar_en_catalogos(db: Session, partidas: list, imagenes_guardadas: dict):
+def _guardar_en_catalogos(db: Session, partidas: list, imagenes_guardadas: dict,
+                          moneda=None, tasa=None):
     """Guarda automáticamente en los catálogos las partidas y los productos
     nuevos escritos en el formulario (para poder reutilizarlos a futuro).
 
-    - Partida nueva (nombre que no existe en el catálogo) → se crea con su
-      descripción, unidad, precio y categoría.
+    - Partida nueva (nombre que no existe en el catálogo, ni en su forma
+      traducida al país de la organización) → se crea con su descripción,
+      unidad, precio y categoría.
     - Producto nuevo (nombre que no existe en la base de datos de productos)
       → se crea con su precio, unidad, categoría e imagen.
     Los que ya existen no se modifican.
+
+    Moneda: el presupuesto se edita en su moneda contractual (COP, MXN…) y el
+    catálogo se guarda SIEMPRE en la moneda base (USD). Sin deshacer la
+    conversión, un presupuesto colombiano escribía «15.299 COP» como si fueran
+    dólares y la siguiente vez que se usaba esa partida el editor la volvía a
+    multiplicar por la tasa: 47.000.000 COP/m² por demoler un piso.
     """
+    _mon_cat, factor = _contexto_moneda(db, moneda, tasa)
+
+    def _base(valor):
+        return _a_moneda_base(float(valor or 0.0), factor)
+
+    from ..services.busqueda_catalogo import normalizar
+
     # La sesión trabaja sin autoflush: recordar las altas de este mismo
     # formulario evita chocar con la restricción UNIQUE si una partida o un
     # producto se repite en dos líneas antes del primer commit.
+    indice_catalogo: dict[str, int] | None = None
     partidas_nuevas = set()
     productos_nuevos = set()
     for i, pd in enumerate(partidas):
         nombre = str(pd.get("nombre", "")).strip()
-        if (nombre and nombre not in partidas_nuevas
-                and not db.query(Partida).filter(Partida.nombre == nombre).first()):
-            # El precio de la línea incluye el producto asociado (base +
-            # producto). En el catálogo se guarda SOLO la base: el producto
-            # es un catálogo aparte y si se guardara el total, al reutilizar
-            # la partida y añadir el producto se sumaría dos veces.
-            precio_linea = pd.get("precio", 0.0) or 0.0
-            precio_producto = pd.get("prod_precio") or 0.0
-            precio_base = max(0.0, float(precio_linea) - float(precio_producto))
-            db.add(Partida(
-                nombre=nombre,
-                descripcion=str(pd.get("descripcion", "")).strip(),
-                precio_unitario=precio_base,
-                unidad=str(pd.get("unidad", "ud")).strip() or "ud",
-                categoria=str(pd.get("categoria", "General")).strip() or "General",
-                codigo_interno=str(pd.get("codigo") or pd.get("codigo_interno") or "").strip(),
-                coste_materiales=pd.get("coste_materiales", 0.0) or 0.0,
-                coste_mano_obra=pd.get("coste_mano_obra", 0.0) or 0.0,
-                coste_complementarios=pd.get("coste_complementarios", 0.0) or 0.0,
-                coste_otros=pd.get("coste_otros", 0.0) or 0.0,
-                desperdicio_recomendado_pct=pd.get("desperdicio_pct", 0.0) or 0.0,
-            ))
-            partidas_nuevas.add(nombre)
+        clave = normalizar(nombre)
+        # Una línea que viene del catálogo ya tiene su maestra: no se duplica
+        # aunque el usuario le haya retocado el texto.
+        ya_del_catalogo = bool(pd.get("catalogo_id") or pd.get("partida_id"))
+        if nombre and clave not in partidas_nuevas and not ya_del_catalogo:
+            if indice_catalogo is None:
+                indice_catalogo = _indice_nombres_catalogo(db)
+            if clave not in indice_catalogo:
+                # El precio de la línea incluye el producto asociado (base +
+                # producto). En el catálogo se guarda SOLO la base: el producto
+                # es un catálogo aparte y si se guardara el total, al reutilizar
+                # la partida y añadir el producto se sumaría dos veces.
+                precio_linea = pd.get("precio", 0.0) or 0.0
+                precio_producto = pd.get("prod_precio") or 0.0
+                precio_base = max(0.0, float(precio_linea) - float(precio_producto))
+                db.add(Partida(
+                    nombre=nombre,
+                    descripcion=str(pd.get("descripcion", "")).strip(),
+                    precio_unitario=_base(precio_base),
+                    unidad=str(pd.get("unidad", "ud")).strip() or "ud",
+                    categoria=str(pd.get("categoria", "General")).strip() or "General",
+                    codigo_interno=str(pd.get("codigo") or pd.get("codigo_interno") or "").strip(),
+                    coste_materiales=_base(pd.get("coste_materiales", 0.0)),
+                    coste_mano_obra=_base(pd.get("coste_mano_obra", 0.0)),
+                    coste_complementarios=_base(pd.get("coste_complementarios", 0.0)),
+                    coste_otros=_base(pd.get("coste_otros", 0.0)),
+                    desperdicio_recomendado_pct=pd.get("desperdicio_pct", 0.0) or 0.0,
+                ))
+                partidas_nuevas.add(clave)
 
         prod_nombre = str(pd.get("prod_nombre", "")).strip()
         if (prod_nombre and prod_nombre not in productos_nuevos
                 and not db.query(Producto).filter(Producto.nombre == prod_nombre).first()):
             imagen = imagenes_guardadas.get(i) or str(pd.get("prod_imagen_actual", "")).strip()
+            coste_producto = pd.get("prod_coste")
             db.add(Producto(
                 nombre=prod_nombre,
                 descripcion="",
-                precio_unitario=pd.get("prod_precio") or 0.0,
-                precio_compra=pd.get("prod_coste"),
+                precio_unitario=_base(pd.get("prod_precio") or 0.0),
+                precio_compra=(_base(coste_producto) if coste_producto not in (None, "") else None),
                 unidad=str(pd.get("prod_unidad", "")).strip() or "ud",
                 categoria=str(pd.get("prod_categoria", "General")).strip() or "General",
                 imagen=imagen,

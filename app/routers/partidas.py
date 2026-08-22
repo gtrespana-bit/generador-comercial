@@ -172,7 +172,7 @@ def listar_partidas(
         pass
     q = str(q or "").strip()
     salud = str(salud or "").strip().lower()
-    filtros_salud = {"sin_precio", "sin_coste", "margen_bajo", "sin_tiempo", "desactualizadas"}
+    filtros_salud = {"sin_precio", "sin_coste", "margen_bajo", "sin_tiempo", "desactualizadas", "precio_absurdo"}
     if salud not in filtros_salud:
         salud = ""
     total_ocultas = db.query(Partida).filter(Partida.oculta.is_(True)).count()
@@ -219,6 +219,10 @@ def listar_partidas(
         elif salud == "desactualizadas":
             limite = datetime.utcnow() - timedelta(days=DIAS_SIN_REVISION)
             query = query.filter(Partida.fecha_actualizacion_precio < limite)
+        elif salud == "precio_absurdo":
+            from ..services.precios_anomalos import ids_partidas_anomalas
+
+            query = query.filter(Partida.id.in_(ids_partidas_anomalas(db) or [0]))
         total_partidas = query.count()
         total_paginas = max(1, math.ceil(total_partidas / por_pagina))
         pagina = max(1, min(int(pagina or 1), total_paginas))
@@ -511,14 +515,25 @@ def buscar_partidas_catalogo_api(
     query = db.query(Partida).filter(
         Partida.oculta.is_(False)
     ).options(load_only(*_CAMPOS_INDICE_CATALOGO))
-    query, grupos = _aplicar_busqueda_catalogo(query, consulta)
-    candidatas = query.order_by(
-        Partida.usos.desc(), Partida.ultimo_uso.desc(), Partida.nombre
-    ).limit(max(100, min(500, limite * 8))).all() if grupos else []
-    partidas = sorted(
-        candidatas,
-        key=lambda p: (-_puntuar_busqueda_catalogo(p, consulta, grupos), p.nombre),
-    )[:limite]
+    if not consulta:
+        # Sin texto: sugerencias inmediatas (lo más usado y lo más reciente).
+        # El editor las pide nada más enfocar el buscador, así que el usuario
+        # tiene partidas que insertar sin esperar a que baje el índice completo
+        # del catálogo.
+        partidas = query.order_by(
+            Partida.usos.desc(),
+            Partida.ultimo_uso.desc(),
+            Partida.nombre,
+        ).limit(limite).all()
+    else:
+        query, grupos = _aplicar_busqueda_catalogo(query, consulta)
+        candidatas = query.order_by(
+            Partida.usos.desc(), Partida.ultimo_uso.desc(), Partida.nombre
+        ).limit(max(100, min(500, limite * 8))).all() if grupos else []
+        partidas = sorted(
+            candidatas,
+            key=lambda p: (-_puntuar_busqueda_catalogo(p, consulta, grupos), p.nombre),
+        )[:limite]
     try:
         _cfg_b = _config(db)
         _codigo_b = codigo_desde_pais(getattr(_cfg_b, "empresa_pais", ""))
@@ -756,6 +771,55 @@ def ajustar_precios(porcentaje: str = Form("0"), db: Session = Depends(get_db)):
         detalle={"porcentaje": pct, "partidas": len(partidas)},
     )
     return _redirect("/partidas", msg=f"Precios ajustados un {fmt_num(pct)} % en {len(partidas)} partidas.")
+
+
+@router.get("/partidas/precios/anomalos")
+def listar_precios_anomalos(db: Session = Depends(get_db)):
+    """Diagnóstico de precios imposibles (JSON) para revisar antes de reparar."""
+    from ..services.precios_anomalos import detectar_precios_anomalos
+
+    anomalias = detectar_precios_anomalos(db)
+    return {
+        "ok": True,
+        "total": len(anomalias),
+        "reparables": sum(1 for a in anomalias if a["reparable"]),
+        "anomalias": anomalias,
+    }
+
+
+@router.post("/partidas/precios/reparar")
+def reparar_precios_anomalos_catalogo(db: Session = Depends(get_db)):
+    """Devuelve a la moneda base los precios inflados por la tasa de cambio.
+
+    Es la contraparte del fallo de guardado automático: hasta su corrección,
+    un presupuesto en moneda local podía escribir en el catálogo el importe ya
+    convertido, y el editor lo multiplicaba otra vez al reutilizar la partida.
+    """
+    from ..services.precios_anomalos import reparar_precios_anomalos
+
+    resultado = reparar_precios_anomalos(db)
+    total = resultado["total_corregidas"]
+    pendientes = resultado["total_pendientes"]
+    if not total and not pendientes:
+        return _redirect("/partidas", msg="No hay precios imposibles en el catálogo.")
+    if total:
+        auditoria.registrar_evento(
+            db,
+            "catalogo.precios_reparados",
+            entidad="partida",
+            detalle={
+                "corregidas": total,
+                "pendientes": pendientes,
+                "ejemplos": [
+                    {"id": a["id"], "de": a["precio"], "a": a["precio_sugerido"]}
+                    for a in resultado["corregidas"][:10]
+                ],
+            },
+        )
+    mensaje = f"{total} precio(s) devueltos a su moneda base."
+    if pendientes:
+        mensaje += f" Quedan {pendientes} para revisar a mano."
+    return _redirect("/partidas?salud=precio_absurdo" if pendientes else "/partidas", msg=mensaje)
 
 
 @router.post("/partidas/{partida_id}/usar")

@@ -50,7 +50,17 @@
       })
       .then(function (datos) {
         if (!datos || !datos.ok) throw new Error("catalogo");
-        editor.CATALOGO = datos.partidas || [];
+        // Conserva lo que la búsqueda remota ya trajo mientras el índice
+        // bajaba: si se reemplazase el array a secas, una partida recién
+        // buscada dejaría de existir para el resto del editor.
+        var previas = editor.CATALOGO || [];
+        var indice = datos.partidas || [];
+        var ids = Object.create(null);
+        indice.forEach(function (p) { ids[String(p.id)] = true; });
+        previas.forEach(function (p) {
+          if (p && p.id && !ids[String(p.id)]) indice.push(p);
+        });
+        editor.CATALOGO = indice;
         editor.PRODUCTOS = datos.productos || [];
         editor.RECURSOS = datos.recursos || [];
         if (typeof editor.reconstruirArbolCatalogo === "function") {

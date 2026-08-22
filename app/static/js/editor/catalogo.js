@@ -93,14 +93,25 @@
   function buscarRemoto(texto, limite) {
     var consulta = String(texto || "").trim();
     if (consulta.length < 2) return Promise.resolve([]);
-    var clave = consulta.toLowerCase() + "|" + String(limite || 60);
+    return peticionCatalogo(consulta, limite || 60);
+  }
+
+  // Sugerencias sin escribir nada: lo más usado y lo más reciente. Se piden al
+  // servidor porque el índice completo del catálogo llega de forma diferida y
+  // durante esos primeros segundos el editor no tenía NADA que ofrecer.
+  function sugerenciasRemotas(limite) {
+    return peticionCatalogo("", limite || 15);
+  }
+
+  function peticionCatalogo(consulta, limite) {
+    var clave = String(consulta).toLowerCase() + "|" + String(limite);
     if (peticionesBusqueda[clave]) return peticionesBusqueda[clave];
     peticionesBusqueda[clave] = fetch(
       conContexto(
         "/partidas/api/buscar?q=" + encodeURIComponent(consulta) +
-        "&limite=" + encodeURIComponent(limite || 60)
+        "&limite=" + encodeURIComponent(limite)
       ),
-      { headers: { "Accept": "application/json" } }
+      { headers: { "Accept": "application/json" }, credentials: "same-origin" }
     )
       .then(function (respuesta) {
         if (!respuesta.ok) throw new Error("No se pudo buscar en el catálogo");
@@ -120,8 +131,32 @@
         });
         return salida;
       })
-      .catch(function () { return []; });
+      .catch(function () {
+        // Una búsqueda fallida no debe quedar cacheada como «sin resultados».
+        delete peticionesBusqueda[clave];
+        return [];
+      });
     return peticionesBusqueda[clave];
+  }
+
+  // Une resultados del servidor y del índice local sin repetir partidas: el
+  // servidor manda (puntúa con sinónimos y todo el catálogo) y lo local añade
+  // lo que ya estuviera cargado.
+  function combinarResultados(remotos, locales, limite) {
+    var salida = [];
+    var vistos = Object.create(null);
+    function agregar(lista) {
+      (lista || []).forEach(function (item) {
+        if (!item) return;
+        var clave = item.id ? "id:" + item.id : "n:" + String(item.nombre || "").toLowerCase();
+        if (vistos[clave]) return;
+        vistos[clave] = true;
+        salida.push(item);
+      });
+    }
+    agregar(remotos);
+    agregar(locales);
+    return salida.slice(0, limite || 50);
   }
 
   function registrarSinResultados(texto) {
@@ -143,53 +178,85 @@
   function initCatalogo() {
     var buscador = document.getElementById("buscar-partida");
     var catalogoPanel = document.getElementById("catalogo-partidas");
+    if (!buscador || !catalogoPanel) return;
 
-    if (buscador && catalogoPanel) {
-      // Abrir panel al hacer focus
-      buscador.addEventListener("focus", function () {
-        catalogoPanel.classList.add("open");
-        // Cargar sugerencias inteligentes contextuales
+    var temporizador = null;
+    var secuencia = 0;
+
+    function buscarLocal(filtro) {
+      if (!filtro) return [];
+      if (editor.CATALOGO_UTILS && editor.CATALOGO_UTILS.buscarEnCatalogo) {
+        return editor.CATALOGO_UTILS.buscarEnCatalogo(
+          editor.CATALOGO || [],
+          filtro,
+          ["nombre", "buscable", "categoria", "subcategoria", "apartado", "codigo", "codigo_legacy"],
+          ""
+        );
+      }
+      return (editor.CATALOGO || []).filter(function (item) {
+        var t = ((item.nombre || "") + " " + (item.categoria || "")).toLowerCase();
+        return t.indexOf(filtro) !== -1;
+      }).slice(0, 50);
+    }
+
+    // La búsqueda SIEMPRE va al servidor además de mirar el índice local. El
+    // índice completo del catálogo se descarga de forma diferida y puede tardar
+    // decenas de segundos con miles de partidas: hasta que llegaba, escribir
+    // aquí no encontraba nada y parecía que el buscador estuviera roto.
+    function ejecutarBusqueda(texto) {
+      var filtro = String(texto || "").toLowerCase().trim();
+      var mio = ++secuencia;
+      catalogoPanel.classList.add("open");
+
+      if (!filtro) {
         cargarSugerenciasContextuales();
-      });
+        return;
+      }
 
-      buscador.addEventListener("input", function () {
-        var f = buscador.value.toLowerCase().trim();
-        if (!f) {
-          // If empty, show suggestions
-          cargarSugerenciasContextuales();
-          catalogoPanel.classList.remove("open");
-          return;
-        }
-        catalogoPanel.classList.add("open");
+      var locales = buscarLocal(filtro);
+      if (locales.length) renderizarSugerencias(locales.slice(0, 50));
+      else renderizarEstado("Buscando en el catálogo…");
 
-        // Buscar en todo el catálogo usando CATALOGO_UTILS si está disponible,
-        // o filtrado manual
-        var matches = [];
-        if (editor.CATALOGO_UTILS && editor.CATALOGO_UTILS.buscarEnCatalogo) {
-          matches = editor.CATALOGO_UTILS.buscarEnCatalogo(
-            editor.CATALOGO,
-            f,
-            ["nombre", "buscable", "categoria", "subcategoria", "apartado", "codigo", "codigo_legacy"],
-            ""
-          );
+      buscarRemoto(filtro, 60).then(function (remotos) {
+        if (mio !== secuencia) return;  // llegó tarde: hay una búsqueda más nueva
+        var combinados = combinarResultados(remotos, locales, 50);
+        if (combinados.length) {
+          renderizarSugerencias(combinados);
         } else {
-          // Fallback
-          matches = editor.CATALOGO.filter(function(item) {
-             var t = ((item.nombre||"") + " " + (item.categoria||"")).toLowerCase();
-             return t.indexOf(f) !== -1;
-          }).slice(0, 50);
-        }
-        
-        renderizarSugerencias(matches);
-      });
-
-      // Cerrar al hacer clic fuera
-      document.addEventListener("click", function (e) {
-        if (!catalogoPanel.contains(e.target) && e.target !== buscador) {
-          catalogoPanel.classList.remove("open");
+          renderizarEstado("Sin resultados para «" + texto.trim() + "»");
+          registrarSinResultados(filtro);
         }
       });
     }
+
+    buscador.addEventListener("focus", function () {
+      catalogoPanel.classList.add("open");
+      ejecutarBusqueda(buscador.value);
+    });
+
+    buscador.addEventListener("input", function () {
+      var valor = buscador.value;
+      if (temporizador) clearTimeout(temporizador);
+      // Rebote corto: acompaña al tecleo sin lanzar una petición por letra.
+      temporizador = setTimeout(function () { ejecutarBusqueda(valor); }, 140);
+    });
+
+    buscador.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        if (temporizador) clearTimeout(temporizador);
+        ejecutarBusqueda(buscador.value);
+      } else if (e.key === "Escape") {
+        catalogoPanel.classList.remove("open");
+      }
+    });
+
+    // Cerrar al hacer clic fuera
+    document.addEventListener("click", function (e) {
+      if (!catalogoPanel.contains(e.target) && e.target !== buscador) {
+        catalogoPanel.classList.remove("open");
+      }
+    });
   }
 
   // -------------------------------------------------------------------------
@@ -197,12 +264,10 @@
   // -------------------------------------------------------------------------
 
   function cargarSugerenciasContextuales() {
-    // Obtener contexto del cliente si existe
-    var clienteId = editor.BUDGET_ID ? obtenerClienteIdDelPresupuesto() : null;
     var tipoObra = obtenerTipoObraDelPresupuesto();
 
-    // Ordenar catálogo por relevancia contextual
-    var ordenado = editor.CATALOGO.slice().sort(function (a, b) {
+    // Ordenar el índice ya cargado por relevancia contextual
+    var ordenado = (editor.CATALOGO || []).slice().sort(function (a, b) {
       var scoreA = (a.usos || 0) * 2;
       var scoreB = (b.usos || 0) * 2;
 
@@ -217,7 +282,18 @@
       return scoreB - scoreA;
     }).slice(0, 15);
 
-    renderizarSugerencias(ordenado);
+    if (ordenado.length) {
+      renderizarSugerencias(ordenado);
+      return;
+    }
+
+    // Índice todavía sin cargar: el servidor devuelve al instante lo más usado
+    // para que se pueda insertar sin esperar.
+    renderizarEstado("Cargando sugerencias…");
+    sugerenciasRemotas(15).then(function (items) {
+      if (items.length) renderizarSugerencias(items);
+      else renderizarEstado("Escribe para buscar en el catálogo");
+    });
   }
 
   function obtenerClienteIdDelPresupuesto() {
@@ -238,6 +314,17 @@
   // -------------------------------------------------------------------------
   // Renderizar sugerencias en panel
   // -------------------------------------------------------------------------
+
+  function renderizarEstado(texto) {
+    var catalogoPanel = document.getElementById("catalogo-partidas");
+    if (!catalogoPanel) return;
+    catalogoPanel.replaceChildren();
+    var aviso = document.createElement("div");
+    aviso.className = "empty";
+    CotizatStyles.setCssText(aviso, "padding:1rem; color:var(--text-soft); font-size:0.85rem;");
+    aviso.textContent = texto;
+    catalogoPanel.appendChild(aviso);
+  }
 
   function renderizarSugerencias(items) {
     var catalogoPanel = document.getElementById("catalogo-partidas");
@@ -307,7 +394,11 @@
       div.addEventListener("mousedown", function (e) { e.preventDefault(); });
       div.addEventListener("click", function (e) {
         e.stopPropagation();
-        agregarDesdeCatalogo(realIdx);
+        // Se inserta por id, no por posición: el índice del catálogo puede
+        // haberse recargado entre la búsqueda y el clic y una posición vieja
+        // insertaría otra partida distinta.
+        if (item.id) insertarPorId(item.id);
+        else agregarDesdeCatalogo(realIdx);
         catalogoPanel.classList.remove("open");
         var buscador = document.getElementById("buscar-partida");
         if (buscador) buscador.value = "";
@@ -391,7 +482,7 @@
       });
   }
 
-  function insertarPorId(partidaId) {
+  function insertarIdEnCapitulo(partidaId, cap) {
     var item = (editor.CATALOGO || []).find(function (partida) {
       return Number(partida.id) === Number(partidaId);
     });
@@ -399,7 +490,15 @@
     // ficha solo necesita el id y fusionará el resultado al recibirlo.
     if (!item) item = { id: Number(partidaId) };
     return obtenerFicha(item)
-      .then(function (ficha) { return insertarFichaEnCapitulo(ficha, null); });
+      .then(function (ficha) { return insertarFichaEnCapitulo(ficha, cap || null); })
+      .catch(function () {
+        alert("No se pudo cargar la ficha de la partida. Inténtalo de nuevo.");
+        return null;
+      });
+  }
+
+  function insertarPorId(partidaId) {
+    return insertarIdEnCapitulo(partidaId, null);
   }
 
   function obtenerFichasPorIds(ids) {
@@ -655,9 +754,12 @@
     insertarEnCapitulo: insertarEnCapitulo,
     obtenerFicha: obtenerFicha,
     buscarRemoto: buscarRemoto,
+    sugerenciasRemotas: sugerenciasRemotas,
+    combinarResultados: combinarResultados,
     registrarSinResultados: registrarSinResultados,
     fusionarEnIndice: fusionarEnIndice,
     insertarPorId: insertarPorId,
+    insertarIdEnCapitulo: insertarIdEnCapitulo,
     obtenerFichasPorIds: obtenerFichasPorIds,
     insertarLote: insertarLote
   };

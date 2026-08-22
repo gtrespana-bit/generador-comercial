@@ -655,7 +655,8 @@ def _clonar_descomposicion_cype(origen: DescomposicionPartida | None) -> Descomp
     return copia
 
 
-def _importar_a_catalogo(db: Session, filas: list[dict], formato: str) -> tuple[int, int]:
+def _importar_a_catalogo(db: Session, filas: list[dict], formato: str,
+                         factor: float = 1.0) -> tuple[int, int]:
     """Crea entradas de catálogo de partidas desde un resultado validado.
 
     Devuelve (creadas, omitidas). Las omitidas ya existen con el mismo
@@ -663,6 +664,13 @@ def _importar_a_catalogo(db: Session, filas: list[dict], formato: str) -> tuple[
     CYPE conservan su código interno y sus costes por categoría para que,
     al usarlas en un presupuesto, la descomposición aparezca ya poblada.
     """
+    # El archivo se lee en la moneda con la que trabaja el usuario (la de su
+    # organización o la del presupuesto) y el catálogo vive en la moneda base:
+    # sin deshacer la conversión, importar una lista de precios en pesos dejaba
+    # el catálogo multiplicado por la tasa igual que el guardado automático.
+    def _base(valor):
+        return _a_moneda_base(float(valor or 0.0), factor)
+
     creadas = omitidas = 0
     nombres_nuevos = set()
     for item in filas:
@@ -691,10 +699,20 @@ def _importar_a_catalogo(db: Session, filas: list[dict], formato: str) -> tuple[
         codigo = str(item.get("codigo") or item.get("codigo_externo") or "").strip()
         codigo_legacy = str(item.get("codigo_legacy") or "").strip()
         es_codigo_v2 = bool(re.fullmatch(r"\d{2}\.\d{2}\.\d{2}\.\d{3}", codigo))
+        filas_descompuestas = item.get("filas", [])
+        if factor != 1.0 and isinstance(filas_descompuestas, list):
+            filas_descompuestas = [
+                dict(f, **{
+                    campo: _base(f.get(campo))
+                    for campo in ("precio", "precio_unitario", "importe", "coste_unitario")
+                    if isinstance(f.get(campo), (int, float)) and not isinstance(f.get(campo), bool)
+                }) if isinstance(f, dict) else f
+                for f in filas_descompuestas
+            ]
         db.add(Partida(
             nombre=nombre,
             descripcion=str(item.get("descripcion", "")).strip(),
-            precio_unitario=precio,
+            precio_unitario=_base(precio),
             unidad=str(item.get("unidad", "ud")).strip() or "ud",
             categoria=categoria,
             subcategoria=subcategoria[:80],
@@ -709,12 +727,12 @@ def _importar_a_catalogo(db: Session, filas: list[dict], formato: str) -> tuple[
                 "codigo": codigo,
                 "codigo_legacy": codigo_legacy,
                 "unidad": str(item.get("unidad") or "ud"),
-                "filas": item.get("filas", []),
+                "filas": filas_descompuestas,
             }, ensure_ascii=False),
-            coste_materiales=max(0.0, _f(costes.get("materiales"), 0)),
-            coste_mano_obra=max(0.0, _f(costes.get("mano_obra"), 0)),
-            coste_complementarios=max(0.0, _f(costes.get("complementarios"), 0)),
-            coste_otros=max(0.0, _f(costes.get("otros"), 0)),
+            coste_materiales=_base(max(0.0, _f(costes.get("materiales"), 0))),
+            coste_mano_obra=_base(max(0.0, _f(costes.get("mano_obra"), 0))),
+            coste_complementarios=_base(max(0.0, _f(costes.get("complementarios"), 0))),
+            coste_otros=_base(max(0.0, _f(costes.get("otros"), 0))),
             desperdicio_recomendado_pct=0.0,
         ))
         nombres_nuevos.add(nombre)
@@ -808,11 +826,15 @@ async def confirmar_importacion_presupuesto(request: Request, db: Session = Depe
 
     modo = str(payload.get("modo", "")).strip().lower()
     formato = str(payload.get("formato", ""))
+    # Los importes del archivo están en la moneda que ve el usuario; el
+    # catálogo se guarda en la base y la respuesta vuelve a la moneda de la
+    # vista para que el editor no mezcle divisas.
+    _moneda_imp, _factor_imp = _contexto_moneda(db, payload.get("moneda"), payload.get("tasa"))
 
     # Modo catálogo (botón del tab Partidas): las partidas se guardan en el
     # catálogo reutilizable, sin crear ni modificar ningún presupuesto.
     if modo == "catalogo":
-        creadas, omitidas = _importar_a_catalogo(db, resultado["filas"], formato)
+        creadas, omitidas = _importar_a_catalogo(db, resultado["filas"], formato, _factor_imp)
         db.commit()
         _sincronizar_recursos(db)
         mensaje = f"Se importaron {creadas} partida(s) al catálogo."
@@ -830,10 +852,10 @@ async def confirmar_importacion_presupuesto(request: Request, db: Session = Depe
     # estructura al editor; el presupuesto las persistirá con su guardado
     # normal, sin abandonar esta pantalla.
     if modo == "editor_inline" and destino is None:
-        creadas_catalogo, omitidas_catalogo = _importar_a_catalogo(db, resultado["filas"], formato)
+        creadas_catalogo, omitidas_catalogo = _importar_a_catalogo(db, resultado["filas"], formato, _factor_imp)
         db.flush()
         catalogo_editor = [
-            _partida_catalogo_json(partida)
+            _ficha_en_moneda(_partida_catalogo_json(partida), _moneda_imp, _factor_imp)
             for fila in resultado["filas"]
             if (partida := db.query(Partida).filter(Partida.nombre == str(fila.get("nombre", "")).strip()).first())
         ]
@@ -894,10 +916,10 @@ async def confirmar_importacion_presupuesto(request: Request, db: Session = Depe
     # La misma operación deja cada partida disponible para presupuestos
     # futuros. Para CYPE se conserva en el catálogo su descomposición, no solo
     # el nombre y el precio.
-    creadas_catalogo, omitidas_catalogo = _importar_a_catalogo(db, resultado["filas"], formato)
+    creadas_catalogo, omitidas_catalogo = _importar_a_catalogo(db, resultado["filas"], formato, _factor_imp)
     db.flush()
     catalogo_editor = [
-        _partida_catalogo_json(partida)
+        _ficha_en_moneda(_partida_catalogo_json(partida), _moneda_imp, _factor_imp)
         for fila in resultado["filas"]
         if (partida := db.query(Partida).filter(Partida.nombre == str(fila.get("nombre", "")).strip()).first())
     ]
@@ -1750,7 +1772,12 @@ async def crear_presupuesto(request: Request, db: Session = Depends(get_db)):
 
     _montar_presupuesto(presupuesto, capitulos, partidas, imagenes, imagenes_opciones)
     db.add(presupuesto)
-    _guardar_en_catalogos(db, partidas, imagenes)
+    # El catálogo se guarda en la moneda base: se pasan la moneda y la tasa
+    # congeladas del presupuesto para deshacer la conversión del editor.
+    _guardar_en_catalogos(
+        db, partidas, imagenes,
+        moneda=presupuesto.moneda, tasa=presupuesto.tipo_cambio,
+    )
     db.flush()  # hace visibles las entradas nuevas antes de registrar el uso
     _vincular_partidas_catalogo(db, presupuesto)
     _registrar_usos(db, partidas)
@@ -3321,7 +3348,10 @@ async def actualizar_presupuesto(presupuesto_id: int, request: Request, db: Sess
     for ruta in antiguas_opciones:
         if ruta and ruta not in nuevas_opciones:
             _borrar_imagen(ruta, db)
-    _guardar_en_catalogos(db, partidas, imagenes)
+    _guardar_en_catalogos(
+        db, partidas, imagenes,
+        moneda=presupuesto.moneda, tasa=presupuesto.tipo_cambio,
+    )
     db.flush()
     _vincular_partidas_catalogo(db, presupuesto)
     _registrar_usos(db, partidas, nombres_previos)

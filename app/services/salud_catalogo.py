@@ -34,7 +34,10 @@ def _tiene_tiempo(p: Partida) -> bool:
 
 
 def analizar_salud_catalogo(db: Session) -> dict:
+    from .precios_anomalos import contar_precios_anomalos
+
     partidas = db.query(Partida).filter(Partida.oculta.is_(False)).all()
+    precios_absurdos = contar_precios_anomalos(db)
     total = len(partidas)
     limite_fecha = datetime.utcnow() - timedelta(days=DIAS_SIN_REVISION)
 
@@ -102,6 +105,7 @@ def analizar_salud_catalogo(db: Session) -> dict:
         {"clave": "margen_bajo", "label": "Margen bajo", "count": len(margen_bajo), "url": "/partidas?salud=margen_bajo"},
         {"clave": "sin_tiempo", "label": "Sin tiempo", "count": len(sin_tiempo), "url": "/partidas?salud=sin_tiempo"},
         {"clave": "desactualizadas", "label": f"> {DIAS_SIN_REVISION} días", "count": len(desactualizadas), "url": "/partidas?salud=desactualizadas"},
+        {"clave": "precio_absurdo", "label": "Precio imposible", "count": precios_absurdos, "url": "/partidas?salud=precio_absurdo"},
     ]
     problemas_visibles = [p for p in problemas if p["count"] > 0]
 
@@ -118,6 +122,9 @@ def analizar_salud_catalogo(db: Session) -> dict:
         "sin_tiempo": len(sin_tiempo),
         "margen_bajo": len(margen_bajo),
         "desactualizadas": len(desactualizadas),
+        # Precios que solo se explican por una conversión de moneda aplicada de
+        # más: se ofrecen con un botón de reparación en la vista de catálogo.
+        "precio_absurdo": precios_absurdos,
         "problemas": problemas,
         "problemas_visibles": problemas_visibles,
         "requiere_atencion": bool(problemas_visibles),
