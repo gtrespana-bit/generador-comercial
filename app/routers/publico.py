@@ -313,6 +313,16 @@ def landing_pe_slash(request: Request):
     return _landing_con_pais(request, "PE")
 
 
+@router.get("/es", include_in_schema=False)
+def landing_es(request: Request):
+    return _redirige_a_slash("ES")
+
+
+@router.get("/es/", response_class=HTMLResponse, include_in_schema=False)
+def landing_es_slash(request: Request):
+    return _landing_con_pais(request, "ES")
+
+
 def _pagina_intencion(request: Request, codigo: str, tema: str):
     from ..paises import ORDEN_SELECTOR, PAIS_GENERICO, PAISES, lista_paises
     from ..seo import TEMAS, contexto_seo, ficha_tema

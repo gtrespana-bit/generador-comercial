@@ -47,9 +47,10 @@ from app.utils import (
 # app/paises.py — catálogo de países
 # ---------------------------------------------------------------------------
 
-def test_selector_expone_los_5_paises_foco_en_orden():
+def test_selector_expone_los_paises_foco_en_orden():
+    # VE histórico + 4 LatAm + España (primer mercado fuera de LatAm).
     codigos = [p["codigo"] for p in paises.lista_paises()]
-    assert codigos == ["VE", "CO", "MX", "EC", "PE"]
+    assert codigos == ["VE", "CO", "MX", "EC", "PE", "ES"]
 
 
 def test_defaults_colombia_sugieren_nit_cop_19():
@@ -278,7 +279,7 @@ def test_landing_pais_invalido_ignora_el_parametro(cliente_web):
 def test_sitemap_incluye_subdirectorios_de_pais(cliente_web):
     resp = cliente_web.get("/sitemap.xml")
     assert resp.status_code == 200
-    for u in ("/ve/", "/co/", "/mx/", "/ec/", "/pe/"):
+    for u in ("/ve/", "/co/", "/mx/", "/ec/", "/pe/", "/es/"):
         assert u in resp.text
 
 

@@ -24,7 +24,7 @@ from decimal import Decimal, ROUND_HALF_UP
 #
 # No son vinculantes: el usuario ve la tasa y la confirma antes de guardar.
 # Cada presupuesto congela su tasa al crearse.
-TASAS_ACTUALIZADAS = "2026-08-19"
+TASAS_ACTUALIZADAS = "2026-08-22"
 TASAS_SUGERIDAS: dict[str, float | None] = {
     "USD": 1.0,
     "PAB": 1.0,  # balboa, paridad con USD
@@ -36,9 +36,12 @@ TASAS_SUGERIDAS: dict[str, float | None] = {
     "MXN": 17.06,
     # SUNAT (12/08/2026: 3,364 compra / 3,372 venta; ~3,37)
     "PEN": 3.37,
+    # EUR/USD 1,1677 (xe.com mid-market 22/08/2026; BCE 21/08: 1,1681)
+    # -> 1 USD = 0,8564 EUR
+    "EUR": 0.8564,
 }
 # El resto de monedas del selector (CLP, ARS, UYU, PYG, BOB, DOP, CRC, GTQ,
-# HNL, NIO, BRL, EUR…) no se pre-rellenan: sin tasa verificada a la fecha de
+# HNL, NIO, BRL…) no se pre-rellenan: sin tasa verificada a la fecha de
 # TASAS_ACTUALIZADAS. El usuario consulta «Tasa de hoy» o escribe la oficial.
 
 

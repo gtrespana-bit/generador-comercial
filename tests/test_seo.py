@@ -72,10 +72,11 @@ def test_sitemap_incluye_paises_temas_y_hreflang():
         resp = client.get("/sitemap.xml")
     assert resp.status_code == 200
     texto = resp.text
-    for u in ("/ve/", "/co/", "/mx/", "/ec/", "/pe/", "/co/apu", "/mx/remodelacion", "/software-presupuestos"):
+    for u in ("/ve/", "/co/", "/mx/", "/ec/", "/pe/", "/es/", "/co/apu", "/mx/remodelacion", "/software-presupuestos"):
         assert u in texto
     assert "xmlns:xhtml" in texto
     assert 'hreflang="es-CO"' in texto
+    assert 'hreflang="es-ES"' in texto
     assert "/conocer" not in texto
 
 
@@ -150,7 +151,7 @@ def test_landing_pais_tiene_cuerpo_propio_y_faq_visible():
 
 def test_paginas_estaticas_no_heredan_faq_de_la_home():
     """Cómo funciona, planes y mapa no deben publicar el FAQPage de ``/``."""
-    pregunta_home = "¿CotizaT sirve para presupuestos de construcción en Latinoamérica?"
+    pregunta_home = "¿CotizaT sirve para presupuestos de construcción en Latinoamérica y España?"
     with _cliente() as client:
         home = client.get("/").text
         mapa = client.get("/mapa-del-sitio").text
@@ -182,8 +183,8 @@ def test_guia_howto_lleva_texto_en_los_pasos():
 def test_cuerpos_de_pais_no_son_un_find_and_replace():
     from app.seo_contenido import cuerpo_pais
 
-    titulos = {cuerpo_pais(c)[0][0] for c in ("", "VE", "CO", "MX", "PE", "EC")}
-    assert len(titulos) == 6
+    titulos = {cuerpo_pais(c)[0][0] for c in ("", "VE", "CO", "MX", "PE", "EC", "ES")}
+    assert len(titulos) == 7
 
 
 def test_hubs_de_intencion_no_son_la_misma_pagina_con_otro_pais():

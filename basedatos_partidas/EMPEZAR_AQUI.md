@@ -14,6 +14,13 @@ Una base de datos de partidas de construcción **propia al 100 %**, para
 sin errores en CotizaT y que ya se usa desde una barra lateral en el editor de
 presupuestos.
 
+> **España (22/08/2026).** El catálogo base sigue siendo venezolano en USD:
+> no se duplica. Para España hay una capa de adaptación al mostrar —glosario
+> VE→ES en `glosarios/ES.json` (concreto→hormigón, friso→enfoscado, cielo
+> raso→falso techo, mesón→encimera, plomero→fontanero…)— y una matriz nacional
+> de precios en EUR (`salida/precios_recursos_espana.csv`, 388 recursos).
+> Detalle en `docs/APERTURA_MERCADO_ESPANA.md`.
+
 ---
 
 # 2. Estado a día de hoy
