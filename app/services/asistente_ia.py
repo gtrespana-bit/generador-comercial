@@ -4,14 +4,15 @@ Proporciona soporte conversacional, asistencia en navegación, redacción
 técnica de partidas y sugerencias de presupuestos de obra.
 
 Arquitectura:
-- Modelo gratuito de alto rendimiento: Llama 3.3 70B Versatile (Meta) vía Groq Cloud API
+- Modelo de alto rendimiento: OpenAI GPT OSS 120B vía Groq Cloud API
   (OpenAI-compatible REST).
-- 100 % gratuito: utiliza la capa de uso libre de Groq (sin coste de suscripción ni tarjeta).
+- Usa la capa de uso disponible de Groq; la cuenta y sus límites dependen del
+  plan del proveedor.
 - Inyección de contexto RAG: manual del sistema, atajos, descompuestos CYPE,
   monedas y catálogo propio de la organización activa.
 - Modo de degradación elegante: si la clave no está configurada, el asistente
   responde a dudas frecuentes de CotizaT mediante el índice local de conocimiento
-  e indica cómo activar la clave gratuita en un minuto.
+  e indica cómo activar la clave de Groq.
 """
 from __future__ import annotations
 
@@ -29,8 +30,16 @@ log = logging.getLogger("cotizat")
 
 # Configuración por omisión
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
-MODELO_DEFAULT = "llama-3.3-70b-versatile"
-MODELO_LIGERO = "llama-3.1-8b-instant"
+MODELO_DEFAULT = "openai/gpt-oss-120b"
+MODELO_LIGERO = "openai/gpt-oss-20b"
+
+# Groq retiró estos identificadores el 16/08/2026. Se conservan como alias
+# para que una instalación que aún los tenga en COTIZAT_IA_MODEL no falle con
+# HTTP 404 después de actualizar la aplicación.
+MODELOS_REEMPLAZO = {
+    "llama-3.3-70b-versatile": MODELO_DEFAULT,
+    "llama-3.1-8b-instant": MODELO_LIGERO,
+}
 
 
 def obtener_clave_ia() -> str:
@@ -57,8 +66,25 @@ def obtener_clave_ia() -> str:
 
 
 def obtener_modelo_ia() -> str:
-    """Devuelve el modelo configurado o el predeterminado."""
-    return os.environ.get("COTIZAT_IA_MODEL", "").strip() or MODELO_DEFAULT
+    """Devuelve el modelo configurado o el predeterminado.
+
+    También lee ``COTIZAT_IA_MODEL`` del ``.env`` cuando la aplicación se
+    arranca directamente con Uvicorn (sin pasar por ``run.py``). Los modelos
+    retirados por Groq se traducen a su reemplazo vigente para evitar un 404.
+    """
+    modelo = os.environ.get("COTIZAT_IA_MODEL", "").strip()
+    if not modelo:
+        try:
+            from dotenv import dotenv_values
+            from pathlib import Path
+
+            env_path = Path(__file__).resolve().parents[2] / ".env"
+            if env_path.is_file():
+                modelo = (dotenv_values(env_path).get("COTIZAT_IA_MODEL") or "").strip()
+        except Exception:
+            pass
+    modelo = modelo or MODELO_DEFAULT
+    return MODELOS_REEMPLAZO.get(modelo, modelo)
 
 
 def asistente_configurado() -> bool:
@@ -77,8 +103,8 @@ def estado_asistente() -> dict[str, Any]:
         "gratuito": True,
         "mensaje_activacion": (
             "" if clave_ok else
-            "Para activar respuestas ilimitadas con Llama 3.3 70B en tiempo real, "
-            "configura tu clave gratuita de Groq en .env (GROQ_API_KEY=gsk_...)."
+            "Para activar respuestas con GPT OSS 120B en tiempo real, "
+            "configura tu clave de Groq en .env (GROQ_API_KEY=gsk_...)."
         ),
     }
 
@@ -332,8 +358,8 @@ def consultar_asistente_stream(
             guia_activacion = (
                 "### 💬 Asistente CotizaT (Modo Base)\n\n"
                 "Puedo responderte dudas sobre cómo funciona el software, atajos de teclado, importación CYPE y monedas.\n\n"
-                "⚡ **Para habilitar el asistente con Llama 3.3 70B:**\n"
-                "1. Obtén tu clave gratuita en [console.groq.com/keys](https://console.groq.com/keys) *(sin tarjeta de crédito)*.\n"
+                "⚡ **Para habilitar el asistente con GPT OSS 120B:**\n"
+                "1. Obtén tu clave en [console.groq.com/keys](https://console.groq.com/keys).\n"
                 "2. Agrégala en tu archivo `.env` como `GROQ_API_KEY=gsk_...`.\n\n"
                 "¿En qué apartado o función de CotizaT te gustaría que te ayude hoy?"
             )

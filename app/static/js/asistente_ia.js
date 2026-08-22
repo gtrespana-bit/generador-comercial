@@ -2,7 +2,7 @@
  * Asistente Inteligente de CotizaT (Copilot).
  *
  * Proporciona soporte en vivo, resolución de dudas de uso, navegación y
- * redacción técnica asistida por IA (Llama 3.3 70B vía Groq).
+ * redacción técnica asistida por IA (GPT OSS 120B vía Groq).
  *
  * Cumple estrictamente con las políticas de seguridad CSP:
  * - Cero uso de manipulaciones crudas de texto o sinks de inyección.
