@@ -17,6 +17,9 @@ import os
 import threading
 import webbrowser
 
+from dotenv import load_dotenv
+load_dotenv()
+
 import uvicorn
 
 HOST = os.environ.get("COTIZAT_HOST") or os.environ.get("PRESUPUESTOS_HOST") or "127.0.0.1"

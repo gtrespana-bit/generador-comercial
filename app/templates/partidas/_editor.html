@@ -12,7 +12,13 @@
       <div class="field"><label>Apartado</label><input name="apartado" value="{{ partida.apartado if partida else '' }}" placeholder="p. ej. 99.01.01 Trabajos diversos"></div>
       <div class="field"><label>Unidad de la partida</label><input name="unidad" value="{{ partida.unidad if partida else 'ud' }}" placeholder="m², m³, ud…"></div>
       <div class="field"><label>Código de partida</label><input name="codigo_externo" value="{{ partida.codigo_externo if partida else '' }}" placeholder="RBE030"></div>
-      <div class="field field-full"><label>Descripción técnica</label><textarea name="descripcion" rows="4" placeholder="Alcance, materiales, ejecución, normativa y acabado…">{{ partida.descripcion if partida else '' }}</textarea></div>
+      <div class="field field-full">
+        <div class="card-head">
+          <label>Descripción técnica</label>
+          <button type="button" class="btn-ia-redactar" data-cotizat-click="ia-redactar-partida" title="Redactar especificación técnica con IA">✨ Redactar con IA</button>
+        </div>
+        <textarea name="descripcion" rows="4" placeholder="Alcance, materiales, ejecución, normativa y acabado…">{{ partida.descripcion if partida else '' }}</textarea>
+      </div>
     </div>
   </section>
 

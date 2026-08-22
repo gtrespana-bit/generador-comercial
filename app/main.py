@@ -53,6 +53,7 @@ from .routers import (  # noqa: E402
     auth,
     clientes,
     configuracion,
+    ia,
     inicio,
     pagos,
     partidas,
@@ -431,6 +432,7 @@ app.include_router(productos.router)
 app.include_router(recursos.router)
 app.include_router(plantillas.router)
 app.include_router(recetas.router)
+app.include_router(ia.router)
 
 
 # ---------------------------------------------------------------------------
