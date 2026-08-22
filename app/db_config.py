@@ -29,12 +29,31 @@ class DatabaseSettings:
 
 
 def _normalizar_url(url: str) -> str:
-    """Usa psycopg 3 incluso cuando el proveedor entrega una URL genérica."""
+    """Usa psycopg 3 y optimiza el puerto del pooler de Supabase.
+
+    - Convierte ``postgres://`` y ``postgresql://`` a ``postgresql+psycopg://``.
+    - Si la conexión apunta al pooler de Supabase (``*.pooler.supabase.com``)
+      en el puerto 5432 (Session mode, limitado a 15 conexiones) o sin puerto
+      explícito, conmuta automáticamente al puerto 6543 (Transaction mode),
+      diseñado para entornos serverless y concurrencia web.
+    """
     url = url.strip()
+    if not url:
+        return url
     if url.startswith("postgres://"):
-        return "postgresql+psycopg://" + url[len("postgres://"):]
-    if url.startswith("postgresql://"):
-        return "postgresql+psycopg://" + url[len("postgresql://"):]
+        url = "postgresql+psycopg://" + url[len("postgres://"):]
+    elif url.startswith("postgresql://"):
+        url = "postgresql+psycopg://" + url[len("postgresql://"):]
+
+    try:
+        parsed = make_url(url)
+        host = (parsed.host or "").lower()
+        if "pooler.supabase.com" in host and parsed.port in (5432, None):
+            parsed = parsed.set(port=6543)
+            url = parsed.render_as_string(hide_password=False)
+    except Exception:
+        pass
+
     return url
 
 

@@ -68,6 +68,46 @@ with engine.connect() as connection:
     assert comprobacion.returncode == 0, comprobacion.stderr
 
 
+def test_normalizar_url_autoajusta_pooler_supabase_a_puerto_transaccion(monkeypatch, tmp_path):
+    # Caso 1: Supabase pooler en puerto 5432 (Session mode) -> se conmuta a 6543 (Transaction mode)
+    monkeypatch.setenv(
+        "DATABASE_URL",
+        "postgresql://cotizat_runtime.abc:secret@aws-0-ca-central-1.pooler.supabase.com:5432/postgres?sslmode=require",
+    )
+    settings = resolver_database_settings(tmp_path, "local.db")
+    assert settings.url == (
+        "postgresql+psycopg://cotizat_runtime.abc:secret@aws-0-ca-central-1.pooler.supabase.com:6543/postgres?sslmode=require"
+    )
+
+    # Caso 2: Supabase pooler sin puerto explícito -> se añade puerto 6543
+    monkeypatch.setenv(
+        "DATABASE_URL",
+        "postgres://cotizat_runtime.abc:secret@aws-0-ca-central-1.pooler.supabase.com/postgres?sslmode=require",
+    )
+    settings2 = resolver_database_settings(tmp_path, "local.db")
+    assert settings2.url == (
+        "postgresql+psycopg://cotizat_runtime.abc:secret@aws-0-ca-central-1.pooler.supabase.com:6543/postgres?sslmode=require"
+    )
+
+    # Caso 3: Supabase pooler ya en puerto 6543 -> se conserva 6543
+    monkeypatch.setenv(
+        "DATABASE_URL",
+        "postgresql://cotizat_runtime.abc:secret@aws-0-ca-central-1.pooler.supabase.com:6543/postgres?sslmode=require",
+    )
+    settings3 = resolver_database_settings(tmp_path, "local.db")
+    assert settings3.url == (
+        "postgresql+psycopg://cotizat_runtime.abc:secret@aws-0-ca-central-1.pooler.supabase.com:6543/postgres?sslmode=require"
+    )
+
+    # Caso 4: Conexión directa a PostgreSQL regular (no pooler) en 5432 -> se conserva 5432
+    monkeypatch.setenv(
+        "DATABASE_URL",
+        "postgresql://usuario:secret@db.example.com:5432/cotizat",
+    )
+    settings4 = resolver_database_settings(tmp_path, "local.db")
+    assert settings4.url == "postgresql+psycopg://usuario:secret@db.example.com:5432/cotizat"
+
+
 def test_verificar_head_alembic_postgresql_eleva_runtime_error_si_tabla_vacia_o_version_diferente(monkeypatch):
     import pytest
     from app.database import _verificar_head_alembic_postgresql, EXPECTED_ALEMBIC_HEAD

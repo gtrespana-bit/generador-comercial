@@ -113,6 +113,30 @@ PRIVATE_STORAGE_DIR = DATA_DIR / "private_storage"
 _engine_options = {"pool_pre_ping": True}
 if DATABASE_IS_SQLITE:
     _engine_options["connect_args"] = {"check_same_thread": False}
+else:
+    # PostgreSQL / Web:
+    # 1. prepare_threshold=None: imprescindible para el pooler de Supabase / PgBouncer
+    #    en modo Transaction (puerto 6543), evitando colisiones de prepared statements.
+    # 2. pool_recycle=300: renueva conexiones periódicamente para evitar sockets caídos.
+    _engine_options["connect_args"] = {"prepare_threshold": None}
+    _engine_options["pool_recycle"] = int(os.environ.get("COTIZAT_DB_POOL_RECYCLE", "300"))
+    pool_class_cfg = os.environ.get("COTIZAT_DB_POOL_CLASS", "").strip().lower()
+    if pool_class_cfg == "nullpool":
+        from sqlalchemy.pool import NullPool
+        _engine_options["poolclass"] = NullPool
+    else:
+        pool_size_cfg = os.environ.get("COTIZAT_DB_POOL_SIZE", "").strip()
+        max_overflow_cfg = os.environ.get("COTIZAT_DB_MAX_OVERFLOW", "").strip()
+        if pool_size_cfg:
+            try:
+                _engine_options["pool_size"] = int(pool_size_cfg)
+            except ValueError:
+                pass
+        if max_overflow_cfg:
+            try:
+                _engine_options["max_overflow"] = int(max_overflow_cfg)
+            except ValueError:
+                pass
 engine = create_engine(DATABASE_URL, **_engine_options)
 
 
@@ -579,10 +603,14 @@ def _asegurar_esquema_postgres() -> None:
     if DATABASE_IS_SQLITE:
         return
     mig_url = os.environ.get("MIGRATION_DATABASE_URL", "").strip() or DATABASE_URL
+    if mig_url:
+        from .db_config import _normalizar_url
+        mig_url = _normalizar_url(mig_url)
     try:
         from sqlalchemy.pool import NullPool
 
-        eng = create_engine(mig_url, poolclass=NullPool)
+        mig_connect_args = {"prepare_threshold": None} if not mig_url.startswith("sqlite") else {}
+        eng = create_engine(mig_url, poolclass=NullPool, connect_args=mig_connect_args)
         # Cada ALTER va en su PROPIA transacción. Antes compartían un único
         # ``begin()``: bastaba con que la primera sentencia fallara para que
         # PostgreSQL abortara el bloque entero y se perdieran también las
