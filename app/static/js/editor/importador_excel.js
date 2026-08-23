@@ -1,10 +1,8 @@
 /* ============================================================================
-   Importador Excel embebido en el editor de presupuestos
+   Importador Excel/BC3 embebido en el editor de presupuestos
 
    Analiza, valida y confirma una importación sin navegar a otra pantalla.
-   En presupuestos existentes el servidor persiste las partidas al confirmar;
-   en uno nuevo las guarda ya en el catálogo y las mantiene en el constructor
-   hasta el guardado normal del presupuesto.
+   Soporta tabular, CYPE descompuesto y BC3 (FIEBDC-3).
    ============================================================================ */
 
 (function () {
@@ -18,7 +16,9 @@
     mapeo: {},
     primeraFila: 2,
     importacionId: "",
-    partidasCype: []
+    partidasCype: [],
+    bc3Filas: [],
+    bc3Capitulos: []
   };
 
   function $(id) { return document.getElementById(id); }
@@ -31,6 +31,7 @@
   }
 
   function esCype() { return estado.formato === "cype_descompuesto"; }
+  function esBc3() { return estado.formato === "bc3"; }
 
   function normalizar(valor) {
     return String(valor || "")
@@ -73,7 +74,7 @@
   function resetear() {
     estado = {
       formato: "tabular", encabezados: [], filas: [], mapeo: {},
-      primeraFila: 2, importacionId: "", partidasCype: []
+      primeraFila: 2, importacionId: "", partidasCype: [], bc3Filas: [], bc3Capitulos: []
     };
     var file = $("excel-inline-file");
     if (file) file.value = "";
@@ -83,6 +84,8 @@
     $("excel-inline-review").classList.add("import-hidden");
     $("excel-inline-mapping").classList.add("import-hidden");
     $("excel-inline-cype-chapter").classList.add("import-hidden");
+    var bc3Chap = $("excel-inline-bc3-chapter");
+    if (bc3Chap) bc3Chap.classList.add("import-hidden");
     CotizatStyles.set($("excel-inline-header").closest(".excel-header-check"), "display", "");
     $("excel-inline-preview").replaceChildren();
     limpiarIssues();
@@ -188,10 +191,41 @@
     });
   }
 
+  function renderPreviewBc3() {
+    var cont = $("excel-inline-preview");
+    cont.replaceChildren();
+    var info = document.createElement("div");
+    info.className = "excel-cype-item";
+    var texto = document.createElement("div");
+    var titulo = document.createElement("strong");
+    titulo.textContent = "BC3 · " + (estado.bc3Capitulos.length||0) + " capítulo(s) · " + (estado.bc3Filas.length||0) + " partida(s)";
+    texto.appendChild(titulo);
+    var meta = document.createElement("span");
+    meta.textContent = "Capítulos originales y mediciones se respetarán. Código BC3 como código externo.";
+    texto.appendChild(meta);
+    info.appendChild(texto);
+    cont.appendChild(info);
+    estado.bc3Filas.slice(0, 8).forEach(function (fila) {
+      var item = document.createElement("div");
+      item.className = "excel-cype-item";
+      var t = document.createElement("div");
+      var st = document.createElement("strong");
+      st.textContent = (fila.codigo ? fila.codigo + " · " : "") + (fila.nombre || "");
+      t.appendChild(st);
+      var sp = document.createElement("span");
+      sp.textContent = (fila.capitulo||"") + " · " + (fila.unidad||"") + " · " + (fila.cantidad||"") + " · " + (fila.precio||"");
+      t.appendChild(sp);
+      item.appendChild(t);
+      cont.appendChild(item);
+    });
+  }
+
   function renderAnalisis(data) {
     estado.formato = data.formato || "tabular";
     estado.importacionId = data.importacion_id || "";
     estado.partidasCype = data.partidas || [];
+    estado.bc3Filas = data.filas || [];
+    estado.bc3Capitulos = data.capitulos || [];
     estado.encabezados = data.encabezados || [];
     estado.filas = data.filas || [];
     estado.mapeo = data.mapeo_sugerido || {};
@@ -199,19 +233,31 @@
 
     CotizatStyles.set($("excel-inline-source"), "display", "none");
     $("excel-inline-review").classList.remove("import-hidden");
-    CotizatStyles.set($("excel-inline-header").closest(".excel-header-check"), "display", esCype() ? "none" : "");
+    CotizatStyles.set($("excel-inline-header").closest(".excel-header-check"), "display", (esCype() || esBc3()) ? "none" : "");
     limpiarIssues();
 
     if (esCype()) {
       $("excel-inline-mapping").classList.add("import-hidden");
       $("excel-inline-cype-chapter").classList.remove("import-hidden");
+      var bc3Chap = $("excel-inline-bc3-chapter");
+      if (bc3Chap) bc3Chap.classList.add("import-hidden");
       $("excel-inline-result-title").textContent = estado.partidasCype.length + " partida(s) de descompuesto detectada(s)";
       var totalFilas = estado.partidasCype.reduce(function (n, p) { return n + (p.filas || []).length; }, 0);
       $("excel-inline-result-meta").textContent = totalFilas + " filas técnicas y fórmulas se conservarán.";
       renderPreviewCype();
+    } else if (esBc3()) {
+      $("excel-inline-mapping").classList.add("import-hidden");
+      $("excel-inline-cype-chapter").classList.add("import-hidden");
+      var bc3Chap2 = $("excel-inline-bc3-chapter");
+      if (bc3Chap2) bc3Chap2.classList.remove("import-hidden");
+      $("excel-inline-result-title").textContent = estado.bc3Filas.length + " partida(s) BC3 detectada(s)";
+      $("excel-inline-result-meta").textContent = (estado.bc3Capitulos.length||0) + " capítulo(s) originales. Se importarán con mediciones.";
+      renderPreviewBc3();
     } else {
       $("excel-inline-mapping").classList.remove("import-hidden");
       $("excel-inline-cype-chapter").classList.add("import-hidden");
+      var bc3Chap3 = $("excel-inline-bc3-chapter");
+      if (bc3Chap3) bc3Chap3.classList.add("import-hidden");
       $("excel-inline-result-title").textContent = estado.filas.length + " fila(s) detectada(s)";
       $("excel-inline-result-meta").textContent = "Revisa la asignación y añádelas directamente al presupuesto.";
       renderMapeo();
@@ -222,7 +268,7 @@
   async function analizar() {
     var input = $("excel-inline-file");
     if (!input.files || !input.files.length) {
-      mostrarError("Selecciona al menos un archivo .xlsx o .csv.");
+      mostrarError("Selecciona al menos un archivo .xlsx, .csv o .bc3.");
       return;
     }
     var boton = $("btn-analizar-excel-inline");
@@ -255,6 +301,13 @@
     if (esCype()) {
       datos.importacion_id = estado.importacionId;
       datos.capitulo_cype = $("excel-inline-chapter").value || "PARTIDAS IMPORTADAS";
+      return datos;
+    }
+    if (esBc3()) {
+      datos.importacion_id = estado.importacionId;
+      var bc3Input = $("excel-inline-bc3-chapter-input");
+      datos.capitulo_bc3 = bc3Input ? bc3Input.value || "" : "";
+      datos.filas = estado.filas;
       return datos;
     }
     var mapeo = {};

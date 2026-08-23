@@ -4,7 +4,7 @@
 <div class="page-head">
   <div>
     <h1>Importar partidas</h1>
-    <p class="subtitle">Importa tablas o descompuestos de partidas. El formato de descompuesto conserva la matriz completa, fórmulas y archivo original de cada partida.</p>
+    <p class="subtitle">Importa tablas, descompuestos CYPE o presupuestos BC3 (FIEBDC-3). BC3 conserva capítulos, partidas, mediciones y precios.</p>
   </div>
   <a class="btn" href="{{ '/partidas' if modo_catalogo else '/presupuestos' }}">← Volver a {{ 'partidas' if modo_catalogo else 'presupuestos' }}</a>
 </div>
@@ -15,12 +15,12 @@
 
 <div class="card" id="import-source-card">
   <h2>1. Carga los datos</h2>
-  <p class="hint">Para archivos como <strong>DPT020.xlsx</strong>, selecciona uno o varios <strong>.xlsx</strong> de descompuesto: se detectará cada partida, fila, celda y fórmula sin convertirlo en una tabla plana. También se admiten CSV/Excel tabulares.</p>
+  <p class="hint">Para archivos como <strong>DPT020.xlsx</strong>, selecciona uno o varios <strong>.xlsx</strong> de descompuesto: se detectará cada partida, fila, celda y fórmula sin convertirlo en una tabla plana. También se admiten CSV/Excel tabulares y <strong>BC3 (FIEBDC-3)</strong> de España (BCCA Andalucía, Extremadura, etc.).</p>
   <div class="form-grid">
     <div class="field">
-      <label>Archivo CSV o Excel</label>
-      <input type="file" id="import-file" multiple accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
-      <p class="hint">Puedes seleccionar varios archivos solo si todos son descompuestos.</p>
+      <label>Archivo CSV, Excel o BC3</label>
+      <input type="file" id="import-file" multiple accept=".csv,.xlsx,.bc3,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+      <p class="hint">Puedes seleccionar varios archivos solo si todos son descompuestos CYPE. BC3 se carga de uno en uno.</p>
     </div>
     <div class="field" id="import-header-field">
       <label>Primera fila (solo formato tabular)</label>
@@ -30,7 +30,7 @@
     <div class="field field-full">
       <label>O pega filas tabulares aquí</label>
       <textarea id="import-text" rows="6" placeholder="Capítulo	Partida	Descripción	Unidad	Cantidad	Precio&#10;PISOS	Porcelanato 90x90	Suministro y colocación	m2	84,6	68"></textarea>
-      <p class="hint">El pegado admite tabulaciones, coma o punto y coma. Si eliges un archivo, este campo se ignora.</p>
+      <p class="hint">El pegado admite tabulaciones, coma o punto y coma. Si eliges un archivo, este campo se ignora. También puedes pegar el contenido de un .bc3.</p>
     </div>
   </div>
   <div class="form-actions">
@@ -51,10 +51,12 @@
     </div>
   </div>
   <div id="cype-summary" class="import-hidden"></div>
+  <div id="bc3-summary" class="import-hidden"></div>
   <h3 class="csp-s-a3c9c5afaa">Vista previa <span id="import-preview-count" class="hint"></span></h3>
   <div class="table-wrap import-preview-wrap" id="import-preview-wrap">
     <table class="table" id="import-preview-table"><thead></thead><tbody></tbody></table>
     <div id="cype-preview"></div>
+    <div id="bc3-preview"></div>
   </div>
   <div class="form-actions">
     <button type="button" class="btn btn-primary" id="btn-validate-import">Validar importación →</button>
@@ -85,6 +87,11 @@
       <label>Capítulo para las partidas</label>
       <input type="text" id="import-cype-chapter" value="PARTIDAS IMPORTADAS" maxlength="200">
       <p class="hint">Cada hoja/archivo detectado será una partida y conservará su descompuesto completo dentro de este capítulo.</p>
+    </div>
+    <div class="field import-bc3-only import-hidden" id="import-bc3-chapter-field">
+      <label>Capítulo (BC3) - opcional</label>
+      <input type="text" id="import-bc3-chapter" value="" maxlength="200" placeholder="Dejar vacío para respetar capítulos del BC3">
+      <p class="hint">Si indicas un capítulo, todas las partidas del BC3 irán ahí. Si lo dejas vacío, se respetan los capítulos originales del .bc3.</p>
     </div>
     <div class="field import-new-only">
       <label>Cliente *</label>
@@ -118,7 +125,7 @@
 (function () {
   'use strict';
   var CAMPOS = {{ campos_importables | tojson }};
-  var estado = { formato: 'tabular', encabezados: [], filas: [], mapeo: {}, primeraFila: 2, validacion: null, importacionId: '', cypePartidas: [] };
+  var estado = { formato: 'tabular', encabezados: [], filas: [], mapeo: {}, primeraFila: 2, validacion: null, importacionId: '', cypePartidas: [], bc3Filas: [], bc3Capitulos: [] };
   var fileInput = document.getElementById('import-file');
   var textInput = document.getElementById('import-text');
   var headerInput = document.getElementById('import-header');
@@ -128,8 +135,6 @@
   var validationCard = document.getElementById('import-validation-card');
   var destination = document.getElementById('import-destination');
   var confirmBtn = document.getElementById('btn-confirm-import');
-  // Modo catálogo (abierto desde el tab Partidas): las partidas se guardan
-  // en el Catálogo de Partidas y no hace falta elegir destino ni cliente.
   var MODO_CATALOGO = !!document.getElementById('modo-catalogo');
 
   function mostrarError(mensaje) {
@@ -141,8 +146,9 @@
     validationCard.classList.add('import-hidden');
     confirmBtn.disabled = true;
   }
-  function escapeText(valor) { return String(valor == null ? '' : valor); }
   function esCype() { return estado.formato === 'cype_descompuesto'; }
+  function esBc3() { return estado.formato === 'bc3'; }
+  function esTabular() { return estado.formato === 'tabular'; }
   function payload() {
     var base = { formato: estado.formato, modo: MODO_CATALOGO ? 'catalogo' : 'presupuesto' };
     if (!MODO_CATALOGO) {
@@ -153,6 +159,15 @@
     if (esCype()) {
       base.importacion_id = estado.importacionId;
       if (!MODO_CATALOGO) base.capitulo_cype = document.getElementById('import-cype-chapter').value || '';
+      return base;
+    }
+    if (esBc3()) {
+      base.importacion_id = estado.importacionId;
+      if (!MODO_CATALOGO) {
+        var bc3Chap = document.getElementById('import-bc3-chapter');
+        base.capitulo_bc3 = bc3Chap ? bc3Chap.value || '' : '';
+      }
+      base.filas = estado.filas;
       return base;
     }
     var mapeo = {};
@@ -166,7 +181,7 @@
     return base;
   }
   function actualizarDestino() {
-    if (!destination) return;  // modo catálogo: no hay selector de destino
+    if (!destination) return;
     var nuevo = !destination.value;
     document.querySelectorAll('.import-new-only').forEach(function (el) { CotizatStyles.set(el, "display", nuevo ? '' : 'none'); });
     ocultarValidacion();
@@ -179,10 +194,48 @@
     CotizatStyles.set(document.getElementById('import-preview-table'), "display", activo ? 'none' : '');
     var chapterField = document.getElementById('import-cype-chapter-field');
     if (chapterField) chapterField.classList.toggle('import-hidden', !activo);
-    document.getElementById('import-review-title').textContent = activo ? '2. Revisa las partidas y filas detectadas' : '2. Revisa la detección de columnas';
-    document.getElementById('import-review-hint').textContent = activo
-      ? 'Cada fila y columna se conserva con su número original. Los resultados de fórmula y las fórmulas se guardan, junto con el archivo .xlsx original.'
-      : 'El sistema propone una asignación. Solo Partida es obligatoria; ajusta cualquier columna antes de validar.';
+    var bc3Summary = document.getElementById('bc3-summary');
+    var bc3Preview = document.getElementById('bc3-preview');
+    var bc3ChapterField = document.getElementById('import-bc3-chapter-field');
+    if (bc3Summary) bc3Summary.classList.add('import-hidden');
+    if (bc3Preview) CotizatStyles.set(bc3Preview, "display", 'none');
+    if (bc3ChapterField) bc3ChapterField.classList.add('import-hidden');
+    if (activo) {
+      document.getElementById('import-review-title').textContent = '2. Revisa las partidas y filas detectadas';
+      document.getElementById('import-review-hint').textContent = 'Cada fila y columna se conserva con su número original. Los resultados de fórmula y las fórmulas se guardan, junto con el archivo .xlsx original.';
+    }
+  }
+  function setModoBc3(activo) {
+    CotizatStyles.set(document.getElementById('import-header-field'), "display", activo ? 'none' : '');
+    CotizatStyles.set(document.getElementById('tabular-mapping'), "display", activo ? 'none' : '');
+    document.getElementById('bc3-summary').classList.toggle('import-hidden', !activo);
+    CotizatStyles.set(document.getElementById('bc3-preview'), "display", activo ? '' : 'none');
+    CotizatStyles.set(document.getElementById('import-preview-table'), "display", activo ? 'none' : '');
+    CotizatStyles.set(document.getElementById('cype-preview'), "display", 'none');
+    document.getElementById('cype-summary').classList.add('import-hidden');
+    var chapterField = document.getElementById('import-cype-chapter-field');
+    if (chapterField) chapterField.classList.add('import-hidden');
+    var bc3ChapterField = document.getElementById('import-bc3-chapter-field');
+    if (bc3ChapterField) bc3ChapterField.classList.toggle('import-hidden', !activo);
+    if (activo) {
+      document.getElementById('import-review-title').textContent = '2. Revisa las partidas BC3 detectadas';
+      document.getElementById('import-review-hint').textContent = 'Se han detectado capítulos y partidas del .bc3. Se conservarán código, unidad, precio, descripción larga y mediciones.';
+    }
+  }
+  function setModoTabular() {
+    CotizatStyles.set(document.getElementById('import-header-field'), "display", '');
+    CotizatStyles.set(document.getElementById('tabular-mapping'), "display", '');
+    CotizatStyles.set(document.getElementById('import-preview-table'), "display", '');
+    CotizatStyles.set(document.getElementById('cype-preview'), "display", 'none');
+    CotizatStyles.set(document.getElementById('bc3-preview'), "display", 'none');
+    document.getElementById('cype-summary').classList.add('import-hidden');
+    document.getElementById('bc3-summary').classList.add('import-hidden');
+    var chapterField = document.getElementById('import-cype-chapter-field');
+    if (chapterField) chapterField.classList.add('import-hidden');
+    var bc3ChapterField = document.getElementById('import-bc3-chapter-field');
+    if (bc3ChapterField) bc3ChapterField.classList.add('import-hidden');
+    document.getElementById('import-review-title').textContent = '2. Revisa la detección de columnas';
+    document.getElementById('import-review-hint').textContent = 'El sistema propone una asignación. Solo Partida es obligatoria; ajusta cualquier columna antes de validar.';
   }
   function renderMapeo() {
     var body = document.getElementById('import-mapping-body');
@@ -262,6 +315,37 @@
     });
     document.getElementById('import-preview-count').textContent = '· ' + estado.cypePartidas.length + ' partida(s), ' + totalFilas + ' fila(s) conservadas';
   }
+  function renderPreviewBc3() {
+    var summary = document.getElementById('bc3-summary');
+    var preview = document.getElementById('bc3-preview');
+    summary.replaceChildren(); preview.replaceChildren();
+    var info = document.createElement('div'); info.className = 'cype-partida-summary';
+    var title = document.createElement('strong');
+    title.textContent = 'BC3 detectado · ' + (estado.bc3Capitulos.length || 0) + ' capítulo(s) · ' + (estado.bc3Filas.length || 0) + ' partida(s)';
+    info.appendChild(title);
+    var meta = document.createElement('span');
+    meta.textContent = 'Se respetan capítulos originales y mediciones. Código BC3 se guarda como código externo.';
+    info.appendChild(meta); summary.appendChild(info);
+
+    var table = document.createElement('table'); table.className = 'table';
+    var thead = document.createElement('thead');
+    var hrow = document.createElement('tr');
+    ['Capítulo','Código','Partida','Ud','Cant','Precio'].forEach(function(h){ var th=document.createElement('th'); th.textContent=h; hrow.appendChild(th); });
+    thead.appendChild(hrow); table.appendChild(thead);
+    var tbody = document.createElement('tbody');
+    estado.bc3Filas.slice(0, 20).forEach(function(fila){
+      var tr=document.createElement('tr');
+      var tdCap=document.createElement('td'); tdCap.textContent=fila.capitulo||''; tr.appendChild(tdCap);
+      var tdCod=document.createElement('td'); tdCod.textContent=fila.codigo||''; tr.appendChild(tdCod);
+      var tdNom=document.createElement('td'); tdNom.textContent=fila.nombre||''; tr.appendChild(tdNom);
+      var tdUd=document.createElement('td'); tdUd.textContent=fila.unidad||''; tr.appendChild(tdUd);
+      var tdCant=document.createElement('td'); tdCant.textContent=fila.cantidad||''; tr.appendChild(tdCant);
+      var tdPrec=document.createElement('td'); tdPrec.textContent=fila.precio||''; tr.appendChild(tdPrec);
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody); preview.appendChild(table);
+    document.getElementById('import-preview-count').textContent = '· ' + estado.bc3Filas.length + ' partida(s) BC3 · mostrando 20';
+  }
   function issueLine(issue, type) {
     var div = document.createElement('div');
     div.className = type === 'error' ? 'import-issue error' : 'import-issue warning';
@@ -277,7 +361,7 @@
       summary.className = 'import-summary error'; validationCard.classList.remove('import-hidden'); return;
     }
     var errors = data.errores || [], warnings = data.advertencias || [];
-    var etiqueta = esCype() ? 'partida(s) de descompuesto' : 'partida(s)';
+    var etiqueta = esCype() ? 'partida(s) de descompuesto' : esBc3() ? 'partida(s) BC3' : 'partida(s)';
     summary.textContent = data.filas.length + ' ' + etiqueta + ' lista(s) · ' + errors.length + ' error(es) · ' + warnings.length + ' advertencia(s)';
     summary.className = 'import-summary ' + (errors.length ? 'error' : warnings.length ? 'warning' : 'ok');
     errors.forEach(function (issue) { issues.appendChild(issueLine(issue, 'error')); });
@@ -304,9 +388,12 @@
       estado.formato = data.formato || 'tabular';
       estado.importacionId = data.importacion_id || '';
       estado.cypePartidas = data.partidas || [];
+      estado.bc3Filas = data.filas || [];
+      estado.bc3Capitulos = data.capitulos || [];
       estado.encabezados = data.encabezados || []; estado.filas = data.filas || []; estado.mapeo = data.mapeo_sugerido || {}; estado.primeraFila = data.primera_fila || 2;
-      setModoCype(esCype());
-      if (esCype()) renderPreviewCype(); else { renderMapeo(); renderPreviewTabular(); }
+      if (esCype()) { setModoCype(true); renderPreviewCype(); }
+      else if (esBc3()) { setModoBc3(true); renderPreviewBc3(); }
+      else { setModoTabular(); renderMapeo(); renderPreviewTabular(); }
       mappingCard.classList.remove('import-hidden'); destinationCard.classList.remove('import-hidden'); ocultarValidacion();
       mappingCard.scrollIntoView({behavior: 'smooth', block: 'start'});
     } catch (error) { mostrarError('No se pudo conectar con el analizador. Inténtalo otra vez.'); }
@@ -318,9 +405,11 @@
   var importClient = document.getElementById('import-client');
   var importTitle = document.getElementById('import-title');
   var importChapter = document.getElementById('import-cype-chapter');
+  var importBc3Chapter = document.getElementById('import-bc3-chapter');
   if (importClient) importClient.addEventListener('change', ocultarValidacion);
   if (importTitle) importTitle.addEventListener('input', ocultarValidacion);
   if (importChapter) importChapter.addEventListener('input', ocultarValidacion);
+  if (importBc3Chapter) importBc3Chapter.addEventListener('input', ocultarValidacion);
   actualizarDestino();
 
   confirmBtn.addEventListener('click', async function () {

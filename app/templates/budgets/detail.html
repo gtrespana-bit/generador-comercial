@@ -17,6 +17,7 @@
     {% endif %}
     {% if cambios_reenvio and cambios_reenvio.hay_cambios %}<a class="btn btn-secondary" href="#cambios-reenvio">🔁 Reenviar actualización</a>{% endif %}
     <a class="btn" href="/presupuestos/{{ p.id }}/pdf" download="presupuesto_{{ p.numero }}.pdf" data-cotizat-click="download-pdf">⬇ PDF</a>
+    <a class="btn" href="/presupuestos/{{ p.id }}/planos" title="Medición manual sobre planos">📐 Planos</a>
     <a class="btn" href="/presupuestos/{{ p.id }}/editar">✏️ Editar</a>
     <a class="btn" href="/presupuestos/{{ p.id }}/tiempos" title="Planificación de horas, cuadrillas y duración de obra">⏱ Planificación</a>
     <details class="actions-more">
@@ -28,6 +29,7 @@
         <a class="btn" href="/presupuestos/{{ p.id }}/pdf?inline=1" target="_blank">👁 Ver PDF</a>
         <button class="btn" type="button" data-cotizat-click="print-pdf" data-url="/presupuestos/{{ p.id }}/pdf?inline=1" title="Imprimir presupuesto en formato PDF">🖨️ Imprimir</button>
         <a class="btn" href="/presupuestos/{{ p.id }}/exportar" title="Descargar CSV con el detalle tabular">📥 CSV</a>
+        <a class="btn" href="/presupuestos/{{ p.id }}/exportar?formato=bc3" title="Exportar a BC3 (FIEBDC-3) básico para Presto/Arquímedes">📤 BC3</a>
         <a class="btn" href="/presupuestos/nuevo" title="Crear otro presupuesto">+ Nuevo</a>
         {% if p.estado == 'aprobado' %}
         <form method="post" action="/presupuestos/{{ p.id }}/proyecto"><button class="btn" type="submit" title="Crear obra y control financiero">🏗️ Convertir en proyecto</button></form>

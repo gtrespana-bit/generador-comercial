@@ -142,10 +142,10 @@ CUERPO_PAIS: dict[str, list[tuple[str, list[str]]]] = {
             ],
         ),
         (
-            "Del visado a la obra, sin BC3 ni visor BIM",
+            "Del visado a la obra, con BC3 y medición sobre planos",
             [
                 "El cliente no entra a ninguna plataforma. Tú mides, armas el presupuesto por capítulos, revisas margen y horas de cuadrilla, y mandas el PDF por WhatsApp o email. Si el cliente cambia el solado, editas, se crea una versión y reenvías con el resumen de qué cambió.",
-                "CotizaT no exporta BC3 (FIEBDC-3) ni lee planos. Si trabajas licitación pública que exige BC3, este no es tu software; si haces reforma residencial y comercial, el flujo es el que ya usas.",
+                "CotizaT importa BC3 (FIEBDC-3) de arquitectos y bases como BCCA Andalucía o Extremadura: capítulos, partidas, mediciones y precios. También mide sobre planos en modo manual asistido —subes PNG/JPG/PDF, calibras escala y sacas líneas, áreas y conteos sin IA ni coste por uso. Si trabajas licitación pública que exige exportar BC3 con certificaciones y residuos, aún no es tu software; si haces reforma residencial y comercial que recibe BC3 del arquitecto, el flujo es el que ya usas.",
             ],
         ),
         (
@@ -272,7 +272,7 @@ GUIAS: dict[str, dict] = {
             (
                 "Qué no cubre este APU",
                 [
-                    "No calcula AIU de contrato estatal colombiano, no exporta BC3/FIEBDC y no lee planos. El APU de CotizaT es el de la obra privada: recursos, rendimientos y precio de venta que tú decides.",
+                    "No calcula AIU de contrato estatal colombiano y no exporta BC3/FIEBDC con certificaciones. Sí importa BC3 de arquitectos y sí mide sobre planos en modo manual asistido (sin IA). El APU de CotizaT es el de la obra privada: recursos, rendimientos y precio de venta que tú decides.",
                 ],
             ),
         ],

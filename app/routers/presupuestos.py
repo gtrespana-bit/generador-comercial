@@ -257,6 +257,8 @@ def _datos_importacion_desde_payload(payload, db: Session):
         raise ErrorImportacion("Los datos de importación no son válidos.")
     if payload.get("formato") == "cype_descompuesto":
         return _datos_cype_desde_payload(payload, db)
+    if payload.get("formato") == "bc3":
+        return _datos_bc3_desde_payload(payload, db)
     filas = payload.get("filas", [])
     if not isinstance(filas, list) or len(filas) > MAX_FILAS:
         raise ErrorImportacion(f"La importación debe contener entre 1 y {MAX_FILAS} filas.")
@@ -270,6 +272,89 @@ def _datos_importacion_desde_payload(payload, db: Session):
         primera_fila=max(1, int(_f(payload.get("primera_fila"), 2))),
     )
     return resultado, destino
+
+
+def _anexar_filas_bc3(
+    presupuesto: Presupuesto,
+    filas: list[dict],
+    items_creados: list[PresupuestoItem] | None = None,
+) -> list[dict]:
+    """Convierte partidas BC3 en PresupuestoItem, respetando capítulos y mediciones."""
+    capitulos = {normalizar(cap.nombre): cap for cap in presupuesto.capitulos}
+    orden_capitulo = max((cap.orden or 0 for cap in presupuesto.capitulos), default=0)
+    ordenes_partidas = {
+        cap.id: max((part.orden or 0 for part in cap.partidas), default=0)
+        for cap in presupuesto.capitulos if cap.id
+    }
+    catalogo = []
+    for fila in filas:
+        nombre_capitulo = str(fila.get("capitulo", "PARTIDAS BC3")).strip().upper() or "PARTIDAS BC3"
+        clave_capitulo = normalizar(nombre_capitulo)
+        capitulo = capitulos.get(clave_capitulo)
+        if capitulo is None:
+            orden_capitulo += 1
+            capitulo = Capitulo(nombre=nombre_capitulo, orden=orden_capitulo)
+            presupuesto.capitulos.append(capitulo)
+            capitulos[clave_capitulo] = capitulo
+        clave_orden = capitulo.id if capitulo.id is not None else id(capitulo)
+        if clave_orden not in ordenes_partidas:
+            ordenes_partidas[clave_orden] = max((part.orden or 0 for part in capitulo.partidas), default=0)
+        ordenes_partidas[clave_orden] += 1
+
+        costes = fila.get("costes") if isinstance(fila.get("costes"), dict) else {}
+        coste_materiales = max(0.0, _f(costes.get("materiales"), 0))
+        coste_mano_obra = max(0.0, _f(costes.get("mano_obra"), 0))
+        coste_complementarios = max(0.0, _f(costes.get("complementarios"), 0))
+        coste_otros = max(0.0, _f(costes.get("otros"), 0))
+
+        item = PresupuestoItem(
+            codigo_externo=str(fila.get("codigo", "")).strip(),
+            nombre=str(fila.get("nombre", "")).strip(),
+            descripcion=str(fila.get("descripcion", "")).strip(),
+            unidad=str(fila.get("unidad", "ud")).strip() or "ud",
+            cantidad=max(0.0, _f(fila.get("cantidad"), 1.0)),
+            precio_unitario=max(0.0, _f(fila.get("precio"), 0)),
+            moneda=presupuesto.moneda or "USD",
+            orden=ordenes_partidas[clave_orden],
+            coste_materiales=coste_materiales,
+            coste_mano_obra=coste_mano_obra,
+            coste_complementarios=coste_complementarios,
+            coste_otros=coste_otros,
+            desperdicio_pct=0.0,
+            tipo_partida="included",
+            seleccionada=True,
+        )
+        # Mediciones BC3 -> Medicion
+        for idx, med in enumerate(fila.get("mediciones", []) or []):
+            if not isinstance(med, dict):
+                continue
+            concepto = str(med.get("concepto", "")).strip()[:250]
+            cant = _f(med.get("cantidad"), 0)
+            if cant != 0 or concepto:
+                item.mediciones.append(Medicion(concepto=concepto, cantidad=cant, orden=idx + 1))
+
+        capitulo.partidas.append(item)
+        if items_creados is not None:
+            items_creados.append(item)
+
+        catalogo.append({
+            "capitulo": capitulo.nombre,
+            "nombre": item.nombre,
+            "descripcion": item.descripcion,
+            "unidad": item.unidad,
+            "cantidad": item.cantidad,
+            "precio": item.precio_unitario,
+            "categoria": fila.get("categoria", "BC3"),
+            "tipo_partida": "included",
+            "codigo": item.codigo_externo,
+            "coste_materiales": coste_materiales,
+            "coste_mano_obra": coste_mano_obra,
+            "coste_complementarios": coste_complementarios,
+            "coste_otros": coste_otros,
+            "desperdicio_pct": 0.0,
+            "coste_directo_unitario": _f(fila.get("coste_directo_unitario"), item.precio_unitario),
+        })
+    return catalogo
 
 
 def _anexar_filas_importadas(presupuesto: Presupuesto, filas: list[dict]) -> list[PresupuestoItem]:
@@ -455,13 +540,28 @@ def _partida_importada_para_editor(
     Se usa tanto al importar sobre un presupuesto ya guardado (``item`` tiene
     id) como al trabajar en uno nuevo: en este último caso la partida queda en
     el editor y en el catálogo, y se guarda en el presupuesto con el botón
-    habitual, conservando también los metadatos CYPE.
+    habitual, conservando también los metadatos CYPE o BC3.
     """
     es_cype = formato == "cype_descompuesto"
+    es_bc3 = formato == "bc3"
     costes = fila.get("costes") if isinstance(fila.get("costes"), dict) else {}
     tipo = str(fila.get("tipo_partida", "included") or "included")
     if item is not None:
         tipo = item.tipo_partida or tipo
+
+    # Mediciones: para BC3 vienen en la fila, para presupuesto existente en item
+    mediciones_editor = []
+    if item is not None and getattr(item, "mediciones", None):
+        mediciones_editor = [
+            {"concepto": m.concepto, "cantidad": m.cantidad}
+            for m in item.mediciones
+        ]
+    elif isinstance(fila.get("mediciones"), list):
+        mediciones_editor = [
+            {"concepto": str(m.get("concepto", ""))[:250], "cantidad": _f(m.get("cantidad"), 0)}
+            for m in fila.get("mediciones", [])
+            if isinstance(m, dict)
+        ]
 
     datos = {
         "partida_id": item.id if item is not None and item.id is not None else "",
@@ -476,10 +576,10 @@ def _partida_importada_para_editor(
         "unidad": item.unidad if item is not None else str(fila.get("unidad", "ud") or "ud"),
         "precio": item.precio_unitario if item is not None else max(
             0.0,
-            _f(fila.get("coste_directo_unitario") if es_cype else fila.get("precio"), 0),
+            _f(fila.get("coste_directo_unitario") if (es_cype or es_bc3) else fila.get("precio"), 0),
         ),
         "cantidad": item.cantidad if item is not None else (1.0 if es_cype else _f(fila.get("cantidad"), 1.0)),
-        "categoria": str(fila.get("categoria", "")).strip() or ("CYPE" if es_cype else "General"),
+        "categoria": str(fila.get("categoria", "")).strip() or ("CYPE" if es_cype else "BC3" if es_bc3 else "General"),
         "tipo_partida": tipo,
         "seleccionada": (
             bool(item.seleccionada) if item is not None
@@ -498,7 +598,7 @@ def _partida_importada_para_editor(
         "desperdicio_pct": item.desperdicio_pct if item is not None else 0.0,
         "margen_pct": item.margen_pct if item is not None else 0.0,
         "grupo_alternativa": item.grupo_alternativa if item is not None else "",
-        "mediciones": [],
+        "mediciones": mediciones_editor,
         "descomposicion": None,
         "descomposicion_meta": {},
     }
@@ -579,8 +679,12 @@ def _capitulos_importados_para_editor(
     agrupados: dict[str, dict] = {}
     items = items or []
     for indice, fila in enumerate(resultado.get("filas", [])):
-        if formato == "cype_descompuesto":
-            nombre_capitulo = str(resultado.get("capitulo", "PARTIDAS IMPORTADAS"))
+        if formato in ("cype_descompuesto", "bc3"):
+            # CYPE usa capítulo global del resultado, BC3 usa capítulo por fila
+            if formato == "bc3":
+                nombre_capitulo = str(fila.get("capitulo", "PARTIDAS BC3"))
+            else:
+                nombre_capitulo = str(resultado.get("capitulo", "PARTIDAS IMPORTADAS"))
         else:
             nombre_capitulo = str(fila.get("capitulo", "CAPÍTULO GENERAL"))
         nombre_capitulo = nombre_capitulo.strip().upper() or "CAPÍTULO GENERAL"
@@ -755,6 +859,121 @@ def importar_presupuesto_form(request: Request, destino: str = "", db: Session =
     })
 
 
+def _guardar_importacion_bc3(
+    nombre_original: str, contenido: bytes, db: Session
+) -> dict:
+    """Guarda .bc3 original y su manifiesto parseado en almacenamiento privado."""
+    token = str(uuid.uuid4())
+    analisis = analizar_bc3(contenido)
+    referencias = []
+    try:
+        guardado_bc3 = save_object(
+            db, contenido, "importaciones", Path(nombre_original or f"{token}.bc3").name,
+            "text/plain",
+            exact_filename=f"{token}.bc3",
+        )
+        referencias.append(guardado_bc3.reference)
+        for fila in analisis.get("filas", []):
+            fila["archivo_origen"] = guardado_bc3.reference
+            fila["nombre_archivo_origen"] = Path(nombre_original or f"{token}.bc3").name
+
+        manifiesto = {
+            "formato": "bc3",
+            "capitulo": analisis.get("capitulo", "PARTIDAS BC3"),
+            "capitulos_detectados": analisis.get("capitulos_detectados", 0),
+            "conceptos_detectados": analisis.get("conceptos_detectados", 0),
+            "filas_detectadas": analisis.get("filas_detectadas", 0),
+            "filas": analisis.get("filas", []),
+            "capitulos": analisis.get("capitulos", []),
+            "version": analisis.get("version", {}),
+        }
+        guardado_json = save_object(
+            db,
+            json.dumps(manifiesto, ensure_ascii=False).encode("utf-8"),
+            "manifiestos-importacion", f"{token}.json", "application/json",
+            exact_filename=f"{token}.json",
+        )
+        referencias.append(guardado_json.reference)
+        db.commit()
+        return {"importacion_id": token, **manifiesto}
+    except (StorageError, ErrorBC3) as exc:
+        for ref in referencias:
+            try:
+                delete_object(db, ref)
+            except StorageError:
+                pass
+        db.rollback()
+        if isinstance(exc, ErrorBC3):
+            raise ErrorImportacion(str(exc)) from exc
+        raise ErrorImportacion("No se pudo guardar la importación BC3.") from exc
+
+
+def _cargar_importacion_bc3(importacion_id: object, db: Session) -> dict:
+    token = str(importacion_id or "").strip()
+    if not _TOKEN_IMPORTACION_RE.fullmatch(token):
+        raise ErrorImportacion("La importación BC3 no es válida o ha caducado.")
+    organizacion_id = int(db.info.get("organizacion_id") or 0)
+    key = f"organizaciones/{organizacion_id}/manifiestos-importacion/{token}.json"
+    metadata = db.query(ArchivoAlmacenado).filter(ArchivoAlmacenado.object_key == key).first()
+    try:
+        if metadata is not None:
+            contenido = read_reference(storage_reference(key)).decode("utf-8")
+        else:
+            contenido = (IMPORTS_DIR / f"{token}.json").read_text(encoding="utf-8")
+        datos = json.loads(contenido)
+    except (OSError, StorageError, UnicodeDecodeError, ValueError) as exc:
+        raise ErrorImportacion("La importación BC3 no está disponible. Vuelve a cargar el archivo.") from exc
+    if datos.get("formato") != "bc3" or not isinstance(datos.get("filas"), list):
+        raise ErrorImportacion("El manifiesto BC3 no es válido.")
+    return datos
+
+
+def _datos_bc3_desde_payload(payload, db: Session):
+    datos = _cargar_importacion_bc3(payload.get("importacion_id"), db)
+    filas = datos.get("filas", [])
+    if not filas:
+        raise ErrorImportacion("No se detectaron partidas BC3 para importar.")
+    if len(filas) > MAX_FILAS:
+        raise ErrorImportacion(f"La importación BC3 contiene más de {MAX_FILAS} partidas.")
+    destino_id = int(_f(payload.get("presupuesto_destino_id"), 0))
+    destino = db.get(Presupuesto, destino_id) if destino_id else None
+    if destino_id and destino is None:
+        raise ErrorImportacion("El presupuesto destino ya no existe.")
+    capitulo_override = str(payload.get("capitulo_bc3", "")).strip().upper()
+    capitulo = capitulo_override or datos.get("capitulo", "PARTIDAS BC3")
+    if len(capitulo) > 200:
+        raise ErrorImportacion("El capítulo de destino no puede superar 200 caracteres.")
+
+    errores = []
+    advertencias = []
+    codigos_vistos = set()
+    for fila in filas:
+        codigo = str(fila.get("codigo", "")).strip()
+        nombre = str(fila.get("nombre") or fila.get("partida", "")).strip()
+        unidad = str(fila.get("unidad", "")).strip()
+        if not codigo or not nombre:
+            errores.append({"fila": 0, "mensaje": f"Partida BC3 sin código o nombre: {codigo or nombre}"})
+        clave = normalizar(codigo)
+        if clave in codigos_vistos:
+            advertencias.append({"fila": 0, "mensaje": f"Código «{codigo}» repetido en BC3; se conservarán ambas."})
+        codigos_vistos.add(clave)
+        try:
+            precio = float(fila.get("precio", 0))
+        except (TypeError, ValueError):
+            precio = -1
+        if precio < 0:
+            errores.append({"fila": 0, "mensaje": f"Precio no válido en «{codigo or nombre}»."})
+
+    return {
+        "mapeo": {},
+        "errores": errores,
+        "advertencias": advertencias + datos.get("advertencias", []),
+        "filas": filas,
+        "capitulo": capitulo,
+        "capitulos": datos.get("capitulos", []),
+    }, destino
+
+
 @router.post("/presupuestos/importar/analizar")
 async def analizar_importacion_presupuesto(
     request: Request, db: Session = Depends(get_db)
@@ -772,9 +991,21 @@ async def analizar_importacion_presupuesto(
             for archivo in archivos_subidos:
                 contenido = await archivo.read()
                 extension = Path(archivo.filename or "").suffix.lower()
-                if extension not in {".csv", ".xlsx"}:
-                    raise ErrorImportacion("Selecciona archivos .csv o .xlsx.")
+                if extension not in {".csv", ".xlsx", ".bc3"}:
+                    raise ErrorImportacion("Selecciona archivos .csv, .xlsx o .bc3.")
                 archivos.append((archivo.filename or "", extension, contenido))
+
+            # BC3: solo uno
+            bc3_archivos = [a for a in archivos if a[1] == ".bc3" or es_formato_bc3(a[2])]
+            if bc3_archivos:
+                if len(archivos) > 1:
+                    raise ErrorImportacion("El formato BC3 solo se puede cargar de uno en uno.")
+                nombre, _, contenido = bc3_archivos[0]
+                # Validar BC3 real
+                if not es_formato_bc3(contenido):
+                    raise ErrorImportacion("El archivo no parece un BC3 válido (faltan registros ~C/~D).")
+                resultado = _guardar_importacion_bc3(nombre, contenido, db)
+                return {"ok": True, **resultado}
 
             # Varios .xlsx CYPE equivalen a varias partidas. Todos se detectan
             # antes de guardarse: nunca se mezcla una importación parcial con
@@ -793,12 +1024,39 @@ async def analizar_importacion_presupuesto(
             else:
                 matriz = leer_xlsx(contenido)
         elif texto.strip():
+            # Detectar si el texto pegado es BC3
+            if "~C|" in texto or "~D|" in texto:
+                try:
+                    resultado = analizar_bc3(texto.encode("utf-8", errors="ignore"))
+                    # Guardar como importación temporal para flujo uniforme
+                    token = str(uuid.uuid4())
+                    manifiesto = {
+                        "formato": "bc3",
+                        "capitulo": resultado.get("capitulo", "PARTIDAS BC3"),
+                        "capitulos_detectados": resultado.get("capitulos_detectados", 0),
+                        "conceptos_detectados": resultado.get("conceptos_detectados", 0),
+                        "filas_detectadas": resultado.get("filas_detectadas", 0),
+                        "filas": resultado.get("filas", []),
+                        "capitulos": resultado.get("capitulos", []),
+                        "version": resultado.get("version", {}),
+                    }
+                    # Guardar solo json manifiesto (no hay binario original)
+                    save_object(
+                        db,
+                        json.dumps(manifiesto, ensure_ascii=False).encode("utf-8"),
+                        "manifiestos-importacion", f"{token}.json", "application/json",
+                        exact_filename=f"{token}.json",
+                    )
+                    db.commit()
+                    return {"ok": True, "importacion_id": token, **manifiesto}
+                except ErrorBC3 as e:
+                    raise ErrorImportacion(str(e)) from e
             matriz = leer_texto(texto)
         else:
-            raise ErrorImportacion("Carga un archivo CSV/XLSX o pega las filas desde Excel.")
+            raise ErrorImportacion("Carga un archivo CSV/XLSX/BC3 o pega las filas desde Excel.")
         resultado = analizar_matriz(matriz, tiene_encabezados)
         return {"ok": True, "formato": "tabular", **resultado, "primera_fila": 2 if tiene_encabezados else 1}
-    except ErrorImportacion as exc:
+    except (ErrorImportacion, ErrorBC3) as exc:
         return {"ok": False, "error": str(exc)}
 
 
@@ -907,6 +1165,12 @@ async def confirmar_importacion_presupuesto(request: Request, db: Session = Depe
             destino,
             resultado["filas"],
             resultado["capitulo"],
+            items_creados=items_importados,
+        )
+    elif formato == "bc3":
+        _anexar_filas_bc3(
+            destino,
+            resultado["filas"],
             items_creados=items_importados,
         )
     else:
@@ -2964,7 +3228,7 @@ def ver_version(presupuesto_id: int, version_id: int, request: Request, db: Sess
 
 @router.get("/presupuestos/{presupuesto_id}/exportar")
 def exportar_presupuesto(presupuesto_id: int, formato: str = "csv", db: Session = Depends(get_db)):
-    """Exportar presupuesto a CSV o Excel con formato profesional."""
+    """Exportar presupuesto a CSV, Excel o BC3 (FIEBDC-3)."""
     p = db.get(Presupuesto, presupuesto_id)
     if p is None:
         return _redirect("/presupuestos", error="Presupuesto no encontrado.")
@@ -2977,6 +3241,19 @@ def exportar_presupuesto(presupuesto_id: int, formato: str = "csv", db: Session 
             media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             headers={"Content-Disposition": f'attachment; filename="presupuesto_{p.numero}.xlsx"'},
         )
+
+    if formato.lower() == "bc3":
+        from ..services.bc3 import exportar_presupuesto_bc3
+        try:
+            contenido = exportar_presupuesto_bc3(p, _config(db))
+            return Response(
+                content=contenido,
+                media_type="text/plain; charset=windows-1252",
+                headers={"Content-Disposition": f'attachment; filename="presupuesto_{p.numero}.bc3"'},
+            )
+        except Exception as exc:
+            log.error("Error exportando BC3 %s: %s", p.numero, exc)
+            return _redirect(f"/presupuestos/{p.id}", error="No se pudo generar el BC3. Revisa capítulos y partidas.")
 
     # CSV por defecto
     def num(v):

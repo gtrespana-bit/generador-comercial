@@ -2573,6 +2573,94 @@ class BorradorPresupuesto(TenantMixin, Base):
     presupuesto = relationship("Presupuesto")
 
 
+class PlanoObra(TenantMixin, Base):
+    """Plano subido para medición manual asistida (imagen o PDF convertido).
+
+    El archivo binario vive en Storage privado (organizaciones/{id}/planos/...),
+    aquí solo se guarda la referencia y los metadatos de escala.
+    """
+
+    __tablename__ = "planos_obra"
+    __table_args__ = (
+        Index("ix_planos_obra_presupuesto", "presupuesto_id"),
+        Index("ix_planos_obra_org_presupuesto", "organizacion_id", "presupuesto_id"),
+    )
+
+    id = Column(Integer, primary_key=True)
+    presupuesto_id = Column(Integer, ForeignKey("presupuestos.id", ondelete="CASCADE"), nullable=False, index=True)
+    nombre = Column(String(250), nullable=False, default="Plano")
+    archivo = Column(String(500), nullable=False, default="")  # storage://...
+    content_type = Column(String(150), nullable=False, default="image/png")
+    ancho_px = Column(Integer, nullable=True)  # dimensiones originales de la imagen
+    alto_px = Column(Integer, nullable=True)
+    # Escala: cuántos píxeles corresponden a 1 metro real. Si NULL, no calibrado.
+    escala_px_por_metro = Column(Float, nullable=True)
+    # Para trazabilidad de la calibración: distancia en px y real
+    calibracion_px = Column(Float, nullable=True)
+    calibracion_real = Column(Float, nullable=True)
+    unidad_calibracion = Column(String(20), default="m")  # m, cm, mm
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    presupuesto = relationship("Presupuesto", backref="planos")
+    mediciones = relationship(
+        "PlanoMedicion",
+        back_populates="plano",
+        cascade="all, delete-orphan",
+        order_by="PlanoMedicion.id",
+    )
+
+    @property
+    def calibrado(self) -> bool:
+        return self.escala_px_por_metro is not None and self.escala_px_por_metro > 0
+
+    @property
+    def factor_m(self) -> float | None:
+        """Convierte px a metros: 1 px = factor_m metros"""
+        if not self.calibrado:
+            return None
+        return 1.0 / float(self.escala_px_por_metro)
+
+
+class PlanoMedicion(TenantMixin, Base):
+    """Medición dibujada sobre un plano: línea, área, conteo o perímetro."""
+
+    __tablename__ = "planos_mediciones"
+    __table_args__ = (
+        Index("ix_planos_mediciones_plano", "plano_id"),
+        Index("ix_planos_mediciones_org_plano", "organizacion_id", "plano_id"),
+        CheckConstraint(
+            "tipo IN ('lineal', 'area', 'perimetro', 'conteo', 'volumen')",
+            name="ck_plano_medicion_tipo_valido",
+        ),
+    )
+
+    id = Column(Integer, primary_key=True)
+    plano_id = Column(Integer, ForeignKey("planos_obra.id", ondelete="CASCADE"), nullable=False, index=True)
+    presupuesto_id = Column(Integer, ForeignKey("presupuestos.id", ondelete="CASCADE"), nullable=True, index=True)
+    tipo = Column(String(20), nullable=False, default="lineal")
+    etiqueta = Column(String(250), default="")
+    # Valor en unidades reales (m, m2, ud). Se recalcula al cambiar escala.
+    valor = Column(Float, default=0.0)
+    unidad = Column(String(20), default="m")  # m, m2, m3, ud
+    # Puntos en coordenadas de imagen: [[x,y], [x,y], ...] JSON
+    puntos_json = Column(Text, default="[]")
+    # Partida destino opcional (para aplicar medición)
+    partida_destino_id = Column(Integer, ForeignKey("presupuesto_items.id", ondelete="SET NULL"), nullable=True)
+    color = Column(String(20), default="#ff0000")
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    plano = relationship("PlanoObra", back_populates="mediciones")
+    partida_destino = relationship("PresupuestoItem")
+
+    def puntos(self) -> list[list[float]]:
+        try:
+            v = json.loads(self.puntos_json or "[]")
+            return v if isinstance(v, list) else []
+        except (TypeError, ValueError):
+            return []
+
+
 class Proyecto(TenantMixin, Base):
     __tablename__ = "proyectos"
     id = Column(Integer, primary_key=True)

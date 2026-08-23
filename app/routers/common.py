@@ -107,6 +107,8 @@ from ..models import (
     PresupuestoItem,
     PresupuestoVersion,
     Proyecto,
+    PlanoObra,
+    PlanoMedicion,
     Usuario,
     CambioAlcance,
     CambioAlcanceItem,
@@ -206,6 +208,12 @@ from ..services.importer import (
     recalcular_descompuesto_cype,
     texto_celda,
     validar_filas,
+)
+from ..services.bc3 import (
+    ErrorBC3,
+    analizar_bc3,
+    bc3_a_filas_cotizat,
+    es_formato_bc3,
 )
 from ..services.instalacion_sqlite import (
     ErrorInstalacion,

@@ -514,9 +514,9 @@
         <span class="excel-drop-icon" aria-hidden="true">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5M8 13h8M8 17h5"/></svg>
         </span>
-        <strong>Selecciona o arrastra tu Excel</strong>
-        <span>Archivos .xlsx o .csv · puedes seleccionar varios descompuestos</span>
-        <input type="file" id="excel-inline-file" multiple accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+        <strong>Selecciona o arrastra tu Excel o BC3</strong>
+        <span>Archivos .xlsx, .csv o .bc3 (FIEBDC-3) · varios descompuestos CYPE permitidos</span>
+        <input type="file" id="excel-inline-file" multiple accept=".csv,.xlsx,.bc3,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
       </label>
       <div id="excel-inline-files" class="excel-selected-files hint">Ningún archivo seleccionado</div>
       <label class="check-line excel-header-check">
@@ -552,6 +552,12 @@
       <div id="excel-inline-cype-chapter" class="field import-hidden">
         <label>Capítulo de destino</label>
         <input type="text" id="excel-inline-chapter" value="PARTIDAS IMPORTADAS" maxlength="200">
+      </div>
+
+      <div id="excel-inline-bc3-chapter" class="field import-hidden">
+        <label>Capítulo BC3 (opcional)</label>
+        <input type="text" id="excel-inline-bc3-chapter-input" value="" maxlength="200" placeholder="Vacío = respeta capítulos del BC3">
+        <p class="hint">Si indicas capítulo, todas las partidas del BC3 irán ahí.</p>
       </div>
 
       <div class="excel-inline-preview" id="excel-inline-preview"></div>
