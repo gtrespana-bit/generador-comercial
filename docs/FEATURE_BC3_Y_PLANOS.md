@@ -1,14 +1,14 @@
-# Feature: Import BC3 y Medición manual sobre planos
+# Feature: Import BC3 y Medición automática sobre planos
 
-Fecha: 2026-08-22
-Rama: arena/01a02bdb-generador-comercial
+Actualizado: 2026-08-23
+Rama: arena/01a030da-generador-comercial
 
 ## Resumen ejecutivo
 
 Se implementan los dos puntos de mayor ROI para España sin cambiar de nicho:
 
 1. **Import BC3 (FIEBDC-3)** - el reformista recibe el .bc3 del arquitecto y lo convierte en presupuesto CotizaT
-2. **Planos manual asistido** - mide sobre PNG/JPG/PDF sin IA ni coste por uso
+2. **Planos con detección geométrica automática** - localiza estancias en PNG/JPG/WEBP, guarda sus áreas y permite corregirlas sin API externa ni coste por uso
 
 Ambos mantienen el posicionamiento honesto: seguimos siendo software de reforma residencial/comercial, no de licitación pública completa.
 
@@ -75,68 +75,74 @@ Aunque la recomendación inicial era solo import, se añade export básico para 
 - 0€ licencia. FIEBDC es estándar abierto.
 - Solo horas dev (40-60h export, 60-80h import) + mantenimiento encoding.
 
-## 2. Planos manual asistido
+## 2. Planos con detección automática y ajuste manual
 
-### Qué hace (sin IA)
-- Subir plano: PNG, JPG, WEBP, PDF (12 MB máx, 20 planos por presupuesto)
-- Si PDF, intenta convertir a PNG con PyMuPDF (opcional). Si no está instalado, guarda PDF y avisa.
-- Calibrar escala: usuario dibuja línea de N px y dice "son 5 m" -> se calcula `escala_px_por_metro`
-- Medir:
-  - Lineal (m): distancia total
-  - Área (m2): Shoelace
-  - Perímetro (m): cierre automático
-  - Conteo (ud): nº puntos
-  - Volumen (m2 placeholder)
-- Guardar medición con puntos JSON, etiqueta, color, valor real
-- Aplicar medición a partida: crea `Medicion` en presupuesto (concepto + cantidad)
+### Flujo principal
+- Sube PNG, JPG o WEBP (12 MB máx., 20 planos por presupuesto).
+- Tras la subida, el navegador abre el plano y lanza automáticamente el análisis geométrico local.
+- El servicio detecta espacios claros cerrados, crea un polígono editable por estancia y lo persiste inmediatamente como `PlanoMedicion` de tipo `area`.
+- La lista, el lienzo y `GET /planos/{id}/datos` recuperan esas mismas geometrías después de recargar o volver otro día.
+- «Repetir análisis» vuelve a procesar el archivo, pero deduplica los candidatos ya guardados mediante solapamiento de sus cajas; no crea copias en cada ejecución.
+- El usuario calibra una distancia conocida para convertir píxeles a metros y m². Las mediciones existentes se recalculan en cascada.
 
-### Modelos
-- `PlanoObra`: presupuesto_id, nombre, archivo (storage://), ancho_px, alto_px, escala_px_por_metro, calibración
-- `PlanoMedicion`: plano_id, tipo, etiqueta, valor, unidad, puntos_json, partida_destino_id, color
+### Cómo funciona el detector
+`app/services/planos.py` implementa visión geométrica determinista con Pillow y biblioteca estándar:
+1. reduce temporalmente la imagen a un máximo de 950 px;
+2. calcula umbral adaptativo Otsu sobre escala de grises;
+3. engrosa tinta para cerrar intersecciones y antialias;
+4. prolonga trazos horizontales y verticales a través de huecos de puerta habituales;
+5. segmenta por componentes conectados los espacios claros que no tocan el borde;
+6. filtra ruido por área, dimensiones, proporción y ocupación;
+7. convierte la envolvente de cada espacio en un polígono simplificado y lo escala a las coordenadas originales.
 
-### Código
-- `app/services/planos.py`: validación, conversión PDF, cálculo geométrico, recalibración en cascada
-- `app/routers/planos.py`:
-  - GET `/presupuestos/{id}/planos` -> template
-  - GET `/planos/{id}/datos` -> JSON plano + mediciones
-  - GET `/planos/{id}/archivo` -> binario privado
-  - POST `/presupuestos/{id}/planos/upload`
-  - POST `/planos/{id}/calibrar`
-  - POST `/planos/{id}/mediciones`
-  - POST `/planos/{id}/mediciones/{mid}/aplicar`
-  - DELETE `/planos/{id}` y mediciones
-- `app/templates/budgets/planos.html`: canvas interactivo
-  - Zoom, reset, calibración, herramientas, lista mediciones, aplicar a partida
-  - Sin dependencias externas, solo canvas 2D
-- `migrations/versions/a1b2c3d4e5f6_add_planos_obra.py`: tablas + RLS
+El proceso no envía planos ni datos a terceros, no usa un modelo generativo y no tiene coste por página. Es una detección de geometría, no una interpretación semántica: las etiquetas iniciales son `Estancia detectada N` y el usuario puede cambiarlas.
 
-### Frontend detalles
-- Click añade punto, clic derecho borra último, doble clic cierra polígono
-- Valor actual en vivo (px o m/m2 según calibrado)
-- Mediciones guardadas dibujadas con color y etiqueta
-- Botón aplicar crea medición en partida destino
+### Ajuste manual y conservación
+- Línea (m), área (m²), perímetro (m) y conteo (ud) siguen disponibles como alternativa y para corregir detecciones.
+- Una medición válida se **autoguarda**: el primer guardado usa `POST` y cada punto, etiqueta o color posterior usa `PUT` sobre el mismo registro.
+- Los primeros puntos todavía incompletos se conservan como borrador en `localStorage`; al recargar se recuperan.
+- Cambiar de herramienta finaliza primero un trazo válido. Un borrador incompleto no se descarta sin confirmación.
+- El doble clic ignora puntos consecutivos prácticamente idénticos, cierra área/perímetro y confirma el guardado.
+- «Editar geometría» carga una medición persistida en el lienzo; sus cambios recalculan valor y unidad en el servidor.
+- Mínimos validados también en servidor: 2 puntos para línea, 3 para área/perímetro/volumen y 1 para conteo.
+- Aplicar una medición a partida crea la `Medicion` correspondiente en el presupuesto.
+
+### Formatos y límites
+- PNG/JPG/WEBP: medibles y analizables directamente.
+- PDF: se convierte a PNG si PyMuPDF está instalado. Sin ese extra, el PDF se conserva y se puede descargar, pero la interfaz pide una versión PNG/JPG para analizar y medir con fiabilidad.
+- Máximo de 30 candidatos por análisis y 500 mediciones por plano.
+- El algoritmo favorece plantas con paredes contrastadas y principalmente horizontales/verticales. Planos borrosos, perspectivas, muros diagonales o recintos realmente abiertos pueden requerir corrección manual.
+
+### Modelos y endpoints
+- `PlanoObra`: presupuesto, archivo privado, dimensiones y calibración.
+- `PlanoMedicion`: tipo, etiqueta, valor, unidad, geometría JSON, partida destino y color.
+- No ha sido necesaria una migración nueva: las detecciones reutilizan el modelo persistente existente.
+- `POST /planos/{id}/detectar`: analiza, deduplica y guarda candidatos.
+- `POST /planos/{id}/mediciones`: crea el primer estado válido de un trazo.
+- `PUT /planos/{id}/mediciones/{mid}`: actualiza geometría y recalcula el valor.
+- `GET /planos/{id}/datos`: devuelve plano y todas las mediciones persistidas.
+- Se mantienen calibración, aplicación a partida, renombrado, borrado y exportaciones CSV/DXF/PNG/PDF.
 
 ### Tests
-- `tests/test_planos.py`: 4 tests de cálculo geométrico
+`tests/test_planos.py` cubre 17 escenarios, entre ellos detección con huecos de puerta, análisis HTTP, deduplicación, persistencia tras recarga, creación/actualización geométrica, rechazo de polígonos incompletos y exportaciones.
 
 ### Coste
-- 0€ recurrente. Sin IA, sin API externa.
-- Opcional: PyMuPDF para convertir PDF a imagen (`pip install PyMuPDF`), si no, frontend muestra aviso y pide PNG/JPG.
-- Si en futuro se quiere IA automática, coste sería ~0.02-0.08€/página con vision model.
+- 0 € recurrente: Pillow ya forma parte de las dependencias y no se llama a ninguna API de visión.
+- PyMuPDF continúa siendo opcional para convertir PDFs a imagen.
 
 ## SEO / Copy
 
 Actualizado `app/seo_contenido.py` ES:
 - Antes: "CotizaT no exporta BC3 ni lee planos..."
-- Ahora: "CotizaT importa BC3 de arquitectos y bases como BCCA... También mide sobre planos en modo manual asistido... Si trabajas licitación pública que exige exportar BC3 con certificaciones y residuos, aún no es tu software; si haces reforma que recibe BC3 del arquitecto, el flujo es el que ya usas."
+- Ahora: "CotizaT importa BC3 de arquitectos y bases como BCCA... También detecta estancias y guarda mediciones editables sobre planos, sin enviar el archivo a una API externa... Si trabajas licitación pública que exige exportar BC3 con certificaciones y residuos, aún no es tu software; si haces reforma que recibe BC3 del arquitecto, el flujo es el que ya usas."
 
 Mantiene honestidad y convierte mejor.
 
 ## Por dónde empezar (recomendación implementada)
 
 1. BC3 import (ya hecho): permite al reformista decir "sí, traé el BC3 del arquitecto"
-2. Planos manual (ya hecho): diferenciador barato, sin coste IA
-3. Próximo: pulir UX de planos (snap, ortogonal, export DXF) y si hay demanda España, mejorar export BC3 con descomposición completa y luego certificaciones.
+2. Planos con detección geométrica, autoguardado y ajuste manual (ya hecho): diferenciador sin coste por página.
+3. Próximo: validar el detector con planos reales variados y, si hay demanda, mejorar export BC3 con descomposición completa y luego certificaciones.
 
 ## Checklist operación
 
@@ -194,4 +200,4 @@ python -m pytest tests/test_planos.py -v
 - `_ALLOWED_CATEGORIES` de `app/storage.py` no incluía `planos`: toda subida fallaba con «No se pudo guardar el plano». Corregido y cubierto con test de subida real.
 
 ### Tests
-- `tests/test_planos.py`: 13 pruebas (geometría, visor, deep-link, CSV, DXF, renombrado, anexo PDF).
+- La cobertura original de 13 pruebas (geometría, visor, deep-link, CSV, DXF, renombrado y anexo PDF) se amplía a 17 con detector automático, deduplicación, persistencia, `POST`/`PUT` y validación de geometrías incompletas.

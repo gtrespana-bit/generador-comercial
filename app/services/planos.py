@@ -1,12 +1,9 @@
-"""Gestión de planos y mediciones manuales sobre planos.
+"""Detección geométrica, calibración y mediciones editables sobre planos.
 
-El flujo es:
-1. Usuario sube imagen (PNG/JPG/WEBP) o PDF (se convierte a primera página como imagen)
-2. Se guarda en storage privado organizaciones/{org}/planos/{presupuesto}/{id}.ext
-3. Usuario calibra escala: dibuja línea de N px que corresponde a X metros
-4. Mide líneas, áreas, conteos. Cada medición se guarda con puntos en px y valor real.
-
-No hay IA: es medición asistida manual, sin coste por uso.
+El flujo principal analiza localmente PNG/JPG/WEBP, crea áreas candidatas y las
+persiste como geometrías ordinarias. El usuario puede calibrarlas, editarlas o
+añadir líneas, perímetros y conteos manuales. No se envían planos a servicios de
+visión externos y no hay coste por uso.
 """
 
 from __future__ import annotations
@@ -14,6 +11,7 @@ from __future__ import annotations
 import io
 import json
 import math
+from collections import deque
 from pathlib import Path
 from typing import Any
 
@@ -155,6 +153,354 @@ def calcular_valor_real(tipo: str, puntos: list[list[float]], escala_px_por_m: f
     return 0.0, "m"
 
 
+# --------------------------------------------------------------------------- #
+# Detección automática local de estancias
+# --------------------------------------------------------------------------- #
+
+def _umbral_otsu(histograma: list[int], total: int) -> int:
+    """Umbral de tinta adaptativo sin depender de OpenCV ni de servicios externos."""
+    suma_total = sum(i * n for i, n in enumerate(histograma))
+    peso_fondo = 0
+    suma_fondo = 0.0
+    mejor_varianza = -1.0
+    mejor = 128
+    for nivel, cantidad in enumerate(histograma):
+        peso_fondo += cantidad
+        if peso_fondo == 0:
+            continue
+        peso_frente = total - peso_fondo
+        if peso_frente <= 0:
+            break
+        suma_fondo += nivel * cantidad
+        media_fondo = suma_fondo / peso_fondo
+        media_frente = (suma_total - suma_fondo) / peso_frente
+        varianza = peso_fondo * peso_frente * (media_fondo - media_frente) ** 2
+        if varianza > mejor_varianza:
+            mejor_varianza = varianza
+            mejor = nivel
+    # Los planos suelen tener fondo blanco y tinta negra/gris. El margen recoge
+    # el antialias de las líneas sin convertir sombras claras en paredes.
+    return max(45, min(215, mejor + 18))
+
+
+def _runs_tinta(valores: list[int], max_hueco: int, largo_minimo: int) -> list[tuple[int, int]]:
+    """Une tramos de tinta alineados, cerrando huecos típicos de puertas."""
+    runs: list[tuple[int, int, int]] = []
+    inicio = None
+    for i, valor in enumerate(valores):
+        if valor:
+            if inicio is None:
+                inicio = i
+        elif inicio is not None:
+            runs.append((inicio, i - 1, i - inicio))
+            inicio = None
+    if inicio is not None:
+        runs.append((inicio, len(valores) - 1, len(valores) - inicio))
+    if not runs:
+        return []
+
+    unidos: list[tuple[int, int, int]] = [runs[0]]
+    for inicio, fin, tinta in runs[1:]:
+        anterior_i, anterior_f, anterior_tinta = unidos[-1]
+        hueco = inicio - anterior_f - 1
+        # Solo se puentea cuando los trazos a ambos lados tienen entidad. Así
+        # no se convierte cada palabra del plano en una pared artificial.
+        lados_utiles = anterior_tinta >= 3 and tinta >= 3
+        if hueco <= max_hueco and lados_utiles:
+            unidos[-1] = (anterior_i, fin, anterior_tinta + tinta)
+        else:
+            unidos.append((inicio, fin, tinta))
+
+    salida = []
+    for inicio, fin, tinta in unidos:
+        largo = fin - inicio + 1
+        densidad = tinta / max(1, largo)
+        if largo >= largo_minimo and densidad >= 0.18:
+            salida.append((inicio, fin))
+    return salida
+
+
+def _rdp(puntos: list[list[float]], epsilon: float) -> list[list[float]]:
+    """Simplificación Ramer-Douglas-Peucker de un trazado abierto."""
+    if len(puntos) <= 2:
+        return puntos
+    x1, y1 = puntos[0]
+    x2, y2 = puntos[-1]
+    dx, dy = x2 - x1, y2 - y1
+    largo = math.hypot(dx, dy)
+    maxima = -1.0
+    indice = 0
+    for i, (x, y) in enumerate(puntos[1:-1], 1):
+        if largo <= 1e-9:
+            distancia = math.hypot(x - x1, y - y1)
+        else:
+            distancia = abs(dy * x - dx * y + x2 * y1 - y2 * x1) / largo
+        if distancia > maxima:
+            maxima = distancia
+            indice = i
+    if maxima > epsilon:
+        izquierda = _rdp(puntos[: indice + 1], epsilon)
+        derecha = _rdp(puntos[indice:], epsilon)
+        return izquierda[:-1] + derecha
+    return [puntos[0], puntos[-1]]
+
+
+def _poligono_desde_filas(
+    filas: dict[int, tuple[int, int]],
+    factor_x: float,
+    factor_y: float,
+    ancho_original: int,
+    alto_original: int,
+) -> list[list[float]]:
+    """Convierte la envolvente por filas de una estancia en un polígono editable."""
+    ys = sorted(filas)
+    if len(ys) < 2:
+        return []
+    izquierda = [[float(filas[y][0]), float(y)] for y in ys]
+    derecha = [[float(filas[y][1] + 1), float(y)] for y in reversed(ys)]
+    trazado = izquierda + derecha
+    epsilon = max(1.5, min(len(ys) / 80.0, 6.0))
+    simplificado = _rdp(trazado, epsilon)
+    while len(simplificado) > 80:
+        epsilon *= 1.35
+        simplificado = _rdp(trazado, epsilon)
+
+    resultado: list[list[float]] = []
+    for x, y in simplificado:
+        punto = [
+            round(min(ancho_original, max(0.0, x * factor_x)), 2),
+            round(min(alto_original, max(0.0, y * factor_y)), 2),
+        ]
+        if not resultado or distancia_entre_puntos(resultado[-1], punto) > 0.5:
+            resultado.append(punto)
+    return resultado
+
+
+def distancia_entre_puntos(a: list[float], b: list[float]) -> float:
+    return math.hypot(float(a[0]) - float(b[0]), float(a[1]) - float(b[1]))
+
+
+def detectar_espacios_plano(
+    contenido: bytes,
+    content_type: str = "",
+    max_espacios: int = 30,
+) -> list[dict[str, Any]]:
+    """Detecta recintos cerrados de una planta y devuelve polígonos candidatos.
+
+    Es visión geométrica local y determinista: binariza el plano, prolonga
+    paredes horizontales/verticales a través de huecos de puerta y busca las
+    regiones claras que no alcanzan el borde exterior. No envía el archivo a
+    una IA ni promete interpretar la semántica de cada habitación.
+    """
+    if content_type and not content_type.lower().startswith("image/"):
+        raise ErrorPlano("La detección automática requiere un plano PNG, JPG o WEBP.")
+    max_espacios = max(1, min(int(max_espacios), 30))
+    try:
+        from PIL import Image, ImageFilter
+
+        with Image.open(io.BytesIO(contenido)) as original:
+            original.load()
+            gris = original.convert("L")
+            ancho_original, alto_original = gris.size
+    except Exception as exc:
+        raise ErrorPlano("No se pudo analizar la imagen del plano.") from exc
+
+    if ancho_original < 80 or alto_original < 80:
+        raise ErrorPlano("El plano es demasiado pequeño para detectar estancias.")
+
+    max_dimension = 950
+    escala_reduccion = min(1.0, max_dimension / max(ancho_original, alto_original))
+    ancho = max(1, round(ancho_original * escala_reduccion))
+    alto = max(1, round(alto_original * escala_reduccion))
+    if (ancho, alto) != (ancho_original, alto_original):
+        gris = gris.resize((ancho, alto), Image.Resampling.LANCZOS)
+
+    histograma = gris.histogram()
+    umbral = _umbral_otsu(histograma, ancho * alto)
+    # 255 representa tinta/barrera; 0 representa espacio transitable.
+    tinta_img = gris.point(lambda p: 255 if p <= umbral else 0, mode="L")
+    tinta = [1 if valor else 0 for valor in tinta_img.tobytes()]
+
+    # Engrosado mínimo para cerrar el antialias y las intersecciones de muros.
+    barrera_img = tinta_img.filter(ImageFilter.MaxFilter(3))
+    barrera = bytearray(1 if valor else 0 for valor in barrera_img.tobytes())
+
+    dimension_menor = min(ancho, alto)
+    max_hueco = max(6, min(55, round(dimension_menor * 0.06)))
+    largo_minimo = max(18, round(dimension_menor * 0.075))
+    grosor = max(1, min(3, round(dimension_menor / 420)))
+
+    # Paredes horizontales. Se prolongan los dos bordes alineados de una puerta
+    # para que la estancia quede cerrada durante la segmentación.
+    for y in range(alto):
+        fila = tinta[y * ancho : (y + 1) * ancho]
+        for x0, x1 in _runs_tinta(fila, max_hueco, largo_minimo):
+            for yy in range(max(0, y - grosor), min(alto, y + grosor + 1)):
+                inicio = yy * ancho + x0
+                barrera[inicio : yy * ancho + x1 + 1] = b"\x01" * (x1 - x0 + 1)
+
+    # Paredes verticales.
+    for x in range(ancho):
+        columna = [tinta[y * ancho + x] for y in range(alto)]
+        for y0, y1 in _runs_tinta(columna, max_hueco, largo_minimo):
+            for xx in range(max(0, x - grosor), min(ancho, x + grosor + 1)):
+                for y in range(y0, y1 + 1):
+                    barrera[y * ancho + xx] = 1
+
+    visitado = bytearray(ancho * alto)
+    area_minima = max(300, round(ancho * alto * 0.0025))
+    area_maxima = round(ancho * alto * 0.78)
+    candidatos: list[dict[str, Any]] = []
+
+    for origen in range(ancho * alto):
+        if visitado[origen] or barrera[origen]:
+            continue
+        cola = deque([origen])
+        visitado[origen] = 1
+        area = 0
+        toca_borde = False
+        min_x = ancho
+        max_x = 0
+        min_y = alto
+        max_y = 0
+        filas: dict[int, tuple[int, int]] = {}
+
+        while cola:
+            indice = cola.popleft()
+            y, x = divmod(indice, ancho)
+            area += 1
+            min_x = min(min_x, x)
+            max_x = max(max_x, x)
+            min_y = min(min_y, y)
+            max_y = max(max_y, y)
+            previo = filas.get(y)
+            filas[y] = (x, x) if previo is None else (min(previo[0], x), max(previo[1], x))
+            if x == 0 or y == 0 or x == ancho - 1 or y == alto - 1:
+                toca_borde = True
+
+            if x > 0:
+                vecino = indice - 1
+                if not visitado[vecino] and not barrera[vecino]:
+                    visitado[vecino] = 1
+                    cola.append(vecino)
+            if x + 1 < ancho:
+                vecino = indice + 1
+                if not visitado[vecino] and not barrera[vecino]:
+                    visitado[vecino] = 1
+                    cola.append(vecino)
+            if y > 0:
+                vecino = indice - ancho
+                if not visitado[vecino] and not barrera[vecino]:
+                    visitado[vecino] = 1
+                    cola.append(vecino)
+            if y + 1 < alto:
+                vecino = indice + ancho
+                if not visitado[vecino] and not barrera[vecino]:
+                    visitado[vecino] = 1
+                    cola.append(vecino)
+
+        bbox_area = max(1, (max_x - min_x + 1) * (max_y - min_y + 1))
+        ocupacion = area / bbox_area
+        anchura = max_x - min_x + 1
+        altura = max_y - min_y + 1
+        proporcion = max(anchura / max(1, altura), altura / max(1, anchura))
+        if (
+            toca_borde
+            or area < area_minima
+            or area > area_maxima
+            or anchura < dimension_menor * 0.035
+            or altura < dimension_menor * 0.035
+            or proporcion > 12
+            or ocupacion < 0.24
+        ):
+            continue
+
+        puntos = _poligono_desde_filas(
+            filas,
+            ancho_original / ancho,
+            alto_original / alto,
+            ancho_original,
+            alto_original,
+        )
+        if len(puntos) < 3:
+            continue
+        confianza = min(0.97, 0.56 + min(0.25, ocupacion * 0.25) + min(0.12, area / (ancho * alto)))
+        candidatos.append({
+            "tipo": "area",
+            "puntos": puntos,
+            "confianza": round(confianza, 2),
+            "area_px2": round(_area_px(puntos), 2),
+            "bbox": [
+                round(min_x * ancho_original / ancho, 2),
+                round(min_y * alto_original / alto, 2),
+                round((max_x + 1) * ancho_original / ancho, 2),
+                round((max_y + 1) * alto_original / alto, 2),
+            ],
+        })
+
+    # Primero los recintos grandes; se evita devolver ruido y se da un nombre
+    # estable que el usuario puede cambiar desde la lista.
+    candidatos.sort(key=lambda c: c["area_px2"], reverse=True)
+    for numero, candidato in enumerate(candidatos[:max_espacios], 1):
+        candidato["etiqueta"] = f"Estancia detectada {numero}"
+    return candidatos[:max_espacios]
+
+
+def _bbox_puntos(puntos: list[list[float]]) -> tuple[float, float, float, float]:
+    xs = [float(p[0]) for p in puntos]
+    ys = [float(p[1]) for p in puntos]
+    return min(xs), min(ys), max(xs), max(ys)
+
+
+def _solapamiento_bbox(a: list[list[float]], b: list[list[float]]) -> float:
+    if not a or not b:
+        return 0.0
+    ax0, ay0, ax1, ay1 = _bbox_puntos(a)
+    bx0, by0, bx1, by1 = _bbox_puntos(b)
+    inter = max(0.0, min(ax1, bx1) - max(ax0, bx0)) * max(0.0, min(ay1, by1) - max(ay0, by0))
+    area_a = max(1.0, (ax1 - ax0) * (ay1 - ay0))
+    area_b = max(1.0, (bx1 - bx0) * (by1 - by0))
+    return inter / max(1.0, area_a + area_b - inter)
+
+
+def guardar_detecciones_automaticas(
+    db: Session,
+    plano: PlanoObra,
+    candidatos: list[dict[str, Any]],
+) -> tuple[list[PlanoMedicion], int]:
+    """Persiste candidatos nuevos y evita duplicarlos al volver a analizar."""
+    existentes = list(plano.mediciones)
+    creadas: list[PlanoMedicion] = []
+    omitidas = 0
+    colores = ("#2563eb", "#16a34a", "#9333ea", "#ea580c", "#0891b2", "#db2777")
+    for candidato in candidatos:
+        puntos = candidato.get("puntos") or []
+        duplicada = any(
+            med.tipo in ("area", "perimetro")
+            and _solapamiento_bbox(med.puntos(), puntos) >= 0.78
+            for med in existentes
+        )
+        if duplicada:
+            omitidas += 1
+            continue
+        med = crear_medicion(
+            db,
+            plano,
+            "area",
+            str(candidato.get("etiqueta") or f"Estancia detectada {len(creadas) + 1}"),
+            puntos,
+            colores[len(creadas) % len(colores)],
+            confirmar=False,
+        )
+        creadas.append(med)
+        existentes.append(med)
+    if creadas:
+        db.commit()
+        for med in creadas:
+            db.refresh(med)
+    return creadas, omitidas
+
+
 def crear_plano(
     db: Session,
     presupuesto_id: int,
@@ -259,6 +605,51 @@ def calibrar_plano(
     return plano
 
 
+TIPOS_MEDICION = ("lineal", "area", "perimetro", "conteo", "volumen")
+MIN_PUNTOS_MEDICION = {
+    "lineal": 2,
+    "area": 3,
+    "perimetro": 3,
+    "conteo": 1,
+    "volumen": 3,
+}
+
+
+def _limpiar_puntos_medicion(tipo: str, puntos: list[list[float]]) -> list[list[float]]:
+    if not isinstance(puntos, list):
+        raise ErrorPlano("Los puntos de la medición no son válidos.")
+    if len(puntos) > 100:
+        raise ErrorPlano("Demasiados puntos (máx. 100).")
+    puntos_limpios = []
+    for punto in puntos:
+        if not isinstance(punto, (list, tuple)) or len(punto) < 2:
+            continue
+        try:
+            x, y = float(punto[0]), float(punto[1])
+        except (TypeError, ValueError):
+            continue
+        if math.isfinite(x) and math.isfinite(y):
+            puntos_limpios.append([x, y])
+    minimo = MIN_PUNTOS_MEDICION[tipo]
+    if len(puntos_limpios) < minimo:
+        nombres = {"lineal": "línea", "area": "área", "perimetro": "perímetro", "conteo": "conteo", "volumen": "volumen"}
+        raise ErrorPlano(
+            f"La medición de {nombres.get(tipo, tipo)} necesita al menos {minimo} punto(s)."
+        )
+    return puntos_limpios
+
+
+def _color_medicion(color: str) -> str:
+    color = (color or "#ff0000").strip()
+    if len(color) == 7 and color.startswith("#"):
+        try:
+            int(color[1:], 16)
+            return color.lower()
+        except ValueError:
+            pass
+    return "#ff0000"
+
+
 def crear_medicion(
     db: Session,
     plano: PlanoObra,
@@ -267,53 +658,65 @@ def crear_medicion(
     puntos: list[list[float]],
     color: str = "#ff0000",
     partida_destino_id: int | None = None,
+    confirmar: bool = True,
 ) -> PlanoMedicion:
     tipo = (tipo or "lineal").strip().lower()
-    if tipo not in ("lineal", "area", "perimetro", "conteo", "volumen"):
+    if tipo not in TIPOS_MEDICION:
         raise ErrorPlano("Tipo de medición no válido.")
-
-    if len(puntos) == 0:
-        raise ErrorPlano("La medición debe tener puntos.")
-
-    if len(puntos) > 100:
-        raise ErrorPlano("Demasiados puntos (máx 100).")
 
     existentes = db.query(PlanoMedicion).filter(PlanoMedicion.plano_id == plano.id).count()
     if existentes >= MAX_MEDICIONES_POR_PLANO:
         raise ErrorPlano(f"Máximo {MAX_MEDICIONES_POR_PLANO} mediciones por plano.")
 
-    # Validar puntos
-    puntos_limpios = []
-    for p in puntos:
-        if not isinstance(p, (list, tuple)) or len(p) < 2:
-            continue
-        try:
-            x = float(p[0]); y = float(p[1])
-            if not (math.isfinite(x) and math.isfinite(y)):
-                continue
-            puntos_limpios.append([x, y])
-        except (TypeError, ValueError):
-            continue
-
-    if not puntos_limpios:
-        raise ErrorPlano("Puntos no válidos.")
-
+    puntos_limpios = _limpiar_puntos_medicion(tipo, puntos)
     valor, unidad = calcular_valor_real(tipo, puntos_limpios, plano.escala_px_por_metro)
 
     med = PlanoMedicion(
         plano_id=plano.id,
         presupuesto_id=plano.presupuesto_id,
         tipo=tipo,
-        etiqueta=(etiqueta or "")[:250],
+        etiqueta=(etiqueta or "").strip()[:250],
         valor=valor,
         unidad=unidad,
         puntos_json=json.dumps(puntos_limpios, ensure_ascii=False),
         partida_destino_id=partida_destino_id,
-        color=color[:20] if color else "#ff0000",
+        color=_color_medicion(color),
     )
     db.add(med)
-    db.commit()
+    if confirmar:
+        db.commit()
+        db.refresh(med)
+    else:
+        db.flush()
     return med
+
+
+def actualizar_medicion(
+    db: Session,
+    plano: PlanoObra,
+    medicion: PlanoMedicion,
+    tipo: str,
+    etiqueta: str,
+    puntos: list[list[float]],
+    color: str = "#ff0000",
+) -> PlanoMedicion:
+    """Actualiza y confirma en servidor un trazo autoguardado."""
+    if medicion.plano_id != plano.id:
+        raise ErrorPlano("La medición no pertenece a este plano.")
+    tipo = (tipo or medicion.tipo or "lineal").strip().lower()
+    if tipo not in TIPOS_MEDICION:
+        raise ErrorPlano("Tipo de medición no válido.")
+    puntos_limpios = _limpiar_puntos_medicion(tipo, puntos)
+    valor, unidad = calcular_valor_real(tipo, puntos_limpios, plano.escala_px_por_metro)
+    medicion.tipo = tipo
+    medicion.etiqueta = (etiqueta or "").strip()[:250]
+    medicion.puntos_json = json.dumps(puntos_limpios, ensure_ascii=False)
+    medicion.color = _color_medicion(color)
+    medicion.valor = valor
+    medicion.unidad = unidad
+    db.commit()
+    db.refresh(medicion)
+    return medicion
 
 
 def eliminar_plano(db: Session, plano: PlanoObra):

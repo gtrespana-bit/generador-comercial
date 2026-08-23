@@ -1,4 +1,4 @@
-"""Router de planos con medición manual asistida."""
+"""Router de planos con detección automática y mediciones editables."""
 
 from fastapi import APIRouter, Form, Request, UploadFile
 from fastapi.responses import HTMLResponse, JSONResponse, Response
@@ -28,6 +28,9 @@ from ..services.planos import (
     crear_plano,
     calibrar_plano,
     crear_medicion,
+    actualizar_medicion,
+    detectar_espacios_plano,
+    guardar_detecciones_automaticas,
     renombrar_medicion,
     eliminar_plano,
     eliminar_medicion,
@@ -85,6 +88,7 @@ def listar_planos_presupuesto(
     presupuesto_id: int,
     request: Request,
     plano: int = 0,
+    detectar: int = 0,
     db: Session = Depends(get_db),
 ):
     presupuesto = db.get(Presupuesto, presupuesto_id)
@@ -119,10 +123,24 @@ def listar_planos_presupuesto(
             "p": presupuesto,
             "planos": planos,
             "plano_inicial": plano_inicial,
+            "detectar_automaticamente": bool(detectar and plano_inicial),
             "partidas": partidas,
             "cfg": _config(db),
         },
     )
+
+
+def _datos_medicion_plano(medicion: PlanoMedicion) -> dict:
+    return {
+        "id": medicion.id,
+        "tipo": medicion.tipo,
+        "etiqueta": medicion.etiqueta,
+        "valor": medicion.valor,
+        "unidad": medicion.unidad,
+        "puntos": medicion.puntos(),
+        "color": medicion.color,
+        "partida_destino_id": medicion.partida_destino_id,
+    }
 
 
 @router.get("/planos/{plano_id}/datos")
@@ -147,19 +165,35 @@ def datos_plano(plano_id: int, db: Session = Depends(get_db)):
             "unidad_calibracion": plano.unidad_calibracion,
             "calibrado": plano.calibrado,
         },
-        "mediciones": [
-            {
-                "id": m.id,
-                "tipo": m.tipo,
-                "etiqueta": m.etiqueta,
-                "valor": m.valor,
-                "unidad": m.unidad,
-                "puntos": m.puntos(),
-                "color": m.color,
-                "partida_destino_id": m.partida_destino_id,
-            }
-            for m in plano.mediciones
-        ],
+        "mediciones": [_datos_medicion_plano(m) for m in plano.mediciones],
+    }
+
+
+@router.post("/planos/{plano_id}/detectar")
+def detectar_mediciones_plano(plano_id: int, limite: int = 30, db: Session = Depends(get_db)):
+    """Analiza una imagen localmente y guarda sus estancias cerradas como áreas."""
+    plano = db.get(PlanoObra, plano_id)
+    if not plano or not plano.archivo:
+        return JSONResponse({"ok": False, "error": "Plano no encontrado."}, status_code=404)
+    limite = max(1, min(int(limite), 30))
+    try:
+        contenido = read_reference(plano.archivo)
+        candidatos = detectar_espacios_plano(contenido, plano.content_type, max_espacios=limite)
+        mediciones, omitidas = guardar_detecciones_automaticas(db, plano, candidatos)
+    except (ErrorPlano, StorageError) as exc:
+        return JSONResponse({"ok": False, "error": str(exc)}, status_code=400)
+    except Exception:
+        log.exception("Error analizando automáticamente el plano %s", plano_id)
+        return JSONResponse(
+            {"ok": False, "error": "No se pudo analizar automáticamente el plano."},
+            status_code=500,
+        )
+    return {
+        "ok": True,
+        "analizadas": len(candidatos),
+        "nuevas": len(mediciones),
+        "omitidas": omitidas,
+        "mediciones": [_datos_medicion_plano(m) for m in mediciones],
     }
 
 
@@ -197,7 +231,14 @@ async def subir_plano(
     contenido = await archivo.read()
     try:
         plano = crear_plano(db, presupuesto_id, nombre, archivo.filename, contenido)
-        return {"ok": True, "plano_id": plano.id, "url": f"/presupuestos/{presupuesto_id}/planos"}
+        es_imagen = (plano.content_type or "").startswith("image/")
+        query = f"?plano={plano.id}" + ("&detectar=1" if es_imagen else "")
+        return {
+            "ok": True,
+            "plano_id": plano.id,
+            "url": f"/presupuestos/{presupuesto_id}/planos{query}",
+            "deteccion_automatica": es_imagen,
+        }
     except ErrorPlano as e:
         return JSONResponse({"ok": False, "error": str(e)}, status_code=400)
     except Exception as e:
@@ -266,18 +307,37 @@ async def crear_medicion_endpoint(
 
     try:
         med = crear_medicion(db, plano, tipo, etiqueta, puntos, color, pid)
-        return {
-            "ok": True,
-            "medicion": {
-                "id": med.id,
-                "tipo": med.tipo,
-                "etiqueta": med.etiqueta,
-                "valor": med.valor,
-                "unidad": med.unidad,
-                "puntos": med.puntos(),
-                "color": med.color,
-            },
-        }
+        return {"ok": True, "medicion": _datos_medicion_plano(med)}
+    except ErrorPlano as e:
+        return JSONResponse({"ok": False, "error": str(e)}, status_code=400)
+
+
+@router.put("/planos/{plano_id}/mediciones/{medicion_id}")
+async def actualizar_medicion_endpoint(
+    plano_id: int,
+    medicion_id: int,
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    plano = db.get(PlanoObra, plano_id)
+    med = db.get(PlanoMedicion, medicion_id)
+    if not plano or not med or med.plano_id != plano_id:
+        return JSONResponse({"ok": False, "error": "Medición no encontrada."}, status_code=404)
+    try:
+        payload = await request.json()
+    except Exception:
+        return JSONResponse({"ok": False, "error": "JSON no válido."}, status_code=400)
+    try:
+        med = actualizar_medicion(
+            db,
+            plano,
+            med,
+            str(payload.get("tipo", med.tipo)),
+            str(payload.get("etiqueta", med.etiqueta or "")),
+            payload.get("puntos", med.puntos()),
+            str(payload.get("color", med.color or "#ff0000")),
+        )
+        return {"ok": True, "medicion": _datos_medicion_plano(med)}
     except ErrorPlano as e:
         return JSONResponse({"ok": False, "error": str(e)}, status_code=400)
 
