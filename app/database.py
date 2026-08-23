@@ -91,7 +91,7 @@ DATABASE_URL = DATABASE.url
 DATABASE_BACKEND = DATABASE.backend
 DATABASE_IS_SQLITE = DATABASE.is_sqlite
 DB_PATH = DATABASE.sqlite_path
-EXPECTED_ALEMBIC_HEAD = "b1c2d3e4f5a6"
+EXPECTED_ALEMBIC_HEAD = "b2c3d4e5f6a7"
 
 # Copias de seguridad automáticas y manuales (solo corresponden al modo
 # SQLite local; PostgreSQL tendrá backups administrados fuera del proceso).
@@ -679,9 +679,12 @@ def _asegurar_esquema_postgres() -> None:
                 elif cur == "c3e9a1b7d4f2":
                     conn.execute(text("UPDATE public.alembic_version SET version_num = 'b1c2d3e4f5a6'"))
                     logging.getLogger("cotizat").info("alembic_version avanzada de c3e9a1b7d4f2 a b1c2d3e4f5a6 tras auto-reparación.")
+                elif cur == "b1c2d3e4f5a6":
+                    conn.execute(text("UPDATE public.alembic_version SET version_num = 'b2c3d4e5f6a7'"))
+                    logging.getLogger("cotizat").info("alembic_version avanzada de b1c2d3e4f5a6 a b2c3d4e5f6a7 tras auto-reparación.")
                 elif cur is None:
                     # Base sin marca (instalación antigua): la insertamos
-                    conn.execute(text("INSERT INTO public.alembic_version (version_num) VALUES ('b1c2d3e4f5a6') ON CONFLICT DO NOTHING"))
+                    conn.execute(text("INSERT INTO public.alembic_version (version_num) VALUES ('b2c3d4e5f6a7') ON CONFLICT DO NOTHING"))
             except Exception:
                 # La tabla alembic_version puede no ser visible para este rol
                 pass

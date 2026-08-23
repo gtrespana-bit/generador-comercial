@@ -160,10 +160,12 @@ def test_head_exigido_por_runtime_coincide_con_alembic():
     """
     from migrations.versions import a4c8e2f7b1d6_market_price_evidence as evidence_migration
     from migrations.versions import b1c2d3e4f5a6_ocultar_guia_inicio as ocultar_migration
+    from migrations.versions import b2c3d4e5f6a7_add_planos_obra as planos_migration
     from migrations.versions import b9f4d8a2c6e1_rendimiento_indices_calientes as indices_migration
     from migrations.versions import c3e9a1b7d4f2_stripe_checkout as stripe_migration
     from migrations.versions import c5d6e7f8a9b0_merge_currency_heads as merge_migration
-    assert database_module.EXPECTED_ALEMBIC_HEAD == ocultar_migration.revision
+    assert database_module.EXPECTED_ALEMBIC_HEAD == planos_migration.revision
+    assert planos_migration.down_revision == ocultar_migration.revision
     assert ocultar_migration.down_revision == stripe_migration.revision
     assert stripe_migration.down_revision == evidence_migration.revision
     assert evidence_migration.down_revision == indices_migration.revision
@@ -227,10 +229,13 @@ def test_migracion_rls_cubre_cada_modelo_tenant():
         for mapper in Base.registry.mappers
         if issubclass(mapper.class_, TenantMixin)
     }
+    # Planos tienen su propia migración con RLS, igual que compras_plan y enlaces
     assert modelos_tenant == set(migration.TENANT_TABLES) | {
         migration.INVITATION_TABLE,
         proposal_links_migration.TABLE,
         plan_purchases_migration.TABLE,
+        "planos_obra",
+        "planos_mediciones",
     }
 
 

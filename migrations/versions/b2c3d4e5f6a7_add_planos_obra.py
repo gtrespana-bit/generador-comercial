@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 revision: str = "b2c3d4e5f6a7"
-down_revision: Union[str, Sequence[str], None] = "f9d4c2a7e5b3"
+down_revision: Union[str, Sequence[str], None] = "b1c2d3e4f5a6"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
@@ -94,6 +94,14 @@ def upgrade() -> None:
     )
     op.create_index("ix_planos_mediciones_plano", "planos_mediciones", ["plano_id"])
     op.create_index("ix_planos_mediciones_org_plano", "planos_mediciones", ["organizacion_id", "plano_id"])
+
+    # Permisos para el rol de aplicación (sin esto la página falla con permission denied)
+    op.execute("REVOKE ALL ON TABLE public.planos_obra FROM PUBLIC")
+    op.execute("GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE public.planos_obra TO cotizat_app")
+    op.execute("GRANT USAGE, SELECT ON SEQUENCE public.planos_obra_id_seq TO cotizat_app")
+    op.execute("REVOKE ALL ON TABLE public.planos_mediciones FROM PUBLIC")
+    op.execute("GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE public.planos_mediciones TO cotizat_app")
+    op.execute("GRANT USAGE, SELECT ON SEQUENCE public.planos_mediciones_id_seq TO cotizat_app")
 
     op.execute("ALTER TABLE planos_obra ENABLE ROW LEVEL SECURITY")
     op.execute("ALTER TABLE planos_obra FORCE ROW LEVEL SECURITY")

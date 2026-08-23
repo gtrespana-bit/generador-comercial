@@ -44,6 +44,8 @@ from app.models import (
     Pago,
     Partida,
     Plantilla,
+    PlanoObra,
+    PlanoMedicion,
     Presupuesto,
     PresupuestoItem,
     PresupuestoItemProducto,
@@ -178,6 +180,27 @@ def _construir_grafo(db, organizacion_id: int) -> dict:
         comprobante_reference="storage://x/comprobante.png",
         comprobante_nombre="comprobante.png",
         comprobante_mime="image/png",
+    ))
+
+    # --- Planos con medición manual ---------------------------------------
+    plano = PlanoObra(
+        presupuesto_id=presupuesto.id,
+        nombre="Plano inventario",
+        archivo=f"organizaciones/{organizacion_id}/planos/plano.png",
+        content_type="image/png",
+        ancho_px=800,
+        alto_px=600,
+    )
+    db.add(plano)
+    db.flush()
+    db.add(PlanoMedicion(
+        plano_id=plano.id,
+        presupuesto_id=presupuesto.id,
+        tipo="lineal",
+        etiqueta="Medición inventario",
+        valor=5.0,
+        unidad="m",
+        puntos_json="[[0,0],[100,0]]",
     ))
 
     db.commit()

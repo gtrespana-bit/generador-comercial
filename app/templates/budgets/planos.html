@@ -70,7 +70,7 @@
         <button class="btn btn-sm" id="tool-perimetro" data-tool="perimetro">🔲 Perímetro (m)</button>
         <button class="btn btn-sm" id="tool-conteo" data-tool="conteo">🔢 Conteo (ud)</button>
       </div>
-      <div id="calibracion-panel" class="cotizat-hidden" style="margin-top:12px; padding:10px; background:#f1f5f9; border-radius:8px;">
+      <div id="calibracion-panel" class="cotizat-hidden planos-panel-calib">
         <strong>Calibración</strong>
         <p class="hint">Dibuja una línea sobre una medida conocida del plano.</p>
         <p>Distancia en píxeles: <span id="calib-px">-</span></p>
@@ -85,7 +85,7 @@
         <button class="btn btn-sm btn-primary" id="btn-confirm-calibrar">✓ Confirmar calibración</button>
         <button class="btn btn-sm" id="btn-cancel-calibrar">Cancelar</button>
       </div>
-      <div id="medicion-panel" style="margin-top:12px;">
+      <div id="medicion-panel" class="planos-panel-med">
         <div class="field">
           <label>Etiqueta medición</label>
           <input type="text" id="med-etiqueta" placeholder="Muro cocina, Suelo salón...">
@@ -106,7 +106,7 @@
     <div class="card">
       <h3>Mediciones guardadas</h3>
       <div id="lista-mediciones"></div>
-      <div class="field" style="margin-top:10px;">
+      <div class="field planos-field-aplicar">
         <label>Aplicar a partida</label>
         <select id="select-partida">
           <option value="">— Selecciona partida —</option>
@@ -114,7 +114,7 @@
           <option value="{{ part.id }}">{{ part.capitulo }} · {{ part.nombre }} ({{ part.unidad }})</option>
           {% endfor %}
         </select>
-        <button class="btn btn-sm" id="btn-aplicar-a-partida" style="margin-top:6px;">➕ Crear medición en partida</button>
+        <button class="btn btn-sm planos-btn-aplicar" id="btn-aplicar-a-partida">➕ Crear medición en partida</button>
       </div>
       <p class="hint" id="aplicar-hint"></p>
     </div>
@@ -122,7 +122,7 @@
 
   <div class="planos-canvas-area">
     <div class="card">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
+      <div class="planos-canvas-head">
         <h3 id="plano-titulo">Plano</h3>
         <div>
           <button class="btn btn-sm" id="btn-zoom-in">🔍+</button>
@@ -131,9 +131,9 @@
           <button class="btn btn-sm btn-danger" id="btn-eliminar-plano">🗑️ Eliminar plano</button>
         </div>
       </div>
-      <div id="canvas-container" style="position:relative; overflow:auto; border:1px solid #e2e8f0; background:#fff; max-height:80vh;">
-        <canvas id="plano-canvas" style="display:block; cursor:crosshair;"></canvas>
-        <img id="plano-img" style="display:none;" crossorigin="anonymous">
+      <div id="canvas-container" class="planos-canvas-container">
+        <canvas id="plano-canvas" class="planos-canvas"></canvas>
+        <img id="plano-img" class="cotizat-hidden" crossorigin="anonymous" alt="Plano">
       </div>
       <p class="hint" id="plano-info"></p>
     </div>
@@ -141,7 +141,7 @@
 </div>
 {% endif %}
 
-<style>
+<style nonce="{{ request.state.csp_nonce }}">
 .planos-layout { display:grid; grid-template-columns: 320px 1fr; gap:16px; }
 .planos-sidebar { display:flex; flex-direction:column; gap:16px; }
 .plano-item { padding:10px; border:1px solid #e2e8f0; border-radius:8px; margin-bottom:8px; cursor:pointer; }
@@ -151,6 +151,13 @@
 .badge-ok { background:#dcfce7; color:#166534; }
 .badge-warn { background:#fef9c3; color:#854d0e; }
 .btn-group-vertical { display:flex; flex-direction:column; gap:6px; }
+.planos-panel-calib { margin-top:12px; padding:10px; background:#f1f5f9; border-radius:8px; }
+.planos-panel-med { margin-top:12px; }
+.planos-field-aplicar { margin-top:10px; }
+.planos-btn-aplicar { margin-top:6px; }
+.planos-canvas-head { display:flex; justify-content:space-between; align-items:center; }
+.planos-canvas-container { position:relative; overflow:auto; border:1px solid #e2e8f0; background:#fff; max-height:80vh; }
+.planos-canvas { display:block; cursor:crosshair; }
 #lista-mediciones { max-height:300px; overflow:auto; }
 .medicion-item { display:flex; justify-content:space-between; align-items:center; padding:6px; border-bottom:1px solid #f1f5f9; }
 .medicion-item strong { font-size:13px; }
@@ -170,18 +177,17 @@
   let calibracionPuntos = [];
   let medicionesGuardadas = [];
   let zoom = 1;
-  let pan = {x:0,y:0};
   let img = document.getElementById('plano-img');
   let canvas = document.getElementById('plano-canvas');
   let ctx = canvas ? canvas.getContext('2d') : null;
 
-  if (!canvas) return; // sin planos
+  if (!canvas) return;
 
   function mostrarErrorUpload(msg){
     const el = document.getElementById('upload-error');
     if (!el) return;
     el.textContent = msg;
-    el.style.display = msg ? 'block' : 'none';
+    CotizatStyles.set(el, "display", msg ? 'block' : 'none');
   }
 
   document.getElementById('form-upload-plano')?.addEventListener('submit', async (e)=>{
@@ -262,7 +268,6 @@
     ctx.save();
     ctx.scale(zoom, zoom);
     ctx.drawImage(img, 0,0);
-    // Dibujar mediciones guardadas
     medicionesGuardadas.forEach(m=>{
       const pts = m.puntos || [];
       if (!pts.length) return;
@@ -282,14 +287,12 @@
       } else if (m.tipo==='conteo'){
         pts.forEach(pt=>{ ctx.beginPath(); ctx.arc(pt[0],pt[1],6,0,Math.PI*2); ctx.fillStyle = m.color; ctx.fill(); });
       }
-      // Etiqueta
       if (pts[0]){
         ctx.fillStyle = '#000';
         ctx.font = '12px sans-serif';
         ctx.fillText((m.etiqueta||'') + ' ' + (m.valor?.toFixed(2)||'') + (m.unidad||''), pts[0][0]+8, pts[0][1]-8);
       }
     });
-    // Dibujar actual
     const ptsActual = herramienta==='calibrar' ? calibracionPuntos : puntosActuales;
     if (ptsActual.length){
       ctx.strokeStyle = herramienta==='calibrar' ? '#00aaff' : '#ff0000';
@@ -317,7 +320,8 @@
       calibracionPuntos.push(canvasPos(e));
       if (calibracionPuntos.length>2) calibracionPuntos = calibracionPuntos.slice(-2);
       actualizarValorActual(); dibujar();
-      document.getElementById('calibracion-panel')?.classList.remove('cotizat-hidden');
+      const panel = document.getElementById('calibracion-panel');
+      if (panel) panel.classList.remove('cotizat-hidden');
     } else {
       puntosActuales.push(canvasPos(e));
       actualizarValorActual(); dibujar();
@@ -326,7 +330,6 @@
   canvas.addEventListener('dblclick', (e)=>{
     e.preventDefault();
     if (herramienta==='area' || herramienta==='perimetro'){
-      // cerrar polígono, no añadir punto doble
       if (puntosActuales.length>=3){
         actualizarValorActual();
         dibujar();
@@ -335,7 +338,6 @@
   });
   canvas.addEventListener('contextmenu', (e)=>{
     e.preventDefault();
-    // clic derecho borra último punto
     if (herramienta==='calibrar'){
       calibracionPuntos.pop(); actualizarValorActual(); dibujar();
     } else {
@@ -343,7 +345,6 @@
     }
   });
 
-  // Herramientas
   document.querySelectorAll('[data-tool]').forEach(btn=>{
     btn.addEventListener('click', ()=>{
       herramienta = btn.dataset.tool;
@@ -351,17 +352,21 @@
       btn.classList.add('btn-primary');
       puntosActuales = [];
       if (herramienta!=='calibrar') calibracionPuntos = [];
-      document.getElementById('calibracion-panel')?.classList.toggle('cotizat-hidden', herramienta!=='calibrar');
+      const calibPanel = document.getElementById('calibracion-panel');
+      if (calibPanel) calibPanel.classList.toggle('cotizat-hidden', herramienta!=='calibrar');
       actualizarValorActual(); dibujar();
     });
   });
 
   document.getElementById('btn-cancel-medicion')?.addEventListener('click', ()=>{
     puntosActuales = []; actualizarValorActual(); dibujar();
-    document.getElementById('med-etiqueta').value = '';
+    const et = document.getElementById('med-etiqueta');
+    if (et) et.value = '';
   });
   document.getElementById('btn-cancel-calibrar')?.addEventListener('click', ()=>{
-    calibracionPuntos = []; document.getElementById('calibracion-panel')?.classList.add('cotizat-hidden');
+    calibracionPuntos = [];
+    const cp = document.getElementById('calibracion-panel');
+    if (cp) cp.classList.add('cotizat-hidden');
     actualizarValorActual(); dibujar();
   });
 
@@ -373,7 +378,11 @@
     try {
       const res = await fetch(`/planos/${planoActivoId}/calibrar`, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({distancia_px:px, distancia_real:real, unidad})});
       const data = await res.json();
-      if (data.ok){ escala = data.escala_px_por_metro; alert('Calibrado: '+escala.toFixed(2)+' px/m'); cargarPlano(planoActivoId); }
+      if (data.ok){
+        escala = data.escala_px_por_metro;
+        alert('Calibrado: '+escala.toFixed(2)+' px/m');
+        cargarPlano(planoActivoId);
+      }
       else alert(data.error||'Error calibrando');
     } catch(e){ alert('Error conexión'); }
   });
@@ -385,7 +394,13 @@
     try {
       const res = await fetch(`/planos/${planoActivoId}/mediciones`, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({tipo:herramienta, etiqueta, puntos:puntosActuales, color})});
       const data = await res.json();
-      if (data.ok){ puntosActuales=[]; document.getElementById('med-etiqueta').value=''; actualizarValorActual(); await cargarPlano(planoActivoId); }
+      if (data.ok){
+        puntosActuales=[];
+        const et = document.getElementById('med-etiqueta');
+        if (et) et.value='';
+        actualizarValorActual();
+        await cargarPlano(planoActivoId);
+      }
       else alert(data.error||'Error guardando');
     } catch(e){ alert('Error conexión'); }
   });
@@ -422,10 +437,10 @@
       });
       const btnUse = document.createElement('button'); btnUse.className='btn btn-sm'; btnUse.textContent='👁️';
       btnUse.addEventListener('click', ()=>{
-        // resaltar
         puntosActuales = m.puntos || [];
         dibujar();
-        document.getElementById('select-partida').value = m.partida_destino_id || '';
+        const sel = document.getElementById('select-partida');
+        if (sel) sel.value = m.partida_destino_id || '';
       });
       right.appendChild(btnUse); right.appendChild(btnDel);
       div.appendChild(left); div.appendChild(right); cont.appendChild(div);
@@ -435,14 +450,8 @@
   document.getElementById('btn-aplicar-a-partida')?.addEventListener('click', async ()=>{
     const partidaId = document.getElementById('select-partida').value;
     if (!partidaId){ alert('Selecciona partida'); return; }
-    // Aplicar última medición o la seleccionada?
-    const sel = document.getElementById('lista-mediciones').querySelector('.selected');
-    let medId = null;
-    // Si hay una medición enfocada (puntosActuales coincide), buscar id
-    // Por simplicidad, aplicar la última guardada
     if (!medicionesGuardadas.length){ alert('No hay mediciones guardadas'); return; }
-    medId = medicionesGuardadas[medicionesGuardadas.length-1].id;
-    // Si puntosActuales coincide con alguna, usar esa
+    let medId = medicionesGuardadas[medicionesGuardadas.length-1].id;
     for (let mm of medicionesGuardadas){
       if (JSON.stringify(mm.puntos)===JSON.stringify(puntosActuales)){ medId=mm.id; break; }
     }
@@ -450,42 +459,52 @@
       const res = await fetch(`/planos/${planoActivoId}/mediciones/${medId}/aplicar`, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({partida_id: parseInt(partidaId)})});
       const data = await res.json();
       if (data.ok){
-        document.getElementById('aplicar-hint').textContent = '✓ Medición aplicada: '+data.cantidad+' a partida '+partidaId;
-        // opcional redirigir a presupuesto
+        const hint = document.getElementById('aplicar-hint');
+        if (hint) hint.textContent = '✓ Medición aplicada: '+data.cantidad+' a partida '+partidaId;
       } else alert(data.error||'Error aplicando');
     } catch(e){ alert('Error conexión'); }
   });
 
   async function cargarPlano(id){
     planoActivoId = id;
-    document.querySelectorAll('.plano-item').forEach(el=>{ el.classList.toggle('active', parseInt(el.dataset.planoId)===id); });
+    document.querySelectorAll('.plano-item').forEach(el=>{
+      const isActive = parseInt(el.dataset.planoId)===id;
+      el.classList.toggle('active', isActive);
+    });
     try {
       const res = await fetch(`/planos/${id}/datos`);
       const data = await res.json();
       if (!data.ok) return;
       escala = data.plano.escala_px_por_metro;
       medicionesGuardadas = data.mediciones || [];
-      document.getElementById('plano-titulo').textContent = data.plano.nombre + (data.plano.calibrado ? ' (calibrado)' : ' (sin calibrar)');
-      document.getElementById('plano-info').textContent = `Archivo: ${data.plano.archivo} · ${data.plano.ancho_px||'?'}x${data.plano.alto_px||'?'} px · Escala: ${escala ? escala.toFixed(2)+' px/m' : 'no calibrado'}`;
-      // Cargar imagen
+      const tituloEl = document.getElementById('plano-titulo');
+      if (tituloEl) tituloEl.textContent = data.plano.nombre + (data.plano.calibrado ? ' (calibrado)' : ' (sin calibrar)');
+      const infoEl = document.getElementById('plano-info');
+      if (infoEl) infoEl.textContent = `Archivo: ${data.plano.archivo} · ${data.plano.ancho_px||'?'}x${data.plano.alto_px||'?'} px · Escala: ${escala ? escala.toFixed(2)+' px/m' : 'no calibrado'}`;
       const archivoRes = await fetch(`/planos/${id}/archivo`);
       if (archivoRes.ok){
         const blob = await archivoRes.blob();
         const ct = archivoRes.headers.get('content-type') || '';
         if (ct.includes('pdf')){
-          document.getElementById('plano-info').textContent += ' · PDF: usa visor PDF (convierte a imagen si tienes PyMuPDF instalado)';
-          // Mostrar placeholder
-          img.style.display='none';
+          const info2 = document.getElementById('plano-info');
+          if (info2) info2.textContent += ' · PDF: usa visor PDF (convierte a imagen si tienes PyMuPDF instalado)';
+          img.classList.add('cotizat-hidden');
           canvas.width=800; canvas.height=600;
           ctx.fillStyle='#f8fafc'; ctx.fillRect(0,0,800,600);
-          ctx.fillStyle='#64748b'; ctx.fillText('PDF guardado. Instala PyMuPDF (pip install PyMuPDF) para convertir a imagen automáticamente, o sube PNG/JPG.',20,30);
+          ctx.fillStyle='#64748b'; ctx.font='14px sans-serif';
+          ctx.fillText('PDF guardado. Instala PyMuPDF para convertir a imagen automáticamente, o sube PNG/JPG.',20,30);
           renderListaMediciones();
           return;
         }
         const url = URL.createObjectURL(blob);
-        img.onload = ()=>{ URL.revokeObjectURL(url); dibujar(); renderListaMediciones(); actualizarValorActual(); };
+        img.onload = ()=>{
+          URL.revokeObjectURL(url);
+          dibujar();
+          renderListaMediciones();
+          actualizarValorActual();
+        };
         img.src = url;
-        img.style.display='block';
+        img.classList.remove('cotizat-hidden');
       }
     } catch(e){ console.error(e); }
   }
