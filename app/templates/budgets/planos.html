@@ -60,7 +60,7 @@
           <input type="text" id="plano-nombre" placeholder="Nombre">
           <input type="file" id="plano-archivo" accept=".png,.jpg,.jpeg,.webp,.pdf" required>
         </div>
-        <button type="submit" class="btn btn-sm btn-primary">+ Añadir plano</button>
+        <button type="submit" class="btn btn-sm btn-primary" id="btn-upload-plano">+ Añadir plano</button>
       </form>
       <div id="upload-error" class="alert alert-error cotizat-hidden"></div>
     </div>
@@ -233,8 +233,6 @@
   let panActivo = null;
   let planoNombreArchivo = 'plano';
 
-  if (!canvas) return;
-
   function cont(){ return document.getElementById('canvas-container'); }
 
   function mostrarErrorUpload(msg){
@@ -244,24 +242,35 @@
     CotizatStyles.set(el, "display", msg ? 'block' : 'none');
   }
 
+  // El formulario de subida existe también cuando aún no hay planos (sin canvas).
+  // Hay que registrarlo SIEMPRE, antes de cualquier early-return del visor.
   document.getElementById('form-upload-plano')?.addEventListener('submit', async (e)=>{
     e.preventDefault();
-    const nombre = document.getElementById('plano-nombre').value || '';
-    const file = document.getElementById('plano-archivo').files[0];
+    const nombre = document.getElementById('plano-nombre')?.value || '';
+    const fileInput = document.getElementById('plano-archivo');
+    const file = fileInput?.files?.[0];
     if (!file) { mostrarErrorUpload('Selecciona archivo'); return; }
     const fd = new FormData();
     fd.append('archivo', file);
     fd.append('nombre', nombre);
     const btn = document.getElementById('btn-upload-plano');
-    btn.disabled = true; btn.textContent = 'Subiendo...';
+    const textoOriginal = btn ? btn.textContent : '';
+    if (btn) { btn.disabled = true; btn.textContent = 'Subiendo...'; }
     try {
       const res = await fetch(`/presupuestos/${presupuestoId}/planos/upload`, {method:'POST', body: fd});
-      const data = await res.json();
-      if (data.ok) { window.location.reload(); }
-      else { mostrarErrorUpload(data.error || 'Error subiendo'); }
+      let data = null;
+      try { data = await res.json(); } catch(_){ data = null; }
+      if (data && data.ok) { window.location.reload(); return; }
+      const msg = (data && data.error) || (res.ok ? 'Error subiendo' : ('Error subiendo (' + res.status + ')'));
+      mostrarErrorUpload(msg);
     } catch(err){ mostrarErrorUpload('Error de conexión'); }
-    finally { btn.disabled = false; btn.textContent = '📤 Subir plano'; }
+    finally {
+      if (btn) { btn.disabled = false; btn.textContent = textoOriginal || '📤 Subir plano'; }
+    }
   });
+
+  // Sin canvas = pantalla de primer plano: solo hace falta el upload.
+  if (!canvas) return;
 
   function distancia(p1,p2){ return Math.hypot(p2[0]-p1[0], p2[1]-p1[1]); }
   function distanciaTotal(pts){
