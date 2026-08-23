@@ -1964,3 +1964,49 @@ bloque:
 Suite: **694 passed, 7 skipped** (23 pruebas nuevas en
 `tests/test_consentimiento.py` y ajustes de cadena de cabezas). Cabeza
 Alembic: `b6d9e4c2a8f1`.
+
+## Actualización 23/08/2026 — Planos: visor global, medición premium y exportaciones (PR #83)
+
+La función de planos del 22/08 estaba operativa pero era prácticamente
+invisible (solo un botón en la ficha del presupuesto) y, sin saberlo,
+**rota**: la categoría `planos` faltaba en `_ALLOWED_CATEGORIES` de
+`app/storage.py`, así que toda subida fallaba con «No se pudo guardar el
+plano». PR #83 corrige ambas cosas y sube la función a primera clase.
+
+### Qué se construyó
+
+- **Visor global `/planos`**: galería de todos los planos de la
+  organización agrupados por presupuesto, con miniaturas, estadísticas
+  (calibrados, mediciones) y enlaces profundos `?plano=<id>`. Entrada
+  «Planos» en el sidebar, en la cabecera de Presupuestos, acción por fila
+  y botón en la barra del editor.
+- **Medición premium** en el área de trabajo: snap ortogonal (casilla o
+  Mayús), snap a vértices con anillo indicador, línea elástica con
+  previsualización del cierre, paneo (botón central o ✋ Mover), zoom con
+  rueda centrado en el cursor, ⛶ Ajustar/pantalla completa, descarga PNG
+  del lienzo, atajos L/A/P/C/E/M + Ctrl+Z + Esc, renombrado de
+  mediciones, totales por unidad y mostrar/ocultar trazos.
+- **Exportaciones**: CSV de todas las mediciones del presupuesto (`;` +
+  BOM, Excel ES); **DXF ASCII R12** por plano en metros con Y invertida,
+  capa por tipo y etiquetas TEXT (AutoCAD/LibreCAD/BricsCAD); PNG
+  client-side; y **anexo «Planos y mediciones» en el PDF** del presupuesto
+  con «Incluir anexos» activo (`app/services/pdf_planos.py`: imagen +
+  mediciones superpuestas + tabla, integrado en el circuito estándar de
+  `pdf_anexos` con índice, tope de 4 MB y degradación elegante).
+- **Fix UI**: el menú «Más opciones» de la ficha del presupuesto quedaba
+  **tapado por el Resumen** — la animación `fadeInUp` de `.page-head`
+  crea un contexto de apilamiento que atrapaba el z-index del desplegable;
+  `.page-head` ahora tiene capa propia (`z-index: 30`).
+
+### Fix crítico
+
+- `_ALLOWED_CATEGORIES` ahora incluye `planos`; cubierto con un test que
+  sube un PNG real por `crear_plano` (antes de este fix, imposible).
+
+### Documentación y pruebas
+
+- `docs/FEATURE_BC3_Y_PLANOS.md` ampliado con la actualización premium;
+  README con las secciones de BC3 y planos.
+- `tests/test_planos.py`: 13 pruebas (geometría, visor, deep-link, CSV,
+  DXF, renombrado, anexo PDF, subida real).
+- Suite completa: **992 passed, 9 skipped**. Sin migraciones nuevas.

@@ -107,6 +107,28 @@ TOTAL** sobre fondo azul-grisáceo con faja azul y numeración de páginas
   - **Exportar a CSV/Excel**: historial (respetando filtros), detalle de
     un presupuesto, y catálogos de partidas y productos.
   - Vista previa del PDF en el navegador (👁 Ver PDF).
+- **Import/export BC3 (FIEBDC-3)**: importa el `.bc3` del arquitecto
+  (Presto, Arquímedes, BCCA; detecta UTF-8/Windows-1252/ISO/CP850) en
+  `/presupuestos/importar` o desde el propio editor, y exporta de vuelta un
+  BC3 básico (`Más opciones → 📤 BC3`). El original queda guardado con
+  manifiesto auditable.
+- **Planos con medición manual asistida** (`📐 Planos` en cada presupuesto y
+  visor global en `/planos` con todas las miniaturas agrupadas por
+  presupuesto):
+  - Sube PNG/JPG/WEBP/PDF (12 MB, 20 por presupuesto), calibra la escala
+    dibujando una línea de longitud conocida y mide **líneas (m), áreas
+    (m²), perímetros y conteos** directamente sobre el dibujo.
+  - Medición premium: **snap ortogonal** (casilla o Mayús), **snap a
+    vértices** existentes, línea elástica con previsualización del cierre,
+    paneo (herramienta ✋ Mover o botón central), zoom con rueda centrado
+    en el cursor, pantalla completa, atajos `L/A/P/C/E/M` + `Ctrl+Z` +
+    `Esc`, renombrado de mediciones y totales por unidad.
+  - Cada medición se **aplica a una partida** del presupuesto como
+    medición con su cantidad.
+  - Exporta las mediciones a **DXF para CAD** (metros, capa por tipo),
+    **CSV**, **PNG** con los trazos dibujados, o déjalas embebidas en el
+    **PDF del presupuesto** activando «Incluir anexos» (página por plano:
+    imagen + mediciones superpuestas + tabla).
 - **Asistente CotizaT con herramientas reales**:
   - Busca partidas, clientes, presupuestos, productos y recursos dentro de la organización activa.
   - Revisa tanto presupuestos guardados como el borrador visible del editor: precios, cantidades, duplicados, unidades, mediciones y márgenes negativos.
