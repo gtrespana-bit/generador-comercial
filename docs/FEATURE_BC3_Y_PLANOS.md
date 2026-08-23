@@ -1,7 +1,7 @@
 # Feature: Import BC3 y Medición automática sobre planos
 
 Actualizado: 2026-08-23
-Rama: arena/01a030da-generador-comercial
+Rama: arena/01a030f2-generador-comercial
 
 ## Resumen ejecutivo
 
@@ -79,7 +79,7 @@ Aunque la recomendación inicial era solo import, se añade export básico para 
 
 ### Flujo principal
 - Sube PNG, JPG o WEBP (12 MB máx., 20 planos por presupuesto).
-- Tras la subida, el navegador abre el plano y lanza automáticamente el análisis geométrico local.
+- Tras la subida, el primer paso es **calibrar**: se marca una cota conocida y se escribe su medida real. El análisis de estancias va después, ya en metros.
 - El servicio detecta espacios claros cerrados, crea un polígono editable por estancia y lo persiste inmediatamente como `PlanoMedicion` de tipo `area`.
 - La lista, el lienzo y `GET /planos/{id}/datos` recuperan esas mismas geometrías después de recargar o volver otro día.
 - «Repetir análisis» vuelve a procesar el archivo, pero deduplica los candidatos ya guardados mediante solapamiento de sus cajas; no crea copias en cada ejecución.
@@ -87,15 +87,15 @@ Aunque la recomendación inicial era solo import, se añade export básico para 
 
 ### Cómo funciona el detector
 `app/services/planos.py` implementa visión geométrica determinista con Pillow y biblioteca estándar:
-1. reduce temporalmente la imagen a un máximo de 950 px;
+1. reduce temporalmente la imagen a un máximo de 1100 px;
 2. calcula umbral adaptativo Otsu sobre escala de grises;
-3. engrosa tinta para cerrar intersecciones y antialias;
-4. prolonga trazos horizontales y verticales a través de huecos de puerta habituales;
+3. **borra cotas y números** (dígitos, ticks y líneas de acotación) para que no se lean como tabiques;
+4. reconoce muros horizontales, verticales y **diagonales**, y solo puentea huecos de puerta entre tramos con entidad;
 5. segmenta por componentes conectados los espacios claros que no tocan el borde;
 6. filtra ruido por área, dimensiones, proporción y ocupación;
-7. convierte la envolvente de cada espacio en un polígono simplificado y lo escala a las coordenadas originales.
+7. simplifica el polígono y alinea ángulos casi ortogonales, conservando las diagonales reales.
 
-El proceso no envía planos ni datos a terceros, no usa un modelo generativo y no tiene coste por página. Es una detección de geometría, no una interpretación semántica: las etiquetas iniciales son `Estancia detectada N` y el usuario puede cambiarlas.
+El proceso no envía planos ni datos a terceros, no usa un modelo generativo y no tiene coste por página. Es una detección de geometría, no una interpretación semántica: las etiquetas iniciales son `Estancia N`. El usuario hace clic en el recinto, escribe el nombre y se guarda.
 
 ### Ajuste manual y conservación
 - Línea (m), área (m²), perímetro (m) y conteo (ud) siguen disponibles como alternativa y para corregir detecciones.
@@ -169,7 +169,7 @@ python -m pytest tests/test_bc3.py -v
 
 # Planos
 python -m pytest tests/test_planos.py -v
-# Ir a /presupuestos/{id}/planos, subir imagen, calibrar, medir, aplicar a partida
+# Ir a /presupuestos/{id}/planos → marcar una cota → aplicar escala → analizar estancias → clic y nombrar
 ```
 
 ---
@@ -200,4 +200,21 @@ python -m pytest tests/test_planos.py -v
 - `_ALLOWED_CATEGORIES` de `app/storage.py` no incluía `planos`: toda subida fallaba con «No se pudo guardar el plano». Corregido y cubierto con test de subida real.
 
 ### Tests
-- La cobertura original de 13 pruebas (geometría, visor, deep-link, CSV, DXF, renombrado y anexo PDF) se amplía a 17 con detector automático, deduplicación, persistencia, `POST`/`PUT` y validación de geometrías incompletas.
+- La cobertura original de 13 pruebas (geometría, visor, deep-link, CSV, DXF, renombrado y anexo PDF) se amplía a 22: detector sin tratar cotas como muros, ángulos diagonales, métricas de estancia, calibración previa al análisis y altura libre.
+
+---
+
+## Actualización 2026-08-23: calibrar primero, cotas ≠ tabiques
+
+Feedback de uso: el detector era peor que no tener nada. Confundía números de cota con muros, no respetaba ángulos y la recalibración estaba escondida. El flujo queda así:
+
+1. **Recalibrar plano** (paso 1, visible y obligatorio en la práctica). Dos clics sobre una medida ya acotada + valor real + altura libre (2,50 m). Toda cantidad posterior sale de esa escala.
+2. **Detectar estancias**. Ya no se lanza al subir. Ignora dígitos, ticks y líneas de cota; reconoce tabiques también a 45°/135°; solo puentea huecos de puerta entre tramos con entidad.
+3. **Clic en la estancia**. Se selecciona, se escribe el nombre y se guarda solo. En el panel aparecen automáticamente:
+   - m² de suelo (área del polígono);
+   - perímetro cerrado;
+   - m² de paredes = perímetro × altura libre.
+
+Límites honestos: no lee el nombre impreso en el plano ni resta huecos de puertas/ventanas. Un recinto abierto o un plano borroso sigue pidiendo ajuste manual.
+
+Código: `app/services/planos.py` (`_borrar_anotaciones_cotas`, `_pintar_run_direccion`, `_ortogonalizar_poligono`, `metricas_estancia`), `POST /planos/{id}/altura`, `PlanoObra.altura_libre_m`.

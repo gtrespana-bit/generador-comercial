@@ -2599,6 +2599,8 @@ class PlanoObra(TenantMixin, Base):
     calibracion_px = Column(Float, nullable=True)
     calibracion_real = Column(Float, nullable=True)
     unidad_calibracion = Column(String(20), default="m")  # m, cm, mm
+    # Altura libre para estimar m² de paredes (perímetro × altura).
+    altura_libre_m = Column(Float, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -2620,6 +2622,16 @@ class PlanoObra(TenantMixin, Base):
         if not self.calibrado:
             return None
         return 1.0 / float(self.escala_px_por_metro)
+
+    @property
+    def altura_m(self) -> float:
+        """Altura libre usada para m² de paredes. Por defecto 2,50 m."""
+        valor = getattr(self, "altura_libre_m", None)
+        try:
+            altura = float(valor)
+        except (TypeError, ValueError):
+            return 2.5
+        return altura if altura > 0 else 2.5
 
 
 class PlanoMedicion(TenantMixin, Base):

@@ -29,8 +29,10 @@ from ..services.planos import (
     calibrar_plano,
     crear_medicion,
     actualizar_medicion,
+    actualizar_altura_plano,
     detectar_espacios_plano,
     guardar_detecciones_automaticas,
+    metricas_estancia,
     renombrar_medicion,
     eliminar_plano,
     eliminar_medicion,
@@ -123,23 +125,31 @@ def listar_planos_presupuesto(
             "p": presupuesto,
             "planos": planos,
             "plano_inicial": plano_inicial,
-            "detectar_automaticamente": bool(detectar and plano_inicial),
+            "detectar_automaticamente": False,
             "partidas": partidas,
             "cfg": _config(db),
         },
     )
 
 
-def _datos_medicion_plano(medicion: PlanoMedicion) -> dict:
+def _datos_medicion_plano(medicion: PlanoMedicion, plano: PlanoObra | None = None) -> dict:
+    puntos = medicion.puntos()
+    plano = plano or medicion.plano
+    escala = plano.escala_px_por_metro if plano is not None else None
+    altura = plano.altura_m if plano is not None else 2.5
+    extras = {}
+    if medicion.tipo in ("area", "perimetro", "volumen"):
+        extras["metricas"] = metricas_estancia(puntos, escala, altura)
     return {
         "id": medicion.id,
         "tipo": medicion.tipo,
         "etiqueta": medicion.etiqueta,
         "valor": medicion.valor,
         "unidad": medicion.unidad,
-        "puntos": medicion.puntos(),
+        "puntos": puntos,
         "color": medicion.color,
         "partida_destino_id": medicion.partida_destino_id,
+        **extras,
     }
 
 
@@ -164,8 +174,9 @@ def datos_plano(plano_id: int, db: Session = Depends(get_db)):
             "calibracion_real": plano.calibracion_real,
             "unidad_calibracion": plano.unidad_calibracion,
             "calibrado": plano.calibrado,
+            "altura_libre_m": plano.altura_m,
         },
-        "mediciones": [_datos_medicion_plano(m) for m in plano.mediciones],
+        "mediciones": [_datos_medicion_plano(m, plano) for m in plano.mediciones],
     }
 
 
@@ -193,7 +204,7 @@ def detectar_mediciones_plano(plano_id: int, limite: int = 30, db: Session = Dep
         "analizadas": len(candidatos),
         "nuevas": len(mediciones),
         "omitidas": omitidas,
-        "mediciones": [_datos_medicion_plano(m) for m in mediciones],
+        "mediciones": [_datos_medicion_plano(m, plano) for m in mediciones],
     }
 
 
@@ -232,12 +243,13 @@ async def subir_plano(
     try:
         plano = crear_plano(db, presupuesto_id, nombre, archivo.filename, contenido)
         es_imagen = (plano.content_type or "").startswith("image/")
-        query = f"?plano={plano.id}" + ("&detectar=1" if es_imagen else "")
         return {
             "ok": True,
             "plano_id": plano.id,
-            "url": f"/presupuestos/{presupuesto_id}/planos{query}",
-            "deteccion_automatica": es_imagen,
+            "url": f"/presupuestos/{presupuesto_id}/planos?plano={plano.id}",
+            "deteccion_automatica": False,
+            "requiere_calibracion": True,
+            "es_imagen": es_imagen,
         }
     except ErrorPlano as e:
         return JSONResponse({"ok": False, "error": str(e)}, status_code=400)
@@ -265,15 +277,18 @@ async def calibrar_plano_endpoint(
         dist_px = float(payload.get("distancia_px", 0))
         dist_real = float(payload.get("distancia_real", 0))
         unidad = str(payload.get("unidad", "m"))
+        altura_raw = payload.get("altura_libre_m")
+        altura = float(altura_raw) if altura_raw not in (None, "") else None
     except (TypeError, ValueError):
         return JSONResponse({"ok": False, "error": "Distancias no válidas."}, status_code=400)
 
     try:
-        calibrar_plano(db, plano, dist_px, dist_real, unidad)
+        calibrar_plano(db, plano, dist_px, dist_real, unidad, altura)
         return {
             "ok": True,
             "escala_px_por_metro": plano.escala_px_por_metro,
             "factor_m": plano.factor_m,
+            "altura_libre_m": plano.altura_m,
         }
     except ErrorPlano as e:
         return JSONResponse({"ok": False, "error": str(e)}, status_code=400)
@@ -307,7 +322,7 @@ async def crear_medicion_endpoint(
 
     try:
         med = crear_medicion(db, plano, tipo, etiqueta, puntos, color, pid)
-        return {"ok": True, "medicion": _datos_medicion_plano(med)}
+        return {"ok": True, "medicion": _datos_medicion_plano(med, plano)}
     except ErrorPlano as e:
         return JSONResponse({"ok": False, "error": str(e)}, status_code=400)
 
@@ -337,7 +352,7 @@ async def actualizar_medicion_endpoint(
             payload.get("puntos", med.puntos()),
             str(payload.get("color", med.color or "#ff0000")),
         )
-        return {"ok": True, "medicion": _datos_medicion_plano(med)}
+        return {"ok": True, "medicion": _datos_medicion_plano(med, plano)}
     except ErrorPlano as e:
         return JSONResponse({"ok": False, "error": str(e)}, status_code=400)
 
@@ -362,6 +377,31 @@ async def aplicar_medicion_endpoint(
     try:
         res = aplicar_medicion_a_partida(db, med, partida_id)
         return res
+    except ErrorPlano as e:
+        return JSONResponse({"ok": False, "error": str(e)}, status_code=400)
+
+
+@router.post("/planos/{plano_id}/altura")
+async def actualizar_altura_endpoint(
+    plano_id: int,
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    plano = db.get(PlanoObra, plano_id)
+    if not plano:
+        return JSONResponse({"ok": False, "error": "Plano no encontrado."}, status_code=404)
+    try:
+        payload = await request.json()
+        altura = float(payload.get("altura_libre_m", 0))
+    except Exception:
+        return JSONResponse({"ok": False, "error": "Altura no válida."}, status_code=400)
+    try:
+        actualizar_altura_plano(db, plano, altura)
+        return {
+            "ok": True,
+            "altura_libre_m": plano.altura_m,
+            "mediciones": [_datos_medicion_plano(m, plano) for m in plano.mediciones],
+        }
     except ErrorPlano as e:
         return JSONResponse({"ok": False, "error": str(e)}, status_code=400)
 
