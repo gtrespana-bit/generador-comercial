@@ -1,4 +1,4 @@
-"""Planos con medición manual asistida (a1b2c3d4e5f6).
+"""Planos con medición manual asistida (b2c3d4e5f6a7).
 
 Crea tablas planos_obra y planos_mediciones con RLS por organización.
 """
@@ -9,7 +9,7 @@ from alembic import op
 import sqlalchemy as sa
 
 
-revision: str = "a1b2c3d4e5f6"
+revision: str = "b2c3d4e5f6a7"
 down_revision: Union[str, Sequence[str], None] = "f9d4c2a7e5b3"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -22,7 +22,6 @@ def _postgres() -> bool:
 def upgrade() -> None:
     # SQLite se crea via Base.metadata.create_all, no necesita migración
     if not _postgres():
-        # Crear tablas en SQLite si se ejecuta alembic local
         op.create_table(
             "planos_obra",
             sa.Column("id", sa.Integer(), primary_key=True),
@@ -96,7 +95,6 @@ def upgrade() -> None:
     op.create_index("ix_planos_mediciones_plano", "planos_mediciones", ["plano_id"])
     op.create_index("ix_planos_mediciones_org_plano", "planos_mediciones", ["organizacion_id", "plano_id"])
 
-    # RLS
     op.execute("ALTER TABLE planos_obra ENABLE ROW LEVEL SECURITY")
     op.execute("ALTER TABLE planos_obra FORCE ROW LEVEL SECURITY")
     op.execute("""

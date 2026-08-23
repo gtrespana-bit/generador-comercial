@@ -31,6 +31,7 @@
   <a href="#flujo">El flujo</a>
   <a href="#catalogo">Catálogo y APU</a>
   <a href="#editor">Editor</a>
+  <a href="#planos">Planos y BC3</a>
   <a href="#packs">Packs</a>
   <a href="#margen">Margen y tiempos</a>
   <a href="#entrega">PDF y envío</a>
@@ -49,7 +50,7 @@
     </li>
     <li>
       <strong>Revisa el catálogo</strong>
-      <span>{{ catalogo().partidas_txt }} partidas descompuestas y {{ catalogo().recursos_txt }} recursos, listos para editar. Importa el tuyo desde Excel o CYPE si ya lo tienes.</span>
+      <span>{{ catalogo().partidas_txt }} partidas descompuestas y {{ catalogo().recursos_txt }} recursos, listos para editar. Importa el tuyo desde Excel, CYPE o BC3 (FIEBDC-3) si ya lo tienes.</span>
     </li>
     <li>
       <strong>Arma el presupuesto</strong>
@@ -84,8 +85,8 @@
       <p>Subes el cemento o la hora del oficial una sola vez en Recursos. Todas las partidas que lo usan se recalculan solas: la partida, el capítulo y el presupuesto. Ningún Excel hace esto sin romperse.</p>
     </article>
     <article>
-      <h3>Importación Excel y CYPE</h3>
-      <p>Pega TSV desde Excel o sube un .xlsx de descompuestos CYPE. Se clasifican materiales, mano de obra y complementarios, y se conserva la matriz original. También puedes importar una instalación local anterior.</p>
+      <h3>Importación Excel, CYPE y BC3</h3>
+      <p>Pega TSV desde Excel, sube un .xlsx de descompuestos CYPE o importa un .bc3 (FIEBDC-3) de Presto/Arquímedes —BCCA Andalucía, Extremadura, etc. Se conservan capítulos, partidas, mediciones y precios. También puedes importar una instalación local anterior.</p>
     </article>
     <article>
       <h3>Salud del catálogo</h3>
@@ -130,6 +131,26 @@
     <article>
       <h3>Moneda e IVA del documento</h3>
       <p>Cada presupuesto congela su moneda, su tasa y su IVA. Puedes cotizar en USD o en la moneda local. Un PDF antiguo no cambia si mañana se mueve el tipo de cambio.</p>
+    </article>
+  </div>
+</section>
+
+<section id="planos" class="franja">
+  <span class="section-kicker">Medición real</span>
+  <h2>Planos y BC3: de la visita y del arquitecto al presupuesto.</h2>
+  <p class="intro">Dos formas de entrar sin escribir a mano: si el arquitecto te manda un .bc3 lo importas, si subes un plano mides encima.</p>
+  <div class="funciona-grid">
+    <article>
+      <h3>📥 Importa BC3 (FIEBDC-3)</h3>
+      <p>Sube el .bc3 que te manda el arquitecto (Presto, Arquímedes, BCCA). CotizaT detecta capítulos, partidas, descripciones largas, mediciones y precios. Guarda el archivo original como trazabilidad. Exporta también a BC3 básico para quien te lo pida.</p>
+    </article>
+    <article>
+      <h3>📐 Mide sobre planos (manual asistido)</h3>
+      <p>Sube PNG, JPG, WEBP o PDF del plano. Calibras escala dibujando una línea conocida ("esta fachada son 8 m") y mides líneas, áreas, perímetros y conteos con el canvas. Sin IA ni coste por uso, funciona offline en obra.</p>
+    </article>
+    <article>
+      <h3>➕ Del plano a la partida</h3>
+      <p>Cada medición guardada (p. ej. "Suelo salón 24.3 m2") se puede crear como medición en la partida que elijas. Así la cantidad deja de ser a ojo y pasa a ser trazable del plano.</p>
     </article>
   </div>
 </section>
