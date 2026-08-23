@@ -54,6 +54,7 @@ def test_get_routes():
             "/reportes",
             "/buscar",
             "/presupuestos",
+            "/planos",
             "/proyectos",
             "/facturas",
             "/partidas",

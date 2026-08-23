@@ -36,10 +36,51 @@ from ..services.planos import (
 router = APIRouter()
 
 
+@router.get("/planos", response_class=HTMLResponse)
+def visor_planos(request: Request, db: Session = Depends(get_db)):
+    """Galería global de planos de la organización, agrupada por presupuesto."""
+    planos = (
+        db.query(PlanoObra)
+        .options(
+            selectinload(PlanoObra.mediciones),
+            selectinload(PlanoObra.presupuesto).selectinload(Presupuesto.cliente),
+        )
+        .order_by(PlanoObra.id.desc())
+        .all()
+    )
+
+    grupos: list[dict] = []
+    indice: dict[int, dict] = {}
+    for plano in planos:
+        presupuesto = plano.presupuesto
+        if presupuesto is None:
+            continue
+        grupo = indice.get(presupuesto.id)
+        if grupo is None:
+            grupo = {"presupuesto": presupuesto, "planos": [], "n_mediciones": 0}
+            indice[presupuesto.id] = grupo
+            grupos.append(grupo)
+        grupo["planos"].append(plano)
+        grupo["n_mediciones"] += len(plano.mediciones)
+
+    return TEMPLATES.TemplateResponse(
+        request,
+        "planos/visor.html",
+        {
+            "grupos": grupos,
+            "total_planos": len(planos),
+            "planos_calibrados": sum(1 for plano in planos if plano.calibrado),
+            "total_mediciones": sum(len(plano.mediciones) for plano in planos),
+            "cfg": _config(db),
+        },
+    )
+
+
 @router.get("/presupuestos/{presupuesto_id}/planos", response_class=HTMLResponse)
 def listar_planos_presupuesto(
     presupuesto_id: int,
     request: Request,
+    plano: int = 0,
     db: Session = Depends(get_db),
 ):
     presupuesto = db.get(Presupuesto, presupuesto_id)
@@ -54,6 +95,13 @@ def listar_planos_presupuesto(
         .all()
     )
 
+    # Enlace profundo ?plano=<id> desde el visor global; si no existe, el primero.
+    plano_inicial = None
+    if plano:
+        plano_inicial = next((p for p in planos if p.id == plano), None)
+    if plano_inicial is None and planos:
+        plano_inicial = planos[0]
+
     # Partidas para selector de aplicar medición
     partidas = []
     for cap in presupuesto.capitulos:
@@ -66,6 +114,7 @@ def listar_planos_presupuesto(
         {
             "p": presupuesto,
             "planos": planos,
+            "plano_inicial": plano_inicial,
             "partidas": partidas,
             "cfg": _config(db),
         },

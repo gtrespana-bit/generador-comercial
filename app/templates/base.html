@@ -94,6 +94,10 @@
       <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 16h14M4 16V7l5-4 5 4v9"/><rect x="7" y="10" width="4" height="6" rx="0.5"/></svg>
       <span>Proyectos</span>
     </a>
+    <a href="/planos" data-label="Planos" class="{{ 'active' if request.url.path == '/planos' else '' }}">
+      <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 1.7l2.3 2.3L4 16.3 1.7 14z"/><path d="M5.9 11.4l1.2 1.2M8.1 9.2l1.2 1.2M10.3 7l1.2 1.2M12.5 4.8l1.2 1.2"/></svg>
+      <span>Planos</span>
+    </a>
     <a href="/facturas" data-label="Cobros" class="{{ 'active' if request.url.path.startswith('/facturas') else '' }}">
       <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="1.5" width="14" height="15" rx="1.5"/><path d="M5 5h8M5 8h6M5 11h4"/><path d="M10 13h3"/></svg>
       <span>Cobros</span>
