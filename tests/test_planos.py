@@ -54,7 +54,7 @@ from app.models import (  # noqa: E402
     Presupuesto,
     Usuario,
 )
-from app.services.planos import crear_plano  # noqa: E402
+from app.services.planos import calibrar_plano, crear_medicion, crear_plano  # noqa: E402
 from app.storage import reset_storage_backend_cache  # noqa: E402
 
 # PNG 1x1 RGBA válido.
@@ -105,6 +105,22 @@ def entorno_planos(monkeypatch, tmp_path):
         seed.flush()
         plano_a = crear_plano(seed, presupuesto.id, "Planta baja", "planta.png", PNG_1x1)
         plano_b = crear_plano(seed, presupuesto.id, "Alzado norte", "alzado.png", PNG_1x1)
+        # Dimensiones estables para exportaciones: 1000x1000 px, 100 px/m.
+        plano_a.ancho_px = 1000
+        plano_a.alto_px = 1000
+        calibrar_plano(seed, plano_a, 300.0, 3.0, "m")
+        crear_medicion(
+            seed, plano_a, "lineal", "Muro cocina",
+            [[0, 1000], [300, 1000]], color="#ff0000",
+        )
+        crear_medicion(
+            seed, plano_a, "area", "Suelo salón",
+            [[0, 1000], [300, 1000], [300, 700], [0, 700]], color="#00aa00",
+        )
+        crear_medicion(
+            seed, plano_a, "conteo", "Enchufes",
+            [[50, 950], [150, 950]], color="#0000ff",
+        )
         seed.add(Membresia(usuario_id=usuario.id, organizacion_id=org.id, rol="propietario"))
         seed.commit()
         ids = (org.id, usuario.id, presupuesto.id, plano_a.id, plano_b.id)
@@ -165,3 +181,148 @@ def test_area_de_medicion_ignora_plano_inexistente(entorno_planos):
     resp = client.get(f"/presupuestos/{ids[2]}/planos?plano=999999")
     assert resp.status_code == 200
     assert f"planoActivoId = {ids[4]};" in resp.text
+
+
+# ------------------------------------------------------------------
+# Exportaciones premium: CSV, DXF, renombrado y anexo PDF
+# ------------------------------------------------------------------
+def test_exportar_csv_mediciones_del_presupuesto(entorno_planos):
+    """El CSV recoge todas las mediciones de todos los planos."""
+    _Session, ids = entorno_planos
+    client = TestClient(app, base_url="https://cotizat.test")
+    resp = client.get(f"/presupuestos/{ids[2]}/planos/exportar?formato=csv")
+    assert resp.status_code == 200
+    assert "text/csv" in resp.headers["content-type"]
+    assert "Planta baja" in resp.text
+    assert "Muro cocina" in resp.text
+    assert "Suelo salón" in resp.text
+    assert "Enchufes" in resp.text
+    assert "Lineal" in resp.text and "Área" in resp.text and "Conteo" in resp.text
+    assert "3,00" in resp.text   # muro: 300 px a 100 px/m = 3 m
+    assert "9,00" in resp.text   # área: 300x300 px = 9 m2
+
+
+def test_exportar_dxf_con_mediciones_en_metros(entorno_planos):
+    """DXF ASCII con entidades por tipo, Y invertida y metros reales."""
+    _Session, ids = entorno_planos
+    client = TestClient(app, base_url="https://cotizat.test")
+    resp = client.get(f"/planos/{ids[3]}/exportar?formato=dxf")
+    assert resp.status_code == 200
+    assert "application/dxf" in resp.headers["content-type"]
+    cuerpo = resp.text
+    assert "ENTITIES" in cuerpo
+    # Capas por tipo de medición + capa de etiquetas.
+    assert "MED_LINEAL_M" in cuerpo
+    assert "MED_AREA_M" in cuerpo
+    assert "MED_CONTEO_M" in cuerpo
+    assert "MED_ETIQUETAS" in cuerpo
+    # Muro cocina: (0,1000)->(300,1000) px => (0,0)->(3,0) m con Y invertida.
+    assert "10\n0.0000" in cuerpo
+    assert "20\n0.0000" in cuerpo
+    assert "11\n3.0000" in cuerpo
+    # Lineal = 1 segmento; área cerrada de 4 vértices = 4 segmentos.
+    assert cuerpo.count("\nLINE\n") == 5
+    # El conteo dibuja círculos y las etiquetas van como TEXT.
+    assert "\nCIRCLE\n" in cuerpo
+    assert "\nTEXT\n" in cuerpo
+    assert "Muro cocina" in cuerpo
+
+
+def test_exportar_dxf_sin_mediciones_avisa(entorno_planos):
+    _Session, ids = entorno_planos
+    client = TestClient(app, base_url="https://cotizat.test")
+    resp = client.get(f"/planos/{ids[4]}/exportar?formato=dxf")
+    assert resp.status_code == 400
+    assert "no tiene mediciones" in resp.json()["error"]
+
+
+def test_renombrar_medicion_guardada(entorno_planos):
+    Session, ids = entorno_planos
+    with Session() as db:
+        from app.models import PlanoMedicion
+        med = db.query(PlanoMedicion).filter(PlanoMedicion.plano_id == ids[3]).first()
+        med_id = med.id
+    client = TestClient(app, base_url="https://cotizat.test")
+    resp = client.post(
+        f"/planos/{ids[3]}/mediciones/{med_id}/renombrar",
+        json={"etiqueta": "Muro salón norte"},
+    )
+    assert resp.status_code == 200
+    assert resp.json() == {"ok": True, "etiqueta": "Muro salón norte"}
+
+
+def test_renombrar_medicion_rechaza_etiqueta_vacia(entorno_planos):
+    _Session, ids = entorno_planos
+    with _Session() as db:
+        from app.models import PlanoMedicion
+        med = db.query(PlanoMedicion).filter(PlanoMedicion.plano_id == ids[3]).first()
+        med_id = med.id
+    client = TestClient(app, base_url="https://cotizat.test")
+    resp = client.post(
+        f"/planos/{ids[3]}/mediciones/{med_id}/renombrar",
+        json={"etiqueta": "   "},
+    )
+    assert resp.status_code == 400
+
+
+def test_pdf_del_presupuesto_incluye_anexo_de_planos(monkeypatch):
+    """Con «incluir anexos», el PDF final lleva el plano con sus mediciones."""
+    import io
+    import json as _json
+
+    from PIL import Image
+    from pypdf import PdfReader
+
+    from app.models import (
+        Capitulo,
+        Cliente,
+        Configuracion,
+        PlanoMedicion,
+        PlanoObra,
+        Presupuesto,
+        PresupuestoItem,
+    )
+    from app.services import pdf as pdf_service
+    from app.services import pdf_planos
+
+    buf = io.BytesIO()
+    Image.new("RGB", (400, 300), (248, 250, 252)).save(buf, "PNG")
+    almacen = {"storage://a/planta.png": buf.getvalue()}
+    monkeypatch.setattr(pdf_planos, "read_reference", lambda ref: almacen[ref])
+
+    plano = PlanoObra(
+        nombre="Planta baja",
+        archivo="storage://a/planta.png",
+        content_type="image/png",
+        ancho_px=400,
+        alto_px=300,
+        escala_px_por_metro=100.0,
+    )
+    plano.mediciones = [
+        PlanoMedicion(
+            tipo="lineal", etiqueta="Muro cocina", valor=3.0, unidad="m",
+            puntos_json=_json.dumps([[0, 300], [300, 300]]), color="#ff0000",
+        ),
+    ]
+    cliente = Cliente(nombre="Cliente de prueba", rif="J-12345678")
+    presupuesto = Presupuesto(
+        numero="P-2026-050",
+        titulo="Reforma con planos",
+        fecha=date(2026, 8, 22),
+        moneda="USD",
+        estado="borrador",
+        impuesto_pct=16.0,
+        cliente=cliente,
+        incluir_anexos=True,
+    )
+    cap = Capitulo(nombre="ALBAÑILERÍA", orden=1)
+    cap.partidas = [PresupuestoItem(nombre="Tabique", unidad="m2", cantidad=10.0, precio_unitario=40.0)]
+    presupuesto.capitulos = [cap]
+    presupuesto.planos = [plano]
+
+    cfg = Configuracion(empresa_nombre="Constructora de prueba", pdf_color="#0F4C81")
+    datos = pdf_service.generar_pdf(presupuesto, cfg).getvalue()
+    texto = "\n".join(p.extract_text() or "" for p in PdfReader(io.BytesIO(datos)).pages)
+    assert "Plano: Planta baja" in texto
+    assert "Muro cocina" in texto
+    assert "Planos y mediciones" in texto  # citado en el índice de anexos

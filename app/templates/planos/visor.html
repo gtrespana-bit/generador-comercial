@@ -46,7 +46,10 @@
         {{ grupo.n_mediciones }} medición(es)
       </p>
     </div>
-    <a class="btn btn-primary planos-grupo-abrir" href="/presupuestos/{{ presupuesto.id }}/planos">📐 Abrir medición</a>
+    <div class="planos-grupo-accesos">
+      <a class="btn" href="/presupuestos/{{ presupuesto.id }}/planos/exportar?formato=csv" title="Descargar CSV con todas las mediciones del presupuesto">⬇ CSV</a>
+      <a class="btn btn-primary" href="/presupuestos/{{ presupuesto.id }}/planos">📐 Abrir medición</a>
+    </div>
   </div>
   <div class="planos-thumb-grid">
     {% for plano in grupo.planos %}
@@ -112,9 +115,10 @@
 .planos-empty-paso { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: .9rem 1rem; background: color-mix(in srgb, var(--surface) 60%, transparent); }
 .planos-empty-paso strong { display: block; margin-bottom: .25rem; color: var(--accent); }
 .planos-empty-paso p { margin: 0; font-size: .84rem; color: var(--text-soft); }
+.planos-grupo-accesos { display:flex; gap:.5rem; flex-wrap:wrap; }
 @media (max-width: 700px) {
   .planos-grupo-head { align-items: flex-start; flex-direction: column; }
-  .planos-grupo-abrir { width: 100%; }
+  .planos-grupo-accesos { width: 100%; }
 }
 </style>
 {% endblock %}
