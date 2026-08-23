@@ -335,6 +335,7 @@
       <button type="button" class="btn btn-sm btn-ghost" id="btn-pegar-excel" title="Pegar filas desde Excel">Pegar</button>
       <button type="button" class="btn btn-sm btn-ghost" id="btn-modal-receta-seccion" title="Pack de Estancia (Alt+R)">Pack</button>
       <button type="button" class="btn btn-sm btn-ghost" id="btn-preview-pdf" title="Vista previa del PDF">Vista previa</button>
+      {% if presupuesto %}<a class="btn btn-sm btn-ghost" href="/presupuestos/{{ presupuesto.id }}/planos" title="Medir sobre los planos de la obra">📐 Planos</a>{% endif %}
       <button type="button" class="btn btn-xs btn-ghost autosave-save-now" id="btn-autosave-save-now" title="Forzar guardado del borrador" aria-label="Guardar borrador ahora">Borrador</button>
     </div>
   </div>

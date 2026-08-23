@@ -367,3 +367,154 @@ def aplicar_medicion_a_partida(
     medicion.partida_destino_id = partida.id
     db.commit()
     return {"ok": True, "medicion_id": nueva.id, "cantidad": nueva.cantidad}
+
+
+def renombrar_medicion(db: Session, medicion: PlanoMedicion, etiqueta: str) -> PlanoMedicion:
+    """Cambia la etiqueta de una medición guardada."""
+    etiqueta = (etiqueta or "").strip()
+    if not etiqueta:
+        raise ErrorPlano("La etiqueta no puede estar vacía.")
+    medicion.etiqueta = etiqueta[:250]
+    db.commit()
+    return medicion
+
+
+# --------------------------------------------------------------------------- #
+# Exportaciones
+# --------------------------------------------------------------------------- #
+
+ETIQUETAS_TIPO_MEDICION = {
+    "lineal": "Lineal",
+    "area": "Área",
+    "perimetro": "Perímetro",
+    "conteo": "Conteo",
+    "volumen": "Volumen",
+}
+
+
+def _fmt_num(valor: float) -> str:
+    """Número con coma decimal, como el resto de CSV de la app (Excel ES)."""
+    return f"{float(valor or 0):.2f}".replace(".", ",")
+
+
+def filas_csv_mediciones(presupuesto) -> list[list[str]]:
+    """Filas CSV con todas las mediciones de todos los planos del presupuesto."""
+    planos = sorted(
+        getattr(presupuesto, "planos", None) or [],
+        key=lambda pl: pl.id,
+    )
+    filas = [[
+        "Plano", "Etiqueta", "Tipo", "Valor", "Unidad", "Puntos",
+        "Escala (px/m)", "Partida destino",
+    ]]
+    for plano in planos:
+        escala_txt = f"{plano.escala_px_por_metro:.2f}".replace(".", ",") if plano.calibrado else ""
+        for med in plano.mediciones:
+            destino = ""
+            if med.partida_destino:
+                destino = med.partida_destino.nombre
+            filas.append([
+                plano.nombre,
+                med.etiqueta or "",
+                ETIQUETAS_TIPO_MEDICION.get(med.tipo, med.tipo),
+                _fmt_num(med.valor),
+                med.unidad or "",
+                str(len(med.puntos())),
+                escala_txt,
+                destino,
+            ])
+    return filas
+
+
+def _color_dxf(hex_color: str) -> int:
+    """Color hex → índice ACI (aproximado) de la paleta DXF."""
+    try:
+        h = (hex_color or "#ff0000").lstrip("#")
+        r, g, b = int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
+    except (ValueError, IndexError):
+        return 1
+    if r > 200 and g < 100 and b < 100:
+        return 1   # rojo
+    if g > 150 and r < 150:
+        return 3   # verde
+    if b > 150 and r < 150:
+        return 5   # azul
+    if r > 200 and g > 150 and b < 100:
+        return 2   # amarillo
+    if r > 150 and b > 150 and g < 120:
+        return 6   # magenta
+    if r > 150 and g > 100 and b < 100:
+        return 30  # naranja
+    return 7      # blanco
+
+
+def exportar_plano_dxf(plano: PlanoObra) -> str:
+    """DXF ASCII (R12, solo ENTITIES) con las mediciones del plano.
+
+    Coordenadas en metros cuando el plano está calibrado (origen abajo-
+    izquierda, como en CAD: la Y se invierte respecto de la imagen) y en
+    píxeles cuando no. Cada tipo de medición va a su capa MED_<TIPO>_*
+    para poder congelarlas/aislarlas en el editor CAD.
+    """
+    if not plano.mediciones:
+        raise ErrorPlano("Este plano no tiene mediciones que exportar.")
+
+    factor = plano.factor_m if plano.calibrado else 1.0
+    sufijo = "M" if plano.calibrado else "PX"
+    alto = plano.alto_px
+    if not alto:
+        alto = max(
+            (p[1] for m in plano.mediciones for p in m.puntos()),
+            default=1000,
+        )
+
+    lineas: list[str] = []
+
+    def par(codigo: int, valor):
+        lineas.append(str(codigo))
+        lineas.append(str(valor))
+
+    def vertice(x_px: float, y_px: float) -> tuple[float, float]:
+        return (x_px * factor, (alto - y_px) * factor)
+
+    for med in plano.mediciones:
+        pts = [vertice(x, y) for x, y in med.puntos()]
+        capa = f"MED_{(med.tipo or 'LINEAL').upper()}_{sufijo}"
+        color = _color_dxf(med.color)
+
+        def segmentos(puntos, cerrar):
+            for i in range(1, len(puntos)):
+                par(0, "LINE"); par(8, capa); par(62, color)
+                par(10, f"{puntos[i-1][0]:.4f}"); par(20, f"{puntos[i-1][1]:.4f}")
+                par(11, f"{puntos[i][0]:.4f}"); par(21, f"{puntos[i][1]:.4f}")
+            if cerrar and len(puntos) >= 3:
+                par(0, "LINE"); par(8, capa); par(62, color)
+                par(10, f"{puntos[-1][0]:.4f}"); par(20, f"{puntos[-1][1]:.4f}")
+                par(11, f"{puntos[0][0]:.4f}"); par(21, f"{puntos[0][1]:.4f}")
+
+        if med.tipo in ("lineal", "perimetro", "volumen"):
+            segmentos(pts, cerrar=(med.tipo != "lineal"))
+        elif med.tipo == "area":
+            segmentos(pts, cerrar=True)
+        elif med.tipo == "conteo":
+            radio = (8 * factor) if factor < 1 else 8
+            for x, y in pts:
+                par(0, "CIRCLE"); par(8, capa); par(62, color)
+                par(10, f"{x:.4f}"); par(20, f"{y:.4f}"); par(40, f"{radio:.4f}")
+
+        etiqueta = (med.etiqueta or "").strip()
+        if etiqueta and pts:
+            alto_txt = (0.25 if plano.calibrado else 12)
+            par(0, "TEXT"); par(8, "MED_ETIQUETAS"); par(62, 7)
+            par(10, f"{pts[0][0]:.4f}"); par(20, f"{pts[0][1]:.4f}")
+            par(40, f"{alto_txt:.2f}")
+            par(1, etiqueta[:80])
+
+    cuerpo = "\n".join(lineas)
+    unidad = "metros" if plano.calibrado else "píxeles"
+    return (
+        f"999\nMediciones CotizaT - {plano.nombre} - coordenadas en {unidad}\n"
+        "0\nSECTION\n2\nENTITIES\n"
+        f"{cuerpo}\n"
+        "0\nENDSEC\n0\nEOF\n"
+    )

@@ -9,6 +9,7 @@
   </div>
   <div class="actions">
     <a class="btn btn-sm" href="/presupuestos/optimizar-precios" title="Analiza márgenes de tu catálogo">Optimizar precios</a>
+    <a class="btn btn-sm" href="/planos" title="Galería de planos con medición asistida">📐 Planos</a>
     <a class="btn btn-sm" href="/presupuestos/importar">Importar</a>
     <a class="btn btn-primary" href="/presupuestos/nuevo">Nuevo presupuesto</a>
   </div>
@@ -49,6 +50,7 @@
           <div class="row-actions list-row-actions">
             <a class="btn btn-sm btn-ghost" href="/presupuestos/{{ p.id }}">Ver</a>
             <a class="btn btn-sm" href="/presupuestos/{{ p.id }}/editar">Editar</a>
+            <a class="btn btn-sm btn-ghost" href="/presupuestos/{{ p.id }}/planos" title="Medición manual sobre planos">📐 Planos</a>
             <a class="btn btn-sm btn-ghost" href="/presupuestos/{{ p.id }}/tiempos" title="Tiempo estimado de obra">Tiempos</a>
             {% set wa = p.cliente.telefono | whatsapp('Hola ' ~ p.cliente.nombre ~ ', te comparto el presupuesto ' ~ p.numero ~ ' por un total de ' ~ (p.total | money_iso(p.moneda)) ~ '.') %}
             {% if wa %}<a class="btn btn-sm btn-whatsapp" href="{{ wa }}" target="_blank" title="Enviar por WhatsApp">WhatsApp</a>{% endif %}

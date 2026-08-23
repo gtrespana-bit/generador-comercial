@@ -52,7 +52,7 @@ from ..utils import (
     saneado,
 )
 from .traduccion import codigo_desde_pais, traducir
-from . import pdf_anexos
+from . import pdf_anexos, pdf_planos
 from .pdf_interactivo import ContextoInteractivo
 
 # Código de país activo para traducir terminología al vuelo (VE base -> CO/MX/EC/PE)
@@ -1357,6 +1357,13 @@ def generar_pdf(presupuesto, config):
     en qué página empieza cada uno (ver :mod:`app.services.pdf_anexos`).
     """
     anexos = pdf_anexos.cargar(presupuesto)
+    if getattr(presupuesto, "incluir_anexos", False):
+        # Anexo generado en memoria: plano + mediciones dibujadas + tabla.
+        # Si no hay planos con mediciones (o algo falla) devuelve None y el
+        # documento sale exactamente igual que antes.
+        anexo_planos = pdf_planos.generar_anexo(presupuesto)
+        if anexo_planos is not None:
+            anexos.append(anexo_planos)
     if not anexos:
         return _documento_presupuesto(presupuesto, config)
 

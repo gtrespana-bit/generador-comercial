@@ -37,8 +37,8 @@ DEFAULT_BUCKET = "cotizat-private"
 MAX_OBJECT_SIZE = 12 * 1024 * 1024
 _ALLOWED_CATEGORIES = {
     "anexos", "comprobantes", "firmas", "fotos-proyecto", "fichas-tecnicas",
-    "importaciones", "manifiestos-importacion", "logos", "partidas", "productos",
-    "presupuestos",
+    "importaciones", "manifiestos-importacion", "logos", "partidas", "planos",
+    "productos", "presupuestos",
 }
 
 

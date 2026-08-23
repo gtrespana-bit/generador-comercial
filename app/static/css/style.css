@@ -6255,6 +6255,11 @@ body { -webkit-tap-highlight-color: transparent; }
 
 /* ───────────────────── Presupuesto · revisión antes de enviar ───────────────────── */
 .budget-actions-main { align-items: flex-start; }
+/* La animación fadeInUp de .content > .page-head deja un transform persistente
+   que crea un contexto de apilamiento: sin capa propia, el menú "Más opciones"
+   (z-index 20 dentro de ese contexto) quedaba tapado por las tarjetas siguientes
+   (p. ej. el Resumen del presupuesto). */
+.page-head { position: relative; z-index: 30; }
 .actions-more { position: relative; }
 .actions-more summary { list-style: none; cursor: pointer; }
 .actions-more summary::-webkit-details-marker { display: none; }

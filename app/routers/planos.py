@@ -10,6 +10,7 @@ from .common import (
     _config,
     _redirect,
     _f,
+    _csv_response,
     Depends,
     Presupuesto,
     PlanoObra,
@@ -27,19 +28,63 @@ from ..services.planos import (
     crear_plano,
     calibrar_plano,
     crear_medicion,
+    renombrar_medicion,
     eliminar_plano,
     eliminar_medicion,
     aplicar_medicion_a_partida,
     calcular_valor_real,
+    exportar_plano_dxf,
+    filas_csv_mediciones,
 )
 
 router = APIRouter()
+
+
+@router.get("/planos", response_class=HTMLResponse)
+def visor_planos(request: Request, db: Session = Depends(get_db)):
+    """Galería global de planos de la organización, agrupada por presupuesto."""
+    planos = (
+        db.query(PlanoObra)
+        .options(
+            selectinload(PlanoObra.mediciones),
+            selectinload(PlanoObra.presupuesto).selectinload(Presupuesto.cliente),
+        )
+        .order_by(PlanoObra.id.desc())
+        .all()
+    )
+
+    grupos: list[dict] = []
+    indice: dict[int, dict] = {}
+    for plano in planos:
+        presupuesto = plano.presupuesto
+        if presupuesto is None:
+            continue
+        grupo = indice.get(presupuesto.id)
+        if grupo is None:
+            grupo = {"presupuesto": presupuesto, "planos": [], "n_mediciones": 0}
+            indice[presupuesto.id] = grupo
+            grupos.append(grupo)
+        grupo["planos"].append(plano)
+        grupo["n_mediciones"] += len(plano.mediciones)
+
+    return TEMPLATES.TemplateResponse(
+        request,
+        "planos/visor.html",
+        {
+            "grupos": grupos,
+            "total_planos": len(planos),
+            "planos_calibrados": sum(1 for plano in planos if plano.calibrado),
+            "total_mediciones": sum(len(plano.mediciones) for plano in planos),
+            "cfg": _config(db),
+        },
+    )
 
 
 @router.get("/presupuestos/{presupuesto_id}/planos", response_class=HTMLResponse)
 def listar_planos_presupuesto(
     presupuesto_id: int,
     request: Request,
+    plano: int = 0,
     db: Session = Depends(get_db),
 ):
     presupuesto = db.get(Presupuesto, presupuesto_id)
@@ -54,6 +99,13 @@ def listar_planos_presupuesto(
         .all()
     )
 
+    # Enlace profundo ?plano=<id> desde el visor global; si no existe, el primero.
+    plano_inicial = None
+    if plano:
+        plano_inicial = next((p for p in planos if p.id == plano), None)
+    if plano_inicial is None and planos:
+        plano_inicial = planos[0]
+
     # Partidas para selector de aplicar medición
     partidas = []
     for cap in presupuesto.capitulos:
@@ -66,6 +118,7 @@ def listar_planos_presupuesto(
         {
             "p": presupuesto,
             "planos": planos,
+            "plano_inicial": plano_inicial,
             "partidas": partidas,
             "cfg": _config(db),
         },
@@ -279,3 +332,69 @@ def borrar_medicion_post(plano_id: int, medicion_id: int, db: Session = Depends(
         return JSONResponse({"ok": False, "error": "Medición no encontrada."}, status_code=404)
     eliminar_medicion(db, med)
     return {"ok": True}
+
+
+@router.post("/planos/{plano_id}/mediciones/{medicion_id}/renombrar")
+async def renombrar_medicion_endpoint(
+    plano_id: int,
+    medicion_id: int,
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    med = db.get(PlanoMedicion, medicion_id)
+    if not med or med.plano_id != plano_id:
+        return JSONResponse({"ok": False, "error": "Medición no encontrada."}, status_code=404)
+    try:
+        payload = await request.json()
+    except Exception:
+        return JSONResponse({"ok": False, "error": "JSON no válido."}, status_code=400)
+    try:
+        med = renombrar_medicion(db, med, str(payload.get("etiqueta", "")))
+        return {"ok": True, "etiqueta": med.etiqueta}
+    except ErrorPlano as e:
+        return JSONResponse({"ok": False, "error": str(e)}, status_code=400)
+
+
+@router.get("/presupuestos/{presupuesto_id}/planos/exportar")
+def exportar_mediciones_presupuesto(
+    presupuesto_id: int,
+    formato: str = "csv",
+    db: Session = Depends(get_db),
+):
+    """CSV con todas las mediciones de todos los planos del presupuesto."""
+    presupuesto = db.get(Presupuesto, presupuesto_id)
+    if not presupuesto:
+        return _redirect("/presupuestos", error="Presupuesto no encontrado.")
+    filas = filas_csv_mediciones(presupuesto)
+    if len(filas) <= 1:
+        return _redirect(
+            f"/presupuestos/{presupuesto_id}/planos",
+            error="Este presupuesto no tiene mediciones que exportar.",
+        )
+    return _csv_response(filas, f"mediciones_{presupuesto.numero}.csv")
+
+
+@router.get("/planos/{plano_id}/exportar")
+def exportar_plano_endpoint(
+    plano_id: int,
+    formato: str = "dxf",
+    db: Session = Depends(get_db),
+):
+    """DXF con las mediciones del plano para AutoCAD/LibreCAD/BricsCAD."""
+    plano = db.get(PlanoObra, plano_id)
+    if not plano:
+        return JSONResponse({"ok": False, "error": "Plano no encontrado."}, status_code=404)
+    if (formato or "dxf").lower() != "dxf":
+        return JSONResponse({"ok": False, "error": "Formato no soportado."}, status_code=400)
+    try:
+        dxf = exportar_plano_dxf(plano)
+    except ErrorPlano as e:
+        return JSONResponse({"ok": False, "error": str(e)}, status_code=400)
+    nombre = "".join(c for c in plano.nombre if c.isalnum() or c in "-_ ")[:40].strip() or f"plano_{plano.id}"
+    return Response(
+        content=dxf,
+        media_type="application/dxf",
+        headers={
+            "Content-Disposition": f'attachment; filename="mediciones_{nombre}.dxf"',
+        },
+    )

@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block title %}Visor de planos{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>📐 Visor de planos</h1>
+    <p class="subtitle">Todos los planos de tus presupuestos en un solo sitio: calibra la escala, mide sobre el dibujo y aplica las mediciones a tus partidas.</p>
+  </div>
+  <div class="actions">
+    <a class="btn" href="/presupuestos">Ir a presupuestos</a>
+  </div>
+</div>
+
+{% if grupos %}
+<div class="cards planos-stats">
+  <div class="card card-stat">
+    <strong class="planos-stat-num">{{ total_planos }}</strong>
+    <span class="planos-stat-label">plano{{ 's' if total_planos != 1 }}</span>
+  </div>
+  <div class="card card-stat">
+    <strong class="planos-stat-num">{{ planos_calibrados }}<span class="planos-stat-total">/{{ total_planos }}</span></strong>
+    <span class="planos-stat-label">calibrados</span>
+  </div>
+  <div class="card card-stat">
+    <strong class="planos-stat-num">{{ total_mediciones }}</strong>
+    <span class="planos-stat-label">mediciones guardadas</span>
+  </div>
+  <div class="card card-stat">
+    <strong class="planos-stat-num">{{ grupos|length }}</strong>
+    <span class="planos-stat-label">presupuesto{{ 's' if grupos|length != 1 }} con planos</span>
+  </div>
+</div>
+
+{% for grupo in grupos %}
+{% set presupuesto = grupo.presupuesto %}
+<div class="card planos-grupo">
+  <div class="planos-grupo-head">
+    <div class="planos-grupo-info">
+      <h2 class="planos-grupo-titulo">
+        <a href="/presupuestos/{{ presupuesto.id }}">{{ presupuesto.numero }}</a>
+        {% if presupuesto.titulo %}<span class="planos-grupo-titulo-extra">· {{ presupuesto.titulo }}</span>{% endif %}
+      </h2>
+      <p class="hint">
+        {{ presupuesto.cliente.nombre if presupuesto.cliente else 'Sin cliente' }} ·
+        {{ grupo.planos|length }} plano{{ 's' if grupo.planos|length != 1 }} ·
+        {{ grupo.n_mediciones }} medición(es)
+      </p>
+    </div>
+    <div class="planos-grupo-accesos">
+      <a class="btn" href="/presupuestos/{{ presupuesto.id }}/planos/exportar?formato=csv" title="Descargar CSV con todas las mediciones del presupuesto">⬇ CSV</a>
+      <a class="btn btn-primary" href="/presupuestos/{{ presupuesto.id }}/planos">📐 Abrir medición</a>
+    </div>
+  </div>
+  <div class="planos-thumb-grid">
+    {% for plano in grupo.planos %}
+    <a class="planos-thumb" href="/presupuestos/{{ presupuesto.id }}/planos?plano={{ plano.id }}" title="Abrir «{{ plano.nombre }}» en el área de medición">
+      {% if plano.content_type and plano.content_type.startswith('image/') %}
+      <span class="planos-thumb-img"><img src="/planos/{{ plano.id }}/archivo" alt="Plano {{ plano.nombre }}" loading="lazy" decoding="async"></span>
+      {% else %}
+      <span class="planos-thumb-img planos-thumb-pdf">📄<small>PDF</small></span>
+      {% endif %}
+      <span class="planos-thumb-nombre" title="{{ plano.nombre }}">{{ plano.nombre }}</span>
+      <span class="planos-thumb-meta">
+        {% if plano.calibrado %}
+        <span class="badge badge-ok">📏 {{ "%.0f"|format(plano.escala_px_por_metro) }} px/m</span>
+        {% else %}
+        <span class="badge badge-warn">Sin calibrar</span>
+        {% endif %}
+        <span class="badge">{{ plano.mediciones|length }} med.</span>
+      </span>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endfor %}
+
+{% else %}
+<div class="card planos-empty">
+  <span class="planos-empty-icon" aria-hidden="true">📐</span>
+  <h2>Aún no hay planos subidos</h2>
+  <p class="hint">El visor de planos te permite medir sobre las plantas del cliente sin IA y sin coste por uso.</p>
+  <div class="planos-empty-pasos">
+    <div class="planos-empty-paso"><strong>1 · Sube</strong><p>Entra en un presupuesto y abre <a class="link" href="/presupuestos">📐 Planos</a>. Acepta PNG, JPG, WEBP o PDF.</p></div>
+    <div class="planos-empty-paso"><strong>2 · Calibra</strong><p>Dibuja una línea sobre una medida conocida (una puerta, un pasillo) y dile cuántos metros mide.</p></div>
+    <div class="planos-empty-paso"><strong>3 · Mide y aplica</strong><p>Mide longitudes, áreas y conteos, y envíalos como medición a la partida correspondiente.</p></div>
+  </div>
+  <div class="form-actions">
+    <a class="btn btn-primary" href="/presupuestos">Elegir un presupuesto</a>
+  </div>
+</div>
+{% endif %}
+
+<style nonce="{{ request.state.csp_nonce }}">
+.planos-stats { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: .75rem; margin-bottom: 1.25rem; }
+.planos-stat-num { display: block; font-size: 1.6rem; line-height: 1.1; }
+.planos-stat-total { font-size: .9rem; color: var(--text-soft); font-weight: 500; }
+.planos-stat-label { color: var(--text-soft); font-size: .8rem; }
+.planos-grupo { margin-bottom: 1.25rem; }
+.planos-grupo-head { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; margin-bottom: .9rem; }
+.planos-grupo-titulo { margin: 0; font-size: 1.05rem; }
+.planos-grupo-titulo-extra { color: var(--text-soft); font-weight: 500; }
+.planos-grupo-info .hint { margin: .15rem 0 0; }
+.planos-thumb-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: .8rem; }
+.planos-thumb { display: flex; flex-direction: column; gap: .35rem; padding: .6rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); text-decoration: none; color: inherit; transition: border-color .15s ease, box-shadow .15s ease; }
+.planos-thumb:hover { border-color: var(--accent); box-shadow: var(--shadow-sm); }
+.planos-thumb-img { display: flex; align-items: center; justify-content: center; height: 130px; border-radius: 6px; overflow: hidden; background: var(--bg-soft, #f1f5f9); }
+.planos-thumb-img img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.planos-thumb-pdf { flex-direction: column; color: var(--text-soft); font-size: 1.8rem; gap: .2rem; }
+.planos-thumb-pdf small { font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; }
+.planos-thumb-nombre { font-weight: 600; font-size: .85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.planos-thumb-meta { display: flex; gap: .3rem; flex-wrap: wrap; }
+.planos-empty { text-align: center; padding: 2.5rem 1.5rem; }
+.planos-empty-icon { font-size: 2.6rem; display: block; margin-bottom: .5rem; }
+.planos-empty-pasos { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1rem; margin: 1.25rem auto; max-width: 760px; text-align: left; }
+.planos-empty-paso { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: .9rem 1rem; background: color-mix(in srgb, var(--surface) 60%, transparent); }
+.planos-empty-paso strong { display: block; margin-bottom: .25rem; color: var(--accent); }
+.planos-empty-paso p { margin: 0; font-size: .84rem; color: var(--text-soft); }
+.planos-grupo-accesos { display:flex; gap:.5rem; flex-wrap:wrap; }
+@media (max-width: 700px) {
+  .planos-grupo-head { align-items: flex-start; flex-direction: column; }
+  .planos-grupo-accesos { width: 100%; }
+}
+</style>
+{% endblock %}

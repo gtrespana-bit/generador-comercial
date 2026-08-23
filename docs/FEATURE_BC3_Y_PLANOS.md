@@ -165,3 +165,33 @@ python -m pytest tests/test_bc3.py -v
 python -m pytest tests/test_planos.py -v
 # Ir a /presupuestos/{id}/planos, subir imagen, calibrar, medir, aplicar a partida
 ```
+
+---
+
+## Actualización 2026-08-23: visor global + opciones premium
+
+### Visibilidad
+- `GET /planos`: galería global de todos los planos de la organización, agrupados por presupuesto, con miniaturas, estadísticas y enlaces profundos `?plano=<id>`.
+- Entrada «Planos» en el sidebar, en la cabecera de Presupuestos, acción por fila, botón en la barra del editor y enlace desde el área de medición.
+
+### Área de medición (premium)
+- **Snap ortogonal**: fijo con casilla o manteniendo Mayús; restringe el siguiente punto a horizontal/vertical del anterior.
+- **Snap a vértices**: magnetismo a puntos de mediciones guardadas (umbral 8 px de pantalla, independiente del zoom), con anillo indicador.
+- **Línea elástica**: previsualización en vivo del siguiente segmento y del cierre del polígono.
+- **Paneo**: botón central del ratón siempre, o herramienta ✋ Mover.
+- **Atajos**: L/A/P/C/E/M cambian herramienta, Ctrl+Z deshace punto, Esc cancela.
+- **Pantalla completa** del lienzo (⛶⛶) y **descarga PNG** del plano con las mediciones dibujadas.
+- Barra de estado con coordenadas del cursor (m o px), zoom y medición en curso.
+- Renombrado de mediciones (✏️), totales por unidad, mostrar/ocultar mediciones.
+
+### Exportaciones
+- **CSV** (`/presupuestos/{id}/planos/exportar?formato=csv`): todas las mediciones del presupuesto, `;` + BOM para Excel ES.
+- **DXF** (`/planos/{id}/exportar?formato=dxf`): ASCII R12 solo ENTITIES, coordenadas en metros (Y invertida, origen abajo-izquierda), capa por tipo (`MED_LINEAL_M`, `MED_AREA_M`, …) y etiquetas como TEXT. Abre en AutoCAD/LibreCAD/BricsCAD.
+- **PNG**: descarga del lienzo con mediciones (client-side).
+- **PDF**: con «Incluir anexos» activo, `pdf_planos` genera un anexo en memoria (imagen del plano + mediciones superpuestas + tabla) que entra por el circuito estándar de `pdf_anexos` (índice, tope 4 MB, degradación elegante).
+
+### Fix crítico incluido
+- `_ALLOWED_CATEGORIES` de `app/storage.py` no incluía `planos`: toda subida fallaba con «No se pudo guardar el plano». Corregido y cubierto con test de subida real.
+
+### Tests
+- `tests/test_planos.py`: 13 pruebas (geometría, visor, deep-link, CSV, DXF, renombrado, anexo PDF).
