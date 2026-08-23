@@ -1,4 +1,4 @@
-from app.services.planos import calcular_valor_real, detectar_espacios_plano
+from app.services.planos import calcular_valor_real, detectar_espacios_plano, metricas_estancia
 
 
 def test_calcular_valor_lineal_sin_escala():
@@ -57,11 +57,87 @@ def test_detector_local_encuentra_estancias_y_cierra_huecos_de_puerta():
     assert all(len(d["puntos"]) >= 3 for d in detecciones)
     assert all(d["confianza"] >= 0.7 for d in detecciones)
     assert [d["etiqueta"] for d in detecciones] == [
-        "Estancia detectada 1",
-        "Estancia detectada 2",
-        "Estancia detectada 3",
-        "Estancia detectada 4",
+        "Estancia 1",
+        "Estancia 2",
+        "Estancia 3",
+        "Estancia 4",
     ]
+
+
+def _png_planta_con_cotas_numericas():
+    """Misma planta de 4 recintos, pero con cotas y números sobre los muros."""
+    import io
+    from PIL import Image, ImageDraw
+
+    imagen = Image.new("RGB", (800, 600), "white")
+    dibujo = ImageDraw.Draw(imagen)
+    dibujo.rectangle((40, 40, 760, 560), outline="black", width=8)
+    dibujo.line((400, 40, 400, 560), fill="black", width=8)
+    dibujo.line((40, 300, 760, 300), fill="black", width=8)
+    dibujo.rectangle((397, 115, 403, 165), fill="white")
+    dibujo.rectangle((200, 297, 250, 303), fill="white")
+    # Números de cota pegados a los tabiques: el detector antiguo los
+    # convertía en muros y partía las estancias.
+    dibujo.text((160, 48), "3.50", fill="black")
+    dibujo.text((520, 48), "4.20", fill="black")
+    dibujo.text((48, 160), "2.80", fill="black")
+    dibujo.text((410, 320), "1.20", fill="black")
+    dibujo.line((80, 28, 380, 28), fill="black", width=1)
+    dibujo.line((80, 22, 80, 34), fill="black", width=1)
+    dibujo.line((380, 22, 380, 34), fill="black", width=1)
+    salida = io.BytesIO()
+    imagen.save(salida, "PNG")
+    return salida.getvalue()
+
+
+def _png_planta_con_muro_diagonal():
+    import io
+    from PIL import Image, ImageDraw
+
+    imagen = Image.new("RGB", (800, 600), "white")
+    dibujo = ImageDraw.Draw(imagen)
+    dibujo.rectangle((60, 60, 740, 540), outline="black", width=8)
+    dibujo.line((60, 60, 740, 540), fill="black", width=8)
+    salida = io.BytesIO()
+    imagen.save(salida, "PNG")
+    return salida.getvalue()
+
+
+def test_detector_ignora_cotas_y_numeros_sobre_muros():
+    detecciones = detectar_espacios_plano(_png_planta_con_cotas_numericas(), "image/png")
+    assert len(detecciones) == 4
+
+
+def test_detector_conserva_angulo_de_muro_diagonal():
+    import math
+
+    detecciones = detectar_espacios_plano(_png_planta_con_muro_diagonal(), "image/png")
+    assert len(detecciones) == 2
+
+    def _tiene_diagonal(puntos):
+        n = len(puntos)
+        for i in range(n):
+            a, b = puntos[i], puntos[(i + 1) % n]
+            dx, dy = b[0] - a[0], b[1] - a[1]
+            if math.hypot(dx, dy) < 40:
+                continue
+            ang = abs(math.degrees(math.atan2(dy, dx))) % 180
+            if 28 < ang < 62 or 118 < ang < 152:
+                return True
+        return False
+
+    assert any(_tiene_diagonal(d["puntos"]) for d in detecciones)
+
+
+def test_metricas_estancia_suelo_perimetro_y_paredes():
+    puntos = [[0, 0], [400, 0], [400, 300], [0, 300]]
+    met = metricas_estancia(puntos, 100.0, 2.5)
+    assert met["suelo"] == 12.0
+    assert met["suelo_unidad"] == "m2"
+    assert met["perimetro"] == 14.0
+    assert met["perimetro_unidad"] == "m"
+    assert met["paredes"] == 35.0
+    assert met["calibrado"] is True
 
 
 # ------------------------------------------------------------------
@@ -226,8 +302,9 @@ def test_subida_activa_analisis_y_detecciones_persisten_sin_duplicarse(entorno_p
     assert subida.status_code == 200
     datos_subida = subida.json()
     plano_id = datos_subida["plano_id"]
-    assert datos_subida["deteccion_automatica"] is True
-    assert datos_subida["url"].endswith(f"?plano={plano_id}&detectar=1")
+    assert datos_subida["deteccion_automatica"] is False
+    assert datos_subida["requiere_calibracion"] is True
+    assert datos_subida["url"].endswith(f"?plano={plano_id}")
 
     primera = client.post(f"/planos/{plano_id}/detectar")
     assert primera.status_code == 200
@@ -353,6 +430,26 @@ def test_renombrar_medicion_guardada(entorno_planos):
     )
     assert resp.status_code == 200
     assert resp.json() == {"ok": True, "etiqueta": "Muro salón norte"}
+
+
+def test_datos_de_area_incluyen_metricas_de_estancia(entorno_planos):
+    _Session, ids = entorno_planos
+    client = TestClient(app, base_url="https://cotizat.test")
+    recarga = client.get(f"/planos/{ids[3]}/datos").json()
+    suelo = next(m for m in recarga["mediciones"] if m["tipo"] == "area")
+    assert suelo["metricas"]["suelo"] == pytest.approx(9.0)
+    assert suelo["metricas"]["perimetro"] == pytest.approx(12.0)
+    assert suelo["metricas"]["paredes"] == pytest.approx(30.0)
+    assert recarga["plano"]["altura_libre_m"] == pytest.approx(2.5)
+
+
+def test_cambiar_altura_recalcula_paredes(entorno_planos):
+    _Session, ids = entorno_planos
+    client = TestClient(app, base_url="https://cotizat.test")
+    resp = client.post(f"/planos/{ids[3]}/altura", json={"altura_libre_m": 3.0})
+    assert resp.status_code == 200
+    suelo = next(m for m in resp.json()["mediciones"] if m["tipo"] == "area")
+    assert suelo["metricas"]["paredes"] == pytest.approx(36.0)
 
 
 def test_renombrar_medicion_rechaza_etiqueta_vacia(entorno_planos):

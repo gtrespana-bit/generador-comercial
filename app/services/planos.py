@@ -109,6 +109,62 @@ def _area_px(puntos: list[list[float]]) -> float:
     return abs(s) / 2.0
 
 
+ALTURA_LIBRE_DEFECTO_M = 2.5
+
+
+def _perimetro_cerrado_px(puntos: list[list[float]]) -> float:
+    """Perímetro de un polígono, incluyendo el cierre si falta."""
+    if len(puntos) < 2:
+        return 0.0
+    px = _distancia_px(puntos)
+    if len(puntos) >= 3:
+        x0, y0 = puntos[0]
+        x1, y1 = puntos[-1]
+        cierre = math.hypot(x1 - x0, y1 - y0)
+        if cierre > 1e-6:
+            px += cierre
+    return px
+
+
+def metricas_estancia(
+    puntos: list[list[float]],
+    escala_px_por_m: float | None,
+    altura_m: float | None = None,
+) -> dict[str, Any]:
+    """Suelo, perímetro y desarrollo de paredes a partir del polígono.
+
+    Sin calibrar se informan píxeles. Con escala, el suelo va en m², el
+    perímetro en m y las paredes en m² (perímetro × altura libre).
+    """
+    altura = float(altura_m) if altura_m and altura_m > 0 else ALTURA_LIBRE_DEFECTO_M
+    area_px2 = _area_px(puntos)
+    perimetro_px = _perimetro_cerrado_px(puntos)
+    if not escala_px_por_m or escala_px_por_m <= 0:
+        return {
+            "suelo": round(area_px2, 2),
+            "suelo_unidad": "px2",
+            "perimetro": round(perimetro_px, 2),
+            "perimetro_unidad": "px",
+            "paredes": None,
+            "paredes_unidad": "m2",
+            "altura_m": altura,
+            "calibrado": False,
+        }
+    factor = 1.0 / escala_px_por_m
+    suelo = area_px2 * (factor ** 2)
+    perimetro = perimetro_px * factor
+    return {
+        "suelo": round(suelo, 2),
+        "suelo_unidad": "m2",
+        "perimetro": round(perimetro, 2),
+        "perimetro_unidad": "m",
+        "paredes": round(perimetro * altura, 2),
+        "paredes_unidad": "m2",
+        "altura_m": altura,
+        "calibrado": True,
+    }
+
+
 def calcular_valor_real(tipo: str, puntos: list[list[float]], escala_px_por_m: float | None) -> tuple[float, str]:
     """
     Calcula valor real a partir de puntos y escala.
@@ -184,7 +240,11 @@ def _umbral_otsu(histograma: list[int], total: int) -> int:
 
 
 def _runs_tinta(valores: list[int], max_hueco: int, largo_minimo: int) -> list[tuple[int, int]]:
-    """Une tramos de tinta alineados, cerrando huecos típicos de puertas."""
+    """Une tramos de tinta alineados, cerrando huecos típicos de puertas.
+
+    Exige tramos con entidad a ambos lados del hueco. Así un «3.50» escrito
+    junto a un muro no se convierte en un tabique extra.
+    """
     runs: list[tuple[int, int, int]] = []
     inicio = None
     for i, valor in enumerate(valores):
@@ -199,13 +259,14 @@ def _runs_tinta(valores: list[int], max_hueco: int, largo_minimo: int) -> list[t
     if not runs:
         return []
 
+    # Un dígito o un tick de cota suele medir pocos píxeles. Solo se
+    # puentea cuando ambos lados parecen un muro de verdad.
+    tinta_minima_lado = max(10, largo_minimo // 4)
     unidos: list[tuple[int, int, int]] = [runs[0]]
     for inicio, fin, tinta in runs[1:]:
         anterior_i, anterior_f, anterior_tinta = unidos[-1]
         hueco = inicio - anterior_f - 1
-        # Solo se puentea cuando los trazos a ambos lados tienen entidad. Así
-        # no se convierte cada palabra del plano en una pared artificial.
-        lados_utiles = anterior_tinta >= 3 and tinta >= 3
+        lados_utiles = anterior_tinta >= tinta_minima_lado and tinta >= tinta_minima_lado
         if hueco <= max_hueco and lados_utiles:
             unidos[-1] = (anterior_i, fin, anterior_tinta + tinta)
         else:
@@ -215,9 +276,161 @@ def _runs_tinta(valores: list[int], max_hueco: int, largo_minimo: int) -> list[t
     for inicio, fin, tinta in unidos:
         largo = fin - inicio + 1
         densidad = tinta / max(1, largo)
-        if largo >= largo_minimo and densidad >= 0.18:
+        if largo >= largo_minimo and densidad >= 0.32:
             salida.append((inicio, fin))
     return salida
+
+
+def _componentes_tinta(tinta: list[int] | bytearray, ancho: int, alto: int) -> list[dict[str, Any]]:
+    """Componentes 4-conectados de tinta para distinguir cotas de muros."""
+    visitado = bytearray(ancho * alto)
+    componentes: list[dict[str, Any]] = []
+    for origen in range(ancho * alto):
+        if visitado[origen] or not tinta[origen]:
+            continue
+        cola = deque([origen])
+        visitado[origen] = 1
+        pixeles: list[int] = []
+        min_x = ancho
+        max_x = 0
+        min_y = alto
+        max_y = 0
+        while cola:
+            indice = cola.popleft()
+            pixeles.append(indice)
+            y, x = divmod(indice, ancho)
+            min_x = min(min_x, x)
+            max_x = max(max_x, x)
+            min_y = min(min_y, y)
+            max_y = max(max_y, y)
+            if x > 0:
+                vecino = indice - 1
+                if not visitado[vecino] and tinta[vecino]:
+                    visitado[vecino] = 1
+                    cola.append(vecino)
+            if x + 1 < ancho:
+                vecino = indice + 1
+                if not visitado[vecino] and tinta[vecino]:
+                    visitado[vecino] = 1
+                    cola.append(vecino)
+            if y > 0:
+                vecino = indice - ancho
+                if not visitado[vecino] and tinta[vecino]:
+                    visitado[vecino] = 1
+                    cola.append(vecino)
+            if y + 1 < alto:
+                vecino = indice + ancho
+                if not visitado[vecino] and tinta[vecino]:
+                    visitado[vecino] = 1
+                    cola.append(vecino)
+        componentes.append({
+            "pixeles": pixeles,
+            "area": len(pixeles),
+            "min_x": min_x,
+            "max_x": max_x,
+            "min_y": min_y,
+            "max_y": max_y,
+        })
+    return componentes
+
+
+def _es_anotacion_cota(comp: dict[str, Any], dim_menor: int) -> bool:
+    """Números, ticks y líneas de cota: no son tabiques."""
+    w = comp["max_x"] - comp["min_x"] + 1
+    h = comp["max_y"] - comp["min_y"] + 1
+    largo = max(w, h)
+    corto = min(w, h)
+    area = comp["area"]
+    bbox = max(1, w * h)
+    densidad = area / bbox
+    aspect = largo / max(1, corto)
+    alto_texto = max(16, round(dim_menor * 0.048))
+    area_texto = max(70, round(dim_menor * dim_menor * 0.0011))
+
+    if area <= 22:
+        return True
+    # Dígitos, cotas «3.50», flechas y símbolos compactos.
+    if largo <= alto_texto and area <= area_texto and aspect <= 5.2:
+        return True
+    # Tick o trazo de acotación: corto y muy delgado.
+    if corto <= 3 and largo <= alto_texto * 1.6:
+        return True
+    # Línea de cota fina y larga, sin el cuerpo de un muro.
+    if corto <= 2 and aspect >= 7 and densidad <= 0.55:
+        return True
+    return False
+
+
+def _borrar_anotaciones_cotas(tinta: bytearray, ancho: int, alto: int) -> bytearray:
+    """Borra cotas numéricas y sus ticks para que no se lean como muros."""
+    dim_menor = min(ancho, alto)
+    componentes = _componentes_tinta(tinta, ancho, alto)
+    anotaciones = [c for c in componentes if _es_anotacion_cota(c, dim_menor)]
+    if not anotaciones:
+        return tinta
+
+    limpio = bytearray(tinta)
+    for comp in anotaciones:
+        for indice in comp["pixeles"]:
+            limpio[indice] = 0
+
+    # Las líneas de cota suelen acompañar al número. Se borran trazos finos
+    # que quedan pegados a una anotación recién eliminada.
+    margen = max(6, round(dim_menor * 0.018))
+    restantes = [c for c in componentes if not _es_anotacion_cota(c, dim_menor)]
+    for texto in anotaciones:
+        caja = (
+            texto["min_x"] - margen,
+            texto["min_y"] - margen,
+            texto["max_x"] + margen,
+            texto["max_y"] + margen,
+        )
+        for comp in restantes:
+            w = comp["max_x"] - comp["min_x"] + 1
+            h = comp["max_y"] - comp["min_y"] + 1
+            corto = min(w, h)
+            if corto > 4:
+                continue
+            solapa = not (
+                comp["max_x"] < caja[0]
+                or comp["min_x"] > caja[2]
+                or comp["max_y"] < caja[1]
+                or comp["min_y"] > caja[3]
+            )
+            if solapa:
+                for indice in comp["pixeles"]:
+                    limpio[indice] = 0
+    return limpio
+
+
+def _pintar_run_direccion(
+    barrera: bytearray,
+    ancho: int,
+    alto: int,
+    origen_x: int,
+    origen_y: int,
+    dx: int,
+    dy: int,
+    tinta: list[int] | bytearray,
+    max_hueco: int,
+    largo_minimo: int,
+    grosor: int,
+) -> None:
+    """Prolonga un muro en una dirección (incluye diagonales)."""
+    valores: list[int] = []
+    coords: list[tuple[int, int]] = []
+    x, y = origen_x, origen_y
+    while 0 <= x < ancho and 0 <= y < alto:
+        valores.append(1 if tinta[y * ancho + x] else 0)
+        coords.append((x, y))
+        x += dx
+        y += dy
+    for i0, i1 in _runs_tinta(valores, max_hueco, largo_minimo):
+        for i in range(i0, i1 + 1):
+            cx, cy = coords[i]
+            for yy in range(max(0, cy - grosor), min(alto, cy + grosor + 1)):
+                for xx in range(max(0, cx - grosor), min(ancho, cx + grosor + 1)):
+                    barrera[yy * ancho + xx] = 1
 
 
 def _rdp(puntos: list[list[float]], epsilon: float) -> list[list[float]]:
@@ -245,6 +458,35 @@ def _rdp(puntos: list[list[float]], epsilon: float) -> list[list[float]]:
     return [puntos[0], puntos[-1]]
 
 
+def _ortogonalizar_poligono(puntos: list[list[float]], tolerancia_deg: float = 14.0) -> list[list[float]]:
+    """Alinea tramos casi horizontales/verticales y conserva diagonales reales."""
+    if len(puntos) < 3:
+        return puntos
+    pts = [p[:] for p in puntos]
+    n = len(pts)
+    for i in range(n):
+        a = pts[i]
+        b = pts[(i + 1) % n]
+        dx, dy = b[0] - a[0], b[1] - a[1]
+        if abs(dx) < 1e-6 and abs(dy) < 1e-6:
+            continue
+        ang = abs(math.degrees(math.atan2(dy, dx))) % 180.0
+        if ang <= tolerancia_deg or ang >= 180.0 - tolerancia_deg:
+            y = (a[1] + b[1]) / 2.0
+            a[1] = b[1] = y
+        elif abs(ang - 90.0) <= tolerancia_deg:
+            x = (a[0] + b[0]) / 2.0
+            a[0] = b[0] = x
+    limpios: list[list[float]] = []
+    for punto in pts:
+        red = [round(punto[0], 2), round(punto[1], 2)]
+        if not limpios or distancia_entre_puntos(limpios[-1], red) > 0.8:
+            limpios.append(red)
+    if len(limpios) >= 3 and distancia_entre_puntos(limpios[0], limpios[-1]) < 0.8:
+        limpios.pop()
+    return limpios
+
+
 def _poligono_desde_filas(
     filas: dict[int, tuple[int, int]],
     factor_x: float,
@@ -259,10 +501,15 @@ def _poligono_desde_filas(
     izquierda = [[float(filas[y][0]), float(y)] for y in ys]
     derecha = [[float(filas[y][1] + 1), float(y)] for y in reversed(ys)]
     trazado = izquierda + derecha
-    epsilon = max(1.5, min(len(ys) / 80.0, 6.0))
+    alto_estancia = max(1, ys[-1] - ys[0])
+    anchos = [filas[y][1] - filas[y][0] + 1 for y in ys]
+    ancho_estancia = max(anchos) if anchos else 1
+    # Epsilon más generoso: colapsa la escalera de una diagonal real y no
+    # deja cada diente de antialias como un «tabique».
+    epsilon = max(3.0, min(ancho_estancia, alto_estancia) * 0.045, 8.0)
     simplificado = _rdp(trazado, epsilon)
-    while len(simplificado) > 80:
-        epsilon *= 1.35
+    while len(simplificado) > 48:
+        epsilon *= 1.3
         simplificado = _rdp(trazado, epsilon)
 
     resultado: list[list[float]] = []
@@ -273,7 +520,7 @@ def _poligono_desde_filas(
         ]
         if not resultado or distancia_entre_puntos(resultado[-1], punto) > 0.5:
             resultado.append(punto)
-    return resultado
+    return _ortogonalizar_poligono(resultado)
 
 
 def distancia_entre_puntos(a: list[float], b: list[float]) -> float:
@@ -287,16 +534,15 @@ def detectar_espacios_plano(
 ) -> list[dict[str, Any]]:
     """Detecta recintos cerrados de una planta y devuelve polígonos candidatos.
 
-    Es visión geométrica local y determinista: binariza el plano, prolonga
-    paredes horizontales/verticales a través de huecos de puerta y busca las
-    regiones claras que no alcanzan el borde exterior. No envía el archivo a
-    una IA ni promete interpretar la semántica de cada habitación.
+    Visión geométrica local: quita cotas y números, reconoce muros también en
+    diagonal, cierra huecos de puerta y segmenta los recintos que no tocan el
+    borde. No envía el archivo a una IA.
     """
     if content_type and not content_type.lower().startswith("image/"):
         raise ErrorPlano("La detección automática requiere un plano PNG, JPG o WEBP.")
     max_espacios = max(1, min(int(max_espacios), 30))
     try:
-        from PIL import Image, ImageFilter
+        from PIL import Image
 
         with Image.open(io.BytesIO(contenido)) as original:
             original.load()
@@ -308,7 +554,7 @@ def detectar_espacios_plano(
     if ancho_original < 80 or alto_original < 80:
         raise ErrorPlano("El plano es demasiado pequeño para detectar estancias.")
 
-    max_dimension = 950
+    max_dimension = 1100
     escala_reduccion = min(1.0, max_dimension / max(ancho_original, alto_original))
     ancho = max(1, round(ancho_original * escala_reduccion))
     alto = max(1, round(alto_original * escala_reduccion))
@@ -317,29 +563,34 @@ def detectar_espacios_plano(
 
     histograma = gris.histogram()
     umbral = _umbral_otsu(histograma, ancho * alto)
-    # 255 representa tinta/barrera; 0 representa espacio transitable.
     tinta_img = gris.point(lambda p: 255 if p <= umbral else 0, mode="L")
-    tinta = [1 if valor else 0 for valor in tinta_img.tobytes()]
+    tinta_cruda = bytearray(1 if valor else 0 for valor in tinta_img.tobytes())
+    tinta = _borrar_anotaciones_cotas(tinta_cruda, ancho, alto)
 
-    # Engrosado mínimo para cerrar el antialias y las intersecciones de muros.
-    barrera_img = tinta_img.filter(ImageFilter.MaxFilter(3))
-    barrera = bytearray(1 if valor else 0 for valor in barrera_img.tobytes())
+    # Barrera inicial: solo la tinta que sobrevivió a las cotas.
+    barrera = bytearray(tinta)
+    # Cierra el antialias de los muros reales, no de los números ya borrados.
+    for y in range(alto):
+        for x in range(ancho):
+            if not tinta[y * ancho + x]:
+                continue
+            for yy in range(max(0, y - 1), min(alto, y + 2)):
+                for xx in range(max(0, x - 1), min(ancho, x + 2)):
+                    barrera[yy * ancho + xx] = 1
 
     dimension_menor = min(ancho, alto)
-    max_hueco = max(6, min(55, round(dimension_menor * 0.06)))
-    largo_minimo = max(18, round(dimension_menor * 0.075))
-    grosor = max(1, min(3, round(dimension_menor / 420)))
+    max_hueco = max(6, min(48, round(dimension_menor * 0.055)))
+    largo_minimo = max(28, round(dimension_menor * 0.09))
+    grosor = max(1, min(2, round(dimension_menor / 480)))
 
-    # Paredes horizontales. Se prolongan los dos bordes alineados de una puerta
-    # para que la estancia quede cerrada durante la segmentación.
+    # Muros horizontales y verticales (puertas alineadas).
     for y in range(alto):
-        fila = tinta[y * ancho : (y + 1) * ancho]
+        fila = [tinta[y * ancho + x] for x in range(ancho)]
         for x0, x1 in _runs_tinta(fila, max_hueco, largo_minimo):
             for yy in range(max(0, y - grosor), min(alto, y + grosor + 1)):
                 inicio = yy * ancho + x0
                 barrera[inicio : yy * ancho + x1 + 1] = b"\x01" * (x1 - x0 + 1)
 
-    # Paredes verticales.
     for x in range(ancho):
         columna = [tinta[y * ancho + x] for y in range(alto)]
         for y0, y1 in _runs_tinta(columna, max_hueco, largo_minimo):
@@ -347,8 +598,17 @@ def detectar_espacios_plano(
                 for y in range(y0, y1 + 1):
                     barrera[y * ancho + xx] = 1
 
+    # Muros a 45° y 135°: sin esto un tabique diagonal se lee como escalera
+    # de píxeles y parte mal las estancias.
+    for x in range(ancho):
+        _pintar_run_direccion(barrera, ancho, alto, x, 0, 1, 1, tinta, max_hueco, largo_minimo, grosor)
+        _pintar_run_direccion(barrera, ancho, alto, x, alto - 1, 1, -1, tinta, max_hueco, largo_minimo, grosor)
+    for y in range(1, alto):
+        _pintar_run_direccion(barrera, ancho, alto, 0, y, 1, 1, tinta, max_hueco, largo_minimo, grosor)
+        _pintar_run_direccion(barrera, ancho, alto, 0, y, 1, -1, tinta, max_hueco, largo_minimo, grosor)
+
     visitado = bytearray(ancho * alto)
-    area_minima = max(300, round(ancho * alto * 0.0025))
+    area_minima = max(380, round(ancho * alto * 0.003))
     area_maxima = round(ancho * alto * 0.78)
     candidatos: list[dict[str, Any]] = []
 
@@ -408,10 +668,10 @@ def detectar_espacios_plano(
             toca_borde
             or area < area_minima
             or area > area_maxima
-            or anchura < dimension_menor * 0.035
-            or altura < dimension_menor * 0.035
-            or proporcion > 12
-            or ocupacion < 0.24
+            or anchura < dimension_menor * 0.04
+            or altura < dimension_menor * 0.04
+            or proporcion > 10
+            or ocupacion < 0.22
         ):
             continue
 
@@ -438,11 +698,9 @@ def detectar_espacios_plano(
             ],
         })
 
-    # Primero los recintos grandes; se evita devolver ruido y se da un nombre
-    # estable que el usuario puede cambiar desde la lista.
     candidatos.sort(key=lambda c: c["area_px2"], reverse=True)
     for numero, candidato in enumerate(candidatos[:max_espacios], 1):
-        candidato["etiqueta"] = f"Estancia detectada {numero}"
+        candidato["etiqueta"] = f"Estancia {numero}"
     return candidatos[:max_espacios]
 
 
@@ -576,6 +834,7 @@ def calibrar_plano(
     distancia_px: float,
     distancia_real: float,
     unidad: str = "m",
+    altura_libre_m: float | None = None,
 ) -> PlanoObra:
     if distancia_px <= 0 or distancia_real <= 0:
         raise ErrorPlano("Distancias de calibración deben ser positivas.")
@@ -593,6 +852,10 @@ def calibrar_plano(
     plano.calibracion_px = distancia_px
     plano.calibracion_real = distancia_real_m
     plano.unidad_calibracion = unidad
+    if altura_libre_m is not None:
+        if altura_libre_m <= 0 or altura_libre_m > 20:
+            raise ErrorPlano("La altura libre debe estar entre 0 y 20 m.")
+        plano.altura_libre_m = float(altura_libre_m)
 
     # Recalcular mediciones existentes
     for med in plano.mediciones:
@@ -717,6 +980,15 @@ def actualizar_medicion(
     db.commit()
     db.refresh(medicion)
     return medicion
+
+
+def actualizar_altura_plano(db: Session, plano: PlanoObra, altura_libre_m: float) -> PlanoObra:
+    """Cambia la altura libre y no toca la geometría: las paredes se recalculan al leer."""
+    if altura_libre_m <= 0 or altura_libre_m > 20:
+        raise ErrorPlano("La altura libre debe estar entre 0 y 20 m.")
+    plano.altura_libre_m = float(altura_libre_m)
+    db.commit()
+    return plano
 
 
 def eliminar_plano(db: Session, plano: PlanoObra):

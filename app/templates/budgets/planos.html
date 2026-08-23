@@ -4,7 +4,7 @@
 <div class="page-head">
   <div>
     <h1>📐 Planos - {{ p.numero }}</h1>
-    <p class="subtitle">{{ p.titulo or "Sin título" }} · {{ p.cliente.nombre }} · Detección automática y medición editable</p>
+    <p class="subtitle">{{ p.titulo or "Sin título" }} · {{ p.cliente.nombre }} · Primero calibra una medida, luego detecta y nombra estancias</p>
   </div>
   <div class="page-head-actions">
     <a class="btn" href="/planos" title="Galería de todos tus planos">▦ Visor de planos</a>
@@ -16,7 +16,7 @@
 {% if planos|length == 0 %}
 <div class="card">
   <h2>Sube tu primer plano</h2>
-  <p class="hint">Acepta PNG, JPG, WEBP o PDF (12 MB máx). Podrás calibrar escala y medir longitudes, áreas y conteos directamente sobre el plano.</p>
+  <p class="hint">Acepta PNG, JPG, WEBP o PDF (12 MB máx). El primer paso será marcar una medida conocida del plano para calcular el resto.</p>
   <form id="form-upload-plano" enctype="multipart/form-data" class="form-grid">
     <div class="field">
       <label>Nombre del plano</label>
@@ -65,18 +65,58 @@
       <div id="upload-error" class="alert alert-error cotizat-hidden"></div>
     </div>
 
+    <div class="card planos-paso" id="card-calibrar">
+      <h3>1 · Recalibrar plano</h3>
+      <p class="hint">Marca una medida ya acotada (una pared, una puerta, un hueco) y escribe su valor real. Todo lo demás se calcula con esa escala.</p>
+      <button class="btn btn-primary planos-btn-analizar" id="tool-calibrar" data-tool="calibrar" title="Dibuja una línea sobre una medida conocida (E)">📏 Marcar medida conocida (E)</button>
+      <div id="calibracion-panel" class="planos-panel-calib">
+        <p>Segmento marcado: <strong id="calib-px">haz dos clics sobre la cota</strong></p>
+        <div class="field">
+          <label>Esa distancia mide</label>
+          <input type="number" id="calib-real" step="0.01" min="0.01" placeholder="3,50">
+        </div>
+        <div class="field">
+          <label>Unidad</label>
+          <select id="calib-unidad"><option value="m">metros</option><option value="cm">cm</option><option value="mm">mm</option></select>
+        </div>
+        <div class="field">
+          <label>Altura libre de paredes</label>
+          <input type="number" id="calib-altura" step="0.05" min="1" max="8" value="2.50">
+        </div>
+        <button class="btn btn-sm btn-primary" id="btn-confirm-calibrar">✓ Aplicar escala al plano</button>
+        <button class="btn btn-sm" id="btn-cancel-calibrar">Borrar marca</button>
+      </div>
+      <div id="calib-status" class="planos-analisis-status" role="status">Pendiente de calibrar.</div>
+    </div>
+
+    <div class="card planos-paso" id="card-analizar">
+      <h3>2 · Detectar estancias</h3>
+      <p class="hint">Ignora cotas y números. Busca tabiques reales, también en diagonal, y calcula suelo, perímetro y paredes.</p>
+      <button class="btn planos-btn-analizar" id="btn-analizar-plano">✨ Analizar estancias</button>
+      <div id="analisis-status" class="planos-analisis-status" role="status" aria-live="polite">Calibra primero para obtener m² reales.</div>
+    </div>
+
+    <div class="card planos-paso" id="card-estancia">
+      <h3>Estancia seleccionada</h3>
+      <p class="hint">Haz clic en una estancia del plano para nombrarla. El nombre se guarda solo.</p>
+      <div id="estancia-vacia" class="hint">Ninguna estancia seleccionada.</div>
+      <div id="estancia-editor" class="cotizat-hidden">
+        <div class="field">
+          <label>Nombre</label>
+          <input type="text" id="estancia-nombre" placeholder="Cocina, Baño, Dormitorio…">
+        </div>
+        <p id="estancia-save" class="planos-save-status">Clic en la estancia y escribe su nombre.</p>
+        <dl class="planos-metricas" id="estancia-metricas"></dl>
+      </div>
+    </div>
+
     <div class="card">
-      <h3>Medición automática</h3>
-      <p class="hint">Detecta estancias cerradas, calcula sus áreas y las guarda para que solo tengas que revisar y ajustar.</p>
-      <button class="btn btn-primary planos-btn-analizar" id="btn-analizar-plano">✨ Analizar plano automáticamente</button>
-      <div id="analisis-status" class="planos-analisis-status" role="status" aria-live="polite">Listo para analizar.</div>
-      <hr>
       <h3>Ajuste manual</h3>
-      <p class="hint">Úsalo para corregir una detección o medir elementos especiales. Los trazos válidos se autoguardan.</p>
+      <p class="hint">Para corregir un contorno o medir un elemento suelto. Los trazos válidos se autoguardan.</p>
       <div class="btn-group-vertical">
+        <button class="btn btn-sm btn-primary" id="tool-seleccionar" data-tool="seleccionar" title="Clic en una estancia para seleccionarla (S)">👆 Seleccionar estancia (S)</button>
         <button class="btn btn-sm" id="tool-mover" data-tool="mover" title="Arrastra el plano para desplazarlo (M)">✋ Mover (M)</button>
-        <button class="btn btn-sm" id="tool-calibrar" data-tool="calibrar" title="Dibuja una línea sobre una medida conocida (E)">📏 Calibrar escala (E)</button>
-        <button class="btn btn-sm btn-primary" id="tool-lineal" data-tool="lineal" title="Distancia recorrida entre puntos (L)">📐 Línea (L)</button>
+        <button class="btn btn-sm" id="tool-lineal" data-tool="lineal" title="Distancia recorrida entre puntos (L)">📐 Línea (L)</button>
         <button class="btn btn-sm" id="tool-area" data-tool="area" title="Polígono cerrado; doble clic para terminar (A)">⬜ Área (A)</button>
         <button class="btn btn-sm" id="tool-perimetro" data-tool="perimetro" title="Recorrido cerrado; doble clic para terminar (P)">🔲 Perímetro (P)</button>
         <button class="btn btn-sm" id="tool-conteo" data-tool="conteo" title="Cuenta elementos puntuales (C)">🔢 Conteo (C)</button>
@@ -87,21 +127,6 @@
         <label class="planos-check"><input type="checkbox" id="chk-mostrar-med" checked> 👁️ Mostrar mediciones</label>
       </div>
       <p class="hint planos-atajos">Ctrl+Z deshace punto · clic derecho borra el último · Esc cancela · rueda = zoom · botón central o Mover = desplazar</p>
-      <div id="calibracion-panel" class="cotizat-hidden planos-panel-calib">
-        <strong>Calibración</strong>
-        <p class="hint">Dibuja una línea sobre una medida conocida del plano.</p>
-        <p>Distancia en píxeles: <span id="calib-px">-</span></p>
-        <div class="field">
-          <label>Medida real</label>
-          <input type="number" id="calib-real" step="0.01" placeholder="5">
-        </div>
-        <div class="field">
-          <label>Unidad</label>
-          <select id="calib-unidad"><option value="m">metros</option><option value="cm">cm</option><option value="mm">mm</option></select>
-        </div>
-        <button class="btn btn-sm btn-primary" id="btn-confirm-calibrar">✓ Confirmar calibración</button>
-        <button class="btn btn-sm" id="btn-cancel-calibrar">Cancelar</button>
-      </div>
       <div id="medicion-panel" class="planos-panel-med">
         <div class="field">
           <label>Etiqueta medición</label>
@@ -111,7 +136,7 @@
           <label>Color</label>
           <input type="color" id="med-color" value="#ff0000">
         </div>
-        <p class="hint">Haz clic para dibujar; doble clic cierra áreas y perímetros. El borrador se conserva en este navegador y se guarda en el servidor al tener puntos suficientes.</p>
+        <p class="hint">Haz clic para dibujar; doble clic cierra áreas y perímetros.</p>
         <p>Valor actual: <strong id="med-valor-actual">-</strong></p>
         <p id="med-guardado-status" class="planos-save-status" role="status" aria-live="polite">Sin trazo en curso.</p>
         <div class="form-actions">
@@ -193,9 +218,16 @@
 .planos-check input { margin:0; }
 .planos-check small { color:#94a3b8; }
 .planos-atajos { margin-top:8px; }
+.planos-paso h3 { margin-top:0; }
 .planos-panel-calib { margin-top:12px; padding:10px; background:#f1f5f9; border-radius:8px; }
 .planos-panel-med { margin-top:12px; }
 .planos-btn-analizar { width:100%; justify-content:center; }
+.planos-metricas { display:grid; grid-template-columns:1fr auto; gap:4px 10px; margin:10px 0 0; }
+.planos-metricas dt { color:#64748b; font-size:12px; }
+.planos-metricas dd { margin:0; font-weight:600; font-size:13px; text-align:right; }
+.medicion-item.seleccionada { background:#eff6ff; border-color:#93c5fd; }
+#card-calibrar.is-pendiente { outline:2px solid #f59e0b; }
+#card-calibrar.is-ok { outline:2px solid #16a34a; }
 .planos-analisis-status, .planos-save-status { margin:8px 0 0; padding:7px 9px; border-radius:7px; background:#f1f5f9; color:#475569; font-size:12px; }
 .planos-analisis-status.is-working, .planos-save-status.is-saving { background:#eff6ff; color:#1d4ed8; }
 .planos-analisis-status.is-ok, .planos-save-status.is-ok { background:#ecfdf5; color:#166534; }
@@ -227,13 +259,16 @@
   const presupuestoId = {{ p.id }};
   let planoActivoId = {{ plano_inicial.id if plano_inicial else 'null' }};
   let escala = null;
-  let herramienta = 'lineal';
+  let alturaLibre = 2.5;
+  let herramienta = 'seleccionar';
   let puntosActuales = [];
   let calibracionPuntos = [];
   let medicionesGuardadas = [];
   let medicionEnEdicionId = null;
+  let medicionSeleccionadaId = null;
   let timerAutoguardado = null;
-  let analisisInicialPendiente = {{ 'true' if detectar_automaticamente else 'false' }};
+  let timerNombreEstancia = null;
+  let analisisInicialPendiente = false;
   let analisisEnCurso = false;
   let planoEsImagen = true;
   let zoom = 1;
@@ -296,6 +331,37 @@
   function areaPoligono(pts){
     if (pts.length<3) return 0;
     let s=0; for(let i=0;i<pts.length;i++){ let [x0,y0]=pts[i]; let [x1,y1]=pts[(i+1)%pts.length]; s+=x0*y1 - x1*y0; } return Math.abs(s)/2;
+  }
+  function perimetroCerrado(pts){
+    let d = distanciaTotal(pts);
+    if (pts.length>=3) d += distancia(pts[0], pts[pts.length-1]);
+    return d;
+  }
+  function puntoEnPoligono(pt, poly){
+    if (!poly || poly.length<3) return false;
+    let x=pt[0], y=pt[1], inside=false;
+    for (let i=0,j=poly.length-1;i<poly.length;j=i++){
+      const xi=poly[i][0], yi=poly[i][1], xj=poly[j][0], yj=poly[j][1];
+      const cruce = ((yi>y)!==(yj>y)) && (x < (xj-xi)*(y-yi)/((yj-yi)||1e-12)+xi);
+      if (cruce) inside = !inside;
+    }
+    return inside;
+  }
+  function metricasLocales(m){
+    if (m && m.metricas) return m.metricas;
+    const pts = (m && m.puntos) || [];
+    const perPx = perimetroCerrado(pts);
+    const areaPx = areaPoligono(pts);
+    if (!escala){
+      return {suelo:areaPx, suelo_unidad:'px2', perimetro:perPx, perimetro_unidad:'px', paredes:null, paredes_unidad:'m2', altura_m:alturaLibre, calibrado:false};
+    }
+    const f = 1/escala;
+    const per = perPx * f;
+    return {suelo:areaPx*f*f, suelo_unidad:'m2', perimetro:per, perimetro_unidad:'m', paredes:per*alturaLibre, paredes_unidad:'m2', altura_m:alturaLibre, calibrado:true};
+  }
+  function fmtMedida(valor, unidad){
+    if (valor==null || Number.isNaN(valor)) return '—';
+    return Number(valor).toFixed(2).replace('.', ',') + ' ' + unidad;
   }
 
   const MIN_PUNTOS = {lineal:2, area:3, perimetro:3, conteo:1};
@@ -502,7 +568,7 @@
     ctx.scale(zoom, zoom);
     ctx.drawImage(img, 0,0);
     if (mostrarMediciones) {
-      medicionesGuardadas.forEach(m=>{ if (m.id!==medicionEnEdicionId) dibujarMedicion(m); });
+      medicionesGuardadas.forEach(m=>{ if (m.id!==medicionEnEdicionId) dibujarMedicion(m, m.id===medicionSeleccionadaId); });
     }
     dibujarTrazoActual();
     ctx.restore();
@@ -510,13 +576,13 @@
     if (sz) sz.textContent = Math.round(zoom*100)+'%';
   }
 
-  function dibujarMedicion(m){
+  function dibujarMedicion(m, seleccionada){
     const pts = m.puntos || [];
     if (!pts.length) return;
     const color = m.color || '#ff0000';
     ctx.strokeStyle = color;
-    ctx.lineWidth = 2;
-    ctx.fillStyle = color + '33';
+    ctx.lineWidth = seleccionada ? 3.5 : 2;
+    ctx.fillStyle = seleccionada ? color + '55' : color + '33';
     ctx.beginPath();
     if (m.tipo==='area'){
       pts.forEach((pt,i)=>{ if(i===0) ctx.moveTo(pt[0],pt[1]); else ctx.lineTo(pt[0],pt[1]); });
@@ -531,9 +597,11 @@
       pts.forEach(pt=>{ ctx.beginPath(); ctx.arc(pt[0],pt[1],6,0,Math.PI*2); ctx.fillStyle = color; ctx.fill(); });
     }
     if (pts[0]){
-      ctx.fillStyle = '#000';
-      ctx.font = '12px sans-serif';
-      ctx.fillText((m.etiqueta||'') + ' ' + (m.valor?.toFixed(2)||'') + (m.unidad||''), pts[0][0]+8, pts[0][1]-8);
+      const met = (m.tipo==='area') ? metricasLocales(m) : null;
+      const extra = met ? (' · ' + fmtMedida(met.suelo, met.suelo_unidad)) : (' ' + (m.valor?.toFixed(2)||'') + (m.unidad||''));
+      ctx.fillStyle = '#0f172a';
+      ctx.font = seleccionada ? 'bold 13px sans-serif' : '12px sans-serif';
+      ctx.fillText((m.etiqueta||m.tipo) + extra, pts[0][0]+8, pts[0][1]-8);
     }
   }
 
@@ -593,15 +661,92 @@
 
   // ---------- Eventos del lienzo ----------
 
+  function estanciaEnPunto(pos){
+    const areas = medicionesGuardadas.filter(m=>m.tipo==='area' && (m.puntos||[]).length>=3);
+    areas.sort((a,b)=>areaPoligono(a.puntos)-areaPoligono(b.puntos));
+    for (const m of areas){
+      if (puntoEnPoligono(pos, m.puntos)) return m;
+    }
+    return null;
+  }
+
+  function setEstadoNombre(texto, tipo=''){
+    const el = document.getElementById('estancia-save');
+    if (!el) return;
+    el.textContent = texto;
+    el.classList.remove('is-saving','is-ok','is-error');
+    if (tipo) el.classList.add(`is-${tipo}`);
+  }
+
+  function pintarMetricas(m){
+    const dl = document.getElementById('estancia-metricas');
+    if (!dl) return;
+    dl.replaceChildren();
+    const met = metricasLocales(m);
+    const filas = [
+      ['Suelo', fmtMedida(met.suelo, met.suelo_unidad)],
+      ['Perímetro', fmtMedida(met.perimetro, met.perimetro_unidad)],
+      ['Paredes', met.paredes==null ? 'Calibra para ver m²' : fmtMedida(met.paredes, met.paredes_unidad)],
+      ['Altura libre', fmtMedida(met.altura_m, 'm')],
+    ];
+    filas.forEach(([k,v])=>{
+      const dt=document.createElement('dt'); dt.textContent=k;
+      const dd=document.createElement('dd'); dd.textContent=v;
+      dl.appendChild(dt); dl.appendChild(dd);
+    });
+  }
+
+  function seleccionarEstancia(m, {focus=true}={}){
+    medicionSeleccionadaId = m ? m.id : null;
+    const vacio = document.getElementById('estancia-vacia');
+    const editor = document.getElementById('estancia-editor');
+    if (vacio) vacio.classList.toggle('cotizat-hidden', !!m);
+    if (editor) editor.classList.toggle('cotizat-hidden', !m);
+    const input = document.getElementById('estancia-nombre');
+    if (m && input){
+      input.value = m.etiqueta || '';
+      if (focus) setTimeout(()=>input.focus(), 20);
+      pintarMetricas(m);
+      setEstadoNombre('El nombre se guarda al escribir.');
+    }
+    renderListaMediciones();
+    dibujar();
+  }
+
+  async function guardarNombreEstancia(){
+    const m = medicionesGuardadas.find(x=>x.id===medicionSeleccionadaId);
+    const input = document.getElementById('estancia-nombre');
+    if (!m || !input) return;
+    const nueva = (input.value || '').trim();
+    if (!nueva){ setEstadoNombre('El nombre no puede estar vacío.', 'error'); return; }
+    if (nueva === (m.etiqueta||'')) return;
+    setEstadoNombre('Guardando nombre…', 'saving');
+    try {
+      const res = await fetch(`/planos/${planoActivoId}/mediciones/${m.id}/renombrar`, {
+        method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({etiqueta:nueva})
+      });
+      const data = await res.json();
+      if (!data.ok){ setEstadoNombre(data.error||'No se pudo guardar.', 'error'); return; }
+      m.etiqueta = data.etiqueta;
+      integrarMedicionGuardada(m);
+      setEstadoNombre('Nombre guardado.', 'ok');
+    } catch(_){
+      setEstadoNombre('Sin conexión: no se guardó el nombre.', 'error');
+    }
+  }
+
   canvas.addEventListener('click', (e)=>{
     if (herramienta==='mover' || panActivo) return;
     const r = resolverPos(e);
+    if (herramienta==='seleccionar'){
+      const est = estanciaEnPunto(r.pos);
+      seleccionarEstancia(est);
+      return;
+    }
     if (herramienta==='calibrar'){
       calibracionPuntos.push(r.pos);
       if (calibracionPuntos.length>2) calibracionPuntos = calibracionPuntos.slice(-2);
       actualizarValorActual(); dibujar();
-      const panel = document.getElementById('calibracion-panel');
-      if (panel) panel.classList.remove('cotizat-hidden');
     } else if (agregarPuntoSeguro(r.pos)) {
       actualizarValorActual(); dibujar();
     }
@@ -672,9 +817,8 @@
     document.querySelectorAll('[data-tool]').forEach(b=>b.classList.toggle('btn-primary', b.dataset.tool===h));
     if (forzar) puntosActuales = [];
     if (herramienta!=='calibrar') calibracionPuntos = [];
-    const calibPanel = document.getElementById('calibracion-panel');
-    if (calibPanel) calibPanel.classList.toggle('cotizat-hidden', herramienta!=='calibrar');
     canvas.classList.toggle('modo-mover', herramienta==='mover');
+    if (canvas) canvas.style.cursor = (herramienta==='seleccionar') ? 'pointer' : '';
     actualizarValorActual(); dibujar();
     return true;
   }
@@ -689,7 +833,7 @@
     actualizarValorActual(); dibujar();
   }
 
-  const ATAJO_HERRAMIENTA = {l:'lineal', a:'area', p:'perimetro', c:'conteo', e:'calibrar', m:'mover'};
+  const ATAJO_HERRAMIENTA = {l:'lineal', a:'area', p:'perimetro', c:'conteo', e:'calibrar', m:'mover', s:'seleccionar'};
   window.addEventListener('keydown', (e)=>{
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase()==='z'){
       e.preventDefault(); deshacerPunto(); return;
@@ -743,26 +887,71 @@
   });
   document.getElementById('btn-cancel-calibrar')?.addEventListener('click', ()=>{
     calibracionPuntos = [];
-    const cp = document.getElementById('calibracion-panel');
-    if (cp) cp.classList.add('cotizat-hidden');
     actualizarValorActual(); dibujar();
   });
+
+  function setEstadoCalib(texto, tipo){
+    const el = document.getElementById('calib-status');
+    const card = document.getElementById('card-calibrar');
+    if (el){
+      el.textContent = texto;
+      el.classList.remove('is-working','is-ok','is-error');
+      if (tipo) el.classList.add('is-'+tipo);
+    }
+    if (card){
+      card.classList.toggle('is-pendiente', tipo!=='ok');
+      card.classList.toggle('is-ok', tipo==='ok');
+    }
+  }
 
   document.getElementById('btn-confirm-calibrar')?.addEventListener('click', async ()=>{
     const px = valorActual();
     const real = parseFloat(document.getElementById('calib-real').value);
     const unidad = document.getElementById('calib-unidad').value;
-    if (!px || !real){ alert('Dibuja línea y pon medida real'); return; }
+    const altura = parseFloat(document.getElementById('calib-altura')?.value || '2.5');
+    if (!px || !real){ setEstadoCalib('Marca dos puntos sobre una cota y escribe su medida real.', 'error'); return; }
     try {
-      const res = await fetch(`/planos/${planoActivoId}/calibrar`, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({distancia_px:px, distancia_real:real, unidad})});
+      const res = await fetch(`/planos/${planoActivoId}/calibrar`, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({distancia_px:px, distancia_real:real, unidad, altura_libre_m:altura})
+      });
       const data = await res.json();
       if (data.ok){
         escala = data.escala_px_por_metro;
-        alert('Calibrado: '+escala.toFixed(2)+' px/m');
-        cargarPlano(planoActivoId);
+        alturaLibre = data.altura_libre_m || altura;
+        setEstadoCalib('Escala aplicada: '+escala.toFixed(1)+' px/m. Ya puedes analizar estancias.', 'ok');
+        setEstadoAnalisis('Plano calibrado. Pulsa «Analizar estancias» para detectar tabiques y recintos.', 'ok');
+        await cargarPlano(planoActivoId);
+        activarHerramienta('seleccionar', true);
       }
-      else alert(data.error||'Error calibrando');
-    } catch(e){ alert('Error conexión'); }
+      else setEstadoCalib(data.error||'Error calibrando', 'error');
+    } catch(e){ setEstadoCalib('Error de conexión', 'error'); }
+  });
+
+  document.getElementById('estancia-nombre')?.addEventListener('input', ()=>{
+    clearTimeout(timerNombreEstancia);
+    timerNombreEstancia = setTimeout(guardarNombreEstancia, 450);
+  });
+  document.getElementById('estancia-nombre')?.addEventListener('keydown', (e)=>{
+    if (e.key==='Enter'){ e.preventDefault(); clearTimeout(timerNombreEstancia); guardarNombreEstancia(); }
+  });
+  document.getElementById('calib-altura')?.addEventListener('change', async ()=>{
+    const altura = parseFloat(document.getElementById('calib-altura').value);
+    if (!planoActivoId || !altura) return;
+    alturaLibre = altura;
+    try {
+      const res = await fetch(`/planos/${planoActivoId}/altura`, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({altura_libre_m:altura})
+      });
+      const data = await res.json();
+      if (data.ok){
+        (data.mediciones||[]).forEach(integrarMedicionGuardada);
+      }
+    } catch(_){ }
+    const sel = medicionesGuardadas.find(m=>m.id===medicionSeleccionadaId);
+    if (sel) pintarMetricas(sel);
   });
 
   document.getElementById('btn-guardar-medicion')?.addEventListener('click', async ()=>{
@@ -871,13 +1060,18 @@
       if (!data.ok){ setEstadoAnalisis(data.error||'No se pudo analizar el plano.', 'error'); return; }
       (data.mediciones||[]).forEach(integrarMedicionGuardada);
       if (data.analizadas===0){
-        setEstadoAnalisis('No se encontraron estancias cerradas. Prueba con una imagen más nítida o usa el ajuste manual.', 'error');
+        setEstadoAnalisis('No se encontraron estancias cerradas. Prueba con una imagen más nítida o dibuja el recinto a mano.', 'error');
       } else if (data.nuevas===0){
-        setEstadoAnalisis(`Revisión completa: las ${data.analizadas} detecciones ya estaban guardadas.`, 'ok');
+        setEstadoAnalisis(`Revisión completa: las ${data.analizadas} estancias ya estaban guardadas. Clic para renombrarlas.`, 'ok');
       } else {
-        setEstadoAnalisis(`✓ ${data.nuevas} estancia(s) detectada(s) y guardada(s). Revisa sus contornos y calibra la escala.`, 'ok');
+        setEstadoAnalisis(`✓ ${data.nuevas} estancia(s) detectada(s). Clic en cada una para ponerle nombre; suelo, perímetro y paredes se calculan solos.`, 'ok');
       }
       if (btn) btn.textContent='↻ Repetir análisis';
+      const primera = (data.mediciones||[])[0] || medicionesGuardadas.find(m=>m.tipo==='area');
+      if (primera){
+        await activarHerramienta('seleccionar', true);
+        seleccionarEstancia(medicionesGuardadas.find(m=>m.id===primera.id) || primera);
+      }
     } catch(_){
       setEstadoAnalisis('Error de conexión durante el análisis.', 'error');
     } finally {
@@ -911,8 +1105,21 @@
     medicionesGuardadas.forEach(m=>{
       const div = document.createElement('div'); div.className='medicion-item';
       const left = document.createElement('div');
-      const strong = document.createElement('strong'); strong.textContent = (ICONO_TIPO[m.tipo]||'📐') + ' ' + (m.etiqueta||m.tipo) + ' · ' + (m.valor?.toFixed(2)||'') + ' ' + (m.unidad||'');
-      const small = document.createElement('small'); small.textContent = m.tipo + ' · ' + (m.puntos?.length||0) + ' puntos';
+      if (m.id===medicionSeleccionadaId) div.classList.add('seleccionada');
+      const met = m.tipo==='area' ? metricasLocales(m) : null;
+      const resumen = met
+        ? `${fmtMedida(met.suelo, met.suelo_unidad)} suelo · ${fmtMedida(met.perimetro, met.perimetro_unidad)}`
+        : `${(m.valor?.toFixed(2)||'')} ${m.unidad||''}`;
+      const strong = document.createElement('strong'); strong.textContent = (ICONO_TIPO[m.tipo]||'📐') + ' ' + (m.etiqueta||m.tipo) + ' · ' + resumen;
+      const small = document.createElement('small'); small.textContent = met && met.paredes!=null
+        ? (`paredes ${fmtMedida(met.paredes, met.paredes_unidad)} · ${m.puntos?.length||0} pts`)
+        : (m.tipo + ' · ' + (m.puntos?.length||0) + ' puntos');
+      left.style.cursor = 'pointer';
+      left.addEventListener('click', ()=>{
+        if (m.tipo==='area'){
+          activarHerramienta('seleccionar', true).then(()=>seleccionarEstancia(m));
+        }
+      });
       left.appendChild(strong); left.appendChild(small);
       const right = document.createElement('div'); right.className='planos-med-btns';
       const btnVer = document.createElement('button'); btnVer.className='btn btn-sm'; btnVer.title='Editar geometría'; btnVer.textContent='✏️';
@@ -1018,11 +1225,24 @@
       const data = await res.json();
       if (!data.ok) return;
       escala = data.plano.escala_px_por_metro;
+      alturaLibre = data.plano.altura_libre_m || 2.5;
+      const inpAlt = document.getElementById('calib-altura');
+      if (inpAlt && !inpAlt.matches(':focus')) inpAlt.value = Number(alturaLibre).toFixed(2);
       medicionesGuardadas = data.mediciones || [];
       planoEsImagen = (data.plano.content_type || '').startsWith('image/');
       const btnAnalizar=document.getElementById('btn-analizar-plano');
       if (btnAnalizar) btnAnalizar.disabled=!planoEsImagen;
       if (!planoEsImagen) setEstadoAnalisis('La detección automática no está disponible para PDF; sube una versión PNG, JPG o WEBP.', 'error');
+      else if (data.plano.calibrado){
+        setEstadoCalib('Calibrado: '+Number(escala).toFixed(1)+' px/m. Las estancias usan esta escala.', 'ok');
+        setEstadoAnalisis('Listo para analizar o para hacer clic en una estancia y nombrarla.', 'ok');
+      } else {
+        setEstadoCalib('Pendiente: marca una cota conocida y escribe su medida real.', 'error');
+        setEstadoAnalisis('Primero calibra el plano. Luego se calculan m² de suelo y paredes.', '');
+        activarHerramienta('calibrar', true);
+      }
+      const sel = medicionesGuardadas.find(m=>m.id===medicionSeleccionadaId);
+      if (sel) pintarMetricas(sel);
       if (!puntosActuales.length) restaurarBorradorLocal();
       planoNombreArchivo = (data.plano.nombre||'plano').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'') || 'plano';
       const tituloEl = document.getElementById('plano-titulo');
@@ -1058,13 +1278,7 @@
           ajustarVista();
           renderListaMediciones();
           actualizarValorActual();
-          if (analisisInicialPendiente){
-            analisisInicialPendiente=false;
-            const urlLimpia=new URL(window.location.href);
-            urlLimpia.searchParams.delete('detectar');
-            window.history.replaceState({}, '', urlLimpia.pathname + urlLimpia.search + urlLimpia.hash);
-            analizarPlanoAutomaticamente();
-          }
+          analisisInicialPendiente=false;
         };
         img.src = url;
         img.classList.remove('cotizat-hidden');
