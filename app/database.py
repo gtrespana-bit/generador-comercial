@@ -91,7 +91,7 @@ DATABASE_URL = DATABASE.url
 DATABASE_BACKEND = DATABASE.backend
 DATABASE_IS_SQLITE = DATABASE.is_sqlite
 DB_PATH = DATABASE.sqlite_path
-EXPECTED_ALEMBIC_HEAD = "b2c3d4e5f6a7"
+EXPECTED_ALEMBIC_HEAD = "c0d1e2f3a4b5"
 
 # Copias de seguridad automáticas y manuales (solo corresponden al modo
 # SQLite local; PostgreSQL tendrá backups administrados fuera del proceso).
@@ -589,8 +589,81 @@ def _verificar_rol_aplicacion_postgresql() -> None:
         )
 
 
+def _asegurar_permisos_planos_postgres(eng) -> None:
+    """Repara permisos de ``planos_*`` si el head fue marcado sin ejecutar DCL.
+
+    Algunas bases quedaron en ``b2c3d4e5f6a7`` por la reparación best-effort de
+    arranque, o ejecutaron la creación de tablas sin que el rol runtime heredara
+    los GRANT necesarios. Si ``MIGRATION_DATABASE_URL`` apunta al propietario del
+    esquema, este bloque deja el visor de planos operativo ya en el siguiente
+    arranque; la migración ``c0d1e2f3a4b5`` conserva la reparación versionada.
+    """
+    statements = [
+        "REVOKE ALL ON TABLE public.planos_obra FROM PUBLIC",
+        "REVOKE ALL ON TABLE public.planos_mediciones FROM PUBLIC",
+        "ALTER TABLE public.planos_obra ENABLE ROW LEVEL SECURITY",
+        "ALTER TABLE public.planos_obra FORCE ROW LEVEL SECURITY",
+        "ALTER TABLE public.planos_mediciones ENABLE ROW LEVEL SECURITY",
+        "ALTER TABLE public.planos_mediciones FORCE ROW LEVEL SECURITY",
+        "GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE public.planos_obra TO cotizat_app",
+        "GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE public.planos_mediciones TO cotizat_app",
+        """
+        DO $$ DECLARE secuencia text; BEGIN
+          secuencia := pg_get_serial_sequence('public.planos_obra', 'id');
+          IF secuencia IS NOT NULL THEN
+            EXECUTE format('GRANT USAGE, SELECT ON SEQUENCE %s TO cotizat_app', secuencia);
+          END IF;
+        END $$
+        """,
+        """
+        DO $$ DECLARE secuencia text; BEGIN
+          secuencia := pg_get_serial_sequence('public.planos_mediciones', 'id');
+          IF secuencia IS NOT NULL THEN
+            EXECUTE format('GRANT USAGE, SELECT ON SEQUENCE %s TO cotizat_app', secuencia);
+          END IF;
+        END $$
+        """,
+    ]
+    policies = (
+        ("planos_obra", "cotizat_planos_obra_select", "SELECT", "USING (cotizat_security.tenant_access(organizacion_id, FALSE))"),
+        ("planos_obra", "cotizat_planos_obra_insert", "INSERT", "WITH CHECK (cotizat_security.tenant_access(organizacion_id, TRUE))"),
+        ("planos_obra", "cotizat_planos_obra_update", "UPDATE", "USING (cotizat_security.tenant_access(organizacion_id, TRUE)) WITH CHECK (cotizat_security.tenant_access(organizacion_id, TRUE))"),
+        ("planos_obra", "cotizat_planos_obra_delete", "DELETE", "USING (cotizat_security.tenant_access(organizacion_id, TRUE))"),
+        ("planos_mediciones", "cotizat_planos_mediciones_select", "SELECT", "USING (cotizat_security.tenant_access(organizacion_id, FALSE))"),
+        ("planos_mediciones", "cotizat_planos_mediciones_insert", "INSERT", "WITH CHECK (cotizat_security.tenant_access(organizacion_id, TRUE))"),
+        ("planos_mediciones", "cotizat_planos_mediciones_update", "UPDATE", "USING (cotizat_security.tenant_access(organizacion_id, TRUE)) WITH CHECK (cotizat_security.tenant_access(organizacion_id, TRUE))"),
+        ("planos_mediciones", "cotizat_planos_mediciones_delete", "DELETE", "USING (cotizat_security.tenant_access(organizacion_id, TRUE))"),
+    )
+    for table, name, action, clause in policies:
+        statements.append(f"DROP POLICY IF EXISTS {name} ON public.{table}")
+        statements.append(f"CREATE POLICY {name} ON public.{table} FOR {action} TO cotizat_app {clause}")
+
+    try:
+        with eng.begin() as conn:
+            existen = conn.execute(text("""
+                SELECT count(*) = 2
+                FROM information_schema.tables
+                WHERE table_schema = 'public'
+                  AND table_name IN ('planos_obra', 'planos_mediciones')
+            """)).scalar()
+            if not existen:
+                logging.getLogger("cotizat").warning(
+                    "No se reparan permisos de planos: faltan tablas planos_obra/planos_mediciones. "
+                    "Ejecuta `alembic upgrade head`."
+                )
+                return
+            for statement in statements:
+                conn.execute(text(statement))
+        logging.getLogger("cotizat").info("Permisos/RLS de planos verificados para cotizat_app.")
+    except Exception as exc:
+        logging.getLogger("cotizat").warning(
+            "No se pudieron reparar permisos de planos (ejecuta `alembic upgrade head` con MIGRATION_DATABASE_URL): %s",
+            exc,
+        )
+
+
 def _asegurar_esquema_postgres() -> None:
-    """Intenta añadir columnas faltantes tras un deploy sin migrar (best-effort).
+    """Intenta añadir columnas/permisos faltantes tras un deploy sin migrar (best-effort).
 
     El error reportado en producción es ``UndefinedColumn: configuracion.
     recorrido_inicial_oculto does not exist``: el modelo ya exige la columna
@@ -680,16 +753,26 @@ def _asegurar_esquema_postgres() -> None:
                     conn.execute(text("UPDATE public.alembic_version SET version_num = 'b1c2d3e4f5a6'"))
                     logging.getLogger("cotizat").info("alembic_version avanzada de c3e9a1b7d4f2 a b1c2d3e4f5a6 tras auto-reparación.")
                 elif cur == "b1c2d3e4f5a6":
-                    conn.execute(text("UPDATE public.alembic_version SET version_num = 'b2c3d4e5f6a7'"))
-                    logging.getLogger("cotizat").info("alembic_version avanzada de b1c2d3e4f5a6 a b2c3d4e5f6a7 tras auto-reparación.")
+                    # No se puede marcar b2/c0 desde esta reparación: planos
+                    # crea tablas, GRANT y políticas RLS. Si se avanzara solo
+                    # por haber creado columnas de configuración, Alembic ya no
+                    # ejecutaría la migración real y el visor fallaría con
+                    # ``permission denied`` o ``undefined table``.
+                    logging.getLogger("cotizat").warning(
+                        "alembic_version sigue en b1c2d3e4f5a6: no se marca "
+                        "planos como aplicado automáticamente. Ejecuta `alembic upgrade head`."
+                    )
                 elif cur is None:
-                    # Base sin marca (instalación antigua): la insertamos
-                    conn.execute(text("INSERT INTO public.alembic_version (version_num) VALUES ('b2c3d4e5f6a7') ON CONFLICT DO NOTHING"))
+                    logging.getLogger("cotizat").warning(
+                        "Base sin alembic_version: no se inserta un head ficticio. "
+                        "Ejecuta `alembic upgrade head`."
+                    )
             except Exception:
                 # La tabla alembic_version puede no ser visible para este rol
                 pass
+        _asegurar_permisos_planos_postgres(eng)
         eng.dispose()
-        logging.getLogger("cotizat").info("Esquema Postgres asegurado (columnas de configuracion verificadas).")
+        logging.getLogger("cotizat").info("Esquema Postgres asegurado (columnas/permisos verificados).")
     except Exception as exc:
         logging.getLogger("cotizat").warning("No se pudo auto-reparar esquema Postgres (se usará fallback de lectura): %s", exc)
 

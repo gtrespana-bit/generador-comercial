@@ -162,9 +162,11 @@ def test_head_exigido_por_runtime_coincide_con_alembic():
     from migrations.versions import b1c2d3e4f5a6_ocultar_guia_inicio as ocultar_migration
     from migrations.versions import b2c3d4e5f6a7_add_planos_obra as planos_migration
     from migrations.versions import b9f4d8a2c6e1_rendimiento_indices_calientes as indices_migration
+    from migrations.versions import c0d1e2f3a4b5_fix_planos_permissions as permisos_planos_migration
     from migrations.versions import c3e9a1b7d4f2_stripe_checkout as stripe_migration
     from migrations.versions import c5d6e7f8a9b0_merge_currency_heads as merge_migration
-    assert database_module.EXPECTED_ALEMBIC_HEAD == planos_migration.revision
+    assert database_module.EXPECTED_ALEMBIC_HEAD == permisos_planos_migration.revision
+    assert permisos_planos_migration.down_revision == planos_migration.revision
     assert planos_migration.down_revision == ocultar_migration.revision
     assert ocultar_migration.down_revision == stripe_migration.revision
     assert stripe_migration.down_revision == evidence_migration.revision
@@ -603,4 +605,38 @@ def test_migracion_precios_mercado_no_hace_nada_fuera_de_postgresql(monkeypatch)
     )
     market_prices_migration.upgrade()
     market_prices_migration.downgrade()
+    assert statements == []
+
+
+def test_migracion_planos_hotfix_concede_permisos_y_limita_rls(monkeypatch):
+    from migrations.versions import c0d1e2f3a4b5_fix_planos_permissions as planos_hotfix
+
+    statements = []
+    monkeypatch.setattr(planos_hotfix.op, "get_bind", lambda: _FakeBind())
+    monkeypatch.setattr(planos_hotfix.op, "execute", lambda s: statements.append(str(s)))
+
+    planos_hotfix.upgrade()
+    sql = "\n".join(statements)
+
+    for tabla in ("planos_obra", "planos_mediciones"):
+        assert f"REVOKE ALL ON TABLE public.{tabla} FROM PUBLIC" in sql
+        assert f"ALTER TABLE public.{tabla} ENABLE ROW LEVEL SECURITY" in sql
+        assert f"ALTER TABLE public.{tabla} FORCE ROW LEVEL SECURITY" in sql
+        assert f"GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE public.{tabla} TO cotizat_app" in sql
+        assert f"pg_get_serial_sequence('public.{tabla}', 'id')" in sql
+    assert "FOR SELECT TO cotizat_app" in sql
+    assert "FOR INSERT TO cotizat_app" in sql
+    assert "cotizat_security.tenant_access(organizacion_id, FALSE)" in sql
+    assert "cotizat_security.tenant_access(organizacion_id, TRUE)" in sql
+
+
+def test_migracion_planos_hotfix_no_hace_nada_fuera_de_postgresql(monkeypatch):
+    from migrations.versions import c0d1e2f3a4b5_fix_planos_permissions as planos_hotfix
+
+    statements = []
+    sqlite_bind = SimpleNamespace(dialect=SimpleNamespace(name="sqlite"))
+    monkeypatch.setattr(planos_hotfix.op, "get_bind", lambda: sqlite_bind)
+    monkeypatch.setattr(planos_hotfix.op, "execute", lambda s: statements.append(s))
+    planos_hotfix.upgrade()
+    planos_hotfix.downgrade()
     assert statements == []
