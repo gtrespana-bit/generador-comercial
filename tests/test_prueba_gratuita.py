@@ -589,8 +589,10 @@ def test_la_migracion_encadena_con_la_cabeza_anterior():
         c3e9a1b7d4f2_stripe_checkout as stripe_migracion,
         b1c2d3e4f5a6_ocultar_guia_inicio as ocultar_migracion,
         b2c3d4e5f6a7_add_planos_obra as planos_migration,
+        c0d1e2f3a4b5_fix_planos_permissions as permisos_planos_migration,
     )
-    assert planos_migration.revision == EXPECTED_ALEMBIC_HEAD
+    assert permisos_planos_migration.revision == EXPECTED_ALEMBIC_HEAD
+    assert permisos_planos_migration.down_revision == planos_migration.revision
     assert planos_migration.down_revision == ocultar_migracion.revision
     assert ocultar_migracion.down_revision == stripe_migracion.revision
     assert stripe_migracion.down_revision == evidencia_migracion.revision
