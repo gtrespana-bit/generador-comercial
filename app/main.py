@@ -59,6 +59,7 @@ from .routers import (  # noqa: E402
     pagos,
     partidas,
     plantillas,
+    planos,
     presupuestos,
     productos,
     publico,
@@ -459,6 +460,7 @@ app.include_router(admin.router)
 app.include_router(inicio.router)
 app.include_router(clientes.router)
 app.include_router(presupuestos.router)
+app.include_router(planos.router)
 app.include_router(configuracion.router)
 app.include_router(partidas.router)
 app.include_router(productos.router)
