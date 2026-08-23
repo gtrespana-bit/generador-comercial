@@ -1,4 +1,4 @@
-from app.services.planos import calcular_valor_real
+from app.services.planos import calcular_valor_real, detectar_espacios_plano
 
 
 def test_calcular_valor_lineal_sin_escala():
@@ -30,6 +30,38 @@ def test_calcular_conteo():
     valor, unidad = calcular_valor_real("conteo", puntos, 100.0)
     assert valor == 3
     assert unidad == "ud"
+
+
+def _png_planta_sintetica(con_huecos=True):
+    import io
+    from PIL import Image, ImageDraw
+
+    imagen = Image.new("RGB", (800, 600), "white")
+    dibujo = ImageDraw.Draw(imagen)
+    dibujo.rectangle((40, 40, 760, 560), outline="black", width=8)
+    dibujo.line((400, 40, 400, 560), fill="black", width=8)
+    dibujo.line((40, 300, 760, 300), fill="black", width=8)
+    if con_huecos:
+        # Huecos de puerta que el detector debe puentear durante la segmentación.
+        dibujo.rectangle((397, 115, 403, 165), fill="white")
+        dibujo.rectangle((200, 297, 250, 303), fill="white")
+    salida = io.BytesIO()
+    imagen.save(salida, "PNG")
+    return salida.getvalue()
+
+
+def test_detector_local_encuentra_estancias_y_cierra_huecos_de_puerta():
+    detecciones = detectar_espacios_plano(_png_planta_sintetica(), "image/png")
+    assert len(detecciones) == 4
+    assert all(d["tipo"] == "area" for d in detecciones)
+    assert all(len(d["puntos"]) >= 3 for d in detecciones)
+    assert all(d["confianza"] >= 0.7 for d in detecciones)
+    assert [d["etiqueta"] for d in detecciones] == [
+        "Estancia detectada 1",
+        "Estancia detectada 2",
+        "Estancia detectada 3",
+        "Estancia detectada 4",
+    ]
 
 
 # ------------------------------------------------------------------
@@ -181,6 +213,78 @@ def test_area_de_medicion_ignora_plano_inexistente(entorno_planos):
     resp = client.get(f"/presupuestos/{ids[2]}/planos?plano=999999")
     assert resp.status_code == 200
     assert f"planoActivoId = {ids[4]};" in resp.text
+
+
+def test_subida_activa_analisis_y_detecciones_persisten_sin_duplicarse(entorno_planos):
+    Session, ids = entorno_planos
+    client = TestClient(app, base_url="https://cotizat.test")
+    subida = client.post(
+        f"/presupuestos/{ids[2]}/planos/upload",
+        data={"nombre": "Planta automática"},
+        files={"archivo": ("planta-auto.png", _png_planta_sintetica(), "image/png")},
+    )
+    assert subida.status_code == 200
+    datos_subida = subida.json()
+    plano_id = datos_subida["plano_id"]
+    assert datos_subida["deteccion_automatica"] is True
+    assert datos_subida["url"].endswith(f"?plano={plano_id}&detectar=1")
+
+    primera = client.post(f"/planos/{plano_id}/detectar")
+    assert primera.status_code == 200
+    assert primera.json()["nuevas"] == 4
+
+    segunda = client.post(f"/planos/{plano_id}/detectar")
+    assert segunda.status_code == 200
+    assert segunda.json()["analizadas"] == 4
+    assert segunda.json()["nuevas"] == 0
+    assert segunda.json()["omitidas"] == 4
+
+    # Una recarga obtiene exactamente las geometrías confirmadas en la base de datos.
+    recarga = client.get(f"/planos/{plano_id}/datos").json()
+    assert recarga["ok"] is True
+    assert len(recarga["mediciones"]) == 4
+    with Session() as db:
+        from app.models import PlanoMedicion
+        assert db.query(PlanoMedicion).filter(PlanoMedicion.plano_id == plano_id).count() == 4
+
+
+def test_post_y_put_medicion_guardan_geometria_recalculada(entorno_planos):
+    Session, ids = entorno_planos
+    client = TestClient(app, base_url="https://cotizat.test")
+    creada = client.post(
+        f"/planos/{ids[3]}/mediciones",
+        json={"tipo": "lineal", "etiqueta": "Tramo editable", "puntos": [[0, 0], [100, 0]], "color": "#123456"},
+    )
+    assert creada.status_code == 200
+    med_id = creada.json()["medicion"]["id"]
+    assert creada.json()["medicion"]["valor"] == pytest.approx(1.0)
+
+    actualizada = client.put(
+        f"/planos/{ids[3]}/mediciones/{med_id}",
+        json={"tipo": "lineal", "etiqueta": "Tramo corregido", "puntos": [[0, 0], [250, 0]], "color": "#654321"},
+    )
+    assert actualizada.status_code == 200
+    assert actualizada.json()["medicion"]["valor"] == pytest.approx(2.5)
+    assert actualizada.json()["medicion"]["puntos"] == [[0.0, 0.0], [250.0, 0.0]]
+
+    with Session() as db:
+        from app.models import PlanoMedicion
+        med = db.get(PlanoMedicion, med_id)
+        assert med.etiqueta == "Tramo corregido"
+        assert med.color == "#654321"
+        assert med.valor == pytest.approx(2.5)
+        assert med.puntos() == [[0.0, 0.0], [250.0, 0.0]]
+
+
+def test_medicion_incompleta_no_se_confirma_en_servidor(entorno_planos):
+    _Session, ids = entorno_planos
+    client = TestClient(app, base_url="https://cotizat.test")
+    resp = client.post(
+        f"/planos/{ids[3]}/mediciones",
+        json={"tipo": "area", "etiqueta": "Incompleta", "puntos": [[0, 0], [10, 0]]},
+    )
+    assert resp.status_code == 400
+    assert "al menos 3" in resp.json()["error"]
 
 
 # ------------------------------------------------------------------

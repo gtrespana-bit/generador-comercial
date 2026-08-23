@@ -2574,7 +2574,7 @@ class BorradorPresupuesto(TenantMixin, Base):
 
 
 class PlanoObra(TenantMixin, Base):
-    """Plano subido para medición manual asistida (imagen o PDF convertido).
+    """Plano subido para detección automática y medición editable (imagen o PDF convertido).
 
     El archivo binario vive en Storage privado (organizaciones/{id}/planos/...),
     aquí solo se guarda la referencia y los metadatos de escala.

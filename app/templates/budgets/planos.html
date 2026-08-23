@@ -4,7 +4,7 @@
 <div class="page-head">
   <div>
     <h1>📐 Planos - {{ p.numero }}</h1>
-    <p class="subtitle">{{ p.titulo or "Sin título" }} · {{ p.cliente.nombre }} · Medición manual asistida</p>
+    <p class="subtitle">{{ p.titulo or "Sin título" }} · {{ p.cliente.nombre }} · Detección automática y medición editable</p>
   </div>
   <div class="page-head-actions">
     <a class="btn" href="/planos" title="Galería de todos tus planos">▦ Visor de planos</a>
@@ -66,7 +66,13 @@
     </div>
 
     <div class="card">
-      <h3>Herramientas</h3>
+      <h3>Medición automática</h3>
+      <p class="hint">Detecta estancias cerradas, calcula sus áreas y las guarda para que solo tengas que revisar y ajustar.</p>
+      <button class="btn btn-primary planos-btn-analizar" id="btn-analizar-plano">✨ Analizar plano automáticamente</button>
+      <div id="analisis-status" class="planos-analisis-status" role="status" aria-live="polite">Listo para analizar.</div>
+      <hr>
+      <h3>Ajuste manual</h3>
+      <p class="hint">Úsalo para corregir una detección o medir elementos especiales. Los trazos válidos se autoguardan.</p>
       <div class="btn-group-vertical">
         <button class="btn btn-sm" id="tool-mover" data-tool="mover" title="Arrastra el plano para desplazarlo (M)">✋ Mover (M)</button>
         <button class="btn btn-sm" id="tool-calibrar" data-tool="calibrar" title="Dibuja una línea sobre una medida conocida (E)">📏 Calibrar escala (E)</button>
@@ -105,11 +111,12 @@
           <label>Color</label>
           <input type="color" id="med-color" value="#ff0000">
         </div>
-        <p class="hint">Haz clic en el plano para dibujar. Doble clic para cerrar polígono.</p>
+        <p class="hint">Haz clic para dibujar; doble clic cierra áreas y perímetros. El borrador se conserva en este navegador y se guarda en el servidor al tener puntos suficientes.</p>
         <p>Valor actual: <strong id="med-valor-actual">-</strong></p>
+        <p id="med-guardado-status" class="planos-save-status" role="status" aria-live="polite">Sin trazo en curso.</p>
         <div class="form-actions">
-          <button class="btn btn-sm btn-primary" id="btn-guardar-medicion">💾 Guardar medición</button>
-          <button class="btn btn-sm" id="btn-cancel-medicion">Cancelar</button>
+          <button class="btn btn-sm btn-primary" id="btn-guardar-medicion">✓ Finalizar medición</button>
+          <button class="btn btn-sm" id="btn-cancel-medicion">Descartar borrador</button>
         </div>
       </div>
     </div>
@@ -188,6 +195,11 @@
 .planos-atajos { margin-top:8px; }
 .planos-panel-calib { margin-top:12px; padding:10px; background:#f1f5f9; border-radius:8px; }
 .planos-panel-med { margin-top:12px; }
+.planos-btn-analizar { width:100%; justify-content:center; }
+.planos-analisis-status, .planos-save-status { margin:8px 0 0; padding:7px 9px; border-radius:7px; background:#f1f5f9; color:#475569; font-size:12px; }
+.planos-analisis-status.is-working, .planos-save-status.is-saving { background:#eff6ff; color:#1d4ed8; }
+.planos-analisis-status.is-ok, .planos-save-status.is-ok { background:#ecfdf5; color:#166534; }
+.planos-analisis-status.is-error, .planos-save-status.is-error { background:#fef2f2; color:#b91c1c; }
 .planos-field-aplicar { margin-top:10px; }
 .planos-btn-aplicar { margin-top:6px; }
 .planos-export { display:flex; gap:8px; flex-wrap:wrap; }
@@ -219,6 +231,11 @@
   let puntosActuales = [];
   let calibracionPuntos = [];
   let medicionesGuardadas = [];
+  let medicionEnEdicionId = null;
+  let timerAutoguardado = null;
+  let analisisInicialPendiente = {{ 'true' if detectar_automaticamente else 'false' }};
+  let analisisEnCurso = false;
+  let planoEsImagen = true;
   let zoom = 1;
   let img = document.getElementById('plano-img');
   let canvas = document.getElementById('plano-canvas');
@@ -260,7 +277,7 @@
       const res = await fetch(`/presupuestos/${presupuestoId}/planos/upload`, {method:'POST', body: fd});
       let data = null;
       try { data = await res.json(); } catch(_){ data = null; }
-      if (data && data.ok) { window.location.reload(); return; }
+      if (data && data.ok) { window.location.href = data.url || `/presupuestos/${presupuestoId}/planos?plano=${data.plano_id}`; return; }
       const msg = (data && data.error) || (res.ok ? 'Error subiendo' : ('Error subiendo (' + res.status + ')'));
       mostrarErrorUpload(msg);
     } catch(err){ mostrarErrorUpload('Error de conexión'); }
@@ -279,6 +296,120 @@
   function areaPoligono(pts){
     if (pts.length<3) return 0;
     let s=0; for(let i=0;i<pts.length;i++){ let [x0,y0]=pts[i]; let [x1,y1]=pts[(i+1)%pts.length]; s+=x0*y1 - x1*y0; } return Math.abs(s)/2;
+  }
+
+  const MIN_PUNTOS = {lineal:2, area:3, perimetro:3, conteo:1};
+  let colaGuardado = Promise.resolve();
+
+  function claveBorrador(){ return planoActivoId ? `cotizat:plano:${planoActivoId}:borrador` : ''; }
+
+  function setEstadoGuardado(texto, tipo=''){
+    const el = document.getElementById('med-guardado-status');
+    if (!el) return;
+    el.textContent = texto;
+    el.classList.remove('is-saving','is-ok','is-error');
+    if (tipo) el.classList.add(`is-${tipo}`);
+  }
+
+  function guardarBorradorLocal(){
+    const clave = claveBorrador();
+    if (!clave) return;
+    try {
+      if (!puntosActuales.length){ localStorage.removeItem(clave); return; }
+      localStorage.setItem(clave, JSON.stringify({
+        tipo:herramienta,
+        puntos:puntosActuales,
+        etiqueta:document.getElementById('med-etiqueta')?.value || '',
+        color:document.getElementById('med-color')?.value || '#ff0000',
+        medicion_id:medicionEnEdicionId,
+        actualizado:Date.now()
+      }));
+    } catch(_){ /* El servidor sigue siendo la fuente principal. */ }
+  }
+
+  function borrarBorradorLocal(){
+    try { const clave=claveBorrador(); if (clave) localStorage.removeItem(clave); } catch(_){}
+  }
+
+  function trazoValido(){
+    return (MIN_PUNTOS[herramienta] || 999) <= puntosActuales.length;
+  }
+
+  function firmaTrazo(){
+    return JSON.stringify([herramienta, puntosActuales, document.getElementById('med-etiqueta')?.value || '', document.getElementById('med-color')?.value || '#ff0000']);
+  }
+
+  function integrarMedicionGuardada(medicion){
+    const i = medicionesGuardadas.findIndex(m=>m.id===medicion.id);
+    if (i>=0) medicionesGuardadas[i]=medicion;
+    else medicionesGuardadas.push(medicion);
+    renderListaMediciones();
+    dibujar();
+  }
+
+  function programarAutoguardado(){
+    guardarBorradorLocal();
+    clearTimeout(timerAutoguardado);
+    if (!trazoValido()){
+      const faltan = Math.max(0, (MIN_PUNTOS[herramienta]||0)-puntosActuales.length);
+      setEstadoGuardado(`Borrador local · faltan ${faltan} punto(s) para guardarlo en el servidor.`);
+      return;
+    }
+    setEstadoGuardado('Cambios pendientes de autoguardado…', 'saving');
+    timerAutoguardado = setTimeout(()=>persistirTrazo(), 550);
+  }
+
+  function persistirTrazo({finalizar=false}={}){
+    clearTimeout(timerAutoguardado);
+    colaGuardado = colaGuardado.catch(()=>false).then(async ()=>{
+      if (!trazoValido()){
+        guardarBorradorLocal();
+        setEstadoGuardado('El trazo aún no tiene los puntos mínimos.', 'error');
+        return false;
+      }
+      const firmaInicial = firmaTrazo();
+      const payload = {
+        tipo:herramienta,
+        etiqueta:document.getElementById('med-etiqueta')?.value || '',
+        puntos:puntosActuales.map(p=>[p[0],p[1]]),
+        color:document.getElementById('med-color')?.value || '#ff0000'
+      };
+      const idObjetivo = medicionEnEdicionId;
+      const url = idObjetivo ? `/planos/${planoActivoId}/mediciones/${idObjetivo}` : `/planos/${planoActivoId}/mediciones`;
+      setEstadoGuardado(idObjetivo ? 'Guardando cambios…' : 'Guardando medición…', 'saving');
+      try {
+        const res = await fetch(url, {method:idObjetivo?'PUT':'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)});
+        const data = await res.json();
+        if (!data.ok){ setEstadoGuardado(data.error||'No se pudo guardar.', 'error'); return false; }
+        medicionEnEdicionId = data.medicion.id;
+        integrarMedicionGuardada(data.medicion);
+        if (finalizar && firmaTrazo()===firmaInicial){
+          puntosActuales=[];
+          medicionEnEdicionId=null;
+          borrarBorradorLocal();
+          const et=document.getElementById('med-etiqueta'); if(et) et.value='';
+          setEstadoGuardado('Medición guardada. Puedes revisarla más tarde.', 'ok');
+        } else {
+          guardarBorradorLocal();
+          setEstadoGuardado('Autoguardado en el servidor.', 'ok');
+        }
+        actualizarValorActual(); dibujar();
+        return true;
+      } catch(_){
+        guardarBorradorLocal();
+        setEstadoGuardado('Sin conexión: el borrador queda guardado en este navegador.', 'error');
+        return false;
+      }
+    });
+    return colaGuardado;
+  }
+
+  function agregarPuntoSeguro(pos){
+    const ultimo = puntosActuales[puntosActuales.length-1];
+    if (ultimo && distancia(ultimo,pos) < Math.max(1.5, 3/zoom)) return false;
+    puntosActuales.push([pos[0],pos[1]]);
+    programarAutoguardado();
+    return true;
   }
 
   function valorActual(){
@@ -371,7 +502,7 @@
     ctx.scale(zoom, zoom);
     ctx.drawImage(img, 0,0);
     if (mostrarMediciones) {
-      medicionesGuardadas.forEach(m=>dibujarMedicion(m));
+      medicionesGuardadas.forEach(m=>{ if (m.id!==medicionEnEdicionId) dibujarMedicion(m); });
     }
     dibujarTrazoActual();
     ctx.restore();
@@ -410,7 +541,8 @@
     const enCalibracion = herramienta==='calibrar';
     const pts = enCalibracion ? calibracionPuntos : puntosActuales;
     if (pts.length){
-      ctx.strokeStyle = enCalibracion ? '#00aaff' : '#ff0000';
+      const colorTrazo = document.getElementById('med-color')?.value || '#ff0000';
+      ctx.strokeStyle = enCalibracion ? '#00aaff' : colorTrazo;
       ctx.lineWidth = 2;
       ctx.setLineDash([6,4]);
       ctx.beginPath();
@@ -418,7 +550,7 @@
       if ((herramienta==='area' || herramienta==='perimetro') && pts.length>=3) ctx.closePath();
       ctx.stroke();
       ctx.setLineDash([]);
-      pts.forEach(pt=>{ ctx.beginPath(); ctx.arc(pt[0],pt[1],4,0,Math.PI*2); ctx.fillStyle='#ff0000'; ctx.fill(); });
+      pts.forEach(pt=>{ ctx.beginPath(); ctx.arc(pt[0],pt[1],4,0,Math.PI*2); ctx.fillStyle=colorTrazo; ctx.fill(); });
     }
     // Línea elástica hasta el cursor y previsualización del cierre.
     if (cursorPos && pts.length && herramienta!=='conteo' && herramienta!=='mover'){
@@ -470,19 +602,14 @@
       actualizarValorActual(); dibujar();
       const panel = document.getElementById('calibracion-panel');
       if (panel) panel.classList.remove('cotizat-hidden');
-    } else {
-      puntosActuales.push(r.pos);
+    } else if (agregarPuntoSeguro(r.pos)) {
       actualizarValorActual(); dibujar();
     }
   });
   canvas.addEventListener('dblclick', (e)=>{
     e.preventDefault();
     if (herramienta==='area' || herramienta==='perimetro'){
-      if (puntosActuales.length>=3){
-        actualizarValorActual(); dibujar();
-        const et = document.getElementById('med-etiqueta');
-        if (et) et.focus();
-      }
+      if (trazoValido()) persistirTrazo({finalizar:true});
     }
   });
   canvas.addEventListener('contextmenu', (e)=>{
@@ -530,15 +657,26 @@
 
   // ---------- Herramientas y atajos ----------
 
-  function activarHerramienta(h){
+  async function activarHerramienta(h, forzar=false){
+    if (!forzar && h!==herramienta && puntosActuales.length){
+      if (trazoValido()){
+        const guardado = await persistirTrazo({finalizar:true});
+        if (!guardado) return false;
+      } else if (!confirm('Este trazo aún no se puede guardar. ¿Descartar el borrador y cambiar de herramienta?')){
+        return false;
+      } else {
+        puntosActuales=[]; medicionEnEdicionId=null; borrarBorradorLocal();
+      }
+    }
     herramienta = h;
     document.querySelectorAll('[data-tool]').forEach(b=>b.classList.toggle('btn-primary', b.dataset.tool===h));
-    puntosActuales = [];
+    if (forzar) puntosActuales = [];
     if (herramienta!=='calibrar') calibracionPuntos = [];
     const calibPanel = document.getElementById('calibracion-panel');
     if (calibPanel) calibPanel.classList.toggle('cotizat-hidden', herramienta!=='calibrar');
     canvas.classList.toggle('modo-mover', herramienta==='mover');
     actualizarValorActual(); dibujar();
+    return true;
   }
 
   document.querySelectorAll('[data-tool]').forEach(btn=>{
@@ -547,7 +685,7 @@
 
   function deshacerPunto(){
     if (herramienta==='calibrar') calibracionPuntos.pop();
-    else puntosActuales.pop();
+    else { puntosActuales.pop(); programarAutoguardado(); }
     actualizarValorActual(); dibujar();
   }
 
@@ -560,8 +698,12 @@
     const t = (e.target && e.target.tagName) || '';
     if (['INPUT','SELECT','TEXTAREA'].includes(t)) return;
     if (e.key==='Escape'){
-      puntosActuales = []; calibracionPuntos = [];
-      actualizarValorActual(); dibujar(); return;
+      if (!puntosActuales.length || confirm('¿Descartar el borrador actual? Las mediciones ya autoguardadas seguirán en la lista.')){
+        puntosActuales=[]; calibracionPuntos=[]; medicionEnEdicionId=null; borrarBorradorLocal();
+        setEstadoGuardado('Borrador descartado.');
+        actualizarValorActual(); dibujar();
+      }
+      return;
     }
     const h = ATAJO_HERRAMIENTA[e.key.toLowerCase()];
     if (h) activarHerramienta(h);
@@ -591,9 +733,13 @@
   }
 
   document.getElementById('btn-cancel-medicion')?.addEventListener('click', ()=>{
-    puntosActuales = []; actualizarValorActual(); dibujar();
+    if (puntosActuales.length && !confirm('¿Descartar este borrador? Las versiones ya autoguardadas seguirán disponibles.')) return;
+    puntosActuales=[]; medicionEnEdicionId=null; borrarBorradorLocal();
+    clearTimeout(timerAutoguardado);
+    actualizarValorActual(); dibujar();
     const et = document.getElementById('med-etiqueta');
     if (et) et.value = '';
+    setEstadoGuardado('Borrador descartado.');
   });
   document.getElementById('btn-cancel-calibrar')?.addEventListener('click', ()=>{
     calibracionPuntos = [];
@@ -620,21 +766,14 @@
   });
 
   document.getElementById('btn-guardar-medicion')?.addEventListener('click', async ()=>{
-    if (!puntosActuales.length){ alert('Dibuja medición primero'); return; }
-    const etiqueta = document.getElementById('med-etiqueta').value || '';
-    const color = document.getElementById('med-color').value || '#ff0000';
-    try {
-      const res = await fetch(`/planos/${planoActivoId}/mediciones`, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({tipo:herramienta, etiqueta, puntos:puntosActuales, color})});
-      const data = await res.json();
-      if (data.ok){
-        puntosActuales=[];
-        const et = document.getElementById('med-etiqueta');
-        if (et) et.value='';
-        actualizarValorActual();
-        await cargarPlano(planoActivoId);
-      }
-      else alert(data.error||'Error guardando');
-    } catch(e){ alert('Error conexión'); }
+    if (!puntosActuales.length){ setEstadoGuardado('Dibuja una medición primero.', 'error'); return; }
+    await persistirTrazo({finalizar:true});
+  });
+  document.getElementById('med-etiqueta')?.addEventListener('input', ()=>{
+    if (puntosActuales.length) programarAutoguardado();
+  });
+  document.getElementById('med-color')?.addEventListener('input', ()=>{
+    if (puntosActuales.length) programarAutoguardado();
   });
 
   // ---------- Zoom, ajuste y pantalla completa ----------
@@ -706,6 +845,49 @@
     else alert(data.error||'Error');
   });
 
+  // ---------- Detección automática ----------
+
+  function setEstadoAnalisis(texto, tipo=''){
+    const el=document.getElementById('analisis-status');
+    if (!el) return;
+    el.textContent=texto;
+    el.classList.remove('is-working','is-ok','is-error');
+    if (tipo) el.classList.add(`is-${tipo}`);
+  }
+
+  async function analizarPlanoAutomaticamente(){
+    if (analisisEnCurso) return;
+    if (!planoEsImagen){
+      setEstadoAnalisis('La detección automática requiere PNG, JPG o WEBP. Convierte este PDF a imagen.', 'error');
+      return;
+    }
+    analisisEnCurso=true;
+    const btn=document.getElementById('btn-analizar-plano');
+    if (btn){ btn.disabled=true; btn.textContent='Analizando geometría…'; }
+    setEstadoAnalisis('Buscando paredes y espacios cerrados. Puede tardar unos segundos…', 'working');
+    try {
+      const res=await fetch(`/planos/${planoActivoId}/detectar`, {method:'POST'});
+      const data=await res.json();
+      if (!data.ok){ setEstadoAnalisis(data.error||'No se pudo analizar el plano.', 'error'); return; }
+      (data.mediciones||[]).forEach(integrarMedicionGuardada);
+      if (data.analizadas===0){
+        setEstadoAnalisis('No se encontraron estancias cerradas. Prueba con una imagen más nítida o usa el ajuste manual.', 'error');
+      } else if (data.nuevas===0){
+        setEstadoAnalisis(`Revisión completa: las ${data.analizadas} detecciones ya estaban guardadas.`, 'ok');
+      } else {
+        setEstadoAnalisis(`✓ ${data.nuevas} estancia(s) detectada(s) y guardada(s). Revisa sus contornos y calibra la escala.`, 'ok');
+      }
+      if (btn) btn.textContent='↻ Repetir análisis';
+    } catch(_){
+      setEstadoAnalisis('Error de conexión durante el análisis.', 'error');
+    } finally {
+      analisisEnCurso=false;
+      if (btn){ btn.disabled=!planoEsImagen; if (btn.textContent==='Analizando geometría…') btn.textContent='✨ Analizar plano automáticamente'; }
+    }
+  }
+
+  document.getElementById('btn-analizar-plano')?.addEventListener('click', analizarPlanoAutomaticamente);
+
   // ---------- Lista y estadísticas de mediciones ----------
 
   const ICONO_TIPO = {lineal:'📐', area:'⬜', perimetro:'🔲', conteo:'🔢', volumen:'🧊'};
@@ -733,14 +915,29 @@
       const small = document.createElement('small'); small.textContent = m.tipo + ' · ' + (m.puntos?.length||0) + ' puntos';
       left.appendChild(strong); left.appendChild(small);
       const right = document.createElement('div'); right.className='planos-med-btns';
-      const btnVer = document.createElement('button'); btnVer.className='btn btn-sm'; btnVer.title='Cargar en el lienzo'; btnVer.textContent='👁️';
-      btnVer.addEventListener('click', ()=>{
-        puntosActuales = m.puntos || [];
-        dibujar();
+      const btnVer = document.createElement('button'); btnVer.className='btn btn-sm'; btnVer.title='Editar geometría'; btnVer.textContent='✏️';
+      btnVer.addEventListener('click', async ()=>{
+        if (puntosActuales.length && medicionEnEdicionId===m.id){
+          setEstadoGuardado('Esta medición ya está abierta para editar.', 'ok');
+          return;
+        }
+        if (puntosActuales.length && medicionEnEdicionId!==m.id){
+          if (trazoValido()){
+            if (!await persistirTrazo({finalizar:true})) return;
+          } else if (!confirm('¿Descartar el borrador incompleto para editar esta medición?')) return;
+        }
+        await activarHerramienta(m.tipo, true);
+        puntosActuales = (m.puntos || []).map(p=>[p[0],p[1]]);
+        medicionEnEdicionId = m.id;
+        const et=document.getElementById('med-etiqueta'); if(et) et.value=m.etiqueta||'';
+        const color=document.getElementById('med-color'); if(color) color.value=m.color||'#ff0000';
+        guardarBorradorLocal();
+        setEstadoGuardado('Editando una medición guardada. Los cambios se autoguardan.', 'ok');
+        actualizarValorActual(); dibujar();
         const sel = document.getElementById('select-partida');
         if (sel) sel.value = m.partida_destino_id || '';
       });
-      const btnRen = document.createElement('button'); btnRen.className='btn btn-sm'; btnRen.title='Renombrar'; btnRen.textContent='✏️';
+      const btnRen = document.createElement('button'); btnRen.className='btn btn-sm'; btnRen.title='Cambiar etiqueta'; btnRen.textContent='🏷️';
       btnRen.addEventListener('click', async ()=>{
         const nueva = prompt('Nueva etiqueta para la medición:', m.etiqueta||'');
         if (nueva===null) return;
@@ -756,7 +953,13 @@
         if (!confirm('¿Borrar medición?')) return;
         const res = await fetch(`/planos/${planoActivoId}/mediciones/${m.id}`, {method:'DELETE'});
         const data = await res.json();
-        if (data.ok) await cargarPlano(planoActivoId);
+        if (data.ok){
+          if (medicionEnEdicionId===m.id){
+            puntosActuales=[]; medicionEnEdicionId=null; borrarBorradorLocal();
+            setEstadoGuardado('Medición eliminada.');
+          }
+          await cargarPlano(planoActivoId);
+        }
       });
       right.appendChild(btnVer); right.appendChild(btnRen); right.appendChild(btnDel);
       div.appendChild(left); div.appendChild(right); contLista.appendChild(div);
@@ -768,10 +971,7 @@
     const partidaId = document.getElementById('select-partida').value;
     if (!partidaId){ alert('Selecciona partida'); return; }
     if (!medicionesGuardadas.length){ alert('No hay mediciones guardadas'); return; }
-    let medId = medicionesGuardadas[medicionesGuardadas.length-1].id;
-    for (let mm of medicionesGuardadas){
-      if (JSON.stringify(mm.puntos)===JSON.stringify(puntosActuales)){ medId=mm.id; break; }
-    }
+    const medId = medicionEnEdicionId || medicionesGuardadas[medicionesGuardadas.length-1].id;
     try {
       const res = await fetch(`/planos/${planoActivoId}/mediciones/${medId}/aplicar`, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({partida_id: parseInt(partidaId)})});
       const data = await res.json();
@@ -784,7 +984,30 @@
 
   // ---------- Carga de planos ----------
 
+  function restaurarBorradorLocal(){
+    let borrador=null;
+    try { borrador=JSON.parse(localStorage.getItem(claveBorrador())||'null'); } catch(_){ borrador=null; }
+    if (!borrador || !MIN_PUNTOS.hasOwnProperty(borrador.tipo) || !Array.isArray(borrador.puntos) || !borrador.puntos.length){
+      return false;
+    }
+    herramienta=borrador.tipo;
+    puntosActuales=borrador.puntos;
+    medicionEnEdicionId=medicionesGuardadas.some(m=>m.id===borrador.medicion_id) ? borrador.medicion_id : null;
+    document.querySelectorAll('[data-tool]').forEach(b=>b.classList.toggle('btn-primary', b.dataset.tool===herramienta));
+    const et=document.getElementById('med-etiqueta'); if(et) et.value=borrador.etiqueta||'';
+    const color=document.getElementById('med-color'); if(color) color.value=borrador.color||'#ff0000';
+    setEstadoGuardado(medicionEnEdicionId ? 'Borrador recuperado; su versión anterior ya está en el servidor.' : 'Borrador local recuperado; se autoguardará al ser válido.', 'ok');
+    actualizarValorActual();
+    return true;
+  }
+
   async function cargarPlano(id){
+    if (planoActivoId && planoActivoId!==id){
+      clearTimeout(timerAutoguardado);
+      if (puntosActuales.length && trazoValido()) await persistirTrazo({finalizar:true});
+      else guardarBorradorLocal();
+      puntosActuales=[]; medicionEnEdicionId=null;
+    }
     planoActivoId = id;
     document.querySelectorAll('.plano-item').forEach(el=>{
       const isActive = parseInt(el.dataset.planoId)===id;
@@ -796,6 +1019,11 @@
       if (!data.ok) return;
       escala = data.plano.escala_px_por_metro;
       medicionesGuardadas = data.mediciones || [];
+      planoEsImagen = (data.plano.content_type || '').startsWith('image/');
+      const btnAnalizar=document.getElementById('btn-analizar-plano');
+      if (btnAnalizar) btnAnalizar.disabled=!planoEsImagen;
+      if (!planoEsImagen) setEstadoAnalisis('La detección automática no está disponible para PDF; sube una versión PNG, JPG o WEBP.', 'error');
+      if (!puntosActuales.length) restaurarBorradorLocal();
       planoNombreArchivo = (data.plano.nombre||'plano').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'') || 'plano';
       const tituloEl = document.getElementById('plano-titulo');
       if (tituloEl) tituloEl.textContent = data.plano.nombre + (data.plano.calibrado ? ' (calibrado)' : ' (sin calibrar)');
@@ -830,6 +1058,13 @@
           ajustarVista();
           renderListaMediciones();
           actualizarValorActual();
+          if (analisisInicialPendiente){
+            analisisInicialPendiente=false;
+            const urlLimpia=new URL(window.location.href);
+            urlLimpia.searchParams.delete('detectar');
+            window.history.replaceState({}, '', urlLimpia.pathname + urlLimpia.search + urlLimpia.hash);
+            analizarPlanoAutomaticamente();
+          }
         };
         img.src = url;
         img.classList.remove('cotizat-hidden');
