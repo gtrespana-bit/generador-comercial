@@ -15,8 +15,25 @@
         {% endfor %}
       </select>
     </div>
-    <div class="field"><label>Precio base ({{ moneda_vista }}) *</label><input type="number" name="precio" step="0.0001" min="0" required value="{{ precio_vista if precio_vista is not none else (recurso.precio if recurso else 0) }}"><span class="hint">Se edita en {{ moneda_vista }}, la moneda de tu organización; se guarda internamente en USD con tu tasa configurada.</span></div>
-    <div class="field"><label>Precio efectivo de tu mercado ({{ mercado_moneda }})</label><input type="number" name="precio_mercado" step="0.0001" min="0" value="{{ precio_mercado_vista if precio_mercado_vista is not none else '' }}"><span class="hint">Override de tu empresa en {{ mercado_moneda }}; no modifica el precio nacional ni otros países.</span>{% if precio_referencia_nacional_vista is not none %}<div class="hint">📊 Referencia nacional {{ mercado_codigo }}: <strong>{{ precio_referencia_nacional_vista | money_iso(moneda_vista) }}</strong>. Es el precio que se muestra en el catálogo y se propaga a las partidas.</div>{% endif %}</div>
+    {# El precio base del catálogo no es un dato de mercado: es el precio de la
+       partida original (Venezuela) convertido. No se muestra ni se edita. Se
+       conserva en un campo oculto para no perder la plantilla interna si el
+       usuario solo ajusta el precio de mercado. #}
+    <input type="hidden" name="precio" value="{{ precio_vista if precio_vista is not none else (recurso.precio if recurso else 0) }}">
+    <div class="field">
+      <label>Tu precio para {{ mercado_codigo }} ({{ mercado_moneda }})</label>
+      <input type="number" name="precio_mercado" step="0.0001" min="0" value="{{ precio_mercado_vista if precio_mercado_vista is not none else '' }}">
+      {% if precio_mercado and precio_mercado_vista is not none %}
+        <span class="hint">El tuyo se usa antes que el mercado. Si lo dejas vacío se vuelve al precio de mercado.</span>
+        {% if precio_referencia_nacional_vista is not none %}<div class="hint">📊 Mercado {{ mercado_codigo }}: <strong>{{ precio_referencia_nacional_vista | money_iso(moneda_vista) }}</strong></div>{% endif %}
+      {% else %}
+        {% if precio_referencia_nacional_vista is not none %}
+          <span class="hint">Se usará automáticamente el precio de mercado: <strong>{{ precio_referencia_nacional_vista | money_iso(moneda_vista) }}</strong>. Solo escribe aquí si quieres fijar el tuyo.</span>
+        {% else %}
+          <span class="hint">⚠ Sin precio de mercado para {{ mercado_codigo }}. Si lo dejas vacío, el recurso se mostrará sin precio hasta cargar la referencia nacional o tu precio.</span>
+        {% endif %}
+      {% endif %}
+    </div>
     <div class="field"><label>Grupo (opcional)</label><input name="grupo" value="{{ recurso.grupo if recurso else '' }}" placeholder="Mano de obra, Materiales..."></div>
     <div class="field"><label>Proveedor (opcional)</label><input name="proveedor" value="{{ recurso.proveedor if recurso else '' }}"></div>
     <div class="field"><label>Subtipo</label><input name="subtipo" value="{{ recurso.subtipo if recurso else '' }}" placeholder="oficial, equipo, transporte"></div>

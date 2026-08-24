@@ -5,7 +5,7 @@
   <div>
     <p class="crumb">🧱 <a href="/recursos">Recursos</a> › Impacto</p>
     <h1>{{ recurso.descripcion }}</h1>
-    <p class="subtitle">{{ recurso.codigo or 'Sin código' }} · {{ recurso.unidad }} · {{ precio_vista | money_iso(moneda_vista) }}</p>
+    <p class="subtitle">{{ recurso.codigo or 'Sin código' }} · {{ recurso.unidad }} · {% if precio_vista is not none %}{{ precio_vista | money_iso(moneda_vista) }}{% else %}⚠ Sin precio de mercado para {{ mercado_codigo }}{% endif %}</p>
   </div>
   <div class="actions"><a class="btn" href="/recursos">← Volver a recursos</a><a class="btn btn-primary" href="/recursos/{{ recurso.id }}/editar">Editar precio</a></div>
 </div>

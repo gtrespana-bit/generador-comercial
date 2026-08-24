@@ -119,7 +119,16 @@ def _resolver_precios_filas(
     salida: dict[str, float] = {}
     for r in por_id.values():
         ef = efectivos.get(r.id)
-        if ef is not None and ef.get("precio") is not None and not ef.get("requiere_tasa"):
+        # Solo se consideran precios reales de este país: referencia nacional
+        # o precio fijado por la organización. El precio base de la partida
+        # original (Venezuela convertida) no es un precio de mercado y no debe
+        # alimentar el APU mostrado.
+        if (
+            ef is not None
+            and ef.get("precio") is not None
+            and not ef.get("requiere_tasa")
+            and (ef.get("origen") or "base") in ("nacional", "organizacion")
+        ):
             salida[normalizar(r.codigo)] = float(ef["precio"])
     # Filas sin código: match por descripción. Solo se guardan cuando hay
     # referencia nacional real; si no, la fila usará su precio base.
@@ -131,7 +140,12 @@ def _resolver_precios_filas(
         for r in por_id.values():
             if _recurso_de_fila(r, fila):
                 ef = efectivos.get(r.id)
-                if ef is not None and ef.get("precio") is not None and not ef.get("requiere_tasa"):
+                if (
+                    ef is not None
+                    and ef.get("precio") is not None
+                    and not ef.get("requiere_tasa")
+                    and (ef.get("origen") or "base") in ("nacional", "organizacion")
+                ):
                     salida.setdefault(clave, float(ef["precio"]))
                 break
     return salida

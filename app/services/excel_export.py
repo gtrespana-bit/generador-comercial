@@ -752,11 +752,14 @@ def exportar_catalogo_recursos_excel(recursos, etiquetas=None, moneda="USD", fac
         ws.cell(row=row, column=5, value=r.grupo or "")
         _precio = (
             float(precios_efectivos.get(r.id))
-            if precios_efectivos and precios_efectivos.get(r.id) is not None
-            else tasa_convertir_precio(r.precio or 0, factor)
+            if precios_efectivos and r.id in precios_efectivos and precios_efectivos.get(r.id) is not None
+            else None
         )
-        ws.cell(row=row, column=6, value=_money(_precio))
-        ws.cell(row=row, column=6).number_format = _CURRENCY_FMT
+        if _precio is not None:
+            ws.cell(row=row, column=6, value=_money(_precio))
+            ws.cell(row=row, column=6).number_format = _CURRENCY_FMT
+        else:
+            ws.cell(row=row, column=6, value="")
         ws.cell(row=row, column=7, value=r.usos or 0)
         ws.cell(row=row, column=8, value=r.proveedor or "")
         ws.cell(row=row, column=9, value=r.fecha_actualizacion_precio.isoformat() if r.fecha_actualizacion_precio else "")

@@ -115,20 +115,24 @@ def listar_recursos(request: Request, q: str = "", categoria: str = "", db: Sess
         mercado_vista = None
         if efectivo.get("precio") is not None and not efectivo.get("requiere_tasa"):
             mercado_vista = float(efectivo["precio"])
+        es_mercado = bool(
+            mercado_vista is not None
+            and (efectivo.get("origen") or "base") in ("nacional", "organizacion")
+        )
         precios_vista[r.id] = {
-            "base": base_vista,
-            "mercado": mercado_vista,
+            "base": base_vista,  # solo interno/fallback, nunca se muestra
+            "mercado": mercado_vista if es_mercado else None,
             "origen": efectivo.get("origen", "base"),
             "aviso": efectivo.get("aviso", ""),
             "requiere_tasa": bool(efectivo.get("requiere_tasa")),
         }
-        # El total por categoría usa la referencia nacional cuando existe:
-        # sumar el base (Partida Venezuela convertida) daba un total que no
-        # reflejaba el mercado del país de la organización.
-        totales_categoria[r.categoria] = (
-            totales_categoria.get(r.categoria, 0.0)
-            + (mercado_vista if mercado_vista is not None else base_vista)
-        )
+        # El total por categoría suma únicamente referencias de mercado o del
+        # propio usuario. El precio base (Partida Venezuela convertida) no
+        # cuenta: nunca debe contaminar el total visible de un mercado.
+        if es_mercado:
+            totales_categoria[r.categoria] = (
+                totales_categoria.get(r.categoria, 0.0) + mercado_vista
+            )
     # Agrupar por categoria
     return TEMPLATES.TemplateResponse(request, "recursos/list.html", {
         "recursos": recursos,
@@ -167,10 +171,16 @@ def exportar_recursos(formato: str = "csv", db: Session = Depends(get_db)):
         efectivos_x = {}
 
     def _precio_export(r):
+        """Precio visible para exportar: solo mercado o precio propio.
+
+        El precio base del catálogo no se exporta como si fuera un precio de
+        mercado; cuando no hay referencia se deja vacío para que el destinatario
+        no confunda la partida original convertida con un precio real de país.
+        """
         ef = efectivos_x.get(r.id)
         if ef is not None and ef.get("precio") is not None and not ef.get("requiere_tasa"):
             return float(ef["precio"])
-        return tasa_convertir_precio(r.precio or 0, _factor_x)
+        return None
 
     if formato.lower() == "excel" or formato.lower() == "xlsx":
         from ..services.excel_export import exportar_catalogo_recursos_excel
@@ -194,7 +204,7 @@ def exportar_recursos(formato: str = "csv", db: Session = Depends(get_db)):
             r.unidad or "",
             ETIQUETAS_RECURSO.get(r.categoria, r.categoria),
             r.grupo or "",
-            f"{_precio_export(r):.2f}".replace(".", ","),
+            (f"{_precio_export(r):.2f}".replace(".", ",") if _precio_export(r) is not None else ""),
             _moneda_x,
             r.usos or 0,
             r.proveedor or "",
@@ -295,10 +305,25 @@ def impacto_recurso(recurso_id: int, request: Request, db: Session = Depends(get
     if recurso is None:
         return _redirect("/recursos", error="Recurso no encontrado.")
     partidas = _partidas_afectadas_por_recurso(db, recurso)
+    from ..services.traduccion import codigo_desde_pais
+    from ..services.precios_mercado import resolver_precio
     _moneda, _factor = _contexto_moneda(db)
+    cfg_i = _config(db)
+    pais_i = codigo_desde_pais(getattr(cfg_i, "empresa_pais", "") or "") or "VE"
+    precio_mercado_i = resolver_precio(db, recurso.id, pais_i, int(db.info.get("organizacion_id") or 0))
+    precio_vista_i = None
+    if precio_mercado_i is not None and precio_mercado_i.precio is not None and precio_mercado_i.origen != "base":
+        from ..utils import normalizar_moneda
+        moneda_org_i = normalizar_moneda(_moneda, "USD")
+        moneda_mercado_i = normalizar_moneda(precio_mercado_i.moneda or "USD", "USD")
+        if moneda_mercado_i == moneda_org_i:
+            precio_vista_i = float(precio_mercado_i.precio)
+        elif moneda_mercado_i == "USD":
+            precio_vista_i = tasa_convertir_precio(precio_mercado_i.precio, _factor)
     return TEMPLATES.TemplateResponse(request, "recursos/impacto.html", {
         "recurso": recurso,
-        "precio_vista": tasa_convertir_precio(recurso.precio or 0, _factor),
+        "precio_vista": precio_vista_i,
+        "mercado_codigo": pais_i,
         "partidas_afectadas": partidas,
         "total_filas": sum(p["filas"] for p in partidas),
         "moneda_vista": _moneda,
@@ -314,7 +339,12 @@ def editar_recurso_form(recurso_id: int, request: Request, db: Session = Depends
     from ..services.precios_mercado import resolver_precio
     cfg = _config(db)
     pais = codigo_desde_pais(cfg.empresa_pais or "") or "VE"
-    precio_mercado = resolver_precio(db, recurso.id, pais, int(db.info.get("organizacion_id") or 0))
+    org_id_edit = int(db.info.get("organizacion_id") or 0)
+    # Referencia nacional y precio propio se consultan por separado para poder
+    # mostrar ambos: el nacional es informativo, el propio es el que el usuario
+    # puede guardar. La referencia nacional no se edita desde aquí.
+    nacional_edit = resolver_precio(db, recurso.id, pais, None)
+    propio_edit = resolver_precio(db, recurso.id, pais, org_id_edit)
     # Todo el formulario se edita en la moneda de la organización: el precio
     # base llega convertido y el override de mercado también (cuando su
     # moneda de origen permite el puente). El POST revierte la conversión.
@@ -322,19 +352,19 @@ def editar_recurso_form(recurso_id: int, request: Request, db: Session = Depends
     from ..utils import normalizar_moneda
     moneda_org = normalizar_moneda(moneda_vista, "USD")
     precio_vista = tasa_convertir_precio(recurso.precio or 0, factor_vista)
-    precio_mercado_vista = None
-    precio_referencia_nacional_vista = None
-    if precio_mercado is not None and precio_mercado.precio is not None:
-        moneda_mercado = normalizar_moneda(precio_mercado.moneda or "USD", "USD")
-        _vista = None
+
+    def _a_vista(resol):
+        if resol is None or resol.precio is None:
+            return None
+        moneda_mercado = normalizar_moneda(resol.moneda or "USD", "USD")
         if moneda_mercado == moneda_org:
-            _vista = float(precio_mercado.precio)
-        elif moneda_mercado == "USD":
-            _vista = tasa_convertir_precio(precio_mercado.precio, factor_vista)
-        if precio_mercado.origen == "organizacion":
-            precio_mercado_vista = _vista
-        else:
-            precio_referencia_nacional_vista = _vista
+            return float(resol.precio)
+        if moneda_mercado == "USD":
+            return tasa_convertir_precio(resol.precio, factor_vista)
+        return None
+
+    precio_mercado_vista = _a_vista(propio_edit) if propio_edit.origen == "organizacion" else None
+    precio_referencia_nacional_vista = _a_vista(nacional_edit)
     return TEMPLATES.TemplateResponse(request, "recursos/form.html", {
         "recurso": recurso,
         "categorias": CATEGORIAS_RECURSO,
@@ -345,8 +375,8 @@ def editar_recurso_form(recurso_id: int, request: Request, db: Session = Depends
         "precio_vista": precio_vista,
         # Solo se prellena el override propio de la organización; la
         # referencia nacional se consulta, no se edita desde aquí.
-        "precio_mercado": precio_mercado if precio_mercado.origen == "organizacion" else None,
-        "precio_mercado_vista": precio_mercado_vista if precio_mercado.origen == "organizacion" else None,
+        "precio_mercado": propio_edit if propio_edit.origen == "organizacion" else None,
+        "precio_mercado_vista": precio_mercado_vista,
         "precio_referencia_nacional_vista": precio_referencia_nacional_vista,
     })
 
@@ -377,11 +407,13 @@ def actualizar_recurso(
         return _redirect(f"/recursos/{recurso_id}/editar", error="La descripción es obligatoria.")
     if categoria not in CATEGORIAS_RECURSO:
         categoria = "otros"
-    # El formulario edita en la moneda de la organización; el catálogo y la
-    # propagación a partidas/presupuestos trabajan en USD base.
+    # El formulario ya no edita el precio base del catálogo: es el precio de
+    # la partida original y no representa el mercado del país. El campo oculto
+    # se ignora para no destrozar la plantilla interna ni disparar una
+    # propagación accidental al guardar el precio propio de la empresa.
     _moneda_u, _factor_u = _contexto_moneda(db)
     precio_anterior = float(recurso.precio or 0)
-    nuevo_precio = _a_moneda_base(max(0.0, _f(precio)), _factor_u)
+    nuevo_precio = precio_anterior
     # Verificar duplicado si cambia clave
     from ..services.recursos import clave_recurso
     nueva_clave = clave_recurso(codigo, descripcion, unidad, categoria)
@@ -399,12 +431,17 @@ def actualizar_recurso(
     recurso.incluye_operador = bool(incluye_operador); recurso.incluye_combustible = bool(incluye_combustible); recurso.incluye_flete = bool(incluye_flete)
     recurso.rendimiento_jornada = _f(rendimiento_jornada, None)
     recurso.fecha_actualizacion_precio = datetime.utcnow()
+    from ..services.traduccion import codigo_desde_pais
+    from ..services.precios_mercado import guardar_precio, eliminar_precio_organizacion
+    cfg = _config(db)
+    pais = codigo_desde_pais(cfg.empresa_pais or "") or "VE"
+    org_id = int(db.info.get("organizacion_id") or 0)
     if str(precio_mercado or "").strip():
-        from ..services.traduccion import codigo_desde_pais
-        from ..services.precios_mercado import guardar_precio
-        cfg = _config(db)
-        pais = codigo_desde_pais(cfg.empresa_pais or "") or "VE"
-        guardar_precio(db, recurso.id, pais, _f(precio_mercado), cfg.moneda_default or "USD", organizacion_id=int(db.info.get("organizacion_id") or 0), fuente="Empresa")
+        guardar_precio(db, recurso.id, pais, _f(precio_mercado), cfg.moneda_default or "USD", organizacion_id=org_id, fuente="Empresa")
+    else:
+        # El usuario borró su precio propio: a partir de ahora manda la
+        # referencia nacional de mercado.
+        eliminar_precio_organizacion(db, recurso.id, pais, org_id)
     # Propagar si cambió precio
     if abs(nuevo_precio - precio_anterior) > 1e-9:
         try:
