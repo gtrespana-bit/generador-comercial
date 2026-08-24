@@ -1,8 +1,20 @@
-"""Router de planos con detección automática y mediciones editables."""
+"""Router de planos con detección automática, dibujo y mediciones editables.
+
+Cubre tres modos del plano:
+
+* **subido**: imagen o PDF que se analiza con el detector local.
+* **dibujado**: creado desde cero en el editor vectorial.
+* **mixto**: combinación de imagen de fondo y geometría vectorial.
+
+El grosor del tabique es transversal: vive en ``PlanoObra.grosor_tabique_cm``
+y se usa en la detección, en la métrica y en el render de los muros
+dibujados.
+"""
 
 from fastapi import APIRouter, Form, Request, UploadFile
 from fastapi.responses import HTMLResponse, JSONResponse, Response
 from sqlalchemy.orm import Session, selectinload
+from typing import Any
 
 from .common import (
     TEMPLATES,
@@ -15,6 +27,7 @@ from .common import (
     Presupuesto,
     PlanoObra,
     PlanoMedicion,
+    PlanoElemento,
     PresupuestoItem,
     ArchivoAlmacenado,
     save_object,
@@ -26,13 +39,21 @@ from .common import (
 from ..services.planos import (
     ErrorPlano,
     crear_plano,
+    crear_plano_en_blanco,
     calibrar_plano,
     crear_medicion,
     actualizar_medicion,
     actualizar_altura_plano,
+    actualizar_grosor_tabique,
     detectar_espacios_plano,
     guardar_detecciones_automaticas,
+    detectar_estancias_sobre_dibujo,
+    guardar_detecciones_sobre_dibujo,
+    guardar_elemento,
+    actualizar_elemento,
+    eliminar_elemento,
     metricas_estancia,
+    grosor_px_plano,
     renombrar_medicion,
     eliminar_plano,
     eliminar_medicion,
@@ -40,6 +61,7 @@ from ..services.planos import (
     calcular_valor_real,
     exportar_plano_dxf,
     filas_csv_mediciones,
+    GROSOR_TABIQUE_DEFECTO_CM,
 )
 
 router = APIRouter()
@@ -139,10 +161,27 @@ def mediciones_selector_presupuesto(presupuesto_id: int, db: Session = Depends(g
     La respuesta presenta una estancia como varias magnitudes útiles: suelo,
     perímetro y desarrollo de paredes. Así el editor de presupuestos no tiene
     que copiar a mano el número que ya está calculado en el visor.
+
+    Diagnóstico ampliado (sin filtrar por RLS en SQLite): si la consulta
+    inicial no devuelve planos, se comprueba si existen otros presupuestos
+    con planos del mismo cliente. Eso le dice al frontend **por qué** el
+    selector está vacío (no hay presupuesto, no hay planos, o los planos
+    pertenecen a otro presupuesto) en lugar de mostrar el mensaje genérico
+    de "sube un plano" que despistaba al usuario.
     """
     presupuesto = db.get(Presupuesto, presupuesto_id)
     if not presupuesto:
-        return JSONResponse({"ok": False, "error": "Presupuesto no encontrado."}, status_code=404)
+        # Diferenciamos claramente "el presupuesto no existe" de "no hay
+        # planos" para que el frontend pueda mostrar un mensaje útil.
+        return JSONResponse(
+            {
+                "ok": False,
+                "error": "Presupuesto no encontrado.",
+                "razon": "presupuesto_inexistente",
+                "presupuesto_id": presupuesto_id,
+            },
+            status_code=404,
+        )
 
     planos = (
         db.query(PlanoObra)
@@ -151,14 +190,34 @@ def mediciones_selector_presupuesto(presupuesto_id: int, db: Session = Depends(g
         .order_by(PlanoObra.id.desc())
         .all()
     )
-    resultado = []
+
+    # Diagnóstico: si la consulta no devuelve nada, miramos si el
+    # presupuesto existe pero no tiene planos, o si el filtro tenant
+    # del ORM ha descartado filas que sí existen.
+    diagnostico: dict[str, Any] = {
+        "planos_en_presupuesto": len(planos),
+    }
+    if not planos:
+        conteo_total = (
+            db.query(PlanoObra)
+            .filter(PlanoObra.presupuesto_id == presupuesto_id)
+            .count()
+        )
+        diagnostico["conteo_total"] = conteo_total
+        diagnostico["presupuesto_id"] = presupuesto_id
+
+    resultado: list[dict[str, Any]] = []
     for plano in planos:
         medidas = []
         for med in plano.mediciones:
-            metricas = None
-            opciones = []
+            opciones: list[dict[str, Any]] = []
             if med.tipo == "area":
-                metricas = metricas_estancia(med.puntos(), plano.escala_px_por_metro, plano.altura_m)
+                metricas = metricas_estancia(
+                    med.puntos(),
+                    plano.escala_px_por_metro,
+                    plano.altura_m,
+                    plano.grosor_tabique_m,
+                )
                 opciones = [
                     {
                         "clave": "perimetro",
@@ -211,10 +270,13 @@ def mediciones_selector_presupuesto(presupuesto_id: int, db: Session = Depends(g
         resultado.append({
             "id": plano.id,
             "nombre": plano.nombre,
+            "origen": plano.origen or "subido",
             "calibrado": plano.calibrado,
+            "grosor_tabique_cm": plano.grosor_tabique_cm,
+            "altura_libre_m": plano.altura_m,
             "mediciones": medidas,
         })
-    return {"ok": True, "planos": resultado}
+    return {"ok": True, "planos": resultado, "diagnostico": diagnostico}
 
 
 def _datos_medicion_plano(medicion: PlanoMedicion, plano: PlanoObra | None = None) -> dict:
@@ -222,9 +284,10 @@ def _datos_medicion_plano(medicion: PlanoMedicion, plano: PlanoObra | None = Non
     plano = plano or medicion.plano
     escala = plano.escala_px_por_metro if plano is not None else None
     altura = plano.altura_m if plano is not None else 2.5
-    extras = {}
+    grosor = plano.grosor_tabique_m if plano is not None else None
+    extras: dict[str, Any] = {}
     if medicion.tipo in ("area", "perimetro", "volumen"):
-        extras["metricas"] = metricas_estancia(puntos, escala, altura)
+        extras["metricas"] = metricas_estancia(puntos, escala, altura, grosor)
     return {
         "id": medicion.id,
         "tipo": medicion.tipo,
@@ -235,6 +298,17 @@ def _datos_medicion_plano(medicion: PlanoMedicion, plano: PlanoObra | None = Non
         "color": medicion.color,
         "partida_destino_id": medicion.partida_destino_id,
         **extras,
+    }
+
+
+def _datos_elemento_plano(elemento: PlanoElemento) -> dict:
+    return {
+        "id": elemento.id,
+        "tipo": elemento.tipo,
+        "puntos": elemento.puntos(),
+        "grosor_cm": elemento.grosor_cm,
+        "color": elemento.color,
+        "muro_id": elemento.muro_id,
     }
 
 
@@ -260,21 +334,61 @@ def datos_plano(plano_id: int, db: Session = Depends(get_db)):
             "unidad_calibracion": plano.unidad_calibracion,
             "calibrado": plano.calibrado,
             "altura_libre_m": plano.altura_m,
+            "origen": plano.origen or "subido",
+            "grosor_tabique_cm": plano.grosor_tabique_cm,
+            "grosor_tabique_m": plano.grosor_tabique_m,
+            "ancho_lienzo_m": plano.ancho_lienzo_m,
+            "alto_lienzo_m": plano.alto_lienzo_m,
         },
         "mediciones": [_datos_medicion_plano(m, plano) for m in plano.mediciones],
+        "elementos": [_datos_elemento_plano(e) for e in plano.elementos],
     }
 
 
 @router.post("/planos/{plano_id}/detectar")
 def detectar_mediciones_plano(plano_id: int, limite: int = 30, db: Session = Depends(get_db)):
-    """Analiza una imagen localmente y guarda sus estancias cerradas como áreas."""
+    """Analiza una imagen localmente y guarda sus estancias cerradas como áreas.
+
+    Para planos ``subido``/``mixto`` corre el detector raster sobre la
+    imagen de fondo. Para planos ``dibujado`` (sin imagen) corre el
+    detector vectorial sobre los muros creados por el usuario. En
+    ambos casos el grosor declarado por el usuario participa en la
+    generación de la barrera y en el ajuste de bordes compartidos.
+    """
     plano = db.get(PlanoObra, plano_id)
-    if not plano or not plano.archivo:
+    if not plano:
         return JSONResponse({"ok": False, "error": "Plano no encontrado."}, status_code=404)
     limite = max(1, min(int(limite), 30))
+
+    if plano.origen == "dibujado":
+        try:
+            candidatos = detectar_estancias_sobre_dibujo(plano)
+            mediciones, omitidas = guardar_detecciones_sobre_dibujo(db, plano, candidatos)
+        except ErrorPlano as exc:
+            return JSONResponse({"ok": False, "error": str(exc)}, status_code=400)
+        return {
+            "ok": True,
+            "analizadas": len(candidatos),
+            "nuevas": len(mediciones),
+            "omitidas": omitidas,
+            "mediciones": [_datos_medicion_plano(m, plano) for m in mediciones],
+            "modo": "vectorial",
+        }
+
+    if not plano.archivo:
+        return JSONResponse(
+            {"ok": False, "error": "Este plano no tiene imagen para analizar."},
+            status_code=400,
+        )
     try:
         contenido = read_reference(plano.archivo)
-        candidatos = detectar_espacios_plano(contenido, plano.content_type, max_espacios=limite)
+        grosor_px = grosor_px_plano(plano)
+        candidatos = detectar_espacios_plano(
+            contenido,
+            plano.content_type,
+            max_espacios=limite,
+            grosor_tabique_px=grosor_px,
+        )
         mediciones, omitidas = guardar_detecciones_automaticas(db, plano, candidatos)
     except (ErrorPlano, StorageError) as exc:
         return JSONResponse({"ok": False, "error": str(exc)}, status_code=400)
@@ -290,6 +404,8 @@ def detectar_mediciones_plano(plano_id: int, limite: int = 30, db: Session = Dep
         "nuevas": len(mediciones),
         "omitidas": omitidas,
         "mediciones": [_datos_medicion_plano(m, plano) for m in mediciones],
+        "modo": "raster",
+        "grosor_tabique_px": grosor_px_plano(plano),
     }
 
 
@@ -364,16 +480,22 @@ async def calibrar_plano_endpoint(
         unidad = str(payload.get("unidad", "m"))
         altura_raw = payload.get("altura_libre_m")
         altura = float(altura_raw) if altura_raw not in (None, "") else None
+        grosor_raw = payload.get("grosor_tabique_cm")
+        grosor_cm = float(grosor_raw) if grosor_raw not in (None, "") else None
     except (TypeError, ValueError):
         return JSONResponse({"ok": False, "error": "Distancias no válidas."}, status_code=400)
 
     try:
+        if grosor_cm is not None:
+            actualizar_grosor_tabique(db, plano, grosor_cm)
         calibrar_plano(db, plano, dist_px, dist_real, unidad, altura)
         return {
             "ok": True,
             "escala_px_por_metro": plano.escala_px_por_metro,
             "factor_m": plano.factor_m,
             "altura_libre_m": plano.altura_m,
+            "grosor_tabique_cm": plano.grosor_tabique_cm,
+            "grosor_tabique_px": grosor_px_plano(plano),
         }
     except ErrorPlano as e:
         return JSONResponse({"ok": False, "error": str(e)}, status_code=400)
@@ -583,3 +705,149 @@ def exportar_plano_endpoint(
             "Content-Disposition": f'attachment; filename="mediciones_{nombre}.dxf"',
         },
     )
+
+
+# --------------------------------------------------------------------------- #
+# Planos creados desde cero (editor vectorial)
+# --------------------------------------------------------------------------- #
+
+@router.post("/presupuestos/{presupuesto_id}/planos/blanco")
+async def crear_plano_blanco(
+    presupuesto_id: int,
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    """Crea un plano vectorial vacío que el usuario dibujará en el editor.
+
+    El cliente manda ``nombre``, ``ancho_lienzo_m``, ``alto_lienzo_m`` y
+    opcionalmente ``grosor_tabique_cm``. Devuelve la ficha del plano
+    recién creado para que el visor entre directamente en modo edición.
+    """
+    presupuesto = db.get(Presupuesto, presupuesto_id)
+    if not presupuesto:
+        return JSONResponse({"ok": False, "error": "Presupuesto no encontrado."}, status_code=404)
+    try:
+        payload = await request.json()
+    except Exception:
+        payload = {}
+
+    nombre = str(payload.get("nombre") or "").strip()[:250]
+    ancho_m = payload.get("ancho_lienzo_m")
+    alto_m = payload.get("alto_lienzo_m")
+    grosor = payload.get("grosor_tabique_cm", GROSOR_TABIQUE_DEFECTO_CM)
+
+    try:
+        plano = crear_plano_en_blanco(
+            db,
+            presupuesto_id,
+            nombre,
+            float(ancho_m) if ancho_m is not None else 12.0,
+            float(alto_m) if alto_m is not None else 8.0,
+            float(grosor) if grosor is not None else GROSOR_TABIQUE_DEFECTO_CM,
+        )
+    except ErrorPlano as e:
+        return JSONResponse({"ok": False, "error": str(e)}, status_code=400)
+    return {
+        "ok": True,
+        "plano_id": plano.id,
+        "url": f"/presupuestos/{presupuesto_id}/planos?plano={plano.id}",
+    }
+
+
+@router.post("/planos/{plano_id}/grosor")
+async def actualizar_grosor_endpoint(
+    plano_id: int,
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    """Cambia el grosor típico del tabique del plano (en centímetros)."""
+    plano = db.get(PlanoObra, plano_id)
+    if not plano:
+        return JSONResponse({"ok": False, "error": "Plano no encontrado."}, status_code=404)
+    try:
+        payload = await request.json()
+        grosor = float(payload.get("grosor_tabique_cm", 0))
+    except Exception:
+        return JSONResponse({"ok": False, "error": "Grosor no válido."}, status_code=400)
+    try:
+        actualizar_grosor_tabique(db, plano, grosor)
+    except ErrorPlano as e:
+        return JSONResponse({"ok": False, "error": str(e)}, status_code=400)
+    return {
+        "ok": True,
+        "grosor_tabique_cm": plano.grosor_tabique_cm,
+        "grosor_tabique_m": plano.grosor_tabique_m,
+        "grosor_tabique_px": grosor_px_plano(plano),
+    }
+
+
+@router.post("/planos/{plano_id}/elementos")
+async def crear_elemento_endpoint(
+    plano_id: int,
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    """Crea un muro / hueco / línea auxiliar en el plano."""
+    plano = db.get(PlanoObra, plano_id)
+    if not plano:
+        return JSONResponse({"ok": False, "error": "Plano no encontrado."}, status_code=404)
+    try:
+        payload = await request.json()
+    except Exception:
+        return JSONResponse({"ok": False, "error": "JSON no válido."}, status_code=400)
+    try:
+        elem = guardar_elemento(
+            db,
+            plano,
+            str(payload.get("tipo", "")),
+            payload.get("puntos") or [],
+            payload.get("grosor_cm"),
+            str(payload.get("color", "#1f2937")),
+            payload.get("muro_id"),
+        )
+    except ErrorPlano as e:
+        return JSONResponse({"ok": False, "error": str(e)}, status_code=400)
+    return {"ok": True, "elemento": _datos_elemento_plano(elem)}
+
+
+@router.put("/planos/{plano_id}/elementos/{elemento_id}")
+async def actualizar_elemento_endpoint(
+    plano_id: int,
+    elemento_id: int,
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    plano = db.get(PlanoObra, plano_id)
+    elem = db.get(PlanoElemento, elemento_id)
+    if not plano or not elem or elem.plano_id != plano_id:
+        return JSONResponse({"ok": False, "error": "Elemento no encontrado."}, status_code=404)
+    try:
+        payload = await request.json()
+    except Exception:
+        return JSONResponse({"ok": False, "error": "JSON no válido."}, status_code=400)
+    try:
+        elem = actualizar_elemento(
+            db,
+            plano,
+            elem,
+            payload.get("puntos") or [],
+            payload.get("grosor_cm"),
+            payload.get("color"),
+        )
+    except ErrorPlano as e:
+        return JSONResponse({"ok": False, "error": str(e)}, status_code=400)
+    return {"ok": True, "elemento": _datos_elemento_plano(elem)}
+
+
+@router.delete("/planos/{plano_id}/elementos/{elemento_id}")
+def eliminar_elemento_endpoint(
+    plano_id: int,
+    elemento_id: int,
+    db: Session = Depends(get_db),
+):
+    plano = db.get(PlanoObra, plano_id)
+    elem = db.get(PlanoElemento, elemento_id)
+    if not plano or not elem or elem.plano_id != plano_id:
+        return JSONResponse({"ok": False, "error": "Elemento no encontrado."}, status_code=404)
+    eliminar_elemento(db, plano, elem)
+    return {"ok": True}

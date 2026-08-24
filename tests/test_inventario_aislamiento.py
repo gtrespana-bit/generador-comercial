@@ -44,6 +44,7 @@ from app.models import (
     Pago,
     Partida,
     Plantilla,
+    PlanoElemento,
     PlanoObra,
     PlanoMedicion,
     Presupuesto,
@@ -201,6 +202,12 @@ def _construir_grafo(db, organizacion_id: int) -> dict:
         valor=5.0,
         unidad="m",
         puntos_json="[[0,0],[100,0]]",
+    ))
+    db.add(PlanoElemento(
+        plano_id=plano.id,
+        tipo="muro",
+        puntos_json="[[0,0],[100,0]]",
+        grosor_cm=10.0,
     ))
 
     db.commit()

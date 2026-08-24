@@ -33,12 +33,12 @@
   <div class="pais-bar-int">
     <span class="pais-bar-label">🌎 Elige tu país</span>
     <select id="pais-select" aria-label="Elige tu país">
-      <option value="" {% if not pais_codigo %}selected{% endif %}>Latinoamérica (genérico)</option>
+      <option value="" {% if not pais_codigo %}selected{% endif %}>Todos los países (genérico)</option>
       {% for p in paises %}
       <option value="{{ p.codigo }}" {% if p.codigo == pais_codigo %}selected{% endif %}>{{ p.bandera }} {{ p.nombre }}</option>
       {% endfor %}
     </select>
-    <span class="pais-bar-hint" id="pais-bar-hint">{% if pais_actual %}{{ pais_actual.bandera }} Mostrando contenido para {{ pais_actual.nombre }} · {{ pais_actual.id_fiscal }} · IVA {{ pais_actual.iva }}%{% else %}Mostrando contenido genérico para toda Latinoamérica{% endif %}</span>
+    <span class="pais-bar-hint" id="pais-bar-hint">{% if pais_actual %}{{ pais_actual.bandera }} Mostrando contenido para {{ pais_actual.nombre }} · {{ pais_actual.id_fiscal }} · IVA {{ pais_actual.iva }}%{% else %}Mostrando contenido genérico (España y Latinoamérica){% endif %}</span>
   </div>
 </div>
 {% include "_nav.html" %}
@@ -50,7 +50,7 @@
       {% if pais_actual %}
       <span class="hero-kicker" id="hero-kicker">{{ pais_actual.bandera }} Sistema comercial para {{ pais_actual.nombre }} · Construcción y remodelación</span>
       {% else %}
-      <span class="hero-kicker" id="hero-kicker">🌎 Sistema comercial para Latinoamérica · Construcción y remodelación</span>
+      <span class="hero-kicker" id="hero-kicker">🌎 Sistema comercial para España y Latinoamérica · Construcción y remodelación</span>
       {% endif %}
       {% if hay_prueba_gratuita() %}
       <span class="hero-prueba">✨ {{ dias_de_prueba() }} días gratis · sin tarjeta de crédito</span>
@@ -694,7 +694,7 @@
         <li><span class="check">✓</span> Se actualiza periódicamente para seguir el mercado.</li>
       </ul>
       {% else %}
-      <h2 id="banner-h2">El catálogo más completo para presupuestar en Latinoamérica.</h2>
+      <h2 id="banner-h2">El catálogo más completo para presupuestar en España y Latinoamérica.</h2>
       <p id="banner-p">{{ catalogo().partidas_txt }} partidas descompuestas y {{ catalogo().recursos_txt }} precios de recursos ({{ catalogo().materiales }} materiales, {{ catalogo().mano_obra }} de mano de obra, {{ catalogo().equipo }} de equipo), organizadas en {{ catalogo().capitulos }} capítulos y {{ catalogo().subcapitulos }} subcapítulos. {{ catalogo().lineas_descomp_txt }} líneas de recursos y rendimientos listas para usar, en USD de referencia convertibles a tu moneda y en revisión continua. No empiezas de cero: llegas con una base de precios real y propia.</p>
       <ul class="banner-lista">
         <li id="banner-vocab"><span class="check">✓</span> Terminología hispana neutra con variantes locales: elige tu país y adapta los nombres.</li>
@@ -778,8 +778,8 @@
       <p id="fiscal-p">IVA {{ pais_actual.iva }}%, {{ pais_actual.id_fiscal }}, retención, operación exenta, número de control y cláusula cambiaria. Moneda {{ pais_actual.moneda }}{% if pais_actual.moneda != 'USD' %} ({{ pais_actual.simbolo_local }}){% endif %} o USD, con tasa de referencia.</p>
       {% else %}
       <div class="icon">🌎</div>
-      <h3 id="fiscal-h3">Fiscal a tu medida · Latinoamérica</h3>
-      <p id="fiscal-p">IVA configurable por país, tu ID fiscal (RIF, NIT, RUT, CUIT, RUC, RFC…), retención, operación exenta y cláusula cambiaria. Moneda en tu divisa local o USD, con tasa de referencia.</p>
+      <h3 id="fiscal-h3">Fiscal a tu medida · España y Latinoamérica</h3>
+      <p id="fiscal-p">IVA configurable por país, tu ID fiscal (NIF, RIF, NIT, RUT, CUIT, RUC, RFC…), retención, operación exenta y cláusula cambiaria. Moneda en tu divisa local o USD, con tasa de referencia.</p>
       {% endif %}
     </div>
   </div>
@@ -807,8 +807,8 @@
     </div>
   </div>
   {% else %}
-  <h2 id="franja-h2">Pensado para Latinoamérica, no adaptado después.</h2>
-  <p class="intro" id="franja-intro">No es una herramienta genérica. {{ product_name }} nace para construir en Latinoamérica: precios en USD de referencia, vocabulario hispano y fiscalidad configurable por país.</p>
+  <h2 id="franja-h2">Pensado para España y Latinoamérica, no adaptado después.</h2>
+  <p class="intro" id="franja-intro">No es una herramienta genérica. {{ product_name }} nace para construir en España y en Latinoamérica: precios en USD de referencia, vocabulario hispano y fiscalidad configurable por país.</p>
   <div class="grid3">
     <div class="tarjeta">
       <div class="icon">💵</div>

@@ -2248,6 +2248,13 @@ def migrar(engine):
         "descomposicion_filas": [
             ("categoria", "VARCHAR(30) DEFAULT ''"),
         ],
+        # Bloque "Grosor + edición desde cero" del visor de planos.
+        "planos_obra": [
+            ("origen", "VARCHAR(20) DEFAULT 'subido'"),
+            ("grosor_tabique_cm", "FLOAT DEFAULT 10"),
+            ("ancho_lienzo_m", "FLOAT"),
+            ("alto_lienzo_m", "FLOAT"),
+        ],
     }
     with engine.begin() as conn:
         partidas_existentes = _columnas(engine, "partidas") is not None
@@ -2404,6 +2411,34 @@ def migrar(engine):
             fecha_actualizacion_precio DATETIME,
             created_at DATETIME
         )"""))
+
+        # Geometría dibujable del visor de planos (muros / huecos / líneas
+        # auxiliares). Se crea incluso en instalaciones antiguas porque
+        # ``CREATE TABLE IF NOT EXISTS`` es idempotente.
+        conn.execute(text("""CREATE TABLE IF NOT EXISTS planos_elementos (
+            id INTEGER PRIMARY KEY,
+            plano_id INTEGER NOT NULL REFERENCES planos_obra(id) ON DELETE CASCADE,
+            organizacion_id INTEGER NOT NULL DEFAULT 1,
+            tipo VARCHAR(20) NOT NULL DEFAULT 'muro',
+            puntos_json TEXT NOT NULL DEFAULT '[]',
+            grosor_cm FLOAT DEFAULT 10,
+            color VARCHAR(20) DEFAULT '#1f2937',
+            muro_id INTEGER REFERENCES planos_elementos(id) ON DELETE SET NULL,
+            created_at DATETIME,
+            updated_at DATETIME
+        )"""))
+        conn.execute(text("CREATE INDEX IF NOT EXISTS ix_planos_elementos_plano ON planos_elementos (plano_id)"))
+        conn.execute(text("CREATE INDEX IF NOT EXISTS ix_planos_elementos_org_plano ON planos_elementos (organizacion_id, plano_id)"))
+        conn.execute(text("CREATE INDEX IF NOT EXISTS ix_planos_elementos_muro ON planos_elementos (muro_id)"))
+        # Rellena la organización en instalaciones que ya tuvieran elementos
+        # con NULL en esa columna (huérfanos por haberse añadido tarde).
+        try:
+            conn.execute(text(
+                "UPDATE planos_elementos SET organizacion_id = 1 "
+                "WHERE organizacion_id IS NULL"
+            ))
+        except Exception:
+            pass
         # Marcar semillas como aplicadas en BDs ya existentes con datos (evita que borrados reaparezcan)
         try:
             has_cfg = _columnas(engine, "configuracion") is not None
@@ -2574,17 +2609,39 @@ class BorradorPresupuesto(TenantMixin, Base):
 
 
 class PlanoObra(TenantMixin, Base):
-    """Plano subido para detección automática y medición editable (imagen o PDF convertido).
+    """Plano para detección automática, medición y dibujo desde cero.
 
-    El archivo binario vive en Storage privado (organizaciones/{id}/planos/...),
-    aquí solo se guarda la referencia y los metadatos de escala.
+    Tres modos de procedencia (columna ``origen``):
+
+    * ``subido`` (legacy): PNG/JPG/WEBP/PDF que el usuario importa y la app
+      analiza para extraer estancias y medir.
+    * ``dibujado``: plano creado desde cero con el editor vectorial. No tiene
+      archivo de imagen; toda la geometría vive en la tabla
+      :class:`PlanoElemento`. El ``archivo`` queda vacío.
+    * ``mixto``: se subió una imagen como base y además se dibujaron
+      elementos vectoriales (p. ej. para ampliar un plano o corregir uno
+      mal escaneado). Los elementos vectoriales mandan sobre la imagen
+      durante el render y la detección.
+
+    El archivo binario de la imagen vive en Storage privado
+    (organizaciones/{id}/planos/...); aquí solo se guarda la referencia y
+    los metadatos de escala y grosor de tabiques.
     """
 
     __tablename__ = "planos_obra"
     __table_args__ = (
         Index("ix_planos_obra_presupuesto", "presupuesto_id"),
         Index("ix_planos_obra_org_presupuesto", "organizacion_id", "presupuesto_id"),
+        CheckConstraint(
+            "origen IN ('subido', 'dibujado', 'mixto')",
+            name="ck_plano_origen_valido",
+        ),
     )
+
+    #: Modos de procedencia de un plano. ``subido`` se mantiene como alias
+    #: histórico del valor por defecto (planos creados antes de existir
+    #: esta columna).
+    ORIGENES = ("subido", "dibujado", "mixto")
 
     id = Column(Integer, primary_key=True)
     presupuesto_id = Column(Integer, ForeignKey("presupuestos.id", ondelete="CASCADE"), nullable=False, index=True)
@@ -2601,6 +2658,22 @@ class PlanoObra(TenantMixin, Base):
     unidad_calibracion = Column(String(20), default="m")  # m, cm, mm
     # Altura libre para estimar m² de paredes (perímetro × altura).
     altura_libre_m = Column(Float, nullable=True)
+    #: Procedencia del plano. ``subido`` es el comportamiento histórico de
+    #: las versiones anteriores; los planos nuevos creados desde el editor
+    #: del usuario nacen con ``dibujado`` o ``mixto``. El default en BD
+    #: es ``subido`` para no romper instalaciones existentes.
+    origen = Column(String(20), nullable=False, default="subido", server_default="subido")
+    #: Grosor típico de los tabiques en centímetros. Por defecto 10 cm
+    #: (tabiquería interior estándar de yeso laminado / ladrillo hueco).
+    #: Se usa en la detección automática y al pintar muros dibujados, y
+    #: nunca modifica mediciones ya guardadas (que conservan sus px).
+    grosor_tabique_cm = Column(Float, nullable=False, default=10.0)
+    #: Geometría vectorial cuando el plano es ``dibujado`` o ``mixto``. La
+    #: anchura del lienzo virtual en metros (calculada a partir de la
+    #: escala real cuando el plano se calibra). ``None`` en planos solo
+    #: subidos.
+    ancho_lienzo_m = Column(Float, nullable=True)
+    alto_lienzo_m = Column(Float, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -2610,6 +2683,12 @@ class PlanoObra(TenantMixin, Base):
         back_populates="plano",
         cascade="all, delete-orphan",
         order_by="PlanoMedicion.id",
+    )
+    elementos = relationship(
+        "PlanoElemento",
+        back_populates="plano",
+        cascade="all, delete-orphan",
+        order_by="PlanoElemento.id",
     )
 
     @property
@@ -2632,6 +2711,35 @@ class PlanoObra(TenantMixin, Base):
         except (TypeError, ValueError):
             return 2.5
         return altura if altura > 0 else 2.5
+
+    @property
+    def grosor_tabique_m(self) -> float:
+        """Grosor de tabique en metros (helper para el motor de medición).
+
+        Si por algún motivo el valor es absurdo (<=0 o > 1 m) cae al
+        valor por defecto: el editor de presupuestos prefiere mostrar un
+        valor razonable antes que propagar un dato corrupto a todas las
+        mediciones.
+        """
+        try:
+            grosor = float(self.grosor_tabique_cm or 0.0)
+        except (TypeError, ValueError):
+            return 0.10
+        if grosor <= 0 or grosor > 100:
+            return 0.10
+        return grosor / 100.0
+
+    @property
+    def grosor_tabique_px(self) -> float | None:
+        """Grosor en píxeles del plano actual. ``None`` si no está calibrado."""
+        if not self.calibrado:
+            return None
+        return self.grosor_tabique_m * float(self.escala_px_por_metro)
+
+    @property
+    def es_vectorial(self) -> bool:
+        """``True`` cuando el plano se creó en el editor (sin imagen subida)."""
+        return (self.origen or "subido") in ("dibujado", "mixto")
 
 
 class PlanoMedicion(TenantMixin, Base):
@@ -2666,6 +2774,65 @@ class PlanoMedicion(TenantMixin, Base):
     partida_destino = relationship("PresupuestoItem")
 
     def puntos(self) -> list[list[float]]:
+        try:
+            v = json.loads(self.puntos_json or "[]")
+            return v if isinstance(v, list) else []
+        except (TypeError, ValueError):
+            return []
+
+
+class PlanoElemento(TenantMixin, Base):
+    """Geometría dibujable de un plano: muros, huecos, líneas auxiliares.
+
+    Es la representación vectorial cuando el plano se crea o se completa
+    en el editor del producto. El editor genera tres tipos:
+
+    * ``muro``: segmento recto con grosor (cm). Se persiste como
+      ``[x1, y1, x2, y2, grosor_cm]`` para no perder el grosor del
+      tramo cuando el usuario ajusta uno de los segmentos a posteriori.
+    * ``hueco``: puerta o ventana. ``(x, y, ancho, alto, tipo, muro_ref)``
+      donde ``tipo`` es ``puerta`` o ``ventana`` y ``muro_ref`` el
+      ``id`` del :class:`PlanoElemento` que perfora. Esto permite al
+      motor de medición descontar el hueco de la superficie del muro.
+    * ``linea_auxiliar``: marcas de eje, textos sobre el plano, etc.
+
+    Todos los puntos se guardan en **píxeles del lienzo** (mismo sistema
+    que :class:`PlanoMedicion`). Convertir a metros se hace con
+    :attr:`PlanoObra.factor_m` cuando el plano está calibrado; el
+    grosor propio del elemento (``grosor_cm``) siempre va en
+    centímetros reales, igual que en muros importados.
+    """
+
+    __tablename__ = "planos_elementos"
+    __table_args__ = (
+        Index("ix_planos_elementos_plano", "plano_id"),
+        Index("ix_planos_elementos_org_plano", "organizacion_id", "plano_id"),
+        CheckConstraint(
+            "tipo IN ('muro', 'hueco', 'linea_auxiliar')",
+            name="ck_plano_elemento_tipo_valido",
+        ),
+    )
+
+    id = Column(Integer, primary_key=True)
+    plano_id = Column(Integer, ForeignKey("planos_obra.id", ondelete="CASCADE"), nullable=False, index=True)
+    tipo = Column(String(20), nullable=False, default="muro")
+    #: Forma serializada. Para ``muro`` y ``linea_auxiliar`` es
+    #: ``[x1, y1, x2, y2]``; para ``muro`` con grosor variable, también
+    #: se puede guardar ``[x1, y1, x2, y2, grosor_cm]``. Para ``hueco``
+    #: es ``[x, y, ancho, alto, subtipo]`` donde ``subtipo`` es
+    #: ``puerta`` o ``ventana``.
+    puntos_json = Column(Text, default="[]")
+    grosor_cm = Column(Float, default=10.0)
+    color = Column(String(20), default="#1f2937")
+    # Hueco: id del :class:`PlanoElemento` (tipo muro) al que pertenece. Solo
+    # se usa cuando ``tipo = 'hueco'``; en muros y líneas queda NULL.
+    muro_id = Column(Integer, ForeignKey("planos_elementos.id", ondelete="SET NULL"), nullable=True, index=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    plano = relationship("PlanoObra", back_populates="elementos")
+
+    def puntos(self) -> list[float]:
         try:
             v = json.loads(self.puntos_json or "[]")
             return v if isinstance(v, list) else []

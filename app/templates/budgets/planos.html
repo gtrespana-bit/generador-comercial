@@ -88,6 +88,38 @@
       <span>Las mediciones se guardan automáticamente.</span>
       <a href="/presupuestos/{{ p.id }}/planos/exportar?formato=csv">Exportar CSV</a>
     </div>
+
+    <details class="planos-add-blanco">
+      <summary>✏️ Crear plano desde cero</summary>
+      <p class="hint">Dibuja los muros y huecos directamente en el editor, sin tener que importar una imagen. El grosor del tabique es ajustable (10 cm por defecto).</p>
+      <form id="form-plano-blanco" class="planos-add-blanco-form">
+        <div class="field">
+          <label for="plano-blanco-nombre">Nombre</label>
+          <input type="text" id="plano-blanco-nombre" placeholder="Ej. Planta tipo A" maxlength="250">
+        </div>
+        <div class="planos-blanco-grid">
+          <div class="field"><label for="plano-blanco-ancho">Ancho (m)</label><input type="number" id="plano-blanco-ancho" step="0.1" min="1" max="200" value="12"></div>
+          <div class="field"><label for="plano-blanco-alto">Alto (m)</label><input type="number" id="plano-blanco-alto" step="0.1" min="1" max="200" value="8"></div>
+        </div>
+        <div class="field">
+          <label for="plano-blanco-grosor">Grosor de tabique (cm)</label>
+          <input type="number" id="plano-blanco-grosor" step="0.1" min="3" max="40" value="10">
+        </div>
+        <button type="submit" class="btn btn-sm btn-primary" id="btn-crear-plano-blanco">Crear y abrir editor</button>
+        <div id="plano-blanco-error" class="alert alert-error cotizat-hidden"></div>
+      </form>
+    </details>
+
+    <details class="planos-grosor" open>
+      <summary>📐 Grosor de tabique</summary>
+      <p class="hint">El grosor se aplica a la detección automática, a las paredes dibujadas y al motor de medición.</p>
+      <div class="planos-grosor-row">
+        <input type="number" id="plano-grosor-cm" step="0.1" min="3" max="40" value="{{ plano_inicial.grosor_tabique_cm if plano_inicial else 10 }}">
+        <span>cm</span>
+        <button type="button" class="btn btn-xs" id="btn-guardar-grosor">Aplicar</button>
+      </div>
+      <div id="plano-grosor-status" class="planos-save-status"></div>
+    </details>
   </aside>
 
   <main class="planos-canvas-area" aria-label="Área de trabajo del plano">
@@ -327,6 +359,34 @@ body.planos-workspace-page { background: var(--bg); }
 .planos-add-document .alert { margin:.4rem; }
 .planos-sidebar-foot { display:flex; justify-content:space-between; gap:.4rem; padding:.55rem .65rem; border-top:1px solid var(--border); color:var(--text-muted); font-size:.59rem; }
 .planos-sidebar-foot a { color:var(--accent); text-decoration:none; font-weight:700; white-space:nowrap; }
+.planos-add-blanco { flex:0 0 auto; margin:.4rem; border:1px solid var(--border); border-radius:10px; background:var(--surface); }
+.planos-add-blanco > summary { padding:.58rem .65rem; color:var(--accent); font-size:.71rem; font-weight:700; cursor:pointer; list-style:none; }
+.planos-add-blanco > summary::-webkit-details-marker { display:none; }
+.planos-add-blanco[open] > summary { border-bottom:1px solid var(--border-subtle); }
+.planos-add-blanco > p { margin:.4rem .65rem 0; color:var(--text-soft); font-size:.62rem; }
+.planos-add-blanco-form { display:grid; gap:.45rem; padding:.55rem .65rem; }
+.planos-blanco-grid { display:grid; grid-template-columns:1fr 1fr; gap:.4rem; }
+.planos-add-blanco-form label { font-size:.6rem; }
+.planos-add-blanco-form input { width:100%; padding:.34rem .42rem; font-size:.68rem; }
+.planos-add-blanco-form button { margin-top:.2rem; }
+.planos-grosor { flex:0 0 auto; margin:.4rem; border:1px solid var(--border); border-radius:10px; background:var(--surface); }
+.planos-grosor > summary { padding:.5rem .65rem; color:var(--accent); font-size:.68rem; font-weight:700; cursor:pointer; list-style:none; }
+.planos-grosor > summary::-webkit-details-marker { display:none; }
+.planos-grosor[open] > summary { border-bottom:1px solid var(--border-subtle); }
+.planos-grosor > p { margin:.4rem .65rem .2rem; color:var(--text-soft); font-size:.6rem; }
+.planos-grosor-row { display:flex; align-items:center; gap:.35rem; padding:0 .65rem .55rem; }
+.planos-grosor-row input { width:80px; padding:.3rem .4rem; font-size:.7rem; }
+.planos-grosor-row span { color:var(--text-soft); font-size:.65rem; }
+.planos-editor-panel { position:absolute; top:10px; right:10px; z-index:30; width:min(310px,90%); padding:.6rem; background:var(--surface-raised); border:1px solid var(--border); border-radius:12px; box-shadow:var(--shadow-lg); display:flex; flex-direction:column; gap:.5rem; }
+.plano-editor-head { display:flex; flex-direction:column; gap:.15rem; }
+.plano-editor-head strong { font-size:.78rem; color:var(--accent); }
+.plano-editor-ayuda { color:var(--text-soft); font-size:.62rem; }
+.plano-editor-tools { display:grid; grid-template-columns:repeat(2,1fr); gap:.3rem; }
+.plano-editor-tool { min-height:32px; padding:.35rem .5rem; border:1px solid var(--border); border-radius:8px; background:var(--surface); color:var(--text); font-size:.65rem; font-weight:600; cursor:pointer; }
+.plano-editor-tool.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+.plano-editor-grosor { display:flex; flex-direction:column; gap:.2rem; font-size:.62rem; color:var(--text-soft); }
+.plano-editor-grosor input { width:100%; }
+.plano-editor-acciones { display:flex; flex-wrap:wrap; gap:.3rem; }
 .planos-canvas-area { min-width:0; min-height:0; }
 .planos-main-card { height:100%; display:flex; flex-direction:column; overflow:hidden; }
 .planos-canvas-head { min-height:46px; display:flex; align-items:center; justify-content:space-between; gap:.6rem; padding:.55rem .7rem; border-bottom:1px solid var(--border-subtle); }
@@ -1738,4 +1798,93 @@ body.planos-workspace-page { background: var(--bg); }
 
 })();
 </script>
+
+  <script nonce="{{ request.state.csp_nonce }}">
+(function() {
+  // Conecta el editor vectorial con el plano actual.
+  const plano = {
+    id: {{ plano_inicial.id if plano_inicial else 'null' }},
+    origen: {{ (plano_inicial.origen if plano_inicial else 'subido') | tojson }},
+    grosor_tabique_cm: {{ plano_inicial.grosor_tabique_cm if plano_inicial else 10 }},
+    ancho_px: {{ plano_inicial.ancho_px if plano_inicial else 'null' }},
+    alto_px: {{ plano_inicial.alto_px if plano_inicial else 'null' }},
+    escala_px_por_metro: {{ plano_inicial.escala_px_por_metro if plano_inicial else 'null' }},
+    ancho_lienzo_m: {{ plano_inicial.ancho_lienzo_m if plano_inicial else 'null' }},
+    alto_lienzo_m: {{ plano_inicial.alto_lienzo_m if plano_inicial else 'null' }},
+    elementos: [
+      {%- for e in (plano_inicial.elementos if plano_inicial else []) -%}
+        {
+          id: {{ e.id }},
+          tipo: {{ e.tipo | tojson }},
+          puntos: {{ e.puntos() | tojson }},
+          grosor_cm: {{ e.grosor_cm }},
+          color: {{ e.color | tojson }},
+          muro_id: {{ e.muro_id if e.muro_id else 'null' }}
+        }{% if not loop.last %},{% endif %}
+      {%- endfor -%}
+    ]
+  };
+  window.PLANO_ACTIVO = plano;
+
+  // Botón "Crear plano desde cero"
+  const formBlanco = document.getElementById('form-plano-blanco');
+  if (formBlanco) {
+    formBlanco.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const errEl = document.getElementById('plano-blanco-error');
+      if (errEl) { errEl.textContent = ''; CotizatStyles.set(errEl, 'display', 'none'); }
+      const payload = {
+        nombre: (document.getElementById('plano-blanco-nombre')?.value || '').trim() || 'Plano desde cero',
+        ancho_lienzo_m: parseFloat(document.getElementById('plano-blanco-ancho')?.value || 12),
+        alto_lienzo_m: parseFloat(document.getElementById('plano-blanco-alto')?.value || 8),
+        grosor_tabique_cm: parseFloat(document.getElementById('plano-blanco-grosor')?.value || 10)
+      };
+      try {
+        const res = await fetch('/presupuestos/{{ p.id }}/planos/blanco', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!data.ok) throw new Error(data.error || 'No se pudo crear el plano.');
+        window.location.href = data.url + '&editor=1';
+      } catch (err) {
+        if (errEl) { errEl.textContent = err.message; CotizatStyles.set(errEl, 'display', 'block'); }
+      }
+    });
+  }
+
+  // Botón "Aplicar grosor"
+  const btnGuardarGrosor = document.getElementById('btn-guardar-grosor');
+  const inputGrosor = document.getElementById('plano-grosor-cm');
+  const statusGrosor = document.getElementById('plano-grosor-status');
+  async function aplicarGrosor() {
+    if (!plano.id || !inputGrosor) return;
+    const v = parseFloat(inputGrosor.value);
+    if (!isFinite(v) || v < 3 || v > 40) {
+      if (statusGrosor) { statusGrosor.textContent = 'Grosor fuera de rango (3–40 cm).'; statusGrosor.className = 'planos-save-status is-error'; }
+      return;
+    }
+    try {
+      const res = await fetch('/planos/' + plano.id + '/grosor', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ grosor_tabique_cm: v })
+      });
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error || 'No se pudo aplicar el grosor.');
+      plano.grosor_tabique_cm = data.grosor_tabique_cm;
+      if (statusGrosor) { statusGrosor.textContent = 'Grosor actualizado: ' + (data.grosor_tabique_cm || v).toFixed(1) + ' cm.'; statusGrosor.className = 'planos-save-status is-ok'; }
+    } catch (err) {
+      if (statusGrosor) { statusGrosor.textContent = err.message; statusGrosor.className = 'planos-save-status is-error'; }
+    }
+  }
+  if (btnGuardarGrosor) btnGuardarGrosor.addEventListener('click', aplicarGrosor);
+  if (inputGrosor) inputGrosor.addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); aplicarGrosor(); } });
+})();
+</script>
+
+{% if plano_inicial and plano_inicial.origen in ('dibujado', 'mixto') %}
+<script src="/static/js/editor/plano_editor.js"></script>
+{% endif %}
 {% endblock %}

@@ -33,7 +33,7 @@
           <li><span class="check">✓</span> Tu equipo, con roles y control de aprobaciones</li>
         </ul>
       </div>
-      <small class="panel-foot">Construcción y remodelación para Latinoamérica</small>
+      <small class="panel-foot">Construcción y remodelación para España y Latinoamérica</small>
     </aside>
 
     <section class="auth-split-forms">
@@ -68,12 +68,9 @@
         <div class="field">
           <label for="signup-pais">País <span class="hint">(configura moneda, IVA e ID fiscal)</span></label>
           <select id="signup-pais" name="pais" required {% if not auth_configured %}disabled{% endif %}>
-            <option value="VE">🇻🇪 Venezuela — RIF 16% USD</option>
-            <option value="CO">🇨🇴 Colombia — NIT 19% COP</option>
-            <option value="MX">🇲🇽 México — RFC 16% MXN</option>
-            <option value="EC">🇪🇨 Ecuador — RUC 15% USD</option>
-            <option value="PE">🇵🇪 Perú — RUC 18% PEN</option>
-            <option value="ES">🇪🇸 España — NIF 21% EUR</option>
+            {% for p in paises %}
+            <option value="{{ p.codigo }}" {% if pais_preseleccionado == p.codigo %}selected{% endif %}>{{ p.bandera }} {{ p.nombre }} — {{ p.id_fiscal }} {{ p.iva }}% {{ p.moneda }}{% if p.moneda != 'USD' %} ({{ p.simbolo_local }}){% endif %}</option>
+            {% endfor %}
           </select>
           <p class="hint">Elige tu país para que tu espacio nazca ya configurado. Podrás cambiarlo después en Configuración.</p>
         </div>
@@ -105,15 +102,22 @@
 </div>
 <script nonce="{{ request.state.csp_nonce }}">
 (function(){
+  // El servidor ya preselecciona ``selected`` con ``pais_preseleccionado``.
+  // Este JS se limita a mantener la coherencia cuando la cookie o la query
+  // traigan un valor posterior: solo reescribe la selección si el país está
+  // en la lista. Si la cookie es de un país retirado, se respeta la opción
+  // por defecto del servidor y se borra la cookie obsoleta.
   var sel=document.getElementById('signup-pais');
   if(!sel) return;
   try{
     var m=document.cookie.match(/(?:^|; )cotizat_pais=([^;]*)/);
     var code=m?decodeURIComponent(m[1]).toUpperCase():'';
     if(code && sel.querySelector('option[value="'+code+'"]')) sel.value=code;
-    else {
-      // fallback a VE si no hay cookie (histórico)
-      if(!sel.value) sel.value='VE';
+    else if (code) {
+      // País obsoleto: la cookie apunta a algo que ya no ofrecemos. No
+      // rompemos la UX (no pisamos el valor por defecto) y limpiamos la
+      // cookie para que la siguiente vez no vuelva a aparecer.
+      try { document.cookie = "cotizat_pais=; path=/; max-age=0; samesite=lax"; } catch(e){}
     }
   }catch(e){}
 })();

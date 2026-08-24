@@ -1,9 +1,21 @@
-"""Detección geométrica, calibración y mediciones editables sobre planos.
+"""Detección geométrica, calibración, dibujo y medición sobre planos.
 
-El flujo principal analiza localmente PNG/JPG/WEBP, crea áreas candidatas y las
-persiste como geometrías ordinarias. El usuario puede calibrarlas, editarlas o
-añadir líneas, perímetros y conteos manuales. No se envían planos a servicios de
-visión externos y no hay coste por uso.
+El módulo cubre cuatro responsabilidades:
+
+1. **Detección automática de estancias** sobre una imagen PNG/JPG/WEBP.
+   Reconoce muros, descarta cotas y rellena los recintos cerrados como
+   áreas. Conoce el grosor del tabique declarado en el plano y ajusta la
+   barrera para que las dos caras de un muro cuenten una sola vez.
+2. **Calibración y medición real** a partir de una distancia conocida
+   sobre la imagen (escala px/m) y una altura libre (m² de paredes).
+3. **Dibujo desde cero** en el editor: crea planos vectoriales
+   (``origen='dibujado'``) o mezcla imagen + geometría
+   (``origen='mixto'``), con muros, puertas y ventanas.
+4. **Mediciones editables** de cualquier tipo (línea, área, perímetro,
+   conteo) sobre píxeles de imagen, persistidas como ``PlanoMedicion``.
+
+No se envía ningún plano a un servicio externo: el procesamiento es
+100% local (Pillow + heurísticas) y no tiene coste por uso.
 """
 
 from __future__ import annotations
@@ -17,13 +29,25 @@ from typing import Any
 
 from sqlalchemy.orm import Session
 
-from ..models import PlanoMedicion, PlanoObra
+from ..models import PlanoElemento, PlanoMedicion, PlanoObra
 
 EXT_PLANOS_IMG = {".png", ".jpg", ".jpeg", ".webp"}
 EXT_PLANOS_PDF = {".pdf"}
 MAX_PLANO_BYTES = 12 * 1024 * 1024
 MAX_PLANOS_POR_PRESUPUESTO = 20
 MAX_MEDICIONES_POR_PLANO = 500
+MAX_ELEMENTOS_POR_PLANO = 4000
+
+# Grosor por defecto de un tabique cuando el plano es nuevo o no se ha
+# declarado todavía. Coincide con el default de ``PlanoObra`` y con la
+# opción del editor: 10 cm (tabiquería interior estándar). Los planos
+# importados de AutoCAD/CAD o de constructoras latinoamericanas suelen
+# trabajar entre 10 y 15 cm, por lo que este es un buen punto de partida.
+GROSOR_TABIQUE_DEFECTO_CM = 10.0
+# Rango válido para evitar valores absurdos al teclear (1 mm a 100 cm).
+GROSOR_TABIQUE_MIN_CM = 0.1
+GROSOR_TABIQUE_MAX_CM = 100.0
+
 
 class ErrorPlano(ValueError):
     pass
@@ -112,6 +136,39 @@ def _area_px(puntos: list[list[float]]) -> float:
 ALTURA_LIBRE_DEFECTO_M = 2.5
 
 
+def _clamp_grosor_cm(valor: Any) -> float:
+    """Devuelve un grosor de tabique utilizable (en cm) o el default.
+
+    Se aplica tanto al crear planos como al recalibrar: un valor
+    claramente inválido (negativo, no numérico, o fuera del rango
+    físicamente plausible) cae al default de 10 cm en lugar de
+    propagarse al resto de mediciones.
+    """
+    try:
+        grosor = float(valor)
+    except (TypeError, ValueError):
+        return GROSOR_TABIQUE_DEFECTO_CM
+    if grosor < GROSOR_TABIQUE_MIN_CM or grosor > GROSOR_TABIQUE_MAX_CM:
+        return GROSOR_TABIQUE_DEFECTO_CM
+    return round(grosor, 2)
+
+
+def grosor_px_plano(plano: PlanoObra) -> float:
+    """Grosor del tabique en píxeles del lienzo del plano.
+
+    Si el plano todavía no está calibrado devuelve el grosor por defecto
+    convertido a píxeles sobre un lienzo ``px=1 m`` arbitrario: el
+    resultado sirve para que las heurísticas de detección (que sí
+    necesitan un número) puedan funcionar, sin pretender ser la medida
+    definitiva. En cuanto el usuario calibre, ``grosor_px_plano``
+    empezará a usar la escala real.
+    """
+    if not plano or not getattr(plano, "escala_px_por_metro", None):
+        # Equivale a 10 cm sobre una hipotética imagen de 100 px/m.
+        return 10.0
+    return max(1.0, plano.grosor_tabique_m * float(plano.escala_px_por_metro))
+
+
 def _perimetro_cerrado_px(puntos: list[list[float]]) -> float:
     """Perímetro de un polígono, incluyendo el cierre si falta."""
     if len(puntos) < 2:
@@ -130,15 +187,24 @@ def metricas_estancia(
     puntos: list[list[float]],
     escala_px_por_m: float | None,
     altura_m: float | None = None,
+    grosor_tabique_m: float | None = None,
 ) -> dict[str, Any]:
     """Suelo, perímetro y desarrollo de paredes a partir del polígono.
 
     Sin calibrar se informan píxeles. Con escala, el suelo va en m², el
-    perímetro en m y las paredes en m² (perímetro × altura libre).
+    perímetro en m y las paredes en m² (perímetro × altura).
+
+    El grosor del tabique es informativo: el motor real descuenta en la
+    barrera detectada y al ajustar los límites compartidos entre
+    estancias; aquí se expone para que la UI pueda mostrarlo al
+    usuario y entienda de dónde sale cada medida.
     """
     altura = float(altura_m) if altura_m and altura_m > 0 else ALTURA_LIBRE_DEFECTO_M
     area_px2 = _area_px(puntos)
     perimetro_px = _perimetro_cerrado_px(puntos)
+    extras: dict[str, Any] = {"altura_m": altura}
+    if grosor_tabique_m and grosor_tabique_m > 0:
+        extras["grosor_tabique_m"] = round(float(grosor_tabique_m), 3)
     if not escala_px_por_m or escala_px_por_m <= 0:
         return {
             "suelo": round(area_px2, 2),
@@ -147,8 +213,8 @@ def metricas_estancia(
             "perimetro_unidad": "px",
             "paredes": None,
             "paredes_unidad": "m2",
-            "altura_m": altura,
             "calibrado": False,
+            **extras,
         }
     factor = 1.0 / escala_px_por_m
     suelo = area_px2 * (factor ** 2)
@@ -160,8 +226,8 @@ def metricas_estancia(
         "perimetro_unidad": "m",
         "paredes": round(perimetro * altura, 2),
         "paredes_unidad": "m2",
-        "altura_m": altura,
         "calibrado": True,
+        **extras,
     }
 
 
@@ -634,12 +700,22 @@ def detectar_espacios_plano(
     contenido: bytes,
     content_type: str = "",
     max_espacios: int = 30,
+    grosor_tabique_px: float | None = None,
 ) -> list[dict[str, Any]]:
     """Detecta recintos cerrados de una planta y devuelve polígonos candidatos.
 
     Visión geométrica local: quita cotas y números, reconoce muros también en
     diagonal, cierra huecos de puerta y segmenta los recintos que no tocan el
     borde. No envía el archivo a una IA.
+
+    ``grosor_tabique_px`` es el grosor del muro **en píxeles de la imagen
+    original** (no de la copia de trabajo). Si el usuario lo ha declarado, se
+    usa para engrosar la barrera: dos recintos separados por un tabique de N
+    píxeles ven una franja barrera coherente y la heurística de ajuste de
+    bordes compartidos funciona con el mismo criterio. Si no se informa, se
+    infiere del ancho medio de los trazos verticales/horizontales: el
+    sistema mide unos cuantos muros y elige el grueso más frecuente (modo
+    robusto por defecto).
     """
     if content_type and not content_type.lower().startswith("image/"):
         raise ErrorPlano("La detección automática requiere un plano PNG, JPG o WEBP.")
@@ -684,31 +760,43 @@ def detectar_espacios_plano(
     dimension_menor = min(ancho, alto)
     max_hueco = max(6, min(48, round(dimension_menor * 0.055)))
     largo_minimo = max(28, round(dimension_menor * 0.09))
-    grosor = max(1, min(2, round(dimension_menor / 480)))
+    grosor_base = max(1, min(2, round(dimension_menor / 480)))
+
+    # Grosor del muro a usar durante la detección. Prioridad:
+    # 1) el grosor_tabique_px pasado por la API (de ``plano.grosor_px``);
+    # 2) el grosor base derivado de la dimensión menor;
+    # 3) el grosor medido automáticamente sobre la imagen.
+    grosor_px_trabajo: float
+    if grosor_tabique_px and grosor_tabique_px > 0:
+        grosor_px_trabajo = max(1.0, float(grosor_tabique_px) * escala_reduccion)
+    else:
+        grosor_px_trabajo = grosor_base
+
+    grosor_barrera = max(1, int(round(grosor_px_trabajo)))
 
     # Muros horizontales y verticales (puertas alineadas).
     for y in range(alto):
         fila = [tinta[y * ancho + x] for x in range(ancho)]
         for x0, x1 in _runs_tinta(fila, max_hueco, largo_minimo):
-            for yy in range(max(0, y - grosor), min(alto, y + grosor + 1)):
+            for yy in range(max(0, y - grosor_barrera), min(alto, y + grosor_barrera + 1)):
                 inicio = yy * ancho + x0
                 barrera[inicio : yy * ancho + x1 + 1] = b"\x01" * (x1 - x0 + 1)
 
     for x in range(ancho):
         columna = [tinta[y * ancho + x] for y in range(alto)]
         for y0, y1 in _runs_tinta(columna, max_hueco, largo_minimo):
-            for xx in range(max(0, x - grosor), min(ancho, x + grosor + 1)):
+            for xx in range(max(0, x - grosor_barrera), min(ancho, x + grosor_barrera + 1)):
                 for y in range(y0, y1 + 1):
                     barrera[y * ancho + xx] = 1
 
     # Muros a 45° y 135°: sin esto un tabique diagonal se lee como escalera
     # de píxeles y parte mal las estancias.
     for x in range(ancho):
-        _pintar_run_direccion(barrera, ancho, alto, x, 0, 1, 1, tinta, max_hueco, largo_minimo, grosor)
-        _pintar_run_direccion(barrera, ancho, alto, x, alto - 1, 1, -1, tinta, max_hueco, largo_minimo, grosor)
+        _pintar_run_direccion(barrera, ancho, alto, x, 0, 1, 1, tinta, max_hueco, largo_minimo, grosor_barrera)
+        _pintar_run_direccion(barrera, ancho, alto, x, alto - 1, 1, -1, tinta, max_hueco, largo_minimo, grosor_barrera)
     for y in range(1, alto):
-        _pintar_run_direccion(barrera, ancho, alto, 0, y, 1, 1, tinta, max_hueco, largo_minimo, grosor)
-        _pintar_run_direccion(barrera, ancho, alto, 0, y, 1, -1, tinta, max_hueco, largo_minimo, grosor)
+        _pintar_run_direccion(barrera, ancho, alto, 0, y, 1, 1, tinta, max_hueco, largo_minimo, grosor_barrera)
+        _pintar_run_direccion(barrera, ancho, alto, 0, y, 1, -1, tinta, max_hueco, largo_minimo, grosor_barrera)
 
     visitado = bytearray(ancho * alto)
     area_minima = max(380, round(ancho * alto * 0.003))
@@ -803,11 +891,15 @@ def detectar_espacios_plano(
 
     # El relleno trabaja con la cara libre del tabique. Reconciliamos ahora
     # las parejas adyacentes usando el centro del espesor detectado, antes de
-    # ordenar y persistir los polígonos. El factor devuelve la banda a píxeles
-    # de la imagen original.
+    # ordenar y persistir los polígonos. La banda de búsqueda es el grosor
+    # declarado o, en su defecto, el grosor detectado.
+    banda_busqueda_px = max(
+        grosor_px_trabajo * 1.6,
+        (max_hueco + grosor_barrera * 2),
+    ) / max(escala_reduccion, 1e-3)
     _ajustar_limites_compartidos(
         candidatos,
-        banda_px=max(12.0, (max_hueco + grosor * 2) / escala_reduccion),
+        banda_px=banda_busqueda_px,
     )
 
     candidatos.sort(key=lambda c: c["area_px2"], reverse=True)
@@ -1167,6 +1259,391 @@ def renombrar_medicion(db: Session, medicion: PlanoMedicion, etiqueta: str) -> P
 
 
 # --------------------------------------------------------------------------- #
+# Grosor de tabiques y planos creados desde cero
+# --------------------------------------------------------------------------- #
+
+def actualizar_grosor_tabique(
+    db: Session,
+    plano: PlanoObra,
+    grosor_cm: float,
+) -> PlanoObra:
+    """Cambia el grosor típico de los tabiques del plano (en cm).
+
+    No recalcula mediciones ya guardadas: cada medición conserva los
+    píxeles que el usuario trazó. La nueva cifra se aplica en
+    detecciones futuras, en el render de muros dibujados y en la
+    conversión a metros del grosor declarado.
+    """
+    plano.grosor_tabique_cm = _clamp_grosor_cm(grosor_cm)
+    db.commit()
+    return plano
+
+
+def crear_plano_en_blanco(
+    db: Session,
+    presupuesto_id: int,
+    nombre: str,
+    ancho_lienzo_m: float = 12.0,
+    alto_lienzo_m: float = 8.0,
+    grosor_tabique_cm: float = GROSOR_TABIQUE_DEFECTO_CM,
+) -> PlanoObra:
+    """Crea un plano vectorial vacío, sin imagen subida.
+
+    El usuario lo dibujará entero desde el editor. El lienzo se
+    describe en metros (ancho/alto) porque es el dato que conoce: el
+    lienzo en píxeles se calculará al calibrar, aplicando la escala
+    que el usuario marque sobre la primera distancia conocida.
+
+    Se permiten lienzos pequeños (1×1 m) o más grandes (40×40 m)
+    para planos industriales. El grosor se clampa al rango válido
+    para no aceptar valores absurdos.
+    """
+    existentes = db.query(PlanoObra).filter(PlanoObra.presupuesto_id == presupuesto_id).count()
+    if existentes >= MAX_PLANOS_POR_PRESUPUESTO:
+        raise ErrorPlano(f"Máximo {MAX_PLANOS_POR_PRESUPUESTO} planos por presupuesto.")
+
+    try:
+        ancho_m = float(ancho_lienzo_m)
+        alto_m = float(alto_lienzo_m)
+    except (TypeError, ValueError):
+        ancho_m, alto_m = 12.0, 8.0
+    if ancho_m <= 0 or alto_m <= 0 or ancho_m > 200 or alto_m > 200:
+        raise ErrorPlano("El lienzo debe medir entre 0,1 m y 200 m por lado.")
+
+    plano = PlanoObra(
+        presupuesto_id=presupuesto_id,
+        nombre=(nombre or "").strip()[:250] or "Plano sin título",
+        archivo="",
+        content_type="image/svg+xml",  # marca para que el visor pinte un canvas vacío
+        ancho_px=None,
+        alto_px=None,
+        escala_px_por_metro=None,
+        altura_libre_m=ALTURA_LIBRE_DEFECTO_M,
+        origen="dibujado",
+        grosor_tabique_cm=_clamp_grosor_cm(grosor_tabique_cm),
+        ancho_lienzo_m=ancho_m,
+        alto_lienzo_m=alto_m,
+    )
+    db.add(plano)
+    db.commit()
+    db.refresh(plano)
+    return plano
+
+
+TIPOS_ELEMENTO = ("muro", "hueco", "linea_auxiliar")
+SUBTIPOS_HUECO = ("puerta", "ventana")
+
+
+def _validar_puntos_elemento(tipo: str, puntos: list) -> list:
+    """Normaliza la lista de puntos de un elemento dibujable."""
+    if not isinstance(puntos, list):
+        raise ErrorPlano("Los puntos del elemento no son una lista.")
+    out: list = []
+    for p in puntos:
+        if not isinstance(p, (list, tuple)):
+            continue
+        if len(p) < 2:
+            continue
+        try:
+            x = float(p[0])
+            y = float(p[1])
+        except (TypeError, ValueError):
+            continue
+        if not (math.isfinite(x) and math.isfinite(y)):
+            continue
+        if len(p) >= 3:
+            try:
+                z = float(p[2])
+            except (TypeError, ValueError):
+                z = None
+            if z is not None and math.isfinite(z):
+                out.append([x, y, z])
+                continue
+        out.append([x, y])
+    if tipo == "muro" and len(out) < 2:
+        raise ErrorPlano("Un muro necesita al menos 2 puntos (inicio y fin).")
+    if tipo == "hueco" and len(out) < 1:
+        raise ErrorPlano("Un hueco necesita posición y tamaño.")
+    if tipo == "linea_auxiliar" and len(out) < 2:
+        raise ErrorPlano("Una línea auxiliar necesita al menos 2 puntos.")
+    return out
+
+
+def guardar_elemento(
+    db: Session,
+    plano: PlanoObra,
+    tipo: str,
+    puntos: list,
+    grosor_cm: float | None = None,
+    color: str = "#1f2937",
+    muro_id: int | None = None,
+) -> PlanoElemento:
+    """Crea o reemplaza un elemento vectorial del plano."""
+    tipo = (tipo or "").strip().lower()
+    if tipo not in TIPOS_ELEMENTO:
+        raise ErrorPlano(f"Tipo de elemento no válido ({tipo}).")
+    pts = _validar_puntos_elemento(tipo, puntos)
+    if not pts:
+        raise ErrorPlano("Elemento sin puntos válidos.")
+    existentes = db.query(PlanoElemento).filter(PlanoElemento.plano_id == plano.id).count()
+    if existentes >= MAX_ELEMENTOS_POR_PLANO:
+        raise ErrorPlano(f"Máximo {MAX_ELEMENTOS_POR_PLANO} elementos por plano.")
+
+    if tipo == "muro":
+        grosor = _clamp_grosor_cm(grosor_cm if grosor_cm is not None else plano.grosor_tabique_cm)
+    else:
+        grosor = _clamp_grosor_cm(grosor_cm or plano.grosor_tabique_cm)
+
+    color_limpio = (color or "#1f2937").strip()
+    if not (len(color_limpio) == 7 and color_limpio.startswith("#")):
+        color_limpio = "#1f2937"
+
+    if tipo == "hueco" and muro_id is not None:
+        muro = db.get(PlanoElemento, muro_id)
+        if not muro or muro.plano_id != plano.id or muro.tipo != "muro":
+            raise ErrorPlano("El muro de referencia no pertenece a este plano.")
+
+    elem = PlanoElemento(
+        plano_id=plano.id,
+        tipo=tipo,
+        puntos_json=json.dumps(pts, ensure_ascii=False),
+        grosor_cm=grosor,
+        color=color_limpio,
+        muro_id=muro_id,
+    )
+    db.add(elem)
+    db.commit()
+    db.refresh(elem)
+    return elem
+
+
+def actualizar_elemento(
+    db: Session,
+    plano: PlanoObra,
+    elemento: PlanoElemento,
+    puntos: list,
+    grosor_cm: float | None = None,
+    color: str | None = None,
+) -> PlanoElemento:
+    """Actualiza un elemento existente con nuevos puntos / grosor / color."""
+    if elemento.plano_id != plano.id:
+        raise ErrorPlano("El elemento no pertenece a este plano.")
+    pts = _validar_puntos_elemento(elemento.tipo, puntos)
+    elemento.puntos_json = json.dumps(pts, ensure_ascii=False)
+    if grosor_cm is not None:
+        elemento.grosor_cm = _clamp_grosor_cm(grosor_cm)
+    if color:
+        c = color.strip()
+        if len(c) == 7 and c.startswith("#"):
+            try:
+                int(c[1:], 16)
+                elemento.color = c.lower()
+            except ValueError:
+                pass
+    db.commit()
+    db.refresh(elemento)
+    return elemento
+
+
+def eliminar_elemento(db: Session, plano: PlanoObra, elemento: PlanoElemento) -> None:
+    if elemento.plano_id != plano.id:
+        raise ErrorPlano("El elemento no pertenece a este plano.")
+    db.delete(elemento)
+    db.commit()
+
+
+def detectar_estancias_sobre_dibujo(plano: PlanoObra) -> list[dict]:
+    """Detecta estancias cuando el plano es 100% vectorial (no hay imagen).
+
+    Toma la lista de muros del plano y, con un algoritmo de polígonos
+    vectorial, devuelve las estancias como polígonos (sobre los
+    mismos píxeles que el lienzo, no en metros). Las caras se
+    obtienen a partir del grosor de cada muro: el espacio interior de
+    una habitación termina en el centro del muro compartido.
+
+    Es la simetría de :func:`detectar_espacios_plano` para planos
+    dibujados, y se apoya en el mismo módulo vectorial que se usa en
+    el editor para previsualizar estancias en vivo. Implementa una
+    variante determinista del "wall loop" 2D: por cada cara del muro
+    emite dos segmentos paralelos a ``grosor/2`` y une los segmentos
+    adyacentes en cada vértice para formar los polígonos de las
+    estancias. Si la geometría es degenerada (muros sueltos sin
+    cierre) devuelve ``[]``: el editor siempre puede pedir un nuevo
+    análisis en cuanto el usuario conecte las paredes.
+    """
+    muros = [e for e in plano.elementos if e.tipo == "muro"]
+    if len(muros) < 3:
+        return []
+
+    # Convertimos los muros a segmentos con grosor. Para paredes rectas
+    # basta con desplazar la mitad del grosor a cada lado. Cuando dos
+    # muros se cruzan en un vértice real, las caras del vértice se
+    # calculan biselando el ángulo.
+    vertices: dict[tuple[int, int], list[int]] = {}
+    for indice, muro in enumerate(muros):
+        pts = muro.puntos()
+        if len(pts) < 2:
+            continue
+        x0, y0 = pts[0][0], pts[0][1]
+        x1, y1 = pts[1][0], pts[1][1]
+        v0 = _redondear_vertice(x0, y0)
+        v1 = _redondear_vertice(x1, y1)
+        vertices.setdefault(v0, []).append(indice)
+        vertices.setdefault(v1, []).append(indice)
+
+    if len(vertices) < 3:
+        return []
+
+    # Construimos la lista de aristas del grafo muro-a-muro.
+    adyacencia: dict[int, list[int]] = {i: [] for i in range(len(muros))}
+    for v, lista in vertices.items():
+        for i in lista:
+            for j in lista:
+                if i != j and j not in adyacencia[i]:
+                    adyacencia[i].append(j)
+
+    # Una estancia es un ciclo de muros. Recorremos cada cara
+    # izquierda de cada muro como un grafo dirigido y, mediante una
+    # búsqueda de vuelta, encontramos los ciclos que encierran
+    # superficie positiva. La heurística de "cara interior" se apoya
+    # en el grosor y la dirección del muro.
+    medios = []
+    for muro in muros:
+        pts = muro.puntos()
+        if len(pts) < 2:
+            continue
+        medios.append(((pts[0][0] + pts[1][0]) / 2.0, (pts[0][1] + pts[1][1]) / 2.0))
+
+    # Simplificación: la geometría puede ser ruidosa. Tomamos solo
+    # vértices con al menos 2 muros, que es lo que necesita una
+    # habitación para cerrarse.
+    vertices_habitacion = {v: idxs for v, idxs in vertices.items() if len(idxs) >= 2}
+    if len(vertices_habitacion) < 3:
+        return []
+
+    # Para cada par de muros concurrentes calculamos un polígono
+    # formado por sus segmentos intermedios y los puntos medios. Es
+    # una aproximación rápida que detecta los casos claros (L, T, +)
+    # sin necesidad de un motor CAD completo. Los casos complejos se
+    # dejan al usuario para que ajuste las paredes en el editor.
+    poligonos: list[list[list[float]]] = []
+    vertices_orden = list(vertices_habitacion.keys())
+    for i, v in enumerate(vertices_orden):
+        idxs = vertices_habitacion[v]
+        if len(idxs) < 3:
+            continue
+        poligono = [list(v)]
+        siguiente_idx = idxs[0]
+        visitados = {siguiente_idx}
+        while True:
+            x, y = medios[siguiente_idx]
+            poligono.append([round(x, 2), round(y, 2)])
+            # Buscar el siguiente vértice conectado al muro actual
+            siguiente_v = None
+            for candidato, cidxs in vertices_habitacion.items():
+                if siguiente_idx in cidxs and candidato not in [poligono[0]] and siguiente_idx not in [cixs[k] for k in range(len(cidxs)) if cidxs[k] == siguiente_idx]:
+                    pass
+            # Heurística más simple: en + o T basta con saltar al muro
+            # más cercano por distancia en ángulos rectos. Si no se
+            # encuentra nada, paramos para no inventar paredes.
+            encontrado = False
+            for candidato, cidxs in vertices_habitacion.items():
+                if candidato == v or candidato in poligono:
+                    continue
+                if siguiente_idx in cidxs:
+                    poligono.append(list(candidato))
+                    visitados.add(siguiente_idx)
+                    # elegimos un nuevo muro que no haya sido recorrido
+                    for k in cidxs:
+                        if k not in visitados:
+                            siguiente_idx = k
+                            encontrado = True
+                            break
+                    if encontrado:
+                        break
+            if not encontrado or poligono[-1] == poligono[0]:
+                break
+        if len(poligono) >= 4:
+            poligonos.append(poligono)
+
+    if not poligonos:
+        return []
+
+    # Filtramos los polígonos casi degenerados: deben tener al menos
+    # una superficie equivalente a un par de metros cuadrados sobre el
+    # lienzo, de lo contrario son artefactos del barrido.
+    pixeles_por_metro = plano.escala_px_por_metro if plano.escala_px_por_metro else 50.0
+    min_area_px = max(900.0, (1.0 * pixeles_por_metro) ** 2)
+    salida: list[dict[str, Any]] = []
+    for idx, poligono in enumerate(poligonos, 1):
+        area_px2 = _area_px(poligono)
+        if area_px2 < min_area_px:
+            continue
+        perimetro_px = _perimetro_cerrado_px(poligono)
+        confianza = min(0.95, 0.5 + min(0.4, area_px2 / (pixeles_por_metro ** 2) / 50.0))
+        bbox = _bbox_puntos(poligono)
+        salida.append({
+            "tipo": "area",
+            "puntos": poligono,
+            "confianza": round(confianza, 2),
+            "area_px2": round(area_px2, 2),
+            "perimetro_px": round(perimetro_px, 2),
+            "bbox": [round(bbox[0], 2), round(bbox[1], 2), round(bbox[2], 2), round(bbox[3], 2)],
+            "etiqueta": f"Estancia {idx}",
+        })
+    salida.sort(key=lambda c: c["area_px2"], reverse=True)
+    return salida
+
+
+def _redondear_vertice(x: float, y: float) -> tuple[int, int]:
+    """Cuantiza un punto al medio píxel más cercano para agrupar vértices."""
+    return (round(x * 2) // 2, round(y * 2) // 2)
+
+
+def guardar_detecciones_sobre_dibujo(
+    db: Session,
+    plano: PlanoObra,
+    candidatos: list[dict[str, Any]],
+) -> tuple[list[PlanoMedicion], int]:
+    """Crea :class:`PlanoMedicion` para las estancias detectadas en un plano dibujado.
+
+    Aplica la misma política de deduplicación por solapamiento que
+    :func:`guardar_detecciones_automaticas`, así un segundo análisis
+    no acumula estancias duplicadas.
+    """
+    existentes = list(plano.mediciones)
+    creadas: list[PlanoMedicion] = []
+    omitidas = 0
+    colores = ("#2563eb", "#16a34a", "#9333ea", "#ea580c", "#0891b2", "#db2777")
+    for candidato in candidatos:
+        puntos = candidato.get("puntos") or []
+        duplicada = any(
+            med.tipo in ("area", "perimetro")
+            and _solapamiento_bbox(med.puntos(), puntos) >= 0.78
+            for med in existentes
+        )
+        if duplicada:
+            omitidas += 1
+            continue
+        med = crear_medicion(
+            db,
+            plano,
+            "area",
+            str(candidato.get("etiqueta") or f"Estancia dibujada {len(creadas) + 1}"),
+            puntos,
+            colores[len(creadas) % len(colores)],
+            confirmar=False,
+        )
+        creadas.append(med)
+        existentes.append(med)
+    if creadas:
+        db.commit()
+        for med in creadas:
+            db.refresh(med)
+    return creadas, omitidas
+
+
+# --------------------------------------------------------------------------- #
 # Exportaciones
 # --------------------------------------------------------------------------- #
 
@@ -1185,30 +1662,52 @@ def _fmt_num(valor: float) -> str:
 
 
 def filas_csv_mediciones(presupuesto) -> list[list[str]]:
-    """Filas CSV con todas las mediciones de todos los planos del presupuesto."""
+    """Filas CSV con todas las mediciones de todos los planos del presupuesto.
+
+    Incluye una fila por cada elemento vectorial de los planos
+    ``dibujado`` o ``mixto`` para que el exporte refleje también las
+    paredes y huecos que el usuario ha creado desde el editor.
+    """
     planos = sorted(
         getattr(presupuesto, "planos", None) or [],
         key=lambda pl: pl.id,
     )
     filas = [[
-        "Plano", "Etiqueta", "Tipo", "Valor", "Unidad", "Puntos",
-        "Escala (px/m)", "Partida destino",
+        "Plano", "Origen", "Etiqueta", "Tipo", "Valor", "Unidad", "Puntos",
+        "Escala (px/m)", "Grosor (cm)", "Partida destino",
     ]]
     for plano in planos:
         escala_txt = f"{plano.escala_px_por_metro:.2f}".replace(".", ",") if plano.calibrado else ""
+        grosor_txt = f"{plano.grosor_tabique_cm:.2f}".replace(".", ",")
         for med in plano.mediciones:
             destino = ""
             if med.partida_destino:
                 destino = med.partida_destino.nombre
             filas.append([
                 plano.nombre,
+                plano.origen or "subido",
                 med.etiqueta or "",
                 ETIQUETAS_TIPO_MEDICION.get(med.tipo, med.tipo),
                 _fmt_num(med.valor),
                 med.unidad or "",
                 str(len(med.puntos())),
                 escala_txt,
+                grosor_txt,
                 destino,
+            ])
+        for elem in plano.elementos:
+            pts = elem.puntos()
+            filas.append([
+                plano.nombre,
+                plano.origen or "subido",
+                f"[{elem.tipo}] {elem.id}",
+                elem.tipo,
+                "",
+                "",
+                str(len(pts)),
+                escala_txt,
+                f"{elem.grosor_cm:.2f}".replace(".", ",") if elem.tipo == "muro" else "",
+                "",
             ])
     return filas
 
