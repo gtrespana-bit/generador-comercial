@@ -1091,6 +1091,7 @@ def nueva_partida_form(request: Request, db: Session = Depends(get_db)):
         "categorias": _categorias(db),
         "moneda_local": _moneda_n,
         "simbolo_local": _simbolo_n,
+        "error": request.query_params.get("error", ""),
     })
 
 
@@ -1169,6 +1170,7 @@ def editar_partida_form(partida_id: int, request: Request, db: Session = Depends
         "categorias": _categorias(db),
         "moneda_local": getattr(_cfg_e, "moneda_default", "USD") if '_cfg_e' in locals() else "USD",
         "simbolo_local": _simbolo_local,
+        "error": request.query_params.get("error", ""),
     })
 
 

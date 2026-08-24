@@ -426,7 +426,14 @@
 <!-- Modal: ficha completa de partida (mismo editor que el catálogo) -->
 <div class="modal-overlay" id="modal-editor-partida" role="dialog" aria-modal="true" aria-labelledby="titulo-editor-partida">
   <div class="modal modal-partida-completa">
-    <form id="form-editor-partida" enctype="multipart/form-data">
+    <!-- novalidate: la ficha vive en pestañas ocultas y en un <details>
+         plegado; la validación nativa del navegador no puede enfocar un
+         control inválido oculto y bloqueaba el guardado con
+         «An invalid form control ... is not focusable» (p. ej.
+         tiempo_estimado_horas con stepMismatch o valores pegados con coma).
+         La validación real la hace el JS del modal (nombre obligatorio con
+         error visible) y el servidor. -->
+    <form id="form-editor-partida" enctype="multipart/form-data" novalidate>
       <input type="hidden" name="partida_catalogo_id" id="editor-partida-catalogo-id">
       <div class="modal-head partida-modal-head">
         <div><span class="page-eyebrow">Editor completo de partida</span><h3 id="titulo-editor-partida">Editar partida</h3><p class="hint">La misma ficha técnica y el mismo cálculo que en la pestaña Partidas.</p></div>

@@ -11,7 +11,17 @@
   <a href="/partidas" class="btn">← Volver al catálogo</a>
 </div>
 
-<form class="catalog-editor-form" method="post" enctype="multipart/form-data" action="{{ '/partidas/' ~ partida.id ~ '/editar' if partida else '/partidas/nueva' }}">
+<!-- novalidate: los campos de «Datos adicionales» viven en un <details>
+     plegado; si un valor del catálogo no cumplía step/min (p. ej.
+     tiempo_estimado_horas 0,60 o 0,35 con step 0.05: el cociente por coma
+     flotante no sale entero y el navegador lo da por inválido) o se pegó un
+     decimal con coma, la validación nativa bloqueaba el guardado con
+     «An invalid form control ... is not focusable». El servidor valida
+     nombre y duplicados y devuelve el error visible abajo. -->
+<form class="catalog-editor-form" method="post" enctype="multipart/form-data" action="{{ '/partidas/' ~ partida.id ~ '/editar' if partida else '/partidas/nueva' }}" novalidate>
+  {% if error %}
+  <div class="alert alert-error" role="alert">{{ error }}</div>
+  {% endif %}
   {{ editor_partida_catalogo(partida, true) }}
   <div class="form-actions catalog-editor-actions">
     <span class="hint">Los cambios se aplicarán a las próximas veces que uses esta partida.</span>
