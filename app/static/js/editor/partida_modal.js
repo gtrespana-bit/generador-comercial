@@ -153,13 +153,33 @@
   // -----------------------------------------------------------------------
   var selectorPlanos = [];
   var selectorSeleccionadas = new Set();
+  // Estado de la carga: el desplegable de magnitud nunca debe pisar un
+  // mensaje de diagnóstico («guárdalo primero», error de red…) con el
+  // genérico de «no hay planos», que fue lo que confundió al usuario.
+  var selectorEstadoCarga = "cargando"; // cargando | sin_presupuesto | error | listo
+  // Destino de las medidas: la ficha del modal (por defecto) o una partida
+  // concreta del constructor cuando se abre desde el botón 📐 de la fila.
+  var selectorDestino = { tipo: "modal" };
 
-  function selectorMagnitudInicial() {
-    var unidadOriginal = String(valor("unidad") || "").trim().toLowerCase();
+  function selectorBudgetId() {
+    var raw = editor.BUDGET_ID != null ? editor.BUDGET_ID : window.BUDGET_ID;
+    var n = Number(raw);
+    return Number.isInteger(n) && n > 0 ? n : null;
+  }
+
+  function urlPlanosPresupuesto() {
+    var id = selectorBudgetId();
+    // Sin id nunca construimos «/presupuestos//planos» (URL rota con doble
+    // barra): caemos al visor global, que siempre existe.
+    return id ? "/presupuestos/" + id + "/planos" : "/planos";
+  }
+
+  function selectorMagnitudInicial(unidadFuente) {
+    var unidadOriginal = String(unidadFuente != null ? unidadFuente : valor("unidad") || "").trim().toLowerCase();
     var unidad = norm(unidadOriginal);
     if (unidadOriginal === "m²" || unidadOriginal === "m2" || unidadOriginal === "m^2" || unidad === "m2") return "suelo";
     if (["m", "ml", "metro", "metros"].indexOf(unidad) !== -1) return "perimetro";
-    return "perimetro";
+    return "suelo";
   }
 
   function selectorOpcion(medicion, magnitud) {
@@ -173,6 +193,50 @@
     contador.textContent = total + (total === 1 ? " estancia seleccionada" : " estancias seleccionadas");
   }
 
+  function setSelectorStatusNodos(nodos) {
+    var status = $("plano-selector-status");
+    if (!status) return;
+    status.replaceChildren();
+    (nodos || []).forEach(function (nodo) { status.appendChild(nodo); });
+  }
+
+  function linkAPlanos(texto) {
+    var link = document.createElement("a");
+    link.className = "link";
+    link.href = urlPlanosPresupuesto();
+    link.textContent = texto;
+    return link;
+  }
+
+  function renderGuiaSelectorVacio() {
+    // Mensajes para cuando la carga terminó y no hay nada seleccionable.
+    if (selectorEstadoCarga === "sin_presupuesto") {
+      setSelectorStatusNodos([
+        document.createTextNode("Guarda primero el presupuesto (Ctrl+S o el botón Guardar): las medidas del plano se vinculan a un presupuesto ya creado.")
+      ]);
+      return;
+    }
+    if (!selectorPlanos.length) {
+      setSelectorStatusNodos([
+        document.createTextNode("Este presupuesto todavía no tiene planos. "),
+        linkAPlanos("Ábrelo desde 📐 Planos"),
+        document.createTextNode(" y sube uno o dibújalo desde cero.")
+      ]);
+      return;
+    }
+    var n = selectorPlanos.length;
+    var tieneMuros = selectorPlanos.some(function (p) { return (p.total_muros || 0) >= 3; });
+    setSelectorStatusNodos([
+      document.createTextNode("Tienes " + n + " plano(s) pero ninguno con mediciones guardadas. "),
+      linkAPlanos("Ábrelo desde 📐 Planos"),
+      document.createTextNode(
+        tieneMuros
+          ? " y pulsa «Detectar estancias» para convertir los muros dibujados en recintos medibles."
+          : ", calibra la escala y pulsa «Analizar», o dibuja una medición manualmente."
+      )
+    ]);
+  }
+
   function renderSelectorPlanos() {
     var lista = $("plano-selector-lista");
     var status = $("plano-selector-status");
@@ -180,6 +244,19 @@
     if (!lista || !magnitudEl) return;
     var magnitud = magnitudEl.value;
     lista.replaceChildren();
+
+    // Mientras no haya una carga completa, el desplegable no puede cambiar
+    // el diagnóstico: el mensaje que ve el usuario siempre refleja la causa
+    // real (sin presupuesto guardado, error, o datos listos).
+    if (selectorEstadoCarga !== "listo") {
+      if (selectorEstadoCarga === "cargando" && status) status.textContent = "Cargando mediciones del proyecto…";
+      else if (selectorEstadoCarga === "sin_presupuesto") renderGuiaSelectorVacio();
+      // En estado «error» se conserva el mensaje de error ya mostrado por
+      // la carga: cambiar la magnitud no debe ocultarlo.
+      actualizarContadorSelector();
+      return;
+    }
+
     var total = 0;
     var disponibles = 0;
 
@@ -192,42 +269,7 @@
     });
 
     if (!total) {
-      // Diagnóstico en lugar del mensaje genérico anterior: si el
-      // presupuesto no tiene planos, lo decimos claro y enlazamos a la
-      // página de Planos; si los tiene pero sin mediciones, guiamos
-      // hacia el análisis o el dibujo.
-      // El status se construye con createTextNode + createElement para
-      // no usar sinks de inyección HTML en el front.
-      if (status) {
-        status.replaceChildren();
-        if (!selectorPlanos.length) {
-          var texto1 = document.createTextNode("Este presupuesto todavía no tiene planos. ");
-          var link1 = document.createElement("a");
-          link1.className = "link";
-          link1.href = "/presupuestos/" + (editor.BUDGET_ID || "") + "/planos";
-          link1.textContent = "Ábrelo desde 📐 Planos";
-          var texto2 = document.createTextNode(" y sube uno o dibújalo desde cero.");
-          status.appendChild(texto1);
-          status.appendChild(link1);
-          status.appendChild(texto2);
-        } else {
-          var n = selectorPlanos.length;
-          var tieneMuros = selectorPlanos.some(function (p) { return (p.total_muros || 0) >= 3; });
-          var pre = document.createTextNode("Tienes " + n + " plano(s) pero ninguno con mediciones guardadas. ");
-          var link2 = document.createElement("a");
-          link2.className = "link";
-          link2.href = "/presupuestos/" + (editor.BUDGET_ID || "") + "/planos";
-          link2.textContent = "Ábrelo desde 📐 Planos";
-          var post = document.createTextNode(
-            tieneMuros
-              ? " y pulsa «Detectar estancias» para convertir los muros dibujados en recintos medibles."
-              : ", calibra la escala y pulsa «Analizar», o dibuja una medición manualmente."
-          );
-          status.appendChild(pre);
-          status.appendChild(link2);
-          status.appendChild(post);
-        }
-      }
+      renderGuiaSelectorVacio();
       actualizarContadorSelector();
       return;
     }
@@ -294,15 +336,16 @@
   async function cargarSelectorPlanos() {
     var status = $("plano-selector-status");
     var lista = $("plano-selector-lista");
+    selectorEstadoCarga = "cargando";
     if (lista) lista.replaceChildren();
     if (status) status.textContent = "Cargando mediciones del proyecto…";
     var magnitud = $("plano-selector-magnitud");
-    if (magnitud) magnitud.value = selectorMagnitudInicial();
+    if (magnitud) magnitud.value = selectorMagnitudInicial(selectorDestino.unidad);
 
-    var budgetId = editor.BUDGET_ID || window.BUDGET_ID;
+    var budgetId = selectorBudgetId();
     if (!budgetId) {
-      if (status) status.textContent = "Guarda primero el presupuesto para poder vincular medidas de un plano.";
-      actualizarContadorSelector();
+      selectorEstadoCarga = "sin_presupuesto";
+      renderSelectorPlanos();
       return;
     }
     try {
@@ -312,22 +355,46 @@
       });
       var data = await response.json();
       if (response.status === 404 || (data && data.razon === "presupuesto_inexistente")) {
+        selectorEstadoCarga = "error";
         if (status) status.textContent = "El presupuesto no se ha encontrado. Vuelve a abrirlo desde el listado.";
         selectorPlanos = [];
-        renderSelectorPlanos();
         return;
       }
       if (!response.ok || !data.ok) throw new Error((data && data.error) || "No se pudieron cargar las mediciones.");
       selectorPlanos = data.planos || [];
+      // Si no hay estancias (solo mediciones lineales o conteos), la magnitud
+      // útil es la medida guardada: evita abrir el selector con la lista
+      // vacía y obligar al usuario a descubrir el desplegable.
+      var hayEstancias = selectorPlanos.some(function (p) {
+        return (p.mediciones || []).some(function (m) { return m.tipo === "area"; });
+      });
+      if (!hayEstancias && magnitud && selectorPlanos.length) magnitud.value = "valor";
+      selectorEstadoCarga = "listo";
       renderSelectorPlanos();
     } catch (error) {
+      selectorEstadoCarga = "error";
       if (status) status.textContent = error.message || "No se pudieron cargar las mediciones del plano.";
     }
   }
 
-  async function abrirSelectorPlanos() {
+  async function abrirSelectorPlanos(opciones) {
     var overlay = $("modal-mediciones-plano");
     if (!overlay) return;
+    opciones = opciones || {};
+    // Destino: por defecto la ficha del modal; desde el botón 📐 de la fila
+    // se recibe la partida concreta y las medidas se escriben directamente
+    // en ella, sin tener que abrir la ficha completa.
+    selectorDestino = opciones.destinoWrap
+      ? { tipo: "partida", wrap: opciones.destinoWrap, unidad: opciones.unidad || "", nombrePartida: opciones.nombrePartida || "" }
+      : { tipo: "modal" };
+    // El encabezado deja claro DÓNDE terminarán las medidas antes de elegir:
+    // en la partida concreta (acceso rápido) o en la ficha abierta.
+    var titulo = $("titulo-mediciones-plano");
+    if (titulo) {
+      titulo.textContent = selectorDestino.tipo === "partida" && selectorDestino.nombrePartida
+        ? "Añadir medidas del plano a «" + selectorDestino.nombrePartida + "»"
+        : "Añadir desde plano";
+    }
     overlay.classList.add("open");
     document.body.classList.add("modal-open");
     selectorSeleccionadas = new Set();
@@ -338,12 +405,25 @@
   function cerrarSelectorPlanos() {
     var overlay = $("modal-mediciones-plano");
     if (overlay) overlay.classList.remove("open");
-    document.body.classList.remove("modal-open");
+    // Si la ficha de partida sigue abierta debajo, la página permanece
+    // bloqueada tras ella: solo liberamos el scroll cuando ya no hay modales.
+    if (!document.querySelector(".modal-overlay.open")) {
+      document.body.classList.remove("modal-open");
+    }
+    selectorDestino = { tipo: "modal" };
   }
 
   function confirmarSelectorPlanos() {
     var magnitud = $("plano-selector-magnitud");
     var claveMagnitud = magnitud ? magnitud.value : "perimetro";
+    // La partida pudo re-renderizarse mientras el selector estaba abierto
+    // (drag&drop, undo…): en ese caso no añadimos a ciegas, mejor avisar.
+    if (selectorDestino.tipo === "partida" && (!selectorDestino.wrap || !selectorDestino.wrap.isConnected)) {
+      var statusStale = $("plano-selector-status");
+      if (statusStale) statusStale.textContent = "La partida cambió mientras elegías. Cierra y vuelve a pulsar 📐 en esa partida.";
+      return;
+    }
+    var destinoDirecto = selectorDestino.tipo === "partida";
     var añadidas = 0;
     selectorPlanos.forEach(function (plano) {
       (plano.mediciones || []).forEach(function (medicion) {
@@ -351,11 +431,17 @@
         if (!selectorSeleccionadas.has(clave)) return;
         var opcion = selectorOpcion(medicion, claveMagnitud);
         if (!opcion || opcion.cantidad == null) return;
-        addMedicion({
+        var fila = {
           concepto: plano.nombre + " · " + (medicion.etiqueta || "Estancia") + " · " + opcion.etiqueta,
           cantidad: Number(opcion.cantidad)
-        });
-        añadidas += 1;
+        };
+        if (destinoDirecto && editor.Partida && typeof editor.Partida.agregarMedicion === "function") {
+          editor.Partida.agregarMedicion(selectorDestino.wrap, fila, editor);
+          añadidas += 1;
+        } else if (!destinoDirecto) {
+          addMedicion(fila);
+          añadidas += 1;
+        }
       });
     });
     if (!añadidas) {
@@ -365,6 +451,18 @@
     }
     editor.marcarCambio();
     cerrarSelectorPlanos();
+    if (destinoDirecto) {
+      // Confirmación visible inmediata: la fila queda marcada y se avisa de
+      // que la cantidad de la partida ya se ha recalculado con la suma.
+      var flash = $("undo-flash");
+      if (flash) {
+        flash.textContent = añadidas === 1
+          ? "✓ Medida del plano añadida a la partida"
+          : "✓ " + añadidas + " medidas del plano añadidas a la partida";
+        flash.classList.add("show");
+        setTimeout(function () { flash.classList.remove("show"); }, 3500);
+      }
+    }
   }
 
   function leerMediciones() {
@@ -703,9 +801,9 @@
       var fila = addMedicion({});
       fila.querySelector("input").focus();
     });
-    $("editor-add-medicion-plano")?.addEventListener("click", abrirSelectorPlanos);
-    $("editor-cantidad-plano")?.addEventListener("click", abrirSelectorPlanos);
-    $("plano-selector-recargar")?.addEventListener("click", cargarSelectorPlanos);
+    $("editor-add-medicion-plano")?.addEventListener("click", function () { abrirSelectorPlanos(); });
+    $("editor-cantidad-plano")?.addEventListener("click", function () { abrirSelectorPlanos(); });
+    $("plano-selector-recargar")?.addEventListener("click", function () { cargarSelectorPlanos(); });
     $("plano-selector-magnitud")?.addEventListener("change", renderSelectorPlanos);
     document.querySelectorAll("[data-close-plano-selector]").forEach(function (btn) {
       btn.addEventListener("click", cerrarSelectorPlanos);

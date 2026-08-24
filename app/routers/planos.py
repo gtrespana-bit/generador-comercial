@@ -686,9 +686,13 @@ async def aplicar_medicion_endpoint(
         partida_id = int(payload.get("partida_id", 0))
     except Exception:
         return JSONResponse({"ok": False, "error": "Partida no válida."}, status_code=400)
+    # El visor envía la magnitud elegida por el usuario (perímetro, suelo o
+    # paredes para una estancia). Sin ella se aplicaba siempre el valor
+    # crudo guardado y el usuario no controlaba qué número llegaba.
+    magnitud = str(payload.get("magnitud", "") or "").strip().lower() or None
 
     try:
-        res = aplicar_medicion_a_partida(db, med, partida_id)
+        res = aplicar_medicion_a_partida(db, med, partida_id, magnitud)
         return res
     except ErrorPlano as e:
         return JSONResponse({"ok": False, "error": str(e)}, status_code=400)

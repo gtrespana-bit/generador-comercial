@@ -1369,6 +1369,9 @@ def nuevo_presupuesto_form(request: Request, db: Session = Depends(get_db)):
         {
             **_contexto_cascaron_editor(db, cfg, cfg.moneda_default, cfg.tasa_cambio),
             "presupuesto": None,
+            # Presupuesto aún sin guardar: el editor arranca sin id y el
+            # selector de planos pide guardar primero (mensaje explícito).
+            "budget_id": None,
             "tiempos_catalogo": {},
         },
     )
@@ -3509,6 +3512,12 @@ def editar_presupuesto_form(presupuesto_id: int, request: Request, db: Session =
         {
             **_contexto_cascaron_editor(db, cfg, presupuesto.moneda, presupuesto.tipo_cambio),
             "presupuesto": presupuesto,
+            # El editor y el selector de mediciones de plano dependen de este
+            # id (autoguardado, vista previa PDF, 📐 desde plano). Sin él,
+            # `window.BUDGET_ID` quedaba en null y el selector mostraba el
+            # mensaje de «presupuesto sin planos» con enlaces rotos aunque
+            # el presupuesto tuviera planos y mediciones.
+            "budget_id": presupuesto.id,
             "borrador_servidor": borrador_servidor,
             "presupuesto_compartido": presupuesto_compartido,
             "tiempos_catalogo": _tiempos_catalogo(db, presupuesto),

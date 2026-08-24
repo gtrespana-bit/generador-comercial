@@ -318,16 +318,23 @@
         </div>
         <div id="lista-mediciones"></div>
         <div class="planos-apply-box">
+          <div id="aplicar-seleccion-resumen" class="planos-apply-seleccion">Selecciona una medición de la lista para enviarla a una partida.</div>
           <div class="field planos-field-aplicar">
-            <label for="select-partida">Enviar medición seleccionada a</label>
+            <label for="select-magnitud">Qué medida enviar</label>
+            <select id="select-magnitud">
+              <option value="">— Selecciona primero una medición —</option>
+            </select>
+          </div>
+          <div class="field planos-field-aplicar">
+            <label for="select-partida">Partida de destino</label>
             <select id="select-partida">
               <option value="">— Selecciona partida —</option>
               {% for part in partidas %}
-              <option value="{{ part.id }}">{{ part.capitulo }} · {{ part.nombre }} ({{ part.unidad }})</option>
+              <option value="{{ part.id }}" data-unidad="{{ part.unidad }}">{{ part.capitulo }} · {{ part.nombre }} ({{ part.unidad }})</option>
               {% endfor %}
             </select>
           </div>
-          <button class="btn btn-sm btn-primary planos-btn-aplicar" id="btn-aplicar-a-partida">Crear en la partida</button>
+          <button class="btn btn-sm btn-primary planos-btn-aplicar" id="btn-aplicar-a-partida">Añadir a la partida</button>
           <p class="hint" id="aplicar-hint"></p>
         </div>
         <div class="planos-export">
@@ -536,11 +543,15 @@ body.planos-workspace-page { background: var(--bg); }
 .planos-med-btns { display:flex; gap:.18rem; }
 .planos-med-btns .btn { width:25px; height:25px; justify-content:center; padding:0; font-size:.65rem; }
 .planos-apply-box { flex:0 0 auto; margin-top:.5rem; padding:.55rem; border:1px solid var(--border); border-radius:10px; background:var(--surface-alt); }
-.planos-field-aplicar { gap:.2rem; }
+.planos-field-aplicar { gap:.2rem; margin-top:.45rem; }
 .planos-field-aplicar label { font-size:.6rem; }
 .planos-field-aplicar select { width:100%; min-height:32px; padding:.35rem; font-size:.64rem; }
-.planos-btn-aplicar { width:100%; justify-content:center; margin-top:.4rem; }
-.planos-apply-box #aplicar-hint { margin:.3rem 0 0; font-size:.58rem; }
+.planos-apply-seleccion { padding:.42rem .55rem; border:1px dashed var(--border-strong); border-radius:8px; color:var(--text-soft); font-size:.62rem; font-weight:600; line-height:1.35; }
+.planos-apply-seleccion.is-activa { border-style:solid; border-color:var(--accent); background:var(--accent-soft); color:var(--accent); }
+.planos-btn-aplicar { width:100%; justify-content:center; margin-top:.5rem; }
+.planos-apply-box #aplicar-hint { margin:.3rem 0 0; font-size:.58rem; line-height:1.4; }
+.planos-apply-box #aplicar-hint.is-ok { color:var(--green); font-weight:650; }
+.planos-apply-box #aplicar-hint.is-warn { color:var(--rose); font-weight:650; }
 .planos-export { flex:0 0 auto; display:flex; gap:.35rem; margin-top:.45rem; }
 .planos-export .btn { flex:1; justify-content:center; }
 .planos-first-upload { max-width:920px; display:grid; grid-template-columns:auto 1fr; gap:1rem 1.2rem; align-items:center; margin:clamp(2rem,8vh,6rem) auto; padding:clamp(1.4rem,3vw,2.4rem); }
@@ -1132,6 +1143,7 @@ body.planos-workspace-page { background: var(--bg); }
   }
 
   function seleccionarEstancia(m, {focus=true}={}){
+    if ((m ? m.id : null) !== medicionSeleccionadaId) magnitudElegidaManual = false;
     medicionSeleccionadaId = m ? m.id : null;
     activarTabInspector('estancia');
     const vacio = document.getElementById('estancia-vacia');
@@ -1651,9 +1663,18 @@ body.planos-workspace-page { background: var(--bg); }
         : resumen;
       CotizatStyles.set(left, 'cursor', 'pointer');
       left.addEventListener('click', ()=>{
+        // Selección «en sitio»: resalta la medición y rellena el selector de
+        // magnitud sin salir de la lista (antes un área saltaba de pestaña y
+        // el usuario perdía el panel de envío a partida).
+        if (medicionSeleccionadaId !== m.id) magnitudElegidaManual = false;
         medicionSeleccionadaId = m.id;
-        if (m.tipo==='area') activarHerramienta('seleccionar', true).then(()=>seleccionarEstancia(m));
-        else { renderListaMediciones(); dibujar(); }
+        // Si esta medición ya se había enviado a una partida, preselecciona
+        // ese destino: repetir zonas de la misma partida queda a un clic.
+        const partSel = document.getElementById('select-partida');
+        if (partSel && m.partida_destino_id) partSel.value = String(m.partida_destino_id);
+        setAplicarHint('');
+        renderListaMediciones();
+        dibujar();
       });
       left.appendChild(strong); left.appendChild(small);
       const right = document.createElement('div'); right.className='planos-med-btns';
@@ -1708,26 +1729,150 @@ body.planos-workspace-page { background: var(--bg); }
       div.appendChild(left); div.appendChild(right); contLista.appendChild(div);
     });
     renderStats();
+    actualizarAplicarUI();
   }
 
+  // ---------- Enviar medición a una partida (flujo guiado) ----------
+  // Reglas de producto (pensadas como quien hace un presupuesto):
+  //   1. Nada se envía sin que el usuario elija EXPLÍCITAMENTE la medición
+  //      (antes se tomaba en silencio la última guardada → "envía lo que le
+  //      da la gana").
+  //   2. El usuario elige QUÉ medida enviar (suelo, paredes o perímetro de
+  //      una estancia), viendo el valor real antes de confirmar.
+  //   3. La confirmación cuenta qué se añadió, a qué partida y con qué
+  //      concepto quedó en el desglose.
+  let magnitudElegidaManual = false;
+
+  function unidadNormVisible(u){
+    u = String(u || '').toLowerCase().replace('²','2').replace('³','3').trim();
+    return (u==='ml' || u==='metro' || u==='metros') ? 'm' : u;
+  }
+
+  function magnitudesDeMedicion(m){
+    if (!m) return [];
+    if (m.tipo==='area'){
+      const met = metricasLocales(m);
+      if (!met.calibrado) return [{clave:'', etiqueta:'Calibra el plano para poder enviar medidas', cantidad:null, unidad:'', disponible:false}];
+      return [
+        {clave:'suelo',     etiqueta:'Superficie de suelo',    cantidad:met.suelo,     unidad:met.suelo_unidad,     disponible:true},
+        {clave:'paredes',   etiqueta:'Superficie de paredes',  cantidad:met.paredes,   unidad:met.paredes_unidad,   disponible:true},
+        {clave:'perimetro', etiqueta:'Perímetro de estancia',  cantidad:met.perimetro, unidad:met.perimetro_unidad, disponible:true},
+      ];
+    }
+    if (m.tipo!=='conteo' && !escala){
+      return [{clave:'', etiqueta:'Calibra el plano para poder enviar medidas', cantidad:null, unidad:'', disponible:false}];
+    }
+    return [{clave:'valor', etiqueta:'Medida guardada', cantidad:m.valor, unidad:(m.tipo==='conteo' ? 'ud' : m.unidad), disponible:true}];
+  }
+
+  function preferenciaMagnitudPorUnidad(unidadPartida){
+    const u = unidadNormVisible(unidadPartida);
+    if (u==='m2') return 'suelo';
+    if (u==='m')  return 'perimetro';
+    return '';
+  }
+
+  function setAplicarHint(texto, tipo){
+    const hint = document.getElementById('aplicar-hint');
+    if (!hint) return;
+    hint.textContent = texto || '';
+    hint.classList.remove('is-ok','is-warn');
+    if (tipo) hint.classList.add(tipo);
+  }
+
+  function actualizarAplicarUI(){
+    const resumen = document.getElementById('aplicar-seleccion-resumen');
+    const selMag  = document.getElementById('select-magnitud');
+    const m = medicionesGuardadas.find(x=>x.id===medicionSeleccionadaId) || null;
+    if (resumen){
+      if (m){
+        resumen.textContent = 'Medición seleccionada: ' + (ICONO_TIPO[m.tipo]||'📐') + ' ' + (m.etiqueta || m.tipo);
+        resumen.classList.add('is-activa');
+      } else {
+        resumen.textContent = 'Selecciona una medición de la lista para enviarla a una partida.';
+        resumen.classList.remove('is-activa');
+      }
+    }
+    if (selMag){
+      const previa = selMag.value;
+      selMag.replaceChildren();
+      const opciones = magnitudesDeMedicion(m);
+      if (!opciones.length){
+        const o = document.createElement('option');
+        o.value = ''; o.textContent = '— Selecciona primero una medición —';
+        selMag.appendChild(o);
+      } else {
+        opciones.forEach(op=>{
+          const o = document.createElement('option');
+          o.value = op.clave;
+          o.disabled = !op.disponible;
+          o.textContent = op.cantidad==null ? op.etiqueta : (op.etiqueta + ' — ' + fmtMedida(op.cantidad, op.unidad));
+          selMag.appendChild(o);
+        });
+        // Preferencia: la última elección manual; si no, la unidad de la partida.
+        let objetivo = (magnitudElegidaManual && opciones.some(op=>op.clave===previa && op.disponible)) ? previa : '';
+        if (!objetivo){
+          const partSel = document.getElementById('select-partida');
+          const unidadPartida = partSel && partSel.selectedOptions.length ? (partSel.selectedOptions[0].dataset.unidad || '') : '';
+          const pref = preferenciaMagnitudPorUnidad(unidadPartida);
+          if (pref && opciones.some(op=>op.clave===pref && op.disponible)) objetivo = pref;
+        }
+        if (!objetivo){
+          const primera = opciones.find(op=>op.disponible);
+          objetivo = primera ? primera.clave : '';
+        }
+        selMag.value = objetivo;
+      }
+    }
+  }
+
+  document.getElementById('select-magnitud')?.addEventListener('change', ()=>{ magnitudElegidaManual = true; setAplicarHint(''); });
+  document.getElementById('select-partida')?.addEventListener('change', ()=>{
+    // Al cambiar la partida, re-sugerir la magnitud solo si el usuario aún
+    // no la ha elegido a mano para esta medición.
+    if (!magnitudElegidaManual) actualizarAplicarUI();
+    setAplicarHint('');
+  });
+
   document.getElementById('btn-aplicar-a-partida')?.addEventListener('click', async ()=>{
-    const partidaId = document.getElementById('select-partida').value;
-    if (!partidaId){ alert('Selecciona una partida'); return; }
-    if (!medicionesGuardadas.length){ alert('No hay mediciones guardadas'); return; }
-    const medId = medicionSeleccionadaId || medicionEnEdicionId || medicionesGuardadas[medicionesGuardadas.length-1].id;
-    const medicionAplicada = medicionesGuardadas.find(m=>m.id===medId);
-    if (medicionAplicada && medicionAplicada.tipo!=='conteo' && !escala){
-      alert('Calibra el plano antes de enviar una medida a la partida.');
+    const partSel = document.getElementById('select-partida');
+    const partidaId = partSel ? partSel.value : '';
+    const med = medicionesGuardadas.find(x=>x.id===medicionSeleccionadaId) || null;
+    if (!med){
+      setAplicarHint('Primero selecciona una medición de la lista (clic sobre ella).', 'is-warn');
       return;
     }
+    const selMag = document.getElementById('select-magnitud');
+    const magnitud = selMag ? selMag.value : 'valor';
+    if (!magnitud){
+      setAplicarHint('Calibra el plano antes de enviar una medida a la partida.', 'is-warn');
+      return;
+    }
+    if (!partidaId){
+      setAplicarHint('Elige la partida de destino en el desplegable.', 'is-warn');
+      if (partSel) partSel.focus();
+      return;
+    }
+    setAplicarHint('Enviando…');
     try {
-      const res = await fetch(`/planos/${planoActivoId}/mediciones/${medId}/aplicar`, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({partida_id: parseInt(partidaId)})});
+      const res = await fetch(`/planos/${planoActivoId}/mediciones/${med.id}/aplicar`, {
+        method :'POST',
+        headers:{'Content-Type':'application/json'},
+        body   : JSON.stringify({partida_id: parseInt(partidaId), magnitud: magnitud})
+      });
       const data = await res.json();
       if (data.ok){
-        const hint = document.getElementById('aplicar-hint');
-        if (hint) hint.textContent = '✓ Medición aplicada: '+data.cantidad+' a partida '+partidaId;
-      } else alert(data.error||'Error aplicando');
-    } catch(e){ alert('Error conexión'); }
+        med.partida_destino_id = parseInt(partidaId);
+        let texto = '✓ ' + fmtMedida(data.cantidad, data.unidad) + ' (' + (data.magnitud_etiqueta || '') + ') añadido a «' + (data.partida_nombre || 'la partida') + '» como «' + (data.concepto || '') + '». Ya está en el desglose de la partida.';
+        if (data.aviso) texto += ' ' + data.aviso;
+        setAplicarHint(texto, 'is-ok');
+        renderListaMediciones();
+      } else {
+        setAplicarHint(data.error || 'No se pudo añadir la medida a la partida.', 'is-warn');
+      }
+    } catch(e){
+      setAplicarHint('Error de conexión. Inténtalo de nuevo.', 'is-warn');
+    }
   });
 
   // ---------- Carga de planos ----------

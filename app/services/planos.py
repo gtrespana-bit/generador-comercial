@@ -1397,12 +1397,41 @@ def eliminar_medicion(db: Session, medicion: PlanoMedicion):
     db.commit()
 
 
+# Magnitudes que una estancia (área cerrada) puede aportar a una partida.
+# El usuario elige cuál enviar: por defecto ya no se manda «lo que haya»,
+# sino exactamente la medida que necesita la partida (suelo para solados,
+# paredes para pintura, perímetro para rodapiés…).
+MAGNITUDES_AREA_A_PARTIDA = {
+    "perimetro": ("Perímetro de estancia", "perimetro", "m"),
+    "suelo": ("Superficie de suelo", "suelo", "m2"),
+    "paredes": ("Superficie de paredes", "paredes", "m2"),
+    "valor": ("Superficie medida", "suelo", "m2"),
+}
+
+
+def _norm_unidad_presupuesto(unidad: str | None) -> str:
+    """Normaliza una unidad para compararla (m² ≡ m2, ml ≡ m…)."""
+    texto = (unidad or "").strip().lower().replace("²", "2").replace("³", "3")
+    if texto in {"ml", "metro", "metros", "mlineal", "m.lineal"}:
+        return "m"
+    return texto
+
+
 def aplicar_medicion_a_partida(
     db: Session,
     medicion: PlanoMedicion,
     partida_id: int,
+    magnitud: str | None = None,
 ) -> dict:
-    """Crea una Medicion (del presupuesto) a partir de una PlanoMedicion."""
+    """Crea una Medicion (del presupuesto) a partir de una PlanoMedicion.
+
+    ``magnitud`` decide QUÉ medida de la estancia se envía (perímetro,
+    suelo o paredes). Antes siempre se enviaba ``medicion.valor``, así una
+    estancia sólo podía aportar su suelo aunque el usuario necesitara las
+    paredes para una partida de pintura: el visor parecía «enviar lo que
+    le daba la gana». Ahora el visor ofrece las magnitudes reales con sus
+    valores y aquí se calcula exactamente la pedida.
+    """
     from ..models import Medicion, PresupuestoItem
 
     partida = db.query(PresupuestoItem).filter(PresupuestoItem.id == partida_id).first()
@@ -1413,23 +1442,79 @@ def aplicar_medicion_a_partida(
     if partida.capitulo and partida.capitulo.presupuesto_id != medicion.presupuesto_id:
         raise ErrorPlano("La partida no pertenece al mismo presupuesto que el plano.")
 
-    # Crear medición de presupuesto
-    # Si es conteo, valor es uds; si lineal, m; si área, m2
-    concepto = medicion.etiqueta or f"Plano {medicion.plano.nombre} - {medicion.tipo}"
+    plano = medicion.plano
+    etiqueta = (medicion.etiqueta or "").strip() or "Medición"
+    clave = (magnitud or "").strip().lower()
+
+    if medicion.tipo == "area":
+        if not clave:
+            clave = "valor"
+        if clave not in MAGNITUDES_AREA_A_PARTIDA:
+            raise ErrorPlano("Magnitud no válida para una estancia.")
+        metricas = metricas_estancia(
+            medicion.puntos(),
+            plano.escala_px_por_metro if plano else None,
+            plano.altura_m if plano else None,
+            plano.grosor_tabique_m if plano else None,
+        )
+        if not metricas.get("calibrado"):
+            raise ErrorPlano("Calibra el plano antes de enviar una medida a la partida.")
+        magnitud_etiqueta, metrica_clave, unidad = MAGNITUDES_AREA_A_PARTIDA[clave]
+        cantidad = float(metricas.get(metrica_clave) or 0)
+    else:
+        # Lineal, perímetro libre y conteo tienen una única magnitud: su
+        # propio valor guardado.
+        if medicion.tipo != "conteo" and (medicion.unidad or "").startswith("px"):
+            raise ErrorPlano("Calibra el plano antes de enviar una medida a la partida.")
+        clave = "valor"
+        magnitud_etiqueta = "Medida guardada"
+        unidad = medicion.unidad or ""
+        cantidad = float(medicion.valor or 0)
+
+    if cantidad <= 0:
+        raise ErrorPlano("La medición seleccionada tiene un valor de cero; revísala en el plano.")
+
+    concepto = " · ".join(
+        parte for parte in ((plano.nombre if plano else ""), etiqueta, magnitud_etiqueta) if parte
+    )
     # Si ya hay mediciones, añadir, si no, cantidad directa se reemplaza por suma
     from sqlalchemy import func
     max_orden = db.query(func.max(Medicion.orden)).filter(Medicion.partida_id == partida.id).scalar() or 0
     nueva = Medicion(
         partida_id=partida.id,
         concepto=concepto[:250],
-        cantidad=float(medicion.valor or 0),
+        cantidad=round(cantidad, 3),
         orden=max_orden + 1,
     )
     db.add(nueva)
     # Vincular
     medicion.partida_destino_id = partida.id
     db.commit()
-    return {"ok": True, "medicion_id": nueva.id, "cantidad": nueva.cantidad}
+
+    # Aviso suave cuando la unidad enviada no coincide con la de la partida
+    # (p. ej. perímetro en m a una partida en m²). Se envía igualmente: el
+    # desglose es editable, pero el usuario debe saberlo.
+    aviso = ""
+    unidad_partida = _norm_unidad_presupuesto(partida.unidad)
+    unidad_enviada = _norm_unidad_presupuesto(unidad)
+    if unidad_partida and unidad_enviada and unidad_partida != unidad_enviada:
+        aviso = (
+            f"Ojo: la medida enviada va en {unidad} y la partida "
+            f"«{partida.nombre}» está en {partida.unidad}."
+        )
+
+    return {
+        "ok": True,
+        "medicion_id": nueva.id,
+        "cantidad": nueva.cantidad,
+        "unidad": unidad,
+        "magnitud": clave,
+        "magnitud_etiqueta": magnitud_etiqueta,
+        "concepto": concepto[:250],
+        "partida_id": partida.id,
+        "partida_nombre": partida.nombre,
+        "aviso": aviso,
+    }
 
 
 def renombrar_medicion(db: Session, medicion: PlanoMedicion, etiqueta: str) -> PlanoMedicion:
