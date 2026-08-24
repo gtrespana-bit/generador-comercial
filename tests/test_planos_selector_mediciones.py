@@ -115,6 +115,44 @@ def test_selector_devuelve_planos_y_mediciones(presupuesto_creado):
         assert suelo["cantidad"] is not None and suelo["cantidad"] > 0
 
 
+def test_selector_autodetects_estancias_de_plano_dibujado_sin_mediciones(presupuesto_creado):
+    """Un plano dibujado con muros trazados pero sin estancias detectadas se
+    materializa solo al abrir el selector: el presupuesto ve los recintos sin
+    que el usuario tenga que pasar por el editor a pulsar «Detectar»."""
+    with TestClient(app) as client:
+        resp = client.post(
+            f"/presupuestos/{presupuesto_creado}/planos/blanco",
+            json={"nombre": "Desde cero", "grosor_tabique_cm": 10},
+        )
+        assert resp.status_code == 200, resp.text
+        plano_id = resp.json()["plano_id"]
+
+        # Cuadrado cerrado de 4 muros (300 px = 3 m a escala 100 px/m).
+        for puntos in (
+            [[100, 100], [400, 100]],
+            [[400, 100], [400, 400]],
+            [[400, 400], [100, 400]],
+            [[100, 400], [100, 100]],
+        ):
+            resp = client.post(
+                f"/planos/{plano_id}/elementos",
+                json={"tipo": "muro", "puntos": puntos, "grosor_cm": 10},
+            )
+            assert resp.status_code == 200, resp.text
+
+        # Sin llamar a /detectar: el selector debe autodetectar la estancia.
+        resp = client.get(f"/presupuestos/{presupuesto_creado}/planos/mediciones-selector")
+        assert resp.status_code == 200, resp.text
+        data = resp.json()
+        plano = next((p for p in data["planos"] if p["id"] == plano_id), None)
+        assert plano is not None
+        assert plano["total_muros"] == 4
+        assert plano["mediciones"], "El selector debe materializar la estancia dibujada."
+        opciones = {o["clave"]: o for o in plano["mediciones"][0]["opciones"]}
+        assert opciones["suelo"]["cantidad"] == pytest.approx(8.41, abs=0.1)
+        assert opciones["perimetro"]["cantidad"] == pytest.approx(11.6, abs=0.1)
+
+
 def test_selector_presupuesto_inexistente_devuelve_404_con_razon(presupuesto_creado):
     """El 404 del selector debe distinguir "no existe" de "no hay planos"."""
     with SessionLocal() as s:

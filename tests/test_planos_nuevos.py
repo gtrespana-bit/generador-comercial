@@ -136,21 +136,43 @@ def test_detectar_espacios_plano_no_falla_con_grosor_explicito(db, presupuesto):
 
 def test_dibujo_y_deteccion_vectorial_basica(db, presupuesto):
     plano = crear_plano_en_blanco(db, presupuesto_id=presupuesto.id, nombre="dibujo", ancho_lienzo_m=8, alto_lienzo_m=6, grosor_tabique_cm=10)
-    # Forzamos una escala para que el filtro de área mínima no descarte
-    # geometrías muy pequeñas.
-    plano.escala_px_por_metro = 50.0
-    db.commit()
-    # Creamos 4 muros en cuadrado cerrado.
+    # Creamos 4 muros en cuadrado cerrado (escala interna 100 px/m).
     guardar_elemento(db, plano, "muro", [[100, 100], [400, 100]], grosor_cm=10)
     guardar_elemento(db, plano, "muro", [[400, 100], [400, 400]], grosor_cm=10)
     guardar_elemento(db, plano, "muro", [[400, 400], [100, 400]], grosor_cm=10)
     guardar_elemento(db, plano, "muro", [[100, 400], [100, 100]], grosor_cm=10)
     db.refresh(plano)
-    # Sin polígonos viables (los muros no están cerrados en vértices
-    # compartidos por el parser actual) la lista puede ser vacía; lo que
-    # nos importa es que el motor no lance excepción.
+
     candidatos = detectar_estancias_sobre_dibujo(plano)
-    assert isinstance(candidatos, list)
+    # Una única estancia, pegada a la cara interior de los muros de 10 cm.
+    assert len(candidatos) == 1
+    poligono = candidatos[0]["puntos"]
+    assert abs(candidatos[0]["area_px2"] - 290 * 290) < 2.0
+    assert min(p[0] for p in poligono) == pytest.approx(105.0)
+    assert max(p[0] for p in poligono) == pytest.approx(395.0)
+    assert min(p[1] for p in poligono) == pytest.approx(105.0)
+    assert max(p[1] for p in poligono) == pytest.approx(395.0)
+
     creadas, omitidas = guardar_detecciones_sobre_dibujo(db, plano, candidatos)
-    assert isinstance(creadas, list)
-    assert isinstance(omitidas, int)
+    assert len(creadas) == 1
+    assert omitidas == 0
+    # Volver a detectar no duplica la estancia.
+    creadas2, omitidas2 = guardar_detecciones_sobre_dibujo(db, plano, candidatos)
+    assert creadas2 == []
+    assert omitidas2 == 1
+
+
+def test_dibujo_en_cruz_detecta_cuatro_estancias(db, presupuesto):
+    plano = crear_plano_en_blanco(db, presupuesto_id=presupuesto.id, nombre="cruz", ancho_lienzo_m=10, alto_lienzo_m=8, grosor_tabique_cm=10)
+    guardar_elemento(db, plano, "muro", [[100, 100], [900, 100]], grosor_cm=10)
+    guardar_elemento(db, plano, "muro", [[900, 100], [900, 700]], grosor_cm=10)
+    guardar_elemento(db, plano, "muro", [[900, 700], [100, 700]], grosor_cm=10)
+    guardar_elemento(db, plano, "muro", [[100, 700], [100, 100]], grosor_cm=10)
+    guardar_elemento(db, plano, "muro", [[500, 100], [500, 700]], grosor_cm=10)
+    guardar_elemento(db, plano, "muro", [[100, 400], [900, 400]], grosor_cm=10)
+    db.refresh(plano)
+
+    candidatos = detectar_estancias_sobre_dibujo(plano)
+    assert len(candidatos) == 4
+    # Cada estancia mide (500-100-10) x (400-100-10) = 390 x 290 px.
+    assert all(abs(c["area_px2"] - 390 * 290) < 2.0 for c in candidatos)
