@@ -155,3 +155,89 @@ def test_verificar_head_alembic_postgresql_eleva_runtime_error_si_tabla_vacia_o_
     monkeypatch.setattr("app.database.engine", _FakeEngine(EXPECTED_ALEMBIC_HEAD))
     _verificar_head_alembic_postgresql()  # No debe elevar excepción
 
+
+
+RAIZ_REPO = Path(__file__).resolve().parents[1]
+
+
+def test_expected_head_coincide_con_la_cabeza_real_de_alembic():
+    """El head exigido por el runtime no puede quedarse atrás.
+
+    Regresión del 500 del 23/08/2026 en el visor de planos: el PR que añadió
+    ``planos_obra.altura_libre_m`` creó la revisión e4b8c2d6a190 pero dejó
+    ``EXPECTED_ALEMBIC_HEAD`` en c0d1e2f3a4b5. /readyz siguió verde, el deploy
+    se publicó sin migrar y producción reventó con
+    ``UndefinedColumn: planos_obra.altura_libre_m`` en cada ``SELECT`` del
+    visor. Comparando contra el grafo real de revisiones (no contra un head
+    escrito a mano), cualquier migración nueva sin su actualización se
+    detecta en CI antes del despliegue.
+    """
+    from alembic.config import Config
+    from alembic.script import ScriptDirectory
+
+    config = Config(str(RAIZ_REPO / "alembic.ini"))
+    config.set_main_option("script_location", str(RAIZ_REPO / "migrations"))
+    cabezas = ScriptDirectory.from_config(config).get_heads()
+    assert len(cabezas) == 1, f"Se esperaba una sola cabeza, hay: {cabezas}"
+    assert cabezas[0] == EXPECTED_ALEMBIC_HEAD
+
+
+def test_head_actual_tiene_sql_de_aplicacion_manual_en_supabase():
+    """Cada cabeza nueva debe traer su ``docs/staging_upgrade_<rev>.sql``.
+
+    En producción (Supabase, sin ``MIGRATION_DATABASE_URL`` en Vercel) las
+    migraciones se aplican pegando ese archivo en el SQL Editor. El 500 del
+    visor de planos ocurrió también porque e4b8c2d6a190 llegó sin él.
+    """
+    sql = RAIZ_REPO / "docs" / f"staging_upgrade_{EXPECTED_ALEMBIC_HEAD}.sql"
+    assert sql.exists(), (
+        f"Falta {sql.name}: crea el SQL de aplicación manual para el head "
+        f"{EXPECTED_ALEMBIC_HEAD}."
+    )
+    contenido = sql.read_text(encoding="utf-8")
+    assert EXPECTED_ALEMBIC_HEAD in contenido
+    assert "UPDATE public.alembic_version" in contenido
+
+
+def test_auto_reparacion_incluye_altura_libre_de_planos():
+    """El arranque best-effort debe curar también el incidente de planos.
+
+    Si otro despliegue llega sin migrar, el primer arranque con una URL con
+    permisos DDL crea la columna y la app no vuelve al 500 permanente.
+    """
+    fuente = (RAIZ_REPO / "app" / "database.py").read_text(encoding="utf-8")
+    assert (
+        "ALTER TABLE planos_obra ADD COLUMN IF NOT EXISTS altura_libre_m FLOAT"
+        in fuente
+    )
+    # Solo se avanza la marca si la columna existe de verdad (misma regla que
+    # recorrido_inicial_oculto): marcar sin crear dejaría el 500 permanente.
+    bloque = fuente.split('cur == "c0d1e2f3a4b5"', 1)[1]
+    assert "if altura_creada:" in bloque
+    assert "version_num = 'e4b8c2d6a190'" in bloque
+    # Y la base atascada en b1 con el contenido de planos ya creado solo se
+    # rescata verificando el contenido real (8 políticas + columna), nunca a
+    # ciegas: el 23/08/2026 el rol runtime no podía escribir alembic_version.
+    bloque_b1 = fuente.split('cur == "b1c2d3e4f5a6"', 1)[1]
+    assert "if politicas_planos == 8 and altura_creada:" in bloque_b1
+
+
+def test_existe_sql_de_rescate_desde_b1_con_contenido_planos_ya_creado():
+    """Rescate b1→e4 para bases cuya marca se quedó atrás (incidente planos).
+
+    La auto-reparación de arranque crea tablas/políticas pero el rol runtime
+    no puede escribir ``alembic_version``: la marca queda en b1c2d3e4f5a6 y
+    las guardas de los staging_upgrade por revisión la rechazan. Este archivo
+    une el camino verificando el contenido real antes de avanzar la marca.
+    """
+    sql = RAIZ_REPO / "docs" / "staging_upgrade_b1c2d3e4f5a6_to_e4b8c2d6a190.sql"
+    assert sql.exists()
+    contenido = sql.read_text(encoding="utf-8")
+    # La guarda exige la versión atascada y el contenido de b2/c0 ya presente.
+    assert "b1c2d3e4f5a6" in contenido
+    assert "cotizat_planos_%" in contenido
+    # Cierra huecos idempotentemente y añade la columna del head actual.
+    assert "CREATE POLICY cotizat_planos_obra_select" in contenido
+    assert "ADD COLUMN IF NOT EXISTS altura_libre_m" in contenido
+    assert "SET version_num = 'e4b8c2d6a190'" in contenido
+    assert "WHERE version_num = 'b1c2d3e4f5a6'" in contenido

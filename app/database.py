@@ -91,7 +91,7 @@ DATABASE_URL = DATABASE.url
 DATABASE_BACKEND = DATABASE.backend
 DATABASE_IS_SQLITE = DATABASE.is_sqlite
 DB_PATH = DATABASE.sqlite_path
-EXPECTED_ALEMBIC_HEAD = "c0d1e2f3a4b5"
+EXPECTED_ALEMBIC_HEAD = "e4b8c2d6a190"
 
 # Copias de seguridad automáticas y manuales (solo corresponden al modo
 # SQLite local; PostgreSQL tendrá backups administrados fuera del proceso).
@@ -708,6 +708,11 @@ def _asegurar_esquema_postgres() -> None:
             "ALTER TABLE configuracion ADD COLUMN IF NOT EXISTS fuente_tipo_cambio VARCHAR(120) DEFAULT ''",
             "ALTER TABLE configuracion ADD COLUMN IF NOT EXISTS fecha_tasa DATE",
             "ALTER TABLE presupuestos ADD COLUMN IF NOT EXISTS total_calculado FLOAT",
+            # Bloque planos: altura libre de paramentos (head e4b8c2d6a190).
+            # El deploy del 23/08/2026 subió el modelo sin ejecutar la
+            # migración y cada apertura del visor de planos devolvía 500 con
+            # ``UndefinedColumn: planos_obra.altura_libre_m does not exist``.
+            "ALTER TABLE planos_obra ADD COLUMN IF NOT EXISTS altura_libre_m FLOAT",
         )
         sin_permiso_ddl = False
         for sentencia in sentencias:
@@ -743,6 +748,19 @@ def _asegurar_esquema_postgres() -> None:
                     WHERE table_name = 'configuracion'
                       AND column_name = 'recorrido_inicial_oculto'
                 """)).first() is not None
+                altura_creada = conn.execute(text("""
+                    SELECT 1 FROM information_schema.columns
+                    WHERE table_name = 'planos_obra'
+                      AND column_name = 'altura_libre_m'
+                """)).first() is not None
+                # Contenido real del bloque planos (b2/c0): las 8 políticas
+                # solo existen si las tablas y el RLS se crearon de verdad.
+                politicas_planos = conn.execute(text("""
+                    SELECT count(*) FROM pg_policies
+                    WHERE schemaname = 'public'
+                      AND tablename IN ('planos_obra', 'planos_mediciones')
+                      AND policyname LIKE 'cotizat_planos_%'
+                """)).scalar()
                 cur = conn.execute(text("SELECT version_num FROM public.alembic_version")).scalar_one_or_none()
                 if not columna_creada:
                     logging.getLogger("cotizat").warning(
@@ -753,15 +771,38 @@ def _asegurar_esquema_postgres() -> None:
                     conn.execute(text("UPDATE public.alembic_version SET version_num = 'b1c2d3e4f5a6'"))
                     logging.getLogger("cotizat").info("alembic_version avanzada de c3e9a1b7d4f2 a b1c2d3e4f5a6 tras auto-reparación.")
                 elif cur == "b1c2d3e4f5a6":
-                    # No se puede marcar b2/c0 desde esta reparación: planos
-                    # crea tablas, GRANT y políticas RLS. Si se avanzara solo
-                    # por haber creado columnas de configuración, Alembic ya no
-                    # ejecutaría la migración real y el visor fallaría con
-                    # ``permission denied`` o ``undefined table``.
-                    logging.getLogger("cotizat").warning(
-                        "alembic_version sigue en b1c2d3e4f5a6: no se marca "
-                        "planos como aplicado automáticamente. Ejecuta `alembic upgrade head`."
-                    )
+                    # Una base puede quedarse en b1 con TODO el contenido de
+                    # b2/c0 ya presente: la reparación best-effort de arranque
+                    # creó tablas y políticas, pero el rol runtime solo tiene
+                    # SELECT sobre alembic_version y la marca nunca avanzó
+                    # (incidente del visor de planos del 23/08/2026). Si las 8
+                    # políticas y altura_libre_m existen de verdad, la base
+                    # equivale a e4b8c2d6a190 y se puede marcar sin riesgo.
+                    # Si falta algo, no se avanza: podría quedar un GRANT sin
+                    # ejecutar y el visor fallaría con ``permission denied`` o
+                    # ``undefined table``.
+                    if politicas_planos == 8 and altura_creada:
+                        conn.execute(text("UPDATE public.alembic_version SET version_num = 'e4b8c2d6a190'"))
+                        logging.getLogger("cotizat").info("alembic_version avanzada de b1c2d3e4f5a6 a e4b8c2d6a190: contenido de planos ya verificado presente.")
+                    else:
+                        logging.getLogger("cotizat").warning(
+                            "alembic_version sigue en b1c2d3e4f5a6: no se marca "
+                            "planos como aplicado automáticamente. Ejecuta `alembic upgrade head`."
+                        )
+                elif cur == "c0d1e2f3a4b5":
+                    # Sí se puede avanzar a e4b8c2d6a190: a diferencia de
+                    # b2/c0 (tablas, GRANT y políticas RLS), esta revisión solo
+                    # añade una columna NULL, exactamente el ALTER de arriba.
+                    # Se avanza siempre que la columna exista DE VERDAD, para
+                    # no repetir el 500 permanente del visor de planos.
+                    if altura_creada:
+                        conn.execute(text("UPDATE public.alembic_version SET version_num = 'e4b8c2d6a190'"))
+                        logging.getLogger("cotizat").info("alembic_version avanzada de c0d1e2f3a4b5 a e4b8c2d6a190 tras auto-reparación.")
+                    else:
+                        logging.getLogger("cotizat").warning(
+                            "Falta planos_obra.altura_libre_m: no se avanza "
+                            "alembic_version (ejecuta `alembic upgrade head`)."
+                        )
                 elif cur is None:
                     logging.getLogger("cotizat").warning(
                         "Base sin alembic_version: no se inserta un head ficticio. "

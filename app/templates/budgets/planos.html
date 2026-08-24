@@ -818,7 +818,7 @@
     if (forzar) puntosActuales = [];
     if (herramienta!=='calibrar') calibracionPuntos = [];
     canvas.classList.toggle('modo-mover', herramienta==='mover');
-    if (canvas) canvas.style.cursor = (herramienta==='seleccionar') ? 'pointer' : '';
+    if (canvas) CotizatStyles.set(canvas, 'cursor', (herramienta==='seleccionar') ? 'pointer' : '');
     actualizarValorActual(); dibujar();
     return true;
   }
@@ -1114,7 +1114,7 @@
       const small = document.createElement('small'); small.textContent = met && met.paredes!=null
         ? (`paredes ${fmtMedida(met.paredes, met.paredes_unidad)} · ${m.puntos?.length||0} pts`)
         : (m.tipo + ' · ' + (m.puntos?.length||0) + ' puntos');
-      left.style.cursor = 'pointer';
+      CotizatStyles.set(left, 'cursor', 'pointer');
       left.addEventListener('click', ()=>{
         if (m.tipo==='area'){
           activarHerramienta('seleccionar', true).then(()=>seleccionarEstancia(m));
