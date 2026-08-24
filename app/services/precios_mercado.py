@@ -219,6 +219,27 @@ def guardar_precio(db: Session, recurso_id: int, pais_codigo: str, precio: float
         db.add(HistorialPrecioRecurso(precio_mercado=row, precio_anterior=anterior, precio_nuevo=row.precio, moneda=row.moneda, motivo="Actualización de referencia", fuente=row.fuente))
     return row
 
+def eliminar_precio_organizacion(db: Session, recurso_id: int, pais_codigo: str,
+                                 organizacion_id: int) -> bool:
+    """Elimina el precio propio de una organización para un recurso y país.
+
+    Usado cuando el usuario borra su valor en el formulario: a partir de ese
+    momento vuelve a mandar la referencia nacional de mercado.
+    """
+    if organizacion_id is None or int(organizacion_id) <= 0:
+        return False
+    pais = str(pais_codigo or "").strip().upper()
+    row = db.query(PrecioRecursoMercado).filter(
+        PrecioRecursoMercado.recurso_id == recurso_id,
+        PrecioRecursoMercado.pais_codigo == pais,
+        PrecioRecursoMercado.organizacion_id == int(organizacion_id),
+    ).first()
+    if row is None:
+        return False
+    db.delete(row)
+    return True
+
+
 def resolver_precio_para_presupuesto(db: Session, recurso_id: int, pais_codigo: str,
                                      organizacion_id: int | None, moneda_presupuesto: str,
                                      tasa_mercado_a_usd: float | None = None,

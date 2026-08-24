@@ -166,13 +166,15 @@ def test_head_exigido_por_runtime_coincide_con_alembic():
     from migrations.versions import c3e9a1b7d4f2_stripe_checkout as stripe_migration
     from migrations.versions import c5d6e7f8a9b0_merge_currency_heads as merge_migration
     from migrations.versions import e4b8c2d6a190_planos_altura_libre as altura_migration
-    assert database_module.EXPECTED_ALEMBIC_HEAD == altura_migration.revision
-    # La altura libre es ahora la cabeza visible. Permisos de planos_elementos
-    # (d1e2f3a4b5c6) se insertó entre los permisos de planos (c0d1e2f3a4b5)
-    # y la altura, por lo que la cadena esperada queda:
-    #   c0d1e2f3a4b5 (permisos planos) → d1e2f3a4b5c6 (permisos elementos)
-    #   → e4b8c2d6a190 (altura libre)
+    from migrations.versions import f1b2c3d4e5a6_planos_vectoriales_schema as vectorial_migration
+    assert database_module.EXPECTED_ALEMBIC_HEAD == vectorial_migration.revision
+    # El editor vectorial es ahora la cabeza visible. Permisos de
+    # planos_elementos (d1e2f3a4b5c6) se insertó entre los permisos de planos
+    # (c0d1e2f3a4b5), la altura (e4b8c2d6a190) y el esquema vectorial
+    # (f1b2c3d4e5a6), por lo que la cadena esperada queda:
+    #   c0d1e2f3a4b5 → d1e2f3a4b5c6 → e4b8c2d6a190 → f1b2c3d4e5a6
     from migrations.versions import d1e2f3a4b5c6_planos_elementos_permissions as elementos_migration
+    assert vectorial_migration.down_revision == altura_migration.revision
     assert altura_migration.down_revision == elementos_migration.revision
     assert elementos_migration.down_revision == permisos_planos_migration.revision
     assert permisos_planos_migration.down_revision == planos_migration.revision

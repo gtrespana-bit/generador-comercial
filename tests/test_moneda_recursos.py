@@ -44,7 +44,7 @@ def _mexico(Session, *, precio_recurso=6.5):
 
 
 def test_lista_de_recursos_habla_una_sola_moneda(entorno, cliente_web):
-    """Precio base y precio de mercado, ambos en MXN: nada de USD suelto."""
+    """Se muestra el precio de mercado; el base convertido nunca se enseña."""
     Session, _ids, _rol = entorno
     recurso_id = _mexico(Session, precio_recurso=6.5)
     with Session() as db:
@@ -56,45 +56,59 @@ def test_lista_de_recursos_habla_una_sola_moneda(entorno, cliente_web):
 
     html = cliente_web.get("/recursos").text
 
-    # Base convertida: 6,5 USD × 17,5 = 113,75 MXN
-    assert "113,75 MXN" in html
     # Mercado ya está en MXN (referencia nacional): se muestra tal cual
     assert "Mercado MX: 100,00 MXN" in html
+    # El precio base convertido (6,5 USD × 17,5 = 113,75 MXN) no se muestra
+    assert "113,75 MXN" not in html
+    assert "Base catálogo" not in html
     # La moneda base del recurso ya no se muestra como USD
-    assert "money_iso" not in html
     assert "6,50 USD" not in html
     # El encabezado de familia también totaliza en la moneda de la organización
     assert "MXN" in html
 
 
-def test_formulario_de_recurso_se_edita_en_la_moneda_de_la_organizacion(entorno, cliente_web):
+def test_formulario_de_recurso_no_muestra_el_precio_base(entorno, cliente_web):
     Session, _ids, _rol = entorno
     recurso_id = _mexico(Session, precio_recurso=6.5)
 
     html = cliente_web.get(f"/recursos/{recurso_id}/editar").text
 
-    assert "Precio base (MXN)" in html
-    # El input llega convertido (6,5 USD × 17,5), no en dólares crudos
+    # El precio base ya no es un campo visible: solo se conserva en un oculto
+    # para no perder la plantilla interna.
+    assert "Precio base (MXN)" not in html
+    assert 'name="precio"' in html
     assert 'value="113.75"' in html
-    assert "Precio base (USD)" not in html
+    # Sin referencia nacional en esta prueba, el formulario avisa de que falta
+    # precio de mercado en lugar de enseñar el base convertido.
+    assert "Sin precio de mercado para MX" in html
 
 
-def test_guardar_recurso_convierte_a_la_base_usd_antes_de_persistir(entorno, cliente_web):
-    """El formulario envía MXN; el catálogo guarda USD (10 USD, no 175)."""
+def test_guardar_recurso_ignora_el_precio_base_y_guarda_el_precio_propio(entorno, cliente_web):
+    """El formulario de mercado ignora el base y persiste el precio propio."""
     Session, _ids, _rol = entorno
     recurso_id = _mexico(Session, precio_recurso=6.5)
 
     respuesta = cliente_web.post(
         f"/recursos/{recurso_id}/editar",
         data={"codigo": "MO001", "descripcion": "Oficial", "unidad": "hora",
-              "categoria": "mano_obra", "precio": "175.0"},
+              "categoria": "mano_obra", "precio": "175.0",
+              "precio_mercado": "200.0"},
         follow_redirects=False,
     )
     assert respuesta.status_code in (302, 303, 307)
 
     with Session() as db:
         recurso = db.get(Recurso, recurso_id)
-        assert recurso.precio == pytest.approx(10.0)  # 175 MXN / 17,5
+        # El precio base del catálogo no se toca desde este formulario.
+        assert recurso.precio == pytest.approx(6.5)
+        # El precio propio de la organización queda persistido para el futuro.
+        precio_propio = db.query(PrecioRecursoMercado).filter(
+            PrecioRecursoMercado.recurso_id == recurso_id,
+            PrecioRecursoMercado.pais_codigo == "MX",
+            PrecioRecursoMercado.organizacion_id.isnot(None),
+        ).one()
+        assert precio_propio.precio == pytest.approx(200.0)
+        assert precio_propio.moneda == "MXN"
 
 
 def test_recurso_nuevo_guarda_la_moneda_local_como_base_usd(entorno, cliente_web):
@@ -132,13 +146,20 @@ def test_precio_fijo_por_lote_se_escribe_en_la_moneda_de_la_organizacion(entorno
 
 def test_exportacion_csv_de_recursos_expresa_la_moneda_de_la_organizacion(entorno, cliente_web):
     Session, _ids, _rol = entorno
-    _mexico(Session, precio_recurso=6.5)
+    recurso_id = _mexico(Session, precio_recurso=6.5)
+    with Session() as db:
+        db.add(PrecioRecursoMercado(
+            recurso_id=recurso_id, pais_codigo="MX", organizacion_id=None,
+            precio=100.0, moneda="MXN", confianza="confirmado",
+        ))
+        db.commit()
 
     csv = cliente_web.get("/recursos/exportar").content.decode("utf-8")
 
     assert "Moneda" in csv
     assert "MXN" in csv
-    assert "113,75" in csv
+    assert "100,00" in csv
+    assert "113,75" not in csv  # el base convertido no viaja en exportaciones
     assert "6,50" not in csv  # el precio crudo en USD ya no viaja
 
 
@@ -212,8 +233,8 @@ def test_reportes_totalizan_en_la_moneda_de_la_organizacion(entorno, cliente_web
 
 
 def test_moneda_sin_tasa_no_etiqueta_pesos_sobre_cifras_en_dolares(entorno, cliente_web):
-    """Organización MXN sin tasa: sin conversión inventada, la vista confiesa
-    la base (USD) en vez de etiquetar «MXN» cifras guardadas en dólares."""
+    """Organización MXN sin tasa: sin conversión inventada no se muestra la
+    base convertida como si fuera un precio de mercado."""
     Session, _ids, _rol = entorno
     with Session() as db:
         cfg = db.query(Configuracion).first()
@@ -224,9 +245,12 @@ def test_moneda_sin_tasa_no_etiqueta_pesos_sobre_cifras_en_dolares(entorno, clie
 
     html = cliente_web.get("/recursos").text
 
-    assert "6,50 USD" in html          # el recurso base, en su moneda real
-    assert "MXN total" not in html     # ninguna etiqueta local sin tasa
-    assert "Importes en <strong>USD</strong>" in html  # subtítulo honesto
+    # El precio base (Venezuela convertida) no se enseña como mercado.
+    assert "6,50 USD" not in html
+    assert "113,75 MXN" not in html
+    assert "Sin precio de mercado para MX" in html
+    assert "MXN total" not in html
+    assert "Importes en <strong>USD</strong>" in html
 
 
 def test_formulario_de_partida_nueva_etiqueta_la_moneda_de_la_organizacion(entorno, cliente_web):
