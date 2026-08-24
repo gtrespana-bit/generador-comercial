@@ -291,6 +291,41 @@ def test_area_de_medicion_ignora_plano_inexistente(entorno_planos):
     assert f"planoActivoId = {ids[4]};" in resp.text
 
 
+def test_workspace_planos_es_compacto_y_solo_hace_zoom_con_lupas(entorno_planos):
+    """El visor evita el zoom accidental de rueda y mantiene el plano a mano."""
+    _Session, ids = entorno_planos
+    client = TestClient(app, base_url="https://cotizat.test")
+    resp = client.get(f"/presupuestos/{ids[2]}/planos?plano={ids[3]}")
+    assert resp.status_code == 200
+    html = resp.text
+    assert 'class="planos-layout"' in html
+    assert 'data-inspector-tab="estancia"' in html
+    assert 'data-inspector-tab="medir"' in html
+    assert 'data-inspector-tab="resultados"' in html
+    assert 'id="btn-zoom-in"' in html
+    assert 'id="btn-zoom-out"' in html
+    assert "Zoom únicamente con las lupas" in html
+    assert "addEventListener('wheel'" not in html
+    assert 'id="btn-fit-view"' not in html
+    assert 'id="btn-reset-view"' not in html
+
+
+def test_workspace_no_presenta_pixeles_como_medida_al_usuario(entorno_planos):
+    """Píxeles quedan como dato técnico interno; la interfaz habla en m y m²."""
+    _Session, ids = entorno_planos
+    client = TestClient(app, base_url="https://cotizat.test")
+    resp = client.get(f"/presupuestos/{ids[2]}/planos?plano={ids[3]}")
+    assert resp.status_code == 200
+    assert "Medidas reales en metros" in resp.text
+    assert "metros cuadrados" in resp.text
+    assert "px/m" not in resp.text
+
+    galeria = client.get("/planos")
+    assert galeria.status_code == 200
+    assert "Escala real lista" in galeria.text
+    assert "px/m" not in galeria.text
+
+
 def test_subida_activa_analisis_y_detecciones_persisten_sin_duplicarse(entorno_planos):
     Session, ids = entorno_planos
     client = TestClient(app, base_url="https://cotizat.test")
