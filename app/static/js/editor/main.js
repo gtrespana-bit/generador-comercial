@@ -306,6 +306,40 @@
         var precio = FMT.parseNum(row.querySelector('input[data-f="p_precio"]').value);
         var importe = FMT.redondear2(cant * precio);
 
+        // Desglose de mediciones visible bajo la fila: el campo de cantidad
+        // refleja la SUMA de las mediciones (y pasa a solo lectura) cuando
+        // existe desglose; los importes de cada medición y el total del
+        // bloque se mantienen sincronizados en vivo.
+        var cantInput = row.querySelector('input[data-f="p_cantidad"]');
+        var medCantidadEls = wrap.querySelectorAll('.medicion-row input[data-f="m_cantidad"]');
+        var hayMediciones = false;
+        medCantidadEls.forEach(function (i) {
+          if (String(i.value || "").trim() !== "") hayMediciones = true;
+        });
+        var cantRedondeada = FMT.redondear2(cant);
+        if (cantInput) {
+          if (hayMediciones) {
+            if (String(cantInput.value) !== String(cantRedondeada)) cantInput.value = String(cantRedondeada);
+            cantInput.readOnly = true;
+            cantInput.title = "Total calculado a partir de las mediciones (edítalas en el desglose de abajo)";
+            cantInput.classList.add("partida-cant-calculada");
+          } else {
+            cantInput.readOnly = false;
+            cantInput.removeAttribute("title");
+            cantInput.classList.remove("partida-cant-calculada");
+          }
+        }
+        wrap.querySelectorAll(".medicion-row").forEach(function (m) {
+          var cantMed = FMT.parseNum((m.querySelector('[data-f="m_cantidad"]') || {}).value);
+          var importeMed = m.querySelector(".partida-medicion-importe");
+          if (importeMed) importeMed.textContent = FMT.fmtNum(FMT.redondear2(cantMed * precio));
+        });
+        var medTotalEl = wrap.querySelector(".partida-mediciones-total");
+        if (medTotalEl) {
+          var unidadEl = wrap.querySelector('[data-f="p_unidad"]');
+          medTotalEl.textContent = "Σ " + FMT.fmtNum(cantRedondeada) + (unidadEl ? " " + unidadEl.value : "");
+        }
+
         var tipoEl = wrap && wrap.querySelector('[data-f="p_tipo_partida"]');
         var selEl = wrap && wrap.querySelector('[data-f="p_seleccionada"]');
         var tipo = avanzado && tipoEl ? tipoEl.value : "included";
@@ -543,8 +577,8 @@
     // Misma semántica que el servidor: si hay mediciones con valor (aunque
     // sea 0), la cantidad total es la SUMA de todas ellas; si no, se usa la
     // cantidad directa. Una medición en 0 NO debe caer a la cantidad directa.
-    // Las mediciones viven en `.partida-details`, hermano de `.partida-row`,
-    // por eso la búsqueda parte del contenedor `.partida-wrap`.
+    // Las mediciones viven en `.partida-mediciones-inline`, hermano de
+    // `.partida-row`, por eso la búsqueda parte del contenedor `.partida-wrap`.
     var filas = wrapEl.querySelectorAll('.medicion-row input[data-f="m_cantidad"]');
     var hayValor = false;
     var sum = 0;

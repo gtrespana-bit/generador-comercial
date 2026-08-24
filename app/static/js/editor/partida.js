@@ -1,9 +1,10 @@
 /* ============================================================================
    Editor — módulo de Partida
 
-   Cada partida vive en un contenedor `.partida-wrap` con dos filas:
+   Cada partida vive en un contenedor `.partida-wrap` con:
      · `.partida-row`     fila compacta (nombre, cantidad, unidad, precio, importe)
-     · `.partida-details` panel expandible con descripción, mediciones, producto
+     · `.partida-mediciones-inline` desglose de mediciones visible bajo la fila
+     · `.partida-details` almacén de datos oculto (descripción, costes, producto)
    ============================================================================ */
 
 (function () {
@@ -1772,15 +1773,15 @@
       btnPlano.addEventListener("click", function (evt) {
         evt.stopPropagation();
         evt.preventDefault();
-        var unidadEl = partidaWrap.querySelector('[data-f="p_unidad"]');
+        var unidadEl = wrap.querySelector('[data-f="p_unidad"]');
         var unidadLinea = (unidadEl && unidadEl.value) || datos.unidad || "";
-        var nombreEl = partidaWrap.querySelector('[data-f="p_nombre"]');
+        var nombreEl = wrap.querySelector('[data-f="p_nombre"]');
         if (typeof editorInst.abrirSelectorPlanos === "function") {
-          editorInst.abrirSelectorPlanos({ destinoWrap: partidaWrap, unidad: unidadLinea, nombrePartida: (nombreEl && nombreEl.value) || "" });
+          editorInst.abrirSelectorPlanos({ destinoWrap: wrap, unidad: unidadLinea, nombrePartida: (nombreEl && nombreEl.value) || "" });
         } else if (typeof editorInst.abrirEditorPartida === "function") {
           // Respaldo: si el selector no estuviera disponible, abre la ficha
           // en la pestaña de cantidad, donde está el mismo botón.
-          editorInst.abrirEditorPartida(partidaWrap, "presupuesto");
+          editorInst.abrirEditorPartida(wrap, "presupuesto");
         }
       });
       cantWrap.appendChild(btnPlano);
@@ -1930,6 +1931,12 @@
       row.appendChild(delCell);
 
       wrap.appendChild(row);
+
+      // Mediciones inline: el desglose por zonas/estancias queda visible
+      // bajo la fila de la partida (sin abrir la ficha completa) y se puede
+      // editar directamente, a primera vista.
+      wrap.appendChild(crearSeccionMedicionesInline(wrap, datos, editorInst));
+
       var avisos = editor.FMT.h("div", "partida-alerts");
       avisos.hidden = true;
       wrap.appendChild(avisos);
@@ -2171,19 +2178,89 @@
       return wrapRes;
     }
 
+    function sincronizarMediciones(partidaWrap) {
+      // Mantiene el bloque inline y las clases del contenedor al día según
+      // existan o no mediciones. Trabaja solo con el DOM para sobrevivir a
+      // re-renderizados (reemplazar partida, deshacer, duplicar…).
+      var sec = partidaWrap.querySelector(".partida-mediciones-inline");
+      if (!sec) return;
+      var lista = sec.querySelector(".mediciones-lista");
+      var hay = !!(lista && lista.children.length);
+      sec.classList.toggle("con-mediciones", hay);
+      partidaWrap.classList.toggle("tiene-mediciones", hay);
+    }
+
+    // -------------------------------------------------------------------------
+    // Mediciones inline (desglose visible bajo la fila de la partida)
+    // -------------------------------------------------------------------------
+    function crearSeccionMedicionesInline(partidaWrap, datos, editorInst) {
+      var sec = editor.FMT.h("div", "partida-mediciones-inline");
+
+      var head = editor.FMT.h("div", "partida-mediciones-head");
+      head.appendChild(editor.FMT.h("span", "partida-mediciones-label", "📐 Mediciones"));
+      var total = editor.FMT.h("span", "partida-mediciones-total", "—");
+      total.title = "Suma de las mediciones: es la cantidad con la que se calcula el importe de la partida";
+      head.appendChild(total);
+      var hintVacio = editor.FMT.h("span", "partida-mediciones-hint", "Añade mediciones por zona o estancia: su suma define la cantidad de la partida.");
+      head.appendChild(hintVacio);
+
+      var acciones = editor.FMT.h("div", "partida-mediciones-acciones");
+      var btnAdd = editor.FMT.h("button", "btn btn-xs partida-medicion-add-btn", "＋ Medición");
+      btnAdd.type = "button";
+      btnAdd.title = "Añadir una medición manual (concepto / zona y cantidad)";
+      btnAdd.addEventListener("click", function (evt) {
+        evt.stopPropagation();
+        crearMedicion(partidaWrap, null, editorInst);
+        var filas = partidaWrap.querySelectorAll(".partida-mediciones-inline .medicion-row");
+        var ultima = filas[filas.length - 1];
+        var primerInput = ultima && ultima.querySelector("input");
+        if (primerInput) primerInput.focus();
+      });
+
+      var btnPlano = editor.FMT.h("button", "btn btn-xs partida-medicion-plano-btn", "📐 Desde plano");
+      btnPlano.type = "button";
+      btnPlano.title = "Seleccionar perímetros, suelos o paredes del visor de planos";
+      btnPlano.addEventListener("click", function (evt) {
+        evt.stopPropagation();
+        var unidadEl = partidaWrap.querySelector('[data-f="p_unidad"]');
+        var nombreEl = partidaWrap.querySelector('[data-f="p_nombre"]');
+        if (typeof editorInst.abrirSelectorPlanos === "function") {
+          editorInst.abrirSelectorPlanos({ destinoWrap: partidaWrap, unidad: (unidadEl && unidadEl.value) || "", nombrePartida: (nombreEl && nombreEl.value) || "" });
+        } else if (typeof editorInst.abrirEditorPartida === "function") {
+          editorInst.abrirEditorPartida(partidaWrap, "presupuesto");
+        }
+      });
+
+      acciones.appendChild(btnAdd);
+      acciones.appendChild(btnPlano);
+      head.appendChild(acciones);
+      sec.appendChild(head);
+
+      var lista = editor.FMT.h("div", "mediciones-lista");
+      sec.appendChild(lista);
+
+      partidaWrap._syncMediciones = function () { sincronizarMediciones(partidaWrap); };
+      sincronizarMediciones(partidaWrap);
+      return sec;
+    }
+
     function crearMedicion(partidaWrap, datos, editorInst) {
       var lista = partidaWrap.querySelector(".mediciones-lista");
       if (!lista) return;
       var fila = editor.FMT.h("div", "medicion-row");
       var inConcepto = editor.FMT.crearInput("text", (datos && datos.concepto) || "", "Concepto / zona", "m_concepto");
       var inCantidad = editor.FMT.crearInput("number", datos && datos.cantidad !== undefined ? datos.cantidad : "", "Cant.", "m_cantidad", { step: "any", min: "0" });
+      var importe = editor.FMT.h("span", "partida-medicion-importe", "");
+      importe.title = "Importe de esta medición (cantidad × precio unitario)";
       fila.appendChild(inConcepto);
       fila.appendChild(inCantidad);
+      fila.appendChild(importe);
       var btn = editor.FMT.h("button", "btn btn-sm btn-danger", "✕");
       btn.type = "button";
       btn.title = "Quitar medición";
       btn.addEventListener("click", function () {
         fila.remove();
+        sincronizarMediciones(partidaWrap);
         editorInst.renumerar();
         editorInst.recalcular();
         editorInst.marcarCambio();
@@ -2200,6 +2277,25 @@
           editorInst.marcarCambio();
         });
       });
+      // Captura rápida: Enter en el concepto salta a la cantidad; Enter en
+      // la cantidad crea la siguiente medición y deja el foco en su concepto.
+      inConcepto.addEventListener("keydown", function (evt) {
+        if (evt.key === "Enter") {
+          evt.preventDefault();
+          inCantidad.focus();
+          inCantidad.select();
+        }
+      });
+      inCantidad.addEventListener("keydown", function (evt) {
+        if (evt.key !== "Enter") return;
+        evt.preventDefault();
+        var indiceNueva = lista.children.length;
+        crearMedicion(partidaWrap, null, editorInst);
+        var nueva = lista.children[indiceNueva];
+        var primerInput = nueva && nueva.querySelector("input");
+        if (primerInput) primerInput.focus();
+      });
+      sincronizarMediciones(partidaWrap);
       editorInst.renumerar();
       editorInst.recalcular();
       editorInst.marcarCambio();
@@ -2489,37 +2585,10 @@
         }
       }
 
-      // Mediciones
-      var sec2 = editor.FMT.h("div", "detail-section");
-      var medHead = editor.FMT.h("div");
-      CotizatStyles.setCssText(medHead, "display:flex; align-items:center; gap:0.5rem; margin-bottom:0.3rem;");
-      medHead.appendChild(editor.FMT.h("div", "detail-label", "Mediciones (desglose por zonas)"));
-      var btnAddMed = editor.FMT.h("button", "btn btn-sm", "+ Medición");
-      btnAddMed.type = "button";
-      btnAddMed.addEventListener("click", function () {
-        crearMedicion(partidaWrap, null, editorInst);
-      });
-      var btnAddPlano = editor.FMT.h("button", "btn btn-sm partida-medicion-plano-btn", "📐 Desde plano");
-      btnAddPlano.type = "button";
-      btnAddPlano.title = "Seleccionar perímetros, suelos o paredes del visor de planos";
-      btnAddPlano.addEventListener("click", function () {
-        // El selector escribe directamente en el desglose de ESTA partida:
-        // un paso menos y sin ambigüedad sobre el destino de la medida.
-        var unidadEl = partidaWrap.querySelector('[data-f="p_unidad"]');
-        var nombreEl = partidaWrap.querySelector('[data-f="p_nombre"]');
-        if (typeof editorInst.abrirSelectorPlanos === "function") {
-          editorInst.abrirSelectorPlanos({ destinoWrap: partidaWrap, unidad: (unidadEl && unidadEl.value) || "", nombrePartida: (nombreEl && nombreEl.value) || "" });
-        } else if (typeof editorInst.abrirEditorPartida === "function") {
-          editorInst.abrirEditorPartida(partidaWrap, "presupuesto");
-        }
-      });
-      medHead.appendChild(btnAddPlano);
-      medHead.appendChild(btnAddMed);
-      sec2.appendChild(medHead);
-      var medLista = editor.FMT.h("div", "mediciones-lista");
-      sec2.appendChild(medLista);
-      sec2.appendChild(editor.FMT.h("p", "hint", "Si no agregas mediciones, se usa la cantidad directa."));
-      det.appendChild(sec2);
+      // Las mediciones (desglose por zonas) ya no viven aquí: se muestran y
+      // editan en el bloque inline visible bajo la fila de la partida
+      // (.partida-mediciones-inline), que es la única fuente de verdad.
+      // Mantener otra lista aquí duplicaría los totales en leerPartida().
 
       // Producto presupuestado
       var sec3 = editor.FMT.h("div", "detail-section");
@@ -2835,15 +2904,15 @@
       crearMedicion: crearMedicion,
       // Inserta una medición calculada (p. ej. desde un plano) en el desglose
       // de una partida ya renderizada, recalcula importes al momento y deja
-      // el desglose abierto para que el usuario VEA la medida añadida.
+      // visible la medida añadida en el bloque inline bajo la fila.
       agregarMedicion: function (partidaWrap, datos, editorInst) {
         var ed = editorInst || editor || window.EDITOR || {};
         crearMedicion(partidaWrap, datos, ed);
-        var det = partidaWrap.querySelector(".partida-details");
-        var row = partidaWrap.querySelector(".partida-row");
-        if (det && !det.classList.contains("open")) det.classList.add("open");
-        partidaWrap.classList.add("expanded");
-        if (row && !row.classList.contains("expanded")) row.classList.add("expanded");
+        var filas = partidaWrap.querySelectorAll(".partida-mediciones-inline .medicion-row");
+        var ultima = filas[filas.length - 1];
+        if (ultima && ultima.scrollIntoView) {
+          ultima.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
       },
       crearResumenProducto: crearResumenProducto,
       crearDetalles: crearDetalles,

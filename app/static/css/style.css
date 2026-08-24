@@ -3084,6 +3084,112 @@ button:focus-visible, a:focus-visible {
 .builder-workspace .btn-add-partida { border-radius: var(--radius-xs); }
 .builder-workspace > .btn-add-capitulo { margin-top: .4rem; border-radius: var(--radius-sm); background: var(--surface); }
 
+/* ── Mediciones inline bajo la fila de la partida ── */
+.partida-mediciones-inline {
+  padding: 0 .65rem .15rem 2rem;
+  border-top: 1px dashed var(--border-subtle);
+  background: var(--surface);
+}
+.partida-wrap:nth-child(even) .partida-mediciones-inline { background: var(--surface-alt); }
+.partida-mediciones-head {
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  flex-wrap: wrap;
+  padding: .3rem 0;
+  min-height: 26px;
+}
+.partida-mediciones-label {
+  font-size: .68rem;
+  font-weight: 750;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.partida-mediciones-total {
+  display: none;
+  font-size: .72rem;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-light);
+  border-radius: 999px;
+  padding: 1px 8px;
+}
+.partida-mediciones-inline.con-mediciones .partida-mediciones-total { display: inline-block; }
+.partida-mediciones-hint {
+  display: none;
+  font-size: .7rem;
+  color: var(--text-muted);
+}
+.partida-mediciones-inline:not(.con-mediciones) .partida-mediciones-hint { display: inline; }
+.partida-mediciones-acciones {
+  display: flex;
+  align-items: center;
+  gap: .35rem;
+  margin-left: auto;
+}
+.partida-mediciones-acciones .btn {
+  font-size: .7rem;
+  padding: .22rem .5rem;
+  white-space: nowrap;
+}
+.partida-medicion-add-btn { color: var(--accent); border-color: var(--accent-light); background: var(--accent-soft); }
+.partida-medicion-add-btn:hover { color: #fff; background: var(--accent); border-color: var(--accent); }
+.partida-mediciones-inline .mediciones-lista {
+  display: none;
+  flex-direction: column;
+  gap: .3rem;
+  padding-bottom: .45rem;
+}
+.partida-mediciones-inline.con-mediciones .mediciones-lista { display: flex; }
+.medicion-row {
+  display: grid;
+  grid-template-columns: minmax(140px, 1fr) 110px 110px 34px;
+  align-items: center;
+  gap: .4rem;
+}
+.medicion-row input {
+  width: 100%;
+  padding: .32rem .45rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xs);
+  color: var(--text);
+  background: var(--surface);
+  font-size: .76rem;
+}
+.medicion-row input:focus { outline: 0; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.partida-medicion-importe {
+  text-align: right;
+  font-size: .76rem;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  padding-right: .2rem;
+  white-space: nowrap;
+}
+.medicion-row .btn-danger {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border-radius: var(--radius-xs);
+}
+.partida-cant-input.partida-cant-calculada {
+  font-weight: 750;
+  color: var(--accent);
+  border-color: var(--accent-light);
+  background: var(--accent-soft);
+  cursor: default;
+  opacity: 1;
+}
+.partida-cant-input.partida-cant-calculada:focus {
+  box-shadow: none;
+  border-color: var(--accent-light);
+}
+
 /* Totales a la derecha (solos); texto del presupuesto debajo a ancho completo. */
 .builder-review {
   display: flex;
@@ -3260,6 +3366,9 @@ button:focus-visible, a:focus-visible {
   .catalog-save-title { display: none; }
   .catalog-save-confirm-actions { flex-direction: column; align-items: stretch; }
   .editor-medicion-row { grid-template-columns: 1fr 100px 36px; }
+  .medicion-row { grid-template-columns: minmax(0, 1fr) 82px 82px 30px; gap: .3rem; }
+  .partida-mediciones-inline { padding-left: .6rem; }
+  .partida-mediciones-hint { display: none !important; }
   .builder-shortcuts { display: none; }
   .save-dock-copy { display: none; }
 }
