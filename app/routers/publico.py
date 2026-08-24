@@ -323,6 +323,45 @@ def landing_es_slash(request: Request):
     return _landing_con_pais(request, "ES")
 
 
+# --- Bloque añadido al expandir a los 18 países (orden ORDEN_SELECTOR).
+# Antes solo VE/CO/MX/EC/PE/ES tenían subdirectorio raíz canónico; los
+# 12 mercados nuevos (CL, AR, DO, UY, PY, BO, PA, CR, GT, HN, SV, NI)
+# caían en 404 al entrar por URL. Con este bucle todos los códigos válidos
+# responden /XX/ con la misma plantilla de landing personalizada. Si mañana
+# se añade un código a ORDEN_SELECTOR, queda cubierto automáticamente.
+from ..paises import ORDEN_SELECTOR as _PAISES_CON_SUBDIRECTORIO  # noqa: E402
+
+
+for _codigo in _PAISES_CON_SUBDIRECTORIO:
+    _codigo = str(_codigo).lower()
+    # Evitar duplicar los que ya están definidos arriba
+    if _codigo in {"ve", "co", "mx", "ec", "pe", "es"}:
+        continue
+    _path = f"/{_codigo}"
+    _path_slash = f"/{_codigo}/"
+
+    def _make_handler(_c):
+        def _handler(request: Request):
+            return _redirige_a_slash(_c.upper())
+        _handler.__name__ = f"landing_{_c}_redirect"
+        return _handler
+
+    def _make_slash_handler(_c):
+        def _handler(request: Request):
+            return _landing_con_pais(request, _c.upper())
+        _handler.__name__ = f"landing_{_c}_slash"
+        return _handler
+
+    router.add_api_route(
+        _path, _make_handler(_codigo),
+        methods=["GET"], include_in_schema=False,
+    )
+    router.add_api_route(
+        _path_slash, _make_slash_handler(_codigo),
+        methods=["GET"], response_class=HTMLResponse, include_in_schema=False,
+    )
+
+
 def _pagina_intencion(request: Request, codigo: str, tema: str):
     from ..paises import ORDEN_SELECTOR, PAIS_GENERICO, PAISES, lista_paises
     from ..seo import TEMAS, contexto_seo, ficha_tema

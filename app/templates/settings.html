@@ -75,12 +75,11 @@
       <div class="field">
         <label>País</label>
         <select name="empresa_pais" id="select-pais">
-          <option value="Venezuela" {{ 'selected' if (cfg.empresa_pais or 'Venezuela') == 'Venezuela' else '' }}>🇻🇪 Venezuela</option>
-          <option value="Colombia" {{ 'selected' if cfg.empresa_pais == 'Colombia' else '' }}>🇨🇴 Colombia</option>
-          <option value="México" {{ 'selected' if cfg.empresa_pais == 'México' else '' }}>🇲🇽 México</option>
-          <option value="Ecuador" {{ 'selected' if cfg.empresa_pais == 'Ecuador' else '' }}>🇪🇨 Ecuador</option>
-          <option value="Perú" {{ 'selected' if cfg.empresa_pais == 'Perú' else '' }}>🇵🇪 Perú</option>
-          <option value="" {{ 'selected' if cfg.empresa_pais in ['', 'Latinoamérica'] else '' }}>🌎 Otro / Latinoamérica</option>
+          {% for p in paises %}
+          <option value="{{ p.nombre }}" {{ 'selected' if cfg.empresa_pais == p.nombre else '' }}>{{ p.bandera }} {{ p.nombre }}</option>
+          {% endfor %}
+          <option value="Latinoamérica" {{ 'selected' if cfg.empresa_pais in ['Latinoamérica', '', 'Otro'] else '' }}>🌎 Otro / Latinoamérica</option>
+          <option value="España y Latinoamérica" {{ 'selected' if cfg.empresa_pais == 'España y Latinoamérica' else '' }}>🌎 España y Latinoamérica</option>
         </select>
       </div>
       <div class="field">
@@ -307,16 +306,29 @@
     if(telInput && p.telefono_ejemplo) telInput.placeholder = p.telefono_ejemplo;
     if(ivaInput && !ivaInput.dataset.tocado) ivaInput.value = p.iva;
     if(monedaSel && !monedaSel.dataset.tocado) monedaSel.value = p.moneda;
-    if(labelTasaMoneda) labelTasaMoneda.textContent = p.moneda;
-    if(labelTasaSimbolo) labelTasaSimbolo.textContent = p.moneda;
-    if(hintTasa) hintTasa.textContent = hintParaMoneda(p.moneda);
+    refrescarTasaPorMoneda();
     if(autoTasa && tasaInput && !tasaInput.value && datos.tasas[p.moneda]){
       tasaInput.value = datos.tasas[p.moneda];
       if(fechaInput && !fechaInput.value) fechaInput.value = new Date().toISOString().slice(0,10);
     }
   }
+
+  // Refresca placeholder + label + hint del campo tasa según la moneda
+  // actualmente seleccionada. Llamado por cambios de país y de moneda; sin
+  // él, el placeholder seguía siendo el de la moneda anterior y la persona
+  // escribía una tasa que no correspondía con la moneda del select.
+  function refrescarTasaPorMoneda(){
+    if(!monedaSel) return;
+    var m = (monedaSel.value || '').toUpperCase();
+    if(m === 'BS') m = 'VES';
+    if(labelTasaMoneda) labelTasaMoneda.textContent = m;
+    if(labelTasaSimbolo) labelTasaSimbolo.textContent = m;
+    var tasa = datos.tasas[m];
+    if(tasaInput) tasaInput.placeholder = (tasa !== null && tasa !== undefined) ? ('p. ej. ' + tasa) : 'Escribe la tasa oficial del día';
+    if(hintTasa) hintTasa.textContent = hintParaMoneda(m);
+  }
   // marca tocado si el usuario edita manual
-  [etiquetaInput, ivaInput, monedaSel].forEach(function(el){
+  [etiquetaInput, ivaInput, monedaSel, tasaInput].forEach(function(el){
     if(!el) return;
     el.addEventListener('change', function(){ el.dataset.tocado='1'; });
     el.addEventListener('input', function(){ el.dataset.tocado='1'; });
@@ -328,12 +340,24 @@
     if(monedaSel) delete monedaSel.dataset.tocado;
     actualizarPorPais(true);
   });
-  // moneda cambia -> actualiza label tasa y la sugerencia
+  // moneda cambia -> actualiza label tasa, placeholder, sugerencia y, si la
+  // persona aún no la tocó manualmente, completa el campo con la tasa
+  // sugerida (mismo comportamiento que al cambiar de país).
   if(monedaSel){
     monedaSel.addEventListener('change', function(){
-      if(labelTasaMoneda) labelTasaMoneda.textContent = monedaSel.value;
-      if(labelTasaSimbolo) labelTasaSimbolo.textContent = monedaSel.value;
-      if(hintTasa) hintTasa.textContent = hintParaMoneda(monedaSel.value);
+      if(tasaInput && !tasaInput.dataset.tocado){
+        var m = (monedaSel.value || '').toUpperCase();
+        if(m === 'BS') m = 'VES';
+        if(m === 'USD' || m === 'PAB'){
+          tasaInput.value = 1;
+        } else if(datos.tasas[m]){
+          tasaInput.value = datos.tasas[m];
+        }
+        if(fechaInput && !fechaInput.value && (m === 'USD' || m === 'PAB' || datos.tasas[m])){
+          fechaInput.value = new Date().toISOString().slice(0,10);
+        }
+      }
+      refrescarTasaPorMoneda();
     });
   }
   if(btnAuto){

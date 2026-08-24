@@ -48,9 +48,17 @@ from app.utils import (
 # ---------------------------------------------------------------------------
 
 def test_selector_expone_los_paises_foco_en_orden():
-    # VE histórico + 4 LatAm + España (primer mercado fuera de LatAm).
+    # El selector muestra los 18 países definidos en orden explícito:
+    # VE histórico, los 4 LatAm pioneros (CO/MX/EC/PE), los 11 países
+    # que se añadieron después (CL/AR/DO/UY/PY/BO/PA/CR/GT/HN/SV/NI) y
+    # España (ES) como primer mercado fuera de LatAm. El orden manda
+    # porque la landing, /pago, /acceso y /organizaciones/nueva iteran
+    # sobre la misma lista.
     codigos = [p["codigo"] for p in paises.lista_paises()]
-    assert codigos == ["VE", "CO", "MX", "EC", "PE", "ES"]
+    assert codigos == [
+        "VE", "CO", "MX", "EC", "PE", "CL", "AR", "DO", "UY", "PY",
+        "BO", "PA", "CR", "GT", "HN", "SV", "NI", "ES",
+    ], f"ORDEN_SELECTOR desactualizado: {codigos}"
 
 
 def test_defaults_colombia_sugieren_nit_cop_19():
@@ -65,7 +73,10 @@ def test_defaults_pais_invalido_cae_a_generico():
     d = paises.defaults_para_pais("ZZ")
     assert d["codigo"] == ""
     assert d["moneda"] == "USD"
-    assert d["nombre"] == "Latinoamérica"
+    # El genérico enuncia el mercado completo (Latinoamérica + España) para
+    # que el visitante hispanohablante de cualquier mercado se sienta incluido.
+    assert d["nombre"] == "España y Latinoamérica"
+    assert d["mercado"] == "iberoamericano"
 
 
 def test_obtener_pais_normaliza_minusculas():

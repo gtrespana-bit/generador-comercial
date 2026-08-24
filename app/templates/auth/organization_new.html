@@ -31,12 +31,9 @@
       <div class="field">
         <label for="pais">País de la organización</label>
         <select id="pais" name="pais" required>
-          <option value="VE">🇻🇪 Venezuela — RIF 16% USD</option>
-          <option value="CO">🇨🇴 Colombia — NIT 19% COP</option>
-          <option value="MX">🇲🇽 México — RFC 16% MXN</option>
-          <option value="EC">🇪🇨 Ecuador — RUC 15% USD</option>
-          <option value="PE">🇵🇪 Perú — RUC 18% PEN</option>
-          <option value="ES">🇪🇸 España — NIF 21% EUR</option>
+          {% for p in paises %}
+          <option value="{{ p.codigo }}" {% if pais_preseleccionado == p.codigo %}selected{% endif %}>{{ p.bandera }} {{ p.nombre }} — {{ p.id_fiscal }} {{ p.iva }}% {{ p.moneda }}{% if p.moneda != 'USD' %} ({{ p.simbolo_local }}){% endif %}</option>
+          {% endfor %}
         </select>
         <p class="hint">Define moneda, IVA e ID fiscal por defecto. Podrás ajustarlo en Configuración y por presupuesto.</p>
       </div>
@@ -53,13 +50,20 @@
 </div>
 <script nonce="{{ request.state.csp_nonce }}">
 (function(){
+  // El servidor ya preselecciona con ``selected`` usando ``pais_preseleccionado``.
+  // Este JS valida que el país sigue en la lista (la cookie puede apuntar a
+  // un país retirado): si no está, borra la cookie obsoleta y respeta la
+  // opción por defecto.
   var sel=document.getElementById('pais');
   if(!sel) return;
   try{
     var m=document.cookie.match(/(?:^|; )cotizat_pais=([^;]*)/);
     var code=m?decodeURIComponent(m[1]).toUpperCase():'';
     if(code && sel.querySelector('option[value="'+code+'"]')) sel.value=code;
-    // Si viene ?pais= en la URL (desde registro), úsalo
+    else if (code) {
+      try { document.cookie = "cotizat_pais=; path=/; max-age=0; samesite=lax"; } catch(e){}
+    }
+    // Si viene ?pais= en la URL (compatibilidad), úsalo
     var q=new URLSearchParams(window.location.search).get('pais');
     if(q){ q=q.toUpperCase(); if(sel.querySelector('option[value="'+q+'"]')) sel.value=q; }
   }catch(e){}

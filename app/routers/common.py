@@ -109,6 +109,7 @@ from ..models import (
     Proyecto,
     PlanoObra,
     PlanoMedicion,
+    PlanoElemento,
     Usuario,
     CambioAlcance,
     CambioAlcanceItem,

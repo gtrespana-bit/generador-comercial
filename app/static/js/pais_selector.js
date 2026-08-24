@@ -23,7 +23,7 @@
   try { paises = JSON.parse(dataEl.textContent || "[]"); } catch (_) { paises = []; }
   try { generico = JSON.parse(genericoEl ? genericoEl.textContent : "null"); } catch (_) { generico = null; }
   try { monedas = JSON.parse(monedasEl ? monedasEl.textContent : "null"); } catch (_) { monedas = null; }
-  if (!generico) generico = { codigo: "", nombre: "Latinoamérica", bandera: "🌎", moneda: "USD", simbolo_local: "$", iva: 16, id_fiscal: "ID fiscal", vocab: "concreto, friso, cielo raso, rodapié, plomero", mercado: "latinoamericano", gentilicio: "latinoamericano" };
+  if (!generico) generico = { codigo: "", nombre: "España y Latinoamérica", bandera: "🌎", moneda: "USD", simbolo_local: "$", iva: 16, id_fiscal: "ID fiscal", vocab: "concreto, friso, cielo raso, rodapié, plomero", mercado: "iberoamericano", gentilicio: "iberoamericano" };
 
   var mapa = {};
   for (var i = 0; i < paises.length; i++) mapa[paises[i].codigo] = paises[i];
@@ -66,19 +66,19 @@
     // Textos dinámicos por id
     texto("hero-kicker", p
       ? p.bandera + " Sistema comercial para " + p.nombre + " · Construcción y remodelación"
-      : "🌎 Sistema comercial para Latinoamérica · Construcción y remodelación");
+      : "🌎 Sistema comercial para España y Latinoamérica · Construcción y remodelación");
     texto("banner-h2", p
       ? "El catálogo más completo para presupuestar en " + p.nombre + "."
-      : "El catálogo más completo para presupuestar en Latinoamérica.");
+      : "El catálogo más completo para presupuestar en España y Latinoamérica.");
 
     var bannerP = document.getElementById("banner-p");
     if (bannerP) {
       var txt = bannerP.textContent || "";
       // Reemplazos quirúrgicos: mercado y país, conservando las cifras
       // reales que el servidor ya renderizó.
-      txt = txt.replace(/mercado [a-záéíóúñ]+/i, "mercado " + (p ? p.mercado : "latinoamericano"));
+      txt = txt.replace(/mercado [a-záéíóúñ]+/i, "mercado " + (p ? p.mercado : "iberoamericano"));
       if (!p) {
-        txt = txt.replace(/para [A-ZÁÉÍÓÚÑ][\wáéíóúñ ,()]+/, "para Latinoamérica.");
+        txt = txt.replace(/para [A-ZÁÉÍÓÚÑ][\wáéíóúñ ,()]+/, "para España y Latinoamérica.");
       }
       bannerP.textContent = txt;
     }
@@ -105,16 +105,16 @@
     // Fiscal
     var fiscalIcon = document.querySelector("#fiscal-card .icon");
     if (fiscalIcon) fiscalIcon.textContent = p ? p.bandera : "🌎";
-    texto("fiscal-h3", p ? "Fiscal a tu medida · " + p.nombre : "Fiscal a tu medida · Latinoamérica");
+    texto("fiscal-h3", p ? "Fiscal a tu medida · " + p.nombre : "Fiscal a tu medida · España y Latinoamérica");
     texto("fiscal-p", p
       ? "IVA " + p.iva + "%, " + p.id_fiscal + ", retención, operación exenta, número de control y cláusula cambiaria. Moneda " + p.moneda + (p.moneda !== "USD" ? " (" + p.simbolo_local + ")" : "") + " o USD, con tasa de referencia."
-      : "IVA configurable por país, tu ID fiscal (RIF, NIT, RUT, CUIT, RUC, RFC…), retención, operación exenta y cláusula cambiaria. Moneda en tu divisa local o USD, con tasa de referencia.");
+      : "IVA configurable por país, tu ID fiscal (NIF, RIF, NIT, RUT, CUIT, RUC, RFC…), retención, operación exenta y cláusula cambiaria. Moneda en tu divisa local o USD, con tasa de referencia.");
 
     // Franja país
-    texto("franja-h2", p ? "Pensado para " + p.nombre + ", no adaptado después." : "Pensado para Latinoamérica, no adaptado después.");
+    texto("franja-h2", p ? "Pensado para " + p.nombre + ", no adaptado después." : "Pensado para España y Latinoamérica, no adaptado después.");
     texto("franja-intro", p
       ? "No es una herramienta genérica traducida. CotizaT habla el idioma de la obra en " + p.nombre + ": precios, vocabulario y fiscalidad de aquí."
-      : "No es una herramienta genérica. CotizaT nace para construir en Latinoamérica: precios en USD de referencia, vocabulario hispano y fiscalidad configurable por país.");
+      : "No es una herramienta genérica. CotizaT nace para construir en España y en Latinoamérica: precios en USD de referencia, vocabulario hispano y fiscalidad configurable por país.");
     texto("franja-precio-p", p
       ? "Cotiza en " + p.moneda + (p.moneda !== "USD" ? " (" + p.simbolo_local + ")" : "") + " o en USD como referencia regional. Sin conversiones improvisadas: tu tasa queda guardada en cada presupuesto."
       : "Cotiza en USD como referencia regional o en tu moneda local (COP, MXN, PEN, CLP, ARS…). Tu tasa de referencia queda guardada en cada presupuesto.");
@@ -127,7 +127,7 @@
 
     if (hint) hint.textContent = p
       ? p.bandera + " Mostrando contenido para " + p.nombre + " · " + p.id_fiscal + " · IVA " + p.iva + "%"
-      : "Mostrando contenido genérico para toda Latinoamérica";
+      : "Mostrando contenido genérico (España y Latinoamérica)";
 
     // Título y meta description (opcional, sin recargar)
     try {
@@ -139,7 +139,7 @@
     if (meta) {
       meta.setAttribute("content", p
         ? "Software para presupuestos de obra y remodelación en " + p.nombre + ". Catálogo con APU, PDF profesional. 7 días gratis, sin tarjeta."
-        : "Software de presupuestos de construcción y remodelación para Latinoamérica. Catálogo con APU, margen, tiempos de cuadrilla y PDF profesional. 7 días gratis, sin tarjeta.");
+        : "Software de presupuestos de construcción y remodelación para España y Latinoamérica. Catálogo con APU, margen, tiempos de cuadrilla y PDF profesional. 7 días gratis, sin tarjeta.");
     }
 
     // Normalizar select
@@ -178,10 +178,16 @@
   });
 
   // Soporte navegación atrás/adelante con subdirectorio o ?pais=
+  // Detecta cualquier código de país que esté en el mapa (los 18 mercados:
+  // VE, CO, MX, EC, PE, CL, AR, DO, UY, PY, BO, PA, CR, GT, HN, SV, NI, ES).
+  // Antes solo reconocía 6 (ve|co|mx|ec|pe|es), así que entrar a /cl/ o /ar/
+  // por la barra de direcciones caía al fallback genérico en vez de aplicar
+  // la personalización del país.
   window.addEventListener("popstate", function () {
     try {
       var path = window.location.pathname || "";
-      var m = path.match(/^\/(ve|co|mx|ec|pe|es)(\/|$)/i);
+      var keys = Object.keys(mapa).join("|");
+      var m = path.match(new RegExp("^/(" + keys + ")(/|$)", "i"));
       if (m) {
         var c = m[1].toUpperCase();
         if (mapa[c]) { aplicarPais(c, { persist: false }); return; }

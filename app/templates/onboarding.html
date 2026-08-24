@@ -79,6 +79,10 @@
   .pending-purchase strong { font-weight:800; }
   .pending-purchase .spacer { flex:1; }
   .pending-purchase a { color:#123f78; font-weight:750; white-space:nowrap; }
+  .tasa-row { display:flex; gap:8px; align-items:stretch; flex-wrap:wrap; }
+  .tasa-input-flex { flex:1 1 160px; min-width:0; }
+  .tasa-label { display:flex; align-items:center; padding:0 10px; background:#f3f6fa; border:1px solid #ccd4df; border-radius:10px; font-weight:700; color:#344054; }
+  .btn-tasa-auto-onb { flex:0 0 auto; padding:0 14px; font-size:.82rem; }
   @media(max-width:900px){ .shell{grid-template-columns:1fr}.intro{min-height:auto;padding:30px}.intro-copy{margin:45px 0 35px}.intro h1{font-size:2.5rem}.workspace{padding:28px 18px 46px}.trust{display:none} }
   @media(max-width:620px){ .grid,.mode-grid{grid-template-columns:1fr}.step span{display:none}.card{padding:24px 18px}.summary-row{display:grid;gap:4px}.summary-row strong{text-align:left}.actions{align-items:stretch}.btn{flex:1}.actions-right{width:100%} }
 </style>
@@ -147,11 +151,18 @@
             <div class="field">
               <label for="empresa_pais">País</label>
               <select id="empresa_pais" name="empresa_pais">
-                <option value="Venezuela" {{ 'selected' if (cfg.empresa_pais or 'Venezuela') == 'Venezuela' else '' }}>🇻🇪 Venezuela</option>
-                <option value="Colombia" {{ 'selected' if cfg.empresa_pais == 'Colombia' else '' }}>🇨🇴 Colombia</option>
-                <option value="México" {{ 'selected' if cfg.empresa_pais == 'México' else '' }}>🇲🇽 México</option>
-                <option value="Ecuador" {{ 'selected' if cfg.empresa_pais == 'Ecuador' else '' }}>🇪🇨 Ecuador</option>
-                <option value="Perú" {{ 'selected' if cfg.empresa_pais == 'Perú' else '' }}>🇵🇪 Perú</option>
+                {% set _pais_sel = cfg.empresa_pais or '' %}
+                {# País vacío (alta nueva sin país aún): no preseleccionamos nada
+                   para que el usuario elija consciente. El país «Venezuela» se
+                   sigue mostrando como una opción más en la lista. #}
+                {% for p in paises %}
+                <option value="{{ p.nombre }}" {{ 'selected' if _pais_sel == p.nombre else '' }}>{{ p.bandera }} {{ p.nombre }}</option>
+                {% endfor %}
+                {# Compatibilidad con valores históricos ('Latinoamérica',
+                   'España y Latinoamérica', 'Otro') guardados antes del cambio. #}
+                {% if _pais_sel and (_pais_sel not in (paises | map(attribute='nombre') | list)) %}
+                <option value="{{ _pais_sel }}" selected>{{ _pais_sel }} (valor histórico)</option>
+                {% endif %}
               </select>
             </div>
             <div class="field">
@@ -170,11 +181,14 @@
             <div class="field">
               <label for="moneda_default">Moneda principal</label>
               <select id="moneda_default" name="moneda_default">
-                <option value="USD" {{ 'selected' if (cfg.moneda_default or 'USD') in ['USD', ''] else '' }}>USD ($) — dólar</option>
-                <option value="COP" {{ 'selected' if cfg.moneda_default == 'COP' else '' }}>COP ($) — peso colombiano</option>
-                <option value="MXN" {{ 'selected' if cfg.moneda_default == 'MXN' else '' }}>MXN ($) — peso mexicano</option>
-                <option value="PEN" {{ 'selected' if cfg.moneda_default == 'PEN' else '' }}>PEN (S/) — sol peruano</option>
-                <option value="VES" {{ 'selected' if cfg.moneda_default in ['VES', 'Bs'] else '' }}>VES (Bs) — bolívar</option>
+                {% set _moneda_sel = cfg.moneda_default or 'USD' %}
+                {% for m in monedas %}
+                <option value="{{ m.codigo }}" {{ 'selected' if _moneda_sel == m.codigo else '' }}>{{ m.codigo }} ({{ m.simbolo }}) — {{ m.nombre }}</option>
+                {% endfor %}
+                {# Compatibilidad con valores históricos ('Bs' en vez de 'VES') #}
+                {% if _moneda_sel == 'Bs' %}
+                <option value="Bs" selected>Bs — bolívar (alias histórico)</option>
+                {% endif %}
               </select>
             </div>
             <div class="field">
@@ -187,6 +201,7 @@
               <div class="tasa-row">
                 <input id="tasa_cambio" name="tasa_cambio" type="number" step="any" min="0" value="{{ cfg.tasa_cambio if cfg.tasa_cambio else '' }}" placeholder="{{ ('p. ej. ' ~ tasas[cfg.moneda_default]) if tasas.get(cfg.moneda_default) else 'Escribe la tasa oficial del día' }}" class="tasa-input-flex">
                 <span id="label-tasa-moneda-onb" class="tasa-label">{{ cfg.moneda_default or 'COP' }}</span>
+                <button type="button" class="btn btn-tasa-auto-onb" id="btn-tasa-auto-onb">↻ Tasa de hoy</button>
               </div>
               <span class="hint" id="hint-tasa-onb"></span>
             </div>
@@ -342,7 +357,64 @@
       if(monedaSel) delete monedaSel.dataset.tocado;
       aplicarPais(true);
     });
+    // Cambiar la moneda manualmente: actualiza placeholder, label y hint de
+    // la tasa con los mismos datos del servidor (TASAS_SUGERIDAS), para que
+    // el usuario vea inmediatamente qué tasa esperarse para esa moneda.
+    function refrescarTasaPorMoneda(){
+      if(!monedaSel) return;
+      var m = (monedaSel.value || '').toUpperCase();
+      if(m === 'BS') m = 'VES';
+      if(labelTasa) labelTasa.textContent = m;
+      var tasa = datos.tasas[m];
+      if(tasaInput) tasaInput.placeholder = (tasa !== null && tasa !== undefined) ? ('p. ej. ' + tasa) : 'Escribe la tasa oficial del día';
+      if(hintTasa){
+        if(m === 'USD' || m === 'PAB') hintTasa.textContent = 'Tu moneda es ' + m + ' — no necesitas tasa.';
+        else if(tasa) hintTasa.textContent = 'Sugerido: 1 USD = ' + tasa + ' ' + m + '. Confírmalo o ajústalo a tu fuente oficial.';
+        else hintTasa.textContent = 'Sin tasa verificada para ' + m + ' — pulsa «Tasa de hoy» o escribe la oficial.';
+      }
+    }
+    if(monedaSel) monedaSel.addEventListener('change', refrescarTasaPorMoneda);
+    // Botón «Tasa de hoy» — consulta la API para la moneda seleccionada.
+    var btnTasaAuto = document.getElementById('btn-tasa-auto-onb');
+    if(btnTasaAuto){
+      btnTasaAuto.addEventListener('click', function(){
+        var moneda = monedaSel ? (monedaSel.value || 'USD') : 'USD';
+        if(moneda === 'Bs') moneda = 'VES';
+        if(moneda === 'USD' || moneda === 'PAB'){
+          if(tasaInput) tasaInput.value = '1';
+          if(hintTasa) hintTasa.textContent = 'Tu moneda es ' + moneda + ' — la tasa es 1.';
+          return;
+        }
+        btnTasaAuto.disabled = true;
+        var prev = btnTasaAuto.textContent;
+        btnTasaAuto.textContent = '⏳ Consultando…';
+        fetch('/configuracion/tasa-auto?moneda='+encodeURIComponent(moneda), {headers:{'Accept':'application/json'}})
+          .then(function(r){ return r.json(); })
+          .then(function(j){
+            if(j && j.ok && j.tasa){
+              if(tasaInput){
+                tasaInput.value = j.tasa;
+                tasaInput.dataset.tocado = '1';
+              }
+              if(fechaInput){
+                fechaInput.value = j.fecha || new Date().toISOString().slice(0,10);
+              }
+              if(hintTasa) hintTasa.textContent = 'Tasa de hoy: 1 USD = '+j.tasa+' '+moneda+' (fuente: open.er-api.com).';
+            } else if(hintTasa){
+              hintTasa.textContent = 'No se pudo traer la tasa: '+(j && j.error ? j.error : 'sin conexión')+'. Escribe la oficial.';
+            }
+          })
+          .catch(function(){
+            if(hintTasa) hintTasa.textContent = 'Sin conexión — escribe la tasa oficial del día.';
+          })
+          .finally(function(){
+            btnTasaAuto.disabled = false;
+            btnTasaAuto.textContent = prev;
+          });
+      });
+    }
     aplicarPais(false);
+    refrescarTasaPorMoneda();
   })();
   function value(id) { var el = document.getElementById(id); return el ? el.value.trim() : ''; }
   function updateSummary() {

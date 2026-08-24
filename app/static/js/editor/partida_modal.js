@@ -192,9 +192,37 @@
     });
 
     if (!total) {
-      if (status) status.textContent = selectorPlanos.length
-        ? "Este plano todavía no tiene estancias o mediciones guardadas. Analiza el plano o dibuja una medición primero."
-        : "Este presupuesto todavía no tiene planos. Sube y calibra uno desde 📐 Planos.";
+      // Diagnóstico en lugar del mensaje genérico anterior: si el
+      // presupuesto no tiene planos, lo decimos claro y enlazamos a la
+      // página de Planos; si los tiene pero sin mediciones, guiamos
+      // hacia el análisis o el dibujo.
+      // El status se construye con createTextNode + createElement para
+      // no usar sinks de inyección HTML en el front.
+      if (status) {
+        status.replaceChildren();
+        if (!selectorPlanos.length) {
+          var texto1 = document.createTextNode("Este presupuesto todavía no tiene planos. ");
+          var link1 = document.createElement("a");
+          link1.className = "link";
+          link1.href = "/presupuestos/" + (editor.BUDGET_ID || "") + "/planos";
+          link1.textContent = "Ábrelo desde 📐 Planos";
+          var texto2 = document.createTextNode(" y sube uno o dibújalo desde cero.");
+          status.appendChild(texto1);
+          status.appendChild(link1);
+          status.appendChild(texto2);
+        } else {
+          var n = selectorPlanos.length;
+          var pre = document.createTextNode("Tienes " + n + " plano(s) pero ninguno con mediciones guardadas. Ábrelo desde ");
+          var link2 = document.createElement("a");
+          link2.className = "link";
+          link2.href = "/presupuestos/" + (editor.BUDGET_ID || "") + "/planos";
+          link2.textContent = "📐 Planos";
+          var post = document.createTextNode(", calibra y pulsa “Analizar” o dibuja una medición manualmente.");
+          status.appendChild(pre);
+          status.appendChild(link2);
+          status.appendChild(post);
+        }
+      }
       actualizarContadorSelector();
       return;
     }
@@ -211,7 +239,8 @@
       var grupo = document.createElement("section");
       grupo.className = "plano-selector-grupo";
       var titulo = document.createElement("h4");
-      titulo.textContent = plano.nombre + (plano.calibrado ? " · escala lista" : " · sin calibrar");
+      var sufijo = plano.origen === "dibujado" ? " · dibujado" : (plano.origen === "mixto" ? " · mixto" : "");
+      titulo.textContent = plano.nombre + (plano.calibrado ? " · escala lista" : " · sin calibrar") + sufijo;
       grupo.appendChild(titulo);
 
       mediciones.forEach(function (medicion) {
@@ -283,7 +312,13 @@
         credentials: "same-origin"
       });
       var data = await response.json();
-      if (!response.ok || !data.ok) throw new Error(data.error || "No se pudieron cargar las mediciones.");
+      if (response.status === 404 || (data && data.razon === "presupuesto_inexistente")) {
+        if (status) status.textContent = "El presupuesto no se ha encontrado. Vuelve a abrirlo desde el listado.";
+        selectorPlanos = [];
+        renderSelectorPlanos();
+        return;
+      }
+      if (!response.ok || !data.ok) throw new Error((data && data.error) || "No se pudieron cargar las mediciones.");
       selectorPlanos = data.planos || [];
       renderSelectorPlanos();
     } catch (error) {

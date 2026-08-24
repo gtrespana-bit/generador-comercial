@@ -332,19 +332,29 @@ PAISES: dict[str, dict] = {
     },
 }
 
-# Orden en que aparecen en el selector. VE histórico + 4 LatAm
-# (CO + MX + EC + PE) + España (EUR), el primer mercado fuera de LatAm.
-# Los demás países quedan en PAISES pero ocultos hasta su ola de apertura
-# para no dispersar validación.
+# Orden en que aparecen en el selector: todos los países disponibles.
+# Era VE + 4 LatAm (CO/MX/EC/PE) + España (EUR) = 6, pero ese filtro
+# artificial obligaba al usuario a tener un país "principal" (siempre
+# Venezuela) cuando quería España. Ahora la landing, /pago, /bienvenida y
+# /organizaciones/nueva muestran los 17 países que están definidos y son
+# válidos. La onda de apertura ya pasó para todos: cada uno tiene moneda,
+# IVA, ID fiscal y vocabulario documentados, así que listarlos no
+# diluye el mercado, lo enuncia completo (Latinoamérica + España).
 ORDEN_SELECTOR = [
-    "VE", "CO", "MX", "EC", "PE", "ES",
+    "VE", "CO", "MX", "EC", "PE", "CL", "AR",
+    "DO", "UY", "PY", "BO", "PA", "CR", "GT",
+    "HN", "SV", "NI", "ES",
 ]
 
-# Genérico para cuando no hay país seleccionado (SEO, primera visita)
+# Genérico para cuando no hay país seleccionado (SEO, primera visita).
+# Antes decía "Latinoamérica" (incl. mercado "latinoamericano"), pero desde
+# que España es un mercado real con EUR/NIF/Vocabulario propio, decir
+# "Latinoamérica" invisibilizaba a España. Ahora se enuncia el mercado
+# completo: "España y Latinoamérica", gentilicio "iberoamericano".
 PAIS_GENERICO: dict = {
     "codigo": "",
-    "nombre": "Latinoamérica",
-    "gentilicio": "latinoamericano",
+    "nombre": "España y Latinoamérica",
+    "gentilicio": "iberoamericano",
     "bandera": "🌎",
     "moneda": "USD",
     "moneda_local": "USD",
@@ -352,7 +362,7 @@ PAIS_GENERICO: dict = {
     "iva": 16,
     "id_fiscal": "ID fiscal",
     "vocab": "concreto, friso, cielo raso, rodapié, plomero",
-    "mercado": "latinoamericano",
+    "mercado": "iberoamericano",
     "id_fiscal_placeholder": "RIF, NIT, RUC, RFC…",
     "telefono_ejemplo": "+00 000 000 0000",
     "razon_social_ejemplo": "",

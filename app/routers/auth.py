@@ -18,6 +18,10 @@ def acceso(request: Request, next: str = ""):
     except AuthNotConfigured as exc:
         configurado = False
         error = error or str(exc)
+    # Lista de países del selector de registro. Se sirve en lugar de
+    # hardcodearlos en la plantilla: si mañana se añade un mercado nuevo
+    # (Brasil, Estados Unidos, …) aparece solo, sin tocar HTML.
+    from ..paises import lista_paises
     return TEMPLATES.TemplateResponse(
         request,
         "auth/access.html",
@@ -26,6 +30,11 @@ def acceso(request: Request, next: str = ""):
             "msg": mensaje,
             "auth_configured": configurado,
             "next": _next_seguro(next, "/inicio"),
+            "paises": lista_paises(),
+            "pais_preseleccionado": (
+                str(request.query_params.get("pais", "") or "").strip().upper()
+                or str(request.cookies.get("cotizat_pais", "") or "").strip().upper()
+            ),
         },
     )
 
@@ -547,10 +556,26 @@ def nueva_organizacion_web(
     # quiere, así que se le ofrece la opción correcta antes de escribir nada.
     if pendientes and not membresias_activas(db, usuario.id):
         return _redirect("/organizaciones")
+    # Lista de países disponibles para el selector. Viene de la fuente única
+    # (``app.paises.PAISES``) y ya está ordenada por el ORDEN_SELECTOR
+    # actualizado: 17 países (Latinoamérica + España) en lugar de los 6 que
+    # se listaban a mano. Si mañana se añade otro mercado, aparece solo.
+    from ..paises import lista_paises
     return TEMPLATES.TemplateResponse(
         request,
         "auth/organization_new.html",
-        {"usuario": usuario, "error": request.query_params.get("error", "")},
+        {
+            "usuario": usuario,
+            "paises": lista_paises(),
+            # País preseleccionado: cookie del registro o query param
+            # ``?pais=XX`` (legacy). Si no, no preseleccionamos nada para
+            # que el usuario elija consciente, no por defecto.
+            "pais_preseleccionado": (
+                str(request.query_params.get("pais", "") or "").strip().upper()
+                or str(request.cookies.get("cotizat_pais", "") or "").strip().upper()
+            ),
+            "error": request.query_params.get("error", ""),
+        },
     )
 
 
@@ -1003,7 +1028,41 @@ def bienvenida(request: Request, db: Session = Depends(get_db)):
         if not resumen.get("activo"):
             compra_pendiente_ficha = plan_info(plan_recordado)
     from ..paises import PAIS_GENERICO, lista_paises
-    from ..services.tasa import TASAS_SUGERIDAS
+    from ..services.tasa import TASAS_SUGERIDAS, obtener_tasa_api
+    from ..services.monedas import MONEDAS, MONEDAS_VISIBLE, definicion as _def_moneda
+
+    # Tasas pre-cargadas (TASAS_SUGERIDAS) + intento de traer la tasa real del
+    # día desde open.er-api.com para las monedas que aún no tienen tasa
+    # verificada. Si la API no responde, se devuelven sólo las verificadas y
+    # la UI muestra el botón «Tasa de hoy» para consultarla bajo demanda.
+    tasas_dia = dict(TASAS_SUGERIDAS)
+    for _m in MONEDAS_VISIBLE:
+        if tasas_dia.get(_m) in (None,) and _m not in ("USD", "PAB"):
+            try:
+                _tasa_api, _ = obtener_tasa_api(_m, timeout=2)
+                if _tasa_api:
+                    tasas_dia[_m] = round(float(_tasa_api), 4)
+            except Exception:
+                pass
+
+    # Lista de monedas para el selector: la visible completa + VES (legacy)
+    # para que un país con moneda VES (Venezuela) la vea sin perder la opción.
+    # El orden refleja la familiaridad del usuario hispanohablante: primero
+    # USD/EUR (referencia global), luego el resto de LatAm y al final VES.
+    _monedas_orden = [
+        "USD", "EUR", "COP", "MXN", "PEN", "CLP", "ARS",
+        "UYU", "PYG", "BOB", "DOP", "PAB", "CRC", "GTQ",
+        "HNL", "NIO", "BRL", "VES",
+    ]
+    _monedas_info = []
+    for _m in _monedas_orden:
+        if _m in MONEDAS:
+            d = _def_moneda(_m)
+            _monedas_info.append({
+                "codigo": d.codigo,
+                "nombre": d.nombre,
+                "simbolo": d.simbolo_auxiliar,
+            })
 
     return TEMPLATES.TemplateResponse(
         request,
@@ -1019,7 +1078,8 @@ def bienvenida(request: Request, db: Session = Depends(get_db)):
             # del wizard leen estos datos, no valores duplicados a mano.
             "paises": lista_paises(),
             "pais_generico": PAIS_GENERICO,
-            "tasas": TASAS_SUGERIDAS,
+            "monedas": _monedas_info,
+            "tasas": tasas_dia,
         },
     )
 
