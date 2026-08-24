@@ -91,7 +91,7 @@ DATABASE_URL = DATABASE.url
 DATABASE_BACKEND = DATABASE.backend
 DATABASE_IS_SQLITE = DATABASE.is_sqlite
 DB_PATH = DATABASE.sqlite_path
-EXPECTED_ALEMBIC_HEAD = "c0d1e2f3a4b5"
+EXPECTED_ALEMBIC_HEAD = "e4b8c2d6a190"
 
 # Copias de seguridad automáticas y manuales (solo corresponden al modo
 # SQLite local; PostgreSQL tendrá backups administrados fuera del proceso).
@@ -708,6 +708,11 @@ def _asegurar_esquema_postgres() -> None:
             "ALTER TABLE configuracion ADD COLUMN IF NOT EXISTS fuente_tipo_cambio VARCHAR(120) DEFAULT ''",
             "ALTER TABLE configuracion ADD COLUMN IF NOT EXISTS fecha_tasa DATE",
             "ALTER TABLE presupuestos ADD COLUMN IF NOT EXISTS total_calculado FLOAT",
+            # Bloque planos: altura libre de paramentos (head e4b8c2d6a190).
+            # El deploy del 23/08/2026 subió el modelo sin ejecutar la
+            # migración y cada apertura del visor de planos devolvía 500 con
+            # ``UndefinedColumn: planos_obra.altura_libre_m does not exist``.
+            "ALTER TABLE planos_obra ADD COLUMN IF NOT EXISTS altura_libre_m FLOAT",
         )
         sin_permiso_ddl = False
         for sentencia in sentencias:
@@ -743,6 +748,11 @@ def _asegurar_esquema_postgres() -> None:
                     WHERE table_name = 'configuracion'
                       AND column_name = 'recorrido_inicial_oculto'
                 """)).first() is not None
+                altura_creada = conn.execute(text("""
+                    SELECT 1 FROM information_schema.columns
+                    WHERE table_name = 'planos_obra'
+                      AND column_name = 'altura_libre_m'
+                """)).first() is not None
                 cur = conn.execute(text("SELECT version_num FROM public.alembic_version")).scalar_one_or_none()
                 if not columna_creada:
                     logging.getLogger("cotizat").warning(
@@ -762,6 +772,20 @@ def _asegurar_esquema_postgres() -> None:
                         "alembic_version sigue en b1c2d3e4f5a6: no se marca "
                         "planos como aplicado automáticamente. Ejecuta `alembic upgrade head`."
                     )
+                elif cur == "c0d1e2f3a4b5":
+                    # Sí se puede avanzar a e4b8c2d6a190: a diferencia de
+                    # b2/c0 (tablas, GRANT y políticas RLS), esta revisión solo
+                    # añade una columna NULL, exactamente el ALTER de arriba.
+                    # Se avanza siempre que la columna exista DE VERDAD, para
+                    # no repetir el 500 permanente del visor de planos.
+                    if altura_creada:
+                        conn.execute(text("UPDATE public.alembic_version SET version_num = 'e4b8c2d6a190'"))
+                        logging.getLogger("cotizat").info("alembic_version avanzada de c0d1e2f3a4b5 a e4b8c2d6a190 tras auto-reparación.")
+                    else:
+                        logging.getLogger("cotizat").warning(
+                            "Falta planos_obra.altura_libre_m: no se avanza "
+                            "alembic_version (ejecuta `alembic upgrade head`)."
+                        )
                 elif cur is None:
                     logging.getLogger("cotizat").warning(
                         "Base sin alembic_version: no se inserta un head ficticio. "

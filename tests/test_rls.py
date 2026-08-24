@@ -165,7 +165,9 @@ def test_head_exigido_por_runtime_coincide_con_alembic():
     from migrations.versions import c0d1e2f3a4b5_fix_planos_permissions as permisos_planos_migration
     from migrations.versions import c3e9a1b7d4f2_stripe_checkout as stripe_migration
     from migrations.versions import c5d6e7f8a9b0_merge_currency_heads as merge_migration
-    assert database_module.EXPECTED_ALEMBIC_HEAD == permisos_planos_migration.revision
+    from migrations.versions import e4b8c2d6a190_planos_altura_libre as altura_migration
+    assert database_module.EXPECTED_ALEMBIC_HEAD == altura_migration.revision
+    assert altura_migration.down_revision == permisos_planos_migration.revision
     assert permisos_planos_migration.down_revision == planos_migration.revision
     assert planos_migration.down_revision == ocultar_migration.revision
     assert ocultar_migration.down_revision == stripe_migration.revision
