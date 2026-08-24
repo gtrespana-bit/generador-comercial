@@ -148,6 +148,181 @@
     CotizatStyles.set($("editor-mediciones-empty"), "display", $("editor-mediciones-list").children.length ? "none" : "flex");
   }
 
+  // -----------------------------------------------------------------------
+  // Importar medidas del plano al desglose de la partida
+  // -----------------------------------------------------------------------
+  var selectorPlanos = [];
+  var selectorSeleccionadas = new Set();
+
+  function selectorMagnitudInicial() {
+    var unidadOriginal = String(valor("unidad") || "").trim().toLowerCase();
+    var unidad = norm(unidadOriginal);
+    if (unidadOriginal === "m²" || unidadOriginal === "m2" || unidadOriginal === "m^2" || unidad === "m2") return "suelo";
+    if (["m", "ml", "metro", "metros"].indexOf(unidad) !== -1) return "perimetro";
+    return "perimetro";
+  }
+
+  function selectorOpcion(medicion, magnitud) {
+    return (medicion.opciones || []).find(function (op) { return op.clave === magnitud; }) || null;
+  }
+
+  function actualizarContadorSelector() {
+    var contador = $("plano-selector-seleccion-count");
+    if (!contador) return;
+    var total = selectorSeleccionadas.size;
+    contador.textContent = total + (total === 1 ? " estancia seleccionada" : " estancias seleccionadas");
+  }
+
+  function renderSelectorPlanos() {
+    var lista = $("plano-selector-lista");
+    var status = $("plano-selector-status");
+    var magnitudEl = $("plano-selector-magnitud");
+    if (!lista || !magnitudEl) return;
+    var magnitud = magnitudEl.value;
+    lista.replaceChildren();
+    var total = 0;
+    var disponibles = 0;
+
+    selectorPlanos.forEach(function (plano) {
+      (plano.mediciones || []).forEach(function (medicion) {
+        total += 1;
+        var opcion = selectorOpcion(medicion, magnitud);
+        if (opcion && opcion.cantidad != null) disponibles += 1;
+      });
+    });
+
+    if (!total) {
+      if (status) status.textContent = selectorPlanos.length
+        ? "Este plano todavía no tiene estancias o mediciones guardadas. Analiza el plano o dibuja una medición primero."
+        : "Este presupuesto todavía no tiene planos. Sube y calibra uno desde 📐 Planos.";
+      actualizarContadorSelector();
+      return;
+    }
+    if (status) status.textContent = disponibles
+      ? "Marca una o varias estancias. Las cantidades se añadirán como filas independientes y seguirán siendo editables."
+      : "No hay valores reales para esta magnitud. Calibra los planos antes de utilizarlos en el presupuesto.";
+
+    selectorPlanos.forEach(function (plano) {
+      var mediciones = (plano.mediciones || []).filter(function (medicion) {
+        return selectorOpcion(medicion, magnitud) || medicion.tipo === "area";
+      });
+      if (!mediciones.length) return;
+
+      var grupo = document.createElement("section");
+      grupo.className = "plano-selector-grupo";
+      var titulo = document.createElement("h4");
+      titulo.textContent = plano.nombre + (plano.calibrado ? " · escala lista" : " · sin calibrar");
+      grupo.appendChild(titulo);
+
+      mediciones.forEach(function (medicion) {
+        var opcion = selectorOpcion(medicion, magnitud);
+        var clave = String(plano.id) + ":" + String(medicion.id);
+        var fila = document.createElement("label");
+        fila.className = "plano-selector-medicion";
+        if (!opcion || opcion.cantidad == null) fila.classList.add("is-disabled");
+
+        var check = document.createElement("input");
+        check.type = "checkbox";
+        check.dataset.selectorKey = clave;
+        check.checked = selectorSeleccionadas.has(clave);
+        check.disabled = !opcion || opcion.cantidad == null;
+        check.addEventListener("change", function () {
+          if (check.checked) selectorSeleccionadas.add(clave);
+          else selectorSeleccionadas.delete(clave);
+          actualizarContadorSelector();
+        });
+
+        var texto = document.createElement("span");
+        texto.className = "plano-selector-medicion-texto";
+        var nombre = document.createElement("strong");
+        nombre.textContent = medicion.etiqueta || "Estancia";
+        var detalle = document.createElement("small");
+        detalle.textContent = opcion && opcion.cantidad != null
+          ? opcion.etiqueta + " · " + Number(opcion.cantidad).toFixed(2).replace(".", ",") + " " + (opcion.unidad === "m2" ? "m²" : opcion.unidad)
+          : "Calibra el plano para obtener metros reales";
+        texto.appendChild(nombre);
+        texto.appendChild(detalle);
+
+        var cantidad = document.createElement("output");
+        cantidad.textContent = opcion && opcion.cantidad != null
+          ? Number(opcion.cantidad).toFixed(2).replace(".", ",") + " " + (opcion.unidad === "m2" ? "m²" : opcion.unidad)
+          : "—";
+        fila.appendChild(check);
+        fila.appendChild(texto);
+        fila.appendChild(cantidad);
+        grupo.appendChild(fila);
+      });
+      lista.appendChild(grupo);
+    });
+    actualizarContadorSelector();
+  }
+
+  async function abrirSelectorPlanos() {
+    var overlay = $("modal-mediciones-plano");
+    var status = $("plano-selector-status");
+    var lista = $("plano-selector-lista");
+    if (!overlay) return;
+    overlay.classList.add("open");
+    document.body.classList.add("modal-open");
+    selectorSeleccionadas = new Set();
+    selectorPlanos = [];
+    if (lista) lista.replaceChildren();
+    if (status) status.textContent = "Cargando mediciones del proyecto…";
+    var magnitud = $("plano-selector-magnitud");
+    if (magnitud) magnitud.value = selectorMagnitudInicial();
+
+    var budgetId = editor.BUDGET_ID || window.BUDGET_ID;
+    if (!budgetId) {
+      if (status) status.textContent = "Guarda primero el presupuesto para poder vincular medidas de un plano.";
+      actualizarContadorSelector();
+      return;
+    }
+    try {
+      var response = await fetch("/presupuestos/" + budgetId + "/planos/mediciones-selector", {
+        headers: { Accept: "application/json" },
+        credentials: "same-origin"
+      });
+      var data = await response.json();
+      if (!response.ok || !data.ok) throw new Error(data.error || "No se pudieron cargar las mediciones.");
+      selectorPlanos = data.planos || [];
+      renderSelectorPlanos();
+    } catch (error) {
+      if (status) status.textContent = error.message || "No se pudieron cargar las mediciones del plano.";
+    }
+  }
+
+  function cerrarSelectorPlanos() {
+    var overlay = $("modal-mediciones-plano");
+    if (overlay) overlay.classList.remove("open");
+    document.body.classList.remove("modal-open");
+  }
+
+  function confirmarSelectorPlanos() {
+    var magnitud = $("plano-selector-magnitud");
+    var claveMagnitud = magnitud ? magnitud.value : "perimetro";
+    var añadidas = 0;
+    selectorPlanos.forEach(function (plano) {
+      (plano.mediciones || []).forEach(function (medicion) {
+        var clave = String(plano.id) + ":" + String(medicion.id);
+        if (!selectorSeleccionadas.has(clave)) return;
+        var opcion = selectorOpcion(medicion, claveMagnitud);
+        if (!opcion || opcion.cantidad == null) return;
+        addMedicion({
+          concepto: plano.nombre + " · " + (medicion.etiqueta || "Estancia") + " · " + opcion.etiqueta,
+          cantidad: Number(opcion.cantidad)
+        });
+        añadidas += 1;
+      });
+    });
+    if (!añadidas) {
+      var status = $("plano-selector-status");
+      if (status) status.textContent = "Selecciona al menos una estancia con un valor disponible.";
+      return;
+    }
+    editor.marcarCambio();
+    cerrarSelectorPlanos();
+  }
+
   function leerMediciones() {
     return Array.prototype.map.call($("editor-mediciones-list").querySelectorAll(".editor-medicion-row"), function (fila) {
       return {
@@ -484,6 +659,15 @@
       var fila = addMedicion({});
       fila.querySelector("input").focus();
     });
+    $("editor-add-medicion-plano")?.addEventListener("click", abrirSelectorPlanos);
+    $("plano-selector-magnitud")?.addEventListener("change", renderSelectorPlanos);
+    document.querySelectorAll("[data-close-plano-selector]").forEach(function (btn) {
+      btn.addEventListener("click", cerrarSelectorPlanos);
+    });
+    $("btn-confirmar-mediciones-plano")?.addEventListener("click", confirmarSelectorPlanos);
+    $("modal-mediciones-plano")?.addEventListener("click", function (evt) {
+      if (evt.target === $("modal-mediciones-plano")) cerrarSelectorPlanos();
+    });
     modal.querySelectorAll("[data-partida-tab]").forEach(function (btn) {
       btn.addEventListener("click", function () { cambiarTab(btn.dataset.partidaTab); });
     });
@@ -643,6 +827,7 @@
     })();
 
     editor.abrirEditorPartida = abrir;
+    editor.abrirSelectorPlanos = abrirSelectorPlanos;
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);

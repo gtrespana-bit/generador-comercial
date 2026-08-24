@@ -527,6 +527,109 @@ def distancia_entre_puntos(a: list[float], b: list[float]) -> float:
     return math.hypot(float(a[0]) - float(b[0]), float(a[1]) - float(b[1]))
 
 
+def _ajustar_limites_compartidos(
+    candidatos: list[dict[str, Any]],
+    banda_px: float,
+) -> None:
+    """Hace coincidir los bordes de dos estancias separadas por un tabique.
+
+    El relleno por inundación termina en la cara interior de la barrera
+    rasterizada. Si se persisten esos dos contornos tal cual, el tabique queda
+    convertido en un hueco: el salón acaba antes del muro y la cocina empieza
+    después de él. Para una pareja de recintos adyacentes tomamos el punto
+    medio de ambas caras. Así los dos polígonos usan la misma línea central del
+    tabique, sin inventar superficie ni duplicar el espesor del muro.
+
+    Primero se recopilan las parejas y después se agrupan las que pertenecen a
+    la misma línea de tabique. Esto es importante en un cruce: si una pared
+    horizontal tiene estancias a izquierda y derecha, cada tramo puede tener
+    una cara rasterizada distinta, pero los cuatro polígonos deben compartir
+    una única coordenada central.
+    """
+    if len(candidatos) < 2:
+        return
+
+    def extremos(candidato: dict[str, Any]) -> tuple[float, float, float, float]:
+        puntos = candidato.get("puntos") or []
+        if not puntos:
+            return 0.0, 0.0, 0.0, 0.0
+        xs = [float(p[0]) for p in puntos]
+        ys = [float(p[1]) for p in puntos]
+        return min(xs), min(ys), max(xs), max(ys)
+
+    def solapa(a0: float, a1: float, b0: float, b1: float) -> float:
+        return max(0.0, min(a1, b1) - max(a0, b0))
+
+    parejas: list[dict[str, Any]] = []
+    for i, primero in enumerate(candidatos):
+        ax0, ay0, ax1, ay1 = extremos(primero)
+        for segundo in candidatos[i + 1 :]:
+            bx0, by0, bx1, by1 = extremos(segundo)
+
+            # Borde vertical enfrentado: estancia | tabique | estancia.
+            solapa_y = solapa(ay0, ay1, by0, by1)
+            if ax1 <= bx0 and bx0 - ax1 <= banda_px and solapa_y >= min(ay1 - ay0, by1 - by0) * 0.30:
+                parejas.append({
+                    "eje": 0, "primero": primero, "segundo": segundo,
+                    "borde_primero": ax1, "borde_segundo": bx0,
+                    "tramo0": max(ay0, by0), "tramo1": min(ay1, by1),
+                })
+
+            # Borde horizontal enfrentado.
+            solapa_x = solapa(ax0, ax1, bx0, bx1)
+            if ay1 <= by0 and by0 - ay1 <= banda_px and solapa_x >= min(ax1 - ax0, bx1 - bx0) * 0.30:
+                parejas.append({
+                    "eje": 1, "primero": primero, "segundo": segundo,
+                    "borde_primero": ay1, "borde_segundo": by0,
+                    "tramo0": max(ax0, bx0), "tramo1": min(ax1, bx1),
+                })
+
+    def poner_borde(puntos: list[list[float]], eje: int, extremo: float, nuevo: float) -> bool:
+        tolerancia = max(2.0, banda_px * 0.35)
+        indices = [i for i, punto in enumerate(puntos) if abs(float(punto[eje]) - extremo) <= tolerancia]
+        # Dos puntos o más evitan tocar un vértice suelto de una diagonal.
+        if len(indices) < 2:
+            return False
+        for i in indices:
+            puntos[i][eje] = round(nuevo, 2)
+        return True
+
+    # Agrupa segmentos de una misma línea; el tramo común puede limitarse a
+    # un vértice (p. ej. una cruz de cuatro estancias), por eso se admiten
+    # intervalos que se tocan además de los que se solapan.
+    tolerancia_linea = max(4.0, banda_px * 0.35)
+    for eje in (0, 1):
+        grupos: list[list[dict[str, Any]]] = []
+        for pareja in [p for p in parejas if p["eje"] == eje]:
+            centro = (pareja["borde_primero"] + pareja["borde_segundo"]) / 2.0
+            pareja["centro"] = centro
+            colocado = False
+            for grupo in grupos:
+                centro_grupo = sum(p["centro"] for p in grupo) / len(grupo)
+                tramo0 = min(p["tramo0"] for p in grupo)
+                tramo1 = max(p["tramo1"] for p in grupo)
+                if abs(centro - centro_grupo) <= tolerancia_linea and pareja["tramo0"] <= tramo1 + banda_px and pareja["tramo1"] >= tramo0 - banda_px:
+                    grupo.append(pareja)
+                    colocado = True
+                    break
+            if not colocado:
+                grupos.append([pareja])
+
+        for grupo in grupos:
+            centro = round(sum(p["centro"] for p in grupo) / len(grupo), 2)
+            for pareja in grupo:
+                if poner_borde(pareja["primero"]["puntos"], eje, pareja["borde_primero"], centro) and poner_borde(pareja["segundo"]["puntos"], eje, pareja["borde_segundo"], centro):
+                    if eje == 0:
+                        pareja["primero"]["bbox"][2] = centro
+                        pareja["segundo"]["bbox"][0] = centro
+                    else:
+                        pareja["primero"]["bbox"][3] = centro
+                        pareja["segundo"]["bbox"][1] = centro
+
+    for candidato in candidatos:
+        candidato["area_px2"] = round(_area_px(candidato.get("puntos") or []), 2)
+
+
 def detectar_espacios_plano(
     contenido: bytes,
     content_type: str = "",
@@ -697,6 +800,15 @@ def detectar_espacios_plano(
                 round((max_y + 1) * alto_original / alto, 2),
             ],
         })
+
+    # El relleno trabaja con la cara libre del tabique. Reconciliamos ahora
+    # las parejas adyacentes usando el centro del espesor detectado, antes de
+    # ordenar y persistir los polígonos. El factor devuelve la banda a píxeles
+    # de la imagen original.
+    _ajustar_limites_compartidos(
+        candidatos,
+        banda_px=max(12.0, (max_hueco + grosor * 2) / escala_reduccion),
+    )
 
     candidatos.sort(key=lambda c: c["area_px2"], reverse=True)
     for numero, candidato in enumerate(candidatos[:max_espacios], 1):

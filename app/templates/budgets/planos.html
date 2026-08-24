@@ -218,6 +218,11 @@
             <input type="text" id="estancia-nombre" placeholder="Cocina, baño, dormitorio…">
           </div>
           <p id="estancia-save" class="planos-save-status">El nombre se guarda automáticamente.</p>
+          <div class="planos-estancia-actions">
+            <button type="button" class="btn btn-sm btn-primary" id="btn-editar-estancia">✏️ Editar contorno</button>
+            <button type="button" class="btn btn-sm" id="btn-ver-mediciones-estancia">Ver mediciones</button>
+          </div>
+          <p class="hint planos-edit-hint" id="estancia-edit-hint">Arrastra un vértice o un tramo del tabique para ajustar la estancia.</p>
           <dl class="planos-metricas" id="estancia-metricas"></dl>
         </div>
       </section>
@@ -522,6 +527,8 @@ body.planos-workspace-page { background: var(--bg); }
   let snapPuntos = true;
   let mostrarMediciones = true;
   let panActivo = null;
+  let arrastreGeometria = null;
+  let arrastreAcabo = false;
   let planoNombreArchivo = 'plano';
 
   function cont(){ return document.getElementById('canvas-container'); }
@@ -916,6 +923,21 @@ body.planos-workspace-page { background: var(--bg); }
         ctx.strokeStyle='#2563eb'; ctx.lineWidth=2; ctx.stroke();
       }
     }
+    // En el modo de edición se muestran asas visibles: los círculos mueven
+    // vértices y los pequeños rombos permiten desplazar una pared completa.
+    if (!enCalibracion && herramienta==='area' && medicionEnEdicionId && pts.length>=3){
+      pts.forEach(function (pt) {
+        ctx.beginPath(); ctx.arc(pt[0], pt[1], 6, 0, Math.PI * 2);
+        ctx.fillStyle = '#fff'; ctx.fill();
+        ctx.strokeStyle = '#2563eb'; ctx.lineWidth = 2; ctx.stroke();
+      });
+      for (let i=0; i<pts.length; i++){
+        const a=pts[i], b=pts[(i+1)%pts.length];
+        const mx=(a[0]+b[0])/2, my=(a[1]+b[1])/2;
+        ctx.save(); ctx.translate(mx,my); ctx.rotate(Math.PI/4);
+        ctx.fillStyle='#2563eb'; ctx.fillRect(-4,-4,8,8); ctx.restore();
+      }
+    }
   }
 
   function canvasPos(e){
@@ -942,6 +964,54 @@ body.planos-workspace-page { background: var(--bg); }
     el.textContent = texto;
     el.classList.remove('is-saving','is-ok','is-error');
     if (tipo) el.classList.add(`is-${tipo}`);
+  }
+
+  function distanciaPuntoSegmento(p, a, b){
+    const dx=b[0]-a[0], dy=b[1]-a[1];
+    const largo2=dx*dx+dy*dy;
+    if (!largo2) return {distancia:distancia(p,a), t:0};
+    const t=Math.max(0,Math.min(1,((p[0]-a[0])*dx+(p[1]-a[1])*dy)/largo2));
+    const q=[a[0]+t*dx,a[1]+t*dy];
+    return {distancia:distancia(p,q), t:t};
+  }
+
+  function asaGeometriaCercana(pos){
+    if (herramienta!=='area' || !medicionEnEdicionId || puntosActuales.length<3) return null;
+    const umbral=12/zoom;
+    let mejorVertice=null, distanciaVertice=umbral;
+    puntosActuales.forEach(function(pt,i){
+      const d=distancia(pos,pt);
+      if (d<distanciaVertice){ distanciaVertice=d; mejorVertice=i; }
+    });
+    if (mejorVertice!==null) return {tipo:'vertice', indice:mejorVertice};
+    let mejorArista=null, distanciaArista=umbral;
+    for (let i=0;i<puntosActuales.length;i++){
+      const r=distanciaPuntoSegmento(pos,puntosActuales[i],puntosActuales[(i+1)%puntosActuales.length]);
+      if (r.distancia<distanciaArista){ distanciaArista=r.distancia; mejorArista=i; }
+    }
+    if (mejorArista===null) return null;
+    const a=puntosActuales[mejorArista], b=puntosActuales[(mejorArista+1)%puntosActuales.length];
+    const dx=b[0]-a[0], dy=b[1]-a[1], largo=Math.hypot(dx,dy)||1;
+    return {tipo:'arista', indice:mejorArista, inicio:[pos[0],pos[1]], a:[a[0],a[1]], b:[b[0],b[1]], normal:[-dy/largo,dx/largo]};
+  }
+
+  function actualizarGeometriaArrastrada(pos){
+    if (!arrastreGeometria) return;
+    if (arrastreGeometria.tipo==='vertice') {
+      puntosActuales[arrastreGeometria.indice]=[pos[0],pos[1]];
+    } else {
+      const dato=arrastreGeometria;
+      const delta=(pos[0]-dato.inicio[0])*dato.normal[0]+(pos[1]-dato.inicio[1])*dato.normal[1];
+      const i=dato.indice, j=(i+1)%puntosActuales.length;
+      puntosActuales[i]=[dato.a[0]+dato.normal[0]*delta,dato.a[1]+dato.normal[1]*delta];
+      puntosActuales[j]=[dato.b[0]+dato.normal[0]*delta,dato.b[1]+dato.normal[1]*delta];
+    }
+    guardarBorradorLocal();
+    const seleccion=medicionesGuardadas.find(function(m){return m.id===medicionSeleccionadaId;});
+    if (seleccion) pintarMetricas({puntos:puntosActuales});
+    setEstadoNombre('Editando contorno…', 'saving');
+    actualizarValorActual();
+    dibujar();
   }
 
   function pintarMetricas(m){
@@ -980,6 +1050,33 @@ body.planos-workspace-page { background: var(--bg); }
     dibujar();
   }
 
+  async function editarEstancia(m){
+    if (!m || m.tipo!=='area') return;
+    if (puntosActuales.length && medicionEnEdicionId!==m.id){
+      if (trazoValido()){
+        if (!await persistirTrazo({finalizar:true})) return;
+      } else if (!confirm('¿Descartar el borrador incompleto para editar esta estancia?')) return;
+    }
+    if (!await activarHerramienta('area', true)) return;
+    puntosActuales=(m.puntos||[]).map(function(p){return [p[0],p[1]];});
+    medicionEnEdicionId=m.id;
+    medicionSeleccionadaId=m.id;
+    const et=document.getElementById('med-etiqueta'); if(et) et.value=m.etiqueta||'';
+    const color=document.getElementById('med-color'); if(color) color.value=m.color||'#ff0000';
+    guardarBorradorLocal();
+    activarTabInspector('estancia');
+    setEstadoNombre('Edita los puntos o arrastra un tramo del tabique. Se guarda automáticamente.', 'ok');
+    actualizarValorActual(); dibujar();
+  }
+
+  document.getElementById('btn-editar-estancia')?.addEventListener('click', function(){
+    const m=medicionesGuardadas.find(function(x){return x.id===medicionSeleccionadaId;});
+    editarEstancia(m);
+  });
+  document.getElementById('btn-ver-mediciones-estancia')?.addEventListener('click', function(){
+    activarTabInspector('resultados');
+  });
+
   async function guardarNombreEstancia(){
     const m = medicionesGuardadas.find(x=>x.id===medicionSeleccionadaId);
     const input = document.getElementById('estancia-nombre');
@@ -1003,7 +1100,8 @@ body.planos-workspace-page { background: var(--bg); }
   }
 
   canvas.addEventListener('click', (e)=>{
-    if (herramienta==='mover' || panActivo) return;
+    if (arrastreAcabo){ arrastreAcabo=false; return; }
+    if (herramienta==='mover' || panActivo || arrastreGeometria) return;
     const r = resolverPos(e);
     if (herramienta==='seleccionar'){
       const est = estanciaEnPunto(r.pos);
@@ -1030,6 +1128,10 @@ body.planos-workspace-page { background: var(--bg); }
   });
 
   canvas.addEventListener('mousemove', (e)=>{
+    if (arrastreGeometria){
+      actualizarGeometriaArrastrada(canvasPos(e));
+      return;
+    }
     if (panActivo) return;
     const r = resolverPos(e);
     cursorPos = r.pos;
@@ -1046,6 +1148,16 @@ body.planos-workspace-page { background: var(--bg); }
   // ---------- Paneo (botón central o herramienta Mover) ----------
 
   canvas.addEventListener('mousedown', (e)=>{
+    if (e.button===0 && herramienta==='area' && medicionEnEdicionId && puntosActuales.length>=3){
+      const asa=asaGeometriaCercana(canvasPos(e));
+      if (asa){
+        e.preventDefault();
+        arrastreGeometria=asa;
+        arrastreAcabo=false;
+        canvas.classList.add('planos-editando-geometria');
+        return;
+      }
+    }
     const esMover = (herramienta==='mover' && e.button===0) || e.button===1;
     if (!esMover) return;
     e.preventDefault();
@@ -1055,6 +1167,10 @@ body.planos-workspace-page { background: var(--bg); }
     canvas.classList.add('panendo');
   });
   window.addEventListener('mousemove', (e)=>{
+    if (arrastreGeometria){
+      actualizarGeometriaArrastrada(canvasPos(e));
+      return;
+    }
     if (!panActivo) return;
     const c = cont();
     if (!c) return;
@@ -1062,6 +1178,14 @@ body.planos-workspace-page { background: var(--bg); }
     c.scrollTop = panActivo.st - (e.clientY - panActivo.y);
   });
   window.addEventListener('mouseup', ()=>{
+    if (arrastreGeometria){
+      arrastreGeometria=null;
+      arrastreAcabo=true;
+      canvas.classList.remove('planos-editando-geometria');
+      programarAutoguardado();
+      setEstadoNombre('Cambios del contorno pendientes de guardado…', 'saving');
+      persistirTrazo();
+    }
     if (panActivo){ panActivo = null; canvas.classList.remove('panendo'); }
   });
   // Evita el menú contextual del botón central durante el paneo.
