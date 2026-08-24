@@ -1661,15 +1661,22 @@ def _fmt_num(valor: float) -> str:
     return f"{float(valor or 0):.2f}".replace(".", ",")
 
 
-def filas_csv_mediciones(presupuesto) -> list[list[str]]:
+def filas_csv_mediciones(
+    presupuesto,
+    planos: list[PlanoObra] | None = None,
+) -> list[list[str]]:
     """Filas CSV con todas las mediciones de todos los planos del presupuesto.
 
     Incluye una fila por cada elemento vectorial de los planos
     ``dibujado`` o ``mixto`` para que el exporte refleje también las
     paredes y huecos que el usuario ha creado desde el editor.
+
+    ``planos`` permite al router suministrar una carga compatible durante la
+    ventana entre desplegar el código y aplicar la migración vectorial. Sin él
+    se conserva el comportamiento histórico basado en la relación ORM.
     """
     planos = sorted(
-        getattr(presupuesto, "planos", None) or [],
+        planos if planos is not None else (getattr(presupuesto, "planos", None) or []),
         key=lambda pl: pl.id,
     )
     filas = [[

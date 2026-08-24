@@ -63,21 +63,80 @@ from ..services.planos import (
     filas_csv_mediciones,
     GROSOR_TABIQUE_DEFECTO_CM,
 )
+from ..services.planos_compat import (
+    EsquemaPlanos,
+    completar_plano_legacy,
+    completar_planos_legacy,
+    detectar_esquema_planos,
+    opciones_columnas_compatibles,
+)
 
 router = APIRouter()
+
+
+_MENSAJE_MIGRACION_PLANOS = (
+    "El editor de planos se está actualizando. Los planos existentes siguen "
+    "disponibles, pero esta acción requiere que termine la migración de datos."
+)
+
+
+def _consulta_planos_compatible(
+    db: Session,
+    esquema: EsquemaPlanos,
+    *,
+    cargar_elementos: bool = False,
+):
+    """Consulta ``PlanoObra`` sin seleccionar columnas aún no migradas."""
+    opciones = list(opciones_columnas_compatibles(esquema))
+    if cargar_elementos and esquema.tiene_tabla_elementos:
+        opciones.append(selectinload(PlanoObra.elementos))
+    return db.query(PlanoObra).options(*opciones)
+
+
+def _obtener_plano_compatible(
+    db: Session,
+    plano_id: int,
+    *,
+    esquema: EsquemaPlanos | None = None,
+) -> PlanoObra | None:
+    esquema = esquema or detectar_esquema_planos(db)
+    plano = (
+        _consulta_planos_compatible(db, esquema, cargar_elementos=True)
+        .options(selectinload(PlanoObra.mediciones))
+        .filter(PlanoObra.id == plano_id)
+        .first()
+    )
+    if plano is not None:
+        completar_plano_legacy(plano, esquema)
+    return plano
+
+
+def _respuesta_migracion_planos_pendiente() -> JSONResponse:
+    """Evita un 500 si se intenta escribir el esquema vectorial ausente."""
+    return JSONResponse(
+        {
+            "ok": False,
+            "error": _MENSAJE_MIGRACION_PLANOS,
+            "codigo": "migracion_planos_pendiente",
+        },
+        status_code=503,
+        headers={"Retry-After": "300"},
+    )
 
 
 @router.get("/planos", response_class=HTMLResponse)
 def visor_planos(request: Request, db: Session = Depends(get_db)):
     """Galería global de planos de la organización, agrupada por presupuesto."""
-    planos = (
-        db.query(PlanoObra)
+    esquema = detectar_esquema_planos(db)
+    planos = completar_planos_legacy(
+        _consulta_planos_compatible(db, esquema)
         .options(
             selectinload(PlanoObra.mediciones),
             selectinload(PlanoObra.presupuesto).selectinload(Presupuesto.cliente),
         )
         .order_by(PlanoObra.id.desc())
-        .all()
+        .all(),
+        esquema,
     )
 
     grupos: list[dict] = []
@@ -102,6 +161,7 @@ def visor_planos(request: Request, db: Session = Depends(get_db)):
             "total_planos": len(planos),
             "planos_calibrados": sum(1 for plano in planos if plano.calibrado),
             "total_mediciones": sum(len(plano.mediciones) for plano in planos),
+            "esquema_planos_completo": esquema.editor_vectorial_disponible,
             "cfg": _config(db),
         },
     )
@@ -119,12 +179,14 @@ def listar_planos_presupuesto(
     if not presupuesto:
         return _redirect("/presupuestos", error="Presupuesto no encontrado.")
 
-    planos = (
-        db.query(PlanoObra)
+    esquema = detectar_esquema_planos(db)
+    planos = completar_planos_legacy(
+        _consulta_planos_compatible(db, esquema, cargar_elementos=True)
         .filter(PlanoObra.presupuesto_id == presupuesto_id)
         .options(selectinload(PlanoObra.mediciones))
         .order_by(PlanoObra.id.desc())
-        .all()
+        .all(),
+        esquema,
     )
 
     # Enlace profundo ?plano=<id> desde el visor global; si no existe, el primero.
@@ -149,6 +211,7 @@ def listar_planos_presupuesto(
             "plano_inicial": plano_inicial,
             "detectar_automaticamente": False,
             "partidas": partidas,
+            "esquema_planos_completo": esquema.editor_vectorial_disponible,
             "cfg": _config(db),
         },
     )
@@ -183,12 +246,14 @@ def mediciones_selector_presupuesto(presupuesto_id: int, db: Session = Depends(g
             status_code=404,
         )
 
-    planos = (
-        db.query(PlanoObra)
+    esquema = detectar_esquema_planos(db)
+    planos = completar_planos_legacy(
+        _consulta_planos_compatible(db, esquema)
         .filter(PlanoObra.presupuesto_id == presupuesto_id)
         .options(selectinload(PlanoObra.mediciones))
         .order_by(PlanoObra.id.desc())
-        .all()
+        .all(),
+        esquema,
     )
 
     # Diagnóstico: si la consulta no devuelve nada, miramos si el
@@ -314,7 +379,7 @@ def _datos_elemento_plano(elemento: PlanoElemento) -> dict:
 
 @router.get("/planos/{plano_id}/datos")
 def datos_plano(plano_id: int, db: Session = Depends(get_db)):
-    plano = db.get(PlanoObra, plano_id)
+    plano = _obtener_plano_compatible(db, plano_id)
     if not plano:
         return JSONResponse({"ok": False, "error": "Plano no encontrado."}, status_code=404)
 
@@ -355,11 +420,14 @@ def detectar_mediciones_plano(plano_id: int, limite: int = 30, db: Session = Dep
     ambos casos el grosor declarado por el usuario participa en la
     generación de la barrera y en el ajuste de bordes compartidos.
     """
-    plano = db.get(PlanoObra, plano_id)
+    esquema = detectar_esquema_planos(db)
+    plano = _obtener_plano_compatible(db, plano_id, esquema=esquema)
     if not plano:
         return JSONResponse({"ok": False, "error": "Plano no encontrado."}, status_code=404)
     limite = max(1, min(int(limite), 30))
 
+    if plano.origen == "dibujado" and not esquema.editor_vectorial_disponible:
+        return _respuesta_migracion_planos_pendiente()
     if plano.origen == "dibujado":
         try:
             candidatos = detectar_estancias_sobre_dibujo(plano)
@@ -411,7 +479,7 @@ def detectar_mediciones_plano(plano_id: int, limite: int = 30, db: Session = Dep
 
 @router.get("/planos/{plano_id}/archivo")
 def descargar_archivo_plano(plano_id: int, db: Session = Depends(get_db)):
-    plano = db.get(PlanoObra, plano_id)
+    plano = _obtener_plano_compatible(db, plano_id)
     if not plano or not plano.archivo:
         return Response(status_code=404)
     try:
@@ -436,6 +504,12 @@ async def subir_plano(
     presupuesto = db.get(Presupuesto, presupuesto_id)
     if not presupuesto:
         return JSONResponse({"ok": False, "error": "Presupuesto no encontrado."}, status_code=404)
+    # El INSERT ORM incluye las cuatro columnas nuevas aun para un plano
+    # raster. Si falta cualquiera, responde de forma explícita en vez de dejar
+    # que PostgreSQL genere UndefinedColumn y un 500.
+    esquema = detectar_esquema_planos(db)
+    if not esquema.columnas_vectoriales_completas:
+        return _respuesta_migracion_planos_pendiente()
 
     if not archivo or not archivo.filename:
         return JSONResponse({"ok": False, "error": "Selecciona un archivo de plano."}, status_code=400)
@@ -465,7 +539,8 @@ async def calibrar_plano_endpoint(
     request: Request,
     db: Session = Depends(get_db),
 ):
-    plano = db.get(PlanoObra, plano_id)
+    esquema = detectar_esquema_planos(db)
+    plano = _obtener_plano_compatible(db, plano_id, esquema=esquema)
     if not plano:
         return JSONResponse({"ok": False, "error": "Plano no encontrado."}, status_code=404)
 
@@ -486,7 +561,10 @@ async def calibrar_plano_endpoint(
         return JSONResponse({"ok": False, "error": "Distancias no válidas."}, status_code=400)
 
     try:
-        if grosor_cm is not None:
+        # Calibrar (funcionalidad histórica) sigue disponible durante la
+        # ventana de migración. Solo se omite el ajuste del grosor si su
+        # columna física aún no existe; el valor seguro sigue siendo 10 cm.
+        if grosor_cm is not None and esquema.tiene_columna("grosor_tabique_cm"):
             actualizar_grosor_tabique(db, plano, grosor_cm)
         calibrar_plano(db, plano, dist_px, dist_real, unidad, altura)
         return {
@@ -507,7 +585,7 @@ async def crear_medicion_endpoint(
     request: Request,
     db: Session = Depends(get_db),
 ):
-    plano = db.get(PlanoObra, plano_id)
+    plano = _obtener_plano_compatible(db, plano_id)
     if not plano:
         return JSONResponse({"ok": False, "error": "Plano no encontrado."}, status_code=404)
 
@@ -541,7 +619,7 @@ async def actualizar_medicion_endpoint(
     request: Request,
     db: Session = Depends(get_db),
 ):
-    plano = db.get(PlanoObra, plano_id)
+    plano = _obtener_plano_compatible(db, plano_id)
     med = db.get(PlanoMedicion, medicion_id)
     if not plano or not med or med.plano_id != plano_id:
         return JSONResponse({"ok": False, "error": "Medición no encontrada."}, status_code=404)
@@ -594,7 +672,7 @@ async def actualizar_altura_endpoint(
     request: Request,
     db: Session = Depends(get_db),
 ):
-    plano = db.get(PlanoObra, plano_id)
+    plano = _obtener_plano_compatible(db, plano_id)
     if not plano:
         return JSONResponse({"ok": False, "error": "Plano no encontrado."}, status_code=404)
     try:
@@ -615,7 +693,7 @@ async def actualizar_altura_endpoint(
 
 @router.delete("/planos/{plano_id}")
 def borrar_plano_endpoint(plano_id: int, db: Session = Depends(get_db)):
-    plano = db.get(PlanoObra, plano_id)
+    plano = _obtener_plano_compatible(db, plano_id)
     if not plano:
         return JSONResponse({"ok": False, "error": "Plano no encontrado."}, status_code=404)
     presupuesto_id = plano.presupuesto_id
@@ -672,7 +750,20 @@ def exportar_mediciones_presupuesto(
     presupuesto = db.get(Presupuesto, presupuesto_id)
     if not presupuesto:
         return _redirect("/presupuestos", error="Presupuesto no encontrado.")
-    filas = filas_csv_mediciones(presupuesto)
+    esquema = detectar_esquema_planos(db)
+    planos = completar_planos_legacy(
+        _consulta_planos_compatible(db, esquema, cargar_elementos=True)
+        .filter(PlanoObra.presupuesto_id == presupuesto_id)
+        .options(
+            selectinload(PlanoObra.mediciones).selectinload(
+                PlanoMedicion.partida_destino
+            )
+        )
+        .order_by(PlanoObra.id)
+        .all(),
+        esquema,
+    )
+    filas = filas_csv_mediciones(presupuesto, planos=planos)
     if len(filas) <= 1:
         return _redirect(
             f"/presupuestos/{presupuesto_id}/planos",
@@ -688,7 +779,7 @@ def exportar_plano_endpoint(
     db: Session = Depends(get_db),
 ):
     """DXF con las mediciones del plano para AutoCAD/LibreCAD/BricsCAD."""
-    plano = db.get(PlanoObra, plano_id)
+    plano = _obtener_plano_compatible(db, plano_id)
     if not plano:
         return JSONResponse({"ok": False, "error": "Plano no encontrado."}, status_code=404)
     if (formato or "dxf").lower() != "dxf":
@@ -726,6 +817,9 @@ async def crear_plano_blanco(
     presupuesto = db.get(Presupuesto, presupuesto_id)
     if not presupuesto:
         return JSONResponse({"ok": False, "error": "Presupuesto no encontrado."}, status_code=404)
+    esquema = detectar_esquema_planos(db)
+    if not esquema.editor_vectorial_disponible:
+        return _respuesta_migracion_planos_pendiente()
     try:
         payload = await request.json()
     except Exception:
@@ -761,7 +855,10 @@ async def actualizar_grosor_endpoint(
     db: Session = Depends(get_db),
 ):
     """Cambia el grosor típico del tabique del plano (en centímetros)."""
-    plano = db.get(PlanoObra, plano_id)
+    esquema = detectar_esquema_planos(db)
+    if not esquema.tiene_columna("grosor_tabique_cm"):
+        return _respuesta_migracion_planos_pendiente()
+    plano = _obtener_plano_compatible(db, plano_id, esquema=esquema)
     if not plano:
         return JSONResponse({"ok": False, "error": "Plano no encontrado."}, status_code=404)
     try:
@@ -788,7 +885,10 @@ async def crear_elemento_endpoint(
     db: Session = Depends(get_db),
 ):
     """Crea un muro / hueco / línea auxiliar en el plano."""
-    plano = db.get(PlanoObra, plano_id)
+    esquema = detectar_esquema_planos(db)
+    if not esquema.editor_vectorial_disponible:
+        return _respuesta_migracion_planos_pendiente()
+    plano = _obtener_plano_compatible(db, plano_id, esquema=esquema)
     if not plano:
         return JSONResponse({"ok": False, "error": "Plano no encontrado."}, status_code=404)
     try:
@@ -817,7 +917,10 @@ async def actualizar_elemento_endpoint(
     request: Request,
     db: Session = Depends(get_db),
 ):
-    plano = db.get(PlanoObra, plano_id)
+    esquema = detectar_esquema_planos(db)
+    if not esquema.editor_vectorial_disponible:
+        return _respuesta_migracion_planos_pendiente()
+    plano = _obtener_plano_compatible(db, plano_id, esquema=esquema)
     elem = db.get(PlanoElemento, elemento_id)
     if not plano or not elem or elem.plano_id != plano_id:
         return JSONResponse({"ok": False, "error": "Elemento no encontrado."}, status_code=404)
@@ -845,7 +948,10 @@ def eliminar_elemento_endpoint(
     elemento_id: int,
     db: Session = Depends(get_db),
 ):
-    plano = db.get(PlanoObra, plano_id)
+    esquema = detectar_esquema_planos(db)
+    if not esquema.editor_vectorial_disponible:
+        return _respuesta_migracion_planos_pendiente()
+    plano = _obtener_plano_compatible(db, plano_id, esquema=esquema)
     elem = db.get(PlanoElemento, elemento_id)
     if not plano or not elem or elem.plano_id != plano_id:
         return JSONResponse({"ok": False, "error": "Elemento no encontrado."}, status_code=404)

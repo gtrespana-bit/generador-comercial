@@ -11,6 +11,14 @@
   </div>
 </div>
 
+{% if esquema_planos_completo is defined and not esquema_planos_completo %}
+<div class="alert alert-warning" role="status">
+  <strong>Actualización de planos pendiente.</strong>
+  La galería y los planos existentes siguen disponibles; la creación y el
+  editor vectorial se habilitarán al terminar la migración de datos.
+</div>
+{% endif %}
+
 {% if grupos %}
 <div class="cards planos-stats">
   <div class="card card-stat">
