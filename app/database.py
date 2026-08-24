@@ -753,6 +753,14 @@ def _asegurar_esquema_postgres() -> None:
                     WHERE table_name = 'planos_obra'
                       AND column_name = 'altura_libre_m'
                 """)).first() is not None
+                # Contenido real del bloque planos (b2/c0): las 8 políticas
+                # solo existen si las tablas y el RLS se crearon de verdad.
+                politicas_planos = conn.execute(text("""
+                    SELECT count(*) FROM pg_policies
+                    WHERE schemaname = 'public'
+                      AND tablename IN ('planos_obra', 'planos_mediciones')
+                      AND policyname LIKE 'cotizat_planos_%'
+                """)).scalar()
                 cur = conn.execute(text("SELECT version_num FROM public.alembic_version")).scalar_one_or_none()
                 if not columna_creada:
                     logging.getLogger("cotizat").warning(
@@ -763,15 +771,24 @@ def _asegurar_esquema_postgres() -> None:
                     conn.execute(text("UPDATE public.alembic_version SET version_num = 'b1c2d3e4f5a6'"))
                     logging.getLogger("cotizat").info("alembic_version avanzada de c3e9a1b7d4f2 a b1c2d3e4f5a6 tras auto-reparación.")
                 elif cur == "b1c2d3e4f5a6":
-                    # No se puede marcar b2/c0 desde esta reparación: planos
-                    # crea tablas, GRANT y políticas RLS. Si se avanzara solo
-                    # por haber creado columnas de configuración, Alembic ya no
-                    # ejecutaría la migración real y el visor fallaría con
-                    # ``permission denied`` o ``undefined table``.
-                    logging.getLogger("cotizat").warning(
-                        "alembic_version sigue en b1c2d3e4f5a6: no se marca "
-                        "planos como aplicado automáticamente. Ejecuta `alembic upgrade head`."
-                    )
+                    # Una base puede quedarse en b1 con TODO el contenido de
+                    # b2/c0 ya presente: la reparación best-effort de arranque
+                    # creó tablas y políticas, pero el rol runtime solo tiene
+                    # SELECT sobre alembic_version y la marca nunca avanzó
+                    # (incidente del visor de planos del 23/08/2026). Si las 8
+                    # políticas y altura_libre_m existen de verdad, la base
+                    # equivale a e4b8c2d6a190 y se puede marcar sin riesgo.
+                    # Si falta algo, no se avanza: podría quedar un GRANT sin
+                    # ejecutar y el visor fallaría con ``permission denied`` o
+                    # ``undefined table``.
+                    if politicas_planos == 8 and altura_creada:
+                        conn.execute(text("UPDATE public.alembic_version SET version_num = 'e4b8c2d6a190'"))
+                        logging.getLogger("cotizat").info("alembic_version avanzada de b1c2d3e4f5a6 a e4b8c2d6a190: contenido de planos ya verificado presente.")
+                    else:
+                        logging.getLogger("cotizat").warning(
+                            "alembic_version sigue en b1c2d3e4f5a6: no se marca "
+                            "planos como aplicado automáticamente. Ejecuta `alembic upgrade head`."
+                        )
                 elif cur == "c0d1e2f3a4b5":
                     # Sí se puede avanzar a e4b8c2d6a190: a diferencia de
                     # b2/c0 (tablas, GRANT y políticas RLS), esta revisión solo

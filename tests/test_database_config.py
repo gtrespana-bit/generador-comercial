@@ -215,3 +215,29 @@ def test_auto_reparacion_incluye_altura_libre_de_planos():
     bloque = fuente.split('cur == "c0d1e2f3a4b5"', 1)[1]
     assert "if altura_creada:" in bloque
     assert "version_num = 'e4b8c2d6a190'" in bloque
+    # Y la base atascada en b1 con el contenido de planos ya creado solo se
+    # rescata verificando el contenido real (8 políticas + columna), nunca a
+    # ciegas: el 23/08/2026 el rol runtime no podía escribir alembic_version.
+    bloque_b1 = fuente.split('cur == "b1c2d3e4f5a6"', 1)[1]
+    assert "if politicas_planos == 8 and altura_creada:" in bloque_b1
+
+
+def test_existe_sql_de_rescate_desde_b1_con_contenido_planos_ya_creado():
+    """Rescate b1→e4 para bases cuya marca se quedó atrás (incidente planos).
+
+    La auto-reparación de arranque crea tablas/políticas pero el rol runtime
+    no puede escribir ``alembic_version``: la marca queda en b1c2d3e4f5a6 y
+    las guardas de los staging_upgrade por revisión la rechazan. Este archivo
+    une el camino verificando el contenido real antes de avanzar la marca.
+    """
+    sql = RAIZ_REPO / "docs" / "staging_upgrade_b1c2d3e4f5a6_to_e4b8c2d6a190.sql"
+    assert sql.exists()
+    contenido = sql.read_text(encoding="utf-8")
+    # La guarda exige la versión atascada y el contenido de b2/c0 ya presente.
+    assert "b1c2d3e4f5a6" in contenido
+    assert "cotizat_planos_%" in contenido
+    # Cierra huecos idempotentemente y añade la columna del head actual.
+    assert "CREATE POLICY cotizat_planos_obra_select" in contenido
+    assert "ADD COLUMN IF NOT EXISTS altura_libre_m" in contenido
+    assert "SET version_num = 'e4b8c2d6a190'" in contenido
+    assert "WHERE version_num = 'b1c2d3e4f5a6'" in contenido
