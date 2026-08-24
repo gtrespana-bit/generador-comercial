@@ -2475,6 +2475,19 @@
       btnAddMed.addEventListener("click", function () {
         crearMedicion(partidaWrap, null, editorInst);
       });
+      var btnAddPlano = editor.FMT.h("button", "btn btn-sm partida-medicion-plano-btn", "📐 Desde plano");
+      btnAddPlano.type = "button";
+      btnAddPlano.title = "Seleccionar perímetros, suelos o paredes del visor de planos";
+      btnAddPlano.addEventListener("click", function () {
+        // El selector reutiliza el mismo modal que la ficha completa para que
+        // la medición termine en esta partida y no en otra.
+        if (typeof editorInst.abrirEditorPartida !== "function") return;
+        editorInst.abrirEditorPartida(partidaWrap, "presupuesto");
+        setTimeout(function () {
+          if (typeof editorInst.abrirSelectorPlanos === "function") editorInst.abrirSelectorPlanos();
+        }, 0);
+      });
+      medHead.appendChild(btnAddPlano);
       medHead.appendChild(btnAddMed);
       sec2.appendChild(medHead);
       var medLista = editor.FMT.h("div", "mediciones-lista");

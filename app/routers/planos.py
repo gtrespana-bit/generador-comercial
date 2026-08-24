@@ -132,6 +132,91 @@ def listar_planos_presupuesto(
     )
 
 
+@router.get("/presupuestos/{presupuesto_id}/planos/mediciones-selector")
+def mediciones_selector_presupuesto(presupuesto_id: int, db: Session = Depends(get_db)):
+    """Medidas listas para insertar como desglose en una partida.
+
+    La respuesta presenta una estancia como varias magnitudes útiles: suelo,
+    perímetro y desarrollo de paredes. Así el editor de presupuestos no tiene
+    que copiar a mano el número que ya está calculado en el visor.
+    """
+    presupuesto = db.get(Presupuesto, presupuesto_id)
+    if not presupuesto:
+        return JSONResponse({"ok": False, "error": "Presupuesto no encontrado."}, status_code=404)
+
+    planos = (
+        db.query(PlanoObra)
+        .filter(PlanoObra.presupuesto_id == presupuesto_id)
+        .options(selectinload(PlanoObra.mediciones))
+        .order_by(PlanoObra.id.desc())
+        .all()
+    )
+    resultado = []
+    for plano in planos:
+        medidas = []
+        for med in plano.mediciones:
+            metricas = None
+            opciones = []
+            if med.tipo == "area":
+                metricas = metricas_estancia(med.puntos(), plano.escala_px_por_metro, plano.altura_m)
+                opciones = [
+                    {
+                        "clave": "perimetro",
+                        "etiqueta": "Perímetro de estancia",
+                        "cantidad": metricas["perimetro"] if metricas.get("calibrado") else None,
+                        "unidad": "m",
+                    },
+                    {
+                        "clave": "valor",
+                        "etiqueta": "Superficie medida",
+                        "cantidad": metricas["suelo"] if metricas.get("calibrado") else None,
+                        "unidad": "m2",
+                    },
+                    {
+                        "clave": "suelo",
+                        "etiqueta": "Superficie de suelo",
+                        "cantidad": metricas["suelo"] if metricas.get("calibrado") else None,
+                        "unidad": "m2",
+                    },
+                    {
+                        "clave": "paredes",
+                        "etiqueta": "Superficie de paredes",
+                        "cantidad": metricas["paredes"] if metricas.get("calibrado") else None,
+                        "unidad": "m2",
+                    },
+                ]
+            elif med.tipo in {"lineal", "perimetro"}:
+                opciones = [{
+                    "clave": "valor",
+                    "etiqueta": "Medida guardada",
+                    "cantidad": med.valor if plano.calibrado else None,
+                    "unidad": "m",
+                }]
+            elif med.tipo == "conteo":
+                opciones = [{
+                    "clave": "valor",
+                    "etiqueta": "Conteo",
+                    "cantidad": med.valor,
+                    "unidad": "ud",
+                }]
+            else:
+                continue
+            medidas.append({
+                "id": med.id,
+                "etiqueta": med.etiqueta or f"{med.tipo.title()} {med.id}",
+                "tipo": med.tipo,
+                "opciones": opciones,
+                "calibrado": plano.calibrado or med.tipo == "conteo",
+            })
+        resultado.append({
+            "id": plano.id,
+            "nombre": plano.nombre,
+            "calibrado": plano.calibrado,
+            "mediciones": medidas,
+        })
+    return {"ok": True, "planos": resultado}
+
+
 def _datos_medicion_plano(medicion: PlanoMedicion, plano: PlanoObra | None = None) -> dict:
     puntos = medicion.puntos()
     plano = plano or medicion.plano

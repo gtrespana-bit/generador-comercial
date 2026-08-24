@@ -458,7 +458,7 @@
           </div>
         </section>
         <section class="catalog-breakdown budget-measurements-editor">
-          <div class="breakdown-head"><div><span class="section-kicker">Desglose de cantidad</span><h3>Mediciones por zona o concepto</h3><p class="hint">Si añades mediciones, su suma sustituye a la cantidad directa.</p></div><button type="button" class="btn btn-sm btn-primary" id="editor-add-medicion">+ Añadir medición</button></div>
+          <div class="breakdown-head"><div><span class="section-kicker">Desglose de cantidad</span><h3>Mediciones por zona o concepto</h3><p class="hint">Si añades mediciones, su suma sustituye a la cantidad directa.</p></div><div class="editor-mediciones-actions"><button type="button" class="btn btn-sm" id="editor-add-medicion-plano">📐 Añadir desde plano</button><button type="button" class="btn btn-sm btn-primary" id="editor-add-medicion">+ Añadir medición</button></div></div>
           <div id="editor-mediciones-list" class="editor-mediciones-list"></div>
           <div id="editor-mediciones-empty" class="breakdown-empty"><span>📐</span><strong>Sin mediciones desglosadas</strong><small>Se utilizará la cantidad directa indicada arriba.</small></div>
         </section>
@@ -496,6 +496,38 @@
         <div class="actions"><button type="button" class="btn" data-close>Cancelar</button><button type="submit" class="btn btn-primary" id="editor-partida-save">✓ Aplicar cambios</button></div>
       </div>
     </form>
+  </div>
+</div>
+
+<!-- Modal: seleccionar mediciones ya calculadas en los planos -->
+<div class="modal-overlay" id="modal-mediciones-plano" role="dialog" aria-modal="true" aria-labelledby="titulo-mediciones-plano">
+  <div class="modal modal-mediciones-plano">
+    <div class="modal-head">
+      <div>
+        <span class="page-eyebrow">Mediciones del proyecto</span>
+        <h3 id="titulo-mediciones-plano">Añadir desde plano</h3>
+        <p class="hint">Selecciona una o varias estancias y copia al desglose el perímetro, el suelo o las paredes.</p>
+      </div>
+      <button type="button" class="btn btn-ghost" data-close-plano-selector aria-label="Cerrar">✕</button>
+    </div>
+    <div class="plano-selector-toolbar">
+      <div class="field">
+        <label for="plano-selector-magnitud">Magnitud a añadir</label>
+        <select id="plano-selector-magnitud">
+          <option value="perimetro">Perímetro de estancia · m</option>
+          <option value="suelo">Superficie de suelo · m²</option>
+          <option value="paredes">Superficie de paredes · m²</option>
+          <option value="valor">Medida guardada · según unidad</option>
+        </select>
+      </div>
+      <span id="plano-selector-seleccion-count" class="plano-selector-count">0 estancias seleccionadas</span>
+    </div>
+    <div id="plano-selector-status" class="plano-selector-status" role="status" aria-live="polite">Cargando mediciones…</div>
+    <div id="plano-selector-lista" class="plano-selector-lista"></div>
+    <div class="plano-selector-footer">
+      <p class="hint">Cada selección se añadirá como una fila editable. Puedes ajustar después el concepto o la cantidad.</p>
+      <div class="actions"><button type="button" class="btn" data-close-plano-selector>Cancelar</button><button type="button" class="btn btn-primary" id="btn-confirmar-mediciones-plano">Añadir seleccionadas</button></div>
+    </div>
   </div>
 </div>
 

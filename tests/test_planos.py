@@ -562,3 +562,33 @@ def test_pdf_del_presupuesto_incluye_anexo_de_planos(monkeypatch):
     assert "Plano: Planta baja" in texto
     assert "Muro cocina" in texto
     assert "Planos y mediciones" in texto  # citado en el índice de anexos
+
+
+def test_detector_reutiliza_el_eje_central_de_tabiques_compartidos():
+    """Dos recintos colindantes no dejan un hueco equivalente al espesor del muro."""
+    detecciones = detectar_espacios_plano(_png_planta_sintetica())
+    assert len(detecciones) == 4
+    izquierda = [d for d in detecciones if d["bbox"][2] < 500]
+    derecha = [d for d in detecciones if d["bbox"][0] >= 390]
+    assert izquierda and derecha
+    assert {round(d["bbox"][2], 2) for d in izquierda} == {round(d["bbox"][0], 2) for d in derecha}
+    arriba = [d for d in detecciones if d["bbox"][3] < 400]
+    abajo = [d for d in detecciones if d["bbox"][1] >= 250]
+    assert {round(d["bbox"][3], 2) for d in arriba} == {round(d["bbox"][1], 2) for d in abajo}
+
+
+def test_selector_de_presupuesto_expone_perimetro_suelo_y_paredes(entorno_planos):
+    _Session, ids = entorno_planos
+    client = TestClient(app, base_url="https://cotizat.test")
+    resp = client.get(f"/presupuestos/{ids[2]}/planos/mediciones-selector")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["ok"] is True
+    planta = next(p for p in data["planos"] if p["id"] == ids[3])
+    estancia = next(m for m in planta["mediciones"] if m["tipo"] == "area")
+    opciones = {op["clave"]: op for op in estancia["opciones"]}
+    assert opciones["perimetro"]["unidad"] == "m"
+    assert opciones["perimetro"]["cantidad"] == pytest.approx(12.0)
+    assert opciones["suelo"]["unidad"] == "m2"
+    assert opciones["suelo"]["cantidad"] == pytest.approx(9.0)
+    assert opciones["paredes"]["cantidad"] == pytest.approx(30.0)

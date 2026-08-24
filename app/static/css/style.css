@@ -7189,3 +7189,48 @@ body { -webkit-tap-highlight-color: transparent; }
     border-bottom: none;
   }
 }
+
+/* ==========================================================================
+   Selector de mediciones desde planos
+   ========================================================================== */
+.editor-mediciones-actions { display:flex; align-items:center; gap:.45rem; flex-wrap:wrap; }
+.modal-mediciones-plano { width:min(720px, 96vw); max-width:720px; }
+.modal-mediciones-plano > .modal-head { align-items:flex-start; }
+.modal-mediciones-plano .modal-head h3 { margin-top:.12rem; }
+.modal-mediciones-plano .modal-head .hint { max-width:540px; margin-top:.25rem; }
+.plano-selector-toolbar { display:flex; align-items:end; justify-content:space-between; gap:.8rem; padding:.75rem; margin:.6rem 0; border:1px solid var(--border); border-radius:10px; background:var(--surface-alt); }
+.plano-selector-toolbar .field { min-width:0; flex:1; gap:.2rem; }
+.plano-selector-toolbar label { font-size:.7rem; font-weight:700; }
+.plano-selector-toolbar select { width:100%; min-height:35px; }
+.plano-selector-count { flex:0 0 auto; padding:.34rem .55rem; border-radius:999px; background:var(--accent-soft); color:var(--accent); font-size:.67rem; font-weight:750; white-space:nowrap; }
+.plano-selector-status { padding:.55rem .65rem; border-radius:8px; background:var(--surface-alt); color:var(--text-soft); font-size:.7rem; line-height:1.4; }
+.plano-selector-lista { max-height:43vh; overflow:auto; margin:.65rem 0; padding-right:.2rem; }
+.plano-selector-grupo { margin-bottom:.7rem; }
+.plano-selector-grupo h4 { margin:0 0 .3rem; padding:.3rem .45rem; color:var(--text-soft); border-bottom:1px solid var(--border); font-size:.68rem; text-transform:uppercase; letter-spacing:.04em; }
+.plano-selector-medicion { display:grid; grid-template-columns:22px minmax(0, 1fr) auto; align-items:center; gap:.45rem; padding:.55rem .5rem; border:1px solid transparent; border-radius:8px; cursor:pointer; }
+.plano-selector-medicion:hover { background:var(--surface-alt); border-color:var(--border); }
+.plano-selector-medicion.is-disabled { opacity:.55; cursor:not-allowed; }
+.plano-selector-medicion input { margin:0; }
+.plano-selector-medicion-texto { min-width:0; display:flex; flex-direction:column; gap:.1rem; }
+.plano-selector-medicion-texto strong { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:.73rem; }
+.plano-selector-medicion-texto small { color:var(--text-soft); font-size:.63rem; }
+.plano-selector-medicion output { color:var(--accent); font-size:.7rem; font-weight:750; white-space:nowrap; font-variant-numeric:tabular-nums; }
+.plano-selector-footer { display:flex; align-items:center; gap:1rem; padding-top:.7rem; border-top:1px solid var(--border); }
+.plano-selector-footer .hint { margin:0; line-height:1.35; }
+.plano-selector-footer .actions { margin-left:auto; display:flex; gap:.45rem; flex:0 0 auto; }
+@media (max-width:620px) {
+  .editor-mediciones-actions { width:100%; }
+  .editor-mediciones-actions .btn { flex:1; justify-content:center; }
+  .plano-selector-toolbar { align-items:stretch; flex-direction:column; gap:.5rem; }
+  .plano-selector-count { align-self:flex-start; }
+  .plano-selector-footer { align-items:stretch; flex-direction:column; }
+  .plano-selector-footer .actions { margin-left:0; }
+}
+
+/* Edición precisa del contorno detectado */
+.planos-estancia-actions { display:flex; gap:.4rem; margin-top:.55rem; }
+.planos-estancia-actions .btn { flex:1; justify-content:center; }
+
+.planos-canvas.planos-editando-geometria { cursor: grab; }
+
+.partida-medicion-plano-btn { color:var(--accent); }
