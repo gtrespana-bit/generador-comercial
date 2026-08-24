@@ -404,6 +404,33 @@ def listar_partidas(
                 _p.coste_otros = tasa_convertir_precio(_p.coste_otros or 0, _factor)
     except Exception:
         pass
+    # Si el país tiene referencias de mercado para los recursos de la
+    # descomposición, el precio de la partida debe usar esas referencias y no
+    # el precio base convertido (que procede de la partida original de
+    # Venezuela). Se recalcula el APU con la cascada CYPE y se reemplazan los
+    # costes/importes del listado y de las tablas de descomposición.
+    try:
+        from ..services.precios_partidas import recalcular_partidas_mercado
+        _cfg_pm = _config(db)
+        _pais_pm = codigo_desde_pais(getattr(_cfg_pm, "empresa_pais", "") or "") or "VE"
+        _org_pm = int(db.info.get("organizacion_id") or 0) or None
+        _precios_mk = recalcular_partidas_mercado(
+            db, partidas, _pais_pm, _org_pm, _mon_cfg, _factor,
+        )
+        for _p in partidas:
+            _mk = _precios_mk.get(_p.id)
+            if _mk is None:
+                continue
+            _p.precio_unitario = _mk.precio_unitario
+            _p.coste_materiales = _mk.coste_materiales
+            _p.coste_mano_obra = _mk.coste_mano_obra
+            _p.coste_complementarios = _mk.coste_complementarios
+            _p.coste_otros = _mk.coste_otros
+            # Las tablas de descomposición del listado también usan las
+            # referencias nacionales, no el base convertido.
+            catalogo_descompuestos[_p.id] = _mk.filas
+    except Exception:
+        pass
     return TEMPLATES.TemplateResponse(request, "partidas/list.html", {
         "partidas": partidas,
         # Los importes de la lista ya están convertidos: la vista los etiqueta
@@ -456,8 +483,25 @@ def filas_subcategoria_catalogo(
     try:
         _cfg_api = _config(db)
         _codigo_api = codigo_desde_pais(getattr(_cfg_api, "empresa_pais", ""))
+        _mon_api = str(getattr(_cfg_api, "moneda_default", "USD") or "USD").strip().upper()
+        _tasa_api = getattr(_cfg_api, "tasa_cambio", None)
+        _factor_api = factor_conversion_local(_mon_api, _tasa_api)
     except Exception:
+        _cfg_api = None
         _codigo_api = ""
+        _mon_api = "USD"
+        _factor_api = 1.0
+    # Recalcula cada partida con las referencias nacionales cuando existen.
+    _precios_mk_api = {}
+    try:
+        from ..services.precios_partidas import recalcular_partidas_mercado
+        _pais_api = codigo_desde_pais(getattr(_cfg_api, "empresa_pais", "") or "") or "VE"
+        _org_api = int(db.info.get("organizacion_id") or 0) or None
+        _precios_mk_api = recalcular_partidas_mercado(
+            db, filas, _pais_api, _org_api, _mon_api, _factor_api,
+        )
+    except Exception:
+        pass
     for p in filas:
         try:
             valor = json.loads(p.descomposicion_json or "[]")
@@ -471,15 +515,18 @@ def filas_subcategoria_catalogo(
         # Precio Y costes convertidos a moneda local con el MISMO factor:
         # las filas del navegador calculan margen = precio - coste y no
         # deben mezclar monedas.
-        _precio_api = p.precio_unitario or 0.0
-        try:
-            _mon_api = str(getattr(_cfg_api, "moneda_default", "USD") or "USD").strip().upper()
-            _tasa_api = getattr(_cfg_api, "tasa_cambio", None)
-            _factor_api = factor_conversion_local(_mon_api, _tasa_api)
-        except Exception:
-            _factor_api = 1.0
-        if _factor_api != 1.0:
+        _mk_api = _precios_mk_api.get(p.id)
+        _precio_api = _mk_api.precio_unitario if _mk_api else (p.precio_unitario or 0.0)
+        _coste_mat_api = _mk_api.coste_materiales if _mk_api else (p.coste_materiales or 0.0)
+        _coste_mo_api = _mk_api.coste_mano_obra if _mk_api else (p.coste_mano_obra or 0.0)
+        _coste_comp_api = _mk_api.coste_complementarios if _mk_api else (p.coste_complementarios or 0.0)
+        _coste_otros_api = _mk_api.coste_otros if _mk_api else (p.coste_otros or 0.0)
+        if not _mk_api and _factor_api != 1.0:
             _precio_api = tasa_convertir_precio(_precio_api, _factor_api)
+            _coste_mat_api = tasa_convertir_precio(_coste_mat_api, _factor_api)
+            _coste_mo_api = tasa_convertir_precio(_coste_mo_api, _factor_api)
+            _coste_comp_api = tasa_convertir_precio(_coste_comp_api, _factor_api)
+            _coste_otros_api = tasa_convertir_precio(_coste_otros_api, _factor_api)
         partidas.append({
             "id": p.id,
             "nombre": traducir(p.nombre or "", _codigo_api) if _codigo_api else (p.nombre or ""),
@@ -494,10 +541,10 @@ def filas_subcategoria_catalogo(
             "usos": p.usos or 0,
             "imagen": bool(p.imagen),
             "es_oficial": bool(p.es_oficial),
-            "coste_materiales": tasa_convertir_precio(p.coste_materiales or 0.0, _factor_api),
-            "coste_mano_obra": tasa_convertir_precio(p.coste_mano_obra or 0.0, _factor_api),
-            "coste_complementarios": tasa_convertir_precio(p.coste_complementarios or 0.0, _factor_api),
-            "coste_otros": tasa_convertir_precio(p.coste_otros or 0.0, _factor_api),
+            "coste_materiales": _coste_mat_api,
+            "coste_mano_obra": _coste_mo_api,
+            "coste_complementarios": _coste_comp_api,
+            "coste_otros": _coste_otros_api,
             "recursos": n_recursos,
         })
     return {"ok": True, "partidas": partidas}
@@ -623,7 +670,30 @@ def ficha_partida_catalogo(
         _j["subcategoria"] = traducir(_j.get("subcategoria",""), _codigo_f)
         _j["apartado"] = traducir(_j.get("apartado",""), _codigo_f)
     _moneda_f, _factor_f = _contexto_moneda(db, moneda, tasa)
-    _j = _ficha_en_moneda(_j, _moneda_f, _factor_f)
+    # Reemplaza el precio base de la ficha por la referencia de mercado del
+    # país cuando existe, para que la vista previa y la inserción de una
+    # partida no cotice con la partida original convertida.
+    _j_mercado = False
+    try:
+        from ..services.precios_partidas import recalcular_partida_mercado
+        _pais_f = codigo_desde_pais(getattr(_config(db), "empresa_pais", "") or "") or "VE"
+        _org_f = int(db.info.get("organizacion_id") or 0) or None
+        _mk_f = recalcular_partida_mercado(db, partida, _pais_f, _org_f, _moneda_f, _factor_f)
+        if _mk_f is not None and _mk_f.con_precio_mercado:
+            _j["precio"] = _mk_f.precio_unitario
+            _j["precio_unitario"] = _mk_f.precio_unitario
+            _j["coste_materiales"] = _mk_f.coste_materiales
+            _j["coste_mano_obra"] = _mk_f.coste_mano_obra
+            _j["coste_complementarios"] = _mk_f.coste_complementarios
+            _j["coste_otros"] = _mk_f.coste_otros
+            _j["moneda"] = _moneda_f
+            if isinstance(_j.get("descomposicion"), dict):
+                _j["descomposicion"]["filas"] = _mk_f.filas
+            _j_mercado = True
+    except Exception:
+        pass
+    if not _j_mercado:
+        _j = _ficha_en_moneda(_j, _moneda_f, _factor_f)
     return {"ok": True, "partida": _j, "moneda": _moneda_f}
 
 
@@ -649,11 +719,25 @@ def descomposicion_partida(
         valor = []
     filas = valor.get("filas", []) if isinstance(valor, dict) else valor
     filas = [f for f in filas if isinstance(f, dict) and f.get("tipo") == "recurso"]
-    # La tabla de descomposición se muestra junto a las filas de la página (o
-    # dentro de un presupuesto): sus precios se convierten al mismo contexto
-    # monetario para que las sumas cuadren visualmente.
     _mon_d, _factor_d = _contexto_moneda(db, moneda, tasa)
-    if _factor_d != 1.0:
+    _filas_mercado = False
+    # Referencias nacionales primero: si el país tiene precio de mercado para
+    # los recursos, la descomposición debe mostrar la referencia real y no el
+    # base convertido de la partida original.
+    try:
+        from ..services.precios_partidas import recalcular_partida_mercado
+        _pais_d = codigo_desde_pais(getattr(_config(db), "empresa_pais", "") or "") or "VE"
+        _org_d = int(db.info.get("organizacion_id") or 0) or None
+        mk = recalcular_partida_mercado(db, partida, _pais_d, _org_d, _mon_d, _factor_d)
+        if mk is not None and mk.con_precio_mercado:
+            filas = mk.filas
+            _filas_mercado = True
+    except Exception:
+        pass
+    # Si no hay referencia nacional (o el recálculo falla), las filas se
+    # convierten al contexto monetario de la vista con el mismo factor que el
+    # resto de importes.
+    if not _filas_mercado and _factor_d != 1.0:
         for _f in filas:
             if isinstance(_f.get("precio"), (int, float)):
                 _f["precio"] = tasa_convertir_precio(_f["precio"], _factor_d)
@@ -676,6 +760,30 @@ def exportar_partidas(
         Partida.categoria, Partida.subcategoria, Partida.apartado,
         Partida.codigo_interno, Partida.nombre,
     ).all()
+
+    # Las exportaciones deben reflejar el mercado del país igual que la lista:
+    # se recalcula el APU con las referencias nacionales y se sobreescriben los
+    # importes en los objetos antes de escribirlos (la exportación no guarda).
+    try:
+        from ..services.precios_partidas import recalcular_partidas_mercado
+        _moneda_exp, _factor_exp = _contexto_moneda(db)
+        _cfg_exp = _config(db)
+        _pais_exp = codigo_desde_pais(getattr(_cfg_exp, "empresa_pais", "") or "") or "VE"
+        _org_exp = int(db.info.get("organizacion_id") or 0) or None
+        _precios_exp = recalcular_partidas_mercado(
+            db, partidas, _pais_exp, _org_exp, _moneda_exp, _factor_exp,
+        )
+        for _p in partidas:
+            _mk_exp = _precios_exp.get(_p.id)
+            if _mk_exp is None:
+                continue
+            _p.precio_unitario = _mk_exp.precio_unitario
+            _p.coste_materiales = _mk_exp.coste_materiales
+            _p.coste_mano_obra = _mk_exp.coste_mano_obra
+            _p.coste_complementarios = _mk_exp.coste_complementarios
+            _p.coste_otros = _mk_exp.coste_otros
+    except Exception:
+        pass
 
     if formato.lower() == "excel" or formato.lower() == "xlsx":
         from ..services.excel_export import exportar_catalogo_partidas_excel

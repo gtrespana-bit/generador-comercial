@@ -122,8 +122,12 @@ def listar_recursos(request: Request, q: str = "", categoria: str = "", db: Sess
             "aviso": efectivo.get("aviso", ""),
             "requiere_tasa": bool(efectivo.get("requiere_tasa")),
         }
+        # El total por categoría usa la referencia nacional cuando existe:
+        # sumar el base (Partida Venezuela convertida) daba un total que no
+        # reflejaba el mercado del país de la organización.
         totales_categoria[r.categoria] = (
-            totales_categoria.get(r.categoria, 0.0) + base_vista
+            totales_categoria.get(r.categoria, 0.0)
+            + (mercado_vista if mercado_vista is not None else base_vista)
         )
     # Agrupar por categoria
     return TEMPLATES.TemplateResponse(request, "recursos/list.html", {
@@ -141,14 +145,38 @@ def listar_recursos(request: Request, q: str = "", categoria: str = "", db: Sess
 
 @router.get("/recursos/exportar")
 def exportar_recursos(formato: str = "csv", db: Session = Depends(get_db)):
-    """Exportar catálogo de recursos a CSV o Excel."""
+    """Exportar catálogo de recursos a CSV o Excel.
+
+    La exportación, igual que la lista, usa la referencia nacional cuando
+    existe: el precio exportado debe ser el del mercado del país, no el precio
+    base (Partida Venezuela) convertido con la tasa.
+    """
     recursos = db.query(Recurso).order_by(Recurso.categoria, Recurso.descripcion).all()
+    from ..services.traduccion import codigo_desde_pais
+    from ..services.precios_mercado import resolver_precios_para_presupuesto_lote
+
+    _moneda_x, _factor_x = _contexto_moneda(db)
+    _cfg_x = _config(db)
+    _pais_x = codigo_desde_pais(getattr(_cfg_x, "empresa_pais", "") or "") or "VE"
+    _org_x = int(db.info.get("organizacion_id") or 0) or None
+    try:
+        efectivos_x = resolver_precios_para_presupuesto_lote(
+            db, recursos, _pais_x, _org_x, _moneda_x, tasa_usd_presupuesto=_factor_x,
+        )
+    except Exception:
+        efectivos_x = {}
+
+    def _precio_export(r):
+        ef = efectivos_x.get(r.id)
+        if ef is not None and ef.get("precio") is not None and not ef.get("requiere_tasa"):
+            return float(ef["precio"])
+        return tasa_convertir_precio(r.precio or 0, _factor_x)
 
     if formato.lower() == "excel" or formato.lower() == "xlsx":
         from ..services.excel_export import exportar_catalogo_recursos_excel
-        _moneda_xl, _factor_xl = _contexto_moneda(db)
         buf = exportar_catalogo_recursos_excel(
-            recursos, ETIQUETAS_RECURSO, moneda=_moneda_xl, factor=_factor_xl
+            recursos, ETIQUETAS_RECURSO, moneda=_moneda_x, factor=1.0,
+            precios_efectivos={r.id: _precio_export(r) for r in recursos},
         )
         return Response(
             content=buf.getvalue(),
@@ -158,7 +186,6 @@ def exportar_recursos(formato: str = "csv", db: Session = Depends(get_db)):
 
     # La exportación habla la misma moneda que la página: la de la
     # organización (el catálogo interno sigue en USD).
-    _moneda_x, _factor_x = _contexto_moneda(db)
     filas = [["Código", "Descripción", "Unidad", "Categoría", "Grupo", "Precio", "Moneda", "Usos", "Proveedor", "Última actualización"]]
     for r in recursos:
         filas.append([
@@ -167,7 +194,7 @@ def exportar_recursos(formato: str = "csv", db: Session = Depends(get_db)):
             r.unidad or "",
             ETIQUETAS_RECURSO.get(r.categoria, r.categoria),
             r.grupo or "",
-            f"{tasa_convertir_precio(r.precio or 0, _factor_x):.2f}".replace(".", ","),
+            f"{_precio_export(r):.2f}".replace(".", ","),
             _moneda_x,
             r.usos or 0,
             r.proveedor or "",
@@ -201,6 +228,7 @@ def nuevo_recurso_form(request: Request, _db: Session = Depends(get_db)):
         "precio_vista": 0,
         "precio_mercado": None,
         "precio_mercado_vista": None,
+        "precio_referencia_nacional_vista": None,
     })
 
 @router.post("/recursos/nuevo")
@@ -295,12 +323,18 @@ def editar_recurso_form(recurso_id: int, request: Request, db: Session = Depends
     moneda_org = normalizar_moneda(moneda_vista, "USD")
     precio_vista = tasa_convertir_precio(recurso.precio or 0, factor_vista)
     precio_mercado_vista = None
+    precio_referencia_nacional_vista = None
     if precio_mercado is not None and precio_mercado.precio is not None:
         moneda_mercado = normalizar_moneda(precio_mercado.moneda or "USD", "USD")
+        _vista = None
         if moneda_mercado == moneda_org:
-            precio_mercado_vista = float(precio_mercado.precio)
+            _vista = float(precio_mercado.precio)
         elif moneda_mercado == "USD":
-            precio_mercado_vista = tasa_convertir_precio(precio_mercado.precio, factor_vista)
+            _vista = tasa_convertir_precio(precio_mercado.precio, factor_vista)
+        if precio_mercado.origen == "organizacion":
+            precio_mercado_vista = _vista
+        else:
+            precio_referencia_nacional_vista = _vista
     return TEMPLATES.TemplateResponse(request, "recursos/form.html", {
         "recurso": recurso,
         "categorias": CATEGORIAS_RECURSO,
@@ -313,6 +347,7 @@ def editar_recurso_form(recurso_id: int, request: Request, db: Session = Depends
         # referencia nacional se consulta, no se edita desde aquí.
         "precio_mercado": precio_mercado if precio_mercado.origen == "organizacion" else None,
         "precio_mercado_vista": precio_mercado_vista if precio_mercado.origen == "organizacion" else None,
+        "precio_referencia_nacional_vista": precio_referencia_nacional_vista,
     })
 
 @router.post("/recursos/{recurso_id}/editar")

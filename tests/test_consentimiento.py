@@ -509,8 +509,10 @@ def test_la_migracion_encadena_con_la_cabeza_anterior(migracion):
         c0d1e2f3a4b5_fix_planos_permissions as permisos_planos_migration,
         d1e2f3a4b5c6_planos_elementos_permissions as elementos_migracion,
         e4b8c2d6a190_planos_altura_libre as altura_migracion,
+        f1b2c3d4e5a6_planos_vectoriales_schema as vectorial_migracion,
     )
-    assert altura_migracion.revision == EXPECTED_ALEMBIC_HEAD
+    assert vectorial_migracion.revision == EXPECTED_ALEMBIC_HEAD
+    assert vectorial_migracion.down_revision == altura_migracion.revision
     assert altura_migracion.down_revision == elementos_migracion.revision
     assert elementos_migracion.down_revision == permisos_planos_migration.revision
     assert permisos_planos_migration.down_revision == planos_migration.revision

@@ -91,7 +91,7 @@ DATABASE_URL = DATABASE.url
 DATABASE_BACKEND = DATABASE.backend
 DATABASE_IS_SQLITE = DATABASE.is_sqlite
 DB_PATH = DATABASE.sqlite_path
-EXPECTED_ALEMBIC_HEAD = "e4b8c2d6a190"
+EXPECTED_ALEMBIC_HEAD = "f1b2c3d4e5a6"
 
 # Copias de seguridad automáticas y manuales (solo corresponden al modo
 # SQLite local; PostgreSQL tendrá backups administrados fuera del proceso).
@@ -589,6 +589,102 @@ def _verificar_rol_aplicacion_postgresql() -> None:
         )
 
 
+def _reparar_permisos_planos_elementos_postgres(eng) -> None:
+    """Concede permisos/RLS a ``planos_elementos`` de forma idempotente.
+
+    La tabla creada por el editor vectorial vive en una migración posterior a
+    ``e4b8c2d6a190``. Cuando una base se auto-repara en el arranque (o se creó
+    la tabla a mano) este bloque deja el dibujo operativo sin esperar a un
+    ``alembic upgrade head``.
+    """
+    try:
+        with eng.begin() as conn:
+            existe = conn.execute(text("""
+                SELECT count(*) = 1
+                FROM information_schema.tables
+                WHERE table_schema = 'public'
+                  AND table_name = 'planos_elementos'
+            """)).scalar()
+            if not existe:
+                return
+            statements = [
+                "REVOKE ALL ON TABLE public.planos_elementos FROM PUBLIC",
+                "GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE public.planos_elementos TO cotizat_app",
+                """
+                DO $$ DECLARE secuencia text; BEGIN
+                  secuencia := pg_get_serial_sequence('public.planos_elementos', 'id');
+                  IF secuencia IS NOT NULL THEN
+                    EXECUTE format('GRANT USAGE, SELECT ON SEQUENCE %s TO cotizat_app', secuencia);
+                  END IF;
+                END $$
+                """,
+                "ALTER TABLE public.planos_elementos ENABLE ROW LEVEL SECURITY",
+                "ALTER TABLE public.planos_elementos FORCE ROW LEVEL SECURITY",
+            ]
+            policies = (
+                ("cotizat_planos_elementos_select", "SELECT", "USING (cotizat_security.tenant_access(organizacion_id, FALSE))"),
+                ("cotizat_planos_elementos_insert", "INSERT", "WITH CHECK (cotizat_security.tenant_access(organizacion_id, TRUE))"),
+                ("cotizat_planos_elementos_update", "UPDATE", "USING (cotizat_security.tenant_access(organizacion_id, TRUE)) WITH CHECK (cotizat_security.tenant_access(organizacion_id, TRUE))"),
+                ("cotizat_planos_elementos_delete", "DELETE", "USING (cotizat_security.tenant_access(organizacion_id, TRUE))"),
+            )
+            for name, action, clause in policies:
+                statements.append(f"DROP POLICY IF EXISTS {name} ON public.planos_elementos")
+                statements.append(f"CREATE POLICY {name} ON public.planos_elementos FOR {action} TO cotizat_app {clause}")
+            for statement in statements:
+                conn.execute(text(statement))
+        logging.getLogger("cotizat").info("Permisos/RLS de planos_elementos verificados para cotizat_app.")
+    except Exception as exc:
+        logging.getLogger("cotizat").warning(
+            "No se pudieron reparar permisos de planos_elementos: %s", exc,
+        )
+
+
+def _crear_planos_elementos_postgres(eng) -> None:
+    """Crea ``planos_elementos`` si el editor vectorial se desplegó sin migrar.
+
+    ``planos_elementos`` no existe en la rama de migraciones hasta
+    ``e4b8c2d6a190``; el modelo ya la usa, de modo que una base Postgres que
+    saltó a ese head sin el editor vectorial devolvería
+    ``undefined table planos_elementos`` al guardar el primer muro.
+    """
+    sentencias = (
+        """
+        CREATE TABLE IF NOT EXISTS public.planos_elementos (
+            id SERIAL PRIMARY KEY,
+            plano_id INTEGER NOT NULL REFERENCES public.planos_obra(id) ON DELETE CASCADE,
+            organizacion_id INTEGER NOT NULL REFERENCES public.organizaciones(id) ON DELETE RESTRICT,
+            tipo VARCHAR(20) NOT NULL DEFAULT 'muro',
+            puntos_json TEXT NOT NULL DEFAULT '[]',
+            grosor_cm DOUBLE PRECISION DEFAULT 10,
+            color VARCHAR(20) DEFAULT '#1f2937',
+            muro_id INTEGER REFERENCES public.planos_elementos(id) ON DELETE SET NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+        """,
+        "CREATE INDEX IF NOT EXISTS ix_planos_elementos_plano ON public.planos_elementos (plano_id)",
+        "CREATE INDEX IF NOT EXISTS ix_planos_elementos_org_plano ON public.planos_elementos (organizacion_id, plano_id)",
+        "CREATE INDEX IF NOT EXISTS ix_planos_elementos_muro ON public.planos_elementos (muro_id)",
+        """
+        DO $$ BEGIN
+          IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ck_plano_elemento_tipo_valido') THEN
+            ALTER TABLE public.planos_elementos ADD CONSTRAINT ck_plano_elemento_tipo_valido
+              CHECK (tipo IN ('muro', 'hueco', 'linea_auxiliar'));
+          END IF;
+        END $$
+        """,
+    )
+    for sentencia in sentencias:
+        try:
+            with eng.begin() as conn:
+                conn.execute(text(sentencia))
+        except Exception as exc:  # noqa: PERF203
+            logging.getLogger("cotizat").warning(
+                "No se pudo aplicar «%s» (planos_elementos): %s", sentencia, exc,
+            )
+            return
+
+
 def _asegurar_permisos_planos_postgres(eng) -> None:
     """Repara permisos de ``planos_*`` si el head fue marcado sin ejecutar DCL.
 
@@ -660,6 +756,7 @@ def _asegurar_permisos_planos_postgres(eng) -> None:
             "No se pudieron reparar permisos de planos (ejecuta `alembic upgrade head` con MIGRATION_DATABASE_URL): %s",
             exc,
         )
+    _reparar_permisos_planos_elementos_postgres(eng)
 
 
 def _asegurar_esquema_postgres() -> None:
@@ -713,6 +810,14 @@ def _asegurar_esquema_postgres() -> None:
             # migración y cada apertura del visor de planos devolvía 500 con
             # ``UndefinedColumn: planos_obra.altura_libre_m does not exist``.
             "ALTER TABLE planos_obra ADD COLUMN IF NOT EXISTS altura_libre_m FLOAT",
+            # Bloque planos vectoriales (posterior a e4b8c2d6a190): el editor
+            # desde cero pide ``origen``, ``grosor_tabique_cm`` y el lienzo.
+            # Sin estas columnas, «Añadir plano» devuelve UndefinedColumn
+            # planos_obra.origen antes de abrir el visor.
+            "ALTER TABLE planos_obra ADD COLUMN IF NOT EXISTS origen VARCHAR(20) NOT NULL DEFAULT 'subido'",
+            "ALTER TABLE planos_obra ADD COLUMN IF NOT EXISTS grosor_tabique_cm DOUBLE PRECISION NOT NULL DEFAULT 10",
+            "ALTER TABLE planos_obra ADD COLUMN IF NOT EXISTS ancho_lienzo_m DOUBLE PRECISION",
+            "ALTER TABLE planos_obra ADD COLUMN IF NOT EXISTS alto_lienzo_m DOUBLE PRECISION",
         )
         sin_permiso_ddl = False
         for sentencia in sentencias:
@@ -733,6 +838,10 @@ def _asegurar_esquema_postgres() -> None:
                         "Sin permisos DDL en configuracion: se omite el resto de "
                         "ALTER. Ejecuta `alembic upgrade head` con MIGRATION_DATABASE_URL."
                     )
+        # Tabla del editor vectorial: si el deploy llegó sin migrar, la base
+        # no la tiene y el dibujo de muros/huecos fallaría después de arreglar
+        # ``planos_obra.origen``.
+        _crear_planos_elementos_postgres(eng)
         with eng.begin() as conn:
             # Si la versión sigue en el head anterior y ya añadimos la columna,
             # avanzamos la marca para que el próximo ``alembic upgrade head``
@@ -752,6 +861,23 @@ def _asegurar_esquema_postgres() -> None:
                     SELECT 1 FROM information_schema.columns
                     WHERE table_name = 'planos_obra'
                       AND column_name = 'altura_libre_m'
+                """)).first() is not None
+                # Bloque del editor vectorial (head f1b2c3d4e5a6): origen y
+                # grosor de tabique en planos_obra + tablero planos_elementos.
+                origen_creada = conn.execute(text("""
+                    SELECT 1 FROM information_schema.columns
+                    WHERE table_name = 'planos_obra'
+                      AND column_name = 'origen'
+                """)).first() is not None
+                grosor_creada = conn.execute(text("""
+                    SELECT 1 FROM information_schema.columns
+                    WHERE table_name = 'planos_obra'
+                      AND column_name = 'grosor_tabique_cm'
+                """)).first() is not None
+                elementos_creada = conn.execute(text("""
+                    SELECT 1 FROM information_schema.tables
+                    WHERE table_schema = 'public'
+                      AND table_name = 'planos_elementos'
                 """)).first() is not None
                 # Contenido real del bloque planos (b2/c0): las 8 políticas
                 # solo existen si las tablas y el RLS se crearon de verdad.
@@ -802,6 +928,21 @@ def _asegurar_esquema_postgres() -> None:
                         logging.getLogger("cotizat").warning(
                             "Falta planos_obra.altura_libre_m: no se avanza "
                             "alembic_version (ejecuta `alembic upgrade head`)."
+                        )
+                elif cur == "e4b8c2d6a190":
+                    # El editor vectorial se subió después de e4b8. Solo se
+                    # avanza a f1b2c3d4e5a6 si el contenido existe DE VERDAD
+                    # (columnas origen/grosor + tabla planos_elementos); si
+                    # falta algo se deja la marca para que `alembic upgrade
+                    # head` lo cree sin conflicto (la migración es IF NOT
+                    # EXISTS).
+                    if origen_creada and grosor_creada and elementos_creada:
+                        conn.execute(text("UPDATE public.alembic_version SET version_num = 'f1b2c3d4e5a6'"))
+                        logging.getLogger("cotizat").info("alembic_version avanzada de e4b8c2d6a190 a f1b2c3d4e5a6 tras auto-reparación.")
+                    else:
+                        logging.getLogger("cotizat").warning(
+                            "Falta contenido del editor vectorial de planos: "
+                            "no se avanza alembic_version (ejecuta `alembic upgrade head`)."
                         )
                 elif cur is None:
                     logging.getLogger("cotizat").warning(

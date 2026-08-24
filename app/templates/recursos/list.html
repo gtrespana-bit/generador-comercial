@@ -151,10 +151,17 @@
                     </td>
                     <td class="col-und"><span class="und-badge">{{ r.unidad }}</span></td>
                     {% set pv = precios_vista.get(r.id) if precios_vista else none %}
-                    <td class="col-precio right" data-precio="{{ pv.base if pv else r.precio }}">
-                      <strong class="precio-val">{{ (pv.base if pv else r.precio) | money_iso(moneda_vista) }}</strong>
-                      {% if pv and pv.mercado is not none and pv.origen != 'base' %}<div class="hint">Mercado {{ mercado_codigo }}: {{ pv.mercado | money_iso(moneda_vista) }} · {{ pv.origen }}</div>{% endif %}
-                      {% if pv and pv.requiere_tasa %}<div class="hint">⚠ {{ pv.aviso or 'Falta tasa para convertir el precio de mercado' }}</div>{% elif pv and pv.aviso %}<div class="hint">⚠ {{ pv.aviso }}</div>{% endif %}
+                    {% set tiene_mercado = pv and pv.mercado is not none and pv.origen != 'base' %}
+                    {% set precio_principal = (pv.mercado if tiene_mercado else (pv.base if pv else r.precio)) %}
+                    <td class="col-precio right" data-precio="{{ precio_principal }}">
+                      <strong class="precio-val">{{ precio_principal | money_iso(moneda_vista) }}</strong>
+                      {% if tiene_mercado %}
+                        <div class="hint">Mercado {{ mercado_codigo }}: {{ pv.mercado | money_iso(moneda_vista) }} · {{ pv.origen }}</div>
+                        {% if pv.base is not none %}<div class="hint">Base catálogo: {{ pv.base | money_iso(moneda_vista) }}</div>{% endif %}
+                      {% elif pv and pv.origen == 'base' %}
+                        <div class="hint">⚠ Sin referencia {{ mercado_codigo }}: se muestra el precio base convertido</div>
+                      {% endif %}
+                      {% if pv and pv.requiere_tasa %}<div class="hint">⚠ {{ pv.aviso or 'Falta tasa para convertir el precio de mercado' }}</div>{% elif pv and pv.aviso and (pv.origen == 'base' or not tiene_mercado) %}<div class="hint">⚠ {{ pv.aviso }}</div>{% endif %}
                       {% if r.fecha_actualizacion_precio %}<div class="hint csp-s-aa47175cbd">{{ r.fecha_actualizacion_precio | fecha }}</div>{% endif %}
                     </td>
                     <td class="col-usos right" data-usos="{{ r.usos or 0 }}">{{ r.usos or 0 }}</td>
