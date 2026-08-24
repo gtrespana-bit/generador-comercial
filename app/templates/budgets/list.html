@@ -58,6 +58,9 @@
               <button class="btn btn-sm btn-ghost" type="submit" title="Duplicar">Duplicar</button>
             </form>
             <a class="btn btn-sm btn-ghost" href="/presupuestos/{{ p.id }}/pdf" download="presupuesto_{{ p.numero }}.pdf" data-cotizat-click="download-pdf">PDF</a>
+            <form method="post" action="/presupuestos/{{ p.id }}/eliminar" class="csp-s-a91548c594" data-confirm="¿Eliminar el presupuesto «{{ p.numero }}»? Esta acción no se puede deshacer.">
+              <button class="btn btn-sm btn-danger" type="submit" title="Eliminar presupuesto" aria-label="Eliminar presupuesto {{ p.numero }}">🗑 Eliminar</button>
+            </form>
           </div>
         </td>
       </tr>

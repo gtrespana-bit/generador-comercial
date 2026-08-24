@@ -3830,15 +3830,68 @@ def eliminar_presupuesto(presupuesto_id: int, db: Session = Depends(get_db)):
     presupuesto = db.get(Presupuesto, presupuesto_id)
     if presupuesto is None:
         return _redirect("/presupuestos", error="Presupuesto no encontrado.")
+
+    # Un proyecto conserva una referencia obligatoria al presupuesto y a su
+    # versión contractual. Borrarlo en cascada sería una pérdida de datos de
+    # obra y cobros, por lo que esta eliminación debe quedar bloqueada.
+    if (
+        db.query(Proyecto.id)
+        .filter(Proyecto.presupuesto_id == presupuesto_id)
+        .first()
+        is not None
+    ):
+        return _redirect(
+            "/presupuestos",
+            error=(
+                "No se puede eliminar este presupuesto porque ya tiene un "
+                "proyecto asociado. Puedes archivarlo para conservar la obra."
+            ),
+        )
+
     numero = presupuesto.numero
     referencias = {presupuesto.foto_proyecto, presupuesto.firma_cliente}
     referencias.update(anexo.archivo for anexo in presupuesto.anexos)
+    referencias.update(version.pdf_snapshot for version in presupuesto.versiones)
+    referencias.update(enlace.pdf_snapshot for enlace in presupuesto.enlaces_publicos)
+    # Seleccionamos solo la referencia del archivo. No se debe hidratar
+    # PlanoObra completo aquí: instalaciones antiguas pueden seguir sin las
+    # columnas vectoriales mientras la FK con ON DELETE CASCADE sí existe.
+    referencias.update(
+        archivo
+        for (archivo,) in db.query(PlanoObra.archivo)
+        .filter(PlanoObra.presupuesto_id == presupuesto_id)
+        .all()
+    )
     for cap in presupuesto.capitulos:
         for p in cap.partidas:
             referencias.add(p.producto_imagen)
             referencias.update(opcion.imagen for opcion in p.productos_opciones)
             if p.descomposicion_cype:
                 referencias.add(p.descomposicion_cype.archivo_origen)
+
+    # Facturas y pagos son documentos independientes que deben conservarse;
+    # sus vínculos opcionales se desligan. El autoguardado, en cambio, no
+    # tiene valor sin su presupuesto y se elimina dentro de la transacción.
+    version_ids = db.query(PresupuestoVersion.id).filter(
+        PresupuestoVersion.presupuesto_id == presupuesto_id
+    )
+    db.query(Factura).filter(
+        or_(
+            Factura.presupuesto_id == presupuesto_id,
+            Factura.presupuesto_version_id.in_(version_ids),
+        )
+    ).update(
+        {Factura.presupuesto_id: None, Factura.presupuesto_version_id: None},
+        synchronize_session=False,
+    )
+    db.query(Pago).filter(Pago.presupuesto_id == presupuesto_id).update(
+        {Pago.presupuesto_id: None},
+        synchronize_session=False,
+    )
+    db.query(BorradorPresupuesto).filter(
+        BorradorPresupuesto.presupuesto_id == presupuesto_id
+    ).delete(synchronize_session=False)
+
     db.delete(presupuesto)
     db.flush()
     for referencia in referencias:

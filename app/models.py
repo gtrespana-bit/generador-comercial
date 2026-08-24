@@ -30,7 +30,7 @@ from sqlalchemy import (
     text,
     Boolean,
 )
-from sqlalchemy.orm import Session as OrmSession, declared_attr, relationship, with_loader_criteria
+from sqlalchemy.orm import Session as OrmSession, backref, declared_attr, relationship, with_loader_criteria
 
 from .database import Base
 
@@ -2677,7 +2677,14 @@ class PlanoObra(TenantMixin, Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    presupuesto = relationship("Presupuesto", backref="planos")
+    # La FK ya usa ON DELETE CASCADE. Evitamos que SQLAlchemy cargue todos los
+    # planos (y trate de poner presupuesto_id=NULL) al borrar el presupuesto:
+    # además de ser innecesario, rompía instalaciones pendientes de la
+    # migración de columnas vectoriales y contradice el NOT NULL de la FK.
+    presupuesto = relationship(
+        "Presupuesto",
+        backref=backref("planos", passive_deletes=True),
+    )
     mediciones = relationship(
         "PlanoMedicion",
         back_populates="plano",

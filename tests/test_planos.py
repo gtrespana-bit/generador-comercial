@@ -148,18 +148,23 @@ from datetime import date  # noqa: E402
 import pytest  # noqa: E402
 from fastapi import Request  # noqa: E402
 from fastapi.testclient import TestClient  # noqa: E402
-from sqlalchemy import create_engine  # noqa: E402
+from sqlalchemy import create_engine, event, text  # noqa: E402
 from sqlalchemy.orm import sessionmaker  # noqa: E402
 from sqlalchemy.pool import StaticPool  # noqa: E402
 
 from app.database import Base, get_db  # noqa: E402
 from app.main import app  # noqa: E402
 from app.models import (  # noqa: E402
+    BorradorPresupuesto,
     Cliente,
     Configuracion,
+    Factura,
     Membresia,
     Organizacion,
+    Pago,
+    PlanoObra,
     Presupuesto,
+    Proyecto,
     Usuario,
 )
 from app.services.planos import calibrar_plano, crear_medicion, crear_plano  # noqa: E402
@@ -184,6 +189,11 @@ def entorno_planos(monkeypatch, tmp_path):
         connect_args={"check_same_thread": False},
         poolclass=StaticPool,
     )
+
+    @event.listens_for(engine, "connect")
+    def _activar_claves_foraneas(dbapi_connection, _connection_record):
+        dbapi_connection.execute("PRAGMA foreign_keys=ON")
+
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
     with Session() as seed:
@@ -254,6 +264,115 @@ def entorno_planos(monkeypatch, tmp_path):
         app.dependency_overrides.pop(get_db, None)
         reset_storage_backend_cache()
         engine.dispose()
+
+
+def test_listado_presupuestos_ofrece_eliminacion_directa_con_confirmacion(entorno_planos):
+    _Session, ids = entorno_planos
+    client = TestClient(app, base_url="https://cotizat.test")
+
+    resp = client.get("/presupuestos")
+
+    assert resp.status_code == 200
+    assert f'action="/presupuestos/{ids[2]}/eliminar"' in resp.text
+    assert 'data-confirm="¿Eliminar el presupuesto «P-2026-031»?' in resp.text
+    assert "🗑 Eliminar" in resp.text
+
+
+def test_eliminar_presupuesto_con_planos_legacy_y_dependencias_conservables(entorno_planos):
+    Session, ids = entorno_planos
+    with Session() as db:
+        db.info["organizacion_id"] = ids[0]
+        db.info["usuario_id"] = ids[1]
+        db.info["rol_membresia"] = "propietario"
+        presupuesto = db.get(Presupuesto, ids[2])
+        borrador = BorradorPresupuesto(
+            presupuesto_id=presupuesto.id,
+            datos='{"capitulos": []}',
+        )
+        factura = Factura(
+            numero="DC-2026-099",
+            year=2026,
+            fecha=date(2026, 8, 24),
+            presupuesto_id=presupuesto.id,
+            client_id=presupuesto.client_id,
+        )
+        pago = Pago(
+            presupuesto_id=presupuesto.id,
+            fecha=date(2026, 8, 24),
+            importe=125.0,
+        )
+        db.add_all([borrador, factura, pago])
+        db.commit()
+        factura_id, pago_id = factura.id, pago.id
+        engine = db.get_bind()
+
+    # Reproduce el desfase que causaba el 500: el modelo ya conoce los campos
+    # vectoriales, pero la tabla física todavía no tiene varios de ellos.
+    # ``origen`` conserva un CHECK en la tabla SQLite de pruebas y por eso no
+    # se puede retirar con ALTER; cualquiera de los otros campos demuestra que
+    # la eliminación no intenta hidratar el PlanoObra completo.
+    with engine.begin() as connection:
+        for columna in (
+            "grosor_tabique_cm",
+            "ancho_lienzo_m",
+            "alto_lienzo_m",
+        ):
+            connection.exec_driver_sql(
+                f"ALTER TABLE planos_obra DROP COLUMN {columna}"
+            )
+
+    client = TestClient(app, base_url="https://cotizat.test")
+    resp = client.post(
+        f"/presupuestos/{ids[2]}/eliminar",
+        follow_redirects=False,
+    )
+
+    assert resp.status_code == 303
+    assert resp.headers["location"].startswith("/presupuestos?msg=")
+    with engine.connect() as connection:
+        planos_restantes = connection.scalar(
+            text("SELECT COUNT(*) FROM planos_obra WHERE presupuesto_id = :id"),
+            {"id": ids[2]},
+        )
+        assert planos_restantes == 0
+    with Session() as db:
+        assert db.get(Presupuesto, ids[2]) is None
+        assert db.query(BorradorPresupuesto).count() == 0
+        factura = db.get(Factura, factura_id)
+        pago = db.get(Pago, pago_id)
+        assert factura is not None
+        assert factura.presupuesto_id is None
+        assert factura.presupuesto_version_id is None
+        assert pago is not None
+        assert pago.presupuesto_id is None
+
+
+def test_eliminar_presupuesto_bloquea_proyecto_asociado(entorno_planos):
+    Session, ids = entorno_planos
+    with Session() as db:
+        db.info["organizacion_id"] = ids[0]
+        db.info["usuario_id"] = ids[1]
+        db.info["rol_membresia"] = "propietario"
+        proyecto = Proyecto(
+            presupuesto_id=ids[2],
+            nombre="Obra contratada",
+        )
+        db.add(proyecto)
+        db.commit()
+        proyecto_id = proyecto.id
+
+    client = TestClient(app, base_url="https://cotizat.test")
+    resp = client.post(
+        f"/presupuestos/{ids[2]}/eliminar",
+        follow_redirects=False,
+    )
+
+    assert resp.status_code == 303
+    assert resp.headers["location"].startswith("/presupuestos?error=")
+    with Session() as db:
+        assert db.get(Presupuesto, ids[2]) is not None
+        assert db.get(Proyecto, proyecto_id) is not None
+        assert db.get(PlanoObra, ids[3]) is not None
 
 
 def test_visor_global_lista_planos_agrupados_por_presupuesto(entorno_planos):
