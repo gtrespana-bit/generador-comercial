@@ -1,255 +1,494 @@
 {% extends "base.html" %}
 {% block title %}Planos - {{ p.numero }}{% endblock %}
+{% block body_class %}planos-workspace-page editor-focus{% endblock %}
 {% block content %}
-<div class="page-head">
-  <div>
-    <h1>📐 Planos - {{ p.numero }}</h1>
-    <p class="subtitle">{{ p.titulo or "Sin título" }} · {{ p.cliente.nombre }} · Primero calibra una medida, luego detecta y nombra estancias</p>
+<header class="planos-page-head">
+  <div class="planos-page-title">
+    <a href="/presupuestos/{{ p.id }}" class="planos-back" aria-label="Volver al presupuesto" title="Volver al presupuesto">←</a>
+    <div>
+      <div class="planos-eyebrow">LECTOR Y MEDICIÓN DE PLANOS</div>
+      <h1>{{ p.numero }} <span>· {{ p.titulo or "Sin título" }}</span></h1>
+      <p>{{ p.cliente.nombre }} · Medidas reales en metros</p>
+    </div>
   </div>
-  <div class="page-head-actions">
-    <a class="btn" href="/planos" title="Galería de todos tus planos">▦ Visor de planos</a>
-    <a class="btn" href="/presupuestos/{{ p.id }}">← Volver al presupuesto</a>
-    <a class="btn" href="/presupuestos/{{ p.id }}/editar">✏️ Editar</a>
-  </div>
-</div>
+  <nav class="planos-page-actions" aria-label="Acciones del presupuesto">
+    <a class="btn btn-sm" href="/planos">▦ Todos los planos</a>
+    <a class="btn btn-sm" href="/presupuestos/{{ p.id }}/editar">Editar presupuesto</a>
+  </nav>
+</header>
 
 {% if planos|length == 0 %}
-<div class="card">
-  <h2>Sube tu primer plano</h2>
-  <p class="hint">Acepta PNG, JPG, WEBP o PDF (12 MB máx). El primer paso será marcar una medida conocida del plano para calcular el resto.</p>
-  <form id="form-upload-plano" enctype="multipart/form-data" class="form-grid">
+<section class="planos-first-upload card">
+  <span class="planos-first-icon" aria-hidden="true">⌑</span>
+  <div>
+    <span class="planos-eyebrow">PRIMER PASO</span>
+    <h2>Sube el plano de {{ p.cliente.nombre }}</h2>
+    <p class="hint">Admite PNG, JPG, WEBP o PDF hasta 12 MB. Después marcarás una distancia conocida para obtener todas las mediciones en m y m².</p>
+  </div>
+  <form id="form-upload-plano" enctype="multipart/form-data" class="planos-upload-first">
     <div class="field">
-      <label>Nombre del plano</label>
-      <input type="text" id="plano-nombre" placeholder="Planta baja, Fachada, etc.">
+      <label for="plano-nombre">Nombre del plano</label>
+      <input type="text" id="plano-nombre" placeholder="Ej. Planta baja">
     </div>
     <div class="field">
-      <label>Archivo</label>
+      <label for="plano-archivo">Archivo</label>
       <input type="file" id="plano-archivo" accept=".png,.jpg,.jpeg,.webp,.pdf" required>
     </div>
-    <div class="field field-full form-actions">
-      <button type="submit" class="btn btn-primary" id="btn-upload-plano">📤 Subir plano</button>
-    </div>
+    <button type="submit" class="btn btn-primary" id="btn-upload-plano">Subir y abrir plano</button>
   </form>
   <div id="upload-error" class="alert alert-error cotizat-hidden"></div>
-</div>
+</section>
 {% else %}
 <div class="planos-layout">
-  <div class="planos-sidebar">
-    <div class="card">
-      <h3>Planos ({{ planos|length }})</h3>
-      <div class="planos-list">
-        {% for plano in planos %}
-        <div class="plano-item {% if plano_inicial and plano.id == plano_inicial.id %}active{% endif %}" data-plano-id="{{ plano.id }}" data-presupuesto-id="{{ p.id }}">
+  <aside class="planos-sidebar" aria-label="Planos del presupuesto">
+    <div class="planos-panel-head">
+      <div>
+        <span class="planos-panel-kicker">DOCUMENTOS</span>
+        <h2>Planos</h2>
+      </div>
+      <span class="planos-count">{{ planos|length }}</span>
+    </div>
+
+    <div class="planos-list">
+      {% for plano in planos %}
+      <button type="button" class="plano-item {% if plano_inicial and plano.id == plano_inicial.id %}active{% endif %}" data-plano-id="{{ plano.id }}" data-presupuesto-id="{{ p.id }}">
+        <span class="plano-item-icon" aria-hidden="true">{{ '▧' if plano.content_type and plano.content_type.startswith('image/') else 'PDF' }}</span>
+        <span class="plano-item-copy">
           <strong>{{ plano.nombre }}</strong>
-          <small>{{ plano.content_type }} · {% if plano.ancho_px %}{{ plano.ancho_px }}x{{ plano.alto_px }} px{% else %}PDF{% endif %}</small>
+          <small>{{ 'Imagen' if plano.content_type and plano.content_type.startswith('image/') else 'Documento PDF' }} · {{ plano.mediciones|length }} medición{{ '' if plano.mediciones|length == 1 else 'es' }}</small>
           <span class="plano-item-badges">
             {% if plano.calibrado %}
-            <span class="badge badge-ok">Calibrado {{ "%.2f"|format(plano.escala_px_por_metro) }} px/m</span>
+            <span class="badge badge-ok">✓ Escala lista</span>
             {% else %}
-            <span class="badge badge-warn">Sin calibrar</span>
+            <span class="badge badge-warn">Escala pendiente</span>
             {% endif %}
-            <span class="badge">{{ plano.mediciones|length }} med.</span>
           </span>
-        </div>
-        {% endfor %}
-      </div>
-      <hr>
+        </span>
+      </button>
+      {% endfor %}
+    </div>
+
+    <details class="planos-add-document">
+      <summary>＋ Añadir otro plano</summary>
       <form id="form-upload-plano" enctype="multipart/form-data">
         <div class="field">
-          <label>Nuevo plano</label>
-          <input type="text" id="plano-nombre" placeholder="Nombre">
+          <label for="plano-nombre">Nombre</label>
+          <input type="text" id="plano-nombre" placeholder="Ej. Planta primera">
+        </div>
+        <div class="field">
+          <label for="plano-archivo">Archivo</label>
           <input type="file" id="plano-archivo" accept=".png,.jpg,.jpeg,.webp,.pdf" required>
         </div>
-        <button type="submit" class="btn btn-sm btn-primary" id="btn-upload-plano">+ Añadir plano</button>
+        <button type="submit" class="btn btn-sm btn-primary" id="btn-upload-plano">Subir plano</button>
       </form>
       <div id="upload-error" class="alert alert-error cotizat-hidden"></div>
-    </div>
+    </details>
 
-    <div class="card planos-paso" id="card-calibrar">
-      <h3>1 · Recalibrar plano</h3>
-      <p class="hint">Marca una medida ya acotada (una pared, una puerta, un hueco) y escribe su valor real. Todo lo demás se calcula con esa escala.</p>
-      <button class="btn btn-primary planos-btn-analizar" id="tool-calibrar" data-tool="calibrar" title="Dibuja una línea sobre una medida conocida (E)">📏 Marcar medida conocida (E)</button>
-      <div id="calibracion-panel" class="planos-panel-calib">
-        <p>Segmento marcado: <strong id="calib-px">haz dos clics sobre la cota</strong></p>
-        <div class="field">
-          <label>Esa distancia mide</label>
-          <input type="number" id="calib-real" step="0.01" min="0.01" placeholder="3,50">
-        </div>
-        <div class="field">
-          <label>Unidad</label>
-          <select id="calib-unidad"><option value="m">metros</option><option value="cm">cm</option><option value="mm">mm</option></select>
-        </div>
-        <div class="field">
-          <label>Altura libre de paredes</label>
-          <input type="number" id="calib-altura" step="0.05" min="1" max="8" value="2.50">
-        </div>
-        <button class="btn btn-sm btn-primary" id="btn-confirm-calibrar">✓ Aplicar escala al plano</button>
-        <button class="btn btn-sm" id="btn-cancel-calibrar">Borrar marca</button>
-      </div>
-      <div id="calib-status" class="planos-analisis-status" role="status">Pendiente de calibrar.</div>
+    <div class="planos-sidebar-foot">
+      <span>Las mediciones se guardan automáticamente.</span>
+      <a href="/presupuestos/{{ p.id }}/planos/exportar?formato=csv">Exportar CSV</a>
     </div>
+  </aside>
 
-    <div class="card planos-paso" id="card-analizar">
-      <h3>2 · Detectar estancias</h3>
-      <p class="hint">Ignora cotas y números. Busca tabiques reales, también en diagonal, y calcula suelo, perímetro y paredes.</p>
-      <button class="btn planos-btn-analizar" id="btn-analizar-plano">✨ Analizar estancias</button>
-      <div id="analisis-status" class="planos-analisis-status" role="status" aria-live="polite">Calibra primero para obtener m² reales.</div>
-    </div>
-
-    <div class="card planos-paso" id="card-estancia">
-      <h3>Estancia seleccionada</h3>
-      <p class="hint">Haz clic en una estancia del plano para nombrarla. El nombre se guarda solo.</p>
-      <div id="estancia-vacia" class="hint">Ninguna estancia seleccionada.</div>
-      <div id="estancia-editor" class="cotizat-hidden">
-        <div class="field">
-          <label>Nombre</label>
-          <input type="text" id="estancia-nombre" placeholder="Cocina, Baño, Dormitorio…">
-        </div>
-        <p id="estancia-save" class="planos-save-status">Clic en la estancia y escribe su nombre.</p>
-        <dl class="planos-metricas" id="estancia-metricas"></dl>
-      </div>
-    </div>
-
-    <div class="card">
-      <h3>Ajuste manual</h3>
-      <p class="hint">Para corregir un contorno o medir un elemento suelto. Los trazos válidos se autoguardan.</p>
-      <div class="btn-group-vertical">
-        <button class="btn btn-sm btn-primary" id="tool-seleccionar" data-tool="seleccionar" title="Clic en una estancia para seleccionarla (S)">👆 Seleccionar estancia (S)</button>
-        <button class="btn btn-sm" id="tool-mover" data-tool="mover" title="Arrastra el plano para desplazarlo (M)">✋ Mover (M)</button>
-        <button class="btn btn-sm" id="tool-lineal" data-tool="lineal" title="Distancia recorrida entre puntos (L)">📐 Línea (L)</button>
-        <button class="btn btn-sm" id="tool-area" data-tool="area" title="Polígono cerrado; doble clic para terminar (A)">⬜ Área (A)</button>
-        <button class="btn btn-sm" id="tool-perimetro" data-tool="perimetro" title="Recorrido cerrado; doble clic para terminar (P)">🔲 Perímetro (P)</button>
-        <button class="btn btn-sm" id="tool-conteo" data-tool="conteo" title="Cuenta elementos puntuales (C)">🔢 Conteo (C)</button>
-      </div>
-      <div class="planos-snaps">
-        <label class="planos-check"><input type="checkbox" id="chk-ortogonal"> 📐 Snap ortogonal <small>(o Mayús)</small></label>
-        <label class="planos-check"><input type="checkbox" id="chk-snappoints" checked> 🧲 Snap a vértices</label>
-        <label class="planos-check"><input type="checkbox" id="chk-mostrar-med" checked> 👁️ Mostrar mediciones</label>
-      </div>
-      <p class="hint planos-atajos">Ctrl+Z deshace punto · clic derecho borra el último · Esc cancela · rueda = zoom · botón central o Mover = desplazar</p>
-      <div id="medicion-panel" class="planos-panel-med">
-        <div class="field">
-          <label>Etiqueta medición</label>
-          <input type="text" id="med-etiqueta" placeholder="Muro cocina, Suelo salón...">
-        </div>
-        <div class="field">
-          <label>Color</label>
-          <input type="color" id="med-color" value="#ff0000">
-        </div>
-        <p class="hint">Haz clic para dibujar; doble clic cierra áreas y perímetros.</p>
-        <p>Valor actual: <strong id="med-valor-actual">-</strong></p>
-        <p id="med-guardado-status" class="planos-save-status" role="status" aria-live="polite">Sin trazo en curso.</p>
-        <div class="form-actions">
-          <button class="btn btn-sm btn-primary" id="btn-guardar-medicion">✓ Finalizar medición</button>
-          <button class="btn btn-sm" id="btn-cancel-medicion">Descartar borrador</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <h3>Mediciones guardadas</h3>
-      <p class="hint" id="med-stats">Sin mediciones</p>
-      <div id="lista-mediciones"></div>
-      <div class="field planos-field-aplicar">
-        <label>Aplicar a partida</label>
-        <select id="select-partida">
-          <option value="">— Selecciona partida —</option>
-          {% for part in partidas %}
-          <option value="{{ part.id }}">{{ part.capitulo }} · {{ part.nombre }} ({{ part.unidad }})</option>
-          {% endfor %}
-        </select>
-        <button class="btn btn-sm planos-btn-aplicar" id="btn-aplicar-a-partida">➕ Crear medición en partida</button>
-      </div>
-      <p class="hint" id="aplicar-hint"></p>
-      <hr>
-      <div class="planos-export">
-        <a class="btn btn-sm" id="btn-export-csv" href="/presupuestos/{{ p.id }}/planos/exportar?formato=csv" title="CSV con todas las mediciones del presupuesto">⬇ CSV mediciones</a>
-        <a class="btn btn-sm" id="btn-export-dxf" href="#" title="DXF con las mediciones de este plano para CAD (AutoCAD, LibreCAD, BricsCAD)">⬇ DXF (CAD)</a>
-      </div>
-    </div>
-  </div>
-
-  <div class="planos-canvas-area">
-    <div class="card">
+  <main class="planos-canvas-area" aria-label="Área de trabajo del plano">
+    <section class="planos-main-card">
       <div class="planos-canvas-head">
-        <h3 id="plano-titulo">Plano</h3>
-        <div class="planos-canvas-tools">
-          <button class="btn btn-sm" id="btn-zoom-in" title="Acercar">🔍+</button>
-          <button class="btn btn-sm" id="btn-zoom-out" title="Alejar">🔍-</button>
-          <button class="btn btn-sm" id="btn-fit-view" title="Ajustar el plano a la pantalla">⛶ Ajustar</button>
-          <button class="btn btn-sm" id="btn-reset-view" title="Volver al 100%">↺ 100%</button>
-          <button class="btn btn-sm" id="btn-fullscreen" title="Pantalla completa del lienzo">⛶⛶</button>
-          <button class="btn btn-sm" id="btn-descargar-png" title="Descargar el plano con las mediciones dibujadas como imagen PNG">📸 PNG</button>
-          <a class="btn btn-sm" id="btn-ver-pdf" href="#" target="_blank" rel="noopener" hidden>⬇ Ver PDF</a>
-          <button class="btn btn-sm btn-danger" id="btn-eliminar-plano">🗑️ Eliminar plano</button>
+        <div class="planos-active-title">
+          <h2 id="plano-titulo">Plano</h2>
+          <span class="planos-state-chip" id="plano-estado-escala">Comprobando escala…</span>
+        </div>
+        <div class="planos-document-actions">
+          <button class="btn btn-sm" id="btn-fullscreen" title="Ver el lienzo a pantalla completa">⛶ Pantalla completa</button>
+          <details class="planos-more-actions">
+            <summary class="btn btn-sm" aria-label="Más acciones" title="Más acciones">•••</summary>
+            <div class="planos-more-menu">
+              <button class="btn btn-sm" id="btn-descargar-png">Descargar PNG medido</button>
+              <a class="btn btn-sm" id="btn-ver-pdf" href="#" target="_blank" rel="noopener" hidden>Ver PDF original</a>
+              <button class="btn btn-sm btn-danger" id="btn-eliminar-plano">Eliminar plano</button>
+            </div>
+          </details>
         </div>
       </div>
-      <div id="canvas-container" class="planos-canvas-container">
+
+      <div class="planos-toolstrip" role="toolbar" aria-label="Herramientas de medición">
+        <div class="planos-tool-group">
+          <button class="planos-tool active btn-primary" id="tool-seleccionar" data-tool="seleccionar" title="Seleccionar una estancia (S)"><span aria-hidden="true">↖</span> Seleccionar</button>
+          <button class="planos-tool" id="tool-mover" data-tool="mover" title="Arrastrar el plano (M)"><span aria-hidden="true">✋</span> Mover</button>
+        </div>
+        <span class="planos-tool-divider" aria-hidden="true"></span>
+        <div class="planos-tool-group planos-measure-tools">
+          <button class="planos-tool" id="tool-lineal" data-tool="lineal" data-requires-scale="1" title="Medir una longitud en metros (L)"><span aria-hidden="true">╱</span> Línea</button>
+          <button class="planos-tool" id="tool-area" data-tool="area" data-requires-scale="1" title="Medir una superficie en metros cuadrados (A)"><span aria-hidden="true">▱</span> Área</button>
+          <button class="planos-tool" id="tool-perimetro" data-tool="perimetro" data-requires-scale="1" title="Medir un perímetro en metros (P)"><span aria-hidden="true">▣</span> Perímetro</button>
+          <button class="planos-tool" id="tool-conteo" data-tool="conteo" title="Contar elementos (C)"><span aria-hidden="true">●</span> Conteo</button>
+        </div>
+        <div class="planos-zoom-controls" aria-label="Zoom del plano">
+          <span class="planos-zoom-label">Zoom</span>
+          <button type="button" class="planos-zoom-btn" id="btn-zoom-out" aria-label="Alejar plano" title="Alejar">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m15.5 15.5 5 5M7.5 10.5h6"></path></svg>
+          </button>
+          <output id="status-zoom" class="planos-zoom-value">100%</output>
+          <button type="button" class="planos-zoom-btn" id="btn-zoom-in" aria-label="Acercar plano" title="Acercar">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m15.5 15.5 5 5M7.5 10.5h6M10.5 7.5v6"></path></svg>
+          </button>
+        </div>
+      </div>
+
+      <div id="canvas-container" class="planos-canvas-container" tabindex="0" aria-label="Plano interactivo">
         <canvas id="plano-canvas" class="planos-canvas"></canvas>
         <img id="plano-img" class="cotizat-hidden" crossorigin="anonymous" alt="Plano">
+        <div class="planos-canvas-help">Zoom únicamente con las lupas − / +</div>
       </div>
-      <div class="planos-statusbar">
-        <span id="status-coords">–</span>
+
+      <footer class="planos-statusbar">
+        <span id="status-coords">Calibra para ver coordenadas en metros</span>
         <span class="planos-status-sep" aria-hidden="true">·</span>
-        <span>Zoom: <span id="status-zoom">100%</span></span>
-        <span class="planos-status-sep" aria-hidden="true">·</span>
-        <span id="status-snap" class="cotizat-hidden">🧲 ajustado a vértice</span>
+        <span id="status-snap" class="cotizat-hidden">🧲 Ajustado a vértice</span>
         <span id="status-valor"></span>
+        <span class="planos-status-spacer"></span>
+        <span>Esc cancela · Ctrl+Z deshace · doble clic finaliza</span>
+      </footer>
+      <p class="planos-info" id="plano-info"></p>
+    </section>
+  </main>
+
+  <aside class="planos-inspector" aria-label="Panel de mediciones">
+    <div class="planos-workflow">
+      <details class="planos-step" id="card-calibrar" open>
+        <summary>
+          <span class="planos-step-number">1</span>
+          <span class="planos-step-title"><strong>Escala real</strong><small id="calib-summary">Necesaria para medir en metros</small></span>
+          <span class="planos-step-toggle">Recalibrar</span>
+        </summary>
+        <div class="planos-step-body">
+          <p class="hint">Marca dos extremos de una cota conocida e indica su distancia real.</p>
+          <button class="btn btn-primary planos-btn-analizar" id="tool-calibrar" data-tool="calibrar" title="Marcar una distancia conocida (E)">📏 Marcar distancia conocida</button>
+          <div id="calibracion-panel" class="planos-panel-calib">
+            <p class="planos-segment-status">Segmento: <strong id="calib-px">haz dos clics en el plano</strong></p>
+            <div class="planos-calib-fields">
+              <div class="field planos-calib-distance">
+                <label for="calib-real">Distancia real</label>
+                <input type="number" id="calib-real" step="0.01" min="0.01" placeholder="3,50">
+              </div>
+              <div class="field">
+                <label for="calib-unidad">Unidad</label>
+                <select id="calib-unidad"><option value="m">m</option><option value="cm">cm</option><option value="mm">mm</option></select>
+              </div>
+              <div class="field planos-calib-height">
+                <label for="calib-altura">Altura paredes</label>
+                <div class="planos-input-unit"><input type="number" id="calib-altura" step="0.05" min="1" max="8" value="2.50"><span>m</span></div>
+              </div>
+            </div>
+            <div class="planos-calib-actions">
+              <button class="btn btn-sm btn-primary" id="btn-confirm-calibrar">Aplicar escala</button>
+              <button class="btn btn-sm btn-ghost" id="btn-cancel-calibrar">Borrar marca</button>
+            </div>
+          </div>
+          <div id="calib-status" class="planos-analisis-status" role="status">Pendiente de calibrar.</div>
+        </div>
+      </details>
+
+      <div class="planos-step planos-step-detect" id="card-analizar">
+        <span class="planos-step-number">2</span>
+        <span class="planos-step-title"><strong>Detectar estancias</strong><small id="analisis-status" role="status" aria-live="polite">Disponible tras calibrar</small></span>
+        <button class="btn btn-sm" id="btn-analizar-plano">✨ Analizar</button>
       </div>
-      <p class="hint" id="plano-info"></p>
     </div>
-  </div>
+
+    <div class="planos-inspector-tabs" role="tablist" aria-label="Detalle del plano">
+      <button type="button" class="active" role="tab" aria-selected="true" data-inspector-tab="estancia">Estancia</button>
+      <button type="button" role="tab" aria-selected="false" data-inspector-tab="medir">Medir</button>
+      <button type="button" role="tab" aria-selected="false" data-inspector-tab="resultados">Mediciones <span id="resultados-count">0</span></button>
+    </div>
+
+    <div class="planos-inspector-content">
+      <section class="planos-tab-panel" role="tabpanel" data-inspector-panel="estancia">
+        <div class="planos-panel-title">
+          <span class="planos-panel-icon" aria-hidden="true">⌂</span>
+          <div><h3>Estancia seleccionada</h3><p>Haz clic dentro de un recinto para revisar sus medidas.</p></div>
+        </div>
+        <div id="estancia-vacia" class="planos-empty-selection">
+          <span aria-hidden="true">↖</span>
+          <strong>Selecciona una estancia</strong>
+          <small>Verás aquí superficie, perímetro y paredes en medidas reales.</small>
+        </div>
+        <div id="estancia-editor" class="cotizat-hidden">
+          <div class="field">
+            <label for="estancia-nombre">Nombre de la estancia</label>
+            <input type="text" id="estancia-nombre" placeholder="Cocina, baño, dormitorio…">
+          </div>
+          <p id="estancia-save" class="planos-save-status">El nombre se guarda automáticamente.</p>
+          <dl class="planos-metricas" id="estancia-metricas"></dl>
+        </div>
+      </section>
+
+      <section class="planos-tab-panel" role="tabpanel" data-inspector-panel="medir" hidden>
+        <div class="planos-panel-title">
+          <span class="planos-panel-icon" aria-hidden="true">⌁</span>
+          <div><h3>Medición manual</h3><p>Elige la herramienta sobre el plano y marca los puntos.</p></div>
+        </div>
+        <div class="planos-snaps">
+          <label class="planos-check"><input type="checkbox" id="chk-ortogonal"> <span>Snap ortogonal <small>o Mayús</small></span></label>
+          <label class="planos-check"><input type="checkbox" id="chk-snappoints" checked> <span>Ajustar a vértices</span></label>
+          <label class="planos-check"><input type="checkbox" id="chk-mostrar-med" checked> <span>Mostrar mediciones</span></label>
+        </div>
+        <div id="medicion-panel" class="planos-panel-med">
+          <div class="field">
+            <label for="med-etiqueta">Etiqueta</label>
+            <input type="text" id="med-etiqueta" placeholder="Ej. Muro cocina">
+          </div>
+          <div class="planos-med-row">
+            <div class="field">
+              <label for="med-color">Color</label>
+              <input type="color" id="med-color" value="#e11d48">
+            </div>
+            <div class="planos-current-value"><span>Medida actual</span><strong id="med-valor-actual">—</strong></div>
+          </div>
+          <p id="med-guardado-status" class="planos-save-status" role="status" aria-live="polite">Sin trazo en curso.</p>
+          <div class="planos-panel-actions">
+            <button class="btn btn-sm btn-primary" id="btn-guardar-medicion">Finalizar medición</button>
+            <button class="btn btn-sm" id="btn-cancel-medicion">Descartar</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="planos-tab-panel planos-results-panel" role="tabpanel" data-inspector-panel="resultados" hidden>
+        <div class="planos-results-head">
+          <div><h3>Mediciones guardadas</h3><p class="hint" id="med-stats">Sin mediciones</p></div>
+          <span class="planos-autosave-chip">✓ Auto</span>
+        </div>
+        <div id="lista-mediciones"></div>
+        <div class="planos-apply-box">
+          <div class="field planos-field-aplicar">
+            <label for="select-partida">Enviar medición seleccionada a</label>
+            <select id="select-partida">
+              <option value="">— Selecciona partida —</option>
+              {% for part in partidas %}
+              <option value="{{ part.id }}">{{ part.capitulo }} · {{ part.nombre }} ({{ part.unidad }})</option>
+              {% endfor %}
+            </select>
+          </div>
+          <button class="btn btn-sm btn-primary planos-btn-aplicar" id="btn-aplicar-a-partida">Crear en la partida</button>
+          <p class="hint" id="aplicar-hint"></p>
+        </div>
+        <div class="planos-export">
+          <a class="btn btn-sm" id="btn-export-csv" href="/presupuestos/{{ p.id }}/planos/exportar?formato=csv">CSV</a>
+          <a class="btn btn-sm" id="btn-export-dxf" href="#">DXF para CAD</a>
+        </div>
+      </section>
+    </div>
+  </aside>
 </div>
 {% endif %}
 
 <style nonce="{{ request.state.csp_nonce }}">
-.planos-layout { display:grid; grid-template-columns: 320px 1fr; gap:16px; }
-.planos-sidebar { display:flex; flex-direction:column; gap:16px; }
-.plano-item { padding:10px; border:1px solid #e2e8f0; border-radius:8px; margin-bottom:8px; cursor:pointer; }
-.plano-item.active { border-color:#04265D; background:#f0f7ff; }
-.plano-item small { display:block; color:#64748b; }
-.plano-item-badges { display:flex; gap:4px; flex-wrap:wrap; margin-top:4px; }
-.badge { font-size:11px; padding:2px 6px; border-radius:10px; }
-.badge-ok { background:#dcfce7; color:#166534; }
-.badge-warn { background:#fef9c3; color:#854d0e; }
-.btn-group-vertical { display:flex; flex-direction:column; gap:6px; }
-.planos-snaps { margin-top:10px; padding:8px 10px; background:#f1f5f9; border-radius:8px; display:flex; flex-direction:column; gap:5px; }
-.planos-check { display:flex; align-items:center; gap:6px; font-size:12.5px; cursor:pointer; }
-.planos-check input { margin:0; }
-.planos-check small { color:#94a3b8; }
-.planos-atajos { margin-top:8px; }
-.planos-paso h3 { margin-top:0; }
-.planos-panel-calib { margin-top:12px; padding:10px; background:#f1f5f9; border-radius:8px; }
-.planos-panel-med { margin-top:12px; }
-.planos-btn-analizar { width:100%; justify-content:center; }
-.planos-metricas { display:grid; grid-template-columns:1fr auto; gap:4px 10px; margin:10px 0 0; }
-.planos-metricas dt { color:#64748b; font-size:12px; }
-.planos-metricas dd { margin:0; font-weight:600; font-size:13px; text-align:right; }
-.medicion-item.seleccionada { background:#eff6ff; border-color:#93c5fd; }
-#card-calibrar.is-pendiente { outline:2px solid #f59e0b; }
-#card-calibrar.is-ok { outline:2px solid #16a34a; }
-.planos-analisis-status, .planos-save-status { margin:8px 0 0; padding:7px 9px; border-radius:7px; background:#f1f5f9; color:#475569; font-size:12px; }
-.planos-analisis-status.is-working, .planos-save-status.is-saving { background:#eff6ff; color:#1d4ed8; }
-.planos-analisis-status.is-ok, .planos-save-status.is-ok { background:#ecfdf5; color:#166534; }
-.planos-analisis-status.is-error, .planos-save-status.is-error { background:#fef2f2; color:#b91c1c; }
-.planos-field-aplicar { margin-top:10px; }
-.planos-btn-aplicar { margin-top:6px; }
-.planos-export { display:flex; gap:8px; flex-wrap:wrap; }
-.planos-canvas-head { display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; }
-.planos-canvas-tools { display:flex; gap:4px; flex-wrap:wrap; }
-.planos-canvas-container { position:relative; overflow:auto; border:1px solid #e2e8f0; background:#fff; height:72vh; max-height:80vh; }
-.planos-canvas-container:fullscreen { height:100vh; max-height:none; border:none; }
-.planos-canvas { display:block; cursor:crosshair; }
+body.planos-workspace-page { background: var(--bg); }
+.planos-page-head { min-height:56px; display:flex; align-items:center; justify-content:space-between; gap:1rem; flex:0 0 auto; margin-bottom:.65rem; padding:0 .15rem; }
+.planos-page-title { min-width:0; display:flex; align-items:center; gap:.7rem; }
+.planos-page-title h1 { margin:0; font-size:1.08rem; line-height:1.2; letter-spacing:-.025em; }
+.planos-page-title h1 span { color:var(--text-soft); font-weight:550; }
+.planos-page-title p { margin:.12rem 0 0; color:var(--text-soft); font-size:.72rem; }
+.planos-eyebrow,.planos-panel-kicker { display:block; color:var(--accent); font-size:.61rem; font-weight:800; letter-spacing:.09em; }
+.planos-back { width:34px; height:34px; display:grid; place-items:center; flex:0 0 auto; border:1px solid var(--border); border-radius:10px; background:var(--surface); color:var(--text); text-decoration:none; font-size:1rem; }
+.planos-back:hover { border-color:var(--accent-light); color:var(--accent); background:var(--accent-soft); }
+.planos-page-actions { display:flex; gap:.4rem; flex-wrap:wrap; }
+.planos-layout { flex:1 1 auto; min-height:0; display:grid; grid-template-columns:210px minmax(420px,1fr) 318px; gap:.65rem; }
+.planos-sidebar,.planos-inspector,.planos-main-card { min-width:0; min-height:0; background:var(--surface); border:1px solid var(--border); border-radius:14px; box-shadow:var(--shadow-xs); }
+.planos-sidebar { display:flex; flex-direction:column; overflow:hidden; }
+.planos-panel-head { display:flex; align-items:center; justify-content:space-between; padding:.8rem .85rem .62rem; border-bottom:1px solid var(--border-subtle); }
+.planos-panel-head h2 { margin:.05rem 0 0; font-size:.95rem; }
+.planos-count { min-width:24px; height:24px; display:grid; place-items:center; border-radius:8px; background:var(--surface-alt); color:var(--text-soft); font-size:.72rem; font-weight:750; }
+.planos-list { min-height:0; flex:1; overflow:auto; padding:.45rem; }
+.plano-item { width:100%; display:flex; align-items:flex-start; gap:.55rem; padding:.62rem; margin:0 0 .3rem; border:1px solid transparent; border-radius:10px; background:transparent; color:var(--text); text-align:left; cursor:pointer; transition:background .14s ease,border-color .14s ease; }
+.plano-item:hover { background:var(--surface-hover); }
+.plano-item.active { border-color:var(--accent-light); background:var(--accent-soft); box-shadow:inset 3px 0 0 var(--accent); }
+.plano-item-icon { width:30px; height:34px; display:grid; place-items:center; flex:0 0 auto; border:1px solid var(--border); border-radius:7px; background:var(--surface); color:var(--accent); font-size:.62rem; font-weight:800; }
+.plano-item-copy { min-width:0; display:block; flex:1; }
+.plano-item strong,.plano-item small { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.plano-item strong { font-size:.78rem; line-height:1.35; }
+.plano-item small { margin-top:.12rem; color:var(--text-soft); font-size:.65rem; }
+.plano-item-badges { display:flex; margin-top:.3rem; }
+.planos-sidebar .badge { font-size:.59rem; padding:.12rem .35rem; border-radius:999px; }
+.badge-ok { background:var(--green-soft); color:var(--green); }
+.badge-warn { background:var(--amber-soft); color:var(--amber); }
+.planos-add-document { flex:0 0 auto; margin:.4rem; border:1px solid var(--border); border-radius:10px; background:var(--surface-alt); }
+.planos-add-document > summary { padding:.58rem .65rem; color:var(--accent); font-size:.71rem; font-weight:700; cursor:pointer; list-style:none; }
+.planos-add-document > summary::-webkit-details-marker { display:none; }
+.planos-add-document[open] > summary { border-bottom:1px solid var(--border); }
+.planos-add-document form { display:grid; gap:.48rem; padding:.6rem; }
+.planos-add-document .field { gap:.15rem; }
+.planos-add-document input { width:100%; padding:.4rem .45rem; font-size:.68rem; }
+.planos-add-document label { font-size:.63rem; }
+.planos-add-document .alert { margin:.4rem; }
+.planos-sidebar-foot { display:flex; justify-content:space-between; gap:.4rem; padding:.55rem .65rem; border-top:1px solid var(--border); color:var(--text-muted); font-size:.59rem; }
+.planos-sidebar-foot a { color:var(--accent); text-decoration:none; font-weight:700; white-space:nowrap; }
+.planos-canvas-area { min-width:0; min-height:0; }
+.planos-main-card { height:100%; display:flex; flex-direction:column; overflow:hidden; }
+.planos-canvas-head { min-height:46px; display:flex; align-items:center; justify-content:space-between; gap:.6rem; padding:.55rem .7rem; border-bottom:1px solid var(--border-subtle); }
+.planos-active-title { min-width:0; display:flex; align-items:center; gap:.5rem; }
+.planos-active-title h2 { max-width:22rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin:0; font-size:.88rem; }
+.planos-state-chip { padding:.18rem .42rem; border-radius:999px; background:var(--surface-alt); color:var(--text-soft); font-size:.61rem; font-weight:700; white-space:nowrap; }
+.planos-state-chip.is-ok { background:var(--green-soft); color:var(--green); }
+.planos-state-chip.is-pending { background:var(--amber-soft); color:var(--amber); }
+.planos-document-actions { display:flex; align-items:center; gap:.3rem; }
+.planos-more-actions { position:relative; }
+.planos-more-actions > summary { list-style:none; }
+.planos-more-actions > summary::-webkit-details-marker { display:none; }
+.planos-more-menu { position:absolute; z-index:20; top:calc(100% + 5px); right:0; width:180px; display:grid; gap:.25rem; padding:.35rem; border:1px solid var(--border); border-radius:10px; background:var(--surface-raised); box-shadow:var(--shadow-lg); }
+.planos-more-menu .btn { justify-content:flex-start; width:100%; }
+.planos-toolstrip { min-height:48px; display:flex; align-items:center; gap:.35rem; padding:.42rem .55rem; border-bottom:1px solid var(--border); background:var(--surface-alt); overflow-x:auto; scrollbar-width:none; }
+.planos-toolstrip::-webkit-scrollbar { display:none; }
+.planos-tool-group { display:flex; align-items:center; gap:.2rem; }
+.planos-tool { min-height:32px; display:inline-flex; align-items:center; justify-content:center; gap:.3rem; padding:.35rem .5rem; border:1px solid transparent; border-radius:8px; background:transparent; color:var(--text-secondary); font-family:inherit; font-size:.68rem; font-weight:600; line-height:1.1; white-space:nowrap; cursor:pointer; }
+.planos-tool:hover:not(:disabled) { background:var(--surface); border-color:var(--border); color:var(--text); }
+.planos-tool.btn-primary { color:#fff; background:var(--accent); border-color:var(--accent); box-shadow:none; }
+.planos-tool:disabled { opacity:.4; cursor:not-allowed; }
+.planos-tool-divider { width:1px; height:24px; flex:0 0 auto; background:var(--border); }
+.planos-zoom-controls { display:flex; align-items:center; gap:.18rem; margin-left:auto; padding-left:.35rem; }
+.planos-zoom-label { color:var(--text-muted); font-size:.61rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em; }
+.planos-zoom-btn { width:32px; height:32px; display:grid; place-items:center; flex:0 0 auto; border:1px solid var(--border); border-radius:8px; background:var(--surface); color:var(--text); cursor:pointer; }
+.planos-zoom-btn:hover { border-color:var(--accent-light); color:var(--accent); background:var(--accent-soft); }
+.planos-zoom-btn svg { width:17px; height:17px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; }
+.planos-zoom-value { width:38px; color:var(--text-secondary); font-size:.65rem; font-weight:750; text-align:center; font-variant-numeric:tabular-nums; }
+.planos-canvas-container { position:relative; min-height:0; flex:1; overflow:auto; overscroll-behavior:contain; background-color:#e9edf2; background-image:linear-gradient(rgba(100,116,139,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(100,116,139,.07) 1px,transparent 1px); background-size:20px 20px; }
+[data-theme="dark"] .planos-canvas-container { background-color:#202228; }
+.planos-canvas-container:focus-visible { outline:2px solid var(--accent); outline-offset:-2px; }
+.planos-canvas-container:fullscreen { width:100vw; height:100vh; background-color:#e9edf2; }
+.planos-canvas { display:block; cursor:crosshair; box-shadow:0 4px 24px rgba(15,23,42,.15); }
 .planos-canvas.modo-mover { cursor:grab; }
 .planos-canvas.panendo { cursor:grabbing !important; }
-.planos-statusbar { display:flex; gap:10px; align-items:center; padding:6px 2px 0; font-size:12px; color:#475569; flex-wrap:wrap; }
-.planos-status-sep { color:#cbd5e1; }
-#lista-mediciones { max-height:300px; overflow:auto; }
-.medicion-item { display:flex; justify-content:space-between; align-items:center; padding:6px; border-bottom:1px solid #f1f5f9; gap:6px; }
-.medicion-item strong { font-size:13px; }
-.medicion-item small { color:#64748b; }
-.medicion-item .planos-med-btns { display:flex; gap:4px; }
-@media (max-width: 900px) { .planos-layout { grid-template-columns:1fr; } }
+.planos-canvas-help { position:sticky; left:12px; bottom:10px; width:max-content; max-width:calc(100% - 24px); padding:.3rem .48rem; border:1px solid rgba(255,255,255,.65); border-radius:7px; background:rgba(15,23,42,.72); color:#fff; font-size:.6rem; pointer-events:none; backdrop-filter:blur(6px); }
+.planos-statusbar { min-height:30px; display:flex; align-items:center; gap:.45rem; padding:.35rem .65rem; border-top:1px solid var(--border); color:var(--text-soft); font-size:.61rem; white-space:nowrap; overflow:hidden; }
+.planos-status-sep { color:var(--border-strong); }
+.planos-status-spacer { flex:1; }
+.planos-info { min-height:22px; margin:0; padding:.3rem .65rem; border-top:1px solid var(--border-subtle); color:var(--text-muted); font-size:.59rem; }
+.planos-inspector { display:flex; flex-direction:column; overflow:hidden; }
+.planos-workflow { flex:0 0 auto; padding:.45rem; border-bottom:1px solid var(--border); background:var(--surface-alt); }
+.planos-step { border:1px solid var(--border); border-radius:10px; background:var(--surface); overflow:hidden; }
+.planos-step + .planos-step { margin-top:.35rem; }
+.planos-step > summary { min-height:44px; display:flex; align-items:center; gap:.5rem; padding:.45rem .55rem; list-style:none; cursor:pointer; }
+.planos-step > summary::-webkit-details-marker { display:none; }
+.planos-step-number { width:23px; height:23px; display:grid; place-items:center; flex:0 0 auto; border-radius:7px; background:var(--accent-soft); color:var(--accent); font-size:.67rem; font-weight:850; }
+.planos-step.is-ok .planos-step-number { background:var(--green-soft); color:var(--green); }
+.planos-step-title { min-width:0; display:flex; flex-direction:column; flex:1; }
+.planos-step-title strong { font-size:.73rem; }
+.planos-step-title small { overflow:hidden; color:var(--text-soft); font-size:.59rem; line-height:1.35; text-overflow:ellipsis; white-space:nowrap; }
+.planos-step-toggle { color:var(--accent); font-size:.58rem; font-weight:700; }
+.planos-step:not(.is-ok) .planos-step-toggle { color:var(--text-muted); }
+.planos-step-body { padding:0 .6rem .6rem; border-top:1px solid var(--border-subtle); }
+.planos-step-body > .hint { margin:.48rem 0; font-size:.64rem; }
+.planos-btn-analizar { width:100%; justify-content:center; }
+.planos-panel-calib { margin-top:.45rem; padding:.5rem; border-radius:8px; background:var(--surface-alt); }
+.planos-segment-status { margin:0 0 .4rem; color:var(--text-soft); font-size:.61rem; }
+.planos-calib-fields { display:grid; grid-template-columns:1fr 64px; gap:.38rem; }
+.planos-calib-height { grid-column:1 / -1; }
+.planos-calib-fields .field { gap:.15rem; }
+.planos-calib-fields label { font-size:.59rem; }
+.planos-calib-fields input,.planos-calib-fields select { width:100%; min-height:31px; padding:.34rem .42rem; font-size:.69rem; }
+.planos-input-unit { display:flex; align-items:center; }
+.planos-input-unit input { border-radius:6px 0 0 6px; }
+.planos-input-unit span { min-height:31px; display:grid; place-items:center; padding:0 .45rem; border:1px solid var(--border); border-left:0; border-radius:0 6px 6px 0; color:var(--text-soft); font-size:.65rem; }
+.planos-calib-actions { display:flex; gap:.3rem; margin-top:.45rem; }
+.planos-analisis-status,.planos-save-status { margin:.42rem 0 0; padding:.4rem .48rem; border-radius:7px; background:var(--surface-alt); color:var(--text-soft); font-size:.6rem; line-height:1.35; }
+.planos-analisis-status.is-working,.planos-save-status.is-saving { background:var(--blue-soft); color:var(--blue); }
+.planos-analisis-status.is-ok,.planos-save-status.is-ok { background:var(--green-soft); color:var(--green); }
+.planos-analisis-status.is-error,.planos-save-status.is-error { background:var(--rose-soft); color:var(--rose); }
+.planos-step-detect { min-height:47px; display:flex; align-items:center; gap:.5rem; padding:.42rem .55rem; }
+.planos-step-detect .btn { flex:0 0 auto; }
+.planos-inspector-tabs { flex:0 0 auto; display:grid; grid-template-columns:repeat(3,1fr); padding:.35rem .35rem 0; border-bottom:1px solid var(--border); }
+.planos-inspector-tabs button { position:relative; padding:.52rem .25rem; border:0; background:transparent; color:var(--text-soft); font-size:.65rem; font-weight:700; cursor:pointer; }
+.planos-inspector-tabs button::after { content:""; position:absolute; left:15%; right:15%; bottom:-1px; height:2px; border-radius:2px 2px 0 0; background:transparent; }
+.planos-inspector-tabs button.active { color:var(--accent); }
+.planos-inspector-tabs button.active::after { background:var(--accent); }
+.planos-inspector-tabs button span { display:inline-grid; place-items:center; min-width:17px; height:17px; margin-left:.15rem; border-radius:999px; background:var(--surface-alt); font-size:.57rem; }
+.planos-inspector-content { min-height:0; flex:1; }
+.planos-tab-panel { height:100%; overflow:auto; padding:.7rem; }
+.planos-panel-title { display:flex; align-items:flex-start; gap:.55rem; margin-bottom:.7rem; }
+.planos-panel-icon { width:31px; height:31px; display:grid; place-items:center; flex:0 0 auto; border-radius:9px; background:var(--accent-soft); color:var(--accent); font-size:1rem; }
+.planos-panel-title h3,.planos-results-head h3 { margin:0; font-size:.8rem; }
+.planos-panel-title p { margin:.08rem 0 0; color:var(--text-soft); font-size:.61rem; line-height:1.4; }
+.planos-empty-selection { min-height:150px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.25rem; padding:1rem; border:1px dashed var(--border-strong); border-radius:10px; color:var(--text-soft); text-align:center; }
+.planos-empty-selection > span { font-size:1.3rem; color:var(--accent); }
+.planos-empty-selection strong { color:var(--text-secondary); font-size:.72rem; }
+.planos-empty-selection small { max-width:210px; font-size:.61rem; }
+.planos-metricas { display:grid; grid-template-columns:1fr auto; gap:.1rem; margin:.65rem 0 0; overflow:hidden; border:1px solid var(--border); border-radius:10px; }
+.planos-metricas dt,.planos-metricas dd { margin:0; padding:.52rem .6rem; border-bottom:1px solid var(--border-subtle); }
+.planos-metricas dt { color:var(--text-soft); font-size:.66rem; }
+.planos-metricas dd { font-size:.72rem; font-weight:750; text-align:right; font-variant-numeric:tabular-nums; }
+.planos-snaps { display:grid; gap:.15rem; margin-bottom:.6rem; padding:.4rem; border:1px solid var(--border); border-radius:9px; background:var(--surface-alt); }
+.planos-check { display:flex; align-items:center; gap:.45rem; padding:.32rem .35rem; border-radius:7px; font-size:.67rem; cursor:pointer; }
+.planos-check:hover { background:var(--surface); }
+.planos-check input { margin:0; }
+.planos-check span { display:flex; justify-content:space-between; gap:.5rem; flex:1; }
+.planos-check small { color:var(--text-muted); }
+.planos-panel-med { padding:.6rem; border:1px solid var(--border); border-radius:10px; }
+.planos-med-row { display:grid; grid-template-columns:72px 1fr; gap:.5rem; margin-top:.5rem; }
+.planos-panel-med input[type="color"] { width:100%; height:34px; padding:.15rem; }
+.planos-current-value { display:flex; flex-direction:column; justify-content:center; padding:.35rem .55rem; border-radius:8px; background:var(--surface-alt); }
+.planos-current-value span { color:var(--text-soft); font-size:.57rem; }
+.planos-current-value strong { font-size:.76rem; font-variant-numeric:tabular-nums; }
+.planos-panel-actions { display:flex; gap:.35rem; margin-top:.5rem; }
+.planos-results-panel { display:flex; flex-direction:column; overflow:hidden; }
+.planos-results-head { display:flex; align-items:flex-start; justify-content:space-between; gap:.5rem; flex:0 0 auto; margin-bottom:.45rem; }
+.planos-results-head .hint { margin:.08rem 0 0; font-size:.59rem; }
+.planos-autosave-chip { padding:.15rem .38rem; border-radius:999px; background:var(--green-soft); color:var(--green); font-size:.56rem; font-weight:750; }
+#lista-mediciones { min-height:80px; flex:1; overflow:auto; margin:0 -.25rem; padding:0 .25rem; }
+.medicion-item { display:flex; align-items:center; justify-content:space-between; gap:.4rem; padding:.48rem .35rem; border-bottom:1px solid var(--border-subtle); border-radius:7px; }
+.medicion-item:hover { background:var(--surface-alt); }
+.medicion-item.seleccionada { background:var(--accent-soft); box-shadow:inset 2px 0 0 var(--accent); }
+.medicion-item > div:first-child { min-width:0; flex:1; }
+.medicion-item strong,.medicion-item small { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.medicion-item strong { font-size:.65rem; }
+.medicion-item small { margin-top:.08rem; color:var(--text-soft); font-size:.57rem; }
+.planos-med-btns { display:flex; gap:.18rem; }
+.planos-med-btns .btn { width:25px; height:25px; justify-content:center; padding:0; font-size:.65rem; }
+.planos-apply-box { flex:0 0 auto; margin-top:.5rem; padding:.55rem; border:1px solid var(--border); border-radius:10px; background:var(--surface-alt); }
+.planos-field-aplicar { gap:.2rem; }
+.planos-field-aplicar label { font-size:.6rem; }
+.planos-field-aplicar select { width:100%; min-height:32px; padding:.35rem; font-size:.64rem; }
+.planos-btn-aplicar { width:100%; justify-content:center; margin-top:.4rem; }
+.planos-apply-box #aplicar-hint { margin:.3rem 0 0; font-size:.58rem; }
+.planos-export { flex:0 0 auto; display:flex; gap:.35rem; margin-top:.45rem; }
+.planos-export .btn { flex:1; justify-content:center; }
+.planos-first-upload { max-width:920px; display:grid; grid-template-columns:auto 1fr; gap:1rem 1.2rem; align-items:center; margin:clamp(2rem,8vh,6rem) auto; padding:clamp(1.4rem,3vw,2.4rem); }
+.planos-first-icon { width:64px; height:64px; display:grid; place-items:center; grid-row:1 / span 2; border-radius:18px; background:var(--accent-soft); color:var(--accent); font-size:2rem; }
+.planos-first-upload h2 { margin:.15rem 0 .25rem; font-size:1.25rem; }
+.planos-upload-first { grid-column:2; display:grid; grid-template-columns:1fr 1.3fr auto; gap:.65rem; align-items:end; }
+.planos-upload-first .field { min-width:0; }
+.planos-upload-first input { width:100%; }
+@media (min-width:981px) {
+  body.planos-workspace-page { overflow:hidden; }
+  body.planos-workspace-page .content { height:100dvh; max-width:none; display:flex; flex-direction:column; overflow:hidden; padding:.55rem .7rem .65rem; }
+}
+@media (max-width:1240px) {
+  .planos-layout { grid-template-columns:185px minmax(360px,1fr) 292px; }
+  .planos-tool { padding:.35rem .4rem; font-size:.64rem; }
+  .planos-zoom-label { display:none; }
+  .planos-document-actions > .btn { padding:.3rem .5rem; font-size:.63rem; }
+}
+@media (max-width:980px) {
+  body.planos-workspace-page .content { max-width:none; }
+  .planos-page-head { align-items:flex-start; }
+  .planos-layout { display:flex; flex-direction:column; }
+  .planos-sidebar { max-height:190px; }
+  .planos-list { display:flex; gap:.35rem; }
+  .plano-item { min-width:190px; }
+  .planos-add-document,.planos-sidebar-foot { display:none; }
+  .planos-canvas-area { min-height:62vh; }
+  .planos-inspector { min-height:620px; }
+}
+@media (max-width:620px) {
+  .planos-page-title h1 span,.planos-page-title p,.planos-page-actions .btn:first-child { display:none; }
+  .planos-page-actions .btn { font-size:.65rem; }
+  .planos-canvas-head { align-items:flex-start; }
+  .planos-state-chip { display:none; }
+  .planos-measure-tools .planos-tool { font-size:0; width:34px; }
+  .planos-measure-tools .planos-tool span { font-size:.85rem; }
+  .planos-zoom-controls { position:sticky; right:0; background:var(--surface-alt); }
+  .planos-statusbar > :last-child { display:none; }
+  .planos-first-upload { display:flex; flex-direction:column; align-items:stretch; }
+  .planos-upload-first { display:flex; flex-direction:column; align-items:stretch; }
+}
 </style>
 {% endblock %}
 
@@ -324,6 +563,20 @@
   // Sin canvas = pantalla de primer plano: solo hace falta el upload.
   if (!canvas) return;
 
+  function activarTabInspector(nombre){
+    document.querySelectorAll('[data-inspector-tab]').forEach(btn=>{
+      const activo = btn.dataset.inspectorTab === nombre;
+      btn.classList.toggle('active', activo);
+      btn.setAttribute('aria-selected', activo ? 'true' : 'false');
+    });
+    document.querySelectorAll('[data-inspector-panel]').forEach(panel=>{
+      panel.hidden = panel.dataset.inspectorPanel !== nombre;
+    });
+  }
+  document.querySelectorAll('[data-inspector-tab]').forEach(btn=>{
+    btn.addEventListener('click', ()=>activarTabInspector(btn.dataset.inspectorTab));
+  });
+
   function distancia(p1,p2){ return Math.hypot(p2[0]-p1[0], p2[1]-p1[1]); }
   function distanciaTotal(pts){
     let t=0; for(let i=1;i<pts.length;i++) t+=distancia(pts[i-1], pts[i]); return t;
@@ -348,20 +601,25 @@
     return inside;
   }
   function metricasLocales(m){
-    if (m && m.metricas) return m.metricas;
+    if (m && m.metricas && m.metricas.calibrado) return m.metricas;
     const pts = (m && m.puntos) || [];
+    if (!escala){
+      // Las coordenadas técnicas del archivo nunca se presentan como una medida
+      // al usuario: sin escala todavía no existen metros reales.
+      return {suelo:null, suelo_unidad:'m2', perimetro:null, perimetro_unidad:'m', paredes:null, paredes_unidad:'m2', altura_m:alturaLibre, calibrado:false};
+    }
     const perPx = perimetroCerrado(pts);
     const areaPx = areaPoligono(pts);
-    if (!escala){
-      return {suelo:areaPx, suelo_unidad:'px2', perimetro:perPx, perimetro_unidad:'px', paredes:null, paredes_unidad:'m2', altura_m:alturaLibre, calibrado:false};
-    }
     const f = 1/escala;
     const per = perPx * f;
     return {suelo:areaPx*f*f, suelo_unidad:'m2', perimetro:per, perimetro_unidad:'m', paredes:per*alturaLibre, paredes_unidad:'m2', altura_m:alturaLibre, calibrado:true};
   }
+  function unidadVisible(unidad){
+    return unidad === 'm2' ? 'm²' : (unidad || '');
+  }
   function fmtMedida(valor, unidad){
-    if (valor==null || Number.isNaN(valor)) return '—';
-    return Number(valor).toFixed(2).replace('.', ',') + ' ' + unidad;
+    if (valor==null || Number.isNaN(valor)) return 'Pendiente de calibrar';
+    return Number(valor).toFixed(2).replace('.', ',') + ' ' + unidadVisible(unidad);
   }
 
   const MIN_PUNTOS = {lineal:2, area:3, perimetro:3, conteo:1};
@@ -496,27 +754,31 @@
 
   function valorReal(){
     const v = valorActual();
-    if (!escala || herramienta==='conteo' || herramienta==='calibrar') return {valor:v, unidad: herramienta==='area'?'px2': herramienta==='conteo'?'ud':'px'};
+    if (herramienta==='calibrar') return {valor:v, unidad:'', calibracion:true};
+    if (herramienta==='conteo') return {valor:v, unidad:'ud'};
+    if (!escala) return {valor:null, unidad:herramienta==='area'?'m2':'m', pendiente:true};
     const factor = 1/escala;
-    if (herramienta==='lineal' || herramienta==='perimetro') return {valor: v*factor, unidad:'m'};
-    if (herramienta==='area') return {valor: v*factor*factor, unidad:'m2'};
+    if (herramienta==='lineal' || herramienta==='perimetro') return {valor:v*factor, unidad:'m'};
+    if (herramienta==='area') return {valor:v*factor*factor, unidad:'m2'};
     return {valor:v, unidad:'m'};
   }
 
   function actualizarValorActual(){
     const r = valorReal();
     const el = document.getElementById('med-valor-actual');
-    if (el) {
-      if (herramienta==='calibrar'){
-        el.textContent = r.valor.toFixed(1)+' px';
-        const cp = document.getElementById('calib-px');
-        if (cp) cp.textContent = r.valor.toFixed(1)+' px';
-      } else {
-        el.textContent = r.valor.toFixed(2)+' '+r.unidad;
-      }
+    const cp = document.getElementById('calib-px');
+    if (herramienta==='calibrar'){
+      if (el) el.textContent = '—';
+      if (cp) cp.textContent = calibracionPuntos.length >= 2 ? 'listo para indicar la medida real' : (calibracionPuntos.length === 1 ? 'marca el segundo extremo' : 'haz dos clics en el plano');
+    } else if (el) {
+      el.textContent = r.pendiente ? 'Calibra primero' : fmtMedida(r.valor, r.unidad);
     }
     const sv = document.getElementById('status-valor');
-    if (sv) sv.textContent = (herramienta!=='mover' && puntosActuales.length) ? ('Medición en curso: ' + r.valor.toFixed(2) + ' ' + r.unidad) : '';
+    if (sv){
+      if (herramienta==='calibrar') sv.textContent = calibracionPuntos.length ? 'Calibración en curso' : '';
+      else if (puntosActuales.length) sv.textContent = r.pendiente ? 'Calibra el plano para obtener la medida real' : ('Medición en curso: ' + fmtMedida(r.valor, r.unidad));
+      else sv.textContent = '';
+    }
   }
 
   // ---------- Snap y resolución de posición ----------
@@ -598,7 +860,11 @@
     }
     if (pts[0]){
       const met = (m.tipo==='area') ? metricasLocales(m) : null;
-      const extra = met ? (' · ' + fmtMedida(met.suelo, met.suelo_unidad)) : (' ' + (m.valor?.toFixed(2)||'') + (m.unidad||''));
+      let extra = '';
+      if (met) extra = met.calibrado ? (' · ' + fmtMedida(met.suelo, met.suelo_unidad)) : ' · escala pendiente';
+      else if (m.tipo==='conteo') extra = ' · ' + fmtMedida(m.valor, 'ud');
+      else if (escala) extra = ' · ' + fmtMedida(m.valor, m.unidad);
+      else extra = ' · escala pendiente';
       ctx.fillStyle = '#0f172a';
       ctx.font = seleccionada ? 'bold 13px sans-serif' : '12px sans-serif';
       ctx.fillText((m.etiqueta||m.tipo) + extra, pts[0][0]+8, pts[0][1]-8);
@@ -698,6 +964,7 @@
 
   function seleccionarEstancia(m, {focus=true}={}){
     medicionSeleccionadaId = m ? m.id : null;
+    activarTabInspector('estancia');
     const vacio = document.getElementById('estancia-vacia');
     const editor = document.getElementById('estancia-editor');
     if (vacio) vacio.classList.toggle('cotizat-hidden', !!m);
@@ -803,6 +1070,12 @@
   // ---------- Herramientas y atajos ----------
 
   async function activarHerramienta(h, forzar=false){
+    if (['lineal','area','perimetro'].includes(h) && !escala){
+      setEstadoCalib('Calibra una distancia conocida antes de medir.', 'error');
+      const detalles=document.getElementById('card-calibrar');
+      if (detalles) detalles.open=true;
+      return false;
+    }
     if (!forzar && h!==herramienta && puntosActuales.length){
       if (trazoValido()){
         const guardado = await persistirTrazo({finalizar:true});
@@ -817,6 +1090,12 @@
     document.querySelectorAll('[data-tool]').forEach(b=>b.classList.toggle('btn-primary', b.dataset.tool===h));
     if (forzar) puntosActuales = [];
     if (herramienta!=='calibrar') calibracionPuntos = [];
+    if (['lineal','area','perimetro','conteo'].includes(h)) activarTabInspector('medir');
+    if (h==='seleccionar') activarTabInspector('estancia');
+    if (h==='calibrar'){
+      const detalles = document.getElementById('card-calibrar');
+      if (detalles) detalles.open = true;
+    }
     canvas.classList.toggle('modo-mover', herramienta==='mover');
     if (canvas) CotizatStyles.set(canvas, 'cursor', (herramienta==='seleccionar') ? 'pointer' : '');
     actualizarValorActual(); dibujar();
@@ -862,13 +1141,13 @@
   function actualizarStatus(){
     const sc = document.getElementById('status-coords');
     if (sc){
-      if (!cursorPos){ sc.textContent = '–'; }
+      if (!cursorPos){ sc.textContent = escala ? 'Mueve el cursor sobre el plano' : 'Calibra para ver coordenadas en metros'; }
       else {
         const fm = escala ? (1/escala) : null;
         if (fm){
           sc.textContent = `x ${(cursorPos[0]*fm).toFixed(2)} m · y ${(cursorPos[1]*fm).toFixed(2)} m`;
         } else {
-          sc.textContent = `x ${cursorPos[0].toFixed(0)} px · y ${cursorPos[1].toFixed(0)} px`;
+          sc.textContent = 'Escala pendiente · las coordenadas reales aún no están disponibles';
         }
       }
     }
@@ -893,14 +1172,29 @@
   function setEstadoCalib(texto, tipo){
     const el = document.getElementById('calib-status');
     const card = document.getElementById('card-calibrar');
+    const resumen = document.getElementById('calib-summary');
+    const chip = document.getElementById('plano-estado-escala');
+    const toggle = card?.querySelector('.planos-step-toggle');
+    const escalaActiva = !!escala;
     if (el){
       el.textContent = texto;
       el.classList.remove('is-working','is-ok','is-error');
       if (tipo) el.classList.add('is-'+tipo);
     }
     if (card){
-      card.classList.toggle('is-pendiente', tipo!=='ok');
-      card.classList.toggle('is-ok', tipo==='ok');
+      card.classList.toggle('is-pendiente', !escalaActiva);
+      card.classList.toggle('is-ok', escalaActiva);
+      // Una calibración aplicada queda reducida a una sola fila. El usuario
+      // puede desplegarla cuando realmente necesite recalibrar. Si hay un
+      // error al recalibrar, la escala anterior continúa activa.
+      card.open = tipo !== 'ok';
+    }
+    if (resumen) resumen.textContent = escalaActiva ? `Lista · altura ${Number(alturaLibre).toFixed(2).replace('.',',')} m` : 'Necesaria para medir en metros';
+    if (toggle) toggle.textContent = escalaActiva ? 'Recalibrar' : 'Configurar';
+    if (chip){
+      chip.textContent = escalaActiva ? '✓ Medidas reales activas' : 'Escala pendiente';
+      chip.classList.toggle('is-ok', escalaActiva);
+      chip.classList.toggle('is-pending', !escalaActiva);
     }
   }
 
@@ -920,8 +1214,8 @@
       if (data.ok){
         escala = data.escala_px_por_metro;
         alturaLibre = data.altura_libre_m || altura;
-        setEstadoCalib('Escala aplicada: '+escala.toFixed(1)+' px/m. Ya puedes analizar estancias.', 'ok');
-        setEstadoAnalisis('Plano calibrado. Pulsa «Analizar estancias» para detectar tabiques y recintos.', 'ok');
+        setEstadoCalib('Escala aplicada. Todas las mediciones se muestran en metros y metros cuadrados.', 'ok');
+        setEstadoAnalisis('Listo para detectar estancias.', 'ok');
         await cargarPlano(planoActivoId);
         activarHerramienta('seleccionar', true);
       }
@@ -965,11 +1259,9 @@
     if (puntosActuales.length) programarAutoguardado();
   });
 
-  // ---------- Zoom, ajuste y pantalla completa ----------
-
-  document.getElementById('btn-zoom-in')?.addEventListener('click', ()=>{ zoom = Math.min(8, zoom*1.2); dibujar(); });
-  document.getElementById('btn-zoom-out')?.addEventListener('click', ()=>{ zoom = Math.max(0.1, zoom/1.2); dibujar(); });
-  document.getElementById('btn-reset-view')?.addEventListener('click', ()=>{ zoom=1; dibujar(); });
+  // ---------- Zoom, ajuste inicial y pantalla completa ----------
+  // El zoom interactivo se controla exclusivamente con las dos lupas. La
+  // rueda conserva su comportamiento natural de desplazamiento del visor.
 
   function ajustarVista(){
     const c = cont();
@@ -979,7 +1271,6 @@
     if (zoom <= 0 || !isFinite(zoom)) zoom = 1;
     dibujar();
   }
-  document.getElementById('btn-fit-view')?.addEventListener('click', ajustarVista);
 
   function zoomEn(clientX, clientY, factor){
     const c = cont();
@@ -995,11 +1286,14 @@
     c.scrollLeft = cx*ratio - dx;
     c.scrollTop = cy*ratio - dy;
   }
-  cont()?.addEventListener('wheel', (e)=>{
-    if (!img.naturalWidth) return;
-    e.preventDefault();
-    zoomEn(e.clientX, e.clientY, e.deltaY < 0 ? 1.15 : 1/1.15);
-  }, {passive:false});
+  function zoomDesdeCentro(factor){
+    const c = cont();
+    if (!c || !img.naturalWidth) return;
+    const rect = c.getBoundingClientRect();
+    zoomEn(rect.left + rect.width/2, rect.top + rect.height/2, factor);
+  }
+  document.getElementById('btn-zoom-in')?.addEventListener('click', ()=>zoomDesdeCentro(1.2));
+  document.getElementById('btn-zoom-out')?.addEventListener('click', ()=>zoomDesdeCentro(1/1.2));
 
   document.getElementById('btn-fullscreen')?.addEventListener('click', ()=>{
     const c = cont();
@@ -1007,7 +1301,7 @@
     if (document.fullscreenElement) document.exitFullscreen?.();
     else c.requestFullscreen?.().catch(()=>{ alert('Tu navegador bloqueó la pantalla completa'); });
   });
-  document.addEventListener('fullscreenchange', ()=>{ setTimeout(ajustarVista, 80); });
+  document.addEventListener('fullscreenchange', dibujar);
 
   // ---------- Descarga PNG del lienzo ----------
 
@@ -1047,26 +1341,32 @@
   async function analizarPlanoAutomaticamente(){
     if (analisisEnCurso) return;
     if (!planoEsImagen){
-      setEstadoAnalisis('La detección automática requiere PNG, JPG o WEBP. Convierte este PDF a imagen.', 'error');
+      setEstadoAnalisis('Disponible en imágenes PNG, JPG o WEBP.', 'error');
+      return;
+    }
+    if (!escala){
+      setEstadoAnalisis('Calibra primero para obtener resultados en m².', 'error');
+      const detalles=document.getElementById('card-calibrar');
+      if (detalles) detalles.open=true;
       return;
     }
     analisisEnCurso=true;
     const btn=document.getElementById('btn-analizar-plano');
-    if (btn){ btn.disabled=true; btn.textContent='Analizando geometría…'; }
-    setEstadoAnalisis('Buscando paredes y espacios cerrados. Puede tardar unos segundos…', 'working');
+    if (btn){ btn.disabled=true; btn.textContent='Analizando…'; }
+    setEstadoAnalisis('Buscando recintos cerrados…', 'working');
     try {
       const res=await fetch(`/planos/${planoActivoId}/detectar`, {method:'POST'});
       const data=await res.json();
       if (!data.ok){ setEstadoAnalisis(data.error||'No se pudo analizar el plano.', 'error'); return; }
       (data.mediciones||[]).forEach(integrarMedicionGuardada);
       if (data.analizadas===0){
-        setEstadoAnalisis('No se encontraron estancias cerradas. Prueba con una imagen más nítida o dibuja el recinto a mano.', 'error');
+        setEstadoAnalisis('No se encontraron recintos. Puedes dibujarlos con Área.', 'error');
       } else if (data.nuevas===0){
-        setEstadoAnalisis(`Revisión completa: las ${data.analizadas} estancias ya estaban guardadas. Clic para renombrarlas.`, 'ok');
+        setEstadoAnalisis(`${data.analizadas} estancias ya estaban guardadas.`, 'ok');
       } else {
-        setEstadoAnalisis(`✓ ${data.nuevas} estancia(s) detectada(s). Clic en cada una para ponerle nombre; suelo, perímetro y paredes se calculan solos.`, 'ok');
+        setEstadoAnalisis(`✓ ${data.nuevas} estancias listas en m².`, 'ok');
       }
-      if (btn) btn.textContent='↻ Repetir análisis';
+      if (btn) btn.textContent='↻ Repetir';
       const primera = (data.mediciones||[])[0] || medicionesGuardadas.find(m=>m.tipo==='area');
       if (primera){
         await activarHerramienta('seleccionar', true);
@@ -1076,7 +1376,7 @@
       setEstadoAnalisis('Error de conexión durante el análisis.', 'error');
     } finally {
       analisisEnCurso=false;
-      if (btn){ btn.disabled=!planoEsImagen; if (btn.textContent==='Analizando geometría…') btn.textContent='✨ Analizar plano automáticamente'; }
+      if (btn){ btn.disabled=!planoEsImagen || !escala; if (btn.textContent==='Analizando…') btn.textContent='✨ Analizar'; }
     }
   }
 
@@ -1089,36 +1389,45 @@
   function renderStats(){
     const el = document.getElementById('med-stats');
     if (!el) return;
+    if (!escala && medicionesGuardadas.some(m=>m.tipo!=='conteo')){
+      el.textContent = 'Calibra para ver medidas reales';
+      return;
+    }
     const porUnidad = {};
     medicionesGuardadas.forEach(m=>{
-      const u = m.unidad || '?';
+      if (!escala && m.tipo!=='conteo') return;
+      const u = m.tipo==='conteo' ? 'ud' : m.unidad;
+      if (!u) return;
       porUnidad[u] = (porUnidad[u]||0) + (m.valor||0);
     });
-    const partes = Object.entries(porUnidad).map(([u,v])=>`${v.toFixed(2)} ${u}`);
+    const partes = Object.entries(porUnidad).map(([u,v])=>fmtMedida(v,u));
     el.textContent = partes.length ? ('Totales: ' + partes.join(' · ')) : 'Sin mediciones en este plano';
   }
 
   function renderListaMediciones(){
     const contLista = document.getElementById('lista-mediciones');
     if (!contLista) return;
+    const contador = document.getElementById('resultados-count');
+    if (contador) contador.textContent = medicionesGuardadas.length;
     contLista.replaceChildren();
     medicionesGuardadas.forEach(m=>{
       const div = document.createElement('div'); div.className='medicion-item';
       const left = document.createElement('div');
       if (m.id===medicionSeleccionadaId) div.classList.add('seleccionada');
       const met = m.tipo==='area' ? metricasLocales(m) : null;
-      const resumen = met
-        ? `${fmtMedida(met.suelo, met.suelo_unidad)} suelo · ${fmtMedida(met.perimetro, met.perimetro_unidad)}`
-        : `${(m.valor?.toFixed(2)||'')} ${m.unidad||''}`;
-      const strong = document.createElement('strong'); strong.textContent = (ICONO_TIPO[m.tipo]||'📐') + ' ' + (m.etiqueta||m.tipo) + ' · ' + resumen;
+      let resumen = 'Pendiente de calibrar';
+      if (met && met.calibrado) resumen = `${fmtMedida(met.suelo, met.suelo_unidad)} suelo · ${fmtMedida(met.perimetro, met.perimetro_unidad)} perímetro`;
+      else if (m.tipo==='conteo') resumen = fmtMedida(m.valor, 'ud');
+      else if (escala) resumen = fmtMedida(m.valor, m.unidad);
+      const strong = document.createElement('strong'); strong.textContent = (ICONO_TIPO[m.tipo]||'📐') + ' ' + (m.etiqueta||m.tipo);
       const small = document.createElement('small'); small.textContent = met && met.paredes!=null
-        ? (`paredes ${fmtMedida(met.paredes, met.paredes_unidad)} · ${m.puntos?.length||0} pts`)
-        : (m.tipo + ' · ' + (m.puntos?.length||0) + ' puntos');
+        ? `${resumen} · ${fmtMedida(met.paredes, met.paredes_unidad)} paredes`
+        : resumen;
       CotizatStyles.set(left, 'cursor', 'pointer');
       left.addEventListener('click', ()=>{
-        if (m.tipo==='area'){
-          activarHerramienta('seleccionar', true).then(()=>seleccionarEstancia(m));
-        }
+        medicionSeleccionadaId = m.id;
+        if (m.tipo==='area') activarHerramienta('seleccionar', true).then(()=>seleccionarEstancia(m));
+        else { renderListaMediciones(); dibujar(); }
       });
       left.appendChild(strong); left.appendChild(small);
       const right = document.createElement('div'); right.className='planos-med-btns';
@@ -1136,6 +1445,7 @@
         await activarHerramienta(m.tipo, true);
         puntosActuales = (m.puntos || []).map(p=>[p[0],p[1]]);
         medicionEnEdicionId = m.id;
+        medicionSeleccionadaId = m.id;
         const et=document.getElementById('med-etiqueta'); if(et) et.value=m.etiqueta||'';
         const color=document.getElementById('med-color'); if(color) color.value=m.color||'#ff0000';
         guardarBorradorLocal();
@@ -1176,9 +1486,14 @@
 
   document.getElementById('btn-aplicar-a-partida')?.addEventListener('click', async ()=>{
     const partidaId = document.getElementById('select-partida').value;
-    if (!partidaId){ alert('Selecciona partida'); return; }
+    if (!partidaId){ alert('Selecciona una partida'); return; }
     if (!medicionesGuardadas.length){ alert('No hay mediciones guardadas'); return; }
-    const medId = medicionEnEdicionId || medicionesGuardadas[medicionesGuardadas.length-1].id;
+    const medId = medicionSeleccionadaId || medicionEnEdicionId || medicionesGuardadas[medicionesGuardadas.length-1].id;
+    const medicionAplicada = medicionesGuardadas.find(m=>m.id===medId);
+    if (medicionAplicada && medicionAplicada.tipo!=='conteo' && !escala){
+      alert('Calibra el plano antes de enviar una medida a la partida.');
+      return;
+    }
     try {
       const res = await fetch(`/planos/${planoActivoId}/mediciones/${medId}/aplicar`, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({partida_id: parseInt(partidaId)})});
       const data = await res.json();
@@ -1226,29 +1541,34 @@
       if (!data.ok) return;
       escala = data.plano.escala_px_por_metro;
       alturaLibre = data.plano.altura_libre_m || 2.5;
+      const calibrado = !!data.plano.calibrado;
       const inpAlt = document.getElementById('calib-altura');
       if (inpAlt && !inpAlt.matches(':focus')) inpAlt.value = Number(alturaLibre).toFixed(2);
       medicionesGuardadas = data.mediciones || [];
+      if (!medicionesGuardadas.some(m=>m.id===medicionSeleccionadaId)) medicionSeleccionadaId = null;
       planoEsImagen = (data.plano.content_type || '').startsWith('image/');
       const btnAnalizar=document.getElementById('btn-analizar-plano');
-      if (btnAnalizar) btnAnalizar.disabled=!planoEsImagen;
-      if (!planoEsImagen) setEstadoAnalisis('La detección automática no está disponible para PDF; sube una versión PNG, JPG o WEBP.', 'error');
-      else if (data.plano.calibrado){
-        setEstadoCalib('Calibrado: '+Number(escala).toFixed(1)+' px/m. Las estancias usan esta escala.', 'ok');
-        setEstadoAnalisis('Listo para analizar o para hacer clic en una estancia y nombrarla.', 'ok');
+      if (btnAnalizar) btnAnalizar.disabled=!planoEsImagen || !calibrado;
+      document.querySelectorAll('[data-requires-scale="1"]').forEach(btn=>{ btn.disabled=!calibrado; });
+      if (calibrado){
+        setEstadoCalib('Escala aplicada. Suelo, perímetros y paredes se expresan en medidas reales.', 'ok');
       } else {
-        setEstadoCalib('Pendiente: marca una cota conocida y escribe su medida real.', 'error');
-        setEstadoAnalisis('Primero calibra el plano. Luego se calculan m² de suelo y paredes.', '');
-        activarHerramienta('calibrar', true);
+        setEstadoCalib('Marca una distancia conocida para activar las medidas reales.', 'error');
       }
+      if (!planoEsImagen) setEstadoAnalisis('La detección automática requiere una imagen.', 'error');
+      else if (calibrado) setEstadoAnalisis('Listo para analizar estancias.', 'ok');
+      else setEstadoAnalisis('Disponible tras calibrar.', '');
+      if (!calibrado) activarHerramienta('calibrar', true);
       const sel = medicionesGuardadas.find(m=>m.id===medicionSeleccionadaId);
       if (sel) pintarMetricas(sel);
       if (!puntosActuales.length) restaurarBorradorLocal();
       planoNombreArchivo = (data.plano.nombre||'plano').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'') || 'plano';
       const tituloEl = document.getElementById('plano-titulo');
-      if (tituloEl) tituloEl.textContent = data.plano.nombre + (data.plano.calibrado ? ' (calibrado)' : ' (sin calibrar)');
+      if (tituloEl) tituloEl.textContent = data.plano.nombre;
       const infoEl = document.getElementById('plano-info');
-      if (infoEl) infoEl.textContent = `Archivo: ${data.plano.archivo} · ${data.plano.ancho_px||'?'}x${data.plano.alto_px||'?'} px · Escala: ${escala ? escala.toFixed(2)+' px/m' : 'no calibrado'}`;
+      if (infoEl) infoEl.textContent = calibrado
+        ? `Mediciones reales activas · Altura de paredes ${Number(alturaLibre).toFixed(2).replace('.',',')} m · ${medicionesGuardadas.length} medición${medicionesGuardadas.length===1?'':'es'}`
+        : 'Escala pendiente · calibra una distancia conocida antes de medir';
       const btnPdf = document.getElementById('btn-ver-pdf');
       if (btnPdf){
         const esPdf = (data.plano.content_type || '').includes('pdf');
