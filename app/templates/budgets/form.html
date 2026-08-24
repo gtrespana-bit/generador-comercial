@@ -449,7 +449,13 @@
         <section class="catalog-editor-section">
           <div class="catalog-editor-section-head"><div><span class="section-kicker">Solo para este presupuesto</span><h3>Cantidad, comportamiento y mediciones</h3></div></div>
           <div class="form-grid budget-line-grid">
-            <div class="field"><label>Cantidad directa</label><input type="number" step="any" min="0" name="linea_cantidad" value="1"></div>
+            <div class="field"><label>Cantidad directa</label>
+              <div class="cantidad-con-plano">
+                <input type="number" step="any" min="0" name="linea_cantidad" value="1">
+                <button type="button" class="btn btn-sm btn-ghost cantidad-plano-btn" id="editor-cantidad-plano" title="Añadir medición desde plano">📐</button>
+              </div>
+              <small class="hint">O pulsa 📐 para traer el suelo, el perímetro o las paredes desde un plano.</small>
+            </div>
             <div class="field"><label>Tipo de partida</label><select name="linea_tipo"><option value="included">Incluida</option><option value="optional">Opcional</option><option value="alternative">Alternativa</option><option value="excluded">No incluida</option><option value="provisional">Provisional</option><option value="measurement">Sujeta a medición</option></select></div>
             <div class="field"><label>Estado</label><select name="linea_seleccionada"><option value="1">Seleccionada</option><option value="0">No seleccionada</option></select></div>
             <div class="field"><label>Grupo de alternativa</label><input name="linea_grupo_alternativa" placeholder="Opcional"></div>
@@ -521,6 +527,7 @@
         </select>
       </div>
       <span id="plano-selector-seleccion-count" class="plano-selector-count">0 estancias seleccionadas</span>
+      <button type="button" class="btn btn-sm btn-ghost" id="plano-selector-recargar" title="Volver a leer los planos">↻</button>
     </div>
     <div id="plano-selector-status" class="plano-selector-status" role="status" aria-live="polite">Cargando mediciones…</div>
     <div id="plano-selector-lista" class="plano-selector-lista"></div>

@@ -1758,9 +1758,26 @@
       var cantCell = editor.FMT.h("div", "");
       CotizatStyles.set(cantCell, "textAlign", "right");
       CotizatStyles.set(cantCell, "padding", "0 0.5rem");
+      var cantWrap = editor.FMT.h("div", "partida-cant-wrap");
       var cantInput = editor.FMT.crearInput("number", datos.cantidad !== undefined ? datos.cantidad : "1", "0", "p_cantidad", { step: "any", min: "0" });
       cantInput.className = "partida-cant-input";
-      cantCell.appendChild(cantInput);
+      cantWrap.appendChild(cantInput);
+      // Acceso rápido premium: traer la cantidad directamente de un plano,
+      // justo al lado de donde se escribe la medición.
+      var btnPlano = editor.FMT.h("button", "partida-cant-plano-btn", "📐");
+      btnPlano.type = "button";
+      btnPlano.title = "Añadir medición desde plano";
+      btnPlano.setAttribute("aria-label", "Añadir medición desde plano");
+      btnPlano.addEventListener("click", function (evt) {
+        evt.stopPropagation();
+        if (typeof editorInst.abrirEditorPartida !== "function") return;
+        editorInst.abrirEditorPartida(partidaWrap, "presupuesto");
+        setTimeout(function () {
+          if (typeof editorInst.abrirSelectorPlanos === "function") editorInst.abrirSelectorPlanos();
+        }, 0);
+      });
+      cantWrap.appendChild(btnPlano);
+      cantCell.appendChild(cantWrap);
       row.appendChild(cantCell);
 
       var undCell = editor.FMT.h("div", "");

@@ -48,6 +48,11 @@ GROSOR_TABIQUE_DEFECTO_CM = 10.0
 GROSOR_TABIQUE_MIN_CM = 0.1
 GROSOR_TABIQUE_MAX_CM = 100.0
 
+# Escala interna de los planos dibujados desde cero (``origen='dibujado'``).
+# 1 px = 1 cm real: el usuario dibuja a escala real y las medidas en metros
+# salen directas, sin necesidad de calibrar una distancia conocida.
+ESCALA_LIENZO_DIBUJO_PX_M = 100.0
+
 
 class ErrorPlano(ValueError):
     pass
@@ -499,6 +504,134 @@ def _pintar_run_direccion(
                     barrera[yy * ancho + xx] = 1
 
 
+def _runs_tinta_todas(tinta: list[int] | bytearray, ancho: int, alto: int) -> tuple[list[list[tuple[int, int]]], list[list[tuple[int, int]]]]:
+    """Todas las tiradas de tinta por fila y por columna (sin filtrar largo).
+
+    Devuelve ``(filas, columnas)`` donde ``filas[y]`` es la lista de
+    intervalos ``(x0, x1)`` con tinta en la fila ``y`` y ``columnas[x]``
+    la lista de ``(y0, y1)`` con tinta en la columna ``x``. Se usa para
+    rellenar el hueco de los muros de doble línea.
+    """
+    filas: list[list[tuple[int, int]]] = []
+    for y in range(alto):
+        base = y * ancho
+        runs: list[tuple[int, int]] = []
+        x = 0
+        while x < ancho:
+            if tinta[base + x]:
+                x0 = x
+                while x < ancho and tinta[base + x]:
+                    x += 1
+                runs.append((x0, x - 1))
+            else:
+                x += 1
+        filas.append(runs)
+    columnas: list[list[tuple[int, int]]] = []
+    for x in range(ancho):
+        runs: list[tuple[int, int]] = []
+        y = 0
+        while y < alto:
+            if tinta[y * ancho + x]:
+                y0 = y
+                while y < alto and tinta[y * ancho + x]:
+                    y += 1
+                runs.append((y0, y - 1))
+            else:
+                y += 1
+        columnas.append(runs)
+    return filas, columnas
+
+
+def _extremo_vertical_muro(
+    tinta: list[int] | bytearray,
+    ancho: int,
+    alto: int,
+    y: int,
+    x0: int,
+    x1: int,
+    tope: int,
+) -> tuple[int, int]:
+    """Filas ``(top, bot)`` del cuerpo de un muro horizontal en la fila ``y``.
+
+    Sonda varias columnas del tramo y se queda con la mediana de los extremos:
+    así una puerta (que vacía la columna central) o una esquina (que une con
+    un muro perpendicular) no deforman la medida del espesor real.
+    """
+    tops: list[int] = []
+    bots: list[int] = []
+    for frac in (0.15, 0.3, 0.5, 0.7, 0.85):
+        cx = min(ancho - 1, max(0, x0 + int((x1 - x0) * frac)))
+        t = y
+        while t > 0 and y - t < tope and tinta[(t - 1) * ancho + cx]:
+            t -= 1
+        b = y
+        while b + 1 < alto and b - y < tope and tinta[(b + 1) * ancho + cx]:
+            b += 1
+        tops.append(t)
+        bots.append(b)
+    tops.sort()
+    bots.sort()
+    return tops[len(tops) // 2], bots[len(bots) // 2]
+
+
+def _extremo_horizontal_muro(
+    tinta: list[int] | bytearray,
+    ancho: int,
+    alto: int,
+    x: int,
+    y0: int,
+    y1: int,
+    tope: int,
+) -> tuple[int, int]:
+    """Columnas ``(left, right)`` del cuerpo de un muro vertical en la columna ``x``."""
+    lefts: list[int] = []
+    rights: list[int] = []
+    for frac in (0.15, 0.3, 0.5, 0.7, 0.85):
+        cy = min(alto - 1, max(0, y0 + int((y1 - y0) * frac)))
+        l = x
+        while l > 0 and x - l < tope and tinta[cy * ancho + (l - 1)]:
+            l -= 1
+        r = x
+        while r + 1 < ancho and r - x < tope and tinta[cy * ancho + (r + 1)]:
+            r += 1
+        lefts.append(l)
+        rights.append(r)
+    lefts.sort()
+    rights.sort()
+    return lefts[len(lefts) // 2], rights[len(rights) // 2]
+
+
+def _medir_espesor_muros(
+    tinta: list[int] | bytearray,
+    ancho: int,
+    alto: int,
+    runs_horiz: list[tuple[int, int, int]],
+    runs_vert: list[tuple[int, int, int]],
+) -> int | None:
+    """Mediana del espesor real (px) de los muros de la imagen.
+
+    Mide el cuerpo de los tramos largos horizontales y verticales (los que
+    parecen muros de verdad) y devuelve la mediana, acotada a un rango
+    plausible. ``None`` si no hay muros medibles.
+    """
+    tope = max(4, min(80, round(min(ancho, alto) * 0.08)))
+    espesores: list[int] = []
+    for y, x0, x1 in runs_horiz:
+        top, bot = _extremo_vertical_muro(tinta, ancho, alto, y, x0, x1, tope)
+        if bot - top + 1 >= 2:
+            espesores.append(bot - top + 1)
+    for x, y0, y1 in runs_vert:
+        left, right = _extremo_horizontal_muro(tinta, ancho, alto, x, y0, y1, tope)
+        if right - left + 1 >= 2:
+            espesores.append(right - left + 1)
+    if not espesores:
+        return None
+    espesores.sort()
+    mediana = espesores[len(espesores) // 2]
+    tope_final = max(4, min(60, round(min(ancho, alto) * 0.06)))
+    return int(max(2, min(mediana, tope_final)))
+
+
 def _rdp(puntos: list[list[float]], epsilon: float) -> list[list[float]]:
     """Simplificación Ramer-Douglas-Peucker de un trazado abierto."""
     if len(puntos) <= 2:
@@ -597,20 +730,14 @@ def _ajustar_limites_compartidos(
     candidatos: list[dict[str, Any]],
     banda_px: float,
 ) -> None:
-    """Hace coincidir los bordes de dos estancias separadas por un tabique.
+    """Alisa las caras de dos estancias separadas por un tabique.
 
     El relleno por inundación termina en la cara interior de la barrera
-    rasterizada. Si se persisten esos dos contornos tal cual, el tabique queda
-    convertido en un hueco: el salón acaba antes del muro y la cocina empieza
-    después de él. Para una pareja de recintos adyacentes tomamos el punto
-    medio de ambas caras. Así los dos polígonos usan la misma línea central del
-    tabique, sin inventar superficie ni duplicar el espesor del muro.
-
-    Primero se recopilan las parejas y después se agrupan las que pertenecen a
-    la misma línea de tabique. Esto es importante en un cruce: si una pared
-    horizontal tiene estancias a izquierda y derecha, cada tramo puede tener
-    una cara rasterizada distinta, pero los cuatro polígonos deben compartir
-    una única coordenada central.
+    rasterizada, que ahora se pega al muro. Cada recinto conserva su propia
+    cara: la estancia de la izquierda se pega a la cara derecha del tabique y
+    la de la derecha a la cara izquierda. El ajuste solo alisa el ruido del
+    raster agrupando las caras de una misma línea de tabique (sin colapsarlas
+    a un eje central, que dejaría medio muro dentro de cada estancia).
     """
     if len(candidatos) < 2:
         return
@@ -651,7 +778,7 @@ def _ajustar_limites_compartidos(
                 })
 
     def poner_borde(puntos: list[list[float]], eje: int, extremo: float, nuevo: float) -> bool:
-        tolerancia = max(2.0, banda_px * 0.35)
+        tolerancia = max(2.0, banda_px * 0.6)
         indices = [i for i, punto in enumerate(puntos) if abs(float(punto[eje]) - extremo) <= tolerancia]
         # Dos puntos o más evitan tocar un vértice suelto de una diagonal.
         if len(indices) < 2:
@@ -660,37 +787,41 @@ def _ajustar_limites_compartidos(
             puntos[i][eje] = round(nuevo, 2)
         return True
 
-    # Agrupa segmentos de una misma línea; el tramo común puede limitarse a
-    # un vértice (p. ej. una cruz de cuatro estancias), por eso se admiten
-    # intervalos que se tocan además de los que se solapan.
-    tolerancia_linea = max(4.0, banda_px * 0.35)
+    # Agrupa segmentos de una misma línea por lado (cara "primero" y cara
+    # "segundo" por separado) y ajusta cada lado a su mediana. Así la cara de
+    # cada estancia queda pegada a su lado del tabique y el espesor del muro
+    # permanece entre ambas.
+    tolerancia_linea = max(4.0, banda_px * 0.6)
     for eje in (0, 1):
-        grupos: list[list[dict[str, Any]]] = []
-        for pareja in [p for p in parejas if p["eje"] == eje]:
-            centro = (pareja["borde_primero"] + pareja["borde_segundo"]) / 2.0
-            pareja["centro"] = centro
-            colocado = False
+        for lado in ("borde_primero", "borde_segundo"):
+            grupos: list[list[dict[str, Any]]] = []
+            for pareja in [p for p in parejas if p["eje"] == eje]:
+                valor = pareja[lado]
+                colocado = False
+                for grupo in grupos:
+                    media = sum(g[lado] for g in grupo) / len(grupo)
+                    tramo0 = min(g["tramo0"] for g in grupo)
+                    tramo1 = max(g["tramo1"] for g in grupo)
+                    if abs(valor - media) <= tolerancia_linea and pareja["tramo0"] <= tramo1 + banda_px and pareja["tramo1"] >= tramo0 - banda_px:
+                        grupo.append(pareja)
+                        colocado = True
+                        break
+                if not colocado:
+                    grupos.append([pareja])
             for grupo in grupos:
-                centro_grupo = sum(p["centro"] for p in grupo) / len(grupo)
-                tramo0 = min(p["tramo0"] for p in grupo)
-                tramo1 = max(p["tramo1"] for p in grupo)
-                if abs(centro - centro_grupo) <= tolerancia_linea and pareja["tramo0"] <= tramo1 + banda_px and pareja["tramo1"] >= tramo0 - banda_px:
-                    grupo.append(pareja)
-                    colocado = True
-                    break
-            if not colocado:
-                grupos.append([pareja])
-
-        for grupo in grupos:
-            centro = round(sum(p["centro"] for p in grupo) / len(grupo), 2)
-            for pareja in grupo:
-                if poner_borde(pareja["primero"]["puntos"], eje, pareja["borde_primero"], centro) and poner_borde(pareja["segundo"]["puntos"], eje, pareja["borde_segundo"], centro):
-                    if eje == 0:
-                        pareja["primero"]["bbox"][2] = centro
-                        pareja["segundo"]["bbox"][0] = centro
-                    else:
-                        pareja["primero"]["bbox"][3] = centro
-                        pareja["segundo"]["bbox"][1] = centro
+                media = round(sum(g[lado] for g in grupo) / len(grupo), 2)
+                for pareja in grupo:
+                    if poner_borde(pareja["primero" if lado == "borde_primero" else "segundo"]["puntos"], eje, pareja[lado], media):
+                        if lado == "borde_primero":
+                            if eje == 0:
+                                pareja["primero"]["bbox"][2] = media
+                            else:
+                                pareja["primero"]["bbox"][3] = media
+                        else:
+                            if eje == 0:
+                                pareja["segundo"]["bbox"][0] = media
+                            else:
+                                pareja["segundo"]["bbox"][1] = media
 
     for candidato in candidatos:
         candidato["area_px2"] = round(_area_px(candidato.get("puntos") or []), 2)
@@ -746,57 +877,112 @@ def detectar_espacios_plano(
     tinta_cruda = bytearray(1 if valor else 0 for valor in tinta_img.tobytes())
     tinta = _borrar_anotaciones_cotas(tinta_cruda, ancho, alto)
 
-    # Barrera inicial: solo la tinta que sobrevivió a las cotas.
-    barrera = bytearray(tinta)
-    # Cierra el antialias de los muros reales, no de los números ya borrados.
-    for y in range(alto):
-        for x in range(ancho):
-            if not tinta[y * ancho + x]:
-                continue
-            for yy in range(max(0, y - 1), min(alto, y + 2)):
-                for xx in range(max(0, x - 1), min(ancho, x + 2)):
-                    barrera[yy * ancho + xx] = 1
-
     dimension_menor = min(ancho, alto)
     max_hueco = max(6, min(48, round(dimension_menor * 0.055)))
     largo_minimo = max(28, round(dimension_menor * 0.09))
     grosor_base = max(1, min(2, round(dimension_menor / 480)))
 
-    # Grosor del muro a usar durante la detección. Prioridad:
-    # 1) el grosor_tabique_px pasado por la API (de ``plano.grosor_px``);
-    # 2) el grosor base derivado de la dimensión menor;
-    # 3) el grosor medido automáticamente sobre la imagen.
-    grosor_px_trabajo: float
-    if grosor_tabique_px and grosor_tabique_px > 0:
-        grosor_px_trabajo = max(1.0, float(grosor_tabique_px) * escala_reduccion)
-    else:
-        grosor_px_trabajo = grosor_base
-
-    grosor_barrera = max(1, int(round(grosor_px_trabajo)))
-
-    # Muros horizontales y verticales (puertas alineadas).
-    for y in range(alto):
+    # Tiradas de tinta por fila/columna. Las largas (puertas puenteadas) son
+    # las que parecen muro; las brutas sirven para rellenar dobles líneas.
+    filas_tinta, columnas_tinta = _runs_tinta_todas(tinta, ancho, alto)
+    runs_horiz: list[tuple[int, int, int]] = []
+    for y, runs in enumerate(filas_tinta):
         fila = [tinta[y * ancho + x] for x in range(ancho)]
         for x0, x1 in _runs_tinta(fila, max_hueco, largo_minimo):
-            for yy in range(max(0, y - grosor_barrera), min(alto, y + grosor_barrera + 1)):
-                inicio = yy * ancho + x0
-                barrera[inicio : yy * ancho + x1 + 1] = b"\x01" * (x1 - x0 + 1)
-
+            runs_horiz.append((y, x0, x1))
+    runs_vert: list[tuple[int, int, int]] = []
     for x in range(ancho):
         columna = [tinta[y * ancho + x] for y in range(alto)]
         for y0, y1 in _runs_tinta(columna, max_hueco, largo_minimo):
-            for xx in range(max(0, x - grosor_barrera), min(ancho, x + grosor_barrera + 1)):
-                for y in range(y0, y1 + 1):
-                    barrera[y * ancho + xx] = 1
+            runs_vert.append((x, y0, y1))
+
+    # Espesor real del muro medido sobre la imagen. Tiene prioridad sobre el
+    # grosor declarado (que depende de una escala que puede no estar
+    # calibrada) y sobre el grosor base. El antiguo motor aplicaba el grosor
+    # declarado como relleno extra alrededor de cada trazo, engordando los
+    # tabiques varios centímetros hacia el interior de la estancia; medir el
+    # trazo real hace que la barrera se pegue a la cara del tabique.
+    espesor_medido = _medir_espesor_muros(
+        tinta, ancho, alto, runs_horiz, runs_vert
+    )
+    if espesor_medido:
+        grosor_px_trabajo = float(espesor_medido)
+    elif grosor_tabique_px and grosor_tabique_px > 0:
+        grosor_px_trabajo = max(1.0, float(grosor_tabique_px) * escala_reduccion)
+    else:
+        grosor_px_trabajo = float(grosor_base)
+
+    grosor_barrera = max(1, int(round(grosor_px_trabajo)))
+    tope_cuerpo = max(6, grosor_barrera * 6)
+
+    # Barrera que se pega a la cara del muro:
+    # 1) tinta + 1 px de dilatación (cierra el antialias);
+    # 2) cuerpo del muro relleno hasta su cara real (no se engorda);
+    # 3) muros de doble línea: se rellena el hueco entre caras paralelas.
+    barrera = bytearray(tinta)
+    for y in range(alto):
+        base = y * ancho
+        for x in range(ancho):
+            if not tinta[base + x]:
+                continue
+            for yy in range(max(0, y - 1), min(alto, y + 2)):
+                bb = yy * ancho
+                for xx in range(max(0, x - 1), min(ancho, x + 2)):
+                    barrera[bb + xx] = 1
+
+    # Muros horizontales: rellena el cuerpo entre sus caras reales (la
+    # tirada ya puentea los huecos de puerta, así el hueco queda cerrado).
+    for y, x0, x1 in runs_horiz:
+        top, bot = _extremo_vertical_muro(tinta, ancho, alto, y, x0, x1, tope_cuerpo)
+        for yy in range(top, bot + 1):
+            inicio = yy * ancho + x0
+            barrera[inicio : yy * ancho + x1 + 1] = b"\x01" * (x1 - x0 + 1)
+
+    # Muros verticales.
+    for x, y0, y1 in runs_vert:
+        left, right = _extremo_horizontal_muro(tinta, ancho, alto, x, y0, y1, tope_cuerpo)
+        for xx in range(left, right + 1):
+            for y in range(y0, y1 + 1):
+                barrera[y * ancho + xx] = 1
+
+    # Muros de doble línea (caras paralelas separadas por el hueco del muro):
+    # rellena entre las dos caras para que el interior no se cuele como
+    # recinto. Solo une caras próximas (espesor medido) y muy solapadas.
+    tolerancia_hueco = max(2, grosor_barrera)
+    for y, x0, x1 in runs_horiz:
+        for yy in range(y + 1, min(alto, y + tolerancia_hueco + 1)):
+            for a0, a1 in filas_tinta[yy]:
+                if a1 - a0 + 1 < largo_minimo:
+                    continue
+                solapa = min(x1, a1) - max(x0, a0) + 1
+                if solapa < max(12, min(x1 - x0, a1 - a0) * 0.6):
+                    continue
+                for rr in range(y, yy + 1):
+                    inicio = rr * ancho + x0
+                    barrera[inicio : rr * ancho + x1 + 1] = b"\x01" * (x1 - x0 + 1)
+                break
+    for x, y0, y1 in runs_vert:
+        for xx in range(x + 1, min(ancho, x + tolerancia_hueco + 1)):
+            for b0, b1 in columnas_tinta[xx]:
+                if b1 - b0 + 1 < largo_minimo:
+                    continue
+                solapa = min(y1, b1) - max(y0, b0) + 1
+                if solapa < max(12, min(y1 - y0, b1 - b0) * 0.6):
+                    continue
+                for cc in range(x, xx + 1):
+                    for y in range(y0, y1 + 1):
+                        barrera[y * ancho + cc] = 1
+                break
 
     # Muros a 45° y 135°: sin esto un tabique diagonal se lee como escalera
-    # de píxeles y parte mal las estancias.
+    # de píxeles y parte mal las estancias. Se pinta con el espesor medido.
+    grosor_diag = max(1, int(round(grosor_px_trabajo / 2.0)))
     for x in range(ancho):
-        _pintar_run_direccion(barrera, ancho, alto, x, 0, 1, 1, tinta, max_hueco, largo_minimo, grosor_barrera)
-        _pintar_run_direccion(barrera, ancho, alto, x, alto - 1, 1, -1, tinta, max_hueco, largo_minimo, grosor_barrera)
+        _pintar_run_direccion(barrera, ancho, alto, x, 0, 1, 1, tinta, max_hueco, largo_minimo, grosor_diag)
+        _pintar_run_direccion(barrera, ancho, alto, x, alto - 1, 1, -1, tinta, max_hueco, largo_minimo, grosor_diag)
     for y in range(1, alto):
-        _pintar_run_direccion(barrera, ancho, alto, 0, y, 1, 1, tinta, max_hueco, largo_minimo, grosor_barrera)
-        _pintar_run_direccion(barrera, ancho, alto, 0, y, 1, -1, tinta, max_hueco, largo_minimo, grosor_barrera)
+        _pintar_run_direccion(barrera, ancho, alto, 0, y, 1, 1, tinta, max_hueco, largo_minimo, grosor_diag)
+        _pintar_run_direccion(barrera, ancho, alto, 0, y, 1, -1, tinta, max_hueco, largo_minimo, grosor_diag)
 
     visitado = bytearray(ancho * alto)
     area_minima = max(380, round(ancho * alto * 0.003))
@@ -889,14 +1075,12 @@ def detectar_espacios_plano(
             ],
         })
 
-    # El relleno trabaja con la cara libre del tabique. Reconciliamos ahora
-    # las parejas adyacentes usando el centro del espesor detectado, antes de
-    # ordenar y persistir los polígonos. La banda de búsqueda es el grosor
-    # declarado o, en su defecto, el grosor detectado.
-    banda_busqueda_px = max(
-        grosor_px_trabajo * 1.6,
-        (max_hueco + grosor_barrera * 2),
-    ) / max(escala_reduccion, 1e-3)
+    # El relleno por inundación ya termina en la cara interior del tabique
+    # (la barrera se pega al muro). Reconciliamos las parejas adyacentes
+    # alisando cada cara por separado —sin colapsarlas a un eje central— para
+    # que cada estancia conserve su cara y el espesor del tabique quede entre
+    # ambas. La banda de búsqueda es proporcional al espesor del muro.
+    banda_busqueda_px = max(grosor_px_trabajo * 1.8, 6.0) / max(escala_reduccion, 1e-3)
     _ajustar_limites_compartidos(
         candidatos,
         banda_px=banda_busqueda_px,
@@ -1283,20 +1467,17 @@ def crear_plano_en_blanco(
     db: Session,
     presupuesto_id: int,
     nombre: str,
-    ancho_lienzo_m: float = 12.0,
-    alto_lienzo_m: float = 8.0,
+    ancho_lienzo_m: float = 30.0,
+    alto_lienzo_m: float = 20.0,
     grosor_tabique_cm: float = GROSOR_TABIQUE_DEFECTO_CM,
 ) -> PlanoObra:
     """Crea un plano vectorial vacío, sin imagen subida.
 
-    El usuario lo dibujará entero desde el editor. El lienzo se
-    describe en metros (ancho/alto) porque es el dato que conoce: el
-    lienzo en píxeles se calculará al calibrar, aplicando la escala
-    que el usuario marque sobre la primera distancia conocida.
-
-    Se permiten lienzos pequeños (1×1 m) o más grandes (40×40 m)
-    para planos industriales. El grosor se clampa al rango válido
-    para no aceptar valores absurdos.
+    El usuario lo dibujará entero desde el editor. El lienzo se describe en
+    metros solo como tamaño inicial de trabajo; no se le pide al usuario (el
+    editor crece solo si dibuja cerca del borde). El plano nace con la escala
+    interna ``ESCALA_LIENZO_DIBUJO_PX_M`` (1 px = 1 cm), de modo que las
+    medidas en metros salen directas al dibujar, sin calibrar.
     """
     existentes = db.query(PlanoObra).filter(PlanoObra.presupuesto_id == presupuesto_id).count()
     if existentes >= MAX_PLANOS_POR_PRESUPUESTO:
@@ -1306,7 +1487,7 @@ def crear_plano_en_blanco(
         ancho_m = float(ancho_lienzo_m)
         alto_m = float(alto_lienzo_m)
     except (TypeError, ValueError):
-        ancho_m, alto_m = 12.0, 8.0
+        ancho_m, alto_m = 30.0, 20.0
     if ancho_m <= 0 or alto_m <= 0 or ancho_m > 200 or alto_m > 200:
         raise ErrorPlano("El lienzo debe medir entre 0,1 m y 200 m por lado.")
 
@@ -1317,7 +1498,7 @@ def crear_plano_en_blanco(
         content_type="image/svg+xml",  # marca para que el visor pinte un canvas vacío
         ancho_px=None,
         alto_px=None,
-        escala_px_por_metro=None,
+        escala_px_por_metro=ESCALA_LIENZO_DIBUJO_PX_M,
         altura_libre_m=ALTURA_LIBRE_DEFECTO_M,
         origen="dibujado",
         grosor_tabique_cm=_clamp_grosor_cm(grosor_tabique_cm),
@@ -1327,6 +1508,38 @@ def crear_plano_en_blanco(
     db.add(plano)
     db.commit()
     db.refresh(plano)
+    return plano
+
+
+def actualizar_lienzo(
+    db: Session,
+    plano: PlanoObra,
+    ancho_lienzo_m: float | None = None,
+    alto_lienzo_m: float | None = None,
+) -> PlanoObra:
+    """Amplía el lienzo de trabajo del editor vectorial (en metros).
+
+    El editor crece solo cuando el usuario dibuja cerca del borde; aquí se
+    persiste el nuevo tamaño para que el siguiente render conserve el espacio
+    de trabajo. Nunca se encoge: solo se acepta crecer.
+    """
+    try:
+        nuevo_ancho = float(ancho_lienzo_m) if ancho_lienzo_m is not None else None
+        nuevo_alto = float(alto_lienzo_m) if alto_lienzo_m is not None else None
+    except (TypeError, ValueError):
+        nuevo_ancho = nuevo_alto = None
+
+    ancho_actual = float(plano.ancho_lienzo_m or 0.0)
+    alto_actual = float(plano.alto_lienzo_m or 0.0)
+    if nuevo_ancho is not None and nuevo_ancho > ancho_actual:
+        if nuevo_ancho > 200:
+            raise ErrorPlano("El lienzo no puede superar 200 m de ancho.")
+        plano.ancho_lienzo_m = nuevo_ancho
+    if nuevo_alto is not None and nuevo_alto > alto_actual:
+        if nuevo_alto > 200:
+            raise ErrorPlano("El lienzo no puede superar 200 m de alto.")
+        plano.alto_lienzo_m = nuevo_alto
+    db.commit()
     return plano
 
 
@@ -1452,135 +1665,283 @@ def eliminar_elemento(db: Session, plano: PlanoObra, elemento: PlanoElemento) ->
     db.commit()
 
 
+def _interseccion_segmentos(
+    p1: tuple[float, float],
+    p2: tuple[float, float],
+    p3: tuple[float, float],
+    p4: tuple[float, float],
+) -> tuple[float, float] | None:
+    """Punto de corte de los segmentos p1-p2 y p3-p4, o ``None`` si no se cruzan."""
+    x1, y1 = p1
+    x2, y2 = p2
+    x3, y3 = p3
+    x4, y4 = p4
+    denom = (x2 - x1) * (y4 - y3) - (y2 - y1) * (x4 - x3)
+    if abs(denom) < 1e-9:
+        return None
+    t = ((x3 - x1) * (y4 - y3) - (y3 - y1) * (x4 - x3)) / denom
+    u = ((x3 - x1) * (y2 - y1) - (y3 - y1) * (x2 - x1)) / denom
+    if -1e-6 <= t <= 1 + 1e-6 and -1e-6 <= u <= 1 + 1e-6:
+        return (x1 + t * (x2 - x1), y1 + t * (y2 - y1))
+    return None
+
+
+def _interseccion_rectas(
+    p1: tuple[float, float],
+    d1: tuple[float, float],
+    p2: tuple[float, float],
+    d2: tuple[float, float],
+) -> tuple[float, float] | None:
+    """Corte de las rectas p1+t·d1 y p2+s·d2 (d1 y d2 no paralelas)."""
+    denom = d1[0] * d2[1] - d1[1] * d2[0]
+    if abs(denom) < 1e-9:
+        return None
+    t = ((p2[0] - p1[0]) * d2[1] - (p2[1] - p1[1]) * d2[0]) / denom
+    return (p1[0] + t * d1[0], p1[1] + t * d1[1])
+
+
+def _area_orientada(puntos: list[tuple[float, float]]) -> float:
+    """Área con signo (positiva en sentido antihorario)."""
+    n = len(puntos)
+    if n < 3:
+        return 0.0
+    suma = 0.0
+    for i in range(n):
+        x0, y0 = puntos[i]
+        x1, y1 = puntos[(i + 1) % n]
+        suma += x0 * y1 - x1 * y0
+    return suma / 2.0
+
+
 def detectar_estancias_sobre_dibujo(plano: PlanoObra) -> list[dict]:
-    """Detecta estancias cuando el plano es 100% vectorial (no hay imagen).
+    """Detecta estancias de un plano 100% vectorial (muros dibujados).
 
-    Toma la lista de muros del plano y, con un algoritmo de polígonos
-    vectorial, devuelve las estancias como polígonos (sobre los
-    mismos píxeles que el lienzo, no en metros). Las caras se
-    obtienen a partir del grosor de cada muro: el espacio interior de
-    una habitación termina en el centro del muro compartido.
-
-    Es la simetría de :func:`detectar_espacios_plano` para planos
-    dibujados, y se apoya en el mismo módulo vectorial que se usa en
-    el editor para previsualizar estancias en vivo. Implementa una
-    variante determinista del "wall loop" 2D: por cada cara del muro
-    emite dos segmentos paralelos a ``grosor/2`` y une los segmentos
-    adyacentes en cada vértice para formar los polígonos de las
-    estancias. Si la geometría es degenerada (muros sueltos sin
-    cierre) devuelve ``[]``: el editor siempre puede pedir un nuevo
-    análisis en cuanto el usuario conecte las paredes.
+    Construye el grafo planar de los ejes de los muros (dividiendo los
+    segmentos en sus intersecciones), enumera las caras cerradas del grafo y
+    desplaza cada cara hacia su interior media vez el grosor de cada muro.
+    Así el polígono de la estancia se pega a la cara interior del tabique,
+    igual que hace el detector raster, y el espesor del muro queda entre
+    estancias adyacentes. Si la geometría no cierra ningún recinto devuelve
+    ``[]``.
     """
     muros = [e for e in plano.elementos if e.tipo == "muro"]
     if len(muros) < 3:
         return []
 
-    # Convertimos los muros a segmentos con grosor. Para paredes rectas
-    # basta con desplazar la mitad del grosor a cada lado. Cuando dos
-    # muros se cruzan en un vértice real, las caras del vértice se
-    # calculan biselando el ángulo.
-    vertices: dict[tuple[int, int], list[int]] = {}
-    for indice, muro in enumerate(muros):
-        pts = muro.puntos()
-        if len(pts) < 2:
-            continue
-        x0, y0 = pts[0][0], pts[0][1]
-        x1, y1 = pts[1][0], pts[1][1]
-        v0 = _redondear_vertice(x0, y0)
-        v1 = _redondear_vertice(x1, y1)
-        vertices.setdefault(v0, []).append(indice)
-        vertices.setdefault(v1, []).append(indice)
+    escala = plano.escala_px_por_metro or ESCALA_LIENZO_DIBUJO_PX_M
 
-    if len(vertices) < 3:
-        return []
-
-    # Construimos la lista de aristas del grafo muro-a-muro.
-    adyacencia: dict[int, list[int]] = {i: [] for i in range(len(muros))}
-    for v, lista in vertices.items():
-        for i in lista:
-            for j in lista:
-                if i != j and j not in adyacencia[i]:
-                    adyacencia[i].append(j)
-
-    # Una estancia es un ciclo de muros. Recorremos cada cara
-    # izquierda de cada muro como un grafo dirigido y, mediante una
-    # búsqueda de vuelta, encontramos los ciclos que encierran
-    # superficie positiva. La heurística de "cara interior" se apoya
-    # en el grosor y la dirección del muro.
-    medios = []
+    # 1) Segmentos de eje con su grosor en px (cada tramo de una polilínea).
+    segmentos: list[tuple[float, float, float, float, float]] = []
     for muro in muros:
         pts = muro.puntos()
         if len(pts) < 2:
             continue
-        medios.append(((pts[0][0] + pts[1][0]) / 2.0, (pts[0][1] + pts[1][1]) / 2.0))
+        try:
+            grosor_px = max(1.0, float(muro.grosor_cm or plano.grosor_tabique_cm) / 100.0 * escala)
+        except (TypeError, ValueError):
+            grosor_px = max(1.0, GROSOR_TABIQUE_DEFECTO_CM / 100.0 * escala)
+        for i in range(len(pts) - 1):
+            a, b = pts[i], pts[i + 1]
+            if math.hypot(float(b[0]) - float(a[0]), float(b[1]) - float(a[1])) < 1e-6:
+                continue
+            segmentos.append(
+                (float(a[0]), float(a[1]), float(b[0]), float(b[1]), grosor_px)
+            )
 
-    # Simplificación: la geometría puede ser ruidosa. Tomamos solo
-    # vértices con al menos 2 muros, que es lo que necesita una
-    # habitación para cerrarse.
-    vertices_habitacion = {v: idxs for v, idxs in vertices.items() if len(idxs) >= 2}
-    if len(vertices_habitacion) < 3:
+    if len(segmentos) < 3:
         return []
 
-    # Para cada par de muros concurrentes calculamos un polígono
-    # formado por sus segmentos intermedios y los puntos medios. Es
-    # una aproximación rápida que detecta los casos claros (L, T, +)
-    # sin necesidad de un motor CAD completo. Los casos complejos se
-    # dejan al usuario para que ajuste las paredes en el editor.
-    poligonos: list[list[list[float]]] = []
-    vertices_orden = list(vertices_habitacion.keys())
-    for i, v in enumerate(vertices_orden):
-        idxs = vertices_habitacion[v]
-        if len(idxs) < 3:
+    # 2) Puntos únicos: extremos + todos los cruces entre segmentos.
+    indice_punto: dict[tuple[int, int], int] = {}
+    puntos: list[tuple[float, float]] = []
+
+    def _idx(x: float, y: float) -> int:
+        clave = (round(x * 2), round(y * 2))
+        if clave in indice_punto:
+            return indice_punto[clave]
+        idx = len(puntos)
+        indice_punto[clave] = idx
+        puntos.append((round(x * 2) / 2.0, round(y * 2) / 2.0))
+        return idx
+
+    for seg in segmentos:
+        _idx(seg[0], seg[1])
+        _idx(seg[2], seg[3])
+    for i in range(len(segmentos)):
+        a = segmentos[i]
+        for j in range(i + 1, len(segmentos)):
+            b = segmentos[j]
+            corte = _interseccion_segmentos(
+                (a[0], a[1]), (a[2], a[3]), (b[0], b[1]), (b[2], b[3])
+            )
+            if corte is not None:
+                _idx(corte[0], corte[1])
+
+    # 3) Divide cada segmento en las aristas que pasan por sus puntos.
+    aristas: list[tuple[int, int, float]] = []
+    for seg in segmentos:
+        x0, y0, x1, y1, grosor = seg
+        dx, dy = x1 - x0, y1 - y0
+        largo2 = dx * dx + dy * dy
+        if largo2 < 1e-9:
             continue
-        poligono = [list(v)]
-        siguiente_idx = idxs[0]
-        visitados = {siguiente_idx}
-        while True:
-            x, y = medios[siguiente_idx]
-            poligono.append([round(x, 2), round(y, 2)])
-            # Buscar el siguiente vértice conectado al muro actual
-            siguiente_v = None
-            for candidato, cidxs in vertices_habitacion.items():
-                if siguiente_idx in cidxs and candidato not in [poligono[0]] and siguiente_idx not in [cixs[k] for k in range(len(cidxs)) if cidxs[k] == siguiente_idx]:
-                    pass
-            # Heurística más simple: en + o T basta con saltar al muro
-            # más cercano por distancia en ángulos rectos. Si no se
-            # encuentra nada, paramos para no inventar paredes.
-            encontrado = False
-            for candidato, cidxs in vertices_habitacion.items():
-                if candidato == v or candidato in poligono:
-                    continue
-                if siguiente_idx in cidxs:
-                    poligono.append(list(candidato))
-                    visitados.add(siguiente_idx)
-                    # elegimos un nuevo muro que no haya sido recorrido
-                    for k in cidxs:
-                        if k not in visitados:
-                            siguiente_idx = k
-                            encontrado = True
-                            break
-                    if encontrado:
-                        break
-            if not encontrado or poligono[-1] == poligono[0]:
-                break
-        if len(poligono) >= 4:
+        sobre: list[tuple[float, int]] = []
+        for idx, (px, py) in enumerate(puntos):
+            t = ((px - x0) * dx + (py - y0) * dy) / largo2
+            if -1e-6 <= t <= 1 + 1e-6:
+                # distancia perpendicular a la recta del segmento
+                proj_x = x0 + t * dx
+                proj_y = y0 + t * dy
+                if math.hypot(px - proj_x, py - proj_y) <= 0.9:
+                    sobre.append((t, idx))
+        sobre.sort()
+        for k in range(len(sobre) - 1):
+            aristas.append((sobre[k][1], sobre[k + 1][1], grosor))
+
+    if len(aristas) < 3:
+        return []
+
+    # 3b) Poda iterativa de tramos con extremo libre: un muro que no cierra
+    # con otro en su extremo no delimita ningún recinto (es un muro a medias),
+    # y de no quitarlo aparecería como una «espina» que rompe el contorno.
+    grado: dict[int, int] = {}
+    incidencia: dict[int, list[int]] = {}
+    for idx, (a, b, _g) in enumerate(aristas):
+        grado[a] = grado.get(a, 0) + 1
+        grado[b] = grado.get(b, 0) + 1
+        incidencia.setdefault(a, []).append(idx)
+        incidencia.setdefault(b, []).append(idx)
+    activa = [True] * len(aristas)
+    cola = [n for n, g in grado.items() if g <= 1]
+    while cola:
+        n = cola.pop()
+        for idx in incidencia.get(n, []):
+            if not activa[idx]:
+                continue
+            activa[idx] = False
+            a, b, _g = aristas[idx]
+            otro = b if a == n else a
+            grado[otro] -= 1
+            if grado[otro] <= 1:
+                cola.append(otro)
+    aristas = [aristas[i] for i in range(len(aristas)) if activa[i]]
+    if len(aristas) < 3:
+        return []
+
+    # 4) Grafo planar y enumeración de caras (recorrido de medias aristas).
+    adyacencia: dict[int, list[tuple[float, int]]] = {i: [] for i in range(len(puntos))}
+    for a, b, _g in aristas:
+        if a == b:
+            continue
+        ang_ab = math.atan2(puntos[b][1] - puntos[a][1], puntos[b][0] - puntos[a][0])
+        ang_ba = math.atan2(puntos[a][1] - puntos[b][1], puntos[a][0] - puntos[b][0])
+        adyacencia[a].append((ang_ab, b))
+        adyacencia[b].append((ang_ba, a))
+    for k in adyacencia:
+        adyacencia[k].sort()
+
+    def _siguiente(a: int, b: int) -> int:
+        vecinos = adyacencia.get(b)
+        if not vecinos:
+            return a
+        n = len(vecinos)
+        for k in range(n):
+            if vecinos[k][1] == a:
+                return vecinos[(k - 1) % n][1]
+        return vecinos[0][1]
+
+    visitadas: set[tuple[int, int]] = set()
+    caras: list[list[int]] = []
+    total_mitades = sum(len(v) for v in adyacencia.values())
+    for u in list(adyacencia.keys()):
+        for _ang, v in adyacencia[u]:
+            if (u, v) in visitadas:
+                continue
+            camino = [u]
+            a, b = u, v
+            guarda = 0
+            while True:
+                visitadas.add((a, b))
+                camino.append(b)
+                w = _siguiente(a, b)
+                a, b = b, w
+                guarda += 1
+                if (a, b) == (u, v) or guarda > total_mitades + 2:
+                    break
+            caras.append(camino)
+
+    # 5) Caras interiores: se desplazan media vez el grosor hacia dentro.
+    # Con la regla de recorrido elegida, las caras cerradas (estancias) salen
+    # con área positiva y las exteriores con área negativa, sea cual sea el
+    # número de componentes sueltos del dibujo.
+    grosor_por_arista: dict[tuple[int, int], float] = {}
+    for a, b, g in aristas:
+        grosor_por_arista[(a, b)] = g
+
+    poligonos: list[list[list[float]]] = []
+    for camino in caras:
+        n = len(camino)
+        if n < 4:
+            continue
+        # quitar el nodo final repetido
+        if camino[0] == camino[-1]:
+            ciclo = camino[:-1]
+        else:
+            ciclo = camino
+        if len(ciclo) < 3:
+            continue
+        area = _area_orientada([puntos[i] for i in ciclo])
+        if area <= 0.0:
+            continue
+
+        # Desplaza cada arista del ciclo hacia el interior media vez su grosor.
+        lineas: list[tuple[tuple[float, float], tuple[float, float]]] = []
+        for i in range(len(ciclo)):
+            a = ciclo[i]
+            b = ciclo[(i + 1) % len(ciclo)]
+            pa = puntos[a]
+            pb = puntos[b]
+            dx, dy = pb[0] - pa[0], pb[1] - pa[1]
+            largo = math.hypot(dx, dy)
+            if largo < 1e-6:
+                continue
+            nx, ny = -dy / largo, dx / largo  # normal izquierda (área > 0 → interior)
+            g = grosor_por_arista.get((a, b), grosor_por_arista.get((b, a), 10.0))
+            d = g / 2.0
+            lineas.append(((pa[0] + nx * d, pa[1] + ny * d), (dx, dy)))
+
+        m = len(lineas)
+        if m < 3:
+            continue
+        poligono: list[list[float]] = []
+        for k in range(m):
+            corte = _interseccion_rectas(
+                lineas[k][0], lineas[k][1],
+                lineas[(k + 1) % m][0], lineas[(k + 1) % m][1],
+            )
+            if corte is None:
+                # Tramo colineal: usar el punto medio entre los extremos
+                # desplazados evita saltos feos.
+                q1 = lineas[k][0]
+                q2 = lineas[(k + 1) % m][0]
+                corte = ((q1[0] + q2[0]) / 2.0, (q1[1] + q2[1]) / 2.0)
+            poligono.append([round(corte[0], 2), round(corte[1], 2)])
+        if len(poligono) >= 3 and _area_px(poligono) >= 1.0:
             poligonos.append(poligono)
 
     if not poligonos:
         return []
 
-    # Filtramos los polígonos casi degenerados: deben tener al menos
-    # una superficie equivalente a un par de metros cuadrados sobre el
-    # lienzo, de lo contrario son artefactos del barrido.
-    pixeles_por_metro = plano.escala_px_por_metro if plano.escala_px_por_metro else 50.0
-    min_area_px = max(900.0, (1.0 * pixeles_por_metro) ** 2)
+    # 6) Filtra por superficie mínima y emite el resultado.
+    pixeles_por_metro = escala
+    min_area_px = max(250.0, (0.5 * pixeles_por_metro) ** 2)
     salida: list[dict[str, Any]] = []
     for idx, poligono in enumerate(poligonos, 1):
         area_px2 = _area_px(poligono)
         if area_px2 < min_area_px:
             continue
         perimetro_px = _perimetro_cerrado_px(poligono)
-        confianza = min(0.95, 0.5 + min(0.4, area_px2 / (pixeles_por_metro ** 2) / 50.0))
+        confianza = min(0.97, 0.55 + min(0.42, area_px2 / (pixeles_por_metro ** 2) / 40.0))
         bbox = _bbox_puntos(poligono)
         salida.append({
             "tipo": "area",
@@ -1593,11 +1954,6 @@ def detectar_estancias_sobre_dibujo(plano: PlanoObra) -> list[dict]:
         })
     salida.sort(key=lambda c: c["area_px2"], reverse=True)
     return salida
-
-
-def _redondear_vertice(x: float, y: float) -> tuple[int, int]:
-    """Cuantiza un punto al medio píxel más cercano para agrupar vértices."""
-    return (round(x * 2) // 2, round(y * 2) // 2)
 
 
 def guardar_detecciones_sobre_dibujo(

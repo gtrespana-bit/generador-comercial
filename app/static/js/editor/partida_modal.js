@@ -212,12 +212,17 @@
           status.appendChild(texto2);
         } else {
           var n = selectorPlanos.length;
-          var pre = document.createTextNode("Tienes " + n + " plano(s) pero ninguno con mediciones guardadas. Ábrelo desde ");
+          var tieneMuros = selectorPlanos.some(function (p) { return (p.total_muros || 0) >= 3; });
+          var pre = document.createTextNode("Tienes " + n + " plano(s) pero ninguno con mediciones guardadas. ");
           var link2 = document.createElement("a");
           link2.className = "link";
           link2.href = "/presupuestos/" + (editor.BUDGET_ID || "") + "/planos";
-          link2.textContent = "📐 Planos";
-          var post = document.createTextNode(", calibra y pulsa “Analizar” o dibuja una medición manualmente.");
+          link2.textContent = "Ábrelo desde 📐 Planos";
+          var post = document.createTextNode(
+            tieneMuros
+              ? " y pulsa «Detectar estancias» para convertir los muros dibujados en recintos medibles."
+              : ", calibra la escala y pulsa «Analizar», o dibuja una medición manualmente."
+          );
           status.appendChild(pre);
           status.appendChild(link2);
           status.appendChild(post);
@@ -286,15 +291,9 @@
     actualizarContadorSelector();
   }
 
-  async function abrirSelectorPlanos() {
-    var overlay = $("modal-mediciones-plano");
+  async function cargarSelectorPlanos() {
     var status = $("plano-selector-status");
     var lista = $("plano-selector-lista");
-    if (!overlay) return;
-    overlay.classList.add("open");
-    document.body.classList.add("modal-open");
-    selectorSeleccionadas = new Set();
-    selectorPlanos = [];
     if (lista) lista.replaceChildren();
     if (status) status.textContent = "Cargando mediciones del proyecto…";
     var magnitud = $("plano-selector-magnitud");
@@ -324,6 +323,16 @@
     } catch (error) {
       if (status) status.textContent = error.message || "No se pudieron cargar las mediciones del plano.";
     }
+  }
+
+  async function abrirSelectorPlanos() {
+    var overlay = $("modal-mediciones-plano");
+    if (!overlay) return;
+    overlay.classList.add("open");
+    document.body.classList.add("modal-open");
+    selectorSeleccionadas = new Set();
+    selectorPlanos = [];
+    await cargarSelectorPlanos();
   }
 
   function cerrarSelectorPlanos() {
@@ -695,6 +704,8 @@
       fila.querySelector("input").focus();
     });
     $("editor-add-medicion-plano")?.addEventListener("click", abrirSelectorPlanos);
+    $("editor-cantidad-plano")?.addEventListener("click", abrirSelectorPlanos);
+    $("plano-selector-recargar")?.addEventListener("click", cargarSelectorPlanos);
     $("plano-selector-magnitud")?.addEventListener("change", renderSelectorPlanos);
     document.querySelectorAll("[data-close-plano-selector]").forEach(function (btn) {
       btn.addEventListener("click", cerrarSelectorPlanos);

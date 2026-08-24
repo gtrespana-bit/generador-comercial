@@ -45,6 +45,7 @@ from ..services.planos import (
     actualizar_medicion,
     actualizar_altura_plano,
     actualizar_grosor_tabique,
+    actualizar_lienzo,
     detectar_espacios_plano,
     guardar_detecciones_automaticas,
     detectar_estancias_sobre_dibujo,
@@ -248,7 +249,7 @@ def mediciones_selector_presupuesto(presupuesto_id: int, db: Session = Depends(g
 
     esquema = detectar_esquema_planos(db)
     planos = completar_planos_legacy(
-        _consulta_planos_compatible(db, esquema)
+        _consulta_planos_compatible(db, esquema, cargar_elementos=True)
         .filter(PlanoObra.presupuesto_id == presupuesto_id)
         .options(selectinload(PlanoObra.mediciones))
         .order_by(PlanoObra.id.desc())
@@ -271,6 +272,30 @@ def mediciones_selector_presupuesto(presupuesto_id: int, db: Session = Depends(g
         diagnostico["conteo_total"] = conteo_total
         diagnostico["presupuesto_id"] = presupuesto_id
 
+    # Un plano dibujado desde cero con muros trazados pero sin estancias
+    # detectadas es una fuente muy común de «tengo plano pero el presupuesto
+    # dice que no hay mediciones». Al abrir el selector materializamos las
+    # estancias de esos planos (operación idempotente y con deduplicación) para
+    # que el usuario vea sus recintos de inmediato, sin dar un rodeo por el
+    # editor. Los planos subidos o mixtos sin mediciones conservan su flujo
+    # normal (calibrar → analizar).
+    for plano in planos:
+        if (plano.origen or "subido") != "dibujado":
+            continue
+        if plano.mediciones:
+            continue
+        muros = [e for e in (plano.elementos or []) if e.tipo == "muro"]
+        if len(muros) < 3:
+            continue
+        try:
+            candidatos = detectar_estancias_sobre_dibujo(plano)
+            guardar_detecciones_sobre_dibujo(db, plano, candidatos)
+        except Exception:
+            # El selector nunca debe caerse por un dibujo degenerado: si el
+            # autodiagnóstico falla, seguimos con lo que haya.
+            continue
+
+    total_mediciones = 0
     resultado: list[dict[str, Any]] = []
     for plano in planos:
         medidas = []
@@ -332,6 +357,7 @@ def mediciones_selector_presupuesto(presupuesto_id: int, db: Session = Depends(g
                 "opciones": opciones,
                 "calibrado": plano.calibrado or med.tipo == "conteo",
             })
+        total_mediciones += len(medidas)
         resultado.append({
             "id": plano.id,
             "nombre": plano.nombre,
@@ -340,7 +366,9 @@ def mediciones_selector_presupuesto(presupuesto_id: int, db: Session = Depends(g
             "grosor_tabique_cm": plano.grosor_tabique_cm,
             "altura_libre_m": plano.altura_m,
             "mediciones": medidas,
+            "total_muros": sum(1 for e in (plano.elementos or []) if e.tipo == "muro"),
         })
+    diagnostico["total_mediciones"] = total_mediciones
     return {"ok": True, "planos": resultado, "diagnostico": diagnostico}
 
 
@@ -810,8 +838,9 @@ async def crear_plano_blanco(
 ):
     """Crea un plano vectorial vacío que el usuario dibujará en el editor.
 
-    El cliente manda ``nombre``, ``ancho_lienzo_m``, ``alto_lienzo_m`` y
-    opcionalmente ``grosor_tabique_cm``. Devuelve la ficha del plano
+    El cliente solo necesita ``nombre`` y, opcionalmente,
+    ``grosor_tabique_cm``. El lienzo inicial es amplio y crece solo; no se
+    pide largo por ancho (el dibujo es libre). Devuelve la ficha del plano
     recién creado para que el visor entre directamente en modo edición.
     """
     presupuesto = db.get(Presupuesto, presupuesto_id)
@@ -835,8 +864,8 @@ async def crear_plano_blanco(
             db,
             presupuesto_id,
             nombre,
-            float(ancho_m) if ancho_m is not None else 12.0,
-            float(alto_m) if alto_m is not None else 8.0,
+            float(ancho_m) if ancho_m is not None else 30.0,
+            float(alto_m) if alto_m is not None else 20.0,
             float(grosor) if grosor is not None else GROSOR_TABIQUE_DEFECTO_CM,
         )
     except ErrorPlano as e:
@@ -845,6 +874,39 @@ async def crear_plano_blanco(
         "ok": True,
         "plano_id": plano.id,
         "url": f"/presupuestos/{presupuesto_id}/planos?plano={plano.id}",
+    }
+
+
+@router.post("/planos/{plano_id}/lienzo")
+async def actualizar_lienzo_endpoint(
+    plano_id: int,
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    """Amplía el lienzo de trabajo de un plano dibujado (crece con el dibujo)."""
+    esquema = detectar_esquema_planos(db)
+    if not esquema.editor_vectorial_disponible:
+        return _respuesta_migracion_planos_pendiente()
+    plano = _obtener_plano_compatible(db, plano_id, esquema=esquema)
+    if not plano:
+        return JSONResponse({"ok": False, "error": "Plano no encontrado."}, status_code=404)
+    try:
+        payload = await request.json()
+    except Exception:
+        payload = {}
+    try:
+        plano = actualizar_lienzo(
+            db,
+            plano,
+            payload.get("ancho_lienzo_m"),
+            payload.get("alto_lienzo_m"),
+        )
+    except ErrorPlano as e:
+        return JSONResponse({"ok": False, "error": str(e)}, status_code=400)
+    return {
+        "ok": True,
+        "ancho_lienzo_m": plano.ancho_lienzo_m,
+        "alto_lienzo_m": plano.alto_lienzo_m,
     }
 
 

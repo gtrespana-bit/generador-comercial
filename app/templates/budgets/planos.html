@@ -31,20 +31,37 @@
   <span class="planos-first-icon" aria-hidden="true">⌑</span>
   <div>
     <span class="planos-eyebrow">PRIMER PASO</span>
-    <h2>Sube el plano de {{ p.cliente.nombre }}</h2>
-    <p class="hint">Admite PNG, JPG, WEBP o PDF hasta 12 MB. Después marcarás una distancia conocida para obtener todas las mediciones en m y m².</p>
+    <h2>Empieza el plano de {{ p.cliente.nombre }}</h2>
+    <p class="hint">Sube un archivo (PNG, JPG, WEBP o PDF) para detectar estancias, o dibuja el plano desde cero con el editor de muros. Sin límites de forma: la estancia no tiene por qué ser un rectángulo.</p>
   </div>
-  <form id="form-upload-plano" enctype="multipart/form-data" class="planos-upload-first">
-    <div class="field">
-      <label for="plano-nombre">Nombre del plano</label>
-      <input type="text" id="plano-nombre" placeholder="Ej. Planta baja">
-    </div>
-    <div class="field">
-      <label for="plano-archivo">Archivo</label>
-      <input type="file" id="plano-archivo" accept=".png,.jpg,.jpeg,.webp,.pdf" required>
-    </div>
-    <button type="submit" class="btn btn-primary" id="btn-upload-plano" {% if esquema_planos_completo is defined and not esquema_planos_completo %}disabled title="Migración de planos pendiente"{% endif %}>Subir y abrir plano</button>
-  </form>
+  <div class="planos-start-grid">
+    <form id="form-upload-plano" enctype="multipart/form-data" class="planos-start-card">
+      <span class="planos-start-card-title">📤 Subir un plano</span>
+      <div class="field">
+        <label for="plano-nombre">Nombre del plano</label>
+        <input type="text" id="plano-nombre" placeholder="Ej. Planta baja">
+      </div>
+      <div class="field">
+        <label for="plano-archivo">Archivo</label>
+        <input type="file" id="plano-archivo" accept=".png,.jpg,.jpeg,.webp,.pdf" required>
+      </div>
+      <button type="submit" class="btn btn-primary" id="btn-upload-plano" {% if esquema_planos_completo is defined and not esquema_planos_completo %}disabled title="Migración de planos pendiente"{% endif %}>Subir y abrir plano</button>
+    </form>
+    <form id="form-plano-blanco" class="planos-start-card planos-blanco-start">
+      <span class="planos-start-card-title">✏️ Crear desde cero</span>
+      <p class="hint">Dibuja muros libres, pon el grosor del tabique y traza cada línea. Después ajusta cualquier medida con un clic.</p>
+      <div class="field">
+        <label for="plano-blanco-nombre">Nombre</label>
+        <input type="text" id="plano-blanco-nombre" placeholder="Ej. Planta tipo A" maxlength="250">
+      </div>
+      <div class="field">
+        <label for="plano-blanco-grosor">Grosor de tabique (cm)</label>
+        <input type="number" id="plano-blanco-grosor" step="0.5" min="3" max="40" value="10">
+      </div>
+      <button type="submit" class="btn btn-primary" id="btn-crear-plano-blanco" {% if esquema_planos_completo is defined and not esquema_planos_completo %}disabled title="Migración de planos pendiente"{% endif %}>Crear y abrir editor</button>
+      <div id="plano-blanco-error" class="alert alert-error cotizat-hidden"></div>
+    </form>
+  </div>
   <div id="upload-error" class="alert alert-error cotizat-hidden"></div>
 </section>
 {% else %}
@@ -100,19 +117,15 @@
 
     <details class="planos-add-blanco">
       <summary>✏️ Crear plano desde cero</summary>
-      <p class="hint">Dibuja los muros y huecos directamente en el editor, sin tener que importar una imagen. El grosor del tabique es ajustable (10 cm por defecto).</p>
+      <p class="hint">Dibuja los muros directamente en el editor, sin importar imagen. Forma libre: traza cada línea y ajusta su medida con un clic. El grosor del tabique es ajustable (10 cm por defecto).</p>
       <form id="form-plano-blanco" class="planos-add-blanco-form">
         <div class="field">
           <label for="plano-blanco-nombre">Nombre</label>
           <input type="text" id="plano-blanco-nombre" placeholder="Ej. Planta tipo A" maxlength="250">
         </div>
-        <div class="planos-blanco-grid">
-          <div class="field"><label for="plano-blanco-ancho">Ancho (m)</label><input type="number" id="plano-blanco-ancho" step="0.1" min="1" max="200" value="12"></div>
-          <div class="field"><label for="plano-blanco-alto">Alto (m)</label><input type="number" id="plano-blanco-alto" step="0.1" min="1" max="200" value="8"></div>
-        </div>
         <div class="field">
           <label for="plano-blanco-grosor">Grosor de tabique (cm)</label>
-          <input type="number" id="plano-blanco-grosor" step="0.1" min="3" max="40" value="10">
+          <input type="number" id="plano-blanco-grosor" step="0.5" min="3" max="40" value="10">
         </div>
         <button type="submit" class="btn btn-sm btn-primary" id="btn-crear-plano-blanco" {% if esquema_planos_completo is defined and not esquema_planos_completo %}disabled title="Migración de planos pendiente"{% endif %}>Crear y abrir editor</button>
         <div id="plano-blanco-error" class="alert alert-error cotizat-hidden"></div>
@@ -386,16 +399,22 @@ body.planos-workspace-page { background: var(--bg); }
 .planos-grosor-row { display:flex; align-items:center; gap:.35rem; padding:0 .65rem .55rem; }
 .planos-grosor-row input { width:80px; padding:.3rem .4rem; font-size:.7rem; }
 .planos-grosor-row span { color:var(--text-soft); font-size:.65rem; }
-.planos-editor-panel { position:absolute; top:10px; right:10px; z-index:30; width:min(310px,90%); padding:.6rem; background:var(--surface-raised); border:1px solid var(--border); border-radius:12px; box-shadow:var(--shadow-lg); display:flex; flex-direction:column; gap:.5rem; }
+.planos-editor-panel { position:absolute; top:10px; left:10px; z-index:30; width:min(330px,92%); padding:.65rem; background:var(--surface-raised); border:1px solid var(--border); border-radius:12px; box-shadow:var(--shadow-lg); display:flex; flex-direction:column; gap:.55rem; }
 .plano-editor-head { display:flex; flex-direction:column; gap:.15rem; }
 .plano-editor-head strong { font-size:.78rem; color:var(--accent); }
-.plano-editor-ayuda { color:var(--text-soft); font-size:.62rem; }
-.plano-editor-tools { display:grid; grid-template-columns:repeat(2,1fr); gap:.3rem; }
-.plano-editor-tool { min-height:32px; padding:.35rem .5rem; border:1px solid var(--border); border-radius:8px; background:var(--surface); color:var(--text); font-size:.65rem; font-weight:600; cursor:pointer; }
+.plano-editor-ayuda { color:var(--text-soft); font-size:.6rem; line-height:1.35; }
+.plano-editor-tools { display:grid; grid-template-columns:repeat(4,1fr); gap:.3rem; }
+.plano-editor-tool { min-height:34px; padding:.35rem .3rem; border:1px solid var(--border); border-radius:8px; background:var(--surface); color:var(--text); font-size:.62rem; font-weight:600; cursor:pointer; }
 .plano-editor-tool.active { background:var(--accent); color:#fff; border-color:var(--accent); }
 .plano-editor-grosor { display:flex; flex-direction:column; gap:.2rem; font-size:.62rem; color:var(--text-soft); }
-.plano-editor-grosor input { width:100%; }
+.plano-editor-grosor input { width:100%; accent-color:var(--accent); }
 .plano-editor-acciones { display:flex; flex-wrap:wrap; gap:.3rem; }
+.plano-editor-acciones .btn { font-size:.62rem; }
+.plano-editor-carta { position:absolute; z-index:40; width:230px; padding:.6rem; display:grid; gap:.4rem; background:var(--surface-raised); border:1px solid var(--accent-light); border-radius:12px; box-shadow:var(--shadow-lg); }
+.plano-editor-carta label { display:flex; flex-direction:column; gap:.15rem; font-size:.6rem; color:var(--text-soft); }
+.plano-editor-carta input { width:100%; padding:.34rem .42rem; font-size:.72rem; }
+.plano-editor-carta-botones { display:flex; gap:.3rem; justify-content:flex-end; }
+.plano-editor-carta-botones .btn { font-size:.62rem; }
 .planos-canvas-area { min-width:0; min-height:0; }
 .planos-main-card { height:100%; display:flex; flex-direction:column; overflow:hidden; }
 .planos-canvas-head { min-height:46px; display:flex; align-items:center; justify-content:space-between; gap:.6rem; padding:.55rem .7rem; border-bottom:1px solid var(--border-subtle); }
@@ -530,6 +549,16 @@ body.planos-workspace-page { background: var(--bg); }
 .planos-upload-first { grid-column:2; display:grid; grid-template-columns:1fr 1.3fr auto; gap:.65rem; align-items:end; }
 .planos-upload-first .field { min-width:0; }
 .planos-upload-first input { width:100%; }
+.planos-start-grid { grid-column:1 / -1; display:grid; grid-template-columns:1fr 1fr; gap:.8rem; }
+.planos-start-card { display:flex; flex-direction:column; gap:.6rem; padding:1rem; border:1px solid var(--border); border-radius:12px; background:var(--surface-alt); }
+.planos-start-card .field { min-width:0; }
+.planos-start-card input { width:100%; }
+.planos-start-card-title { font-size:.82rem; font-weight:800; color:var(--text); }
+.planos-start-card .hint { margin:0; color:var(--text-soft); font-size:.68rem; line-height:1.4; }
+.planos-blanco-start .btn { align-self:flex-start; }
+@media (max-width:620px) {
+  .planos-start-grid { grid-template-columns:1fr; }
+}
 @media (min-width:981px) {
   body.planos-workspace-page { overflow:hidden; }
   body.planos-workspace-page .content { height:100dvh; max-width:none; display:flex; flex-direction:column; overflow:hidden; padding:.55rem .7rem .65rem; }
@@ -584,6 +613,7 @@ body.planos-workspace-page { background: var(--bg); }
   let analisisInicialPendiente = false;
   let analisisEnCurso = false;
   let planoEsImagen = true;
+  let planoEsVectorial = false;
   let zoom = 1;
   let img = document.getElementById('plano-img');
   let canvas = document.getElementById('plano-canvas');
@@ -1307,6 +1337,9 @@ body.planos-workspace-page { background: var(--bg); }
 
   const ATAJO_HERRAMIENTA = {l:'lineal', a:'area', p:'perimetro', c:'conteo', e:'calibrar', m:'mover', s:'seleccionar'};
   window.addEventListener('keydown', (e)=>{
+    // Con el editor vectorial activo, los atajos del visor ceden el paso para
+    // no interferir (M=muro, S=seleccionar, Esc, Supr…).
+    if (window.PlanoEditor && window.PlanoEditor.estado) return;
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase()==='z'){
       e.preventDefault(); deshacerPunto(); return;
     }
@@ -1533,7 +1566,7 @@ body.planos-workspace-page { background: var(--bg); }
 
   async function analizarPlanoAutomaticamente(){
     if (analisisEnCurso) return;
-    if (!planoEsImagen){
+    if (!planoEsImagen && !planoEsVectorial){
       setEstadoAnalisis('Disponible en imágenes PNG, JPG o WEBP.', 'error');
       return;
     }
@@ -1569,7 +1602,7 @@ body.planos-workspace-page { background: var(--bg); }
       setEstadoAnalisis('Error de conexión durante el análisis.', 'error');
     } finally {
       analisisEnCurso=false;
-      if (btn){ btn.disabled=!planoEsImagen || !escala; if (btn.textContent==='Analizando…') btn.textContent='✨ Analizar'; }
+      if (btn){ btn.disabled=!(planoEsImagen || planoEsVectorial) || !escala; if (btn.textContent==='Analizando…') btn.textContent='✨ Analizar'; }
     }
   }
 
@@ -1740,15 +1773,17 @@ body.planos-workspace-page { background: var(--bg); }
       medicionesGuardadas = data.mediciones || [];
       if (!medicionesGuardadas.some(m=>m.id===medicionSeleccionadaId)) medicionSeleccionadaId = null;
       planoEsImagen = (data.plano.content_type || '').startsWith('image/');
+      planoEsVectorial = (data.plano.origen === 'dibujado' || data.plano.origen === 'mixto');
       const btnAnalizar=document.getElementById('btn-analizar-plano');
-      if (btnAnalizar) btnAnalizar.disabled=!planoEsImagen || !calibrado;
+      if (btnAnalizar) btnAnalizar.disabled=!(planoEsImagen || planoEsVectorial) || !calibrado;
       document.querySelectorAll('[data-requires-scale="1"]').forEach(btn=>{ btn.disabled=!calibrado; });
       if (calibrado){
         setEstadoCalib('Escala aplicada. Suelo, perímetros y paredes se expresan en medidas reales.', 'ok');
       } else {
         setEstadoCalib('Marca una distancia conocida para activar las medidas reales.', 'error');
       }
-      if (!planoEsImagen) setEstadoAnalisis('La detección automática requiere una imagen.', 'error');
+      if (planoEsVectorial) setEstadoAnalisis('Dibujo libre: usa el panel «Editor de planos» para trazar muros.', 'ok');
+      else if (!planoEsImagen) setEstadoAnalisis('La detección automática requiere una imagen.', 'error');
       else if (calibrado) setEstadoAnalisis('Listo para analizar estancias.', 'ok');
       else setEstadoAnalisis('Disponible tras calibrar.', '');
       if (!calibrado) activarHerramienta('calibrar', true);
@@ -1770,6 +1805,18 @@ body.planos-workspace-page { background: var(--bg); }
       }
       const btnDxf = document.getElementById('btn-export-dxf');
       if (btnDxf) btnDxf.setAttribute('href', `/planos/${id}/exportar?formato=dxf`);
+
+      // Plano dibujado desde cero: no hay imagen. El editor vectorial pinta el
+      // lienzo y las mediciones; aquí solo dejamos la lista y el inspector
+      // listos y no intentamos cargar ningún archivo.
+      if (planoEsVectorial && !planoEsImagen) {
+        renderListaMediciones();
+        actualizarValorActual();
+        const infoVec = document.getElementById('plano-info');
+        if (infoVec) infoVec.textContent = `Dibujo libre a escala real · ${medicionesGuardadas.length} medición${medicionesGuardadas.length===1?'':'es'} · grosor de tabique ${Number(data.plano.grosor_tabique_cm||10).toFixed(1).replace('.',',')} cm`;
+        return;
+      }
+
       const archivoRes = await fetch(`/planos/${id}/archivo`);
       if (archivoRes.ok){
         const blob = await archivoRes.blob();
@@ -1802,6 +1849,26 @@ body.planos-workspace-page { background: var(--bg); }
   document.querySelectorAll('.plano-item').forEach(el=>{
     el.addEventListener('click', ()=> cargarPlano(parseInt(el.dataset.planoId)));
   });
+
+  // Puente para el editor vectorial (plano_editor.js): le deja refrescar la
+  // lista de mediciones, seleccionar una estancia y mostrar avisos sin
+  // duplicar la lógica del inspector.
+  window.PlanosAPI = {
+    aviso: function(msg, tipo){ setEstadoAnalisis(msg, tipo || ''); },
+    refrescar: async function(){
+      if (!planoActivoId) return [];
+      try {
+        const res = await fetch(`/planos/${planoActivoId}/datos`);
+        const data = await res.json();
+        if (data && data.ok) {
+          medicionesGuardadas = data.mediciones || [];
+          renderListaMediciones();
+        }
+      } catch(_) {}
+      return medicionesGuardadas;
+    },
+    seleccionarEstancia: seleccionarEstancia,
+  };
 
   if (planoActivoId) cargarPlano(planoActivoId);
 
@@ -1844,8 +1911,6 @@ body.planos-workspace-page { background: var(--bg); }
       if (errEl) { errEl.textContent = ''; CotizatStyles.set(errEl, 'display', 'none'); }
       const payload = {
         nombre: (document.getElementById('plano-blanco-nombre')?.value || '').trim() || 'Plano desde cero',
-        ancho_lienzo_m: parseFloat(document.getElementById('plano-blanco-ancho')?.value || 12),
-        alto_lienzo_m: parseFloat(document.getElementById('plano-blanco-alto')?.value || 8),
         grosor_tabique_cm: parseFloat(document.getElementById('plano-blanco-grosor')?.value || 10)
       };
       try {

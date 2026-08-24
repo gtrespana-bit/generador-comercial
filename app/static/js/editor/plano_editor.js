@@ -1,427 +1,542 @@
-/* Editor de planos desde cero para CotizaT.
+/* Editor vectorial de planos desde cero para CotizaT (v2).
 
-   Se activa cuando ``plano.origen === 'dibujado'`` o cuando el usuario
-   pulsa "Editar geometría" sobre un plano ``mixto``. Ofrece cuatro
-   herramientas: muro, puerta, ventana y selección. Los muros se
-   guardan como ``PlanoElemento`` con su grosor; las puertas y
-   ventanas referencian el muro al que pertenecen para que la métrica
-   pueda descontarlas del desarrollo de paredes.
+   Es un editor de muros libre y profesional:
 
-   El render usa el mismo canvas que el visor principal (``#plano-canvas``)
-   para evitar duplicar el motor de zoom/paneo. El lienzo virtual del
-   plano en blanco se dibuja como una cuadrícula isométrica con
-   coordenadas en metros para que el usuario mida mientras dibuja.
+   * Lienzo infinito con cuadrícula en metros y regla. No se pide largo por
+     ancho: el lienzo crece solo cuando dibujas cerca del borde.
+   * Grosor de tabique ajustable (10 cm por defecto). Cada tramo de muro se
+     guarda como elemento independiente para poder tocarlo luego.
+   * Trazas las líneas tú: clic para empezar, clic en cada vértice, doble clic
+     / Esc / Enter para terminar. Snap a vértices, ortogonal (Mayús para libre)
+     y a cuadrícula, con la medida en metros en vivo.
+   * Haz clic sobre un muro y cambia su medida al momento (p. ej. 2,00 → 2,50)
+     y el plano se ajusta moviendo los muros conectados.
 
-   Esta capa no es invasiva: si el JS no encuentra los hooks del
-   editor (porque la página no tiene ``data-plano-editor``), se sale
-   silenciosamente y el visor sigue funcionando como antes.
+   Se activa cuando ``window.PLANO_ACTIVO.origen`` es ``dibujado`` (o
+   ``mixto``) y existe el contenedor ``#canvas-container``. Renderiza sobre su
+   propio lienzo superpuesto y se comunica con el visor principal a través de
+   ``window.PlanosAPI`` (lista de mediciones, selección de estancia, análisis).
 */
 (function () {
   "use strict";
 
+  var ESCALA_PX_M = 100.0;   // 1 px = 1 cm
+  var EPS = 1.5;             // tolerancia (px) para unir vértices
   var API = {
     crear: "/planos/{plano_id}/elementos",
     actualizar: "/planos/{plano_id}/elementos/{elemento_id}",
     eliminar: "/planos/{plano_id}/elementos/{elemento_id}",
     grosor: "/planos/{plano_id}/grosor",
+    lienzo: "/planos/{plano_id}/lienzo",
     detectar: "/planos/{plano_id}/detectar",
-    enBlanco: "/presupuestos/{presupuesto_id}/planos/blanco",
   };
 
   function $(id) { return document.getElementById(id); }
-  function normUrl(template, ctx) {
-    return template.replace(/\{(\w+)\}/g, function (_, k) { return ctx[k]; });
+  function normUrl(tpl, ctx) {
+    return tpl.replace(/\{(\w+)\}/g, function (_, k) { return ctx[k]; });
+  }
+  function dist(a, b) { return Math.hypot(a[0] - b[0], a[1] - b[1]); }
+  function cerca(a, b, tol) { return dist(a, b) <= (tol == null ? EPS : tol); }
+  function fmt(n, dec) {
+    if (n == null || !isFinite(n)) return "—";
+    return Number(n).toFixed(dec == null ? 2 : dec).replace(".", ",");
   }
 
   function Estado(plano) {
     this.plano = plano;
     this.herramienta = "muro";
-    this.puntosActuales = [];
-    this.elementoEnEdicion = null;
+    this.zoom = 1;
+    this.panX = -40;
+    this.panY = -40;
     this.grosorCm = plano.grosor_tabique_cm || 10;
-    this.color = "#1f2937";
+    this.elementos = (plano.elementos || []).slice();
+    this.mediciones = [];
+    this.puntoInicio = null;   // ancla del tramo en curso
+    this.primerPunto = null;   // primer punto de la cadena (para cerrar)
+    this.cursor = null;        // posición actual en mundo
+    this.seleccionado = null;  // id del muro seleccionado
+    this.pan = null;           // arrastre de paneo
+    this.snap = null;          // {x, y} vértice de snap activo
+    this.escala = plano.escala_px_por_metro || ESCALA_PX_M;
   }
 
-  function findPlanoGlobal() {
-    if (typeof window !== "undefined" && window.PLANO_ACTIVO) {
-      return window.PLANO_ACTIVO;
-    }
-    return null;
-  }
-
-  function panelDisponible() {
-    return !!document.getElementById("plano-editor-panel");
-  }
-
-  function asegurarLienzo(contenedor, ancho, alto) {
-    if (window.CotizatStyles) {
-      CotizatStyles.set(contenedor, "position", "relative");
-    }
-    if (!document.getElementById("plano-editor-canvas")) {
-      var c = document.createElement("canvas");
+  function contenedor() { return $("canvas-container"); }
+  function lienzo() {
+    var c = document.getElementById("plano-editor-canvas");
+    if (!c) {
+      c = document.createElement("canvas");
       c.id = "plano-editor-canvas";
-      if (window.CotizatStyles) {
-        CotizatStyles.setMany(c, {
-          position: "absolute",
-          inset: "0",
-          width: "100%",
-          height: "100%",
-          pointerEvents: "none",
-        });
+      CotizatStyles.setMany(c, {
+        position: "absolute", inset: "0", width: "100%", height: "100%",
+        pointerEvents: "auto", display: "block",
+      });
+      var cont = contenedor();
+      if (cont) cont.appendChild(c);
+    }
+    return c;
+  }
+
+  function lienzoPx(estado) {
+    var anchoM = estado.plano.ancho_lienzo_m || 30;
+    var altoM = estado.plano.alto_lienzo_m || 20;
+    return { ancho: Math.round(anchoM * estado.escala), alto: Math.round(altoM * estado.escala) };
+  }
+
+  // ---------- utilidades de geometría ----------
+
+  function mundoDesdePantalla(estado, cx, cy) {
+    return [cx / estado.zoom + estado.panX, cy / estado.zoom + estado.panY];
+  }
+
+  function verticesExistentes(estado) {
+    var out = [];
+    estado.elementos.forEach(function (e) {
+      if (e.tipo !== "muro" || !e.puntos) return;
+      e.puntos.forEach(function (p) { out.push([p[0], p[1]]); });
+    });
+    return out;
+  }
+
+  function snapPunto(estado, p, fuerzaLibre) {
+    var tol = 10 / estado.zoom;
+    // 1) Snap a vértices existentes.
+    var mejor = null, mejorD = tol;
+    verticesExistentes(estado).forEach(function (v) {
+      var d = dist(p, v);
+      if (d < mejorD) { mejorD = d; mejor = v; }
+    });
+    if (mejor) return { p: mejor, snap: true };
+
+    // 2) Ortogonal desde el punto anterior (si estamos trazando y no se pide libre).
+    if (estado.puntoInicio && !fuerzaLibre) {
+      var a = estado.puntoInicio;
+      var dx = Math.abs(p[0] - a[0]), dy = Math.abs(p[1] - a[1]);
+      if (dx >= dy) p = [p[0], a[1]];
+      else p = [a[0], p[1]];
+    }
+
+    // 3) Cuadrícula de 5 cm.
+    var paso = estado.escala * 0.05;
+    var q = [Math.round(p[0] / paso) * paso, Math.round(p[1] / paso) * paso];
+    if (dist(p, q) <= (6 / estado.zoom) + 1) return { p: q, snap: false };
+    return { p: [p[0], p[1]], snap: false };
+  }
+
+  // ---------- render ----------
+
+  function pintarFondo(estado, ctx) {
+    var c = lienzo();
+    var dpr = window.devicePixelRatio || 1;
+    var w = c.clientWidth, h = c.clientHeight;
+    if (w <= 0 || h <= 0) return;
+    if (c.width !== Math.round(w * dpr) || c.height !== Math.round(h * dpr)) {
+      c.width = Math.round(w * dpr);
+      c.height = Math.round(h * dpr);
+    }
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, c.width, c.height);
+    ctx.setTransform(
+      estado.zoom * dpr, 0, 0, estado.zoom * dpr,
+      -estado.panX * estado.zoom * dpr, -estado.panY * estado.zoom * dpr
+    );
+
+    // Límites visibles en mundo.
+    var x0 = estado.panX, y0 = estado.panY;
+    var x1 = x0 + w / estado.zoom, y1 = y0 + h / estado.zoom;
+
+    // En un plano dibujado desde cero el lienzo es propio y se pinta la
+    // cuadrícula; en uno mixto (imagen + muros) dejamos el lienzo
+    // transparente para que se vea la imagen de fondo.
+    var esDibujo = estado.plano.origen === "dibujado";
+    if (esDibujo) {
+      ctx.fillStyle = "#f5f7fa";
+      ctx.fillRect(x0 - 2, y0 - 2, (x1 - x0) + 4, (y1 - y0) + 4);
+    }
+
+    // Cuadrícula fina (0,1 m) y gruesa (1 m).
+    var fino = estado.escala * 0.1, grueso = estado.escala;
+    if (esDibujo && fino * estado.zoom >= 6) {
+      ctx.strokeStyle = "rgba(148,163,184,0.14)";
+      ctx.lineWidth = 1 / estado.zoom;
+      ctx.beginPath();
+      for (var gx = Math.floor(x0 / fino) * fino; gx <= x1; gx += fino) {
+        ctx.moveTo(gx, y0); ctx.lineTo(gx, y1);
       }
-      contenedor.appendChild(c);
-    }
-    return document.getElementById("plano-editor-canvas");
-  }
-
-  function construirLienzoPx(plano) {
-    // Lienzo virtual en metros -> píxeles de pantalla del editor.
-    // El lienzo del editor se renderiza en una capa paralela al canvas
-    // principal con coordenadas coherentes con la escala calibrada.
-    if (!plano.escala_px_por_metro) {
-      return { anchoPx: 1200, altoPx: 800, factor: 50 };
-    }
-    var anchoM = plano.ancho_lienzo_m || (plano.ancho_px ? plano.ancho_px / plano.escala_px_por_metro : 12);
-    var altoM = plano.alto_lienzo_m || (plano.alto_px ? plano.alto_px / plano.escala_px_por_metro : 8);
-    return {
-      anchoPx: Math.round(anchoM * plano.escala_px_por_metro),
-      altoPx: Math.round(altoM * plano.escala_px_por_metro),
-      factor: plano.escala_px_por_metro,
-    };
-  }
-
-  function pintarCuadricula(ctx, ancho, alto, escala) {
-    if (!escala) return;
-    var factorPx = escala;  // px / m
-    ctx.save();
-    ctx.strokeStyle = "rgba(100, 116, 139, 0.18)";
-    ctx.lineWidth = 1;
-    for (var x = 0; x <= ancho; x += factorPx) {
-      ctx.beginPath();
-      ctx.moveTo(x, 0);
-      ctx.lineTo(x, alto);
-      ctx.stroke();
-    }
-    for (var y = 0; y <= alto; y += factorPx) {
-      ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.lineTo(ancho, y);
-      ctx.stroke();
-    }
-    // Eje principal cada metro
-    ctx.strokeStyle = "rgba(100, 116, 139, 0.35)";
-    for (var x2 = 0; x2 <= ancho; x2 += factorPx * 5) {
-      ctx.beginPath();
-      ctx.moveTo(x2, 0);
-      ctx.lineTo(x2, alto);
-      ctx.stroke();
-    }
-    for (var y2 = 0; y2 <= alto; y2 += factorPx * 5) {
-      ctx.beginPath();
-      ctx.moveTo(0, y2);
-      ctx.lineTo(ancho, y2);
-      ctx.stroke();
-    }
-    ctx.restore();
-  }
-
-  function pintarElemento(ctx, elemento, escala) {
-    if (!elemento || !ctx) return;
-    var pts = elemento.puntos || [];
-    ctx.save();
-    if (elemento.tipo === "muro") {
-      ctx.strokeStyle = elemento.color || "#1f2937";
-      ctx.fillStyle = (elemento.color || "#1f2937") + "55";
-      ctx.lineWidth = Math.max(2, (elemento.grosor_cm / 100) * (escala || 50));
-      if (pts.length >= 2) {
-        ctx.beginPath();
-        ctx.moveTo(pts[0][0], pts[0][1]);
-        for (var i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
-        ctx.stroke();
+      for (var gy = Math.floor(y0 / fino) * fino; gy <= y1; gy += fino) {
+        ctx.moveTo(x0, gy); ctx.lineTo(x1, gy);
       }
-    } else if (elemento.tipo === "hueco") {
+      ctx.stroke();
+    }
+    if (esDibujo) {
+      ctx.strokeStyle = "rgba(100,116,139,0.30)";
+      ctx.lineWidth = 1 / estado.zoom;
+      ctx.beginPath();
+      for (var gx2 = Math.floor(x0 / grueso) * grueso; gx2 <= x1; gx2 += grueso) {
+        ctx.moveTo(gx2, y0); ctx.lineTo(gx2, y1);
+      }
+      for (var gy2 = Math.floor(y0 / grueso) * grueso; gy2 <= y1; gy2 += grueso) {
+        ctx.moveTo(x0, gy2); ctx.lineTo(x1, gy2);
+      }
+      ctx.stroke();
+    }
+
+    // Etiquetas de la regla (cada 1 m), fijas al borde.
+    if (esDibujo && grueso * estado.zoom >= 34) {
+      ctx.fillStyle = "#64748b";
+      ctx.font = (10 / estado.zoom) + "px sans-serif";
+      ctx.textBaseline = "top";
+      var pista = 12 / estado.zoom;
+      for (var rx = Math.max(0, Math.floor(x0 / grueso)) * grueso; rx <= x1; rx += grueso) {
+        var met = (rx / estado.escala).toFixed(0);
+        ctx.fillText(met, rx + 2 / estado.zoom, y0 + pista);
+      }
+      ctx.textBaseline = "alphabetic";
+      for (var ry = Math.max(0, Math.floor(y0 / grueso)) * grueso; ry <= y1; ry += grueso) {
+        var met2 = (ry / estado.escala).toFixed(0);
+        ctx.fillText(met2, x0 + pista, ry - 2 / estado.zoom);
+      }
+    }
+  }
+
+  function grosorPx(e, estado) {
+    return Math.max(1.5, (e.grosor_cm || estado.grosorCm) / 100.0 * estado.escala);
+  }
+
+  function pintarElemento(ctx, e, estado) {
+    var pts = e.puntos || [];
+    ctx.save();
+    if (e.tipo === "muro") {
+      if (pts.length < 2) return ctx.restore();
+      ctx.strokeStyle = e.color || "#1f2937";
+      ctx.lineCap = "butt";
+      ctx.lineJoin = "miter";
+      ctx.lineWidth = grosorPx(e, estado);
+      ctx.beginPath();
+      ctx.moveTo(pts[0][0], pts[0][1]);
+      for (var i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+      ctx.stroke();
+      // Medida del tramo (en m).
+      if (estado.zoom >= 0.35) {
+        var mx = (pts[0][0] + pts[pts.length - 1][0]) / 2;
+        var my = (pts[0][1] + pts[pts.length - 1][1]) / 2;
+        var dx = pts[pts.length - 1][0] - pts[0][0];
+        var dy = pts[pts.length - 1][1] - pts[0][1];
+        var largo = Math.hypot(dx, dy) / estado.escala;
+        var nx = -dy, ny = dx;
+        var nl = Math.hypot(nx, ny) || 1;
+        var off = Math.max(14 / estado.zoom, grosorPx(e, estado) / 2 + 5 / estado.zoom);
+        var lx = mx + (nx / nl) * off, ly = my + (ny / nl) * off;
+        ctx.fillStyle = "#0f172a";
+        ctx.font = "500 " + (11 / estado.zoom) + "px Inter, sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(fmt(largo) + " m", lx, ly);
+        ctx.textAlign = "start";
+        ctx.textBaseline = "alphabetic";
+      }
+    } else if (e.tipo === "hueco") {
       var sub = (pts[0] && pts[0][2]) || "puerta";
-      ctx.fillStyle = sub === "puerta" ? "rgba(244, 114, 182, 0.5)" : "rgba(56, 189, 248, 0.5)";
+      var cxp = pts[0][0], cyp = pts[0][1];
+      var an = (pts[0][3] || 90) / 100 * estado.escala;
+      var al = (pts[0][4] || 20) / 100 * estado.escala;
+      ctx.fillStyle = sub === "puerta" ? "rgba(244,114,182,0.55)" : "rgba(56,189,248,0.55)";
       ctx.strokeStyle = sub === "puerta" ? "#db2777" : "#0284c7";
-      ctx.lineWidth = 1.4;
-      if (pts.length >= 1) {
-        var cx = pts[0][0];
-        var cy = pts[0][1];
-        var ancho = (pts[0][2] || 60);
-        var alto = (pts[0][3] || 30);
-        ctx.beginPath();
-        ctx.rect(cx, cy, ancho, alto);
-        ctx.fill();
-        ctx.stroke();
-      }
-    } else if (elemento.tipo === "linea_auxiliar") {
-      ctx.strokeStyle = "rgba(14, 165, 233, 0.7)";
-      ctx.setLineDash([5, 4]);
-      ctx.lineWidth = 1.2;
-      if (pts.length >= 2) {
-        ctx.beginPath();
-        ctx.moveTo(pts[0][0], pts[0][1]);
-        for (var j = 1; j < pts.length; j++) ctx.lineTo(pts[j][0], pts[j][1]);
-        ctx.stroke();
-      }
-      ctx.setLineDash([]);
+      ctx.lineWidth = 1.4 / estado.zoom;
+      ctx.beginPath();
+      ctx.rect(cxp - an / 2, cyp - al / 2, an, al);
+      ctx.fill();
+      ctx.stroke();
     }
     ctx.restore();
   }
 
-  function pintarTrazoActual(ctx, estado, escala) {
-    if (!ctx || !estado.puntosActuales.length) return;
+  function pintarMedicion(ctx, m, estado) {
+    var pts = m.puntos || [];
+    if (pts.length < 3) return;
+    var color = m.color || "#2563eb";
     ctx.save();
-    ctx.strokeStyle = estado.color || "#1f2937";
-    ctx.lineWidth = Math.max(2, (estado.grosorCm / 100) * (escala || 50));
-    ctx.setLineDash([6, 4]);
+    ctx.fillStyle = color + "2e";
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2 / estado.zoom;
     ctx.beginPath();
-    ctx.moveTo(estado.puntosActuales[0][0], estado.puntosActuales[0][1]);
-    for (var i = 1; i < estado.puntosActuales.length; i++) {
-      ctx.lineTo(estado.puntosActuales[i][0], estado.puntosActuales[i][1]);
+    pts.forEach(function (p, i) { if (i === 0) ctx.moveTo(p[0], p[1]); else ctx.lineTo(p[0], p[1]); });
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    if (pts[0] && m.metricas && m.metricas.calibrado) {
+      var label = (m.etiqueta || "Estancia") + " · " + fmt(m.metricas.suelo) + " m²";
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "600 " + (12 / estado.zoom) + "px Inter, sans-serif";
+      ctx.fillText(label, pts[0][0] + 6 / estado.zoom, pts[0][1] - 6 / estado.zoom);
     }
+    ctx.restore();
+  }
+
+  function pintarTrazo(estado, ctx) {
+    var e = estado;
+    if (e.snap) {
+      ctx.save();
+      ctx.strokeStyle = "#2563eb";
+      ctx.lineWidth = 2 / e.zoom;
+      ctx.beginPath();
+      ctx.arc(e.snap[0], e.snap[1], 7 / e.zoom, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+    }
+    if (!e.puntoInicio || !e.cursor) return;
+    var a = e.puntoInicio;
+    var b = e.cursor;
+    if (e.snap) b = e.snap;
+    ctx.save();
+    ctx.strokeStyle = "#2563eb";
+    ctx.lineWidth = grosorPx({ grosor_cm: e.grosorCm }, e);
+    ctx.setLineDash([6 / e.zoom, 4 / e.zoom]);
+    ctx.beginPath();
+    ctx.moveTo(a[0], a[1]);
+    ctx.lineTo(b[0], b[1]);
     ctx.stroke();
     ctx.setLineDash([]);
-    estado.puntosActuales.forEach(function (pt) {
+    // Medida en vivo.
+    var largo = dist(a, b) / e.escala;
+    ctx.fillStyle = "#0f172a";
+    ctx.font = "600 " + (12 / e.zoom) + "px Inter, sans-serif";
+    var mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2;
+    ctx.fillText(fmt(largo) + " m", mx + 8 / e.zoom, my - 8 / e.zoom);
+    ctx.beginPath();
+    ctx.arc(a[0], a[1], 4 / e.zoom, 0, Math.PI * 2);
+    ctx.fillStyle = "#2563eb";
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function pintarSeleccion(estado, ctx) {
+    var sel = null;
+    estado.elementos.forEach(function (e) {
+      if (e.id === estado.seleccionado && e.tipo === "muro") sel = e;
+    });
+    if (!sel || sel.puntos.length < 2) return;
+    ctx.save();
+    ctx.strokeStyle = "#2563eb";
+    ctx.lineWidth = 3 / estado.zoom;
+    ctx.beginPath();
+    ctx.moveTo(sel.puntos[0][0], sel.puntos[0][1]);
+    ctx.lineTo(sel.puntos[1][0], sel.puntos[1][1]);
+    ctx.stroke();
+    // Asas en los extremos.
+    ctx.fillStyle = "#fff";
+    ctx.lineWidth = 2 / estado.zoom;
+    sel.puntos.forEach(function (p) {
       ctx.beginPath();
-      ctx.arc(pt[0], pt[1], 4, 0, Math.PI * 2);
-      ctx.fillStyle = estado.color || "#1f2937";
+      ctx.arc(p[0], p[1], 6 / estado.zoom, 0, Math.PI * 2);
       ctx.fill();
+      ctx.stroke();
     });
     ctx.restore();
   }
 
-  function render(estado, contenedor) {
-    var lienzo = asegurarLienzo(contenedor);
-    var dims = construirLienzoPx(estado.plano);
-    lienzo.width = dims.anchoPx || 1200;
-    lienzo.height = dims.altoPx || 800;
-    var ctx = lienzo.getContext("2d");
-    ctx.clearRect(0, 0, lienzo.width, lienzo.height);
-    pintarCuadricula(ctx, lienzo.width, lienzo.height, dims.factor);
-    (estado.plano.elementos || []).forEach(function (e) { pintarElemento(ctx, e, dims.factor); });
-    pintarTrazoActual(ctx, estado, dims.factor);
+  function render(estado) {
+    var c = lienzo();
+    var ctx = c.getContext("2d");
+    pintarFondo(estado, ctx);
+    estado.elementos.forEach(function (e) { pintarElemento(ctx, e, estado); });
+    estado.mediciones.forEach(function (m) { pintarMedicion(ctx, m, estado); });
+    pintarSeleccion(estado, ctx);
+    pintarTrazo(estado, ctx);
   }
 
-  function fmtM(num) {
-    if (num == null || isNaN(num)) return "—";
-    return Number(num).toFixed(2).replace(".", ",") + " m";
-  }
+  // ---------- persistencia ----------
 
-  function actualizarEstadoAyuda(estado) {
-    var ayuda = $("plano-editor-ayuda");
-    if (!ayuda) return;
-    var msg = {
-      muro: "Muro: haz clic en cada vértice. Doble clic para terminar.",
-      puerta: "Puerta: haz clic sobre un muro. Arrastra para ajustar el ancho.",
-      ventana: "Ventana: haz clic sobre un muro. Arrastra para ajustar el ancho.",
-      seleccion: "Selección: haz clic en un muro o hueco para editarlo o borrarlo.",
-    }[estado.herramienta] || "";
-    ayuda.textContent = msg;
-    var grosor = $("plano-editor-grosor-valor");
-    if (grosor) grosor.textContent = (estado.grosorCm || 10).toFixed(1) + " cm";
-  }
-
-  function persistirGrosor(estado) {
-    return fetch(normUrl(API.grosor, { plano_id: estado.plano.id }), {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ grosor_tabique_cm: estado.grosorCm }),
-    })
-      .then(function (r) { return r.json(); })
-      .then(function (data) {
-        if (data && data.ok && data.grosor_tabique_cm != null) {
-          estado.grosorCm = data.grosor_tabique_cm;
-          estado.plano.grosor_tabique_cm = data.grosor_tabique_cm;
-        }
-        return data;
-      });
-  }
-
-  function enviarElemento(estado, payload, opts) {
-    var url = opts && opts.id
-      ? normUrl(API.actualizar, { plano_id: estado.plano.id, elemento_id: opts.id })
-      : normUrl(API.crear, { plano_id: estado.plano.id });
-    var metodo = opts && opts.id ? "PUT" : "POST";
+  function pedirJson(url, metodo, body) {
     return fetch(url, {
       method: metodo,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    })
-      .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, data: d }; }); })
-      .then(function (res) {
-        if (!res.ok || !res.data || !res.data.ok) {
-          throw new Error((res.data && res.data.error) || "No se pudo guardar el elemento.");
-        }
-        return res.data.elemento;
-      });
+      body: body ? JSON.stringify(body) : undefined,
+    }).then(function (r) { return r.json().then(function (d) { return { ok: r.ok, data: d }; }); });
+  }
+
+  function persistirGrosor(estado) {
+    return pedirJson(normUrl(API.grosor, { plano_id: estado.plano.id }), "POST", {
+      grosor_tabique_cm: estado.grosorCm,
+    }).then(function (res) {
+      if (res.ok && res.data && res.data.ok) {
+        estado.grosorCm = res.data.grosor_tabique_cm;
+        estado.plano.grosor_tabique_cm = res.data.grosor_tabique_cm;
+      }
+    }).catch(function () {});
+  }
+
+  function guardarMuro(estado, pts, grosorCm) {
+    return pedirJson(normUrl(API.crear, { plano_id: estado.plano.id }), "POST", {
+      tipo: "muro", puntos: pts, grosor_cm: grosorCm, color: "#1f2937",
+    }).then(function (res) {
+      if (!res.ok || !res.data || !res.data.ok) {
+        throw new Error((res.data && res.data.error) || "No se pudo guardar el muro.");
+      }
+      return res.data.elemento;
+    });
+  }
+
+  function guardarHueco(estado, pts, sub) {
+    return pedirJson(normUrl(API.crear, { plano_id: estado.plano.id }), "POST", {
+      tipo: "hueco", puntos: pts, grosor_cm: 0,
+      color: sub === "puerta" ? "#db2777" : "#0284c7",
+    }).then(function (res) {
+      if (!res.ok || !res.data || !res.data.ok) {
+        throw new Error((res.data && res.data.error) || "No se pudo guardar el hueco.");
+      }
+      return res.data.elemento;
+    });
+  }
+
+  function actualizarElemento(estado, id, pts, grosorCm) {
+    return pedirJson(normUrl(API.actualizar, { plano_id: estado.plano.id, elemento_id: id }), "PUT", {
+      puntos: pts, grosor_cm: grosorCm,
+    }).then(function (res) {
+      if (!res.ok || !res.data || !res.data.ok) {
+        throw new Error((res.data && res.data.error) || "No se pudo actualizar.");
+      }
+      return res.data.elemento;
+    });
   }
 
   function eliminarElemento(estado, id) {
-    return fetch(normUrl(API.eliminar, { plano_id: estado.plano.id, elemento_id: id }), {
-      method: "DELETE",
-    }).then(function (r) { return r.json(); });
+    return pedirJson(normUrl(API.eliminar, { plano_id: estado.plano.id, elemento_id: id }), "DELETE")
+      .catch(function () {});
   }
 
-  function pintar(estado, contenedor) {
-    render(estado, contenedor);
+  function ampliarLienzo(estado) {
+    var dims = lienzoPx(estado);
+    var anchoM = estado.plano.ancho_lienzo_m || 30;
+    var altoM = estado.plano.alto_lienzo_m || 20;
+    var margen = 2.0; // crece cuando dibujas a menos de 2 m del borde
+    var crecio = false;
+    if (estado.cursor && estado.cursor[0] > dims.ancho - margen * estado.escala) {
+      anchoM += 10; crecio = true;
+    }
+    if (estado.cursor && estado.cursor[1] > dims.alto - margen * estado.escala) {
+      altoM += 10; crecio = true;
+    }
+    if (estado.cursor && estado.cursor[0] < margen * estado.escala) {
+      // no encogemos por la izquierda; el usuario puede mover el paneo
+    }
+    if (!crecio) return;
+    estado.plano.ancho_lienzo_m = anchoM;
+    estado.plano.alto_lienzo_m = altoM;
+    pedirJson(normUrl(API.lienzo, { plano_id: estado.plano.id }), "POST", {
+      ancho_lienzo_m: anchoM, alto_lienzo_m: altoM,
+    }).catch(function () {});
   }
 
-  function onCanvasClick(estado, contenedor, ev) {
-    var lienzo = asegurarLienzo(contenedor);
-    var rect = lienzo.getBoundingClientRect();
-    var factorX = lienzo.width / Math.max(1, rect.width);
-    var factorY = lienzo.height / Math.max(1, rect.height);
-    var x = (ev.clientX - rect.left) * factorX;
-    var y = (ev.clientY - rect.top) * factorY;
-    var herr = estado.herramienta;
-    if (herr === "muro") {
-      estado.puntosActuales.push([x, y]);
-      pintar(estado, contenedor);
-    } else if (herr === "puerta" || herr === "ventana") {
-      // Hueco: pedimos ancho arrastrando. Primer clic fija esquina, drag hasta soltar.
-      estado.puntosActuales = [[x, y, herr, 80, 30]];
-      pintar(estado, contenedor);
-    } else if (herr === "seleccion") {
-      // Buscar el elemento más cercano.
-      var objetivo = null;
-      (estado.plano.elementos || []).forEach(function (e) {
-        if (e.tipo === "muro" && e.puntos && e.puntos.length >= 2) {
-          var d = distanciaPuntoSegmento([x, y], e.puntos[0], e.puntos[1]);
-          if (d < 12) objetivo = e;
+  // ---------- redimensionar un muro (y ajustar el plano) ----------
+
+  function muroPorId(estado, id) {
+    for (var i = 0; i < estado.elementos.length; i++) {
+      if (estado.elementos[i].id === id) return estado.elementos[i];
+    }
+    return null;
+  }
+
+  function propagarCambio(estado, verticeOld, delta, u, ancla, origenId, cambios) {
+    estado.elementos.forEach(function (w) {
+      if (w.id === origenId || w.tipo !== "muro" || w.puntos.length < 2) return;
+      if (cambios.some(function (c) { return c.id === w.id; })) return;
+      var pa = [w.puntos[0][0], w.puntos[0][1]];
+      var pb = [w.puntos[1][0], w.puntos[1][1]];
+      var enA = cerca(pa, verticeOld), enB = cerca(pb, verticeOld);
+      if (!enA && !enB) return;
+
+      var wdx = pb[0] - pa[0], wdy = pb[1] - pa[1];
+      var wl = Math.hypot(wdx, wdy) || 1;
+      var dot = Math.abs((wdx / wl) * u[0] + (wdy / wl) * u[1]);
+      var perpendicular = dot < 0.3;
+
+      function mover(p) {
+        var q = [p[0] + delta[0], p[1] + delta[1]];
+        if (cerca(q, ancla, EPS)) return [ancla[0], ancla[1]]; // no mover el ancla
+        return q;
+      }
+
+      var npa, npb;
+      if (enA) {
+        npa = mover(pa);
+        npb = perpendicular ? mover(pb) : [pb[0], pb[1]];
+      } else {
+        npb = mover(pb);
+        npa = perpendicular ? mover(pa) : [pa[0], pa[1]];
+      }
+      cambios.push({ id: w.id, puntos: [npa, npb] });
+      if (perpendicular) {
+        var far = enA ? pb : pa;
+        if (!cerca(far, ancla, EPS)) propagarCambio(estado, far, delta, u, ancla, w.id, cambios);
+      }
+    });
+  }
+
+  function redimensionarMuro(estado, muro, nuevaLongitudM) {
+    var pts = muro.puntos;
+    var a = [pts[0][0], pts[0][1]];
+    var b = [pts[1][0], pts[1][1]];
+    var dx = b[0] - a[0], dy = b[1] - a[1];
+    var lenPx = Math.hypot(dx, dy) || 1;
+    var nuevaLenPx = nuevaLongitudM * estado.escala;
+    var delta = nuevaLenPx - lenPx;
+    if (Math.abs(delta) < 0.5) return [];
+    var u = [dx / lenPx, dy / lenPx];
+    var dd = [u[0] * delta, u[1] * delta];
+    var nuevoB = [b[0] + dd[0], b[1] + dd[1]];
+    var cambios = [{ id: muro.id, puntos: [[a[0], a[1]], nuevoB] }];
+    propagarCambio(estado, b, dd, u, a, muro.id, cambios);
+    return cambios;
+  }
+
+  function aplicarRedimension(estado, muro, nuevaLongitudM) {
+    var cambios = redimensionarMuro(estado, muro, nuevaLongitudM);
+    var promesas = cambios.map(function (c) {
+      var grosor = muroPorId(estado, c.id) ? muroPorId(estado, c.id).grosor_cm : estado.grosorCm;
+      return actualizarElemento(estado, c.id, c.puntos, grosor).then(function (elem) {
+        var local = muroPorId(estado, c.id);
+        if (local) {
+          local.puntos = elem.puntos;
+          local.grosor_cm = elem.grosor_cm;
         }
+        return elem;
       });
-      if (objetivo) {
-        var nuevoEstado = confirm("¿Eliminar el muro seleccionado?")
-          ? "eliminar"
-          : "editar";
-        if (nuevoEstado === "eliminar") {
-          eliminarElemento(estado, objetivo.id).then(function () {
-            estado.plano.elementos = (estado.plano.elementos || []).filter(function (e) { return e.id !== objetivo.id; });
-            pintar(estado, contenedor);
-          });
-        } else {
-          estado.elementoEnEdicion = objetivo;
-          var nuevoGrosor = prompt("Grosor del muro en cm:", objetivo.grosor_cm);
-          if (nuevoGrosor != null) {
-            enviarElemento(estado, {
-              tipo: objetivo.tipo,
-              puntos: objetivo.puntos,
-              grosor_cm: parseFloat(nuevoGrosor) || objetivo.grosor_cm,
-              color: objetivo.color,
-            }, { id: objetivo.id })
-              .then(function (elemento) {
-                Object.assign(objetivo, elemento);
-                pintar(estado, contenedor);
-              });
-          }
-        }
-      }
-    }
+    });
+    return Promise.all(promesas).then(function () {
+      render(estado);
+      actualizarCarta(estado);
+    });
   }
 
-  function onCanvasDblClick(estado, contenedor, ev) {
-    if (estado.herramienta !== "muro") return;
-    if (estado.puntosActuales.length < 2) {
-      estado.puntosActuales = [];
-      pintar(estado, contenedor);
-      return;
-    }
-    enviarElemento(estado, {
-      tipo: "muro",
-      puntos: estado.puntosActuales,
-      grosor_cm: estado.grosorCm,
-      color: estado.color,
-    })
-      .then(function (elemento) {
-        estado.plano.elementos = (estado.plano.elementos || []).concat([elemento]);
-        estado.puntosActuales = [];
-        pintar(estado, contenedor);
-      })
-      .catch(function (err) {
-        alert(err.message);
-      });
-  }
+  // ---------- UI flotante ----------
 
-  function onCanvasMouseUp(estado, ev) {
-    if ((estado.herramienta === "puerta" || estado.herramienta === "ventana") && estado.puntosActuales.length === 1) {
-      // Mover el segundo vértice crea un rectángulo; simplificamos
-      // pidiendo el ancho vía prompt para que la operación sea rápida
-      // y precisa.
-      var ancho = prompt("Ancho del hueco en cm (1 cm a 400 cm):", "80");
-      if (ancho === null) {
-        estado.puntosActuales = [];
-        return;
-      }
-      var anchoNum = parseFloat(ancho);
-      if (!isFinite(anchoNum) || anchoNum <= 0 || anchoNum > 400) {
-        alert("Ancho no válido (1 a 400 cm).");
-        estado.puntosActuales = [];
-        return;
-      }
-      var p0 = estado.puntosActuales[0];
-      enviarElemento(estado, {
-        tipo: "hueco",
-        puntos: [[p0[0], p0[1], estado.herramienta, anchoNum, 20]],
-        grosor_cm: 0,
-        color: estado.herramienta === "puerta" ? "#db2777" : "#0284c7",
-      })
-        .then(function (elemento) {
-          estado.plano.elementos = (estado.plano.elementos || []).concat([elemento]);
-          estado.puntosActuales = [];
-          pintar(estado, getContenedorActivo());
-        })
-        .catch(function (err) {
-          alert(err.message);
-        });
-    }
-  }
-
-  function getContenedorActivo() {
-    return $("canvas-container") || document.body;
-  }
-
-  function distanciaPuntoSegmento(p, a, b) {
-    var dx = b[0] - a[0];
-    var dy = b[1] - a[1];
-    var l2 = dx * dx + dy * dy;
-    if (!l2) return Math.hypot(p[0] - a[0], p[1] - a[1]);
-    var t = Math.max(0, Math.min(1, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / l2));
-    var qx = a[0] + t * dx;
-    var qy = a[1] + t * dy;
-    return Math.hypot(p[0] - qx, p[1] - qy);
-  }
-
-  function construirPanel(estado) {
+  function construirUI(estado) {
     if ($("plano-editor-panel")) return;
-    var cont = getContenedorActivo();
+    var cont = contenedor();
+    if (!cont) return;
+
     var panel = document.createElement("div");
     panel.id = "plano-editor-panel";
     panel.className = "plano-editor-panel";
 
-    // El panel se construye con createElement (no se usa la API de
-    // asignación de HTML crudo) para evitar sinks de inyección. El
-    // test de seguridad audita que ningún front use la asignación
-    // directa de HTML al DOM.
     var head = document.createElement("header");
     head.className = "plano-editor-head";
-    var headTitulo = document.createElement("strong");
-    headTitulo.textContent = "Editor vectorial";
+    var t = document.createElement("strong");
+    t.textContent = "Editor de planos";
     var ayuda = document.createElement("span");
-    ayuda.className = "plano-editor-ayuda";
     ayuda.id = "plano-editor-ayuda";
-    head.appendChild(headTitulo);
+    ayuda.className = "plano-editor-ayuda";
+    head.appendChild(t);
     head.appendChild(ayuda);
 
     var tools = document.createElement("div");
     tools.className = "plano-editor-tools";
-    var herramientas = [
-      ["muro", "Muro", true],
+    [
+      ["muro", "＋ Muro", true],
+      ["seleccionar", "↖ Seleccionar", false],
       ["puerta", "Puerta", false],
       ["ventana", "Ventana", false],
-      ["seleccion", "Selección", false],
-    ];
-    herramientas.forEach(function (h) {
+    ].forEach(function (h) {
       var b = document.createElement("button");
       b.type = "button";
       b.className = "plano-editor-tool" + (h[2] ? " active" : "");
@@ -432,34 +547,29 @@
 
     var grosor = document.createElement("div");
     grosor.className = "plano-editor-grosor";
-    var grosorLabel = document.createElement("label");
-    grosorLabel.appendChild(document.createTextNode("Grosor "));
-    var grosorOut = document.createElement("output");
-    grosorOut.id = "plano-editor-grosor-valor";
-    grosorOut.textContent = "10.0 cm";
-    grosorLabel.appendChild(grosorOut);
-    var grosorRange = document.createElement("input");
-    grosorRange.type = "range";
-    grosorRange.id = "plano-editor-grosor";
-    grosorRange.min = "3";
-    grosorRange.max = "40";
-    grosorRange.step = "0.5";
-    grosorRange.value = "10";
-    grosor.appendChild(grosorLabel);
-    grosor.appendChild(grosorRange);
+    var gl = document.createElement("label");
+    gl.textContent = "Grosor del tabique ";
+    var go = document.createElement("output");
+    go.id = "plano-editor-grosor-valor";
+    go.textContent = "10 cm";
+    gl.appendChild(go);
+    var gr = document.createElement("input");
+    gr.type = "range";
+    gr.id = "plano-editor-grosor";
+    gr.min = "3"; gr.max = "40"; gr.step = "0.5"; gr.value = "10";
+    grosor.appendChild(gl);
+    grosor.appendChild(gr);
 
     var acciones = document.createElement("div");
     acciones.className = "plano-editor-acciones";
-    var botonesAccion = [
-      ["plano-editor-detectar", "Detectar estancias", "btn btn-sm"],
-      ["plano-editor-limpiar", "Limpiar selección", "btn btn-sm"],
-      ["plano-editor-cerrar", "Cerrar editor", "btn btn-sm btn-primary"],
-    ];
-    botonesAccion.forEach(function (cfg) {
+    [
+      ["plano-editor-detectar", "✨ Detectar estancias"],
+      ["plano-editor-ayuda-boton", "¿Cómo se usa?"],
+    ].forEach(function (cfg) {
       var b = document.createElement("button");
       b.type = "button";
       b.id = cfg[0];
-      b.className = cfg[2];
+      b.className = "btn btn-sm";
       b.textContent = cfg[1];
       acciones.appendChild(b);
     });
@@ -469,105 +579,479 @@
     panel.appendChild(grosor);
     panel.appendChild(acciones);
     cont.appendChild(panel);
+
     panel.querySelectorAll("[data-herr]").forEach(function (b) {
       b.addEventListener("click", function () {
         estado.herramienta = b.dataset.herr;
-        panel.querySelectorAll("[data-herr]").forEach(function (otro) {
-          otro.classList.toggle("active", otro === b);
+        panel.querySelectorAll("[data-herr]").forEach(function (o) {
+          o.classList.toggle("active", o === b);
         });
-        estado.puntosActuales = [];
-        actualizarEstadoAyuda(estado);
-        pintar(estado, cont);
+        if (estado.herramienta !== "muro") estado.puntoInicio = estado.primerPunto = null;
+        if (estado.herramienta !== "seleccionar") {
+          estado.seleccionado = null;
+          ocultarCarta();
+        }
+        actualizarAyuda(estado);
+        render(estado);
       });
     });
-    var grosor = $("plano-editor-grosor");
-    grosor.value = String(estado.grosorCm);
-    grosor.addEventListener("input", function () {
-      var v = parseFloat(grosor.value);
+
+    var grosorRange = $("plano-editor-grosor");
+    grosorRange.value = String(estado.grosorCm);
+    grosorRange.addEventListener("input", function () {
+      var v = parseFloat(grosorRange.value);
       if (isFinite(v) && v > 0) {
         estado.grosorCm = v;
-        actualizarEstadoAyuda(estado);
+        actualizarAyuda(estado);
         persistirGrosor(estado);
-        pintar(estado, cont);
+        render(estado);
       }
     });
+
     $("plano-editor-detectar").addEventListener("click", function () {
-      fetch(normUrl(API.detectar, { plano_id: estado.plano.id }), { method: "POST" })
-        .then(function (r) { return r.json(); })
-        .then(function (data) {
-          if (data && data.ok) {
-            alert(data.modo === "vectorial"
-              ? "Estancias detectadas: " + (data.nuevas || 0) + "."
-              : "Estancias detectadas en la imagen: " + (data.nuevas || 0) + " (existentes: " + (data.omitidas || 0) + ").");
-            if (typeof window.cargarPlano === "function") {
-              window.cargarPlano(estado.plano.id);
-            }
+      detectarEstancias(estado);
+    });
+    $("plano-editor-ayuda-boton").addEventListener("click", function () {
+      alert(
+        "Muro: clic para empezar, clic en cada vértice, doble clic / Enter / Esc para terminar.\n" +
+        "Mayús + clic: línea libre (sin ortogonal).\n" +
+        "Seleccionar: clic sobre un muro para cambiar su medida o su grosor; Supr para borrarlo.\n" +
+        "Rueda: zoom. Arrastra con el botón central o la barra espaciadora: mover el lienzo."
+      );
+    });
+
+    // Carta flotante de edición de medida.
+    var carta = document.createElement("div");
+    carta.id = "plano-editor-carta";
+    carta.className = "plano-editor-carta cotizat-hidden";
+    var cl = document.createElement("label");
+    cl.textContent = "Longitud (m)";
+    var ci = document.createElement("input");
+    ci.type = "number";
+    ci.id = "plano-editor-carta-long";
+    ci.step = "0.01";
+    ci.min = "0.1";
+    var cg = document.createElement("label");
+    cg.textContent = "Grosor (cm)";
+    var cgi = document.createElement("input");
+    cgi.type = "number";
+    cgi.id = "plano-editor-carta-grosor";
+    cgi.step = "0.5";
+    cgi.min = "3";
+    cgi.max = "40";
+    var cbotones = document.createElement("div");
+    cbotones.className = "plano-editor-carta-botones";
+    var bAplicar = document.createElement("button");
+    bAplicar.type = "button";
+    bAplicar.id = "plano-editor-carta-aplicar";
+    bAplicar.className = "btn btn-sm btn-primary";
+    bAplicar.textContent = "Aplicar";
+    var bBorrar = document.createElement("button");
+    bBorrar.type = "button";
+    bBorrar.id = "plano-editor-carta-borrar";
+    bBorrar.className = "btn btn-sm btn-danger";
+    bBorrar.textContent = "Borrar";
+    var bCerrar = document.createElement("button");
+    bCerrar.type = "button";
+    bCerrar.id = "plano-editor-carta-cerrar";
+    bCerrar.className = "btn btn-sm";
+    bCerrar.textContent = "✕";
+    cbotones.appendChild(bAplicar);
+    cbotones.appendChild(bBorrar);
+    cbotones.appendChild(bCerrar);
+    carta.appendChild(cl);
+    carta.appendChild(ci);
+    carta.appendChild(cg);
+    carta.appendChild(cgi);
+    carta.appendChild(cbotones);
+    cont.appendChild(carta);
+
+    ci.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") { e.preventDefault(); bAplicar.click(); }
+    });
+    bAplicar.addEventListener("click", function () {
+      var muro = estado.seleccionado != null ? muroPorId(estado, estado.seleccionado) : null;
+      if (!muro) return;
+      var largo = parseFloat(ci.value);
+      if (!isFinite(largo) || largo <= 0) { alert("Medida no válida."); return; }
+      aplicarRedimension(estado, muro, largo).catch(function (err) { alert(err.message); });
+    });
+    bBorrar.addEventListener("click", function () {
+      var id = estado.seleccionado;
+      if (id == null) return;
+      if (!confirm("¿Borrar este muro?")) return;
+      eliminarElemento(estado, id).then(function () {
+        estado.elementos = estado.elementos.filter(function (e) { return e.id !== id; });
+        estado.seleccionado = null;
+        ocultarCarta();
+        render(estado);
+      });
+    });
+    bCerrar.addEventListener("click", function () {
+      estado.seleccionado = null;
+      ocultarCarta();
+      render(estado);
+    });
+  }
+
+  function actualizarAyuda(estado) {
+    var ayuda = $("plano-editor-ayuda");
+    if (!ayuda) return;
+    var msg = {
+      muro: "Muro: clic para empezar · clic en cada vértice · doble clic para terminar · Mayús = línea libre",
+      seleccionar: "Seleccionar: clic en un muro para cambiar su medida o grosor · Supr borra",
+      puerta: "Puerta: clic sobre un muro para colocar un hueco de 90 cm",
+      ventana: "Ventana: clic sobre un muro para colocar un hueco de 120 cm",
+    }[estado.herramienta] || "";
+    ayuda.textContent = msg;
+    var go = $("plano-editor-grosor-valor");
+    if (go) go.textContent = (estado.grosorCm || 10).toFixed(1).replace(".", ",") + " cm";
+  }
+
+  function mostrarCarta(estado, muro) {
+    var carta = $("plano-editor-carta");
+    if (!carta) return;
+    CotizatStyles.set(carta, "display", "block");
+    var ci = $("plano-editor-carta-long");
+    var cgi = $("plano-editor-carta-grosor");
+    if (ci) {
+      var p0 = muro.puntos[0], p1 = muro.puntos[1];
+      var largo = dist(p0, p1) / estado.escala;
+      ci.value = largo.toFixed(2);
+    }
+    if (cgi) cgi.value = String(muro.grosor_cm || estado.grosorCm);
+
+    // Posiciona la carta junto al punto medio del muro (en pantalla).
+    var c = lienzo();
+    var mx = (muro.puntos[0][0] + muro.puntos[1][0]) / 2;
+    var my = (muro.puntos[0][1] + muro.puntos[1][1]) / 2;
+    var sx = (mx - estado.panX) * estado.zoom;
+    var sy = (my - estado.panY) * estado.zoom;
+    CotizatStyles.set(carta, "left", Math.max(6, Math.min(sx, c.clientWidth - 240)) + "px");
+    CotizatStyles.set(carta, "top", Math.max(6, Math.min(sy + 18, c.clientHeight - 200)) + "px");
+
+    $("plano-editor-carta-grosor").oninput = function () {
+      var v = parseFloat(cgi.value);
+      if (!isFinite(v) || v < 3 || v > 40) return;
+      actualizarElemento(estado, muro.id, muro.puntos, v).then(function (elem) {
+        muro.grosor_cm = elem.grosor_cm;
+        render(estado);
+      }).catch(function () {});
+    };
+  }
+
+  function ocultarCarta() {
+    var carta = $("plano-editor-carta");
+    if (carta) CotizatStyles.set(carta, "display", "none");
+  }
+
+  function actualizarCarta(estado) {
+    if (estado.seleccionado == null) return;
+    var muro = muroPorId(estado, estado.seleccionado);
+    if (muro) mostrarCarta(estado, muro);
+  }
+
+  // ---------- detección de estancias ----------
+
+  function detectarEstancias(estado) {
+    var btn = $("plano-editor-detectar");
+    if (btn) { btn.disabled = true; btn.textContent = "Detectando…"; }
+    pedirJson(normUrl(API.detectar, { plano_id: estado.plano.id }), "POST")
+      .then(function (res) {
+        if (!res.ok || !res.data || !res.data.ok) {
+          throw new Error((res.data && res.data.error) || "No se pudo analizar el plano.");
+        }
+        return res.data;
+      })
+      .then(function (data) {
+        return refrescarMediciones(estado).then(function (meds) {
+          var msg;
+          if ((data.nuevas || 0) === 0 && (data.omitidas || 0) > 0) {
+            msg = "Las estancias ya estaban detectadas.";
           } else {
-            alert((data && data.error) || "No se pudo analizar el plano.");
+            msg = (data.nuevas || 0) + " estancia(s) detectada(s).";
           }
-        })
-        .catch(function () { alert("Error de red."); });
+          if (btn) btn.textContent = "✨ Detectar estancias";
+          return { meds: meds, msg: msg };
+        });
+      })
+      .then(function (r) {
+        if (window.PlanosAPI && window.PlanosAPI.aviso) window.PlanosAPI.aviso(r.msg, "ok");
+        var primera = r.meds.find(function (m) { return m.tipo === "area"; });
+        if (primera && window.PlanosAPI && window.PlanosAPI.seleccionarEstancia) {
+          window.PlanosAPI.seleccionarEstancia(primera);
+        }
+      })
+      .catch(function (err) {
+        if (window.PlanosAPI && window.PlanosAPI.aviso) window.PlanosAPI.aviso(err.message, "error");
+      })
+      .finally(function () {
+        if (btn) { btn.disabled = false; if (btn.textContent === "Detectando…") btn.textContent = "✨ Detectar estancias"; }
+      });
+  }
+
+  function refrescarMediciones(estado) {
+    if (window.PlanosAPI && window.PlanosAPI.refrescar) {
+      return window.PlanosAPI.refrescar().then(function (meds) {
+        estado.mediciones = meds || [];
+        render(estado);
+        return estado.mediciones;
+      });
+    }
+    return Promise.resolve(estado.mediciones || []);
+  }
+
+  // ---------- eventos ----------
+
+  function muroEnPunto(estado, p) {
+    var tol = 12 / estado.zoom;
+    var mejor = null, mejorD = tol;
+    estado.elementos.forEach(function (e) {
+      if (e.tipo !== "muro" || e.puntos.length < 2) return;
+      var a = e.puntos[0], b = e.puntos[1];
+      var dx = b[0] - a[0], dy = b[1] - a[1];
+      var l2 = dx * dx + dy * dy;
+      var t = l2 ? Math.max(0, Math.min(1, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / l2)) : 0;
+      var qx = a[0] + t * dx, qy = a[1] + t * dy;
+      var d = dist(p, [qx, qy]);
+      if (d < mejorD) { mejorD = d; mejor = e; }
     });
-    $("plano-editor-limpiar").addEventListener("click", function () {
-      estado.puntosActuales = [];
-      pintar(estado, cont);
+    return mejor;
+  }
+
+  function medicionEnPunto(estado, p) {
+    var areas = estado.mediciones.filter(function (m) {
+      return m.tipo === "area" && (m.puntos || []).length >= 3;
     });
-    $("plano-editor-cerrar").addEventListener("click", function () {
-      panel.remove();
-      var lienzo = document.getElementById("plano-editor-canvas");
-      if (lienzo) lienzo.remove();
-    });
+    areas.sort(function (a, b) { return areaPx(a) - areaPx(b); });
+    for (var i = 0; i < areas.length; i++) {
+      if (puntoEnPoligono(p, areas[i].puntos)) return areas[i];
+    }
+    return null;
+  }
+
+  function areaPx(m) {
+    var pts = m.puntos || [];
+    if (pts.length < 3) return 0;
+    var s = 0;
+    for (var i = 0; i < pts.length; i++) {
+      var p = pts[i], q = pts[(i + 1) % pts.length];
+      s += p[0] * q[1] - q[0] * p[1];
+    }
+    return Math.abs(s) / 2;
+  }
+
+  function puntoEnPoligono(p, poly) {
+    var inside = false;
+    for (var i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+      var xi = poly[i][0], yi = poly[i][1], xj = poly[j][0], yj = poly[j][1];
+      if (((yi > p[1]) !== (yj > p[1])) && (p[0] < (xj - xi) * (p[1] - yi) / ((yj - yi) || 1e-12) + xi)) {
+        inside = !inside;
+      }
+    }
+    return inside;
+  }
+
+  function onClick(estado, ev) {
+    var c = lienzo();
+    var rect = c.getBoundingClientRect();
+    var cx = ev.clientX - rect.left, cy = ev.clientY - rect.top;
+    var mundo = mundoDesdePantalla(estado, cx, cy);
+    var herr = estado.herramienta;
+
+    if (herr === "muro") {
+      var r = snapPunto(estado, mundo, ev.shiftKey);
+      var p = r.p;
+      if (!estado.puntoInicio) {
+        estado.puntoInicio = p;
+        estado.primerPunto = p.slice();
+      } else {
+        // cierre de cadena: si cae sobre el primer punto, cierra.
+        if (cerca(p, estado.primerPunto, 10 / estado.zoom)) {
+          guardarMuro(estado, [estado.puntoInicio.slice(), estado.primerPunto.slice()], estado.grosorCm)
+            .then(function (elem) { estado.elementos.push(elem); render(estado); })
+            .catch(function (err) { alert(err.message); });
+          estado.puntoInicio = estado.primerPunto = null;
+        } else if (dist(p, estado.puntoInicio) > 1) {
+          var ini = estado.puntoInicio.slice();
+          var destino = p.slice();
+          estado.puntoInicio = destino; // continúa la cadena sin esperar a la red
+          guardarMuro(estado, [ini, destino], estado.grosorCm)
+            .then(function (elem) {
+              estado.elementos.push(elem);
+              ampliarLienzo(estado);
+              render(estado);
+            })
+            .catch(function (err) { alert(err.message); });
+        }
+      }
+      return;
+    }
+
+    if (herr === "seleccionar") {
+      var muro = muroEnPunto(estado, mundo);
+      if (muro) {
+        estado.seleccionado = muro.id;
+        mostrarCarta(estado, muro);
+      } else {
+        var med = medicionEnPunto(estado, mundo);
+        if (med && window.PlanosAPI && window.PlanosAPI.seleccionarEstancia) {
+          window.PlanosAPI.seleccionarEstancia(med);
+        }
+        estado.seleccionado = null;
+        ocultarCarta();
+      }
+      render(estado);
+      return;
+    }
+
+    if (herr === "puerta" || herr === "ventana") {
+      var m = muroEnPunto(estado, mundo);
+      if (!m || m.puntos.length < 2) return;
+      var sub = herr;
+      var anchoCm = herr === "puerta" ? 90 : 120;
+      guardarHueco(estado, [[mundo[0], mundo[1], sub, anchoCm, 20]], sub)
+        .then(function (elem) { estado.elementos.push(elem); render(estado); })
+        .catch(function (err) { alert(err.message); });
+      return;
+    }
+  }
+
+  function onDblClick(estado) {
+    if (estado.herramienta === "muro") {
+      estado.puntoInicio = estado.primerPunto = null;
+      render(estado);
+    }
+  }
+
+  function onKeyDown(estado, ev) {
+    if (ev.key === "Escape") {
+      estado.puntoInicio = estado.primerPunto = null;
+      estado.seleccionado = null;
+      ocultarCarta();
+      render(estado);
+      return;
+    }
+    if (ev.key === "Enter") {
+      estado.puntoInicio = estado.primerPunto = null;
+      render(estado);
+      return;
+    }
+    if ((ev.key === "Delete" || ev.key === "Backspace") && estado.seleccionado != null) {
+      var id = estado.seleccionado;
+      if (!confirm("¿Borrar este muro?")) return;
+      eliminarElemento(estado, id).then(function () {
+        estado.elementos = estado.elementos.filter(function (e) { return e.id !== id; });
+        estado.seleccionado = null;
+        ocultarCarta();
+        render(estado);
+      });
+      return;
+    }
+    if (ev.key.toLowerCase() === "m") { cambiarHerramienta(estado, "muro"); }
+    if (ev.key.toLowerCase() === "s") { cambiarHerramienta(estado, "seleccionar"); }
+  }
+
+  function cambiarHerramienta(estado, h) {
+    estado.herramienta = h;
+    var panel = $("plano-editor-panel");
+    if (panel) {
+      panel.querySelectorAll("[data-herr]").forEach(function (b) {
+        b.classList.toggle("active", b.dataset.herr === h);
+      });
+    }
+    if (h !== "muro") estado.puntoInicio = estado.primerPunto = null;
+    if (h !== "seleccionar") { estado.seleccionado = null; ocultarCarta(); }
+    actualizarAyuda(estado);
+    render(estado);
   }
 
   function iniciar(estado) {
-    if (!panelDisponible() && !document.getElementById("canvas-container")) return;
-    construirPanel(estado);
-    var cont = getContenedorActivo();
-    var lienzo = asegurarLienzo(cont);
-    if (window.CotizatStyles) {
-      CotizatStyles.set(lienzo, "pointerEvents", "auto");
-    }
-    lienzo.addEventListener("click", function (ev) { onCanvasClick(estado, cont, ev); });
-    lienzo.addEventListener("dblclick", function (ev) { onCanvasDblClick(estado, cont, ev); });
-    lienzo.addEventListener("mouseup", function (ev) { onCanvasMouseUp(estado, ev); });
-    actualizarEstadoAyuda(estado);
-    pintar(estado, cont);
+    construirUI(estado);
+    var c = lienzo();
+    var cont = contenedor();
+
+    c.addEventListener("click", function (ev) { onClick(estado, ev); });
+    c.addEventListener("dblclick", function (ev) { ev.preventDefault(); onDblClick(estado); });
+    c.addEventListener("contextmenu", function (ev) {
+      ev.preventDefault();
+      estado.puntoInicio = estado.primerPunto = null;
+      render(estado);
+    });
+
+    c.addEventListener("mousemove", function (ev) {
+      var rect = c.getBoundingClientRect();
+      var cx = ev.clientX - rect.left, cy = ev.clientY - rect.top;
+      estado.cursor = mundoDesdePantalla(estado, cx, cy);
+      if (estado.pan) {
+        estado.panX = estado.pan.mundoX0 - cx / estado.zoom;
+        estado.panY = estado.pan.mundoY0 - cy / estado.zoom;
+        render(estado);
+        return;
+      }
+      // snap visual
+      if (estado.herramienta === "muro" && estado.puntoInicio) {
+        var r = snapPunto(estado, estado.cursor, ev.shiftKey);
+        estado.snap = r.snap ? r.p : null;
+      } else {
+        estado.snap = null;
+      }
+      render(estado);
+    });
+    c.addEventListener("mouseleave", function () {
+      estado.cursor = null;
+      estado.snap = null;
+      render(estado);
+    });
+
+    c.addEventListener("mousedown", function (ev) {
+      if (ev.button === 1 || (ev.button === 0 && (ev.shiftKey && estado.herramienta !== "muro"))) {
+        ev.preventDefault();
+        var rect = c.getBoundingClientRect();
+        estado.pan = {
+          mundoX0: estado.panX + (ev.clientX - rect.left) / estado.zoom,
+          mundoY0: estado.panY + (ev.clientY - rect.top) / estado.zoom,
+        };
+      }
+    });
+    window.addEventListener("mouseup", function () { estado.pan = null; });
+
+    c.addEventListener("wheel", function (ev) {
+      ev.preventDefault();
+      var rect = c.getBoundingClientRect();
+      var cx = ev.clientX - rect.left, cy = ev.clientY - rect.top;
+      var mundoAntes = mundoDesdePantalla(estado, cx, cy);
+      var factor = ev.deltaY < 0 ? 1.15 : 1 / 1.15;
+      var nuevoZoom = Math.min(10, Math.max(0.15, estado.zoom * factor));
+      estado.zoom = nuevoZoom;
+      estado.panX = mundoAntes[0] - cx / estado.zoom;
+      estado.panY = mundoAntes[1] - cy / estado.zoom;
+      render(estado);
+    }, { passive: false });
+
+    document.addEventListener("keydown", function (ev) {
+      var t = (ev.target && ev.target.tagName) || "";
+      if (["INPUT", "SELECT", "TEXTAREA"].includes(t)) return;
+      onKeyDown(estado, ev);
+    });
+
+    window.addEventListener("resize", function () { render(estado); });
+
+    // Mediciones iniciales desde el puente.
+    refrescarMediciones(estado);
+    actualizarAyuda(estado);
+    render(estado);
   }
 
   function init() {
-    var plano = findPlanoGlobal();
-    if (!plano) return;
+    if (typeof window === "undefined" || !window.PLANO_ACTIVO) return;
+    var plano = window.PLANO_ACTIVO;
     if (plano.origen !== "dibujado" && plano.origen !== "mixto") return;
+    if (!document.getElementById("canvas-container")) return;
     var estado = new Estado(plano);
     iniciar(estado);
+    window.PlanoEditor = { estado: estado };
   }
-
-  // API expuesta para abrir el editor desde fuera (p. ej. desde el botón
-  // "Crear plano desde cero" del sidebar o la página principal).
-  window.PlanoEditor = {
-    abrir: function (plano) {
-      var estado = new Estado(plano);
-      iniciar(estado);
-    },
-    crearEnBlanco: function (presupuestoId, opts) {
-      opts = opts || {};
-      return fetch(normUrl(API.enBlanco, { presupuesto_id: presupuestoId }), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          nombre: opts.nombre || "Plano sin título",
-          ancho_lienzo_m: opts.ancho || 12,
-          alto_lienzo_m: opts.alto || 8,
-          grosor_tabique_cm: opts.grosor || 10,
-        }),
-      })
-        .then(function (r) { return r.json(); })
-        .then(function (data) {
-          if (!data.ok) throw new Error(data.error || "No se pudo crear el plano.");
-          return data;
-        });
-    },
-  };
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);

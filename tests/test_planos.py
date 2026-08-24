@@ -683,17 +683,32 @@ def test_pdf_del_presupuesto_incluye_anexo_de_planos(monkeypatch):
     assert "Planos y mediciones" in texto  # citado en el índice de anexos
 
 
-def test_detector_reutiliza_el_eje_central_de_tabiques_compartidos():
-    """Dos recintos colindantes no dejan un hueco equivalente al espesor del muro."""
+def test_detector_pega_cada_estancia_a_su_cara_del_tabique():
+    """Cada recinto se pega a su cara del tabique, sin colapsar a un eje central.
+
+    El tabique de la planta sintética mide 8 px y está centrado en x=400 y en
+    y=300. La estancia de la izquierda debe terminar en la cara izquierda del
+    tabique (≈396) y la de la derecha empezar en la cara derecha (≈404): el
+    espesor del muro queda entre ambas, no medio muro dentro de cada una.
+    """
     detecciones = detectar_espacios_plano(_png_planta_sintetica())
     assert len(detecciones) == 4
     izquierda = [d for d in detecciones if d["bbox"][2] < 500]
     derecha = [d for d in detecciones if d["bbox"][0] >= 390]
     assert izquierda and derecha
-    assert {round(d["bbox"][2], 2) for d in izquierda} == {round(d["bbox"][0], 2) for d in derecha}
+    cara_izq = [round(d["bbox"][2], 1) for d in izquierda]
+    cara_der = [round(d["bbox"][0], 1) for d in derecha]
+    # La cara de la izquierda queda pegada al muro y la de la derecha también:
+    # no comparten la misma coordenada (el muro de 8 px vive entre ambas).
+    assert max(cara_izq) < min(cara_der)
+    assert all(390 <= c <= 402 for c in cara_izq)
+    assert all(398 <= c <= 412 for c in cara_der)
+    # Ídem en horizontal: el tabique de y=300 queda entre las caras.
     arriba = [d for d in detecciones if d["bbox"][3] < 400]
     abajo = [d for d in detecciones if d["bbox"][1] >= 250]
-    assert {round(d["bbox"][3], 2) for d in arriba} == {round(d["bbox"][1], 2) for d in abajo}
+    assert max(d["bbox"][3] for d in arriba) < min(d["bbox"][1] for d in abajo)
+    assert all(290 <= d["bbox"][3] <= 302 for d in arriba)
+    assert all(298 <= d["bbox"][1] <= 312 for d in abajo)
 
 
 def test_selector_de_presupuesto_expone_perimetro_suelo_y_paredes(entorno_planos):
