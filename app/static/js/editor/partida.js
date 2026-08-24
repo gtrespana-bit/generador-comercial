@@ -1763,18 +1763,25 @@
       cantInput.className = "partida-cant-input";
       cantWrap.appendChild(cantInput);
       // Acceso rápido premium: traer la cantidad directamente de un plano,
-      // justo al lado de donde se escribe la medición.
+      // justo al lado de donde se escribe la medición. Abre el selector de
+      // planos directamente sobre ESTA partida: sin rodeos por la ficha.
       var btnPlano = editor.FMT.h("button", "partida-cant-plano-btn", "📐");
       btnPlano.type = "button";
       btnPlano.title = "Añadir medición desde plano";
       btnPlano.setAttribute("aria-label", "Añadir medición desde plano");
       btnPlano.addEventListener("click", function (evt) {
         evt.stopPropagation();
-        if (typeof editorInst.abrirEditorPartida !== "function") return;
-        editorInst.abrirEditorPartida(partidaWrap, "presupuesto");
-        setTimeout(function () {
-          if (typeof editorInst.abrirSelectorPlanos === "function") editorInst.abrirSelectorPlanos();
-        }, 0);
+        evt.preventDefault();
+        var unidadEl = partidaWrap.querySelector('[data-f="p_unidad"]');
+        var unidadLinea = (unidadEl && unidadEl.value) || datos.unidad || "";
+        var nombreEl = partidaWrap.querySelector('[data-f="p_nombre"]');
+        if (typeof editorInst.abrirSelectorPlanos === "function") {
+          editorInst.abrirSelectorPlanos({ destinoWrap: partidaWrap, unidad: unidadLinea, nombrePartida: (nombreEl && nombreEl.value) || "" });
+        } else if (typeof editorInst.abrirEditorPartida === "function") {
+          // Respaldo: si el selector no estuviera disponible, abre la ficha
+          // en la pestaña de cantidad, donde está el mismo botón.
+          editorInst.abrirEditorPartida(partidaWrap, "presupuesto");
+        }
       });
       cantWrap.appendChild(btnPlano);
       cantCell.appendChild(cantWrap);
@@ -2496,13 +2503,15 @@
       btnAddPlano.type = "button";
       btnAddPlano.title = "Seleccionar perímetros, suelos o paredes del visor de planos";
       btnAddPlano.addEventListener("click", function () {
-        // El selector reutiliza el mismo modal que la ficha completa para que
-        // la medición termine en esta partida y no en otra.
-        if (typeof editorInst.abrirEditorPartida !== "function") return;
-        editorInst.abrirEditorPartida(partidaWrap, "presupuesto");
-        setTimeout(function () {
-          if (typeof editorInst.abrirSelectorPlanos === "function") editorInst.abrirSelectorPlanos();
-        }, 0);
+        // El selector escribe directamente en el desglose de ESTA partida:
+        // un paso menos y sin ambigüedad sobre el destino de la medida.
+        var unidadEl = partidaWrap.querySelector('[data-f="p_unidad"]');
+        var nombreEl = partidaWrap.querySelector('[data-f="p_nombre"]');
+        if (typeof editorInst.abrirSelectorPlanos === "function") {
+          editorInst.abrirSelectorPlanos({ destinoWrap: partidaWrap, unidad: (unidadEl && unidadEl.value) || "", nombrePartida: (nombreEl && nombreEl.value) || "" });
+        } else if (typeof editorInst.abrirEditorPartida === "function") {
+          editorInst.abrirEditorPartida(partidaWrap, "presupuesto");
+        }
       });
       medHead.appendChild(btnAddPlano);
       medHead.appendChild(btnAddMed);
@@ -2824,6 +2833,18 @@
       crearPartida: crearPartida,
       reemplazarPartida: reemplazarPartida,
       crearMedicion: crearMedicion,
+      // Inserta una medición calculada (p. ej. desde un plano) en el desglose
+      // de una partida ya renderizada, recalcula importes al momento y deja
+      // el desglose abierto para que el usuario VEA la medida añadida.
+      agregarMedicion: function (partidaWrap, datos, editorInst) {
+        var ed = editorInst || editor || window.EDITOR || {};
+        crearMedicion(partidaWrap, datos, ed);
+        var det = partidaWrap.querySelector(".partida-details");
+        var row = partidaWrap.querySelector(".partida-row");
+        if (det && !det.classList.contains("open")) det.classList.add("open");
+        partidaWrap.classList.add("expanded");
+        if (row && !row.classList.contains("expanded")) row.classList.add("expanded");
+      },
       crearResumenProducto: crearResumenProducto,
       crearDetalles: crearDetalles,
       filasDesdeCostesPartida: filasDesdeCostesPartida,

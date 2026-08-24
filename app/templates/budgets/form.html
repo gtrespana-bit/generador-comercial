@@ -1005,7 +1005,7 @@
   {% for c in categorias %}<option value="{{ c }}"></option>{% endfor %}
 </datalist>
 <script nonce="{{ request.state.csp_nonce }}">
-  window.BUDGET_ID = {{ budget_id if budget_id else 'null' }};
+  window.BUDGET_ID = {{ (budget_id or (presupuesto.id if presupuesto else none)) | tojson }};
   // Borrador del autoguardado persistido en el servidor (solo si es más
   // reciente que el último guardado del presupuesto).
   window.BORRADOR_SERVIDOR = {{ borrador_servidor | tojson if borrador_servidor else 'null' }};
