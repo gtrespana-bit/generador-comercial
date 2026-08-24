@@ -17,6 +17,15 @@
   </nav>
 </header>
 
+{% if esquema_planos_completo is defined and not esquema_planos_completo %}
+<div class="alert alert-warning" role="status">
+  <strong>Actualización de planos pendiente.</strong>
+  Puedes consultar, calibrar y medir los planos existentes. Crear planos,
+  cambiar el grosor o usar el dibujo vectorial se habilitará cuando termine la
+  migración de datos.
+</div>
+{% endif %}
+
 {% if planos|length == 0 %}
 <section class="planos-first-upload card">
   <span class="planos-first-icon" aria-hidden="true">⌑</span>
@@ -34,7 +43,7 @@
       <label for="plano-archivo">Archivo</label>
       <input type="file" id="plano-archivo" accept=".png,.jpg,.jpeg,.webp,.pdf" required>
     </div>
-    <button type="submit" class="btn btn-primary" id="btn-upload-plano">Subir y abrir plano</button>
+    <button type="submit" class="btn btn-primary" id="btn-upload-plano" {% if esquema_planos_completo is defined and not esquema_planos_completo %}disabled title="Migración de planos pendiente"{% endif %}>Subir y abrir plano</button>
   </form>
   <div id="upload-error" class="alert alert-error cotizat-hidden"></div>
 </section>
@@ -79,7 +88,7 @@
           <label for="plano-archivo">Archivo</label>
           <input type="file" id="plano-archivo" accept=".png,.jpg,.jpeg,.webp,.pdf" required>
         </div>
-        <button type="submit" class="btn btn-sm btn-primary" id="btn-upload-plano">Subir plano</button>
+        <button type="submit" class="btn btn-sm btn-primary" id="btn-upload-plano" {% if esquema_planos_completo is defined and not esquema_planos_completo %}disabled title="Migración de planos pendiente"{% endif %}>Subir plano</button>
       </form>
       <div id="upload-error" class="alert alert-error cotizat-hidden"></div>
     </details>
@@ -105,7 +114,7 @@
           <label for="plano-blanco-grosor">Grosor de tabique (cm)</label>
           <input type="number" id="plano-blanco-grosor" step="0.1" min="3" max="40" value="10">
         </div>
-        <button type="submit" class="btn btn-sm btn-primary" id="btn-crear-plano-blanco">Crear y abrir editor</button>
+        <button type="submit" class="btn btn-sm btn-primary" id="btn-crear-plano-blanco" {% if esquema_planos_completo is defined and not esquema_planos_completo %}disabled title="Migración de planos pendiente"{% endif %}>Crear y abrir editor</button>
         <div id="plano-blanco-error" class="alert alert-error cotizat-hidden"></div>
       </form>
     </details>
@@ -116,7 +125,7 @@
       <div class="planos-grosor-row">
         <input type="number" id="plano-grosor-cm" step="0.1" min="3" max="40" value="{{ plano_inicial.grosor_tabique_cm if plano_inicial else 10 }}">
         <span>cm</span>
-        <button type="button" class="btn btn-xs" id="btn-guardar-grosor">Aplicar</button>
+        <button type="button" class="btn btn-xs" id="btn-guardar-grosor" {% if esquema_planos_completo is defined and not esquema_planos_completo %}disabled title="Migración de planos pendiente"{% endif %}>Aplicar</button>
       </div>
       <div id="plano-grosor-status" class="planos-save-status"></div>
     </details>

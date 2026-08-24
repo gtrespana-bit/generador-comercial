@@ -25,6 +25,8 @@ from app.models import (
     asegurar_config,
     asegurar_organizacion_local,
 )
+from app.routers import planos as router_planos
+from app.services.planos_compat import ESQUEMA_PLANOS_LEGACY
 
 
 def _png_plano_con_habitacion():
@@ -251,3 +253,116 @@ def test_crear_y_actualizar_y_eliminar_elemento(presupuesto_creado):
         # Comprobación final: el plano no tiene ya elementos
         resp = client.get(f"/planos/{plano_id}/datos")
         assert resp.json()["elementos"] == []
+
+
+def test_rutas_legacy_siguen_disponibles_y_escrituras_nuevas_devuelven_503(
+    presupuesto_creado,
+    monkeypatch,
+):
+    """Galerías, selector, datos, calibración y exportes sobreviven al desfase."""
+    with TestClient(app) as client:
+        respuesta = client.post(
+            f"/presupuestos/{presupuesto_creado}/planos/upload",
+            data={"nombre": "Plano legacy existente"},
+            files={
+                "archivo": (
+                    "legacy.png",
+                    _png_plano_con_habitacion(),
+                    "image/png",
+                )
+            },
+        )
+        assert respuesta.status_code == 200, respuesta.text
+        plano_id = respuesta.json()["plano_id"]
+        respuesta = client.post(
+            f"/planos/{plano_id}/mediciones",
+            json={
+                "tipo": "lineal",
+                "etiqueta": "Muro existente",
+                "puntos": [[0, 0], [100, 0]],
+                "color": "#2563eb",
+            },
+        )
+        assert respuesta.status_code == 200, respuesta.text
+
+        # Desde aquí cada petición cree que ve exactamente el esquema físico
+        # anterior a f1b2c3d4e5a6. Las opciones ``defer`` siguen actuando sobre
+        # el ORM real, aunque SQLite conserve las columnas para el resto del CI.
+        monkeypatch.setattr(
+            router_planos,
+            "detectar_esquema_planos",
+            lambda _db: ESQUEMA_PLANOS_LEGACY,
+        )
+
+        listado = client.get(f"/presupuestos/{presupuesto_creado}/planos")
+        assert listado.status_code == 200, listado.text
+        assert "Actualización de planos pendiente" in listado.text
+        assert "Plano legacy existente" in listado.text
+
+        galeria = client.get("/planos")
+        assert galeria.status_code == 200, galeria.text
+        assert "Actualización de planos pendiente" in galeria.text
+
+        selector = client.get(
+            f"/presupuestos/{presupuesto_creado}/planos/mediciones-selector"
+        )
+        assert selector.status_code == 200, selector.text
+        assert selector.json()["planos"][0]["grosor_tabique_cm"] == 10.0
+
+        datos = client.get(f"/planos/{plano_id}/datos")
+        assert datos.status_code == 200, datos.text
+        assert datos.json()["plano"]["origen"] == "subido"
+        assert datos.json()["elementos"] == []
+
+        calibracion = client.post(
+            f"/planos/{plano_id}/calibrar",
+            json={
+                "distancia_px": 100,
+                "distancia_real": 1.0,
+                "unidad": "m",
+                "altura_libre_m": 2.5,
+                "grosor_tabique_cm": 18,
+            },
+        )
+        assert calibracion.status_code == 200, calibracion.text
+        # La calibración histórica se guarda; solo se omite el grosor porque
+        # esa columna no existe en el esquema simulado.
+        assert calibracion.json()["escala_px_por_metro"] == 100.0
+        assert calibracion.json()["grosor_tabique_cm"] == 10.0
+
+        csv = client.get(f"/presupuestos/{presupuesto_creado}/planos/exportar")
+        assert csv.status_code == 200, csv.text
+        assert csv.headers["content-type"].startswith("text/csv")
+        dxf = client.get(f"/planos/{plano_id}/exportar")
+        assert dxf.status_code == 200, dxf.text
+        assert dxf.headers["content-type"].startswith("application/dxf")
+
+        respuestas_bloqueadas = (
+            client.post(
+                f"/presupuestos/{presupuesto_creado}/planos/upload",
+                data={"nombre": "No disponible"},
+                files={
+                    "archivo": (
+                        "nuevo.png",
+                        _png_plano_con_habitacion(),
+                        "image/png",
+                    )
+                },
+            ),
+            client.post(
+                f"/presupuestos/{presupuesto_creado}/planos/blanco",
+                json={"nombre": "No disponible"},
+            ),
+            client.post(
+                f"/planos/{plano_id}/grosor",
+                json={"grosor_tabique_cm": 18},
+            ),
+            client.post(
+                f"/planos/{plano_id}/elementos",
+                json={"tipo": "muro", "puntos": [[0, 0], [10, 0]]},
+            ),
+        )
+        for bloqueada in respuestas_bloqueadas:
+            assert bloqueada.status_code == 503, bloqueada.text
+            assert bloqueada.json()["codigo"] == "migracion_planos_pendiente"
+            assert bloqueada.headers["retry-after"] == "300"
