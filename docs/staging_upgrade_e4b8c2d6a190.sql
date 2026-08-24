@@ -13,6 +13,10 @@
 -- Comprueba primero la versión con:
 --   SELECT version_num FROM public.alembic_version;
 --
+-- Si la guarda responde «Se esperaba alembic_version en c0d1e2f3a4b5», tu base
+-- está más atrás: aplica primero docs/staging_upgrade_c0d1e2f3a4b5.sql
+-- (hotfix de permisos de planos, b2c3d4e5f6a7 → c0d1e2f3a4b5) y vuelve aquí.
+--
 -- Va dentro de una transacción: si algo falla, no se aplica a medias.
 
 BEGIN;
