@@ -3,6 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  {# La etiqueta GA4 va aquí, antes del CSS crítico: el detector de Google
+     busca gtag.js en los primeros KB y 10 KB de CSS lo tapaban. #}
+  {% include "_ga.html" %}
   {# El Speed Index de ~7 s no era la red: el filmstrip estaba en blanco
      hasta que public.css (107 KB) se parseaba y se maquetaban ~1.200 nodos
      (Style & Layout ~1,9 s). Diferir TODA la hoja, sin CSS del primer
@@ -22,6 +25,7 @@
   })();
   </script>
   <noscript><link rel="stylesheet" href="{{ 'css/public.css' | asset }}"></noscript>
+  {% set seo_skip_ga = true %}
   {% include "_seo_head.html" %}
   <script nonce="{{ request.state.csp_nonce }}" defer src="{{ 'js/pais_selector.js' | asset }}"></script>
   <script nonce="{{ request.state.csp_nonce }}" defer src="{{ 'js/landing-tour.js' | asset }}"></script>

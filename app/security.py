@@ -12,6 +12,7 @@ from starlette.types import ASGIApp, Message, Receive, Scope, Send
 from .analytics import (
     GA_COOKIE_EVENTO,
     csp_connect_src_extra,
+    csp_img_src_extra,
     csp_script_src_extra,
     ga_measurement_id,
 )
@@ -354,7 +355,9 @@ class WebSecurityMiddleware:
                         + f"style-src 'self' 'nonce-{nonce}'; ".encode("ascii")
                         + b"style-src-attr 'none'; "
                         + b"font-src 'self' data:; "
-                        + b"img-src 'self' data: blob:; "
+                        + b"img-src 'self' data: blob:"
+                        + csp_img_src_extra().encode("ascii")
+                        + b"; "
                         + b"connect-src 'self'"
                         + csp_connect_src_extra().encode("ascii")
                         + b"; frame-src 'self' blob:"
