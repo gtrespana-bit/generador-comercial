@@ -140,6 +140,90 @@ CUERPO_PAIS: dict[str, list[tuple[str, list[str]]]] = {
             ],
         ),
     ],
+    "PA": [
+        (
+            "Presupuestos y APU en dólares para Panamá",
+            [
+                "Panamá cotiza en USD (balboa PAB paridad 1:1). CotizaT nace en dólares, con RUC e ITBMS 7 %, y el catálogo habla concreto, repello, cielo raso, zócalo y plomero. Cada partida trae APU editable: rendimientos y precios de recursos con referencias nacionales de Panamá.",
+                "El flujo es el de un remodelador en Ciudad de Panamá, San Miguelito o David: armas el presupuesto, lo mandas por WhatsApp y, si hay cambios, reenvías una versión con el resumen del total anterior y el nuevo. Precios de referencia: cemento $8.25 por saco 42.5kg, bloque $0.95, arena $34/m3, concreto 210 $125/m3.",
+            ],
+        ),
+        (
+            "Sin factura electrónica DGI, con ITBMS 7 %",
+            [
+                "Los documentos son comerciales. No sustituyen la factura electrónica que te exija la DGI. El ITBMS 7 % del presupuesto lo configuras tú; no es asesoramiento tributario.",
+            ],
+        ),
+        (
+            "Dólar nativo y formaleta, no conversión improvisada",
+            [
+                "Panamá ya cotiza en USD. El espacio no nace en otra moneda para luego «convertir». El RUC y el ITBMS 7 % se configuran al registrarte. Terminología local: repello (no friso), zócalo (no rodapié), formaleta (no encofrado), varilla (no cabilla).",
+            ],
+        ),
+    ],
+    "SV": [
+        (
+            "Presupuestos y APU en dólares para El Salvador",
+            [
+                "El Salvador cotiza en USD desde 2001. CotizaT nace en dólares, con NIT e IVA 13 %, y el catálogo habla concreto, repello, cielo falso, zócalo y fontanero. Cada partida trae APU editable: rendimientos y precios de recursos con referencias nacionales de El Salvador.",
+                "El flujo es el de un remodelador en San Salvador, Santa Ana o San Miguel: armas el presupuesto, lo mandas por WhatsApp y, si hay cambios, reenvías una versión con el resumen del total anterior y el nuevo. Precios de referencia: cemento $8.73 por saco 42.5kg (CASALCO), bloque $0.40, arena $35/m3, grava $45.05/m3, concreto 210 $135.35/m3.",
+            ],
+        ),
+        (
+            "Sin factura del Ministerio de Hacienda, con IVA 13 %",
+            [
+                "Los documentos son comerciales. No sustituyen la factura electrónica que te exija Hacienda. El IVA 13 % del presupuesto lo configuras tú; no es asesoramiento tributario.",
+            ],
+        ),
+        (
+            "Dólar nativo y tabla yeso, no conversión improvisada",
+            [
+                "El Salvador ya cotiza en USD. El espacio no nace en otra moneda para luego «convertir». El NIT y el IVA 13 % se configuran al registrarte. Terminología local: repello (no friso), cielo falso (no cielo raso), zócalo (no rodapié), fontanero (no plomero), tabla yeso (no drywall), varilla / hierro corrugado (no cabilla).",
+            ],
+        ),
+    ],
+    "CL": [
+        (
+            "Presupuestos y APU en pesos chilenos para Chile",
+            [
+                "Chile cotiza en CLP. CotizaT nace en pesos chilenos, con RUT e IVA 19 %, y el catálogo habla hormigón, estuco, cielo falso, guardapolvo y gasfíter. Cada partida trae APU editable: rendimientos y precios de recursos con referencias nacionales de Chile.",
+                "El flujo es el de un remodelador en Santiago, Valparaíso o Concepción: armas el presupuesto, lo mandas por WhatsApp y, si hay cambios, reenvías una versión con el resumen del total anterior y el nuevo. Precios de referencia: cemento $4.790 por saco 25kg (Sodimac Melón), bloque $1.840, arena $33.190/m3, hormigón H25 $110.000/m3.",
+            ],
+        ),
+        (
+            "Sin factura del SII, con IVA 19 %",
+            [
+                "Los documentos son comerciales. No sustituyen la factura electrónica que te exija el SII. El IVA 19 % del presupuesto lo configuras tú; no es asesoramiento tributario.",
+            ],
+        ),
+        (
+            "Pesos chilenos y moldaje, no conversión improvisada",
+            [
+                "Chile ya cotiza en CLP. El espacio no nace en USD para luego «convertir» con una tasa inventada: nace en CLP con tasa verificada 925.90 CLP/USD. Terminología local: hormigón (no concreto), estuco (no friso), cielo falso (no cielo raso), guardapolvo (no rodapié), gasfíter (no plomero), moldaje (no encofrado), fierro (no cabilla), ampolleta (no bombillo), volcanita (no drywall).",
+            ],
+        ),
+    ],
+    "AR": [
+        (
+            "Presupuestos y APU en pesos argentinos para Argentina",
+            [
+                "Argentina cotiza en ARS. CotizaT nace en pesos argentinos, con CUIT e IVA 21 %, y el catálogo habla hormigón, revoque, cielorraso, zócalo y plomero. Cada partida trae APU editable: rendimientos y precios de recursos con referencias nacionales de Argentina.",
+                "El flujo es el de un remodelador en Buenos Aires, Córdoba o Rosario: armas el presupuesto, lo mandas por WhatsApp y, si hay cambios, reenvías una versión con el resumen del total anterior y el nuevo. Precios de referencia: cemento $11.433 por bolsa 50kg (Loma Negra/Holcim), bloque $1.500, arena $33.500/m3, hormigón H21 $168.478/m3.",
+            ],
+        ),
+        (
+            "Sin factura AFIP, con IVA 21 %",
+            [
+                "Los documentos son comerciales. No sustituyen la factura electrónica que te exija AFIP. El IVA 21 % del presupuesto lo configuras tú; no es asesoramiento tributario. El CUIT sale en el PDF.",
+            ],
+        ),
+        (
+            "Pesos argentinos y Durlock, no conversión improvisada",
+            [
+                "Argentina ya cotiza en ARS. El espacio no nace en USD para luego «convertir» con una tasa inventada: nace en ARS con tasa verificada 1497.38 ARS/USD. Terminología local: hormigón (no concreto), revoque (no friso), cielorraso (no cielo raso), zócalo (no rodapié), plomero (también sanitarista), hierro redondo / malla sima / pastina (no cabilla / electrosoldada / fragüe), mesada (no mesón), canilla (no grifo), térmica (no breaker), Durlock (no drywall), placard (no closet).",
+            ],
+        ),
+    ],
     "ES": [
         (
             "Software de presupuestos para reformas y obra en España",
@@ -503,6 +587,78 @@ HUB_EXTRA: dict[tuple[str, str], list[tuple[str, str]]] = {
             "Pack de estancia, tumbado y enlucido, productos con foto. Si hay cambios, reenvías total anterior y total nuevo. El cliente no se registra.",
         ),
     ],
+    ("PA", "software-presupuestos"): [
+        (
+            "Software de presupuestos en dólares para Panamá",
+            "Panamá ya cotiza en USD (PAB paridad 1:1). El espacio nace en dólares, con RUC e ITBMS 7 %, no en otra moneda «para convertir después». Concreto, repello, cielo raso, zócalo, plomero, formaleta.",
+        ),
+    ],
+    ("PA", "apu"): [
+        (
+            "APU en USD, con RUC e ITBMS 7 %",
+            "Descompuestos editables en dólares con referencias de Panamá: cemento $8.25/saco, bloque $0.95, arena $34/m3. El ITBMS 7 % del documento lo pones tú. No emite factura DGI.",
+        ),
+    ],
+    ("PA", "remodelacion"): [
+        (
+            "Reforma en Ciudad de Panamá o David, PDF por WhatsApp",
+            "Pack de estancia, repello y cielo raso, productos con foto. Si hay cambios, reenvías total anterior y total nuevo. El cliente no se registra.",
+        ),
+    ],
+    ("SV", "software-presupuestos"): [
+        (
+            "Software de presupuestos en dólares para El Salvador",
+            "El Salvador ya cotiza en USD desde 2001. El espacio nace en dólares, con NIT e IVA 13 %, no en otra moneda «para convertir después». Concreto, repello, cielo falso, zócalo, fontanero, tabla yeso.",
+        ),
+    ],
+    ("SV", "apu"): [
+        (
+            "APU en USD, con NIT e IVA 13 %",
+            "Descompuestos editables en dólares con referencias de El Salvador: cemento $8.73/saco CASALCO, bloque $0.40, arena $35/m3, concreto $135.35/m3. El IVA 13 % lo pones tú. No emite factura Hacienda.",
+        ),
+    ],
+    ("SV", "remodelacion"): [
+        (
+            "Reforma en San Salvador o Santa Ana, PDF por WhatsApp",
+            "Pack de estancia, repello y cielo falso, productos con foto. Si hay cambios, reenvías total anterior y total nuevo. El cliente no se registra.",
+        ),
+    ],
+    ("CL", "software-presupuestos"): [
+        (
+            "Software de presupuestos en pesos chilenos para Chile",
+            "Chile ya cotiza en CLP, con RUT e IVA 19 %. El espacio nace en CLP, no en USD «para convertir después». Hormigón, estuco, cielo falso, guardapolvo, gasfíter, moldaje, fierro.",
+        ),
+    ],
+    ("CL", "apu"): [
+        (
+            "APU en CLP, con RUT e IVA 19 %",
+            "Descompuestos editables en pesos chilenos con referencias de Chile: cemento $4.790/saco 25kg, bloque $1.840, arena $33.190/m3, hormigón $110.000/m3. El IVA 19 % lo pones tú. No emite factura SII.",
+        ),
+    ],
+    ("CL", "remodelacion"): [
+        (
+            "Reforma en Santiago o Concepción, PDF por WhatsApp",
+            "Pack de estancia, estuco y cielo falso, productos con foto. Si hay cambios, reenvías total anterior y total nuevo. El cliente no se registra.",
+        ),
+    ],
+    ("AR", "software-presupuestos"): [
+        (
+            "Software de presupuestos en pesos argentinos para Argentina",
+            "Argentina ya cotiza en ARS, con CUIT e IVA 21 %. El espacio nace en ARS, no en USD «para convertir después». Hormigón, revoque, cielorraso, zócalo, plomero, hierro.",
+        ),
+    ],
+    ("AR", "apu"): [
+        (
+            "APU en ARS, con CUIT e IVA 21 %",
+            "Descompuestos editables en pesos argentinos con referencias de Argentina: cemento $11.433/bolsa 50kg, bloque $1.500, arena $33.500/m3, hormigón H21 $168.478/m3. El IVA 21 % lo pones tú. No emite factura AFIP.",
+        ),
+    ],
+    ("AR", "remodelacion"): [
+        (
+            "Reforma en Buenos Aires o Córdoba, PDF por WhatsApp",
+            "Pack de estancia, revoque y cielorraso, productos con foto. Si hay cambios, reenvías total anterior y total nuevo. El cliente no se registra.",
+        ),
+    ],
     ("ES", "software-presupuestos"): [
         (
             "Presupuestar reformas en euros, con NIF e IVA",
@@ -553,6 +709,54 @@ FAQ_HUB: dict[tuple[str, str], list[dict]] = {
         {
             "q": "¿Nace en dólares o convierte desde otra moneda?",
             "a": "Nace en USD. Ecuador cotiza en dólares; no hay una conversión improvisada al registrarte.",
+        },
+    ],
+    ("PA", "software-presupuestos"): [
+        {
+            "q": "¿Nace en dólares o convierte desde otra moneda?",
+            "a": "Nace en USD. Panamá cotiza en dólares (PAB paridad 1:1); no hay conversión improvisada al registrarte.",
+        },
+    ],
+    ("PA", "apu"): [
+        {
+            "q": "¿Los precios del APU son de mercado panameño?",
+            "a": "Sí: cemento $8.25/saco, bloque $0.95, arena $34/m3, concreto 210 $125/m3 con fuentes de Panamá, más 382 referencias derivadas de canasta nacional en USD.",
+        },
+    ],
+    ("SV", "software-presupuestos"): [
+        {
+            "q": "¿Nace en dólares o convierte desde otra moneda?",
+            "a": "Nace en USD. El Salvador cotiza en dólares desde 2001; no hay conversión improvisada al registrarte.",
+        },
+    ],
+    ("SV", "apu"): [
+        {
+            "q": "¿Los precios del APU son de mercado salvadoreño?",
+            "a": "Sí: cemento $8.73/saco CASALCO, bloque $0.40, arena $35/m3, grava $45.05/m3, concreto $135.35/m3 con fuentes de El Salvador, más referencias derivadas de canasta nacional en USD.",
+        },
+    ],
+    ("CL", "software-presupuestos"): [
+        {
+            "q": "¿Nace en pesos chilenos o convierte desde dólares?",
+            "a": "Nace en CLP. Chile cotiza en pesos chilenos; no hay conversión improvisada al registrarte. Tasa verificada 925.90 CLP/USD.",
+        },
+    ],
+    ("CL", "apu"): [
+        {
+            "q": "¿Los precios del APU son de mercado chileno?",
+            "a": "Sí: cemento $4.790/saco 25kg Sodimac, bloque $1.840, arena $33.190/m3, hormigón H25 $110.000/m3 con fuentes de Chile, más referencias derivadas de canasta nacional en CLP.",
+        },
+    ],
+    ("AR", "software-presupuestos"): [
+        {
+            "q": "¿Nace en pesos argentinos o convierte desde dólares?",
+            "a": "Nace en ARS. Argentina cotiza en pesos argentinos; no hay conversión improvisada al registrarte. Tasa verificada 1497.38 ARS/USD.",
+        },
+    ],
+    ("AR", "apu"): [
+        {
+            "q": "¿Los precios del APU son de mercado argentino?",
+            "a": "Sí: cemento $11.433/bolsa 50kg Loma Negra/Holcim, bloque $1.500, arena $33.500/m3, hormigón H21 $168.478/m3 con fuentes de Argentina, más referencias derivadas de canasta nacional en ARS.",
         },
     ],
     ("ES", "software-presupuestos"): [

@@ -230,13 +230,16 @@ def test_tasa_sugerida_solo_valores_verificados():
     assert tasa_sugerida("USD") == 1.0
     assert tasa_sugerida("PAB") == 1.0
     assert tasa_sugerida("Bs") == tasa_sugerida("VES")
+    assert tasa_sugerida("CLP") == pytest.approx(925.90)   # 18/08/2026 925.903 CLP/USD
+    assert tasa_sugerida("ARS") == pytest.approx(1497.38)  # 08/08/2026 1497.38 ARS/USD
 
 
 def test_tasa_sugerida_sin_verificacion_devuelve_none():
     """Nunca se pre-rellena una tasa no verificada: el usuario consulta
     «Tasa de hoy» o escribe la oficial."""
-    assert tasa_sugerida("CLP") is None
-    assert tasa_sugerida("ARS") is None
+    assert tasa_sugerida("UYU") is None
+    assert tasa_sugerida("PYG") is None
+    assert tasa_sugerida("BOB") is None
     assert tasa_sugerida("XXX") is None
 
 

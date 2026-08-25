@@ -43,6 +43,10 @@ PAISES = {
     "PE": ("Perú", "PEN"),
     "MX": ("México", "MXN"),
     "EC": ("Ecuador", "USD"),
+    "PA": ("Panamá", "USD"),
+    "SV": ("El Salvador", "USD"),
+    "CL": ("Chile", "CLP"),
+    "AR": ("Argentina", "ARS"),
 }
 CODIGO_RE = re.compile(r"^\d{2}\.\d{2}\.\d{2}\.\d{3}$")
 ESTADOS_VE = {"confirmado", "verificado-mercado", "derivado", "provisional"}
@@ -292,10 +296,10 @@ def auditar_matriz(recursos_fisicos: int) -> Resultado:
         paises[pais][confianza] += 1
         paises[pais]["con_referencia"] += 1
 
-    esperado = recursos_fisicos * 4
+    esperado = recursos_fisicos * (len(PAISES) - 1)
     if len(filas) != esperado:
         resultado.errores.append(f"Matriz: {len(filas)} filas; se esperaban {esperado}")
-    for pais in ("CO", "PE", "MX", "EC"):
+    for pais in ("CO", "PE", "MX", "EC", "PA", "SV", "CL", "AR"):
         total = sum(1 for f in filas if f.get("pais_codigo") == pais)
         if total != recursos_fisicos:
             resultado.errores.append(f"Matriz {pais}: {total} recursos; se esperaban {recursos_fisicos}")
@@ -322,14 +326,14 @@ def escribir_informe(partidas: Resultado, matriz: Resultado) -> None:
     lineas = [
         "# Auditoría integral del catálogo antes de lanzamiento",
         "",
-        "**Fecha de corte:** 20/08/2026  ",
-        "**Alcance:** 3.006 partidas, cuadro base Venezuela y matrices CO/PE/MX/EC.",
+        "**Fecha de corte:** 25/08/2026  ",
+        "**Alcance:** 3.006 partidas, cuadro base Venezuela y matrices CO/PE/MX/EC/PA/SV.",
         "",
         "> Esta auditoría distingue tres cosas: que el APU sea calculable, que la mano de obra esté explícita y que exista una referencia nacional trazable. Una conversión de divisa aislada no basta; una derivación calibrada con la canasta investigada se identifica como `derivado`.",
         "",
         "## Veredicto",
         "",
-        "**APTO para lanzamiento en los cinco países como generador de soporte con precios referenciales nacionales.** Las 3.006 partidas son calculables, todas tienen mano de obra explícita y los 388 recursos físicos tienen referencia en CO/PE/MX/EC. La aplicación debe mantener visibles fecha, rango, confianza y el aviso de comprobación: no son cotizaciones exactas de una tienda.",
+        "**APTO para lanzamiento en los siete países como generador de soporte con precios referenciales nacionales.** Las 3.006 partidas son calculables, todas tienen mano de obra explícita y los 388 recursos físicos tienen referencia en CO/PE/MX/EC/PA/SV. La aplicación debe mantener visibles fecha, rango, confianza y el aviso de comprobación: no son cotizaciones exactas de una tienda.",
         "",
         "## 1. Partidas y mano de obra",
         "",
@@ -370,7 +374,7 @@ def escribir_informe(partidas: Resultado, matriz: Resultado) -> None:
         "| País | Recursos | Referencia directa | Derivados | Pendientes | Cobertura trazable |",
         "|---|---:|---:|---:|---:|---:|",
     ]
-    for pais in ("CO", "PE", "MX", "EC"):
+    for pais in ("CO", "PE", "MX", "EC", "PA", "SV", "CL", "AR"):
         x = matriz.resumen.get(pais, {})
         total = x.get("total", 0)
         directas = x.get("referencia", 0) + x.get("confirmado", 0)
@@ -390,7 +394,7 @@ def escribir_informe(partidas: Resultado, matriz: Resultado) -> None:
         "- Se añadieron rangos normalizados y se exige que la referencia quede dentro de ellos.",
         "- Se excluyeron 4 recursos compuestos que no existen como filas físicas en la aplicación (16 filas huérfanas país/recurso).",
         "- Las 17 categorías de mano de obra tienen referencia por país; las especialidades sin jornal propio quedan visibles como `derivado`, nunca como observación directa.",
-        "- La metodología nacional completa 1.552 referencias con factores de canasta por país y familia, sin segmentación artificial por ciudad.",
+        "- La metodología nacional completa 2.328 referencias con factores de canasta por país y familia, sin segmentación artificial por ciudad.",
         "- El importador es atómico y conserva rango, unidad, fecha, IVA, transporte y observaciones en base de datos.",
         "- La referencia nacional se resuelve por código estable de recurso; ya no queda ligada al ID privado de la organización usada para importarla.",
         "",

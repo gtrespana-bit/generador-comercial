@@ -16,7 +16,7 @@ from sqlalchemy.orm import Session
 from ..models import Recurso
 from .precios_mercado import guardar_precio
 
-MONEDA_PAIS = {"CO": "COP", "PE": "PEN", "MX": "MXN", "EC": "USD", "VE": "USD", "ES": "EUR"}
+MONEDA_PAIS = {"CO": "COP", "PE": "PEN", "MX": "MXN", "EC": "USD", "PA": "USD", "SV": "USD", "CL": "CLP", "AR": "ARS", "VE": "USD", "ES": "EUR"}
 CONFIANZAS = {"confirmado", "referencia", "derivado", "provisional"}
 IVA_VALIDO = {"si", "no", "no_aplica", "no_confirmado", "por_verificar"}
 TRANSPORTE_VALIDO = {"si", "no", "no_aplica", "no_confirmado", "por_verificar"}

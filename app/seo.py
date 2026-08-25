@@ -19,7 +19,7 @@ from .branding import PRODUCT_NAME, VALUE_PROPOSITION
 from .paises import ORDEN_SELECTOR, PAISES, PAIS_GENERICO, lista_paises
 
 OG_IMAGE = "/static/og-cotizat.png"
-SITEMAP_LASTMOD = "2026-08-22"
+SITEMAP_LASTMOD = "2026-08-25"
 
 # Temas con URL propia. Cada uno apunta a una intención de búsqueda distinta.
 TEMAS = ("software-presupuestos", "apu", "remodelacion")
@@ -478,6 +478,195 @@ _LANDING: dict[str, dict] = {
             },
         ],
     },
+    "PA": {
+        "title": "CotizaT: software de presupuestos y APU en Panamá",
+        "description": (
+            "Software de presupuestos de construcción para Panamá. RUC, ITBMS 7 %, "
+            "USD, repello y cielo raso. Catálogo con APU. 7 días gratis, sin tarjeta."
+        ),
+        "h1": "Software de presupuestos y APU para construcción en Panamá",
+        "h1_resalte": "dólares, RUC e ITBMS 7 %",
+        "sub": (
+            "Presupuesta obra y remodelación en USD, con RUC e ITBMS 7 %. Catálogo "
+            "con análisis de precios unitarios, concreto, repello, cielo raso y "
+            "plomero. PDF profesional para WhatsApp. Precios de referencia en USD "
+            "con fuentes de Panamá (CEMEX, Panablock, HOPSA)."
+        ),
+        "kicker": "🇵🇦 Sistema comercial para Panamá · Construcción y remodelación",
+        "faq": [
+            {
+                "q": "¿Está pensado para constructoras en Panamá?",
+                "a": (
+                    "Sí. El espacio nace en USD, ITBMS 7 % y RUC. Terminología "
+                    "local: concreto, repello, cielo raso, zócalo, plomero, formaleta."
+                ),
+            },
+            {
+                "q": "¿Incluye APU con precios de Panamá?",
+                "a": (
+                    "Cada partida trae APU editable con referencias nacionales en USD: "
+                    "cemento $8.25 por saco 42.5kg, bloque $0.95, arena $34/m3, concreto "
+                    "210 $125/m3. El resto es referencia derivada de canasta nacional."
+                ),
+            },
+            {
+                "q": "¿El cliente firma en línea?",
+                "a": (
+                    "Puedes enviar un enlace privado opcional. Lo habitual es el "
+                    "PDF por WhatsApp, que es como ya cierras en Ciudad de Panamá o David."
+                ),
+            },
+            {
+                "q": "¿Emite factura electrónica de la DGI?",
+                "a": (
+                    "No. Los documentos son comerciales y no sustituyen la factura "
+                    "electrónica que te exija la DGI. El ITBMS 7 % lo configuras tú."
+                ),
+            },
+        ],
+    },
+    "SV": {
+        "title": "CotizaT: software de presupuestos y APU en El Salvador",
+        "description": (
+            "Software de presupuestos de construcción para El Salvador. NIT, IVA 13 %, "
+            "USD, repello y cielo falso. Catálogo con APU. 7 días gratis, sin tarjeta."
+        ),
+        "h1": "Software de presupuestos y APU para construcción en El Salvador",
+        "h1_resalte": "dólares, NIT e IVA 13 %",
+        "sub": (
+            "Presupuesta obra y remodelación en USD, con NIT e IVA 13 %. Catálogo "
+            "con análisis de precios unitarios, concreto, repello, cielo falso y "
+            "fontanero. PDF profesional para WhatsApp. Precios de referencia en USD "
+            "con fuentes de El Salvador (CASALCO, EPA, Freund)."
+        ),
+        "kicker": "🇸🇻 Sistema comercial para El Salvador · Construcción y remodelación",
+        "faq": [
+            {
+                "q": "¿Está pensado para constructoras en El Salvador?",
+                "a": (
+                    "Sí. El espacio nace en USD, IVA 13 % y NIT. Terminología "
+                    "local: concreto, repello, cielo falso, zócalo, fontanero, tabla yeso."
+                ),
+            },
+            {
+                "q": "¿Incluye APU con precios de El Salvador?",
+                "a": (
+                    "Cada partida trae APU editable con referencias nacionales en USD: "
+                    "cemento $8.73 por saco 42.5kg (CASALCO), bloque $0.40, arena $35/m3, "
+                    "grava $45.05/m3, concreto 210 $135.35/m3. El resto es referencia "
+                    "derivada de canasta nacional."
+                ),
+            },
+            {
+                "q": "¿El cliente firma en línea?",
+                "a": (
+                    "Puedes enviar un enlace privado opcional. Lo habitual es el "
+                    "PDF por WhatsApp, que es como ya cierras en San Salvador o Santa Ana."
+                ),
+            },
+            {
+                "q": "¿Emite factura del Ministerio de Hacienda?",
+                "a": (
+                    "No. Los documentos son comerciales y no sustituyen la factura "
+                    "electrónica que te exija Hacienda. El IVA 13 % lo configuras tú."
+                ),
+            },
+        ],
+    },
+    "CL": {
+        "title": "CotizaT: software de presupuestos y APU en Chile",
+        "description": (
+            "Software de presupuestos de construcción para Chile. RUT, IVA 19 %, "
+            "CLP, hormigón y cielo falso. Catálogo con APU. 7 días gratis, sin tarjeta."
+        ),
+        "h1": "Software de presupuestos y APU para construcción en Chile",
+        "h1_resalte": "pesos chilenos, RUT e IVA 19 %",
+        "sub": (
+            "Presupuesta obra y remodelación en CLP, con RUT e IVA 19 %. Catálogo "
+            "con análisis de precios unitarios, hormigón, estuco, cielo falso y "
+            "gasfíter. PDF profesional para WhatsApp. Precios de referencia en CLP "
+            "con fuentes de Chile (Sodimac, Easy, CChC, GlobalGTC)."
+        ),
+        "kicker": "🇨🇱 Sistema comercial para Chile · Construcción y remodelación",
+        "faq": [
+            {
+                "q": "¿Está pensado para constructoras en Chile?",
+                "a": (
+                    "Sí. El espacio nace en CLP, IVA 19 % y RUT. Terminología "
+                    "local: hormigón, estuco, cielo falso, guardapolvo, gasfíter, moldaje, fierro."
+                ),
+            },
+            {
+                "q": "¿Incluye APU con precios de Chile?",
+                "a": (
+                    "Cada partida trae APU editable con referencias nacionales en CLP: "
+                    "cemento $4.790 por saco 25kg (Sodimac Melón), bloque $1.840, arena $33.190/m3, "
+                    "hormigón H25 $110.000/m3. El resto es referencia derivada de canasta nacional."
+                ),
+            },
+            {
+                "q": "¿El cliente firma en línea?",
+                "a": (
+                    "Puedes enviar un enlace privado opcional. Lo habitual es el "
+                    "PDF por WhatsApp, que es como ya cierras en Santiago o Concepción."
+                ),
+            },
+            {
+                "q": "¿Emite factura electrónica del SII?",
+                "a": (
+                    "No. Los documentos son comerciales y no sustituyen la factura "
+                    "electrónica que te exija el SII. El IVA 19 % lo configuras tú."
+                ),
+            },
+        ],
+    },
+    "AR": {
+        "title": "CotizaT: software de presupuestos y APU en Argentina",
+        "description": (
+            "Software de presupuestos de construcción para Argentina. CUIT, IVA 21 %, "
+            "ARS, hormigón y cielorraso. Catálogo con APU. 7 días gratis, sin tarjeta."
+        ),
+        "h1": "Software de presupuestos y APU para construcción en Argentina",
+        "h1_resalte": "pesos argentinos, CUIT e IVA 21 %",
+        "sub": (
+            "Presupuesta obra y remodelación en ARS, con CUIT e IVA 21 %. Catálogo "
+            "con análisis de precios unitarios, hormigón, revoque, cielorraso y "
+            "plomero. PDF profesional para WhatsApp. Precios de referencia en ARS "
+            "con fuentes de Argentina (UOCRA, Loma Negra, Holcim, CAMARCO)."
+        ),
+        "kicker": "🇦🇷 Sistema comercial para Argentina · Construcción y remodelación",
+        "faq": [
+            {
+                "q": "¿Está pensado para constructoras en Argentina?",
+                "a": (
+                    "Sí. El espacio nace en ARS, IVA 21 % y CUIT. Terminología "
+                    "local: hormigón, revoque, cielorraso, zócalo, plomero, hierro, encadenado."
+                ),
+            },
+            {
+                "q": "¿Incluye APU con precios de Argentina?",
+                "a": (
+                    "Cada partida trae APU editable con referencias nacionales en ARS: "
+                    "cemento $11.433 por bolsa 50kg (Loma Negra/Holcim), bloque $1.500, arena $33.500/m3, "
+                    "hormigón H21 $168.478/m3. El resto es referencia derivada de canasta nacional."
+                ),
+            },
+            {
+                "q": "¿El cliente firma en línea?",
+                "a": (
+                    "Puedes enviar un enlace privado opcional. Lo habitual es el "
+                    "PDF por WhatsApp, que es como ya cierras en Buenos Aires o Córdoba."
+                ),
+            },
+            {
+                "q": "¿Emite factura electrónica de AFIP?",
+                "a": (
+                    "No. Los documentos son comerciales y no sustituyen la factura "
+                    "electrónica que te exija AFIP. El IVA 21 % lo configuras tú."
+                ),
+            },
+        ],
+    },
     "ES": {
         "title": "CotizaT: software de presupuestos de obra y reformas para España",
         "description": (
@@ -797,7 +986,7 @@ def jsonld_website(request: Request | None = None) -> dict:
         "@type": "WebSite",
         "name": PRODUCT_NAME,
         "url": origen + "/",
-        "inLanguage": ["es", "es-VE", "es-CO", "es-MX", "es-PE", "es-EC", "es-ES"],
+        "inLanguage": ["es", "es-VE", "es-CO", "es-MX", "es-PE", "es-EC", "es-PA", "es-SV", "es-CL", "es-AR", "es-ES"],
         "publisher": {"@type": "Organization", "name": PRODUCT_NAME},
         "description": VALUE_PROPOSITION,
     }

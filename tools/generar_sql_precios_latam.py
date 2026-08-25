@@ -4,7 +4,7 @@ Uso:
     python3 tools/generar_sql_precios_latam.py
 
 La salida se pega en Supabase SQL Editor *después* de aplicar la migración
-``a4c8e2f7b1d6``. Sustituye únicamente referencias nacionales CO/PE/MX/EC;
+``a4c8e2f7b1d6``. Sustituye únicamente referencias nacionales CO/PE/MX/EC/PA/SV;
 no toca precios propios de organizaciones ni referencias VE.
 """
 from __future__ import annotations
@@ -14,7 +14,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 MATRIZ = ROOT / "basedatos_partidas/salida/precios_recursos_latam.csv"
-SALIDA = ROOT / "docs/cargar_precios_referencia_latam_2026-08-20.sql"
+SALIDA = ROOT / "docs/cargar_precios_referencia_latam_2026-08-25.sql"
 COLUMNAS = (
     "codigo_recurso", "pais_codigo", "moneda", "precio_referencia",
     "precio_min", "precio_max", "unidad_fuente", "fuente",
@@ -47,9 +47,11 @@ def generar() -> tuple[int, int]:
     if faltantes:
         raise ValueError(f"Faltan columnas: {', '.join(faltantes)}")
     claves = {(f["codigo_recurso"], f["pais_codigo"]) for f in filas}
-    if len(filas) != 1552 or len(claves) != 1552:
+    paises_unicos = sorted({f["pais_codigo"] for f in filas})
+    esperadas = len(paises_unicos) * 388
+    if len(filas) != esperadas or len(claves) != esperadas:
         raise ValueError(
-            f"Se esperaban 1.552 filas/claves; hay {len(filas)}/{len(claves)}"
+            f"Se esperaban {esperadas} filas/claves ({len(paises_unicos)} países × 388); hay {len(filas)}/{len(claves)}"
         )
     codigos = {f["codigo_recurso"] for f in filas}
     if len(codigos) != 388:
@@ -67,13 +69,16 @@ def generar() -> tuple[int, int]:
             q(f["incluye_transporte"]), q(f["observaciones"]),
         )) + ")")
 
+    paises_sql = "', '".join(paises_unicos)
+    total = len(filas)
     valores_sql = ",\n".join(valores)
+    paises_list = ", ".join(paises_unicos)
     sql = f"""-- CotizaT — carga de precios referenciales nacionales LatAm.
 -- Generado desde basedatos_partidas/salida/precios_recursos_latam.csv.
--- 388 recursos × 4 países = 1.552 referencias.
+-- 388 recursos × {len(paises_unicos)} países ({paises_list}) = {total} referencias.
 --
 -- PRECONDICIÓN: public.alembic_version = a4c8e2f7b1d6.
--- ALCANCE: reemplaza solo referencias nacionales CO/PE/MX/EC.
+-- ALCANCE: reemplaza solo referencias nacionales {paises_list}.
 -- NO TOCA: precios propios de organizaciones ni referencias Venezuela.
 
 BEGIN;
@@ -119,15 +124,16 @@ DO $$
 DECLARE
   v_filas integer;
   v_codigos integer;
+  v_paises integer;
   v_ausentes integer;
 BEGIN
-  SELECT count(*), count(DISTINCT codigo_recurso)
-    INTO v_filas, v_codigos
+  SELECT count(*), count(DISTINCT codigo_recurso), count(DISTINCT pais_codigo)
+    INTO v_filas, v_codigos, v_paises
   FROM cotizat_precios_latam_stage;
-  IF v_filas <> 1552 OR v_codigos <> 388 THEN
+  IF v_filas <> {total} OR v_codigos <> 388 THEN
     RAISE EXCEPTION
-      'Matriz incompleta: % filas y % recursos; se esperaban 1552/388',
-      v_filas, v_codigos;
+      'Matriz incompleta: % filas y % recursos en % paises; se esperaban {total}/388/{len(paises_unicos)}',
+      v_filas, v_codigos, v_paises;
   END IF;
 
   SELECT count(*) INTO v_ausentes
@@ -141,7 +147,7 @@ BEGIN
   ) AS faltantes;
   IF v_ausentes <> 0 THEN
     RAISE EXCEPTION
-      'Hay % códigos de recurso que aún no existen en public.recursos',
+      'Hay % codigos de recurso que aun no existen en public.recursos',
       v_ausentes;
   END IF;
 END
@@ -208,9 +214,9 @@ BEGIN
    AND s.pais_codigo = p.pais_codigo
   WHERE p.organizacion_id IS NULL
     AND p.activo IS TRUE;
-  IF v_cargadas <> 1552 THEN
+  IF v_cargadas <> {total} THEN
     RAISE EXCEPTION
-      'Carga incompleta: % referencias activas; se esperaban 1552',
+      'Carga incompleta: % referencias activas; se esperaban {total}',
       v_cargadas;
   END IF;
 END
@@ -223,7 +229,7 @@ SELECT pais_codigo, count(*) AS referencias
 FROM public.precios_recursos_mercado
 WHERE organizacion_id IS NULL
   AND activo IS TRUE
-  AND pais_codigo IN ('CO', 'PE', 'MX', 'EC')
+  AND pais_codigo IN ('{paises_sql}')
 GROUP BY pais_codigo
 ORDER BY pais_codigo;
 """

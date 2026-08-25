@@ -1,11 +1,15 @@
 # Guía operativa — precios por mercado LatAm
 
-## Mercados iniciales
+## Mercados iniciales y ampliación 2026-08-25
 
 - Colombia — COP
 - Perú — PEN
 - México — MXN
 - Ecuador — USD
+- Panamá — USD (PAB paridad 1:1) — **nuevo 2026-08-25**
+- El Salvador — USD — **nuevo 2026-08-25**
+- Chile — CLP — **nuevo 2026-08-25**
+- Argentina — ARS — **nuevo 2026-08-25**
 - Venezuela — USD, catálogo existente
 
 ## Precio efectivo
@@ -20,10 +24,10 @@ Cotizat resuelve cada recurso en este orden:
 Los precios son orientativos. La empresa debe verificar proveedor, ciudad,
 marca, calidad, volumen, IVA, transporte y fecha.
 
-## Estado auditado (20/08/2026)
+## Estado auditado (25/08/2026)
 
-Cada mercado contiene referencias para los 388 recursos físicos: **1.552 filas
-nacionales, sin huecos**. Hay 73 observaciones directas y 1.479 referencias
+Cada mercado contiene referencias para los 388 recursos físicos: **3.104 filas
+nacionales, sin huecos** (8 países × 388). Hay 113 observaciones directas y 2.991 referencias
 derivadas de las canastas nacionales investigadas.
 
 `Derivado` no significa «precio exacto de tienda»: identifica una referencia
@@ -45,7 +49,7 @@ La salida completa se conserva por compatibilidad en:
 basedatos_partidas/salida/precios_recursos_latam_completa.csv
 ```
 
-Con la cobertura actual ambas contienen precio para las 1.552 filas; la
+Con la cobertura actual ambas contienen precio para las 3.104 filas; la
 principal distingue `referencia` y `derivado`.
 
 ## Importación
@@ -71,12 +75,12 @@ Si no se dispone de `DATABASE_URL` en una terminal administrativa, ejecutar
 después de la migración de esquema:
 
 ```text
-docs/cargar_precios_referencia_latam_2026-08-20.sql
+docs/cargar_precios_referencia_latam_2026-08-25.sql
 ```
 
 El script es idempotente, verifica el head `a4c8e2f7b1d6`, exige 388 códigos de
-recurso y carga 1.552 referencias. Sustituye solo las referencias nacionales
-CO/PE/MX/EC; no toca overrides de empresa ni precios VE.
+recurso y carga 3.104 referencias. Sustituye solo las referencias nacionales
+CO/PE/MX/EC/PA/SV/CL/AR; no toca overrides de empresa ni precios VE.
 
 ## Históricos
 

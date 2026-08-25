@@ -11,8 +11,8 @@ ROOT=Path(__file__).resolve().parents[1]
 SRC=ROOT/'basedatos_partidas/datos/recursos.json'
 IN=ROOT/'basedatos_partidas/salida/precios_recursos_latam.csv'
 OUT=ROOT/'basedatos_partidas/salida/precios_recursos_latam_completa.csv'
-RATES={'CO':3128.65,'PE':3.37,'MX':17.06,'EC':1.0}
-CURRENCY={'CO':'COP','PE':'PEN','MX':'MXN','EC':'USD'}
+RATES={'CO':3128.65,'PE':3.37,'MX':17.06,'EC':1.0,'PA':1.0,'SV':1.0,'CL':925.90,'AR':1497.38}
+CURRENCY={'CO':'COP','PE':'PEN','MX':'MXN','EC':'USD','PA':'USD','SV':'USD','CL':'CLP','AR':'ARS'}
 
 def main():
  data=json.loads(SRC.read_text(encoding='utf8'))
