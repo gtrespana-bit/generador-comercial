@@ -364,7 +364,13 @@ def editar_recurso_form(recurso_id: int, request: Request, db: Session = Depends
         return None
 
     precio_mercado_vista = _a_vista(propio_edit) if propio_edit.origen == "organizacion" else None
-    precio_referencia_nacional_vista = _a_vista(nacional_edit)
+    # La referencia nacional informa, la base (USD) no es mercado: el fallback
+    # del catálogo se conserva en el campo oculto `precio`, pero el formulario
+    # debe avisar de que falta precio nacional en lugar de mostrarlo como
+    # «precio de mercado» (regla de una sola moneda visible).
+    precio_referencia_nacional_vista = (
+        _a_vista(nacional_edit) if nacional_edit and nacional_edit.origen != "base" else None
+    )
     return TEMPLATES.TemplateResponse(request, "recursos/form.html", {
         "recurso": recurso,
         "categorias": CATEGORIAS_RECURSO,
