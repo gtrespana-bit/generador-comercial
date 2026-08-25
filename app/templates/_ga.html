@@ -1,8 +1,10 @@
 {# Etiqueta estándar de Google Analytics 4 (gtag.js).
-   Solo se renderiza cuando COTIZAT_GA_ID está definida y es válida; el
-   atributo nonce la autoriza dentro de la política CSP estricta del sitio. #}
+   Solo se renderiza cuando hay un ID válido; el atributo nonce la autoriza
+   dentro de la política CSP estricta del sitio. Va lo más arriba posible
+   del <head>: el detector de Google recorre los primeros KB del HTML. #}
 {% set ga_id_activo = ga_id() %}
 {% if ga_id_activo %}
+<!-- Google tag (gtag.js) -->
 <script nonce="{{ request.state.csp_nonce }}" async src="https://www.googletagmanager.com/gtag/js?id={{ ga_id_activo }}"></script>
 <script nonce="{{ request.state.csp_nonce }}">
   window.dataLayer = window.dataLayer || [];

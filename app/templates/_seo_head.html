@@ -51,4 +51,6 @@
   {% endfor %}
   {% endif %}
 {% endif %}
+{% if not seo_skip_ga %}
 {% include "_ga.html" %}
+{% endif %}
