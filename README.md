@@ -168,11 +168,14 @@ TOTAL** sobre fondo azul-grisáceo con faja azul y numeración de páginas
   `COTIZAT_DB` para apuntar una instalación nueva al mismo archivo. El nombre
   histórico `PRESUPUESTOS_DB` continúa aceptándose por compatibilidad.
 - **Primer inicio**: una instalación nueva solicita los datos mínimos de la
-  empresa y permite elegir entre **ejemplo guiado** e **instalación limpia**.
-  El ejemplo carga un catálogo base, productos, packs, un cliente y un
-  presupuesto ficticios, identificados como demostración y con precios que
-  deben revisarse. La opción limpia no añade catálogos ni documentos. El
-  dashboard guía hasta la primera descarga de un PDF real.
+  empresa y recomienda entrar con el **catálogo de CotizaT**, con partidas,
+  descompuestos, recursos y referencias de precios del país elegido. También
+  incluye un ejemplo guiado (productos, packs, cliente y presupuesto ficticios)
+  claramente identificado y separado del trabajo real; sus precios deben
+  revisarse antes de usarlos. Si ya tienes tu propia base preparada, puedes
+  elegir un **inicio en limpio** para importar o crear tus partidas, recursos y
+  precios desde cero. El dashboard guía hasta la primera descarga de un PDF
+  real.
 
 ## Requisitos
 

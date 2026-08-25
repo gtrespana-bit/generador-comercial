@@ -63,7 +63,7 @@ def completar_onboarding(db: Session, datos: dict, modo: str) -> Configuracion:
 
     modo = str(modo or "").strip().lower()
     if modo not in MODOS_VALIDOS:
-        raise ErrorOnboarding("Elige si quieres empezar con un ejemplo o en limpio.")
+        raise ErrorOnboarding("Elige el catálogo de CotizaT o empezar con tus propias partidas.")
     modo_en_curso = str(cfg.onboarding_modo or "").strip().lower()
     if modo_en_curso in MODOS_VALIDOS and modo_en_curso != modo:
         raise ErrorOnboarding(

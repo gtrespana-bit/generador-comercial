@@ -21,12 +21,12 @@ El cronómetro funcional comienza cuando aparece el asistente de configuración 
    - Nombre comercial obligatorio.
    - Razón social, RIF, contacto, ubicación y logo opcionales.
    - Moneda e IVA configurados con valores editables.
-2. **Elegir el contenido inicial**
-   - **Ejemplo guiado:** catálogo, productos, packs, cliente y presupuesto ficticios.
-   - **Instalación limpia:** ninguna partida, producto, pack, cliente o presupuesto precargado.
+2. **Elegir el catálogo inicial**
+   - **Catálogo de CotizaT (recomendado):** partidas, descompuestos, recursos y referencias de precios del país elegido; además incluye productos, packs, cliente y presupuesto ficticios para explorar el flujo.
+   - **Mis propias partidas / inicio en limpio:** ninguna partida, producto, pack, cliente o presupuesto precargado; está pensado para quien ya tiene una base lista para importar.
 3. **Revisar o cargar el catálogo**
-   - Quien eligió demo comprueba que los precios son referenciales.
-   - Quien eligió limpio crea una partida o importa su catálogo desde Excel.
+   - Quien eligió el catálogo de CotizaT comprueba que las referencias de precios y su alcance encajan con su trabajo.
+   - Quien eligió el inicio en limpio crea una partida o importa su catálogo desde Excel o BC3.
 4. **Crear un cliente real**
    - Solo nombre obligatorio; el resto puede completarse después.
 5. **Crear el primer presupuesto real**
