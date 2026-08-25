@@ -48,17 +48,34 @@
   input,select { width:100%; border:1px solid #ccd4df; border-radius:10px; padding:11px 12px; color:var(--ink); background:#fff; outline:none; }
   input:focus,select:focus { border-color:var(--navy-2); box-shadow:0 0 0 3px rgba(18,63,120,.1); }
   .hint { color:#818b9b; font-size:.73rem; line-height:1.45; }
+  .catalog-context { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin:-8px 0 20px; padding:11px 14px; border:1px solid #d7e5f4; border-radius:12px; background:#f4f8fd; color:#526174; font-size:.78rem; line-height:1.45; }
+  .catalog-context-label { color:var(--navy-2); font-size:.68rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
+  .catalog-context strong { color:var(--ink); }
   .mode-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
   .mode { position:relative; cursor:pointer; }
   .mode input { position:absolute; opacity:0; pointer-events:none; }
-  .mode-card { height:100%; border:1.5px solid var(--line); border-radius:16px; padding:22px; transition:.18s; background:#fff; }
+  .mode-card { height:100%; border:1.5px solid var(--line); border-radius:16px; padding:22px; transition:.18s; background:#fff; display:flex; flex-direction:column; }
   .mode-card:hover { border-color:#9eb2cc; transform:translateY(-1px); }
   .mode input:checked + .mode-card { border-color:var(--navy-2); box-shadow:0 0 0 3px rgba(18,63,120,.09); background:#f8fbff; }
   .mode input:focus-visible + .mode-card { outline:3px solid rgba(18,63,120,.22); outline-offset:2px; }
+  .mode-card.recommended { border-color:#b7d4c6; background:linear-gradient(180deg,#fbfffc 0%,#fff 72%); }
+  .mode-card.recommended:hover { border-color:#6ea98a; }
+  .mode input:checked + .mode-card.recommended { border-color:var(--green); box-shadow:0 0 0 3px rgba(8,127,91,.11); background:#f7fcf9; }
+  .mode-top { display:flex; align-items:center; gap:9px; min-height:27px; }
+  .mode-icon { width:28px; height:28px; display:grid; place-items:center; flex:none; border-radius:9px; color:var(--navy-2); background:#eaf1fa; font-size:.96rem; font-weight:800; }
+  .recommended .mode-icon { color:var(--green); background:#e3f4eb; }
   .mode-badge { display:inline-flex; padding:4px 8px; border-radius:999px; color:var(--navy-2); background:#eaf1fa; font-size:.68rem; font-weight:800; text-transform:uppercase; letter-spacing:.06em; }
+  .mode-badge.recommended-badge { color:#086b4d; background:#dff4e8; }
   .mode h3 { margin:16px 0 8px; font-size:1.04rem; }
   .mode p { color:var(--muted); font-size:.82rem; line-height:1.55; margin:0 0 16px; }
   .mode ul { margin:0; padding-left:18px; color:#4f5d73; font-size:.77rem; line-height:1.75; }
+  .mode-note { margin-top:auto; padding-top:15px; color:#526174; font-size:.74rem; line-height:1.5; }
+  .mode-note strong { color:var(--navy-2); }
+  .mode.warning .mode-note { color:#8a5b12; }
+  .mode.warning .mode-note strong { color:#7a4b08; }
+  .recommendation { display:flex; gap:10px; align-items:flex-start; margin-top:17px; padding:13px 15px; border:1px solid #bfe6cd; border-radius:12px; color:#14532d; background:#effaf3; font-size:.78rem; line-height:1.55; }
+  .recommendation-mark { width:20px; height:20px; flex:none; display:grid; place-items:center; border-radius:50%; color:#fff; background:var(--green); font-size:.7rem; font-weight:800; }
+  .recommendation strong { color:#0b5c3f; }
   .summary { border:1px solid var(--line); border-radius:15px; overflow:hidden; margin-bottom:20px; }
   .summary-row { display:flex; justify-content:space-between; gap:20px; padding:13px 16px; border-bottom:1px solid var(--line); font-size:.83rem; }
   .summary-row:last-child { border-bottom:0; }
@@ -100,7 +117,7 @@
     <div class="trust">
       <span><i>✓</i> Tus datos permanecen en este equipo</span>
       <span><i>✓</i> Podrás editar todo después</span>
-      <span><i>✓</i> La demo está identificada y no cuenta como trabajo real</span>
+      <span><i>✓</i> Los datos de ejemplo están identificados y no cuentan como trabajo real</span>
     </div>
   </section>
 
@@ -219,28 +236,36 @@
 
         <section class="wizard-panel" data-panel="1">
           <span class="panel-kicker">Paso 2 de 3</span>
-          <h2>Elige cómo empezar</h2>
-          <p class="lead">La elección solo controla el contenido inicial. No cambia las funciones disponibles.</p>
+          <h2>Elige con qué catálogo empezar</h2>
+          <p class="lead">Para la mayoría de empresas, recomendamos el catálogo de CotizaT: tendrás una base de partidas y precios de referencia del país que elegiste. Si ya tienes un catálogo completo preparado para importar, puedes empezar con el espacio vacío.</p>
+          <div class="catalog-context" aria-live="polite">
+            <span class="catalog-context-label">Mercado seleccionado</span>
+            <strong id="catalogo-pais">{{ cfg.empresa_pais or 'el país que has elegido' }}</strong>
+            <span>Los precios de referencia se revisan y editan antes de usarlos en un presupuesto.</span>
+          </div>
           <div class="mode-grid">
             <label class="mode">
-              <input type="radio" name="modo_inicio" value="demo" required>
-              <div class="mode-card">
-                <span class="mode-badge">Recomendado para explorar</span>
-                <h3>Empezar con un ejemplo</h3>
-                <p>Carga contenido ficticio y claramente identificado para recorrer CotizaT sin partir de cero.</p>
-                <ul><li>Catálogo base de partidas</li><li>Productos y packs de estancia</li><li>Cliente y presupuesto de demostración</li><li>Precios solo referenciales: debes revisarlos</li></ul>
+              <input type="radio" name="modo_inicio" value="demo" required checked>
+              <div class="mode-card recommended">
+                <div class="mode-top"><span class="mode-icon" aria-hidden="true">✓</span><span class="mode-badge recommended-badge">Recomendado para empezar</span></div>
+                <h3>Usar el catálogo de CotizaT</h3>
+                <p>Entra con nuestra base de partidas, descompuestos, recursos y precios de referencia del mercado de <strong id="catalogo-pais-card">{{ cfg.empresa_pais or 'tu país' }}</strong>. Es la forma más rápida de comenzar a cotizar sin construir todo desde cero.</p>
+                <ul><li>Partidas y descompuestos listos para usar</li><li>Precios de referencia actualizados para el país elegido</li><li>Puedes editar, añadir o importar tus propias partidas después</li></ul>
+                <div class="mode-note"><strong>Empezar con un ejemplo guiado:</strong> también encontrarás productos, packs, un cliente y un presupuesto de muestra, claramente marcados como demostración. No cuentan como trabajo real y puedes eliminarlos.</div>
               </div>
             </label>
-            <label class="mode">
+            <label class="mode warning">
               <input type="radio" name="modo_inicio" value="limpio" required>
               <div class="mode-card">
-                <span class="mode-badge">Para catálogo propio</span>
-                <h3>Empezar en limpio</h3>
-                <p>No añade clientes, presupuestos, productos, partidas ni packs. Ideal si importarás tu propio catálogo.</p>
-                <ul><li>Base completamente vacía</li><li>Sin precios ajenos como referencia</li><li>Lista para cargar tus miles de partidas</li></ul>
+                <div class="mode-top"><span class="mode-icon" aria-hidden="true">＋</span><span class="mode-badge">Solo si ya tienes tu catálogo</span></div>
+                <h3>Empezar en limpio con mis propias partidas</h3>
+                <p>Deja el espacio vacío. No añade clientes, presupuestos, productos, partidas ni packs. Tendrás que crear o importar todo tu contenido y no tendrás precios de referencia para empezar a cotizar.</p>
+                <ul><li>Sin partidas, recursos, productos ni presupuestos iniciales</li><li>Importa desde Excel o BC3, o créalos manualmente</li><li>Necesitarás configurar tus precios antes de preparar presupuestos</li></ul>
+                <div class="mode-note"><strong>Tenlo en cuenta:</strong> no es un modo de prueba ni una versión mejorada; es un inicio desde cero y requiere más trabajo de configuración.</div>
               </div>
             </label>
           </div>
+          <div class="recommendation" role="note"><span class="recommendation-mark" aria-hidden="true">✓</span><div><strong>Nuestra recomendación:</strong> elige <strong>Usar el catálogo de CotizaT</strong> salvo que ya tengas tus propias partidas listas para importar. Podrás adaptar la base a tu empresa en cualquier momento.</div></div>
           <div class="actions"><button class="btn js-only" type="button" data-back>Atrás</button><button class="btn btn-primary js-only" type="button" data-next>Revisar</button></div>
         </section>
 
@@ -299,6 +324,8 @@
   (function(){
     var paisSel=document.getElementById('empresa_pais');
     if(!paisSel) return;
+    var catalogoPais=document.getElementById('catalogo-pais');
+    var catalogoPaisCard=document.getElementById('catalogo-pais-card');
     var datos = { paises: [], generico: null, tasas: {} };
     try { datos.paises = JSON.parse(document.getElementById('paises-data').textContent || '[]'); } catch(_){}
     try { datos.generico = JSON.parse(document.getElementById('pais-generico-data').textContent || 'null'); } catch(_){}
@@ -307,6 +334,11 @@
     var porNombre = {};
     datos.paises.forEach(function(p){ porNombre[p.nombre] = p; });
     function cfgPais(nombre){ return porNombre[nombre || ''] || datos.generico; }
+    function actualizarPaisCatalogo(){
+      var nombre = paisSel.value || 'el país que has elegido';
+      if(catalogoPais) catalogoPais.textContent = nombre;
+      if(catalogoPaisCard) catalogoPaisCard.textContent = nombre;
+    }
 
     var etiquetaInput=document.getElementById('etiqueta_id_fiscal');
     var rifLabel=document.getElementById('rif-label');
@@ -355,6 +387,7 @@
       if(etiquetaInput) delete etiquetaInput.dataset.tocado;
       if(ivaInput) delete ivaInput.dataset.tocado;
       if(monedaSel) delete monedaSel.dataset.tocado;
+      actualizarPaisCatalogo();
       aplicarPais(true);
     });
     // Cambiar la moneda manualmente: actualiza placeholder, label y hint de
@@ -413,6 +446,7 @@
           });
       });
     }
+    actualizarPaisCatalogo();
     aplicarPais(false);
     refrescarTasaPorMoneda();
   })();
@@ -422,7 +456,7 @@
     document.getElementById('summary-company').textContent = value('empresa_nombre') || '—';
     document.getElementById('summary-location').textContent = [value('empresa_ciudad'), value('empresa_pais')].filter(Boolean).join(', ') || '—';
     document.getElementById('summary-money').textContent = value('moneda_default') + ' · IVA ' + (value('iva_default') || '0') + '%';
-    document.getElementById('summary-mode').textContent = mode && mode.value === 'demo' ? 'Ejemplo guiado' : 'Instalación limpia';
+    document.getElementById('summary-mode').textContent = mode && mode.value === 'demo' ? 'Catálogo de CotizaT + ejemplo guiado' : 'Mis propias partidas (inicio vacío)';
   }
 
   document.querySelectorAll('[data-next]').forEach(function (button) {
