@@ -4,6 +4,7 @@ from fastapi import APIRouter
 
 from . import common
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
+from ..analytics import encolar_evento_ga
 from ..services import auditoria
 
 router = APIRouter()
@@ -136,6 +137,7 @@ async def iniciar_sesion(request: Request):
         )
     response = RedirectResponse(destino, status_code=303)
     set_auth_cookies(response, tokens, settings.cookie_secure)
+    encolar_evento_ga(response, "login")
     # E4-027: constancia del inicio de sesión (best-effort, jamás lo impide).
     email_sesion = getattr(getattr(tokens, "identity", None), "email", "") or str(
         form.get("email") or ""
@@ -226,6 +228,7 @@ async def registrar_cuenta(request: Request):
         return _resp_con_pais(resp)
     response = RedirectResponse(destino, status_code=303)
     set_auth_cookies(response, result.tokens, settings.cookie_secure)
+    encolar_evento_ga(response, "sign_up")
     return _resp_con_pais(response)
 
 

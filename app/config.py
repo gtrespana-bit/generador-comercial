@@ -280,6 +280,11 @@ DEFINICIONES: tuple[Variable, ...] = (
         "dirección de soporte publicada",
     ),
     Variable(
+        "COTIZAT_GA_ID",
+        False,
+        "ID de medición GA4 (G-XXXX…) para la etiqueta de audiencia",
+    ),
+    Variable(
         "COTIZAT_DATA_DIR",
         False,
         "directorio de datos en modo desarrollo",

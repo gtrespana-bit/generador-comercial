@@ -84,10 +84,23 @@ def test_ejemplo_ve_ecuador_y_generico_quedan_en_usd():
         assert ej["tasa"] == 1.0
 
 
-def test_ejemplo_moneda_sin_tasa_verificada_degrada_a_usd():
-    """CLP no tiene tasa verificada: nunca se inventa una conversión."""
-    ej = contexto_ejemplo("CL")
+def test_ejemplo_moneda_sin_tasa_verificada_degrada_a_usd(monkeypatch):
+    """Moneda local sin tasa verificada: nunca se inventa una conversión.
+
+    CLP obtuvo tasa verificada (925,90 · 25/08/2026), así que ningún país del
+    selector ejerce hoy este camino de forma natural; se simula que la
+    consulta de tasas no devuelve nada y se comprueba la degradación a USD.
+    """
+    from app.services import landing_ejemplo
+
+    monkeypatch.setattr(landing_ejemplo, "tasa_sugerida", lambda _moneda: None)
+    landing_ejemplo.contexto_ejemplo.cache_clear()
+    try:
+        ej = landing_ejemplo.contexto_ejemplo("CL")
+    finally:
+        landing_ejemplo.contexto_ejemplo.cache_clear()
     assert ej["moneda"] == "USD"
+    assert ej["convierte"] is False
 
 
 # ---------------------------------------------------------------------------

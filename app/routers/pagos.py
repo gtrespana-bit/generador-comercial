@@ -14,6 +14,7 @@ from fastapi import APIRouter, Form, Request
 
 from . import common
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
+from ..analytics import encolar_purchase_unico
 from ..database import get_stripe_webhook_db
 from ..services import auditoria
 from ..datos_pago import (
@@ -609,7 +610,8 @@ def stripe_exito(
     except KeyError:
         return RedirectResponse("/pago", status_code=303)
 
-    return TEMPLATES.TemplateResponse(
+    activada = compra.estado == "activa"
+    response = TEMPLATES.TemplateResponse(
         request,
         "pago/exito_stripe.html",
         {
@@ -617,9 +619,14 @@ def stripe_exito(
             "plan_nombre": plan_ficha["nombre"],
             "metodo_nombre": metodo_ficha["nombre"],
             "importe_texto": fmt_monto(compra.importe),
-            "activada": compra.estado == "activa",
+            "activada": activada,
         },
     )
+    if activada:
+        # Conversión GA4: el evento purchase se emite una sola vez por
+        # navegador aunque la página de éxito se recargue.
+        encolar_purchase_unico(request, response)
+    return response
 
 
 @router.post("/pago/stripe/webhook", include_in_schema=False)

@@ -12,6 +12,7 @@
 <link rel="stylesheet" href="{{ 'css/csp.css' | asset }}">
 <script nonce="{{ request.state.csp_nonce }}" src="{{ 'js/csp_styles.js' | asset }}"></script>
 <script src="{{ 'js/csp_events.js' | asset }}"></script>
+{% include "_ga.html" %}
 </head>
 <body spellcheck="true" class="{% block body_class %}{% endblock %}"{% if request.url.path in ['/inicio', '/presupuestos'] %} data-refresh-expired="1"{% endif %}>
 <script nonce="{{ request.state.csp_nonce }}">
