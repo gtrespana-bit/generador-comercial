@@ -25,8 +25,8 @@ ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "basedatos_partidas/datos/recursos.json"
 OUT = ROOT / "basedatos_partidas/salida/precios_recursos_espana.csv"
 PAISES = (("ES", "EUR"),)
-FECHA = "2026-08-22"
-FECHA_METODOLOGIA = "2026-08-22"
+FECHA = "2026-08-25"
+FECHA_METODOLOGIA = "2026-08-25"
 
 R_ES = "docs/INVESTIGACION_PRECIOS_ESPANA.md"
 METODOLOGIA = "docs/METODOLOGIA_PRECIOS_REFERENCIA_ESPANA.md"
@@ -239,20 +239,26 @@ OFICIALES = {
     "MO-OF1-CARP", "MO-OF1-SOLD", "MO-OF1-CARPM", "MO-OF1-VIDR",
     "MO-OF1-AC", "MO-OF1-JARD",
 }
-# precio, mínimo y máximo por jornada de 8 h (€/jornada)
+# precio, mínimo y máximo por jornada de 8 h (€/jornada) — COSTE EMPRESA, no tarifa autónomo con margen
+# Metodología 2026-08-25: se usa coste empresa (bruto convenio + SS 32.15% + costes fijos) como referencia nacional,
+# no tarifa autónomo facturada (22-32 €/h oficial 1ª) que ya incluye beneficio del autónomo.
+# Así el catálogo aplica su propio margen (30%) sin doble margen.
+# Fuentes: Convenio General Construcción 2024-2026 BOE, tablas Barcelona 2025 (BOP 17/03/2026), Presupix coste empresa 19.80 €/h,
+# Autopromotor coste mensual 3.431,76 € → 20.50 €/h, ObraHub bruto oficial 1ª 11.50-13.50 €/h → coste empresa 15.18-17.82 + costes → 20.50,
+# Motordepresupuestos tarifa mercado oficial 1ª 22-32 €/h (con beneficio), oficial 2ª 18-25, peón 15-21.
 ESPECIALIDAD_DIRECTA = {
-    "MO-OF1-ELE": {"ES": (232, 192, 272)},
-    "MO-OF1-PLO": {"ES": (232, 192, 272)},
-    "MO-OF1-PIN": {"ES": (192, 160, 224)},
-    "MO-OF1-SOLD": {"ES": (248, 208, 288)},
-    "MO-OF1-ALI": {"ES": (224, 192, 272)},
-    "MO-OF1-PISO": {"ES": (224, 192, 272)},
+    "MO-OF1-ELE": {"ES": (192, 160, 224)},  # electricista 24 €/h central (20-28), +15% vs albañil general por especialidad SEC
+    "MO-OF1-PLO": {"ES": (184, 152, 216)},  # fontanero 23 €/h central (19-27)
+    "MO-OF1-PIN": {"ES": (160, 128, 192)},  # pintor 20 €/h central (16-24), banda baja oficial
+    "MO-OF1-SOLD": {"ES": (200, 160, 240)}, # soldador 25 €/h central (20-30), oficio escaso pero coste empresa no tarifa País Vasco 36-50
+    "MO-OF1-ALI": {"ES": (176, 144, 208)},  # alicatador 22 €/h central (18-26)
+    "MO-OF1-PISO": {"ES": (176, 144, 208)}, # solador 22 €/h central (18-26)
 }
 OFICIAL_GENERAL = {
-    "ES": (216, 176, 256),
+    "ES": (168, 144, 200),  # albañil oficial 1ª 21 €/h central (18-25) coste empresa, no tarifa autónomo 27 (22-32) que incluía beneficio
 }
 AYUDANTE = {
-    "ES": (144, 120, 168),
+    "ES": (120, 96, 144),   # peón/ayudante 15 €/h central (12-18) coste empresa, no 18 (15-21) tarifa autónomo
 }
 
 

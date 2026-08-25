@@ -1,4 +1,4 @@
-# Apertura del mercado España — 2026-08-22
+# Apertura del mercado España — 2026-08-25 (revisión mano obra coste empresa)
 
 España es el primer mercado de CotizaT fuera de LatAm. Esta nota resume qué
 se implantó, cómo se comporta y qué paso operativo queda (carga de precios en
@@ -32,7 +32,8 @@ Supabase).
      convenio/mercado 2026, cemento, acero, pladur, adhesivos, pinturas,
      áridos, hormigón premezclado, maquinaria…) y 324 derivadas de la
      canasta investigada. Todo en EUR con rango, fuente, fecha y confianza.
-   - Investigación: `docs/INVESTIGACION_PRECIOS_ESPANA.md`.
+     **Revisión 2026-08-25:** mano obra corregida de tarifa autónomo con beneficio (27 €/h oficial, 18 peón) a **coste empresa** (21 €/h oficial, 15 peón, electricista 24, fontanero 23, pintor 20, soldador 25) según Convenio General 2024-2026 BOE, tablas Barcelona 2025 BOP, Presupix coste empresa 19.80 €/h y Autopromotor 20.50 €/h. Evita doble margen (catálogo aplica 30% sobre coste).
+   - Investigación: `docs/INVESTIGACION_PRECIOS_ESPANA.md` (revisada 2026-08-25 con análisis a fondo coste empresa vs tarifa mercado).
    - Metodología: `docs/METODOLOGIA_PRECIOS_REFERENCIA_ESPANA.md`
      (misma jerarquía que LatAm: override de organización → referencia
      nacional → respaldo USD).
@@ -56,7 +57,7 @@ Supabase).
 ## Paso operativo pendiente (producción)
 
 Pegar en Supabase SQL Editor el archivo
-`docs/cargar_precios_referencia_espana_2026-08-22.sql` (generado por
+`docs/cargar_precios_referencia_espana_2026-08-25.sql` (generado por
 `tools/generar_sql_precios_espana.py`). El script es idempotente, está en una
 transacción con verificaciones y **solo** reemplaza referencias nacionales
 ES; no toca overrides de empresas ni referencias de otros países. Después,
