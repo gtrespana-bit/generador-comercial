@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Tratamiento fungicida de paramento con moho.",
   "descripcion": "Tratamiento fungicida de paramento afectado por moho o algas, con limpieza y aplicación del producto. Incluye la limpieza de la zona y la aplicación del fungicida para evitar la reaparición. Medido por metro cuadrado tratado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

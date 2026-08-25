@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Refuerzo de losa o viga con perfil metálico.",
   "descripcion": "Refuerzo de losa o viga de concreto mediante perfil metálico dispuesto bajo el elemento, conectado con anclajes químicos y con mortero de nivelación en el contacto. Es la solución más rápida cuando hay que aumentar la capacidad de un losa existente sin engrosarlo por arriba. Incluye el apeo previo del elemento a reforzar, la nivelación de la cara inferior, la perforación y anclaje químico, el izado y presentado del perfil, el relleno del contacto con grout sin retracción que garantiza la transmisión de carga, ya que un perfil que no toca no refuerza, el apriete de los anclajes y la protección anticorrosiva. Medido en longitud de refuerzo realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

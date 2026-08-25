@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Punto de electricidad exterior.",
   "descripcion": "Ejecución de punto de electricidad exterior con tomacorriente o conexión. Incluye la conexión.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

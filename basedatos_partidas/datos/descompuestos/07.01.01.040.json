@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Puerta de closet abatible o plegable.",
   "descripcion": "Suministro e instalación de puerta de closet abatible o plegable, con sus herrajes, guías y tiradores. Incluye el replanteo y comprobación de las dimensiones reales del hueco, el montaje de las guías y herrajes, el colgado de las hojas, el ajuste de holguras y de la alineación de los frentes cerrados, que es lo que determina el aspecto final del conjunto, y la colocación de tiradores y topes. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

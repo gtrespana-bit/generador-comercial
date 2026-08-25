@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Ayuda de albañilería para datos y telecomunicaciones.",
   "descripcion": "Ayuda de albañilería para instalación de datos: pasos y tapado. Incluye la apertura de pasos y el resane. Medido por unidad de ayuda.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

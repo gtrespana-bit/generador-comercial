@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Desmontaje de claraboya o domo.",
   "descripcion": "Desmontaje de claraboya o domo de cubierta. Incluye la retirada del domo y sus fijaciones. Medido por unidad desmontada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

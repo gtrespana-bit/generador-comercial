@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Mesón de concreto con acabado pulido.",
   "descripcion": "Ejecución de mesón de concreto armado revestido, con encofrado y acabado. Incluye el armado, el vaciado y el acabado de la superficie.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

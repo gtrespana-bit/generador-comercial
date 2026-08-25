@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Impermeabilización de muro de cocina.",
   "descripcion": "Impermeabilización de muro de cocina previa al enchapado, con membrana cementosa. Incluye la preparación y la aplicación. Medido por metro cuadrado impermeabilizado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

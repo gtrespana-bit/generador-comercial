@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Encofrado perimetral de losa.",
   "descripcion": "Encofrado perimetral de losa de fundación. Incluye el montaje y el desmontaje. Medido por metro lineal encofrado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

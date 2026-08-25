@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Curado de concreto estructural.",
   "descripcion": "Curado de concreto estructural con membrana de curado. Incluye la aplicación del curador. Medido por metro cuadrado curado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

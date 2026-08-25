@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Programación y puesta en marcha de riego.",
   "descripcion": "Programación y puesta en marcha de sistema de riego, con ajuste de tiempos y revisión de emisores. Incluye la programación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

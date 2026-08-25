@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Verja metálica de cerramiento.",
   "descripcion": "Fabricación e instalación de verja metálica de cerramiento, con barrotes y marco, pintada. Incluye el montaje y la pintura.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

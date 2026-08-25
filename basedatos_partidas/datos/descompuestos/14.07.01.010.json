@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Red de riego por goteo o aspersión.",
   "descripcion": "Instalación de red de riego con tubería de polietileno, sus goteros o aspersores, y conexión al punto de agua. Incluye el replanteo del trazado y de la posición de los emisores según el marco de riego de la plantación, la apertura de la zanja poco profunda, el tendido de la tubería, el montaje de los emisores, la purga de la línea antes de colocar los últimos emisores para arrastrar la suciedad que de otro modo los obstruye, la prueba de presión y caudal y el tapado de la zanja. Medido en longitud de red realmente instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

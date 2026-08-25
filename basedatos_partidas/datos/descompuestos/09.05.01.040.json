@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Punto de teléfono.",
   "descripcion": "Ejecución de punto de teléfono., con canalización y conexión. Incluye el tendido del cable y la conexión. Medido por punto ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

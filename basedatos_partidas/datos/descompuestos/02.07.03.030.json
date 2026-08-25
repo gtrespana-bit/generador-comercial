@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Desmontaje de tubería de agua de PPR.",
   "descripcion": "Desmontaje de tubería de agua de PPR o cobre. Incluye la retirada de la tubería y sus soportes. Medido por metro lineal desmontado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

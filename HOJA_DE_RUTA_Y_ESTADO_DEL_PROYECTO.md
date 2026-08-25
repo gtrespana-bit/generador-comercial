@@ -2010,3 +2010,55 @@ plano». PR #83 corrige ambas cosas y sube la función a primera clase.
 - `tests/test_planos.py`: 13 pruebas (geometría, visor, deep-link, CSV,
   DXF, renombrado, anexo PDF, subida real).
 - Suite completa: **992 passed, 9 skipped**. Sin migraciones nuevas.
+# 30. Margen de beneficio por defecto del catálogo: 30 % → 35 % s/coste (2026-08-25)
+
+## Decisión
+
+A petición del cliente, el beneficio predeterminado de las partidas del
+catálogo pasa de **30 % a 35 % sobre el coste directo**, de forma uniforme
+para **todas las partidas y todos los países**.
+
+## Qué se cambió
+
+- `basedatos_partidas/datos/descompuestos/*.json` (3.006 ficheros): campo
+  `margen` 0.3 → 0.35. Es la fuente de verdad del catálogo.
+- `MARGEN_DEFECTO = 0.35` en `basedatos_partidas/descompuestos.py` y en
+  `app/services/catalogo_propio.py` (antes 0.30), y el fallback sin coste de
+  `app/services/precios_partidas.py` (0.30 → 0.35). También el default de
+  `basedatos_partidas/auditar_lanzamiento.py` y los guiones de generación
+  `tools/generar_capitulos_*.py`.
+- `app/services/landing_ejemplo.py`: el APU de ejemplo lee el margen del
+  descompuesto (ahora 0.35); su presupuesto de ejemplo ya usaba 35 % como
+  elección ilustrativa de la empresa ficticia, por lo que queda coherente.
+
+## Cómo afecta a los países
+
+Los países no tienen margen propio: `app/services/precios_partidas.py`
+recalcula cada partida con los precios de mercado nacionales **conservando el
+margen de la partida base** (Venezuela, USD). Al subir el base a 35 %, los
+18 países heredan 35 % sin tocar nada más. Solo cambia el beneficio
+absoluto, que sigue proporcional al coste local de mercado.
+
+## Artefactos regenerados
+
+- `basedatos_partidas/datos/partidas.csv`, `salida/catalogo_partidas.csv`,
+  `.xlsx`, `.json`, `salida/descompuestos/*.xlsx` (3.006) y
+  `salida/arbol_catalogo.json`: `python3 basedatos_partidas/descompuestos.py`
+  (validado con el importador real: 0 errores) + `python3
+  basedatos_partidas/construir.py`.
+- `salida/auditoria_partidas.csv` e informe
+  `docs/AUDITORIA_CATALOGO_PRELANZAMIENTO_2026-08-20.md`: `python3
+  basedatos_partidas/auditar_lanzamiento.py` (3.006 partidas, 0 errores).
+- Precio de venta = coste × 1,35 (antes × 1,30). Beneficio medio base (VE)
+  por partida: 7,66 → 8,94 USD.
+
+## Afectados / notas operativas
+
+- Las instalaciones ya sembradas conservan el precio del catálogo que tienen
+  en base de datos (semilla aplicada una vez, `semilla_catalogo_aplicada`);
+  para actualizar un despliegue existente hay que resembrar/reimportar el
+  catálogo. Las partidas que cada organización haya editado a mano no se
+  tocan.
+- `tests/test_landing_ejemplo.py` ajustado al nuevo factor (1,35 / «+35 %»).
+- Documentación de la referencia de precios de España actualizada donde
+  afirmaba el margen del catálogo (30 % → 35 %).

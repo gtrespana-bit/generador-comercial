@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Protección de borde de excavación.",
   "descripcion": "Colocación de barandilla o señalización en el borde de la excavación, para prevenir caídas.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

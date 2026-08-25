@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Banda perimetral de desolidarización.",
   "descripcion": "Colocación de banda perimetral de desolidarización en encuentro piso-pared. Incluye la colocación de la banda y el recorte. Medido por metro lineal colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

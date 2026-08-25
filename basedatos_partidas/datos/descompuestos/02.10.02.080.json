@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Picado de estuco o pasta decorativa en paramento.",
   "descripcion": "Picado de revestimiento de estuco, pasta decorativa o revestimiento texturado existente en paramento, ejecutado con medios manuales y martillo eléctrico según el espesor y la dureza del material, hasta dejar el soporte limpio y apto para recibir el nuevo acabado. Incluye la cata previa para identificar el espesor y el tipo de soporte, la protección del entorno, el control de polvo, el retiro del escombro en sacos y la limpieza final. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en superficie realmente picada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

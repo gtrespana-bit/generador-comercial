@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Demolición de revestimiento de granito o piedra natural en escalera.",
   "descripcion": "Demolición del revestimiento de granito, terrazo o piedra natural de escalera, comprendiendo huellas, contrahuellas y su capa de asiento, ejecutada con martillo eléctrico manual. Al mayor espesor y peso de las piezas se suma la dificultad propia del trabajo en escalera, por lo que el rendimiento es el más bajo de los grupos de demolición de revestimientos. Incluye la protección del hueco y del pasamanos, el control de polvo, el retiro manual del escombro en sacos y el repicado de los restos de mortero adheridos a los peldaños. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en superficie realmente demolida, desarrollando huella y contrahuella.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Prueba de drenaje de condensados.",
   "descripcion": "Verificación del drenaje de condensados del sistema de climatización, para evitar reboses.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

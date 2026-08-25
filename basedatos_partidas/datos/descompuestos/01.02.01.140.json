@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Levantamiento de instalaciones existentes.",
   "descripcion": "Levantamiento de instalaciones existentes (eléctrica, sanitaria). Incluye la inspección y el registro. Medido por metro cuadrado levantado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

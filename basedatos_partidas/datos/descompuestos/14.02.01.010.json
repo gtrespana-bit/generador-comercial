@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Brocal o bordillo de concreto.",
   "descripcion": "Ejecución de brocal o bordillo de concreto, prefabricado o vaciado en sitio, sobre su dado de apoyo, con juntas selladas. Incluye el replanteo de la línea y de la rasante con cuerda, la excavación y vaciado del dado de apoyo, la colocación de las piezas a nivel y alineación, el macizado lateral que impide su vuelco bajo el empuje del pavimento, el rejuntado y el curado. Medido en longitud realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

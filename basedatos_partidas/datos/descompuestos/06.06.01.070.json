@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Dintel de bloque canal con refuerzo.",
   "descripcion": "Ejecución de dintel de bloque canal con refuerzo y relleno de concreto. Incluye la colocación del bloque, el armado y el relleno. Medido por metro lineal ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

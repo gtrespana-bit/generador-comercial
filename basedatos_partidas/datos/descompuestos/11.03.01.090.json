@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Alero de cubierta de teja.",
   "descripcion": "Ejecución de alero perimetral en cubierta de teja, con piezas de borde recibidas y canal de recogida. Incluye el remate del faldón y la fijación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

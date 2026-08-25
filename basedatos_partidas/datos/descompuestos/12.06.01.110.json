@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Rodapié de madera lacada.",
   "descripcion": "Colocación de rodapié de madera lacada, con fijación mecánica o adhesiva. Incluye la preparación del soporte y la fijación del rodapié. Medido por metro lineal colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

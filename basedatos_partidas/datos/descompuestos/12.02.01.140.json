@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Friso de nivelación en columnas y vigas.",
   "descripcion": "Friso de nivelación de columnas y vigas de concreto para regularizar su superficie previo al acabado. Incluye la aplicación del mortero y el afinado de las aristas. Medido por metro lineal regularizado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

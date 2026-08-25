@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Tratamiento de humedad en muro de piedra.",
   "descripcion": "Tratamiento de humedad en muro de piedra, con saneado y hidrofugación. Incluye la limpieza y la aplicación del hidrofugante. Medido por metro cuadrado tratado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Refuerzo estructural con tejido de fibra de carbono.",
   "descripcion": "Refuerzo de elemento estructural de concreto mediante encolado de tejido de fibra de carbono con resina epóxica de saturación. Aporta capacidad a flexión o a cortante sin apenas añadir peso ni modificar la geometría, lo que lo hace idóneo en rehabilitación donde no se puede aumentar la sección. Incluye la regularización y lijado del soporte hasta obtener una superficie plana y sin lechada, el redondeo de las aristas por las que ha de doblar el tejido, la imprimación, la aplicación de la resina de saturación, la colocación del tejido en la dirección de las tracciones eliminando burbujas con rodillo, la segunda capa de resina y el curado. Medido en superficie de tejido realmente colocada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

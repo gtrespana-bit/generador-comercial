@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Pintura anticorrosiva sobre estructura metálica.",
   "descripcion": "Aplicación de pintura anticorrosiva sobre estructura metálica, con dos manos de fondo. Incluye la limpieza de la superficie, la preparación anticorrosiva y las dos manos. Medido por metro cuadrado pintado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

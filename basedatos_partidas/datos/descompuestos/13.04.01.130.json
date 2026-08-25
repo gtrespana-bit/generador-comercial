@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Entrepaño flotante de pared.",
   "descripcion": "Colocación de entrepaño flotante de pared en melamina, con soportes ocultos. Incluye el replanteo, el corte y la fijación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

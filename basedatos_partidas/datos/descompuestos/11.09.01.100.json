@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Sustitución de bajante de aguas lluvias.",
   "descripcion": "Sustitución de bajante de aguas lluvias dañada, con desmontaje y colocación de la nueva. Incluye la fijación y los accesorios.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

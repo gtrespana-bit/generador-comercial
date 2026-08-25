@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Pintura de caucho para exterior, dos manos.",
   "descripcion": "Aplicación de dos manos de pintura de caucho para exteriores sobre fachada preparada, con brocha en encuentros y rodillo en paños. Incluye el trabajo desde andamio, la protección de carpinterías y del entorno a pie de fachada, el recorte de perímetros y molduras, la aplicación de las manos respetando el tiempo de secado y evitando pintar bajo sol directo intenso o con amenaza de lluvia, que arruina el acabado, y el repaso final por paños completos para que no se marquen las paradas. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Pintura de exterior en el color elegido por el cliente",

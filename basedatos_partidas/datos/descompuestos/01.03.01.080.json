@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Protección de fachada con malla de obra.",
   "descripcion": "Colocación de malla de protección en la fachada o en el andamio, para retener la caída de material y polvo hacia la vía pública o hacia las propiedades vecinas. Es exigible siempre que se trabaje en altura sobre zonas de paso, y su ausencia es motivo habitual de paralización por parte de la autoridad municipal. Incluye el izado, el tendido de los paños solapados, su atado a la estructura del andamio en todo el perímetro, la revisión periódica de amarres tras episodios de viento y el desmontaje. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

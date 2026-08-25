@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Desmontaje de perchero o gancho fijo.",
   "descripcion": "Desmontaje de perchero o gancho fijo. Incluye la retirada del accesorio. Medido por unidad desmontada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

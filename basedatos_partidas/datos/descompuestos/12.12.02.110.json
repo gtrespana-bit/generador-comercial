@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Pintura ignífuga sobre madera.",
   "descripcion": "Aplicación de pintura intumescente ignífuga sobre madera estructural o de acabado. Incluye la preparación y la aplicación de las capas necesarias. Medido por metro cuadrado pintado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

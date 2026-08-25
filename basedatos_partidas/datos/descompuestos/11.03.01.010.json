@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Cubierta de teja criolla de arcilla.",
   "descripcion": "Cubierta con teja criolla de arcilla cocida sobre listonado o base continua, recibida con mortero en aleros, cumbreras y bordes, y colocada en seco en el faldón. Incluye el replanteo de las hiladas para que la teja de remate no quede recortada, la colocación de la teja canal y cobija con el solape que exige la pendiente, el recibido con mortero de las piezas de borde que son las que levanta el viento, la formación de cumbreras y limatesas y la limpieza final. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

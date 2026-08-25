@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Iluminación de emergencia en obra.",
   "descripcion": "Colocación de iluminación de emergencia en las zonas de paso y evacuación de la obra.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

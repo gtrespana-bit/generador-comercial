@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Registro de drenaje con tapa.",
   "descripcion": "Ejecución de tanquilla o registro de drenaje, con base y tapa. Incluye la excavación y la colocación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

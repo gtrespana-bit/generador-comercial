@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Acometida eléctrica provisional de obra con tablero de protección.",
   "descripcion": "Instalación eléctrica provisional para el suministro de la obra, formada por tablero con interruptor diferencial y protecciones magnetotérmicas, tomas de fuerza y cable encauchetado hasta los frentes de trabajo. Incluye la conexión al punto de suministro autorizado, el montaje y fijación del tablero en lugar protegido y accesible, el tendido del cableado por recorridos que no crucen zonas de paso ni de agua, la puesta a tierra del conjunto, la comprobación del disparo del diferencial antes de la puesta en servicio, el mantenimiento durante la obra y el desmontaje final. Medido por instalación realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Desmontaje de puerta interior corrediza.",
   "descripcion": "Desmontaje de puerta interior corrediza con su riel y herrajes. Incluye la retirada de las hojas, el riel y los herrajes. Medido por unidad desmontada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

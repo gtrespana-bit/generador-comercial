@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Aislamiento acústico en tabique o cielo raso.",
   "descripcion": "Colocación de aislamiento acústico de lana mineral en la cámara de tabiques de yeso laminado o de cielos rasos suspendidos. El aislamiento absorbe la energía sonora dentro de la cámara, pero su efecto se anula si existen puentes rígidos o pasos de aire: una caja de mecanismo enfrentada a ambos lados del tabique deja pasar más ruido del que el aislamiento retiene. Incluye el corte de los paneles con sobremedida para que queden a presión sin caer, su colocación cubriendo la totalidad de la cámara sin dejar huecos y el sellado de los pasos de instalaciones. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

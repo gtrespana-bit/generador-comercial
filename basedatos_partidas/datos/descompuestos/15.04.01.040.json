@@ -6,7 +6,7 @@
   "unidad": "kg",
   "titulo": "Retirada de chatarra metálica a gestor.",
   "descripcion": "Retirada y entrega de chatarra metálica a gestor autorizado, con carga y transporte.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

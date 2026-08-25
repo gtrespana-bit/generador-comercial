@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Escalera de concreto reforzada.",
   "descripcion": "Ejecución de escalera de concreto reforzada. Incluye el vaciado y el refuerzo. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

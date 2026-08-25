@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Pilote con camisa metálica.",
   "descripcion": "Ejecución de pilote con camisa metálica recuperable. Incluye la camisa y el vaciado. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

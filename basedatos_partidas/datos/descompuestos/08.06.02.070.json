@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Soporte de panel solar.",
   "descripcion": "Suministro y colocación de estructura de soporte de panel solar. Incluye el anclaje de la estructura. Medido por unidad colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

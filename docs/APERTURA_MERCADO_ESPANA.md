@@ -32,7 +32,7 @@ Supabase).
      convenio/mercado 2026, cemento, acero, pladur, adhesivos, pinturas,
      áridos, hormigón premezclado, maquinaria…) y 324 derivadas de la
      canasta investigada. Todo en EUR con rango, fuente, fecha y confianza.
-     **Revisión 2026-08-25:** mano obra corregida de tarifa autónomo con beneficio (27 €/h oficial, 18 peón) a **coste empresa** (21 €/h oficial, 15 peón, electricista 24, fontanero 23, pintor 20, soldador 25) según Convenio General 2024-2026 BOE, tablas Barcelona 2025 BOP, Presupix coste empresa 19.80 €/h y Autopromotor 20.50 €/h. Evita doble margen (catálogo aplica 30% sobre coste).
+     **Revisión 2026-08-25:** mano obra corregida de tarifa autónomo con beneficio (27 €/h oficial, 18 peón) a **coste empresa** (21 €/h oficial, 15 peón, electricista 24, fontanero 23, pintor 20, soldador 25) según Convenio General 2024-2026 BOE, tablas Barcelona 2025 BOP, Presupix coste empresa 19.80 €/h y Autopromotor 20.50 €/h. Evita doble margen (catálogo aplica 35% sobre coste desde 2026-08-25).
    - Investigación: `docs/INVESTIGACION_PRECIOS_ESPANA.md` (revisada 2026-08-25 con análisis a fondo coste empresa vs tarifa mercado).
    - Metodología: `docs/METODOLOGIA_PRECIOS_REFERENCIA_ESPANA.md`
      (misma jerarquía que LatAm: override de organización → referencia

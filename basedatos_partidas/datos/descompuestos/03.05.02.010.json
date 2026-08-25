@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Estabilización de fondo de excavación.",
   "descripcion": "Estabilización de fondo de excavación con capa de piedra. Incluye la colocación y la compactación. Medido por metro cuadrado estabilizado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

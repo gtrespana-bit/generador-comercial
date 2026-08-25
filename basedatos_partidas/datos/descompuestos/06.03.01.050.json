@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Machón o columna de confinamiento en pared de bloque.",
   "descripcion": "Machón o columna de confinamiento de concreto armado vaciado dentro del paño de mampostería, que junto con la viga de corona conforma el sistema de mampostería confinada. Su función es dotar a la pared de capacidad frente a acciones sísmicas, por lo que su ejecución no es opcional en los paños que el proyecto define como confinados. Incluye el armado con sus cabillas longitudinales y estribos, el amarre de las esperas a la fundación y a la viga superior, el dentado o la colocación de conectores en el borde de la mampostería para garantizar la trabazón, el encofrado, el vaciado con concreto de 210 kg/cm2, el vibrado y el desencofrado. Medido en longitud realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

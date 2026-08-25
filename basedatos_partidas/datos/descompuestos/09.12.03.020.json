@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Módulo regulador para atenuación de iluminación.",
   "descripcion": "Suministro e instalación de módulo regulador (dimmer) para atenuación de iluminación, integrado en la central domótica. Incluye la verificación de compatibilidad de la carga a regular, el montaje, la conexión, la configuración y la prueba de atenuación en todo el rango. Medido por módulo instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

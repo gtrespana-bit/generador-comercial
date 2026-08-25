@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Protector contra sobretensiones para línea de datos y telecomunicaciones.",
   "descripcion": "Suministro e instalación de protector contra sobretensiones para línea de datos y telecomunicaciones, con su conexión a tierra. Incluye el intercalado del protector en la línea, la conexión del borne de tierra y la verificación de la continuidad de la señal. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

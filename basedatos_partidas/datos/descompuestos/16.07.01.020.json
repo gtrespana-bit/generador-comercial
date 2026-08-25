@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Termografía infrarroja de cubierta.",
   "descripcion": "Inspección termográfica de cubierta para detectar filtraciones y defectos de aislamiento, con informe.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

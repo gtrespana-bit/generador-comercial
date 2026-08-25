@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Andamio interior móvil.",
   "descripcion": "Montaje y uso de andamio interior móvil o sobre borriquetas. Incluye el montaje y la operación. Medido por metro cuadrado de superficie atendida.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

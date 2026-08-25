@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Aislamiento de piso sobre cámara sanitaria.",
   "descripcion": "Colocación de aislamiento bajo el piso sobre cámara sanitaria, para evitar pérdidas al exterior.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

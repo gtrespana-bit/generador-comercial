@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Fachada de chapa con aislamiento.",
   "descripcion": "Ejecución de fachada de chapa metálica con aislamiento térmico. Incluye el aislamiento, la chapa y el remate. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

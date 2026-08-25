@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Sellado de fisuras en fachada.",
   "descripcion": "Sellado de fisuras en fachada con sellador elástico de poliuretano, previo al acabado. Incluye la apertura y limpieza de la fisura y la aplicación del sellador. Medido por metro lineal de fisura sellada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

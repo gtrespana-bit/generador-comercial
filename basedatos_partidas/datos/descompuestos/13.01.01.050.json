@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de electrodoméstico empotrado.",
   "descripcion": "Instalación de electrodoméstico empotrado en mueble de cocina, tal como horno, placa de cocción, microondas o lavavajillas, con sus conexiones. Incluye la verificación de que el hueco del mueble corresponde a las dimensiones y a la ventilación que exige el fabricante, requisito que si se ignora provoca sobrecalentamiento y la pérdida de la garantía, el ajuste del hueco si procede, el encastre y fijación del equipo, la conexión eléctrica, hidráulica o de gas según el caso y la puesta en marcha con prueba. El equipo lo elige el cliente y se presupuesta aparte. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Electrodoméstico empotrado elegido por el cliente",

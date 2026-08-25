@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Mueble de área común (vestíbulo).",
   "descripcion": "Fabricación e instalación de mueble de área común en melamina, con asiento o superficie de apoyo. Incluye el despiece y el armado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

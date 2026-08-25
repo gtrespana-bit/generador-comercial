@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Zona de lavado de herramienta.",
   "descripcion": "Habilitación de zona de lavado de herramienta. Incluye la conexión de agua y la delimitación. Medido por zona habilitada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

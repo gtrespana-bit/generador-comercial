@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Punto de desagüe para nevera.",
   "descripcion": "Punto de desagüe para nevera o congelador. Incluye la conexión. Medido por punto ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

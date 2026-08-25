@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Limpieza de vidrios y carpintería.",
   "descripcion": "Limpieza de vidrios, carpintería y herrajes al final de la obra, con productos adecuados y sin dejar residuos.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

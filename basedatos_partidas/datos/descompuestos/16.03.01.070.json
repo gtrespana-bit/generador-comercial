@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Prueba de estanqueidad de tanque.",
   "descripcion": "Prueba de estanqueidad de tanque o depósito por llenado, para verificar la ausencia de fugas.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

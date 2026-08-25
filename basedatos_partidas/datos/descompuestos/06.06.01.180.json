@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Dintel prefabricado de concreto armado.",
   "descripcion": "Colocación de dintel prefabricado de concreto armado sobre vano. Incluye el izado y la colocación del dintel. Medido por metro lineal ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

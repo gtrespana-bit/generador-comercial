@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Canalón de recogida en cubierta metálica.",
   "descripcion": "Ejecución de canalón de PVC o lámina galvanizada en el alero de cubierta metálica, con soportes y pendiente a bajante. Incluye la fijación y los remates.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Aplicación de hidrofugante incoloro en fachada.",
   "descripcion": "Aplicación de hidrofugante incoloro de impregnación sobre fachada de concreto, ladrillo visto, piedra o friso, para reducir la absorción de agua sin formar película ni alterar el aspecto. A diferencia de una pintura, deja el poro abierto al vapor, de modo que la fachada sigue transpirando y no se producen desprendimientos por presión de vapor desde el interior. Incluye la limpieza y secado previo del soporte, la reparación de fisuras, la aplicación por saturación de abajo hacia arriba hasta que el producto escurra sobre la zona ya tratada, y la segunda mano en fresco sobre la primera. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

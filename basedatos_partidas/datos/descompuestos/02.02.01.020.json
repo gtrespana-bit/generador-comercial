@@ -6,7 +6,7 @@
   "unidad": "m³",
   "titulo": "Demolición de columna de concreto armado.",
   "descripcion": "Demolición de columna de concreto armado, ejecutada con martillo eléctrico o neumático según la sección, con corte previo de la armadura longitudinal. Exige apeo previo de la estructura que la columna soporta y validación del cálculo estructural, trabajos que se valoran aparte. Incluye la protección del entorno, la demolición descendente por tramos para mantener el control del elemento, el corte y retiro del acero, la fragmentación del concreto, el descenso del escombro y la limpieza. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en volumen realmente demolido.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

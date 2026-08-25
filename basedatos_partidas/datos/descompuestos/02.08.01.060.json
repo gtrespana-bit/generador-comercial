@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Retiro de manta reflectiva.",
   "descripcion": "Retiro de manta reflectiva de aislamiento. Incluye la retirada de la manta. Medido por metro cuadrado retirado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de ducto rígido.",
   "descripcion": "Instalación de ducto rígido., con conexión. Incluye la conexión y la fijación. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

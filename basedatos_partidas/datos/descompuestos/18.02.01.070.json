@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Inyección de aislamiento en cámara de fachada.",
   "descripcion": "Inyección de aislamiento en la cámara de aire de la fachada, para mejorar la resistencia térmica.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

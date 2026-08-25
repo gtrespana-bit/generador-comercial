@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Piso de parquet encolado sobre afirmado.",
   "descripcion": "Colocación de parquet encolado directamente sobre el afirmado con adhesivo de poliuretano, sin rastreles. Exige un afirmado perfectamente plano, seco y sin humedad residual: el parquet encolado sobre una base húmeda se abomba y se despega sin remedio, por lo que la medición de humedad del soporte antes de colocar no es un trámite sino la condición del trabajo. Incluye la comprobación de planitud y humedad, la imprimación del soporte si el adhesivo la requiere, el replanteo del despiece, el encolado y colocación con presión, la junta perimetral y el retiro de restos de adhesivo. No incluye el lijado y barnizado. El parquet lo elige el cliente y se presupuesta aparte. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Parquet o tabla de madera para encolar, elegido por el cliente",

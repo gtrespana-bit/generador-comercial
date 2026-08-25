@@ -6,7 +6,7 @@
   "unidad": "kg",
   "titulo": "Estructura metálica de techo.",
   "descripcion": "Suministro y montaje de estructura metálica de techo formada por cerchas, vigas y correas de perfil laminado o conformado, con sus conexiones soldadas o atornilladas y su imprimación anticorrosiva. Incluye la verificación de los apoyos y de las placas base, el izado y presentado de las piezas, el arriostramiento provisional durante el montaje, la ejecución de las uniones definitivas, la comprobación geométrica de niveles y pendientes y el retoque de la protección anticorrosiva en las zonas afectadas por la soldadura. Medido en peso realmente montado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

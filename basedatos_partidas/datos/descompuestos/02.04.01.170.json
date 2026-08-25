@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Demolición de tabique de bloque de vidrio existente.",
   "descripcion": "Demolición de tabique de bloque de vidrio, con retirada de los bloques. Incluye la demolición y la retirada del escombro. Medido por metro cuadrado demolido.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m3",
   "titulo": "Excavación de pozo para fundación.",
   "descripcion": "Excavación de pozo para fundación aislada. Incluye la excavación y el acopio. Medido por metro cúbico excavado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

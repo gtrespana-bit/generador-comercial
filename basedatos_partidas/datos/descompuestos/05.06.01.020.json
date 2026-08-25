@@ -6,7 +6,7 @@
   "unidad": "kg",
   "titulo": "Acero de refuerzo en losa maciza.",
   "descripcion": "Suministro, corte, doblado, armado y colocación de acero de refuerzo en cabillas corrugadas en losa maciza, en parrillas inferior y superior según los planos de despiece. Incluye el corte y doblado, el armado de las parrillas con amarre de alambre, la colocación de separadores inferiores y de caballetes que sostienen la parrilla superior en su cota, los refuerzos sobre los apoyos y en los bordes de huecos, y el repaso de la posición del armado inmediatamente antes del vaciado. Medido en peso de acero realmente colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

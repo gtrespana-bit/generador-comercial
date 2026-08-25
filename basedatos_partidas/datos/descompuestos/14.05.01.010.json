@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Portón de acceso vehicular.",
   "descripcion": "Fabricación e instalación de portón de acceso vehicular, abatible o corredizo, con su bastidor, forro, herrajes y anclajes. Incluye la fabricación del bastidor reforzado dimensionado para el vano, el tratamiento anticorrosivo, la ejecución o comprobación de los machones o del riel según el tipo de apertura, el montaje y nivelación, el ajuste del recorrido y de los topes, la colocación de la cerradura o pasador y la previsión de la canalización eléctrica si va a motorizarse. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

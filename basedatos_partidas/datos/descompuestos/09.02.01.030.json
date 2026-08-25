@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Registro de aguas servidas.",
   "descripcion": "Construcción o instalación de registro de aguas servidas en la red de desagüe, con su solera con media caña, paredes, tapa hermética y conexiones. El registro debe situarse en los cambios de dirección y en los tramos largos, porque es el único punto por donde se puede desobstruir la red sin romper piso. Incluye la excavación, la solera con la media caña de conducción que guía el flujo y evita la sedimentación, el levantamiento de paredes, el friso interior impermeabilizado, las conexiones con sus cotas y la tapa hermética a nivel de piso. Medido por unidad ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Tapa de registro hermética del tipo elegido por el cliente",

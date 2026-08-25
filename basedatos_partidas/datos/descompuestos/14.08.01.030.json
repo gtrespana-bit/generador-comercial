@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Acometida de agua exterior.",
   "descripcion": "Ejecución de acometida de agua exterior desde la red a la edificación, con tubería y llave de corte. Incluye la conexión.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

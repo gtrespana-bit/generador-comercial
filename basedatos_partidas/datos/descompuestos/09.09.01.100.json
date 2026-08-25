@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de regulador de gas.",
   "descripcion": "Ejecución de instalación de regulador de gas., con conexión y prueba. Incluye la conexión y la prueba de estanqueidad. Medido por unidad ejecutado/a.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

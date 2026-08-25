@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Cielo raso continuo en voladizo exterior.",
   "descripcion": "Cielo raso continuo de placa de cemento reforzada con fibra en voladizo o alero exterior. Incluye la estructura, la placa de cemento y el sellado de juntas. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

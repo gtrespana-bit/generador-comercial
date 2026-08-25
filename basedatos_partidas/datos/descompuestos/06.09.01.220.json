@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Restauración de moldura de fachada.",
   "descripcion": "Restauración de moldura o cornisa de fachada. Incluye la reintegración y el acabado. Medido por metro lineal restaurado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

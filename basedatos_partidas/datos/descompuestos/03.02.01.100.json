@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Perfilado y limpieza de fondo de excavación.",
   "descripcion": "Perfilado y limpieza manual del fondo de excavación. Incluye la limpieza y el perfilado. Medido por metro cuadrado perfilado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Drenaje de jardín con tubería perforada.",
   "descripcion": "Ejecución de drenaje de jardín con tubería perforada y geotextil. Incluye la excavación, la colocación de la tubería y el relleno. Medido por metro lineal ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

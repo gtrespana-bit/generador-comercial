@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Sustitución de piezas de cubierta de teja.",
   "descripcion": "Sustitución de piezas de teja rotas o desplazadas en el faldón, sin tocar la estructura. Incluye el levantado de las piezas dañadas y la recolocación con mortero en los remates.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

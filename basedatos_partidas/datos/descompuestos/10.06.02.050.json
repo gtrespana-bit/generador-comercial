@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Impermeabilización de tanque metálico.",
   "descripcion": "Impermeabilización interior de tanque metálico con membrana líquida. Incluye la preparación del soporte y la aplicación. Medido por metro cuadrado impermeabilizado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

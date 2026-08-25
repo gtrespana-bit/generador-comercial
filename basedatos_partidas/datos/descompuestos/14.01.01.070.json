@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Pavimento de adoquín con confinamiento.",
   "descripcion": "Pavimento exterior de adoquín de concreto sobre cama de arena y base compactada, con confinamiento perimetral. Incluye la colocación, el corte y la compactación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

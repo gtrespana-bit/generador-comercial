@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Rodapié de piedra natural.",
   "descripcion": "Colocación de rodapié de piedra natural, con adhesivo y rejuntado. Incluye la preparación del soporte, la colocación y el rejuntado. Medido por metro lineal colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

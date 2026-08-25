@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Reparación de celosía de aluminio.",
   "descripcion": "Reparación de celosía de aluminio con sustitución de lamas dañadas. Incluye la retirada de las lamas dañadas y la colocación de las nuevas. Medido por unidad reparada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

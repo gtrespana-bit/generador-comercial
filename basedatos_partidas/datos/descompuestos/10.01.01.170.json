@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Aislamiento de puente térmico en vigas.",
   "descripcion": "Aislamiento de puente térmico en vigas o pilares, con panel de poliestireno. Incluye la colocación del panel y el remate. Medido por metro cuadrado aislado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

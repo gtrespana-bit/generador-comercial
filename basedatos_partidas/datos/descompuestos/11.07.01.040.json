@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Zócalo de claraboya de concreto.",
   "descripcion": "Ejecución de zócalo de concreto perimetral para apoyo de claraboya o lucernario, con encofrado y curado. Incluye el armado y el vaciado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

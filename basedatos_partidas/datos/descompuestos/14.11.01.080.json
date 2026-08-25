@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Mesa de obra exterior.",
   "descripcion": "Ejecución de mesa de obra exterior, de concreto o bloque revestido. Incluye la ejecución y el acabado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

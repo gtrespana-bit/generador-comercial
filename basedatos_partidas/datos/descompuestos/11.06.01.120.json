@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Apuntalamiento de estructura de techo existente.",
   "descripcion": "Apuntalamiento provisional de estructura de techo durante la reparación, con puntales metálicos y durmientes de reparto. Incluye el montaje y el desmontaje.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

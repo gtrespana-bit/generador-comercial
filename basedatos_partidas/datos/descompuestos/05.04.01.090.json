@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Imprimación anticorrosiva de estructura.",
   "descripcion": "Imprimación anticorrosiva de estructura metálica. Incluye la limpieza y la imprimación. Medido por metro cuadrado imprimado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Marquesina de protección de acceso.",
   "descripcion": "Colocación de marquesina de protección sobre el acceso a la obra, para evitar caída de objetos.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

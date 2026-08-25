@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Mueble fijo a medida.",
   "descripcion": "Fabricación e instalación de mueble fijo a medida en melamina o madera, según despiece acordado con el cliente, para recibidores, salas, escritorios u otros usos. Incluye la toma de medidas en obra, el despiece y corte con cantos aplicados, el armado de la estructura, el anclaje y nivelación al paramento y al piso, el montaje de puertas, gavetas y entrepaños con sus herrajes, la regulación de frentes y el remate con tapajuntas que absorbe las irregularidades del muro. Medido en superficie de frente de mueble.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

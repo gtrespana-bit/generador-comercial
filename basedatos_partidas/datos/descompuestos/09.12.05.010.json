@@ -6,7 +6,7 @@
   "unidad": "glb",
   "titulo": "Programación de escenas y automatizaciones.",
   "descripcion": "Programación de las escenas y automatizaciones del sistema domótico sobre la central configurada: horarios, disparos por sensores y acciones sobre actuadores. Incluye el levantamiento de las rutinas solicitadas por el cliente, la creación y ajuste de cada escena, y la entrega de un listado de las automatizaciones configuradas para su validación. Medido por programación completa del sistema.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

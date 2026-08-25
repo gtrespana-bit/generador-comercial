@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Gancho o anclaje de seguridad en cubierta.",
   "descripcion": "Colocación de gancho o anclaje de seguridad en cubierta para amarre de línea de vida, con fijación a la estructura. Incluye el taladrado y la fijación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

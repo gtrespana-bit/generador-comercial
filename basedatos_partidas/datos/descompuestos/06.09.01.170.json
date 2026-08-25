@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Limpieza de fachada de ladrillo visto.",
   "descripcion": "Limpieza de fachada de ladrillo visto. Incluye la limpieza y el tratamiento. Medido por metro cuadrado limpiado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

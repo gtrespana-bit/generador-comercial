@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Impermeabilización de jardinera con drenaje.",
   "descripcion": "Impermeabilización de jardinera con membrana y capa drenante. Incluye la impermeabilización y la colocación del drenaje. Medido por metro cuadrado impermeabilizado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

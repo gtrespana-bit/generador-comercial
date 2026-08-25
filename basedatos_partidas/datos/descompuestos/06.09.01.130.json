@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Restauración de revestimiento de fachada.",
   "descripcion": "Restauración de revestimiento de fachada, con reintegración de piezas. Incluye la reposición de las piezas y el rejuntado. Medido por metro cuadrado restaurado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

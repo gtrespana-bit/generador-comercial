@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Pintura de fachada a dos colores.",
   "descripcion": "Aplicación de pintura exterior a dos colores en fachada, con enmascarado de la línea de separación. Incluye la aplicación de ambos colores y el remate limpio. Medido por metro cuadrado pintado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

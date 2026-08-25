@@ -6,7 +6,7 @@
   "unidad": "m3",
   "titulo": "Suministro de piedra picada.",
   "descripcion": "Suministro y transporte de piedra picada a obra. Incluye el suministro y el transporte. Medido por metro cúbico suministrado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

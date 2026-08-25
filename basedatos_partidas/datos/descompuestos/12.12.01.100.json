@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Pintura de closet con esmalte.",
   "descripcion": "Aplicación de esmalte sobre closet o mueble de madera, con fondo y dos manos. Incluye la preparación y las dos manos de esmalte. Medido por metro cuadrado pintado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

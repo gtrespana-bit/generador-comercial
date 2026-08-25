@@ -6,7 +6,7 @@
   "unidad": "kg",
   "titulo": "Acero de refuerzo en muro de contención.",
   "descripcion": "Suministro, corte, doblado, armado y colocación de acero de refuerzo en cabillas corrugadas en muro de contención, según los planos de despiece. Incluye el corte y doblado, el armado de las dos parrillas verticales con sus ganchos de arranque solapados a las esperas de la fundación, el amarre con alambre, la colocación de separadores en ambas caras para garantizar el recubrimiento, los refuerzos de borde y de esquina, y la comprobación de que la parrilla del lado del terreno queda en la cara traccionada correcta, error frecuente y de consecuencias graves. Medido en peso de acero realmente colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

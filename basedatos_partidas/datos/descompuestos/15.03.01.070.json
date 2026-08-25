@@ -6,7 +6,7 @@
   "unidad": "m³",
   "titulo": "Acopio de escombro en sacos apilados.",
   "descripcion": "Acopio de escombro en sacos de rafia apilados en zona delimitada, a la espera de su retirada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

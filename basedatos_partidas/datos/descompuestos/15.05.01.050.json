@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Gestión de aceites y lubricantes usados.",
   "descripcion": "Recogida y entrega a gestor de aceites y lubricantes usados de la maquinaria, en recipiente estanco.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

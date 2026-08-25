@@ -65,7 +65,7 @@ Es coste empresa + beneficio del autónomo + gastos (RETA ~350€/mes, gestoría
 
 | Código | Descripción | Precio EUR/h | Min | Max | Origen | Problema |
 |---|---|---|---|---|---|---|
-| MO-OF1 | Oficial 1ª | 27 | 22 | 32 | referencia | Tarifa mercado 22-32 con beneficio, no coste empresa 17-23. Si catálogo aplica 30% margen → precio venta 35,1 €/h (27×1,3) = tarifa País Vasco 36-50, alto para zona media |
+| MO-OF1 | Oficial 1ª | 27 | 22 | 32 | referencia | Tarifa mercado 22-32 con beneficio, no coste empresa 17-23. Si catálogo aplica 35% margen → precio venta 36,45 €/h (27×1,35), en el borde de tarifa País Vasco 36-50, alto para zona media |
 | MO-AYU | Peón | 18 | 15 | 21 | referencia | Tarifa mercado peón 15-21 con beneficio, no coste empresa 12-18. Venta 23,4 €/h alto vs mercado peón 15-21 |
 | MO-OF1-ELE | Electricista | 29 | 24 | 34 | referencia | Tarifa mercado electricista 25-35 con beneficio, no coste empresa 18-22 |
 | MO-OF1-PLO | Fontanero | 29 | 24 | 34 | — | Idem |
@@ -76,7 +76,7 @@ Es coste empresa + beneficio del autónomo + gastos (RETA ~350€/mes, gestoría
 
 | Código | Descripción | Precio EUR/h | Min | Max | Jornada 8h | Origen | Justificación |
 |---|---|---|---|---|---|---|---|
-| MO-OF1 | Oficial 1ª albañil | **21** | 18 | 25 | 168 €/día (144-200) | referencia | Coste empresa zona media 17-20 + alta 19-23, País Vasco 22-27. 21 es centro zona media-alta, -22% vs 27 anterior. Venta con 30% margen =27,3 €/h → dentro tarifa mercado 22-32 y 26-36 zona media, no alto |
+| MO-OF1 | Oficial 1ª albañil | **21** | 18 | 25 | 168 €/día (144-200) | referencia | Coste empresa zona media 17-20 + alta 19-23, País Vasco 22-27. 21 es centro zona media-alta, -22% vs 27 anterior. Venta con 35% margen = 28,35 €/h → dentro tarifa mercado 22-32 y 26-36 zona media, no alto |
 | MO-AYU | Peón/ayudante | **15** | 12 | 18 | 120 €/día (96-144) | referencia | Coste empresa peón 13,32-15,45 + costes → 15 €/h centro. Venta 19,5 €/h dentro tarifa peón 15-21 y 16-22 |
 | MO-OF1-ALI | Alicatador | **22** | 18 | 26 | 176 €/día | referencia | +10-15% vs albañil general por especialidad, pero coste empresa no tarifa reforma 28-42 |
 | MO-OF1-PISO | Solador | **22** | 18 | 26 | 176 | referencia | Idem |

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Afirmado de concreto sobre terreno, 8 cm de espesor.",
   "descripcion": "Afirmado de concreto de 8 cm de espesor con malla electrosoldada de retracción, vaciado sobre base de piedra picada compactada y barrera de vapor, con juntas de control aserradas. Incluye la comprobación de la base, la colocación de la barrera de vapor y de la malla sobre separadores, el vaciado y vibrado, el reglado a nivel, el fratasado, el aserrado de las juntas de control en el momento adecuado, que es lo que evita la fisuración anárquica por retracción, y el curado. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

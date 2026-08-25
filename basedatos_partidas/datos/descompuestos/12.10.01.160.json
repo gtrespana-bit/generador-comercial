@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Retoque y repaso puntual de pintura interior.",
   "descripcion": "Retoque y repaso puntual de pintura interior en zonas dañadas o desgastadas, con una mano de acabado. Incluye la limpieza de la zona, el resane de pequeños desperfectos y la mano de retoque. Medido por metro cuadrado retocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

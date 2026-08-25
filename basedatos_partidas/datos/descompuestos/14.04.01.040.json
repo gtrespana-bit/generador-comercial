@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Cerca de malla ciclónica sobre postes.",
   "descripcion": "Ejecución de cerca de malla ciclónica sobre postes metálicos, con tensores y alambre de amarre. Incluye la colocación de postes y malla.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

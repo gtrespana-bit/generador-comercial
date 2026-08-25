@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Forrado de bajante con placa de cemento.",
   "descripcion": "Forrado de bajante con placa de cemento. Incluye la estructura y la placa. Medido por metro cuadrado forrado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

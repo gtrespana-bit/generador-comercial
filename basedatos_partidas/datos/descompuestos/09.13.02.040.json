@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Unión equipotencial de la bajante con la red de tierra general.",
   "descripcion": "Ejecución de la unión equipotencial entre la bajante del sistema de protección y la red de tierra general de la edificación, con conductor de cobre desnudo y elemento de conexión desmontable. Incluye el tendido del conductor de enlace, la conexión en ambos extremos y la protección del tramo expuesto. Medido por unión ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

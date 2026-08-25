@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Sellado de pase de tubería en impermeabilización.",
   "descripcion": "Sellado del paso de tubería, antena, soporte o cualquier elemento que atraviesa la impermeabilización, mediante collarín, banda de refuerzo y masilla elástica. Cada pase es una perforación deliberada en la capa que debe ser estanca, y resolverlo con un simple cordón de silicona es la causa habitual de goteras localizadas. Incluye la limpieza y preparación del entorno del pase, la colocación del collarín o pieza pasamuros, el refuerzo con banda embebida en la impermeabilización, el sellado con masilla elástica compatible y la comprobación. Medido por pase realmente sellado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

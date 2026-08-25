@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Apeo o arriostramiento provisional de muro.",
   "descripcion": "Apeo o arriostramiento provisional de muro mediante puntales inclinados con durmientes de reparto, para estabilizarlo frente a empujes o vuelco durante los trabajos en su entorno. Debe responder a la instrucción del profesional responsable. Incluye el replanteo de los puntos de apoyo, la preparación de las bases de reparto en el piso, el montaje y puesta en carga de los puntales inclinados, la comprobación periódica de la estabilidad y del apriete, y el desmontaje una vez consolidado el elemento. Medido en superficie de muro realmente apeada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

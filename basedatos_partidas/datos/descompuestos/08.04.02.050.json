@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Remate de junta de fachada.",
   "descripcion": "Remate de junta de fachada con sellador. Incluye el sellado. Medido por metro lineal ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

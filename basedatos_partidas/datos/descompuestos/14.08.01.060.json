@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Acometida eléctrica exterior.",
   "descripcion": "Ejecución de acometida eléctrica exterior con cableado y canalización. Incluye la canalización y el cableado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

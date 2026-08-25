@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Celosía de fachada de madera.",
   "descripcion": "Suministro y colocación de celosía de fachada de madera tratada. Incluye la subestructura y la colocación de las lamas. Medido por metro cuadrado instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

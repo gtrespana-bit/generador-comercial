@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Vegetación de sombreado de fachada.",
   "descripcion": "Plantación de vegetación trepadora para sombreado de fachada, reduciendo la ganancia térmica. Las plantas las elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

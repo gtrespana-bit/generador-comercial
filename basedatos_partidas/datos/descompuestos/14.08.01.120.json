@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Punto de agua para lavado de vehículo.",
   "descripcion": "Ejecución de punto de agua para lavado de vehículo, con llave y manguera. Incluye la conexión.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

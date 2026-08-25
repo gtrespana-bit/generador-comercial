@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Prueba de estanqueidad de instalación de agua.",
   "descripcion": "Prueba de estanqueidad de instalación de agua existente. Incluye la presurización y la verificación. Medido por prueba realizada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

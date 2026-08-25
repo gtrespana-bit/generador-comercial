@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Reparación de mesón de piedra.",
   "descripcion": "Reparación de mesón de piedra con resane de fisuras, pulido y sellado. Incluye la reparación y el acabado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

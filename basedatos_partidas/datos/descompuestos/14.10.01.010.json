@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Piscina de concreto armado.",
   "descripcion": "Ejecución de piscina de concreto armado, con losa de fondo, muros y acabado. Incluye el encofrado, el armado y el vaciado. El revestimiento lo elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

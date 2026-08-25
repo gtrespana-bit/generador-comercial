@@ -6,7 +6,7 @@
   "unidad": "m3",
   "titulo": "Sustitución de terreno con material granular.",
   "descripcion": "Sustitución de terreno blando con material granular. Incluye la excavación y el relleno compactado. Medido por metro cúbico sustituido.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

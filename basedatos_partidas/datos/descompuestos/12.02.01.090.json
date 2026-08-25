@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Friso de mortero sobre bloque de concreto.",
   "descripcion": "Aplicación de friso de mortero sobre paramento de bloque de concreto, con maestras y afinado, de 1,5 cm de espesor. Incluye la humectación del soporte, las maestras y el afinado. Medido por metro cuadrado frisado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

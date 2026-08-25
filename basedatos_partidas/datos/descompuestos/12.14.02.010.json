@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Hidrofugación de fachada de piedra o ladrillo.",
   "descripcion": "Aplicación de hidrofugante sobre fachada de piedra natural o ladrillo visto, para repeler el agua sin impedir la transpiración. Incluye la limpieza previa y la aplicación del hidrofugante. Medido por metro cuadrado tratado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

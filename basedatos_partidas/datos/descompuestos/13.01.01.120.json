@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Despensa de cocina con gavetas.",
   "descripcion": "Fabricación e instalación de alacena o despensa de cocina en melamina, con entrepaños y puertas. Incluye el despiece y el armado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Adecuación de hueco de ascensor.",
   "descripcion": "Adecuación de hueco para ascensor. Incluye la preparación del hueco. Medido por unidad adecuada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

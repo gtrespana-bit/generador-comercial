@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de gabinete contra incendios.",
   "descripcion": "Instalación de gabinete contra incendios con su manguera, válvula, boquilla y conexión a la red. Incluye el replanteo en posición visible y accesible del recorrido de evacuación, el empotrado o anclaje del gabinete, la conexión a la red de agua contra incendios con su válvula, el plegado correcto de la manguera para que salga sin enredarse al tirar, la señalización y la prueba de presión y caudal en boquilla. Medido por unidad instalada y probada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

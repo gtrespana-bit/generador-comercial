@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Sustitución de tramo de tubería de agua existente.",
   "descripcion": "Sustitución de un tramo de tubería de agua existente en mal estado, con el corte, retiro y reposición del tramo y sus conexiones. En reforma es una intervención muy frecuente al sustituir tramos de hierro galvanizado corroído, y el punto delicado es la unión con la tubería que permanece, que debe hacerse con adaptador compatible entre materiales distintos y no forzando roscas. Incluye el cierre y vaciado de la red, la localización y apertura de roza, el corte y retiro del tramo, la instalación del nuevo con sus adaptadores, la prueba de presión y el resane. Medido en longitud realmente sustituida.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

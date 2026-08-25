@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Eliminación de grafitis en fachada.",
   "descripcion": "Eliminación de grafitis en fachada. Incluye la limpieza química y mecánica. Medido por metro cuadrado tratado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

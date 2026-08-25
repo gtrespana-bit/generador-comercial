@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Impermeabilización de muro de ducha.",
   "descripcion": "Impermeabilización de muro de zona de ducha con membrana cementosa, previa al enchapado. Incluye la preparación del soporte y la aplicación de la membrana. Medido por metro cuadrado impermeabilizado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

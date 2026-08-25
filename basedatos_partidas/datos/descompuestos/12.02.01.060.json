@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Friso de mortero proyectado mecánicamente.",
   "descripcion": "Friso de mortero aplicado mediante máquina de proyección, maestreado y fratasado. La proyección mecánica multiplica el rendimiento frente al tendido a mano y mejora la compactación y la adherencia del mortero contra el soporte, por lo que compensa a partir de superficies medianas. Incluye la limpieza y humedecido del soporte, la colocación de maestras y cantoneras, el amasado y bombeo continuo, la proyección por franjas, el reglado, el fratasado y el curado. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Alféizar de mármol.",
   "descripcion": "Colocación de alféizar de mármol. Incluye la colocación y el rejuntado. Medido por metro lineal ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

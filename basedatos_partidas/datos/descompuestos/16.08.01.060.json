@@ -6,7 +6,7 @@
   "unidad": "glb",
   "titulo": "Certificación de impermeabilización.",
   "descripcion": "Emisión de la certificación de la impermeabilización, con las pruebas de estanqueidad realizadas.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Accesorio de baño (toallero, jabonera, etc.).",
   "descripcion": "Colocación de accesorio de baño (toallero, jabonera, percha) con fijación a la pared. Incluye el replanteo y la fijación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

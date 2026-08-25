@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Portón batiente de dos hojas con automatismo.",
   "descripcion": "Suministro y colocación de portón batiente de dos hojas con automatismo. Incluye la fabricación, el montaje, los motores y la programación. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

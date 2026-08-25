@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Reparación de desagüe obstruido.",
   "descripcion": "Reparación de desagüe obstruido. Incluye la localización y el desatasco. Medido por reparación ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

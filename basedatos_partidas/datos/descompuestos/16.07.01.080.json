@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Ensayo de esclerometría en elementos de concreto.",
   "descripcion": "Ensayo esclerométrico en elementos de concreto para estimar la resistencia, con informe.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

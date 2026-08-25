@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Plataforma elevadora móvil de tijera.",
   "descripcion": "Uso de plataforma elevadora móvil de tijera para trabajos en altura. Incluye la operación. Medido por metro cuadrado de superficie atendida.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

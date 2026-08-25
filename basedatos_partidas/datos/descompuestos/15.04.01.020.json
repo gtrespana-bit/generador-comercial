@@ -6,7 +6,7 @@
   "unidad": "m³",
   "titulo": "Transporte de escombro a vertedero autorizado.",
   "descripcion": "Transporte de escombro a vertedero o botadero autorizado, con vehículo y canon de vertido incluidos.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

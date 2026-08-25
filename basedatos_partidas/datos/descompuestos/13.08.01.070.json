@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Estantería metálica de almacén.",
   "descripcion": "Montaje de estantería metálica de almacén, con niveles y fijación. Incluye el replanteo y el montaje.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

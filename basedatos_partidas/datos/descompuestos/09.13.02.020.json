@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Bajante con contador de descargas y mando de comprobación.",
   "descripcion": "Instalación del contador de descargas con su mando de comprobación, intercalado en la bajante del sistema de protección. Incluye el corte del conductor, el montaje del contador en caja o soporte registrable, la conexión de los tramos de bajante y la fijación del conjunto a una altura accesible para inspección. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

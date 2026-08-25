@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Desmontaje de tubería de desagüe.",
   "descripcion": "Desmontaje de tubería de desagüe de PVC. Incluye la retirada de la tubería. Medido por metro lineal desmontado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

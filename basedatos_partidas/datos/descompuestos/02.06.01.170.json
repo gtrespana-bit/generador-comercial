@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Desmontaje de tapa de registro.",
   "descripcion": "Desmontaje de tapa de registro practicable. Incluye la retirada de la tapa y su marco. Medido por unidad desmontada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Pintura impermeabilizante de cubierta metálica.",
   "descripcion": "Aplicación de pintura impermeabilizante elastomérica sobre cubierta metálica, con dos manos. Incluye la limpieza y la aplicación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Junta de dilatación en piso.",
   "descripcion": "Ejecución de junta de dilatación en piso mediante perfil con elemento elástico, que absorbe los movimientos del soporte e impide que la tensión se descargue rompiendo el piso. Es obligada en paños extensos, en los cambios de ambiente y coincidiendo con las juntas estructurales del edificio: una junta estructural que se cubre con piso continuo se refleja como fisura en pocos meses. Incluye el replanteo coordinado con las juntas del soporte, la formación del alojamiento, la colocación y nivelación del perfil y el sellado de los bordes. Medido en longitud realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

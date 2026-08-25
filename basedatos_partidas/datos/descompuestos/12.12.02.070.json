@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Aplicación de tinte para madera.",
   "descripcion": "Aplicación de tinte o colorante para madera interior, con una o dos manos. Incluye la preparación de la madera y la aplicación del tinte. Medido por metro cuadrado teñido.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Losa nervada con bloques de poliestireno de aliviano.",
   "descripcion": "Losa nervada de entrepiso o techo formada por nervios de concreto armado y bloques de poliestireno expandido de aliviano, con su loseta de compresión y malla de retracción. Frente al bloque de arcilla reduce notablemente el peso propio de la losa, lo que repercute en el dimensionado de vigas, columnas y fundaciones, y mejora el aislamiento térmico. Incluye el encofrado y apuntalamiento, la colocación de los bloques, el armado de los nervios, la malla de la loseta de compresión, el vaciado y vibrado, el reglado, el curado y el desapuntalamiento escalonado. Medido en superficie de losa realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

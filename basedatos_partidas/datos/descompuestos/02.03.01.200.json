@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Picado de friso de fachada.",
   "descripcion": "Picado de friso de mortero en fachada, con retirada del revestimiento. Incluye el picado del friso y la limpieza del soporte. Medido por metro cuadrado picado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

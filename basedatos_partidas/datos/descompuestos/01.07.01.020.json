@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Replanteo de ejes de muros.",
   "descripcion": "Replanteo de ejes de muros con nivel láser. Incluye el trazado de los ejes. Medido por metro lineal replanteado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

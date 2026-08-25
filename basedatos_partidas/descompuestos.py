@@ -31,7 +31,9 @@ CLASIFICACION = BASE / "datos" / "clasificacion.json"
 SALIDA = BASE / "salida" / "descompuestos"
 
 # Margen por defecto para pasar de coste directo a precio de venta del catálogo.
-MARGEN_DEFECTO = 0.30
+# 2026-08-25: subido de 30 % a 35 % s/coste para todo el catálogo (y por tanto
+# para todos los países, que conservan el margen de la partida base).
+MARGEN_DEFECTO = 0.35
 
 # Layout de 8 columnas (como DPT020.xlsx): A Código, D Unidad, E Descripción,
 # F Rendimiento, G Precio unitario, H Importe.

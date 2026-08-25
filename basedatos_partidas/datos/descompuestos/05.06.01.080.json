@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Losa mixta con lámina colaborante sobre estructura metálica.",
   "descripcion": "Losa de entrepiso con lámina colaborante de acero galvanizado sobre estructura metálica, con malla de retracción y capa de compresión de concreto. La lámina actúa a la vez como encofrado perdido y como armadura inferior, lo que elimina el encofrado y el apuntalamiento en la mayoría de las luces y acelera notablemente la ejecución. Incluye la colocación y fijación de las láminas a las vigas, la soldadura de los conectores de cortante que hacen trabajar solidariamente el acero y el concreto, el cierre de bordes, la malla, el vaciado y reglado del concreto y el curado. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

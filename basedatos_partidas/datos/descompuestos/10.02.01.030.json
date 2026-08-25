@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Aislamiento acústico de cielo raso.",
   "descripcion": "Suministro y colocación de lana mineral sobre cielo raso, para aislamiento acústico. Incluye la colocación de la lana sobre la placa. Medido por metro cuadrado aislado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Cubierta de teja asfáltica en shingle.",
   "descripcion": "Cubierta de teja asfáltica en shingle sobre base continua, clavada y con los solapes de fábrica. Incluye el fieltro base, la colocación y los remates de cumbrera.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

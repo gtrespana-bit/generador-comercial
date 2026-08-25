@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Ventana fija o paño panorámico.",
   "descripcion": "Suministro e instalación de paño fijo de aluminio y vidrio, sin hojas practicables. Incluye la toma de medidas en obra, el montaje y aplomado del marco, el anclaje, el acristalamiento con sus calzos de apoyo y laterales que reparten el peso del vidrio sin transmitirle tensiones puntuales, el acuñado, el sellado perimetral y la limpieza. En paños de gran superficie se verifica el espesor del vidrio conforme a su dimensión y exposición al viento. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

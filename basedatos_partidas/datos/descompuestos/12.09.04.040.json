@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Borde perimetral de sombra para iluminación indirecta.",
   "descripcion": "Ejecución de borde perimetral de sombra en cielo raso, para alojar iluminación indirecta. Incluye la estructura del borde, el remate y el acabado. Medido por metro lineal de borde.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

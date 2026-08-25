@@ -1350,7 +1350,7 @@ def main() -> int:
                     "unidad": unidad,
                     "titulo": titulo,
                     "descripcion": descripcion,
-                    "margen": 0.3,
+                    "margen": 0.35,
                     "complementarios_pct": 1,
                     "recursos": recursos,
                     "codigo_covenin": "",

@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Cerramiento perimetral provisional de obra con malla de señalización.",
   "descripcion": "Cerramiento provisional del perímetro de la zona de obra mediante malla plástica de señalización sostenida por parales metálicos o de madera, con señalización de advertencia. Delimita el área de trabajo e impide el paso de personas ajenas, requisito básico de seguridad cuando la obra convive con zonas en uso o da a espacios comunes. Incluye el replanteo, la colocación y arriostramiento de los parales, el tensado y fijación de la malla, la colocación de las señales de advertencia, el mantenimiento durante la obra y el desmontaje y retiro al finalizar. Medido en longitud realmente cerrada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

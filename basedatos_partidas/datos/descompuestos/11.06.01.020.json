@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Estructura de madera de techo.",
   "descripcion": "Suministro y montaje de estructura de madera de techo formada por pares, correas y tirantes, con uniones mediante herrajes metálicos, y su tratamiento preservante. Incluye la selección de las piezas verificando escuadría y ausencia de defectos, el corte y labra, el izado y montaje con apeo provisional, la fijación con herrajes, la aplicación del preservante en todas las caras y muy especialmente en las testas y zonas de apoyo, y la comprobación de niveles y pendientes. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

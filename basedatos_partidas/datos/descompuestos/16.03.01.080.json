@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Control de pendientes de evacuación.",
   "descripcion": "Verificación de las pendientes de evacuación de cubiertas y pisos húmedos, con nivel láser.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

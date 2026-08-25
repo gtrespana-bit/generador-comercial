@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Desmontaje de tablero eléctrico.",
   "descripcion": "Desmontaje de tablero eléctrico de distribución, incluidos los interruptores termomagnéticos, el barraje y la caja. Incluye el corte previo del suministro desde el punto de acometida y su verificación con detector de tensión, el etiquetado de los circuitos existentes antes de desconectarlos para poder replantear la nueva instalación con la información del estado previo, la desconexión ordenada, el desmontaje de la caja empotrada, el resane del hueco y el retiro del material. Si el cliente desea conservar el equipo, se desmonta con cuidado y se acopia protegido. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido por unidad desmontada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

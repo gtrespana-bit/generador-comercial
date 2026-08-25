@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "División de machihembrado de madera.",
   "descripcion": "Ejecución de división liviana de machihembrado de madera. Incluye la estructura y la colocación del machihembrado. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

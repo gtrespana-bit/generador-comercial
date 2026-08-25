@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Punto de alarma, cámara o control de acceso.",
   "descripcion": "Punto de instalación para sensor de alarma, cámara de videovigilancia o lector de control de acceso, con su canalización, cableado y caja. Incluye el replanteo de la posición atendiendo al ángulo de cobertura del dispositivo y evitando contraluces en el caso de cámaras, la canalización independiente, el tendido del cable hasta la central o grabador, el conectorizado, el montaje del dispositivo y la prueba de funcionamiento y de cobertura. El equipo lo elige el cliente y se presupuesta aparte. Medido por punto terminado y probado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Sensor, cámara o lector de control de acceso elegido por el cliente",

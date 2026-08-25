@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Desmontaje de lámpara de techo.",
   "descripcion": "Desmontaje de lámpara o luminaria de techo. Incluye la retirada de la luminaria. Medido por unidad desmontada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

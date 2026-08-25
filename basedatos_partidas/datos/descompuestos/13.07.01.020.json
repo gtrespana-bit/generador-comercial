@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Señalización de seguridad pintada en piso.",
   "descripcion": "Pintado de demarcación y señalización en piso con pintura de tráfico, con plantillas y enmascarado. Incluye la limpieza y la aplicación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Aislamiento de fachada con lana de roca.",
   "descripcion": "Colocación de panel de lana de roca sobre fachada, fijado y con capa de protección.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

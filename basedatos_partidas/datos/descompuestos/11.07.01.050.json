@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Escalera de acceso a cubierta.",
   "descripcion": "Colocación de escalera fija de acceso a cubierta, con anclajes y fijación a la estructura. Incluye el replanteo y el montaje.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

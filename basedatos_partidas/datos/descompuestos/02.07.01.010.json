@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Desmontaje de equipo de aire acondicionado tipo split.",
   "descripcion": "Desmontaje de equipo de aire acondicionado tipo split, comprendiendo la unidad evaporadora interior, la unidad condensadora exterior, la tubería frigorífica y el drenaje. Incluye la recuperación previa del gas refrigerante mediante equipo específico, operación obligatoria por normativa ambiental que no debe liberarse a la atmósfera, la desconexión eléctrica comprobada, el desmontaje de ambas unidades y de sus soportes, el retiro de la tubería y el drenaje, el resane de las perforaciones de paso y el descenso de los equipos. Si el cliente desea conservar el equipo, se desmonta con cuidado y se acopia protegido. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido por equipo desmontado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

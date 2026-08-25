@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Roza en muro de concreto.",
   "descripcion": "Apertura de roza en muro de concreto. Incluye la ejecución de la roza. Medido por metro lineal ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

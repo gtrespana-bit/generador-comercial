@@ -6,7 +6,7 @@
   "unidad": "m³",
   "titulo": "Movimiento interno de escombro a zona de acopio.",
   "descripcion": "Movimiento interno de escombro desde el punto de generación hasta la zona de acopio, con medios manuales o carretilla.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

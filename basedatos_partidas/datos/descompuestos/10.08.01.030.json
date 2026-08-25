@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Sellado de junta con banda de PVC.",
   "descripcion": "Sellado de junta de construcción con banda de PVC. Incluye la colocación de la banda y el remate. Medido por metro lineal sellado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

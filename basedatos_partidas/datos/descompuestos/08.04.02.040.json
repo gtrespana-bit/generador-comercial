@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Remate de encuentro de ducha.",
   "descripcion": "Remate de encuentro de zona de ducha. Incluye el sellado y el remate. Medido por metro lineal ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

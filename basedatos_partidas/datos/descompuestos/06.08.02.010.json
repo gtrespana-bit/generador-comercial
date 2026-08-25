@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Malla de protección de fachada.",
   "descripcion": "Colocación de malla de protección o defensa de fachada. Incluye la fijación de la malla. Medido por metro cuadrado instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

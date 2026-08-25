@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Sellado de fisuras en cubierta previo a impermeabilización.",
   "descripcion": "Apertura, limpieza y sellado de fisuras en la superficie de cubierta antes de aplicar la impermeabilización, con sellador elástico y banda de refuerzo. Impermeabilizar sobre una fisura sin tratar no la resuelve: el movimiento se transmite a la membrana y la rompe en la misma línea al poco tiempo. Incluye el mapeo de las fisuras, su apertura en forma de cajeado, la limpieza y aspirado, la imprimación, el relleno con sellador elástico y la colocación de la banda de refuerzo embebida. Medido en longitud de fisura realmente tratada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

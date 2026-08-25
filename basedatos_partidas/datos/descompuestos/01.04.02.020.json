@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Control de acceso a zona de obra.",
   "descripcion": "Instalación de control de acceso a zona de obra. Incluye la señalización y la delimitación del acceso. Medido por acceso habilitado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

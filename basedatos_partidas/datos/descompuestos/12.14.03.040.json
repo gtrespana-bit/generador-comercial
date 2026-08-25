@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Restauración de carpintería de madera con masilla.",
   "descripcion": "Restauración de carpintería de madera con relleno de masilla, lijado y acabado. Incluye el resane de golpes, el lijado y el acabado. Medido por metro cuadrado restaurado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

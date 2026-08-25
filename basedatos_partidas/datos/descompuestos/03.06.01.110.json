@@ -6,7 +6,7 @@
   "unidad": "m3",
   "titulo": "Suministro de arena lavada.",
   "descripcion": "Suministro y transporte de arena lavada a obra. Incluye el suministro y el transporte. Medido por metro cúbico suministrado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

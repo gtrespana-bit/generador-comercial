@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Limpieza de terreno con escombros de demolición.",
   "descripcion": "Limpieza de terreno con restos de demolición. Incluye la retirada y el acopio. Medido por metro cuadrado limpiado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

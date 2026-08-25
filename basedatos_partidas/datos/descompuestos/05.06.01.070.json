@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Apuntalamiento de losa durante el vaciado y el fraguado.",
   "descripcion": "Apuntalamiento de losa mediante puntales metálicos telescópicos sobre durmientes de reparto, dimensionado para soportar el peso del concreto fresco, del encofrado y de las cargas de ejecución, y mantenido hasta que la losa alcanza la resistencia de proyecto. El desapuntalamiento prematuro es una de las causas más frecuentes de flechas excesivas y de fisuración permanente. Incluye el replanteo de la retícula, la colocación de durmientes en cabeza y base, el montaje y puesta en carga de los puntales, la comprobación de que la carga se transmite a un nivel inferior con capacidad suficiente, la revisión durante el vaciado y el desapuntalamiento escalonado. Medido en superficie de losa realmente apuntalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Desmontaje de estructura de techo.",
   "descripcion": "Desmontaje de la estructura de soporte de cubierta, formada por correas, cerchas o perfiles de madera o metal, una vez retirado el material de cubrición. Ejecutado con sierra, oxicorte o desatornillado según el material, con apeo previo y eslingado de los elementos antes de liberarlos. Incluye el estudio del orden de desmontaje para conservar la estabilidad del conjunto, el sostenimiento de cada pieza antes del corte, el descenso mecánico, la clasificación del material recuperable y la limpieza. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en superficie de cubierta cuya estructura se desmonta.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

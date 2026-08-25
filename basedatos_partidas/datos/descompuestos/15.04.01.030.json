@@ -6,7 +6,7 @@
   "unidad": "m³",
   "titulo": "Canon de vertido de escombro mezclado.",
   "descripcion": "Canon de vertido en vertedero autorizado de escombro mezclado no recuperable.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

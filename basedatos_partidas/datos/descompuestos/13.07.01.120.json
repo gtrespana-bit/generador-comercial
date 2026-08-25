@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Demarcación de zona de seguridad pintada.",
   "descripcion": "Pintado de demarcación de zona de seguridad con pintura de tráfico y plantillas. Incluye la limpieza y la aplicación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

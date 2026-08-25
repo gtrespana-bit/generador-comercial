@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Levantamiento de la envolvente térmica.",
   "descripcion": "Levantamiento de la envolvente térmica de la vivienda, con medición de superficies y composición.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

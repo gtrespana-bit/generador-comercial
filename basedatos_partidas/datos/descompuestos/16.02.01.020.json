@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Ensayo de líquidos penetrantes en soldadura.",
   "descripcion": "Ensayo de líquidos penetrantes para detección de fisuras superficiales en soldaduras, con informe.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

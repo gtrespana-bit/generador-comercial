@@ -6,7 +6,7 @@
   "unidad": "m3",
   "titulo": "Acopio y reutilización de tierra en obra.",
   "descripcion": "Acopio de tierra en obra para su reutilización. Incluye el acopio y la protección. Medido por metro cúbico acopiado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

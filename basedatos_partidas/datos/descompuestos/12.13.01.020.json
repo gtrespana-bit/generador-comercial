@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Acabado decorativo texturado.",
   "descripcion": "Aplicación de acabado decorativo texturado sobre paramento interior o exterior, con la técnica y el grano acordados con el cliente. El resultado depende de mantener la misma mano, la misma herramienta y la misma dosificación en todo el paño, por lo que conviene ejecutar una muestra aprobada previamente y no interrumpir el trabajo dentro de un mismo paño. Incluye la preparación y sellado del soporte, la aplicación de la capa base, la ejecución de la textura de forma continua y la protección final cuando el sistema la requiera. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Friso de mortero con hidrófugo en paramento exterior.",
   "descripcion": "Friso de mortero de cemento y arena con aditivo hidrófugo de masa, de 2 cm de espesor medio, maestreado y fratasado sobre paramento exterior de bloque o ladrillo. El hidrófugo reduce la absorción capilar del mortero, que es la vía por la que la lluvia batiente termina apareciendo como humedad en la cara interior. Incluye el trabajo desde andamio, la limpieza y humedecido del soporte, la colocación de maestras y cantoneras, la malla de refuerzo en los encuentros de materiales distintos, el tendido y reglado del mortero en dos capas, el fratasado final y el curado durante los primeros días, sin el cual el friso exterior fisura por retracción. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Decapado de pintura en paramento.",
   "descripcion": "Decapado químico de capas de pintura existentes en paramento o carpintería, previo a un nuevo acabado. Incluye la aplicación del decapante, el retiro de la pintura reblandecida y la limpieza de la superficie. Medido por metro cuadrado decapado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

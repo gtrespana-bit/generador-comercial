@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Caja de registro de servicios exterior.",
   "descripcion": "Ejecución de caja de registro de servicios exterior, con base y tapa. Incluye la colocación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Picado de friso de yeso o pasta en paramento.",
   "descripcion": "Picado de revestimiento de yeso o pasta existente en paramento interior, ejecutado con medios manuales mediante espátula ancha y cincel, con martillo eléctrico solo en las zonas de mayor espesor. Por tratarse de un material blando el rendimiento es sensiblemente mayor que en un friso de mortero, aunque genera abundante polvo fino. Incluye la protección del entorno, el control de polvo mediante aspiración continua, el retiro del escombro en sacos hasta el punto de acopio y la limpieza del paramento resultante. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en superficie realmente picada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

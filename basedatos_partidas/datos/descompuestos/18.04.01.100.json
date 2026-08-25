@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Aislamiento de piso de garaje.",
   "descripcion": "Colocación de aislamiento en el piso del garaje, para reducir la pérdida térmica al exterior.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

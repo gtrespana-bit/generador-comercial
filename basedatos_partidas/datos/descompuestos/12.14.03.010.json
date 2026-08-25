@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Restauración de carpintería de madera con decapado y barnizado.",
   "descripcion": "Restauración de carpintería de madera con decapado del acabado anterior, lijado y barnizado nuevo. Incluye el decapado, el lijado, el fondo y las dos manos de barniz. Medido por metro cuadrado restaurado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

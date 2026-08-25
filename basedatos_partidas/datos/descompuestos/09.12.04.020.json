@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Teclado de escenas para activación directa.",
   "descripcion": "Suministro e instalación de teclado o pulsador de escenas para activación directa de ambientes preconfigurados, integrado en la central domótica. Incluye el montaje en caja empotrada, la conexión, la configuración de las escenas y la prueba de activación. Medido por teclado instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

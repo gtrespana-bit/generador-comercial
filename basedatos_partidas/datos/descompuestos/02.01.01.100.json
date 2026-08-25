@@ -6,7 +6,7 @@
   "unidad": "m3",
   "titulo": "Demolición de sobrecimiento de concreto.",
   "descripcion": "Demolición de sobrecimiento o arranque de muro de concreto, con medios mecánicos. Incluye la demolición y la retirada del escombro. Medido por metro cúbico demolido.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

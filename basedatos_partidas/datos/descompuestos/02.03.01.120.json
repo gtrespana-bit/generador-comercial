@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Demolición de muro de fachada de mampostería.",
   "descripcion": "Demolición de muro de fachada de mampostería de piedra o ladrillo. Incluye la demolición y la retirada del escombro. Medido por metro cuadrado demolido.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

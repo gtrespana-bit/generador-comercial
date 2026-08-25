@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Cata en muro para reconocimiento de espesor.",
   "descripcion": "Cata en muro para reconocimiento de espesor y composición. Incluye la apertura de la cata y la limpieza. Medido por metro lineal de cata.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

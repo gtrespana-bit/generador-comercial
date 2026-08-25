@@ -6,7 +6,7 @@
   "unidad": "m3",
   "titulo": "Achique de agua en excavación.",
   "descripcion": "Achique de agua en excavación con bomba sumergible. Incluye la colocación de la bomba y el achique. Medido por metro cúbico achicado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

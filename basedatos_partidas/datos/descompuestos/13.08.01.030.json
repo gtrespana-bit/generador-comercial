@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Estantería fija de pared.",
   "descripcion": "Fabricación y colocación de repisa o estantería fija, en melamina o madera, con fijación a la pared. Incluye el corte y la fijación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

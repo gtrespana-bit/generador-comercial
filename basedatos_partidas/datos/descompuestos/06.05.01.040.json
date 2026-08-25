@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "División liviana de machihembrado de madera.",
   "descripcion": "División interior ejecutada con machihembrado de madera sobre rastreles, fijada a piso, techo y paramentos. Se emplea en divisiones ligeras, forros y cerramientos de carácter decorativo o en construcción tradicional. Incluye el replanteo, el montaje y nivelación del rastrelado, la aplicación de preservante en las piezas y muy especialmente en las testas y zonas de apoyo, el montaje del machihembrado con encaje a presión, el remate perimetral con molduras y el lijado final. Medido a cinta corrida descontando huecos mayores de 2 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

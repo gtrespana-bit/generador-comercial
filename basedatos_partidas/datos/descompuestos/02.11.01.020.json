@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Desmontaje de mueble de cocina alto o bajo.",
   "descripcion": "Desmontaje de mueble de cocina alto o bajo, incluidas las puertas, los entrepaños, los cajones y los herrajes de fijación al paramento. Ejecutado con medios manuales y atornillador. Incluye el vaciado previo del contenido si el cliente no lo hubiera retirado, la desconexión de las instalaciones que atraviesen el mueble, el desmontaje ordenado desde las puertas hacia el cuerpo, la extracción de tacos y tornillos del muro, el resane de los huecos de anclaje y la clasificación de las piezas aprovechables. Si el cliente desea conservar el elemento, se desmonta con cuidado y se acopia protegido. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en longitud de frente de mueble realmente desmontada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

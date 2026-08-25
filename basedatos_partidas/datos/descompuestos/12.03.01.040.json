@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Cenefa o listelo decorativo en enchapado.",
   "descripcion": "Colocación de cenefa, listelo o pieza decorativa corrida dentro del enchapado cerámico, recibida con adhesivo y rejuntada a juego. Incluye el replanteo de la línea que debe coordinarse con el despiece general para que la cenefa coincida con la junta de las piezas y no obligue a cortes forzados, la colocación pieza a pieza con nivelación, los cortes de ajuste en esquinas y encuentros, el rejuntado y la limpieza. La pieza la elige el cliente y se presupuesta aparte. Medido en longitud realmente colocada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Cenefa, listelo o pieza decorativa cerámica elegida por el cliente",

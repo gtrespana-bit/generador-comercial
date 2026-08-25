@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Apertura de nicho u hornacina en pared.",
   "descripcion": "Apertura de nicho u hornacina en pared de mampostería para alojar repisas, tableros, equipos o elementos decorativos, con el repaso de las jambas y del fondo. Incluye la comprobación previa de que la pared no es portante y de que no aloja instalaciones en el área del nicho, el corte perimetral con disco para obtener bordes rectos, el picado controlado por capas, el repaso y aplomado de jambas y fondo, la formación del dintel superior cuando la luz lo requiera y el retiro del escombro. No incluye el friso ni el acabado interior. Medido por nicho realmente abierto.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

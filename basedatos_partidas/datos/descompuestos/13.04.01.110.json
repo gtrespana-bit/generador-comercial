@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Alacena o armario de almacenamiento.",
   "descripcion": "Fabricación e instalación de alacena o armario de almacenamiento en melamina, con puertas y entrepaños. Incluye el despiece y el armado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

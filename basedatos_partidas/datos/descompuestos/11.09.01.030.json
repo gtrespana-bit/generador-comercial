@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Reparación de impermeabilización de cubierta plana.",
   "descripcion": "Reparación de impermeabilización de cubierta plana con aplicación de membrana líquida sobre la zona dañada, con refuerzo de malla. Incluye la preparación y el sellado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

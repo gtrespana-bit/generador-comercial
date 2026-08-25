@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Red de seguridad en hueco de escalera.",
   "descripcion": "Colocación de red de seguridad en hueco de escalera, con cuerdas de atado, para prevenir caídas.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

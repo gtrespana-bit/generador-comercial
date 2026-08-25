@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Cumbrera y caballete de lámina metálica.",
   "descripcion": "Remate de cumbrera o caballete en cubierta de lámina metálica, con pieza de remate atornillada y sellada. Incluye la colocación y el sellado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

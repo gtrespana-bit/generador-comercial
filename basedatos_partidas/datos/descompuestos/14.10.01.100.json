@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Iluminación subacuática de piscina.",
   "descripcion": "Instalación de iluminación subacuática de piscina, con cableado y conexión. Incluye la instalación. La luminaria la elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

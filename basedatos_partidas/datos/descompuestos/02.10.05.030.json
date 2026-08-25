@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Retiro de láminas decorativas, vinilos o espejos adheridos.",
   "descripcion": "Retiro de revestimiento decorativo adherido al paramento, ya sea lámina vinílica, calcomanía mural o espejo pegado, junto con los restos de adhesivo. Incluye la protección del piso y del mobiliario, el calentamiento o humectación previa para reblandecer el adhesivo, el desprendimiento controlado del material con espátula, y en el caso de espejos el encintado previo de la superficie para evitar la proyección de fragmentos al fracturarse. Incluye el rascado de los restos de adhesivo, el retiro del material en sacos y la limpieza del paramento. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en superficie realmente tratada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

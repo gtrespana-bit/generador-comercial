@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Perforación de paso en muro.",
   "descripcion": "Perforación de paso en muro para instalación. Incluye la perforación. Medido por unidad ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

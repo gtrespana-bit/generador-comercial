@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Pintura de guarda o friso decorativo interior.",
   "descripcion": "Aplicación de guarda o friso decorativo interior pintado, con una o dos manos. Incluye el enmascarado de la línea y la aplicación. Medido por metro lineal pintado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

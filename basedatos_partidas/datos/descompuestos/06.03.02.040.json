@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Pared de ladrillo de arcilla a la vista.",
   "descripcion": "Pared de ladrillo de arcilla ejecutada con acabado a la vista, con selección de piezas, aparejo replanteado y junta trabajada y rehundida. Es el trabajo de mampostería de menor rendimiento del catálogo: sin friso posterior que corrija nada, cada pieza y cada junta quedan expuestas. Incluye la selección y descarte de piezas descantilladas o de tono discordante, el replanteo del aparejo para resolver los encuentros y los huecos sin piezas partidas a la vista, el humedecido, la colocación con junta constante controlada con plantilla, el rehundido y perfilado de la junta y la limpieza inmediata de rebabes antes de que fragüen. Medido a cinta corrida descontando huecos mayores de 2 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

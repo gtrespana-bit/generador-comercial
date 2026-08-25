@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de banco de baterías para fotovoltaica.",
   "descripcion": "Instalación de banco de baterías para sistema fotovoltaico, con conexión. Las baterías las elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

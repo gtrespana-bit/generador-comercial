@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Sellado de junta de hormigonado con bentonita.",
   "descripcion": "Sellado de junta de hormigonado con cordón de bentonita expansiva. Incluye la colocación del cordón y el remate. Medido por metro lineal sellado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

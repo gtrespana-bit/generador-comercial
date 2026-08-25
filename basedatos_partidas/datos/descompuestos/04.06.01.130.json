@@ -6,7 +6,7 @@
   "unidad": "m3",
   "titulo": "Concreto para pilote de sección grande.",
   "descripcion": "Concreto para pilote de gran sección. Incluye el vaciado. Medido por metro cúbico ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

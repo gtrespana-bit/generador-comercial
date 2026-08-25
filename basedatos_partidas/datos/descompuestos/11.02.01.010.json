@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Pendientado de cubierta plana con mortero aligerado.",
   "descripcion": "Formación de pendientes en cubierta plana mediante relleno de mortero aligerado, con el espesor variable necesario para dirigir el agua hacia los tragantes con la pendiente mínima de proyecto. Es la capa que determina si la cubierta evacúa o empoza, y el error más común es dejar pendiente insuficiente o contrapendientes junto a los petos. Incluye el replanteo de las líneas de limatesa y de los puntos bajos en los tragantes, la colocación de maestras, el extendido y reglado del mortero, el fratasado y el curado. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

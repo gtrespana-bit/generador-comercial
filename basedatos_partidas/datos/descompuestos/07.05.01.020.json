@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Baranda o pasamanos de acero inoxidable.",
   "descripcion": "Suministro y montaje de baranda o pasamanos de acero inoxidable con sus montantes, tubos y accesorios de unión, anclados al piso o al canto de la losa. Incluye el replanteo, el corte y pulido de los tubos, el montaje de los montantes con sus bases ancladas mecánicamente, el ensamblaje de los tramos con accesorios o soldadura de inoxidable, el pulido de las uniones hasta igualar el acabado del tubo y la comprobación de rigidez frente a empuje horizontal. Medido en longitud realmente instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

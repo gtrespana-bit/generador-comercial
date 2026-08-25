@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Tubería frigorífica y drenaje.",
   "descripcion": "Instalación de equipo de climatización, con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

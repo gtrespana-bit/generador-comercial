@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Preparación y puente de adherencia sobre losa existente.",
   "descripcion": "Preparación de losa o piso existente que permanece como base, mediante limpieza, saneado y aplicación de puente de adherencia, para recibir una capa de afirmado o un piso adherido. Se emplea en reforma cuando no se demuele la base y hay que garantizar que la capa nueva no se despegue. Incluye el sondeo por golpeo y el saneado de las zonas huecas, el desengrasado y eliminación de restos de adhesivos o pinturas, el aspirado del polvo, la apertura del poro mediante lijado o repicado ligero y la aplicación del puente de adherencia respetando el tiempo abierto antes de recibir la capa siguiente. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Pavimento de concreto alisado con allanadora.",
   "descripcion": "Pavimento exterior de concreto alisado con allanadora mecánica, para tránsito peatonal y vehicular. Incluye el vaciado y el alisado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Remate de aislamiento en esquinas y juntas.",
   "descripcion": "Ejecución de remates de aislamiento en esquinas, juntas y encuentros de la fachada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

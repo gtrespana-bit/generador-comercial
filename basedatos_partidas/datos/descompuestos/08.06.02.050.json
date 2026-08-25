@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Soporte de calentador.",
   "descripcion": "Suministro y colocación de soporte de calentador. Incluye el anclaje. Medido por unidad colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Desmontaje de reja de protección en fachada.",
   "descripcion": "Desmontaje de reja o protector metálico de ventana o puerta en fachada, ejecutado mediante oxicorte o amoladora sobre los anclajes empotrados en el paramento. Incluye el sostenimiento de la reja antes de liberar el último anclaje para evitar su caída, el corte de los elementos de fijación, el picado y resane de los huecos de anclaje que queden en el muro, el descenso del elemento y su acopio clasificado como chatarra. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en superficie realmente desmontada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Piso de porcelanato rectificado en capa fina.",
   "descripcion": "Colocación de piso de porcelanato rectificado de junta mínima, en capa fina. Incluye la preparación del soporte, la colocación y el rejuntado. Medido por metro cuadrado colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

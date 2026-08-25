@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Colocación de espejo de pared.",
   "descripcion": "Suministro y colocación de espejo de pared, fijado con adhesivo o soportes. Incluye la preparación del soporte y la colocación del espejo. Medido por metro cuadrado colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

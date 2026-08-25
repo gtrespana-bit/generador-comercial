@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Bordillo de concreto vaciado en sitio.",
   "descripcion": "Ejecución de brocal o bordillo de concreto para confinamiento de pavimento, con encofrado y curado. Incluye el vaciado y el acabado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

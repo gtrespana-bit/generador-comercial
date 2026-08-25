@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "SATE de muro con acabado texturado.",
   "descripcion": "Ejecución de SATE de muro con acabado texturado. Incluye el panel, la malla, el mortero y el acabado. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

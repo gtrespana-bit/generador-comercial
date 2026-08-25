@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Tendido de tubería exterior enterrada.",
   "descripcion": "Tendido de tubería exterior enterrada para agua o gas, con excavación, colocación y relleno. Incluye la colocación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

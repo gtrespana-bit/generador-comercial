@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Aro o tablero de baloncesto.",
   "descripcion": "Instalación de aro o tablero de baloncesto, con fijación a poste o pared. Incluye la fijación. El equipo lo elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Ensayo de compresión de bloques de mampostería.",
   "descripcion": "Ensayo de resistencia a compresión de bloque de mampostería, con emisión de informe.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

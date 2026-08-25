@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Levantado de adoquín con recuperación.",
   "descripcion": "Levantado de pavimento de adoquín con recuperación de piezas. Incluye el levantado, la limpieza y el acopio de las piezas. Medido por metro cuadrado levantado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

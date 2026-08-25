@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Demolición de muro de concreto no estructural.",
   "descripcion": "Demolición de muro interior de concreto no estructural, incluidos sus revestimientos, ejecutada con martillo neumático y corte de la malla de refuerzo si la tuviera. Incluye la comprobación estructural previa que acredite que el muro no es portante ni de arriostramiento, requisito imprescindible antes de intervenir, el corte perimetral con disco de diamante, la protección del entorno, el control de polvo, la fragmentación del escombro y su retiro en sacos. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en superficie realmente demolida.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

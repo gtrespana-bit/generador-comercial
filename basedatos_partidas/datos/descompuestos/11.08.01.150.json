@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Reposición de tornillería y solapes de cubierta.",
   "descripcion": "Reposición de tornillería y sellado de solapes de cubierta metálica, para eliminar filtraciones. Incluye la sustitución y el sellado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

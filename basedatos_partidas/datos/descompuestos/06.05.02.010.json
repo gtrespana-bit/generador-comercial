@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Mampara divisoria de oficina.",
   "descripcion": "Suministro e instalación de mampara divisoria de oficina, ciega, acristalada o mixta, con su perfilería, paneles, juntas y remates. Su ventaja es ser desmontable y reconfigurable sin obra, lo que la hace idónea en locales en alquiler o con distribución cambiante. Incluye el replanteo de la línea, la fijación de las guías a piso y techo con sellado acústico, el montaje de los montantes aplomados, la colocación de paneles y vidrios con sus juntas, el ajuste de puertas si las hubiera y el remate perimetral. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Protección de mobiliario y equipos con lámina plástica.",
   "descripcion": "Protección de mobiliario, electrodomésticos y equipos que permanecen en el inmueble durante la obra, mediante lámina de polietileno fijada con cinta. Incluye el agrupamiento previo del mobiliario en la zona más alejada del frente de trabajo, su cubrición completa con lámina solapada, el sellado con cinta para impedir la entrada de polvo, la revisión periódica de la protección mientras dure la obra y su retiro y desecho al finalizar. Medido en superficie de mobiliario realmente protegida.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

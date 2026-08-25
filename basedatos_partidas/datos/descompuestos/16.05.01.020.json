@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Prueba de continuidad de conductores.",
   "descripcion": "Prueba de continuidad de los conductores de la instalación eléctrica, verificando la ausencia de cortes.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

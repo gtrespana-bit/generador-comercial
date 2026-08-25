@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Coronación de muro con pieza.",
   "descripcion": "Colocación de pieza de coronación de muro. Incluye la colocación de la pieza. Medido por metro lineal ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

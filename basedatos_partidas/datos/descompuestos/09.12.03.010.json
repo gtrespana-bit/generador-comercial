@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Módulo de actuación on/off para circuitos de iluminación.",
   "descripcion": "Suministro e instalación de módulo de actuación on/off (relé) para control de circuitos de iluminación y cargas, integrado en la central domótica. Incluye el montaje en el tablero o en caja empotrada, la conexión del circuito de potencia y de la señal de control, la configuración y la prueba de conmutación. Medido por módulo instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

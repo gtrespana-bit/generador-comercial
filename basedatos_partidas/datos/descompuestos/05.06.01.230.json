@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Losa de entrepiso con malla.",
   "descripcion": "Ejecución de losa de entrepiso con malla electrosoldada. Incluye la malla y el vaciado. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

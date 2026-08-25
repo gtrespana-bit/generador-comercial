@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de lavamanos con mueble.",
   "descripcion": "Instalación de lavamanos con mueble y grifería. Incluye la conexión de agua y desagüe. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

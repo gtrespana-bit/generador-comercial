@@ -6,7 +6,7 @@
   "unidad": "glb",
   "titulo": "Inspección de seguridad periódica.",
   "descripcion": "Inspección de seguridad periódica de la obra, con emisión de informe de observaciones.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

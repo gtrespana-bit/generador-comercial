@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Fachada de chapa metálica con junta alzada.",
   "descripcion": "Ejecución de fachada de chapa metálica con junta alzada, con fijación a estructura. Incluye la colocación de la chapa y el remate de juntas. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

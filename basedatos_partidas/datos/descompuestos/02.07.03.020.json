@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Desmontaje de aparato sanitario y su grifería.",
   "descripcion": "Desmontaje de aparato sanitario existente, ya sea inodoro, lavamanos, bidé o fregadero, junto con su grifería y accesorios de conexión. Incluye cierre previo de la llave de paso y vaciado del aparato, desconexión de las tomas de agua y del desagüe, taponado provisional de las salidas para evitar olores y entrada de escombro, retirada del aparato hasta el punto de acopio y limpieza de la zona. Si el cliente desea conservar el aparato, se desmonta con cuidado y se acopia protegido. No incluye el transporte a vertedero. Medido por unidad desmontada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

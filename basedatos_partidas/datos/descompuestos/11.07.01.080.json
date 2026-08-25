@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Pase de instalaciones por cubierta.",
   "descripcion": "Ejecución de pase de instalaciones (tubería, cable) a través de la cubierta, con sellado y refuerzo de la impermeabilización. Incluye la apertura y el sellado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

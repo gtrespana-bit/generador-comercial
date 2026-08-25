@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Placa base con pernos de anclaje para columna metálica.",
   "descripcion": "Placa base de acero con sus pernos de anclaje, cartelas y nivelación con grout de retracción compensada, para el apoyo de columna metálica sobre fundación de concreto. Incluye el replanteo preciso de la posición de los pernos, que es la operación crítica del conjunto porque un error aquí obliga a rehacer anclajes en concreto endurecido, la colocación de la plantilla de pernos antes del vaciado de la fundación o el anclaje químico posterior, el nivelado de la placa mediante cuñas o tuercas de nivelación, el relleno del espacio bajo la placa con grout fluido sin retracción, el apriete de tuercas al par especificado y la protección del conjunto. Medido por unidad realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

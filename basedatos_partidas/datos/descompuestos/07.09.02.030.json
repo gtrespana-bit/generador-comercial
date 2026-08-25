@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de videoportero.",
   "descripcion": "Instalación de videoportero con placa exterior y monitor interior. Incluye el cableado, el montaje y la configuración. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Circuito de iluminación exterior.",
   "descripcion": "Ejecución de circuito de iluminación exterior, con cableado y canalización. Incluye el cableado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

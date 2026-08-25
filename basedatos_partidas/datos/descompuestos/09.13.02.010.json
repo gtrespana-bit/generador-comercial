@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Bajante de cobre desnudo con fijaciones.",
   "descripcion": "Suministro y tendido de bajante de cobre desnudo desde el captador hasta la puesta a tierra, con sus grapas de fijación separadas del paramento. Incluye el replanteo del recorrido más corto y recto, la fijación de las grapas, el tendido del conductor sin dobleces cerrados y la conexión en ambos extremos. Medido por metro lineal de bajante instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

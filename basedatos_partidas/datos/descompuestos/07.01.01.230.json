@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Puerta interior de cristal corrediza.",
   "descripcion": "Suministro y colocación de puerta interior corrediza de vidrio templado, con riel y herrajes. Incluye el montaje del riel y la colocación del vidrio. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

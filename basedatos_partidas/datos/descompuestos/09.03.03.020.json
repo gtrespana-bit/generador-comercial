@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Interruptor termomagnético de protección de circuito.",
   "descripcion": "Suministro y montaje de interruptor termomagnético en el tablero, con su conexión e identificación. La capacidad del interruptor debe corresponder al calibre del conductor que protege, no al consumo del equipo: un interruptor sobredimensionado deja de proteger el cable y lo convierte en el fusible del circuito. Incluye el montaje sobre riel, la conexión de fase y su apriete al par, el rotulado del circuito en el directorio y la prueba de disparo. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

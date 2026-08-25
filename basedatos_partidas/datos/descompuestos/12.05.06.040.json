@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Piso de alfombra o moqueta, encolado o tensado.",
   "descripcion": "Colocación de alfombra o moqueta, mediante encolado directo o sistema de tiras tensoras según el tipo, con su remate perimetral. Incluye la comprobación de limpieza y sequedad del soporte, la colocación de la manta base cuando el sistema lo requiera, el corte y presentado de los paños respetando el sentido del pelo, que debe ser el mismo en todo el ambiente porque de lo contrario los paños se ven de distinto tono, el encolado o tensado, el sellado de las uniones y el remate en umbrales y perímetro. El material lo elige el cliente y se presupuesta aparte. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Piso de alfombra o moqueta elegido por el cliente",

@@ -6,7 +6,7 @@
   "unidad": "m³",
   "titulo": "Suministro y transporte de material de préstamo a obra.",
   "descripcion": "Suministro de material granular de préstamo desde cantera o proveedor autorizado y su transporte y descarga en obra, en el punto de acopio indicado. Incluye la comprobación de la granulometría y la limpieza del material a la llegada, el rechazo de la carga si no cumple, la descarga en el punto acordado y el registro de los volúmenes recibidos por vale de entrega. Medido en volumen de material realmente recibido en obra.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

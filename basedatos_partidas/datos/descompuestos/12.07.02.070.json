@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Forro de placa de yeso sobre estructura para medianería.",
   "descripcion": "Forro de placa de yeso laminado sobre estructura metálica para medianería, sin contacto directo con el muro vecino. Incluye la estructura, la placa y el tratamiento de juntas. Medido por metro cuadrado de forro terminado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

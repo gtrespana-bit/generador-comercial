@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Pintura de cielo raso de concreto visto.",
   "descripcion": "Aplicación de pintura de caucho sobre cielo raso de concreto visto, con fondo sellador y dos manos. Incluye la limpieza, el fondo y las dos manos de acabado, con protección de muros y pisos. Medido por metro cuadrado pintado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

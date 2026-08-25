@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Tubería de gas doméstico.",
   "descripcion": "Tendido de tubería de gas doméstico en cobre o acero, vista o en canalización ventilada, con sus accesorios, soportes y prueba de estanqueidad. La tubería de gas no se empotra ciega: debe discurrir vista o en vaina ventilada al exterior, de modo que una fuga se disipe en lugar de acumularse. Incluye el replanteo del trazado, el corte y unión por soldadura fuerte o roscado según el material, la fijación con abrazaderas, los pasos de muro con vaina, la prueba de estanqueidad con presión y detector, y la señalización de la tubería. Medido en longitud realmente instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

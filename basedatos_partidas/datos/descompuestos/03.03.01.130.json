@@ -6,7 +6,7 @@
   "unidad": "m3",
   "titulo": "Excavación de registro enterrado.",
   "descripcion": "Excavación de registro o tanquilla enterrada. Incluye la excavación y el acopio. Medido por unidad excavada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

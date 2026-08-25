@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Control de recubrimiento de armadura.",
   "descripcion": "Verificación del recubrimiento de la armadura con detector magnético, para garantizar la protección del acero.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

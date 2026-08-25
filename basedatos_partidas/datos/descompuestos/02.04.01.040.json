@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Apertura de vano en pared de bloque o ladrillo.",
   "descripcion": "Apertura de vano para puerta, ventana o paso en pared existente de bloque o ladrillo, ejecutada con corte perimetral mediante disco de diamante y demolición interior con martillo eléctrico. Incluye el replanteo del vano, el apeo provisional del dintel mediante puntales antes de iniciar la demolición, el corte perimetral que garantiza jambas rectas y sin desgarros hacia el resto del muro, la demolición controlada desde la parte superior, el retiro del escombro y el repaso de las jambas dejándolas aplomadas. No incluye el dintel definitivo ni el resane de las jambas, que se valoran aparte. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en superficie de vano realmente abierto.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

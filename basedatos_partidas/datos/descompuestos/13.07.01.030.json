@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Señalización de evacuación y emergencia.",
   "descripcion": "Colocación de señal de evacuación y emergencia, con fijación y rotulación. Incluye el replanteo y la fijación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

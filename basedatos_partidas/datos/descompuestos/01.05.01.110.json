@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Andamio de fachada con protección de malla.",
   "descripcion": "Montaje de andamio de fachada con malla de protección. Incluye el andamio y la malla. Medido por metro cuadrado montado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

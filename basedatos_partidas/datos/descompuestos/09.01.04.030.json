@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de ducha o regadera con su grifería.",
   "descripcion": "Instalación de ducha o regadera sobre puntos de agua previamente ejecutados, con su grifería mezcladora, brazo y rociador. Incluye la comprobación de la altura y separación normalizadas de las salidas, el montaje del cuerpo de la grifería con sus excéntricas y juntas, el ajuste del embellecedor contra el enchapado, el sellado perimetral con silicona sanitaria, el montaje del brazo y rociador y la prueba de funcionamiento, temperatura y estanqueidad. El aparato y la grifería los elige el cliente y se presupuestan aparte. Medido por unidad instalada y probada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Grifería de ducha, brazo y rociador del modelo elegido por el cliente",

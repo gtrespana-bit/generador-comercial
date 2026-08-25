@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Central domótica con configuración inicial.",
   "descripcion": "Suministro, instalación y configuración inicial de la central domótica o controlador principal, con su fuente de alimentación y su conexión a la red local. Incluye el replanteo del punto de montaje accesible, la fijación del equipo, la alimentación y conexión de red, la puesta en hora y asignación de dirección, y la verificación de que la central se comunica con los módulos previstos. Medido por central instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

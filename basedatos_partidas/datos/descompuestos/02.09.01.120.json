@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Desmontaje de viga de techo de madera.",
   "descripcion": "Desmontaje de viga o correa de techo de madera. Incluye la retirada de la viga. Medido por metro lineal desmontado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

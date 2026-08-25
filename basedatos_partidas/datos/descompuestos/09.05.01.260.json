@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Punto de datos en estudio.",
   "descripcion": "Ejecución de punto de datos en estudio., con canalización y conexión. Incluye el tendido del cable y la conexión. Medido por punto ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

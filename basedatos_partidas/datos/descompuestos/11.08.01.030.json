@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Tragante o boquilla de desagüe de cubierta.",
   "descripcion": "Suministro y montaje de tragante, boquilla o sumidero de cubierta con su rejilla guardahojas, integrado en la impermeabilización. Es el punto por el que sale toda el agua de la cubierta y también el que más falla, ya sea por obstrucción o por un sellado deficiente del encuentro con el manto. Incluye la formación del rebaje en el punto bajo, la colocación de la pieza con su ala embebida entre las capas de impermeabilización, el sellado del encuentro, la colocación de la rejilla y la comprobación de evacuación mediante prueba con agua. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

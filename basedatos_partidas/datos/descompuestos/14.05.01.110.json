@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Baranda de acceso peatonal.",
   "descripcion": "Colocación de baranda de acceso peatonal, con fijación y pintura. Incluye la fijación y el acabado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

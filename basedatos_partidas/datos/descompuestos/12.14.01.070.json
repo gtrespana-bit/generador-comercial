@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Tratamiento de madera carcomida.",
   "descripcion": "Tratamiento de madera carcomida con consolidante e insecticida, previo a la restauración. Incluye la limpieza de la zona y la aplicación del tratamiento. Medido por metro cuadrado tratado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

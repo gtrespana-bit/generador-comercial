@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Cubierta de madera con teja.",
   "descripcion": "Ejecución de cubierta de madera preparada para teja. Incluye la estructura y el entablado. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

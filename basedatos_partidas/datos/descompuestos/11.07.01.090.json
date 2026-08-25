@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Ventilación de cubierta con rejilla.",
   "descripcion": "Instalación de rejilla o ventosa de ventilación de cubierta, para evitar condensaciones en el espacio bajo cubierta. Incluye la apertura y la fijación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

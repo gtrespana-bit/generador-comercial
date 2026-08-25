@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Piso cerámico colocado en capa gruesa sobre mortero.",
   "descripcion": "Colocación de piso cerámico por el método tradicional de capa gruesa, asentando la pieza sobre una capa de mortero fresco que a la vez recibe la pieza y forma el nivel. Se emplea cuando el soporte presenta desniveles que harían inviable la capa fina, ya que permite corregir cota y planitud en una sola operación, aunque exige más material y más pericia del colocador de pisos. Incluye el replanteo de niveles con maestras, el extendido del mortero, la espolvoreada de cemento, el asentado y golpeteo de la pieza hasta el nivel, la comprobación continua con regla y nivel, el rejuntado y la limpieza. La pieza la elige el cliente y se presupuesta aparte. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Pieza cerámica o porcelanato para pavimento",

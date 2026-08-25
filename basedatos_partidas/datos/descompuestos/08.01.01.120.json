@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Ayuda de albañilería para solar.",
   "descripcion": "Ayuda de albañilería para instalación solar: bases y pasos. Incluye la formación de bases y el resane. Medido por unidad de ayuda.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Mampara acristalada de oficina.",
   "descripcion": "Ejecución de mampara acristalada de oficina con vidrio templado. Incluye la estructura, el acristalamiento y el sellado. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

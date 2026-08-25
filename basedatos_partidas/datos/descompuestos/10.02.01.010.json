@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Aislamiento acústico de tabique con lana mineral.",
   "descripcion": "Suministro y colocación de lana mineral en tabique o trasdosado, para aislamiento acústico. Incluye la colocación de la lana en la cámara. Medido por metro cuadrado aislado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

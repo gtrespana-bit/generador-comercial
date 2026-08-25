@@ -6,7 +6,7 @@
   "unidad": "kg",
   "titulo": "Acero de refuerzo en losa de fundación.",
   "descripcion": "Suministro, corte, doblado, armado y colocación de acero de refuerzo en cabillas corrugadas en losa de fundación, en parrillas inferior y superior según los planos de despiece. Incluye el corte y doblado, el armado de las parrillas con amarre de alambre, la colocación de separadores inferiores y de caballetes o soportes que mantienen la parrilla superior en su cota durante el vaciado, los refuerzos de borde y de esquina, y la revisión del despiece y del recubrimiento antes de autorizar el concreto. Medido en peso de acero realmente colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Lijado y barnizado de piso de madera.",
   "descripcion": "Lijado y acabado con barniz de poliuretano de piso de madera nuevo o existente, en tres manos con lijado intermedio. En pisos existentes esta operación recupera por completo el aspecto de la madera y evita su sustitución. Incluye el hundido de las puntas que sobresalgan y el resane de juntas y grietas con masilla al tono, el lijado en pasadas de grano decreciente con lijadora de banda y orilladora en perímetros y rincones, el aspirado exhaustivo entre pasadas porque cualquier partícula queda atrapada bajo el barniz, la aplicación de las manos de barniz con lijado suave intermedio y el respeto de los tiempos de secado antes de pisar. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

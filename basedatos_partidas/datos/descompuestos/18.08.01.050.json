@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Sensor de luz natural para iluminación.",
   "descripcion": "Instalación de sensor de nivel de luz, para regular la iluminación según la luz natural. El sensor lo elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

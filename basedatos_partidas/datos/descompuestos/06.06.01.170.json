@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Refuerzo de vano con perfil de acero.",
   "descripcion": "Refuerzo de vano con perfil de acero en esquinas. Incluye la fabricación y el montaje del refuerzo. Medido por metro lineal ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Limpieza de fachada con hidrolavadora.",
   "descripcion": "Limpieza de fachada con hidrolavadora de presión para eliminar suciedad, contaminación y eflorescencias sin dañar el soporte. Incluye la protección de carpintería y accesos y la limpieza por franjas. Medido por metro cuadrado limpiado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Reparación de junta de dilatación en paramento.",
   "descripcion": "Reparación de junta de dilatación en paramento, con retirada del sellado deteriorado y aplicación de sellador elástico. Incluye la limpieza de la junta y el nuevo sellado. Medido por metro lineal reparado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Refuerzo de estructura con perfil.",
   "descripcion": "Refuerzo de estructura con perfil metálico. Incluye el montaje del refuerzo. Medido por metro cuadrado reforzado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

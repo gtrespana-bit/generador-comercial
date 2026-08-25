@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Red de riego por aspersión.",
   "descripcion": "Ejecución de red de riego por goteo o aspersión, con tubería de polietileno y emisores. Incluye la colocación y la conexión.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

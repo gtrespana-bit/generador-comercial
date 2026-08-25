@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Piso cerámico con guarda o cenefa.",
   "descripcion": "Colocación de piso cerámico con guarda o cenefa perimetral de pieza decorativa, en capa fina. Incluye el replanteo, la colocación y el rejuntado. Medido por metro cuadrado colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

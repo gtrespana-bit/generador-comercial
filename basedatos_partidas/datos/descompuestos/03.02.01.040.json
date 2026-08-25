@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Perfilado y compactación del fondo de excavación.",
   "descripcion": "Perfilado, refine y compactación del fondo de la excavación hasta dejarlo a la cota exacta, plano y con la densidad requerida para recibir la fundación o la base del pavimento. Incluye la retirada del material suelto y descomprimido del fondo, el refine manual hasta la cota de proyecto, la humectación del terreno hasta la humedad óptima y la compactación con plancha vibratoria o compactador de impacto según el ancho disponible. Medido en superficie de fondo realmente perfilada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

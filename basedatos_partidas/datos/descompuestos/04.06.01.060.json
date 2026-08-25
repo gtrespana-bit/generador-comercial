@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Perforación de pilote vaciado en sitio.",
   "descripcion": "Perforación para pilote vaciado en sitio. Incluye la perforación. Medido por metro lineal perforado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

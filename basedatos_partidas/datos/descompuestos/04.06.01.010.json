@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Perforación para pilote vaciado en sitio.",
   "descripcion": "Perforación rotatoria para pilote vaciado en sitio, en terreno de consistencia media, con equipo de perforación y su operador. Incluye el traslado y emplazamiento del equipo, el replanteo y centrado sobre el eje del pilote, la perforación hasta la cota de proyecto con control de la verticalidad, la extracción y acopio del material perforado, la limpieza del fondo de la perforación antes de introducir el armado y la protección o entubado provisional de la boca para evitar desprendimientos. Medido en longitud realmente perforada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

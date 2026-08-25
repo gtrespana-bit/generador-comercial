@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Reparación de canal o bajante.",
   "descripcion": "Reparación de canal o bajante de aguas lluvias con sustitución de tramos y accesorios dañados. Incluye el desmontaje parcial y la reposición.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

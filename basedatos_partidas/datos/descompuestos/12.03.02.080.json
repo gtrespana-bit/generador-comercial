@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Enchapado de piedra con anclaje mecánico en fachada.",
   "descripcion": "Enchapado de fachada con pieza de piedra natural fijada con anclaje mecánico puntual. Incluye la fijación de los anclajes, la colocación de la pieza y el sellado de juntas. Medido por metro cuadrado enchapado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

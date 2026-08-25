@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Banda perimetral en encuentro piso-muro.",
   "descripcion": "Colocación de banda perimetral elástica en el encuentro piso-muro, para eliminar el puente acústico y térmico.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

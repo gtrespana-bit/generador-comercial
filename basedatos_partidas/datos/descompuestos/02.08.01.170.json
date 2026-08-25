@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Retiro de aislamiento de piso.",
   "descripcion": "Retiro de aislamiento de piso o suelo flotante. Incluye la retirada del aislamiento. Medido por metro cuadrado retirado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

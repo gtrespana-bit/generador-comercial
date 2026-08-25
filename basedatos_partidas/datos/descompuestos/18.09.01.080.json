@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Aerotermia para agua caliente.",
   "descripcion": "Instalación de sistema de aerotermia para agua caliente. El equipo lo elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

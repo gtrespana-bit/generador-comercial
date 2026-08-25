@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Refuerzo de zapata con ampliación.",
   "descripcion": "Refuerzo de zapata existente con ampliación de concreto. Incluye el armado y el vaciado. Medido por metro cuadrado reforzado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

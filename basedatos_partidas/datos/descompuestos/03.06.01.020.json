@@ -6,7 +6,7 @@
   "unidad": "m³",
   "titulo": "Carga mecanizada y transporte de tierra sobrante a botadero.",
   "descripcion": "Carga mecanizada del material sobrante de excavación con retroexcavadora sobre camión volqueta y transporte a botadero autorizado, incluido el canon de vertido, con una distancia media considerada de 25 km. Incluye la carga con la máquina, el amarre y cubrición de la carga, el traslado, la descarga, el repaso manual del acopio residual y la limpieza de la zona de carga. Medido en volumen de material esponjado realmente retirado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

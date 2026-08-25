@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de electrodoméstico con conexiones.",
   "descripcion": "Instalación de electrodoméstico empotrado (horno, lavaplatos, etc.) con conexión de agua, desagüe y electricidad según el equipo. Incluye la nivelación y la conexión.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

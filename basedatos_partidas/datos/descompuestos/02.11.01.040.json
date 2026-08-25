@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Desmontaje de mobiliario fijo diverso.",
   "descripcion": "Desmontaje de mobiliario fijo no clasificado en las partidas anteriores, tal como repisas de obra, bancos, barras, mostradores o estanterías ancladas al paramento. Ejecutado con medios manuales, atornillador, amoladora y martillo eléctrico según el material y el tipo de anclaje. Incluye el vaciado previo, el sostenimiento del elemento antes de liberar el último anclaje, la extracción de las fijaciones, el picado de los apoyos de obra si los tuviera, el resane de los huecos y el retiro del material clasificado. Si el cliente desea conservar el elemento, se desmonta con cuidado y se acopia protegido. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en superficie de frente realmente desmontada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Cubierta invertida con aislamiento exterior.",
   "descripcion": "Cubierta plana invertida con aislamiento rígido colocado sobre la membrana impermeabilizante y protegido con gravilla. Incluye la colocación del aislamiento y la capa de protección.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

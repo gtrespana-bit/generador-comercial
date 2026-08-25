@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Portón de reja para acceso.",
   "descripcion": "Fabricación y montaje de portón de reja abatible para acceso peatonal o vehicular, con su bastidor, bisagras reforzadas, pasador y cerradura. Incluye la fabricación del bastidor y del marco, el tratamiento anticorrosivo, el montaje del marco anclado a los machones, el colgado con bisagras dimensionadas para el peso, el ajuste de la nivelación para que el portón no se abra o se cierre solo, la colocación de pasador y cerradura y el acabado. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

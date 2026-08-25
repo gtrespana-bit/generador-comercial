@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Pasarela de comunicación entre protocolos.",
   "descripcion": "Suministro e instalación de pasarela de comunicación que integra protocolos de distintos fabricantes con la central domótica. Incluye la elección de la pasarela según los dispositivos a integrar, su montaje junto a la central, la conexión de alimentación y datos, y el emparejamiento y verificación de los dispositivos a través de la pasarela. Medido por pasarela instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Regularización con mortero aislante.",
   "descripcion": "Regularización del piso con mortero aligerado aislante, para mejorar la resistencia térmica.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

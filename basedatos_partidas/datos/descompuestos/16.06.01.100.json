@@ -6,7 +6,7 @@
   "unidad": "glb",
   "titulo": "Informe de puesta en marcha de climatización.",
   "descripcion": "Emisión de informe de puesta en marcha del sistema de climatización, con protocolo de resultados.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

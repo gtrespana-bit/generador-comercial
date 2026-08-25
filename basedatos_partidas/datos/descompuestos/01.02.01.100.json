@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Detección de armadura en concreto.",
   "descripcion": "Detección de armadura y recubrimiento en elemento de concreto. Incluye la medición con detector. Medido por elemento inspeccionado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Tabique móvil o plegable.",
   "descripcion": "Suministro e instalación de tabique móvil o plegable suspendido de riel, para dividir o unir ambientes según el uso. Todo el peso cuelga del riel superior, de modo que la estructura de la que se suspende debe estar dimensionada y verificada antes del montaje: es el punto donde fallan estas instalaciones. Incluye la comprobación y refuerzo del apoyo estructural, el montaje y nivelación del riel, el colgado de los paneles con sus carros, el ajuste de los sellos superior e inferior que aportan el aislamiento acústico, la regulación del recorrido y del apilamiento y la prueba de maniobra completa. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

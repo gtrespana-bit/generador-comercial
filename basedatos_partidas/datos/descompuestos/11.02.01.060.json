@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Cubierta plana con acabado de gravilla.",
   "descripcion": "Cubierta plana no transitable con acabado de gravilla lavada de protección sobre membrana impermeabilizante. Incluye el extendido de la gravilla en capa uniforme sobre la membrana.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

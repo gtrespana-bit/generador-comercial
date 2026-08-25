@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Piso de concreto estampado.",
   "descripcion": "Piso de concreto con acabado estampado mediante moldes texturados y desmoldeante pigmentado, con sellado final. Se emplea en accesos, patios y áreas exteriores donde se busca el aspecto de piedra o adoquín con la continuidad de un piso de concreto. Incluye el vaciado y reglado, la aplicación del endurecedor color en polvo, la espolvoreada del desmoldeante pigmentado, el estampado con los moldes en el punto exacto de fraguado, ventana de tiempo estrecha de la que depende por completo el resultado, el aserrado de juntas, el lavado del exceso de desmoldeante y la aplicación de las manos de sellador. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

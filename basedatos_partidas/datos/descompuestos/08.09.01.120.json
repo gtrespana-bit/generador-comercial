@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Sellado cortafuego de cierre perimetral.",
   "descripcion": "Sellado cortafuego de cierre perimetral de paso. Incluye la aplicación de la masilla. Medido por metro lineal sellado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

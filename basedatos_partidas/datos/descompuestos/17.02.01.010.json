@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Dotación de equipo de protección individual por trabajador.",
   "descripcion": "Suministro de la dotación de equipo de protección individual para un trabajador: casco, botas de seguridad, guantes, lentes, protección auditiva y chaleco reflectante, con su reposición durante la obra. Incluye la entrega documentada de los equipos, que acredita el cumplimiento de la obligación del empleador, la verificación del estado y de la talla, la formación básica sobre su uso y la reposición de los elementos deteriorados a lo largo de la obra. Medido por dotación entregada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

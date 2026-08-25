@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Punto de interruptor o tomacorriente, incluso caja y mecanismo.",
   "descripcion": "Ejecución de punto eléctrico de interruptor o tomacorriente, formado por caja de mecanismo empotrada, conexionado de los conductores del circuito correspondiente, mecanismo de gama estándar y placa embellecedora. Incluye apertura del hueco de la caja, fijación y enrase con el paramento, conexionado con apriete y verificación de continuidad y polaridad, colocación del mecanismo y comprobación de funcionamiento. Medido por unidad de punto terminado y probado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Mecanismo y placa de la gama y acabado elegidos por el cliente, si supera la gama estándar",

@@ -151,7 +151,7 @@ def _apu_base() -> dict | None:
             "unidad": _unidad_web(partida.get("unidad") or "m²"),
             "descripcion": str(partida.get("descripcion") or ""),
             "complementarios_pct": float(partida.get("complementarios_pct") or 0),
-            "margen": float(partida.get("margen") or 0.30),
+            "margen": float(partida.get("margen") or 0.35),
             "filas": filas,
         }
     except Exception:

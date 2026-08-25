@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Aislamiento térmico reflectivo bajo cubierta.",
   "descripcion": "Colocación de manta reflectiva de doble burbuja con foil de aluminio bajo la cubierta metálica o de teja, fijada a la estructura con solapes sellados. Actúa por reflexión de la radiación infrarroja, no por resistencia térmica, de modo que necesita una cámara de aire ventilada por debajo para funcionar: pegada contra el cielo raso pierde casi toda su eficacia. Incluye el replanteo, el tendido de las bandas con solape y sellado con cinta de aluminio, su fijación a las correas y el remate en aleros y cumbrera. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

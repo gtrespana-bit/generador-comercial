@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Reparación de cielo raso con sustitución de placa.",
   "descripcion": "Reparación de cielo raso continuo con sustitución de la placa dañada y tratamiento de juntas. Incluye el corte, la reposición de la placa y el acabado. Medido por metro cuadrado reparado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

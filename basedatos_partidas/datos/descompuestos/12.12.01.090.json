@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Pintura de mueble de cocina lacado.",
   "descripcion": "Pintura de mueble de cocina con laca, con preparación y dos manos. Incluye la preparación de la superficie, el fondo y las dos manos de laca. Medido por metro cuadrado pintado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

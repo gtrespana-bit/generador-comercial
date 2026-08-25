@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Zona de vestuario y comedor de obra, por mes.",
   "descripcion": "Habilitación y mantenimiento de la zona de vestuario y comedor del personal de obra, con su mobiliario básico, durante un mes. Incluye la adecuación del espacio, la dotación de mesa, asientos, taquillas o perchas y punto de agua potable, la limpieza periódica y el mantenimiento del orden. Medido por mes de permanencia.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

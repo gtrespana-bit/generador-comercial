@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Refuerzo de aislamiento en cumbrera.",
   "descripcion": "Colocación de refuerzo de aislamiento en la cumbrera de la cubierta, para eliminar el puente térmico.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

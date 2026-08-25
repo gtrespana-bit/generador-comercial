@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de bomba presurizadora de agua.",
   "descripcion": "Instalación de bomba presurizadora., con conexión. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

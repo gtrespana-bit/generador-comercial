@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Desmontaje de portarrollo o toallero.",
   "descripcion": "Desmontaje de portarrollo, toallero o accesorio de baño fijo. Incluye la retirada del accesorio. Medido por unidad desmontada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

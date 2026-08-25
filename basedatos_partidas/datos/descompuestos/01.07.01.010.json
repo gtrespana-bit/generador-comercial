@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Replanteo general de la obra y trazado de ejes.",
   "descripcion": "Replanteo general de la intervención sobre el inmueble, con trazado de los ejes de tabiquería, los niveles de piso terminado y las cotas de referencia, ejecutado con nivel láser y equipo de medición. Incluye la comprobación de escuadras y de la geometría real frente a la del plano, el marcado de los ejes sobre piso y paramentos, el establecimiento de la cota de nivel de referencia que regirá toda la obra, la señalización de los puntos fijos y la anotación de las discrepancias detectadas respecto al proyecto. Medido en superficie de intervención realmente replanteada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

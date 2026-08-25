@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Peldaño prefabricado de concreto.",
   "descripcion": "Suministro y colocación de peldaño prefabricado de concreto sobre estructura existente. Incluye la preparación del soporte, la colocación y el nivelado del peldaño. Medido por unidad de peldaño colocada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

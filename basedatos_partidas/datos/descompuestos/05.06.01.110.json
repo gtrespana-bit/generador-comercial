@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Losa nervada con bloque de poliestireno.",
   "descripcion": "Ejecución de losa nervada con bloques de poliestireno de aliviano. Incluye la colocación de bloques y el vaciado. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

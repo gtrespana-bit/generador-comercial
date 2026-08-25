@@ -6,7 +6,7 @@
   "unidad": "glb",
   "titulo": "Diagnóstico de puentes térmicos.",
   "descripcion": "Diagnóstico de puentes térmicos de la envolvente con termografía, para identificar pérdidas de energía.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Acometida de riego con llave de corte.",
   "descripcion": "Ejecución de acometida de riego con llave de corte y conexión a la red. Incluye la conexión y la llave.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

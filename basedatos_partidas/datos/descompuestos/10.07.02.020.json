@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Capa de protección con gravilla.",
   "descripcion": "Colocación de capa de protección de gravilla sobre impermeabilización. Incluye la extensión de la gravilla y el nivelado. Medido por metro cuadrado colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Lámina de control solar en vidrios.",
   "descripcion": "Aplicación de lámina de control solar sobre los vidrios, para reducir la ganancia térmica.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

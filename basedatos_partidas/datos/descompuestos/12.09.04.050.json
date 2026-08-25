@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Perfil de remate perimetral entre cielo y muro.",
   "descripcion": "Colocación de perfil de remate perimetral entre cielo raso y muro, como terminación. Incluye la fijación del perfil y el remate de las uniones. Medido por metro lineal de remate.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

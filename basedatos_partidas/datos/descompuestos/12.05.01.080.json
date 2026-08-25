@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Relleno de nivelación con mortero seco.",
   "descripcion": "Relleno de nivelación de piso con mortero seco compactado, para regularizar antes del acabado. Incluye el replanteo, la extensión y la compactación. Medido por metro cuadrado nivelado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

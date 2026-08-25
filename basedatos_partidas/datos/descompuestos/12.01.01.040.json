@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Regularización de paramento con mortero de nivelación.",
   "descripcion": "Regularización de paramento interior con mortero de nivelación para corregir desniveles previo al acabado. Incluye el replanteo, la aplicación y el afinado. Medido por metro cuadrado regularizado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

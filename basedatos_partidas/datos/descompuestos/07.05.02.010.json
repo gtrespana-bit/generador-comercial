@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Baranda metálica de protección.",
   "descripcion": "Fabricación y montaje de baranda metálica de protección en balcón, terraza o escalera, con su pasamanos, montantes y barrotes, anclada al piso o al canto de la losa. La altura y la separación entre barrotes no son de diseño libre: responden a criterios de seguridad frente a caída y frente al paso de un niño entre ellos. Incluye la fabricación, el tratamiento anticorrosivo, el replanteo y anclaje mecánico de los montantes, el resane de los anclajes, la comprobación de la rigidez del conjunto frente a empuje horizontal y el acabado. Medido en longitud realmente instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

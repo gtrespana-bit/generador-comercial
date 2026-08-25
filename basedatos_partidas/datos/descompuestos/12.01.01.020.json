@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Preparación de paramento exterior para pintura.",
   "descripcion": "Preparación de fachada o paramento exterior antes de pintar, con lavado a presión, eliminación de partes sueltas, tratamiento de hongos y aplicación de fondo fijador. En exterior la preparación pesa más que la pintura: aplicada sobre una superficie con moho o con friso disgregado, la mejor pintura se desprende en una temporada de lluvias. Incluye el lavado con hidrolavadora, el raspado de las zonas desprendidas, la aplicación de solución fungicida sobre las manchas de moho con su tiempo de actuación y enjuague, el resane de fisuras y el fondo fijador. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Apeo de escalera existente.",
   "descripcion": "Apeo de escalera existente durante trabajos de refuerzo. Incluye la colocación de puntales. Medido por metro lineal apeado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

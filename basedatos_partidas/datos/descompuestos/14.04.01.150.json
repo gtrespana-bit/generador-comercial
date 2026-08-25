@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Base de muro de cerramiento.",
   "descripcion": "Ejecución de base o viga de fundación de muro de cerramiento, con armadura y vaciado. Incluye el armado y el vaciado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

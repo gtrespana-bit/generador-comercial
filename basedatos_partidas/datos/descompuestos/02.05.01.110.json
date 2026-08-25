@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Desmontaje de ventana de madera.",
   "descripcion": "Desmontaje de ventana de madera con su marco, sin dañar el vano. Incluye la retirada de la ventana y la limpieza. Medido por unidad desmontada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

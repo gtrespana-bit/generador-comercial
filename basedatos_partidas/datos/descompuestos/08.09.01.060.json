@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Sellado cortafuego de junta lineal.",
   "descripcion": "Sellado cortafuego de junta lineal en muro o losa. Incluye la aplicación de la masilla. Medido por metro lineal sellado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Eliminación de eflorescencias en fachada.",
   "descripcion": "Eliminación de eflorescencias salinas en fachada. Incluye la limpieza y el tratamiento. Medido por metro cuadrado tratado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

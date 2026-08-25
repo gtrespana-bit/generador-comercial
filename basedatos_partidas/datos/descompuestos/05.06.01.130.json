@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Losa mixta con lámina colaborante.",
   "descripcion": "Ejecución de losa mixta con lámina colaborante sobre estructura metálica. Incluye la lámina y el vaciado. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

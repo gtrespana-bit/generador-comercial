@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Borde y antepecho de cubierta plana.",
   "descripcion": "Ejecución de peto o antepecho perimetral de concreto armado en cubierta plana, con encofrado y curado. Incluye el armado, el encofrado y el vaciado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

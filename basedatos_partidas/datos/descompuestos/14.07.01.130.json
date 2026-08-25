@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Drenaje y purga de red de riego.",
   "descripcion": "Ejecución de drenaje y purga de red de riego, con válvula de purga. Incluye la colocación y la conexión.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Diagnóstico de humedades en paramento.",
   "descripcion": "Diagnóstico de humedades en paramento, con medición de humedad. Incluye la inspección y el registro. Medido por punto diagnosticado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

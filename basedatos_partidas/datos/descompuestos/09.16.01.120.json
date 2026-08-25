@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Adecuación de foso de ascensor.",
   "descripcion": "Adecuación de foso de ascensor. Incluye la preparación del foso. Medido por unidad adecuada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

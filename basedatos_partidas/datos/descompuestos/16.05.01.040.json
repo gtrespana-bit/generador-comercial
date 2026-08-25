@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Prueba de disparo de diferenciales.",
   "descripcion": "Prueba de disparo de los interruptores diferenciales con el botón de test, para verificar su funcionamiento.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

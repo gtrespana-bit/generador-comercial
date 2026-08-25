@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Remate de mocheta con cantonera.",
   "descripcion": "Colocación de cantonera en mocheta o arista de vano. Incluye la fijación de la cantonera y el remate. Medido por metro lineal ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

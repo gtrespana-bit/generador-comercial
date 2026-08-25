@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Retirada de material combustible.",
   "descripcion": "Retirada de material combustible de las zonas de trabajo, para reducir el riesgo de incendio.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

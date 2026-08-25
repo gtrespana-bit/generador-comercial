@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Acometida eléctrica subterránea.",
   "descripcion": "Acometida eléctrica subterránea. Incluye el tendido y la conexión. Medido por acometida ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

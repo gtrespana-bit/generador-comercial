@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Acometida eléctrica provisional de obra.",
   "descripcion": "Acometida eléctrica provisional de obra con tablero de protección. Incluye el tendido y el tablero. Medido por acometida ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Tabique de placa de cemento con aislamiento.",
   "descripcion": "Ejecución de tabique de placa de cemento con aislamiento. Incluye la estructura, la lana, la placa y el sellado. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

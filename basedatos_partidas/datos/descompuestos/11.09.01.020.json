@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Reparación de faldón de cubierta de teja.",
   "descripcion": "Reparación de faldón de cubierta de teja con sustitución de piezas rotas o desplazadas. Incluye el levantado y la recolocación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

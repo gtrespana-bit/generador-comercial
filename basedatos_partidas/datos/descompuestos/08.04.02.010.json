@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Remate de encuentro pared-techo.",
   "descripcion": "Remate de encuentro pared-techo con sellador o perfil. Incluye el remate. Medido por metro lineal ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

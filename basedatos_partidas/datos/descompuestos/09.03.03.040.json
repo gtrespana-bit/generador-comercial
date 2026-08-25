@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Revisión y certificación de instalación eléctrica.",
   "descripcion": "Revisión completa de la instalación eléctrica ejecutada, con medición de continuidad, aislamiento, resistencia de puesta a tierra y prueba de disparo de los diferenciales, y emisión del informe de resultados. Es lo que acredita ante el cliente que la instalación no solo funciona sino que es segura, y el documento que respalda al instalador si más adelante hay una incidencia. Incluye la inspección visual del tablero y de los puntos, las mediciones con equipo calibrado, la comprobación del rotulado de circuitos, las pruebas de disparo y la entrega del informe con los valores obtenidos. Medido por instalación revisada y certificada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

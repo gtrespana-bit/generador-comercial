@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Suministro y colocación de vidrio en carpintería.",
   "descripcion": "Suministro y colocación de vidrio en carpintería existente o nueva, con sus calzos, junquillos y sellado. Incluye la toma de medidas del galce con la holgura de dilatación necesaria, ya que un vidrio colocado a presión sin holgura se rompe con la dilatación térmica, la limpieza del galce, la colocación de los calzos de apoyo y laterales en la posición correcta según el tipo de hoja, el acuñado del vidrio, la colocación de junquillos y el sellado perimetral. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

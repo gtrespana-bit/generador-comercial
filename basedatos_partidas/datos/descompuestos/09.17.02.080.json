@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Reparación de sistema de seguridad.",
   "descripcion": "Reparación de sistema de seguridad o alarma. Incluye el diagnóstico y la reparación. Medido por reparación ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Cubierta de panel sándwich aislado.",
   "descripcion": "Cubierta con panel sándwich de doble chapa metálica y núcleo aislante de poliuretano, fijado a las correas con tornillería específica y juntas machihembradas selladas. Resuelve en una sola operación la cubrición, el aislamiento térmico y el acabado interior, lo que compensa su mayor costo de material frente a la lámina simple con aislamiento aparte. Incluye el replanteo, el izado y colocación de los paneles con encaje entre ellos, el sellado de las juntas, la fijación y los remates de cumbrera, alero y borde con piezas específicas. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

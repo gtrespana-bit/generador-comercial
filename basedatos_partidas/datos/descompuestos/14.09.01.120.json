@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Reparación de iluminación exterior.",
   "descripcion": "Reparación de iluminación exterior con sustitución de luminaria o cableado dañado. Incluye la sustitución.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

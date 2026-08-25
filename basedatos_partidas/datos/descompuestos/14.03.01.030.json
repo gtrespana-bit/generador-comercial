@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Canal de drenaje con rejilla metálica.",
   "descripcion": "Colocación de canal de drenaje lineal prefabricado con rejilla, sobre base de mortero. Incluye la colocación y la nivelación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

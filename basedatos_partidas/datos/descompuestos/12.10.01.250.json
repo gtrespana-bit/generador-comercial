@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Pintura satinada de locales de alta humedad.",
   "descripcion": "Aplicación de pintura satinada lavable en locales de alta humedad, con fondo antihumedad y dos manos. Incluye la preparación y las dos manos. Medido por metro cuadrado pintado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

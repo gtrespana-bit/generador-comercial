@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Pavimento de adoquín de concreto.",
   "descripcion": "Pavimento exterior de adoquín de concreto sobre cama de arena y base compactada, con confinamiento perimetral y sellado de juntas con arena. El confinamiento perimetral es lo que mantiene el pavimento trabado: sin un bordillo o brocal que lo contenga, los adoquines del borde se desplazan y el paño entero pierde la trabazón. Incluye el extendido y reglado de la cama de arena, la colocación de los adoquines según el aparejo, el corte de las piezas de ajuste, la compactación con plancha y el barrido y vibrado de arena en las juntas. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

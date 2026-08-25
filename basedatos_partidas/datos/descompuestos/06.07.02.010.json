@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Sistema de aislamiento térmico exterior (SATE).",
   "descripcion": "Ejecución de sistema de aislamiento térmico por el exterior (SATE), con panel, malla y mortero. Incluye la fijación del panel, la malla y el revestimiento. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

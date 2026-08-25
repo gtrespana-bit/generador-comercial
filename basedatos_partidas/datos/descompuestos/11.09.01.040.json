@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Revisión general de cubierta con informe.",
   "descripcion": "Revisión general de cubierta con inspección de remates, desagües y estructura, y emisión de informe de estado y recomendaciones. Incluye la inspección visual.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Retiro de tocones de árboles.",
   "descripcion": "Retiro de tocones y raíces de árboles talados. Incluye la extracción y la limpieza. Medido por unidad retirada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

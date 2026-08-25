@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Desmontaje de persiana de fachada.",
   "descripcion": "Desmontaje de persiana enrollable de fachada, con retirada del cajón y el mecanismo. Incluye la retirada de la persiana y el cajón. Medido por metro cuadrado desmontado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

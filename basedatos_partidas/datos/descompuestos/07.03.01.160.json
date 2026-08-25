@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Ventana de aluminio con rejilla de ventilación.",
   "descripcion": "Suministro y colocación de ventana de aluminio con rejilla de ventilación integrada. Incluye el montaje del marco, el acristalamiento y la rejilla. Medido por metro cuadrado instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

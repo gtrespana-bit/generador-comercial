@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Cubrición de huecos de ascensor.",
   "descripcion": "Cubrición de huecos de ascensor con tabla y barandilla, para prevenir caídas durante la obra.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

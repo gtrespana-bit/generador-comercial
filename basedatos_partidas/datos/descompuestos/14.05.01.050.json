@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Motorización de portón existente.",
   "descripcion": "Instalación de motor y automatismo de portón existente, con programación y puesta en marcha. Incluye la instalación. El motor lo elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

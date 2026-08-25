@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Friso de yeso con fibra de refuerzo.",
   "descripcion": "Aplicación de friso de yeso con fibra de refuerzo para paramentos con mayor resistencia a la fisuración. Incluye la aplicación de la pasta reforzada y el afinado. Medido por metro cuadrado frisado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

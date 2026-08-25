@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de fregadero con su grifería.",
   "descripcion": "Instalación de fregadero de cocina sobre mesón, con su grifería, desagüe y sifón. Incluye el replanteo y corte del hueco en el mesón cuando no venga mecanizado, el sellado del canto de corte que en mesones de aglomerado es lo que evita que se hinche con la humedad, el montaje del fregadero con sus clips y sellado perimetral, el montaje de la grifería, la conexión de agua fría y caliente con abastos flexibles y llaves de escuadra, el montaje del desagüe y sifón y la prueba de estanqueidad. El aparato y la grifería los elige el cliente y se presupuestan aparte. Medido por unidad instalada y probada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Fregadero y grifería del modelo elegido por el cliente",

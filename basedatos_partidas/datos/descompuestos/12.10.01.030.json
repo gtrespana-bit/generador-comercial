@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Pintura de cielo raso, dos manos.",
   "descripcion": "Aplicación de dos manos de pintura sobre cielo raso previamente preparado, con rodillo de mango extensible y brocha en encuentros. Pintar por encima de la cabeza rinde bastante menos que en pared, obliga a proteger todo el piso y el mobiliario por el goteo y penaliza el acabado si no se mantiene el borde húmedo, ya que los solapes se marcan mucho más con la luz rasante que llega desde las ventanas. Incluye la protección integral del ambiente, el recorte de perímetros, la aplicación en manos cruzadas y los repasos finales. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Pintura de cielo raso en el color elegido por el cliente",

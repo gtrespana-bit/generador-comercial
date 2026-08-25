@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Desmontaje de trasdosado directo de placa pegada al muro.",
   "descripcion": "Desmontaje de trasdosado directo formado por placa de yeso laminado o panel aislante adherido al muro mediante pelladas de pasta, ejecutado con medios manuales mediante palanca y espátula. Incluye la protección del piso, el arranque de las placas, el rascado de los restos de pasta y adhesivo adheridos al muro hasta dejarlo apto para recibir el nuevo revestimiento, el retiro del material en sacos hasta el punto de acopio y la limpieza de la zona. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en superficie realmente desmontada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

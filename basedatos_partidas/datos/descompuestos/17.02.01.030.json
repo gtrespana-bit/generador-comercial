@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Dotación de guantes y calzado de seguridad.",
   "descripcion": "Dotación de guantes y calzado de seguridad para el personal, conforme a la tarea.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

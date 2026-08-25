@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de sistema hidroneumático.",
   "descripcion": "Instalación de sistema hidroneumático compuesto por bomba, tanque de presión con membrana y presostato, con sus válvulas, manómetro y conexión eléctrica. Incluye el montaje del conjunto sobre base antivibratoria, las conexiones con uniones desmontables, el montaje del manómetro y del presostato, la carga de aire del tanque a la presión de precarga que corresponde a la de arranque, paso que se omite con frecuencia y que provoca arranques continuos que queman la bomba, la regulación de las presiones de arranque y parada y la prueba de ciclo completo. El equipo lo elige el cliente y se presupuesta aparte. Medido por sistema instalado y probado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Equipo hidroneumático del caudal y presión elegidos por el cliente",

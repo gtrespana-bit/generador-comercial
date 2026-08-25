@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Apeo de dintel durante apertura de vano.",
   "descripcion": "Apeo de dintel durante la apertura de vano. Incluye la colocación de puntales. Medido por metro lineal apeado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

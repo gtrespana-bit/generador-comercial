@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Ventana proyectante de aluminio.",
   "descripcion": "Suministro y colocación de ventana proyectante de aluminio con vidrio. Incluye el montaje del marco, el acristalamiento y el sellado. Medido por metro cuadrado instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Iluminación de caminería exterior.",
   "descripcion": "Ejecución de iluminación de caminería exterior con balizas o faroles, con cableado. Incluye la conexión. Las luminarias las elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

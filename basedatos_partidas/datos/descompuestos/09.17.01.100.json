@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Puesta en marcha de sistema de ventilación.",
   "descripcion": "Ejecución de puesta en marcha de sistema de ventilación., con verificación. Incluye la verificación y el ajuste. Medido por unidad ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

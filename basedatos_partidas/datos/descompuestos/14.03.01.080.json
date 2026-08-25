@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Drenaje francés con gravilla.",
   "descripcion": "Ejecución de drenaje francés con zanja rellena de gravilla y tubería perforada, envuelta en geotextil. Incluye la excavación y el relleno.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Mampara de baño en vidrio templado.",
   "descripcion": "Suministro e instalación de mampara de ducha o baño en vidrio templado, con sus perfiles, herrajes y sellado. El vidrio templado no admite ningún corte ni perforación después del temple, de modo que todas las medidas y taladros deben definirse antes de fabricar: un error de medición obliga a rehacer la pieza completa. Incluye la toma de medidas en obra sobre el enchapado ya terminado, el montaje de perfiles y herrajes, la colocación del vidrio con sus calzos, el ajuste de la puerta y el sellado con silicona sanitaria dejando libre la línea inferior interior para que el agua drene hacia dentro. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

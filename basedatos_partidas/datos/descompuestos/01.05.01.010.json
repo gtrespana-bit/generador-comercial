@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Andamio tubular de fachada, montaje, alquiler mensual y desmontaje.",
   "descripcion": "Andamio tubular metálico apoyado en fachada, con plataformas de trabajo, barandas, rodapiés y escalera interior de acceso, incluido su montaje, el primer mes de permanencia y su desmontaje. Incluye el estudio previo del apoyo y del arriostramiento a fachada, el montaje por personal competente, la colocación de las protecciones colectivas, la revisión del conjunto antes de la puesta en servicio y tras cualquier modificación, el desmontaje ordenado y el retiro del material. No incluye la permanencia adicional más allá del primer mes, que se valora en la partida siguiente. Medido en superficie de fachada realmente cubierta por el andamio.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Limpieza final de obra.",
   "descripcion": "Limpieza final de la obra terminada, dejando el inmueble en condiciones de entrega. Incluye la retirada de los restos y protecciones, el barrido y aspirado de todas las superficies, la limpieza de pisos con el producto adecuado a cada material, la limpieza de sanitarios, griferías y carpinterías, la retirada de etiquetas y adhesivos de vidrios y aparatos, la limpieza de mecanismos y luminarias y el repaso final de manchas de pintura y de mortero. Medido en superficie de inmueble realmente limpiada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

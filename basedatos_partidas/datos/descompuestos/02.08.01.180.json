@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Retiro de panel de lana mineral.",
   "descripcion": "Retiro de panel de lana mineral de tabique o cielo. Incluye la retirada del panel. Medido por metro cuadrado retirado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

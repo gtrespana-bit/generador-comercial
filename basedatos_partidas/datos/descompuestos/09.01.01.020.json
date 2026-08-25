@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Montante de agua de PPR de 25 mm.",
   "descripcion": "Montante o alimentación principal de agua en tubería de polipropileno PPR de 25 mm, con uniones por termofusión, soportes y llaves de sectorización. Incluye el replanteo del recorrido buscando trazados registrables siempre que sea posible, el corte y termofusión, la colocación de soportes con la separación que evita flechas y ruidos por dilatación, los pasos de losa y pared con su pasamuros, la prueba de estanqueidad a presión y el resane. Medido en longitud realmente instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

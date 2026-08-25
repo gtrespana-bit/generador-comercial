@@ -6,7 +6,7 @@
   "unidad": "glb",
   "titulo": "Calibración y balanceo del sistema.",
   "descripcion": "Calibración y balanceo del sistema de climatización, para asegurar el rendimiento óptimo.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Tabique de paneles livianos prefabricados.",
   "descripcion": "Tabique ejecutado con paneles livianos prefabricados de núcleo aligerado y caras de mortero, montados machihembrados entre sí y recibidos en piso y techo. Su ventaja es la rapidez de montaje y el bajo peso propio, lo que lo hace idóneo para dividir sobre losas existentes sin sobrecargarlas, situación frecuente en remodelación de plantas altas. Incluye el replanteo, la fijación de la guía inferior, el montaje de los paneles con adhesivo en las juntas machihembradas, el ajuste y acuñado contra el techo, el sellado del perímetro y el tratamiento de juntas dejando la superficie lista para pintar. Medido a cinta corrida descontando huecos mayores de 2 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

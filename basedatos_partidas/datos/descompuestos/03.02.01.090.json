@@ -6,7 +6,7 @@
   "unidad": "m3",
   "titulo": "Excavación a cielo abierto con taludes.",
   "descripcion": "Excavación a cielo abierto con formación de taludes. Incluye la excavación y el perfilado. Medido por metro cúbico excavado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Cata en piso o losa para reconocimiento de capas o instalaciones.",
   "descripcion": "Apertura de cata de reconocimiento en piso o losa, de dimensiones aproximadas 40x40 cm, para identificar el espesor y el estado del afirmado, la existencia de impermeabilización o la presencia de instalaciones enterradas antes de definir la intervención. Incluye la localización previa con detector, el corte perimetral con disco para obtener un borde limpio, el picado por capas con registro del espesor de cada una, el registro fotográfico, y la reposición de la cata con mortero de reparación enrasado con el nivel existente. Medido por cata realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Retiro de manto asfáltico en cubierta.",
   "descripcion": "Retiro de impermeabilización existente de manto asfáltico en cubierta, incluidos los solapes, los refuerzos de encuentro y la imprimación adherida al soporte, ejecutado con medios manuales mediante espátula y palanca, con aplicación puntual de calor para reblandecer las zonas fuertemente adheridas. Incluye la protección de los desagües para impedir que se obstruyan con restos, el corte del manto en franjas manejables, el rascado del soporte hasta dejarlo limpio y apto para recibir la nueva impermeabilización, el retiro del material en rollos atados y la limpieza. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en superficie realmente retirada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

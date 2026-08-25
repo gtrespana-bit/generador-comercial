@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Contenedor de residuos mezclados.",
   "descripcion": "Alquiler de contenedor de residuos mezclados no recuperables, con su colocación y retirada a vertedero.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

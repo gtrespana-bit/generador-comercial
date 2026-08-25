@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Pulido de enchapado de mármol en pared.",
   "descripcion": "Pulido y abrillantado de enchapado de mármol en pared, para recuperar el brillo. Incluye el pulido mecánico y el abrillantado final. Medido por metro cuadrado pulido.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

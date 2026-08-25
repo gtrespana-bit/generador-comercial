@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Sumidero de patio o estacionamiento.",
   "descripcion": "Ejecución de sumidero de patio o estacionamiento con rejilla y conexión a drenaje. Incluye la colocación y la conexión.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

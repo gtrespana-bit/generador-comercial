@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Apeo de viga con puntales.",
   "descripcion": "Apeo de viga con puntales metálicos. Incluye la colocación de puntales y el arriostramiento. Medido por metro lineal apeado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

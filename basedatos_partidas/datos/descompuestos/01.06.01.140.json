@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Apuntalamiento de talud interior.",
   "descripcion": "Apuntalamiento de talud o excavación interior. Incluye la colocación de la entibación. Medido por metro cuadrado apuntalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

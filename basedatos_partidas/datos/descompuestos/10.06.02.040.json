@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Impermeabilización de piscina con doble membrana.",
   "descripcion": "Impermeabilización del vaso de piscina con doble membrana líquida. Incluye la preparación y la aplicación de las dos capas. Medido por metro cuadrado impermeabilizado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

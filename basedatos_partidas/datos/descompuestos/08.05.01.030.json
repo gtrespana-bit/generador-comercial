@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Vierteaguas de mortero.",
   "descripcion": "Ejecución de vierteaguas de mortero con pendiente. Incluye la formación de la pendiente y el acabado. Medido por metro lineal ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

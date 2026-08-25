@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Tratamiento de puentes térmicos de fachada.",
   "descripcion": "Tratamiento de los puentes térmicos de fachada con piezas de aislamiento en los puntos singulares.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

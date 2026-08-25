@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Charla de inducción y formación en seguridad.",
   "descripcion": "Realización de la charla de inducción en seguridad al personal de obra y de las charlas periódicas durante la ejecución, con su registro de asistencia. El registro firmado es lo que acredita que el trabajador fue informado de los riesgos de su puesto, documento que resulta determinante ante cualquier incidente. Incluye la preparación del contenido según los riesgos reales de la obra, la impartición de la charla inicial y de las periódicas, la entrega de las instrucciones de trabajo seguro y el registro documentado de asistencia. Medido por conjunto de charlas de la obra.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

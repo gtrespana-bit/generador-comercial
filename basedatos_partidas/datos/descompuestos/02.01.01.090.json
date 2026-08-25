@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Corte de muro de fundación con disco.",
   "descripcion": "Corte de muro de fundación con disco de diamante, para apertura de hueco o demolición parcial. Incluye el replanteo del corte y el corte en seco o con agua. Medido por metro lineal cortado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

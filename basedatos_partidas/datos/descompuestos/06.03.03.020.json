@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Pared de mampostería estructural de bloque de concreto de 20 cm.",
   "descripcion": "Pared portante de mampostería estructural con bloque de concreto de resistencia certificada de 20x20x40 cm, con refuerzo horizontal, acero vertical y relleno de celdas con concreto fluido. Incluye replanteo y verificación de la modulación, que en mampostería estructural debe respetarse porque cortar bloques rompe la continuidad de las celdas y deja el acero vertical sin alojamiento, el humedecido, la colocación de hiladas a nivel y plomo, la escalerilla de refuerzo, el acero vertical con sus solapes, la limpieza de celdas y el vaciado y vibrado del relleno. Medido a cinta corrida descontando huecos mayores de 2 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

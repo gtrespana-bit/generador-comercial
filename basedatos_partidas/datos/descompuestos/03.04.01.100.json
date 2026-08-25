@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Nivelación y compactación de subrasante.",
   "descripcion": "Nivelación y compactación de subrasante. Incluye la nivelación y la compactación. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

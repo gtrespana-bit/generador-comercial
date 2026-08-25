@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de puerta metálica exterior o de seguridad.",
   "descripcion": "Instalación de puerta metálica exterior o de seguridad con su marco, anclajes y cerradura. Por su peso requiere dos operarios y anclaje mecánico al muro, no espuma. Incluye la comprobación del vano, el presentado y aplomado del marco con cuñas, el taladrado y anclaje mecánico en los puntos previstos, el macizado del perímetro con mortero, el colgado y ajuste de la hoja, el montaje de la cerradura de seguridad y la comprobación del cierre en los tres puntos. La puerta la elige el cliente y se presupuesta aparte. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Puerta metálica exterior o de seguridad elegida por el cliente",

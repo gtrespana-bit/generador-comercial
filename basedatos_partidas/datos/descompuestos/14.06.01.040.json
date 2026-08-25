@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Plantación de árbol ornamental.",
   "descripcion": "Siembra de arbusto o árbol con hoyo de plantación, abono y riego. Incluye la excavación y la siembra. La planta la elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

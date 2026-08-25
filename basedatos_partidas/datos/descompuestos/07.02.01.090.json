@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Puerta de acceso con cierra-puertas.",
   "descripcion": "Suministro y colocación de puerta de acceso con cierra-puertas hidráulico. Incluye el montaje de la hoja, el cierra-puertas y el ajuste de velocidad. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

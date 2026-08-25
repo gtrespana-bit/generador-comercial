@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Friso rústico texturado en fachada.",
   "descripcion": "Revestimiento de fachada con friso rústico texturado, aplicado sobre friso base o directamente sobre la mampostería, con acabado obtenido por proyección o por peinado según la textura elegida. Incluye el trabajo desde andamio, la preparación y humedecido del soporte, la aplicación de la capa base, la ejecución de la textura de forma continua por paños completos entre juntas o quiebres para evitar que se marquen las paradas de trabajo, y el curado. La uniformidad del acabado depende de mantener la misma cuadrilla y la misma dosificación en todo el paño. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

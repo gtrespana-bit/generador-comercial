@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Desmontaje de piso técnico registrable.",
   "descripcion": "Desmontaje de piso técnico registrable existente, formado por paneles apoyados sobre pedestales regulables, ejecutado con medios manuales. Por tratarse de un sistema desmontable la operación es limpia y permite recuperar el material. Incluye la retirada ordenada de los paneles con ventosa, el desmontaje de los pedestales y travesaños, la clasificación de las piezas en aprovechables y desechables, el acopio protegido de las que el cliente desee conservar, el retiro del resto en sacos y la limpieza de la losa resultante. No incluye el bote del escombro. Medido en superficie realmente desmontada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

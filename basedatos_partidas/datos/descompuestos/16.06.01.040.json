@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Balanceo de caudales de ventilación.",
   "descripcion": "Balanceo de los caudales de ventilación, con anemómetro, para verificar la renovación de aire proyectada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

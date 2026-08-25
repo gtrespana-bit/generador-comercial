@@ -6,7 +6,7 @@
   "unidad": "glb",
   "titulo": "Ventilación de espacio confinado.",
   "descripcion": "Ventilación forzada de espacio confinado antes y durante el trabajo, para asegurar la calidad del aire.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

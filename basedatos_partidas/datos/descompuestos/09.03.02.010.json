@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Puesta a tierra con electrodo.",
   "descripcion": "Ejecución de la puesta a tierra de la instalación mediante electrodo de cobre enterrado, con su conductor de protección, conector y caja de inspección registrable. Sin puesta a tierra efectiva, el interruptor diferencial no dispone del camino de fuga que necesita para actuar, de modo que ambos elementos funcionan como sistema o no funcionan. Incluye la excavación, el hincado del electrodo, la conexión del conductor con conector de compresión, la caja de inspección registrable, el tendido hasta el tablero y la medición de la resistencia de tierra con telurómetro, que es lo que acredita que el sistema sirve. Medido por puesta a tierra ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Punto de iluminación exterior de jardín.",
   "descripcion": "Punto de iluminación exterior de jardín o acceso, con su canalización enterrada, cableado, caja estanca y base de anclaje de la luminaria. Incluye el replanteo, la apertura de la zanja, la canalización enterrada con cinta de señalización sobre ella, el tendido del conductor apto para intemperie, la ejecución de la base de anclaje, la conexión estanca y la prueba. La luminaria la elige el cliente y se presupuesta aparte. Medido por punto terminado y probado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Luminaria de exterior o baliza elegida por el cliente",

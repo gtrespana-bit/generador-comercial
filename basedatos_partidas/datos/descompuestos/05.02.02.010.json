@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Malla electrosoldada para losa.",
   "descripcion": "Colocación de malla electrosoldada de refuerzo en losa. Incluye la colocación y el solape. Medido por metro cuadrado colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

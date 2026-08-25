@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Trasdosado directo de placa de yeso.",
   "descripcion": "Ejecución de trasdosado directo de placa de yeso adherida al muro. Incluye la aplicación de pasta y la colocación de la placa. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

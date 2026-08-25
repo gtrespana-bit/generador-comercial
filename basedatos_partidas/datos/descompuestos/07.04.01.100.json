@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Estructura metálica menor para marquesina.",
   "descripcion": "Suministro y montaje de estructura metálica menor para marquesina, con perfiles soldados. Incluye la fabricación, el montaje y el anclaje. Medido por metro cuadrado instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

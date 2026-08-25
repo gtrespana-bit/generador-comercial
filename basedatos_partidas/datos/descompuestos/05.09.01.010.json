@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Reparación superficial de concreto con mortero estructural.",
   "descripcion": "Reparación de concreto deteriorado por coqueras, desprendimientos o carbonatación, mediante saneado del área y reposición con mortero tixotrópico de reparación estructural, de 3 cm de espesor medio. Incluye la delimitación del área con corte perimetral perpendicular para evitar bordes en bisel que se desprenden, el picado del concreto suelto hasta alcanzar concreto sano, la limpieza y saturación del soporte, la aplicación del puente de adherencia, la reposición del mortero por capas respetando el espesor máximo por capa y el curado del material aplicado. Medido en superficie realmente reparada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

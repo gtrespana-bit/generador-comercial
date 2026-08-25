@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Punto de datos doble.",
   "descripcion": "Ejecución de punto de datos doble., con canalización y conexión. Incluye el tendido del cable y la conexión. Medido por punto ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Regularización de soporte de cubierta plana.",
   "descripcion": "Regularización del soporte de una cubierta plana existente con mortero de nivelación, eliminando ondulaciones antes de impermeabilizar. Incluye la limpieza del soporte, el maestreado y el afinado final.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

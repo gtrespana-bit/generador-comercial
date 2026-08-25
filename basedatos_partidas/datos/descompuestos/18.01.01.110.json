@@ -6,7 +6,7 @@
   "unidad": "glb",
   "titulo": "Seguimiento y medición de ahorro energético.",
   "descripcion": "Seguimiento y medición del ahorro energético tras la rehabilitación, con comparación de consumos.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

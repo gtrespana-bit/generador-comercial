@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Encofrado y desencofrado de viga.",
   "descripcion": "Encofrado de viga mediante fondo y laterales de madera sobre puntales, con sus arriostramientos, y su posterior desencofrado. Es el encofrado más laborioso de la estructura por el apuntalamiento y la nivelación del fondo. Incluye el replanteo de la cota inferior, el montaje y nivelación del fondo sobre puntales con la contraflecha prevista, el montaje y aplomado de los laterales, la comprobación de sección y alineación, la aplicación de desmoldeante, el desencofrado escalonado retirando primero los laterales y manteniendo el fondo y los puntales hasta alcanzar la resistencia de proyecto, y la limpieza y acopio del material. Medido en superficie de encofrado en contacto con el concreto.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

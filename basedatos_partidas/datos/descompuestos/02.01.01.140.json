@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Desmontaje de encofrado perdido en fundación.",
   "descripcion": "Desmontaje y retiro de encofrado perdido o restos de madera en fundación. Incluye la retirada de la madera y la limpieza. Medido por metro lineal desmontado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Rampa portátil de acceso.",
   "descripcion": "Colocación de rampa portátil de acceso para accesibilidad, con anclaje y fijación. Incluye la colocación y el anclaje.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

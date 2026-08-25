@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Prueba de vacío de sistema de climatización.",
   "descripcion": "Prueba de vacío del circuito frigorífico de climatización, para eliminar humedad y verificar la estanqueidad.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Escalera metálica con peldaños de rejilla.",
   "descripcion": "Suministro y montaje de escalera metálica con peldaños de rejilla. Incluye el montaje. Medido por metro cuadrado montado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

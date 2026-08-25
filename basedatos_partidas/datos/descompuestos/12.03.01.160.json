@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Enchapado de columna con pieza cerámica, en capa fina.",
   "descripcion": "Enchapado de columna con pieza cerámica o porcelanato, en capa fina. Incluye la preparación del soporte, la colocación con cortes y el rejuntado. Medido por metro cuadrado revestido.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

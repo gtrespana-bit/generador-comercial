@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Cerca de malla ciclónica.",
   "descripcion": "Cerca perimetral de malla ciclónica con sus postes, tensores, alambre de púas de coronación y dados de concreto. Incluye el replanteo de la línea, la excavación y vaciado de los dados de los postes, el aplomado y arriostramiento de los postes de esquina y de tiro que son los que reciben toda la tensión de la malla, el tendido y tensado de la malla con su alambre de amarre, la colocación de los tensores y el remate de coronación. Medido en longitud realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Inspección visual de soldadura.",
   "descripcion": "Inspección visual de cordones de soldadura, verificando continuidad, penetración y ausencia de defectos superficiales.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

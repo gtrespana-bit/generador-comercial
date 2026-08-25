@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Limpieza de aparatos sanitarios y grifería.",
   "descripcion": "Limpieza de aparatos sanitarios y grifería al final de la obra, con desincrustante y pulido.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

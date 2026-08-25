@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Cortina térmica interior.",
   "descripcion": "Colocación de cortina térmica interior, para mejorar el aislamiento del hueco.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

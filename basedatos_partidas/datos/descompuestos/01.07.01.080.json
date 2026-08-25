@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Replanteo de escalera.",
   "descripcion": "Replanteo de escalera y peldaños. Incluye el trazado de huellas y contrahuellas. Medido por escalera replanteada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Válvula de zona de riego.",
   "descripcion": "Instalación de válvula de zona de riego, con conexión a la red. Incluye la colocación y la conexión.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Punto de desagüe para bañera.",
   "descripcion": "Ejecución de punto de desagüe para bañera., con conexión. Incluye la conexión y la fijación. Medido por unidad ejecutado/a.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Sellado cortafuego de paso eléctrico.",
   "descripcion": "Sellado cortafuego de paso de instalación eléctrica en muro o losa. Incluye la aplicación de la masilla intumescente. Medido por unidad sellado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

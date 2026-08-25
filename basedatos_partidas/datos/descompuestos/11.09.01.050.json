@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Sustitución de cumbrera de cubierta.",
   "descripcion": "Sustitución de cumbrera o remate superior de cubierta dañado, con desmontaje y colocación de la nueva pieza. Incluye el recibido y el sellado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

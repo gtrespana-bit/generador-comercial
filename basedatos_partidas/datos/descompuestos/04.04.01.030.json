@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Malla electrosoldada de refuerzo en losa.",
   "descripcion": "Suministro y colocación de malla electrosoldada de acero como refuerzo de losa, sobre separadores que garantizan su posición dentro del espesor. Incluye el replanteo, el corte de los paños, su colocación con los solapes mínimos de dos retículas amarrados con alambre, la colocación de separadores y caballetes, y el repaso de la posición de la malla inmediatamente antes del vaciado, ya que es habitual que quede pisada y apoyada en el fondo, con lo que pierde por completo su función. Medido en superficie realmente reforzada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

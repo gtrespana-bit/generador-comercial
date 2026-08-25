@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Demolición de rodapié cerámico.",
   "descripcion": "Demolición de rodapié existente de baldosa cerámica o de porcelanato y de su capa de pega, ejecutada con medios manuales y martillo eléctrico, cuidando de no dañar el friso de la pared por encima de la línea del rodapié. Incluye retiro manual del escombro en sacos hasta el punto de acopio, repicado de los restos de mortero adheridos y limpieza de la zona. No incluye el bote del escombro. Medido en longitud realmente demolida.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

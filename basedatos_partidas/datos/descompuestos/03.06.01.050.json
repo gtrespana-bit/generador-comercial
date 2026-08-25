@@ -6,7 +6,7 @@
   "unidad": "m³",
   "titulo": "Traslado interno de material con carretilla.",
   "descripcion": "Traslado interno de tierra, escombro o material a granel con carretilla, desde el frente de trabajo hasta el punto de acopio o de carga, en obras sin acceso para maquinaria. Incluye la habilitación y protección del recorrido, la carga a pala, el traslado con la distancia media de obra, la descarga ordenada en el punto de acopio y la limpieza continua del recorrido, que en un inmueble habitado es obligada y consume tiempo real. Medido en volumen de material realmente trasladado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

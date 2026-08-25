@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Verificación de pendientes de desagüe.",
   "descripcion": "Verificación de las pendientes de la tubería de desagüe, con nivel láser, para asegurar la evacuación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

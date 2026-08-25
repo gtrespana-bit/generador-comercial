@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Acometida provisional de agua.",
   "descripcion": "Acometida provisional de agua de obra. Incluye la conexión a la red y la llave general. Medido por acometida ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Torta de cemento de protección de cubierta.",
   "descripcion": "Capa de mortero de protección sobre la impermeabilización de cubierta plana, armada con malla y con juntas de retracción, que protege el manto del tránsito y de la radiación. Debe ejecutarse sobre una capa separadora: si se vacía directamente sobre la impermeabilización, la retracción del mortero arrastra y desgarra el manto. Incluye la colocación de la lámina separadora, la malla de retracción, el vaciado y reglado del mortero, la ejecución de las juntas de retracción en paños y contra los petos, el fratasado y el curado. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

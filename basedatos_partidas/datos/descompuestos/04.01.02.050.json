@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Limpieza y saneo de fondo de fundación.",
   "descripcion": "Limpieza y saneo del fondo de fundación previo al vaciado. Incluye la limpieza. Medido por metro cuadrado saneado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Desinfección de zonas húmedas.",
   "descripcion": "Desinfección de zonas húmedas (baños, cocina) al final de la obra, con productos desinfectantes.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

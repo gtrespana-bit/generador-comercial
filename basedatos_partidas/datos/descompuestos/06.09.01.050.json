@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Limpieza de fachada con proyección de arena.",
   "descripcion": "Limpieza de fachada con proyección de arena o abrasivo. Incluye la protección del entorno y la limpieza. Medido por metro cuadrado limpiado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

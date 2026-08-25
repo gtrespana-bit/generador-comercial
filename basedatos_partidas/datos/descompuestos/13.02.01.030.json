@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Salpicadero de mesón.",
   "descripcion": "Ejecución del salpicadero o zócalo posterior del mesón, en el mismo material del tablero o en el acabado elegido, con su sellado inferior. El sellado de la junta entre salpicadero y mesón es lo que impide que el agua se filtre por detrás y arruine el mueble bajo, que es el fallo más habitual en cocinas. Incluye el corte a medida, la colocación con adhesivo, el ajuste a las irregularidades de la pared, el sellado de la junta inferior con silicona sanitaria y el remate de esquinas. Medido en longitud realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Pieza de salpicadero a juego con el mesón, elegida por el cliente",

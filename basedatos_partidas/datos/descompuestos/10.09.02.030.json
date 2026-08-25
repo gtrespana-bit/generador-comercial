@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Saneado de muro con eflorescencias salinas.",
   "descripcion": "Saneado de muro con eflorescencias salinas, con limpieza y tratamiento. Incluye la limpieza de las sales y la aplicación del tratamiento. Medido por metro cuadrado saneado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

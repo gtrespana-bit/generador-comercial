@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Aplique de pared exterior.",
   "descripcion": "Instalación de aplique de pared exterior, con fijación y conexión. Incluye la conexión. El aplique lo elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

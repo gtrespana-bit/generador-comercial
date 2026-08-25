@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Dotación de mascarilla y protección respiratoria.",
   "descripcion": "Dotación de mascarilla y protección respiratoria para trabajos con polvo o vapores.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

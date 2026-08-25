@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Demolición de afirmado o base de mortero de nivelación.",
   "descripcion": "Demolición de afirmado o base de mortero de nivelación de hasta 5 cm de espesor, una vez retirado el piso de acabado, ejecutada con martillo eléctrico manual hasta dejar la losa estructural a la vista y limpia. Se emplea cuando la base existente está disgregada, hueca o fuera de nivel y no admite recibir el nuevo piso. Incluye la comprobación previa del estado de la base mediante golpeo, la protección de los ambientes contiguos, el control de polvo mediante aspiración, el retiro manual del escombro en sacos y el barrido final de la losa. No incluye el bote del escombro. Medido en superficie realmente demolida.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

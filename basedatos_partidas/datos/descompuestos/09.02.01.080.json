@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Canalón de aguas lluvias.",
   "descripcion": "Suministro e instalación de canalón de aguas lluvias. Incluye el montaje. Medido por metro lineal instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Demolición de piso de cemento pulido.",
   "descripcion": "Demolición de piso continuo de cemento pulido y de su base de mortero, ejecutada con martillo eléctrico manual, sin afectar a la losa estructural. Incluye corte perimetral con amoladora cuando la demolición sea parcial, protección de los ambientes contiguos, control de polvo mediante aspiración, fragmentación del escombro, retiro manual en sacos hasta el punto de acopio y limpieza de la superficie resultante. No incluye el bote del escombro. Medido en superficie realmente demolida.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

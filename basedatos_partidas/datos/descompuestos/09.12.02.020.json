@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Sensor magnético de apertura de puerta o ventana.",
   "descripcion": "Suministro e instalación de sensor magnético de apertura para puertas y ventanas, con su emisor y soporte, integrado en la central domótica. Incluye el replanteo del punto de montaje, la fijación del imán y del emisor alineados, la conexión o emparejamiento y la prueba de apertura y cierre. Medido por sensor instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

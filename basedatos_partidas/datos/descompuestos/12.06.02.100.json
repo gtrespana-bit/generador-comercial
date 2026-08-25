@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Peldaño de madera flotante.",
   "descripcion": "Colocación de peldaño de madera flotante sobre escalera existente, con fijación. Incluye la preparación del soporte y la fijación del peldaño. Medido por metro lineal de peldaño.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

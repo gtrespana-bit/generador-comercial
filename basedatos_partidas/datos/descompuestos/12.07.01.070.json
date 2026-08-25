@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Trasdosado con doble placa y aislamiento.",
   "descripcion": "Trasdosado autoportante con doble placa de yeso laminado y panel de lana mineral en la cámara, para aislamiento térmico y acústico reforzado. Incluye la estructura, la lana, el doble atornillado y el tratamiento de juntas. Medido por metro cuadrado de trasdosado terminado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

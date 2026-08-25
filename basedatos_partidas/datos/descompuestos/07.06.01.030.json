@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Baranda o cerramiento de vidrio templado.",
   "descripcion": "Suministro e instalación de baranda o cerramiento de vidrio templado con sus perfiles de sujeción, pinzas o perfil continuo empotrado, y pasamanos superior. Incluye la comprobación del anclaje y del refuerzo del soporte, que debe estar dimensionado para el empuje horizontal reglamentario, el montaje del perfil o de las pinzas, la colocación y aplomado del vidrio con sus calzos, el acuñado y sellado, y la colocación del pasamanos superior de protección del canto. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

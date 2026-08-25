@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Tira LED exterior decorativa.",
   "descripcion": "Colocación de tira LED exterior decorativa, con fuente de alimentación y perfil. Incluye la conexión. La tira la elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

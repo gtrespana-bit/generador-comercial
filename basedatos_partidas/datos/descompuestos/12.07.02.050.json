@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Tratamiento de juntas y remates de trasdosado.",
   "descripcion": "Acabado de juntas y remates de un trasdosado de placa de yeso laminado ya montado, como trabajo independiente. Incluye el repaso de las juntas con pasta y cinta, el masillado de cabezas de tornillo, el lijado de las uniones y el remate de encuentros con muros y techo. Medido por metro cuadrado de superficie tratada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Pintura ignífuga intumescente interior.",
   "descripcion": "Aplicación de pintura intumescente ignífuga sobre estructura o paramento interior, con las capas necesarias para el grado de resistencia requerido. Incluye la preparación del soporte y la aplicación. Medido por metro cuadrado pintado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

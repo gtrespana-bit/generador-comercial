@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Preparación de soporte para microcemento.",
   "descripcion": "Preparación de soporte para la aplicación de microcemento, con regularización, imprimación y malla en juntas. Incluye la nivelación y la preparación de la superficie. Medido por metro cuadrado preparado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

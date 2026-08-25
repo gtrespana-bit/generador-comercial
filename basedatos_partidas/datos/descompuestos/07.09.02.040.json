@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de cerradura con apertura remota.",
   "descripcion": "Instalación de cerradura con apertura remota o intercomunicación. Incluye el montaje, la conexión y la programación. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

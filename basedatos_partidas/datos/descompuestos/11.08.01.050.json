@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Limpieza y mantenimiento de cubierta.",
   "descripcion": "Limpieza y mantenimiento de cubierta, con retirada de hojas, sedimentos y vegetación, desobstrucción de canales y tragantes, y revisión del estado general. Es la intervención preventiva más rentable que existe en una edificación: la mayoría de las filtraciones de cubierta no se deben al fallo de la impermeabilización sino a un tragante obstruido que provoca el remanso del agua. Incluye el barrido y retirada de residuos, la limpieza de canales y bajantes, la comprobación de evacuación con agua, la revisión visual de encuentros y pases y el informe de las reparaciones que se detecten necesarias. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

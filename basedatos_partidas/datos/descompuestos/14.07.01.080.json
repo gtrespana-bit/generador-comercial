@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Reparación de red de riego.",
   "descripcion": "Reparación de red de riego con sustitución de tramos de tubería o emisores dañados. Incluye la sustitución.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

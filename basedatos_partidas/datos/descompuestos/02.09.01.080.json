@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Desmontaje de cubierta de panel sándwich.",
   "descripcion": "Desmontaje de cubierta de panel sándwich. Incluye la retirada de los paneles y sus fijaciones. Medido por metro cuadrado desmontado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

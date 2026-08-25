@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Neutralización y limpieza de derrame menor.",
   "descripcion": "Neutralización y limpieza de derrame menor de sustancia química, con material absorbente y disposición del residuo.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

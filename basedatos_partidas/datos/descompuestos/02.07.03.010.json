@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Desmontaje de red de tuberías de agua o desagüe.",
   "descripcion": "Desmontaje de red existente de tuberías de agua o de desagüe, vista o empotrada, incluidos sus accesorios y soportes. Incluye el cierre y comprobación previa de que la red está fuera de servicio y vaciada, el picado del paramento en los tramos empotrados, el corte y extracción de la tubería en tramos manejables, el taponado de las derivaciones que permanecen activas, el retiro del material clasificado según sea PVC, hierro galvanizado o cobre, y el resane de las rozas. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en longitud realmente desmontada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

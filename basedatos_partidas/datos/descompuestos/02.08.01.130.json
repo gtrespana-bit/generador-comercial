@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Retiro de sellado de juntas.",
   "descripcion": "Retiro de sellado de juntas existente. Incluye la retirada del sellador. Medido por metro lineal retirado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

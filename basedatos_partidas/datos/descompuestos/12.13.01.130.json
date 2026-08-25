@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Sellado de piso de concreto.",
   "descripcion": "Sellado de piso de concreto con sellador acrílico o de poliuretano, para protección y realce. Incluye la limpieza y la aplicación del sellador. Medido por metro cuadrado sellado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

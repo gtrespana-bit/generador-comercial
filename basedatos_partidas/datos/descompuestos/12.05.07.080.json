@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Piso de terrazo pulido en obra.",
   "descripcion": "Ejecución de piso de terrazo pulido en obra, con mortero, árido y pulido mecánico. Incluye el vaciado, el nivelado y el pulido y abrillantado. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

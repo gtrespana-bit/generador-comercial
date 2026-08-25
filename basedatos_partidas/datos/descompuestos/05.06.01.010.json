@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Encofrado de losa maciza sobre puntales.",
   "descripcion": "Encofrado de losa maciza mediante tablero de madera sobre soleras y puntales metálicos, con su nivelación y contraflecha, y su posterior desencofrado. Incluye el replanteo de la cota inferior, el montaje de la retícula de puntales con la separación indicada, la colocación de soleras y del tablero, la nivelación del conjunto con la contraflecha prevista, el sellado de juntas del tablero para evitar la pérdida de lechada, la aplicación de desmoldeante, el desencofrado escalonado manteniendo los puntales de seguridad hasta alcanzar la resistencia de proyecto, y la limpieza y acopio del material. Medido en superficie de encofrado en contacto con el concreto.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

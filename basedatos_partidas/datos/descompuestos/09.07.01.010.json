@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de equipo de aire acondicionado tipo split.",
   "descripcion": "Instalación de equipo de aire acondicionado tipo split, comprendiendo el montaje de la unidad evaporadora y de la condensadora, la interconexión frigorífica, el drenaje y la conexión eléctrica. Incluye el replanteo de ambas unidades respetando las distancias mínimas de servicio y la ventilación de la condensadora, el anclaje de los soportes, el abocardado de la tubería frigorífica, el vacío del circuito con bomba antes de abrir las válvulas, paso que se omite con frecuencia y que deja humedad dentro del circuito arruinando el compresor a medio plazo, la conexión eléctrica protegida, el drenaje con pendiente continua y la puesta en marcha con medición de presiones y temperaturas. El equipo lo elige el cliente y se presupuesta aparte. Medido por equipo instalado y probado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Equipo de aire acondicionado split de la capacidad y tipo elegidos por el cliente",

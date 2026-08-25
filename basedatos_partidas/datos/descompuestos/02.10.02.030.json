@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Picado de enchapado de piedra natural en pared.",
   "descripcion": "Picado de enchapado de piedra natural existente en pared, ya sea mármol, laja o piedra de revestimiento, incluida su capa de asiento y los anclajes metálicos si los tuviera, ejecutado con martillo eléctrico manual. Si el cliente desea recuperar las piezas se desmontan una a una con cuidado, se limpian y se acopian protegidas, lo que reduce el rendimiento y debe advertirse en el presupuesto. Incluye la protección del entorno, el control de polvo, el retiro del escombro en sacos y el repicado de los restos adheridos. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en superficie realmente picada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

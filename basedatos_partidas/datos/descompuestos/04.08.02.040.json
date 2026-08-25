@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Refuerzo de fundación con micropilotes.",
   "descripcion": "Refuerzo de fundación con micropilotes. Incluye la perforación y el vaciado. Medido por metro lineal reforzado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de cocina eléctrica empotrada.",
   "descripcion": "Instalación de cocina eléctrica empotrada con circuito de fuerza dedicado y fijación. Incluye la conexión y la fijación. El equipo lo elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

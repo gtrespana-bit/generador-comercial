@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Inyección de fisuras con resina.",
   "descripcion": "Inyección de fisuras en concreto con resina epóxica. Incluye la inyección. Medido por metro lineal inyectado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

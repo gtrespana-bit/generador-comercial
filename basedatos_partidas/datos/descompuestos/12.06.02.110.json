@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Revestimiento de rampa antideslizante.",
   "descripcion": "Revestimiento de rampa con pieza antideslizante o sistema de resinas, para circulación segura. Incluye la preparación del soporte y la colocación del revestimiento. Medido por metro cuadrado revestido.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

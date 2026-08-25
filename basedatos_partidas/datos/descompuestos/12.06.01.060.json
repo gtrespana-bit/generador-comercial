@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Nivelación y remate de umbral entre ambientes.",
   "descripcion": "Formación y remate del umbral de paso entre ambientes con pisos de distinto material o nivel, resolviendo la transición sin resalto peligroso. Un desnivel superior a un centímetro sin resolver es un tropiezo, y en accesos y baños es además una barrera. Incluye el replanteo, la regularización del soporte con mortero formando la rampa de transición cuando la diferencia lo exija, la colocación de la pieza o perfil de umbral, el sellado de bordes y la comprobación de que no queda ningún canto vivo. Medido en longitud realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

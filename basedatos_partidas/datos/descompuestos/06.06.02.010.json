@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Tratamiento y remate de frente de losa en fachada.",
   "descripcion": "Tratamiento del canto o frente de losa visto en fachada, con regularización, refuerzo del encuentro con la mampostería y formación de goterón. El frente de losa es un puente térmico y el punto donde el movimiento diferencial entre estructura y cerramiento produce la fisura horizontal característica de las fachadas: tratarlo con malla y goterón evita tanto la fisura como el chorreado de agua sucia sobre el paño inferior. Incluye la limpieza y repicado del canto, la malla de refuerzo solapada sobre estructura y mampostería, el friso de regularización y la conformación del goterón. Medido en longitud realmente tratada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

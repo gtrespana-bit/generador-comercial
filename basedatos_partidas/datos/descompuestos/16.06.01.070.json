@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Limpieza de serpentines y filtros.",
   "descripcion": "Limpieza de serpentines y filtros del sistema de climatización, para asegurar el rendimiento.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Limpieza y abrillantado de piso de granito.",
   "descripcion": "Limpieza y abrillantado de piso de granito, con pulido mecánico y protección. Incluye la limpieza, el pulido y el abrillantado. Medido por metro cuadrado abrillantado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

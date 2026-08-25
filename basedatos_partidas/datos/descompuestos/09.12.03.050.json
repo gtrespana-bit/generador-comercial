@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Termostato inteligente para control de climatización.",
   "descripcion": "Suministro e instalación de termostato inteligente para control de climatización, con programación horaria y comunicación a la central domótica. Incluye la elección del punto de montaje en zona representativa, la fijación, la conexión de alimentación y de la señal de control del equipo de climatización, la configuración de horarios y la prueba de regulación. Medido por termostato instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Desconexión de equipo de aire acondicionado.",
   "descripcion": "Desconexión de equipo de aire acondicionado, con recuperación de refrigerante. Incluye la recuperación y la desconexión eléctrica. Medido por equipo desconectado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

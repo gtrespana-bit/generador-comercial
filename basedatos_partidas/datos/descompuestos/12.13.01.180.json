@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Recubrimiento de resina en cámara frigorífica.",
   "descripcion": "Aplicación de recubrimiento de resina en cámara frigorífica o local frío. Incluye la preparación y la aplicación del recubrimiento apto para frío. Medido por metro cuadrado recubierto.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

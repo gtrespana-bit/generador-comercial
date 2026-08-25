@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Pintura de cornisa, alero y remates de fachada.",
   "descripcion": "Aplicación de pintura exterior en cornisas, aleros y remates de fachada, con dos manos. Incluye la protección de los elementos adyacentes y las dos manos de pintura. Medido por metro cuadrado pintado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

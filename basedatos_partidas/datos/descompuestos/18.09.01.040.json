@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Sistema de agua caliente solar.",
   "descripcion": "Instalación de sistema de agua caliente solar, con conexión hidráulica. El sistema lo elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

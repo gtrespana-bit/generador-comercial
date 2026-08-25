@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Piso de porcelanato de gran formato, en capa fina.",
   "descripcion": "Colocación de piso con pieza de porcelanato rectificado de gran formato, tipo 120x60 cm o superior, sobre soporte previamente regularizado. Ejecución en capa fina con adhesivo cementoso mejorado C2 TE mediante doble encolado, manipulación de las piezas con juego de ventosas, nivelación con cuñas para garantizar la planitud que exige el formato y junta mínima rejuntada con mortero CG2. Incluye comprobación previa de la planitud del soporte, replanteo del despiece, cortes con cortadora de disco de diamante refrigerada por agua, limpieza final y retirada de restos. La pieza la elige el cliente y se presupuesta aparte. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Pieza de porcelanato de gran formato para piso, 120x60 cm o superior",

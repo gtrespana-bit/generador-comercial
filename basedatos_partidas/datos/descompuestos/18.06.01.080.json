@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Automatización de toldo con sensor solar.",
   "descripcion": "Automatización de toldo con sensor solar, para accionamiento automático. El sistema lo elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

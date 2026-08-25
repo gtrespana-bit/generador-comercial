@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Protección de zanja con señalización nocturna.",
   "descripcion": "Señalización y balizamiento nocturno de zanja abierta, para prevenir accidentes de tránsito.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Puente de adherencia sobre soporte de concreto.",
   "descripcion": "Aplicación de puente de adherencia sobre soporte de concreto endurecido previo a la colocación de mortero o enchapado. Incluye la limpieza y la aplicación del puente. Medido por metro cuadrado tratado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Cerramiento de vano con lámina de madera.",
   "descripcion": "Cerramiento provisional de vano con lámina de madera. Incluye la fijación de la lámina. Medido por metro cuadrado cerrado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

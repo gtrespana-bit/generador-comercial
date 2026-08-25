@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Aislamiento térmico de losa con poliestireno.",
   "descripcion": "Suministro y colocación de panel de poliestireno en losa, previo al vaciado. Incluye la colocación del panel y el remate. Medido por metro cuadrado aislado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

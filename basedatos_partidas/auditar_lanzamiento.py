@@ -204,7 +204,7 @@ def auditar_partidas() -> Resultado:
         base = sum(costes.values())
         complementarios = base * float(partida.get("complementarios_pct", 0) or 0) / 100
         coste_directo = base + complementarios
-        precio_venta = coste_directo * (1 + float(partida.get("margen", 0.3) or 0))
+        precio_venta = coste_directo * (1 + float(partida.get("margen", 0.35) or 0))
         vector = (unidad, tuple(referencias))
         vectores[vector].append(codigo)
         resultado.detalle.append({

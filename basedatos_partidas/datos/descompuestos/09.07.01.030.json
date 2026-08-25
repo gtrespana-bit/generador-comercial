@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Mantenimiento y limpieza de equipo de climatización.",
   "descripcion": "Mantenimiento preventivo de equipo de climatización tipo split, con limpieza de filtros y serpentines, revisión del drenaje y comprobación de parámetros de funcionamiento. El drenaje obstruido es la causa más común de la avería que el usuario percibe como gotera del aire, y la suciedad del serpentín es lo que dispara el consumo eléctrico sin que el equipo enfríe mejor. Incluye el desmontaje y lavado de filtros, la limpieza química de los serpentines de ambas unidades, la desobstrucción y desinfección del drenaje, la revisión de presiones y del consumo, y el informe del estado. Medido por equipo mantenido.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

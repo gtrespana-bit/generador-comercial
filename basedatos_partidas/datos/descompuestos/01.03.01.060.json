@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Protección de carpintería y aparatos que permanecen en obra.",
   "descripcion": "Protección de puertas, ventanas, aparatos sanitarios y elementos terminados que permanecen dentro de la zona de trabajo, mediante lámina plástica y cartón fijados con cinta de baja adherencia que no deje residuo ni dañe los acabados. Incluye el enmascarado de marcos, herrajes y vidrios, la cubrición de los aparatos sanitarios que siguen en servicio, la reposición de la protección deteriorada y su retiro y limpieza al finalizar la obra. Medido en superficie realmente protegida.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

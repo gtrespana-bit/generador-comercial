@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Mampara antipolvo con puerta.",
   "descripcion": "Colocación de mampara antipolvo con puerta de paso. Incluye la estructura y la lámina. Medido por metro cuadrado colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

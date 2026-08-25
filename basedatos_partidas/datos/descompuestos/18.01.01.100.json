@@ -6,7 +6,7 @@
   "unidad": "glb",
   "titulo": "Propuesta de medidas de rehabilitación energética.",
   "descripcion": "Elaboración de propuesta de medidas de rehabilitación energética, con estimación de ahorros.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

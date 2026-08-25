@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Pérgola de sombreado exterior.",
   "descripcion": "Ejecución de pérgola de sombreado exterior, para proteger del sol las zonas acristaladas.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

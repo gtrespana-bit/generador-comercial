@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Temporizador de iluminación exterior.",
   "descripcion": "Instalación de temporizador de iluminación exterior, con conexión y programación. Incluye la instalación. El temporizador lo elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Fachada de panel sándwich con remates.",
   "descripcion": "Ejecución de fachada de panel sándwich con remates y esquineros. Incluye la colocación de los paneles y los remates. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

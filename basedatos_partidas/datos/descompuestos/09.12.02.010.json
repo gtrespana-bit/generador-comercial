@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Sensor de movimiento para iluminación y alarmas.",
   "descripcion": "Suministro e instalación de sensor de movimiento o presencia, con su soporte de montaje y su integración en la central domótica. Incluye el replanteo del punto de detección para cubrir la zona prevista, la fijación del soporte, la conexión y el emparejamiento con la central, y la prueba de detección y de alcance. Medido por sensor instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

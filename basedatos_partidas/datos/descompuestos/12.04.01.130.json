@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Revestimiento de espejo en pared.",
   "descripcion": "Revestimiento de paramento con espejo, fijado con adhesivo o soportes. Incluye la preparación del soporte, la colocación del espejo y el remate. Medido por metro cuadrado revestido.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

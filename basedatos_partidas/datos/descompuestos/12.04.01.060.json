@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Revestimiento de pared de baño con paneles de PVC.",
   "descripcion": "Revestimiento de paredes de baño o área húmeda con paneles de PVC o composite machihembrados, con sus perfiles de remate y sellado. Es la alternativa rápida y económica al enchapado cuando no se quiere picar ni esperar fraguados, y se instala sobre el revestimiento existente si está firme, lo que evita por completo la demolición. Incluye la comprobación del soporte, el montaje de los perfiles perimetrales, la colocación de los paneles con encaje a presión y adhesivo, los cortes alrededor de grifería y accesorios y el sellado con silicona sanitaria de todos los encuentros. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

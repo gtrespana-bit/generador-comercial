@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Canalón oculto bajo alero de teja.",
   "descripcion": "Ejecución de canalón oculto bajo el alero de cubierta de teja, para recogida de aguas lluvias, con su soporte y conexión a bajante. Incluye la fijación y los remates.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

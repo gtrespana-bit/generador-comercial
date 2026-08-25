@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Reparación de forro de placa de cemento.",
   "descripcion": "Reparación puntual de forro de placa de cemento dañado, con sustitución de la zona y sellado de juntas. Incluye el corte de la zona, la reposición de la placa y el acabado. Medido por metro cuadrado reparado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Boquilla de desagüe de cubierta con rejilla.",
   "descripcion": "Colocación de tragante o boquilla de desagüe en cubierta, con conexión a la bajante y sellado de la impermeabilización. Incluye la apertura y la fijación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

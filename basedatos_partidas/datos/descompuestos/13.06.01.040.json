@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Herrajes y tiradores de mobiliario.",
   "descripcion": "Colocación de juego de accesorios y herrajes de mobiliario (tiradores, bisagras, soportes), con fijación. Incluye el replanteo y la fijación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Barrera de vapor bajo losa de fundación.",
   "descripcion": "Colocación de barrera de vapor de polietileno bajo losa. Incluye la extensión y el solape. Medido por metro cuadrado colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

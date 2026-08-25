@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Aislamiento de fachada con lana mineral proyectada.",
   "descripcion": "Proyección de lana mineral aislante sobre fachada, para relleno de cámaras y mejora térmica.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

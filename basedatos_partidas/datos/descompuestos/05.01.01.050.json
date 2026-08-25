@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Encofrado de muro de concreto.",
   "descripcion": "Encofrado a dos caras de muro de concreto con madera. Incluye el montaje y el desencofrado. Medido por metro cuadrado encofrado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

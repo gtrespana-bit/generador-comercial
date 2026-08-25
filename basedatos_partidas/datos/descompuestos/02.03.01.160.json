@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Demolición de cornisa o remate de fachada.",
   "descripcion": "Demolición de cornisa, alero o remate de fachada de concreto o mortero. Incluye la demolición y la retirada del escombro. Medido por metro cuadrado demolido.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

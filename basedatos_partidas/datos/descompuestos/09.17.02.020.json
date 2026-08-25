@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Reparación de punto eléctrico.",
   "descripcion": "Reparación de punto eléctrico averiado. Incluye la localización y la reparación. Medido por reparación ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

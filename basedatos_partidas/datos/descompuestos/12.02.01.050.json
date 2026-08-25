@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Regularización y repello de paramento existente.",
   "descripcion": "Regularización de paramento existente mediante repello de mortero de espesor variable, para corregir desplomes, resanar zonas picadas y dejar la superficie apta para recibir el acabado. Se emplea en reforma cuando el friso existente está sano en su mayor parte y solo requiere reparación y nivelación, evitando el picado completo. Incluye el sondeo por golpeo para delimitar y retirar las zonas huecas, la limpieza y humedecido, la aplicación del puente de adherencia en las zonas de mayor espesor, el tendido y reglado del mortero enrasando con el friso existente, y el fratasado dejando una transición imperceptible entre lo nuevo y lo conservado. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

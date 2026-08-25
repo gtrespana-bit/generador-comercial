@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Protector contra sobretensiones transitorias tipo 2 en tablero secundario.",
   "descripcion": "Suministro y montaje de protector contra sobretensiones transitorias tipo 2 (clase II) en tablero secundario de distribución, con su conexión a tierra. Incluye el montaje en el carril del tablero, la conexión de los conductores con la sección indicada y lo más cortos posible, y la prueba de funcionamiento. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

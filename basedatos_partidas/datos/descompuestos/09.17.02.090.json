@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Reparación de bomba de agua.",
   "descripcion": "Ejecución de reparación de bomba de agua., con verificación. Incluye la verificación y el ajuste. Medido por unidad ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

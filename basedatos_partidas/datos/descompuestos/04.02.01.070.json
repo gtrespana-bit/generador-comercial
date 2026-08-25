@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Dado o base de concreto para equipo o máquina.",
   "descripcion": "Ejecución de dado o base de concreto armado para el apoyo de equipos, máquinas, tanques o estructuras menores, con su encofrado, armado, vaciado y previsión de pernos de anclaje. Incluye la excavación y compactación del fondo, el encofrado, el armado, la colocación de la plantilla de pernos de anclaje antes del vaciado, que es lo que garantiza que el equipo asiente sin ajustes forzados, el vaciado y vibrado, el curado y el desencofrado. Medido por unidad ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

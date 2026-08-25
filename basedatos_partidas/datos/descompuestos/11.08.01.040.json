@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Alero y remate de borde de cubierta.",
   "descripcion": "Formación del alero y del remate del borde de cubierta, con su pieza de terminación, goterón y sellado. El goterón es lo que separa el agua del paramento: sin él, el agua rodea el canto por capilaridad y escurre por la fachada dejando el chorreado sucio característico bajo los aleros mal resueltos. Incluye el replanteo, la colocación de la pieza de remate con su vuelo, la formación del goterón, el sellado del encuentro con la cubierta y con el paramento y la fijación. Medido en longitud realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

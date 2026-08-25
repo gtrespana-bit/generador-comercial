@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Encofrado de escalera de concreto armado.",
   "descripcion": "Encofrado de escalera de concreto armado, comprendiendo el fondo de la losa inclinada sobre puntales, los laterales de cierre y los tabicones de formación de peldaños, y su posterior desencofrado. Es de los encofrados más laboriosos por la geometría inclinada y por el replanteo de la huella y la contrahuella, que debe ser exacto y constante porque cualquier diferencia entre peldaños se percibe al caminar y compromete la seguridad. Incluye el replanteo, el montaje y nivelación del fondo, los laterales, los tabicones de peldaño, el arriostramiento, el desmoldeante, el desencofrado y la limpieza del material. Medido en superficie de encofrado en contacto con el concreto.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

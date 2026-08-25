@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Corte de concreto con disco de diamante.",
   "descripcion": "Corte de concreto o mampostería con disco de diamante refrigerado por agua, para delimitar demoliciones, abrir juntas o preparar aperturas con borde recto. El corte previo es lo que evita que la demolición arrastre y fisure el material que permanece, y es la diferencia entre una apertura limpia y un boquete que hay que reconstruir. Incluye el replanteo y marcado de la línea, la comprobación previa de que no discurren instalaciones ni armaduras críticas en el trazado, el corte con aporte de agua, la recogida del lodo generado y la limpieza. Medido en longitud realmente cortada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

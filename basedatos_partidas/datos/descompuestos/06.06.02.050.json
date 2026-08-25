@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Remate de frente de losa con perfil.",
   "descripcion": "Colocación de perfil de remate en frente de losa. Incluye la fijación del perfil y el remate. Medido por metro lineal ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

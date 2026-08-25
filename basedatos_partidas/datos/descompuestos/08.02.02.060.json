@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Perforación de hueco para caja.",
   "descripcion": "Perforación de hueco para caja de mecanismo. Incluye la perforación. Medido por unidad ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

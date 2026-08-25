@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Pintura de fachada con acabado texturado.",
   "descripcion": "Aplicación de pintura exterior con acabado texturado o gota sobre fachada, con dos manos. Incluye la preparación del soporte y la aplicación del revestimiento texturado. Medido por metro cuadrado pintado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

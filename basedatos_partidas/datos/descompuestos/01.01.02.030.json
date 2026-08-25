@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Aislamiento de servicio de gas existente.",
   "descripcion": "Aislamiento del servicio de gas existente, con cierre y taponado provisional. Incluye el cierre de la llave y el taponado seguro. Medido por servicio aislado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

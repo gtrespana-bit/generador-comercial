@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Sistema de control de iluminación por zonas.",
   "descripcion": "Instalación de sistema de control de iluminación por zonas, con pulsadores de escena. El sistema lo elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

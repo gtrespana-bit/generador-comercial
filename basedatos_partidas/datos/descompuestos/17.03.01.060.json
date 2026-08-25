@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Señalización de vías de evacuación.",
   "descripcion": "Colocación de señalización de vías de evacuación y salidas de emergencia en la obra.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

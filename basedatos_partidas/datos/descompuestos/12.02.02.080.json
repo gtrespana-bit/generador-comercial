@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Reparación de friso de yeso en zona amplia.",
   "descripcion": "Reparación de friso de yeso en zona amplia, con saneado del área, aplicación de pasta y afinado. Incluye la retirada del material suelto y la reposición del enlucido. Medido por metro cuadrado reparado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

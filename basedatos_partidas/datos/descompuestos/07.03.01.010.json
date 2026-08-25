@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Ventana de aluminio corrediza.",
   "descripcion": "Suministro e instalación de ventana de aluminio corrediza con su marco, hojas, rieles, felpas y acristalamiento. Incluye la toma de medidas en obra del vano ya terminado, nunca del plano, porque la diferencia entre ambos es la causa habitual de ventanas que no entran, el montaje y aplomado del marco con cuñas, el anclaje mecánico, el sellado perimetral exterior con silicona neutra que impide la entrada de agua, el montaje de las hojas, el ajuste de rodamientos y felpas y la comprobación de deslizamiento y cierre. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

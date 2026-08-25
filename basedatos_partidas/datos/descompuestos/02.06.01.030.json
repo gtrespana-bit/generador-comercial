@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Desmontaje de pasamanos de escalera.",
   "descripcion": "Desmontaje de pasamanos de escalera, sea de madera, metálico o de obra, junto con sus soportes y anclajes al paramento o a la baranda. Ejecutado con medios manuales, atornillador y amoladora según el tipo de fijación. Incluye el sostenimiento del elemento durante el desmontaje, el corte o extracción de los anclajes, el resane de los huecos que queden en el paramento, la clasificación del material recuperable y el retiro hasta el punto de acopio. Si el cliente desea conservar el elemento, se desmonta con cuidado y se acopia protegido, lo que reduce el rendimiento y debe advertirse en el presupuesto. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en longitud realmente desmontada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

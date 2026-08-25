@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Impermeabilización de zona de riego interior.",
   "descripcion": "Impermeabilización de zona de riego o macetero interior. Incluye la preparación del soporte y la aplicación de la membrana. Medido por metro cuadrado impermeabilizado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

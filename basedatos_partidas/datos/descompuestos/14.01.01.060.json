@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Piso de concreto exterior alisado.",
   "descripcion": "Pavimento exterior de concreto con acabado escobillado antideslizante, sobre base compactada, con juntas de retracción. Incluye el vaciado, el acabado y las juntas.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

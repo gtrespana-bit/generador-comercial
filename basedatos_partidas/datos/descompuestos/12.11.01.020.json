@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Pintura elastomérica impermeabilizante de fachada.",
   "descripcion": "Aplicación de recubrimiento elastomérico impermeabilizante en fachada, en dos o tres manos hasta alcanzar el espesor de película que garantiza el puenteo de fisuras. A diferencia de una pintura convencional, su valor está en el espesor: aplicada en capa fina para ahorrar material pierde la elasticidad que justifica su precio y deja de puentear las fisuras. Incluye la preparación del soporte, el tratamiento previo de fisuras mayores con banda, la aplicación de las manos cruzadas respetando el consumo indicado por el fabricante y la verificación del espesor. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

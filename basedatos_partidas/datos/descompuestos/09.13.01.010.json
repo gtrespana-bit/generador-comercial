@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Pararrayos con dispositivo de cebado sobre mástil en cubierta.",
   "descripcion": "Suministro e instalación de pararrayos con dispositivo de cebado (PDA), sobre mástil en cubierta, con su contador de descargas y conexión a la bajante. Incluye el replanteo del punto de captación para cubrir el volumen protegido, el montaje y arriostramiento del mástil, la fijación de la cabeza captadora, el intercalado del contador de descargas en la bajante, la conexión mecánica y eléctrica al conductor de bajada y la protección anticorrosión de las uniones. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

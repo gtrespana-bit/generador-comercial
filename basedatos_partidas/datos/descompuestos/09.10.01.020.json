@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de detector de humo y alarma.",
   "descripcion": "Instalación de detector de humo con su base, conexión y prueba, integrado o autónomo según el sistema. Incluye el replanteo de la posición en el techo respetando la separación mínima a paredes, vigas y difusores de aire, ya que colocado junto a una rejilla de impulsión el flujo de aire desvía el humo y retrasa la detección, el montaje de la base, la conexión al lazo o la colocación de la batería en los autónomos, la programación de la dirección cuando corresponda y la prueba con generador de humo. Medido por unidad instalada y probada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

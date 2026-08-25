@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Ducha exterior de piscina.",
   "descripcion": "Instalación de ducha exterior de piscina, con conexión de agua. Incluye la conexión. La ducha la elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

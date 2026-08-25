@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Sustitución de lámina de cubierta dañada.",
   "descripcion": "Sustitución de lámina de cubierta metálica dañada, con desmontaje de la pieza y colocación de la nueva. Incluye el desmontaje y la reposición.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

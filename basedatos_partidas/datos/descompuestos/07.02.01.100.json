@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Puerta de reja de acceso con cerradura.",
   "descripcion": "Suministro y colocación de puerta de reja de acceso con cerradura y herrajes. Incluye el montaje de la reja y la instalación de la cerradura. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

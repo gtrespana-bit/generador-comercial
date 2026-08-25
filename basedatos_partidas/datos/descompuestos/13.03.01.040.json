@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Mueble de baño suspendido con lavamanos.",
   "descripcion": "Fabricación e instalación de mueble de baño con hueco para lavamanos, en melamina hidrófuga. Incluye el despiece, armado y fijación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

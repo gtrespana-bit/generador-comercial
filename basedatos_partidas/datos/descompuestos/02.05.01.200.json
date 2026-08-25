@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Desmontaje de mampara de baño.",
   "descripcion": "Desmontaje de mampara de baño de vidrio templado. Incluye la retirada del vidrio y los perfiles. Medido por unidad desmontada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

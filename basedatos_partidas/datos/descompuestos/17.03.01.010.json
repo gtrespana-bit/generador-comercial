@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Señalización de seguridad de obra.",
   "descripcion": "Suministro y colocación del conjunto de señalización de seguridad de la obra: señales de advertencia, obligación, prohibición y emergencia, cinta de delimitación y conos. Incluye el replanteo de la ubicación de cada señal en el punto donde el riesgo es real y visible antes de exponerse a él, la fijación de las señales, la delimitación de las zonas de riesgo y su mantenimiento y reposición durante la obra. Medido por conjunto de señalización instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

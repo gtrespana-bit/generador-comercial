@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Regularización de techo previo a cielo raso.",
   "descripcion": "Regularización de techo de concreto previo a la instalación de cielo raso o pintura, con mortero o pasta de nivelación. Incluye la corrección de desniveles y el afinado. Medido por metro cuadrado regularizado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

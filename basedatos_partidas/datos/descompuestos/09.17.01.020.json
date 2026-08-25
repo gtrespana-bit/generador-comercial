@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Prueba de instalación eléctrica.",
   "descripcion": "Prueba de instalación eléctrica con medición de continuidad y aislamiento. Incluye la medición y el informe. Medido por instalación probada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

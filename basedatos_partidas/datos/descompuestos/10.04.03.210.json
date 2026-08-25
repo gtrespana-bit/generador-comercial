@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Impermeabilización de cubierta con manta reflectiva.",
   "descripcion": "Impermeabilización de cubierta con membrana y manta reflectiva de protección. Incluye la impermeabilización y la colocación de la manta reflectiva. Medido por metro cuadrado impermeabilizado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

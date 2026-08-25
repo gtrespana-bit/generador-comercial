@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Tratamiento de frente de losa en fachada.",
   "descripcion": "Tratamiento y remate de frente de losa en fachada. Incluye la limpieza y el remate del frente. Medido por metro lineal ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

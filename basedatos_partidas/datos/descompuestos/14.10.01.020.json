@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Impermeabilización de piscina.",
   "descripcion": "Impermeabilización de piscina con membrana líquida o cementosa, previa al revestimiento. Incluye la imprimación y la aplicación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

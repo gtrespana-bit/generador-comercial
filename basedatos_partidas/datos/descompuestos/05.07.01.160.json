@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Rampa de concreto con bordillo.",
   "descripcion": "Ejecución de rampa de concreto con bordillo. Incluye el vaciado y el bordillo. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Fachada de panel sándwich.",
   "descripcion": "Ejecución de fachada de panel sándwich aislado, con fijación a estructura. Incluye la colocación de los paneles y el remate de juntas. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

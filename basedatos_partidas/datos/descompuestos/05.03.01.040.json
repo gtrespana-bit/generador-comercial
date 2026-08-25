@@ -6,7 +6,7 @@
   "unidad": "kg",
   "titulo": "Acero de refuerzo en vigas.",
   "descripcion": "Suministro, corte, doblado, armado y colocación de acero de refuerzo en cabillas corrugadas en vigas, según los planos de despiece. Incluye el corte y doblado de barras y estribos, el armado de la canasta con la separación de estribos indicada y su reducción en las zonas de confinamiento junto a los apoyos, la disposición del refuerzo superior sobre los apoyos y del inferior en el centro del vano conforme al diagrama de momentos, el amarre con alambre, la colocación de separadores, el anclaje en los nudos con las columnas y la revisión del despiece antes de autorizar el vaciado. Medido en peso de acero realmente colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

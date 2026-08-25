@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de cerradura y herrajes de puerta.",
   "descripcion": "Instalación de cerradura de embutir con su manija, cilindro y placas, o de herrajes de superficie según el tipo. Incluye el replanteo de la altura normalizada, el mecanizado del alojamiento en la hoja y del cajetín en el marco, el montaje de la cerradura con su frente enrasado, la colocación de manijas y cilindro, el ajuste del picaporte contra el cajetín y la comprobación del cierre y del giro de la llave sin forzar. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

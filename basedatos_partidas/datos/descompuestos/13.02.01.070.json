@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Salpicadero de mesón en piedra.",
   "descripcion": "Colocación de salpicadero de mesón en el mismo material del mesón o revestimiento, con sellado de juntas. Incluye la fijación y el sellado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

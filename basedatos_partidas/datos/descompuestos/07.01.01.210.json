@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Puerta interior con rejilla de ventilación.",
   "descripcion": "Suministro y colocación de puerta interior con rejilla de ventilación, con marco y herrajes. Incluye el montaje del marco, la colocación de la hoja y la rejilla. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

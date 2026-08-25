@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Sellado cortafuego de bandeja portacables.",
   "descripcion": "Sellado cortafuego de paso de bandeja portacables. Incluye la aplicación de la masilla. Medido por unidad sellado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

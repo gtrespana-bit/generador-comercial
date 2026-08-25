@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Entrepiso de madera estructural.",
   "descripcion": "Ejecución de entrepiso de madera estructural. Incluye la estructura y el tablero. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

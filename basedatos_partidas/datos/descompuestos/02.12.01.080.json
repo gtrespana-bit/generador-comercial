@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Tala y destronque de árbol.",
   "descripcion": "Tala y destronque de árbol de porte medio situado en el interior de la parcela, incluidos el desrame previo, el troceado del fuste, la extracción del tocón y del sistema radicular superficial y el relleno del hueco resultante. Ejecutado con motosierra y retroexcavadora. Incluye la comprobación previa de que la especie no está protegida y de que se cuenta con la autorización municipal cuando sea exigible, el acordonamiento de la zona de caída, el desrame descendente, el troceado en piezas transportables, la extracción del tocón y el relleno y compactación del hueco. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido por unidad talada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

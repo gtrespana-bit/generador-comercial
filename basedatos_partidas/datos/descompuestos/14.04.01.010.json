@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Cerca perimetral de bloque.",
   "descripcion": "Cerca perimetral de bloque de concreto con sus machones de confinamiento y viga de corona, frisada por ambas caras. Incluye el replanteo de la línea de lindero, la ejecución de la fundación corrida, el levantamiento de la mampostería a nivel y plomo, los machones de confinamiento a la separación de proyecto, la viga de corona, el friso por ambas caras y el remate superior con pendiente que evacúa el agua y protege la coronación. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Prueba hidrostática de tubería de agua.",
   "descripcion": "Prueba hidrostática de la tubería de agua potable, con presión controlada y verificación de ausencia de fugas.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

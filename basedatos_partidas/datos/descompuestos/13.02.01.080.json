@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Mesón de lavadero con escurridor.",
   "descripcion": "Ejecución de tope o mesón de área de lavado en concreto o piedra, con pendiente al desagüe. Incluye el armado y el acabado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

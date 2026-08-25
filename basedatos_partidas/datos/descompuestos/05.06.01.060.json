@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Losa con viguetas prefabricadas pretensadas.",
   "descripcion": "Losa de entrepiso o techo formada por viguetas prefabricadas pretensadas, bloques de aliviano, loseta de compresión y malla de retracción. Al trabajar la vigueta como elemento resistente durante el montaje, el apuntalamiento necesario es mucho menor que en una losa nervada tradicional, lo que acelera la ejecución. Incluye el replanteo y colocación de las viguetas sobre sus apoyos con la entrega mínima requerida, el apuntalamiento intermedio, la colocación de los bloques, el armado de negativos sobre apoyos, la malla de la loseta, el vaciado y vibrado, el curado y el desapuntalamiento escalonado. Medido en superficie de losa realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

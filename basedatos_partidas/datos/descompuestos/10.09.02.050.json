@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Tratamiento de humedad por condensación.",
   "descripcion": "Tratamiento de humedad por condensación, con saneado y revestimiento antihumedad. Incluye la limpieza y la aplicación del tratamiento. Medido por metro cuadrado tratado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

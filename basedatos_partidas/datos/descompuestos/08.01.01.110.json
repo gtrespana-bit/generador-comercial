@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Apertura y tapado de paso en losa.",
   "descripcion": "Apertura y tapado de paso de instalación en losa. Incluye la apertura y el resane. Medido por metro lineal ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

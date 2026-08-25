@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Poste de iluminación exterior.",
   "descripcion": "Instalación de poste de iluminación exterior, con base de concreto y conexión. Incluye la cimentación y la conexión. El poste lo elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Red de seguridad horizontal en cubierta.",
   "descripcion": "Colocación de red de seguridad horizontal bajo cubierta, para amortiguar caídas.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

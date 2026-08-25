@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Marquesina de sombreado.",
   "descripcion": "Ejecución de marquesina de sombreado sobre ventanas, para reducir la ganancia solar directa.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

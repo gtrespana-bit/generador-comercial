@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Friso de mortero maestreado sobre paramento interior, 1,5 cm de espesor.",
   "descripcion": "Friso de mortero de cemento y arena cernida sobre paramento interior de bloque o ladrillo, de 1,5 cm de espesor medio, maestreado y acabado a la llana. Incluye limpieza y humedecido previo del soporte, colocación de maestras y cantoneras en esquinas y encuentros, malla de refuerzo en los cambios de material, tendido y reglado del mortero, y acabado fratasado dejando la superficie plana y aplomada, lista para recibir pintura o revestimiento cerámico. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Fachada de bloque de concreto con acabado a la vista.",
   "descripcion": "Ejecución de fachada de bloque de concreto con acabado a la vista, sin friso. Incluye la colocación del bloque y el rejuntado cuidado. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

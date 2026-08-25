@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Friso impermeabilizante en muro de contención.",
   "descripcion": "Aplicación de friso con mortero impermeabilizante en muro de contención o de sótano. Incluye la preparación del soporte y la aplicación del mortero impermeabilizante. Medido por metro cuadrado frisado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Revestimiento de fachada con panel composite.",
   "descripcion": "Colocación de panel composite sobre fachada, con fijación mecánica, para mejorar el aislamiento y la estética.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m3",
   "titulo": "Transporte de escombro a vertedero.",
   "descripcion": "Transporte de escombro a vertedero. Incluye el transporte y el canon. Medido por metro cúbico transportado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

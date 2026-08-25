@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Tablero eléctrico de distribución.",
   "descripcion": "Suministro y montaje de tablero eléctrico de distribución empotrado o de sobreponer, con su barraje de neutro y tierra, y espacio de reserva para ampliaciones. Incluye el replanteo en punto accesible y no obstruido, la apertura del hueco y el montaje enrasado, la entrada ordenada de las canalizaciones, el montaje del barraje, la conexión de los circuitos con el conductor peinado e identificado, la colocación del directorio de circuitos rotulado, que es lo que permite a cualquiera localizar una falla sin ir probando, y la prueba de continuidad y aislamiento. Medido por tablero instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

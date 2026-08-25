@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Drenaje de trasdós con tubería y grava.",
   "descripcion": "Drenaje de trasdós de muro con tubería y grava. Incluye la tubería y el relleno de grava. Medido por metro lineal ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

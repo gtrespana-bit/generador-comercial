@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Desmontaje de mueble de baño empotrado.",
   "descripcion": "Desmontaje de mueble de baño empotrado, con retirada de accesorios. Incluye la retirada del mueble. Medido por unidad desmontada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

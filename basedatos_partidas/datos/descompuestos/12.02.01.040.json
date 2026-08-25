@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Mortero impermeabilizante en área húmeda, base para enchapado.",
   "descripcion": "Aplicación de mortero impermeabilizante cementoso flexible en dos manos sobre el paramento de zonas de ducha y áreas de contacto directo con agua, como base bajo el enchapado. Es la capa que realmente impide el paso del agua: la cerámica y su boquilla no son estancas, y sin esta base la humedad termina apareciendo en la habitación contigua. Incluye la regularización previa del soporte, el redondeo o refuerzo con banda elástica de los encuentros de pared con piso y de las esquinas, que son los puntos por donde falla el sistema, la aplicación de las dos manos cruzadas respetando el tiempo entre ellas y la prueba de estanqueidad antes de enchapar. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Puerta blindada de seguridad.",
   "descripcion": "Suministro y colocación de puerta blindada de seguridad con cerradura multipunto. Incluye el montaje del marco, la colocación de la hoja y el ajuste de la cerradura. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

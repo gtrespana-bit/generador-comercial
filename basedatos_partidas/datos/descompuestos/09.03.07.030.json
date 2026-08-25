@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Punto de interruptor doble.",
   "descripcion": "Punto de interruptor doble. Incluye la caja y el mecanismo. Medido por punto ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Desmontaje de puerta plegable.",
   "descripcion": "Desmontaje de puerta plegable con su riel y paneles. Incluye la retirada de los paneles y el riel. Medido por unidad desmontada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

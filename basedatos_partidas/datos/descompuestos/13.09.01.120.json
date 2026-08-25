@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Equipamiento de juegos de salón.",
   "descripcion": "Instalación de equipamiento de juegos de salón (mesa de billar, etc.), con nivelación y fijación. Incluye la instalación. El equipo lo elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

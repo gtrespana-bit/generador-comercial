@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Señalización de áreas y zonas interiores.",
   "descripcion": "Colocación de señal de identificación de áreas y zonas interiores, con fijación. Incluye el replanteo y la fijación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

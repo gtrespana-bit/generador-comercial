@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Saneado de paramento con eflorescencias.",
   "descripcion": "Saneado de paramento con eflorescencias salinas, con cepillado, lavado y aplicación de tratamiento neutralizante. Incluye la limpieza de las sales y el tratamiento previo al acabado. Medido por metro cuadrado saneado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

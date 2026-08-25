@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Demarcación de cancha deportiva.",
   "descripcion": "Pintado de demarcación de cancha deportiva con líneas y pintura de tráfico. Incluye el replanteo y la aplicación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

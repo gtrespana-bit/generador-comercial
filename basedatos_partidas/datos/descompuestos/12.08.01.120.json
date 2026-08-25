@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Cielo raso continuo a una pendiente.",
   "descripcion": "Cielo raso continuo de yeso a una pendiente o inclinado, con estructura conformada al faldón. Incluye la estructura inclinada, la placa y el tratamiento de juntas. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

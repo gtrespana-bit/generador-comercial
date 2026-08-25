@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Sustitución de puerta exterior con aislamiento.",
   "descripcion": "Sustitución de puerta exterior por una con núcleo aislante, para reducir las pérdidas. La puerta la elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m3",
   "titulo": "Recalce de zapata con concreto.",
   "descripcion": "Recalce de zapata existente con concreto. Incluye el saneo y el vaciado. Medido por metro cúbico ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

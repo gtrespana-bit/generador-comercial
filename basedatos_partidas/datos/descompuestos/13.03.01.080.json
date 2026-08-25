@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Botiquín de baño empotrado.",
   "descripcion": "Instalación de botiquín de baño empotrado, con apertura del hueco y fijación. Incluye la apertura y el remate del hueco.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

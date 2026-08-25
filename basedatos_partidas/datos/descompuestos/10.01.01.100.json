@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Aislamiento térmico de tubería.",
   "descripcion": "Suministro y colocación de coquilla aislante en tuberías de agua caliente o climatización. Incluye la colocación de la coquilla y el sellado de juntas. Medido por metro lineal aislado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

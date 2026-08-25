@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de ascensor sin cuarto de máquinas.",
   "descripcion": "Instalación de ascensor sin cuarto de máquinas. Incluye el montaje y la puesta en marcha. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

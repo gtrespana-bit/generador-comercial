@@ -6,7 +6,7 @@
   "unidad": "m³",
   "titulo": "Concreto para escalera de concreto armado.",
   "descripcion": "Concreto premezclado de resistencia 250 kg/cm2 vaciado en escalera, incluida su compactación por vibrado y su curado. El vaciado en pendiente exige un concreto de consistencia más seca de lo habitual para que no escurra por la rampa, y debe ejecutarse de forma ascendente desde el arranque. Incluye la revisión previa del encofrado, el apuntalamiento y el armado, la recepción del concreto con el asentamiento adecuado, el vaciado ascendente por peldaños, la compactación con vibrador, el fratasado de huellas y contrahuellas, el curado y el desapuntalamiento escalonado. Medido en volumen teórico según las dimensiones de proyecto.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

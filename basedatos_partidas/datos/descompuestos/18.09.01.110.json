@@ -6,7 +6,7 @@
   "unidad": "glb",
   "titulo": "Mantenimiento de sistema fotovoltaico.",
   "descripcion": "Mantenimiento del sistema fotovoltaico, con limpieza de paneles y revisión de conexiones.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

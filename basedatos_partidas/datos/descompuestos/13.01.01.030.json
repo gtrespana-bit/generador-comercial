@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Isla o península de cocina.",
   "descripcion": "Fabricación e instalación de isla o península de cocina, con su estructura, muebles a una o dos caras, y previsión de instalaciones. Incluye la coordinación previa de los puntos de agua, desagüe y electricidad que deben quedar dentro de la isla y que se ejecutan antes del piso, punto que si se pasa por alto obliga a picar el piso terminado, el anclaje de la estructura al piso para que no se desplace, el armado y nivelación de los módulos, el montaje de puertas y gavetas y los remates laterales. No incluye el mesón. Medido en longitud de isla.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

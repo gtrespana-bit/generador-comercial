@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de luminaria LED empotrada.",
   "descripcion": "Instalación de luminaria led empotrada., con conexión y fijación. Incluye la conexión eléctrica y la fijación. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

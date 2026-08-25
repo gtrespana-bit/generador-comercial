@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Picado de friso de mortero en paramento.",
   "descripcion": "Picado de friso de mortero de cemento existente en paramento interior o exterior, ejecutado con martillo eléctrico manual hasta dejar el bloque o el ladrillo a la vista, cuando el friso está disgregado, hueco o presenta fisuración generalizada. Incluye el sondeo previo por golpeo para delimitar las zonas sin adherencia, la protección de pisos y ambientes contiguos, el control de polvo mediante aspiración, el retiro manual del escombro en sacos hasta el punto de acopio y el barrido y limpieza del paramento, dejándolo listo para recibir el nuevo friso. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en superficie realmente picada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

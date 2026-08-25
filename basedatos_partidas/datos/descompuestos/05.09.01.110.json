@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Refuerzo con fibra de carbono.",
   "descripcion": "Refuerzo estructural con tejido de fibra de carbono. Incluye la aplicación. Medido por metro cuadrado reforzado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

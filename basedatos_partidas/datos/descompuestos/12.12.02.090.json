@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Protección de madera estructural con barniz.",
   "descripcion": "Aplicación de barniz protector sobre madera estructural interior, con dos manos. Incluye la preparación de la madera y las dos manos de barniz. Medido por metro cuadrado barnizado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

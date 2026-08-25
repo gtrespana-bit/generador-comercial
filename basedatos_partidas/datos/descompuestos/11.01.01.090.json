@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Replanteo de pendientes y niveles de cubierta.",
   "descripcion": "Replanteo topográfico de las pendientes, cotas y puntos de desagüe de una cubierta, con nivel láser y maestras de referencia. Incluye el marcado de las líneas de cumbrera y limahoyas.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

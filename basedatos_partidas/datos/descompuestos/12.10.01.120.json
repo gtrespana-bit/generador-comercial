@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Pintura de mocheta y remate de vanos.",
   "descripcion": "Pintura de mocheta, arista y remate interior de vanos de puertas y ventanas, con dos manos de esmalte o caucho. Incluye la protección de las superficies adyacentes y las dos manos de acabado. Medido por metro lineal de mocheta pintada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

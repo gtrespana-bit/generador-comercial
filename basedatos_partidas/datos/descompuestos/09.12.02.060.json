@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Sensor de nivel de luz para automatización.",
   "descripcion": "Suministro e instalación de sensor de nivel de luz para automatización de iluminación y persianas, integrado en la central domótica. Incluye el replanteo del punto con exposición representativa, la fijación, el emparejamiento y la calibración del umbral de disparo. Medido por sensor instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

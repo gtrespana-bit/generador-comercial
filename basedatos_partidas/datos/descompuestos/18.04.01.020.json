@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Aislamiento de piso con manta reflectiva.",
   "descripcion": "Colocación de manta reflectiva bajo el piso, para mejorar el confort y reducir pérdidas.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

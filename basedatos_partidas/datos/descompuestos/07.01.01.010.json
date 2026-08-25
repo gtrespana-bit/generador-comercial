@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de puerta interior de madera con su marco.",
   "descripcion": "Instalación de puerta de paso interior con su marco, molduras de remate y herrajes de colgar. Incluye la comprobación previa de que el vano está aplomado y a escuadra, sin lo cual la puerta nunca cerrará bien por mucho que se ajuste, el montaje y aplomado del marco con cuñas, su fijación y el relleno del espacio perimetral con espuma o mortero, la colocación de las molduras, el colgado de la hoja con sus bisagras, el ajuste de holguras uniformes y la comprobación de que la hoja se mantiene en cualquier posición. La puerta la elige el cliente y se presupuesta aparte. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Hoja de puerta interior del modelo y acabado elegidos por el cliente",

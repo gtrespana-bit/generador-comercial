@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Muro de contención de bloque con refuerzo.",
   "descripcion": "Ejecución de muro de contención de bloque de concreto con refuerzo. Incluye la mampostería, el refuerzo y el relleno. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

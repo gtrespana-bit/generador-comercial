@@ -6,7 +6,7 @@
   "unidad": "m3",
   "titulo": "Transporte interno con carretilla.",
   "descripcion": "Transporte interno de material con carretilla. Incluye el traslado. Medido por metro cúbico transportado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Barrera antihumedad en piso.",
   "descripcion": "Colocación de barrera antihumedad en piso, previa al acabado. Incluye la extensión de la barrera y el solape. Medido por metro cuadrado colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

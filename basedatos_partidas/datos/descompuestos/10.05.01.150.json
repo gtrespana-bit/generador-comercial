@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Impermeabilización de piso de baño existente.",
   "descripcion": "Impermeabilización de piso de baño existente, previa a la renovación del acabado. Incluye la preparación del soporte y la aplicación de la membrana. Medido por metro cuadrado impermeabilizado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

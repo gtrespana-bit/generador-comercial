@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Aislamiento térmico de muro por el interior.",
   "descripcion": "Suministro y colocación de aislamiento térmico de muro por el interior, con panel y placa de yeso. Incluye la estructura, el panel y la placa. Medido por metro cuadrado aislado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

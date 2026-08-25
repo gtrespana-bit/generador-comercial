@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Bajante de cobre aislada.",
   "descripcion": "Ejecución de bajante de cobre aislada., con conexión. Incluye la conexión y la fijación. Medido por unidad ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

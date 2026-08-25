@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Reparación de junta de yeso en techo.",
   "descripcion": "Reparación de juntas de placas de yeso en techo, con pasta y cinta. Incluye el tratamiento de las juntas fisuradas y el lijado. Medido por metro cuadrado reparado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

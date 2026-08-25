@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Apuntalamiento de muro con madera.",
   "descripcion": "Apuntalamiento de muro con madera y puntales. Incluye la colocación del apuntalamiento. Medido por metro cuadrado apuntalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

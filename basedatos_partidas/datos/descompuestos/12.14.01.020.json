@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Restauración y rejuntado de enchapado existente.",
   "descripcion": "Restauración de enchapado existente con retirada del mortero de juntas deteriorado y rejuntado con mortero nuevo. Incluye el vaciado de las juntas, la limpieza y el relleno con el mortero adecuado. Medido por metro cuadrado restaurado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

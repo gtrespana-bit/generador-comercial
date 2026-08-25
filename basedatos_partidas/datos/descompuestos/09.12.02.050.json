@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Detector de gas doméstico con alarma.",
   "descripcion": "Suministro e instalación de detector de gas doméstico con alarma local y comunicación a la central domótica. Incluye la elección del punto de montaje según la densidad del gas detectado, la fijación, la conexión de alimentación, el emparejamiento y la prueba de detección. Medido por detector instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

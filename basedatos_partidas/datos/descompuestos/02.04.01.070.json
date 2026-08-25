@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Demolición de tabique de placa de cemento.",
   "descripcion": "Demolición de tabique de placa de cemento sobre estructura metálica. Incluye la demolición de la placa y el desmontaje de la estructura. Medido por metro cuadrado demolido.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

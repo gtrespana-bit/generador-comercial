@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Baño portátil de obra, por mes.",
   "descripcion": "Alquiler de baño portátil de obra, por mes. Incluye el suministro y la limpieza. Medido por mes de permanencia.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

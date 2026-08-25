@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Limpieza diaria de zonas de trabajo.",
   "descripcion": "Limpieza diaria de las zonas de trabajo durante la ejecución, con retirada de restos y barrido, para mantener el orden y la seguridad.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

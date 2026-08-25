@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Demolición de brocal o cordón de acera.",
   "descripcion": "Demolición de brocal, cordón o bordillo de acera, sea prefabricado o vaciado en sitio, junto con su dado de concreto de apoyo, ejecutada con martillo eléctrico manual. Incluye el acordonamiento y señalización del área de trabajo por su situación en zona de tránsito, el corte de las juntas entre piezas, la demolición del dado de apoyo, la extracción del escombro, el acopio de las piezas prefabricadas aprovechables si el cliente desea reutilizarlas y la limpieza de la zona. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en longitud realmente demolida.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

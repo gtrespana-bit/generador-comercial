@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Pasamanos de madera sobre baranda o pared.",
   "descripcion": "Suministro y montaje de pasamanos de madera sobre baranda existente o directamente sobre pared mediante soportes. Incluye el replanteo de la altura constante siguiendo la pendiente de la escalera, el corte y unión de los tramos con empalmes ocultos, el montaje de los soportes con la separación que evita la flexión, la fijación del pasamanos, el lijado de la unión hasta hacerla imperceptible al tacto, que es como se percibe un pasamanos, y el barnizado. Medido en longitud realmente instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

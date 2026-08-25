@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Descabezado de pilote de concreto.",
   "descripcion": "Descabezado de pilote de concreto. Incluye el corte del acero y el descabezado. Medido por unidad descabezada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

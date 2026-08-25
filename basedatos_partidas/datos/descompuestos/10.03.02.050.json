@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Protección de impermeabilización con lámina drenante.",
   "descripcion": "Colocación de lámina drenante nodular sobre la impermeabilización del muro enterrado. Incluye la colocación de la lámina y el remate. Medido por metro cuadrado colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

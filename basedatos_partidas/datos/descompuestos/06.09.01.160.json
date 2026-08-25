@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Limpieza química de fachada de piedra.",
   "descripcion": "Limpieza química de fachada de piedra natural. Incluye la aplicación del producto y el aclarado. Medido por metro cuadrado limpiado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

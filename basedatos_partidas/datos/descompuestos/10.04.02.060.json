@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Impermeabilización de cubierta con protección de gravilla.",
   "descripcion": "Impermeabilización de cubierta con manto asfáltico y protección de gravilla. Incluye la imprimación, el manto y la capa de gravilla. Medido por metro cuadrado impermeabilizado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

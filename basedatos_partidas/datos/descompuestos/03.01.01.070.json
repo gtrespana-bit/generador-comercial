@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Retiro de obstáculos y escombros superficiales.",
   "descripcion": "Retiro de obstáculos, escombros y basura superficial del terreno. Incluye la limpieza y el acopio. Medido por metro cuadrado limpiado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Desmontaje de portón corredizo.",
   "descripcion": "Desmontaje de portón corredizo con su riel y carros. Incluye la retirada del portón y el riel. Medido por unidad desmontada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

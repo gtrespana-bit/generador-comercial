@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Prueba hidráulica de instalación de agua.",
   "descripcion": "Prueba hidráulica de instalación de agua. Incluye la presurización y la verificación. Medido por instalación probada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

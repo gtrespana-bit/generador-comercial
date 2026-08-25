@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Desmontaje de remate o tapajuntas.",
   "descripcion": "Desmontaje de remate o tapajuntas metálico. Incluye la retirada del remate y sus fijaciones. Medido por metro lineal desmontado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

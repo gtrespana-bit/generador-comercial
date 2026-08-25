@@ -6,7 +6,7 @@
   "unidad": "m3",
   "titulo": "Demolición de cabezal de pilote.",
   "descripcion": "Demolición de cabezal de pilote de concreto armado, con medios mecánicos y manuales. Incluye el picado del concreto, el corte del acero y la retirada del escombro. Medido por metro cúbico demolido.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

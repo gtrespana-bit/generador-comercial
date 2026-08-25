@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Señalización exterior de parcela.",
   "descripcion": "Colocación de señal exterior de parcela o local, con fijación y anclaje. Incluye el replanteo y la fijación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

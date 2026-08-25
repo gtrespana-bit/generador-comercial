@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Enchapado de piedra en fachada ventilada.",
   "descripcion": "Enchapado de fachada ventilada con pieza de piedra natural sobre subestructura de anclaje. Incluye la fijación de los anclajes, la colocación de la pieza y el sellado de juntas abiertas. Medido por metro cuadrado enchapado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Desmontaje de mueble de baño y sus accesorios.",
   "descripcion": "Desmontaje de mueble de baño con su lavamanos integrado, espejo y accesorios como toalleros, jaboneras y portarrollos. Ejecutado con medios manuales y atornillador. Incluye el cierre previo de las llaves de paso, la desconexión de las tomas de agua y del desagüe con recogida del agua retenida en el sifón, el corte del sellado perimetral, el desmontaje del mueble y del espejo con sostenimiento previo, la extracción de los anclajes, el resane de los huecos y el retiro del material. Si el cliente desea conservar el elemento, se desmonta con cuidado y se acopia protegido. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido por conjunto realmente desmontado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Revestimiento de paramento con paneles decorativos.",
   "descripcion": "Colocación de paneles decorativos de PVC, madera técnica, laminado o material similar sobre paramento interior, montados sobre rastrelado o adheridos según el sistema. Incluye el replanteo del despiece para centrar el paño y evitar piezas estrechas en los bordes, el montaje y nivelación del rastrelado cuando el sistema lo requiera, la colocación de los paneles con su sistema de encaje o adhesivo, el ajuste alrededor de mecanismos y huecos, y la colocación de los perfiles de remate perimetrales. El panel lo elige el cliente y se presupuesta aparte. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Panel decorativo de pared elegido por el cliente",

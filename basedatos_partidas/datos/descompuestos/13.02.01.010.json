@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Mesón de granito, cuarzo o piedra natural.",
   "descripcion": "Suministro e instalación de mesón de granito, cuarzo o piedra natural sobre muebles o estructura de apoyo, con su canto trabajado y los recortes de fregadero y placa. Incluye la plantilla en obra tomada sobre los muebles ya instalados y nivelados, nunca sobre medidas de plano, el mecanizado de recortes y del canto en taller, el transporte y presentado de las piezas, el nivelado con calzos, la unión de tramos con adhesivo al tono y el sellado perimetral contra la pared. El material lo elige el cliente y se presupuesta aparte. Medido en longitud de mesón.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Tablero de granito, cuarzo o piedra natural para mesón, elegido por el cliente",

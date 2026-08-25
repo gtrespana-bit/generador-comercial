@@ -6,7 +6,7 @@
   "unidad": "glb",
   "titulo": "Medición de infiltraciones de aire.",
   "descripcion": "Medición de las infiltraciones de aire de la vivienda, para evaluar la estanqueidad de la envolvente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

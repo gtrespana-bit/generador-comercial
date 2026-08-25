@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Inyección de resina en fisura.",
   "descripcion": "Inyección de resina en fisura para sellar filtraciones en muro o losa. Incluye la preparación de la fisura, la colocación de boquillas y la inyección. Medido por metro lineal inyectado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de cerradura de seguridad.",
   "descripcion": "Instalación de cerradura de seguridad con cilindro en puerta existente. Incluye la preparación del hueco, el montaje y el ajuste. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

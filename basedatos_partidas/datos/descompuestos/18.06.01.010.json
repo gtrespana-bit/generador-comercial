@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Toldo exterior de protección solar.",
   "descripcion": "Colocación de toldo exterior de protección solar, para reducir la ganancia térmica. El toldo lo elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

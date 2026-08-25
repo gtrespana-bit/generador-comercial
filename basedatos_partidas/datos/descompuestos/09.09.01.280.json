@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Tubería de gas flexible.",
   "descripcion": "Ejecución de tubería de gas flexible., con conexión y prueba. Incluye la conexión y la prueba de estanqueidad. Medido por metro lineal ejecutado/a.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

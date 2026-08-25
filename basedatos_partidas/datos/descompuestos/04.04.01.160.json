@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Losa de fundación con aditivo impermeabilizante.",
   "descripcion": "Ejecución de losa de fundación con aditivo impermeabilizante. Incluye el vaciado con el aditivo. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

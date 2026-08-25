@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Piso de piedra natural a junta mínima.",
   "descripcion": "Colocación de piso de piedra natural a junta mínima, en capa fina. Incluye la preparación, la colocación y el sellado de la junta. Medido por metro cuadrado colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Reparación de barra de apoyo.",
   "descripcion": "Reparación de barra de apoyo con refijación o sustitución de anclajes. Incluye la revisión y la refijación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

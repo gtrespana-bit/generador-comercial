@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Desmontaje de baranda metálica.",
   "descripcion": "Desmontaje de baranda metálica de balcón o escalera. Incluye el corte de las fijaciones y la retirada. Medido por metro lineal desmontado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

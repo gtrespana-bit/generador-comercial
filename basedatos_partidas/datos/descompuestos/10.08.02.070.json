@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Sellado de junta de encuentro piso-pared.",
   "descripcion": "Sellado de junta de encuentro piso-pared con sellador sanitario. Incluye la limpieza de la junta y la aplicación del sellador. Medido por metro lineal sellado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

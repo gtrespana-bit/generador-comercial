@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Cuneta de concreto para drenaje.",
   "descripcion": "Ejecución de cuneta de concreto para conducción de aguas superficiales, con encofrado y acabado. Incluye el vaciado y el acabado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

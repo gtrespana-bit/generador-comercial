@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Cubierta de teja de concreto.",
   "descripcion": "Cubierta de teja de concreto perfilada sobre listonado, clavada o atornillada, con remates de alero y cumbrera. Incluye el replanteo y la colocación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

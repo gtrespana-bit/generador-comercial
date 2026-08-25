@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Tablero de transferencia entre red y respaldo.",
   "descripcion": "Instalación de tablero de transferencia, manual o automática, entre el suministro de red y el sistema de respaldo. La transferencia debe garantizar que ambas fuentes nunca queden conectadas a la vez, condición que protege tanto al equipo de respaldo como al personal de la compañía suministradora que pudiera estar trabajando en la línea. Incluye el montaje del tablero, la conexión de las tres líneas de red, respaldo y carga, la verificación del enclavamiento mecánico o eléctrico, la programación de tiempos en las automáticas y la prueba completa de transferencia y retransferencia. Medido por tablero instalado y probado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Equipo de transferencia manual o automática elegido por el cliente",

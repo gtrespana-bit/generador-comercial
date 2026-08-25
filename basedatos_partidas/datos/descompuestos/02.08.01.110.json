@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Retiro de impermeabilización de muro enterrado.",
   "descripcion": "Retiro de impermeabilización de muro enterrado. Incluye la retirada de la membrana y la limpieza. Medido por metro cuadrado retirado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

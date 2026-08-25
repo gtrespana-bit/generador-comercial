@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Impermeabilización de cubierta con manto asfáltico.",
   "descripcion": "Impermeabilización de cubierta con manto asfáltico prefabricado con armadura de poliéster, adherido por soplete sobre imprimación asfáltica, con solapes sellados. Incluye la limpieza y secado del soporte, la comprobación de que las pendientes evacúan realmente hacia los tragantes porque un manto perfecto sobre una cubierta que empoza sigue fallando, la imprimación, el desenrollado y adherido del manto con solapes mínimos de 10 cm, el sellado de todos los bordes y la prueba de estanqueidad por inundación antes de dar por terminada la partida. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

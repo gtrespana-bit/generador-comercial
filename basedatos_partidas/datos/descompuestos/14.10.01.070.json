@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Rebosadero de piscina.",
   "descripcion": "Ejecución de rebosadero de piscina, con canal de recogida y conexión a drenaje. Incluye la ejecución y la conexión.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

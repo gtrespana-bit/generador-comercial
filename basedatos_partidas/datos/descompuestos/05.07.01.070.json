@@ -6,7 +6,7 @@
   "unidad": "m3",
   "titulo": "Vaciado de concreto en escalera de obra.",
   "descripcion": "Concreto estructural para escalera. Incluye el vaciado y el vibrado. Medido por metro cúbico ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

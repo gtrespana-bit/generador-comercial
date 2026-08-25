@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Inspección de carpintería y vidrios.",
   "descripcion": "Inspección del estado de la carpintería y vidrios, para evaluar su contribución a las pérdidas térmicas.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

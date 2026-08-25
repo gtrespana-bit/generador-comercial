@@ -6,7 +6,7 @@
   "unidad": "glb",
   "titulo": "Retirada final de protecciones y limpieza general.",
   "descripcion": "Retirada final de las protecciones de obra y limpieza general, dejando el inmueble en condiciones de entrega.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Reparación puntual de trasdosado de placa de yeso.",
   "descripcion": "Reparación puntual de un trasdosado o forro de placa de yeso laminado dañado por golpe o humedad localizada. Incluye el corte del tramo afectado, la sustitución de la placa en la zona, el tratamiento de juntas del parche y el lijado para dejar la superficie lista para pintar. Medido por reparación ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

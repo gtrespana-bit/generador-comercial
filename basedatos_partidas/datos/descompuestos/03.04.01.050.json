@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Nivelación y compactación de terreno.",
   "descripcion": "Nivelación y compactación de la superficie del terreno tras el desbroce o el relleno, hasta dejarla a la cota y con la pendiente de proyecto y con la densidad necesaria para recibir la capa siguiente. Incluye el repaso de la superficie con retirada de los puntos altos y aporte en los bajos, la humectación hasta la humedad óptima, la compactación con plancha vibratoria en pasadas cruzadas y la comprobación de cotas y pendientes con nivel láser. Medido en superficie realmente nivelada y compactada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

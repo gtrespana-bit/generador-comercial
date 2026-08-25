@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Rampa peatonal exterior.",
   "descripcion": "Ejecución de rampa peatonal exterior de concreto con pendiente de accesibilidad y acabado antideslizante. Incluye el encofrado y el vaciado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

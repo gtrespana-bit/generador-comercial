@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Portón corredizo con automatismo.",
   "descripcion": "Suministro y colocación de portón corredizo con motor y automatismo, riel y carros. Incluye la fabricación, el montaje del riel, el motor y la programación. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

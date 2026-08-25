@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Bancada para equipo de aire.",
   "descripcion": "Ejecución de bancada para unidad condensadora de aire. Incluye el vaciado y los anclajes. Medido por unidad ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

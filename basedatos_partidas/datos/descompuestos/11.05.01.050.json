@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Cubierta ligera de malla sombra.",
   "descripcion": "Cubierta de malla sombra tensada sobre estructura para áreas recreativas, con cables y anclajes. Incluye la estructura y el tensado de la malla.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

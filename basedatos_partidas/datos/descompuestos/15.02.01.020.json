@@ -6,7 +6,7 @@
   "unidad": "m³",
   "titulo": "Bajada de escombro por escombrera o ducto.",
   "descripcion": "Bajada de escombro desde plantas altas mediante escombrera o ducto vertical, con tolva de recepción y riego para control de polvo.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Anclaje de estructura de techo a la losa.",
   "descripcion": "Anclaje químico o mecánico de la estructura de techo a la losa o viga de apoyo, con pernos de anclaje. Incluye el taladrado y la fijación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

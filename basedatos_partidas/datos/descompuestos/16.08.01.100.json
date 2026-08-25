@@ -6,7 +6,7 @@
   "unidad": "glb",
   "titulo": "Informe de conformidad con proyecto.",
   "descripcion": "Emisión del informe de conformidad con el proyecto, verificando que la obra se ajusta a lo contratado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

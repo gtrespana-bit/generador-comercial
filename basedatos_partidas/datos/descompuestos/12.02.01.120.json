@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Friso con malla de refuerzo en fachada.",
   "descripcion": "Aplicación de friso en fachada con malla de refuerzo embebida para prevenir fisuración. Incluye la colocación de la malla y la aplicación del mortero. Medido por metro cuadrado frisado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

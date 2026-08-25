@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Medición de resistencia de puesta a tierra.",
   "descripcion": "Medición de la resistencia de puesta a tierra con telurómetro, para verificar el valor exigido por la norma.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de trampa de grasa.",
   "descripcion": "Instalación de trampa de grasa prefabricada en la red de desagüe de cocina, con sus conexiones de entrada y salida y su tapa registrable. Su función es retener las grasas antes de que lleguen a la red, donde se solidifican y terminan obstruyendo el colector. Incluye la excavación o preparación del alojamiento, la nivelación de la pieza, la conexión de entrada y salida respetando las cotas y el desnivel entre ellas, el macizado perimetral, la colocación de la tapa accesible para su limpieza periódica y la prueba de escurrimiento. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

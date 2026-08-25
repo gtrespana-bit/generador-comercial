@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Toldo o sombra exterior fija.",
   "descripcion": "Instalación de toldo o sombra exterior fija, con estructura y tensado. Incluye la estructura y el tensado. El toldo lo elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

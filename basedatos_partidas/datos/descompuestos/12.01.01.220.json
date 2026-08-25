@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Preparación de soporte para papel tapiz.",
   "descripcion": "Preparación de soporte para la colocación de papel tapiz, con resane, lijado e imprimación. Incluye el alisado y la aplicación de la imprimación. Medido por metro cuadrado preparado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

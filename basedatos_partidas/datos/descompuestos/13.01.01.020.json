@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Mueble alto de cocina a medida.",
   "descripcion": "Fabricación e instalación de mueble alto de cocina en melamina, con su estructura, puertas y entrepaños, colgado del paramento. Incluye la comprobación de que el paramento soporta la carga, ya que un mueble alto cargado pesa bastante y en tabique de yeso laminado exige refuerzo interior previo, el replanteo de la altura útil coordinada con el mesón y el salpicadero, el montaje del riel o de los soportes de colgar, el armado y colgado de los módulos, la nivelación y unión entre ellos, el montaje de puertas con bisagras regulables y la regulación de frentes. Medido en longitud de frente de mueble.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

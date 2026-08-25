@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Encamisado de columna.",
   "descripcion": "Encamisado de columna de concreto armado. Incluye el armado y el vaciado. Medido por metro cuadrado encamisado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

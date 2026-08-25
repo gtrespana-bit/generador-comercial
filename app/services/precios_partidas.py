@@ -202,7 +202,8 @@ def recalcular_partida_mercado(
     coste_directo = float(resultado.get("coste_directo", 0) or 0)
 
     # Margen conservado de la partida base (USD). Si la partida no tenía
-    # coste o precio usamos el margen por defecto del catálogo.
+    # coste o precio usamos el margen por defecto del catálogo (35 % desde
+    # 2026-08-25).
     coste_base = (
         float(partida.coste_materiales or 0)
         + float(partida.coste_mano_obra or 0)
@@ -210,7 +211,7 @@ def recalcular_partida_mercado(
         + float(partida.coste_otros or 0)
     )
     precio_base = float(partida.precio_unitario or 0)
-    margen = (precio_base - coste_base) / coste_base if coste_base > 0 else 0.30
+    margen = (precio_base - coste_base) / coste_base if coste_base > 0 else 0.35
     precio_venta = round(coste_directo * (1.0 + margen), 2)
 
     # Aplica los precios de la cascada (para las filas de % se usa el precio

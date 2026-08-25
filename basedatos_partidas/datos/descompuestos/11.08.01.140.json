@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Limpieza de canalones y bajantes.",
   "descripcion": "Limpieza de canalones y bajantes con retirada de sedimentos y comprobación de la evacuación. Incluye la limpieza y el informe.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Trasdosado autoportante de placa de yeso laminado estándar.",
   "descripcion": "Suministro y montaje de trasdosado autoportante de placa de yeso laminado estándar de 12,5 mm, sobre estructura de acero galvanizado separada del muro, sin aislamiento. Incluye el replanteo de la estructura con montantes cada 60 cm, la fijación de canales de arranque al piso y al techo con banda perimetral de estanqueidad, el atornillado de la placa, el tratamiento de juntas con pasta y cinta, y el remate de encuentros con muros y techo. Medido por metro cuadrado de trasdosado terminado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

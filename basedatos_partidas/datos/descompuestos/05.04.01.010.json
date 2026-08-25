@@ -6,7 +6,7 @@
   "unidad": "kg",
   "titulo": "Suministro y montaje de estructura metálica.",
   "descripcion": "Suministro, izado y montaje de estructura metálica de acero formada por perfiles laminados, con sus cartelas, rigidizadores y elementos de conexión, montada mediante soldadura y tornillería estructural. Incluye la recepción y verificación del material contra los planos de taller, el replanteo y comprobación de la posición de las placas base, el izado con grúa y el presentado de las piezas, el aplomado y nivelación provisional mediante arriostramientos y tornillos de montaje, la ejecución de las uniones definitivas, la verificación geométrica del conjunto montado y la retirada de los elementos provisionales. No incluye la protección anticorrosiva ni la protección contra incendios. Medido en peso de estructura realmente montada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

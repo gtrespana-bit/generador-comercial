@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Base de mortero para cubierta de teja.",
   "descripcion": "Base continua de mortero de cemento sobre el faldón para recibir cubierta de teja o lámina, con malla de refuerzo en los encuentros. Incluye el extendido, reglado y afinado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

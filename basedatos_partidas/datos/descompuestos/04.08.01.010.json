@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Reparación de fundación con mortero.",
   "descripcion": "Reparación de fundación con mortero de reparación estructural. Incluye el saneo y la reparación. Medido por metro cuadrado reparado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

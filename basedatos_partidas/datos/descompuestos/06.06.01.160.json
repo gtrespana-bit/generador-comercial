@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Remate de vano con piedra artificial.",
   "descripcion": "Colocación de remate de vano con pieza de piedra artificial. Incluye la colocación de la pieza y el rejuntado. Medido por metro lineal ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

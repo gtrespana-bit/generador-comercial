@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Rotulación de directorio de planta.",
   "descripcion": "Colocación de directorio de planta con rotulación, con fijación. Incluye el replanteo y la fijación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

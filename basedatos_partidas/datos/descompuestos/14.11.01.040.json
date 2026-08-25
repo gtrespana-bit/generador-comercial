@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Jardinera de bloque revestido.",
   "descripcion": "Ejecución de jardinera de obra en exterior, de bloque o concreto, con drenaje. Incluye la mampostería y el drenaje.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

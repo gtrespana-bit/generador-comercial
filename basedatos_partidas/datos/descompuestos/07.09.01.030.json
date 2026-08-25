@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Sustitución de cerradura de puerta.",
   "descripcion": "Sustitución de la cerradura de una puerta, con desmontaje de la anterior y montaje de la nueva. Incluye la retirada y el montaje. Medido por unidad sustituida.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

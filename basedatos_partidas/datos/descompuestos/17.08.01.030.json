@@ -6,7 +6,7 @@
   "unidad": "glb",
   "titulo": "Charla de inducción en seguridad.",
   "descripcion": "Impartición de charla de inducción en seguridad al personal que ingresa a la obra.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

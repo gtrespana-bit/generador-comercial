@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Medición de espesor de recubrimiento.",
   "descripcion": "Medición del espesor de recubrimiento de la armadura con detector magnético, con informe.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

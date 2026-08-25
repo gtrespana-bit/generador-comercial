@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Cabina de ducha completa de vidrio.",
   "descripcion": "Suministro y colocación de cabina de ducha completa de vidrio templado, con paneles y puerta. Incluye la toma de medidas, el montaje y el sellado. Medido por metro cuadrado instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

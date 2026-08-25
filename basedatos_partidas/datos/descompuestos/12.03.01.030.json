@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Enchapado cerámico en fachada o paramento exterior.",
   "descripcion": "Colocación de enchapado cerámico o de porcelanato en fachada o paramento exterior, en capa fina con adhesivo cementoso de altas prestaciones tipo C2 con deslizamiento reducido, con juntas de dilatación en paños y encuentros. En exterior el revestimiento sufre dilataciones térmicas y humedad, de modo que el adhesivo, la junta ancha y las juntas de dilatación dejan de ser opcionales: son lo que impide el desprendimiento de piezas. Incluye el trabajo desde andamio, la comprobación del soporte, el replanteo, el doble encolado, la ejecución de las juntas de dilatación, el rejuntado con mortero para exterior y la limpieza. La pieza la elige el cliente y se presupuesta aparte. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Pieza cerámica o porcelanato apta para exterior, con resistencia a heladas y al deslizamiento requerida",

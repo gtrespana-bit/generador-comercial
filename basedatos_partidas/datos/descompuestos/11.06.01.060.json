@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Correas de madera aserrada para cubierta.",
   "descripcion": "Colocación de correas de madera sobre la estructura para apoyo de la cubierta, con fijación mecánica. Incluye el replanteo y la fijación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

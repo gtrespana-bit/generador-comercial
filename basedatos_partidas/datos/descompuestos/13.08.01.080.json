@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Mueble de recepción.",
   "descripcion": "Fabricación e instalación de mueble de recepción en melamina, con mesón y frentes. Incluye el despiece y el armado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

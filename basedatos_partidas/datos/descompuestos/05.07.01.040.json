@@ -6,7 +6,7 @@
   "unidad": "kg",
   "titulo": "Escalera metálica estructural.",
   "descripcion": "Suministro y montaje de escalera metálica estructural formada por zancas de perfil laminado, peldaños y descansos, con sus anclajes a la estructura. Incluye la verificación en obra de las cotas reales de arranque y llegada antes de la fabricación, paso imprescindible porque una escalera metálica no admite ajustes en sitio, el izado y presentado de las zancas, su nivelación y aplomado, la ejecución de las uniones soldadas o atornilladas, el montaje de peldaños y descansos y la comprobación de que huella y contrahuella se mantienen constantes en todo el tramo. No incluye barandas ni el acabado del peldaño. Medido en peso realmente montado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

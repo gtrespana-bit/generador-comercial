@@ -6,7 +6,7 @@
   "unidad": "glb",
   "titulo": "Adecuación de zona de vestuario y comedor.",
   "descripcion": "Adecuación de zona de vestuario y comedor de obra, con mobiliario y servicios básicos.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

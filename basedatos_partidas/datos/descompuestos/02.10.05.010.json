@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Retiro de papel tapiz en paramento.",
   "descripcion": "Retiro de papel tapiz existente en paramento interior, junto con los restos de pegamento mural, ejecutado con medios manuales mediante humectación previa con solución reblandecedora y raspado con espátula ancha. Incluye la protección de pisos, rodapiés y mecanismos, la aplicación de la solución en varias pasadas hasta que el papel se desprenda sin arrancar el friso, el rascado de los residuos de pegamento, el lavado final del paramento y su secado, dejándolo listo para recibir el nuevo acabado. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en superficie realmente tratada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m3",
   "titulo": "Excavación de explanada.",
   "descripcion": "Excavación de explanada para nivelación del terreno. Incluye la excavación y el acopio. Medido por metro cúbico excavado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

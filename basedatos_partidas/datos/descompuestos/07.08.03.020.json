@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Mosquitero corredizo.",
   "descripcion": "Suministro y colocación de mosquitero corredizo en ventana o balconera. Incluye la toma de medidas, el montaje del riel y la colocación del mosquitero. Medido por metro cuadrado instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

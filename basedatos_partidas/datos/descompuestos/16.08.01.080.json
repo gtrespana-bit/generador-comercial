@@ -6,7 +6,7 @@
   "unidad": "glb",
   "titulo": "Acta de recepción de obra.",
   "descripcion": "Elaboración del acta de recepción de obra, con el estado final y los pendientes.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

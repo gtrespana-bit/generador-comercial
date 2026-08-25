@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de inodoro de tanque.",
   "descripcion": "Instalación de inodoro de tanque. Incluye la conexión de agua y desagüe. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

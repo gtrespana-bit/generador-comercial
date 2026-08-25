@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Forrado de montante de instalación.",
   "descripcion": "Forrado de montante de instalaciones con placa. Incluye la estructura y la placa. Medido por metro lineal forrado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

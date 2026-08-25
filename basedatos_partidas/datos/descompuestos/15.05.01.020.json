@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Retiro de residuos peligrosos menores.",
   "descripcion": "Recogida y entrega a gestor autorizado de residuos peligrosos menores (aerosoles, adhesivos, siliconas).",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

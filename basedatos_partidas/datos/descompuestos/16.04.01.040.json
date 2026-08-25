@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Prueba de ventilación de desagüe.",
   "descripcion": "Verificación de la ventilación de la red de desagüe, para evitar sifonado y malos olores.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

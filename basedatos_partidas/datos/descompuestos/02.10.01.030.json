@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Demolición de piso de granito o terrazo en baldosa.",
   "descripcion": "Demolición de piso existente de baldosa de granito o terrazo prefabricado, junto con su capa de asiento de mortero, ejecutada con martillo eléctrico manual. Por la dureza y el espesor de este tipo de baldosa el rendimiento es menor que en un piso cerámico y el escombro resulta más pesado, lo que se refleja en el rendimiento de la partida. Incluye protección previa de los ambientes contiguos, control de polvo, retiro manual del escombro en sacos y limpieza de la superficie. No incluye el bote del escombro. Medido en superficie realmente demolida.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

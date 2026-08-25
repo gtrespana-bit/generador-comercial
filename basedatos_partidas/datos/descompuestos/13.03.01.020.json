@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Espejo y botiquín de baño.",
   "descripcion": "Instalación de espejo y botiquín de baño, fijados al paramento con sus anclajes. Incluye el replanteo de la altura de uso y de su centrado respecto al lavamanos, el taladrado sobre el enchapado con broca de vidrio a baja velocidad y sin percusión, evitando la junta y los cantos donde la pieza se astilla, la colocación de tacos, el montaje y nivelación y el sellado perimetral cuando corresponda. El espejo o botiquín lo elige el cliente y se presupuesta aparte. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Espejo o botiquín de baño elegido por el cliente",

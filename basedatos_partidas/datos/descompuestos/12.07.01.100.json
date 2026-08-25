@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Trasdosado con placa perforada acústica.",
   "descripcion": "Trasdosado autoportante con placa de yeso perforada acústica, para mejorar la absorción del local. Incluye la estructura, la placa perforada y el tratamiento de juntas. Medido por metro cuadrado de trasdosado terminado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

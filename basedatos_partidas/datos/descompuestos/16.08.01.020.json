@@ -6,7 +6,7 @@
   "unidad": "glb",
   "titulo": "Protocolo de entrega de instalaciones.",
   "descripcion": "Elaboración del protocolo de entrega de las instalaciones, con verificación final de cada sistema.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

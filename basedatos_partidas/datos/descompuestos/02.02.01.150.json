@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Corte de losa para escalera o montacargas.",
   "descripcion": "Corte de losa de concreto para apertura de hueco de escalera o montacargas. Incluye el apuntalamiento, el corte perimetral y la demolición del paño. Medido por metro cuadrado de hueco.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

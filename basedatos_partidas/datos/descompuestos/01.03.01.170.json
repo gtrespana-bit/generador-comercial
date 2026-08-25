@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Protección de mesón o mueble de cocina.",
   "descripcion": "Protección de mesón o mueble de cocina existente. Incluye el forrado con cartón y lámina. Medido por metro cuadrado protegido.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

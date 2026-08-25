@@ -6,7 +6,7 @@
   "unidad": "m³",
   "titulo": "Muro de contención de parcela.",
   "descripcion": "Ejecución de muro de contención de parcela de concreto armado, con encofrado y drenaje. Incluye el armado, el encofrado y el vaciado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

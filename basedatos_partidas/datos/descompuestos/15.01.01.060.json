@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Zona de acopio de madera y pallets.",
   "descripcion": "Habilitación de zona de acopio de madera y pallets para su reutilización o reciclaje, delimitada y señalizada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

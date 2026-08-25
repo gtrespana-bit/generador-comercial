@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Piso cerámico o porcelanato de formato estándar, en capa fina.",
   "descripcion": "Colocación de piso con pieza cerámica o de porcelanato de formato estándar, hasta 60x60 cm, sobre soporte previamente regularizado y limpio. Ejecución en capa fina con adhesivo cementoso mejorado C2 TE aplicado con llana dentada y doble encolado en la pieza, nivelación con sistema de crucetas y cuñas, y rejuntado con mortero cementoso CG2 en el color elegido. Incluye replanteo previo para centrar el despiece, cortes y ajustes en encuentros y pasos de instalaciones, limpieza final de la superficie y retirada de restos. La pieza cerámica la elige el cliente y se presupuesta aparte. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Pieza cerámica o porcelanato para piso, formato hasta 60x60 cm",

@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Estabilización de muro con arriostramiento.",
   "descripcion": "Estabilización de muro con arriostramiento metálico provisional. Incluye la colocación del arriostramiento. Medido por metro cuadrado estabilizado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Desmontaje de tablero o mesón de oficina.",
   "descripcion": "Desmontaje de tablero o mesón de oficina. Incluye la retirada del tablero y sus soportes. Medido por unidad desmontada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

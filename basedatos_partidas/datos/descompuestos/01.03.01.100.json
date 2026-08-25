@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Protección de escalera existente.",
   "descripcion": "Protección de escalera existente durante la obra. Incluye la colocación de protección en huellas y barandas. Medido por metro cuadrado protegido.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

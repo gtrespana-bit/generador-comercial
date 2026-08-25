@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Ensayo de granulometría de agregados.",
   "descripcion": "Ensayo granulométrico de agregados (arena, gravilla) para verificar su idoneidad en la mezcla de concreto.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

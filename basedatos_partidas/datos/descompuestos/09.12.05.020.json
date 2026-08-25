@@ -6,7 +6,7 @@
   "unidad": "glb",
   "titulo": "Prueba y verificación del sistema domótico.",
   "descripcion": "Prueba y verificación del sistema domótico completo: comunicación de todos los dispositivos, respuesta de sensores y actuadores, y funcionamiento de las escenas programadas. Incluye la inspección de todas las conexiones, la prueba de cada zona, la corrección de los desajustes detectados y el informe de resultados. Medido por sistema verificado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

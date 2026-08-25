@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Cumbrera y remates de cubierta de teja.",
   "descripcion": "Formación de cumbrera, limatesa o remate lateral en cubierta de teja, con piezas específicas recibidas con mortero y sellado. Es la línea por la que entra el agua cuando está mal resuelta, y también la que primero levanta el viento. Incluye el replanteo, la nivelación de la línea de cumbrera, la colocación de las piezas con solape en el sentido contrario a los vientos dominantes, el recibido con mortero y el sellado de los encuentros. Medido en longitud realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

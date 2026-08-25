@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Desmontaje de repisa de cocina.",
   "descripcion": "Desmontaje de repisa o estante de cocina. Incluye la retirada de la repisa. Medido por unidad desmontada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

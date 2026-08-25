@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Mueble de exterior a medida.",
   "descripcion": "Fabricación e instalación de mueble de exterior a medida en madera tratada. Incluye el despiece y el armado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

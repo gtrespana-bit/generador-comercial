@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Desbroce de vegetación arbustiva.",
   "descripcion": "Desbroce de vegetación arbustiva y maleza del terreno. Incluye la tala de arbustos y la limpieza. Medido por metro cuadrado desbrozado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

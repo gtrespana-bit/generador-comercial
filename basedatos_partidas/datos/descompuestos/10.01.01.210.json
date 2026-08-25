@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Aislamiento térmico de cubierta transitable.",
   "descripcion": "Suministro y colocación de aislamiento térmico en cubierta transitable, con poliestireno de alta densidad. Incluye la colocación del panel y el remate. Medido por metro cuadrado aislado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

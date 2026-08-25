@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Temporizador de iluminación de zonas comunes.",
   "descripcion": "Instalación de temporizador de iluminación de zonas comunes, para apagado automático. El temporizador lo elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

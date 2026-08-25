@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Cubierta de lámina de zinc con fieltro base.",
   "descripcion": "Cubierta de lámina metálica con fieltro o membrana bajo lámina sobre base continua, para evitar condensaciones. Incluye la colocación de la barrera y la lámina.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

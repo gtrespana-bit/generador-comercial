@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Reparación de portón de acceso.",
   "descripcion": "Reparación de portón de acceso con ajuste de bisagras, sustitución de piezas y pintura. Incluye la revisión y el ajuste.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

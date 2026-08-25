@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Revestimiento textil de pared.",
   "descripcion": "Revestimiento de paramento con tela o textil tensado o adherido, con sus remates. Incluye la preparación del soporte, la colocación del textil y el remate de bordes. Medido por metro cuadrado revestido.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

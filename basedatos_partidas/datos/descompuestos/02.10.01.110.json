@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Levantado de rodapié de madera.",
   "descripcion": "Levantado de rodapié existente de madera, ejecutado con medios manuales mediante palanca y espátula, cuidando de no dañar el friso de la pared. Incluye la extracción de los clavos, tornillos o tacos de fijación que queden en el paramento, el retiro del material en sacos hasta el punto de acopio y la limpieza de la zona. No incluye el bote del escombro. Medido en longitud realmente levantada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {
