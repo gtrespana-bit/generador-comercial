@@ -9,6 +9,10 @@
   {% for alt in hreflang_links %}
   <link rel="alternate" hreflang="{{ alt.hreflang }}" href="{{ alt.href }}">
   {% endfor %}
+  {# Iconos: favicon, apple-touch-icon y manifest PWA. #}
+  <link rel="icon" type="image/png" href="/static/icono.png">
+  <link rel="apple-touch-icon" href="/static/icono-180.png">
+  <link rel="manifest" href="/static/site.webmanifest">
   {# Las páginas que cargan fonts.css precargan los pesos 400/700. La landing
      pinta con la fuente del sistema y pide omitirlas: un preload de Inter
      compite con el CSS en el primer viewport y no llega a usarse. #}
@@ -32,6 +36,7 @@
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@CotizaT">
   <meta name="twitter:title" content="{{ seo.title }}">
   <meta name="twitter:description" content="{{ seo.description }}">
   <meta name="twitter:image" content="{{ og_image }}">

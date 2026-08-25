@@ -1434,6 +1434,33 @@ def jsonld_breadcrumb(request: Request | None, items: list[tuple[str, str]]) -> 
     }
 
 
+def jsonld_webpage(
+    request: Request | None,
+    path: str,
+    title: str,
+    description: str = "",
+    page_type: str = "WebPage",
+) -> dict:
+    """Schema WebPage para una página individual.
+
+    Google lo usa para entender la jerarquía del sitio y la relación
+    entre la WebSite y cada página indexable.
+    """
+    origen = origen_canonico(request)
+    data: dict = {
+        "@context": "https://schema.org",
+        "@type": page_type,
+        "name": title,
+        "url": origen + path,
+        "isPartOf": {"@type": "WebSite", "name": PRODUCT_NAME, "url": origen + "/"},
+        "inLanguage": "es",
+        "dateModified": SITEMAP_LASTMOD,
+    }
+    if description:
+        data["description"] = description
+    return data
+
+
 def jsonld_howto(guia: dict, request: Request | None = None) -> dict:
     origen = origen_canonico(request)
     pasos = []
@@ -1465,6 +1492,7 @@ def jsonld_articulo(guia: dict, request: Request | None = None) -> dict:
         "inLanguage": "es",
         "url": origen + path,
         "mainEntityOfPage": origen + path,
+        "datePublished": SITEMAP_LASTMOD,
         "dateModified": SITEMAP_LASTMOD,
         "author": {"@type": "Organization", "name": PRODUCT_NAME},
         "publisher": {
@@ -1499,6 +1527,7 @@ def contexto_guia(request: Request, slug: str) -> dict | None:
     bloques = [
         jsonld_organizacion(request),
         jsonld_website(request),
+        jsonld_webpage(request, path, guia["h1"], guia["description"], "Article"),
         jsonld_articulo(guia, request),
         jsonld_howto(guia, request),
         jsonld_breadcrumb(request, [("Inicio", "/"), ("Guías", "/mapa-del-sitio"), (guia["h1"], path)]),
@@ -1513,7 +1542,7 @@ def contexto_guia(request: Request, slug: str) -> dict | None:
         "paises": lista_paises(),
         "origen_seo": origen,
         "canonical_url": origen + path,
-        "hreflang_links": [],
+        "hreflang_links": [{"hreflang": "es", "href": origen + path}],
         "og_image": origen + OG_IMAGE,
         "jsonld_bloques": bloques,
         "seo_temas": TEMAS,
@@ -1539,6 +1568,7 @@ def contexto_seo(
     bloques_ld = [
         jsonld_organizacion(request),
         jsonld_website(request),
+        jsonld_webpage(request, ficha["canonical_path"], ficha["h1"], ficha.get("description", "")),
         jsonld_software(request, codigo),
     ]
     if ficha.get("faq"):
@@ -1671,6 +1701,7 @@ def contexto_pagina_estatica(request: Request, clave: str) -> dict:
     bloques = [
         jsonld_organizacion(request),
         jsonld_website(request),
+        jsonld_webpage(request, path, ficha["h1"], ficha["description"]),
     ]
     if ficha.get("software"):
         bloques.append(jsonld_software(request, ""))
@@ -1741,6 +1772,7 @@ def robots_txt(request: Request | None = None) -> str:
         "User-agent: *",
         "Allow: /",
         "Allow: /static/",
+        "Allow: /static/site.webmanifest",
         "Disallow: /acceso",
         "Disallow: /registro",
         "Disallow: /recuperar-acceso",
