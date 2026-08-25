@@ -808,6 +808,147 @@ _LANDING: dict[str, dict] = {
             },
         ],
     },
+    "BO": {
+        "title": "CotizaT: software de presupuestos y APU en Bolivia",
+        "description": (
+            "Software de presupuestos de construcción para Bolivia. NIT, IVA 13 %, "
+            "BOB, hormigón y revoque. Catálogo con APU. 7 días gratis, sin tarjeta."
+        ),
+        "h1": "Software de presupuestos y APU para construcción en Bolivia",
+        "h1_resalte": "bolivianos, NIT e IVA 13 %",
+        "sub": (
+            "Presupuesta obra y remodelación en BOB, con NIT e IVA 13 %. Catálogo "
+            "con análisis de precios unitarios, hormigón, revoque, cielo falso y "
+            "plomero. PDF profesional para WhatsApp. Precios de referencia en BOB "
+            "con fuentes de Bolivia (SOBOCE, FANCESA, COBOCE, OneEstimate)."
+        ),
+        "kicker": "🇧🇴 Sistema comercial para Bolivia · Construcción y remodelación",
+        "faq": [
+            {
+                "q": "¿Está pensado para constructoras en Bolivia?",
+                "a": (
+                    "Sí. El espacio nace en BOB, IVA 13 % y NIT. Terminología "
+                    "local: hormigón, revoque, cielo falso, zócalo, plomero, fierro."
+                ),
+            },
+            {
+                "q": "¿Incluye APU con precios de Bolivia?",
+                "a": (
+                    "Cada partida trae APU editable con referencias nacionales en BOB: "
+                    "cemento Bs 54 por bolsa 50kg, arena Bs 150/m3, piedra Bs 160/m3, bloque Bs 2.5, hormigón Bs 600/m3. "
+                    "El resto es referencia derivada de canasta nacional."
+                ),
+            },
+            {
+                "q": "¿El cliente firma en línea?",
+                "a": (
+                    "Puedes enviar un enlace privado opcional. Lo habitual es el "
+                    "PDF por WhatsApp, que es como ya cierras en Santa Cruz o La Paz."
+                ),
+            },
+            {
+                "q": "¿Emite factura electrónica del SIN?",
+                "a": (
+                    "No. Los documentos son comerciales y no sustituyen la factura "
+                    "que te exija el SIN. El IVA 13 % lo configuras tú."
+                ),
+            },
+        ],
+    },
+    "CR": {
+        "title": "CotizaT: software de presupuestos y APU en Costa Rica",
+        "description": (
+            "Software de presupuestos de construcción para Costa Rica. NITE, IVA 13 %, "
+            "CRC, concreto y repello. Catálogo con APU. 7 días gratis, sin tarjeta."
+        ),
+        "h1": "Software de presupuestos y APU para construcción en Costa Rica",
+        "h1_resalte": "colones, NITE e IVA 13 %",
+        "sub": (
+            "Presupuesta obra y remodelación en CRC, con NITE e IVA 13 %. Catálogo "
+            "con análisis de precios unitarios, concreto, repello, cielo raso y "
+            "fontanero. PDF profesional para WhatsApp. Precios de referencia en CRC "
+            "con fuentes de Costa Rica (EPA, Ferconce, CFIA)."
+        ),
+        "kicker": "🇨🇷 Sistema comercial para Costa Rica · Construcción y remodelación",
+        "faq": [
+            {
+                "q": "¿Está pensado para constructoras en Costa Rica?",
+                "a": (
+                    "Sí. El espacio nace en CRC, IVA 13 % y NITE. Terminología "
+                    "local: concreto, repello, cielo raso, rodapié, fontanero, formaleta."
+                ),
+            },
+            {
+                "q": "¿Incluye APU con precios de Costa Rica?",
+                "a": (
+                    "Cada partida trae APU editable con referencias nacionales en CRC: "
+                    "cemento ₡6.750 por saco 50kg, arena ₡27.470/m3, piedra ₡28.000/m3, bloque ₡650, concreto ₡55.000/m3. "
+                    "El resto es referencia derivada de canasta nacional."
+                ),
+            },
+            {
+                "q": "¿El cliente firma en línea?",
+                "a": (
+                    "Puedes enviar un enlace privado opcional. Lo habitual es el "
+                    "PDF por WhatsApp, que es como ya cierras en San José o Alajuela."
+                ),
+            },
+            {
+                "q": "¿Emite factura electrónica de Hacienda?",
+                "a": (
+                    "No. Los documentos son comerciales y no sustituyen la factura "
+                    "electrónica que te exija Hacienda. El IVA 13 % lo configuras tú."
+                ),
+            },
+        ],
+    },
+    "GT": {
+        "title": "CotizaT: software de presupuestos y APU en Guatemala",
+        "description": (
+            "Software de presupuestos de construcción para Guatemala. NIT, IVA 12 %, "
+            "GTQ, concreto y repello. Catálogo con APU. 7 días gratis, sin tarjeta."
+        ),
+        "h1": "Software de presupuestos y APU para construcción en Guatemala",
+        "h1_resalte": "quetzales, NIT e IVA 12 %",
+        "sub": (
+            "Presupuesta obra y remodelación en GTQ, con NIT e IVA 12 %. Catálogo "
+            "con análisis de precios unitarios, concreto, repello, cielo falso y "
+            "fontanero. PDF profesional para WhatsApp. Precios de referencia en GTQ "
+            "con fuentes de Guatemala (EPA, Cemaco, Construfácil, INE)."
+        ),
+        "kicker": "🇬🇹 Sistema comercial para Guatemala · Construcción y remodelación",
+        "faq": [
+            {
+                "q": "¿Está pensado para constructoras en Guatemala?",
+                "a": (
+                    "Sí. El espacio nace en GTQ, IVA 12 % y NIT. Terminología "
+                    "local: concreto, repello, cielo falso, zócalo, fontanero, block, varilla, flipón."
+                ),
+            },
+            {
+                "q": "¿Incluye APU con precios de Guatemala?",
+                "a": (
+                    "Cada partida trae APU editable con referencias nacionales en GTQ: "
+                    "cemento Q80.25 por saco 42.5kg, block Q5.5, arena Q180/m3, piedrín Q230/m3, concreto Q900/m3. "
+                    "El resto es referencia derivada de canasta nacional."
+                ),
+            },
+            {
+                "q": "¿El cliente firma en línea?",
+                "a": (
+                    "Puedes enviar un enlace privado opcional. Lo habitual es el "
+                    "PDF por WhatsApp, que es como ya cierras en Ciudad de Guatemala o Quetzaltenango."
+                ),
+            },
+            {
+                "q": "¿Emite factura FEL?",
+                "a": (
+                    "No. Los documentos son comerciales y no sustituyen la factura "
+                    "electrónica FEL que te exija la SAT. El IVA 12 % lo configuras tú."
+                ),
+            },
+        ],
+    },
     "ES": {
         "title": "CotizaT: software de presupuestos de obra y reformas para España",
         "description": (
@@ -1127,7 +1268,7 @@ def jsonld_website(request: Request | None = None) -> dict:
         "@type": "WebSite",
         "name": PRODUCT_NAME,
         "url": origen + "/",
-        "inLanguage": ["es", "es-VE", "es-CO", "es-MX", "es-PE", "es-EC", "es-PA", "es-SV", "es-CL", "es-AR", "es-DO", "es-UY", "es-PY", "es-ES"],
+        "inLanguage": ["es", "es-VE", "es-CO", "es-MX", "es-PE", "es-EC", "es-PA", "es-SV", "es-CL", "es-AR", "es-DO", "es-UY", "es-PY", "es-BO", "es-CR", "es-GT", "es-ES"],
         "publisher": {"@type": "Organization", "name": PRODUCT_NAME},
         "description": VALUE_PROPOSITION,
     }

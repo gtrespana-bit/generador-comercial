@@ -776,6 +776,60 @@ HUB_EXTRA: dict[tuple[str, str], list[tuple[str, str]]] = {
             "Pack de estancia, revoque y cielorraso, productos con foto. Si hay cambios, reenvías total anterior y total nuevo. El cliente no se registra.",
         ),
     ],
+    ("BO", "software-presupuestos"): [
+        (
+            "Software de presupuestos en bolivianos para Bolivia",
+            "Bolivia ya cotiza en BOB, con NIT e IVA 13 %. El espacio nace en BOB, no en USD «para convertir después». Hormigón, revoque, cielo falso, zócalo, plomero, fierro.",
+        ),
+    ],
+    ("BO", "apu"): [
+        (
+            "APU en BOB, con NIT e IVA 13 %",
+            "Descompuestos editables en bolivianos con referencias de Bolivia: cemento Bs 54/bolsa 50kg, arena Bs 150/m3, piedra Bs 160/m3, bloque Bs 2.5, hormigón Bs 600/m3. El IVA 13 % lo pones tú.",
+        ),
+    ],
+    ("BO", "remodelacion"): [
+        (
+            "Reforma en Santa Cruz o La Paz, PDF por WhatsApp",
+            "Pack de estancia, revoque y cielo falso, productos con foto. Si hay cambios, reenvías total anterior y total nuevo. El cliente no se registra.",
+        ),
+    ],
+    ("CR", "software-presupuestos"): [
+        (
+            "Software de presupuestos en colones para Costa Rica",
+            "Costa Rica ya cotiza en CRC, con NITE e IVA 13 %. El espacio nace en CRC, no en USD «para convertir después». Concreto, repello, cielo raso, rodapié, fontanero, formaleta.",
+        ),
+    ],
+    ("CR", "apu"): [
+        (
+            "APU en CRC, con NITE e IVA 13 %",
+            "Descompuestos editables en colones con referencias de Costa Rica: cemento ₡6.750/saco 50kg, arena ₡27.470/m3, piedra ₡28.000/m3, bloque ₡650, concreto ₡55.000/m3. El IVA 13 % lo pones tú.",
+        ),
+    ],
+    ("CR", "remodelacion"): [
+        (
+            "Reforma en San José o Alajuela, PDF por WhatsApp",
+            "Pack de estancia, repello y cielo raso, productos con foto. Si hay cambios, reenvías total anterior y total nuevo. El cliente no se registra.",
+        ),
+    ],
+    ("GT", "software-presupuestos"): [
+        (
+            "Software de presupuestos en quetzales para Guatemala",
+            "Guatemala ya cotiza en GTQ, con NIT e IVA 12 %. El espacio nace en GTQ, no en USD «para convertir después». Concreto, repello, cielo falso, zócalo, fontanero, block, flipón.",
+        ),
+    ],
+    ("GT", "apu"): [
+        (
+            "APU en GTQ, con NIT e IVA 12 %",
+            "Descompuestos editables en quetzales con referencias de Guatemala: cemento Q80.25/saco 42.5kg, block Q5.5, arena Q180/m3, piedrín Q230/m3, concreto Q900/m3. El IVA 12 % lo pones tú. No emite factura FEL.",
+        ),
+    ],
+    ("GT", "remodelacion"): [
+        (
+            "Reforma en Ciudad de Guatemala o Quetzaltenango, PDF por WhatsApp",
+            "Pack de estancia, repello y cielo falso, productos con foto. Si hay cambios, reenvías total anterior y total nuevo. El cliente no se registra.",
+        ),
+    ],
     ("ES", "software-presupuestos"): [
         (
             "Presupuestar reformas en euros, con NIF e IVA",
@@ -910,6 +964,42 @@ FAQ_HUB: dict[tuple[str, str], list[dict]] = {
         {
             "q": "¿Los precios del APU son de mercado paraguayo?",
             "a": "Sí: cemento Gs 59.000/bolsa 50kg, bloque Gs 5.300, piedra Gs 104.000/m3, hormigón Gs 650.000/m3 con fuentes de Paraguay, más referencias derivadas de canasta nacional en PYG sin decimales.",
+        },
+    ],
+    ("BO", "software-presupuestos"): [
+        {
+            "q": "¿Nace en bolivianos o convierte desde dólares?",
+            "a": "Nace en BOB. Bolivia cotiza en bolivianos; no hay conversión improvisada al registrarte. Tasa verificada 11.55 BOB/USD.",
+        },
+    ],
+    ("BO", "apu"): [
+        {
+            "q": "¿Los precios del APU son de mercado boliviano?",
+            "a": "Sí: cemento Bs 54/bolsa 50kg, arena Bs 150/m3, piedra Bs 160/m3, bloque Bs 2.5, hormigón Bs 600/m3 con fuentes de Bolivia, más referencias derivadas de canasta nacional en BOB.",
+        },
+    ],
+    ("CR", "software-presupuestos"): [
+        {
+            "q": "¿Nace en colones o convierte desde dólares?",
+            "a": "Nace en CRC. Costa Rica cotiza en colones; no hay conversión improvisada al registrarte. Tasa verificada 449.39 CRC/USD.",
+        },
+    ],
+    ("CR", "apu"): [
+        {
+            "q": "¿Los precios del APU son de mercado costarricense?",
+            "a": "Sí: cemento ₡6.750/saco 50kg, arena ₡27.470/m3, piedra ₡28.000/m3, bloque ₡650, concreto ₡55.000/m3 con fuentes de Costa Rica, más referencias derivadas de canasta nacional en CRC.",
+        },
+    ],
+    ("GT", "software-presupuestos"): [
+        {
+            "q": "¿Nace en quetzales o convierte desde dólares?",
+            "a": "Nace en GTQ. Guatemala cotiza en quetzales; no hay conversión improvisada al registrarte. Tasa verificada 7.62 GTQ/USD.",
+        },
+    ],
+    ("GT", "apu"): [
+        {
+            "q": "¿Los precios del APU son de mercado guatemalteco?",
+            "a": "Sí: cemento Q80.25/saco 42.5kg, block Q5.5, arena Q180/m3, piedrín Q230/m3, concreto Q900/m3 con fuentes de Guatemala, más referencias derivadas de canasta nacional en GTQ.",
         },
     ],
     ("ES", "software-presupuestos"): [

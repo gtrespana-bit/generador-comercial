@@ -17,7 +17,7 @@ def test_las_3006_partidas_y_6062_lineas_de_mano_de_obra_son_validas():
 def test_matriz_cubre_cada_recurso_fisico_en_cada_pais():
     resultado = auditar_matriz(388)
     assert resultado.errores == []
-    for pais in ("CO", "PE", "MX", "EC", "PA", "SV", "CL", "AR", "DO", "UY", "PY"):
+    for pais in ("CO", "PE", "MX", "EC", "PA", "SV", "CL", "AR", "DO", "UY", "PY", "BO", "CR", "GT"):
         assert resultado.resumen[pais]["total"] == 388
         assert resultado.resumen[pais].get("pendiente", 0) == 0
         assert resultado.resumen[pais]["con_referencia"] == 388
@@ -60,14 +60,14 @@ def test_sql_de_carga_supabase_es_completo_idempotente_y_acotado():
 
     filas, codigos = generar()
     sql = Path(SALIDA).read_text(encoding="utf-8")
-    # 388 recursos × 11 países (CO, PE, MX, EC, PA, SV, CL, AR, DO, UY, PY) = 4268 referencias
-    assert (filas, codigos) == (4268, 388)
+    # 388 recursos × 14 países (CO, PE, MX, EC, PA, SV, CL, AR, DO, UY, PY, BO, CR, GT) = 5432 referencias
+    assert (filas, codigos) == (5432, 388)
     assert "public.alembic_version = a4c8e2f7b1d6" in sql
     assert f"v_filas <> {filas} OR v_codigos <> 388" in sql or f"v_filas <> {filas}" in sql
     assert "p.organizacion_id IS NULL" in sql
     assert "p.pais_codigo = s.pais_codigo" in sql
     # Debe incluir los 8 países
-    for pais in ("CO", "PE", "MX", "EC", "PA", "SV", "CL", "AR", "DO", "UY", "PY"):
+    for pais in ("CO", "PE", "MX", "EC", "PA", "SV", "CL", "AR", "DO", "UY", "PY", "BO", "CR", "GT"):
         assert pais in sql
     assert "DELETE FROM public.precios_recursos_mercado" in sql
     assert "INSERT INTO public.precios_recursos_mercado" in sql

@@ -19,7 +19,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "basedatos_partidas/datos/recursos.json"
 OUT = ROOT / "basedatos_partidas/salida/precios_recursos_latam.csv"
-PAISES = (("CO", "COP"), ("PE", "PEN"), ("MX", "MXN"), ("EC", "USD"), ("PA", "USD"), ("SV", "USD"), ("CL", "CLP"), ("AR", "ARS"), ("DO", "DOP"), ("UY", "UYU"), ("PY", "PYG"))
+PAISES = (("CO", "COP"), ("PE", "PEN"), ("MX", "MXN"), ("EC", "USD"), ("PA", "USD"), ("SV", "USD"), ("CL", "CLP"), ("AR", "ARS"), ("DO", "DOP"), ("UY", "UYU"), ("PY", "PYG"), ("BO", "BOB"), ("CR", "CRC"), ("GT", "GTQ"))
 FECHA = "2026-08-25"
 FECHA_METODOLOGIA = "2026-08-20"
 
@@ -35,11 +35,14 @@ RAR = "docs/INVESTIGACION_PRECIOS_CL_AR.md"
 RDO = "docs/INVESTIGACION_PRECIOS_DO_UY_PY.md"
 RUY = "docs/INVESTIGACION_PRECIOS_DO_UY_PY.md"
 RPY = "docs/INVESTIGACION_PRECIOS_DO_UY_PY.md"
+RBO = "docs/INVESTIGACION_PRECIOS_BO_CR_GT.md"
+RCR = "docs/INVESTIGACION_PRECIOS_BO_CR_GT.md"
+RGT = "docs/INVESTIGACION_PRECIOS_BO_CR_GT.md"
 METODOLOGIA = "docs/METODOLOGIA_PRECIOS_REFERENCIA_LATAM.md"
 # Tasas de corte usadas solo para normalizar el precio base USD antes de
 # aplicarle el factor de mercado observado. El resultado queda congelado en
 # moneda nacional y con fecha; no se recalcula silenciosamente en producción.
-TASAS_CORTE = {"CO": 3128.65, "PE": 3.37, "MX": 17.06, "EC": 1.0, "PA": 1.0, "SV": 1.0, "CL": 925.90, "AR": 1497.38, "DO": 58.33, "UY": 40.21, "PY": 5946.10}
+TASAS_CORTE = {"CO": 3128.65, "PE": 3.37, "MX": 17.06, "EC": 1.0, "PA": 1.0, "SV": 1.0, "CL": 925.90, "AR": 1497.38, "DO": 58.33, "UY": 40.21, "PY": 5946.10, "BO": 11.55, "CR": 449.39, "GT": 7.62}
 
 
 @dataclass(frozen=True)
@@ -77,6 +80,9 @@ REFERENCIAS: dict[str, dict[str, Referencia]] = {
         "DO": ref(535 / 42.6, 440 / 42.6, 625 / 42.6, RDO),
         "UY": ref(240 / 25, 225 / 25, 286 / 25, RUY),
         "PY": ref(59000 / 50, 47000 / 50, 59000 / 50, RPY),
+        "BO": ref(54 / 50, 49 / 50, 79 / 50, RBO),
+        "CR": ref(6750 / 50, 6695 / 50, 7500 / 50, RCR),
+        "GT": ref(80.25 / 42.5, 68.42 / 42.5, 91.25 / 42.5, RGT),
     },
     "MT-ARENA": {
         "CO": ref(100_000, 80_000, 220_000, R1),
@@ -90,6 +96,9 @@ REFERENCIAS: dict[str, dict[str, Referencia]] = {
         "DO": ref(1550, 1400, 1700, RDO),
         "UY": ref(1200, 1000, 1400, RUY),
         "PY": ref(104000, 90000, 120000, RPY),
+        "BO": ref(150, 130, 170, RBO),
+        "CR": ref(27470, 25000, 30000, RCR),
+        "GT": ref(180, 140, 220, RGT),
     },
     "MT-PIEDRA-PIC": {
         "CO": ref(115_000, 90_000, 240_000, R1),
@@ -103,6 +112,9 @@ REFERENCIAS: dict[str, dict[str, Referencia]] = {
         "DO": ref(1700, 1500, 1850, RDO),
         "UY": ref(1300, 1100, 1500, RUY),
         "PY": ref(110000, 95000, 125000, RPY),
+        "BO": ref(160, 140, 180, RBO),
+        "CR": ref(28000, 25000, 31000, RCR),
+        "GT": ref(230, 180, 280, RGT),
     },
     "MT-ACERO-CAB": {
         "CO": ref(4_000, 3_650, 4_350, R1),
@@ -116,6 +128,9 @@ REFERENCIAS: dict[str, dict[str, Referencia]] = {
         "DO": ref(55, 48, 62, RDO),
         "UY": ref(65, 55, 75, RUY),
         "PY": ref(5500, 4800, 6200, RPY),
+        "BO": ref(12, 10, 14, RBO),
+        "CR": ref(700, 600, 800, RCR),
+        "GT": ref(14, 12, 16, RGT),
     },
     "MT-BLQ-15": {
         "CO": ref(2_600, 2_000, 3_200, R1),
@@ -128,6 +143,9 @@ REFERENCIAS: dict[str, dict[str, Referencia]] = {
         "DO": ref(42, 38, 50, RDO),
         "UY": ref(70, 49, 84, RUY),
         "PY": ref(5300, 5000, 5500, RPY),
+        "BO": ref(2.5, 2.0, 3.0, RBO),
+        "CR": ref(650, 550, 750, RCR),
+        "GT": ref(5.5, 4.5, 7.0, RGT),
     },
     "MT-LADRILLO": {
         "CO": ref(1_000, 500, 1_200, R1),
@@ -149,6 +167,9 @@ REFERENCIAS: dict[str, dict[str, Referencia]] = {
         "DO": ref(4500, 4000, 5000, RDO, incluye_transporte="por_verificar"),
         "UY": ref(5500, 5000, 6000, RUY, incluye_transporte="por_verificar"),
         "PY": ref(650000, 600000, 700000, RPY, incluye_transporte="por_verificar"),
+        "BO": ref(600, 500, 700, RBO, incluye_transporte="por_verificar"),
+        "CR": ref(55000, 50000, 60000, RCR, incluye_transporte="por_verificar"),
+        "GT": ref(900, 800, 1000, RGT, incluye_transporte="por_verificar"),
     },
     "MT-PYL-PLACA125": {
         "CO": ref(48_900 / 2.9768, 48_900 / 2.9768, 48_900 / 2.9768, R2),
@@ -198,6 +219,9 @@ REFERENCIAS: dict[str, dict[str, Referencia]] = {
         "DO": ref(2500, 2000, 3000, RDO, incluye_transporte="no_confirmado", observaciones="Tarifa horaria retroexcavadora en RD; validar operador, combustible y flete."),
         "UY": ref(1800, 1500, 2100, RUY, incluye_transporte="no_confirmado", observaciones="Tarifa horaria retroexcavadora en Uruguay; validar operador, combustible y flete."),
         "PY": ref(120000, 100000, 140000, RPY, incluye_transporte="no_confirmado", observaciones="Tarifa horaria retroexcavadora en Paraguay; validar operador, combustible y flete."),
+        "BO": ref(180, 150, 210, RBO, incluye_transporte="no_confirmado", observaciones="Tarifa horaria retroexcavadora en Bolivia; validar operador, combustible y flete."),
+        "CR": ref(18000, 15000, 21000, RCR, incluye_transporte="no_confirmado", observaciones="Tarifa horaria retroexcavadora en Costa Rica; validar operador, combustible y flete."),
+        "GT": ref(180, 150, 220, RGT, incluye_transporte="no_confirmado", observaciones="Tarifa horaria retroexcavadora en Guatemala; validar operador, combustible y flete."),
     },
     "MQ-VOLQ": {
         "PE": ref(125, 110, 140, R6, incluye_transporte="si", observaciones="Tarifa horaria de volquete; confirmar capacidad, operador, combustible y mínimo."),
@@ -238,6 +262,9 @@ OFICIAL_GENERAL = {
     "DO": (2000, 1600, 2200),
     "UY": (2412.65, 2000, 2600),
     "PY": (125875, 107627, 130000),
+    "BO": (270, 220, 320),
+    "CR": (13991.86, 12436.41, 15500),
+    "GT": (220, 150, 250),
 }
 AYUDANTE = {
     "CO": (72_500, 60_000, 85_000),
@@ -251,6 +278,9 @@ AYUDANTE = {
     "DO": (900, 800, 1000),
     "UY": (1554.29, 1400, 1700),
     "PY": (107627, 93000, 115000),
+    "BO": (140, 125, 170),
+    "CR": (13523.69, 12436.41, 14500),
+    "GT": (130, 100, 150),
 }
 
 

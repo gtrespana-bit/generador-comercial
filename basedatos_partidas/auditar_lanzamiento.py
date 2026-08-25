@@ -50,6 +50,9 @@ PAISES = {
     "DO": ("República Dominicana", "DOP"),
     "UY": ("Uruguay", "UYU"),
     "PY": ("Paraguay", "PYG"),
+    "BO": ("Bolivia", "BOB"),
+    "CR": ("Costa Rica", "CRC"),
+    "GT": ("Guatemala", "GTQ"),
 }
 CODIGO_RE = re.compile(r"^\d{2}\.\d{2}\.\d{2}\.\d{3}$")
 ESTADOS_VE = {"confirmado", "verificado-mercado", "derivado", "provisional"}
@@ -302,7 +305,7 @@ def auditar_matriz(recursos_fisicos: int) -> Resultado:
     esperado = recursos_fisicos * (len(PAISES) - 1)
     if len(filas) != esperado:
         resultado.errores.append(f"Matriz: {len(filas)} filas; se esperaban {esperado}")
-    for pais in ("CO", "PE", "MX", "EC", "PA", "SV", "CL", "AR", "DO", "UY", "PY"):
+    for pais in ("CO", "PE", "MX", "EC", "PA", "SV", "CL", "AR", "DO", "UY", "PY", "BO", "CR", "GT"):
         total = sum(1 for f in filas if f.get("pais_codigo") == pais)
         if total != recursos_fisicos:
             resultado.errores.append(f"Matriz {pais}: {total} recursos; se esperaban {recursos_fisicos}")
@@ -377,7 +380,7 @@ def escribir_informe(partidas: Resultado, matriz: Resultado) -> None:
         "| País | Recursos | Referencia directa | Derivados | Pendientes | Cobertura trazable |",
         "|---|---:|---:|---:|---:|---:|",
     ]
-    for pais in ("CO", "PE", "MX", "EC", "PA", "SV", "CL", "AR", "DO", "UY", "PY"):
+    for pais in ("CO", "PE", "MX", "EC", "PA", "SV", "CL", "AR", "DO", "UY", "PY", "BO", "CR", "GT"):
         x = matriz.resumen.get(pais, {})
         total = x.get("total", 0)
         directas = x.get("referencia", 0) + x.get("confirmado", 0)

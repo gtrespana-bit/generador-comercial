@@ -49,9 +49,14 @@ TASAS_SUGERIDAS: dict[str, float | None] = {
     "UYU": 40.21,
     # PYG/USD 08-24/08/2026 (pluang 5946.10, Xe 6009.42, RioTimes 5932) → 5946.10 adoptado
     "PYG": 5946.10,
+    # BOB/USD 14-20/08/2026 (exchange-rates.org 11.551, pluang 11.58, tradingeconomics 11.5558) → 11.55 adoptado
+    "BOB": 11.55,
+    # CRC/USD 08-20/08/2026 (currency.me.uk 449.3937, pluang 446.30, currency.wiki 453.95) → 449.39 adoptado
+    "CRC": 449.39,
+    # GTQ/USD 07-16/08/2026 (pluang 7.6239, foreignexchange 7.6258, exchange-rates.org 7.629) → 7.62 adoptado
+    "GTQ": 7.62,
 }
-# El resto de monedas del selector (BOB, CRC, GTQ,
-# HNL, NIO, BRL…) no se pre-rellenan: sin tasa verificada a la fecha de
+# El resto de monedas del selector (HNL, NIO, BRL…) no se pre-rellenan: sin tasa verificada a la fecha de
 # TASAS_ACTUALIZADAS. El usuario consulta «Tasa de hoy» o escribe la oficial.
 
 
