@@ -1,13 +1,13 @@
 # Auditoría integral del catálogo antes de lanzamiento
 
-**Fecha de corte:** 20/08/2026  
-**Alcance:** 3.006 partidas, cuadro base Venezuela y matrices CO/PE/MX/EC.
+**Fecha de corte:** 25/08/2026  
+**Alcance:** 3.006 partidas, cuadro base Venezuela y matrices CO/PE/MX/EC/PA/SV.
 
 > Esta auditoría distingue tres cosas: que el APU sea calculable, que la mano de obra esté explícita y que exista una referencia nacional trazable. Una conversión de divisa aislada no basta; una derivación calibrada con la canasta investigada se identifica como `derivado`.
 
 ## Veredicto
 
-**APTO para lanzamiento en los cinco países como generador de soporte con precios referenciales nacionales.** Las 3.006 partidas son calculables, todas tienen mano de obra explícita y los 388 recursos físicos tienen referencia en CO/PE/MX/EC. La aplicación debe mantener visibles fecha, rango, confianza y el aviso de comprobación: no son cotizaciones exactas de una tienda.
+**APTO para lanzamiento en los siete países como generador de soporte con precios referenciales nacionales.** Las 3.006 partidas son calculables, todas tienen mano de obra explícita y los 388 recursos físicos tienen referencia en CO/PE/MX/EC/PA/SV. La aplicación debe mantener visibles fecha, rango, confianza y el aviso de comprobación: no son cotizaciones exactas de una tienda.
 
 ## 1. Partidas y mano de obra
 
@@ -45,6 +45,18 @@ Los 388 recursos físicos tienen precio base referencial. `Provisional` expresa 
 | Perú (PEN) | 388 | 14 | 374 | 0 | 100.0% |
 | México (MXN) | 388 | 18 | 370 | 0 | 100.0% |
 | Ecuador (USD) | 388 | 19 | 369 | 0 | 100.0% |
+| Panamá (USD) | 388 | 10 | 378 | 0 | 100.0% |
+| El Salvador (USD) | 388 | 10 | 378 | 0 | 100.0% |
+| Chile (CLP) | 388 | 10 | 378 | 0 | 100.0% |
+| Argentina (ARS) | 388 | 10 | 378 | 0 | 100.0% |
+| República Dominicana (DOP) | 388 | 10 | 378 | 0 | 100.0% |
+| Uruguay (UYU) | 388 | 10 | 378 | 0 | 100.0% |
+| Paraguay (PYG) | 388 | 10 | 378 | 0 | 100.0% |
+| Bolivia (BOB) | 388 | 10 | 378 | 0 | 100.0% |
+| Costa Rica (CRC) | 388 | 10 | 378 | 0 | 100.0% |
+| Guatemala (GTQ) | 388 | 10 | 378 | 0 | 100.0% |
+| Honduras (HNL) | 388 | 10 | 378 | 0 | 100.0% |
+| Nicaragua (NIO) | 388 | 10 | 378 | 0 | 100.0% |
 
 La matriz contiene referencias nacionales directas y derivadas. Las derivadas se calibran con la canasta investigada de cada país y se identifican como tales; no se presentan como una cotización local exacta. `precios_recursos_latam_completa.csv` se conserva por compatibilidad y actualmente coincide en cobertura con la matriz principal.
 
@@ -55,7 +67,7 @@ La matriz contiene referencias nacionales directas y derivadas. Las derivadas se
 - Se añadieron rangos normalizados y se exige que la referencia quede dentro de ellos.
 - Se excluyeron 4 recursos compuestos que no existen como filas físicas en la aplicación (16 filas huérfanas país/recurso).
 - Las 17 categorías de mano de obra tienen referencia por país; las especialidades sin jornal propio quedan visibles como `derivado`, nunca como observación directa.
-- La metodología nacional completa 1.552 referencias con factores de canasta por país y familia, sin segmentación artificial por ciudad.
+- La metodología nacional completa 2.328 referencias con factores de canasta por país y familia, sin segmentación artificial por ciudad.
 - El importador es atómico y conserva rango, unidad, fecha, IVA, transporte y observaciones en base de datos.
 - La referencia nacional se resuelve por código estable de recurso; ya no queda ligada al ID privado de la organización usada para importarla.
 

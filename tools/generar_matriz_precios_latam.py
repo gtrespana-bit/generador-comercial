@@ -19,8 +19,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "basedatos_partidas/datos/recursos.json"
 OUT = ROOT / "basedatos_partidas/salida/precios_recursos_latam.csv"
-PAISES = (("CO", "COP"), ("PE", "PEN"), ("MX", "MXN"), ("EC", "USD"))
-FECHA = "2026-08-19"
+PAISES = (("CO", "COP"), ("PE", "PEN"), ("MX", "MXN"), ("EC", "USD"), ("PA", "USD"), ("SV", "USD"), ("CL", "CLP"), ("AR", "ARS"), ("DO", "DOP"), ("UY", "UYU"), ("PY", "PYG"), ("BO", "BOB"), ("CR", "CRC"), ("GT", "GTQ"), ("HN", "HNL"), ("NI", "NIO"))
+FECHA = "2026-08-25"
 FECHA_METODOLOGIA = "2026-08-20"
 
 R1 = "docs/INVESTIGACION_PRECIOS_RONDA_1.md"
@@ -29,11 +29,22 @@ R3 = "docs/INVESTIGACION_PRECIOS_RONDA_3.md"
 R4 = "docs/INVESTIGACION_PRECIOS_RONDA_4.md"
 R5 = "docs/INVESTIGACION_PRECIOS_RONDA_5_MANO_OBRA.md"
 R6 = "docs/INVESTIGACION_PRECIOS_RONDA_6_EQUIPOS.md"
+RPA = "docs/INVESTIGACION_PRECIOS_PA_SV.md"
+RCL = "docs/INVESTIGACION_PRECIOS_CL_AR.md"
+RAR = "docs/INVESTIGACION_PRECIOS_CL_AR.md"
+RDO = "docs/INVESTIGACION_PRECIOS_DO_UY_PY.md"
+RUY = "docs/INVESTIGACION_PRECIOS_DO_UY_PY.md"
+RPY = "docs/INVESTIGACION_PRECIOS_DO_UY_PY.md"
+RBO = "docs/INVESTIGACION_PRECIOS_BO_CR_GT.md"
+RCR = "docs/INVESTIGACION_PRECIOS_BO_CR_GT.md"
+RGT = "docs/INVESTIGACION_PRECIOS_BO_CR_GT.md"
+RHN = "docs/INVESTIGACION_PRECIOS_HN_NI.md"
+RNI = "docs/INVESTIGACION_PRECIOS_HN_NI.md"
 METODOLOGIA = "docs/METODOLOGIA_PRECIOS_REFERENCIA_LATAM.md"
 # Tasas de corte usadas solo para normalizar el precio base USD antes de
 # aplicarle el factor de mercado observado. El resultado queda congelado en
 # moneda nacional y con fecha; no se recalcula silenciosamente en producción.
-TASAS_CORTE = {"CO": 3128.65, "PE": 3.37, "MX": 17.06, "EC": 1.0}
+TASAS_CORTE = {"CO": 3128.65, "PE": 3.37, "MX": 17.06, "EC": 1.0, "PA": 1.0, "SV": 1.0, "CL": 925.90, "AR": 1497.38, "DO": 58.33, "UY": 40.21, "PY": 5946.10, "BO": 11.55, "CR": 449.39, "GT": 7.62, "HN": 26.82, "NI": 36.70}
 
 
 @dataclass(frozen=True)
@@ -64,29 +75,89 @@ REFERENCIAS: dict[str, dict[str, Referencia]] = {
         "PE": ref(31 / 42.5, 27.5 / 42.5, 35.5 / 42.5, R1),
         "MX": ref(240 / 50, 185 / 50, 295 / 50, R1),
         "EC": ref(8.5 / 50, 7.63 / 50, 10.5 / 50, R1),
+        "PA": ref(8.25 / 42.5, 7.99 / 42.5, 8.60 / 42.5, RPA),
+        "SV": ref(8.73 / 42.5, 7.90 / 42.5, 9.85 / 42.5, RPA),
+        "CL": ref(4790 / 25, 3590 / 25, 5090 / 25, RCL),
+        "AR": ref(11433 / 50, 9050 / 50, 14000 / 50, RAR),
+        "DO": ref(535 / 42.6, 440 / 42.6, 625 / 42.6, RDO),
+        "UY": ref(240 / 25, 225 / 25, 286 / 25, RUY),
+        "PY": ref(59000 / 50, 47000 / 50, 59000 / 50, RPY),
+        "BO": ref(54 / 50, 49 / 50, 79 / 50, RBO),
+        "CR": ref(6750 / 50, 6695 / 50, 7500 / 50, RCR),
+        "GT": ref(80.25 / 42.5, 68.42 / 42.5, 91.25 / 42.5, RGT),
+        "HN": ref(215 / 42.5, 180 / 42.5, 235 / 42.5, RHN),
+        "NI": ref(522.57 / 42.5, 400 / 42.5, 600 / 42.5, RNI),
     },
     "MT-ARENA": {
         "CO": ref(100_000, 80_000, 220_000, R1),
         "PE": ref(85, 50, 110, R1),
         "MX": ref(600, 280, 900, R1),
         "EC": ref(20, 18, 28, R1),
+        "PA": ref(34, 30, 38, RPA),
+        "SV": ref(35, 17, 38, RPA),
+        "CL": ref(33190, 16379, 38190, RCL),
+        "AR": ref(33500, 28000, 47644, RAR),
+        "DO": ref(1550, 1400, 1700, RDO),
+        "UY": ref(1200, 1000, 1400, RUY),
+        "PY": ref(104000, 90000, 120000, RPY),
+        "BO": ref(150, 130, 170, RBO),
+        "CR": ref(27470, 25000, 30000, RCR),
+        "GT": ref(180, 140, 220, RGT),
+        "HN": ref(500, 400, 600, RHN),
+        "NI": ref(600, 500, 700, RNI),
     },
     "MT-PIEDRA-PIC": {
         "CO": ref(115_000, 90_000, 240_000, R1),
         "PE": ref(100, 65, 140, R1),
         "MX": ref(500, 320, 750, R1),
         "EC": ref(20, 16, 25, R1),
+        "PA": ref(35, 30, 40, RPA),
+        "SV": ref(45.05, 22, 50, RPA),
+        "CL": ref(34500, 32190, 36190, RCL),
+        "AR": ref(40000, 31445, 67900, RAR),
+        "DO": ref(1700, 1500, 1850, RDO),
+        "UY": ref(1300, 1100, 1500, RUY),
+        "PY": ref(110000, 95000, 125000, RPY),
+        "BO": ref(160, 140, 180, RBO),
+        "CR": ref(28000, 25000, 31000, RCR),
+        "GT": ref(230, 180, 280, RGT),
+        "HN": ref(550, 450, 650, RHN),
+        "NI": ref(650, 550, 750, RNI),
     },
     "MT-ACERO-CAB": {
         "CO": ref(4_000, 3_650, 4_350, R1),
         # Perú quedó por diámetro/pieza; no se inventa una conversión a kg.
         "MX": ref(22, 17.5, 26, R1),
         "EC": ref(0.98, 0.85, 1.10, R1),
+        "PA": ref(1.10, 0.95, 1.25, RPA),
+        "SV": ref(1.15, 1.0, 1.35, RPA),
+        "CL": ref(1100, 900, 1300, RCL),
+        "AR": ref(1200, 1000, 1500, RAR),
+        "DO": ref(55, 48, 62, RDO),
+        "UY": ref(65, 55, 75, RUY),
+        "PY": ref(5500, 4800, 6200, RPY),
+        "BO": ref(12, 10, 14, RBO),
+        "CR": ref(700, 600, 800, RCR),
+        "GT": ref(14, 12, 16, RGT),
+        "HN": ref(28, 24, 32, RHN),
+        "NI": ref(38, 32, 44, RNI),
     },
     "MT-BLQ-15": {
         "CO": ref(2_600, 2_000, 3_200, R1),
         "MX": ref(17, 12, 22, R1),
         "EC": ref(0.43, 0.35, 0.50, R1),
+        "PA": ref(0.95, 0.71, 0.99, RPA),
+        "SV": ref(0.40, 0.35, 0.45, RPA),
+        "CL": ref(1840, 990, 1840, RCL),
+        "AR": ref(1500, 1300, 1800, RAR),
+        "DO": ref(42, 38, 50, RDO),
+        "UY": ref(70, 49, 84, RUY),
+        "PY": ref(5300, 5000, 5500, RPY),
+        "BO": ref(2.5, 2.0, 3.0, RBO),
+        "CR": ref(650, 550, 750, RCR),
+        "GT": ref(5.5, 4.5, 7.0, RGT),
+        "HN": ref(28, 22, 32, RHN),
+        "NI": ref(32, 28, 38, RNI),
     },
     "MT-LADRILLO": {
         "CO": ref(1_000, 500, 1_200, R1),
@@ -101,6 +172,18 @@ REFERENCIAS: dict[str, dict[str, Referencia]] = {
     "MT-CONC-210": {
         "CO": ref(525_000, 350_000, 700_000, R1, incluye_transporte="por_verificar"),
         "EC": ref(105, 95, 115, R1, incluye_transporte="por_verificar"),
+        "PA": ref(125, 100, 150, RPA, incluye_transporte="por_verificar"),
+        "SV": ref(135.35, 130, 145, RPA, incluye_transporte="por_verificar"),
+        "CL": ref(110000, 80000, 118405, RCL, incluye_transporte="por_verificar"),
+        "AR": ref(168478, 137655, 199876, RAR, incluye_transporte="por_verificar"),
+        "DO": ref(4500, 4000, 5000, RDO, incluye_transporte="por_verificar"),
+        "UY": ref(5500, 5000, 6000, RUY, incluye_transporte="por_verificar"),
+        "PY": ref(650000, 600000, 700000, RPY, incluye_transporte="por_verificar"),
+        "BO": ref(600, 500, 700, RBO, incluye_transporte="por_verificar"),
+        "CR": ref(55000, 50000, 60000, RCR, incluye_transporte="por_verificar"),
+        "GT": ref(900, 800, 1000, RGT, incluye_transporte="por_verificar"),
+        "HN": ref(4500, 4000, 5000, RHN, incluye_transporte="por_verificar"),
+        "NI": ref(5000, 4500, 5500, RNI, incluye_transporte="por_verificar"),
     },
     "MT-PYL-PLACA125": {
         "CO": ref(48_900 / 2.9768, 48_900 / 2.9768, 48_900 / 2.9768, R2),
@@ -143,6 +226,18 @@ REFERENCIAS: dict[str, dict[str, Referencia]] = {
         "PE": ref(160, 150, 170, R6, incluye_transporte="si"),
         "MX": ref(1_100, 800, 1_500, R6, incluye_transporte="no_confirmado"),
         "EC": ref(30, 30, 30, R6, incluye_transporte="no_confirmado", observaciones="Tarifa municipal por hora; validar equipo, operador, combustible y flete."),
+        "PA": ref(35, 30, 45, RPA, incluye_transporte="no_confirmado", observaciones="Tarifa horaria retroexcavadora en Panamá; validar operador, combustible y flete."),
+        "SV": ref(30, 25, 35, RPA, incluye_transporte="no_confirmado", observaciones="Tarifa horaria retroexcavadora en El Salvador; validar operador, combustible y flete."),
+        "CL": ref(30000, 25000, 35000, RCL, incluye_transporte="no_confirmado", observaciones="Tarifa horaria retroexcavadora en Chile; validar operador, combustible y flete."),
+        "AR": ref(35000, 30000, 40000, RAR, incluye_transporte="no_confirmado", observaciones="Tarifa horaria retroexcavadora en Argentina; validar operador, combustible y flete."),
+        "DO": ref(2500, 2000, 3000, RDO, incluye_transporte="no_confirmado", observaciones="Tarifa horaria retroexcavadora en RD; validar operador, combustible y flete."),
+        "UY": ref(1800, 1500, 2100, RUY, incluye_transporte="no_confirmado", observaciones="Tarifa horaria retroexcavadora en Uruguay; validar operador, combustible y flete."),
+        "PY": ref(120000, 100000, 140000, RPY, incluye_transporte="no_confirmado", observaciones="Tarifa horaria retroexcavadora en Paraguay; validar operador, combustible y flete."),
+        "BO": ref(180, 150, 210, RBO, incluye_transporte="no_confirmado", observaciones="Tarifa horaria retroexcavadora en Bolivia; validar operador, combustible y flete."),
+        "CR": ref(18000, 15000, 21000, RCR, incluye_transporte="no_confirmado", observaciones="Tarifa horaria retroexcavadora en Costa Rica; validar operador, combustible y flete."),
+        "GT": ref(180, 150, 220, RGT, incluye_transporte="no_confirmado", observaciones="Tarifa horaria retroexcavadora en Guatemala; validar operador, combustible y flete."),
+        "HN": ref(1500, 1200, 1800, RHN, incluye_transporte="no_confirmado", observaciones="Tarifa horaria retroexcavadora en Honduras; validar operador, combustible y flete."),
+        "NI": ref(1200, 1000, 1400, RNI, incluye_transporte="no_confirmado", observaciones="Tarifa horaria retroexcavadora en Nicaragua; validar operador, combustible y flete."),
     },
     "MQ-VOLQ": {
         "PE": ref(125, 110, 140, R6, incluye_transporte="si", observaciones="Tarifa horaria de volquete; confirmar capacidad, operador, combustible y mínimo."),
@@ -176,12 +271,36 @@ OFICIAL_GENERAL = {
     "PE": (69.75, 69.75, 69.75),
     "MX": (750, 650, 850),
     "EC": (21.67, 21.67, 21.67),
+    "PA": (45, 40, 50),
+    "SV": (28, 25, 35),
+    "CL": (55000, 45000, 65000),
+    "AR": (45624, 41136, 50784),
+    "DO": (2000, 1600, 2200),
+    "UY": (2412.65, 2000, 2600),
+    "PY": (125875, 107627, 130000),
+    "BO": (270, 220, 320),
+    "CR": (13991.86, 12436.41, 15500),
+    "GT": (220, 150, 250),
+    "HN": (800, 700, 1000),
+    "NI": (532.6, 400, 600),
 }
 AYUDANTE = {
     "CO": (72_500, 60_000, 85_000),
     "PE": (62.80, 62.80, 62.80),
     "MX": (400, 350, 450),
     "EC": (20.315, 20.00, 20.63),
+    "PA": (35, 30, 40),
+    "SV": (16, 13, 20),
+    "CL": (35000, 30000, 40000),
+    "AR": (38808, 34992, 43192),
+    "DO": (900, 800, 1000),
+    "UY": (1554.29, 1400, 1700),
+    "PY": (107627, 93000, 115000),
+    "BO": (140, 125, 170),
+    "CR": (13523.69, 12436.41, 14500),
+    "GT": (130, 100, 150),
+    "HN": (450, 400, 500),
+    "NI": (350, 300, 400),
 }
 
 

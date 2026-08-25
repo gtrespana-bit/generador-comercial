@@ -276,9 +276,10 @@ def test_matriz_espana_mano_obra_en_euros_de_mercado():
     filas = {f["codigo_recurso"]: f for f in _filas_matriz_espana()}
     oficial = float(filas["MO-OF1"]["precio_referencia"])
     peon = float(filas["MO-AYU"]["precio_referencia"])
-    # Tarifas facturadas en España (2026): oficial ~22-32 €/h, peón ~15-21 €/h.
-    assert 20 <= oficial <= 35, f"Oficial fuera de rango de mercado ES: {oficial}"
-    assert 13 <= peon <= 23, f"Peón fuera de rango de mercado ES: {peon}"
+    # Coste empresa España 2026 (revisión 2026-08-25): oficial ~18-25 €/h (20.50 medio), peón ~12-18 €/h (15 medio).
+    # Antes era tarifa autónomo con beneficio 22-32/15-21 y daba doble margen.
+    assert 17 <= oficial <= 26, f"Oficial fuera de rango coste empresa ES: {oficial}"
+    assert 11 <= peon <= 19, f"Peón fuera de rango coste empresa ES: {peon}"
     assert oficial > peon
 
 
@@ -400,7 +401,7 @@ def test_pais_de_nombre_espana_en_plantillas():
 
 
 def test_sql_de_carga_espana_generado():
-    ruta = RAIZ / "docs" / "cargar_precios_referencia_espana_2026-08-22.sql"
+    ruta = RAIZ / "docs" / "cargar_precios_referencia_espana_2026-08-25.sql"
     assert ruta.is_file(), "Falta el SQL de carga ES; ejecutar tools/generar_sql_precios_espana.py"
     texto = ruta.read_text(encoding="utf-8")
     assert "ES" in texto

@@ -24,7 +24,7 @@ from decimal import Decimal, ROUND_HALF_UP
 #
 # No son vinculantes: el usuario ve la tasa y la confirma antes de guardar.
 # Cada presupuesto congela su tasa al crearse.
-TASAS_ACTUALIZADAS = "2026-08-22"
+TASAS_ACTUALIZADAS = "2026-08-25"
 TASAS_SUGERIDAS: dict[str, float | None] = {
     "USD": 1.0,
     "PAB": 1.0,  # balboa, paridad con USD
@@ -39,9 +39,28 @@ TASAS_SUGERIDAS: dict[str, float | None] = {
     # EUR/USD 1,1677 (xe.com mid-market 22/08/2026; BCE 21/08: 1,1681)
     # -> 1 USD = 0,8564 EUR
     "EUR": 0.8564,
+    # CLP/USD 18/08/2026 (currency.me.uk 925.903, mid-market 913.16) → 925.90 adoptado
+    "CLP": 925.90,
+    # ARS/USD 08-11/08/2026 (pluang 1497.38, alanchand 1498.36) → 1497.38 adoptado
+    "ARS": 1497.38,
+    # DOP/USD 02-24/08/2026 (currency.me.uk 57.8169, Forbes 58.753, Xe 58.3369) → 58.33 adoptado
+    "DOP": 58.33,
+    # UYU/USD 05-18/08/2026 (Xe 40.2124, valutafx 40.248-40.28) → 40.21 adoptado
+    "UYU": 40.21,
+    # PYG/USD 08-24/08/2026 (pluang 5946.10, Xe 6009.42, RioTimes 5932) → 5946.10 adoptado
+    "PYG": 5946.10,
+    # BOB/USD 14-20/08/2026 (exchange-rates.org 11.551, pluang 11.58, tradingeconomics 11.5558) → 11.55 adoptado
+    "BOB": 11.55,
+    # CRC/USD 08-20/08/2026 (currency.me.uk 449.3937, pluang 446.30, currency.wiki 453.95) → 449.39 adoptado
+    "CRC": 449.39,
+    # GTQ/USD 07-16/08/2026 (pluang 7.6239, foreignexchange 7.6258, exchange-rates.org 7.629) → 7.62 adoptado
+    "GTQ": 7.62,
+    # HNL/USD 20/08/2026 (Xe 26.8228, pluang 26.8068) → 26.82 adoptado
+    "HNL": 26.82,
+    # NIO/USD 13-24/08/2026 (currency.me.uk 36.7, pluang 36.6243, Xe 36.759) → 36.70 adoptado
+    "NIO": 36.70,
 }
-# El resto de monedas del selector (CLP, ARS, UYU, PYG, BOB, DOP, CRC, GTQ,
-# HNL, NIO, BRL…) no se pre-rellenan: sin tasa verificada a la fecha de
+# El resto de monedas del selector (BRL…) no se pre-rellenan: sin tasa verificada a la fecha de
 # TASAS_ACTUALIZADAS. El usuario consulta «Tasa de hoy» o escribe la oficial.
 
 

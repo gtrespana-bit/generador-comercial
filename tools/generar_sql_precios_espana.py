@@ -14,7 +14,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 MATRIZ = ROOT / "basedatos_partidas/salida/precios_recursos_espana.csv"
-SALIDA = ROOT / "docs/cargar_precios_referencia_espana_2026-08-22.sql"
+SALIDA = ROOT / "docs/cargar_precios_referencia_espana_2026-08-25.sql"
 COLUMNAS = (
     "codigo_recurso", "pais_codigo", "moneda", "precio_referencia",
     "precio_min", "precio_max", "unidad_fuente", "fuente",
