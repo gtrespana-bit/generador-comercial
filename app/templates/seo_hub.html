@@ -4,9 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   {% include "_seo_head.html" %}
-  <link rel="icon" type="image/png" href="/static/icono.png">
+  {# Fonts y CSS diferido: fonts.css es ligero (~3 KB) y public.css se carga
+     en paralelo sin bloquear el render del above-the-fold. #}
   <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
-  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}">
+  <link rel="preload" href="{{ 'css/public.css' | asset }}" as="style">
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="{{ 'css/public.css' | asset }}"></noscript>
 </head>
 <body class="landing hub-page">
 {% include "_nav.html" %}
