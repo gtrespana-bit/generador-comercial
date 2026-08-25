@@ -10,9 +10,9 @@ from __future__ import annotations
 CUERPO_PAIS: dict[str, list[tuple[str, list[str]]]] = {
     "": [
         (
-            "Qué es un software de presupuestos de construcción",
+            "Qué es un software de presupuestos de obra",
             [
-                "Un software de presupuestos de construcción no es un Word con tabla. Es la herramienta con la que una constructora o un remodelador arma capítulos, partidas, cantidades, precios, IVA y un PDF que el cliente entiende. CotizaT está hecho para ese oficio en Latinoamérica: catálogo con análisis de precios unitarios, margen interno, horas de cuadrilla y envío por WhatsApp o email.",
+                "Un software de presupuestos de construcción no es un Word con tabla. Es la herramienta con la que una constructora o un reformista arma capítulos, partidas, cantidades, precios, IVA y un PDF que el cliente entiende. CotizaT está hecho para ese oficio en España y Latinoamérica: catálogo con análisis de precios unitarios, margen interno, horas de cuadrilla y envío por WhatsApp o email.",
                 "La mayoría de las empresas de 2 a 15 personas sigue cotizando en Excel. Funciona hasta que sube el cemento, el cliente pide dos cambios y nadie recuerda qué versión se aprobó. CotizaT guarda el catálogo una vez, recalcula en cascada y sella cada envío.",
             ],
         ),
@@ -24,10 +24,17 @@ CUERPO_PAIS: dict[str, list[tuple[str, list[str]]]] = {
             ],
         ),
         (
-            "Latinoamérica y España, un catálogo, nombres al mostrar",
+            "Cada país, su propio catálogo de precios",
             [
-                "El catálogo es uno. Al elegir Venezuela, Colombia, México, Ecuador, Perú o España cambian el vocabulario en pantalla, el IVA, el ID fiscal y la moneda de ejemplo. No clonamos seis bases de precios: evitamos que un mexicano vea «friso», un colombiano «zoclo» o un español «concreto».",
-                "Si tu mercado aún no está en el selector (Chile, Argentina, Uruguay…), puedes usar la versión genérica en USD. Abrir un país nuevo exige copy y fiscalidad propios, no un find-and-replace.",
+                "No es un catálogo genérico con un rate. Cada mercado tiene su referencia: España en EUR con NIF e IVA 21 % y terminología de reforma (pladur, falso techo, alicatado, fontanería); Colombia en COP con NIT e IVA 19 % (pañete, guardaescoba); México en MXN con RFC e IVA 16 %; Venezuela en USD o Bs con RIF e IVA 16 %.",
+                "Por eso el país se elige al entrar, y por eso CotizaT no conviertes \"friso\" a \"pañete\" con un find-and-replace: la landing, el ejemplo, el IVA, el ID fiscal y las referencias de precios cambian con el país. Elegir bien tu mercado no es cosmético; es lo que hace que los precios sean los de tu obra.",
+            ],
+        ),
+        (
+            "España, primer mercado europeo",
+            [
+                "España tiene un hueco claro para el pequeño reformista: cotizar reformas en EUR, con NIF, IVA 21 % y un presupuesto que el cliente pueda enviar a un albañil o a una gestoría. CotizaT nace con vocabulario español (pladur, falso techo, alicatado, fontanero), referencias nacionales en euros y BC3/FIEBDC-3 para quien trabaja con bases de precios.",
+                "El resto de mercados hispanos sigue siendo el foco: Venezuela, Colombia, México, Ecuador, Perú, Chile y Argentina. Todo corre en una sola aplicación, sin duplicar catálogos.",
             ],
         ),
     ],

@@ -48,16 +48,17 @@ from app.utils import (
 # ---------------------------------------------------------------------------
 
 def test_selector_expone_los_paises_foco_en_orden():
-    # El selector muestra los 18 países definidos en orden explícito:
-    # VE histórico, los 4 LatAm pioneros (CO/MX/EC/PE), los 11 países
-    # que se añadieron después (CL/AR/DO/UY/PY/BO/PA/CR/GT/HN/SV/NI) y
-    # España (ES) como primer mercado fuera de LatAm. El orden manda
-    # porque la landing, /pago, /acceso y /organizaciones/nueva iteran
-    # sobre la misma lista.
+    # El selector muestra los 18 países definidos en orden explícito.
+    # España (ES) va primero por ser mercado prioritario (EUR, NIF, IVA
+    # 21 % y referencias nacionales propias), y le sigue LatAm: el
+    # histórico VE, los pioneros CO/MX/EC/PE y el resto de países de la
+    # región. El orden manda porque landing, /pago, /acceso y
+    # /organizaciones/nueva iteran sobre la misma lista.
     codigos = [p["codigo"] for p in paises.lista_paises()]
     assert codigos == [
+        "ES",
         "VE", "CO", "MX", "EC", "PE", "CL", "AR", "DO", "UY", "PY",
-        "BO", "PA", "CR", "GT", "HN", "SV", "NI", "ES",
+        "BO", "PA", "CR", "GT", "HN", "SV", "NI",
     ], f"ORDEN_SELECTOR desactualizado: {codigos}"
 
 

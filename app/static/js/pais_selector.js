@@ -54,7 +54,7 @@
       } else if (p) {
         nota.textContent = "moneda de " + p.nombre + " · IVA " + p.iva + "%";
       } else {
-        nota.textContent = "USD de referencia · convierte a tu moneda local";
+        nota.textContent = "España en EUR · Latinoamérica en su moneda";
       }
     }
   }
@@ -65,10 +65,10 @@
 
     // Textos dinámicos por id
     texto("hero-kicker", p
-      ? p.bandera + " Sistema comercial para " + p.nombre + " · Construcción y remodelación"
-      : "🌎 Sistema comercial para España y Latinoamérica · Construcción y remodelación");
+      ? p.bandera + " Sistema comercial para " + p.nombre + " · Construcción y reformas · catálogo de precios propio"
+      : "🇪🇸 España · 🌎 Latinoamérica — Sistema comercial de obra y reformas · catálogo de precios por país");
     texto("banner-h2", p
-      ? "El catálogo más completo para presupuestar en " + p.nombre + "."
+      ? "El catálogo de " + p.nombre + ": precios de su mercado, no de otro país."
       : "El catálogo más completo para presupuestar en España y Latinoamérica.");
 
     var bannerP = document.getElementById("banner-p");
@@ -84,21 +84,23 @@
     }
 
     texto("banner-vocab", p
-      ? "✓ Terminología de " + p.nombre + ": " + p.vocab + "."
-      : "✓ Terminología hispana neutra con variantes locales: elige tu país y adapta los nombres.");
+      ? "✓ Catálogo y vocabulario de " + p.nombre + ": " + p.vocab + "."
+      : "✓ España: hormigón, pladur, falso techo, alicatado, fontanería. Cada país con su vocabulario.");
 
     var bannerMoneda = document.getElementById("banner-moneda");
     if (bannerMoneda) {
       if (p) {
         var m = "✓ ";
-        if (p.moneda !== "USD") {
-          m += "Precios convertidos a " + p.moneda + " con la tasa de referencia · o en US$ si prefieres. Cada presupuesto congela su tasa.";
+        if (p.codigo === "ES") {
+          m += "España en EUR con NIF e IVA 21 % · referencias de mercado espejo español. Cada presupuesto congela su tasa si trabajas en USD.";
+        } else if (p.moneda !== "USD") {
+          m += "Precios de " + p.nombre + " en " + p.moneda + " con la tasa de referencia · o en US$ si prefieres. Cada presupuesto congela su tasa.";
         } else {
-          m += "Precios en " + (p.moneda_local && p.moneda_local !== "USD" ? "USD o " + p.moneda_local : p.moneda) + " de referencia. Cada presupuesto congela su tasa si cambias de moneda.";
+          m += "Precios de " + p.nombre + " en " + (p.moneda_local && p.moneda_local !== "USD" ? "USD o " + p.moneda_local : p.moneda) + ". Cada presupuesto congela su tasa si cambias de moneda.";
         }
         bannerMoneda.textContent = m;
       } else {
-        bannerMoneda.textContent = "✓ Precios en USD de referencia · convierte a tu moneda local (COP, MXN, PEN, CLP, ARS…) en cada presupuesto.";
+        bannerMoneda.textContent = "✓ España en EUR con NIF e IVA 21 % · Latinoamérica en su moneda (MXN, COP, PEN…) con tasa congelada por presupuesto.";
       }
     }
 
@@ -114,32 +116,36 @@
     texto("franja-h2", p ? "Pensado para " + p.nombre + ", no adaptado después." : "Pensado para España y Latinoamérica, no adaptado después.");
     texto("franja-intro", p
       ? "No es una herramienta genérica traducida. CotizaT habla el idioma de la obra en " + p.nombre + ": precios, vocabulario y fiscalidad de aquí."
-      : "No es una herramienta genérica. CotizaT nace para construir en España y en Latinoamérica: precios en USD de referencia, vocabulario hispano y fiscalidad configurable por país.");
+      : "No es una herramienta genérica traducida. CotizaT nace para reformar en España (EUR, NIF, IVA 21 %, pladur y fontanería) y para construir en Latinoamérica. Cada país, su catálogo.");
     texto("franja-precio-p", p
-      ? "Cotiza en " + p.moneda + (p.moneda !== "USD" ? " (" + p.simbolo_local + ")" : "") + " o en USD como referencia regional. Sin conversiones improvisadas: tu tasa queda guardada en cada presupuesto."
-      : "Cotiza en USD como referencia regional o en tu moneda local (COP, MXN, PEN, CLP, ARS…). Tu tasa de referencia queda guardada en cada presupuesto.");
+      ? (p.codigo === "ES"
+        ? "Cotiza reformas en EUR con NIF e IVA 21 %, o en USD como referencia. Referencias de mercado españolas incluidas; tu tasa queda guardada en cada presupuesto."
+        : "Cotiza en " + p.moneda + (p.moneda !== "USD" ? " (" + p.simbolo_local + ")" : "") + " o en USD como referencia. Sin conversiones improvisadas: tu tasa queda guardada en cada presupuesto.")
+      : "España en euros con NIF e IVA 21 %; Latinoamérica en US$ o su moneda local (MXN, COP, PEN…). Tu tasa queda guardada en cada presupuesto.");
     texto("franja-vocab-p", p
-      ? p.vocab + ", y todos los nombres que usa tu cliente y tu cuadrilla en " + p.nombre + ", no los de otro país."
-      : "Concreto/hormigón, friso/revoque, cielo raso/cielorraso, rodapié/zócalo, plomero/gasfíter… Elige tu país y la landing habla tu obra.");
+      ? (p.codigo === "ES"
+        ? "Hormigón, pladur, falso techo, alicatado, fontanero. El vocabulario de tu cliente y tu cuadrilla en España, no el de otro país."
+        : p.vocab + ", y todos los nombres que usa tu cliente y tu cuadrilla en " + p.nombre + ", no los de otro país.")
+      : "Hormigón, pladur, falso techo, alicatado, fontanero en España; concreto/pañete/cielo raso en LatAm. Elige tu país y la landing habla tu obra.");
 
     // Bloque de moneda (stat del hero)
     actualizarMoneda(p);
 
     if (hint) hint.textContent = p
-      ? p.bandera + " Mostrando contenido para " + p.nombre + " · " + p.id_fiscal + " · IVA " + p.iva + "%"
-      : "Mostrando contenido genérico (España y Latinoamérica)";
+      ? p.bandera + " Catálogo de " + p.nombre + " · " + p.id_fiscal + " · IVA " + p.iva + "%"
+      : "Elige tu país para ver su catálogo de precios (España · LatAm)";
 
     // Título y meta description (opcional, sin recargar)
     try {
       document.title = p
         ? "CotizaT: software de presupuestos de obra en " + p.nombre
-        : "CotizaT: software de presupuestos de construcción";
+        : "CotizaT: software de presupuestos de obra para España y Latinoamérica";
     } catch (_) {}
     var meta = document.querySelector('meta[name="description"]');
     if (meta) {
       meta.setAttribute("content", p
-        ? "Software para presupuestos de obra y remodelación en " + p.nombre + ". Catálogo con APU, PDF profesional. 7 días gratis, sin tarjeta."
-        : "Software de presupuestos de construcción y remodelación para España y Latinoamérica. Catálogo con APU, margen, tiempos de cuadrilla y PDF profesional. 7 días gratis, sin tarjeta.");
+        ? "Software para presupuestos de obra y reformas en " + p.nombre + ". Catálogo de precios de su mercado, APU, PDF profesional. 7 días gratis, sin tarjeta."
+        : "Software de presupuestos de obra para España y Latinoamérica. Catálogo de precios por país, APU, margen, tiempos y PDF profesional. 7 días gratis, sin tarjeta.");
     }
 
     // Normalizar select

@@ -202,25 +202,27 @@ _LANDING: dict[str, dict] = {
     "": {
         "title": "CotizaT: software de presupuestos de construcción",
         "description": (
-            "Software de presupuestos de construcción y remodelación para "
-            "Latinoamérica. Catálogo con APU, margen, tiempos de cuadrilla y "
-            "PDF profesional. 7 días gratis, sin tarjeta."
+            "Software de presupuestos de construcción y reformas para España y "
+            "Latinoamérica. Cada país con su catálogo de precios, IVA y NIF/RIF/RFC. "
+            "APU, margen y PDF profesional. 7 días gratis."
         ),
-        "h1": "Software de presupuestos de construcción para Latinoamérica",
+        "h1": "Software de presupuestos de obra para España y Latinoamérica",
         "h1_resalte": "margen, tiempos y cierre",
         "sub": (
             "CotizaT convierte tu catálogo y tus precios en presupuestos de obra "
-            "claros, con coste interno, beneficio y horas de cuadrilla. PDF con "
-            "tu logo, listo para WhatsApp. Venezuela, Colombia, México, Ecuador, Perú y España."
+            "claros, con coste interno, beneficio y horas de cuadrilla. España con "
+            "precios en EUR, NIF e IVA 21 %; Latinoamérica con su moneda y fiscalidad. "
+            "PDF con tu logo, listo para WhatsApp."
         ),
-        "kicker": "Sistema comercial para Latinoamérica y España · Construcción y remodelación",
+        "kicker": "Sistema comercial para España y Latinoamérica · Construcción y reformas",
         "faq": [
             {
-                "q": "¿CotizaT sirve para presupuestos de construcción en Latinoamérica y España?",
+                "q": "¿CotizaT sirve para presupuestos de construcción en España y Latinoamérica?",
                 "a": (
-                    "Sí. Está hecho para constructoras pequeñas, remodeladores y "
-                    "contratistas de Venezuela, Colombia, México, Ecuador, Perú y España. "
-                    "Configuras moneda, IVA e ID fiscal (RIF, NIT, RFC, RUC, NIF) al registrarte."
+                    "Sí. Está hecho para constructoras pequeñas, reformistas y "
+                    "contratistas de España, Venezuela, Colombia, México, Ecuador y Perú. "
+                    "Cada país tiene su catálogo de precios, su moneda, su IVA y su ID fiscal "
+                    "(NIF, RIF, NIT, RFC, RUC) y se elige al entrar."
                 ),
             },
             {

@@ -34,11 +34,14 @@ h1,h2,h3,h4{letter-spacing:-.025em;color:var(--text)}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:.45rem;padding:.62rem 1.15rem;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text);font:inherit;font-size:.9rem;font-weight:600;letter-spacing:-.01em;cursor:pointer;text-decoration:none;white-space:nowrap}
 .btn-primary{background:linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,0) 55%),var(--accent);border-color:#0e3261;color:#fff;box-shadow:0 1px 0 rgba(255,255,255,.22) inset,0 6px 16px var(--accent-glow)}
 .btn-secondary{background:var(--accent-soft);border-color:transparent;color:var(--accent-h);box-shadow:none}
-.pais-bar{background:linear-gradient(90deg,#0e3261 0%,#123f78 55%,#1a4a8c 100%);color:#fff;border-bottom:1px solid rgba(255,255,255,.12);font-size:.88rem}
-.pais-bar-int{max-width:1080px;margin:0 auto;padding:.55rem 1.5rem;display:flex;align-items:center;gap:.9rem;flex-wrap:wrap}
-.pais-bar-label{font-weight:800;letter-spacing:.02em;white-space:nowrap}
-.pais-bar select{appearance:none;-webkit-appearance:none;background:#fff;color:var(--text);border:0;border-radius:999px;padding:.32rem 2rem .32rem .75rem;font:inherit;font-size:.86rem;font-weight:600;min-width:220px}
-.pais-bar-hint{color:rgba(255,255,255,.84);font-size:.82rem;font-weight:500;white-space:nowrap}
+.pais-bar{background:linear-gradient(95deg,#071d3f 0%,#0a2a56 55%,#104477 100%);color:#fff;border-bottom:1px solid rgba(255,255,255,.12);font-size:.86rem;box-shadow:0 8px 30px rgba(7,29,63,.18)}
+.pais-bar-int{max-width:1160px;margin:0 auto;padding:.6rem 1.5rem;display:flex;align-items:center;gap:.7rem;flex-wrap:wrap}
+.pais-bar-label{font-size:1.02rem;line-height:1;white-space:nowrap}
+.pais-bar-strong{font-weight:850;letter-spacing:-.015em;white-space:nowrap;color:#fff}
+@supports ((-webkit-background-clip:text) or (background-clip:text)){.pais-bar-strong{background:linear-gradient(90deg,#fff,rgba(255,255,255,.72));-webkit-background-clip:text;background-clip:text;color:transparent}}
+.pais-bar select{appearance:none;-webkit-appearance:none;background:#fff;color:var(--text);border:0;border-radius:999px;padding:.36rem 2.1rem .36rem .85rem;font:inherit;font-size:.86rem;font-weight:650;min-width:230px;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,.22)}
+.pais-bar-badge{display:inline-flex;align-items:center;gap:.35rem;padding:.28rem .72rem;border-radius:999px;border:1px solid rgba(229,174,60,.4);background:rgba(229,174,60,.13);color:#f3d38a;font-size:.76rem;font-weight:750;white-space:nowrap}
+.pais-bar-hint{color:rgba(255,255,255,.86);font-size:.8rem;font-weight:520;white-space:nowrap}
 .landing .nav{max-width:none;width:100%;margin:0 auto;padding:1.1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:saturate(160%) blur(12px);-webkit-backdrop-filter:saturate(160%) blur(12px);border-bottom:1px solid var(--border)}
 .landing .nav-links{display:flex;align-items:center;gap:.25rem}
 .landing .nav a.entrar,.landing .nav a.nav-item{color:var(--text-secondary);font-weight:600;font-size:.9rem;padding:.4rem .7rem;border-radius:8px;white-space:nowrap}
@@ -57,6 +60,12 @@ h1,h2,h3,h4{letter-spacing:-.025em;color:var(--text)}
 .landing .acciones{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:flex-start}
 .landing .hero .btn{font-size:.95rem;padding:.72rem 1.3rem}
 .landing .hero-letra-pequena{margin-top:.85rem;font-size:.85rem;color:var(--text-soft)}
+.landing .hero-mercados{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.55rem;max-width:560px;margin:1.25rem 0 0}
+.landing .hero-mercado{display:flex;flex-direction:column;gap:.05rem;padding:.55rem .7rem;border:1px solid var(--border);border-radius:13px;background:color-mix(in srgb,var(--surface) 82%,transparent);color:var(--text);font-size:.8rem;font-weight:800;letter-spacing:-.015em;text-decoration:none;transition:border-color 160ms ease,box-shadow 160ms ease}
+.landing .hero-mercado span{font-size:1rem;line-height:1}
+.landing .hero-mercado small{color:var(--text-muted);font-weight:650;font-size:.7rem}
+.landing .hero-mercado:hover{border-color:var(--accent-light);box-shadow:0 10px 24px var(--accent-glow)}
+.landing .hero-mercado-mas{align-items:center;justify-content:center;color:var(--accent-h);background:var(--accent-soft);border-style:dashed}
 .landing .hero-outcomes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem;max-width:560px;margin:1.35rem 0 0}
 .landing .hero-outcome{display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-rows:auto auto;column-gap:.65rem;align-items:center;padding:.75rem .85rem;border:1px solid var(--border);border-radius:14px;background:color-mix(in srgb,var(--surface) 78%,transparent)}
 .landing .hero-outcome>span{grid-row:1/span 2;display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:var(--accent-soft);font-size:1.08rem}
@@ -93,6 +102,7 @@ h1,h2,h3,h4{letter-spacing:-.025em;color:var(--text)}
   .pais-bar select{min-width:180px}
   .pais-bar-hint{display:none}
   .landing .hero{padding:3.4rem 1.2rem 4.2rem}
+  .landing .hero-mercados{margin-left:auto;margin-right:auto}
   .landing .hero-outcomes{grid-template-columns:1fr}
   .landing .hero-outcome{text-align:left}
 }

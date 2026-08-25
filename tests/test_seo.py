@@ -151,7 +151,7 @@ def test_landing_pais_tiene_cuerpo_propio_y_faq_visible():
 
 def test_paginas_estaticas_no_heredan_faq_de_la_home():
     """Cómo funciona, planes y mapa no deben publicar el FAQPage de ``/``."""
-    pregunta_home = "¿CotizaT sirve para presupuestos de construcción en Latinoamérica y España?"
+    pregunta_home = "¿CotizaT sirve para presupuestos de construcción en España y Latinoamérica?"
     with _cliente() as client:
         home = client.get("/").text
         mapa = client.get("/mapa-del-sitio").text

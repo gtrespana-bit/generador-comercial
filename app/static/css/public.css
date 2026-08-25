@@ -433,6 +433,7 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
 .landing .comparativa { contain-intrinsic-size: auto 1100px; }
 .landing .tour { contain-intrinsic-size: auto 720px; }
 .landing .banner-catalogo { contain-intrinsic-size: auto 640px; }
+.landing .flagship { contain-intrinsic-size: auto 820px; }
 .landing .nav {
   max-width: none;
   width: 100%;
@@ -877,6 +878,55 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
   font-size: 0.7rem;
   font-weight: 800;
   flex: 0 0 auto;
+}
+
+/* Mercados disponibles — España primero, cada uno con su catálogo. */
+.landing .hero-mercados {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 0.55rem;
+  max-width: 560px;
+  margin: 1.25rem 0 0;
+}
+.landing .hero-mercado {
+  display: flex;
+  flex-direction: column;
+  gap: 0.05rem;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+  color: var(--text);
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: -0.015em;
+  text-decoration: none;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+.landing .hero-mercado span {
+  font-size: 1rem;
+  line-height: 1;
+}
+.landing .hero-mercado small {
+  color: var(--text-muted);
+  font-weight: 650;
+  font-size: 0.7rem;
+}
+.landing .hero-mercado:hover {
+  border-color: var(--accent-light);
+  box-shadow: 0 10px 24px var(--accent-glow);
+  transform: translateY(-2px);
+}
+.landing .hero-mercado[aria-current="true"] {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-soft-strong), 0 10px 24px var(--accent-glow);
+}
+.landing .hero-mercado-mas {
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-h);
+  background: var(--accent-soft);
+  border-style: dashed;
 }
 
 /* Resumen inmediato de valor: deja claro arriba del todo que no es solo PDF. */
@@ -3665,58 +3715,310 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
   text-align: left;
 }
 
-/* ───────────────────── País selector (landing adaptativa Semana 1) ───────────────────── */
+/* ───────────────────── País selector (landing adaptativa · catálogo por país) ── */
 .pais-bar {
-  background: linear-gradient(90deg, #0e3261 0%, #123f78 55%, #1a4a8c 100%);
+  background:
+    radial-gradient(520px 220px at 8% -20%, rgba(229,174,60,0.22), transparent 60%),
+    radial-gradient(720px 300px at 100% -30%, rgba(66,133,244,0.26), transparent 55%),
+    linear-gradient(95deg, #071d3f 0%, #0a2a56 55%, #104477 100%);
   color: #fff;
   border-bottom: 1px solid rgba(255,255,255,0.12);
-  font-size: 0.88rem;
+  font-size: 0.86rem;
+  box-shadow: 0 8px 30px rgba(7,29,63,0.18);
 }
 .pais-bar-int {
-  max-width: 1080px;
+  max-width: 1160px;
   margin: 0 auto;
-  padding: 0.55rem 1.5rem;
+  padding: 0.6rem 1.5rem;
   display: flex;
   align-items: center;
-  gap: 0.9rem;
+  gap: 0.7rem;
   flex-wrap: wrap;
 }
 .pais-bar-label {
-  font-weight: 800;
-  letter-spacing: 0.02em;
+  font-size: 1.02rem;
+  line-height: 1;
   white-space: nowrap;
+}
+.pais-bar-strong {
+  font-weight: 850;
+  letter-spacing: -0.015em;
+  white-space: nowrap;
+  color: #fff;
+}
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .pais-bar-strong {
+    background: linear-gradient(90deg, #fff, rgba(255,255,255,0.72));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
 }
 .pais-bar select {
   appearance: none;
   -webkit-appearance: none;
   background: #fff;
   color: var(--text);
-  border: 1px solid rgba(255,255,255,0.0);
+  border: 1px solid rgba(255,255,255,0.15);
   border-radius: 999px;
-  padding: 0.32rem 2rem 0.32rem 0.75rem;
+  padding: 0.36rem 2.1rem 0.36rem 0.85rem;
   font: inherit;
   font-size: 0.86rem;
-  font-weight: 600;
+  font-weight: 650;
   cursor: pointer;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.22);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23123f78' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 0.6rem center;
-  min-width: 220px;
+  background-position: right 0.65rem center;
+  min-width: 230px;
 }
 .pais-bar select:focus {
   outline: 2px solid #fff;
   outline-offset: 2px;
 }
+.pais-bar-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.28rem 0.72rem;
+  border-radius: 999px;
+  border: 1px solid rgba(229,174,60,0.4);
+  background: rgba(229,174,60,0.13);
+  color: #f3d38a;
+  font-size: 0.76rem;
+  font-weight: 750;
+  white-space: nowrap;
+}
 .pais-bar-hint {
-  color: rgba(255,255,255,0.84);
-  font-size: 0.82rem;
-  font-weight: 500;
+  color: rgba(255,255,255,0.86);
+  font-size: 0.8rem;
+  font-weight: 520;
   white-space: nowrap;
 }
 @media (max-width: 640px) {
   .pais-bar-int { padding: 0.6rem 1.2rem; gap: 0.6rem; }
   .pais-bar select { min-width: 180px; }
   .pais-bar-hint { display: none; }
+}
+
+/* ───────────────────── Landing · mejores funciones (a primera vista) ─────────── */
+.landing .flagship {
+  max-width: 1080px;
+  padding-top: 3.2rem;
+  padding-bottom: 4.2rem;
+  position: relative;
+}
+.landing .flagship::before {
+  content: "";
+  position: absolute;
+  inset: 0 -30px;
+  background:
+    radial-gradient(620px 300px at 8% 0%, rgba(18, 63, 120, 0.08), transparent 60%),
+    radial-gradient(520px 260px at 96% 20%, rgba(229, 174, 60, 0.09), transparent 58%);
+  pointer-events: none;
+}
+.landing .flagship-intro {
+  position: relative;
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 2.1rem;
+}
+.landing .flagship-intro h2 { margin-bottom: .75rem; }
+.landing .flagship-intro .intro { margin: 0 auto; }
+.landing .flagship-grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+.landing .fl-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .9rem;
+  padding: 1.25rem 1.2rem 1.1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow-xs);
+  overflow: hidden;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+.landing .fl-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--gold));
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+.landing .fl-card:hover,
+.landing .fl-card:focus-within {
+  transform: translateY(-4px);
+  border-color: var(--accent-light);
+  box-shadow: 0 18px 38px rgba(18, 63, 120, 0.12);
+}
+.landing .fl-card:hover::before,
+.landing .fl-card:focus-within::before { opacity: 1; }
+.landing .fl-ico {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--accent) 0%, #2f6bd8 100%);
+  color: #fff;
+  font-size: 1.25rem;
+  box-shadow: 0 8px 20px rgba(18, 63, 120, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+.landing .fl-body h3 {
+  margin: .15rem 0 .35rem;
+  font-size: 1.02rem;
+  font-weight: 850;
+  letter-spacing: -.02em;
+}
+.landing .fl-body p {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: .87rem;
+  line-height: 1.55;
+}
+.landing .fl-proof {
+  grid-column: 1 / -1;
+  justify-self: start;
+  margin-top: .35rem;
+  padding: .3rem .72rem;
+  border-radius: 999px;
+  border: 1px solid var(--accent-light);
+  background: var(--accent-soft);
+  color: var(--accent-h);
+  font-size: .74rem;
+  font-weight: 750;
+  letter-spacing: -.01em;
+}
+.landing .flagship-cta {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: .7rem;
+  margin-top: 2rem;
+}
+@media (max-width: 900px) {
+  .landing .flagship-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 620px) {
+  .landing .flagship-grid { grid-template-columns: 1fr; }
+  .landing .fl-card { padding: 1.1rem 1rem .95rem; }
+}
+
+/* ───────────────────── Landing · catálogo por país (premium) ─────────────────── */
+.landing .mercados {
+  max-width: 1080px;
+  padding-top: 3.2rem;
+  padding-bottom: 4.2rem;
+  position: relative;
+}
+.landing .mercados::before {
+  content: "";
+  position: absolute;
+  inset: 0 -30px;
+  background:
+    radial-gradient(700px 340px at 92% -8%, rgba(18,63,120,0.09), transparent 60%),
+    radial-gradient(560px 300px at 2% 90%, rgba(229,174,60,0.08), transparent 58%);
+  pointer-events: none;
+}
+.landing .mercados-intro {
+  position: relative;
+  text-align: center;
+  max-width: 860px;
+  margin: 0 auto 2.1rem;
+}
+.landing .mercados-intro h2 { margin-bottom: .75rem; }
+.landing .mercados-intro .intro { margin: 0 auto; }
+.landing .mercado-grid {
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  display: grid;
+}
+.landing .mercado-cab,
+.landing .mercado-fila {
+  display: grid;
+  grid-template-columns: 1.35fr 1.1fr .7fr 1.6fr;
+  align-items: center;
+  gap: .9rem;
+  padding: .95rem 1.1rem;
+}
+.landing .mercado-cab {
+  background:
+    radial-gradient(420px 180px at 100% 0%, rgba(229,174,60,0.14), transparent 60%),
+    linear-gradient(135deg, #0a2a56, #071d3f);
+  color: rgba(255,255,255,0.66);
+  font-size: .72rem;
+  font-weight: 850;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.landing .mercado-fila {
+  border-top: 1px solid var(--border);
+  color: var(--text);
+  text-decoration: none;
+  transition: background 160ms ease, border-color 160ms ease;
+}
+.landing .mercado-fila:hover {
+  background: var(--accent-soft);
+}
+.landing .mercado-fila.es-activo {
+  background: var(--accent-soft-strong);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+.landing .mercado-nombre {
+  font-weight: 800;
+  letter-spacing: -.015em;
+  font-size: .95rem;
+}
+.landing .mercado-moneda,
+.landing .mercado-fiscal {
+  color: var(--text-secondary);
+  font-size: .84rem;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+.landing .mercado-fiscal {
+  color: var(--accent-h);
+  font-weight: 800;
+}
+.landing .mercado-vocab {
+  color: var(--text-soft);
+  font-size: .82rem;
+  font-weight: 560;
+  line-height: 1.4;
+}
+.landing .mercados-mas {
+  position: relative;
+  margin: 1.2rem auto 0;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: .85rem;
+  font-weight: 600;
+}
+@media (max-width: 860px) {
+  .landing .mercado-cab,
+  .landing .mercado-fila { grid-template-columns: 1.1fr .9fr .6fr; }
+  .landing .mercado-vocab { display: none; }
+  .landing .mercado-cab { padding: .8rem 1rem; }
+}
+@media (max-width: 620px) {
+  .landing .mercado-cab,
+  .landing .mercado-fila { grid-template-columns: 1fr auto; gap: .3rem .8rem; }
+  .landing .mercado-fiscal { display: none; }
+  .landing .mercado-moneda { grid-column: 1 / -1; }
+  .landing .mercados-mas { padding: 0 1rem; }
 }
 
 /* ───────────────────── Landing · flujo real del contratista ───────────────────── */
@@ -4006,3 +4308,88 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
 }
 .guia-articulo { padding: 2.4rem 1.5rem 1rem; max-width: 760px; margin: 0 auto; }
 .guia-articulo .hub-bloque p { margin: 0 0 0.85rem; }
+
+/* ───────────────────── Landing · pulido premium global ───────────────────── */
+/* Refinamientos encima de estilos de sección existentes: elevan la sensación
+   premium sin tocar el layout ni el primer viewport (se aplican cuando llega
+   public.css, tras el CSS crítico). */
+.landing .section-kicker {
+  background: linear-gradient(120deg, var(--accent-soft), rgba(229,174,60,.14));
+  border-color: rgba(229,174,60,.5);
+}
+.landing .hero {
+  background:
+    radial-gradient(900px 480px at 12% -12%, rgba(18,63,120,.12), transparent 55%),
+    radial-gradient(720px 420px at 100% 0%, rgba(229,174,60,.08), transparent 52%);
+}
+.landing .hero::before {
+  background:
+    radial-gradient(820px 440px at 45% -18%, rgba(18,63,120,.16), transparent 58%),
+    radial-gradient(620px 360px at 90% 8%, rgba(229,174,60,.11), transparent 55%);
+}
+.landing .hero-outcome {
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  border-color: color-mix(in srgb, var(--border) 70%, var(--accent-light));
+  box-shadow: 0 10px 28px rgba(18,63,120,.07), inset 0 1px 0 rgba(255,255,255,.7);
+}
+.landing .hero-outcome > span {
+  background: linear-gradient(135deg, var(--accent) 0%, #2f6bd8 100%);
+  color: #fff;
+  box-shadow: 0 6px 16px rgba(18,63,120,.22), inset 0 1px 0 rgba(255,255,255,.28);
+}
+.landing .hero-command {
+  box-shadow: 0 34px 70px rgba(7,29,63,.18), 0 10px 24px rgba(18,63,120,.10);
+  border-color: rgba(18,63,120,.18);
+}
+.landing .btn-primary {
+  background: linear-gradient(180deg, rgba(255,255,255,.2), rgba(255,255,255,0) 55%), linear-gradient(135deg, #123f78 0%, #2f6bd8 62%, #1a4a8c 100%);
+  border-color: #0e3261;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.28), 0 12px 26px rgba(18,63,120,.28);
+  position: relative;
+  overflow: hidden;
+}
+.landing .btn-primary::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,.24) 48%, transparent 62%);
+  transform: translateX(-120%);
+  transition: transform 700ms ease;
+}
+.landing .btn-primary:hover::after { transform: translateX(120%); }
+.landing .btn-secondary {
+  background: rgba(255,255,255,.72);
+  border: 1px solid rgba(229,174,60,.45);
+  color: var(--accent-h);
+  backdrop-filter: blur(6px);
+}
+.landing .ventaja,
+.landing .tarjeta,
+.landing .apu-lateral {
+  box-shadow: 0 12px 30px rgba(18,63,120,.06), inset 0 1px 0 rgba(255,255,255,.7);
+  border-color: color-mix(in srgb, var(--border) 74%, var(--accent-light));
+}
+.landing .ventaja-icon,
+.landing .tarjeta .icon {
+  background: linear-gradient(135deg, var(--accent) 0%, #2f6bd8 100%);
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(18,63,120,.2), inset 0 1px 0 rgba(255,255,255,.25);
+}
+.landing .apu-card {
+  box-shadow: 0 30px 60px rgba(7,29,63,.16), 0 8px 20px rgba(18,63,120,.10);
+  border-color: rgba(18,63,120,.16);
+}
+.landing .window {
+  box-shadow: 0 40px 90px rgba(7,29,63,.22), 0 12px 30px rgba(18,63,120,.12);
+  border-color: rgba(18,63,120,.2);
+}
+.landing .franja {
+  border-top: 1px solid rgba(229,174,60,.24);
+}
+.landing .comp-tabla th,
+.landing .comp-tabla td {
+  border-color: color-mix(in srgb, var(--border) 70%, var(--accent-light));
+}
+.landing .comp-cta-col {
+  background: linear-gradient(135deg, #0a2a56, #071d3f);
+}
