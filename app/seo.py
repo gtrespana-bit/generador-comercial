@@ -667,6 +667,147 @@ _LANDING: dict[str, dict] = {
             },
         ],
     },
+    "DO": {
+        "title": "CotizaT: software de presupuestos y APU en República Dominicana",
+        "description": (
+            "Software de presupuestos de construcción para República Dominicana. RNC, ITBIS 18 %, "
+            "DOP, hormigón y pañete. Catálogo con APU. 7 días gratis, sin tarjeta."
+        ),
+        "h1": "Software de presupuestos y APU para construcción en República Dominicana",
+        "h1_resalte": "pesos dominicanos, RNC e ITBIS 18 %",
+        "sub": (
+            "Presupuesta obra y remodelación en DOP, con RNC e ITBIS 18 %. Catálogo "
+            "con análisis de precios unitarios, hormigón, pañete, plafón y "
+            "plomero. PDF profesional para WhatsApp. Precios de referencia en DOP "
+            "con fuentes de RD (MOPC, Ferretería Americana, Ferremix, SonProject)."
+        ),
+        "kicker": "🇩🇴 Sistema comercial para República Dominicana · Construcción y remodelación",
+        "faq": [
+            {
+                "q": "¿Está pensado para constructoras en República Dominicana?",
+                "a": (
+                    "Sí. El espacio nace en DOP, ITBIS 18 % y RNC. Terminología "
+                    "local: hormigón, pañete, plafón, zócalo, plomero, block, varilla."
+                ),
+            },
+            {
+                "q": "¿Incluye APU con precios de República Dominicana?",
+                "a": (
+                    "Cada partida trae APU editable con referencias nacionales en DOP: "
+                    "cemento RD$535 por funda 94lb, block 6'' RD$42, arena RD$1.550/m3, grava RD$1.700/m3. "
+                    "El resto es referencia derivada de canasta nacional."
+                ),
+            },
+            {
+                "q": "¿El cliente firma en línea?",
+                "a": (
+                    "Puedes enviar un enlace privado opcional. Lo habitual es el "
+                    "PDF por WhatsApp, que es como ya cierras en Santo Domingo o Santiago."
+                ),
+            },
+            {
+                "q": "¿Emite comprobante fiscal DGII?",
+                "a": (
+                    "No. Los documentos son comerciales y no sustituyen el comprobante "
+                    "fiscal que te exija DGII. El ITBIS 18 % lo configuras tú."
+                ),
+            },
+        ],
+    },
+    "UY": {
+        "title": "CotizaT: software de presupuestos y APU en Uruguay",
+        "description": (
+            "Software de presupuestos de construcción para Uruguay. RUT, IVA 22 %, "
+            "UYU, hormigón y revoque. Catálogo con APU. 7 días gratis, sin tarjeta."
+        ),
+        "h1": "Software de presupuestos y APU para construcción en Uruguay",
+        "h1_resalte": "pesos uruguayos, RUT e IVA 22 %",
+        "sub": (
+            "Presupuesta obra y remodelación en UYU, con RUT e IVA 22 %. Catálogo "
+            "con análisis de precios unitarios, hormigón, revoque, cielorraso y "
+            "sanitario. PDF profesional para WhatsApp. Precios de referencia en UYU "
+            "con fuentes de Uruguay (SUNCA laudo 2025-2026, Barraca Central, EMAT, Sodimac UY)."
+        ),
+        "kicker": "🇺🇾 Sistema comercial para Uruguay · Construcción y remodelación",
+        "faq": [
+            {
+                "q": "¿Está pensado para constructoras en Uruguay?",
+                "a": (
+                    "Sí. El espacio nace en UYU, IVA 22 % y RUT. Terminología "
+                    "local: hormigón, revoque, cielorraso, zócalo, sanitario, varilla, malla sima."
+                ),
+            },
+            {
+                "q": "¿Incluye APU con precios de Uruguay?",
+                "a": (
+                    "Cada partida trae APU editable con referencias nacionales en UYU: "
+                    "cemento $240 por bolsa 25kg, bloque 15x19x39 $70, arena $1.200/m3, hormigón $5.500/m3. "
+                    "El resto es referencia derivada de canasta nacional."
+                ),
+            },
+            {
+                "q": "¿El cliente firma en línea?",
+                "a": (
+                    "Puedes enviar un enlace privado opcional. Lo habitual es el "
+                    "PDF por WhatsApp, que es como ya cierras en Montevideo o Maldonado."
+                ),
+            },
+            {
+                "q": "¿Emite factura electrónica de DGI?",
+                "a": (
+                    "No. Los documentos son comerciales y no sustituyen la factura "
+                    "electrónica que te exija DGI. El IVA 22 % lo configuras tú."
+                ),
+            },
+        ],
+    },
+    "PY": {
+        "title": "CotizaT: software de presupuestos y APU en Paraguay",
+        "description": (
+            "Software de presupuestos de construcción para Paraguay. RUC, IVA 10 %, "
+            "PYG, hormigón y revoque. Catálogo con APU. 7 días gratis, sin tarjeta."
+        ),
+        "h1": "Software de presupuestos y APU para construcción en Paraguay",
+        "h1_resalte": "guaraníes, RUC e IVA 10 %",
+        "sub": (
+            "Presupuesta obra y remodelación en PYG, con RUC e IVA 10 %. Catálogo "
+            "con análisis de precios unitarios, hormigón, revoque, cielorraso y "
+            "plomero. PDF profesional para WhatsApp. Precios de referencia en PYG "
+            "con fuentes de Paraguay (MTESS laudo, INC, Costeo.com.py)."
+        ),
+        "kicker": "🇵🇾 Sistema comercial para Paraguay · Construcción y remodelación",
+        "faq": [
+            {
+                "q": "¿Está pensado para constructoras en Paraguay?",
+                "a": (
+                    "Sí. El espacio nace en PYG, IVA 10 % y RUC. Terminología "
+                    "local: hormigón, revoque, cielorraso, zócalo, plomero, varilla, encadenado. Sin decimales en guaraníes."
+                ),
+            },
+            {
+                "q": "¿Incluye APU con precios de Paraguay?",
+                "a": (
+                    "Cada partida trae APU editable con referencias nacionales en PYG: "
+                    "cemento Gs 59.000 por bolsa 50kg, bloque Gs 5.300, piedra bruta Gs 104.000/m3, hormigón Gs 650.000/m3. "
+                    "El resto es referencia derivada de canasta nacional."
+                ),
+            },
+            {
+                "q": "¿El cliente firma en línea?",
+                "a": (
+                    "Puedes enviar un enlace privado opcional. Lo habitual es el "
+                    "PDF por WhatsApp, que es como ya cierras en Asunción o Ciudad del Este."
+                ),
+            },
+            {
+                "q": "¿Emite factura electrónica de la SET?",
+                "a": (
+                    "No. Los documentos son comerciales y no sustituyen la factura "
+                    "electrónica que te exija la SET. El IVA 10 % lo configuras tú."
+                ),
+            },
+        ],
+    },
     "ES": {
         "title": "CotizaT: software de presupuestos de obra y reformas para España",
         "description": (
@@ -986,7 +1127,7 @@ def jsonld_website(request: Request | None = None) -> dict:
         "@type": "WebSite",
         "name": PRODUCT_NAME,
         "url": origen + "/",
-        "inLanguage": ["es", "es-VE", "es-CO", "es-MX", "es-PE", "es-EC", "es-PA", "es-SV", "es-CL", "es-AR", "es-ES"],
+        "inLanguage": ["es", "es-VE", "es-CO", "es-MX", "es-PE", "es-EC", "es-PA", "es-SV", "es-CL", "es-AR", "es-DO", "es-UY", "es-PY", "es-ES"],
         "publisher": {"@type": "Organization", "name": PRODUCT_NAME},
         "description": VALUE_PROPOSITION,
     }

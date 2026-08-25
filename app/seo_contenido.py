@@ -224,6 +224,69 @@ CUERPO_PAIS: dict[str, list[tuple[str, list[str]]]] = {
             ],
         ),
     ],
+    "DO": [
+        (
+            "Presupuestos y APU en pesos dominicanos para República Dominicana",
+            [
+                "República Dominicana cotiza en DOP. CotizaT nace en pesos dominicanos, con RNC e ITBIS 18 %, y el catálogo habla hormigón, pañete, plafón, zócalo y plomero. Cada partida trae APU editable con referencias nacionales de RD.",
+                "El flujo es el de un remodelador en Santo Domingo, Santiago o La Romana: armas el presupuesto, lo mandas por WhatsApp y, si hay cambios, reenvías una versión con el resumen del total anterior y el nuevo. Precios de referencia: cemento RD$535 por funda 94lb, block 6'' RD$42, arena RD$1.550/m3, grava RD$1.700/m3.",
+            ],
+        ),
+        (
+            "Sin comprobante DGII, con ITBIS 18 %",
+            [
+                "Los documentos son comerciales. No sustituyen el comprobante fiscal que te exija DGII. El ITBIS 18 % del presupuesto lo configuras tú; no es asesoramiento tributario.",
+            ],
+        ),
+        (
+            "Pesos dominicanos y sheetrock, no conversión improvisada",
+            [
+                "RD ya cotiza en DOP. El espacio no nace en USD para luego «convertir» con tasa inventada: nace en DOP con tasa verificada 58.33 DOP/USD. Terminología local: hormigón (no concreto), pañete (no friso), plafón (no cielo raso), zócalo (no rodapié), plomero, block (no bloque), varilla (no cabilla), sheetrock (no drywall).",
+            ],
+        ),
+    ],
+    "UY": [
+        (
+            "Presupuestos y APU en pesos uruguayos para Uruguay",
+            [
+                "Uruguay cotiza en UYU. CotizaT nace en pesos uruguayos, con RUT e IVA 22 %, y el catálogo habla hormigón, revoque, cielorraso, zócalo y sanitario. Cada partida trae APU editable con referencias nacionales de Uruguay.",
+                "El flujo es el de un remodelador en Montevideo, Canelones o Maldonado: armas el presupuesto, lo mandas por WhatsApp y, si hay cambios, reenvías una versión con el resumen del total anterior y el nuevo. Precios de referencia: cemento $240 por bolsa 25kg, bloque 15x19x39 $70, arena $1.200/m3, hormigón $5.500/m3.",
+            ],
+        ),
+        (
+            "Sin factura DGI, con IVA 22 %",
+            [
+                "Los documentos son comerciales. No sustituyen la factura electrónica que te exija DGI. El IVA 22 % del presupuesto lo configuras tú; no es asesoramiento tributario.",
+            ],
+        ),
+        (
+            "Pesos uruguayos y Durlock, no conversión improvisada",
+            [
+                "Uruguay ya cotiza en UYU. El espacio no nace en USD para luego «convertir» con tasa inventada: nace en UYU con tasa verificada 40.21 UYU/USD. Terminología local: hormigón (no concreto), revoque (no friso), cielorraso (no cielo raso), zócalo (no rodapié), sanitario (no plomero), varilla / hierro / malla electrosoldada, mesada (no mesón), canilla (no grifo), térmica (no breaker), Durlock (no drywall), placard (no closet).",
+            ],
+        ),
+    ],
+    "PY": [
+        (
+            "Presupuestos y APU en guaraníes para Paraguay",
+            [
+                "Paraguay cotiza en PYG, sin decimales. CotizaT nace en guaraníes, con RUC e IVA 10 %, y el catálogo habla hormigón, revoque, cielorraso, zócalo y plomero. Cada partida trae APU editable con referencias nacionales de Paraguay.",
+                "El flujo es el de un remodelador en Asunción, Ciudad del Este o Encarnación: armas el presupuesto, lo mandas por WhatsApp y, si hay cambios, reenvías una versión con el resumen del total anterior y el nuevo. Precios de referencia: cemento Gs 59.000 por bolsa 50kg, bloque Gs 5.300, piedra bruta Gs 104.000/m3, hormigón Gs 650.000/m3.",
+            ],
+        ),
+        (
+            "Sin factura SET, con IVA 10 % y guaraníes sin decimales",
+            [
+                "Los documentos son comerciales. No sustituyen la factura electrónica que te exija la SET. El IVA 10 % del presupuesto lo configuras tú. Los importes en guaraníes se muestran sin decimales, como es norma local.",
+            ],
+        ),
+        (
+            "Guaraníes nativos y Durlock, no conversión improvisada",
+            [
+                "Paraguay ya cotiza en PYG. El espacio no nace en USD para luego «convertir» con tasa inventada: nace en PYG con tasa verificada 5946.10 PYG/USD. Terminología local: hormigón (no concreto), revoque (no friso), cielorraso (no cielo raso), zócalo (no rodapié), plomero, varilla (no cabilla), mesada (no mesón), canilla (no grifo), llave térmica (no breaker), Durlock (no drywall), placard (no closet).",
+            ],
+        ),
+    ],
     "ES": [
         (
             "Software de presupuestos para reformas y obra en España",
@@ -659,6 +722,60 @@ HUB_EXTRA: dict[tuple[str, str], list[tuple[str, str]]] = {
             "Pack de estancia, revoque y cielorraso, productos con foto. Si hay cambios, reenvías total anterior y total nuevo. El cliente no se registra.",
         ),
     ],
+    ("DO", "software-presupuestos"): [
+        (
+            "Software de presupuestos en pesos dominicanos para República Dominicana",
+            "RD ya cotiza en DOP, con RNC e ITBIS 18 %. El espacio nace en DOP, no en USD «para convertir después». Hormigón, pañete, plafón, zócalo, plomero, block, varilla, sheetrock.",
+        ),
+    ],
+    ("DO", "apu"): [
+        (
+            "APU en DOP, con RNC e ITBIS 18 %",
+            "Descompuestos editables en pesos dominicanos con referencias de RD: cemento RD$535/funda 94lb, block RD$42, arena RD$1.550/m3. El ITBIS 18 % lo pones tú. No emite comprobante DGII.",
+        ),
+    ],
+    ("DO", "remodelacion"): [
+        (
+            "Reforma en Santo Domingo o Santiago, PDF por WhatsApp",
+            "Pack de estancia, pañete y plafón, productos con foto. Si hay cambios, reenvías total anterior y total nuevo. El cliente no se registra.",
+        ),
+    ],
+    ("UY", "software-presupuestos"): [
+        (
+            "Software de presupuestos en pesos uruguayos para Uruguay",
+            "Uruguay ya cotiza en UYU, con RUT e IVA 22 %. El espacio nace en UYU, no en USD «para convertir después». Hormigón, revoque, cielorraso, zócalo, sanitario.",
+        ),
+    ],
+    ("UY", "apu"): [
+        (
+            "APU en UYU, con RUT e IVA 22 %",
+            "Descompuestos editables en pesos uruguayos con referencias de Uruguay: cemento $240/bolsa 25kg, bloque $70, arena $1.200/m3, hormigón $5.500/m3. El IVA 22 % lo pones tú. No emite factura DGI.",
+        ),
+    ],
+    ("UY", "remodelacion"): [
+        (
+            "Reforma en Montevideo o Maldonado, PDF por WhatsApp",
+            "Pack de estancia, revoque y cielorraso, productos con foto. Si hay cambios, reenvías total anterior y total nuevo. El cliente no se registra.",
+        ),
+    ],
+    ("PY", "software-presupuestos"): [
+        (
+            "Software de presupuestos en guaraníes para Paraguay",
+            "Paraguay ya cotiza en PYG sin decimales, con RUC e IVA 10 %. El espacio nace en PYG, no en USD «para convertir después». Hormigón, revoque, cielorraso, zócalo, plomero.",
+        ),
+    ],
+    ("PY", "apu"): [
+        (
+            "APU en PYG, con RUC e IVA 10 %",
+            "Descompuestos editables en guaraníes con referencias de Paraguay: cemento Gs 59.000/bolsa 50kg, bloque Gs 5.300, piedra Gs 104.000/m3, hormigón Gs 650.000/m3. El IVA 10 % lo pones tú. Sin decimales en PYG.",
+        ),
+    ],
+    ("PY", "remodelacion"): [
+        (
+            "Reforma en Asunción o Ciudad del Este, PDF por WhatsApp",
+            "Pack de estancia, revoque y cielorraso, productos con foto. Si hay cambios, reenvías total anterior y total nuevo. El cliente no se registra.",
+        ),
+    ],
     ("ES", "software-presupuestos"): [
         (
             "Presupuestar reformas en euros, con NIF e IVA",
@@ -757,6 +874,42 @@ FAQ_HUB: dict[tuple[str, str], list[dict]] = {
         {
             "q": "¿Los precios del APU son de mercado argentino?",
             "a": "Sí: cemento $11.433/bolsa 50kg Loma Negra/Holcim, bloque $1.500, arena $33.500/m3, hormigón H21 $168.478/m3 con fuentes de Argentina, más referencias derivadas de canasta nacional en ARS.",
+        },
+    ],
+    ("DO", "software-presupuestos"): [
+        {
+            "q": "¿Nace en pesos dominicanos o convierte desde dólares?",
+            "a": "Nace en DOP. RD cotiza en pesos dominicanos; no hay conversión improvisada al registrarte. Tasa verificada 58.33 DOP/USD.",
+        },
+    ],
+    ("DO", "apu"): [
+        {
+            "q": "¿Los precios del APU son de mercado dominicano?",
+            "a": "Sí: cemento RD$535/funda 94lb, block RD$42, arena RD$1.550/m3, grava RD$1.700/m3 con fuentes de RD, más referencias derivadas de canasta nacional en DOP.",
+        },
+    ],
+    ("UY", "software-presupuestos"): [
+        {
+            "q": "¿Nace en pesos uruguayos o convierte desde dólares?",
+            "a": "Nace en UYU. Uruguay cotiza en pesos uruguayos; no hay conversión improvisada al registrarte. Tasa verificada 40.21 UYU/USD.",
+        },
+    ],
+    ("UY", "apu"): [
+        {
+            "q": "¿Los precios del APU son de mercado uruguayo?",
+            "a": "Sí: cemento $240/bolsa 25kg, bloque $70, arena $1.200/m3, hormigón $5.500/m3 con fuentes de Uruguay, más referencias derivadas de canasta nacional en UYU.",
+        },
+    ],
+    ("PY", "software-presupuestos"): [
+        {
+            "q": "¿Nace en guaraníes o convierte desde dólares?",
+            "a": "Nace en PYG sin decimales. Paraguay cotiza en guaraníes; no hay conversión improvisada al registrarte. Tasa verificada 5946.10 PYG/USD.",
+        },
+    ],
+    ("PY", "apu"): [
+        {
+            "q": "¿Los precios del APU son de mercado paraguayo?",
+            "a": "Sí: cemento Gs 59.000/bolsa 50kg, bloque Gs 5.300, piedra Gs 104.000/m3, hormigón Gs 650.000/m3 con fuentes de Paraguay, más referencias derivadas de canasta nacional en PYG sin decimales.",
         },
     ],
     ("ES", "software-presupuestos"): [

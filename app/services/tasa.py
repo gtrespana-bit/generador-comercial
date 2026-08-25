@@ -43,8 +43,14 @@ TASAS_SUGERIDAS: dict[str, float | None] = {
     "CLP": 925.90,
     # ARS/USD 08-11/08/2026 (pluang 1497.38, alanchand 1498.36) → 1497.38 adoptado
     "ARS": 1497.38,
+    # DOP/USD 02-24/08/2026 (currency.me.uk 57.8169, Forbes 58.753, Xe 58.3369) → 58.33 adoptado
+    "DOP": 58.33,
+    # UYU/USD 05-18/08/2026 (Xe 40.2124, valutafx 40.248-40.28) → 40.21 adoptado
+    "UYU": 40.21,
+    # PYG/USD 08-24/08/2026 (pluang 5946.10, Xe 6009.42, RioTimes 5932) → 5946.10 adoptado
+    "PYG": 5946.10,
 }
-# El resto de monedas del selector (UYU, PYG, BOB, DOP, CRC, GTQ,
+# El resto de monedas del selector (BOB, CRC, GTQ,
 # HNL, NIO, BRL…) no se pre-rellenan: sin tasa verificada a la fecha de
 # TASAS_ACTUALIZADAS. El usuario consulta «Tasa de hoy» o escribe la oficial.
 

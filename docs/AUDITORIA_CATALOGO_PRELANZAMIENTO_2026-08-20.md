@@ -49,6 +49,9 @@ Los 388 recursos físicos tienen precio base referencial. `Provisional` expresa 
 | El Salvador (USD) | 388 | 10 | 378 | 0 | 100.0% |
 | Chile (CLP) | 388 | 10 | 378 | 0 | 100.0% |
 | Argentina (ARS) | 388 | 10 | 378 | 0 | 100.0% |
+| República Dominicana (DOP) | 388 | 10 | 378 | 0 | 100.0% |
+| Uruguay (UYU) | 388 | 10 | 378 | 0 | 100.0% |
+| Paraguay (PYG) | 388 | 10 | 378 | 0 | 100.0% |
 
 La matriz contiene referencias nacionales directas y derivadas. Las derivadas se calibran con la canasta investigada de cada país y se identifican como tales; no se presentan como una cotización local exacta. `precios_recursos_latam_completa.csv` se conserva por compatibilidad y actualmente coincide en cobertura con la matriz principal.
 

@@ -19,7 +19,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "basedatos_partidas/datos/recursos.json"
 OUT = ROOT / "basedatos_partidas/salida/precios_recursos_latam.csv"
-PAISES = (("CO", "COP"), ("PE", "PEN"), ("MX", "MXN"), ("EC", "USD"), ("PA", "USD"), ("SV", "USD"), ("CL", "CLP"), ("AR", "ARS"))
+PAISES = (("CO", "COP"), ("PE", "PEN"), ("MX", "MXN"), ("EC", "USD"), ("PA", "USD"), ("SV", "USD"), ("CL", "CLP"), ("AR", "ARS"), ("DO", "DOP"), ("UY", "UYU"), ("PY", "PYG"))
 FECHA = "2026-08-25"
 FECHA_METODOLOGIA = "2026-08-20"
 
@@ -32,11 +32,14 @@ R6 = "docs/INVESTIGACION_PRECIOS_RONDA_6_EQUIPOS.md"
 RPA = "docs/INVESTIGACION_PRECIOS_PA_SV.md"
 RCL = "docs/INVESTIGACION_PRECIOS_CL_AR.md"
 RAR = "docs/INVESTIGACION_PRECIOS_CL_AR.md"
+RDO = "docs/INVESTIGACION_PRECIOS_DO_UY_PY.md"
+RUY = "docs/INVESTIGACION_PRECIOS_DO_UY_PY.md"
+RPY = "docs/INVESTIGACION_PRECIOS_DO_UY_PY.md"
 METODOLOGIA = "docs/METODOLOGIA_PRECIOS_REFERENCIA_LATAM.md"
 # Tasas de corte usadas solo para normalizar el precio base USD antes de
 # aplicarle el factor de mercado observado. El resultado queda congelado en
 # moneda nacional y con fecha; no se recalcula silenciosamente en producción.
-TASAS_CORTE = {"CO": 3128.65, "PE": 3.37, "MX": 17.06, "EC": 1.0, "PA": 1.0, "SV": 1.0, "CL": 925.90, "AR": 1497.38}
+TASAS_CORTE = {"CO": 3128.65, "PE": 3.37, "MX": 17.06, "EC": 1.0, "PA": 1.0, "SV": 1.0, "CL": 925.90, "AR": 1497.38, "DO": 58.33, "UY": 40.21, "PY": 5946.10}
 
 
 @dataclass(frozen=True)
@@ -71,6 +74,9 @@ REFERENCIAS: dict[str, dict[str, Referencia]] = {
         "SV": ref(8.73 / 42.5, 7.90 / 42.5, 9.85 / 42.5, RPA),
         "CL": ref(4790 / 25, 3590 / 25, 5090 / 25, RCL),
         "AR": ref(11433 / 50, 9050 / 50, 14000 / 50, RAR),
+        "DO": ref(535 / 42.6, 440 / 42.6, 625 / 42.6, RDO),
+        "UY": ref(240 / 25, 225 / 25, 286 / 25, RUY),
+        "PY": ref(59000 / 50, 47000 / 50, 59000 / 50, RPY),
     },
     "MT-ARENA": {
         "CO": ref(100_000, 80_000, 220_000, R1),
@@ -81,6 +87,9 @@ REFERENCIAS: dict[str, dict[str, Referencia]] = {
         "SV": ref(35, 17, 38, RPA),
         "CL": ref(33190, 16379, 38190, RCL),
         "AR": ref(33500, 28000, 47644, RAR),
+        "DO": ref(1550, 1400, 1700, RDO),
+        "UY": ref(1200, 1000, 1400, RUY),
+        "PY": ref(104000, 90000, 120000, RPY),
     },
     "MT-PIEDRA-PIC": {
         "CO": ref(115_000, 90_000, 240_000, R1),
@@ -91,6 +100,9 @@ REFERENCIAS: dict[str, dict[str, Referencia]] = {
         "SV": ref(45.05, 22, 50, RPA),
         "CL": ref(34500, 32190, 36190, RCL),
         "AR": ref(40000, 31445, 67900, RAR),
+        "DO": ref(1700, 1500, 1850, RDO),
+        "UY": ref(1300, 1100, 1500, RUY),
+        "PY": ref(110000, 95000, 125000, RPY),
     },
     "MT-ACERO-CAB": {
         "CO": ref(4_000, 3_650, 4_350, R1),
@@ -101,6 +113,9 @@ REFERENCIAS: dict[str, dict[str, Referencia]] = {
         "SV": ref(1.15, 1.0, 1.35, RPA),
         "CL": ref(1100, 900, 1300, RCL),
         "AR": ref(1200, 1000, 1500, RAR),
+        "DO": ref(55, 48, 62, RDO),
+        "UY": ref(65, 55, 75, RUY),
+        "PY": ref(5500, 4800, 6200, RPY),
     },
     "MT-BLQ-15": {
         "CO": ref(2_600, 2_000, 3_200, R1),
@@ -110,6 +125,9 @@ REFERENCIAS: dict[str, dict[str, Referencia]] = {
         "SV": ref(0.40, 0.35, 0.45, RPA),
         "CL": ref(1840, 990, 1840, RCL),
         "AR": ref(1500, 1300, 1800, RAR),
+        "DO": ref(42, 38, 50, RDO),
+        "UY": ref(70, 49, 84, RUY),
+        "PY": ref(5300, 5000, 5500, RPY),
     },
     "MT-LADRILLO": {
         "CO": ref(1_000, 500, 1_200, R1),
@@ -128,6 +146,9 @@ REFERENCIAS: dict[str, dict[str, Referencia]] = {
         "SV": ref(135.35, 130, 145, RPA, incluye_transporte="por_verificar"),
         "CL": ref(110000, 80000, 118405, RCL, incluye_transporte="por_verificar"),
         "AR": ref(168478, 137655, 199876, RAR, incluye_transporte="por_verificar"),
+        "DO": ref(4500, 4000, 5000, RDO, incluye_transporte="por_verificar"),
+        "UY": ref(5500, 5000, 6000, RUY, incluye_transporte="por_verificar"),
+        "PY": ref(650000, 600000, 700000, RPY, incluye_transporte="por_verificar"),
     },
     "MT-PYL-PLACA125": {
         "CO": ref(48_900 / 2.9768, 48_900 / 2.9768, 48_900 / 2.9768, R2),
@@ -174,6 +195,9 @@ REFERENCIAS: dict[str, dict[str, Referencia]] = {
         "SV": ref(30, 25, 35, RPA, incluye_transporte="no_confirmado", observaciones="Tarifa horaria retroexcavadora en El Salvador; validar operador, combustible y flete."),
         "CL": ref(30000, 25000, 35000, RCL, incluye_transporte="no_confirmado", observaciones="Tarifa horaria retroexcavadora en Chile; validar operador, combustible y flete."),
         "AR": ref(35000, 30000, 40000, RAR, incluye_transporte="no_confirmado", observaciones="Tarifa horaria retroexcavadora en Argentina; validar operador, combustible y flete."),
+        "DO": ref(2500, 2000, 3000, RDO, incluye_transporte="no_confirmado", observaciones="Tarifa horaria retroexcavadora en RD; validar operador, combustible y flete."),
+        "UY": ref(1800, 1500, 2100, RUY, incluye_transporte="no_confirmado", observaciones="Tarifa horaria retroexcavadora en Uruguay; validar operador, combustible y flete."),
+        "PY": ref(120000, 100000, 140000, RPY, incluye_transporte="no_confirmado", observaciones="Tarifa horaria retroexcavadora en Paraguay; validar operador, combustible y flete."),
     },
     "MQ-VOLQ": {
         "PE": ref(125, 110, 140, R6, incluye_transporte="si", observaciones="Tarifa horaria de volquete; confirmar capacidad, operador, combustible y mínimo."),
@@ -211,6 +235,9 @@ OFICIAL_GENERAL = {
     "SV": (28, 25, 35),
     "CL": (55000, 45000, 65000),
     "AR": (45624, 41136, 50784),
+    "DO": (2000, 1600, 2200),
+    "UY": (2412.65, 2000, 2600),
+    "PY": (125875, 107627, 130000),
 }
 AYUDANTE = {
     "CO": (72_500, 60_000, 85_000),
@@ -221,6 +248,9 @@ AYUDANTE = {
     "SV": (16, 13, 20),
     "CL": (35000, 30000, 40000),
     "AR": (38808, 34992, 43192),
+    "DO": (900, 800, 1000),
+    "UY": (1554.29, 1400, 1700),
+    "PY": (107627, 93000, 115000),
 }
 
 
