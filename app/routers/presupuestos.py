@@ -136,7 +136,7 @@ def _guardar_importacion_cype(
 ) -> dict:
     """Guarda fuentes y manifiesto CYPE en almacenamiento privado del tenant."""
     if not archivos:
-        raise ErrorImportacion("Selecciona al menos un archivo .xlsx de CYPE.")
+        raise ErrorImportacion("Selecciona al menos un archivo .xlsx de descompuestos.")
     token = str(uuid.uuid4())
     analizados = []
     for indice, (nombre_original, contenido) in enumerate(archivos, start=1):
@@ -189,7 +189,7 @@ def _guardar_importacion_cype(
 def _cargar_importacion_cype(importacion_id: object, db: Session) -> dict:
     token = str(importacion_id or "").strip()
     if not _TOKEN_IMPORTACION_RE.fullmatch(token):
-        raise ErrorImportacion("La importación CYPE no es válida o ha caducado. Vuelve a analizar el archivo.")
+        raise ErrorImportacion("La importación del descompuesto no es válida o ha caducado. Vuelve a analizar el archivo.")
     organizacion_id = int(db.info.get("organizacion_id") or 0)
     key = f"organizaciones/{organizacion_id}/manifiestos-importacion/{token}.json"
     metadata = db.query(ArchivoAlmacenado).filter(ArchivoAlmacenado.object_key == key).first()
@@ -200,9 +200,9 @@ def _cargar_importacion_cype(importacion_id: object, db: Session) -> dict:
             contenido = (IMPORTS_DIR / f"{token}.json").read_text(encoding="utf-8")
         datos = json.loads(contenido)
     except (OSError, StorageError, UnicodeDecodeError, ValueError) as exc:
-        raise ErrorImportacion("La importación CYPE no está disponible. Vuelve a cargar el archivo.") from exc
+        raise ErrorImportacion("La importación del descompuesto no está disponible. Vuelve a cargar el archivo.") from exc
     if datos.get("formato") != "cype_descompuesto" or not isinstance(datos.get("partidas"), list):
-        raise ErrorImportacion("El manifiesto de la importación CYPE no es válido.")
+        raise ErrorImportacion("El manifiesto de la importación del descompuesto no es válido.")
     return datos
 
 def _datos_cype_desde_payload(payload, db: Session):
@@ -210,7 +210,7 @@ def _datos_cype_desde_payload(payload, db: Session):
     datos = _cargar_importacion_cype(payload.get("importacion_id"), db)
     partidas = datos["partidas"]
     if not partidas:
-        raise ErrorImportacion("No se detectaron partidas CYPE para importar.")
+        raise ErrorImportacion("No se detectaron partidas de descompuesto para importar.")
     if len(partidas) > MAX_FILAS:
         raise ErrorImportacion(f"La importación contiene más de {MAX_FILAS} partidas.")
     destino_id = int(_f(payload.get("presupuesto_destino_id"), 0))
@@ -228,7 +228,7 @@ def _datos_cype_desde_payload(payload, db: Session):
         nombre = str(partida.get("nombre", "")).strip()
         unidad = str(partida.get("unidad", "")).strip()
         if not codigo or not nombre or not unidad:
-            errores.append({"fila": partida.get("fila_cabecera", 0), "mensaje": "Una partida CYPE debe incluir código, unidad y descripción."})
+            errores.append({"fila": partida.get("fila_cabecera", 0), "mensaje": "Una partida de descompuesto debe incluir código, unidad y descripción."})
         clave = (normalizar(codigo), str(partida.get("archivo_origen", "")), str(partida.get("hoja", "")))
         if clave in codigos_vistos:
             advertencias.append({"fila": partida.get("fila_cabecera", 0), "mensaje": f"Código «{codigo}» repetido; se conservarán ambas partidas."})
@@ -502,7 +502,7 @@ def _anexar_partidas_cype(
             "unidad": item.unidad,
             "cantidad": item.cantidad,
             "precio": item.precio_unitario,
-            "categoria": "CYPE",
+            "categoria": "Excel",
             "tipo_partida": "included",
             # La entrada de catálogo conserva código y costes para que, al
             # reutilizarla en otro presupuesto, la descomposición ya venga
@@ -579,7 +579,7 @@ def _partida_importada_para_editor(
             _f(fila.get("coste_directo_unitario") if (es_cype or es_bc3) else fila.get("precio"), 0),
         ),
         "cantidad": item.cantidad if item is not None else (1.0 if es_cype else _f(fila.get("cantidad"), 1.0)),
-        "categoria": str(fila.get("categoria", "")).strip() or ("CYPE" if es_cype else "BC3" if es_bc3 else "General"),
+        "categoria": str(fila.get("categoria", "")).strip() or ("Excel" if es_cype else "BC3" if es_bc3 else "General"),
         "tipo_partida": tipo,
         "seleccionada": (
             bool(item.seleccionada) if item is not None
@@ -797,7 +797,7 @@ def _importar_a_catalogo(db: Session, filas: list[dict], formato: str,
             if capitulo and capitulo.upper() != "CAPÍTULO GENERAL":
                 categoria = capitulo
             else:
-                categoria = "CYPE" if es_cype else "General"
+                categoria = "Excel" if es_cype else "General"
         subcategoria = str(item.get("subcapitulo") or item.get("subcategoria") or "").strip()
         apartado = str(item.get("apartado") or "").strip()
         codigo = str(item.get("codigo") or item.get("codigo_externo") or "").strip()
@@ -1016,7 +1016,7 @@ async def analizar_importacion_presupuesto(
                 )
                 return {"ok": True, **resultado}
             if len(archivos) > 1:
-                raise ErrorImportacion("Solo se pueden cargar varios archivos cuando todos usan el formato CYPE de descompuesto.")
+                raise ErrorImportacion("Solo se pueden cargar varios archivos cuando todos usan el mismo formato de descompuesto Excel.")
 
             _nombre, extension, contenido = archivos[0]
             if extension == ".csv":
@@ -3080,7 +3080,7 @@ def ver_descomposicion_partida(presupuesto_id: int, partida_id: int, request: Re
         return _redirect(f"/presupuestos/{presupuesto_id}", error="Partida no encontrada.")
     descomposicion = partida.descomposicion_cype
     if descomposicion is None:
-        return _redirect(f"/presupuestos/{presupuesto_id}", error="Esta partida no tiene un descompuesto CYPE asociado.")
+        return _redirect(f"/presupuestos/{presupuesto_id}", error="Esta partida no tiene un descompuesto Excel asociado.")
     # Las filas creadas o editadas a mano pueden llevar una categoría de
     # coste explícita (elegida en el generador); se respeta sobre la derivada
     # del grupo/código para que los cálculos de la página coincidan.
@@ -3129,7 +3129,7 @@ async def recalcular_descomposicion_partida(presupuesto_id: int, partida_id: int
         return _redirect(f"/presupuestos/{presupuesto_id}", error="Partida no encontrada.")
     descomposicion = partida.descomposicion_cype
     if descomposicion is None:
-        return _redirect(f"/presupuestos/{presupuesto_id}", error="Esta partida no tiene un descompuesto CYPE asociado.")
+        return _redirect(f"/presupuestos/{presupuesto_id}", error="Esta partida no tiene un descompuesto Excel asociado.")
 
     form = await request.form()
     filas = list(descomposicion.filas)

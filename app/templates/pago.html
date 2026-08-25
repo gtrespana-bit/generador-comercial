@@ -43,8 +43,13 @@
     <div class="plan destacado">
       <span class="etiqueta">M&Aacute;S AHORRO</span>
       <h3>Plan anual</h3>
+      {% if pais_pago.codigo == 'ES' %}
+      <div class="cifra">89 € <small>/ a&ntilde;o</small></div>
+      <p><span class="antes">109 € / a&ntilde;o</span> &mdash; precio habitual</p>
+      {% else %}
       <div class="cifra">89 US$ <small>/ a&ntilde;o</small></div>
       <p><span class="antes">109 US$ / a&ntilde;o</span> &mdash; precio habitual</p>
+      {% endif %}
       <ul>
         <li>Todas las funciones incluidas</li>
         <li>Configuraci&oacute;n asistida de tu empresa y cat&aacute;logo</li>
@@ -56,8 +61,13 @@
     <div class="plan">
       <span class="etiqueta">SIN PERMANENCIA</span>
       <h3>Plan mensual</h3>
+      {% if pais_pago.codigo == 'ES' %}
+      <div class="cifra">9,99 € <small>/ mes el primer a&ntilde;o</small></div>
+      <p><span class="antes">12,99 € / mes</span> &mdash; precio habitual</p>
+      {% else %}
       <div class="cifra">9,99 US$ <small>/ mes el primer a&ntilde;o</small></div>
       <p><span class="antes">12,99 US$ / mes</span> &mdash; precio habitual</p>
+      {% endif %}
       <ul>
         <li>Todas las funciones incluidas</li>
         <li>Sin permanencia: cancela cuando quieras</li>

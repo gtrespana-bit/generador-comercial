@@ -333,17 +333,16 @@ PAISES: dict[str, dict] = {
 }
 
 # Orden en que aparecen en el selector: todos los países disponibles.
-# Era VE + 4 LatAm (CO/MX/EC/PE) + España (EUR) = 6, pero ese filtro
-# artificial obligaba al usuario a tener un país "principal" (siempre
-# Venezuela) cuando quería España. Ahora la landing, /pago, /bienvenida y
-# /organizaciones/nueva muestran los 17 países que están definidos y son
-# válidos. La onda de apertura ya pasó para todos: cada uno tiene moneda,
-# IVA, ID fiscal y vocabulario documentados, así que listarlos no
-# diluye el mercado, lo enuncia completo (Latinoamérica + España).
+# España va primero porque es un mercado prioritario (EUR, NIF, IVA 21 %
+# y referencias nacionales propias) y le sigue Latinoamérica. Cada país
+# tiene catálogo de precios, moneda, IVA, ID fiscal y vocabulario propios;
+# por eso el selector es explícito y debe elegirse correctamente antes de
+# cotizar.
 ORDEN_SELECTOR = [
+    "ES",
     "VE", "CO", "MX", "EC", "PE", "CL", "AR",
     "DO", "UY", "PY", "BO", "PA", "CR", "GT",
-    "HN", "SV", "NI", "ES",
+    "HN", "SV", "NI",
 ]
 
 # Genérico para cuando no hay país seleccionado (SEO, primera visita).

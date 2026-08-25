@@ -8,7 +8,7 @@ Arquitectura:
   (OpenAI-compatible REST).
 - Usa la capa de uso disponible de Groq; la cuenta y sus límites dependen del
   plan del proveedor.
-- Inyección de contexto RAG: manual del sistema, atajos, descompuestos CYPE,
+- Inyección de contexto RAG: manual del sistema, atajos, descompuestos Excel,
   monedas y catálogo propio de la organización activa.
 - Modo de degradación elegante: si la clave no está configurada, el asistente
   responde a dudas frecuentes de CotizaT mediante el índice local de conocimiento
@@ -151,7 +151,7 @@ ATAJOS DE TECLADO EN EL EDITOR DE PRESUPUESTOS:
 
 FUNCIONES AVANZADAS:
 - Mediciones desglosadas: Cada partida permite detallar zonas/estancias (ej. Baño 4.50 m², Pasillo 2.20 m²); la suma calcula la cantidad automáticamente.
-- Importación CYPE (.xlsx): Admite plantillas de 8 y 10 columnas (DPT020 / RBE010). Clasifica en materiales, mano de obra, directos complementarios y otros. Permite editar rendimientos y precios unitarios.
+- Importación desde Excel (.xlsx): Admite plantillas de 8 y 10 columnas (DPT020 / RBE010). Clasifica en materiales, mano de obra, directos complementarios y otros. Permite editar rendimientos y precios unitarios.
 - Monedas y Tasa de Cambio: Soporta USD, Bs (VES), COP, MXN, EUR, etc. Incluye actualización automática o manual de tasa de cambio y cláusula cambiaria.
 - PDF Profesional ReportLab: Encabezado corporativo, caja de empresa con faja navy, marca de agua por estado (BORRADOR, RECHAZADO, VENCIDO), firmas digitales (cliente y empresa), anexo de garantías por familia de obra y portada opcional con foto del proyecto.
 - Documentos de Cobro (DC): Desde un presupuesto aprobado se emite el documento de cobro comercial aclarando que no sustituye una factura fiscal.
@@ -617,10 +617,10 @@ PREGUNTAS_FRECUENTES_LOCALES = [
         ),
     },
     {
-        "patrones": [r"cype", r"excel", r"descompuesto", r"dpt020", r"rbe010", r"importar"],
+        "patrones": [r"excel", r"descompuesto", r"dpt020", r"rbe010", r"importar"],
         "respuesta": (
-            "### 📑 Importación de descompuestos CYPE (.xlsx):\n\n"
-            "CotizaT permite importar matrices de descompuestos exportadas desde CYPE/Arquímedes:\n\n"
+            "### 📑 Importación de descompuestos desde Excel (.xlsx):\n\n"
+            "CotizaT permite importar matrices de descompuestos exportadas desde Excel:\n\n"
             "1. Ve a **Presupuestos** → [Importar Descompuesto](/presupuestos/importar-descompuesto) o dentro del propio editor.\n"
             "2. Sube tu archivo `.xlsx` (detecta formatos de 8 columnas tipo `DPT020` y 10 columnas tipo `RBE010`).\n"
             "3. CotizaT clasifica automáticamente los costes en: **Materiales, Mano de Obra, Directos Complementarios y Otros**.\n"

@@ -202,25 +202,27 @@ _LANDING: dict[str, dict] = {
     "": {
         "title": "CotizaT: software de presupuestos de construcción",
         "description": (
-            "Software de presupuestos de construcción y remodelación para "
-            "Latinoamérica. Catálogo con APU, margen, tiempos de cuadrilla y "
-            "PDF profesional. 7 días gratis, sin tarjeta."
+            "Software de presupuestos de construcción y reformas para España y "
+            "Latinoamérica. Cada país con su catálogo de precios, IVA y NIF/RIF/RFC. "
+            "APU, margen y PDF profesional. 7 días gratis."
         ),
-        "h1": "Software de presupuestos de construcción para Latinoamérica",
+        "h1": "Software de presupuestos de obra para España y Latinoamérica",
         "h1_resalte": "margen, tiempos y cierre",
         "sub": (
             "CotizaT convierte tu catálogo y tus precios en presupuestos de obra "
-            "claros, con coste interno, beneficio y horas de cuadrilla. PDF con "
-            "tu logo, listo para WhatsApp. Venezuela, Colombia, México, Ecuador, Perú y España."
+            "claros, con coste interno, beneficio y horas de cuadrilla. España con "
+            "precios en EUR, NIF e IVA 21 %; Latinoamérica con su moneda y fiscalidad. "
+            "PDF con tu logo, listo para WhatsApp."
         ),
-        "kicker": "Sistema comercial para Latinoamérica y España · Construcción y remodelación",
+        "kicker": "Sistema comercial para España y Latinoamérica · Construcción y reformas",
         "faq": [
             {
-                "q": "¿CotizaT sirve para presupuestos de construcción en Latinoamérica y España?",
+                "q": "¿CotizaT sirve para presupuestos de construcción en España y Latinoamérica?",
                 "a": (
-                    "Sí. Está hecho para constructoras pequeñas, remodeladores y "
-                    "contratistas de Venezuela, Colombia, México, Ecuador, Perú y España. "
-                    "Configuras moneda, IVA e ID fiscal (RIF, NIT, RFC, RUC, NIF) al registrarte."
+                    "Sí. Está hecho para constructoras pequeñas, reformistas y "
+                    "contratistas de España, Venezuela, Colombia, México, Ecuador y Perú. "
+                    "Cada país tiene su catálogo de precios, su moneda, su IVA y su ID fiscal "
+                    "(NIF, RIF, NIT, RFC, RUC) y se elige al entrar."
                 ),
             },
             {
@@ -477,49 +479,57 @@ _LANDING: dict[str, dict] = {
         ],
     },
     "ES": {
-        "title": "CotizaT: software de presupuestos de obra en España",
+        "title": "CotizaT: software de presupuestos de obra y reformas para España",
         "description": (
-            "Software de presupuestos de construcción y reformas en España. "
-            "NIF, IVA 21 %, euros, hormigón y pladur. Catálogo con APU. "
+            "Software para presupuestos de reformas y obra en España. En euros, "
+            "NIF, IVA 21 %, hormigón, pladur y fontanería. Catálogo con APU. "
             "7 días gratis, sin tarjeta."
         ),
         "h1": "Software de presupuestos de obra y reformas para España",
         "h1_resalte": "euros, NIF e IVA 21 %",
         "sub": (
-            "Presupuesta reformas y obra en euros, con NIF e IVA 21 %. Catálogo "
-            "con análisis de precios unitarios, hormigón, pladur, falso techo, "
-            "alicatado y fontanería. PDF profesional para WhatsApp."
+            "Cotiza reformas y obra en euros, con NIF, IVA 21 % y la terminología "
+            "de la obra española: hormigón, pladur, falso techo, alicatado y "
+            "fontanería. Ves el margen, el coste y las horas de tu cuadrilla antes "
+            "de enviar un PDF con tu logo por WhatsApp o email."
         ),
-        "kicker": "🇪🇸 Sistema comercial para España · Construcción y reformas",
+        "kicker": "🇪🇸 Sistema comercial para España · Presupuestos de reforma y obra",
         "faq": [
             {
-                "q": "¿Está pensado para reformas y obra en España?",
+                "q": "¿Está pensado para reformistas y constructoras en España?",
                 "a": (
-                    "Sí. El espacio nace en euros, IVA 21 % y NIF. Terminología "
-                    "de obra española: hormigón, pladur, falso techo, alicatado, "
-                    "fontanero."
+                    "Sí. Es para reformistas, contratistas y pequeñas constructoras "
+                    "de 2 a 15 personas que cotizan en euros, con NIF e IVA 21 %. "
+                    "Habla tu obra: hormigón, pladur, falso techo, alicatado, fontanería."
                 ),
             },
             {
-                "q": "¿Incluye análisis de precios unitarios (APU)?",
+                "q": "¿Incluye análisis de precios unitarios (APU) en euros?",
                 "a": (
                     "Cada partida llega descompuesta en materiales, mano de obra y "
-                    "equipo, con rendimiento y precio en euros. Editas un recurso y "
-                    "se recalcula el presupuesto."
+                    "equipo, con rendimiento y precio en euros, con referencias de "
+                    "mercado españolas. Editas un recurso y se recalcula el presupuesto."
                 ),
             },
             {
                 "q": "¿El cliente tiene que registrarse?",
                 "a": (
-                    "No. Envías el PDF por WhatsApp o email. El enlace privado con "
-                    "firma es opcional."
+                    "No. Envías el PDF por WhatsApp o email como ya haces. El enlace "
+                    "privado con firma es opcional."
                 ),
             },
             {
-                "q": "¿Emite factura con SII / AEAT?",
+                "q": "¿Emite factura con la AEAT?",
                 "a": (
-                    "No. Los documentos son comerciales y no sustituyen la factura "
-                    "que te exija la Agencia Tributaria."
+                    "No. Genera presupuestos comerciales con NIF e IVA; la factura "
+                    "la emites con tu gestoría o tu sistema de facturación."
+                ),
+            },
+            {
+                "q": "¿Cuánto cuesta en España?",
+                "a": (
+                    "89 € al año (habitual 109 €) o 9,99 € al mes el primer año. "
+                    "7 días de prueba completa, sin tarjeta y sin permanencia."
                 ),
             },
         ],
@@ -594,7 +604,7 @@ def _bloques_tema(codigo: str, tema: str) -> dict:
                 "Qué incluye el primer día",
                 "Más de 3.000 partidas descompuestas y cientos de recursos con precio. "
                 f"Terminología de {nombre}: {vocab}. Packs de estancia (baño, cocina) "
-                "escalados a los m². Importación desde Excel o CYPE.",
+                "escalados a los m². Importación desde Excel (.xlsx) y BC3.",
             ),
             (
                 "Precio",
@@ -642,10 +652,11 @@ def _bloques_tema(codigo: str, tema: str) -> dict:
                 "enviados no se tocan: cada versión queda congelada.",
             ),
             (
-                "CYPE y Excel",
-                "Si ya trabajas con descompuestos CYPE, importas el .xlsx y se "
-                "clasifica materiales, mano de obra y complementarios, sin perder filas "
-                "ni fórmulas. También pegas TSV desde Excel.",
+                "Excel y BC3",
+                "Si ya trabajas con matrices de descompuestos en Excel (.xlsx), "
+                "importas el archivo y se clasifica materiales, mano de obra y "
+                "complementarios, sin perder filas ni fórmulas. También pegas TSV "
+                "desde Excel o importas .bc3 (FIEBDC-3).",
             ),
         ]
         description = (

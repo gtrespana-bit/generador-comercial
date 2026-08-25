@@ -28,17 +28,19 @@
   <script nonce="{{ request.state.csp_nonce }}" defer src="{{ 'js/landing-tour.js' | asset }}"></script>
 </head>
 <body class="landing">
-{# Barra de país — genérica por defecto, se adapta al elegir #}
+{# Barra de país — cada país tiene su propio catálogo de precios #}
 <div class="pais-bar" id="pais-bar">
   <div class="pais-bar-int">
-    <span class="pais-bar-label">🌎 Elige tu país</span>
-    <select id="pais-select" aria-label="Elige tu país">
+    <span class="pais-bar-label" aria-hidden="true">🌍</span>
+    <span class="pais-bar-strong">Tu país, tu catálogo de precios</span>
+    <select id="pais-select" aria-label="Elige tu país. Cada país tiene su propio catálogo de precios.">
       <option value="" {% if not pais_codigo %}selected{% endif %}>Todos los países (genérico)</option>
       {% for p in paises %}
       <option value="{{ p.codigo }}" {% if p.codigo == pais_codigo %}selected{% endif %}>{{ p.bandera }} {{ p.nombre }}</option>
       {% endfor %}
     </select>
-    <span class="pais-bar-hint" id="pais-bar-hint">{% if pais_actual %}{{ pais_actual.bandera }} Mostrando contenido para {{ pais_actual.nombre }} · {{ pais_actual.id_fiscal }} · IVA {{ pais_actual.iva }}%{% else %}Mostrando contenido genérico (España y Latinoamérica){% endif %}</span>
+    <span class="pais-bar-badge">✨ precios de tu mercado</span>
+    <span class="pais-bar-hint" id="pais-bar-hint">{% if pais_actual %}{{ pais_actual.bandera }} Catálogo de {{ pais_actual.nombre }} · {{ pais_actual.id_fiscal }} · IVA {{ pais_actual.iva }}%{% else %}Elige tu país para ver su catálogo de precios (España · LatAm){% endif %}</span>
   </div>
 </div>
 {% include "_nav.html" %}
@@ -48,15 +50,26 @@
   <div class="hero-int">
     <div class="hero-copy">
       {% if pais_actual %}
-      <span class="hero-kicker" id="hero-kicker">{{ pais_actual.bandera }} Sistema comercial para {{ pais_actual.nombre }} · Construcción y remodelación</span>
+      <span class="hero-kicker" id="hero-kicker">{{ pais_actual.bandera }} Sistema comercial para {{ pais_actual.nombre }} · Construcción y reformas · catálogo de precios propio</span>
       {% else %}
-      <span class="hero-kicker" id="hero-kicker">🌎 Sistema comercial para España y Latinoamérica · Construcción y remodelación</span>
+      <span class="hero-kicker" id="hero-kicker">🇪🇸 España · 🌎 Latinoamérica — Sistema comercial de obra y reformas · catálogo de precios por país</span>
       {% endif %}
       {% if hay_prueba_gratuita() %}
       <span class="hero-prueba">✨ {{ dias_de_prueba() }} días gratis · sin tarjeta de crédito</span>
       {% endif %}
       <h1>{{ seo.h1 }}: <span class="hero-hl">{{ seo.h1_resalte }}</span>.</h1>
       <p class="sub">{{ seo.sub }}</p>
+      <div class="hero-mercados" aria-label="Mercados disponibles">
+        {% set destacados = paises[:6] %}
+        {% for p in destacados %}
+        <a class="hero-mercado" href="/{{ p.codigo | lower }}/" {% if p.codigo == pais_codigo %}aria-current="true"{% endif %}>
+          <span>{{ p.bandera }}</span>{{ p.nombre }}<small>{{ p.moneda }} · IVA {{ p.iva }}%</small>
+        </a>
+        {% endfor %}
+        {% if paises|length > destacados|length %}
+        <span class="hero-mercado hero-mercado-mas">+ {{ paises|length - destacados|length }} mercados</span>
+        {% endif %}
+      </div>
       <div class="acciones">
         {% if hay_prueba_gratuita() %}
         <a class="btn btn-primary" href="/acceso">Empezar mis {{ dias_de_prueba() }} días gratis</a>
@@ -68,16 +81,16 @@
       {% if hay_prueba_gratuita() %}
       <p class="hero-letra-pequena">Acceso completo durante {{ dias_de_prueba() }} días. No pedimos tarjeta y no se cobra nada automáticamente.</p>
       {% endif %}
-      <div class="hero-outcomes" aria-label="Ventajas principales de {{ product_name }}">
-        <div class="hero-outcome"><span>💰</span><strong>Beneficio real</strong><small>coste vs. venta por partida</small></div>
-        <div class="hero-outcome"><span>📐</span><strong>Planos y BC3</strong><small>mide y importa FIEBDC-3</small></div>
-        <div class="hero-outcome"><span>⏱️</span><strong>Tiempo de obra</strong><small>horas y días de cuadrilla</small></div>
-        <div class="hero-outcome"><span>📄</span><strong>PDF y reenvío</strong><small>versiones y cambios claros</small></div>
+      <div class="hero-outcomes" aria-label="Las 4 funciones que marcan la diferencia en {{ product_name }}">
+        <div class="hero-outcome"><span>💰</span><strong>Beneficio real, no suma de líneas</strong><small>APU → coste interno → margen en vivo</small></div>
+        <div class="hero-outcome"><span>📚</span><strong>Base de precios ya lista</strong><small>{{ catalogo().lineas_precio_txt }} líneas de precio y APU</small></div>
+        <div class="hero-outcome"><span>⏱️</span><strong>Plazo que puedes cumplir</strong><small>horas por rol + duración de cuadrilla</small></div>
+        <div class="hero-outcome"><span>📄</span><strong>PDF que cierra la venta</strong><small>logo, firmas, versiones y WhatsApp</small></div>
       </div>
       <ul class="hero-points">
-        <li><span class="check">✓</span> Presupuesta obra y productos, pero también calcula coste interno, margen y beneficio.</li>
-        <li><span class="check">✓</span> Planifica con horas-hombre, duración estimada y rendimientos de cada partida.</li>
-        <li><span class="check">✓</span> {{ catalogo().lineas_precio_txt }} líneas de precio: {{ catalogo().partidas_txt }} partidas + {{ catalogo().recursos_txt }} recursos{% if ej.convierte %} · en {{ ej.moneda }}{% endif %}, editables y conectados.</li>
+        <li><span class="check">✓</span> Si sube el cemento o la hora del oficial, <strong>todas</strong> las partidas que lo usan se recalculan solas.</li>
+        <li><span class="check">✓</span> Importa descompuestos desde Excel (.xlsx) o .bc3 (FIEBDC-3), y mide sobre el plano.</li>
+        <li><span class="check">✓</span> {{ catalogo().lineas_precio_txt }} líneas de precio: {{ catalogo().partidas_txt }} partidas + {{ catalogo().recursos_txt }} recursos{% if ej.convierte %} · en {{ ej.moneda }}{% endif %}.</li>
       </ul>
     </div>
 
@@ -136,6 +149,96 @@
     </div>
   </div>
 </header>
+
+<section class="flagship" id="superpoderes" aria-label="Las mejores funciones de {{ product_name }}">
+  <div class="flagship-intro">
+    <span class="section-kicker">Nuestras mejores funciones</span>
+    <h2>Lo que {{ product_name }} hace que una plantilla o un generador no pueden.</h2>
+    <p class="intro">No se trata de sumar líneas. Se trata de partir de un catálogo con los precios de <strong>tu país</strong>, ver cuánto ganas y cuánto tardas, y entregar un PDF profesional que el cliente entiende y firma.</p>
+  </div>
+  <div class="flagship-grid">
+    <article class="fl-card">
+      <div class="fl-ico" aria-hidden="true">💰</div>
+      <div class="fl-body">
+        <h3>Sabes cuánto ganas de verdad</h3>
+        <p>Coste interno de cada partida comparado con tu precio de venta: beneficio y margen en vivo, por partida, capítulo y total.</p>
+      </div>
+      <span class="fl-proof">Margen real por partida ⚡</span>
+    </article>
+    <article class="fl-card">
+      <div class="fl-ico" aria-hidden="true">📚</div>
+      <div class="fl-body">
+        <h3>Llegas con la base de precios puesta</h3>
+        <p>{{ catalogo().partidas_txt }} partidas descompuestas y {{ catalogo().recursos_txt }} recursos con precio y rendimiento. En España en EUR, en cada país con su mercado.</p>
+      </div>
+      <span class="fl-proof">{{ catalogo().lineas_descomp_txt }} líneas de APU · catálogo por país</span>
+    </article>
+    <article class="fl-card">
+      <div class="fl-ico" aria-hidden="true">⏱️</div>
+      <div class="fl-body">
+        <h3>Promete plazos que puedes cumplir</h3>
+        <p>Horas-hombre por rol, duración estimada y planificación de cuadrilla. Antes de enviar, sabes cuántos días necesitas.</p>
+      </div>
+      <span class="fl-proof">98 h → ~6 días en el ejemplo</span>
+    </article>
+    <article class="fl-card">
+      <div class="fl-ico" aria-hidden="true">📥</div>
+      <div class="fl-body">
+        <h3>Entra Excel, BC3 y tus planos</h3>
+        <p>Importa descompuestos desde Excel (.xlsx) y .bc3 (FIEBDC-3) sin perder filas, y mide sobre el plano: líneas, áreas y conteos que van a la partida.</p>
+      </div>
+      <span class="fl-proof">Excel + BC3 + medición en canvas</span>
+    </article>
+    <article class="fl-card">
+      <div class="fl-ico" aria-hidden="true">🧱</div>
+      <div class="fl-body">
+        <h3>Vende con opciones, no con renuncias</h3>
+        <p>Productos incluidos, opcionales o alternativos con foto, y packs de estancia que insertan el capítulo entero escalado a los m².</p>
+      </div>
+      <span class="fl-proof">{% if catalogo().packs %}Packs de serie{% else %}Packs y opcionales{% endif %} + los tuyos</span>
+    </article>
+    <article class="fl-card">
+      <div class="fl-ico" aria-hidden="true">📄</div>
+      <div class="fl-body">
+        <h3>El PDF que cierra la venta</h3>
+        <p>Con tu logo, firma, versiones y resumen de cambios. Si el cliente llama y pide ajustes, reenvías sin que nadie pierda el hilo.</p>
+      </div>
+      <span class="fl-proof">PDF + versiones selladas + WhatsApp</span>
+    </article>
+  </div>
+  <div class="flagship-cta">
+    <a class="btn btn-primary" href="#producto">Ver un presupuesto real ↓</a>
+    <a class="btn btn-secondary" href="#comparativa">Comparar con Excel y generadores</a>
+  </div>
+</section>
+
+<section class="mercados" id="catalogo-paises" aria-label="Catálogo de precios por país">
+  <div class="mercados-intro">
+    <span class="section-kicker">Catálogo por país, no genérico</span>
+    <h2>España no cotiza igual que México. Cada país tiene su catálogo.</h2>
+    <p class="intro">CotizaT no es una sola lista de precios con una bandera encima. Cada mercado lleva sus precios de referencia, su moneda, su IVA, su ID fiscal y su terminología de obra. Por eso el país se elige <strong>al entrar</strong>: para que veas los precios de tu obra, no los de otra.</p>
+  </div>
+
+  <div class="mercado-grid" role="table" aria-label="Ejemplo de catálogos por país">
+    <div class="mercado-cab" role="row">
+      <span role="columnheader">Mercado</span>
+      <span role="columnheader">Moneda</span>
+      <span role="columnheader">Fiscal</span>
+      <span role="columnheader">Habla tu obra</span>
+    </div>
+    {% for p in paises[:6] %}
+    <a class="mercado-fila{% if p.codigo == pais_codigo %} es-activo{% endif %}" role="row" href="/{{ p.codigo | lower }}/">
+      <span role="cell" class="mercado-nombre">{{ p.bandera }} {{ p.nombre }}</span>
+      <span role="cell" class="mercado-moneda">{{ p.moneda }}{% if p.moneda_local and p.moneda_local != p.moneda %} · {{ p.simbolo_local }}{% endif %} · IVA {{ p.iva }}%</span>
+      <span role="cell" class="mercado-fiscal">{{ p.id_fiscal }}</span>
+      <span role="cell" class="mercado-vocab">{{ p.vocab }}</span>
+    </a>
+    {% endfor %}
+  </div>
+  {% if paises|length > 6 %}
+  <p class="mercados-mas">+ {{ paises|length - 6 }} países con catálogo, moneda, IVA y terminología propios. Elige el tuyo en la parte superior de la página.</p>
+  {% endif %}
+</section>
 
 <section class="flujo-real" id="flujo-real">
   <div class="flujo-real-intro">
@@ -370,8 +473,8 @@
       </article>
       <article class="apu-lateral">
         <div class="ventaja-icon" aria-hidden="true">📥</div>
-        <h3>Importa tus descompuestos CYPE</h3>
-        <p>¿Trabajas con CYPE? Importa el Excel de descompuestos (.xlsx) y se clasifica solo: materiales, mano de obra y costes directos, sin perder ninguna fila.</p>
+        <h3>Importa tus descompuestos desde Excel</h3>
+        <p>¿Tienes la matriz de descompuestos en Excel (.xlsx)? Impórtala y se clasifica sola: materiales, mano de obra, equipos y costes directos, sin perder una sola fila.</p>
       </article>
       <article class="apu-lateral">
         <div class="ventaja-icon" aria-hidden="true">🧮</div>
@@ -506,7 +609,7 @@
           <td><span class="comp-si">✓</span> .bc3 con capítulos y mediciones + canvas con calibración (sin IA)</td>
         </tr>
         <tr>
-          <th scope="row">Importar descompuestos de CYPE (.xlsx)</th>
+          <th scope="row">Importar descompuestos desde Excel (.xlsx)</th>
           <td><span class="comp-no">✗</span></td>
           <td><span class="comp-no">✗</span></td>
           <td><span class="comp-si">✓</span> Sin perder filas ni fórmulas</td>
@@ -695,13 +798,13 @@
       </ul>
       {% else %}
       <h2 id="banner-h2">El catálogo más completo para presupuestar en España y Latinoamérica.</h2>
-      <p id="banner-p">{{ catalogo().partidas_txt }} partidas descompuestas y {{ catalogo().recursos_txt }} precios de recursos ({{ catalogo().materiales }} materiales, {{ catalogo().mano_obra }} de mano de obra, {{ catalogo().equipo }} de equipo), organizadas en {{ catalogo().capitulos }} capítulos y {{ catalogo().subcapitulos }} subcapítulos. {{ catalogo().lineas_descomp_txt }} líneas de recursos y rendimientos listas para usar, en USD de referencia convertibles a tu moneda y en revisión continua. No empiezas de cero: llegas con una base de precios real y propia.</p>
+      <p id="banner-p">{{ catalogo().partidas_txt }} partidas descompuestas y {{ catalogo().recursos_txt }} precios de recursos ({{ catalogo().materiales }} materiales, {{ catalogo().mano_obra }} de mano de obra, {{ catalogo().equipo }} de equipo), organizadas en {{ catalogo().capitulos }} capítulos y {{ catalogo().subcapitulos }} subcapítulos. {{ catalogo().lineas_descomp_txt }} líneas de recursos y rendimientos listas para usar, con precios de referencia por país: España en EUR y cada mercado latino con su moneda. En revisión continua. No empiezas de cero: llegas con una base de precios real de tu mercado.</p>
       <ul class="banner-lista">
-        <li id="banner-vocab"><span class="check">✓</span> Terminología hispana neutra con variantes locales: elige tu país y adapta los nombres.</li>
-        <li id="banner-moneda"><span class="check">✓</span> Precios en USD de referencia · convierte a tu moneda local (COP, MXN, PEN, CLP, ARS…) en cada presupuesto.</li>
+        <li id="banner-vocab"><span class="check">✓</span> España: hormigón, pladur, falso techo, alicatado, fontanero. Cada país con su terminología.</li>
+        <li id="banner-moneda"><span class="check">✓</span> España en EUR con NIF e IVA 21 % · Latinoamérica en USD o su moneda local (MXN, COP, PEN…) con tasa congelada por presupuesto.</li>
         <li><span class="check">✓</span> Descomposición técnica de cada partida: materiales, mano de obra y equipo.</li>
         <li><span class="check">✓</span> Cambia un precio de recurso y se recalculan todas las partidas que lo usan.</li>
-        <li><span class="check">✓</span> Se actualiza periódicamente para seguir el mercado.</li>
+        <li><span class="check">✓</span> Se actualiza periódicamente para seguir el mercado de cada país.</li>
       </ul>
       {% endif %}
     </div>
@@ -754,7 +857,7 @@
     <div class="tarjeta">
       <div class="icon">📐</div>
       <h3>Planos y BC3 (FIEBDC-3)</h3>
-      <p>Importa el .bc3 del arquitecto (Presto, Arquímedes, BCCA) con capítulos y mediciones. Sube el plano en PNG/JPG/PDF, calibra escala y mide líneas, áreas y conteos directo al presupuesto. Exporta a BC3 básico.</p>
+      <p>Importa el .bc3 (FIEBDC-3) que te manda el arquitecto, con capítulos y mediciones. Sube el plano en PNG/JPG/PDF, calibra escala y mide líneas, áreas y conteos directo al presupuesto. Exporta a BC3 básico.</p>
     </div>
     <div class="tarjeta">
       <div class="icon">🧱</div>
@@ -808,22 +911,22 @@
   </div>
   {% else %}
   <h2 id="franja-h2">Pensado para España y Latinoamérica, no adaptado después.</h2>
-  <p class="intro" id="franja-intro">No es una herramienta genérica. {{ product_name }} nace para construir en España y en Latinoamérica: precios en USD de referencia, vocabulario hispano y fiscalidad configurable por país.</p>
+  <p class="intro" id="franja-intro">No es una herramienta genérica traducida. {{ product_name }} nace para reformar en España (EUR, NIF, IVA 21 %, pladur y fontanería) y para construir en Latinoamérica (USD o moneda local, con su IVA y su ID fiscal). Cada país, su catálogo.</p>
   <div class="grid3">
     <div class="tarjeta">
-      <div class="icon">💵</div>
-      <h3>Precios en tu moneda</h3>
-      <p id="franja-precio-p">Cotiza en USD como referencia regional o en tu moneda local (COP, MXN, PEN, CLP, ARS…). Tu tasa de referencia queda guardada en cada presupuesto.</p>
+      <div class="icon">💶</div>
+      <h3>España en euros</h3>
+      <p id="franja-precio-p">Cotiza reformas en EUR con NIF e IVA 21 %, o en USD como referencia regional. Referencias de mercado españolas incluidas; tu tasa queda guardada en cada presupuesto.</p>
     </div>
     <div class="tarjeta">
       <div class="icon">🧱</div>
-      <h3>Vocabulario hispano</h3>
-      <p id="franja-vocab-p">Concreto/hormigón, friso/revoque, cielo raso/cielorraso, rodapié/zócalo, plomero/gasfíter… Elige tu país y la landing habla tu obra.</p>
+      <h3>Vocabulario de cada mercado</h3>
+      <p id="franja-vocab-p">Hormigón, pladur, falso techo, alicatado, fontanero en España; concreto/pañete/cielo raso en LatAm. Elige tu país y la landing habla tu obra.</p>
     </div>
     <div class="tarjeta">
       <div class="icon">📈</div>
-      <h3>Precios que se actualizan</h3>
-      <p>La base en USD se contrasta con mercados de la región y se revisa periódicamente, para que no cotices con cifras de hace un año.</p>
+      <h3>Precios por país, que se actualizan</h3>
+      <p>Cada mercado se contrasta y revisa periódicamente, para que no cotices con cifras de hace un año ni con precios de otro país.</p>
     </div>
   </div>
   {% endif %}
@@ -850,7 +953,7 @@
   <p class="intro">
     <a href="/guia/presupuesto-de-obra">Cómo hacer un presupuesto de obra</a>
     · <a href="/guia/analisis-precios-unitarios">Qué es un APU</a>
-    · <a href="/guia/presupuesto-remodelacion">Presupuestar una remodelación</a>
+    · <a href="/guia/presupuesto-remodelacion">Presupuestar una reforma</a>
     {% if pais_codigo %}
     · <a href="/{{ pais_codigo | lower }}/software-presupuestos">Software en {{ seo.nombre_pais }}</a>
     · <a href="/{{ pais_codigo | lower }}/apu">APU en {{ seo.nombre_pais }}</a>
@@ -889,11 +992,16 @@
     <a class="plan destacado" href="/pago">
       <span class="etiqueta">PROMOCIÓN INICIAL</span>
       <h3>Plan anual</h3>
+      {% if pais_codigo == 'ES' %}
+      <div class="cifra">89 € <small>/ año</small></div>
+      <p><span class="antes">109 € / año</span> — precio habitual</p>
+      {% else %}
       <div class="cifra">89 US$ <small>/ año</small></div>
       <p><span class="antes">109 US$ / año</span> — precio habitual</p>
+      {% endif %}
       <ul>
         {% if hay_prueba_gratuita() %}<li>Empieza con {{ dias_de_prueba() }} días gratis</li>{% endif %}
-        <li>Todas las funciones incluidas: catálogo, APU, packs, PDF, versiones y cobros</li>
+        <li>Todas las funciones incluidas: catálogo por país, APU, packs, PDF, versiones y cobros</li>
         <li>Configuración asistida de tu empresa y catálogo</li>
         <li>Soporte directo por email</li>
         <li>Actualizaciones incluidas</li>
@@ -902,8 +1010,13 @@
     <a class="plan" href="/pago">
       <span class="etiqueta">PROMOCIÓN INICIAL</span>
       <h3>Plan mensual</h3>
+      {% if pais_codigo == 'ES' %}
+      <div class="cifra">9,99 € <small>/ mes el primer año</small></div>
+      <p><span class="antes">12,99 € / mes</span> — precio habitual</p>
+      {% else %}
       <div class="cifra">9,99 US$ <small>/ mes el primer año</small></div>
       <p><span class="antes">12,99 US$ / mes</span> — precio habitual</p>
+      {% endif %}
       <ul>
         {% if hay_prueba_gratuita() %}<li>Empieza con {{ dias_de_prueba() }} días gratis</li>{% endif %}
         <li>Todas las funciones incluidas</li>
@@ -919,7 +1032,7 @@
 
 <section class="franja cta-final" id="pago">
   <h2>¿Listo para dejar de presupuestar a mano?</h2>
-  <p class="intro">{{ product_name }} convierte tu catálogo, tus precios y tu cuadrilla en presupuestos con tu margen de beneficio, tu tiempo de obra, tu PDF con tu logo y los cambios claros para reenviar. Sin Excel, sin pegar y copiar.</p>
+  <p class="intro">{{ product_name }} convierte el catálogo de tu país, tus precios y tu cuadrilla en presupuestos con tu margen de beneficio, tu tiempo de obra, tu PDF con tu logo y los cambios claros para reenviar. En España, en euros y con NIF. Sin Excel, sin pegar y copiar.</p>
   <div class="acciones mt-3">
     {% if hay_prueba_gratuita() %}
     <a class="btn btn-primary" href="/acceso">Empezar mis {{ dias_de_prueba() }} días gratis</a>

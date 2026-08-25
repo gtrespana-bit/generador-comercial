@@ -4,7 +4,7 @@
 <div class="page-head">
   <div>
     <h1>Importar partidas</h1>
-    <p class="subtitle">Importa tablas, descompuestos CYPE o presupuestos BC3 (FIEBDC-3). BC3 conserva capítulos, partidas, mediciones y precios.</p>
+    <p class="subtitle">Importa tablas de Excel, matrices de descompuestos (.xlsx) o presupuestos BC3 (FIEBDC-3). BC3 conserva capítulos, partidas, mediciones y precios.</p>
   </div>
   <a class="btn" href="{{ '/partidas' if modo_catalogo else '/presupuestos' }}">← Volver a {{ 'partidas' if modo_catalogo else 'presupuestos' }}</a>
 </div>
@@ -15,12 +15,12 @@
 
 <div class="card" id="import-source-card">
   <h2>1. Carga los datos</h2>
-  <p class="hint">Para archivos como <strong>DPT020.xlsx</strong>, selecciona uno o varios <strong>.xlsx</strong> de descompuesto: se detectará cada partida, fila, celda y fórmula sin convertirlo en una tabla plana. También se admiten CSV/Excel tabulares y <strong>BC3 (FIEBDC-3)</strong> de España (BCCA Andalucía, Extremadura, etc.).</p>
+  <p class="hint">Si tienes una matriz de descompuesto en <strong>.xlsx</strong>, selecciona uno o varios archivos: se detectará cada partida, fila, celda y fórmula sin convertirlo en una tabla plana. También se admiten CSV/Excel tabulares y <strong>BC3 (FIEBDC-3)</strong>.</p>
   <div class="form-grid">
     <div class="field">
       <label>Archivo CSV, Excel o BC3</label>
       <input type="file" id="import-file" multiple accept=".csv,.xlsx,.bc3,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
-      <p class="hint">Puedes seleccionar varios archivos solo si todos son descompuestos CYPE. BC3 se carga de uno en uno.</p>
+      <p class="hint">Puedes seleccionar varios archivos solo si todos son descompuestos Excel (.xlsx). BC3 se carga de uno en uno.</p>
     </div>
     <div class="field" id="import-header-field">
       <label>Primera fila (solo formato tabular)</label>
