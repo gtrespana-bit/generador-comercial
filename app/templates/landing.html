@@ -89,7 +89,7 @@
       </div>
       <ul class="hero-points">
         <li><span class="check">✓</span> Si sube el cemento o la hora del oficial, <strong>todas</strong> las partidas que lo usan se recalculan solas.</li>
-        <li><span class="check">✓</span> Importa tus descompuestos CYPE y tu .bc3 (FIEBDC-3), y mide sobre el plano.</li>
+        <li><span class="check">✓</span> Importa descompuestos desde Excel (.xlsx) o .bc3 (FIEBDC-3), y mide sobre el plano.</li>
         <li><span class="check">✓</span> {{ catalogo().lineas_precio_txt }} líneas de precio: {{ catalogo().partidas_txt }} partidas + {{ catalogo().recursos_txt }} recursos{% if ej.convierte %} · en {{ ej.moneda }}{% endif %}.</li>
       </ul>
     </div>
@@ -184,8 +184,8 @@
     <article class="fl-card">
       <div class="fl-ico" aria-hidden="true">📥</div>
       <div class="fl-body">
-        <h3>Entra CYPE, BC3 y tus planos</h3>
-        <p>Importa descompuestos CYPE (.xlsx) y .bc3 (FIEBDC-3) sin perder filas, y mide sobre el plano: líneas, áreas y conteos que van a la partida.</p>
+        <h3>Entra Excel, BC3 y tus planos</h3>
+        <p>Importa descompuestos desde Excel (.xlsx) y .bc3 (FIEBDC-3) sin perder filas, y mide sobre el plano: líneas, áreas y conteos que van a la partida.</p>
       </div>
       <span class="fl-proof">Excel + BC3 + medición en canvas</span>
     </article>
@@ -473,8 +473,8 @@
       </article>
       <article class="apu-lateral">
         <div class="ventaja-icon" aria-hidden="true">📥</div>
-        <h3>Importa tus descompuestos CYPE</h3>
-        <p>¿Trabajas con CYPE? Importa el Excel de descompuestos (.xlsx) y se clasifica solo: materiales, mano de obra y costes directos, sin perder ninguna fila.</p>
+        <h3>Importa tus descompuestos desde Excel</h3>
+        <p>¿Tienes la matriz de descompuestos en Excel (.xlsx)? Impórtala y se clasifica sola: materiales, mano de obra, equipos y costes directos, sin perder una sola fila.</p>
       </article>
       <article class="apu-lateral">
         <div class="ventaja-icon" aria-hidden="true">🧮</div>
@@ -609,7 +609,7 @@
           <td><span class="comp-si">✓</span> .bc3 con capítulos y mediciones + canvas con calibración (sin IA)</td>
         </tr>
         <tr>
-          <th scope="row">Importar descompuestos de CYPE (.xlsx)</th>
+          <th scope="row">Importar descompuestos desde Excel (.xlsx)</th>
           <td><span class="comp-no">✗</span></td>
           <td><span class="comp-no">✗</span></td>
           <td><span class="comp-si">✓</span> Sin perder filas ni fórmulas</td>
@@ -857,7 +857,7 @@
     <div class="tarjeta">
       <div class="icon">📐</div>
       <h3>Planos y BC3 (FIEBDC-3)</h3>
-      <p>Importa el .bc3 del arquitecto (Presto, Arquímedes, BCCA) con capítulos y mediciones. Sube el plano en PNG/JPG/PDF, calibra escala y mide líneas, áreas y conteos directo al presupuesto. Exporta a BC3 básico.</p>
+      <p>Importa el .bc3 (FIEBDC-3) que te manda el arquitecto, con capítulos y mediciones. Sube el plano en PNG/JPG/PDF, calibra escala y mide líneas, áreas y conteos directo al presupuesto. Exporta a BC3 básico.</p>
     </div>
     <div class="tarjeta">
       <div class="icon">🧱</div>
@@ -953,7 +953,7 @@
   <p class="intro">
     <a href="/guia/presupuesto-de-obra">Cómo hacer un presupuesto de obra</a>
     · <a href="/guia/analisis-precios-unitarios">Qué es un APU</a>
-    · <a href="/guia/presupuesto-remodelacion">Presupuestar una remodelación</a>
+    · <a href="/guia/presupuesto-remodelacion">Presupuestar una reforma</a>
     {% if pais_codigo %}
     · <a href="/{{ pais_codigo | lower }}/software-presupuestos">Software en {{ seo.nombre_pais }}</a>
     · <a href="/{{ pais_codigo | lower }}/apu">APU en {{ seo.nombre_pais }}</a>
@@ -992,11 +992,16 @@
     <a class="plan destacado" href="/pago">
       <span class="etiqueta">PROMOCIÓN INICIAL</span>
       <h3>Plan anual</h3>
+      {% if pais_codigo == 'ES' %}
+      <div class="cifra">89 € <small>/ año</small></div>
+      <p><span class="antes">109 € / año</span> — precio habitual</p>
+      {% else %}
       <div class="cifra">89 US$ <small>/ año</small></div>
       <p><span class="antes">109 US$ / año</span> — precio habitual</p>
+      {% endif %}
       <ul>
         {% if hay_prueba_gratuita() %}<li>Empieza con {{ dias_de_prueba() }} días gratis</li>{% endif %}
-        <li>Todas las funciones incluidas: catálogo, APU, packs, PDF, versiones y cobros</li>
+        <li>Todas las funciones incluidas: catálogo por país, APU, packs, PDF, versiones y cobros</li>
         <li>Configuración asistida de tu empresa y catálogo</li>
         <li>Soporte directo por email</li>
         <li>Actualizaciones incluidas</li>
@@ -1005,8 +1010,13 @@
     <a class="plan" href="/pago">
       <span class="etiqueta">PROMOCIÓN INICIAL</span>
       <h3>Plan mensual</h3>
+      {% if pais_codigo == 'ES' %}
+      <div class="cifra">9,99 € <small>/ mes el primer año</small></div>
+      <p><span class="antes">12,99 € / mes</span> — precio habitual</p>
+      {% else %}
       <div class="cifra">9,99 US$ <small>/ mes el primer año</small></div>
       <p><span class="antes">12,99 US$ / mes</span> — precio habitual</p>
+      {% endif %}
       <ul>
         {% if hay_prueba_gratuita() %}<li>Empieza con {{ dias_de_prueba() }} días gratis</li>{% endif %}
         <li>Todas las funciones incluidas</li>

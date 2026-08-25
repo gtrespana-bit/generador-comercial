@@ -152,7 +152,7 @@ CUERPO_PAIS: dict[str, list[tuple[str, list[str]]]] = {
             "Del visado a la obra, con BC3 y medición sobre planos",
             [
                 "El cliente no entra a ninguna plataforma. Tú mides, armas el presupuesto por capítulos, revisas margen y horas de cuadrilla, y mandas el PDF por WhatsApp o email. Si el cliente cambia el solado, editas, se crea una versión y reenvías con el resumen de qué cambió.",
-                "CotizaT importa BC3 (FIEBDC-3) de arquitectos y bases como BCCA Andalucía o Extremadura: capítulos, partidas, mediciones y precios. También mide sobre planos en modo manual asistido —subes PNG/JPG/PDF, calibras escala y sacas líneas, áreas y conteos sin IA ni coste por uso. Si trabajas licitación pública que exige exportar BC3 con certificaciones y residuos, aún no es tu software; si haces reforma residencial y comercial que recibe BC3 del arquitecto, el flujo es el que ya usas.",
+                "CotizaT importa BC3 (FIEBDC-3): capítulos, partidas, mediciones y precios. También mide sobre planos en modo manual asistido —subes PNG/JPG/PDF, calibras escala y sacas líneas, áreas y conteos sin IA ni coste por uso. Si trabajas licitación pública que exige exportar BC3 con certificaciones y residuos, aún no es tu software; si haces reforma residencial y comercial que recibe BC3 del arquitecto, el flujo es el que ya usas.",
             ],
         ),
         (
@@ -271,9 +271,9 @@ GUIAS: dict[str, dict] = {
                 ],
             ),
             (
-                "CYPE y Excel",
+                "Excel y BC3",
                 [
-                    "Si ya exportas descompuestos CYPE, el .xlsx se puede importar clasificando materiales, mano de obra y complementarios, sin perder filas. También se pega TSV desde Excel.",
+                    "Si ya exportas matrices de descompuestos en Excel (.xlsx), se pueden importar clasificando materiales, mano de obra y complementarios, sin perder filas. También se pega TSV desde Excel o se importa .bc3 (FIEBDC-3).",
                 ],
             ),
             (
@@ -424,7 +424,7 @@ HUB_EXTRA: dict[tuple[str, str], list[tuple[str, str]]] = {
         ),
         (
             "De Excel al descompuesto, sin perder el rendimiento",
-            "Importas CYPE o pegas TSV. El oficial y el cemento se editan en Recursos y caen a las partidas. El presupuesto enviado no se reescribe.",
+            "Importas el .xlsx o pegas TSV. El oficial y el cemento se editan en Recursos y caen a las partidas. El presupuesto enviado no se reescribe.",
         ),
     ],
     ("CO", "remodelacion"): [

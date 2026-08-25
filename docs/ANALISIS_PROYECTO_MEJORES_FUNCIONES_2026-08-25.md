@@ -28,7 +28,7 @@ En una frase: **convierte tu catálogo y tus precios en presupuestos de obra cla
 
 ## 2. Cómo se hizo el análisis
 
-- Revisión de `README.md`, `docs/` (rutas de producto, comercialización, SEO, APU, planos, BC3, seguridad, licencias, operación) y de los análisis anteriores (`ANALISIS_PRODUCTO_Y_VIABILIDAD.md`, `HOJA_DE_RUTA_Y_ESTADO_DEL_PROYECTO.md`, `GUIA_IMPORTACION_EXCEL_CYPE.md`).
+- Revisión de `README.md`, `docs/` (rutas de producto, comercialización, SEO, APU, planos, BC3, seguridad, licencias, operación) y de los análisis anteriores (`ANALISIS_PRODUCTO_Y_VIABILIDAD.md`, `HOJA_DE_RUTA_Y_ESTADO_DEL_PROYECTO.md`, `GUIA_IMPORTACION_EXCEL_Excel.md`).
 - Inspección directa de los módulos clave que sostienen las funciones: `calculations.py` (márgenes), `apu.py` (APU), `tiempos.py` (horas/duración), `bc3.py` (FIEBDC-3), `planos.py` (medición de planos), `cambios_presupuesto.py` (versiones/comparación), `pdf*.py`, `excel_export.py`, `landing_ejemplo.py`, `seo.py`.
 - Verificación de las cifras de catálogo a partir de `basedatos_partidas` (3.006 partidas + 392 recursos).
 
@@ -42,7 +42,7 @@ En una frase: **convierte tu catálogo y tus precios en presupuestos de obra cla
 | **2. APU y costes** | Descomposición en recursos (rendimiento × precio), costes directos complementarios, edición de rendimiento/precio, recálculo en cascada | Sabes de dónde sale cada precio y puedes corregirlo sin romper nada |
 | **3. Presupuesto** | Capítulos ilimitados, partidas, mediciones, productos, packs de estancia, autosave, deshacer, Excel/TSV, plantillas, numeración | Es rápido armar y mantener el presupuesto |
 | **4. Comercial** | Beneficio/margen por partida–capítulo–total, alertas de margen bajo, tiempo de obra (horas por rol + duración), planificación de cuadrilla | Deja de cotizar a ciegas: ves cuánto ganas y cuánto tardas |
-| **5. Entrada de datos** | Importar Excel propio, **CYPE .xlsx**, **BC3 (FIEBDC-3)**, medición sobre planos (líneas/áreas/perímetros/conteos), exportar DXF/CSV/PNG, anexos al PDF | Aprovecha lo que ya existe en la empresa (planos, Excel, CYPE) |
+| **5. Entrada de datos** | Importar Excel propio, **Excel .xlsx**, **BC3 (FIEBDC-3)**, medición sobre planos (líneas/áreas/perímetros/conteos), exportar DXF/CSV/PNG, anexos al PDF | Aprovecha lo que ya existe en la empresa (planos, Excel, Excel) |
 | **6. Entrega** | PDF con logo, condiciones, garantías, firmas, marca de agua, **versiones inmutables**, enlace privado (caducidad, revocación, firma), WhatsApp, email, **resumen de cambios** al reenviar | Tú envías como ya lo haces, pero con trazabilidad profesional |
 | **7. Operación** | Clientes, historial con filtros, estados, vencimiento automático, ajuste de precios por %, cobros (documentos DC, saldos), reportes/CSV, copia de seguridad/restauración, multiorganización, licencias/facturación | El presupuesto se convierte en negocio, no queda en un PDF suelto |
 
@@ -67,8 +67,8 @@ En una frase: **convierte tu catálogo y tus precios en presupuestos de obra cla
 - **Qué es:** horas-hombre por rol (oficial, ayudante, capataz), **duración estimada de la obra**, simulación de planificación y asignación manual de horas.
 - **Por qué es Top 4:** permite **prometer plazos que se pueden cumplir**, lo cual es una promesa de venta muy potente para remodeladores.
 
-### 🔟 5. Importación CYPE + BC3 (FIEBDC-3)
-- **Qué es:** importa descompuestos de **CYPE (.xlsx)** sin perder filas ni fórmulas, y **.bc3 de Presto/Arquímedes/BCCA** (UTF-8/Windows-1252/ISO/CP850). Exporta BC3 básico.
+### 🔟 5. Importación de descompuestos Excel + BC3 (FIEBDC-3)
+- **Qué es:** importa descompuestos de **descompuestos Excel (.xlsx)** sin perder filas ni fórmulas, y **.bc3 (FIEBDC-3)** (UTF-8/Windows-1252/ISO/CP850). Exporta BC3 básico.
 - **Por qué es Top 5:** baja la barrera de entrada para quien ya trabaja con bases de precios. Convierte "otro software" en "el que ya entiende mis archivos".
 
 ### 🔟 6. Medición sobre planos
@@ -106,7 +106,7 @@ En una frase: **convierte tu catálogo y tus precios en presupuestos de obra cla
 - Bajan hasta el **coste** (no solo el precio).
 - Mostrar **margen y beneficio** en vivo.
 - **Base de precios incluida** (no 50 partidas de muestra).
-- **Import de CYPE/BC3** y **medición en planos** (los típicos no lo tienen).
+- **Import de Excel/BC3** y **medición en planos** (los típicos no lo tienen).
 - **Productos con opciones y packs** (propuesta comercial, no lista plana).
 
 ### 5.3 Contra ERP / BIM de obra
@@ -130,7 +130,7 @@ En una frase: **convierte tu catálogo y tus precios en presupuestos de obra cla
 | Beneficio y margen real | "Sabes cuánto ganas por partida" (no "presupuesta" genérico) |
 | Tiempo de obra | "Promete plazos que puedes cumplir: 98 h → ~6 días" |
 | PDF + cambios | "PDF con tu logo + qué cambió al reenviar" |
-| CYPE / BC3 / planos | "Importa lo que ya tienes: CYPE, BC3, planos" (una sola línea) |
+| Excel / BC3 / planos | "Importa lo que ya tienes: Excel, BC3, planos" (una sola línea) |
 | Packs y opciones | "Vende con opciones, no con renuncias" |
 | Datos sin rehenes | "Exporta todo cuando quieras" (mini-barra de confianza) |
 
@@ -147,7 +147,7 @@ En una frase: **convierte tu catálogo y tus precios en presupuestos de obra cla
 **Lo que se puede mejorar (y se ha hecho en esta iteración):**
 1. **El mensaje de apertura es ancho, no afilado.** El hero enumera 4 funciones en tarjetas genéricas ("Beneficio real", "Planos y BC3", "Tiempo de obra", "PDF y reenvío"). Se ha cambiado por beneficios concretos con la **palanca** que los hace únicos: "APU → coste → margen", "base de precios ya lista", "plazo que puedes cumplir", "PDF + firma + cambios".
 2. **Las mejores funciones no están "arriba"**: aparecen bien, pero en secciones medias. Se ha añadido **una franja de superpoderes justo después del hero** con 6 tarjetas + prueba cuantitativa, para que en el **primer scroll** el visitante ya vea el diferencial.
-3. **Falta un ancla de confianza inmediata.** Se refuerzan los "check" del hero con los claims más difíciles de copiar (recálculo en cascada, CYPE/BC3/planos).
+3. **Falta un ancla de confianza inmediata.** Se refuerzan los "check" del hero con los claims más difíciles de copiar (recálculo en cascada, Excel/BC3/planos).
 4. **Ritmo visual plano en la parte alta.** Se añade un diseño más vivo (iconos en gradiente, tarjetas con acento, hover y micro-animaciones que respetan `prefers-reduced-motion`) sin tocar el LCP (el H1 se pinta con CSS crítico en línea, como antes).
 
 ---
@@ -159,10 +159,10 @@ En una frase: **convierte tu catálogo y tus precios en presupuestos de obra cla
    - Beneficio real por partida (margen en vivo).
    - Base de precios con APU (3.006 partidas + 392 recursos).
    - Tiempo de obra con tu cuadrilla (horas por rol y duración).
-   - Importa CYPE y BC3 + mide en planos.
+   - Importa Excel y BC3 + mide en planos.
    - Productos con opciones y packs de estancia.
    - PDF con logo, versiones y resumen de cambios.
-3. **Ancho de confianza en el hero:** el bloque `hero-points` ahora ancla los tres claims más fuertes (recálculo en cascada, import CYPE/BC3/planos, línea de precios).
+3. **Ancho de confianza en el hero:** el bloque `hero-points` ahora ancla los tres claims más fuertes (recálculo en cascada, import Excel/BC3/planos, línea de precios).
 4. **Estilo más llamativo sin romper rendimiento:** gradiente acento/oro en iconos, borde de acento en tarjetas, hover con elevación y micro-animación CSS solo en la franja nueva (fuera del primer viewport).
 
 ---
@@ -179,7 +179,7 @@ En una frase: **convierte tu catálogo y tus precios en presupuestos de obra cla
 
 ## 10. Conclusión
 
-El producto tiene **funciones de verdadero valor** y varias son difíciles de copiar (APU + base de precios + tiempo de obra + versiones + import CYPE/BC3/planos). La landing ahora **las muestra arriba, con número y con la palanca**, y deja el detalle para las secciones de profundidad. Ese es el equilibrio: **persuadir en el primer momento y argumentar en el resto de la página.**
+El producto tiene **funciones de verdadero valor** y varias son difíciles de copiar (APU + base de precios + tiempo de obra + versiones + import Excel/BC3/planos). La landing ahora **las muestra arriba, con número y con la palanca**, y deja el detalle para las secciones de profundidad. Ese es el equilibrio: **persuadir en el primer momento y argumentar en el resto de la página.**
 
 ---
 
@@ -212,4 +212,4 @@ El producto tiene **funciones de verdadero valor** y varias son difíciles de co
 4. **Mensaje de honestidad claro en el catálogo por país.** Cada país tiene su catálogo **de referencia** (con sus precios, moneda, IVA, ID fiscal y vocabulario). La app además permite al usuario editar cualquier partida/recurso y congelar su tasa en cada presupuesto. No se promete una cotización de tienda exacta; se promete un punto de partida de su mercado, editable.
 
 **Cómo debería leerse ahora la home**
-> CotizaT es software de presupuestos de obra y reformas para **España y Latinoamérica**. Cada país tiene su catálogo de precios, su moneda, su IVA y su vocabulario: elige el tuyo y cotiza con precios de tu mercado. Además ves **beneficio y margen en vivo**, **tiempo de cuadrilla**, **importas CYPE/BC3 y mides planos**, y cierras con un **PDF profesional con versiones, firma y WhatsApp**.
+> CotizaT es software de presupuestos de obra y reformas para **España y Latinoamérica**. Cada país tiene su catálogo de precios, su moneda, su IVA y su vocabulario: elige el tuyo y cotiza con precios de tu mercado. Además ves **beneficio y margen en vivo**, **tiempo de cuadrilla**, **importas Excel/BC3 y mides planos**, y cierras con un **PDF profesional con versiones, firma y WhatsApp**.

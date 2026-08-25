@@ -56,9 +56,9 @@ ARTICULOS: dict[str, dict] = {
                 ],
             ),
             (
-                "De CYPE o Excel a CotizaT",
+                "De Excel a CotizaT",
                 [
-                    "Si ya exportas descompuestos CYPE, importas el .xlsx y se clasifican materiales, mano de obra y complementarios, sin perder filas. También pegas TSV desde una hoja. El catálogo propio trae más de 3.000 partidas descompuestas y cientos de recursos; no empiezas la base de cero.",
+                    "Si ya exportas matrices de descompuestos en Excel (.xlsx), importas el archivo y se clasifican materiales, mano de obra y complementarios, sin perder filas. También pegas TSV desde una hoja o importas .bc3 (FIEBDC-3). El catálogo propio trae más de 3.000 partidas descompuestas y cientos de recursos; no empiezas la base de cero.",
                     "El plan de lanzamiento es 89 US$ al año (habitual 109) o 9,99 US$ al mes el primer año. 7 días de prueba, sin tarjeta.",
                 ],
             ),
@@ -193,7 +193,7 @@ ARTICULOS: dict[str, dict] = {
                 "APU editable, no una lista plana",
                 [
                     "Materiales, mano de obra y equipo, con rendimiento. Cambias el cemento o la hora del oficial una vez; las partidas en edición se recalculan. Los metrados ya enviados quedan congelados.",
-                    "Más de 3.000 partidas descompuestas en el catálogo propio. Importación desde Excel o CYPE si ya traes descompuestos.",
+                    "Más de 3.000 partidas descompuestas en el catálogo propio. Importación desde Excel (.xlsx) o BC3 si ya traes descompuestos.",
                 ],
             ),
         ],
@@ -305,7 +305,7 @@ ARTICULOS: dict[str, dict] = {
             (
                 "Qué trae el APU el primer día",
                 [
-                    "Cada partida llega descompuesta en materiales, mano de obra y equipo, con rendimiento y precio. Editas un insumo y se recalcula el presupuesto. Más de 3.000 partidas en el catálogo propio; importación desde Excel o CYPE si ya tienes descompuestos.",
+                    "Cada partida llega descompuesta en materiales, mano de obra y equipo, con rendimiento y precio. Editas un insumo y se recalcula el presupuesto. Más de 3.000 partidas en el catálogo propio; importación desde Excel (.xlsx) o BC3 si ya tienes descompuestos.",
                     "Hormigón, no concreto venezolano. Enlucido y tumbado, no friso y cielo raso. El vocabulario es el de Quito o Guayaquil.",
                 ],
             ),
