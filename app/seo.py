@@ -949,6 +949,100 @@ _LANDING: dict[str, dict] = {
             },
         ],
     },
+    "HN": {
+        "title": "CotizaT: software de presupuestos y APU en Honduras",
+        "description": (
+            "Software de presupuestos de construcción para Honduras. RTN, ISV 15 %, "
+            "HNL, concreto y repello. Catálogo con APU. 7 días gratis, sin tarjeta."
+        ),
+        "h1": "Software de presupuestos y APU para construcción en Honduras",
+        "h1_resalte": "lempiras, RTN e ISV 15 %",
+        "sub": (
+            "Presupuesta obra y remodelación en HNL, con RTN e ISV 15 %. Catálogo "
+            "con análisis de precios unitarios, concreto, repello, cielo falso y "
+            "fontanero. PDF profesional para WhatsApp. Precios de referencia en HNL "
+            "con fuentes de Honduras (CHICO, Argos, Bijao, UNO, La Prensa)."
+        ),
+        "kicker": "🇭🇳 Sistema comercial para Honduras · Construcción y remodelación",
+        "faq": [
+            {
+                "q": "¿Está pensado para constructoras en Honduras?",
+                "a": (
+                    "Sí. El espacio nace en HNL, ISV 15 % y RTN. Terminología "
+                    "local: concreto, repello, cielo falso, zócalo, fontanero, bloque, varilla."
+                ),
+            },
+            {
+                "q": "¿Incluye APU con precios de Honduras?",
+                "a": (
+                    "Cada partida trae APU editable con referencias nacionales en HNL: "
+                    "cemento L215 por saco 42.5kg, bloque L28, arena L500/m3, piedra L550/m3, concreto L4.500/m3. "
+                    "El resto es referencia derivada de canasta nacional."
+                ),
+            },
+            {
+                "q": "¿El cliente firma en línea?",
+                "a": (
+                    "Puedes enviar un enlace privado opcional. Lo habitual es el "
+                    "PDF por WhatsApp, que es como ya cierras en Tegucigalpa o San Pedro Sula."
+                ),
+            },
+            {
+                "q": "¿Emite factura electrónica del SAR?",
+                "a": (
+                    "No. Los documentos son comerciales y no sustituyen la factura "
+                    "electrónica que te exija el SAR. El ISV 15 % lo configuras tú."
+                ),
+            },
+        ],
+    },
+    "NI": {
+        "title": "CotizaT: software de presupuestos y APU en Nicaragua",
+        "description": (
+            "Software de presupuestos de construcción para Nicaragua. RUC, IVA 15 %, "
+            "NIO, concreto y repello. Catálogo con APU. 7 días gratis, sin tarjeta."
+        ),
+        "h1": "Software de presupuestos y APU para construcción en Nicaragua",
+        "h1_resalte": "córdobas, RUC e IVA 15 %",
+        "sub": (
+            "Presupuesta obra y remodelación en NIO, con RUC e IVA 15 %. Catálogo "
+            "con análisis de precios unitarios, concreto, repello, cielo raso y "
+            "fontanero. PDF profesional para WhatsApp. Precios de referencia en NIO "
+            "con fuentes de Nicaragua (SINSA, Cemex, MITRAB)."
+        ),
+        "kicker": "🇳🇮 Sistema comercial para Nicaragua · Construcción y remodelación",
+        "faq": [
+            {
+                "q": "¿Está pensado para constructoras en Nicaragua?",
+                "a": (
+                    "Sí. El espacio nace en NIO, IVA 15 % y RUC. Terminología "
+                    "local: concreto, repello, cielo raso, zócalo, fontanero, bloque, varilla, Gypsum."
+                ),
+            },
+            {
+                "q": "¿Incluye APU con precios de Nicaragua?",
+                "a": (
+                    "Cada partida trae APU editable con referencias nacionales en NIO: "
+                    "cemento C$522.57 por saco 42.5kg (SINSA), bloque C$32, arena C$600/m3, piedra C$650/m3, concreto C$5.000/m3. "
+                    "El resto es referencia derivada de canasta nacional."
+                ),
+            },
+            {
+                "q": "¿El cliente firma en línea?",
+                "a": (
+                    "Puedes enviar un enlace privado opcional. Lo habitual es el "
+                    "PDF por WhatsApp, que es como ya cierras en Managua o León."
+                ),
+            },
+            {
+                "q": "¿Emite factura electrónica de la DGI?",
+                "a": (
+                    "No. Los documentos son comerciales y no sustituyen la factura "
+                    "electrónica que te exija la DGI. El IVA 15 % lo configuras tú."
+                ),
+            },
+        ],
+    },
     "ES": {
         "title": "CotizaT: software de presupuestos de obra y reformas para España",
         "description": (
@@ -1268,7 +1362,7 @@ def jsonld_website(request: Request | None = None) -> dict:
         "@type": "WebSite",
         "name": PRODUCT_NAME,
         "url": origen + "/",
-        "inLanguage": ["es", "es-VE", "es-CO", "es-MX", "es-PE", "es-EC", "es-PA", "es-SV", "es-CL", "es-AR", "es-DO", "es-UY", "es-PY", "es-BO", "es-CR", "es-GT", "es-ES"],
+        "inLanguage": ["es", "es-VE", "es-CO", "es-MX", "es-PE", "es-EC", "es-PA", "es-SV", "es-CL", "es-AR", "es-DO", "es-UY", "es-PY", "es-BO", "es-CR", "es-GT", "es-HN", "es-NI", "es-ES"],
         "publisher": {"@type": "Organization", "name": PRODUCT_NAME},
         "description": VALUE_PROPOSITION,
     }

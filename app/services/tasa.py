@@ -55,8 +55,12 @@ TASAS_SUGERIDAS: dict[str, float | None] = {
     "CRC": 449.39,
     # GTQ/USD 07-16/08/2026 (pluang 7.6239, foreignexchange 7.6258, exchange-rates.org 7.629) → 7.62 adoptado
     "GTQ": 7.62,
+    # HNL/USD 20/08/2026 (Xe 26.8228, pluang 26.8068) → 26.82 adoptado
+    "HNL": 26.82,
+    # NIO/USD 13-24/08/2026 (currency.me.uk 36.7, pluang 36.6243, Xe 36.759) → 36.70 adoptado
+    "NIO": 36.70,
 }
-# El resto de monedas del selector (HNL, NIO, BRL…) no se pre-rellenan: sin tasa verificada a la fecha de
+# El resto de monedas del selector (BRL…) no se pre-rellenan: sin tasa verificada a la fecha de
 # TASAS_ACTUALIZADAS. El usuario consulta «Tasa de hoy» o escribe la oficial.
 
 

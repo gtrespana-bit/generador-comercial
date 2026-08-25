@@ -11,8 +11,8 @@ ROOT=Path(__file__).resolve().parents[1]
 SRC=ROOT/'basedatos_partidas/datos/recursos.json'
 IN=ROOT/'basedatos_partidas/salida/precios_recursos_latam.csv'
 OUT=ROOT/'basedatos_partidas/salida/precios_recursos_latam_completa.csv'
-RATES={'CO':3128.65,'PE':3.37,'MX':17.06,'EC':1.0,'PA':1.0,'SV':1.0,'CL':925.90,'AR':1497.38,'DO':58.33,'UY':40.21,'PY':5946.10,'BO':11.55,'CR':449.39,'GT':7.62}
-CURRENCY={'CO':'COP','PE':'PEN','MX':'MXN','EC':'USD','PA':'USD','SV':'USD','CL':'CLP','AR':'ARS','DO':'DOP','UY':'UYU','PY':'PYG','BO':'BOB','CR':'CRC','GT':'GTQ'}
+RATES={'CO':3128.65,'PE':3.37,'MX':17.06,'EC':1.0,'PA':1.0,'SV':1.0,'CL':925.90,'AR':1497.38,'DO':58.33,'UY':40.21,'PY':5946.10,'BO':11.55,'CR':449.39,'GT':7.62,'HN':26.82,'NI':36.70}
+CURRENCY={'CO':'COP','PE':'PEN','MX':'MXN','EC':'USD','PA':'USD','SV':'USD','CL':'CLP','AR':'ARS','DO':'DOP','UY':'UYU','PY':'PYG','BO':'BOB','CR':'CRC','GT':'GTQ','HN':'HNL','NI':'NIO'}
 
 def main():
  data=json.loads(SRC.read_text(encoding='utf8'))

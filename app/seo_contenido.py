@@ -830,6 +830,42 @@ HUB_EXTRA: dict[tuple[str, str], list[tuple[str, str]]] = {
             "Pack de estancia, repello y cielo falso, productos con foto. Si hay cambios, reenvías total anterior y total nuevo. El cliente no se registra.",
         ),
     ],
+    ("HN", "software-presupuestos"): [
+        (
+            "Software de presupuestos en lempiras para Honduras",
+            "Honduras ya cotiza en HNL, con RTN e ISV 15 %. El espacio nace en HNL, no en USD «para convertir después». Concreto, repello, cielo falso, zócalo, fontanero.",
+        ),
+    ],
+    ("HN", "apu"): [
+        (
+            "APU en HNL, con RTN e ISV 15 %",
+            "Descompuestos editables en lempiras con referencias de Honduras: cemento L215/saco 42.5kg, bloque L28, arena L500/m3, piedra L550/m3, concreto L4.500/m3. El ISV 15 % lo pones tú.",
+        ),
+    ],
+    ("HN", "remodelacion"): [
+        (
+            "Reforma en Tegucigalpa o San Pedro Sula, PDF por WhatsApp",
+            "Pack de estancia, repello y cielo falso, productos con foto. Si hay cambios, reenvías total anterior y total nuevo. El cliente no se registra.",
+        ),
+    ],
+    ("NI", "software-presupuestos"): [
+        (
+            "Software de presupuestos en córdobas para Nicaragua",
+            "Nicaragua ya cotiza en NIO, con RUC e IVA 15 %. El espacio nace en NIO, no en USD «para convertir después». Concreto, repello, cielo raso, zócalo, fontanero.",
+        ),
+    ],
+    ("NI", "apu"): [
+        (
+            "APU en NIO, con RUC e IVA 15 %",
+            "Descompuestos editables en córdobas con referencias de Nicaragua: cemento C$522.57/saco 42.5kg SINSA, bloque C$32, arena C$600/m3, piedra C$650/m3, concreto C$5.000/m3. El IVA 15 % lo pones tú.",
+        ),
+    ],
+    ("NI", "remodelacion"): [
+        (
+            "Reforma en Managua o León, PDF por WhatsApp",
+            "Pack de estancia, repello y cielo raso, productos con foto. Si hay cambios, reenvías total anterior y total nuevo. El cliente no se registra.",
+        ),
+    ],
     ("ES", "software-presupuestos"): [
         (
             "Presupuestar reformas en euros, con NIF e IVA",
@@ -1000,6 +1036,30 @@ FAQ_HUB: dict[tuple[str, str], list[dict]] = {
         {
             "q": "¿Los precios del APU son de mercado guatemalteco?",
             "a": "Sí: cemento Q80.25/saco 42.5kg, block Q5.5, arena Q180/m3, piedrín Q230/m3, concreto Q900/m3 con fuentes de Guatemala, más referencias derivadas de canasta nacional en GTQ.",
+        },
+    ],
+    ("HN", "software-presupuestos"): [
+        {
+            "q": "¿Nace en lempiras o convierte desde dólares?",
+            "a": "Nace en HNL. Honduras cotiza en lempiras; no hay conversión improvisada al registrarte. Tasa verificada 26.82 HNL/USD.",
+        },
+    ],
+    ("HN", "apu"): [
+        {
+            "q": "¿Los precios del APU son de mercado hondureño?",
+            "a": "Sí: cemento L215/saco 42.5kg, bloque L28, arena L500/m3, piedra L550/m3, concreto L4.500/m3 con fuentes de Honduras, más referencias derivadas de canasta nacional en HNL.",
+        },
+    ],
+    ("NI", "software-presupuestos"): [
+        {
+            "q": "¿Nace en córdobas o convierte desde dólares?",
+            "a": "Nace en NIO. Nicaragua cotiza en córdobas; no hay conversión improvisada al registrarte. Tasa verificada 36.70 NIO/USD.",
+        },
+    ],
+    ("NI", "apu"): [
+        {
+            "q": "¿Los precios del APU son de mercado nicaragüense?",
+            "a": "Sí: cemento C$522.57/saco 42.5kg SINSA, bloque C$32, arena C$600/m3, piedra C$650/m3, concreto C$5.000/m3 con fuentes de Nicaragua, más referencias derivadas de canasta nacional en NIO.",
         },
     ],
     ("ES", "software-presupuestos"): [

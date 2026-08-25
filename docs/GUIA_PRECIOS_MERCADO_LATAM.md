@@ -13,6 +13,11 @@
 - República Dominicana — DOP — **nuevo 2026-08-25**
 - Uruguay — UYU — **nuevo 2026-08-25**
 - Paraguay — PYG — **nuevo 2026-08-25**
+- Bolivia — BOB — **nuevo 2026-08-25**
+- Costa Rica — CRC — **nuevo 2026-08-25**
+- Guatemala — GTQ — **nuevo 2026-08-25**
+- Honduras — HNL — **nuevo 2026-08-25**
+- Nicaragua — NIO — **nuevo 2026-08-25**
 - Venezuela — USD, catálogo existente
 
 ## Precio efectivo
@@ -29,8 +34,8 @@ marca, calidad, volumen, IVA, transporte y fecha.
 
 ## Estado auditado (25/08/2026)
 
-Cada mercado contiene referencias para los 388 recursos físicos: **4.268 filas
-nacionales, sin huecos** (11 países × 388). Hay 143 observaciones directas y 4.125 referencias
+Cada mercado contiene referencias para los 388 recursos físicos: **6.208 filas
+nacionales, sin huecos** (16 países × 388). Hay 193 observaciones directas y 6.015 referencias
 derivadas de las canastas nacionales investigadas.
 
 `Derivado` no significa «precio exacto de tienda»: identifica una referencia
@@ -52,7 +57,7 @@ La salida completa se conserva por compatibilidad en:
 basedatos_partidas/salida/precios_recursos_latam_completa.csv
 ```
 
-Con la cobertura actual ambas contienen precio para las 4.268 filas; la
+Con la cobertura actual ambas contienen precio para las 6.208 filas; la
 principal distingue `referencia` y `derivado`.
 
 ## Importación
@@ -82,8 +87,8 @@ docs/cargar_precios_referencia_latam_2026-08-25.sql
 ```
 
 El script es idempotente, verifica el head `a4c8e2f7b1d6`, exige 388 códigos de
-recurso y carga 4.268 referencias. Sustituye solo las referencias nacionales
-CO/PE/MX/EC/PA/SV/CL/AR/DO/UY/PY; no toca overrides de empresa ni precios VE.
+recurso y carga 6.208 referencias. Sustituye solo las referencias nacionales
+CO/PE/MX/EC/PA/SV/CL/AR/DO/UY/PY/BO/CR/GT/HN/NI; no toca overrides de empresa ni precios VE.
 
 ## Históricos
 

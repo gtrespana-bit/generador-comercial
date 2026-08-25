@@ -55,6 +55,8 @@ Los 388 recursos físicos tienen precio base referencial. `Provisional` expresa 
 | Bolivia (BOB) | 388 | 10 | 378 | 0 | 100.0% |
 | Costa Rica (CRC) | 388 | 10 | 378 | 0 | 100.0% |
 | Guatemala (GTQ) | 388 | 10 | 378 | 0 | 100.0% |
+| Honduras (HNL) | 388 | 10 | 378 | 0 | 100.0% |
+| Nicaragua (NIO) | 388 | 10 | 378 | 0 | 100.0% |
 
 La matriz contiene referencias nacionales directas y derivadas. Las derivadas se calibran con la canasta investigada de cada país y se identifican como tales; no se presentan como una cotización local exacta. `precios_recursos_latam_completa.csv` se conserva por compatibilidad y actualmente coincide en cobertura con la matriz principal.
 

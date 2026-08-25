@@ -238,14 +238,15 @@ def test_tasa_sugerida_solo_valores_verificados():
     assert tasa_sugerida("BOB") == pytest.approx(11.55)    # 20/08/2026 11.551 BOB/USD
     assert tasa_sugerida("CRC") == pytest.approx(449.39)   # 24/08/2026 449.3937 CRC/USD
     assert tasa_sugerida("GTQ") == pytest.approx(7.62)     # 16/08/2026 7.6239 GTQ/USD
+    assert tasa_sugerida("HNL") == pytest.approx(26.82)    # 20/08/2026 26.8228 HNL/USD
+    assert tasa_sugerida("NIO") == pytest.approx(36.70)    # 20/08/2026 36.7 NIO/USD
 
 
 def test_tasa_sugerida_sin_verificacion_devuelve_none():
     """Nunca se pre-rellena una tasa no verificada: el usuario consulta
     «Tasa de hoy» o escribe la oficial."""
-    assert tasa_sugerida("HNL") is None
-    assert tasa_sugerida("NIO") is None
     assert tasa_sugerida("BRL") is None
+    assert tasa_sugerida("XXX") is None
     assert tasa_sugerida("XXX") is None
 
 
