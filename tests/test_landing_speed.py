@@ -66,7 +66,10 @@ def test_jsonld_va_despues_del_h1():
     jsonld = html.find("application/ld+json")
     assert 0 < h1 < jsonld
     assert html.find("</main>") < jsonld
-    assert html.count("application/ld+json") == 5
+    # 6 schemas legítimos, todos diferidos tras </main>: Organization y
+    # ContactPoint, Organization+WebSite, WebPage, SoftwareApplication+Offer,
+    # FAQPage y BreadcrumbList.
+    assert html.count("application/ld+json") == 6
     assert "FAQPage" in html
 
 

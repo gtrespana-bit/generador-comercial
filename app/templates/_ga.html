@@ -1,0 +1,26 @@
+{# Etiqueta estándar de Google Analytics 4 (gtag.js).
+   Solo se renderiza cuando COTIZAT_GA_ID está definida y es válida; el
+   atributo nonce la autoriza dentro de la política CSP estricta del sitio. #}
+{% set ga_id_activo = ga_id() %}
+{% if ga_id_activo %}
+<script nonce="{{ request.state.csp_nonce }}" async src="https://www.googletagmanager.com/gtag/js?id={{ ga_id_activo }}"></script>
+<script nonce="{{ request.state.csp_nonce }}">
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', '{{ ga_id_activo }}');
+</script>
+{# Eventos de clic (PDF, WhatsApp…) registrados con atributos data-*. #}
+<script nonce="{{ request.state.csp_nonce }}" defer src="{{ 'js/ga_eventos.js' | asset }}"></script>
+{#
+   Evento de un solo uso encolado por el servidor (registro, login, cobro):
+   se emite aquí y la cabecera de la respuesta borra la cookie, así que se
+   cuenta exactamente una vez aunque el usuario recargue la página.
+#}
+{% set ga_evento_unico = ga_evento_pendiente(request.cookies) %}
+{% if ga_evento_unico %}
+<script nonce="{{ request.state.csp_nonce }}">
+  gtag('event', {{ ga_evento_unico | tojson }});
+</script>
+{% endif %}
+{% endif %}

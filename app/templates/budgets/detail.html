@@ -23,7 +23,7 @@
     <details class="actions-more">
       <summary class="btn">Más opciones</summary>
       <div class="actions-more-menu">
-        {% if wa %}<a class="btn btn-whatsapp" href="{{ wa }}" target="_blank">💬 WhatsApp</a>{% endif %}
+        {% if wa %}<a class="btn btn-whatsapp" href="{{ wa }}" target="_blank" data-ga-event="presupuesto_whatsapp">💬 WhatsApp</a>{% endif %}
         <a class="btn" href="/presupuestos/{{ p.id }}/enviar-email">✉️ Email</a>
         <a class="btn" href="/presupuestos/{{ p.id }}/enlace-publico">🔗 Enlace público</a>
         <a class="btn" href="/presupuestos/{{ p.id }}/pdf?inline=1" target="_blank">👁 Ver PDF</a>
@@ -68,7 +68,7 @@
       </div>
       <div class="actions csp-s-38965f9b18">
         <a class="btn" href="/presupuestos/{{ p.id }}/contrato?inline=1" target="_blank" title="Genera un contrato de servicios real en PDF con los datos de este presupuesto">📄 Ver contrato</a>
-        <a class="btn btn-ai" href="/presupuestos/{{ p.id }}/contrato" download="contrato_{{ p.numero }}.pdf" data-cotizat-click="download-pdf">⬇ Descargar contrato</a>
+        <a class="btn btn-ai" href="/presupuestos/{{ p.id }}/contrato" download="contrato_{{ p.numero }}.pdf" data-cotizat-click="download-pdf" data-ga-event="contrato_descargado">⬇ Descargar contrato</a>
       </div>
   </div>
 </div>
@@ -144,7 +144,7 @@
       <p class="hint">Cambios detectados frente a V{{ cambios_reenvio.version_numero }}. Descarga el PDF actualizado y copia un resumen breve para WhatsApp/email.</p>
     </div>
     <div class="actions">
-      <a class="btn" href="/presupuestos/{{ p.id }}/pdf" download="presupuesto_{{ p.numero }}_actualizado.pdf">⬇ PDF actualizado</a>
+      <a class="btn" href="/presupuestos/{{ p.id }}/pdf" download="presupuesto_{{ p.numero }}_actualizado.pdf" data-ga-event="pdf_descargado">⬇ PDF actualizado</a>
       <button class="btn btn-primary" type="button" id="btn-copiar-resumen-cambios">Copiar resumen</button>
     </div>
   </div>

@@ -6,7 +6,16 @@
   {% include "_seo_head.html" %}
   <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
   <link rel="preload" href="{{ 'css/public.css' | asset }}" as="style">
-  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}" media="print" id="css-publico">
+  <script nonce="{{ request.state.csp_nonce }}">
+  (function () {
+    var el = document.getElementById("css-publico");
+    if (!el) return;
+    var activar = function () { el.media = "all"; };
+    el.addEventListener("load", activar);
+    if (el.sheet) activar();
+  })();
+  </script>
   <noscript><link rel="stylesheet" href="{{ 'css/public.css' | asset }}"></noscript>
 </head>
 <body class="landing pago-page">

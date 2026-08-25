@@ -1,6 +1,8 @@
 __pycache__/
 *.pyc
 .venv/
+.venv-flyer/
+.venv-test/
 venv/
 presupuestos.db
 *.db

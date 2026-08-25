@@ -9,6 +9,12 @@ from urllib.parse import urlsplit
 from starlette.responses import JSONResponse, PlainTextResponse
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
+from .analytics import (
+    GA_COOKIE_EVENTO,
+    csp_connect_src_extra,
+    csp_script_src_extra,
+    ga_measurement_id,
+)
 from .ratelimit import MemoryRateLimit, RateLimitBackend, build_rate_limiter
 
 _UNSAFE_METHODS = {"POST", "PUT", "PATCH", "DELETE"}
@@ -342,13 +348,16 @@ class WebSecurityMiddleware:
                         b"default-src 'self'; base-uri 'self'; object-src 'none'; "
                         + b"frame-ancestors " + antecesores + b"; "
                         + b"form-action " + _destinos_formulario() + b"; "
-                        + f"script-src 'self' 'nonce-{nonce}'; ".encode("ascii")
-                        + b"script-src-attr 'none'; "
+                        + f"script-src 'self' 'nonce-{nonce}'".encode("ascii")
+                        + csp_script_src_extra().encode("ascii")
+                        + b"; script-src-attr 'none'; "
                         + f"style-src 'self' 'nonce-{nonce}'; ".encode("ascii")
                         + b"style-src-attr 'none'; "
                         + b"font-src 'self' data:; "
-                        + b"img-src 'self' data: blob:; connect-src 'self'; "
-                        + b"frame-src 'self' blob:"
+                        + b"img-src 'self' data: blob:; "
+                        + b"connect-src 'self'"
+                        + csp_connect_src_extra().encode("ascii")
+                        + b"; frame-src 'self' blob:"
                     ),
                 }
                 if x_frame:
@@ -367,7 +376,39 @@ class WebSecurityMiddleware:
                     pass
                 raw = list(message.get("headers", []))
                 raw.extend((key, value) for key, value in additions.items() if key not in existing)
+                _consumir_evento_ga(raw, request_headers)
                 message["headers"] = raw
             await send(message)
 
         return send_secure
+
+
+def _consumir_evento_ga(raw_headers: list, request_headers: dict) -> None:
+    """Borra la cookie del evento GA4 recién emitido en esta página.
+
+    Los eventos de conversión del servidor viajan en una cookie efímera
+    (``app.analytics.GA_COOKIE_EVENTO``) que ``_ga.html`` renderiza como
+    ``gtag('event', …)`` una sola vez. Al entregar una respuesta HTML que
+    la transportaba, se instruye además su borrado: sin esto, recargar la
+    página dispararía el evento otra vez.
+    """
+    cookies = request_headers.get("cookie", "")
+    if f"{GA_COOKIE_EVENTO}=" not in cookies:
+        return
+    if not ga_measurement_id():
+        return
+    tipo = ""
+    for clave, valor in raw_headers:
+        if clave.lower() == b"content-type":
+            tipo = valor.decode("latin-1", "ignore")
+            break
+    if "text/html" not in tipo:
+        return
+    raw_headers.append(
+        (
+            b"set-cookie",
+            f"{GA_COOKIE_EVENTO}=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax".encode(
+                "ascii"
+            ),
+        )
+    )

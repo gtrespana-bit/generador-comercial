@@ -40,6 +40,7 @@ from sqlalchemy.orm import Session, joinedload, load_only, selectinload
 from starlette.middleware.gzip import GZipMiddleware
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
+from ..analytics import evento_pendiente, ga_measurement_id
 from ..branding import LEGAL_ENTITY, PRODUCT_NAME, SUPPORT_EMAIL, VALUE_PROPOSITION
 from ..security import AuthRateLimitMiddleware, WebSecurityMiddleware, ip_de_request
 from ..database import (
@@ -427,6 +428,10 @@ TEMPLATES.env.globals.update(
     titular_legal=LEGAL_ENTITY,
     email_soporte=SUPPORT_EMAIL,
     catalogo=cifras_catalogo,
+    # Función, no valor: la etiqueta de GA4 se apaga o enciende solo con la
+    # variable de entorno, igual que la prueba gratuita.
+    ga_id=ga_measurement_id,
+    ga_evento_pendiente=evento_pendiente,
     # Funciones, no valores: la prueba se puede apagar cambiando
     # COTIZAT_DIAS_PRUEBA sin volver a desplegar, y la página pública tiene que
     # enterarse en el mismo instante. Anunciar «7 días gratis» cuando la prueba
