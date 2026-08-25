@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Tratamiento de salitre y pintura de muro exterior.",
   "descripcion": "Tratamiento de salitre en muro exterior seguido de dos manos de pintura. Incluye el saneado del salitre, el tratamiento y las dos manos. Medido por metro cuadrado tratado y pintado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

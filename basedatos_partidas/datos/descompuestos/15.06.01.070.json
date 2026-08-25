@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Retirada de embalajes de la zona de trabajo.",
   "descripcion": "Retirada de embalajes y material de desecho de la zona de trabajo, con clasificación para reciclaje.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

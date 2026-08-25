@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Enchapado de mármol pulido en pared.",
   "descripcion": "Enchapado de paramento con placas de mármol pulido, en capa fina. Incluye la preparación del soporte, la colocación de las placas y el rejuntado. Medido por metro cuadrado enchapado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

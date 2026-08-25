@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Ensayo de adherencia de anclaje de fachada.",
   "descripcion": "Ensayo de adherencia o extracción de anclajes de fachada y revestimientos, con informe.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

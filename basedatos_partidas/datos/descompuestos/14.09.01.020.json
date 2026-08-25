@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Iluminación exterior de caminería.",
   "descripcion": "Ejecución de punto de iluminación exterior de jardín, con luminaria, cableado y fijación. Incluye la conexión. La luminaria la elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

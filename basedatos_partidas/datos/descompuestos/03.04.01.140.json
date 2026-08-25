@@ -6,7 +6,7 @@
   "unidad": "m3",
   "titulo": "Relleno estructural con piedra picada.",
   "descripcion": "Relleno estructural con piedra picada compactada. Incluye la extensión y la compactación. Medido por metro cúbico rellenado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

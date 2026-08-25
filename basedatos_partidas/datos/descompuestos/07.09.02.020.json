@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Automatización de portón batiente existente.",
   "descripcion": "Automatización de un portón batiente existente, con motores y mando. Incluye el montaje de los motores y la programación. Medido por unidad automatizada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

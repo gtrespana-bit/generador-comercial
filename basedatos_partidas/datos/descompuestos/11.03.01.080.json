@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Cumbrera y limatesa de cubierta de teja.",
   "descripcion": "Formación de cumbrera y limatesa en cubierta de teja con piezas de remate recibidas con mortero, para cierre estanco del faldón. Incluye el recibido y el sellado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

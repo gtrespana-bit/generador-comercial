@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Levantamiento de patologías de paramentos.",
   "descripcion": "Levantamiento de patologías de paramentos (humedades, fisuras, desprendimientos). Incluye la inspección y el registro. Medido por metro cuadrado inspeccionado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

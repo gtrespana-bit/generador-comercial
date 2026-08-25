@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Pintura de demarcación de pisos industriales.",
   "descripcion": "Aplicación de pintura de demarcación sobre pisos industriales y estacionamientos, para delimitación de zonas y circulaciones. Incluye el replanteo de las líneas y la aplicación de la pintura de tráfico. Medido por metro cuadrado demarcado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

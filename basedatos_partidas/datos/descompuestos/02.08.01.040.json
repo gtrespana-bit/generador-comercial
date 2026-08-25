@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Retiro de aislamiento térmico en cubierta.",
   "descripcion": "Retiro de aislamiento térmico en cubierta. Incluye la retirada del aislamiento y la limpieza. Medido por metro cuadrado retirado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

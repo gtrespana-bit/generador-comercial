@@ -6,7 +6,7 @@
   "unidad": "glb",
   "titulo": "Medición de tensión y frecuencia.",
   "descripcion": "Medición de la tensión y frecuencia de la acometida eléctrica, para verificar la calidad del suministro.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

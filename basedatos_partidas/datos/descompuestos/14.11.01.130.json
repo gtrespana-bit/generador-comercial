@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Reparación de pérgola o estructura exterior.",
   "descripcion": "Reparación de pérgola o estructura exterior con sustitución de piezas y tratamiento. Incluye la reparación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

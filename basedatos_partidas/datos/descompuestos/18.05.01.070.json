@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Calafateado de carpintería exterior.",
   "descripcion": "Calafateado y sellado de la carpintería exterior, para eliminar infiltraciones de aire y agua.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

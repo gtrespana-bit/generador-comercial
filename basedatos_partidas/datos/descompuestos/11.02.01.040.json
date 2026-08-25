@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Cubierta plana no transitable con membrana de PVC.",
   "descripcion": "Impermeabilización de cubierta plana no transitable con membrana de PVC armado con poliéster, soldada en los solapes y remontada en los paramentos. Incluye imprimación, solapes soldados y remontes.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

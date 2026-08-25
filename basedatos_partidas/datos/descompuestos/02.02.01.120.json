@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Desmontaje de correa o viga metálica.",
   "descripcion": "Desmontaje de correa o viga metálica de estructura, con corte de uniones. Incluye el desmontaje con corte y la bajada controlada. Medido por metro lineal desmontado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

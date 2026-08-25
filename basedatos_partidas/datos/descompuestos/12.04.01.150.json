@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Revestimiento de ladrillo visto decorativo.",
   "descripcion": "Revestimiento de paramento con ladrillo visto decorativo (ladrillo caravista o plaqueta). Incluye la preparación del soporte, la colocación y el rejuntado. Medido por metro cuadrado revestido.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

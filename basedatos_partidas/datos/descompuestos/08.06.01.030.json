@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Base para tanque de agua.",
   "descripcion": "Ejecución de base para tanque de agua. Incluye el vaciado y el acabado. Medido por unidad ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

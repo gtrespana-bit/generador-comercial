@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Prueba de estanqueidad de terraza.",
   "descripcion": "Prueba de estanqueidad de terraza por inundación, con revisión de desagües y remates.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

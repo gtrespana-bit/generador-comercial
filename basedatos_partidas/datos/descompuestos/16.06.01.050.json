@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Prueba de funcionamiento de extractores.",
   "descripcion": "Verificación del funcionamiento de extractores y ventiladores, con medición de caudal y ruido.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

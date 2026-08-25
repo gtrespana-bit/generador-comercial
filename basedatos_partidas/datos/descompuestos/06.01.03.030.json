@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Fachada de ladrillo visto con cámara.",
   "descripcion": "Ejecución de fachada de ladrillo visto con cámara de aire, sobre trasdosado. Incluye la colocación del ladrillo visto y los anclajes. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

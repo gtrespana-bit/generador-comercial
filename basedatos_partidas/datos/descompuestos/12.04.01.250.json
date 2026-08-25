@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Revestimiento de plancha de melamina.",
   "descripcion": "Revestimiento de paramento con plancha de melamina, con bastidor y remates. Incluye la preparación del soporte, la colocación del tablero y el remate. Medido por metro cuadrado revestido.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

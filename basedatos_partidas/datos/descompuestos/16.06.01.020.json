@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Prueba de presión de gas refrigerante.",
   "descripcion": "Prueba de presión del circuito frigorífico con nitrógeno, para detectar fugas antes de la carga.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

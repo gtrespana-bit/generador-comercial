@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Enchapado con pieza de formato largo tipo metro.",
   "descripcion": "Enchapado de paramento con pieza de formato largo (tipo metro o lamosa), en capa fina. Incluye la preparación del soporte, la colocación y el rejuntado. Medido por metro cuadrado enchapado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Pintura de fachada de bloque de concreto.",
   "descripcion": "Aplicación de pintura exterior sobre fachada de bloque de concreto, con fondo y dos manos. Incluye el sellado del bloque, el fondo y las dos manos. Medido por metro cuadrado pintado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

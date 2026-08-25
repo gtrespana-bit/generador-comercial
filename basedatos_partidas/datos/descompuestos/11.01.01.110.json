@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Relleno aligerado de cubierta con bloques de aliviano.",
   "descripcion": "Relleno aligerado de formación de pendientes con bloques de arcilla o poliestireno colocados en seco, previo a la capa de compresión. Incluye el replanteo y la colocación a rompejuntas.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

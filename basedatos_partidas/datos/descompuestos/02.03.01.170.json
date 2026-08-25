@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Desmontaje de marquesina de fachada.",
   "descripcion": "Desmontaje de marquesina de fachada, con corte de fijaciones y bajada controlada. Incluye el corte de las fijaciones y la bajada. Medido por metro cuadrado desmontado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

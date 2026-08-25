@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Nivelación con mortero seco compactado.",
   "descripcion": "Capa de nivelación con mortero seco de consistencia de tierra húmeda, extendido y compactado, empleada cuando hay que salvar desniveles importantes o embeber instalaciones bajo el piso sin recurrir a un espesor de mortero convencional que resultaría costoso y pesado. Incluye la limpieza del soporte, el replanteo de niveles con maestras, el extendido y compactado del mortero por capas, el reglado final y la aplicación de la lechada de cierre superficial que sella la capa y permite recibir el adhesivo del piso. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

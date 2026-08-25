@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Mampara de oficina con perfilería.",
   "descripcion": "Instalación de mampara divisoria de oficina, con perfilería y paneles. Incluye el replanteo y el montaje. El sistema lo elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

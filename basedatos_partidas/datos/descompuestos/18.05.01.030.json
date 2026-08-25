@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Sustitución de ventana por vidrio de control solar.",
   "descripcion": "Sustitución de ventana por vidrio de control solar, para reducir la ganancia térmica. El vidrio lo elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

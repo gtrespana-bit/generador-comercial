@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Reparación de grietas con malla de refuerzo.",
   "descripcion": "Reparación de grietas en paramento con apertura, colocación de malla de refuerzo y sellado con mortero. Incluye la apertura de la grieta, la malla y el relleno. Medido por metro lineal reparado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

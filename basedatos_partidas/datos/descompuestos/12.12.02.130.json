@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Laca para puertas de interior.",
   "descripcion": "Aplicación de laca sobre puertas de interior, con fondo y dos manos. Incluye la preparación, el fondo y las dos manos de laca. Medido por metro cuadrado lacado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

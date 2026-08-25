@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Portería de fútbol sala.",
   "descripcion": "Instalación de portería de fútbol sala, con anclaje y fijación. Incluye la fijación. El equipo lo elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

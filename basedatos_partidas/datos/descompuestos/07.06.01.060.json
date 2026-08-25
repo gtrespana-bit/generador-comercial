@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Colocación de doble acristalamiento.",
   "descripcion": "Suministro y colocación de doble acristalamiento en carpintería existente. Incluye la toma de medidas y la colocación con sellado. Medido por metro cuadrado colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

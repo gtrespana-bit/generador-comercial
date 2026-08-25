@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Sustitución de ductos de ventilación.",
   "descripcion": "Sustitución de ductos de ventilación, para mejorar la eficiencia del sistema.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

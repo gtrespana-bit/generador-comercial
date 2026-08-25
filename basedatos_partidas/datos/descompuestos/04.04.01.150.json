@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Junta de dilatación en losa de fundación.",
   "descripcion": "Ejecución de junta de dilatación en losa de fundación. Incluye la formación de la junta. Medido por metro lineal ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

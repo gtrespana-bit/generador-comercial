@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Retiro de tubos fluorescentes y lámparas.",
   "descripcion": "Recogida y entrega a gestor de tubos fluorescentes y lámparas de descarga, residuo con contenido de mercurio.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Inspección de membrana impermeabilizante.",
   "descripcion": "Inspección visual de la membrana impermeabilizante, verificando solapes, remontes y puntos singulares.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

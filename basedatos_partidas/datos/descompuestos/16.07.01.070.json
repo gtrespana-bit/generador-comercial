@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Inspección de fisuras y diagnóstico estructural.",
   "descripcion": "Inspección de fisuras en elementos estructurales, con mapeo y diagnóstico de la causa.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

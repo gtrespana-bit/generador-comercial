@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Puerta de entrada con espejo de seguridad.",
   "descripcion": "Suministro y colocación de puerta de entrada con espejo o mirilla de seguridad. Incluye el montaje del marco, la colocación de la hoja y la instalación de la mirilla. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

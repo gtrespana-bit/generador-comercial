@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Estructura de soporte de mesón.",
   "descripcion": "Ejecución de estructura de soporte de mesón en perfil metálico o mampostería, para apoyo del mesón. Incluye la fijación y el nivelado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

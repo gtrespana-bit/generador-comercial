@@ -6,7 +6,7 @@
   "unidad": "m³",
   "titulo": "Separación selectiva de residuos en origen.",
   "descripcion": "Clasificación en origen de los residuos de demolición y desmontaje, separando los recuperables de los de vertedero, para abaratar el bote.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

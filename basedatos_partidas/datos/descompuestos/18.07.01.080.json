@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Ventilación natural con rejillas regulables.",
   "descripcion": "Instalación de rejillas de ventilación regulables, para aprovechar la ventilación natural.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

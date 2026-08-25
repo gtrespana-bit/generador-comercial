@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Reparación de filtración en muro enterrado.",
   "descripcion": "Reparación de filtración en muro enterrado, con saneado y sellado. Incluye la localización, el saneado y el sellado de la filtración. Medido por metro cuadrado reparado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

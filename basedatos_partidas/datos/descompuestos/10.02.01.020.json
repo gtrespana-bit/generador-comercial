@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Aislamiento acústico de medianería.",
   "descripcion": "Suministro y colocación de aislamiento acústico en pared medianera. Incluye la estructura y la colocación de la lana. Medido por metro cuadrado aislado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

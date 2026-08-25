@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Caseta o zona cerrada de acopio de materiales y herramienta, por mes.",
   "descripcion": "Habilitación de una zona cerrada dentro de la obra para el acopio de materiales y el guardado de herramienta, mediante cerramiento de lámina de madera sobre bastidor con puerta y cierre, o mediante la adecuación de un ambiente existente. Incluye el montaje del cerramiento y de la puerta con cerradura, la protección del piso de la zona de acopio, la organización de estanterías o tarimas para separar el material del suelo, el mantenimiento del orden durante el periodo y el desmontaje al finalizar la obra. Medido por mes de permanencia.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

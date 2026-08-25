@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Suministro y colocación de espejo.",
   "descripcion": "Suministro y colocación de espejo con canto pulido, fijado al paramento mediante adhesivo específico y clips de seguridad. El adhesivo debe ser neutro y compatible con el respaldo del espejo: los adhesivos ácidos atacan la plata del reverso y producen manchas negras irreversibles en los bordes al cabo de unos meses. Incluye la comprobación de la planitud del soporte, la aplicación del adhesivo en cordones verticales que permiten la ventilación del reverso, la colocación de los clips o perfiles de seguridad y el sellado perimetral. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

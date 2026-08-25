@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Refuerzo y ampliación de zapata existente.",
   "descripcion": "Refuerzo de zapata existente mediante ampliación de su superficie con una corona de concreto armado conectada al elemento original. Incluye el descubrimiento de la zapata existente, el repicado de su superficie para dar adherencia, la perforación y anclaje químico de los conectores que cosen la ampliación al núcleo, el armado de la corona, el encofrado, el vaciado con concreto de retracción compensada, el curado y el relleno perimetral. Medido en superficie de ampliación realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

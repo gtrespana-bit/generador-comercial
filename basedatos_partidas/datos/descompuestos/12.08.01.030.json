@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Cielo raso de yeso laminado con doble placa, acústico.",
   "descripcion": "Cielo raso continuo con doble placa de yeso laminado sobre estructura suspendida con horquillas antivibratorias y lana mineral en la cámara, para reducir la transmisión de ruido aéreo y de impacto desde la planta superior. La mejora acústica depende tanto de la masa de la doble placa como de que la estructura quede desolidarizada: si un solo tornillo hace puente rígido con la losa, el aislamiento cae. Incluye replanteo, ángulo perimetral con banda elástica, montaje de la estructura con elementos antivibratorios, colocación de la lana, atornillado de las dos capas a juntas contrapeadas, tratamiento de juntas y lijado. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

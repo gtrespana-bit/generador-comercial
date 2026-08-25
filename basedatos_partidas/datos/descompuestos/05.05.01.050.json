@@ -6,7 +6,7 @@
   "unidad": "m3",
   "titulo": "Montaje de estructura de madera en obra.",
   "descripcion": "Suministro y montaje de estructura de madera. Incluye el montaje y la fijación. Medido por metro cúbico montado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

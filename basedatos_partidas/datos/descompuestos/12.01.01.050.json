@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Picado y limpieza de paramento deteriorado.",
   "descripcion": "Picado y limpieza de paramento deteriorado con eliminación del revestimiento suelto previo a la reparación. Incluye la retirada del material suelto y la limpieza de la superficie. Medido por metro cuadrado picado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

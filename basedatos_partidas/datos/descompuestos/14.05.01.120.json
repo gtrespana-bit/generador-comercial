@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Portón de malla para acceso.",
   "descripcion": "Fabricación e instalación de portón de malla metálica para acceso, con marco y bisagras. Incluye el montaje. El portón lo elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

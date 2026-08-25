@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Baranda de tubo de acero galvanizado.",
   "descripcion": "Suministro y colocación de baranda de tubo de acero galvanizado, con montantes y pasamanos. Incluye la fabricación, el montaje y el anclaje. Medido por metro lineal instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

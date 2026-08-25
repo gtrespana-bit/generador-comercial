@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Asiento o banqueta fija.",
   "descripcion": "Fabricación e instalación de asiento o banqueta fija en melamina o madera, con fijación. Incluye el despiece y la fijación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

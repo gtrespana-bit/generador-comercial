@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Tratamiento anticorrosivo de cubierta metálica.",
   "descripcion": "Aplicación de tratamiento anticorrosivo sobre cubierta metálica, con limpieza previa y dos manos. Incluye la preparación de la superficie.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

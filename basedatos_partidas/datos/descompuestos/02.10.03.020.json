@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Demolición de cielo raso de yeso vaciado o pasta.",
   "descripcion": "Demolición de cielo raso de yeso vaciado, pasta o placa de yeso tradicional, junto con su estructura de soporte y elementos de cuelgue, ejecutada con medios manuales y martillo eléctrico donde el espesor lo requiera. Por tratarse de un material macizo genera más escombro y más polvo fino que un cielo de placa. Incluye la desconexión previa de las luminarias, la protección del piso y del mobiliario, el control de polvo mediante aspiración, el retiro del escombro en sacos y la limpieza de la losa resultante. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en superficie realmente demolida.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

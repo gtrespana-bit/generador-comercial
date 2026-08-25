@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de accesorios de baño.",
   "descripcion": "Montaje del juego de accesorios de baño: toallero, portarrollos, jabonera, percha y repisa, fijados al enchapado. Incluye el replanteo de las alturas y posiciones de uso coordinadas con el despiece del enchapado para taladrar en el centro de la pieza y no sobre la junta ni cerca del canto, donde la cerámica se astilla, el taladrado con broca de vidrio a baja velocidad y sin percusión, la colocación de tacos y el montaje de los accesorios. Los accesorios los elige el cliente y se presupuestan aparte. Medido por juego instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Juego de accesorios de baño elegido por el cliente",

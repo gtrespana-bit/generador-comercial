@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Portón corredizo de acero con hoja ciega.",
   "descripcion": "Suministro y colocación de portón corredizo de acero con hoja ciega de chapa, con riel y carros. Incluye la fabricación, el montaje del riel y la colocación del portón. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

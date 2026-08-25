@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Desmontaje de celosía o romanilla.",
   "descripcion": "Desmontaje de celosía o romanilla de ventilación. Incluye la retirada de la celosía y sus fijaciones. Medido por unidad desmontada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

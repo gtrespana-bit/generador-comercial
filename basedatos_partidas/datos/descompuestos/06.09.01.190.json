@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Tratamiento de humedad en fachada.",
   "descripcion": "Tratamiento de humedad en fachada. Incluye el saneado y la aplicación de tratamiento antihumedad. Medido por metro cuadrado tratado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

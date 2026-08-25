@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Estructura metálica para marquesina.",
   "descripcion": "Suministro y montaje de estructura metálica para marquesina. Incluye el montaje y la fijación. Medido por metro cuadrado montado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Remonte de impermeabilización en paramento.",
   "descripcion": "Ejecución del remonte de la membrana impermeabilizante en el paramento perimetral de la cubierta, con banda de refuerzo y sellado de la entrega. Incluye la preparación del soporte y el sellado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

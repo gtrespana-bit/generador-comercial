@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Restauración de piso de madera.",
   "descripcion": "Restauración de piso de madera con lijado, resane de juntas y barnizado. Incluye el lijado, el resane y las dos manos de barniz. Medido por metro cuadrado restaurado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

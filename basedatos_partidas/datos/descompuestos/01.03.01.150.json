@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Protección de zócalo o rodapié existente.",
   "descripcion": "Protección de zócalo o rodapié existente. Incluye el forrado con cartón. Medido por metro lineal protegido.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

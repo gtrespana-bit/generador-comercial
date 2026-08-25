@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Replanteo de cielos rasos.",
   "descripcion": "Replanteo de cielos rasos y alturas. Incluye el marcado de cotas. Medido por metro cuadrado replanteado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

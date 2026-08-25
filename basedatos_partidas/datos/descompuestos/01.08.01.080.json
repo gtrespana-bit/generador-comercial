@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Iluminación provisional con reflectores.",
   "descripcion": "Iluminación provisional de obra, con reflectores. Incluye la colocación de los reflectores. Medido por punto ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

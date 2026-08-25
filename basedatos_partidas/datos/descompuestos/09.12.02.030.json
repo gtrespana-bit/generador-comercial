@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Sensor de temperatura y humedad ambiente.",
   "descripcion": "Suministro e instalación de sensor de temperatura y humedad ambiente, integrado en la central domótica para la regulación de climatización. Incluye la elección del punto de medición representativo, alejado de fuentes de calor y corrientes, la fijación, el emparejamiento y la verificación de la lectura. Medido por sensor instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

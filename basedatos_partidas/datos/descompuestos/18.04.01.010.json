@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Aislamiento de piso con poliestireno.",
   "descripcion": "Colocación de panel de poliestireno bajo el piso, para reducir las pérdidas térmicas al terreno.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

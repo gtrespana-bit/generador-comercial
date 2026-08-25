@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Picado de friso en techo o cara inferior de losa.",
   "descripcion": "Picado de friso de mortero o de pasta en el techo o en la cara inferior de la losa, ejecutado con medios manuales y martillo eléctrico trabajando por encima de la cabeza. La posición de trabajo reduce mucho el rendimiento frente al mismo picado en pared, y el material cae directamente sobre el operario y sobre el piso, lo que obliga a protección facial y a cubrir el ambiente completo. Incluye la protección integral del ambiente, el sondeo por golpeo, el picado por sectores, el control de polvo, el retiro del escombro y la limpieza. No incluye el bote del escombro. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

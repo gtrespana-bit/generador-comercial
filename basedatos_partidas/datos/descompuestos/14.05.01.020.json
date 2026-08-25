@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Portón vehicular corredizo.",
   "descripcion": "Fabricación e instalación de portón de acceso vehicular metálico, con marco, bisagras y pintura. Incluye el montaje y la pintura. El portón lo elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

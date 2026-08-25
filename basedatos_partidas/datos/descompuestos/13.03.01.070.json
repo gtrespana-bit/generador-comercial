@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Mueble de baño suspendido.",
   "descripcion": "Fabricación e instalación de mueble de baño suspendido, con fijación a la pared mediante escuadras. Incluye el armado y la fijación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

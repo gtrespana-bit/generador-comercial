@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Enchapado de piedra con junta ancha de mortero.",
   "descripcion": "Enchapado de paramento con pieza de piedra natural colocada con junta ancha de mortero. Incluye la preparación del soporte, la colocación y el rejuntado ancho. Medido por metro cuadrado enchapado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

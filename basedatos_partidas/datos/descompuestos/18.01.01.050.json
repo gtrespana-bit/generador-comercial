@@ -6,7 +6,7 @@
   "unidad": "glb",
   "titulo": "Informe de certificación energética.",
   "descripcion": "Emisión del informe de certificación energética de la vivienda, con la calificación obtenida.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

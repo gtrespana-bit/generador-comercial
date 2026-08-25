@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Punto de agua provisional con llave y manguera.",
   "descripcion": "Punto de agua provisional de obra, con llave y manguera. Incluye la conexión y la llave. Medido por punto ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

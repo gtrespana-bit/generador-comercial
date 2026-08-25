@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Canalización eléctrica en cielo raso o superficie.",
   "descripcion": "Canalización eléctrica no empotrada, tendida por el plenum del cielo raso o vista sobre superficie con tubería conduit y sus abrazaderas, con conductor de cobre. Frente a la canalización empotrada evita el picado y el resane, y deja la instalación registrable, lo que la hace preferible en reforma siempre que el trazado quede oculto. Incluye el replanteo, la fijación de la tubería con abrazaderas a la separación indicada, el tendido de los conductores, la identificación de circuitos y las cajas de derivación en puntos accesibles. Medido en longitud realmente instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

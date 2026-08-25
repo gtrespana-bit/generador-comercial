@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Demolición de pavimento asfáltico.",
   "descripcion": "Demolición de pavimento asfáltico de hasta 10 cm de espesor, ejecutada con martillo hidráulico montado sobre retroexcavadora, con corte perimetral previo para obtener un borde recto que facilite la reposición. Incluye la comprobación de instalaciones enterradas, el acordonamiento y señalización del área, el corte perimetral con disco, el arranque y fragmentación del asfalto, el acopio diferenciado del material fresado por admitir reciclaje específico, y la limpieza y barrido de la base resultante. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en superficie realmente demolida.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

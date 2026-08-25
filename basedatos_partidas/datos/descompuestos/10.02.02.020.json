@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Suelo flotante con panel de lana mineral.",
   "descripcion": "Suministro y colocación de panel de lana mineral como suelo flotante acústico. Incluye la colocación del panel y el remate. Medido por metro cuadrado colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

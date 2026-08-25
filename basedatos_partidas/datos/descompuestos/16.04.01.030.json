@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Prueba de desagüe por vaciado.",
   "descripcion": "Prueba de desagüe de aparato sanitario por vaciado controlado, para verificar la correcta evacuación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

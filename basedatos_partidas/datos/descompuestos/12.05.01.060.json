@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Reparación y parcheo puntual de piso existente.",
   "descripcion": "Reparación puntual de piso existente mediante reposición de piezas sueltas, huecas o rotas, y resane de zonas deterioradas, conservando el resto del piso. Es la intervención que evita cambiar un piso completo por un daño localizado, y su éxito depende de disponer de piezas del mismo lote o de reubicar piezas tomadas de una zona oculta, como el interior de un closet, porque una pieza de otro lote canta a distancia. Incluye el levantado cuidadoso de las piezas afectadas, la limpieza del soporte, la reposición con adhesivo, la nivelación con las piezas contiguas, el rejuntado a tono y la limpieza. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

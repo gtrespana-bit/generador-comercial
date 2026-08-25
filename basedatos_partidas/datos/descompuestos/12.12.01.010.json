@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Esmalte sintético sobre carpintería metálica o de madera, dos manos.",
   "descripcion": "Aplicación de dos manos de esmalte sintético brillante sobre carpintería metálica o de madera, previa preparación del soporte mediante lijado, desengrasado y eliminación de óxido o restos de acabados anteriores. Incluye enmascarado de vidrios, herrajes y paramentos contiguos, aplicación a brocha en perfiles y molduras, lijado suave entre manos y retirada de protecciones. Medido en superficie realmente tratada, midiendo ambas caras por separado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

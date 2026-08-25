@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Andamio colgante o silleta para trabajos en fachada.",
   "descripcion": "Puesta a disposición de andamio colgante o silleta suspendida para trabajos puntuales en fachada donde no se justifica el montaje de andamio tubular. Su seguridad depende por completo de los puntos de anclaje en cubierta y del uso obligatorio de línea de vida independiente del equipo de suspensión, requisito que no admite excepción. Incluye el estudio y ejecución de los anclajes, el montaje del equipo, la prueba de carga previa, la revisión diaria de cables y frenos, el uso durante el periodo y el desmontaje. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

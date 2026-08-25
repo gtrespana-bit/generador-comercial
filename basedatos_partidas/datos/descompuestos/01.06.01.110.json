@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Apeo de fachada durante demolición parcial.",
   "descripcion": "Apeo de fachada durante demolición parcial. Incluye la colocación de puntales y arriostramiento. Medido por metro cuadrado apeado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

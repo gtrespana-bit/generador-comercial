@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Cerramiento perimetral de piscina.",
   "descripcion": "Ejecución de cerramiento perimetral de seguridad de piscina, con reja o malla. Incluye la colocación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

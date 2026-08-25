@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Conexión de drenaje a red existente.",
   "descripcion": "Conexión de drenaje exterior a la red existente, con excavación, empalme y relleno. Incluye la conexión y el relleno.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Ensayo de asentamiento (slump) del concreto.",
   "descripcion": "Determinación del asentamiento del concreto fresco con el cono de Abrams, para verificar la trabajabilidad.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

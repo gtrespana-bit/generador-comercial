@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Encofrado de viga de fundación.",
   "descripcion": "Encofrado y desencofrado de viga de fundación. Incluye el montaje y el desmontaje. Medido por metro cuadrado encofrado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

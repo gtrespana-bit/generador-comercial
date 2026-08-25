@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Zonificación del sistema de climatización.",
   "descripcion": "Zonificación del sistema de climatización, con compuertas motorizadas y control. El sistema lo elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

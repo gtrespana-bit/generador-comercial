@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Tratamiento de filtración en techo.",
   "descripcion": "Tratamiento de filtración en techo con localización, saneado y sellado. Incluye la localización de la filtración, el saneado y el sellado. Medido por metro cuadrado tratado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

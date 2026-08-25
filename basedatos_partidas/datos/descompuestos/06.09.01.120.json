@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Restauración de friso de fachada.",
   "descripcion": "Restauración de friso de fachada, con reintegración. Incluye la reposición del friso y el acabado. Medido por metro cuadrado restaurado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

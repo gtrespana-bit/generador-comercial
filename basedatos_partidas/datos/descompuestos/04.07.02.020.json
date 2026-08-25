@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Protección de fundación con lámina drenante.",
   "descripcion": "Colocación de lámina drenante sobre impermeabilización de fundación. Incluye la colocación de la lámina. Medido por metro cuadrado colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

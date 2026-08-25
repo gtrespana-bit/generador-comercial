@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Cata en pared para reconocimiento de instalaciones o soporte.",
   "descripcion": "Apertura de cata de reconocimiento en pared, de dimensiones aproximadas 30x30 cm, para identificar el tipo de soporte, su espesor o la presencia de instalaciones empotradas antes de proyectar la intervención. Incluye la localización previa con detector electrónico para no perforar una tubería o un cable en servicio, el picado controlado por capas hasta descubrir el elemento buscado, el registro fotográfico del hallazgo, y el resane de la cata con mortero de reparación dejando el paramento apto para su acabado. Medido por cata realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

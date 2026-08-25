@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Barra de bar o cafetería.",
   "descripcion": "Fabricación e instalación de barra de bar o cafetería en melamina o madera, con mesón. Incluye el despiece y el armado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

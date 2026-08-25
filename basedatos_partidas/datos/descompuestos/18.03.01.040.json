@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Aislamiento de cubierta plana con lana mineral.",
   "descripcion": "Colocación de panel de lana mineral sobre cubierta plana, previo a la impermeabilización.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

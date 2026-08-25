@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Escalera de concreto a prueba de fuego.",
   "descripcion": "Ejecución de escalera de concreto a prueba de fuego. Incluye el vaciado. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

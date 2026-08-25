@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Puerta corrediza de closet con riel.",
   "descripcion": "Fabricación y colocación de puerta corrediza de closet, con riel superior e inferior y carros. Incluye el montaje y la regulación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

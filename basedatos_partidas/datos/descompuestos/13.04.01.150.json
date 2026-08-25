@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Organizador de alacena con canastillas.",
   "descripcion": "Colocación de organizador de alacena con canastillas extraíbles y soportes. Incluye la fijación y la regulación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de herrajes de puerta.",
   "descripcion": "Instalación de herrajes (bisagras, manillas, cerraderos) en puerta. Incluye el montaje y el ajuste. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

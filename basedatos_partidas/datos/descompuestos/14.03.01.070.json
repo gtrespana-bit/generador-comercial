@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Canaleta de desagüe de concreto.",
   "descripcion": "Ejecución de canaleta de desagüe de concreto para evacuación de aguas superficiales. Incluye el encofrado y el vaciado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

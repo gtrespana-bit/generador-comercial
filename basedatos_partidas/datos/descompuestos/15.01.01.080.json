@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Identificación y etiquetado de contenedores de residuos.",
   "descripcion": "Colocación de identificación y etiquetado sobre los contenedores o zonas de acopio, indicando el tipo de residuo admitido.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

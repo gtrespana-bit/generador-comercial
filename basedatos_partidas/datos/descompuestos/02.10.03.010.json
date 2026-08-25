@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Demolición de cielo raso de yeso laminado y su estructura.",
   "descripcion": "Demolición de cielo raso continuo de placa de yeso laminado, junto con la perfilería de acero galvanizado, las varillas de cuelgue y el ángulo perimetral, ejecutada con medios manuales. Incluye la desconexión y retiro previo de las luminarias, rejillas y difusores alojados en el plano del cielo, la protección del piso y del mobiliario, el descuelgue ordenado de las placas para evitar caídas incontroladas, el retiro del escombro en sacos y de la perfilería atada, y la limpieza de la zona dejando la losa a la vista. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en superficie realmente demolida.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

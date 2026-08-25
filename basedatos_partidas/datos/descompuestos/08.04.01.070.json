@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Sellado de paso de tubería.",
   "descripcion": "Sellado de paso de tubería con collarín. Incluye la limpieza y el sellado. Medido por unidad sellada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

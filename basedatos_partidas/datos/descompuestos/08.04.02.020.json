@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Remate de encuentro de materiales.",
   "descripcion": "Remate de encuentro entre materiales distintos. Incluye el sellado. Medido por metro lineal ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

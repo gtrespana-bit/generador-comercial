@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Eslinga y absorbedor de energía.",
   "descripcion": "Dotación de eslinga con absorbedor de energía para el amarre de arneses en trabajos en altura.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Piso flotante sobre pedestales en cubierta.",
   "descripcion": "Piso técnico exterior formado por losetas apoyadas sobre pedestales regulables sobre la impermeabilización de la cubierta, sin adherencia ni perforación. Su ventaja es doble: nivela el piso final sobre una base en pendiente y deja la impermeabilización registrable, ya que basta levantar las losetas para inspeccionarla o repararla. Incluye el replanteo de la retícula, la colocación de las bases protectoras sobre el manto, el montaje y regulación de los pedestales, la colocación de las losetas y el ajuste de las piezas perimetrales. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Loseta de exterior para piso flotante sobre pedestales",

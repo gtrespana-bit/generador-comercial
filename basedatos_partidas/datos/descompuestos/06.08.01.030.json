@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Celosía cerámica de fachada.",
   "descripcion": "Suministro y colocación de celosía cerámica de fachada. Incluye la subestructura y la colocación de las piezas. Medido por metro cuadrado instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

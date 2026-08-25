@@ -6,7 +6,7 @@
   "unidad": "m³",
   "titulo": "Excavación en material duro o roca.",
   "descripcion": "Excavación en terreno de alta compacidad, material cementado o roca, mediante martillo hidráulico montado sobre retroexcavadora, con apoyo de martillo neumático manual en los rincones. Se aplica cuando el rendimiento de la excavación convencional cae por debajo de lo aceptable, circunstancia que debe dejarse acreditada en obra para justificar el cambio de partida. Incluye el fracturado del material, su extracción y acopio, el refine de paredes y fondo, y el control de las vibraciones cuando existan edificaciones colindantes. No incluye el transporte del material sobrante a botadero, que se valora en el subcapítulo de transporte de tierras. Medido en volumen teórico de excavación según las dimensiones de proyecto.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

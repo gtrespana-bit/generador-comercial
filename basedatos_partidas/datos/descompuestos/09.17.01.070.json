@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Puesta en marcha de sistema domótico.",
   "descripcion": "Puesta en marcha de sistema domótico. Incluye la configuración y la verificación. Medido por sistema puesto en marcha.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Pavimento de lajas de piedra.",
   "descripcion": "Pavimento exterior de lajas de piedra sobre cama de mortero, con juntas rellenadas. Incluye la colocación y el juntado. La piedra la elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

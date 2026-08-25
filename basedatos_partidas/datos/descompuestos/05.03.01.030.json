@@ -6,7 +6,7 @@
   "unidad": "m³",
   "titulo": "Concreto para columna.",
   "descripcion": "Concreto premezclado de resistencia 250 kg/cm2 vaciado en columna, incluida su compactación por vibrado y su curado. Incluye la limpieza del fondo del encofrado por la ventana prevista antes de cerrarla, la recepción y comprobación del concreto, el vaciado por capas de altura limitada empleando tubo de descarga para evitar la segregación por caída libre, la compactación con vibrador de aguja en cada capa sin tocar el armado, el enrase de la cabeza dejando la superficie rugosa para la junta con la viga superior, el desencofrado y el curado. Medido en volumen teórico según las dimensiones de proyecto.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

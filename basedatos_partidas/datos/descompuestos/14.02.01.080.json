@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Bordillo prefabricado de concreto.",
   "descripcion": "Colocación de bordillo prefabricado de concreto sobre base de mortero. Incluye la colocación y el rejuntado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

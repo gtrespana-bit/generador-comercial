@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Cornisa para iluminación indirecta en cielo raso.",
   "descripcion": "Formación de cornisa perimetral con perfil específico para alojar cinta LED de iluminación indirecta, montada sobre el cielo raso. Incluye el replanteo de la altura y de la separación al techo, que determina la apertura del haz y por tanto el efecto de luz conseguido, el montaje del perfil, el remate de juntas, la previsión del paso del cableado y de la posición de la fuente en un punto registrable, y el acabado listo para pintar. No incluye la cinta LED. Medido en longitud realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

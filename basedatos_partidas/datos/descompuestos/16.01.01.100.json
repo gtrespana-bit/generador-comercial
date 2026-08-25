@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Verificación de plomos y niveles de muros.",
   "descripcion": "Verificación de plomos, niveles y escuadras de muros y particiones, con nivel láser.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

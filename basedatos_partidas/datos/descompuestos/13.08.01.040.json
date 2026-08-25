@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Mueble fijo con entrepaños y puertas.",
   "descripcion": "Fabricación e instalación de mueble fijo a medida en melamina, con puertas y entrepaños. Incluye el despiece y el armado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

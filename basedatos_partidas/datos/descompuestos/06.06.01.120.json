@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Dintel metálico para vano.",
   "descripcion": "Suministro y colocación de dintel metálico para vano. Incluye la fabricación y el montaje del dintel. Medido por metro lineal ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

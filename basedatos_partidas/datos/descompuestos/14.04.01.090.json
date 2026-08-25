@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Cerca de reja sobre murete de bloque.",
   "descripcion": "Ejecución de cerca de reja metálica sobre murete de bloque, con columnas. Incluye el murete y la reja.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

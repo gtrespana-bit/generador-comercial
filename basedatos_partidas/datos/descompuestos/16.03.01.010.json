@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Prueba de estanqueidad de cubierta por inundación.",
   "descripcion": "Prueba de estanqueidad de cubierta plana por inundación controlada, con registro del nivel y revisión de puntos singulares.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

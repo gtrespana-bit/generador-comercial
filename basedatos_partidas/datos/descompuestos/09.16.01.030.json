@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de montacargas.",
   "descripcion": "Instalación de montacargas de obra o de servicio. Incluye el montaje y la puesta en marcha. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

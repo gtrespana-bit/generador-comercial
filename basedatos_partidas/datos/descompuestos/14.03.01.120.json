@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Registro de inspección de drenaje.",
   "descripcion": "Ejecución de registro de inspección de drenaje con tapa y marco. Incluye la excavación y la colocación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

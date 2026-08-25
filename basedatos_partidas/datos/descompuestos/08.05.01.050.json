@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Vierteaguas prefabricado.",
   "descripcion": "Colocación de vierteaguas prefabricado de concreto. Incluye la colocación. Medido por metro lineal ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

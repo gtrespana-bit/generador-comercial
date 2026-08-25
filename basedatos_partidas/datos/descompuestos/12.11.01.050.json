@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Repintado de fachada sobre pintura existente.",
   "descripcion": "Repintado de fachada sobre pintura existente en buen estado, con limpieza y dos manos de pintura de caucho exterior. Incluye la limpieza de la superficie, el repaso de fisuras y las dos manos de acabado. Medido por metro cuadrado repintado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

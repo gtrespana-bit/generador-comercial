@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Canalización eléctrica para equipo de climatización.",
   "descripcion": "Canalización eléctrica dedicada para equipo de climatización, con su tubería, conductor de calibre adecuado y previsión de la protección independiente en el tablero. Incluye el replanteo del recorrido entre el tablero y la unidad, la apertura de roza o el tendido por plenum, el tendido del conductor dimensionado a la potencia del equipo, el paso a la unidad exterior con su sellado del pase en fachada y la identificación del circuito. Medido en longitud realmente instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

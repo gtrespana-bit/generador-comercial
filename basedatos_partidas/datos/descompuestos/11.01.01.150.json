@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Cazuela de recogida para desagüe de cubierta.",
   "descripcion": "Ejecución de cazuela o sumidero de desagüe en el punto bajo de la pendiente de cubierta, con conexión a la bajante y sellado de la impermeabilización. Incluye la apertura del hueco y la fijación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

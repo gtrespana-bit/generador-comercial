@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Bajante de aguas lluvias en cubierta metálica.",
   "descripcion": "Ejecución de bajante de PVC para aguas lluvias en cubierta metálica, con abrazaderas y conexión al canalón. Incluye la fijación y los accesorios.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

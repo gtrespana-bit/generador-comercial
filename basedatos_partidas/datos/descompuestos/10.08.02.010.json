@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Sellado de junta de dilatación en piso.",
   "descripcion": "Sellado de junta de dilatación en piso con perfil y sellador elástico. Incluye la limpieza de la junta, la colocación del perfil y el sellado. Medido por metro lineal sellado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

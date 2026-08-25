@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Punto de fuerza para cocina.",
   "descripcion": "Punto de fuerza para cocina o electrodoméstico. Incluye la conexión. Medido por punto ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

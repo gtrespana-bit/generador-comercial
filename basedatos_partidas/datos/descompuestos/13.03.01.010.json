@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Mueble de baño con lavamanos.",
   "descripcion": "Fabricación o suministro e instalación de mueble de baño con su lavamanos integrado o sobrepuesto, colgado o de pie. Incluye la comprobación del refuerzo del paramento en los muebles suspendidos, que soportan el peso del mueble más el del lavamanos lleno, el replanteo de la altura útil, la previsión de los recortes de paso de desagüe y abastos, el anclaje, la nivelación, el montaje de puertas y gavetas con su regulación y el sellado perimetral contra la pared. El mueble y el lavamanos los elige el cliente y se presupuestan aparte. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Mueble de baño con lavamanos elegido por el cliente",

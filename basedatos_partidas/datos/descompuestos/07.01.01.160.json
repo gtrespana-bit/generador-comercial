@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Puerta interior con panel de vidrio.",
   "descripcion": "Suministro y colocación de puerta interior de madera con panel de vidrio, con marco y herrajes. Incluye el montaje del marco, la colocación de la hoja y el ajuste. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

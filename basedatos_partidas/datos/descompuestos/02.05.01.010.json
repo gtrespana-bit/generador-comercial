@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Desmontaje de closet o mueble empotrado.",
   "descripcion": "Desmontaje de closet, alacena o mueble empotrado, incluidos las puertas, los entrepaños, la estructura interior y los rastreles de fijación al paramento, ejecutado con medios manuales y atornillador. Incluye el vaciado previo del contenido si el cliente no lo hubiera retirado, el desmontaje ordenado desde las puertas hacia la estructura, la extracción de tacos y tornillos del muro, el resane de los huecos de anclaje, la clasificación de las piezas aprovechables y el retiro del material. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en superficie de frente de mueble realmente desmontada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

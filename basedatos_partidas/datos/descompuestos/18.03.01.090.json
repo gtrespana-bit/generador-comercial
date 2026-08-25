@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Aislamiento de lucernario o claraboya.",
   "descripcion": "Colocación de aislamiento en el perímetro del lucernario o claraboya, para reducir las pérdidas.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

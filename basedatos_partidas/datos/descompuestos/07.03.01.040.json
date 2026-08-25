@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Mosquitero para ventana.",
   "descripcion": "Suministro y colocación de mosquitero con bastidor de aluminio y malla, fijo o corredizo según el tipo de ventana. Incluye la toma de medidas, el montaje del bastidor con la malla tensada sin arrugas, la colocación de las guías o clips de sujeción y la comprobación del ajuste perimetral, ya que una holgura de pocos milímetros anula por completo su función. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

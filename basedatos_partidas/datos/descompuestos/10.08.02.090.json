@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Sellado de junta en tanque.",
   "descripcion": "Sellado de junta en tanque de agua con sellador apto para inmersión. Incluye la limpieza de la junta y la aplicación. Medido por metro lineal sellado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

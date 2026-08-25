@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Reparación de claraboya o lucernario.",
   "descripcion": "Reparación de claraboya o lucernario con sustitución del sellado y de piezas dañadas. Incluye la limpieza y el sellado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

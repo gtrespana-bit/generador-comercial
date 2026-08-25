@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Levantamiento topográfico interior.",
   "descripcion": "Levantamiento topográfico interior de la obra. Incluye la medición y el registro de cotas. Medido por metro cuadrado levantado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

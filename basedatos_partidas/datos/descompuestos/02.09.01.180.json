@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Desmontaje de caballete de techo.",
   "descripcion": "Desmontaje de caballete o cumbrera de techo. Incluye la retirada del elemento. Medido por metro lineal desmontado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

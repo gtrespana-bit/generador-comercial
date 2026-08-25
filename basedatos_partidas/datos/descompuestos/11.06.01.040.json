@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Estructura de madera de techo a dos aguas.",
   "descripcion": "Estructura de madera para cubierta con pares, tirantes y correas, con herrajes de unión y tratamiento preservante. Incluye el armado y el montaje.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

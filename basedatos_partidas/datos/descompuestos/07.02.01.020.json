@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de puerta de entrada de madera.",
   "descripcion": "Instalación de puerta de entrada principal de madera maciza con su marco reforzado, herrajes y cerradura de seguridad. Incluye la comprobación y preparación del vano, el montaje y aplomado del marco con anclaje mecánico, el macizado perimetral, el colgado de la hoja con bisagras reforzadas dimensionadas para su peso, el ajuste de holguras, la colocación de burletes y del umbral, el montaje de la cerradura y la aplicación de protección en el canto inferior y en las testas, que son por donde la madera absorbe humedad y se hincha. La puerta la elige el cliente y se presupuesta aparte. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Hoja de puerta de entrada elegida por el cliente",

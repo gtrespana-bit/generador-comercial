@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Faldón o panel de remate de cocina.",
   "descripcion": "Colocación de faldón o panel de remate entre mesón y mueble alto de cocina, en melamina o material a juego. Incluye el corte y la fijación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

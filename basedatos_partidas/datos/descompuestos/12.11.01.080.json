@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Pintura de muro de cerramiento o pared medianera.",
   "descripcion": "Aplicación de pintura exterior en muro de cerramiento o medianera, con dos manos. Incluye la limpieza de la superficie y las dos manos de pintura de caucho exterior. Medido por metro cuadrado pintado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

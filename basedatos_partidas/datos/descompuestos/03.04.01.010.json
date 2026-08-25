@@ -6,7 +6,7 @@
   "unidad": "m³",
   "titulo": "Relleno y compactación con material del sitio.",
   "descripcion": "Relleno de zanjas, trasdós de muros o rebajes con el propio material procedente de la excavación, siempre que sea apto por no contener materia orgánica ni elementos compresibles, extendido y compactado en capas de 20 cm de espesor máximo. Incluye la selección y cribado grosero del material acopiado, su extendido por tongadas, la humectación hasta la humedad óptima, la compactación de cada capa con compactador de impacto o plancha vibratoria según el espacio, y la comprobación del nivel final. Medido en volumen de relleno compactado según las dimensiones de proyecto.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

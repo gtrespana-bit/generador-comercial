@@ -6,7 +6,7 @@
   "unidad": "m³",
   "titulo": "Concreto para viga de riostra.",
   "descripcion": "Concreto premezclado de resistencia 210 kg/cm2 vaciado en viga de riostra, incluida su compactación por vibrado y su curado. La viga de riostra ata las fundaciones entre sí y es la que absorbe los asientos diferenciales, por lo que su continuidad y la correcta ejecución de los nudos con las zapatas son determinantes. Incluye la revisión previa del armado y del recubrimiento, la recepción del concreto, el vaciado continuo evitando juntas frías en los nudos, la compactación con vibrador de aguja, el reglado de la cara superior y el curado. Medido en volumen teórico según las dimensiones de proyecto.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

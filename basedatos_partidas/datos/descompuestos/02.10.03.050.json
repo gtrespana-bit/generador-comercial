@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Desmontaje de cielo raso de láminas de PVC o aluminio.",
   "descripcion": "Desmontaje de cielo raso formado por láminas de PVC, aluminio o material similar, junto con sus perfiles de soporte y remates perimetrales, ejecutado con medios manuales. Incluye la desconexión previa de las luminarias y rejillas, la protección del piso, el desencastre ordenado de las láminas para poder recuperarlas si el cliente lo desea, el desmontaje de la perfilería, el retiro del material hasta el punto de acopio y la limpieza de la zona. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en superficie realmente desmontada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

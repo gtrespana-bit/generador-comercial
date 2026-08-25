@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Refuerzo de encuentros y petos en impermeabilización asfáltica.",
   "descripcion": "Refuerzo con banda de manto asfáltico en los encuentros de la cubierta con petos, chimeneas, muros y demás elementos verticales, con formación de media caña en la arista y remonte mínimo de 20 cm sobre el plano de cubierta. Los encuentros verticales son donde falla la impermeabilización casi siempre, no el paño central. Incluye la formación de la media caña con mortero, la imprimación, la colocación de la banda de refuerzo, el remonte y su fijación mecánica superior con perfil y sellado. Medido en longitud de encuentro realmente reforzada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

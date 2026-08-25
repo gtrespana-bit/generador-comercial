@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Mampara divisoria de oficina con puerta.",
   "descripcion": "Ejecución de mampara divisoria de oficina con puerta. Incluye la estructura, los paneles y la puerta. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

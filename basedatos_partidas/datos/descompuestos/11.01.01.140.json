@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Junta de dilatación de cubierta.",
   "descripcion": "Ejecución de junta de dilatación en cubierta plana con perfil de junta, fondo de junta y sellado elástico. Incluye la apertura o previsión del hueco, la colocación del fondo y el sellado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

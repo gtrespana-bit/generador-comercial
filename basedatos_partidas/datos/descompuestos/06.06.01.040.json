@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Formación de jambas y mochetas de vano.",
   "descripcion": "Formación y repaso de las jambas y mochetas de un vano de puerta o ventana, dejándolas aplomadas, escuadradas y con las dimensiones exactas para recibir la carpintería. Es la operación que determina si la carpintería entra sin forzarla: un vano fuera de escuadra obliga a rehacerlo o a resolverlo con calzos y sellados que se ven. Incluye el repicado de los excesos, el macizado y regularización con mortero de las zonas deficientes, la comprobación de plomos, escuadras y diagonales, y el acabado de la superficie lista para frisar. Medido en longitud de jamba realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

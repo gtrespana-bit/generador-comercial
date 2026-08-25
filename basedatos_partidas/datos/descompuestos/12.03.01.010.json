@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Enchapado de paramento interior con pieza cerámica o porcelanato, en capa fina.",
   "descripcion": "Enchapado de paramento interior en baños, cocinas y áreas húmedas con pieza cerámica o de porcelanato rectificado, sobre soporte previamente frisado y regularizado. Ejecución en capa fina con adhesivo cementoso mejorado C2 TE de deslizamiento reducido aplicado con llana dentada, nivelación mediante crucetas y cuñas, y rejuntado con mortero CG2. Incluye replanteo de hiladas para evitar piezas cortadas en zonas vistas, cortes y taladros para el paso de instalaciones y mecanismos, resolución de encuentros y esquinas, y limpieza final. La pieza la elige el cliente y se presupuesta aparte. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Pieza cerámica o porcelanato para revestimiento de paramento",

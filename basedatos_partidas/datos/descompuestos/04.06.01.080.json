@@ -6,7 +6,7 @@
   "unidad": "m3",
   "titulo": "Vaciado de concreto en pilote.",
   "descripcion": "Concreto para pilote vaciado en sitio. Incluye el vaciado. Medido por metro cúbico ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

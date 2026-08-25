@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Impermeabilización de balcón o terraza transitable.",
   "descripcion": "Impermeabilización de balcón o terraza transitable con membrana cementosa flexible bajo el piso de acabado, con refuerzo de encuentros y tratamiento del borde. El punto crítico es el encuentro con el paramento y el remate del borde exterior: la membrana debe remontar por la pared por encima del nivel del piso terminado y morir en el goterón del borde, no cortarse a ras. Incluye la comprobación de las pendientes, el refuerzo de encuentros y desagües, las manos de membrana con el remonte perimetral, la prueba de estanqueidad y la protección hasta recibir el piso. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

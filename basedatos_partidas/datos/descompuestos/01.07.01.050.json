@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Replanteo de instalaciones.",
   "descripcion": "Replanteo de instalaciones (eléctrica, sanitaria) con trazado de recorridos. Incluye el marcado. Medido por instalación replanteada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

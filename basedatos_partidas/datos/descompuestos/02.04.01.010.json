@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Demolición de tabique de bloque o ladrillo, incluidos sus revestimientos.",
   "descripcion": "Demolición de tabique interior no estructural de bloque de concreto o ladrillo, con sus revestimientos por ambas caras, ejecutada con martillo eléctrico manual sin afectar a la estabilidad de los elementos constructivos contiguos. Incluye comprobación previa de que el tabique no es portante y de que no aloja instalaciones en servicio, protección del entorno, apeo puntual si fuera necesario, fragmentación del escombro en piezas manejables, retirada en sacos hasta el punto de acopio y limpieza de la zona. No incluye el transporte a vertedero. Medido en superficie realmente demolida.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

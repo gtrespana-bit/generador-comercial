@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Punto para ventilador de techo.",
   "descripcion": "Punto eléctrico para ventilador de techo, con su caja reforzada, canalización, conductor y mando. La caja debe ser específica para ventilador y estar anclada a un elemento estructural o a un refuerzo del cielo raso: una caja de luminaria común no está diseñada para soportar el peso y la vibración de un ventilador en marcha. Incluye el replanteo, el refuerzo del anclaje, la caja específica, la canalización y el conductor con el hilo adicional del control de velocidad, el mecanismo de mando y la prueba. Medido por punto terminado y probado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

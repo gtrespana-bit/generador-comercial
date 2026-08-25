@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de videoportero o citófono.",
   "descripcion": "Instalación de videoportero o citófono, con su placa exterior, monitor interior, alimentador y cableado. Incluye el replanteo de la altura de la placa exterior y de la cámara para que encuadre correctamente al visitante, el empotrado de la caja de la placa, el tendido del cableado por canalización independiente, el montaje del monitor, la conexión del alimentador y de la apertura eléctrica de la cerradura si existe, y la puesta en servicio con prueba de imagen, audio y apertura. El equipo lo elige el cliente y se presupuesta aparte. Medido por sistema instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Equipo de videoportero o citófono elegido por el cliente",

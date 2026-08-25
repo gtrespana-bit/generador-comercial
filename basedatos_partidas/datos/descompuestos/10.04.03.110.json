@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Impermeabilización de canaleta de cubierta.",
   "descripcion": "Impermeabilización de canaleta o sumidero de cubierta, con refuerzo. Incluye la preparación y la colocación del refuerzo en el punto de desagüe. Medido por unidad impermeabilizada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

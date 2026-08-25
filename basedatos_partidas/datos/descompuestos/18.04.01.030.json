@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Aislamiento perimetral de piso.",
   "descripcion": "Colocación de aislamiento en el perímetro del piso, para evitar el puente térmico con el terreno.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

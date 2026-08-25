@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Rodapié de madera o MDF.",
   "descripcion": "Colocación de rodapié de madera o MDF lacado, fijado al paramento con adhesivo y clavado oculto, con cortes a inglete en esquinas. Incluye el replanteo, el corte a inglete en esquinas interiores y exteriores, el ajuste alrededor de los marcos de puerta, la fijación combinando adhesivo y puntas, el relleno y disimulo de los puntos de clavado y el sellado de la junta superior con la pared cuando el acabado lo requiera. El rodapié lo elige el cliente y se presupuesta aparte. Medido en longitud realmente colocada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Rodapié de madera o MDF elegido por el cliente",

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Celosía o romanilla de ventilación.",
   "descripcion": "Suministro e instalación de celosía o romanilla de aluminio para ventilación permanente, con su marco y malla antiinsectos. Es un elemento muy usado en clima tropical para ventilar cuartos de servicio, depósitos y baños sin ventana practicable. Incluye la toma de medidas del vano, el montaje y aplomado del marco, el anclaje, el sellado perimetral, la colocación de la malla antiinsectos por la cara interior y la comprobación de la sección libre de ventilación. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Tabique de bloque de concreto con junta de dilatación.",
   "descripcion": "Ejecución de tabique de bloque de concreto con junta de dilatación. Incluye la mampostería y la formación de la junta. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

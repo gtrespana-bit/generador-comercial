@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Protección de sanitarios y grifería existente.",
   "descripcion": "Protección de sanitarios y grifería existente durante la obra. Incluye el forrado con lámina y cartón. Medido por unidad protegida.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

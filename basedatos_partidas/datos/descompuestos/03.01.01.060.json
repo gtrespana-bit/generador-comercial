@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Desbroce con retiro de capa vegetal.",
   "descripcion": "Desbroce con retiro de capa vegetal y raíces superficiales. Incluye la limpieza y el acopio. Medido por metro cuadrado desbrozado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

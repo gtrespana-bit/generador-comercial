@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Escalera de acceso provisional.",
   "descripcion": "Colocación de escalera de acceso provisional a la zona de obra. Incluye el montaje de la escalera. Medido por metro lineal colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

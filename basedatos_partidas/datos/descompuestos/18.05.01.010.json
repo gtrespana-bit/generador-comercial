@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Sustitución de ventana por doble acristalamiento.",
   "descripcion": "Sustitución de ventana por doble acristalamiento con cámara de aire, para reducir las pérdidas térmicas. El vidrio lo elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

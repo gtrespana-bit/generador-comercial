@@ -6,7 +6,7 @@
   "unidad": "m³",
   "titulo": "Concreto para losa maciza.",
   "descripcion": "Concreto premezclado de resistencia 250 kg/cm2 vaciado en losa maciza de entrepiso o techo, incluida su compactación por vibrado y su curado. Incluye la revisión previa del encofrado, del apuntalamiento, del armado y de los recubrimientos, la recepción y comprobación del concreto, el vaciado continuo por franjas evitando juntas frías, la compactación con vibrador de aguja, el reglado a la cota mediante maestras, el flotado de la superficie y el curado durante los primeros días. Medido en volumen teórico según las dimensiones de proyecto.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

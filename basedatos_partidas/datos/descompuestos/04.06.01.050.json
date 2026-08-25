@@ -6,7 +6,7 @@
   "unidad": "m³",
   "titulo": "Cabezal de pilotes de concreto armado.",
   "descripcion": "Cabezal de concreto armado de resistencia 250 kg/cm2 que recibe y reparte la carga de la columna entre el grupo de pilotes, incluidos su encofrado, su vaciado, su vibrado y su curado. Incluye el replanteo sobre las cabezas descabezadas, el montaje y arriostramiento del encofrado, la comprobación de que las esperas de los pilotes quedan embebidas con la longitud de anclaje prevista, el vaciado por capas con vibrado, el desencofrado y el curado. No incluye el acero de refuerzo, que se valora por su peso. Medido en volumen teórico según las dimensiones de proyecto.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

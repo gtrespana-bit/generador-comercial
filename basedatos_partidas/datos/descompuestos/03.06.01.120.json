@@ -6,7 +6,7 @@
   "unidad": "m3",
   "titulo": "Carga manual de tierra sobrante.",
   "descripcion": "Carga manual de tierra sobrante a carretilla o saco. Incluye la carga. Medido por metro cúbico cargado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

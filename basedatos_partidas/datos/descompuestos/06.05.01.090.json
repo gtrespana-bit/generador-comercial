@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "División liviana de placa de cemento.",
   "descripcion": "Ejecución de división liviana de placa de cemento. Incluye la estructura, la placa y el sellado. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

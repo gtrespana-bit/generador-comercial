@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Laca para carpintería interior de madera.",
   "descripcion": "Aplicación de laca sobre carpintería interior de madera, con fondo y dos manos. Incluye el lijado, el fondo y las dos manos de laca. Medido por metro cuadrado lacado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

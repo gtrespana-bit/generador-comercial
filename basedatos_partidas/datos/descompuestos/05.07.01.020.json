@@ -6,7 +6,7 @@
   "unidad": "kg",
   "titulo": "Acero de refuerzo en escalera.",
   "descripcion": "Suministro, corte, doblado, armado y colocación de acero de refuerzo en cabillas corrugadas en escalera de concreto armado, según los planos de despiece. Incluye el corte y doblado, el armado de la parrilla principal de la losa inclinada con su refuerzo de reparto, la disposición de los refuerzos en los quiebres de la geometría donde el trazado del acero debe respetar el sentido de las tracciones, el anclaje en los apoyos de arranque y llegada, el amarre con alambre y la colocación de separadores. Medido en peso de acero realmente colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

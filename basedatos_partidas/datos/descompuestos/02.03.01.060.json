@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Picado de mortero monocapa en fachada.",
   "descripcion": "Picado de revestimiento de mortero monocapa en fachada, incluida su malla de refuerzo y los perfiles de arranque y goterón, ejecutado con martillo eléctrico manual hasta dejar el soporte limpio y apto para recibir el nuevo revestimiento. Incluye el sondeo previo del paramento, el trabajo desde andamio con las protecciones colectivas correspondientes, la protección de carpinterías y del paso a pie de fachada, el corte y retiro de la malla, el control de la caída de escombro, su retiro en sacos y la limpieza del soporte. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en superficie realmente picada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

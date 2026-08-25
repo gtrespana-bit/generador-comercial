@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Capa drenante de cubierta ajardinada.",
   "descripcion": "Ejecución de capa drenante en cubierta ajardinada, con geotextil y drenaje. Incluye la colocación del drenaje y el geotextil. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

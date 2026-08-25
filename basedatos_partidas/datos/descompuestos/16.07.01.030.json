@@ -6,7 +6,7 @@
   "unidad": "glb",
   "titulo": "Termografía de instalación eléctrica.",
   "descripcion": "Inspección termográfica de la instalación eléctrica para detectar puntos calientes y conexiones defectuosas.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Columna metálica.",
   "descripcion": "Suministro y montaje de columna metálica. Incluye el izado, el montaje y la fijación. Medido por metro lineal montado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

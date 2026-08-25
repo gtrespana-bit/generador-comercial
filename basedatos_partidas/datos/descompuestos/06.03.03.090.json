@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Mampostería estructural de bloque de arcilla.",
   "descripcion": "Ejecución de mampostería estructural de bloque de arcilla con refuerzo. Incluye la mampostería, el refuerzo y el relleno. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

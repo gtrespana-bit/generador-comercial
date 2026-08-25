@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Base compactada para pavimento exterior.",
   "descripcion": "Ejecución de base de material granular compactado para pavimento exterior, con nivelación y compactación. Incluye el extendido y la compactación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

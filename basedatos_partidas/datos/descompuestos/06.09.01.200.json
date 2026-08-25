@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Reparación de muro de fachada.",
   "descripcion": "Reparación de muro de fachada, con reintegración de material. Incluye la reposición del material y el acabado. Medido por metro cuadrado reparado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

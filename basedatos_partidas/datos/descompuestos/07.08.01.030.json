@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Toldo extensible de lona.",
   "descripcion": "Suministro y colocación de toldo extensible de lona con brazos y soportes. Incluye la toma de medidas, el montaje de los soportes y la colocación del toldo. Medido por metro cuadrado instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

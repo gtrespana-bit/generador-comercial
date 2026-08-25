@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Baranda de acero inoxidable con vidrio.",
   "descripcion": "Suministro y colocación de baranda de acero inoxidable con paño de vidrio templado. Incluye la fijación de la baranda y el acristalamiento. Medido por metro lineal instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

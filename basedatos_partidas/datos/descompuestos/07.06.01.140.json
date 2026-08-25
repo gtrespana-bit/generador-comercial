@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Techo de vidrio en patio interior.",
   "descripcion": "Suministro y colocación de techo de vidrio templado en patio interior, con estructura portante. Incluye la estructura, el acristalamiento y el sellado. Medido por metro cuadrado instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

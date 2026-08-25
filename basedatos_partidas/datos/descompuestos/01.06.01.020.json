@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Apeo de viga con puntales metálicos.",
   "descripcion": "Apeo provisional de viga mediante puntales metálicos telescópicos con durmiente de reparto en cabeza, dispuestos a ambos lados del elemento a intervenir. Debe responder a un cálculo o a la instrucción del profesional responsable. Incluye el replanteo de los puntos de apeo, la colocación de los durmientes, el montaje y puesta en carga progresiva de los puntales, la comprobación de que la carga se transmite a un apoyo con capacidad suficiente en el nivel inferior, la revisión durante los trabajos y el desapeo escalonado. Medido en longitud de viga realmente apeada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

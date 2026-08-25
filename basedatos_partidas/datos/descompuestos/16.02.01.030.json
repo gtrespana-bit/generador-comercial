@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Ensayo de partículas magnéticas en soldadura.",
   "descripcion": "Ensayo de partículas magnéticas para detección de discontinuidades en soldaduras de acero, con informe.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

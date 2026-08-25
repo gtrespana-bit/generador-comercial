@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Tabique de bloque de concreto de 10 cm, recibido con mortero de pega.",
   "descripcion": "Tabique interior no estructural de 10 cm de espesor, ejecutado con bloque hueco de concreto de 10x20x40 cm recibido con mortero de pega, aparejado a soga con juntas de 1 cm enrasadas. Incluye replanteo y trazado sobre el piso, colocación de hiladas a nivel y plomo con la ayuda de reglas y cuerda, formación de huecos de paso, anclaje del tabique a los paramentos existentes, humedecido previo de las piezas y limpieza de restos. No incluye el friso ni los dinteles de los huecos, que se valoran aparte. Medido a cinta corrida descontando huecos mayores de 2 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

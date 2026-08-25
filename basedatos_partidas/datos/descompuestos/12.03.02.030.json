@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Enchapado de piedra natural con anclaje mecánico.",
   "descripcion": "Colocación de piezas de piedra natural en fachada mediante anclaje mecánico de acero inoxidable, sin depender del adhesivo como elemento portante. Es la solución obligada a partir de cierta altura, espesor o peso de pieza, donde un enchapado adherido no ofrece seguridad suficiente frente al desprendimiento. Incluye el trabajo desde andamio, el replanteo, el taladrado de los alojamientos en el canto de la pieza y en el soporte, la colocación de los anclajes con su resina, el aplomado y nivelación de cada pieza, el sellado de juntas y la limpieza. La pieza la elige el cliente y se presupuesta aparte. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Pieza de piedra natural para fachada, de espesor apto para anclaje mecánico",

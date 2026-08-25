@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Placa de identificación de puerta.",
   "descripcion": "Colocación de placa de identificación de puerta, con fijación. Incluye el replanteo y la fijación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

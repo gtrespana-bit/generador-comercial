@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Levantado de piso de parquet o madera.",
   "descripcion": "Levantado de piso existente de parquet o de tablilla de madera, incluidos los rastreles o el adhesivo de fijación al afirmado, ejecutado con medios manuales mediante palanca y espátula. Incluye el retiro previo de las molduras de remate, el rascado de los restos de adhesivo adheridos al afirmado, la extracción de los clavos o tornillos que queden en la base, el retiro del material en sacos hasta el punto de acopio y la limpieza de la superficie resultante. No incluye el bote del escombro. Medido en superficie realmente levantada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

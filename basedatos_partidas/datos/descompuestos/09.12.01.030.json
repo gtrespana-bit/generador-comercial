@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Repetidor de señal inalámbrica para la red domótica.",
   "descripcion": "Suministro e instalación de repetidor o extensor de señal inalámbrica para ampliar la cobertura de la red domótica en viviendas o locales con zonas de baja señal. Incluye la elección del punto de instalación intermedio, la fijación, la alimentación y la verificación de la mejora de cobertura. Medido por repetidor instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

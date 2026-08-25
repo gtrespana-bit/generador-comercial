@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Jardinera prefabricada exterior.",
   "descripcion": "Colocación de jardinera prefabricada exterior, con fijación y drenaje. Incluye la colocación. La jardinera la elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

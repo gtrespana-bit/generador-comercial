@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de silla salvaescaleras.",
   "descripcion": "Instalación de silla salvaescaleras. Incluye el montaje del riel y la silla. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

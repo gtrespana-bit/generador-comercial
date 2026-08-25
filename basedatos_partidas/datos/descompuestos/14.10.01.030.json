@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Borde o coronación de piscina.",
   "descripcion": "Ejecución de borde o coronación de piscina, con losa de remate y acabado. Incluye el vaciado y el acabado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

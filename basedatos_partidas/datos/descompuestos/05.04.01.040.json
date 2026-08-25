@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Imprimación anticorrosiva de estructura metálica.",
   "descripcion": "Preparación de la superficie y aplicación de dos manos de imprimación anticorrosiva sobre estructura metálica. La durabilidad del recubrimiento depende mucho más de la preparación previa que de la calidad de la pintura, de modo que el grado de limpieza alcanzado es lo determinante. Incluye la eliminación de óxido, calamina, grasa y restos de escoria mediante cepillo de púas y esmerilado, el desengrasado, la aplicación de la primera mano cubriendo aristas, cantos y zonas de difícil acceso que son las que primero fallan, el respeto del tiempo de repintado y la aplicación de la segunda mano. Medido en superficie realmente tratada, desarrollando todas las caras del perfil.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Viga de riostra con bloque lateral.",
   "descripcion": "Ejecución de viga de riostra con bloque lateral como encofrado perdido. Incluye la colocación del bloque y el vaciado. Medido por metro lineal ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Montante de desagüe de cocina.",
   "descripcion": "Ejecución de montante de desagüe de cocina., con conexión. Incluye la conexión y la fijación. Medido por metro lineal ejecutado/a.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

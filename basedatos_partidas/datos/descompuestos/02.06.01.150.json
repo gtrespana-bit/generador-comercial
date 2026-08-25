@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Demolición de bancada de equipo.",
   "descripcion": "Demolición de bancada o base de equipo de concreto. Incluye la demolición y la retirada del escombro. Medido por unidad demolida.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

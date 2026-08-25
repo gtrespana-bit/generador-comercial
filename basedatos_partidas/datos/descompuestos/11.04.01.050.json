@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Cubierta de lámina metálica acanalada galvanizada.",
   "descripcion": "Cubierta de lámina metálica acanalada galvanizada sobre correas, atornillada con solapes laterales y de cabecera. Incluye el replanteo, la fijación y los remates.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

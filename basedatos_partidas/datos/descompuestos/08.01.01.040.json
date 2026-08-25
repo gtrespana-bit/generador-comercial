@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Ayuda de albañilería para gas.",
   "descripcion": "Ayuda de albañilería para instalación de gas: rozas y tapado. Incluye la apertura de rozas y el resane. Medido por unidad de ayuda.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "glb",
   "titulo": "Auditoría de consumos energéticos.",
   "descripcion": "Auditoría de los consumos energéticos de la vivienda, con análisis de facturas y propuesta de mejora.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

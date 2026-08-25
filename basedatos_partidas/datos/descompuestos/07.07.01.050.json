@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "División de oficina acristalada.",
   "descripcion": "Suministro y colocación de división de oficina acristalada, con perfilería y vidrio. Incluye la estructura, el acristalamiento y el sellado. Medido por metro cuadrado instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

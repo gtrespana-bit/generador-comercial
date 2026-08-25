@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Equipamiento de parque infantil.",
   "descripcion": "Instalación de equipamiento de parque infantil, con anclaje al piso y fijación. Incluye la fijación. El equipo lo elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

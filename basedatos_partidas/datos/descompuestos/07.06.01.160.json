@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Sustitución de vidrio en ventana.",
   "descripcion": "Sustitución del vidrio roto de una ventana, con retirada y colocación del nuevo. Incluye la limpieza del marco, la toma de medidas y la colocación. Medido por metro cuadrado sustituido.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

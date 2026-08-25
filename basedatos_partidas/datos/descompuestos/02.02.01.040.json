@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Demolición de losa de entrepiso maciza o nervada.",
   "descripcion": "Demolición de losa de entrepiso de concreto armado, maciza o nervada, ejecutada con martillo neumático y corte de armaduras, con apeo previo de los tramos que permanecen. Incluye la validación estructural, el montaje del apeo, el acordonamiento y protección del nivel inferior para impedir el paso durante los trabajos, la demolición en franjas controladas desde los apoyos hacia el centro, el corte y separación del acero, el descenso del escombro y la limpieza. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en superficie realmente demolida.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

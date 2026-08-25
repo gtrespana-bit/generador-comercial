@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Sellado de juntas de mesón.",
   "descripcion": "Sellado de juntas y encuentros de mesón con silicona sanitaria, para evitar filtraciones. Incluye la limpieza y el sellado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m³",
   "titulo": "Demolición de viga de concreto armado.",
   "descripcion": "Demolición de viga de concreto armado, ejecutada con martillo eléctrico o neumático, con apeo previo de la losa o de los elementos que la viga sostiene. Incluye la validación estructural previa, el montaje del apeo provisional, la protección del entorno y del nivel inferior, la demolición por tramos controlados desde andamio, el corte y retiro de las barras de refuerzo, el descenso del escombro y la limpieza. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en volumen realmente demolido.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

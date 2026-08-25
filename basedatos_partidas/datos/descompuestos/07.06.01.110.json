@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Colocación de vidrio en marco existente.",
   "descripcion": "Colocación de vidrio en marco existente, con sustitución del vidrio roto. Incluye la retirada del vidrio roto, la toma de medidas y la colocación del nuevo. Medido por metro cuadrado colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

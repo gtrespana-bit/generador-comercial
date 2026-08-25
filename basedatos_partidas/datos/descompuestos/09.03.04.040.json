@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Canalización eléctrica en piso.",
   "descripcion": "Ejecución de canalización eléctrica en piso., con conexión. Incluye la conexión y la fijación. Medido por unidad ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

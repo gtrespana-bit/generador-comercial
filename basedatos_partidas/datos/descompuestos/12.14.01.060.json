@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Reintegración de juntas de mármol.",
   "descripcion": "Reintegración de juntas de piso o enchapado de mármol, con limpieza y rejuntado con mortero adecuado. Incluye el vaciado de juntas y el rejuntado. Medido por metro cuadrado restaurado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

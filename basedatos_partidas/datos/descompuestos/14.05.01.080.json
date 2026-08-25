@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Riel de portón corredizo empotrado.",
   "descripcion": "Ejecución de riel de portón corredizo empotrado en el pavimento, con base de concreto. Incluye la colocación y el nivelado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

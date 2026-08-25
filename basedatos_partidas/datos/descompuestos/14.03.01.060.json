@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Pozo de drenaje o sumidero exterior.",
   "descripcion": "Ejecución de pozo de drenaje o sumidero exterior con rejilla, sobre base de concreto. Incluye la excavación y la colocación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Cubierta de lona o toldo fijo.",
   "descripcion": "Cubierta ligera de lona tensada sobre estructura, para sombreado de terrazas y estacionamientos. Incluye la estructura de apoyo, el tensado y los anclajes.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

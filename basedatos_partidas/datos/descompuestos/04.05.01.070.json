@@ -6,7 +6,7 @@
   "unidad": "kg",
   "titulo": "Colocación de acero en muro de contención.",
   "descripcion": "Suministro y colocación de acero de refuerzo en muro de contención. Incluye el corte y la colocación. Medido por kilogramo colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

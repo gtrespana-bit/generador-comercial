@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Tratamiento acústico de sala con paneles.",
   "descripcion": "Suministro y colocación de paneles acústicos en sala, para absorción del sonido. Incluye la fijación de los paneles y el remate. Medido por metro cuadrado tratado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

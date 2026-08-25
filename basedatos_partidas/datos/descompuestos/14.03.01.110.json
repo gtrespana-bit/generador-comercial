@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Reparación de canal de drenaje.",
   "descripcion": "Reparación de canal de drenaje con sustitución de tramos de rejilla o canal dañados. Incluye la sustitución.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

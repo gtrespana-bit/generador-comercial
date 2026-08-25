@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Fachada de ladrillo macizo de arcilla.",
   "descripcion": "Ejecución de fachada de ladrillo macizo de arcilla, recibido con mortero. Incluye el replanteo, la colocación y el rejuntado. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

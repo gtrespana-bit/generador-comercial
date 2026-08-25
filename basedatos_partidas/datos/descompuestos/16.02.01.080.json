@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Inspección dimensional de estructura metálica.",
   "descripcion": "Verificación dimensional y de plomos de la estructura metálica montada, con nivel láser.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

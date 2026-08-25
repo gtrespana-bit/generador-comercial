@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Módulo de enchufe inteligente para cargas enchufables.",
   "descripcion": "Suministro e instalación de módulo de enchufe inteligente para medición y control on/off de cargas enchufables, integrado en la central domótica. Incluye la verificación de la carga a controlar, la conexión o emparejamiento y la prueba de conmutación y medición. Medido por módulo instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

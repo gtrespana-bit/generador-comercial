@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Base de piedra picada compactada para pavimento.",
   "descripcion": "Base de piedra picada compactada para pavimento. Incluye la extensión y la compactación. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

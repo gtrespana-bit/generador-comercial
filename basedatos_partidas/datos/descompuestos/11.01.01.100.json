@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Maestras de pendiente para cubierta.",
   "descripcion": "Ejecución de maestras de mortero para definir la pendiente y el espesor del relleno de cubierta. Incluye el replanteo, la ejecución de las maestras y el reglado entre ellas.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

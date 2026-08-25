@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Desmontaje de canalón de alero.",
   "descripcion": "Desmontaje de canalón de cubierta, con retirada del elemento y sus soportes. Incluye la retirada del canalón. Medido por metro lineal desmontado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Botiquín de primeros auxilios.",
   "descripcion": "Suministro y dotación de botiquín de primeros auxilios de obra, con su reposición.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

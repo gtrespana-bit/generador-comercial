@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Losa de entrepiso con aislamiento.",
   "descripcion": "Ejecución de losa de entrepiso con aislamiento térmico. Incluye el aislamiento y el vaciado. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

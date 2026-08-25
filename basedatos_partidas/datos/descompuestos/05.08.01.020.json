@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Perno de anclaje en concreto.",
   "descripcion": "Colocación de perno de anclaje en concreto. Incluye la perforación y la colocación. Medido por perno colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

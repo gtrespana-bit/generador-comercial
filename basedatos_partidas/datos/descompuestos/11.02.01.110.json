@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Encuentro de cubierta con peto o muro.",
   "descripcion": "Refuerzo y sellado del encuentro entre la cubierta plana y el peto o muro perimetral, con banda elástica y membrana. Incluye la limpieza, el refuerzo y el remate.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

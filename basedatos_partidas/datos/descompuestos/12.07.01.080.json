@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Trasdosado con barrera de vapor.",
   "descripcion": "Trasdosado autoportante de placa de yeso laminado con barrera de vapor en la cámara, para paramentos expuestos a humedad. Incluye la estructura, la barrera de vapor, la placa y el tratamiento de juntas. Medido por metro cuadrado de trasdosado terminado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

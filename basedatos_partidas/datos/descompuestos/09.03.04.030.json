@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Canalización eléctrica empotrada.",
   "descripcion": "Canalización eléctrica empotrada con conduit. Incluye el tendido del conduit. Medido por metro lineal instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

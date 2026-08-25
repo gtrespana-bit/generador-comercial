@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Reposición de grama dañada.",
   "descripcion": "Reposición de grama dañada con sustitución de panes y riego. Incluye la sustitución y el riego.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

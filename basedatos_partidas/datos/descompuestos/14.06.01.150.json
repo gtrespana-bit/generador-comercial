@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Mulch o acolchado de parterre.",
   "descripcion": "Colocación de mulch o acolchado orgánico sobre parterre, para retención de humedad. Incluye el extendido.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

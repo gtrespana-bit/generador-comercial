@@ -6,7 +6,7 @@
   "unidad": "m³",
   "titulo": "Relleno de zanja de instalaciones con arena.",
   "descripcion": "Relleno de zanja de instalaciones con arena lavada, formando la cama de asiento bajo la tubería y el recubrimiento envolvente hasta 20 cm por encima de su generatriz superior, para protegerla de cargas puntuales y del contacto con material grueso. Incluye el suministro y puesta en obra de la arena, la formación de la cama con la pendiente de la instalación, el relleno lateral y superior por capas con compactación manual cuidadosa para no desplazar ni dañar la tubería, y la colocación de la cinta de señalización sobre el recubrimiento. Medido en volumen de arena realmente colocada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

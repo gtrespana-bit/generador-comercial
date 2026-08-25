@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Desconexión de instalación de gas.",
   "descripcion": "Desconexión de la instalación de gas existente previa a la obra, con cierre de llave. Incluye el cierre y la verificación de ausencia de fugas. Medido por instalación desconectada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

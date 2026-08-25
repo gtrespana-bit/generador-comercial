@@ -6,7 +6,7 @@
   "unidad": "m³",
   "titulo": "Bajada de escombro por montacargas.",
   "descripcion": "Bajada de escombro desde plantas altas mediante montacargas de obra, con carga y descarga manual.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

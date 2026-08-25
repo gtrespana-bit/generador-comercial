@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Baranda de acero galvanizado con pasamanos de madera.",
   "descripcion": "Suministro y colocación de baranda de acero galvanizado con pasamanos de madera. Incluye la fabricación, el montaje y la fijación del pasamanos. Medido por metro lineal instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

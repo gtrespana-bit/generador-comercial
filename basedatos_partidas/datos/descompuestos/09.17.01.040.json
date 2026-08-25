@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Puesta en marcha de sistema de climatización.",
   "descripcion": "Puesta en marcha de sistema de climatización. Incluye la verificación y el ajuste. Medido por sistema puesto en marcha.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

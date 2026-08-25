@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Cubierta de lámina metálica prepintada.",
   "descripcion": "Cubierta de lámina metálica acanalada prepintada sobre correas, atornillada con solapes y remates laterales. Incluye el replanteo y la fijación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

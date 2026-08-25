@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Borde de jardín con brocal.",
   "descripcion": "Ejecución de borde de jardín con brocal o bordillo de concreto. Incluye la colocación y el rejuntado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

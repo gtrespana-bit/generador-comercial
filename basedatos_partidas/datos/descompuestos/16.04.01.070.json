@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Prueba de estanqueidad de trampa de grasa.",
   "descripcion": "Prueba de estanqueidad de la trampa de grasa, con llenado y verificación de ausencia de fugas.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

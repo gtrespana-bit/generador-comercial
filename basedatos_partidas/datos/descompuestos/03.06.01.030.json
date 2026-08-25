@@ -6,7 +6,7 @@
   "unidad": "m³",
   "titulo": "Acopio provisional de tierra en obra para su reutilización.",
   "descripcion": "Traslado interno y acopio provisional en obra del material de excavación apto para ser reutilizado en los rellenos posteriores, evitando el doble coste de botarlo y luego comprar material de préstamo. Incluye el traslado del material al punto de acopio, su amontonamiento con talud estable y alejado de los bordes de excavación, su cubrición con lámina plástica para evitar el lavado por lluvia y el aumento de humedad, y su posterior recuperación para el relleno. Medido en volumen de material realmente acopiado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

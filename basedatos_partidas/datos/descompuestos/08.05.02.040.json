@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Coronación con ladrillo visto.",
   "descripcion": "Ejecución de coronación de muro con ladrillo visto. Incluye la colocación del ladrillo. Medido por metro lineal ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

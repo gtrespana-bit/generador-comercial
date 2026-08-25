@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Suministro y colocación de extintor portátil.",
   "descripcion": "Suministro y colocación de extintor portátil de polvo químico seco con su soporte de pared y señalización. Incluye la selección del agente y de la capacidad según el riesgo del local, el replanteo de la posición en recorrido de evacuación y a la altura reglamentaria de la parte superior del aparato, el anclaje del soporte, la colocación del extintor con su tarjeta de revisión y la señalización visible desde la distancia normativa. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

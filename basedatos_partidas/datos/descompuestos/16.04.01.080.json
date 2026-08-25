@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Prueba de funcionamiento de válvulas.",
   "descripcion": "Verificación del funcionamiento de válvulas y llaves de corte, con apertura y cierre.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

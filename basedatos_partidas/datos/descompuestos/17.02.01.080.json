@@ -6,7 +6,7 @@
   "unidad": "glb",
   "titulo": "Reposición de EPI durante la obra.",
   "descripcion": "Reposición de los equipos de protección individual consumidos o dañados durante la obra.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

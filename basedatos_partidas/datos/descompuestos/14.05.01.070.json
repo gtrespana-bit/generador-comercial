@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Base de concreto para poste de portón.",
   "descripcion": "Ejecución de base de concreto para poste o guía de portón, con anclajes. Incluye la excavación y el vaciado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

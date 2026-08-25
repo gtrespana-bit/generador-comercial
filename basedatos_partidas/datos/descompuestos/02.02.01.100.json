@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Demolición de losa nervada.",
   "descripcion": "Demolición de losa nervada de entrepiso o techo, con apuntalamiento y medios mecánicos. Incluye el apuntalamiento, el corte del acero y la retirada. Medido por metro cuadrado demolido.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Aplicación de preservante fungicida sobre madera estructural.",
   "descripcion": "Aplicación de preservante fungicida e insecticida sobre madera estructural o de obra, con una o dos manos. Incluye la preparación de la madera y la aplicación del preservante. Medido por metro cuadrado tratado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

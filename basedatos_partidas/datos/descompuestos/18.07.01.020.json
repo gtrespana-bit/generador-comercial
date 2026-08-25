@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Termostato programable.",
   "descripcion": "Instalación de termostato programable, con conexión y programación. El termostato lo elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

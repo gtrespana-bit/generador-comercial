@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Drenaje de trasdós de muro con tubería y grava.",
   "descripcion": "Drenaje longitudinal en la base del trasdós del muro, formado por tubería corrugada perforada envuelta en geotextil y capa de piedra picada de relleno drenante, con salida a punto de evacuación. Su función es eliminar el empuje hidrostático sobre el muro, que es la causa más común del fallo de los muros de contención, mucho más que el empuje de tierras. Incluye la formación del asiento con pendiente hacia la salida, la colocación del geotextil envolvente, el tendido de la tubería, el relleno con piedra picada, el cierre del geotextil y la conexión a la salida de evacuación. Medido en longitud realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Reparación de persiana enrollable.",
   "descripcion": "Reparación de persiana enrollable, con sustitución de cinta o ajuste del mecanismo. Incluye la comprobación y la reparación del mecanismo. Medido por unidad reparada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

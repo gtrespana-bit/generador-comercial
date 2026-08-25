@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Escalera de acceso a excavación.",
   "descripcion": "Colocación de escalera de acceso a la excavación, para evacuación segura del personal.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Encofrado metálico de columna.",
   "descripcion": "Encofrado metálico modular de columna. Incluye el montaje, el desencofrado y la limpieza. Medido por metro cuadrado encofrado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

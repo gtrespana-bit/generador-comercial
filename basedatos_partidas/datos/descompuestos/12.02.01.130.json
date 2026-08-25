@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Friso de mortero en techo.",
   "descripcion": "Aplicación de friso de mortero en techo, con maestras y afinado. Incluye la preparación del soporte, las maestras y el afinado. Medido por metro cuadrado frisado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Encofrado de losa con sistema modular.",
   "descripcion": "Encofrado de losa con sistema modular de puntales y tablero metálico. Incluye el montaje del sistema. Medido por metro cuadrado encofrado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

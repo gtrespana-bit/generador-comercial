@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Ensayo de impermeabilización de muro enterrado.",
   "descripcion": "Verificación de la impermeabilización de muro enterrado, con inspección y prueba puntual.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Puerta interior de acero galvanizado.",
   "descripcion": "Suministro y colocación de puerta interior de acero galvanizado, con marco metálico y herrajes. Incluye el montaje del marco y la colocación de la hoja. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

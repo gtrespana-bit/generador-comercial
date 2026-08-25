@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Tabique de bloque de arcilla a media altura.",
   "descripcion": "Ejecución de tabique de bloque de arcilla a media altura. Incluye la mampostería y el remate. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

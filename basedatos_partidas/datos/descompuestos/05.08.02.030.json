@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Junta sísmica estructural.",
   "descripcion": "Ejecución de junta sísmica estructural. Incluye la formación de la junta. Medido por metro lineal ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Retiro de vidrio de carpintería existente.",
   "descripcion": "Retiro de vidrio de carpintería que permanece en obra, ya sea por rotura, por sustitución del acristalamiento o para aligerar la ventana antes de su desmontaje. Ejecutado con medios manuales, retirando junquillos, masilla o silicona de sujeción. Incluye el encintado previo de la superficie del vidrio para que, si se fractura, los fragmentos queden contenidos en la lámina adhesiva, el uso de protección facial y guantes anticorte, la limpieza del galce, el retiro del vidrio en contenedor rígido específico y el barrido minucioso de esquirlas. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en superficie de vidrio realmente retirada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "kg",
   "titulo": "Correas metálicas para estructura de techo.",
   "descripcion": "Suministro y montaje de correas metálicas de perfil conformado para el soporte de la cubierta, fijadas a la estructura principal mediante tornillería o soldadura, con sus tensores y separadores. Incluye la recepción y verificación del material, el replanteo de la separación entre correas según la luz admisible del material de cubrición, el izado y presentado, la fijación a la estructura principal, la colocación de los tensores que evitan el pandeo lateral y la comprobación de la alineación y del plano de apoyo de la cubierta. Medido en peso realmente montado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

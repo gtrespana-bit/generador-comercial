@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Película reflectiva en cubierta.",
   "descripcion": "Aplicación de película reflectiva sobre cubierta, para reducir la ganancia de calor solar.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

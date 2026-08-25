@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Punto de datos, telefonía o televisión.",
   "descripcion": "Punto de red de datos, telefonía o televisión, con su canalización independiente, cable categoría 6 o coaxial según el servicio, caja y toma. La canalización debe ser independiente de la de fuerza y mantener separación con ella, porque el paralelismo con conductores de potencia induce interferencias que degradan la señal. Incluye la canalización, el tendido del cable sin empalmes hasta el rack o punto de distribución, el conectorizado en ambos extremos, el etiquetado del punto y la prueba de continuidad y certificación básica. Medido por punto terminado y probado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

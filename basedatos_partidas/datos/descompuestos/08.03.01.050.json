@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Recibido de reja.",
   "descripcion": "Recibido de reja con mortero y anclaje. Incluye el recibido y la fijación. Medido por unidad recibida.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

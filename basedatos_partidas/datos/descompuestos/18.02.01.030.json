@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "SATE de fachada con poliestireno expandido.",
   "descripcion": "Sistema de aislamiento térmico exterior (SATE) de fachada con poliestireno expandido, malla y mortero.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

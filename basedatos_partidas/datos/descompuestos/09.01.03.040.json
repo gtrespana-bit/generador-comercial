@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Llave general de agua.",
   "descripcion": "Instalación de llave general de agua. Incluye la conexión. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

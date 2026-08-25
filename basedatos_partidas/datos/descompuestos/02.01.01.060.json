@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Corte y demolición de viga de fundación.",
   "descripcion": "Corte y demolición de viga de fundación o de riostra, con corte de acero y demolición mecánica. Incluye el corte de los extremos y la retirada del escombro. Medido por metro lineal demolido.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

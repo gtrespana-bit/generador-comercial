@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Piso vinílico en lámina.",
   "descripcion": "Colocación de piso vinílico en lámina continua, encolado al afirmado, con soldadura o sellado de las juntas entre paños. Su ventaja frente a la baldosa es la ausencia casi total de juntas, lo que lo hace idóneo en áreas de higiene exigente. Requiere un soporte perfectamente liso, ya que el vinílico es un material fino que copia y hace visible cualquier grano o irregularidad del afirmado. Incluye la nivelación fina previa si el soporte la requiere, el corte y presentado de los paños dejándolos relajar, el encolado, el paso de rodillo para eliminar aire, la soldadura o sellado de juntas y el remate perimetral. El material lo elige el cliente y se presupuesta aparte. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Piso vinílico en lámina, de la clase de uso elegida por el cliente",

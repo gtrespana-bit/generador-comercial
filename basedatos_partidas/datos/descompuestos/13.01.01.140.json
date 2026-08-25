@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Mueble de esquinero de cocina.",
   "descripcion": "Fabricación e instalación de mueble de esquinero de cocina en melamina, con sistema de acceso al fondo. Incluye el despiece y el armado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Reparación de red exterior de servicios.",
   "descripcion": "Reparación de red exterior de servicios con sustitución de tramos de tubería dañados. Incluye la sustitución.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

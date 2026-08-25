@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Limpieza de terreno en pendiente.",
   "descripcion": "Limpieza y desbroce de terreno en pendiente. Incluye la limpieza manual y mecanizada. Medido por metro cuadrado limpiado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Cortinero empotrado en cielo raso.",
   "descripcion": "Formación de cortinero empotrado en el cielo raso, con su nicho, refuerzo estructural y riel. Es un detalle que se decide antes de cerrar el cielo raso y que no admite improvisación posterior: resolverlo después obliga a abrir el cielo terminado. Incluye la coordinación previa del ancho del nicho con el sistema de cortina, el refuerzo de la estructura en la línea del riel para soportar el peso de la cortina, el forrado del nicho, el remate de aristas, el montaje del riel y el repaso listo para pintar. Medido en longitud realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

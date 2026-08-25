@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Pulido y abrillantado de enchapado de piedra natural.",
   "descripcion": "Pulido y abrillantado en obra de enchapado de piedra natural, para igualar el plano entre piezas y recuperar o dar el brillo final. Se ejecuta cuando la piedra se coloca en bruto o cuando los pequeños resaltos entre piezas hacen necesario rectificar el plano completo. Incluye la protección del entorno, el pulido con pasadas sucesivas de grano decreciente con aporte de agua, la recogida y evacuación del lodo generado, el abrillantado con cristalizador, la limpieza y la aplicación del sellador hidrofugante y antimanchas. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

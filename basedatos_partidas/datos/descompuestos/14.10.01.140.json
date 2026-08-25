@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Pérgola o sombra de área de piscina.",
   "descripcion": "Ejecución de pérgola o sombra de área de piscina, con estructura de madera o metálica. Incluye la estructura y el montaje.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

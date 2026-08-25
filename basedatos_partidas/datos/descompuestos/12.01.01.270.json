@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Nivelación de paramento con nivel láser.",
   "descripcion": "Replanteo y nivelación de paramento con nivel láser previo a friso o enchapado, para garantizar plomos y niveles. Incluye la comprobación con láser y el marcado de maestras. Medido por metro cuadrado nivelado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Forrado de conducto de climatización.",
   "descripcion": "Forrado de conducto de climatización con placa de yeso. Incluye la estructura y la placa. Medido por metro lineal forrado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

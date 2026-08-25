@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Trasdosado autoportante de yeso laminado.",
   "descripcion": "Trasdosado autoportante de placa de yeso laminado sobre estructura independiente separada del muro existente, con aislamiento en la cámara. Se emplea para regularizar paredes desplomadas o en mal estado, para alojar instalaciones sin picar el muro y para mejorar el aislamiento térmico y acústico. Al no apoyarse en el muro, admite soportes muy irregulares sin trasladar sus defectos al paramento final. Incluye el replanteo, la banda estanca, el montaje de canales y montantes, el aislamiento, el atornillado de la placa, el tratamiento de juntas y el lijado. Medido en superficie realmente ejecutada, descontando huecos mayores de 2 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

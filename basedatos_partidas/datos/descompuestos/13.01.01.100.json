@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de campana extractora con ducto.",
   "descripcion": "Instalación de campana extractora de cocina con conexión a la extracción y fijación. Incluye el replanteo y la fijación. El equipo lo elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

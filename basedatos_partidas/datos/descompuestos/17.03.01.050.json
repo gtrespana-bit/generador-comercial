@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Cierre perimetral de la obra.",
   "descripcion": "Ejecución de cierre perimetral de la obra con malla de señalización, para control de accesos.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

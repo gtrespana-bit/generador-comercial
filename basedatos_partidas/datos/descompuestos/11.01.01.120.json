@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Capa de compresión de cubierta con malla.",
   "descripcion": "Capa de compresión de mortero armado con malla electrosoldada sobre relleno aligerado de cubierta, para repartir cargas. Incluye el extendido, el embebido de la malla y el fratasado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

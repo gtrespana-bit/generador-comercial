@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Remate de losa con cornisa.",
   "descripcion": "Ejecución de remate de losa con cornisa de mortero o prefabricada. Incluye la formación de la cornisa y el remate. Medido por metro lineal ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

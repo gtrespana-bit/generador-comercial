@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Restauración de ventana de madera.",
   "descripcion": "Restauración de ventana de madera con resane, lijado y acabado. Incluye el resane, el lijado y el barnizado o pintado. Medido por metro cuadrado restaurado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

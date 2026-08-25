@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Saco big-bag de escombro.",
   "descripcion": "Suministro y colocación de saco big-bag para acopio de escombro, con sus asas de izado para retirada con grúa.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Herraje de unión de estructura de madera.",
   "descripcion": "Suministro y colocación de herraje o conector para unión de estructura de madera. Incluye la colocación del herraje. Medido por unidad colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Tratamiento de puente térmico en canto de losa.",
   "descripcion": "Tratamiento del puente térmico en el canto del losa, con pieza de aislamiento.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

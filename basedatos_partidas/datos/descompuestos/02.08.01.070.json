@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Retiro de membrana de PVC.",
   "descripcion": "Retiro de membrana impermeabilizante de PVC. Incluye la retirada de la membrana. Medido por metro cuadrado retirado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

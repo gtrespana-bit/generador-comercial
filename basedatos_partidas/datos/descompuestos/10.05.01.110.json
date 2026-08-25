@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Sellado perimetral de ducha con banda.",
   "descripcion": "Sellado perimetral de la zona de ducha con banda de refuerzo en los encuentros. Incluye la colocación de la banda y el sellado. Medido por metro lineal sellado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

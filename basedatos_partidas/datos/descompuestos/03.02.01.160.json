@@ -6,7 +6,7 @@
   "unidad": "m3",
   "titulo": "Excavación a cielo abierto con retiro lateral.",
   "descripcion": "Excavación mecanizada a cielo abierto con retiro lateral del material. Incluye la excavación y el acopio del material retirado. Medido por metro cúbico excavado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

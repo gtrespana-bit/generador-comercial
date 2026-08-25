@@ -31,7 +31,8 @@ _RECURSOS = _BASE_DATOS / "datos" / "recursos.json"
 _CLASIFICACION = _BASE_DATOS / "datos" / "clasificacion.json"
 
 # Mismo margen por defecto que basedatos_partidas/descompuestos.py
-MARGEN_DEFECTO = 0.30
+# (2026-08-25: 35 % s/coste en todo el catálogo y todos los países).
+MARGEN_DEFECTO = 0.35
 # Versión del catálogo propio. Cada ampliación del catálogo que añade partidas
 # nuevas debe subir esta versión: ``actualizar_taxonomia_catalogo_propio`` solo
 # incorpora conceptos cuyo ``version_alta_catalogo`` sea posterior a la versión

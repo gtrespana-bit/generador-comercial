@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de bidé o ducha higiénica.",
   "descripcion": "Instalación de bidé o de ducha higiénica sobre puntos de agua y desagüe previamente ejecutados. Incluye el replanteo respetando las separaciones mínimas de uso respecto al inodoro y a los paramentos, el anclaje de la pieza, la conexión de agua fría y caliente con sus llaves, el montaje del desagüe y sifón en el caso del bidé, el sellado perimetral y la prueba de funcionamiento y estanqueidad. El aparato y la grifería los elige el cliente y se presupuestan aparte. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Bidé o kit de ducha higiénica elegido por el cliente",

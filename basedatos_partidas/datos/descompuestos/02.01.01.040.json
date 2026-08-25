@@ -6,7 +6,7 @@
   "unidad": "m3",
   "titulo": "Demolición de muro de sótano de concreto armado.",
   "descripcion": "Demolición de muro de sótano o contención de concreto armado, con medios mecánicos y corte de acero. Incluye el apuntalamiento previo, la demolición por bataches y la retirada del escombro. Medido por metro cúbico demolido.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Aislamiento de conductos de climatización.",
   "descripcion": "Aislamiento de los conductos de climatización, para evitar pérdidas de energía.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

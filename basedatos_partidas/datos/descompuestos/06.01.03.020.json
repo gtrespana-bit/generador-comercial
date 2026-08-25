@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Fachada de ladrillo visto con juntas coloreadas.",
   "descripcion": "Ejecución de fachada de ladrillo visto con juntas coloreadas. Incluye la colocación y el rejuntado con mortero de junta coloreado. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

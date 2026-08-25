@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de calentador de agua.",
   "descripcion": "Instalación de calentador de agua eléctrico o a gas, con sus soportes, conexiones hidráulicas y elementos de seguridad. Incluye el replanteo y anclaje de los soportes verificando que el paramento resiste el peso del equipo lleno, que es varias veces el del equipo vacío, la conexión de entrada y salida con llaves de corte y uniones desmontables para permitir el mantenimiento, el montaje de la válvula de seguridad con su descarga conducida, la conexión eléctrica o de gas según el tipo, el llenado, la purga y la prueba de funcionamiento. El equipo lo elige el cliente y se presupuesta aparte. Medido por unidad instalada y probada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Calentador de agua del tipo y capacidad elegidos por el cliente",

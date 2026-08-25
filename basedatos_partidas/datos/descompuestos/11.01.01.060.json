@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Aislamiento térmico de cubierta plana con poliestireno.",
   "descripcion": "Colocación de paneles rígidos de poliestireno expandido sobre cubierta plana, a matajuntas, para aislamiento térmico previo a la impermeabilización. Incluye el replanteo, el corte y la colocación a junta cerrada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

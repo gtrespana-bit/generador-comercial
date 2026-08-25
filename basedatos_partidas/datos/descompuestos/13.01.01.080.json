@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Mueble alto de cocina con entrepaños.",
   "descripcion": "Fabricación e instalación de mueble alto de cocina en melamina, con puertas y entrepaños. Incluye despiece, armado y fijación a la pared.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Prueba de descarga de inodoro y lavamanos.",
   "descripcion": "Prueba de descarga y funcionamiento de inodoro y lavamanos, verificando llenado, descarga y ausencia de fugas.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

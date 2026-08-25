@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Caseta de acopio de materiales, por mes.",
   "descripcion": "Caseta o zona cerrada de acopio de materiales, por mes. Incluye el montaje y la permanencia. Medido por mes de permanencia.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

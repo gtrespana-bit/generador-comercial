@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Trasdosado autoportante con lana.",
   "descripcion": "Ejecución de trasdosado autoportante de yeso laminado con lana mineral. Incluye la estructura, la lana, la placa y el tratamiento de juntas. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

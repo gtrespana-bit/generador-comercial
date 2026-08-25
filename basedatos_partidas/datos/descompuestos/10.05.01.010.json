@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Impermeabilización de piso de baño o ducha bajo enchapado.",
   "descripcion": "Impermeabilización del piso de baño, ducha o lavadero con membrana cementosa flexible, con refuerzo de encuentros y tratamiento del sumidero, como base bajo el enchapado. Es la capa que contiene el agua que atraviesa la cerámica y la boquilla, que no son estancas. El punto crítico es el encuentro del piso con la pared y el collarín del sumidero: es por donde falla el 90 % de los baños que filtran al piso inferior. Incluye la saturación del soporte, el refuerzo con banda de todos los encuentros, el tratamiento del sumidero con su collarín, las dos manos cruzadas y la prueba de estanqueidad por inundación antes de enchapar. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

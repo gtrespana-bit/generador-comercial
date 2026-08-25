@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Teja de remate de borde con gancho.",
   "descripcion": "Colocación de teja de borde o de remate de alero con gancho de fijación, para evitar el levantamiento por viento. Incluye la fijación mecánica de cada pieza.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

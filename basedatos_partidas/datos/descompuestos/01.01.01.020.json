@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Desconexión de instalación de agua.",
   "descripcion": "Desconexión de la instalación de agua existente previa a la obra, con cierre de llaves. Incluye el cierre y la verificación de estanqueidad. Medido por instalación desconectada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

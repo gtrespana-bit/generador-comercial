@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Ajuste de puerta descolgada.",
   "descripcion": "Ajuste de puerta descolgada o que roza, con reajuste de bisagras. Incluye la comprobación y el reajuste de los herrajes. Medido por unidad ajustada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

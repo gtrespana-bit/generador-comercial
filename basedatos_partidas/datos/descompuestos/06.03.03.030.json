@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Viga dintel de mampostería estructural con bloque canal.",
   "descripcion": "Viga dintel ejecutada con bloque canal sobre vano en muro de mampostería estructural, con su armado longitudinal y relleno de concreto fluido, apoyada sobre apuntalamiento hasta el fraguado. Incluye el apuntalamiento del vano, la colocación de la hilada de bloque canal, el armado longitudinal con las entregas de apoyo en el muro, el vaciado y vibrado del relleno, el curado y el desapuntalamiento una vez alcanzada la resistencia. Medido en longitud realmente ejecutada, incluidas las entregas.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

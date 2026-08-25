@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Recibido de calentador.",
   "descripcion": "Recibido de calentador de agua con fijación. Incluye el anclaje y el recibido. Medido por unidad recibida.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

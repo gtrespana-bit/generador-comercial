@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Demolición de tanquilla o registro.",
   "descripcion": "Demolición de tanquilla o registro enterrado. Incluye la demolición y la retirada. Medido por unidad demolida.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

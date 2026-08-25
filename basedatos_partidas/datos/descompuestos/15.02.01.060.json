@@ -6,7 +6,7 @@
   "unidad": "m³",
   "titulo": "Carga mecánica de escombro sobre vehículo.",
   "descripcion": "Carga mecánica de escombro sobre vehículo o volqueta con equipo adecuado, para su retirada a vertedero.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

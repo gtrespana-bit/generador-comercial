@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de detectores en pasillo.",
   "descripcion": "Instalación de detectores en pasillo., con fijación y señalización. Incluye la fijación y la señalización. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

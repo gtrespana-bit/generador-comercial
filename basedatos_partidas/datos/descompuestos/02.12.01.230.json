@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Desmontaje de canal de drenaje exterior.",
   "descripcion": "Desmontaje de canal de drenaje exterior. Incluye la retirada del canal y su rejilla. Medido por metro lineal desmontado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

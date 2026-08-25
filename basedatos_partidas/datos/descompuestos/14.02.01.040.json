@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Acera de concreto con juntas.",
   "descripcion": "Ejecución de acera de concreto con acabado escobillado y juntas de retracción. Incluye la base, el vaciado y las juntas.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

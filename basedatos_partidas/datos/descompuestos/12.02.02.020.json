@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Estucado fino de pasta sobre friso.",
   "descripcion": "Capa de acabado fino de pasta aplicada sobre friso de mortero o de yeso, de 2 a 3 mm de espesor, para obtener una superficie tersa apta para pinturas de alto brillo o para acabados donde cualquier irregularidad se marca con la luz rasante. Incluye la comprobación y el sellado previo del soporte, la aplicación de la pasta en dos manos cruzadas con llana, el lijado entre manos y el lijado final con aspiración, y la revisión con luz rasante para detectar y corregir los defectos que solo aparecen bajo esa iluminación. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

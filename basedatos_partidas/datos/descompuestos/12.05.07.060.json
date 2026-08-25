@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Piso de cemento pulido llaneteado a mano.",
   "descripcion": "Piso continuo de cemento con acabado pulido llaneteado a mano, sobre afirmado o losa, con juntas de control. Es el acabado tradicional para áreas de servicio, garajes y patios: más económico que el alisado mecánico y perfectamente válido en superficies pequeñas donde no compensa traer la alisadora. Incluye el vaciado y reglado, la espolvoreada de cemento, el llaneteado en pasadas sucesivas conforme el mortero pierde agua, el marcado de juntas y el curado. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

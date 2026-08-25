@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Puerta abatible de closet.",
   "descripcion": "Fabricación y colocación de puerta abatible de closet, con bisagras y tirador. Incluye el montaje y la regulación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

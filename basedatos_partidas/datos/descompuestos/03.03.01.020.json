@@ -6,7 +6,7 @@
   "unidad": "m³",
   "titulo": "Excavación mecanizada en zanja para fundaciones.",
   "descripcion": "Excavación mecanizada en zanja o pozo para fundaciones mediante retroexcavadora, en terreno de consistencia media, hasta la cota y con las dimensiones de proyecto. Incluye el replanteo, la excavación con la máquina, el acopio del material a distancia suficiente del borde, el refine manual de paredes y fondo que la máquina no puede dar, y la vigilancia durante la excavación para detener los trabajos si aparecen instalaciones enterradas no previstas. No incluye el transporte del material sobrante a botadero, que se valora en el subcapítulo de transporte de tierras. Medido en volumen teórico de excavación según las dimensiones de proyecto.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

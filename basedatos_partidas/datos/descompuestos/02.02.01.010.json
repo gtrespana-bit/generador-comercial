@@ -6,7 +6,7 @@
   "unidad": "kg",
   "titulo": "Desmontaje de estructura metálica.",
   "descripcion": "Desmontaje de estructura metálica de acero, formada por perfiles laminados o armados, ejecutado mediante oxicorte y desatornillado según el tipo de unión, con apeo previo de los elementos que permanecen. Incluye el estudio del orden de desmontaje para mantener la estabilidad del conjunto en todo momento, el eslingado y sostenimiento de las piezas antes de liberarlas, el corte en tramos transportables, el descenso a nivel de acopio y la clasificación del acero para su venta o gestión como chatarra, cuyo valor de recuperación puede descontarse al cliente. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en peso realmente desmontado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

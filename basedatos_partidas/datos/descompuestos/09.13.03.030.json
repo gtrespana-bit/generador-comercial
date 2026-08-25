@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Protector contra sobretensiones tipo 3 para equipos sensibles.",
   "descripcion": "Suministro e instalación de protector contra sobretensiones tipo 3 (clase III) para equipos electrónicos sensibles, en el punto de conexión del equipo. Incluye la elección del supresor según el equipo protegido, su conexión y la verificación del funcionamiento. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Revestimiento de paramento con papel tapiz.",
   "descripcion": "Colocación de papel tapiz sobre paramento interior previamente preparado, con pegamento mural. Incluye la comprobación de que el soporte está liso, seco y con absorción uniforme, condición sin la cual las juntas se abren o se marcan las irregularidades, la aplicación del fondo sellador, el replanteo de la primera plomada, el corte de los paños respetando el ajuste del dibujo, el encolado y colocación con eliminación de burbujas y arrugas, el recorte de los excesos en rodapié y cielo, y la limpieza de restos de pegamento. El papel lo elige el cliente y se presupuesta aparte. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Papel tapiz o revestimiento mural elegido por el cliente",

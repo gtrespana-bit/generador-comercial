@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Inyección de fisuras en concreto con resina epóxica.",
   "descripcion": "Sellado y restitución del monolitismo de fisuras en elementos de concreto mediante inyección de resina epóxica de baja viscosidad a través de boquillas. Incluye el mapeo previo y el registro del ancho y recorrido de las fisuras, la determinación de si la fisura está viva o estabilizada, ya que inyectar con resina rígida una fisura en movimiento provoca su reaparición junto al sello, la limpieza del recorrido, la colocación de boquillas y el sellado superficial del labio, la inyección progresiva de boquilla en boquilla hasta rebose en la siguiente, el fraguado y el retiro de boquillas y sello con repaso de la superficie. Medido en longitud de fisura realmente inyectada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

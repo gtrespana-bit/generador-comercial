@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Tratamiento fungicida de fachada contra moho y verdín.",
   "descripcion": "Tratamiento de fachada afectada por moho, verdín o algas, mediante aplicación de solución fungicida y algicida con su tiempo de actuación y posterior enjuague. Pintar sobre una fachada con moho sin tratarlo no lo elimina: el hongo sigue vivo bajo la pintura y reaparece en la primera temporada de lluvias, de modo que este tratamiento es condición previa a cualquier acabado. Incluye la protección del entorno y de la vegetación, la aplicación de la solución sobre superficie seca, el respeto del tiempo de actuación indicado, el cepillado de las zonas de mayor colonización, el enjuague y el secado antes de pintar. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

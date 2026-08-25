@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Demolición de escalera de concreto armado.",
   "descripcion": "Demolición de escalera de concreto armado, comprendiendo losa inclinada, peldaños y descansos, ejecutada con martillo neumático y corte de armaduras, previa validación estructural y apeo. Es de las demoliciones más complejas por la posición de trabajo, por la dificultad de evacuar el escombro y porque suele ser la única vía de comunicación entre niveles, lo que obliga a prever un acceso alternativo antes de empezar. Incluye la validación estructural, el apeo, el acordonamiento de ambos niveles, la demolición descendente desde el descanso superior, el corte del acero, el descenso del escombro y la limpieza. No incluye el bote del escombro. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Cubierta plana con membrana líquida de poliuretano.",
   "descripcion": "Impermeabilización de cubierta plana con membrana líquida de poliuretano de aplicación en frío, con refuerzo de malla en los puntos singulares. Incluye imprimación y dos manos de membrana.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Dotación de chaleco reflectivo.",
   "descripcion": "Dotación de chaleco reflectivo para el personal, para su visibilidad en la obra.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

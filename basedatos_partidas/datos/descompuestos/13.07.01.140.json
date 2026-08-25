@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Señalización de extintores y equipos de seguridad.",
   "descripcion": "Colocación de señalización de extintores y equipos de seguridad, con fijación. Incluye el replanteo y la fijación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

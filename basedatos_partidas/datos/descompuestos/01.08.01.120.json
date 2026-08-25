@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Extintor de obra.",
   "descripcion": "Suministro y colocación de extintor de obra. Incluye la fijación y la señalización. Medido por extintor suministrado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

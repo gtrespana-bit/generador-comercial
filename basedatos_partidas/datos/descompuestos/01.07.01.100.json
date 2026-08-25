@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Replanteo de desagües y pendientes.",
   "descripcion": "Replanteo de desagües y pendientes de piso. Incluye el marcado de las pendientes. Medido por metro lineal replanteado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Losa con juntas de dilatación.",
   "descripcion": "Ejecución de losa con juntas de dilatación. Incluye la formación de las juntas. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

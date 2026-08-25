@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Mesón de granito vaciado en sitio.",
   "descripcion": "Ejecución de mesón de granito vaciado en sitio, con encofrado, mezcla de grano y acabado pulido. Incluye el armado, el vaciado y el pulido.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

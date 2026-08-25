@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Demolición de tanquilla o registro enterrado.",
   "descripcion": "Demolición de tanquilla, registro o caja de paso enterrada de concreto o mampostería, incluidas su tapa, sus paredes y su solera, ejecutada con martillo eléctrico previa excavación de descubrimiento. Incluye la comprobación previa de que la tanquilla está fuera de servicio, el vaciado y limpieza de su interior, el taponado de las tuberías que acometen y permanecen activas, la demolición de las paredes y la solera, la extracción del escombro y el relleno y compactación del hueco resultante. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido por unidad demolida.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

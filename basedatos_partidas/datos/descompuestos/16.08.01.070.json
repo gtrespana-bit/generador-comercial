@@ -6,7 +6,7 @@
   "unidad": "glb",
   "titulo": "Manual de uso y mantenimiento.",
   "descripcion": "Elaboración del manual de uso y mantenimiento del inmueble, con las pautas de conservación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

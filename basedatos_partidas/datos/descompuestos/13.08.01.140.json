@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Góndola o estantería comercial.",
   "descripcion": "Montaje de góndola o estantería comercial, con niveles y fijación. Incluye el replanteo y el montaje.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Pérgola de madera para exterior.",
   "descripcion": "Fabricación y montaje de pérgola de madera tratada para exterior, con sus pilares, vigas, correas y anclajes a la base. En clima tropical el punto de fallo es siempre el encuentro del pilar con el piso: la madera en contacto directo con el concreto absorbe humedad por capilaridad y se pudre desde la base, de modo que debe apoyarse sobre herraje metálico que la separe del piso. Incluye la ejecución de los dados de anclaje, el montaje de los herrajes separadores, el corte y labra de las piezas, el montaje de la estructura con apeo provisional, la fijación con herrajes y el tratamiento preservante en todas las caras y testas. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

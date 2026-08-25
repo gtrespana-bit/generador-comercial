@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Reparación de paramento de concreto con mortero.",
   "descripcion": "Reparación de paramento de concreto deteriorado con mortero de reparación estructural, previo a cualquier acabado. Incluye el saneado de la zona, la aplicación del mortero y el afinado. Medido por metro cuadrado reparado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

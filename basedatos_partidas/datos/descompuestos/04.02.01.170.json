@@ -6,7 +6,7 @@
   "unidad": "kg",
   "titulo": "Refuerzo de zapata existente con acero.",
   "descripcion": "Refuerzo de zapata existente con acero de refuerzo. Incluye el anclaje y la colocación. Medido por kilogramo colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

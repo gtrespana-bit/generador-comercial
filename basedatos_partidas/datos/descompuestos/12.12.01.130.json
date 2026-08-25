@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Pintura de puerta metálica.",
   "descripcion": "Aplicación de esmalte sobre puerta metálica, con fondo anticorrosivo y dos manos. Incluye la limpieza, el fondo y las dos manos. Medido por metro cuadrado pintado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

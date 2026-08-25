@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Tratamiento de filtración en piscina.",
   "descripcion": "Tratamiento de filtración en piscina, con localización y sellado de la zona. Incluye el vaciado parcial, la localización y el sellado. Medido por metro cuadrado tratado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

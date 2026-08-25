@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Iluminación exterior LED con fotocélula.",
   "descripcion": "Instalación de iluminación exterior LED con fotocélula, para ahorro. La luminaria la elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

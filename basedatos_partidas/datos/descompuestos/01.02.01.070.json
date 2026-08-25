@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Ensayo de carga o prueba de estructura existente.",
   "descripcion": "Realización de ensayo o prueba de carga de estructura existente. Incluye la preparación y la medición. Medido por ensayo realizado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

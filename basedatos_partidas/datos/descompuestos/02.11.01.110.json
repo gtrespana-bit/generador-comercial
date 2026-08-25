@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Desmontaje de barra de cocina.",
   "descripcion": "Desmontaje de barra de cocina o mostrador. Incluye la retirada de la barra y sus soportes. Medido por unidad desmontada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

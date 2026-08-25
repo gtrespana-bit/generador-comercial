@@ -6,7 +6,7 @@
   "unidad": "m3",
   "titulo": "Excavación en terreno con agua.",
   "descripcion": "Excavación en terreno con presencia de agua, con achique. Incluye la excavación y el achique. Medido por metro cúbico excavado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

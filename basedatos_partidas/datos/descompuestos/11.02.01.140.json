@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Cubierta plana de concreto armado.",
   "descripcion": "Cubierta plana de losa de concreto armado vaciada en sitio, con encofrado, armadura de refuerzo y curado. Incluye el encofrado, el armado y el vaciado con vibrado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

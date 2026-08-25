@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Equipo de gimnasio interior.",
   "descripcion": "Instalación de equipo de gimnasio interior, con anclaje y fijación. Incluye la fijación. El equipo lo elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

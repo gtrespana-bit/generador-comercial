@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Muro cortina de vidrio templado.",
   "descripcion": "Suministro y colocación de muro cortina de vidrio templado con estructura portante. Incluye la estructura, el acristalamiento y el sellado. Medido por metro cuadrado instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

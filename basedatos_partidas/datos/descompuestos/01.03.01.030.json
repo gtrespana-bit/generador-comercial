@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Barrera antipolvo con lámina plástica y cierre de paso.",
   "descripcion": "Barrera provisional de confinamiento de polvo entre la zona de obra y las áreas en uso, formada por bastidor de listón de madera y lámina de polietileno tensada y sellada en todo su perímetro contra piso, paredes y techo, con cierre tipo cremallera para el paso del personal. Es la medida que permite trabajar en un ambiente mientras el resto del inmueble sigue habitado u operativo. Incluye el replanteo, el montaje del bastidor, la colocación y sellado de la lámina, el montaje del cierre de paso, el mantenimiento de la barrera durante la obra y su desmontaje y retiro al finalizar. Medido en superficie de barrera realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

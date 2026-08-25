@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de planta eléctrica de respaldo.",
   "descripcion": "Instalación de planta eléctrica de respaldo, con su base antivibratoria, conexión eléctrica, sistema de escape y ventilación. Incluye la comprobación del emplazamiento en cuanto a ventilación, evacuación de gases y distancia a zonas habitadas por ruido, la ejecución de la base, el emplazamiento del equipo sobre elementos antivibratorios, la conexión de potencia hasta el punto de transferencia, la conducción del escape al exterior, la conexión del combustible y la puesta en marcha con prueba en carga. El equipo lo elige el cliente y se presupuesta aparte. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Planta eléctrica de la potencia y tipo elegidos por el cliente",

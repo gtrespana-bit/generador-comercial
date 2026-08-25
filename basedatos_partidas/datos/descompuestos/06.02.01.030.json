@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Fachada ligera de placa de cemento exterior.",
   "descripcion": "Ejecución de fachada ligera de placa de cemento exterior, con sellado de juntas. Incluye la estructura, la placa y el sellado. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

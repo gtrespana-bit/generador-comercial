@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Aislamiento de techo con celulosa insuflada.",
   "descripcion": "Insulfado de celulosa aislante en el espacio bajo cubierta, para mejora térmica y acústica.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

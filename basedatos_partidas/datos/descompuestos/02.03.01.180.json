@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Demolición de antepecho de fachada.",
   "descripcion": "Demolición de antepecho o peto de fachada de mampostería. Incluye la demolición y la retirada del escombro. Medido por metro cuadrado demolido.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

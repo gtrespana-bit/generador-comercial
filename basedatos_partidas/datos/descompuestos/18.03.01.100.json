@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Cubierta fría con aislamiento y ventilación.",
   "descripcion": "Ejecución de cubierta fría con aislamiento y cámara ventilada, para reducir la ganancia de calor.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Conexión de bomba exterior.",
   "descripcion": "Conexión de bomba exterior con tubería, válvula y electricidad. Incluye la conexión hidráulica y eléctrica. La bomba la elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

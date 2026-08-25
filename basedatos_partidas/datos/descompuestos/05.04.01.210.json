@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Viga de amarre metálica.",
   "descripcion": "Suministro y montaje de viga de amarre metálica. Incluye el montaje y la fijación. Medido por metro lineal montado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

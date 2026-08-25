@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Prueba de disparo de termomagnéticos.",
   "descripcion": "Verificación del disparo de los interruptores termomagnéticos, para comprobar su calibración.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

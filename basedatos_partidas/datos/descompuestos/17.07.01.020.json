@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Botiquín de primeros auxilios de obra.",
   "descripcion": "Suministro y colocación del botiquín de primeros auxilios de obra, dotado y con reposición durante la ejecución. Incluye la colocación en punto visible, accesible y conocido por todo el personal, la revisión periódica del contenido y de las fechas de caducidad, la reposición de lo consumido y la señalización de su ubicación junto con los teléfonos de emergencia. Medido por botiquín instalado y mantenido.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

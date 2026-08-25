@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Zócalo de piedra natural.",
   "descripcion": "Colocación de zócalo de piedra natural a juego con el piso o el paramento, recibido con adhesivo cementoso blanco. Incluye el replanteo de la altura, los cortes a inglete en esquinas y encuentros, la colocación con nivelación, el rejuntado y el sellado de la junta inferior con el piso. La pieza la elige el cliente y se presupuesta aparte. Medido en longitud realmente colocada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Zócalo de piedra natural a juego, elegido por el cliente",

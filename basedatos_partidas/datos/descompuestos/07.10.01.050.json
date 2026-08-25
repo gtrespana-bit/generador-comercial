@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Reparación de reja con sustitución de tubo.",
   "descripcion": "Reparación de reja con sustitución de tramo de tubo dañado. Incluye el corte del tramo, la soldadura del nuevo y el repintado. Medido por metro lineal reparado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

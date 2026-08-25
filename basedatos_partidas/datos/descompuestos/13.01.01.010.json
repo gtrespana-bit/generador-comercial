@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Mueble bajo de cocina a medida.",
   "descripcion": "Fabricación e instalación de mueble bajo de cocina en melamina, con su estructura, puertas, gavetas, entrepaños y zócalo. Incluye la toma de medidas en obra comprobando plomos y escuadras, el despiece y corte con cantos aplicados, la previsión de los huecos y recortes para el paso de tuberías y tomas eléctricas antes del montaje, el armado de los módulos, la nivelación mediante patas regulables, la unión entre módulos, el montaje de puertas y gavetas con sus correderas y la regulación de frentes hasta obtener holguras uniformes. Medido en longitud de frente de mueble.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

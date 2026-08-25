@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Retiro de geotextil.",
   "descripcion": "Retiro de geotextil de cubierta o muro. Incluye la retirada del geotextil. Medido por metro cuadrado retirado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

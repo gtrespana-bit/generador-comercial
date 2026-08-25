@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Camilla de evacuación.",
   "descripcion": "Suministro de camilla de evacuación para la obra, con su ubicación señalizada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

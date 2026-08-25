@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Línea de riego para jardín vertical.",
   "descripcion": "Ejecución de línea de riego para jardín vertical, con goteo y soportes. Incluye la colocación y la conexión.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

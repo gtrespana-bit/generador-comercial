@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Red de riego con tubería principal.",
   "descripcion": "Ejecución de red de riego con tubería principal de polietileno y derivaciones. Incluye la colocación y las conexiones.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

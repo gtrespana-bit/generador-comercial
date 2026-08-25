@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Portillo peatonal de cerramiento.",
   "descripcion": "Fabricación e instalación de portillo peatonal de cerramiento metálico, con marco y cerradura. Incluye el montaje y la cerradura.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

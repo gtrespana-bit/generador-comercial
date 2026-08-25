@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Programador de riego.",
   "descripcion": "Instalación de programador de riego, con conexión eléctrica y programación. Incluye la instalación. El equipo lo elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

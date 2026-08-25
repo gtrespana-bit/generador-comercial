@@ -4,13 +4,13 @@
 
 **Tasa de corte:** 1 USD = 0,8564 EUR (EUR/USD 1,1677, xe.com mid-market 22/08/2026; BCE 21/08/2026: 1,1681). Solo se usa para normalizar el precio base USD antes de aplicar el factor de mercado; el resultado queda congelado en EUR con fecha.
 
-**Ámbito:** reformas y obra residencial en España. Precios de material sin porte salvo indicación; mano de obra = **coste empresa** (bruto convenio + Seguridad Social + costes fijos), sin IVA, no tarifa autónomo facturada con beneficio, para evitar doble margen (el catálogo aplica 30% margen sobre coste directo).
+**Ámbito:** reformas y obra residencial en España. Precios de material sin porte salvo indicación; mano de obra = **coste empresa** (bruto convenio + Seguridad Social + costes fijos), sin IVA, no tarifa autónomo facturada con beneficio, para evitar doble margen (el catálogo aplica 35% margen sobre coste directo desde 2026-08-25).
 
 ---
 
 ## 1. Mano de obra — análisis a fondo (España 2024-2026)
 
-> **Conclusión principal:** el precio anterior de 27 €/h oficial y 18 €/h peón era **tarifa de autónomo con beneficio incluido** (22-32 €/h oficial 1ª según Motordepresupuestos), no coste empresa. Si el catálogo guarda 27 €/h como coste y luego aplica 30% margen, el precio de venta lleva **margen sobre margen**. Se corrige a **coste empresa** 21 €/h oficial y 15 €/h peón (zona media), con especialidades 20-24 €/h.
+> **Conclusión principal:** el precio anterior de 27 €/h oficial y 18 €/h peón era **tarifa de autónomo con beneficio incluido** (22-32 €/h oficial 1ª según Motordepresupuestos), no coste empresa. Si el catálogo guarda 27 €/h como coste y luego aplica 35% margen, el precio de venta lleva **margen sobre margen**. Se corrige a **coste empresa** 21 €/h oficial y 15 €/h peón (zona media), con especialidades 20-24 €/h.
 
 ### 1.1 Fuentes oficiales y de mercado
 
@@ -77,7 +77,7 @@ Coste hora empresa = Coste anual / Horas facturables reales (1.400-1.736h según
 
 ### 1.4 Impacto en partidas
 
-Con cemento y arena sin tocar, bajar mano obra 27→21 €/h (-22,2%) y peón 18→15 (-16,7%) reduce coste directo de una partida de friso (ej. 0,537h oficial) de 14,50 € a 11,28 € (-22,2%), y precio venta con 30% margen de 18,85 € a 14,66 €. El conjunto del catálogo (3006 partidas) baja peso económico de mano obra de ~79,6% verificado a similar pero con nivel de mercado español real de coste empresa, no tarifa inflada.
+Con cemento y arena sin tocar, bajar mano obra 27→21 €/h (-22,2%) y peón 18→15 (-16,7%) reduce coste directo de una partida de friso (ej. 0,537h oficial) de 14,50 € a 11,28 € (-22,2%), y precio venta con 35% margen de 19,58 € a 15,23 €. El conjunto del catálogo (3006 partidas) baja peso económico de mano obra de ~79,6% verificado a similar pero con nivel de mercado español real de coste empresa, no tarifa inflada.
 
 ---
 

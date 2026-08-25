@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Repisa o estantería fija.",
   "descripcion": "Fabricación e instalación de repisa o estantería fija en melamina o madera, con sus soportes anclados al paramento. Incluye el replanteo de la altura y de la separación entre soportes en función del espesor del tablero y de la carga prevista, ya que una repisa con soportes demasiado separados flecha de forma permanente, el anclaje de los soportes con el sistema adecuado al tipo de muro, el corte y canteado del tablero, su colocación y nivelación y el remate de cantos vistos. Medido en longitud realmente instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

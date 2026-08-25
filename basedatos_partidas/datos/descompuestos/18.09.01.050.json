@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Estructura soporte de paneles solares.",
   "descripcion": "Ejecución de estructura soporte de paneles solares, con perfiles y fijación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

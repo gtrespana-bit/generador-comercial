@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Desmontaje de portón exterior.",
   "descripcion": "Desmontaje de portón exterior de acceso. Incluye la retirada del portón y sus herrajes. Medido por unidad desmontada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

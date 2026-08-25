@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Pendientado de cubierta con concreto ligero.",
   "descripcion": "Formación de pendientes con concreto ligero de baja resistencia sobre cubierta plana, para crear la caída hacia tragantes o canales. Incluye el encofrado perimetral, el extendido y reglado con maestras y el curado de la superficie.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

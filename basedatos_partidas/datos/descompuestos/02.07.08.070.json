@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Desmontaje de extractor de baño.",
   "descripcion": "Desmontaje de extractor de baño, con desconexión. Incluye la desconexión y la retirada. Medido por unidad desmontada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

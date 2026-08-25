@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Apertura de rozas en pared para instalaciones.",
   "descripcion": "Apertura de rozas en pared de bloque o ladrillo para el paso de instalaciones. Incluye el replanteo, la ejecución de la roza y la limpieza. Medido por metro lineal de roza.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

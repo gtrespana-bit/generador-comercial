@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Regata para tubería en pared.",
   "descripcion": "Apertura de regata para tubería en pared. Incluye la ejecución de la regata. Medido por metro lineal ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

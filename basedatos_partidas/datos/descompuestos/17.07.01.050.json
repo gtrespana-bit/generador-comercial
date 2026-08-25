@@ -6,7 +6,7 @@
   "unidad": "glb",
   "titulo": "Agua potable para el personal.",
   "descripcion": "Suministro de agua potable para el personal de obra, conforme a la normativa de higiene.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Retiro de aislamiento de tubería.",
   "descripcion": "Retiro de coquilla aislante de tubería. Incluye la retirada de la coquilla. Medido por metro lineal retirado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

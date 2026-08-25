@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de cierra-puertas.",
   "descripcion": "Instalación de cierra-puertas hidráulico en puerta, con regulación de velocidad. Incluye el montaje y el ajuste. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

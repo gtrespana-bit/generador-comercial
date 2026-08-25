@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Peldaño de madera sobre escalera de concreto.",
   "descripcion": "Colocación de huella y contrahuella de madera sobre escalera de concreto existente, fijadas con adhesivo y tornillería oculta. Es una solución muy habitual en reforma para renovar una escalera sin demolerla. Incluye la comprobación y regularización de la superficie del peldaño de concreto, la toma de medidas peldaño a peldaño porque en una escalera existente rara vez son todos iguales, el corte y ajuste de cada pieza, el encolado y atornillado oculto, la colocación de la pieza de nariz y el remate lateral. La madera la elige el cliente y se presupuesta aparte. Medido en longitud de peldaño realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Huella y contrahuella de madera para escalera, elegidas por el cliente",

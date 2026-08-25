@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Aislamiento térmico reflectivo en fachada.",
   "descripcion": "Suministro y colocación de manta reflectiva de doble burbuja en fachada o cubierta. Incluye la colocación y el solape de la manta. Medido por metro cuadrado aislado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

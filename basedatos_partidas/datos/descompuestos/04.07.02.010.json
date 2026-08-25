@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Impermeabilización de fundación con manto.",
   "descripcion": "Impermeabilización de fundación con manto asfáltico. Incluye la imprimación y el manto. Medido por metro cuadrado impermeabilizado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

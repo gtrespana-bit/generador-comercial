@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Isla de cocina con mesón.",
   "descripcion": "Fabricación e instalación de isla o península de cocina en melamina, con mesón y gavetas. Incluye el armado, la nivelación y la fijación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

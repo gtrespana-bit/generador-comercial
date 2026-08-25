@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Conector de cortante en losa mixta.",
   "descripcion": "Colocación de conector de cortante soldable en losa mixta. Incluye la soldadura del conector. Medido por conector colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

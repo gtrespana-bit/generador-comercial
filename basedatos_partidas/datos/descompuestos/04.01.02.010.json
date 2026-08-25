@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Nivelación y compactación de fondo de fundación.",
   "descripcion": "Nivelación y compactación del fondo de fundación. Incluye la nivelación y la compactación. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

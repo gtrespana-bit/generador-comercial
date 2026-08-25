@@ -6,7 +6,7 @@
   "unidad": "glb",
   "titulo": "Medición de atmósfera en espacio confinado.",
   "descripcion": "Medición de la atmósfera de espacio confinado (oxígeno, gases), con detector, antes del acceso.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

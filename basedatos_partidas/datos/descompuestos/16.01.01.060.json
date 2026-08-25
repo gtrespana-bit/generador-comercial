@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Ensayo de mortero de pega.",
   "descripcion": "Ensayo de resistencia del mortero de pega de mampostería, con toma de muestra y laboratorio.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

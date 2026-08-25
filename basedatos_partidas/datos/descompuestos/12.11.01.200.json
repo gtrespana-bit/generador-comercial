@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Hidrofugación con siloxano de fachada.",
   "descripcion": "Aplicación de hidrofugante a base de siloxano sobre fachada, permeable al vapor. Incluye la limpieza previa y la aplicación del hidrofugante. Medido por metro cuadrado tratado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

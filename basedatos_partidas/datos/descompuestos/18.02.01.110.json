@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Acabado de fachada aislada con mortero.",
   "descripcion": "Acabado de fachada aislada con mortero de protección y malla, listo para el revestimiento final.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

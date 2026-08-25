@@ -6,7 +6,7 @@
   "unidad": "m³",
   "titulo": "Demolición de losa de fundación de concreto armado.",
   "descripcion": "Demolición de losa de fundación de concreto armado, ejecutada con martillo hidráulico montado sobre retroexcavadora y corte de la malla de refuerzo. Incluye el corte perimetral previo para delimitar la zona de intervención, la comprobación de que no discurren instalaciones enterradas bajo la losa, la fragmentación del concreto en piezas cargables, el corte y separación del acero para su gestión diferenciada, el acopio del escombro y la limpieza del terreno resultante. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en volumen realmente demolido.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

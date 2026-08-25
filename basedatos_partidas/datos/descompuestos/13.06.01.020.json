@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Juego de accesorios y herrajes de mobiliario.",
   "descripcion": "Suministro y montaje del juego de accesorios y herrajes complementarios del mobiliario: tiradores, organizadores, bisagras de cierre suave, sistemas de elevación y topes. Incluye el replanteo, el pretaladrado con plantilla para garantizar la alineación de los tiradores en todos los frentes, que es lo que se nota a simple vista en un mueble bien terminado, el montaje y la regulación final de cierres y amortiguadores. Medido por juego instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Cubierta de teja asfáltica.",
   "descripcion": "Cubierta con teja asfáltica tipo shingle clavada sobre tablero continuo con fieltro asfáltico de base. Requiere un tablero continuo y firme, no un simple listonado, porque la teja asfáltica no tiene rigidez propia y copia cualquier irregularidad del soporte. Incluye la colocación del fieltro con solapes, el replanteo de hiladas, el clavado de las piezas con el número de clavos y la posición indicados por el fabricante, ya que de ello depende la resistencia al viento, la formación de cumbreras con piezas específicas y los remates de borde con perfil metálico. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Electrodo de puesta a tierra.",
   "descripcion": "Puesta a tierra con electrodo de cobre. Incluye el hincado y la conexión. Medido por toma ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

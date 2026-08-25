@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Soporte para condensadora.",
   "descripcion": "Suministro y colocación de soporte para unidad condensadora. Incluye el anclaje del soporte. Medido por unidad colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

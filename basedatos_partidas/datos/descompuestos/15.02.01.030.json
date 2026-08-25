@@ -6,7 +6,7 @@
   "unidad": "m³",
   "titulo": "Bajada de escombro por medios manuales.",
   "descripcion": "Bajada de escombro desde plantas altas por medios manuales con sacos, hasta la zona de acopio en planta baja.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

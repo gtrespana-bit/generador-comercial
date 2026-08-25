@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Preparación de piso existente para nuevo revestimiento.",
   "descripcion": "Preparación de piso existente para la colocación de un nuevo revestimiento, con raspado, limpieza y nivelación de las irregularidades. Incluye la retirada de restos y la nivelación previa. Medido por metro cuadrado preparado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

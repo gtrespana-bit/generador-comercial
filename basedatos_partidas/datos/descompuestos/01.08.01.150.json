@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Red provisional de desagüe de obra.",
   "descripcion": "Ejecución de red provisional de desagüe de obra. Incluye la conexión y el tendido. Medido por red ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

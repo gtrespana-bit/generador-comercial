@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Desmontaje de muro cortina de vidrio.",
   "descripcion": "Desmontaje de muro cortina o cerramiento de vidrio en fachada, con retirada de vidrios y estructura. Incluye la retirada de los vidrios y el desmontaje de la estructura. Medido por metro cuadrado desmontado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

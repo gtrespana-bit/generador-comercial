@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Tabique de yeso laminado con placa resistente a la humedad.",
   "descripcion": "Tabique autoportante ejecutado con placa de yeso laminado resistente a la humedad en las caras expuestas, para baños, cocinas y áreas de servicio. La placa resistente a la humedad no es impermeable: retrasa la absorción, pero en las zonas de contacto directo con el agua debe complementarse con una impermeabilización bajo el enchapado, que se valora aparte. Incluye el replanteo, la banda estanca perimetral, el montaje de canales y montantes con la separación reducida que exige recibir el enchapado, el atornillado de las placas, el aislamiento de la cámara, el tratamiento de juntas y el lijado. Medido a cinta corrida descontando huecos mayores de 2 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Prueba de temperatura de impulsión.",
   "descripcion": "Medición de la temperatura de impulsión y retorno del sistema de climatización, para verificar el rendimiento.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

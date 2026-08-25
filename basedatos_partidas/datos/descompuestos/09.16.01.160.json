@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de ascensor de 6 paradas.",
   "descripcion": "Instalación de ascensor de 6 paradas., con montaje y puesta en marcha. Incluye el montaje. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

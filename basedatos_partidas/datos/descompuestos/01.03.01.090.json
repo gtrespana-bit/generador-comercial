@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Puerta provisional de acceso a la zona de obra.",
   "descripcion": "Montaje de puerta provisional con cierre en el acceso a la zona de obra, para separar el área de trabajo de la zona en uso y controlar el acceso. Incluye el bastidor, el forro con lámina de madera, las bisagras y el cierre con candado, la banda de sellado perimetral que impide el paso de polvo, la señalización de acceso restringido y el desmontaje al finalizar. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

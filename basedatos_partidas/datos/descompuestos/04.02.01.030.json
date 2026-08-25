@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Encofrado y desencofrado de zapata.",
   "descripcion": "Encofrado de las caras laterales de zapata mediante paneles de madera con sus puntales y arriostramientos, y su posterior desencofrado. Incluye el replanteo y montaje de los paneles, la comprobación de escuadras, plomos y dimensiones antes del vaciado, el apuntalamiento y arriostramiento que impide la apertura del encofrado por el empuje del concreto fresco, la aplicación de desmoldeante, el desencofrado cuidadoso una vez alcanzada la resistencia necesaria, y la limpieza y acopio de los paneles para su reutilización. Medido en superficie de encofrado en contacto con el concreto.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

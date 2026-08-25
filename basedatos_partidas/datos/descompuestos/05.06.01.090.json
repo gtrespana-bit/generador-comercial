@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Ampliación de losa en voladizo o balcón.",
   "descripcion": "Ampliación de losa existente en voladizo o formación de balcón, con conexión a la estructura mediante anclaje químico de las barras de continuidad. La conexión es el punto crítico: un voladizo trabaja con el acero en la cara superior y con la longitud de anclaje completa dentro de la losa existente, de modo que la profundidad y la posición de las perforaciones no admiten aproximaciones. Incluye el apeo, el repicado y limpieza del borde existente, la perforación y anclaje químico de las barras, el armado, el encofrado sobre puntales, el vaciado y vibrado, el curado y el desapeo escalonado. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Limpieza química de fachada y eliminación de manchas.",
   "descripcion": "Limpieza química de fachada para eliminar eflorescencias, manchas de óxido, restos de mortero, grafitis o depósitos incrustados, con el producto específico para cada tipo de mancha y de soporte. La elección del producto es lo determinante: un limpiador ácido sobre mármol, granito pulido o aluminio anodizado produce un daño irreversible que resulta peor que la mancha original, por lo que se ensaya siempre en zona oculta. Incluye la identificación del tipo de mancha, el ensayo previo, la protección del entorno, la aplicación con su tiempo de actuación, el cepillado, la neutralización y el enjuague abundante. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

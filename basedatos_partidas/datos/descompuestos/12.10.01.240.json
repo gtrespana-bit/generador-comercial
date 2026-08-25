@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Pintura de techo con rodillo extensible.",
   "descripcion": "Aplicación de pintura de caucho en techo con rodillo extensible, con dos manos. Incluye la preparación y las dos manos de pintura. Medido por metro cuadrado pintado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

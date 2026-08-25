@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Piso de laja o piedra natural irregular.",
   "descripcion": "Colocación de piso de laja o piedra natural de formato irregular, recibida con mortero o adhesivo de alta deformabilidad según el espesor de la pieza. Al no existir despiece regular, el paño se compone pieza a pieza buscando el encaje y la distribución de tonos, lo que reduce sensiblemente el rendimiento. Incluye la selección y clasificación previa del material, el replanteo del paño, la colocación con junta irregular controlada, el rejuntado, la limpieza y la aplicación del sellador hidrofugante que protege la piedra y facilita su mantenimiento. La pieza la elige el cliente y se presupuesta aparte. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Laja o piedra natural irregular para piso",

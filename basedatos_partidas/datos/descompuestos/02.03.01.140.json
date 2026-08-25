@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Picado de aplacado cerámico de fachada.",
   "descripcion": "Picado de aplacado cerámico o porcelánico de fachada, con retirada de la capa de pega. Incluye el picado de las piezas y la limpieza del soporte. Medido por metro cuadrado picado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

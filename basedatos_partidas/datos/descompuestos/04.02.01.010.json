@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Concreto pobre de limpieza bajo fundaciones, 5 cm de espesor.",
   "descripcion": "Capa de concreto pobre de limpieza de 5 cm de espesor medio, vaciada sobre el fondo de excavación antes de armar la fundación. Cumple una función que no es estructural sino de ejecución: aísla el acero del terreno, evita que la tierra contamine el concreto estructural y proporciona una superficie limpia y a nivel donde replantear y apoyar los separadores. Incluye el repaso y compactación del fondo, el vaciado y extendido del concreto, su reglado a nivel y el marcado de los ejes de la fundación sobre la capa endurecida. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

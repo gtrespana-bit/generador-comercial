@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Demolición de tabique de doble placa de yeso.",
   "descripcion": "Demolición de tabique de doble placa de yeso laminado con aislamiento. Incluye la demolición de las placas, la lana y la estructura. Medido por metro cuadrado demolido.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

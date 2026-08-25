@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Reparación de cielo raso de yeso.",
   "descripcion": "Reparación de cielo raso de yeso laminado dañado, con sustitución de la zona afectada y tratamiento de juntas. Incluye el corte de la zona, la reposición de la placa y el acabado. Medido por metro cuadrado reparado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

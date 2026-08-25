@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Refuerzo de muro de contención existente.",
   "descripcion": "Refuerzo de muro de contención existente. Incluye el refuerzo y el recubrimiento. Medido por metro cuadrado reforzado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

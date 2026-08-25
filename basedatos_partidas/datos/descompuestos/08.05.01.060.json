@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Alféizar de madera.",
   "descripcion": "Colocación de alféizar de madera. Incluye la fijación y el acabado. Medido por metro lineal ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

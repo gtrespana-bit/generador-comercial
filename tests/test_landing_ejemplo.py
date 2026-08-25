@@ -146,10 +146,10 @@ def test_ejemplo_apu_real_del_catalogo():
     assert abs(
         _a_numero(apu["coste"]) - _a_numero(apu["directo"]) - _a_numero(apu["comp"])
     ) < 1.01
-    # Precio de venta = coste × (1 + margen 30 %)
+    # Precio de venta = coste × (1 + margen 35 %, defecto del catálogo desde 2026-08-25)
     pv = _a_numero(apu["precio"].split(" COL$/")[0] + " COL$")
-    assert abs(pv - _a_numero(apu["coste"]) * 1.30) < max(2.0, pv * 0.002)
-    assert apu["margen"] == "+30 %"
+    assert abs(pv - _a_numero(apu["coste"]) * 1.35) < max(2.0, pv * 0.002)
+    assert apu["margen"] == "+35 %"
 
 
 def test_ejemplo_traduce_terminologia_al_pais():

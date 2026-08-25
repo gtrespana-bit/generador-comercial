@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Estructura de paneles solares sobre techo inclinado.",
   "descripcion": "Ejecución de estructura de soporte de paneles solares sobre techo inclinado, con fijación a la cubierta y sellado de los pasos.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

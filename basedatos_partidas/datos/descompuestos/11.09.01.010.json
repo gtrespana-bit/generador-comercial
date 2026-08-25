@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Reparación de faldón de cubierta de lámina.",
   "descripcion": "Reparación de faldón de cubierta de lámina metálica con sustitución de tramos y sellado de solapes. Incluye el desmontaje y la reposición.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

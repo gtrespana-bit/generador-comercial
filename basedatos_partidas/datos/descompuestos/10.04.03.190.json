@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Impermeabilización de techo con capa de protección.",
   "descripcion": "Impermeabilización de techo con membrana y capa de protección de mortero. Incluye la impermeabilización y la capa de protección. Medido por metro cuadrado impermeabilizado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "glb",
   "titulo": "Prueba integral de sistemas.",
   "descripcion": "Prueba integral de todos los sistemas de la obra, coordinando su funcionamiento conjunto.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

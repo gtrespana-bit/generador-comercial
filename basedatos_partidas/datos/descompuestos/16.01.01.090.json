@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Ensayo de resistencia de piso de concreto.",
   "descripcion": "Ensayo no destructivo de la resistencia del concreto endurecido mediante esclerómetro, con informe.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

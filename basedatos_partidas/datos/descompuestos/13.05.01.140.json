@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de filtro de agua de cocina.",
   "descripcion": "Instalación de filtro de agua de cocina con conexión a la red y fijación. Incluye la conexión y la fijación. El equipo lo elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m3",
   "titulo": "Transporte de tierra sobrante a botadero.",
   "descripcion": "Transporte de tierra sobrante a botadero. Incluye el transporte y el canon de vertido. Medido por metro cúbico transportado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m3",
   "titulo": "Demolición de viga de corona de fundación.",
   "descripcion": "Demolición de viga de corona o amarre de fundación, con corte de acero. Incluye el corte del acero, la demolición y la retirada del escombro. Medido por metro cúbico demolido.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

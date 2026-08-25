@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Acera de adoquín.",
   "descripcion": "Ejecución de acera de adoquín sobre cama de arena, con confinamiento perimetral. Incluye la colocación y la compactación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

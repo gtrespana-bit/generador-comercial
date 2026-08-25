@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Punto de timbre con su pulsador.",
   "descripcion": "Instalación de timbre con su pulsador exterior, transformador y conexión. Incluye el replanteo del pulsador junto al acceso a la altura de uso, la canalización hasta el punto del timbre, el tendido del conductor, el montaje del transformador en punto registrable, la conexión y la prueba. Medido por punto terminado y probado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Retiro de aislamiento térmico o acústico.",
   "descripcion": "Retiro de aislamiento térmico o acústico existente, sea de lana mineral, poliestireno o poliuretano, alojado en cámara de tabique, cielo raso o cubierta. Incluye el uso de mascarilla y guantes por la irritación que producen las fibras minerales, el desmontaje del material en piezas completas cuando el estado lo permita, el ensacado inmediato para evitar la dispersión de fibras por el ambiente, el aspirado de los restos y la limpieza de la zona. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en superficie realmente retirada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

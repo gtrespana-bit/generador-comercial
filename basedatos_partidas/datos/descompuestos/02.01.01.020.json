@@ -6,7 +6,7 @@
   "unidad": "m³",
   "titulo": "Demolición de viga de riostra o muro de contención de concreto.",
   "descripcion": "Demolición de viga de riostra, muro de contención o murete de concreto armado, ejecutada con martillo neumático y corte de armaduras. Incluye la comprobación previa de que el elemento no sostiene empujes de tierra activos o, en su caso, el sostenimiento provisional del terreno, la protección del entorno, el corte y retiro del acero de refuerzo, la fragmentación del concreto y su acopio, y la limpieza de la zona. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en volumen realmente demolido.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

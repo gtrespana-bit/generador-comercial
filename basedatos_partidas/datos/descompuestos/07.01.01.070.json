@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de cerradura electrónica o inteligente.",
   "descripcion": "Instalación de cerradura electrónica o inteligente en puerta existente, con su mecanizado, montaje, configuración y prueba. Incluye la verificación previa de la compatibilidad del espesor de la hoja y de la distancia del eje, la adaptación del mecanizado existente, el montaje del cuerpo y de los lectores interior y exterior, la conexión de la alimentación, la configuración de usuarios y códigos, la comprobación del funcionamiento del sistema mecánico de emergencia, que debe seguir operando aunque falle la batería, y la entrega al cliente con su instrucción de uso. La cerradura la elige el cliente y se presupuesta aparte. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Cerradura electrónica o inteligente elegida por el cliente",

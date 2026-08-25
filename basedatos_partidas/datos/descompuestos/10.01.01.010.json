@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Aislamiento térmico en cubierta.",
   "descripcion": "Colocación de panel de aislamiento térmico sobre la cubierta, bajo la protección o la impermeabilización según el sistema. En clima tropical el aislamiento de cubierta es la medida con mayor impacto sobre el confort y sobre el consumo de aire acondicionado, muy por encima del aislamiento de fachada, porque la cubierta es la superficie que recibe la radiación solar directa durante todo el día. Incluye la nivelación del soporte, la colocación de los paneles a junta contrapeada y encajados sin holguras, ya que cualquier junta abierta es un puente térmico, y su fijación o lastrado. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

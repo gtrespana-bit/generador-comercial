@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Cielo raso exterior en alero o porche.",
   "descripcion": "Cielo raso en alero, porche o área exterior cubierta, con lámina de PVC o placa de cemento sobre estructura resistente a la humedad. El material y la estructura deben ser aptos para exterior: una placa de yeso laminado, aunque sea resistente a la humedad, no soporta la humedad ambiental permanente de un alero y termina descolgándose. Incluye el replanteo y nivelación, la estructura de perfilería galvanizada, la colocación del material con sus juntas de dilatación, la ventilación de la cámara y el remate perimetral. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

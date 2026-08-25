@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Demolición de losa de piso de sótano.",
   "descripcion": "Demolición de losa de piso de sótano o de fundación, con medios mecánicos. Incluye la demolición y la retirada del escombro. Medido por metro cuadrado demolido.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

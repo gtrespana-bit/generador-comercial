@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Siembra de grama en panes.",
   "descripcion": "Preparación del terreno y siembra de grama en panes o alfombra, con nivelación y riego inicial. Incluye la preparación y la siembra.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Punto de drenaje de condensados exterior.",
   "descripcion": "Ejecución de punto de drenaje de condensados exterior, con tubería y sifón. Incluye la colocación y la conexión.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

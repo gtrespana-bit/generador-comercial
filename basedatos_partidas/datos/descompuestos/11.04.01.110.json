@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Solape y sellado de cubierta metálica.",
   "descripcion": "Sellado de solapes y remates de cubierta metálica con sellador elástico y tornillos de recambio, para eliminar filtraciones. Incluye la limpieza y el sellado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

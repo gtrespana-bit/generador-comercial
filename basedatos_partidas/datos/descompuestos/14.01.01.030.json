@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Pavimento de gravilla o piedra suelta.",
   "descripcion": "Pavimento exterior de gravilla o piedra decorativa sobre geotextil y base compactada, con confinamiento perimetral. El geotextil separador es lo que impide que la gravilla se hunda en el terreno y que crezca vegetación a través de ella, que son las dos razones por las que este pavimento se degrada. Incluye la nivelación y compactación de la base, la colocación del geotextil con solapes, el extendido de la gravilla con el espesor uniforme de proyecto y el rastrillado final. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

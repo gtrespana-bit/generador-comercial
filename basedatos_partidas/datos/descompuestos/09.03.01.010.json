@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Acometida eléctrica desde el punto de suministro.",
   "descripcion": "Ejecución de la acometida eléctrica desde el punto de suministro hasta el tablero principal, con conductor de calibre adecuado, canalización y protección de cabecera. Incluye el replanteo del recorrido, la canalización enterrada o vista según el trazado, el tendido del conductor sin empalmes en todo el recorrido, la conexión en ambos extremos, la protección general y la coordinación con la compañía suministradora para la conexión definitiva. Medido por acometida ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

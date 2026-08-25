@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Demolición de piso cerámico y su capa de pega.",
   "descripcion": "Demolición de piso existente de baldosa cerámica o de porcelanato, junto con su capa de pega de mortero, ejecutada con martillo eléctrico manual sin comprometer la losa ni los elementos constructivos vecinos. Incluye protección previa de paredes, puertas y ambientes contiguos, control de polvo mediante aspiración, retiro manual del escombro en sacos hasta el punto de acopio y barrido de la superficie resultante, dejándola lista para recibir el nuevo afirmado. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en superficie realmente demolida.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

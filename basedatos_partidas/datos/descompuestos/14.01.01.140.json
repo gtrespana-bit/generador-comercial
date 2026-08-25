@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Pavimento de baldosa exterior antideslizante.",
   "descripcion": "Pavimento exterior de baldosa cerámica antideslizante sobre mortero de agarre, con juntas selladas. Incluye la colocación y el juntado. La baldosa la elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

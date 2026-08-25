@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Microcemento en techo.",
   "descripcion": "Aplicación de microcemento en techo, con malla y acabado sellado. Incluye la preparación del soporte y la aplicación del microcemento. Medido por metro cuadrado aplicado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

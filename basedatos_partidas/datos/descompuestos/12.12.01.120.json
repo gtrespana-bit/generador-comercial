@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Pintura de pasamanos metálico.",
   "descripcion": "Aplicación de esmalte sobre pasamanos o baranda metálica, con fondo anticorrosivo y dos manos. Incluye la limpieza, el fondo y las dos manos. Medido por metro lineal pintado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

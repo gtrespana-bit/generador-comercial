@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de lavadero o poceta de servicio.",
   "descripcion": "Instalación de lavadero o poceta de servicio con su grifería, desagüe y soportes. Incluye la comprobación de la base o soportes que deben resistir el peso de la pieza llena de agua y con ropa, el nivelado, la conexión de la toma de agua con su llave, el montaje del desagüe con sifón, el sellado perimetral contra la pared y la prueba de estanqueidad y evacuación. El aparato y la grifería los elige el cliente y se presupuestan aparte. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Lavadero o poceta de servicio con su grifería, elegido por el cliente",

@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "SATE con panel de alta densidad.",
   "descripcion": "Ejecución de SATE con panel de poliestireno de alta densidad. Incluye la fijación del panel, la malla y el mortero. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

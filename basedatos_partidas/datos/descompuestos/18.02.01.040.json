@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Fachada ventilada con subestructura y aislamiento.",
   "descripcion": "Ejecución de fachada ventilada con subestructura metálica y aislamiento térmico, con cámara de aire.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

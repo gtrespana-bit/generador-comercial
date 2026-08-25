@@ -6,7 +6,7 @@
   "unidad": "m³",
   "titulo": "Base de piedra picada compactada.",
   "descripcion": "Base de piedra picada extendida y compactada bajo pisos, aceras o pavimentos exteriores, con función de capa drenante y de reparto de cargas, y de rotura del ascenso capilar de humedad hacia el piso. Incluye el suministro y puesta en obra de la piedra, su extendido por tongadas de 15 cm, el acuñado con material fino cuando se requiera cerrar la superficie, la compactación con plancha vibratoria y la comprobación del nivel y la planitud finales. Medido en volumen de base compactada según las dimensiones de proyecto.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

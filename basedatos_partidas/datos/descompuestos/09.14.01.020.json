@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de bomba centrífuga de agua.",
   "descripcion": "Instalación de bomba centrífuga para elevación o presurización de agua, con sus válvulas, uniones desmontables y conexión eléctrica. Incluye la fijación de la bomba sobre base antivibratoria, el montaje de válvula de retención y de compuerta en aspiración e impulsión con uniones universales que permitan desmontar el equipo sin cortar tubería, la conexión eléctrica con su protección, el cebado, la puesta en marcha comprobando sentido de giro y ausencia de cavitación, y la verificación de caudal y presión. El equipo lo elige el cliente y se presupuesta aparte. Medido por unidad instalada y probada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Bomba de agua del caudal y potencia elegidos por el cliente",

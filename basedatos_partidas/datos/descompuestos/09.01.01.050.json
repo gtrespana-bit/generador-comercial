@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Tubería de agua de cobre.",
   "descripcion": "Suministro e instalación de tubería de agua de cobre. Incluye el montaje y la soldadura. Medido por metro lineal instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

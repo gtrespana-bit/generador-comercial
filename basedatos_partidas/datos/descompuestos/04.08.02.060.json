@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Refuerzo de fundación con recalce.",
   "descripcion": "Refuerzo de fundación con recalce escalonado. Incluye la excavación y el vaciado. Medido por metro cuadrado reforzado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

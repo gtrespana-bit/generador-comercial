@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Estabilización de talud con malla.",
   "descripcion": "Estabilización de talud con malla metálica. Incluye la colocación de la malla. Medido por metro cuadrado estabilizado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

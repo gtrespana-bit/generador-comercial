@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Estuco veneciano o acabado decorativo mineral.",
   "descripcion": "Acabado decorativo tipo estuco veneciano a la cal, aplicado en varias capas a espátula sobre paramento interior preparado, con bruñido final que produce el brillo característico. Es un trabajo de acabado puro en el que el resultado depende casi por completo de la mano del aplicador, por lo que conviene ejecutar una muestra previa aprobada por el cliente antes de acometer el paño. Incluye la preparación y sellado del soporte, la aplicación de las capas sucesivas con la espátula, el bruñido y el encerado final de protección. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

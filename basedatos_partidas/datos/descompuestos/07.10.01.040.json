@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Ajuste de portón corredizo.",
   "descripcion": "Ajuste de portón corredizo, con reajuste de carros, guías y topes. Incluye la comprobación y el reajuste. Medido por unidad ajustada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

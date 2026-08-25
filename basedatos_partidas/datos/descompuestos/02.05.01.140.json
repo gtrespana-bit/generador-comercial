@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Desmontaje de puerta blindada.",
   "descripcion": "Desmontaje de puerta blindada con su marco. Incluye la retirada de la puerta y el marco. Medido por unidad desmontada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

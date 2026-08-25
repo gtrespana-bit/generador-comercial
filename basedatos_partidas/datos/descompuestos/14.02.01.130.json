@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Rampa de acceso con baranda.",
   "descripcion": "Ejecución de rampa de acceso con baranda de protección, en concreto y acero. Incluye el vaciado y la baranda.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

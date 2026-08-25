@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Pintura de tuberías y conducciones metálicas.",
   "descripcion": "Aplicación de esmalte o pintura anticorrosiva sobre tuberías y conducciones metálicas vistas, con dos manos. Incluye la limpieza y las dos manos de pintura de protección. Medido por metro lineal de tubería pintada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

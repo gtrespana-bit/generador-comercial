@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Ensayo ultrasónico de soldadura.",
   "descripcion": "Ensayo ultrasónico de soldaduras estructurales, para detección de defectos internos, con informe.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

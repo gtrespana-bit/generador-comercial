@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de triturador de cocina.",
   "descripcion": "Instalación de triturador de cocina con conexión de desagüe y electricidad. Incluye la conexión y la fijación. El equipo lo elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

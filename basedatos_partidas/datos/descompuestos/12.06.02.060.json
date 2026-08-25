@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Peldaño de granito o piedra prefabricada.",
   "descripcion": "Revestimiento de peldaño de escalera con huella y contrahuella de granito o piedra prefabricada. Incluye la preparación del soporte, la colocación y el rejuntado. Medido por metro lineal de peldaño.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

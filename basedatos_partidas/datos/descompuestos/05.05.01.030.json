@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Tratamiento preservante de madera estructural.",
   "descripcion": "Aplicación de tratamiento preservante fungicida e insecticida sobre madera estructural, mediante dos manos a brocha o por inmersión. En clima tropical este tratamiento no es opcional: la madera sin proteger tiene una vida útil corta frente al comején y a los hongos de pudrición. Incluye el lijado y limpieza previa de la superficie, la aplicación de la primera mano con especial atención a testas, ensambles y zonas de apoyo que son las de mayor riesgo, el respeto del tiempo de absorción y la aplicación de la segunda mano. Medido en superficie realmente tratada, desarrollando todas las caras.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Rampa de concreto estructural.",
   "descripcion": "Ejecución de rampa de concreto estructural. Incluye el vaciado y el acabado. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Punto de gas para horno.",
   "descripcion": "Ejecución de punto de gas para horno., con conexión y prueba. Incluye la conexión y la prueba de estanqueidad. Medido por unidad ejecutado/a.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

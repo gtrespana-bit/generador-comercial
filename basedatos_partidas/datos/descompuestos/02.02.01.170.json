@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Desmontaje de celosía o cercha metálica.",
   "descripcion": "Desmontaje de celosía o cercha metálica, con corte de uniones y bajada controlada. Incluye el desmontaje y la bajada con grúa o pluma. Medido por metro lineal desmontado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

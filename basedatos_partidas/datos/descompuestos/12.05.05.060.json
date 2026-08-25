@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Piso de parquet colocado en espiga.",
   "descripcion": "Colocación de piso de parquet encolado en espiga, sobre afirmado nivelado. Incluye el replanteo del patrón, el encolado y el lijado. Medido por metro cuadrado colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

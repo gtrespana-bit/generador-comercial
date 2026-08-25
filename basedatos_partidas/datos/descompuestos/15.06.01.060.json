@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Limpieza de escombro disperso en pisos.",
   "descripcion": "Limpieza del escombro disperso en pisos tras los trabajos de demolición y albañilería, con barrido y retirada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Verificación de capacidad portante.",
   "descripcion": "Verificación de capacidad portante del fondo de fundación. Incluye la comprobación. Medido por metro cuadrado verificado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

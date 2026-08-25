@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Cenefa integrada de iluminación en cielo raso.",
   "descripcion": "Ejecución de cenefa o foso perimetral integrado en el cielo raso de yeso para iluminación indirecta. Incluye la estructura del foso, la placa y el remate. Medido por metro lineal de cenefa.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

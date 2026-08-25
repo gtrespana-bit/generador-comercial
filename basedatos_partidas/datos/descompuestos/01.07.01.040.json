@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Control geométrico de paramentos.",
   "descripcion": "Control geométrico de plomos y niveles de paramentos. Incluye la verificación con nivel láser. Medido por metro cuadrado verificado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

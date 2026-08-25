@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Aislamiento acústico de conducto.",
   "descripcion": "Suministro y colocación de aislamiento acústico en conductos de ventilación o climatización. Incluye la colocación del aislamiento y el sellado. Medido por metro cuadrado aislado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Remate de frente de losa con aislamiento.",
   "descripcion": "Remate de frente de losa con aislamiento térmico. Incluye la colocación del aislamiento y el remate. Medido por metro lineal ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

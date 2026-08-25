@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Reparación de fisuras en fachada.",
   "descripcion": "Reparación de fisuras en fachada, con sellado. Incluye la apertura de la fisura y el sellado. Medido por metro lineal reparado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

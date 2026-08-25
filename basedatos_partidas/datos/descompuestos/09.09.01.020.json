@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Punto de gas para cocina o calentador.",
   "descripcion": "Punto de conexión de gas para cocina, calentador u otro artefacto, con su llave de corte individual, conexión flexible homologada y prueba. Incluye la derivación desde la línea principal, el montaje de la llave de corte en posición accesible sin necesidad de mover el artefacto, la conexión con manguera homologada dentro de su fecha de validez, la prueba de estanqueidad de la unión con detector de fugas y la verificación de la combustión del artefacto tras la puesta en servicio. Medido por punto terminado y probado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Limpieza final de obra para entrega.",
   "descripcion": "Limpieza final de obra previa a la entrega, con barrido, retirada de restos y limpieza de todas las superficies.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

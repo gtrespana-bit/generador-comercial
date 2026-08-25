@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Siembra de plantas ornamentales.",
   "descripcion": "Siembra de plantas ornamentales en área verde, con preparación del suelo y riego. Incluye la siembra. Las plantas las elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

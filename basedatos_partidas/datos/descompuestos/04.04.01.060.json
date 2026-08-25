@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Acabado y curado de losa de fundación.",
   "descripcion": "Acabado superficial de la losa mediante alisado mecánico y su curado posterior. Incluye el reglado y flotado inicial, el alisado con alisadora mecánica en las pasadas necesarias hasta obtener la textura requerida según vaya a recibir un piso adherido o quedar visto, el aserrado de las juntas de retracción en el momento adecuado, y el curado mediante curador de membrana o riego continuo durante los primeros días, sin el cual la losa fisura por retracción plástica por muy bien vaciada que esté. Medido en superficie realmente acabada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

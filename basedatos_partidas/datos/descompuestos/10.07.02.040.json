@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Capa separadora geotextil en terraza.",
   "descripcion": "Colocación de geotextil separador en terraza, entre impermeabilización y acabado. Incluye la extensión del geotextil y el solape. Medido por metro cuadrado colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

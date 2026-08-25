@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Burlete de estanqueidad en puertas.",
   "descripcion": "Colocación de burlete de estanqueidad en el perímetro de las puertas exteriores, para reducir infiltraciones.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

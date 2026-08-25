@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Fachada revestida con listones de madera.",
   "descripcion": "Ejecución de fachada revestida con listones de madera tratada. Incluye la subestructura y la colocación de los listones. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

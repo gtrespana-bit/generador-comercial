@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Fachada ligera de placa de cemento con aislamiento.",
   "descripcion": "Ejecución de fachada ligera de placa de cemento con aislamiento en la cámara. Incluye la estructura, la lana, la placa y el sellado. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

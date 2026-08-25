@@ -6,7 +6,7 @@
   "unidad": "m3",
   "titulo": "Excavación de sótano.",
   "descripcion": "Excavación de sótano, con retirada de tierras. Incluye la excavación y el acopio. Medido por metro cúbico excavado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

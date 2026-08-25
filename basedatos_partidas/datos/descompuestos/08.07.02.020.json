@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Tapajuntas de aluminio.",
   "descripcion": "Colocación de tapajuntas de aluminio. Incluye la fijación. Medido por metro lineal colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

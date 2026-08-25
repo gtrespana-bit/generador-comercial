@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Desmontaje de puerta exterior o metálica con su marco.",
   "descripcion": "Desmontaje de puerta exterior, de seguridad o metálica, incluidos la hoja, el marco y la herrajería, ejecutado mediante oxicorte o amoladora sobre los anclajes empotrados. Por su peso requiere dos operarios para el sostenimiento de la hoja durante la liberación del marco. Incluye el sostenimiento previo del conjunto, el corte de los anclajes, el picado y resane de los huecos que queden en el muro, el retiro del material hasta el punto de acopio y su clasificación como chatarra. Si el cliente desea conservar el elemento, se desmonta con cuidado y se acopia protegido, lo que reduce el rendimiento y debe advertirse en el presupuesto. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido por unidad desmontada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

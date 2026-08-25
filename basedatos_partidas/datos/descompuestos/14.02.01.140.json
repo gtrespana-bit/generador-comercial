@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Reparación de acera o brocal.",
   "descripcion": "Reparación de acera o brocal con resane de concreto y sustitución de tramos dañados. Incluye la demolición parcial y el resane.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

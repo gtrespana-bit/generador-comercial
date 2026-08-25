@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Piso de baldosa de granito prefabricado.",
   "descripcion": "Colocación de piso con baldosa de granito o terrazo prefabricado, recibida con mortero o adhesivo según el espesor, con pulido de igualación en obra. Incluye el replanteo del despiece, la colocación con nivelación y junta mínima, el rejuntado con lechada de cemento a juego, el pulido de igualación que elimina los resaltos entre piezas y unifica el plano, el resane de poros y el abrillantado. La pieza la elige el cliente y se presupuesta aparte. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Baldosa de granito o terrazo prefabricado para piso",

@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Desmontaje de cumbrera o remate de techo.",
   "descripcion": "Desmontaje de cumbrera o remate de cubierta. Incluye la retirada del remate y sus fijaciones. Medido por metro lineal desmontado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

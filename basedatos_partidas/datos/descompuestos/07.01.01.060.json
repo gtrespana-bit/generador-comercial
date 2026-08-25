@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Marco y contramarco metálico para vano.",
   "descripcion": "Suministro y montaje de marco y contramarco metálico en vano de puerta, embebido en la mampostería o anclado al paramento. El contramarco se coloca durante el levantamiento de la pared y queda embebido, de modo que su replanteo y aplomado condicionan toda la carpintería posterior: un contramarco mal aplomado no se corrige después. Incluye el replanteo, el aplomado y arriostramiento provisional, el macizado de las patillas en la fábrica, la protección anticorrosiva y el montaje del marco definitivo. Medido en longitud de perímetro de vano.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

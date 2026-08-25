@@ -6,7 +6,7 @@
   "unidad": "m³",
   "titulo": "Pedestal de concreto armado sobre fundación.",
   "descripcion": "Pedestal de concreto armado de resistencia 210 kg/cm2 que arranca de la zapata y eleva el apoyo de la columna hasta la cota de arranque, incluidos su encofrado, su vaciado y su curado. Incluye el replanteo sobre la zapata, el montaje y aplomado del encofrado con arriostramiento en las cuatro caras, la comprobación de que las cabillas de espera quedan en su posición y con la longitud de solape prevista, el vaciado y vibrado por capas, el desencofrado y el curado. No incluye el acero de refuerzo, que se valora por su peso. Medido en volumen teórico según las dimensiones de proyecto.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

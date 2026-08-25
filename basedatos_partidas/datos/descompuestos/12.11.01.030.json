@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Pintura sobre concreto visto o superficie mineral.",
   "descripcion": "Aplicación de pintura sobre concreto visto, bloque o superficie mineral porosa, con imprimación selladora previa. El concreto joven es fuertemente alcalino y ataca las pinturas convencionales produciendo saponificación y desprendimiento, por lo que hay que respetar el tiempo de curado o emplear imprimación resistente a álcalis. Incluye la limpieza y eliminación de eflorescencias, la imprimación selladora, el resane de coqueras y las manos de acabado. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

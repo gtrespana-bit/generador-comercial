@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Pintura de cerramiento metálico.",
   "descripcion": "Aplicación de pintura anticorrosiva sobre cerramiento metálico, con limpieza previa. Incluye la preparación y la aplicación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

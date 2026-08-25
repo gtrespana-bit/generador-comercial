@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Cubierta de madera estructural.",
   "descripcion": "Ejecución de cubierta de madera estructural. Incluye la estructura de la cubierta. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

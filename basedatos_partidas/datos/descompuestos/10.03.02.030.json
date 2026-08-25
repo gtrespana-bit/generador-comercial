@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Impermeabilización de muro enterrado con bentonita.",
   "descripcion": "Impermeabilización de muro enterrado con geocompuesto de bentonita. Incluye la preparación y la colocación del geocompuesto. Medido por metro cuadrado impermeabilizado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

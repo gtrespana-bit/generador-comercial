@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Base de concreto para bomba.",
   "descripcion": "Ejecución de base de concreto para bomba. Incluye el vaciado y el acabado. Medido por unidad ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

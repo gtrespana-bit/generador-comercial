@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Control de apriete de pernos estructurales.",
   "descripcion": "Verificación del par de apriete de los pernos de alta resistencia de la estructura, con llave dinamométrica.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

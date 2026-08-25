@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Cubierta de teja criolla con canal y cobija.",
   "descripcion": "Cubierta de teja criolla de arcilla colocada a canal y cobija sobre listonado, con recibido de aleros y cumbreras con mortero. Incluye el replanteo, la colocación y los remates.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

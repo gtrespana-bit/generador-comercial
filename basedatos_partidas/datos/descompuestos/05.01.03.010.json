@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Cimbra y apuntalamiento de losa.",
   "descripcion": "Cimbra y apuntalamiento de losa durante el vaciado. Incluye la colocación de puntales. Medido por metro cuadrado apuntalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

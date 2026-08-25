@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Acabado de losa de fundación.",
   "descripcion": "Acabado y curado de losa de fundación. Incluye el alisado y el curado. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

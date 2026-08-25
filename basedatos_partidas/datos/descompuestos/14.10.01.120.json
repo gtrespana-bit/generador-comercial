@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Reparación de vaso de piscina.",
   "descripcion": "Reparación de vaso de piscina con resane de fisuras y reimpermeabilización puntual. Incluye la reparación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

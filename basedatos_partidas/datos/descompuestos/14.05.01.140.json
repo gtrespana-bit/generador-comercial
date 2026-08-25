@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Interruptor de apertura de portón.",
   "descripcion": "Instalación de interruptor o pulsador de apertura de portón, con cableado. Incluye la instalación y la conexión.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

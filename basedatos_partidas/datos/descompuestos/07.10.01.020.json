@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Reparación de puerta con reposición de herrajes.",
   "descripcion": "Reparación de puerta con reposición de herrajes deteriorados. Incluye la retirada de los herrajes dañados y el montaje de los nuevos. Medido por unidad reparada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

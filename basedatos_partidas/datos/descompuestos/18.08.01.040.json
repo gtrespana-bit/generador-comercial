@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Regulación de iluminación con dimmer.",
   "descripcion": "Instalación de regulador (dimmer) de iluminación, para ajustar el consumo. El regulador lo elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

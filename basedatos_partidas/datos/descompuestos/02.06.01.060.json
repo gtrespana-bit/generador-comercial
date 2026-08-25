@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Demolición de vierteaguas.",
   "descripcion": "Demolición de vierteaguas o alféizar de ventana. Incluye la demolición y la retirada del escombro. Medido por metro lineal demolido.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

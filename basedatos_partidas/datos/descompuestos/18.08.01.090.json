@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Iluminación de bajo consumo en áreas comunes.",
   "descripcion": "Instalación de luminaria de bajo consumo en áreas comunes. La luminaria la elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

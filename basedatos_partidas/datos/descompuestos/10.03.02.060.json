@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Barrera anticapilaridad en arranque de muro.",
   "descripcion": "Colocación de barrera anticapilaridad en el arranque del muro, sobre la fundación. Incluye la colocación de la lámina y el remate. Medido por metro lineal colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

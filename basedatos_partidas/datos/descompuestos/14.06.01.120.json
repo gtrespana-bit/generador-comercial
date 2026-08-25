@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Cama de siembra con sustrato.",
   "descripcion": "Ejecución de cama de siembra con sustrato abonado, para parterres y áreas de plantación. Incluye el extendido y el rastrillado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

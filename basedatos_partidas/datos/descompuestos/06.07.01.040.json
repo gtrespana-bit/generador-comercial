@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Fachada ventilada de fibrocemento.",
   "descripcion": "Ejecución de fachada ventilada de panel de fibrocemento, con subestructura. Incluye la subestructura y la colocación de los paneles. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

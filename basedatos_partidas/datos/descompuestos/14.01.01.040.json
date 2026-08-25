@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Rampa de acceso vehicular de concreto.",
   "descripcion": "Rampa de acceso vehicular de concreto armado con acabado antideslizante estriado y su drenaje de pie. Las estrías transversales no son decorativas: en pendiente y con lluvia son lo único que da tracción al vehículo y agarre al peatón. Incluye el replanteo de la pendiente comprobando que el vehículo no roce en los quiebres de entrada y salida, la preparación de la base, la malla, el encofrado lateral, el vaciado y reglado, el estriado transversal, el canal o rejilla de recogida al pie de la rampa que impide que el agua entre al garaje, el aserrado de juntas y el curado. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

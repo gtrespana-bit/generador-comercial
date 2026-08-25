@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Drenaje de cubierta con canaleta.",
   "descripcion": "Ejecución de drenaje de cubierta con canaleta y bajante. Incluye la colocación de la canaleta y la conexión a la bajante. Medido por metro lineal ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

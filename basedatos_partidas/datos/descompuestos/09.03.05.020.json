@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Canalización con conductor de 10 AWG.",
   "descripcion": "Canalización eléctrica con conductor de 10 AWG. Incluye el tendido del conductor. Medido por metro lineal instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

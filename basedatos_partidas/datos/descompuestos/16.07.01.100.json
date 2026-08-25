@@ -6,7 +6,7 @@
   "unidad": "glb",
   "titulo": "Informe de diagnóstico no destructivo.",
   "descripcion": "Emisión de informe de diagnóstico no destructivo, con resultados de las inspecciones realizadas.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Portón corredizo metálico.",
   "descripcion": "Suministro y montaje de portón corredizo metálico para acceso vehicular o peatonal, con su bastidor, riel, ruedas, guías y topes. Incluye la fabricación o recepción del bastidor, la ejecución o comprobación del riel de rodadura perfectamente nivelado, ya que cualquier desnivel hace que el portón corra solo o se atasque, el montaje de las ruedas y guías superiores, el ajuste del recorrido y los topes, la imprimación anticorrosiva y la comprobación de maniobra. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

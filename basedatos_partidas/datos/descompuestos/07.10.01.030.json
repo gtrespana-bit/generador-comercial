@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Reparación de ventana con ajuste de herrajes.",
   "descripcion": "Reparación de ventana con ajuste de herrajes y mecanismos. Incluye la comprobación y el ajuste. Medido por metro cuadrado reparado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

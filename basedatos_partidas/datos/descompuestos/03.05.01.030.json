@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Cuneta provisional de desvío de aguas.",
   "descripcion": "Ejecución de cuneta provisional de desvío de aguas. Incluye la excavación de la cuneta. Medido por metro lineal ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

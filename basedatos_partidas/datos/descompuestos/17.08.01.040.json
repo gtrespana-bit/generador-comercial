@@ -6,7 +6,7 @@
   "unidad": "glb",
   "titulo": "Formación específica en trabajos en altura.",
   "descripcion": "Formación específica al personal para trabajos en altura, con prácticas de uso de EPI.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Recalce de fundación existente.",
   "descripcion": "Recalce de fundación existente mediante bataches, para ampliar su superficie de apoyo o descender su cota cuando aparecen asientos o cuando se aumenta la carga sobre la estructura. Se ejecuta por tramos alternos y nunca en continuo: excavar bajo toda la fundación a la vez la deja sin apoyo y provoca el colapso que se pretende evitar. Incluye el estudio y la definición del orden de bataches, la excavación por tramos alternos, el encofrado, el armado con conexión a la fundación existente mediante anclaje químico, el vaciado con mortero de retracción compensada, el acuñado contra la fundación existente y la espera antes de abrir el tramo siguiente. Medido en longitud realmente recalzada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Retiro de impermeabilización líquida o acrílica.",
   "descripcion": "Retiro de recubrimiento impermeabilizante líquido, acrílico o cementoso existente en cubierta o terraza, ejecutado con medios manuales mediante rasqueta y lijado mecánico, hasta dejar el soporte limpio y con la rugosidad adecuada para recibir el nuevo sistema. Incluye la protección de los desagües, el rascado de las zonas con burbujas o desprendimientos, el lijado de la superficie remanente, el aspirado del polvo generado y el retiro de los residuos. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en superficie realmente tratada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

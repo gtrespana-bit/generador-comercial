@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Prueba de estanqueidad de baño o ducha.",
   "descripcion": "Prueba de estanqueidad de zona húmeda (baño, ducha) por inundación, para verificar la impermeabilización.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

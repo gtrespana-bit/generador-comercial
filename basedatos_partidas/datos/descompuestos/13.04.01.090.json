@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Barra de colgar y soportes de closet.",
   "descripcion": "Colocación de barra de colgar y soportes de closet, con fijación a los laterales. Incluye el replanteo y la fijación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "kg",
   "titulo": "Estructura metálica menor y marquesinas.",
   "descripcion": "Fabricación y montaje de estructura metálica menor, tal como marquesinas, pérgolas, soportes de equipos y estructuras auxiliares, con su tratamiento anticorrosivo. Incluye el replanteo, el corte y armado de los perfiles, la soldadura de las uniones con su limpieza de escoria, el tratamiento anticorrosivo, el izado y montaje, el anclaje al soporte y la comprobación geométrica. Medido en peso realmente montado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

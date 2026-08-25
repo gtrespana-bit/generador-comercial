@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Viga de corona o de amarre en pared de bloque.",
   "descripcion": "Viga de corona de concreto armado vaciada en la coronación del paño de mampostería, que cierra el marco de confinamiento junto con los machones y reparte las cargas hacia ellos. Incluye el armado con sus cabillas longitudinales y estribos, el anclaje en los machones extremos, el encofrado apoyado sobre la última hilada, el vaciado con concreto de 210 kg/cm2, el vibrado, el curado y el desencofrado. Medido en longitud realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

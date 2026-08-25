@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Losa nervada con bloques de arcilla de aliviano.",
   "descripcion": "Losa nervada de entrepiso o techo formada por nervios de concreto armado y bloques de arcilla de aliviano, con su loseta de compresión y malla de retracción. Incluye el encofrado y apuntalamiento del fondo, la colocación de los bloques de aliviano dejando el ancho de nervio previsto, el armado de los nervios con su refuerzo inferior y superior, la colocación de la malla electrosoldada de la loseta de compresión, el vaciado y vibrado del concreto, el reglado, el curado y el desapuntalamiento escalonado. Medido en superficie de losa realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Conexión de gas para cocina.",
   "descripcion": "Ejecución de punto de conexión de gas para cocina, con tubería, llave de corte y prueba de estanqueidad. Incluye la conexión y la prueba.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

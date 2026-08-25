@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Desmontaje de rejilla de ventilación.",
   "descripcion": "Desmontaje de rejilla de ventilación. Incluye la retirada de la rejilla. Medido por unidad desmontada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

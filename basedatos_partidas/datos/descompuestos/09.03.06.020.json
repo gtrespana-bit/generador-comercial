@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Reubicación de punto eléctrico existente.",
   "descripcion": "Reubicación de un punto eléctrico existente, con el traslado de la caja y del mecanismo a la nueva posición y el anulado del punto anterior. Es de las intervenciones más frecuentes en reforma al cambiar la distribución del mobiliario. Incluye el corte y verificación de ausencia de tensión, la apertura de la nueva roza y caja, el desvío del conductor con caja de derivación registrable, ya que un empalme enterrado sin registro es una falla futura imposible de localizar, el montaje del mecanismo en la nueva posición, el tapado y resane de la caja anulada y la prueba. Medido por punto reubicado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

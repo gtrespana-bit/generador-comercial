@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Piso de concreto coloreado.",
   "descripcion": "Ejecución de piso de concreto coloreado con pigmento integral y acabado alisado. Incluye el vaciado, el coloreado y el alisado. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

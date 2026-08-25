@@ -6,7 +6,7 @@
   "unidad": "m³",
   "titulo": "Excavación manual en zanja para fundaciones.",
   "descripcion": "Excavación manual en zanja o pozo para fundaciones, en terreno de consistencia media, hasta la cota y con las dimensiones de proyecto. Es la solución habitual en obra de reforma y en ampliaciones donde no hay acceso para maquinaria o el volumen no la justifica. Incluye el replanteo de la zanja, la excavación con pico y pala por capas, el acopio del material a distancia suficiente del borde para no sobrecargarlo, el perfilado de paredes y fondo, y la extracción del material hasta el punto de carga. No incluye el transporte del material sobrante a botadero, que se valora en el subcapítulo de transporte de tierras. Medido en volumen teórico de excavación según las dimensiones de proyecto.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

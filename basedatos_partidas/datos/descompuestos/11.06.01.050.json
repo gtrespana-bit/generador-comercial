@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Correas de acero para cubierta.",
   "descripcion": "Colocación de correas de acero sobre las cerchas para apoyo de la cubierta, con fijación soldada o atornillada. Incluye el replanteo y la fijación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Bajante de aguas lluvias.",
   "descripcion": "Suministro y montaje de bajante de aguas lluvias en PVC, con sus abrazaderas, codos y conexión a la red de drenaje. Incluye el replanteo del recorrido, la fijación de las abrazaderas al paramento con la separación indicada, el montaje de los tramos con sus codos de arranque y de pie, el sellado de las uniones y la conexión a la tanquilla o punto de vertido, evitando la descarga libre contra el piso que erosiona y salpica la fachada. Medido en longitud realmente montada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

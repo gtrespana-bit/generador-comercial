@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Desmontaje de soporte de aparato de aire.",
   "descripcion": "Desmontaje de soporte metálico de aparato de aire acondicionado en fachada. Incluye la retirada del soporte. Medido por unidad desmontada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

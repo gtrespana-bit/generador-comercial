@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Desmontaje de impermeabilización de cubierta.",
   "descripcion": "Desmontaje de impermeabilización de cubierta. Incluye la retirada de la membrana. Medido por metro cuadrado desmontado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

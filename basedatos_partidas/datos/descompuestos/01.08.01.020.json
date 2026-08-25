@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Punto de agua provisional de obra.",
   "descripcion": "Instalación de punto de agua provisional para el amasado de morteros, la limpieza y el consumo de la obra, formado por derivación desde la red existente con llave de paso, manguera reforzada hasta el frente de trabajo y punto de descarga con recogida. Incluye la comprobación de la presión disponible, el montaje de la llave y los accesorios, el tendido de la manguera por recorridos protegidos del tránsito, la previsión de la evacuación del agua utilizada para no inundar zonas terminadas, el mantenimiento durante la obra y el desmontaje final con reposición del punto de toma. Medido por punto realmente instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

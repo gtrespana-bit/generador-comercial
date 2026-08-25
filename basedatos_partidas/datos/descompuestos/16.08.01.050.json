@@ -6,7 +6,7 @@
   "unidad": "glb",
   "titulo": "Certificación de instalación de gas.",
   "descripcion": "Emisión de la certificación de la instalación de gas, con la prueba de estanqueidad y cumplimiento.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

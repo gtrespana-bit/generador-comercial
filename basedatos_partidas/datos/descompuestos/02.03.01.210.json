@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Desmontaje de publicidad o letrero de fachada.",
   "descripcion": "Desmontaje de letrero, rótulo o publicidad de fachada, con retirada de fijaciones. Incluye la retirada del elemento y sus soportes. Medido por unidad desmontada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Tabique de yeso laminado de una sola placa.",
   "descripcion": "Ejecución de tabique de yeso laminado de placa simple por cara. Incluye la estructura, la placa y el tratamiento de juntas. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

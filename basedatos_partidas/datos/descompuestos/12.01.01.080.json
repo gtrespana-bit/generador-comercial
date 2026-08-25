@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Nivelación puntual de paramento con pasta.",
   "descripcion": "Nivelación puntual de paramento con pasta de nivelación para alisar zonas irregulares previo al acabado. Incluye la aplicación de la pasta y el lijado. Medido por metro cuadrado nivelado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

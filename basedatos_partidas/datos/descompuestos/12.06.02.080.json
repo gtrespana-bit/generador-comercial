@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Revestimiento de descansillo de escalera.",
   "descripcion": "Revestimiento del descansillo de escalera con pieza cerámica o porcelanato. Incluye la preparación del soporte, la colocación y el rejuntado. Medido por metro cuadrado revestido.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

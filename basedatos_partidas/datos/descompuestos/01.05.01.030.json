@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Andamio interior móvil o sobre borriquetas.",
   "descripcion": "Andamio interior rodante o plataforma sobre borriquetas para trabajos en altura en interiores, tales como cielos rasos, frisos de pared alta y pintura. Incluye el traslado del equipo a obra, su montaje y nivelación, la colocación de barandas cuando la altura de trabajo lo exija, los desplazamientos y ajustes de altura sucesivos a lo largo de la jornada, el desmontaje y el retiro. Medido en superficie de techo o de paramento realmente atendida desde el andamio.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

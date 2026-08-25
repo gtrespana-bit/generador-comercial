@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Prueba de vacío en solapes de membrana.",
   "descripcion": "Prueba de vacío sobre los solapes de la membrana impermeabilizante, para detectar defectos de soldadura.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Aislamiento térmico de tabique con doble panel.",
   "descripcion": "Suministro y colocación de doble panel de aislamiento térmico en tabique. Incluye la colocación de los paneles y el remate. Medido por metro cuadrado aislado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

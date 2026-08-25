@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Verificación de polaridad y neutro.",
   "descripcion": "Verificación de la polaridad y correcta conexión del neutro en los tomacorrientes, con comprobador.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

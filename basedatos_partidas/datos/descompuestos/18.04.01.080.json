@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Aislamiento de piso con panel rígido de lana.",
   "descripcion": "Colocación de panel rígido de lana mineral bajo el piso, para aislamiento térmico y acústico.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

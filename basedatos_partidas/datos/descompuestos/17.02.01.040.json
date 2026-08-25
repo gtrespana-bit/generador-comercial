@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Dotación de protección ocular y auditiva.",
   "descripcion": "Dotación de protección ocular (gafas) y auditiva (tapones) para trabajos con riesgo.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

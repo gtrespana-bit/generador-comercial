@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Iluminación LED con sensor de presencia.",
   "descripcion": "Instalación de luminaria LED con sensor de presencia, para ahorro en zonas de paso. La luminaria la elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

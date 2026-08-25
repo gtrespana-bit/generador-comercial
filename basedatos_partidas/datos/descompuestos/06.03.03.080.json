@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Mampostería estructural con bloque canal.",
   "descripcion": "Ejecución de mampostería estructural con bloque canal y viga dintel. Incluye la mampostería, el refuerzo y el relleno. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

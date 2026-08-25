@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Aislamiento de techo con poliestireno extruido.",
   "descripcion": "Colocación de panel de poliestireno extruido sobre el techo, para reducir las pérdidas térmicas.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

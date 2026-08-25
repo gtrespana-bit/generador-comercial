@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Prueba de fugas de tubería de gas.",
   "descripcion": "Prueba de estanqueidad de la tubería de gas con manómetro y jabón detector, para verificar la ausencia de fugas.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

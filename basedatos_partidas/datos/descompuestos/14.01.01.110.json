@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Pavimento de concreto estampado.",
   "descripcion": "Pavimento exterior de concreto estampado con moldes y desmoldeante de color, sellado. Incluye el vaciado, el estampado y el sellado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

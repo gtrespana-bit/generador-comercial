@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de luminaria de sobreponer o colgante.",
   "descripcion": "Instalación de luminaria de sobreponer, aplique o colgante, con su fijación y conexión. Incluye el replanteo, la comprobación de que el punto de anclaje soporta el peso de la luminaria, que en colgantes y lámparas de gran formato exige refuerzo previo en el cielo raso, la fijación mecánica, la conexión, el ajuste de altura en colgantes y la prueba de encendido. La luminaria la elige el cliente y se presupuesta aparte. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Luminaria de sobreponer o colgante del modelo elegido por el cliente",

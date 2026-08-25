@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Mueble de despensa con gavetas y entrepaños.",
   "descripcion": "Fabricación e instalación de mueble de despensa con gavetas y entrepaños regulables, en melamina. Incluye el despiece y el armado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Fachada de bloque de concreto con friso.",
   "descripcion": "Ejecución de fachada de bloque de concreto de 15 cm con friso de mortero a una cara. Incluye la mampostería y el friso exterior. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

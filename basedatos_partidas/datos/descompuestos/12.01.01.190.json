@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Reparación de esquina con cantonera.",
   "descripcion": "Reparación de esquina o arista de paramento con colocación de cantonera metálica y acabado con mortero o pasta. Incluye la fijación de la cantonera y el remate. Medido por metro lineal de esquina reparada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

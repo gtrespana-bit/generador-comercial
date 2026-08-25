@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Listonado para cubierta de teja.",
   "descripcion": "Colocación de listonado de madera sobre la estructura para recibir la cubierta de teja, con separación según el solape de la pieza. Incluye el replanteo y la fijación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

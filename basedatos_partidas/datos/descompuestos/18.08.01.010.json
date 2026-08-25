@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Sustitución de luminarias por LED.",
   "descripcion": "Sustitución de luminarias por LED de alta eficiencia, con conexión. La luminaria la elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

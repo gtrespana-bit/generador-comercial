@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Columpio o tobogán de parque.",
   "descripcion": "Instalación de columpio o tobogán de parque, con anclaje y fijación. Incluye la fijación. El equipo lo elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

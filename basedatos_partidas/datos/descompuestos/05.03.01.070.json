@@ -6,7 +6,7 @@
   "unidad": "kg",
   "titulo": "Acero de refuerzo en pantalla o muro estructural.",
   "descripcion": "Suministro, corte, doblado, armado y colocación de acero de refuerzo en cabillas corrugadas en pantalla o muro estructural de concreto armado, en dos parrillas verticales, según los planos de despiece. Incluye el corte y doblado, el armado de ambas parrillas con sus barras verticales y horizontales, la colocación de los ganchos o grapas de unión entre parrillas que impiden su separación durante el vaciado, el solape con las esperas del nivel inferior, la disposición de los refuerzos de borde y de los elementos de confinamiento en los extremos, la colocación de separadores en ambas caras y la revisión del despiece. Medido en peso de acero realmente colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

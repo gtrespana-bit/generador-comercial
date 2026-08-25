@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Abrillantado de piso de mármol.",
   "descripcion": "Abrillantado de piso de mármol con pulido mecánico y cristalizado. Incluye el pulido, el cristalizado y el abrillantado final. Medido por metro cuadrado abrillantado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

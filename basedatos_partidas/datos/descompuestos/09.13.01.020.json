@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Pararrayos tipo Franklin de punta simple sobre soporte.",
   "descripcion": "Suministro e instalación de pararrayos tipo Franklin de punta simple, sobre soporte en cubierta o remate, con conexión a la bajante. Incluye el replanteo del punto de captación, el montaje del soporte, la fijación de la punta captadora, la conexión al conductor de bajada y la protección de las uniones. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

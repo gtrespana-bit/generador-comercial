@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Sellado de junta de bañera.",
   "descripcion": "Sellado de junta perimetral de bañera o ducha. Incluye la limpieza y el sellado. Medido por metro lineal sellado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

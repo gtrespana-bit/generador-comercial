@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Protección de baranda o pasamanos existente.",
   "descripcion": "Protección de baranda o pasamanos existente. Incluye el forrado con lámina. Medido por metro lineal protegido.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

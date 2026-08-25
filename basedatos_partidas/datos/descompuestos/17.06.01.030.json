@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Señalización de extintores.",
   "descripcion": "Colocación de señalización de extintores y de los medios de extinción de la obra.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

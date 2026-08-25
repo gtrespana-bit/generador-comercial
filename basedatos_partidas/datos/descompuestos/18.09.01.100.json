@@ -6,7 +6,7 @@
   "unidad": "glb",
   "titulo": "Monitorización de producción fotovoltaica.",
   "descripcion": "Instalación de sistema de monitorización de la producción fotovoltaica. El sistema lo elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

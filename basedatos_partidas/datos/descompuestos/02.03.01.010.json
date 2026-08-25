@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Desmontaje de baranda o pasamanos de balcón.",
   "descripcion": "Desmontaje de baranda o antepecho metálico de balcón, terraza o escalera exterior, ejecutado mediante oxicorte o desatornillado según el anclaje, con sostenimiento previo del elemento. Incluye la instalación de una protección provisional del borde antes de retirar la baranda definitiva, requisito de seguridad ineludible cuando queda un vacío accesible, el corte de los anclajes al ras del soporte, el resane de los huecos de anclaje, el descenso del material y su acopio clasificado como chatarra. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en longitud realmente desmontada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Dintel de concreto armado encofrado en sitio.",
   "descripcion": "Ejecución de dintel de concreto armado vaciado en sitio sobre vano. Incluye el encofrado, el armado y el vaciado. Medido por metro lineal ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

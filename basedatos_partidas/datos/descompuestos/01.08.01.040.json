@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Baño portátil de obra, por mes de permanencia.",
   "descripcion": "Puesta a disposición de baño portátil para el personal de obra, incluido su traslado, emplazamiento, mantenimiento y vaciado periódico durante un mes. Es exigible en obras sin servicios sanitarios utilizables y evita el uso de los del inmueble en reforma. Incluye el transporte y colocación en punto accesible al camión de servicio, el suministro de consumibles, el vaciado y limpieza periódicos y el retiro al finalizar el periodo. Medido por mes de permanencia.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

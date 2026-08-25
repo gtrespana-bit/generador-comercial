@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Cerca de tubos metálicos.",
   "descripcion": "Ejecución de cerca de tubos metálicos horizontales sobre postes, con pintura anticorrosiva. Incluye el montaje y la pintura.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

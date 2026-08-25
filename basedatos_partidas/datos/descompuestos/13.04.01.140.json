@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Puerta de closet con espejo.",
   "descripcion": "Fabricación y colocación de puerta de closet con espejo integrado, con bisagras o corredera. Incluye el montaje y la regulación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m³",
   "titulo": "Concreto para pantalla estructural.",
   "descripcion": "Concreto premezclado de resistencia 250 kg/cm2 vaciado en pantalla o muro estructural, incluida su compactación por vibrado y su curado. Incluye la revisión previa del armado, del encofrado y de los recubrimientos, la recepción del concreto, el vaciado por capas de altura limitada y por puntos alternos para no descuadrar el encofrado, el empleo de tubo de descarga para evitar la segregación, la compactación con vibrador de aguja en cada capa, el curado prolongado y el desencofrado una vez alcanzada la resistencia. Medido en volumen teórico según las dimensiones de proyecto.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

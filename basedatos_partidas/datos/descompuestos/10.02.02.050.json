@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Suelo flotante con doble manta acústica.",
   "descripcion": "Suministro y colocación de doble manta acústica bajo piso, para mayor aislamiento de impacto. Incluye la extensión de las dos mantas y el remate. Medido por metro cuadrado colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

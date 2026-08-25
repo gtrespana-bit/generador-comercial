@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Limpieza de paramento con agua a presión.",
   "descripcion": "Limpieza de paramento interior con agua a presión para eliminar suciedad y restos antes del acabado. Incluye la protección del entorno y la limpieza por franjas. Medido por metro cuadrado limpiado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

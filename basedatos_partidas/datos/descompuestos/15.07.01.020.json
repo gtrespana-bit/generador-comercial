@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Limpieza profunda de vidrios y acabados delicados.",
   "descripcion": "Limpieza profunda de vidrios, espejos, acabados pulidos y superficies delicadas al finalizar la obra. Requiere producto y técnica específicos por material: un desincrustante ácido usado sobre mármol o sobre aluminio anodizado lo mancha de forma irreversible, y ese daño aparece justo el día de la entrega. Incluye la retirada de restos de mortero, silicona y adhesivos con espátula plástica, la limpieza con el producto compatible con cada material, el secado sin dejar marcas y la revisión final. Medido en superficie realmente tratada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Revisión y limpieza de cubierta con informe.",
   "descripcion": "Limpieza de cubierta con retirada de hojas, sedimentos y revisión de desagües y remates, con informe de estado. Incluye la limpieza de canales y tragantes.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

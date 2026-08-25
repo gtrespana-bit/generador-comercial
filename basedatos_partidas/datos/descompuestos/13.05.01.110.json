@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de lavadora empotrada.",
   "descripcion": "Instalación de lavadora con conexión de agua, desagüe y electricidad. Incluye la nivelación y la conexión. El equipo lo elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

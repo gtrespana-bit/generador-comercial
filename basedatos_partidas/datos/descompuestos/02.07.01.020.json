@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Desmontaje de unidad condensadora de aire.",
   "descripcion": "Desmontaje de unidad condensadora de aire acondicionado, con retirada del refrigerante. Incluye la recuperación del refrigerante y la retirada de la unidad. Medido por unidad desmontada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

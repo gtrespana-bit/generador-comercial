@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Sustitución de canal de recogida de aguas lluvias.",
   "descripcion": "Sustitución de canal de recogida de aguas lluvias dañado, con desmontaje y colocación del nuevo. Incluye la fijación y los remates.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

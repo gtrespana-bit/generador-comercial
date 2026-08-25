@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Reparación de cerca perimetral.",
   "descripcion": "Reparación de cerca perimetral con sustitución de tramos de malla o postes dañados. Incluye la sustitución.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

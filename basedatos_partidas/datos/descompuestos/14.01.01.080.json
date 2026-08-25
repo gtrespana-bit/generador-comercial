@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Pavimento de gravilla compactada.",
   "descripcion": "Pavimento exterior de gravilla o piedra suelta sobre base nivelada, con geotextil de separación. Incluye el extendido y la nivelación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

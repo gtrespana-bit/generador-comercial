@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Andamio tubular de fachada con plataforma.",
   "descripcion": "Montaje, alquiler y desmontaje de andamio tubular de fachada con plataformas. Incluye el montaje, la permanencia y el desmontaje. Medido por metro cuadrado montado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

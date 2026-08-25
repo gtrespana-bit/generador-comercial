@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Encofrado de madera de columna.",
   "descripcion": "Encofrado y desencofrado de columna de concreto con madera. Incluye el montaje, el desencofrado y la limpieza. Medido por metro cuadrado encofrado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

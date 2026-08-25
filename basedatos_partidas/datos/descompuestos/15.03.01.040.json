@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Contenedor de residuos de madera.",
   "descripcion": "Alquiler de contenedor destinado a residuos de madera, con su colocación y retirada para reciclaje.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

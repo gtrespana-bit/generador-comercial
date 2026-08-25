@@ -6,7 +6,7 @@
   "unidad": "m³",
   "titulo": "Excavación manual en interiores.",
   "descripcion": "Excavación manual en el interior de una edificación existente, para rebaje de cota, ejecución de fundaciones de refuerzo o paso de instalaciones enterradas. El rendimiento es muy inferior al de una excavación a cielo abierto por la falta de espacio de maniobra, la imposibilidad de usar maquinaria y la obligación de evacuar el material a mano por el interior del inmueble. Incluye el replanteo, la protección de los ambientes de paso, la excavación por capas con pico y pala, el ensacado del material y su traslado hasta el punto de acopio exterior. No incluye el bote.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

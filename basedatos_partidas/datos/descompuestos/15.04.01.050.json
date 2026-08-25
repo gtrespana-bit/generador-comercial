@@ -6,7 +6,7 @@
   "unidad": "m³",
   "titulo": "Retirada de cartón y embalajes a reciclaje.",
   "descripcion": "Retirada y entrega de cartón y embalajes a planta de reciclaje, con carga y transporte.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

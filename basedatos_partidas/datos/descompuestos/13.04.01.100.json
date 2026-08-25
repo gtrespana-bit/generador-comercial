@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Zapatero empotrado.",
   "descripcion": "Fabricación e instalación de zapatero empotrado en melamina, con entrepaños inclinados. Incluye el despiece y el armado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

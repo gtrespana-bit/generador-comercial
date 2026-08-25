@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Colocación de geotextil separador.",
   "descripcion": "Colocación de geotextil separador bajo rellenos o pavimentos. Incluye la extensión del geotextil y el solape. Medido por metro cuadrado colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Zócalo escalonado de escalera.",
   "descripcion": "Ejecución del zócalo o rodapié escalonado que acompaña a la escalera en su encuentro con el paramento, con la pieza cortada siguiendo el perfil de peldaños. Es el remate que da el acabado a la escalera y el trabajo de rodapié de menor rendimiento, ya que cada pieza exige un corte doble en ángulo ajustado al peldaño. Incluye el replanteo de la línea inclinada, el corte de las piezas siguiendo el perfil, la colocación con adhesivo y nivelación, el rejuntado y el sellado de la junta con el peldaño. La pieza la elige el cliente y se presupuesta aparte. Medido en longitud real de la línea inclinada del zócalo.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Pieza de zócalo a juego con el revestimiento de la escalera",

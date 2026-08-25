@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Mejoramiento de fundación con geotextil.",
   "descripcion": "Colocación de geotextil de separación en fondo de fundación. Incluye la colocación del geotextil. Medido por metro cuadrado colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

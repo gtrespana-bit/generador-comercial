@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de ascensor unifamiliar.",
   "descripcion": "Instalación de ascensor unifamiliar, con estructura, cabina y control. Incluye el montaje de la estructura, la cabina y la puesta en marcha. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

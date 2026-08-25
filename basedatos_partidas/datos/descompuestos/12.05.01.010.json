@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Nivelación con mortero autonivelante de 5 mm de espesor medio.",
   "descripcion": "Regularización de soporte mediante mortero autonivelante de base cemento, de 5 mm de espesor medio, para dejar la superficie en condiciones de planitud aptas para recibir pavimento cerámico, incluso de gran formato. Incluye limpieza y aspirado previo del soporte, aplicación de imprimación tapaporos para regular la absorción, colocación de banda perimetral de desolidarización, amasado mecánico, vertido, extendido y desaireado del producto, y espera hasta transitabilidad. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

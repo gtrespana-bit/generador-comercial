@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Portón batiente de tubo de acero.",
   "descripcion": "Suministro y colocación de portón batiente de tubo de acero, con bisagras y cerradura. Incluye la fabricación, el montaje y el anclaje. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

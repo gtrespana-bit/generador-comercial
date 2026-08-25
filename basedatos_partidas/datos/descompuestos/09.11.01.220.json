@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de cámara de terraza.",
   "descripcion": "Instalación de cámara de terraza., con conexión y configuración. Incluye la conexión y la configuración. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

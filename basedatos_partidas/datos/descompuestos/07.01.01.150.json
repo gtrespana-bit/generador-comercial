@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Puerta interior de vidrio sin marco.",
   "descripcion": "Suministro y colocación de puerta interior de vidrio templado sin marco, con herrajes de pivote o bisagra. Incluye el montaje de los herrajes y la colocación del vidrio. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

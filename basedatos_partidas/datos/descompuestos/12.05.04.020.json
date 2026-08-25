@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Piso de granito vaciado en sitio.",
   "descripcion": "Piso continuo de granito vaciado en sitio, formado por capa de mortero con grano de mármol, dividida en paños mediante platinas divisorias, con pulido y abrillantado final. Es un piso tradicional muy usado en Venezuela, de gran durabilidad y sin juntas de pieza, cuyo resultado depende de la homogeneidad de la mezcla y de la ejecución del pulido. Incluye la preparación del soporte, el replanteo y colocación de las platinas divisorias que absorben la retracción y definen los paños, el vaciado y reglado de la capa de grano, el curado, el pulido en pasadas de grano decreciente con aporte de agua, el resane de poros y el abrillantado final. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

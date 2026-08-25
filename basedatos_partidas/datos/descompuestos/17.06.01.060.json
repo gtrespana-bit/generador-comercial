@@ -6,7 +6,7 @@
   "unidad": "glb",
   "titulo": "Corte de oxicorte con pantalla de protección.",
   "descripcion": "Protección contra incendios en trabajos de oxicorte y soldadura, con pantalla y extintor próximo.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

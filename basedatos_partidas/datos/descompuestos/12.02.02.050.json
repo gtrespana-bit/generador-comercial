@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Reparación puntual de friso de yeso.",
   "descripcion": "Reparación de zonas puntuales de friso de yeso deteriorado por golpes, humedades ya resueltas o desprendimientos, con reposición del material y enrase con el friso existente. Incluye la delimitación y retirada del material suelto hasta encontrar friso sano y bien adherido, la limpieza y humedecido del borde, la aplicación del puente de adherencia, la reposición por capas de la pasta, el enrase con la superficie existente y el lijado de la transición. En reparaciones sobre humedades es imprescindible haber eliminado antes la causa, porque de lo contrario la zona vuelve a fallar. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

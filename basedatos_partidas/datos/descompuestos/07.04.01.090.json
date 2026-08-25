@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Cerrajera de protección para ventana.",
   "descripcion": "Suministro y colocación de cerrajera de protección para ventana, con anclaje a muro. Incluye la fabricación, el montaje y el anclaje. Medido por metro cuadrado instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

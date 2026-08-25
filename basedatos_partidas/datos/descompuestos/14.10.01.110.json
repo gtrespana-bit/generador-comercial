@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Limpieza y puesta en marcha de piscina.",
   "descripcion": "Limpieza y puesta en marcha de piscina, con llenado, ajuste químico y puesta en marcha del filtrado. Incluye el llenado y el ajuste.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

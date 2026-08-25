@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Encamisado de columna de concreto armado.",
   "descripcion": "Refuerzo de columna existente mediante encamisado de concreto armado, aumentando su sección con una capa perimetral de concreto con su propio armado, conectada al núcleo original. Incluye el apeo previo de la estructura que descarga la columna, el repicado de la superficie existente para dar adherencia, la perforación y anclaje químico de los conectores que cosen el encamisado al núcleo, el armado longitudinal y de estribos de confinamiento, el encofrado, el vaciado con concreto de retracción compensada o mortero fluido dado el reducido espesor, el curado y el desapeo escalonado. Medido en longitud de columna realmente encamisada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

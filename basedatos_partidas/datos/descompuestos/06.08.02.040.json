@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Defensa de fachada con reja.",
   "descripcion": "Suministro y colocación de defensa de fachada con reja. Incluye la fabricación y el montaje. Medido por metro cuadrado instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

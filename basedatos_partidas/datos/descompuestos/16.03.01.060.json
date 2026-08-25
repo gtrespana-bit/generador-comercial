@@ -6,7 +6,7 @@
   "unidad": "glb",
   "titulo": "Prueba de estanqueidad de piscina.",
   "descripcion": "Prueba de estanqueidad de piscina por llenado controlado, con registro de pérdidas y revisión del vaso.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Pintura a dos colores con guarda de separación.",
   "descripcion": "Aplicación de pintura de caucho a dos colores en un mismo paramento, con guarda o línea de separación recta. Incluye la aplicación de ambos colores con enmascarado de la línea y el remate limpio de la unión. Medido por metro cuadrado pintado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Retiro de raíces y obstáculos menores enterrados.",
   "descripcion": "Retiro de raíces, restos de fundaciones antiguas, tuberías fuera de servicio y demás obstáculos menores que aparecen enterrados al despejar el terreno. Incluye la localización y descubrimiento del obstáculo, su extracción con medios manuales o con retroexcavadora según el tamaño, el corte con motosierra o amoladora cuando sea necesario fragmentarlo, el relleno y compactación del hueco resultante con material del sitio y la separación del material extraído según sea escombro, chatarra o vegetal. No incluye el transporte del material sobrante a botadero, que se valora en el subcapítulo de transporte de tierras. Medido en superficie de terreno realmente sondeada y liberada de obstáculos.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

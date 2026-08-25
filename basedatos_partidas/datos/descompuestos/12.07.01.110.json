@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Formación de cajón para instalaciones en trasdosado.",
   "descripcion": "Formación de cajón o falso pilar de placa de yeso laminado para ocultar instalaciones dentro del trasdosado. Incluye la estructura del cajón, la placa y el tratamiento de juntas. Medido por metro lineal de cajón.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Pared de mampostería estructural de bloque de concreto de 15 cm.",
   "descripcion": "Pared portante de mampostería estructural con bloque de concreto de resistencia certificada de 15x20x40 cm, con mortero de pega de resistencia controlada, refuerzo horizontal en las juntas y celdas verticales rellenas con concreto fluido en las posiciones de proyecto. A diferencia de la mampostería confinada, aquí el muro es el elemento estructural y no un relleno entre marcos, de modo que la resistencia del bloque, la dosificación del mortero y el relleno efectivo de las celdas dejan de ser detalles de ejecución para ser requisitos verificables. Incluye replanteo, humedecido, colocación de hiladas a nivel y plomo con trabazón, escalerilla de refuerzo horizontal, colocación del acero vertical, limpieza del fondo de las celdas antes del relleno y vaciado del concreto fluido con vibrado. Medido a cinta corrida descontando huecos mayores de 2 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

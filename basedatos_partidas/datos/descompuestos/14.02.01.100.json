@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Pasamanos exterior de acero.",
   "descripcion": "Colocación de pasamanos exterior de acero, con fijación y pintura. Incluye la fijación y el acabado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

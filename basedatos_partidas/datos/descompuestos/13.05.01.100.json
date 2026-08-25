@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Conexión eléctrica de fuerza para cocina.",
   "descripcion": "Ejecución de circuito eléctrico de fuerza para cocina, con cableado, protección y toma. Incluye el cableado y la conexión.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

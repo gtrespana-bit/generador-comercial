@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Alero de lámina metálica.",
   "descripcion": "Ejecución de alero en cubierta de lámina metálica, con perfil de remate de borde atornillado. Incluye el replanteo, corte y fijación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

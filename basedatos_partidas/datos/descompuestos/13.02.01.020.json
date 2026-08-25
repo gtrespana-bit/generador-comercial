@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Mesón de concreto revestido.",
   "descripcion": "Ejecución de mesón de concreto armado vaciado en sitio, con su estructura de apoyo, revestido con el acabado elegido. Es la solución tradicional y la más económica cuando el acabado es cerámico o de granito vaciado. Incluye la ejecución de la estructura de apoyo, el encofrado y armado del tablero, el vaciado y curado, la conformación de los huecos de fregadero y placa, el desencofrado y la regularización de la superficie lista para recibir el revestimiento. No incluye el revestimiento de acabado. Medido en longitud de mesón.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

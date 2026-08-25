@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Trasdosado de medianería con aislamiento y placa.",
   "descripcion": "Suministro y montaje de trasdosado de medianería sobre muro medianero, con estructura autoportante, panel de lana mineral de 60 mm y placa de yeso laminado de 12,5 mm, para aislar del ruido y la humedad del vecino. Incluye la banda perimetral, la colocación del panel, el atornillado de la placa y el tratamiento de juntas. Medido por metro cuadrado de trasdosado terminado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

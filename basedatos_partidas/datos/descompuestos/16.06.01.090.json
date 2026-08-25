@@ -6,7 +6,7 @@
   "unidad": "glb",
   "titulo": "Puesta en servicio de climatización con ajuste.",
   "descripcion": "Puesta en servicio del sistema de climatización completo, con ajuste de parámetros y verificación de rendimiento.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

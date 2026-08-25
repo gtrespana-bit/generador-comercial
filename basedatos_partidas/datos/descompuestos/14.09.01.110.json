@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Iluminación de estacionamiento exterior.",
   "descripcion": "Instalación de iluminación de estacionamiento exterior, con luminaria y conexión. Incluye la conexión. La luminaria la elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

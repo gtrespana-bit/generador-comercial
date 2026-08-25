@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Andamio con barandilla de protección.",
   "descripcion": "Montaje de andamio con barandilla de protección y rodapié, para trabajos en altura.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

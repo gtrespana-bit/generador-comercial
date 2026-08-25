@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Replanteo de niveles y pendientes.",
   "descripcion": "Replanteo de niveles y pendientes de piso. Incluye el marcado de cotas. Medido por metro lineal replanteado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Desmontaje de cielo raso de machihembrado de madera.",
   "descripcion": "Desmontaje de cielo raso de machihembrado o tablilla de madera, junto con los rastreles y la estructura de soporte fijada a la losa, ejecutado con medios manuales mediante palanca y barra. Incluye la desconexión previa de las luminarias, la protección del piso y del mobiliario, la extracción de los clavos y tornillos que queden en la estructura, el retiro del material en atados hasta el punto de acopio, la clasificación de las piezas aprovechables y la limpieza de la zona. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en superficie realmente desmontada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

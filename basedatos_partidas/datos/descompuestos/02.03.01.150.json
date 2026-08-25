@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Desmontaje de bajante o canalón de fachada.",
   "descripcion": "Desmontaje de bajante o canalón de fachada, con retirada del elemento. Incluye la retirada de la bajante o canalón y sus soportes. Medido por metro lineal desmontado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

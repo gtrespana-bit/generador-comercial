@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Portero eléctrico o videoportero de acceso.",
   "descripcion": "Instalación de portero eléctrico o videoportero de acceso, con cableado y conexión. Incluye la instalación. El equipo lo elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

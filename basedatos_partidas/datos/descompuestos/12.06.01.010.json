@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Colocación de rodapié cerámico o de porcelanato.",
   "descripcion": "Colocación de rodapié de pieza cerámica o de porcelanato, a juego con el pavimento, recibido con adhesivo cementoso mejorado C2 TE sobre paramento previamente regularizado. Incluye replanteo, cortes a inglete en esquinas y encuentros, ajuste a los marcos de carpintería, rejuntado con mortero CG2 y sellado de la junta inferior con el pavimento. La pieza la elige el cliente y se presupuesta aparte. Medido en longitud realmente ejecutada, descontando los huecos de paso.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Rodapié cerámico o de porcelanato, a juego con el pavimento",

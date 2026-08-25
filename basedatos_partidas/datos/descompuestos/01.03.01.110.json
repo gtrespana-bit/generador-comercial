@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Protección de ventanas y vidrios.",
   "descripcion": "Protección de ventanas y vidrios existentes durante la obra. Incluye la colocación de lámina protectora. Medido por metro cuadrado protegido.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

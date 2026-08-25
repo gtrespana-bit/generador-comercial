@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Zona de acopio de chatarra metálica.",
   "descripcion": "Habilitación de zona de acopio de chatarra metálica, delimitada y señalizada, para su venta o entrega a gestor autorizado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

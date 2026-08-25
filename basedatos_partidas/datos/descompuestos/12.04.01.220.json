@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Mural decorativo pintado a mano.",
   "descripcion": "Ejecución de mural decorativo pintado a mano sobre paramento, según diseño. Incluye el replanteo del diseño, la pintura y el acabado protector. Medido por metro cuadrado de mural.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

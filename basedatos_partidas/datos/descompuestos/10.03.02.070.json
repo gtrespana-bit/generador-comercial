@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Impermeabilización de muro enterrado con manto autoadherido.",
   "descripcion": "Impermeabilización de muro enterrado con manto asfáltico autoadherido. Incluye la preparación del soporte y la colocación del manto. Medido por metro cuadrado impermeabilizado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

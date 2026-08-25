@@ -6,7 +6,7 @@
   "unidad": "kg",
   "titulo": "Acero de refuerzo en columnas.",
   "descripcion": "Suministro, corte, doblado, armado y colocación de acero de refuerzo en cabillas corrugadas de límite elástico 4.200 kg/cm2 en columnas, según los planos de despiece. El rendimiento por kilogramo es de los más bajos del acero de obra por el trabajo en vertical y por la cantidad de estribos. Incluye el corte y doblado de barras y estribos, el armado de la canasta con la separación de estribos indicada y su reducción en las zonas de confinamiento de los extremos, el amarre con alambre en todos los cruces, el solape con las esperas de la fundación o del nivel inferior respetando la longitud prevista, la colocación de separadores en las cuatro caras y el aplomado y arriostramiento del armado antes del encofrado. Medido en peso de acero realmente colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

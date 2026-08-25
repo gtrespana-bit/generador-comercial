@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Botiquín de baño con espejo integrado.",
   "descripcion": "Colocación de espejo y botiquín de baño, con fijación y sellado. Incluye el replanteo y la fijación. El espejo lo elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

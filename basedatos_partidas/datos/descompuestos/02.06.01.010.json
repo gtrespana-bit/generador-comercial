@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Desmontaje de alféizar o repisa de ventana.",
   "descripcion": "Desmontaje del alféizar o repisa de ventana, sea de granito, piedra, cerámica o concreto, incluida su capa de asiento, ejecutado con medios manuales y martillo eléctrico. Incluye el corte previo de la junta con el paramento para no arrastrar el friso al desprender la pieza, el picado del mortero de asiento, la limpieza del apoyo dejándolo plano y a nivel para recibir el nuevo alféizar, y el retiro del escombro en sacos. Si el cliente desea conservar el elemento, se desmonta con cuidado y se acopia protegido, lo que reduce el rendimiento y debe advertirse en el presupuesto. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en longitud realmente desmontada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

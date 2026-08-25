@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Borde de sombra en cielo desmontable.",
   "descripcion": "Ejecución de borde de sombra perimetral en cielo raso desmontable, para alojar iluminación indirecta. Incluye la estructura del borde y el remate. Medido por metro lineal de borde.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de luminaria empotrada en cielo raso.",
   "descripcion": "Instalación de luminaria empotrada en cielo raso, con su conexión y ajuste. Incluye el replanteo de la posición coordinado con la estructura del cielo raso para no cortar una maestra, el corte del hueco con la herramienta adecuada al material, la conexión con conector rápido dejando holgura de cable para poder bajar la luminaria en un futuro mantenimiento, el montaje con sus muelles o clips y la prueba de encendido. La luminaria la elige el cliente y se presupuesta aparte. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Luminaria empotrada del modelo elegido por el cliente",

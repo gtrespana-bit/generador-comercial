@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Mueble bajo de cocina con fregadero.",
   "descripcion": "Fabricación e instalación de mueble bajo de cocina en melamina, con puertas, gavetas y zócalo. Incluye toma de medidas, despiece, armado, nivelación y regulación de frentes.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

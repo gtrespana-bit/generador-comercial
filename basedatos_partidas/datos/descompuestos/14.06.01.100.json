@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Riego de implantación de área verde.",
   "descripcion": "Riego de implantación de área verde tras la siembra, para asentamiento de la vegetación. Incluye el riego.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

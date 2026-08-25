@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Pintura de fachada con puente de adherencia.",
   "descripcion": "Aplicación de puente de adherencia y dos manos de pintura exterior en fachada con soporte irregular. Incluye el puente, las dos manos y la protección del entorno. Medido por metro cuadrado pintado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

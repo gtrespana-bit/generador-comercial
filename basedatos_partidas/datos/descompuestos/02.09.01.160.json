@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Desmontaje de techo de madera machihembrada.",
   "descripcion": "Desmontaje de techo de madera machihembrada. Incluye la retirada de las tablas. Medido por metro cuadrado desmontado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

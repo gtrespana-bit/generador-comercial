@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Baliza empotrada de piso exterior.",
   "descripcion": "Instalación de baliza empotrada de piso exterior, con caja y conexión. Incluye la instalación. La baliza la elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

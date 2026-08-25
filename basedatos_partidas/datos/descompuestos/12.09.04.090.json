@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Perfil de cierre entre cielos de distinta cota.",
   "descripcion": "Colocación de perfil de cierre entre cielos rasos de distinta cota, como transición. Incluye la fijación del perfil y el remate. Medido por metro lineal de cierre.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

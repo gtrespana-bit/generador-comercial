@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Piso de baldosa hidráulica o mosaico de cemento.",
   "descripcion": "Colocación de piso de baldosa hidráulica o mosaico de cemento, asentada con mortero y rejuntada con lechada, con pulido de igualación en obra si el acabado lo requiere. Es una pieza de gran valor decorativo y muy presente en la edificación tradicional venezolana, pero es porosa y no viene calibrada, de modo que exige sellado previo antes de rejuntar para que la lechada no la manche de forma permanente. Incluye el replanteo del despiece del dibujo, el sellado previo de la pieza, el asentado con nivelación, el rejuntado, la limpieza inmediata y el sellado final. La pieza la elige el cliente y se presupuesta aparte. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Baldosa hidráulica o mosaico de cemento elegido por el cliente",

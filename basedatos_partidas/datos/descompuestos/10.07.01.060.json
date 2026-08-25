@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Capa drenante con geocompuesto.",
   "descripcion": "Colocación de geocompuesto drenante en muro o cubierta. Incluye la colocación del geocompuesto y el remate. Medido por metro cuadrado colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

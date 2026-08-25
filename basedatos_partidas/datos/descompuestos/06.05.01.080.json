@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "División de bloques de vidrio.",
   "descripcion": "Ejecución de división de bloques de vidrio, con junta de mortero. Incluye la colocación de los bloques y el rejuntado. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

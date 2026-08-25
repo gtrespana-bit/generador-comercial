@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Friso bruñido de mortero.",
   "descripcion": "Aplicación de friso de mortero con acabado bruñido, para paramentos interiores. Incluye la aplicación del mortero, el bruñido y el afinado final. Medido por metro cuadrado frisado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Desmontaje de cerca de malla.",
   "descripcion": "Desmontaje de cerca de malla ciclónica o metálica. Incluye la retirada de la malla y los postes. Medido por metro lineal desmontado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

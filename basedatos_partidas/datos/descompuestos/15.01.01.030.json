@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Sacos de rafia para clasificación de residuos.",
   "descripcion": "Suministro de sacos de rafia de alta resistencia para la clasificación y retirada manual de residuos de obra, apilados y etiquetados por tipo de material.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

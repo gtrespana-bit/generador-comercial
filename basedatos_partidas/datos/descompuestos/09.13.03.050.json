@@ -6,7 +6,7 @@
   "unidad": "glb",
   "titulo": "Prueba y verificación del sistema de protección contra rayos.",
   "descripcion": "Prueba y verificación del sistema completo de protección contra rayos: continuidad eléctrica de captación, bajantes y conexiones, y medición de la resistencia de puesta a tierra. Incluye la inspección visual de todas las uniones, la medición con medidor de resistencia de puesta a tierra, el registro de los valores obtenidos y el informe de resultados con las observaciones para subsanación. Medido por sistema verificado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

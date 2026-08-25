@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Mampara de oficina con perfilería vista.",
   "descripcion": "Ejecución de mampara de oficina con perfilería vista y vidrio. Incluye la estructura, el acristalamiento y el sellado. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

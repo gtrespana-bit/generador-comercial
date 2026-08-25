@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de extractor o ventilador.",
   "descripcion": "Instalación de extractor de baño o cocina, o de ventilador de techo, con su conexión eléctrica y su salida al exterior cuando corresponda. Un extractor cuya descarga se queda en el plenum del cielo raso no extrae: recircula el aire húmedo y lo condensa dentro del cielo raso, con la consiguiente aparición de moho. Incluye el replanteo, la apertura del hueco, el montaje del equipo, la conducción de la descarga hasta el exterior con su rejilla y compuerta antirretorno, la conexión eléctrica con su mando y la prueba de funcionamiento y caudal. El equipo lo elige el cliente y se presupuesta aparte. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Extractor o ventilador del modelo elegido por el cliente",

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Desmontaje de cubierta de lámina metálica o acerolit.",
   "descripcion": "Desmontaje de cubierta de lámina metálica, acerolit, zinc o fibrocemento, incluidos los ganchos, tornillos y elementos de fijación a la estructura, ejecutado con medios manuales desde andamio y con línea de vida. Si la lámina es de fibrocemento antiguo debe verificarse la posible presencia de amianto, en cuyo caso el desmontaje queda fuera de esta partida y exige empresa autorizada. Incluye el desmontaje ordenado con sujeción de las láminas frente al viento, el descenso controlado, la clasificación del material y el acopio. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en superficie realmente desmontada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

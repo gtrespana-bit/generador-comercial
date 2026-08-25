@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Limpieza de fachada con hidrolavado a presión.",
   "descripcion": "Limpieza de fachada con hidrolavado a presión. Incluye la limpieza por franjas y la protección de carpintería. Medido por metro cuadrado limpiado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

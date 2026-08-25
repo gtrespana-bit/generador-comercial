@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Capa separadora de geotextil en cubierta.",
   "descripcion": "Colocación de geotextil no tejido como capa separadora entre aislamiento y membrana impermeabilizante. Incluye el extendido, los solapes y el recorte en los encuentros.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

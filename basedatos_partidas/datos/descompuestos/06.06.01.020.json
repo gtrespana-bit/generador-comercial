@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Dintel de concreto armado vaciado en sitio.",
   "descripcion": "Dintel de concreto armado vaciado en sitio sobre vano de puerta o ventana, con su armado, encofrado y entregas de apoyo. Se emplea cuando la luz del vano, la carga que recibe o la geometría no admiten un dintel prefabricado. Incluye el apeo provisional de la fábrica superior, el armado con sus cabillas y estribos, el encofrado del fondo y los laterales apoyado sobre puntales, el vaciado con concreto de 210 kg/cm2, el vibrado, el curado y el desencofrado y desapeo una vez alcanzada la resistencia. Medido en longitud realmente ejecutada, incluidas las entregas.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Carga de gas refrigerante.",
   "descripcion": "Carga de gas refrigerante del sistema de climatización, con báscula y verificación de presiones.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

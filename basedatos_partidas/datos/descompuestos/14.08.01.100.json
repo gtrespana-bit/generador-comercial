@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Acometida de aguas servidas exterior.",
   "descripcion": "Ejecución de acometida de aguas servidas exterior, con tubería de PVC y pendiente. Incluye la colocación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

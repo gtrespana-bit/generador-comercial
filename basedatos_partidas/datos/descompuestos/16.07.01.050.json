@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Medición de humedad de piso.",
   "descripcion": "Medición del contenido de humedad del piso, para verificar la idoneidad antes de colocar revestimientos.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

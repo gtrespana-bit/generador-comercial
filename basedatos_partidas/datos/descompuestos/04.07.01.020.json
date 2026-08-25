@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Drenaje con canaleta de fundación.",
   "descripcion": "Drenaje con canaleta prefabricada en fundación. Incluye la colocación de la canaleta. Medido por metro lineal ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

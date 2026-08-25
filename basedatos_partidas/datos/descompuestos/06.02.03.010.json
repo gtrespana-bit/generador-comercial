@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Fachada revestida con lámina de aluminio.",
   "descripcion": "Ejecución de fachada revestida con lámina de aluminio, con subestructura. Incluye la subestructura y el revestimiento. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

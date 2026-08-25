@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Refuerzo de estructura de cubierta existente.",
   "descripcion": "Refuerzo de estructura de cubierta existente con angulares o perfiles atornillados, para rigidizar. Incluye la fijación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

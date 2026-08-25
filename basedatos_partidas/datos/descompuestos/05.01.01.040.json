@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Encofrado de escalera.",
   "descripcion": "Encofrado y desencofrado de escalera de concreto con madera. Incluye el montaje del encofrado de huellas y contrahuellas. Medido por metro cuadrado encofrado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

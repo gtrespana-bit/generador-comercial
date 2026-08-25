@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Sellado de conductos de climatización.",
   "descripcion": "Sellado de las uniones de los conductos de climatización, para evitar fugas de aire.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

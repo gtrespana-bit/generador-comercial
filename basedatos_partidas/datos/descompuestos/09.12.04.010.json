@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Panel táctil de pared para el sistema domótico.",
   "descripcion": "Suministro e instalación de panel táctil de pared para control y visualización del sistema domótico, con su caja de empotrar. Incluye el replanteo del punto de montaje accesible, la apertura del hueco, el montaje enrasado, la conexión de alimentación y datos, y la configuración de las pantallas y accesos. Medido por panel instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

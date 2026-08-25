@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Tratamiento de humedad ascendente por capilaridad.",
   "descripcion": "Tratamiento de humedad ascendente por capilaridad con barrera y saneado. Incluye el saneado del muro y la aplicación de la barrera. Medido por metro cuadrado tratado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

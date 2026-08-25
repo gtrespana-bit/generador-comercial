@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Desmontaje de enchapado de madera o machihembrado en pared.",
   "descripcion": "Desmontaje de revestimiento de madera existente en pared, ya sea machihembrado, tablilla o panel, junto con los rastreles de soporte fijados al paramento, ejecutado con medios manuales mediante palanca y barra. Incluye la extracción de los clavos, tornillos y tacos que queden en el muro, el retiro del material en sacos o atados hasta el punto de acopio, la clasificación de las piezas aprovechables si el cliente desea conservarlas y la limpieza del paramento resultante. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en superficie realmente desmontada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

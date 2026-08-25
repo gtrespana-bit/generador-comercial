@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Demolición de pavimento exterior de concreto.",
   "descripcion": "Demolición de pavimento exterior de concreto, en acera, patio o vía de acceso, de hasta 15 cm de espesor, ejecutada con martillo hidráulico montado sobre retroexcavadora. Incluye la comprobación previa de que no discurren instalaciones enterradas bajo el pavimento, el corte perimetral con disco de diamante para delimitar la zona de intervención, el acordonamiento del área de trabajo, la fragmentación del concreto en piezas cargables, el corte y separación de la malla de refuerzo si la tuviera, el acopio del escombro y la limpieza. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en superficie realmente demolida.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

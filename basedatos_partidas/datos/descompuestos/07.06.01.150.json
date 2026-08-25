@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Ventanal de vidrio fijo interior.",
   "descripcion": "Suministro y colocación de ventanal de vidrio fijo interior, con perfil de fijación. Incluye el montaje del perfil y el acristalamiento. Medido por metro cuadrado instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Buzón de correspondencia empotrado.",
   "descripcion": "Colocación de buzón de correspondencia, con fijación o empotrado en el cerramiento. Incluye la fijación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

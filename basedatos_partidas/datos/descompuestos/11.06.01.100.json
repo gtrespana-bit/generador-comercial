@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Pintura de protección de estructura de techo.",
   "descripcion": "Aplicación de pintura anticorrosiva sobre estructura metálica de techo, con limpieza previa y dos manos. Incluye la preparación de la superficie.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

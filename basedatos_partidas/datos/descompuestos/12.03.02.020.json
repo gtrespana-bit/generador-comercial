@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Enchapado de laja o piedra natural irregular.",
   "descripcion": "Colocación de laja o piedra natural de formato irregular en paramento interior o exterior, recibida con mortero o adhesivo de alta deformabilidad según el espesor y el peso de la pieza. Al no existir un despiece regular, el trabajo consiste en componer el paño pieza a pieza buscando el encaje y la distribución de tonos, lo que reduce el rendimiento respecto a cualquier enchapado modular. Incluye la selección y clasificación previa del material, el replanteo del paño, la colocación con junta irregular controlada, el rejuntado o el acabado a hueso según el diseño, la limpieza y la aplicación del sellador hidrofugante. La pieza la elige el cliente y se presupuesta aparte. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Laja o piedra natural irregular elegida por el cliente",

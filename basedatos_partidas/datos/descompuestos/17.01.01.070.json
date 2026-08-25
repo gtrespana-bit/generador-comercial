@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Protección de borde con red vertical.",
   "descripcion": "Colocación de red vertical de protección en el borde de losa, con sus soportes.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

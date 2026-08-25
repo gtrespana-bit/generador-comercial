@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Conexión soldada de placa base.",
   "descripcion": "Ejecución de conexión soldada de placa base. Incluye la soldadura. Medido por metro lineal soldado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

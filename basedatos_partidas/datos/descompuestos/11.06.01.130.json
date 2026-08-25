@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Viga de amarre perimetral de cubierta.",
   "descripcion": "Ejecución de viga de amarre perimetral de concreto armado en el apoyo de la cubierta, con encofrado y curado. Incluye el armado y el vaciado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

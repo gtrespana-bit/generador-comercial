@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Detección de armadura y tuberías empotradas.",
   "descripcion": "Detección de armadura, tuberías y conducciones empotradas con detector, para evitar perforaciones.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

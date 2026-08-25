@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Tabique de placa de cemento sobre estructura metálica.",
   "descripcion": "Tabique autoportante ejecutado con placa de cemento reforzada con fibra sobre estructura de perfiles de acero galvanizado, para áreas húmedas, exteriores protegidos y zonas donde la placa de yeso no es apta. La placa de cemento admite humedad permanente y constituye un soporte estable para recibir enchapado en duchas y fachadas de patio. Incluye el replanteo, el montaje de canales y montantes, el atornillado de las placas con tornillería específica, el tratamiento de juntas con cinta de malla y mortero, y el remate perimetral. Medido a cinta corrida descontando huecos mayores de 2 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

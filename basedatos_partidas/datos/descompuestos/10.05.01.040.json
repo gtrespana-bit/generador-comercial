@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Impermeabilización interior de tanque de agua.",
   "descripcion": "Impermeabilización interior de tanque de agua potable con mortero cementoso apto para contacto con agua de consumo, con refuerzo de encuentros y prueba de estanqueidad. El producto debe estar certificado para agua potable: un impermeabilizante común libera compuestos al agua y la inutiliza para consumo. Incluye el vaciado y limpieza del tanque, el saneado y resane de las paredes, el refuerzo con banda de todos los encuentros y de los pases de tubería, las manos de mortero cementoso, el curado, la prueba de estanqueidad por llenado y el lavado y desinfección antes de la puesta en servicio. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

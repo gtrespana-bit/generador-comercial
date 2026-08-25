@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Demolición de piso de granito vaciado en sitio.",
   "descripcion": "Demolición de piso continuo de granito vaciado en sitio, incluida su base de mortero y las platinas divisorias de las juntas, ejecutada con martillo neumático por tratarse de una superficie monolítica de gran dureza. Incluye corte perimetral previo con amoladora de disco de diamante para delimitar la zona de intervención y evitar desprendimientos fuera de ella, protección de los ambientes contiguos, control de polvo, fragmentación del escombro en piezas manejables, retiro en sacos y limpieza. No incluye el bote del escombro. Medido en superficie realmente demolida.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Soldadura de conexiones estructurales en obra.",
   "descripcion": "Ejecución de cordón de soldadura de conexión estructural en obra, con preparación de bordes, precalentamiento cuando el espesor lo requiera y limpieza entre pasadas. Incluye la limpieza y preparación de las superficies a unir con esmerilado hasta metal sano, el punteado y verificación de la posición antes del cordón definitivo, la ejecución de la soldadura en las pasadas necesarias según el espesor, la eliminación de escoria entre pasadas, la inspección visual del cordón terminado y el retoque de la protección anticorrosiva en la zona afectada por el calor. Medido en longitud de cordón realmente ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

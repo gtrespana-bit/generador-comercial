@@ -6,7 +6,7 @@
   "unidad": "m³",
   "titulo": "Concreto para losa de fundación.",
   "descripcion": "Concreto premezclado de resistencia 250 kg/cm2 vaciado en losa de fundación, incluida su compactación por vibrado. Incluye la revisión previa del armado, de los separadores y de la barrera de vapor, la recepción y comprobación del concreto, el vaciado continuo por franjas evitando las juntas frías, la compactación con vibrador de aguja, el reglado a la cota mediante maestras y el sangrado del agua de exudación antes del acabado. No incluye el acabado superficial ni el curado, que se valoran en la partida siguiente. Medido en volumen teórico según las dimensiones de proyecto.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

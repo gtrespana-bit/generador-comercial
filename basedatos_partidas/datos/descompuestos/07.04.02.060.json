@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Portón levadizo de garaje.",
   "descripcion": "Suministro y colocación de portón levadizo de garaje, con mecanismo de contrapeso y guías. Incluye la fabricación, el montaje de las guías y la colocación del portón. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

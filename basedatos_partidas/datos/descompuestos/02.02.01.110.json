@@ -6,7 +6,7 @@
   "unidad": "m3",
   "titulo": "Demolición de muro estructural de concreto.",
   "descripcion": "Demolición de muro estructural de concreto armado, con apuntalamiento y medios mecánicos. Incluye el apuntalamiento, el corte del acero y la retirada. Medido por metro cúbico demolido.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

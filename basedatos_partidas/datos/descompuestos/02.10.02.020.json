@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Picado de enchapado de granito o terrazo en pared.",
   "descripcion": "Picado de enchapado de granito o terrazo prefabricado existente en pared, incluida su capa de asiento de mortero, ejecutado con martillo eléctrico manual. Por el mayor espesor y peso de estas piezas frente al enchapado cerámico, el rendimiento es menor y el escombro más pesado. Incluye la protección de pisos y ambientes contiguos, el control de polvo, el retiro manual del escombro en sacos hasta el punto de acopio y el repicado de los restos de mortero adheridos al paramento. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en superficie realmente picada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

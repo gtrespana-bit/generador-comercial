@@ -6,7 +6,7 @@
   "unidad": "m³",
   "titulo": "Retirada de madera y pallets a reciclaje.",
   "descripcion": "Retirada y entrega de madera y pallets a planta de reciclaje o reutilización, con carga y transporte.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

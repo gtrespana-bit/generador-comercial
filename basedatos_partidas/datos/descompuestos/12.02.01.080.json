@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Repello y afinado de mocheta o arista de vano.",
   "descripcion": "Repello y afinado de la mocheta o arista de un vano de puerta o ventana, con cantonera de refuerzo, dejando la arista recta y aplomada. La arista de un vano es lo primero que se mira al entrar a un ambiente y lo primero que se golpea, de modo que la cantonera no es solo un elemento de guía sino la protección que evita el desconchado permanente. Incluye la limpieza, la colocación y aplomado de la cantonera, el tendido y reglado del mortero a ambas caras y el fratasado. Medido en longitud de arista realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

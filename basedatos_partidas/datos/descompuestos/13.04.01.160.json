@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Reparación de closet o armario.",
   "descripcion": "Reparación de closet o armario con ajuste de puertas, sustitución de herrajes y regulación. Incluye la revisión y el ajuste.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

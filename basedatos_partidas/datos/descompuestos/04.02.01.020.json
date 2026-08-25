@@ -6,7 +6,7 @@
   "unidad": "kg",
   "titulo": "Acero de refuerzo en zapatas y bases.",
   "descripcion": "Suministro, corte, doblado, armado y colocación de acero de refuerzo en cabillas corrugadas de límite elástico 4.200 kg/cm2 en zapatas y bases de fundación, según los planos de despiece. Incluye el corte y doblado en obra o el recibo del acero ya elaborado, el armado de las parrillas con amarre de alambre en todos los cruces del perímetro y alternos en el interior, la colocación de separadores para garantizar el recubrimiento especificado por todas las caras, el arriostramiento del armado para que no se desplace durante el vaciado y la revisión del despiece antes de autorizar el concreto. Medido en peso de acero realmente colocado, sin incluir despuntes ni solapes no previstos en el despiece.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

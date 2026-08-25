@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Apeo de losa con puntales y durmientes.",
   "descripcion": "Apeo de losa con puntales metálicos y durmientes de reparto. Incluye la colocación de puntales y el arriostramiento. Medido por metro cuadrado apeado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

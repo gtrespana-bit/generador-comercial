@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Barnizado de mueble de madera exterior.",
   "descripcion": "Barnizado de mueble de madera exterior, con lijado y dos manos de barniz marino. Incluye la preparación y las dos manos de barniz. Medido por metro cuadrado barnizado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

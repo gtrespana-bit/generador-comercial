@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Anclaje químico de barra en concreto.",
   "descripcion": "Ejecución de anclaje químico de barra de acero en concreto. Incluye la perforación y la inyección. Medido por anclaje ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

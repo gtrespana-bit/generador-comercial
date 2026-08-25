@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Punto de riego con manguera y aspersor.",
   "descripcion": "Ejecución de punto de riego con llave, manguera y aspersor. Incluye la colocación y la conexión.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

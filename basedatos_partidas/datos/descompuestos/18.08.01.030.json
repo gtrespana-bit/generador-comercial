@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Tira LED de iluminación eficiente.",
   "descripcion": "Colocación de tira LED de iluminación eficiente, con fuente y perfil. La tira la elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

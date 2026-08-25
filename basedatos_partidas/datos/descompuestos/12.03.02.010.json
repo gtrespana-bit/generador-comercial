@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Enchapado de mármol o granito en pared, colocación en capa fina.",
   "descripcion": "Colocación en pared de pieza de mármol o granito en capa fina, con adhesivo cementoso blanco de altas prestaciones. El adhesivo blanco no es un capricho: los mármoles claros son translúcidos y un adhesivo gris se transparenta y mancha la pieza de forma irreversible. Incluye la comprobación y regularización del soporte, el replanteo del despiece atendiendo a la veta y al tono para que la composición sea continua, el doble encolado, la nivelación, los cortes con disco refrigerado, el rejuntado con junta mínima a juego y la limpieza con productos no ácidos. La pieza la elige el cliente y se presupuesta aparte. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Pieza de mármol, granito o piedra natural pulida elegida por el cliente",

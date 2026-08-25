@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Revestimiento de escalera con piedra natural.",
   "descripcion": "Colocación de piezas de mármol, granito o piedra natural en huellas y contrahuellas de escalera, recibidas con adhesivo cementoso blanco de altas prestaciones. Es el revestimiento de escalera de menor rendimiento, por el peso de las piezas, la exigencia de nivelación y el corte a medida de cada peldaño. Incluye el replanteo verificando la constancia de huella y contrahuella, el corte y pulido del canto de la huella, el doble encolado, la nivelación, el rejuntado a juego y la limpieza con productos no ácidos. La pieza la elige el cliente y se presupuesta aparte. Medido en superficie realmente ejecutada, desarrollando huella y contrahuella.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Pieza de mármol, granito o piedra natural para escalera",

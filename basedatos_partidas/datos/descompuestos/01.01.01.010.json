@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Desconexión de instalación eléctrica existente.",
   "descripcion": "Desconexión de la instalación eléctrica existente previa a la obra, con corte de suministro y protección. Incluye la verificación de ausencia de tensión y el bloqueo del circuito. Medido por instalación desconectada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Cambio de cilindro de cerradura.",
   "descripcion": "Cambio del cilindro de una cerradura existente, manteniendo el cuerpo. Incluye la retirada del cilindro anterior y el montaje del nuevo. Medido por unidad cambiada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de domo o claraboya en cubierta.",
   "descripcion": "Instalación de domo o claraboya en cubierta, con su zócalo de realce, sellado e integración en la impermeabilización. El zócalo de realce no es opcional: un domo instalado a ras del plano de cubierta acaba filtrando en cuanto el agua remansa, de modo que debe elevarse por encima del nivel máximo de agua previsible. Incluye la apertura del hueco con refuerzo del borde, la ejecución del zócalo de realce, la integración de la impermeabilización remontando por el zócalo, la colocación del domo con su sellado perimetral y la prueba de estanqueidad. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

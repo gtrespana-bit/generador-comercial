@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Malla captadora de cubierta para protección contra rayos.",
   "descripcion": "Ejecución de malla captadora sobre cubierta (jaula de Faraday), con conductor de cobre desnudo formando retícula y sus soportes de fijación. Incluye el replanteo de la retícula según la clase de protección requerida, la fijación de los soportes sin perforar la impermeabilización, el tendido del conductor con las uniones soldadas o amordazadas y la conexión a las bajantes en los puntos previstos. Medido por metro cuadrado de cubierta protegida.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

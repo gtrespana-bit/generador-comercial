@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Reflector exterior de seguridad.",
   "descripcion": "Instalación de reflector exterior de seguridad, con fijación y conexión. Incluye la conexión. El reflector lo elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

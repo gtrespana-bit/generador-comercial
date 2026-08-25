@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Reparación de concreto con mortero.",
   "descripcion": "Reparación superficial de concreto con mortero estructural. Incluye el saneo y la reparación. Medido por metro cuadrado reparado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

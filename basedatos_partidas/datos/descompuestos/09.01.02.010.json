@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Punto de agua fría y caliente para aparato sanitario.",
   "descripcion": "Ejecución de punto de agua para aparato sanitario, formado por las derivaciones de agua fría y caliente en tubería de PPR de 20 mm desde el montante más próximo hasta la salida del aparato, con una longitud media de 2,5 m por punto. Incluye replanteo de la altura y separación normalizadas de las tomas, apertura de roza, montaje de la tubería con uniones por termofusión, codos de salida con refuerzo metálico anclados al paramento, prueba de estanqueidad a presión de la derivación, taponado provisional hasta la instalación del aparato y tapado de roza con mortero de reparación. No incluye la grifería ni el aparato. Medido por punto terminado y probado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

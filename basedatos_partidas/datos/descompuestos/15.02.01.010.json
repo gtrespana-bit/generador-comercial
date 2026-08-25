@@ -6,7 +6,7 @@
   "unidad": "m³",
   "titulo": "Bajada de escombro desde plantas altas.",
   "descripcion": "Bajada de escombro desde plantas altas hasta el punto de acopio o carga, mediante montacargas, tolva o traslado manual, según la accesibilidad de la obra. Es un costo que se olvida sistemáticamente y que en un edificio sin ascensor de obra puede superar al del propio bote. Incluye el ensacado del escombro, su traslado hasta el punto de descenso, la bajada con el medio disponible, el acopio ordenado en planta baja y la limpieza continua de las zonas comunes de paso, que en un edificio habitado es obligada y consume tiempo real. Medido en volumen de escombro esponjado realmente bajado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

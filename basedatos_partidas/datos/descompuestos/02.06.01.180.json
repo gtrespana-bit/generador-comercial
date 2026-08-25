@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Desmontaje de soporte de toldo.",
   "descripcion": "Desmontaje de soporte o brazo de toldo en fachada. Incluye la retirada del soporte. Medido por unidad desmontada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

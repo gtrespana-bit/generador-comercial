@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Apertura de hueco en losa de concreto armado.",
   "descripcion": "Apertura de hueco en losa de concreto armado para paso de escalera, ducto de instalaciones o claraboya, ejecutada mediante corte perimetral con disco de diamante y demolición interior con martillo eléctrico. Incluye la validación estructural previa y el refuerzo del borde si el cálculo lo exige, el apeo de la zona, el replanteo y corte perimetral que garantiza un borde limpio y sin fisuración hacia el resto de la losa, el corte de las armaduras, el descenso controlado del escombro y la limpieza. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en superficie de hueco realmente abierto.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

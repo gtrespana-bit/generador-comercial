@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Demolición de rodapié de granito o terrazo.",
   "descripcion": "Demolición de rodapié existente de granito o terrazo prefabricado y de su capa de asiento, ejecutada con martillo eléctrico manual, cuidando de no dañar el friso de la pared. Incluye repicado de los restos de mortero adheridos, retiro manual del escombro en sacos hasta el punto de acopio y limpieza de la zona. No incluye el bote del escombro. Medido en longitud realmente demolida.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Junta de dilatación en escalera.",
   "descripcion": "Ejecución de junta de dilatación en escalera, con perfil y sellado elástico. Incluye la colocación del perfil y el sellado de la junta. Medido por metro lineal de junta.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

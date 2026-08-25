@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Impermeabilización de jardinera o maceta de obra.",
   "descripcion": "Impermeabilización interior de jardinera o maceta de obra con membrana cementosa flexible y capa drenante, incluida la salida de drenaje. Una jardinera sin impermeabilizar transmite humedad permanente al muro contiguo y termina reventando el friso y la pintura de la cara opuesta. Incluye la regularización interior, el refuerzo de encuentros y esquinas, las manos de membrana, el tratamiento del pase de drenaje, la colocación del geotextil y de la capa drenante de gravilla antes del sustrato. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Marco perimetral de claraboya.",
   "descripcion": "Ejecución de marco perimetral de apoyo de claraboya en chapa plegada o perfil, con fijación y sellado. Incluye el replanteo y la fijación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

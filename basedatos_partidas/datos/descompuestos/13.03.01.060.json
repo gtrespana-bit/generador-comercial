@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Mesón de baño con lavamanos integrado.",
   "descripcion": "Colocación de mesón de baño sobre mueble o estructura, con perforación para lavamanos y sellado. Incluye la colocación y el sellado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

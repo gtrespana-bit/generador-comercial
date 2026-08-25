@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de tira LED en zócalo.",
   "descripcion": "Instalación de tira led en zócalo., con conexión y fijación. Incluye la conexión eléctrica y la fijación. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

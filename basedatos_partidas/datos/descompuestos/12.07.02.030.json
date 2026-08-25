@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Regularización de muro con placa de yeso para ocultar instalaciones.",
   "descripcion": "Suministro y montaje de placa de yeso laminado de 12,5 mm sobre rastreles para regularizar un muro y ocultar instalaciones vistas sin recurrir a obra húmeda. Incluye el replanteo, la fijación de los rastreles, el paso y protección de las instalaciones, el atornillado de la placa y el tratamiento de juntas. Medido por metro cuadrado de paramento regularizado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

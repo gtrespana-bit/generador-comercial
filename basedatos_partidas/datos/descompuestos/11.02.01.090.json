@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Cubierta plana con impermeabilización acrílica.",
   "descripcion": "Impermeabilización de cubierta plana con resina acrílica elastomérica en frío, reforzada con velo de fibra en los encuentros. Incluye imprimación y dos manos.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

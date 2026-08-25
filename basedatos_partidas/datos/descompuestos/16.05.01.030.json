@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Prueba de aislamiento de conductores.",
   "descripcion": "Prueba de resistencia de aislamiento de los conductores, con megóhmetro, para verificar la ausencia de fugas.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

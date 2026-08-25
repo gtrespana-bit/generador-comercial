@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Reparación de tablero eléctrico.",
   "descripcion": "Reparación de tablero eléctrico. Incluye la sustitución de protecciones. Medido por reparación ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

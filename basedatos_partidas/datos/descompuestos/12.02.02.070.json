@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Enlucido de yeso sobre bloque.",
   "descripcion": "Enlucido de yeso sobre paramento de bloque, con maestras y acabado fino. Incluye la preparación del soporte, las maestras y el afinado. Medido por metro cuadrado enlucido.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

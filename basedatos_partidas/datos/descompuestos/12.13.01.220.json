@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Recubrimiento reflectivo de cubierta.",
   "descripcion": "Aplicación de recubrimiento reflectivo sobre cubierta, para reducir la carga térmica. Incluye la limpieza y la aplicación del recubrimiento reflectivo. Medido por metro cuadrado recubierto.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

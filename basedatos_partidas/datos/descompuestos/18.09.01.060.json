@@ -6,7 +6,7 @@
   "unidad": "glb",
   "titulo": "Conexión de sistema fotovoltaico a red.",
   "descripcion": "Conexión del sistema fotovoltaico a la red, con protecciones y puesta en marcha.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

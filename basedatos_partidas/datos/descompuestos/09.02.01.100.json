@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Canal de drenaje.",
   "descripcion": "Instalación de canal de drenaje lineal. Incluye el montaje. Medido por metro lineal instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

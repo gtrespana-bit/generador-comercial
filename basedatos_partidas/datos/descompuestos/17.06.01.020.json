@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Extintor de CO2 para cuadro eléctrico.",
   "descripcion": "Suministro y colocación de extintor de CO2 junto al cuadro eléctrico de obra.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

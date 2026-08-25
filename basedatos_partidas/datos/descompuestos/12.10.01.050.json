@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Repintado de paramento interior sobre pintura existente.",
   "descripcion": "Repintado de paramento interior sobre pintura existente en buen estado, con dos manos de pintura de caucho. Incluye la limpieza superficial, el repaso de pequeños desperfectos y las dos manos de acabado. Medido por metro cuadrado repintado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

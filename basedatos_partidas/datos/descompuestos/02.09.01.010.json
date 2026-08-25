@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Desmontaje de canal de aguas lluvias.",
   "descripcion": "Desmontaje de canal o canalón de recogida de aguas lluvias, incluidos los soportes, las uniones y las piezas especiales, ejecutado con medios manuales desde andamio. Incluye el acordonamiento de la zona inferior, el desmontaje por tramos con sostenimiento previo, la extracción de los ganchos y anclajes al alero, el resane de los puntos de fijación, el descenso del material y su clasificación para reciclaje. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en longitud realmente desmontada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

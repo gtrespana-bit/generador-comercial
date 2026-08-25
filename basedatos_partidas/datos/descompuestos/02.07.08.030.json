@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Desmontaje de lavadora o secadora.",
   "descripcion": "Desmontaje de lavadora o secadora empotrada, con desconexión. Incluye la desconexión y la retirada del equipo. Medido por unidad desmontada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

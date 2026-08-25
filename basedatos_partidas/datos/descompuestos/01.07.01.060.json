@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Replanteo de vanos y carpintería.",
   "descripcion": "Replanteo de vanos y carpintería. Incluye el trazado de las posiciones. Medido por metro lineal replanteado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

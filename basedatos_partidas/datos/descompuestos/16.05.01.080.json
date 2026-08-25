@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Prueba de iluminación de circuitos.",
   "descripcion": "Verificación del funcionamiento de los circuitos de iluminación, encendiendo y comprobando cada punto.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

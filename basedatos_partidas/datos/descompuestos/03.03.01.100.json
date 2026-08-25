@@ -6,7 +6,7 @@
   "unidad": "m3",
   "titulo": "Excavación localizada a mano en interior.",
   "descripcion": "Excavación localizada a mano en interior. Incluye la excavación y la retirada. Medido por metro cúbico excavado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

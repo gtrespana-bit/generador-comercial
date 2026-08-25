@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Delimitación y acordonamiento de zonas de riesgo.",
   "descripcion": "Delimitación y acordonamiento de zonas de riesgo dentro de la obra, mediante malla, cinta de peligro, conos o vallas, con su señalización. Incluye el replanteo del perímetro dejando una distancia de seguridad suficiente respecto al riesgo, el montaje de los soportes, el tendido de la malla o cinta, la colocación de la señalización correspondiente y el mantenimiento y reposición mientras dure el riesgo. Medido en longitud realmente delimitada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

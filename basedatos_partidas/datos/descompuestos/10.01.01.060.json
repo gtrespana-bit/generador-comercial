@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Aislamiento térmico de muro con lana de roca.",
   "descripcion": "Suministro y colocación de panel de lana de roca en muro o tabique. Incluye la preparación del soporte y la colocación del panel. Medido por metro cuadrado aislado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de ventilador de baño con sensor.",
   "descripcion": "Instalación de ventilador de baño con sensor., con conexión. Incluye la conexión. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

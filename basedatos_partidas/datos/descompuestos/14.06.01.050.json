@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Nivelación y preparación de terreno para jardín.",
   "descripcion": "Nivelación y preparación de terreno para jardín, con desbroce, relleno y rastrillado. Incluye la limpieza y la nivelación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Refuerzo de aislamiento en petos y cantos.",
   "descripcion": "Colocación de refuerzo de aislamiento en petos, cantos y puntos singulares de la fachada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Protección de membrana con plancha de cemento.",
   "descripcion": "Colocación de plancha de cemento o loseta de protección sobre membrana impermeabilizante de cubierta transitable, recibida sobre soportes. Incluye el replanteo y la colocación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

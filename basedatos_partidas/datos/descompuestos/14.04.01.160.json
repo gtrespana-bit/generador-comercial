@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Cerca viva o seto perimetral.",
   "descripcion": "Siembra de cerca viva o seto perimetral con plantas, sobre terreno preparado. Incluye la preparación y la siembra. Las plantas las elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Regulador, medidor y protección de instalación de gas.",
   "descripcion": "Montaje del conjunto de regulación y medida de la instalación de gas, con su regulador de presión, llave de corte general, medidor y armario o nicho ventilado. Incluye el replanteo en emplazamiento ventilado y accesible conforme exige la normativa y la compañía suministradora, el montaje del armario, la instalación del regulador y de la llave general, la conexión de entrada y salida, la prueba de estanqueidad del conjunto y la preparación para la inspección y puesta en servicio. Medido por conjunto instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Tratamiento de óxido en paramento de concreto.",
   "descripcion": "Tratamiento de manchas de óxido en paramento de concreto, con limpieza y aplicación de producto pasivante. Incluye la limpieza de la zona y el tratamiento. Medido por metro cuadrado tratado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

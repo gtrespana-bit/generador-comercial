@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Escalera exterior de concreto.",
   "descripcion": "Escalera exterior de concreto armado con acabado antideslizante, sobre terreno o estructura, con su fundación corrida. Incluye el replanteo verificando que huella y contrahuella se mantienen constantes en todo el tramo, la fundación, el armado, el encofrado del fondo y de los tabicones de peldaño, el vaciado ascendente con concreto de consistencia seca, el fratasado antideslizante de las huellas, la pendiente de evacuación hacia el exterior en cada peldaño para que no empocen, el curado y el desencofrado. Medido en superficie desarrollando huella y contrahuella.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

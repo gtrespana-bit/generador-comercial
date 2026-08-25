@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Módulo de control de persiana o cortina motorizada.",
   "descripcion": "Suministro e instalación de módulo de control de persiana, cortina o toldo motorizado, con detección de final de carrera, integrado en la central domótica. Incluye la verificación del motor existente, el montaje del módulo, la conexión, la configuración de los finales de carrera y la prueba de subida y bajada. Medido por módulo instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

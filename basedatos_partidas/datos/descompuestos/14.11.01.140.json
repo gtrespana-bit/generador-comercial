@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Jardinera de concreto prefabricado.",
   "descripcion": "Colocación de jardinera de concreto prefabricado, con nivelación y drenaje. Incluye la colocación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

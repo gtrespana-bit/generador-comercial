@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Placa base con pernos para columna.",
   "descripcion": "Suministro y colocación de placa base con pernos de anclaje para columna metálica. Incluye el replanteo, el anclaje y el montaje. Medido por unidad colocada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

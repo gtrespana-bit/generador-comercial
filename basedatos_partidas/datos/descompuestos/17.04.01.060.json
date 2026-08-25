@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Escalera de mano con fijación.",
   "descripcion": "Colocación de escalera de mano con fijación y estabilización, para trabajos puntuales en altura.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

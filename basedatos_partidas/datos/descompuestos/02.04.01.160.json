@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Apertura de vano en muro de concreto.",
   "descripcion": "Apertura de vano en muro de concreto, con corte y demolición. Incluye el replanteo, el corte perimetral y la demolición del paño. Medido por metro lineal de vano.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

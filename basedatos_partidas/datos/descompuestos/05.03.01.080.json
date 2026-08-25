@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Encofrado a dos caras de pantalla estructural.",
   "descripcion": "Encofrado a dos caras de pantalla o muro estructural mediante paneles de madera con tirantes pasantes, puntales y arriostramientos, y su posterior desencofrado. Incluye el replanteo, el montaje y aplomado de la primera cara, la colocación de los tirantes y separadores de espesor, el cierre de la segunda cara tras la revisión del armado, el arriostramiento frente al empuje del concreto fresco, la aplicación de desmoldeante, el desencofrado y el sellado de los agujeros de los tirantes. Medido en superficie de encofrado en contacto con el concreto, contando ambas caras.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

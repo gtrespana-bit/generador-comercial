@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Poda y mantenimiento de áreas verdes.",
   "descripcion": "Poda y mantenimiento de áreas verdes con retirada de restos vegetales. Incluye la poda y la limpieza.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

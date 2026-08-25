@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Resane de rozas y pasos.",
   "descripcion": "Resane de rozas y pasos de instalaciones. Incluye el tapado y el acabado. Medido por metro cuadrado resanado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

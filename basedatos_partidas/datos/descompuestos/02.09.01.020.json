@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Desmontaje de bajante de aguas lluvias.",
   "descripcion": "Desmontaje de bajante de aguas lluvias, vista o empotrada, incluidos las abrazaderas, los codos y las piezas de conexión, ejecutado con medios manuales desde andamio. Incluye el acordonamiento de la zona inferior, el corte de la bajante en tramos manejables, la extracción de las abrazaderas ancladas a la fachada, el resane de los huecos de anclaje, el taponado provisional de la conexión a la red que permanece y el retiro del material. No incluye el bote del escombro, que se valora en el capítulo de gestión de residuos. Medido en longitud realmente desmontada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

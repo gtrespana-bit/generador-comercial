@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Anclaje de barra con resina epóxica.",
   "descripcion": "Ejecución de anclaje de barra con resina epóxica. Incluye la perforación y la inyección. Medido por anclaje ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

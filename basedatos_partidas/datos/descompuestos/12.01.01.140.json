@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Resane de paramento interior con masilla.",
   "descripcion": "Resane de paramento interior con masilla para eliminar imperfecciones previo a la pintura. Incluye la aplicación de la masilla y el lijado. Medido por metro cuadrado resanado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Conexión de riego por goteo a tanque.",
   "descripcion": "Conexión de red de riego por goteo a tanque de almacenamiento, con válvula y filtro. Incluye la conexión.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

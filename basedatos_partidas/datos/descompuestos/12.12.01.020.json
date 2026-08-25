@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Pintura sobre superficie galvanizada o de aluminio.",
   "descripcion": "Aplicación de acabado sobre superficie galvanizada o de aluminio, con imprimación específica de adherencia. Estos soportes son la trampa clásica del pintor: una imprimación anticorrosiva convencional no agarra sobre el galvanizado y el acabado se desprende en láminas al cabo de unos meses, de modo que hace falta desengrasado a fondo e imprimación de adherencia específica o tratamiento de conversión. Incluye el desengrasado, el lijado suave de la superficie para crear anclaje mecánico, la imprimación de adherencia y las dos manos de acabado. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

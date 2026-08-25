@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Recibido de espejo.",
   "descripcion": "Recibido de espejo con fijación. Incluye la fijación del espejo. Medido por unidad recibida.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

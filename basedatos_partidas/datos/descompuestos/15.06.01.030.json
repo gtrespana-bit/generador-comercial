@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Limpieza semanal de la obra.",
   "descripcion": "Limpieza semanal general de la obra, con barrido, retirada de escombros menores y organización de materiales.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

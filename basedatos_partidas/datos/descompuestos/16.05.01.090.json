@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Prueba de puesta en marcha de tablero.",
   "descripcion": "Prueba de puesta en marcha del tablero de distribución, con verificación de cada circuito y su rotulado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

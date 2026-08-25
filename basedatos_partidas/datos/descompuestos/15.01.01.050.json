@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Zona de acopio de cartón y embalajes.",
   "descripcion": "Habilitación de zona de acopio de cartón y embalajes para su reciclaje, con protección del piso y señalización.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

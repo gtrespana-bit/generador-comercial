@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Línea de vida horizontal en cubierta.",
   "descripcion": "Instalación de línea de vida horizontal en cubierta con cable y anclajes, para trabajos en altura. Incluye la fijación de los postes y el tensado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de campana extractora de cocina.",
   "descripcion": "Instalación de campana extractora de cocina, con su anclaje, conducción de salida al exterior y conexión eléctrica. Una campana cuya descarga se queda dentro del mueble alto o del cielo raso no extrae nada: recircula el aire graso y lo condensa donde descarga. Incluye el replanteo de la altura sobre la placa según el tipo de cocción, el anclaje al mueble o al paramento, la conducción de salida hasta el exterior con su rejilla y compuerta antirretorno, la conexión eléctrica y la prueba de funcionamiento y caudal. El equipo lo elige el cliente y se presupuesta aparte. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Campana extractora del modelo elegido por el cliente",

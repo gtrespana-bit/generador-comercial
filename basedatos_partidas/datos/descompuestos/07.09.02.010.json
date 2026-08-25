@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Automatización de portón corredizo existente.",
   "descripcion": "Automatización de un portón corredizo existente, con motor, mando y finales de carrera. Incluye el montaje del motor y la programación. Medido por unidad automatizada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

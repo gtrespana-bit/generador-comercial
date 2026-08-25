@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Reparación de membrana de cubierta plana.",
   "descripcion": "Reparación puntual de cubierta con sustitución del tramo dañado de membrana o lámina, con sellado de solapes. Incluye la limpieza y el sellado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

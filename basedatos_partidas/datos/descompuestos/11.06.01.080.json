@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Viga cumbrera de madera.",
   "descripcion": "Colocación de viga cumbrera de madera en la parte superior de la cubierta, para apoyo de los pares. Incluye el replanteo y la fijación.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

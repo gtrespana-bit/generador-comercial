@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Toma de muestras de concreto para ensayo.",
   "descripcion": "Toma de muestras de concreto fresco en probetas normalizadas para ensayo de resistencia a compresión, con su identificación y curado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Pintura de reja, verja o elemento metálico exterior.",
   "descripcion": "Aplicación de esmalte sobre reja, verja o elemento metálico exterior, con fondo anticorrosivo y dos manos. Incluye la limpieza, el fondo anticorrosivo y las dos manos de esmalte. Medido por metro cuadrado pintado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

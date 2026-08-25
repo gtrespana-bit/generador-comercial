@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Mesón de baño sobre mueble o estructura.",
   "descripcion": "Suministro e instalación de mesón de baño en piedra, cuarzo o material compacto, sobre mueble o estructura, con el recorte del lavamanos y su canto trabajado. Incluye la plantilla en obra sobre el mueble ya instalado, el mecanizado del recorte según sea lavamanos sobrepuesto, empotrado o bajo mesón, el presentado y nivelado, el sellado del canto de corte y el sellado perimetral contra la pared. El material lo elige el cliente y se presupuesta aparte. Medido en longitud de mesón.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Tablero de mesón de baño elegido por el cliente",

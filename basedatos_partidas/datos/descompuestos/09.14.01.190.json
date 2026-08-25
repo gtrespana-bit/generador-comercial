@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Instalación de bomba de pozo.",
   "descripcion": "Instalación de bomba de pozo., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

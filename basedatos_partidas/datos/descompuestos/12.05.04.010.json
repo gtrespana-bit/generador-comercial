@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Piso de mármol o granito en capa fina.",
   "descripcion": "Colocación de piso de mármol o granito en capa fina con adhesivo cementoso blanco de altas prestaciones, con junta mínima. El adhesivo blanco es obligado en mármoles claros porque el gris se transparenta a través de la pieza y produce manchas irreversibles. Incluye la comprobación y regularización previa del soporte, el replanteo del despiece atendiendo a la veta y al tono para que la composición sea continua, el doble encolado, la nivelación con cuñas, los cortes con disco refrigerado, el rejuntado a juego y la limpieza con productos no ácidos, ya que el ácido ataca el mármol de forma permanente. La pieza la elige el cliente y se presupuesta aparte. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "producto_cliente": {
     "tipo": "Pieza de mármol, granito o piedra natural pulida para piso",

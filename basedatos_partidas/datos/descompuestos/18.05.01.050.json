@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Sellado perimetral de ventanas.",
   "descripcion": "Sellado del perímetro de las ventanas, para eliminar las infiltraciones de aire.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

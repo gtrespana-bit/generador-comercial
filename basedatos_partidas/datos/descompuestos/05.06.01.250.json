@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Losa de concreto con pendiente.",
   "descripcion": "Ejecución de losa de concreto con pendiente de evacuación. Incluye la formación de la pendiente y el vaciado. Medido por metro cuadrado ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Iluminación de fachada con reflectores.",
   "descripcion": "Instalación de iluminación de fachada con reflectores, con fijación y conexión. Incluye la conexión. Los reflectores los elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

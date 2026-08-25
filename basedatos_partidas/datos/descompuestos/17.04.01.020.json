@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Punto de anclaje de línea de vida.",
   "descripcion": "Ejecución de punto de anclaje para línea de vida en cubierta, con fijación a la estructura.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

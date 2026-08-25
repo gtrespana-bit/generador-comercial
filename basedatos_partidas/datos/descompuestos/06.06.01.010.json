@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Dintel prefabricado de concreto sobre vano.",
   "descripcion": "Colocación de dintel prefabricado de concreto armado sobre vano de puerta o ventana en pared de mampostería, con la entrega mínima de apoyo a cada lado. Incluye la comprobación de que el apoyo disponible a cada lado alcanza la entrega mínima exigida, requisito del que depende que el dintel trabaje como tal y no se limite a rellenar el hueco, la nivelación del asiento con mortero, la colocación de la pieza a nivel y plomo, el macizado de los apoyos y el relleno de la junta superior. Medido en longitud realmente colocada, incluidas las entregas.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

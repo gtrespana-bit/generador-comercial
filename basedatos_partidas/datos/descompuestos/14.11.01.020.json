@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Jardinera de obra en exterior.",
   "descripcion": "Construcción de jardinera de obra en exterior, con su fábrica, friso, impermeabilización interior, drenaje y capa filtrante. Una jardinera sin impermeabilizar y sin drenaje transmite humedad permanente al muro contiguo y encharca la tierra hasta pudrir la raíz, de modo que ambas capas son parte del elemento y no un extra. Incluye la fundación, el levantamiento de la fábrica, el friso exterior, la impermeabilización interior con refuerzo de encuentros, el pase y la tubería de drenaje, la capa de gravilla con geotextil y el remate superior. No incluye el sustrato ni la plantación. Medido en longitud de jardinera.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

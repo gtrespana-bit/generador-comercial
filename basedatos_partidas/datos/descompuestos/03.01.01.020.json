@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Limpieza y desbroce mecanizado del terreno.",
   "descripcion": "Limpieza y desbroce mecanizado del terreno mediante retroexcavadora o minicargadora, con retiro de maleza, arbustos, raíces y escombro superficial, hasta dejar la superficie despejada y groseramente nivelada. Rinde frente al desbroce manual a partir de superficies medianas y con acceso para maquinaria. Incluye el acordonamiento de la zona de trabajo, el barrido mecánico de la superficie, el amontonamiento del material retirado en el punto de acopio y el repaso manual de los bordes y esquinas donde no alcanza la máquina. No incluye el transporte del material sobrante a botadero, que se valora en el subcapítulo de transporte de tierras. Medido en superficie realmente desbrozada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

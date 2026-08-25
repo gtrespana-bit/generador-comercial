@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Prueba de instalación de gas.",
   "descripcion": "Prueba de estanqueidad de instalación de gas. Incluye la presurización y la verificación. Medido por instalación probada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

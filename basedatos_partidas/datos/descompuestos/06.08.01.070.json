@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Cerramiento de fachada con lamas de PVC.",
   "descripcion": "Suministro y colocación de cerramiento de fachada con lamas de PVC. Incluye la subestructura y la colocación de las lamas. Medido por metro cuadrado instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Soldadura de conexiones estructurales.",
   "descripcion": "Soldadura de conexiones estructurales en obra. Incluye la soldadura y la limpieza. Medido por metro lineal soldado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

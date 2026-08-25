@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Escalera exterior de concreto con pasamanos.",
   "descripcion": "Ejecución de escalera exterior de concreto con previsión de pasamanos. Incluye el encofrado, el armado y el vaciado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

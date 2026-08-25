@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Escalera metálica de piscina.",
   "descripcion": "Instalación de escalera metálica de piscina, con fijación y anclaje. Incluye la fijación. La escalera la elige el cliente.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

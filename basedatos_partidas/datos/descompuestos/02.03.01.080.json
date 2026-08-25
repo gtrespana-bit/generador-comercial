@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Desmontaje de revestimiento de fachada ventilada.",
   "descripcion": "Desmontaje de revestimiento de fachada ventilada, con retirada de paneles y subestructura. Incluye la retirada de los paneles y el desmontaje de la subestructura. Medido por metro cuadrado desmontado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

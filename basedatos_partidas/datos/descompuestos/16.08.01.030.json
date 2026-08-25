@@ -6,7 +6,7 @@
   "unidad": "glb",
   "titulo": "Documentación final de obra.",
   "descripcion": "Recopilación y entrega de la documentación final de obra, con planos, garantías y manuales.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

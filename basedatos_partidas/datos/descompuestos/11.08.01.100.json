@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Remate de borde de cubierta con goterón.",
   "descripcion": "Ejecución de alero y remate de borde de cubierta, con perfil de remate y sellado. Incluye la fijación y el sellado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

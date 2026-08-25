@@ -6,7 +6,7 @@
   "unidad": "glb",
   "titulo": "Estudio de viabilidad de energías renovables.",
   "descripcion": "Estudio de viabilidad de incorporación de energías renovables, con análisis de radiación y consumos.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

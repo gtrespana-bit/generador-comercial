@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Trasdosado curvo de placa de yeso.",
   "descripcion": "Trasdosado autoportante curvo de placa de yeso laminado conformada según el radio de diseño. Incluye la estructura curva, la placa conformada y el tratamiento de juntas. Medido por metro cuadrado de trasdosado terminado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

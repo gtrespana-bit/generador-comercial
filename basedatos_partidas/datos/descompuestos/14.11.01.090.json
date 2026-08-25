@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Parrillera de obra exterior.",
   "descripcion": "Ejecución de parrillera de obra exterior, de bloque o concreto revestido. Incluye la ejecución.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

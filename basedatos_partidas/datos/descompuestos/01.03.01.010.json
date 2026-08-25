@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Protección de piso terminado durante la ejecución de la obra.",
   "descripcion": "Protección de piso existente que permanece, mediante cartón corrugado en rollo solapado y fijado con cinta en las juntas, colocado sobre lámina de polietileno cuando exista riesgo de humedad. Se emplea en reformas parciales donde el piso de las áreas que no se intervienen debe entregarse intacto. Incluye la limpieza previa de la superficie, el extendido y solape del material, el sellado de juntas y del perímetro contra el rodapié, la reposición de las zonas que se deterioren durante la obra, y el retiro y desecho de la protección al finalizar los trabajos. Medido en superficie realmente protegida.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

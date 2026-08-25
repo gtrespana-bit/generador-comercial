@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Remate de tapajuntas de esquina.",
   "descripcion": "Colocación de remate de tapajuntas de esquina. Incluye la fijación. Medido por metro lineal colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

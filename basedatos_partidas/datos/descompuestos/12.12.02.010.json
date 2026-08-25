@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Barniz protector sobre madera interior.",
   "descripcion": "Aplicación de barniz de poliuretano o laca sobre carpintería y elementos de madera interiores, en tres manos con lijado intermedio. Incluye el lijado inicial en el sentido de la veta, el desempolvado, la aplicación del sellador de poro, el lijado suave entre manos que es lo que produce el tacto liso del acabado final, y las manos de barniz respetando los tiempos de secado. Medido en superficie realmente tratada, desarrollando todas las caras.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

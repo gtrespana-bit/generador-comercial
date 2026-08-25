@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Protección de hueco con tabla y barandilla.",
   "descripcion": "Protección de hueco con tabla resistente y barandilla, señalizada, para prevenir caídas.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

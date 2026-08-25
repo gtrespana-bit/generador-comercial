@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Restauración de papel tapiz.",
   "descripcion": "Restauración puntual de papel tapiz, con reposición de paños dañados y remate de juntas. Incluye la retirada del paño dañado y la reposición. Medido por metro cuadrado restaurado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

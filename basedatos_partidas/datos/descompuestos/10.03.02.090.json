@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Sellado de juntas de hormigonado con bentonita.",
   "descripcion": "Sellado de juntas de hormigonado en muro enterrado con cordón de bentonita. Incluye la colocación del cordón y el remate. Medido por metro lineal sellado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "kg",
   "titulo": "Acero de refuerzo en viga de riostra.",
   "descripcion": "Suministro y colocación de acero de refuerzo en viga de riostra. Incluye el corte, el doblado y la colocación. Medido por kilogramo colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

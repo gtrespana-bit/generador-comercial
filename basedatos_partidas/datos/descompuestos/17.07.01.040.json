@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Baño químico portátil, por mes.",
   "descripcion": "Alquiler mensual de baño químico portátil, con su mantenimiento y limpieza.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

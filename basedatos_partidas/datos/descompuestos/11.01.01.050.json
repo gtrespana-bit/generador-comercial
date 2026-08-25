@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Barrera de vapor bajo cubierta.",
   "descripcion": "Colocación de lámina de polietileno como barrera de vapor bajo el aislamiento de cubierta, con solapes sellados y remontes en los paramentos. Incluye la limpieza del soporte y el sellado de los encuentros.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Protección de fachada contra impactos.",
   "descripcion": "Colocación de protección de fachada contra impactos. Incluye la fijación de la protección. Medido por metro cuadrado instalado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

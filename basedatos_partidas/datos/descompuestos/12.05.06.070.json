@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Piso de linóleo encolado.",
   "descripcion": "Colocación de piso de linóleo encolado sobre soporte nivelado. Incluye la preparación, el encolado y el remate de juntas. Medido por metro cuadrado colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

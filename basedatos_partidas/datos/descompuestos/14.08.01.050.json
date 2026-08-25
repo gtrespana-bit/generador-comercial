@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Conexión de gas exterior.",
   "descripcion": "Ejecución de conexión de gas exterior, con tubería y regulador. Incluye la conexión y la prueba de estanqueidad.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

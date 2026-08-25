@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Estabilización de fondo con material granular.",
   "descripcion": "Estabilización de fondo de excavación con material granular. Incluye la colocación y la compactación. Medido por metro cuadrado estabilizado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

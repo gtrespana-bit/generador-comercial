@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Punto de desagüe exterior.",
   "descripcion": "Ejecución de punto de desagüe exterior, con conexión a la red de drenaje. Incluye la conexión.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

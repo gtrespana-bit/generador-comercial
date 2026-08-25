@@ -6,7 +6,7 @@
   "unidad": "m3",
   "titulo": "Concreto con aditivo plastificante.",
   "descripcion": "Concreto estructural con aditivo plastificante. Incluye el vaciado con el aditivo. Medido por metro cúbico ejecutado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

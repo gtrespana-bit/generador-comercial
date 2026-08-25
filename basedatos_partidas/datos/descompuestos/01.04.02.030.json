@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Cartel informativo de obra.",
   "descripcion": "Colocación de cartel informativo de obra. Incluye la fijación del cartel. Medido por unidad colocado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

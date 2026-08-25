@@ -6,7 +6,7 @@
   "unidad": "m",
   "titulo": "Zanja para tubería de agua.",
   "descripcion": "Excavación de zanja para tubería de agua. Incluye la excavación y el perfilado. Medido por metro lineal excavado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

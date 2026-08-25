@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Puerta de acceso con barra antipánico.",
   "descripcion": "Suministro y colocación de puerta de acceso con barra antipánico. Incluye el montaje de la hoja, la barra antipánico y el ajuste. Medido por unidad instalada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

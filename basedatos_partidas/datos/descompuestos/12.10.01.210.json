@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Pintura de señalización de seguridad interior.",
   "descripcion": "Aplicación de pintura de señalización de seguridad interior, con franjas y marcas según normativa. Incluye el replanteo de las marcas y la aplicación. Medido por metro cuadrado pintado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

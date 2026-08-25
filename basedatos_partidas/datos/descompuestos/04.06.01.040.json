@@ -6,7 +6,7 @@
   "unidad": "ud",
   "titulo": "Descabezado de pilote.",
   "descripcion": "Demolición de la cabeza del pilote hasta la cota de proyecto, eliminando el concreto contaminado del rebose, y preparación de las esperas de acero para su conexión con el cabezal o la viga de atado. Incluye el marcado de la cota de corte, la demolición con martillo eléctrico sin dañar las barras de espera ni fisurar el concreto que permanece, el enderezado y limpieza de las esperas, el repicado de la superficie de contacto para dar adherencia al elemento superior y el retiro del escombro. Medido por pilote realmente descabezado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

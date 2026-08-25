@@ -6,7 +6,7 @@
   "unidad": "m2",
   "titulo": "Eliminación de restos de adhesivo en paramento.",
   "descripcion": "Eliminación de restos de adhesivo y pintura vieja en paramento, con decapante o raspado, previo al nuevo acabado. Incluye la limpieza de la superficie. Medido por metro cuadrado limpiado.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

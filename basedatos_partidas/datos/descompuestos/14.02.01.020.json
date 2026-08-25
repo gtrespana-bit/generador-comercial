@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Acera de concreto.",
   "descripcion": "Acera de concreto de 8 cm sobre base compactada, con juntas de control y acabado antideslizante, con la pendiente transversal de evacuación. Incluye el replanteo de rasantes y pendientes, el encofrado perimetral, la colocación de la malla, el vaciado y reglado, el acabado, el aserrado o formación de juntas de control a la separación indicada y el curado. Medido en superficie realmente ejecutada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {

@@ -6,7 +6,7 @@
   "unidad": "m²",
   "titulo": "Entibado de zanja con madera.",
   "descripcion": "Entibado de las paredes de zanja mediante tablones y puntales de madera, para sostener el terreno y permitir el trabajo seguro en el interior. Es obligatorio a partir de la profundidad en que el terreno deja de ser autoestable, y su ausencia es la causa principal de los accidentes graves en zanja. Incluye el montaje del entibado conforme avanza la excavación y nunca después, la colocación de tablones y puntales con el apriete necesario, la revisión diaria del conjunto y tras cada lluvia, y el desmontaje escalonado a medida que se ejecuta el relleno. Medido en superficie de pared de zanja realmente entibada.",
-  "margen": 0.3,
+  "margen": 0.35,
   "complementarios_pct": 1,
   "recursos": [
     {
