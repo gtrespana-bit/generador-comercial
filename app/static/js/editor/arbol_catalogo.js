@@ -700,11 +700,16 @@
     cuerpo.addEventListener("click", function (event) {
       var rama = event.target.closest && event.target.closest(".arbol-rama");
       if (rama) { alternar(rama); return; }
+      var hoja = event.target.closest && event.target.closest(".arbol-hoja");
+      if (hoja && window.matchMedia("(max-width: 768px)").matches) {
+        insertar(hoja.dataset.idx, null, hoja.dataset.partidaId);
+        aplicarEstadoPlegado(true);
+      }
     });
 
     cuerpo.addEventListener("dblclick", function (event) {
       var hoja = event.target.closest && event.target.closest(".arbol-hoja");
-      if (hoja) insertar(hoja.dataset.idx, null);
+      if (hoja) insertar(hoja.dataset.idx, null, hoja.dataset.partidaId);
     });
 
     cuerpo.addEventListener("keydown", function (event) {
@@ -734,14 +739,21 @@
   }
 
   function aplicarEstadoPlegado(plegado) {
+    var movil = window.matchMedia("(max-width: 768px)").matches;
     panel.classList.toggle("plegado", plegado);
+    panel.classList.toggle("arbol-sheet-open", movil && !plegado);
+    document.body.classList.toggle("arbol-sheet-open", movil && !plegado);
     // El contenedor grid debe soltar la columna: si no, el panel se pliega
     // pero sigue ocupando 280–360 px y no se gana espacio de trabajo.
     var layout = panel.closest(".builder-con-arbol");
     if (layout) layout.classList.toggle("arbol-plegado", plegado);
-    try {
-      localStorage.setItem("arbol-catalogo-plegado", plegado ? "true" : "false");
-    } catch (e) {}
+    var backdrop = document.getElementById("arbol-sheet-backdrop");
+    if (backdrop) backdrop.hidden = !(movil && !plegado);
+    if (!movil) {
+      try {
+        localStorage.setItem("arbol-catalogo-plegado", plegado ? "true" : "false");
+      } catch (e) {}
+    }
     var boton = document.getElementById("arbol-toggle");
     if (boton) {
       boton.setAttribute("aria-expanded", plegado ? "false" : "true");

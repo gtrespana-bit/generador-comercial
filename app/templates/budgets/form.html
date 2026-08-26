@@ -34,6 +34,9 @@
     </div>
 
     <div class="ecb-actions">
+      <details class="ecb-more">
+        <summary class="btn btn-sm btn-ghost ecb-more-btn" title="Más herramientas">Más</summary>
+        <div class="ecb-more-panel">
       <div class="ecb-tools">
         <button type="button" id="btn-ai-dictation" class="btn btn-sm btn-ghost" title="Dictar en el campo activo">
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><rect x="5.5" y="1.5" width="5" height="8" rx="2.5"/><path d="M3 7.5a5 5 0 0010 0M8 12.5V14.5"/></svg>
@@ -57,6 +60,8 @@
           <span class="ecb-label">Densidad</span>
         </button>
       </div>
+        </div>
+      </details>
       <span id="autosave-status" class="autosave-status" title="Estado del autoguardado"></span>
       <button type="submit" class="btn btn-primary ecb-save" id="btn-guardar-principal">Guardar</button>
     </div>
@@ -284,6 +289,7 @@
 
   <!-- CONSTRUCTOR DE PRESUPUESTO -->
   <div class="builder-con-arbol">
+  <div id="arbol-sheet-backdrop" class="arbol-sheet-backdrop" hidden></div>
   <aside class="arbol-catalogo" id="arbol-catalogo">
     <div class="arbol-head">
       <div class="arbol-titulo">
@@ -315,6 +321,7 @@
       <p class="hint">Arrastra desde el catálogo, importa Excel o crea partidas a mano.</p>
     </div>
     <div class="builder-workspace-tools">
+      <button type="button" class="btn btn-sm editor-open-catalog" id="btn-open-catalog-mobile" data-cotizat-click="arbol-toggle" title="Abrir catálogo">Catálogo</button>
       <div class="catalog-search-wrap">
         <input type="text" id="buscar-partida" placeholder="Buscar…  Ctrl+K" autocomplete="off" aria-label="Buscar en catálogo" readonly data-cotizat-click="open-spotlight" title="Abrir buscador del catálogo (Ctrl+K)">
         <div id="catalogo-partidas">
@@ -410,6 +417,25 @@
     <a class="btn btn-ghost" href="{% if budget_id %}/presupuestos/{{ budget_id }}{% else %}/presupuestos{% endif %}">Cancelar</a>
   </div>
 </form>
+
+<nav class="editor-mobile-bar" aria-label="Acciones del editor">
+  <button type="button" class="editor-mobile-bar-btn" id="emb-catalog" data-cotizat-click="arbol-toggle">
+    <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 3.5h12v11H3z"/><path d="M3 7h12M7 3.5v11"/></svg>
+    <span>Catálogo</span>
+  </button>
+  <button type="button" class="editor-mobile-bar-btn" id="emb-add-partida">
+    <span class="editor-mobile-bar-plus">+</span>
+    <span>Partida</span>
+  </button>
+  <button type="button" class="editor-mobile-bar-btn" id="emb-add-cap">
+    <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 4h12M3 9h12M3 14h8"/></svg>
+    <span>Capítulo</span>
+  </button>
+  <button type="submit" form="form-presupuesto" class="editor-mobile-bar-btn editor-mobile-bar-save">
+    <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 9.2l3.2 3.2L14 5.6"/></svg>
+    <span>Guardar</span>
+  </button>
+</nav>
 
 <!-- Toast para deshacer / confirmaciones -->
 <div id="undo-flash" class="undo-flash"></div>
@@ -1306,7 +1332,24 @@
         if (window.EDITOR && window.EDITOR.abrirSpotlight) window.EDITOR.abrirSpotlight();
       });
     }
+
+    function clickIf(id) {
+      var el = document.getElementById(id);
+      if (el) el.click();
+    }
+    var embCap = document.getElementById('emb-add-cap');
+    if (embCap) {
+      embCap.addEventListener('click', function () { clickIf('btn-agregar-capitulo'); });
+    }
+    var embPart = document.getElementById('emb-add-partida');
+    if (embPart) {
+      embPart.addEventListener('click', function () {
+        var last = document.querySelector('#capitulos .btn-add-partida');
+        var all = document.querySelectorAll('#capitulos .btn-add-partida');
+        if (all.length) all[all.length - 1].click();
+        else clickIf('empty-add-first-partida');
+      });
+    }
   });
 </script>
 {% endblock %}
-
