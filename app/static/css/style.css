@@ -7752,8 +7752,11 @@ body { -webkit-tap-highlight-color: transparent; }
 @media (max-width: 768px) {
 
   /* La barra crece con el área segura del iPhone: los cinco botones
-     conservan sus 64px útiles aunque haya notch/indicator. */
+     conservan sus 64px útiles aunque haya notch/indicator.
+     display: flex explícito para ganar sobre el fallback de escritorio
+     declarado en .bottom-nav más arriba en la hoja. */
   .bottom-nav {
+    display: flex;
     height: calc(64px + env(safe-area-inset-bottom, 0px));
   }
   /* El contenido nunca queda debajo de la barra (64px + safe-area). */
