@@ -221,6 +221,16 @@ def test_menu_movil_clona_el_sidebar_unica_fuente_de_verdad():
     assert "js/menu_movil.js" in base
 
 
+def test_css_movil_barra_inferior_visible_en_movil():
+    """Garantiza que la barra inferior no quede anulada por reglas base
+    de escritorio declaradas más abajo en style.css."""
+    base_pos = CSS.find(".bottom-nav {\n  display: none;")
+    assert base_pos != -1
+    bloque_posterior = CSS[base_pos:]
+    assert "display: flex" in bloque_posterior
+    assert ".bottom-nav {" in bloque_posterior
+
+
 def test_css_movil_hoja_menu_alcanzable_y_comoda():
     assert ".bottom-nav button.bottom-nav-menu" in CSS
     # La hoja es un bottom-sheet con safe-area y cuerpo desplazable.
