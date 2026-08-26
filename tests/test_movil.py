@@ -13,6 +13,8 @@ import re
 from pathlib import Path
 
 CSS = Path("app/static/css/style.css").read_text(encoding="utf-8")
+PUBLIC_CSS = Path("app/static/css/public.css").read_text(encoding="utf-8")
+CRITICO = Path("app/templates/_landing_critical.css").read_text(encoding="utf-8")
 
 
 def test_base_lleva_viewport_con_safe_area(cliente_web):
@@ -68,6 +70,95 @@ def test_css_movil_bandeza_inferior_y_modal_completo():
 def test_css_sin_errores_de_sintaxis():
     import tinycss2
 
-    reglas = tinycss2.parse_stylesheet(CSS, skip_whitespace=True, skip_comments=True)
-    errores = [r for r in reglas if r.type == "error"]
-    assert not errores, [e.message for e in errores[:3]]
+    for hoja in (CSS, PUBLIC_CSS, CRITICO):
+        reglas = tinycss2.parse_stylesheet(hoja, skip_whitespace=True, skip_comments=True)
+        errores = [r for r in reglas if r.type == "error"]
+        assert not errores, [e.message for e in errores[:3]]
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Capa móvil premium del sitio público (2026-08-26)
+#
+# Regresiones que bloquean el reajuste integral de la landing y páginas
+# públicas en teléfono: sin viewport-fit=cover la barra de países se pega al
+# notch; sin las reglas de APU los subtotales caen a una segunda línea; sin
+# la tarjeta de la comparativa la tabla de 720 px obliga a scroll lateral;
+# sin el reflujo de la app-bar el botón "PDF" queda recortado en 360 px.
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+def test_landing_lleva_viewport_con_safe_area(cliente_web):
+    html = cliente_web.get("/").text
+    assert "viewport-fit=cover" in html
+
+
+def test_css_movil_apu_subtotales_alineados():
+    """Celdas vacías de relleno ocultas e importe fijado a la última columna;
+    la fila de costes complementarios conserva su porcentaje."""
+    assert ".apu-fila.apu-sub > span:nth-child(3)," in PUBLIC_CSS
+    assert ".apu-fila.apu-sub:not(.apu-sub-comp) > span:nth-child(2)," in PUBLIC_CSS
+    assert ".apu-fila.apu-venta > span:nth-child(3) { display: none; }" in PUBLIC_CSS
+    assert ".apu-fila.apu-total > span:last-child { grid-column: 3; }" in PUBLIC_CSS
+    assert ".apu-fila.apu-venta > span:last-child { grid-column: 2; }" in PUBLIC_CSS
+
+
+def test_plantilla_apu_filas_de_subtotal_con_clases():
+    contenido = Path("app/templates/landing.html").read_text(encoding="utf-8")
+    assert 'class="apu-fila apu-sub apu-sub-comp"' in contenido
+
+
+def test_css_movil_app_bar_sin_desborde():
+    assert ".landing .app-eyebrow { display: none; }" in PUBLIC_CSS
+    assert ".landing .app-title { max-width: none; flex: 1 1 auto; }" in PUBLIC_CSS
+    assert ".landing .app-total { display: none; }" in PUBLIC_CSS
+    assert ".landing .window-ghost { display: none; }" in PUBLIC_CSS
+
+
+def test_css_movil_pais_bar_compacto_y_sans_zoom_ios():
+    assert ".pais-bar-strong { display: none; }" in PUBLIC_CSS
+    assert ".pais-bar select { flex: 1 1 auto; width: 100%; min-width: 0; font-size: 16px; }" in PUBLIC_CSS
+
+
+def test_css_movil_hero_muestra_el_producto_compacto():
+    """El panel de control comercial vuelve a verse en móvil (versión compacta)
+    y el hero se libera de los 7 chips de mercado (redundantes con la barra
+    superior y la sección de países)."""
+    assert ".landing .hero-mercados { display: none; }" in PUBLIC_CSS
+    assert ".landing .hero-visual { display: flex; padding: 1.5rem 0 0.4rem; }" in PUBLIC_CSS
+    assert ".landing .hc-flow { font-size: 0.58rem;" in PUBLIC_CSS
+
+
+def test_css_critico_sincronizado_con_capa_movil():
+    """El CSS del primer viewport refleja la capa móvil: el H1 no se redibuja
+    al llegar public.css (los chips de mercado desaparecen con la misma
+    media query en ambas hojas)."""
+    assert ".landing .hero-mercados{display:none}" in CRITICO
+
+
+def test_css_movil_comparativa_se_vuelve_tarjetas():
+    assert ".landing .comp-tabla thead { display: none; }" in PUBLIC_CSS
+    # display:block en tabla+tbody: sin esto las filas en bloque caerían en
+    # celdas anónimas de tabla y las tarjetas quedarían en fila horizontal.
+    assert (
+        ".landing .comp-tabla,\n  .landing .comp-tabla tbody { display: block; }"
+        in PUBLIC_CSS
+    )
+    assert ".landing .comp-tabla tbody tr {" in PUBLIC_CSS
+    assert "float: left;" in PUBLIC_CSS
+    assert ".landing .comp-who { display: none; }" in PUBLIC_CSS
+
+
+def test_plantilla_comparativa_lleva_etiquetas_de_columna():
+    """Cada celda revela su herramienta (Excel / Generadores / CotizaT) en
+    modo tarjeta; en escritorio la etiqueta sigue oculta."""
+    contenido = Path("app/templates/landing.html").read_text(encoding="utf-8")
+    assert contenido.count('class="comp-who"') == 45
+
+
+def test_css_movil_botones_a_ancho_completo():
+    assert ".landing .acciones { flex-direction: column; align-items: stretch; gap: 0.6rem; }" in PUBLIC_CSS
+    assert ".landing .acciones .btn { width: 100%;" in PUBLIC_CSS
+
+
+def test_css_movil_footer_respeta_safe_area():
+    assert "env(safe-area-inset-bottom, 0px)" in PUBLIC_CSS
