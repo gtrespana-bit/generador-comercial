@@ -20,3 +20,4 @@ instalador/
 logs/
 # Componente oficial descargado al crear el instalador (no se versiona).
 recursos/MicrosoftEdgeWebview2Setup.exe
+.venv-web/

@@ -92,6 +92,10 @@ h1,h2,h3,h4{letter-spacing:-.025em;color:var(--text)}
   .landing .hero .acciones{justify-content:center}
   .landing .hero-outcomes{margin-left:auto;margin-right:auto}
   .landing .hero-points{justify-items:center;text-align:left}
+  /* Sincronizado con la capa móvil de public.css: los mercados se retiran
+     del hero en móvil (viven en la barra superior y en su propia sección)
+     para que el H1 no se redibuje al cargar la hoja completa. */
+  .landing .hero-mercados{display:none}
   .landing .hero-visual{display:none}
   .landing .hero-stats{grid-template-columns:repeat(2,1fr)}
   .landing .hero-stats .stat:nth-child(3){border-left:none;border-top:1px solid var(--border)}

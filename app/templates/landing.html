@@ -2,7 +2,7 @@
 <html lang="{{ seo.lang if seo is defined else 'es' }}">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   {# La etiqueta GA4 va aquí, antes del CSS crítico: el detector de Google
      busca gtag.js en los primeros KB y 10 KB de CSS lo tapaban. #}
   {% include "_ga.html" %}
@@ -461,7 +461,7 @@
       <div class="apu-fila apu-sub" role="row"><span role="cell">Materiales</span><span role="cell"></span><span role="cell"></span><span role="cell">{{ ej.apu.materiales }}</span></div>
       <div class="apu-fila apu-sub" role="row"><span role="cell">Mano de obra</span><span role="cell"></span><span role="cell"></span><span role="cell">{{ ej.apu.mano_obra }}</span></div>
       <div class="apu-fila apu-sub" role="row"><span role="cell">Equipo y maquinaria</span><span role="cell"></span><span role="cell"></span><span role="cell">{{ ej.apu.equipo }}</span></div>
-      <div class="apu-fila apu-sub" role="row"><span role="cell">Costes directos complementarios</span><span role="cell">{{ ej.apu.comp_pct }} %</span><span role="cell"></span><span role="cell">{{ ej.apu.comp }}</span></div>
+      <div class="apu-fila apu-sub apu-sub-comp" role="row"><span role="cell">Costes directos complementarios</span><span role="cell">{{ ej.apu.comp_pct }} %</span><span role="cell"></span><span role="cell">{{ ej.apu.comp }}</span></div>
       <div class="apu-fila apu-total" role="row"><span role="cell">COSTE DIRECTO</span><span role="cell"></span><span role="cell"></span><span role="cell">{{ ej.apu.coste }}</span></div>
       <div class="apu-fila apu-venta" role="row"><span role="cell">BENEFICIO Y PRECIO DE VENTA</span><span role="cell">{{ ej.apu.margen }}</span><span role="cell"></span><span role="cell">{{ ej.apu.precio }}</span></div>
       </div>
@@ -577,93 +577,93 @@
       <tbody>
         <tr>
           <th scope="row">Base de precios del país incluida y editable</th>
-          <td><span class="comp-no">✗</span> Empiezas de cero</td>
-          <td><span class="comp-mitad">◦</span> Decenas de partidas</td>
-          <td><span class="comp-si">✓</span> {{ catalogo().lineas_precio_txt }} líneas: {{ catalogo().partidas_txt }} partidas + {{ catalogo().recursos_txt }} recursos</td>
+          <td><span class="comp-who">Excel / plantillas</span><span class="comp-no">✗</span> Empiezas de cero</td>
+          <td><span class="comp-who">Generadores típicos</span><span class="comp-mitad">◦</span> Decenas de partidas</td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> {{ catalogo().lineas_precio_txt }} líneas: {{ catalogo().partidas_txt }} partidas + {{ catalogo().recursos_txt }} recursos</td>
         </tr>
         <tr>
           <th scope="row">Análisis de precios unitarios (recursos y rendimientos)</th>
-          <td><span class="comp-mitad">◦</span> A mano, hoja por hoja</td>
-          <td><span class="comp-no">✗</span> Solo texto y precio</td>
-          <td><span class="comp-si">✓</span> {{ catalogo().lineas_descomp_txt }} líneas de descomposición editables</td>
+          <td><span class="comp-who">Excel / plantillas</span><span class="comp-mitad">◦</span> A mano, hoja por hoja</td>
+          <td><span class="comp-who">Generadores típicos</span><span class="comp-no">✗</span> Solo texto y precio</td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> {{ catalogo().lineas_descomp_txt }} líneas de descomposición editables</td>
         </tr>
         <tr>
           <th scope="row">Cambia un precio de recurso y se recalcula todo</th>
-          <td><span class="comp-no">✗</span> Buscar y reemplazar</td>
-          <td><span class="comp-no">✗</span> Recalcular a mano</td>
-          <td><span class="comp-si">✓</span> En cascada: recurso → partidas → presupuesto</td>
+          <td><span class="comp-who">Excel / plantillas</span><span class="comp-no">✗</span> Buscar y reemplazar</td>
+          <td><span class="comp-who">Generadores típicos</span><span class="comp-no">✗</span> Recalcular a mano</td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> En cascada: recurso → partidas → presupuesto</td>
         </tr>
         <tr>
           <th scope="row">Horas-hombre por rol y duración de la obra</th>
-          <td><span class="comp-no">✗</span></td>
-          <td><span class="comp-no">✗</span></td>
-          <td><span class="comp-si">✓</span> Por partida y total, con tu cuadrilla</td>
+          <td><span class="comp-who">Excel / plantillas</span><span class="comp-no">✗</span></td>
+          <td><span class="comp-who">Generadores típicos</span><span class="comp-no">✗</span></td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> Por partida y total, con tu cuadrilla</td>
         </tr>
         <tr>
           <th scope="row">Beneficio y margen en vivo por partida, capítulo y total</th>
-          <td><span class="comp-mitad">◦</span> Fórmulas frágiles</td>
-          <td><span class="comp-mitad">◦</span> Solo el total</td>
-          <td><span class="comp-si">✓</span> Con alertas de margen bajo</td>
+          <td><span class="comp-who">Excel / plantillas</span><span class="comp-mitad">◦</span> Fórmulas frágiles</td>
+          <td><span class="comp-who">Generadores típicos</span><span class="comp-mitad">◦</span> Solo el total</td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> Con alertas de margen bajo</td>
         </tr>
         <tr>
           <th scope="row">Importar BC3 (FIEBDC-3) + medir sobre planos</th>
-          <td><span class="comp-no">✗</span></td>
-          <td><span class="comp-no">✗</span></td>
-          <td><span class="comp-si">✓</span> .bc3 con capítulos y mediciones + canvas con calibración (sin IA)</td>
+          <td><span class="comp-who">Excel / plantillas</span><span class="comp-no">✗</span></td>
+          <td><span class="comp-who">Generadores típicos</span><span class="comp-no">✗</span></td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> .bc3 con capítulos y mediciones + canvas con calibración (sin IA)</td>
         </tr>
         <tr>
           <th scope="row">Importar descompuestos desde Excel (.xlsx)</th>
-          <td><span class="comp-no">✗</span></td>
-          <td><span class="comp-no">✗</span></td>
-          <td><span class="comp-si">✓</span> Sin perder filas ni fórmulas</td>
+          <td><span class="comp-who">Excel / plantillas</span><span class="comp-no">✗</span></td>
+          <td><span class="comp-who">Generadores típicos</span><span class="comp-no">✗</span></td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> Sin perder filas ni fórmulas</td>
         </tr>
         <tr>
           <th scope="row">Packs de estancia (capítulo entero escalado a m²)</th>
-          <td><span class="comp-no">✗</span> Copiar y pegar</td>
-          <td><span class="comp-no">✗</span></td>
-          <td><span class="comp-si">✓</span> {{ catalogo().packs }} packs de serie + los tuyos</td>
+          <td><span class="comp-who">Excel / plantillas</span><span class="comp-no">✗</span> Copiar y pegar</td>
+          <td><span class="comp-who">Generadores típicos</span><span class="comp-no">✗</span></td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> {{ catalogo().packs }} packs de serie + los tuyos</td>
         </tr>
         <tr>
           <th scope="row">Productos a elección del cliente con foto</th>
-          <td><span class="comp-mitad">◦</span> Adjuntos sueltos</td>
-          <td><span class="comp-no">✗</span></td>
-          <td><span class="comp-si">✓</span> Incluido / opcional / alternativa</td>
+          <td><span class="comp-who">Excel / plantillas</span><span class="comp-mitad">◦</span> Adjuntos sueltos</td>
+          <td><span class="comp-who">Generadores típicos</span><span class="comp-no">✗</span></td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> Incluido / opcional / alternativa</td>
         </tr>
         <tr>
           <th scope="row">PDF profesional, versiones y enlace opcional</th>
-          <td><span class="comp-no">✗</span></td>
-          <td><span class="comp-mitad">◦</span> Apps de firma aparte</td>
-          <td><span class="comp-si">✓</span> PDF, resumen de cambios y enlace privado opcional</td>
+          <td><span class="comp-who">Excel / plantillas</span><span class="comp-no">✗</span></td>
+          <td><span class="comp-who">Generadores típicos</span><span class="comp-mitad">◦</span> Apps de firma aparte</td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> PDF, resumen de cambios y enlace privado opcional</td>
         </tr>
         <tr>
           <th scope="row">Versiones inmutables del PDF enviado</th>
-          <td><span class="comp-mitad">◦</span> Carpeta de emails</td>
-          <td><span class="comp-no">✗</span></td>
-          <td><span class="comp-si">✓</span> Cada envío queda sellado</td>
+          <td><span class="comp-who">Excel / plantillas</span><span class="comp-mitad">◦</span> Carpeta de emails</td>
+          <td><span class="comp-who">Generadores típicos</span><span class="comp-no">✗</span></td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> Cada envío queda sellado</td>
         </tr>
         <tr>
           <th scope="row">Moneda local + USD con tasa congelada por presupuesto</th>
-          <td><span class="comp-no">✗</span></td>
-          <td><span class="comp-mitad">◦</span> Una sola moneda</td>
-          <td><span class="comp-si">✓</span> 20 monedas, IVA y fiscalidad por país</td>
+          <td><span class="comp-who">Excel / plantillas</span><span class="comp-no">✗</span></td>
+          <td><span class="comp-who">Generadores típicos</span><span class="comp-mitad">◦</span> Una sola moneda</td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> 20 monedas, IVA y fiscalidad por país</td>
         </tr>
         <tr>
           <th scope="row">Del presupuesto al cobro (pagos y saldos)</th>
-          <td><span class="comp-no">✗</span></td>
-          <td><span class="comp-no">✗</span></td>
-          <td><span class="comp-si">✓</span> Documentos DC y control de saldos</td>
+          <td><span class="comp-who">Excel / plantillas</span><span class="comp-no">✗</span></td>
+          <td><span class="comp-who">Generadores típicos</span><span class="comp-no">✗</span></td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> Documentos DC y control de saldos</td>
         </tr>
         <tr>
           <th scope="row">Subir todos los precios de golpe por % (inflación)</th>
-          <td><span class="comp-mitad">◦</span> Riesgoso</td>
-          <td><span class="comp-no">✗</span></td>
-          <td><span class="comp-si">✓</span> Todo el catálogo o por capítulo</td>
+          <td><span class="comp-who">Excel / plantillas</span><span class="comp-mitad">◦</span> Riesgoso</td>
+          <td><span class="comp-who">Generadores típicos</span><span class="comp-no">✗</span></td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> Todo el catálogo o por capítulo</td>
         </tr>
         <tr>
           <th scope="row">Tus datos sin rehenes</th>
-          <td><span class="comp-si">✓</span> El archivo es tuyo</td>
-          <td><span class="comp-no">✗</span> Exportación limitada</td>
-          <td><span class="comp-si">✓</span> Excel, PDF y copia de seguridad completa</td>
+          <td><span class="comp-who">Excel / plantillas</span><span class="comp-si">✓</span> El archivo es tuyo</td>
+          <td><span class="comp-who">Generadores típicos</span><span class="comp-no">✗</span> Exportación limitada</td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> Excel, PDF y copia de seguridad completa</td>
         </tr>
       </tbody>
     </table>
