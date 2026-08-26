@@ -162,3 +162,95 @@ def test_css_movil_botones_a_ancho_completo():
 
 def test_css_movil_footer_respeta_safe_area():
     assert "env(safe-area-inset-bottom, 0px)" in PUBLIC_CSS
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Navegación móvil completa: barra inferior + hoja de menú (2026-08-26)
+#
+# El antiguo flujo móvil (botón hamburguesa pequeño en la esquina superior)
+# escondía la mayoría de las secciones y quedaba fuera del alcance del pulgar.
+# Ahora la barra inferior tiene un botón «Menú» que abre una hoja con TODAS
+# las secciones, un buscador de secciones, accesos rápidos para crear y el
+# bloque de cuenta (cuenta, organización, tema, salir). Escritorio intacto.
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+def test_barra_inferior_abre_hoja_menu_con_todas_las_secciones(cliente_web):
+    html = cliente_web.get("/inicio").text
+    assert 'id="boton-menu-movil"' in html
+    assert 'aria-controls="menu-movil"' in html
+    assert 'aria-haspopup="dialog"' in html
+    assert 'id="menu-movil"' in html
+    assert 'role="dialog"' in html
+    # Secciones sin pestaña propia en la barra: deben llegar vía menú.
+    for destino in ('href="/clientes"', 'href="/recursos"', 'href="/facturas"', 'href="/configuracion"'):
+        assert destino in html, destino
+
+
+def test_hoja_menu_trae_buscador_y_accesos_para_crear(cliente_web):
+    html = cliente_web.get("/inicio").text
+    assert 'id="menu-movil-filtro"' in html
+    for destino in (
+        "href=\"/presupuestos/nuevo\"",
+        "href=\"/clientes/nuevo\"",
+        "href=\"/partidas/nueva\"",
+        "href=\"/recursos/nuevo\"",
+        "href=\"/productos/nuevo\"",
+        "href=\"/recetas/nueva\"",
+    ):
+        assert destino in html, destino
+
+
+def test_hoja_menu_incluye_cuenta_organizacion_tema_y_salir(cliente_web):
+    html = cliente_web.get("/inicio").text
+    assert "menu-movil-usuario" in html
+    assert 'href="/cuenta"' in html
+    assert 'href="/organizaciones"' in html
+    assert "theme-toggle-btn" in html
+    assert 'action="/salir"' in html
+
+
+def test_menu_movil_clona_el_sidebar_unica_fuente_de_verdad():
+    """La hoja reutiliza la navegación del sidebar (incluye condicionales de
+    rol como «Equipo» y el estado activo) en vez de duplicar enlaces."""
+    js = Path("app/static/js/menu_movil.js").read_text(encoding="utf-8")
+    assert '#app-sidebar nav' in js
+    assert "cloneNode(true)" in js
+    assert "menu-movil-filtro" in js
+    base = Path("app/templates/base.html").read_text(encoding="utf-8")
+    assert "js/menu_movil.js" in base
+
+
+def test_css_movil_hoja_menu_alcanzable_y_comoda():
+    assert ".bottom-nav button.bottom-nav-menu" in CSS
+    # La hoja es un bottom-sheet con safe-area y cuerpo desplazable.
+    assert "max-height: calc(90dvh - env(safe-area-inset-top, 0px))" in CSS
+    assert (
+        "padding: 0.7rem 0.9rem calc(0.7rem + env(safe-area-inset-bottom, 0px));"
+        in CSS
+    )
+    assert "overscroll-behavior: contain" in CSS
+    # El filtro usa 16px reales para no disparar el zoom de iOS.
+    assert ".menu-movil-buscar input {" in CSS
+    bloque = CSS.split(".menu-movil-buscar input {", 1)[1].split("}", 1)[0]
+    assert "font-size: 16px !important;" in bloque
+    # Objetivos táctiles generosos en la rejilla de secciones.
+    assert ".menu-movil-nav nav a {" in CSS
+    assert "min-height: 68px" in CSS
+    # El atributo hidden manda aunque la hoja use display:flex.
+    assert ".menu-movil [hidden] { display: none !important; }" in CSS
+
+
+def test_css_movil_retira_el_hamburguesa_de_la_esquina():
+    """En móvil ya no se muestra el botón flotante superior: la navegación
+    vive en la barra inferior (al alcance del pulgar y sin tapar el título)."""
+    assert ".mobile-nav-toggle { display: none; }" in CSS
+
+
+def test_hoja_menu_no_existe_en_escritorio():
+    """Capa base fuera de media queries a display:none (patrón
+    .editor-mobile-bar) + guarda explícita ≥769px."""
+    assert ".menu-movil,\n.menu-movil-backdrop { display: none; }" in CSS
+    guard = CSS.rsplit("@media (min-width: 769px)", 1)[1]
+    assert ".menu-movil," in guard
+    assert "display: none !important" in guard

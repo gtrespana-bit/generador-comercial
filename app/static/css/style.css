@@ -2468,7 +2468,8 @@ body.modal-open { overflow: hidden; }
    ========================================================================== */
 @media print {
   .sidebar, .theme-toggle-btn, .sidebar-toggle-btn, .filters, .pagination,
-  .page-head .actions, form, .no-print, .alert, .alert-warn {
+  .page-head .actions, form, .no-print, .alert, .alert-warn,
+  .bottom-nav, .menu-movil, .menu-movil-backdrop {
     display: none !important;
   }
   body { background: #fff; }
@@ -2590,7 +2591,12 @@ body.modal-open { overflow: hidden; }
   .page-head { flex-direction: column; }
   .cards { grid-template-columns: 1fr 1fr; }
   .sidebar-toggle-btn { display: none; }
-  .mobile-nav-toggle { display: flex; }
+  /* El acceso a la navegación en móvil es la barra inferior + su botón
+     «Menú» (hoja inferior): el botón hamburguesa de la esquina quedaba
+     lejos del pulgar, tapaba el título de la página y escondía la mitad
+     de las secciones. Se retira del móvil; el drawer sigue disponible
+     por si algún flujo lo reutiliza. */
+  .mobile-nav-toggle { display: none; }
   .bottom-nav { display: flex; }
   body.editor-focus .bottom-nav { display: none; }
   body.editor-focus .content { padding-bottom: 3.5rem; }
@@ -6282,6 +6288,8 @@ body { -webkit-tap-highlight-color: transparent; }
   .bottom-nav { box-shadow: 0 -6px 24px rgba(15, 23, 42, 0.10); }
   .bottom-nav a { font-size: 0.64rem; }
   .bottom-nav a:active { color: var(--accent); }
+  .bottom-nav button { font-size: 0.64rem; }
+  .bottom-nav button:active { color: var(--accent); }
 }
 
 /* ───────────────────── Tiempos · asistente ligero de decisión ───────────────────── */
@@ -7673,4 +7681,462 @@ body { -webkit-tap-highlight-color: transparent; }
 
 @media (min-width: 769px) {
   .editor-mobile-bar { display: none !important; }
+}
+
+
+/* ==========================================================================
+   MENÚ MÓVIL — botón «Menú» de la barra inferior + hoja con TODAS las
+   secciones, buscador de secciones y accesos rápidos para crear.
+   En escritorio no existe: la capa completa vive dentro de ≤768px y la hoja
+   queda display:none fuera de ella (mismo patrón que .editor-mobile-bar).
+   ========================================================================== */
+
+.menu-movil,
+.menu-movil-backdrop { display: none; }
+
+.bottom-nav a,
+.bottom-nav button {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.bottom-nav button.bottom-nav-menu {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15rem;
+  min-width: 0;
+  padding: 0.35rem 0.15rem;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 0.62rem;
+  font-weight: 650;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+}
+.bottom-nav button.bottom-nav-menu svg {
+  width: 20px;
+  height: 20px;
+  opacity: 0.75;
+}
+/* Punto dorado: la sección actual no tiene pestaña propia en la barra
+   inferior y se alcanza desde el menú (Recursos, Cobros, Ajustes…). */
+.bottom-nav button.bottom-nav-menu .menu-movil-punto {
+  position: absolute;
+  top: 6px;
+  right: calc(50% - 17px);
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--gold);
+  opacity: 0;
+  transform: scale(0.4);
+  transition: opacity var(--dur) var(--ease-out), transform var(--dur) var(--ease-spring);
+}
+.bottom-nav button.bottom-nav-menu.menu-fuera-seccion { color: var(--text-secondary); }
+.bottom-nav button.bottom-nav-menu.menu-fuera-seccion svg { opacity: 1; }
+.bottom-nav button.bottom-nav-menu.menu-fuera-seccion .menu-movil-punto {
+  opacity: 1;
+  transform: none;
+}
+/* Feedback mientras la hoja está abierta: el propio botón queda activo. */
+.bottom-nav button.bottom-nav-menu[aria-expanded="true"] { color: var(--accent); }
+.bottom-nav button.bottom-nav-menu[aria-expanded="true"] svg { opacity: 1; }
+
+@media (max-width: 768px) {
+
+  /* La barra crece con el área segura del iPhone: los cinco botones
+     conservan sus 64px útiles aunque haya notch/indicator. */
+  .bottom-nav {
+    height: calc(64px + env(safe-area-inset-bottom, 0px));
+  }
+  /* El contenido nunca queda debajo de la barra (64px + safe-area). */
+  .content {
+    padding-bottom: calc(92px + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* ── Fondo ─────────────────────────────────────────────────────────── */
+  .menu-movil-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 1400;
+    background: rgba(9, 9, 11, 0.45);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--dur-slow) var(--ease-out);
+  }
+  .menu-movil-backdrop.abierto {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* ── Hoja ──────────────────────────────────────────────────────────── */
+  .menu-movil {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1450;
+    /* Fallback vh para navegadores sin dvh; luego el límite fino. */
+    max-height: 88vh;
+    max-height: calc(90dvh - env(safe-area-inset-top, 0px));
+    border: 1px solid var(--border);
+    border-bottom: none;
+    border-radius: 20px 20px 0 0;
+    background: var(--surface);
+    box-shadow: var(--shadow-xl);
+    overflow: hidden;
+    transform: translateY(105%);
+    visibility: hidden;
+    transition:
+      transform var(--dur-slow) var(--ease-out),
+      visibility 0s linear var(--dur-slow);
+  }
+  .menu-movil.abierto {
+    transform: translateY(0);
+    visibility: visible;
+    transition: transform var(--dur-slow) var(--ease-out);
+  }
+  /* El atributo hidden (filtrado de secciones) manda sobre cualquier display */
+  .menu-movil [hidden] { display: none !important; }
+
+  body.menu-movil-abierto { overflow: hidden; }
+
+  .menu-movil-head {
+    position: relative;
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.95rem 0.9rem 0.55rem;
+    border-bottom: 1px solid var(--border-subtle);
+    /* La cabecera es el asidero: se arrastra para cerrar la hoja. */
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    cursor: grab;
+  }
+  .menu-movil.arrastrando { transition: none; }
+  .menu-movil-agarre {
+    position: absolute;
+    top: 7px;
+    left: 50%;
+    width: 42px;
+    height: 4px;
+    border-radius: 999px;
+    background: var(--border-strong);
+    transform: translateX(-50%);
+  }
+  .menu-movil-titulo {
+    font-size: 1.02rem;
+    font-weight: 750;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+  .menu-movil-cerrar {
+    margin-left: auto;
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface);
+    color: var(--text-secondary);
+    cursor: pointer;
+  }
+  .menu-movil-cerrar:active { background: var(--surface-active); }
+
+  .menu-movil-cuerpo {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.95rem;
+    padding: 0.8rem 0.9rem 1rem;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+
+  .menu-movil-crear-chips {
+    display: flex;
+    gap: 0.45rem;
+    padding-bottom: 0.2rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  /* ── Buscador de secciones (16px reales: sin zoom de iOS) ──────────── */
+  .menu-movil-buscar {
+    position: relative;
+    flex: 0 0 auto;
+  }
+  .menu-movil-buscar > svg {
+    position: absolute;
+    left: 0.85rem;
+    top: 50%;
+    width: 16px;
+    height: 16px;
+    color: var(--text-muted);
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+  .menu-movil-buscar input {
+    width: 100%;
+    min-height: 48px;
+    padding: 0.6rem 0.9rem 0.6rem 2.45rem;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface-alt);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 16px !important;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  .menu-movil-buscar input::placeholder { color: var(--text-muted); }
+  .menu-movil-buscar input:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: var(--surface);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+
+  /* ── Accesos rápidos para crear ────────────────────────────────────── */
+  .menu-movil-crear { flex: 0 0 auto; }
+  .menu-movil-crear-titulo {
+    display: block;
+    margin-bottom: 0.45rem;
+    font-size: 0.66rem;
+    font-weight: 800;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--text-soft);
+  }
+  .menu-movil-crear-chips::-webkit-scrollbar { display: none; }
+  .menu-movil-crear-chips a {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    min-height: 42px;
+    padding: 0.45rem 0.9rem;
+    border: 1px solid color-mix(in srgb, var(--accent) 26%, var(--border));
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 0.84rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .menu-movil-crear-chips a:first-child {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .menu-movil-crear-chips a:active { transform: scale(0.97); }
+
+  /* ── Rejilla de secciones (clon del sidebar) ───────────────────────── */
+  .menu-movil-nav { flex: 0 0 auto; }
+  .menu-movil-nav nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+  .menu-movil-nav .nav-section {
+    grid-column: 1 / -1;
+    margin: 0.45rem 0 0;
+    border: 0;
+    background: none;
+    padding: 0;
+    font-size: 0.66rem;
+    font-weight: 800;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--text-soft);
+  }
+  .menu-movil-nav .nav-section:first-child { margin-top: 0; }
+  .menu-movil-nav nav a {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.5rem;
+    min-height: 68px;
+    padding: 0.6rem 0.7rem;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface-alt);
+    color: var(--text);
+    font-size: 0.82rem;
+    font-weight: 650;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+    text-decoration: none;
+    transition: transform var(--dur-fast) var(--ease-out);
+  }
+  .menu-movil-nav nav a .nav-icon {
+    width: 20px;
+    height: 20px;
+    color: var(--text-soft);
+    flex: 0 0 auto;
+  }
+  .menu-movil-nav nav a:active { transform: scale(0.97); }
+  .menu-movil-nav nav a.active {
+    border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+  .menu-movil-nav nav a.active .nav-icon { color: var(--accent); }
+  /* Neutraliza cualquier resto del modo iconos del escritorio si el cuerpo
+     llegase a estar contraído al clonar. */
+  .menu-movil-nav nav a > span:not(.nav-icon) {
+    position: static;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition: none;
+  }
+
+  .menu-movil-vacio {
+    padding: 0.9rem;
+    border: 1px dashed var(--border-strong);
+    border-radius: 12px;
+    color: var(--text-soft);
+    font-size: 0.85rem;
+    text-align: center;
+  }
+
+  /* ── Pie: cuenta, organización, tema y salir ───────────────────────── */
+  .menu-movil-pie {
+    flex: 0 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    padding: 0.7rem 0.9rem calc(0.7rem + env(safe-area-inset-bottom, 0px));
+    border-top: 1px solid var(--border-subtle);
+    background: var(--surface-alt);
+  }
+  .menu-movil-usuario {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-height: 48px;
+    padding: 0.45rem 0.6rem;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface);
+    color: var(--text);
+    text-decoration: none;
+  }
+  .menu-movil-usuario:active { background: var(--surface-hover); }
+  .menu-movil-avatar {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    flex: 0 0 auto;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 750;
+  }
+  .menu-movil-usuario-info {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+  }
+  .menu-movil-usuario-info strong {
+    font-size: 0.83rem;
+    font-weight: 700;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .menu-movil-usuario-info small {
+    font-size: 0.7rem;
+    color: var(--text-soft);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .menu-movil-usuario > svg {
+    margin-left: auto;
+    flex: 0 0 auto;
+    color: var(--text-muted);
+  }
+  .menu-movil-pie-btn {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.45rem;
+    min-height: 44px;
+    padding: 0.5rem 0.7rem;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface);
+    color: var(--text-secondary);
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: 650;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .menu-movil-pie-btn:active { background: var(--surface-hover); }
+  .menu-movil-salir { display: contents; }
+  .menu-movil-salir button {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    width: 100%;
+    min-height: 44px;
+    padding: 0.5rem 0.7rem;
+    border: 1px solid color-mix(in srgb, var(--rose) 32%, var(--border));
+    border-radius: 10px;
+    background: var(--surface);
+    color: var(--rose);
+    font-family: inherit;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .menu-movil-salir button:active { background: var(--rose-soft); }
+
+  /* En tema oscuro el acento es azul claro: el texto blanco de los chips
+     sólidos no contrasta; se invierte a tinta azul marino. */
+  [data-theme="dark"] .menu-movil-crear-chips a:first-child { color: #0b2547; }
+  [data-theme="dark"] .menu-movil-avatar { color: #0b2547; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .menu-movil,
+    .menu-movil-backdrop,
+    .menu-movil-crear-chips a,
+    .menu-movil-nav nav a,
+    .bottom-nav button.bottom-nav-menu .menu-movil-punto {
+      transition: none;
+    }
+  }
+}
+
+@media (min-width: 769px) {
+  .menu-movil,
+  .menu-movil-backdrop { display: none !important; }
 }
