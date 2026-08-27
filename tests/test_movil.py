@@ -264,3 +264,79 @@ def test_hoja_menu_no_existe_en_escritorio():
     guard = CSS.rsplit("@media (min-width: 769px)", 1)[1]
     assert ".menu-movil," in guard
     assert "display: none !important" in guard
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Vista documento del presupuesto en teléfono (2026-08-27)
+#
+# El bloque de totales (SUBTOTAL / COSTE INTERNO / BENEFICIO / BASE
+# IMPONIBLE / I.V.A. / PRESUPUESTO TOTAL) es una tabla etiqueta-valor que
+# caía en las reglas de «tabla ancha» (min-width: 620px + columna pegajosa)
+# y obligaba a desplazamiento lateral en el móvil. Estas regresiones
+# bloquean el reflujo tipo factura y el resto de la capa móvil de la
+# ficha: partidas como fichas de datos con microtítulos, mediciones
+# compactas sin la columna vacía «—» y versiones como tarjetas.
+# ─────────────────────────────────────────────────────────────────────────────
+
+DETALLE = Path("app/templates/budgets/detail.html").read_text(encoding="utf-8")
+
+
+def test_css_totales_fuera_de_las_tablas_anchas():
+    """Ninguna regla de tabla ancha (620px / columna fija / overflow del
+    card) puede alcanzar a .doc-totales."""
+    bloque = CSS.split("Tablas anchas que conservan columnas", 1)[1].split("}\n\n", 1)[0]
+    assert "min-width: 620px" in bloque
+    for linea in bloque.splitlines():
+        if "min-width: 620px" in linea or "th:first-child" in linea or "overflow-x" in linea:
+            assert ":not(.doc-totales)" in linea, linea.strip()
+
+
+def test_css_totales_como_bloque_tipo_factura():
+    """Etiqueta a la izquierda (muted, versalitas) e importe tabular a la
+    derecha; el total cierra como píldora destacada."""
+    assert ".doc-totales tr {\n    display: flex;" in CSS
+    assert ".doc-totales td:first-child {" in CSS
+    assert ".doc-totales td + td {" in CSS
+    bloque_valor = CSS.split(".doc-totales td + td {", 1)[1].split("}", 1)[0]
+    assert "white-space: nowrap" in bloque_valor
+    assert "font-variant-numeric: tabular-nums" in bloque_valor
+    assert ".doc-totales tr.row-total {" in CSS
+    bloque_total = CSS.split(".doc-totales tr.row-total {", 1)[1].split("}", 1)[0]
+    assert "background: var(--accent-soft)" in bloque_total
+    assert "border-radius" in bloque_total
+
+
+def test_css_partidas_como_ficha_de_datos_con_microtitulos():
+    """La partida apilada en cuadrícula de dos columnas con etiquetas
+    CANTIDAD / PRECIO UNITARIO / IMPORTE / TIEMPO; nada hereda anchos fijos."""
+    assert ".doc-partida .table tr {\n    display: grid;" in CSS
+    assert 'td:nth-child(2)::before { content: "Cantidad"; }' in CSS
+    assert 'td:nth-child(3)::before { content: "Precio unitario"; }' in CSS
+    assert 'td:nth-child(4)::before { content: "Importe"; }' in CSS
+    assert 'td:nth-child(5)::before { content: "Tiempo"; }' in CSS
+    bloque_td = CSS.split(".doc-partida .table td {", 1)[1].split("}", 1)[0]
+    assert "width: 100% !important" in bloque_td
+    # El chip de horas (nowrap en escritorio) debe poder partirse en la ficha.
+    assert ".doc-partida .table .tiempo-chip {" in CSS
+
+
+def test_css_mediciones_compactas_sin_columna_vacia():
+    assert ".doc-mediciones td:nth-child(3) { display: none; }" in CSS
+    bloque = CSS.split(".doc-mediciones td:first-child {", 1)[1].split("}", 1)[0]
+    assert "text-align: left !important" in bloque
+
+
+def test_detalle_versiones_como_tarjetas_moviles():
+    """La tabla de versiones congeladas usa el patrón table-mobile-cards
+    con data-label (igual que las listas principales)."""
+    assert '<table class="table table-mobile-cards"><thead><tr><th>Versión</th>' in DETALLE
+    assert 'data-label="Motivo"' in DETALLE
+    assert 'data-label="Total"' in DETALLE
+
+
+def test_css_opciones_de_producto_no_desbordan_en_movil_estrecho():
+    """En ≤340px el mínimo de 220px de la cuadrícula de opciones superaba
+    el ancho del teléfono: se ajusta con min(220px, 100%)."""
+    assert ".doc-prod-multiples > div:last-child {" in CSS
+    bloque = CSS.split(".doc-prod-multiples > div:last-child {", 1)[1].split("}", 1)[0]
+    assert "minmax(min(220px, 100%), 1fr)" in bloque
