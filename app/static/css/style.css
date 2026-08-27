@@ -1865,6 +1865,7 @@ body.collapsed .theme-toggle-label {
 }
 .doc-prod img {
   max-height: 60px;
+  max-width: min(260px, 100%);
   border-radius: 4px;
   margin-top: 0.3rem;
 }
@@ -6067,24 +6068,27 @@ body { -webkit-tap-highlight-color: transparent; }
   }
 }
 
-/* --- Tablas anchas que conservan columnas (reportes, mercado, import) -- */
+/* --- Tablas anchas que conservan columnas (reportes, mercado, import) ---
+   OJO: .doc-totales (y cualquier tabla de resumen etiqueta/valor de la vista
+   documento) queda fuera: son tablas de 2 columnas que deben refluir a todo
+   el ancho del teléfono, nunca forzarse a 620px con desplazamiento lateral. */
 @media (max-width: 768px) {
-  .card:has(> table.table:not(.table-mobile-cards)) { overflow-x: auto; }
-  .card > table.table:not(.table-mobile-cards) { min-width: 620px; }
-  .table-wrap table.table:not(.table-mobile-cards) { min-width: 620px; }
+  .card:has(> table.table:not(.table-mobile-cards):not(.doc-totales)) { overflow-x: auto; }
+  .card > table.table:not(.table-mobile-cards):not(.doc-totales) { min-width: 620px; }
+  .table-wrap table.table:not(.table-mobile-cards):not(.doc-totales) { min-width: 620px; }
 
   /* Primera columna fija mientras la tabla desplaza */
-  .card > table.table:not(.table-mobile-cards) th:first-child,
-  .card > table.table:not(.table-mobile-cards) td:first-child,
-  .table-wrap table.table:not(.table-mobile-cards) th:first-child,
-  .table-wrap table.table:not(.table-mobile-cards) td:first-child {
+  .card > table.table:not(.table-mobile-cards):not(.doc-totales) th:first-child,
+  .card > table.table:not(.table-mobile-cards):not(.doc-totales) td:first-child,
+  .table-wrap table.table:not(.table-mobile-cards):not(.doc-totales) th:first-child,
+  .table-wrap table.table:not(.table-mobile-cards):not(.doc-totales) td:first-child {
     position: sticky;
     left: 0;
     background: var(--surface);
     box-shadow: 6px 0 8px -6px rgba(15, 23, 42, 0.18);
   }
-  .card > table.table:not(.table-mobile-cards) th:first-child { background: var(--surface-alt); z-index: 2; }
-  .table-wrap table.table:not(.table-mobile-cards) th:first-child { background: var(--surface-alt); z-index: 2; }
+  .card > table.table:not(.table-mobile-cards):not(.doc-totales) th:first-child { background: var(--surface-alt); z-index: 2; }
+  .table-wrap table.table:not(.table-mobile-cards):not(.doc-totales) th:first-child { background: var(--surface-alt); z-index: 2; }
 }
 
 /* --- Catálogo (partidas / recursos) en teléfono ----------------------- */
@@ -7673,10 +7677,120 @@ body { -webkit-tap-highlight-color: transparent; }
   .filters input[name="q"] { grid-column: 1 / -1; width: 100%; }
   .filters .btn { justify-content: center; }
 
+  /* ── Vista documento (detalle de presupuesto / planificación) ────────
+     Objetivo: cero desplazamiento lateral. La partida pasa a ser una ficha
+     de datos con microtítulos, las mediciones una línea compacta y los
+     totales un bloque tipo factura (etiqueta a la izquierda, importe a la
+     derecha con cifras tabulares). */
   .doc-capitulo { flex-wrap: wrap; gap: 0.3rem; font-size: 0.78rem; }
+
   .doc-partida .table { display: block; }
-  .doc-partida .table tr { display: flex; flex-direction: column; gap: 0.2rem; }
-  .doc-partida .table td { display: block; width: 100% !important; text-align: left !important; }
+  .doc-partida .table tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 0.5rem 0.9rem;
+  }
+  .doc-partida .table td {
+    display: block;
+    width: 100% !important;   /* pisa los anchos fijos heredados de csp.css */
+    min-width: 0;
+    text-align: left !important;
+    padding: 0;
+    border-bottom: none;      /* la separación la marca .doc-partida */
+  }
+  .doc-partida .table td:first-child { grid-column: 1 / -1; }
+  .doc-partida .table td:not(:first-child)::before {
+    display: block;
+    font-size: 0.62rem;
+    font-weight: 750;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .doc-partida .table td:nth-child(2)::before { content: "Cantidad"; }
+  .doc-partida .table td:nth-child(3)::before { content: "Precio unitario"; }
+  .doc-partida .table td:nth-child(4)::before { content: "Importe"; }
+  .doc-partida .table td:nth-child(5)::before { content: "Tiempo"; }
+  .doc-partida .table td:nth-child(4) {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+  /* El chip de horas es nowrap en escritorio; en la ficha móvil debe poder
+     partirse para no salirse de su columna. */
+  .doc-partida .table .tiempo-chip {
+    white-space: normal;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+
+  /* Mediciones: concepto a la izquierda y cantidad/importe compactos.
+     La columna central «—» (precio unitario, vacía) desaparece en móvil. */
+  .doc-mediciones { width: 100%; }
+  .doc-mediciones tr { display: flex; align-items: baseline; gap: 0.6rem; }
+  .doc-mediciones td { padding: 0.14rem 0; border-bottom: none; }
+  .doc-mediciones td:first-child {
+    flex: 1 1 auto;
+    min-width: 0;
+    text-align: left !important;
+    overflow-wrap: anywhere;
+  }
+  .doc-mediciones td:nth-child(3) { display: none; }
+  .doc-mediciones td:last-child { font-weight: 600; color: var(--text); }
+
+  /* Totales tipo factura: etiqueta (muted) + importe tabular alineado. */
+  .doc-totales { width: 100%; margin-top: 1.15rem; }
+  .doc-totales tr {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.9rem;
+    padding: 0.36rem 0;
+    border-bottom: 1px dashed var(--border-subtle);
+  }
+  .doc-totales tr:first-child { border-top: 1px solid var(--border); }
+  .doc-totales td {
+    display: block;
+    width: auto !important;   /* pisa el width:70%/55% de csp.css */
+    min-width: 0;
+    padding: 0;
+    font-size: 0.88rem;
+    border-bottom: none;      /* el divisor por fila lo dibuja el tr */
+  }
+  .doc-totales td:first-child {
+    flex: 1 1 0%;
+    text-align: left !important;
+    color: var(--text-soft);
+    font-size: 0.74rem;
+    font-weight: 650;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+  .doc-totales td:first-child .hint { text-transform: none; letter-spacing: 0; }
+  .doc-totales td + td {
+    flex: 0 0 auto;
+    text-align: right !important;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+    white-space: nowrap;
+  }
+  .doc-totales tr.row-total {
+    margin-top: 0.5rem;
+    padding: 0.62rem 0.72rem;
+    border: none;
+    border-radius: 10px;
+    background: var(--accent-soft);
+    align-items: center;
+  }
+  .doc-totales tr.row-total td { font-size: 1.02rem; border-top: none; }
+  .doc-totales tr.row-total td:first-child { color: var(--text); font-size: 0.82rem; }
+  .doc-totales tr.row-total td + td { font-size: 1.06rem; font-weight: 700; }
+
+  /* Opciones de producto: la cuadrícula nunca supera el ancho disponible
+     (en móviles ≤340px el mínimo de 220px de csp.css desbordaba). */
+  .doc-prod-multiples > div:last-child {
+    grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)) !important;
+  }
 }
 
 @media (min-width: 769px) {
