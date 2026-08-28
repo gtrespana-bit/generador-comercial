@@ -166,9 +166,13 @@ def test_head_exigido_por_runtime_coincide_con_alembic():
     from migrations.versions import c3e9a1b7d4f2_stripe_checkout as stripe_migration
     from migrations.versions import c5d6e7f8a9b0_merge_currency_heads as merge_migration
     from migrations.versions import e4b8c2d6a190_planos_altura_libre as altura_migration
+    from migrations.versions import e3a5c7d9b1f4_eventos_producto as telemetria_migration
     from migrations.versions import f1b2c3d4e5a6_planos_vectoriales_schema as vectorial_migration
-    assert database_module.EXPECTED_ALEMBIC_HEAD == vectorial_migration.revision
-    # El editor vectorial es ahora la cabeza visible. Permisos de
+    assert vectorial_migration.down_revision == "e4b8c2d6a190"
+    assert database_module.EXPECTED_ALEMBIC_HEAD == telemetria_migration.revision
+    assert telemetria_migration.down_revision == vectorial_migration.revision
+    # La telemetría de producto (eventos_producto) es ahora la cabeza visible.
+    # El editor vectorial sigue inmediatamente detrás. Permisos de
     # planos_elementos (d1e2f3a4b5c6) se insertó entre los permisos de planos
     # (c0d1e2f3a4b5), la altura (e4b8c2d6a190) y el esquema vectorial
     # (f1b2c3d4e5a6), por lo que la cadena esperada queda:

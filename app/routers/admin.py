@@ -7,6 +7,7 @@ from fastapi import APIRouter
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
 from ..database import get_cron_db
 from ..datos_pago import PLANES
+from ..services import telemetria
 
 router = APIRouter()
 
@@ -86,6 +87,32 @@ def panel_admin(request: Request, db: Session = Depends(get_operator_db)):
             "exigencia_licencias": exigencia_licencia_activada(),
             "msg": request.query_params.get("msg", ""),
             "error": request.query_params.get("error", ""),
+        },
+        headers={"Cache-Control": "no-store"},
+    )
+
+
+@router.get("/admin/analitica", response_class=HTMLResponse, include_in_schema=False)
+def panel_analitica(
+    request: Request,
+    dias: int = 30,
+    db: Session = Depends(get_operator_db),
+):
+    """Panel de analítica de producto (E5-012): embudo, retención y uso.
+
+    Dato propio del servidor que complementa a Google Analytics (que solo ve
+    la capa pública). Solo el operador: las métricas agregan toda la base de
+    clientes y no pertenecen a una organización concreta.
+    """
+    from ..services.analitica import resumen_analitica
+
+    resumen = resumen_analitica(db, dias=dias)
+    return TEMPLATES.TemplateResponse(
+        request,
+        "admin/analitica.html",
+        {
+            "resumen": resumen,
+            "operador": db.info.get("auth_email", ""),
         },
         headers={"Cache-Control": "no-store"},
     )
@@ -624,6 +651,14 @@ def activar_compra_web(
     # devolver un error al operador, que ya hizo su parte; se anota en el
     # mensaje para que sepa si tiene que escribir a mano.
     aviso = _avisar_activacion_al_cliente(db, compra, licencia)
+    # Telemetría (E5-012): cierre del embudo de cobro por activación manual.
+    # La sesión de operador no lleva claim de tenant: organización explícita.
+    telemetria.registrar(
+        db,
+        "licencia.activada",
+        organizacion_id=compra.organizacion_id,
+        detalle={"plan": compra.plan, "origen": "manual"},
+    )
     return _redirect(
         "/admin/compras",
         msg=(

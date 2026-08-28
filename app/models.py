@@ -3251,6 +3251,74 @@ class EventoAuditoria(Base):
         return datos if isinstance(datos, dict) else {}
 
 
+class EventoProducto(Base):
+    """Telemetría interna de producto, mínima y agregada (E5-012).
+
+    Hermana pequeña de :class:`EventoAuditoria` con un propósito distinto:
+    la auditoría responde «quién hizo qué» (registro inmutable de negocio);
+    esta tabla responde «cómo se usa el producto» (embudo, activación,
+    retención y uso de funciones) para el panel de analítica del operador.
+
+    Diferencias de diseño frente a la auditoría:
+
+    - **Sin IP** (ni hash): no hace falta para agregar. El detalle es JSON
+      pequeño con métricas de negocio (país, plan, nº de partidas…), nunca
+      datos de clientes de la organización.
+    - **Lectura solo de operador**: en PostgreSQL la política SELECT exige
+      la marca ``cotizat.es_operador``; ninguna sesión de tenant consulta
+      telemetría. El INSERT sí es de tenant (con escritura) para que los
+      eventos nazcan en la propia petición; las sesiones de operador también
+      pueden insertar (activaciones de licencia, webhook de Stripe).
+    - Los eventos **sin organización** (``cuenta.registrada``) entran en
+      PostgreSQL por la función SECURITY DEFINER
+      ``cotizat_security.registrar_evento_producto_global`` con lista cerrada
+      de acciones; en SQLite se insertan directo.
+    - **Inmutable y best-effort** como la auditoría: la aplicación solo
+      inserta y lee, y ningún fallo de telemetría puede romper el flujo
+      principal (ver ``app/services/telemetria.py``).
+
+    No usa ``TenantMixin`` a propósito (mismo motivo que la auditoría) y la
+    baja de la organización elimina sus filas (coherente con el borrado
+    verificado de E3-023).
+    """
+
+    __tablename__ = "eventos_producto"
+    __table_args__ = (
+        Index("ix_eventos_producto_org_fecha", "organizacion_id", "created_at"),
+        Index("ix_eventos_producto_fecha", "created_at"),
+    )
+
+    id = Column(Integer, primary_key=True)
+    #: Organización a la que pertenece el evento; NULL solo en el alta de
+    #: cuenta (``cuenta.registrada``), que ocurre antes de existir la empresa.
+    organizacion_id = Column(
+        Integer,
+        ForeignKey("organizaciones.id", ondelete="RESTRICT"),
+        nullable=True,
+    )
+    #: Quien ejecutó la acción (sesión autenticada) o el email del registro.
+    actor_email = Column(String(254), nullable=False, default="")
+    #: Acción en formato ``dominio.verbo`` (catálogo cerrado del servicio).
+    accion = Column(String(60), nullable=False, index=True)
+    #: Métricas de negocio como JSON pequeño (plan, país, partidas…).
+    detalle = Column(Text, nullable=False, default="{}")
+    created_at = Column(
+        DateTime,
+        nullable=False,
+        default=datetime.utcnow,
+        server_default=text("CURRENT_TIMESTAMP"),
+    )
+
+    organizacion = relationship("Organizacion")
+
+    def detalle_dict(self) -> dict:
+        try:
+            datos = json.loads(self.detalle or "{}")
+        except (TypeError, ValueError):
+            return {}
+        return datos if isinstance(datos, dict) else {}
+
+
 class ContextoOrganizacionError(RuntimeError):
     """Una lectura o escritura intentó cruzar el límite de organización."""
 

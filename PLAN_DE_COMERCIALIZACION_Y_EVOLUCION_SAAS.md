@@ -4,7 +4,7 @@
 **Mercado inicial:** empresas pequeñas de remodelación y construcción privada en Venezuela  
 **Zona inicial recomendada:** Valencia / Carabobo, con posterior expansión a Caracas y otras ciudades  
 **Fecha de creación:** 13 de agosto de 2026  
-**Última actualización:** 16 de agosto de 2026
+**Última actualización:** 28 de agosto de 2026
 **Estado general:** Etapas 0 y 1 completadas · Validación comercial aplazada hasta el final
 **Etapa activa:** Etapa 3 — Cierre funcional y operativo de la versión web
 
@@ -975,7 +975,21 @@ Prioridades sujetas a evidencia de clientes:
 - [ ] **E5-009 — PWA/móvil para visitas y trabajo en obra.**
 - [ ] **E5-010 — Modo offline selectivo, solo después de definir sincronización y conflictos.**
 - [ ] **E5-011 — Actualización versionada de catálogos y precios.**
-- [ ] **E5-012 — Telemetría mínima, agregada y voluntaria para conocer uso de funciones.**
+- [~] **E5-012 — Telemetría mínima, agregada y voluntaria para conocer uso de funciones.**
+  En curso (28/08/2026, decisión D-023): implementada la **parte de servidor** — tabla
+  `eventos_producto` (migración `e3a5c7d9b1f4`, hermana de `eventos_auditoria`:
+  inmutable, sin IP, detalle sin datos sensibles), servicio
+  `app/services/telemetria.py` (catálogo cerrado de 12 acciones, best-effort),
+  latido diario por organización en `get_db`, eventos en los momentos del
+  embudo (registro, alta de empresa, presupuesto creado/aprobado/enviado, PDF,
+  importación CYPE/BC3, compra, checkout Stripe, licencia activada, invitación)
+  y panel de operador `/admin/analitica` (KPIs, embudo, series diarias,
+  cohortes de retención, uso de funciones, riesgo de churn, eventos recientes).
+  Cubierto por `tests/test_telemetria.py` y `tests/test_panel_analitica.py`.
+  Complementa a GA4 (que sigue midiendo la capa pública); no usa cookies ni
+  terceros, por lo que no exige consentimiento adicional al registrado (E4-038).
+  Pendiente de E5-012: revisar las métricas con datos reales de la beta y
+  decidir si alguna función necesita eventos más finos.
 
 ## Métricas de esta etapa
 
@@ -1084,6 +1098,7 @@ Estas cifras no son precios definitivos; deben probarse en la Etapa 2.
 | 19/08/2026 | D-019 | Agrupar **toda** la validación de tipo prueba en un día final único de solo tests | Hacer las pruebas por etapas y repetirlas al cierre sería trabajo doble. Incluye: matriz de aceptación manual, cruces con dos correos y dos organizaciones, primer alta real con el corte, auditoría externa del bucket, invitación sin cuenta previa y recordatorio real | Cuando el titular lo indique |
 | 19/08/2026 | D-020 | El catálogo de partidas propio (3.006) **es el catálogo del producto**; los `.xlsx` de ejemplo no aportan contenido | E1-022 cerrado con evidencia: autoría 100 % propia; el trabajo pendiente es crecimiento (≈5.000 partidas) y precios B2B, no sustitución | En la carga final de contenido |
 | 19/08/2026 | D-021 | **No implementar** el registro de apertura de correos/enlaces (E3-025) | Requeriría tratamiento legal del consentimiento y aporta poco frente al coste en el piloto manual | Si se abre beta automatizada con métricas de conversión |
+| 28/08/2026 | D-023 | Adelantar la **telemetría interna de producto** (E5-012) en su variante de servidor, a petición del titular | GA4 solo ve la capa pública y pierde conversiones por bloqueadores; el plan necesita retención y activación medidas con dato propio. Se implementó como eventos agregados sin IP ni cookies (no amplía el tratamiento registrado en E4-038) | Con los primeros datos de la beta se revisan las métricas y se decide si hacen falta eventos más finos |
 
 ---
 

@@ -12,6 +12,7 @@ from app.models import (
     Consentimiento,
     ContextoOrganizacionError,
     EventoAuditoria,
+    EventoProducto,
     HistorialPrecioRecurso,
     Licencia,
     Membresia,
@@ -96,6 +97,7 @@ def test_todo_modelo_comercial_declara_propietario():
         PruebaConcedida,
         Consentimiento,
         EventoAuditoria,
+        EventoProducto,
         PrecioRecursoMercado,
         HistorialPrecioRecurso,
     }

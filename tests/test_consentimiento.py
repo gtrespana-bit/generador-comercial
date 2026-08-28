@@ -510,8 +510,10 @@ def test_la_migracion_encadena_con_la_cabeza_anterior(migracion):
         d1e2f3a4b5c6_planos_elementos_permissions as elementos_migracion,
         e4b8c2d6a190_planos_altura_libre as altura_migracion,
         f1b2c3d4e5a6_planos_vectoriales_schema as vectorial_migracion,
+        e3a5c7d9b1f4_eventos_producto as telemetria_migracion,
     )
-    assert vectorial_migracion.revision == EXPECTED_ALEMBIC_HEAD
+    assert telemetria_migracion.revision == EXPECTED_ALEMBIC_HEAD
+    assert telemetria_migracion.down_revision == vectorial_migracion.revision
     assert vectorial_migracion.down_revision == altura_migracion.revision
     assert altura_migracion.down_revision == elementos_migracion.revision
     assert elementos_migracion.down_revision == permisos_planos_migration.revision

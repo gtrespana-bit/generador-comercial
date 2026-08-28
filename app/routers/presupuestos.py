@@ -4,7 +4,7 @@ from fastapi import APIRouter
 
 from . import common
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
-from ..services import auditoria
+from ..services import auditoria, telemetria
 from ..utils import normalizar_moneda
 from ..services.monedas import convertir as convertir_moneda
 from ..services.revision_presupuesto import revisar_presupuesto_antes_de_enviar
@@ -1192,6 +1192,12 @@ async def confirmar_importacion_presupuesto(request: Request, db: Session = Depe
     mensaje_final = f"{mensaje}: {len(resultado['filas'])} partida(s)."
     db.commit()
     _sincronizar_recursos(db)
+    # Telemetría (E5-012): adopción del importador CYPE/BC3.
+    telemetria.registrar(
+        db,
+        "importacion.confirmada",
+        detalle={"formato": formato, "filas": len(resultado["filas"])},
+    )
 
     if modo == "editor_inline":
         return {
@@ -2096,6 +2102,22 @@ async def crear_presupuesto(request: Request, db: Session = Depends(get_db)):
     _registrar_usos_productos(db, partidas)
     db.commit()
     _sincronizar_recursos(db)
+    # Telemetría (E5-012): creación de presupuesto y señal de activación
+    # («primero») para el embudo del panel de analítica. El filtro de tenant
+    # de la sesión hace que la comprobación solo vea los de la organización.
+    telemetria.registrar(
+        db,
+        "presupuesto.creado",
+        detalle={
+            "primero": (
+                db.query(Presupuesto.id)
+                .filter(Presupuesto.id != presupuesto.id)
+                .first()
+                is None
+            ),
+            "partidas": len(partidas),
+        },
+    )
     return _redirect(f"/presupuestos/{presupuesto.id}", msg=f"Presupuesto {presupuesto.numero} creado.")
 
 
@@ -2379,6 +2401,8 @@ def enviar_presupuesto_email_web(
             "version": version.numero_version,
         },
     )
+    # Telemetría (E5-012): envío real (el correo ya salió), paso del embudo.
+    telemetria.registrar(db, "presupuesto.enviado_email")
     return _redirect(
         f"/presupuestos/{presupuesto_id}#versiones",
         msg=(
@@ -3717,6 +3741,10 @@ def cambiar_estado(presupuesto_id: int, estado: str = Form(...), db: Session = D
             entidad_id=presupuesto_id,
             detalle={"de": estado_anterior, "a": estado},
         )
+        # Telemetría (E5-012): la aprobación es el momento de valor del
+        # embudo (el cobro nace de un presupuesto aprobado).
+        if estado == "aprobado":
+            telemetria.registrar(db, "presupuesto.aprobado")
         return _redirect(f"/presupuestos/{presupuesto_id}", msg=f"Estado cambiado a «{estado}».")
     return _redirect(f"/presupuestos/{presupuesto_id}", error="Estado inválido.")
 
@@ -3969,6 +3997,9 @@ def descargar_pdf(presupuesto_id: int, inline: int = 0, db: Session = Depends(ge
     )
     if isinstance(resultado, Response) and resultado.status_code != 200:
         return resultado
+    # Telemetría (E5-012): uso del generador de PDF (el de muestra no cuenta).
+    if not getattr(presupuesto, "es_demo", False):
+        telemetria.registrar(db, "presupuesto.pdf_descargado")
     return _respuesta_pdf(resultado, f"presupuesto_{presupuesto.numero}.pdf", inline)
 
 

@@ -91,7 +91,7 @@ DATABASE_URL = DATABASE.url
 DATABASE_BACKEND = DATABASE.backend
 DATABASE_IS_SQLITE = DATABASE.is_sqlite
 DB_PATH = DATABASE.sqlite_path
-EXPECTED_ALEMBIC_HEAD = "f1b2c3d4e5a6"
+EXPECTED_ALEMBIC_HEAD = "e3a5c7d9b1f4"
 
 # Copias de seguridad automáticas y manuales (solo corresponden al modo
 # SQLite local; PostgreSQL tendrá backups administrados fuera del proceso).
@@ -412,6 +412,11 @@ def _abrir_sesion_de_organizacion(request: Request, *, exigir_licencia: bool):
     try:
         if DATABASE_IS_SQLITE:
             db.info["organizacion_id"] = _organizacion_sqlite_desde_entorno()
+            # Telemetría (E5-012): latido diario de la organización activa.
+            # Best-effort: si falla, la petición sigue exactamente igual.
+            from .services.telemetria import latido_diario
+
+            latido_diario(db)
             if request is not None:
                 # SQLite (escritorio/desarrollo) no tiene Supabase Auth: exponemos
                 # una organización y usuario sintéticos para que la barra lateral
@@ -505,6 +510,14 @@ def _abrir_sesion_de_organizacion(request: Request, *, exigir_licencia: bool):
         request.state.licencia_resumen = _resumen_licencia_para_request(
             db, membresia.organizacion_id
         )
+        # Telemetría (E5-012): latido diario de la organización activa, tras
+        # superar la puerta de licencia (una organización suspendida no cuenta
+        # como uso). Best-effort: nunca puede romper la petición, y el listener
+        # ``after_begin`` reinstala los claims de RLS en la transacción que
+        # abra el handler después del commit del latido.
+        from .services.telemetria import latido_diario
+
+        latido_diario(db)
         yield db
     finally:
         db.close()
