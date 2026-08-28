@@ -5,7 +5,7 @@ from fastapi import APIRouter
 from . import common
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
 from ..analytics import encolar_evento_ga
-from ..services import auditoria
+from ..services import auditoria, telemetria
 
 router = APIRouter()
 
@@ -205,6 +205,12 @@ async def registrar_cuenta(request: Request):
         pais_reg = str(request.cookies.get("cotizat_pais", "") or "").strip().upper()
         if pais_reg not in PAISES:
             pais_reg = "VE"
+    # Telemetría propia (E5-012): el registro contado en el servidor, sin
+    # depender de que el navegador ejecute GA4. El país llega del selector
+    # y solo se usa agregado en el panel de analítica.
+    telemetria.anotar_registro(
+        email=str(form.get("email") or ""), pais=pais_reg,
+    )
     # Helper para fijar cookie de país en cualquier redirect de registro
     def _resp_con_pais(resp):
         try:
@@ -662,6 +668,13 @@ async def crear_organizacion_web(
         f"{destino}?msg={quote(resultado_prueba.mensaje)}", status_code=303
     )
     _set_organization_cookie(response, organizacion.id)
+    # Telemetría (E5-012): paso 2 del embudo, contado en el servidor.
+    telemetria.registrar(
+        db,
+        "organizacion.creada",
+        organizacion_id=organizacion.id,
+        detalle={"pais": pais_org},
+    )
     return response
 
 
@@ -773,6 +786,9 @@ async def crear_invitacion_web(request: Request, db: Session = Depends(get_db)):
         entidad_id=invitacion.id,
         detalle={"email": invitacion.email, "rol": invitacion.rol},
     )
+    # Telemetría (E5-012): invitar al equipo es la señal de crecimiento
+    # intra-empresa; el detalle no lleva el email (no hace falta agregar).
+    telemetria.registrar(db, "equipo.invitacion_enviada")
 
     # La invitación ya está guardada: el correo es un canal de entrega, no la
     # fuente de verdad. Si no hay correo configurado o el proveedor falla, se

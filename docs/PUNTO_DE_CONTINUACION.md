@@ -1,6 +1,6 @@
 # Punto exacto de continuación
 
-Fecha de corte: **19/08/2026 — Bloque E4-026/E4-027 terminado en la rama de la sesión: registro de auditoría inmutable (`eventos_auditoria`, migración `d2a7c9e4f1b3`) + fix de la baja con compras. Pendiente inmediato del titular: fusionar el PR del bloque y aplicar `docs/staging_upgrade_d2a7c9e4f1b3.sql` en Supabase. Simulacro E4-043 y día final de tests (D-019): al final, por decisión del titular** (America/Caracas).
+Fecha de corte: **28/08/2026 — Telemetría interna (`eventos_producto`, migración `e3a5c7d9b1f4`) y panel `/admin/analitica` listos en la rama; pendiente aplicar el SQL de staging. Corte anterior: 19/08/2026 — Bloque E4-026/E4-027 terminado en la rama de la sesión: registro de auditoría inmutable (`eventos_auditoria`, migración `d2a7c9e4f1b3`) + fix de la baja con compras. Pendiente inmediato del titular: fusionar el PR del bloque y aplicar `docs/staging_upgrade_d2a7c9e4f1b3.sql` en Supabase. Simulacro E4-043 y día final de tests (D-019): al final, por decisión del titular** (America/Caracas).
 
 Este documento retoma el trabajo sin depender del historial del chat. Describe
 **dónde quedó exactamente** el trabajo y **qué sigue**, en ese orden. Léelo
@@ -355,6 +355,54 @@ organización (visible solo para el operador).
 **E4-020 (cola de trabajos): APLAZADO totalmente (D-022).** Documentado en el
 plan §4.4 con los disparadores que lo reabrirían (PDF/importación que supere
 el timeout, envíos masivos). No bloquea el lanzamiento.
+
+---
+
+## ✅ Cierre de sesión — Telemetría interna de producto + panel de analítica (28/08/2026)
+
+**Qué se construyó (E5-012, adelantado por decisión D-023 del plan):** medición
+propia del servidor que complementa a Google Analytics (GA4 sigue midiendo la
+capa pública; esto mide lo que pasa tras el login).
+
+- **Tabla `eventos_producto`** (migración `e3a5c7d9b1f4`, cabeza nueva de la
+  cadena, hija de `f1b2c3d4e5a6`): hermana de `eventos_auditoria` — inmutable
+  (RLS: solo SELECT/INSERT), sin IP, detalle JSON sin datos sensibles. La baja
+  de organización borra sus filas. SELECT solo para operador; INSERT de tenant
+  y de operador; el alta de cuenta entra por
+  `cotizat_security.registrar_evento_producto_global` (lista cerrada).
+- **Servicio `app/services/telemetria.py`**: 12 acciones de catálogo cerrado,
+  best-effort (nunca rompe el flujo) y **latido diario** — una fila
+  `actividad.diaria` por organización y día, escrito desde `get_db` (la base
+  de activos por día, cohortes y churn).
+- **Eventos en el embudo**: `cuenta.registrada` (registro), `organizacion.creada`,
+  `presupuesto.creado` (con bandera `primero`), `presupuesto.aprobado`,
+  `presupuesto.enviado_email`, `presupuesto.pdf_descargado`,
+  `importacion.confirmada` (CYPE/BC3), `pago.checkout_iniciado`,
+  `pago.compra_registrada`, `licencia.activada` (manual y Stripe webhook),
+  `equipo.invitacion_enviada`.
+- **Panel `/admin/analitica`** (solo operador, en el menú de administración):
+  KPIs (empresas, activas hoy/7d/ventana, cuentas, conversión a presupuesto,
+  pagos, ingresos), embudo registro→empresa→presupuesto→envío→pago, series
+  diarias SVG (activas/presupuestos/registros con ventanas 7/30/90 días),
+  cohortes de retención mensuales (mapa de calor), uso de funciones,
+  registros por país, riesgo de churn (plan vigente + 14 días sin uso) y
+  eventos recientes filtrables. Todo renderizado en el servidor, sin JS
+  externo ni CDN (CSP intacta).
+- **Pruebas**: `tests/test_telemetria.py` (17) + `tests/test_panel_analitica.py`
+  (5); suite completa en verde tras el cambio (incluidas las guardas de
+  cadena/head: `EXPECTED_ALEMBIC_HEAD = e3a5c7d9b1f4`).
+- **Vista previa local**: `python tools/vista_previa_analitica.py` →
+  `http://localhost:8000/admin/analitica` con datos de ejemplo.
+
+**Pendiente inmediato del titular (después de fusionar):**
+
+1. Aplicar `docs/staging_upgrade_e3a5c7d9b1f4.sql` en el SQL Editor de
+   Supabase (verifica que `alembic_version` esté en `f1b2c3d4e5a6`; el propio
+   script lo comprueba y aborta si no).
+2. Desplegar y verificar `/readyz` → `head:e3a5c7d9b1f4`.
+3. A partir de ese momento la telemetría empieza a contar: el embudo y las
+   cohortes ganan fiabilidad con los días (los pasos de presupuesto/envío no
+   existen antes del despliegue).
 
 ---
 

@@ -16,7 +16,7 @@ from . import common
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
 from ..analytics import encolar_purchase_unico
 from ..database import get_stripe_webhook_db
-from ..services import auditoria
+from ..services import auditoria, telemetria
 from ..datos_pago import (
     METODO_STRIPE,
     METODOS_PAGO,
@@ -328,6 +328,11 @@ async def registrar_compra(
         entidad_id=compra.id,
         detalle={"plan": plan, "metodo": metodo_pago},
     )
+    # Telemetría (E5-012): embudo de cobro, paso «compra declarada».
+    telemetria.registrar(
+        db, "pago.compra_registrada",
+        detalle={"plan": plan, "metodo": metodo_pago},
+    )
 
     # Notificación por email (no bloqueante): la compra ya está registrada.
     try:
@@ -582,6 +587,10 @@ def stripe_checkout(
         entidad_id=compra.id,
         detalle={"plan": plan, "metodo": METODO_STRIPE},
     )
+    # Telemetría (E5-012): el cliente entró al checkout de tarjeta.
+    telemetria.registrar(
+        db, "pago.checkout_iniciado", detalle={"plan": plan},
+    )
     respuesta = RedirectResponse(str(sesion["url"]), status_code=303)
     _clear_plan_pendiente_cookie(respuesta)
     return respuesta
@@ -655,6 +664,18 @@ async def stripe_webhook(
                 licencia = db.get(Licencia, compra.licencia_id)
                 if licencia is not None:
                     _avisar_activacion_stripe(db, compra, licencia)
+                    # Telemetría (E5-012): cierre del embudo de cobro. La
+                    # sesión del webhook es de operador (sin claim de tenant),
+                    # por eso la organización va explícita.
+                    telemetria.registrar(
+                        db,
+                        "licencia.activada",
+                        organizacion_id=compra.organizacion_id,
+                        detalle={
+                            "plan": compra.plan,
+                            "origen": "stripe",
+                        },
+                    )
         else:
             db.rollback()
     except StripeNotConfigured as exc:

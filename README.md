@@ -14,7 +14,7 @@ alcance, y genera documentos PDF profesionales.
 > externo. Supabase Auth, Storage privado, RLS/CSP y el entorno de staging ya
 > están implantados. Antes de un despliegue público debe seguirse el control
 > operativo y de pilotos de `docs/PUNTO_DE_CONTINUACION.md`; el head de esquema
-> vigente es `f9d4c2a7e5b3`.
+> vigente es `e3a5c7d9b1f4`.
 >
 > Sus sugerencias se basan en coincidencias deterministas sobre el catálogo del
 > usuario; no se presentan como inteligencia artificial.
