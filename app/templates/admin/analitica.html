@@ -3,142 +3,167 @@
 {% block title %}Analítica{% endblock %}
 {% block topbar_title %}Analítica de Producto{% endblock %}
 {% block topbar_actions %}
-  <div style="display: flex; gap: 8px; background: #fff; border: 1px solid var(--border-color); border-radius: 8px; padding: 4px;">
-    <a href="/admin/analitica?dias=7" class="btn {% if resumen.dias == 7 %}btn-primary{% else %}btn-secondary{% endif %}" style="padding: 6px 12px; font-size: 0.8rem;">7 días</a>
-    <a href="/admin/analitica?dias=30" class="btn {% if resumen.dias == 30 %}btn-primary{% else %}btn-secondary{% endif %}" style="padding: 6px 12px; font-size: 0.8rem;">30 días</a>
-    <a href="/admin/analitica?dias=90" class="btn {% if resumen.dias == 90 %}btn-primary{% else %}btn-secondary{% endif %}" style="padding: 6px 12px; font-size: 0.8rem;">90 días</a>
+  <div class="alc-window-group">
+    <a href="/admin/analitica?dias=7" class="btn btn-sm btn-topbar {{ 'btn-primary' if resumen.dias == 7 else 'btn-secondary' }}">7 días</a>
+    <a href="/admin/analitica?dias=30" class="btn btn-sm btn-topbar {{ 'btn-primary' if resumen.dias == 30 else 'btn-secondary' }}">30 días</a>
+    <a href="/admin/analitica?dias=90" class="btn btn-sm btn-topbar {{ 'btn-primary' if resumen.dias == 90 else 'btn-secondary' }}">90 días</a>
   </div>
 {% endblock %}
 
 {% block extra_css %}
-<style>
-  .btn-primary { background: var(--brand-color); color: white; border: 1px solid var(--brand-color); }
-  .btn-secondary { background: transparent; color: var(--text-muted); border: 1px solid transparent; box-shadow: none; }
-  .btn-secondary:hover { background: #f1f5f9; color: var(--text-main); }
-  
-  .embudo-card { background: #fff; border-radius: 16px; border: 1px solid var(--border-color); padding: 24px; }
-  .embudo { display: flex; flex-direction: column; gap: 20px; }
-  .paso { display: grid; grid-template-columns: 220px 1fr 140px; gap: 16px; align-items: center; }
-  .paso .nombre { font-size: 0.95rem; font-weight: 700; color: var(--text-main); }
-  .paso .nombre small { display: block; color: var(--text-muted); font-weight: 500; font-size: 0.75rem; margin-top: 4px; }
-  .paso .barra svg { width: 100%; height: 32px; display: block; border-radius: 8px; overflow: hidden; }
-  .paso .barra rect.fondo { fill: #f1f5f9; }
-  .paso .barra rect { fill: var(--brand-color); transition: width 1s ease-in-out; }
+<style nonce="{{ request.state.csp_nonce }}">
+  .btn-primary { background: var(--brand-color); color: #fff; }
+  .btn-secondary { color: var(--text-muted); }
+  .btn-secondary:hover { background: #f4f7f5; }
+
+  .kpi .delta { display: inline-block; margin-top: 6px; font-size: 0.7rem; font-weight: 800; color: var(--brand-color); background: var(--success-bg); border-radius: 999px; padding: 2px 8px; }
+  .kpi .delta.cero { color: var(--text-muted); background: #eef3f0; }
+  .kpi-nota { display: block; color: var(--text-muted); font-size: 0.72rem; margin-top: 4px; }
+
+  /* Embudo */
+  .embudo { display: flex; flex-direction: column; gap: 14px; }
+  .paso { display: grid; grid-template-columns: 200px 1fr 120px; gap: 14px; align-items: center; }
+  .paso .nombre { font-size: 0.87rem; font-weight: 800; color: var(--text-main); }
+  .paso .nombre small { display: block; color: var(--text-muted); font-weight: 600; font-size: 0.72rem; margin-top: 3px; }
+  .paso .barra svg { width: 100%; height: 26px; display: block; border-radius: 6px; overflow: hidden; }
+  .paso .barra rect.fondo { fill: #eef5f1; }
+  .paso .barra rect { fill: var(--brand-color); }
   .paso .cifra { text-align: right; }
-  .paso .cifra b { font-size: 1.2rem; font-weight: 800; color: var(--text-main); }
-  .paso .cifra span { display: block; color: var(--text-muted); font-size: 0.75rem; font-weight: 600; margin-top: 2px; }
-  
-  .chart svg { width: 100%; height: 240px; }
+  .paso .cifra b { font-size: 1.05rem; font-weight: 900; }
+  .paso .cifra span { display: block; color: var(--text-muted); font-size: 0.72rem; font-weight: 700; margin-top: 2px; }
+
+  /* Charts */
+  .grid-charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; margin-bottom: 22px; }
+  .chart svg { width: 100%; height: 220px; }
   .chart .eje { stroke: var(--border-color); stroke-width: 1; }
-  .chart .bar { fill: var(--brand-color); opacity: 0.8; transition: opacity 0.2s; cursor: pointer; }
+  .chart .bar { fill: var(--brand-color); opacity: 0.85; transition: opacity 0.18s, transform 0.18s; transform-origin: bottom; }
   .chart .bar:hover { opacity: 1; }
-  .chart .bar.b-presu { fill: #10b981; }
-  .chart .bar.b-reg { fill: #f59e0b; }
-  .chart text { font-size: 11px; fill: var(--text-muted); font-weight: 500; font-family: 'Inter', sans-serif; }
-  .chart-info { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 16px; }
-  .chart-info b { font-size: 1.5rem; font-weight: 800; }
-  .chart-info span { color: var(--text-muted); font-size: 0.8rem; font-weight: 500; }
-  
-  .grid-charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; margin-top: 24px; }
-  
+  .chart .bar.b-presu { fill: #2b7a4b; }
+  .chart .bar.b-reg { fill: #c07f12; }
+  .chart text { font-size: 10px; fill: var(--text-muted); font-weight: 600; }
+  .chart-info { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; flex-wrap: wrap; gap: 6px; }
+  .chart-info b { font-size: 1.3rem; font-weight: 900; }
+  .chart-info span { color: var(--text-muted); font-size: 0.78rem; font-weight: 600; }
+
+  /* Cohortes */
   .cohorte-table { border-collapse: separate; border-spacing: 0; width: 100%; font-size: 0.85rem; }
   .cohorte-table th { background: transparent; padding: 12px; text-align: center; }
   .cohorte-table td { padding: 12px; text-align: center; border-bottom: 1px solid var(--border-color); }
-  .cohorte-table td:first-child { text-align: left; font-weight: 600; color: var(--text-main); }
-  .cohorte-table td:nth-child(2) { font-weight: 700; }
-  
-  .cel { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 32px; border-radius: 6px; font-weight: 700; font-size: 0.8rem; }
-  .cel.c-null { background: #f8fafc; color: #cbd5e1; }
-  .cel.c-0 { background: #f1f5f9; color: #94a3b8; }
-  .cel.c-1 { background: #dcfce7; color: #047857; }
-  .cel.c-2 { background: #6ee7b7; color: #065f46; }
-  .cel.c-3 { background: #10b981; color: white; }
-  .cel.c-4 { background: #059669; color: white; }
-  
-  .leyenda { display: flex; gap: 8px; align-items: center; margin-top: 20px; font-size: 0.8rem; color: var(--text-muted); font-weight: 500; }
-  .leyenda .cel { height: 24px; font-size: 0.75rem; }
+  .cohorte-table th:first-child { text-align: left; }
+  .cohorte-table td:first-child { text-align: left; font-weight: 700; }
+  .cohorte-table td:nth-child(2) { font-weight: 900; }
+  .cel { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 32px; border-radius: 7px; font-weight: 800; font-size: 0.78rem; }
+  .cel.c-null { background: #f4f7f5; color: #a4b5ac; }
+  .cel.c-0 { background: #eef3f0; color: #94a89e; }
+  .cel.c-1 { background: #dcefe4; color: #3c5a4c; }
+  .cel.c-2 { background: #bfe2cf; color: #0b5b38; }
+  .cel.c-3 { background: #4c9a70; color: #fff; }
+  .cel.c-4 { background: #0b5b38; color: #fff; }
+  .leyenda { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 18px; color: var(--text-muted); font-size: 0.78rem; font-weight: 700; }
 
-  .filtros-eventos { display: flex; gap: 12px; padding: 20px 24px; border-bottom: 1px solid var(--border-color); background: #fcfcfd; }
-  .filtros-eventos input, .filtros-eventos select { padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 8px; font: inherit; font-size: 0.9rem; }
-  .filtros-eventos input { flex: 1; max-width: 400px; }
-  
-  .funciones { display: flex; flex-direction: column; gap: 16px; }
-  .funcion { display: grid; grid-template-columns: 180px 1fr 60px; gap: 16px; align-items: center; font-size: 0.85rem; }
-  .funcion .nombre { font-weight: 600; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  /* Funciones y países */
+  .funciones { display: flex; flex-direction: column; gap: 14px; }
+  .funcion { display: grid; grid-template-columns: 180px 1fr 56px; gap: 14px; align-items: center; font-size: 0.84rem; }
+  .funcion .nombre { font-weight: 700; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .funcion .barra svg { width: 100%; height: 12px; border-radius: 4px; overflow: hidden; }
-  .funcion .barra rect.fondo { fill: #f1f5f9; }
-  .funcion .barra rect { fill: #10b981; }
-  .funcion .total { font-weight: 700; text-align: right; color: var(--text-main); }
-  
-  .pais-fila { display: flex; align-items: center; gap: 16px; padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.85rem; }
+  .funcion .barra rect.fondo { fill: #eef3f0; }
+  .funcion .barra rect { fill: #2b7a4b; }
+  .funcion .total { font-weight: 900; text-align: right; }
+  .pais-fila { display: flex; align-items: center; gap: 14px; padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.85rem; }
   .pais-fila:last-child { border-bottom: none; }
-  .pais-fila b { width: 50px; font-weight: 700; color: var(--text-main); }
+  .pais-fila b { width: 46px; font-weight: 900; }
   .pais-fila .barra { flex: 1; }
   .pais-fila .barra svg { width: 100%; height: 12px; border-radius: 4px; overflow: hidden; }
-  .pais-fila .barra rect.fondo { fill: #f1f5f9; }
-  .pais-fila .barra rect { fill: #f59e0b; }
-  .pais-fila span { font-weight: 600; color: var(--text-muted); width: 90px; text-align: right; }
-  
+  .pais-fila .barra rect.fondo { fill: #f6efe2; }
+  .pais-fila .barra rect { fill: #c07f12; }
+  .pais-fila span { font-weight: 700; color: var(--text-muted); width: 92px; text-align: right; }
+
+  /* Riesgo y eventos */
+  .tabla-eventos-wrap { max-height: 500px; overflow-y: auto; }
+  .tabla-eventos-wrap thead th { position: sticky; top: 0; background: #f4f7f5; z-index: 10; }
+  .filtros-eventos { display: flex; gap: 12px; padding: 16px 20px; border-bottom: 1px solid var(--border-color); background: #fcfdfc; flex-wrap: wrap; }
+  .filtros-eventos input { flex: 1; max-width: 380px; }
+  .filtros-eventos select { min-width: 220px; }
+  .detalle-ev { color: var(--text-muted); font-size: 0.78rem; display: block; max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
   @media (max-width: 768px) {
     .embudo .paso { grid-template-columns: 1fr; gap: 8px; }
     .embudo .paso .cifra { text-align: left; }
     .filtros-eventos { flex-direction: column; align-items: stretch; }
     .filtros-eventos input { max-width: 100%; }
-    .chart svg { height: 200px; }
-    .chart-info { flex-direction: column; }
-    .cohorte-table th, .cohorte-table td { padding: 8px 4px; font-size: 0.75rem; }
-    .cel { width: 36px; height: 28px; font-size: 0.75rem; }
+    .funcion { grid-template-columns: 120px 1fr 44px; }
+    .chart svg { height: 180px; }
+    .cohorte-table th, .cohorte-table td { padding: 8px 4px; font-size: 0.74rem; }
+    .cel { width: 36px; height: 28px; }
   }
 </style>
 {% endblock %}
 
 {% block content %}
-  <p class="page-subtitle">Medición propia en el servidor. Los pasos de presupuestación sí requieren el plan Pro.</p>
+  <h1 class="page-title">Analítica de producto</h1>
+  <p class="page-subtitle">
+    Embudo, retención y uso real del producto · Operador: <span class="sub-op">{{ operador }}</span> · {{ resumen.hoy.strftime("%d/%m/%Y") }}
+  </p>
+  <p class="note-h">Medición propia en el servidor (sin cookies, sin terceros). Los pasos de presupuestación cuentan desde la implantación de la telemetría.</p>
 
   <div class="kpis">
     <div class="kpi-card">
-      <div class="kpi-value">{{ resumen.kpis.adopcion_activa }}%</div>
-      <div class="kpi-label">Adopción activa</div>
-      <div class="muted" style="font-size:0.75rem; margin-top:8px;">% de clientes que usan la app</div>
+      <div class="kpi-value">{{ resumen.kpis.organizaciones }}</div>
+      <div class="kpi-label">Empresas</div>
+      <div class="muted">{% if resumen.kpis.org_recientes %}+{{ resumen.kpis.org_recientes }} en {{ resumen.dias }}d{% else %}sin altas en {{ resumen.dias }}d{% endif %}</div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-value">{{ resumen.kpis.retencion_dia1 }}%</div>
-      <div class="kpi-label">Retención Día 1</div>
-      <div class="muted" style="font-size:0.75rem; margin-top:8px;">Vuelven al día siguiente</div>
+      <div class="kpi-value">{{ resumen.kpis.activas_hoy }}</div>
+      <div class="kpi-label">Activas hoy</div>
     </div>
-    <div class="kpi-card blue">
-      <div class="kpi-value">{{ "%.1f"|format(resumen.kpis.sesiones_por_usuario) }}</div>
-      <div class="kpi-label">Sesiones/Usuario</div>
-      <div class="muted" style="font-size:0.75rem; margin-top:8px;">En los últimos {{ resumen.dias }} días</div>
+    <div class="kpi-card">
+      <div class="kpi-value">{{ resumen.kpis.activas_7d }}</div>
+      <div class="kpi-label">Activas 7 días</div>
     </div>
-    <div class="kpi-card warn">
-      <div class="kpi-value">{{ resumen.kpis.conversion_pago }}%</div>
-      <div class="kpi-label">Conversión a Pago</div>
-      <div class="muted" style="font-size:0.75rem; margin-top:8px;">Desde registro</div>
+    <div class="kpi-card info">
+      <div class="kpi-value">{{ "%.0f"|format(resumen.kpis.adopcion_activa) }} <small>%</small></div>
+      <div class="kpi-label">Adopción activa</div>
+      <div class="muted">{{ resumen.kpis.activas_ventana }} de {{ resumen.kpis.organizaciones }} en {{ resumen.dias }}d</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">{{ resumen.kpis.usuarios }}</div>
+      <div class="kpi-label">Cuentas</div>
+      <div class="muted">{% if resumen.kpis.usuarios_recientes %}+{{ resumen.kpis.usuarios_recientes }} en {{ resumen.dias }}d{% else %}sin registros en {{ resumen.dias }}d{% endif %}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">{{ "%.0f"|format(resumen.kpis.empresa_a_presupuesto) }} <small>%</small></div>
+      <div class="kpi-label">Llegan a presupuesto</div>
+    </div>
+    <div class="kpi-card info">
+      <div class="kpi-value">{{ resumen.kpis.orgs_que_pagaron }}</div>
+      <div class="kpi-label">Han pagado</div>
+      <div class="muted">{{ "%.0f"|format(resumen.kpis.empresa_a_pago) }}% de las empresas</div>
+    </div>
+    <div class="kpi-card danger">
+      <div class="kpi-value">{{ "%.2f"|format(resumen.kpis.ingresos) }} <small>US$</small></div>
+      <div class="kpi-label">Ingresos acumulados</div>
     </div>
   </div>
 
   <div class="card">
     <div class="card-header">
-      <h2>Embudo de Adquisición</h2>
+      <h2>Embudo de conversión</h2>
       <span class="badge badge-neutral">Últimos {{ resumen.dias }} días</span>
     </div>
     <div class="card-body">
       <div class="embudo">
-        {% set max_val = resumen.embudo.paso1.cifra if resumen.embudo.paso1.cifra > 0 else 1 %}
-        {% for paso in [resumen.embudo.paso1, resumen.embudo.paso2, resumen.embudo.paso3, resumen.embudo.paso4] %}
+        {% for paso in resumen.embudo %}
         <div class="paso">
-          <div class="nombre">{{ paso.nombre }}<small>{{ paso.descripcion }}</small></div>
+          <div class="nombre">{{ paso.etiqueta }}
+            {% if not loop.first %}<small>{{ "%.0f"|format(paso.pct) }}% desde «{{ resumen.embudo[loop.index0 - 1].etiqueta }}»</small>{% endif %}
+          </div>
           <div class="barra">
-            <svg viewBox="0 0 100 8" preserveAspectRatio="none">
-              <rect class="fondo" x="0" y="0" width="100" height="8"></rect>
-              <rect x="0" y="0" width="{{ (paso.cifra * 100.0 / max_val)|round(1) }}" height="8"></rect>
+            <svg viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true">
+              <rect class="fondo" x="0" y="1" width="100" height="8"></rect>
+              <rect x="0" y="1" width="{{ [paso.pct, 0.6]|max }}" height="8"></rect>
             </svg>
           </div>
-          <div class="cifra">
-            <b>{{ paso.cifra }}</b>
-            <span>{{ "%.1f"|format(paso.pct_previo) }}% del anterior</span>
-          </div>
+          <div class="cifra"><b>{{ paso.valor }}</b><span>{{ "%.1f"|format(paso.pct) }}% de la base</span></div>
         </div>
         {% endfor %}
       </div>
@@ -156,11 +181,8 @@
       <div class="card-header"><h2>{{ titulo }}</h2></div>
       <div class="card-body">
         {% set c = resumen[clave] %}
-        <div class="chart-info">
-          <b>{{ c.total }}</b>
-          <span>máx. {{ c.maximo }}/día</span>
-        </div>
-        <svg viewBox="0 0 {{ c.ancho }} {{ c.alto }}" role="img">
+        <div class="chart-info"><b>{{ c.total }}</b><span>máx. {{ c.maximo }}/día · {{ resumen.dias }} días</span></div>
+        <svg viewBox="0 0 {{ c.ancho }} {{ c.alto }}" role="img" aria-label="{{ titulo }}">
           <line class="eje" x1="0" y1="{{ c.base }}" x2="{{ c.ancho }}" y2="{{ c.base }}"></line>
           {% for p in c.puntos %}
           <rect class="bar {{ clase_serie }}" x="{{ p.x }}" y="{{ p.y }}" width="{{ p.ancho }}" height="{{ p.alto }}" rx="2">
@@ -178,13 +200,12 @@
       <h2>Retención por cohorte</h2>
       <span class="badge badge-success">{{ "%.0f"|format(resumen.kpis.adopcion_activa) }}% activas en {{ resumen.dias }}d</span>
     </div>
-    <div class="card-body" style="padding: 0;">
-      <div style="overflow-x: auto; padding: 24px;">
+    <div class="card-body">
+      <p class="note-block">Empresas creadas cada mes y % que usaron el producto en ese mes y los siguientes (uso diario).</p>
+      <div class="table-container">
         <table class="cohorte-table">
           <thead>
-            <tr>
-              <th style="text-align: left;">Cohorte</th>
-              <th>Empresas</th>
+            <tr><th>Cohorte</th><th>Empresas</th>
               {% for i in range(resumen.cohortes|length) %}<th>Mes {{ i }}</th>{% endfor %}
             </tr>
           </thead>
@@ -200,30 +221,25 @@
                   {% if valor >= 75 %}{% set clase = "c-4" %}{% elif valor >= 50 %}{% set clase = "c-3" %}
                   {% elif valor >= 25 %}{% set clase = "c-2" %}{% elif valor > 0 %}{% set clase = "c-1" %}
                   {% else %}{% set clase = "c-0" %}{% endif %}
-                  <td><span class="cel {{ clase }}" title="{{ fila.organizaciones }} empresa(s)">{{ "%.0f"|format(valor) }}%</span></td>
+                  <td><span class="cel {{ clase }}" title="{{ fila.organizaciones }} empresa(s) en la cohorte">{{ "%.0f"|format(valor) }}%</span></td>
                 {% endif %}
               {% endfor %}
             </tr>
             {% endfor %}
           </tbody>
         </table>
-        
-        <div class="leyenda">
-          <span>Sin uso</span>
-          <span class="cel c-0">0%</span>
-          <span class="cel c-1">25%</span>
-          <span class="cel c-2">50%</span>
-          <span class="cel c-3">75%</span>
-          <span class="cel c-4">100%</span>
-          <span>Uso pleno</span>
-        </div>
+      </div>
+      <div class="leyenda">
+        <span>Sin uso</span>
+        <span class="cel c-0">0%</span><span class="cel c-1">25</span><span class="cel c-2">50</span><span class="cel c-3">75</span><span class="cel c-4">100</span>
+        <span>Uso pleno</span>
       </div>
     </div>
   </div>
 
   <div class="grid-charts">
     <div class="card">
-      <div class="card-header"><h2>Uso de funciones</h2></div>
+      <div class="card-header"><h2>Uso de funciones</h2><span class="badge badge-neutral">últimos {{ resumen.dias }} días</span></div>
       <div class="card-body">
         {% if resumen.funciones %}
         <div class="funciones">
@@ -231,9 +247,9 @@
           <div class="funcion">
             <div class="nombre" title="{{ f.accion }}">{{ f.etiqueta }}</div>
             <div class="barra">
-              <svg viewBox="0 0 100 8" preserveAspectRatio="none">
-                <rect class="fondo" x="0" y="0" width="100" height="8"></rect>
-                <rect x="0" y="0" width="{{ [f.pct, 1.2]|max }}" height="8"></rect>
+              <svg viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true">
+                <rect class="fondo" x="0" y="1" width="100" height="6"></rect>
+                <rect x="0" y="1" width="{{ [f.pct, 1.2]|max }}" height="6"></rect>
               </svg>
             </div>
             <div class="total">{{ f.total }}</div>
@@ -241,13 +257,13 @@
           {% endfor %}
         </div>
         {% else %}
-        <p class="muted text-center">Todavía no hay eventos de uso.</p>
+        <p class="muted text-center">Todavía no hay eventos de uso en esta ventana.</p>
         {% endif %}
       </div>
     </div>
 
     <div class="card">
-      <div class="card-header"><h2>Registros por país</h2></div>
+      <div class="card-header"><h2>Registros por país</h2><span class="badge badge-neutral">últimos {{ resumen.dias }} días</span></div>
       <div class="card-body">
         {% if resumen.paises %}
         {% set max_pais = resumen.paises[0].total %}
@@ -255,16 +271,16 @@
         <div class="pais-fila">
           <b>{{ p.pais }}</b>
           <div class="barra">
-            <svg viewBox="0 0 100 8" preserveAspectRatio="none">
-              <rect class="fondo" x="0" y="0" width="100" height="8"></rect>
-              <rect x="0" y="0" width="{{ (p.total * 100.0 / max_pais)|round(1) }}" height="8"></rect>
+            <svg viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true">
+              <rect class="fondo" x="0" y="1" width="100" height="6"></rect>
+              <rect x="0" y="1" width="{{ (p.total * 100.0 / max_pais)|round(1) }}" height="6"></rect>
             </svg>
           </div>
-          <span>{{ p.total }} <small class="muted">({{ "%.0f"|format(p.pct) }}%)</small></span>
+          <span>{{ p.total }} · {{ "%.0f"|format(p.pct) }}%</span>
         </div>
         {% endfor %}
         {% else %}
-        <p class="muted text-center">Sin registros.</p>
+        <p class="muted text-center">Sin registros en esta ventana.</p>
         {% endif %}
       </div>
     </div>
@@ -278,11 +294,11 @@
     <div class="table-container">
       {% if resumen.riesgo.pagantes_en_riesgo %}
       <table>
-        <thead><tr><th>Empresa</th><th>Días inactivo</th><th>Última actividad</th><th>Plan vence</th><th>Estado</th></tr></thead>
+        <thead><tr><th>Empresa</th><th>Días sin uso</th><th>Última actividad</th><th>Plan vence</th><th>Estado</th></tr></thead>
         <tbody>
           {% for fila in resumen.riesgo.pagantes_en_riesgo %}
           <tr>
-            <td style="font-weight: 600;">{{ fila.organizacion.nombre }}</td>
+            <td class="text-bold">{{ fila.organizacion.nombre }}</td>
             <td><span class="badge {% if fila.dias_inactivo >= 30 %}badge-danger{% else %}badge-warning{% endif %}">{{ fila.dias_inactivo }} días</span></td>
             <td class="muted">{% if fila.ultima_actividad %}{{ fila.ultima_actividad.strftime("%d/%m/%Y") }}{% else %}—{% endif %}</td>
             <td class="muted">{% if fila.vence %}{{ fila.vence.strftime("%d/%m/%Y") }} ({{ fila.dias_restantes }}d){% else %}—{% endif %}</td>
@@ -292,10 +308,7 @@
         </tbody>
       </table>
       {% else %}
-      <div style="padding: 32px; text-align: center; color: var(--text-muted);">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 12px; color: var(--success);"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-        <p style="margin: 0; font-weight: 500;">Ninguna empresa con plan activo supera los 14 días sin uso.</p>
-      </div>
+      <div class="text-center muted empty-pad">Ninguna empresa con plan activo supera los 14 días sin uso.</div>
       {% endif %}
     </div>
   </div>
@@ -306,36 +319,36 @@
       <span class="badge badge-neutral">{{ resumen.eventos|length }} eventos</span>
     </div>
     <div class="filtros-eventos">
-      <input type="search" id="buscar-evento" placeholder="Buscar por empresa, email o detalle…">
-      <select id="filtro-accion">
+      <input type="search" id="buscar-evento" placeholder="Buscar por empresa, email o detalle…" aria-label="Buscar eventos">
+      <select id="filtro-accion" aria-label="Filtrar por acción">
         <option value="">Todas las acciones</option>
         {% for accion in resumen.acciones_catalogo %}
         <option value="{{ accion }}">{{ accion }}</option>
         {% endfor %}
       </select>
     </div>
-    <div class="table-container" style="max-height: 500px; overflow-y: auto;">
+    <div class="table-container tabla-eventos-wrap">
       <table id="tabla-eventos">
         <thead>
-          <tr style="position: sticky; top: 0; background: #f8fafc; z-index: 10;">
-            <th>Cuándo</th><th>Acción</th><th>Empresa</th><th>Quién</th><th>Detalle</th>
-          </tr>
+          <tr><th>Cuándo</th><th>Acción</th><th>Empresa</th><th>Quien</th><th>Detalle</th></tr>
         </thead>
         <tbody>
           {% for ev in resumen.eventos %}
           <tr data-accion="{{ ev.accion }}" data-texto="{{ ev.organizacion|lower }} {{ ev.actor|lower }} {{ ev.etiqueta|lower }} {{ ev.detalle|tojson|lower }}">
             <td class="muted">{{ ev.created_at.strftime("%d/%m %H:%M") }}</td>
-            <td><span class="badge {{ 'badge-neutral' if ev.global else 'badge-success' }}" style="background: {{ '#f1f5f9' if ev.global else '#e0e7ff' }}; color: {{ '#475569' if ev.global else '#3730a3' }}">{{ ev.etiqueta }}</span></td>
-            <td style="font-weight: 600;">{{ ev.organizacion }}</td>
+            <td><span class="badge {{ 'badge-info' if ev.global else 'badge-neutral' }}">{{ ev.etiqueta }}</span></td>
+            <td class="text-bold">{{ ev.organizacion }}</td>
             <td class="muted">{{ ev.actor }}</td>
-            <td class="muted" style="max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ ev.detalle|tojson if ev.detalle else '' }}">
-              {{ ev.detalle|tojson if ev.detalle else "—" }}
-            </td>
+            <td class="muted">{% if ev.detalle %}<span class="detalle-ev">{{ ev.detalle|tojson }}</span>{% else %}—{% endif %}</td>
           </tr>
           {% endfor %}
+          {% if not resumen.eventos %}
+          <tr><td colspan="5" class="muted text-center empty-pad-sm">Sin eventos todavía. La telemetría empieza a contar desde el despliegue de esta versión.</td></tr>
+          {% endif %}
         </tbody>
       </table>
     </div>
+    <div class="card-body"><p class="note-bottom">Fuente: <code>eventos_producto</code> — medición propia, mínima y sin cookies (E5-012). Google Analytics sigue midiendo la capa pública.</p></div>
   </div>
 
 {% endblock %}

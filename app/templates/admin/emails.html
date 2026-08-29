@@ -4,25 +4,25 @@
 {% block topbar_title %}Prueba de Correos{% endblock %}
 
 {% block extra_css %}
-<style>
-  .filtros-box { display: flex; gap: 16px; margin-bottom: 24px; align-items: center; background: #fff; padding: 20px; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
-  .filtros-box label { font-size: 0.85rem; font-weight: 600; color: var(--text-main); white-space: nowrap; }
-  .filtros-box input { border: 1px solid var(--border-color); border-radius: 8px; padding: 10px 14px; font: inherit; font-size: 0.9rem; flex: 1; max-width: 400px; }
-  
-  .email-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; }
-  
+<style nonce="{{ request.state.csp_nonce }}">
+  .filtros-box { display: flex; gap: 14px; margin-bottom: 20px; align-items: center; background: #fff; padding: 16px 20px; border-radius: 14px; border: 1px solid var(--border-color); flex-wrap: wrap; }
+  .filtros-box label { font-size: 0.84rem; font-weight: 700; color: var(--text-main); white-space: nowrap; }
+  .filtros-box input { flex: 1; max-width: 420px; }
+
+  .email-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 18px; }
   .email-card { display: flex; flex-direction: column; height: 100%; margin-bottom: 0; }
-  .email-card .card-header { padding: 16px 20px; border-bottom: 1px solid var(--border-color); background: #fcfcfd; }
-  .email-card .card-body { padding: 20px; flex: 1; display: flex; flex-direction: column; gap: 16px; }
-  
-  .email-card h2 { font-size: 1rem; margin: 0; display: flex; align-items: center; gap: 10px; justify-content: space-between; }
-  .email-card p { margin: 0; color: var(--text-muted); font-size: 0.85rem; line-height: 1.5; flex: 1; }
-  
+  .email-card .card-header { padding: 16px 20px; background: #fcfdfc; }
+  .email-card .card-header h2 { font-size: 0.96rem; margin: 0; display: flex; align-items: center; gap: 10px; justify-content: space-between; }
+  .email-card .card-body { padding: 18px; flex: 1; display: flex; flex-direction: column; gap: 16px; }
+  .email-card p { margin: 0; color: var(--text-muted); font-size: 0.85rem; line-height: 1.55; flex: 1; }
   .email-form { display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; }
   .email-form input { flex: 1; min-width: 180px; }
-  
-  .info-text { margin-top: 32px; padding: 16px 20px; background: #f8fafc; border-radius: 12px; font-size: 0.85rem; color: var(--text-muted); display: flex; gap: 12px; align-items: flex-start; }
-  
+  .email-card .pill { font-size: 0.66rem; padding: 3px 9px; }
+  .pill.cliente { background: var(--success-bg); color: var(--brand-color); }
+  .pill.interno { background: var(--blue-bg); color: var(--blue); }
+
+  .info-text { margin-top: 24px; padding: 16px 20px; background: #f7faf8; border-radius: 14px; font-size: 0.84rem; color: var(--text-muted); display: flex; gap: 12px; align-items: flex-start; line-height: 1.55; }
+
   @media (max-width: 768px) {
     .filtros-box { flex-direction: column; align-items: stretch; gap: 8px; }
     .filtros-box input { max-width: 100%; }
@@ -33,6 +33,7 @@
 {% endblock %}
 
 {% block content %}
+  <h1 class="page-title">Correos de {{ product_name }}</h1>
   <p class="page-subtitle">Envía cualquiera de los correos transaccionales a un buzón y revísalo tal cual llega, con los datos de ejemplo.</p>
 
   <div class="filtros-box">
@@ -44,20 +45,14 @@
     {% for c in correos %}
     <div class="card email-card">
       <div class="card-header">
-        <h2>
-          {{ c.titulo }}
-          <span class="badge {{ 'badge-success' if c.grupo == 'cliente' else 'badge-neutral' }}">{{ c.grupo_label }}</span>
-        </h2>
+        <h2>{{ c.titulo }} <span class="pill {{ 'cliente' if c.grupo == 'cliente' else 'interno' }}">{{ c.grupo_label }}</span></h2>
       </div>
       <div class="card-body">
         <p>{{ c.descripcion }}</p>
-        <form method="post" action="/admin/emails/enviar" class="email-form">
+        <form class="email-form" method="post" action="/admin/emails/enviar">
           <input type="hidden" name="slug" value="{{ c.slug }}">
-          <input class="form-control correo" type="email" name="destino" value="{{ destino }}" placeholder="correo@ejemplo.com" required>
-          <button type="submit" class="btn">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-            Enviar
-          </button>
+          <input class="correo" type="email" name="destino" value="{{ destino }}" placeholder="correo@ejemplo.com">
+          <button class="btn" type="submit">Enviar</button>
         </form>
       </div>
     </div>
@@ -65,22 +60,25 @@
   </div>
 
   <div class="info-text">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #94a3b8; flex-shrink: 0;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+    <svg class="svg-fix" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
     <div>
-      <strong style="color: var(--text-main); display: block; margin-bottom: 4px;">Información de prueba</strong>
       Los datos de estos correos son de ejemplo. El botón «Enviar» usa el mismo remitente y las mismas plantillas que producción; revisa también la carpeta de spam, por si acaso. Los correos marcados como «Interno» llegan al buzón de soporte en la operación real; aquí puedes redirigirlos a cualquiera.
     </div>
   </div>
+
 {% endblock %}
 
 {% block extra_js %}
 <script nonce="{{ request.state.csp_nonce }}">
+  // El campo "Destino por omisión" rellena el de cada tarjeta al escribir.
   (function () {
     var global = document.getElementById('destino-global');
     var tarjetas = document.querySelectorAll('input.correo');
-    global.addEventListener('input', function () {
-      tarjetas.forEach(function (input) { input.value = global.value; });
-    });
+    if (global && tarjetas.length) {
+      global.addEventListener('input', function () {
+        tarjetas.forEach(function (input) { input.value = global.value; });
+      });
+    }
   })();
 </script>
 {% endblock %}

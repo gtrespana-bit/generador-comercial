@@ -2,240 +2,159 @@
 
 {% block title %}Operación{% endblock %}
 {% block topbar_title %}Operación y Diagnóstico{% endblock %}
-
 {% block topbar_actions %}
   {% if diagnostico.salud.ok %}
-  <span class="badge badge-success" style="font-size: 0.85rem; padding: 6px 12px;">SALUDABLE</span>
+  <span class="badge badge-success chip-lg">Saludable</span>
   {% else %}
-  <span class="badge badge-danger" style="font-size: 0.85rem; padding: 6px 12px;">CON ERRORES</span>
+  <span class="badge badge-danger chip-lg">Con errores</span>
   {% endif %}
 {% endblock %}
 
 {% block extra_css %}
-<style>
-  .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 24px; margin-bottom: 24px; }
-  .full-width { grid-column: 1 / -1; }
-  
-  .hechos-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
-  .hecho-card { background: #f8fafc; border: 1px dashed var(--border-color); border-radius: 12px; padding: 16px; }
-  .hecho-card .label { font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.05em; margin-bottom: 6px; }
-  .hecho-card .value { font-size: 1rem; font-weight: 700; color: var(--text-main); word-break: break-all; }
+<style nonce="{{ request.state.csp_nonce }}">
+  .hechos-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; }
+  .hecho-card { background: #f7faf8; border: 1px solid var(--border-color); border-radius: 12px; padding: 14px; }
+  .hecho-card .label { font-size: 0.72rem; text-transform: uppercase; color: var(--text-muted); font-weight: 800; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .hecho-card .value { font-size: 0.95rem; font-weight: 700; color: var(--text-main); word-break: break-all; }
   .hecho-card.completo { grid-column: 1 / -1; }
-  
-  .code-badge { background: #f1f5f9; color: var(--text-main); padding: 2px 6px; border-radius: 4px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 0.85rem; }
-  
+
   .status-table { width: 100%; border-collapse: collapse; }
-  .status-table th { background: transparent; padding: 12px 0; border-bottom: 2px solid var(--border-color); font-size: 0.8rem; }
+  .status-table th { background: transparent; padding: 12px 0; border-bottom: 2px solid var(--border-color); }
   .status-table td { padding: 12px 0; border-bottom: 1px dashed var(--border-color); }
   .status-table tr:last-child td { border-bottom: none; }
-  
-  .error-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; }
-  .error-list li { display: flex; gap: 12px; align-items: flex-start; padding: 16px; background: var(--danger-bg); border-radius: 8px; border: 1px solid #fecaca; font-size: 0.9rem; color: var(--danger-hover); }
-  .error-list li.warn { background: var(--warn-bg); border-color: #fde68a; color: #b45309; }
-  
-  @media (max-width: 768px) {
-    .card-grid { grid-template-columns: 1fr; }
-    .hecho-card.completo { flex-direction: column; align-items: flex-start; gap: 12px; }
-    .hecho-card.completo > div { width: 100%; }
-    .hecho-card.completo > div .label, .hecho-card.completo > div .value { text-align: left !important; }
+
+  .error-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+  .error-list li { display: flex; gap: 12px; align-items: flex-start; padding: 14px; background: var(--danger-bg); border-radius: 10px; border: 1px solid #f2c6c9; font-size: 0.88rem; color: var(--danger-hover); }
+  .error-list li.warn { background: var(--warn-bg); border-color: #ecd9a8; color: #8a5b10; }
+
+  code { background: #eef3f0; border-radius: 5px; padding: 2px 6px; font-size: 0.85rem; }
+
+  @media (max-width: 640px) {
+    .hechos-grid { grid-template-columns: 1fr 1fr; }
+    .hecho-card.completo { grid-column: 1 / -1; }
   }
 </style>
 {% endblock %}
 
 {% block content %}
-  <p class="page-subtitle">Los mismos chequeos que <code>/readyz</code>, presentados para el operador.</p>
-
-  <div class="card-grid">
-    <div class="card">
-      <div class="card-header">
-        <h2>Chequeos de Salud</h2>
-      </div>
-      <div class="card-body">
-        <table class="status-table">
-          <thead>
-            <tr>
-              <th style="text-align: left;">Componente</th>
-              <th style="text-align: right;">Estado</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for clave, valor in diagnostico.salud.checks.items() %}
-            <tr>
-              <td style="font-weight: 600;">{{ clave }}</td>
-              <td style="text-align: right;">
-                {% if 'error' in valor|string or 'no-configurado' in valor|string or 'mal-' in valor|string or 'inesperado' in valor|string %}
-                <span class="badge badge-danger">{{ valor }}</span>
-                {% elif 'no-aplica' in valor|string or 'verificacion-desactivada' in valor|string %}
-                <span class="badge badge-neutral">{{ valor }}</span>
-                {% else %}
-                <span class="badge badge-success">{{ valor }}</span>
-                {% endif %}
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-
-        {% if diagnostico.salud.errors %}
-        <div style="margin-top: 24px;">
-          <h3 style="font-size: 0.9rem; margin-top: 0; margin-bottom: 12px;">Errores reportados</h3>
-          <ul class="error-list">
-            {% for error in diagnostico.salud.errors %}
-            <li>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-              {{ error }}
-            </li>
-            {% endfor %}
-          </ul>
-        </div>
-        {% endif %}
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <h2>Configuración por entorno</h2>
-        <span class="badge badge-neutral">{{ diagnostico.hechos.configuracion.entorno }}</span>
-      </div>
-      <div class="card-body">
-        <table class="status-table">
-          <thead>
-            <tr>
-              <th style="text-align: left;">Variable</th>
-              <th style="text-align: right;">Definición</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for nombre, definido in diagnostico.hechos.configuracion.secretos.items() %}
-            <tr>
-              <td><span class="code-badge">{{ nombre }}</span></td>
-              <td style="text-align: right;">
-                {% if definido %}
-                <span class="badge badge-success">Definido</span>
-                {% else %}
-                <span class="badge badge-neutral">No definido</span>
-                {% endif %}
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-
-        {% if diagnostico.hechos.configuracion.problemas %}
-        <div style="margin-top: 24px;">
-          <h3 style="font-size: 0.9rem; margin-top: 0; margin-bottom: 12px;">Validación de entorno</h3>
-          <ul class="error-list">
-            {% for problema in diagnostico.hechos.configuracion.problemas %}
-            <li class="{{ 'warn' if problema.gravedad != 'error' else '' }}">
-              {% if problema.gravedad == 'error' %}
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-              {% else %}
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-              {% endif %}
-              {{ problema.mensaje }}
-            </li>
-            {% endfor %}
-          </ul>
-        </div>
-        {% endif %}
-      </div>
-    </div>
-  </div>
+  <h1 class="page-title">Estado del despliegue</h1>
+  <p class="page-subtitle">Los mismos chequeos que <code>/readyz</code>, presentados para el operador. <code>/healthz</code> y <code>/readyz</code> siguen siendo los puntos públicos de monitorización.</p>
 
   <div class="card">
     <div class="card-header">
-      <h2>Hechos Operativos</h2>
-    </div>
-    <div class="card-body">
-      <div class="hechos-grid">
-        <div class="hecho-card">
-          <div class="label">Base de datos</div>
-          <div class="value">{{ diagnostico.hechos.backend }}</div>
-        </div>
-        <div class="hecho-card">
-          <div class="label">Serverless / Efímero</div>
-          <div class="value">{{ 'Sí' if diagnostico.hechos.efimero else 'No' }}</div>
-        </div>
-        <div class="hecho-card">
-          <div class="label">Head de Alembic</div>
-          <div class="value"><span class="code-badge">{{ diagnostico.hechos.head_esperado }}</span></div>
-        </div>
-        <div class="hecho-card">
-          <div class="label">Almacenamiento</div>
-          <div class="value">{{ diagnostico.hechos.storage }}</div>
-        </div>
-        <div class="hecho-card">
-          <div class="label">Rate Limiting</div>
-          <div class="value">{{ diagnostico.hechos.rate_limit }}</div>
-        </div>
-        <div class="hecho-card">
-          <div class="label">Proceso Activo</div>
-          <div class="value">{{ diagnostico.hechos.arrancado_hace_segundos }} seg</div>
-        </div>
-        
-        <div class="hecho-card completo" style="display: flex; justify-content: space-between; align-items: center;">
-          <div>
-            <div class="label">Operadores configurados</div>
-            <div class="value">
-              {% if diagnostico.hechos.operadores %}
-                {{ diagnostico.hechos.operadores|join(', ') }}
-              {% else %}
-                <span style="color: var(--danger);">Ninguno — el panel queda cerrado</span>
-              {% endif %}
-            </div>
-          </div>
-          <div>
-            <div class="label" style="text-align: right;">Entorno (E4-003)</div>
-            <div class="value" style="text-align: right;">{{ diagnostico.hechos.configuracion.entorno_etiqueta }}</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-header">
-      <h2>Errores Recientes (No capturados)</h2>
-      <span class="badge {{ 'badge-danger' if diagnostico.hechos.errores_registrados > 0 else 'badge-success' }}">{{ diagnostico.hechos.errores_registrados }} errores</span>
+      <h2>Chequeos de salud</h2>
+      {% if diagnostico.salud.ok %}
+      <span class="badge badge-success chip-lg">Saludable</span>
+      {% else %}
+      <span class="badge badge-danger chip-lg">Con errores</span>
+      {% endif %}
     </div>
     <div class="table-container">
-      {% if diagnostico.errores %}
-      <table>
-        <thead>
-          <tr>
-            <th>Última vez</th>
-            <th>Ruta</th>
-            <th>Tipo</th>
-            <th>Mensaje</th>
-            <th style="text-align: center;">Ocurrencias</th>
-          </tr>
-        </thead>
+      <table class="status-table">
+        <thead><tr><th>Chequeo</th><th>Estado</th></tr></thead>
         <tbody>
-          {% for error in diagnostico.errores %}
+          {% for clave, valor in diagnostico.salud.checks.items() %}
           <tr>
-            <td class="muted">{{ error.ultima_vez }}</td>
-            <td><span class="code-badge">{{ error.metodo }} {{ error.ruta }}</span></td>
-            <td><strong>{{ error.tipo }}</strong></td>
-            <td class="muted" style="max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ error.mensaje }}">{{ error.mensaje }}</td>
-            <td style="text-align: center; font-weight: 700;">{{ error.ocurrencias }}</td>
+            <td class="text-bold">{{ clave }}</td>
+            <td>
+              {% if 'error' in valor|string or 'no-configurado' in valor|string or 'mal-' in valor|string or 'inesperado' in valor|string %}
+              <span class="badge badge-danger">{{ valor }}</span>
+              {% elif 'no-aplica' in valor|string or 'verificacion-desactivada' in valor|string %}
+              <span class="badge badge-neutral">{{ valor }}</span>
+              {% else %}
+              <span class="badge badge-success">{{ valor }}</span>
+              {% endif %}
+            </td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
-      {% else %}
-      <div style="padding: 32px; text-align: center; color: var(--text-muted);">
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 12px; color: var(--success);"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-        <p style="margin: 0; font-weight: 500;">Ningún error no capturado en esta instancia desde que arrancó.</p>
-        <p style="margin: 6px 0 0; font-size: 0.85rem;">Que siga así.</p>
+    </div>
+    {% if diagnostico.salud.errors %}
+    <div class="card-body">
+      <h2 class="section-title-md">Errores de salud</h2>
+      <ul class="error-list">
+        {% for error in diagnostico.salud.errors %}
+        <li><span class="badge badge-danger">error</span> {{ error }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h2>Hechos operativos</h2></div>
+    <div class="card-body">
+      <div class="hechos-grid">
+        <div class="hecho-card"><div class="label">Base de datos</div><div class="value">{{ diagnostico.hechos.backend }}</div></div>
+        <div class="hecho-card"><div class="label">Modo efímero (serverless)</div><div class="value">{{ 'sí' if diagnostico.hechos.efimero else 'no' }}</div></div>
+        <div class="hecho-card"><div class="label">Head de Alembic esperado</div><div class="value">{{ diagnostico.hechos.head_esperado }}</div></div>
+        <div class="hecho-card"><div class="label">Almacenamiento</div><div class="value">{{ diagnostico.hechos.storage }}</div></div>
+        <div class="hecho-card"><div class="label">Contador de frecuencia</div><div class="value">{{ diagnostico.hechos.rate_limit }}</div></div>
+        <div class="hecho-card"><div class="label">Exigencia de licencias</div><div class="value">{{ diagnostico.hechos.licencias_exigidas }}</div></div>
+        <div class="hecho-card"><div class="label">Proceso activo</div><div class="value">{{ diagnostico.hechos.arrancado_hace_segundos }} s</div></div>
+        <div class="hecho-card"><div class="label">Errores registrados</div><div class="value">{{ diagnostico.hechos.errores_registrados }}</div></div>
+        <div class="hecho-card completo"><div class="label">Operadores configurados (COTIZAT_OPERADORES)</div><div class="value">{% if diagnostico.hechos.operadores %}{{ diagnostico.hechos.operadores|join(', ') }}{% else %}ninguno — el panel queda cerrado{% endif %}</div></div>
+        <div class="hecho-card completo"><div class="label">Entorno detectado (E4-003)</div><div class="value">{{ diagnostico.hechos.configuracion.entorno_etiqueta }} · <code>{{ diagnostico.hechos.configuracion.entorno }}</code></div></div>
       </div>
-      {% endif %}
     </div>
-    <div class="card-body" style="padding-top: 0;">
-      <p style="margin: 16px 0 0; font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-        {{ diagnostico.nota_errores }}
-      </p>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h2>Configuración por entorno</h2></div>
+    <div class="table-container">
+      <table class="status-table">
+        <thead><tr><th>Secreto</th><th>Estado</th></tr></thead>
+        <tbody>
+          {% for nombre, definido in diagnostico.hechos.configuracion.secretos.items() %}
+          <tr>
+            <td><code>{{ nombre }}</code></td>
+            <td>{% if definido %}<span class="badge badge-success">definido</span>{% else %}<span class="badge badge-neutral">sin definir</span>{% endif %}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
+    {% if diagnostico.hechos.configuracion.problemas %}
+    <div class="card-body">
+      <h2 class="section-title-md">Validación por entorno</h2>
+      <ul class="error-list">
+        {% for problema in diagnostico.hechos.configuracion.problemas %}
+        <li class="{{ 'warn' if problema.gravedad != 'error' else '' }}">
+          {% if problema.gravedad == 'error' %}<span class="badge badge-danger">error</span>{% else %}<span class="badge badge-warning">aviso</span>{% endif %}
+          {{ problema.mensaje }}
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% else %}
+    <div class="card-body"><p class="muted-note">Sin problemas de configuración para el entorno actual.</p></div>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h2>Errores recientes no capturados</h2></div>
+    {% if diagnostico.errores %}
+    <div class="table-container">
+      <table class="status-table">
+        <thead><tr><th>Última vez</th><th>Método y ruta</th><th>Tipo</th><th>Mensaje</th><th>Ocurrencias</th></tr></thead>
+        <tbody>
+          {% for error in diagnostico.errores %}
+          <tr>
+            <td class="muted">{{ error.ultima_vez }}</td>
+            <td><code>{{ error.metodo }} {{ error.ruta }}</code></td>
+            <td>{{ error.tipo }}</td>
+            <td>{{ error.mensaje }}</td>
+            <td>{{ error.ocurrencias }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="card-body"><p class="muted-note">Ningún error no capturado en esta instancia desde que arrancó. Que siga así.</p></div>
+    {% endif %}
+    <div class="card-body"><p class="note-bottom">{{ diagnostico.nota_errores }}</p></div>
   </div>
 
 {% endblock %}
