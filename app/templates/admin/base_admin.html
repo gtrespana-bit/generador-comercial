@@ -1,0 +1,635 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <title>{% block title %}Panel de administración{% endblock %} · {{ product_name }}</title>
+  <link rel="icon" type="image/png" href="/static/icono.png">
+  <link rel="preload" href="{{ 'fonts/Inter-Regular.woff2' | asset }}" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="{{ 'fonts/Inter-Bold.woff2' | asset }}" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+  <style nonce="{{ request.state.csp_nonce }}">
+    :root {
+      --bg-body: #f4f7f5;
+      --bg-sidebar: #0e2b20;
+      --bg-sidebar-2: #0b241a;
+      --text-sidebar: #a7bfb1;
+      --text-sidebar-hover: #f4fbf7;
+      --bg-sidebar-hover: #173b2c;
+      --bg-sidebar-active: #0b5b38;
+      --text-sidebar-active: #ffffff;
+      --brand-color: #0b5b38;
+      --brand-hover: #0a4d2f;
+      --text-main: #17211d;
+      --text-muted: #66776f;
+      --border-color: #dfe9e3;
+      --card-bg: #ffffff;
+      --danger: #b34048;
+      --danger-hover: #99373e;
+      --danger-bg: #fbe7e8;
+      --success: #0b5b38;
+      --success-bg: #e6f2ec;
+      --warn: #b07b16;
+      --warn-bg: #fbf0dc;
+      --blue: #2b5b9b;
+      --blue-bg: #e8effb;
+      font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+      color: var(--text-main);
+      background: var(--bg-body);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      background: var(--bg-body);
+      color: var(--text-main);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--brand-color); }
+
+    /* Sidebar */
+    .sidebar {
+      width: 264px;
+      background: linear-gradient(180deg, var(--bg-sidebar) 0%, var(--bg-sidebar-2) 100%);
+      color: var(--text-sidebar);
+      display: flex;
+      flex-direction: column;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      flex-shrink: 0;
+      box-shadow: 4px 0 24px rgba(0,0,0,0.12);
+      z-index: 50;
+      overflow-y: auto;
+    }
+
+    .sidebar-header {
+      padding: 22px 20px 18px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .brand {
+      font-size: 1.15rem;
+      font-weight: 900;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      letter-spacing: -0.01em;
+    }
+    .brand svg { flex-shrink: 0; }
+    .brand-tag {
+      background: rgba(255,255,255,0.12);
+      color: #bfe2cf;
+      font-size: 0.62rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 999px;
+      letter-spacing: 0.06em;
+    }
+
+    .sidebar-nav {
+      padding: 18px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+    }
+
+    .sidebar-nav a {
+      color: var(--text-sidebar);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 600;
+      padding: 10px 13px;
+      border-radius: 10px;
+      transition: background 0.18s, color 0.18s;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .sidebar-nav a svg { flex-shrink: 0; }
+    .sidebar-nav a:hover {
+      background: var(--bg-sidebar-hover);
+      color: var(--text-sidebar-hover);
+    }
+    .sidebar-nav a.activo {
+      background: var(--bg-sidebar-active);
+      color: var(--text-sidebar-active);
+      box-shadow: 0 6px 16px rgba(11, 91, 56, 0.34);
+    }
+    .sidebar-nav .nav-seccion {
+      font-size: 0.66rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #6f9180;
+      font-weight: 800;
+      padding: 14px 13px 6px;
+    }
+
+    .sidebar-footer {
+      padding: 18px 16px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      font-size: 0.8rem;
+    }
+    .sidebar-footer .operador {
+      display: block;
+      color: #fff;
+      font-weight: 700;
+      margin-bottom: 3px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .sidebar-footer .operador-role {
+      color: var(--text-sidebar);
+      font-size: 0.72rem;
+    }
+    .sidebar-footer .volver-btn {
+      display: block;
+      margin-top: 14px;
+      padding: 8px 10px;
+      text-align: center;
+      border-radius: 9px;
+      border: 1px solid rgba(255,255,255,0.12);
+      color: var(--text-sidebar);
+      text-decoration: none;
+      transition: background 0.18s, color 0.18s;
+    }
+    .sidebar-footer .volver-btn:hover {
+      background: rgba(255,255,255,0.06);
+      color: #fff;
+    }
+
+    /* Contenido */
+    .content-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .topbar {
+      height: 64px;
+      background: rgba(255,255,255,0.86);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      padding: 0 26px;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      gap: 12px;
+    }
+
+    .topbar-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin: 0;
+      letter-spacing: -0.01em;
+    }
+    .topbar-actions {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    main.content {
+      padding: 28px 30px 70px;
+      max-width: 1380px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    h1.page-title {
+      font-size: 1.75rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      margin: 0 0 6px;
+    }
+    p.page-subtitle {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin: 0 0 26px;
+      line-height: 1.5;
+    }
+    p.page-subtitle .sub-op { color: var(--brand-color); font-weight: 700; }
+
+    .muted { color: var(--text-muted); }
+    .text-center { text-align: center; }
+
+    /* Cards */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      box-shadow: 0 6px 22px rgba(10,48,34,0.05);
+      margin-bottom: 22px;
+      overflow: hidden;
+    }
+    .card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: #fff;
+      flex-wrap: wrap;
+    }
+    .card-header h2 {
+      margin: 0;
+      font-size: 1.02rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+    }
+    .card-body { padding: 20px; }
+    .card .head { display: flex; align-items: center; gap: 10px; padding: 16px 20px; border-bottom: 1px solid var(--border-color); flex-wrap: wrap; }
+    .card .head h2 { margin: 0; font-size: 1.02rem; letter-spacing: -0.01em; }
+    .card .head .cnt { margin-left: auto; font-size: 0.76rem; font-weight: 800; color: var(--brand-color); background: var(--success-bg); border-radius: 999px; padding: 4px 11px; }
+    .card .cuerpo { padding: 20px; }
+
+    /* Botones */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 0;
+      border-radius: 9px;
+      background: var(--brand-color);
+      color: #fff;
+      padding: 10px 16px;
+      font: inherit;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.18s, transform 0.08s, box-shadow 0.18s;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+    }
+    .btn:hover { background: var(--brand-hover); box-shadow: 0 6px 14px rgba(11,91,56,0.2); }
+    .btn:active { transform: translateY(1px); }
+    .btn-secondary { background: #fff; color: var(--text-main); border: 1px solid var(--border-color); box-shadow: none; }
+    .btn-secondary:hover { background: #f4f7f5; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+    .btn-danger { background: var(--danger); }
+    .btn-danger:hover { background: var(--danger-hover); box-shadow: 0 6px 14px rgba(179,64,72,0.22); }
+    .btn-sm { padding: 7px 12px; font-size: 0.78rem; }
+    a.btn { color: #fff; }
+
+    /* Alertas */
+    .alert {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 20px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      line-height: 1.45;
+    }
+    .alert svg { flex-shrink: 0; margin-top: 1px; }
+    .alert-danger { background: var(--danger-bg); color: var(--danger-hover); border: 1px solid #f2c6c9; }
+    .alert-success { background: var(--success-bg); color: var(--brand-color); border: 1px solid #c4e2d2; }
+    .alert-warning { background: var(--warn-bg); color: #8a5b10; border: 1px solid #ecd9a8; }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+    }
+    .badge-success { background: var(--success-bg); color: var(--brand-color); }
+    .badge-danger { background: var(--danger-bg); color: var(--danger-hover); }
+    .badge-warning { background: var(--warn-bg); color: #8a5b10; }
+    .badge-neutral { background: #eef3f0; color: var(--text-muted); }
+    .badge-info { background: var(--blue-bg); color: var(--blue); }
+
+    /* KPIs */
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 26px;
+    }
+    .kpi-card {
+      background: #fff;
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+    .kpi-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--brand-color);
+    }
+    .kpi-card.warn::before { background: var(--warn); }
+    .kpi-card.danger::before { background: var(--danger); }
+    .kpi-card.info::before { background: var(--blue); }
+    .kpi-value {
+      font-size: 1.9rem;
+      font-weight: 900;
+      color: var(--text-main);
+      line-height: 1.1;
+      margin-bottom: 4px;
+      letter-spacing: -0.02em;
+    }
+    .kpi-value small { font-size: 1rem; color: var(--text-muted); font-weight: 700; }
+    .kpi-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Tablas */
+    .table-container { overflow-x: auto; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.87rem;
+    }
+    th {
+      background: #f4f7f5;
+      padding: 13px 16px;
+      text-align: left;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      font-weight: 700;
+      border-bottom: 1px solid var(--border-color);
+      white-space: nowrap;
+    }
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border-color);
+      vertical-align: middle;
+      color: var(--text-main);
+    }
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr:hover { background: #f8faf8; }
+
+    /* Formularios */
+    .form-group { margin-bottom: 16px; }
+    .form-label {
+      display: block;
+      font-size: 0.83rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+    .form-control {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--border-color);
+      border-radius: 9px;
+      font: inherit;
+      font-size: 0.9rem;
+      background: #fff;
+      color: var(--text-main);
+      transition: border-color 0.18s, box-shadow 0.18s;
+    }
+    .form-control:focus {
+      outline: none;
+      border-color: var(--brand-color);
+      box-shadow: 0 0 0 3px rgba(11,91,56,0.1);
+    }
+    select.form-control { appearance: auto; }
+    textarea.form-control { min-height: 70px; resize: vertical; }
+
+    input[type="search"], input[type="email"], input[type="number"], input[type="text"], select {
+      border: 1px solid var(--border-color);
+      border-radius: 9px;
+      padding: 9px 12px;
+      font: inherit;
+      font-size: 0.88rem;
+      background: #fff;
+      color: var(--text-main);
+    }
+
+    /* Responsive */
+    /* Utilidades */
+    .alc-window-group { display: flex; gap: 6px; background: #fff; border: 1px solid var(--border-color); border-radius: 10px; padding: 4px; }
+    .btn-topbar { padding: 6px 11px; }
+    .note-h { font-size: 0.82rem; color: var(--text-muted); }
+    .note-sub { font-size: 0.78rem; color: var(--text-muted); margin-top: 8px; }
+    .note-block { font-size: 0.82rem; color: var(--text-muted); margin: 0 0 16px; }
+    .note-fine { font-size: 0.82rem; color: var(--text-muted); margin: 0 0 16px; }
+    .note-bottom { font-size: 0.78rem; color: var(--text-muted); margin: 0; line-height: 1.55; }
+    .muted-inline { color: var(--text-muted); }
+    .text-bold { font-weight: 700; }
+    .text-left { text-align: left; }
+    .org-name { font-weight: 700; color: var(--text-main); }
+    .org-sub { font-size: 0.78rem; color: var(--text-muted); margin-top: 2px; max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .empty-pad { padding: 42px 20px; }
+    .empty-pad-sm { padding: 38px 0; }
+    .flex-end { display: flex; justify-content: flex-end; }
+    .grid-full { grid-column: 1 / -1; }
+    .svg-inline { vertical-align: middle; margin-right: 4px; }
+    .svg-fix { flex-shrink: 0; }
+    .alert-title { display: block; margin-bottom: 4px; }
+    .chip-lg { font-size: 0.8rem; padding: 6px 12px; }
+    .section-title-md { font-size: 0.95rem; margin: 0 0 12px; }
+    .hist-cell { background: #fcfdfc; padding: 4px 16px 12px; }
+    .hist-label { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); }
+    .tbl-strong { font-weight: 700; }
+    .muted-note { font-size: 0.78rem; color: var(--text-muted); margin: 0; }
+
+    @media (max-width: 1080px) {
+      .sidebar { width: 78px; }
+      .sidebar-header { padding: 18px 12px; }
+      .sidebar-header .brand span:not(.brand-tag) { display: none; }
+      .sidebar-nav a { justify-content: center; padding: 10px; }
+      .sidebar-nav a span { display: none; }
+      .sidebar-nav .nav-seccion { display: none; }
+      .sidebar-footer { padding: 14px 10px; }
+      .sidebar-footer .operador, .sidebar-footer .operador-role { display: none; }
+      .sidebar-footer .volver-btn span { display: none; }
+      .sidebar-footer .volver-btn { padding: 10px 0; }
+    }
+
+    @media (max-width: 780px) {
+      body { flex-direction: column; }
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: sticky;
+        top: 0;
+        flex-direction: row;
+        align-items: center;
+        padding: 0 10px;
+        overflow-x: auto;
+        overflow-y: visible;
+        box-shadow: 0 4px 18px rgba(0,0,0,0.1);
+      }
+      .sidebar-header {
+        border-bottom: none;
+        padding: 12px 12px 12px 0;
+        margin-right: 8px;
+        border-right: 1px solid rgba(255,255,255,0.07);
+        flex-shrink: 0;
+      }
+      .sidebar-header .brand span:not(.brand-tag) { display: block; font-size: 0.95rem; }
+      .sidebar-nav {
+        flex-direction: row;
+        padding: 10px 0;
+        gap: 6px;
+        flex: 1;
+        min-width: max-content;
+      }
+      .sidebar-nav a {
+        white-space: nowrap;
+        padding: 8px 11px;
+        justify-content: flex-start;
+        gap: 6px;
+      }
+      .sidebar-nav a span { display: inline; font-size: 0.8rem; }
+      .sidebar-nav .nav-seccion { display: none; }
+      .sidebar-footer { display: none; }
+
+      .topbar { padding: 0 16px; height: 58px; }
+      .topbar-title { font-size: 0.96rem; }
+      main.content { padding: 20px 16px 56px; }
+      .kpis { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 20px; }
+      .kpi-card { padding: 16px; }
+      .kpi-value { font-size: 1.6rem; }
+      .card-header, .card .head { padding: 14px 16px; }
+      .card-body, .card .cuerpo { padding: 16px; }
+    }
+
+    @media (max-width: 480px) {
+      .sidebar-header { padding: 10px 10px 10px 0; }
+      .sidebar-header .brand span:not(.brand-tag) { display: none; }
+      .sidebar-nav a { padding: 7px 8px; }
+      .sidebar-nav a span { display: none; }
+      .topbar { flex-direction: column; height: auto; padding: 12px 16px; gap: 8px; align-items: flex-start; }
+      .topbar-actions { margin-left: 0; width: 100%; overflow-x: auto; padding-bottom: 2px; }
+      main.content { padding: 18px 12px 50px; }
+      .kpis { grid-template-columns: 1fr 1fr; }
+      .kpi-value { font-size: 1.45rem; }
+      .alert { flex-wrap: wrap; }
+      .btn { padding: 10px 14px; }
+    }
+
+    @media print {
+      .sidebar, .topbar { display: none; }
+      body { display: block; background: #fff; }
+      main.content { padding: 0; max-width: none; }
+      .card { box-shadow: none; border-radius: 0; }
+    }
+
+    {% block extra_css %}{% endblock %}
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <a href="/admin" class="brand">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>{{ product_name }}</span>
+        <span class="brand-tag">ADMIN</span>
+      </a>
+    </div>
+
+    <nav class="sidebar-nav" aria-label="Panel de administración">
+      {% set current_path = request.url.path %}
+      <a href="/admin" class="{{ 'activo' if current_path == '/admin' else '' }}">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+        <span>Panel</span>
+      </a>
+      <a href="/admin/licencias" class="{{ 'activo' if current_path == '/admin/licencias' else '' }}">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 4.86 5.36.78-3.88 3.78.92 5.34L12 14.34l-4.8 2.52.92-5.34L4.24 7.64l5.36-.78L12 2z"></path></svg>
+        <span>Licencias</span>
+      </a>
+      <a href="/admin/compras" class="{{ 'activo' if current_path == '/admin/compras' else '' }}">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+        <span>Compras</span>
+      </a>
+      <a href="/admin/analitica" class="{{ 'activo' if current_path == '/admin/analitica' else '' }}">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+        <span>Analítica</span>
+      </a>
+      <a href="/admin/emails" class="{{ 'activo' if current_path == '/admin/emails' else '' }}">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+        <span>Correos</span>
+      </a>
+      <a href="/admin/operacion" class="{{ 'activo' if current_path == '/admin/operacion' else '' }}">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        <span>Operación</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <span class="operador">{{ operador }}</span>
+      <span class="operador-role">Panel de operador</span>
+      <a href="/organizaciones" class="volver-btn">
+        <svg class="svg-inline" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        <span>Volver a la app</span>
+      </a>
+    </div>
+  </aside>
+
+  <div class="content-wrapper">
+    <header class="topbar">
+      <h2 class="topbar-title">{% block topbar_title %}Panel de administración{% endblock %}</h2>
+      <div class="topbar-actions">
+        {% block topbar_actions %}{% endblock %}
+      </div>
+    </header>
+
+    <main class="content">
+      {% if error %}
+      <div class="alert alert-danger" role="alert">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+        <div>{{ error }}</div>
+      </div>
+      {% endif %}
+
+      {% if msg %}
+      <div class="alert alert-success" role="status">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        <div>{{ msg }}</div>
+      </div>
+      {% endif %}
+
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+
+  {% block extra_js %}{% endblock %}
+</body>
+</html>
