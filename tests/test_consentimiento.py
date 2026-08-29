@@ -511,8 +511,15 @@ def test_la_migracion_encadena_con_la_cabeza_anterior(migracion):
         e4b8c2d6a190_planos_altura_libre as altura_migracion,
         f1b2c3d4e5a6_planos_vectoriales_schema as vectorial_migracion,
         e3a5c7d9b1f4_eventos_producto as telemetria_migracion,
+        a1b8c2d4e6f0_roles_operador_y_auditoria_admin as panel_migracion,
+        c2d4e6f8a1b3_operador_gestion_cliente_y_cobros as fase2_migracion,
+        d3e5f7a9c2b4_web_admin_crm_y_salud as fase3_migracion,
     )
-    assert telemetria_migracion.revision == EXPECTED_ALEMBIC_HEAD
+    # Fase 3 (web + CRM + salud/operación) es ahora la cabeza.
+    assert fase3_migracion.revision == EXPECTED_ALEMBIC_HEAD
+    assert fase3_migracion.down_revision == fase2_migracion.revision
+    assert fase2_migracion.down_revision == panel_migracion.revision
+    assert panel_migracion.down_revision == telemetria_migracion.revision
     assert telemetria_migracion.down_revision == vectorial_migracion.revision
     assert vectorial_migracion.down_revision == altura_migracion.revision
     assert altura_migracion.down_revision == elementos_migracion.revision

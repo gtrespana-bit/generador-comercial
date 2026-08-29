@@ -1,0 +1,69 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Auditoría del panel{% endblock %}
+{% block topbar_title %}Auditoría del panel{% endblock %}
+
+{% block content %}
+  <h1 class="page-title">Auditoría de acciones del panel</h1>
+  <p class="page-subtitle">Registro inmutable de quién hizo qué en la administración del producto: licencias, compras, avisos y equipo.</p>
+
+  <div class="card">
+    <div class="card-header"><h2>Filtros</h2></div>
+    <div class="card-body">
+      <form class="filtros-form" method="get" action="/admin/auditoria">
+        <div class="form-group">
+          <label class="form-label" for="actor">Actor</label>
+          <input class="form-control" id="actor" name="actor" value="{{ filtros.actor }}" placeholder="correo del operador">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="accion">Acción</label>
+          <select class="form-control" id="accion" name="accion">
+            <option value="">Todas</option>
+            {% for valor, etiqueta in acciones %}
+            <option value="{{ valor }}" {{ 'selected' if filtros.accion == valor else '' }}>{{ etiqueta }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="organizacion_id">Organización ID</label>
+          <input class="form-control" id="organizacion_id" name="organizacion_id" type="number" value="{{ filtros.organizacion_id or '' }}" placeholder="opcional">
+        </div>
+        <button class="btn" type="submit">Filtrar</button>
+        <a class="btn btn-secondary" href="/admin/auditoria">Limpiar</a>
+      </form>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h2>Eventos</h2>
+      <span class="badge badge-neutral">{{ eventos|length }}</span>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr><th>Fecha</th><th>Operador</th><th>Rol</th><th>Acción</th><th>Entidad</th><th>Detalle</th><th>Resultado</th></tr>
+        </thead>
+        <tbody>
+          {% for evento in eventos %}
+          <tr>
+            <td>{{ evento.created_at.strftime('%d/%m/%Y %H:%M') if evento.created_at else '—' }}</td>
+            <td class="org-name">{{ evento.operador_email or '—' }}</td>
+            <td>
+              {% if evento.operador_rol %}
+              <span class="badge badge-info">{{ evento.operador_rol }}</span>
+              {% else %}—{% endif %}
+            </td>
+            <td><code class="accion-code">{{ evento.accion }}</code></td>
+            <td>{{ evento.entidad or '—' }}{% if evento.entidad_id %} #{{ evento.entidad_id }}{% endif %}</td>
+            <td class="muted detalle-celda">{{ evento.detalle }}</td>
+            <td><span class="badge {{ 'badge-danger' if evento.resultado != 'ok' else 'badge-success' }}">{{ evento.resultado }}</span></td>
+          </tr>
+          {% else %}
+          <tr><td colspan="7"><div class="empty-pad muted text-center">Sin eventos con esos filtros.</div></td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}

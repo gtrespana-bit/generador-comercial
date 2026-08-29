@@ -1,0 +1,79 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Web pública{% endblock %}
+{% block topbar_title %}Web · {{ product_name }}{% endblock %}
+
+{% block extra_css %}
+  <style nonce="{{ request.state.csp_nonce }}">
+    .form-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; align-items:center; }
+    .vista-item { border-top:1px solid var(--border-color); padding-top:18px; margin-top:18px; }
+    .vista-item .head { width:100%; }
+    .vista-item h3 { margin:0; font-size:1rem; }
+    .vista-item .head .muted { margin-left:auto; }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <h1 class="page-title">Web pública</h1>
+  <p class="page-subtitle">El contenido que se ve en la landing y en las páginas SEO, sin tocar código. <span class="sub-op">El borrador nunca sale al público; solo cuando publicas.</span></p>
+
+  {% if msg %}<div class="alert alert-success">{{ msg }}</div>{% endif %}
+  {% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
+
+  <div class="card">
+    <div class="card-header">
+      <h2>Contenido</h2>
+      <span class="badge badge-neutral">{{ contenido|length }} claves</span>
+    </div>
+    <div class="card-body">
+      {% for item in contenido %}
+      <div class="vista-item">
+        <div class="head">
+          <h3>{{ item.nombre }}</h3>
+          <span class="muted">{{ item.clave }}</span>
+        </div>
+        <p class="muted">{{ item.descripcion }}</p>
+        {% if item.publicado %}
+          <p class="muted">Publicado {{ item.publicado_at|string }} por {{ item.publicado_por }}</p>
+        {% else %}
+          <p class="muted-note">Sin contenido publicado todavía.</p>
+        {% endif %}
+
+        <form class="grid-form" method="post" action="/admin/web/guardar">
+          <input type="hidden" name="clave" value="{{ item.clave }}">
+          <div class="form-group">
+            <label class="form-label" for="contenido-{{ loop.index }}">Borrador (JSON)</label>
+            <textarea class="form-control" id="contenido-{{ loop.index }}" name="contenido_json" rows="8" spellcheck="false">{{ item.borrador | tojson }}</textarea>
+          </div>
+          <div class="form-actions">
+            <button class="btn" type="submit">Guardar borrador</button>
+          </div>
+        </form>
+
+        <div class="form-actions">
+          <form class="form-inline" method="post" action="/admin/web/{{ item.clave }}/publicar">
+            <button class="btn" type="submit">Publicar</button>
+          </form>
+          <form class="form-inline" method="post" action="/admin/web/{{ item.clave }}/descartar">
+            <button class="btn btn-secondary" type="submit">Descartar</button>
+          </form>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h2>Claves disponibles</h2></div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Clave</th><th>Página objetivo</th></tr></thead>
+        <tbody>
+          {% for item in contenido %}
+          <tr><td class="org-name">{{ item.clave }}</td><td class="muted">{{ item.nombre }}</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}

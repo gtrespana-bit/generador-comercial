@@ -6,9 +6,11 @@ que **nadie más que el operador pueda alcanzarlo**.
 
 Las tres barreras que se verifican:
 
-1. `COTIZAT_OPERADORES` decide quién es operador, y la lista vive en el entorno
-   (no en una columna que se pueda escribir desde la aplicación).
-2. `get_operator_db` rechaza a cualquier sesión que no figure en esa lista.
+1. `COTIZAT_OPERADORES` es la semilla inicial; desde ahí (y solo con rol
+   superadmin) el panel escala el equipo en `operadores_producto`. Nunca en
+   el perfil del cliente (`usuarios`).
+2. `get_operator_db` rechaza a cualquier sesión que no sea operador (env o
+   tabla activa).
 3. En PostgreSQL, las políticas `cotizat_licencia_*` exigen la marca
    `cotizat.es_operador`, que solo se activa desde la identidad ya validada.
    Aquí se comprueba el SQL de la migración, porque la suite corre en SQLite.
@@ -88,12 +90,13 @@ def test_un_email_sin_verificar_nunca_es_operador(monkeypatch):
     assert es_operador("titular@example.com", email_verificado=True)
 
 
-def test_no_existe_ninguna_forma_de_nombrar_operadores_desde_la_aplicacion():
-    """La escalada a operador no debe ser posible escribiendo en la base.
+def test_operadores_nunca_se_marcan_en_la_tabla_de_usuarios():
+    """La escalada a operador no puede vivir en el perfil del cliente.
 
-    Si algún día apareciera una columna `es_operador` en `usuarios`, un fallo de
-    autorización bastaría para que alguien se nombrara administrador del
-    producto. La lista debe seguir viviendo solo en el entorno.
+    Si algún día apareciera una columna `es_operador` en `usuarios`, un fallo
+    de autorización bastaría para que alguien se nombrara administrador del
+    producto. Los operadores viven en `operadores_producto` (tabla del negocio
+    del titular) o en `COTIZAT_OPERADORES`, nunca en el modelo de cliente.
     """
     columnas = {columna.name for columna in Usuario.__table__.columns}
     assert "es_operador" not in columnas

@@ -1,0 +1,200 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}{{ ficha.organizacion.nombre }} · Cliente{% endblock %}
+{% block topbar_title %}Cliente · {{ ficha.organizacion.nombre }}{% endblock %}
+
+{% block content %}
+  <div class="page-head">
+    <h1 class="page-title">{{ ficha.organizacion.nombre }}</h1>
+    <a class="btn btn-secondary" href="/admin/clientes">← Clientes</a>
+  </div>
+  <p class="page-subtitle">
+    {{ ficha.organizacion.slug }} ·
+    {% if ficha.vigente %}
+      {% set v = ficha.vence_total or ficha.vigente.vence %}
+      Acceso hasta {{ v.strftime('%d/%m/%Y') }} ·
+      {% if ficha.dias_restantes <= 15 %}<span class="badge badge-danger">{{ ficha.dias_restantes }} días</span>
+      {% else %}<span class="badge badge-success">activo</span>{% endif %}
+    {% else %}
+      <span class="badge badge-danger">Sin acceso activo</span>
+    {% endif %}
+  </p>
+
+  <div class="kpis">
+    <div class="kpi-card"><div class="kpi-value">{{ '%.2f'|format(ficha.ingresos) }}</div><div class="kpi-label">Ingresos US$</div></div>
+    <div class="kpi-card"><div class="kpi-value">{{ ficha.agregados.presupuestos }}</div><div class="kpi-label">Presupuestos</div></div>
+    <div class="kpi-card"><div class="kpi-value">{{ ficha.agregados.facturas }}</div><div class="kpi-label">Facturas</div></div>
+    <div class="kpi-card"><div class="kpi-value">{{ ficha.agregados.pagos }}</div><div class="kpi-label">Pagos</div></div>
+    <div class="kpi-card"><div class="kpi-value">{{ '%.2f'|format(ficha.agregados.total_cobrado) }}</div><div class="kpi-label">Cobrado US$</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h2>Renovación rápida</h2></div>
+    <div class="card-body">
+      <form method="post" action="/admin/organizaciones/{{ ficha.organizacion.id }}/conceder">
+        <input type="hidden" name="volver" value="/admin/clientes/{{ ficha.organizacion.id }}">
+        <input type="hidden" name="organizacion_id" value="{{ ficha.organizacion.id }}">
+        <div class="filtros-form">
+          <div class="form-group">
+            <select class="form-control" name="origen">
+              {% for valor, etiqueta in origenes %}
+              <option value="{{ valor }}" {{ 'selected' if valor == 'pago' else '' }}>{{ etiqueta }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <select class="form-control" name="duracion">
+              {% for valor, etiqueta in duraciones %}
+              <option value="{{ valor }}" {{ 'selected' if valor == '1a' else '' }}>{{ etiqueta }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <input class="form-control" name="importe" placeholder="Importe (vacío = plan)" inputmode="decimal">
+          </div>
+          <button class="btn" type="submit">Conceder / Renovar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  {% if ficha.emails %}
+  <div class="card">
+    <div class="card-header"><h2>Miembros administradores</h2></div>
+    <div class="card-body">
+      {% for email in ficha.emails %}<span class="badge badge-neutral">{{ email }}</span>{% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="card">
+    <div class="card-header"><h2>Historial de licencias</h2><span class="badge badge-neutral">{{ ficha.licencias|length }}</span></div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Inicio</th><th>Vence</th><th>Origen</th><th>Importe</th><th>Estado</th><th>Referencia / Cobro</th></tr></thead>
+        <tbody>
+          {% for lic in ficha.licencias %}
+          <tr>
+            <td>{{ lic.inicio.strftime('%d/%m/%Y') }}</td>
+            <td>{{ lic.vence.strftime('%d/%m/%Y') }}</td>
+            <td>{{ lic.origen }}</td>
+            <td>{{ '%.2f'|format(lic.importe) }} {{ lic.moneda }}</td>
+            <td>
+              {% if lic.estado == 'activa' %}<span class="badge badge-success">Activa</span>
+              {% elif lic.estado == 'vencida' %}<span class="badge badge-danger">Vencida</span>
+              {% else %}<span class="badge badge-neutral">{{ lic.estado }}</span>{% endif %}
+            </td>
+            <td class="muted">{{ lic.metodo_cobro or '—' }}{% if lic.referencia %} · {{ lic.referencia }}{% endif %}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="6"><div class="empty-pad muted text-center">Sin licencias registradas.</div></td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h2>Compras de plan</h2><span class="badge badge-neutral">{{ ficha.compras|length }}</span></div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Fecha</th><th>Plan</th><th>Método</th><th>Importe</th><th>Estado</th><th>Acción</th></tr></thead>
+        <tbody>
+          {% for c in ficha.compras %}
+          <tr>
+            <td>{{ c.created_at.strftime('%d/%m/%Y %H:%M') if c.created_at else '—' }}</td>
+            <td>{{ c.plan }}</td>
+            <td>{{ c.metodo_pago }}</td>
+            <td>{{ '%.2f'|format(c.importe) }} {{ c.moneda }}</td>
+            <td>{{ c.etiqueta_estado }}</td>
+            <td><a class="btn btn-sm btn-secondary" href="/admin/compras?compra={{ c.id }}">Revisar</a></td>
+          </tr>
+          {% else %}
+          <tr><td colspan="6"><div class="empty-pad muted text-center">Sin compras registradas.</div></td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h2>Facturas y pagos</h2><span class="badge badge-neutral">{{ ficha.cobros|length }}</span></div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Tipo</th><th>Número</th><th>Fecha</th><th>Importe</th><th>Moneda</th><th>Estado</th><th>Descripción</th></tr></thead>
+        <tbody>
+          {% for m in ficha.cobros %}
+          <tr>
+            <td><span class="badge {{ 'badge-info' if m.tipo == 'factura' else 'badge-success' }}">{{ m.tipo }}</span></td>
+            <td>{{ m.numero }}</td>
+            <td>{{ m.fecha.strftime('%d/%m/%Y') if m.fecha else '—' }}</td>
+            <td>{{ '%.2f'|format(m.importe) }}</td>
+            <td>{{ m.moneda }}</td>
+            <td>{{ m.estado }}</td>
+            <td class="muted detalle-celda">{{ m.descripcion }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="7"><div class="empty-pad muted text-center">Sin movimientos de cobro visibles.</div></td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h2>Notas internas</h2><span class="badge badge-neutral">{{ ficha.notas|length }}</span></div>
+    <div class="card-body">
+      <form class="filtros-form nota-form" method="post" action="/admin/clientes/{{ ficha.organizacion.id }}/notas">
+        <div class="form-group"><input class="form-control" name="contenido" placeholder="Nueva nota de gestión…" required></div>
+        <button class="btn" type="submit">Guardar</button>
+      </form>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Fecha</th><th>Autor</th><th>Nota</th></tr></thead>
+        <tbody>
+          {% for n in ficha.notas %}
+          <tr>
+            <td>{{ n.created_at.strftime('%d/%m/%Y %H:%M') if n.created_at else '—' }}</td>
+            <td>{{ n.autor_email or '—' }}</td>
+            <td>{{ n.contenido }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="3"><div class="empty-pad muted text-center">Sin notas internas.</div></td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h2>Actividad</h2><span class="badge badge-neutral">{{ ficha.eventos_cliente|length + ficha.eventos_admin|length }}</span></div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Fecha</th><th>Actor</th><th>Acción</th><th>Detalle</th></tr></thead>
+        <tbody>
+          {% for e in ficha.eventos_cliente %}
+          <tr>
+            <td>{{ e.created_at.strftime('%d/%m/%Y %H:%M') if e.created_at else '—' }}</td>
+            <td>{{ e.actor_email or '—' }}</td>
+            <td><code class="accion-code">{{ e.accion }}</code></td>
+            <td class="muted detalle-celda">{{ e.detalle}}</td>
+          </tr>
+          {% endfor %}
+          {% for e in ficha.eventos_admin %}
+          <tr>
+            <td>{{ e.created_at.strftime('%d/%m/%Y %H:%M') if e.created_at else '—' }}</td>
+            <td>{{ e.operador_email or '—' }}</td>
+            <td><code class="accion-code">admin · {{ e.accion }}</code></td>
+            <td class="muted detalle-celda">{{ e.detalle }}</td>
+          </tr>
+          {% else %}
+          {% if not ficha.eventos_cliente %}
+          <tr><td colspan="4"><div class="empty-pad muted text-center">Sin actividad registrada.</div></td></tr>
+          {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}

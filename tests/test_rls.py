@@ -84,9 +84,13 @@ def test_contexto_postgresql_usa_parametros_y_limpia_valores_ausentes():
         # Sin marca explícita, la sesión NO es de operador: es el valor seguro
         # por omisión y lo que deja vacía la tabla `licencias` bajo RLS.
         "es_operador": "off",
+        # Tampoco tiene rol de operador: el panel solo sube su claim al
+        # verificar que el correo es operador.
+        "operador_rol": "",
     }
     assert "set_config('cotizat.organization_id'" in sql
     assert "set_config('cotizat.es_operador'" in sql
+    assert "set_config('cotizat.operador_rol'" in sql
     assert "set_config('cotizat.proposal_token_hash'" in sql
 
 
@@ -167,12 +171,18 @@ def test_head_exigido_por_runtime_coincide_con_alembic():
     from migrations.versions import c5d6e7f8a9b0_merge_currency_heads as merge_migration
     from migrations.versions import e4b8c2d6a190_planos_altura_libre as altura_migration
     from migrations.versions import e3a5c7d9b1f4_eventos_producto as telemetria_migration
+    from migrations.versions import a1b8c2d4e6f0_roles_operador_y_auditoria_admin as panel_migration
+    from migrations.versions import c2d4e6f8a1b3_operador_gestion_cliente_y_cobros as fase2_migration
+    from migrations.versions import d3e5f7a9c2b4_web_admin_crm_y_salud as fase3_migration
     from migrations.versions import f1b2c3d4e5a6_planos_vectoriales_schema as vectorial_migration
     assert vectorial_migration.down_revision == "e4b8c2d6a190"
-    assert database_module.EXPECTED_ALEMBIC_HEAD == telemetria_migration.revision
+    assert database_module.EXPECTED_ALEMBIC_HEAD == fase3_migration.revision
+    assert fase3_migration.down_revision == fase2_migration.revision
+    assert fase2_migration.down_revision == panel_migration.revision
+    assert panel_migration.down_revision == telemetria_migration.revision
     assert telemetria_migration.down_revision == vectorial_migration.revision
-    # La telemetría de producto (eventos_producto) es ahora la cabeza visible.
-    # El editor vectorial sigue inmediatamente detrás. Permisos de
+    # La Fase 2 del panel (ficha cliente + cobros) es ahora la cabeza visible.
+    # La telemetría de producto sigue inmediatamente detrás. Permisos de
     # planos_elementos (d1e2f3a4b5c6) se insertó entre los permisos de planos
     # (c0d1e2f3a4b5), la altura (e4b8c2d6a190) y el esquema vectorial
     # (f1b2c3d4e5a6), por lo que la cadena esperada queda:
@@ -555,6 +565,10 @@ def test_toda_tabla_del_modelo_recibe_permisos_del_rol_de_aplicacion():
             texto = texto.replace("{" + nombre + "}", valor)
         for sentencia in re.findall(r"GRANT [^\n]*", texto):
             concedidas.update(re.findall(r"public\.([a-z0-9_]+)", sentencia))
+        # Las migraciones nuevas usan _rl_simple("tabla", ...) con el nombre
+        # literal; el GRANT se genera en tiempo de ejecución.
+        for nombre in re.findall(r'_rl_simple\(\s*["\']([a-z0-9_]+)["\']', texto):
+            concedidas.add(nombre)
 
     tablas_modelo = {mapper.local_table.name for mapper in Base.registry.mappers}
     sin_permisos = sorted(tablas_modelo - concedidas)

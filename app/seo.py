@@ -1623,6 +1623,16 @@ _PAGINAS_ESTATICAS: dict[str, dict] = {
         "h1": "Mapa del sitio",
         "software": False,
     },
+    "novedades": {
+        "path": "/novedades",
+        "title": "CotizaT: novedades y changelog del software de presupuestos",
+        "description": (
+            "Novedades y versiones de CotizaT: mejoras del software de "
+            "presupuestos de construcción, rendimiento y nuevas funciones."
+        ),
+        "h1": "Novedades y versiones",
+        "software": False,
+    },
     "terminos": {
         "path": "/legal/terminos",
         "title": "CotizaT: términos del servicio del software de presupuestos",

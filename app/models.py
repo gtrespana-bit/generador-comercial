@@ -3079,6 +3079,348 @@ class PruebaConcedida(Base):
     licencia = relationship("Licencia")
 
 
+#: Roles del equipo que opera el producto (no roles de organización).
+ROLES_OPERADOR = ("superadmin", "admin", "soporte", "analista")
+
+ROLES_OPERADOR_ETIQUETA = {
+    "superadmin": "Superadmin",
+    "admin": "Admin",
+    "soporte": "Soporte",
+    "analista": "Analista",
+}
+
+
+class OperadorProducto(Base):
+    """Operador del producto gestionable desde el panel (E1-060 v2).
+
+    **No es una tabla de tenant.** Es un dato del negocio del titular *sobre*
+    quién administra el producto, igual que ``Licencia``. Por eso queda fuera
+    del filtro ORM y, en PostgreSQL, se protege con políticas RLS propias:
+
+    - ``SELECT``: sesiones de operador **o** el propio correo (para poder
+      establecer la marca de operador al inicio de la sesión antes de que el
+      ``cotizat.es_operador`` esté encendido).
+    - ``INSERT``/``UPDATE``/``DELETE``: solo sesión de operador **con rol
+      ``superadmin``** (claim ``cotizat.operador_rol``). Un operador de
+      soporte o analista no puede nombrar ni rebajar a nadie.
+    """
+
+    __tablename__ = "operadores_producto"
+    __table_args__ = (
+        UniqueConstraint("email", name="uq_operadores_producto_email"),
+        CheckConstraint(
+            "rol IN ('superadmin', 'admin', 'soporte', 'analista')",
+            name="ck_operador_rol_valido",
+        ),
+        Index("ix_operadores_producto_email", "email"),
+    )
+
+    id = Column(Integer, primary_key=True)
+    email = Column(String(254), nullable=False)
+    rol = Column(String(30), nullable=False, default="admin")
+    activo = Column(Boolean, nullable=False, default=True)
+    notas = Column(Text, nullable=False, default="")
+    creado_por_email = Column(String(254), nullable=False, default="")
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    @property
+    def etiqueta_rol(self) -> str:
+        return ROLES_OPERADOR_ETIQUETA.get(self.rol, self.rol)
+
+
+class EventoAdmin(Base):
+    """Auditoría inmutable de las acciones del panel del operador.
+
+    **No es una tabla de tenant** (puede referenciar una organización afectada
+    a través de ``organizacion_id``, pero la fila pertenece al operador). En
+    PostgreSQL queda con RLS de operador: ninguna sesión de cliente la lee ni
+    la escribe.
+
+    A diferencia de ``EventoAuditoria`` (auditoría de negocio de un tenant),
+    aquí no hay dato de cliente que proteger en el detalle: se guarda *quién*,
+    *qué* y *a quién* para poder responder "¿quién concedió esta licencia?".
+    """
+
+    __tablename__ = "eventos_admin"
+    __table_args__ = (
+        Index("ix_eventos_admin_fecha", "created_at"),
+        Index("ix_eventos_admin_actor", "operador_email", "created_at"),
+        Index("ix_eventos_admin_org", "organizacion_id", "created_at"),
+        Index("ix_eventos_admin_accion", "accion", "created_at"),
+    )
+
+    id = Column(Integer, primary_key=True)
+    #: Correo del operador que ejecutó la acción.
+    operador_email = Column(String(254), nullable=False, default="")
+    operador_rol = Column(String(30), nullable=False, default="")
+    #: Acción en formato ``equipo.verbo`` / ``licencia.verbo`` / ``compra.verbo``.
+    accion = Column(String(60), nullable=False)
+    entidad = Column(String(40), nullable=False, default="")
+    entidad_id = Column(Integer, nullable=True)
+    #: Organización afectada (opcional). No obliga a estar en la sesión.
+    organizacion_id = Column(
+        Integer,
+        ForeignKey("organizaciones.id", ondelete="RESTRICT"),
+        nullable=True,
+    )
+    detalle = Column(Text, nullable=False, default="{}")
+    ip_hash = Column(String(64), nullable=False, default="")
+    resultado = Column(String(20), nullable=False, default="ok")
+    created_at = Column(
+        DateTime,
+        nullable=False,
+        default=datetime.utcnow,
+        server_default=text("CURRENT_TIMESTAMP"),
+    )
+
+    organizacion = relationship("Organizacion")
+
+    def detalle_dict(self) -> dict:
+        try:
+            datos = json.loads(self.detalle or "{}")
+        except (TypeError, ValueError):
+            return {}
+        return datos if isinstance(datos, dict) else {}
+
+
+
+class ContenidoWeb(Base):
+    """Contenido público de la web con publicar/descartar (Fase 3, C1/C2).
+
+    **No es tenant**: es contenido del titular para su landing/legales/SEO.
+    ``borrador`` nunca se sirve al público; ``publicado`` solo se lee cuando
+    existe. PostgreSQL lo protege con RLS: el público ve solo filas con
+    ``publicado`` (o avisos activos), el operador escribe.
+    """
+
+    __tablename__ = "contenido_web"
+    __table_args__ = (
+        Index("ix_contenido_web_clave", "clave"),
+        UniqueConstraint("clave", name="uq_contenido_web_clave"),
+    )
+
+    id = Column(Integer, primary_key=True)
+    clave = Column(String(80), nullable=False)
+    borrador = Column(Text, nullable=False, default="{}")
+    publicado = Column(Text, nullable=True)
+    publicado_por = Column(String(254), nullable=False, default="")
+    publicado_at = Column(DateTime, nullable=True)
+    updated_by = Column(String(254), nullable=False, default="")
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
+class AvisoWeb(Base):
+    """Aviso/banner público de la web (Fase 3, C4).
+
+    No es tenant. Solo los avisos activos (y dentro de su ventana) se sirven
+    al público; el resto lo ve únicamente el operador.
+    """
+
+    __tablename__ = "avisos_web"
+    __table_args__ = (
+        Index("ix_avisos_web_activo_fechas", "activo", "inicio", "fin"),
+        CheckConstraint(
+            "tipo IN ('info', 'mantenimiento', 'legal', 'version', 'estado')",
+            name="ck_aviso_web_tipo_valido",
+        ),
+        CheckConstraint(
+            "nivel IN ('info', 'warning', 'danger')",
+            name="ck_aviso_web_nivel_valido",
+        ),
+    )
+
+    id = Column(Integer, primary_key=True)
+    tipo = Column(String(30), nullable=False, default="info")
+    nivel = Column(String(20), nullable=False, default="info")
+    titulo = Column(String(180), nullable=False)
+    mensaje = Column(Text, nullable=False, default="")
+    activo = Column(Boolean, nullable=False, default=False)
+    inicio = Column(Date, nullable=True)
+    fin = Column(Date, nullable=True)
+    creado_por = Column(String(254), nullable=False, default="")
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
+class ReleaseWeb(Base):
+    """Nota de versión / changelog (Fase 3, C5)."""
+
+    __tablename__ = "releases"
+    __table_args__ = (
+        Index("ix_releases_pub_fecha", "publicado", "fecha"),
+        UniqueConstraint("version", name="uq_releases_version"),
+    )
+
+    id = Column(Integer, primary_key=True)
+    version = Column(String(30), nullable=False)
+    titulo = Column(String(200), nullable=False)
+    notas = Column(Text, nullable=False, default="")
+    destacado = Column(Boolean, nullable=False, default=False)
+    publicado = Column(Boolean, nullable=False, default=False)
+    fecha = Column(Date, nullable=False, default=date.today)
+    creado_por = Column(String(254), nullable=False, default="")
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
+class FeatureFlag(Base):
+    """Interruptor de funcionalidad (Fase 3, D3). Solo operador."""
+
+    __tablename__ = "feature_flags"
+    __table_args__ = (
+        UniqueConstraint("clave", name="uq_feature_flags_clave"),
+    )
+
+    id = Column(Integer, primary_key=True)
+    clave = Column(String(80), nullable=False)
+    activo = Column(Boolean, nullable=False, default=False)
+    descripcion = Column(String(300), nullable=False, default="")
+    updated_by = Column(String(254), nullable=False, default="")
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
+class CrmCliente(Base):
+    """Estado comercial ligero de un cliente (Fase 4, B4).
+
+    **No es tenant**: es gestión del titular sobre una organización. Solo
+    operador. El estado complementa a ``notas_operador`` con el ciclo
+    comercial: lead → prueba → activo → riesgo → inactivo.
+    """
+
+    __tablename__ = "crm_clientes"
+    __table_args__ = (
+        Index("ix_crm_clientes_estado", "estado", "proximo_contacto"),
+        UniqueConstraint("organizacion_id", name="uq_crm_clientes_org"),
+        CheckConstraint(
+            "estado IN ('lead', 'prueba', 'activo', 'riesgo', 'inactivo')",
+            name="ck_crm_cliente_estado_valido",
+        ),
+    )
+
+    id = Column(Integer, primary_key=True)
+    organizacion_id = Column(
+        Integer,
+        ForeignKey("organizaciones.id", ondelete="RESTRICT"),
+        nullable=False,
+    )
+    estado = Column(String(20), nullable=False, default="activo")
+    proximo_contacto = Column(Date, nullable=True)
+    notas = Column(Text, nullable=False, default="")
+    updated_by = Column(String(254), nullable=False, default="")
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    organizacion = relationship("Organizacion")
+
+
+class ApiKeyOperador(Base):
+    """Clave de integración del operador (Fase 4, A6).
+
+    Nunca se guarda el token: solo ``clave_hash`` (SHA-256). El prefijo sin
+    hash (p. ej. ``cotizat_...``) se muestra al crear para que el operador lo
+    guarde una vez; no se puede recuperar.
+    """
+
+    __tablename__ = "api_keys_operador"
+    __table_args__ = (
+        Index("ix_api_keys_operador_nombre", "nombre"),
+        UniqueConstraint("clave_hash", name="uq_api_keys_operador_hash"),
+    )
+
+    id = Column(Integer, primary_key=True)
+    nombre = Column(String(100), nullable=False)
+    clave_hash = Column(String(64), nullable=False)
+    scopes = Column(Text, nullable=False, default="[]")
+    activo = Column(Boolean, nullable=False, default=True)
+    creada_por = Column(String(254), nullable=False, default="")
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    last_used_at = Column(DateTime, nullable=True)
+    revoked_at = Column(DateTime, nullable=True)
+
+    def scopes_lista(self) -> list[str]:
+        try:
+            datos = json.loads(self.scopes or "[]")
+        except (TypeError, ValueError):
+            return []
+        return [str(x) for x in datos] if isinstance(datos, list) else []
+
+
+class VistaGuardada(Base):
+    """Filtros persistentes por módulo del panel (Fase 4, A5 completo).
+
+    No es tenant: cada operador guarda su vista (clientes, cobros,
+    renovaciones…) y el filtro viaja como JSON para no acoplarse a un módulo.
+    Solo operador; una vista guardada no accede a datos de negocio por sí
+    misma, simplemente recuerda cómo filtrar una página.
+    """
+
+    __tablename__ = "vistas_guardadas"
+    __table_args__ = (
+        Index("ix_vistas_guardadas_modulo", "modulo", "nombre"),
+    )
+
+    id = Column(Integer, primary_key=True)
+    nombre = Column(String(120), nullable=False)
+    modulo = Column(String(60), nullable=False)
+    filtros = Column(Text, nullable=False, default="{}")
+    columnas = Column(Text, nullable=False, default="[]")
+    creada_por = Column(String(254), nullable=False, default="")
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def filtros_dict(self) -> dict:
+        try:
+            datos = json.loads(self.filtros or "{}")
+        except (TypeError, ValueError):
+            return {}
+        return datos if isinstance(datos, dict) else {}
+
+    def columnas_lista(self) -> list[str]:
+        try:
+            datos = json.loads(self.columnas or "[]")
+        except (TypeError, ValueError):
+            return []
+        return [str(x) for x in datos] if isinstance(datos, list) else []
+
+
+class NotaOperador(Base):
+    """Nota interna del panel sobre un cliente (Fase 2, B1).
+
+    **No es una tabla tenant**: es un registro del negocio del titular *sobre*
+    una organización, igual que ``EventoAdmin``. Solo la marca de operador la
+    hace visible y editable; las sesiones de cliente no la ven.
+    """
+
+    __tablename__ = "notas_operador"
+    __table_args__ = (
+        Index("ix_notas_operador_org_fecha", "organizacion_id", "created_at"),
+    )
+
+    id = Column(Integer, primary_key=True)
+    organizacion_id = Column(
+        Integer,
+        ForeignKey("organizaciones.id", ondelete="RESTRICT"),
+        nullable=False,
+        index=True,
+    )
+    contenido = Column(Text, nullable=False, default="")
+    autor_email = Column(String(254), nullable=False, default="")
+    created_at = Column(
+        DateTime,
+        nullable=False,
+        default=datetime.utcnow,
+        server_default=text("CURRENT_TIMESTAMP"),
+    )
+    updated_at = Column(
+        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
+    )
+
+    organizacion = relationship("Organizacion")
+
+
 class CompraPlan(TenantMixin, Base):
     """Compra de un plan registrada por un cliente con su comprobante.
 

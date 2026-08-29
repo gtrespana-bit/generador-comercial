@@ -29,6 +29,13 @@
   {% include "_seo_head.html" %}
   <script nonce="{{ request.state.csp_nonce }}" defer src="{{ 'js/pais_selector.js' | asset }}"></script>
   <script nonce="{{ request.state.csp_nonce }}" defer src="{{ 'js/landing-tour.js' | asset }}"></script>
+  <style nonce="{{ request.state.csp_nonce }}">
+    .aviso-web { display:flex; gap:12px; align-items:flex-start; max-width:1180px; margin:14px auto 0; padding:12px 16px; border-radius:12px; font-size:0.92rem; line-height:1.45; }
+    .aviso-info { background:#e8effb; color:#234b7c; border:1px solid #c6d9f2; }
+    .aviso-warning { background:#fbf0dc; color:#8a5b10; border:1px solid #ecd9a8; }
+    .aviso-danger { background:#fbe7e8; color:#99373e; border:1px solid #f2c6c9; }
+    .aviso-web strong { font-weight:800; }
+  </style>
 </head>
 <body class="landing">
 {# Barra de país — cada país tiene su propio catálogo de precios #}
@@ -47,6 +54,14 @@
   </div>
 </div>
 {% include "_nav.html" %}
+
+{% if web is defined and web.avisos and web.avisos[0] %}
+{% set aviso = web.avisos[0] %}
+<div class="aviso-web aviso-{{ aviso.nivel }}" role="status">
+  <span aria-hidden="true">📢</span>
+  <div><strong>{{ aviso.titulo }}</strong>{% if aviso.mensaje %} — {{ aviso.mensaje }}{% endif %}</div>
+</div>
+{% endif %}
 
 <main>
 <header class="hero">
