@@ -4,6 +4,88 @@
 (function () {
   "use strict";
 
+  /* ---------- Menú móvil del panel ----------
+   *
+   * El botón ya está en la plantilla porque el sidebar se convierte en un
+   * cajón en pantallas pequeñas. Este controlador mantiene la clase que usa
+   * la hoja de estilos y cierra el cajón al navegar, al pulsar Escape o al
+   * tocar el fondo. También devuelve el foco al botón para que el menú sea
+   * utilizable sin ratón.
+   */
+  var menuToggle = document.querySelector("[data-menu-toggle]");
+  var menuSidebar = document.getElementById("sidebar");
+  var menuBackdrop = document.querySelector("[data-menu-fondo]");
+  var menuOpen = false;
+  var menuFocusPrevious = null;
+
+  function menuEsMovil() {
+    if (window.matchMedia) return window.matchMedia("(max-width: 860px)").matches;
+    return window.innerWidth <= 860;
+  }
+
+  function menuActualizarAccesibilidad() {
+    if (!menuSidebar) return;
+    // El sidebar sigue siendo la navegación normal en escritorio, pero está
+    // fuera del árbol accesible mientras permanece cerrado en móvil.
+    menuSidebar.setAttribute("aria-hidden", menuEsMovil() && !menuOpen ? "true" : "false");
+    if (menuBackdrop) menuBackdrop.setAttribute("aria-hidden", menuOpen ? "false" : "true");
+  }
+
+  function menuCerrar() {
+    if (!menuOpen) {
+      menuActualizarAccesibilidad();
+      return;
+    }
+    menuOpen = false;
+    document.body.classList.remove("menu-abierto");
+    if (menuToggle) {
+      menuToggle.setAttribute("aria-expanded", "false");
+      menuToggle.setAttribute("aria-label", "Abrir el menú de secciones");
+    }
+    menuActualizarAccesibilidad();
+    if (menuFocusPrevious && typeof menuFocusPrevious.focus === "function") {
+      try { menuFocusPrevious.focus(); } catch (_e) { /* nodo fuera del DOM */ }
+    }
+    menuFocusPrevious = null;
+  }
+
+  function menuAbrir() {
+    if (menuOpen) return;
+    menuOpen = true;
+    menuFocusPrevious = document.activeElement;
+    document.body.classList.add("menu-abierto");
+    if (menuToggle) {
+      menuToggle.setAttribute("aria-expanded", "true");
+      menuToggle.setAttribute("aria-label", "Cerrar el menú de secciones");
+    }
+    menuActualizarAccesibilidad();
+
+    // El foco entra en el cajón después de aplicar la transición. Si se cierra
+    // antes de que termine, no robamos el foco de vuelta al sidebar oculto.
+    var primero = menuSidebar && menuSidebar.querySelector("a[href]");
+    window.setTimeout(function () {
+      if (menuOpen && primero && typeof primero.focus === "function") primero.focus();
+    }, 0);
+  }
+
+  if (menuToggle && menuSidebar) {
+    menuToggle.addEventListener("click", function () {
+      if (menuOpen) menuCerrar(); else menuAbrir();
+    });
+    if (menuBackdrop) menuBackdrop.addEventListener("click", menuCerrar);
+    Array.prototype.forEach.call(menuSidebar.querySelectorAll("a[href]"), function (enlace) {
+      enlace.addEventListener("click", menuCerrar);
+    });
+    document.addEventListener("keydown", function (ev) {
+      if (ev.key === "Escape" && menuOpen) menuCerrar();
+    });
+    window.addEventListener("resize", function () {
+      if (!menuEsMovil()) menuCerrar();
+      else menuActualizarAccesibilidad();
+    });
+    menuActualizarAccesibilidad();
+  }
+
   /* ---------- Buscador global ---------- */
   var overlay = document.querySelector("[data-admin-search-overlay]");
   var searchBtn = document.querySelector("[data-admin-search]");
