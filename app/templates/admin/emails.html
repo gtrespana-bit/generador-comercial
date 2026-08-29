@@ -1,80 +1,101 @@
-{% extends "admin/base_admin.html" %}
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Correos · Panel de administración · {{ product_name }}</title>
+  <link rel="icon" type="image/png" href="/static/icono.png">
+  <style nonce="{{ request.state.csp_nonce }}">
+    :root{font-family:Inter,ui-sans-serif,system-ui,sans-serif;color:#17211d;background:#f2f6f4}
+    *{box-sizing:border-box}
+    body{margin:0;background:linear-gradient(180deg,#eef5f1 0,#f2f6f4 220px)}
+    header.top{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid #e2ebe6;padding:0 22px}
+    header.top .inner{max-width:1180px;margin:auto;display:flex;align-items:center;gap:14px;height:60px;flex-wrap:wrap}
+    .brand{font-size:1.2rem;font-weight:900;color:#0b5b38;letter-spacing:-.01em}
+    .brand small{color:#8aa79a;font-weight:700;font-size:.72rem;letter-spacing:.06em}
+    header.top nav{display:flex;gap:4px;margin-left:auto;align-items:center;flex-wrap:wrap}
+    header.top nav a{color:#3c5a4c;text-decoration:none;font-size:.84rem;font-weight:700;padding:7px 12px;border-radius:9px;transition:background .15s,color .15s}
+    header.top nav a:hover{background:#e6efe9}
+    header.top nav a.activo{background:#0b5b38;color:#fff}
+    main{max-width:1180px;margin:auto;padding:26px 22px 70px}
+    h1{margin:0;font-size:1.45rem;letter-spacing:-.02em}
+    .sub{color:#66776f;font-size:.88rem;margin:4px 0 0}
+    .alert,.notice{border-radius:12px;padding:12px 15px;margin:16px 0;font-size:.88rem}
+    .alert{background:#fbe7e8;color:#9b2529;border:1px solid #f2c6c9}
+    .notice{background:#e6f2ec;color:#0b5b38;border:1px solid #c4e2d2}
+    .filtros{display:flex;gap:10px;margin:20px 0 18px;flex-wrap:wrap;align-items:center}
+    .filtros label{font-size:.82rem;font-weight:700;color:#3c5a4c}
+    .filtros input{border:1.5px solid #c8d6cf;border-radius:10px;padding:9px 12px;font:inherit;font-size:.88rem;background:#fff;min-width:280px;flex:1;max-width:420px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+    .tarjeta{background:#fff;border:1px solid #e4ede8;border-radius:16px;box-shadow:0 8px 30px rgba(10,48,34,.07);padding:18px;display:flex;flex-direction:column;gap:10px}
+    .tarjeta .cabeza{display:flex;align-items:center;gap:8px}
+    .tarjeta h2{margin:0;font-size:.98rem;letter-spacing:-.01em}
+    .pill{display:inline-block;border-radius:999px;padding:3px 9px;font-size:.7rem;font-weight:800;white-space:nowrap}
+    .pill.cliente{background:#e6f2ec;color:#0b5b38}
+    .pill.interno{background:#e8effb;color:#2b5b9b}
+    .tarjeta p{margin:0;color:#66776f;font-size:.82rem;line-height:1.5;flex:1}
+    .tarjeta form{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .tarjeta input{flex:1;min-width:160px;border:1.5px solid #c8d6cf;border-radius:9px;padding:8px 10px;font:inherit;font-size:.85rem;background:#fff}
+    button{border:0;border-radius:9px;background:#0b5b38;color:#fff;padding:8px 14px;font:inherit;font-weight:800;font-size:.82rem;cursor:pointer;transition:background .15s,transform .05s;white-space:nowrap}
+    button:hover{background:#0a4d2f}
+    button:active{transform:translateY(1px)}
+    .nota{color:#8aa79a;font-size:.8rem;margin-top:20px;line-height:1.6}
+  </style>
+</head>
+<body>
 
-{% block title %}Correos{% endblock %}
-{% block topbar_title %}Prueba de Correos{% endblock %}
+<header class="top">
+  <div class="inner">
+    <span class="brand">{{ product_name }} <small>ADMIN</small></span>
+    <nav>
+      <a href="/admin">Panel</a>
+      <a href="/admin/analitica">Analítica</a>
+      <a href="/admin/compras">Compras</a>
+      <a class="activo" href="/admin/emails">Correos</a>
+      <a href="/admin/operacion">Operación</a>
+      <a href="/organizaciones">Volver</a>
+    </nav>
+  </div>
+</header>
 
-{% block extra_css %}
-<style>
-  .filtros-box { display: flex; gap: 16px; margin-bottom: 24px; align-items: center; background: #fff; padding: 20px; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
-  .filtros-box label { font-size: 0.85rem; font-weight: 600; color: var(--text-main); white-space: nowrap; }
-  .filtros-box input { border: 1px solid var(--border-color); border-radius: 8px; padding: 10px 14px; font: inherit; font-size: 0.9rem; flex: 1; max-width: 400px; }
-  
-  .email-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; }
-  
-  .email-card { display: flex; flex-direction: column; height: 100%; margin-bottom: 0; }
-  .email-card .card-header { padding: 16px 20px; border-bottom: 1px solid var(--border-color); background: #fcfcfd; }
-  .email-card .card-body { padding: 20px; flex: 1; display: flex; flex-direction: column; gap: 16px; }
-  
-  .email-card h2 { font-size: 1rem; margin: 0; display: flex; align-items: center; gap: 10px; justify-content: space-between; }
-  .email-card p { margin: 0; color: var(--text-muted); font-size: 0.85rem; line-height: 1.5; flex: 1; }
-  
-  .email-form { display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; }
-  .email-form input { flex: 1; min-width: 180px; }
-  
-  .info-text { margin-top: 32px; padding: 16px 20px; background: #f8fafc; border-radius: 12px; font-size: 0.85rem; color: var(--text-muted); display: flex; gap: 12px; align-items: flex-start; }
-  
-  @media (max-width: 768px) {
-    .filtros-box { flex-direction: column; align-items: stretch; gap: 8px; }
-    .filtros-box input { max-width: 100%; }
-    .email-form { flex-direction: column; }
-    .email-form input, .email-form button { width: 100%; }
-  }
-</style>
-{% endblock %}
+<main>
+  <h1>Correos de {{ product_name }}</h1>
+  <p class="sub">Envía cualquiera de los correos transaccionales a un buzón y revísalo tal cual llega, con los datos de ejemplo.</p>
 
-{% block content %}
-  <p class="page-subtitle">Envía cualquiera de los correos transaccionales a un buzón y revísalo tal cual llega, con los datos de ejemplo.</p>
+  {% if msg %}<div class="notice">{{ msg }}</div>{% endif %}
+  {% if error %}<div class="alert">{{ error }}</div>{% endif %}
 
-  <div class="filtros-box">
+  <div class="filtros">
     <label for="destino-global">Destino por omisión</label>
     <input id="destino-global" type="email" value="{{ destino }}" placeholder="correo@ejemplo.com">
   </div>
 
-  <div class="email-grid">
+  <div class="grid">
     {% for c in correos %}
-    <div class="card email-card">
-      <div class="card-header">
-        <h2>
-          {{ c.titulo }}
-          <span class="badge {{ 'badge-success' if c.grupo == 'cliente' else 'badge-neutral' }}">{{ c.grupo_label }}</span>
-        </h2>
+    <div class="tarjeta">
+      <div class="cabeza">
+        <h2>{{ c.titulo }}</h2>
+        <span class="pill {{ c.grupo }}">{{ c.grupo_label }}</span>
       </div>
-      <div class="card-body">
-        <p>{{ c.descripcion }}</p>
-        <form method="post" action="/admin/emails/enviar" class="email-form">
-          <input type="hidden" name="slug" value="{{ c.slug }}">
-          <input class="form-control correo" type="email" name="destino" value="{{ destino }}" placeholder="correo@ejemplo.com" required>
-          <button type="submit" class="btn">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-            Enviar
-          </button>
-        </form>
-      </div>
+      <p>{{ c.descripcion }}</p>
+      <form method="post" action="/admin/emails/enviar">
+        <input type="hidden" name="slug" value="{{ c.slug }}">
+        <input class="correo" type="email" name="destino" value="{{ destino }}" placeholder="correo@ejemplo.com">
+        <button type="submit">Enviar</button>
+      </form>
     </div>
     {% endfor %}
   </div>
 
-  <div class="info-text">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #94a3b8; flex-shrink: 0;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-    <div>
-      <strong style="color: var(--text-main); display: block; margin-bottom: 4px;">Información de prueba</strong>
-      Los datos de estos correos son de ejemplo. El botón «Enviar» usa el mismo remitente y las mismas plantillas que producción; revisa también la carpeta de spam, por si acaso. Los correos marcados como «Interno» llegan al buzón de soporte en la operación real; aquí puedes redirigirlos a cualquiera.
-    </div>
-  </div>
-{% endblock %}
+  <p class="nota">
+    Los datos de estos correos son de ejemplo. El botón «Enviar» usa el mismo
+    remitente y las mismas plantillas que producción; revisa también la carpeta
+    de spam, por si acaso. Los correos marcados como «Interno» llegan al buzón
+    de soporte en la operación real; aquí puedes redirigirlos a cualquiera.
+  </p>
+</main>
 
-{% block extra_js %}
 <script nonce="{{ request.state.csp_nonce }}">
+  // El campo "Destino por omisión" rellena el de cada tarjeta al escribir.
   (function () {
     var global = document.getElementById('destino-global');
     var tarjetas = document.querySelectorAll('input.correo');
@@ -83,4 +104,6 @@
     });
   })();
 </script>
-{% endblock %}
+
+</body>
+</html>

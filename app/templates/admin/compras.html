@@ -1,162 +1,122 @@
-{% extends "admin/base_admin.html" %}
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Compras · {{ product_name }}</title>
+  <style nonce="{{ request.state.csp_nonce }}">
+    :root{font-family:Inter,ui-sans-serif,system-ui,sans-serif;color:#17211d;background:#f3f7f5}
+    *{box-sizing:border-box}
+    body{margin:0;padding:26px 16px 60px}
+    main{max-width:1060px;margin:auto}
+    header.site{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;gap:12px;flex-wrap:wrap}
+    .brand{font-size:1.3rem;font-weight:900;color:#0b5b38}
+    .operador{color:#66776f;font-size:.85rem}
+    h1{margin:0 0 4px;font-size:1.5rem}
+    .muted{color:#66776f}
+    .card{background:white;border-radius:14px;padding:20px;box-shadow:0 8px 30px rgba(10,48,34,.08);margin-bottom:18px}
+    table{border-collapse:collapse;width:100%;font-size:.88rem}
+    th,td{border-bottom:1px solid #e4ede8;padding:9px 8px;text-align:left;vertical-align:top}
+    th{background:#eef5f1;font-size:.8rem;text-transform:uppercase;letter-spacing:.03em}
+    .pill{display:inline-block;border-radius:999px;padding:3px 9px;font-size:.75rem;font-weight:800}
+    .pend{background:#fdf3e2;color:#9b6114}
+    .ok{background:#e9f6ef;color:#11623f}
+    .bad{background:#fff0f0;color:#9b2529}
+    details summary{cursor:pointer;color:#0b5b38;font-weight:700;font-size:.82rem}
+    .kv{margin:4px 0;font-size:.84rem}
+    .kv b{display:inline-block;min-width:170px;color:#66776f;font-weight:600}
+    form.inline{display:inline}
+    button{border:0;border-radius:9px;background:#146c43;color:white;padding:8px 13px;font:inherit;font-weight:800;cursor:pointer}
+    button.risk{background:#9b2529}
+    a.btn{display:inline-block;border-radius:9px;background:#146c43;color:white;padding:8px 13px;font-weight:800;text-decoration:none;font-size:.85rem}
+    .alert,.notice{border-radius:10px;padding:11px 14px;margin-bottom:16px;font-size:.9rem}
+    .alert{background:#fff0f0;color:#9b2529}
+    .notice{background:#e9f6ef;color:#11623f}
+    .vac{text-align:center;color:#66776f;padding:26px 0}
+    .acciones-compra{margin-top:10px;display:flex;gap:10px;flex-wrap:wrap}
+    .verif{border-left:3px solid #e4ede8;padding:2px 0 2px 12px;margin:8px 0}
+    .verif span{display:block;font-size:.82rem;color:#66776f}
+    .verif b{font-size:.88rem}
+  </style>
+</head>
+<body><main>
 
-{% block title %}Compras{% endblock %}
-{% block topbar_title %}Compras de Planes{% endblock %}
-
-{% block extra_css %}
-<style>
-  .compra-card { margin-bottom: 24px; border: 1px solid var(--border-color); border-radius: 12px; background: #fff; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
-  
-  .compra-header { display: grid; grid-template-columns: auto 2fr 1.5fr 1fr 1fr 1.5fr 1fr; gap: 16px; align-items: center; padding: 16px 24px; background: #fcfcfd; border-bottom: 1px solid var(--border-color); }
-  .compra-header-item { display: flex; flex-direction: column; gap: 4px; }
-  .compra-header-item .label { font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.05em; }
-  .compra-header-item .value { font-size: 0.9rem; font-weight: 600; color: var(--text-main); }
-  .compra-header-item .sub-value { font-size: 0.8rem; color: var(--text-muted); }
-  
-  .compra-body { padding: 20px 24px; display: flex; flex-direction: column; gap: 20px; }
-  
-  .verif-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; background: #f8fafc; padding: 16px; border-radius: 8px; border: 1px dashed var(--border-color); }
-  .kv { font-size: 0.85rem; display: flex; flex-direction: column; gap: 4px; }
-  .kv b { color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.03em; }
-  .kv span { color: var(--text-main); font-weight: 500; }
-  .kv a { color: var(--brand-color); font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
-  .kv a:hover { text-decoration: underline; }
-  
-  .acciones-compra { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
-  
-  details.revisado { background: #f8fafc; border-radius: 8px; border: 1px solid var(--border-color); overflow: hidden; }
-  details.revisado summary { cursor: pointer; color: var(--text-main); font-weight: 600; font-size: 0.85rem; padding: 12px 16px; list-style: none; display: flex; justify-content: space-between; align-items: center; }
-  details.revisado summary::-webkit-details-marker { display: none; }
-  details.revisado summary::after { content: "▾"; color: var(--text-muted); }
-  details.revisado[open] summary::after { content: "▴"; }
-  details.revisado .verif-grid { border: none; border-top: 1px solid var(--border-color); border-radius: 0; }
-  
-  @media (max-width: 980px) {
-    .compra-header { grid-template-columns: 1fr 1fr; }
-  }
-  @media (max-width: 768px) {
-    .compra-header { grid-template-columns: 1fr; gap: 12px; }
-    .compra-body { padding: 16px; }
-    .acciones-compra { flex-direction: column; }
-    .acciones-compra form, .acciones-compra button { width: 100%; }
-  }
-</style>
-{% endblock %}
-
-{% block content %}
-  <p class="page-subtitle">Compras registradas por clientes con su comprobante. Revisa el comprobante antes de activar.</p>
-
-  {% if not filas %}
-  <div style="padding: 48px; text-align: center; color: var(--text-muted); background: #fff; border: 1px dashed var(--border-color); border-radius: 12px;">
-    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 16px; color: #cbd5e1;"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
-    <h3 style="margin:0 0 8px; color: var(--text-main); font-weight: 600;">Aún no hay compras</h3>
-    <p style="margin:0;">Las compras registradas por clientes aparecerán aquí.</p>
+<header class="site">
+  <div>
+    <span class="brand">{{ product_name }}</span>
+    <div class="operador">Panel de operador · {{ operador }}</div>
   </div>
-  {% endif %}
+  <div><a href="/admin/licencias">Licencias</a> · <a href="/admin/analitica">Analítica</a> · <a href="/admin/emails">Correos</a> · <a href="/admin/operacion">Operación</a> · <a href="/organizaciones">Volver a la aplicación</a></div>
+</header>
 
-  {% for fila in filas %}
-  {% set c = fila.compra %}
-  <div class="compra-card">
-    <div class="compra-header">
-      <div class="compra-header-item">
-        <span class="label">ID</span>
-        <span class="value">#{{ c.id }}</span>
-      </div>
-      <div class="compra-header-item">
-        <span class="label">Organización</span>
-        <span class="value">{{ fila.organizacion_nombre }}</span>
-        <span class="sub-value">{{ c.creada_por_email }}</span>
-      </div>
-      <div class="compra-header-item">
-        <span class="label">Plan</span>
-        <span class="value">{{ fila.plan_nombre }}</span>
-      </div>
-      <div class="compra-header-item">
-        <span class="label">Método</span>
-        <span class="value">{{ fila.metodo_nombre }}</span>
-      </div>
-      <div class="compra-header-item">
-        <span class="label">Importe</span>
-        <span class="value">{{ "%.2f"|format(c.importe) }} {{ c.moneda }}</span>
-      </div>
-      <div class="compra-header-item">
-        <span class="label">Fecha</span>
-        <span class="value">{{ c.created_at.strftime("%d/%m/%Y") if c.created_at }}</span>
-        <span class="sub-value">{{ c.created_at.strftime("%H:%M") if c.created_at }}</span>
-      </div>
-      <div class="compra-header-item">
-        <span class="label">Estado</span>
-        <span class="badge {{ 'badge-warning' if c.estado == 'pendiente' else ('badge-success' if c.estado == 'activa' else 'badge-danger') }}" style="align-self: flex-start;">{{ c.etiqueta_estado }}</span>
-      </div>
-    </div>
+<h1>Compras de plan</h1>
+<p class="muted">Compras registradas por clientes con su comprobante. Revisa el comprobante antes de activar.</p>
 
-    <div class="compra-body">
-      {% if c.estado == 'pendiente' %}
-      <div class="verif-grid">
-        {% for etiqueta, valor in fila.verificacion.items() %}
-        <div class="kv"><b>{{ etiqueta }}</b> <span>{{ valor }}</span></div>
-        {% endfor %}
-        
-        {% if not fila.verificacion %}
-        <div class="kv"><b style="color:var(--danger)">Atención</b> <span>Sin datos de verificación declarados.</span></div>
+{% if error %}<div class="alert">{{ error }}</div>{% endif %}
+{% if msg %}<div class="notice">{{ msg }}</div>{% endif %}
+
+{% if not filas %}
+<div class="card vac">Aún no hay compras registradas.</div>
+{% endif %}
+
+{% for fila in filas %}
+{% set c = fila.compra %}
+<div class="card">
+  <table>
+    <tr>
+      <th>Compra</th><th>Organización</th><th>Plan</th><th>Método</th><th>Importe</th><th>Fecha</th><th>Estado</th>
+    </tr>
+    <tr>
+      <td>#{{ c.id }}</td>
+      <td>{{ fila.organizacion_nombre }}<br><span class="muted">{{ c.creada_por_email }}</span></td>
+      <td>{{ fila.plan_nombre }}</td>
+      <td>{{ fila.metodo_nombre }}</td>
+      <td>{{ "%.2f"|format(c.importe) }} {{ c.moneda }}</td>
+      <td>{{ c.created_at.strftime("%d/%m/%Y %H:%M") if c.created_at }}</td>
+      <td>
+        <span class="pill {{ 'pend' if c.estado == 'pendiente' else ('ok' if c.estado == 'activa' else 'bad') }}">{{ c.etiqueta_estado }}</span>
+      </td>
+    </tr>
+  </table>
+
+  <details>
+    <summary>Datos de verificación y comprobante</summary>
+    <div class="verif">
+      {% for etiqueta, valor in fila.verificacion.items() %}
+      <div class="kv"><b>{{ etiqueta }}:</b> {{ valor }}</div>
+      {% endfor %}
+      {% if not fila.verificacion %}
+      <div class="kv muted">Sin datos de verificación declarados.</div>
+      {% endif %}
+      <div class="kv">
+        <b>Comprobante:</b>
+        {% if c.comprobante_reference %}
+        <a href="/admin/compras/{{ c.id }}/comprobante" target="_blank" rel="noopener">Ver / descargar</a>
+        {% else %}
+        <span class="muted">No adjuntado</span>
         {% endif %}
-        
-        <div class="kv">
-          <b>Comprobante adjunto</b>
-          {% if c.comprobante_reference %}
-          <a href="/admin/compras/{{ c.id }}/comprobante" target="_blank" rel="noopener">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-            Ver / descargar documento
-          </a>
-          {% else %}
-          <span style="color:var(--danger); font-weight:600;">No adjuntado</span>
-          {% endif %}
-        </div>
       </div>
-      
-      <div class="acciones-compra">
-        <form method="POST" action="/admin/compras/{{ c.id }}/activar" style="margin:0;">
-          <button type="submit" class="btn" onclick="return confirm('¿Confirmas que el comprobante es válido y activar la compra?');">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-            Verificar y activar
-          </button>
-        </form>
-        <form method="POST" action="/admin/compras/{{ c.id }}/rechazar" style="margin:0;" data-confirmar="Se marcará la compra como rechazada. ¿Continuar?">
-          <button type="submit" class="btn btn-danger" onclick="return confirm('¿Confirmas que quieres rechazar esta compra?');">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            Rechazar
-          </button>
-        </form>
-      </div>
-      {% else %}
-      <details class="revisado">
-        <summary>Datos de verificación y comprobante</summary>
-        <div class="verif-grid">
-          {% for etiqueta, valor in fila.verificacion.items() %}
-          <div class="kv"><b>{{ etiqueta }}</b> <span>{{ valor }}</span></div>
-          {% endfor %}
-          
-          <div class="kv">
-            <b>Comprobante</b>
-            {% if c.comprobante_reference %}
-            <a href="/admin/compras/{{ c.id }}/comprobante" target="_blank" rel="noopener">Descargar documento</a>
-            {% else %}
-            <span class="muted">No adjuntado</span>
-            {% endif %}
-          </div>
-          
-          {% if c.licencia_id %}
-          <div class="kv"><b>Licencia concedida</b> <span>#{{ c.licencia_id }}</span></div>
-          {% endif %}
-          
-          {% if c.revisado_por_email %}
-          <div class="kv"><b>Revisada por</b> <span>{{ c.revisado_por_email }} el {{ c.revisado_at.strftime("%d/%m/%Y") }}</span></div>
-          {% endif %}
-        </div>
-      </details>
+      {% if c.licencia_id %}
+      <div class="kv"><b>Licencia concedida:</b> #{{ c.licencia_id }}</div>
+      {% endif %}
+      {% if c.revisado_por_email %}
+      <div class="kv"><b>Revisada por:</b> {{ c.revisado_por_email }} · {{ c.revisado_at.strftime("%d/%m/%Y %H:%M") if c.revisado_at }}</div>
       {% endif %}
     </div>
-  </div>
-  {% endfor %}
+  </details>
 
-{% endblock %}
+  {% if c.estado == 'pendiente' %}
+  <div class="acciones-compra">
+    <form class="inline" method="POST" action="/admin/compras/{{ c.id }}/activar">
+      <button type="submit">✓ Verificar y activar</button>
+    </form>
+    <form class="inline" method="POST" action="/admin/compras/{{ c.id }}/rechazar"
+>
+      <button type="submit" class="risk">✕ Rechazar</button>
+    </form>
+  </div>
+  {% endif %}
+</div>
+{% endfor %}
+
+</main></body>
+</html>
