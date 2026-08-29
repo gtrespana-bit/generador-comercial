@@ -1,7 +1,7 @@
 # Panel de administración — plan para llevarlo a nivel profesional
 
 **Fecha:** 2026-08-29
-**Estado:** ✅ Fases 1–2 completas y ✅ Fase 3 completada; Fase 4 en curso con CRM, vistas guardadas, salud de datos y API keys — suite verde (1153 pruebas, 9 skipped). Pendientes detallados en la sección 3.
+**Estado:** ✅ Fases 1–2 completas y ✅ Fase 3 completada; Fase 4 en curso con CRM, vistas guardadas, salud de datos y API keys — suite verde (1153 pruebas, 9 skipped). Pendientes detallados en la sección 3 y en `docs/PROGRESO_PANEL_ADMIN.md`.
 **Ámbito:** `app/routers/admin.py`, `app/services/panel_admin.py`, `app/templates/admin/*`, `app/services/analitica.py`, `app/services/mantenimiento.py`
 **Objetivo:** que `/admin` deje de ser un panel de **lectura/gestión de licencias** y pase a ser el **centro de control de todo el negocio**: cobros, clientes, web, producto, seguridad y operaciones.
 
